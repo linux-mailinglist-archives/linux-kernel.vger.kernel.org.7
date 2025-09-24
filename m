@@ -1,123 +1,244 @@
-Return-Path: <linux-kernel+bounces-829993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A6FB9866A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E2DB9866D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B13C4A7446
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994AE4A7464
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3153246764;
-	Wed, 24 Sep 2025 06:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5566B2451F0;
+	Wed, 24 Sep 2025 06:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvIcP+69"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eWc7uY+4"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355F921D3C9;
-	Wed, 24 Sep 2025 06:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794FE2222A1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758695887; cv=none; b=qA3QgBnEekRWLBRUtPk5mRiGuH8PCJiLxxx0ku7xxT0fhb6MRfNV0Tyt87bSYzYwFiPkVNhI8wpPj+IPoopf43vZqB0yO0Vef3OQhwcGPCTu214vocBkEs2X4s76qJ+hlpN8iaQx8dBGlhBj5bQJ7OQsTHQmlSkMtwyaFsJDuBU=
+	t=1758695903; cv=none; b=OAwNIjPcOaSuJ/wmaqWMZSPd2SjrqxpaufzApmpyFc/mcJrKiqRbqQfqhUlCMo9GEuvatVHOAPaE0nSF/kmfnLzXpH7Av47y471b2rW654+H/mkwLmq2eu2IWZn7/Vd9DpAGPU/5spue33gZoP7faBvx9bXhWJEQ7px5dze7e4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758695887; c=relaxed/simple;
-	bh=0FWcUptjZXF2KcJSQk5WhzpvjI+nx7EN+MHiNt3QPVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=moNp3AOhvySJc8tTnXjBCFzhtl16mi2/JDS9r1tOffRMtNhMEgkCFQ6XmioZf5XLxpdrQ5bvnD1LcFXHJ7k/znqwDeyXYxmO7uAygiZp86P/q0690O05gg7S285sYlZJqj8LcaYWD0m1wZqD7fUbPe9FzzAh7+sfcsmBpRVl95Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvIcP+69; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C951C4CEE7;
-	Wed, 24 Sep 2025 06:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758695886;
-	bh=0FWcUptjZXF2KcJSQk5WhzpvjI+nx7EN+MHiNt3QPVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fvIcP+69cctnyeSa8wmXQoOwoV66mlFGMrhdRLSo1mk9s/x/A9XVuYISm8ZiTWHar
-	 JdytNZlOoXtDsAJO+akVi+BDH7Bmu9jPQK/aD1QE3aVpT51JlXUOyjYM8ORqEKG9Vt
-	 7JFWqhovKhxtuMFWZf6HwC73CsDkH2dAdiCpTH/jVlHDoNxSJGFG+vSH3givFUYCzY
-	 +0shsmUgeYMezZTNsQz5dXziIqUx5GsdqDaiatKPU33GJT5zysUxjzSWBQgnA7/Qjj
-	 v1IofgcRx64iAy9ZSDYyoHGYEz+hy4edn21y2nb9V0bDdWx7/M9cDCsSh+nhTD5Uq7
-	 JtlrLCJ09QO7A==
-Date: Tue, 23 Sep 2025 20:38:05 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
- rhashtable_lookup_fast()
-Message-ID: <aNORzVQ6OVkPHAjS@slm.duckdns.org>
-References: <20250922013246.275031-1-tj@kernel.org>
- <aNOMK1gk9if3UTgQ@gpd4>
+	s=arc-20240116; t=1758695903; c=relaxed/simple;
+	bh=Y414l4Q4h9CyZswAYtdgfRLc+vH1uwVEFVIrOjI2NS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rW3I8/6Z/IpfOYxs1CglKvGSRV51y5Mg3NMz3fBHFSfjUDFCOgldS1Tppbcoohza7pdvIf+FeROpdhUDX4fxlsZjzEKx+qPeYWv8UgU1/WCHUxh2Gjwe/8MbIlcWW1v2TERRakusTZypX53xG2iDigGMebQxVFYk6aPv50fjn+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eWc7uY+4; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f1f29a551so4291689b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758695901; x=1759300701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s6Ov3S9HpN4cjEcIlojuqLvi3igYJ6DGKCzi466R5uM=;
+        b=eWc7uY+4tmcqZbZlY74fxdmsTr4Pl8DxWjpn7E7yqg6u/a0msD/XTQ0dcYOW4pGWo0
+         5ToftsCcUrC1ARztAj8B4AN7Mh7kNT5hB4mFQBytKhxbPkNJcusBfoD6iGhl9ar2hYyY
+         0EfkfRixwRfc0lpFvSn8B+aw45w86hhFFJYSL+ZZpZHiVZUcjdaFrUKeUGcm7WGOhXlV
+         +H+jJDdy1enO3TzLcNA1JtwGceuY5gKZGxNQf07HEz/+zKBOklwQgfM8I/NSDOGhKis8
+         0dzv+Qf/5XU3PKo30rf+bSPvA8W83adsNPr4/b+URKcK5tEu//0cQ/Q2VfLK99fhGgb4
+         ayjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758695901; x=1759300701;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6Ov3S9HpN4cjEcIlojuqLvi3igYJ6DGKCzi466R5uM=;
+        b=C7R5bJU2y6gqgXvBw57Gp6B6o3RX3HcFyI3CPpasom+laiw5+zAgFhsJCqvoxC8k5p
+         FgBS6MfO2IIYTdXy8NQi6K2BPZJUcf0D7eV3AZrOU/kcYZ1KO2yyatYC0uH15KT4/+cf
+         JpNHV+UFAACUgHZOAtcXvrAvzlbVugNoGNJmXEtoqiT3NaGX0Tu/70Kt4sE4rpyt7ahX
+         jOGHv8XA6RpgtkekAzv+s1j1xLBBm3m+NFHpx8+bLZBQZPAC5riT/tm5iR0+31bH7gLq
+         Q40JRK+5tkZFvFTUWVSeozjQqkEqpodzNWkRvRSC+/hisWEVNujBthrcnalU8nnclHsy
+         vwCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgx9lQJqQdNeNd3Xeo3LjESN+KKfFw05/gbs4mdZg7qn35tPaE0nQlwMROP46qGHbPcZK+DmWTWGiwJyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmdw2tDyZyJ+glECSOJw6eUlaRKw+GrqD/RTOr9UA+IhfadZDd
+	lMavANVV2IwgtCH7qfTNlQWFpdYTl3zIc/WJANfR9Aq3nBP+sxn26FLKiCwG/WOJgBQ=
+X-Gm-Gg: ASbGncvkkNN6jJVCclyR3t6kx82oYGYicewHyDPfoqYsYDwIpFMO5ZgyKIc8EaB2GV7
+	B695XfLDZoIa0jev91XSBtZTrk/8ADq9cGAlJeyjhhSfd4VPEiS61VpQAVky1ikN3le3ebDV7sa
+	LCzE8WoPN8ZUMWOTjQ/J/p6cATmF+qJ3lx3KHa+lkfXe0HGWoGzCZhpHBlG6WnzjQhwNj50Wasv
+	tikqaM2KIZuPjfbAg9tkDfmAJNvOJwF7c/MrDwJhqkYnqAMeAVAQH/Mr8TY/wOtc9lAuM8MsEtQ
+	yLC6pPJFH/488N9ba34Rzrcz1HyB0RZeESCbYFYbtYSCh4AZNxeG6zZuvYMMg+DDHH56oCdf6yK
+	raSMYgXI5Jststp9G9OI5wy4b/UZI2cetJdHMxp3ie0Vtpffmfe7D5igWsKx+/khpk4RSecs=
+X-Google-Smtp-Source: AGHT+IGsFnvhEJuy1jeBg1o60pY8GGKmm8OjAXogiR/DVRn3nto/+G8JKif7BLpZrq6QkESMTuyG3w==
+X-Received: by 2002:a05:6a00:4fd4:b0:77f:169d:7f62 with SMTP id d2e1a72fcca58-77f538ea09bmr6917644b3a.14.1758695900695;
+        Tue, 23 Sep 2025 23:38:20 -0700 (PDT)
+Received: from [10.88.213.9] ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfec3dadbsm17605879b3a.68.2025.09.23.23.38.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 23:38:20 -0700 (PDT)
+Message-ID: <b5bc34c2-b82a-475d-ba15-a7f67495b56a@bytedance.com>
+Date: Wed, 24 Sep 2025 14:38:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNOMK1gk9if3UTgQ@gpd4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page
+ size
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ xieyongji@bytedance.com
+References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
+ <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com>
+ <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com>
+ <CACGkMEv3pUBF3Uv2s3MM0Qn--fP3mwN92SqE9NX4gNuMALBTUg@mail.gmail.com>
+ <aed938d0-e70a-4af6-9950-d4d0b7d6a93f@bytedance.com>
+ <CACGkMEv4TZOAyxaTkCvZ4rgyVsPet+r3pNSauHaGOYHim3Loag@mail.gmail.com>
+Content-Language: en-US
+From: Sheng Zhao <sheng.zhao@bytedance.com>
+In-Reply-To: <CACGkMEv4TZOAyxaTkCvZ4rgyVsPet+r3pNSauHaGOYHim3Loag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-On Wed, Sep 24, 2025 at 08:14:03AM +0200, Andrea Righi wrote:
-> Hi Tejun
+
+On 2025/9/24 12:15, Jason Wang wrote:
+> On Wed, Sep 24, 2025 at 12:05 PM Sheng Zhao <sheng.zhao@bytedance.com> wrote:
+>>
+>>
+>>
+>> On 2025/9/24 08:57, Jason Wang wrote:
+>>> On Tue, Sep 23, 2025 at 8:37 PM Sheng Zhao <sheng.zhao@bytedance.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2025/9/17 16:16, Jason Wang wrote:
+>>>>> On Mon, Sep 15, 2025 at 3:34 PM <sheng.zhao@bytedance.com> wrote:
+>>>>>>
+>>>>>> From: Sheng Zhao <sheng.zhao@bytedance.com>
+>>>>>>
+>>>>>> The allocation granularity of bounce pages is PAGE_SIZE. This may cause
+>>>>>> even small IO requests to occupy an entire bounce page exclusively. The
+>>>>>> kind of memory waste will be more significant on arm64 with 64KB pages.
+>>>>>
+>>>>> Let's tweak the title as there are archs that are using non 4KB pages
+>>>>> other than arm.
+>>>>>
+>>>>
+>>>> Got it. I will modify this in v2.
+>>>>
+>>>>>>
+>>>>>> So, optimize it by using fixed 4KB bounce pages.
+>>>>>>
+>>>>>> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
+>>>>>> ---
+>>>>>>     drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++----------
+>>>>>>     drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
+>>>>>>     2 files changed, 83 insertions(+), 42 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+>>>>>> index 58116f89d8da..768313c80b62 100644
+>>>>>> --- a/drivers/vdpa/vdpa_user/iova_domain.c
+>>>>>> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
+>>>>>> @@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iova_domain *domain,
+>>>>>>     static int vduse_domain_map_bounce_page(struct vduse_iova_domain *domain,
+>>>>>>                                             u64 iova, u64 size, u64 paddr)
+>>>>>>     {
+>>>>>> -       struct vduse_bounce_map *map;
+>>>>>> +       struct vduse_bounce_map *map, *head_map;
+>>>>>> +       struct page *tmp_page;
+>>>>>>            u64 last = iova + size - 1;
+>>>>>>
+>>>>>>            while (iova <= last) {
+>>>>>> -               map = &domain->bounce_maps[iova >> PAGE_SHIFT];
+>>>>>> +               map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
+>>>>>
+>>>>> BOUNCE_PAGE_SIZE is kind of confusing as it's not the size of any page
+>>>>> at all when PAGE_SIZE is not 4K.
+>>>>>
+>>>>
+>>>> How about BOUNCE_MAP_SIZE?
+>>>
+>>> Fine with me.
+>>>
+>>>>
+>>>>>>                    if (!map->bounce_page) {
+>>>>>> -                       map->bounce_page = alloc_page(GFP_ATOMIC);
+>>>>>> -                       if (!map->bounce_page)
+>>>>>> -                               return -ENOMEM;
+>>>>>> +                       head_map = &domain->bounce_maps[(iova & PAGE_MASK) >> BOUNCE_PAGE_SHIFT];
+>>>>>> +                       if (!head_map->bounce_page) {
+>>>>>> +                               tmp_page = alloc_page(GFP_ATOMIC);
+>>>>>> +                               if (!tmp_page)
+>>>>>> +                                       return -ENOMEM;
+>>>>>> +                               if (cmpxchg(&head_map->bounce_page, NULL, tmp_page))
+>>>>>> +                                       __free_page(tmp_page);
+>>>>>
+>>>>> I don't understand why we need cmpxchg() logic.
+>>>>>
+>>>>> Btw, it looks like you want to make multiple bounce_map to point to
+>>>>> the same 64KB page? I wonder what's the advantages of doing this. Can
+>>>>> we simply keep the 64KB page in bounce_map?
+>>>>>
+>>>>> Thanks
+>>>>>
+>>>>
+>>>> That's correct. We use fixed 4KB-sized bounce pages, and there will be a
+>>>> many-to-one relationship between these 4KB bounce pages and the 64KB
+>>>> memory pages.
+>>>>
+>>>> Bounce pages are allocated on demand. As a result, it may occur that
+>>>> multiple bounce pages corresponding to the same 64KB memory page attempt
+>>>> to allocate memory simultaneously, so we use cmpxchg to handle this
+>>>> concurrency.
+>>>>
+>>>> In the current implementation, the bounce_map structure requires no
+>>>> modification. However, if we keep the 64KB page into a single bounce_map
+>>>> while still wanting to implement a similar logic, we may need an
+>>>> additional array to store multiple orig_phys values in order to
+>>>> accommodate the many-to-one relationship.
+>>>
+>>> Or simply having a bitmap is sufficient per bounce_map?
+>>>
+>>
+>> Yes, using a bitmap can mark the usage status of each 4KB, but it may
+>> not simplify things overall.
+>>
+>> - we will inevitably need to add an additional array per bounce_map to
+>> store the orig_phys corresponding to each 4KB for subsequent copying
+>> (vduse_domain_bounce).
 > 
-> On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
-> > The find_user_dsq() function is called from contexts that are already
-> > under RCU read lock protection. Switch from rhashtable_lookup_fast() to
-> > rhashtable_lookup() to avoid redundant RCU locking.
-> > 
-> > Signed-off-by: Tejun Heo <tj@kernel.org>
+> I may miss something, the PAGE_SIZE is 64KB in this case, why do we
+> need to store per 4KB orig_phys?
 > 
-> It looks like the ttwu_queue() path isn't RCU read lock protected.
-> With this applied:
+
+Since one orig_phys originates from one IO request. If we want the 
+minimum size of bounce pages occupied by an IO request to be 4KB instead 
+of 64KB. we need to store their respective orig_phys values for each 4KB 
+corresponding to the IO request.
+
+In other words, we may not be able to guarantee that the orig_phys 
+values of all IO requests within the same 64KB memory page are 
+contiguous, so we need to store them separately.
+
+Thanks
+>>
+>> - compared to the current commit, this modification may only be a
+>> structural change and fail to reduce the amount of changes to the code
+>> logic. For instance, cmpxchg is still required.
 > 
-> [    6.647598] =============================
-> [    6.647603] WARNING: suspicious RCU usage
-> [    6.647605] 6.17.0-rc7-virtme #1 Not tainted
-> [    6.647608] -----------------------------
-> [    6.647608] ./include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
-> [    6.647610]
-> [    6.647610] other info that might help us debug this:
-> [    6.647610]
-> [    6.647612]
-> [    6.647612] rcu_scheduler_active = 2, debug_locks = 1
-> [    6.647613] 1 lock held by swapper/10/0:
-> [    6.647614]  #0: ffff8b14bbb3cc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0x90
-> [    6.647630]
-> [    6.647630] stack backtrace:
-> [    6.647633] CPU: 10 UID: 0 PID: 0 Comm: swapper/10 Not tainted 6.17.0-rc7-virtme #1 PREEMPT(full)
-> [    6.647643] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-> [    6.647646] Sched_ext: beerland_1.0.2_g27d63fc3_x86_64_unknown_linux_gnu (enabled+all)
-> [    6.647648] Call Trace:
-> [    6.647652]  <IRQ>
-> [    6.647655]  dump_stack_lvl+0x78/0xe0
-> [    6.647665]  lockdep_rcu_suspicious+0x14a/0x1b0
-> [    6.647672]  __rhashtable_lookup.constprop.0+0x1d5/0x250
-> [    6.647680]  find_dsq_for_dispatch+0xbc/0x190
-> [    6.647684]  do_enqueue_task+0x25b/0x550
-> [    6.647689]  enqueue_task_scx+0x21d/0x360
-> [    6.647692]  ? trace_lock_acquire+0x22/0xb0
-> [    6.647695]  enqueue_task+0x2e/0xd0
-> [    6.647698]  ttwu_do_activate+0xa2/0x290
-> [    6.647703]  sched_ttwu_pending+0xfd/0x250
-> [    6.647706]  __flush_smp_call_function_queue+0x1cd/0x610
-> [    6.647714]  __sysvec_call_function_single+0x34/0x150
-> [    6.647720]  sysvec_call_function_single+0x6e/0x80
-> [    6.647726]  </IRQ>
-> [    6.647726]  <TASK>
-> [    6.647727]  asm_sysvec_call_function_single+0x1a/0x20
+> Thanks
 > 
-> Should we revert this?
+>>
+>>
+>> Thanks
+>>
+>>> Thanks
+>>>
+>>>>
+>>>> Thanks
+>>>>
+>>>
+>>
+> 
 
-IRQ is disabled, so it is in RCU protected region but the lockdep annotation
-isn't happy with it. :-( I'll revert the patch for now.
-
-Thanks.
-
--- 
-tejun
 
