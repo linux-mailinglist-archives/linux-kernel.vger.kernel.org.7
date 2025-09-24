@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-830249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A76CB99329
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B661B99338
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AAD4C501A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81004C4F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2F82D9ECB;
-	Wed, 24 Sep 2025 09:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4219B2D97AA;
+	Wed, 24 Sep 2025 09:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="aLhCZFaj"
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="Je+lHbX5"
 Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020110.outbound.protection.outlook.com [52.101.69.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE212D8DDD;
-	Wed, 24 Sep 2025 09:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622322D9EC2;
+	Wed, 24 Sep 2025 09:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.110
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758706896; cv=fail; b=dNO0fUYRFMrCHvgh2XPmdSx5YWJq13/WdAm1qjFBKE8Rk6P21wEP3ePUx58jQwKxrMao9PaS8FNIzKM8jq7RATUl8pPItgdsz/7lbiKAl7t0ZgCX9yXltVemaUBOI1HEUl2wLgx+BsBlvd7h75a9WFmNuzjJpUQZCV0InEpiCQo=
+	t=1758706902; cv=fail; b=DncoWpSdoLnw+HyjECk/p0wWNHvsUwXe6NP7gyoiKYF5cZIJgTebW9w+5xMmFesmapTZIaWu1BWqdl/dj++axa5jMTzIgGX1jQOgNFsn0ek3T43EOZaDusEuCJPeS+i+I4JRTZCxJahRRWd8cKWAqSvTdVa9nIQpYSfGRkYELAI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758706896; c=relaxed/simple;
-	bh=iQHi+15vFLbIelGkizQRrINT0RFjAjEFnJxd1LAAeLY=;
+	s=arc-20240116; t=1758706902; c=relaxed/simple;
+	bh=UW0JxqB4O5AT141DO/igGmdB5ylfV7yjJmhJBePHJho=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nk/D968ox7QXZ2ytP9RQcJi5S1Wbz+P6sKyNV6bw89eeELcF1FHAwr8nLlVu89GL5CMFvGi1onZ7qLzAar4i5vIekSkd4+yW/wul+XI5yyYpsExxsZpi5W4PNp1Ti+keimElbIh27EbXGZkGgxlG4TJYTlnkCsMqfmOb9XFHXRY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=aLhCZFaj; arc=fail smtp.client-ip=52.101.69.110
+	 Content-Type:MIME-Version; b=QBvDlPJ84jCbR0vRcWmn5SSYWC0kDIbxaTK+TmEFJ+V98o6tfbE8wDVPAKvOCzvhkV9/SjO8yIm7jFE/MMp20NGv+hrpkjQWM4hjHbRipC72J1Nj5Q7T4MvzlTFhV0q1aZ467Ga2QGPHJ2rpdylF32wZlX1U7l5JaZriXNvGk1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=Je+lHbX5; arc=fail smtp.client-ip=52.101.69.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uhr5rydap1nvQPTZ23CSRgtE3eSQTUYwWp7kEazQzLd0/R2JRS4giNBH47pggZX30JrmlPCtQoAoCX+JYPqrURaEqrd8rEMvSE8a/pz81lGplLVUJB6VVuWpHkCtSZsJqI6pgZ6/hQPD3fhOKymZlWqGRvyvsAdMxV3du7Gwhkb/WH2uVhgAd1aXx0qBWhXf9MR1l33MY01PwdpeC48tCFokAr2SpVNl7hOpUiEfZ7RISNnZZAru5TQhNPAZpv2pOwq+7lqt/dTsKojTJ6CZ6L6GRz7AMLByIil4NfGLOspCzf5r21m8984rmhW19Iy/gbyAexor+Gy3LyCnDTPDcQ==
+ b=eGN/RevX0VTV8hNXvE/0IFAlJzSqnTqsYq7Qesp1XYeASt5KSzHYAidPdt74xQ/s98g9DMgbsxQrIOn6wI5XmeFhvyXrb69y9g/rMXMcNuM6AThj3avBkx4BTZ25cIzMReaH6cmPqKiBwV8Zud8txnK1VXv7an3czV247FaeBmpoCJOVTiM4FkDVbcoRBYBFgo4+daSPhiobtN/0W5xJsUhxkdpfc/kjU3uPT1oNeqh8KSGBia9b7PAe+WpgK45m7GjkBv2Ncw3GKcBedJZJSw774mXAX1OD/nnWIefII6EqNmdM5QC8DnuNl9OIubba0/2/WBMUpQ1ZEYrSQGbRfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=th9QqMg21D3uTdyRRQEqRFK5ruIlzO4hQtaLw4ZD5VU=;
- b=J7rGt3DqAw+pCnddBVIbnOHn3sZXTtkm6v2w5v8d9NZ5j4kphwqT5GLyoHjZZDGhWnWyyWA+7rgxpj1iIGZZErYyn3ZCcQezyZQnBEIJ6FbZxoEJ0ied6XrAtueiRrZQaKC+QnCcc6ZXqMOKj+j/cIf8IF8P/mccQAKGxtAdqO2dpduwP7KX1QUd6kAvCyKaY+YAivBUYEgKL1mo5ZRCYbFdYTpNvrgTRjzH031nbs8kCtR1VIf7P6JklhX1sFcbCmsvWDlMsBHTPobIa+meBLeqxCAXFqm0N+oFN681tSwdEXkb25W30hsRlPE4TgSPSrMbRx+wFUpdD4CpMwBx3g==
+ bh=8Rkm7PmTzmoNGXzyaRHNq2Ac4Bjo92vYvTFt305jT+c=;
+ b=JvajG7WDuHWRU77Yhkus7ypZOY2eOb10y6s34ogKKwS301Mn1SQvckHl6iTL+QyqBLJqUwAjrcp/W0IgE5mErcTKvsUu8IQgoQFrW1kU2pxKvCd5KkOggSROsdXQA6Kl7wQJcjQZkhmXe1p3nl9JbuStcHnJNdneWZG0014piZwDlFm0eo+1sQDJ87raP7hdCv7jJt6QWZeTH+y71yPq5BWvD5zDMO8C31VTlBkhRdlI8FFXb4XstMyAakw6PKApcj8I79p4jxg2ep/84NxjgPhYuiJwZMo5pKvX14lMb6NmGmMB2XQcviRpCkNSRt5HWUi+1oC7KW8ptuYxzBwnhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
  dkim=pass header.d=iopsys.eu; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=th9QqMg21D3uTdyRRQEqRFK5ruIlzO4hQtaLw4ZD5VU=;
- b=aLhCZFaj8UlTx/a3TR5WnwtD2MTY06x5sWOONAikU41ejTDb8HwgzjClduBH+vO7ebG5GAmgpfU1s8Re3OUPESWp31WJDM5fdekkRurt5CTXjuLggqkKEccG4qWjEnIW3KyIekNROi9Xaql2GE5qi7e0pM60fYhZaile7V6tLSoJcWIsPGzi0RPmGp8ThmiFvtYtMQsukoveQRkwK/dWJCSarrshELorQKAwpkk90oJ3llsW2/dJIdStTrkXqZl+Hc1O0UK1RIAnweM8c++f+XL7VfB9/noiWwgeoKt1PCltocln/tt/Se0bu1MrUoqZQJY8suRtfI+3+uDeHWH/XA==
+ bh=8Rkm7PmTzmoNGXzyaRHNq2Ac4Bjo92vYvTFt305jT+c=;
+ b=Je+lHbX5J8Z1fhv4YZQ3D4svjHlavSdKN0+031Be8HAOCBm/8ed276dPWdOtkcsKBeIx7+kkKwbIoVA8QsTJvxtt6UVNaDmzEoz9rjX+2QKCQXIxoKz1fEs3eKvevmyFiR/67sZBqPbmnNlnjqjC6t0HppO/4LVRd8rw/5rXNVXNZXPR0WiAg55ioUlfvzZfwio3O/dtVKEzDdAaSY8Ah6J/SC78sxdwYYFGGb3tSONa6USUDPJMfBOagWn5JAaTZdfAHbaILwbju2Z8yO9qWG1VrRjhrAIDayVKstFeJhHPYecPZmBx+Ps0njaOvZYgpwULcdj+ihS23Zi+vnv0lQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=iopsys.eu;
 Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
  by AM9PR08MB6098.eurprd08.prod.outlook.com (2603:10a6:20b:2d9::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 09:41:21 +0000
+ 2025 09:41:23 +0000
 Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
  ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
  ([fe80::4cd3:da80:2532:daa0%3]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
- 09:41:21 +0000
+ 09:41:23 +0000
 From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -73,9 +73,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-mediatek@lists.infradead.org
 Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
 	Andreas Gnau <andreas.gnau@iopsys.eu>
-Subject: [PATCH v2 1/3] dt-bindings: clock: airoha: Add reset support to EN7523 clock binding
-Date: Wed, 24 Sep 2025 12:41:10 +0300
-Message-ID: <20250924094112.1918444-2-mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH v2 2/3] clk: en7523: Add reset-controller support for EN7523 SoC
+Date: Wed, 24 Sep 2025 12:41:11 +0300
+Message-ID: <20250924094112.1918444-3-mikhail.kshevetskiy@iopsys.eu>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250924094112.1918444-1-mikhail.kshevetskiy@iopsys.eu>
 References: <20250924060509.1889131-1-mikhail.kshevetskiy@iopsys.eu>
@@ -93,180 +93,231 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|AM9PR08MB6098:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a7996f1-4415-4233-4503-08ddfb4e850a
+X-MS-Office365-Filtering-Correlation-Id: 333473b1-cba0-4e05-ee4d-08ddfb4e85f9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qt/Ui2jC62DwSumSTxpIgZ3hOfE9ZoZMRzjxzQ+uKRFBcZ9wClJfyJx2QCKo?=
- =?us-ascii?Q?JARWm7Uewx9KIij97/RU3ZgM11SW1gZf/thCb3hEawMQT2pNkP0282cxGZZn?=
- =?us-ascii?Q?S+UDzrTbN8NReA09yJmed26z1es3IY6ioiS9leteiGtw/RekfO6NsrV3XFqB?=
- =?us-ascii?Q?zfB6HeFvmRG/yLvHLb1qM/lp9qQlSg7iM2OzMpvpYvFEJExhOJ/sBUzfA3iY?=
- =?us-ascii?Q?iTCleucluSdrscgkSfdFx2oDM1XO8rapD/v4IThe92uN6VtBxwrA9grnK7d3?=
- =?us-ascii?Q?2d+UD5ljlv4Uwx+O+usH1dX9LOQkAU9DV6pgEopkW6IJRPU79DiYoTbh3Af0?=
- =?us-ascii?Q?ideKfUE4DylEF8SPGybf4hBaTy2sH3BUCC6/So3vwLoIKtRYe0E+xYrrfyBI?=
- =?us-ascii?Q?3XMqOmDtFWsHyo6+EmK/lnShLJ13IIyd1w3T4I4La7QJCMBrv+epeAxEu+nX?=
- =?us-ascii?Q?Yb8MYVMYx1iWcBVkZqasf8AYbTg9OTqaQnUoLHmVu7n5p0ptS4kK++2vYUmw?=
- =?us-ascii?Q?MqOQ83W/BxhDQSTa7lLo+ijozJI1E48Aq0ATrntf2g+8tNO3OC9onNb4/Ky0?=
- =?us-ascii?Q?Y9KusdbrOrn2PrE6BA5wanm8V7scNE5rbKKeCG586PF0TBRP/6fYyZdX0ck1?=
- =?us-ascii?Q?6DLKyRf7b1jKDtT7YnloybtCxWYGyPRpdii2ODfS4TiT7z755h2BD8CqRQn3?=
- =?us-ascii?Q?OxopTPM2sQ7sVPp4lwXoCGwpcbhTWQ8olDw4T9++/QAuNoVHig71qSt/VjNQ?=
- =?us-ascii?Q?u4TMw2xi1qq8bGS1aE8V16Wy49C+PyU8egkFWpTpHP0Z8dseHYY70b3UVCHN?=
- =?us-ascii?Q?jOlQq6nMgWSgv/yq4zlWKdcsJjgSfN+pdRqV9221BI412cbkmELF24DwOPqF?=
- =?us-ascii?Q?jRDfEIJSIr25OMaqBe5uhBjsRU5hmoBw/9O0YDWO0FNmFVf25guwMOGqEC3z?=
- =?us-ascii?Q?GXaWILDRRwU3f0lsvJ/QVSdN+cPnm4AgQl6NJa82pWheMeygOnZX063HWqAR?=
- =?us-ascii?Q?un12TobvLywV6nbZVZ9u3ZEkVAy2a3vC1SFx4dnrrkhXtCHVcLSMwyixQop0?=
- =?us-ascii?Q?tptjvaC1NcxVIpduKRAsalxam9GiXoBdc2MaFoxXziS3fkZv1n2LrIbdoLG0?=
- =?us-ascii?Q?W+Xf3haeDJ8ja4RNeWT+RlUxKK6reGAMsajzBqGbLEmt2t0mwRPrzJDu/3Bn?=
- =?us-ascii?Q?xmewFcC0ZuurQT7cOMhnwaW7j4d422a1KudCr0h08KR3Q47LTUnCtQx/JfAn?=
- =?us-ascii?Q?lKCq2Dza7qTmxHxEznfhLdbKqMVoBJgfHQkFSC9jzUNipJy7aji87sa4t3M0?=
- =?us-ascii?Q?UvP4iJCTQcmvoG0ieRUwN1cLWkmzsjf4zNWqunXbroJDKq5/Q5lGRIAUuZ/h?=
- =?us-ascii?Q?AxgRl4Nlydw/jMW+oQn9JjHXDmHrrP1/lWcUZDmrchV6PsUAZ2eITlYPQe6g?=
- =?us-ascii?Q?jQc90NZuztLbK82/6LwleP8shVcvK/yFEd0jFfvWjdLWPUECs48EtHa4SuZP?=
- =?us-ascii?Q?a3aaJFf9MjHAeDI=3D?=
+	=?us-ascii?Q?Nv8MpJST96I/DR2DGq7rxYYCRoEJgzDwndQirTMd+XDJwwMVQGZICr3WfOeT?=
+ =?us-ascii?Q?O9gZg9hYbB1/b5SfbtC516fMsIgSWvvPj16PXyQ7Z8CsS7JnsbN/N8C5BdNc?=
+ =?us-ascii?Q?wUxifTz2kteelO2R29q8MMN6D2VbxMmqreQQeDcQJxGh5Ru/pwzFTK6R1Gfh?=
+ =?us-ascii?Q?yK1KX38s3WLq2Kz7131c8hedLfs+0FCRWSL/CKF7QCbJvVIcRCuqJZ1JrlCL?=
+ =?us-ascii?Q?5bEE+TEw3+aUqNANZRqN51zUC1QstDBF5+Gt+Xr4Zrv/EXh3sgSnAPUVX0/2?=
+ =?us-ascii?Q?RlWSPBELbXRx3T4rCVpHYB5c95iyE2DEzn8wMA6bd+yxNsYClz7jQNotQ98s?=
+ =?us-ascii?Q?oGoJMgZxVmPLLIPOG5o3gIc29dcJneJk5hBSMOICpgHNAj1ahxZGvtVBo8MR?=
+ =?us-ascii?Q?jGrJZO0TEaUeS6926UXVFsZ/oIreDyZFaK5gpHpE3NDKF3fs4XJxF3XD52Pa?=
+ =?us-ascii?Q?ypgMDrY8nv4et2LpWaA0vvyfA/oDGnpE6XKoVQ20O3RwsW8/voqDT0J5geQl?=
+ =?us-ascii?Q?jMmfq/sZOWWZCw9N4gyg10aE6q6e11e0aNAr4p2Hcxqlk98BMJ1Mw7wskHlm?=
+ =?us-ascii?Q?MW5z/3Noc4OW0Cd5xEVSJAPXvBWxaL27cDzSDeiyK5fQSVsWfD/oSd/v+9nU?=
+ =?us-ascii?Q?bF4tjqUYddDm6knYssg7R40eOjnyvxTQodiFoXTrQbf7EuB+CHHNuNliQxTm?=
+ =?us-ascii?Q?fxLavrcn3gaFVsEAJzV1r6mIKSu48aSxwYZiwFLIK8n0CFB5nFgMsqYfASCG?=
+ =?us-ascii?Q?nFW0sok2Z+0i4Qz3zbtQ9Gyg+jCtJZQ5mZOaZRrKNg0z6YTOdPgKyVBytCk2?=
+ =?us-ascii?Q?dDj+mOur6u03Y46fYF+1e4tm93U3GrXQT1WjP2GrMWe5qprumDNABLBU7M8E?=
+ =?us-ascii?Q?e0qR22CRwj+iSghLGR9fNqQI9K8fQ8sk4WJTtmrQoYrfiGyr3976Lf6aR5uL?=
+ =?us-ascii?Q?IAF1+bjVgf5+XvnQLiy/aQ/L5rOsyyrcxpXezAwpWsjEaf7XxQwiN/4gW2wI?=
+ =?us-ascii?Q?H7aEhYhWXmtVVAFxsWBxTd1XKCBsTZWHR+puk4p8BkAgfYgvOkn0Bs1ArUMU?=
+ =?us-ascii?Q?XzRkj08fjCKDsMjgbqHN0iiVfAMQigitQpizeKwi8dT3QswI+5loQMLDB1mC?=
+ =?us-ascii?Q?RqOmqDUE6JCvgRBo2rYmaP6EBDdZ8VlNJ/Kqi62ChzG19qtJocKkb5y+RPPY?=
+ =?us-ascii?Q?Zm/E4234jg2UVMA2XlwR84I1l7vb6ncIQDltSewntyz9MukfD7p2UulAQNUH?=
+ =?us-ascii?Q?4lf43KxE1ktxpqEFdZbugNNzOKhVIZn6fwwrX9kQDb0PvrOQhcHzV2Ef5Y98?=
+ =?us-ascii?Q?uiioTyZl1PeTZ9UBk1+8wpHBudJgXg1Gi6jarEjpdlIq/t7+pFbyabtDRGMC?=
+ =?us-ascii?Q?cW2jrBbGpjjyz2L6OfY9byKkciPNT2ZOvzsG7yvZ5exJHkNohAVrwu45jvUB?=
+ =?us-ascii?Q?suOMa/Cy05qj2E/Aha1XpI1dhtmZAU24zjc7GV1skmabwOnt+5kbYYE92K9b?=
+ =?us-ascii?Q?9InHSwZI4XEWylU=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?orIwVpsJikvwCMLvFNUAep0ROMaMAfw5NS6EBFYgHPz/dJAamB0uoU8lAp8J?=
- =?us-ascii?Q?+lC0LHzbbXBTI3X1wnJNVI/NonCWw6015Ur/U5Em2rrCjT0mq+TUgojDj8MK?=
- =?us-ascii?Q?CLyIE9+Wr1C8qu6FoGsIdyxM3CgWf7O9F0Y4q2hVmIGwbCr9+aMBqPOgMl3w?=
- =?us-ascii?Q?8x6OWDNxDDwUlbJGIKKreQreV/dU+Hj9gXLqxzeI3ubFmLr6+ZjPBH/Q9Ijk?=
- =?us-ascii?Q?BSY7o6kT0d8Q2OqE6IahyIjiwkWwqM/9W8tWIzjE6Mrf7WubAotWKoFMspYW?=
- =?us-ascii?Q?YUS/ivXxmVUDxhqxVDzAzyc6o3K9MSit2fr816vzwKDWEdM6KyTrAcFw764P?=
- =?us-ascii?Q?G5ez2rLNVD58Nf0XGetMaO42oXiqUEl2VGp8Lac4lmHv/qbqbJ1hh3qWPl57?=
- =?us-ascii?Q?B/tH8EzI3Ip8Fr3M9bKvWBUNP90ARxwTV+/dyAKyT1EXeZhgqb4zsf0L1kA7?=
- =?us-ascii?Q?G/OgK9XdSqNbrrxN66SHI56CG8jndT0kcm/EK4OgRevj9it4ztlNn+1n1K92?=
- =?us-ascii?Q?jurkOWWge1XV0K/BwUCWleTmyN5BIN9wR+dypue3MGq87HGylSW227hQJYoE?=
- =?us-ascii?Q?zZvNEgOCWnOuzhm1iK0Syfti5v58n4JzjRuLxTmK+OwY1aAsOoma717Jemb0?=
- =?us-ascii?Q?htHKibgSpaE+DJbzRyGOE5pSTM2JCiMDbdkXcEqy4JLc5uFLiSrTB7/GCCXA?=
- =?us-ascii?Q?VKzeArQyT0h6We3GD88/ljFAz1oDcLDEd1hcn5d+uHNPJRZ4+L583SR1bMud?=
- =?us-ascii?Q?0KVJDqwfIcPinVxjxwCEnphELsH3jZtBWd2sPSz4eb+QCRrlLaRBhhiMQcVv?=
- =?us-ascii?Q?+gd6576o0ZtgTK/zp0wdp91W0VpzFykkt2ohrTHo9O7V50otBPCo55xi7yWl?=
- =?us-ascii?Q?VfqVCjnq8VWb3DSI+SOrKc6P7+XvK2sm7NmpK9Y0x/CJgDX7g1PbBlDTORU1?=
- =?us-ascii?Q?L+nHW572vUGErdfBEDY44sY7lu5tsPTivad3S32JK0z+M41K/FxYNlkIWwIX?=
- =?us-ascii?Q?jook+gHQmM0b9v1AbxOMZHC2xxbGxSC7CHYzKomRDAncwdaXMNPRG8sHmvam?=
- =?us-ascii?Q?93JV1e9n6CGY7/a8iP+iaOCkPMLdrahR2VY/Ej1JsMAlcxYmlA/8HAsqnMNz?=
- =?us-ascii?Q?KIrH0WaF5Z7STNzQnCG5miYRTCzMEgd2BWFQiSBkHvIQdZe6RwzE7ogckzjR?=
- =?us-ascii?Q?wImZsCZkCMXyvIqOF9eknl8Ugf+udnCHGCqBaxh5Aj+9klW4JplL2Jdgh1di?=
- =?us-ascii?Q?mNU8uP4hx7G2Tw8g49PqWwxsBIlGhPbwHFF/DSDveAfOMhYxS5prlCqH9WDi?=
- =?us-ascii?Q?FvRPd1E+N3f9yrYufXIJrJN3PgncFqx6zbCXwp94z48uVnxuTOF6mFRnvKb9?=
- =?us-ascii?Q?5qpP3nXG0Kc1vgYmndAGcKy2hJowVUgySrwpKlE8mbbYIPQOlgz13Nvf5gsl?=
- =?us-ascii?Q?uwHHXK5s92R4kMMNCV73m4LWOAzvoDA9voo4qsAexL1QKfE7pWk+fdq+BkLP?=
- =?us-ascii?Q?cTYHncTuLFo1VkvWhhDqdVvWaRTPNVgpMQ5N5QY8eEvj2ozZnTHigjps1hPp?=
- =?us-ascii?Q?x2fbS8BZfyjzpQQgnlx+aY9LKnaqZIiAhoX70ix66Vl8YsK6NIzFBk4kvHyI?=
- =?us-ascii?Q?CCYV30KLebEnFe3Uy1zPfQU=3D?=
+	=?us-ascii?Q?DkgAEElD1lILYLyp/01CA2Kil7gcd5s1Twy8Zujuj6A55saP2dgZBI6050RG?=
+ =?us-ascii?Q?/w/vTD+DO3Gpg8jrRSr09nacDlqQc+m84+n0wg7iMigEYOZ9p3qkrK1BL1WT?=
+ =?us-ascii?Q?SnfMwgiEZvY5Ok0xCVxU38y0DkhTLFV9r7/bI4goBkSxWtpaCaO2WtBJtsXJ?=
+ =?us-ascii?Q?c/RaGlb6dt71ReYEeJ3/bMKZKBNStfeDxRrxR775aESHeZcboD+IKkkN4Evr?=
+ =?us-ascii?Q?rkF4NYyo7d5zykgjYp1xEqjnHsZGkYLrJ11AxuqxIVBzKmLfEDRkSzWSQxHF?=
+ =?us-ascii?Q?RSKs50mb7Z52CmI0Bqqwan1lalcGpzWnh4efafc1JxxCbXOS62VPlkiDYVGt?=
+ =?us-ascii?Q?CHczbw7nVi+hI4HCuJJW1k64j0ILu/zStFFytqFcQ4vrB/aACRPYMqgafRai?=
+ =?us-ascii?Q?Z9OyDw2IizZr8pmgzt7hYzj7A+9QUO2YJ0fO0IFsUgamlLd0/Z8WWeSOtXrv?=
+ =?us-ascii?Q?bNqgpE29SXho6ZsiVidjT0wqKP1+jHORkKRim8vAqshqivwakLOzN9hUjPl6?=
+ =?us-ascii?Q?aqx1KDVSOXIgwSPxrQIwrPsiDLAPF4oDCXHovuQgb1zas9uN5UASuVAEF8aF?=
+ =?us-ascii?Q?5kWxy6+EcXvd8nqGmWV3AJ/6og/h7eNyQN+7XwfmOLXt3wCrlqKCXh6+itta?=
+ =?us-ascii?Q?o+tiDawg6LF60XwiA7VXcTyHlcPMOELMr6qQzM43a0QGVhfe3PYiwsUXEk/G?=
+ =?us-ascii?Q?65hZTJkZLRSMholBuYykWdHtJyS73grcx9jIFU4m7Z4JBfIyrWnlF2l1dLch?=
+ =?us-ascii?Q?9RnOEPPyJZLtQjv9/NJgsjj9T+LmhzlNAYAfyXjyqrNVFedZ6JcOb/J29Ytb?=
+ =?us-ascii?Q?5sCjjTSSBIva8QSAgUP/quBRtj86tjLjfX5urRxeIPiuonC/pPJYVgxPViX2?=
+ =?us-ascii?Q?tJW9EF0JIFUJfxVQ3ooTDG4bG2r8KlnPg261XRU/qadhYf6A4s7zHKxKl5Nq?=
+ =?us-ascii?Q?V3o11FQZx6/YvgDvtUEXaVosqqaH44hGK9Im1+/v7+/ElLrYyEJ42cid4l0k?=
+ =?us-ascii?Q?OlhG9mlgTEPJAq5I/TFB8yxe7a4yPVW6wmOK0kNb2a3+o9BC7jTOtePqJeCP?=
+ =?us-ascii?Q?z/yFHy44bE90aFOLkbzaw4a9N+fVDTS8osq5XK3CX3Ph5aYWwMUmg34tu7kD?=
+ =?us-ascii?Q?0OpqOZIP7q+ANuhQPJb+wVyBmxmGlHHJNs3bW5ijClqkMlxRW7VZ5vm7TIBK?=
+ =?us-ascii?Q?YtXEFgzUsphZAjEbVJO9Q8Hp93mDN3/uEFx8/cjuZm4NhMKXK09TxUOCA7RL?=
+ =?us-ascii?Q?bghjV5iqRDd+979CiQbKKtIXkylSfpQn7FtALyZltV3QYx/s3fMFQCfQT6zm?=
+ =?us-ascii?Q?hl8FlcfA/oQyza49vH6/+E+ob8FUYIaN360npfKzasdCEHGFHiOEiLD5bCJT?=
+ =?us-ascii?Q?fN3BIoRv9nb9UfJU2yDU96wAdHfBFUzCD6p2cQq9JuGN51qb74sw44BmyKNL?=
+ =?us-ascii?Q?LNwmXSf0TmZP6mJrLeXz+fpGJSGcy+eDuJD+bNWhrTeglllyqdD1N0YOciPr?=
+ =?us-ascii?Q?sc0yDzVz2Jd2Y4UN9finxI273GBSWX2cJ/fASccfNBZLYyMFLJrNwQ4k5Mx6?=
+ =?us-ascii?Q?tfon+Wle/sTKzekTss060WpVducQ22DLv1QnNqdtkXHrvj0xMMTbNKMxbUSP?=
+ =?us-ascii?Q?3gIB57bRqtroXWmfpJcWIrY=3D?=
 X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a7996f1-4415-4233-4503-08ddfb4e850a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 333473b1-cba0-4e05-ee4d-08ddfb4e85f9
 X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 09:41:21.6950
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 09:41:23.2469
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 09Spo1DsoHS5CmS1RIwMFVXt2blL7IlG1VULYY7a2zs8uiVDx+j8jclcpJC4lquaUbmTUtboXcThiaPJDoQAYbSWwpgYP98QDFUbdm4s12Q=
+X-MS-Exchange-CrossTenant-UserPrincipalName: WuePPci4tqdZ68ulKCGD+6X1Ml2R6ukjpHR5Tj92rrKSyDMW/LyUx9cODpKNBkyjZXXNAUQ9b1gI+BScBfVZFyE06+HxAL95gtEXVxXv09I=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR08MB6098
 
-Introduce reset capability to EN7523 device-tree clock binding
-documentation.
+Introduce reset API support to EN7523 clock driver. EN7523 uses the
+same reset logic as EN7581, so just reuse existing code. The patch
+renames:
+ * en7581_rst_ofs to en75xx_rst_ofs,
+ * en7581_reset_register() to en75xx_reset_register()
+because they are not en7581 specific.
 
 Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml     |  3 +-
- .../dt-bindings/reset/airoha,en7523-reset.h   | 61 +++++++++++++++++++
- 2 files changed, 62 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/reset/airoha,en7523-reset.h
+ drivers/clk/clk-en7523.c | 72 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index fe2c5c1baf43..a8471367175b 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -64,8 +64,6 @@ allOf:
-         reg:
-           minItems: 2
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 15bbdeb60b8e..f276937181b9 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -9,6 +9,7 @@
+ #include <linux/regmap.h>
+ #include <linux/reset-controller.h>
+ #include <dt-bindings/clock/en7523-clk.h>
++#include <dt-bindings/reset/airoha,en7523-reset.h>
+ #include <dt-bindings/reset/airoha,en7581-reset.h>
  
--        '#reset-cells': false
--
-   - if:
-       properties:
-         compatible:
-@@ -85,6 +83,7 @@ examples:
-       reg = <0x1fa20000 0x400>,
-             <0x1fb00000 0x1000>;
-       #clock-cells = <1>;
-+      #reset-cells = <1>;
-     };
+ #define RST_NR_PER_BANK			32
+@@ -294,11 +295,58 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 	}
+ };
  
-   - |
-diff --git a/include/dt-bindings/reset/airoha,en7523-reset.h b/include/dt-bindings/reset/airoha,en7523-reset.h
-new file mode 100644
-index 000000000000..211e8a23a21c
---- /dev/null
-+++ b/include/dt-bindings/reset/airoha,en7523-reset.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2024 iopsys Software Solutions AB.
-+ * Copyright (C) 2025 Genexis AB.
-+ *
-+ * Author: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-+ *
-+ * based on
-+ *   include/dt-bindings/reset/airoha,en7581-reset.h
-+ * by Lorenzo Bianconi <lorenzo@kernel.org>
-+ */
+-static const u16 en7581_rst_ofs[] = {
++static const u16 en75xx_rst_ofs[] = {
+ 	REG_RST_CTRL2,
+ 	REG_RST_CTRL1,
+ };
+ 
++static const u16 en7523_rst_map[] = {
++	/* RST_CTRL2 */
++	[EN7523_XPON_PHY_RST]		= 0,
++	[EN7523_XSI_MAC_RST]		= 7,
++	[EN7523_XSI_PHY_RST]		= 8,
++	[EN7523_NPU_RST]		= 9,
++	[EN7523_I2S_RST]		= 10,
++	[EN7523_TRNG_RST]		= 11,
++	[EN7523_TRNG_MSTART_RST]	= 12,
++	[EN7523_DUAL_HSI0_RST]		= 13,
++	[EN7523_DUAL_HSI1_RST]		= 14,
++	[EN7523_HSI_RST]		= 15,
++	[EN7523_DUAL_HSI0_MAC_RST]	= 16,
++	[EN7523_DUAL_HSI1_MAC_RST]	= 17,
++	[EN7523_HSI_MAC_RST]		= 18,
++	[EN7523_WDMA_RST]		= 19,
++	[EN7523_WOE0_RST]		= 20,
++	[EN7523_WOE1_RST]		= 21,
++	[EN7523_HSDMA_RST]		= 22,
++	[EN7523_I2C2RBUS_RST]		= 23,
++	[EN7523_TDMA_RST]		= 24,
++	/* RST_CTRL1 */
++	[EN7523_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
++	[EN7523_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
++	[EN7523_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
++	[EN7523_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
++	[EN7523_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
++	[EN7523_TIMER_RST]		= RST_NR_PER_BANK + 8,
++	[EN7523_PCM1_RST]		= RST_NR_PER_BANK + 11,
++	[EN7523_UART_RST]		= RST_NR_PER_BANK + 12,
++	[EN7523_GPIO_RST]		= RST_NR_PER_BANK + 13,
++	[EN7523_GDMA_RST]		= RST_NR_PER_BANK + 14,
++	[EN7523_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
++	[EN7523_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
++	[EN7523_SFC_RST]		= RST_NR_PER_BANK + 18,
++	[EN7523_UART2_RST]		= RST_NR_PER_BANK + 19,
++	[EN7523_GDMP_RST]		= RST_NR_PER_BANK + 20,
++	[EN7523_FE_RST]			= RST_NR_PER_BANK + 21,
++	[EN7523_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
++	[EN7523_GSW_RST]		= RST_NR_PER_BANK + 23,
++	[EN7523_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
++	[EN7523_PCIE0_RST]		= RST_NR_PER_BANK + 26,
++	[EN7523_PCIE1_RST]		= RST_NR_PER_BANK + 27,
++	[EN7523_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
++	[EN7523_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
++};
 +
-+#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7523_H_
-+#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7523_H_
+ static const u16 en7581_rst_map[] = {
+ 	/* RST_CTRL2 */
+ 	[EN7581_XPON_PHY_RST]		= 0,
+@@ -357,6 +405,9 @@ static const u16 en7581_rst_map[] = {
+ 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+ };
+ 
++static int en75xx_reset_register(struct device *dev, void __iomem *base,
++				 const u16 *rst_map, int nr_resets);
 +
-+/* RST_CTRL2 */
-+#define EN7523_XPON_PHY_RST		 0
-+#define EN7523_XSI_MAC_RST		 1
-+#define EN7523_XSI_PHY_RST		 2
-+#define EN7523_NPU_RST			 3
-+#define EN7523_I2S_RST			 4
-+#define EN7523_TRNG_RST			 5
-+#define EN7523_TRNG_MSTART_RST		 6
-+#define EN7523_DUAL_HSI0_RST		 7
-+#define EN7523_DUAL_HSI1_RST		 8
-+#define EN7523_HSI_RST			 9
-+#define EN7523_DUAL_HSI0_MAC_RST	10
-+#define EN7523_DUAL_HSI1_MAC_RST	11
-+#define EN7523_HSI_MAC_RST		12
-+#define EN7523_WDMA_RST			13
-+#define EN7523_WOE0_RST			14
-+#define EN7523_WOE1_RST			15
-+#define EN7523_HSDMA_RST		16
-+#define EN7523_I2C2RBUS_RST		17
-+#define EN7523_TDMA_RST			18
-+/* RST_CTRL1 */
-+#define EN7523_PCM1_ZSI_ISI_RST		19
-+#define EN7523_FE_PDMA_RST		20
-+#define EN7523_FE_QDMA_RST		21
-+#define EN7523_PCM_SPIWP_RST		22
-+#define EN7523_CRYPTO_RST		23
-+#define EN7523_TIMER_RST		24
-+#define EN7523_PCM1_RST			25
-+#define EN7523_UART_RST			26
-+#define EN7523_GPIO_RST			27
-+#define EN7523_GDMA_RST			28
-+#define EN7523_I2C_MASTER_RST		29
-+#define EN7523_PCM2_ZSI_ISI_RST		30
-+#define EN7523_SFC_RST			31
-+#define EN7523_UART2_RST		32
-+#define EN7523_GDMP_RST			33
-+#define EN7523_FE_RST			34
-+#define EN7523_USB_HOST_P0_RST		35
-+#define EN7523_GSW_RST			36
-+#define EN7523_SFC2_PCM_RST		37
-+#define EN7523_PCIE0_RST		38
-+#define EN7523_PCIE1_RST		39
-+#define EN7523_PCIE_HB_RST		40
-+#define EN7523_XPON_MAC_RST		41
-+
-+#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7523_H_ */
+ static u32 en7523_get_base_rate(const struct en_clk_desc *desc, u32 val)
+ {
+ 	if (!desc->base_bits)
+@@ -552,7 +603,8 @@ static int en7523_clk_hw_init(struct platform_device *pdev,
+ 
+ 	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
+ 
+-	return 0;
++	return en75xx_reset_register(&pdev->dev, np_base, en7523_rst_map,
++				     ARRAY_SIZE(en7523_rst_map));
+ }
+ 
+ static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
+@@ -646,13 +698,14 @@ static int en7523_reset_xlate(struct reset_controller_dev *rcdev,
+ 	return rst_data->idx_map[reset_spec->args[0]];
+ }
+ 
+-static const struct reset_control_ops en7581_reset_ops = {
++static const struct reset_control_ops en75xx_reset_ops = {
+ 	.assert = en7523_reset_assert,
+ 	.deassert = en7523_reset_deassert,
+ 	.status = en7523_reset_status,
+ };
+ 
+-static int en7581_reset_register(struct device *dev, void __iomem *base)
++static int en75xx_reset_register(struct device *dev, void __iomem *base,
++				 const u16 *rst_map, int nr_resets)
+ {
+ 	struct en_rst_data *rst_data;
+ 
+@@ -660,13 +713,13 @@ static int en7581_reset_register(struct device *dev, void __iomem *base)
+ 	if (!rst_data)
+ 		return -ENOMEM;
+ 
+-	rst_data->bank_ofs = en7581_rst_ofs;
+-	rst_data->idx_map = en7581_rst_map;
++	rst_data->bank_ofs = en75xx_rst_ofs;
++	rst_data->idx_map = rst_map;
+ 	rst_data->base = base;
+ 
+-	rst_data->rcdev.nr_resets = ARRAY_SIZE(en7581_rst_map);
++	rst_data->rcdev.nr_resets = nr_resets;
+ 	rst_data->rcdev.of_xlate = en7523_reset_xlate;
+-	rst_data->rcdev.ops = &en7581_reset_ops;
++	rst_data->rcdev.ops = &en75xx_reset_ops;
+ 	rst_data->rcdev.of_node = dev->of_node;
+ 	rst_data->rcdev.of_reset_n_cells = 1;
+ 	rst_data->rcdev.owner = THIS_MODULE;
+@@ -698,7 +751,8 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 	val = readl(base + REG_NP_SCU_PCIC);
+ 	writel(val | 3, base + REG_NP_SCU_PCIC);
+ 
+-	return en7581_reset_register(&pdev->dev, base);
++	return en75xx_reset_register(&pdev->dev, base, en7581_rst_map,
++				     ARRAY_SIZE(en7581_rst_map));
+ }
+ 
+ static int en7523_clk_probe(struct platform_device *pdev)
 -- 
 2.51.0
 
