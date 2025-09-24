@@ -1,157 +1,139 @@
-Return-Path: <linux-kernel+bounces-830328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C9EB9968C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:22:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15D9B9969B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E911D19C7A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611BF4A3840
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6652DEA6B;
-	Wed, 24 Sep 2025 10:21:44 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A2B2DE701;
+	Wed, 24 Sep 2025 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvdHD7ii"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8282DE71C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F22A2DE1FE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709304; cv=none; b=czSCTPySw3I2XXXIMFSjzudyXB6BwOYcAD9Ywx8n+9hz7m/DntNsq9FeoNXo+65DmVKU/j6OUrHriEjhgiWa0ecPIEJgAHd0FtoRJqI9Pu1XNBUTX3KCaFxvFScz3mb2qx+doO5cgO8NFhJSYnt1eeYTFsWI/fkoBt129IhuBNw=
+	t=1758709382; cv=none; b=SiH/MskqDrpbC0fgEIuYBPYLDOzjwh1ko2k2oXlYlGPUcX6t6qFZ/+TyHs4a9IZ08jWmfw+xOt30AaMkHzHHpybzwX2IlGoPRKKGfW/lHjVtryHBmhXJ7rlCNB+h4Ma+7LRHN3aGokGUAn9+z+U+u3IKzsmhOm3aApb3VTin5+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709304; c=relaxed/simple;
-	bh=GmnXGzOJVIb2WXEx3CGo6GpzydoF9S80js/+qq5ecyM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TwtkLlQqDj/cWcS9Hsb4I5zflqPb1zkLMr6H0W6I6VNmb04JyrKlXnStPav1+/W3+ABSKPvHUohujQm/Trq0Fl0t391DUS69MBkVDlPxcPhi5cArBYr32SAN5OvrHGulKTK7edAZZR01Qgt55ABZWbB7vs2GVnYWCumIYkli1Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42486f6da6fso71080895ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:21:38 -0700 (PDT)
+	s=arc-20240116; t=1758709382; c=relaxed/simple;
+	bh=70m8hIHxbgOeHMiX7Op2kXSoJJya+09jCQ+CrFquVZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IlC+cbJJQ4+wwfZ2kj8eyBaYHCrkeu18MQdWnl8ylQLwj0U1j1Xj1ykfT40Rh1e/Uplzw5IfQnryKyhlS4UOjtuxUcgK4uVT3oxUrt6iMhn8+BFqhoemyuDau6JvmRT1jN5DnR4Ov/WcgPjkaaLcwXmfVlSlhcF7idR+K6fbWAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvdHD7ii; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e1bc8ffa1so21380015e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758709379; x=1759314179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2SZhlVPPd52n7ONt3JZoUJyYMwjtJvsP+AyT6HZcYJQ=;
+        b=PvdHD7iiom+tbN5R71tFRPm6867+xfycSFIQvMU+rQJDnpGwKk/qIaGTEEBTFmDrnP
+         NRz0t1IGZRMcVkteykENOWj3u2GCNFnzscORO8lCbJYn0MvdGR23OhmddtyJ/yAqqerX
+         D8K0GAowA9q3MfwiZX4BzhHT6qFJM/weg9jpAKXzd2cDEaChyutJ6VlJo+uzEHXnT792
+         7UtWLXk+FbmGdFpATlAQyI53a3GGxPyFQ+Rz13ZvGYxjbxlK41ScNadHxabKB5jigzPA
+         Zy5slThkOoFxaeo2UXVut+I/hUiE47XiAkHuc7eBTbJzuwioVvQIlRIJA5lyrsv1bHFT
+         1QXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758709298; x=1759314098;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YW5FK+9Nxf2a1psstXqeD3lJ/i8saIm5oi9/QSnJhnQ=;
-        b=EYwHfsUBN9sSWEKMcXoqel7Dmz0aJpL6MUKkeujWpD+wWfsNTzA6wFedfJhMBDuiJc
-         OAHbRKch7jvhvUxOw5djcF1gQXaqVEBsOZ3t7bOd77CEophRarD4zcuzwxTDqsABujFB
-         znLk67atJcN3WtfDoyTlvasExE3TOxu7NHgLN7HCZxWoJnDCGsc7IElyReVRJ6/bZBF6
-         D38He+05lWp2C2UsVhQoa1Tf5kvakK0DtyFLSZyYBjPUbSpN/VsNmm0pBI6ERHgG5gQm
-         mOv2UxLMRTDPH8zixTzj/nmmub7/3uEYI3Q8UjVW4HRDndYXlnDtaNGNDhR6FZX+XNsp
-         nBLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlyHhjo+UDzkoJN8+JNWz/lFVgdoR5CHuBTBXYQONHTVhOAhKHl5g9zAnVE2PblW49PTBw1YyrORg6Hds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVnv3LcdgRWFdQzILsFRCTsrNJMq01sPfJDvDT2okm4zmEs61c
-	lZCfDCdMcp91UX6GkXIKB9ESflW5ow5bkvL+qpLvW7CtexGYmIyLqyjhohwxi9QKQREBczWXDJ+
-	1ScRDWNfrUY7mexZB8RpfFL1zFCYmXXopCdyg1B7wPRYPNJdu5rjOY0TPioA=
-X-Google-Smtp-Source: AGHT+IEDOKk+kz5ZVy9+diabv4h0WvsEwMoydrRk2RCg1gfQOQ6owEIvzTDTMOyUL49kzwmG7sUPSvLMGpfC+zpzTyKMDticTUxe
+        d=1e100.net; s=20230601; t=1758709379; x=1759314179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2SZhlVPPd52n7ONt3JZoUJyYMwjtJvsP+AyT6HZcYJQ=;
+        b=iqT6reMSNHQNhi8XQaHPYy4yYRYsd+rB+BlJHPhSZ5LTIUbO0CehDD1LUQzd2GXGdy
+         QgkHnd7l3Jq3JADKN3m4xzL4bseMYlcTWkTSB9Jjan2Y5uFADEc7cE6zpvtzrCuduLrD
+         2oJL8BrYqH+c6Zwr5M/egmgCMeHC1iWJmFRP5Jf4+k++Y+6K/4WziTkdtsBN3vQ7pUBr
+         uTa3456qsQlEHo4WMiHjVYJF3LH/jNiEAkQdtJmAVBtyuoCOuzJxsg6VhALJLtldc5gV
+         GYnYO981wRov07gyX37+4P50CRPSvyeIUNgbjC0pB5gZyDWm6/HDBMauygLhHHS2Kuy6
+         Lh4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdqfKvR5FK32oJSlM8JOY4ts7mhgFEliOzpOT6py/M2KTJIZ99HE5wmdmtp+NZraefz8udlk+ZoxzFqi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykHiLkOFTDcdrYxiRT+XvZZYYCMXX+QMRgaWGFqKrGXLsvorRK
+	0S4WDHZuKGq5aniojEdXeVKxyMteuIN7JdydX6IEj5Ou6xYSavlUBYoqVVZWJbr1bcA=
+X-Gm-Gg: ASbGncu+stRbDaEXxTXK87iD9BvCrThUNr1ndVr6HqvGAadc1ARTmhtE9XWoufIMwM6
+	e6q9b1ah4XQWICOq5gveD587kCSD/WPoC2pixQJIwfOBjnR8cW3Gpn2FrAwQ1veXYxArHqV4A84
+	F0BcCyuX8rcYYQ8N0LPctuu/s5TlHB5W0K3q5clpjPz+UWxjUicwG4j7qbloEFd3K1n3YuWQw2q
+	JDAk5oyE5RyoVN3b0kSnp1jD61gtaZPsIvkiRq/2KtMOVtJOa3efab5YuK+m7hR+7TmIZ3dSct2
+	WhQeW1bRgl+zCPoPZHq+HlBCpBEHxmcNuIRcWV7bOrxjTtPSnCciMlUEfL2xR9TK1JOhmLFITS5
+	HZZqb/B3OcQ6UF3fUdWrNmCV2BKU0a76M
+X-Google-Smtp-Source: AGHT+IEaxHf/2iRwwqfoIfQ+Znhm/drcILF6bGn2vT3pOma/+G7W3dJJfRF76aIPViePMXlaIdlZhw==
+X-Received: by 2002:a05:600c:1d0d:b0:46d:fd71:f69 with SMTP id 5b1f17b1804b1-46e1d988de8mr46724395e9.14.1758709378513;
+        Wed, 24 Sep 2025 03:22:58 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e2a9b6e1bsm29341975e9.10.2025.09.24.03.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 03:22:56 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Badal Nilawar <badal.nilawar@intel.com>,
+	Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] drm/xe/xe_late_bind_fw: Fix missing initialization of variable offset
+Date: Wed, 24 Sep 2025 11:22:08 +0100
+Message-ID: <20250924102208.9216-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c89:b0:425:7974:fe21 with SMTP id
- e9e14a558f8ab-42581e98642mr88318565ab.22.1758709297779; Wed, 24 Sep 2025
- 03:21:37 -0700 (PDT)
-Date: Wed, 24 Sep 2025 03:21:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d3c631.a70a0220.4f78.001a.GAE@google.com>
-Subject: [syzbot] [fuse?] KMSAN: uninit-value in fuse_dentry_revalidate
-From: syzbot <syzbot+743e3f809752d6f7934f@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The variable offset is not being initialized, and it is only set inside
+a for-loop if entry->name is the same as manifest_entry. In the case
+where it is not initialized a non-zero check on offset is potentialy checking
+a bogus uninitalized value. Fix this by initializing offset to zero.
 
-syzbot found the following issue on:
+Fixes: efa29317a553 ("drm/xe/xe_late_bind_fw: Extract and print version info")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-HEAD commit:    cec1e6e5d1ab Merge tag 'sched_ext-for-6.17-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1404f8e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b093ccee5a9e08c
-dashboard link: https://syzkaller.appspot.com/bug?extid=743e3f809752d6f7934f
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/da3c94d97543/disk-cec1e6e5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e27bce00cc13/vmlinux-cec1e6e5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f42a4c26986c/bzImage-cec1e6e5.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+743e3f809752d6f7934f@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in fuse_dentry_revalidate+0x150/0x13a0 fs/fuse/dir.c:208
- fuse_dentry_revalidate+0x150/0x13a0 fs/fuse/dir.c:208
- d_revalidate fs/namei.c:929 [inline]
- lookup_open fs/namei.c:3637 [inline]
- open_last_lookups fs/namei.c:3807 [inline]
- path_openat+0x13a9/0x6760 fs/namei.c:4043
- do_filp_open+0x280/0x660 fs/namei.c:4073
- do_sys_openat2+0x1bb/0x2f0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_compat_sys_openat fs/open.c:1512 [inline]
- __se_compat_sys_openat fs/open.c:1510 [inline]
- __ia32_compat_sys_openat+0x238/0x300 fs/open.c:1510
- ia32_sys_call+0x3210/0x4310 arch/x86/include/generated/asm/syscalls_32.h:296
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4197 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_lru_noprof+0x822/0xed0 mm/slub.c:4259
- __d_alloc+0x66/0xa60 fs/dcache.c:1690
- d_alloc_parallel+0x98/0x2680 fs/dcache.c:2549
- __lookup_slow+0x138/0x760 fs/namei.c:1793
- lookup_slow+0x6a/0xd0 fs/namei.c:1825
- walk_component+0x444/0x650 fs/namei.c:2129
- lookup_last fs/namei.c:2630 [inline]
- path_lookupat+0x251/0x6b0 fs/namei.c:2654
- filename_lookup+0x2bd/0x800 fs/namei.c:2683
- do_linkat+0x14e/0x1040 fs/namei.c:4904
- __do_sys_link fs/namei.c:4958 [inline]
- __se_sys_link fs/namei.c:4956 [inline]
- __ia32_sys_link+0xd7/0x140 fs/namei.c:4956
- ia32_sys_call+0x3684/0x4310 arch/x86/include/generated/asm/syscalls_32.h:10
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-CPU: 0 UID: 0 PID: 8754 Comm: syz.4.604 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-=====================================================
-
+V2: Fix identical issue in parse_lb_layout that I ommitted in the first
+patch
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/gpu/drm/xe/xe_late_bind_fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/gpu/drm/xe/xe_late_bind_fw.c b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+index 38f3feb2aecd..8f5082e689dc 100644
+--- a/drivers/gpu/drm/xe/xe_late_bind_fw.c
++++ b/drivers/gpu/drm/xe/xe_late_bind_fw.c
+@@ -60,7 +60,7 @@ static int parse_cpd_header(struct xe_late_bind_fw *lb_fw,
+ 	const struct gsc_manifest_header *manifest;
+ 	const struct gsc_cpd_entry *entry;
+ 	size_t min_size = sizeof(*header);
+-	u32 offset;
++	u32 offset = 0;
+ 	int i;
+ 
+ 	/* manifest_entry is mandatory */
+@@ -116,7 +116,7 @@ static int parse_lb_layout(struct xe_late_bind_fw *lb_fw,
+ 	const struct csc_fpt_header *header = data;
+ 	const struct csc_fpt_entry *entry;
+ 	size_t min_size = sizeof(*header);
+-	u32 offset;
++	u32 offset = 0;
+ 	int i;
+ 
+ 	/* fpt_entry is mandatory */
+-- 
+2.51.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
