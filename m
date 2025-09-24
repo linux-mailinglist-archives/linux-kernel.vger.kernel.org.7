@@ -1,99 +1,176 @@
-Return-Path: <linux-kernel+bounces-830768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517A9B9A75D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AEAB9A783
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE6292E57A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7035D161AD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A906330B522;
-	Wed, 24 Sep 2025 15:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63AC30ACF7;
+	Wed, 24 Sep 2025 15:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pb979cQf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I08/LofM"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EF72DC344;
-	Wed, 24 Sep 2025 15:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB658462;
+	Wed, 24 Sep 2025 15:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726338; cv=none; b=TuLVxS8iYVYE4x6MuTHBlVvnLpdAWcW2KanQKGJSkb3TuLGqY9BamzHJOYwD7zX1iPeQGl4DP10QuXUGDKKck9PXMyqUAgyCLN9Qt9Y3qXfBP/6AguXKicZKSxG9cFUV9dD61/FeGDP/0anNAW9S2SrH4wX8ziEDT2P6hhpLNjI=
+	t=1758726399; cv=none; b=EqfIz9iWG+S8zmYHvpEDYjQxXbu4PmO3vCMw6+6uzvTZlaav+uuN7WUXg3LDUCo8Oxm7RgvZzHFeR5nQwhvZWwgO0GO9TyIL9AsmnewqVgtr0+TPFOhExtLNs0Q4/RK+koFEoFrpLlm8IB6GSGUvhQwVj56MUYadQkHAlpZy57I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726338; c=relaxed/simple;
-	bh=K4A6zGP3BfvvldHzqYPCu0QqsPbrNHzID+x8GumfyHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sH1+8BTd7Mj2la9OPuv7F8NWNecP1Cz6Q4mEmwPCZg1YREnnKTDwa5BNpZwU3AkdvFQsaIIUvuIX3FZ9I8P7bfl3AYsM0pxKyC0dPQBNMxTfperxyO1exFCKO/gFPtYVYg2ZUalZCN+SRLh1trLQ9dfiUD2GPT6AR1nnz+XPgZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pb979cQf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F26C4CEE7;
-	Wed, 24 Sep 2025 15:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758726337;
-	bh=K4A6zGP3BfvvldHzqYPCu0QqsPbrNHzID+x8GumfyHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pb979cQf9HQXftkWVT5Y6GQdXGi5L23LivKOKQKZKUdsHsmf6bOTQxLIsoVTmYzSS
-	 fHEpR6EaLcCLt30/uO50MXqSnt1Y5YZGkhj63URveSOPSU7qBCNcd8eAk7JL0Hp1sa
-	 YbjihNfHU9SqW8BpkaNeLx9M7CVCMSSeHIxsuGvstZ9qoal/efTLa07zvWgya/pt+T
-	 0gLxs7bfhR6QfA+/HVwSsSM0vCtzpaByXR37x6prkTrlXDnZIINWiR9ssp/TWMBm4K
-	 SlrXTJPQfHBYpMry3qkyS+9Gik0uvK/Yt5kT/fI5XZ2Jj7E189Ex2LMIAGWy0Focp8
-	 naaBFfYTFlbRw==
-Date: Wed, 24 Sep 2025 10:05:35 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	Pawel Dembicki <paweldembicki@gmail.com>,
-	Grant Peltier <grantpeltier93@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Dixit Parmar <dixitparmar19@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Wensheng Wang <wenswang@yeah.net>
-Subject: Re: [2nd RESENT v3 1/1] dt-bindings: trivial-devices: Add compatible
- string synaptics,synaptics_i2c
-Message-ID: <175872633057.1718747.5690564230165529710.robh@kernel.org>
-References: <20250923204120.197796-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1758726399; c=relaxed/simple;
+	bh=lTo0mxD7UgzpTGzWkwz+NQb+tgBlMPnQN8ycWHq9SLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OVJZwc0Ri7Ck3TSMV+LU19ATDP3CmnsITYL8bo/P5XQ1y9KolKsx0ZXIcbgmKPTdoFk3CXPFEJdeNaiSx9m+4xRzx95FtrTUZ71rnoKg6tti2AO2uNsOPGxGw9/yqiy2UuAG7GBAKQDPa/ASeLWIlQcnRKCiOCRtGRSafZYpQTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I08/LofM; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58OF6PtQ1723564;
+	Wed, 24 Sep 2025 10:06:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758726385;
+	bh=C12jodyvOYQRYMZFpqYTb+c/4y9abagksNSdTyo4T44=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=I08/LofMj2RI/rOoDeTKdx4rSNujCNumeQYa3+g+1ITPPWqSZB7t6qNhnq8u4v0f3
+	 Y5H3Lg0h3Sp2xiNKlv3iIeSklhbwmfjLBmqMtmTr3fTIhd/1y5g+aa5c3yS/svqRRg
+	 6toQp4zOnV8xl6MJJaDVlkIQhUZpH0VJRewWNK7c=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58OF6PxL2521207
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 24 Sep 2025 10:06:25 -0500
+Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 24
+ Sep 2025 10:06:25 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 24 Sep 2025 10:06:25 -0500
+Received: from [10.250.32.49] ([10.250.32.49])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58OF6O2G2203485;
+	Wed, 24 Sep 2025 10:06:24 -0500
+Message-ID: <76e12732-9a39-409d-aa60-44622fe42ec5@ti.com>
+Date: Wed, 24 Sep 2025 10:06:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923204120.197796-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance of
+ decoder
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        "jackson.lee"
+	<jackson.lee@chipsnmedia.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
+        "bob.beckett@collabora.com" <bob.beckett@collabora.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lafley.kim"
+	<lafley.kim@chipsnmedia.com>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        Nas
+ Chung <nas.chung@chipsnmedia.com>
+References: <20250922055255.116-1-jackson.lee@chipsnmedia.com>
+ <20250922055255.116-5-jackson.lee@chipsnmedia.com>
+ <1f59f00d-eff7-4c65-a504-227df0de75d2@ti.com>
+ <d4b7cc51f1bd7fcf88066e8510f950ec90cfb5aa.camel@collabora.com>
+ <PU4P216MB114923D47D5AD77D5D32D56FED1CA@PU4P216MB1149.KORP216.PROD.OUTLOOK.COM>
+ <6eed102e2aa739e5026ee545a38ddacf09058bbb.camel@collabora.com>
+Content-Language: en-US
+From: Brandon Brnich <b-brnich@ti.com>
+In-Reply-To: <6eed102e2aa739e5026ee545a38ddacf09058bbb.camel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Nicolas and Jackson,
 
-On Tue, 23 Sep 2025 16:41:18 -0400, Frank Li wrote:
-> Add compatible string synaptics,synaptics_i2c for synaptics touch pad. It
-> match existed driver drivers/input/mouse/synaptics_i2c.c.
+On 9/24/2025 8:20 AM, Nicolas Dufresne wrote:
+> Hi Jackson,
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Resend v3 include Krzysztof Kozlowski's review tag
+> Le mercredi 24 septembre 2025 à 01:14 +0000, jackson.lee a écrit :
+>> Hi Nicolas
+>>
+>>> -----Original Message-----
+>>> From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>>> Sent: Tuesday, September 23, 2025 3:00 AM
+>>> To: Brandon Brnich <b-brnich@ti.com>; jackson.lee
+>>> <jackson.lee@chipsnmedia.com>; mchehab@kernel.org; hverkuil-
+>>> cisco@xs4all.nl; bob.beckett@collabora.com
+>>> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; lafley.kim
+>>> <lafley.kim@chipsnmedia.com>; hverkuil@xs4all.nl; Nas Chung
+>>> <nas.chung@chipsnmedia.com>
+>>> Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance
+>>> of decoder
+>>>
+>>> Hi Brandon,
+>>>
+>>> Le lundi 22 septembre 2025 à 12:32 -0500, Brandon Brnich a écrit :
+>>>>> -	/*
+>>>>> -	 * During a resolution change and while draining, the firmware
+>>>>> may
+>>>>> flush
+>>>>> -	 * the reorder queue regardless of having a matching decoding
+>>>>> operation
+>>>>> -	 * pending. Only terminate the job if there are no more IRQ
+>>>>> coming.
+>>>>> -	 */
+>>>>> -	wave5_vpu_dec_give_command(inst, DEC_GET_QUEUE_STATUS,
+>>>>> &q_status);
+>>>>> -	if (q_status.report_queue_count == 0 &&
+>>>>> -	    (q_status.instance_queue_count == 0 ||
+>>>>> dec_info.sequence_changed)) {
+>>>>> -		dev_dbg(inst->dev->dev, "%s: finishing job.\n",
+>>>>> __func__);
+>>>>> -		pm_runtime_mark_last_busy(inst->dev->dev);
+>>>>
+>>>> Patch is failing to apply here to linux-next because these redundant
+>>>> calls have already been removed[0].
+>>>
+>>> Which have not been merged back from the RC into media-committers/next,
+>>> forcing to skip a cycle. Jackson, feel free to rebase on linux-next like
+>>> Brandon suggest.
+>>
+>> Then should I make v6 patch series based on Linux-next ?
 > 
-> change in v3
-> - fix order in vendor-prefixes
-> change in v2
-> - update vendor-prefixes
-> ---
->  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 3 +++
->  2 files changed, 5 insertions(+)
+> I've asked advises from the other maintainers, and the answer is no. Basing it
+> on our next branch for linux-media submission is the correct thing to do. Its
+> too late for this cycle, but be reassured we will improve our process in future
+> iterations to reduce the risk of this happening.
 > 
+> Feel free to send a rebased patch to Brandon, having more testing is always
+> good.
 
-Applied, thanks!
+Sorry for the confusion here, I was unaware that the patches weren't 
+present in -next on linux-media tree. Typically I just do all my testing 
+on the linux-next branch. I will make sure to use linux-media in the future.
+
+No need to share the patch with me, I already rebased it to build and 
+start my own testing.
+
+Thanks,
+Brandon
+
+> 
+> cheers,
+> Nicolas
+> 
+>>
+>> Thanks
+>> Jackson
+>>
+>>>
+>>> regards,
+>>
+>>> Nicolas
 
 
