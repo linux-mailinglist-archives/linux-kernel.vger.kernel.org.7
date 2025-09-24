@@ -1,158 +1,146 @@
-Return-Path: <linux-kernel+bounces-830922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E36B9AEA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B946BB9AEAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532452A6225
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7937D3B6B65
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13EE31355C;
-	Wed, 24 Sep 2025 16:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD913148D5;
+	Wed, 24 Sep 2025 16:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XtUBN6jZ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FFJtn1To"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84E51FB1
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F12313545;
+	Wed, 24 Sep 2025 16:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758732576; cv=none; b=XfaufSY/E50jTRy5ffbVQBLq5gHAMgL/sOqS37k3u2V0kfYol+tOg/JfXLvsrA9qx0Vg+ZeEaxEfiJrh9c3ROH30srUOLR6p6ea2HjfXoaEJVWIp9KP5VA9Gv+FEEJfx9NDXfQpFN5zZzs1onWIAwgW2TCv0Idn9fds3CFF2reA=
+	t=1758732601; cv=none; b=NuXdcHmp0WkJlqg+zPbtPE6By674oG/d3E79zLKkYpRXBGX+LvfiqbmIPhkW9A0yhHqohLsi575rIdnuVUpcVfP/WNy8ar+Y0A6LnJUbazMhLeuv93FCH4c1FmnZn1xorMIa8nJF0WGknH+Heurd1upuJ+x+OAgxUjUqxMn98uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758732576; c=relaxed/simple;
-	bh=i631qAijwETG12yrH4H3BbU91qlt5cJOWY9XMqxvPAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qbvt8SxuZcH6/fq0Q8Jr2DtSHKAqqc9uwpx0NI7wKLir/irpTf1TqD3fSPAxU6YOwEU6104XzQPCj1anUvnLDny4vbcWy0E6SXCViryff5nlh0kWfu3rACQFcMV0EMoQ4WfmeVgANw85KRKZLNABS/uXF8XNy4llvdR3Id/zaJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XtUBN6jZ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4bb7209ec97so613051cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758732574; x=1759337374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3JvFELxPCxwY74AcuaB/2r4NripPELBrPEQdEr+31uM=;
-        b=XtUBN6jZfbf5FeCOa72rCsBPZSJaylqONMQNErCwCclqllIWubI66NJQ5wKn+F8H6j
-         i3W//Bpkt3rRZAe1+XcA850XfLQR59UwRiyUPAVyATCvAES6HYUluuyugFr0DSMMoZrW
-         UUIKbXIU0g5bnlJ6dxrECHyxHGOMu5Xe2bs6ZiO1Iy9BRZ4WItauhTODS7laMkjh8+Td
-         1ZWBbXAYVBWZep8AxT7RpafpXmNfWGUEGUH+2pcT9jHWhozh2ue0BU92KBl/jPWfav/7
-         xdxo7+Z6ciriEHdWAQ30rZMnVgInxc1U2antwdq2WG4CQ6RyaJb9Ce12MLTE6jPJGk1J
-         tLNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758732574; x=1759337374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3JvFELxPCxwY74AcuaB/2r4NripPELBrPEQdEr+31uM=;
-        b=u1IkJOHp3S6tQPsXcSbs7WX8DsIPpbhKW0mScGJYBiECW0cJ4NzbbiZ23uBXShuwSg
-         JPjhprlmISc3OUCSA8Vz6uDAvh/CqvBffNrXAjj+bR8f4MGOh/NYTpEDhrdla3MLALO2
-         brG/t/ReSjRPC72UBGSKKRlgKZYt6feFWSBcSsHceiLX4CC+GNE2ZT1Cw/W7KQhxQXo5
-         EbgrGZq3xpd0vS7zHwt8bjKhokfMVoYVRqxqyZ5Gn40mSkxDvXZ7x13xCauMyLe+/Z7c
-         RqasyCE2MBVI2LfgwcKrsBJxfpRLE02X93/io3ZI+MhKNMSGYLF7Jxvt/LuFFXsEggAd
-         tcYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLCqNPqd2lmkcRmR6zMH6IPL7HM2QNsZ+dHoFoaw45Kc3QcWHDhZ3ymJRmaWPJMLVs1YodSn3w7oO7UxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW/8bbCVAdhDOA3b6RQ7jnd8Zyk5A70STYzBEjFbGVKcJWoSg/
-	NLI0Bg+VU/GqQRs8YngrybTyq7Qm/hXvOW9/jhGEr220dTrZlH8XS5Wpv4LUKAv4q98GJswwQIV
-	QBAz/NvYYJEY16LrBo0UVfAAWfgA+kynHFCtMQXVy
-X-Gm-Gg: ASbGncuko9jBVvX1iDElnHT46FKe7jWMjW6D39jPth9pKFJmDUZ4PnDnxlKycKxeoRD
-	WJy/WLn+VBFt+hqImMq7ip7tuNSeCmy3pzyN2fA06B7qrOZndgUNI5Z4Xqu2/EnD92Z28Qkq7co
-	icdZCBp0f9qmGc6/wkmtdQKNUwlryqKpM7VGc4zm14mYjmM6ERDu5TCXjs351sibw477VDOYH5w
-	JZfYh+UJRZa8IPBtJobfF0m1G0xsvW4CTByz/DU+w==
-X-Google-Smtp-Source: AGHT+IGMhOROnHAHwCWHqP41TFW4SwH3fT102kMQ13CWu7KInQWNKqQYfl3q0oAPFRaFbRuo/IaOLBDDK9OLZu1oDik=
-X-Received: by 2002:ac8:5996:0:b0:4b6:2d44:13c4 with SMTP id
- d75a77b69052e-4da2f12a974mr1030921cf.10.1758732573085; Wed, 24 Sep 2025
- 09:49:33 -0700 (PDT)
+	s=arc-20240116; t=1758732601; c=relaxed/simple;
+	bh=7Lyty3eSS3v2XcMQmmN8XPr/4x8fIWolfrzPFMBQiTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4F40OHxT6xvmroTxrDa+gaRtsias1usHc7FXOVAtL5aKEfimbvc5A2D4cU7NZbItMvkOEJzqn9DV0pQtZZu+0SZ586IfLPZeSnXvTla2gSWmCQ8xsh+4hwW0crPd/PCcOrSfLg8EWZdzTSD36YEDH5pzpmPz7hszHfjGwAGI4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FFJtn1To; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OGDDHS023754;
+	Wed, 24 Sep 2025 16:49:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=oJepJD
+	alpCjrUn6GNqQSp8g9NaMeJS/cdDEkwUGlS6g=; b=FFJtn1ToPw2Nij5TGmBuiL
+	S7oCeAPUD3jAmexqsq1tbFyKrmpxv13bJjvGR3RUdRKqyvnouxs2cVOSyuT22TwY
+	whSRqAQrgms2tUSvA4vDmIW7zdlKlA/BnkbaaIhdiHEXzpaiHJSsoezcCBr0iiD5
+	G0io+BOi3GLpkrLtoDDYS1JM4sG2/76aDsgi+Ongc9hp7v9fXazwfX/YbuZt42Rm
+	mJj9wriyusRGclnlhs7ic9y8NCUB/BG9+OjfMJ60XJLwR07pBIvKTVpywOk97fKI
+	ywNP9HI18owRUP+qpQd08uQAqy6tvldNCf/39XLAibj714Rpbm90svcGyyTilXoA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499n0jrnwa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 16:49:56 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OESO2O030359;
+	Wed, 24 Sep 2025 16:49:55 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a19b6b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 16:49:55 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OGnrLL50200882
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 16:49:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 64F1320043;
+	Wed, 24 Sep 2025 16:49:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36A0520040;
+	Wed, 24 Sep 2025 16:49:53 +0000 (GMT)
+Received: from [9.111.167.228] (unknown [9.111.167.228])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Sep 2025 16:49:53 +0000 (GMT)
+Message-ID: <9d48c84b-c686-4d79-9b56-ede551ad62fc@linux.ibm.com>
+Date: Wed, 24 Sep 2025 18:49:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz> <20250910-slub-percpu-caches-v8-1-ca3099d8352c@suse.cz>
-In-Reply-To: <20250910-slub-percpu-caches-v8-1-ca3099d8352c@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 24 Sep 2025 09:49:22 -0700
-X-Gm-Features: AS18NWCIXTS-bjNMv6stOKe8Aj5QIFYPyCiaTgRjLhznKLAkt4P5WJ5syBfmC9U
-Message-ID: <CAJuCfpE0AQ+59=PLb0xWK28NVAn_BxG-X=EPxy+dcRn2xWb6=g@mail.gmail.com>
-Subject: Re: [PATCH v8 01/23] locking/local_lock: Expose dep_map in local_trylock_t.
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	maple-tree@lists.infradead.org, Alexei Starovoitov <ast@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] dibs: Check correct variable in dibs_init()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Julian Ruess <julianr@linux.ibm.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aNP-XcrjSUjZAu4a@stanley.mountain>
+Content-Language: en-US
+From: Alexandra Winter <wintera@linux.ibm.com>
+In-Reply-To: <aNP-XcrjSUjZAu4a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfX6MnrO8gJCZ9A
+ oyDW5NSYJX3p0W9c3MZN6uJAgg1ruGW74H5qNjcoQbVpZ2lQj6iJCaQBAqw1ZpyN/HHrdJPVifL
+ xMCOclesw3cGoRJk+orBY7AHNJ7mYSLkvyHX0wjYKpK6Pc+xz+8xDH4L9rmpREb49SejiwX+KX1
+ UJHaCSkg3KNXZL5XJc78rlKfl/USY1C9f/yV0Lwl2UHZw9xzkmO5D5De64zuob3L2mkLOTSWm2f
+ DVM7yOC8zbsYXmIIN+Ik9LvZeaOmg95LwsargxiH9pgM0iaZTGtKLL5INHxjpCz48GZv4J73ELk
+ uaPhX50LUzmvQZS32+WUDm70aXxJUlYtGJM0rNSa8BCL1VaZTV3lPzlIazxOFVjZH9zv0wYFgt4
+ Z2xnBRzF
+X-Authority-Analysis: v=2.4 cv=TOlFS0la c=1 sm=1 tr=0 ts=68d42134 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=VnNF1IyMAAAA:8
+ a=rf5vUxhh8_kBZuwVy0UA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: ALSaE6D4M1XY-QmlI867w0uHYMOe_2-A
+X-Proofpoint-GUID: ALSaE6D4M1XY-QmlI867w0uHYMOe_2-A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200033
 
-On Wed, Sep 10, 2025 at 1:01=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> From: Alexei Starovoitov <ast@kernel.org>
->
-> lockdep_is_held() macro assumes that "struct lockdep_map dep_map;"
-> is a top level field of any lock that participates in LOCKDEP.
-> Make it so for local_trylock_t.
->
-> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
+On 24.09.25 16:21, Dan Carpenter wrote:
+> There is a typo in this code.  It should check "dibs_class" instead of
+> "&dibs_class".  Remove the &.
+> 
+> Fixes: 804737349813 ("dibs: Create class dibs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  include/linux/local_lock_internal.h | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lo=
-ck_internal.h
-> index d80b5306a2c0ccf95a3405b6b947b5f1f9a3bd38..949de37700dbc10feafc06d0b=
-52382cf2e00c694 100644
-> --- a/include/linux/local_lock_internal.h
-> +++ b/include/linux/local_lock_internal.h
-> @@ -17,7 +17,10 @@ typedef struct {
->
->  /* local_trylock() and local_trylock_irqsave() only work with local_tryl=
-ock_t */
->  typedef struct {
-> -       local_lock_t    llock;
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +       struct lockdep_map      dep_map;
-> +       struct task_struct      *owner;
-> +#endif
->         u8              acquired;
->  } local_trylock_t;
->
-> @@ -31,7 +34,7 @@ typedef struct {
->         .owner =3D NULL,
->
->  # define LOCAL_TRYLOCK_DEBUG_INIT(lockname)            \
-> -       .llock =3D { LOCAL_LOCK_DEBUG_INIT((lockname).llock) },
-> +       LOCAL_LOCK_DEBUG_INIT(lockname)
->
->  static inline void local_lock_acquire(local_lock_t *l)
->  {
-> @@ -81,7 +84,7 @@ do {                                                   =
-       \
->         local_lock_debug_init(lock);                            \
->  } while (0)
->
-> -#define __local_trylock_init(lock) __local_lock_init(lock.llock)
-> +#define __local_trylock_init(lock) __local_lock_init((local_lock_t *)loc=
-k)
->
->  #define __spinlock_nested_bh_init(lock)                                \
->  do {                                                           \
->
-> --
-> 2.51.0
->
+>  drivers/dibs/dibs_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dibs/dibs_main.c b/drivers/dibs/dibs_main.c
+> index 5425238d5a42..0374f8350ff7 100644
+> --- a/drivers/dibs/dibs_main.c
+> +++ b/drivers/dibs/dibs_main.c
+> @@ -258,8 +258,8 @@ static int __init dibs_init(void)
+>  	max_client = 0;
+>  
+>  	dibs_class = class_create("dibs");
+> -	if (IS_ERR(&dibs_class))
+> -		return PTR_ERR(&dibs_class);
+> +	if (IS_ERR(dibs_class))
+> +		return PTR_ERR(dibs_class);
+>  
+>  	rc = dibs_loopback_init();
+>  	if (rc)
+
+oops, this has been wrong since the first RFC in february.
+Great catch, thank you Dan.
+
+Reviewed-by: Alexandra Winter <wintera@linux.ibm.com>
+
 
