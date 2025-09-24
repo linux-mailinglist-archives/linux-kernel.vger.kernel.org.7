@@ -1,185 +1,210 @@
-Return-Path: <linux-kernel+bounces-831028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D004EB9B381
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:09:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383DCB9B60D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A8AC7A63AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:07:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C68E7B384A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CF231FECA;
-	Wed, 24 Sep 2025 18:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B82330D20;
+	Wed, 24 Sep 2025 18:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UvK+7s/z"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj785LvZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE133320A0C;
-	Wed, 24 Sep 2025 18:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871A433086B;
+	Wed, 24 Sep 2025 18:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737202; cv=none; b=u5j2sVLJwwNGW92b5xkKw690jWA+/sMaksp5PuO+llsbAkwl0C1eUmMW9/Eo9fFY2bcrd2BHykcIxEWmejSMlGQb92qtjDosr9XQ/qhjZjRUX/NYHhj3xpl3AOK8OFtWr8v1cX6yhBsZhAcRHmQzQbx0JSTO6iD7VOF94KG3nLM=
+	t=1758737300; cv=none; b=fsDT3zEXj7gckTa29KNb/pIryZq5Z0YQEw5DbgNdNK4DgW3zvRsVCfDk9Q46dslPsXLpsR54JtfTmShhIYMM2JcoDD8mDlWSaHr3Lbh2Fa8A3tSlmEcy5JT+0O88JA5kN8X3k50G0r98ckIfJz8sO5L1Lu7X+S5zzp0t9jXGqyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737202; c=relaxed/simple;
-	bh=dazGZDRW7qAaKN44foyGkWr8uwdmrb/S5T6bijsNZOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K3HMn0QJjIUEIf+BqVPPJGwc7E/wUAn+ewWDN2K8+BqY3Ju9JiMi+eNbJcFZ44rHnLEcje6VDmvd2WRd45B4OZWb4c5d8xJsvWB4TTmrhadWwDQ09B+9ofgyqaT8Oq4jN04h1IXS8SpAuljgDY1xwFlqTLOIuJUqGvn3IffkN4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UvK+7s/z; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OFZI47014961;
-	Wed, 24 Sep 2025 18:06:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=aaxJas
-	kaXOR0M5l1czBITqmXHpWHQ4BzOz02zcB6yu4=; b=UvK+7s/zZxfy2c4XenGRLM
-	BoWXvQNL603aRNhFfkJBW7Imxco5Wn3AKeHSWhFxFqJgLHxW1Fm5ADO2SgcahSvu
-	ArghVwWMghwBeMSr8XUlR7u6UGyNW9S6ZKlj/7mzl7sexkWmXckn53h1AZ48aj4G
-	jlLV3hIsBAExTbyopFXQ6h7uM1z34gI4LCHk09xYpaClaG+uOVXRI/jHCTSe7tFM
-	dNyOMo9IQPXkh0nkHPw0yF2YHqtkSni7QX+XgIJGbiavVLU0v+do/H+7AE1lTnZM
-	nOWi+zPFAw8+KGxN2k7NkBW4H+Eo1fXLYBoEo2c6pdRseWJRJETNSAvkX+WSCYBw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqgqqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 18:06:36 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OI6BwP030336;
-	Wed, 24 Sep 2025 18:06:36 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a19p0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 18:06:36 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OI6Yb431392318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 18:06:34 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 301A958054;
-	Wed, 24 Sep 2025 18:06:34 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C18DF5805D;
-	Wed, 24 Sep 2025 18:06:32 +0000 (GMT)
-Received: from [9.61.252.148] (unknown [9.61.252.148])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 24 Sep 2025 18:06:32 +0000 (GMT)
-Message-ID: <48360cde-81d9-4161-8c32-0029e193c685@linux.ibm.com>
-Date: Wed, 24 Sep 2025 11:06:22 -0700
+	s=arc-20240116; t=1758737300; c=relaxed/simple;
+	bh=PazxF+TT5c/ZpvyMrYcDvw1SQIk4JaxhRj1B/Dqx47A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hi0TSJKfSg87GOTNkbL++dCBbB2wiNNxQPGHJEvzmIGIH5ml+b/Th0H2WQkU36/5ZEiYYWHVdG6r+nqcQ3N4Bp8YmZH6TgS6tXXT3VRJ0U1JbPKjJY5S12fhiIw+h43dEj1R7YRNsbvceZxpHAlKxJLzIzofYcBNQ/1ms/dF7rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj785LvZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B499EC116D0;
+	Wed, 24 Sep 2025 18:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758737300;
+	bh=PazxF+TT5c/ZpvyMrYcDvw1SQIk4JaxhRj1B/Dqx47A=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Gj785LvZuNBC0Dw85VzIe5n0WYV+/9dqpYb/q318uSILCjLnH/I+H1I5L+tkrz/tq
+	 fhofYBsoqXODwOHdXmJE+SJbGE5Aj9nblpefUbAYNEc6Kk6kJdH7sLg1RCDdV69jUa
+	 /OWFGhNM/IHOFPvvJQDPrlOxnRrjpTLqVPBRv4n800RU443UTEa9cgtQVzWvXcvyqk
+	 JWkn25bmv0N674fx8IhL57CUwkvahEE8+UclGVXueUMON7XRk9IKvx0bUwQdUGRKeB
+	 gqGodGLSE2CJKyhFXsh2UzjPb56O2FVC4JRuw9g8yleWh35Skq6Fkionjt6BA/2OwG
+	 +1p8ewd1gEOyQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 24 Sep 2025 14:06:22 -0400
+Subject: [PATCH v3 36/38] nfsd: properly track requested child attributes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] PCI: Add lockdep assertion in
- pci_stop_and_remove_bus_device()
-To: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>
-Cc: Keith Busch <kbusch@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250826-pci_fix_sriov_disable-v1-0-2d0bc938f2a3@linux.ibm.com>
- <20250826-pci_fix_sriov_disable-v1-2-2d0bc938f2a3@linux.ibm.com>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <20250826-pci_fix_sriov_disable-v1-2-2d0bc938f2a3@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d4332c cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=F53kh5m_LVtqdGsIIDMA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: HGLcPrf4wuJDEogZpyRV4eoNNGqNiWsr
-X-Proofpoint-GUID: HGLcPrf4wuJDEogZpyRV4eoNNGqNiWsr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfXyjh1glDtSlFL
- SUiwmzbNBrpRieCE/v0oBtzSv6UcUsRn0XcVai75PT68KbYRhiKBzFDpZEMTxd+VdKYaG0uviKQ
- cnfu9go0Kb7gBZz952rJgfgb9aX2C/pSrrsGxYeBQIqLQt4i7jQvBTv06T0R5kZvETANfbQP+no
- 2LxkxebggD4JB00JrRrftTT/IDsWG0iQT+gGpgk4AkOeqds2qFd1df58/fmxyge7MFB85DI8m8o
- 12oTfDlwGy+12fH/8dfyA4sFqnQnAaxUDMg5+WVb+CDknHi+phNORXvinquNS8yhIS1GRLJAGYI
- 8BxxD0GZhRPP9T4OvZwW/xKTS05e0WNz1j7F4euaDoXCePjd0gxdTjM4KdrHVSTe6/qwFHJMFOy
- g246xgk4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1011 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
+Message-Id: <20250924-dir-deleg-v3-36-9f3af8bc5c40@kernel.org>
+References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
+In-Reply-To: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Steve French <sfrench@samba.org>, 
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+ Bharath SM <bharathsm@microsoft.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Amir Goldstein <amir73il@gmail.com>, 
+ Miklos Szeredi <miklos@szeredi.hu>, Paulo Alcantara <pc@manguebit.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+ Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Carlos Maiolino <cem@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Paulo Alcantara <pc@manguebit.org>
+Cc: Rick Macklem <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+ linux-doc@vger.kernel.org, netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+ linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4000; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PazxF+TT5c/ZpvyMrYcDvw1SQIk4JaxhRj1B/Dqx47A=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo1DMSK863743hpQkBbcB0AJIav7LBX+sYqX9Md
+ kRHSb1SibGJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaNQzEgAKCRAADmhBGVaC
+ FatWD/4zLT/pxdhTwtIbbW3AFWJaRgFy86zENA5i7aitOruIobpNXlZt6HAxZY6BJfY+sqiKoD/
+ kYKdm1IzeV51xlf627iGviGiN5EWAPkIjs26RN+K9mio0bCzrUKGuXdjhLoJIEYe3rbK4JfLK/g
+ f1FSUlu9UXI8s9uInRPE+cT8v4AtaMOTeX4XwKsyIgYB4EtPfKGD7n/Nfudv87GaJ53pSgleP5D
+ WaLctTt0ilotxJvODkM5VCf6MsqQjBjWDqbcPPr/47Mdfrr8MPnrfemUuXDCx5NBr8Z0L7gGA3n
+ sjWIUFiXnY1EkeoKhUfqZk8Uq1ovQCstWgcheWCUn90SiQPDfLdZhiqPRJ93lr7GerFfuh/PHL/
+ yr7kh2ZUerUNOwjZqqeHUhajKImS2/yWYs+36IYzmhiB01F3BQZY2/NSV5CasuI8VqSiN++qXK4
+ xVMT+c9ihvgTAKQ+gJRx3wbRZ9CHM0AAYINz5xhfBBTsRm2iY87udwnLl2vrw4OIWyYiXt6pNd2
+ Uw/o5Pd0HZuCoaRsQHVC50jcn3v9pK2dUylA64bRoe95pf2EpJ89rsvruejfSWmZyiLNM02jisX
+ Ag9BDmKlqk64nCW8js8u/pqi2oukYap87WKODZkPhaa4UGDOAPQJclnVF0hARovtHudUN02a9+F
+ Ni+vt7/Kjwpwozg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
+Track the union of requested and supported child attributes in the
+delegation, and only encode the attributes in that union when sending
+add/remove/rename updates.
 
-On 8/26/2025 1:52 AM, Niklas Schnelle wrote:
-> Removing a PCI devices requires holding pci_rescan_remove_lock. Prompted
-> by this being missed in sriov_disable() and going unnoticed since its
-> inception add a lockdep assert so this doesn't get missed again in the
-> future.
->
-> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->   drivers/pci/pci.h    | 2 ++
->   drivers/pci/probe.c  | 2 +-
->   drivers/pci/remove.c | 1 +
->   3 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 34f65d69662e9f61f0c489ec58de2ce17d21c0c6..1ad2e3ab147f3b2c42b3257e4f366fc5e424ede3 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -84,6 +84,8 @@ struct pcie_tlp_log;
->   extern const unsigned char pcie_link_speed[];
->   extern bool pci_early_dump;
->   
-> +extern struct mutex pci_rescan_remove_lock;
-> +
->   bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
->   bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
->   bool pcie_cap_has_rtctl(const struct pci_dev *dev);
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index f41128f91ca76ab014ad669ae84a53032c7c6b6b..2b35bb39ab0366bbf86b43e721811575b9fbcefb 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3469,7 +3469,7 @@ EXPORT_SYMBOL_GPL(pci_rescan_bus);
->    * pci_rescan_bus(), pci_rescan_bus_bridge_resize() and PCI device removal
->    * routines should always be executed under this mutex.
->    */
-> -static DEFINE_MUTEX(pci_rescan_remove_lock);
-> +DEFINE_MUTEX(pci_rescan_remove_lock);
->   
->   void pci_lock_rescan_remove(void)
->   {
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index 445afdfa6498edc88f1ef89df279af1419025495..0b9a609392cecba36a818bc496a0af64061c259a 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -138,6 +138,7 @@ static void pci_remove_bus_device(struct pci_dev *dev)
->    */
->   void pci_stop_and_remove_bus_device(struct pci_dev *dev)
->   {
-> +	lockdep_assert_held(&pci_rescan_remove_lock);
->   	pci_stop_bus_device(dev);
->   	pci_remove_bus_device(dev);
->   }
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/nfsd/nfs4proc.c  |  2 ++
+ fs/nfsd/nfs4state.c | 18 ++++++++++++++++++
+ fs/nfsd/nfs4xdr.c   | 15 ++++++---------
+ fs/nfsd/state.h     |  3 +++
+ 4 files changed, 29 insertions(+), 9 deletions(-)
 
-We also have the function pci_stop_and_remove_bus_device_locked() as 
-Gerd mentioned, so is pci_stop_and_remove_bus_device meant to be called 
-without the rescan_remove_lock held? This is a little confusing as we 
-shouldn't be adding/removing from the bus without the lock AFAIU, but 
-maybe I am missing something?
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 220fc873db8f08a90ac74e51ac9d931fe7edb9e4..774d18dd2f1a31d299a8426c3462847de6c88115 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -2385,6 +2385,8 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
+ 
+ 	gdd->gddrnf_status = GDD4_OK;
+ 	memcpy(&gdd->gddr_stateid, &dd->dl_stid.sc_stateid, sizeof(gdd->gddr_stateid));
++	gdd->gddr_child_attributes[0] = dd->dl_child_attrs[0];
++	gdd->gddr_child_attributes[1] = dd->dl_child_attrs[1];
+ 	nfs4_put_stid(&dd->dl_stid);
+ 	return nfs_ok;
+ }
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 9b5f559ff6125a551f73ac103f8af2e3763dc3e6..368face4d0b7001914b209b858dc1baa366535f6 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -9643,6 +9643,21 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
+ 	return status;
+ }
+ 
++#define GDD_WORD0_CHILD_ATTRS	(FATTR4_WORD0_TYPE |		\
++				 FATTR4_WORD0_CHANGE |		\
++				 FATTR4_WORD0_SIZE |		\
++				 FATTR4_WORD0_FILEID |		\
++				 FATTR4_WORD0_FILEHANDLE)
++
++#define GDD_WORD1_CHILD_ATTRS	(FATTR4_WORD1_MODE |		\
++				 FATTR4_WORD1_NUMLINKS |	\
++				 FATTR4_WORD1_RAWDEV |		\
++				 FATTR4_WORD1_SPACE_USED |	\
++				 FATTR4_WORD1_TIME_ACCESS |	\
++				 FATTR4_WORD1_TIME_METADATA |	\
++				 FATTR4_WORD1_TIME_MODIFY |	\
++				 FATTR4_WORD1_TIME_CREATE)
++
+ /**
+  * nfsd_get_dir_deleg - attempt to get a directory delegation
+  * @cstate: compound state
+@@ -9689,6 +9704,9 @@ nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
+ 	if (!dp)
+ 		goto out_delegees;
+ 
++	dp->dl_child_attrs[0] = gdd->gdda_child_attributes[0] & GDD_WORD0_CHILD_ATTRS;
++	dp->dl_child_attrs[1] = gdd->gdda_child_attributes[1] & GDD_WORD1_CHILD_ATTRS;
++
+ 	fl = nfs4_alloc_init_lease(dp, gdd->gddr_notification[0]);
+ 	if (!fl)
+ 		goto out_put_stid;
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 11b622aca5111502b483f269b1fce6a684804645..0c411c758279177837c078d393048aaebf31d46f 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3837,18 +3837,15 @@ nfsd4_setup_notify_entry4(struct notify_entry4 *ne, struct xdr_stream *xdr,
+ 
+ 	args.change_attr = nfsd4_change_attribute(&args.stat);
+ 
+-	attrmask[0] = FATTR4_WORD0_TYPE | FATTR4_WORD0_CHANGE |
+-		      FATTR4_WORD0_SIZE | FATTR4_WORD0_FILEID;
+-	attrmask[1] = FATTR4_WORD1_MODE | FATTR4_WORD1_NUMLINKS | FATTR4_WORD1_RAWDEV |
+-		      FATTR4_WORD1_SPACE_USED | FATTR4_WORD1_TIME_ACCESS |
+-		      FATTR4_WORD1_TIME_METADATA | FATTR4_WORD1_TIME_MODIFY;
++	attrmask[0] = dp->dl_child_attrs[0];
++	attrmask[1] = dp->dl_child_attrs[1];
+ 	attrmask[2] = 0;
+ 
+-	if (setup_notify_fhandle(dentry, fi, &args))
+-		attrmask[0] |= FATTR4_WORD0_FILEHANDLE;
++	if (!setup_notify_fhandle(dentry, fi, &args))
++		attrmask[0] &= ~FATTR4_WORD0_FILEHANDLE;
+ 
+-	if (args.stat.result_mask & STATX_BTIME)
+-		attrmask[1] |= FATTR4_WORD1_TIME_CREATE;
++	if (!(args.stat.result_mask & STATX_BTIME))
++		attrmask[1] &= ~FATTR4_WORD1_TIME_CREATE;
+ 
+ 	ne->ne_attrs.attrmask.count = 2;
+ 	ne->ne_attrs.attr_vals.data = (u8 *)xdr->p;
+diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+index 6e066f0721e6a48394e182b3c273a44d2fbb652d..73869ae25bcdf63cc29f9ba49bdac20e21a812bd 100644
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -281,6 +281,9 @@ struct nfs4_delegation {
+ 	struct timespec64	dl_atime;
+ 	struct timespec64	dl_mtime;
+ 	struct timespec64	dl_ctime;
++
++	/* For dir delegations */
++	uint32_t		dl_child_attrs[2];
+ };
+ 
+ static inline bool deleg_is_read(u32 dl_type)
 
-Thanks
-Farhan
+-- 
+2.51.0
 
 
