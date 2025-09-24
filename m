@@ -1,314 +1,349 @@
-Return-Path: <linux-kernel+bounces-830995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBDBB9B18D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:43:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E20CB9B1AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2E4E7A97EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:41:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E090B7B019A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1996A3161B7;
-	Wed, 24 Sep 2025 17:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE52F313295;
+	Wed, 24 Sep 2025 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s0Wkc1/p"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iKnZE+de"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010017.outbound.protection.outlook.com [52.101.201.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B55627877B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758735781; cv=none; b=cZwbmu2X1My2bJHRceYcIvtI19P4uBqjITZx9XjJP88uoW7SVWkcuedRQ1vKc7Lvin228UslJQwBy/4FS3foQDqRWHhc9CQ9pKd0vwGbRqtH3WjPz3njzf/QHPCybYOBXoH24ph/xZ6RQoKiKKxZZrSBhKUvYKkY7fCk9e6WZ6w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758735781; c=relaxed/simple;
-	bh=G+3ZRqT1PoaXjRdb5oeX5rvzeJjyHI1vcgX8HaETxWE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WpxAeeQVyH3iW/d9UAuRRz4DpN1gm6KhYeQ9g7w/SGI3xeH528os64o3+yOjrji6tIHNvRWiqZSPrSZKJKb+kLj4AkjDqs9vJQOjaqsxbMVf5cRSrX61IXBo1T3LwPWJR/KSO9VJtW6Ujg0amqAJm6hJjW1Nafm9gc9L83pdYcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s0Wkc1/p; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54df707c1cso33332a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758735778; x=1759340578; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NKLHKuSSH5KomJKM38o7XR7NGc4hSYm/KrkL7rWCOhI=;
-        b=s0Wkc1/pO0w+kTx7E4dy+4XRUXrQwUyVBbJI0P4w8JDW/7IEUZlNAYjije59K8z6UA
-         XXWT49Ay+6Ml2mI2s9TULe5wCetf3iVQEdXwfqY0WPO20f3sTN1oTvT/QhjGV1tJ7nUd
-         YDKg8o8Ah+uQ2AcxPkDDHBKGokid70KJAkaArAeY/3qLgd1fecE4F4CASJ1YZClu1ssw
-         HRe8SPs9RFLnoU1kV784gn2GwX4XCcFCoj9JQ28e8rNsg/eifXwXRwwxUlLo55AvhqcZ
-         IsbEgk9+AM7KZAmTf1gf2xi7owWds6RPsJ89DURDpyjlOjH+pBwIksBsJASAqAtpUqyr
-         9vLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758735778; x=1759340578;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NKLHKuSSH5KomJKM38o7XR7NGc4hSYm/KrkL7rWCOhI=;
-        b=jM3b8G9p3m1JCYhICGcPTuGVe/wXgeW31cjzrn2YmgygR4oFwQKNImxAIEAtWZA0t6
-         X2m4imw4CDJS733KR3Z9m6UawOx2wqsuVYyU0o5QKC/C6fyVKRVmhkoSkJ7vEBhc8tme
-         jGasWkyD4zOjEA5ZZx9A/FjKSjQARgJatOS5Y5++0C51h5iz4mlYGLsVaqb595P9PGyS
-         9LjtXL7Jorq+MQZsxZkHykszJgV/2lrRthcXI8SLyBW0b7IJl5/1AgkHFH4tYL/eyz+C
-         VfjKirUu+lCZM1tp9JpxjYr694fopTM5T4z2SKvgz27sqSavcgejf/Uq/KiLYPZXS1Ce
-         JWrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKrc7eXNEJ3T9uBrSYKK6L1WGUv10vJkAv4qvIpzfHPZIAXxZ5nIhuQN7jAMXMemMp8BTCZx8Q8VZoUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpZbo9rpS/kmAvHat+b+4DVF9gTwNS57U+eE4m5cN6BjwqKuX
-	fVjaXuKuwMPOMXlNDvqiEe7SHx8Q0D5en9H/K6DlHotN5kI9wli98OflGzr0Xuh3KgN7SLZZYDs
-	JOf4Xiw==
-X-Google-Smtp-Source: AGHT+IHdLIFgjQqMCG7KTukyX1lK7wVnctYuW/7FsXop1pIla2RIXjz99qbnEjDth8Kr2bCD1ntyG42LX3M=
-X-Received: from pjbcx21.prod.google.com ([2002:a17:90a:fd95:b0:329:ccdd:e725])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c04:b0:334:18f9:8008
- with SMTP id 98e67ed59e1d1-3342a2701e7mr581983a91.8.1758735778322; Wed, 24
- Sep 2025 10:42:58 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 24 Sep 2025 10:42:55 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6E28834;
+	Wed, 24 Sep 2025 17:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758735993; cv=fail; b=Eb8wOpL7JqCZlh0rlGDeDLZgAOk2WlncEiSTGkDROpIQETnw9Ke0mezFApgfc4E+2TcaWWIt/9ql/foVZoErfGdWc8eqfs6LNbBAL+MN6bzC0YQZC0dBomXudAoY2+fF4gBo6sO8IoBlakY0u6m/gMOnc+2fYVd13U/K1+Q1SHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758735993; c=relaxed/simple;
+	bh=ZwwfRdRPanME116zwaKCRP6rQM/H9u41ZA6cipdOfS4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ye/yScgvbLC/gn93nsSCO4Ed3zwRaPQlL1OReK02EOVUyq+xqlv8sr37tlUrCw/gfgbkrNdJ12SsEr5MhTJ6L8oz/4b3fuvV8JQ5eAZAVCNr3onKycC9GlRCqmvIlzhdh1uo1bNzPfnLMzocE3PWcVh2GPRYpX5H2Xn1hfB5rQY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iKnZE+de; arc=fail smtp.client-ip=52.101.201.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KBm7nXijZG7EVTY4LnLyTUdCWHutAuyK7Xq3bFErDDXzX1hsx2X4B5nYLpo9A5KC1nvzciSRmbhR08ebKVLsrKhq3oNGTHL03wIuywMwXJNt+KNZHA6HBg0OndsjchrEuB/Ol2ZYtoQbgD0oeuJDe9PiVXXoJPIERSVRG5u719asdG9bjzH1CifmIiX3ulmO29BJxlwE6efZlx9BZHBF30JmA2pSundPaHsjiJNdGfV5NDgWPZ+pxBjfC4xyWXkaIduS8AMmXDla5pkzjLpktQil4uvZkUE9mK+8dI/qanP48AqKVCxK7EuWGMHm8NCMu2ugn/K9vfoYoIWAKIpbJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AfBU/26vx5iUxmA6p8bQ3bGqeUzfH5nqJoeUwbZCo68=;
+ b=XvxU9xVkdij87oC8Q8OMgKlvw0iv5l+h1vFLiz5BQVoWSZi46RWKJsOLLExrS8SG1pnJTTC0qTUDWdXfko/Vi6C+6urxTXMb/nYoJLd76fp5Jbcs4D/TpjVwU3MPj22R0XR8kKXZnyoWSFNganGyb+qlTOweCg1C+GWZ+5XKJYN/HmSc/5X3PhrYnoM0mGMYbhPT/6LJrZeAaA608/X4s7FBUJE5RSsfZmy/cnz2LRwQ0RgydnLYgLchFJ7wNuwHYQY6rjEXKFC4v2AzqlLtATXOWgpyO//FKXiUp4qDop1OirHaak6PGKvBYZ0g0ecOvDtz/fcvN20FhkxWZHqUwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AfBU/26vx5iUxmA6p8bQ3bGqeUzfH5nqJoeUwbZCo68=;
+ b=iKnZE+detI7xXJiPudzm/LXSx32cqTHVHyv4IoGfWeb/AzTB5tmYE5Fui4oksWm45s9S1WCdWLLe0+KSTUnQycQKgG0A8gi38TquGjXjdK1FZWF5OwYWG8pTlQuJ/IxNRtPVNpMiTsb8KwYGNbqnlbCrHaCdn/edOq3Jnpfui0L6yj+vYicUKDN3q11pkudiiR3iusC3bzQpmD5SXG7GAjuJTIHV7zkxxsh6aJK6Ah39FK6Uh7jnMeahqr/+oLTXUr43e8f+zim+Q8fG+qpo7fDJ8eUoHTVTpSaTHNLUzfl6q1apdzbsBsXvN1+LzlQbkvGdqcgtJNU1pmaoxyjoQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CY8PR12MB7732.namprd12.prod.outlook.com (2603:10b6:930:87::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 17:46:25 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
+ 17:46:25 +0000
+Message-ID: <2979b6b8-ebdb-43cf-ba3a-5d428101f74b@nvidia.com>
+Date: Wed, 24 Sep 2025 19:46:19 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+To: Yury Norov <yury.norov@gmail.com>, Greg KH <gregkh@linuxfoundation.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, acourbot@nvidia.com,
+ Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh> <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh> <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+ <2025092432-entrust-citizen-0232@gregkh> <aNQCVslEIHHSm8f5@yury>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aNQCVslEIHHSm8f5@yury>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0135.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:36e::6) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250924174255.2141847-1-seanjc@google.com>
-Subject: [PATCH v3] KVM: selftests: Test prefault memory during concurrent
- memslot removal
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB7732:EE_
+X-MS-Office365-Filtering-Correlation-Id: 939f0585-e9d0-4d22-73e6-08ddfb924828
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UHp6OHZkMWtNSmR2SWJ3ZVhZc21SZUszdCt0MXMxMCtjU3pORmp0ZWpTUHFO?=
+ =?utf-8?B?MDlQbXY4YWZqRERWYndhZlc5a0JBa1QyRitaemMvL3pjWVpjNVNVYjRvOXhJ?=
+ =?utf-8?B?aE5oZGc1MTQwREY1Z1FMT1Z3K2dGbFFpOUdCUTUwVUZsZWMyZDdFdDQyV1pO?=
+ =?utf-8?B?Q2lVYUlldnlBZ0FhdUlsMTBNUWdVSGsydDdmU2FXOHpzTUpKTlFXdk9PNzc0?=
+ =?utf-8?B?QVpjdGdUNWZnY1IvcThIRkFJdDhRK0NpZHNzNm5hOEFEZWcwY3FUaFNNZVZk?=
+ =?utf-8?B?c0Frd3JZU3JUVkdpSk5yWXhwaG14RFF2VXZtUWJFWnFnai8yQ0V3WFFpb2Y0?=
+ =?utf-8?B?cWRneThKZW5iRW52Wkh3cFVzZldSVWZ4aExJZEhDSHp1eWFndTRiMVM3c2lT?=
+ =?utf-8?B?NDhFYVJQWFArSG0zNmZuL1M4TC85Z1BpRDRyUW5qZTl4TkNkd3U3RkZacG9n?=
+ =?utf-8?B?MERpMzQ4a0djakVjOEgxYmtMa0FmU1Y4UEpvTklnWEpYOVV1eVRIUXpkUWJJ?=
+ =?utf-8?B?Mjg4QnloRlZKL01hbzBzTG9wWHZqY2JvMENsUHFUUDVUWlFkYVpYcmo2d253?=
+ =?utf-8?B?OTE0RFBqYWJ1Q2M1S0JxMzlBUDdLVEVRWllXUjVNbVVQL3RPR0ptNzFPWnpP?=
+ =?utf-8?B?QXZjWXp3cUE1Q3dxdXpHZHYwUTdsTDhKM3UzVEtrTW9BSmRZV2JlTUxBd09p?=
+ =?utf-8?B?S0pNZGRFbXVUdGV5VFJkaVVQR0R3cUg2RnBZNzR6Q2lKUWFLK0ErU0xWamZT?=
+ =?utf-8?B?NXRsRy9Rb25ENWZUODkxV3M1dFdIdHdQYmIyV1A3NGtxNFI5eDdLTHN6ZGpr?=
+ =?utf-8?B?NFpOdTlJYko0Vk9McG1pK242dUdRR2p5OFRpNnU5VE5qYVRicXZDWU5yTnhH?=
+ =?utf-8?B?NE95Zm9zMW16b20rOHRzN1h3RFdFVU1UclA0RTlEUy9ENy96QXNaRG5GdDZ6?=
+ =?utf-8?B?b1NFcHdvU1dCalZGVUh3UjZHaC9jNzVsVmJMbWhydE05RHovbUo4N0lEOGZG?=
+ =?utf-8?B?bEJJNDh3REFHTVQxUDBMdmVaN005ZzJ5SExVQXFMS0hEb3BrYmV2UzdsVGVv?=
+ =?utf-8?B?anVpWStYcUVsUkhDY3M0aVNEMFVZcGwxTzJQZXhTb1ZxOUUrTk5XZmR3WFph?=
+ =?utf-8?B?U0NWTW5uS3M2N2UvSExZVGlFcUtkWElIYzJVWENjbUdZRWVVTFpTMFg3cGY5?=
+ =?utf-8?B?YUxtUmR1WmJhMi9GWmNxLzluSHE3NDVsL2F2VE9wMzloaVhqVjBkUGVEaEFa?=
+ =?utf-8?B?ZFNmaFQ5Vm5XUkJSbXRoNzJTOU83TDh6Lzk5OHNIWUc0TnREQ1BEUWxITXVE?=
+ =?utf-8?B?bTJkZGJuY1dDR0E2WTNnSDVRaTdibGpaNm5aMWs2K01UN3FaMHVoK3JNSEU4?=
+ =?utf-8?B?MEhWblBSQUR4L2V4SVJPdlhkZS81WlZYU0FtUkZzTWgyY2dNSjh0UEJVeTRX?=
+ =?utf-8?B?WlFYU2dnMnlmQzYvTHByeHZkN3FhempXd2RsWHpGVHFMK1ZKM3E2RVlsaTFD?=
+ =?utf-8?B?UUFESTFSMnFzNzNKQnplUTFXcjJIS24xRmVCMHNNUzF6MmR4WTU0TGNKRlpD?=
+ =?utf-8?B?WDBoN2NDejV5VjNGQXVCYm4zUGxqYXB6WlM5RUNqbFBGSGJGNjJreXpkKzRq?=
+ =?utf-8?B?WUxJUWNSU1dPZGlYeG5CZHdINXdtOGNhbUtTZndNRm9hNllmYTF6RXA0V0JH?=
+ =?utf-8?B?RmJ1WXlkUy9jSjZWdHF0MEVkSGE5Rk5zSkpNNDVvUDdUQk5PMDZtMUtwcm1o?=
+ =?utf-8?B?TlVDSGJ1eTY0OVJMeVN1NXk2VkJkUFpWVS84bG5nbGppSmJKV3g5WUJKOVJ5?=
+ =?utf-8?B?dnhjcDRkSWZWWENIczhBbVNIN1RVWDJMMHlIaFJTc3IzNjMwVFJRZlpKcU1m?=
+ =?utf-8?B?LzJJR0NuaXd1bmRJc1RqeXBVT1RENm05YndJZk8ydXFaelVMbTZpMGhBSk1Y?=
+ =?utf-8?Q?s/T6pr6wtSs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eU9IOCs3bk14b29UUi9lajZtTDEvMCs1Y0ZUOGlvdVFvUE1TL3FrTzJ5L1Zy?=
+ =?utf-8?B?OWQwSGhTRlRLZmhSaDJJSS9VaXRZWGJkTHBXNEtlOVVRU1hYdGRkUWZMdFFs?=
+ =?utf-8?B?eWtzbFdQdjZDcXFEcGVJSWEyRTFKMUtwU3J6bVB4bGxLNm9RQ1oxcWVDb1Vr?=
+ =?utf-8?B?UEVRTCtwQlQyUjN1VERUbHFtRUllSzFKZ1JYZnRvbFBXalpkNXE5a2VNYWFF?=
+ =?utf-8?B?WXR4UE4xNmFHY0VqZlQ3WWo4QTRQTE8vOGxJU0VuNFg2TXJKUkdYZzJENXNx?=
+ =?utf-8?B?b2hyT0ZJWnNWczY3RFRwRFN6WDd5TVljSXQxdTNNbXVOZGxTZXZFQXoyWWZa?=
+ =?utf-8?B?MDVpcTB5MnZVOVZLb3l0Z29ldFV3akJNajBSclJ5K2plYmw2YjFKY2NWVmJa?=
+ =?utf-8?B?OVZMeDVPVVorYlVUT1ZDMnE4UnBJdzl1OVlRTUdmS2M1YmZncW13UVlRcjlO?=
+ =?utf-8?B?K1VWWVFvQmI5S0dVYzkzOGkyVUhHWEIyVmhQUnJqVHYzd1NiN2FrQ0dIQ3Jj?=
+ =?utf-8?B?ZWJSbEFhdEx0SzRwOExTN0cxMVVJbW1BbDd1VFRpOUVVb1l3OXEweGxMUTlU?=
+ =?utf-8?B?bG5sK1I1b1JjejBhYzNFN1ZhYmRvZU5XeU8rM3gzelNWMG5iLzFjMVFKT2dy?=
+ =?utf-8?B?aGdOR0ZPN09tUjZjRm5qQWFQcGEzQit2MmlkMmF0NzBBNGtlaEpwVlNuUkZJ?=
+ =?utf-8?B?ZThLSEJHTDJocHJ6NzNiQ0JzdTkrYUF4Zjd2ZHFKYStiOWFWeGN4TVNlalpo?=
+ =?utf-8?B?UnNNZm40eVFMdVJLU29FVXY5clluUXJrZlc5T1JKZ1YyQ3FLS2RkUDlUWjRX?=
+ =?utf-8?B?cG1qNG05R3pOSmFWbiszUjkvcDFyRzUvUUF2VlZwUUdJRUF6Mmd3K0t3ZDV6?=
+ =?utf-8?B?MEswaFBLU3RmOXd3bVpHdWxLRjR0TzI0b3hnWUJqQ3NyVW9SckNrVEhGaGJX?=
+ =?utf-8?B?SXNzVCtUeGR5WXJiMnoxNU1tQXlkTlFGdkpST3pENUtPWmZYSEF0c2tVMVFT?=
+ =?utf-8?B?YWdJSGlrSDRyQ09rZC9iK0syVTRoNjQxZjZnVDBMK0J0YnVIMmM4YXJtUVZn?=
+ =?utf-8?B?Zmd4czFNQzh0R1NpWUl4YVYva3JmMFRvMWZXMWRSZGlkUDlCT0FEK2RtMGZR?=
+ =?utf-8?B?akROYXZtNWFIWjRHTk1MdXE5b0sxZ3g4d1ZZa0pMeWNYRmE3R1N1a0NWcDAy?=
+ =?utf-8?B?dmFrQ2lPWi95V2VvWlErWnRieXpiSmt0Ti9mWTB5ZTR2WGlxZFgrdGJqUnNJ?=
+ =?utf-8?B?bTkxVTRoUE5HdHdhQmxTMVRhbUo4eVNXN1VXWHduUHFZdEduOTBBaVllbW1h?=
+ =?utf-8?B?WGN0SHAvZlN0RnFIZWJ1WGQ1YUxiMzdncHZQL2EzdnVWb3ZpOTY2aGxBcXlO?=
+ =?utf-8?B?blRsSmk0Y1RUTTUyTGtsUmREak5selUzNnprZEFLTm9XcFFSZlVhMlp5Yk45?=
+ =?utf-8?B?QWhvZTh1Vmx2R1d5bEd6cTUwK0IwanVBYVZremFXdEovSnFjMjBuQjBoL0dZ?=
+ =?utf-8?B?Nko2LzFKY080aS92Vkw0bWtPWVlDNTFIMVd6eHZmandhZGpCOUorQU5sOUNT?=
+ =?utf-8?B?LzlVbXpoY3RIQVhvdHlYTHZ4RnBNTjV0Unlibzh0N2NoNHcySXpWdktMSmxm?=
+ =?utf-8?B?a3p1cmNZMWYvNWw4VmYwVEM2UllOVkJyM2JjaUx0Mm45STZRWXdBRDNUUzUw?=
+ =?utf-8?B?a1RUM0RxdjZsZHRnZ3dEQXVjUVA2NW9IK0tsNmVyODI2M2pnUk1yOVVIT1RQ?=
+ =?utf-8?B?SE03a2R1VEc3MjI1blY0b1JQSW4xL0d3bVdaTGNKR1phQXNZZDhRN0VIdmxM?=
+ =?utf-8?B?akpiRjFKaDcyeWdJSENDSmQ4UzNTWWx4V0lqbFJwdWI0SFlIdjJmYlhMcyts?=
+ =?utf-8?B?ZUJ2V2FtYWNhR29ITmd2UkhucG9hbWFEWHZkTkZ0M0xYNE5ES1pHQTlQeG1D?=
+ =?utf-8?B?MlNaR3RmWkJPdVpqSHIxdEJmdDRrRnpSWkRjSDR2QUhJV0pzcU5sV2EzTk5j?=
+ =?utf-8?B?SW54WXFrYWloV0JnRFlKaEdicXdNMGpkMnA5Z1Z4UzMvOWg1allGcjk3bHVx?=
+ =?utf-8?B?ZWJkRXgvQ0xmVUQzT0tHeTlxVTg0bC8rNjJzS0g5bkVGUVJKRXBjVzNpOEw5?=
+ =?utf-8?Q?sVpF4PfKtGBZOw8o4nMSLhM8M?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 939f0585-e9d0-4d22-73e6-08ddfb924828
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 17:46:25.3779
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VUMJvr+b2IJeWpMfoJUePk+wv3w1JZr4VSI0hm+C3VMwW0k0heXN6uWsUiD4VN0qEo39pVBYR22T1e1Ysfwd7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7732
 
-From: Yan Zhao <yan.y.zhao@intel.com>
 
-Expand the prefault memory selftest to add a regression test for a KVM bug
-where TDX's retry logic (to avoid tripping the zero-step mitigation) would
-result in deadlock due to the memslot deletion waiting on prefaulting to
-release SRCU, and prefaulting waiting on the memslot to fully disappear
-(KVM uses a two-step process to delete memslots, and KVM x86 retries page
-faults if a to-be-deleted, a.k.a. INVALID, memslot is encountered).
 
-To exercise concurrent memslot remove, spawn a second thread to initiate
-memslot removal at roughly the same time as prefaulting.  Test memslot
-removal for all testcases, i.e. don't limit concurrent removal to only the
-success case.  There are essentially three prefault scenarios (so far)
-that are of interest:
+On 9/24/2025 4:38 PM, Yury Norov wrote:
+> On Wed, Sep 24, 2025 at 12:52:41PM +0200, Greg KH wrote:
+>> On Sun, Sep 21, 2025 at 03:47:55PM +0200, Danilo Krummrich wrote:
+>>> On Sun Sep 21, 2025 at 2:45 PM CEST, Greg KH wrote:
+>>>> Again, regmap handles this all just fine, why not just make bindings to
+>>>> that api here instead?
+>>>
+>>> The idea is to use this for the register!() macro, e.g.
+>>>
+>>> 	register!(NV_PMC_BOOT_0 @ 0x00000000, "Basic revision information about the GPU" {
+>>> 	    28:24   architecture_0 as u8, "Lower bits of the architecture";
+>>> 	    23:20   implementation as u8, "Implementation version of the architecture";
+>>> 	    8:8     architecture_1 as u8, "MSB of the architecture";
+>>> 	    7:4     major_revision as u8, "Major revision of the chip";
+>>> 	    3:0     minor_revision as u8, "Minor revision of the chip";
+>>> 	});
+>>>
+>>> (More examples in [1].)
+>>
+>> Wonderful, but I fail to see where the endian-ness of this is set
+>> anywhere.  Am I just missing that?  The regmap api enforces this idea,
+>> and so the 
+>>
+>>>
+>>> This generates a structure with the relevant accessors; we can also implement
+>>> additional logic, such as:
+>>>
+>>> 	impl NV_PMC_BOOT_0 {
+>>> 	    /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
+>>> 	    pub(crate) fn architecture(self) -> Result<Architecture> {
+>>> 	        Architecture::try_from(
+>>> 	            self.architecture_0() | (self.architecture_1() << Self::ARCHITECTURE_0_RANGE.len()),
+>>> 	        )
+>>> 	    }
+>>> 	
+>>> 	    /// Combines `architecture` and `implementation` to obtain a code unique to the chipset.
+>>> 	    pub(crate) fn chipset(self) -> Result<Chipset> {
+>>> 	        self.architecture()
+>>> 	            .map(|arch| {
+>>> 	                ((arch as u32) << Self::IMPLEMENTATION_RANGE.len())
+>>> 	                    | u32::from(self.implementation())
+>>> 	            })
+>>> 	            .and_then(Chipset::try_from)
+>>> 	    }
+>>> 	}
+>>>
+>>> This conviniently allows us to read the register with
+>>>
+>>> 	let boot0 = regs::NV_PMC_BOOT_0::read(bar);
+>>>
+>>> and obtain an instance of the entire Chipset structure with
+>>>
+>>> 	let chipset = boot0.chipset()?;
+>>>
+>>> or pass it to a constructor that creates a Revision instance
+>>>
+>>> 	let rev = Revision::from_boot0(boot0);
+>>>
+>>> Analogously it allows us to modify and write registers without having to mess
+>>> with error prone shifts, masks and casts, because that code is generated by the
+>>> register!() macro. (Of course, unless we have more complicated cases where
+>>> multiple fields have to be combined as illustrated above.)
+>>>
+>>> Note that bar is of type pci::Bar<BAR0_SIZE> where BAR0_SIZE in our case is
+>>> SZ_16M.
+>>>
+>>> However, the type required by read() as generated by the register!() macro
+>>> actually only requires something that implements an I/O backend, i.e
+>>> kernel::io::Io<SIZE>.
+>>>
+>>> pci::Bar is a specific implementation of kernel::io::Io.
+>>>
+>>> With this we can let the actual I/O backend handle the endianness of the bus.
+>>
+>> Ok, great, but right now it's not doing that from what I am seeing when
+>> reading the code.  Shouldn't IoMem::new() take that as an argument?
+>>
+>> But, that feels odd as our current iomem api in C doesn't care about
+>> endian issues at all because it "assumes" that the caller has already
+>> handle this properly and all that the caller "wants" is to write/read to
+>> some memory chunk and not twiddle bits.
+>>
+>>> (Actually, we could even implement an I/O backend that uses regmap.)
+>>
+>> That would probably be best to do eventually as most platform drivers
+>> use regmap today as it's the sanest api we have at the moment.
+>>
+>>> So, I think the register!() stuff is rather orthogonal.
+>>
+>> I think it's very relevant as people seem to just be "assuming" that all
+>> the world (hardware and cpus) are little-endian, while in reality, they
+>> are anything but.  As proof, the code that uses this register!() logic
+>> today totally ignores endian issues and just assumes that it is both
+>> running on a little-endian system, AND the hardware is little-endian.
+>>
+>> As a crazy example, look at the USB host controllers that at runtime,
+>> have to be queried to determine what endian they are running on and the
+>> kernel drivers have to handle this "on the fly".  Yes, one can argue
+>> that the hardware developers who came up with that should be forced to
+>> write the drivers as penance for such sins, but in the end, it's us that
+>> has to deal with it...
+>>
+>> So ignoring it will get us quite a ways forward with controlling sane
+>> hardware on sane systems, but when s390 finally realizes they can be
+>> writing their drivers in rust, we are going to have to have these
+>> conversations again :)
+> 
+> Hi Greg, all,
+> 
+> Endianess is not the only problem when dealing with registers mapped
+> to the memory, right?
+> 
+> I recall some built-in 12-bit ADCs in 8-bit AVR microcontrollers. That
+> required to read 4-bit LO register before 8-bit HI, if you didn't want to
+> loose those 4 bits.
+> 
+> Bitfields don't address that issue as well. In my understanding, it's
+> done on purpose: bitfields encapsulate shifts and masks, and don't
+> pretend that they are suitable for direct access to a hardware.
+> 
+> Notice another rust bitfield project. It tries to account for endianess
+> and everything else:
+> 
+> https://docs.rs/bitfield-struct/latest/bitfield_struct/
+> 
+> I didn't ask explicitly, and maybe it's a good time to ask now: Joel,
+> Danilo and everyone, have you considered adopting this project in
+> kernel?
+> 
+> The bitfield_struct builds everything into the structure:
+> 
+>         use bitfield_struct::bitfield;
+>         
+>         #[bitfield(u8, order = Msb)]
+>         struct MyMsbByte {
+>             /// The first field occupies the *most* significant bits
+>             #[bits(4)]
+>             kind: usize,
+>             system: bool,
+>             #[bits(2)]
+>             level: usize,
+>             present: bool
+>         }
 
- 1. Success
- 2. ENOENT due to no memslot
- 3. EAGAIN due to INVALID memslot
+Thanks for raising this. The syntax seems quite different from what we need, in
+particular since register! macro is based on our bitfield! macro, this syntax is
+incompatible with the need to specify bit ranges, not just the number of bits.
+In other words, it appears the out-of-crate does not satisfy the requirement.
+They have to specific 'order' property mainly because they don't have the notion
+of bitfield index, just number of bits.
 
-For all intents and purposes, #1 and #2 are mutually exclusive, or rather,
-easier to test via separate testcases since writing to non-existent memory
-is trivial.  But for #3, making it mutually exclusive with #1 _or_ #2 is
-actually more complex than testing memslot removal for all scenarios.  The
-only requirement to let memslot removal coexist with other scenarios is a
-way to guarantee a stable result, e.g. that the "no memslot" test observes
-ENOENT, not EAGAIN, for the final checks.
+Regarding endianness in that crate, it appears to be configurable based on
+user's requirement so we can make it such if needed for any kernel usecases. But
+the default in that crate is native-endianness just like our implementation right?
 
-So, rather than make memslot removal mutually exclusive with the ENOENT
-scenario, simply restore the memslot and retry prefaulting.  For the "no
-memslot" case, KVM_PRE_FAULT_MEMORY should be idempotent, i.e. should
-always fail with ENOENT regardless of how many times userspace attempts
-prefaulting.
-
-Pass in both the base GPA and the offset (instead of the "full" GPA) so
-that the worker can recreate the memslot.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
-
-v3 of Yan's series to fix a deadlock when prefaulting memory for a TDX
-guest.  The KVM fixes have already been applied, all that remains is this
-selftest.
-
-v3: Test memslot removal for both positive and negative testcases, and simply
-    ensure a stable result by restoring the memslot and retrying if necessary.
-
-v2: https://lore.kernel.org/all/20250822070305.26427-1-yan.y.zhao@intel.com
-
- .../selftests/kvm/pre_fault_memory_test.c     | 131 +++++++++++++++---
- 1 file changed, 114 insertions(+), 17 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/pre_fault_memory_test.c b/tools/testing/selftests/kvm/pre_fault_memory_test.c
-index 0350a8896a2f..f04768c1d2e4 100644
---- a/tools/testing/selftests/kvm/pre_fault_memory_test.c
-+++ b/tools/testing/selftests/kvm/pre_fault_memory_test.c
-@@ -10,6 +10,7 @@
- #include <test_util.h>
- #include <kvm_util.h>
- #include <processor.h>
-+#include <pthread.h>
- 
- /* Arbitrarily chosen values */
- #define TEST_SIZE		(SZ_2M + PAGE_SIZE)
-@@ -30,18 +31,66 @@ static void guest_code(uint64_t base_gpa)
- 	GUEST_DONE();
- }
- 
--static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
--			     u64 left)
-+struct slot_worker_data {
-+	struct kvm_vm *vm;
-+	u64 gpa;
-+	uint32_t flags;
-+	bool worker_ready;
-+	bool prefault_ready;
-+	bool recreate_slot;
-+};
-+
-+static void *delete_slot_worker(void *__data)
-+{
-+	struct slot_worker_data *data = __data;
-+	struct kvm_vm *vm = data->vm;
-+
-+	WRITE_ONCE(data->worker_ready, true);
-+
-+	while (!READ_ONCE(data->prefault_ready))
-+		cpu_relax();
-+
-+	vm_mem_region_delete(vm, TEST_SLOT);
-+
-+	while (!READ_ONCE(data->recreate_slot))
-+		cpu_relax();
-+
-+	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS, data->gpa,
-+				    TEST_SLOT, TEST_NPAGES, data->flags);
-+
-+	return NULL;
-+}
-+
-+static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 base_gpa, u64 offset,
-+			     u64 size, u64 expected_left, bool private)
- {
- 	struct kvm_pre_fault_memory range = {
--		.gpa = gpa,
-+		.gpa = base_gpa + offset,
- 		.size = size,
- 		.flags = 0,
- 	};
--	u64 prev;
-+	struct slot_worker_data data = {
-+		.vm = vcpu->vm,
-+		.gpa = base_gpa,
-+		.flags = private ? KVM_MEM_GUEST_MEMFD : 0,
-+	};
-+	bool slot_recreated = false;
-+	pthread_t slot_worker;
- 	int ret, save_errno;
-+	u64 prev;
- 
--	do {
-+	/*
-+	 * Concurrently delete (and recreate) the slot to test KVM's handling
-+	 * of a racing memslot deletion with prefaulting.
-+	 */
-+	pthread_create(&slot_worker, NULL, delete_slot_worker, &data);
-+
-+	while (!READ_ONCE(data.worker_ready))
-+		cpu_relax();
-+
-+	WRITE_ONCE(data.prefault_ready, true);
-+
-+	for (;;) {
- 		prev = range.size;
- 		ret = __vcpu_ioctl(vcpu, KVM_PRE_FAULT_MEMORY, &range);
- 		save_errno = errno;
-@@ -49,18 +98,65 @@ static void pre_fault_memory(struct kvm_vcpu *vcpu, u64 gpa, u64 size,
- 			    "%sexpecting range.size to change on %s",
- 			    ret < 0 ? "not " : "",
- 			    ret < 0 ? "failure" : "success");
--	} while (ret >= 0 ? range.size : save_errno == EINTR);
- 
--	TEST_ASSERT(range.size == left,
--		    "Completed with %lld bytes left, expected %" PRId64,
--		    range.size, left);
-+		/*
-+		 * Immediately retry prefaulting if KVM was interrupted by an
-+		 * unrelated signal/event.
-+		 */
-+		if (ret < 0 && save_errno == EINTR)
-+			continue;
- 
--	if (left == 0)
--		__TEST_ASSERT_VM_VCPU_IOCTL(!ret, "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
-+		/*
-+		 * Tell the worker to recreate the slot in order to complete
-+		 * prefaulting (if prefault didn't already succeed before the
-+		 * slot was deleted) and/or to prepare for the next testcase.
-+		 * Wait for the worker to exit so that the next invocation of
-+		 * prefaulting is guaranteed to complete (assuming no KVM bugs).
-+		 */
-+		if (!slot_recreated) {
-+			WRITE_ONCE(data.recreate_slot, true);
-+			pthread_join(slot_worker, NULL);
-+			slot_recreated = true;
-+
-+			/*
-+			 * Retry prefaulting to get a stable result, i.e. to
-+			 * avoid seeing random EAGAIN failures.  Don't retry if
-+			 * prefaulting already succeeded, as KVM disallows
-+			 * prefaulting with size=0, i.e. blindly retrying would
-+			 * result in test failures due to EINVAL.  KVM should
-+			 * always return success if all bytes are prefaulted,
-+			 * i.e. there is no need to guard against EAGAIN being
-+			 * returned.
-+			 */
-+			if (range.size)
-+				continue;
-+		}
-+
-+		/*
-+		 * All done if there are no remaining bytes to prefault, or if
-+		 * prefaulting failed (EINTR was handled above, and EAGAIN due
-+		 * to prefaulting a memslot that's being actively deleted should
-+		 * be impossible since the memslot has already been recreated).
-+		 */
-+		if (!range.size || ret < 0)
-+			break;
-+	}
-+
-+	TEST_ASSERT(range.size == expected_left,
-+		    "Completed with %llu bytes left, expected %lu",
-+		    range.size, expected_left);
-+
-+	/*
-+	 * Assert success if prefaulting the entire range should succeed, i.e.
-+	 * complete with no bytes remaining.  Otherwise prefaulting should have
-+	 * failed due to ENOENT (due to RET_PF_EMULATE for emulated MMIO when
-+	 * no memslot exists).
-+	 */
-+	if (!expected_left)
-+		TEST_ASSERT_VM_VCPU_IOCTL(!ret, KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
- 	else
--		/* No memory slot causes RET_PF_EMULATE. it results in -ENOENT. */
--		__TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
--					    "KVM_PRE_FAULT_MEMORY", ret, vcpu->vm);
-+		TEST_ASSERT_VM_VCPU_IOCTL(ret && save_errno == ENOENT,
-+					  KVM_PRE_FAULT_MEMORY, ret, vcpu->vm);
- }
- 
- static void __test_pre_fault_memory(unsigned long vm_type, bool private)
-@@ -97,9 +193,10 @@ static void __test_pre_fault_memory(unsigned long vm_type, bool private)
- 
- 	if (private)
- 		vm_mem_set_private(vm, guest_test_phys_mem, TEST_SIZE);
--	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, 0);
--	pre_fault_memory(vcpu, guest_test_phys_mem + SZ_2M, PAGE_SIZE * 2, PAGE_SIZE);
--	pre_fault_memory(vcpu, guest_test_phys_mem + TEST_SIZE, PAGE_SIZE, PAGE_SIZE);
-+
-+	pre_fault_memory(vcpu, guest_test_phys_mem, 0, SZ_2M, 0, private);
-+	pre_fault_memory(vcpu, guest_test_phys_mem, SZ_2M, PAGE_SIZE * 2, PAGE_SIZE, private);
-+	pre_fault_memory(vcpu, guest_test_phys_mem, TEST_SIZE, PAGE_SIZE, PAGE_SIZE, private);
- 
- 	vcpu_args_set(vcpu, 1, guest_test_virt_mem);
- 	vcpu_run(vcpu);
-
-base-commit: ecbcc2461839e848970468b44db32282e5059925
--- 
-2.51.0.536.g15c5d4f767-goog
+Thanks.
 
 
