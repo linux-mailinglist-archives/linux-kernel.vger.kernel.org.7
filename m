@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-830578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127CEB9A04D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:22:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFA8B9A062
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A917B5DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBED2188696E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B6F301494;
-	Wed, 24 Sep 2025 13:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A5C3009E8;
+	Wed, 24 Sep 2025 13:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="as6UZ7nV"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q//IkjTE"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BF815B971
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FC115B971
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720148; cv=none; b=hL/EUatVcyYiGUtTw5tzEwSm2Kz1PSOPp4u+63HkJ/+gv3WGnhWMM7qLD3K8Xumdtyi5903/PFD40z2Pzwvs3NP+rOAlNVeiulLi056Eqi/HaUHy42qW2zkc3EUuzDWIdnp9mzTcQO7bdgwViRQ89X2KeYEhwZjlJf0geg1oBEU=
+	t=1758720223; cv=none; b=n7kJ05ULAOL+5JEjq8GVdt1/qXep1fSzCNnstM7ZmV4mo/61yYWUPieXAupoOXzoNZbipJBuy/u2FFcUl7MUqKvH98yrZzYQ4WeoQGQ4Su5Uy26BbX71o2O+bO3VQZooSDCB8c4QsUYXTw7d3QpQT2sZPUN66+dacpZLuWj5D04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720148; c=relaxed/simple;
-	bh=lI2GHuw6RP6D9TulmrFtEisGBRAcx8RDL9OwlG6McYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a35TPKHz8qAZRQA9pBsxwGdg7+9Hj/uiRY5CmrdRga5PpozOCH/WMqUQk73TQL4ESf/kkeeO1fXhy4YtdjGyBL0fB7zCXtKcvNY8y0RBp7MecAlkbu0J+NV4eHveNRMPMXfxmeNlx8/Rsyjd3kxzHfOweWupkl8iBvIN2zGqiTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=as6UZ7nV; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7859d18aa33so2094779a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758720145; x=1759324945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bk5S8ctIXq9wfVpD3CxClS13Cmu6hpYbPn+0lF9IlDg=;
-        b=as6UZ7nVVSlggYRk+wj4p08+r2MjmJXSxwkkmKCcEzCOVUsIhGQU2LUIOlk8AiZWxP
-         ldYkIbEjO6Z7rqHuCSuVm2MyQtA04xTj4vnRWXhKgk6OTjd5Dfa5nfcPwQtYwE1nDmSU
-         h+60j4xnus3NqVoWwHxaPGrrycIkyfsYIYEHKqzkbZvdqTs/wzdSAHMDmlFW0ML99C/m
-         QPZZ5ooX/+BWhItlcUwHNbVzeqhW01P6BD1UT+0tIK1XvOiu/j3CQ8kdAhj5hehZCN0l
-         0tKIY/B4jTqQjVLUD4w1soI6RmGNFdw3y3bdjjwbutvkRb3pD1IomuwfTEMFVkEOeJRV
-         O3yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758720145; x=1759324945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bk5S8ctIXq9wfVpD3CxClS13Cmu6hpYbPn+0lF9IlDg=;
-        b=QbrqspPdCa+99u/teyFPwBwTif9FYXu/pxk8NDGTidWZe5158skCsln8Vdn5TB8bgu
-         IilxN8+3QvbWILTMy7o+ZgGnWHqUP4Csh1lE5ZZMYx8lLDR7GlsaHXNId/Dy9goF84uf
-         E1UGF6mvFzEQXHUHsIdaQizQ6PUeMV8XSjFyjfoeph6Trvz6v2zWJZkuv9nzlPHVlpAa
-         /5t+9X2OYvFbIeZ07UCm67FqznfgYSrK146HZEQ7SlPm7GhKnRBApsswjtOWgScsl4GN
-         r1e5ZF5PGUzX9eeEsHQmvOdeyfQfL05UhYLbrPPDUWwZmen1KmeNTU4KBs7Gab9A8Stt
-         cpqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVr26kzE6PK2jgbv7DhygY+1+lLY4/usJ7oEpgcCjbJwuVYwRf9T3PIluMAcZtVKAerjDqY7wU7xtAs5KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6+fUEESGsnhQOeaMpajgirSupSC8/ZlPPzLImbXHxznIu0wIo
-	0DSDpxJ/gzYgeC9Kt2fQIfe8DUPSwxXX6sZKr5POLT9dIJE5pIj3ShDDFzlmB8gKHsA=
-X-Gm-Gg: ASbGncssSe17tI7lOZgHlQpN6VSL+4gLGK1N0+p8Ry3YUyPNMrB5d2seL8CwCSE30c9
-	CwORSKc9p+ZwnSlg36ithM1zgpkhzvz2gaZ54qQlkvEMZHg8R0Zj5Pc8YodBnj2syVQvSLlC7g2
-	DQSvq0iW9nYAC8rmnRx9d/SMmdvK20VBIM0QRrHtsas8aBTk0gwtEn3pDeOAi8n9ePsKwI0UUmZ
-	bhiWSaBqMn0JPEPR8etytZD/at5cfw8JxTGonNDpc17bb0IKN7L+HAIkgTBnhdcb/gZ4/xCiSO+
-	yEz/50oaVJjCqnm6NFqwPi1aU8wEop2QnK8cKr+bfnWfVtWMVFLnAwSuF+q4e9hGwUe0+4tuCVz
-	Yn1IRN7J8Xq4tC4zBn4uwqr/AQSvUcr/vqN8y/gFYIYqoTk0QkmoYYquDoNUu/FLk9/uy3Eer
-X-Google-Smtp-Source: AGHT+IF0AAKtC4K2vFos6O8AcfB8HOurhg3DtXtcY/Osy02ydHwxnuAFRkAy4WH1cbNpMhYIdPvEMw==
-X-Received: by 2002:a05:6830:25d6:b0:74a:52f8:6f40 with SMTP id 46e09a7af769-7914648876amr3753456a34.8.1758720144748;
-        Wed, 24 Sep 2025 06:22:24 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2? ([2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-634f97f8abfsm552478eaf.2.2025.09.24.06.22.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 06:22:23 -0700 (PDT)
-Message-ID: <f8af47c8-b2e4-45b6-8c2d-36f952327d00@baylibre.com>
-Date: Wed, 24 Sep 2025 08:22:21 -0500
+	s=arc-20240116; t=1758720223; c=relaxed/simple;
+	bh=DYl/Bkmkgnv8NnV8bRJWPp5qpg+MVxlpTt4ZhnmTKGY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ncCg8/43//+j+feUs7mU32Z+sHKDhhz3RacFxmULFbExrJ6qs/P36gFZUFLEjCoZ9EuCedHBIrcilLCOZCvWCRGVoz/PMHB+6CNvQN/6uLjTC5hw+e4L4sBk3XHAqJnvw8VooZMjveDfCpL/XVGGlwVhzViXSFfykMKhMWiaSjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q//IkjTE; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758720208; x=1759325008; i=markus.elfring@web.de;
+	bh=oUx7FQDk2SiuLavlx/HNjgWtSxwt+Njd+F6PUkWYXZc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Q//IkjTEddC1uTTET7XqodQwxs0USK5Tp0NlciUFBdusrkoOVGlTSrFHIpLDEqIn
+	 Q56RlA0hhswnOoWSLaWOIFCea5SVxrWvvjbCLIo2aczMHrTP8LxAkNlBWQjfC1bwv
+	 63tCnddtkYK00S6i8jf1CUtxBlXjkgDtgbrIN8cLEV34ni7Bbd501LkisWsg7abDA
+	 K7xdrEOEixs5kFYillU7uEN6W9ixv894l5PFtGtUWreXHa5pdLqhfUnjtDeKODZoE
+	 93WBshPIcXDzD7e9f6j9xy6g8N3NF0gzcOXdoM3w14Glw9iowmKuleSlejR/pGpq/
+	 IyF1ElCPUk/pk4BYZA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdfCN-1uRnfK3hGD-00nFl0; Wed, 24
+ Sep 2025 15:23:27 +0200
+Message-ID: <8f0366c8-f05e-4687-817f-90a5b47922c9@web.de>
+Date: Wed, 24 Sep 2025 15:23:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,116 +56,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
- <aNPrlIYGrB8oSsfL@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aNPrlIYGrB8oSsfL@debian-BULLSEYE-live-builder-AMD64>
+To: Alexander Potapenko <glider@google.com>, linux-mm@kvack.org,
+ kasan-dev@googlegroups.com
+Cc: LKML <linux-kernel@vger.kernel.org>, Aleksandr Nogikh
+ <nogikh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Marco Elver <elver@google.com>, Mike Rapoport <rppt@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20250924100301.1558645-1-glider@google.com>
+Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with
+ KMSAN
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250924100301.1558645-1-glider@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GbK73zxLYoS2kQ137BowTVrHDqoJ8gk83c2ByReHUM2nq/LRqlh
+ CZO842TFixdnpUk1ktMJFWudMgvfOEDHLgTrHpvgtEf6VDZAlIkg892QjA6IwmIm4AZAGQa
+ oNuryIfeGvJ2wsDd3/FylPuN2EIt+UCxKigm6SB0DvsaAXNqmFhAss29qpFku4zedN1kKB/
+ RSZKpA/cm2WPRO972GolA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:q/uBpl4JHmo=;6HT6GiaWj/LEuxTLU8Jcvzj9PSt
+ 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
 
-On 9/24/25 8:01 AM, Marcelo Schmitt wrote:
-> Hi,
-> 
-> On 09/23, David Lechner wrote:
->> Fix temperature channel not working due to gain and offset not being
->> initialized. This was causing the raw temperature readings to be always
->> 8388608 (0x800000).
-> 
-> Would
-> 'Fix temperature channel not working due to gain and offset not being
-> initialized to their default values.'
-> be a more accurate description?
-> 
-> 
->>
->> To fix it, we just make sure the gain and offset values are set to the
->> default values and still return early without doing an internal
->> calibration.
->>
->> While here, add a comment explaining why we don't bother calibrating
->> the temperature channel.
->>
->> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
-> ...
->>  	for (i = 0; i < st->num_channels; i++) {
->> -
->> -		if (indio_dev->channels[i].type != IIO_VOLTAGE)
->> -			continue;
->> -
->>  		/*
->>  		 * For calibration the OFFSET register should hold its reset default
->>  		 * value. For the GAIN register there is no such requirement but
->> @@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
->>  		st->channels[i].cfg.calibration_offset = 0x800000;
->>  		st->channels[i].cfg.calibration_gain = st->gain_default;
->>  
->> +		/*
->> +		 * Only the main voltage input channels are important enough
->> +		 * to be automatically calibrated here.
-> I think it would be more accurate to just say the offset and callibscale
-> for temperature channel need to be at default values for the data sheet's
-> equation for the temperature sensor to be accurate.
+=E2=80=A6
+> +++ b/mm/mm_init.c
+> @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char =
+*tablename,
+=E2=80=A6
+> +unsigned long __init memblock_free_pages(struct page *page, unsigned lo=
+ng pfn,
+> +					 unsigned int order)
+>  {
+=E2=80=A6
+>  	if (!kmsan_memblock_free_pages(page, order)) {
+>  		/* KMSAN will take care of these pages. */
+> -		return;
+> +		return 0;
+>  	}
+=E2=80=A6
 
-This is true for all channels, not just the temperature channel and
-there is an existing comment (partially visible above) that says
-something like this already.
+How do you think about to omit curly brackets for this if statement?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.17-rc7#n197
 
-> 
-> 
->> +		 */
->> +		if (indio_dev->channels[i].type != IIO_VOLTAGE)
->> +			continue;
->> +
->>  		/*
->>  		 * Full-scale calibration isn't supported at gain 1, so skip in
->>  		 * that case. Note that untypically full-scale calibration has
-> 
-> Maybe, instead of moving the 'if(... IIO_VOLTAGE)' check, this could alternatively
-> be set when initializing the temperature channel at ad7124_parse_channel_config().
-> 
->  	if (num_channels < AD7124_MAX_CHANNELS) {
->  		st->channels[num_channels] = (struct ad7124_channel) {
->  			.nr = num_channels,
->  			.ain = FIELD_PREP(AD7124_CHANNEL_AINP, AD7124_CHANNEL_AINx_TEMPSENSOR) |
->  				FIELD_PREP(AD7124_CHANNEL_AINM, AD7124_CHANNEL_AINx_AVSS),
->  			.cfg = {
->  				.bipolar = true,
-> +				.calibration_offset = 0x800000,
-> +				.calibration_gain = st->gain_default,
-
-st->gain_default has not been initialized at this point, so this would
-not work without more rearranging.
-
->  			},
->  		};
->  
->  		chan[num_channels] = (struct iio_chan_spec) {
->  			.type = IIO_TEMP,
-> 
-> 
-> Nevertheless, the current fix looks good to me as it is, so
-> Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> 
->>
->> ---
->> base-commit: 411e8b72c181e4f49352c12ced0fd8426eb683aa
->> change-id: 20250923-iio-adc-ad7124-fix-temperature-channel-5900f7302886
->>
->> Best regards,
->> -- 
->> David Lechner <dlechner@baylibre.com>
->>
->>
-
+Regards,
+Markus
 
