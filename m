@@ -1,211 +1,119 @@
-Return-Path: <linux-kernel+bounces-830025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB0FB987B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F373B987C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8B01733AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C934B1772C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F026B26F445;
-	Wed, 24 Sep 2025 07:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C6B270551;
+	Wed, 24 Sep 2025 07:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNlUSZ3k"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BpvRQHn7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A31257820
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874B626F2AA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758698273; cv=none; b=cUWyACcyhBSi8WB1cBXMGkoRT8JXM3lCW/uMiPS/+uSDCRqMOymTfBBy+XTSh7yWbkxe1VyxDTg7iOXgwXwos0egmQj8Ne3i6qAB147zLYhxok9FfrsGqWQsuf7E85dz2WOGzbQp0FwumXWtdYrHGxd+DqP/hmdSMm8Ipy6UyHg=
+	t=1758698328; cv=none; b=p6Y0lCo34iRmjGcD4Rn7CyXhz/x2mYv200v2zeGyq1JhatinWGbH8PLhn1tlUS6EEazMvpj8kx3ZuXSyhKPBijVCzUVxZ4ZZ7+FE2+Ub0+eN/4e2fY55JZdMAOgg7kqd4umITwfV26Ltz9QGiVioYAjxKJprlX3xpO0EpjVJMB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758698273; c=relaxed/simple;
-	bh=DYwYxtW8j5hnS7SADVusd2umGXr4SbYAynpTO8qJ9Vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KRzPbyndhU6zGpBAhbU/H3rfdmtQ4Pha+HpefY6kl3dAn7ireuDklXMuSH3DcaUC7pTYRHvINdCpmCIuhL1axHcvcnbbJuPruruRRPzPr34WJ4rU5QGNDNga3aJ8rJ96UUZGTuXqDwujbbqs524wTsTYpEKE3x83jASteNI5Wfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNlUSZ3k; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3307de086d8so5768088a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758698271; x=1759303071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+ejEjcbFe35qGbfGp+veZnDMTD7hLq5QdeCS+8VltE=;
-        b=FNlUSZ3k0WcKaszNq7naK5BIK3J6lv7cJjMBVqb3qxVPF5GaRvISA7Sws5lt9beEq8
-         l9PweLmjLFGuc0Q1Ks5tYkUPTmtTQUIo/oz95KTTf8psRyMOwXfUasPzdtI5tBb0mt5e
-         DTjsxvAkbQlzi5u67+dskp2+emrEjt06olPP0VAb5/DVDzAM6pcrxwQLYLasTYDPpNJm
-         zMJnZnvyCoQj92xPWp+KfRIVWQAmuol0vWQ8acc5iuNKWsmo+AI7YinqM5pSnHMrBWWL
-         Qg1SUlHy5MCkGisUreKEazHqC1yaOdtULqDRR6Oo+jOWXTzxwGz8xbjYOLna2hyB9GVd
-         kk6w==
+	s=arc-20240116; t=1758698328; c=relaxed/simple;
+	bh=vFGV/5SdrXTqAjDg1Z+qtUf7lXuT4QgHCPVLjdBhXkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7fO+CiLheTHW4KYEN3RwGEassoDs3Q9MWVwEsukmH1I6CJfm2jo7GQlBkKLt0RG0erf9iMM9oaElz8YDZ7qDsjnVM415BRsZ5+d5SEdhzssQXRjU8pN99n3DmyH/f5CEIQjPZWtfxe3NT1hzSAUdfDRcXh7wEPyFwXmY2myyWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BpvRQHn7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758698325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x4iJVB6lD2fruztfkG80c2BDXVSi3uw6WFakzazt5Zo=;
+	b=BpvRQHn7cNZq5pWuP49RkKnIJZSwSvxbcsKmuYQldlXbAvde6XqEptmVyzmZH/r09K5D6H
+	+7sgFaxferELr0RINM2gvyMLzHBOnWvWwHhcEwdmK8ResiqFRH9VTfBpPHIKlCUJ1AdI+E
+	UZBC0o+0lzXyX8gB/7//m/MCdrOGCes=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-XUpShtbKPdW-07zWH4ugbA-1; Wed, 24 Sep 2025 03:18:43 -0400
+X-MC-Unique: XUpShtbKPdW-07zWH4ugbA-1
+X-Mimecast-MFC-AGG-ID: XUpShtbKPdW-07zWH4ugbA_1758698323
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e19ee1094so23831525e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:18:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758698271; x=1759303071;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758698322; x=1759303122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B+ejEjcbFe35qGbfGp+veZnDMTD7hLq5QdeCS+8VltE=;
-        b=NGtahNWwPSQByBP7NHTpqF2t51ByXVTWEiDJ6WY4W2s7o64t42sai53N1cRKoCHUP+
-         KLqA6IDqSys3yuUKWeyH29e+QCPdQ67GNOvCLOfCl53P7lDzkzH9bCyIFrBQr78zAsqv
-         Tqp2Uz+zgLGopByV8QJxs9WhGX72L+9ioIJ5h39eE3VGiIUWc9aixLsHnazSrrlvGzaH
-         YOdSn9ad8JlddqkPL7edZelH2OhIoThBX63qprdSHSi6y2mHNEyJ8pOzojF+ugdBBiFg
-         JB8DCUetTAproZxRXCb5ZTdB+TN0XLG5ZQm2vnHy2Bc83ClkmmA3G2O5YqMPCEB5dZqD
-         eEGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT07G4GT9+yQ5010c59+Z0Ir27gup0MVXkLxkQz3B8kj3WMnPNkP/61fd/I3jd1Lluh+3QZXKAqwix4Fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQt73HE24NoOU9jF6PayhFppxAWrcTdYjyGZzS10qcAENe2mkA
-	lO2dA9T7JF2YOxEFv2uNdgXKauUR357TDESTiuFb0hXu50xSngpzAs+8
-X-Gm-Gg: ASbGncunlAM3kg6EDD/iC2O9k2MJwD5VrhgRsn6VjW6jJ02+lfbm7vFovslFZAq4hut
-	oSDGBIGNKkJZ1J54bDFkwUz5vwlH0AystTBafcyjozh1E+R8/lEjzXpTabSP+G7XtoFzmJwtNQM
-	58e3yQK8MjI25TC5dKZFzcB+lDKqhHBV+vdZdrN9K3AYRHvg7UbqJpxtPdVAIFMHNgSzLkZbGhK
-	Xzq9Ub9x6f4Gwx/X88ZLJV+1OhfrQZqk3J+7+8zzh3ebJ6vrJUW6lMQc5RVZxIl0DOS7U6ewp0M
-	/Nb0/xPTySf35HHy8Kp1S1QBWR/CV1afVe+goARYtigakP74UbCc/WYISRyoJvlAaBDtpJg5VX5
-	iG1b/Lao3ChSIe8mKL8MEhuhEeVy3csHuJ5QPnO3YXACIAU/P6g+ZRSVZ9Mz7MW/eDHZ3Y84=
-X-Google-Smtp-Source: AGHT+IFxcqW0NSyd8uIjzX1YbU3spIqk1m1Hoj9o81cMRygM4Rv+qE/24RAN1KbD7bl6jN3Ionxn+w==
-X-Received: by 2002:a17:90b:3c06:b0:32f:98da:c397 with SMTP id 98e67ed59e1d1-332a96fcbcdmr6799875a91.24.1758698270468;
-        Wed, 24 Sep 2025 00:17:50 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55149526cfsm14361279a12.36.2025.09.24.00.17.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 00:17:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b68d40d9-6ea9-49a9-8a2e-8b899f33340d@roeck-us.net>
-Date: Wed, 24 Sep 2025 00:17:48 -0700
+        bh=x4iJVB6lD2fruztfkG80c2BDXVSi3uw6WFakzazt5Zo=;
+        b=ZcCPq9QqHLzxX3jehAVoBSoyUV7ofpnRWefPUo2lum/c5swljwbnaIQ+hlbOE3MU/6
+         r/2o+qdv4nWWgdbwOstxl5K9LnTF0G2VgP0m2kSvZCdGd76U12zmbFS/8xJviYoP8zGX
+         oEYTc48vqRf3g0Xz4c6EJYcoGTnesiza7e/8tpQcKtjhibwryxf3CgC3FgHGtU7rgSGd
+         UYb+T2zJRiRZlIrKhf6XgN87A5645nQC+qfHT8zNud9VB/55kZR0j23Aztt0uvi6n0Y1
+         lcVl7atOclXR/oRvBuEHtkOo7JIXmV231Vkfqys8VfgBdEjJ5vGz6C8WYTwv193alaze
+         BP/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWa3xqBLQIeD4Lz6U9eneZtv6J3HEV9xJl9p0Udqfk/ILj8FmOOBUwSKH5zr6L9BkYJtrCjE3sgkuQnzCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8HCAroQToH5//se5O417QwYwf/NJOpnOzx3VLZu2QATrfybem
+	Ql5OfAq1MTYNpBAAHdt/ZQnqQkmqkpCVhw/LWcCQdDcSRKeXmIB4QbutenAUMnqVk96+SRLgq27
+	szsmYdX8ZwNudvEGsjgsb1x9LkJWmY9oyRQtvmZWbQil7HIvhssaUZxo9B0HKZHDneg==
+X-Gm-Gg: ASbGnctbD89LVOTfsgw0uLEJ7fF5Wv65fvTB4pAO5zlQb7/A/X9Gk530z71s2VZ92FU
+	9rU3GCHhxZFpbXswYi3QA0KlzsAyDQTV25/r79kwEy5mtvlIj0eH2eNF8dondATaNdGA7EwqFUe
+	BFW97uxHlfMm1FadCTNDJvExd/EUhH1I+g+SvJxZZWnJYX/mvYz6ee3EjLb+10B0ZvkMnMb2mae
+	pwzLEXuvalqu+G0zk4zoNbwfiRu+dmLQ6IJvEMS0/5N2Tk0JJ3hNzuJslgynyK9I5LSmtjmTlTF
+	vCyGMHS4LNFOoY07EorbL4PYTSh3m9kYN6w=
+X-Received: by 2002:a05:600c:4f16:b0:45f:28ed:6e22 with SMTP id 5b1f17b1804b1-46e1d9789cdmr54641475e9.3.1758698322529;
+        Wed, 24 Sep 2025 00:18:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbSI2vy3Xtfu4Q9BvlHbV7J5LuaePh9VoqJOvv5JsIaLhsTV8uduTMFmV9uZ4PhlaEw7WBrw==
+X-Received: by 2002:a05:600c:4f16:b0:45f:28ed:6e22 with SMTP id 5b1f17b1804b1-46e1d9789cdmr54641135e9.3.1758698321969;
+        Wed, 24 Sep 2025 00:18:41 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9b1dd4sm18905645e9.8.2025.09.24.00.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 00:18:41 -0700 (PDT)
+Date: Wed, 24 Sep 2025 03:18:38 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, kvm@vger.kernel.org
+Subject: Re: [PATCH net-next v5 0/8] TUN/TAP & vhost_net: netdev queue flow
+ control to avoid ptr_ring tail drop
+Message-ID: <20250924031105-mutt-send-email-mst@kernel.org>
+References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
- subdevices
-To: Andreas Kemnade <andreas@kemnade.info>, Mark Brown <broonie@kernel.org>
-Cc: jdelvare@suse.com, lgirdwood@gmail.com, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alistair Francis <alistair@alistair23.me>
-References: <20250920114311.291450-1-andreas@kemnade.info>
- <20250920114311.291450-2-andreas@kemnade.info>
- <79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
- <20250920233307.0c425863@kemnade.info>
- <473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
- <20250924090023.282ae450@kemnade.info>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250924090023.282ae450@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
 
-On 9/24/25 00:00, Andreas Kemnade wrote:
-> On Sat, 20 Sep 2025 23:18:59 +0100
-> Mark Brown <broonie@kernel.org> wrote:
-> 
->> On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
->>
->>> Just for learning, yes, it is an abuse of the _optional for non-optional
->>> things, so a dirty hack which should not go in, therefore RFC. But what
->>> happens more than having the hwmon device endlessly deferred at worst?
->>
->> There's also the fact that this API is so frequently abused for bad and
->> broken reasons that I regularly audit users and try to fix them, I'd
->> rather not see any new users that don't have a really strong reason to
->> use it.
->>
->>> The wanted regulator is the one defined in sy7636a-regulator.c. So it
->>> is all an issue internal to the sy7636a.
->>
->>> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
->>> I see several other solutions:
->>> a) call device_is_bound() on every other children of dev->parent, if not
->>> bound defer.
->>> b) do not care about the regulator api at all, just check whether
->>>     the corresponding bit is set before reading temperature, return
->>>     -ENODATA if not, some mutex is probably needed.
->>> c) do not care about the regulator api at all, just set the
->>>     corresponding bit (together with some mutex locking and counting).
->>
->> I assume this is using the regulator API because someone might use an
->> external regulator in a system design for some reason (better quality,
->> power efficiency or a shared reference between multiple devices I
->> guess?), or because the supply might also be used by external devices?
->>
->>> d) copy the of_node pointer from the parent, add a regulator phandle property
->>>     to the node pointing to the regulator in the node itself.
->>>     That sounds like your idea but is against the current dt binding for
->>>     this device and afaik it is uncommon to have mfd-internal things wired
->>>     up this way
->>>
->>> e) something clean, simple I miss
->>
->> The idea is that the relationship between the devices should be
->> registered before the devices, that's how the regulator knows to defer.
->> We used to have an API for doing this for board files which might fit
->> here, but it got removed since nobody wants board files any more.  If
->> you're allocating the devices dynamically that's annoying to implement
->> though...
-> 
-> looking a bit around:
-> max5970-regulator.c has hwmon integrated and no extra device. That would
-> simplify things. Although it does not report temperature. Some
-> touchscreens have temperature via hwmon, some others have temperature
-> via iio, directly in one device without mfd. Maybe that is also
-> the better way here?
-> 
+On Tue, Sep 23, 2025 at 12:15:45AM +0200, Simon Schippers wrote:
+> This patch series deals with TUN, TAP and vhost_net which drop incoming 
+> SKBs whenever their internal ptr_ring buffer is full. Instead, with this 
+> patch series, the associated netdev queue is stopped before this happens. 
+> This allows the connected qdisc to function correctly as reported by [1] 
+> and improves application-layer performance, see our paper [2]. Meanwhile 
+> the theoretical performance differs only slightly:
 
-Touchscreens reporting temperature via iio is in general the wrong thing to do.
-Touchscreens report the temperature for monitoring reasons, after all.
-But then, sure, if you insist. I am getting tired of arguing.
 
-FWIW, the proper implementation would probably have been to implement
-the hwmon device as auxiliary device.
+About this whole approach.
+What if userspace is not consuming packets?
+Won't the watchdog warnings appear?
+Is it safe to allow userspace to block a tx queue
+indefinitely?
 
-Guenter
+-- 
+MST
 
 
