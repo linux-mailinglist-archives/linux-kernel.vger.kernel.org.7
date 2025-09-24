@@ -1,95 +1,155 @@
-Return-Path: <linux-kernel+bounces-830235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFF3B9920D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:28:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D7DB99236
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6EDB170271
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCB83A748B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857D42D0C6F;
-	Wed, 24 Sep 2025 09:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813FD2DA76B;
+	Wed, 24 Sep 2025 09:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMpUya35"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gF52eEVl"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD39F2D6E69;
-	Wed, 24 Sep 2025 09:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BCD27A47F;
+	Wed, 24 Sep 2025 09:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758706102; cv=none; b=UtLh6o84H0A8KQwKSgOKpdWezYzJFiW9r7rJj2/J/CgAT2A8HPKIf3D3BbGK7SnwQQHbyTtV7tPe5OnbwKvjbu0V02qVn3gudUzv4emkYRys9vaELKTF9OVrJWnvk8q/IvrKTHRWTec8STw0vFh3vjEUl9g51crJGrzWopQqCCo=
+	t=1758706120; cv=none; b=RPomV/sHOeSwI/GjgKTG3jzIa7HZyT1lQZSd4tuT4Yufz0QhB0KTPUkZtg5SSsnx7uIWiyBylnwPWh+vetgykzgp8gNjiqB4yh9iHzYUOQ6Fkqf0PlPU7hII4DWsOqDR+QlHPWNckwlnH54rbW+I8k3ExyFE6tCTZNgqkqi6hlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758706102; c=relaxed/simple;
-	bh=LjEZsu/eRN6Oc2WFJua8KrGaq3Ac5hB3lBQxT0YFGr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jNZOm0AxhEPCLW6FGDF5Pb0BgOi3/w+Phmunux4Sbp2LaCEZS1cO4XPXAArzhU7gVfh7n23GmW5fnXgYI2HU8MS8DtxNEi7sxDfCc+YelkQ7yVi+ipQn0jEUFRUFxlvcsmc1mbHNtZHNTVv5oUlGuezWuv3QmarjtkGs6fpd57Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMpUya35; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90A8C2BCB8;
-	Wed, 24 Sep 2025 09:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758706101;
-	bh=LjEZsu/eRN6Oc2WFJua8KrGaq3Ac5hB3lBQxT0YFGr0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TMpUya35NhDTWF7mbMjNWQQqW3N0pzPrB2gSmhinHpi2ocrNXnjX2f3YaYFqsoiXc
-	 ahF2Wlvp0am8TI70w7hDTsPuECDiwVvXjhn+Fa12NApwVuoJqoyrcFcU6h33MrwKSy
-	 WWt3ysvpl8vqxz9wXSao37d2q/nxsCs7Aj3tBId2jm+FYpGL1/r9ywgnxp2Ld4la/a
-	 9bPZd8GxiWDzKvPraMKPgSLkwrM9MVSKC+Nl5D23lXwUbVE8/eqzczPqgpVIrq2StP
-	 dgq8/S0WFmzQkWiVRPiheQNKCac6OgNEQFaSHXJOPKEroMK0rGgrjtFFLQiN7TCIcD
-	 x4SNSNFCkd52Q==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v1LnL-000000006pE-2Qg0;
-	Wed, 24 Sep 2025 11:28:15 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4/4] drm/imx/parallel-display: drop unused module alias
-Date: Wed, 24 Sep 2025 11:26:43 +0200
-Message-ID: <20250924092643.26113-5-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250924092643.26113-1-johan@kernel.org>
-References: <20250924092643.26113-1-johan@kernel.org>
+	s=arc-20240116; t=1758706120; c=relaxed/simple;
+	bh=Mvtpnlgmu4fkZBD1ciM4YyQufHOelWXpMzob6t85g5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fl6Xxfx6wE1UXdCYDzsucpwrvofo1QN0hd/iFFQuX5ZkrRiYItCoZGIfVb1/LvbITBf6TdPTLreUJeTH/iRr5IUbY6/KJIfPiQ1dvUU6L2ttOmOBNXTTt7jcqb5K2Q6OjQn7EtKf3leQu6Ceq/CupUfG6+jSZcI4A0YYX6yhGx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gF52eEVl; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-33-231-nat.elisa-mobile.fi [85.76.33.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5FC95BE4;
+	Wed, 24 Sep 2025 11:27:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758706020;
+	bh=Mvtpnlgmu4fkZBD1ciM4YyQufHOelWXpMzob6t85g5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gF52eEVlwp4aTR924B7Rti2uGM0f7hC4JEmyvLceIpfAyzAXSzwJmFqmg2TzuILyB
+	 0xrF+Du8u+XMGdfhm1v8nCT1eLkoWjc0k5GPAVWlThxKSZ4S2bd6Fy+9fbGA5/JmAM
+	 gfftysU8zP/q92FlJRRS+ZFBDDJlvD/cdFEKRG7I=
+Date: Wed, 24 Sep 2025 12:27:50 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 01/16] ACPI: property: Make acpi_get_next_subnode()
+ static
+Message-ID: <20250924092750.GA28073@pendragon.ideasonboard.com>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+ <20250924074602.266292-2-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250924074602.266292-2-sakari.ailus@linux.intel.com>
 
-The driver has never supported anything but OF probe so drop the unused
-platform module alias incorrectly added by commit b2da05ff4797
-("imx-drm: parallel-display: Add MODULE_ALIAS()")
+Hi Sakari,
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/gpu/drm/imx/ipuv3/parallel-display.c | 1 -
- 1 file changed, 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-index 6d8325c76697..f2f36f425664 100644
---- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-+++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-@@ -286,4 +286,3 @@ module_platform_driver(imx_pd_driver);
- MODULE_DESCRIPTION("i.MX parallel display driver");
- MODULE_AUTHOR("Sascha Hauer, Pengutronix");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:imx-parallel-display");
+On Wed, Sep 24, 2025 at 10:45:47AM +0300, Sakari Ailus wrote:
+> acpi_get_next_subnode() is only used in drivers/acpi/property.c. Remove
+> its prototype from include/linux/acpi.h and make it static.
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  drivers/acpi/property.c |  5 +++--
+>  include/linux/acpi.h    | 10 ----------
+>  2 files changed, 3 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 436019d96027..5435628c67e7 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -1264,8 +1264,9 @@ static int stop_on_next(struct acpi_device *adev, void *data)
+>   * @fwnode: Firmware node to find the next child node for.
+>   * @child: Handle to one of the device's child nodes or a null handle.
+>   */
+> -struct fwnode_handle *acpi_get_next_subnode(const struct fwnode_handle *fwnode,
+> -					    struct fwnode_handle *child)
+> +static struct fwnode_handle *
+> +acpi_get_next_subnode(const struct fwnode_handle *fwnode,
+> +		      struct fwnode_handle *child)
+>  {
+>  	struct acpi_device *adev = to_acpi_device_node(fwnode);
+>  
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 5ff5d99f6ead..703323b9fe0c 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1349,9 +1349,6 @@ acpi_data_add_props(struct acpi_device_data *data, const guid_t *guid,
+>  int acpi_node_prop_get(const struct fwnode_handle *fwnode, const char *propname,
+>  		       void **valptr);
+>  
+> -struct fwnode_handle *acpi_get_next_subnode(const struct fwnode_handle *fwnode,
+> -					    struct fwnode_handle *child);
+> -
+>  struct acpi_probe_entry;
+>  typedef bool (*acpi_probe_entry_validate_subtbl)(struct acpi_subtable_header *,
+>  						 struct acpi_probe_entry *);
+> @@ -1450,13 +1447,6 @@ static inline int acpi_node_prop_get(const struct fwnode_handle *fwnode,
+>  	return -ENXIO;
+>  }
+>  
+> -static inline struct fwnode_handle *
+> -acpi_get_next_subnode(const struct fwnode_handle *fwnode,
+> -		      struct fwnode_handle *child)
+> -{
+> -	return NULL;
+> -}
+> -
+>  static inline struct fwnode_handle *
+>  acpi_graph_get_next_endpoint(const struct fwnode_handle *fwnode,
+>  			     struct fwnode_handle *prev)
+
 -- 
-2.49.1
+Regards,
 
+Laurent Pinchart
 
