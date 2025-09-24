@@ -1,188 +1,188 @@
-Return-Path: <linux-kernel+bounces-830576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B5AB9A041
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 341DFB9A047
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DF9C3B7C8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31333A431E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84113301477;
-	Wed, 24 Sep 2025 13:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115303019BA;
+	Wed, 24 Sep 2025 13:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xw164tS6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b/i3PbXB"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013038.outbound.protection.outlook.com [40.93.196.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9E4213237;
-	Wed, 24 Sep 2025 13:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720047; cv=none; b=sZGtbC6oXsoVmkBX9E52DyMVxEoh+WZjdMz1YWMUS3KzMM4NCr7GKTrLU1J5zsbDWmLv/EPnZQYfkCNXYYdmwHPnN6R8PNufviCDZ5O3zwBUqRh16LXYNtROJJHrC7UeGiBEs5y+ttakMrgSmT37rekTk6OVLNl8kfFYO8ycypE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720047; c=relaxed/simple;
-	bh=rB2sBTaMEgkmzZWzWgoT0m60TQ1pDitX6JLgXdRRbF8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u2v9n6OSEt+8eKVgB5s4tdiqa1cmaszVGnRdrq49Fw/gE2EQRBT0wQCNORoa7DFRiQVItdKss70ddbYtOrqb0LUw4WymGMLNEU1lhxnn5RO8nTxLsomlxx8IpvRS0Q4Vn6dm6/3sCNYTKP9sDko2DM5sR4iaSy/oERaOKGzYy3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xw164tS6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758720043;
-	bh=rB2sBTaMEgkmzZWzWgoT0m60TQ1pDitX6JLgXdRRbF8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Xw164tS6oOBvIAjK20FXtEQPLVWk8PZs1BdwPM0gxNArJX3VOaWfW/KDHrntQfIk/
-	 +SKGUebpRPB4lDRyByYJafb5SCO1FX6eW/Pen5PEkBdRdBOWQbQSMPI5t+qKu0EOFl
-	 xQXNZ6sEeLhoa6fjqqErm5UX5vR3oK27MC2EjA8VFzzSwAN0QIyQ2rUyRqHcVOIy+r
-	 WKEYzbBNXJwJM+ubWeD0vMGFmsGvvG5GIM/e0/zVDA5ita0PyyuD0gvTgOBFYqKoPE
-	 q10igw3hrMdGX8yU1P6h/RNQ3YxznNLH4n1+IYZjDAuvmKKfVkVn1Li6n3sdVP3uXa
-	 eDC50aQjNTf3g==
-Received: from [IPv6:2606:6d00:17:ebd3::5ac] (unknown [IPv6:2606:6d00:17:ebd3::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 980B617E046C;
-	Wed, 24 Sep 2025 15:20:42 +0200 (CEST)
-Message-ID: <6eed102e2aa739e5026ee545a38ddacf09058bbb.camel@collabora.com>
-Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance
- of decoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "jackson.lee" <jackson.lee@chipsnmedia.com>, Brandon Brnich
-	 <b-brnich@ti.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
- "hverkuil-cisco@xs4all.nl"
-	 <hverkuil-cisco@xs4all.nl>, "bob.beckett@collabora.com"
-	 <bob.beckett@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
- "lafley.kim" <lafley.kim@chipsnmedia.com>,  "hverkuil@xs4all.nl"	
- <hverkuil@xs4all.nl>, Nas Chung <nas.chung@chipsnmedia.com>
-Date: Wed, 24 Sep 2025 09:20:40 -0400
-In-Reply-To: <PU4P216MB114923D47D5AD77D5D32D56FED1CA@PU4P216MB1149.KORP216.PROD.OUTLOOK.COM>
-References: <20250922055255.116-1-jackson.lee@chipsnmedia.com>
-		 <20250922055255.116-5-jackson.lee@chipsnmedia.com>
-		 <1f59f00d-eff7-4c65-a504-227df0de75d2@ti.com>
-	 <d4b7cc51f1bd7fcf88066e8510f950ec90cfb5aa.camel@collabora.com>
-	 <PU4P216MB114923D47D5AD77D5D32D56FED1CA@PU4P216MB1149.KORP216.PROD.OUTLOOK.COM>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-S4Lbt0KClbM21B1zMugb"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B61A76B1;
+	Wed, 24 Sep 2025 13:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758720103; cv=fail; b=TTo2sS4IGvNo43WhUSuO5DU2iAbBHvn6Uw8pcyHDOsJGkrVr5sNNPEFGleVKlwnPFoicpTd2T7nuASMRS8Nt4JOCmShfDRVv7jPIsA0gXckdf8tceqEojt0Z6B/WLWd1FKYN3ksB9sCvNrOvaoxoMpRH2VC/xqhmQyS31978eiA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758720103; c=relaxed/simple;
+	bh=6cyzcjqjwWqShkFK0r2ATUaS/k0kqtQTY5SYc0hTvNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UW51KlDAVG8huY1abpESg0q/Jy3ovwInv1rqhPuxF2ZRmmI2O3jkz6yYTmrvBJyANQ6SZB0/lb8xwomeX4Xmg8gGllgIXCpCUGOLLPFs7FrzYC1GM+UWU7uPbiQsOixRSgJFNURmSjQwZalRClUOJadOExydUSiP4pw4GwqGyMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b/i3PbXB; arc=fail smtp.client-ip=40.93.196.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NMt3KMV/1ZZsuHfhUMviQnCvxGgsbWRau+rvsdNrJz1DoHtXmdBamJU7EuhKWXu9BQEzHQt6ulNltbLsylIQxol5/Pczl9RPlZAYZUa60iAfeVrKuMC2eL7GGsgwLagP5Roo49nAnirF/xb3gTX7tpCuvdu1z9FXD5u2AzvAT02pyxhxD+1JBansSHul7Ztb5O82vvv6lza1gfvhXJYrxnPca5bCL8VuBPjxcYWdN5Z3HHB9z+pgTURQaa+f4Tpl9nKdtnchRUwmNNy8h7VDby2RorOtvsmR3iPBd7rkTJrjh1pc36TgvvNHWubDbJRSLfnTBQEiaDE7UnuX9s5CCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rCXwr+RWrUTMvr/UypLHPn2YvR6B31nKjA6ygTkUh+Q=;
+ b=Ew844hjrer8KjVhBydTXNQssJ5CjxEP/yUjyUY+pygDrcDy4VROglh8vtYl6HguIw9Pjxfijl73NtRqe1ySRz5dy+T6+JsuNEE7aI/2J64MDlI8M61PmjzZ/Zi77dcZuKXe/KIRAGQp02TpE0+Ca5JzZIkmX0buxcmhJuAtJHakqZQAu4j89b3/N27b0Dk7UtooBd4Pr8j2DDjgjVirgsqO2xxQMRbPgrnPoKDHb/xHwr8tWR+nI+xSO6LX7bpbKRrCoZ3xM1LU+q+lSmS/m0fKuc/9z2NwH3YfPEXwUm9sM+aGjMS6U67uB5SzmquBkucsYiVfeNf13Gnl2aJiNLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rCXwr+RWrUTMvr/UypLHPn2YvR6B31nKjA6ygTkUh+Q=;
+ b=b/i3PbXBKSm8bh9kqruZ6IB2KRTNupEZhRNv2iAisA399GpHmD60z3cyzj5Dg2uGBcyr2/vsnY6fmub1F2sLmFtevhJeZuFJiEeGVTFb4AmeflVk+M6O8JVkxNi2dzyOzldZ4mFKl92PFKGdpN9VuMndcQRAq5SwStob5JajjMjYr6jV4nrsIFWX41HQ1XQDwDk/TuLa4ik2ynW7RjxL2AvAmQDwxdy1sdkD+TiAOikR1onNrQvEukTWAXh3Jkr+fjxymj/ey4HNKsjIudd+7gy/s5Lh8tl1GI0mI3iHlazgXNw+OvY2IeD0czZ8GI84tCXyTESiwhi2+Ibmb//GCw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by CH2PR12MB4200.namprd12.prod.outlook.com (2603:10b6:610:ac::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
+ 2025 13:21:37 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
+ 13:21:36 +0000
+Date: Wed, 24 Sep 2025 10:21:35 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Philipp Reisner <philipp.reisner@linbit.com>
+Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Leon Romanovsky <leon@kernel.org>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding
+ cq->cq_lock
+Message-ID: <20250924132135.GA2653699@nvidia.com>
+References: <20250822081941.989520-1-philipp.reisner@linbit.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822081941.989520-1-philipp.reisner@linbit.com>
+X-ClientProxiedBy: MN0P221CA0016.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:52a::19) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CH2PR12MB4200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2794fc9a-4df5-48d9-7df5-08ddfb6d49e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U51lQhuQpD6GacDkAHnF4BO/Fh+VLkiTIkKbUruyxPmi0tEsjHux1XunqZRW?=
+ =?us-ascii?Q?ktD+iP0E/uFAf5U8bQy3j3zUXBkU+eNCRIU5qGFxKuCRqMv4PGxjj0hcAplN?=
+ =?us-ascii?Q?p7+vPcTM6xIYhwqoG7WHnXaxY+iWV3XGLv9LVTYg4POaPCKwQSkoyDPEhDF6?=
+ =?us-ascii?Q?MqL1aJuW6x/AvWJL7I7v9JIJgciqH9DKDeuFe6cdVWTfep6c7RAe8+q8z3EM?=
+ =?us-ascii?Q?tQfDNWOB6vOD9Qz5yqtm7UDixRfSv4EeCaj8Eby8pjq8AFAv1y5yS36+kXiZ?=
+ =?us-ascii?Q?kk3vy29h7Qa9a+9L/+G5GqKE5EsO3XjlDyl+olXfacOTJJYXIUZvx5OeUL0U?=
+ =?us-ascii?Q?MeC/ojf4SbBZ6gRIjY2eboi0J/T2/UHPJRcZEj4HDdKf2XUWxv4X+1DMPeO6?=
+ =?us-ascii?Q?6feH05TGesBcVS7xdc1IxqYJ+FNvi0WhdS2ItyYIYV7WGVkfKwlSw5eOzMOK?=
+ =?us-ascii?Q?gXlETpkfZcERHpTBnLeeZeszOcZE1At7zedgLo6CF7JsMkLgEYnw+EaMUqAH?=
+ =?us-ascii?Q?AoKvD4sQmAmnrPQxd+fjYP7wlv2xTncYe/pONDF4xPzietvjIK1O5tEp7swy?=
+ =?us-ascii?Q?uFeA56iLBpAzpc0qr5VUPs47KU6i+9z8HRHSaangMfOrc42+8Zbg1hjq3FJ0?=
+ =?us-ascii?Q?EwA20+YRyxrjgoPqiiGYHziYWaoN4FsnEycUHANFMiuine5fB7q+JoetWhrg?=
+ =?us-ascii?Q?/xndMhBMDpoux5P93+hxXl9zHJjmzIF8ncb0j8kvtR/t/JDGlGzGdtQbmOa3?=
+ =?us-ascii?Q?dxMWnLfDbk/a4zfaYnIhhksIxGE3Nbxph+N/Gx+rJmvFhIEa7vdHGX5TkrAG?=
+ =?us-ascii?Q?RZP6ByEjczImVTGJPvhmctfFx3Pp/G7uRhZA4eCBeSmctA+BEO4J5nwZ50qh?=
+ =?us-ascii?Q?0QuZs0Cq3CHvW6Rifz1CaCK6PkqlBjCRDLPsdlN4ivohyTfp4xUDNyw65M1l?=
+ =?us-ascii?Q?uBagkRbk7rlXoIyNqWkGRVlL7RY8usgRY0GG7IAVSEQ2fNXR3eT9zmOaaJXT?=
+ =?us-ascii?Q?36nToc+7Z1vlxeD1hsx30BAc3pl+rsPL4UrAr/VkUR2aPxjnUCy4V45wLtNy?=
+ =?us-ascii?Q?05jTKA1z2ZAjg6yiR1oMUlxpDN/WpyYnsGMeSrBDpuThoNTsQgSlgAvCSCZJ?=
+ =?us-ascii?Q?/9jJJIpIcin4c98190tJoQFPWBlYJe4xM/b9TXy/aD2z749l1Ck9curcLgUd?=
+ =?us-ascii?Q?L+mb85Apz0nPgmrRVo9RZmD50mOtALDly6RmlbN2hVAlJ9xqm7gYdP5wckz0?=
+ =?us-ascii?Q?GC/XS3phclYLP3ZhZr4ZoY9RlXUm90vCgISy+rqM5bUxYOnYKegr1eA9iGc8?=
+ =?us-ascii?Q?bi66NdP/rOhY/C+FmCO0iolmzaVpUI97pN7EDq5NpUUY46SSEANzSxGidosd?=
+ =?us-ascii?Q?25b/iPiHbcFlqaWOQ3ME/WpVqaMMiXuE41zYYBuQB75njlfoq/sDlcQ2CMOh?=
+ =?us-ascii?Q?n0iRZnXrz6Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0wN0yeMvyXCsv6i3DYel4gd+NCdlTjZqUzciwbudZqVwM4aiot1ZjVD0Sf2/?=
+ =?us-ascii?Q?M3lARCeJepiPsFGeDwZwboOQJRCGm2m9mGNxWE1LDWuIYBdiAaXkFCYgYwrZ?=
+ =?us-ascii?Q?m5i/VSm/SQoeJTQtY2DJPdFmcrryKKS4X8xn0WtuE9YZN2p1bbtaVbKYVW28?=
+ =?us-ascii?Q?CUrl4Qivt1A74fXgZm35p1wg55Z12PfVhgFr9+ti/Dq9L7u8YLtPmSCEb2Wf?=
+ =?us-ascii?Q?GzhabbzOfxKuGuSE41P1sagR0ZvF9mHBgqUKZ5V8OBeHapwCzdtcD1IWbZiB?=
+ =?us-ascii?Q?tq/WHn4ife+wuxYYBIGJ2Y3lfm+qkvxU/WkVN3a9n+iVMmUCMRSVP4AAAl6w?=
+ =?us-ascii?Q?s7p7U54sPoSJr1vwuDMFoA4w+jxI0ElB2lN0Xf9WRHeymLp2d9Tg3dNzxYO1?=
+ =?us-ascii?Q?Rknk+EBUJvZtqwpVmAxTae5SuPWfamITmQZNeY+dy1njwAUoQ/WzKJAvNAQL?=
+ =?us-ascii?Q?NdmCalo/oVkB5FCCyLgkCZtgEPq6aKHGgMhE5TNn2W6vW71DOPABMITD7+fs?=
+ =?us-ascii?Q?MUW2DGHog7WQ/CW1ecX0cdOVTSXl1KTC2HU1K0R191Of3F8pi/JVhsHaFyAX?=
+ =?us-ascii?Q?mcBPWbwgiA9fbhOdXAQ3xiHRCeV5poYc6TZ6oYrhaMq/3FArnZV4lSDkJ68D?=
+ =?us-ascii?Q?yFH0qgX4YmAhgJt1umWHwt2ZHg3XYUKZ4kf4hbDUzmPfjDQp4mQERjCx2lDn?=
+ =?us-ascii?Q?lCNCwrDHyjUU9ny4nffrJy1vjlRU5mPJqTqlQDsxuUGJ6XeXntNZT9lB3Iy4?=
+ =?us-ascii?Q?h8LQbTcSZdChd3nmFvhKjvTFm3oonyrui1bLkg4jAH73DeD3Fj8gCBgobGpe?=
+ =?us-ascii?Q?5ig1YOKg3lG7lT90xT+jppHjZNULqnBe3CS5ZMg4VDGdvr54/vdVy/jjWXo6?=
+ =?us-ascii?Q?XPJVhVkNe4ErDWMzlkWTXwsNw6ovXueFAxfhGr0Wo2y+9vxeoYS25S+0nX8X?=
+ =?us-ascii?Q?/dT+YY4+gsf2LFht2XdyxPZ0gStYNHKWoT2/+zDDkjpbuUgy/sWhlIWKubHP?=
+ =?us-ascii?Q?IBkTPtkjw1wt3ErSEYZsZf41R4BHfDQ4i3JmpXq0wMrjo1GDUH1nOuGvyHng?=
+ =?us-ascii?Q?ewvqE29t2EIWcRAWfRg5F+kS8w9AEtdS/1HMXjp2SYDjRhEs9Nz5WYJ/kN+e?=
+ =?us-ascii?Q?5JX6GgMRmpn/uIdL9xXvZCE63yFVZL9ZK+Sv2EjT09TN7np6hsGreRw/MzpA?=
+ =?us-ascii?Q?sjDsU7S9E2E4isvNYnpEOYHViypJSjLOQzQJmgVZPQ2BrjgRGpVODYfUJ9zh?=
+ =?us-ascii?Q?gion3WXcdmdRJLs4SFDj8ZR4fhbvE8xGhWWz9UErlP9UfEpzZdwCNE9BE7Mf?=
+ =?us-ascii?Q?4iQg/BXZoAKOT82r1UrGxIknISGgfJY+sXkmlygsHaxhAwWVcmWqluS8M1Et?=
+ =?us-ascii?Q?B0yxgfFwZkZCspZvDN5YLqPCO+xBgwQ5E3+GAnEU4WeyD5eLWArc99qb1OMA?=
+ =?us-ascii?Q?zVFKkU5qYx1a6JEfZfvy93Qs24RzZ8EMRGWi3TQX2VfmqiEQx90W3ZTKETSC?=
+ =?us-ascii?Q?hTJ0WxVBEeiFVKWRtUtubcizNHdS50P2U7Q2hyshvBIJ3EbM6zQ9BITwOA37?=
+ =?us-ascii?Q?wnuxknSANuTd2wu1OXBNDaKizIsfxVkyYdqVDqEc?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2794fc9a-4df5-48d9-7df5-08ddfb6d49e3
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 13:21:36.7942
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t6G1efRhrKFVcZT/J2KUGd6GVewn0SNwOg/LrlGMAn+VyQqX2DEjAWtGUSK0+uR9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4200
 
+On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
+> Allow the comp_handler callback implementation to call ib_poll_cq().
+> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
+> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+> 
+> The Mellanox and Intel drivers allow a comp_handler callback
+> implementation to call ib_poll_cq().
+> 
+> Avoid the deadlock by calling the comp_handler callback without
+> holding cq->cq_lock.
 
---=-S4Lbt0KClbM21B1zMugb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I spent some time looking at this, and I think the basic statement
+above is right. The comp_handler should be able to call poll_cq/etc
 
-Hi Jackson,
+rxe holding a lock it used to push a CQE is not correct.
 
-Le mercredi 24 septembre 2025 =C3=A0 01:14 +0000, jackson.lee a =C3=A9crit=
-=C2=A0:
-> Hi Nicolas
->=20
-> > -----Original Message-----
-> > From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> > Sent: Tuesday, September 23, 2025 3:00 AM
-> > To: Brandon Brnich <b-brnich@ti.com>; jackson.lee
-> > <jackson.lee@chipsnmedia.com>; mchehab@kernel.org; hverkuil-
-> > cisco@xs4all.nl; bob.beckett@collabora.com
-> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; lafley.k=
-im
-> > <lafley.kim@chipsnmedia.com>; hverkuil@xs4all.nl; Nas Chung
-> > <nas.chung@chipsnmedia.com>
-> > Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performa=
-nce
-> > of decoder
-> >=20
-> > Hi Brandon,
-> >=20
-> > Le lundi 22 septembre 2025 =C3=A0 12:32 -0500, Brandon Brnich a =C3=A9c=
-rit=C2=A0:
-> > > > -	/*
-> > > > -	 * During a resolution change and while draining, the firmware
-> > > > may
-> > > > flush
-> > > > -	 * the reorder queue regardless of having a matching decoding
-> > > > operation
-> > > > -	 * pending. Only terminate the job if there are no more IRQ
-> > > > coming.
-> > > > -	 */
-> > > > -	wave5_vpu_dec_give_command(inst, DEC_GET_QUEUE_STATUS,
-> > > > &q_status);
-> > > > -	if (q_status.report_queue_count =3D=3D 0 &&
-> > > > -	=C2=A0=C2=A0=C2=A0 (q_status.instance_queue_count =3D=3D 0 ||
-> > > > dec_info.sequence_changed)) {
-> > > > -		dev_dbg(inst->dev->dev, "%s: finishing job.\n",
-> > > > __func__);
-> > > > -		pm_runtime_mark_last_busy(inst->dev->dev);
-> > >=20
-> > > Patch is failing to apply here to linux-next because these redundant
-> > > calls have already been removed[0].
-> >=20
-> > Which have not been merged back from the RC into media-committers/next,
-> > forcing to skip a cycle. Jackson, feel free to rebase on linux-next lik=
-e
-> > Brandon suggest.
->=20
-> Then should I make v6 patch series based on Linux-next ?
+However! The comp_handler is also supposed to be single threaded by
+the driver, I don't think ULPs are prepared to handle concurrent calls
+to comp_handler.
 
-I've asked advises from the other maintainers, and the answer is no. Basing=
- it
-on our next branch for linux-media submission is the correct thing to do. I=
-ts
-too late for this cycle, but be reassured we will improve our process in fu=
-ture
-iterations to reduce the risk of this happening.
+Other HW drivers run their comp_handlers from an EQ which is both
+single threaded and does not exclude poll_cq/etc.
 
-Feel free to send a rebased patch to Brandon, having more testing is always
-good.
+So while removing the cq lock here is correct from the perspective of
+allowing poll_cq, I could not find any locking in rxe that made
+do_complete() be single threaded.
 
-cheers,
-Nicolas
+Please send a v2, either explain how the do_complete is single
+threaded in a comment above the comp_handler call, or make it be
+single threaded.
 
->=20
-> Thanks
-> Jackson
->=20
-> >=20
-> > regards,
->=20
-> > Nicolas
-
---=-S4Lbt0KClbM21B1zMugb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNPwKAAKCRDZQZRRKWBy
-9JInAP9ILze2brb/ataoKkg1g48S7xht38hWn+SOv6Q5tcUUZQEAoCkZnl150vPS
-QU9retwUO/W9mggegoXGEUheH/LZUgg=
-=9EFr
------END PGP SIGNATURE-----
-
---=-S4Lbt0KClbM21B1zMugb--
+Thanks,
+Jason
 
