@@ -1,209 +1,119 @@
-Return-Path: <linux-kernel+bounces-830145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DD6B98E58
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96ECB98E6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D39D2A077A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0F21884F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A310F28506A;
-	Wed, 24 Sep 2025 08:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1528135B;
+	Wed, 24 Sep 2025 08:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="O9Dwn1OX"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpNCmf9d"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ED4283FEF;
-	Wed, 24 Sep 2025 08:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAA027CB38
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702763; cv=none; b=Mu3YElHz0njdUMmbpCKUTRWEppKQelt5FC5GuyDk1dDkR28Jq1KSxBS7sFRftDxarIi1y9tF5tf3w0WnWhgCwWut6Rpb5ds393tAmTiR+OqhYfBmDQliNZjbnWKvTsdLwUqJ+kdrZ9Hlksqu3EGkE1eFnikePbWl1Nh0luA1h+4=
+	t=1758702850; cv=none; b=ArVPs4kfd/9oMg3OctsKTh9WE7ok7phjeCnfwNrd21bqe6/90IX3CSQnL1ZqOKKX8j2zw0C5vDvyYL17TDiZ+AYc0YNjlvviM08yc42TA4SAqfpH42/x4FcCCTWbKzZUzzJz1hWZrz1Z0kacfQkmPMy5UMIzGT42CddJeklbUXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702763; c=relaxed/simple;
-	bh=cLezCJAwAqkORNPG2HLqUibKGtDN8FG7pnsNn8TTtQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=beYzcgmnn2a7y2JjY1btvp9yO+XNfmnSlG0lswrlxeH2XSgShtQnGy6UUejIdZpRiCDyz5moGmzUzJ7mEg3jqdcGwts+5IPjUHN5+GrX7h+RrNFDzyNWKVdwIh83BapphSiyeflwCSiJvlqZMMURce6wmOIav1S8lqGkIo7ofXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=O9Dwn1OX; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RyV9TsLTTABJTwKwOuUIKaaq22w3uW9zvHP3pAU/Okk=; b=O9Dwn1OXZKG8McfoWulnOThMgd
-	b7B+c1uIUc0+gKEdI6chrGk3TEv9Kr57JYsfx3yVaCRd5kdGv2g2lO/UNzBQCnUBJUSb/E4yZD0pH
-	sQwUWtzn761xZRh/AdrYcYyQ1XekEPLqv/a55MSS+p5HqGivZNjekAIYN5PSr4Ln9ikUf+S/7vnUp
-	PMrfWODHAkoxis3P6f/nLajknhwWp+1Wx4ddKy/ibg6Zmr2f2gTc+oKWQb06Ae1WvwsRpREebdVyM
-	k2102/mtG6kYPdzRjnh+drIXIefqd3OnA2bZJYjDIGJXa/rCNE0/Vs0B1otoc+DoYfem3ddrvO4q9
-	2YQGUQoQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1v1KvR-00EFVU-15;
-	Wed, 24 Sep 2025 09:32:33 +0100
-Date: Wed, 24 Sep 2025 09:32:33 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/4] tpm: Use -EPERM as fallback error code in
- tpm_ret_to_err
-Message-ID: <aNOsoVOZPXns6WB2@earth.li>
-References: <20250922164318.3540792-1-jarkko@kernel.org>
- <20250922164318.3540792-2-jarkko@kernel.org>
+	s=arc-20240116; t=1758702850; c=relaxed/simple;
+	bh=OrATnpZDnlXdQH9ZHMeh5Yq3DhbnbcVfeDmwbff5INc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eY4bLWUzYf5amFaaxOx2dsLiSpbsRmzBCvjXnaH7m9op9Ba72g97/fksGvLm3kFwtYXfH0dCmda+Px0Fa7ZNjMq4ZToUpHWdgAGrJ06iGHpha/bsFlDiyFk2/RtYS0o3Caz73nBL242eOk08/0gX5ppkAxB3d4XTWQ6P5uIO+g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpNCmf9d; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b2d92b52149so526927366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:34:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758702847; x=1759307647; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T2GuLi6XyMMBKMY8TiQINu19CGtecqHLNQuiswEu7fo=;
+        b=hpNCmf9d4Pp/9eN5nue3g/dp6EQb4+Lh46VqpYOANYItMY/Ytm79PdECY6s+/vpJoz
+         06c/l693kzOuJZhCEbnJIsmH+lCB7C8sj812mKkj0EpwC3eGqOjcyxh/G6DHFxfdcfYA
+         J+Rsn5pJ1uvYysMDsyRwjjqx53K/4Hd2embuVraRQA7Uz0md/Bc5oPWdd9lDEnNw6o7R
+         hRhBvtrY49gYVykiMwj2/3LSQmGwYfyncvAv5ahdrKxQ3YorJmIIHk5K+lstlYgYZUFy
+         awV2QhdngNMfz6BTMyUPDVb0wrl46sQnbE+DLj7HiA/5PNsF83K00MQ93INPcTj6f5Vv
+         2/Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758702847; x=1759307647;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2GuLi6XyMMBKMY8TiQINu19CGtecqHLNQuiswEu7fo=;
+        b=j4Usdh2RGvQivZ84WgW7tnNBaTNK9+LZRaoZ0UttHprEXEWIcagbHUOJXTXr/kWCtK
+         J1FAEeItodtKeNXCnG/6QfxMC3OZqjQiQSGKIckBrupeiK+Y1ke3U6bkroNvHAczR/a8
+         fh+WHEmcD9q69UBSTPNyM6ysH+aWtnjOSptN7Qp52FjXPaPXNcAAnLob0Vqz3UNSwDZL
+         J6V+6YPjUaapk/WkLM9L081HIpn+VHOKHo4pkBqzsY5ZXFEpqGWLCosqatWjzo/lg0W5
+         RUWYIPMs5u+f9C5eFPYUoeaMR7uD525Xo3nQkOxtTT4+UCyp5bmQsPEROVN4w6prYfHo
+         HoJA==
+X-Gm-Message-State: AOJu0YzRiKZ5k9tPyDvvhqzlm+CYFI7RgydG66lt0CtA/ko20C6iEfaR
+	qym5Cx7gFAOATemr8OdN6uKh7KgBiuXGZJoSdLaI847m/t/LE96/uoqBppbqH56NUsmrh+fwluM
+	8LGTELek=
+X-Gm-Gg: ASbGncsRyF0XVkqTWtd+QThv0hKxX7/GJQ4MvZs2qZoj7jfqhAc4yiamjKStdC5K4ki
+	78WAb0AlWgd9+5pwqihUdN+BDaJq5GNVVlQHtZ+8Kv+y9BFRIfJUDX+4+M+g9dB3oVVMqyobybS
+	ZYqxjX5l0UnDIE0OLsSafcwyo9MdTx9kpJ26W8FJ/gbeGe8iS2ek0eH0xAIqS9CTcran7HZMkFC
+	tIDdeta2+Fu6wHPmoUgCRLb70Ge0LSdBeMrs9cKm3Mk0+7Lm4SmK9nw96//2A/oOW6tnKYlt2vS
+	HKuD5irnnjAFwr2FBhSFOmeb+HIJoGeNgat0BURzp0rmjVQ9JSYKrmfrIDzIq8nuLjl+WpkKWCB
+	9xLJN0VGZfcJ/62Zar9RrRw4SXJSbPZAIGBILdGiDwyMMSnFJFCJFYCq4OdipR0eX
+X-Google-Smtp-Source: AGHT+IH1aDoALWFRsO0oVLqVi+ToUZna4cdMnC32Rm3fsJgeudeKUR1iGh2aJbkhuYEWll04azdH2g==
+X-Received: by 2002:a17:907:7e88:b0:b2f:5c41:49c with SMTP id a640c23a62f3a-b30267964c0mr565741666b.3.1758702847411;
+        Wed, 24 Sep 2025 01:34:07 -0700 (PDT)
+Received: from rayden (h-37-123-177-177.A175.priv.bahnhof.se. [37.123.177.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b338b404a3dsm46227966b.11.2025.09.24.01.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 01:34:06 -0700 (PDT)
+Date: Wed, 24 Sep 2025 10:34:04 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: arm@kernel.org, soc@kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	op-tee@lists.trustedfirmware.org
+Subject: [GIT PULL] TEE fix2 for v6.17
+Message-ID: <20250924083404.GA3747732@rayden>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250922164318.3540792-2-jarkko@kernel.org>
 
-On Mon, Sep 22, 2025 at 07:43:14PM +0300, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->
->Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
->error code as it is no concise with trusted keys.
->
->Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
->and by these changes make the helper applicable for trusted keys.
->
->Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->---
-> include/linux/tpm.h                       |  9 +++++---
-> security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
-> 2 files changed, 13 insertions(+), 22 deletions(-)
->
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index dc0338a783f3..667d290789ca 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
-> 	if (ret < 0)
-> 		return ret;
->
->-	switch (tpm2_rc_value(ret)) {
->-	case TPM2_RC_SUCCESS:
->+	if (!ret)
-> 		return 0;
+Hello arm-soc maintainers,
 
-Fold this into the check above to get:
+Please pull this fix in the TEE subsystem.
 
-	if (ret <= 0)
+Thanks,
+Jens
 
-?
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
->+
->+	switch (tpm2_rc_value(ret)) {
-> 	case TPM2_RC_SESSION_MEMORY:
-> 		return -ENOMEM;
->+	case TPM2_RC_HASH:
->+		return -EINVAL;
-> 	default:
->-		return -EFAULT;
->+		return -EPERM;
-> 	}
-> }
->
->diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->index 024be262702f..e165b117bbca 100644
->--- a/security/keys/trusted-keys/trusted_tpm2.c
->+++ b/security/keys/trusted-keys/trusted_tpm2.c
->@@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> 	}
->
-> 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
->+	if (blob_len < 0)
->+		rc = blob_len;
->
-> out:
-> 	tpm_buf_destroy(&sized);
-> 	tpm_buf_destroy(&buf);
->
->-	if (rc > 0) {
->-		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
->-			rc = -EINVAL;
->-		else
->-			rc = -EPERM;
->-	}
->-	if (blob_len < 0)
->-		rc = blob_len;
->-	else
->+	if (!rc)
-> 		payload->blob_len = blob_len;
->
-> out_put:
-> 	tpm_put_ops(chip);
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 		kfree(blob);
-> 	tpm_buf_destroy(&buf);
->
->-	if (rc > 0)
->-		rc = -EPERM;
->-
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> 	tpm_buf_fill_hmac_session(chip, &buf);
-> 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
->-	if (rc > 0)
->-		rc = -EPERM;
->
-> 	if (!rc) {
-> 		data_len = be16_to_cpup(
->@@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->
-> out:
-> 	tpm_buf_destroy(&buf);
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->
-> out:
-> 	tpm_put_ops(chip);
->-
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->-- 
->2.39.5
->
->
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-J.
+are available in the Git repository at:
 
--- 
-Web [  Sleep?  Isn't that some inferior replacement for caffeine?  ]
-site: https:// [                                          ]      Made by
-www.earth.li/~noodles/  [                      ]         HuggieTag 0.0.24
+  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-shm-register-fix-for-v6.17
+
+for you to fetch changes up to d5cf5b37064b1699d946e8b7ab4ac7d7d101814c:
+
+  tee: fix register_shm_helper() (2025-09-22 08:47:00 +0200)
+
+----------------------------------------------------------------
+TEE fix2 for v6.17
+
+Fixing incorrect error handling for a call to iov_iter_extract_pages().
+
+----------------------------------------------------------------
+Jens Wiklander (1):
+      tee: fix register_shm_helper()
+
+ drivers/tee/tee_shm.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
