@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-829849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74C2B980B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42934B980C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18D64C2C73
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:06:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A012A3BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A4121B192;
-	Wed, 24 Sep 2025 02:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621F226CFE;
+	Wed, 24 Sep 2025 02:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7NFvb7/"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiJlzNFd"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECE115C0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC4F221290
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758679604; cv=none; b=TOPhCnu+SuWAIWQK1aRP6Mk8BZ/ueB7l33nXXapBLQ9KGxDSCpZXkTuctpoamMCg0jUKNUYWDHfg0kxZzoEUtD8yP5cr95zVUW/0p+WfL/Qi3NfosMvOK6sojc+Ki9KRlCoWNu1MINrm6N9kjpM+5z2PaYMlEAgCp3aCEoW+Vi4=
+	t=1758679607; cv=none; b=U4L4nkhyzqb7nN+HDpO5lhG6USw19tiJHLLmy7sKyP5nKDSh1zYzM8gPlw1nfeHBqpDFPv+tmkonT907NkiBj6DKU+P/vng/dyaZg2t79w+KfWMFvSNxxt2RVLpRQlf5P/sM2CCBu8Olj1rdppk3pheJHQooB+9cp2tCFeVllAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758679604; c=relaxed/simple;
-	bh=zKlZGWoOmkq/pBFpjZDZhK0vM9ul0Y8n1dGY0HTd8EM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bpP3x1Ew1eliv7Zo1snhli47g/pFO48K3KaFTRuVhubXvxB7K5QlYHxDSdrDr29Y9U14KCrFBwHF+MUTDoWNrKBIAjxp8RmFbCaWYLHP1OIypRl0BFAx6IE7bMHHr2vGc8J+8dylMYdToGaDw86+ALxemEjekLBF1hg7pXQTIQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7NFvb7/; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1758679607; c=relaxed/simple;
+	bh=SJbHWlbvJA/01zIZ7Y6v2IHBI9WiHdTgUa7T2tMLDKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ft4FitmEwU+8kyC9t/Ebcan4BoWOKN/g00k2R5NnRR0fA3Az7z7Tenb1hVUm6Djhn+I7tdnFxqKkftouj4zTmS3+gxC0+/qk8aVb6h2Fq3mfacMAkWpzTreGogjDWRtv7Z9ucUEsats1l2FS/b43ntFfdKPEnM4H5FxCPZ7bDpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiJlzNFd; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4c1fc383eeso4195500a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:06:43 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f3405c38aso2631407b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758679602; x=1759284402; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTpEMsMEIs3fjA8nsBcCzWer07tvcAO2S5Gxt6Xbj7g=;
-        b=H7NFvb7/twYqyOncBE0BVVPwxw6fjLRta8iNaSk9Hm+QyB5LR8O8TLPwzPYa4Wgn1A
-         PgActhJGw1mgTHUeDlNiGtRYAZx7tiGnEl1F8VMhCbNrzrapXFuqkrQ6Fd1ycM2XXmM7
-         JAGSv9DK0vQYo6eTzTZ69iadX6qmgSRqprb5rFAPRs9XiG3l6W6fGE7hUeSWTg/bqHWq
-         5BvYH0Z7kFqMjv6XWvuCqcU/HSjqPvjxbG9bG8MkvQ0XoK6+sFDY7XbiRx6IrNGu/HjW
-         NJ9DtgaMmZjagePBwh9zzk1JRxPqwmqorNRd5Sw+QdBxeCz5Iv/s6MSBLRv12xzNrOgN
-         JKkQ==
+        d=gmail.com; s=20230601; t=1758679605; x=1759284405; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dwTsINYgLAubnrIc+zvaDxzMOPdaYgdoD6PMu3OyE78=;
+        b=iiJlzNFd2QsQmb/jor3WwzljFOU87pfqPEsmInV/maWE06nzxORVxnpD/tKKE8cj8T
+         2azvzeax6Z/E+r6Le8SvUF51WznvOTSXPKAtxXX5rdGfIw5zfeSmIjqf+iJ4NyfEu8sk
+         OUqTJa0fv2UxK0PFNGcqdNM8dZpg9F/nSdYJscQrPbXAfswyhjiCeOyf2OIJpTe+M4Om
+         hrK31jY55ejDqgnimzMJZVfNlj6i+Toz5OO5Nwm54pmo17I1LZ3GEWiPLAUDlG0Yth16
+         CGYxiJVuRMSK5jlBjw1BL6qeqBo7duJgpaNJRCatrRkmk7ueyVfhVSuFapNfxUkoUw2Z
+         1L7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758679602; x=1759284402;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTpEMsMEIs3fjA8nsBcCzWer07tvcAO2S5Gxt6Xbj7g=;
-        b=vVzKHBXtQugiM7GAhQfLShdDv8A2p4Hfm1HThWcmrSJjdEVExTtKAmL8HP6DmeN8O5
-         1S0w14rFkF+vVqZBeGGMFIAt54Z484UfGBep7hcFgysjX/G3uizdpYTdH8JuX0sREA8w
-         n6akFKA92+PInYWT+8Ok2K0OLSQVslATKQKNhFxWTKwIXrQgQrFqJkJ0Zr8+2UhSMjZ+
-         /27VL0Iy3CCX+IAADdreMeTkDL7qJW4/oUOZM6hPjPbY7gp5I2eTGL3ISELdGOa9ZnBP
-         CyEeTDyBur9+GEDIqdyF/AXsKxi7uNB5Hka9xdPhT2DokDmZQ58LvTrpJlweONDpQthE
-         MYtg==
-X-Gm-Message-State: AOJu0YzINhLfgL87XiVlE6TNJFZdqoo/Y7RX5L2h9+gnOoS6FrDJUlBh
-	3oIScdcSLYE2e7YJMoa08aTDLfkaH75Cgf0TTIqhCwzVrJFg6gHhcttx
-X-Gm-Gg: ASbGnctfej+HqFnSQT/EtBQKSDwUBo2Ake3Ockk7oQpx326N22JM4ZdBp1qqd+zWqmC
-	kAV8ijdfwlp7TOL3yq2Ue42Bzt9/pwyeh4+udAy58Yln1HUz7cGKUZgouNBTWaLW3rxIG5Pj0sF
-	pBMqy5jpzpfl71pDK1QE+HxfxThCylA/Lw8+g0irnStluRNGJUpYLEmbIGtAbK/9cvNdJLYppXU
-	PMSjZKG5VgGjznfI2C462woc++Abw0k5+dgfVBTjU04wIrxRjJGdO/Cru6kPYrG8cPEaaPbxTBg
-	AIvnAeoYiCjsIs0f77acH+xWFhbI/FuLee2to4ackym4ouNDQZ+trSqMtipptKNUkd4TAFgnAts
-	NzcNG1iMl3WY3cmXh+7i/xw==
-X-Google-Smtp-Source: AGHT+IF+tyYKZIXuXEet4Qn27ecJRbXmLmmKIAg+V0vsKXZxS07Fv8voBpsRFqNeRMVZK0GpM0AM8w==
-X-Received: by 2002:a17:90b:2e8d:b0:32e:d015:777b with SMTP id 98e67ed59e1d1-332a96fd52fmr5444528a91.18.1758679602327;
-        Tue, 23 Sep 2025 19:06:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758679605; x=1759284405;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dwTsINYgLAubnrIc+zvaDxzMOPdaYgdoD6PMu3OyE78=;
+        b=SSCZ6vBISHPy8S0cuLRustmuFJDJJ7NSlqa206z5xPt8MP4grIxQ1l2OOubCA0nhBn
+         b+YGrPlPfBNkbvGMXfhleoY9kLtXbAfdjG2sAbkUSuxql35jYpk3sxb+0y06Gstg4S9b
+         hsAfxBjir6QLBsVgU2m/XHYpDWZbxfPL56/UAF3ApSzPz/bbQ6Zh6hibUG2nceIJlHGi
+         MrGn8DoPAE58XlfnICV3vwOmtst/rbkQYpTUsnIc5XNEMM3kNqr5DfQDeM+/NWRqj7uS
+         DhMy3V2qedSImivhrcs6bivkNGg0B02zgjsBfaWfUGAhcDpW4aKYUNWRT1PTDtI6EXB4
+         Z79g==
+X-Gm-Message-State: AOJu0YwD13O71UErZtxCtyZOkuyLQvqGTSpvxWJUAHm8VC1jKfY9+Olp
+	HMlmAEGhz3C4gGlgLh56MyywceiqzfnQhLgjU/yLX1+Gx0wJgy+gb1oF
+X-Gm-Gg: ASbGncsbVDCVu6FwzvLRNVy4OXSQKj1TFejw22UrP8TmQ/m6mK693XJOFMDQ/cmSWEz
+	se8wA0c7uDsrXK0kHYcsE5GFPwjjmk3K9nFqCMndYtAfAAoMnTdcjjt6dWTH28d8reXBTmppVQ5
+	x7QCsBcE54sZ/qEhKIOK0a2GwnuQSa1Z4xqrCPNFRaNo/H9M7WN7Nd9KlHUyynZxUBgo2e8tZNt
+	GjjQLjt6KcKcEEwtgqAJFdpl6RFNxiG0tkakUhl3ZehIjingyjq6rqPn78gMg0tVP+V2H0ahynM
+	kLHMe+M3PBLZxudkGu7ORIfryq8JYnM6KPFULf4JUtEfOZKEiZBzBIlEdj3KVcZJRGGejXCgm2j
+	CLAMFOwaMEtfZQrAFxvJJ5zWBC4OOPp01
+X-Google-Smtp-Source: AGHT+IGkf78YC2sKEM7cbsmrqX1hFpvzRBYNzQq7EPVRv+Rq2UBgzLYX+YUWp3EP4vlgaXWZwiW4JQ==
+X-Received: by 2002:a05:6a20:3c90:b0:23d:ab68:1b7c with SMTP id adf61e73a8af0-2cff9a39f41mr6933117637.46.1758679605150;
+        Tue, 23 Sep 2025 19:06:45 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bd90327sm542825a91.3.2025.09.23.19.06.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77dbc8e7cc4sm15316561b3a.29.2025.09.23.19.06.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 23 Sep 2025 19:06:41 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 57CDA4206928; Wed, 24 Sep 2025 09:06:39 +0700 (WIB)
+	id 7AD49424C03C; Wed, 24 Sep 2025 09:06:39 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -84,49 +86,50 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Kees Cook <kees@kernel.org>,
 	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next v2 0/3] dns_resolver docs formatting cleanup
-Date: Wed, 24 Sep 2025 09:06:22 +0700
-Message-ID: <20250924020626.17073-1-bagasdotme@gmail.com>
+Subject: [PATCH net-next v2 1/3] net: dns_resolver: Use reST bullet list for features list
+Date: Wed, 24 Sep 2025 09:06:23 +0700
+Message-ID: <20250924020626.17073-2-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250924020626.17073-1-bagasdotme@gmail.com>
+References: <20250924020626.17073-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1013; i=bagasdotme@gmail.com; h=from:subject; bh=zKlZGWoOmkq/pBFpjZDZhK0vM9ul0Y8n1dGY0HTd8EM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmXAxPEa4J6WdkPl4VO3MDBwF/7Lj3S5qnLnWbFBwG9G +60W7p0lLIwiHExyIopskxK5Gs6vctI5EL7WkeYOaxMIEMYuDgFYCKzDRn+WWV5O6XO2La9yjnL 5OLPG/dcbRJC3572XSrc6906Xy6ghZFhzyXe6aeEl6+X0jaf1Nqa2XS8eqrX2ulPtQ3dwj5uZOb iAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1267; i=bagasdotme@gmail.com; h=from:subject; bh=SJbHWlbvJA/01zIZ7Y6v2IHBI9WiHdTgUa7T2tMLDKg=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmXA9N6vq/JfJ2+ySTG72ZEsG6Q87+q2xOCluT8TX5nc eMiq7BLRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACby/xvDf8+9L7eVcr/33af5 TGhFt+LhmKVCCvtSrnu/erI2ff7huD+MDLf2rblYmXD1TNSJVTK7H31rWuMmlHZli9q7N6L7F/k KmzEBAA==
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Features overview list uses an asterisk in parentheses (``(*)``)
+as bullet list marker, which isn't supported by Sphinx as proper
+bullet. Replace it with just asterisk.
 
-Here are reST cleanups for DNS Resolver Module documentation. The shortlog
-below should be self-explanatory.
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/networking/dns_resolver.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Enjoy!
-
-netdev maintainers: Given the tight timeline before 6.17 release is cut
-next week, is it still feasible to merge this series to net-next (targeting
-6.18) before it is closed, or should I repost it once net-next reopens for
-6.19?
-
-Changes since v1 [1]:
-
-  * Apply proofreading suggestions (Simon, [2/3])
-  * Collect review tags (Simon)
-
-[1]: https://lore.kernel.org/linux-doc/20250922095647.38390-2-bagasdotme@gmail.com/
-
-Bagas Sanjaya (3):
-  net: dns_resolver: Use reST bullet list for features list
-  net: dns_resolver: Move dns_query() explanation out of code block
-  net: dns_resolver: Fix request-key cross-reference
-
- Documentation/networking/dns_resolver.rst | 52 +++++++++++------------
- 1 file changed, 25 insertions(+), 27 deletions(-)
-
-
-base-commit: 312e6f7676e63bbb9b81e5c68e580a9f776cc6f0
+diff --git a/Documentation/networking/dns_resolver.rst b/Documentation/networking/dns_resolver.rst
+index c0364f7070af84..5cec37bedf9950 100644
+--- a/Documentation/networking/dns_resolver.rst
++++ b/Documentation/networking/dns_resolver.rst
+@@ -25,11 +25,11 @@ These routines must be supported by userspace tools dns.upcall, cifs.upcall and
+ request-key.  It is under development and does not yet provide the full feature
+ set.  The features it does support include:
+ 
+- (*) Implements the dns_resolver key_type to contact userspace.
++ * Implements the dns_resolver key_type to contact userspace.
+ 
+ It does not yet support the following AFS features:
+ 
+- (*) Dns query support for AFSDB resource record.
++ * DNS query support for AFSDB resource record.
+ 
+ This code is extracted from the CIFS filesystem.
+ 
 -- 
 An old man doll... just what I always wanted! - Clara
 
