@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-831198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4F7B9BD47
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:17:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8789EB9BD5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A2938088A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:17:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056807A7970
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B4524A044;
-	Wed, 24 Sep 2025 20:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4F9323F75;
+	Wed, 24 Sep 2025 20:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TdtAsioL"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ObPxcJur"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE002153E7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30118327A1A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758745052; cv=none; b=AJpa0Z1QYEbIUMANyW22ZnJB7RiPxZ2MNaMNRTepKLrhtOFdtV4b6NQQ6mOo/Tl9hSKodHiMleFgsEKbIkl2LZJLLTOuAJPlq5wnq6OURu0+6ciX85fQf4AV9SHv3FP9hE45dwAgDMvOcYDn+N5ZRwL5j9g/Lq2NI9TZYzcprF8=
+	t=1758745113; cv=none; b=Ep+8lVwsViKo97uaKYcOTEhFMp5B9P7sQRIA2ybMjAcHP1z5sFb2rGrcpZOCd9Ar5dbLJpVZFa3sD1yZbLw99ir9jaP0xBjSWryNDs6AUcwC4mC+sSTh9w5qdsykxtsTyyL7yDcDvbWKBPjNf6FI0LMTiMy4d+uxIZi1XSZlZCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758745052; c=relaxed/simple;
-	bh=11LSxohVQLtgYPqV705IwGyhWZ5zTC5qes4PC/XU5NE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dktzVDxqoyiQUEwwhoABibJa3cZwYD0cXJwWwBIJsHNVwQl8MszYycdRLnv6Q/ZLvR/ntlFZ54ySggmlR4kZpUubzjk8HFSrOF7lO75SjLRePswPj4kvEe1c35qNwEaBWA4h0Iizy53ktbLnaqEGlSS4PujvZ2iDJg3EBmWtYZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TdtAsioL; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62f0702ef0dso2638457a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1758745048; x=1759349848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KxL1IkdhPFqi7CXmsjucqEYlGYsVkwBpOGWKm6mx5yk=;
-        b=TdtAsioLFIvvZ4aD55iuZbLfLlQZ6W4tQTsSymUPQM4a8e5z9/LCH3w6UmgjE87dL/
-         7TVp+wsHsEf72FTTaQY699p2GGlsyZWXbUjGVEIJy7wnREtnDnyWor9BNLdfIr5cwWZE
-         1DfNfOIKzbER8eiWaRJpg9l9kAtb7/rcVvXms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758745048; x=1759349848;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KxL1IkdhPFqi7CXmsjucqEYlGYsVkwBpOGWKm6mx5yk=;
-        b=fNIZjNybbIuVb9Uu5s3cGS0iiA3UCbMyIMOk7WYszRSsdBnjYtWrPUm9hA//G8DkFy
-         e5+dm6uBlDhUa3EKIQ5gZgtgvt5YJpqRwVTLuFo6IFD26+UxjgSBxbi2JVV20O0Ta+Z/
-         GGd3JXTtYEkFQhemSsMoxJgaRay8QlTwL9HIUNR45KyJkW6Bf+Kn/W6JI2CcqHDjqJyz
-         RG4CrZ5Q1udPIiATFYFJtww0C9498782aVzf+MFKF964VdHpWEkaQPYPiVjGwzSNpxHp
-         rJbmvvrzNvCcij8nSbrDVbQkqTQ72nsOWKeXoVDPj8wQlqC70n0h6AhUyOiBZM4AQTA7
-         ASAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0X52iGqH0rE+hrKUeo//yF2Rplg6Umncfo4YnMjFtaTsOBuaND5uFCcW8sjEqcxnoKYAEbxMni5uwqhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO97UeQjZL431ZVrZnIIrP7H2KmWmVoh9slebhJA+Le4i+1+5B
-	OEc0Ww08n4KwXcUtKbfKXtycWIcvDQ4Lh+P0LL3bWKI5QOrH5mH72iOzeLtGfwFs6yctGpPT1ZY
-	JYs+y7oA=
-X-Gm-Gg: ASbGncufniVWcIjiqHcXlJL4FjNCNEtDS7+u+4RdAW4dSMTzAZbOyFcglVgJ+6mWZ1j
-	909liSJtmYPXA2lwu11LMdznb0LDAiVv2yezV4Tcu41l60tgw+lRAKtiNOhzhgAuYpujaoFE/gN
-	pdiQH9nuSFci8S8RJdwGX5HyOy6SHSjJwedYpi4AYRk4wmXys6A5qV+NPhgNViOSutoa8sGHoZE
-	zbNyTx8aH6gpQ9HUZd1T4GD0NSqmav1KI3GTOIO9q3sJZZdGAZlyxFM8842K88LGIjKhii6Euoi
-	7PMPd8X8LcruJ9Kjjblqb2RfExDTwfI83MOjhphzRJI/+vcy+UrPwI2/aRlPrhQSp40GOIVex6O
-	YtGclu8z2dtQ9QWTE+1n7jxD4LpOxjuACSdj//qte7fMiTug3swMv3IfzhnNQNsjmkf206VNW
-X-Google-Smtp-Source: AGHT+IGfy9L4S0QNYR+NkJ0eo3K/3QF5DiFihWnTH/5BA4woL6xC3Zr5XK3z26aOpieaoqy5sBbiGg==
-X-Received: by 2002:a17:906:608:b0:b33:821f:156e with SMTP id a640c23a62f3a-b35498c1749mr10064866b.12.1758745048016;
-        Wed, 24 Sep 2025 13:17:28 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f6904sm8267666b.66.2025.09.24.13.17.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 13:17:27 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b07e3a77b72so225307066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4zgloVXm/9qOnyZLoXMB3wQm2ZzGmADPFDSEAW7Eog5j29QjZaqBtUllNjQd0aZV7g1yxj4CoAymaxDU=@vger.kernel.org
-X-Received: by 2002:a17:907:7e8e:b0:b07:d815:296a with SMTP id
- a640c23a62f3a-b354ae9a113mr13555466b.12.1758745046911; Wed, 24 Sep 2025
- 13:17:26 -0700 (PDT)
+	s=arc-20240116; t=1758745113; c=relaxed/simple;
+	bh=RGD3QOePiicKNdREN70yoNQJezzvYWsuaApnVvvYuT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EtERvBevJomvnnJMIH4QHj8aNKgpb+/qJP8hnbZxFQ47wXlO7A65wuIAUFuxvfOmtUIWHQhX3zAkJG/mN10bJDoK7Nb2RO12Vhmq9NQ/qs9ccPxdADU7zQS2PCX3spZu/KMmcK/MmVje7CHbq5p38wKq/STspdGG7j9O3gRgJDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ObPxcJur; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OGfvQ2015409;
+	Wed, 24 Sep 2025 20:17:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=G6hE0q
+	hYH+SLfXrlJasCg+Z+QZknl4cpzc4X+DNBpPs=; b=ObPxcJurb0aPYGP1nfvLNI
+	aoJQcvqdKtagHBtPNZH6OmwF2NQsPx+A1TZy0GUtwf3iRwX1t9kMI1109GK+G7Ar
+	flXO4Ahv1CssU8mF+IGQRTA2YjaUE9Qo1nbOi0nDhVea0bswblJe+KULz3827V68
+	hV+FkuXAcTs6bveqJgOVhnL7ksTpl+Hk4FSRFvHxL6jhSL9JcLeHPtnHPQGsRzCj
+	rlhcnnrteKIXbqGlrhLeVGlIvsaT2qgsg7QwSd/g3NmnMy66cMbAB/q3uaXZpmhe
+	AfBPVFirC0K/BSCtWf2YzLBJ+769yskkgUxVSNSN/3DPlmz/dzPqG1jeDhzSImsw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ksc1vra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:17:41 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58OKG7s7006450;
+	Wed, 24 Sep 2025 20:17:41 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ksc1vr3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:17:41 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OHONJg013329;
+	Wed, 24 Sep 2025 20:17:40 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49cj349jce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:17:39 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OKHcAi43647484
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 20:17:38 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EFE5A20040;
+	Wed, 24 Sep 2025 20:17:37 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2CE5720043;
+	Wed, 24 Sep 2025 20:17:31 +0000 (GMT)
+Received: from [9.61.52.22] (unknown [9.61.52.22])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Sep 2025 20:17:30 +0000 (GMT)
+Message-ID: <409bde01-720b-4602-bde9-a04262ea2c73@linux.ibm.com>
+Date: Thu, 25 Sep 2025 01:47:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924192641.850903-1-ebiggers@kernel.org> <CAHk-=wieFY6__aPLEz_2mv-GG6-Utw9NQOLDzi4TF93xFAnCoQ@mail.gmail.com>
- <20250924201347.GA4511@quark>
-In-Reply-To: <20250924201347.GA4511@quark>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Sep 2025 13:17:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjk5rMWnVt6K_3BSQ=_uEKNaYBs=FZH_fMLKqp9E4G8kg@mail.gmail.com>
-X-Gm-Features: AS18NWB-TOLqbEIGYHOdjx4mWxKWbwYfZ2s88AY8lnF0tIKXxGgu95ZpuJakE_Y
-Message-ID: <CAHk-=wjk5rMWnVt6K_3BSQ=_uEKNaYBs=FZH_fMLKqp9E4G8kg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/19] sched/fair: Use rq->nohz_tick_stopped in
+ update_nohz_stats()
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20250904041516.3046-1-kprateek.nayak@amd.com>
+ <20250904041516.3046-4-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250904041516.3046-4-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NWOjTwsZbg6f3Net1tTt7yI6GtgkkWPa
+X-Proofpoint-GUID: lYJwCxw0Pnbs3QzY-RwCfqJhsOVr-aS0
+X-Authority-Analysis: v=2.4 cv=SdH3duRu c=1 sm=1 tr=0 ts=68d451e5 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=zd2uoN0lAAAA:8 a=e0ugSSi9uvxMxiJAq8MA:9
+ a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX8pJPcNjMwozl
+ wv3+m8wznyHBww6UQfUEnWb9ZYeG8Hp2t9emf56npkNuZxQ83oJjDMbyaqM6hC1fTjK0zo/cVTl
+ m1P60RsOO37LnFBOoSJhqSCL9sHFRod2YjS34CObTCLT5d1j7L3GI6zeztxWEiKQYStExfCHfnl
+ Xu4S9jh+j5KIkol55CV0VaVqzE4HO5UKFSP7U/asZt641EQWclI/iD69aa4Af7oySCw/kSvYJX/
+ HaPzc7TuV6yZ/Jbe9kMb8GPtLh1fXVkOBFDXKrWUgtARC/xMzaUcO5uV6+b6cyXtv8D+uK86g2n
+ TbfW57esq7WAdWf14l664bIWhXBLzRNNsv1JRAYeGRQAkzeqQZZxVRa3JI9MCkSnCSDv60IDtGP
+ RdBmxHIb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_06,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
 
-On Wed, 24 Sept 2025 at 13:13, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> I do think the idea of trying to re-pack the structure as part of a bug
-> fix is a bit misguided, though.
 
-Well, now it's done, so let's not change it even *more*, when a
-one-liner should fix it.
 
-I do agree that clearly the original fix was clearly buggy, but unless
-it's reverted entirely I'd rather go for "minimal one-liner fix on top
-of buggy fix", particularly since the end result is then better...
+On 9/4/25 9:44 AM, K Prateek Nayak wrote:
+> "rq->nohz_tick_stopped" always follows the state of CPU on
+> "nohz.idle_cpus_mask". Use the local rq indicator instead of checking
+> for the CPU on the "idle_cpus_mask".
+> 
+> Use READ_ONCE() and WRITE_ONCE() for "rq->nohz_tick_stopped" to ensure
+> update_nohz_stats() always sees the latest value.
+> 
 
-             Linus
+Is this ever called by remote CPU? If not, is READ/WRITE ONCE is necessary?
+
+> This cleanup is necessary to avoid the number of references to the
+> global "nohz.idle_cpus_mask" to ease the transition to a distributed
+> nohz idle tracking strategy.
+> 
+> No functional changes intended.
+> 
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
 
