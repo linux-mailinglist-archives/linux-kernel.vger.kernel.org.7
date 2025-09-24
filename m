@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-829960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC417B98551
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052DCB98554
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D284818953CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:03:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072F819C3D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DD723D7EE;
-	Wed, 24 Sep 2025 06:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DEB243370;
+	Wed, 24 Sep 2025 06:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g+bee02u"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ma5q2+q1"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE231D6DB5
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBBB23D7C3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758693763; cv=none; b=F9v4WSjlDUiOKb/i/rmwQMG0AQjtslE1iAf5f3ryk7TMpcxWtBG593hgU7VNplYl2eKFuMnmP1a3MSqvdL9ywj3gZnqf06fS0vjMuZUotZyWNJCQfjcyn7vlW3TqnqJU4xGPPg17IcBvDho54cWlW/i5wQjA2jYteq6Vu03Cu/k=
+	t=1758693765; cv=none; b=WBZSjwhoSJDAzdTDA4OKCb1c1WVq05B5mKs+1lAXctUbiE0kHD30VtgZBHESkEFxAKfHCN+UqtVes1TMD+89wYpWcGn/axLB3/ozzUTnFJDaGux6X8M9T+n7MM28XZwmMXPZ51FYQ9gzWedp89k9gJz3WreBnX7yMAq/Z9CEHrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758693763; c=relaxed/simple;
-	bh=Vt9MfymYDQwEvit0KVgc2ClANbmnauv0q5tPcOx97N8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=sF4gtghOLnvbe1id5jsrXwhaeUK94HHD8dKE2ucIvnwDpZd7EQ3lqeC7lVXsVRtnc6Ska7khOWrlaK2StdkNmHnNf/hHgP8APD1ikG36FjIcluWlZOBvRMIRltvScN68h+QaF8hv3vEu0/EBBiIWzo7zE6Izg47nEqPXhMg+3QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g+bee02u; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1758693765; c=relaxed/simple;
+	bh=Ozua6/BW5UuFbpCg0FHDmGoWQdaJSjFMqj1wv2uvy3U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=NChd4/vWP3M/qpxvaampzObK/mX3JeSvJdETAnCYiHa3wPIkdcke0hIoupVqaHNZ7OB/L9rJ4w992Y+EcLv3EppTsjo0MiLnsCKNGjKasRupUSXGeyXrmTD8oJSlKwzTh/RDdurKyphO4sLI7GZMPimH9NR4vidQIMxLyn2yyTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ma5q2+q1; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso9472737a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:02:42 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458345f5dso93695375ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758693762; x=1759298562; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XD1WIzYiMatnlzgDrUYCZrBYkmo/k2ltaCjRnSuYXHQ=;
-        b=g+bee02uuZQwV13yywMc7eeb2pGv32IMXeB9DNbFlUprEFJBN41IniEXPV3Jhn0uIY
-         xbwlCkeYi29m8fLgrNYNYpY0cU4yQHNH63ZMtZtd4ugAhInRFIS7ygCcT5R/vozfLrPM
-         Ny/SQ4c7h/LYr+56JlcfaZgx2fTNV9aBeGl9p3l8aQGyg9Qf8GdgfzOcwBEqSr2KSCIt
-         OhiuhYNUR3HyynsAZalDxcTzIf39kg4C+CLYPkgpXECr7iqhMtZs+bvqVkH00GbA8t1J
-         7HVhHYlXlTz1BLxhLyUEARQQMJkHKtpRwenVskcUYB79nykpO+K4ovolHESreoA+1lnO
-         3RjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758693762; x=1759298562;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1758693764; x=1759298564; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XD1WIzYiMatnlzgDrUYCZrBYkmo/k2ltaCjRnSuYXHQ=;
-        b=PSRK3qt4aIwNxmdx3EQJp7P5eNkHcvd9XZFGdz/JVPRUpeOXwxlsA2Xuto8JkzTBSA
-         t/kMgw5IcGpxt7dQ22VcviaVTvLALDY1eDIcqRtSq5d4hxQ6tM5K7WYI4tAMwuEHyIi4
-         sJPQ8pRV7NTUzitP/fvnkO010EZXBKnDT5YMHNpRNZwk+MP+9ZtY10Dtev6OODuJlGx5
-         f4nndSEtgurbYU2dCAvLM/RcC87+Y7TjNVFF8U2c6bhqCw9HG4PkY1goR/5Xm4UbHz4k
-         9D3rNcfAlf3IIq8dUrNfmIraeZq7uTxbxuPGEIsI6giEmWwrNRgwyyqsCLNHeqrJ5P+G
-         CL5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXLvu4AsZf6mwrBTb5wtsIHHr1bFUs5FJf+JAlQXhT7DjNiJ/mWaSxJQoSeQx3fYA0KNmgmXq/MUnwsYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWHtqKaaGR2OGlMDbRjyayst0P56f3ieN5b9eXHaU/Dco+svl2
-	gWR/P4SLCpHkPLthXsjPgyg9KDlb/Lg/uQLMXqDodhWBlBkRn6pvljEhTOBIdWcB0CrLogs3m5d
-	PIKhnFZuUyQ==
-X-Google-Smtp-Source: AGHT+IFL4L1MIYQhQl9in5iuhGuEVE1aJyAQn07XgjJnmT2SlWg3JCnZlvrYcGnXKswwwax36O9bLO/ZdUsV
-X-Received: from pjbfr17.prod.google.com ([2002:a17:90a:e2d1:b0:32b:65c6:661a])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2543:b0:32e:7bbc:bf13
- with SMTP id 98e67ed59e1d1-332a96f9bd1mr5398943a91.34.1758693761729; Tue, 23
- Sep 2025 23:02:41 -0700 (PDT)
-Date: Tue, 23 Sep 2025 23:02:19 -0700
+        bh=7Vk9l4AUq7CTqMThMt9/9gMzCRxcRdsa0lSeQ8Ld27k=;
+        b=Ma5q2+q1I2VV0IneknMMNeO/oNJLHerf6k2RTYtJSra5c0xj+3IWUOtB86avA7Y2gC
+         k9JQ2RdYsWGHoFDGRaN/C0rzfhzfmH4ldJt2L2vCS76QsfnS25811TEs+HcfVr/msDCb
+         r1VwOtlKwUfKA47GzVoKkCKqcn52EyPoOK4hGOzUBtGqGF9xu9U9vcF6aoPReEcVUvZT
+         kDKHTQyLM2Tz11mljIVwX5i3b0v8wylkqJUBABRTWGO2U7SO9Rir/McU2ya0nqQPWHxb
+         h27hpBxCmTfNhpwjvgZUDQgru9zqCZDKaV0x1gd+9gDxfKYlucCu/3KH+uM9lKRx0UMW
+         ftZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758693764; x=1759298564;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Vk9l4AUq7CTqMThMt9/9gMzCRxcRdsa0lSeQ8Ld27k=;
+        b=ea1K4HMDdYTunp8QpKzxPeWRKAsL0ZfqLT/dNY9h3xTUN7yjkkEM6VZi9l0LYDNHTv
+         bfsURKEejVwdsMkInj1u7G9vfp6TFdbxbhEInioyOnI5hwvBLb3A4v0WuBhPSDUkOQDa
+         G4r0YCAjWy4UAKyXgnkXeOR7HScI6JZ/s9WpzIBb+t78Bo4+ozvWenx37WO8T9cT0x1O
+         xTIFhiikLL50HNTBXoaFneSHdkih7xwtHjLAs18P3ryv5nTJSXLZzaR7u0h/qPxw+mOM
+         wx6z6Ihj6ghwp8oaEir5qxBOJFeSKlV0PtjUbwXUK0E03Gc/LWgQCC5UTHsnGhVN+Q7+
+         yiPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX33eyAKB8CSdL9jSXgq0384C5OZCCKfhE+m4an+VqVBBsOfvIfQ4v6o1M7QvPgQ21cPFbqjA3Oj7v1bVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpjV2X9yd2etAhN8xwOkak27/UYBIVP71ze/1LstJVONUlGEnM
+	ENkog6lNo71zHrDVR6Yab8G9Dy5I5i1EIKpgMV3HPedxTVwVMxwIejB4R2mxlXL6CsMWSsdmBbb
+	cPEJ2DlrdXQ==
+X-Google-Smtp-Source: AGHT+IFlWiauUk8EbSxn3sXF/UaKrU6UOsxiB/XsWCah+2/yHZXJiweDcFuAxLl//qhqqMxn/mWbHmYILg6j
+X-Received: from plsl15.prod.google.com ([2002:a17:903:244f:b0:24b:1657:c088])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f547:b0:269:ae5a:e32b
+ with SMTP id d9443c01a7336-27cc18532ecmr62772295ad.13.1758693763653; Tue, 23
+ Sep 2025 23:02:43 -0700 (PDT)
+Date: Tue, 23 Sep 2025 23:02:20 -0700
+In-Reply-To: <20250924060229.375718-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250924060229.375718-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250924060229.375718-1-irogers@google.com>
-Subject: [PATCH v1 00/10] perf vendor events intel update
+Message-ID: <20250924060229.375718-2-irogers@google.com>
+Subject: [PATCH v1 01/10] perf vendor events intel: Update alderlake events to v1.34
 From: Ian Rogers <irogers@google.com>
 To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -83,69 +86,85 @@ To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.or
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Update events and some metrics to the latest perfmon versions:
- - alderlake 1.34
- - arrowlake 1.13
- - emeraldrapids 1.20
- - grandridge 1.10
- - graniterapids 1.15
- - lunarlake 1.18
- - meteorlake 1.17
- - sapphirerapids 1.35
- - sierraforest 1.12
+Update alderlake events to v1.34 released in:
+https://github.com/intel/perfmon/commit/80b773ebcf601b0e48e31f2184ffef933c4d842e
 
-Ian Rogers (10):
-  perf vendor events intel: Update alderlake events to v1.34
-  perf vendor events intel: Update arrowlake events to v1.13
-  perf vendor events intel: Update emeraldrapids events to v1.20
-  perf vendor events intel: Update grandridge events to v1.10
-  perf vendor events intel: Update graniterapids events to v1.15
-  perf vendor events intel: Update lunarlake events to v1.18
-  perf vendor events intel: Update meteorlake events to v1.17
-  perf vendor events intel: Update pantherlake events to v1.00
-  perf vendor events intel: Update sapphirerapids events to v1.35
-  perf vendor events intel: Update sierraforest events to v1.12
+Event json automatically generated by:
+https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
 
- .../pmu-events/arch/x86/alderlake/cache.json  |   36 +
- .../pmu-events/arch/x86/arrowlake/cache.json  |   46 +-
- .../pmu-events/arch/x86/arrowlake/memory.json |    6 +-
- .../pmu-events/arch/x86/arrowlake/other.json  |    2 +-
- .../arch/x86/emeraldrapids/cache.json         |   63 +
- .../arch/x86/emeraldrapids/emr-metrics.json   |   12 +
- .../arch/x86/emeraldrapids/uncore-cache.json  |   11 +
- .../arch/x86/emeraldrapids/uncore-memory.json |   22 +
- .../arch/x86/emeraldrapids/uncore-power.json  |    2 -
- .../pmu-events/arch/x86/grandridge/cache.json |   20 +-
- .../graniterapids/uncore-interconnect.json    |   10 +-
- .../arch/x86/graniterapids/uncore-memory.json |  112 ++
- .../pmu-events/arch/x86/lunarlake/cache.json  |   46 +-
- .../pmu-events/arch/x86/lunarlake/memory.json |    6 +-
- .../pmu-events/arch/x86/lunarlake/other.json  |    2 +-
- tools/perf/pmu-events/arch/x86/mapfile.csv    |   20 +-
- .../pmu-events/arch/x86/meteorlake/cache.json |   36 +
- .../arch/x86/pantherlake/cache.json           | 1207 ++++++++++-
- .../arch/x86/pantherlake/counter.json         |    9 +-
- .../arch/x86/pantherlake/floating-point.json  |  286 +++
- .../arch/x86/pantherlake/frontend.json        |  535 +++++
- .../arch/x86/pantherlake/memory.json          |  106 +-
- .../arch/x86/pantherlake/other.json           |   44 +
- .../arch/x86/pantherlake/pipeline.json        | 1776 ++++++++++++++++-
- .../arch/x86/pantherlake/uncore-memory.json   |   26 +
- .../arch/x86/pantherlake/virtual-memory.json  |  248 +++
- .../arch/x86/sapphirerapids/cache.json        |   63 +
- .../arch/x86/sapphirerapids/spr-metrics.json  |   12 +
- .../arch/x86/sapphirerapids/uncore-cache.json |   11 +
- .../x86/sapphirerapids/uncore-memory.json     |   22 +
- .../arch/x86/sapphirerapids/uncore-power.json |    2 -
- .../arch/x86/sierraforest/cache.json          |   61 +-
- .../x86/sierraforest/uncore-interconnect.json |   10 +-
- .../arch/x86/sierraforest/uncore-io.json      |    1 -
- .../arch/x86/sierraforest/uncore-memory.json  |  103 +-
- 35 files changed, 4712 insertions(+), 262 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/floating-point.json
- create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/other.json
- create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/uncore-memory.json
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ .../pmu-events/arch/x86/alderlake/cache.json  | 36 +++++++++++++++++++
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |  4 +--
+ 2 files changed, 38 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/pmu-events/arch/x86/alderlake/cache.json b/tools/perf/pmu-events/arch/x86/alderlake/cache.json
+index 6a56c9ad8e43..4cd535baf703 100644
+--- a/tools/perf/pmu-events/arch/x86/alderlake/cache.json
++++ b/tools/perf/pmu-events/arch/x86/alderlake/cache.json
+@@ -1062,6 +1062,30 @@
+         "UMask": "0x1",
+         "Unit": "cpu_atom"
+     },
++    {
++        "BriefDescription": "Counts writebacks of modified cachelines that hit in the L3 or were snooped from another core's caches.",
++        "Counter": "0,1,2,3",
++        "EventCode": "0x2A,0x2B",
++        "EventName": "OCR.COREWB_M.L3_HIT",
++        "MSRIndex": "0x1a6,0x1a7",
++        "MSRValue": "0x1F803C0008",
++        "PublicDescription": "Counts writebacks of modified cachelines that hit in the L3 or were snooped from another core's caches. Available PDIST counters: 0",
++        "SampleAfterValue": "100003",
++        "UMask": "0x1",
++        "Unit": "cpu_core"
++    },
++    {
++        "BriefDescription": "Counts writebacks of non-modified cachelines that hit in the L3 or were snooped from another core's caches.",
++        "Counter": "0,1,2,3",
++        "EventCode": "0x2A,0x2B",
++        "EventName": "OCR.COREWB_NONM.L3_HIT",
++        "MSRIndex": "0x1a6,0x1a7",
++        "MSRValue": "0x1F803C1000",
++        "PublicDescription": "Counts writebacks of non-modified cachelines that hit in the L3 or were snooped from another core's caches. Available PDIST counters: 0",
++        "SampleAfterValue": "100003",
++        "UMask": "0x1",
++        "Unit": "cpu_core"
++    },
+     {
+         "BriefDescription": "Counts demand instruction fetches and L1 instruction cache prefetches that have any type of response.",
+         "Counter": "0,1,2,3,4,5",
+@@ -1302,6 +1326,18 @@
+         "UMask": "0x1",
+         "Unit": "cpu_atom"
+     },
++    {
++        "BriefDescription": "Counts all data read, code read, RFO and ITOM requests including demands and prefetches to the core caches (L1 or L2) that hit in the L3 or were snooped from another core's caches.",
++        "Counter": "0,1,2,3",
++        "EventCode": "0x2A,0x2B",
++        "EventName": "OCR.READS_TO_CORE.L3_HIT",
++        "MSRIndex": "0x1a6,0x1a7",
++        "MSRValue": "0x1F803C4477",
++        "PublicDescription": "Counts all data read, code read, RFO and ITOM requests including demands and prefetches to the core caches (L1 or L2) that hit in the L3 or were snooped from another core's caches. Available PDIST counters: 0",
++        "SampleAfterValue": "100003",
++        "UMask": "0x1",
++        "Unit": "cpu_core"
++    },
+     {
+         "BriefDescription": "Counts L1 data cache software prefetches which include T0/T1/T2 and NTA (except PREFETCHW) that have any type of response.",
+         "Counter": "0,1,2,3,4,5",
+diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-events/arch/x86/mapfile.csv
+index d9daab4d8461..4b706599124d 100644
+--- a/tools/perf/pmu-events/arch/x86/mapfile.csv
++++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
+@@ -1,6 +1,6 @@
+ Family-model,Version,Filename,EventType
+-GenuineIntel-6-(97|9A|B7|BA|BF),v1.33,alderlake,core
+-GenuineIntel-6-BE,v1.33,alderlaken,core
++GenuineIntel-6-(97|9A|B7|BA|BF),v1.34,alderlake,core
++GenuineIntel-6-BE,v1.34,alderlaken,core
+ GenuineIntel-6-C[56],v1.12,arrowlake,core
+ GenuineIntel-6-(1C|26|27|35|36),v5,bonnell,core
+ GenuineIntel-6-(3D|47),v30,broadwell,core
 -- 
 2.51.0.534.gc79095c0ca-goog
 
