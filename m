@@ -1,148 +1,173 @@
-Return-Path: <linux-kernel+bounces-830141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517A5B98DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A632B98E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0860B161493
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF9B161820
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199B4283FF8;
-	Wed, 24 Sep 2025 08:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E579D283FF8;
+	Wed, 24 Sep 2025 08:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="cALgYdvf"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="DRwF2xRs"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3548B2F56;
-	Wed, 24 Sep 2025 08:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DFC4502F;
+	Wed, 24 Sep 2025 08:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702550; cv=none; b=YU1PPhHsPnozJn7NAGdcehiOj5CMrvnXykqrarlTdDmeJZO9N7kLRd+rT+wenTsG6g/O4ZxfAuK0XmCW/nz2c4eIzWcFLXGhzpq5mewL062y8Fse9nH8/ndamNSpNkjS77DXFTrRIPaCNQ1VmHeP/6vQPW4Oiil6suZtf7sgBMU=
+	t=1758702580; cv=none; b=iC633DRaHsz10VElmKJsTds1UYySUgAwOAqyzx1h/y/6GwM1zGEQzl3Ef6nKqzEuZtz+s9cY4hFENMVo9eulaiG0N7TUyKv0z8m8sr5Atd0e/rdNQxUB0uk9zoxu4m0Wrc8uyBCnfeDZ5jX+lcRR+pckD+7t2dJrcggqojXvCNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702550; c=relaxed/simple;
-	bh=Jfhn3x3I1dOiPLprVbdyNIwQ8Y8jbUeUt6XV1D2TV9U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jT4V+EMibJn4qqN0Cs+wWg+rtSok+Jw4C9NYls/IIl3yzSGMlhDkxiDDUbx37fFjRgDsSL2a3hKSX4p8hgnmvLIpuWHNmjn6QctbwUEUHx0aoM5hVXbNILcsY8MdQf3ekTraLdxYZ/wAoVzoGSIXok/sFIZMliGlL/VZjJ8Kj5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=cALgYdvf; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=fv65kSjXoHh5kZbIWKr7i3/NioyZJdRuwp5qAQi17S0=; t=1758702547;
-	x=1759307347; b=cALgYdvfECSSjrEvB+zc3qOGLKJ5wWon14mQ6allAcGR5nJTMn9xRdax3iaC+
-	AOr8ypr55an3mN6ltfGOKDsCShSlGTtDT7IDh+pj6xSE2UuzvHIZYeF8cs7T2E1Z65Nuh5QWBy2Vh
-	OqdCzCtDAjx6TMnZjOWv/mYq8cUYvaUJasChUPOkVA9Eb2Y+XNNXxo6skPy66ywh+Z/c4RwaOprMq
-	uKikHbUbwGtpGdOxwvjtDLt9WOF1syTKS+AWAnvpWm//oYl1oM8cHLa3yc+t9ViedjLYB8XNgc1Tq
-	CySEaNx3019GwKk/FWuXKdkXlk+ejOtBCObpyfxn0TL5SFQiSg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1v1Krw-000000002th-3piT; Wed, 24 Sep 2025 10:28:56 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1v1Krw-00000003LPw-2L5t; Wed, 24 Sep 2025 10:28:56 +0200
-Message-ID: <ec0894011cb4403f45ad8b30095cc333edc1e5e6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
- library
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-  Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
- <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,  Andreas Larsson
- <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, John Stultz
- <jstultz@google.com>,  Stephen Boyd <sboyd@kernel.org>, Shuah Khan
- <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld"
- <Jason@zx2c4.com>,  Russell King <linux@armlinux.org.uk>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Michael Ellerman	 <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy	
- <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui	 <kernel@xen0n.name>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Alexander Gordeev	 <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,  Sven Schnelle
- <svens@linux.ibm.com>, Nagarathnam Muthusamy
- <nagarathnam.muthusamy@oracle.com>, Shannon Nelson	 <sln@onemain.com>,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, Arnd Bergmann	
- <arnd@kernel.org>
-Date: Wed, 24 Sep 2025 10:28:54 +0200
-In-Reply-To: <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
-References: 
-	<20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
-	 <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de>
-	 <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de>
-	 <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de>
-	 <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1758702580; c=relaxed/simple;
+	bh=dMJayFRQXCbfy7iFRVB54b2syrkiy8nEueH3QbLILTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+j8eqgVC+QOPaPmBskXcnmHbakhJCEWoJZ25UTJN4yUp4AuZkLN808ur37V5qlUZuj/Epu1Tcj8exDxN8VE2+/wQQy/KAL603DrALtuuSWbYRAO6pB6UxAG2IrVe1kicTqZRNl9nZhec1Khc9SCmYjo2YiLqUeZubszf+tpeb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=DRwF2xRs; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=K1s/oBfOLj5oIgwltUdaNspTmj/kufa3O8CRtPGUkXY=; b=DRwF2xRsWH/dYQFn3bBeJahJaM
+	355/2JZAvH8ekwKFy9bMNLrZf5GL4hhAoodxeRmlF/BGAwvzLh6ANNSwXbUxNQ3WL2EFwJKOV6Kxl
+	yAqKANnNDidvIPWcvUy0zh3YqjOiMLW2ENu0sXZWl96BLh36kCgzC4pyTP77kn0OlS9LJLcUdDw+o
+	qolGoySAFCUNeamzY9zlFe1JaYliyUOGuHM6A8RKLFAWFttPqTMyt5/XZxjOsGjhE+UXS3zW7jhDY
+	6pqL8w0CjTtwQrcM42pqzORw8bfFDdC1UigDeuwZ+FEHT/wV0O4QzoGwx1bbZ5En/v7QqbpXn2BPq
+	RvEQy2bw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1v1KsN-00EF72-22;
+	Wed, 24 Sep 2025 09:29:23 +0100
+Date: Wed, 24 Sep 2025 09:29:23 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] keys, trusted: Remove redundant helper
+Message-ID: <aNOr4_xLQ30iTRSe@earth.li>
+References: <20250922164318.3540792-1-jarkko@kernel.org>
+ <20250922164318.3540792-5-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250922164318.3540792-5-jarkko@kernel.org>
 
-Hi,
+On Mon, Sep 22, 2025 at 07:43:17PM +0300, Jarkko Sakkinen wrote:
+>From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>
+>tpm2_buf_append_auth has only single call site and most of its parameters
+>are redundant. Open code it to the call site. Remove illegit FIXME comment
+>as there is no categorized bug and replace it with more sane comment about
+>implementation (i.e. "non-opionated inline comment").
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-On Wed, 2025-09-24 at 10:07 +0200, Thomas Wei=C3=9Fschuh wrote:
-> Sep 24, 2025 09:40:47 John Paul Adrian Glaubitz <glaubitz@physik.fu-berli=
-n.de>:
->=20
-> > Hi Thomas,
-> >=20
-> > On Sat, 2025-09-20 at 16:37 +0200, Thomas Wei=C3=9Fschuh wrote:
-> > > > Could you share a version of the series based on top of 6.17.0-rcN =
-for
-> > > > testing purposes? I would like to test the series on a Sun Netra 24=
-0
-> > > > which is based on the UltraSPARC IIIi.
-> > >=20
-> > > Here is the git branch based on rc4:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/lin=
-ux.git/log/?h=3Db4/vdso-sparc64-generic-2
-> > >=20
-> > > Does that work for you?
-> >=20
-> > I'm getting merge conflicts with "vdso/datastore: Allocate data pages d=
-ynamically" and
-> > "vdso/datapage: Remove inclusion of gettimeofday.h".
-> >=20
-> > Can these be skipped?
->=20
-> No, these are important.
->=20
-> What are you trying to merge?
-> I can probably give you a merge.
+Seems like a reasonable cleanup.
 
-I'm using v6.17-rc7 plus all SPARC fixes in Andreas Larsson's linux-sparc f=
-or-next branch:
+Reviewed-by: Jonathan McDowell <noodles@earth.li>
 
-https://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git/lo=
-g/?h=3Dfor-next
+>---
+> security/keys/trusted-keys/trusted_tpm2.c | 51 ++++-------------------
+> 1 file changed, 9 insertions(+), 42 deletions(-)
+>
+>diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+>index c414a7006d78..8e3b283a59b2 100644
+>--- a/security/keys/trusted-keys/trusted_tpm2.c
+>+++ b/security/keys/trusted-keys/trusted_tpm2.c
+>@@ -198,36 +198,6 @@ int tpm2_key_priv(void *context, size_t hdrlen,
+> 	return 0;
+> }
+>
+>-/**
+>- * tpm2_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+>- *
+>- * @buf: an allocated tpm_buf instance
+>- * @session_handle: session handle
+>- * @nonce: the session nonce, may be NULL if not used
+>- * @nonce_len: the session nonce length, may be 0 if not used
+>- * @attributes: the session attributes
+>- * @hmac: the session HMAC or password, may be NULL if not used
+>- * @hmac_len: the session HMAC or password length, maybe 0 if not used
+>- */
+>-static void tpm2_buf_append_auth(struct tpm_buf *buf, u32 session_handle,
+>-				 const u8 *nonce, u16 nonce_len,
+>-				 u8 attributes,
+>-				 const u8 *hmac, u16 hmac_len)
+>-{
+>-	tpm_buf_append_u32(buf, 9 + nonce_len + hmac_len);
+>-	tpm_buf_append_u32(buf, session_handle);
+>-	tpm_buf_append_u16(buf, nonce_len);
+>-
+>-	if (nonce && nonce_len)
+>-		tpm_buf_append(buf, nonce, nonce_len);
+>-
+>-	tpm_buf_append_u8(buf, attributes);
+>-	tpm_buf_append_u16(buf, hmac_len);
+>-
+>-	if (hmac && hmac_len)
+>-		tpm_buf_append(buf, hmac, hmac_len);
+>-}
+>-
+> /**
+>  * tpm2_seal_trusted() - seal the payload of a trusted key
+>  *
+>@@ -507,19 +477,16 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> 					    options->blobauth_len);
+> 	} else {
+> 		/*
+>-		 * FIXME: The policy session was generated outside the
+>-		 * kernel so we don't known the nonce and thus can't
+>-		 * calculate a HMAC on it.  Therefore, the user can
+>-		 * only really use TPM2_PolicyPassword and we must
+>-		 * send down the plain text password, which could be
+>-		 * intercepted.  We can still encrypt the returned
+>-		 * key, but that's small comfort since the interposer
+>-		 * could repeat our actions with the exfiltrated
+>-		 * password.
+>+		 * The policy session is generated outside the kernel, and thus
+>+		 * the password will end up being unencrypted on the bus, as
+>+		 * HMAC nonce cannot be calculated for it.
+> 		 */
+>-		tpm2_buf_append_auth(&buf, options->policyhandle,
+>-				     NULL /* nonce */, 0, 0,
+>-				     options->blobauth, options->blobauth_len);
+>+		tpm_buf_append_u32(&buf, 9 + options->blobauth_len);
+>+		tpm_buf_append_u32(&buf, options->policyhandle);
+>+		tpm_buf_append_u16(&buf, 0);
+>+		tpm_buf_append_u8(&buf, 0);
+>+		tpm_buf_append_u16(&buf, options->blobauth_len);
+>+		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
+> 		if (tpm2_chip_auth(chip)) {
+> 			tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_ENCRYPT, NULL, 0);
+> 		} else  {
+>-- 
+>2.39.5
+>
+>
 
-Adrian
+J.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+-- 
+If a program is useful, it must be changed.
 
