@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-830747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32C0B9A716
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DA3B9A71F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3916432789B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EC74A4550
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D081309EF4;
-	Wed, 24 Sep 2025 15:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B48930CD94;
+	Wed, 24 Sep 2025 15:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vx0UKi/A"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VKRkWjD4"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1336830AAC4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED0730BF63
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726013; cv=none; b=oY9IXi5IvUlYCaWWQQ3af+bs/zrPiBIDlPIcY6mgc63GsDlX7I/NDdq4zV0l1t3KkKfDyj7IEBO5+wmrTm962cJkUFRrM+JWII3sbpvy4G5SvBqTsQpiQGVGU7GRlJ1SEPWreJoVWc1X0O9Erqwa/aIKvjKrLX6s0amy7qu+ho0=
+	t=1758726016; cv=none; b=RQgv8tcMsknSyGJryFWTtnU97av1sOawhToZ/0osHE4YYQh0y395RQMMb6jHK7aY99i7r++ZiuMtQzoLBcO4TrBl1l3dIvcL3XVCb8cfXzsqmmu5szI+94wU5xQMwaOmSskyhGbQeL+GeT9iCoapBuvJw8n7LDVJJqZZa5abFWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726013; c=relaxed/simple;
-	bh=EYLPQH5oehnbYPc5sxBDHhm4ClGMnbLmbBqQann3GQY=;
+	s=arc-20240116; t=1758726016; c=relaxed/simple;
+	bh=iVEfUkagpTd8ShTdeYE6IfpxRs8e6FjbaJNwIS6zNps=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jMh9crv5/cHmvZymftbGtwLRH6LY7jZnfUdJL/ryhD4egIxrmMNHbgvcbr8fSE8lGlmixqNO3d3abtlNThg3bSgJynx+nD9SmSPos3cOQY+U649cEFQX/JrXt7QN2MpXNDp48q2aiqm0vSelAN+MPOHqJ9YYlwuxlbBO/iEiego=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vx0UKi/A; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=YAPXh0WJnVnwnadU8e6dYLoglcRK4W1Vsh+4X7mk0pTHv8ebtZeTSH++yZNdH4MVRp4ZuilJ8UuMq9lhQAp8y5jjtnk3I9NAwgHRuHV+HA4nX6TI+SmGGiRdqHlDruPbbtc0gg41HCOWgHcd9ESRXywLkvJPDB6qyrQpDQEzGQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VKRkWjD4; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3ee888281c3so3986265f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:11 -0700 (PDT)
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-62fce1f3fa8so4716688a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758726010; x=1759330810; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758726013; x=1759330813; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sQ+0/NTgmoYJ7zvD18U+frXGZZeEnJJzFJ7cE/2yig=;
-        b=vx0UKi/AOg4yDr0YyRqDSrnXMTTtLjGNWG1r79ZqqnnpTH7CmNrSPWvsqN8PtPaGe8
-         4JjQEQ8lVj1rF87HCv2ndCjY5V+um83lMKoZgb6Q/d4a1bYnFYRaC67EtF4dy/9uiaHS
-         1d4+ATfBiTIYiKcqSFetp3d9afGyvFy5yIvzJb1566amx6N0yz9hk1F858uo91sDsYAj
-         zU0LSZsP6VVGL4ywzgx/7UROLc42SpPDppp4a6qXHJt9mfOuz9f5R5fSD7pabRma7ynX
-         aLgvTytEYQNZy0VNyPIBK9rRKJn1z0ukNfC6p5+tI9MZUcOazzwXIpg4dmobUxoSYvZB
-         d4ow==
+        bh=4lMKL0dag2cTvl5zrGDAXdNMfc9wzwq11ZbZ3BSylYk=;
+        b=VKRkWjD4bdD+WZ5XD8bUleo3jJN1gZRXPTB78N/BD5UX3QzuUyQ4cPROrBoEiYDl3U
+         nbZNTPwNU6j9mkXFK7YfhSUwiSs4vqUU8As7d52JV0LVB4UGx/0vO0KvyGeArkgh+c8c
+         IPe+ktbffXMi00/TWrLmvgMUmIzmZCG53qbT1czJe1MXnQrBGtlnTwWHO/iyGizoOdA5
+         vKSNW2z5VQpi4tfsuHu0iZcnRl1TcBz1JSbfq2b1PTYr1f+2AL0VJUzrEEcZ49J7qlG6
+         MXAboNgPWv6u0PhQjAZTBOIplFWxESZTlcYv4Sezv+lzxv8vmj/8dV9MsGprnCkfLZK+
+         ry4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758726010; x=1759330810;
+        d=1e100.net; s=20230601; t=1758726013; x=1759330813;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sQ+0/NTgmoYJ7zvD18U+frXGZZeEnJJzFJ7cE/2yig=;
-        b=GyyI/4gwoSy40uetIzZtYlJa+cBRedwTgVQjOugunzaxgSz/ph4olOrORgacxPygRb
-         twAUqWTJ8FJ8NK3YwOHwl1/k5eR8HP7gtjLfyPdz2YRCf+fGWIlptTwZ4OCFzAHP9UVK
-         xruR1Fb72t77jRsamTZ/AcoCODJ3NaYDiBCNRwr/qczX9Novqr0Mys2NPcLc8iN3xctZ
-         utM0ktdJxTU2rz/RiFqJ5OqDBhbAHSD3pKhxCXrN/Rf48AmCxvincoQXJ2tbhylL59au
-         ju6xfdMaY9VVsi0MhkZXjLzbSlBAeUPH7UfR+dpmdNKh3gM0KoqbEk+Ggm1QqvKYDGsu
-         vEXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgS843G+I5fU2eC4CqxRhEHekba9pQ5NwioUheEnhPZVOl2hGKzpTI9ZWoZQFLUgmYuwIhMVspeBAsjXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvLwMnxVtFN9SUN15SBdEi3tRO9SzH+bSbfY9a3ozDYAc6Neq+
-	PFaMmL+BMYttKq2eVm0hucBkKDGG+GAOHjD+HaGRx4/FGYr1ZlnLNFkAsTQAHw2m9m9s+UekGXT
-	OBAsoNEm0fKdpAw==
-X-Google-Smtp-Source: AGHT+IFqsEQb7cIi2yGxxJ+MfZzjIIfAO9RpfOWtkftlHXz5t7D+GW6T5K74X995LeYOztbN6pZKuqk/SB6tcQ==
-X-Received: from wrty13.prod.google.com ([2002:a5d:614d:0:b0:402:ec26:76f8])
+        bh=4lMKL0dag2cTvl5zrGDAXdNMfc9wzwq11ZbZ3BSylYk=;
+        b=soo4jQwVRm/ZLDbGVs9KfgthQG+42Zx17Ls6MIc5573YFPFw2d/QJP/rzu6ZlMy6Jk
+         Iew0nuqEnIc0xhSAc9zY1CwfuOvJZvX8YbN12BuTHDhIu62Z6p+Z9aUz0/0n2I3wPZCT
+         k2RhqiC8ulnnq0XTbel4HpZ+Lz5mafMwvcEcf7o1GX1U9JbFuPChFMQ0X8zGjNJBQ5P2
+         MO6NApiUHHy2QDVzPAlu5n26S4xuiSHCmvVu/EbXo9nE85WbyyJnOdomBdsz2qgQ6XDv
+         5Hq8sx59nIzIJnMJNt/vXuwa7gGJ3O0pM3eOTSO8uu5lMD7VOiCGVfCXHb3U5/oYYh2F
+         vW1g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7cN4TdtbUlpvbTWKTMfT9prMSGcY/QIWy4l+sEhdi+TGaBJt23h/9sq/nWSo/EkjIUl1zZwpnQ+O6uuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/o0CqK1GuL2dh5OINjedS+me0G3V+h3R77dYZmcuw+HGzgtaU
+	rnzsXBpPHt3aLoyE/yta7HWNq7gLfhW8HDdQVMzDBQMQFz9DaNj+3xqv3LafQ4Y7vsnuTM16C3m
+	hvpIe3PaApKTxxw==
+X-Google-Smtp-Source: AGHT+IFVSQFxUV/mTSePnmrlINV4I944f6eUP8KCpi3pssIRknrIWSkYfW/GfKVJFIh3a3hgc0TE+MDy6SWe2w==
+X-Received: from edbm26.prod.google.com ([2002:a50:999a:0:b0:634:9b3d:9588])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5f85:0:b0:3e9:ad34:2b2e with SMTP id ffacd0b85a97d-40e4cb6e211mr232236f8f.46.1758726010290;
- Wed, 24 Sep 2025 08:00:10 -0700 (PDT)
-Date: Wed, 24 Sep 2025 14:59:38 +0000
+ 2002:a05:6402:1d24:b0:634:5722:cc3f with SMTP id 4fb4d7f45d1cf-6346779876dmr4825674a12.16.1758726011350;
+ Wed, 24 Sep 2025 08:00:11 -0700 (PDT)
+Date: Wed, 24 Sep 2025 14:59:39 +0000
 In-Reply-To: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250924-b4-asi-page-alloc-v1-3-2d861768041f@google.com>
-Subject: [PATCH 03/21] x86/mm: factor out phys_pgd_init()
+Message-ID: <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
+Subject: [PATCH 04/21] x86/mm/asi: set up asi_nonsensitive_pgd
 From: Brendan Jackman <jackmanb@google.com>
 To: jackmanb@google.com, Andy Lutomirski <luto@kernel.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
@@ -90,80 +90,172 @@ Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
 	yosry.ahmed@linux.dev
 Content-Type: text/plain; charset="utf-8"
 
-__kernel_physical_mapping_init() will soon need to work on multiple
-PGDs, so factor out something similar to phys_p4d_init() and friends,
-which takes the base of the PGD as an argument.
+Create the initial shared pagetable to hold all the mappings that will
+be shared among ASI domains.
+
+Mirror the physmap into the ASI pagetables, but with a maximum
+granularity that's guaranteed to allow changing pageblock sensitivity
+without having to allocate pagetables, and with everything as
+non-present.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/mm/init_64.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/asi.h |  4 ++++
+ arch/x86/mm/asi.c          | 19 +++++++++++++++++++
+ arch/x86/mm/init.c         |  2 ++
+ arch/x86/mm/init_64.c      | 25 +++++++++++++++++++++++--
+ include/linux/asi.h        |  4 ++++
+ init/main.c                |  1 +
+ 6 files changed, 53 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 0e4270e20fadb578c7fd6bf5c5e4762027c36c45..e98e85cf15f42db669696ba8195d8fc633351b26 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -741,21 +741,20 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+diff --git a/arch/x86/include/asm/asi.h b/arch/x86/include/asm/asi.h
+index 32a4c04c4be0f6f425c7cbcff4c58f1827a4b4c4..85062f2a23e127c736a92bb0d49e54f6fdcc2a5b 100644
+--- a/arch/x86/include/asm/asi.h
++++ b/arch/x86/include/asm/asi.h
+@@ -12,4 +12,8 @@ static inline bool asi_enabled_static(void)
+ 	return cpu_feature_enabled(X86_FEATURE_ASI);
  }
  
- static unsigned long __meminit
--__kernel_physical_mapping_init(unsigned long paddr_start,
--			       unsigned long paddr_end,
--			       unsigned long page_size_mask,
--			       pgprot_t prot, bool init)
-+phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_end,
-+	      unsigned long page_size_mask, pgprot_t prot, bool init, bool *pgd_changed)
++void asi_init(void);
++
++extern pgd_t *asi_nonsensitive_pgd;
++
+ #endif /* _ASM_X86_ASI_H */
+diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
+index 8c907f3c84f43f66e412ecbfa99e67390d31a66f..7225f6aec936eedf98cd263d791dd62263d62575 100644
+--- a/arch/x86/mm/asi.c
++++ b/arch/x86/mm/asi.c
+@@ -1,11 +1,20 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/asi.h>
+ #include <linux/init.h>
++#include <linux/memblock.h>
+ #include <linux/string.h>
+ 
+ #include <asm/cmdline.h>
+ #include <asm/cpufeature.h>
+ 
++#include "mm_internal.h"
++
++/*
++ * This is a bit like init_mm.pgd, it holds mappings shared among all ASI
++ * domains.
++ */
++pgd_t *asi_nonsensitive_pgd;
++
+ void __init asi_check_boottime_disable(void)
  {
--	bool pgd_changed = false;
+ 	bool enabled = false;
+@@ -26,3 +35,13 @@ void __init asi_check_boottime_disable(void)
+ 	if (enabled)
+ 		setup_force_cpu_cap(X86_FEATURE_ASI);
+ }
++
++void __init asi_init(void)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_ASI))
++		return;
++
++	asi_nonsensitive_pgd = alloc_low_page();
++	if (WARN_ON(!asi_nonsensitive_pgd))
++		setup_clear_cpu_cap(X86_FEATURE_ASI);
++}
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index b877a41fc291284eb271ebe764a52730d51da3fc..8fd34475af7ccd49d0124e13a87342d3bfef3e05 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -773,6 +773,8 @@ void __init init_mem_mapping(void)
+ 	end = max_low_pfn << PAGE_SHIFT;
+ #endif
+ 
++	asi_init();
++
+ 	/* the ISA range is always mapped regardless of memory holes */
+ 	init_memory_mapping(0, ISA_END_ADDRESS, PAGE_KERNEL);
+ 
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index e98e85cf15f42db669696ba8195d8fc633351b26..7e0471d46767c63ceade479ae0d1bf738f14904a 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -7,6 +7,7 @@
+  *  Copyright (C) 2002,2003 Andi Kleen <ak@suse.de>
+  */
+ 
++#include <linux/asi.h>
+ #include <linux/signal.h>
+ #include <linux/sched.h>
+ #include <linux/kernel.h>
+@@ -746,7 +747,8 @@ phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_en
+ {
  	unsigned long vaddr, vaddr_start, vaddr_end, vaddr_next, paddr_last;
  
-+	*pgd_changed = false;
-+
+-	*pgd_changed = false;
++	if (pgd_changed)
++		*pgd_changed = false;
+ 
  	paddr_last = paddr_end;
  	vaddr = (unsigned long)__va(paddr_start);
- 	vaddr_end = (unsigned long)__va(paddr_end);
- 	vaddr_start = vaddr;
- 
- 	for (; vaddr < vaddr_end; vaddr = vaddr_next) {
--		pgd_t *pgd = pgd_offset_k(vaddr);
-+		pgd_t *pgd = pgd_offset_pgd(pgd_page, vaddr);
- 		p4d_t *p4d;
- 
- 		vaddr_next = (vaddr & PGDIR_MASK) + PGDIR_SIZE;
-@@ -781,15 +780,29 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+@@ -780,7 +782,8 @@ phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_en
  					  (pud_t *) p4d, init);
  
  		spin_unlock(&init_mm.page_table_lock);
--		pgd_changed = true;
-+		*pgd_changed = true;
+-		*pgd_changed = true;
++		if (pgd_changed)
++			*pgd_changed = true;
  	}
  
--	if (pgd_changed)
--		sync_global_pgds(vaddr_start, vaddr_end - 1);
--
  	return paddr_last;
- }
+@@ -797,6 +800,24 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
  
-+static unsigned long __meminit
-+__kernel_physical_mapping_init(unsigned long paddr_start,
-+			       unsigned long paddr_end,
-+			       unsigned long page_size_mask,
-+			       pgprot_t prot, bool init)
-+{
-+	bool pgd_changed;
-+	unsigned long paddr_last;
+ 	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
+ 				   prot, init, &pgd_changed);
 +
-+	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
-+				   prot, init, &pgd_changed);
-+	if (pgd_changed)
-+		sync_global_pgds((unsigned long)__va(paddr_start),
-+				 (unsigned long)__va(paddr_end) - 1);
++	/*
++	 * Set up ASI's unrestricted physmap. This needs to mapped at minimum 2M
++	 * size so that regions can be mapped and unmapped at pageblock
++	 * granularity without requiring allocations.
++	 */
++	if (asi_nonsensitive_pgd) {
++		/*
++		 * Since most memory is expected to end up sensitive, start with
++		 * everything unmapped in this pagetable.
++		 */
++		pgprot_t prot_np = __pgprot(pgprot_val(prot) & ~_PAGE_PRESENT);
 +
-+	return paddr_last;
-+}
++		VM_BUG_ON((PAGE_SHIFT + pageblock_order) < page_level_shift(PG_LEVEL_2M));
++		phys_pgd_init(asi_nonsensitive_pgd, paddr_start, paddr_end, 1 << PG_LEVEL_2M,
++			      prot_np, init, NULL);
++	}
++
+ 	if (pgd_changed)
+ 		sync_global_pgds((unsigned long)__va(paddr_start),
+ 				 (unsigned long)__va(paddr_end) - 1);
+diff --git a/include/linux/asi.h b/include/linux/asi.h
+index 1832feb1b14d63f05bbfa3f87dd07753338ed70b..cc4bc957274dbf92ce5bf6185a418d0a8d1b7748 100644
+--- a/include/linux/asi.h
++++ b/include/linux/asi.h
+@@ -11,5 +11,9 @@
+ static inline void asi_check_boottime_disable(void) { }
+ static inline bool asi_enabled_static(void) { return false; }
  
- /*
-  * Create page table mapping for the physical memory for specific physical
++#define asi_nonsensitive_pgd NULL
++
++static inline void asi_init(void) { };
++
+ #endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
+ #endif /* _INCLUDE_ASI_H */
+diff --git a/init/main.c b/init/main.c
+index 07a3116811c5d72cbab48410493b3d0f89d1f1b2..0ec230ba123613c89c4dfbede27e0441207b2f88 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -12,6 +12,7 @@
+ 
+ #define DEBUG		/* Enable initcall_debug */
+ 
++#include <linux/asi.h>
+ #include <linux/types.h>
+ #include <linux/export.h>
+ #include <linux/extable.h>
 
 -- 
 2.50.1
