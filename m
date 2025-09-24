@@ -1,105 +1,83 @@
-Return-Path: <linux-kernel+bounces-830353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9564AB99748
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EA3B9973C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C2EE324A42
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05834A8139
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B9F2DF71F;
-	Wed, 24 Sep 2025 10:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ED32DF6FF;
+	Wed, 24 Sep 2025 10:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eoWRumnG"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iIsn9hQ+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806AD2D8DD9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC181F3BBB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758710426; cv=none; b=byF54DmBnCJNoJYkkiErgo1RzIcYmozrlGjQQeiAWNNv1zu+d+bNNWCOIt1pmeQfWAkafehEFfgYP3Q8KnLsmA58x2uCOG4QZFdKnNF9MQ+hKx/u9NuG0j4oY7ucnh0sPrBY+DHlKdbvwBu+bndIgFke+wfeKhOwZSyfUs+A2nE=
+	t=1758710362; cv=none; b=MX2UzAYACqxMhIOonMz+imqZc4VMRwkSA/bh0Ea9jvHuiebQxXe68zPQsMBeACgkZ3ZdgFFUnfEiBC3/e67T5gfGduZKbxIVxbzZ+gdkGAoA5Vl/zLNcGXtZeyXdKjeKxCgfd+Ao+Lo6KJ9SpzYcFKAUIRSsBrjLGVY2Y0J6zsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758710426; c=relaxed/simple;
-	bh=jeX5ftDRwaX3cod3MHo6BdpMnAVXf/aMojH1iG4Eq5k=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=R7Cq6oSvzQHonbQm8ivQi2oi7lPG1YqZj7wF5HXVkTgM8cltJAqiPuwAx2udAsIZjcmZ/m6E0TaDtLPAcIJ9Ek2Kc5m4Q9PWBfDCc8M9ovXLGQhijCtiH9UJl7ZSTdtnzAp5fVNh33Fwbtr9m+fcKQd9epGbpcu5/43rNEzQGSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eoWRumnG; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1758710410; bh=+kV5tWeWcuHHZcGTSmvtUTrsy6QbeKhRnlGtuBpvKfM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eoWRumnG/EKwVbJISO3pjFzoXOS4XWTNoXegom200qOSSthFdCYhOMo9RxaD8/hL9
-	 858cudoT0XCmlnVMU9dWKWtyPm0OqAVSq3K9UCbiRwGbfPtWo5/RJ35sYpnLKK0NDV
-	 TB3NMD3zNlT3RCQ/XGyclke9kT8qh3OUZyOKs2po=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 9B68CA6C; Wed, 24 Sep 2025 18:38:54 +0800
-X-QQ-mid: xmsmtpt1758710334taix0o0kg
-Message-ID: <tencent_7784EEC92ECA4CBAE7CAC6F592CEC6728906@qq.com>
-X-QQ-XMAILINFO: OSwzSWs0onYPe9WhMqeboiuAHU6+62/mKYdrPFoAn1LTOaMRwfU4pWJGtTEpoT
-	 omKOTQntf3QusQKAS6IGUVudT0jGF/W5LVoNkHhXYyPiEaprMG0noDT5NhKfSm/q/nen0g6HxzIZ
-	 PTW5ryAZduPDBE1e8ZQkcH5s7QpzBPk2Rv+i2qyZzrbSpORCe0fzwVd+StG5yxVXgu+CvRqpKzzG
-	 tXh7w1XGIyZLNtA8NMXHmBcUyIhB6AMhFi6gpCcJHkt+EVavw4/a7/yvqotGmuyD82ntsaOi1oDO
-	 ay1utbbbgvm5HbxCOK524y1mzpl5FBzvzRhL9q1cAsnDHqp0YUidVd0FZ+e3wwV+RXvKjRZx4jn7
-	 42Duf3s7Rq2SqdAd4aSGRS6Y9qXReAyj+g+rxS6YoziEgUKIb9Y8Q7mU5f80/HnvR1AhAnZzHTnl
-	 wnQmUKVfoUuPXkB48Ra+R9tMsXkrH8MHzGgvhuR3J1XXrLEbBi3/0AmPs+HRXAWNC2p/0QhJAF1t
-	 rwAwDYCyC7WLXkVbmLvh0LMx71hcawjCZ3plV0u+YMCvlpkUYxld11M2ff7+CeLfIQsGqzo0g49O
-	 As/h41TBr+Hq7L+zx+RymTI8MamU5c1F9MFk40lpimbL1ql0BONbjaSrUnfR7H/cBwclQon9M3U2
-	 Usi5/PtTYJnuf3v+TiKOaAwTbZ0YKivqvkkhK8g8awP+CUTvukeDSbmti0+A1BhgUGMGUby+nAcI
-	 dCT8EQ4BNk/LhtocXIT0ZMsh45FehuWXjvw08LsydEkveMMugZ32Q+uE9BGsyBk1GF9E7L+qNQir
-	 bydZpV3z/hXXyfTjpfb4csxj3k++63p2aImj2WEcTN1F/u8/OdIpxdOU9dNrRhjpwWA3tkwPe6DQ
-	 9G5Pf5aVDDmJdVO95na1QLLxEY4Z5ycPk0ni4EHJQfHQ1uO4TN1TeWF64ov+vLa1K+zOcD8K3/yv
-	 2icCPgvbOO3rdjeD5S0kTqXrBfnOJgvtw3UD7QqHM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context in hook_sb_delete
-Date: Wed, 24 Sep 2025 18:38:53 +0800
-X-OQ-MSGID: <20250924103852.1499403-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
-References: <68d32659.a70a0220.4f78.0012.GAE@google.com>
+	s=arc-20240116; t=1758710362; c=relaxed/simple;
+	bh=VQ8VOZmpdDGrQxu5JvAU61J13zwKbyZ5/3P7rrRWAdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXXLUN/+d/7hTM6+nPgmFQNcMuXC0MxRewsIocFvDdGHrDLb44N5BjcczBrIFzZecZ+MGEiPSmR8BppVQiWUvhvLBjS8Db4jx3bU+4mm2t0pC2W7Wx71BE4BAXlnghPKnxTP7Ck3jYukjjXFGpgSygt6fYmZa2tPP/7V5JwNiq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iIsn9hQ+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758710353;
+	bh=VQ8VOZmpdDGrQxu5JvAU61J13zwKbyZ5/3P7rrRWAdE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iIsn9hQ+xV1cS8Kxaeswc1Kb5Tok5ZzW/txEt4ryXjW+JVbp7UaVItzTWHQ4jlK4w
+	 uebVDe+MvllN4sLMmJm6Z+49p741d0gJLkwk5zLcauI5m9ziG6/ly5fR0RHpM10eY3
+	 WQuzIeI6o2hNgQcTK4TCDkDkF2qHeeDue3ZUAGblrJ7r1fYPIcl7Z4RDLMImq2lEi2
+	 tu4OBaQ6bDvXdohCkZ+iXX24RnGPvlv3ge+agRzrnnp3WM1N1zWnrkGvoULwp7kIn2
+	 ledvoYaWcTDWSEO2TnlqdwQvZMsIvf7RNFeS8A9sAAjPr9/HySKxb1FwjuXybrNkf5
+	 nG6Y1AKpGu2Qg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E46817E068C;
+	Wed, 24 Sep 2025 12:39:13 +0200 (CEST)
+Message-ID: <7f3a096a-fb49-4d43-be60-9cb25c4e1d16@collabora.com>
+Date: Wed, 24 Sep 2025 12:39:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] drm/mediatek: fix probe resource leaks
+To: Johan Hovold <johan@kernel.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Matthias Brugger <matthias.bgg@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250923152340.18234-1-johan@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250923152340.18234-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-#syz test
+Il 23/09/25 17:23, Johan Hovold ha scritto:
+> This series fixes various probe resource leaks in the mediatek drm
+> drivers that were found through inspection.
+> 
+> Johan
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 4ed997f4a663..a18d53507210 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1484,7 +1484,6 @@ static void hook_sb_delete(struct super_block *const sb)
- 			 * previous loop walk, which is not needed anymore.
- 			 */
- 			iput(prev_inode);
--			cond_resched();
- 			spin_lock(&sb->s_inode_list_lock);
- 		}
- 		prev_inode = inode;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e9a7fb5c3e49..a0b8eeeb1d27 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2349,7 +2349,7 @@ __latent_entropy struct task_struct *copy_process(
- 	if (need_futex_hash_allocate_default(clone_flags)) {
- 		retval = futex_hash_allocate_default();
- 		if (retval)
--			goto bad_fork_core_free;
-+			goto bad_fork_cancel_cgroup;
- 		/*
- 		 * If we fail beyond this point we don't free the allocated
- 		 * futex hash map. We assume that another thread will be created
+Whole series is
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 
 
