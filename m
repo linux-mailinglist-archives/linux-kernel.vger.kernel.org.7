@@ -1,205 +1,604 @@
-Return-Path: <linux-kernel+bounces-831286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45321B9C47F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB548B9C485
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3D5A3BD3B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862AF3BAD66
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF342820CE;
-	Wed, 24 Sep 2025 21:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38CD286424;
+	Wed, 24 Sep 2025 21:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rniMsDfy"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010048.outbound.protection.outlook.com [52.101.85.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3AAfp3Zp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ADE1E0B9C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758749556; cv=fail; b=rz3dZfI36I3kh5N3Q1a77BvBb4XNX29XSb9yyuwmLNUFcFQb7WhHwF4/UDlEw0I8Nrr2QBVf6yhPOVuZytkCdyvxQPrPMfi9RiMw+xMfj9VNhCAE1u/FTuANhTxOk5vvhEOqeRV0qZpmY99pdIL6rxOZsnw2Oi/aCU+EUTh3B8M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758749556; c=relaxed/simple;
-	bh=JCxAUKgmIvrd0FOmblFNIbU5mhju3nh8PihBQLFQYxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kzwTlmJLk19/5lgp/PwQCrgiAF351Bq1u3jXCZty0g4f/CMc7L0qMzmfOVigkCRLZiL+Qgj/r+fYC5uOsyW9tnfY0epTSj1IbOz/W6lEdrlgPfPNhF9RsTwmaK7g3Zx6GS7bsHaIb9fe5E/ntrsj6kyKj9GEIwYkbiJ2IyH3Gqw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rniMsDfy; arc=fail smtp.client-ip=52.101.85.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mUrGH6ltgGtw1jm3w+ZpVo11fSpkw8hf613FaxACSxDhPDsI6k2mo6ySR47qn5EZqr3B5gphslHyNexgALQtRxvAZvAA5xJfGSbCbkjiOQAySHoOI6Hj4D6p3GvYt/V7Yz5gp9LosQk3SuQWlSGphsZ2MBw/eaBMdt9+U1nR1QbJbO2ASZaCOeOqtAulM4f5x4ShryRKXYljfEEH/8wTj66EA9NSGR2gxjFooDMR2hWJIBZRewuBtYZfQFiL/XXZ6bgnwQAiR3k2rKtMq10KHNjhudmqAza+RQofeNhwtE8JNx4MMP794NhZ1yQBub4obgpdW0uOwYbs6XCRF9OYhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x3xdNfmyYMblKWfSFcR90w0Ssbj9yi0IFD9M7BzeEls=;
- b=GmRmE+EqCG6W/fcyzMRofh3Qa40fL8WxfDxRg06RvVR8ncQD9Kww0vnzZh9mShHboQSmtIxMF/VufVQYiE+L2AodkL0g/HvAW+ZnSQyCkewmE6rPI2DYQ71ChS4QTEMJ0vT8S0ON0RsFHHeSJQMZrldkSCXzjyqOe1eD2SCg996KYwCPK2BOwYsaR5wqGK/Ss4y7087BesMaJ4oPH1awGTl9CpYPUsK6noTzLNIVRzbQtrtDJdSVnBOOqjvDoJMMk4FSWAMyiot0ZTbPqSmjKAK7Ddnp4Lw+81aogeldiXHkTC1JXIzPgAhtc/CAblAXVkIKl6zoDLha+UJ5Uj/m1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x3xdNfmyYMblKWfSFcR90w0Ssbj9yi0IFD9M7BzeEls=;
- b=rniMsDfyW886RB+1eNrTXaywEWcuRecUc+hPX4skr3Nfg8k04K+uPeIfLWidsq9iHLpslq433Xd+2Vu8zZ1dD36puQUhqO/P7hArQi4XIb55iCCuCmd6+bMMoCZqOyQydIvYffj3mL4t7bJ5YB487XCuz5BoGI9lM4x0xGqM773lVz1LDsIfVt9hSY0scWhsxNjsJMG/NB8VAbb8VIkLTRd60Gzcjg3FxaexUh3dDHXmTPSB6pVmuE1MGWBuq6bdWyzwR3fJxPbv3UOM/b3MZSFleBb1rIsWrTI8wUtmICosIugRl7JsDh5DdierWRRy3lLiBGVH44lytb6ILJYRwQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by SA1PR12MB9513.namprd12.prod.outlook.com (2603:10b6:806:45c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 21:32:32 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
- 21:32:32 +0000
-Date: Wed, 24 Sep 2025 18:32:30 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	jean-philippe@linaro.org, miko.lenczewski@arm.com,
-	balbirs@nvidia.com, peterz@infradead.org, smostafa@google.com,
-	kevin.tian@intel.com, praan@google.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH rfcv2 5/8] iommu/arm-smmu-v3: Pre-allocate a per-master
- invalidation array
-Message-ID: <20250924213230.GQ2617119@nvidia.com>
-References: <cover.1757373449.git.nicolinc@nvidia.com>
- <f5f635077b791b27b46ea41b5c86a52fd4549a44.1757373449.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f5f635077b791b27b46ea41b5c86a52fd4549a44.1757373449.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: SJ0PR13CA0150.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::35) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD6C1DE2A7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758749680; cv=none; b=QsFjYywr6EB73WE2FSAPfG8qh1duFx2I0QohRllY1Fxh4NiUfzouw93qQwNHqGpdG58Dpj6vJdc4bhSEiw/iJerKxlAdmS+uPuuoE3zUkMp//fyNojc9SGcbnlYJyLYq4faN1LILlli7XlUN9ETf+E8uRsjYjz69gAuUlbMx2cU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758749680; c=relaxed/simple;
+	bh=qL/qqboFruerUqMQH8wZQwrqfOQPFdYzkJDkOd52qMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gVSe9INdL+gv3Z2L/iyXH+vvY0/M1KOFNBxnYzEdValh7Cpl1PXjq8UMscIuO7WQI89pd8vS0Yfj5RqlGkFdXrkx39afKacDe9+4Chz+7E4SVmQYvZaxngkxlDqRR/XnVWmAXxbIb6DJk8k4n8uf4M9KebRqxrl+2O/7sB8w3uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3AAfp3Zp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2731ff54949so250175ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758749678; x=1759354478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vPKSgJ+JnuWhZmWvU4SdwVrx8NK/S6tQIDBDLdOb+DU=;
+        b=3AAfp3ZpdeKrjXXw4cfLDbJXTSuN7rr0OOhvfL/eRsO6S5gN/oqZ8dZHKXL2z2lbLS
+         a6AROIuO9l8KQXGj4sXfMk08ogt1aR/bf+mTdn5meTi6U07I/JAWxtIvP2l2RtGNaeak
+         sjBuuCcLdfUqf5LMp+BoEMBA3sIQcOPpmKlGcafphReAJlF2kMLp8slOU8S0kUFfI7pu
+         bdug3fJL10Befw0pqYvFELKNbC+fMbTZoK5MJUOBZbQPFAeUi/+rfo63MFxjKC8K7ujv
+         0cfd804XrfD81FBPLHfBdIk9J0k6XhEsz03S4uXqRowMulOipdyufxPN4gfpcr0qzFXJ
+         v7vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758749678; x=1759354478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vPKSgJ+JnuWhZmWvU4SdwVrx8NK/S6tQIDBDLdOb+DU=;
+        b=F/4/wnrdDvjYpiDqaZqe5sMC2WCXDWVEIpgMOxnkZDW0m8ZtsnKixShEV/h28k9m4W
+         VGdQotCgZWt9dFBfBr5c4IZvq0WXx5ujx6rT/PxO7NEjUuHjZAPQde8gRNBk3YRkN1Ws
+         TMOzQRpaaUXZ+SyzttnuN1lZVbLxvLhrJcVK7Q0TUZjoJ3gRr4S//qNRGegW+ftIMOCR
+         ahOkIp3rEre9k/kpdjYP1DAVWHbdTPg5KnqsrgVk/aUFjG1RQK5bNLpnBThAR5Nm5FWt
+         w5RBFH99VRNTIPjd6oBuRKqK1CEIpz3Jt4iiU4p9Qfv1rZ5IBh9KfbNqQCCZoIVZxxeg
+         aEMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcOOCi7+JU+BpWgw0FFt3BNgMtOElcL7tuoiOXs5tkUm4cu+tQ51YTUVOVPcvSpcefLZrfD9gVnAwwJ0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTb/eQ17LA8I7TEOscxR/IhKA5f874Gd6D1ahRyWY+SpEhM3ds
+	WnJ9Ysws5fgB8Atz0bijzDGJ/jm5TyOUygUg33ceR7oWu/WsW0ONvkKtD3HaQlv5ZhQwdkTLN3w
+	ZgYhjJxPfW3RWKOLHL4UVfLxKMvkFbKHmWtyBnoBRjm+aPxU8Df3lKOB6
+X-Gm-Gg: ASbGncsfn++TtY+PAbCumBbRIR7BTleO2l/zO7Ki/QoTWAsjLzZlmyp6wJwOBREC4VX
+	6RJVA3exnp6QXe5NH0jq72MvOTD+cRndW5ebhWu+hn+PhS3cgkLvW84BYhM5FJbV8NQmOuRptM9
+	IgBD7zs5KJxCarNtVh+XC0kcSFiOh++u0jfliI/LD5ldtvHNmaP1A4WUdWSDbXT0Gel9DdaYbrX
+	j9jCQAU702aAS90UWBkW4C0+rERu5Wj6t2FVSxbeN30
+X-Google-Smtp-Source: AGHT+IEu70Mu1ZDyXwU1Dtw8/ffbqsWWrL/Hqq+SEMEDOyD5B5ZvFYX2fM3ni56scJNwlP7Gxl35AGidO4X8GRL8A5s=
+X-Received: by 2002:a17:902:e745:b0:267:912b:2b4d with SMTP id
+ d9443c01a7336-27ed3fdcf89mr2396165ad.7.1758749677120; Wed, 24 Sep 2025
+ 14:34:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SA1PR12MB9513:EE_
-X-MS-Office365-Filtering-Correlation-Id: 681fdc4b-4e51-4ab7-01d4-08ddfbb1de8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aqo4huDi9x/B5jXMSVjLXiqk/iKvfiwOwGgu7fEFGaooVxMsR2ce71x5lGyp?=
- =?us-ascii?Q?DWZyhvi9V68roRChER8AYUeRlQFtcld/rbemUU0JrQc7dNeAAjnjQDN8FLgj?=
- =?us-ascii?Q?B1WTd8K8CyQ7yF1gdRw9J0Q1tgxXgZMTNziAUOLR58wMZWtsH3Wu7OEetUTl?=
- =?us-ascii?Q?IVTJdJpX4XA8EKyPKvIdIxGIQUHH9DPQ74jj9VCQ7dZG9H++jHsXRFPwrmmQ?=
- =?us-ascii?Q?kaJxI6LAPdeOnPTe3ZAIcPzXl57ynNb55vlx21/lY778U+TnoR0/bJPb7sy7?=
- =?us-ascii?Q?h4Ur9wxf2ZL/bRL7lJy9Sf8qOmElHOzWPODKWAD5n+hbp5JHUHBuZ2zd6oP/?=
- =?us-ascii?Q?DLpTeluMlUm5L6qcpTo+gEHwkx+kXu8JIB47E/bxRPTr83hH1FI1SPxh75kf?=
- =?us-ascii?Q?hWJVEj/RCwfXbpfzv9yn4D7WWftnlL1f6oMAkYmRlcQNkPDwsZNdDTD11cFh?=
- =?us-ascii?Q?GmFIlifHT2HkoTtppkP/NFaJv2rgOdN30OwZRlYTPJwJ2taQGfQeKnEf8fe8?=
- =?us-ascii?Q?CrJSAmLy5OFqBFdE476Dr7X0A38jPY/qIbnyNKGcJLJBv1dyGMwzZMDIL/W+?=
- =?us-ascii?Q?+iXjst0dG9qDMgTcJ8k4hhD2fjtqF7HlrkoCydlGxEoolUUamYM7WpoMCWZh?=
- =?us-ascii?Q?PmBdDeWCuhvCEXWSLpdCM3lgBWOXVVl3SPzamPaoMTOmmnzJN4UodS/eF1os?=
- =?us-ascii?Q?xILzN+VGDme4TAGAwYHJ7bQm1hP2mDMqakPYB5hvsZa1Ha1XNZRB6xJkvekJ?=
- =?us-ascii?Q?06TOsFLfTyHz4X9cH7gnkusC2RW6w9V9rfPWOQkFNoieBkHkNLXWF533wrje?=
- =?us-ascii?Q?8PJaL96Nzf+KjawQiLh88ED1p+Y0aXnJZJeg7iMTw4kxXD4u1wbhJv+l1Qi2?=
- =?us-ascii?Q?P7RBa9xWRLEaNNDadc/JEn8pCucrBy6YIJ3BiOMdVJWNVAK0vd84HVHNOgIO?=
- =?us-ascii?Q?9x70gCBpmf45xU7M6T676g3cuLgQ2FObbqKdAUNRfQLe5KnXQqaIgrilbryV?=
- =?us-ascii?Q?89UnO6eOt/HlNWndzOQtnc/b6XMUmTtT94pw43tWV/gwTsALh7ErCx41RW8H?=
- =?us-ascii?Q?5JvJuR66TNfODvtREve97uJbrZ00f1qxTjTUATaB7yaIq0bAIvDg1hrNbcU2?=
- =?us-ascii?Q?hq0eT+8JQIBpKqWDZkkoJRJ/PofuPsKQxeFXJ0tuqWnzjHHdTG8HXkr/fW+U?=
- =?us-ascii?Q?WmqjvoqeGcIQ5uStOtAhUSmgSGE6CI6VzbwyA9U665hTCEH089/lz6vqhh+o?=
- =?us-ascii?Q?CYS0ZqEIZPCrXHJgOMj9QNVGIQ7UdeRqQB20utYKBgQhoC+pywk+9HN22oks?=
- =?us-ascii?Q?TFfXuN0SbPAMWLfK+IcLeE7Sq1PDKzV1b5rqiVsBhSQMVFA2fQS2nUJ28i5X?=
- =?us-ascii?Q?p9HjaO1IlkMk+corpGITIei9MH6ZpQVqaxJGcmEfor0YU9CNWba3ErIEhDry?=
- =?us-ascii?Q?42yvHgZrPUk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DFhDvVTSr7UaZ/IWQZ+V3AUO5RdQmmGz0om9WwweLWGWIc6WaUuqq97y/Hn6?=
- =?us-ascii?Q?qBaPTCRMn0LtrddRpwVzoE+zqI3RpN0l3zPEaBt/XbGhy43F4KmzXofY2a1M?=
- =?us-ascii?Q?+m6VomrpEC1712GxDpXmGvceGlV6IgeY/MdsKfWMgkgy7FpVzGc0L/NFj4Xx?=
- =?us-ascii?Q?AG/LHBiYVwgtNeHRbYdA6zS2WCVtHZR72OgAqVbKOyCtF5k62Wf10xm4FRo8?=
- =?us-ascii?Q?wxRFGTP4GHgrGMemizAmqKegEacjH8uokWanac4ZX2ISRwyNriL7RcobxK/w?=
- =?us-ascii?Q?XxFhLkG51MaJJsyB8MMKD/X9W04x4GtCjdomvziYrv/aZp+9K2zmeFIpreM0?=
- =?us-ascii?Q?16ZALVLG9wtM3cncM6HmJjx3pLsCxcw3QYWq1FJ6W7teDexfUM4TQltFDvgk?=
- =?us-ascii?Q?KiBZfxqLcaYMnblqWBw2Y1BJxFurKQnMSaT5Tx0JutOeklwWu5JyHPOWgnQm?=
- =?us-ascii?Q?aahycLLIyHSG9myWDgniwNyVkn3gqBpaIowRXIsd4yZHwcOnZR5hm81RkId3?=
- =?us-ascii?Q?YXYTtgb5z0YwjnSQJydIDPGvaphRJCmC5CKKWmvG0Qsheztlrhsyotsl691Z?=
- =?us-ascii?Q?hSOfur1sFiLEavivoERjwuh6wNRgFgzS6NjjLuOvh64feJDYyZzmAXU6u7NH?=
- =?us-ascii?Q?jjfoEjP081jVR1KaLZ5YuVJbc1iavmE8kmfOD7xO4hI/UTuDN1naIUr5ZoM9?=
- =?us-ascii?Q?Xh3GnzaRLejyZdjKXbNxwohTUpdLeskzZJcra9ZvcE//BwjCf3hBYDVehMzl?=
- =?us-ascii?Q?qf0HzsexeXqi/FAyngIUalUjMQZNBG2zxet7tUe1kvdTCZt30PSAKtnSwRgP?=
- =?us-ascii?Q?//ZFec5Q0IdqJPtxvHE+T9fvlYZDSpG6ZaDNwuKOInMT95OFvVJdTyokq9nt?=
- =?us-ascii?Q?L9jWgiLXJ3YCElAFf6ItWhvWwTSazzhUAEodQz3T6ZTdwtGMtdv57oGmGIti?=
- =?us-ascii?Q?0Yrhp3tpI8EbGCzzilT+6qgn+8s7QV9kYn9VCPP1WDS0ImK0mRuQFdrdiPTz?=
- =?us-ascii?Q?y7YB4sm9Ar7ay2+SrKaz20B9LsdqUvm8VbV5ooS8jl6kmnsxeYZ38GDPOJyR?=
- =?us-ascii?Q?PDOB7n2EbBDouZKBCp6725IUh5zx+bzPx6zD6Ar4/Znu0uwCD8DdQmabRNjM?=
- =?us-ascii?Q?lQFC4xn/0w5B7Gx0yZcYJJVTq5KDh92D1ItzG9dcHS2hyR4udQ1DTna+LdRW?=
- =?us-ascii?Q?9+UqaVQX2BTPMmhdykTWi1DnCti40CiQYoQe8wfFvX6r13+DK+f4DDTi44Vz?=
- =?us-ascii?Q?E9+lb/58MpBoomUaOJkB2nfr8Gr0uGMl3MnDd2Z53aFSYfYx3RlfJTc2V/rc?=
- =?us-ascii?Q?ERiTeETXKq21aPd5OSG9XJbcM/eaXVKFqgk126ZjXysK0f6JMY7ySRjxuG3x?=
- =?us-ascii?Q?QyfCvkm8Ys3v1tR/YYUH8lshJM+BVu96s+LFP36Jcf54Ngn58lOnc79QO2dQ?=
- =?us-ascii?Q?Rhtwr2wKQIMUux4wWaqFsySXZCQrjMeT4PoHiJfpwSw8vluXRScGs7d3IEqR?=
- =?us-ascii?Q?pGsspeTgLlO5AcoWmU0OtvF9+oTSdC5LA0xDhchCgVjBn3feRENg5JIBwNMY?=
- =?us-ascii?Q?3QqntkneFNAO1OfXdkcpbP8op7KcfgW3YafwWDaJ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 681fdc4b-4e51-4ab7-01d4-08ddfbb1de8a
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 21:32:31.9504
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vhguPU2JLt6tQbtXLyVhT2mZ3EKfv8w+PvvrYIiMqnGk2rw/eDc2LfuRpU690cOv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9513
+References: <20250902164047.64261-1-thomas.falcon@intel.com> <20250902164047.64261-2-thomas.falcon@intel.com>
+In-Reply-To: <20250902164047.64261-2-thomas.falcon@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 24 Sep 2025 14:34:26 -0700
+X-Gm-Features: AS18NWA3mro55yisLg4M9ifNw8wPOnS-NRj-YIx5vNmqipRTez2CzPwz95LoALI
+Message-ID: <CAP-5=fXe43BE3hWoQ1gjxXuQ9OYBTNvMjexrxiyC+SHgP9rTYQ@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v2 1/2] perf record: Add ratio-to-prev term
+To: Thomas Falcon <thomas.falcon@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 08, 2025 at 04:26:59PM -0700, Nicolin Chen wrote:
-> When a master is attached from an old domain to a new domain, it needs to
-> build an invalidation array to delete and add the array entries from/onto
-> the invalidation arrays of those two domains, passed via the to_merge and
-> to_unref arguments into arm_smmu_invs_merge/unref() respectively.
-> 
-> Since the master->num_streams might differ across masters, a memory would
-> have to be allocated when building an to_merge/to_unref array which might
-> fail with -ENOMEM.
-> 
-> On the other hand, an attachment to arm_smmu_blocked_domain must not fail
-> so it's the best to avoid any memory allocation in that path.
-> 
-> Pre-allocate a fixed size invalidation array for every master. This array
-> will be used as a scratch to fill dynamically when building a to_merge or
-> to_unref invs array.
-
-Mention the sorting here too, though maybe that hunk should be moved
-to the next patch.
-
-> +	/* Base case has 1 ASID or 1~2 VMIDs. ATS case adds num_ids */
-> +	if (!ats_supported)
-> +		master->build_invs = arm_smmu_invs_alloc(2);
-> +	else
-> +		master->build_invs = arm_smmu_invs_alloc(2 + fwspec->num_ids);
-> +	if (IS_ERR(master->build_invs)) {
-> +		kfree(master->streams);
-> +		return PTR_ERR(master->build_invs);
-> +	}
+On Tue, Sep 2, 2025 at 9:41=E2=80=AFAM Thomas Falcon <thomas.falcon@intel.c=
+om> wrote:
+>
+> Provide ratio-to-prev term which allows the user to
+> set the event sample period of two events corresponding
+> to a desired ratio. If using on an Intel x86 platform with
+> Auto Counter Reload support, also set corresponding event's
+> config2 attribute with a bitmask which counters to reset and
+> which counters to sample if the desired ratio is met or exceeded.
+> On other platforms, only the sample period is affected by the
+> ratio-to-prev term.
+>
+> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> ---
+>  tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+>  tools/perf/Documentation/perf-list.txt |  2 +
+>  tools/perf/arch/x86/util/evsel.c       | 53 ++++++++++++++++++
+>  tools/perf/util/evsel.c                | 76 ++++++++++++++++++++++++++
+>  tools/perf/util/evsel.h                |  1 +
+>  tools/perf/util/evsel_config.h         |  1 +
+>  tools/perf/util/parse-events.c         | 22 ++++++++
+>  tools/perf/util/parse-events.h         |  3 +-
+>  tools/perf/util/parse-events.l         |  1 +
+>  tools/perf/util/pmu.c                  |  3 +-
+>  10 files changed, 213 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/perf/Documentation/intel-acr.txt
+>
+> diff --git a/tools/perf/Documentation/intel-acr.txt b/tools/perf/Document=
+ation/intel-acr.txt
+> new file mode 100644
+> index 000000000000..72654fdd9a52
+> --- /dev/null
+> +++ b/tools/perf/Documentation/intel-acr.txt
+> @@ -0,0 +1,53 @@
+> +Intel Auto Counter Reload Support
+> +---------------------------------
+> +Support for Intel Auto Counter Reload in perf tools
 > +
-> +	/* Put the ids into order for a sorted to_merge or to_unref array */
-> +	sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
-> +		       arm_smmu_ids_cmp, NULL);
+> +Auto counter reload provides a means for software to specify to hardware
+> +that certain counters, if supported, should be automatically reloaded
+> +upon overflow of chosen counters. By taking a sample only if the rate of
+> +one event exceeds some threshold relative to the rate of another event,
+> +this feature enables software to sample based on the relative rate of
+> +two or more events. To enable this, the user must provide a sample perio=
+d
+> +term and a bitmask ("acr_mask") for each relevant event specifying the
+> +counters in an event group to reload if the event's specified sample
+> +period is exceeded.
+> +
+> +For example, if the user desires to measure a scenario when IPC > 2,
+> +the event group might look like the one below:
+> +
+> +       perf record -e {cpu_atom/instructions,period=3D200000,acr_mask=3D=
+0x2/, \
+> +       cpu_atom/cycles,period=3D100000,acr_mask=3D0x3/} -- true
+> +
+> +In this case, if the "instructions" counter exceeds the sample period of
+> +200000, the second counter, "cycles", will be reset and a sample will be
+> +taken. If "cycles" is exceeded first, both counters in the group will be
+> +reset. In this way, samples will only be taken for cases where IPC > 2.
+> +
+> +The acr_mask term is a hexadecimal value representing a bitmask of the
+> +events in the group to be reset when the period is exceeded. In the
+> +example above, "instructions" is assigned an acr_mask of 0x2, meaning
+> +only the second event in the group is reloaded and a sample is taken
+> +for the first event. "cycles" is assigned an acr_mask of 0x3, meaning
+> +that both event counters will be reset if the sample period is exceeded
+> +first.
 
-The sort could be moved under the above !ats_supported, a little more
-insurance in case something is inspecting the ids.
+This is great! Thank you for adding it.
 
-I searched around and only found tegra_dev_iommu_get_stream_id() which
-is fine with the sort due to num_ids ==1
+> +
+> +ratio-to-prev Event Term
+> +------------------------
+> +To simplify this, an event term "ratio-to-prev" is provided which is use=
+d
+> +alongside the sample period term n or the -c/--count option. This would
+> +allow users to specify the desired relative rate between events as a
+> +ratio. Note: Both events compared must belong to the same PMU.
+> +
+> +The command above would then become
+> +
+> +       perf record -e {cpu_atom/instructions/, \
+> +       cpu_atom/cycles,period=3D100000,ratio-to-prev=3D0.5/} -- true
+> +
+> +ratio-to-prev is the ratio of the event using the term relative
+> +to the previous event in the group, which will always be 1,
+> +for a 1:0.5 or 2:1 ratio.
+> +
+> +To sample for IPC < 2 for example, the events need to be reordered:
+> +
+> +       perf record -e {cpu_atom/cycles/, \
+> +       cpu_atom/instructions,period=3D200000,ratio-to-prev=3D2.0/} -- tr=
+ue
+> diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Document=
+ation/perf-list.txt
+> index 28215306a78a..10bc66d39202 100644
+> --- a/tools/perf/Documentation/perf-list.txt
+> +++ b/tools/perf/Documentation/perf-list.txt
+> @@ -392,6 +392,8 @@ Support raw format:
+>  . '--raw-dump [hw|sw|cache|tracepoint|pmu|event_glob]', shows the raw-du=
+mp of
+>    a certain kind of events.
+>
+> +include::intel-acr.txt[]
+> +
+>  SEE ALSO
+>  --------
+>  linkperf:perf-stat[1], linkperf:perf-top[1],
+> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/=
+evsel.c
+> index 9bc80fff3aa0..84858e4c397d 100644
+> --- a/tools/perf/arch/x86/util/evsel.c
+> +++ b/tools/perf/arch/x86/util/evsel.c
+> @@ -1,7 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> +#include "util/evlist.h"
+>  #include "util/evsel.h"
+> +#include "util/evsel_config.h"
+>  #include "util/env.h"
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+> @@ -67,6 +69,57 @@ int arch_evsel__hw_name(struct evsel *evsel, char *bf,=
+ size_t size)
+>                          event_name);
+>  }
+>
+> +void arch_evsel__apply_ratio_to_prev(struct evsel *evsel,
+> +                               struct perf_event_attr *attr)
+> +{
+> +       struct perf_event_attr *prev_attr =3D NULL;
+> +       struct evsel *evsel_prev =3D NULL;
+> +       const char *name =3D "acr_mask";
+> +       int evsel_idx =3D 0;
+> +       __u64 ev_mask, pr_ev_mask;
+> +
+> +       if (!perf_pmu__has_format(evsel->pmu, name)) {
+> +               pr_err("'%s' does not have acr_mask format support\n", ev=
+sel->pmu->name);
+> +               return;
+> +       }
+> +       if (perf_pmu__format_type(evsel->pmu, name) !=3D
+> +                       PERF_PMU_FORMAT_VALUE_CONFIG2) {
+> +               pr_err("'%s' does not have config2 format support\n", evs=
+el->pmu->name);
+> +               return;
+> +       }
+> +
+> +       evsel_prev =3D evsel__prev(evsel);
+> +       if (!evsel_prev) {
+> +               pr_err("Previous event does not exist.\n");
+> +               return;
+> +       }
 
-Otherwise looks OK
+Nit: you should probably check that the leader of both events is the
+same, this means the events are in the same group.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> +
+> +       prev_attr =3D &evsel_prev->core.attr;
+> +
+> +       if (prev_attr->config2) {
+> +               pr_err("'%s' has set config2 (acr_mask?) already, configu=
+ration not supported\n", evsel_prev->name);
+> +               return;
+> +       }
+> +
+> +       /*
+> +        * acr_mask (config2) is calculated using the event's index in
+> +        * the event group. The first event will use the index of the
+> +        * second event as its mask (e.g., 0x2), indicating that the
+> +        * second event counter will be reset and a sample taken for
+> +        * the first event if its counter overflows. The second event
+> +        * will use the mask consisting of the first and second bits
+> +        * (e.g., 0x3), meaning both counters will be reset if the
+> +        * second event counter overflows.
+> +        */
+> +
+> +       evsel_idx =3D evsel__group_idx(evsel);
+> +       ev_mask =3D 1ull << evsel_idx;
+> +       pr_ev_mask =3D 1ull << (evsel_idx - 1);
+> +
+> +       prev_attr->config2 =3D ev_mask;
+> +       attr->config2 =3D ev_mask | pr_ev_mask;
+> +}
+> +
+>  static void ibs_l3miss_warn(void)
+>  {
+>         pr_warning(
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index d264c143b592..f6f93920c0aa 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1091,6 +1091,71 @@ static void evsel__reset_callgraph(struct evsel *e=
+vsel, struct callchain_param *
+>         }
+>  }
+>
+> +static void evsel__apply_ratio_to_prev(struct evsel *evsel,
+> +                                      struct perf_event_attr *attr,
+> +                                      struct record_opts *opts,
+> +                                      const char *buf)
+> +{
+> +       struct perf_event_attr *prev_attr =3D NULL;
+> +       struct evsel *evsel_prev =3D NULL;
+> +       u64 type =3D evsel->core.attr.sample_type;
+> +       u64 prev_type =3D 0;
+> +       double rtp;
+> +
+> +       rtp =3D strtod(buf, NULL);
+> +       if (rtp <=3D 0) {
+> +               pr_err("Invalid ratio-to-prev value %lf\n", rtp);
+> +               return;
+> +       }
+> +       if (evsel =3D=3D evsel__leader(evsel)) {
+> +               pr_err("Invalid use of ratio-to-prev term without precedi=
+ng element in group\n");
+> +               return;
+> +       }
 
-Jason
+Ah, it is done here.
+
+> +       if (!evsel->pmu->is_core) {
+> +               pr_err("Event using ratio-to-prev term must have a core P=
+MU\n");
+> +               return;
+> +       }
+> +
+> +       evsel_prev =3D evsel__prev(evsel);
+> +       if (!evsel_prev) {
+> +               pr_err("Previous event does not exist.\n");
+> +               return;
+> +       }
+> +
+> +       if (evsel_prev->pmu->type !=3D evsel->pmu->type) {
+> +               pr_err("Compared events (\"%s\", \"%s\") must have same P=
+MU\n",
+> +                       evsel->name, evsel_prev->name);
+> +               return;
+> +       }
+> +
+> +       prev_attr =3D &evsel_prev->core.attr;
+> +       prev_type =3D evsel_prev->core.attr.sample_type;
+> +
+> +       if (!(prev_type & PERF_SAMPLE_PERIOD)) {
+> +               attr->sample_period =3D prev_attr->sample_period * rtp;
+> +               attr->freq =3D 0;
+> +               evsel__reset_sample_bit(evsel, PERIOD);
+> +       } else if (!(type & PERF_SAMPLE_PERIOD)) {
+> +               prev_attr->sample_period =3D attr->sample_period / rtp;
+> +               prev_attr->freq =3D 0;
+> +               evsel__reset_sample_bit(evsel_prev, PERIOD);
+> +       } else {
+> +               if (opts->user_interval !=3D ULLONG_MAX) {
+> +                       prev_attr->sample_period =3D opts->user_interval;
+> +                       attr->sample_period =3D prev_attr->sample_period =
+* rtp;
+> +                       prev_attr->freq =3D 0;
+> +                       attr->freq =3D 0;
+> +                       evsel__reset_sample_bit(evsel_prev, PERIOD);
+> +                       evsel__reset_sample_bit(evsel, PERIOD);
+> +               } else {
+> +                       pr_err("Event period term or count (-c) must be s=
+et when using ratio-to-prev term.\n");
+> +                       return;
+> +               }
+> +       }
+> +
+> +       arch_evsel__apply_ratio_to_prev(evsel, attr);
+> +}
+> +
+>  static void evsel__apply_config_terms(struct evsel *evsel,
+>                                       struct record_opts *opts, bool trac=
+k)
+>  {
+> @@ -1104,6 +1169,7 @@ static void evsel__apply_config_terms(struct evsel =
+*evsel,
+>         u32 dump_size =3D 0;
+>         int max_stack =3D 0;
+>         const char *callgraph_buf =3D NULL;
+> +       const char *rtp_buf =3D NULL;
+>
+>         list_for_each_entry(term, config_terms, list) {
+>                 switch (term->type) {
+> @@ -1174,6 +1240,9 @@ static void evsel__apply_config_terms(struct evsel =
+*evsel,
+>                         break;
+>                 case EVSEL__CONFIG_TERM_CFG_CHG:
+>                         break;
+> +               case EVSEL__CONFIG_TERM_RATIO_TO_PREV:
+> +                       rtp_buf =3D term->val.str;
+> +                       break;
+>                 default:
+>                         break;
+>                 }
+> @@ -1225,6 +1294,8 @@ static void evsel__apply_config_terms(struct evsel =
+*evsel,
+>                         evsel__config_callchain(evsel, opts, &param);
+>                 }
+>         }
+> +       if (rtp_buf)
+> +               evsel__apply_ratio_to_prev(evsel, attr, opts, rtp_buf);
+>  }
+>
+>  struct evsel_config_term *__evsel__get_config_term(struct evsel *evsel, =
+enum evsel_term_type type)
+> @@ -1249,6 +1320,11 @@ void __weak arch__post_evsel_config(struct evsel *=
+evsel __maybe_unused,
+>  {
+>  }
+>
+> +void __weak arch_evsel__apply_ratio_to_prev(struct evsel *evsel __maybe_=
+unused,
+> +                                           struct perf_event_attr *attr =
+__maybe_unused)
+> +{
+> +}
+> +
+
+I'm not a fan of weak functions as they introduce subtle bugs, but I
+can see why you have this organization.
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
+
+>  static void evsel__set_default_freq_period(struct record_opts *opts,
+>                                            struct perf_event_attr *attr)
+>  {
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 5797a02e5d6a..5002c795e818 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -342,6 +342,7 @@ void evsel__set_sample_id(struct evsel *evsel, bool u=
+se_sample_identifier);
+>  void arch_evsel__set_sample_weight(struct evsel *evsel);
+>  void arch__post_evsel_config(struct evsel *evsel, struct perf_event_attr=
+ *attr);
+>  int arch_evsel__open_strerror(struct evsel *evsel, char *msg, size_t siz=
+e);
+> +void arch_evsel__apply_ratio_to_prev(struct evsel *evsel, struct perf_ev=
+ent_attr *attr);
+>
+>  int evsel__set_filter(struct evsel *evsel, const char *filter);
+>  int evsel__append_tp_filter(struct evsel *evsel, const char *filter);
+> diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_confi=
+g.h
+> index 94a1e9cf73d6..bcd3a978f0c4 100644
+> --- a/tools/perf/util/evsel_config.h
+> +++ b/tools/perf/util/evsel_config.h
+> @@ -28,6 +28,7 @@ enum evsel_term_type {
+>         EVSEL__CONFIG_TERM_AUX_ACTION,
+>         EVSEL__CONFIG_TERM_AUX_SAMPLE_SIZE,
+>         EVSEL__CONFIG_TERM_CFG_CHG,
+> +       EVSEL__CONFIG_TERM_RATIO_TO_PREV,
+>  };
+>
+>  struct evsel_config_term {
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+> index 8282ddf68b98..850de3a51f47 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -834,6 +834,7 @@ const char *parse_events__term_type_str(enum parse_ev=
+ents__term_type term_type)
+>                 [PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          =3D "lega=
+cy-cache",
+>                 [PARSE_EVENTS__TERM_TYPE_HARDWARE]              =3D "hard=
+ware",
+>                 [PARSE_EVENTS__TERM_TYPE_CPU]                   =3D "cpu"=
+,
+> +               [PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV]         =3D "rati=
+o-to-prev",
+>         };
+>         if ((unsigned int)term_type >=3D __PARSE_EVENTS__TERM_TYPE_NR)
+>                 return "unknown term";
+> @@ -884,6 +885,7 @@ config_term_avail(enum parse_events__term_type term_t=
+ype, struct parse_events_er
+>         case PARSE_EVENTS__TERM_TYPE_RAW:
+>         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>         case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+> +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+>         default:
+>                 if (!err)
+>                         return false;
+> @@ -1037,6 +1039,21 @@ do {                                              =
+                          \
+>                 perf_cpu_map__put(map);
+>                 break;
+>         }
+> +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> +               CHECK_TYPE_VAL(STR);
+> +               if (strtod(term->val.str, NULL) <=3D 0) {
+> +                       parse_events_error__handle(err, term->err_val,
+> +                                                  strdup("zero or negati=
+ve"),
+> +                                                  NULL);
+> +                       return -EINVAL;
+> +               }
+> +               if (errno =3D=3D ERANGE) {
+> +                       parse_events_error__handle(err, term->err_val,
+> +                                                  strdup("too big"),
+> +                                                  NULL);
+> +                       return -EINVAL;
+> +               }
+> +               break;
+>         case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
+>         case PARSE_EVENTS__TERM_TYPE_USER:
+>         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+> @@ -1165,6 +1182,7 @@ static int config_term_tracepoint(struct perf_event=
+_attr *attr,
+>         case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>         case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+>         case PARSE_EVENTS__TERM_TYPE_CPU:
+> +       case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+>         default:
+>                 if (err) {
+>                         parse_events_error__handle(err, term->err_term,
+> @@ -1289,6 +1307,9 @@ do {                                               =
+               \
+>                         ADD_CONFIG_TERM_VAL(AUX_SAMPLE_SIZE, aux_sample_s=
+ize,
+>                                             term->val.num, term->weak);
+>                         break;
+> +               case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+> +                       ADD_CONFIG_TERM_STR(RATIO_TO_PREV, term->val.str,=
+ term->weak);
+> +                       break;
+>                 case PARSE_EVENTS__TERM_TYPE_USER:
+>                 case PARSE_EVENTS__TERM_TYPE_CONFIG:
+>                 case PARSE_EVENTS__TERM_TYPE_CONFIG1:
+> @@ -1355,6 +1376,7 @@ static int get_config_chgs(struct perf_pmu *pmu, st=
+ruct parse_events_terms *head
+>                 case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
+>                 case PARSE_EVENTS__TERM_TYPE_HARDWARE:
+>                 case PARSE_EVENTS__TERM_TYPE_CPU:
+> +               case PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV:
+>                 default:
+>                         break;
+>                 }
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-event=
+s.h
+> index 62dc7202e3ba..b2dcc52e3814 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -83,7 +83,8 @@ enum parse_events__term_type {
+>         PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
+>         PARSE_EVENTS__TERM_TYPE_HARDWARE,
+>         PARSE_EVENTS__TERM_TYPE_CPU,
+> -#define        __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU=
+ + 1)
+> +       PARSE_EVENTS__TERM_TYPE_RATIO_TO_PREV,
+> +#define        __PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_RAT=
+IO_TO_PREV + 1)
+>  };
+>
+>  struct parse_events_term {
+> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-event=
+s.l
+> index 2034590eb789..25206de68007 100644
+> --- a/tools/perf/util/parse-events.l
+> +++ b/tools/perf/util/parse-events.l
+> @@ -336,6 +336,7 @@ aux-action          { return term(yyscanner, PARSE_EV=
+ENTS__TERM_TYPE_AUX_ACTION); }
+>  aux-sample-size                { return term(yyscanner, PARSE_EVENTS__TE=
+RM_TYPE_AUX_SAMPLE_SIZE); }
+>  metric-id              { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+METRIC_ID); }
+>  cpu                    { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+CPU); }
+> +ratio-to-prev          { return term(yyscanner, PARSE_EVENTS__TERM_TYPE_=
+RATIO_TO_PREV); }
+>  cpu-cycles|cycles                              { return hw_term(yyscanne=
+r, PERF_COUNT_HW_CPU_CYCLES); }
+>  stalled-cycles-frontend|idle-cycles-frontend   { return hw_term(yyscanne=
+r, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
+>  stalled-cycles-backend|idle-cycles-backend     { return hw_term(yyscanne=
+r, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 5a291f1380ed..3d1f975e8db9 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1541,7 +1541,7 @@ static int pmu_config_term(const struct perf_pmu *p=
+mu,
+>                         break;
+>                 case PARSE_EVENTS__TERM_TYPE_USER: /* Not hardcoded. */
+>                         return -EINVAL;
+> -               case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__TERM_=
+TYPE_CPU:
+> +               case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__TERM_=
+TYPE_RATIO_TO_PREV:
+>                         /* Skip non-config terms. */
+>                         break;
+>                 default:
+> @@ -1930,6 +1930,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pmu,=
+ void *state, pmu_format_call
+>                 "aux-action=3D(pause|resume|start-paused)",
+>                 "aux-sample-size=3Dnumber",
+>                 "cpu=3Dnumber",
+> +               "ratio-to-prev=3Dstring",
+>         };
+>         struct perf_pmu_format *format;
+>         int ret;
+> --
+> 2.50.1
+>
 
