@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-831294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36169B9C4B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D94BB9C4C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0B6382371
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7BE1BC17FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D323D288537;
-	Wed, 24 Sep 2025 21:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65043263C8A;
+	Wed, 24 Sep 2025 21:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gpvaMTzE"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sLXR2/5t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8C915D1
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B604C85
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758750296; cv=none; b=t8ymEbSl7twqzhfdY/I0DpsowKmsBfZq9NNn5p4QX4ekFSNdK/Kzh9F/VLXAa2fR3/EWZy7P44x9qIpEgN6JoAi6B6FnlL8Lqs50Bqt5dkaZ4zoIESPUc5o8s5arNSW/lz8MFtLrEcU9r1TmGIH8xzYV0nQ5dt2QRocRHtIrk7I=
+	t=1758750407; cv=none; b=tDgyRD5Iu4D4XgZ/Z1RMPWI3QWtWDwOp9s52BTekG9hqkgVEeaROrtpfLZPEXg8R9H+kHJyms1C/Ltdqcd9c9C8QgzVRJypzKGxKQRbKwKdEaEK/LmQ9xHz1JnxkldVqXUUW7tfwi5fNYnhbmrUnn5r2MWVxmht05v1ASjpkBNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758750296; c=relaxed/simple;
-	bh=PzqRSymdVzt1Og9H2m/pVZgy34E6YLnOoomg2VWITJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m1s5YlWYqNErlCm/+fDQrHF/PN3HmziaAoFP2km90QPf1L02s8pZjTjLUyuEoddYMql47VMrxFeqI53J53TO3vOZC0QB5h7SDsc1wllIPXMrmFq15WHK1eUEM1XOHbc3UEeclBWhd2ugVoLZsvOIv0nnslPHk/skpUvrARnBhWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gpvaMTzE; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6228de280a4so503629a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1758750292; x=1759355092; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=38X5IFenUzwUhQGVC0bd120a5LFhgoZi9a0z5DrCvfg=;
-        b=gpvaMTzECxo9tYItWL8VaHkOTQFEmuAjhUKojozeoWFDAle4CMUllQvEAoPiMS0JWP
-         qc1Gqd6SgJqN239aGs5b8AJDnDrd5AS1L07XWQZk52Z3ZpoqOdg/+bhWj9yfwM+Al+ZX
-         6PU6Ksh6AIL0jEMJkCGgOafJr0+fSZJ4Z+toc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758750292; x=1759355092;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38X5IFenUzwUhQGVC0bd120a5LFhgoZi9a0z5DrCvfg=;
-        b=Niq6US1pyHS8337xLO3kkPF5k+LAC9qct1flFTJmWYYVUSvJAW4h5LHJuT7+elDS7r
-         4YpKYTXF8P/khVPA0R1w7xHkOSKkTJnojmRwH54rtOkXpKkfhDLklplwrXu+NRQQyNeX
-         oGr//2PsISkahGojkW2bzGiftUP8uhmfrXyc1PzHZ6+1Lwa1SG9hyeKHEo705zcWZHxR
-         FgqJWFrpej5XUpdzYGUdU9qk9p6UT+ndAhSmo7PCYXx6NvMOUNIan5Vjyak/1RumRsqY
-         xjzUTgoAgOntaC7jB1CeMHkae3mLZISRRXpjpJSc4OMTvupLd4qHzT7q9WXa/iIuF0Q0
-         LyoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXspJ5llJgxJ2B04INtJ30C97biMui0+448Jz5dylcTGOTjIa3fmuo5UsyKK1pNmVit/QVAUn+YYNolvTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoN/neDEFfIDwhOhPPckfxNgBJzHjyptAGFJA03+fVKbvvprC2
-	aFIpIx78a6XayC25GsSpzspMp7N7WaBSov6Lg0HbGQ6lGGMuIV4WgU45fP6PCNgp0Acc3Yjfb32
-	obQ6L6xs=
-X-Gm-Gg: ASbGncuvXlLCZ9dqo/75Cdq8C8G6G61TQqgdVM48r/Apqc3ETE4hxyXSymqPsG/kqBe
-	2JRRsFMJZ99pQp8vfapZqBtze+KX7BaKumSE6/67XpDw34LuDBwHwFzLY2s5LCn9xtmXJJpP1nM
-	nf4ffxaLB482acIsETS+bjKbsICFSPYalPne1KjtDnUD9D95gRMzVzrSTivJflTYoMQ8QoZmUHL
-	iTa/I1KkW5lvH3xPG5aI8kv+ciZ/Mdh5cjuf7YuFE2M2jXBG8CCrYai/zh4n+XXOd+3SLVpa3HL
-	peMTZnmdSw7sTfAZI9HRTVdlQmwwk1HlT1fM1Zko/COuzvXbHB48osKuLbapXMjSNMxLST4lokD
-	8wfDbIdDg3ghuMkoAOJafceTUssfWXAKMcbtH7HpFSeg604XuepyHXJcfHzbnOcQ5fBpkhkrt
-X-Google-Smtp-Source: AGHT+IF3EcKb/oW0cGipHl6/NS8m3HeVoUmoUjh4nfU7gV5Ry/CcyXAwF7aWO0gZxBS3aU3tCMXUIw==
-X-Received: by 2002:a05:6402:26d2:b0:62f:c6c8:e6c5 with SMTP id 4fb4d7f45d1cf-6349fa7e6a1mr758957a12.20.1758750291953;
-        Wed, 24 Sep 2025 14:44:51 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3b0582bsm106859a12.50.2025.09.24.14.44.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 14:44:51 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b33d785de7cso50499966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:44:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXTjPugSFvUa2irKJFseVFOyO6nRzDq8I9EWOLuvYz6m/lJhdRjgcfrBJEHpJXRnera8wBOiNeyI+eQBFU=@vger.kernel.org
-X-Received: by 2002:a17:907:3d9e:b0:b2d:830a:8c17 with SMTP id
- a640c23a62f3a-b34bd068ecdmr129037066b.56.1758750290992; Wed, 24 Sep 2025
- 14:44:50 -0700 (PDT)
+	s=arc-20240116; t=1758750407; c=relaxed/simple;
+	bh=ckaSwtRPrj356IriTKLthYSjTY99oe1PgyqUXN6/eDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FwYnElGtRAWHJmIDx8kVXqWAkEIEuKtyXg5FhwubzlUYEXveeY74jrGWKTGndkQIzqOUqAjZpBto6Ji0/IlMPXPMVO8X2iiQb3mocaBHuYf0nsFmRFQOZBTKP0H5OGd03DBL8pENkCG0yNLYSOSx3uwC3STgrhQ5Z5IixU8REuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sLXR2/5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAC06C4CEE7;
+	Wed, 24 Sep 2025 21:46:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758750407;
+	bh=ckaSwtRPrj356IriTKLthYSjTY99oe1PgyqUXN6/eDg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=sLXR2/5tlBDoAo+MWC8BCrzcXg4Lodf+O2znxlGGPUCxbmfnu+caHSthpgXZ/h8JS
+	 fenKE2u2/2HaxNpsrsVmR5RPPsL0KWt1shLEG+W00qUxCvHb8qqwF9XUVxRvzH2EI6
+	 2mSXHfh30GudnUyf0hnxzuzPG/nwyAmGOLNXjxButbaHkCdgyC71LLeqDYz33Fcfjm
+	 NRXmxTpurJR7xHuIaDNQ9nYoCTiU6u9qnD1jLgLynfXcQSxwhmDqBJFwKH42kZttAf
+	 6s6LXllje2kiOdEMNwanpnfLpPR3MjwD+8x7uZ0Boma9iOL7garIIOg8oMpfIo9Juu
+	 VBYaXc/qoIuuw==
+Received: by venus (Postfix, from userid 1000)
+	id CB1CF1805CC; Wed, 24 Sep 2025 23:46:43 +0200 (CEST)
+From: Sebastian Reichel <sre@kernel.org>
+Date: Wed, 24 Sep 2025 23:46:30 +0200
+Subject: [PATCH] drm/panel: sitronix-st7789v: fix sync flags for
+ t28cp45tn89
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924201822.9138-1-ebiggers@kernel.org>
-In-Reply-To: <20250924201822.9138-1-ebiggers@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Sep 2025 14:44:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wivFdqXAytf0Hv4GQ9FgD1hGBMutrrbicgSZirX5qYR_A@mail.gmail.com>
-X-Gm-Features: AS18NWBx1VupiFgf0uY-dl7iFrU4oMoZkrOXQfLP0z514sSYRpKr3DVixUA0aJI
-Message-ID: <CAHk-=wivFdqXAytf0Hv4GQ9FgD1hGBMutrrbicgSZirX5qYR_A@mail.gmail.com>
-Subject: Re: [PATCH v2] crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
+X-B4-Tracking: v=1; b=H4sIALVm1GgC/x2MQQqAIBAAvyJ7TthMQftKdJDaai8mKhGIf086z
+ sBMhUyJKcMsKiR6OPMdOoyDgO3y4STJe2dQqAw6pWVRdovalGCdPPiV6KbRIBJZ66FXMVHX/3F
+ ZW/sAG5u1iGEAAAA=
+X-Change-ID: 20250924-t28cp45tn89-fix-0931500ee88a
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, kernel@collabora.com, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1563;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=yo39CeDpYS10BZLVJfancD+PhiXUMdjyCeXd2WEPXNk=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBo1GbDqfNn0D/c1bP94UcM7RFr8hOS6xS7sItSO
+ EM3oYksaPuJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaNRmwwAKCRDY7tfzyDv6
+ mgSVD/9qInDMt1F7V7n52ZgLdiBx1TxisznnPNS/i7G5Qg4z1XLr2ecdzH+KWfuEK7GjO624Xes
+ l5hHtt2upTpCIZ2qnWmLYeO6rbepRsyywAgUpqGlJfhcsMD161sNQwKY4r3/V7usUNSLpX94Xng
+ i8fk8k2mFYD7hOti8YyFu4RfjlfzQuIFt3fH7r9gt6ykNtRsjMNzfHFu4oFq3irIyZv3ZtBHOcU
+ 2nafyWbfo4NDBtDBvUltguT/Kt7ROPxeMt40BFRD73NVx4GsAo5SqSRGTwcbHYXEbpL87CuCV18
+ MxhWmSjwkp/x0vfQup/HgP4L4QMaRHEF2hGb+X+XqLF1laSvCw45Pm7YUIAQ/0ksxZ2uwLEWkgr
+ FkGe2VGe/23zSeDDhaJScs/B2W4J2/A0Zm/bR73+1M0VdIWd7h0flEtsK++xZiX1MhVSRk2oZto
+ UthmhA1VcT5LtHz9eoVSZbchh6hN5JhKIIg1iPzUSoIDp3iYW7jhYM/mQRmLYxCyxMwmJYyCUil
+ 3lIcJlzHO9h8VRyHfBGY0Qr2eU7OhPb+otCx7EE7x+ZFz47RrzkzO9aBg9mBn4pZF3LX9r9rksJ
+ pzuiUmaGQwBw6uEvRXqo1e2UBbBZ7e4DJG45pI48SbweJ/g/2YPQyyWwjkJxNlW8woesnGzMut/
+ +omS/45E8XIevLA==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-On Wed, 24 Sept 2025 at 13:19, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Fix this by restoring the bool type.
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Applied directly since the end is nigh.
+I planned to set the polarity of horizontal and vertical sync, but
+accidentally described vertical sync twice with different polarity
+instead.
 
-          Linus
+Note, that there is no functional change, because the driver only
+makes use of DRM_MODE_FLAG_P[HV]SYNC to divert from the default
+active-low polarity.
+
+Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Closes: https://lore.kernel.org/all/20250923132616.GH20765@pendragon.ideasonboard.com/
+Fixes: a411558cc143 ("drm/panel: sitronix-st7789v: add Inanbo T28CP45TN89 support")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+index 04d91929eedda092b966b8cffdef5b267748f190..dedf0a390a88dd45a8179e2d22e872128c87cfda 100644
+--- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
++++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+@@ -261,7 +261,7 @@ static const struct drm_display_mode t28cp45tn89_mode = {
+ 	.vtotal = 320 + 8 + 4 + 4,
+ 	.width_mm = 43,
+ 	.height_mm = 57,
+-	.flags = DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC,
++	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_PVSYNC,
+ };
+ 
+ static const struct drm_display_mode et028013dma_mode = {
+
+---
+base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
+change-id: 20250924-t28cp45tn89-fix-0931500ee88a
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
 
