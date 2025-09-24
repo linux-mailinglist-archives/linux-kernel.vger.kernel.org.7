@@ -1,102 +1,255 @@
-Return-Path: <linux-kernel+bounces-830352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6934B99742
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 972FBB99751
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDCB3249EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0F6325184
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C022DFF18;
-	Wed, 24 Sep 2025 10:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B82E03FD;
+	Wed, 24 Sep 2025 10:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jTJFJBDD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5MyWP4X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF42DFA2F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6158C2DFF18
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758710389; cv=none; b=o8M2e9aGrmP8ZuLX8t9k+Eox3/H0HMrCx1a1dxvpZ7iL3ZgLLdg3KqaXnUCYsXXIFpOZyQfaZYLc9OOmbgDM0IhcXMyOV2qOmAH+HxmHAmyTT1HiH3kvbB5Y7KQgPp7tgyzUJZ4BjTsn8pyo2Dfon/cxXyVl+zIy0iOLWD2CJh4=
+	t=1758710427; cv=none; b=AK78HIr5IwlyZMpWnrpeocGyIKkTtRG5FwmpbKVRXjc/NNKlz8hWO5oU6+06xnicyuEMZPTjhp8/xMWOozTdC8bSNQ4Srq+0V7G8S25MrAkndPmxlD75KdHYtKEsBDNLIIgHufR2c6QMrVArT3qsI/bFsum/CkEDKUpZFnsNp3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758710389; c=relaxed/simple;
-	bh=RD2bDCnokvBr2io7nj34I0+bX53THU9utJYuo/5mwBU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=eNMA0zyfT7/KfCQTUQ83NomUZ5GHlhYZ47PWBF8xpnfuO27H7lWymNASibaZEstQqEIRFbm8l1EAUiSMh3Bg2tISEYXOwVrLCTrNuEw3JaAb0ef1iZiOxpGvwDVR4uciaTE13vAW0RMsdiM7YZI7vIW7qltkPQ+t3/+nAVk3WUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jTJFJBDD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758710383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hF4kiLf7HaqY1/LkvQINP3t8+3I60jrbQmSIFL8i6mM=;
-	b=jTJFJBDDmyyW/SLfPm9FG2f9l1flp9QbVGuAN1TODAI6Jx6g0hlJzYRd0NT8VogXzXrwRF
-	NOB19vqRswVXP5qzXVdQZ3ZYkNOxMt2tskpM4kp4uZyJLrVFgFux1KGH5/VtsWAi5FZqxp
-	iSe0EwN90JRK7bOpZMaUxiAoZMOzEzM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-586-8jgRHihsNYSXYhc0c7zGRA-1; Wed,
- 24 Sep 2025 06:39:39 -0400
-X-MC-Unique: 8jgRHihsNYSXYhc0c7zGRA-1
-X-Mimecast-MFC-AGG-ID: 8jgRHihsNYSXYhc0c7zGRA_1758710378
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 962B31800366;
-	Wed, 24 Sep 2025 10:39:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7862419560B1;
-	Wed, 24 Sep 2025 10:39:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250922124137.5266-1-bagasdotme@gmail.com>
-References: <20250922124137.5266-1-bagasdotme@gmail.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: dhowells@redhat.com,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Linux Documentation <linux-doc@vger.kernel.org>,
-    Linux Networking <netdev@vger.kernel.org>,
-    Linux AFS <linux-afs@lists.infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next RESEND] Documentation: rxrpc: Demote three sections
+	s=arc-20240116; t=1758710427; c=relaxed/simple;
+	bh=q87c/lH5CUMQTHGed3HhLRajBsxA7h0kFcKQs4MPIp0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nznXwDowS7f5ns6J3+OoKioOPOJ30MvEZCSN08AftcWvWmz/N+YHKCmmTjlZq98cY7rf5MLFDLDybnNai+0lk0MGraHRdcAnbbTWbrljb/YzBA9YZyxMO2CBz2BZ4Fs87Mj2NFqFKUF87JvPpbz6ROXj0tXvUAEf6cCSviQNS6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5MyWP4X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065F6C19424
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758710427;
+	bh=q87c/lH5CUMQTHGed3HhLRajBsxA7h0kFcKQs4MPIp0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j5MyWP4XZTT/qb5Pa4ncWy6+3YeUtmttM/8d7v2EWnemmaNtf3ijOpn9XSHny8eAe
+	 jtxKqpqHrzIajF1jvv+ImYIUlQsdlziGJKhXlG8X5dV9UHNxog9QJVr9CBVXcF1MWd
+	 gaNkO83J7cJzJ6/3Ryl45xGYAPyxAmWih0933nbbIs7z8tbM5VPoPgsXgkI9xbKAb8
+	 TPjFfb/XH1Vxtu3GNdxWqQ+3+eK+hHa+0y36V6vSgbhlam8T+s92TmeM4EVxYlI/21
+	 eyPCB7arpUdrLqYWMIfch+N8OHrQJp0CqIdr8K5FZzYzopRq9urocJnm1rvceNHw11
+	 028kLDaVw/Pkw==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-62184a28eaaso1305733eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:40:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdYcc5FG8FE1KaT3byv4UJjgX6Rv3411alLqVdozc0fktHst2wZkRi+1ynMFno2I/d87X8ramF+vT9YJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhxOc/JoVjYwOgg9ZYM+1qTPfSuQyrZIBbPuXnFn+ZbGm/t/z8
+	+NRUHxQlDWHTySIz+nzxyyeV+6ue2Iz/ZG30CpnphyXlQqjLGfLMSkpubr44V9OyN8vMnCGUDB7
+	T8zq+3/7d1GHxC7i1zclbXVckdUVLmh8=
+X-Google-Smtp-Source: AGHT+IHKm4dDl7MhU8SYfK1f4AfRfLq2zO+oX8dUQ5EHv63cT03ommMhEQvx/CKxDzJFNgUJlVlKmAvtqpHdKtJN7z0=
+X-Received: by 2002:a05:6820:611:b0:61e:77ca:2a56 with SMTP id
+ 006d021491bc7-632fe58834bmr3456285eaf.0.1758710426219; Wed, 24 Sep 2025
+ 03:40:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <721546.1758710369.1@warthog.procyon.org.uk>
-Date: Wed, 24 Sep 2025 11:39:29 +0100
-Message-ID: <721547.1758710369@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <5944379.DvuYhMxLoT@rafael.j.wysocki> <20250923223831.1308685-1-luogf2025@163.com>
+In-Reply-To: <20250923223831.1308685-1-luogf2025@163.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 24 Sep 2025 12:40:13 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
+X-Gm-Features: AS18NWB1mApL7_DLRGOuTW_lHH7VZ-jo032YvlPSozVsTKP9KexboosMfXG9sYo
+Message-ID: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
+Subject: Re: [PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on
+ rapid events
+To: GuangFei Luo <luogf2025@163.com>
+Cc: rafael@kernel.org, dan.carpenter@linaro.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+On Wed, Sep 24, 2025 at 12:38=E2=80=AFAM GuangFei Luo <luogf2025@163.com> w=
+rote:
+>
+> > On Tuesday, September 23, 2025 7:12:03 PM CEST Rafael J. Wysocki wrote:
+> > > On Tue, Sep 23, 2025 at 6:14=E2=80=AFPM GuangFei Luo <luogf2025@163.c=
+om> wrote:
+> > > >
+> > > > The functions battery_hook_add_battery(), battery_hook_remove_batte=
+ry(),
+> > > > and sysfs_remove_battery() already acquire locks, so their internal
+> > > > accesses are safe.
+> > >
+> > > In fact, there are two locks in use, battery->sysfs_lock and
+> > > hook_mutex.  The latter is used for managing hooks and the former is
+> > > only used by sysfs_remove_battery(), so it only prevents that functio=
+n
+> > > from racing with another instance of itself.
+> > >
+> > > I would suggest using battery->sysfs_lock for protecting battery->bat
+> > > in general.
+> > >
+> > > > acpi_battery_refresh() does check battery->bat, but its child
+> > > > functions (sysfs_add_battery() and sysfs_remove_battery()) already
+> > > > handle locking.
+> > >
+> > > What locking?  Before the $subject patch, sysfs_add_battery() doesn't
+> > > do any locking at all AFAICS.
+> > >
+> > > > In acpi_battery_notify(), battery->bat has no lock. However, the
+> > > > check of battery->bat is at the very end of the function. During
+> > > > earlier calls, battery->bat has already been protected by locks, so
+> > > > re-entry will not cause issues.
+> > >
+> > > All of the battery->bat checks and the code depending on them need to
+> > > go under the same lock.  I'd use battery->sysfs_lock for this as
+> > > already mentioned above.
+> >
+> > So my (untested) version of this fix is appended.
+> >
+> > Note that it explicitly prevents acpi_battery_notify() from racing with
+> > addition/removal, PM notifications, and resume.
+> >
+> > ---
+> >  drivers/acpi/battery.c |   36 +++++++++++++++++++++++-------------
+> >  1 file changed, 23 insertions(+), 13 deletions(-)
+> >
+> > --- a/drivers/acpi/battery.c
+> > +++ b/drivers/acpi/battery.c
+> > @@ -92,7 +92,7 @@ enum {
+> >
+> >  struct acpi_battery {
+> >       struct mutex lock;
+> > -     struct mutex sysfs_lock;
+> > +     struct mutex update_lock;
+> >       struct power_supply *bat;
+> >       struct power_supply_desc bat_desc;
+> >       struct acpi_device *device;
+> > @@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
+> >
+> >  static void sysfs_remove_battery(struct acpi_battery *battery)
+> >  {
+> > -     mutex_lock(&battery->sysfs_lock);
+> > -     if (!battery->bat) {
+> > -             mutex_unlock(&battery->sysfs_lock);
+> > +     if (!battery->bat)
+> >               return;
+> > -     }
+> > +
+> >       battery_hook_remove_battery(battery);
+> >       power_supply_unregister(battery->bat);
+> >       battery->bat =3D NULL;
+> > -     mutex_unlock(&battery->sysfs_lock);
+> >  }
+> >
+> >  static void find_battery(const struct dmi_header *dm, void *private)
+> > @@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
+> >
+> >       if (!battery)
+> >               return;
+> > +
+> > +     guard(mutex)(&battery->update_lock);
+> > +
+> >       old =3D battery->bat;
+> >       /*
+> >        * On Acer Aspire V5-573G notifications are sometimes triggered t=
+oo
+> > @@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
+> >  }
+> >
+> >  static int battery_notify(struct notifier_block *nb,
+> > -                            unsigned long mode, void *_unused)
+> > +                       unsigned long mode, void *_unused)
+> >  {
+> >       struct acpi_battery *battery =3D container_of(nb, struct acpi_bat=
+tery,
+> >                                                   pm_nb);
+> > -     int result;
+> >
+> > -     switch (mode) {
+> > -     case PM_POST_HIBERNATION:
+> > -     case PM_POST_SUSPEND:
+> > +     if (mode =3D=3D PM_POST_SUSPEND || mode =3D=3D PM_POST_HIBERNATIO=
+N) {
+> > +             guard(mutex)(&battery->update_lock);
+> > +
+> >               if (!acpi_battery_present(battery))
+> >                       return 0;
+> >
+> >               if (battery->bat) {
+> >                       acpi_battery_refresh(battery);
+> >               } else {
+> > +                     int result;
+> > +
+> >                       result =3D acpi_battery_get_info(battery);
+> >                       if (result)
+> >                               return result;
+> > @@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
+> >
+> >               acpi_battery_init_alarm(battery);
+> >               acpi_battery_get_state(battery);
+> > -             break;
+> >       }
+> >
+> >       return 0;
+> > @@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
+> >  {
+> >       int retry, ret;
+> >
+> > +     guard(mutex)(&battery->update_lock);
+> > +
+> >       for (retry =3D 5; retry; retry--) {
+> >               ret =3D acpi_battery_update(battery, false);
+> >               if (!ret)
+> > @@ -1230,7 +1232,7 @@ static int acpi_battery_add(struct acpi_
+> >       if (result)
+> >               return result;
+> >
+> > -     result =3D devm_mutex_init(&device->dev, &battery->sysfs_lock);
+> > +     result =3D devm_mutex_init(&device->dev, &battery->update_lock);
+> >       if (result)
+> >               return result;
+> >
+> > @@ -1262,6 +1264,8 @@ fail_pm:
+> >       device_init_wakeup(&device->dev, 0);
+> >       unregister_pm_notifier(&battery->pm_nb);
+> >  fail:
+> > +     guard(mutex)(&battery->update_lock);
+> > +
+> >       sysfs_remove_battery(battery);
+> >
+> >       return result;
+> > @@ -1281,6 +1285,9 @@ static void acpi_battery_remove(struct a
+> >
+> >       device_init_wakeup(&device->dev, 0);
+> >       unregister_pm_notifier(&battery->pm_nb);
+> > +
+> > +     guard(mutex)(&battery->update_lock);
+> > +
+> >       sysfs_remove_battery(battery);
+> >  }
+> >
+> > @@ -1297,6 +1304,9 @@ static int acpi_battery_resume(struct de
+> >               return -EINVAL;
+> >
+> >       battery->update_time =3D 0;
+> > +
+> > +     guard(mutex)(&battery->update_lock);
+> > +
+> >       acpi_battery_update(battery, true);
+> >       return 0;
+> >  }
+>
+> Thanks for the detailed explanation and the updated version of the fix.
+>
+> I will test your suggested changes on my platform.
+> After verification, I will send a v7 based on your suggestion.
 
-> Three sections ("Socket Options", "Security", and "Example Client Usage")
-> use title headings, which increase number of entries in the networking
-> docs toctree by three, and also make the rest of sections headed under
-> "Example Client Usage".
-> 
-> Demote these sections back to section headings.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Please just verify and I'll add a changelog and subject to the patch
+and submit it.
 
-Acked-by: David Howells <dhowells@redhat.com>
-
+Thanks!
 
