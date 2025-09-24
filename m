@@ -1,140 +1,112 @@
-Return-Path: <linux-kernel+bounces-831197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19CCDB9BD39
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:16:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4F7B9BD47
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A4D01B27AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A2938088A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0C9327A28;
-	Wed, 24 Sep 2025 20:16:05 +0000 (UTC)
-Received: from sender4-of-o52.zoho.com (sender4-of-o52.zoho.com [136.143.188.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B4524A044;
+	Wed, 24 Sep 2025 20:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TdtAsioL"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A2F327A0B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758744964; cv=pass; b=As3YMewgkKkvv4+mE1MmuOKVf/tuQ2eLPJ5gpePq/0+bB/Zi/GI+QOEADpuCscmOe8r9F1CfbGFj+bMbUiDxEmXbLGzX+9R4tPDIRo0ZBO5EuXlrn31NxiiVzf7KJQSoDr74XSe7xZx509ZWntCK/GBdQcLI1qJpuDO5pfSu3nM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758744964; c=relaxed/simple;
-	bh=z9Y2IcTYyhS9Y+0b7OFPXI5bO+NtfGTy5FCNaMGTFfs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE002153E7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758745052; cv=none; b=AJpa0Z1QYEbIUMANyW22ZnJB7RiPxZ2MNaMNRTepKLrhtOFdtV4b6NQQ6mOo/Tl9hSKodHiMleFgsEKbIkl2LZJLLTOuAJPlq5wnq6OURu0+6ciX85fQf4AV9SHv3FP9hE45dwAgDMvOcYDn+N5ZRwL5j9g/Lq2NI9TZYzcprF8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758745052; c=relaxed/simple;
+	bh=11LSxohVQLtgYPqV705IwGyhWZ5zTC5qes4PC/XU5NE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sEWX/eSK1cmEFzqD0PVbgBTbngz4Bt7hqCSSlrq773LvauZ3mIr6k8/b0K9YzNeANfyre71KS/YhUjgWSO4Ty4Ho9B9sZW8FIEc6WwUdggE5Puhjh/1jVYkPaWYchDLrJp2ecD7ZOeAIXZucpNQnN8nmq3jbpnzy13xK5pflPMg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=euphon.net; spf=pass smtp.mailfrom=euphon.net; arc=pass smtp.client-ip=136.143.188.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=euphon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=euphon.net
-ARC-Seal: i=1; a=rsa-sha256; t=1758744904; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Chhd2malt96fZaLjoEnSspcAYsuh71Ou8vErEojkDAct6s7ByFO5bfz4aKXMD2DwM3SdwvlrQHpNKG0GuNy1rkddwqWyGFjspG6QSvj4JslFnDYCIGTkOmhX7i+l3iqKUaW/AePHr1ZXz1dRAm78So7y/bnZWcyDTcUtRqG3PWI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758744904; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Reply-To:References:Subject:Subject:To:To:Message-Id; 
-	bh=z9Y2IcTYyhS9Y+0b7OFPXI5bO+NtfGTy5FCNaMGTFfs=; 
-	b=eG05AjKTjQ3pqbKFfXAx+CIATfgTJB2v8+v95mdGwPYxx+9j7JrnTc73CXaXQgyWlYOvLtsrOVBPixJapiID43sxWVNEf9Iwc24tOpW5CEMoZVJvhjQA6T6lwbe5h/XCyfktIBOIVD+4zdbYeNBcatj6iQhDpcsL+lrDP5VNKK0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	spf=pass  smtp.mailfrom=fam@euphon.net;
-	dmarc=pass header.from=<fam@euphon.net>
-Received: by mx.zohomail.com with SMTPS id 1758744903310901.0916121639858;
-	Wed, 24 Sep 2025 13:15:03 -0700 (PDT)
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8b0055cbd0fso22310139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:15:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmmLkQWHJn818rmw0w4DTJXedH4qPx4JVYJdkLisp5r8iYNgCG6UKjQ4xgEI191BprM6+ujlyFWiKRV9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiZijLQUGBBv4xYCVCIUzJzqfIPPueAsj9FflhoZJGG39VQcOY
-	hCULG8mS4RV0nYu8STLEPMshy0XqiKN8QtmDLujeU7sbavSKP3dZCOpFRBmHjiaGp1ov0/Lakgs
-	A2Js+PhTf6MG/aKrinkUW0q7ah4FJ2cc=
-X-Google-Smtp-Source: AGHT+IHo3cRD727FoBpTzjSb3ODevUGf7xcwfz+BAxpGUAt0Fib3xEjCeu8N7kSWseIRUw0++Nyg4seYa6KpUPvZ8jk=
-X-Received: by 2002:a05:6e02:1d86:b0:424:57d:1a50 with SMTP id
- e9e14a558f8ab-425955ed837mr18175745ab.11.1758744902713; Wed, 24 Sep 2025
- 13:15:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=dktzVDxqoyiQUEwwhoABibJa3cZwYD0cXJwWwBIJsHNVwQl8MszYycdRLnv6Q/ZLvR/ntlFZ54ySggmlR4kZpUubzjk8HFSrOF7lO75SjLRePswPj4kvEe1c35qNwEaBWA4h0Iizy53ktbLnaqEGlSS4PujvZ2iDJg3EBmWtYZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TdtAsioL; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62f0702ef0dso2638457a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1758745048; x=1759349848; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KxL1IkdhPFqi7CXmsjucqEYlGYsVkwBpOGWKm6mx5yk=;
+        b=TdtAsioLFIvvZ4aD55iuZbLfLlQZ6W4tQTsSymUPQM4a8e5z9/LCH3w6UmgjE87dL/
+         7TVp+wsHsEf72FTTaQY699p2GGlsyZWXbUjGVEIJy7wnREtnDnyWor9BNLdfIr5cwWZE
+         1DfNfOIKzbER8eiWaRJpg9l9kAtb7/rcVvXms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758745048; x=1759349848;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KxL1IkdhPFqi7CXmsjucqEYlGYsVkwBpOGWKm6mx5yk=;
+        b=fNIZjNybbIuVb9Uu5s3cGS0iiA3UCbMyIMOk7WYszRSsdBnjYtWrPUm9hA//G8DkFy
+         e5+dm6uBlDhUa3EKIQ5gZgtgvt5YJpqRwVTLuFo6IFD26+UxjgSBxbi2JVV20O0Ta+Z/
+         GGd3JXTtYEkFQhemSsMoxJgaRay8QlTwL9HIUNR45KyJkW6Bf+Kn/W6JI2CcqHDjqJyz
+         RG4CrZ5Q1udPIiATFYFJtww0C9498782aVzf+MFKF964VdHpWEkaQPYPiVjGwzSNpxHp
+         rJbmvvrzNvCcij8nSbrDVbQkqTQ72nsOWKeXoVDPj8wQlqC70n0h6AhUyOiBZM4AQTA7
+         ASAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0X52iGqH0rE+hrKUeo//yF2Rplg6Umncfo4YnMjFtaTsOBuaND5uFCcW8sjEqcxnoKYAEbxMni5uwqhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO97UeQjZL431ZVrZnIIrP7H2KmWmVoh9slebhJA+Le4i+1+5B
+	OEc0Ww08n4KwXcUtKbfKXtycWIcvDQ4Lh+P0LL3bWKI5QOrH5mH72iOzeLtGfwFs6yctGpPT1ZY
+	JYs+y7oA=
+X-Gm-Gg: ASbGncufniVWcIjiqHcXlJL4FjNCNEtDS7+u+4RdAW4dSMTzAZbOyFcglVgJ+6mWZ1j
+	909liSJtmYPXA2lwu11LMdznb0LDAiVv2yezV4Tcu41l60tgw+lRAKtiNOhzhgAuYpujaoFE/gN
+	pdiQH9nuSFci8S8RJdwGX5HyOy6SHSjJwedYpi4AYRk4wmXys6A5qV+NPhgNViOSutoa8sGHoZE
+	zbNyTx8aH6gpQ9HUZd1T4GD0NSqmav1KI3GTOIO9q3sJZZdGAZlyxFM8842K88LGIjKhii6Euoi
+	7PMPd8X8LcruJ9Kjjblqb2RfExDTwfI83MOjhphzRJI/+vcy+UrPwI2/aRlPrhQSp40GOIVex6O
+	YtGclu8z2dtQ9QWTE+1n7jxD4LpOxjuACSdj//qte7fMiTug3swMv3IfzhnNQNsjmkf206VNW
+X-Google-Smtp-Source: AGHT+IGfy9L4S0QNYR+NkJ0eo3K/3QF5DiFihWnTH/5BA4woL6xC3Zr5XK3z26aOpieaoqy5sBbiGg==
+X-Received: by 2002:a17:906:608:b0:b33:821f:156e with SMTP id a640c23a62f3a-b35498c1749mr10064866b.12.1758745048016;
+        Wed, 24 Sep 2025 13:17:28 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f6904sm8267666b.66.2025.09.24.13.17.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 13:17:27 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b07e3a77b72so225307066b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV4zgloVXm/9qOnyZLoXMB3wQm2ZzGmADPFDSEAW7Eog5j29QjZaqBtUllNjQd0aZV7g1yxj4CoAymaxDU=@vger.kernel.org
+X-Received: by 2002:a17:907:7e8e:b0:b07:d815:296a with SMTP id
+ a640c23a62f3a-b354ae9a113mr13555466b.12.1758745046911; Wed, 24 Sep 2025
+ 13:17:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923153146.365015-1-fam.zheng@bytedance.com>
- <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com> <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
- <CABgc4wTjc9nxmB16LkxiOL5gYO9K8kr46OqM=asyUkX7cT50Sg@mail.gmail.com>
-In-Reply-To: <CABgc4wTjc9nxmB16LkxiOL5gYO9K8kr46OqM=asyUkX7cT50Sg@mail.gmail.com>
-Reply-To: fam@euphon.net
-From: Fam Zheng <fam@euphon.net>
-Date: Wed, 24 Sep 2025 21:14:26 +0100
-X-Gmail-Original-Message-ID: <CABgc4wThvZrxBLb0JRiROCws12qLNUxwcb4cJa_W63qh41apjg@mail.gmail.com>
-X-Gm-Features: AS18NWAwzAeqcUbRqM-zteEYsDi9I9ZtA0NHRrjSVKFDmg21-neJ1rSM6NNvPzg
-Message-ID: <CABgc4wThvZrxBLb0JRiROCws12qLNUxwcb4cJa_W63qh41apjg@mail.gmail.com>
-Subject: Re: [RFC 0/5] parker: PARtitioned KERnel
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Fam Zheng <fam.zheng@bytedance.com>, 
-	linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>, 
-	linyongting@bytedance.com, songmuchun@bytedance.com, 
-	satish.kumar@bytedance.com, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com, Ingo Molnar <mingo@redhat.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, x86@kernel.org, 
-	liangma@bytedance.com, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, guojinhui.liam@bytedance.com, linux-pm@vger.kernel.org, 
-	Thom Hughes <thom.hughes@bytedance.com>
+References: <20250924192641.850903-1-ebiggers@kernel.org> <CAHk-=wieFY6__aPLEz_2mv-GG6-Utw9NQOLDzi4TF93xFAnCoQ@mail.gmail.com>
+ <20250924201347.GA4511@quark>
+In-Reply-To: <20250924201347.GA4511@quark>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 24 Sep 2025 13:17:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjk5rMWnVt6K_3BSQ=_uEKNaYBs=FZH_fMLKqp9E4G8kg@mail.gmail.com>
+X-Gm-Features: AS18NWB-TOLqbEIGYHOdjx4mWxKWbwYfZ2s88AY8lnF0tIKXxGgu95ZpuJakE_Y
+Message-ID: <CAHk-=wjk5rMWnVt6K_3BSQ=_uEKNaYBs=FZH_fMLKqp9E4G8kg@mail.gmail.com>
+Subject: Re: [PATCH] crypto: af_alg - Fix incorrect boolean values in af_alg_ctx
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
 
-On Wed, Sep 24, 2025 at 9:10=E2=80=AFPM Fam Zheng <fam@euphon.net> wrote:
+On Wed, 24 Sept 2025 at 13:13, Eric Biggers <ebiggers@kernel.org> wrote:
 >
->
->
-> On Wed, Sep 24, 2025 at 8:02=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wr=
-ote:
->>
->> On September 24, 2025 8:22:54 AM PDT, Dave Hansen <dave.hansen@intel.com=
-> wrote:
->> >On 9/23/25 08:31, Fam Zheng wrote:
->> >> In terms of fault isolation or security, all kernel instances share
->> >> the same domain, as there is no supervising mechanism. A kernel bug
->> >> in any partition can cause problems for the whole physical machine.
->> >> This is a tradeoff for low-overhead / low-complexity, but hope in
->> >> the future we can take advantage of some hardware mechanism to
->> >> introduce some isolation.
->> >I just don't think this is approach is viable. The buck needs to stop
->> >_somewhere_. You can't just have a bunch of different kernels, with
->> >nothing in charge of the system as a whole.
->> >
->> >Just think of bus locks. They affect the whole system. What if one
->> >kernel turns off split lock detection? Or has a different rate limit
->> >than the others? What if one kernel is a big fan of WBINVD? How about
->> >when they use resctrl to partition an L3 cache? How about microcode upd=
-ates?
->> >
->> >I'd just guess that there are a few hundred problems like that. Maybe m=
-ore.
->> >
->> >I'm not saying this won't be useful for a handful of folks in a tightly
->> >controlled environment. But I just don't think it has a place in
->> >mainline where it needs to work for everyone.
->>
->> Again, this comes down to why a partitioning top level hypervisor is The=
- Right Thing[TM].
->>
->> IBM mainframes are, again, the archetype here, having done it standard s=
-ince VM/370 in 1972. This was running on machines with a *maximum* of 4 MB =
-memory.
->>
->> This approach works.
->>
->> Nearly every OS on these machines tend to run under a *second* level hyp=
-ervisor, although that isn't required.
->
->
-I'm trying to think about the hypervisor approach you mentioned, but
-if it doesn't provide memory and I/O isolation, what is the advantage
-over this RFC? (if it doesn I think then we're talking about a
-specially configured KVM which does 1:1 vcpu pinning etc).
+> I do think the idea of trying to re-pack the structure as part of a bug
+> fix is a bit misguided, though.
 
+Well, now it's done, so let's not change it even *more*, when a
+one-liner should fix it.
 
-Sorry, forgot to turn off email html mode in my previous message..
+I do agree that clearly the original fix was clearly buggy, but unless
+it's reverted entirely I'd rather go for "minimal one-liner fix on top
+of buggy fix", particularly since the end result is then better...
 
-
-Fam
+             Linus
 
