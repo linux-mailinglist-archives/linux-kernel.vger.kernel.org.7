@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-831005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89496B9B23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D807CB9B241
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 014F84E2A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97CD03B0164
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0A3161AC;
-	Wed, 24 Sep 2025 17:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E363A315D51;
+	Wed, 24 Sep 2025 17:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vevfVSZA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961C8314A9D;
-	Wed, 24 Sep 2025 17:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ymry3qXT"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567CD314B9E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758736461; cv=none; b=qZwEh2W0yF3ydoVk7q2SZhWEDB63mPMFuZiqvXA6rDs5mCgvdS9EEFhzT9zs4BnyMRERhsRa1Ynmc+hvg066dMvmk13gxEfNHpxU1Z7V3SgEbrzNX1RLFMJ2nzU8fenPWp+MPLnZi6TfvTkRUNQqGOkkGHszizzS8ZXLyUwkBaE=
+	t=1758736488; cv=none; b=Pt72nf7RSUl1fakPcbq/CTJM9CXLBYidtoy1IHiZB1BrQCGfgDOHpe0OJJ9b7f/y0W+7do+5iDixqzAEJop1RYSMzZYhjX8MbwmYNn/8mF2yWAPRNc8KX1J7JOMi0WlBHBrZcH06ydhJMIjYknGoIlA0MaMF4gFumku7OnmdCcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758736461; c=relaxed/simple;
-	bh=yZaV+sxozajM6fh76n/Q3fe/F45TDwcisoxUUnq5Ds4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwfzTqVbXU5JgBuHrtwlWzxNjZcscbZf9ovwVW1FmlHOKIOARc5NjvJ9su2jkILtLD7b5t/Y3NU95mV+uHv6Sb5sFKZP+w0Zde4cY1EuiIvtlgsySSQ8MtXlWt8NmvrXnKubG4YCXVaBaW8t+Pm41V5tiycxQRHVpoEv+Xh31qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vevfVSZA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=79J+s7OT4SJ76d+lyjBn2RVcHoFxmPfoh9N1Knl5A4s=; b=vevfVSZA7KAuh5przsgxSgsQV8
-	ysrMUeZAVxJUYo5gD0+VZ41D2UZbMgkMLpZFtcjHNUpjBHsXkSXSRTkgKGjl/g8qk+s6mhO34XAlT
-	CpfRxgLxPMtUG6A/pI5mzpaRVH+DH/R1ULIU136NFMHcn1xvnmsqsa9DJ8pmQaVE3pWa3x3olp7kp
-	4CukeB9QrrrNx/N+TJVzYOkjivPowDuKK4YvGsz5oAw9N/58erBbXmxXuOpqjHwyDRiZbKxKliw7s
-	oUfKZKAZPrgjGOKJH38RH7J4YiToNPDudJIXI2lEy+ut8ltJ9eVXhC70SIDaeHropF8vnJpPzGLPR
-	djEmsPyg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1Th5-00000002KNj-0pDY;
-	Wed, 24 Sep 2025 17:54:19 +0000
-Message-ID: <e7c29532-71de-496b-a89f-743cef28736e@infradead.org>
-Date: Wed, 24 Sep 2025 10:54:18 -0700
+	s=arc-20240116; t=1758736488; c=relaxed/simple;
+	bh=ag1vNuT/kxZxXkXGRRGmxBDw80fmvceu868lguHhC50=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e7jX6rb9X8BsGNfRwjHoc3CKka0G4fo7SZCrALYbQodnNCwDMRlg7tWy85fwV62pNCB4Bqu269pO7ykiMtMf81GsaUB6Wnxoby/LfluKDn0qYDL/J0d+FeJPrBgjbGNIlwDK7N9dYKjP03NK2eO1JjF7qhiXuNxptTKOMAg+aLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ymry3qXT; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC.corp.microsoft.com (unknown [20.236.11.185])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 45FF9201C951;
+	Wed, 24 Sep 2025 10:54:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 45FF9201C951
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758736480;
+	bh=qYnEFJ4ml8ZsATSMrFpZfLXw2dI2teC8KK1sm5L+cAw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ymry3qXT9rbGaEiWas6zChS/mD8YHLBOE2rOO+BpOlb4Y17Tyidz/rNSEKow5hFef
+	 h14DrJJvTZOVuw05+8ZV1jtjnlD3Zldg3APglsal5A7e2PuqSibch23MODLi0WASgs
+	 hePL4PnZiZpxN77xVp0v4+8PZf61LSuF9GlMrz38=
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: linux-kernel@vger.kernel.org,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	Will Deacon <will@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Cc: Jacob Pan <jacob.pan@linux.microsoft.com>,
+	Zhang Yu <zhangyu1@linux.microsoft.com>,
+	Jean Philippe-Brucker <jean-philippe@linaro.org>,
+	Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: [PATCH 0/2] SMMU v3 CMDQ fix and improvement
+Date: Wed, 24 Sep 2025 10:54:36 -0700
+Message-Id: <20250924175438.7450-1-jacob.pan@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Sep 24 (htmldocs / pdfdocs)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-References: <aNQC_Nv03iyldOqP@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aNQC_Nv03iyldOqP@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Hi Will et al,
+
+These two patches are derived from testing SMMU driver with smaller CMDQ
+sizes where we see soft lockups.
+
+This happens on HyperV emulated SMMU v3 as well as baremetal ARM servers
+with artificially reduced queue size and microbenchmark to stress test
+concurrency.
+
+Thanks,
+
+Jacob 
 
 
+Alexander Grest (1):
+  iommu/arm-smmu-v3: Improve CMDQ lock fairness and efficiency
 
-On 9/24/25 7:41 AM, Mark Brown wrote:
-> Hi all,
-> 
-> There will be no -next releases Tuesday and Wednesday next week, and
-> it's possible I might run out of time on Monday.
-> 
+Jacob Pan (1):
+  iommu/arm-smmu-v3: Fix CMDQ timeout warning
 
-When I run 'make O=DOCS htmldocs', I see these warning messages:
-
-../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
-../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
-
-
-Is this a known issue?
-
-I have seen these warning messages for several days recently.
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 85 +++++++++------------
+ 1 file changed, 35 insertions(+), 50 deletions(-)
 
 -- 
-~Randy
+2.43.0
 
 
