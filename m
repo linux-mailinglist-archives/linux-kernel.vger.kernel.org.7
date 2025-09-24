@@ -1,158 +1,125 @@
-Return-Path: <linux-kernel+bounces-830903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4511AB9ADA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF78AB9ADCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AD234E1E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93274A6B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9214B307AF7;
-	Wed, 24 Sep 2025 16:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C36F31327A;
+	Wed, 24 Sep 2025 16:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJ9fR/G/"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lDGu75/C"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F2D311580
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C814A31353C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758730690; cv=none; b=N7z6EnRyxX6Fb2b/mKC8sdTQERNDJbPcijT9LQu7GEi8Lsj2tCm5mH+HG4+4bW+3gy/ZTCkPbIvF5808HCsziLITiQHlsyrVwyrr+K0p1Kr7xRqRfu9qfa36aH95PnxeZ/VWtHT0+Ubie3Q/ZyQnHdj78xnqEnCnqc6l2C0FWPI=
+	t=1758730888; cv=none; b=a7SKheSd/x5scCLiiMyN9HAEl9tJF11EtMy5ERPpoUOTGEN+EBteQhtNZOejlYijiXvZf73Qdl7PhyFs4GlTZAsD++BDXGj2mVt99++cJ6nQ0a6GAKVNiCmiUgQshjvF6/Gw+DzygouTkYyaLEcqVd3m7ttqrVtHV79Vf/zjHZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758730690; c=relaxed/simple;
-	bh=+elp/mgEwQHUPO2/veHl6cFeD7QMzkxV3mT27B/vMe0=;
+	s=arc-20240116; t=1758730888; c=relaxed/simple;
+	bh=ZcA2jKJiXKnbRwI+0MpjeeiPsAiOH2A641I3YnoiC58=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VYpCZTZfLbD8sLOXzm8Uo1iJVWNSMKWqvXEk/VXJCCPDOLJsbizriBZ+36FJJM9EVZYLz9h0DET3B2nm4s49z+V48o3toYI09efpDYFvkwGFo/tqWGuUBbHWe6/veUMkTqyFJyomoRJ6yq9l+tcnkFcoaraPUnt86ID9CnvXyy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJ9fR/G/; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4d7b4b3c06dso112531cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:18:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=XkcOMS3PA7DdZr1Zisrp2yec8RTtzMvDattNZhNP71adHBW71M5th5y92j1Sb44g9rIhfik9EF7Lg/7y7AWT7uwuW0W82Cq7GKW3Y1rH4bCr1j87WiZruLBJc3zPF3oYyiZO24b+0dcog7dVd584IkodtVUOTo+cvW/iy7jUpSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lDGu75/C; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso2574683a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758730685; x=1759335485; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1758730885; x=1759335685; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+elp/mgEwQHUPO2/veHl6cFeD7QMzkxV3mT27B/vMe0=;
-        b=jJ9fR/G/uQOoGU1zjzeq+kEGJH0FGPF6hyv+BRd11txZaP6jykJx7KYV+Fy89/hm3r
-         Fj1jHTTr1k3gSZ9YbnsYf7t/+Y1cgcUQRaozim9bYqDxSSoV25zr5djoCo2k+XVY+9XH
-         hZwrqWm/lkHBVgotX1/VMNfSLp5gX19VCA2QcSKMUDXlmxsoFrDA/aUnalMiOUk6S4Dm
-         ApxpBGputpqRfa7MY3pOnEuQUef0R7OKBgerb0vkMv3dzWiW0+dXhhizmvnjoU/shLfI
-         pMehbr68Tb60E0EQMTVNp25KF0WY4uOSvx5h0SUZ0kqikDM0hjKYe9piKoNpkOCmD6s4
-         fVZg==
+        bh=ZcA2jKJiXKnbRwI+0MpjeeiPsAiOH2A641I3YnoiC58=;
+        b=lDGu75/CmUU+chrQl3SRXh04l8tU1MPx3VDaJjKh4FMAxZdaWUQiM6JOTs1wB5UFoB
+         qTzqGmc/oU9KcFcfb6NmV72oofiD5kokl1cG5U9izgTL2aWBtO8K/S+B9csLMN90Fs9U
+         tDxtsaqrsgr+gRYzxucJtFeY+4/9wxTB17tRoNCwcfeJd/80g7eS/ee6cY2DRvjs2FTr
+         gGSQjMcfvNrdt6wKkebwyJIWSGh4cgcEvFmyosjCk2/wyXOna6bTzTAf4in+rWHOP77z
+         WE7zjPM2JZ3nkVRH0kif80XGdqmBnLM0khtwbIZdTWhpXR6BoDe7qz/rl/iuxUcrz9PY
+         JSLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758730685; x=1759335485;
+        d=1e100.net; s=20230601; t=1758730885; x=1759335685;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+elp/mgEwQHUPO2/veHl6cFeD7QMzkxV3mT27B/vMe0=;
-        b=uOrOORtYIAbB42HGvKp4oGZA8PKK098G97BYLlveRrq8jOnWIQDLdfImMNApiKqEVM
-         WrY8jPeaqKXRjL5usjM3o+sA1lnnN9ad7pAH0NHlXtNe+5ZolJ5UwT8nQawdMFiYn1a4
-         ZT5DZVBDygO7QxwXGDo4AcoiNhdVs8B515W7VNwCI/6s5IH5XwvjOeY2sqGxP140mF+W
-         /gp1OlKE8TJL/w23BCCrgb3BtpHDUgpP9ToubnvnTEQY991PunOvKpY/uZXXvuymvyZ5
-         re/90H6hGka4gU3MqjSrYFyEtlWPK9xxZEeUBqoGi3vzi5XOQgIQDSBtag7oC7TMhRmG
-         8IJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwBCHVeyFzSDTGYiUIRVNgwy5V2vaWe06MMso0p1nLFggr5EWhTrKULxxSE6atJ/M4TXJE7BOtXJBBXq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo0z4uPYO4P60fttzCHwNBVvkkT4HjiuImrIOAq3OUYmkCRqfB
-	DTltFORv4smjTyG6lsZo3122ppooK7EDuLyzMUUxLpZFtVBMlGpkA4uCUYpvy++bal0PWGL8wNw
-	z1yxfT/j0yCJbclybsWwHEvjZ9iPZ3qc=
-X-Gm-Gg: ASbGncukaOOZs/dFTMIgWGUPI8gWGKWLqZWZtjjak0+JYo7ipHToiuxg97gJwwST1wX
-	8x1CrR4p47QzhNQbdO3knVQFA8EEzI9COcuY3wb2gunOgle0Bz6B1B6Ltgu1bk/tA7rQuY8h2y0
-	hO17xFR2J819bMCW0WwnxTV2hHPUp6XAiirFkM0SsOcYIzvhbMoxfYH9cRY8ApiZX2QKYbtmkk0
-	745wZFMNCU96xTGKHyDrz4zluXdKUe9CfBFkqaq
-X-Google-Smtp-Source: AGHT+IHrjx0XfB3NQHdqBt66Ox1dwY4oj3I0wMxztSwqqFAAkQnhEkK0QBLdnresO+RuCvDJitimjmBRn2YZHsgZxpk=
-X-Received: by 2002:a05:622a:3d2:b0:4d9:ea03:74f8 with SMTP id
- d75a77b69052e-4da473535b8mr6186491cf.16.1758730685377; Wed, 24 Sep 2025
- 09:18:05 -0700 (PDT)
+        bh=ZcA2jKJiXKnbRwI+0MpjeeiPsAiOH2A641I3YnoiC58=;
+        b=DEddPgtt2WrAB7GiGvF9AfZwLUgMYZllemfRhBbdVcux5rWz5QT4e+/iRGqMAOhaGx
+         X5N0wOT47XmOmmf07wDcDCdxENbS5lcBZ4OeCjR+j9d7nJyfzXh9hH6kelS9RoKwc76j
+         drDwM/8kLPbhM/wlr3SYlaa/pbmceT8hjI1ObInfm9/s2zwUrNfQM2bfhaKLdH1MW4oh
+         ZsQ/psHAHw3zQdrxFfOaThm11OH7MWpGAmSPeZx3jrRA7Ui+Ykvjl7LufK3/nq52pFOj
+         tIQwyhVxCOTq3W6QGJGOqLB7AtDVwiTzlu8MRciN2ASEWwwAkv4OXKyhm91OdMjMvJA/
+         s5XA==
+X-Gm-Message-State: AOJu0YydimkqEfwjoOpuABzNVsmhq9kVHTZ39tMm8CjEqcFoP6sYxKkB
+	8dNCpPclgiUqoM3hM26Pmtrytw8GxcU6+4ys7/VqTTeh1C+iumrYfmAWOSRkZiSsPLa1f+1dLAH
+	K215B8oK53huzdwdQauvJ9Uthb12SRQLFW/0VI+BHqA==
+X-Gm-Gg: ASbGncv5MiqH/E3Y1PlK7GkEsfwQKacn6oqQ7v9oGaKl/p1+LIHUI2uG+ux2qIa5+x4
+	q2pwz0XcsRBkoVxrSrS5ikCsA24Z8hH+NkwWaz7MCn7ScxH4MCpDuPEo59QzC9keptxuMDCraPZ
+	JGT2/i0lmZDh7GbM+D5sjFGOSzo5/C+WWQ1zBG8Pvnc/yhBpRPsbZD17NRSTYtuZGTlLydv5WBa
+	M+Wy6jBPveH2cvSaIUq+4dT+w==
+X-Google-Smtp-Source: AGHT+IGRWpoRX5kieAx8ODfA2c3P5709GPwYpJaUY9gD32LbMuLf1qLMI747P1qalIOpXzd9sueLH/Q8vbfBhoPeM3k=
+X-Received: by 2002:a05:6402:90c:b0:62f:4bf5:2b1 with SMTP id
+ 4fb4d7f45d1cf-6349f604f2fmr146057a12.14.1758730884308; Wed, 24 Sep 2025
+ 09:21:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913003842.41944-1-safinaskar@gmail.com> <ffbf1a04-047d-4787-ac1e-f5362e1ca600@csgroup.eu>
-In-Reply-To: <ffbf1a04-047d-4787-ac1e-f5362e1ca600@csgroup.eu>
-From: Alexander Patrakov <patrakov@gmail.com>
-Date: Thu, 25 Sep 2025 00:17:39 +0800
-X-Gm-Features: AS18NWB-xeGoRDKYPj3kUYXUnKXLhFMFvvc0QyoLpOeKcP1DsD-enKeBhlulfsI
-Message-ID: <CAN_LGv3Opj9RW0atfXODy-Epn++5mt_DLEi-ewxR9Me5x46Bkg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 00/62] initrd: remove classic initrd support
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>, 
-	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
-	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, 
-	linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, initramfs@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	"Theodore Y . Ts'o" <tytso@mit.edu>, linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, 
-	devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250923153146.365015-1-fam.zheng@bytedance.com> <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+In-Reply-To: <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+From: Fam Zheng <fam.zheng@bytedance.com>
+Date: Wed, 24 Sep 2025 17:21:13 +0100
+X-Gm-Features: AS18NWBFLLBlUj7TG1Zl8-MnAWo-Z0AA8d0KVmB7UquRCmlLYJ7gqHCqbgn4mu8
+Message-ID: <CAG+v+KZ4bRgVNiMDhNTeiOqqbEXCBD72K5SQZCo=m0xaQ2vauQ@mail.gmail.com>
+Subject: Re: [External] Re: [RFC 0/5] parker: PARtitioned KERnel
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>, 
+	linyongting@bytedance.com, songmuchun@bytedance.com, 
+	satish.kumar@bytedance.com, Borislav Petkov <bp@alien8.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com, Ingo Molnar <mingo@redhat.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, fam@euphon.net, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, liangma@bytedance.com, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	guojinhui.liam@bytedance.com, linux-pm@vger.kernel.org, 
+	Thom Hughes <thom.hughes@bytedance.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 8:22=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
+On Wed, Sep 24, 2025 at 4:23=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
+ wrote:
 >
+> On 9/23/25 08:31, Fam Zheng wrote:
+> > In terms of fault isolation or security, all kernel instances share
+> > the same domain, as there is no supervising mechanism. A kernel bug
+> > in any partition can cause problems for the whole physical machine.
+> > This is a tradeoff for low-overhead / low-complexity, but hope in
+> > the future we can take advantage of some hardware mechanism to
+> > introduce some isolation.
+> I just don't think this is approach is viable. The buck needs to stop
+> _somewhere_. You can't just have a bunch of different kernels, with
+> nothing in charge of the system as a whole.
 >
->
-> Le 13/09/2025 =C3=A0 02:37, Askar Safin a =C3=A9crit :
-> > [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. D=C3=
-=A9couvrez pourquoi ceci est important =C3=A0 https://aka.ms/LearnAboutSend=
-erIdentification ]
-> >
-> > Intro
-> > =3D=3D=3D=3D
-> > This patchset removes classic initrd (initial RAM disk) support,
-> > which was deprecated in 2020.
-> > Initramfs still stays, and RAM disk itself (brd) still stays, too.
-> > init/do_mounts* and init/*initramfs* are listed in VFS entry in
-> > MAINTAINERS, so I think this patchset should go through VFS tree.
-> > This patchset touchs every subdirectory in arch/, so I tested it
-> > on 8 (!!!) archs in Qemu (see details below).
-> > Warning: this patchset renames CONFIG_BLK_DEV_INITRD (!!!) to CONFIG_IN=
-ITRAMFS
-> > and CONFIG_RD_* to CONFIG_INITRAMFS_DECOMPRESS_* (for example,
-> > CONFIG_RD_GZIP to CONFIG_INITRAMFS_DECOMPRESS_GZIP).
-> > If you still use initrd, see below for workaround.
->
-> Apologise if my question looks stupid, but I'm using QEMU for various
-> tests, and the way QEMU is started is something like:
->
-> qemu-system-ppc -kernel ./vmlinux -cpu g4 -M mac99 -initrd
-> ./qemu/rootfs.cpio.gz
->
-> I was therefore expecting (and fearing) it to fail with your series
-> applied, but surprisingly it still works.
->
-> Therefore is it really initrd you are removing or just some corner case
-> ? If it is really initrd, then how does QEMU still work with that
-> -initrd parameter ?
+> Just think of bus locks. They affect the whole system. What if one
+> kernel turns off split lock detection? Or has a different rate limit
+> than the others? What if one kernel is a big fan of WBINVD? How about
+> when they use resctrl to partition an L3 cache? How about microcode updat=
+es?
 
-The QEMU -initrd parameter is a misnomer. It can be used to pass an
-initrd or an initramfs, and the kernel automatically figures out what
-it is. What you are passing is an initramfs (a gzipped cpio archive
-with all the files), which is a modern and supported use case.
+The model and motivation here is not to split the domain and give
+different shares to different sysadmins, it's intended for one kernel
+to partition itself. I agree we shouldn't have different kernels here:
+one old, one new, one Linux, one Windows... All partitions should run
+a verified parker-aware kernel. Actually, it may be a good idea to
+force the same buildid in kexec between the boot kernel and secondary
+ones.
 
---=20
-Alexander Patrakov
+Fam
 
