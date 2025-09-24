@@ -1,83 +1,124 @@
-Return-Path: <linux-kernel+bounces-831076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D55EB9B74A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:23:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365E7B9B74D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A799018881DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:23:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F74E2E15
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416D4319855;
-	Wed, 24 Sep 2025 18:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B0831281C;
+	Wed, 24 Sep 2025 18:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U143hdzX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kL0Q3C1P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1968834;
-	Wed, 24 Sep 2025 18:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3002E0923;
+	Wed, 24 Sep 2025 18:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758738169; cv=none; b=R4fmMntKcL18yRdtcEw+gXIsUVlOI8neGOlEt8Phi27V8nyX0uHkCTCptDqgbnTmbR3zvjttePBqg6D5etDlZN7VUr6B/z2n/iWLSXxs+6Cl0SUQJ2uFCqHgg5oPSa/plUaY5PQGBcY94zqnAtkiHdjD08kJygqP1FG0ZjeDpI4=
+	t=1758738234; cv=none; b=GuzzWdGxlwMz327zn0d1WE7OxuaDJXHqj7ieVsp6ekEiMPLUFGwzWIG6OIcfMMTAPCak+UgC2khL13ptpKF5dtY4nzoxQPMwSp1BCnLg6U16mBuAM5dvqZbTicb/uoB2a0J1OZE7YdT3vF80pD1fLi+owBchQr00KTpcmHIfBwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758738169; c=relaxed/simple;
-	bh=/dizJ5Yx9RjejGKb4zmO9A3cx6kee5ApzkrMTFA0MNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixobPqYuoroWv+vpAGmspAEYeza5F+XWs7TnEsnU+G8IteqDkmoczD3DxfGgQ32Zb4AcS8az+TEPSmB9YXxgmtjiiQLWGHW/Nr2jl6sLxarluc08o6Vh2F7f1R/BIlXX7OdtgYtBfeX/8koACvZITRWxAmlBWlme+tSbziritn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U143hdzX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 164ABC4CEE7;
-	Wed, 24 Sep 2025 18:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758738168;
-	bh=/dizJ5Yx9RjejGKb4zmO9A3cx6kee5ApzkrMTFA0MNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U143hdzXG4BM2U4/RGhbJLZkf0oHaWc6kUm4O7eVMoW3LZC3znzGv+cmvpHeLKlOK
-	 eIM+3C2AOcCqDVAo9QWSnqGGFiOcyT51ZM3FpMgvvexB9rwL6LQuczEdEgNIUXUuka
-	 3r8PfGWoeUBEFrGmbWqDO6TbNH/+zlOoI7O/RNoUwA1mIoReOZaLe/6bPqtrDXCGn7
-	 04MhO7ShJEt+ZvQyYxRo+f+9YXoqAt0Zh9DZhnI9jjahdcvVzgwsX8OxfzNTqDzREk
-	 2RAdPp0WK43KkCtYdJmnwliRuoDAnbnvDeM3y7XTxlb4lcz5x3531NjZZbdMgeI4ru
-	 oZC/vxeZyzxfQ==
-Date: Wed, 24 Sep 2025 13:22:42 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm64: dts: airoha: Add AN7583
- compatible
-Message-ID: <175873812927.2390194.2900839145520003196.robh@kernel.org>
-References: <20250923185340.21526-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1758738234; c=relaxed/simple;
+	bh=oNVDqanX5WdUO+OP2LCxi19ptR9qwxjEMdMa02OPxcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G9EzoE4cy5rRziRE7mkky2mj5HKxWL7Vo/7Ye9hwZPmJF6lObsiGBWbxyVaZEXftLpdz2Xbi1GoPGS4dAMG1S+bpOMktnhsdINJsmRDiE+IFWAf0YlGBf24Z3NWl9e4TFcBhp3KYh/dhQeocPf+ZH6JH94KfdUAa2dlI6+UDgtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kL0Q3C1P; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758738234; x=1790274234;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oNVDqanX5WdUO+OP2LCxi19ptR9qwxjEMdMa02OPxcA=;
+  b=kL0Q3C1Pz6xLgLlCrVUF1vi8WiMC7OsxYx03TPFjoR5TTXLN2r/KlUnD
+   krmM4rg4BtFXfPUmFiuanPjJSCfQovt/pJSoHe6L3Ynq7pb9sPGbedKhP
+   7U9eBQhu8Lv/h3fnDoImHk3o6IiJCY3+uL/BZAD9bXQv41lc812A7Jd41
+   u5KYkScTH4IoNMnBq/iAX8Qn4NrwXFhO748BzLkZORZLk2ga4QM9LUvLO
+   /lFZmed9EkrZ5imPsuGG6mnEdKm0gvL0jfTW3SdPIrfNyteIkP6AFl10k
+   tJH2KQtK44cwUxYqMnUQiREMILtdYh9cig3ykKUtCb4O/J9uc89rEx+Bm
+   w==;
+X-CSE-ConnectionGUID: aPINmDDbSgC2UFumASaoYg==
+X-CSE-MsgGUID: P8E5JAUQRZ2qODXLspr1Dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="72470095"
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="72470095"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:23:53 -0700
+X-CSE-ConnectionGUID: HWYp6wAmScmPXdUk4orb9w==
+X-CSE-MsgGUID: 5g5gUoHJS0iFDjVulBGY2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="176396186"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:23:52 -0700
+Message-ID: <0bcc237d-08ba-4909-8ad2-748570cbc1db@intel.com>
+Date: Wed, 24 Sep 2025 11:23:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923185340.21526-1-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 16/20] cxl/mem: Preserve cxl root decoder during mem
+ probe
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134203epcas5p3819aee1deecdeaed95bd92d19d3b1910@epcas5p3.samsung.com>
+ <20250917134116.1623730-17-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-17-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Tue, 23 Sep 2025 20:53:34 +0200, Christian Marangi wrote:
-> Add Airoha AN7583 compatible to the list of enum for Airoha Supported
-> SoCs.
+
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> Saved root decoder info is required for cxl region persistency
+
+Should squash this patch into the previous patch. It's small enough that the usage and the implementation can be in the same patch.
+
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 > ---
-> Changes v2:
-> - Follow alphabetical order
+>  drivers/cxl/cxlmem.h | 1 +
+>  drivers/cxl/mem.c    | 2 ++
+>  2 files changed, 3 insertions(+)
 > 
->  Documentation/devicetree/bindings/arm/airoha.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index 434031a0c1f7..25cb115b72bd 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -59,6 +59,7 @@ struct cxl_memdev {
+>  	struct cxl_nvdimm_bridge *cxl_nvb;
+>  	struct cxl_nvdimm *cxl_nvd;
+>  	struct cxl_port *endpoint;
+> +	struct cxl_root_decoder *cxlrd;
+>  	int id;
+>  	int depth;
+>  	u8 scrub_cycle;
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 54501616ff09..1a0da7253a24 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -152,6 +152,8 @@ static int cxl_mem_probe(struct device *dev)
+>  		return -ENXIO;
+>  	}
+>  
+> +	cxlmd->cxlrd = cxl_find_root_decoder_by_port(parent_port);
+> +
+>  	if (dport->rch)
+>  		endpoint_parent = parent_port->uport_dev;
+>  	else
 
 
