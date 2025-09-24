@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-831213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D30B9BE70
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 512EEB9BEA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F071BC2D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A546A188E7A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D4432897A;
-	Wed, 24 Sep 2025 20:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EDE328565;
+	Wed, 24 Sep 2025 20:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IZpHMA5R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tZ4Zh3mr"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E91328980;
-	Wed, 24 Sep 2025 20:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96069242938
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758745547; cv=none; b=fnrMEzf+2eoFgqILl3WGMgK2XFcAZ5m5GmBDX6h054/MOMiTf3KYbFQgvksgdguWLqKXJv1BfrD5uFLaLyLysB23FWhJL6t5ENagHbgNyiLCe6Y8wyzIQKaEbwlsmSTI630ngVoZ5PcPlUAIhznGtfQpHuAXT5RcpxsSHszKnfc=
+	t=1758745599; cv=none; b=rurCBLc0XIrMXNC8fZ9ZFa+587KcSAzKDQ1jY3eghiNaQM/wmK209ISl1M2Y7uIBKLlmMohzdtn5GpUEqYQjGD24ohr1RoUILeezrvuk/Kww7Xbmbj7pRhe245BSk9uvbIZPLQk7seiGuxqM3BytegLDdEZWkkZsDx/UUEG358A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758745547; c=relaxed/simple;
-	bh=zw3x76AQ/vgPk9kgFqedMjqFTF9PAcJEulNJ//NEyQg=;
+	s=arc-20240116; t=1758745599; c=relaxed/simple;
+	bh=c/wppCWoCykYza98XE0R7mb4b4/obB2EvPce43fnMuY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t77SqEe60THnvSPiiEL3TnTVmMXFxssFJj1MSMALojrmadjwUXMQTPWbLk1feq9ZtOd2a8RSC6Fs1UL43a8467JazVdCDVGLYuH+XmYYlQoIYyh7+zOy3SVP0F9xRtH+z7pCjXO1gOWQgyYVmek3+rfwhf9OJ0mj5UTSIh1MdNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IZpHMA5R; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758745545; x=1790281545;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zw3x76AQ/vgPk9kgFqedMjqFTF9PAcJEulNJ//NEyQg=;
-  b=IZpHMA5RStF0YaLLlvJNHE0ITwpeinzAVfKoNkAs3mx6SewMI5GX6DK0
-   zfEhyANaG3yeUDMDdLHdL+x37Kb3TviiDvWXil88z3wbeaQ4YNn9thRHs
-   HrPv/ilnUX1DHscs5dnp47QW13gs5Lzgr4DxgtpXhPDe+xstejoh+TlRa
-   u3mMHi6Yq5ywUWZ+bm6tjb6pVMKvlSYaKgG/lLY4y5txW6PTtSOB7usL7
-   AafSCI6L8CmQNrjxgtjosyxZWWRdej/Xb2NZkEALS9oyCBKvqI9ke+9IW
-   oWirYyp0FaTWfFaZLd1+kv5/4H1BPa6v6bLIGGu3u4Mr1t/9VLu7GLXEt
-   Q==;
-X-CSE-ConnectionGUID: aT/drTkiS2qkLk8vZTqWuQ==
-X-CSE-MsgGUID: e31idQicQumuIYMCKa5VWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="78492768"
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="78492768"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 13:25:45 -0700
-X-CSE-ConnectionGUID: g+4KIF0eRtSTxWYdplrqyg==
-X-CSE-MsgGUID: aEyEW8p+SYmnW2q92zLTsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="181512197"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 13:25:43 -0700
-Message-ID: <6734182c-579e-439c-906c-f3c053025ef0@intel.com>
-Date: Wed, 24 Sep 2025 13:25:43 -0700
+	 In-Reply-To:Content-Type; b=uLz0xL6vAjdIOqn1eAiwe71b03A5JH8DnJuRopNKH1LmuRNbWfJwgyzjd4q0OKFRJVNfSIXcEQUj6s8aaHPT/HyiKGt0U2qEW0UyxxCu8i78Hxa4h/TKB8btoybn8Ux7/91iozxPzf6yg83bIuzdscqUzL+TjKm/7pA2wDeyzA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tZ4Zh3mr; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OI8QB2011419;
+	Wed, 24 Sep 2025 20:26:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=qnKAPR
+	s+VPg3wNkZoc/sU4tRgABH4YX50fwnXW8GwZ0=; b=tZ4Zh3mrr037vDc5K+d1D+
+	IUU1oPO3/zH2o0k2TTofWWGDwCpUuVlEoboqOgp8m9i27l9tiTuPO1VWMoaveLkJ
+	mrBmX8+NGHR92CoYH0abWKFOIoBnyG/0t6CODdN/ARky7vByBCLyVQVnC6gsp9TI
+	/2od2VYSpD3d41MbPiiQ+SJV3Dreat4yYHtdoQk/I8Fa8RhNcsI8ohqRZubYUUh5
+	Tntv+xVoqFZ0TusBITdg68ZUyAxFLHXV6b0cWEAq3IgdBwXoNhspUmJtvJLJDMwr
+	KK//bU5aHx57wY4AIgs5wJU7YuzR9cQ3Tp4N3ZjfUsQ/R6p3cugo2Z36iT1zClIg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky69wb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:26:14 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58OKPDpV017548;
+	Wed, 24 Sep 2025 20:26:14 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky69wb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:26:14 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OHkcjx013599;
+	Wed, 24 Sep 2025 20:26:13 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a8tjj9h2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 20:26:13 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OKQBI150725240
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 20:26:11 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 64DD220040;
+	Wed, 24 Sep 2025 20:26:11 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 53FCD2004B;
+	Wed, 24 Sep 2025 20:26:04 +0000 (GMT)
+Received: from [9.61.52.22] (unknown [9.61.52.22])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Sep 2025 20:26:03 +0000 (GMT)
+Message-ID: <98aa5e37-258e-4efe-8e09-b8cfc5f78f0d@linux.ibm.com>
+Date: Thu, 25 Sep 2025 01:56:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,197 +83,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 19/20] cxl/pmem_region: Add sysfs attribute cxl region
- label updation/deletion
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
- cpgs@samsung.com
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134211epcas5p17cf5e4052df126a67b27be971be82fe1@epcas5p1.samsung.com>
- <20250917134116.1623730-20-s.neeraj@samsung.com>
+Subject: Re: [RFC PATCH 01/19] sched/fair: Simplify set_cpu_sd_state_*() with
+ guards
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>,
+        Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+References: <20250904041516.3046-1-kprateek.nayak@amd.com>
+ <20250904041516.3046-2-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
 Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250917134116.1623730-20-s.neeraj@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250904041516.3046-2-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WEBgESyanmAGKw8wuT_O1ApQt4MJxw5n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX3dyFASGeRs7E
+ GwlL4VcO90sKqMBcqcIbKgQWUjG/On3okQbMRgAG2wheyauw94UldH9c+rrFU03EFYi/m+bG3z5
+ Ctq8CaRZkuaxFi3CZqdGmE6BpAsrqVYyBxj+g6I9Jlp21kwOFFrbIG0WTLeFoVZlXliwZO1C96k
+ SYbO+NdGpGvu/D/lAwlqI48N56Xd2ej2joMVID7wi8kVDpdA2z40jJwwW0IaHInqJLpaelkx52p
+ waRyZxQ48OtVCLCSva1s880wSbYrqZVoas3prDxioNRDeUD7NxLFJQ1YeT06lu2xTfgB5SJY20K
+ N8igt0qVobhQirB7cuXYnjlbDR8iBiQ7InCc9MOQBDZaB2U/h/xmqAdjdEk0ic1Dd3aEWQNvG76
+ KELOlM6b
+X-Authority-Analysis: v=2.4 cv=XYGJzJ55 c=1 sm=1 tr=0 ts=68d453e6 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=zd2uoN0lAAAA:8 a=VnNF1IyMAAAA:8
+ a=fHjAQ3KN5lqxBgJHjdkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: T9IdPYAM-u8zPTZAlIVniIouUK16mcwx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_06,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 adultscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
 
 
 
-On 9/17/25 6:41 AM, Neeraj Kumar wrote:
-> Using these attributes region label is added/deleted into LSA. These
-> attributes are called from userspace (ndctl) after region creation.
+On 9/4/25 9:44 AM, K Prateek Nayak wrote:
+> Simplify set_cpu_sd_state_{busy,idle}() using guard(rcu).
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 22 ++++++
->  drivers/cxl/core/pmem_region.c          | 91 ++++++++++++++++++++++++-
->  drivers/cxl/cxl.h                       |  1 +
->  3 files changed, 113 insertions(+), 1 deletion(-)
+>   kernel/sched/fair.c | 20 ++++++++------------
+>   1 file changed, 8 insertions(+), 12 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index 6b4e8c7a963d..d6080fcf843a 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -615,3 +615,25 @@ Description:
->  		The count is persistent across power loss and wraps back to 0
->  		upon overflow. If this file is not present, the device does not
->  		have the necessary support for dirty tracking.
-> +
-> +
-> +What:		/sys/bus/cxl/devices/regionZ/pmem_regionZ/region_label_update
-> +Date:		Sept, 2025
-> +KernelVersion:	v6.17
-> +Contact:	linux-cxl@vger.kernel.org
-> +Description:
-> +		(RW) Write a boolean 'true' string value to this attribute to
-> +		update cxl region information into LSA as region label. It
-> +		uses nvdimm nd_region_label_update() to update cxl region
-> +		information saved during cxl region creation into LSA. This
-> +		attribute must be called at last during cxl region creation.
-> +
-> +
-> +What:		/sys/bus/cxl/devices/regionZ/pmem_regionZ/region_label_delete
-> +Date:		Sept, 2025
-> +KernelVersion:	v6.17
-> +Contact:	linux-cxl@vger.kernel.org
-> +Description:
-> +		(WO) When a boolean 'true' is written to this attribute then
-> +		pmem_region driver deletes cxl region label from LSA using
-> +		nvdimm nd_region_label_delete()
-> diff --git a/drivers/cxl/core/pmem_region.c b/drivers/cxl/core/pmem_region.c
-> index 55b80d587403..665b603c907b 100644
-> --- a/drivers/cxl/core/pmem_region.c
-> +++ b/drivers/cxl/core/pmem_region.c
-> @@ -45,9 +45,98 @@ static void cxl_pmem_region_release(struct device *dev)
->  	kfree(cxlr_pmem);
->  }
->  
-> +static ssize_t region_label_update_store(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 const char *buf, size_t len)
-> +{
-> +	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-> +	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-> +	ssize_t rc;
-> +	bool update;
-> +
-> +	rc = kstrtobool(buf, &update);
-> +	if (rc)
-> +		return rc;
-> +
-> +	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
-> +	rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/* Region not yet committed */
-> +	if (update && cxlr && cxlr->params.state != CXL_CONFIG_COMMIT) {
-> +		dev_dbg(dev, "region not committed, can't update into LSA\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	if (cxlr && cxlr->cxlr_pmem && cxlr->cxlr_pmem->nd_region) {
-> +		rc = nd_region_label_update(cxlr->cxlr_pmem->nd_region);
-> +		if (!rc)
-> +			cxlr->params.region_label_state = 1;
-> +	}
-> +
-> +	if (rc)
-> +		return rc;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index df8dc389af8e..61b59fd75ced 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -12449,16 +12449,14 @@ static void set_cpu_sd_state_busy(int cpu)
+>   {
+>   	struct sched_domain *sd;
+>   
+> -	rcu_read_lock();
+> -	sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> +	guard(rcu)();
+>   
+> +	sd = rcu_dereference(per_cpu(sd_llc, cpu));
+>   	if (!sd || !sd->nohz_idle)
+> -		goto unlock;
+> -	sd->nohz_idle = 0;
+> +		return;
+>   
+> +	sd->nohz_idle = 0;
+>   	atomic_inc(&sd->shared->nr_busy_cpus);
+> -unlock:
+> -	rcu_read_unlock();
+>   }
+>   
+>   void nohz_balance_exit_idle(struct rq *rq)
+> @@ -12479,16 +12477,14 @@ static void set_cpu_sd_state_idle(int cpu)
+>   {
+>   	struct sched_domain *sd;
+>   
+> -	rcu_read_lock();
+> -	sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> +	guard(rcu)();
+>   
+> +	sd = rcu_dereference(per_cpu(sd_llc, cpu));
+>   	if (!sd || sd->nohz_idle)
+> -		goto unlock;
+> -	sd->nohz_idle = 1;
+> +		return;
+>   
+> +	sd->nohz_idle = 1;
+>   	atomic_dec(&sd->shared->nr_busy_cpus);
+> -unlock:
+> -	rcu_read_unlock();
+>   }
+>   
+>   /*
 
-Feels like this segment should look like
+This looks good.
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 
-if (!cxlr || !cxlr->cxlr_pmem || ! cxlr->cxlr_pmem->nd_region)
-	return 0;
+---
 
-rc = nd_region_label_update(..);
-if (rc)
-	return rc;
+we have both sd_llc->shared and sd_llc_shared usage spread
+across the code, is it possible to remove sd_llc_shared and use sd_llc->shared
+instead?
 
-cxlr->params.region_label_state = 1;
+Likely sd_llc is cache hot and access to shared should be fast too.
+In turn this could free up some per cpu area.
 
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t region_label_update_show(struct device *dev,
-> +					struct device_attribute *attr,
-> +					char *buf)
-> +{
-> +	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-> +	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-> +	struct cxl_region_params *p = &cxlr->params;
-> +	ssize_t rc;
-> +
-> +	ACQUIRE(rwsem_read_intr, rwsem)(&cxl_rwsem.region);
-> +	rc = ACQUIRE_ERR(rwsem_read_intr, &rwsem);
-> +	if (rc)
-> +		return rc;
-> +
-> +	return sysfs_emit(buf, "%d\n", p->region_label_state);
-> +}
-> +static DEVICE_ATTR_RW(region_label_update);
-> +
-> +static ssize_t region_label_delete_store(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 const char *buf, size_t len)
-> +{
-> +	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-> +	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-> +	ssize_t rc;
-> +
-> +	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
-> +	rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem);
-> +	if (rc)
-> +		return rc;
-> +
-> +	if (cxlr && cxlr->cxlr_pmem && cxlr->cxlr_pmem->nd_region) {
-> +		rc = nd_region_label_delete(cxlr->cxlr_pmem->nd_region);
-> +		if (rc)
-> +			return rc;
-> +		cxlr->params.region_label_state = 0;
-> +	}
-
-Similar to above. You can exit early and not have to indent.
-
-> +
-> +	return len;
-> +}
-> +static DEVICE_ATTR_WO(region_label_delete);
-> +
-> +static struct attribute *cxl_pmem_region_attrs[] = {
-> +	&dev_attr_region_label_update.attr,
-> +	&dev_attr_region_label_delete.attr,
-> +	NULL
-> +};
-> +
-> +static struct attribute_group cxl_pmem_region_group = {
-> +	.attrs = cxl_pmem_region_attrs,
-> +};
-> +
->  static const struct attribute_group *cxl_pmem_region_attribute_groups[] = {
->  	&cxl_base_attribute_group,
-> -	NULL,
-> +	&cxl_pmem_region_group,
-> +	NULL
->  };
->  
->  const struct device_type cxl_pmem_region_type = {
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 0d576b359de6..f01f8c942fdf 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -484,6 +484,7 @@ enum cxl_config_state {
->   */
->  struct cxl_region_params {
->  	enum cxl_config_state state;
-> +	int region_label_state;
-
-Maybe a enum?
-
->  	uuid_t uuid;
->  	int interleave_ways;
->  	int interleave_granularity;
-
+Any thoughts?
 
