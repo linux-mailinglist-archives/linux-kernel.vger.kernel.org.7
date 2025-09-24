@@ -1,132 +1,114 @@
-Return-Path: <linux-kernel+bounces-831118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B2CB9B949
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:58:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B7FB9B95E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB4D1B2502D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2618E17AB10
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F85F3191CD;
-	Wed, 24 Sep 2025 18:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E3524A06B;
+	Wed, 24 Sep 2025 19:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nonZE0uV"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="C6zVS0R8"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13EE229B16
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88804245028;
+	Wed, 24 Sep 2025 19:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758740310; cv=none; b=fMIUEgsbbDecsXdQiAmbS35QeA7xGK9YhhGfVi7HPBIbLq5grWrFB8n7SBh77aT+kw0ZY6RIHL/8Gw64+hgxyC5vPhV4nqENulEaUK6+aEAW7nsTD3VC/b+XGkupuPnTwT2UTPIMMoJ7uOaLlDpX805whaLIxjwJVq5N9vl2Oyg=
+	t=1758740573; cv=none; b=O0Ll2xNpy5UkI3yCiwiXDnuN+JmXAHNevOjv4XpJsyJFFHOr1liFfjVcd0r4UL1TYL1+BjIBEM5OXO5jlPSOEhxFMrZduHBVXnGCYxnwY4bLB8NZ/HyQ2zB1pLI2eIMqD+fYhWc0Fs/Wy/VcllMmBAZLJU1UoAMDI9COXUZT5QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758740310; c=relaxed/simple;
-	bh=Tvms9S2u+WWs1aqmeVPw1ZH+QcXa67JBCDgXQqcL1Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KgQMQbE3zDlIlwBJ4aYCzBN1sJS+Reipq0eSLSI135ztf91nfm/su3/3Zvxd8HZgxO8CSHdKOeRtH7uQGJcRURUv5F2vvygIK5QGJKdUKEjuCDg6nXrJGt4aeR9IeTmkiJcSGtBlw/rkp08/lhribXvz2ho6mI7Ver5WA/s9vpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nonZE0uV; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5821dec0408so150715e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758740307; x=1759345107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tvms9S2u+WWs1aqmeVPw1ZH+QcXa67JBCDgXQqcL1Nc=;
-        b=nonZE0uVLQny5TOOi+KqIwped2yLEoydhjl/vCnV6UWHVCXFBQtsStcpMjfcSHmYws
-         ndawyzrdlnsaFp4fBQZJM1CBnKMv0/qy6aJ9VV2wTAWd3UlrQnQlcHYXtVBgDT3c3eQg
-         O19EoSwhA5vvdo/gxkbqulZRyLZC2GpCmDfsmqwAtSRsYNNMT9mZpBw38M1Vw90RX8ch
-         MUmoQaU/Rd+WSIdCP04amGm5rSNRySj+N9pYWZ9BN/p61WWNsqfBDq8vTcuLs0h0ycxV
-         8E0YIYD6U4psQRPtOX+qP1E4P3YMeSGZz9Cajxk2R3nq2FlpLF3FRcV5W55LbRJipTg/
-         ZMUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758740307; x=1759345107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tvms9S2u+WWs1aqmeVPw1ZH+QcXa67JBCDgXQqcL1Nc=;
-        b=HvcS9u5Ne+CSuT7IqaQwdn7UpzjSCEHHLPrbXwevAzfGYLaOrKdfTm3Wwi1VpEzXH2
-         ltD28FzgoR7CUUDbROv9XEc54uUAygpJJvA4I4mNW7wRI3sfb3ms1CXX3lK+zhCrm3Gs
-         +rRdyUtIdPTA6KCEu01HMBzRm3YqspFdhWEOIhx/T5ssfifVQ0qHTssLrNzZ4g+2ZW/O
-         EGeQ9SMUWGCOuLk4fsFNZPSMjzWkXvKDm5YkrBGRdSIFtk2KMyjtbcS1+u3fIlxM8qqK
-         v3myO08rfgWLkat1CHy3nXHyisX0flnVYUU5xPjN4yEf9JE8NbgLfK1mwnMzVBilJdr9
-         4FBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOTQ6pIuPNX2IhOx6p0WBSyt2C3uNl4U5bQCCMUWv2XuwnFHekC4QCllSVUEkovzeX//5YlcYimD40DnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyhrq7iBNVB8etIM5wpz2yH2aUCKhvOryg3IdnhvGkctpi858c
-	BvMzfNk5tLxQ3eOdC8lerDVTDbVz42IvSH0dnKtnArg9SeLZy+cpvCfcnYKlD/kfe98kutCH2S2
-	miukSSi6zGPDEZ+vr5Iy68n8ZISdb3M5++X09Hkgjfg==
-X-Gm-Gg: ASbGnct9GZw5TOdD7ZSYVUFz8Jo3j3d/n+Q7vdos6dltatomtwmQIVp+7eLrC5SmKaS
-	2Y4O4uIbNwqDK7zi0+Lo24GoPUdWh+7VwwjLrN4QBYGqPEjDnWCoDrtG+Tv2ToypQ2R/ezylh0R
-	OGt+6y/c1aVpNIFsxLKhsXFMo/3ilU3rPR6BuY56lf3QTz5T4LFGNMC8V6hGGq8kakh8HOcQuQ/
-	NTMU7VSXMuLPdDYznDlxBJKbAMUH6vW/3tRzDo=
-X-Google-Smtp-Source: AGHT+IG80v30cYAxmqw0nWtuIX67T8j0+pyB3RqSVPJrA4Q3f2yx4NJvYOML7KmCJ9NDodn7hTwpeLEpVOpaBNNnZoU=
-X-Received: by 2002:a05:6512:1389:b0:55f:572e:2417 with SMTP id
- 2adb3069b0e04-582d4442054mr147305e87.56.1758740306748; Wed, 24 Sep 2025
- 11:58:26 -0700 (PDT)
+	s=arc-20240116; t=1758740573; c=relaxed/simple;
+	bh=9fBWK7k1Rf1vLpHtgZBMHqyJT2G839ts4KtXsMJZmyE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=huYHIa1xZZTw2EVCYXQFo8969Lph/RAqxw2IKIWmbdcF73TkJMvlWThbbK4A6tL8xWGTkBZtqRUt2As/t8lT+7HUdJMM3/spSppkz858b/AsJ1CTlpWtZWClWN+znFAYSvRrLuVOZA7hDL1ghXQs6b5xUol8a1EUDI27S866XM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=C6zVS0R8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58OJ1ska2121518
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 24 Sep 2025 12:01:54 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58OJ1ska2121518
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1758740516;
+	bh=9fBWK7k1Rf1vLpHtgZBMHqyJT2G839ts4KtXsMJZmyE=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=C6zVS0R8YnknObsBTcwa3u6kBokVTdm7XewZv0IPiZ9V3lr2egImqUFtZsyoxGl/A
+	 MIqNLNfzj/5YdE//NHgr+D5ApVBs0TnjfTTGEpqQELXZj/ZtRZ7iuUYRGQFsYPsN1p
+	 VMNK9xJdIPEDmWBbFu+Nmfm78qvYNUtsJqwlx/qPkUy3W9vhaT4g06W0sWUr1iJuZ9
+	 d6I+ix2ynXLs674lK4NJ5oRnqgomf50Psxil13Yug0Zak/jH9HKishugqGkhSB2HiO
+	 j8VJFb6m2ZXjUkffZJG5eLDEatrUV3EVURB9S+iH16saPnpyQx/PUe8FWyxt977/0w
+	 bHGwcfErPaBZw==
+Date: Wed, 24 Sep 2025 12:01:52 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Dave Hansen <dave.hansen@intel.com>, Fam Zheng <fam.zheng@bytedance.com>,
+        linux-kernel@vger.kernel.org
+CC: Lukasz Luba <lukasz.luba@arm.com>, linyongting@bytedance.com,
+        songmuchun@bytedance.com, satish.kumar@bytedance.com,
+        Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+        yuanzhu@bytedance.com, Ingo Molnar <mingo@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, fam@euphon.net, x86@kernel.org,
+        liangma@bytedance.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, guojinhui.liam@bytedance.com,
+        linux-pm@vger.kernel.org, Thom Hughes <thom.hughes@bytedance.com>
+Subject: Re: [RFC 0/5] parker: PARtitioned KERnel
+User-Agent: K-9 Mail for Android
+In-Reply-To: <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+References: <20250923153146.365015-1-fam.zheng@bytedance.com> <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+Message-ID: <AEC34AE1-AEB5-4678-AC9D-39155E97D86C@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org> <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
-In-Reply-To: <hyzzrjn7jzo3tt3oyg7azijouawe3zopfjzq6zfhoo6e6z2m4t@ssl5vl4g557e>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 24 Sep 2025 20:58:14 +0200
-X-Gm-Features: AS18NWB3RTCRDB9znJ75efLzXjjUdrkYJL4LszylIzL1olaMxdJPlHwCWt0jx1k
-Message-ID: <CAMRc=McVc2aYFX-DKjtNNNs0eZLcq_jahR+_q3EP1T352XhP+Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 8:25=E2=80=AFPM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On September 24, 2025 8:22:54 AM PDT, Dave Hansen <dave=2Ehansen@intel=2Eco=
+m> wrote:
+>On 9/23/25 08:31, Fam Zheng wrote:
+>> In terms of fault isolation or security, all kernel instances share
+>> the same domain, as there is no supervising mechanism=2E A kernel bug
+>> in any partition can cause problems for the whole physical machine=2E
+>> This is a tradeoff for low-overhead / low-complexity, but hope in
+>> the future we can take advantage of some hardware mechanism to
+>> introduce some isolation=2E
+>I just don't think this is approach is viable=2E The buck needs to stop
+>_somewhere_=2E You can't just have a bunch of different kernels, with
+>nothing in charge of the system as a whole=2E
 >
-> Hi Bartosz,
+>Just think of bus locks=2E They affect the whole system=2E What if one
+>kernel turns off split lock detection? Or has a different rate limit
+>than the others? What if one kernel is a big fan of WBINVD? How about
+>when they use resctrl to partition an L3 cache? How about microcode updat=
+es?
 >
-> On Wed, Sep 24, 2025 at 04:51:28PM +0200, Bartosz Golaszewski wrote:
-> > Here's a functional RFC for improving the handling of shared GPIOs in
-> > linux.
-> >
-
-[snip]
-
-> >
-> > The practical use-case for this are the powerdown GPIOs shared by
-> > speakers on Qualcomm db845c platform, however I have also extensively
-> > tested it using gpio-virtuser on arm64 qemu with various DT
-> > configurations.
+>I'd just guess that there are a few hundred problems like that=2E Maybe m=
+ore=2E
 >
-> How is this different from the existing gpio-backed regulator/supply?
-> IMO GPIOs are naturally exclusive-use resources (in cases when you need
-> to control them, not simply read their state), and when there is a need
-> to share them there are more appropriate abstractions that are built on
-> top of GPIOs...
->
+>I'm not saying this won't be useful for a handful of folks in a tightly
+>controlled environment=2E But I just don't think it has a place in
+>mainline where it needs to work for everyone=2E
 
-I think you have never been on the receiving end of Krzysztof's wrath
-when trying to model a simple shared pin as a nonexistent reset
-provider or a fixed regulator in device-tree. :)
+Again, this comes down to why a partitioning top level hypervisor is The R=
+ight Thing[TM]=2E
 
-Unless you mean some other abstractions I am missing.
+IBM mainframes are, again, the archetype here, having done it standard sin=
+ce VM/370 in 1972=2E This was running on machines with a *maximum* of 4 MB =
+memory=2E
 
-Bartosz
+This approach works=2E
+
+Nearly every OS on these machines tend to run under a *second* level hyper=
+visor, although that isn't required=2E
 
