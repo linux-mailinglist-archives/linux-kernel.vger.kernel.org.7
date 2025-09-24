@@ -1,129 +1,167 @@
-Return-Path: <linux-kernel+bounces-830551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6A8B99F58
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67583B99F40
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE6A32871F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4064C66BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5272E1EE1;
-	Wed, 24 Sep 2025 13:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="dMgPnnXF"
-Received: from mx-relay98-hz2.antispameurope.com (mx-relay98-hz2.antispameurope.com [94.100.136.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0613D2D660B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.136.198
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718867; cv=pass; b=Wv+Cwjy8wBhRfEwtiKEXHkh3sVZkXa4q3YQUAUoK8ckbqsdNc+ch4BhnbKGeMVnpHgZj2FULFygPTlbaXWuM6WE75QS0RBUjlw11k+jHSxlkr1rYjGykphHv4VQ5XmVOR+XLAgkHh+hOFD57exel+PodrJmyNmwgPO/3NRYegCg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718867; c=relaxed/simple;
-	bh=tRFO2lmj9fh8+cqEU3EcQ/kLEOghCXUYGgOwKHAIOT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GKv1zSiP2kvoI9/SWo8mcCz4V4UQFmsEFjFC+4OdA0D0Q9cDVUePzYXELgtHhrvtBMD4oYq/vqIdKuqj7z8R3iMxmTrDUNvZIQCMuxGaf/dQ+lHO3an3MT54094Ms6lPBq6wSlTWx2h4Z8sx17kLmFsFFSOfURTDLmy7fvEj8Oo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=dMgPnnXF; arc=pass smtp.client-ip=94.100.136.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate98-hz2.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=9UDISnZw3L2CnlLPkLi4dm5l+dhut+bxyAY7QFGqaZY=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1758718831;
- b=YV37sbsoBsxzRzIClrFFXwiy8dPlK1nA2sKxVcpHlzOteAz4cH1/8OyZrP/NXsC6R9NVV+rt
- SsOJu5r7v1NrSESSYvTsmIPa9CeywmpN5HcxIG3GUxIZiuCfQ/cj9tXA4Ta7Uv3dEhXUX8kghGE
- AeqRGzwvxE0FkKRqiOh0FeEn11xsGbuk8qqDzks7Wfsxyl2SZXTA+7T6BTT2UoK9MnN2UpYNCyV
- DNejCATpq36Dp4RgDSdA4Y39m241qWUnOtsaVpXQNAAL3Kz2Xz7TcdpwrDza/koE9F/2cVUsgcm
- 5+VmXycTQ9FgZ7JnwRjkJNnyUObpppWy6AGdezvwiryVg==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1758718831;
- b=jISLSrYEKn8QVNX2Cs/bzm2VT+8Dy6+AYACQLgJUUibL3ukIZQrMtsmFj/QzGfV2JS+pXKGv
- Kpj/3oPriPJOziBinZ5eADjQpY+IJ22Eaf/PUgGWfzU5+CZqp2AHZgC8bW5wsHaLdETtJlXE8Qu
- IwklxtWfxd33/b08572XkV6/bWH2xY8CYPrV/3aJTTvQOVMXbu+OO/jkHkRodhDjEEKDkgR2lzH
- S1W2sjBi+Q7qOp6IQg5qTKAhms+nCLz5mix+Q8ng8K5RrcFtca3oqMjWZiO4Frd5X/lk+PoAxRz
- YDm8T4kXB1Y2GJGvP0ZTqIVw4hroNt+06z7Bn/gDZV30w==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay98-hz2.antispameurope.com;
- Wed, 24 Sep 2025 15:00:31 +0200
-Received: from steina-w.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id B64FC220CCC;
-	Wed, 24 Sep 2025 15:00:20 +0200 (CEST)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Lizhi Hou <lizhi.hou@amd.com>,
-	Brian Xu <brian.xu@amd.com>,
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Sonal Santan <sonal.santan@amd.com>,
-	Max Zhen <max.zhen@amd.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] dmaengine: xilinx: xdma: Fix regmap's max_register
-Date: Wed, 24 Sep 2025 14:59:41 +0200
-Message-ID: <20250924125941.742020-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7140433993;
+	Wed, 24 Sep 2025 13:00:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45951C8630;
+	Wed, 24 Sep 2025 13:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758718805; cv=none; b=u/Lzm7FqjJXvHkZmjKBoEa3KbsBynzSbzt7/+rfCV9uyeoPLSIWTm717NsukHim4gKEruR5UntCdDhkT2tIls9px5m1j5V8x2EMpsGpdNWdg1tV8vvgBH0U2YdJh84H4dPZhO1lQbuPiQASAnTF+nrps5B6nS9NOvZW4I4XDpvc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758718805; c=relaxed/simple;
+	bh=rYcNuhNICQ9oVzckWeSQB/D9K9FZwfeY6TIwX2DR+po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D4y5TgD75UDOmEj4hcgfqwx543fGCG3VOPIPepXazQi//0o71ZyDKSU5L3NI7OWnF6qzEV5PWIbUBQZPtp+a/HkTCoRPEwZBorS5FTnRoYrpshQufz44ZTlVu3u5KJ/e+LVzf6fQfOw8TwS4D9gtB4JC5inFNmaXUCtbyn+p9O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00617106F;
+	Wed, 24 Sep 2025 05:59:54 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A9E93F5A1;
+	Wed, 24 Sep 2025 05:59:58 -0700 (PDT)
+Date: Wed, 24 Sep 2025 13:59:56 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Sebin Francis <sebin.francis@ti.com>, Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Dhruva Gole <d-gole@ti.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Message-ID: <20250924-versed-auspicious-bullmastiff-19de2e@sudeepholla>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+ <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+ <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
+ <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com>
+ <aNPmydbv6Xm0Tj9B@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay98-hz2.antispameurope.com with 4cWxln2CYmzJVhx
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:80bcfa90857a8c74b541e95d24a74b4e
-X-cloud-security:scantime:2.129
-DKIM-Signature: a=rsa-sha256;
- bh=9UDISnZw3L2CnlLPkLi4dm5l+dhut+bxyAY7QFGqaZY=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1758718831; v=1;
- b=dMgPnnXFkAz2lIAEQLzDaAs2ypXEhdZX+9a5G8wVnKCGYQtlGE0u8PwONcJm+6RC0kiLUJZ6
- QVfQuApva+ZyY2/EY4E8MOThjRxSU91mFLeX9yBHKHEQ347R6dBFf0Xk5qcG9XzoCFqHxoLUnAR
- EdIxvfTQsFfDzIGptLiXFzR+9hlTGFXxk/Slhi9mOLI3bTKrjLsdaMRokjkGbze/sYKV9/1ox4I
- OwKKKXORbqwlYjUZNb9Xq6QC6lMCeSznYJz/u57n+vepN1DFZPCKTpd91tOOZ467EHd3lagZyh+
- PFyuLNyNCejIppaFFXKWgZ/WVlrBJHbqlVfYtR7kWqK4g==
+In-Reply-To: <aNPmydbv6Xm0Tj9B@pluto>
 
-max_register specifies the last valid register address. As the BAR is only
-64kiB in size, 65536 aka 0x10000 is too big. Restrict the XDMA register
-space to be actually 64kiB.
+Hi Cristian,
 
-Fixes: 17ce252266c7 ("dmaengine: xilinx: xdma: Add xilinx xdma driver")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/dma/xilinx/xdma-regs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Sep 24, 2025 at 01:40:56PM +0100, Cristian Marussi wrote:
+> On Wed, Sep 24, 2025 at 05:45:32PM +0530, Sebin Francis wrote:
+> > Hi Peng,
+> 
+> Hi ,
+> 
+> > 
+> > On 24/09/25 17:13, Peng Fan wrote:
+> > > > Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
+> > > > NXP i.MX95
+> > > ...
+> > > > > > >         SCMI_CLOCK_CFG_OEM_START = 0x80,
+> > > > > > > +     SCMI_CLOCK_CFG_IMX_SSC = 0x80,
+> > > > > > 
+> > > > > > TI is also planning to implement the same in our upcoming platform.
+> > > > > > so can we use a generic ID instead of vender specfic message ID?
+> > > > > 
+> > > > > I tried to push to new generic ID [1] in half a year ago, but in the
+> > > > > end ARM decided not to add generic ID for spread spectrum support.
+> > > > > 
+> > > > > To i.MX, it is too late to use a generic ID and waiting spec, i.MX
+> > > > > firmware has been public for quite some time and passed several
+> > > > external releases.
+> > > > > So I need to use what our firmware adds and spec allows: vendor
+> > > > > extension.
+> > > > 
+> > > > Thanks for the quick response,
+> > > > Since this implementation is specific to i.MX, can you move this to a
+> > > > vendor specific file, so that it will not break i.MX's firmware and TI can
+> > > > implement SSC in TI specific file.
+> > > 
+> > > i.MX has encountered issue with pinctrl-scmi.c and pinctrl-imx-scmi.c
+> > > both supports SCMI PINCTRL. Current linux scmi does not support
+> > > both drivers built in kernel image, because scmi devlink issue.
+> > >
+> 
+> Yes indeed, BUT the vendor protocol extensions mechanism was meant to
+> serve the development of vendor custom protocols and drivers, it was
+> NEVER meant really to allow multiple alternative drivers implementation
+> on top of the same standard protocols like it happened with pinctrl-imx-scmi...
+>  
+> > > Sudeep said he would address the devlink issue in 6.19 cycle.
+> > > 
+> > > Given the current situation, I'm hesitant to introduce a new driver
+> > > saying clk-imx-scmi.c.
+> > >
+> 
+> Even if the devlink issues will be solved, in THIS case the problem is
+> handling custom vendor extensions inside a standard protocol, as it is
+> allowed in this case...
+> 
+> > > What I'm unclear about is whether moving to a vendor-specific file
+> > > implies creating a new driver (i.e., clk-imx-scmi.c), or if it could be
+> > > handled via a callback or another mechanism. Could you help
+> > > clarify the intended direction?
+> > 
+> > My intended was to handle it via callback or something similar, so that TI
+> > can its own callback for the TI's SSC implementation.
+> > 
+> 
+> This is exactly what is needed, the ability to extend with vendor
+> extensions callback the behavior of a standard protocol where
+> allowed....this is NOT currently supported and sincerely that was the
+> reason months ago I proposed initially that maybe we could have standardized
+> a new common clock extension SSC instead of using the OEM extensions since:
+> 
+> 1. it seemed a pretty generic operation
+> 2. any per-vendor extension callback of std protocol was NOT ready :P
+> 
+> ...then this proposal never went anywhere with ATG...AND now looking at
+> this thread I think that it is good at the end that we did NOT add a new
+> standard extended clock config instead of the IMX OEM, since now it
+> seems that TI wants its own non-compatible implementation...
+> 
+> So yes the ideal solutiomn would be to extend in a generic way the SCMI
+> framework so that you can add in these cases custom handling of vendor
+> extensions for standard protocols (and then generalize the current
+> clk-scmi IMX support and add the new TI one...)...but I have not thought
+> about this and I certainly dont have enough bandwidth now to work on
+> this...beside having already in the pipeline other stuff/fixes like
+> a proper fix for vendor drivers coex like Peng askes (rightly so a few
+> months ago)
+> 
 
-diff --git a/drivers/dma/xilinx/xdma-regs.h b/drivers/dma/xilinx/xdma-regs.h
-index 6ad08878e9386..c6ef198ef7627 100644
---- a/drivers/dma/xilinx/xdma-regs.h
-+++ b/drivers/dma/xilinx/xdma-regs.h
-@@ -8,7 +8,7 @@
- #define __DMA_XDMA_REGS_H
- 
- /* The length of register space exposed to host */
--#define XDMA_REG_SPACE_LEN	65536
-+#define XDMA_REG_SPACE_LEN	0xffff
- 
- /*
-  * maximum number of DMA channels for each direction:
+Thanks for the detailed response as usual 😄. I don't have much to add
+in case anyone is expecting different or more info from me.
+
 -- 
-2.43.0
-
+Regards,
+Sudeep
 
