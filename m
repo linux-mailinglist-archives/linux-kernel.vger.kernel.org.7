@@ -1,225 +1,207 @@
-Return-Path: <linux-kernel+bounces-831262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91DFB9C389
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B79B9C3A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB817ABCEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B29B3A5DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7BA2629C;
-	Wed, 24 Sep 2025 21:00:31 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC5B285CB5;
+	Wed, 24 Sep 2025 21:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="doMmKeaQ"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011025.outbound.protection.outlook.com [52.101.62.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F692030A;
-	Wed, 24 Sep 2025 21:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758747630; cv=none; b=XvNeCo4Zf2jqVBIQU7FwAbtad1OeDBnmIaVQ6aJonJkdNjm7OH8fDCsP5H7QR5oOiJDj0L2jDqvlqAdyvTIU4oBxaCUfj2zej6mFI2c6DVD7BXLJ6ys1LoOd336q9PtEqcEYbSPMLUnosACFTYbdaqCjFAXDzuMIQZcdI1ZMbXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758747630; c=relaxed/simple;
-	bh=RGaamjF2IpwNIjXgC1t3FdjIIIk21TfElKBMJOvZv8Q=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=P9zz68xVuKWXpN7Df937vDxgh/6568g7LoWHjpptXyxcZSmezin8xcfDO9KfK6XPnC+kSc65XARCojbqVWjHPcAFXg84S1DPeHxSV2bcFwD/QUndcD1tDvvrRPqOuV4+64uIq9pNGWCltkTqRQeXbdQtMV1u8F4ZIsJQfzbDhtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.103] (213.87.129.165) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 25 Sep
- 2025 00:00:13 +0300
-Message-ID: <1bb8aa58-7f40-4ba7-959a-e44655aa4a83@omp.ru>
-Date: Thu, 25 Sep 2025 00:00:10 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6699226CFE;
+	Wed, 24 Sep 2025 21:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758747757; cv=fail; b=Jg14FtBIcHpOZF6/nr+/F3toGCk6iDa99jNE1pfDOTlwLh6/KVdba2ffpocNkZpcYGHVTShj+p0gsMwbE5liDDqPCPXNyhKuiVd9SABmjZh9wSIMnrVTE/fFBWO56r9jAIU7fCiM6HKSKXCo6nlXVhrM3exzxO9FNvybnNrHN0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758747757; c=relaxed/simple;
+	bh=wyCXQ9x5TQCrhtcm+Khx/xPwStfI5lYgIsmO7OreCmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XPuhTFMO+wlXp3SXvPioGsatpBlYVuxZmRm0cmTeUK5kivfZSdIFn1z2tkCHisLnOrkKVM33GcR5xoVW5BkCp/ZiBW7EI/hxK4UgSOC9HQmjKT0Qkg9BnPpeooMZB2GtmhqM/5lQjckNXPGQ2+RrxmtVe3TAqmPfq92dJrjgd6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=doMmKeaQ; arc=fail smtp.client-ip=52.101.62.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=miQLbuj5pjmPg8wjD8lGiM7I+D8rofgR4Bixk7fFHzmrbqCiqpg+x8HI+BWAUwGf5QEIMpGYakiuxUj+OQPQ/yWr+3XCa51OfAgRnhP9VxU9TpW4+TJYmZzy2VXboRxd0lDUpyYeGJp64uUhKl7dvXNsF/YPrTd/Cg84K2zhVesGvUi7Ba3V9Za9f7kyzg0kcI6BrD3gSn+efizhv78kopya0ryHeieDp4/NHQHwULoiwb/5EU5B/k+h/tx8rqcLsRP0323H8MpWMAsUkNZfV8rpove+msRell6tSpyZF+BVhj8qT/9tN+/D9t32NnfWb8CrZssyMJYgSyjz1p417w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VNojt7aMVflgWZMZF/1yfftwQPxOFC3B//05vtbnNE8=;
+ b=iIQb5Soz8KA8uj1UgnrXlaWbtb9ZsDQqgs66BkHR4ianyfDhdcynfLRIptP0vhWOnIKYTmYrrXK8T2s8ZeSfkx82OhZWqeend9LrojWE24bxxUeLabVLHoOu1tYapQIewuQx7T/WO6WSzqYg3pDwXh8R8lIerdcIiLBEuWKbewR4VRGoL9Si1I0ydvJE2iONE+E1DY4aFg04kBUlJ3kaVGQlCiEgIafCORsFqGBI2MfWzzxVqL2si9Lww+ykrJqcNHg59HgDNvfgqMbB4k/WYfGT7XPXGsNScZkXc40bEb+9Og6OzBgHTVpDM9CPOdBeInCSaGyEOWmxVu0js2n+Kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VNojt7aMVflgWZMZF/1yfftwQPxOFC3B//05vtbnNE8=;
+ b=doMmKeaQtoi8yeYARUMLxGN7qIBrv/es4sxPAmlsfLurbo01RPZhUSIMQTHfv721beogMInIScijBSIknw5CLIyYXKCu4TSUnNAL8GvJPCYl/BFmEkvq7kasuqBQzqintygV0+z6/aZvL+sOr6BOlYS2Kdc16PRQS0phJQpNf6v7s1x7ytn6Fy3FTLCOmjngsFd9ES0Sfu0lx87ibtlM5QF0oezZw1LR2vf+ez/qKviicp2FGVNH0APrLusGqCJw7eLmo2LCl7SqcP0W3syu/NmigU5RmaNmkxRtWA93aUwPaXXE0qPh3ER1AkV5YdJIf0XoFevhrQNC6Fa1NNZ6Vg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
+ 2025 21:02:30 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
+ 21:02:30 +0000
+Date: Wed, 24 Sep 2025 18:02:28 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: joro@8bytes.org, bhelgaas@google.com, suravee.suthikulpanit@amd.com,
+	will@kernel.org, robin.murphy@arm.com, sven@kernel.org,
+	j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev,
+	robin.clark@oss.qualcomm.com, m.szyprowski@samsung.com,
+	krzk@kernel.org, alim.akhtar@samsung.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kevin.tian@intel.com,
+	yong.wu@mediatek.com, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, tjeznach@rivosinc.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, heiko@sntech.de, schnelle@linux.ibm.com,
+	mjrosato@linux.ibm.com, gerald.schaefer@linux.ibm.com,
+	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+	zhang.lyra@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, jean-philippe@linaro.org, rafael@kernel.org,
+	lenb@kernel.org, yi.l.liu@intel.com, cwabbott0@gmail.com,
+	quic_pbrahma@quicinc.com, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, patches@lists.linux.dev,
+	vsethi@nvidia.com, helgaas@kernel.org, etzhao1900@gmail.com
+Subject: Re: [PATCH v4 5/7] iommu: Add iommu_get_domain_for_dev_locked()
+ helper
+Message-ID: <20250924210228.GM2617119@nvidia.com>
+References: <cover.1756682135.git.nicolinc@nvidia.com>
+ <c9daeafb9046bed9e915fdafe20fe28a8c427d29.1756682135.git.nicolinc@nvidia.com>
+ <20250924191055.GJ2617119@nvidia.com>
+ <aNRLOsomtHNumaSY@Asurada-Nvidia>
+ <20250924195254.GL2617119@nvidia.com>
+ <aNRObmtcUkYTworw@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNRObmtcUkYTworw@Asurada-Nvidia>
+X-ClientProxiedBy: BLAP220CA0004.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:32c::9) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
-	<davem@davemloft.net>, <linux-crypto@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Karina Yankevich <k.yankevich@omp.ru>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v2] crypto: drbg - make drbg_{ctr_bcc,kcapi_sym}() return
- *void*
-Organization: Open Mobile Platform
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/24/2025 20:43:03
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 196576 [Sep 24 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
- f6b3a124585516de4e61e2bf9df040d8947a2fd5
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.129.165
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/24/2025 20:44:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/24/2025 5:12:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CH3PR12MB9194:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6dc089ef-f2f8-41bf-b3c3-08ddfbadac80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HN9MCgHfnMwp+8+QALWQd9n7lwqyOEZwHb7roaj+zKJf6OewNNh9wuhPd8lX?=
+ =?us-ascii?Q?pycdFFWpbgt1F/O0RjxJmcE6uZd8ajoxwcVF+w6uclo9cgnxKPgFYvs5ipeI?=
+ =?us-ascii?Q?MfWfIGwYg5guhpmo8GggD4EE+CZYE4PLct19ADyqCxOsU2wD3PJ+XQV13j0g?=
+ =?us-ascii?Q?YUyvi5Z9qQ+d7UR5FfrsCIKcy6sQwVj39l7VJFY2rCAwviS1UVF2MdG3EN6z?=
+ =?us-ascii?Q?rNMRW+QIDtTbI/Ai2dIRXFGR8ipgTcXRXAOxiCokpskTwz1JTw/M7mFifDVT?=
+ =?us-ascii?Q?Xf/GSpbNz2+2I6ZdRBZG1C55eqZGTS15z1UuqKKC3Ln35mw9pHuaoqZV/tDl?=
+ =?us-ascii?Q?YfNSTNSZI7q/Eo4J1iZWtS8qOYZOVr86y9PuI8k8NTST7/S6+hHTsJNlIA0g?=
+ =?us-ascii?Q?rdXwHb4JLVg7m0OACtAk0KgEV+EldBKLPU5bvydphdTPXITlIfJcHUj+Dngj?=
+ =?us-ascii?Q?9cHe5EgCm+4UjHDpTfjEJlj4PfdIkeFbxYAiEM5QEU+whTPuo0587EhoEqYt?=
+ =?us-ascii?Q?Tfh/AvbXbC3iTncyn7A11J+GMcBk9GzdUge34PluXghfwpKi4NkyGz6EoIn+?=
+ =?us-ascii?Q?OaLhNRC0EUXTjVjCpt19YEtwnatyJix/bnz523rd+4SbhOY3IfxVBPU9YUET?=
+ =?us-ascii?Q?iiIluX8I4jgMAq/3y2UEvuGP3h9I3KvjBPsZwN0or31wMBglc3FxKgkvjUaF?=
+ =?us-ascii?Q?wk5BfUIKzb+UebOX2bYL0KBfep2TpT/kEhsYkM0pmUcCMbu6prXAeV2g8Y0I?=
+ =?us-ascii?Q?qfPnRtI07ikLOFy9F02fWQ40lc1MYBosB2J/iMlDyoRlIzdjALwRMPNCc3Lo?=
+ =?us-ascii?Q?X3XgX3TYtxNiuYjPOuRBSBCQKVUTeCTy6TK5eazas0hyuBxNC5OeH75ioPp3?=
+ =?us-ascii?Q?hSQ3m34gEuAjGnLBWdO/AHk+TaXFFcEQeG6s3zwZpjObaT8JtGjbahT9H4Um?=
+ =?us-ascii?Q?6uJ/3Ft6WRJFrJbi40xkE8XjUAwny8eyU3oTHVObFtQw4lnH7kbukgzhptp9?=
+ =?us-ascii?Q?ARtqUOYfAZWglQHtS/WIUftYravvpnFcylkHyDcWUcecfPC2Lt9tojWx4LCj?=
+ =?us-ascii?Q?BTFemJkt1nVX1di6+4ei8Gj5MCKE2VsYPnGBwz0coPr40ozK1K2eoIhtO4NM?=
+ =?us-ascii?Q?zBggKr9pQLs+uq5hwJrc1jsuV/U1zJBLqZs0vljysJjz2W/m1J+VoZBWSgkr?=
+ =?us-ascii?Q?KjL725rElRFZfoZdptHQOvRfuLQCxruiiFTf1J2c3i8SU3DcIG2F+jdAQHwa?=
+ =?us-ascii?Q?8kKOmVWuC5IMfDhr1dvTIuOIgtYjHFEq/AQ31wwSnxcVnoOX9BaHcYSHAWGz?=
+ =?us-ascii?Q?kXMfJr8HoOp3ylxMECl+KqhDP84m0KB+x73Kwz0x5LB9X9t9eD5CJToxIQli?=
+ =?us-ascii?Q?AawLSP91jzinRf4jfGtqQeUhQt4u6PyMRYwkGyL0NJlwgDTAj5I/lz7ouoFW?=
+ =?us-ascii?Q?sieIEsDr9ts=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?llu2qpY0s2eoOiIYovn16JfEgXyp1x0Gxn7U0JDa+0i3kAnV8nqg7XSAbN7/?=
+ =?us-ascii?Q?V+tsS9uSrj/TsV3Tm8Mx5zcWQ4W/i11Zy926inoQyE/LfT3Qz5GeFkuGII2h?=
+ =?us-ascii?Q?BynuplbFA6935+w521aezby7ew32jdHjQ6VVVl2YSPg4I/GeEZE6NnlJZZ5S?=
+ =?us-ascii?Q?5IhoGo1HmW16I+23AhWU5ndMTyV/Zv7BG8vlvSFWYMsEUWcvcpirwWx3jjJS?=
+ =?us-ascii?Q?Xb7OCR/qmukhWiRXnrb+/lXKBqURK/G2rArcbHxkJu7Fe6+lie3eCDFL8JxD?=
+ =?us-ascii?Q?ss45yoDEAyHme4UuOyq0o9jznI/phOB+JrNBCidJ+HF7m56DFx51TOQmwjjp?=
+ =?us-ascii?Q?GzdqjEXbUJitfSyXJuG5rUyrEqzr814wdWqJHQhoBnC80uhfKjqf6NV9+ox7?=
+ =?us-ascii?Q?vaaaO9LNJYyDbWCwiw/Z4ivl0rWv9oscoL94QzWbfGSKvgDlu5lckEUn9/oy?=
+ =?us-ascii?Q?33DbUWm3IOLnIpjWA5ZSnnUcR7fJYAFYoJFdCNcHFWNFiZUDqBTyRrrjE8Zr?=
+ =?us-ascii?Q?Kvu2yXT5K/LJGBh1Dz6Ng2pKs//QRs3qpU0SChG6/+igEE7kFpkqsalcnoSY?=
+ =?us-ascii?Q?8YIHXUByKCmpvxY5wIAmHXGDM3mkJGAQioJnm2C+7PYIzBD8Ufo20Vdk19H3?=
+ =?us-ascii?Q?F3Ny+gCs+oW2Jun/pJu812IJHN4XrXVR9TutT9fn9rPdn6s9j+oXHFl6DFI/?=
+ =?us-ascii?Q?q4ANsNvYuvIChBUqzjBXneNedZhK+iUTvu2m16uEcZeTPS/sReoOJ3Pijkt7?=
+ =?us-ascii?Q?SR/ssJSl+2lnNrU9BM+1vqHFyEzCPUKqPpbddqkwzUZ5jiQBNZzfTnHXg431?=
+ =?us-ascii?Q?1FLWAT2mHnZzduvBEctN8dFjnRUUqz9EuLL1Ya9EsoStMoDyLy3Wtr6PXjJE?=
+ =?us-ascii?Q?+qsmf5bZ+e5AFfYjwI4qCu4I+vwrd7PkT8EvAQnLfXvNgF0yJpIlHQn+lkDk?=
+ =?us-ascii?Q?rcPiiTAmnZ8gBalNGxNWxRgtJoN5rZLyOiaTILhfq6v57d8Y7SZP17g9EBsY?=
+ =?us-ascii?Q?BQMfLkrZGKSBKTmKgewTvEAQEJFAPX3ZUua4WPHaVcsgiQuJYcvzJZ6aCCET?=
+ =?us-ascii?Q?1lldZwP8x7VIbtwgqB9SGTkG6sHDtgtxgofwlZeKajM+8fLGs4R7KuY/ahNC?=
+ =?us-ascii?Q?OmMQdPrcSEjGl0D+BbGO4uUAFPZfacOWx6YMgdYyffyWge9SEUtjVJNEOiZP?=
+ =?us-ascii?Q?QfBRj9vGxD0G9tv9NaQkCREJRRudmpxyNFXsSWLqMKXYH5bf+zKnhCIV4N/e?=
+ =?us-ascii?Q?g7SF1EqML+ENE0lG0OewixIHDtM+SCIgvAcmuKLVXBcxVGGFCQS4Dxbl2Atf?=
+ =?us-ascii?Q?F6nq5PCHyCNSwAdFrbG+ynGkAUHQcpS7yWiuCP8rajW2jEaMQAyQbjpiBsqU?=
+ =?us-ascii?Q?IDFedulN3oAaBercVL9LgeL+ylUrHWZDYa6Zp+l14ydCGRkiQz+1xQfh7dr7?=
+ =?us-ascii?Q?nQz887L/Wj7f7opXPErLaf52+KehGwebIQRSyYgbqpwGeJIEsMt60Kv9KNMM?=
+ =?us-ascii?Q?VjxYCzs+WsHTm3QWqZ6GOx3kPQmYgeMJTvfmCJ+oSjogaX49ll5zlBKo4pbk?=
+ =?us-ascii?Q?yiN8VtCjRDFpSs+PC9y/EzzkYnDlAqJUe7apPu7L?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dc089ef-f2f8-41bf-b3c3-08ddfbadac80
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 21:02:30.0895
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FR9ue+xgoyRVvrOoIkk2uaqr3m6O93ZubObdMPfJqo1B7ZhQmHA2NI/RW7XftyRy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9194
 
-From: Karina Yankevich <k.yankevich@omp.ru>
+On Wed, Sep 24, 2025 at 01:02:54PM -0700, Nicolin Chen wrote:
+> On Wed, Sep 24, 2025 at 04:52:54PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Sep 24, 2025 at 12:49:14PM -0700, Nicolin Chen wrote:
+> > > > I really wanted to say this should just always return the
+> > > > default_domain, but it looks like host1x_client_iommu_detach() is the
+> > > > only place outside the iommu drivers that would be unhappy with that.
+> > > 
+> > > I suppose any external user that allocates/attaches a domain has a
+> > > risk of potentially using this helper, in which case group->domain
+> > > may not be default_domain?
+> > 
+> > Yes, host1x seemed to be the only place that had that intersection.
+> 
+> I meant, we cannot prevent others from calling it like host1x does?
+> 
+> Even if we have those replacement APIs that we discussed last time,
+> such a driver might still want its own domain v.s. default_domain,
+> for pgsize or other use?
 
-drgb_kcapi_sym() always returns 0, so make it return void instead.
-Consequently, make drbg_ctr_bcc() return void too.
+If a driver allocates its own domain and attaches it then it should be
+able to track it and not need to ask the iommu subsystem to give it
+back to them :)
 
-Found by Linux Verification Center (linuxtesting.org) with the Svace static
-analysis tool.
-
-[Sergey: fixed the subject, refreshed the patch]
-
-Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
----
-The patch is against the master branch of Linus Torvalds' linux.git repo
-(I'm unable to use the other repos on git.kernel.org and I have to update
-Linus' repo from GitHub).
-
- crypto/drbg.c |   38 ++++++++++++--------------------------
- 1 file changed, 12 insertions(+), 26 deletions(-)
-
-Index: linux/crypto/drbg.c
-===================================================================
---- linux.orig/crypto/drbg.c
-+++ linux/crypto/drbg.c
-@@ -296,8 +296,8 @@ MODULE_ALIAS_CRYPTO("drbg_nopr_ctr_aes12
- 
- static void drbg_kcapi_symsetkey(struct drbg_state *drbg,
- 				 const unsigned char *key);
--static int drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
--			  const struct drbg_string *in);
-+static void drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
-+			   const struct drbg_string *in);
- static int drbg_init_sym_kernel(struct drbg_state *drbg);
- static int drbg_fini_sym_kernel(struct drbg_state *drbg);
- static int drbg_kcapi_sym_ctr(struct drbg_state *drbg,
-@@ -306,11 +306,10 @@ static int drbg_kcapi_sym_ctr(struct drb
- #define DRBG_OUTSCRATCHLEN 256
- 
- /* BCC function for CTR DRBG as defined in 10.4.3 */
--static int drbg_ctr_bcc(struct drbg_state *drbg,
--			unsigned char *out, const unsigned char *key,
--			struct list_head *in)
-+static void drbg_ctr_bcc(struct drbg_state *drbg,
-+			 unsigned char *out, const unsigned char *key,
-+			 struct list_head *in)
- {
--	int ret = 0;
- 	struct drbg_string *curr = NULL;
- 	struct drbg_string data;
- 	short cnt = 0;
-@@ -327,9 +326,7 @@ static int drbg_ctr_bcc(struct drbg_stat
- 			/* 10.4.3 step 4.2 */
- 			if (drbg_blocklen(drbg) == cnt) {
- 				cnt = 0;
--				ret = drbg_kcapi_sym(drbg, out, &data);
--				if (ret)
--					return ret;
-+				drbg_kcapi_sym(drbg, out, &data);
- 			}
- 			out[cnt] ^= *pos;
- 			pos++;
-@@ -339,9 +336,7 @@ static int drbg_ctr_bcc(struct drbg_stat
- 	}
- 	/* 10.4.3 step 4.2 for last block */
- 	if (cnt)
--		ret = drbg_kcapi_sym(drbg, out, &data);
--
--	return ret;
-+		drbg_kcapi_sym(drbg, out, &data);
- }
- 
- /*
-@@ -388,7 +383,6 @@ static int drbg_ctr_df(struct drbg_state
- 		       unsigned char *df_data, size_t bytes_to_return,
- 		       struct list_head *seedlist)
- {
--	int ret = -EFAULT;
- 	unsigned char L_N[8];
- 	/* S3 is input */
- 	struct drbg_string S1, S2, S4, cipherin;
-@@ -459,9 +453,7 @@ static int drbg_ctr_df(struct drbg_state
- 		 */
- 		drbg_cpu_to_be32(i, iv);
- 		/* 10.4.2 step 9.2 -- BCC and concatenation with temp */
--		ret = drbg_ctr_bcc(drbg, temp + templen, K, &bcc_list);
--		if (ret)
--			goto out;
-+		drbg_ctr_bcc(drbg, temp + templen, K, &bcc_list);
- 		/* 10.4.2 step 9.3 */
- 		i++;
- 		templen += drbg_blocklen(drbg);
-@@ -482,9 +474,7 @@ static int drbg_ctr_df(struct drbg_state
- 		 * implicit as the key is only drbg_blocklen in size based on
- 		 * the implementation of the cipher function callback
- 		 */
--		ret = drbg_kcapi_sym(drbg, X, &cipherin);
--		if (ret)
--			goto out;
-+		drbg_kcapi_sym(drbg, X, &cipherin);
- 		blocklen = (drbg_blocklen(drbg) <
- 				(bytes_to_return - generated_len)) ?
- 			    drbg_blocklen(drbg) :
-@@ -494,13 +484,10 @@ static int drbg_ctr_df(struct drbg_state
- 		generated_len += blocklen;
- 	}
- 
--	ret = 0;
--
--out:
- 	memset(iv, 0, drbg_blocklen(drbg));
- 	memset(temp, 0, drbg_statelen(drbg) + drbg_blocklen(drbg));
- 	memset(pad, 0, drbg_blocklen(drbg));
--	return ret;
-+	return 0;
- }
- 
- /*
-@@ -1806,15 +1793,14 @@ static void drbg_kcapi_symsetkey(struct
- 	crypto_cipher_setkey(tfm, key, (drbg_keylen(drbg)));
- }
- 
--static int drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
--			  const struct drbg_string *in)
-+static void drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
-+			   const struct drbg_string *in)
- {
- 	struct crypto_cipher *tfm = drbg->priv_data;
- 
- 	/* there is only component in *in */
- 	BUG_ON(in->len < drbg_blocklen(drbg));
- 	crypto_cipher_encrypt_one(tfm, outval, in->buf);
--	return 0;
- }
- 
- static int drbg_kcapi_sym_ctr(struct drbg_state *drbg,
+Jason
 
