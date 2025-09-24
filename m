@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-830139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC30B98DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:28:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974F7B98DDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 670734E2D08
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A785160D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519382472B1;
-	Wed, 24 Sep 2025 08:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2F22836BD;
+	Wed, 24 Sep 2025 08:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1djX5vS"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rHsC47U7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FFA2F56
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2022F56;
+	Wed, 24 Sep 2025 08:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702499; cv=none; b=aFL48sq6j09Dn/asjhqppYkdduyOOgWh6n0k4bmyBLExEzYCBEUGp0H58pFplTV45m331bWsKjb6jI8lo4Y2lqM11nQQa7urfJW7FSfqHArfsjVzv4GODBJpOz8lMqAS0jC6BPJf4mEgLm3PO6jZ4g2MdbGqheCNAPsxnHHCXdI=
+	t=1758702517; cv=none; b=YcCyJun+4ao3Zo8MWOR7IR21W7ZrNihTxZn3KMUTy4ZK9DCvDXkAYrEKDEjB9TtDgaP42jn7JjRnKpZCtDFi117UkodU03/hRzmTadBj9CFxfKbfYX9Z3nyxpw/TC7XV9VktgYqRXzIdjc5TJnmz9W9/td/MRPDV4RsmRFvbmaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702499; c=relaxed/simple;
-	bh=n0UzIsMpU4D1UpgP8b7QotbFpycmctuT3gIHpLefQyY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hrMY4qGlE752do10LtRYRC6X5Gv4AvbsP9O558c3ENH4AcDPEiH+8C4ndcXH74dMENmUNyEiGSwsLQRAS6jgVOuHEJFtMJTeWrwOyn3Lkg9GFYODJ67sEjXHkxbgZKhqpnX9UYHFDfCIBYhDUiwaLjRYrKZyFDhoN+bjIpA2L4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S1djX5vS; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-355102ff142so196108fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758702495; x=1759307295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tTVkzl6UYOFqbtfOkUTSEgWlYPfNoRJvRz5e440qqv8=;
-        b=S1djX5vSsGp5ogvH0nZRqrnFG24Cuko2fJ11Gl8Z2Tlbqr5epcIDbiQVS4hajfGtAb
-         iGCP07wa+CGJ4b6+HqI+emi+E9cUIdJcaWhF4kgax3cJKDvWCCAVDREmvd4qVGhlJsHE
-         cHjxQXubYf+VMz68dxooTOtVhldpJrvGxt6qJ02SkdsJOlp01Ya/WCD1jxspNNKGsFTx
-         nlLphZt3/vET0QpI2E7EPsP2aL/c//gUYhHBHBjY/AKMpviLEf5MHWGCvxXOZ3TxYPXt
-         aLE60K+ctvxm9D6cPiF4aS66SwqJgZ6lZZ5ekX7Auc7ha9vViwLnZQV8iy7s6BGsqKVx
-         0hjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758702495; x=1759307295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tTVkzl6UYOFqbtfOkUTSEgWlYPfNoRJvRz5e440qqv8=;
-        b=Z+b2V0OEeZiSkIeLNHowEB0GylSgUIm0X0fxtza+bsYBFRwwKWh+kiA4Aiv5QxMUN1
-         YuI5EFQN0ryYguagN9u0/mX9a7gAnZtFWYM+zs8TZ8TuRhvn4X4w8Uvc7fvD87m6MlSi
-         WkF1ZhDi4iG/8MTqvg6uGZHuDgTKsWDRmp0KcwEnkbqJVvUKexlmVDQzdv5eD3Sd/Du1
-         G5vv81aKVMyB5nG9N0+cWXQK6zAoIYfZ7eY5ro/2bvhOwcMWjnQYw2ZJof4CwSlSNHjt
-         QomldGLvVMoDZpT+aBgmGdHx+WSA2cwShX1gcWLR7Ioa8K74HSmogjLp/mquOKEgB/GH
-         keRA==
-X-Gm-Message-State: AOJu0YxpmRj2aaggGvUd68TxdnzPe48y3gJroemLYPvFIdkfnZp+wKsp
-	K6raG4GXXeiNfUMfTDIMLgaXt3ZgaYxkx4NMV5rCnB0UBJyofG4GTWtXeFHgsY7jG0uog52SWf2
-	BdshNPfUCfdXpGTUL6fzIx8wLSY0o6Dr3aTvfwhPqbw==
-X-Gm-Gg: ASbGncs2fqhw71AhbI2XQw9e9GkIywC1glVSjxAYrDTzkAwY24A0ec9xoOXto2/uAkk
-	y9BJXTE6BQRL/yum+G31bGjGZYvjiOetDZf0t7EI7rx9LM4ywGlG9n5uwNL+2Y0J5hvE0bIkaYi
-	LE48oSYW36uYvpjrHnXM77cE5A94A8J5rAfzVUGL0g22BZsNXplYcd3z19M83f7uO6/Ednzhty7
-	696CwUX
-X-Google-Smtp-Source: AGHT+IFiZs3fit7JmrwTrcdOE3PuEb7BgKG0XRjkXlRJI66gxsYXWU/izU5IO2sIbpWcGOQKmMbdO6vVroeM7IP2Zhw=
-X-Received: by 2002:a05:6870:a908:b0:347:b473:5f58 with SMTP id
- 586e51a60fabf-34c781131f2mr3086804fac.1.1758702495151; Wed, 24 Sep 2025
- 01:28:15 -0700 (PDT)
+	s=arc-20240116; t=1758702517; c=relaxed/simple;
+	bh=/l6pEDmoMNTo9JaJyHwB6O8+8ZhdCAKZ0T5ZM4kk0E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBduX8XKHB8t+6huMBcIt9GmA0QiBHAJpUYYUh44Oz7nZsRJLTnYg/BAhhOX8OobONGM7IzgSM/vYC/zocn/5CvCm2VJxDrixQ4WT9taK7UZWNDaeUZu5x1IxYDyi+yPG/UppXCxItqeGkxJCsv7Fp02vKN+VZvw3LfGhDsOUJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rHsC47U7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kdMRagcce4kuVQFoW4RA1DbRO+PtAKXUxldV4VeorZw=; b=rHsC47U7KY3p7KkbV3cyt4+Fmq
+	7eK6PTDpPyOc3DACjuSdcTBRaarmBt5jpmVZzvAXQjz/1a5IQgDl+7ijQvKR1G4HNA0IICxIXfnyr
+	KMoIJLvm9O0gj5ZfZjDDYPu4qN2iGwOTyxRlcUeCOCGLtR3T+1EahvvfcyYYNWABD2LZ06+sEAJb/
+	Ff/kh40taKcEAS3HscPod5UDrSuehEHKVzKW1628ntx5Z9/AHOQXi71EZUMOubaQI/Fqt2zF/xi98
+	7Lh6Q/SMDqn/g/oY7hkB1dCDA4sBOXGuXdBwu+ypkPg9jEC6Recjfsfy4xJY8qzcn4R/RdmWzlkCB
+	/rGrr1dQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1KrP-0000000Byjo-3kWo;
+	Wed, 24 Sep 2025 08:28:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 71B4A30043D; Wed, 24 Sep 2025 10:28:23 +0200 (CEST)
+Date: Wed, 24 Sep 2025 10:28:23 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Julian Sun <sunjunchao@bytedance.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, lance.yang@linux.dev,
+	mhiramat@kernel.org, yangyicong@hisilicon.com, will@kernel.org,
+	dianders@chromium.org, mingo@kernel.org, lihuafei1@huawei.com,
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, tj@kernel.org
+Subject: Re: [External] Re: [PATCH v2 2/2] memcg: Don't trigger hung task
+ warnings when memcg is releasing resources.
+Message-ID: <20250924082823.GV3245006@noisy.programming.kicks-ass.net>
+References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
+ <20250924034100.3701520-3-sunjunchao@bytedance.com>
+ <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
+ <37fd969e-3799-48d0-a8e0-1937e5a4ae38@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922083211.3341508-2-jens.wiklander@linaro.org> <aNENxpvdpW7ItjgT@sumit-X1>
-In-Reply-To: <aNENxpvdpW7ItjgT@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 24 Sep 2025 10:28:03 +0200
-X-Gm-Features: AS18NWBtHMnzvD8ACh0gV2MjOlJFNbL_oo8xYwwc8TnXxOERP-GW5Ztr25D4Hzo
-Message-ID: <CAHUa44FtbqOnbBvOSNkX+jdqUK-+hTAM3hYseMPbhOt0U_Nxqw@mail.gmail.com>
-Subject: Re: [PATCH v2] tee: fix register_shm_helper()
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	Jerome Forissier <jerome.forissier@linaro.org>, stable@vger.kernel.org, 
-	Masami Ichikawa <masami256@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37fd969e-3799-48d0-a8e0-1937e5a4ae38@bytedance.com>
 
-On Mon, Sep 22, 2025 at 10:50=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org>=
- wrote:
->
-> On Mon, Sep 22, 2025 at 10:31:58AM +0200, Jens Wiklander wrote:
-> > In register_shm_helper(), fix incorrect error handling for a call to
-> > iov_iter_extract_pages(). A case is missing for when
-> > iov_iter_extract_pages() only got some pages and return a number larger
-> > than 0, but not the requested amount.
-> >
-> > This fixes a possible NULL pointer dereference following a bad input fr=
-om
-> > ioctl(TEE_IOC_SHM_REGISTER) where parts of the buffer isn't mapped.
-> >
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Masami Ichikawa <masami256@gmail.com>
-> > Closes: https://lore.kernel.org/op-tee/CACOXgS-Bo2W72Nj1_44c7bntyNYOavn=
-TjJAvUbEiQfq=3Du9W+-g@mail.gmail.com/
-> > Tested-by: Masami Ichikawa <masami256@gmail.com>
-> > Fixes: 7bdee4157591 ("tee: Use iov_iter to better support shared buffer=
- registration")
-> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > ---
-> > Changes from v1
-> > - Refactor the if statement as requested by Sumit
-> > - Adding Tested-by: Masami Ichikawa <masami256@gmail.com
-> > - Link to v1:
-> >   https://lore.kernel.org/op-tee/20250919124217.2934718-1-jens.wiklande=
-r@linaro.org/
-> > ---
-> >  drivers/tee/tee_shm.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+On Wed, Sep 24, 2025 at 03:50:41PM +0800, Julian Sun wrote:
+> On 9/24/25 2:32 PM, Peter Zijlstra wrote:
+> > On Wed, Sep 24, 2025 at 11:41:00AM +0800, Julian Sun wrote:
+> > > Hung task warning in mem_cgroup_css_free() is undesirable and
+> > > unnecessary since the behavior of waiting for a long time is
+> > > expected.
+> > > 
+> > > Use touch_hung_task_detector() to eliminate the possible
+> > > hung task warning.
+> > > 
+> > > Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+> > 
+> > Still hate this. It is not tied to progress. If progress really stalls,
+> > no warning will be given.
+> 
+> Hi, peter
+> 
+> Thanks for your review and comments.
+> 
+> I did take a look at your solution provided yesterday, and get your point.
+> However AFAICS it can't resolve the unexpected warnings here. Because it
+> only works after we reach the finish_writeback_work(), and the key point
+> here is, it *already* takes a long time before we reach
+> finish_writeback_work(), and there is true progress before finish the
+> writeback work that hung task detector still can not know.
 
-I'm picking up this.
+But wb_split_bdi_pages() should already split things into smaller chunks
+if there is low bandwidth, right? And we call finish_writeback_work()
+for each chunk.
 
-Thanks,
-Jens
+If a chunk is still taking too long, surely the solution is to use
+smaller chunks?
+
+> If we want to make the hung task detector to known the progress of writeback
+> work, we need to add some code within do_writepages(): after each finish of
+> a_ops->writepages(), we need to make detector to known there's progress.
+> Something like this:
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 3e248d1c3969..49572a83c47b 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2635,6 +2635,10 @@ int do_writepages(struct address_space *mapping,
+> struct writeback_control *wbc)
+>                 else
+>                         /* deal with chardevs and other special files */
+>                         ret = 0;
+> +               /* Make hung task detector to known there's progress. */
+> +               if (force_wake)
+> +                       wake_up_all(waitq);
+> +
+>                 if (ret != -ENOMEM || wbc->sync_mode != WB_SYNC_ALL)
+>                         break;
+> 
+> which has a big impact on current code - I don't want to introduce this.
+
+You sure? It looks to me like the next level down is wb_writeback() and
+writeback_sb_inodes(), and those already have time based breaks in and
+still have access to wb_writeback_work::done, while do_writepages() no
+longer has that context.
+
+> Yes, the behavior in this patch does have the possibility to paper cover the
+> real warnings, and what I want to argue is that the essence of this patch is
+> the same as the current touch_nmi_watchdog() and touch_softlockup_watchdog()
+> - these functions are used only in specific scenarios we known and only
+> affect a single event. And there seems no report that
+> touch_nmi/softlockup_watchdog() will paper cover the real warnings (do we?).
+> 
+> Correct me if there's anything I'm missing or misunderstanding.
+
+The thing with touch_nmi_watchdog() is that you need to keep doing it.
+The moment you stop calling touch_nmi_watchdog(), you will cause it to
+fire.
+
+That is very much in line with the thing I proposed, and rather unlike
+your proposal that blanket kill reporting for the task, irrespective of
+how long it sits there waiting.
+
 
