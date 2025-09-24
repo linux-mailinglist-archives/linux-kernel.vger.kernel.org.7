@@ -1,101 +1,95 @@
-Return-Path: <linux-kernel+bounces-830109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1307B98BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D2EB98BDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFDF57B03C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185691896418
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0072820D7;
-	Wed, 24 Sep 2025 08:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1C4296BCB;
+	Wed, 24 Sep 2025 08:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qj8R8egw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBe/CklQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEED283CA3;
-	Wed, 24 Sep 2025 08:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDBC283CA3;
+	Wed, 24 Sep 2025 08:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701058; cv=none; b=GxLkIDp7U2ZCgOTXS8KWUstJVKuPj+Y7iCo/8aT0JPyqx7Wkoafm9fAyH6ZBHSgOovNUXxH2iJufzNNN4G/NLRJ+goxWzm00R9lNIZTJ0lLEPt4+GSiVpuAwUjdU7w9HT8HJMBKULsdbHmSEODoRty7azgaCML6XPZC8uhN8wNs=
+	t=1758701061; cv=none; b=BEWJzT3UwjOLraYTiNeCXJnfRu15HetebbPXaAO5oyixbvWMd6a96rBdJFHfg+Uf6ZhisxXxdTlI81wJSWC4ItuORuLW92iv3R4TmUAETFhhiaaxY5mtZe+UYJSXQXpo0upIveWk8aQqDdsHge85ya6V8+5m+A7WyFaUCkLIQc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701058; c=relaxed/simple;
-	bh=LmLkRsKSY2fXuY/hpUqK5Lssy9BmQtVFnRdeR7eeV8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7lfow7qOqMyD2fgnjYJb4qy8yCfd6AvFmmPNizQeFnn+84sjf4Dh+IV7bEaYgqi9Dnfv79vXSM+YLdZstROyef+4R1tfTNfBFfkk0wohflx5DGwb0C9mJ75fZgAAspOEwX9vtWxc89oColJ9JvOA3qEtxLaEdm6SRrPA8Jzg+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qj8R8egw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980ACC4CEE7;
-	Wed, 24 Sep 2025 08:04:16 +0000 (UTC)
+	s=arc-20240116; t=1758701061; c=relaxed/simple;
+	bh=KUi4KNlx8m6QwUF7u4uAKipbp1lGT0rx7xr1UqzrtbQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gxQ7sicZPSlZMSKUrAphjWW1KD98IVd/nA0fhGaiJNOnzJ85IWeT9JayzSF3ND6bLvXzaYBiS/2ucdqi+eEGCKlG3Ry06GxlyndX2mk/3SrZ+SR2ZlzbezDtY/KBNyXtkX8FJdJyFmoLjRP2dM5OZeb8hyL6VNvynimW4kpy9o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBe/CklQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E38C116C6;
+	Wed, 24 Sep 2025 08:04:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758701056;
-	bh=LmLkRsKSY2fXuY/hpUqK5Lssy9BmQtVFnRdeR7eeV8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qj8R8egwhbRZ2Jnw3GD+EpMSFWf4uKrGWF7EscL2YNIQT8OTTjQn9ISmOWcvFEufY
-	 ChFUEVvjOyKO+yetrpu7VifmgenAIESo8Vtm8e3I9w5I5qk/UJaR6SJLtVUPydBut/
-	 3N5ViWS1YzgGyaC/9segIZ2G2/am/F/amoCPhQWKC892e7RRKPFm/gVs6s0BgLzatS
-	 1mRg+igCswI40UjYoBxcY5VWn4DkzRo49x7QoEyR34l5o/n9aptWhwyhQohk9k+5nx
-	 sODyFMflJbQ+Xjj0z8z/0iv/h+w/l1la8iMcAyPRVQn3O/tS99SfzTio+iDLLOXn0I
-	 NNGbLxZ7i+m/g==
-Date: Wed, 24 Sep 2025 10:04:11 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the driver-core
- tree
-Message-ID: <aNOl-0O4ikg38x0g@finisterre.sirena.org.uk>
-References: <aNLOhQyd0YmJnPco@finisterre.sirena.org.uk>
- <22591ebe-c496-42e5-b2f8-9ca4f8fcaed5@kernel.org>
- <CANiq72k6fioBpFam4YhHazS1X=EVGV8RM6Y9g7ecZG_0w2FA0A@mail.gmail.com>
+	s=k20201202; t=1758701060;
+	bh=KUi4KNlx8m6QwUF7u4uAKipbp1lGT0rx7xr1UqzrtbQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CBe/CklQWlDgxW9WCFauYOJrEzcV+ffeoHwt4UvmV0mBE+mHJN81GA3Hpp0t04XIE
+	 nf8FiCSn84FJrKmnbns3xGbfr19z4twBhXLV3N7yC4oHrMt97oDUMMaA6j0/qTt6kI
+	 zTnro/oXgyxR9tLKJfuUNIHSIKSVM5e0U20PEU6oXceXXWr/vHQC6Qh2Lg4o/MtHLo
+	 xl3pOVk7G6yTdACRY9z/3oY8JYWWLuEr+7JRKFWXVMPXkgP7M2tirX9ISIb7XkrBho
+	 hfjo51IkO4BIRvSfjuQI4K8WESPUWl276nNy0LFkybFUFuB2/r3moy5Ff3BwM5+4tA
+	 h9rg1x/DbLUvA==
+Date: Wed, 24 Sep 2025 17:04:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Feng Yang <yangfeng59949@163.com>
+Cc: alexei.starovoitov@gmail.com, andrii@kernel.org, ast@kernel.org,
+ bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
+ haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org,
+ kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+ song@kernel.org, yonghong.song@linux.dev
+Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
+ architecture
+Message-Id: <20250924170416.0874e56c2ce99a4de92e05b8@kernel.org>
+In-Reply-To: <20250924062536.471231-1-yangfeng59949@163.com>
+References: <20250924003215.365db154e1fc79163d9d80fe@kernel.org>
+	<20250924062536.471231-1-yangfeng59949@163.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l4ucGXHfbP/Gt8Oh"
-Content-Disposition: inline
-In-Reply-To: <CANiq72k6fioBpFam4YhHazS1X=EVGV8RM6Y9g7ecZG_0w2FA0A@mail.gmail.com>
-X-Cookie: Filmed before a live audience.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Wed, 24 Sep 2025 14:25:36 +0800
+Feng Yang <yangfeng59949@163.com> wrote:
+
+> By the way, during my testing, I also noticed that when executing bpf_get_stackid via kprobes or tracepoints, 
+> the command bpftrace -e 'kprobe:bpf_get_stackid {printf("bpf_get_stackid\n");}' produces no output. 
+
+I think this is because the bpf_get_stackid is a kind of recursive
+event from kprobes. Kprobe handler can not be reentered.
+
+> However, it does output something when bpf_get_stackid is invoked via uprobes. 
+> This phenomenon also occurs on the x86 architecture, could this be a bug as well?
+
+Maybe if bpf_get_stackid() is kicked from uprobes, it is not recursive
+call from kprobes, so it works.
+
+So it is expected behavior, not a bug. Sorry for confusion.
 
 
---l4ucGXHfbP/Gt8Oh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you,
 
-On Tue, Sep 23, 2025 at 09:24:15PM +0200, Miguel Ojeda wrote:
-> On Tue, Sep 23, 2025 at 6:49=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
-> wrote:
+> 
+> Thanks.
+> 
 
-> > This hunk doesn't seem to be related to the driver-core tree.
 
-> Yeah, that comes from drm-next, a script went awry here?
-
-It's the whole diff for the file in -next.
-
---l4ucGXHfbP/Gt8Oh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTpfgACgkQJNaLcl1U
-h9CkqQf/TuNUSiQQ5cvgODr0V9xknSZrLzmMx2XFxMckWXVpciccpi++2YhGJUZJ
-gTveWqWSWSaWS1r4YF+p3IcJawysFzsZSsuiI//gSovtEn1dRN4seGbZjjultenT
-Ma1kd00qAdexmbJNuLL1GXtoHazMS6EGsJllO0vGm0lXn6goGK+wjM25qsudRWtG
-1PGXxwpuOt5odQjWxD7yLnyOFNM4Y2BuzDo63RfjN4wPopPgq5dGlhCds8x+NZ64
-+Iz+KxQ4n4Qw7amZW9q3bGG3QsrDU5466uXQ64s6ooPnxA82ogjqpvlHdp4DRFLO
-OcQob+khqwkTdpHny3Bao+1OQRs61w==
-=/PON
------END PGP SIGNATURE-----
-
---l4ucGXHfbP/Gt8Oh--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
