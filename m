@@ -1,280 +1,103 @@
-Return-Path: <linux-kernel+bounces-830973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED590B9B0AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B8FB9B0C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F6019C0B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C875619C46B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91454314A9D;
-	Wed, 24 Sep 2025 17:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68B7314A8F;
+	Wed, 24 Sep 2025 17:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVAWPHOD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clZD0j/K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51472D9EDC
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FE419CCF5;
+	Wed, 24 Sep 2025 17:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758734579; cv=none; b=kp+b/HGgny0+WDL3CWAZmwkQvrAgyA5snvl0YT0KMRkLB6XRJMHLywIaqKbj4foIWzu1h/o4lnLCVWRV3ohHKKwaC6PgSmmNwaH6q36SqVS41LihGSIltaSUyLrW2IwZkX3yD2JPb/qqxTknBb8vX/AaUrFGCGmArn8IGYM2ujI=
+	t=1758734786; cv=none; b=jeenL6Vb2Z1XruVgk0z0LE1UPe4Ja7ePbgSvybKqr2LL0xDuXasJxZ5O03zshRQOC1x29KM4YDi+Lv2z/vwKHCIsryyEdQkYr8kUAVUjIfb+oyin5FkkkidcB9QXbftqxGQ1GgCFZkZ3b0ADISdef76I0+a1vy7ppepy/yukvkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758734579; c=relaxed/simple;
-	bh=sXJibV3RmNGOhqObd8QqcATRLnEMoRYEVOmX31QC4Sc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CsUmY2G3mXTaGjLu5mPbUZY9CNAAsXD6dGYggmmh0Mg4WmJC3YwqVOMwlFgHu3oILmJieNvboe0wz2ql+7EUnqZ9Phxnefv8WYlgLjwcNmQ681zOtp5wSUpdpvu7hg8o6w/ZTZGXIfSwzJ4lWPLUoujpiyA7Dj66g/tQk0XF8vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVAWPHOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61942C4CEF4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:22:59 +0000 (UTC)
+	s=arc-20240116; t=1758734786; c=relaxed/simple;
+	bh=i+A2vWIRtoLeacGPcvyb2UkQD5W9u2B8lzyc2pZreBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3w6DhGzcxEM2RAklV93QLgqWEar01g6QyGmrkJkxxIgOQBy/vdd/kYhU2/Nd+YV8Fm8GYFqoNOM7Wvacy2DHwiCibgYO5PhSRnqkJdPZk0QEtgIkXGNYv5m12WPA7nlvJzETagKYF+9NJ6CHsaBMe70hCRubc4FS2OVmqiSyRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clZD0j/K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04047C4CEE7;
+	Wed, 24 Sep 2025 17:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758734579;
-	bh=sXJibV3RmNGOhqObd8QqcATRLnEMoRYEVOmX31QC4Sc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BVAWPHODi1axhiE4Mo3YbB9AGxpOV/QnaWXMhDzDtea9XudNXnI/7mQsmhLi6UvH3
-	 7Q1+qvYLRJr3mducAsm7CmPa5OueboXr+a/K3WFXqlkUaDAGGhiT1tfl/OAKCraKdP
-	 scEjtE1CtePBstbEYtiKxBNBbCTuHk1AtcpvBGjmaOIRLgdGrjaER+/aQR7FWP44BX
-	 fUuhWj7AMY0iQ1k17SnV+gtvr7fNcT91g2lXyc5SlmkzCvXa+EZNwYnJKbm5vBuJtm
-	 3o4n9yEA1ceMDWCqsqUpDGW+QDufBGsPwCgi97ds5nUZ755qga4NlaiIIFy4NIK4kc
-	 HLuVZuG5qZp/g==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-78d21d5c75cso51374a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:22:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfVenanK+FMIYuMaY3ZK6UU+wRIbSHnkrZqcBvDghz1JdY3b7/DwR09Xup3Ut1sj9eM2dXyIM2CdWFum8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH1BOtccpCq3XbsavI88NmC/L3UM3kEuk6dtDsuYsTLad6Kvgm
-	6562poNZG80L5NLttTg2QBLMWjXDvwY8sfUes0hbdOkwZViDaAgr7A+Zb7SmPtdeXk8kvVl/b92
-	wGo8nw/UL7JnfRm9sj4Jj/+sXPiczwzU=
-X-Google-Smtp-Source: AGHT+IFsMJ1GbtbudIup8+r+It8AAZGhqVNeJM6Wnrm04PoSZJSQFSxD8VXScqwc6mYrXE6DFbLEz1uXw0MdJn8pzrI=
-X-Received: by 2002:a05:6830:25c4:b0:79f:19f:805 with SMTP id
- 46e09a7af769-7a03b18de32mr333521a34.7.1758734578673; Wed, 24 Sep 2025
- 10:22:58 -0700 (PDT)
+	s=k20201202; t=1758734785;
+	bh=i+A2vWIRtoLeacGPcvyb2UkQD5W9u2B8lzyc2pZreBI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=clZD0j/Kz+BWC8Y5o+6LPwUuHT+oeyeRC+k8JLMNeDiOsfMDQDbD9uP+tHh9lGtZy
+	 HZBe5Earfa+qVEE1umiHT89Ryq6nrtxjpefE4eYPY2U6tqau0nQGl7z1GbPlXBc0WC
+	 f/r7Jmivws2dWzWzgHxWxhG+GszxS3jO4036I8HASXnuHeh8+H/h84GNpdQF2liRQB
+	 Wp//FZt/PyXHu4NZBxeeLvs1yJ6p7KZi4BpmCdacJXHA6LhIeqJc+Ox9erqypNeHrp
+	 DOnCLzWEH7imNerjRm9t5jelv1Co+VYZnoTpAmVSRZdUypYaxNQN946e3B9kSCzVil
+	 quSTYXFuIB9yw==
+Date: Wed, 24 Sep 2025 20:26:21 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm2-sessions: Remove unnecessary wrapper
+Message-ID: <aNQpvQBV43dhS6ad@kernel.org>
+References: <20250922115009.3053664-1-jarkko@kernel.org>
+ <aNOtTIRBrzN_AAMa@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
- <20250924141047.1477743-1-luogf2025@163.com>
-In-Reply-To: <20250924141047.1477743-1-luogf2025@163.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 24 Sep 2025 19:22:47 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iVPCtPjyyNeNM2uuJYZbMwJQxYEXA7=50dtB+q=6rQ6Q@mail.gmail.com>
-X-Gm-Features: AS18NWDwD2U5p9nKVv3jyqUp9kOCnH64Z1J9L4w236z92ASoL7kdw9C3Qa91Q5M
-Message-ID: <CAJZ5v0iVPCtPjyyNeNM2uuJYZbMwJQxYEXA7=50dtB+q=6rQ6Q@mail.gmail.com>
-Subject: Re: [PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on
- rapid events
-To: GuangFei Luo <luogf2025@163.com>
-Cc: rafael@kernel.org, dan.carpenter@linaro.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNOtTIRBrzN_AAMa@earth.li>
 
-On Wed, Sep 24, 2025 at 4:11=E2=80=AFPM GuangFei Luo <luogf2025@163.com> wr=
-ote:
->
-> > On Wed, Sep 24, 2025 at 12:38=E2=80=AFAM GuangFei Luo <luogf2025@163.co=
-m> wrote:
-> > >
-> > > > On Tuesday, September 23, 2025 7:12:03 PM CEST Rafael J. Wysocki wr=
-ote:
-> > > > > On Tue, Sep 23, 2025 at 6:14=E2=80=AFPM GuangFei Luo <luogf2025@1=
-63.com> wrote:
-> > > > > >
-> > > > > > The functions battery_hook_add_battery(), battery_hook_remove_b=
-attery(),
-> > > > > > and sysfs_remove_battery() already acquire locks, so their inte=
-rnal
-> > > > > > accesses are safe.
-> > > > >
-> > > > > In fact, there are two locks in use, battery->sysfs_lock and
-> > > > > hook_mutex.  The latter is used for managing hooks and the former=
- is
-> > > > > only used by sysfs_remove_battery(), so it only prevents that fun=
-ction
-> > > > > from racing with another instance of itself.
-> > > > >
-> > > > > I would suggest using battery->sysfs_lock for protecting battery-=
->bat
-> > > > > in general.
-> > > > >
-> > > > > > acpi_battery_refresh() does check battery->bat, but its child
-> > > > > > functions (sysfs_add_battery() and sysfs_remove_battery()) alre=
-ady
-> > > > > > handle locking.
-> > > > >
-> > > > > What locking?  Before the $subject patch, sysfs_add_battery() doe=
-sn't
-> > > > > do any locking at all AFAICS.
-> > > > >
-> > > > > > In acpi_battery_notify(), battery->bat has no lock. However, th=
-e
-> > > > > > check of battery->bat is at the very end of the function. Durin=
-g
-> > > > > > earlier calls, battery->bat has already been protected by locks=
-, so
-> > > > > > re-entry will not cause issues.
-> > > > >
-> > > > > All of the battery->bat checks and the code depending on them nee=
-d to
-> > > > > go under the same lock.  I'd use battery->sysfs_lock for this as
-> > > > > already mentioned above.
-> > > >
-> > > > So my (untested) version of this fix is appended.
-> > > >
-> > > > Note that it explicitly prevents acpi_battery_notify() from racing =
-with
-> > > > addition/removal, PM notifications, and resume.
-> > > >
-> > > > ---
-> > > >  drivers/acpi/battery.c |   36 +++++++++++++++++++++++-------------
-> > > >  1 file changed, 23 insertions(+), 13 deletions(-)
-> > > >
-> > > > --- a/drivers/acpi/battery.c
-> > > > +++ b/drivers/acpi/battery.c
-> > > > @@ -92,7 +92,7 @@ enum {
-> > > >
-> > > >  struct acpi_battery {
-> > > >       struct mutex lock;
-> > > > -     struct mutex sysfs_lock;
-> > > > +     struct mutex update_lock;
-> > > >       struct power_supply *bat;
-> > > >       struct power_supply_desc bat_desc;
-> > > >       struct acpi_device *device;
-> > > > @@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
-> > > >
-> > > >  static void sysfs_remove_battery(struct acpi_battery *battery)
-> > > >  {
-> > > > -     mutex_lock(&battery->sysfs_lock);
-> > > > -     if (!battery->bat) {
-> > > > -             mutex_unlock(&battery->sysfs_lock);
-> > > > +     if (!battery->bat)
-> > > >               return;
-> > > > -     }
-> > > > +
-> > > >       battery_hook_remove_battery(battery);
-> > > >       power_supply_unregister(battery->bat);
-> > > >       battery->bat =3D NULL;
-> > > > -     mutex_unlock(&battery->sysfs_lock);
-> > > >  }
-> > > >
-> > > >  static void find_battery(const struct dmi_header *dm, void *privat=
-e)
-> > > > @@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
-> > > >
-> > > >       if (!battery)
-> > > >               return;
-> > > > +
-> > > > +     guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >       old =3D battery->bat;
-> > > >       /*
-> > > >        * On Acer Aspire V5-573G notifications are sometimes trigger=
-ed too
-> > > > @@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
-> > > >  }
-> > > >
-> > > >  static int battery_notify(struct notifier_block *nb,
-> > > > -                            unsigned long mode, void *_unused)
-> > > > +                       unsigned long mode, void *_unused)
-> > > >  {
-> > > >       struct acpi_battery *battery =3D container_of(nb, struct acpi=
-_battery,
-> > > >                                                   pm_nb);
-> > > > -     int result;
-> > > >
-> > > > -     switch (mode) {
-> > > > -     case PM_POST_HIBERNATION:
-> > > > -     case PM_POST_SUSPEND:
-> > > > +     if (mode =3D=3D PM_POST_SUSPEND || mode =3D=3D PM_POST_HIBERN=
-ATION) {
-> > > > +             guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >               if (!acpi_battery_present(battery))
-> > > >                       return 0;
-> > > >
-> > > >               if (battery->bat) {
-> > > >                       acpi_battery_refresh(battery);
-> > > >               } else {
-> > > > +                     int result;
-> > > > +
-> > > >                       result =3D acpi_battery_get_info(battery);
-> > > >                       if (result)
-> > > >                               return result;
-> > > > @@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
-> > > >
-> > > >               acpi_battery_init_alarm(battery);
-> > > >               acpi_battery_get_state(battery);
-> > > > -             break;
-> > > >       }
-> > > >
-> > > >       return 0;
-> > > > @@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
-> > > >  {
-> > > >       int retry, ret;
-> > > >
-> > > > +     guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >       for (retry =3D 5; retry; retry--) {
-> > > >               ret =3D acpi_battery_update(battery, false);
-> > > >               if (!ret)
-> > > > @@ -1230,7 +1232,7 @@ static int acpi_battery_add(struct acpi_
-> > > >       if (result)
-> > > >               return result;
-> > > >
-> > > > -     result =3D devm_mutex_init(&device->dev, &battery->sysfs_lock=
-);
-> > > > +     result =3D devm_mutex_init(&device->dev, &battery->update_loc=
-k);
-> > > >       if (result)
-> > > >               return result;
-> > > >
-> > > > @@ -1262,6 +1264,8 @@ fail_pm:
-> > > >       device_init_wakeup(&device->dev, 0);
-> > > >       unregister_pm_notifier(&battery->pm_nb);
-> > > >  fail:
-> > > > +     guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >       sysfs_remove_battery(battery);
-> > > >
-> > > >       return result;
-> > > > @@ -1281,6 +1285,9 @@ static void acpi_battery_remove(struct a
-> > > >
-> > > >       device_init_wakeup(&device->dev, 0);
-> > > >       unregister_pm_notifier(&battery->pm_nb);
-> > > > +
-> > > > +     guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >       sysfs_remove_battery(battery);
-> > > >  }
-> > > >
-> > > > @@ -1297,6 +1304,9 @@ static int acpi_battery_resume(struct de
-> > > >               return -EINVAL;
-> > > >
-> > > >       battery->update_time =3D 0;
-> > > > +
-> > > > +     guard(mutex)(&battery->update_lock);
-> > > > +
-> > > >       acpi_battery_update(battery, true);
-> > > >       return 0;
-> > > >  }
-> > >
-> > > Thanks for the detailed explanation and the updated version of the fi=
-x.
-> > >
-> > > I will test your suggested changes on my platform.
-> > > After verification, I will send a v7 based on your suggestion.
-> >
-> > Please just verify and I'll add a changelog and subject to the patch
-> > and submit it.
-> >
-> > Thanks!
->
-> I have tested your updated patch on my laptop with battery hot-plug scena=
-rios.
-> Everything looks normal and I did not observe any issues.
+On Wed, Sep 24, 2025 at 09:35:24AM +0100, Jonathan McDowell wrote:
+> On Mon, Sep 22, 2025 at 02:50:09PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > Open code tpm_buf_append_hmac_session_opt() because it adds unnecessary
+> > disperancy to the call sites (and reduces the amount of code).
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> 
+> I don't have a strong opinion on whether this is significantly better, but
+> for 2 call sites it's not unreasonable, so:
+> 
+> Reviewed-By: Jonathan McDowell <noodles@earth.li>
 
-Thanks for the confirmation!
+I'll explain a bit of context.
+
+I'm opening tpm2-session knot by knot and once it is like out and naked
+my grand plan is to create a single function tpm2_authenticate or similar
+function that wraps a TPM command into an authenticated TPM command.
+
+The main priority with each patch is to do at least microscopic amount
+of more than just pure clean up. The tpm_buf series and this series
+sort of converge towards the same common goal. I think this is a good
+way to move forward and refactor complex functionality without causing
+major risks in production.
+
+They key topic on this all maximizing the decoupling and it goes beyond
+just "fixing tpm2-sessions". By doing this process we can more easily
+re-use parts of the driver code in early boot code and sort of create
+enablers for e.g., Trenchboot.
+
+BR, Jarkko
 
