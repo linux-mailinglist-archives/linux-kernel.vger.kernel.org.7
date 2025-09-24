@@ -1,146 +1,213 @@
-Return-Path: <linux-kernel+bounces-830193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB462B9905B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB907B99061
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A419C31AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315172E6961
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6022D541E;
-	Wed, 24 Sep 2025 09:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35362D5923;
+	Wed, 24 Sep 2025 09:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kwqkDqQ1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxKDe58I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E872848B2;
-	Wed, 24 Sep 2025 09:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142802848B2;
+	Wed, 24 Sep 2025 09:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704638; cv=none; b=W3++CJVnS3uvZb5r/fv28XuEK8gXDojCDhf35EoyFbCpH119Xp4OGWotj+dpIFwEHs3tZBn1wlvPQXfAiVBkY10GBOEKxIMgsmpwHvSd1JxU9CiSWbfXEhpSJAXoY7ip/hG9zDnLHHsuNURnToisHSVSo0aGRe8ztO5AHtbVGIU=
+	t=1758704648; cv=none; b=RNwpWmS3uNmRKjECRmOhqM7H9cX8EodXC7kjeiFuqrISNq2dBIfm9DwLuBco3y9vPA2yT9wBKuIzkfpUU07Kq5vnfFaBmb/bG2oopPzi0rPA4Zqxk5A4PKTVX3x5rxT1qHnoD3XZfvBCRIn0OhKRivSy+KgrjPo8YLa359kXOns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704638; c=relaxed/simple;
-	bh=qg6Gwo5bLTaLAektR6XB5xMkGmF4GaktPpkpxzMUeTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2jk+Nd75nNrPXyXLKwxv5PpYpXu+nwzyhliXo1fJHkuFLd1IhvDD41CobaF+St9n0cOOa2UjyyouL8suZo7EdwxUKr4jx5Xk0ljAhG7ks2ahaGeFytMPCMjkRnkMU07GnYi8m73l+Gi9vQWfyuXOGLuM+qHKir5pQwK5ylcnBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kwqkDqQ1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O02bGJ003988;
-	Wed, 24 Sep 2025 09:03:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=xtC9PWGAkLhMybSRETjhAmZEaUTjwz
-	eStgYVf7EJiHQ=; b=kwqkDqQ1gMRAdhMArluu+RxwrMehfHQiPmZ9Dard+0Drdo
-	Dhogo5ohYjfKfeiI5cDdj8dYQO9fCE6vsP4dMlLoTdSUutLvYwJ3EukmVQlmIJWd
-	997vZn6mwSKBhB4PmW4SjpfggcLpx27AdYG8Ua1W7acSW3C0f/fLtKxfVAj6NKcX
-	WOVdJV7FvrhqOKj17VwbmPO8Wgxwb1tBM4tntodUxdl9rCLTpu7ZTbDvUkiFyjdC
-	oQ3dwkKzqMn98BX/vYn48/38TeY7Uxq9sA+KLUnAsAHtF0jM8RZ4Kx3mWpPYwAtt
-	R60ZTjhMLDrWIt3BGu9fwI+q3bqADNF0txo0BXBA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499kwynq36-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 09:03:37 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58O93bpj013282;
-	Wed, 24 Sep 2025 09:03:37 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499kwynq30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 09:03:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58O8VZ48008331;
-	Wed, 24 Sep 2025 09:03:36 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yxyy2u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 09:03:36 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58O93W9X51315122
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 09:03:32 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B1C3B20043;
-	Wed, 24 Sep 2025 09:03:32 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FBB220040;
-	Wed, 24 Sep 2025 09:03:32 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 24 Sep 2025 09:03:32 +0000 (GMT)
-Date: Wed, 24 Sep 2025 11:03:30 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v2 0/3] s390: replace wq users and add WQ_PERCPU to
- alloc_workqueue() users
-Message-ID: <20250924090330.7748Aaf-hca@linux.ibm.com>
-References: <20250917153859.363593-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1758704648; c=relaxed/simple;
+	bh=tOLRAerNfsa2S/nN/3Xd095wA6twFInA/0Hb6wbi7Go=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y9eWt2LmHA5KOrE4By3pPcdFPSw6VluuSW1KavRmoy06X8bFVllYf1w7HHgFszYGzLAV7Vnw4Xtaz+j7Q7uh77tvrzKdUvj/rByXU3v0ri4PnQVXGF+gGldNQKciz5E7UHwln6ukRUODQCZwXaZfa5TY3uExj91z5ekBi/gSPKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxKDe58I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04BA8C4CEE7;
+	Wed, 24 Sep 2025 09:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758704647;
+	bh=tOLRAerNfsa2S/nN/3Xd095wA6twFInA/0Hb6wbi7Go=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IxKDe58IN639YGaukKK1JIfohPFTR2WcdfKgCGqRQhcj/vLIEhRO0f9pfIX9+n15L
+	 U9ZmliuUbQ+/qtFqdQ0wAw8FTcxcmbi9TUoFEB9/ODPIphaD8vS154HG6Mk8OFgs1R
+	 UZdfc4qrRFskdJ9IyzlSwqX8G9/WSPLtHXk3pFgXVz3MD69r6xqogb14AfX+n+lNOH
+	 rGlT/SkHQ82P5Ule4LFezQuFI+UDcMvd5NWzyMuUvg0GjJ6EJRtmOyZLXaLqqRTJ0M
+	 Zhm+p/gEk8QFTZQlKB37OfFbWzU0n5iSs7sQS5oC+0CAtMWBBqUA2sNXODftyY6HdI
+	 UohZL1tdJWvCQ==
+Date: Wed, 24 Sep 2025 11:04:04 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs tree with the vfs-brauner tree
+Message-ID: <aNO0BKAXphoFEgUk@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="51BpZmKHHxqjyAHL"
+Content-Disposition: inline
+
+
+--51BpZmKHHxqjyAHL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250917153859.363593-1-marco.crivellari@suse.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=J5Cq7BnS c=1 sm=1 tr=0 ts=68d3b3e9 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=R1_GTazKnjilNYR4TU4A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: hDw4_CXPXpEB0Hp2Ar6QAy32g6sS15Or
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNSBTYWx0ZWRfX6+BkIp08kFr0
- pH8VhgL7zNKjSTQ29MIoSoKYhz7KVme7YSy+b5uiqHKvWFGYyDJiPRaEY+D/rZboUctA86nBCwS
- i0RIS2Az3MS/eLIqmeyzdsr2PApwMTuudxxytdm0Pu2q6qb1mdgd5C2GoZN90LMVWq+bGs+lD5+
- eNOEdOW2U79pFRl0d+vbd8oyw+bchMANoUq0/l8rTUH0W1mjH/wmR8RHwzXFUoP/qwXOouJwORd
- PZ8GOAu1Q/vHXWuroP7qU+9r9wVYsGPGkxbStWwuNeoGHKNdJ1YoOj2bYi2qJ4gWesWAmECr0p4
- hjIW+a53f+h5RglPJYLTJBgapmHhr5pOsq8Zsopv+vlc8aDHMvdkwmX/yRRPfLpKsdnxW1Q7GBA
- JK6W4eSe
-X-Proofpoint-ORIG-GUID: 2mLPRkMubomomzoWQ--0Qgc2dOO32JXc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_02,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 clxscore=1011 adultscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200015
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 05:38:56PM +0200, Marco Crivellari wrote:
-> This patchset is the first stone on a refactoring needed in order to
-> address the points aforementioned; it will have a positive impact also
-> on the cpu isolation, in the long term, moving away percpu workqueue in
-> favor to an unbound model.
-...
-> ---
-> Changes in v2:
-> - New in the series, 2/3: arch/s390/kernel/hiperdispatch.c does not benefit from
->   system_wq: this has been converted directly to system_unbound_wq.
-> - the others system_wq users are converted to system_percpu_wq in patch 3/3
-> 
-> 
-> Marco Crivellari (3):
->   drivers/s390: WQ_PERCPU added to alloc_workqueue users
->   s390/diag324: replace use of system_wq with system_percpu_wq
->   s390: replace use of system_wq with system_dfl_wq
-> 
->  arch/s390/kernel/diag/diag324.c  | 4 ++--
->  arch/s390/kernel/hiperdispatch.c | 2 +-
->  drivers/s390/char/tape_3590.c    | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
+Hi all,
 
-Series applied, thanks!
+Today's linux-next merge of the vfs tree got a conflict in:
+
+  fs/namespace.c
+
+between commit:
+
+  59bfb66816809 ("listmount: don't call path_put() under namespace semaphor=
+e")
+
+=66rom the vfs-brauner tree and commit:
+
+  2aec880c1cdf1 ("path_is_under(): use guards")
+
+=66rom the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc fs/namespace.c
+index ef64472c4e15b,b9430a5cc987f..0000000000000
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@@ -90,7 -80,16 +90,15 @@@ static DECLARE_RWSEM(namespace_sem)
+  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+  static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
+ -static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+ =20
++ static inline void namespace_lock(void);
++ static void namespace_unlock(void);
++ DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
++ DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
++ 				      up_read(&namespace_sem))
++=20
++ DEFINE_FREE(mntput, struct vfsmount *, if (!IS_ERR(_T)) mntput(_T))
++=20
+  #ifdef CONFIG_FSNOTIFY
+  LIST_HEAD(notify_list); /* protected by namespace_sem */
+  #endif
+@@@ -3229,7 -3304,7 +3244,7 @@@ static int do_reconfigure_mnt(const str
+   * If you've mounted a non-root directory somewhere and want to do remount
+   * on it - tough luck.
+   */
+- static int do_remount(struct path *path, int sb_flags,
+ -static int do_remount(const struct path *path, int ms_flags, int sb_flags,
+++static int do_remount(const struct path *path, int sb_flags,
+  		      int mnt_flags, void *data)
+  {
+  	int err;
+@@@ -4205,14 -4241,7 +4170,7 @@@ struct mnt_namespace *copy_mnt_ns(u64 f
+  		while (p->mnt.mnt_root !=3D q->mnt.mnt_root)
+  			p =3D next_mnt(skip_mnt_tree(p), old);
+  	}
+- 	namespace_unlock();
+-=20
+- 	if (rootmnt)
+- 		mntput(rootmnt);
+- 	if (pwdmnt)
+- 		mntput(pwdmnt);
+-=20
+ -	mnt_ns_tree_add(new_ns);
+ +	ns_tree_add_raw(new_ns);
+  	return new_ns;
+  }
+ =20
+@@@ -5897,22 -5900,12 +5827,23 @@@ retry
+  	return ret;
+  }
+ =20
+ +struct klistmount {
+ +	u64 last_mnt_id;
+ +	u64 mnt_parent_id;
+ +	u64 *kmnt_ids;
+ +	u32 nr_mnt_ids;
+ +	struct mnt_namespace *ns;
+ +	struct path root;
+ +};
+ +
++ /* locks: namespace_shared */
+ -static ssize_t do_listmount(struct mnt_namespace *ns, u64 mnt_parent_id,
+ -			    u64 last_mnt_id, u64 *mnt_ids, size_t nr_mnt_ids,
+ -			    bool reverse)
+ +static ssize_t do_listmount(struct klistmount *kls, bool reverse)
+  {
+ -	struct path root __free(path_put) =3D {};
+ +	struct mnt_namespace *ns =3D kls->ns;
+ +	u64 mnt_parent_id =3D kls->mnt_parent_id;
+ +	u64 last_mnt_id =3D kls->last_mnt_id;
+ +	u64 *mnt_ids =3D kls->kmnt_ids;
+ +	size_t nr_mnt_ids =3D kls->nr_mnt_ids;
+  	struct path orig;
+  	struct mount *r, *first;
+  	ssize_t ret;
+@@@ -6040,8 -6012,9 +5971,8 @@@ SYSCALL_DEFINE4(listmount, const struc
+  	 * We only need to guard against mount topology changes as
+  	 * listmount() doesn't care about any mount properties.
+  	 */
+- 	scoped_guard(rwsem_read, &namespace_sem)
++ 	scoped_guard(namespace_shared)
+ -		ret =3D do_listmount(ns, kreq.mnt_id, last_mnt_id, kmnt_ids,
+ -				   nr_mnt_ids, (flags & LISTMOUNT_REVERSE));
+ +		ret =3D do_listmount(&kls, (flags & LISTMOUNT_REVERSE));
+  	if (ret <=3D 0)
+  		return ret;
+ =20
+@@@ -6124,14 -6093,12 +6055,12 @@@ void __init mnt_init(void
+ =20
+  void put_mnt_ns(struct mnt_namespace *ns)
+  {
+ -	if (!refcount_dec_and_test(&ns->ns.count))
+ +	if (!ns_ref_put(ns))
+  		return;
+- 	namespace_lock();
++ 	guard(namespace_excl)();
+  	emptied_ns =3D ns;
+- 	lock_mount_hash();
++ 	guard(mount_writer)();
+  	umount_tree(ns->root, 0);
+- 	unlock_mount_hash();
+- 	namespace_unlock();
+  }
+ =20
+  struct vfsmount *kern_mount(struct file_system_type *type)
+
+--51BpZmKHHxqjyAHL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTtAMACgkQJNaLcl1U
+h9AvNwf/fxkmCW1vGHlqpkQNi10L91krOVGTIu9v4jqqD85R/Scf9f7r+cFcRSe5
+2Hn+P5WqO5EQ4sPLXJ147DLJwCCD9+Kuuaubz9zdtPnKOEqk/KyDbGMsHhMM5RLB
+oQt+ng2X3NkTAz7ftq+iTR1vUyUYLPMWeJSRgdH/APE5d4ab1HW1dkrRFFgNaqtV
+6P3F+C05SFIGs1RTgxnCTI81DbCwjeCJGUgz/KuQVaQs/kTMfk8Oh3Vo4011EFvE
+WWBTr8Amm9tytA7/lp1+0zc7ZOiRR4PHKiUzorYyF+yOtwAfvx6oNd7MSfBsAoqi
+zXJm+3/LM/9/ZWCXkCMKMUhHCrEYig==
+=YPHY
+-----END PGP SIGNATURE-----
+
+--51BpZmKHHxqjyAHL--
 
