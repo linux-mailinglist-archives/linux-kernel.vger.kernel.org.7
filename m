@@ -1,145 +1,254 @@
-Return-Path: <linux-kernel+bounces-830338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB66B996E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F838B996F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704981894FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF9B16A327
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6392DEA94;
-	Wed, 24 Sep 2025 10:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3342C235F;
+	Wed, 24 Sep 2025 10:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lDs3QR4+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJmHICuz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D091A23B9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C372DF131
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709757; cv=none; b=POstqtw32IG1ysADhtuW0cc3BxXzqnTcVlfsSsOptK3x+UG1JwAyVr6xzN8VNLxtaXt6RPdm3QSwF6IrOTmUTDyHL4/EraF50WziGCEWNGyJ86AdPaLUmart9jRsP+SIolT1aEWJolhRi4mOK0Ij1MggFL8ghgNMR9ZS0mQ5SQ4=
+	t=1758709897; cv=none; b=JfkXCupgRuQ3xDeGwotc8SSe9KLYsbGr12yLhkbYBIIIBSYgpnq+grbo64hxpRmwUJsncrzddYfTxwgb7PeKxmkzAl25prBWl7OSDMwSj2anAUAeJkL7Wl4v07Ah6FwteJgjCMFJgG8PlZ1+WqGfRlvBwZWakwC4GCiHgUHbnzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709757; c=relaxed/simple;
-	bh=/9hL9612Gn0CJSgidmnFRkESRP8UBsfv5LMScs4CM38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TuAqfed5ZWcXF0MM0ED5fY7fQY3Zwo3VxHdC36Mow8uNFu/dr/Sq4r+lRd1XM56tRWf8l9gVrgcVT6FCcV5Q78XJ2gz489Tcv8Sx+a6bgR+1IJdEWT23Fuv619IxUr8/l8f1wvbfgb4aEL2WErh2YKFTXf6Mckt3wu2gFubwix4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lDs3QR4+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O4iLqd023773
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:29:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Zjk1j5ULWEzsfJ1pudMsCTDGZ9oTBcQfVxDwzmzjuXI=; b=lDs3QR4+DKETWGb+
-	Qf5XIKiPb7zV6rCF4dM9vt4xj8iNGH7wINBX+P/09KvG1bm124czm9571qRlr9Ih
-	ueZfE6/WbZE1ldWRvafRBpExP1cTZSwlIJHsH8F9g60JsTUZqQhj2B69EC2JDcho
-	He1T5vH4dpfxZ2pxE6s9KJPjvpXkP6SGGCYuNs0oL6JEvouD9nNy9UK3jZsz+6zT
-	d2HPJGI18CVTFAofx3b+5R3iRza3HGK90RGM7kbV7iqMQDNIm7O38mZo43pS3il4
-	0ps2uaawxqUT/4uYIXlEp2carI+LTFCaZUXkOHCnL04PzQy652nzhYoi8eRUx8Jo
-	0C8+Cw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp0ayrx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:29:09 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-850dfe24644so68820685a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:29:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758709749; x=1759314549;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zjk1j5ULWEzsfJ1pudMsCTDGZ9oTBcQfVxDwzmzjuXI=;
-        b=XUQJhB6DQlZA+pc3GiUNn+xtmGWTHlZy9P+PD7eDHfQ0kKjPAlc7B/sKxUJZKLNdMf
-         LNMDOIWzF/aPRCktlgQ5Wx/LkNaUjhtvtZRGffBbu1xiChW3y8WtebdZ87DF2xJG+HE4
-         PLULe36Q2lMpmpY7ucT0K56PJSACOZ3rBRH0sCmsTNDvANWSuTWN/tSwwt1Uo2qcmiix
-         EcptMkDsJIhyfpJip1UiQUvB/pzbzWmGEOUrz5l9T84EQwkv9AJEl6n8C90Se6y3ckl7
-         ru7Sti5U8utPfLKhygGQtuuSs+tfxbkcuoys3+V1fcxlPAHv0WXN+O8IvQqjZ8Lf2Y+V
-         WNxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVktZToscDESuDenZhSLeo8ABlsChb3gzLtPMnFPX813uDPIutKUp4UYUH1rUPVLlXeCenmD7iQZiPk6Cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3aZOwOTLQH21LSCv/j67RhpL2H5OCCS1j6nQsktovxg8H0/NC
-	gIc7FplpikjYEQIXAhqtwYrwbs0V72gQ4/OChwbLTG6cU4OujD36xu/2W4WbML16k4SNiYbTIzU
-	7ZYWe6PYoS80llkM5e03WJSv3IepUMqNPVJxbCwLi2Lniuz7jhv93942r9CZcErYVJqo=
-X-Gm-Gg: ASbGncuiQ/Octd2wSxO/2dAAc7XeD95zofw/euBL8fiuQ1LsKjzcV0hnNCfI1En12JC
-	Py+pt3Z7QLBqMG2yczlrh8vP+V3Wpg9xYrm6F+Gfg3WHL5zsJjuCwxZn67pZpTgaE8k/kZfRUnf
-	z91qMHJ4JmoLJwzHTe7n3ybI+P9ZGtgEEV9sfHXh0OIf7++1aaQOxJ8ZTdBqIljQYsuEeM1P/gm
-	hDIj03b1J6EVQMJghBsBEdNgB51kPeLUMKVJAJTctVR8ksgZCDphn1Khfrsz3W9eFFO5F0j4SmB
-	7IjgnXfykjiO5xijc8S63wmd+IMMpw97VL0ooz9jvJ5PvtumoK+FHsz0yTFxGZdGtTsOE0Vf0XL
-	uPB91AVaY8w0O22Qx+dTthA==
-X-Received: by 2002:a05:620a:9444:b0:851:b083:37e9 with SMTP id af79cd13be357-851b0833b27mr305213885a.7.1758709749062;
-        Wed, 24 Sep 2025 03:29:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRzIWeKgyhxXr/t44Dh/z5B9dbWTC8JKuLuTfE3DKhzEiNCFnlBYfyCkI4J25I5SqB0lq0GQ==
-X-Received: by 2002:a05:620a:9444:b0:851:b083:37e9 with SMTP id af79cd13be357-851b0833b27mr305212485a.7.1758709748562;
-        Wed, 24 Sep 2025 03:29:08 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b290caba5a6sm935424766b.65.2025.09.24.03.29.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:29:08 -0700 (PDT)
-Message-ID: <9edd7057-8330-4d1a-97c6-e9bf05dbb722@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 12:29:05 +0200
+	s=arc-20240116; t=1758709897; c=relaxed/simple;
+	bh=YS5gq2sJy5pCLzSnXC+FMViysSGZ94AbURL0UpJg0hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GGoOvGzO9J3DxTUISI0Xi98rK6Vli6KtttZ7rd3xWsykpr/qPvk1izKn0xecGRz0l6Jic6iXnX4nPN+NVeDnvuMzuAgUvEr5D+QWz4Q5CTJrmw3eclpSi9OinxTRL2Pr5QBGQ8ngyrW4cMEIqqKGgOyhLbFfCCQZYu5w+5Cr0Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJmHICuz; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758709895; x=1790245895;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=YS5gq2sJy5pCLzSnXC+FMViysSGZ94AbURL0UpJg0hU=;
+  b=CJmHICuzT4DmXeSnsp2PZrq4/7Jks+SRkSUgy2ISY6TS21mgRoRnJ9cn
+   T+GsuTvO36JM/V2rUMGtrwJfs6WbTRdwVPHJvGgmQLFmo/HJ6yAwQngrN
+   2kAVE4ujZG/zezhdu9eQ1iqaSSZiBKmi6FTBVacoKoXyJZayI3npiwX8O
+   bHyPbt5ja4sfmAxnFYxFkIi1I6ebTP/vmOcyep3qVGZjOIDGR/bC+ZmDi
+   Al1veevlOOBvsi6ERneg4gxWtWsV8pyO9bPG3nTbJWf4XcC29AHN25K40
+   l7Uw720su6d/1sVM9xq3QB61TVxvZw2n78KaKz6BHgNrZ0djNuzNTg9CV
+   w==;
+X-CSE-ConnectionGUID: GYp/WW6FQvWsAzm0EWKtzQ==
+X-CSE-MsgGUID: em/8yaH3ScGD55lCPbLnmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60042393"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="60042393"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 03:31:34 -0700
+X-CSE-ConnectionGUID: M8QbL6bGR2elKd2lxEy03w==
+X-CSE-MsgGUID: mUqrN4rNRmCo6rSHssA3yQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="177446367"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 24 Sep 2025 03:31:32 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1MmY-00043M-27;
+	Wed, 24 Sep 2025 10:31:30 +0000
+Date: Wed, 24 Sep 2025 18:30:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: arch/arm64/kernel/signal.c:1300: undefined reference to
+ `preserve_gcs_context'
+Message-ID: <202509241856.XvV8zSHD-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: dispcc-sm6350: Add MDSS_CORE & MDSS_RSCC
- resets
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250919-sm6350-mdss-reset-v1-0-48dcac917c73@fairphone.com>
- <20250919-sm6350-mdss-reset-v1-2-48dcac917c73@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250919-sm6350-mdss-reset-v1-2-48dcac917c73@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d3c7f6 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8
- a=WWQFUNGd85j635JlVwcA:9 a=QEXdDO2ut3YA:10 a=AYr37p2UDEkA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: 6A2ly8HP14_nBYRe8uFeOxwwcyzSQGQy
-X-Proofpoint-ORIG-GUID: 6A2ly8HP14_nBYRe8uFeOxwwcyzSQGQy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfX6e34uQr3L6wH
- BuoDXk6X850VoA2pMbs2ii+Y0kA91OOCCowk3jBZaMEF+rxWtG+p2mj8kHHIwLSPaBmKn3k6FZk
- ts68Iw+2Pl9MNhwNBt/I+3/h4kSJo8NWVbdKki//AIdvZhoZ4gd5ZMxdZxFCQSSkqWObgnk8O5U
- HK0YI+3bLpFjtf3SdEYKFjuryVPe9Q6xZTMqF+EQE+usSf/bjZJpe59/WlH3//7Kvb86D3mKPPY
- rtn497IBN/8HZYsoFJOxN0JyjV3+meujJkjiAXxhh6x/C8Bxr/bNncfBMXnD3ipS63M8QTVvoqr
- dA62OYsMkwvUUxacJwTZ3rN3S68pBLWqCx4CvR3ra3NAhYsdKHS+XS7cRMvIhj7ssdXg5y5m4Ng
- 2Dov02g+
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
- adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/19/25 11:57 AM, Luca Weiss wrote:
-> Add the offsets for two resets inside the dispcc on SM6350 SoC.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
+Hi Robin,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+FYI, the error/warning still remains.
 
-Konrad
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+commit: f00b53f1614f7be554fd28b9594ef4e63e2686c5 arm64: cpufeature: Add GCS to cpucap_is_possible()
+date:   10 months ago
+config: arm64-randconfig-r132-20250924 (https://download.01.org/0day-ci/archive/20250924/202509241856.XvV8zSHD-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509241856.XvV8zSHD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509241856.XvV8zSHD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `setup_sigframe':
+>> arch/arm64/kernel/signal.c:1300: undefined reference to `preserve_gcs_context'
+   aarch64-linux-ld: arch/arm64/kernel/signal.o: in function `restore_sigframe':
+>> arch/arm64/kernel/signal.c:1042: undefined reference to `restore_gcs_context'
+
+
+vim +1300 arch/arm64/kernel/signal.c
+
+bb4891a6c3551f Dave Martin      2017-06-15  1258  
+20987de3c2c45c Dave Martin      2017-06-15  1259  static int setup_sigframe(struct rt_sigframe_user_layout *user,
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1260  			  struct pt_regs *regs, sigset_t *set,
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1261  			  const struct user_access_state *ua_state)
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1262  {
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1263  	int i, err = 0;
+20987de3c2c45c Dave Martin      2017-06-15  1264  	struct rt_sigframe __user *sf = user->sigframe;
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1265  
+304ef4e8367244 Will Deacon      2012-11-23  1266  	/* set up the stack frame for unwinding */
+20987de3c2c45c Dave Martin      2017-06-15  1267  	__put_user_error(regs->regs[29], &user->next_frame->fp, err);
+20987de3c2c45c Dave Martin      2017-06-15  1268  	__put_user_error(regs->regs[30], &user->next_frame->lr, err);
+304ef4e8367244 Will Deacon      2012-11-23  1269  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1270  	for (i = 0; i < 31; i++)
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1271  		__put_user_error(regs->regs[i], &sf->uc.uc_mcontext.regs[i],
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1272  				 err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1273  	__put_user_error(regs->sp, &sf->uc.uc_mcontext.sp, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1274  	__put_user_error(regs->pc, &sf->uc.uc_mcontext.pc, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1275  	__put_user_error(regs->pstate, &sf->uc.uc_mcontext.pstate, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1276  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1277  	__put_user_error(current->thread.fault_address, &sf->uc.uc_mcontext.fault_address, err);
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1278  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1279  	err |= __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set));
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1280  
+6d502b6ba1b267 Suzuki K Poulose 2020-01-13  1281  	if (err == 0 && system_supports_fpsimd()) {
+bb4891a6c3551f Dave Martin      2017-06-15  1282  		struct fpsimd_context __user *fpsimd_ctx =
+bb4891a6c3551f Dave Martin      2017-06-15  1283  			apply_user_offset(user, user->fpsimd_offset);
+0e0276d1e1dd06 Catalin Marinas  2014-04-04  1284  		err |= preserve_fpsimd_context(fpsimd_ctx);
+0e0276d1e1dd06 Catalin Marinas  2014-04-04  1285  	}
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1286  
+15af1942dd61ee Catalin Marinas  2013-09-16  1287  	/* fault information, if valid */
+bb4891a6c3551f Dave Martin      2017-06-15  1288  	if (err == 0 && user->esr_offset) {
+bb4891a6c3551f Dave Martin      2017-06-15  1289  		struct esr_context __user *esr_ctx =
+bb4891a6c3551f Dave Martin      2017-06-15  1290  			apply_user_offset(user, user->esr_offset);
+bb4891a6c3551f Dave Martin      2017-06-15  1291  
+15af1942dd61ee Catalin Marinas  2013-09-16  1292  		__put_user_error(ESR_MAGIC, &esr_ctx->head.magic, err);
+15af1942dd61ee Catalin Marinas  2013-09-16  1293  		__put_user_error(sizeof(*esr_ctx), &esr_ctx->head.size, err);
+15af1942dd61ee Catalin Marinas  2013-09-16  1294  		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
+15af1942dd61ee Catalin Marinas  2013-09-16  1295  	}
+15af1942dd61ee Catalin Marinas  2013-09-16  1296  
+16f47bb9ac8afe Mark Brown       2024-10-01  1297  	if (system_supports_gcs() && err == 0 && user->gcs_offset) {
+16f47bb9ac8afe Mark Brown       2024-10-01  1298  		struct gcs_context __user *gcs_ctx =
+16f47bb9ac8afe Mark Brown       2024-10-01  1299  			apply_user_offset(user, user->gcs_offset);
+16f47bb9ac8afe Mark Brown       2024-10-01 @1300  		err |= preserve_gcs_context(gcs_ctx);
+16f47bb9ac8afe Mark Brown       2024-10-01  1301  	}
+16f47bb9ac8afe Mark Brown       2024-10-01  1302  
+85ed24dad2904f Mark Brown       2022-04-19  1303  	/* Scalable Vector Extension state (including streaming), if present */
+85ed24dad2904f Mark Brown       2022-04-19  1304  	if ((system_supports_sve() || system_supports_sme()) &&
+85ed24dad2904f Mark Brown       2022-04-19  1305  	    err == 0 && user->sve_offset) {
+8cd969d28fd284 Dave Martin      2017-10-31  1306  		struct sve_context __user *sve_ctx =
+8cd969d28fd284 Dave Martin      2017-10-31  1307  			apply_user_offset(user, user->sve_offset);
+8cd969d28fd284 Dave Martin      2017-10-31  1308  		err |= preserve_sve_context(sve_ctx);
+8cd969d28fd284 Dave Martin      2017-10-31  1309  	}
+8cd969d28fd284 Dave Martin      2017-10-31  1310  
+39e54499280f37 Mark Brown       2022-12-27  1311  	/* TPIDR2 if supported */
+e9d14f3f3fb76c Dongxu Sun       2023-03-17  1312  	if (system_supports_tpidr2() && err == 0) {
+39e54499280f37 Mark Brown       2022-12-27  1313  		struct tpidr2_context __user *tpidr2_ctx =
+39e54499280f37 Mark Brown       2022-12-27  1314  			apply_user_offset(user, user->tpidr2_offset);
+39e54499280f37 Mark Brown       2022-12-27  1315  		err |= preserve_tpidr2_context(tpidr2_ctx);
+39e54499280f37 Mark Brown       2022-12-27  1316  	}
+39e54499280f37 Mark Brown       2022-12-27  1317  
+8c46def44409fc Mark Brown       2024-03-06  1318  	/* FPMR if supported */
+8c46def44409fc Mark Brown       2024-03-06  1319  	if (system_supports_fpmr() && err == 0) {
+8c46def44409fc Mark Brown       2024-03-06  1320  		struct fpmr_context __user *fpmr_ctx =
+8c46def44409fc Mark Brown       2024-03-06  1321  			apply_user_offset(user, user->fpmr_offset);
+8c46def44409fc Mark Brown       2024-03-06  1322  		err |= preserve_fpmr_context(fpmr_ctx);
+8c46def44409fc Mark Brown       2024-03-06  1323  	}
+8c46def44409fc Mark Brown       2024-03-06  1324  
+466ece4c6e1952 Kevin Brodsky    2024-10-29  1325  	if (system_supports_poe() && err == 0) {
+9160f7e909e179 Joey Gouly       2024-08-22  1326  		struct poe_context __user *poe_ctx =
+9160f7e909e179 Joey Gouly       2024-08-22  1327  			apply_user_offset(user, user->poe_offset);
+9160f7e909e179 Joey Gouly       2024-08-22  1328  
+2e8a1acea8597f Kevin Brodsky    2024-10-29  1329  		err |= preserve_poe_context(poe_ctx, ua_state);
+9160f7e909e179 Joey Gouly       2024-08-22  1330  	}
+9160f7e909e179 Joey Gouly       2024-08-22  1331  
+39782210eb7e87 Mark Brown       2022-04-19  1332  	/* ZA state if present */
+39782210eb7e87 Mark Brown       2022-04-19  1333  	if (system_supports_sme() && err == 0 && user->za_offset) {
+39782210eb7e87 Mark Brown       2022-04-19  1334  		struct za_context __user *za_ctx =
+39782210eb7e87 Mark Brown       2022-04-19  1335  			apply_user_offset(user, user->za_offset);
+39782210eb7e87 Mark Brown       2022-04-19  1336  		err |= preserve_za_context(za_ctx);
+39782210eb7e87 Mark Brown       2022-04-19  1337  	}
+39782210eb7e87 Mark Brown       2022-04-19  1338  
+ee072cf708048c Mark Brown       2023-01-16  1339  	/* ZT state if present */
+ee072cf708048c Mark Brown       2023-01-16  1340  	if (system_supports_sme2() && err == 0 && user->zt_offset) {
+ee072cf708048c Mark Brown       2023-01-16  1341  		struct zt_context __user *zt_ctx =
+ee072cf708048c Mark Brown       2023-01-16  1342  			apply_user_offset(user, user->zt_offset);
+ee072cf708048c Mark Brown       2023-01-16  1343  		err |= preserve_zt_context(zt_ctx);
+ee072cf708048c Mark Brown       2023-01-16  1344  	}
+ee072cf708048c Mark Brown       2023-01-16  1345  
+33f082614c3443 Dave Martin      2017-06-20  1346  	if (err == 0 && user->extra_offset) {
+33f082614c3443 Dave Martin      2017-06-20  1347  		char __user *sfp = (char __user *)user->sigframe;
+33f082614c3443 Dave Martin      2017-06-20  1348  		char __user *userp =
+33f082614c3443 Dave Martin      2017-06-20  1349  			apply_user_offset(user, user->extra_offset);
+33f082614c3443 Dave Martin      2017-06-20  1350  
+33f082614c3443 Dave Martin      2017-06-20  1351  		struct extra_context __user *extra;
+33f082614c3443 Dave Martin      2017-06-20  1352  		struct _aarch64_ctx __user *end;
+33f082614c3443 Dave Martin      2017-06-20  1353  		u64 extra_datap;
+33f082614c3443 Dave Martin      2017-06-20  1354  		u32 extra_size;
+33f082614c3443 Dave Martin      2017-06-20  1355  
+33f082614c3443 Dave Martin      2017-06-20  1356  		extra = (struct extra_context __user *)userp;
+33f082614c3443 Dave Martin      2017-06-20  1357  		userp += EXTRA_CONTEXT_SIZE;
+33f082614c3443 Dave Martin      2017-06-20  1358  
+33f082614c3443 Dave Martin      2017-06-20  1359  		end = (struct _aarch64_ctx __user *)userp;
+33f082614c3443 Dave Martin      2017-06-20  1360  		userp += TERMINATOR_SIZE;
+33f082614c3443 Dave Martin      2017-06-20  1361  
+33f082614c3443 Dave Martin      2017-06-20  1362  		/*
+33f082614c3443 Dave Martin      2017-06-20  1363  		 * extra_datap is just written to the signal frame.
+33f082614c3443 Dave Martin      2017-06-20  1364  		 * The value gets cast back to a void __user *
+33f082614c3443 Dave Martin      2017-06-20  1365  		 * during sigreturn.
+33f082614c3443 Dave Martin      2017-06-20  1366  		 */
+33f082614c3443 Dave Martin      2017-06-20  1367  		extra_datap = (__force u64)userp;
+33f082614c3443 Dave Martin      2017-06-20  1368  		extra_size = sfp + round_up(user->size, 16) - userp;
+33f082614c3443 Dave Martin      2017-06-20  1369  
+33f082614c3443 Dave Martin      2017-06-20  1370  		__put_user_error(EXTRA_MAGIC, &extra->head.magic, err);
+33f082614c3443 Dave Martin      2017-06-20  1371  		__put_user_error(EXTRA_CONTEXT_SIZE, &extra->head.size, err);
+33f082614c3443 Dave Martin      2017-06-20  1372  		__put_user_error(extra_datap, &extra->datap, err);
+33f082614c3443 Dave Martin      2017-06-20  1373  		__put_user_error(extra_size, &extra->size, err);
+33f082614c3443 Dave Martin      2017-06-20  1374  
+33f082614c3443 Dave Martin      2017-06-20  1375  		/* Add the terminator */
+33f082614c3443 Dave Martin      2017-06-20  1376  		__put_user_error(0, &end->magic, err);
+33f082614c3443 Dave Martin      2017-06-20  1377  		__put_user_error(0, &end->size, err);
+33f082614c3443 Dave Martin      2017-06-20  1378  	}
+33f082614c3443 Dave Martin      2017-06-20  1379  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1380  	/* set the "end" magic */
+bb4891a6c3551f Dave Martin      2017-06-15  1381  	if (err == 0) {
+bb4891a6c3551f Dave Martin      2017-06-15  1382  		struct _aarch64_ctx __user *end =
+bb4891a6c3551f Dave Martin      2017-06-15  1383  			apply_user_offset(user, user->end_offset);
+bb4891a6c3551f Dave Martin      2017-06-15  1384  
+0e0276d1e1dd06 Catalin Marinas  2014-04-04  1385  		__put_user_error(0, &end->magic, err);
+0e0276d1e1dd06 Catalin Marinas  2014-04-04  1386  		__put_user_error(0, &end->size, err);
+bb4891a6c3551f Dave Martin      2017-06-15  1387  	}
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1388  
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1389  	return err;
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1390  }
+2c020ed8d148f7 Catalin Marinas  2012-03-05  1391  
+
+:::::: The code at line 1300 was first introduced by commit
+:::::: 16f47bb9ac8afe09e7ca14cc53748f779b2a12e0 arm64/signal: Expose GCS state in signal frames
+
+:::::: TO: Mark Brown <broonie@kernel.org>
+:::::: CC: Catalin Marinas <catalin.marinas@arm.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
