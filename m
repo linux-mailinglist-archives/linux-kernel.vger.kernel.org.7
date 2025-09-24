@@ -1,276 +1,206 @@
-Return-Path: <linux-kernel+bounces-829879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F8AB981C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:11:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04127B981B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE6319C6A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99BA62A0667
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B583E224225;
-	Wed, 24 Sep 2025 03:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7117E221577;
+	Wed, 24 Sep 2025 03:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="IGbBHPks"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B1MU0p6H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D4220296E;
-	Wed, 24 Sep 2025 03:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67DB665
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758683487; cv=none; b=Lmag2MzPaqbt+rpqyezTuok2ZENa5fwGD/4xmsLHCqoEWLujXWgfJMjE9JnOo4CF5Q8HGv0LawO2YXaw+SMTT5kkIoAZBJeCdSTWD5xfLrOCH3HlAsPDmGQ3N7dBYr2UsrAKMy4b4+JgK5QPGh8ehvXNTUPzH8/KIt/EPF2CjyI=
+	t=1758683431; cv=none; b=E8ZisYTtuhlXiwOhahDWouvJsIoOnplASaawdnuXkRgdW0ySy06W6UMcoMga8aZpKrRN1m6vGPs5RpC7hc/OvdIQmDJb5CVYKtd5NZa9cDNcjXNcN9YDAPcuzN6NeSDxiVjocJiDHptZ2GYuzkJHSM7Mt56jUeMJ3L8wj8NIlmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758683487; c=relaxed/simple;
-	bh=vH8bRAAAeNwt95lyr05jkhbdpez5LI3XSYx8WUp52Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAI9B8Z1G90hPsgFmIli8msRKCfVMSFPLvvTOFO5HozHx8Zklago3w1M5/Zu+fGpmAnIw673b1gVXtA3a4Z467/jxxjxeFSqeiacf1gan3kOhv7BEh87OOVdGWoEQiz77EfE/uFRQL+N/B20wDJaUpTEYLKAC7f71TSBKlpYcgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=IGbBHPks; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758683417;
-	bh=Jjv11R9aDZY3HkfGigCrmCIN/cryRhO5uSzQW7puPAU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=IGbBHPksHmyo7HGMGpYIRxvv1yQHUUEGLaTjQCjs9hGwgPPqXM3E21ozilYY3HE1W
-	 Qwz3AbnIwpx1kpgHmlMPJh7pRhCqXU5xFCUD3JIx5qg8X80A9Axg3WLNZvE8U1HSB0
-	 cN67sCRL2MMGYkq69V0AGlH6durb4cofcOM/gbzI=
-X-QQ-mid: zesmtpip3t1758683415te22064f3
-X-QQ-Originating-IP: yaxed/vfNqQ91O3loxchB2e5ZjRmDPdUjsPhX4ETg3c=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 24 Sep 2025 11:10:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3107347898178425822
-EX-QQ-RecipientCnt: 18
-Date: Wed, 24 Sep 2025 11:10:06 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] riscv: dts: spacemit: define a SPI controller node
-Message-ID: <78FF4A33F1D1916E+aNNhDuW28Ia6o8gm@troy-wujie14pro-arch>
-References: <20250922161717.1590690-1-elder@riscstar.com>
- <20250922161717.1590690-4-elder@riscstar.com>
- <20250923001930-GYB1303776@gentoo.org>
- <ED4C67FD136DEB19+aNINJJVYbNnT87va@LT-Guozexi>
- <1aa28123-cfa4-415a-9d1b-4d9edd62489b@riscstar.com>
+	s=arc-20240116; t=1758683431; c=relaxed/simple;
+	bh=p+hAlfWLOo8lrVCig+GYlsVpauV6dDxSNvfvnIzo890=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
+	 In-Reply-To:Content-Type; b=dVkgC1euJ/Ox/WaxK6qucpo04aO4teNrNkCkCgV9qJLBFswGHrI/WILxKMw3YZ1ziv6pgwz6kpG9+EKMj/f+CBYuypNuKCforbxygMXYXTz1csFQv7HllI135BVtV+7mM7Wq+jlT/qFAZ03mQoa5QZl2yE4ryGTYtOoSzkz8wt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B1MU0p6H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758683428;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IkvMMMNr8whS9KWGb21eo2kTG2AVjzPyop3Rbc2zRug=;
+	b=B1MU0p6HtMydS7Goj6Y3rMJY6sDnOup9Zt1JRzNu8cFCdwRnZ7ZORhrInz0GLctcc9V3kV
+	+Dm5u2d35I4pH90u1OzvsH401PW7lSZaZ+W0Q5IzD/gmQm4vJwZu5em3yqfU16oNXnctUX
+	5NMbMV8VD2Q1QmFBv/XFjfSDDp623Ho=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-NRxoTIvMNz6VxfmQ9tPgNw-1; Tue, 23 Sep 2025 23:10:27 -0400
+X-MC-Unique: NRxoTIvMNz6VxfmQ9tPgNw-1
+X-Mimecast-MFC-AGG-ID: NRxoTIvMNz6VxfmQ9tPgNw_1758683427
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-79e48b76f68so115831316d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 20:10:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758683424; x=1759288224;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IkvMMMNr8whS9KWGb21eo2kTG2AVjzPyop3Rbc2zRug=;
+        b=qe23wNp08XsJNO7p/AfMqkMsHLtpt+2FbxqrN1yfqTAe1YJB5LHtixoryC6Y9sU/Vp
+         uYn7+2OqfohOPcNZyk/ji8F84BjUM4jlBTAwP5VohVTJwBEyOa+hq9y8qBHenZfS94bJ
+         MT1xfK5ym7jbJBfKn0xw2qPF6wecDHABwbxEAUKgq/WYzK6Yuai3PE1MarhVSoHHFj/N
+         FoE+ZN7tPt6FRxQ/KlPB6brbD+yzR2nBiCa8Bl7eGUBJkdzhRuM7ciXA07pV72ggGHec
+         jkrYcrv/CcLvHdrSRFfdw42MGDcEB7H+ES8hbObYWcBxi6S8xX4WJuJKTumeq8Fsqyi4
+         FSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXC2kDetgaNOAvrAKMloNOqmgM7FEoAxZcKCr+cLVAXZUHC1JPak7oPJhR9eGI19aw1HQKCDhV5iIdDRJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUgnzFnBMx1/sEzeQukrpjTI3ul+BLxIBb0iJIZPTNLrJgul4A
+	NbX3hSTYfDLBTUlYUPEoEPzWFoWHbGpqS+U3fvBxr4xHvWcDq1HnOWyALOl/Q2vn9kVcXY3A12i
+	AdRp+FphMLJnC0pgiqAt+bkA2uT3NidZxxMX25nJcLqLYeG4MYkrd8cwS/AkUAxPG6w==
+X-Gm-Gg: ASbGncudGMZZkhAroGXKs0wHlpro0ByUqVA21uLDQPQ2rTWLHPAyDaqRq4/sAYLcHbs
+	MWybDrf2kZFLBtEiytg4SJh3ZSXFCU1Msq24SMD+ib7nOxmMnG3DhJ6Dz+ZqX0sfmMDw6YTuCo1
+	z9PBfYpygIZqeg8LAJRd9Avm0AX/QuYSg7rpH7JAuoVS/KsQ7tmCFFJnPjZslPiU2SVQ2ypo/ni
+	362NN8GPLd4gtK3di8MD9qGdUmU7nKLSZjHnDEDNTgM04ppSwlkaoatPFjQo1qv1MWRHTU3ealg
+	eiOzWaAEYaGmN7eKvSsatYycl816r0pabJ8KsSvCBjuHL4h5fTjBglHBEq7rueQY9T5p6Sbz/fM
+	E5d7cSh/w6yw=
+X-Received: by 2002:a05:6214:20c1:b0:70d:fa79:baf0 with SMTP id 6a1803df08f44-7e7131d7020mr59697146d6.38.1758683424384;
+        Tue, 23 Sep 2025 20:10:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLx9MwpCuNHuqA9U34H+EA7/n5lCOMihDnRBo1m3E6DXMRuUMWw3nLKQP4DFoBN1zvCBLgdw==
+X-Received: by 2002:a05:6214:20c1:b0:70d:fa79:baf0 with SMTP id 6a1803df08f44-7e7131d7020mr59696966d6.38.1758683423944;
+        Tue, 23 Sep 2025 20:10:23 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793472c3946sm100462706d6.28.2025.09.23.20.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 20:10:23 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <dbba6b72-d270-4b7e-bb21-39ac8a46864a@redhat.com>
+Date: Tue, 23 Sep 2025 23:10:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locking/mutex:add MUTEX_CHCEK_INIT to detect
+ uninitialized mutex lock
+To: buckzhang1212@yeah.net, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org
+References: <20250924022500.2577-1-buckzhang1212@yeah.net>
+Content-Language: en-US
+In-Reply-To: <20250924022500.2577-1-buckzhang1212@yeah.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1aa28123-cfa4-415a-9d1b-4d9edd62489b@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MKbitA53r7aLonQEbgqrpF7ztfkJgkvnuvhdf1wmMZ5nBRRn+9sSuoSO
-	0XVjrg8FIenKij+Qe65Gq+sKYXu0ft/S9xFm3145jOh/uH/59f1hg7kRGFIQ9tPMvJdHK5L
-	sHaBcMFzjGOxJbR6BHIbLqB4pgTxR2e4grbjBn8tBEwJfucDl6VD0CxdA15CKTjkkzyk2uX
-	IzYSlHAKd6+4O3Gz0ipWYUvbOFR6IuYGWI7lRYu+geyRNhPc8OvwTK2wWuDMuS2CIusMfVW
-	G8CQEuuLSaBTIK39E/0ilGNSusUkIiIs1sdjM/jroyIc4moo5GJgSIexDbMD1uZXV2I1/Y6
-	wQrzwlp8+mILcR7Nkevb1U1BmHMrSwgkSioDU9EDgm1S6liROC/7bSEQd1a/675PyIkPtKt
-	kjP6V4a0tbzCVZ0jDS0TbqnlcJMxxQGqqUEMKhdK8r0mfwWrCq+I+OWNWU9HkIHKgZIsmyS
-	MZV0hQl720cBquFJINtdip9l1jOSMqBSHuyBv7B4PfWUf5k/dVLnOzD6jjqOSVMiSfWYZBG
-	2ewlbV5BjaGJkMp07JU+sRjOsj5XK8Rrj2TNEWaC1mBAbyRJQ+zTJj/Htjsq6fd4ceJHOmI
-	9rIiUQcMtL0+ED/Rmigahjqn22L2eIBDjSfN8vrSP/5jjCnWMMbPSS5TW9G2t1p1mkqsDzO
-	H7OfaP0ur+4bPG3aHI7jmvRcKDUINNe0PocCUH3GQMcVBEMB+1dyWUPA7EbLjg/MyEhxu2O
-	l/Dc3Xtkm+67JZfcLC1uLSc5xXLNyJSXW3jnbkTIFCMAFwHfQ7BAwP28LrJMXQwu5YL4hr5
-	oUcfqZh5SXPm+JD+dyL0YHkhODNkJPDnJMSTAp8xTemOAioXkju5Bg3/Zy8BuP6xDxifmAr
-	rSt7/6IUrVYfNytDZYFq44GMDxPK872ajqnNa2+YP8fZ/p55icw13fFXlJ9jJ8qd0jZTYy9
-	QJ0B57q4FhxH9UhZZeL6kAS1vgadmT5pU/UoL9FMZgwGq5KMKldG/cwTng4KLBQ9MNEk+lB
-	GyFq7M9+ul0xfvIPiWAAuPjBvcG5LlgWeWmxW9breeYPAj8/gwBeJLvg3zT/3NlAY0upVBS
-	GTl3Jv4sNQ47gC6Lo577OgJ0rfhXP0cTsLZBd2tKLfH
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-On Tue, Sep 23, 2025 at 07:49:34AM -0500, Alex Elder wrote:
-> On 9/22/25 9:59 PM, Troy Mitchell wrote:
-> > On Tue, Sep 23, 2025 at 08:19:30AM +0800, Yixun Lan wrote:
-> > > Hi Alex,
-> > > 
-> > > On 11:17 Mon 22 Sep     , Alex Elder wrote:
-> > > > Define a node for the fourth SoC SPI controller (number 3) on
-> > > > the SpacemiT K1 SoC.
-> > > > 
-> > > > Enable it on the Banana Pi BPI-F3 board, which exposes this feature
-> > > > via its GPIO block:
-> > > >    GPIO PIN 19:  MOSI
-> > > >    GPIO PIN 21:  MISO
-> > > >    GPIO PIN 23:  SCLK
-> > > >    GPIO PIN 24:  SS (inverted)
-> 
-> Note that the pin numbers I'm mentioning above are the numbers
-> (1-26) on the 26-pin GPIO header on the BPI-F3 board.
-> 
-> > > > 
-> > > > Define pincontrol configurations for the pins as used on that board.
-> > > > 
-> > > > (This was tested using a GigaDevice GD25Q64E SPI NOR chip.)
-> > > > 
-> > > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > > ---
-> > > > v3: - Moved the SPI controller into the dma-bus memory region
-> > > > 
-> > > >   .../boot/dts/spacemit/k1-bananapi-f3.dts      |  7 +++++++
-> > > >   arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  | 20 +++++++++++++++++++
-> > > >   arch/riscv/boot/dts/spacemit/k1.dtsi          | 16 +++++++++++++++
-> > > >   3 files changed, 43 insertions(+)
-> > > > 
-> > > > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > > > index 2aaaff77831e1..d9d865fbe320e 100644
-> > > > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > > > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > > > @@ -14,6 +14,7 @@ aliases {
-> > > >   		ethernet0 = &eth0;
-> > > >   		ethernet1 = &eth1;
-> > > >   		serial0 = &uart0;
-> > > > +		spi3 = &spi3;
-> > > >   	};
-> > > >   	chosen {
-> > > > @@ -92,6 +93,12 @@ &pdma {
-> > > >   	status = "okay";
-> > > >   };
-> > > > +&spi3 {
-> > > > +	pinctrl-0 = <&ssp3_0_cfg>;
-> > > > +	pinctrl-names = "default";
-> > > > +	status = "okay";
-> > > > +};
-> > > > +
-> > > >   &uart0 {
-> > > >   	pinctrl-names = "default";
-> > > >   	pinctrl-0 = <&uart0_2_cfg>;
-> > > > diff --git a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > > > index aff19c86d5ff3..205c201a3005c 100644
-> > > > --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > > > +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > > > @@ -76,4 +76,24 @@ pwm14-1-pins {
-> > > >   			drive-strength = <32>;
-> > > >   		};
-> > > >   	};
-> > > > +
-> > > > +	ssp3_0_cfg: ssp3-0-cfg {
-> > > ..
-> > > > +		ssp3-0-no-pull-pins {
-> > > I'd prefer not to enforce "pull" info inside the name, you can't embed
-> > > all property info, besides, what's if you want to change/override later?
-> > > 
-> > > how about just name it as ssp3-0-defaul-pins or simply ssp3-0-pins?
-> > uart: uart0_2_cfg and function is 2.
-> > pwm: pwm14_1_cfg and function is 4
-> > spi: ssp3_0_cfg and function is 2
-> > 
-> > I’m a bit confused about the meaning of the second number here.
-> > Is it intended to be an index, or the function number?
-> 
-> It is an index, and it seems arbitrary but it is based on the
-> order in which they occur in a spreadsheet that defines a set
-> of possible pin configurations.
-> 
-> For example, SPI3 lists 2 possible pin combinations:
-> SCLK	GPIO[75] function 2	GPIO[59] function 2
-> FRM	GPIO[76] function 2	GPIO[60] function 2
-> TXD	GPIO[77] function 2	GPIO[61] function 2
-> RXD	GPIO[78] function 2	GPIO[62] function 2
-> 
-> > If it’s an index, should it start from 0 or 1?
-> 
-> It starts with 0.
-> 
-> > The starting point seems inconsistent across pwm/spi/uart.
-> > If it’s supposed to be the function number,
-> > then the spi and pwm parts look incorrect.
-> 
-> The first one (index 0) shows up earlier (lower line number) in
-> the spreadsheet, even though the GPIO numbers used are higher
-> than those in the second one.  They're grouped, and the first
-> one is in GPIO group 2 and the second is in GPIO group 5.
-Thanks! It makes sense.
+On 9/23/25 10:25 PM, buckzhang1212@yeah.net wrote:
+> From: "buck.zhang" <buckzhang1212@yeah.net>
+>
+> Here is a kernel exception about mutex and I can recreate it stably.
+> First we define a custome struct that includes a mutex lock.
+> Then allocate this struct by kmalloc without calling mutex_init.
+> Finally when multiple tasks call mutex_lock together,kernel will panic.
+> But Kernel is good  if only one task call this mutex at the same time.
+> the exception reason is that lock->wait_list is an invalid kernel list.
+> kernel crash log:
+> Unable to handle kernel NULL pointer dereference at virtual address 0000000
+> pc: __mutex_add_waiter+0x68/0x160
+> lr: __mutex_add_waiter+0x128/0x160
+> sp: ffffffc0866f3ac0
+> x29: ffffffc0866f3ad0 x28: ffffff8095148000 x27: 0000000000000000
+> x2: ffffffc0866f3b18 x1 : 0000000000000000 x0 : 0000000000000000
+> Call trace:
+> __mutex_add_waiter+0x68/0x160
+> __mutex_lock+0x48c/0x119c
+> __mutex_lock_slowpath+0x1c/0x2c
+> mutex_lock+0x48/0x144
+> Test case:
+> struct chip_mutex {
+> 	struct mutex tmutex;
+> };
+> static void work_handler1(struct chip_mutex *cmutex)
+> {
+>          mutex_lock(&(cmutex->tmutex));
+> }
+> static void work_handler2(struct chip_mutex *cmutex)
+> {
+>           mutex_lock(&(cmutex->tmutex));
+> }
+> static void chip_tmutex(void)
+> {
+> 	struct chip_mutex *cmutex;
+> 	cmutex = kzalloc(sizeof(struct chip_mutex),GFP_KERNEL);
+> 	work_handler1(cmutex);
+> 	------
+> 	work_handler2(cmutex);
+> }
+>
+> Signed-off-by: buck.zhang <buckzhang1212@yeah.net>
+A mutex must be properly initialized before it can be used. The kernel 
+panic you listed above is expected and the panic itself indicates that 
+the code is wrong.
+> ---
+>   kernel/locking/mutex.c | 12 ++++++++++++
+>   1 file changed, 12 insertions(+)
+>
+> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+> index de7d6702c..8fbe858c8 100644
+> --- a/kernel/locking/mutex.c
+> +++ b/kernel/locking/mutex.c
+> @@ -42,6 +42,16 @@
+>   #else
+>   # define MUTEX_WARN_ON(cond)
+>   #endif
+> +#define MUTEX_CHCEK_INIT(lock)  mutex_check_waitlist(lock)
+> +static void mutex_check_waitlist(struct mutex *lock)
+> +{
+> +	struct list_head *list = &lock->wait_list;
+> +
+> +	if ((unsigned long)list->next < PAGE_OFFSET) {
+> +		pr_err("BUG: mutex lock is uninitialized，wait_list is Error\n");
+> +		MUTEX_WARN_ON("mutex lock is uninitialized");
+> +	}
+> +}
+>   
+>   void
+>   __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
+> @@ -269,6 +279,7 @@ static void __sched __mutex_lock_slowpath(struct mutex *lock);
+>   void __sched mutex_lock(struct mutex *lock)
+>   {
+>   	might_sleep();
+> +	MUTEX_CHCEK_INIT(lock);
+>   
+>   	if (!__mutex_trylock_fast(lock))
+>   		__mutex_lock_slowpath(lock);
 
-                - Troy
+This check has provided no additional value and it slows down the 
+locking fast path.
 
-> 
-> 					-Alex
-> 
-> > Could you clarify this? Yixun.
-> > 
-> >                  - Troy
-> > > 
-> > > > +			pinmux = <K1_PADCONF(75, 2)>,	/* SCLK */
-> > > > +				 <K1_PADCONF(77, 2)>,	/* MOSI  */
-> > > > +				 <K1_PADCONF(78, 2)>;	/* MISO */
-> > > > +
-> > > > +			bias-disable;
-> > > > +			drive-strength = <19>;
-> > > > +			power-source = <3300>;
-> > > > +		};
-> > > > +
-> > > > +		ssp3-0-frm-pins {
-> > > > +			pinmux = <K1_PADCONF(76, 2)>;	/* FRM (frame) */
-> > > > +
-> > > > +			bias-pull-up = <0>;
-> > > > +			drive-strength = <19>;
-> > > > +			power-source = <3300>;
-> > > > +		};
-> > > > +	};
-> > > >   };
-> > > > diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > > index 6cdcd80a7c83b..eb8a14dd72ea4 100644
-> > > > --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > > +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> > > > @@ -797,6 +797,22 @@ uart9: serial@d4017800 {
-> > > >   				status = "disabled";
-> > > >   			};
-> > > > +			spi3: spi@d401c000 {
-> > > > +				compatible = "spacemit,k1-spi";
-> > > > +				reg = <0x0 0xd401c000 0x0 0x30>;
-> > > > +				#address-cells = <1>;
-> > > > +				#size-cells = <0>;
-> > > > +				clocks = <&syscon_apbc CLK_SSP3>,
-> > > > +					 <&syscon_apbc CLK_SSP3_BUS>;
-> > > > +				clock-names = "core", "bus";
-> > > > +				resets = <&syscon_apbc RESET_SSP3>;
-> > > > +				interrupts = <55>;
-> > > ..
-> > > > +				dmas = <&pdma 20>,
-> > > > +				       <&pdma 19>;
-> > > can we also squash the dmas into one line? but, do split if there are too many..
-> > > 
-> > > yes, it's simply a style change that I'd like to keep them consistent at DT level,
-> > > besides you might also want to adjust dt-binding examples to align with them here..
-> > > 
-> > > thanks
-> > > 
-> > > > +				dma-names = "rx", "tx";
-> > > > +				status = "disabled";
-> > > > +			};
-> > > > +
-> > > >   			/* sec_uart1: 0xf0612000, not available from Linux */
-> > > >   		};
-> > > > -- 
-> > > > 2.48.1
-> > > > 
-> > > > 
-> > > 
-> > > -- 
-> > > Yixun Lan (dlan)
-> > > 
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-> 
+NACK
+
+> @@ -991,6 +1002,7 @@ __mutex_lock_interruptible_slowpath(struct mutex *lock);
+>   int __sched mutex_lock_interruptible(struct mutex *lock)
+>   {
+>   	might_sleep();
+> +	MUTEX_CHCEK_INIT(lock);
+>   
+>   	if (__mutex_trylock_fast(lock))
+>   		return 0;
+> @@ -1015,6 +1027,7 @@ EXPORT_SYMBOL(mutex_lock_interruptible);
+>   int __sched mutex_lock_killable(struct mutex *lock)
+>   {
+>   	might_sleep();
+> +	MUTEX_CHCEK_INIT(lock);
+>   
+>   	if (__mutex_trylock_fast(lock))
+>   		return 0;
+
 
