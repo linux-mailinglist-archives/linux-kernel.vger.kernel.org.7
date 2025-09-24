@@ -1,143 +1,167 @@
-Return-Path: <linux-kernel+bounces-829867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6570B98164
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CB8B9816D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC25E1B207FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D944A7AA932
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4202222A1;
-	Wed, 24 Sep 2025 02:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j2V5aZ8y"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BFB2248A4;
+	Wed, 24 Sep 2025 02:45:21 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4F621E087
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9514317D;
+	Wed, 24 Sep 2025 02:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758681686; cv=none; b=cRZjrQFkIRLkbA0NzhTMk1eqMCvMZm6hPKrBue/ycSciRCS4W3eHgxH+/EAZIruwID5vwXhHEtky3Rw7QLUO+9KVgr+zuyGc5uFODCVnYAo5hzVwRbY2fiHfVgkea39lveIOpCOuGW1BDTSWGesMCjeUoRl6EQMGs9+Vf5l3QKU=
+	t=1758681921; cv=none; b=AxHxHDQASlx57/snfIg1JqGcEmc2D7zr3ByYp+Br7VuxD0rt5mUicb22aer/kswZFkZ7ZGK/Wy1oYKRM6OGf/6x+898bA0jsHjYJRAWq23C6QplbRpbP4TTo/YiDyPSO1bDP53fVnwgPkf99WYj6TW8dsg4vib3/uY50f8a9FDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758681686; c=relaxed/simple;
-	bh=33wXjsIvKpnr07ANf4dsbUFwqzQfE0tjd9GeFkQo5dk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZsKNmIQ3vRCHLMDfDSeCN8umsqHzKacJPFryljO23w50Td8rU/shqjXb63prGWadsuHB6g1hxs4jBV29z5OtEF368yVrEytHaCRZCS0FbV/h6bb2qyhQMIshDqzN8Q6qEGvkfd4A2pRuNENFkwP4pA9otgMNU2xiQzl5fcLxhxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j2V5aZ8y; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-344618b80d0so2176063fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758681683; x=1759286483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJ7ZD4HOO6vcvN2jhvcYNuUy+e/nu1npqP5xs4E4kvw=;
-        b=j2V5aZ8yMBhCfMo5ISfykD7gGN6yx8WMCaSuYJPBFLEWlio1CTj58WGzq9sAUph3QI
-         D3FTsfvMz9XkJcAEeS4z6zesVq2Bkc1BFvYB8sLR0qqNvq9E/qyeazaQ5dvKgWsS5gM4
-         9ARqO/5X4AdegKsHVjv9f7UlrLKGn4HtQFr30usWaJP8u0dXvZQMnOjXHb2+/opaOpKR
-         HNYTNw9TYEOJl5KA0zxJjj1IFxb8vubrKWRvZ0DKKWONX/34NY2kYXmSnORFsOwuVdAN
-         Z8a9MPvpNqKo9qxMHblozps2mjWViFcCbda5AqQaJp4hSFWwH/6pXGyg2CUlPArl/g/8
-         /SdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758681683; x=1759286483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KJ7ZD4HOO6vcvN2jhvcYNuUy+e/nu1npqP5xs4E4kvw=;
-        b=dIYuU+qkh/xAuotV0l6OAb2Vj7oEaeAJoXYg5E5Wr3byjRuTglJ8H7DfyRBETe23er
-         n5l4hqLBE6hHz7qsMPWkvwxLuFgWDjBSE/jlidj1sXLdrccuyQosVYv2CwLHpt4HEC+I
-         OQ0Y57L2z7zDVvTaLHTIOrZ52hRuGN/UNtXQgg1h9wEoCm+H3Zu5COe77tW+FxWG0pms
-         RLGDMHj8DXbZbqchNvupwKBqe0EhFnwt6eM1bFLyPLzFV74UFHZ5Iii3o9SC3WwsFqOf
-         jN8/v7KD7d855LCqPB5MNqgG0xtmCXwX3l7bQgf8RFrwc3k1XwMYsnbDfbmZvDgGHus+
-         8Csw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT1BgQDwiPrPoc9K20wx0I2VOPLELNeuJHQ4qo1OD9P0VDaJlLX1Iy78DLzq1GweefOjP2eM/M6tToui4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyatzwOaP1lJ2QoOgOXNLIJa7csNZ7jaMRRRSNwXCegy/JKsMJQ
-	NI6prFHCz+Sa8ZpZofoJBwoEBSlmD6lj7rCD+Dii2iUN3bUeJbn4PVfSEgSNKO/yoImHkn9OUIy
-	qqd2Zj1IEs4QFZYb/OL2L+BssPX7XPUQ7XzhS/zEOuw==
-X-Gm-Gg: ASbGncuIalHGUTVFSPRvxpGIwjyGmSmbSMIP8A+IxpLa0A/xsMT+lPxIE6MSVVJA75i
-	dX/aabSv6qcZ9Aq5f6+ewAjLwQgA1brsbbKpZkWCEYJA4KvLIJRZUlxkXaBzb3PgptvTs4PEGtw
-	eCvnNhms6380sZhIJrnV5/jEtl8Ejh27jSTkMmXP1yv4/uYbAcIf4tDjR65yGRNxDzduiZKiDgV
-	whxqQ8uKP2T5lsAWLs1TKvnJrEkUHE=
-X-Google-Smtp-Source: AGHT+IGEpNk9DDtckp5YNfBhGfRHVJ45anN0NmcR9uT9RDyjMg5L8WQA0A/0mav6VX8Fgt6VaztuETs4XxHkt904xHk=
-X-Received: by 2002:a05:6808:4fcf:b0:439:b9b3:af48 with SMTP id
- 5614622812f47-43f2d4fa2f9mr2800409b6e.51.1758681683348; Tue, 23 Sep 2025
- 19:41:23 -0700 (PDT)
+	s=arc-20240116; t=1758681921; c=relaxed/simple;
+	bh=lqxklR9mOWs81KNj4z4qsLpILTVDdfn7+J979dqGXGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qB65p3hg/EK0A055wvwdY60W2BkbHlyEjrixCcI67JvgO9XYn6B6nDnWWBSnsEBOC3YPMG3I3bn+9Kv6AStJg3emTp/as8qPBFd5VahP6JCpyJTH93Ec+2lHmknTrYJfgMexMgP32gDn5HOqEi9FLxTtTMbx9ckW/2DRSNJGPCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz4t1758681876t1e3ccc25
+X-QQ-Originating-IP: 4kgQSL6STHaKosl1eg/Ylv5lM/i5m44RFczJ2nXYIEw=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 24 Sep 2025 10:44:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17616937174524784097
+Date: Wed, 24 Sep 2025 10:44:34 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev, joerg@jo-so.de, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH net-next v13 1/5] net: rnpgbe: Add build support for
+ rnpgbe
+Message-ID: <EA71F5311AF8C4FB+20250924024434.GA292859@nic-Precision-5820-Tower>
+References: <20250922014111.225155-1-dong100@mucse.com>
+ <20250922014111.225155-2-dong100@mucse.com>
+ <20250923180854.46adc958@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827100959.83023-1-cuiyunhui@bytedance.com>
- <20250827100959.83023-2-cuiyunhui@bytedance.com> <CAD=FV=WiZ5=4Ck3G2gme=ey6uYQhi-3Wo32DpLj9P53wxGCojw@mail.gmail.com>
-In-Reply-To: <CAD=FV=WiZ5=4Ck3G2gme=ey6uYQhi-3Wo32DpLj9P53wxGCojw@mail.gmail.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Wed, 24 Sep 2025 10:41:12 +0800
-X-Gm-Features: AS18NWB66CdU_tLMngkAZDvsu7vdd4uKDW0eFr5qi5AGo0Yw70dG5SNPb2ixTPc
-Message-ID: <CAEEQ3wnHzL6KVaW=RAkoMNSoM+HW11n=5miFwkw7=LQw+375Gw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 1/2] watchdog: refactor watchdog_hld functionality
-To: Doug Anderson <dianders@chromium.org>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, atish.patra@linux.dev, anup@brainfault.org, will@kernel.org, 
-	mark.rutland@arm.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, catalin.marinas@arm.com, 
-	masahiroy@kernel.org, suzuki.poulose@arm.com, maz@kernel.org, 
-	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, mingo@kernel.org, 
-	lihuafei1@huawei.com, akpm@linux-foundation.org, jpoimboe@kernel.org, 
-	rppt@kernel.org, kees@kernel.org, thomas.weissschuh@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923180854.46adc958@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N2uUxVy6vITVQTcXJo2r0ul7TI+3+DuMqgDHgQqYv0Eq7/CjlRyceLmV
+	eby+lNbv7omMBKyA96mOP+uIqRqeYm9HbVB/OamPyCZZSUF+xUURZB9LlfbDSkE6vjnYYVY
+	u6TCrfJ2IQ1GXc5hfCqnkE1rBSbdl+A0UAjNglRtBO9Cu7CNZMjUCotPc5a89VAjwKAx4CO
+	ThIJ419eyWmVpOfIjUmmInIisVVZP2s5RJ8mQCzJN7qpebZjam3po6j68SV9bAdEKV3fau+
+	IOvLdIjVSKYlNJ2Bc8tPBT8r2xHVB6lCW/dB1NeUfRPuAlxKxFF9EVS1Gg4DtK5ENWbEc6X
+	JmAHfwKPgslLKYN/IeHKr8cQdiaqe6cEVFpyIKLnDd1wozG5pV9tm4EFw3oYlM9zdkhFBsn
+	N606SfA5vUkR4oPvOhg0lYErpFeKhHX/QRqzRbS39DhCcdhyY1fIAvUtEtcnI9qhsdZ7qJ4
+	X+slA9Um0LYVBwTPfiYGmc9+TwLE8yrCqqcflzHN5bpAKg+JxwlT6fflEIMeiWaFG7P39UJ
+	netksuCoar4aatyB8Lx8vre/6zwcHlUE/UdErpXXoKIeFuThHiiIt9L4MAaVozsIS7uFhC3
+	WB0KQxxlwf4c9+WtFxAOwH1x20u/1x3ZWtN0CCC6DS7L7y7H3SKnom4la+r8DCrfTKGihSq
+	Z6kv/S6uZlAtjccM6A02EfHnSBVEpR5y+bXAiunh0gO03sj2R7tNWwMT+jusP5Oap81bq3A
+	UJD/D2V8iJR9mYWEQFZBHBR0D8XHnUd915sGHNkezKh2jgpuzGodWWx0dExBjGj9dH9Xl6t
+	GLlWdjP8iW4Ne3wYVzPPPZWk1jnCub4sN7Kd4yvmPgY5DCoZkx/u+CBi0tdwfKVD3jX7HYs
+	DT+D6907gxAlk6fKd34ZaxaTJBZmONzrQFGzZBi2ZL14/fgGRnahg4S7+Ts0ArZ4qsxtkEJ
+	OKo3a3So8Xj+8X2rUUAdHW1wUN4GTGsWckWfe867mHpVjhTG7tg7yxqfpp1bPvtap1XPaNw
+	M20HtVLg==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-Hi Doug,
+Hi, Jakub:
 
-On Sat, Aug 30, 2025 at 5:34=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Wed, Aug 27, 2025 at 3:10=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.c=
-om> wrote:
-> >
-> > Move watchdog_hld.c to kernel/, and rename arm_pmu_irq_is_nmi()
-> > to arch_pmu_irq_is_nmi() for cross-arch reusability.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >  arch/arm64/kernel/Makefile                   | 1 -
-> >  drivers/perf/arm_pmu.c                       | 2 +-
-> >  include/linux/nmi.h                          | 1 +
-> >  include/linux/perf/arm_pmu.h                 | 2 --
-> >  kernel/Makefile                              | 2 +-
-> >  {arch/arm64/kernel =3D> kernel}/watchdog_hld.c | 8 ++++++--
-> >  6 files changed, 9 insertions(+), 7 deletions(-)
-> >  rename {arch/arm64/kernel =3D> kernel}/watchdog_hld.c (97%)
->
-> I'm not a huge fan of the perf hardlockup detector and IMO we should
-> maybe just delete it. Thus spreading it to support a new architecture
-> isn't my favorite thing to do. Can't you use the buddy hardlockup
-> detector?
->
-> That being said, I did a quick look at your patch. I'm pretty sure you
-> can't just move the arm64 "watchdog_hld.c" to be generic. Won't
-> hw_nmi_get_sample_period() conflict with everyone else's (x86 and
-> powerpc)?
+On Tue, Sep 23, 2025 at 06:08:54PM -0700, Jakub Kicinski wrote:
+> On Mon, 22 Sep 2025 09:41:07 +0800 Dong Yibo wrote:
+> > +===========================================================
+> > +Linux Base Driver for MUCSE(R) Gigabit PCI Express Adapters
+> > +===========================================================
+> > +
+> > +MUCSE Gigabit Linux driver.
+> 
+> You already said that in the heading above
+> 
+> > +Copyright (c) 2020 - 2025 MUCSE Co.,Ltd.
+> 
+> copyright is metadata, it should not be part of the user-visible doc.
+> 
+> > +Identifying Your Adapter
+> > +========================
+> > +The driver is compatible with devices based on the following:
+> > +
+> > + * MUCSE(R) Ethernet Controller N500 series
+> > + * MUCSE(R) Ethernet Controller N210 series
+> 
+> These are out of numeric sort order
+> 
+> > +Support
+> > +=======
+> > + If you have problems with the software or hardware, please contact our
+> > + customer support team via email at techsupport@mucse.com or check our
+> > + website at https://www.mucse.com/en/
+> 
+> Please don't add support statements. People can use a search engine if
+> they want to find the corporate support. The kernel docs are for kernel
+> topics, and "support" in the kernel is done on the mailing list.
+> 
+> 
 
-After discussing whether to remove watchdog perf, it still seems
-necessary to keep advancing with it. For the code, we just need to
-decorate hw_nmi_get_sample_period() with __weak, right?
+Got it. I will update this file like this:
 
+.. SPDX-License-Identifier: GPL-2.0
 
->
-> -Doug
->
+===========================================================
+Linux Base Driver for MUCSE(R) Gigabit PCI Express Adapters
+===========================================================
 
-Thanks,
-Yunhui
+Identifying Your Adapter
+========================
+The driver is compatible with devices based on the following:
+
+ * MUCSE(R) Ethernet Controller N210 series
+ * MUCSE(R) Ethernet Controller N500 series
+
+> > +config MGBE
+> > +	tristate "Mucse(R) 1GbE PCI Express adapters support"
+> > +	depends on PCI
+> > +	select PAGE_POOL
+> 
+> you're not using page pool in this series
+> 
+
+Yes, I will remove it, and add this when truely use.
+
+> > +MODULE_DEVICE_TABLE(pci, rnpgbe_pci_tbl);
+> > +MODULE_AUTHOR("Mucse Corporation, <techsupport@mucse.com>");
+> 
+> Only humans can author code, not corporations. Delete his AUTHOR entry
+> or add yourself as the author.
+> 
+
+Will fix this.
+
+> > +MODULE_DESCRIPTION("Mucse(R) 1 Gigabit PCI Express Network Driver");
+> > +MODULE_LICENSE("GPL");
+> 
+> 
+
+Thanks for your feedback.
+
 
