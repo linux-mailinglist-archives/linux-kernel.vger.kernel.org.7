@@ -1,133 +1,170 @@
-Return-Path: <linux-kernel+bounces-830385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37D1B9985C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:02:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E96B9985F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4634F7ABBF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3735C17AFB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255332E4266;
-	Wed, 24 Sep 2025 11:02:10 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7EB2E610B;
+	Wed, 24 Sep 2025 11:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sg2/n1Gk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ndn8VqGR"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CCF2DECD3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91F82E54DB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711729; cv=none; b=C5jzsZUOrwYEX4XYE/+EuGTGZsPRVI6F7zPGCzWofNd8o9PfuNrm+pn9Wro3pbkSE7P1Kzlx+DttUp+IJ4UrSIASovXIxHC7Rh2UOyKbh6Ng3lI1KHyJYwwX8RdB4SSY5GBHPQthEq5UZ1r9S5F/TazJNqPeU4mpI53zFwpIl38=
+	t=1758711830; cv=none; b=aJLrchDVInoxe8dbFf4rsU5j6ov1WeNzVVf7x2bxoOf37EKYpVNb/giSodV8zuu/gUVChPkB6L1srKnuJWWSGdtzu1H4elVcdM+le8Om+Z92ebI8L2Y9MEm/Feb5/sinBJOlbwvuYm6xQHhSEAf2oLnuUOXxDPnWCLAPMO5KxsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711729; c=relaxed/simple;
-	bh=Tb9enl8DiV6BO7835oLvIgPigsCcIfJUYclx9xA1aNw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OO5ieHPbx2vv+JoBAVuP5GnLqRPpi8JCgTSfzitJ9wo8kYx7pdq3pUbkdaTEIbSMdwnWMTnXNbiw37YMG3A9fqj6gxtResVRmJhkdDFvk8BKrvm4HldaVZWEno7hQcwXm8cONBhHJH8vkG927Oi+vK+YSizMXjXLjsIoj238aBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42575c5c876so41001875ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:02:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758711723; x=1759316523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u14xAhFIYJ8iBrwgxzSPy3VprpDahf7H052DcuYQois=;
-        b=l13qP/MLQU9POVOTXn2OJILd1ocwd6OMuSaUnR0GlP2U+aw2CvONND7buzW3LNieLk
-         dQ/gzpjsbYBtBQ4YTE90w4W6Y7VZmqq4bMyeAb3J9uNHdFymzePVx72S5oBKuRLhwZl6
-         pE7nSdRQzAKGJoJTXprT2Hgw6GKRREtKoQ7Vy0IqV+c0Bl+vi7VSznVxh0w+dMkpcOHF
-         4feyU+IRFsvZPEY9ACq+LaqrsSZp3v002jxovh45k3M6hWzfTFTwjgRsiGiVkGoAcv/X
-         TKoBA6I4bGV72Vp7IhvY8LDcaSbScpxM2Yslp57oekn2VIIj/AWu5vZAuxz0Gq/LU3cy
-         l8iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUta9dun4BdcZ8tt1+I0X2tsCsl6l4hDPdrfTPefdJ5L4BsliLJbDPvmTaPjnWp60r1FPopT7aqhN0QV8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7QaYwCbMGMsv/lpiNdCgHUvnJjqvFq/kBbXfJhUAVwALNmSjH
-	8Zyw+p3q4+KW6onZxOPWBBaKyJCWT/jVbaPwYE7xqI4IxQVqHAp+ULnREtqHJaScqTT7BL2lkw6
-	jrtELWum2YJpo9T/HwMRehe78HEhsBbvlAJliXFOCzy5p2FxX5n3eRK8Y854=
-X-Google-Smtp-Source: AGHT+IH+siDKdFbZtTVGW7dEqtBN8fVjf37uuXsXnaxWSUi3MPhiVKouuoIOYEvnmll1Nb6gVcfOyLsShM3X1S1juwr/6D+VKpm3
+	s=arc-20240116; t=1758711830; c=relaxed/simple;
+	bh=LM2ILCAmKT0HlgOfM+2iY9c6SQRN9iq773ECt9CigsM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lz2srmEWTKgOgCGCda7VGU7pDIiUJJxLVnagiqcC7YK4a7I9H19VX3r2OPseNtooaYco2D9srxcr3adg543c3DqnWVxeZ5kL6b29y5qqOA8cHyRonwjy+zwE8qYkM3HC5xIBjZtXGknTJCK2CZSdlCx3OImMwoFKAJquqK8AC0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sg2/n1Gk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ndn8VqGR; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id A47251D00107;
+	Wed, 24 Sep 2025 07:03:42 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 24 Sep 2025 07:03:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758711822;
+	 x=1758798222; bh=8jb3EmJHOwAdkojmIjPqDHZa58n3wYX161nLGH6EK/8=; b=
+	sg2/n1GkkHAkkymHZC5B0VViG7BHavGb3EmtPTalauCQWPxofJycgm+KBd6MDWw8
+	49TzjE17Wa4MiTnTO4eRcshDmlFiLBJDWsvoYsXVaH0UP3Zyz+vcA4GtHqsa0gdo
+	orKO9bDvqwnxg3dIzC4Vi/1e3twwmsqv7UtJXX9P1Ex2NO0BvATpGNQrpWmC8jlS
+	w5RuSD7863WRmsWbaM+ABJMssdH0AoU5FuJkL6WMB2ZDC6nFWq8c+SmL4DHRvNW1
+	FSns91GeSL3j4T53TriQOrRcB9liM0rDZ+DqvJVkrzBhglHkKVpa/yMDnDzWU4He
+	dep/1J7sWbi/8bb6AnJg6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758711822; x=
+	1758798222; bh=8jb3EmJHOwAdkojmIjPqDHZa58n3wYX161nLGH6EK/8=; b=N
+	dn8VqGRkYx3Pma/EBu4KfrVZoWdlmkcLohs9LC2/txSdJN5fZpd7KAi5+/pwsGiQ
+	su6Zm+x9dgsqD1zj+Z/YgAY5SIsfLSG+befkTZPZyGRmx0ne3o4d7nR2OeEU2XGh
+	UB5mDvFm0nU38i3aNHJYSp6UJ342S5reuLOwByXFXuo3emLy4Rk6/byTtsJ/XMdQ
+	T8mq4tH2IpaErLNJqb0Vs8n4jVNJ0IgmDPc4hlkBzlm2GLbntxdKu7NIc5Gsnkvl
+	RMmMVE5jTjNPDROgZ2JxP0xe0dx3K5jjZ0Q6lu28lSoJYYvnPQMN1uZWKMhp9PEu
+	KJi//MsGwDU4cRw4vbHRw==
+X-ME-Sender: <xms:DdDTaC8_t3mjd1ca1yrhG3a88IGSSUW6YfuLIGnl9OvBOi8znjcQ6A>
+    <xme:DdDTaNj0rFLDLhblP0TWEcOM29qHy9tymCdOwfE2nFIsyskIzjfyZ1InwmVZRsINN
+    M3zSKx8BrnlYyFpRLot2d4lHvTl4i35mLMv76DQC128T4ZGsa1fNw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeifeeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvffeiffeuteevgfdtffduiedvgfegleeiteduueekgfffteefvdegffevieduueen
+    ucffohhmrghinhepudeiqdhrtgdurdgrshenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphht
+    thhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehthhgvhhgrjhhimhgvse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhitggrrhhkohhlsehgohhoghhlvgdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhope
+    hgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhu
+    mheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihgrmhdrhh
+    hofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepjhhohhgrnhhnvghssehs
+    ihhpshholhhuthhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:DdDTaMewBAftm_7vrZZzklPk0qvmueZA-aZhBjCCWvPF78s2EKK0pQ>
+    <xmx:DdDTaKMM_p2RjZZvKvfEf5gNmHZ2U9xd3F5j_ukPvckU7sHUSQ2MaA>
+    <xmx:DdDTaPsjjQfWEGLsA8uozdijZ5fZ_BN9tDWqy5Nu1EMkViBxVkW7BA>
+    <xmx:DdDTaDC0gw2E_ePuyejYTiqd7ajQtTjBCJZYWfGsvBgzTszCNGNeuA>
+    <xmx:DtDTaF2wN4VQRU1YIljIVLV3F9nuxA7GzuTpNaJLjDDanKik0gNrPHUs>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 79228700065; Wed, 24 Sep 2025 07:03:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2181:b0:424:71e8:3a2e with SMTP id
- e9e14a558f8ab-42581e7a670mr75765285ab.16.1758711722915; Wed, 24 Sep 2025
- 04:02:02 -0700 (PDT)
-Date: Wed, 24 Sep 2025 04:02:02 -0700
-In-Reply-To: <20250924100341.1255033-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d3cfaa.a70a0220.1b52b.02c9.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] WARNING: bad unlock balance in hugetlb_vmdelete_list
-From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AxP-iOAFlspw
+Date: Wed, 24 Sep 2025 13:03:11 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Hajime Tazaki" <thehajime@gmail.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-um@lists.infradead.org,
+ "Ricardo Koller" <ricarkol@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Message-Id: <b55251bf-625e-48c3-8c60-eb4f8358f397@app.fastmail.com>
+In-Reply-To: <m2zfak7mnd.wl-thehajime@gmail.com>
+References: <cover.1758181109.git.thehajime@gmail.com>
+ <4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
+ <a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
+ <m28qib8g1r.wl-thehajime@gmail.com>
+ <6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
+ <m27bxu949d.wl-thehajime@gmail.com>
+ <CAMuHMdWAdhiY=MiG5JtboffSo_=D7TD5vFM6Ui5E8eS_VJiJ=g@mail.gmail.com>
+ <23adb61e95275251e459513a03ab7d2bcf1f2e07.camel@sipsolutions.net>
+ <m2zfak7mnd.wl-thehajime@gmail.com>
+Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU dependency to
+ PCI driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, Sep 24, 2025, at 01:51, Hajime Tazaki wrote:
+> On Wed, 24 Sep 2025 02:13:47 +0900, Johannes Berg wrote:
+>> On Tue, 2025-09-23 at 17:42 +0200, Geert Uytterhoeven wrote:
+>> > > 
+>> > > currently, drivers/pci/Kconfig (CONFIG_PCI) marks as depends on MMU,
+>> > > so we cannot select it when CONFIG_MMU=n.
+>> > 
+>> > That is a fairly recent change, see commit 8fe743b5eba0abfb ("PCI:
+>> > Add CONFIG_MMU dependency") in v6.16-rc1.  As this is not a "hard"
+>> > dependency, perhaps it should be reverted, iff you are willing to take
+>> > care of the casual breakage?
+>> 
+>> Why though? UML with PCI can't really be a functional thing, only a
+>> testing thing, and testing PCI on !MMU when that is actually impossible
+>> in non-simulation is pointless?
+>
+> currently nommu UML doesn't come with using PCI except building under
+> kunit (ARCH=um), but I have in my mind to use it under !MMU
+> environment, so would be an option in the future.
+>
+> and this series doesn't include PCI w/ !MMU.
+>
+> so, I would propose the modification to revert the MMU dependency when
+> time has come.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in hugetlb_vma_assert_locked
+The reason why it's currently disabled is that it was causing extra
+work to fix build failures in random PCI drivers that individually
+have a CONFIG_MMU dependency. Since we know that none of the NOMMU
+boards we support uses PCI, this was an easy way to avoid work.
 
-------------[ cut here ]------------
-WARNING: mm/hugetlb.c:368 at hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368, CPU#1: syz.0.28/6594
-Modules linked in:
-CPU: 1 UID: 0 PID: 6594 Comm: syz.0.28 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368
-Code: 2e e8 97 6e a1 ff eb 0c e8 90 6e a1 ff eb 05 e8 89 6e a1 ff 5b 41 5c 41 5d 41 5e 41 5f 5d e9 da 41 6a 09 cc e8 74 6e a1 ff 90 <0f> 0b 90 eb e5 e8 69 6e a1 ff 90 0f 0b 90 eb da 48 c7 c1 70 7c e4
-RSP: 0018:ffffc90003637368 EFLAGS: 00010293
-RAX: ffffffff821f22cc RBX: 0000000000000000 RCX: ffff888030330000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff520006c6e70 R12: ffff888026856500
-R13: 1ffff1100bd744fc R14: dffffc0000000000 R15: 0000000000000080
-FS:  00007fb2310906c0(0000) GS:ffff8881258c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb23108ff98 CR3: 0000000075cce000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- huge_pmd_unshare+0x2c8/0x540 mm/hugetlb.c:7622
- __unmap_hugepage_range+0x6e3/0x1aa0 mm/hugetlb.c:5901
- unmap_hugepage_range+0x32e/0x410 mm/hugetlb.c:6089
- hugetlb_vmdelete_list+0x189/0x1f0 fs/hugetlbfs/inode.c:495
- hugetlb_vmtruncate fs/hugetlbfs/inode.c:643 [inline]
- hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:881
- notify_change+0xc1a/0xf40 fs/attr.c:546
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3516 [inline]
- do_open fs/namei.c:3899 [inline]
- path_openat+0x306c/0x3830 fs/namei.c:4054
- do_filp_open+0x1fa/0x410 fs/namei.c:4081
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb23018eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb231090038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fb2303e5fa0 RCX: 00007fb23018eec9
-RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
-RBP: 00007fb230211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fb2303e6038 R14: 00007fb2303e5fa0 R15: 00007fff95fa5748
- </TASK>
+While there are still developers that care about NOMMU Linux
+and test it on the platforms they use, the NOMMU build failures
+usually end up in code that are irrelevant for their use cases,
+so neither the platform owners nor the driver authors care deeply
+about fixing that combination.
 
+If you want to be able to use PCI drivers on UML-NOMMU,
+you can probably use
 
-Tested on:
+config PCI
+       depends on MMU || UML
 
-commit:         ce7f1a98 Add linux-next specific files for 20250923
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=129a4d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-dashboard link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b2cce2580000
+so it will be ignored by the build bots on other architectures.
+You'll still have to decide whether to fix driver code when
+regressions in PCI drivers happen, add 'depends on !UML'
+to individual drivers, or just live with randconfig failures.
 
+      Arnd
 
