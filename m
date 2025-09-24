@@ -1,83 +1,225 @@
-Return-Path: <linux-kernel+bounces-831261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA71FB9C383
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91DFB9C389
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA29D3A3AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB817ABCEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF3E285C91;
-	Wed, 24 Sep 2025 21:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="qANOd8KC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7BA2629C;
+	Wed, 24 Sep 2025 21:00:31 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456D281509
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F692030A;
+	Wed, 24 Sep 2025 21:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758747612; cv=none; b=gI9DHDQXZzcPB/IadYMtbXOmWsf7gZaHZRqimX5wfglrl569iU0g722BQWXRaO9Jw3gT4ol8miyOoOARrEl3FL7PTSNKp/Z7wo+7BBsB7xl0X8WV1cmrE+ZDCUVzj3/k71ND23xRR2ZP8djKTtrtXsG9K+BdZ2gc5CtAgiBMH1A=
+	t=1758747630; cv=none; b=XvNeCo4Zf2jqVBIQU7FwAbtad1OeDBnmIaVQ6aJonJkdNjm7OH8fDCsP5H7QR5oOiJDj0L2jDqvlqAdyvTIU4oBxaCUfj2zej6mFI2c6DVD7BXLJ6ys1LoOd336q9PtEqcEYbSPMLUnosACFTYbdaqCjFAXDzuMIQZcdI1ZMbXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758747612; c=relaxed/simple;
-	bh=dDJN8b77rN9ysunvOFha1XEVk2yflq4396QA+xCKryA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=X1PseXp0wj2MFjdoI5cxlCIbRz9dGt7nGFQO9Oh6GGa9Lk5aiuQMVhnzvcssWWJyPfr9JNRh+pWEdEKqeuTpXoVyg18SwtSlAoOr2Uw+2dBGAKt0RwtdL9N2+AZmyqnEL1mJ0OGl4bGN2QmG7hkbrdytwgCqAx+dssztXQwjEjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=qANOd8KC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19600C4CEE7;
-	Wed, 24 Sep 2025 21:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758747611;
-	bh=dDJN8b77rN9ysunvOFha1XEVk2yflq4396QA+xCKryA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qANOd8KCLjLmqepp6rdBNv6MmCrjJQdAU6quKdt1acGS2IMaHi6blrwkvKzfR/A2g
-	 pLanFR4po7eEdJLjiTLqiKCNSElQhay+3N7EYlL820XKuZIP0G1rqUhse3aEbpG/jt
-	 YQ4zbJV7UVgLhM7jEUz3SZDs4Wg2MoCAuIB9KoM8=
-Date: Wed, 24 Sep 2025 14:00:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
- Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>, Changyuan
- Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, kexec@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] kho: add support for preserving vmalloc
- allocations
-Message-Id: <20250924140010.81305926b42d0223dcf3b818@linux-foundation.org>
-In-Reply-To: <mafs0ikh7dg54.fsf@kernel.org>
-References: <20250921054458.4043761-1-rppt@kernel.org>
-	<20250921054458.4043761-4-rppt@kernel.org>
-	<20250922131948.GX1391379@nvidia.com>
-	<20250922143407.93e171f8b7c09eb21159a33e@linux-foundation.org>
-	<mafs0ikh7dg54.fsf@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758747630; c=relaxed/simple;
+	bh=RGaamjF2IpwNIjXgC1t3FdjIIIk21TfElKBMJOvZv8Q=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=P9zz68xVuKWXpN7Df937vDxgh/6568g7LoWHjpptXyxcZSmezin8xcfDO9KfK6XPnC+kSc65XARCojbqVWjHPcAFXg84S1DPeHxSV2bcFwD/QUndcD1tDvvrRPqOuV4+64uIq9pNGWCltkTqRQeXbdQtMV1u8F4ZIsJQfzbDhtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.103] (213.87.129.165) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 25 Sep
+ 2025 00:00:13 +0300
+Message-ID: <1bb8aa58-7f40-4ba7-959a-e44655aa4a83@omp.ru>
+Date: Thu, 25 Sep 2025 00:00:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+	<davem@davemloft.net>, <linux-crypto@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Karina Yankevich <k.yankevich@omp.ru>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v2] crypto: drbg - make drbg_{ctr_bcc,kcapi_sym}() return
+ *void*
+Organization: Open Mobile Platform
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/24/2025 20:43:03
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 196576 [Sep 24 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
+ f6b3a124585516de4e61e2bf9df040d8947a2fd5
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.129.165
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/24/2025 20:44:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/24/2025 5:12:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, 24 Sep 2025 17:28:07 +0200 Pratyush Yadav <pratyush@kernel.org> wrote:
+From: Karina Yankevich <k.yankevich@omp.ru>
 
-> >
-> > Not sure why this code works - I'll suspend the series from linux-next
-> > for now.
-> 
-> It only gets called in the error path and that didn't get hit during
-> testing I suppose. Until v3 the chunk was being allocated using
-> kzalloc() so I guess this got missed in the move to get_zeroed_page().
-> 
-> I think Mike is out of office this week. Do you think this series is
-> stable enough to land in the upcoming merge window? If so, I can send a
-> v6 with the fix today.
+drgb_kcapi_sym() always returns 0, so make it return void instead.
+Consequently, make drbg_ctr_bcc() return void too.
 
-A one-liner fiup would be preferred, if no other changes are required,
-thanks.
+Found by Linux Verification Center (linuxtesting.org) with the Svace static
+analysis tool.
+
+[Sergey: fixed the subject, refreshed the patch]
+
+Signed-off-by: Karina Yankevich <k.yankevich@omp.ru>
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+
+---
+The patch is against the master branch of Linus Torvalds' linux.git repo
+(I'm unable to use the other repos on git.kernel.org and I have to update
+Linus' repo from GitHub).
+
+ crypto/drbg.c |   38 ++++++++++++--------------------------
+ 1 file changed, 12 insertions(+), 26 deletions(-)
+
+Index: linux/crypto/drbg.c
+===================================================================
+--- linux.orig/crypto/drbg.c
++++ linux/crypto/drbg.c
+@@ -296,8 +296,8 @@ MODULE_ALIAS_CRYPTO("drbg_nopr_ctr_aes12
+ 
+ static void drbg_kcapi_symsetkey(struct drbg_state *drbg,
+ 				 const unsigned char *key);
+-static int drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
+-			  const struct drbg_string *in);
++static void drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
++			   const struct drbg_string *in);
+ static int drbg_init_sym_kernel(struct drbg_state *drbg);
+ static int drbg_fini_sym_kernel(struct drbg_state *drbg);
+ static int drbg_kcapi_sym_ctr(struct drbg_state *drbg,
+@@ -306,11 +306,10 @@ static int drbg_kcapi_sym_ctr(struct drb
+ #define DRBG_OUTSCRATCHLEN 256
+ 
+ /* BCC function for CTR DRBG as defined in 10.4.3 */
+-static int drbg_ctr_bcc(struct drbg_state *drbg,
+-			unsigned char *out, const unsigned char *key,
+-			struct list_head *in)
++static void drbg_ctr_bcc(struct drbg_state *drbg,
++			 unsigned char *out, const unsigned char *key,
++			 struct list_head *in)
+ {
+-	int ret = 0;
+ 	struct drbg_string *curr = NULL;
+ 	struct drbg_string data;
+ 	short cnt = 0;
+@@ -327,9 +326,7 @@ static int drbg_ctr_bcc(struct drbg_stat
+ 			/* 10.4.3 step 4.2 */
+ 			if (drbg_blocklen(drbg) == cnt) {
+ 				cnt = 0;
+-				ret = drbg_kcapi_sym(drbg, out, &data);
+-				if (ret)
+-					return ret;
++				drbg_kcapi_sym(drbg, out, &data);
+ 			}
+ 			out[cnt] ^= *pos;
+ 			pos++;
+@@ -339,9 +336,7 @@ static int drbg_ctr_bcc(struct drbg_stat
+ 	}
+ 	/* 10.4.3 step 4.2 for last block */
+ 	if (cnt)
+-		ret = drbg_kcapi_sym(drbg, out, &data);
+-
+-	return ret;
++		drbg_kcapi_sym(drbg, out, &data);
+ }
+ 
+ /*
+@@ -388,7 +383,6 @@ static int drbg_ctr_df(struct drbg_state
+ 		       unsigned char *df_data, size_t bytes_to_return,
+ 		       struct list_head *seedlist)
+ {
+-	int ret = -EFAULT;
+ 	unsigned char L_N[8];
+ 	/* S3 is input */
+ 	struct drbg_string S1, S2, S4, cipherin;
+@@ -459,9 +453,7 @@ static int drbg_ctr_df(struct drbg_state
+ 		 */
+ 		drbg_cpu_to_be32(i, iv);
+ 		/* 10.4.2 step 9.2 -- BCC and concatenation with temp */
+-		ret = drbg_ctr_bcc(drbg, temp + templen, K, &bcc_list);
+-		if (ret)
+-			goto out;
++		drbg_ctr_bcc(drbg, temp + templen, K, &bcc_list);
+ 		/* 10.4.2 step 9.3 */
+ 		i++;
+ 		templen += drbg_blocklen(drbg);
+@@ -482,9 +474,7 @@ static int drbg_ctr_df(struct drbg_state
+ 		 * implicit as the key is only drbg_blocklen in size based on
+ 		 * the implementation of the cipher function callback
+ 		 */
+-		ret = drbg_kcapi_sym(drbg, X, &cipherin);
+-		if (ret)
+-			goto out;
++		drbg_kcapi_sym(drbg, X, &cipherin);
+ 		blocklen = (drbg_blocklen(drbg) <
+ 				(bytes_to_return - generated_len)) ?
+ 			    drbg_blocklen(drbg) :
+@@ -494,13 +484,10 @@ static int drbg_ctr_df(struct drbg_state
+ 		generated_len += blocklen;
+ 	}
+ 
+-	ret = 0;
+-
+-out:
+ 	memset(iv, 0, drbg_blocklen(drbg));
+ 	memset(temp, 0, drbg_statelen(drbg) + drbg_blocklen(drbg));
+ 	memset(pad, 0, drbg_blocklen(drbg));
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+@@ -1806,15 +1793,14 @@ static void drbg_kcapi_symsetkey(struct
+ 	crypto_cipher_setkey(tfm, key, (drbg_keylen(drbg)));
+ }
+ 
+-static int drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
+-			  const struct drbg_string *in)
++static void drbg_kcapi_sym(struct drbg_state *drbg, unsigned char *outval,
++			   const struct drbg_string *in)
+ {
+ 	struct crypto_cipher *tfm = drbg->priv_data;
+ 
+ 	/* there is only component in *in */
+ 	BUG_ON(in->len < drbg_blocklen(drbg));
+ 	crypto_cipher_encrypt_one(tfm, outval, in->buf);
+-	return 0;
+ }
+ 
+ static int drbg_kcapi_sym_ctr(struct drbg_state *drbg,
 
