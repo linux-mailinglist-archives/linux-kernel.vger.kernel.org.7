@@ -1,54 +1,40 @@
-Return-Path: <linux-kernel+bounces-830137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD65B98E26
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D53B98E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC4883A4B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:27:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B243518895E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B270285CB6;
-	Wed, 24 Sep 2025 08:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52973283FEB;
+	Wed, 24 Sep 2025 08:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C+eiHwu5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b="PUWubLWr"
+Received: from mail-m49213.qiye.163.com (mail-m49213.qiye.163.com [45.254.49.213])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBACD4502F;
-	Wed, 24 Sep 2025 08:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732C02248A5;
+	Wed, 24 Sep 2025 08:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702430; cv=none; b=S42MUhdR6ZXEDuqOzJN7dcayCaIUAo0Hlxnx/Ujo6ELPWhHZ08Tgka2qpKbPD6RBscO1W6aBtcJP29ApdfSDpcRupEsjQYBiCxAM2c6vJ2edoCAZd2nPewO+FxINvkU5x6FnQyi86saLeF/StCEKVeOU3tVeb7cuwgLQ9KOMWwU=
+	t=1758702461; cv=none; b=UgN9AoSIXv54ouqfRZkjRa9AX6o6izH5VaQWttU6yMV+TZpibWoEaMPRy/JbqPfXTsu5GZgdfMwl/MM6xzZb21Qz5uVAwV/9456UpLtzlmrds/AvO1J94pNvmG3heZ1NybaQfSP0qvFyVVoJGy7jBIhCEBFbU7Lx6BzGNKO0//8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702430; c=relaxed/simple;
-	bh=6Wtt45GCrcyLE7Y+MjZ0xRGSIEip4Qk9mzL+4G6Noh8=;
+	s=arc-20240116; t=1758702461; c=relaxed/simple;
+	bh=2XtMD73qRwm1FDk0RBHNctPkkJjJs42pppYKYzyF0ok=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlm072pmX7L5aBigTR9KDe63aeoayTGkbE8N4ZJc9umwGCMhAad0EZHx7hMa8rov4rztv/ioqOMLCHXaQWRLE3okiF5l/9x/UZEGwTknH+ZGn8iVuUiOyNQQSPNAam3uU7FoDnz5euRHxqGnufDlbThrSUHG6DufR+EDXTfxyxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C+eiHwu5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758702427;
-	bh=6Wtt45GCrcyLE7Y+MjZ0xRGSIEip4Qk9mzL+4G6Noh8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C+eiHwu5PH2XvRjUDDPKl/cjs3WlZViR0RFmhNVG5mu2kN+qHXOyf1R9JGqEk0vKz
-	 rBP+czHXptgenYuE6tUvFUROm644KdcAyJG1VoweCC0JoD+8EDLzbjHklWa5tSsJlx
-	 5pc2ovu1A6qBaTlOcZuI9/ilMvO/sZVLJw7JsB43UXBJr36dnEUWML2QDfjUG/fna9
-	 4n9fYhv+C+I58FqJKab3KsbpAgYGloWiT3p6RTple/pXyM9CM2VVHJDkWQxqKOk+MI
-	 yM/gw1AMS3m6MhXn44AimDZNqOGp14I7FSC/rpOW0tl37fqrKagIG4z2r3HJmfx16p
-	 F95p9XMb676EA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 73B8017E068C;
-	Wed, 24 Sep 2025 10:27:06 +0200 (CEST)
-Message-ID: <9dd2fea8-f828-4298-97a2-10ef1c61799f@collabora.com>
-Date: Wed, 24 Sep 2025 10:27:05 +0200
+	 In-Reply-To:Content-Type; b=PHF7U7RV0ETMQ67tTH2xOrw/S2YaXjVd7iCSiVz99nY+l776mazjNQX8cqA0AqhrRG9/IcniuktqVzK2uvVuZjBUbvJOc/M4KWUDSnsMNY0XrbXhUJxJsB+xitABqcdPIwlw3A3nALCUENK4nKDIsrudaElRYNK/Rb2JmTwYTQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn; spf=pass smtp.mailfrom=cqsoftware.com.cn; dkim=pass (1024-bit key) header.d=cqsoftware.com.cn header.i=@cqsoftware.com.cn header.b=PUWubLWr; arc=none smtp.client-ip=45.254.49.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cqsoftware.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cqsoftware.com.cn
+Received: from [192.168.6.2] (unknown [123.53.39.124])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23e53a688;
+	Wed, 24 Sep 2025 16:27:26 +0800 (GMT+08:00)
+Message-ID: <8b47e1d9-19f2-42cf-9077-4ff824101923@cqsoftware.com.cn>
+Date: Wed, 24 Sep 2025 16:27:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,74 +42,389 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: airoha: Add reset support to
- EN7523 clock binding
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Felix Fietkau <nbd@nbd.name>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20250924060509.1889131-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924060509.1889131-2-mikhail.kshevetskiy@iopsys.eu>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250924060509.1889131-2-mikhail.kshevetskiy@iopsys.eu>
+Subject: Re: [PATCH] docs/zh_CN: Add security SCTP Chinese translation
+To: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net
+Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250924072845.22400-1-zhaoshuo@cqsoftware.com.cn>
+From: zhaoshuo <zhaoshuo@cqsoftware.com.cn>
+In-Reply-To: <20250924072845.22400-1-zhaoshuo@cqsoftware.com.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a997ad5a8bf09d0kunm414aab7c5d7271
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCShlIVkxNTBgYH0lOGE8YH1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSUhVTkhVSEJVSklPWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxKVUpLS1
+	VKQktLWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=PUWubLWrDKA14buoij4ZIpiF6nrAUr6Xwx7dJuohTuXdQejRZ8lXbf0UXYIG2uY56zfAHPyigWz99peIDhY6nAjVmm5N2KaAyUelT87ETfKy6TbK5Matmj3ghLxfjTBlWD+MEvruLREZ+gLoIAp9ZVb/ks7/hxqXirRT8H0RjMQ=; c=relaxed/relaxed; s=default; d=cqsoftware.com.cn; v=1;
+	bh=F+tIBwKTQHIxmaCdpQPl6B3WLhEeI6TGwaIXtoN/9Fk=;
+	h=date:mime-version:subject:message-id:from;
 
-Il 24/09/25 08:05, Mikhail Kshevetskiy ha scritto:
-> Introduce reset capability to EN7523 device-tree clock binding
-> documentation. Also this patch makes mandatory '#reset-cells'
-> property for EN7523 SoC dts.
-> 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+
+在 2025/9/24 15:28, Shuo Zhao 写道:
+> Translate .../security/SCTP.rst into Chinese.
+>
+> Update the translation through commit da51bbcdbace
+> ("Docs: typos/spelling")
+>
+> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+
+This document has been reviewed and signed by Zhang San. The link is
+
+https://lore.kernel.org/linux-doc/4fbf991a-f0ce-48e0-a408-f3d7ec2d561c@linux.dev/.
+
+
+Thanks,
+
+Shuo Zhao
+
 > ---
->   .../bindings/clock/airoha,en7523-scu.yaml     |  4 +-
->   .../dt-bindings/reset/airoha,en7523-reset.h   | 61 +++++++++++++++++++
->   2 files changed, 63 insertions(+), 2 deletions(-)
->   create mode 100644 include/dt-bindings/reset/airoha,en7523-reset.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> index fe2c5c1baf43..a0df16485300 100644
-> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -53,6 +53,7 @@ required:
->     - compatible
->     - reg
->     - '#clock-cells'
-> +  - '#reset-cells'
-
-I can't find any reason why #reset-cells should be a required property: this is a
-clock controller, it doesn't necessarily have to provide resets, and you don't
-necessarily have to use resets, so this shall not be a required property.
-
-
->   
->   allOf:
->     - if:
-> @@ -64,8 +65,6 @@ allOf:
->           reg:
->             minItems: 2
->   
-> -        '#reset-cells': false
-> -
->     - if:
->         properties:
->           compatible:
-> @@ -85,6 +84,7 @@ examples:
->         reg = <0x1fa20000 0x400>,
->               <0x1fb00000 0x1000>;
->         #clock-cells = <1>;
-> +      #reset-cells = <1>;
->       };
->   
->     - |
-
-Regards,
-Angelo
+>   .../translations/zh_CN/security/SCTP.rst      | 317 ++++++++++++++++++
+>   .../translations/zh_CN/security/index.rst     |   2 +-
+>   2 files changed, 318 insertions(+), 1 deletion(-)
+>   create mode 100644 Documentation/translations/zh_CN/security/SCTP.rst
+>
+> diff --git a/Documentation/translations/zh_CN/security/SCTP.rst b/Documentation/translations/zh_CN/security/SCTP.rst
+> new file mode 100644
+> index 000000000000..f2774b0d66b5
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/security/SCTP.rst
+> @@ -0,0 +1,317 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/security/SCTP.rst
+> +
+> +:翻译:
+> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+> +
+> +====
+> +SCTP
+> +====
+> +
+> +SCTP的LSM支持
+> +=============
+> +
+> +安全钩子
+> +--------
+> +
+> +对于安全模块支持，已经实现了三个特定于SCTP的钩子::
+> +
+> +	security_sctp_assoc_request()
+> +	security_sctp_bind_connect()
+> +	security_sctp_sk_clone()
+> +	security_sctp_assoc_established()
+> +
+> +这些钩子的用法在下面的 `SCTP的SELinux支持`_ 一章中描述SELinux的实现。
+> +
+> +
+> +security_sctp_assoc_request()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +将关联INIT数据包的 ``@asoc`` 和 ``@chunk->skb`` 传递给安全模块。
+> +成功时返回 0，失败时返回错误。
+> +::
+> +
+> +	@asoc - 指向sctp关联结构的指针。
+> +	@skb - 指向包含关联数据包skbuff的指针。
+> +
+> +
+> +security_sctp_bind_connect()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +将一个或多个IPv4/IPv6地址传递给安全模块进行基于 ``@optname`` 的验证，
+> +这将导致是绑定还是连接服务，如下面的权限检查表所示。成功时返回 0，失败
+> +时返回错误。
+> +::
+> +
+> +	@sk      - 指向sock结构的指针。
+> +	@optname - 需要验证的选项名称。
+> +	@address - 一个或多个IPv4 / IPv6地址。
+> +	@addrlen - 地址的总长度。使用sizeof(struct sockaddr_in)或
+> +			   sizeof(struct sockaddr_in6)来计算每个ipv4或ipv6地址。
+> +
+> +  ------------------------------------------------------------------
+> +  |                     BIND 类型检查                               |
+> +  |       @optname             |         @address contains         |
+> +  |----------------------------|-----------------------------------|
+> +  | SCTP_SOCKOPT_BINDX_ADD     | 一个或多个 ipv4 / ipv6 地址         |
+> +  | SCTP_PRIMARY_ADDR          | 单个 ipv4 or ipv6 地址             |
+> +  | SCTP_SET_PEER_PRIMARY_ADDR | 单个 ipv4 or ipv6 地址             |
+> +  ------------------------------------------------------------------
+> +
+> +  ------------------------------------------------------------------
+> +  |                   CONNECT 类型检查                              |
+> +  |       @optname             |         @address contains         |
+> +  |----------------------------|-----------------------------------|
+> +  | SCTP_SOCKOPT_CONNECTX      | 一个或多个 ipv4 / ipv6 地址         |
+> +  | SCTP_PARAM_ADD_IP          | 一个或多个 ipv4 / ipv6 地址         |
+> +  | SCTP_SENDMSG_CONNECT       | 单个 ipv4 or ipv6 地址             |
+> +  | SCTP_PARAM_SET_PRIMARY     | 单个 ipv4 or ipv6 地址             |
+> +  ------------------------------------------------------------------
+> +
+> +条目 ``@optname`` 的摘要如下::
+> +
+> +	SCTP_SOCKOPT_BINDX_ADD - 允许在（可选地）调用 bind(3) 后，关联额外
+> +							 的绑定地址。
+> +							 sctp_bindx(3) 用于在套接字上添加一组绑定地址。
+> +
+> +	SCTP_SOCKOPT_CONNECTX - 允许分配多个地址以连接到对端（多宿主）。
+> +							sctp_connectx(3) 使用多个目标地址在SCTP
+> +							套接字上发起连接。
+> +
+> +	SCTP_SENDMSG_CONNECT  - 通过sendmsg(2)或sctp_sendmsg(3)在新关联上
+> +							发起连接。
+> +
+> +	SCTP_PRIMARY_ADDR     - 设置本地主地址。
+> +
+> +	SCTP_SET_PEER_PRIMARY_ADDR - 请求远程对端将某个地址设置为其主地址。
+> +
+> +	SCTP_PARAM_ADD_IP          - 在启用动态地址重配置时使用。
+> +	SCTP_PARAM_SET_PRIMARY     - 如下所述，启用重新配置功能。
+> +
+> +
+> +为了支持动态地址重新配置，必须在两个端点上启用以下
+> +参数（或使用适当的 **setsockopt**\(2)）::
+> +
+> +	/proc/sys/net/sctp/addip_enable
+> +	/proc/sys/net/sctp/addip_noauth_enable
+> +
+> +当相应的 ``@optname`` 存在时，以下的 *_PARAM_* 参数会
+> +通过ASCONF块发送到对端::
+> +
+> +		  @optname                      ASCONF Parameter
+> +		 ----------                    ------------------
+> +	SCTP_SOCKOPT_BINDX_ADD     ->   SCTP_PARAM_ADD_IP
+> +	SCTP_SET_PEER_PRIMARY_ADDR ->   SCTP_PARAM_SET_PRIMARY
+> +
+> +
+> +security_sctp_sk_clone()
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +每当通过 **accept**\(2)创建一个新的套接字（即TCP类型的套接字），或者当
+> +一个套接字被‘剥离’时如用户空间调用 **sctp_peeloff**\(3)，会调用此函数。
+> +::
+> +
+> +	@asoc -  指向当前sctp关联结构的指针。
+> +	@sk - 指向当前套接字结构的指针。
+> +	@newsk - 指向新的套接字结构的指针。
+> +
+> +
+> +security_sctp_assoc_established()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +当收到COOKIE ACK时调用，对于客户端，对端的secid将被保存
+> +到 ``@asoc->peer_secid`` 中::
+> +
+> +	@asoc - 指向sctp关联结构的指针。
+> +	@skb - 指向COOKIE ACK数据包的skbuff指针。
+> +
+> +
+> +用于关联建立的安全钩子
+> +----------------------
+> +
+> +下图展示了在建立关联时 ``security_sctp_bind_connect()``、 ``security_sctp_assoc_request()``
+> +和 ``security_sctp_assoc_established()`` 的使用。
+> +::
+> +
+> +      SCTP 端点 "A"                                 SCTP 端点 "Z"
+> +      =============                                 =============
+> +    sctp_sf_do_prm_asoc()
+> + 关联的设置可以通过connect(2),
+> + sctp_connectx(3),sendmsg(2)
+> + or sctp_sendmsg(3)来发起。
+> + 这将导致调用security_sctp_bind_connect()
+> + 发起与SCTP对端端点"Z"的关联。
+> +         INIT --------------------------------------------->
+> +                                                   sctp_sf_do_5_1B_init()
+> +                                                 响应一个INIT数据块。
+> +                                             SCTP对端端点"A"正在请求一个临时关联。
+> +                                             如果是首次关联，调用security_sctp_assoc_request()
+> +                                             来设置对等方标签。
+> +                                             如果不是首次关联，检查是否被允许。
+> +                                             如果允许，则发送:
+> +          <----------------------------------------------- INIT ACK
+> +          |
+> +          |                                  否则，生成审计事件并默默丢弃该数据包。
+> +          |
+> +    COOKIE ECHO ------------------------------------------>
+> +                                                  sctp_sf_do_5_1D_ce()
+> +                                             响应一个COOKIE ECHO数据块。
+> +                                             确认该cookie并创建一个永久关联。
+> +                                             调用security_sctp_assoc_request()
+> +                                             执行与INIT数据块响应相同的操作。
+> +          <------------------------------------------- COOKIE ACK
+> +          |                                               |
+> +    sctp_sf_do_5_1E_ca                                    |
+> + 调用security_sctp_assoc_established()                    |
+> + 来设置对方标签                                           |
+> +          |                                               |
+> +          |                               如果是SCTP_SOCKET_TCP或是剥离的套接
+> +          |                               字，会调用 security_sctp_sk_clone()
+> +          |                               来克隆新的套接字。
+> +          |                                               |
+> +         建立                                            建立
+> +          |                                               |
+> +    ------------------------------------------------------------------
+> +    |                            关联建立                            |
+> +    ------------------------------------------------------------------
+> +
+> +
+> +SCTP的SELinux支持
+> +=================
+> +
+> +安全钩子
+> +--------
+> +
+> +上面的 `SCTP的LSM支持`_ 章节描述了以下SCTP安全钩子，SELinux的细节
+> +说明如下::
+> +
+> +	security_sctp_assoc_request()
+> +	security_sctp_bind_connect()
+> +	security_sctp_sk_clone()
+> +	security_sctp_assoc_established()
+> +
+> +
+> +security_sctp_assoc_request()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +将关联INIT数据包的 ``@asoc`` 和 ``@chunk->skb`` 传递给安全模块。
+> +成功时返回 0，失败时返回错误。
+> +::
+> +
+> +    @asoc - 指向sctp关联结构的指针。
+> +    @skb - 指向关联数据包skbuff的指针。
+> +
+> +安全模块执行以下操作:
+> +	 如果这是 ``@asoc->base.sk`` 上的首次关联，则将对端的sid设置
+> +	 为 ``@skb`` 中的值。这将确保只有一个对端sid分配给可能支持多个
+> +	 关联的 ``@asoc->base.sk``。
+> +
+> +	 否则验证 ``@asoc->base.sk peer sid`` 是否与 ``@skb peer sid``
+> +	 匹配，以确定该关联是否应被允许或拒绝。
+> +
+> +	 将sctp的 ``@asoc sid`` 设置为套接字的sid（来自 ``asoc->base.sk``）
+> +	 并从 ``@skb peer sid`` 中提取MLS部分。这将在SCTP的TCP类型套接字及
+> +	 剥离连接中使用，因为它们会导致生成一个新的套接字。
+> +
+> +	 如果配置了IP安全选项（CIPSO/CALIPSO），则会在套接字上设置IP选项。
+> +
+> +
+> +security_sctp_bind_connect()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +根据 ``@optname`` 检查ipv4/ipv6地址所需的权限，具体如下::
+> +
+> +  ------------------------------------------------------------------
+> +  |                      BIND 权限检查                              |
+> +  |       @optname             |         @address contains         |
+> +  |----------------------------|-----------------------------------|
+> +  | SCTP_SOCKOPT_BINDX_ADD     | 一个或多个 ipv4 / ipv6 地址        |
+> +  | SCTP_PRIMARY_ADDR          | 单个 ipv4 or ipv6 地址            |
+> +  | SCTP_SET_PEER_PRIMARY_ADDR | 单个 ipv4 or ipv6 地址            |
+> +  ------------------------------------------------------------------
+> +
+> +  ------------------------------------------------------------------
+> +  |                   CONNECT 权限检查                              |
+> +  |       @optname             |         @address contains         |
+> +  |----------------------------|-----------------------------------|
+> +  | SCTP_SOCKOPT_CONNECTX      | 一个或多个 ipv4 / ipv6 地址        |
+> +  | SCTP_PARAM_ADD_IP          | 一个或多个 ipv4 / ipv6 地址        |
+> +  | SCTP_SENDMSG_CONNECT       | 单个 ipv4 or ipv6 地址            |
+> +  | SCTP_PARAM_SET_PRIMARY     | 单个 ipv4 or ipv6 地址            |
+> +  ------------------------------------------------------------------
+> +
+> +
+> +`SCTP的LSM支持`_ 提供了 ``@optname`` 摘要，并且还描述了当启用动态地址重新
+> +配置时，ASCONF块的处理过程。
+> +
+> +
+> +security_sctp_sk_clone()
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +每当通过 **accept**\(2)（即TCP类型的套接字）创建一个新的套接字，或者
+> +当一个套接字被“剥离”如用户空间调用 **sctp_peeloff**\(3)时，
+> +``security_sctp_sk_clone()`` 将会分别将新套接字的sid和对端sid设置为
+> +``@asoc sid`` 和 ``@asoc peer sid`` 中包含的值。
+> +::
+> +
+> +	@asoc - 指向当前sctp关联结构的指针。
+> +	@sk - 指向当前sock结构的指针。
+> +	@newsk - 指向新sock结构的指针。
+> +
+> +
+> +security_sctp_assoc_established()
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +当接收到COOKIE ACK时调用，它将连接的对端sid设置为 ``@skb`` 中的值::
+> +
+> +	@asoc - 指向sctp关联结构的指针。
+> +	@skb - 指向COOKIE ACK包skbuff的指针。
+> +
+> +
+> +策略声明
+> +--------
+> +以下支持SCTP的类和权限在内核中是可用的::
+> +
+> +	class sctp_socket inherits socket { node_bind }
+> +
+> +当启用以下策略功能时::
+> +
+> +	policycap extended_socket_class;
+> +
+> +SELinux对SCTP的支持添加了用于连接特定端口类型 ``name_connect`` 权限
+> +以及在下面的章节中进行解释的 ``association`` 权限。
+> +
+> +如果用户空间工具已更新，SCTP将支持如下所示的 ``portcon`` 声明::
+> +
+> +	portcon sctp 1024-1036 system_u:object_r:sctp_ports_t:s0
+> +
+> +
+> +SCTP对端标签
+> +------------
+> +每个SCTP套接字仅分配一个对端标签。这个标签将在建立第一个关联时分配。
+> +任何后续在该套接字上的关联都会将它们的数据包对端标签与套接字的对端标
+> +签进行比较，只有在它们不同的情况下 ``association`` 权限才会被验证。
+> +这是通过检查套接字的对端sid与接收到的数据包中的对端sid来验证的，以决
+> +定是否允许或拒绝该关联。
+> +
+> +注:
+> +   1) 如果对端标签未启用，则对端上下文将始终是 ``SECINITSID_UNLABELED``
+> +      （在策略声明中为 ``unlabeled_t`` ）。
+> +
+> +   2) 由于SCTP可以在单个套接字上支持每个端点（多宿主）的多个传输地址，因此
+> +      可以配置策略和NetLabel为每个端点提供不同的对端标签。由于套接字的对端
+> +      标签是由第一个关联的传输地址决定的，因此建议所有的对端标签保持一致。
+> +
+> +   3) 用户空间可以使用 **getpeercon**\(3) 来检索套接字的对端上下文。
+> +
+> +   4) 虽然这不是SCTP特有的，但在使用NetLabel时要注意，如果标签分配给特定的接
+> +      口，而该接口‘goes down’，则NetLabel服务会移除该条目。因此，请确保网络启
+> +      动脚本调用 **netlabelctl**\(8) 来设置所需的标签（详细信息，
+> +      请参阅 **netlabel-config**\(8) 辅助脚本）。
+> +
+> +   5) NetLabel SCTP对端标签规则应用如下所述标签为“netlabel”的一组帖子：
+> +      https://www.paul-moore.com/blog/t.
+> +
+> +   6) CIPSO仅支持IPv4地址： ``socket(AF_INET, ...)``
+> +      CALIPSO仅支持IPv6地址： ``socket(AF_INET6, ...)``
+> +
+> +      测试CIPSO/CALIPSO时请注意以下事项：
+> +         a) 如果SCTP数据包由于无效标签无法送达，CIPSO会发送一个ICMP包。
+> +         b) CALIPSO不会发送ICMP包，只会默默丢弃数据包。
+> +
+> +   7) RFC 3554不支持IPSEC —— SCTP/IPSEC支持尚未在用户空间实现(**racoon**\(8)
+> +      或 **ipsec_pluto**\(8))，尽管内核支持 SCTP/IPSEC。
+> diff --git a/Documentation/translations/zh_CN/security/index.rst b/Documentation/translations/zh_CN/security/index.rst
+> index 05d24e3acc11..d33b107405c7 100644
+> --- a/Documentation/translations/zh_CN/security/index.rst
+> +++ b/Documentation/translations/zh_CN/security/index.rst
+> @@ -20,6 +20,7 @@
+>      lsm
+>      lsm-development
+>      sak
+> +   SCTP
+>      self-protection
+>      siphash
+>      tpm/index
+> @@ -29,6 +30,5 @@
+>   TODOLIST:
+>   * IMA-templates
+>   * keys/index
+> -* SCTP
+>   * secrets/index
+>   * ipe
 
