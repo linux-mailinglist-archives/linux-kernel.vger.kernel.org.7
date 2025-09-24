@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-830114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F37B98C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0599DB98C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825F618950CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375444C3E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D972A280331;
-	Wed, 24 Sep 2025 08:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0215427FD7C;
+	Wed, 24 Sep 2025 08:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="31Omeb15";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n9aMu2nr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FnHE2anQ"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2D44C63;
-	Wed, 24 Sep 2025 08:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC65280A20
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701266; cv=none; b=hsw4IzJrTARJ9trTGUqxU8Qao+JVlCMVkeiHqC3NSAKWR1iHr3HNMHVUD+6MhhVLSZC6AgEHFnGGlIQjoNgyTKb6juOqgnHu+ATr/ufn1jV7Q8G++EBDr7vPcWCAy6AgpkmOIDLeG6TrYU8ZKTdohWL+3O/923CTmjlCiOiryuo=
+	t=1758701287; cv=none; b=g6gFS42n+0op1KdT3UnbSmSSBUJtH64bVM7opIJ3syQ971wqs3Ub5vbuWB9b41Bof2O8ssZ6NrOe6Sp4YBeGSU8VBxJQWkanS82qcOxHf05DX10b56Stvvwje8OSX8iYEr3dPrw8beXPAz1iczg/oZ+HDQLSyn0VtWoKJhSLjEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701266; c=relaxed/simple;
-	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=Df5c11VGFLTUyE2PZuFOLwh0Ghy5w2sC4ERpH5geAsRV+3ofUqKfuWcjMouJUz+ctjJGz4TJXswO+o15SsIyE0REumaiiWTopvZ+ysgsI9EgYcSyjfflaZo68Dorz9sVwqYmsyHokTbaxlXS5ZVQs3g+aPmHZfwBijTIgIbbRck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=31Omeb15; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n9aMu2nr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 24 Sep 2025 10:07:36 +0200 (GMT+02:00)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758701262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
-	b=31Omeb15YqChHkBBrePL7NG3JD983FRx11Q5uWT/69RIupuUYdoTYmGARAlJia6NlrrGQN
-	5bccvQRhu9NcTZtmvjlgyrvdEj5A1CDs8zthnojoVFXb7nQgs5SpXbO8rV9L4e+rwnpaCO
-	ua2jL9ZurCRzeQvEx0XtMCN7QuKSfAfEmHL2Y+sW7stPznDDzQHvTqbRTdGYko3+/T12ye
-	j1+Ro5mKKD/7GFoBxJzLa4UvxffzbMiluz2XiPl0kMDb4Rznzr4zg9+LVFIMxv9nAN+P3+
-	XSkEVbGVGFCipqBlQpFNsRbuwLO+4Us4XFeGg8YiuoKCqT4LwQxWTqtgvVs2Lw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758701262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QgLVMteIPJ+pMUDeTmzYpa0Om88x4SzL6ygbBAQMfig=;
-	b=n9aMu2nrfU7/A2LOU0ndnoE+3K8jSV2X1C4MQa1OTm1DcYDn9hSt6n0FuxlpuJtK/TUJKn
-	tCL0hbarV8eUGJBg==
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
-Message-ID: <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
-In-Reply-To: <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de>
-References: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de> <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de> <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de> <60a0af09cc1a5de3b33b9606ed07ae91b42c5432.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
- library
+	s=arc-20240116; t=1758701287; c=relaxed/simple;
+	bh=6HP7WS33RyuhHq10ONakzPJU/Wc265faZwnsYhZjIZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MpLf587C8Z5g1tkIeQzBd6szl7l5IxkD8n+LfNlElWv9E3dYrEiCA2Z77/CMaznuapqvXu5GqRDPIqy4TGGcvsyat9iKd5ZMQHUcDGlfwv/8W9tFHaQRcVi3lK5/3tbpUdJvWXO20TIC6RvGVlfE6AKr8Tphm2aEKPsa82yLyh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FnHE2anQ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=6HP7
+	WS33RyuhHq10ONakzPJU/Wc265faZwnsYhZjIZU=; b=FnHE2anQqFYVXls/UmZy
+	YrQmBFJl8lz7rjfOaPHXiT4rOY7Q93aSFhaVKkjEBYfcGNp+/Sn564zOaxOeC37Z
+	y2Vu26IalgtVQds2tAzDx9sDkcjO6pFn8Op/U2IVNpvwL54DrbueHClA/HFPgJAh
+	kGXowapirRYNlYX1YxMwziZ3gQqz9rCLP+4D407eOJHb5lKjutnkTqhI+4pgk/BZ
+	XVzVldK7aC0clwQ0pfJINLHpLQlzM0ipB2ndhYqZq9xqhwGFnkl6rvebk3Msc7Q7
+	27XZONzLCTw7uUHhf2SNvTHWDBvtbfb4TPegUBK+BcnaSdsFmW9rIJ5mFMIMolwM
+	6A==
+Received: (qmail 1410440 invoked from network); 24 Sep 2025 10:07:59 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Sep 2025 10:07:59 +0200
+X-UD-Smtp-Session: l3s3148p1@01sIjYc/0tsujntL
+Date: Wed, 24 Sep 2025 10:07:59 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
+ GPIO Interrupt Multiplexer
+Message-ID: <aNOm3-NxKfjXLsSV@ninjato>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+ <20250922152640.154092-7-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FOgGMUw30W40DZAr"
+Content-Disposition: inline
+In-Reply-To: <20250922152640.154092-7-herve.codina@bootlin.com>
+
+
+--FOgGMUw30W40DZAr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <bea9cc5c-7fc6-4c87-ab78-8232b2bee4dc@linutronix.de>
 
-Sep 24, 2025 09:40:47 John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.=
-de>:
+On Mon, Sep 22, 2025 at 05:26:37PM +0200, Herve Codina (Schneider Electric)=
+ wrote:
+> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+>=20
+> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> IRQ lines out of the 96 available to wire them to the GIC input lines.
+>=20
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
-> Hi Thomas,
->
-> On Sat, 2025-09-20 at 16:37 +0200, Thomas Wei=C3=9Fschuh wrote:
->>> Could you share a version of the series based on top of 6.17.0-rcN for
->>> testing purposes? I would like to test the series on a Sun Netra 240
->>> which is based on the UltraSPARC IIIi.
->>
->> Here is the git branch based on rc4:
->> https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.=
-git/log/?h=3Db4/vdso-sparc64-generic-2
->>
->> Does that work for you?
->
-> I'm getting merge conflicts with "vdso/datastore: Allocate data pages dyn=
-amically" and
-> "vdso/datapage: Remove inclusion of gettimeofday.h".
->
-> Can these be skipped?
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-No, these are important.
-
-What are you trying to merge?
-I can probably give you a merge.
+Looks good from the technical side. No comment on the syntax because my
+DT check invocation fails again after some update, sigh...
 
 
-Thomas
+--FOgGMUw30W40DZAr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjTptsACgkQFA3kzBSg
+KbbUMQ//R4uahw+mh6cHSRJmsbHQeEMbaHXdeiqM2Ezw/8GZn3xhRRz8qFR3AHH+
+5k3pZCffvHtYAxjVCe7gaTcRT3sDtKTiHrvPRtzEZzlOxVtFJqRJC4lueftWS0eW
+i8rLdwy4rf+fq7nczU/dXAcnw902tQp2zzom05wWaekOaTuGWYoBuE0FWtP7mJ9D
+B9rCJV9mfzh7dIxvTbaqKU3AwwlmGAlX7XuNk3GnRKsNEMzYgbSI8s4lbSYrqAmm
+K+zsTmsXlCxG8Eft3siYtSBz5hfnZ/jIEbHw1gXXOrute9ATqhD6MZzRbOFbyy+2
+UqYuOlLReS/fNcxGXpte3XMP059Ixk6LD9JhNTvSy7Z99XAloV79waxPo8kLp5ns
+vBISCYCr8d3eTGVcteoj//X0razRlzJ1Aacx7/UH1tKLqhy1iU2YtY7wJianxwhm
+YNGimNgsnFNMC48UHfzaeQJDFL69fikSluCH+V7gOtAp334mDjzn6cWT83xD8om4
+TXUunrt6VUg6o/csg1Kb50kNqwto34ida/HSUISwm3VnEijK+wJAy1zhxoDC1FWx
+1bsNhc2SpzhQ1n5LvXlqk0SyjtGMryCwf4916OonDLtcbR/5QC+/NEsLrhgW1YWa
+Rcgw09I9B11iqZaXdbdDLQjidkXCE7J7fj5MH96zKMvKwjuFW2E=
+=4j6V
+-----END PGP SIGNATURE-----
+
+--FOgGMUw30W40DZAr--
 
