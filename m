@@ -1,152 +1,163 @@
-Return-Path: <linux-kernel+bounces-830877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03435B9AC46
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED95B9AC53
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A539B17C63A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE16C1896BA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003AF30C0E7;
-	Wed, 24 Sep 2025 15:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BE91E1C02;
+	Wed, 24 Sep 2025 15:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="MH/NzWFm"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFIueKdT"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE812FD7AE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431A1F03DE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758729033; cv=none; b=M691Ffb+hHxHDw1+U/rkcjY+yZhdqdfx7qUzMUjhkjPlbthXV5A05mqnCQxBCPKwzTy3BnH++/EG2DlssjcU8QThPgI/KFMuaDwZjLmOfskG5XYQRHLIfrhxq66QBtDRBSyo6bL13TSvYZT/+tPxbf5SLnwbjBJdHBnrdt2wUYI=
+	t=1758729189; cv=none; b=hns0G1d5RJSKhy48EvLsWI7+WkRr4DZpCoPbpZ1JyYlmZxJfPaTCjxiiYaInin2jR1ow8mZTB2uVUxMGpkACsrdKNccKptN5zteqJBuPUDRnGiVBc1fuBlssCqRVJ72vOr022zPJMP4xgklk234Vilap7ZmI++pVQ7BYPZg0dIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758729033; c=relaxed/simple;
-	bh=3HFVHU2A86JsxNXWuaSgCTlzKZ3pf22FDrMEBP9wlaM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dNaf/3DwrA6R+ah/xGc4v9z7CxnDlR4nsZNmx3HWZXaZ7zNhGzrZxfSojV1M6gmbU8nH7Io3ZVLrDajyZ6kDNsw/cSKe4shOUvwYn6ktUBdlfaGRBNaLWbvUVkRpSkL+iHwqrWxb/HOO7SILncu+cy4kpF3madJWJPb9JUad3H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=MH/NzWFm; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4c88e79866aso29910661cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:50:31 -0700 (PDT)
+	s=arc-20240116; t=1758729189; c=relaxed/simple;
+	bh=VT178yYCZMBRPny+L5bF5MeTxPfpCtbi4fIoBmP00o8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+hBRBtxJb9ksLSL72EluQCsEt0+73uhG/p9SrHTIcF7AlneE/e7ep0gWa7eXfu5LRZmGP5nChPAl7+30n2qV/BEIvNC0oSFtntV/a8a+S52O3ICQVdVOXncHOO5bPVh68yLokrUXHDtG86LA5TTJ8318nO2Cy7t9MOEXCQQPOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFIueKdT; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77d94c6562fso7021875b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:53:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1758729030; x=1759333830; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKYKt3wBpNWpKAvLvz/Y9fS8qlda2gni+8GdP2SiBRk=;
-        b=MH/NzWFmMK66WDJO0EcpeK4YNLynWzOQlyauaqvCkKb3hlA0JQn91tXAOyzlwp+b+o
-         +wo6IafMnp+3aS9zFGtnQKugNM3uebSQZJ/ab30xfp5WBXV2fBzdPTbd2Gn64JC1wJMS
-         mtLWtCQxbfwh9gO3CVdTwsorBka/UWYstT1vjOplFKOgKdOV2XHRFJ4dlv7G7/B3msSu
-         oLh54+K20hlX3OY4CacgIe6uSMLi77toaBXRIjX9yBgwYA2vnr1cNv+vIjNrHIqZIlAK
-         qQNmzgKhITzTwRRweswLiC5EqsUCB01mTUwvzvH1OKnbkcAEZKlqZadqHGJeVIAvewxX
-         QPuw==
+        d=gmail.com; s=20230601; t=1758729187; x=1759333987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLFgCdLMh/r5hFbfHnhDFZlsrstBsRj7M+/SLEooJtQ=;
+        b=iFIueKdTTiB9B5tR8i1hdiMj03VLVLDH3bwi5nWmsTvOkrK4988HIeFviY54KnIeyb
+         Qv+ahD/WvSJLa85bsjsymR5Z/Ge+Btl1mXcfvl7aecJxNVKEXK5gYF0urVRSAc2sLS+G
+         xkWODTsxpT9fdAxGnFvm6ZXzYcEkLqXFE3qo2LdCaTTPsvku/fRd77/bI5L4GgMH7WoF
+         w7TjBSUd3ylmB+Rsc5XVXzUgiFwQt11yUNROodl4Z0O3tP38byu0/CV6sf1Z8OS7FxF1
+         Hk47eUWyDo78nYxp60BO0jQhYtq3qSQbjcCWm1tKcRe0fnRkH+lxZPkMYFmjDzisFBba
+         UmIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758729030; x=1759333830;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758729187; x=1759333987;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wKYKt3wBpNWpKAvLvz/Y9fS8qlda2gni+8GdP2SiBRk=;
-        b=NZDfS1UeS8iWBYSP7Ldn7s3XUVVZMkhsenJhT+gHgRQRZ6x2rg8OmR4unOPoQu7tsA
-         l8P7OoxnRjVehUId0Y9EMM1zrZXxso8J1yhgQjiEi/ejBb42Jz8uOcrAapafe3uO/M2P
-         RZlDMMMuWvlwjcZ5bRHMxn+HuheuvJA/fBoS0hZEnu6VLCkTLOQqkOdbwh00TjP42IN0
-         uIbFnBzftQrLjrwabytDPFj5eB0o7HdkSFT/ma+mRLFf5UOoERuz3aX/K8VrcwZPbh/L
-         G75k13pPk51vmPKg4eWwSXJ7wXvhB5I7m2YAT2zb/XsNhAWJtAvRi53FooI+5phhmpcw
-         F5Kg==
-X-Gm-Message-State: AOJu0YzR+/lHi0rIlQmnQyuLF5hglPpYuqXl8a3YQ+6PPxILd0lUMI1X
-	wxT75RSJCq6rUubStXAPVrvQKAoQSMbdYj02n0EjodBY6Pw+gRbAOyIZWoDwPz/PElI=
-X-Gm-Gg: ASbGnct8SBwDXecMAtKu9F5Tx9isMen9J74Yfd5SkcaI+UyoJ8+hiekUwMb6nS4G0FY
-	W7nvNevSdRYpnq9QRUiBJovaWAKMJ1TrIy4s1y6g9WnEmK7W1ZLbiAeVm5tTs6EKwnzmqleZBc1
-	239qLLDKLM3B+SH6Xvi4MloVMjJ/tMh7AVHMDsEs8JhI58DVtWTnL9UeaZpEWWhGsZdpH5ScxVw
-	Curca/Ndqiz1TpV7jVjD5yyQ1atL8oAUwLWLnqJuoEzTfsHc4nyDuCQYU49mc4P991Iid/otxtC
-	JIt87UTKzTDEbc3iYGYaej6LLb4oyOPajFuF9ewcX9WHsarR4R8po9gMyLQ+eKp4qyr1Shd0Iob
-	JjCijgn2SnAlx+mJafgSCqsGZZIMW
-X-Google-Smtp-Source: AGHT+IHFDw/Eg5JWh7qPZieLyWp9NXunBGjbJijvunF0rhToS+dVyRBZ8XDISKVOXGkGM4owfaf9Vw==
-X-Received: by 2002:ac8:7d8e:0:b0:4cf:b74b:e1af with SMTP id d75a77b69052e-4da4c1aeacfmr3705331cf.63.1758729030340;
-        Wed, 24 Sep 2025 08:50:30 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79351f713a5sm109494106d6.44.2025.09.24.08.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:50:29 -0700 (PDT)
-Message-ID: <b3c3a9b47a2075f6a0acc1ee501f885d4997679e.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/2] media: iris: Add support for QC08C format for
- decoder
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Markus Elfring <Markus.Elfring@web.de>, Dikshita Agarwal
-	 <dikshita.agarwal@oss.qualcomm.com>, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>,  Bryan O'Donoghue	 <bod@kernel.org>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia	
- <vikash.garodia@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 11:50:28 -0400
-In-Reply-To: <ce08ae79-8f7e-4a37-85b9-d86c10567881@web.de>
-References: 
-	<20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
-	 <ce08ae79-8f7e-4a37-85b9-d86c10567881@web.de>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-BGkOL5lJ8hoFaStaZV+n"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        bh=YLFgCdLMh/r5hFbfHnhDFZlsrstBsRj7M+/SLEooJtQ=;
+        b=Dp51qLlcRd86XGJvq6ZBN8LI61rCmYnOkr+D5GRJdDij9zQThOlIyiHtyjYtTcMuT5
+         FwC/XjfiRuLFmMXrZ11DkIyAwh5HGrafr0Z6NkPd06FFIvpKSKzFaMS9CpjwFuhTJXc1
+         tQ59wBOBO3e+hulleN4/BC58zc/cpaGpzRG+eUfrlN4cZFnBkz+hzNKeWrWaw2Hel6/Y
+         8NM6NTwvvCbgYJbJ7ji3BVrqrs3Hno7gN0MDWxnSdarsELGio/b3c1iA5TXtP+XtxtTC
+         ed0YhydTcFVNrKIu8/HR1V0T2sIz5lR5thbgo1pPhnwk76tQRwwUVvN406C0yE43UEbI
+         Wpcg==
+X-Gm-Message-State: AOJu0YzX2QH3FUy95NHVX5+Y5Qt8vr6ee0u0WeOxBrts7m4mTPsCJgvd
+	PYVpWm8fenCSJ8BHkM93jyHcrzAFhvrvk/T8Uw4PrDpC7sKzB77Wy3MM
+X-Gm-Gg: ASbGnctaYoepURu5+7mZ6UlcbJhvqi4HnmAZotwfBNgCqN/foPzg9EO/p6VWvo+WrL1
+	TcuQKiRuArKNTqFupg34QD+3WkbwKu+8T6gkMa1LO9wEiLJlKoNklS19H6Dbfm1WBOcJUIXjrEi
+	sHRuxeaAGHm8xyZHX7v4eIjn6y/AT2o73v5cD/FkfUZVoCdeV+bBUsJA+aKM8iHNxPiLxSMPJ5V
+	tB7AFmelDvHN5NYXfvOJ45pRA4z0tYLxG3FeVbNbC6x1uCCiw9fuBUicFFA08/LJRp16HWVsW5L
+	4V3CFTg6QE92WXsCjOJz61bRUTeYoGoebUT3QbOokH9nACU1i1/lo5qp33gsCx2Mdyk9nJ3TEMV
+	L5GMnNeyuAPdHitr/AUaaD42RwCih4hmthn4PQKRLroaFKSF3UoBVSJ8PiEpQMIvySpfqwp0=
+X-Google-Smtp-Source: AGHT+IFVgSVMSm2vqmLG6DCS+JeXgQcaQs1Myt5b3EftOEQSBe/HHP3HWNYKBwBYn84yLRpiHo54rQ==
+X-Received: by 2002:a05:6a00:a8c:b0:77f:156d:f5b1 with SMTP id d2e1a72fcca58-780fceebcb7mr560901b3a.26.1758729187064;
+        Wed, 24 Sep 2025 08:53:07 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfe7607c8sm19130110b3a.58.2025.09.24.08.53.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 08:53:06 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5e76f825-a352-43b2-9d95-488064b52eba@roeck-us.net>
+Date: Wed, 24 Sep 2025 08:53:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] watchdog/hpwdt New maintianer
+To: Jerry Hoemann <jerry.hoemann@hpe.com>, linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, craig.lamparter@hpe.com
+References: <20250923190352.2517220-1-jerry.hoemann@hpe.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250923190352.2517220-1-jerry.hoemann@hpe.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/23/25 12:03, Jerry Hoemann wrote:
+> Update MAINTAINERS file with new contact.
+> 
+> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
 
---=-BGkOL5lJ8hoFaStaZV+n
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Hi,
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 520fb4e379a3..11839d5f1c2e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10784,7 +10784,7 @@ S:	Supported
+>   F:	drivers/misc/hpilo.[ch]
+>   
+>   HEWLETT PACKARD ENTERPRISE ILO NMI WATCHDOG DRIVER
+> -M:	Jerry Hoemann <jerry.hoemann@hpe.com>
+> +M:	Craig Lamparter <craig.lamparter@hpe.com>
+>   S:	Supported
+>   F:	Documentation/watchdog/hpwdt.rst
+>   F:	drivers/watchdog/hpwdt.c
 
-Le mercredi 24 septembre 2025 =C3=A0 14:32 +0200, Markus Elfring a =C3=A9cr=
-it=C2=A0:
-> =E2=80=A6
-> > +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> > @@ -261,7 +261,10 @@ int iris_get_buffer_size(struct iris_inst *inst,
-> > =C2=A0		case BUF_INPUT:
-> > =C2=A0			return iris_dec_bitstream_buffer_size(inst);
-> > =C2=A0		case BUF_OUTPUT:
-> > -			return iris_yuv_buffer_size_nv12(inst);
-> > +			if (inst->fmt_dst->fmt.pix_mp.pixelformat =3D=3D
-> > V4L2_PIX_FMT_QC08C)
-> > +				return iris_yuv_buffer_size_qc08c(inst);
-> > +			else
-> > +				return iris_yuv_buffer_size_nv12(inst);
-> =E2=80=A6
->=20
-> How do you think about to use a source code variant like the following?
->=20
-> 			return (inst->fmt_dst->fmt.pix_mp.pixelformat =3D=3D
-> V4L2_PIX_FMT_QC08C)
-> 				? iris_yuv_buffer_size_qc08c(inst)
-> 				: iris_yuv_buffer_size_nv12(inst);
-
-Please don't, this is less readable and have no explained technical advanta=
-ges.
-
-Nicolas
-
->=20
->=20
-> Regards,
-> Markus
-
---=-BGkOL5lJ8hoFaStaZV+n
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNQTRAAKCRDZQZRRKWBy
-9M4hAP4xMwFl82DVj9T4UD6n+w1SjuDmzrNmUl3WHwoFFThJMAD/de71Hs2BOyqL
-rqF9js4QRLUpv4wRTLhyGSuePA0+EQ0=
-=v93q
------END PGP SIGNATURE-----
-
---=-BGkOL5lJ8hoFaStaZV+n--
 
