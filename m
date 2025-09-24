@@ -1,64 +1,68 @@
-Return-Path: <linux-kernel+bounces-830429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0543B99A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:46:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C0CB99A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14293230CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6635A3AB9DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1AF2FE574;
-	Wed, 24 Sep 2025 11:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0052FE567;
+	Wed, 24 Sep 2025 11:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jr6HV3wd"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KTeotlF4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F26275B05
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F54D531
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758714380; cv=none; b=pLZHgE55zN21tkq+RdWf6dB+gWNeNZUtLtgWF4hNNPXncyI2akF3rPVX0a3vr8wPEEK7DM/irCULL95PabNwMK3MrqS47KwmhQ3EeV+HOwXQLs8nkH0d3/jBq7hJlLmKoY+wiwMx6XTIirsUgEgwLgdDHTmS0vlrY9CVURiuj08=
+	t=1758714438; cv=none; b=WwiEiZMtPDw4byNbH8qucB74ntiBzJBEuioEY4zoPUUTcYj8E0FwEfqkfJdRN//vHb5/oKYL9NMmgxuJob4zPz8W8lhaIl+Cnnc85NPcAufy2+vwa8b46y2i9C563yQlE594YbKTA7Hpcr3TWKOAX0zqOGMS4mK6U9ybWVOF/u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758714380; c=relaxed/simple;
-	bh=k+rntJ45THdy4+Hm2PhTOYe6rdufjRsUeUq2ZhXNTZg=;
+	s=arc-20240116; t=1758714438; c=relaxed/simple;
+	bh=CpcTn/LkkmKOCPxdKBtvW/X03DJ7EbwCgKqtNEMFm9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdHWCc4fnb8s1QEaDAQYoMssK6LZR1WZx3fGHjCPNzhQe7Ao9VkSkZJQyQo6wUJ/2pJpaZ6TaWfgdlaj9856/C7qaWTGdkIXHyoheOYX5PGpH4a/t76xpRKu1KgTfLluMbWUmE0aPs8VBhBV8Uuvq8figJonrVOWgjIqhY2d3Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jr6HV3wd; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=afT9zG0tjew1yBiop88VK3D4fEabRMn/OKiuwP/ihzY=; b=Jr6HV3wda7HTyJWhrIm/8OiPK1
-	9YLKf46YmjTtbDtun17SM6oJpPVHKcWgxHl5/sYBViJXCx++W3zrtJOzJTlpoCtUtkudCopZ2JLIN
-	M6XnmiI1/vKakf95jfriQpefco+cFhJKmaxHL7j2bmHobXNFSTkuvSDZaIjHC1BbiP1My3RE3Wvny
-	xz7U4hN+CHvRFK8G0UP9L0Xtr1PT163RTU/nwHnPnwpXtuuV8tyLBZXtX48B0Fjh1V+nePXQ13jnl
-	OBdmktK1c4G077XXopxgxygyapFe+xSS+WDhhwfeXDVM5tc/K8mBhYJli1dMQRBZwihiI4SwunI2t
-	QtGr7WvA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1NwQ-00000008jBa-0CPV;
-	Wed, 24 Sep 2025 11:45:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2302D30043D; Wed, 24 Sep 2025 13:45:45 +0200 (CEST)
-Date: Wed, 24 Sep 2025 13:45:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org
-Subject: Re: [RFC PATCH v2 00/17] objtool: Function validation tracing
-Message-ID: <20250924114545.GI1386988@noisy.programming.kicks-ass.net>
-References: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
- <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
- <20250924074206.GW4068168@noisy.programming.kicks-ass.net>
- <20250924100847.GY4068168@noisy.programming.kicks-ass.net>
- <20250924101038.GZ4068168@noisy.programming.kicks-ass.net>
- <90abf24a-326a-4215-8e13-2e1a2e3194ea@oracle.com>
- <20250924105813.GI3419281@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UibPYRmCqBGCOJaOr5GrCXsX3FO5q2fDv1kIPZQlpbsfaKOJkidbyyIiISYWNDMF+3Zt8w+uV7qqL6h59613mLagCTQucwfz5rW2CtuZbFIwSMWM2auR1xGJEsTaiALhuPKs6oOGOAijO9eXtpYpY1AdxBnKjp8nvlDfRHm+Od0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KTeotlF4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758714434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U49N+r+zxSJi1zFY3gjdcUdjVBkpVbT2zJacgwMW37A=;
+	b=KTeotlF4bS5NdsruxZqbk3++Ju+PnilZFCSwQkQuaniU3Ib+wq3Kxrk/j7YNoyQYR8FVXi
+	Zh+L9O8Wlw5aOjIV6Cx94wJZ4NkHRNgRfIZ+E5N2h0aakddlxVXiDSs+NCojRCXXu9ZH3Y
+	QPgpTQdfcSdAKXvJewA+E7CCWBViqNg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-537-ZHnt4TrjPOS_6u8ZCD-IDA-1; Wed,
+ 24 Sep 2025 07:47:09 -0400
+X-MC-Unique: ZHnt4TrjPOS_6u8ZCD-IDA-1
+X-Mimecast-MFC-AGG-ID: ZHnt4TrjPOS_6u8ZCD-IDA_1758714428
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C06AA1955D58;
+	Wed, 24 Sep 2025 11:47:07 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.20])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4512819560B8;
+	Wed, 24 Sep 2025 11:47:02 +0000 (UTC)
+Date: Wed, 24 Sep 2025 19:46:57 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ublk: remove redundant zone op check in ublk_setup_iod()
+Message-ID: <aNPaMVxUR-Q4haGX@fedora>
+References: <20250923155249.2891305-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,42 +71,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250924105813.GI3419281@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250923155249.2891305-1-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Sep 24, 2025 at 12:58:13PM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 24, 2025 at 12:52:35PM +0200, Alexandre Chartre wrote:
-> > 
-> > On 9/24/25 12:10, Peter Zijlstra wrote:
-> > > On Wed, Sep 24, 2025 at 12:08:47PM +0200, Peter Zijlstra wrote:
-> > > > On Wed, Sep 24, 2025 at 09:42:06AM +0200, Peter Zijlstra wrote:
-> > > > 
-> > > > > > >    d051:  perf_get_x86_pmu_capability+0x51    | xchg   %ax,%ax
-> > > > 
-> > > > That libopcode is 'funny', isn't that typically spelled "nop" ?
-> > > 
-> > > Ooh, I see, it is "osp nop" and yeah binutils also seems to do that as
-> > > "xchg %ax,%ax".
-> > 
-> > Yes, "xchg %ax,%ax" is NOP2 (opcodes: 0x66 0x90), "nop" is NOP1 (0x90).
-> > 
-> > That's one more improvement we can do: identify NOP instructions and
-> > display them as NOP<n>
+On Tue, Sep 23, 2025 at 09:52:48AM -0600, Caleb Sander Mateos wrote:
+> ublk_setup_iod() checks first whether the request is a zoned operation
+> issued to a device without zoned support and returns BLK_STS_IOERR if
+> so. However, such a request would already hit the default case in the
+> subsequent switch statement and fail the ublk_queue_is_zoned() check,
+> which also results in a return of BLK_STS_IOERR. So remove the redundant
+> early check for unsupported zone ops.
 > 
-> Right, I have just the function for that. Let me do a patch for you.
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-Bah, I'm having trouble with the makefiles, but we sorta already detect
-nops, and the below should sorta work. I'll improve decode.c a bit.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
---- a/tools/objtool/disas.c
-+++ b/tools/objtool/disas.c
-@@ -273,6 +273,9 @@ static size_t disas_insn(struct disas_co
- 	dctx->insn = insn;
- 	dctx->result[0] = '\0';
- 
-+	if (insn->type == INSN_NOP)
-+		return snprintf(dctx->result, DISAS_RESULT_SIZE, "NOP%d", insn->len);
-+
- 	/*
- 	 * Set the disassembler buffer to read data from the section
- 	 * containing the instruction to disassemble.
+Thanks,
+Ming
+
 
