@@ -1,34 +1,35 @@
-Return-Path: <linux-kernel+bounces-830408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC82B99932
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603DAB99941
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C3B2A5B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED6A4A6E17
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B97B2E7BB4;
-	Wed, 24 Sep 2025 11:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401592ECE9D;
+	Wed, 24 Sep 2025 11:29:17 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1182E2D6E69
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D22E7F04
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713319; cv=none; b=L3LNx7ce9elblHodXWmaw4ICodtfWIimueSNLkQucrlCkkkmx3llZv5ZghzSwtnSACtlJh/ifypwET6HiNzQO+5h8UiZGS50IArHiGkEDyu4TFObbGV7nH0HJ+8kjuyMGsGXFPaF6lolACx/M+bUjZ+RLU8MygHOUgn4EshPKz4=
+	t=1758713356; cv=none; b=neEMkBFwOPa5Ruy9BgHJvd0nWhNjoTFaQfJXqM3noFbucDtY3BvLB1PeTJ788WMmJQewpA9fS8OFggCubeY4nhq4pQ4FxYH13gSthrSjsz5xdX1/QeTBJbSaWJgKu06yxJqvCgs67+fX9vrCF1uRZP4eASTQieElT/5ncBugnLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713319; c=relaxed/simple;
-	bh=1/FUivANIkJMUDEE5QPqxlsnGmmnctoDup6MhovHyoQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AB7r1HORfU+VyqTikGpTfo873MbkNyZnITBGEIFq+CGkeRQcN3oREcQSbPh8u/Ug+NXlAXpz+jm2/37rqKJQ4uWvNj7Ub+R4PJURmy+M8p/JxlFWKeBK+FCKkJM91tH6JSZWYyQCgd3ww1sF+e+2Uf4HepjT4Z+/DjJKzYr9Zvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+	s=arc-20240116; t=1758713356; c=relaxed/simple;
+	bh=ToVhFsgTaUkSAbbRQI5th+VEOqb/+MGFW5F4/tcHWWY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QdnlUMGUMyw7JAXeRMYQOAMJyd/00qdOZDnCY1tfqxv/oNWu26BBF+w8OT0XFwDP0yYxaHut7EQOEqMDXK9QcemaYkYLO/eZadiw7cuOIXzsY9H7EAjQu74nYJIiqJuoXnCkpcv/pzvZl4L/e8cjv2OuDL1s8C5xIwFeRjbJEos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=unknown smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=andestech.com
 Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 58OBST3P074422
+	by Atcsqr.andestech.com with ESMTPS id 58OBSTgl074423
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Wed, 24 Sep 2025 19:28:29 +0800 (+08)
 	(envelope-from randolph@andestech.com)
@@ -47,10 +48,12 @@ CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
         <shradha.t@samsung.com>, <randolph.sklin@gmail.com>,
         <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
-Subject: [PATCH v4 0/5] Add support for Andes Qilai SoC PCIe controller
-Date: Wed, 24 Sep 2025 19:28:15 +0800
-Message-ID: <20250924112820.2003675-1-randolph@andestech.com>
+Subject: [PATCH v4 1/5] PCI: dwc: Skip failed outbound iATU and continue
+Date: Wed, 24 Sep 2025 19:28:16 +0800
+Message-ID: <20250924112820.2003675-2-randolph@andestech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250924112820.2003675-1-randolph@andestech.com>
+References: <20250924112820.2003675-1-randolph@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,56 +65,53 @@ Content-Type: text/plain
 X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 58OBST3P074422
+X-MAIL:Atcsqr.andestech.com 58OBSTgl074423
 
-Add support for Andes Qilai SoC PCIe controller
+Previously, outbound iATU programming included range checks based
+on hardware limitations. If a configuration did not meet these
+constraints, the loop would stop immediately.
 
-These patches introduce driver support for the PCIe controller on the
-Andes Qilai SoC.
+This patch updates the behavior to enhance flexibility. Instead of
+stopping at the first issue, it now logs a warning with details of
+the affected window and proceeds to program the remaining iATU
+entries.
+
+This enables partial configuration to complete in cases where some
+iATU windows may not meet requirements, improving overall
+compatibility.
 
 Signed-off-by: Randolph Lin <randolph@andestech.com>
-
 ---
-Changes in v4:
-- Add .post_init callback for enabling IOCP cache.  
-- Sort by vender name in Kconfig 
-- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
-- Made minor adjustments based on the reviewer's suggestions.
+ drivers/pci/controller/dwc/pcie-designware-host.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
----
-Changes in v3:
-- Remove outbound ATU address range validation callback and logic.
-- Add logic to skip failed outbound iATU configuration and continue.
-- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
-- Made minor adjustments based on the reviewer's suggestions.
-
----
-Changes in v2:
-- Remove the patch that adds the dma-ranges property to the SoC node.
-- Add dma-ranges to the PCIe parent node bus node.
-- Refactor and rename outbound ATU address range validation callback and logic.
-- Use parent_bus_offset instead of cpu_addr_fixup().
-- Using PROBE_DEFAULT_STRATEGY as default probe type.
-- Made minor adjustments based on the reviewer's suggestions.
-
-Randolph Lin (5):
-  PCI: dwc: Skip failed outbound iATU and continue
-  dt-bindings: PCI: Add Andes QiLai PCIe support
-  riscv: dts: andes: Add PCIe node into the QiLai SoC
-  PCI: andes: Add Andes QiLai SoC PCIe host driver support
-  MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
-
- .../bindings/pci/andestech,qilai-pcie.yaml    | 103 +++++++++
- MAINTAINERS                                   |   7 +
- arch/riscv/boot/dts/andes/qilai.dtsi          | 112 ++++++++++
- drivers/pci/controller/dwc/Kconfig            |  13 ++
- drivers/pci/controller/dwc/Makefile           |   1 +
- drivers/pci/controller/dwc/pcie-andes-qilai.c | 198 ++++++++++++++++++
- .../pci/controller/dwc/pcie-designware-host.c |   9 +-
- 7 files changed, 439 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
- create mode 100644 drivers/pci/controller/dwc/pcie-andes-qilai.c
-
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 952f8594b501..91ee6b903934 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -756,7 +756,7 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+ 		if (resource_type(entry->res) != IORESOURCE_MEM)
+ 			continue;
+ 
+-		if (pci->num_ob_windows <= ++i)
++		if (pci->num_ob_windows <= i)
+ 			break;
+ 
+ 		atu.index = i;
+@@ -773,9 +773,10 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+ 
+ 		ret = dw_pcie_prog_outbound_atu(pci, &atu);
+ 		if (ret) {
+-			dev_err(pci->dev, "Failed to set MEM range %pr\n",
+-				entry->res);
+-			return ret;
++			dev_warn(pci->dev, "Failed to set MEM range %pr\n",
++				 entry->res);
++		} else {
++			i++;
+ 		}
+ 	}
+ 
 -- 
 2.34.1
 
