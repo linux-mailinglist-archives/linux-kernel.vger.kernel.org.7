@@ -1,101 +1,210 @@
-Return-Path: <linux-kernel+bounces-830583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF1DB9A099
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B20B9A0A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3042B1776F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F70F2A746C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C05B303A00;
-	Wed, 24 Sep 2025 13:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA88E303A00;
+	Wed, 24 Sep 2025 13:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXEgWnp0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="iuW/qRMc"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01531A08B8;
-	Wed, 24 Sep 2025 13:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD881A08B8
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720706; cv=none; b=ATmcSmtlaafe1+aILIK3FCQrJY4T5p5Yk7X5LZh35Gb+C/gxxgVK48KBaiBCL0PmCHMnSecbikCoyslBgevsIbOO8fBvz3NGPs5Ba1sVpTnkv7gdG+XZNlZfJrwf1OZst/zQbspHHbSnmKxsedDG6/kOIJwhUaNjHuWjilUsAq8=
+	t=1758720716; cv=none; b=Vp9B9jOoJRt08oLRePXbdmH2pfq6KM5HjAK3a0cMlspmoeBElwNoDS15q+FsuRq0OUU0DFa5igprVNr6PnYPgBvRnmvHXxRea5FW6bop6rvafa8lpFUblu7Sg6IkyUIrkz0vEEXMDBhdwCmt13XoQ34R+3GCNPIXv3EYd2V6IoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720706; c=relaxed/simple;
-	bh=ZOKnwxpWQh1OHKfDLUV6APqobBrxGUmV8WR/2jnfww0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X3BRI70XlG8H1+/UUnCsXCp0UHBAydShcVv0LITNIGLhe6599Vb2CcWg4d2n2kUz+zj9HN77FQFvLFmDRC2QMhRIOkjqVF3KSCD/U1M6Xmp1A5FlFOwlglRrqacuPI4Df7sPnziAVqpMCnmcJXvcpmysGp0j4ngreapGABWlDJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXEgWnp0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41ECC4CEE7;
-	Wed, 24 Sep 2025 13:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758720705;
-	bh=ZOKnwxpWQh1OHKfDLUV6APqobBrxGUmV8WR/2jnfww0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sXEgWnp03n0sHny4dsfOG61hTDEe57yuSuvR2SnfOCrw2ky+ENlA8T5EJ4lJKtkXt
-	 ikP7sP7XjUARxY3oKU3v5zTTereqLu/M9kxEQZufzunMW+xC5S4ZbmyVjITO8wnMMR
-	 dIk44Kzaoi3GPnZm1axzUhW1SPSipEr7IqJj6S1HjaVjcvKZNgKT7YwOTWprPh/8qf
-	 HJDbwVIlsyHqp3e284Y+TUavgOcBk6djOdG2UB6hPNPx0j3uaL3JyILp+tZgpl4aIy
-	 ZjuBxLGbivydSpFkCC1ef4Gq7Leo/Xvd7Z8N36SFfnR+9JwBXWQkvLHbyyRX9UJW+D
-	 2ywj0CoTMBvXA==
-Message-ID: <908fece9-769b-4f44-86bb-04de7c3d510e@kernel.org>
-Date: Wed, 24 Sep 2025 14:31:41 +0100
+	s=arc-20240116; t=1758720716; c=relaxed/simple;
+	bh=yuXU6owTONwJ37j4TOUPBOuXQVVPet2Uv64xo0574yQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWM1yfwTMckEDqucokrTZhfRhtfsE+u+c7VUsw4LzP+JnkYY2gvZ8FCUbtqC3YJvxuR4AS5Y+HiUtP9C+Meuhg2LHqv27cnFL18a2Xq+EVDnGb9xVOmldUJ0xMd9kKNXZy6IZICeWAvjVD1OLBIrhLTESE/GGDtF+nlfOAp5FTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=iuW/qRMc; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e27c77so190127339f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1758720713; x=1759325513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sjr8/7QWc40wBIvcq7xbnNiZ+KKEhi3m1vUvdK7Sd/0=;
+        b=iuW/qRMc8p3piBAk5YC7e+vzggAfVwLksK5kfZrWlulNIeeuAqWAaMpfZZ7S9VreUM
+         YXfWWkiWoYarUOYOm4B3j/ZbQhI5Hpri07s693/oIwhWABwnxFCL/iJHLuJ5LVqZGeGb
+         pSEmP/7iYxdI38WYpqeJ2FgdcWdjENKJru3xGtpb9P7+HIHzq4tXReFG8qGsoCRI3/1F
+         cIGCBCuZuJ4r9DuRBOO3c+lG+TSNo/eaBOwAL7UVTFCiKrGmsZ6a3/c/M2eFnThjDa8e
+         Zl12JQTxNCUC3PQ64Tik/yKJ+4MmNAfrCxohrpwvV8Q5vXfc04inEVEagn9VeHa0JZuk
+         JbZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758720713; x=1759325513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sjr8/7QWc40wBIvcq7xbnNiZ+KKEhi3m1vUvdK7Sd/0=;
+        b=tnc5Aq5mh+wmnG/It5/vVHqGeCBv7QkXyPU1lFFAqmv+4+4MRuBpzV74fSs7lImlzQ
+         36wu6kREmyvQss2AtRm4gphiCqZRsNH/gb5fignkrod0MZe9sn8MHVBA552J1YDNfysp
+         titrWZL7fSv3OpeVti8IQxWaCSu4lFUvKOrh6gCvgCTgIZGc6T0Fs36gkMBFgZGWfdjG
+         wYu7+W2Mjm+p6jHYDQwfJ0LxsoIhEdrB/cKB0NMHK83xv3e6wPWVK0KEL0Xr8nfAwkQ0
+         WEpLywby0zik7gWOw13+c/GaB8VodgwezD4mBFuyq3veBLXAwL8YjgxoOc0rm+pZvnzd
+         CBsA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5M5p88tb5jVCeKovEMVpC01c84xL/cm3W9nQ2+i1IqM4x0giximbm02RWSyYEGzyr9Y8DqzZTmkOC1v8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIhiZ/nDzuhn8EA+p3t61gGr5wTExZTYu6oZ8VeLLQmxbwf6LH
+	FI9A/87oD2E24cdiMQXr+z55BZzhFA6WxVhp/kXesCu3kAgssKvwgVIY7irL+FS0kIo=
+X-Gm-Gg: ASbGncvmHQBNFnKELEAeemD0JX7ZM8iV29g6mmwvKGCbiUxq2LPoupMtZfsoqrOwlPJ
+	ub0wujYo/pv8UaBMzQFGJ8ZgeU/MGuTzGLcNE2SEVaTyJfSxgTL8AObpJ4CiEFaOTAmzLYdghfN
+	p/I/wRkxwvFi5BdQSZn/kuaHThBtUWynbXoPjkt96JQihZLl+qfNPJnaFz0nxYeHjwn5q7d6xec
+	EX2oYS3DmruDeBcEIkMC/Gj0NQ7nMwh37EDXAXTLI0QJfXy/M6j9fJaEYVf9MDzzsC9wylsBwQ0
+	1Kqy0quH1F6CKYIFYeckRKUWgEUik51jJXxixibAzhyGyBmpk2fKmgqE5NweMumH4QYovwMi+Hq
+	otvJiAGjhDX/8tqeOl0k/x9FOrJLrtSVxOzM=
+X-Google-Smtp-Source: AGHT+IGomox+b2UDBxIjrLVdwH3ZQg0MBial2WDQuoPjUzT0cQ/7OM+jfwuVUQxS7ZLef0sIJoY2Og==
+X-Received: by 2002:a6b:6a04:0:b0:893:2ff0:162c with SMTP id ca18e2360f4ac-8e1fd6f67b8mr883021539f.9.1758720712618;
+        Wed, 24 Sep 2025 06:31:52 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a46b2f3405sm646365839f.1.2025.09.24.06.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 06:31:51 -0700 (PDT)
+Date: Wed, 24 Sep 2025 08:31:50 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: "Nutty.Liu" <nutty.liu@hotmail.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	jgg@nvidia.com, zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, 
+	will@kernel.org, robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, 
+	tglx@linutronix.de, alex.williamson@redhat.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, alex@ghiti.fr
+Subject: Re: [RFC PATCH v2 03/18] iommu/riscv: Use data structure instead of
+ individual values
+Message-ID: <20250924-01f9a5207f8865555c839abd@orel>
+References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+ <20250920203851.2205115-23-ajones@ventanamicro.com>
+ <TY1PPFCDFFFA68A794163FFB7BFAAAC22BEF31CA@TY1PPFCDFFFA68A.apcprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: iris: Add support for QC08C format for encoder
-To: Markus Elfring <Markus.Elfring@web.de>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-References: <20250919-video-iris-ubwc-enable-v1-2-000d11edafd8@oss.qualcomm.com>
- <HhukkV5KRQfG3CqKw5RPfKcXmPNHytjLriuOjq8xemsNiQz-Ac6ojfTTZGn5jNTAKnFJsReFXyrrZ0dqa1RmDw==@protonmail.internalid>
- <5c0f6b8e-c3cc-492c-9d94-3b79eaca0628@web.de>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <5c0f6b8e-c3cc-492c-9d94-3b79eaca0628@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PPFCDFFFA68A794163FFB7BFAAAC22BEF31CA@TY1PPFCDFFFA68A.apcprd02.prod.outlook.com>
 
-On 24/09/2025 13:40, Markus Elfring wrote:
-> …
->> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
->> @@ -171,9 +171,14 @@ static u32 iris_yuv_buffer_size_nv12(struct iris_inst *inst)
->>   static u32 iris_yuv_buffer_size_qc08c(struct iris_inst *inst)
->>   {
->>   	u32 y_plane, uv_plane, y_stride, uv_stride;
->> -	struct v4l2_format *f = inst->fmt_dst;
->>   	u32 uv_meta_stride, uv_meta_plane;
->>   	u32 y_meta_stride, y_meta_plane;
->> +	struct v4l2_format *f = NULL;
->> +
->> +	if (inst->domain == DECODER)
->> +		f = inst->fmt_dst;
->> +	else
->> +		f = inst->fmt_src;
-> …
-> 
-> How do you think about to use a source code variant like the following?
-> 
-> 	struct v4l2_format *f = (inst->domain == DECODER) ? inst->fmt_dst : inst->fmt_src;
-> 
-> 
-> Regards,
-> Markus
+On Wed, Sep 24, 2025 at 11:25:59AM +0800, Nutty.Liu wrote:
+> On 9/21/2025 4:38 AM, Andrew Jones wrote:
+> > From: Zong Li <zong.li@sifive.com>
+> > 
+> > The parameter will be increased when we need to set up more fields
+> > in the device context. Use a data structure to wrap them up.
+> > 
+> > Signed-off-by: Zong Li <zong.li@sifive.com>
+> > Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> > ---
+> >   drivers/iommu/riscv/iommu.c | 31 +++++++++++++++++++------------
+> >   1 file changed, 19 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> > index 901d02529a26..a44c67a848fa 100644
+> > --- a/drivers/iommu/riscv/iommu.c
+> > +++ b/drivers/iommu/riscv/iommu.c
+> > @@ -988,7 +988,7 @@ static void riscv_iommu_iotlb_inval(struct riscv_iommu_domain *domain,
+> >    * interim translation faults.
+> >    */
+> >   static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+> > -				     struct device *dev, u64 fsc, u64 ta)
+> > +				     struct device *dev, struct riscv_iommu_dc *new_dc)
+> >   {
+> >   	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+> >   	struct riscv_iommu_dc *dc;
+> > @@ -1022,10 +1022,10 @@ static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+> >   	for (i = 0; i < fwspec->num_ids; i++) {
+> >   		dc = riscv_iommu_get_dc(iommu, fwspec->ids[i]);
+> >   		tc = READ_ONCE(dc->tc);
+> > -		tc |= ta & RISCV_IOMMU_DC_TC_V;
+> > +		tc |= new_dc->ta & RISCV_IOMMU_DC_TC_V;
+> > -		WRITE_ONCE(dc->fsc, fsc);
+> > -		WRITE_ONCE(dc->ta, ta & RISCV_IOMMU_PC_TA_PSCID);
+> > +		WRITE_ONCE(dc->fsc, new_dc->fsc);
+> > +		WRITE_ONCE(dc->ta, new_dc->ta & RISCV_IOMMU_PC_TA_PSCID);
+> Seems it will override all other fields in 'TA' except for the field of
+> 'PSCID'.
+> Should the other fields remain unchanged ?
 
-My personal preference is for if / else as above.
+The short answer is that the current implementation is doing the right
+thing. The long answer is that riscv_iommu_iodir_update() and how it's
+called from riscv_iommu_attach_paging_domain() could use some cleanup.
 
-Trying to encourage the Iris people to move away from ternary operators ...
+A more logical interface would be that new_dc would be completely written,
+which means any fields left zero when creating new_dc will result in zeros
+being written -- it doesn't do that right now. Also, rather than passing
+DC_TC_V through new_dc->ta (as PC_TA_V, even though DC_TC_PDTV = 0), we
+should probably just set it directly in new_dc->tc.
 
----
-bod
+We can clean this up separately though, probably as work for adding SVA
+support.
+
+> Otherwise,
+> Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
+
+Thanks,
+drew
+
+> 
+> Thanks,
+> Nutty
+> >   		/* Update device context, write TC.V as the last step. */
+> >   		dma_wmb();
+> >   		WRITE_ONCE(dc->tc, tc);
+> > @@ -1304,20 +1304,20 @@ static int riscv_iommu_attach_paging_domain(struct iommu_domain *iommu_domain,
+> >   	struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
+> >   	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
+> >   	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+> > -	u64 fsc, ta;
+> > +	struct riscv_iommu_dc dc = {0};
+> >   	if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
+> >   		return -ENODEV;
+> > -	fsc = FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
+> > -	      FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_root));
+> > -	ta = FIELD_PREP(RISCV_IOMMU_PC_TA_PSCID, domain->pscid) |
+> > -	     RISCV_IOMMU_PC_TA_V;
+> > +	dc.fsc = FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
+> > +		 FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_root));
+> > +	dc.ta = FIELD_PREP(RISCV_IOMMU_PC_TA_PSCID, domain->pscid) |
+> > +			   RISCV_IOMMU_PC_TA_V;
+> >   	if (riscv_iommu_bond_link(domain, dev))
+> >   		return -ENOMEM;
+> > -	riscv_iommu_iodir_update(iommu, dev, fsc, ta);
+> > +	riscv_iommu_iodir_update(iommu, dev, &dc);
+> >   	riscv_iommu_bond_unlink(info->domain, dev);
+> >   	info->domain = domain;
+> > @@ -1408,9 +1408,12 @@ static int riscv_iommu_attach_blocking_domain(struct iommu_domain *iommu_domain,
+> >   {
+> >   	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
+> >   	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+> > +	struct riscv_iommu_dc dc = {0};
+> > +
+> > +	dc.fsc = RISCV_IOMMU_FSC_BARE;
+> >   	/* Make device context invalid, translation requests will fault w/ #258 */
+> > -	riscv_iommu_iodir_update(iommu, dev, RISCV_IOMMU_FSC_BARE, 0);
+> > +	riscv_iommu_iodir_update(iommu, dev, &dc);
+> >   	riscv_iommu_bond_unlink(info->domain, dev);
+> >   	info->domain = NULL;
+> > @@ -1429,8 +1432,12 @@ static int riscv_iommu_attach_identity_domain(struct iommu_domain *iommu_domain,
+> >   {
+> >   	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
+> >   	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+> > +	struct riscv_iommu_dc dc = {0};
+> > +
+> > +	dc.fsc = RISCV_IOMMU_FSC_BARE;
+> > +	dc.ta = RISCV_IOMMU_PC_TA_V;
+> > -	riscv_iommu_iodir_update(iommu, dev, RISCV_IOMMU_FSC_BARE, RISCV_IOMMU_PC_TA_V);
+> > +	riscv_iommu_iodir_update(iommu, dev, &dc);
+> >   	riscv_iommu_bond_unlink(info->domain, dev);
+> >   	info->domain = NULL;
 
