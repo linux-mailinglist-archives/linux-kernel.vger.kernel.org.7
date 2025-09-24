@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-831083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F8BB9B7DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAC7B9B7F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978053BF375
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6793BF143
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496CD242D69;
-	Wed, 24 Sep 2025 18:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752A5245028;
+	Wed, 24 Sep 2025 18:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="blzgtiUE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efsmGQUS"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45BE1FDD;
-	Wed, 24 Sep 2025 18:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FD5245005
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758738760; cv=none; b=Q6tMqcTnWs04i9OngKrV/TI2GJ2X90RNBhCOOYwHqO3lrdhYSY8Dijdnghf4zXpx4oLVCLGYtei3b/pCILmhElhZMdcWiktYt7c+gNf94IilhykjhPH/JZkwj8G2KmTW6Grxj8UbENfBw78ZGxUsyKqUUum2m2k5EpBtmaZIv5E=
+	t=1758738782; cv=none; b=WlEOZ1t2f+Fv5jzVFSmN+w1C+kcndrtTzd64T3kQQe3m35dM7ti7uM4j67lXKQLp3B+Q+5EBLzp4XPPnR8waUZmNnAIM24A21fIsxkeI8pYjNFMbzpaCAyjsm67Tl5OWN2p2brQTNJegeCP3LmGyXv50/9oTfOkQV6+TearGlDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758738760; c=relaxed/simple;
-	bh=bWIP0s6qalOqwGClINFJAxRrfc9GlOcLTVMnDwKSddc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWLYCMUlSWH98XNA4DfFRqUDBJsUQuRnqP0FvLvsiKDVBZCbFUksxlJtE4lPsCx/X+RuV1QxcHQzpg9l5Hv2MIz7SgPzwF1GdUCyx+qoxfgn2VYUc/F5S4B/4GQ6tW6msxM2E84Iu5GvVLJrihtQZ3As0uSuulcqlcoBnrmQTwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=blzgtiUE; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758738759; x=1790274759;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bWIP0s6qalOqwGClINFJAxRrfc9GlOcLTVMnDwKSddc=;
-  b=blzgtiUEGnx8qO6OTLP9ztwgvDs3/JLki4ZipS/fC0i2ZhruVF2d5pc9
-   mPZTRXeHgiv47pjSdW1gyB8yy/VpDr6+0hNcROzuHYIhryo85zL0fF50v
-   hbQZWdXi1vODBNU/Cq1TXpz1bBQieZ1Mpl8+P2WkFvLM+yEZHOSs05hqR
-   zWPV+YKfkz61+PQ7itrPuke4wGlqWDrEkwAXRM+IzyX2Qp7vcLKdhK+Sc
-   X6FykMNMmc8Zg2amkdIzSvz9hYviP6+VvJ2Z4OCMsuxdQ2vQLZyo8LR9W
-   LvYxXrUMKQhwN8/OcsEbmABkDnU+pj5+jyARAaV/gdZiE1xEcD8nnRxKB
-   Q==;
-X-CSE-ConnectionGUID: hMI0beWjSWuBJ+q540HHwQ==
-X-CSE-MsgGUID: xXA89S2uSXmpjFztJg/HfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="71291185"
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="71291185"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:32:38 -0700
-X-CSE-ConnectionGUID: gDmB2CbwT/+7lDKkxN4p+A==
-X-CSE-MsgGUID: wmLqxbxnQieeaEOwqUbiyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="182386249"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.203]) ([10.125.108.203])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:32:37 -0700
-Message-ID: <5490118a-7185-44fe-b816-b01c8ff75979@intel.com>
-Date: Wed, 24 Sep 2025 11:32:36 -0700
+	s=arc-20240116; t=1758738782; c=relaxed/simple;
+	bh=BPmp7/HZwCEN2P3jkfww+6QmR4v0glh9O0ulkchMmyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxg9Rc97MiAyhQja+nSzkwvSsPTfJUclfXQMzOyuYGvPJo+CJNtqkX+BN8mQI99VOnRt/1bY8fBk/uLAz7YELjr4wg3yJD6pTFnPMXNWeyvFgHFC6ZVKo+bYTaD2otAujxlYVNSgld3OZiZR3bndN1PxSeYxKCjOH/zbr1+5l1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efsmGQUS; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77f41086c11so159233b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758738780; x=1759343580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ZiGUngEg1bz9RIGYOxgVE+7eeU9JAJ9lijyiP/taFE=;
+        b=efsmGQUSpeAlPhYHne6mC9XC+C9cNzm6ws/4Ul28qA1tV22MQq/u+/O0JouKGUlWsB
+         Wg8aQR3IWtavWeaibMajUZYpQ73rb5v4O6F0KOmCFAq5Gz6PwNetVK7bWKp8Tw6mPL7E
+         5ZuAfkeO8xgdBah+Js9Z3uVhESeJZWIqvVbPgx3uF/xguI+WgG4yLngOl9cmHZTTn6Ng
+         LS/WfY3SG3CVQ37ATQh/qhypJX5s+AoKuctiUHKPWFvEPbAOkCNNC8g8OLLCR3UZ23Ka
+         g8HLw1zh61PvqSya2YzFZyovay2iCDkNmu+7zp5GQKFxoSswiC8LBZczkewG1LArYuuk
+         HlBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758738780; x=1759343580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ZiGUngEg1bz9RIGYOxgVE+7eeU9JAJ9lijyiP/taFE=;
+        b=QhRuChdo+Lhtwku0AyWEPp5rS6P44Funcy0WbCVZe1qLaW/tI+P1w3DEoXGNCT07Zw
+         hQrTBUn+wahgQLYq1SU8IC8B4xkV8ZEtSa29T5TzTPluL1ycWBueoEk2S/gsgSU91bOF
+         Kpub0LxXtmzZ4lhqQhtmmtg8Psg/H2UZvpL3nIt/Hue2EyouYwns/CjG6Z8EsASZBw+A
+         HymUgiEjKS+gMLc7ymwL8GMCBwacuztMTXhr+URD0+5v4P8mqWhyaq5WSL9SzMpcGVGT
+         E8u+1nydDYNq8kXfXjXbGS3YDbAYX6r6dbprxDMRk7r+vmLx2eAcePfOZk09gJ6b4EQo
+         IdYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAnMAMTfeK7cY/ZfcmtQZRZWkQABrNjp3qX6Qg2CH6Rh0+VLSTUz1lGrvCfNGCa5Y0s+bt4NkrZQJquJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRio5B7btjhoza7MYYzWlWLC2cQ8MHQRLSk6Unt4yX8uDmESy4
+	U5h0NaFrhubt/7LFcEhm7YavnvgJ5tRhUAdGhdPlbjuqdWVWOQk6zGLS
+X-Gm-Gg: ASbGncu2ENHUYwK0zcAfmiR4iEJZE1945TlAatoj2l9FbHEyttJ/0YWolnq15b09FyM
+	+QnlMZ/PBzrHQ9BZ475/Cni2utkQL60XfhRxtbf4XYP//6jVcwVK8xuO716XMNI1uYmmW1miacn
+	iacDklVfBav020K4UwnWXlIB38Lf1vl2W+a9B75qpXxGqjEOQFQzeFJBu9OyrSgb0PuME38/Ez6
+	+R1yruuJmigpKju8hHyLmtmT7PEUsXklpomxy4vnkT2Op7R/+Wp3OIitNPZnsq7r09lT3FDf+4T
+	ejNvLaLq00yxoXN2aitA4b5Ca4RS/02pKiDVFj0Drqig3TOc3AfmQtdYoMgduqOrTDyKAvD8wfa
+	uTMcTMPqZ9t5BX9gB2brbgmU=
+X-Google-Smtp-Source: AGHT+IGjh8GHJkW4HrCxPM3eBOhaOjfwbgk4g/556B0RsOzYugb+CgPT02LHWIyv3xFJhWkcNdv5fA==
+X-Received: by 2002:a17:90b:3d4b:b0:32d:d4fa:4c3 with SMTP id 98e67ed59e1d1-3342a2ef04fmr506703a91.31.1758738780237;
+        Wed, 24 Sep 2025 11:33:00 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f4c4:bad6:f33e:ddc9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bda06ccsm3113092a91.7.2025.09.24.11.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 11:32:59 -0700 (PDT)
+Date: Wed, 24 Sep 2025 11:32:56 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-spi@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Javier Carrasco <javier.carrasco@wolfvision.net>, 
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Matthias Fend <matthias.fend@emfend.at>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Paul Elder <paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Mark Brown <broonie@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 02/16] ACPI: property: Use ACPI functions in
+ acpi_graph_get_next_endpoint() only
+Message-ID: <iqfarpvf72l7qbhfinopjb27qvfm7wg77d4yhuy5qyubcwtcd2@exmcuvgqr353>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+ <20250924074602.266292-3-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [RFC 0/5] parker: PARtitioned KERnel
-To: Fam Zheng <fam.zheng@bytedance.com>
-Cc: linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
- linyongting@bytedance.com, songmuchun@bytedance.com,
- satish.kumar@bytedance.com, Borislav Petkov <bp@alien8.de>,
- Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com,
- Ingo Molnar <mingo@redhat.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, fam@euphon.net,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, liangma@bytedance.com,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, guojinhui.liam@bytedance.com,
- linux-pm@vger.kernel.org, Thom Hughes <thom.hughes@bytedance.com>
-References: <20250923153146.365015-1-fam.zheng@bytedance.com>
- <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
- <CAG+v+KZ4bRgVNiMDhNTeiOqqbEXCBD72K5SQZCo=m0xaQ2vauQ@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <CAG+v+KZ4bRgVNiMDhNTeiOqqbEXCBD72K5SQZCo=m0xaQ2vauQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924074602.266292-3-sakari.ailus@linux.intel.com>
 
-On 9/24/25 09:21, Fam Zheng wrote:
-...
-> The model and motivation here is not to split the domain and give
-> different shares to different sysadmins, it's intended for one kernel
-> to partition itself. I agree we shouldn't have different kernels here:
-> one old, one new, one Linux, one Windows... All partitions should run
-> a verified parker-aware kernel. Actually, it may be a good idea to
-> force the same buildid in kexec between the boot kernel and secondary
-> ones.
-Uhhh.... From the cover letter:
+Hi Sakari,
 
-> Another possible use case is for different kernel instances to have
-> different performance tunings, CONFIG_ options, FDO/PGO according to
-> the workload.
+On Wed, Sep 24, 2025 at 10:45:48AM +0300, Sakari Ailus wrote:
+> Calling fwnode_get_next_child_node() in ACPI implementation of the fwnode
+> property API is somewhat problematic as the latter is used in the
 
-Wouldn't the buildid change with CONIFG_ options and FDO/PGO?
+How exactly is this problematic?
 
-Thank you for posting this series. It's interesting and a thought
-provoking. But, that's where it stops for me. I don't think this
-approach has any future upstream. I probably won't look at it again,
-even if it hits my inbox. (I hope it _isn't_ sent again unless there is
-some *MAJOR* *MAJOR* change to the approach).
+> impelementation of the former. Instead of using
+> fwnode_get_next_child_node() in acpi_graph_get_next_endpoint(), call
+> acpi_get_next_subnode() directly instead.
+
+I think we are moving into the world of mixed fwnode types with software
+nodes/secondary fwnodes, so I do not think this is a step in right
+direction.
+
+Thanks.
+
+-- 
+Dmitry
 
