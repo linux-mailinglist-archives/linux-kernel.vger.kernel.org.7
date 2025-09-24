@@ -1,587 +1,317 @@
-Return-Path: <linux-kernel+bounces-830871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C834B9AC18
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:44:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D504CB9AC12
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A4816BDDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED423A4D8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB3830FC29;
-	Wed, 24 Sep 2025 15:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5F030FC3B;
+	Wed, 24 Sep 2025 15:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGdQdJPO"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b="U6nSpyk4"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azolkn19010033.outbound.protection.outlook.com [52.103.10.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B7B22127E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728621; cv=none; b=lw2SjxnWB4tYK8NgS2OzQOzpzjp5Nw7tkc5LtBbeAn/YtBtQMdicPB+qZ8SUctPBJcyUqEKyTYzGlPZfK+COwgTCo/uqi1gzOZwQ2R+uFV0b4t0Av7D0uy1q7jexzfVXTLc1mPRoQq2XvgyhRlmGZ4voaB/ysveSLL7neJFHQnw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728621; c=relaxed/simple;
-	bh=WZRb7+DjF8QMNDop0D/1YN7VeclqiJu6gRcLKIIT+mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmnKWFfsoJG5s5Kb9iY7lIO5fBqNkze2cXPbsgeFTDbQuzsNIYLBnvkutz8liBExN0nnkb5m5wzRdHosQjHjGbPc8AUlWYowoxfemMF73/IN3MshIE5nofDatcUZWGXi01Pq71VOTdGc041ft3A1PmUOOUQ1ktb0kjDCoOBV4PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGdQdJPO; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so1242179b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758728617; x=1759333417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ks4dFIz8QLAwcsWBUKnpEizXKioYep0ojUM+hoTX+s=;
-        b=TGdQdJPOm5mdvUlruXmOTk+WCTakn1zJqYk8/lH2NcJk8Z2ljc3sRa3JxENiaVKThk
-         1UaR7sJspd4Dzli9xFq7jLL4X1Ie1n+Vj/NUabvlMTd2DeX+gmUDC8F9yNq34ndeTvOd
-         4xmoBKxtp+AXTZkKxlhCIc5iuBtvT/V3cuNhI2VVv4qUjVN3Rm+/uZN69G7aweQ0z6M+
-         xIt0mrQVH2uTX9OBk94WBY3BAbiP/Btf6mfjY7cbKT3akhgLh82L5hJEHuXCnku5dHRf
-         97QqYrYT9q4ovgmNIrnwOSvKPyg6lU9BPgRtausqRAkp5GUIZ6r4ZTdq/8VSXXnZOslQ
-         29+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758728617; x=1759333417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1ks4dFIz8QLAwcsWBUKnpEizXKioYep0ojUM+hoTX+s=;
-        b=UwSkce3h2NXuriiqL0+XRhlBhe5+G0WL8QlEjGH6rS98sDHBzNetfvZgUDH+9rn2KB
-         AQ+ULpPWFn2Yp4Cmal80XO76+3YQpAhL6k7UMpbS+yZmw1BIgORjxTzyQ0lhivwplGtI
-         4PdBtvS9jW8LpnX2oy3SwR6ler2hVU+FYV3g40ysBAQ7M+Jo9nenUG16fQARn9oeprCz
-         1PxSn6TA39HKW2GC1zJ3gz11s3Mow4rWrWVnC/wvOcUWSK8HKi+a/cLiX6cpDvMIlUh7
-         aPRe5LlRv9tIhfIIFsxli6Bx4gVNLF96zPtMZJGiWa43hG61UuwDEARo00Zjb9I4Wnwm
-         Lerw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTooM8hV2olpnirwDxYoELiLcI5zeCxT6FOwk1y3/Cd6M03p4Dpk4ukUf000CuvU1wZVbwhjgaysTlK6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9LUlsb4x1YcRbyb5/UTCxLD28285k+Qtl0/+YJJGFebapORcT
-	fZA28wFWzrRPwIFSe6RELR+t546gkrY2L3sI4P+SM6caxF7Xo0xDR3+p
-X-Gm-Gg: ASbGncv2AsJgu2KbRhAwD44Y8/6bf7iskH4FtuxfoTVtfu0nFvUOCUu4JXBdIjR4zNP
-	GnXnOjo9DKZZeCU/eUf5X24DLn4dBCIu9lrE1We32w0JuTn77WXinO40Bwcg3dBI089v3Lw5O/r
-	3JJ46NFc011TlwnEzLbHt+1UpckB+oU5Bplv/lmsSrWnyoUsiSF4/nddvVmRtJRSqjaKUFW3cL6
-	FGQJkgK6Xlt1UPUn0uI6bhCKG3Ye/PEPapOOX2Al2wABXmYjvzXeLIDU7lFIt3jq6Mp/uyV5nBu
-	mZY0a3QCl087nDi+HQij6kw+yUzNadpZzdis7Ua4/g4ZfZQFloJIIS1RfvoT1RMG7pw3mGIo+Yr
-	7K5eCqtp20SFABFu1SKQxg/o9MFDOp7kfcfw1xddE1yZ0Pg==
-X-Google-Smtp-Source: AGHT+IH9DTmvZ9j43eoOq3wKSwDjqQ7cjXTS3KNKJ5Aq0iTju+ao3EARcSu2svEj2MLfjzAkHaP+SA==
-X-Received: by 2002:a05:6a20:3ca7:b0:263:bee9:1af0 with SMTP id adf61e73a8af0-2e7ca028460mr104782637.2.1758728616701;
-        Wed, 24 Sep 2025 08:43:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bda1085sm2792940a91.10.2025.09.24.08.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:43:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 24 Sep 2025 08:43:35 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Troy Mitchell <troy.mitchell@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 3/3] hwmon: (ctf2301) Add support for CTF2301
-Message-ID: <53f1d5d2-c871-4823-ab13-8c3dfd86dbfe@roeck-us.net>
-References: <20250916-ctl2301-v1-0-97e7c84f2c47@linux.dev>
- <20250916-ctl2301-v1-3-97e7c84f2c47@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF1217B418;
+	Wed, 24 Sep 2025 15:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.10.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758728669; cv=fail; b=OMORzZ3S6rXxGYan00CRFBorY3iiBZJXqKS3dWRTVQr06rP5C4eFVVC4D8sL6sHWUfWq2DkhSnQ5a+R3K2lLV2OyTjn59UYL5sLJRBLIDT7zxHoUJWzLXegiYMMVclXUfpqoj6E8J3rus+TdUyH1VWgXH9qRJSOVT3EY2mTc2/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758728669; c=relaxed/simple;
+	bh=ZyCZsU4jBU53CtWTukkI4T1oX7Wm/iQK9wPAkERO4FE=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pBUuuza9Y271AitROWnXCuI0n2vE7GhWXhcRd5plKFxWOW2TBVdfJ8LDpgaHOgYNT0UYtji3SC9Sqtfc6OLGR0qin/4wv6aTs+cMJ9LiOvo8rMADqneco338PxnLULzKxJ6McJebogf6SYAoyx6JH2Qz5JOw6qB6VVRYAiDj8W8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca; spf=pass smtp.mailfrom=live.ca; dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b=U6nSpyk4; arc=fail smtp.client-ip=52.103.10.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.ca
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qpAuNV4yuaNxfNki+81nglAdY3HAvW1dGYWZsXyHrQsaExGDuScSHapVKbcfdnd5YNE1PnNp6m1pGn+wVzVXf8vHCHpwKwMmmS4Ah7NqVgIoB93tqeR6IgFZYlZSW7ncUpeTy1XRaGQHf1gwcfjx5i3CR978Pm1B0GWCQkih/nsI1V/5lhjnOlR3WkRACnwz+PDTnpFXJU9fHe3uW0aMBlzFYmgCQdymySLaeCccy3MT2uroq6EtNjwhUGgJ8+0KVNGjnwFmT5KdIdksx7eLA/Y1KqttesnjJI4HEX0+ufjrZKhy9jgtDKOziTPtJmniZWYxzTQ/Q+Cgu7F7l7B00w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cl7Q+QFn43hztCh2pk4r2hdzi99nfJD78o/eo8ddA0U=;
+ b=PaMJ16VxWsL1SqPr5UJsg9/3dmOqC0FAE8pXfgTSoOgwFZskEEqDq1z+MuCbbmIQaoUf7fqwlxvoHFhIe/a4onvvVMndu8pzqHZg8QbOCYkaVECMw3bBULzxhjvkfiR43fUUccDuUscGHnHDMw4n+XL3AITma7AbOaihFu01lZvnlhzRX/CUTGpHoKXsB06TuGSiQiMsQV+SKE9QNv5hpJiaAhHRUMWPouI87v4YQDlU6F+6uSWZon1GErZajHOfWc0cWbzqVrumNxbsYIkjsdIUttDbVbPC3ToKqXY+Cx1ZjkFQEmOwL9CdJG2mt5wOWXlIwkP4SJ7dZM/Zmw7mIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=LIVE.CA; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cl7Q+QFn43hztCh2pk4r2hdzi99nfJD78o/eo8ddA0U=;
+ b=U6nSpyk4j1Jc6QQH0AeTeMU4zoyXH5RvvNy4NtP8kbdjZefyHg7WpBbGFwWQsE7f1KpnasOij+nLoKoBJQfMsAKdx6pZQ8O/5hBLuuA45z+MMd7sWZBWv7c+0A5Un7uq6m63AMm4TkpiMtD4pM83qAnvaJxr+LthUeVIUCzOCwMJvxHJu5s7EpEgcv5w+e+ANAeNqVEmFf1UsViChDCtvwMC6RTmdgBgRwNKR57XcaFQ35Qpl+kkEmzTT1+U3fDYsoCpgs5+/47tgKdj0GUwncWMw42NYRJOjmnuaSzUxCxj8luvAk9t1RJuV7BUdNugdYLvPOB3Pozr1PZg4DfU2A==
+Received: from MN2PR06MB5598.namprd06.prod.outlook.com (2603:10b6:208:c3::13)
+ by PH0PR06MB7934.namprd06.prod.outlook.com (2603:10b6:510:a7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 15:44:24 +0000
+Received: from MN2PR06MB5598.namprd06.prod.outlook.com
+ ([fe80::96f9:fd1e:4b7c:17f4]) by MN2PR06MB5598.namprd06.prod.outlook.com
+ ([fe80::96f9:fd1e:4b7c:17f4%4]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
+ 15:44:24 +0000
+Message-ID:
+ <MN2PR06MB5598AC9C807A8D3929E6C30BDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
+Date: Wed, 24 Sep 2025 11:44:15 -0400
+User-Agent: Mozilla Thunderbird
+From: Daniel <dany97@live.ca>
+Subject: Re: [PATCH v5] platform/x86: lg-laptop: Fix WMAB call in
+ fan_mode_store()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Markus.Elfring@web.de, hansg@kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, matan@svgalib.org,
+ platform-driver-x86@vger.kernel.org
+References: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com>
+ <MN2PR06MB55984287A9BAB69F1711640DDC11A@MN2PR06MB5598.namprd06.prod.outlook.com>
+ <ea57d978-3fd3-fd86-aec7-e814359e3e02@linux.intel.com>
+ <MN2PR06MB559873DBA3BA4491E08949ACDC1DA@MN2PR06MB5598.namprd06.prod.outlook.com>
+ <175871961048.19584.6234729612579222383.b4-ty@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <175871961048.19584.6234729612579222383.b4-ty@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0319.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:eb::17) To MN2PR06MB5598.namprd06.prod.outlook.com
+ (2603:10b6:208:c3::13)
+X-Microsoft-Original-Message-ID:
+ <ec67ae3e-2664-4935-bbf3-e050cdf1f7ae@live.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-ctl2301-v1-3-97e7c84f2c47@linux.dev>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR06MB5598:EE_|PH0PR06MB7934:EE_
+X-MS-Office365-Filtering-Correlation-Id: b976598d-342a-45d7-c51c-08ddfb813c28
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799015|41001999006|19110799012|5072599009|6090799003|15080799012|461199028|23021999003|440099028|4302099013|40105399003|3412199025|12091999003|26104999006|10035399007|3430499032|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZWEwOXVyLzM4ZTBYOXRNYjkwemNtaWxGbmFGekRqdzFTbTNDVzlBalI5dytZ?=
+ =?utf-8?B?R1hKRU1kWXVES05oSzFWOEw1cllNM1krbUpJNENMam81NExxTlZETjZ3UENK?=
+ =?utf-8?B?em5scm1Ba0xkSTNudmpYSmJyamJjS3dTYnJFS3M2TW1panludms4Wkl1QlJ2?=
+ =?utf-8?B?eTRCZGZTTE5mb1pFemFoeEJ6S3Y4bjdsZ0ZIcjZaOWNNd1ZXOWVSVTVtSnZ5?=
+ =?utf-8?B?V2Jjc2o1aDhSUTI2U09NaCtCOWJndHVjZGNabUF2bEJ0U0Vja0hRQUViMUI1?=
+ =?utf-8?B?RGd1WjAxbnRJUmp2VGlzN0h2NmxFUCtCMWlHZ2FXRWVIcGRleWRZb3dZOWNZ?=
+ =?utf-8?B?WmhRYXJZU3J5M0FGalEvVXBuR1VMZnB1cmdrdkNxT2dxc0FHSVpFV3o4LytQ?=
+ =?utf-8?B?eUNYM3h6MDI0cnpObWpTN1ZjY2ZlOWlJdy9Fc1JHc20rdWhYQzZiT3B4Rm82?=
+ =?utf-8?B?cElrL2hyUnNJcFhXbkRwSGt6eU1QWXlTOFNJS1ducUxIbEFMN0pEbVFFc3dn?=
+ =?utf-8?B?WEhhcUkwNzFka25tenhuZ1dveDJ5cWNvT29WSnFXTWdrZnNuckVLY3pzbk8w?=
+ =?utf-8?B?NnZtUnZNVGltK2xVcFJIeUpzeUMxb2JuT3c2MFlXaEtSU3FVV3g3NVFZdFNS?=
+ =?utf-8?B?YWd2VjBxTTlPUGg5Snl6dFcvMU5qSWpoWThkaFlRM0FuZjBBaXgyY09ZUmI5?=
+ =?utf-8?B?elhVQjR1YjF0NWR3RlE0Zkd0elBCZ29MLzJVeXhwMktobTI5MUx2WERBSUlu?=
+ =?utf-8?B?SXpFL21SRWVrQzhPNHZaTExndkxvVW03YmQxMGdzVGg2R0ZGMjhZN09HcWtQ?=
+ =?utf-8?B?TWorZ2VEejBGellsY3V0VDcwNlhDYXVyeXpKVDNtUm9sM0d6WFJFdVg3Zjlt?=
+ =?utf-8?B?ekNmWXBERU1HY1lDakFKdU9iQ2hEQWJtTDRSU1dqSWpUbGR2U3NPWWo4c0ty?=
+ =?utf-8?B?M0R5ejdkaE9WVjJJL1lvY1RJRkVKT3h0UytMaWNzK0t1TlZtUTI5dE8rZDQ3?=
+ =?utf-8?B?QU9Ib1pmU2R1Z01kTlVEUkZyZml0M1dVSmhqZHo4eVlBcGx6dkpqSzJiVzdB?=
+ =?utf-8?B?UnM4ZXRCczcwbTFTekJCNTl2cmM3UnpoWWZDUEx0Y0Uzd2J0dzMyc2w2QTMv?=
+ =?utf-8?B?NUpnYW16bU5zSm5VcEYrV3hMWTZ1WE1sOGhLQXlPNkJKbVNVeDVZRUV6NVdl?=
+ =?utf-8?B?b2ROa0FhZHBMYzQxelU4ODg3SVpXQk9yVndGL2pEdlNyd2RXY3RpdExMSGc5?=
+ =?utf-8?B?UDY5akNPWDdqR0piY3l1TURrbkoxTTVlOE05emx5cjJZbU90aGthUERTdG1Q?=
+ =?utf-8?B?QnFoYVBQUHlWRFROTE5ianh5MVhLSDNlNG1MSmEwZG8xMWVzRHdaVjBsejFS?=
+ =?utf-8?B?MGg5WTNVd21uVUV4VldONjk4UnNSMmdrWnB4LzdEdVhFSmpGZ3JoRlZPT2tj?=
+ =?utf-8?B?TThXQmZUQzFGbDBxcUJQZnZnQ3NQT0hzWjhSaFoyQklWTEVtK1pNbGI5RXFp?=
+ =?utf-8?B?d09EeC9LSzlDNUdkd3ZYYUJpcXhsOGJCU1VuTGpTdmJlamg1K0VFUGVnZXAz?=
+ =?utf-8?B?eTJzaEhjWGwvSG1MTTNCTFFrcUluNGtkRHZ4MzFpNlRMUXR2YitIT2lYekdX?=
+ =?utf-8?B?Q1VBRUMzVEZrT0tnbi9uclVvaXEzYVBtNGNZU0VhVFM0T2tZZ0JFZDBxbTNE?=
+ =?utf-8?B?azJtL1FvN3JOWUcyL25uejYrM0FaNmZDUWFCUmhYY20zQlNEY0wxaEl1V2JW?=
+ =?utf-8?B?czIxUTRWVTUweEZKUUJONjJRWG5KTUxVNjRGSndsM3NnRWJvVGMzMlhHelBw?=
+ =?utf-8?B?TlAyakhxcXU4YW15dUdoUXZyN1B0MEIrUUlpMmtWK3R5MmpBQnlPOHQ0dXBr?=
+ =?utf-8?B?ckFOeVAwMGlERW9wVXhUSkpMbW8xZnM1L2M5b3FMUHVjTkE9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MFN6QUQ3K0JLT3VJeVVWNWtMbXdUa2VtVzlWanJ3R1FnaDY5bkZlckVLeTVE?=
+ =?utf-8?B?U2V2SlZVNmxTdDhoS3ZRbzVJQ05ncWpYODVGL2F0VGV5czh6cWJxNDB5QlpB?=
+ =?utf-8?B?QjREWVYvVWhHUG9USGg0MHhyUlYzcVppQVVuK0xSSjUyeDdIaFl1VU5QUjVT?=
+ =?utf-8?B?K29MTCtDZlhDSWJPRTE0WXZ4ZkZRdjIxM01MLzRUNWhHQ0dVd1BzMW1maWFI?=
+ =?utf-8?B?enhobHVjNWRsSksrTGNSYTZoWFNzY0l2NllTclpUcldSS3FjNDlxZnpUZSt6?=
+ =?utf-8?B?WEF2UFE0cHpiLzZDNC80b3VpT3NacmJqWjZ4aUI1eldkUnR2amViTVIxUmJQ?=
+ =?utf-8?B?bWp5eSswTnFZR3ZZOENLdFpwdzRZaGJvaG5qQU95dU1SQVA5Ly9qYXFmalRQ?=
+ =?utf-8?B?MStNelJGYU9md0gyKzBadGhPdkRqNlpLWmpwQ1NCdFExb2xsT3QyOHZDQlcr?=
+ =?utf-8?B?MjVQOGhQZWdxUkJiTnFpUC9jUzFkaWRVRmZQeEgzY3VROGVzbFArUzRGSW8x?=
+ =?utf-8?B?ZWQ2SFZOb1I2N1BNdTNnZTBHU2d3eUR0LzFmdzFhUjl3anFvRm1nQm1MTnN2?=
+ =?utf-8?B?eDlZcUpyMUJTNnNoMDFJYytsSFpOV0ozMm5tWjlycVZnZmFOcUJKYTFISTNu?=
+ =?utf-8?B?Nk1nb1R5a3g2OW5VMnUycSs2bEQwUndKQ3VmUmJVUmJyVUVMNjRMT0hNRmZQ?=
+ =?utf-8?B?dlZxcnZ5QVdqakZ2SXB4VFplVnA5aUFsZHNKb20xNThJWmgvQ3RWc1ExVmpz?=
+ =?utf-8?B?RlZoTEhIT1pGQlVoVlc0NGF4WjVmYVR1blZOckRQaWhFQVRJRGtRem1KU3Bx?=
+ =?utf-8?B?SVl2OTIxZno4WnBOb2JJVTBkYlJTMEw0UklkMnZnL1o4UWVwc0x3STJ0bk5M?=
+ =?utf-8?B?bEdCWUd3b2d4VEZIL3lBbzNxOVpkc1pVTVdqY05TNXlWUGFyMWVSOVBlbGx4?=
+ =?utf-8?B?MEkzaDJmZkg3VnhoeFp2V2YrSDI4LzExSURaSXkzdVdsWkxTS2NYTlVFYmdo?=
+ =?utf-8?B?TDBJZmthazZORW9PelVwcmxxNTZocnJFTXBkUTdGVmRBRDE1M1V6cXlIM2xQ?=
+ =?utf-8?B?VGt6ZGRlNXFSRG1PdFhlUDF5UkVPTCtaRnlyK0QxdzMxUFpTbW5TNE0vdWcv?=
+ =?utf-8?B?bHJWa3g0YWZuaWpSYXhETllmTE5OSTR3MGY3ekoxalVOWWpHbWVrN2pyaUVP?=
+ =?utf-8?B?L08vMk5RcVY1b05oMTJxS041TFA2SnlKOXpWK3RWcE81MXdRL2Q2K254M29i?=
+ =?utf-8?B?SEtiYmZEeXRsZ3oyNXI5RHRwRUh2SllHdzh3c3NQdGhBbEZUZU1TY1RwR3U1?=
+ =?utf-8?B?RTB1VWhuVFVjNUtTM3Z0c1I0YzVxQVlYa2ZMOWphN0V6K1huZlg2V0RvRjFL?=
+ =?utf-8?B?VmtBSE9Sc09menhhWWowVlhzb1I2STViazhPc3NEN2d5ekZrVjl4OG1YbVk1?=
+ =?utf-8?B?VDR6dU9BYTgzSk80VTlYZGxDTXJZNEZPNU13KzlBV0xyaWNva3BPTkw1aVZk?=
+ =?utf-8?B?Z2Z5cWQyMGdRdlRseCthK2MwakdoL2l5TkRrbWo3S1lPY1JIdXp0K2Nub1FT?=
+ =?utf-8?B?YVprR3V2d0tCbnVHOW40cUxscWp1Sml1R2k2VEdMNkx5R1BrYWJOVTkvWC9l?=
+ =?utf-8?B?dHVMbVRNdXhiY0tWOW5SVDB1YnlDRlE9PQ==?=
+X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-a1430.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: b976598d-342a-45d7-c51c-08ddfb813c28
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR06MB5598.namprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 15:44:23.9312
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR06MB7934
 
-On Tue, Sep 16, 2025 at 12:46:46PM +0800, Troy Mitchell wrote:
-> This commit introduces driver for the Sensylink CTF2301
-> system-level thermal management solution chip.
-> 
-Documentation/process/submitting-patches.rst:
+On 2025-09-24 09:13, Ilpo Järvinen wrote:
 
-"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
- instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
- to do frotz", as if you are giving orders to the codebase to change
- its behaviour."
+> Thank you for your contribution, it has been applied to my local
+> review-ilpo-fixes branch. Note it will show up in the public
+> platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+> local branch there, which might take a while.
 
--->
+Thanks a lot, but I was actually thinking about rewording the body of the
+commit message.  Could I ask that this version be the one to eventually be
+pushed to the public repo?
 
-"Add support for ..."
+Also, this patch fixes an issue raised in this comment on the kernel bugzilla:
+(https://bugzilla.kernel.org/show_bug.cgi?id=204913#c4), but crucially not
+the issue itself.  Do I mention this anywhere in the commit message?
 
-> Currently, the driver does NOT support the Auto-Temp mode of the PWM
-> fan controller, which provides closed-loop automatic fan speed control
-> based on temperature.
-> 
-> Now this driver supports:
+-- >8 --
+Subject: [PATCH v6] platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
 
-Now -> Currently
+When WMAB is called to set the fan mode, the new mode is read from either
+bits 0-1 or bits 4-5 (depending on the value of some other EC register).
+Thus when WMAB is called with bits 4-5 zeroed and called again with
+bits 0-1 zeroed, the second call undoes the effect of the first call.
+This causes writes to /sys/devices/platform/lg-laptop/fan_mode to have
+no effect (and causes reads to always report a status of zero).
 
->   - Reading local temperature.
->   - Reading remote temperature.
->   - Controlling the PWM fan output in Direct-DCY mode (direct duty cycle control).
->   - Monitoring fan speed via the TACH input (RPM measurement).
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
-> ---
->  drivers/hwmon/Kconfig   |  11 ++
->  drivers/hwmon/Makefile  |   1 +
->  drivers/hwmon/ctf2301.c | 326 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 338 insertions(+)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 9d28fcf7cd2a6f9e2f54694a717bd85ff4047b46..2120d891e549795c3f3416d08f71916af714f6b6 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -537,6 +537,17 @@ config SENSORS_CROS_EC
->  	  This driver can also be built as a module. If so, the module
->  	  will be called cros_ec_hwmon.
->  
-> +config SENSORS_CTF2301
-> +	tristate "Sensylink CTF2301"
-> +	depends on I2C
-> +	select REGMAP
-> +	help
-> +	  If you say yes here you get support for Sensylink CTF2301
-> +	  sensor chip.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called ctf2301.
-> +
->  config SENSORS_DRIVETEMP
->  	tristate "Hard disk drives with temperature sensors"
->  	depends on SCSI && ATA
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index cd8bc4752b4dbf015c6eb46157626f4e8f87dfae..12f2894ce8d5fbfd942409f6c43d78fbdece57b4 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_SENSORS_CORETEMP)	+= coretemp.o
->  obj-$(CONFIG_SENSORS_CORSAIR_CPRO) += corsair-cpro.o
->  obj-$(CONFIG_SENSORS_CORSAIR_PSU) += corsair-psu.o
->  obj-$(CONFIG_SENSORS_CROS_EC)	+= cros_ec_hwmon.o
-> +obj-$(CONFIG_SENSORS_CTF2301)	+= ctf2301.o
->  obj-$(CONFIG_SENSORS_DA9052_ADC)+= da9052-hwmon.o
->  obj-$(CONFIG_SENSORS_DA9055)+= da9055-hwmon.o
->  obj-$(CONFIG_SENSORS_DELL_SMM)	+= dell-smm-hwmon.o
-> diff --git a/drivers/hwmon/ctf2301.c b/drivers/hwmon/ctf2301.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2fea4d195519ea34c1d4bf67456098b225d4d13c
-> --- /dev/null
-> +++ b/drivers/hwmon/ctf2301.c
-> @@ -0,0 +1,326 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Driver for CTF2301 system-level thermal management solution chip
-> + * Datasheet: https://www.sensylink.com/upload/1/net.sensylink.portal/1689557281035.pdf
-> + *
-> + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.dev>
-> + */
-> +
-> +#include <linux/hwmon.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +
-> +#define PWM_PARENT_CLOCK			360000
-> +
-> +#define CTF2301_LOCAL_TEMP_MSB			0x00
-	LM90_REG_LOCAL_TEMP
-> +#define CTF2301_RMT_TEMP_MSB			0x01
-	LM90_REG_REMOTE_TEMPH
-> +#define CTF2301_ALERT_STATUS			0x02
-	LM90_REG_STATUS
-> +#define CTF2301_GLOBAL_CFG			0x03
-	LM90_REG_CONFIG1
-> +#define CTF2301_RMT_TEMP_LSB			0x10
-	LM90_REG_REMOTE_TEMPL
-> +#define CTF2301_LOCAL_TEMP_LSB			0x15
-	TMP451_REG_LOCAL_TEMPL
-> +#define CTF2301_ALERT_MASK			0x16
-	TMP461_REG_CHEN
+Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
+When the fan mode is returned from WMAB it always has this form, so
+there is no need to preserve the other bits.  As a bonus, the driver
+now supports the "Performance" fan mode seen in the LG-provided Windows
+control app, which provides less aggressive CPU throttling but louder
+fan noise and shorter battery life.
 
-So far this looks like a chip based on LM90 or TMP451/TMP461
-with an added fan controller. I can not immediatey determine
-if it would be better to add the pwm/tach support to the lm90
-driver. Given that the chip (based on registers) does support
-limits, which is not implemented here but essential for a chip
-like this, I would very much prefer adding support for it to the
-lm90 driver if possible.
+Also correct the documentation to reflect that 0 corresponds to the
+default mode (what the Windows app calls "Optimal") and 1 corresponds
+to the silent mode.
 
-The public datasheet does not provide register details, making it
-all but impossible to do a real evaluation. Any idea how to get
-a complete datasheet ?
+Signed-off-by: Daniel Lee <dany97@live.ca>
+Tested-by: Daniel Lee <dany97@live.ca>
+Fixes: dbf0c5a6b1f8 ("platform/x86: Add LG Gram laptop special features driver")
+---
+V1 -> V2: Replace bitops with GENMASK() and FIELD_PREP()
+V2 -> V3: Add parentheses next to function name in summary line
+          Use full name in signoff
+V3 -> V4: Add include for linux/bitfield.h
+          Remove "FIELD" from bitmask macro names
+V4 -> V5: Rename `status` to `mode` in fan_mode_show()
+V5 -> V6: Reword commit message body
 
-> +#define	CTF2301_ENHANCED_CFG			0x45
-> +#define CTF2301_TACH_COUNT_LSB			0x46
-> +#define CTF2301_TACH_COUNT_MSB			0x47
-> +#define CTF2301_PWM_AND_TACH_CFG		0x4a
-> +#define CTF2301_PWM_VALUE			0x4c
-> +#define CTF2301_PWM_FREQ			0x4d
-> +#define CTF2301_RMT_DIODE_TEMP_FILTER		0xbf
-> +
-> +/* remote diode fault alarm */
-> +#define ALERT_STATUS_RDFA			BIT(2)
-> +
-> +/* alert interrupts enable  */
-> +#define GLOBAL_CFG_ALERT_MASK			BIT(7)
-> +/* tach input enable  */
-> +#define GLOBAL_CFG_TACH_SEL			BIT(2)
-> +
-> +/* local high temperature alarm mask */
-> +#define ALERT_MASK_LHAM				BIT(6)
-> +/* remote high temperature alarm mask */
-> +#define ALERT_MASK_RHAM				BIT(4)
-> +/* remote low temperature alarm mask */
-> +#define ALERT_MASK_RLAM				BIT(3)
-> +/* remote t_crit alarm mask */
-> +#define ALERT_MASK_RCAM				BIT(1)
-> +/* tachometer alarm mask */
-> +#define ALERT_MASK_TCHAM			BIT(0)
-> +
-> +#define ALERT_MASK_ALL				(ALERT_MASK_LHAM | ALERT_MASK_RHAM | \
-> +						ALERT_MASK_RLAM | ALERT_MASK_RCAM | \
-> +						ALERT_MASK_TCHAM)
-> +
-> +/* enables signed format for high and t_crit setpoints */
-> +#define ENHANGCED_CFG_USF			BIT(3)
-> +
-> +/* PWM Programming enable */
-> +#define PWM_AND_TACH_CFG_PWPGM			BIT(5)
-> +
-> +#define PWM_DEFAULT_FREQ_CODE			0x17
-> +
-> +
+ .../admin-guide/laptops/lg-laptop.rst         |  4 +--
+ drivers/platform/x86/lg-laptop.c              | 34 ++++++++-----------
+ 2 files changed, 16 insertions(+), 22 deletions(-)
 
-No mode than one empty line. checkpatch --strict would tell.
-And, indeed, it reports:
-
-total: 0 errors, 4 warnings, 3 checks, 350 lines checked
-
-where
-
-WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
-CHECK: Please don't use multiple blank lines
-CHECK: Alignment should match open parenthesis
-
-are relevant and need to be fixed.
-
-> +struct ctf2301 {
-> +	struct i2c_client *client;
-
-Not used anywhere.
-
-> +
-> +	struct regmap *regmap;
-> +
-> +	unsigned int pwm_freq_code;
-
-Unnecessary empty lines.
-
-> +};
-> +
-> +static int ctf2301_read_temp(struct device *dev, u32 attr, int channel, long *val)
-> +{
-> +	int regval[2], raw, err, flag = 1, shift = 4, scale = 625;
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	unsigned int reg_msb = CTF2301_LOCAL_TEMP_MSB,
-> +		     reg_lsb = CTF2301_LOCAL_TEMP_LSB;
-> +
-> +	switch (attr) {
-> +	case hwmon_temp_input:
-> +		if (channel != 0 && channel != 1)
-> +			return -EOPNOTSUPP;
-
-Should have been handled in is_visible function. It is, therefore
-this check is unnecessary.
-
-> +
-> +		if (channel == 1) {
-> +			err = regmap_read(ctf2301->regmap, CTF2301_ALERT_STATUS, regval);
-> +			if (err)
-> +				return err;
-> +
-> +			if (regval[0] & ALERT_STATUS_RDFA)
-> +				return -ENODEV;
-
-Wrong return value. The device does obviously exist. This should return
--ENODATA.
-
-> +
-> +			shift = 5;
-> +			scale = 1250;
-> +			reg_msb = CTF2301_RMT_TEMP_MSB;
-> +			reg_lsb = CTF2301_RMT_TEMP_LSB;
-> +		}
-> +
-> +		err = regmap_read(ctf2301->regmap, reg_msb, regval);
-> +		if (err)
-> +			return err;
-> +
-> +		err = regmap_read(ctf2301->regmap, reg_lsb, regval + 1);
-> +		if (err)
-> +			return err;
-
-Consider using regmap_multi_reg_read() instead.
-
-> +
-> +		dev_err(dev, "local temp: lsb->0x%x, msb->0x%x", regval[1], regval[0]);
-
-Really ?
-
-Stopping complete review here. The driver is obviously not ready
-for submission. Some more obvious comments below.
-
-
-> +
-> +		raw = (s16)((regval[0] << 8) | regval[1]);
-> +
-> +		raw >>= shift;
-> +
-> +		*val = raw * scale * flag;
-> +
-> +		break;
-
-Drop empty lines.
-
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_read_fan(struct device *dev, u32 attr, long *val)
-
-There is only a single supported attribute, so passing its vbalue
-to this function and checking it adds unnecessary complexity.
-Just drop the parameter and all its complexity.
-
-> +{
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	int regval[2], err, speed;
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		err = regmap_read(ctf2301->regmap, CTF2301_TACH_COUNT_MSB, regval);
-> +		if (err)
-> +			return err;
-> +
-> +		err = regmap_read(ctf2301->regmap, CTF2301_TACH_COUNT_LSB, regval + 1);
-> +		if (err)
-> +			return err;
-
-CTF2301_TACH_COUNT_LSB and CTF2301_TACH_COUNT_MSB are consecutive registers,
-so it should be possible to use regmap_bulk_read(). If not, consider using
-regmap_multi_reg_read() and explain why regmap_bulk_read() does not work.
-
-> +
-> +		speed = (regval[0] << 8) | regval[1];
-> +
-
-speed can be 0.
-
-> +		*val = (unsigned int)(1 * (5400000 / speed));
-				      ^^^^ what is this for ?
-
-The typecast is unnecessary, and speed needs to be checked to
-ensure that there is no divide by zero error.
-
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_write_pwm(struct device *dev, u32 attr, long val)
-> +{
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	int err, map_val;
-> +
-> +	dev_err(dev, "write pwm: %d", attr);
-
-Not commmenting on those any further.
-
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		map_val = (val * ctf2301->pwm_freq_code * 2) / 255;
-
-val needs to be range checked, and the function needs to return
--EINVAL if it is out of range. Also consider using DIV_ROUND_CLOSEST().
-
-> +		dev_err(dev, "val:%ld, map_val: %d", val, map_val);
-> +		err = regmap_write(ctf2301->regmap, CTF2301_PWM_VALUE, map_val);
-> +		if (err)
-> +			return err;
-> +		break;
-> +	case hwmon_pwm_freq:
-> +		ctf2301->pwm_freq_code = DIV_ROUND_UP(PWM_PARENT_CLOCK, val) / 2;
-
-val needs to be clamped to its valid range.
-
-> +		dev_err(dev, "pwm_freq_code: %d", ctf2301->pwm_freq_code);
-> +		err = regmap_write(ctf2301->regmap, CTF2301_PWM_FREQ, ctf2301->pwm_freq_code);
-> +		if (err)
-> +			return err;
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static umode_t ctf2301_is_visible(const void *drvdata,
-> +				 enum hwmon_sensor_types type,
-> +				 u32 attr, int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_temp:
-> +		switch (attr) {
-> +		case hwmon_temp_input:
-> +			return 0444;
-> +		default:
-> +			return 0;
-> +		}
-> +	case hwmon_fan:
-> +		switch (attr) {
-> +		case hwmon_fan_input:
-> +			return 0444;
-> +		default:
-> +			return 0;
-> +		}
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_input:
-> +		case hwmon_pwm_freq:
-> +			return 0644;
-> +		default:
-> +			return 0;
-> +		}
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int ctf2301_read(struct device *dev, enum hwmon_sensor_types type,
-> +		       u32 attr, int channel, long *val)
-> +{
-> +	switch (type) {
-> +	case hwmon_temp:
-> +		return ctf2301_read_temp(dev, attr, channel, val);
-> +	case hwmon_fan:
-> +		return ctf2301_read_fan(dev, attr, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_write(struct device *dev, enum hwmon_sensor_types type,
-> +			 u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return ctf2301_write_pwm(dev, attr, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static const struct hwmon_channel_info * const ctf2301_info[] = {
-> +	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT, HWMON_T_INPUT),
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_FREQ),
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops ctf2301_hwmon_ops = {
-> +	.is_visible = ctf2301_is_visible,
-> +	.read = ctf2301_read,
-> +	.write = ctf2301_write
-> +};
-> +
-> +static const struct hwmon_chip_info ctf2301_chip_info = {
-> +	.ops = &ctf2301_hwmon_ops,
-> +	.info = ctf2301_info,
-> +};
-> +
-> +static const struct regmap_config ctf2301_regmap_config = {
-> +	.max_register = CTF2301_RMT_DIODE_TEMP_FILTER,
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
-> +static int ctf2301_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct device *hwmon_dev;
-> +	struct ctf2301 *ctf2301;
-> +	int err;
-> +
-> +	ctf2301 = devm_kzalloc(dev, sizeof(*ctf2301), GFP_KERNEL);
-> +	if (!ctf2301)
-> +		return -ENOMEM;
-> +	ctf2301->client = client;
-> +
-> +	ctf2301->regmap = devm_regmap_init_i2c(client, &ctf2301_regmap_config);
-> +	if (IS_ERR(ctf2301->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(ctf2301->regmap),
-> +				     "failed to allocate register map");
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_GLOBAL_CFG,
-> +			   GLOBAL_CFG_ALERT_MASK | GLOBAL_CFG_TACH_SEL);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_GLOBAL_CFG register");
-> +
-> +	/*err = regmap_write(ctf2301->regmap, CTF2301_ALERT_MASK, ALERT_MASK_ALL);*/
-> +	/*if (err)*/
-> +		/*return dev_err_probe(dev, err,*/
-> +				     /*"failed to write CTF2301_ALERT_MASK");*/
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_ENHANCED_CFG, ENHANGCED_CFG_USF);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_ENHANCED_CFG");
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_PWM_AND_TACH_CFG, PWM_AND_TACH_CFG_PWPGM);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_PWM_AND_TACH_CFG");
-> +
-> +	ctf2301->pwm_freq_code = PWM_DEFAULT_FREQ_CODE;
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ctf2301,
-> +							 &ctf2301_chip_info,
-> +							 NULL);
-> +	if (IS_ERR(hwmon_dev))
-> +		return dev_err_probe(dev, PTR_ERR(hwmon_dev),
-> +				     "failed to register hwmon device");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id ctf2301_of_match[] = {
-> +	{ .compatible = "sensylink,ctf2301", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ctf2301_of_match);
-> +
-> +static struct i2c_driver ctf2301_driver = {
-> +	.driver = {
-> +		.name	= "ctf2301",
-> +		.of_match_table = of_match_ptr(ctf2301_of_match),
-> +	},
-> +	.probe		= ctf2301_probe,
-> +};
-> +module_i2c_driver(ctf2301_driver);
-> +
-> +MODULE_AUTHOR("Troy Mitchell <troy.mitchell@linux.dev>");
-> +MODULE_DESCRIPTION("ctf2301 driver");
-> +MODULE_LICENSE("GPL");
+diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
+index 67fd6932c..c4dd534f9 100644
+--- a/Documentation/admin-guide/laptops/lg-laptop.rst
++++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+@@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
+ Fan mode
+ --------
+ 
+-Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
+-the fan silent mode.
++Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
++Optimal/Silent/Performance respectively.
+ 
+ 
+ USB charge
+diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
+index 4b57102c7..6af6cf477 100644
+--- a/drivers/platform/x86/lg-laptop.c
++++ b/drivers/platform/x86/lg-laptop.c
+@@ -8,6 +8,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/acpi.h>
++#include <linux/bitfield.h>
+ #include <linux/bits.h>
+ #include <linux/device.h>
+ #include <linux/dev_printk.h>
+@@ -75,6 +76,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
+ #define WMBB_USB_CHARGE 0x10B
+ #define WMBB_BATT_LIMIT 0x10C
+ 
++#define FAN_MODE_LOWER GENMASK(1, 0)
++#define FAN_MODE_UPPER GENMASK(5, 4)
++
+ #define PLATFORM_NAME   "lg-laptop"
+ 
+ MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
+@@ -274,29 +278,19 @@ static ssize_t fan_mode_store(struct device *dev,
+ 			      struct device_attribute *attr,
+ 			      const char *buffer, size_t count)
+ {
+-	bool value;
++	unsigned long value;
+ 	union acpi_object *r;
+-	u32 m;
+ 	int ret;
+ 
+-	ret = kstrtobool(buffer, &value);
++	ret = kstrtoul(buffer, 10, &value);
+ 	if (ret)
+ 		return ret;
++	if (value >= 3)
++		return -EINVAL;
+ 
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+-	if (!r)
+-		return -EIO;
+-
+-	if (r->type != ACPI_TYPE_INTEGER) {
+-		kfree(r);
+-		return -EIO;
+-	}
+-
+-	m = r->integer.value;
+-	kfree(r);
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
+-	kfree(r);
+-	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
++	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
++		FIELD_PREP(FAN_MODE_LOWER, value) |
++		FIELD_PREP(FAN_MODE_UPPER, value));
+ 	kfree(r);
+ 
+ 	return count;
+@@ -305,7 +299,7 @@ static ssize_t fan_mode_store(struct device *dev,
+ static ssize_t fan_mode_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buffer)
+ {
+-	unsigned int status;
++	unsigned int mode;
+ 	union acpi_object *r;
+ 
+ 	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+@@ -317,10 +311,10 @@ static ssize_t fan_mode_show(struct device *dev,
+ 		return -EIO;
+ 	}
+ 
+-	status = r->integer.value & 0x01;
++	mode = FIELD_GET(FAN_MODE_LOWER, r->integer.value);
+ 	kfree(r);
+ 
+-	return sysfs_emit(buffer, "%d\n", status);
++	return sysfs_emit(buffer, "%d\n", mode);
+ }
+ 
+ static ssize_t usb_charge_store(struct device *dev,
+-- 
+2.51.0
 
