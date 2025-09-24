@@ -1,79 +1,55 @@
-Return-Path: <linux-kernel+bounces-830247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC50B99314
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FAFB9968F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B54543AC6A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7C719C7C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E342D8DD9;
-	Wed, 24 Sep 2025 09:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FBB2DEA99;
+	Wed, 24 Sep 2025 10:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDnoTsTt"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=g001.emailsrvr.com header.i=@g001.emailsrvr.com header.b="V/5OGHsA";
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="Bp34dbgM"
+Received: from smtp72.iad3b.emailsrvr.com (smtp72.iad3b.emailsrvr.com [146.20.161.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FE82D877B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A7D2DF13E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758706839; cv=none; b=NZUPaZPbfQy3+0C5vuQtlYWuvHs2iIGk7rD4Hhc46a5d3Xtu1vjUJLQJaFsj2rNO4L3Ig5ab4R7kqHR3681FYh3jU2zpL3cXqZQLteJ5lYi8NSc8NtQT5YHEsdtZ6TRs7Xcqx+sWJseg+/YBUz1a+DNKrrDYJ5Jp5tNe0yxm3nc=
+	t=1758709312; cv=none; b=FipVdlggE9tQQ8VqAN81ezqImLAqbH5SJQsl28D7wF5+Pch+SC+Ojjjrc7Snjrvg3LIqMf1fTYz2spI2cYV9svaMKcXhHSK1zO8HKnV+clLN19w8F6slDnyLyxVMTCxJhtdQCmbYHR6Up1mhlb5qimHZcpuraPH0DIHiksy7Tmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758706839; c=relaxed/simple;
-	bh=jzKLiKmTv/j27SzZOjxIl4Qu+tZgt4ATA7sg5rWQMC8=;
+	s=arc-20240116; t=1758709312; c=relaxed/simple;
+	bh=tsezQOcDbSsKHWE+Y8NNE2KYFSXpuNPy/H6+E//0ZJI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPrkG02QYIPQPn3HjnvEiOKR2euGtMsigC2njWGHKUgL7jaQxs5QGnxZkBrNzwT0qmt4l9d8FqofldexyJ4MdJFrtf47R7xjvE7oB2ZIZ+7vD2MLf2IGU4VYSkoK+IYD5BW0Xsslgde4lKB9yqWJOOpHRuqgHKjsPw5pFUb3tBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDnoTsTt; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b267ca7c402so93262266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758706836; x=1759311636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kETfRtb13E45xSUCjG7RsgFFIEDwDhVzUH8S0QeQpIs=;
-        b=HDnoTsTtXs4kRENzc4A6+V+3atth8W30GNZkN4GkUGyc/kr2V5dP2DxYrWYrq0hMIZ
-         uasZc6gAMz/JPDK3pnHr3+x0Ux+AZhamxlbJ0tRLv89TDVX4+nevUGDHnanI7sQv1egC
-         4c73EO9haZQ4ckQqifgnov6nz10dxgQwbebMRtyuK1xXROprmlfGWAuXPjby2cMJketS
-         z9IVFJ5T0hlTAdfQLsdO1G8suY+UFaxK8mLn3HTNWcaylr/riMtDUxMXRGnE5+SjkmIj
-         fKohfO32lfOViSA2AMzVtXb9E9gfvIMmM1hlThM5WFWOVT8YA3/SHYe8+SNXC+BdrkOT
-         23qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758706836; x=1759311636;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kETfRtb13E45xSUCjG7RsgFFIEDwDhVzUH8S0QeQpIs=;
-        b=kCK4PPc0UhAD7ZiLOW7/3C515cKdMkpzb2Z3M7PHZ7nRzdqMlELTVf35ryvNYK6+wO
-         bZrw0Kd6duk3Ji0TDI0aevBlOqkqcOXIxG51bv5QJRlOnTaG+BwZk98kMfV/1tn/61tb
-         q6Aio6/qKgSHuFu4yhENhTBI6ME3xKW1BrADaEkX9+8dgqBRaEboIo+9ovFg3x5P58de
-         wdfjk5h5V9/7YT/xitnvbE9HcLwHJC5u1i6gqbzuBjWyelBBeoWdSwTAzT1IiC3YYZvO
-         l9spGhbwhmroVq1BTs7OyuF60p/KFylj5I5tVHYuv+cZxVMcThryeMo5wcL3jQraDZLA
-         8pYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXC2K19pUEFWXYzvtU/9fL7EK6GDGL6L/33blm8qfdWFZ8T3DF0qHIFkRqjML8Fa/aPvXgviny0JRnQNio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeIJPfSALgdHerNf9hYgA5gKp0CByH9JxMW3t1PXNZhaVROd9X
-	V7EJkeyqlOpna3VXqcoJWdtZxNzOuSyN1QcO7+vUFaHIm9IUeT5hWaop
-X-Gm-Gg: ASbGncspSTgQcKf4/WL4NyvH4R5yhTFo9iH9ngAzngbhfQnVahtMNOh4G+/j6+MARcZ
-	/5EKqn4GCWblMmr8/YgJcNxxWkpwRJO/114o4zzjYyxlPFs5hVvjVDdH9SBm1sXJcdrn441z7BI
-	Ib8/c7czIkq55VdqsGZraKR5/SkN8XK/JH4+qqzZC2x6QnHoFWbyh4znAzdZJfj14FT9wSeT+FC
-	g96jY8KkCmr5z6e1QD2P4ob8L8k2Gy1MtD8uy+kylyNKWHF9RdZ/6IInK4C9Cq9rrOruW87DgLM
-	Fzxip5wE3DsQMVVbSIt4K50DUEBb+hURnPn9PTieKetXSAPQ1BjmkTi47LjS5RhTAfjSivS1Noi
-	sSFHv91avNN36KPOnFgZTY1S3rOtxVF7S78KV9tLlsP/7icr/y3w=
-X-Google-Smtp-Source: AGHT+IF0eP7C+aQmBPuYKh5yIDRssL3F6YcaqJ1p8ewtObRtDnPBvvunL6qa6AQJ5XZK9rsgzL9BsA==
-X-Received: by 2002:a17:907:7b8c:b0:afe:ae6c:4141 with SMTP id a640c23a62f3a-b302689ce0emr223705166b.2.1758706835860;
-        Wed, 24 Sep 2025 02:40:35 -0700 (PDT)
-Received: from [192.168.1.105] ([165.50.1.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b31a562fe38sm211353166b.45.2025.09.24.02.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 02:40:35 -0700 (PDT)
-Message-ID: <f103da72-0973-4a45-af81-ec1537422433@gmail.com>
-Date: Wed, 24 Sep 2025 11:40:26 +0100
+	 In-Reply-To:Content-Type; b=no6D79iDRoZVUu7Ac0YxGPDGidOf4w2eW3wKNOX3wvDOQAagGoNCOiFrdCU54R80TMQnLKnoy9RIc8/8TSk1hbM8Hp3zRMnmdyOOu4aJSwDl1prcxoEZAkQQ/yOhtYXQ1gkP2nqv7D7LN9mWE4z3o353enp8wUTjuLhaEbwO7Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=g001.emailsrvr.com header.i=@g001.emailsrvr.com header.b=V/5OGHsA; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=Bp34dbgM; arc=none smtp.client-ip=146.20.161.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
+	s=feedback; t=1758704636;
+	bh=tsezQOcDbSsKHWE+Y8NNE2KYFSXpuNPy/H6+E//0ZJI=;
+	h=Date:Subject:To:From:From;
+	b=V/5OGHsAGfxe2+NG8OrT2SOCAi/wpqhtyMkZhpvLf6AmOgUVKXTucE1kd3I2KqSEy
+	 7VFor+tNIciVlggzYHctd2B/riAWa6lzZApZCi7YcVeO/zOAfhH70F+EAfUVxYGgtj
+	 iYWh2+26gG3Jnxhglt0j+8sf3wH6vVufv4Q9KlnY=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1758704636;
+	bh=tsezQOcDbSsKHWE+Y8NNE2KYFSXpuNPy/H6+E//0ZJI=;
+	h=Date:Subject:To:From:From;
+	b=Bp34dbgMe7WoapyLFJfe8rzI/HsFKNryoa+pMqUX8QV1NLA8sAG1BXW8DK9fIhsEP
+	 E6QJQh+1QbcnTVTTdxViiIcR5VjMLOnxn1V0VREaO9hMsKr3cKanbbf8oh+P40xB7R
+	 3JRkicQRiG7jkSY0BeqW5uykPn/NlB2wrWcTjNro=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp2.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 6051C201D1;
+	Wed, 24 Sep 2025 05:03:55 -0400 (EDT)
+Message-ID: <3f7b60e8-9df8-414a-afd2-2caca7d43209@mev.co.uk>
+Date: Wed, 24 Sep 2025 10:03:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,72 +57,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/4] Add XDP RX queue index metadata via kfuncs
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, donald.hunter@gmail.com, andrew+netdev@lunn.ch,
- ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, matttbe@kernel.org, chuck.lever@oracle.com,
- jdamato@fastly.com, skhawaja@google.com, dw@davidwei.uk,
- mkarsten@uwaterloo.ca, yoong.siang.song@intel.com,
- david.hunter.linux@gmail.com, skhan@linuxfoundation.org, horms@kernel.org,
- sdf@fomichev.me, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
- <aNMG2X2GLDLBIjzB@mini-arch>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <aNMG2X2GLDLBIjzB@mini-arch>
+Subject: Re: [PATCH] comedi: fix divide-by-zero in comedi_buf_munge()
+To: Deepanshu Kartikey <kartikey406@gmail.com>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com
+References: <20250924015606.1098345-1-kartikey406@gmail.com>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20250924015606.1098345-1-kartikey406@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Classification-ID: 96808095-5086-44c3-9ba0-64ac69f8dc05-1-1
 
-On 9/23/25 9:45 PM, Stanislav Fomichev wrote:
-> On 09/23, Mehdi Ben Hadj Khelifa wrote:
->> ---
->> Mehdi Ben Hadj Khelifa (4):
->>    netlink: specs: Add XDP RX queue index to XDP metadata
->>    net: xdp: Add xmo_rx_queue_index callback
->>    uapi: netdev: Add XDP RX queue index metadata flags
->>    net: veth: Implement RX queue index XDP hint
->>
->>   Documentation/netlink/specs/netdev.yaml |  5 +++++
->>   drivers/net/veth.c                      | 12 ++++++++++++
->>   include/net/xdp.h                       |  5 +++++
->>   include/uapi/linux/netdev.h             |  3 +++
->>   net/core/xdp.c                          | 15 +++++++++++++++
->>   tools/include/uapi/linux/netdev.h       |  3 +++
->>   6 files changed, 43 insertions(+)
->>   ---
->>   base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
->>   this is the commit of tag: v6.17-rc7 on the mainline.
->>   This patch series is intended to make a base for setting
->>   queue_index in the xdp_rxq_info struct in bpf/cpumap.c to
->>   the right index. Although that part I still didn't figure
->>   out yet,I m searching for my guidance to do that as well
->>   as for the correctness of the patches in this series.
+On 24/09/2025 02:56, Deepanshu Kartikey wrote:
+> The comedi_buf_munge() function performs a modulo operation
+> `async->munge_chan %= async->cmd.chanlist_len` without first
+> checking if chanlist_len is zero. If a user program submits
+> a command with chanlist_len set to zero, this causes a
+> divide-by-zero error when the device processes data in the
+> interrupt handler path.
 
-> But why do you need a kfunc getter? You can already get rxq index
-> via xdp_md rx_queue_index.
+I don't think it should happen for supported hardware devices that are 
+working properly, but it helps to defend against the unexpected.
 
-Hi Stanislav, When i was looking at the available information or recent
-similar patches to populate the queue_index in xdp_rxq_info inside of
-the cpu map of an ebpf program to run xdp. i stumbled upon this: 
-https://lkml.rescloud.iu.edu/2506.1/02808.html
+> Add a check for zero chanlist_len at the beginning of the
+> function, similar to the existing checks for !map and
+> CMDF_RAWDATA flag. When chanlist_len is zero, update
+> munge_count and return early, indicating the data was
+> handled without munging.
+> 
+> This prevents potential kernel panics from malformed user commands.
+> 
+> Reported-by: syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f6c3c066162d2c43a66c
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> ---
+>   drivers/comedi/comedi_buf.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
+> index 002c0e76baff..786f888299ce 100644
+> --- a/drivers/comedi/comedi_buf.c
+> +++ b/drivers/comedi/comedi_buf.c
+> @@ -321,6 +321,11 @@ static unsigned int comedi_buf_munge(struct comedi_subdevice *s,
+>   		async->munge_count += num_bytes;
+>   		return num_bytes;
+>   	}
+> +
+> +	if (async->cmd.chanlist_len == 0) {
+> +		async->munge_count += num_bytes;
+> +		return num_bytes;
+> +	}
 
-which suggests that in order to that, a struct called "xdp_rx_meta" 
-should be the route to do that. In my navigation of code i only found
-the closest thing to that is xdp_rx_metadata which is an enum. I tried 
-to follow was done for other metadata there like timestamp in order to 
-see if that gets me closer to do that. which was stupid with the 
-information that i have now but for my lack of experience (this is my 
-first patch) i tried to reason with the code.So yeah, since xdp_md is 
-the structure for transfering metadata to ebpf programs that use xdp. 
-it's useless to have a kfunc to expose queue_index since it's already 
-present there. But how would one try to populate the queue_index in 
-xdp_rxq_info in cpu_map_bpf_prog_run_xdp()? Any sort of hints or guides 
-would be much appreciated.
-Thank you for your time.
+This `if` statement could be merged with the preceding `if` statement 
+that has the same body, which would save a few lines.
 
-Best Regards,
-Mehdi Ben Hadj Khelifa
+>   
+>   	/* don't munge partial samples */
+>   	num_bytes -= num_bytes % num_sample_bytes;
+
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
