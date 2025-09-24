@@ -1,80 +1,89 @@
-Return-Path: <linux-kernel+bounces-830950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D2BB9AFB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:09:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B2AB9AFA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABE34C7A47
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7EE1B283BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6B5314B62;
-	Wed, 24 Sep 2025 17:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ECD314A9E;
+	Wed, 24 Sep 2025 17:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YLmB0RBH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="C/1lM3J5"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47725302CB2;
-	Wed, 24 Sep 2025 17:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECE3302CB2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733738; cv=none; b=ZW4wbkauzeZK/yWss5Rvb7FuynAVJ/IvkHn50guOnAsaBLh8xscZdxCqrZtmk1BxG4tNSqk9OKT0SvbHsu3gHml79eOcWjWcNlpk2v37UUom5JIOr5DzD3h8Haej7z93yTbW2RF2TlpE18yQdNdazQPaSActiNpzmdhlwAqPXYE=
+	t=1758733730; cv=none; b=qEDglO8iSdIHxAQBO0IhVVDTcavMIY2DekpROuGB7Fm1Bz6GcE18KJbkiIZG2m5n2XoNa6QBdIq/acI2vxW5UP1f3RqgdV/4B6YTNzAINLqJ9eRroqiolx/HUAUpuHrP+ZcRle3YJQHtg+uAxcIRZ8bIW+8dphHsZ7O8kOgmK9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733738; c=relaxed/simple;
-	bh=/FSO6/ipB0cJtJTFavrv+ZfHe+XpgrP21tHroZy25rk=;
+	s=arc-20240116; t=1758733730; c=relaxed/simple;
+	bh=nUAmv8H9hgiFvCdcE/9leaa+cZA/AIOWo7WtnrTKZ5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKn1sksX8xL3ImCqMZXotEK3kNBgy9Tp/OV4nAkST1YSKEB67g+blWg4uw35mDh27md/H6qKXeXXF3d3i+wVeAjQnytzqt81MSyostDUcJrlTCEXXPvJn2z1N/GMZkVvD6h0dunxMMjG7Ng0yT97Y5d0J8ebGydYdKR0SIH7Lv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YLmB0RBH; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758733736; x=1790269736;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/FSO6/ipB0cJtJTFavrv+ZfHe+XpgrP21tHroZy25rk=;
-  b=YLmB0RBH2eBGHs0TqIZyxhgKieQHiz2HKSrwaVAM0F4sM6+TggrUkaQO
-   r5Ii2+vEx2cg5w5ifSK6ggkPHKLg8T3/y8chXPYuTeCpu3xBwHXeUipMr
-   Gctbq1U7Z9JzuoYLzDJO5qskkQ1NGZ6jT9FxgqAmfNOLLcIrnW7POeH+L
-   hdcuzc+GoUmRQSVcAfLqNEqTRe9groqabOIYIftX7cB0e+Ga4cQktuIYX
-   T+H9rdw3LPjLqL7cen327JMbE8GPfMrI7VbUVjYdmilCdSJtRGMjaKLSY
-   Uo3f2DenfxvqN3H+I9z2yO2xJ8ZzCWem0n19x+pXnnGpSMIjUtL0/f5t8
-   g==;
-X-CSE-ConnectionGUID: ehoeje9/T/uUt265+7vAzQ==
-X-CSE-MsgGUID: Q71WBlKFRBisDhH2glDK7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="83643399"
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="83643399"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 10:08:45 -0700
-X-CSE-ConnectionGUID: FqUjPxVWQ3myxASj/onOeA==
-X-CSE-MsgGUID: wBuOCrR5R/y2hpXIKC5Y4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
-   d="scan'208";a="181473382"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 24 Sep 2025 10:08:40 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v1Sys-0004ND-0b;
-	Wed, 24 Sep 2025 17:08:38 +0000
-Date: Thu, 25 Sep 2025 01:07:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Rathor <mrathor@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de
-Subject: Re: [PATCH v2 6/6] x86/hyperv: Enable build of hypervisor crashdump
- collection files
-Message-ID: <202509250034.2hNDVmj0-lkp@intel.com>
-References: <20250923214609.4101554-7-mrathor@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IM5BRZux4UpeYM9uvNUzy9iScII1f2AEIdo4U5kQoK1IroePK4sRsH1qRNbdNsUh/n/xyvyu7PG/se6duXK9F8ODqC9t/ZeSjDoQ2/b9ItR/Hykvun8Ti8DQd4zNJEINvGHnVqWVoP6hivKzxGwvhzMra3DjW+/i6gyXP873bXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=C/1lM3J5; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-4256f0444caso134975ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1758733728; x=1759338528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u9YvycGlNJV4Q2DejLBsM63fTc6nBtT2JcHZL2ev/Ww=;
+        b=C/1lM3J5UtZ5FOfHQ7WA5HbOvk+zRWBXdb+7Su+Z054saIPpkhnR61Ihhf7oYAjhlO
+         wMlR+HcYp7VXra1vhGRNB8D3lFM1cC1GiFIExnE4hPxsGrik21Xx4xVRQShGBg4UJ/RP
+         5vGaMAPhiRRZmECno1l9ydeOeAJzb7j57o9gnBSbj3mBR7vmZToZeairoKT9g4mWZSML
+         V0uRXIciig4zy1t8675RUaZJa7pzwTlHNErr6Sy9PtyWAbMMNEaeYzcKk1VD9ROF5XBt
+         7Kz8KM47rO2/Paq4T10CwV0/HGmFFnShcVYE4+xA7NY1PgjSyyXGnAAgIOkihIIuG1rU
+         mxQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758733728; x=1759338528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u9YvycGlNJV4Q2DejLBsM63fTc6nBtT2JcHZL2ev/Ww=;
+        b=GqCYi7V055xxcjpOEwVxJfXAM+Iw8DUPxAduQy+uhksrFUSVva4q9qbU/OJtajxcKy
+         50T8LyHKc3eoywr3xahkeEVMWygUmDP9dOjztZeSb3skETlN45XQF8oO1REJNFfOJnAS
+         RO+bnUEJBFoA5+lmRhK6VSh086Ag932QnSB0briV4iSZypExMicB7mpMnufeBf4vGRPs
+         Z90tNW25iMWdiO4S7tOaVEB6m1JtLSIOufCvjFPu9Vix+MZWUGbPdGWY4kegmEEkqKUv
+         00YoEjLA+uiUBX9XrLSc9dPS1dTxyIfiFtNOANVRD/qnG0+RYX5bVEMuGpMzWFOTSSfZ
+         DoYQ==
+X-Gm-Message-State: AOJu0YxdUe1tMTbTAdmKJsKwgvB0bvxazOL8k2bmuzuH3gbcXXjzX4oM
+	T5TAoy7LUcgIQYnFa/6knk2uhn/Zyouj/oZf6JcCCKnShMfnN6Po62yWr4wxpExlkEY=
+X-Gm-Gg: ASbGncvxLKxJXFTgfb2Y12X1XoW8qIT9jSJnJZDIIBKWi0iEYL6mpMqvsOoxJmcH9LA
+	KHULzkXXdh15cmw20BAAVSCxH+4w/vCNT4CwsSY+IFph4294/IecfFaTI+TfIAWc7Xh5sewexRA
+	mEX5+sO3A4b9fe0hklsM7IpuCCL1wt5DTUbYdGlQn7lGt+kvrcD2MKJ3r0v/e/n1JFuXaqDB0Ru
+	Feodf1nInOV3xCr8q2OefUWhqOvYtd+7bAFjofAzdmSHCUTNLcdZX3qGJ1Zd9xVw2P98Ti35MVU
+	6ffTgSVC2T9LK5jihSV8+NH7GXlyykz52fhcmUdmqzwQc/P2ZCtRfNJf6yAp3/pIgpvpqR0bWJ0
+	0NEjwWKS6zDIT0YTOKO7+mt+K
+X-Google-Smtp-Source: AGHT+IGI2XTu1luL1W07izdN35I/CB5PQt7LugDhcv/pXBGWRBL2UtisiXkcMiabO518Q3HGRFAjrA==
+X-Received: by 2002:a05:6e02:5:b0:425:7afc:b84d with SMTP id e9e14a558f8ab-42595660be3mr5073975ab.18.1758733728037;
+        Wed, 24 Sep 2025 10:08:48 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42585a701eesm18122715ab.7.2025.09.24.10.08.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 10:08:47 -0700 (PDT)
+Date: Wed, 24 Sep 2025 12:08:46 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	virtualization@lists.linux.dev, x86@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Ajay Kaher <ajay.kaher@broadcom.com>, 
+	Alexey Makhalov <alexey.makhalov@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH v2 10/21] riscv/paravirt: Use common code for
+ paravirt_steal_clock()
+Message-ID: <20250924-8189d2caf8323e5f6770f429@orel>
+References: <20250917145220.31064-1-jgross@suse.com>
+ <20250917145220.31064-11-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,103 +92,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923214609.4101554-7-mrathor@linux.microsoft.com>
+In-Reply-To: <20250917145220.31064-11-jgross@suse.com>
 
-Hi Mukesh,
+On Wed, Sep 17, 2025 at 04:52:09PM +0200, Juergen Gross wrote:
+> Remove the arch specific variant of paravirt_steal_clock() and use
+> the common one instead.
+> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/riscv/Kconfig                |  1 +
+>  arch/riscv/include/asm/paravirt.h | 10 ----------
+>  arch/riscv/kernel/paravirt.c      |  7 -------
+>  3 files changed, 1 insertion(+), 17 deletions(-)
+>
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20250923]
-[also build test ERROR on v6.17-rc7]
-[cannot apply to tip/x86/core linus/master v6.17-rc7 v6.17-rc6 v6.17-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Rathor/x86-hyperv-Rename-guest-crash-shutdown-function/20250924-054910
-base:   next-20250923
-patch link:    https://lore.kernel.org/r/20250923214609.4101554-7-mrathor%40linux.microsoft.com
-patch subject: [PATCH v2 6/6] x86/hyperv: Enable build of hypervisor crashdump collection files
-config: x86_64-randconfig-004-20250924 (https://download.01.org/0day-ci/archive/20250925/202509250034.2hNDVmj0-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250925/202509250034.2hNDVmj0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509250034.2hNDVmj0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/x86/hyperv/hv_crash.c:282:6: warning: variable 'status' set but not used [-Wunused-but-set-variable]
-     282 |         u64 status;
-         |             ^
->> arch/x86/hyperv/hv_crash.c:631:2: error: must use 'struct' tag to refer to type 'smp_ops'
-     631 |         smp_ops.crash_stop_other_cpus = hv_crash_stop_other_cpus;
-         |         ^
-         |         struct 
->> arch/x86/hyperv/hv_crash.c:631:9: error: expected identifier or '('
-     631 |         smp_ops.crash_stop_other_cpus = hv_crash_stop_other_cpus;
-         |                ^
-   1 warning and 2 errors generated.
-
-
-vim +631 arch/x86/hyperv/hv_crash.c
-
-c619422e77519d Mukesh Rathor 2025-09-23  580  
-c619422e77519d Mukesh Rathor 2025-09-23  581  /* Setup for kdump kexec to collect hypervisor RAM when running as root/dom0 */
-c619422e77519d Mukesh Rathor 2025-09-23  582  void hv_root_crash_init(void)
-c619422e77519d Mukesh Rathor 2025-09-23  583  {
-c619422e77519d Mukesh Rathor 2025-09-23  584  	int rc;
-c619422e77519d Mukesh Rathor 2025-09-23  585  	struct hv_input_get_system_property *input;
-c619422e77519d Mukesh Rathor 2025-09-23  586  	struct hv_output_get_system_property *output;
-c619422e77519d Mukesh Rathor 2025-09-23  587  	unsigned long flags;
-c619422e77519d Mukesh Rathor 2025-09-23  588  	u64 status;
-c619422e77519d Mukesh Rathor 2025-09-23  589  	union hv_pfn_range cda_info;
-c619422e77519d Mukesh Rathor 2025-09-23  590  
-c619422e77519d Mukesh Rathor 2025-09-23  591  	if (pgtable_l5_enabled()) {
-c619422e77519d Mukesh Rathor 2025-09-23  592  		pr_err("Hyper-V: crash dump not yet supported on 5level PTs\n");
-c619422e77519d Mukesh Rathor 2025-09-23  593  		return;
-c619422e77519d Mukesh Rathor 2025-09-23  594  	}
-c619422e77519d Mukesh Rathor 2025-09-23  595  
-c619422e77519d Mukesh Rathor 2025-09-23  596  	rc = register_nmi_handler(NMI_LOCAL, hv_crash_nmi_local, NMI_FLAG_FIRST,
-c619422e77519d Mukesh Rathor 2025-09-23  597  				  "hv_crash_nmi");
-c619422e77519d Mukesh Rathor 2025-09-23  598  	if (rc) {
-c619422e77519d Mukesh Rathor 2025-09-23  599  		pr_err("Hyper-V: failed to register crash nmi handler\n");
-c619422e77519d Mukesh Rathor 2025-09-23  600  		return;
-c619422e77519d Mukesh Rathor 2025-09-23  601  	}
-c619422e77519d Mukesh Rathor 2025-09-23  602  
-c619422e77519d Mukesh Rathor 2025-09-23  603  	local_irq_save(flags);
-c619422e77519d Mukesh Rathor 2025-09-23  604  	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-c619422e77519d Mukesh Rathor 2025-09-23  605  	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-c619422e77519d Mukesh Rathor 2025-09-23  606  
-c619422e77519d Mukesh Rathor 2025-09-23  607  	memset(input, 0, sizeof(*input));
-c619422e77519d Mukesh Rathor 2025-09-23  608  	input->property_id = HV_SYSTEM_PROPERTY_CRASHDUMPAREA;
-c619422e77519d Mukesh Rathor 2025-09-23  609  
-c619422e77519d Mukesh Rathor 2025-09-23  610  	status = hv_do_hypercall(HVCALL_GET_SYSTEM_PROPERTY, input, output);
-c619422e77519d Mukesh Rathor 2025-09-23  611  	cda_info.as_uint64 = output->hv_cda_info.as_uint64;
-c619422e77519d Mukesh Rathor 2025-09-23  612  	local_irq_restore(flags);
-c619422e77519d Mukesh Rathor 2025-09-23  613  
-c619422e77519d Mukesh Rathor 2025-09-23  614  	if (!hv_result_success(status)) {
-c619422e77519d Mukesh Rathor 2025-09-23  615  		pr_err("Hyper-V: %s: property:%d %s\n", __func__,
-c619422e77519d Mukesh Rathor 2025-09-23  616  		       input->property_id, hv_result_to_string(status));
-c619422e77519d Mukesh Rathor 2025-09-23  617  		goto err_out;
-c619422e77519d Mukesh Rathor 2025-09-23  618  	}
-c619422e77519d Mukesh Rathor 2025-09-23  619  
-c619422e77519d Mukesh Rathor 2025-09-23  620  	if (cda_info.base_pfn == 0) {
-c619422e77519d Mukesh Rathor 2025-09-23  621  		pr_err("Hyper-V: hypervisor crash dump area pfn is 0\n");
-c619422e77519d Mukesh Rathor 2025-09-23  622  		goto err_out;
-c619422e77519d Mukesh Rathor 2025-09-23  623  	}
-c619422e77519d Mukesh Rathor 2025-09-23  624  
-c619422e77519d Mukesh Rathor 2025-09-23  625  	hv_cda = phys_to_virt(cda_info.base_pfn << HV_HYP_PAGE_SHIFT);
-c619422e77519d Mukesh Rathor 2025-09-23  626  
-c619422e77519d Mukesh Rathor 2025-09-23  627  	rc = hv_crash_trampoline_setup();
-c619422e77519d Mukesh Rathor 2025-09-23  628  	if (rc)
-c619422e77519d Mukesh Rathor 2025-09-23  629  		goto err_out;
-c619422e77519d Mukesh Rathor 2025-09-23  630  
-c619422e77519d Mukesh Rathor 2025-09-23 @631  	smp_ops.crash_stop_other_cpus = hv_crash_stop_other_cpus;
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
