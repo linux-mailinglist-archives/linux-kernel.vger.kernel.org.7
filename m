@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-829939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FB1B9847C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:26:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F35B9847F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE96B3BEC35
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C812A15C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20C722E3FA;
-	Wed, 24 Sep 2025 05:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CE622D9EB;
+	Wed, 24 Sep 2025 05:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="MxEUd7M4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gfkiGmRB"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iQd7hyGr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6BA6FC5;
-	Wed, 24 Sep 2025 05:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CC76FC5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758691558; cv=none; b=mcD1ts4qD9FgYSFszf8Q/+wMxvlhzg5LJiSknCkapDVoNeWIhPPbK75MuppAF6zJ8MMw4Z2Z3JndFDRuFN89NTioDHbrZZeX4KXcX3RRqJuI91qSORjzbr4P+yp0ZehPDDiamkYq7R8T1uTWMbhnQozn7Oi4uUWY4Jp1sbTPdWU=
+	t=1758691638; cv=none; b=lPJJ3BxMdFt3cil43rsUsKdkDL8pxl1lyQzM5JWue3V43M6wjt/xq4d5fRrelc5uDEHAn5OP4y3YlpFk1zYgGH3kXWHDmKnbGbOhs1Sxv73Kvtnz/BMrzgPRweEmBhJM8OYCCJ+iWIcllMtJyTYZYclD/RzrJ5Mh6DMB9dbdH6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758691558; c=relaxed/simple;
-	bh=ezM4unOBkfJoa9iwE18B8oZRiX6f67XdWtDc5Ku+yw0=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=AbHM3+22479FXAmStna5tLf0UW43352Zp+/djoL6xlMV6ht5VZxBSmzYMPXca4DrKTg83eJILFDFdyUigsgEKJvBt2FeaRqFybo7FMeE81uaIqyjwOxYuCzJdENhrN2ISr7qHtpx/lgRP2v/6YI88H69yEojKatSp3abj62ioIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=MxEUd7M4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gfkiGmRB; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7B3BE14000BE;
-	Wed, 24 Sep 2025 01:25:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Wed, 24 Sep 2025 01:25:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758691555;
-	 x=1758777955; bh=ezM4unOBkfJoa9iwE18B8oZRiX6f67XdWtDc5Ku+yw0=; b=
-	MxEUd7M4I9Qhlb0up1FHxnb3KVlq+KpgU3AVVtTuuBYTnItNk5lVGQ5nhF//qgHL
-	i436qEfsW0jFgmLGJwHodfcfoYrBSLok7nzpZ8O0UrfPQInmFWusPZi7vqgDuHCd
-	4xq2ivxOx4kQHCsOtC7GVFj1KXkVh59OQYG90giuL2jmXMGEEx5BVCDu6zsu5AVZ
-	ubXfsbz1MAcDR9VfadXcbab/v3zmTlzN9//4j0f4BNcfc5ZxRF1Kmanjo9C6q+qU
-	5eGfCKcLebtJ7XtMKAqlYbfUxZWbaxOzQhG+8D9DdkvdutuJnqAOwlOj78klsZzm
-	0Lf5241eo0j/lfWMDSbTag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758691555; x=
-	1758777955; bh=ezM4unOBkfJoa9iwE18B8oZRiX6f67XdWtDc5Ku+yw0=; b=g
-	fkiGmRBy+/QHYI3cBaF7+AmxfYV5o704Yaq7J2p5BFHXH129JyxPoJq2KW71Nz+q
-	c/WCatW5rxZYHIYkVvw/OegLtfSD8S6TOtjwM5L/pWy1rz2yk/WYw6DbbW8Rl57W
-	8NSF13pl3hvPa855/0JVeO0nkX2OvkwrBVMdp1hbxVWE143d6T/ArK1tK6ZBbqea
-	0fPPRYH9W4mHG+Tf8Pn5ArlgnEWXpVguC7sK/+k7RNQ+XIjlK2/uTalaYVrVzKaP
-	5Q/mx614Ql07I73KIIY1Q4Mf6mdhYLnA3cRqReInUgm9MTcpeT5evkzOa8nxsGIi
-	lcHIkBIRnGVZxvRGApgSg==
-X-ME-Sender: <xms:4oDTaP0YnrOmwoyKkgSqM-P4xl9u44vtJ2v28I0mAkDnOwQSwUg7IQ>
-    <xme:4oDTaEFpAs3CITQHv5h8Z_fC5ufP69P9bueJfhoP9j12kVgTXn3VxejFT1x9RojUW
-    cwW9im9qTdzc-Dw_qtHQinbPesiBKzrgr7uccU00_RQbDMBQXG5EBw>
-X-ME-Received: <xmr:4oDTaKufQ27h8p3yVxX-ck4ja3mQce89VEcRKTto2_fBnj4gBP8yx5OP_x8y7Sppz9SMM0Wo9Qn_-LduQB352m7OuFRKPg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeivdejjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgffhggfufffkfhevjgfvofesthhqmhdthhdtjeenucfhrhhomhepgfhrihgtucfu
-    rghnuggvvghnuceoshgrnhguvggvnhesshgrnhguvggvnhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepvefghfduvdefjefftdfgkeehffevudejheffveegfefhheegkedtvdelhfej
-    tedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghnuggvvghnsehsrghnuggvvghnrdhn
-    vghtpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epvghrihgtvhhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvlehfsheslhhishht
-    shdrlhhinhhugidruggvvhdprhgtphhtthhopehsrghnuggvvghnsehrvgguhhgrthdrtg
-    homhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtoheprghsmhgruggvuh
-    hssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtoheplhhinhhugigpohhsshestghr
-    uhguvggshihtvgdrtghomh
-X-ME-Proxy: <xmx:4oDTaHquVPLd7DShPLL7-Dj7q6k57X-6YDPf2_uexwP15fEc5_Odrg>
-    <xmx:4oDTaBWownC66bXZKQQ19ds0jI8kKaYcOa5qdP6MgLoeefzKXm1Njw>
-    <xmx:4oDTaP30uHFQo1zyim36v2ekaIIO60syN9b7wWMdM2YGwuWFt0XO7g>
-    <xmx:4oDTaGvhZc4d8v-fd8PgMEgqaTCMRV3B24yRhNOcj0E1BzuOrAqB8g>
-    <xmx:44DTaOD_xyLbZB7nTwRLnpIJu5D5PxYNUJdwisSjwHdGa-6n6WPSBQP_>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Sep 2025 01:25:54 -0400 (EDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Eric Sandeen <sandeen@sandeen.net>
+	s=arc-20240116; t=1758691638; c=relaxed/simple;
+	bh=rcN9V5LgKmUDWSRQZxN6EScS8uDKfYLSUyVCZijz34s=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gG07cYm43pIC7Mmqbx1UvAxLl0emDOGSGSo5ld4PfCBFXt611cR6o2mQxOPCdCL6f5b9/2jXTk9sIuqWKWzobkHX1nhs4zXTkXtE1dCyopMkPKrxfM39AgxlKHq7ZtXEm0g55/mQQJk8NStqf9ESZ9r6vTcgURUWv5NjwZwFktU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iQd7hyGr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758691634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=ERAoYpMxtDzUD7G3vhLO8DlEI+eK/IUeWFrCKYCHy9Y=;
+	b=iQd7hyGrzzois5TJK8ptSvEst5QJEYkadMRoIUIC7kIWqU3Rc5Cm8TUjht5ziFY78IYTi4
+	NszjHS5EAXgLi5rBbqSa1k/ob226hgTcUZBchX2k8L2aYLhKdI+F64DLH1pyH/MSRTH7R+
+	ZjLh0br2Z8VGixIHxarq9aOJMEZ3Y2M=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-207-6_Q1hsUHMJ2c9kbn6gyeFg-1; Wed, 24 Sep 2025 01:27:11 -0400
+X-MC-Unique: 6_Q1hsUHMJ2c9kbn6gyeFg-1
+X-Mimecast-MFC-AGG-ID: 6_Q1hsUHMJ2c9kbn6gyeFg_1758691630
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e1e147cc0so21472835e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 22:27:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758691630; x=1759296430;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERAoYpMxtDzUD7G3vhLO8DlEI+eK/IUeWFrCKYCHy9Y=;
+        b=Q32M5UeUtw331i0nGYG6sQYud/8JDkH758gYQqbvG4IDKZRCKDd0a6zIsLcPJe7KF6
+         eV6g+Zbx2xTgaiw99W56t6l7HAirkWoRwkP+hxiG6Er+eFy1FQajRXSdXjjFDDs3booO
+         ktoMUglRsgVt4fpa6lJDzAdNNbLgVzo3vlZEstz2R57aGJ4SRChMzHoi/O56Tw8TW45n
+         ej9BoelZw/n9hLh8PBphTJLIfLzuJXfG2cajSZZUz2HKtq0Gz/xmg5ph96iUhsBkBVHg
+         WIkqZXBnEscZBkn4K1JWZgNfCeUcFHrmpFu5EbTJzi68UyKNj45whR7wAQj2M4+1AxpG
+         TJdg==
+X-Gm-Message-State: AOJu0YwKJH4ReVygl2Fh0yashYwE6zUdNzgn8D+mD2IyRS2UaJu6p9Vg
+	FsdbJj+y9P0MHK8EdfRim6iFlJSlwmsv07yL7GrV6lcNkKU6u6kmcn84narTq9G/WGoGjYBv9NT
+	ywYC5o5mJo6e11TN9PJXYTT+MP6z+2DxKq8ecCY83TxR6xkB2MfZqmZ4MdIINWVFccRb2qIAWEs
+	AGwl/z273hk8GCbWzTvz31Lsj2WCMYdWx/E50joi6JfVg=
+X-Gm-Gg: ASbGnct1QNGFUduzwzo/sQDvaRXtP050+U5w4E4HAldpHDIUKzpjHD3YjaPZ41UY2MN
+	+Gq9BHTpLheYJoHQxQUO3n6lbz8tQC8GAH6oGvNZBfNiTIGkXwVHYBZZ4+30RT5GPehCYHlYSVG
+	SkhuWSB73/WsIOR1IFbVdcPJ4DGFxdRo+4L6/RsMyAvwZHx2zR8tgtEi1gjhL1QrvlBdEjUSHQF
+	sbHX1Zmu8QJrNPrZM4GFgkji2o94e9/ZKjtA4gO6Z1xcjEvizIJpH/tq1xBoVuBlesyuRmDlP4k
+	8EaH5qAbyt0hfv0MC/qkor4Oi+SlHrwe/pY=
+X-Received: by 2002:a5d:5703:0:b0:3ed:e1d8:bd73 with SMTP id ffacd0b85a97d-405ccbd7134mr3235980f8f.57.1758691629699;
+        Tue, 23 Sep 2025 22:27:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5oQeVT7CKEbf5OCtcMlY7u7zZmn5BQoE+KmwNxb2YtEQ0G5EhwtLvtdy5csjDyGCS3ujNUQ==
+X-Received: by 2002:a5d:5703:0:b0:3ed:e1d8:bd73 with SMTP id ffacd0b85a97d-405ccbd7134mr3235962f8f.57.1758691629177;
+        Tue, 23 Sep 2025 22:27:09 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm18752475e9.7.2025.09.23.22.27.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 22:27:08 -0700 (PDT)
+Date: Wed, 24 Sep 2025 01:27:07 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net] ptr_ring: drop duplicated tail zeroing code
+Message-ID: <adb9d941de4a2b619ddb2be271a9939849e70687.1758690291.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
-Date: Wed, 24 Sep 2025 00:25:43 -0500
-Message-Id: <52E503A0-ED90-4C1B-A6CD-6C226752F180@sandeen.net>
-References: <aNNdfO4WIJmBQ2uO@codewreck.org>
-Cc: Christian Brauner <brauner@kernel.org>,
- Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
- dhowells@redhat.com
-In-Reply-To: <aNNdfO4WIJmBQ2uO@codewreck.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-X-Mailer: iPhone Mail (22G100)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
+We have some rather subtle code around zeroing tail entries, minimizing
+cache bouncing.  Let's put it all in one place.
 
+Doing this also reduces the text size slightly, e.g. for
+drivers/vhost/net.o
+  Before: text: 15,114 bytes
+  After: text: 15,082 bytes
 
-> On Sep 23, 2025, at 21:55, Dominique Martinet <asmadeus@codewreck.org> wro=
-te:
->=20
-> =EF=BB=BFEric Sandeen wrote on Tue, Sep 23, 2025 at 05:21:14PM -0500:
->>> On 8/15/25 3:53 PM, Dominique Martinet wrote:
->>> Christian Brauner wrote on Fri, Aug 15, 2025 at 03:55:13PM +0200:
->>>> Fyi, Eric (Sandeen) is talking about me, Christian Brauner, whereas you=
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
 
->>>> seem to be thinking of Christian Schoenebeck...
->>>=20
->>> Ah, yes.. (He's also in cc, although is name doesn't show up in his
->>> linux_oss@crudebyte mail)
->>>=20
->>> Well, that makes more sense; I've picked up the patches now so I think
->>> it's fine as it is but happy to drop the set if you have any reason to
->>> want them, just let me know.
->>=20
->> Hi Dominique - not to be pushy, but any chance for this in the current
->> merge window, if it's had enough soak time? If not it's not really urgent=
-,
->> I just don't want it to get lost.
->=20
-> Thanks for the mail;
->=20
-> This ran into a syzbot bug a while ago and I've been meaning to check
-> the v9ses setup as I wrote here:
-> https://lkml.kernel.org/r/aKlg5Ci4WC11GZGz@codewreck.org
->=20
-Ah, I had missed that so now it=E2=80=99s my turn to say sorry, didn=E2=80=99=
-t mean to ignore. I=E2=80=99ll take a look and see if I can help.
+Lightly tested.
 
--Eric S
+ include/linux/ptr_ring.h | 42 +++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
+
+diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+index 551329220e4f..a736b16859a6 100644
+--- a/include/linux/ptr_ring.h
++++ b/include/linux/ptr_ring.h
+@@ -243,6 +243,24 @@ static inline bool ptr_ring_empty_bh(struct ptr_ring *r)
+ 	return ret;
+ }
+ 
++/* Zero entries from tail to specified head.
++ * NB: if consumer_head can be >= r->size need to fixup tail later.
++ */
++static inline void __ptr_ring_zero_tail(struct ptr_ring *r, int consumer_head)
++{
++	int head = consumer_head - 1;
++
++	/* Zero out entries in the reverse order: this way we touch the
++	 * cache line that producer might currently be reading the last;
++	 * producer won't make progress and touch other cache lines
++	 * besides the first one until we write out all entries.
++	 */
++	while (likely(head >= r->consumer_tail))
++		r->queue[head--] = NULL;
++
++	r->consumer_tail = consumer_head;
++}
++
+ /* Must only be called after __ptr_ring_peek returned !NULL */
+ static inline void __ptr_ring_discard_one(struct ptr_ring *r)
+ {
+@@ -261,8 +279,7 @@ static inline void __ptr_ring_discard_one(struct ptr_ring *r)
+ 	/* Note: we must keep consumer_head valid at all times for __ptr_ring_empty
+ 	 * to work correctly.
+ 	 */
+-	int consumer_head = r->consumer_head;
+-	int head = consumer_head++;
++	int consumer_head = r->consumer_head + 1;
+ 
+ 	/* Once we have processed enough entries invalidate them in
+ 	 * the ring all at once so producer can reuse their space in the ring.
+@@ -270,16 +287,9 @@ static inline void __ptr_ring_discard_one(struct ptr_ring *r)
+ 	 * but helps keep the implementation simple.
+ 	 */
+ 	if (unlikely(consumer_head - r->consumer_tail >= r->batch ||
+-		     consumer_head >= r->size)) {
+-		/* Zero out entries in the reverse order: this way we touch the
+-		 * cache line that producer might currently be reading the last;
+-		 * producer won't make progress and touch other cache lines
+-		 * besides the first one until we write out all entries.
+-		 */
+-		while (likely(head >= r->consumer_tail))
+-			r->queue[head--] = NULL;
+-		r->consumer_tail = consumer_head;
+-	}
++		     consumer_head >= r->size))
++		__ptr_ring_zero_tail(r, consumer_head);
++
+ 	if (unlikely(consumer_head >= r->size)) {
+ 		consumer_head = 0;
+ 		r->consumer_tail = 0;
+@@ -513,7 +523,6 @@ static inline void ptr_ring_unconsume(struct ptr_ring *r, void **batch, int n,
+ 				      void (*destroy)(void *))
+ {
+ 	unsigned long flags;
+-	int head;
+ 
+ 	spin_lock_irqsave(&r->consumer_lock, flags);
+ 	spin_lock(&r->producer_lock);
+@@ -525,17 +534,14 @@ static inline void ptr_ring_unconsume(struct ptr_ring *r, void **batch, int n,
+ 	 * Clean out buffered entries (for simplicity). This way following code
+ 	 * can test entries for NULL and if not assume they are valid.
+ 	 */
+-	head = r->consumer_head - 1;
+-	while (likely(head >= r->consumer_tail))
+-		r->queue[head--] = NULL;
+-	r->consumer_tail = r->consumer_head;
++	__ptr_ring_zero_tail(r, r->consumer_head);
+ 
+ 	/*
+ 	 * Go over entries in batch, start moving head back and copy entries.
+ 	 * Stop when we run into previously unconsumed entries.
+ 	 */
+ 	while (n) {
+-		head = r->consumer_head - 1;
++		int head = r->consumer_head - 1;
+ 		if (head < 0)
+ 			head = r->size - 1;
+ 		if (r->queue[head]) {
+-- 
+MST
 
 
