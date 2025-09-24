@@ -1,124 +1,214 @@
-Return-Path: <linux-kernel+bounces-830940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7789B9AF53
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:02:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C805B9AF6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0028E4C748C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454FE4C773D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189053191B7;
-	Wed, 24 Sep 2025 17:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31384314A64;
+	Wed, 24 Sep 2025 17:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdWieQub"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="ekY3Qb9A"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD7131690A;
-	Wed, 24 Sep 2025 17:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733288; cv=none; b=G44SgZDpLy6wXpt3or7T79SZBAc7BLMRxf7oLXnjSVqAmT7koSI6OuMYrIDI4TK2bjRiyvqop9dyTAf4SGT2ONh5Ie1Soc9SPY57/lIFwpKw87XxedUjYTkdiDwPlKTy0rwUeUZqFnPYNWiaaKWRpr5f/khZuNxC7pkHNP7n4Xo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733288; c=relaxed/simple;
-	bh=2YWxKi3LzYzTpuHIPCCI2LyStUTGv5qSCSlAiJdVfh0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=A+iUKwLbGPkxTp7vXN47NWGMxLkiplRcxfsCHpATdwiKzFuMucqJj0Yp6QYF5WNk8dKzjHdMVt2nHyEHn9MIbFWLWFHSBrqrKI5xlpUOAXM9hwGwOpzYc6ye9UWf2f7G//Qt8a7QbwxRind9o+d1Eo2CIWZ+ujXDwhE4TTrgpwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdWieQub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE49C4CEF4;
-	Wed, 24 Sep 2025 17:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758733287;
-	bh=2YWxKi3LzYzTpuHIPCCI2LyStUTGv5qSCSlAiJdVfh0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=fdWieQubfkQfer+DI8hWuDq25xS5SzMzcp3NHPukZ8gWucqAd9m6MkQDZ8VocxDZs
-	 +voqudqjvFZi0arkYsBrNqvgV7LMC9lkGnDStynzG2SbsliLioMeRP/bCdbccQbhNx
-	 04o8At33PlPXcbyvAifG++HaCqfzqcPFeH3MfJ2yvY1b0eVnkXA8lNKaaDW8rbaYzY
-	 JLa1IrxwE0CEfMhvTfugBpPwJjmj8Y0EkZ+L7TMEdsVmdPcqA+o9eJa9oQXne6Ycz4
-	 WWOsrhtlEJgz70HQvy0QaoNhqSk4pkEk8QAVHtPXP5vQQaI4C2K962LvUikpkNrGzr
-	 6cKF7aUW9zHQQ==
-Date: Wed, 24 Sep 2025 12:01:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E88C1CA84;
+	Wed, 24 Sep 2025 17:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758733375; cv=pass; b=LsF6Vbkoq8uQkvTmhS7B8qxcuKeI7Wx/0kaIPzE65481O+NCTRVlP0mZI/39bHN5odN/b5yAo5NZW0lM0IevgirLKN35cud9HB34Ii2JROF+AUHY89DSdqNntc00q4w1hcKcvSCfX79Kds46R+RCdeM1ncKDZLuetdR7EDhV7QI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758733375; c=relaxed/simple;
+	bh=zNeGarvJp9ldvLWI3U9r8ilt8V5JcSpZolZhG9Q3e6Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OHintayIURV0P40AQ3KvcHyW7+W3Zb9cW/Sgl/SoZRzf0EGUzmy4GpAYMW0f2QN1azv0Bn9BbA1FwOr1N0IjfKd0nKJ57/ivgES/oNE+vCOvfVMtlsi0uqw4ZAu33xXgsPlx5aFEgJIr6AbMaGq/AWthmPNU57p1rNltMjwvj1Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=ekY3Qb9A; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1758733317; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gRgUEnUHt0OYOmvDqLamFZgrvDeVi6MbX9FdA7XxYYkN+vk80OdxW0v1Q9KI/7nQf3zVD927ZRaS5lSxzQwV5FRcFtiMV45JtiZbyW0/OwW/1xUXwQQ/tF6Y/+WrN0P68XOC4mm6nhBsKRG9xmDi4Tx4zwvKgvEXhfplpr1DJ8c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758733317; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zNeGarvJp9ldvLWI3U9r8ilt8V5JcSpZolZhG9Q3e6Y=; 
+	b=B7K41L+Tcmg9ArIlVWs5idNJGkM6236M8K7lYIBMwNbreieu+69UMQMYEA9swVZ/A0Oyhkf/XudzqRkr5C/jNUIDsZkWaEzWtHONtRZZTqPjuyYabClK6sf61SxBulDkI6GiCsm2Az9BT6v1atM5LloCQrNh2dIPaJtDhjTarLE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758733317;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=zNeGarvJp9ldvLWI3U9r8ilt8V5JcSpZolZhG9Q3e6Y=;
+	b=ekY3Qb9AJrWMc9W2Wfar+zh/j/Ot+Bh6xy99vGHgOG04rGeemin5W5Zriu/gS9EG
+	5CQ1WdwvFQvOdfpGwiInRrr56sjrQfBwHMEVoJ2TDKXkmPmfksUnREN4pEGpKROgLJD
+	a2KbyTLLDcCdcUk0toz4G15QaPn5q3TSXTMstamVDA5/p5XrqInj4mhoNASjlG6IhJV
+	LdvSFd37wXUErL9kgEDXL0Ue+ez89jqI2U4EevITaAWSIkCg5OZewJwLhE+wDDlHpTC
+	q+JcjIBZ98qcNjsRdP8X9ppjSMZT3+kVEHXFJj6IVuO+/dD7rJhwnMmKBwJ4nwen2GQ
+	TLdAb7VCqA==
+Received: by mx.zohomail.com with SMTPS id 1758733315842995.0929959931418;
+	Wed, 24 Sep 2025 10:01:55 -0700 (PDT)
+Message-ID: <36040a0a40311cb1e871075f0c5ad175342ed5db.camel@icenowy.me>
+Subject: Re: [PATCH v2 2/8] dt-bindings: display: add verisilicon,dc
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Rob Herring <robh@kernel.org>, Lucas Stach <l.stach@pengutronix.de>, 
+ Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>, moderated for non-subscribers
+ <etnaviv@lists.freedesktop.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini
+ <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>,  Philipp Zabel <p.zabel@pengutronix.de>, Heiko Stuebner
+ <heiko@sntech.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>,  Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Michal
+ Wilczynski <m.wilczynski@samsung.com>, Han Gao <rabenda.cn@gmail.com>, Yao
+ Zi <ziyao@disroot.org>, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org
+Date: Thu, 25 Sep 2025 01:01:45 +0800
+In-Reply-To: <1ac8c72206abf9f3e0a13e1fcf44be5c605f6372.camel@icenowy.me>
+References: <20250921083446.790374-1-uwu@icenowy.me>
+	 <20250921083446.790374-3-uwu@icenowy.me>
+	 <20250922204349.GA1290045-robh@kernel.org>
+	 <1ac8c72206abf9f3e0a13e1fcf44be5c605f6372.camel@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
- Herbert Xu <herbert@gondor.apana.org.au>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Olivia Mackall <olivia@selenic.com>
-To: Kael D'Alcamo <dev@kael-k.io>
-In-Reply-To: <20250924141247.69323-4-dev@kael-k.io>
-References: <uprke6fujhmckymlpy6oskecol4awhqyroqlg25tprmhnkeyy6@ztozdrlmeotp>
- <20250924141247.69323-2-dev@kael-k.io>
- <20250924141247.69323-4-dev@kael-k.io>
-Message-Id: <175873328127.2089125.595929815081455365.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: rng: sparc_sun_oracle_rng: convert
- to DT schema
+X-ZohoMailClient: External
 
-
-On Wed, 24 Sep 2025 16:09:20 +0200, Kael D'Alcamo wrote:
-> Convert the Devicetree binding documentation for:
-> * SUNW,n2-rng
-> * SUNW,vf-rng
-> * SUNW,kt-rng
-> * ORCL,m4-rng
-> * ORCL,m7-rng
-> from plain text to YAML.
-> 
-> Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
-> ---
->  .../devicetree/bindings/rng/SUNW,n2-rng.yaml  | 50 +++++++++++++++++++
->  .../bindings/rng/sparc_sun_oracle_rng.txt     | 30 -----------
->  2 files changed, 50 insertions(+), 30 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/rng/SUNW,n2-rng.yaml
->  delete mode 100644 Documentation/devicetree/bindings/rng/sparc_sun_oracle_rng.txt
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/rng/SUNW,n2-rng.example.dtb: rng@e (ORCL,m4-rng): 'rng-#units' does not match any of the regexes: '^#.*', '^(at25|bm|devbus|dmacap|dsa|exynos|fsi[ab]|gpio-fan|gpio-key|gpio|gpmc|hdmi|i2c-gpio),.*', '^(keypad|m25p|max8952|max8997|max8998|mpmc),.*', '^(pciclass|pinctrl-single|#pinctrl-single|PowerPC),.*', '^(pl022|pxa-mmc|rcar_sound|rotary-encoder|s5m8767|sdhci),.*', '^(simple-audio-card|st-plgpio|st-spics|ts),.*', '^100ask,.*', '^70mai,.*', '^8dev,.*', '^GEFanuc,.*', '^IBM,.*', '^ORCL,.*', '^SUNW,.*', '^[a-zA-Z0-9#_][a-zA-Z0-9+\\-._@]{0,63}$', '^[a-zA-Z0-9+\\-._]*@[0-9a-zA-Z,]*$', '^abb,.*', '^abilis,.*', '^abracon,.*', '^abt,.*', '^acbel,.*', '^acelink,.*', '^acer,.*', '^acme,.*', '^actions,.*', '^actiontec,.*', '^active-semi,.*', '^ad,.*', '^adafruit,.*', '^adapteva,.*', '^adaptrum,.*', '^adh,.*', '^adi,.*', '^adieng,.*', '^admatec,.*', '^advantech,.*', '^aeroflexgaisler,.*', '^aesop,.*', '^airoha,.*', '^al,.*',
-  '^alcatel,.*', '^aldec,.*', '^alfa-network,.*', '^allegro,.*', '^allegromicro,.*', '^alliedtelesis,.*', '^alliedvision,.*', '^allo,.*', '^allwinner,.*', '^alphascale,.*', '^alps,.*', '^alt,.*', '^altr,.*', '^amarula,.*', '^amazon,.*', '^amcc,.*', '^amd,.*', '^amediatech,.*', '^amlogic,.*', '^ampere,.*', '^amphenol,.*', '^ampire,.*', '^ams,.*', '^amstaos,.*', '^analogix,.*', '^anbernic,.*', '^andestech,.*', '^anvo,.*', '^aoly,.*', '^aosong,.*', '^apm,.*', '^apple,.*', '^aptina,.*', '^arasan,.*', '^archermind,.*', '^arcom,.*', '^arctic,.*', '^arcx,.*', '^argon40,.*', '^ariaboard,.*', '^aries,.*', '^arm,.*', '^armadeus,.*', '^armsom,.*', '^arrow,.*', '^artesyn,.*', '^asahi-kasei,.*', '^asc,.*', '^asix,.*', '^aspeed,.*', '^asrock,.*', '^asteralabs,.*', '^asus,.*', '^atheros,.*', '^atlas,.*', '^atmel,.*', '^auo,.*', '^auvidea,.*', '^avago,.*', '^avia,.*', '^avic,.*', '^avnet,.*', '^awinic,.*', '^axentia,.*', '^axiado,.*', '^axis,.*', '^azoteq,.*', '^azw,.*', '^baikal,.*', '^bananapi,.*'
- , '^beacon,.*', '^beagle,.*', '^belling,.*', '^bestar,.*', '^bhf,.*', '^bigtreetech,.*', '^bitmain,.*', '^blaize,.*', '^bluegiga,.*', '^blutek,.*', '^boe,.*', '^bosch,.*', '^boundary,.*', '^brcm,.*', '^broadmobi,.*', '^bsh,.*', '^bticino,.*', '^buffalo,.*', '^buglabs,.*', '^bur,.*', '^bytedance,.*', '^calamp,.*', '^calao,.*', '^calaosystems,.*', '^calxeda,.*', '^cameo,.*', '^canaan,.*', '^caninos,.*', '^capella,.*', '^cascoda,.*', '^catalyst,.*', '^cavium,.*', '^cct,.*', '^cdns,.*', '^cdtech,.*', '^cellwise,.*', '^ceva,.*', '^chargebyte,.*', '^checkpoint,.*', '^chefree,.*', '^chipidea,.*', '^chipone,.*', '^chipspark,.*', '^chongzhou,.*', '^chrontel,.*', '^chrp,.*', '^chunghwa,.*', '^chuwi,.*', '^ciaa,.*', '^cirrus,.*', '^cisco,.*', '^cix,.*', '^clockwork,.*', '^cloos,.*', '^cloudengines,.*', '^cnm,.*', '^cnxt,.*', '^colorfly,.*', '^compal,.*', '^compulab,.*', '^comvetia,.*', '^congatec,.*', '^coolpi,.*', '^coreriver,.*', '^corpro,.*', '^cortina,.*', '^cosmic,.*', '^crane,.*', '^crea
- tive,.*', '^crystalfontz,.*', '^csky,.*', '^csot,.*', '^csq,.*', '^csr,.*', '^ctera,.*', '^ctu,.*', '^cubietech,.*', '^cudy,.*', '^cui,.*', '^cypress,.*', '^cyx,.*', '^cznic,.*', '^dallas,.*', '^dataimage,.*', '^davicom,.*', '^deepcomputing,.*', '^dell,.*', '^delta,.*', '^densitron,.*', '^denx,.*', '^devantech,.*', '^dfi,.*', '^dfrobot,.*', '^dh,.*', '^difrnce,.*', '^digi,.*', '^digilent,.*', '^dimonoff,.*', '^diodes,.*', '^dioo,.*', '^djn,.*', '^dlc,.*', '^dlg,.*', '^dlink,.*', '^dmo,.*', '^domintech,.*', '^dongwoon,.*', '^dptechnics,.*', '^dragino,.*', '^dream,.*', '^ds,.*', '^dserve,.*', '^dynaimage,.*', '^ea,.*', '^ebang,.*', '^ebbg,.*', '^ebs-systart,.*', '^ebv,.*', '^eckelmann,.*', '^econet,.*', '^edgeble,.*', '^edimax,.*', '^edt,.*', '^ees,.*', '^eeti,.*', '^egnite,.*', '^einfochips,.*', '^eink,.*', '^elan,.*', '^element14,.*', '^elgin,.*', '^elida,.*', '^elimo,.*', '^elpida,.*', '^embedfire,.*', '^embest,.*', '^emcraft,.*', '^emlid,.*', '^emmicro,.*', '^empire-electronix,.*'
- , '^emtrion,.*', '^enbw,.*', '^enclustra,.*', '^endian,.*', '^endless,.*', '^ene,.*', '^energymicro,.*', '^engicam,.*', '^engleder,.*', '^epcos,.*', '^epfl,.*', '^epson,.*', '^esp,.*', '^est,.*', '^eswin,.*', '^ettus,.*', '^eukrea,.*', '^everest,.*', '^everspin,.*', '^evervision,.*', '^exar,.*', '^excito,.*', '^exegin,.*', '^ezchip,.*', '^facebook,.*', '^fairchild,.*', '^fairphone,.*', '^faraday,.*', '^fascontek,.*', '^fastrax,.*', '^fcs,.*', '^feixin,.*', '^feiyang,.*', '^fii,.*', '^firefly,.*', '^flipkart,.*', '^focaltech,.*', '^forlinx,.*', '^foursemi,.*', '^foxlink,.*', '^freebox,.*', '^freecom,.*', '^frida,.*', '^friendlyarm,.*', '^fsl,.*', '^fujitsu,.*', '^fxtec,.*', '^galaxycore,.*', '^gameforce,.*', '^gardena,.*', '^gateway,.*', '^gateworks,.*', '^gcw,.*', '^ge,.*', '^geekbuying,.*', '^gef,.*', '^gehc,.*', '^gemei,.*', '^gemtek,.*', '^genesys,.*', '^genexis,.*', '^geniatech,.*', '^giantec,.*', '^giantplus,.*', '^glinet,.*', '^globalscale,.*', '^globaltop,.*', '^gmt,.*', '^go
- controll,.*', '^goldelico,.*', '^goodix,.*', '^google,.*', '^goramo,.*', '^gplus,.*', '^grinn,.*', '^grmn,.*', '^gumstix,.*', '^gw,.*', '^hannstar,.*', '^haochuangyi,.*', '^haoyu,.*', '^hardkernel,.*', '^hce,.*', '^headacoustics,.*', '^hechuang,.*', '^hideep,.*', '^himax,.*', '^hinlink,.*', '^hirschmann,.*', '^hisi,.*', '^hisilicon,.*', '^hit,.*', '^hitex,.*', '^holt,.*', '^holtek,.*', '^honestar,.*', '^honeywell,.*', '^hoperf,.*', '^hoperun,.*', '^hp,.*', '^hpe,.*', '^hsg,.*', '^htc,.*', '^huawei,.*', '^hugsun,.*', '^huiling,.*', '^hwacom,.*', '^hxt,.*', '^hycon,.*', '^hydis,.*', '^hynitron,.*', '^hynix,.*', '^hyundai,.*', '^i2se,.*', '^ibm,.*', '^icplus,.*', '^idt,.*', '^iei,.*', '^ifi,.*', '^ilitek,.*', '^imagis,.*', '^img,.*', '^imi,.*', '^inanbo,.*', '^incircuit,.*', '^incostartec,.*', '^indiedroid,.*', '^inet-tek,.*', '^infineon,.*', '^inforce,.*', '^ingenic,.*', '^ingrasys,.*', '^injoinic,.*', '^innocomm,.*', '^innolux,.*', '^inside-secure,.*', '^insignal,.*', '^inspur,.*', '
- ^intel,.*', '^intercontrol,.*', '^invensense,.*', '^inventec,.*', '^inversepath,.*', '^iom,.*', '^irondevice,.*', '^isee,.*', '^isil,.*', '^issi,.*', '^ite,.*', '^itead,.*', '^itian,.*', '^ivo,.*', '^iwave,.*', '^jadard,.*', '^jasonic,.*', '^jdi,.*', '^jedec,.*', '^jenson,.*', '^jesurun,.*', '^jethome,.*', '^jianda,.*', '^jide,.*', '^joz,.*', '^jty,.*', '^kam,.*', '^karo,.*', '^keithkoep,.*', '^keymile,.*', '^khadas,.*', '^kiebackpeter,.*', '^kinetic,.*', '^kingdisplay,.*', '^kingnovel,.*', '^kionix,.*', '^kobo,.*', '^kobol,.*', '^koe,.*', '^kontron,.*', '^kosagi,.*', '^kvg,.*', '^kyo,.*', '^lacie,.*', '^laird,.*', '^lamobo,.*', '^lantiq,.*', '^lattice,.*', '^lckfb,.*', '^lctech,.*', '^leadtek,.*', '^leez,.*', '^lego,.*', '^lemaker,.*', '^lenovo,.*', '^lg,.*', '^lgphilips,.*', '^libretech,.*', '^licheepi,.*', '^linaro,.*', '^lincolntech,.*', '^lineartechnology,.*', '^linksprite,.*', '^linksys,.*', '^linutronix,.*', '^linux,.*', '^linx,.*', '^liontron,.*', '^liteon,.*', '^litex,.*', 
- '^lltc,.*', '^logicpd,.*', '^logictechno,.*', '^longcheer,.*', '^lontium,.*', '^loongmasses,.*', '^loongson,.*', '^lsi,.*', '^luckfox,.*', '^lunzn,.*', '^luxul,.*', '^lwn,.*', '^lxa,.*', '^m5stack,.*', '^macnica,.*', '^mantix,.*', '^mapleboard,.*', '^marantec,.*', '^marvell,.*', '^maxbotix,.*', '^maxim,.*', '^maxlinear,.*', '^maxtor,.*', '^mayqueen,.*', '^mbvl,.*', '^mcube,.*', '^meas,.*', '^mecer,.*', '^mediatek,.*', '^megachips,.*', '^mele,.*', '^melexis,.*', '^melfas,.*', '^mellanox,.*', '^memsensing,.*', '^memsic,.*', '^menlo,.*', '^mentor,.*', '^meraki,.*', '^merrii,.*', '^methode,.*', '^micrel,.*', '^microchip,.*', '^microcrystal,.*', '^micron,.*', '^microsoft,.*', '^microsys,.*', '^microtips,.*', '^mikroe,.*', '^mikrotik,.*', '^milkv,.*', '^miniand,.*', '^minix,.*', '^mips,.*', '^miramems,.*', '^mitsubishi,.*', '^mitsumi,.*', '^mixel,.*', '^miyoo,.*', '^mntre,.*', '^mobileye,.*', '^modtronix,.*', '^moortec,.*', '^mosaixtech,.*', '^motorcomm,.*', '^motorola,.*', '^moxa,.*', '^
- mpl,.*', '^mps,.*', '^mqmaker,.*', '^mrvl,.*', '^mscc,.*', '^msi,.*', '^mstar,.*', '^mti,.*', '^multi-inno,.*', '^mundoreader,.*', '^murata,.*', '^mxic,.*', '^mxicy,.*', '^myir,.*', '^national,.*', '^neardi,.*', '^nec,.*', '^neofidelity,.*', '^neonode,.*', '^netcube,.*', '^netgear,.*', '^netlogic,.*', '^netron-dy,.*', '^netronix,.*', '^netxeon,.*', '^neweast,.*', '^newhaven,.*', '^newvision,.*', '^nexbox,.*', '^nextthing,.*', '^ni,.*', '^nicera,.*', '^nintendo,.*', '^nlt,.*', '^nokia,.*', '^nordic,.*', '^nothing,.*', '^novatech,.*', '^novatek,.*', '^novtech,.*', '^numonyx,.*', '^nutsboard,.*', '^nuvoton,.*', '^nvd,.*', '^nvidia,.*', '^nxp,.*', '^oceanic,.*', '^ocs,.*', '^oct,.*', '^okaya,.*', '^oki,.*', '^olimex,.*', '^olpc,.*', '^oneplus,.*', '^onie,.*', '^onion,.*', '^onnn,.*', '^ontat,.*', '^opalkelly,.*', '^openailab,.*', '^opencores,.*', '^openembed,.*', '^openpandora,.*', '^openrisc,.*', '^openwrt,.*', '^option,.*', '^oranth,.*', '^orisetech,.*', '^ortustech,.*', '^osddisplays
- ,.*', '^osmc,.*', '^ouya,.*', '^overkiz,.*', '^ovti,.*', '^oxsemi,.*', '^ozzmaker,.*', '^panasonic,.*', '^parade,.*', '^parallax,.*', '^particle,.*', '^pda,.*', '^pegatron,.*', '^pericom,.*', '^pervasive,.*', '^phicomm,.*', '^phontech,.*', '^phytec,.*', '^picochip,.*', '^pinctrl-[0-9]+$', '^pine64,.*', '^pineriver,.*', '^pixcir,.*', '^plantower,.*', '^plathome,.*', '^plda,.*', '^plx,.*', '^ply,.*', '^pni,.*', '^pocketbook,.*', '^polaroid,.*', '^polyhex,.*', '^pool[0-3],.*', '^portwell,.*', '^poslab,.*', '^pov,.*', '^powertip,.*', '^powervr,.*', '^powkiddy,.*', '^pri,.*', '^primeview,.*', '^primux,.*', '^probox2,.*', '^prt,.*', '^pulsedlight,.*', '^purism,.*', '^puya,.*', '^qca,.*', '^qcom,.*', '^qemu,.*', '^qi,.*', '^qiaodian,.*', '^qihua,.*', '^qishenglong,.*', '^qnap,.*', '^quanta,.*', '^radxa,.*', '^raidsonic,.*', '^ralink,.*', '^ramtron,.*', '^raspberrypi,.*', '^raumfeld,.*', '^raydium,.*', '^rda,.*', '^realtek,.*', '^relfor,.*', '^remarkable,.*', '^renesas,.*', '^rervision,.*',
-  '^retronix,.*', '^revotics,.*', '^rex,.*', '^richtek,.*', '^ricoh,.*', '^rikomagic,.*', '^riot,.*', '^riscv,.*', '^rockchip,.*', '^rocktech,.*', '^rohm,.*', '^ronbo,.*', '^ronetix,.*', '^roofull,.*', '^roseapplepi,.*', '^rve,.*', '^saef,.*', '^sakurapi,.*', '^samsung,.*', '^samtec,.*', '^sancloud,.*', '^sandisk,.*', '^satoz,.*', '^sbs,.*', '^schindler,.*', '^schneider,.*', '^schulercontrol,.*', '^sciosense,.*', '^sdmc,.*', '^seagate,.*', '^seeed,.*', '^seirobotics,.*', '^semtech,.*', '^senseair,.*', '^sensirion,.*', '^sensortek,.*', '^sercomm,.*', '^sff,.*', '^sgd,.*', '^sgmicro,.*', '^sgx,.*', '^sharp,.*', '^shift,.*', '^shimafuji,.*', '^shineworld,.*', '^shiratech,.*', '^si-en,.*', '^si-linux,.*', '^sielaff,.*', '^siemens,.*', '^sifive,.*', '^siflower,.*', '^sigma,.*', '^sii,.*', '^sil,.*', '^silabs,.*', '^silan,.*', '^silead,.*', '^silergy,.*', '^silex-insight,.*', '^siliconfile,.*', '^siliconmitus,.*', '^silvaco,.*', '^simtek,.*', '^sinlinx,.*', '^sinovoip,.*', '^sinowealth,.*'
- , '^sipeed,.*', '^sirf,.*', '^sis,.*', '^sitronix,.*', '^skov,.*', '^skyworks,.*', '^smartfiber,.*', '^smartlabs,.*', '^smartrg,.*', '^smi,.*', '^smsc,.*', '^snps,.*', '^sochip,.*', '^socionext,.*', '^solidrun,.*', '^solomon,.*', '^somfy,.*', '^sony,.*', '^sophgo,.*', '^sourceparts,.*', '^spacemit,.*', '^spansion,.*', '^sparkfun,.*', '^spinalhdl,.*', '^sprd,.*', '^square,.*', '^ssi,.*', '^sst,.*', '^sstar,.*', '^st,.*', '^st-ericsson,.*', '^starfive,.*', '^starry,.*', '^startek,.*', '^starterkit,.*', '^ste,.*', '^stericsson,.*', '^storlink,.*', '^storm,.*', '^storopack,.*', '^summit,.*', '^sunchip,.*', '^sundance,.*', '^sunplus,.*', '^supermicro,.*', '^swir,.*', '^syna,.*', '^synology,.*', '^synopsys,.*', '^taos,.*', '^tbs,.*', '^tbs-biometrics,.*', '^tcg,.*', '^tcl,.*', '^tcs,.*', '^tcu,.*', '^tdo,.*', '^team-source-display,.*', '^technexion,.*', '^technologic,.*', '^techstar,.*', '^techwell,.*', '^teejet,.*', '^teltonika,.*', '^tempo,.*', '^tenda,.*', '^terasic,.*', '^tesla,.*', '
- ^test,.*', '^tfc,.*', '^thead,.*', '^thine,.*', '^thingyjp,.*', '^thundercomm,.*', '^thwc,.*', '^ti,.*', '^tianma,.*', '^tlm,.*', '^tmt,.*', '^topeet,.*', '^topic,.*', '^topland,.*', '^toppoly,.*', '^topwise,.*', '^toradex,.*', '^toshiba,.*', '^toumaz,.*', '^tpk,.*', '^tplink,.*', '^tpo,.*', '^tq,.*', '^transpeed,.*', '^traverse,.*', '^tronfy,.*', '^tronsmart,.*', '^truly,.*', '^tsd,.*', '^turing,.*', '^tyan,.*', '^tyhx,.*', '^u-blox,.*', '^u-boot,.*', '^ubnt,.*', '^ucrobotics,.*', '^udoo,.*', '^ufispace,.*', '^ugoos,.*', '^ultratronik,.*', '^uni-t,.*', '^uniwest,.*', '^upisemi,.*', '^urt,.*', '^usi,.*', '^usr,.*', '^utoo,.*', '^v3,.*', '^vaisala,.*', '^valve,.*', '^vamrs,.*', '^variscite,.*', '^vdl,.*', '^vertexcom,.*', '^via,.*', '^vialab,.*', '^vicor,.*', '^videostrong,.*', '^virtio,.*', '^virtual,.*', '^vishay,.*', '^visionox,.*', '^vitesse,.*', '^vivante,.*', '^vivax,.*', '^vocore,.*', '^voipac,.*', '^voltafield,.*', '^vot,.*', '^vscom,.*', '^vxt,.*', '^wacom,.*', '^wanchanglon
- g,.*', '^wand,.*', '^waveshare,.*', '^wd,.*', '^we,.*', '^welltech,.*', '^wetek,.*', '^wexler,.*', '^whwave,.*', '^wi2wi,.*', '^widora,.*', '^wiligear,.*', '^willsemi,.*', '^winbond,.*', '^wingtech,.*', '^winlink,.*', '^winsen,.*', '^winstar,.*', '^wirelesstag,.*', '^wits,.*', '^wlf,.*', '^wm,.*', '^wobo,.*', '^wolfvision,.*', '^x-powers,.*', '^xen,.*', '^xes,.*', '^xiaomi,.*', '^xicor,.*', '^xillybus,.*', '^xingbangda,.*', '^xinpeng,.*', '^xiphera,.*', '^xlnx,.*', '^xnano,.*', '^xunlong,.*', '^xylon,.*', '^yadro,.*', '^yamaha,.*', '^yes-optoelectronics,.*', '^yic,.*', '^yiming,.*', '^ylm,.*', '^yna,.*', '^yones-toptech,.*', '^ys,.*', '^ysoft,.*', '^yuridenki,.*', '^yuzukihd,.*', '^zarlink,.*', '^zealz,.*', '^zeitec,.*', '^zidoo,.*', '^zii,.*', '^zinitix,.*', '^zkmagic,.*', '^zte,.*', '^zyxel,.*'
-	from schema $id: http://devicetree.org/schemas/vendor-prefixes.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250924141247.69323-4-dev@kael-k.io
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+5ZyoIDIwMjUtMDktMjPmmJ/mnJ/kuoznmoQgMDg6MzMgKzA4MDDvvIxJY2Vub3d5IFpoZW5n5YaZ
+6YGT77yaCj4g5ZyoIDIwMjUtMDktMjLmmJ/mnJ/kuIDnmoQgMTU6NDMgLTA1MDDvvIxSb2IgSGVy
+cmluZ+WGmemBk++8mgo+ID4gT24gU3VuLCBTZXAgMjEsIDIwMjUgYXQgMDQ6MzQ6NDBQTSArMDgw
+MCwgSWNlbm93eSBaaGVuZyB3cm90ZToKPiA+ID4gVmVyaXNpbGljb24gaGFzIGEgc2VyaWVzIG9m
+IGRpc3BsYXkgY29udHJvbGxlcnMgcHJlZml4ZWQgd2l0aCBEQwo+ID4gPiBhbmQKPiA+ID4gd2l0
+aCBzZWxmLWlkZW50aWZpY2F0aW9uIGZhY2lsaXR5IGxpa2UgdGhlaXIgR0Mgc2VyaWVzIEdQVXMu
+Cj4gPiA+IAo+ID4gPiBBZGQgYSBkZXZpY2UgdHJlZSBiaW5kaW5nIGZvciBpdC4KPiA+ID4gCj4g
+PiA+IERlcGVuZHMgb24gdGhlIHNwZWNpZmljIERDIG1vZGVsLCBpdCBjYW4gaGF2ZSBlaXRoZXIg
+b25lIG9yIHR3bwo+ID4gPiBkaXNwbGF5Cj4gPiA+IG91dHB1dHMsIGFuZCBlYWNoIGRpc3BsYXkg
+b3V0cHV0IGNvdWxkIGJlIHNldCB0byBEUEkgc2lnbmFsIG9yCj4gPiA+ICJEUCIKPiA+ID4gc2ln
+bmFsICh3aGljaCBzZWVtcyB0byBiZSBzb21lIHBsYWluIHBhcmFsbGVsIGJ1cyB0byBIRE1JCj4g
+PiA+IGNvbnRyb2xsZXJzKS4KPiA+ID4gCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEljZW5vd3kgWmhl
+bmcgPHV3dUBpY2Vub3d5Lm1lPgo+ID4gPiAtLS0KPiA+ID4gQ2hhbmdlcyBpbiB2MjoKPiA+ID4g
+LSBGaXhlZCBtaXNzcGVsdCAidmVyc2lsaWNvbiIgaW4gdGl0bGUuCj4gPiA+IC0gTW92ZWQgbWlu
+SXRlbXMgaW4gY2xvY2sgcHJvcGVydGllcyB0byBiZSBlYXJsaWVyIHRoYW4gaXRlbXMuCj4gPiA+
+IC0gUmUtYWxpZ25lZCBtdWx0aS1saW5lIGNsb2NrcyBhbmQgcmVzZXRzIGluIGV4YW1wbGUuCj4g
+PiA+IAo+ID4gPiDCoC4uLi9iaW5kaW5ncy9kaXNwbGF5L3ZlcmlzaWxpY29uLGRjLnlhbWzCoMKg
+wqDCoMKgIHwgMTI3Cj4gPiA+ICsrKysrKysrKysrKysrKysrKwo+ID4gPiDCoDEgZmlsZSBjaGFu
+Z2VkLCAxMjcgaW5zZXJ0aW9ucygrKQo+ID4gPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NAo+ID4gPiBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS92ZXJpc2lsaWNvbixkYy55
+YW1sCj4gPiA+IAo+ID4gPiBkaWZmIC0tZ2l0Cj4gPiA+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdmVyaXNpbGljb24sZGMueWFtbAo+ID4gPiBiL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3ZlcmlzaWxpY29uLGRjLnlhbWwKPiA+
+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+ID4gaW5kZXggMDAwMDAwMDAwMDAwMC4uMDdmZWRj
+NGM3Y2MxMwo+ID4gPiAtLS0gL2Rldi9udWxsCj4gPiA+ICsrKwo+ID4gPiBiL0RvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3ZlcmlzaWxpY29uLGRjLnlhbWwKPiA+ID4g
+QEAgLTAsMCArMSwxMjcgQEAKPiA+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwt
+Mi4wIE9SIEJTRC0yLUNsYXVzZSkKPiA+ID4gKyVZQU1MIDEuMgo+ID4gPiArLS0tCj4gPiA+ICsk
+aWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2Rpc3BsYXkvdmVyaXNpbGljb24sZGMu
+eWFtbCMKPiA+ID4gKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9tZXRhLXNjaGVtYXMv
+Y29yZS55YW1sIwo+ID4gPiArCj4gPiA+ICt0aXRsZTogVmVyaXNpbGljb24gREMtc2VyaWVzIGRp
+c3BsYXkgY29udHJvbGxlcnMKPiA+ID4gKwo+ID4gPiArbWFpbnRhaW5lcnM6Cj4gPiA+ICvCoCAt
+IEljZW5vd3kgWmhlbmcgPHV3dUBpY2Vub3d5Lm1lPgo+ID4gPiArCj4gPiA+ICtwcm9wZXJ0aWVz
+Ogo+ID4gPiArwqAgJG5vZGVuYW1lOgo+ID4gPiArwqDCoMKgIHBhdHRlcm46ICJeZGlzcGxheUBb
+MC05YS1mXSskIgo+ID4gPiArCj4gPiA+ICvCoCBjb21wYXRpYmxlOgo+ID4gPiArwqDCoMKgIGNv
+bnN0OiB2ZXJpc2lsaWNvbixkYwo+ID4gCj4gPiBUaGlzIG5lZWRzIGFuIFNvQyBzcGVjaWZpYyBj
+b21wYXRpYmxlLiBHZW5lcmFsbHkgbGljZW5zZWQgSVAKPiA+IGNvbXBhdGlibGVzIAo+ID4gYXJl
+IHVzZWxlc3MgYmVjYXVzZSB0aGUgc3BlY3MgYXJlbid0IHB1YmxpYyBhbmQgdGhlcmUncyBhbHdh
+eXMgCj4gPiBpbnRlZ3JhdGlvbiBxdWlya3MuCj4gCj4gVGhpcyBtaW1pY3MgdGhlIEdQVSBJUHMg
+YnkgdGhlIHNhbWUgdmVuZG9yLCBzZWUgZ3B1L3ZpdmFudGUsZ2MueWFtbCAsCj4gd2hpY2ggY29u
+dGFpbiB0aGUgZXhhY3Qgc2FtZSBzZXQgb2YgaWRlbnRpZmljYXRpb24gcmVnaXN0ZXJzCj4gKGlu
+Y2x1ZGluZwo+IGEgImN1c3RvbWVyIGlkIiBvbmUgdGhhdCBjYW4gZGlmZmVyaWVuYXRlIHRoZSBz
+YW1lIGNvbmZpZ3VyZWQgSVAgb24KPiBTdGFyRml2ZSBKSDcxMTAgYW5kIFQtSGVhZCBUSDE1MjAp
+Lgo+IAo+IElmIHdlIGNhbiBnZXQgdml2YW50ZSxnYyB0byB3b3JrIHcvbyBTb0Mgc3BlY2lmaWMg
+Y29tcGF0aWJsZSwgdGhlbiB3ZQo+IHNob3VsZCBiZSBhYmxlIHRvIGdldCB2ZXJpc2lsaWNvbixk
+YyB0byB3b3JrIHRvby4KCldlbGwgbWF5YmUgSSBzaG91bGQgYWRkIGV0bmF2aXYgcGVvcGxlIHRv
+IHRoZSByZWNpcGllbnQgbGlzdCwgdG8gYWxsb3cKdGhlbSB0byB0ZWxsIHVzIHRoZSBtYWdpYyBi
+ZWhpbmQgdml2YW50ZSxnYyAuCgo+IAo+ID4gCj4gPiA+ICsKPiA+ID4gK8KgIHJlZzoKPiA+ID4g
+K8KgwqDCoCBtYXhJdGVtczogMQo+ID4gPiArCj4gPiA+ICvCoCBpbnRlcnJ1cHRzOgo+ID4gPiAr
+wqDCoMKgIG1heEl0ZW1zOiAxCj4gPiA+ICsKPiA+ID4gK8KgIGNsb2NrczoKPiA+ID4gK8KgwqDC
+oCBtaW5JdGVtczogNAo+ID4gPiArwqDCoMKgIGl0ZW1zOgo+ID4gPiArwqDCoMKgwqDCoCAtIGRl
+c2NyaXB0aW9uOiBEQyBDb3JlIGNsb2NrCj4gPiA+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246
+IERNQSBBWEkgYnVzIGNsb2NrCj4gPiA+ICvCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246IENvbmZp
+Z3VyYXRpb24gQUhCIGJ1cyBjbG9jawo+ID4gPiArwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBQ
+aXhlbCBjbG9jayBvZiBvdXRwdXQgMAo+ID4gPiArwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBQ
+aXhlbCBjbG9jayBvZiBvdXRwdXQgMQo+ID4gPiArCj4gPiA+ICvCoCBjbG9jay1uYW1lczoKPiA+
+ID4gK8KgwqDCoCBtaW5JdGVtczogNAo+ID4gPiArwqDCoMKgIGl0ZW1zOgo+ID4gPiArwqDCoMKg
+wqDCoCAtIGNvbnN0OiBjb3JlCj4gPiA+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IGF4aQo+ID4gPiAr
+wqDCoMKgwqDCoCAtIGNvbnN0OiBhaGIKPiA+ID4gK8KgwqDCoMKgwqAgLSBjb25zdDogcGl4MAo+
+ID4gPiArwqDCoMKgwqDCoCAtIGNvbnN0OiBwaXgxCj4gPiA+ICsKPiA+ID4gK8KgIHJlc2V0czoK
+PiA+ID4gK8KgwqDCoCBpdGVtczoKPiA+ID4gK8KgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogREMg
+Q29yZSByZXNldAo+ID4gPiArwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBETUEgQVhJIGJ1cyBy
+ZXNldAo+ID4gPiArwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBDb25maWd1cmF0aW9uIEFIQiBi
+dXMgcmVzZXQKPiA+ID4gKwo+ID4gPiArwqAgcmVzZXQtbmFtZXM6Cj4gPiA+ICvCoMKgwqAgaXRl
+bXM6Cj4gPiA+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IGNvcmUKPiA+ID4gK8KgwqDCoMKgwqAgLSBj
+b25zdDogYXhpCj4gPiA+ICvCoMKgwqDCoMKgIC0gY29uc3Q6IGFoYgo+ID4gPiArCj4gPiA+ICvC
+oCBwb3J0czoKPiA+ID4gK8KgwqDCoCAkcmVmOiAvc2NoZW1hcy9ncmFwaC55YW1sIy9wcm9wZXJ0
+aWVzL3BvcnRzCj4gPiA+ICsKPiA+ID4gK8KgwqDCoCBwcm9wZXJ0aWVzOgo+ID4gPiArwqDCoMKg
+wqDCoCBwb3J0QDA6Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoCAkcmVmOiAvc2NoZW1hcy9ncmFwaC55
+YW1sIy9wcm9wZXJ0aWVzL3BvcnQKPiA+ID4gK8KgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiBU
+aGUgZmlyc3Qgb3V0cHV0IGNoYW5uZWwsIGVuZHBvaW50IDAgc2hvdWxkCj4gPiA+IGJlCj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqAgdXNlZCBmb3IgRFBJIGZvcm1hdCBvdXRwdXQgYW5kIGVuZHBv
+aW50IDEgc2hvdWxkIGJlCj4gPiA+IHVzZWQKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoCBmb3Ig
+RFAgZm9ybWF0IG91dHB1dC4KPiA+ID4gKwo+ID4gPiArwqDCoMKgwqDCoCBwb3J0QDE6Cj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoCAkcmVmOiAvc2NoZW1hcy9ncmFwaC55YW1sIy9wcm9wZXJ0aWVzL3Bv
+cnQKPiA+ID4gK8KgwqDCoMKgwqDCoMKgIGRlc2NyaXB0aW9uOiBUaGUgc2Vjb25kIG91dHB1dCBj
+aGFubmVsIGlmIHRoZSBEQyB2YXJpYW50Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqAgc3VwcG9y
+dHMgYW5kIHVzZWQuIEZvbGxvdyB0aGUgc2FtZSBlbmRwb2ludCBhZGRyZXNzaW5nCj4gPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqAgcnVsZSB3aXRoIHRoZSBmaXJzdCBwb3J0Lgo+ID4gPiArCj4gPiA+
+ICvCoMKgwqAgcmVxdWlyZWQ6Cj4gPiA+ICvCoMKgwqDCoMKgIC0gcG9ydEAwCj4gPiA+ICsKPiA+
+ID4gK3JlcXVpcmVkOgo+ID4gPiArwqAgLSBjb21wYXRpYmxlCj4gPiA+ICvCoCAtIHJlZwo+ID4g
+PiArwqAgLSBpbnRlcnJ1cHRzCj4gPiA+ICvCoCAtIGNsb2Nrcwo+ID4gPiArwqAgLSBjbG9jay1u
+YW1lcwo+ID4gPiArwqAgLSBwb3J0cwo+ID4gPiArCj4gPiA+ICthZGRpdGlvbmFsUHJvcGVydGll
+czogZmFsc2UKPiA+ID4gKwo+ID4gPiArZXhhbXBsZXM6Cj4gPiA+ICvCoCAtIHwKPiA+ID4gK8Kg
+wqDCoCAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvaW50ZXJydXB0LWNvbnRyb2xsZXIvaXJxLmg+Cj4g
+PiA+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL3RoZWFkLHRoMTUyMC1jbGst
+YXAuaD4KPiA+ID4gK8KgwqDCoCAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcmVzZXQvdGhlYWQsdGgx
+NTIwLXJlc2V0Lmg+Cj4gPiA+ICvCoMKgwqAgc29jIHsKPiA+ID4gK8KgwqDCoMKgwqAgI2FkZHJl
+c3MtY2VsbHMgPSA8Mj47Cj4gPiA+ICvCoMKgwqDCoMKgICNzaXplLWNlbGxzID0gPDI+Owo+ID4g
+PiArCj4gPiA+ICvCoMKgwqDCoMKgIGRpc3BsYXlAZmZlZjYwMDAwMCB7Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoCBjb21wYXRpYmxlID0gInZlcmlzaWxpY29uLGRjIjsKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgIHJlZyA9IDwweGZmIDB4ZWY2MDAwMDAgMHgwIDB4MTAwMDAwPjsKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgIGludGVycnVwdHMgPSA8OTMgSVJRX1RZUEVfTEVWRUxfSElHSD47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoCBjbG9ja3MgPSA8JmNsa192byBDTEtfRFBVX0NDTEs+LAo+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZjbGtfdm8gQ0xLX0RQVV9BQ0xLPiwKPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmY2xrX3ZvIENMS19EUFVfSENMSz4s
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmNsa192byBDTEtfRFBV
+X1BJWEVMQ0xLMD4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmNs
+a192byBDTEtfRFBVX1BJWEVMQ0xLMT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoCBjbG9jay1uYW1l
+cyA9ICJjb3JlIiwgImF4aSIsICJhaGIiLCAicGl4MCIsICJwaXgxIjsKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgIHJlc2V0cyA9IDwmcnN0IFRIMTUyMF9SRVNFVF9JRF9EUFVfQ09SRT4sCj4gPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnJzdCBUSDE1MjBfUkVTRVRfSURfRFBV
+X0FYST4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnJzdCBUSDE1
+MjBfUkVTRVRfSURfRFBVX0FIQj47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoCByZXNldC1uYW1lcyA9
+ICJjb3JlIiwgImF4aSIsICJhaGIiOwo+ID4gPiArCj4gPiA+ICvCoMKgwqDCoMKgwqDCoCBwb3J0
+cyB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqAgI2FkZHJlc3MtY2VsbHMgPSA8MT47Cj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqAgI3NpemUtY2VsbHMgPSA8MD47Cj4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqAgcG9ydEAwIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDA+
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoCBwb3J0QDEgewo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8MT47
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwwPjsKPiA+ID4gKwo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkcHVfb3V0X2RwMTogZW5kcG9pbnRAMSB7Cj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8MT47Cj4gPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCByZW1vdGUtZW5kcG9pbnQgPSA8JmhkbWlfaW4+Owo+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB9Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+
+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ID4gPiArwqDCoMKgwqDCoCB9Owo+ID4gPiArwqDCoMKgIH07
+Cj4gPiA+IC0tIAo+ID4gPiAyLjUxLjAKPiA+ID4gCj4gCgo=
 
 
