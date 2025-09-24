@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-831081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE672B9B7C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A4FB9B7CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ED4C188ACF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDC62E7B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5A73191BF;
-	Wed, 24 Sep 2025 18:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33451281358;
+	Wed, 24 Sep 2025 18:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWjUNK9k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YNMHctgJ"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123282236E8;
-	Wed, 24 Sep 2025 18:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F86414EC73
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758738593; cv=none; b=tKDk7+47aF8xtjutZUg8PYFx0yeyGPQjP5jT5FlNyKWzxB5BZFzRgmtQ7o2meEbyRtepNkUZJ9KVFo8PT9j4d7wqpUNGJLerOBGalmD4ENH/tD294FxrJCh41PCMYDa7JRm6oyNVnJEEINSznyVACs4WYxMAIPrQQ3dr8aGwT1E=
+	t=1758738637; cv=none; b=TXVbQtqKv8UaeMFtNCVEQM8OoX1hhw/8brjGMiVVEHyM+TLvdiXrd0kXkrohwLqwOcOO9H7fmN44T0Szp33XygPfyzO7vsZyV1Cgdt/SZQJUDNyb8inDKMn9QY56uwaoq/NbYcWEWU+HZWvCDwlrFS1jjqQP/WzXC8uiQ1X++0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758738593; c=relaxed/simple;
-	bh=ivIxj/3QNNujwPtTOLPIud3a0Z3ASU+eA3YKOvK8qgI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p0qEzOMs9/KB4sCVGl4l+lJv/b0edm0tx494gzUJ5Z29GSxteznOZwQi0Wf691LOESRAiMzTaRUoQX6Ui1cgl/tQj9/nfUNxswOAe3/pLArgr/VFiyYl6nS8yI05aC536qXMLd96qUmtEgjDgGwbOMSXIots6kqb/FIE45XGl/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWjUNK9k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91E3FC4CEE7;
-	Wed, 24 Sep 2025 18:29:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758738592;
-	bh=ivIxj/3QNNujwPtTOLPIud3a0Z3ASU+eA3YKOvK8qgI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rWjUNK9kxClMeZ63Z3gIKLHvqdUqP6p/OJtUHbGZ5JBtsvrdkMPFps3d7gEeZ3OAm
-	 g1EkC9VSQBfFCP1GrYfcuD7Rl4xnGY7cq/K/QJ221Rl9YLXG545UT2BUCaIMtWlSDI
-	 mxU2mHUIM45ZSVT+7wfFr1uxeupejpA9hp/XZD3ddGOOpoh4fG2v4W0ob/mwn/bovo
-	 2XNBITtn8cO+MA1JSN+58tBjAFNgtXOmi3V9uYzdj82O27tBXAhxu1HUfps7OBrZZQ
-	 35z5guGLse/9e3q8ii288GiFiSZkgSMYBipbSWySMZlH+B4KKsD7Qr/4B0CWmR0NLB
-	 13qXulRjaGDBw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v1UFS-000000097Hp-0iCb;
-	Wed, 24 Sep 2025 18:29:50 +0000
-Date: Wed, 24 Sep 2025 19:29:49 +0100
-Message-ID: <87ikh7ya8y.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs
-In-Reply-To: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
-References: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1758738637; c=relaxed/simple;
+	bh=5nqj3fAD1h+T6SNvMIibru9X2ZJzXeYzWYfnhhFeYkU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SCyEUf3hA+1/RD1lijdEfJua6Os3fcVVQsVB6WW1Fel0NWdDamVgou4Bk+IIR7zPE2ChT5AMReqwxFIsYhRw1bE/C1xW2SCP3VQQKGfDQFaB+mAOuJfuYgmbhqqm8Y1AVHEUkIhhwYurAckha38iJG5eSjbvE58yS9nd6pkrMLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YNMHctgJ; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24458274406so2270435ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758738635; x=1759343435; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0orpj8kKzOLIoFLQuzfzAYvQ/6+/WjKNXq78Px6yaWs=;
+        b=YNMHctgJKvNLiiuciMWP0Qd/KXJO2e3UsIXkRSOHmzVdpg2DMpeed3UWO5JSYln4Mp
+         4CWZHU8bGCQJ4k4HkPnsXuOou340DaXsxpSc9teHjOikB7KLXCq1IDdjs4NDaAjZ6cww
+         H9F2CCqZSQFLIKyXRTzwnhe+buKEKnkHfwN9Jvc+axYCx+rRXrCVWSpiAORO59Ns+7En
+         /fF5jx3x0kazyT0M3osU+/99bASscx1w+JpHP7PlTZPXcT43aTDJkQ5gThjwbPwJsVtz
+         WEOOgIlBPsCzHvRTZtGlASd2wEA2m8L5XrO3ltMO8hbXKfFSyrOWVc+fEaaQhe9kP7mA
+         tTvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758738635; x=1759343435;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0orpj8kKzOLIoFLQuzfzAYvQ/6+/WjKNXq78Px6yaWs=;
+        b=T7qoUn9HALSO1IAK5wvjDCnC1LJPhtitelR29Hj6DXCBsKiErzpaOhJTl+sFvnhdbH
+         4JVbBlurwLfnh6wzwGv+Q/9/ofcjD3wQ5Dqqj6y9mrDXKDrcngx27ziFPZ9YzIu9ChLC
+         NS3H9BVp/0Lon4/voFyiD/93B4PGppJAR1GMfvdkHYTM68fWLHaiSRpWsJurk+NDQtH5
+         68qZ6FXlGKHkAdG7tdoZmulRR1BUcQeSZHwiiGTnZNaNau/2XD/D6raav+FqS7En2zaK
+         WOrejNmHMDqA88AEFOA4X1o6t58M3973twHaSxmTfyNYpK++CbkJtDGjH+VBAtESVBf7
+         Ql4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXUb9Zl3Kai+YLQKCwYAQ/1AOrcpa5vqX3qTNpZt0oKYq9ntA5IjIDAcCelg46NRTr6UbG49BTxSHZ8jio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzECKbqLtWNNfl8Pk+w7bkKauEncgj+VgGhWcRTbTzgcl9OWdZe
+	32chch3GMA6WeZJrMAYhjAdefphKWpTiWPaSqCKE7/0LECUA3/Vy59RvhqopJSkjOZ+01PC098I
+	7i0lQQw==
+X-Google-Smtp-Source: AGHT+IFXo1YtMlm/thVEKH/A2s96aBhqcFtzdeO84CUbY2jR86ggP7c4ogR8CeME5mE1AWN1GkR2fh/uCV4=
+X-Received: from plbml5.prod.google.com ([2002:a17:903:34c5:b0:269:b2a5:8823])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec8b:b0:264:ee2:c40f
+ with SMTP id d9443c01a7336-27ed4a665e9mr6995435ad.52.1758738635595; Wed, 24
+ Sep 2025 11:30:35 -0700 (PDT)
+Date: Wed, 24 Sep 2025 11:30:34 -0700
+In-Reply-To: <175873596698.2143185.9486968747074623197.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Mime-Version: 1.0
+References: <20250919004639.1360453-1-seanjc@google.com> <175873596698.2143185.9486968747074623197.b4-ty@google.com>
+Message-ID: <aNQ4yrhId4s5vxt8@google.com>
+Subject: Re: [PATCH] KVM: x86: Don't treat ENTER and LEAVE as branches,
+ because they aren't
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, 20 Sep 2025 20:51:58 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+On Wed, Sep 24, 2025, Sean Christopherson wrote:
+> On Thu, 18 Sep 2025 17:46:39 -0700, Sean Christopherson wrote:
+> > Remove the IsBranch flag from ENTER and LEAVE in KVM's emulator, as ENTER
+> > and LEAVE are stack operations, not branches.  Add forced emulation of
+> > said instructions to the PMU counters test to prove that KVM diverges from
+> > hardware, and to guard against regressions.
 > 
-> The set_id_regs selftest lacks coverag for ID_AA64ISR3_EL1 which has
-> several features exposed to KVM guests in it.  Add coverage, and while
-> we're here adjust the test to improve maintainability a bit.  
-> 
-> The test will fail without the recently applied change adding FEAT_LSFE:
-> 
->    https://lore.kernel.org/r/175829303126.1764550.939188785634158487.b4-ty@kernel.org
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
-> Mark Brown (2):
->       KVM: arm64: selftests: Remove a duplicate register listing in set_id_regs
->       KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs
-> 
->  tools/testing/selftests/kvm/arm64/set_id_regs.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
+> Applied to kvm-x86 misc, thanks!
 
-$ git show 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
-fatal: bad object 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
+Oh, and I opportunistically added the "1 MOV" pointed out by Chao.
 
-What's the point of indicating a base commit if that's not something I
-can find? You should never base any work on top of something that
-isn't a stable tag.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+> [1/1] KVM: x86: Don't treat ENTER and LEAVE as branches, because they aren't
+>       https://github.com/kvm-x86/linux/commit/e8f85d7884e0
+> 
+> --
+> https://github.com/kvm-x86/linux/tree/next
 
