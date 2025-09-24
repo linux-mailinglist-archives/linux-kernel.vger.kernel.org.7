@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-830968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB86B9B089
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4D1B9AFF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 394C24E1542
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4934C5BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04833321278;
-	Wed, 24 Sep 2025 17:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C884314B78;
+	Wed, 24 Sep 2025 17:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nMTEGq3d"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRIlPEc7"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E99A320CB5;
-	Wed, 24 Sep 2025 17:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7F9314B71
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758734217; cv=none; b=mHDZYh0oQjd/qMrMCmzqVVwf1bseLv/wpbwFRc6c8u2F2IGu8QOnpNeNfuHnKeWSL2fCC7yU0a4EGMq3VuetFSZMBUJBMEi92y2nzq7hW2lENcS54w4XyXuaqrYjhIPe+dVH/VQLHfZcgwC9x06QiSWeWo5uuyWMn6aFsCp8qTQ=
+	t=1758734200; cv=none; b=TWa2sBQmSQYPDnbfrqR7rJTJrU9Y/k76+VX8YCWTdZuK/Jt7Rf3NwUE4gk2zDGaNAcS6wkCKbvy53hQQNpGESLjGrJaVufKBm6Jv2NiLVMQvo6Kt72A7OX9YmIL5C+VPAzIV9JLwZKyYFWKAoOwSnfrG+xrdcPSDsTqR7i0m/m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758734217; c=relaxed/simple;
-	bh=HvTt5221H5DQ1X+GZWXY3QkHHnBA6eW/stRkoiAL7gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=luWwkTby4op1K2ureeaWYIV75a2WE/wZLEKsFln9eFS3wL8FA6nywlzXqT1TJEKpcgHmnYmQxIQyN/DXBD5PHZ7PwI/1AxYw4DbW9CgpmNPkD+B2FXqcTJpNqqvNXdZE17KeyIyiKdStMAT+3MxCBkiILr+pmQFnoDJeBZfAZI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nMTEGq3d; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OBC4E3030655;
-	Wed, 24 Sep 2025 17:16:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=+c2kHIW89fFxZMF7i
-	igDqHKPq5NHEczv6HmG2G6s5GY=; b=nMTEGq3dFYbBbQvJ9GXFiw6mQfvct6nxp
-	aw3KigkApG5BUKVWVh2FLi7guzRJobT9vzJGKJD3pMnVh+yP3UN6o+SANjAexSsc
-	lBtWB277l3UaoVmZrOvFWMTGX6E7cywfwHUFxDDwCBBSjoRci1Z2nhvjn/frKEpx
-	+6FBbc0ZIsVo3+g2BLKcNgWXiUEZO57voI+LrTTcDv4lakN3q9smzMhQFemlLx5c
-	83BqZwoEEbeaqns43uNuuS6pMYgz0iUrmGZmvbr4x1hPuLbI0o78mAeNfkB6XbDy
-	bQXF7j6uUBrRCMDWGKkBiohi0xjoYbouvIJ2/RtrFS8cZuxUsQxsw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499n0jru62-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 17:16:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OGqNCp031129;
-	Wed, 24 Sep 2025 17:16:43 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49b9vdar45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 17:16:43 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OHGfTi25231924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 17:16:41 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82FD958056;
-	Wed, 24 Sep 2025 17:16:41 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C5F455803F;
-	Wed, 24 Sep 2025 17:16:40 +0000 (GMT)
-Received: from IBM-D32RQW3.ibm.com (unknown [9.61.252.148])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 24 Sep 2025 17:16:40 +0000 (GMT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
-        alifm@linux.ibm.com, schnelle@linux.ibm.com, mjrosato@linux.ibm.com
-Subject: [PATCH v4 10/10] vfio: Remove the pcie check for VFIO_PCI_ERR_IRQ_INDEX
-Date: Wed, 24 Sep 2025 10:16:28 -0700
-Message-ID: <20250924171628.826-11-alifm@linux.ibm.com>
+	s=arc-20240116; t=1758734200; c=relaxed/simple;
+	bh=hsA5j6mN1Ho29wv3TqcaUo95fVf6ZgIDjmYFb88klhE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nZIXBvvAo6Ia6XrBqqGtsAGCQLAL18KQFRC/q8smKV+NgmsMgvnGr9q7pliXbeFNMQvCMnhQ2UkKPxgF//vJ9xb33J1LUf0WDhhg++VdPZL3hNgai8jhY+aT9OUqCEgCjQHqFKi/vxh7aQeP1vZk+XQUsUJHIpaHf+u5GxZE4vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WRIlPEc7; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63163a6556bso22021a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758734196; x=1759338996; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNxQWNsaNzm07NK0oI4QfKW+i7h07TGqHOD9HRkHR7U=;
+        b=WRIlPEc7bya2iEY7a0uEEWrpqlt4AHc97i+PMV94TrFREKzT10x1y1q6Cd3kz9JOF3
+         +mJKubZddUAREsEI31FQJQjBm5IinpXXOwsyEszQMiQESSaHVo9YDpcSCZXNdP0dSCug
+         MjXgScHrdMX7F/HTLxqutGdp55YzR6zWnHATYXyvo1AZbNk0sHlyilqgvlrvbLf8/COv
+         ZnDahaL8Yffw2CksNPluQO24ZsrrmLP2/npcrjjFxXNblcbJjGx0IvJlXWyphb/aUcIc
+         G+hPNOlPs7s8drZyLqNRyIOEejjQmQss0Wogi88zO/fPfV6GTeCuGnBbH5kvxU9aMaZl
+         daPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758734196; x=1759338996;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aNxQWNsaNzm07NK0oI4QfKW+i7h07TGqHOD9HRkHR7U=;
+        b=BkeMEfxDVsH7dnSH2LPanzI8X5ww20nnSEb+Bi1TyFPYlpvjikrb+L3hBiC8ozi5Em
+         5AGxbZvv4Gj9J4okjfQ1f8+nh7lp4p3hHUqJ7ZDuW0gGmgc7yfAgQjKyFPuPvwFpaut4
+         AVJftD0BUSZPVU4wFOm/P27MNUcftiGWtXac4zyDcsYfHx/qPFnpB2L857EF2N2cgLWA
+         N9s8rRrsVy+8je9SyyPfDgKGpOd7IDOH7QMipmtPSWWUoHH0+JECYJm0mJmuBlApiMaK
+         kr/Xo+H7UkM1cjHWTX0EO8JREMdFQ3MjrgRS8cRrOh+ZiC8sReX/2wWDKzcJK2vzLKjU
+         XwIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV73PBbUzb3DtLFNY5KIZe2WJRDKoUZjJgaK6z3iahAXYgFCZYwGQwh8BKbXvKsz2ai3cw2fw53vmz7cM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA1N6Aif7bWNVVOAsqTAQVGY530+UENU5rJxQfVi4PP1UHCtlM
+	M730ovJiziLtbJ2j6gWpcxaKH5CvSQx0EwNTLLDVfeJHLyj95GOYNdPLUa57ityBRmU=
+X-Gm-Gg: ASbGncuxrejQzrj70gdxW1QROnBjfBUzUDlRxItWRtJ19SJA66SK/0DuTgv/l88Q3mx
+	QhVBXXwLznqwMSCm3Xi+1GhD96WagmsRffY0XBpiDClLzRUlrxBhNoqSP3pJmNMYdPBmERavnBp
+	N//fdI/kEc+NvsC/jfULgHuADKvfq7HL7JCgNDRXmONGfK6atTyZXgM9bVe2kvEFZc+TiRoG7O5
+	8LliNPeMn1dPlYYuqPqesMdTj3aokaT/cEITvOwocAJdlDNfKhtC2e19Nwqfzuky8FjFuKC/9gQ
+	CrmdINdzLdszX7KZ2ONd0yH0mbuS/O/deQd/EmzWEbtZPhxz+8UteWqiRFzSvuFCrhcJ0UgReOy
+	KUQNi+c2f6ipEyKr5ZWGuxdz8H0Vhs1ds2QMWMQg3W8ZEVCyjU00BttlckvPJEcjAXK/GXss0yV
+	nYhDGcvg==
+X-Google-Smtp-Source: AGHT+IGTRCVL+Vy3tfNF1MUEnXBCXWeb5Jrz0wQXqG7fNQTDEE2vWKNUIlbHrYap21jasTSQYR4WgQ==
+X-Received: by 2002:a05:6402:160c:b0:62f:41d3:ece7 with SMTP id 4fb4d7f45d1cf-6349fa1b9a4mr208376a12.14.1758734196429;
+        Wed, 24 Sep 2025 10:16:36 -0700 (PDT)
+Received: from alessandro-pc.station (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5d4357esm13318691a12.23.2025.09.24.10.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 10:16:36 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: jgg@ziepe.ca,
+	kevin.tian@intel.com,
+	shuah@kernel.org
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	iommu@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] selftests/iommu: prevent use of uninitialized variable
+Date: Wed, 24 Sep 2025 19:16:28 +0200
+Message-ID: <20250924171629.50266-1-alessandro.zanni87@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250924171628.826-1-alifm@linux.ibm.com>
-References: <20250924171628.826-1-alifm@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfX0X969P0a6iN4
- bG850Eq2l3I5lvYOw5aezrN0xypGlm7dmRoS2mjgjFmVhsnKyn2SA41t7mp2VYdZ/cdbyfTJD46
- VN+PKccWSd+5dSll+cCbxHLFpA5Vum/WLZcypoJZ1EXBXidPxLthqZ2ct3fN4gtcr9n5azWtyeR
- HNViRTycMLtwTQ30y3W/AUTjnjPeMQ0IJ5GfILbQ9KBFuQca5MujjiTizo7Hrvc9fOTzPShOgWb
- V26vx4SNTwUgpFWVVchi4f+Pm2ZfnYgx0gUvlvRUxxta5bs5RSE0VCb0Zm0UoIlLOl49tAYT5+M
- BUCDb26Ev0r6p271ZMz28JXiy/GUPjS5th0CfmdGvOgOeX2eZ8cSIGhUoJHVHG7BBab7ll0pbpq
- XGHe59DF
-X-Authority-Analysis: v=2.4 cv=TOlFS0la c=1 sm=1 tr=0 ts=68d4277c cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=gONGJyW3jwFs4LhXXOUA:9
-X-Proofpoint-ORIG-GUID: 48TChb8nh3rFSuN7J0ZHc9sSROnPXjw_
-X-Proofpoint-GUID: 48TChb8nh3rFSuN7J0ZHc9sSROnPXjw_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0
- suspectscore=0 spamscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200033
 
-We are configuring the error signaling on the vast majority of devices and
-it's extremely rare that it fires anyway. This allows userspace to be
-notified on errors for legacy PCI devices. The Internal Share Memory (ISM)
-device on s390x is one such device. For PCI devices on IBM s390x error
-recovery involves platform firmware and notification to operating system
-is done by architecture specific way. So the ISM device can still be
-recovered when notified of an error.
+Fix to avoid the usage of the `res` variable uninitialized in the
+following macro expansions.
 
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+It solves the following warning:
+In function ‘iommufd_viommu_vdevice_alloc’,
+  inlined from ‘wrapper_iommufd_viommu_vdevice_alloc’ at
+iommufd.c:2889:1:
+../kselftest_harness.h:760:12: warning: ‘ret’ may be used uninitialized
+[-Wmaybe-uninitialized]
+  760 |   if (!(__exp _t __seen)) { \
+      |      ^
+../kselftest_harness.h:513:9: note: in expansion of macro ‘__EXPECT’
+  513 |   __EXPECT(expected, #expected, seen, #seen, ==, 1)
+      |   ^~~~~~~~
+iommufd_utils.h:1057:9: note: in expansion of macro ‘ASSERT_EQ’
+ 1057 |   ASSERT_EQ(0, _test_cmd_trigger_vevents(self->fd, dev_id,
+nvevents))
+      |   ^~~~~~~~~
+iommufd.c:2924:17: note: in expansion of macro
+‘test_cmd_trigger_vevents’
+ 2924 |   test_cmd_trigger_vevents(dev_id, 3);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~
+
+The issue can be reproduced, building the tests, with the command:
+make -C tools/testing/selftests TARGETS=iommu
+
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
 ---
- drivers/vfio/pci/vfio_pci_core.c  | 6 ++----
- drivers/vfio/pci/vfio_pci_intrs.c | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+ tools/testing/selftests/iommu/iommufd_utils.h | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index f2fcb81b3e69..d125471fd5ea 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -749,8 +749,7 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
- 			return (flags & PCI_MSIX_FLAGS_QSIZE) + 1;
- 		}
- 	} else if (irq_type == VFIO_PCI_ERR_IRQ_INDEX) {
--		if (pci_is_pcie(vdev->pdev))
--			return 1;
-+		return 1;
- 	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
- 		return 1;
+diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
+index 3c3e08b8c90e..772ca1db6e59 100644
+--- a/tools/testing/selftests/iommu/iommufd_utils.h
++++ b/tools/testing/selftests/iommu/iommufd_utils.h
+@@ -1042,15 +1042,13 @@ static int _test_cmd_trigger_vevents(int fd, __u32 dev_id, __u32 nvevents)
+ 			.dev_id = dev_id,
+ 		},
+ 	};
+-	int ret;
+ 
+ 	while (nvevents--) {
+-		ret = ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
+-			    &trigger_vevent_cmd);
+-		if (ret < 0)
++		if (!ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
++			    &trigger_vevent_cmd))
+ 			return -1;
  	}
-@@ -1150,8 +1149,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
- 	case VFIO_PCI_REQ_IRQ_INDEX:
- 		break;
- 	case VFIO_PCI_ERR_IRQ_INDEX:
--		if (pci_is_pcie(vdev->pdev))
--			break;
-+		break;
- 		fallthrough;
- 	default:
- 		return -EINVAL;
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 123298a4dc8f..f2d13b6eb28f 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -838,8 +838,7 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_core_device *vdev, uint32_t flags,
- 	case VFIO_PCI_ERR_IRQ_INDEX:
- 		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
- 		case VFIO_IRQ_SET_ACTION_TRIGGER:
--			if (pci_is_pcie(vdev->pdev))
--				func = vfio_pci_set_err_trigger;
-+			func = vfio_pci_set_err_trigger;
- 			break;
- 		}
- 		break;
+-	return ret;
++	return 0;
+ }
+ 
+ #define test_cmd_trigger_vevents(dev_id, nvevents) \
 -- 
 2.43.0
 
