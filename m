@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-830088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B446FB98B45
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17E0B98B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A4117A7477
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC1519C3E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025E928A3FA;
-	Wed, 24 Sep 2025 07:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4EA27FD78;
+	Wed, 24 Sep 2025 07:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+2UMnRp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VVSyi0wn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657272882B4;
-	Wed, 24 Sep 2025 07:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7641016132A;
+	Wed, 24 Sep 2025 07:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758700318; cv=none; b=OEO+o7kVhlEke0S8ANNfnvb/8S/4tdCouYIVu5PhSiXJtwERjl4bJiLiN6RCu9FbpLfr+rGGmXWl2lOja91C3pH3j7OLFw/eXvEy3/Kclip9qeBCSWFE7VKGn2X7NUrqsDwuGipQuzKMmEzMAqqRpjnvLJ58131iNuXTwbMirp4=
+	t=1758700711; cv=none; b=asyHuVY7a50qESYixAVuDOt6/xzWJxJurjcD2ajBCZn/NKzACTt4ytmFnZGAkuSnYQ5RUqeDz3wPRv+qzHboW84IeoE/aMoVP5zZWJ9Wx24VlGGI3sF1zQEOIOGL8cwtEqJGW/yLuSXQbJEiLa90WuI4ZZCif4Usqb/tmqGWvGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758700318; c=relaxed/simple;
-	bh=WaJ2eaaSZ2tDy2dFa7jdgb0wqBaGWrbs7O5Yko8R49k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0v70aTq8+XsbjMPcQuukkcTP4Fv+5uyAlFbm5iulPSnucfbc2o/F3mXMt9thg9+LqSRw8CkjAriIZo+S5LOSJMDkobuyQPYQYIWCiIE4FXJ3c5DAkcLHAanxlyr7ZhtjECPCTA/tkzxAkpYcW+9SSuVQjMjo0VNdb5bW8Y0ijw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+2UMnRp; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1758700711; c=relaxed/simple;
+	bh=mt8gJKDFaSad5gUaiDqQw9QnDOAcy7k6tffysTTxn2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=HyKvenQXEuFDNiXgQ2yMHGiMvdOSEuaM+oYgAe4XKEiQqYbLf9oRwHSG5rkcY99d+6rCNqeMI/ilQ0a0ZJhOgFFWXsmZWJ8qSMKp8agpPi8KgNVyoCSDXjBFj62qzilSV+UO/hoZ30lOX0/rA9gtAaF79jvmw8Rv1RzHMxz8m5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VVSyi0wn; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758700317; x=1790236317;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WaJ2eaaSZ2tDy2dFa7jdgb0wqBaGWrbs7O5Yko8R49k=;
-  b=F+2UMnRpOQnHbx351/hFwZ946uqnWVYNockM3Zi8xEziSJSBLxyjN68V
-   sg63whqJq8kRA8kyoOkLdwjozRS/1pJzdKdAWkpB0ZeC8AWtIwMu1hivu
-   JFxKUVQf4ncEQPc9oKbJnKXR+uzC7PywsZSYRsteSACvx93LNDHG646V5
-   a7hFcuUfI2+8sPCL8ZMc1fHY7ahvJdJCJMT5VYYjaRei+wBgGC+FwRBwT
-   pq2G1h0nQJVvI+RRYIY1bild2iaFn/Hvc1GIH+b/Mz12JC2UcqL2vE61Y
-   6JSUfZ+1v5yO5skDWIP7RrkL2EH3+ftoarmL3IbdXDNTaM0cUwfkmGoZa
-   A==;
-X-CSE-ConnectionGUID: hqTW+WGSRn6b98+pr5qDnA==
-X-CSE-MsgGUID: inN1DGcrRFmBhAgAtJzHyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="86434463"
+  t=1758700710; x=1790236710;
+  h=message-id:date:mime-version:subject:to:references:from:
+   cc:in-reply-to:content-transfer-encoding;
+  bh=mt8gJKDFaSad5gUaiDqQw9QnDOAcy7k6tffysTTxn2c=;
+  b=VVSyi0wnPghGodAuXQwIJWAP56W7BHkljTFztFUe0Ry50bsF+L1u6Qnm
+   tswR0JNU1HPpe8HzPewRxkywzYWqUHnwDB+CJw3Nvp6g9sQdEx1Y3aJTB
+   HMxU8d3501gT9VZI17rpvuim7LJxLLwKM8viLQjAc0fcoVBiudQGRRKL1
+   aC/fMWxoQr+LI4tb7GUUBTiVQ/p/LVj5gvjJgdqIfnqbPF92Kv+NHhk+t
+   oWG0bTHw9bpXLl1ehY9RYctb9W++t9oyfCBTIYeZ0WoIPinRqdR3VHsRO
+   EX1xFZ93Xes1DUeF5aBugWTun9MXGHE2/0gvxHAG3ZW0MPLRke5xEjVer
+   g==;
+X-CSE-ConnectionGUID: LEk7PHaMTHCTeQoQ3FsGMA==
+X-CSE-MsgGUID: tPpIZu7FSi+H2GZrBqcQVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60031994"
 X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="86434463"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:51:56 -0700
-X-CSE-ConnectionGUID: QCZxO2UFSX+qBI1JeWQi5w==
-X-CSE-MsgGUID: cO6qki2BQma1KZyRy8F0ZQ==
+   d="scan'208";a="60031994"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:58:27 -0700
+X-CSE-ConnectionGUID: JnF9D1UOTTGUFmF0/Td7rg==
+X-CSE-MsgGUID: 4gOqglb/Rn279KnsyfamHw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="176095748"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.128])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:51:53 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 4F2DD11F8D0;
-	Wed, 24 Sep 2025 10:51:49 +0300 (EEST)
-Date: Wed, 24 Sep 2025 10:51:49 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Lixu Zhang <lixu.zhang@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	wentongw@amazon.com
-Subject: Re: [PATCH 1/5] usb: misc: ljca: Remove Wentong's e-mail address
-Message-ID: <aNOjFfQ63UIjMVQb@kekkonen.localdomain>
-References: <20250922120632.10460-1-sakari.ailus@linux.intel.com>
- <2025092234-magenta-scouting-c3c4@gregkh>
- <aNF5ahYzteTjq8Iu@kekkonen.localdomain>
- <2025092246-swiftly-foothold-0c48@gregkh>
+   d="scan'208";a="207716846"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:58:23 -0700
+Message-ID: <c605f6d7-8d9b-473d-a6d5-a38ddccc1a83@linux.intel.com>
+Date: Wed, 24 Sep 2025 15:58:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025092246-swiftly-foothold-0c48@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/16] KVM: TDX: Add x86 ops for external spt cache
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <20250918232224.2202592-12-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
+ dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
+ seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
+ vannapurve@google.com
+In-Reply-To: <20250918232224.2202592-12-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 06:48:13PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Sep 22, 2025 at 07:29:30PM +0300, Sakari Ailus wrote:
-> > Hi Greg,
-> > 
-> > On Mon, Sep 22, 2025 at 02:18:00PM +0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Sep 22, 2025 at 03:06:28PM +0300, Sakari Ailus wrote:
-> > > > Wentong's e-mail address no longer works, remove it.
-> > > > 
-> > > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > ---
-> > > >  drivers/usb/misc/usb-ljca.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/usb/misc/usb-ljca.c b/drivers/usb/misc/usb-ljca.c
-> > > > index c562630d862c..1846156c0800 100644
-> > > > --- a/drivers/usb/misc/usb-ljca.c
-> > > > +++ b/drivers/usb/misc/usb-ljca.c
-> > > > @@ -891,7 +891,7 @@ static struct usb_driver ljca_driver = {
-> > > >  };
-> > > >  module_usb_driver(ljca_driver);
-> > > >  
-> > > > -MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
-> > > > +MODULE_AUTHOR("Wentong Wu");
-> > > 
-> > > Is there a new address where they can be reached?  SHouldn't that be
-> > > used instead of just deleting the intel one?
-> > 
-> > I believe Wentong has had plenty of time to update his address. If he still
-> > prefers to do so, he can do that after merging these patches.
-> 
-> I would prefer to get Wentong to send the patches themselves for all of
-> this if at all possible, thanks!
 
-Cc Wentong (thanks to Lixu for the address).
 
--- 
-Sakari Ailus
+On 9/19/2025 7:22 AM, Rick Edgecombe wrote:
+> Move mmu_external_spt_cache behind x86 ops.
+>
+> In the mirror/external MMU concept, the KVM MMU manages a non-active EPT
+> tree for private memory (the mirror). The actual active EPT tree the
+> private memory is protected inside the TDX module. Whenever the mirror EPT
+> is changed, it needs to call out into one of a set of x86 opts that
+> implement various update operation with TDX specific SEAMCALLs and other
+> tricks. These implementations operate on the TDX S-EPT (the external).
+>
+> In reality these external operations are designed narrowly with respect to
+> TDX particulars. On the surface, what TDX specific things are happening to
+> fulfill these update operations are mostly hidden from the MMU, but there
+> is one particular area of interest where some details leak through.
+>
+> The S-EPT needs pages to use for the S-EPT page tables. These page tables
+> need to be allocated before taking the mmu lock, like all the rest. So the
+> KVM MMU pre-allocates pages for TDX to use for the S-EPT in the same place
+> where it pre-allocates the other page tables. It’s not too bad and fits
+> nicely with the others.
+>
+> However, Dynamic PAMT will need even more pages for the same operations.
+> Further, these pages will need to be handed to the arch/86 side which used
+arch/86 -> arch/x86
+
+> them for DPAMT updates, which is hard for the existing KVM based cache.
+> The details living in core MMU code start to add up.
+>
+>
+[...]
 
