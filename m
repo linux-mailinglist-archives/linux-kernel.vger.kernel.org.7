@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-830390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BD8B99895
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506D6B9989B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08CB17FB4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034DC3A5587
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321112E6105;
-	Wed, 24 Sep 2025 11:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28FA2E613B;
+	Wed, 24 Sep 2025 11:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dT7yiylI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gVZkYSwp"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9352E2EE7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C1E28136C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711954; cv=none; b=pAZyi2ss5eYR/Er16+OuwSCo1bTPYqPYfKdfmmWsW7lDRk10B5dEOke3OT3MaxmK0kUhqIE7oMWyW6nJyo5b9Lv/L4Yxz5h8sjzQzdznjifhEO8v5qKEHYLDjPnA8MrQf8U9EWXLj3SDN4W9QtywA4BMYGjDy7dBGwIYP0qKzrw=
+	t=1758712013; cv=none; b=b2Rcw/EyDz4wQr3RO399ucXy8Z1WQLLBp9S/nMmOXTVe8Rzynepa8Ruc121TC+mjaU5eUY1I/CVNcMOiFi9qm+JorvZyN9riFBMjZAzVgx+S0zlCN9REyUb6vVcDNAE5j3tE/3AIGaU1IxaYXtLbD3SocmfVyk+Z6Fc3uQnrP7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711954; c=relaxed/simple;
-	bh=fvUBgljBKVg43zzTcyNN9gbB3w/x7fiREhcYmZZivJc=;
+	s=arc-20240116; t=1758712013; c=relaxed/simple;
+	bh=CcPtZaoo08foBKqlcPJlV+AkP6+/DlKpNpplHT1YDIA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mt+aZXcv1JE61t8bJP5bi4DAX6VMRMTd25rP/Hxmpn1ZcN1a4Pi5wxhlVYXiEsz7/oKemAYhnN9TFJ0N60ZoB97Gt8Ig/xy8sKDJlU+VA/z6uK9VPkUHU5Aqj2jIB+tiWEoLhD3i5VRl7XaeltAZ5nIg29aq2TmDslVzhIVmzU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dT7yiylI; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=AlmDCaVp41s2X57za5tqkB7zy9qTn495PnbHExq+KIoCWSN+3yPRhmRnqL9AmBauSQsZTyn8zb8Lmq9uLbOZdGzsqun6YS4Ho0Wgu+WGhWXCL1/XbmWp75e3rfdz9u/K7j7W/QzkkU2X2osAOEjBGizk6bvsXCzD9H4jihge1jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gVZkYSwp; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758711948;
+	s=mimecast20190719; t=1758712007;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pJfstQJzF7vQWtME8nc3e37MPEdGJfdg+SENn3HGjjw=;
-	b=dT7yiylIJrBfLUptE3Bv9xggagrRl7wY84nGwWX1uXRvKpQqo/vZDiRurbFN/FBDI1fT5m
-	Kn2c58j0aAkmOxnXWcxqoRhdEQ3ESleQ4J4CzU8+5q2f9vgSNWW6JNH6w8nE0nf4FLUz8g
-	IXLM/Gyh2Lsnx5duGXoW6y0OTDsfvvI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=klMbSfuXzMxOJQRVHD/MHPSONQrqHt6H8wwjZzCAfEs=;
+	b=gVZkYSwpTx2mC47ldlpL0ABsWvKw34PikbTVDLcq26teuC+VaIEPW7ShUwNcnjCKI0YGDj
+	WOy/zNjHD7WgN71jSCLVRakfOfyA+cH1UYtj3jPa+JJoNiSoOWCuDd/zn0GL9ZcTIAiAcg
+	pnnPLcde29agAlrvih1zrhJUJA/+0Kk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-fuXq1JsBMNunna_WnTFHRQ-1; Wed, 24 Sep 2025 07:05:46 -0400
-X-MC-Unique: fuXq1JsBMNunna_WnTFHRQ-1
-X-Mimecast-MFC-AGG-ID: fuXq1JsBMNunna_WnTFHRQ_1758711946
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e31191379so747975e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:05:46 -0700 (PDT)
+ us-mta-686-zgc9HzWjNMq4IYpvNmsQuA-1; Wed, 24 Sep 2025 07:06:46 -0400
+X-MC-Unique: zgc9HzWjNMq4IYpvNmsQuA-1
+X-Mimecast-MFC-AGG-ID: zgc9HzWjNMq4IYpvNmsQuA_1758712005
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b98de0e34so63485225e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:06:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758711945; x=1759316745;
+        d=1e100.net; s=20230601; t=1758712005; x=1759316805;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pJfstQJzF7vQWtME8nc3e37MPEdGJfdg+SENn3HGjjw=;
-        b=MYtqp5fyoHyBk/p5ZOp67WN8BHKQ58NQKQNI9dsGLb/VG7FOMRqgXamqe/e55Q18eH
-         eNAB35BBI6Sse/V7WOUL7SltEAKub7Sr4ndY+aiOr2FnCaLSzr4FqjhoaAyOIghtBmqd
-         tDQfFErV3IBxAqRe1Y7QQMYFW9E17tev3XjjcK8Jjz2CxFWPV7s/molAu6tCTWvCsyYK
-         33VmYCLUe+pkFLkOI9VbrxwPVe8s5KehtcmYS9hZLSw4E+j0VK7ee6ykg7UOdpmR6uoi
-         7zJOjDhDDLvlyllsbYp/xAbbK1i1KhD/SCiUP/O5+HbVXyGg9k6VvffFocqqVyexv8AL
-         Qukw==
-X-Gm-Message-State: AOJu0YzYaoL7SHgyci+jllWINzp6BJnjTEFZT0qlCHQ0SUfyvt61TKE+
-	S0Py5OYl9QLLBrRLwqbsnB95UFIyiY0GPOt1yXDvWiWVRa3euUXjOd1I0nL1t6ks3/LgQletWO7
-	C18yiv8X5SCAhG52EL/NstyCIru8kP0RE6u9qfdbEJI4jABhOnSflpXZ/Wmjm//x8Kw==
-X-Gm-Gg: ASbGncuXE7Z45hqH+uRyAz0OUW90DvLAvW5ngq+QNl17I7s/ZtdoLHagSUOi391QWsU
-	tpE2m61c9CSYb7F+6x3ZzvepFblsoA0Mskpx3u4ioTvfCGm06Jf7YWG8r2Nj8plAtt2FOkQ5/ks
-	9qtIu7uJOGEOxtvFPn/R3FBEAzn4nzcwF0Huh5ZsbgyAFQT9KdaIZM4giOALcKKVUZcddOqec/u
-	ylH+U7YRVgY80dNdUlnlsCwmX6j1mA0RE6powigch4ancAk3tosw8rPW6Rp0y4Qu8BhR98a7uog
-	t/GBT1eerU/IuTz5tD4Zkupzacp2B8atGsv8vUlaevoBpphOh5GnDrpwGRJCq2M1XTOi6fvHv90
-	RK+t96IOD6FpWLRRuIUjkyZsaHhowEEKB1E++1zhIhpz30YMquWNuw1lAEqY3QuOQRA==
-X-Received: by 2002:a05:600c:4703:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e1dad1bcemr54121265e9.22.1758711945451;
-        Wed, 24 Sep 2025 04:05:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbaeHw9ntX1+d3BLrDR31uBudOw3xXPWA7XtzGS71JBGdZjAGfyJ4Rw0XfiWGDvgzwltJ3qw==
-X-Received: by 2002:a05:600c:4703:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e1dad1bcemr54120805e9.22.1758711944957;
-        Wed, 24 Sep 2025 04:05:44 -0700 (PDT)
+        bh=klMbSfuXzMxOJQRVHD/MHPSONQrqHt6H8wwjZzCAfEs=;
+        b=I/8IM30kTRh40T8qtmGHhxeW73plIQrrkLupXASEos/Rr3xEJyjyL2l+7/K4szsMrI
+         YFZnH2mU8KNm0SU00nviP/bKv9qHR8j97pHh82qWewR5ZHvNqdJBDxwGef0YgOuoMXxD
+         7sUbmVwt0z5VPjGHsdgFicDqehv0ZhHpMVvT4GOEFGy7Mpqp3IouEVfl+buh/gh3keHu
+         dGnffiWQcDjedWYOf4Ojr5nElek5KV0dkFqOZmgWHSVRzvP0Fsi/WWHMuVXAIeIKd4VR
+         nNzdOFKbRG1t6MRB9H1rrIaa129arohUwNiYypjyRUraxvS2mk64fi+ZojdvQ0E54ZIT
+         nWXA==
+X-Gm-Message-State: AOJu0Yy2vpqybf79MaEZ72v36ihCH1dL/vyj4/Hzzb88O2Gciv4YMizJ
+	EfK4H5LoVMcEaoGJtRmcpUmQWt/bxflZtgMqswI6NizgS/XRTJ3MexW6xlMdmgDwL0yYXG3Ve7W
+	/Pq0FMLwF/4sYyVxdu3JncVSxlSYg2U5wNKCL2+5FsIP++8XkACim1rDOHsK+nRA2uw==
+X-Gm-Gg: ASbGncuyJllyeovaqZsjKYon3AIlvAThC3JZo1KaRfVNu0FWDvCz+nlP4+6g7PjcgPN
+	CSuyJHJ4PiEnq1BLEkid1BFvVV6hbr0IqG5eeWAFx1ksJ+6+0MlrnMs46DiuWgGm2lOTK3BnRA+
+	/vAYNlN4bbNgX0Ul4IHYqNjAwQX7m59ji1d5HLbvJHDj6yJftv1Baa2PQMUU4PHbc4EvBQl651N
+	NapeIEbEJQenr0CE5KUb69cYJyYTeIIaTSkdzS6BRWYdynopZYD2pa3PBybcNijIoLF8jBJgO1A
+	21fWlrW4nHsGm1rS+/PdF/tmToqMZZ3dupbvmObr6wpgDZg0UN2BnsFvBr7CFaEd7KR2aOIwTfh
+	sU8E7jeWEzxT/kr6b+uQ1zJiLQgUhPEVn/gRrR51epkoveCjPrAKyTUuVdurR4caIig==
+X-Received: by 2002:a05:600c:46c9:b0:46d:f3c1:684 with SMTP id 5b1f17b1804b1-46e1dab52edmr56566485e9.20.1758712005001;
+        Wed, 24 Sep 2025 04:06:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJLkhVz7awCPGzynHsrwSrqhRsmoA+KtGCiPRp3uPSe+N8fOH1QDxH0RgcAuMsM0GCOSJuRw==
+X-Received: by 2002:a05:600c:46c9:b0:46d:f3c1:684 with SMTP id 5b1f17b1804b1-46e1dab52edmr56566125e9.20.1758712004586;
+        Wed, 24 Sep 2025 04:06:44 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9af289sm28426105e9.6.2025.09.24.04.05.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407d33sm27890308f8f.18.2025.09.24.04.06.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 04:05:44 -0700 (PDT)
-Message-ID: <6743ead5-4d61-4274-a24f-13a8a8265aee@redhat.com>
-Date: Wed, 24 Sep 2025 13:05:42 +0200
+        Wed, 24 Sep 2025 04:06:43 -0700 (PDT)
+Message-ID: <4e061f4f-cd57-4df4-a001-9eba80d1ded9@redhat.com>
+Date: Wed, 24 Sep 2025 13:06:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,7 +88,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/16] mm: define clear_pages(), clear_user_pages()
+Subject: Re: [PATCH v7 11/16] mm/highmem: introduce clear_user_highpages()
 To: Ankur Arora <ankur.a.arora@oracle.com>
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
  akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
@@ -97,8 +97,8 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
  tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
  boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
 References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
- <20250917152418.4077386-11-ankur.a.arora@oracle.com>
- <5ec85b0b-9848-4cee-98f4-37953d504773@redhat.com> <87y0q4ewzf.fsf@oracle.com>
+ <20250917152418.4077386-12-ankur.a.arora@oracle.com>
+ <6626d497-4c27-4263-9be1-1c05d2672019@redhat.com> <87ecrwewn3.fsf@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -145,114 +145,56 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <87y0q4ewzf.fsf@oracle.com>
+In-Reply-To: <87ecrwewn3.fsf@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23.09.25 22:26, Ankur Arora wrote:
+On 23.09.25 22:34, Ankur Arora wrote:
 > 
 > David Hildenbrand <david@redhat.com> writes:
 > 
 >> On 17.09.25 17:24, Ankur Arora wrote:
->>> Define fallback versions of clear_pages(), clear_user_pages().
->>> In absence of architectural primitives, we just clear pages
->>> sequentially.
+>>> Define clear_user_highpages() which clears pages sequentially using
+>>> the single page variant.
+>>> With !CONFIG_HIGHMEM, pages are contiguous so use the range clearing
+>>> primitive clear_user_pages().
 >>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 >>> ---
->>>    include/linux/mm.h | 38 ++++++++++++++++++++++++++++++++++++++
->>>    1 file changed, 38 insertions(+)
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 1ae97a0b8ec7..0cde9b01da5e 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -3768,6 +3768,44 @@ static inline void clear_page_guard(struct zone *zone, struct page *page,
->>>    				unsigned int order) {}
->>>    #endif	/* CONFIG_DEBUG_PAGEALLOC */
->>>    +#ifndef clear_pages
->>> +/**
->>> + * clear_pages() - clear a page range using a kernel virtual address.
+>>>    include/linux/highmem.h | 18 ++++++++++++++++++
+>>>    1 file changed, 18 insertions(+)
+>>> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+>>> index 6234f316468c..ed609987e24d 100644
+>>> --- a/include/linux/highmem.h
+>>> +++ b/include/linux/highmem.h
+>>> @@ -207,6 +207,24 @@ static inline void clear_user_highpage(struct page *page, unsigned long vaddr)
+>>>    }
+>>>    #endif
+>>>    +#ifndef clear_user_highpages
 >>
->> I'd just call this "clear a page range for kernel-internal use"
->>
->>> + * @addr: start address
->>> + * @npages: number of pages
->>> + *
->>> + * Assumes that (@addr, +@npages) references a kernel region.
->>
->> And say here simply that "Use clear_user_pages() instead for clearing a page
->> range to be mapped to user space".
+>> Maybe we can add a simple kernel doc that points at the doc of clear_user_pages,
+>> but makes it clear that this for pages that might reside in highmem.
 > 
-> So, comments that actually speak to the use instead of technically
-> correct but unhelpful generalities :). Thanks, good lesson.
+> Didn't add one because clear_user_highpage() didn't have one. Will add
+> for both.
 > 
->>> + * Does absolutely no exception handling.
->>> + */
->>> +static inline void clear_pages(void *addr, unsigned int npages)
+
+Doesn't have to be excessive. But even I have to keep reminding myself 
+when to use clear_page(), clear_user_page(), clear_user_highpage() ...
+
+>>> +static inline void clear_user_highpages(struct page *page, unsigned long vaddr,
+>>> +					unsigned int npages)
 >>> +{
->>> +	do {
->>> +		clear_page(addr);
->>> +		addr += PAGE_SIZE;
->>> +	} while (--npages);
->>> +}
->>> +#endif
->>> +
->>> +#ifndef clear_user_pages
->>> +/**
->>> + * clear_user_pages() - clear a page range mapped by the user.
+>>> +	if (!IS_ENABLED(CONFIG_HIGHMEM)) {
+>>> +		clear_user_pages(base, vaddr, page, npages);
 >>
->> I'd call this then "clear a page range to be mapped to user space"
+>> Single line should work
 >>
->> Because it's usually called before we actually map it and it will properly flush
->> the dcache if required.
+>> 		clear_user_pages(page_address(page), vaddr, page, npages);
 > 
-> Makes sense.
-> 
->>> + * @addr: kernel mapped address
->>
->> "start address"
->>
->>> + * @vaddr: user mapped address
->>
->> "start address of the user mapping" ?
->>
->>> + * @pg: start page
->>
->> Please just call it "page". I know, clear_user_page() has this weird page vs. pg
->> thingy, but let's do it better here.
->>
->>> + * @npages: number of pages
->>> + *
->>> + * Assumes that the region (@addr, +@npages) has been validated
->>> + * already so this does no exception handling.
->>> + */
->>> +#define clear_user_pages(addr, vaddr, pg, npages)	\
->>> +do {							\
->>> +	clear_user_page(addr, vaddr, pg);		\
->>> +	addr += PAGE_SIZE;				\
->>> +	vaddr += PAGE_SIZE;				\
->>> +	pg++;						\
->>> +} while (--npages)
->>> +#endif
->>
->> Should indent with one tab.
-> 
-> Will do. Also acking to the ones above.
-> 
->> Any reason this is not a static inline function?
-> 
-> Alas yes. Most architecture code defines clear_user_page() as a macro
-> where, if they need a to flush the dcache or otherwise do something
-> special, they need access to some external primitive. And this primitive
-> which might not be visible in contexts that we include this header.
-> 
-> For instance this one on sparc:
->    https://lore.kernel.org/lkml/202509030338.DlQJTxIk-lkp@intel.com/
-> 
-> Defining as a macro to get around that. But maybe there's a better
-> way?
+> Unfortunately not. The problem is that I'm defining the fallback version
+> of clear_user_pages() as a macro in the previous patch.
 
-Can we just move it to mm/utils.c and not have it be an inline function?
-
+Yet another sign that we have to fix that instead. :)
 
 -- 
 Cheers
