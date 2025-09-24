@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-830759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D62DB9A738
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784AFB9A73B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB614E22D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B564E28A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E7F3101D5;
-	Wed, 24 Sep 2025 15:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11643126CE;
+	Wed, 24 Sep 2025 15:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G+Eiyk3Z"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WaQ7Y9qd"
 Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22D3112A4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15953115A0
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726026; cv=none; b=Ye8VcAPqccI3xrjtJncD5RqkltGz77Y7IITjm93MKFEA6Xvo1ndhegfbDC7hQ2jKE4lsnCweCWOegT1Lh18JKy75tCSFYJMGp9j8JeR8qnB0LSHTniD4xCfLa8lUXVxLAgtLLd8N+oJzhyi2Z18RLI7yMlASMxsanjpidi6rFHE=
+	t=1758726027; cv=none; b=RE9ZbiezzkhHQCqDKmxjgBWN8vpS4QOidHBCr9lYQvo9jzgRDbe8qX9TQYCqefRyRnkdH5cJ8/Lm8CudqF4ay+MEKf0MN7J2uYJJLX1m5dHFlY+q6DmH0qnD/zYetQ6HLdKao8spmrktZKmWuxNiM+0Fy+Zo4OLv37RwB38hWmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726026; c=relaxed/simple;
-	bh=0dP5NvAwWbmZXGXCdGyVFXlOGRGhP7dtkT+spo1UHNc=;
+	s=arc-20240116; t=1758726027; c=relaxed/simple;
+	bh=DpKQYYOwhhNiFVGoyRG8dxQpnsEucQPZHGf7AUa02ls=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u4ZSv02qzaDMXneEAaYZGbyEzKRm/vwCT9HI5bD6gw49dn7YD9RgJlerGNI6BK95BsyX+HX/O6xvpDLN1Vxh2WS/BWpzpl3Lsjsn7x9/4hv64lhAoTwdzSK1hDkTgQXS+y1dK2WTkTrWIRdbZe/SdD0Xx9u/gRU/ZF77fmruBVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G+Eiyk3Z; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=pUgCgNiWBrYi0WjwKJb9rK9pqmxQ5GJvvKnVSjkvHa0JoDMzAM8wsNoZGrq3zThg/q4uPHgQHoGOBaeh8nHsXlJtadfB3ruzqu86QgSAnAFK5vmcy+AgpyN7eqj2qkmqCZMiqRnFSGyrw1txhZtw6kkWAMnV7qyKp6hXQnfGUfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WaQ7Y9qd; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f924ae2a89so3319225f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:24 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3ece14b9231so3547817f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758726023; x=1759330823; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758726024; x=1759330824; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EzrycjTVpnWNKj7lM2bs2OjeckNX2GUUhGCkamMVlMg=;
-        b=G+Eiyk3Z5m+Wq/3isv1APAn8/+Qe+OWs3s8twD6pa9aJ6/IB9EomsvApbpDx6kcbkL
-         94+OyTNjLXXMZbXZPCwLIBPMVDCuTbiM0Xs8+Ho4jK8uJYrpj52ma6Ait+w9coWZFkER
-         2+6pEVyGD3R8oBUxQN9lMtUoDaqutWDszgkVtNwoLX5Q8WxLXRIn5qDplPztEWeK634A
-         P8xd2gjQZeS01KBVIf5xxcxwFh3qiVDOB1KvX00jcxU/fka0PNl2+iXq2gOsmTIQi2HV
-         fYao7efqOTCoGMVdac7wt6NG6EkBk0V5+8PIVEJjUEpBRNO6Mm1kRTxtqtBS1a7L56eU
-         m0EA==
+        bh=41pQw++XrTQuPmXHdjyzKZvwkMfko68cyk5qRol2Kg0=;
+        b=WaQ7Y9qdlkB79Lu50kIIOUvwYumy/dP1277iGbJgrvsS0q+bI4cjXYAxQ4Qauzd1u8
+         8JXT8u9PCPuttcKF5sqGpcP5fO5lIq/q0EwgSo0v+U+uiu1P3sFnuMBvppeADSjaVQbe
+         WQCha+TxdxBMifJhL6jD6UDdeiIgb03oX4J7JHaWbRphuOyqtq45co/iXjzKPiBf1CwV
+         iBZT3DmxxpFgKZACE6q6CccEyDStktcIiKahgluSa3uzc7NiGuPaBB6FfY3zmNIJVszA
+         SJvo/P/xwd0bkBCZ48w2q0k0tleS3KlIokUCkxpmT+ImuG4/LOMBq6CejQzq0+zNc3QJ
+         a/6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758726023; x=1759330823;
+        d=1e100.net; s=20230601; t=1758726024; x=1759330824;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EzrycjTVpnWNKj7lM2bs2OjeckNX2GUUhGCkamMVlMg=;
-        b=n7u154kNdtU9AT3l6hk/3KdjWOHPORTVcihd/52FwtmVfUqG4262DK4rrfE1Wjwsf4
-         GQVsYjTql/g50TBqoJX166YbeRLyNitZBiWqb5w+E3b1EPYJ18KguYdXSQ5xtwzJXnqF
-         JlAl186+KLT8X7SI/qm1p55q+7rzL42b5qc95vr1xLcX6UHYO6WfUtKEWkqPPBeK9C5+
-         CYKWmRAccF/VdTcFqOF3xnHW+mfqJ4dEh2fhawhBsqhLxS9Govs4FlG++BpS7DOLClAP
-         kIjVdDdQi4/sChX7/KK7oNuFyBtYMSuXOgnYnEzWOp9TwGjrtpx/vh+OjZ0o98TZWRym
-         UrhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSS72IdWR4wEl8r9uAS/UkrgMW2GZWF4fhYKTKf9p8PK1psb3Cqxnu98vCntkscwjoBUMRkPWCcnKeSyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW3/DKCjR15NEdJ3nzzrTYT7L2gLrxhwWd1KmdW8Nz3QlZYKSs
-	jDDXkhvA7VjlxZrmvd4bZLsBIk1jg9RybenccD/KmY0P23fbgaKWM5qbIOLVAqYRxeVo122Wq1H
-	f8zMlyLhQNh0Jcw==
-X-Google-Smtp-Source: AGHT+IG4WxCVm2OtQGcna9zHZFJt3Y1WAwbtDQRLq8Re2vHQBN3oIS6DUJScN8kIjtixgF9x+8sRx5iaUapcaw==
-X-Received: from wrxo18.prod.google.com ([2002:a05:6000:112:b0:3ea:af7:bb94])
+        bh=41pQw++XrTQuPmXHdjyzKZvwkMfko68cyk5qRol2Kg0=;
+        b=U7Zw9k1KhM8wmeDrYVoNCQRNzo9j79ZOIjEJ0ySTa/2S6tDz7U+zbBBIyHi19Lmfdo
+         o9ZqveQVVd2BkIQ3rWJNF26M0pgorU/qEvWaTnRuXmVnD8lW410QYPW5u8SCSr2E53Ai
+         v/Vxmgikudbjl7dBYEHxdg38u7Be/Vt3gpo+wvzo1TjHZKZUAsJqyPoMS8QawhsGQsao
+         wtjzjWQ8J65E3jFSyF8mQUWWgzdV5fBaIgSchk34g89ZheTWutzjrzqCZ/Jvx3COknis
+         dChyBhnv2xupY9JQbDCNxAIY0ihuHST+3KS1dFl04Ld5SkeEpi6EJNz8ZNjrY21Z1wsB
+         ZFgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHEvBpknJdX1RPGOxlOpNKJh/qsIvOeT1Xkb+2hXzKgHYPuKzUpUydjx3qHbOy62WiKPD0eJ6zzEymc+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNbdZ3TgP88UNg05RVwSg/grJyDdP9Qd1s6dO81v8VSU74sRjc
+	ySAPxmIlFLxQlJxw4iBomsjm1lw/tKpbRcAUAQIEUwJGBIbkPNi5AHAMxmytxzIO8nEkV0rZmEg
+	gvFAeypkmHkj14A==
+X-Google-Smtp-Source: AGHT+IHkwdtdIH8CI6uyF/rnsDuP+ou/4VjkKWWzkjAqCtb5L9y32bbpEud8KTzQ+39EVfVnPp60ULCATUlEug==
+X-Received: from wrbl12.prod.google.com ([2002:adf:a38c:0:b0:3ec:a590:990])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:381:b0:3e0:34f4:3225 with SMTP id ffacd0b85a97d-40e4ce4baeamr250578f8f.45.1758726022897;
- Wed, 24 Sep 2025 08:00:22 -0700 (PDT)
-Date: Wed, 24 Sep 2025 14:59:50 +0000
+ 2002:a05:6000:4210:b0:3e4:5717:368e with SMTP id ffacd0b85a97d-40e498b7705mr228614f8f.2.1758726023909;
+ Wed, 24 Sep 2025 08:00:23 -0700 (PDT)
+Date: Wed, 24 Sep 2025 14:59:51 +0000
 In-Reply-To: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250924-b4-asi-page-alloc-v1-15-2d861768041f@google.com>
-Subject: [PATCH 15/21] mm/page_alloc: rename ALLOC_NON_BLOCK back to _HARDER
+Message-ID: <20250924-b4-asi-page-alloc-v1-16-2d861768041f@google.com>
+Subject: [PATCH 16/21] mm/page_alloc: introduce ALLOC_NOBLOCK
 From: Brendan Jackman <jackmanb@google.com>
 To: jackmanb@google.com, Andy Lutomirski <luto@kernel.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
@@ -90,92 +90,138 @@ Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
 	yosry.ahmed@linux.dev
 Content-Type: text/plain; charset="utf-8"
 
-Commit 1ebbb21811b7 ("mm/page_alloc: explicitly define how __GFP_HIGH
-non-blocking allocations accesses reserves") renamed ALLOC_HARDER to
-ALLOC_NON_BLOCK because the former is "a vague description".
+This flag is set unless we can be sure the caller isn't in an atomic
+context.
 
-However, vagueness is accurate here, this is a vague flag. It is not set
-for __GFP_NOMEMALLOC. It doesn't really mean "allocate without blocking"
-but rather "allow dipping into atomic reserves, _because_ of the need
-not to block".
+The allocator will soon start needing to call set_direct_map_* APIs
+which cannot be called with IRQs off. It will need to do this even
+before direct reclaim is possible.
 
-A later commit will need an alloc flag that really means "don't block
-here", so go back to the flag's old name and update the commentary
-to try and give it a slightly clearer meaning.
+Despite the fact that, in principle, ALLOC_NOBLOCK is distinct from
+__GFP_DIRECT_RECLAIM, in order to avoid introducing a GFP flag, just
+infer the former based on whether the caller set the latter. This means
+that, in practice, ALLOC_NOBLOCK is just !__GFP_DIRECT_RECLAIM, except
+that it is not influenced by gfp_allowed_mask.
+
+Call it ALLOC_NOBLOCK in order to try and mitigate confusion vs the
+recently-removed ALLOC_NON_BLOCK, which meant something different.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- mm/internal.h   | 9 +++++----
- mm/page_alloc.c | 8 ++++----
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ mm/internal.h   |  1 +
+ mm/page_alloc.c | 29 ++++++++++++++++++++++-------
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
 diff --git a/mm/internal.h b/mm/internal.h
-index 6006cfb2b9c7e771a0c647c471901dc7fcdad242..513aba6c00bed813c9e38464aec5a15e65edaa58 100644
+index 513aba6c00bed813c9e38464aec5a15e65edaa58..c697ed35a8ca3376445d1e4249e9ce03097f15b8 100644
 --- a/mm/internal.h
 +++ b/mm/internal.h
-@@ -1297,9 +1297,10 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
- #define ALLOC_OOM		ALLOC_NO_WATERMARKS
- #endif
- 
--#define ALLOC_NON_BLOCK		 0x10 /* Caller cannot block. Allow access
--				       * to 25% of the min watermark or
--				       * 62.5% if __GFP_HIGH is set.
-+#define ALLOC_HARDER		 0x10 /* Because the caller cannot block,
-+				       * allow access * to 25% of the min
-+				       * watermark or 62.5% if __GFP_HIGH is
-+				       * set.
- 				       */
- #define ALLOC_MIN_RESERVE	 0x20 /* __GFP_HIGH set. Allow access to 50%
- 				       * of the min watermark.
-@@ -1316,7 +1317,7 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
+@@ -1315,6 +1315,7 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
+ #define ALLOC_HIGHATOMIC	0x200 /* Allows access to MIGRATE_HIGHATOMIC */
+ #define ALLOC_TRYLOCK		0x400 /* Only use spin_trylock in allocation path */
  #define ALLOC_KSWAPD		0x800 /* allow waking of kswapd, __GFP_KSWAPD_RECLAIM set */
++#define ALLOC_NOBLOCK	       0x1000 /* Caller may be atomic */
  
  /* Flags that allow allocations below the min watermark. */
--#define ALLOC_RESERVES (ALLOC_NON_BLOCK|ALLOC_MIN_RESERVE|ALLOC_HIGHATOMIC|ALLOC_OOM)
-+#define ALLOC_RESERVES (ALLOC_HARDER|ALLOC_MIN_RESERVE|ALLOC_HIGHATOMIC|ALLOC_OOM)
- 
- enum ttu_flags;
- struct tlbflush_unmap_batch;
+ #define ALLOC_RESERVES (ALLOC_HARDER|ALLOC_MIN_RESERVE|ALLOC_HIGHATOMIC|ALLOC_OOM)
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0b205aefd27e188c492c32754db08a4488317bd8..cd47cfaae820ce696d2e6e0c47436e00d3feef60 100644
+index cd47cfaae820ce696d2e6e0c47436e00d3feef60..b0aeb97baa13af038fff0edae33affbbf49e825c 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -3295,7 +3295,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
- 			 * reserves as failing now is worse than failing a
- 			 * high-order atomic allocation in the future.
- 			 */
--			if (!page && (alloc_flags & (ALLOC_OOM|ALLOC_NON_BLOCK)))
-+			if (!page && (alloc_flags & (ALLOC_OOM|ALLOC_HARDER)))
- 				page = __rmqueue_smallest(zone, order, ft_high);
- 
- 			if (!page) {
-@@ -3662,7 +3662,7 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 			 * or (GFP_KERNEL & ~__GFP_DIRECT_RECLAIM) do not get
- 			 * access to the min reserve.
- 			 */
--			if (alloc_flags & ALLOC_NON_BLOCK)
-+			if (alloc_flags & ALLOC_HARDER)
- 				min -= min / 4;
- 		}
- 
-@@ -4546,7 +4546,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
- 	 * The caller may dip into page reserves a bit more if the caller
- 	 * cannot run direct reclaim, or if the caller has realtime scheduling
- 	 * policy or is asking for __GFP_HIGH memory.  GFP_ATOMIC requests will
--	 * set both ALLOC_NON_BLOCK and ALLOC_MIN_RESERVE(__GFP_HIGH).
-+	 * set both ALLOC_HARDER and ALLOC_MIN_RESERVE(__GFP_HIGH).
- 	 */
- 	alloc_flags |= (__force int)
+@@ -4552,6 +4552,8 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
  		(gfp_mask & (__GFP_HIGH | __GFP_KSWAPD_RECLAIM));
-@@ -4557,7 +4557,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
- 		 * if it can't schedule.
- 		 */
- 		if (!(gfp_mask & __GFP_NOMEMALLOC)) {
--			alloc_flags |= ALLOC_NON_BLOCK;
-+			alloc_flags |= ALLOC_HARDER;
  
- 			if (order > 0 && (alloc_flags & ALLOC_MIN_RESERVE))
- 				alloc_flags |= ALLOC_HIGHATOMIC;
+ 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM)) {
++		alloc_flags |= ALLOC_NOBLOCK;
++
+ 		/*
+ 		 * Not worth trying to allocate harder for __GFP_NOMEMALLOC even
+ 		 * if it can't schedule.
+@@ -4745,14 +4747,13 @@ check_retry_cpuset(int cpuset_mems_cookie, struct alloc_context *ac)
+ 
+ static inline struct page *
+ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+-						struct alloc_context *ac)
++		       struct alloc_context *ac, unsigned int alloc_flags)
+ {
+ 	bool can_direct_reclaim = gfp_mask & __GFP_DIRECT_RECLAIM;
+ 	bool can_compact = gfp_compaction_allowed(gfp_mask);
+ 	bool nofail = gfp_mask & __GFP_NOFAIL;
+ 	const bool costly_order = order > PAGE_ALLOC_COSTLY_ORDER;
+ 	struct page *page = NULL;
+-	unsigned int alloc_flags;
+ 	unsigned long did_some_progress;
+ 	enum compact_priority compact_priority;
+ 	enum compact_result compact_result;
+@@ -4795,7 +4796,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 	 * kswapd needs to be woken up, and to avoid the cost of setting up
+ 	 * alloc_flags precisely. So we do that now.
+ 	 */
+-	alloc_flags = gfp_to_alloc_flags(gfp_mask, order);
++	alloc_flags |= gfp_to_alloc_flags(gfp_mask, order);
+ 
+ 	/*
+ 	 * We need to recalculate the starting point for the zonelist iterator
+@@ -5045,6 +5046,19 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 	return page;
+ }
+ 
++static inline unsigned int init_alloc_flags(gfp_t gfp_mask, unsigned int flags)
++{
++	/*
++	 * If the caller allowed __GFP_DIRECT_RECLAIM, they can't be atomic.
++	 * Note this is a separate determination from whether direct
++	 * reclaim is actually allowed, it must happen before applying
++	 * gfp_allowed_mask.
++	 */
++	if (!(gfp_mask & __GFP_DIRECT_RECLAIM))
++		flags |= ALLOC_NOBLOCK;
++	return flags;
++}
++
+ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
+ 		int preferred_nid, nodemask_t *nodemask,
+ 		struct alloc_context *ac, gfp_t *alloc_gfp,
+@@ -5121,7 +5135,7 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
+ 	struct list_head *pcp_list;
+ 	struct alloc_context ac;
+ 	gfp_t alloc_gfp;
+-	unsigned int alloc_flags = ALLOC_WMARK_LOW;
++	unsigned int alloc_flags = init_alloc_flags(gfp, ALLOC_WMARK_LOW);
+ 	int nr_populated = 0, nr_account = 0;
+ 
+ 	/*
+@@ -5267,7 +5281,7 @@ struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
+ 		int preferred_nid, nodemask_t *nodemask)
+ {
+ 	struct page *page;
+-	unsigned int alloc_flags = ALLOC_WMARK_LOW;
++	unsigned int alloc_flags = init_alloc_flags(gfp, ALLOC_WMARK_LOW);
+ 	gfp_t alloc_gfp; /* The gfp_t that was actually used for allocation */
+ 	struct alloc_context ac = { };
+ 
+@@ -5319,7 +5333,7 @@ struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
+ 	 */
+ 	ac.nodemask = nodemask;
+ 
+-	page = __alloc_pages_slowpath(alloc_gfp, order, &ac);
++	page = __alloc_pages_slowpath(alloc_gfp, order, &ac, alloc_flags);
+ 
+ out:
+ 	if (memcg_kmem_online() && (gfp & __GFP_ACCOUNT) && page &&
+@@ -7684,10 +7698,11 @@ struct page *alloc_frozen_pages_nolock_noprof(gfp_t gfp_flags, int nid, unsigned
+ 	 */
+ 	gfp_t alloc_gfp = __GFP_NOWARN | __GFP_ZERO | __GFP_NOMEMALLOC | __GFP_COMP
+ 			| gfp_flags;
+-	unsigned int alloc_flags = ALLOC_TRYLOCK;
++	unsigned int alloc_flags = init_alloc_flags(gfp_flags, ALLOC_TRYLOCK);
+ 	struct alloc_context ac = { };
+ 	struct page *page;
+ 
++	VM_WARN_ON_ONCE(!(alloc_flags & ALLOC_NOBLOCK));
+ 	VM_WARN_ON_ONCE(gfp_flags & ~__GFP_ACCOUNT);
+ 	/*
+ 	 * In PREEMPT_RT spin_trylock() will call raw_spin_lock() which is
 
 -- 
 2.50.1
