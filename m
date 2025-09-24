@@ -1,177 +1,124 @@
-Return-Path: <linux-kernel+bounces-830173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC56B98F82
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:48:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89793B98F9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC0F18882DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4072E2BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44E12BE05B;
-	Wed, 24 Sep 2025 08:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193752BE7D9;
+	Wed, 24 Sep 2025 08:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="DKqHeWjN"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="F9Bz0c58"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FCD26D4DD;
-	Wed, 24 Sep 2025 08:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2562BDC32;
+	Wed, 24 Sep 2025 08:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703692; cv=none; b=W7OLMDVI0Ml7qMn9PoDYuwHYflAsf+8AjKPW31TxtccxVV5opL+ELt8T740peHWaOqXSZas/IJ8NpR80I9C3O9YWX7WwKIn4haCuccn2lig5LSAsEQ6Jjhc8E6gx1F96EbWlsOMH2Wqdi3BFbn4Lw5Op/mEwmTrX00B7m+oYGU4=
+	t=1758703829; cv=none; b=TXzej9DWmT6OjylElaHNL5xxiZje8QhPvVgGIhZlP6cc+af7lh8iIhCVMSWnYt49kUo5csMvJ4fcKib5Ul7o0v7TgAQl8/j1w+DcZIQChVegDgkfmc8Qy0zUF8MjmzuG9sfBJJvS4W8LXtrgP9EtavpAozMPMvDEK5PcN7yqk30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703692; c=relaxed/simple;
-	bh=uoE8mSHWj8gr4lpevWFr/wrq6ju50gysn6cSzYbmMr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjA6yFKSYrSn+bXbzBGWS4d2Mfy2esl9uu5UcisoWvTpB0sQqiMy+mdIpfRHB9FJAOkuj5cMO1PNqm/KfYwowXsAUpfXAfetl1PgzqU3cReLKXqbf8yMJeMUoOxOZTM6XRwQtX6r6EMdGos/8SsnfIXZUAX+iXTv0Q9J4zmhIlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=DKqHeWjN; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6TJDoiWG2mkkA56m/9duvu1c2RVwOHrphW64bZCfJOY=; b=DKqHeWjN8FKSnINvE/HTMPI0Aa
-	mcqaBv5uwey0+zFOf8l6oNmjmPVDkNT23S1pKhnM9WHqr50T3CAN/iKcbt1cg7F3uv78O/Bg7doef
-	lefZZFyQ/k2biwajvOJCbnysfNOfYS/LgVxtVVkPIRqX099BToWrilKOlIWoBIICgH6jXLNzfTj7q
-	slevQKzXRUTysgjbcbA0h7lA4hmzPZ5AG0K9xMhuK+TSpEPPUdsMzy2lQQtLhl3bNc+sc3YtUer/F
-	jdIN29soZRvVZ2qhIgSks9YfcruPZ6ZDKsWgXh7YSd3fFRb+u5CdQccTNANLAkgJlYhlmd6+tKlSA
-	eaLj0dxg==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1v1LAN-00EH85-25;
-	Wed, 24 Sep 2025 09:47:59 +0100
-Date: Wed, 24 Sep 2025 09:47:59 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 2/4] tpm2-sessions: Remove unused parameter from
- tpm_buf_append_auth
-Message-ID: <aNOwP99WNsDgBVof@earth.li>
-References: <20250922164318.3540792-1-jarkko@kernel.org>
- <20250922164318.3540792-3-jarkko@kernel.org>
+	s=arc-20240116; t=1758703829; c=relaxed/simple;
+	bh=ZbVBS6NLG27rMFDjFvUQ2Kdc8oZwxYtjwgxlVPyJ3E4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QgPDrMzFjFMfE4ceWRTIL+MhSXgxKTiga1a+fr8akuOo4vc8RJIK4L6YgHsPJldidIJe5whtXBEIGgFyXJINNsYvEx5rkEjiSRonnGTfiu+vYJZRXShu3VL6Qci5kK7ULOM4TsoR3ng00qeZ7+Em6kHk11rgtS/+pgmV9g64ygk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=F9Bz0c58; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58O8ns7433418274, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758703794; bh=yf5hOenGknaU/uDU0whNjq4J3btNq4aBRtTsPFX4uUU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=F9Bz0c58o++VOSoppckg1shYQQAPiAlusN+X4r4QH/tmvw+lm8CkY4SQSppwCRPBF
+	 TCIsVVcy5coc0RUIwHvQkK7EkHsMITb+gdWrKCGz0pxg/1wEvufrmC7pJVQWJYg4FF
+	 eUlx73nBZvGfC3oR4zj14vWHTXnQemkyBs+hNVkyZ3d+POcB7XjNE8iRQXJcXl0Q3B
+	 FvsLLoA0QbxJWcONBWY2Z3rcEm3R3rwqFgMu5/NbYlK9ZrM9j4MsVmL1Mnj1HZa4RH
+	 FinRAs5VmCMBQXwPu0euOAtUyjMDh9K9+aotViQinjGKqFpclnSKSpI7KNmPaaCdAw
+	 Ro9HzNcggwDSQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58O8ns7433418274
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 16:49:54 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 24 Sep 2025 16:49:54 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Wed, 24 Sep 2025 16:49:54 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next 1/6] wifi: rtw89: usb: fix leak in rtw89_usb_rx_handler()
+Thread-Topic: [PATCH rtw-next 1/6] wifi: rtw89: usb: fix leak in
+ rtw89_usb_rx_handler()
+Thread-Index: AQHcKjJZ7gG/V4UORkyKDEREHbQ2dbSiCanA
+Date: Wed, 24 Sep 2025 08:49:54 +0000
+Message-ID: <1078ec2bdac24744925d24da9522d8d1@realtek.com>
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-2-pchelkin@ispras.ru>
+In-Reply-To: <20250920132614.277719-2-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250922164318.3540792-3-jarkko@kernel.org>
 
-On Mon, Sep 22, 2025 at 07:43:15PM +0300, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->
->In earlier bug fix, an extra parameter was by mistake to the function.
->
->Fixes: 27184f8905ba ("tpm: Opt-in in disable PCR integrity protection")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->---
-> drivers/char/tpm/tpm2-cmd.c      |  2 +-
-> drivers/char/tpm/tpm2-sessions.c |  5 ++---
-> include/linux/tpm.h              | 25 +------------------------
-> 3 files changed, 4 insertions(+), 28 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index 7d77f6fbc152..61a4daaef292 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -191,7 +191,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> 		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-> 	} else {
-> 		tpm_buf_append_handle(chip, &buf, pcr_idx);
->-		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
->+		tpm_buf_append_auth(chip, &buf, NULL, 0);
-> 	}
->
-> 	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
->diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
->index 6d03c224e6b2..13f019d1312a 100644
->--- a/drivers/char/tpm/tpm2-sessions.c
->+++ b/drivers/char/tpm/tpm2-sessions.c
->@@ -266,7 +266,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
-> EXPORT_SYMBOL_GPL(tpm_buf_append_name);
->
-> void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
->-			 u8 attributes, u8 *passphrase, int passphrase_len)
->+			 u8 *passphrase, int passphrase_len)
-> {
-> 	/* offset tells us where the sessions area begins */
-> 	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
->@@ -327,8 +327,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
-> #endif
->
-> 	if (!tpm2_chip_auth(chip)) {
->-		tpm_buf_append_auth(chip, buf, attributes, passphrase,
->-				    passphrase_len);
->+		tpm_buf_append_auth(chip, buf, passphrase, passphrase_len);
-> 		return;
-> 	}
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> Free allocated skb on the error handling path.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>  drivers/net/wireless/realtek/rtw89/usb.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wirel=
+ess/realtek/rtw89/usb.c
+> index 6cf89aee252e..3435599f4740 100644
+> --- a/drivers/net/wireless/realtek/rtw89/usb.c
+> +++ b/drivers/net/wireless/realtek/rtw89/usb.c
+> @@ -422,6 +422,7 @@ static void rtw89_usb_rx_handler(struct work_struct *=
+work)
+>                         rtw89_debug(rtwdev, RTW89_DBG_HCI,
+>                                     "failed to allocate RX skb of size %u=
+\n",
+>                                     desc_info.pkt_size);
+> +                       dev_kfree_skb_any(rx_skb);
+>                         continue;
+>                 }
 
-This chunk below should be in patch 3/4 where you open code 
-tpm_buf_append_hmac_session_opt, rather than here:
+I feel we should goto free_or_reuse like below:
 
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index 667d290789ca..a8984d273c28 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -533,30 +533,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
-> 				 u8 attributes, u8 *passphrase,
-> 				 int passphraselen);
-> void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
->-			 u8 attributes, u8 *passphrase, int passphraselen);
->-static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
->-						   struct tpm_buf *buf,
->-						   u8 attributes,
->-						   u8 *passphrase,
->-						   int passphraselen)
->-{
->-	struct tpm_header *head;
->-	int offset;
->-
->-	if (tpm2_chip_auth(chip)) {
->-		tpm_buf_append_hmac_session(chip, buf, attributes, passphrase, passphraselen);
->-	} else  {
->-		offset = buf->handles * 4 + TPM_HEADER_SIZE;
->-		head = (struct tpm_header *)buf->data;
->-
->-		/*
->-		 * If the only sessions are optional, the command tag must change to
->-		 * TPM2_ST_NO_SESSIONS.
->-		 */
->-		if (tpm_buf_length(buf) == offset)
->-			head->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
->-	}
->-}
->+			 u8 *passphrase, int passphraselen);
->
-> #ifdef CONFIG_TCG_TPM2_HMAC
->
->-- 
->2.39.5
->
->
+free_or_reuse:
+		if (skb_queue_len(&rtwusb->rx_free_queue) >=3D RTW89_USB_RX_SKB_NUM)
+			dev_kfree_skb_any(rx_skb);
+		else
+			skb_queue_tail(&rtwusb->rx_free_queue, rx_skb);
 
-J.
+If just free skb, rtwusb->rx_free_queue might be starved.
 
--- 
-101 things you can't have too much of : 19 - A Good Thing.
-This .sig brought to you by the letter V and the number 13
-Product of the Republic of HuggieTag
 
