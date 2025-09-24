@@ -1,196 +1,149 @@
-Return-Path: <linux-kernel+bounces-829918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85618B98317
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:21:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD46B98378
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783BE1B21260
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:22:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E1E37B6480
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63A91FFC48;
-	Wed, 24 Sep 2025 04:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E453AC15;
+	Wed, 24 Sep 2025 04:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m0vDuDMF"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011070.outbound.protection.outlook.com [52.101.62.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDPmJuQ+"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB84C85
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758687703; cv=fail; b=IDlqb98NSUQiI0a/4LSau2kShVOIA+Ew/2qiy5hBevbb3rwJP2Y98/V4HVH35xWsdXD8Om0sfb5e6dneizHZgwxm903zXYvg2nhJ9vq3+sebKdJxjA2BfCqs2WUvl80CpndMpcdPFr84FOpHXiXwSrgLe/HbmmTiFzCv9d9MrmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758687703; c=relaxed/simple;
-	bh=GwF6YfRAj0H8l5RBRjt988Q7HGj3qyuqwQ76pz1FtHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YrcWYgXJyrieaHjMOHsI337aOcigsSGfeJdTwFZY0BeSTF/ccRYXVq5ar+4F8znNkMg3jDsHGeEKWdc0alaNenLEdoOnI1eGHvjsKjxHEKlBMmRgRrBwIhb8Eryk99nDgEJG7+jdRQ6H8jMFqFioNszMTv8YkmNa5UJ4Zb0IP5c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m0vDuDMF; arc=fail smtp.client-ip=52.101.62.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X4vCRZZOe3WYweeYTj31BpnXvH8fm6iMkfQZvKEnZ9HnQSoR+xKxxsm0rjjeyhkWQeQQ59qCOixud09kLVA7rmNKm6FBX8t85MpfxITG4vI8Th8NDTfOkdcbibTLR0nxICNSFqjf0ElUN+yjS6oIfg+lSly2NrAtJMWmoaRgRV3glSydSplOH20qLAOs2RPMUTBBYHrBUS+C+r5BOQi7vc/uotnkrjuA95PaLcv5HV2LNkevwRsrh1LWnDABclo6LWDut4Eqt0c7ThM0AocGNgrt1w2aIqTRQUsAgdoqdjKMWQbZoP6fHHoyBOcWQlp9YHMohpEIx+F8pX8GhJf7eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d/IhMfN98hh/mDRA6wug1wbKKJeKppL7WZkp11+8nEI=;
- b=aJTBo7S6fac9cofIH2GiLxZp2o1ikElvZA9Pprj9KwJW0b52r3N4nJPSwsVrXeaxY72v0OnTHodC+ffYlpGfnHy8yJpAwG7qzwFkNPTBuafs4u0Es06dwBEdCwM+TLPSSOkq7YZhaOKyCa0EEjU4/E2i6bLVWv8n4r7N6dmDZVmsgkqtSAGVwDZS67frK/JUKpjck5iKkb0EKdstIrZhQ0AzF5SS7tuHeQUmB8iYZeBRkAJm47xZoEkra8COkzHtpAjX5IQZf41xvmDcGGPiSGcWwletA8zv5Ekpvo56Rg6O9ZDQL7vKY4UFHZ1XS0UdxF2ZlEiQMNaQRrjR32Rutw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d/IhMfN98hh/mDRA6wug1wbKKJeKppL7WZkp11+8nEI=;
- b=m0vDuDMFZHXhtGNjBKF/Cyb6/aKFP32g+DLHdihjy5FUjnXWooABLj0xSJMoopHsdva1ccSze0n8kjlitz7ChFaNIQci3bxKf0wa7NbE2Rt+ZlL+Tm9ik5iWqtBg9ezK6jV9lJ87HSkHnJg86/OxDShciAknTUFHSbFlEReZXL0=
-Received: from DM6PR10CA0007.namprd10.prod.outlook.com (2603:10b6:5:60::20) by
- IA4PR12MB9762.namprd12.prod.outlook.com (2603:10b6:208:5d3::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
- 2025 04:21:39 +0000
-Received: from DS1PEPF0001709D.namprd05.prod.outlook.com
- (2603:10b6:5:60:cafe::fa) by DM6PR10CA0007.outlook.office365.com
- (2603:10b6:5:60::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Wed,
- 24 Sep 2025 04:21:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- DS1PEPF0001709D.mail.protection.outlook.com (10.167.18.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 04:21:39 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 23 Sep
- 2025 21:21:35 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 23 Sep
- 2025 21:21:35 -0700
-Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 23 Sep 2025 21:21:31 -0700
-Message-ID: <dc37d8bd-66c4-439e-afb3-e01670f3e08c@amd.com>
-Date: Wed, 24 Sep 2025 09:51:30 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D35C8CE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758688655; cv=none; b=ndx/QVDhHQ7A0JOHnBz5xf15JBd8f7wahV/NiFOM35kOie620A0q85xJPxVeRD+ffjVks+b51FHw8t5bdfqNfqW/fUFFQkjf6gz0CaNQINLzb27vHSITFa4vDQAHnLywtggDMDgjIovremQDT9DslJzs+maq7wCmQi3u2NMdc/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758688655; c=relaxed/simple;
+	bh=RRDPP8ixAZkfYkD+0XWsW143p6YSMBD1DDMJaAaF9t8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=psFYd9Qq7zHveA7Cn1iQ7xUPfiggHq14epsrbKORCQSTQajkS+rOf/zzIDxEvQqB22JrkmFiytYn9rI92ngok5954xr8VpMIVXenebQaJdX5QfyPQ4M9vQttDUM1CJ0SqH027jiclFalOVanEGVgpGLefhvB0FXQ8o7llSx4xpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDPmJuQ+; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77d94c6562fso6376315b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758688653; x=1759293453; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V2AtE3wb9Esvjdk98Ay0zc20hm41uPjRxNV/m1l3tfU=;
+        b=FDPmJuQ+BWsfiGxlPG+z73LuLzo4Wo1eLPCrwRh6AphmmSi6IpidqE61hptb/75X7J
+         zPd/F5UvhCuUnrGKlrYkS8MkPk0u5dFxRcKE4aHYRrdQdnbrG3cQQzEHHWAc9XTJqnzU
+         xPHHPOl3cO8AUKptrczWetLHIoqQfhkFXQy22T1yccCmvnukYdZStJyWOpcnMhpFarqP
+         XdEJFtadJ9KiyA+mpm5NRTHkOfuGoujNFOuhGdirzBSUgw8OIIO37nvn0Aiir4mf2ws8
+         uewPHlO2RBxEOPsOOknNTU8bSmppFDNH5WNLc5cxrGuWdPBVxYAIGNZeyESTfnEdSfQl
+         bN0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758688653; x=1759293453;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V2AtE3wb9Esvjdk98Ay0zc20hm41uPjRxNV/m1l3tfU=;
+        b=fDba/RtlDMOEATyEA/vOcTrNPS4MSsMXTPHHnI99/jXPD39LTYyQZYYoZMj+9AEYPo
+         rHZA+7i68cMkzACdbDxaxOR5xex/Ivd/8iCxgvJcXiLf5krSnH7PVSMkwR+iMvikN7sb
+         kN28bwpef+hQbnYcuWH8i0Rary2CGv6UvzeFo+x2YAEKvKFY4uYvQoY1hPNyWfCaVTdk
+         ZrFwNcLQk/FPvhynDwCYuSGbgFqfCXiawqnSYUZpaxJPWvru2zqILyjFY+KTJEXL7Fkl
+         lkcmCqw1qzgVtJDdrJizgo+pkvYCrhenzwG1EXMQYQ5w14VPvQoj82goZzI80tvcb6uU
+         e8+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWpUZXIw3qFcR09x4zbB1bcbe4OoY8yifEVv/ukQJ01b4XKw7T+LzE2BBSjhTenw9muCz8v2olYAnCh1tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/zhyuDrTBUfl5RFbu9ijrwJlacurV9Y4nOU8mfIpkLI+KHbFQ
+	mkCUUw2fJli+6EqhLO4+DrY9L3RMKJL0HpkrqzzkHmvnWIyal0SFjtQI
+X-Gm-Gg: ASbGnctCghDRbxP2YnTP7n0WDYVEwltPH5gxVhxCBcVO2A0AbCMKq42Tx2MjiyFDKVT
+	lJph6nfqB8GTjApWt/MUWl53oOVLXQI7LdGznNsxfiOlfTOFke1HQGBJb1foEVOd1vgb2gGuww0
+	ZvZendLi9euI0LrQ3ipMcceo3bEZbXJ7VM9x999sUUf69RWi+MeOywMOkNGjPBt7orksaqh0FqU
+	YoBot7/+yNJQTC0wTapdnMB/6wV/5HmvUlissqQ4Y9IEWBQ0ejwZjp8C3YMbkljP9KRcQgyn95V
+	Gn8uzQcEjDtTCiNOczahJK7yv7S1zExo8+CNTyMtgyrOAOyfe8JNiitnBC8qlhhkqqPyEeKqYa4
+	t6kt2u54X3pJ8673Vsv1YswQ/YOqAzorOKw==
+X-Google-Smtp-Source: AGHT+IELiGCDwK/3N8AD/xB8vMByTAfUuiT/2C6BA80wtfiX+6BqvaDzI/YKAnY9RJbUWABNVlvMBg==
+X-Received: by 2002:a05:6a20:bc89:b0:2d9:b2ee:784a with SMTP id adf61e73a8af0-2d9b2ee9d54mr2716962637.20.1758688653537;
+        Tue, 23 Sep 2025 21:37:33 -0700 (PDT)
+Received: from embed-PC.. ([2401:4900:60e0:7677:7e66:bbb0:5e83:be39])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b552882b177sm12122235a12.11.2025.09.23.21.37.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 21:37:33 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: even.xu@intel.com,
+	xinpeng.sun@intel.com,
+	jikos@kernel.org,
+	bentiss@kernel.org
+Cc: mpearson-lenovo@squebb.ca,
+	srinivas.pandruvada@linux.intel.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] HID: intel-thc-hid: intel-quickspi: Add ARL PCI Device Id's
+Date: Wed, 24 Sep 2025 10:07:20 +0530
+Message-Id: <20250924043720.5545-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] sched/fair: Add more core cookie check in wake up
- fast path
-To: Fernand Sieber <sieberf@amazon.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>,
-	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
-	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
-References: <cover.1758543008.git.sieberf@amazon.com>
- <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com>
- <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com>
- <20250923093001.1218488-1-sieberf@amazon.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250923093001.1218488-1-sieberf@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709D:EE_|IA4PR12MB9762:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9efa2c3-43b8-400e-858b-08ddfb21dbcf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cy9tblNiVHlpdUhRL0dVdnFhR1lKQjNtSzJvd2NaOEJjTXhIR2d2Qk45R2Uz?=
- =?utf-8?B?U0JCeUhCbm96MVdXTDlSOXhEVkFTYXBXZjV4ZGs4V3p5MkY5UkVlM043bWdH?=
- =?utf-8?B?ZHd3ai9hUTBCSGgrWVJDcXcrQ0pzOTZjd1NKOXFzeENOUndnZWFTZjhxYm9h?=
- =?utf-8?B?M2w5UnZrQkVvTWJHS29PTGNBSjc4OWk0TXI1dlFibks1dVhhZi9IRzJRUG4w?=
- =?utf-8?B?OGg1R29QNVlEc3YzemtRNDZrbDRQbGxRWWk1cmtrT0k3OHVDTjJJS0p1bldS?=
- =?utf-8?B?TDEwNDJlaDhDL3psWmh4MTZ6UnZjMjVLNXRzdmJnb2wxajJBek9vQVBUYmJZ?=
- =?utf-8?B?Y1BSOENhQTVFUDR0MUNOOUMyUDB6MGttYms1dFpTdktOVlRUV1B5NjBNRDJ6?=
- =?utf-8?B?WGVibFc5RTcrWnpSK2J3VmxOWHIzSDR2S2krcFE1cHoxUldzRUUrUjJJWkZF?=
- =?utf-8?B?MnhWZUNXZ1FjWld0ekRVRWY5Z3c3YTNaQmtCWXlsL3ZTaStVOXJGaXhpR1Jt?=
- =?utf-8?B?NjRURitOeC9LNnQyVEZnVG5weXBVdzBBRTFlZG4xbWZuU3U2OFBrY0YzU0xu?=
- =?utf-8?B?aHNxV09KbVpxUk9jZGdldTNpcXltcktmVHVGa3NNalJlcEZBYUJWR1F6MUU4?=
- =?utf-8?B?eC9CMTBXQVFXSU5ic1ExYzlaZzRnZ0JtVFc1U2lsZEpxZDBVdEdCcmp2NTFU?=
- =?utf-8?B?L2FtY2dqMnZMTTcvd3lJUEd3REIzUGdoSlllb1JmZnpQWGJKVis1b1BRc2lt?=
- =?utf-8?B?RlpWL2JjcndhR3ViNkRId1QrYWpKcGQxdjZUUDdmd0h4aExkTXhKMlJxdFRO?=
- =?utf-8?B?a1l2SDZ5Tko4YmF4VHoyTE1jTDRlKys1aDlLb0hZQVM1TmRTaXdzYUYrbWlK?=
- =?utf-8?B?SnlDUVdWSUkxZUhnU29hRjYwSk5DZ2x4MEJDQjJYdWlpN2VzTkM4cHhXcjFQ?=
- =?utf-8?B?ZnVnYUhMR3B1WUZSb3RKRFVZYjArdzAzTmt2c2QyTTljdzF4akYzMytzVDV1?=
- =?utf-8?B?eHplREtidm9oV29OWVhveDdzQnY3Zjg0TE5vWVNqd25ZOE94dXFoYllRWUxj?=
- =?utf-8?B?TnBCNHdvaUhYRHhKQnAvZkRZSi9CeGdKUkNSWDdmd0I1TmtSSDdhSmdUZW9P?=
- =?utf-8?B?a1FRVkN6YzdnL1NCNzd2VUNCcVRMYWJzZjRTVkRzMzhTSi8yRHYyckg1empa?=
- =?utf-8?B?QW1uZ210YlhBSWRWdXFVUWRwNFlaVldUQTZmVDNlRVZESW5iOXhMQ3RkbUVl?=
- =?utf-8?B?ZGJwbUlsRmRYSHg2NnlPZWxKYWVhSHlzb3kxc2dxSm53ZGJSVHA0NEpwU29X?=
- =?utf-8?B?dUhBYVpjN2cvN3hJVDhzQlpJQzhCZytrMkFya1l1OGUyV0xTRThQMFllWFMz?=
- =?utf-8?B?ZUdkK3pUME1VeCtqSTUrdFVMck15V2xEa0hnNDd5Yk96Y0FvQzE2TUxSNktj?=
- =?utf-8?B?Zk1ycDRYQ3UrSERiU24xOEs3anhNYUkwREdnQXlVbXoxNEdCSjEwQjNEVDZC?=
- =?utf-8?B?YWJJNW95RG1lWWJWUnd4MFdQaTgyUzFadnV0dDUrY2hoR09mZzZCSE90QTc0?=
- =?utf-8?B?RlFQb0o3dDloZE9aRVVOcC9JaDNsSnBES01WVGhvWFBLZDZ3YkprelMvSmpH?=
- =?utf-8?B?d3FpeFlaeUM2Qm1iS3d4aUNRRE9IbXNjSnNVRW1VK1VIZk9Ga2VWV2hUVFF0?=
- =?utf-8?B?eWU5Und4RkFlQm1NUnFqaWM1cGtPTGw4eXlaY1lyQ0w1bnNyNzVSYkt4dFlw?=
- =?utf-8?B?RU1XZFJTeUpRWE9BMmp0Mlp1N0Izc1hjbUd5cXRBbWhHM2l0M1I4UVFid0hi?=
- =?utf-8?B?VEZmOW8wU2JTOWI3ODdwekUrcW9lOGRjYTBUSFpkdE9YTnRIOG1sVTlRTWtX?=
- =?utf-8?B?WHRiSENIR2NzcEZVLzhxYjFJUDc3MDRqeXB2U3ZOMG40bXczVm4xY2l0eVZB?=
- =?utf-8?B?TDhoOE1JdkRKZDlNdi9LRXZJc0F2WllFVTlNY3RnaTQvRDhKRlY0NmI5cWJR?=
- =?utf-8?B?MkFQK1JqVXJnY2djOFhIR0R4UXByR1ZZbWRsZklTWXlyY3YyUzdHZ0RQcmVr?=
- =?utf-8?Q?BQY2k/?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 04:21:39.5935
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9efa2c3-43b8-400e-858b-08ddfb21dbcf
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9762
+Content-Transfer-Encoding: 8bit
 
-Hello Fernand,
+Add the missing PCI ID for the quickspi device used on
+the Lenovo Yoga Pro 9i 16IAH10.
 
-On 9/23/2025 3:00 PM, Fernand Sieber wrote:
-> Hi Prateek,
-> 
-> On 9/23/2025 2:25 PM, K Prateek Nayak wrote:
->> So with Patch 1, you already check for cookie matching while entering
->> select_idle_smt() and now, each pass of the loop again does a
->> sched_core_cookie_match() which internally loops through the smt mask
->> again! Seems wasteful.
-> 
-> Right. The change in select_idle_smt() is unnecessary.
-> 
->> On an SMT-8 system, all the looping over smt mask per wakeup will add
->> up. Is that not a concern? A single task with core cookie enabled will
->> add massive overhead for all wakeup in the system.
-> 
-> In such a scenario there should generally be no looping because I introduced an
-> early return in patch 3 in __sched_core_cookie_match(). Perhaps it's worth
-> extracting this early return as standalone optimization patch? Something like
-> this:
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=220567
 
-Yes, that would be great! Thank you. And also please include some
-benchmark numbers either in improved core utilization or the benchmark
-results actually improving from these changes.
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+Changes in v2:
+- Change the max_packet_size_value to align
+with MAX_PACKET_SIZE_VALUE_MTL
 
-It would be great to know how much things improve by :)
+ drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c | 6 ++++++
+ drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h | 2 ++
+ 2 files changed, 8 insertions(+)
 
--- 
-Thanks and Regards,
-Prateek
+diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+index 84314989dc53..14cabd5dc6dd 100644
+--- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
++++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+@@ -33,6 +33,10 @@ struct quickspi_driver_data ptl = {
+ 	.max_packet_size_value = MAX_PACKET_SIZE_VALUE_LNL,
+ };
+
++struct quickspi_driver_data arl = {
++	.max_packet_size_value = MAX_PACKET_SIZE_VALUE_MTL,
++};
++
+ /* THC QuickSPI ACPI method to get device properties */
+ /* HIDSPI Method: {6e2ac436-0fcf-41af-a265-b32a220dcfab} */
+ static guid_t hidspi_guid =
+@@ -978,6 +982,8 @@ static const struct pci_device_id quickspi_pci_tbl[] = {
+ 	{PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_SPI_PORT2, &ptl), },
+ 	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT1, &ptl), },
+ 	{PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_SPI_PORT2, &ptl), },
++	{PCI_DEVICE_DATA(INTEL, THC_ARL_DEVICE_ID_SPI_PORT1, &arl), },
++	{PCI_DEVICE_DATA(INTEL, THC_ARL_DEVICE_ID_SPI_PORT2, &arl), },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(pci, quickspi_pci_tbl);
+diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+index f3532d866749..c30e1a42eb09 100644
+--- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
++++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+@@ -21,6 +21,8 @@
+ #define PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_SPI_PORT2	0xE44B
+ #define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT1 	0x4D49
+ #define PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_SPI_PORT2 	0x4D4B
++#define PCI_DEVICE_ID_INTEL_THC_ARL_DEVICE_ID_SPI_PORT1 	0x7749
++#define PCI_DEVICE_ID_INTEL_THC_ARL_DEVICE_ID_SPI_PORT2 	0x774B
+
+ /* HIDSPI special ACPI parameters DSM methods */
+ #define ACPI_QUICKSPI_REVISION_NUM			2
+--
+2.34.1
 
 
