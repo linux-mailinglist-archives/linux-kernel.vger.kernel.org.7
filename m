@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-830567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1218B99FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:15:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB8DB99FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC1B43A6D3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:15:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755FE189199D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB12820D7;
-	Wed, 24 Sep 2025 13:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392B2D9EE7;
+	Wed, 24 Sep 2025 13:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aSdNBciZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xF6sm1Vj"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7542FB98F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A16722069E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719722; cv=none; b=OaG6AwU1DBcA/iV1IDPni7BDrra4cknb2rcuCMXcUtXcdZqO+O7rrB7RRz7bfvapMmRUZnugptqRToP7tjl6lxU0HeYFBTs8i0BFfcJTM2myWWKpmTZ/33iO36I2gQam1x7z6olckVvZVhTxqs94GYTFqVY4X06b61oURPSna8I=
+	t=1758719847; cv=none; b=PrVTd4Cp3L5vkiLtEq3fnIH80l7l0KiXdc2BBPI0BKycgZHL7s5booahYCV1MsxhSVB4pROCE//Oi2TFdJyqjIhNE9IqbTGWstFj8A4sHBwb7rGb0/1jGD6xU4r1h1kUe3k7oEk0iG1d5vs7igGVSIBFbdo25YmTseOrgcIdvGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719722; c=relaxed/simple;
-	bh=ZsZyQ7Ql3rqRY8h1WntWXGDU7/FgBAc7YAVNLpKKuuU=;
+	s=arc-20240116; t=1758719847; c=relaxed/simple;
+	bh=nNlhZ3ky71IFd+n9wOyeaZgybeewKfw/SvYwsc4rOOM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2S7ipcbX4nYuteO9gU9Te0c5pY4Gm9awHFz4NQ7My/PKkTL7SktMoVy3wSwZ/o7ufQM/9PaPULmdhntAxXfeqM5Pwy/ywRSmqYbNEoao7OJrx5oiHwpnBo6WgUXZ1lXW9xKyG1o3He6FR6pMpdtWikwzE6BFM8nBylqUbLGb8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aSdNBciZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OD1qH9018023
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:15:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TwFCyIUYndJk/I4av4mMJ5Ifu5vDiUCjBB5zV4J2loE=; b=aSdNBciZsLiwV62j
-	n9AkhY2P7L6z8u+JJaltqeJNw+GDWyfHn06OBDX8sbN25WG/WAfYWVB6NfZbNJ2v
-	LEpA6dOGgE5+gr3LuLXzYtqhFXYPvW3HdJ/YtIX1l2iMsEbikIShVciG95+yRQxF
-	38zFCVtIlI+AKE/GCCFQhYd0rhoSrUibHp3nTBvg1tI2jUr5+hVs/CJAuck96xO8
-	9W9JFaV1fGRN0ZWR19G3LI2L+BqP3XeBYr7nkuMUzoJ0sv3CKw+rxoAIxSslUcoK
-	uzRVl9QGWTZpejHi8WpowdT7tL9qo6nHZOqINzER54YaLmM4ORPjwwsXN0uKkPUX
-	B/hsOg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kk8bs6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:15:19 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4c39b8cb20fso25066051cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:15:19 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=NTAzWIPphUdpQS4+HW92spp5bS3Ek2gpthplN1xO6CS87FERj5Gt/O3JT08ZbrJ5j7ncIKhqUbLhAAbOcOwJajFOQEvX/sXcAS2uSM9DT8nmwIZXkxYY1w8UxxeuyINdl3Nwud9wBTegDDxH8zKSAU18ssWCQif/N/d0MPWILWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xF6sm1Vj; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6218fc7c6b7so1603453eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758719844; x=1759324644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TfzpwQgTHBHYqzRqbLUeQn97RlK5vix1IohjUgnZb8Q=;
+        b=xF6sm1VjFVBtynlSmllYUAtJqUECS0e+rseikvsdgU2AgGLBUqlyjYn09J432Iwo5Y
+         7fKfZguYR9lJ44G5TP9pew8fHVtORer6osKsKz0BXC6uUWb4O4EqNxnc4Se1tQRwxPJ/
+         ClY9aK3PNYcLeg3sQqX+65jdkeSho+d/oAUp9ISRTxOo0UZxeckFym7dCcNTGCycZqdC
+         qkqzp2j9xihzqbDgqPANdDJ28Kisa2UPJ1MXL3p0mxPGp0RF2OgIhyNakqRYpkiwUlRq
+         B1//4aTTq3B3afAGyvCG1tmLTTqKs0RUpJtomFBWHH5l4pcaAT5kmxwUsNoEE690l55R
+         mISg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758719719; x=1759324519;
+        d=1e100.net; s=20230601; t=1758719844; x=1759324644;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TwFCyIUYndJk/I4av4mMJ5Ifu5vDiUCjBB5zV4J2loE=;
-        b=FeQaKHVjy9MoJwijCkCbR3ZhD5KNZDMXaDN1tEXPkki3y9BYRnIlAK9n8e9rysVTZ1
-         MGI8HJRkW7iht4nBq9MaoStCW605QlKcQpxAyJm2NlRr3f9hKroyKUonCjCv5H/fjbmE
-         f47Zng1tz96lNyxx1ZOMmZHIYmSyjKIgY6RqwxatHuQQsaH535n28RkK0vUsqWJOvW80
-         laNG4bbbigztinKKuTuVGj11s8zB7fCQectu/18EL5mpwzzBPmX8QQdLSWDg84kgRk79
-         fdifhkQU/9myYGJ852kWoNf625LLoXK5eFHBaaa9jecGPZYoTNp4DVL3vlrLEaaNVwuW
-         HAUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpjDjcL1peT+N2gMcbl8vbmosVz969mMyqZCpVU6UkfUI22aL1xreEuKEfeu+Oy/xV2+HeO5r3O7vIMq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc74iI8BGUdQORQKNYzUmkoQBHkCQ7XBobyIKu5x0NWmqAXlyI
-	cW2ATb4YA/IDo/fCrQmCsAEa7oSk2zecYToiFXepxqIdpa/757mbv/qYd6AdSxueF+csalGDhHW
-	zlkJQ0pPY8h7wcsWI0YzjrcoWxBroro0ayPie0pWMUEfbqFHtctlzefkTmZIxr8LVL9U=
-X-Gm-Gg: ASbGnctSzx/nAvccN6Tm/cPKxV5zl765cVEm5+AZhpjz9z+m0U1MHSlB0nn1P8WDZGO
-	8v8i89Q79Vpx7xS1/aBCmxNGXxRrC/nUsK+Sh5oY7g8pGO/v87Leq+AJYAZk+g0/HepvqEoyAGa
-	8FGtC83vHbMIICQJ5uQ8B4jQTXf1J91hML1sDWZzhrkEjzJK1nvIxpTJsIMnQvPKsgD2Bj4SmHQ
-	h0FubBuvkNXaNcqE4WRjN7js1ldNyp0Z4dbwQXjbOKPl6NF2i5XQKgYs/hRm5Sv908OPO1YgXEQ
-	HIriVPsNLfTyGwI/GUABeNONqiqoU8x0d3Qxhn3Rrh8b64r8BIJGAk7ENSw0FZ/sXyLx+RkbQIb
-	5kjmI9i7Z19F47mBdnDu53w==
-X-Received: by 2002:ac8:7e89:0:b0:4b7:94f1:7722 with SMTP id d75a77b69052e-4d35bdf0ab6mr48207391cf.0.1758719718491;
-        Wed, 24 Sep 2025 06:15:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESZfa8efiSxEuXWBpFzEPdHkSAYRXc+abBpIikFgLyQyl0nwGOhQi4FND05AsXWtX0Zyh0sg==
-X-Received: by 2002:ac8:7e89:0:b0:4b7:94f1:7722 with SMTP id d75a77b69052e-4d35bdf0ab6mr48206741cf.0.1758719717686;
-        Wed, 24 Sep 2025 06:15:17 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2d4309ab9asm632180266b.74.2025.09.24.06.15.16
+        bh=TfzpwQgTHBHYqzRqbLUeQn97RlK5vix1IohjUgnZb8Q=;
+        b=ezWevXy1kFXqAa9jpC3wIGUgnfKLGXkKzJwd+GzVsQ9j9V31zxWxjPYhcnRJQePpvx
+         cG9DBddAHh4Yktc23Pu2zqm+eoSg+CqhMEvVTouV+pXKD2fmGH0yIg6QGbQAg4OcA8C7
+         CrJjaR8pbVX254/x/bLDV1zvURw/zSrAAZPe2BjIml7a6DrfuvHEQIwKn1CNwCTHfQLx
+         iD2aVXUZRzL7GkMEtXSV2WB4W/j4i8o0t1z2rJUUUrrEOfqY43xECZ+lTYZdbv8tsqfN
+         kymUS3U98WhGUpJyWGOXD/RgfGRkpJuLHHuSTAeKpth1kQZ0hJiZ7rG10Nl6gLq6lkxG
+         9VvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+pXXfw0ct39CgHMV1t/e4Q3qK9Ew3XbWKQCGyCSOg4OXSBIBb1Jv3d2Ef7Vf4JpH0rZmpjqWXyJ5XGkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww6uEYL6vziJXJcaulPsl+NZaTP7+GQpcYUixunZBa2QpEtDKd
+	78VBb0Zm1FPYkNGHnyhHH8onfSYpGPYevMPG5kW99yoW+vRATtWVa+/4ztaQ4ouAA58=
+X-Gm-Gg: ASbGnctpZtihRd1WxAfRry+KPzy1axJi8GOCPTQzs+7RqyVAZTXpvPU893NgoUP1rzJ
+	J0rWDEpdXVb3AssyS3UYC6aZ3B4P0Qm+L907o4kv1mE2RMiXKiyDldAETKhewwBUtWQ044zO/d7
+	eWO6IATaC1hLOeeSqdG4ZX6f1swocKLv43fe7PhlOy0Kr/hhkLhFv4lidaElaVpPSfnglBI0To+
+	CUg/Gm8gZBY7MBTzR5ahutTJLvqMPOrIGTW7nbQ5PPTIudKhumKPiRQ4EeMCJHf8ln8VYKwFOtI
+	vIvPcvDphpy+bZS0BgekYBh8fbmEQIF9qOKuC8mnUsWHSXjkwfzNwMvOPv/B3XdU+tZsgZBrq7u
+	/GeQrbep8zHSLQJhm/UiWfvOzQeX6/kYXvqNBeYts6PdD7IxxCyV74fYVbU1sqtrenv/JlKNx
+X-Google-Smtp-Source: AGHT+IHOZBg2Ew5oG8YZerk3MsMqJ2CIE1Jt5C4KrJR+KD/B3ZokyeWrlgJ+mwKYC9r19TWwcYEPcg==
+X-Received: by 2002:a05:6808:444c:b0:43f:163b:88d with SMTP id 5614622812f47-43f2d2dbd80mr3060029b6e.18.1758719844018;
+        Wed, 24 Sep 2025 06:17:24 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2? ([2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-344ccf031c7sm3446523fac.24.2025.09.24.06.17.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 06:15:17 -0700 (PDT)
-Message-ID: <d650fde0-7ad6-47bf-a8fd-86dadbce235c@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 15:15:15 +0200
+        Wed, 24 Sep 2025 06:17:23 -0700 (PDT)
+Message-ID: <9e20ce95-a401-46ca-94aa-bd4488b45025@baylibre.com>
+Date: Wed, 24 Sep 2025 08:17:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,55 +81,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/14] arm64: dts: qcom: lemans: move USB PHYs to a proper
- place
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20250921-refgen-v1-0-9d93e64133ea@oss.qualcomm.com>
- <20250921-refgen-v1-2-9d93e64133ea@oss.qualcomm.com>
+Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+ <h2rof27omrhv4l6pjisdsnvkpb35ovy7e6m4soeltfun5rafk5@oriv7e3egh3p>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250921-refgen-v1-2-9d93e64133ea@oss.qualcomm.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <h2rof27omrhv4l6pjisdsnvkpb35ovy7e6m4soeltfun5rafk5@oriv7e3egh3p>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 5q5zOh46d7WViPEav7iwrugkO8JHtI-U
-X-Proofpoint-ORIG-GUID: 5q5zOh46d7WViPEav7iwrugkO8JHtI-U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfXwtVYaTke/UJn
- /pzrscsVzOzTJwa5yGzlj2IudpzgSGaZ+g7pFjrL26zNNKibA0Lm4oC1Bbc2lmtamFrsNsHU7WX
- 9o5A5st5oer99JyYRHUHWQinf5bVjkSW4XHZZeEktlMSkVw5qcZJZWJWPIxIGL+Yrm5H3IJ3myg
- 21zvIkYAyiEakd/GEoSma8TztbnBLp+nzJ5dSimJwOLyjgAZu0KH269w4QQJVrQxGCTy8/v64+7
- tdyOKG9bDuATP5kfLLTu1c51IY1jfqiwHmrvnO1ezQ9Z0MUy1tYAKNXPq/IvPxdg79v8ZJXSTrG
- 2zUY0IL1+eh5IKf+w0Aq3knAucOiJIAuPA4fdc54hGShp3XpbSLAGJH+6AGuKDq1n3HsRMyz7++
- lxCg0WgQ
-X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d3eee7 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=9b4w7uh9JfneBs45nCQA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
+Content-Transfer-Encoding: 8bit
 
-On 9/21/25 9:09 AM, Dmitry Baryshkov wrote:
-> Sort the lemans.dtsi, moving USB1 and USB2 PHYs to a proper place,
-> making the DT file sorted by the address.
+On 9/24/25 6:03 AM, Uwe Kleine-König wrote:
+> Hello David,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
+> On Tue, Sep 23, 2025 at 03:18:02PM -0500, David Lechner wrote:
+>> Fix temperature channel not working due to gain and offset not being
+>> initialized. This was causing the raw temperature readings to be always
+>> 8388608 (0x800000).
+>>
+>> To fix it, we just make sure the gain and offset values are set to the
+>> default values and still return early without doing an internal
+>> calibration.
+>>
+>> While here, add a comment explaining why we don't bother calibrating
+>> the temperature channel.
+>>
+>> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+>>  drivers/iio/adc/ad7124.c | 11 +++++++----
+>>  1 file changed, 7 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+>> index 374e39736584f55c1290db3e257dff2c60f884d2..94d90a63987c0f9886586db0c4bc1690855be2c1 100644
+>> --- a/drivers/iio/adc/ad7124.c
+>> +++ b/drivers/iio/adc/ad7124.c
+>> @@ -1518,10 +1518,6 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
+>>  	int ret, i;
+>>  
+>>  	for (i = 0; i < st->num_channels; i++) {
+>> -
+>> -		if (indio_dev->channels[i].type != IIO_VOLTAGE)
+>> -			continue;
+>> -
+>>  		/*
+>>  		 * For calibration the OFFSET register should hold its reset default
+>>  		 * value. For the GAIN register there is no such requirement but
+>> @@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
+>>  		st->channels[i].cfg.calibration_offset = 0x800000;
+>>  		st->channels[i].cfg.calibration_gain = st->gain_default;
+>>  
+>> +		/*
+>> +		 * Only the main voltage input channels are important enough
+>> +		 * to be automatically calibrated here.
+>> +		 */
+>> +		if (indio_dev->channels[i].type != IIO_VOLTAGE)
+>> +			continue;
+>> +
+> 
+> I don't understand a detail of the problem. The commit log suggests that
+> there is a general problem, but looking at the patch I suspect there is
+> only a problem if at probe time the OFFSET and GAIN register for the
+> temperature channel are different from their reset default setting.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+What I failed to mention is that st->channels[i].cfg.calibration_offset
+and st->channels[i].cfg.calibration_gain are zero-initialized. And that
+these values are later programmed into the ADC. Programming these to
+zero is what caused reading the raw value value to always return a fixed
+value because the real value got multiplied by 0 in the ADC.
 
-Konrad
+Is that enough to clear it up?
+
+> 
+> I think the patch is fine, but if my understanding is right the commit
+> log is more dramatic than the issue really is, as it needs some fiddling
+> with the ADC's registers between poweron and driver loading to trigger.
+> 
+> Best regards
+> Uwe
+
 
