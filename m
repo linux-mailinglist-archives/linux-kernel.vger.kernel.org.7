@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-831135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4C4B9BA52
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A50E4B9BA68
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A8C425C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3911316F809
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966AB258EEF;
-	Wed, 24 Sep 2025 19:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1013F25B31B;
+	Wed, 24 Sep 2025 19:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JjcMMcd+"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R45zdsHl"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10D4247293
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383151ADFFB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758741378; cv=none; b=UQoWBpMjpdt8luwxhY9GFmhpFUvp8avQgjC2GlUSVOQb2g3WTnfLnVTSQG9KahE87Wkm0e4yf53a++S0K9n5OhQ5JYcTanaMFzKl8WHSfRCz1zYaIJu5aXTOZmxL+moqnK13RsmrHr8+7n7BXz2vX3XROWRROCBS8A6QA5MbJdI=
+	t=1758741410; cv=none; b=t887DWpV9YlMchgRj6O8bskaPsU+UMLaRxqdQH09PuCvOnKC4ioJJAr/y4WlO4iZFTDh8GJgvXZh4NnLoHuJssh3Fzl3O8eMydtkArLAOwXj1G56LIjJwGu9wKaxTUiI5BtzdEJ8gz5ckYKFGYAId2JQzWbe88mS7JpIculfe9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758741378; c=relaxed/simple;
-	bh=242uNVKq6KrYgnHaBQZ/+ePdOXDtoEPr1zTTT6LTAgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NkbYD3orunU0VH/fPeSBTHlPKvVbFWmwcBWiRcu3uYE40vVgAXXL2mC/K7pAfVtNS61VGTZURpyRHgrPkvzHKEwrTE6U0ivF1eIJVeSi5lhrh4klGEcqsBndrKmu+9RYYH/tyDVIYSNYAs5wl1JffF8Hu4zF+Hr4HbCCW9eoc8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JjcMMcd+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1758741410; c=relaxed/simple;
+	bh=YVlT54garPBD0FO2+bAXLOKliKfzm/96L/8qJaEhjbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EsCn6CUkzS3hHJr/nI1WhBCcw2bKzARgtkLoMQEnibh27DzdrGSb8a0TpymhWstk5MgnrkVBqcZE7ny/w9Xc77pw1u7gcJuLbZdt5OKTzHZWmYUIFwb7VgHFqpdWf1+7FlHjQHh+1XqdZyemZZiUJ5iWWQGA+3VR8zv2ww2Hb8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R45zdsHl; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-26a0a694ea8so1465465ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:16:16 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee130237a8so150805f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758741376; x=1759346176; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGs2Zb6lt09bETnOM5YrvUvUmVqAndiGU5BiAiH+8xc=;
-        b=JjcMMcd+qOTUsprAqT8IZgrmi5dLG3NPladk242QMpb29P5FH72DTOVUzNXFgKJ7xP
-         UFOEn9aRlpRJDG66sZADk/kCb+Yb7ipwDQt1C1tglp9xKDfayrTxA9aitQNMWlGxJPo+
-         1DXM/vh2qFQIkgqhUn976AIszk2S2leoa2U87nQ8j3GCbDDtE3pFAIcMW9DMXno/GwZ7
-         pin33I4tVvrCNVU9W2U4+vSK8nCdANfm9vMA1i22+lekDeB7p5aGVoZTOBeqax2e9M1L
-         gLOH3zcCMFx+04YPb9Rqw8tNjJlZSadOLMCG5NuwkUt4rJ+RejU8enwmTbR6d1dvKVcZ
-         6jAg==
+        d=gmail.com; s=20230601; t=1758741406; x=1759346206; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WGx3zlBBHkNessJ0m/rkeDNiqfi2ciQeFSjApbhvzeI=;
+        b=R45zdsHlhW2m7bUWki9EbupS43pZK2YS+XNfKSbuRMrwXV+zKZikHOBntel/W2MhWj
+         HmuttDl1eP9aDJ38GKPCmnUzawuCeiG7p1myqYyn48ede61RO9VjLuPQuMhcXb3J0AmY
+         ppH4SM++F6UxTwO3pgpL0bOY3F7EanLw/igNyN+ss+BAU/DsIdbfavJVEQrqxPmQG9jX
+         W9Cwd5txHu4RusUdUzOPHgFyvvY9PS5TLbLaSSmFmtQA3La/uC/nBr1psBVwEKMAYNve
+         HI7MkuYVzPrxbpcwv3mNNB0WZlDffKeQFzJCGi6zr/6QlzUK1EdnzGaKBuKO7Q+anLVd
+         jW0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758741376; x=1759346176;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGs2Zb6lt09bETnOM5YrvUvUmVqAndiGU5BiAiH+8xc=;
-        b=eYsVOj/ANolU97Z5qfGalZjYYcthiXpaGCfTX8Oftqt3Z6Sb7tvMhGYqtdNH6eh1ZL
-         nKQMT7JVlTTxFW9LXRwkrFEXFAij7LSQAtQQad7rty5XAtTYMSqSuoAWgMuri2PPQxR+
-         7PPnYhCJ873c7eR/tBt3nFgzGv571KoQP2O+p6FjpcvqBc/YACPuVRvAkd0QUNl0JLfr
-         8Vmd3LGrnG8SixkdsC908T9SttNOAKc7FskPnh1wlqYd2L1/IZ7Jz0KSGXcMQim4LW0t
-         AlTBbbSDaG5Q6Xu8eU7OXenQjDfp5RnSuTt/kTLKJFwI3rWyNz9Pi/B/lzRHzdn+o9MM
-         QA3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKk5f5ngel7vUifsbBY1+WBTNhZqe6MTQOIuyKuXswnd3t0D9/8y28zE7s06YO7mMQ4kDZnI6ojYO/SV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxouzDI3YDvLF5MXZJBzkoFh5rZne3+M5fAaQlJ330x/xA/x3k6
-	6lf+WRQRJjXss8snNXrKfxTrQPq16G7w0HjMgEzv2hhmuu6YiX1LrkF3
-X-Gm-Gg: ASbGncshLNKsMSWAebHiTg4FRpB7v6cAbmIN96xF1lbHjmr5C/fJF4lMShdAKAGsrqQ
-	wbiOZlxiM4B17JpQ2PIvVVhkGD1JnQmeXoM+LyYW2iyqKA9+UcbvDOWF6+/O1kF+++W2sPJAtL7
-	lL1cI0Yv1PqohJcXz9gRARPmC1KuHyV5A4Y9oxY1bpQ07nyG2Zd2cwwmFE+p0mS6iU7Jg9qJj9g
-	3xtZGjoMNIf5kcbKfiVwQtLPBzLczEavhb6PazoMp2RmmBuIsOUhDvZXiBOUv0ZfmdWsQXpylDL
-	TAxbVnuG7t00d4J44wQe2z+laQL9ioGv3pVT8ZFdnFPNebXtjaFFGGrbPyH6Tj3R79EpJYT/uhQ
-	RrLIx86S9kNMbGl3uuhnEwXzgTlJ/nT82+YCDNqSriHtj8/rvxVCWy1JUE0QxXwUhec2+4wY=
-X-Google-Smtp-Source: AGHT+IGzgLOm8oRRNNeox1ZmPlg/Ozpw8OvsNF5vjDP9jV9+fnCL6+cwPBpaHD2rsaR+/wdI6NuCOA==
-X-Received: by 2002:a17:902:e5cc:b0:270:e595:a440 with SMTP id d9443c01a7336-27ed49e1af2mr9808495ad.25.1758741375887;
-        Wed, 24 Sep 2025 12:16:15 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802deb48sm194706265ad.70.2025.09.24.12.16.14
+        d=1e100.net; s=20230601; t=1758741406; x=1759346206;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WGx3zlBBHkNessJ0m/rkeDNiqfi2ciQeFSjApbhvzeI=;
+        b=PMCT6ymeFbrjRZuhr/BFsVxuSGqt2p8Mi/ZYovD0JnBU2fUN5mJ9CSktjRGtuvEFhj
+         iGPtcDZwsdkwhRC1NstrKzv3Djc4J7HSHImNsgraRUsyLEMVr3pAtCTocdU0Dh3Bj7c+
+         rAa6cVAmI7tfpN/ly3qxB867sCtf3EGTK9MNjz1eBzVo9dX2pPMep+sHj2csN4KCWHmV
+         9TlPZjyGQTpUWasscxvr3fKgRKiI6au8Ks9jmdEpjp1Q+79JiHtwgrbZHF37cWwnl+RR
+         coudeIGKfn5D39Y3pk2Sh1fav01/3uFRn1jfMnmZ5oj6MgyhrCQsJPrRjyKJK+JPPPfr
+         Wn3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWSJwyCR7ylM7y0GNO0oBro2xlWbPPfdL+6PYilooogo4UxgkDf4tRaPG+KBKKFKvh0AVVUY/VUaqYFhtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznJhXL/PxSuMJlhbSAKXtv/qxmOnhA1KkSvI3m+iLWLwJo70qo
+	h4x0UbkFGt4IG/BYBlDLF51LP+BtJvpgKEs+3r2Fb0oWzoUCl3hqXUQJ
+X-Gm-Gg: ASbGncv9rti+UC6lnUT79MiPd1EnxlJT5XPs332F8kKJqH0nWAZUm4W3UBOWwtKflgQ
+	bfGkGkUTPDkxCs5p1ls4nKEL1CmfNgk9sgq8RJyo3EgH5YvdHioa0f2SCkQmfRCyLTtO1mioxvj
+	rN98YhcqG5G8RqllDvRvmvzj+7P47Mwf4/y8sIy4Mq4Fs27d+9cRA69LdA02AMZaVVPGFims+35
+	mpx5ccIKJgY4xcVOVqaXwZlAnsyHc4Eb8XapZozD2o5P/A9wpEWHDYQzlHPuCfPxWltdJovxdo2
+	MTbnTz2n3vyMbczlAz28jD6xfHgIzoTVpCXNeHi7qnLNwi8z94c++nersOB/dYdt2NF+XwUvVQo
+	mroS8e2am20/YFTyukFYpgYS/ZHod
+X-Google-Smtp-Source: AGHT+IEkmum6L+0ojuHXcWkPL4nJbsrtJLZN+RK5tA0W3rkL3CZoiSWqcMwEBXIQ0fuk2YRFA2vAwQ==
+X-Received: by 2002:a05:6000:40df:b0:3ea:c893:95a7 with SMTP id ffacd0b85a97d-40e4adce88amr837149f8f.31.1758741406208;
+        Wed, 24 Sep 2025 12:16:46 -0700 (PDT)
+Received: from [192.168.1.50] ([81.196.40.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407aebsm30282797f8f.14.2025.09.24.12.16.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 12:16:15 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e6c8f022-ebfc-459c-806b-f75618f65916@roeck-us.net>
-Date: Wed, 24 Sep 2025 12:16:14 -0700
+        Wed, 24 Sep 2025 12:16:45 -0700 (PDT)
+Message-ID: <07ee4e8c-bcb8-4349-afd3-59bc58899116@gmail.com>
+Date: Wed, 24 Sep 2025 22:16:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,181 +81,230 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
- subdevices
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Mark Brown <broonie@kernel.org>, jdelvare@suse.com, lgirdwood@gmail.com,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alistair Francis <alistair@alistair23.me>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- Jonathan Cameron <jic23@kernel.org>
-References: <20250920114311.291450-1-andreas@kemnade.info>
- <20250920114311.291450-2-andreas@kemnade.info>
- <79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
- <20250920233307.0c425863@kemnade.info>
- <473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
- <20250924090023.282ae450@kemnade.info>
- <b68d40d9-6ea9-49a9-8a2e-8b899f33340d@roeck-us.net>
- <20250924195358.16bbd90c@kemnade.info>
+Subject: Re: [PATCH rtw-next 3/6] wifi: rtw89: implement C2H TX report handler
+From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Ping-Ke Shih <pkshih@realtek.com>
+Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, Po-Hao Huang
+ <phhuang@realtek.com>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-4-pchelkin@ispras.ru>
+ <5316222e-5d9d-4cb8-b161-06ba311bdc2d@gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250924195358.16bbd90c@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <5316222e-5d9d-4cb8-b161-06ba311bdc2d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/24/25 10:53, Andreas Kemnade wrote:
-> On Wed, 24 Sep 2025 00:17:48 -0700
-> Guenter Roeck <linux@roeck-us.net> wrote:
-> 
->> On 9/24/25 00:00, Andreas Kemnade wrote:
->>> On Sat, 20 Sep 2025 23:18:59 +0100
->>> Mark Brown <broonie@kernel.org> wrote:
->>>    
->>>> On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
->>>>   
->>>>> Just for learning, yes, it is an abuse of the _optional for non-optional
->>>>> things, so a dirty hack which should not go in, therefore RFC. But what
->>>>> happens more than having the hwmon device endlessly deferred at worst?
->>>>
->>>> There's also the fact that this API is so frequently abused for bad and
->>>> broken reasons that I regularly audit users and try to fix them, I'd
->>>> rather not see any new users that don't have a really strong reason to
->>>> use it.
->>>>   
->>>>> The wanted regulator is the one defined in sy7636a-regulator.c. So it
->>>>> is all an issue internal to the sy7636a.
->>>>   
->>>>> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
->>>>> I see several other solutions:
->>>>> a) call device_is_bound() on every other children of dev->parent, if not
->>>>> bound defer.
->>>>> b) do not care about the regulator api at all, just check whether
->>>>>      the corresponding bit is set before reading temperature, return
->>>>>      -ENODATA if not, some mutex is probably needed.
->>>>> c) do not care about the regulator api at all, just set the
->>>>>      corresponding bit (together with some mutex locking and counting).
->>>>
->>>> I assume this is using the regulator API because someone might use an
->>>> external regulator in a system design for some reason (better quality,
->>>> power efficiency or a shared reference between multiple devices I
->>>> guess?), or because the supply might also be used by external devices?
->>>>   
->>>>> d) copy the of_node pointer from the parent, add a regulator phandle property
->>>>>      to the node pointing to the regulator in the node itself.
->>>>>      That sounds like your idea but is against the current dt binding for
->>>>>      this device and afaik it is uncommon to have mfd-internal things wired
->>>>>      up this way
->>>>>
->>>>> e) something clean, simple I miss
->>>>
->>>> The idea is that the relationship between the devices should be
->>>> registered before the devices, that's how the regulator knows to defer.
->>>> We used to have an API for doing this for board files which might fit
->>>> here, but it got removed since nobody wants board files any more.  If
->>>> you're allocating the devices dynamically that's annoying to implement
->>>> though...
->>>
->>> looking a bit around:
->>> max5970-regulator.c has hwmon integrated and no extra device. That would
->>> simplify things. Although it does not report temperature. Some
->>> touchscreens have temperature via hwmon, some others have temperature
->>> via iio, directly in one device without mfd. Maybe that is also
->>> the better way here?
->>>    
+On 24/09/2025 01:12, Bitterblue Smith wrote:
+> On 20/09/2025 16:26, Fedor Pchelkin wrote:
+>> rtw89 has several ways of handling TX status report events.  The first one
+>> is based on RPP feature which is used by PCIe HCI.  The other one depends
+>> on firmware sending a corresponding C2H message, quite similar to what
+>> rtw88 has.
 >>
->> Touchscreens reporting temperature via iio is in general the wrong thing to do.
->> Touchscreens report the temperature for monitoring reasons, after all.
->> But then, sure, if you insist. I am getting tired of arguing.
+>> Toggle a bit in the TX descriptor and place skb in a queue to wait for a
+>> message from the firmware.  Do this according to the vendor driver for
+>> RTL8851BU.
 >>
-> I apparently did not make clear what my question refers to. It was more about separate
-> hwmon device + mfd vs. integrating everything into the regulator driver.
+>> It seems the only way to implement TX status reporting for rtw89 USB.
+>> This will allow handling TX wait skbs and the ones flagged with
+>> IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
+>>
+>> Found by Linux Verification Center (linuxtesting.org).
+>>
+>> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+>> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+>> ---
+>>  drivers/net/wireless/realtek/rtw89/core.c | 12 +++++++++++-
+>>  drivers/net/wireless/realtek/rtw89/core.h |  2 ++
+>>  drivers/net/wireless/realtek/rtw89/fw.h   |  5 +++++
+>>  drivers/net/wireless/realtek/rtw89/mac.c  | 23 +++++++++++++++++++++++
+>>  drivers/net/wireless/realtek/rtw89/mac.h  |  9 +++++++++
+>>  drivers/net/wireless/realtek/rtw89/txrx.h |  2 ++
+>>  6 files changed, 52 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+>> index 917b2adede61..d2a559ddfa2e 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/core.c
+>> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+>> @@ -1420,11 +1420,20 @@ static __le32 rtw89_build_txwd_info2_v1(struct rtw89_tx_desc_info *desc_info)
+>>  	return cpu_to_le32(dword);
+>>  }
+>>  
+>> +static __le32 rtw89_build_txwd_info3(struct rtw89_tx_desc_info *desc_info)
+>> +{
+>> +	bool rpt_en = desc_info->report;
+>> +	u32 dword = FIELD_PREP(RTW89_TXWD_INFO3_SPE_RPT, rpt_en);
+>> +
+>> +	return cpu_to_le32(dword);
+>> +}
+>> +
+>>  static __le32 rtw89_build_txwd_info4(struct rtw89_tx_desc_info *desc_info)
+>>  {
+>>  	bool rts_en = !desc_info->is_bmc;
+>>  	u32 dword = FIELD_PREP(RTW89_TXWD_INFO4_RTS_EN, rts_en) |
+>> -		    FIELD_PREP(RTW89_TXWD_INFO4_HW_RTS_EN, 1);
+>> +		    FIELD_PREP(RTW89_TXWD_INFO4_HW_RTS_EN, 1) |
+>> +		    FIELD_PREP(RTW89_TXWD_INFO4_SW_DEFINE, desc_info->sn);
+>>  
+>>  	return cpu_to_le32(dword);
+>>  }
+>> @@ -1447,6 +1456,7 @@ void rtw89_core_fill_txdesc(struct rtw89_dev *rtwdev,
+>>  	txwd_info->dword0 = rtw89_build_txwd_info0(desc_info);
+>>  	txwd_info->dword1 = rtw89_build_txwd_info1(desc_info);
+>>  	txwd_info->dword2 = rtw89_build_txwd_info2(desc_info);
+>> +	txwd_info->dword3 = rtw89_build_txwd_info3(desc_info);
+>>  	txwd_info->dword4 = rtw89_build_txwd_info4(desc_info);
+>>  
+>>  }
+>> diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wireless/realtek/rtw89/core.h
+>> index 928c8c84c964..2362724323a9 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/core.h
+>> +++ b/drivers/net/wireless/realtek/rtw89/core.h
+>> @@ -1167,6 +1167,8 @@ struct rtw89_tx_desc_info {
+>>  	u8 ampdu_density;
+>>  	u8 ampdu_num;
+>>  	bool sec_en;
+>> +	bool report;
+>> +	u8 sn;
+>>  	u8 addr_info_nr;
+>>  	u8 sec_keyid;
+>>  	u8 sec_type;
+>> diff --git a/drivers/net/wireless/realtek/rtw89/fw.h b/drivers/net/wireless/realtek/rtw89/fw.h
+>> index ddebf7972068..f196088a8316 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/fw.h
+>> +++ b/drivers/net/wireless/realtek/rtw89/fw.h
+>> @@ -3747,6 +3747,11 @@ struct rtw89_c2h_scanofld {
+>>  #define RTW89_GET_MAC_C2H_MCC_REQ_ACK_H2C_FUNC(c2h) \
+>>  	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(15, 8))
+>>  
+>> +#define RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h) \
+>> +	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(7, 6))
+>> +#define RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h) \
+>> +	le32_get_bits(*((const __le32 *)(c2h) + 2), GENMASK(12, 8))
+> 
+> This is only 4 bits:
+> 
+> #define TXCCXRPT_SW_DEFINE_SH		8
+> #define TXCCXRPT_SW_DEFINE_MSK		0xf
+> 
+> 
+> The rest of the series looks good to me. (I don't know much about
+> the RCU stuff.) I will test this tomorrow.
 > 
 
-What I keep failing to understand is why people keep avoiding the potential of
-implementing auxiliary device drivers, since that would be the perfect solution
-and match the intended use case for auxiliary devices.
+Actually, I found this in my notes:
 
-> But since you brought up the topic hwmon vs. iio for temperature. I do not have
-> a strong opinion here as long as I can somehow live with it. Nothing I want to
-> fight for. One sensor I use for measuring room temperature is hwmon, another
-> one is iio. So it is all not that consistent.
+"how to get just one tx report for each request? currently it seems
+to provide a report for each transmission attempt. how is the vendor
+driver coping with that?"
+
+I think your code doesn't account for this.
+
+Sorry I forgot about this detail. This behaviour is new in rtw89.
+The chips supported by rtw88 provide only one report for each request.
+
+>> +
+>>  struct rtw89_mac_mcc_tsf_rpt {
+>>  	u32 macid_x;
+>>  	u32 macid_y;
+>> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
+>> index fd11b8fb3c89..01afdcd5f36c 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+>> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+>> @@ -5457,6 +5457,17 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32
+>>  	rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
+>>  }
+>>  
+>> +static void
+>> +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
+>> +{
+>> +	u8 sw_define = RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
+>> +	u8 tx_status = RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
+>> +
+>> +	rtw89_debug(rtwdev, RTW89_DBG_TXRX,
+>> +		    "C2H TX RPT: sn %d, tx_status %d\n",
+>> +		    sw_define, tx_status);
+>> +}
+>> +
+>>  static void
+>>  rtw89_mac_c2h_mrc_tsf_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
+>>  {
+>> @@ -5691,6 +5702,12 @@ void (* const rtw89_mac_c2h_mcc_handler[])(struct rtw89_dev *rtwdev,
+>>  	[RTW89_MAC_C2H_FUNC_MCC_STATUS_RPT] = rtw89_mac_c2h_mcc_status_rpt,
+>>  };
+>>  
+>> +static
+>> +void (* const rtw89_mac_c2h_misc_handler[])(struct rtw89_dev *rtwdev,
+>> +					    struct sk_buff *c2h, u32 len) = {
+>> +	[RTW89_MAC_C2H_FUNC_TX_REPORT] = rtw89_mac_c2h_tx_rpt,
+>> +};
+>> +
+>>  static
+>>  void (* const rtw89_mac_c2h_mlo_handler[])(struct rtw89_dev *rtwdev,
+>>  					   struct sk_buff *c2h, u32 len) = {
+>> @@ -5777,6 +5794,8 @@ bool rtw89_mac_c2h_chk_atomic(struct rtw89_dev *rtwdev, struct sk_buff *c2h,
+>>  		}
+>>  	case RTW89_MAC_C2H_CLASS_MCC:
+>>  		return true;
+>> +	case RTW89_MAC_C2H_CLASS_MISC:
+>> +		return true;
+>>  	case RTW89_MAC_C2H_CLASS_MLO:
+>>  		return true;
+>>  	case RTW89_MAC_C2H_CLASS_MRC:
+>> @@ -5812,6 +5831,10 @@ void rtw89_mac_c2h_handle(struct rtw89_dev *rtwdev, struct sk_buff *skb,
+>>  		if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MCC)
+>>  			handler = rtw89_mac_c2h_mcc_handler[func];
+>>  		break;
+>> +	case RTW89_MAC_C2H_CLASS_MISC:
+>> +		if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MISC)
+>> +			handler = rtw89_mac_c2h_misc_handler[func];
+>> +		break;
+>>  	case RTW89_MAC_C2H_CLASS_MLO:
+>>  		if (func < NUM_OF_RTW89_MAC_C2H_FUNC_MLO)
+>>  			handler = rtw89_mac_c2h_mlo_handler[func];
+>> diff --git a/drivers/net/wireless/realtek/rtw89/mac.h b/drivers/net/wireless/realtek/rtw89/mac.h
+>> index 25fe5e5c8a97..632b85aed032 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/mac.h
+>> +++ b/drivers/net/wireless/realtek/rtw89/mac.h
+>> @@ -432,6 +432,14 @@ enum rtw89_mac_c2h_mcc_func {
+>>  	NUM_OF_RTW89_MAC_C2H_FUNC_MCC,
+>>  };
+>>  
+>> +enum rtw89_mac_c2h_misc_func {
+>> +	RTW89_MAC_C2H_FUNC_WPS_RPT,
+>> +	RTW89_MAC_C2H_FUNC_TX_REPORT,
+>> +	RTW89_MAC_C2H_FUNC_BF_SENS_FEEDBACK = 0x4,
+>> +
+>> +	NUM_OF_RTW89_MAC_C2H_FUNC_MISC,
+>> +};
+>> +
+>>  enum rtw89_mac_c2h_mlo_func {
+>>  	RTW89_MAC_C2H_FUNC_MLO_GET_TBL			= 0x0,
+>>  	RTW89_MAC_C2H_FUNC_MLO_EMLSR_TRANS_DONE		= 0x1,
+>> @@ -470,6 +478,7 @@ enum rtw89_mac_c2h_class {
+>>  	RTW89_MAC_C2H_CLASS_WOW = 0x3,
+>>  	RTW89_MAC_C2H_CLASS_MCC = 0x4,
+>>  	RTW89_MAC_C2H_CLASS_FWDBG = 0x5,
+>> +	RTW89_MAC_C2H_CLASS_MISC = 0x9,
+>>  	RTW89_MAC_C2H_CLASS_MLO = 0xc,
+>>  	RTW89_MAC_C2H_CLASS_MRC = 0xe,
+>>  	RTW89_MAC_C2H_CLASS_AP = 0x18,
+>> diff --git a/drivers/net/wireless/realtek/rtw89/txrx.h b/drivers/net/wireless/realtek/rtw89/txrx.h
+>> index 984c9fdbb018..d7259e6d798e 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/txrx.h
+>> +++ b/drivers/net/wireless/realtek/rtw89/txrx.h
+>> @@ -139,8 +139,10 @@ static inline u8 rtw89_get_data_nss(struct rtw89_dev *rtwdev, u16 hw_rate)
+>>  #define RTW89_TXWD_INFO2_SEC_CAM_IDX GENMASK(7, 0)
+>>  
+>>  /* TX WD INFO DWORD 3 */
+>> +#define RTW89_TXWD_INFO3_SPE_RPT BIT(10)
+>>  
+>>  /* TX WD INFO DWORD 4 */
+>> +#define RTW89_TXWD_INFO4_SW_DEFINE GENMASK(3, 0)
+>>  #define RTW89_TXWD_INFO4_RTS_EN BIT(27)
+>>  #define RTW89_TXWD_INFO4_HW_RTS_EN BIT(31)
+>>  
 > 
-
-That doesn't mean what exists is consistent or even makes sense. Some driver support
-for chips intended for reporting the environment or chip temperature are pushed into iio.
-I have no idea why that is the case. Yes, that results in odd situations like yours,
-but there is nothing I can do about it. I can only guess that _someone_ is pushing for
-submitting drivers into IIO instead of hwmon, but that is just a wild guess. You would
-have to ask the driver authors and/or IIO maintainers for reasons. I am copying the IIO
-mailing list for feedback.
-
-Also, again, I am tired of arguing, so I typically don't even comment anymore (if I even
-notice) unless explicitly asked.
-
-> But what is the hwmon equivalent for
-> devm_fwnode_iio_channel_get_by_name() + iio_read_channel_processed()?
-> 
-
-Assuming you refer to the exported functions for in-kernel use, so far no one has
-expressed a need for it. The best solution would probably be a hwmon->iio bridge,
-or equivalent functions could be implemented and exported.
-
-> I wonder whether I really need a thermal zone. It adds stuff not needed here,
-> trip points and polling.
-> 
-
-The driver _registers_ a thermal zone, but that doesn't mean it has to be configured.
-If one is configured (typically via devicetree), it is obviously needed.
-
-> Documentation/hwmon/sy7636a-hwmon.rst seems to be wrong. It is not
-> SoC-on-die temperature, but temperature from an external NTC. And
-> that is typically used to tune the EPD refresh to the temperature.
-
-Please feel free to submit a patch correcting the documentation.
-
-Guenter
 
 
