@@ -1,392 +1,201 @@
-Return-Path: <linux-kernel+bounces-830085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DF5B98B1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EBAB98B28
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3554A6F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83571899DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEBF286D5C;
-	Wed, 24 Sep 2025 07:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35631FDE01;
+	Wed, 24 Sep 2025 07:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ReA3fDVS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D3R2aYV/"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217892F56
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D24502F
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758700200; cv=none; b=b/Xy3934umjJd0MqCG9BLnp8rZp0fJsR+mSXXJIfHA+7fV00sTvIrFuF0SJ9VeAhOl4TYPpRHCPRnBOltXsoQYNL6kL0pwFIOIfkNYOSwEIEWzWJa726OedoV96Y99ayP7RrXbv5aRI5t5gImzbCOYqyA3ooUpvos1w4huUQalQ=
+	t=1758700254; cv=none; b=jyN2DZFESOLTMKqFE7qtfAXE/zs5z8h4KNTJpGwDBJHYOUBOejqXR0HJOGofL/dTHbcAGvxgwW5kLKEcjjKOu+esjePGIeTy5Rq2PcKbKDKCOPfRV7PVrDGiu+TOKWLc2ynkUXdflTl/IXWF7/tIy47KM2tmVZuGpUyHf9Yzx6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758700200; c=relaxed/simple;
-	bh=uc6ISieAaXFT4aav6NNM2tVosCA7b7yxzr213CmqjSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFQK8ptmm4gceoOxfoW+pEeHmekdYPmazGSTjjwPWENL5W8YnoAMfbhZRWPjh0EdacP4+/U5LPf8Dp0E3a4HIij5KF8Q1Ftr5tiYXhFgL0YWFxP8EO+rF0PF6nmF0ii/F73JMvlgpwDhfZMjjgRpcqjlPV43C7n8XroG5g98YIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ReA3fDVS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758700197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jdMx3QVWSZ6LKmjhlJB1nzhhz5UUzIgjxX638ayHrZQ=;
-	b=ReA3fDVSGxGOdkK78gdIXjkthUy7FadJhc79wBkfr8ICi4BWIzMA2SWN3aez3fnc/z2vtr
-	Qlc04amyz18YATgvuQbCrlQTaRguO5kFrfZvZ4kmKX5bDSNCtsJflPRG5VfUHVNoV4NUDV
-	eeXFyWyw9M2JWDAeaprsruIB0ajQfEU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-531-o9ua1npTPhmYl32hGvwgzQ-1; Wed, 24 Sep 2025 03:49:55 -0400
-X-MC-Unique: o9ua1npTPhmYl32hGvwgzQ-1
-X-Mimecast-MFC-AGG-ID: o9ua1npTPhmYl32hGvwgzQ_1758700195
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-401dbafbcfaso1346500f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:49:55 -0700 (PDT)
+	s=arc-20240116; t=1758700254; c=relaxed/simple;
+	bh=45ID2kuv0qFzfqDiZyEd9DoHC7kvx6ye7Wh2smi4EfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbeDdHWZCYTeSRNyUU5gdvi8vrIXAhqxNAaMU/EkFV3WzfW2csCZ0YGxxrxEfP0nDm2Nltw9ApYaOUe7N1H7JsDcET8vQHqHK3dTetnXuU6LpuX5ibWWZhksqR9phm9kmcvOrc1x1XdS6bkOGs8IGjZAqz2b6T+SDXFmAFPtmwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D3R2aYV/; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so4729071a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758700251; x=1759305051; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CV8Ezfn2saza8BjopllSPTGobi36DchCDdd90Jw4e3I=;
+        b=D3R2aYV/E2VgUiaTXCyGZyOYBD0HiSit4mSb8GssohgxP40kNsfleMraXpc0XZAC++
+         S0yn9ZlVzoKjoTNHS2PF+7/7XZcoJ6OZSuwxwbflSkA5azZB7cRsdgaWTHCg0rVS25A3
+         Q+76runYZeLgnHgqpHIdDKWT98mHjZJLjeEIoUrtiIGZeZdPNoj9uzkFdft5d2QvqF6U
+         3n7LD3wxSaNRq7Pp4bzoVEYkH0elXmApzlDGhE9cmJ16tFC/cRhXJejf4Jpf9ysHo2OQ
+         2Il0WzNFFC6swZz+T6/2Ou4j8tHSJfdayS6N8NpgYGnxkKZk7jm8PFKu82nQCLVUzffZ
+         j9Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758700195; x=1759304995;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdMx3QVWSZ6LKmjhlJB1nzhhz5UUzIgjxX638ayHrZQ=;
-        b=dFRcIZaARGPU3HZbsVcEerbOh15E9uKgB88LqZ9V5WWTr1w1JMfmXxMs0ycetnJzka
-         rg8RTA9aMzOv7Dzd1GU4RKXm4bHHJikZK1KHJyRKvMQm6NO/YBVrWDWMij0f6odMOs4F
-         8pwSTGYd7+BPqQjdOcqtwHm+7Peae+cwJlaZQlTZ8l1TMkojld0qkw8CaHgU4aU5CXy+
-         YSpjQYztSfcUpoyAYCDQQ789+bHcHpVOgD0WYrye5gF4iwCDrl+XusEQ6yUDWb/ppsEn
-         5rvZdyNVv6YOUJWJRaqaAh79giz8daZyZwrOUGWbgwg92UcpuMLyZq9ywXIcfNT4oyy6
-         dDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCW60Sz5Nmj/1k+9jF7m1zJaLxr4NQlRwScnePanR3FYMdbp/rRskwAXelimN+b3nsPx69RAQoF02t8DgX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH46E5RD+rRTrOeRSBe+8M1WtjC860ied94smWbcOOMfSyn7c1
-	mD1upb7Z5h3Hv/M3kcruxPPCfq5MKwp7DzTer1JC+RfHijgUiWhwRhdJ54D7A0bx7fKWyFRVWpA
-	3JjNKWW3cItKXHw8PzljbgsI3QT+XTXdPZ6XgclHoJDGqAp8j0h3aNO9WavIiyUcWjQ==
-X-Gm-Gg: ASbGncvhD6rfPiExTWexKTFLRdjvbcM/f2fTIAao0KZBZBQ+Lhitk9bX7+L+wCx/Ioq
-	s4tYtkOQ3n45X3/rSlzNAMS9XYqwIIS1Vj75hzKGs9AME8KfWEkhh8wsFDmJIPQG4mI+tJuJ6om
-	0BwL85Zf56oqmYB2fn9q8ESE8NSnSL/aNF+XUV+qCblzWgiieaXaRsb0Oyf7ipeM6ebUyO5WEJo
-	S+bkmc8tkyIHVax0A9RqCUdHlMRiKUz2Kjx5k6Ve+bPXmLnU2p2rpRgeuguHXi9g5CHa/wkEObH
-	P9kwQ6clVEPQz6oLuEPXXbOQ+7m9m2gEoLU=
-X-Received: by 2002:a05:6000:2204:b0:3e7:65a6:dbf with SMTP id ffacd0b85a97d-405c5ccc9d5mr4161804f8f.6.1758700194519;
-        Wed, 24 Sep 2025 00:49:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAd953qSH8hZIgDHBwYLoc8FquXuXRMDSqiFyKFFPq3vdIpLOnAbvFV8zHb6qxjx8ZavCtZw==
-X-Received: by 2002:a05:6000:2204:b0:3e7:65a6:dbf with SMTP id ffacd0b85a97d-405c5ccc9d5mr4161779f8f.6.1758700194045;
-        Wed, 24 Sep 2025 00:49:54 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f9c62d083esm15058456f8f.32.2025.09.24.00.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 00:49:53 -0700 (PDT)
-Date: Wed, 24 Sep 2025 03:49:51 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-	eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org,
-	Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: Re: [PATCH net-next v5 4/8] TUN & TAP: Wake netdev queue after
- consuming an entry
-Message-ID: <20250924034534-mutt-send-email-mst@kernel.org>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250922221553.47802-5-simon.schippers@tu-dortmund.de>
- <20250923123101-mutt-send-email-mst@kernel.org>
- <aacb449c-ad20-48b0-aa0f-b3866a3ed7f6@tu-dortmund.de>
- <20250924024416-mutt-send-email-mst@kernel.org>
- <a16b643a-3cfe-4b95-b76a-100f512cdb79@tu-dortmund.de>
+        d=1e100.net; s=20230601; t=1758700251; x=1759305051;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CV8Ezfn2saza8BjopllSPTGobi36DchCDdd90Jw4e3I=;
+        b=m9kqO6vDg3prVtN3EFU1g9NE2UCVzYoK671v/xVncYYC0nkW7NO9R4FyhhjE3AghgM
+         SgYaCqNHdETym4AMXXTE4AZqRayrz7nuY5til51Nmcb5dzJ5i9LcgU8n8TTgyqARHmc0
+         t5TMuQwHcfGZbo68D8J/JcrOAHbC+0VYA/1R17wMmBOC3e0Y5HjLxrkwtGEh8MEKbwIJ
+         9GjtYpZ+a0vCt0BGCpyLobgKqkldPLKO8LbeyZf8lRx1PYRLUrhVJ4Bk4hT2C/RFU/+z
+         YR3908KNq8IlWR7SzV+SMNi5nqSQ4kERbpBFfrsMhUn+vNhJX17rGnokxSm9ezPz22jR
+         D1aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/D84vEM5Pr5Py/ASrx+lj9OLdiIdDBDN8cwNOfrDdO0d6bZXYNua7UfM70crVDPDlAY0bZsmwj4noOR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzIMzKjgIds7flPqQV6HrhKW8d3rBR+ONByrDsC4Vt8+RY/XfB
+	u9WiHntOx41BWy/EdVav1SRvErtbPDmlbnvEepYWOl5r++UNx0D3OXNxgPGO7Fx9OTg=
+X-Gm-Gg: ASbGncvYrBV68GEoLgE0zfblBlW0t1qJf9nSVB6NBxM+lCDSDxzoEyqjsGCBRrffvH+
+	r2D9t1TZgt0FSrqxv2qcjj6orxFwFQOagaxbrFo5B+LXXK6TtFXqU+7+muBzMsiCWv7tq0b21oK
+	hbEqzNF5ue9RBOsCHv8//kG/cFHSVvwwkIE+MJZZMwpnjy99tzfvLg9eB2ETEwQ1QRH7ENUB/3E
+	Dxe+VplwGLh+bz0qxNIoaUkMs8zs3dZtjPkaxGQ+M8314siCjPEfep4DJtoZb2zx2GA47CVi+q/
+	bK8XA5fN1o1qMTwOK6VA4ntpIm4o+pUQr+2b1JtAwiygdYC5smtAPwngpANymoULxB9HKg3k8qo
+	9rSgZ9IJeVHRgqNlC6nRBfXo8XJBcre7y7EcxmHc+sFA53Eut5yeCw4nYVV7lFyXRNRiU1Q3xoQ
+	==
+X-Google-Smtp-Source: AGHT+IF/FsViDZnN1wC3bVBeDjfe2a1td3Uy9MTTTgmPfAiltbIpdnbAcEVw0Jdsi9BK/RiEHIqtzQ==
+X-Received: by 2002:a17:903:4b4b:b0:279:a5bb:54e2 with SMTP id d9443c01a7336-27cc21fabc8mr69834335ad.20.1758700250705;
+        Wed, 24 Sep 2025 00:50:50 -0700 (PDT)
+Received: from [10.88.210.107] ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ec0a7f443sm13118355ad.105.2025.09.24.00.50.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 00:50:50 -0700 (PDT)
+Message-ID: <37fd969e-3799-48d0-a8e0-1937e5a4ae38@bytedance.com>
+Date: Wed, 24 Sep 2025 15:50:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a16b643a-3cfe-4b95-b76a-100f512cdb79@tu-dortmund.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH v2 2/2] memcg: Don't trigger hung task
+ warnings when memcg is releasing resources.
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, lance.yang@linux.dev, mhiramat@kernel.org,
+ yangyicong@hisilicon.com, will@kernel.org, dianders@chromium.org,
+ mingo@kernel.org, lihuafei1@huawei.com, hannes@cmpxchg.org,
+ mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, tj@kernel.org
+References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
+ <20250924034100.3701520-3-sunjunchao@bytedance.com>
+ <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
+From: Julian Sun <sunjunchao@bytedance.com>
+In-Reply-To: <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025 at 09:42:45AM +0200, Simon Schippers wrote:
-> On 24.09.25 08:55, Michael S. Tsirkin wrote:
-> > On Wed, Sep 24, 2025 at 07:56:33AM +0200, Simon Schippers wrote:
-> >> On 23.09.25 18:36, Michael S. Tsirkin wrote:
-> >>> On Tue, Sep 23, 2025 at 12:15:49AM +0200, Simon Schippers wrote:
-> >>>> The new wrappers tun_ring_consume/tap_ring_consume deal with consuming an
-> >>>> entry of the ptr_ring and then waking the netdev queue when entries got
-> >>>> invalidated to be used again by the producer.
-> >>>> To avoid waking the netdev queue when the ptr_ring is full, it is checked
-> >>>> if the netdev queue is stopped before invalidating entries. Like that the
-> >>>> netdev queue can be safely woken after invalidating entries.
-> >>>>
-> >>>> The READ_ONCE in __ptr_ring_peek, paired with the smp_wmb() in
-> >>>> __ptr_ring_produce within tun_net_xmit guarantees that the information
-> >>>> about the netdev queue being stopped is visible after __ptr_ring_peek is
-> >>>> called.
-> >>>>
-> >>>> The netdev queue is also woken after resizing the ptr_ring.
-> >>>>
-> >>>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> >>>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> >>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> >>>> ---
-> >>>>  drivers/net/tap.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
-> >>>>  drivers/net/tun.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
-> >>>>  2 files changed, 88 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
-> >>>> index 1197f245e873..f8292721a9d6 100644
-> >>>> --- a/drivers/net/tap.c
-> >>>> +++ b/drivers/net/tap.c
-> >>>> @@ -753,6 +753,46 @@ static ssize_t tap_put_user(struct tap_queue *q,
-> >>>>  	return ret ? ret : total;
-> >>>>  }
-> >>>>  
-> >>>> +static struct sk_buff *tap_ring_consume(struct tap_queue *q)
-> >>>> +{
-> >>>> +	struct netdev_queue *txq;
-> >>>> +	struct net_device *dev;
-> >>>> +	bool will_invalidate;
-> >>>> +	bool stopped;
-> >>>> +	void *ptr;
-> >>>> +
-> >>>> +	spin_lock(&q->ring.consumer_lock);
-> >>>> +	ptr = __ptr_ring_peek(&q->ring);
-> >>>> +	if (!ptr) {
-> >>>> +		spin_unlock(&q->ring.consumer_lock);
-> >>>> +		return ptr;
-> >>>> +	}
-> >>>> +
-> >>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
-> >>>> +	 * produced in the meantime, because this could result in waking
-> >>>> +	 * even though the ptr_ring is full.
-> >>>
-> >>> So what? Maybe it would be a bit suboptimal? But with your design, I do
-> >>> not get what prevents this:
-> >>>
-> >>>
-> >>> 	stopped? -> No
-> >>> 		ring is stopped
-> >>> 	discard
-> >>>
-> >>> and queue stays stopped forever
-> >>>
-> >>>
-> >>
-> >> I totally missed this (but I am not sure why it did not happen in my 
-> >> testing with different ptr_ring sizes..).
-> >>
-> >> I guess you are right, there must be some type of locking.
-> >> It probably makes sense to lock the netdev txq->_xmit_lock whenever the 
-> >> consumer invalidates old ptr_ring entries (so when r->consumer_head >= 
-> >> r->consumer_tail). The producer holds this lock with dev->lltx=false. Then 
-> >> the consumer is able to wake the queue safely.
-> >>
-> >> So I would now just change the implementation to:
-> >> tun_net_xmit:
-> >> ...
-> >> if ptr_ring_produce
-> >>     // Could happen because of unproduce in vhost_net..
-> >>     netif_tx_stop_queue
-> >>     ...
-> >>     goto drop
-> >>
-> >> if ptr_ring_full
-> >>     netif_tx_stop_queue
-> >> ...
-> >>
-> >> tun_ring_recv/tap_do_read (the implementation for the batched methods 
-> >> would be done in the similar way):
-> >> ...
-> >> ptr_ring_consume
-> >> if r->consumer_head >= r->consumer_tail
-> >>     __netif_tx_lock_bh
-> >>     netif_tx_wake_queue
-> >>     __netif_tx_unlock_bh
-> >>
-> >> This implementation does not need any new ptr_ring helpers and no fancy 
-> >> ordering tricks.
-> >> Would this implementation be sufficient in your opinion?
-> > 
-> > 
-> > Maybe you mean == ? Pls don't poke at ptr ring internals though.
-> > What are we testing for here?
-> > I think the point is that a batch of entries was consumed?
-> > Maybe __ptr_ring_consumed_batch ? and a comment explaining
-> > this returns true when last successful call to consume
-> > freed up a batch of space in the ring for producer to make
-> > progress.
-> >
+On 9/24/25 2:32 PM, Peter Zijlstra wrote:
+> On Wed, Sep 24, 2025 at 11:41:00AM +0800, Julian Sun wrote:
+>> Hung task warning in mem_cgroup_css_free() is undesirable and
+>> unnecessary since the behavior of waiting for a long time is
+>> expected.
+>>
+>> Use touch_hung_task_detector() to eliminate the possible
+>> hung task warning.
+>>
+>> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
 > 
-> Yes, I mean ==.
-> 
-> Having a dedicated helper for this purpose makes sense. I just find
-> the name __ptr_ring_consumed_batch a bit confusing next to
-> __ptr_ring_consume_batched, since they both refer to different kinds of
-> batches.
+> Still hate this. It is not tied to progress. If progress really stalls,
+> no warning will be given.
 
-__ptr_ring_consume_created_space ?
+Hi, peter
 
-/* Previous call to ptr_ring_consume created some space.
- *
- * NB: only refers to the last call to __ptr_ring_consume,
- * if you are calling ptr_ring_consume multiple times, you
- * have to check this multiple times.
- * Accordingly, do not use this after __ptr_ring_consume_batched.
- */
+Thanks for your review and comments.
 
-> > 
-> > consumer_head == consumer_tail also happens rather a lot,
-> > though thankfully not on every entry.
-> > So taking tx lock each time this happens, even if queue
-> > is not stopped, seems heavyweight.
-> > 
-> > 
-> 
-> Yes, I agree — but avoiding locking probably requires some fancy
-> ordering tricks again..
-> 
-> 
-> > 
-> > 
-> > 
-> >>>> The order of the operations
-> >>>> +	 * is ensured by barrier().
-> >>>> +	 */
-> >>>> +	will_invalidate = __ptr_ring_will_invalidate(&q->ring);
-> >>>> +	if (unlikely(will_invalidate)) {
-> >>>> +		rcu_read_lock();
-> >>>> +		dev = rcu_dereference(q->tap)->dev;
-> >>>> +		txq = netdev_get_tx_queue(dev, q->queue_index);
-> >>>> +		stopped = netif_tx_queue_stopped(txq);
-> >>>> +	}
-> >>>> +	barrier();
-> >>>> +	__ptr_ring_discard_one(&q->ring, will_invalidate);
-> >>>> +
-> >>>> +	if (unlikely(will_invalidate)) {
-> >>>> +		if (stopped)
-> >>>> +			netif_tx_wake_queue(txq);
-> >>>> +		rcu_read_unlock();
-> >>>> +	}
-> >>>
-> >>>
-> >>> After an entry is consumed, you can detect this by checking
-> >>>
-> >>> 	                r->consumer_head >= r->consumer_tail
-> >>>
-> >>>
-> >>> so it seems you could keep calling regular ptr_ring_consume
-> >>> and check afterwards?
-> >>>
-> >>>
-> >>>
-> >>>
-> >>>> +	spin_unlock(&q->ring.consumer_lock);
-> >>>> +
-> >>>> +	return ptr;
-> >>>> +}
-> >>>> +
-> >>>>  static ssize_t tap_do_read(struct tap_queue *q,
-> >>>>  			   struct iov_iter *to,
-> >>>>  			   int noblock, struct sk_buff *skb)
-> >>>> @@ -774,7 +814,7 @@ static ssize_t tap_do_read(struct tap_queue *q,
-> >>>>  					TASK_INTERRUPTIBLE);
-> >>>>  
-> >>>>  		/* Read frames from the queue */
-> >>>> -		skb = ptr_ring_consume(&q->ring);
-> >>>> +		skb = tap_ring_consume(q);
-> >>>>  		if (skb)
-> >>>>  			break;
-> >>>>  		if (noblock) {
-> >>>> @@ -1207,6 +1247,8 @@ int tap_queue_resize(struct tap_dev *tap)
-> >>>>  	ret = ptr_ring_resize_multiple_bh(rings, n,
-> >>>>  					  dev->tx_queue_len, GFP_KERNEL,
-> >>>>  					  __skb_array_destroy_skb);
-> >>>> +	if (netif_running(dev))
-> >>>> +		netif_tx_wake_all_queues(dev);
-> >>>>  
-> >>>>  	kfree(rings);
-> >>>>  	return ret;
-> >>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> >>>> index c6b22af9bae8..682df8157b55 100644
-> >>>> --- a/drivers/net/tun.c
-> >>>> +++ b/drivers/net/tun.c
-> >>>> @@ -2114,13 +2114,53 @@ static ssize_t tun_put_user(struct tun_struct *tun,
-> >>>>  	return total;
-> >>>>  }
-> >>>>  
-> >>>> +static void *tun_ring_consume(struct tun_file *tfile)
-> >>>> +{
-> >>>> +	struct netdev_queue *txq;
-> >>>> +	struct net_device *dev;
-> >>>> +	bool will_invalidate;
-> >>>> +	bool stopped;
-> >>>> +	void *ptr;
-> >>>> +
-> >>>> +	spin_lock(&tfile->tx_ring.consumer_lock);
-> >>>> +	ptr = __ptr_ring_peek(&tfile->tx_ring);
-> >>>> +	if (!ptr) {
-> >>>> +		spin_unlock(&tfile->tx_ring.consumer_lock);
-> >>>> +		return ptr;
-> >>>> +	}
-> >>>> +
-> >>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
-> >>>> +	 * produced in the meantime, because this could result in waking
-> >>>> +	 * even though the ptr_ring is full. The order of the operations
-> >>>> +	 * is ensured by barrier().
-> >>>> +	 */
-> >>>> +	will_invalidate = __ptr_ring_will_invalidate(&tfile->tx_ring);
-> >>>> +	if (unlikely(will_invalidate)) {
-> >>>> +		rcu_read_lock();
-> >>>> +		dev = rcu_dereference(tfile->tun)->dev;
-> >>>> +		txq = netdev_get_tx_queue(dev, tfile->queue_index);
-> >>>> +		stopped = netif_tx_queue_stopped(txq);
-> >>>> +	}
-> >>>> +	barrier();
-> >>>> +	__ptr_ring_discard_one(&tfile->tx_ring, will_invalidate);
-> >>>> +
-> >>>> +	if (unlikely(will_invalidate)) {
-> >>>> +		if (stopped)
-> >>>> +			netif_tx_wake_queue(txq);
-> >>>> +		rcu_read_unlock();
-> >>>> +	}
-> >>>> +	spin_unlock(&tfile->tx_ring.consumer_lock);
-> >>>> +
-> >>>> +	return ptr;
-> >>>> +}
-> >>>> +
-> >>>>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-> >>>>  {
-> >>>>  	DECLARE_WAITQUEUE(wait, current);
-> >>>>  	void *ptr = NULL;
-> >>>>  	int error = 0;
-> >>>>  
-> >>>> -	ptr = ptr_ring_consume(&tfile->tx_ring);
-> >>>> +	ptr = tun_ring_consume(tfile);
-> >>>>  	if (ptr)
-> >>>>  		goto out;
-> >>>>  	if (noblock) {
-> >>>> @@ -2132,7 +2172,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-> >>>>  
-> >>>>  	while (1) {
-> >>>>  		set_current_state(TASK_INTERRUPTIBLE);
-> >>>> -		ptr = ptr_ring_consume(&tfile->tx_ring);
-> >>>> +		ptr = tun_ring_consume(tfile);
-> >>>>  		if (ptr)
-> >>>>  			break;
-> >>>>  		if (signal_pending(current)) {
-> >>>> @@ -3621,6 +3661,9 @@ static int tun_queue_resize(struct tun_struct *tun)
-> >>>>  					  dev->tx_queue_len, GFP_KERNEL,
-> >>>>  					  tun_ptr_free);
-> >>>>  
-> >>>> +	if (netif_running(dev))
-> >>>> +		netif_tx_wake_all_queues(dev);
-> >>>> +
-> >>>>  	kfree(rings);
-> >>>>  	return ret;
-> >>>>  }
-> >>>> -- 
-> >>>> 2.43.0
-> >>>
-> > 
+I did take a look at your solution provided yesterday, and get your 
+point. However AFAICS it can't resolve the unexpected warnings here. 
+Because it only works after we reach the finish_writeback_work(), and 
+the key point here is, it *already* takes a long time before we reach 
+finish_writeback_work(), and there is true progress before finish the 
+writeback work that hung task detector still can not know.
 
+If we want to make the hung task detector to known the progress of 
+writeback work, we need to add some code within do_writepages(): after 
+each finish of a_ops->writepages(), we need to make detector to known 
+there's progress. Something like this:
+
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3e248d1c3969..49572a83c47b 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2635,6 +2635,10 @@ int do_writepages(struct address_space *mapping, 
+struct writeback_control *wbc)
+                 else
+                         /* deal with chardevs and other special files */
+                         ret = 0;
++               /* Make hung task detector to known there's progress. */
++               if (force_wake)
++                       wake_up_all(waitq);
++
+                 if (ret != -ENOMEM || wbc->sync_mode != WB_SYNC_ALL)
+                         break;
+
+which has a big impact on current code - I don't want to introduce this.
+
+Yes, the behavior in this patch does have the possibility to paper cover 
+the real warnings, and what I want to argue is that the essence of this 
+patch is the same as the current touch_nmi_watchdog() and 
+touch_softlockup_watchdog() - these functions are used only in specific 
+scenarios we known and only affect a single event. And there seems no 
+report that touch_nmi/softlockup_watchdog() will paper cover the real 
+warnings (do we?).
+
+Correct me if there's anything I'm missing or misunderstanding.
+
+
+> 
+>>   mm/memcontrol.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 8dd7fbed5a94..fc73a56372a4 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -63,6 +63,7 @@
+>>   #include <linux/seq_buf.h>
+>>   #include <linux/sched/isolation.h>
+>>   #include <linux/kmemleak.h>
+>> +#include <linux/nmi.h>
+>>   #include "internal.h"
+>>   #include <net/sock.h>
+>>   #include <net/ip.h>
+>> @@ -3912,8 +3913,15 @@ static void mem_cgroup_css_free(struct cgroup_subsys_state *css)
+>>   	int __maybe_unused i;
+>>   
+>>   #ifdef CONFIG_CGROUP_WRITEBACK
+>> -	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++)
+>> +	for (i = 0; i < MEMCG_CGWB_FRN_CNT; i++) {
+>> +		/*
+>> +		 * We don't want the hung task detector to report warnings
+>> +		 * here since there's nothing wrong if the writeback work
+>> +		 * lasts for a long time.
+>> +		 */
+>> +		touch_hung_task_detector(current);
+>>   		wb_wait_for_completion(&memcg->cgwb_frn[i].done);
+>> +	}
+>>   #endif
+>>   	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_nosocket)
+>>   		static_branch_dec(&memcg_sockets_enabled_key);
+>> -- 
+>> 2.39.5
+>>
+
+Thanks,
+-- 
+Julian Sun <sunjunchao@bytedance.com>
 
