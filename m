@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-830751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26499B9A728
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9970BB9A725
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101864C6A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AAC4C51EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024A730E0E4;
-	Wed, 24 Sep 2025 15:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A743093BF;
+	Wed, 24 Sep 2025 15:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JnCeeov7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SMla2dgR"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EFC30C60B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0200630C620
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726019; cv=none; b=CRmhhOdBMwjHZ1IXKs2jZADsjabDrC5vzv6rRdDr0KeNPdeOvFqMB+ya+AMOw3WsDlEttoqa5+fz9xwvvQ0f9DHyUZRwYVuI+/VtCLTyQ7Q5evT0A0NuiQjQX9/HadRY06p5WRIm0mfrIgu2l5nuw/VWikkEx+86K4eGJgSJIms=
+	t=1758726019; cv=none; b=r7rNPyZ5ze8J+zdpqXocY5cZmrV4DLhfhtYGmQKzpH8uK9dk7KLMrpujLZadvpi7svB8p7ITHt7SluapNfusJQ1reyFDsLkWnShyTrH3zALasFFRVnxkjaKYlPIngTPLelBZK+QLnj7e0krhzAglhz4/n2iGt+Tg7zI5TGqBPKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758726019; c=relaxed/simple;
-	bh=L1VgNfoC71xNyfRLvBsWv8HKOJkfszOB/L2DYbQfD+0=;
+	bh=WAlqU5MUhsOddpJHILI64wsY53VfyKgPLsAmAN+Sb+U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AFKc9Vv3waHQxwP1D2RYrI28eBpruqbqk/dAUDDfK2tIL1L+8x7B3d1Tz8gReqLiSCehAYkI32C8s9AG6u+vBlkO5rY0/EiVIePtqxmXG/Hvyok+cGAToYJh2FUffk4lh4KUbRcWB0M48f4J1a3ay76rg2EljMfctmANBFuCK/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JnCeeov7; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=NrPB9WG5ramvjWIIrfGB0gLHjdcq2iqdAQN0ANsXp0nDpCBVngG2u0dqXFStlL75TZOgTVwBnpMpmOZRu4M3fIRVR5CsFUFDwA3q5wD7E+uUqLQZdX4T+VMALvXCtDVoabM2lGqG7hpKY5qHB+h/0lKW+MAdB7KL5d8YSOdGZXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SMla2dgR; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46cde0b2226so16296655e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:15 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45f2a1660fcso54922485e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758726014; x=1759330814; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758726015; x=1759330815; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX5Q5YH/plIL1ST5QoPko2JUmjdnIY0LBvORLR/qltw=;
-        b=JnCeeov7+l02sCp1bnxwwkvYRbmLI6MSvypGUtX+3+JxbQLKd5KPf/pGMdxTWGgjXw
-         MXAKDySriu+snT6NpKMuuTEJ1XcYoOuZVoTgnCeV05xzoC0e7xD8uMVNyw98nVnTG5Fo
-         X/h1AFMe39VWpFFo6PVded0B+EznsReytc8kPH8u/JJzhx3Vr+NJorwmOSh9eu4d0sF4
-         Ktd9w1lu4okjy1ROBljkLMttIlTs4wOhIIZUH1OQWzY0AOrkpeDsDYnFEhtwXMXa8T0x
-         vMaHuF+Y5mLhJgyD7vDspfPlzBJPuFXohy/X95FN3M/NIlcgMjJh5jBU60i/1vMQmz0K
-         talA==
+        bh=WTuaOxSTe3tk5TxQgOGSdVxjdMn4okuwwVefzm7d4xQ=;
+        b=SMla2dgRZNa4sEWqHj8dm9tnFVf8J+ZiJGa3iGcCMSyPQgq3TBtiEtJhgk2SLhpFqM
+         utLlGXSMdx0NjSX0R+gCwY8gODVcqRDz73+vWaFluczNGJpKHls+NdQ+yZHw4VKjYyHO
+         3RydyaajLnegbB0nR0WiZAP5ClFfTP3CgPGF4MZ7Ds/h8tZdTXui4/ugf8CkmMfPrb+m
+         Z+TEsxExrWDLAe91Meeur7630VZ/HLKfqh91gp3wK26cxRjl4tns2uSOOdi5FzlwsopJ
+         cgv7w7auUURspndp9WXDGf9xc8yiT9vmuZjc/TMZfrt/ILIuS0xHK2C/TUMnl/NoSYXZ
+         igbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758726014; x=1759330814;
+        d=1e100.net; s=20230601; t=1758726015; x=1759330815;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX5Q5YH/plIL1ST5QoPko2JUmjdnIY0LBvORLR/qltw=;
-        b=HaEeaY3DuFwMZ4164kySPS4fhsrYh+v0ZiHjWJAIHLLO0EZ9XzWSIVIGUbIoCQGDDi
-         0I0JZNFlvwAyNDf4s3XFzp8t0xFCzwE2K/eL4JDBFtIlC/zlBlAfRkdztcMoAqUD+Hj/
-         clBUenRc6p9fOF8RaZAZgdGeMzbhoJM5IzZx1nYyggJU5oYIh3cVd4MYv06D1Ya982YY
-         GGwIcY1V/qAQkewyuJZP7anhtN5THgob3Msmz44jRhajYwKkB06rYyCI/xA6RmZWRehH
-         Qzn+zeGf/WnW4MUVwOlJ/WIFSVJ+PrwiPoTTQhodtHTTk0d7IjAZp+zgK24aHGRCKXYy
-         HrEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiIGceLQzWqqrIOj8lyKwJ0aPIXyLmY5ZAyl4ioH6twtvjTy/HszqdLGHGXo9B8v8XZZOHtXGim/TeU40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz3u1rN0fjkfoSQW5SNVthZg44DnV9A8v96QwxQ9KHgGanGzrV
-	UKD4xNx6gFbju6KmhS6iTFgNKeXUlrH6E0xqtEH9pWEEK9Ay4cFgFsp2ggmOaeqUUNDOLE8i8Ax
-	sywPsMXaOXY4VgQ==
-X-Google-Smtp-Source: AGHT+IH1z5403qKBJ7o7GKoFaP/RUEDwuiU+FQ2BI25kf1Pv6Ap4eL3k4PLg1ZIY6q/Lrj8v/DOCur38GOqArA==
-X-Received: from wmbdr13.prod.google.com ([2002:a05:600c:608d:b0:45c:b682:883b])
+        bh=WTuaOxSTe3tk5TxQgOGSdVxjdMn4okuwwVefzm7d4xQ=;
+        b=UIFn2/GducBpyejgoYkAOK0DaJKLYnqyQeDEe6U8Q24c2WGLtE1buMRFAKwmp55CrQ
+         YYN14Mj3QvtBPPq2hAbbMXxCfhCTWTfObHjRfd2in20QeOKT5KwWEsOTDU62K9DsahJf
+         Vs9TMo81mR/NjXgLE6ArKjvGW73gOIgnD17MyrspTAcRNkckOqi07FqtwAwJJw9Jf5lo
+         n8fgoPh/i/BzVYs4nGqR4DA10uxzj8rjGWdYjjKIciZV53zh+xiWSm6rHbsJeiX6DzSJ
+         ryyF0AKykm+mmNs71fUBi5ix/hhJeZJdGb/rF+i14z5AdBE6Puvf+gu2bJGTT+Lyn85T
+         GeNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVisTX+ysWazmmKRv3JTudtYa7NjzTACLEIt1As8++Z2Dw1L7Y0+12q2ppw1N5abSTiBF/Esr27NB25rOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN6zVTyznyisdgSSyI1Eg1Wbr6Z1Q7ImAWNeV7gkZw4CcVQzD3
+	uU/iUzT1XhmZY+UrJktLcOAyHDBAQwXK86jAt0HphKMjUYKTzopp8jjojPoO63J53L7/yRuylsb
+	JwFX19nKkYCVUkw==
+X-Google-Smtp-Source: AGHT+IGt9WJr9xVKvOK+GVvGrHodYbNw3zG+dtfOGTSv7cY+ZO1ThruN4S0CmXEkR5GVWAqvIrk4jx4s1l+ufA==
+X-Received: from wrvw4.prod.google.com ([2002:a5d:5444:0:b0:3eb:7d34:3d1d])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:17d0:b0:45c:b53f:ad9 with SMTP id 5b1f17b1804b1-46e32a1919dmr978105e9.33.1758726013525;
- Wed, 24 Sep 2025 08:00:13 -0700 (PDT)
-Date: Wed, 24 Sep 2025 14:59:41 +0000
+ 2002:a5d:5d07:0:b0:3fe:1d64:1871 with SMTP id ffacd0b85a97d-40e4911408fmr239735f8f.43.1758726014660;
+ Wed, 24 Sep 2025 08:00:14 -0700 (PDT)
+Date: Wed, 24 Sep 2025 14:59:42 +0000
 In-Reply-To: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250924-b4-asi-page-alloc-v1-6-2d861768041f@google.com>
-Subject: [PATCH 06/21] mm/page_alloc: add __GFP_SENSITIVE and always set it
+Message-ID: <20250924-b4-asi-page-alloc-v1-7-2d861768041f@google.com>
+Subject: [PATCH 07/21] mm: introduce for_each_free_list()
 From: Brendan Jackman <jackmanb@google.com>
 To: jackmanb@google.com, Andy Lutomirski <luto@kernel.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
@@ -90,106 +90,93 @@ Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
 	yosry.ahmed@linux.dev
 Content-Type: text/plain; charset="utf-8"
 
-__GFP_SENSITIVE represents that a page should not be mapped into the
-ASI restricted address space.
+Later patches will rearrange the free areas, but there are a couple of
+places that iterate over them with the assumption that they have the
+current structure.
 
-This is added as a GFP flag instead of via some contextual hint, because
-its presence is not ultimately expected to correspond to any such
-existing context. If necessary, it should be possible to instead achieve
-this optionality with something like __alloc_pages_sensitive(), but
-this would be much more invasive to the overall kernel.
+It seems ideally, code outside of mm should not be directly aware of
+struct free_area in the first place, but that awareness seems relatively
+harmless so just make the minimal change.
 
-On startup, all pages are sensitive. Since there is currently no way to
-create nonsensitive pages, temporarily set the flag unconditionally at
-the top of the allocator.
-
-__GFP_SENSITIVE is also added to GFP_USER since that's the most
-important data that ASI needs to protect.
+Now instead of letting users manually iterate over the free lists, just
+provide a macro to do that. Then adopt that macro in a couple of places.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- include/linux/gfp_types.h      | 15 ++++++++++++++-
- include/trace/events/mmflags.h |  1 +
- mm/page_alloc.c                |  7 +++++++
- 3 files changed, 22 insertions(+), 1 deletion(-)
+ include/linux/mmzone.h  |  9 ++++++---
+ kernel/power/snapshot.c |  7 +++----
+ mm/mm_init.c            | 11 +++++++----
+ 3 files changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/gfp_types.h b/include/linux/gfp_types.h
-index 65db9349f9053c701e24bdcf1dfe6afbf1278a2d..5147dbd53eafdccc32cfd506569b04d5c082d1b2 100644
---- a/include/linux/gfp_types.h
-+++ b/include/linux/gfp_types.h
-@@ -58,6 +58,7 @@ enum {
- #ifdef CONFIG_SLAB_OBJ_EXT
- 	___GFP_NO_OBJ_EXT_BIT,
- #endif
-+	___GFP_SENSITIVE_BIT,
- 	___GFP_LAST_BIT
- };
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7fb7331c57250782a464a9583c6ea4867f4ffdab..02f5e8cc40c78ac8b81bb5c6f9af8718b1ffb316 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -123,9 +123,12 @@ static inline bool migratetype_is_mergeable(int mt)
+ 	return mt < MIGRATE_PCPTYPES;
+ }
  
-@@ -103,6 +104,11 @@ enum {
- #else
- #define ___GFP_NO_OBJ_EXT       0
- #endif
-+#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-+#define ___GFP_SENSITIVE	BIT(___GFP_SENSITIVE_BIT)
-+#else
-+#define ___GFP_SENSITIVE 0
-+#endif
+-#define for_each_migratetype_order(order, type) \
+-	for (order = 0; order < NR_PAGE_ORDERS; order++) \
+-		for (type = 0; type < MIGRATE_TYPES; type++)
++#define for_each_free_list(list, zone) \
++	for (unsigned int order = 0; order < NR_PAGE_ORDERS; order++) \
++		for (unsigned int type = 0; \
++		     list = &zone->free_area[order].free_list[type], \
++		     type < MIGRATE_TYPES; \
++		     type++) \
  
- /*
-  * Physical address zone modifiers (see linux/mmzone.h - low four bits)
-@@ -299,6 +305,12 @@ enum {
- /* Disable lockdep for GFP context tracking */
- #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
+ extern int page_group_by_mobility_disabled;
  
-+/*
-+ * Allocate sensitive memory, i.e. do not map it into ASI's restricted address
-+ * space.
-+ */
-+#define __GFP_SENSITIVE	((__force gfp_t)___GFP_SENSITIVE)
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index 645f42e404789286ffa751f083e97e52a4e4cf7e..40a7064eb6b247f47ca02211f8347cbd605af590 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -1244,8 +1244,8 @@ unsigned int snapshot_additional_pages(struct zone *zone)
+ static void mark_free_pages(struct zone *zone)
+ {
+ 	unsigned long pfn, max_zone_pfn, page_count = WD_PAGE_COUNT;
++	struct list_head *free_list;
+ 	unsigned long flags;
+-	unsigned int order, t;
+ 	struct page *page;
+ 
+ 	if (zone_is_empty(zone))
+@@ -1269,9 +1269,8 @@ static void mark_free_pages(struct zone *zone)
+ 			swsusp_unset_page_free(page);
+ 	}
+ 
+-	for_each_migratetype_order(order, t) {
+-		list_for_each_entry(page,
+-				&zone->free_area[order].free_list[t], buddy_list) {
++	for_each_free_list(free_list, zone) {
++		list_for_each_entry(page, free_list, buddy_list) {
+ 			unsigned long i;
+ 
+ 			pfn = page_to_pfn(page);
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 3db2dea7db4c57c81f3fc3b71f0867025edda655..9554b79d0946a4a1a2ac5c934c1f80d2dc91b087 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1435,11 +1435,14 @@ static void __meminit zone_init_internals(struct zone *zone, enum zone_type idx,
+ 
+ static void __meminit zone_init_free_lists(struct zone *zone)
+ {
+-	unsigned int order, t;
+-	for_each_migratetype_order(order, t) {
+-		INIT_LIST_HEAD(&zone->free_area[order].free_list[t]);
++	struct list_head *list;
++	unsigned int order;
 +
- /* Room for N __GFP_FOO bits */
- #define __GFP_BITS_SHIFT ___GFP_LAST_BIT
- #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
-@@ -380,7 +392,8 @@ enum {
- #define GFP_NOWAIT	(__GFP_KSWAPD_RECLAIM | __GFP_NOWARN)
- #define GFP_NOIO	(__GFP_RECLAIM)
- #define GFP_NOFS	(__GFP_RECLAIM | __GFP_IO)
--#define GFP_USER	(__GFP_RECLAIM | __GFP_IO | __GFP_FS | __GFP_HARDWALL)
-+#define GFP_USER	(__GFP_RECLAIM | __GFP_IO | __GFP_FS | \
-+			 __GFP_HARDWALL | __GFP_SENSITIVE)
- #define GFP_DMA		__GFP_DMA
- #define GFP_DMA32	__GFP_DMA32
- #define GFP_HIGHUSER	(GFP_USER | __GFP_HIGHMEM)
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index aa441f593e9a6b537d02189add91eb77bebc6a97..425385b7f073d05e9d660ad19cb7497f045adfb7 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -100,6 +100,7 @@ TRACE_DEFINE_ENUM(___GFP_LAST_BIT);
- 	gfpflag_string(GFP_DMA),		\
- 	gfpflag_string(GFP_DMA32),		\
- 	gfpflag_string(__GFP_RECLAIM),		\
-+	gfpflag_string(__GFP_SENSITIVE),	\
- 	TRACE_GFP_FLAGS				\
- 	{ 0, NULL }
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 600d9e981c23d75fdd4aec118e34f3f49d3de2e0..0d1c28decd57b4a5e250acc0efc41669b7f67f5b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5152,6 +5152,13 @@ struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
- 	gfp_t alloc_gfp; /* The gfp_t that was actually used for allocation */
- 	struct alloc_context ac = { };
- 
-+	/*
-+	 * Temporary hack: Allocation of nonsensitive pages is not possible yet,
-+	 * allocate everything sensitive. The restricted address space is never
-+	 * actually entered yet so this is fine.
-+	 */
-+	gfp |= __GFP_SENSITIVE;
++	for_each_free_list(list, zone)
++		INIT_LIST_HEAD(list);
 +
- 	/*
- 	 * There are several places where we assume that the order value is sane
- 	 * so bail out early if the request is out of bound.
++	for (order = 0; order < NR_PAGE_ORDERS; order++)
+ 		zone->free_area[order].nr_free = 0;
+-	}
+ 
+ #ifdef CONFIG_UNACCEPTED_MEMORY
+ 	INIT_LIST_HEAD(&zone->unaccepted_pages);
 
 -- 
 2.50.1
