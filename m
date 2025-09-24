@@ -1,86 +1,80 @@
-Return-Path: <linux-kernel+bounces-830344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF8BB99712
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D03B99715
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB430188DE84
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8EB1B20810
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FAC2DFA25;
-	Wed, 24 Sep 2025 10:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D117A2DFA25;
+	Wed, 24 Sep 2025 10:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="crCZxAex"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lOat5XcY"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EFB2D94A6
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BFD2DF71D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758710206; cv=none; b=nh1H+MdqRjtu4uRHo3EUa4JN3ML9g0andXEQVukvmDw57cFBk/ANBpAsknKM72hFs+Zi9zoIajnBH53qxVb7Aqa+uAlGJAN9BzfUyciEwDvW/NO0otf3sov8f4Ck1s/jmnPi49q2BZ0yJZVvTHO/MP0phcVKKZlr3u/HjDg6f4c=
+	t=1758710225; cv=none; b=JSldw1NoWVtAGW9cTXLju/iC9lraSHpSkIU0HU27H3tyau09sHm7alWQ5tmnxmlXpRf28Ds+IDDEsVfqfOxdvZjLcPqzRreJWbo10MyVCH3PLsSHsUa2Q/z1GlHsVwHp3WHa1lQ15DVKnBoEMOSQBOUehE+ZNLYq/ouHwobQih4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758710206; c=relaxed/simple;
-	bh=TcJuuFO6n0Y9yMEhd3p5BYTjpQ9PLg7J6rBPzBmb53Y=;
+	s=arc-20240116; t=1758710225; c=relaxed/simple;
+	bh=dRYlXXkB2uJmdz7xtD6gE7x4EFJTzXqpZbsUDTyd8c4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukui/RTnDzOplyEaUbQHn8qnEQgzW6m4mD89grWS62BGzljvNI0YP9Na8cDJpvP6LY+DMh62AW5kYqE0E7vsOKJeJ5LkLH0szCoCLPKcuFVqzWuXhJGC1IY5wki8WeawEZELWz0IIA5PWPIfE9fag9WnCjvv7MsKT5AG8BdB/aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=crCZxAex; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O4iAcD021486
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:36:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	T/Yl5Cf4yj9MAlJOJXqnptSyyyT3YpEhhEgjwU6fmXk=; b=crCZxAex6fQshZlM
-	ju719S9Mgg9yEm1Wmh3Oc4+Czb6/XeUhVpAv7SR66PoQERKkhl4+uGW7Z+oCYfp3
-	BW0CnfhXL74teLEy1b9yLozGO1XeNLre0HNo96fhnLro//2Spx2e152WdPkO6D0t
-	/mPOdRkbqVwPJoMUsoGuiHc2VLOE8GwlXyzL8GuipP1pWlQU4GGynNS9XMAuuvVL
-	s9plhEzvJz/Bktz9N/xhtldwdjENV17YDioseUchtUKrX0bk2ZBWEfcj95ADViE4
-	Qe3EdSlN3AU5kAyDQqjrTss2gJeJCcLQASPAM13tBfyOUzm9nmvXQUmsqO7P2Vzu
-	KZ8koA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49budabj5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:36:39 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ca8c6ec82eso68555591cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:36:39 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=R6JePArK+FZyqIkxr0vFmdWHsfQfbLhDeCTN450gW38+t/pmsmyLYQiMBJsyzER+/9gVQQLDEL1JCls3vhFJrlSwLXtPZvB9CKrIXus+ftFE6RW4K0ulpnhnp1Y8uQBn52+fGFlfSNW8De8mzG0Gko6uhsLrB3Wi3iB1mtOAbxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lOat5XcY; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-269639879c3so64214365ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758710222; x=1759315022; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mz/QbJ4toKNKlZAJuEgAp+fvEFXAqbuxTuvTTDNq1Jo=;
+        b=lOat5XcYibFTSQvkP0tr06i+EOUFBhTE0lzdpUWflDlzQox9LXotkg4wzzuIu2LH6+
+         uMKggXIwsMQbjp+hcNGP2RySbqSNRsyhPwFNA1S85BLqNzxzl+R17Joov+PvtZZyT1VK
+         x4Ki9+L1xQa+bHUPrinJ3IPplBQg7GGZwale4oWzsExuwOMvv9dQ4jVR1B7PWhYxtrbp
+         6nuGmLMJTJURSLwHCGjR6SQOYcbTTRtMO0puvgiehNdbeYGJh+II6nb635wJgjM6Hput
+         aUsL+ehlzPKuiKVUXTT5KCFAV6U7hiFjYTZK8WW5fcHa1vye+RsOpvJ5BYCITwAvF8KB
+         etKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758710198; x=1759314998;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/Yl5Cf4yj9MAlJOJXqnptSyyyT3YpEhhEgjwU6fmXk=;
-        b=cjjhlrOrd4WnZsrLvW/fNr4s6wiXT64yLewZ8hq4GGGfH/hw5iHyvGiYULUeTG9K9L
-         UpZ/7w/sJEiFBBdua0qOem+uaLsP9q4Bm/ToOCMH8+oIvnenplG1M10YR0sL+5ONgCz+
-         wNLdDcdsFjt5EIq7j6uzhYgYl0NNLxPq6OE8yV8tXa604MbyVB+kbR7PjskLrg0IA21D
-         i/zC+AJRvKnKoPSryPHq2Qk48j0fgOuWqMw02vU/is86UrRju72aAyAqV5TX4xrAZ2HE
-         vwYlybXMy2LTjK3zOQvLC2w9aAgJsfUZYYgjxTL+HfgHJRBrKXgNd36Xa3PQJTMGTWHa
-         3Rjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4KZ7ksYsj1jzsOHxFIEMT2fPAGdKj8ocbrvJtzGboYEyXHh2hnoVET1RQJBoUcbmAg54QnZFuvhrSTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpVN7vp/IOQkqG1s/wlfNLk+gJ5V2GKUGs4PynRg81ZcmtC2UI
-	ky7/+zHFEPw64UrWETGCn+eAr5muMjPKh+jfzpPZ295NsqqslOmbMtpYEJCL/AGeHcYdmztHa/s
-	t7VGRWBh3mKS8MF9XYOgJQHWYUxPVRmDq4usqoA+7DQsZsbunDPhEYL7CH5Y4TKJ7koo=
-X-Gm-Gg: ASbGncuIQ/WI8TP7G11NLjl73nKgNIpciKupCvmPeX/PILO0hDoZb4nF3EfNVEeL+es
-	FqTTlTdR2hb9NFFY+Hnt+/1EJ++ESjk+/PQBeen0sBbP5kb3ZAZKn5cjcFNsvsPuiFD6uQQ+YZd
-	Ld9VQiC6rErjWQ9XYTUttI+inAmV01dh1/ZmTPR5VQzRjVS7/A6JgSiUzs3Yo/f2Xl6NPIGgWwi
-	K7ZsaaNOu7Rs3kb8GY6ElIEi9T+8Gdz/FB80Up7zTZ9ks3mdGYU5JftwXgl6DScdEb0XwM0spGe
-	J06u9ULGUrgAZBXAk6eNvr9NGY4Jsgn1qP3hGFx5M8BSZC38bwtXeIa/0TIRkkdhBbs=
-X-Received: by 2002:a05:622a:2996:b0:4b6:2be2:e816 with SMTP id d75a77b69052e-4d36879b57bmr67953241cf.8.1758710198402;
-        Wed, 24 Sep 2025 03:36:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvc+HULoluES1jwdfkJ75V5AO5mrYzrq/vmxtknjaJtpWE6iUTAMZQ0tm+dXZwSY8DOzWdVQ==
-X-Received: by 2002:a05:622a:2996:b0:4b6:2be2:e816 with SMTP id d75a77b69052e-4d36879b57bmr67952911cf.8.1758710197936;
-        Wed, 24 Sep 2025 03:36:37 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3f0e28c83d6sm22815116f8f.56.2025.09.24.03.36.37
+        d=1e100.net; s=20230601; t=1758710222; x=1759315022;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Mz/QbJ4toKNKlZAJuEgAp+fvEFXAqbuxTuvTTDNq1Jo=;
+        b=TazN5vFRtZdV2/o1a5BluKfCQjhaFxyBr0MMg6XO+3veeAJmAPjIm6hWsg6Gi2RqD9
+         ZkeM1Zf0I7cSSpJNI+SVl4nwnKlRfmRM7LIvqkGdEjHhN3k/l/cX9y+X7Onhp8DiKG0T
+         J8VdzfqOXdp7O8SKBCiPtGXlVTOP44p3rNOC7AasYpXE9u4EtrK6VawocXX7pzwVqH+O
+         QxNy0wZy48vI1k7Xn8Mp42PMj7SPXPyc0WTBuGj4XXdEnqEzf1T/bKFx2yl1gXRkmEat
+         vuKsCm2RIF57tl6/c25scmvaImfcbUROWIe4RClcuMbbptshx56uS9+kHdf+mTNzeksa
+         PW3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUwcOSha8izcPJlnAQUgNVyDnMhYJgTxxzKdhGUHumbbQbX07xWh4xuyD5EsXSn1XNZUckUKFf1ER2VEgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrGFa4aFeBVDKY1+v/bLZx83nYYJea9mNDnv5R95X9e+qM4Hiu
+	ExRIdi0jUBsPxWM2nN0ftV/fMpSp00TOV3rAFqoTQ2pRCIN3N/lR/3gU0DafxSEFWWo=
+X-Gm-Gg: ASbGncvvG4p0heYGnWG1HSXwrpnmpika2WJdyXH8ufQdTW6aDoUBxD0jqHQPPnXJU8S
+	Vfqf9mR3cA7LWa3zb4iZ45x/u3w3rSdMLogwaoiouL7O1nhxuvMG7DjG5/GQB1YpKGwZXkNcJyo
+	xC5/xZjOSBLOY8eMQhzwzGFGL/1MKzTM23PdTo5BBXkF7fdIlpLNDULm1/hqI2eGhMtXr2BVcpp
+	vpZfrc1Vvp7P67KwF9daeGXgd80cCzoxTIekIeT3/3DNWNUMmb+VUSAMr7Oylpmzd2Y5Du1TOUv
+	8PV9qh87XCSgyrx3/O12ymFKxJ3jeQgfqxYgp09rgxLnUG+LjpWfaLMqXt+Yag9hhNmVXOIJbKh
+	wg7e86VU1weudqBne6thxKCDqWlZUqKQ+LfKsleEf33H08yL80WhSAokiZ5R9OGLl3lIVLTAsvg
+	==
+X-Google-Smtp-Source: AGHT+IGcpm4z7o8NO6ljSagepQnFIpP0uGIzZYuk92q1VZe5grt2PvNSZ7U+YZG86LFac+Jm4g+HMQ==
+X-Received: by 2002:a17:902:d484:b0:25c:d4b6:f119 with SMTP id d9443c01a7336-27cc09e3c46mr79698515ad.12.1758710222141;
+        Wed, 24 Sep 2025 03:37:02 -0700 (PDT)
+Received: from [10.88.210.107] ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053dbdsm188309915ad.9.2025.09.24.03.36.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 03:36:37 -0700 (PDT)
-Message-ID: <59aa38cf-2a57-49f2-85bf-157b1e7e977e@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 11:36:36 +0100
+        Wed, 24 Sep 2025 03:37:01 -0700 (PDT)
+Message-ID: <b9fd9738-f4bd-4b34-88fd-7dfb7ed0c043@bytedance.com>
+Date: Wed, 24 Sep 2025 18:36:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,80 +82,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] ASoC: codecs: wcd-common: fix signedness bug in
- wcd_dt_parse_micbias_info()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <aNKEZ3VqJ8js208v@stanley.mountain>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <aNKEZ3VqJ8js208v@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: RTqDq_I-PaxV1r4ezAdv6oelVEFCPL3f
-X-Proofpoint-ORIG-GUID: RTqDq_I-PaxV1r4ezAdv6oelVEFCPL3f
-X-Authority-Analysis: v=2.4 cv=Yaq95xRf c=1 sm=1 tr=0 ts=68d3c9b7 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=-C2JdNfRTmumDSgDQiEA:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDExMyBTYWx0ZWRfXySSwg6k2qnff
- vWIWqQsqcljBJap6c49HscIPopiNVIYihG7sz7cfU4KEsFI1coHSqW/S98ohCZuvZVaWSsmPTnG
- 7olQeqxTRfAHETcmavhBrZJomD7CoOPXu8ob4UzMzZf89ThrsVrSwHco4P2WwmT6QROIy/L+L5T
- 91C58am71qXGDkvg/cmoc/91D8IJ2lfMwr9uov0aSdvH9S6t5VihjzirPc3JAlUxatrKfP5i0KT
- 4qYM2f0BdzfCDx1kVupxmANuRgp2c5z1oJXZXaJ8MqRMvSvMdOkXIlAUCliuwsk1r+CnNvymLxU
- Ye29DL8XCaCNTRHm3LiC8EhMePP0M2wBbCWicxV/6e87h5jpHzIjUYm2o/OJ2QGOkr7wgc6H7py
- Yuy2XJtP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
- adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230113
+Subject: Re: [External] Re: [PATCH v2 2/2] memcg: Don't trigger hung task
+ warnings when memcg is releasing resources.
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, lance.yang@linux.dev, mhiramat@kernel.org,
+ yangyicong@hisilicon.com, will@kernel.org, dianders@chromium.org,
+ mingo@kernel.org, lihuafei1@huawei.com, hannes@cmpxchg.org,
+ mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, tj@kernel.org, brauner@kernel.org
+References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
+ <20250924034100.3701520-3-sunjunchao@bytedance.com>
+ <20250924063219.GR4067720@noisy.programming.kicks-ass.net>
+ <37fd969e-3799-48d0-a8e0-1937e5a4ae38@bytedance.com>
+ <20250924082823.GV3245006@noisy.programming.kicks-ass.net>
+From: Julian Sun <sunjunchao@bytedance.com>
+In-Reply-To: <20250924082823.GV3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 9/23/25 12:28 PM, Dan Carpenter wrote:
-> The error handling does not work because common->micb_vout[] is an array
-> of u32.  We need a signed variable to store negative error codes.
+On 9/24/25 4:28 PM, Peter Zijlstra wrote:
+
+Hi,
+> On Wed, Sep 24, 2025 at 03:50:41PM +0800, Julian Sun wrote:
+>> On 9/24/25 2:32 PM, Peter Zijlstra wrote:
+>>> On Wed, Sep 24, 2025 at 11:41:00AM +0800, Julian Sun wrote:
+>>>> Hung task warning in mem_cgroup_css_free() is undesirable and
+>>>> unnecessary since the behavior of waiting for a long time is
+>>>> expected.
+>>>>
+>>>> Use touch_hung_task_detector() to eliminate the possible
+>>>> hung task warning.
+>>>>
+>>>> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+>>>
+>>> Still hate this. It is not tied to progress. If progress really stalls,
+>>> no warning will be given.
+>>
+>> Hi, peter
+>>
+>> Thanks for your review and comments.
+>>
+>> I did take a look at your solution provided yesterday, and get your point.
+>> However AFAICS it can't resolve the unexpected warnings here. Because it
+>> only works after we reach the finish_writeback_work(), and the key point
+>> here is, it *already* takes a long time before we reach
+>> finish_writeback_work(), and there is true progress before finish the
+>> writeback work that hung task detector still can not know.
 > 
-> Fixes: 4f16b6351bbf ("ASoC: codecs: wcd: add common helper for wcd codecs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+> But wb_split_bdi_pages() should already split things into smaller chunks
+> if there is low bandwidth, right? And we call finish_writeback_work()
+> for each chunk.
 
-Thanks Dan for fixing this,
+AFAICS, wb_split_bdi_pages() will only be invoked in the sync scenarios, 
+and not in the background writeback scenarios - which is exactly the 
+case here.
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-
---srini
->  sound/soc/codecs/wcd-common.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
+And I noticed that there's something similar in background writeback, 
+where writeback_chunk_size() will split all pages into several chunks, 
+the min chunk size is 1024(MIN_WRITEBACK_PAGES) pages. The difference 
+from wb_split_bdi_pages() is that we don't report progress after 
+finishing the writeback of a chunk.
 > 
-> diff --git a/sound/soc/codecs/wcd-common.c b/sound/soc/codecs/wcd-common.c
-> index 9bbfda828377..9016e974582f 100644
-> --- a/sound/soc/codecs/wcd-common.c
-> +++ b/sound/soc/codecs/wcd-common.c
-> @@ -62,12 +62,13 @@ static int wcd_get_micbias_val(struct device *dev, int micb_num, u32 *micb_mv)
->  
->  int wcd_dt_parse_micbias_info(struct wcd_common *common)
->  {
-> -	int i;
-> +	int ret, i;
->  
->  	for (i = 0; i < common->max_bias; i++) {
-> -		common->micb_vout[i] = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
-> -		if (common->micb_vout[i] < 0)
-> -			return -EINVAL;
-> +		ret = wcd_get_micbias_val(common->dev, i + 1, &common->micb_mv[i]);
-> +		if (ret < 0)
-> +			return ret;
-> +		common->micb_vout[i] = ret;
->  	}
->  
->  	return 0;
+> If a chunk is still taking too long, surely the solution is to use
+> smaller chunks?
 
+Yeah it still takes a long time, I checked the write_bandwidth and 
+avg_write_bandwidth when warning was triggered:
+
+	>>> wb.write_bandwidth
+	(unsigned long)24
+	>>> wb.avg_write_bandwidth
+	(unsigned long)24
+	>>> wb.write_bandwidth
+	(unsigned long)13
+	>>> wb.write_bandwidth
+	(unsigned long)13
+
+At this bandwidth, it will still takes a lot of seconds to write back 
+MIN_WRITEBACK_PAGES pages.
+
+So it might be a solution, but given the fact that the current minimum 
+chunk size (1024) has been in place for over ten years, and that making 
+it smaller would probably have a negative impact on performance. I'm 
+afraid the filesystem maintainers will not accept this change.
+If we don’t modify this part but can report progress after finishing the 
+chunk writeback, it should probably eliminate most of the unexpected 
+warnings.
+> 
+>> If we want to make the hung task detector to known the progress of writeback
+>> work, we need to add some code within do_writepages(): after each finish of
+>> a_ops->writepages(), we need to make detector to known there's progress.
+>> Something like this:
+>>
+>> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+>> index 3e248d1c3969..49572a83c47b 100644
+>> --- a/mm/page-writeback.c
+>> +++ b/mm/page-writeback.c
+>> @@ -2635,6 +2635,10 @@ int do_writepages(struct address_space *mapping,
+>> struct writeback_control *wbc)
+>>                  else
+>>                          /* deal with chardevs and other special files */
+>>                          ret = 0;
+>> +               /* Make hung task detector to known there's progress. */
+>> +               if (force_wake)
+>> +                       wake_up_all(waitq);
+>> +
+>>                  if (ret != -ENOMEM || wbc->sync_mode != WB_SYNC_ALL)
+>>                          break;
+>>
+>> which has a big impact on current code - I don't want to introduce this.
+> 
+> You sure? It looks to me like the next level down is wb_writeback() and
+> writeback_sb_inodes(), and those already have time based breaks in and
+> still have access to wb_writeback_work::done, while do_writepages() no
+> longer has that context.
+
+Yeah, exactly. What I mean is report progress within the whole writeback 
+work, either writeback_sb_inodes() or do_writepages() is ok.
+> 
+>> Yes, the behavior in this patch does have the possibility to paper cover the
+>> real warnings, and what I want to argue is that the essence of this patch is
+>> the same as the current touch_nmi_watchdog() and touch_softlockup_watchdog()
+>> - these functions are used only in specific scenarios we known and only
+>> affect a single event. And there seems no report that
+>> touch_nmi/softlockup_watchdog() will paper cover the real warnings (do we?).
+>>
+>> Correct me if there's anything I'm missing or misunderstanding.
+> 
+> The thing with touch_nmi_watchdog() is that you need to keep doing it.
+> The moment you stop calling touch_nmi_watchdog(), you will cause it to
+> fire.
+> 
+> That is very much in line with the thing I proposed, and rather unlike
+> your proposal that blanket kill reporting for the task, irrespective of
+> how long it sits there waiting.
+> 
+
+Thanks for clarification. So how about the following solution?
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a07b8cf73ae2..e0698fd3f9ab 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -14,6 +14,7 @@
+   *             Additions for address_space-based writeback
+   */
+
++#include <linux/sched/sysctl.h>
+  #include <linux/kernel.h>
+  #include <linux/export.h>
+  #include <linux/spinlock.h>
+@@ -213,7 +214,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
+  void wb_wait_for_completion(struct wb_completion *done)
+  {
+         atomic_dec(&done->cnt);         /* put down the initial count */
+-       wait_event(*done->waitq, !atomic_read(&done->cnt));
++       wait_event(*done->waitq, (done->stamp = jiffies; 
+!atomic_read(&done->cnt)));
+  }
+
+  #ifdef CONFIG_CGROUP_WRITEBACK
+@@ -1975,6 +1976,11 @@ static long writeback_sb_inodes(struct 
+super_block *sb,
+                  */
+                 __writeback_single_inode(inode, &wbc);
+
++               /* Report progress to make hung task detector know it. */
++               if (jiffies - work->done->stamp >
++                   HZ * sysctl_hung_task_timeout_secs / 2)
++                       wake_up_all(work->done->waitq);
++
+                 wbc_detach_inode(&wbc);
+                 work->nr_pages -= write_chunk - wbc.nr_to_write;
+                 wrote = write_chunk - wbc.nr_to_write - wbc.pages_skipped;
+
+Instead of waking up all waiting threads every half second, we only wake 
+them up if the writeback work lasts for the value of 
+sysctl_hung_task_timeout_secs / 2 seconds to reduce possible overhead.
+
+Hi, Jan, Christian, how do you think about it?
+
+Please correct me if there's anything I'm missing or misunderstanding.
+
+Thanks,
+-- 
+Julian Sun <sunjunchao@bytedance.com>
 
