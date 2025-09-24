@@ -1,250 +1,269 @@
-Return-Path: <linux-kernel+bounces-829982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB6FB985DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:15:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F1DB98605
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A306D1774D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:15:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69E837A3588
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB77221B9F1;
-	Wed, 24 Sep 2025 06:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB82724291B;
+	Wed, 24 Sep 2025 06:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IIiO1ezR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jl+RxqI2"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7B31990D9;
-	Wed, 24 Sep 2025 06:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373D31C4A17;
+	Wed, 24 Sep 2025 06:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758694520; cv=none; b=bPeKDU7Ubrouq8O7Tl0CkV0ldfXXiTaRoKZPOddogOQ2mZvQrBqdu9TyOGRHqAGR6/+gQPixy4ZbsifCP6m0u741qqCyPzrKAEo56+AQCNqC+ia2vbS4NI8hdTLcmsw5gOiEnvLJlxp7Sa7apB67nxvcejNCnO7I1EKDl1wF3g4=
+	t=1758695202; cv=none; b=jIKQ9RGFK0goUPNneOZX8xec8JYR4mXhoExodcnovaFyTDdXrXG2nKeTFwE9LpozJ8D7mjQyBZh7PVY7IIAT7MbOLUjhS6tboDiKdBvZ/nf275S3VrT1h+y5XkPFNNpHAblGj/Bym45JsKCrT4pzH3HUrrKPSZcGYtXVAiWanks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758694520; c=relaxed/simple;
-	bh=UQKOU4aOyyJuEOQGOD3vHgI8e0kGhF/WCbFuBJ3fxps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cuy51Q4r0Ku6+76GwQsyEvDdJRz8dDRoUCIwW8VKYy77DIM1md5/8UCQhhCNtPtTXqFzTze6JO0XnGUfR/EB0xjOoXTRLqcGegfVd7lmmhT4KNqSCGNbLpF2eAyYp17ap4jf4iUK+si6thsW6qaldIqhWe4UkLKgwxeIax3wBdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IIiO1ezR; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758694519; x=1790230519;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UQKOU4aOyyJuEOQGOD3vHgI8e0kGhF/WCbFuBJ3fxps=;
-  b=IIiO1ezRy2Y6xoOEYmJQSuTzz22oXtnam4DhuglYKiB8z3nvqcAodol8
-   dtIm/7zxJjaAu44NDvYtV4SHH8dd3MWtHnYRdSWp/KdrHKYPicZ7PY80/
-   HrN9i3UHDAlImtdEXKEaXbUu1yQ1SZ/J1+dZGc0Fqn0HcGwuOwu6fv2w+
-   gT/eF6/k3WlzRzf0QNURE6fMdr9LkDo12YABesEvdvuho0V0WAYCy+qa7
-   c6auBbbgYiujzUoQQXhBGuHrG+3ARDuAF3Y1VUZASa4idVxBVfrlCw2DK
-   49aiucVvurX423pEVoH5+Ck0FWb4OPDEDcQxGQlevZw29rQg3g84BU3PJ
-   A==;
-X-CSE-ConnectionGUID: hBh4tlIyTr+JctSIShhdhQ==
-X-CSE-MsgGUID: Gy1fe/6cRFOPqHSaghiDCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="78420765"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="78420765"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 23:15:18 -0700
-X-CSE-ConnectionGUID: BwNK/+FdQIap4yTcPLbJDw==
-X-CSE-MsgGUID: j5m87MtgSauJ+9GwEE8sxg==
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2025 23:15:13 -0700
-Message-ID: <86ab9923-624d-4950-abea-46780e94c6ce@linux.intel.com>
-Date: Wed, 24 Sep 2025 14:15:11 +0800
+	s=arc-20240116; t=1758695202; c=relaxed/simple;
+	bh=oePUICDiPVKN9B/TKw8so6b3+qv38ospFzPDbOaKvsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cM4+xn5/fatX4H0wHdeijgbbiUBYS5mXuFG6BgS1Gqb4AlDy9uOyc+JkSldNtF7pngAxw8A6IC3ToP5c6kJDTnLT9iobQER87hBp30EiEMY+aZ1pTKQhNrh0KFN43fedTXP5ntaYwp636x9GbYVYv1Aosmk7ytvaLdFsgQmnHZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jl+RxqI2; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oZ
+	d4WpX2+1Jdxq+9g1RYCBdLuAcNtaFiBB36fTsymVk=; b=jl+RxqI2Nnd+2JBT58
+	Idh2LEuqdwVrMCciEsHTAr8ic3pmlxAr62skYcqlHi5eaTDf9ukNi0/+9oRc7yZb
+	jgdAUhSiQYYTgoTwEZHoch+uxwhQcTE0oqpua3nDXl4LHTbokLi2xbsAB5x1WMfa
+	IC2u3ilZ9/JcghYYm7Xf42TxQ=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgDnhx_hjtNowN2fEA--.57610S2;
+	Wed, 24 Sep 2025 14:25:38 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: mhiramat@kernel.org
+Cc: alexei.starovoitov@gmail.com,
+	andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	yangfeng59949@163.com,
+	yonghong.song@linux.dev
+Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64 architecture
+Date: Wed, 24 Sep 2025 14:25:36 +0800
+Message-Id: <20250924062536.471231-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250924003215.365db154e1fc79163d9d80fe@kernel.org>
+References: <20250924003215.365db154e1fc79163d9d80fe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/16] x86/virt/tdx: Optimize tdx_alloc/free_page()
- helpers
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: kas@kernel.org, bp@alien8.de, chao.gao@intel.com,
- dave.hansen@linux.intel.com, isaku.yamahata@intel.com, kai.huang@intel.com,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, mingo@redhat.com, pbonzini@redhat.com,
- seanjc@google.com, tglx@linutronix.de, x86@kernel.org, yan.y.zhao@intel.com,
- vannapurve@google.com, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-9-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250918232224.2202592-9-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgDnhx_hjtNowN2fEA--.57610S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3ArW8CF4xXr43KF13WF15Arb_yoWxAF43pF
+	WDA3WakFZ0qrWjqwnFqw15XF9akws3ZryUuryrGw13CFnFvFy3Jr9rKFya9rn8Ar4qgw1a
+	vF42yasxK3y5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRzWlhUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiTgzReGjStyW8TwABsx
 
+On Wed, 24 Sep 2025 00:32:15 +0900 Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
+> On Mon, 22 Sep 2025 10:15:31 +0800
+> Feng Yang <yangfeng59949@163.com> wrote:
+> 
+> > On Sun, 21 Sep 2025 22:30:37 +0900 Masami Hiramatsu wrote:
+> > 
+> > > On Fri, 19 Sep 2025 19:56:20 -0700
+> > > Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> > > 
+> > > > On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
+> > > > >
+> > > > > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
+> > > > > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
+> > > > >
+> > > > > For example:
+> > > > > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > > > index 9e1ca8e34913..844fa88cdc4c 100644
+> > > > > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > > > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > > > > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
+> > > > >  __u64 kretprobe_test7_result = 0;
+> > > > >  __u64 kretprobe_test8_result = 0;
+> > > > >
+> > > > > +typedef __u64 stack_trace_t[2];
+> > > > > +
+> > > > > +struct {
+> > > > > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
+> > > > > +       __uint(max_entries, 1024);
+> > > > > +       __type(key, __u32);
+> > > > > +       __type(value, stack_trace_t);
+> > > > > +} stacks SEC(".maps");
+> > > > > +
+> > > > >  static void kprobe_multi_check(void *ctx, bool is_return)
+> > > > >  {
+> > > > >         if (bpf_get_current_pid_tgid() >> 32 != pid)
+> > > > > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
+> > > > >  SEC("kprobe.multi")
+> > > > >  int test_kprobe_manual(struct pt_regs *ctx)
+> > > > >  {
+> > > > > +       int id = bpf_get_stackid(ctx, &stacks, 0);
+> > > > 
+> > > > ftrace_partial_regs() supposed to work on x86 and arm64,
+> > > > but since multi-kprobe is the only user...
+> > > 
+> > > It should be able to unwind stack. It saves sp, pc, lr, fp.
+> > > 
+> > > 	regs->sp = afregs->sp;
+> > > 	regs->pc = afregs->pc;
+> > > 	regs->regs[29] = afregs->fp;
+> > > 	regs->regs[30] = afregs->lr;
+> > > 
+> > > > I suspect the arm64 implementation wasn't really tested.
+> > > > Or maybe there is some other issue.
+> > > 
+> > > It depends on how bpf_get_stackid() works. Some registers for that
+> > > function may not be saved.
+> > > 
+> > > If it returns -EFAULT, the get_perf_callchain() returns NULL.
+> > > 
+> > 
+> > During my test, the reason for returning -EFAULT was that trace->nr was 0.
+> > 
+> > static long __bpf_get_stackid(struct bpf_map *map,
+> > 			      struct perf_callchain_entry *trace, u64 flags)
+> > {
+> > 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+> > 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+> > 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> > 	u32 hash, id, trace_nr, trace_len;
+> > 	bool user = flags & BPF_F_USER_STACK;
+> > 	u64 *ips;
+> > 	bool hash_matches;
+> > 
+> > 	if (trace->nr <= skip)
+> > 		/* skipping more than usable stack trace */
+> > 		return -EFAULT;
+> > 	......
+> 
+> Hmm. The "trace" is returned from get_perf_callchain()
+> 
+> get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
+> 		   u32 max_stack, bool crosstask, bool add_mark)
+> {
+> ...
+> 
+> 	if (kernel && !user_mode(regs)) {
+> 		if (add_mark)
+> 			perf_callchain_store_context(&ctx, PERF_CONTEXT_KERNEL);
+> 		perf_callchain_kernel(&ctx, regs);
+> 	}
+> 
+> So this means `perf_callchain_kernel(&ctx, regs);` fails to unwind stack.
+> 
+> perf_callchain_kernel() -> arch_stack_walk() -> kunwind_stack_walk()
+> 
+> That is `kunwind_init_from_regs()` and `do_kunwind()`.
+> 
+> 	if (regs) {
+> 		if (task != current)
+> 			return -EINVAL;
+> 		kunwind_init_from_regs(&state, regs);
+> 	} else if (task == current) {
+> 		kunwind_init_from_caller(&state);
+> 	} else {
+> 		kunwind_init_from_task(&state, task);
+> 	}
+> 
+> 	return do_kunwind(&state, consume_state, cookie);
+> 
+> For initialization, it should be OK because it only refers pc and 
+> fp(regs[29]), which are recovered by ftrace_partial_regs().
+> 
+> static __always_inline void
+> kunwind_init_from_regs(struct kunwind_state *state,
+> 		       struct pt_regs *regs)
+> {
+> 	kunwind_init(state, current);
+> 
+> 	state->regs = regs;
+> 	state->common.fp = regs->regs[29];
+> 	state->common.pc = regs->pc;
+> 	state->source = KUNWIND_SOURCE_REGS_PC;
+> }
+> 
+> And do_kunwind() should work increase trace->nr before return
+> unless `kunwind_recover_return_address()` fails.
+> 
+> static __always_inline int
+> do_kunwind(struct kunwind_state *state, kunwind_consume_fn consume_state,
+> 	   void *cookie)
+> {
+> 	int ret;
+> 
+> 	ret = kunwind_recover_return_address(state);
+> 	if (ret)
+> 		return ret;
+> 
+> 	while (1) {
+> 		if (!consume_state(state, cookie)) <--- this increases trace->nr (*).
+> 			return -EINVAL;
+> 		ret = kunwind_next(state);
+> 		if (ret == -ENOENT)
+> 			return 0;
+> 		if (ret < 0)
+> 			return ret;
+> 	}
+> }
+> 
+> (*) consume_state() == arch_kunwind_consume_entry() 
+>   ->  data->consume_entry == callchain_trace() -> perf_callchain_store().
+> 
+> Hmm, can you also dump the regs and insert pr_info() to find
+> which function fails?
+> 
+> Thanks,
+> 
 
-On 9/19/2025 7:22 AM, Rick Edgecombe wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->
-> Optimize the PAMT alloc/free helpers to avoid taking the global lock when
-> possible.
->
-> The recently introduced PAMT alloc/free helpers maintain a refcount to
-> keep track of when it is ok to reclaim and free a 4KB PAMT page. This
-> refcount is protected by a global lock in order to guarantee that races
-> don’t result in the PAMT getting freed while another caller requests it
-> be mapped. But a global lock is a bit heavyweight, especially since the
-> refcounts can be (already are) updated atomically.
->
-> A simple approach would be to increment/decrement the refcount outside of
-> the lock before actually adjusting the PAMT, and only adjust the PAMT if
-> the refcount transitions from/to 0. This would correctly allocate and free
-> the PAMT page without getting out of sync. But there it leaves a race
-> where a simultaneous caller could see the refcount already incremented and
-> return before it is actually mapped.
->
-> So treat the refcount 0->1 case as a special case. On add, if the refcount
-> is zero *don’t* increment the refcount outside the lock (to 1). Always
-> take the lock in that case and only set the refcount to 1 after the PAMT
-> is actually added. This way simultaneous adders, when PAMT is not
-> installed yet, will take the slow lock path.
->
-> On the 1->0 case, it is ok to return from tdx_pamt_put() when the DPAMT is
-> not actually freed yet, so the basic approach works. Just decrement the
-> refcount before  taking the lock. Only do the lock and removal of the PAMT
-> when the refcount goes to zero.
->
-> There is an asymmetry between tdx_pamt_get() and tdx_pamt_put() in that
-> tdx_pamt_put() goes 1->0 outside the lock, but tdx_pamt_put() does 0-1
-                                                      ^
-                                                 tdx_pamt_get() ?
-> inside the lock. Because of this, there is a special race where
-> tdx_pamt_put() could decrement the refcount to zero before the PAMT is
-> actually removed, and tdx_pamt_get() could try to do a PAMT.ADD when the
-> page is already mapped. Luckily the TDX module will tell return a special
-> error that tells us we hit this case. So handle it specially by looking
-> for the error code.
->
-> The optimization is a little special, so make the code extra commented
-> and verbose.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> [Clean up code, update log]
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> v3:
->   - Split out optimization from “x86/virt/tdx: Add tdx_alloc/free_page() helpers”
->   - Remove edge case handling that I could not find a reason for
->   - Write log
-> ---
->   arch/x86/include/asm/shared/tdx_errno.h |  2 ++
->   arch/x86/virt/vmx/tdx/tdx.c             | 46 +++++++++++++++++++++----
->   2 files changed, 42 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/include/asm/shared/tdx_errno.h b/arch/x86/include/asm/shared/tdx_errno.h
-> index 49ab7ecc7d54..4bc0b9c9e82b 100644
-> --- a/arch/x86/include/asm/shared/tdx_errno.h
-> +++ b/arch/x86/include/asm/shared/tdx_errno.h
-> @@ -21,6 +21,7 @@
->   #define TDX_PREVIOUS_TLB_EPOCH_BUSY		0x8000020100000000ULL
->   #define TDX_RND_NO_ENTROPY			0x8000020300000000ULL
->   #define TDX_PAGE_METADATA_INCORRECT		0xC000030000000000ULL
-> +#define TDX_HPA_RANGE_NOT_FREE			0xC000030400000000ULL
->   #define TDX_VCPU_NOT_ASSOCIATED			0x8000070200000000ULL
->   #define TDX_KEY_GENERATION_FAILED		0x8000080000000000ULL
->   #define TDX_KEY_STATE_INCORRECT			0xC000081100000000ULL
-> @@ -100,6 +101,7 @@ DEFINE_TDX_ERRNO_HELPER(TDX_SUCCESS);
->   DEFINE_TDX_ERRNO_HELPER(TDX_RND_NO_ENTROPY);
->   DEFINE_TDX_ERRNO_HELPER(TDX_OPERAND_INVALID);
->   DEFINE_TDX_ERRNO_HELPER(TDX_OPERAND_BUSY);
-> +DEFINE_TDX_ERRNO_HELPER(TDX_HPA_RANGE_NOT_FREE);
->   DEFINE_TDX_ERRNO_HELPER(TDX_VCPU_NOT_ASSOCIATED);
->   DEFINE_TDX_ERRNO_HELPER(TDX_FLUSHVP_NOT_DONE);
->   
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index af73b6c2e917..c25e238931a7 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -2117,7 +2117,7 @@ int tdx_pamt_get(struct page *page)
->   	u64 pamt_pa_array[MAX_DPAMT_ARG_SIZE];
->   	atomic_t *pamt_refcount;
->   	u64 tdx_status;
-> -	int ret;
-> +	int ret = 0;
->   
->   	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
->   		return 0;
-> @@ -2128,14 +2128,40 @@ int tdx_pamt_get(struct page *page)
->   
->   	pamt_refcount = tdx_find_pamt_refcount(hpa);
->   
-> +	if (atomic_inc_not_zero(pamt_refcount))
-> +		goto out_free;
-> +
->   	scoped_guard(spinlock, &pamt_lock) {
-> -		if (atomic_read(pamt_refcount))
-> +		/*
-> +		 * Lost race to other tdx_pamt_add(). Other task has already allocated
-> +		 * PAMT memory for the HPA.
-> +		 */
-> +		if (atomic_read(pamt_refcount)) {
-> +			atomic_inc(pamt_refcount);
->   			goto out_free;
-> +		}
->   
->   		tdx_status = tdh_phymem_pamt_add(hpa | TDX_PS_2M, pamt_pa_array);
->   
->   		if (IS_TDX_SUCCESS(tdx_status)) {
-> +			/*
-> +			 * The refcount is zero, and this locked path is the only way to
-> +			 * increase it from 0-1. If the PAMT.ADD was successful, set it
-> +			 * to 1 (obviously).
-> +			 */
-> +			atomic_set(pamt_refcount, 1);
-> +		} else if (IS_TDX_HPA_RANGE_NOT_FREE(tdx_status)) {
-> +			/*
-> +			 * Less obviously, another CPU's call to tdx_pamt_put() could have
-> +			 * decremented the refcount before entering its lock section.
-> +			 * In this case, the PAMT is not actually removed yet. Luckily
-> +			 * TDX module tells about this case, so increment the refcount
-> +			 * 0-1, so tdx_pamt_put() skips its pending PAMT.REMOVE.
-> +			 *
-> +			 * The call didn't need the pages though, so free them.
-> +			 */
->   			atomic_inc(pamt_refcount);
-> +			goto out_free;
->   		} else {
->   			pr_err("TDH_PHYMEM_PAMT_ADD failed: %#llx\n", tdx_status);
->   			goto out_free;
-> @@ -2167,15 +2193,23 @@ void tdx_pamt_put(struct page *page)
->   
->   	pamt_refcount = tdx_find_pamt_refcount(hpa);
->   
-> +	/*
-> +	 * Unlike the paired call in tdx_pamt_get(), decrement the refcount
-> +	 * outside the lock even if it's not the special 0<->1 transition.
-it's not -> it's ?
+After testing, it was found that the stack could not be obtained because user_mode(regs) returned 1. 
+Referring to the arch_ftrace_fill_perf_regs function in your email 
+(https://lore.kernel.org/all/173518997908.391279.15910334347345106424.stgit@devnote2/), 
+I made the following modification: by setting the value of pstate, the stack can now be obtained successfully.
 
-> +	 * See special logic around HPA_RANGE_NOT_FREE in tdx_pamt_get().
-> +	 */
-> +	if (!atomic_dec_and_test(pamt_refcount))
-> +		return;
-> +
->   	scoped_guard(spinlock, &pamt_lock) {
-> -		if (!atomic_read(pamt_refcount))
-> +		/* Lost race with tdx_pamt_get() */
-> +		if (atomic_read(pamt_refcount))
->   			return;
->   
->   		tdx_status = tdh_phymem_pamt_remove(hpa | TDX_PS_2M, pamt_pa_array);
->   
-> -		if (IS_TDX_SUCCESS(tdx_status)) {
-> -			atomic_dec(pamt_refcount);
-> -		} else {
-> +		if (!IS_TDX_SUCCESS(tdx_status)) {
-> +			atomic_inc(pamt_refcount);
->   			pr_err("TDH_PHYMEM_PAMT_REMOVE failed: %#llx\n", tdx_status);
->   			return;
->   		}
+diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+index 058a99aa44bd..f2814175e958 100644
+--- a/arch/arm64/include/asm/ftrace.h
++++ b/arch/arm64/include/asm/ftrace.h
+@@ -159,11 +159,13 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+ {
+        struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
+ 
+        memcpy(regs->regs, afregs->regs, sizeof(afregs->regs));
+        regs->sp = afregs->sp;
+        regs->pc = afregs->pc;
+        regs->regs[29] = afregs->fp;
+        regs->regs[30] = afregs->lr;
++       regs->pstate = PSR_MODE_EL1h;
+        return regs;
+ }
+However, I'm not sure if there will be any other impacts...
+
+By the way, during my testing, I also noticed that when executing bpf_get_stackid via kprobes or tracepoints, 
+the command bpftrace -e 'kprobe:bpf_get_stackid {printf("bpf_get_stackid\n");}' produces no output. 
+However, it does output something when bpf_get_stackid is invoked via uprobes. 
+This phenomenon also occurs on the x86 architecture, could this be a bug as well?
+
+Thanks.
 
 
