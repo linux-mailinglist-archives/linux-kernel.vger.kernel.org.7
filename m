@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-829865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13ED4B98158
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:37:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C956B9815E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C7D1B206E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30BA3B3149
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21BD21E087;
-	Wed, 24 Sep 2025 02:37:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE65F7A13A;
-	Wed, 24 Sep 2025 02:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7334221FCB;
+	Wed, 24 Sep 2025 02:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C979Wyey"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDA821D3F2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758681444; cv=none; b=kTRIiVSNBzCh5p4jbQU8sq2OwAthUW3vTFuKF6eA0KnDPy6l5rKqBeyNEUN8oZCXVHTQlFTARD/ik1skgGtE2tjr1ScwUPMcAxIfuPoUR9rbI4KTz/rYpLziNk0YiiVKTxh1RtMKvbK/MezpcktwbMTv+UsovFbLA6Kc7haNc60=
+	t=1758681665; cv=none; b=US9yyKjS5HC0sfhJqQIVATNAIe+pAQ5NzTweO5L3khwtpcXcJ/yK86eTPE+AV8voaokAWlSdvG1kFSTTOa6PFjSgYxrJvghy3PROcLGppLy6lgfBc3jzUHkgGGVBeIvkunTEU2WgXvW9KeR3o6vcPWnnpsrSPy9gFp2mlFQRGi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758681444; c=relaxed/simple;
-	bh=bIQw0nBSsyOMdhh4+Zz9MWL34Yvwhow8hKpQvTpVbpk=;
+	s=arc-20240116; t=1758681665; c=relaxed/simple;
+	bh=Uha/InzQTMU2XSWRXEyQ5VSO3HoUfrMeKudmNEUQGUc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AA2d+fSB6wST3nugRWOaKHqxk2/+XpDME/ZWXrGc1OkkCeRP8hzbPVlvxoUkVwHyKd5LrDTAEos6NzrNJhSksS8y6SlDmelKmGSfQll2hhAyuaD7v+EmNBdA4166VSWefyN9nE5jDLzHZYo6ozfwHzXEdPHTS+W3Ml7zm0k92W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8911106F;
-	Tue, 23 Sep 2025 19:37:12 -0700 (PDT)
-Received: from [10.164.18.47] (unknown [10.164.18.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFEAD3F694;
-	Tue, 23 Sep 2025 19:37:18 -0700 (PDT)
-Message-ID: <d36c9908-f314-414f-99d8-31440696c06b@arm.com>
-Date: Wed, 24 Sep 2025 08:07:16 +0530
+	 In-Reply-To:Content-Type; b=mfu+IDb3vDQhUudZOgf4NcMjeR1PkTd3WgGtBGT8pb4TNMHR5w3vhgd2wv++n2gtQIhTo1mktSaiAjpzMIhWDfcs/ZJKDOus+zP40ekV9mCfbdMFOgO0js8+OkYQZQncIV81/ZXt9304aBDqfFPSkcTdK5Dt5YcatNe/q38i258=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C979Wyey; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7761b83fd01so5995925b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:41:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758681663; x=1759286463; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uoZZYfcg1eDQ+SJZ5L9LQV2KxrPo1OhoDjYQOppmFGk=;
+        b=C979WyeyIk49+gDTxmmpWDTS2Chki33BatjBnjIRgwsng9LbXjDe4jBnTn1mKj1nLE
+         V8VL+smAD1U05tEQWzWwKruf9nzRjjvcqMYxbtm7z+rTaosd8oYuergBsMN7jVe8c8vT
+         fl1lbbCGYvlPFG4a/ifqIZp65tz5c14AKEHIGR7Z3jryi1jYqIH+FWYbUAw+MH/ZTjxt
+         nc6VNHIg0gi20VYPmVubyq5Ei2QamOt5gM9ptR0x65Akfnl1pyeO/4sj2+qVNABo0ru8
+         PzWaPTPp1YxI7lrFfFSH0KVxoGYN+HBqpT+JF3lXrXCOmmsHmDhjB/nsQYRIYqcp7jF8
+         P3QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758681663; x=1759286463;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uoZZYfcg1eDQ+SJZ5L9LQV2KxrPo1OhoDjYQOppmFGk=;
+        b=FX8hgAFrw/ZUJVvsWjdMAkeuUu9SNNktL7qOoCcxhCuST2SOY7tC5WuTM8LlqGTGix
+         rqtQImWwA/skdjBcoa8OGau3tGHfrHO5kn7N0nYsTef3IWirmCLOXJSP9M1NDSqEh53o
+         c3BNCYITmOlzNR8q/2K+ttdsqgNVVXVAFzcHaUrggCvROdyDAEOE3NGZs2lMkWV2vmwy
+         u1jXlgRW6V8RDFogh8GY0YNiYr0Wdwa12aMBuiEKjoQ2P4QGQkmc1cCGfL05lgZwpwm9
+         YG4ieRXc2XGFTrgt5GfJLcDsvi7ZJAfuhwYr5Z+kPcH+MtJ/U3tdJXArzm533cFzDjUA
+         D4xg==
+X-Forwarded-Encrypted: i=1; AJvYcCU21Ljk6vp6I1MB6BVXUMGuchGIFixSLMKN3E8LZ82umZuARKe3tUmvpccz30NbTdK4ixKYMzwI7AlCI+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSi+Ns/1fO6abwLyYtFTjjx14dw4OtoAZ0gaablYqV1GsTj6mh
+	PFNpvfHxpuqCR5PnUOz65SPdaLvxRnjMS8Ka+m3nGCJ5XnL/MugBL+jf86+jun2dSPA=
+X-Gm-Gg: ASbGncs7K201TJFfOOUZgR6zdBO3ndjLty9ONrks5FmNZFMiY/iPGZ0pddGflaCj1X7
+	n5/leepEjdoSyecgNMgp1Q0NbzWzlJdPC14aZVz7E/lYnVJwz6zgp/MOpBjYm3xlaW3yfaRlTaj
+	bJbkpiMDaOC/HS4bfqpEQG9WgK96ffFWBgkLcon9kJKho/WiF2bVXNL0NHwbRZIkZmlo7ekHT6T
+	K+v7aTR8aF0WHCDvwzst2upfVUjvjfK+DMM82IMGrJ95j4XGs/+tgofZRQOf5otadHXSUeBPOXO
+	S8GB7/PBTccumad9d/XvLff+cp4zmJ0Gonr/dkQXwV6TYGrLCkri9M5F+x9vwHa8dOiqCGK9b2M
+	UhrmBzv1B4T2CxL12BSiYcB683s2GS4UcESnkzorwgSUnMO2AWKz79JwjEXUJBxgoFkjGMUsO13
+	EsqtrGeQyDWBH/
+X-Google-Smtp-Source: AGHT+IGQhBGrCzcmK6hv9moOx8ggT0aDNbcu/Pe0LQUZCBDVl4Fibpr1kyaVHD04dtyoEjoOsTg6CA==
+X-Received: by 2002:a05:6a20:b90f:b0:2dc:40f5:3c6c with SMTP id adf61e73a8af0-2dc40f57e34mr1601675637.54.1758681662762;
+        Tue, 23 Sep 2025 19:41:02 -0700 (PDT)
+Received: from ?IPV6:2804:7f5:b08b:e4a8:158e:d41f:a482:c1c9? ([2804:7f5:b08b:e4a8:158e:d41f:a482:c1c9])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55199e08f1sm12736678a12.24.2025.09.23.19.40.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 19:41:01 -0700 (PDT)
+Message-ID: <1b269e4f-5a2d-4de9-8757-cd4218d36bac@gmail.com>
+Date: Tue, 23 Sep 2025 23:40:55 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,53 +82,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the kvm-arm tree
-To: Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <aNK8hSSKKZhEHZbt@finisterre.sirena.org.uk>
- <aNLEem8ryBiqKfDr@willie-the-truck> <aNLOiRB_HeUAnFKI@willie-the-truck>
+Subject: Re: [PATCH v11 2/3] iio: adc: max14001: New driver
+To: David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+ Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>
+References: <cover.1757971454.git.marilene.agarcia@gmail.com>
+ <c257f7feb92dcf33bf7a55810fe69d13890374d5.1757971454.git.marilene.agarcia@gmail.com>
+ <2d5ef36b-ae37-453d-a19b-76fc97b7f14f@baylibre.com>
+ <83018b80-b939-4e2f-a9ee-7fbf07648181@gmail.com>
+ <c19fdb3a-e537-4f32-9b69-db819c04f447@baylibre.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <aNLOiRB_HeUAnFKI@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
+From: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+In-Reply-To: <c19fdb3a-e537-4f32-9b69-db819c04f447@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 23/09/25 10:14 PM, Will Deacon wrote:
-> On Tue, Sep 23, 2025 at 05:02:02PM +0100, Will Deacon wrote:
->> On Tue, Sep 23, 2025 at 05:28:05PM +0200, Mark Brown wrote:
->>> After merging the kvm-arm tree, today's linux-next build (arm64
->>> defconfig) failed like this:
->>>
->>> In file included from <command-line>:
->>> /tmp/next/build/arch/arm64/kvm/at.c: In function 'setup_s1_walk':
->>> /tmp/next/build/arch/arm64/kvm/at.c:229:30: error: 'TCR_SH1_MASK' undeclared (first use in this function); did you mean 'TCR_SH0_MASK'?
->>>   229 |                    FIELD_GET(TCR_SH1_MASK, tcr) :
->>>       |                              ^~~~~~~~~~~~
->>
->> [...]
->>
->>> Caused by commit
->>>
->>>    4f91624778b27 ("arm64/sysreg: Replace TCR_EL1 field macros")
->>>
->>> from the arm64 tree.  I have reverted that commit.
->>
->> Thanks, I'll drop it from arm64 as well.
+On 23/09/2025 11:27, David Lechner wrote:
+> On 9/22/25 7:56 PM, Marilene Andrade Garcia wrote:
+>> On 16/09/2025 15:04, David Lechner wrote:
+>>> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
 > 
-> (now dropped)
+> ...
+> 
+> 
+> In general, please trim out extra stuff like I've done here when you
+> reply. It makes it easier to find the important parts. I hope I didn't
+> miss any of your questions.
+> 
+>>>> +    /*
+>>>> +     * The following buffers will be bit-reversed during device
+>>>> +     * communication, because the device transmits and receives data
+>>>> +     * LSB-first.
+>>>> +     * DMA (thus cache coherency maintenance) requires the transfer
+>>>> +     * buffers to live in their own cache lines.
+>>>> +     */
+>>>> +    __be16 spi_tx_buffer __aligned(IIO_DMA_MINALIGN);
+>>>> +    __be16 spi_rx_buffer;
+>>>
+>>> These would no longer be strictly big-endian, so we could
+>>> just make them u16 with a note in the comments.
+>>
+>> Hello David, I have some doubts that I would like to clarify before sending v12. Since I am not able to test the case using SPI_LSB_FIRST, I noticed that you suggest saving the data as __le in this case. Just out of curiosity, if I use SPI_LSB_FIRST, would saving the data as __be lead to errors?
+> 
+> My thinking is that since we are sending things out 1 byte at a time, in order
+> for the least significant bit of 16 bits to be sent first, the least significant
+> byte has to be sent first. So will little-endian, the byte containing the least
+> significant bit of the 16 bits will be first in memory.
+> 
+> __be is just a naming convention and doesn't actually cause any bytes to
+> be swapped in memory. It just lets readers of the code know that the
+> value stored there has to be handled carefully because it may not be
+> cpu-endian. It would be confusing to readers to store a little-endian
+> value in a __be16 variable, but technically, no, it would not cause any
+> errors.
+> 
+> This is why I suggested to make it u16. It is still wrong but it is
+> equally wrong in both cases. If you still want to use __be16 though,
+> you could make a union instead.
+> 
+> union {
+> 	__be16 be;
+> 	__le16 le;
+> } spi_tx_buffer;
+> union {
+> 	__be16 be;
+> 	__le16 le;
+> } spi_rx_buffer;
+> 
+>>>
+>>> The scoped_guard() looks a bit odd with the extra indent. I would write
+>>> it like this instead:
+>>>
+>>>
+>>>
+>>>      case IIO_CHAN_INFO_RAW: {
+>>>          guard(mutex)(&st->lock);
+>>>
+>>>          ret = regmap_read(st->regmap, MAX14001_REG_ADC, val);
+>>>          if (ret)
+>>>              return ret;
+>>>
+>>>          return IIO_VAL_INT;
+>>>      }
+>>>
+>>
+>> Ok, thank you. But since I removed the mutex, as it was mentioned in the first comments, I should not use the guard, right? At least not for now.
+>>
+> 
+> Correct. The regmap_read() has something similar internally already.
+> 
+Ok, Thank you for the answers.
 
-Hello Will/Mark,
-
-The conflict happened as the commit c0cc438046ee (“KVM: arm64: Compute shareability for LPA2”)
-which came in via the KVM tree, added a new TCR_SH1_MASK instance. Shall I respin the patches
-accommodating the new changes from KVM or just wait for the next merge window ?
-
-- Anshuman
-
-
+Best Regards,
+Marilene
 
