@@ -1,123 +1,162 @@
-Return-Path: <linux-kernel+bounces-830606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56817B9A1A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0E1B9A1B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58CDB188942E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A519C3FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A446200BBC;
-	Wed, 24 Sep 2025 13:47:02 +0000 (UTC)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5800B3009F6;
+	Wed, 24 Sep 2025 13:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MpA0nxVX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6370FCA6F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E893814A9B;
+	Wed, 24 Sep 2025 13:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758721622; cv=none; b=EvmJ7TznSNDGIaGXb0x9RfzYXK44JBRQobcytmvl1j4SBK1W9RRb1CbrS+9giRrHrklvBiHWLzBmRmclZo9VXOZd+niFUtHsGWgqE7h7CFB6wC42urF3rAqD6+h3rVUjYZD3TOrg0KPwVR/0QwshrSd5dXVsft0Ew/LsXpt4JVo=
+	t=1758721807; cv=none; b=uwKwFE2Sa/JqJdoD+S9SyPJ5ckj/P7j9YlLhycfc8o7jMIDtqeaShmaRGxayUKU0Muh+smB/i+tg9ysBexOR4c5IzY75g/Ee0WU3LDV+BANaitj4/OqpUtGVeDbZfuPaOO439yc+5TkTB/GY9/Y1IXy7qCNf8KFW6ofgRsmGr4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758721622; c=relaxed/simple;
-	bh=4ufVBo91j6b7vQS8nx77668ZnFWJ1UYtSUBtzw1k6GE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=snuctM7Nuck47NImpWNKr3jdMSLaWEVftwiJo+ylpUezqNtMAV5gzlyikqF9V+XT0jrH2QV0KV72PRauGggi06Ht+4cYlnH5dVn36a2tF2sUNnGNKerKMFxuErhCVEDsj91Huq8HOk3YTIyAMwqmTuDcAEpqasadjtzejyZ3C7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-5997f407c85so1561620137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:47:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758721619; x=1759326419;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fLzLZ4lMMfD6hJdHfjXaI/aoGDFxs0QS4To1e7V5pJk=;
-        b=iS5M4Vo1ZJf9/P00WIAbxll7g+gxC1k1mueST+qtLauZJ/D01JPxz2G6+P251w4pMh
-         vjuQX+6Xo6wmLNBWOBG9PBlUacYCpyl1CsxYiDcppmbBU/w+vtAsYzAQU8MMFXCjmdgv
-         uFLqyMhq2k0HSfZ/RoftLBY1E85KhCzUI4vZ50b6qreEgUNoYQKf6O6VDf6Pc74XV22M
-         sctAx9hzj/qtn5wTpXWnyK/ffMJZ/BmizESiTGHMpNvRAHqfKaUCox3MeXBuRmym9M2z
-         0Tio7utKO46R6dPIqoDSx8VvwDzbUi80R04IwOH7Fm3IPnOj0fqYBSlmNpL2iDsv32qY
-         hE8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWau/GjxMtrHWsAMXDyQstveKWG5OwIBv5glxPcGQ/2yzEHv7xFhyQTyl33YO8mA7PO3wrC2f8xMAKMgos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+zcnzRd16/6hZkPDaatNDhKuue86RQi20Ibamkl7UrwajddGd
-	RmVcwoNGsu+6CLmYn22AVxRzNY3zoG15neW2Ro/waUWaGexy4Z6tZoI2YKSuUF1X
-X-Gm-Gg: ASbGncufddVlRR3UrLWvGi2BumEJROw89BwsSHPvjumsWPIAEPW1NIE/WtalIbvrHlK
-	S91rdWH4JoBDIxkdpJubktEJJ6gvOrK7L+KXeyAq2jQe6BvLGS1F7oSBto47gWwi8qF/3iNrgCx
-	fv2WQDg/wu8uf924ksmnUfb1NDagXxknN97yD22yvYTElzfiqNnBQx5dkgNkrnPjU9YWs+jeEh7
-	euTeTD2/Dz0oZWsr6rvMXoM57QhViND513LgpnBCRpBsXfKTk4VuZM/2II5lD/FJWK06IjXGHAM
-	Mn2orcOkIO3IgjMDpQe+A17qym3dklsoiIuxPkO/FX649ejNnGmqpQZAhoTu4XdMUsIx+OT5+QH
-	GzRv6cu2Cbenxnm16t7A/GbVXvMheyCsdb7r7jiUxbgufyHB4phQwzRSWF1dYoF7d
-X-Google-Smtp-Source: AGHT+IHaqIu8kK6IHEGNV3MFlb6gER5FiXsZgcijQfRCg3q65Yd0Ev2icVFhtLJe0D/tA8ePkLniKQ==
-X-Received: by 2002:a05:6102:914:b0:51b:fe23:f4c with SMTP id ada2fe7eead31-5a5787ac8c1mr2246583137.22.1758721617750;
-        Wed, 24 Sep 2025 06:46:57 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-592500edcd3sm3605042137.15.2025.09.24.06.46.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 06:46:57 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-54aa4b86b09so1827705e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:46:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWFY70bi3crFgtUUnFCkD2eyXEMcKjRIYsTwKbrHaUFz1UJAP5GBk25q1cPVVZu62DkIsdh5Sp7WSZBI7A=@vger.kernel.org
-X-Received: by 2002:a05:6122:3d04:b0:544:75d1:15ba with SMTP id
- 71dfb90a1353d-54bcae9778amr1949729e0c.8.1758721616800; Wed, 24 Sep 2025
- 06:46:56 -0700 (PDT)
+	s=arc-20240116; t=1758721807; c=relaxed/simple;
+	bh=FVTlGQRfhtupRSo1RZWEmSo3V6SWhG+b4V2VQt6fC2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmc5ww6mhtFQteGZXHdC3bgGXE+u2GW/KJ5HkPMTl9VEwOpnRUK/VN638mjcDl0nKExyOWHANpnWlypE7ntW/k7Ag/GQJv+tiaaUSbc4WtYPUU+nG5okAZsVNJzpAmbEP1yfS8H66bXz+i73WDn92Ehqzo/+Qn2Uyqh6MjPrrm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MpA0nxVX; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758721805; x=1790257805;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FVTlGQRfhtupRSo1RZWEmSo3V6SWhG+b4V2VQt6fC2M=;
+  b=MpA0nxVX0AVggcEdK0w+WqO0AxtIkizAFOvyDu2wPKWqB832K3tWTZdF
+   36utLx2OHgl3zqcbY7cm9xv1d2r9p+gGPx4S17cneIfaMQ59sq3nmoSnl
+   w6DzmGxRa+5py1kzY7QHJxV9Ugp0qGyUwNQM+SqH+PUTmIHX1Ld0sefiV
+   /B+Jnh3owy8VdX/buVWUQys9lgsrntqpFEq6fS9I2pNsnvr27Ucc9keoR
+   afCvUOE7bl44g65OpSgcruLM6ulPWAR3EaZnLZiJXbT8nSQJ0UDZUj6MP
+   IHhJWzYg8H+Ex+SfTin0emSFMv80Nw4BXefAe+1U7EUd58NqBhhQ+y8Jk
+   Q==;
+X-CSE-ConnectionGUID: pNsJGS5TQ9W1NGVmpgKH5w==
+X-CSE-MsgGUID: kXChP9yRTwWTTOLw2yo8tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60931980"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60931980"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 06:50:04 -0700
+X-CSE-ConnectionGUID: +LyeUF/IR8CAyRI+4elb0g==
+X-CSE-MsgGUID: 7NA19qq7SRSo+9WS0jpauw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="181051824"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 24 Sep 2025 06:49:59 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1Psa-0004C9-1F;
+	Wed, 24 Sep 2025 13:49:56 +0000
+Date: Wed, 24 Sep 2025 21:49:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>, hannes@cmpxchg.org,
+	hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
+	lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com,
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, lance.yang@linux.dev, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
+ offline
+Message-ID: <202509242123.QwwFy7gc-lkp@intel.com>
+References: <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se>
- <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
- <8672a8c1-26b2-4b65-a30e-a4c3e0f1f32e@linaro.org> <20250924093132.GA1062104@ragnatech.se>
- <69f09f55-fd2f-47a9-887a-e9c2cf7c21df@linaro.org>
-In-Reply-To: <69f09f55-fd2f-47a9-887a-e9c2cf7c21df@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 24 Sep 2025 15:46:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
-X-Gm-Features: AS18NWDVph8AWywi1xllkD9wmtBCKD3KT56Evui3Cxt4BbhVbP3DxFNagKkV9X0
-Message-ID: <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/sh_cmt: Do not power down
- channels used for events
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
 
-Hi Daniel,
+Hi Qi,
 
-On Wed, 24 Sept 2025 at 15:43, Daniel Lezcano <daniel.lezcano@linaro.org> w=
-rote:
-> On 24/09/2025 11:31, Niklas S=C3=B6derlund wrote:
-> > If it's not too late I think we should drop it. The issue this work
-> > tries to solve is a lockdep blurb which highlights a design issue in th=
-e
-> > driver. But the driver have function properly in the past. So I think
-> > it's better I work on solving the blurb without any regressions.
->
-> Ok, dropping 2/2 but keeping 1/2 is fine, right ?
+kernel test robot noticed the following build errors:
 
-1/2 is a refactoring without any functional impact.
-Thanks!
+[auto build test ERROR on next-20250922]
+[also build test ERROR on v6.17-rc7]
+[cannot apply to akpm-mm/mm-everything rppt-memblock/for-next rppt-memblock/fixes linus/master v6.17-rc7 v6.17-rc6 v6.17-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Gr{oetje,eeting}s,
+url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-thp-replace-folio_memcg-with-folio_memcg_charged/20250923-171935
+base:   next-20250922
+patch link:    https://lore.kernel.org/r/55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch%40bytedance.com
+patch subject: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg offline
+config: riscv-randconfig-001-20250924 (https://download.01.org/0day-ci/archive/20250924/202509242123.QwwFy7gc-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250924/202509242123.QwwFy7gc-lkp@intel.com/reproduce)
 
-                        Geert
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509242123.QwwFy7gc-lkp@intel.com/
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+All errors (new ones prefixed by >>):
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+   mm/huge_memory.c: In function 'reparent_deferred_split_queue':
+>> mm/huge_memory.c:4302:42: error: dereferencing pointer to incomplete type 'struct mem_cgroup'
+     struct deferred_split *ds_queue = &memcg->deferred_split_queue;
+                                             ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for ARCH_HAS_ELF_CORE_EFLAGS
+   Depends on [n]: BINFMT_ELF [=n] && ELF_CORE [=n]
+   Selected by [y]:
+   - RISCV [=y]
+
+
+vim +4302 mm/huge_memory.c
+
+  4298	
+  4299	void reparent_deferred_split_queue(struct mem_cgroup *memcg)
+  4300	{
+  4301		struct mem_cgroup *parent = parent_mem_cgroup(memcg);
+> 4302		struct deferred_split *ds_queue = &memcg->deferred_split_queue;
+  4303		struct deferred_split *parent_ds_queue = &parent->deferred_split_queue;
+  4304		int nid;
+  4305	
+  4306		spin_lock_irq(&ds_queue->split_queue_lock);
+  4307		spin_lock_nested(&parent_ds_queue->split_queue_lock, SINGLE_DEPTH_NESTING);
+  4308	
+  4309		if (!ds_queue->split_queue_len)
+  4310			goto unlock;
+  4311	
+  4312		list_splice_tail_init(&ds_queue->split_queue, &parent_ds_queue->split_queue);
+  4313		parent_ds_queue->split_queue_len += ds_queue->split_queue_len;
+  4314		ds_queue->split_queue_len = 0;
+  4315		/* Mark the ds_queue dead */
+  4316		ds_queue->is_dying = true;
+  4317	
+  4318		for_each_node(nid)
+  4319			set_shrinker_bit(parent, nid, shrinker_id(deferred_split_shrinker));
+  4320	
+  4321	unlock:
+  4322		spin_unlock(&parent_ds_queue->split_queue_lock);
+  4323		spin_unlock_irq(&ds_queue->split_queue_lock);
+  4324	}
+  4325	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
