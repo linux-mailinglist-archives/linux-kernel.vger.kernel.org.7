@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-831333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABC6B9C611
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:43:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0920EB9C614
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A91217BFAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C8A1BC02D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6653189;
-	Wed, 24 Sep 2025 22:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A770222DF9E;
+	Wed, 24 Sep 2025 22:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="BfvyTssa"
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fRjNd2bi"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A0E126C05
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE9744C63
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758753818; cv=none; b=HDebGFtvVlmhfvIHESM7TgQEnT4uY3UVQ9fpuBDfKnaxP8VbLH7WRpybR6CM7MKbJOppVCyXfjdesRDGf6uvvOv4TSdp80bmIJ5cA471u2niyY8fv5l+u1eVFrwfxCYKYRCjtcYYWACAu0Ke3pkIEg58CUPvLwfYladorpMG7pI=
+	t=1758753918; cv=none; b=BYYAAryBcafS1wqKO7MsrUJAwQdSJu9u4GDi23NxoZYSvzjIcvKEEPw46krXK7qHdyOF1npI/qawFskd5GZcwqBX2uDRUoUi606sMxXD06hjlFKVGjTOwJEFh4mf4WD5KM+3WXV5KQgb/R5gFX1kGw0hWUdP00VHA8GWlqaqsaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758753818; c=relaxed/simple;
-	bh=gX91FlV085Zzj03a/JUrWAXzlp60Pblf+JBRa/t0dNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oUW7lIAVd5xcB2MPkdB+yt5A4+sm7JFTSEXCLwcPv9VSFS9KXB613aNskxX99Y3Sj8N112VpqDKVL8GB4xaUs2uJ/IJ4ksx8dPPBloqDbsp1G/89tvxS4k307eitQ+Ej1UGSVPGhukihLTmemfJGok8PP8j3+I8VQd33AoEQ1bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=BfvyTssa; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758753814;
-	bh=9jzoboa1vOfIqQZDoYIh1fW4a4hloVEmA+RmS4r7Wa4=;
-	h=From:Subject:Date:Message-ID;
-	b=BfvyTssa3C2AwsHUzqOt88iDRNwbn0DEGhixHKzzp2aWBSepefbiB39J7mP66okYd
-	 Ao+N/v0n6xyB+BFgeGy+Qp1qmcN4NMn/jqd5hSJQPNPS/7w0QPjac1UNaL7CmLybIA
-	 n5APZce8C3Jhr9TGW/X7kEZ5j9FoTSI2cEW1srTI=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68D473E8000051CE; Wed, 25 Sep 2025 06:42:50 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4969544456649
-X-SMAIL-UIID: 63B27576B27242D597FF52660C38BAB2-20250925-064250-1
-From: Hillf Danton <hdanton@sina.com>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	multikernel@lists.linux.dev
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
-Date: Thu, 25 Sep 2025 06:42:36 +0800
-Message-ID: <20250924224238.7592-1-hdanton@sina.com>
-In-Reply-To: <CAM_iQpUwm0wOQx3Epo-5MmkfwZmLsehx6HmABNwzqpRNiPjTmQ@mail.gmail.com>
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com> <20250921014721.7323-1-hdanton@sina.com> <CAM_iQpXMjFs4LmpRVNqxeBnFp4KxEfgi9cB_Jwuy7VgOSqTfsQ@mail.gmail.com> <20250924011237.7568-1-hdanton@sina.com>
+	s=arc-20240116; t=1758753918; c=relaxed/simple;
+	bh=Rj/4A4UV+g61EWyN9PSOeN5YsDOwWQ4GD+iQvAJMkX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtofmuJMgetZFdOtEOyqz1KJDBjYCE32T5EHa4N245EkkGEb8ZEGQQQX50MoQ+ri4Ewmn1fluEkBehA/blSnsVBZaJgs4grGva5mFzXAovCWMmSVE+vK70lHo2sj92Nph/v1GY/1Ok21S8YoVdhu+Qt+bOF13gD58B54LxwqcdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fRjNd2bi; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63053019880so621159a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1758753914; x=1759358714; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKPFYFmsxRdO9nBgPXgYLA7v0FY+/aO2JSwgPvlvRAs=;
+        b=fRjNd2biUYDmxb8JINrFXQA7+hLw7GDkHFWYJ8JGHodDhb/6jGtCHsZrGevveYlmVA
+         qub4oVvJ6So2TwNCQwK5DQlpDODaR41xLLsoXeQjcQ2HpWpvB27rJpNT6i2Y3wTIWp2h
+         bxuud2i1gILp7d7UYtB5Ko7Yib5UFHVFni9/GgJgIUsNFfjaP9wxBA/avAieN3fcq4SW
+         DssuGQVpCJjU8aWcgUemdvA3iJsleKCCCS0pA03Cob/GQwdBBi5ok5WASufrwfXspWA7
+         hiAgvJCbOMcgK9DwNIU4YUgxagBzjpaqqDA+wV91t7gLYLXPko09c7dcQJkIIaqUCR14
+         24ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758753914; x=1759358714;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bKPFYFmsxRdO9nBgPXgYLA7v0FY+/aO2JSwgPvlvRAs=;
+        b=SCMW3D4gf5BBjwpDxLf91waAOE4Ssjr0u3aR4QEJD0SkAukGJ+4WR/4nURwTaM4JFH
+         RNO58d+yaKz9Ujs7gecp8KXNwzPnqg930N2oc1ys8KAB3iXyIXzbLlDEhZa5pfoM4Rku
+         BBcmy+Nss+ZpKoAlgLGiqa+7ns6zOjagNNsEkKdrPT2hb7F9J58CcKIkaLakk+g4Hf7G
+         pomCk7XAxflPaCdL+NTq353bIRleWVMtmiDS4k+/f4ZQAastBxvoT1mgn3KTdgEbMtBX
+         IMpgK+EO0KFadmdmSaEnAj81BjzavGH2G5KtzqBu3J6UeEVSai4dnOYWIFWT3qWFbiG/
+         ll4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXkqbKBsC+Ih5o+/0V8NsSp4G4MC/txavQOeBliRxZJ3OG2yITfyorUpPlGVqIljPyg1pDmIGX4slszFpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdsarbcS26jF+Pvg/vYQ0burvQBy+NTWxE0RNrBJYcxU+/6btc
+	ungNqhEpidr0KQ//pxhjl3cxYRUyMEKhHbx6bvDCwAbjazIEs44m/5ihZhW+TUyNVE8=
+X-Gm-Gg: ASbGncuTZkPoB7sJYf5XbgTq+5QXGhiI8fEnE/9YmA6KUjhMmQltK7b/NET0NozftPH
+	m5K0gSd6MJQF5VqJud5kkruafjPmRTKDH6oa8aMvhzq7rvkqWik9rQUZOPv+B0sk+Z8L2vaJXgB
+	wdn+CRS+Q9oJz3Qt36AP/OYtdrXSpkU1OKLaD1ILzTLCXDZk9qr03maHtiGFn2YnEf6J/K6qvHS
+	qMLedBAn/K+p2/4UvieWIBOxGqkWGNSlfyUdqy1oPX9NtoevTLDvbGg2j7doMsIQehE+fXXx3Oi
+	6C2zTAzLfwTZe+frfnhH4kHL+SGDe/yRRjoE/H9sv1HIWyXajkjrrIwHQ0cuzWWTCLgvTvcCPd5
+	EqN0TxXvWRo+gIQVou68xVlmRmafU8Tqa7sA5CvKSgQNeQvE9uLOArmQWESo=
+X-Google-Smtp-Source: AGHT+IE7W0spmlGgfXfGrubqgWuRi3YX2/w8uBTG3/ofbbW3nX06nZJT0SJrS8Lxa16DZfIsr1NfFQ==
+X-Received: by 2002:a17:907:9447:b0:b1f:ecda:b79f with SMTP id a640c23a62f3a-b34bd43f746mr140156766b.38.1758753914406;
+        Wed, 24 Sep 2025 15:45:14 -0700 (PDT)
+Received: from 8745f5817b94.dev.purestorage.com ([208.88.159.129])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b353efa494esm31398366b.25.2025.09.24.15.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 15:45:14 -0700 (PDT)
+From: Amit Chaudhary <achaudhary@purestorage.com>
+To: achaudhary@purestorage.com,
+	Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: mkhalfella@purestorage.com,
+	randyj@purestorage.com,
+	jmeneghi@redhat.com,
+	emilne@redhat.com,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] nvme-multipath: Skip nr_active increments in RETRY disposition
+Date: Wed, 24 Sep 2025 15:43:18 -0700
+Message-ID: <20250924224319.4557-1-achaudhary@purestorage.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Sep 2025 10:30:28 -0700 Cong Wang wrote:
->On Tue, Sep 23, 2025 at 6:12 PM Hillf Danton <hdanton@sina.com> wrote:
->> On Mon, 22 Sep 2025 14:55:41 -0700 Cong Wang wrote:
->> > On Sat, Sep 20, 2025 at 6:47 PM Hillf Danton <hdanton@sina.com> wrote:
->> > > On Thu, 18 Sep 2025 15:25:59 -0700 Cong Wang wrote:
->> > > > This patch series introduces multikernel architecture support, enabling
->> > > > multiple independent kernel instances to coexist and communicate on a
->> > > > single physical machine. Each kernel instance can run on dedicated CPU
->> > > > cores while sharing the underlying hardware resources.
->> > > >
->> > > > The multikernel architecture provides several key benefits:
->> > > > - Improved fault isolation between different workloads
->> > > > - Enhanced security through kernel-level separation
->> > > > - Better resource utilization than traditional VM (KVM, Xen etc.)
->> > > > - Potential zero-down kernel update with KHO (Kernel Hand Over)
->> > > >
->> > > Could you illustrate a couple of use cases to help understand your idea?
->> >
->> > Sure, below are a few use cases on my mind:
->> >
->> > 1) With sufficient hardware resources: each kernel gets isolated resources
->> > with real bare metal performance. This applies to all VM/container use cases
->> > today, just with pure better performance: no virtualization, no noisy neighbor.
->> >
->> > More importantly, they can co-exist. In theory, you can run a multiernel with
->> > a VM inside and with a container inside the VM.
->> >
->> If the 6.17 eevdf perfs better than the 6.15 one could, their co-exist wastes
->> bare metal cpu cycles.
->
-> I think we should never eliminate the ability of not using multikernel, users
-> should have a choice. Apologize if I didn't make this clear.
-> 
-If multikernel is one of features the Thompson and Ritchie Unix offered,
-all is fine simply because the linux kernel is never the pill expected
-to cure all pains particularly in the user space.
+For queue-depth I/O policy, this patch fixes unbalanced I/Os across
+nvme multipaths.
 
-> And even if you only want one kernel, you might still want to use
-> zero-downtime upgrade via multikernel. ;-)
-> 
-FYI what I see in Shenzhen 2025 in the car cockpit product environment WRT
-multikernel is - hypervisor like QNX supports multi virtual machines
-including Android, !Android, linux and !linux, RT and !RT.
+Issue Description:
 
-Hillf
+The RETRY disposition incorrectly increments ns->ctrl->nr_active
+counter and reinitializes iostat start-time. In such cases nr_active
+counter never goes back to zero until that path disconnects and
+reconnects.
+
+Such a path is not chosen for new I/Os if multiple RETRY cases on a given
+a path cause its queue-depth counter to be artificially higher compared
+to other paths. This leads to unbalanced I/Os across paths.
+
+The patch skips calling nvme_mpath_start_request() on a RETRY disposition
+if nvme_req(rq)->retries counter is non-zero. This avoids reincrementing
+nr_active and also from restarting io_stat start time.
+
+base-commit: e989a3da2d371a4b6597ee8dee5c72e407b4db7a
+Fixes: d4d957b53d91eeb ("nvme-multipath: support io stats on the mpath device")
+Signed-off-by: Amit Chaudhary <achaudhary@purestorage.com>
+Reviewed-by: Randy Jennings <randyj@purestorage.com>
+---
+ drivers/nvme/host/nvme.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 102fae6a231c..6ca6529ba83a 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -1150,7 +1150,7 @@ static inline void nvme_hwmon_exit(struct nvme_ctrl *ctrl)
+ 
+ static inline void nvme_start_request(struct request *rq)
+ {
+-	if (rq->cmd_flags & REQ_NVME_MPATH)
++	if ((rq->cmd_flags & REQ_NVME_MPATH) && (!nvme_req(rq)->retries))
+ 		nvme_mpath_start_request(rq);
+ 	blk_mq_start_request(rq);
+ }
+-- 
+2.43.0
+
 
