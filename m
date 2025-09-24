@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-830327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E65B99686
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C9EB9968C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A177A19C6F6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E911D19C7A38
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C60A2DEA86;
-	Wed, 24 Sep 2025 10:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7wrUCIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6652DEA6B;
+	Wed, 24 Sep 2025 10:21:44 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03AF2DE71C;
-	Wed, 24 Sep 2025 10:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8282DE71C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758709289; cv=none; b=PFJ1+WQPCYCMpfs6FHSO9SnSFdMO0t62JC7DHqB1or5mpnwJlZ+m3L5TXvSWNFYh/eCkzv3D9xiAh99vG/5h4lmrHx7o1ekF20QgBVq/1YkXdh4k33pECtpJ0HcrGVAO7THH20VNxfmhUAQ65yUw3EX03GjbHrep8MCMoMWklCE=
+	t=1758709304; cv=none; b=czSCTPySw3I2XXXIMFSjzudyXB6BwOYcAD9Ywx8n+9hz7m/DntNsq9FeoNXo+65DmVKU/j6OUrHriEjhgiWa0ecPIEJgAHd0FtoRJqI9Pu1XNBUTX3KCaFxvFScz3mb2qx+doO5cgO8NFhJSYnt1eeYTFsWI/fkoBt129IhuBNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758709289; c=relaxed/simple;
-	bh=ftOMjFTzb+MRY7H2S+QVmnCC9sAkrD5ND4i1QkcR1Hg=;
-	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I0ug8QLjLnDml/o6yVJjfG/yRsYKFNTnYng9muRyfcRZq/tboR0zMIgTD18YDGQ/DB8UYNoJW2xrNl2NsAXWpXQKhs9rSvcp2FP9dThiHLUZfL7s2h/c4/m/fNYOjWy3U4ds1kNYZ4WMxHTB6t1Ve/iZNR9DgENovO4iohl5bvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7wrUCIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3CCC4CEE7;
-	Wed, 24 Sep 2025 10:21:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758709289;
-	bh=ftOMjFTzb+MRY7H2S+QVmnCC9sAkrD5ND4i1QkcR1Hg=;
-	h=Date:From:Cc:Subject:From;
-	b=G7wrUCIWuvhO9RKW4uQryJtc+jJzQ7gr83WlfoqfIOpqFsMTRpRwnUkFFRL145tYo
-	 gpcHG6qxK+XvepRjtPNAqc/z8EO0Rukj8tDjy/Syh5NHZzzDlXrDTuN7pNvAnVAwGy
-	 uSeWfwXDgwkRIcFsvDjoOIiOAWtrEDp9Q+r4L2EQWCk1dlINLlPX84c+3SjvGA19PN
-	 R5R8cCz/5cWyXS0JmImeyovWho900UvmUbk5e/ucXWPjnar1FbqaP4XeamzRZ2ScmB
-	 Z1SU/Ux3S+n+8hFdtxEQ7s5xMwS1LQpd1rWX3WgSvOS1iMcp9gFN+nTq1Vy2eyEtkA
-	 HHahj5R7lyepQ==
-Date: Wed, 24 Sep 2025 12:21:26 +0200
-From: Mark Brown <broonie@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	NeilBrown <neil@brown.name>
-Subject: linux-next: manual merge of the fs-next tree with the mm-stable tree
-Message-ID: <aNPGHEYMk-6vFJlW@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758709304; c=relaxed/simple;
+	bh=GmnXGzOJVIb2WXEx3CGo6GpzydoF9S80js/+qq5ecyM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TwtkLlQqDj/cWcS9Hsb4I5zflqPb1zkLMr6H0W6I6VNmb04JyrKlXnStPav1+/W3+ABSKPvHUohujQm/Trq0Fl0t391DUS69MBkVDlPxcPhi5cArBYr32SAN5OvrHGulKTK7edAZZR01Qgt55ABZWbB7vs2GVnYWCumIYkli1Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42486f6da6fso71080895ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:21:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758709298; x=1759314098;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YW5FK+9Nxf2a1psstXqeD3lJ/i8saIm5oi9/QSnJhnQ=;
+        b=EYwHfsUBN9sSWEKMcXoqel7Dmz0aJpL6MUKkeujWpD+wWfsNTzA6wFedfJhMBDuiJc
+         OAHbRKch7jvhvUxOw5djcF1gQXaqVEBsOZ3t7bOd77CEophRarD4zcuzwxTDqsABujFB
+         znLk67atJcN3WtfDoyTlvasExE3TOxu7NHgLN7HCZxWoJnDCGsc7IElyReVRJ6/bZBF6
+         D38He+05lWp2C2UsVhQoa1Tf5kvakK0DtyFLSZyYBjPUbSpN/VsNmm0pBI6ERHgG5gQm
+         mOv2UxLMRTDPH8zixTzj/nmmub7/3uEYI3Q8UjVW4HRDndYXlnDtaNGNDhR6FZX+XNsp
+         nBLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyHhjo+UDzkoJN8+JNWz/lFVgdoR5CHuBTBXYQONHTVhOAhKHl5g9zAnVE2PblW49PTBw1YyrORg6Hds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVnv3LcdgRWFdQzILsFRCTsrNJMq01sPfJDvDT2okm4zmEs61c
+	lZCfDCdMcp91UX6GkXIKB9ESflW5ow5bkvL+qpLvW7CtexGYmIyLqyjhohwxi9QKQREBczWXDJ+
+	1ScRDWNfrUY7mexZB8RpfFL1zFCYmXXopCdyg1B7wPRYPNJdu5rjOY0TPioA=
+X-Google-Smtp-Source: AGHT+IEDOKk+kz5ZVy9+diabv4h0WvsEwMoydrRk2RCg1gfQOQ6owEIvzTDTMOyUL49kzwmG7sUPSvLMGpfC+zpzTyKMDticTUxe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FwExP171YsXSxZfv"
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:3c89:b0:425:7974:fe21 with SMTP id
+ e9e14a558f8ab-42581e98642mr88318565ab.22.1758709297779; Wed, 24 Sep 2025
+ 03:21:37 -0700 (PDT)
+Date: Wed, 24 Sep 2025 03:21:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d3c631.a70a0220.4f78.001a.GAE@google.com>
+Subject: [syzbot] [fuse?] KMSAN: uninit-value in fuse_dentry_revalidate
+From: syzbot <syzbot+743e3f809752d6f7934f@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    cec1e6e5d1ab Merge tag 'sched_ext-for-6.17-rc7-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1404f8e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b093ccee5a9e08c
+dashboard link: https://syzkaller.appspot.com/bug?extid=743e3f809752d6f7934f
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/da3c94d97543/disk-cec1e6e5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e27bce00cc13/vmlinux-cec1e6e5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f42a4c26986c/bzImage-cec1e6e5.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+743e3f809752d6f7934f@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in fuse_dentry_revalidate+0x150/0x13a0 fs/fuse/dir.c:208
+ fuse_dentry_revalidate+0x150/0x13a0 fs/fuse/dir.c:208
+ d_revalidate fs/namei.c:929 [inline]
+ lookup_open fs/namei.c:3637 [inline]
+ open_last_lookups fs/namei.c:3807 [inline]
+ path_openat+0x13a9/0x6760 fs/namei.c:4043
+ do_filp_open+0x280/0x660 fs/namei.c:4073
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_compat_sys_openat fs/open.c:1512 [inline]
+ __se_compat_sys_openat fs/open.c:1510 [inline]
+ __ia32_compat_sys_openat+0x238/0x300 fs/open.c:1510
+ ia32_sys_call+0x3210/0x4310 arch/x86/include/generated/asm/syscalls_32.h:296
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4197 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_lru_noprof+0x822/0xed0 mm/slub.c:4259
+ __d_alloc+0x66/0xa60 fs/dcache.c:1690
+ d_alloc_parallel+0x98/0x2680 fs/dcache.c:2549
+ __lookup_slow+0x138/0x760 fs/namei.c:1793
+ lookup_slow+0x6a/0xd0 fs/namei.c:1825
+ walk_component+0x444/0x650 fs/namei.c:2129
+ lookup_last fs/namei.c:2630 [inline]
+ path_lookupat+0x251/0x6b0 fs/namei.c:2654
+ filename_lookup+0x2bd/0x800 fs/namei.c:2683
+ do_linkat+0x14e/0x1040 fs/namei.c:4904
+ __do_sys_link fs/namei.c:4958 [inline]
+ __se_sys_link fs/namei.c:4956 [inline]
+ __ia32_sys_link+0xd7/0x140 fs/namei.c:4956
+ ia32_sys_call+0x3684/0x4310 arch/x86/include/generated/asm/syscalls_32.h:10
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+CPU: 0 UID: 0 PID: 8754 Comm: syz.4.604 Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+=====================================================
 
 
---FwExP171YsXSxZfv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi all,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Today's linux-next merge of the fs-next tree got a conflict in:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-  Documentation/filesystems/porting.rst
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-between commit:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  fa2d97ad06d27 ("doc: update porting, vfs documentation for mmap_prepare a=
-ctions")
-
-=66rom the mm-stable tree and commits:
-
-  3d18f80ce181b ("VFS: rename kern_path_locked() and related functions.")
-  b28f9eba12a49 ("change the calling conventions for vfs_parse_fs_string()")
-
-=66rom the fs-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-
-diff --cc Documentation/filesystems/porting.rst
-index 6743ed0b91126,359b333e89c5a..0000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -1286,7 -1286,24 +1286,27 @@@ The vm_area_desc provides the minimum r
-  to initialise state upon memory mapping of a file-backed region, and outp=
-ut
-  parameters for the file system to set this state.
- =20
- +In nearly all cases, this is all that is required for a filesystem. Howev=
-er, if
- +a filesystem needs to perform an operation such a pre-population of page =
-tables,
- +then that action can be specified in the vm_area_desc->action field, whic=
-h can
- +be configured using the mmap_action_*() helpers.
-++
-+ ---
-+=20
-+ **mandatory**
-+=20
-+ Several functions are renamed:
-+=20
-+ -  kern_path_locked -> start_removing_path
-+ -  kern_path_create -> start_creating_path
-+ -  user_path_create -> start_creating_user_path
-+ -  user_path_locked_at -> start_removing_user_path_at
-+ -  done_path_create -> end_creating_path
- -=3D=3D=3D=3D=3D=3D=3D
-++
-+ Calling conventions for vfs_parse_fs_string() have changed; it does *not*
-+ take length anymore (value ? strlen(value) : 0 is used).  If you want
-+ a different length, use
-+=20
-+ 	vfs_parse_fs_qstr(fc, key, &QSTR_LEN(value, len))
-+=20
-+ instead.
-
---FwExP171YsXSxZfv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTxiYACgkQJNaLcl1U
-h9ByCQf+MEDPuJ/o1s9gPPKtb2r12bCAEzQSL69uCUv2rW4/FIxKDjAyW0oh8zcQ
-noD137GCxghfFRVjSN1EaOG7vhWF0kYI8xOhKAJRB6hnTaa8Mm9v0txtvz6ecVUY
-aXXNchCuj8Uc++7NL4S5aVhqhuZi5DHhgvFfMRIE5xwXDo8vyjlXPomoDgozIDbt
-uxuOgr73uYNXfyMUfJL1hdjNDhOO1mvgnAcRkET22dAd0QLYOQvd5GZhe/KjSbNy
-yMNNaoxQjqYcJ56YTwfsVoRWaQ84ulEoCFEXM8qL/LrBJ+8McthoohIF0EA9XhNp
-cBMi7S7VJWSOV+voo9bC2t8i/NbU7g==
-=gWTs
------END PGP SIGNATURE-----
-
---FwExP171YsXSxZfv--
+If you want to undo deduplication, reply with:
+#syz undup
 
