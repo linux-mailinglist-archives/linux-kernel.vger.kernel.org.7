@@ -1,209 +1,198 @@
-Return-Path: <linux-kernel+bounces-829811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25426B97F53
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:57:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4376DB97F5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3071AE1F74
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 00:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8085F2A4756
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D07E4317D;
-	Wed, 24 Sep 2025 00:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486AF1EEA5D;
+	Wed, 24 Sep 2025 01:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SNiQEHZf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fdADJHtk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BE81C6FF4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257A96F305
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758675443; cv=none; b=FhC9BR/J22lvoJ1H+eswojV5PVje969nII4UROyBk1HztOojS6wOEiEPu3/1NA3+z3e3N0HopPRqupQTFuBaAyO6btizsS1bHgIQRgR+rkNmE1Xz23lq7fAp0gV2T2VnQMH+AB5RbXfvj6PEXMi4xuncJEaHfTT7n/6Q9d4orhs=
+	t=1758675617; cv=none; b=ucOmCdd34xqZKaUkRHLoZQbhvYRfZsyxmPUEBynp+yQrgVZ5rO/id6Qs/IaCpprmIKsAsd49tVLJcD/Q/RO7o2acBd3/o5+VerhtBdviIGAOYsf/bx5nXIwmEBxIdcrzeflqFIHh9WEGpiTiUN5ZXa/ue7mFKc15HbL49SqS2n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758675443; c=relaxed/simple;
-	bh=2meMIq0xvNpsd0C3TfnyRygJ3hyz9WrQ2mbRdwrlQNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R3vuCQBjx9IjpDEr5aXu/L5lTioP8vgztIR8Mc7MDdxzntsPlyghaOvvh9VTS+WEUt9zEgHt3DgraiNuPClFnBcyIX8es8xmr1v2fu8PFL6GWSg6niRFkakmNeSeLEbnofh4/MtbTLnjSHLV/PYDwlw030kDjvdSn+zgGfmnhvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SNiQEHZf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758675441;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mna5fc8+pkr3kffYlRCUCjSYLNXJLdLSL+XsAUmGPn8=;
-	b=SNiQEHZfnHPlc12UJcUcbY/EHBYMzUwyyGSz3SthdXe0Jo33h1haiBZ7Okd7VBuFTdvRCb
-	DpvRdxNlJ42CC1ofJT44RJLwD+skglwQkqGRJABHUUiK5aIQk0FSbKPl8ik0Hqf94lWyYV
-	xv0G9r1+9gSYIzkBPTv3pNO1DVbRR+c=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-IW4JqLS5Ns-LNIosuNCFlw-1; Tue, 23 Sep 2025 20:57:20 -0400
-X-MC-Unique: IW4JqLS5Ns-LNIosuNCFlw-1
-X-Mimecast-MFC-AGG-ID: IW4JqLS5Ns-LNIosuNCFlw_1758675439
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3304def7909so6161564a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 17:57:19 -0700 (PDT)
+	s=arc-20240116; t=1758675617; c=relaxed/simple;
+	bh=aPg0UmtWDWWN4/58XT6GxNp1y+uyLy8yBlL0KKGR5cQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GwEpGQNZ/FRlAPJ9QEGNoGjH4svNxYbYdZgAyB2Yivj6WHdGPmocMABvqoOgzx6GwCF2PfeA9WO/cEVqTdFdtTTFeP1a57UN9zVcvnblSHHmvuVR2En36YyPVHlFLIKu67NBpePJcfGzqPCtjRbQ0I88lE0h1Uhidqvaq+FQbUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fdADJHtk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58NFOVt6026360
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:00:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	X2zvsIx0xpsseLnuqD3wgD1uVrKng7sqp3Iah6620cQ=; b=fdADJHtkDZluEdxf
+	dWy2qaD1z6tiE0NDephEw64aP6tE4TUKhFxUpOnASzJfCsajURWkEQgWLmCSSA4o
+	+SmlVg7B+MVPs/l/omMhm8Mf9EYVjUAqNNnzkVpXhexxfcJp+yYoRK4L2EXQyXkJ
+	ragWJMOYEpGZ4R7sC0r1R5mUTuEw7uqvT4sBodFaG0IITK4ourkDoVXPAT9U+P/w
+	7p5IUliSUv0Vo3SZh7pU15QAVON0Oe13AfYqYUV2crBIzWJWLTzzu/IUCmI2sOCw
+	vaDZFybNnROri0cEDaIdbrsqbRA4atH/kIh4lSTSXSzPCLcSSMTaXTQv3gXmfoX6
+	0nWlJA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyetv1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:00:15 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b551ca103d8so3287118a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:00:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758675438; x=1759280238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mna5fc8+pkr3kffYlRCUCjSYLNXJLdLSL+XsAUmGPn8=;
-        b=ZHjH9TsK10QuiAvUxwEHfP94uOxlhDSz1Yli5+rtwpjSnH3hL6bt9DADykToBnCzgY
-         CnYLIgTGorCn6z/82QuHS1RHrmHJob+/rlxsSrGHSh0UQckILp3qvDLnXo+NcH1CCRBI
-         bl0bGwMR423ag9JVwE1IxP4Whny0zFH1egzt8TOMhFpjNwd0l4PndY8akRHiQHHHy/Yy
-         9Jzsecnm8WOyITXp8zIGPmy5FUljW3HU2+4Yjg5yQxHfg6heNKFHkqM1RswEpnzwTwXZ
-         o5sYY6AI9me9ZKAxBTbam4mBYYuGjnhu3HipD0+2v5Pd04qgvvpl9E5bBrcTcmW+GX62
-         isyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKcqidTT+khGG9FpKe83YBTTRKZCFVYe0z+zqXNDwihqwt7VTVRhveoyVXiPi5FCA2Xw5T9ZryYBDqoOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQwxBOUahey9B+L5MSU5oHzKFHK2VeUJxhS0btpYXkw1b59YrH
-	Qtg5YRu1917fDiqi3jLeEmLp2VLCuANOeVOuBdiAjfrYx7nGcjip8g5AR4e8Og/23Ujq7gveIb4
-	DoNIsACEomfWNh3JRTVqTeRHgg3txxq3yFPgflviYcHvCRgUjiJki7dPLkHeIpoQw/6A6as9W9t
-	CMrt1AJ+T+LUCr97v6Txp2FKzzs5vS/1YdfwS36OweJ7lFFQLv
-X-Gm-Gg: ASbGncvCQR8aFpkCxam7JtjYD6KMCgTtAHCA8UmNM0LDenR/wuRdSym2AcwENI90imn
-	SbSvPr97IH1DrX/vJQKh16CRP1l2w4HXwtEYJ1HNjcQK952M1dZn8Ox5WcC6yH3bgod34weKv1v
-	0lRDEimapo63BAbUQuJA==
-X-Received: by 2002:a17:90a:c484:b0:330:84dc:d129 with SMTP id 98e67ed59e1d1-332a97051e0mr3951543a91.36.1758675438311;
-        Tue, 23 Sep 2025 17:57:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTV0R++YsWMVOlEFmppKwBiFSD4CRSUaeq9TRbxN7oL1yQIoluQr0UeLa4xvqZUE85brDoaQoOyIu6r8dY1Mo=
-X-Received: by 2002:a17:90a:c484:b0:330:84dc:d129 with SMTP id
- 98e67ed59e1d1-332a97051e0mr3951527a91.36.1758675437774; Tue, 23 Sep 2025
- 17:57:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758675607; x=1759280407;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2zvsIx0xpsseLnuqD3wgD1uVrKng7sqp3Iah6620cQ=;
+        b=HT94wJW9UAQv9ikr71roDEIam5IHUs3+7h6bTPCvMvVwZW9j0m3PTFeDAx+NcPbJDK
+         M0hAbOha3Tc/zt9oxpj9UJIn36T5UZg43bslaXyVBLLs0IOpKro1ajxEhuTfN/tIK8In
+         Y4X4APVKH5r9OyOuL/2qs4QOk/EBhr6HiY39bPoysB2fUEDqiY3tT1wygwuc3VPtWbfD
+         oumWhxAMTgsHpIHfHAVE+Wcm8tXFoQb4EMJbclilORK3qstztt8m1LUb5//pFBZvCREU
+         5XuUTQ4wWZmJ6rxAb8rmn7d6xKUykkDQe+mbJW6D9m4afefMlVi9OyXY4MHt6Ak5t1T9
+         4mog==
+X-Forwarded-Encrypted: i=1; AJvYcCVI0ZX3AaF27xSMQ8Kng2zGLdQY9WPPsf2H2YSF+I86DOnVfHEKD0eJNaFgzj7/exI9SRpFqLkvnoC7Fxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0G34UakxSn+8prBRUcXQnDA895ODrA47aggRR5FPnotBG3GbD
+	x6+paGrSIMV8Jxs4z3VKIrhO+C9EARsliyKZM09zK6mAya37Fv8/N9WwvVNwkyciN14Rvxit3Ag
+	q+cg1lO/y/EUEZPvmeI+GYYWib2iKHmSn0P4cc3mzgZXQJF6QUPj3MdDqY2WHNkpZZzs=
+X-Gm-Gg: ASbGncv4yhnLAM6k/k2Ply4M8i43noPTObS5eUgdn1D2LOIEnCm3x/E7suP0c5juR3Q
+	yLqFSifYcStAWhAw2XhLUL5ZR+rR/j91sx0Q/zNzOH5Ko7pMZddpCs5NBVtdVaIHndvwrNEOQkK
+	nhoU9YSGJnTVSwU2wk06MG2vN56dh0+5wwrM4d6qsWn4Nri5mkdoVap6gJuAIFuJry4JXP5Z6Va
+	Tg5F4Dr1BXErZolZvcCy46cMELvr83X2LBNqhASlA69f8otLQt8vtHypM8HE4UoOklIkmaLJHSL
+	SAQusxCHImd56bJwXsbr4NGS0ktHskVqEgefX1hvkzoY7IZ0CQU/u2riYcZClrdX8MNfiqglBay
+	E9LlnLQ==
+X-Received: by 2002:a05:6a20:3d87:b0:252:2bfe:b65d with SMTP id adf61e73a8af0-2cfddc6a137mr6516265637.2.1758675606619;
+        Tue, 23 Sep 2025 18:00:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0NAzGMlXuVw5j4OF/iTpNasadjCiM+4Mz3TJZj0Y3pZnZIJg5KRsof0hAuREl2zzoKFq8fw==
+X-Received: by 2002:a05:6a20:3d87:b0:252:2bfe:b65d with SMTP id adf61e73a8af0-2cfddc6a137mr6516229637.2.1758675606142;
+        Tue, 23 Sep 2025 18:00:06 -0700 (PDT)
+Received: from [10.73.52.96] (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77eee36c2b2sm12958795b3a.78.2025.09.23.18.00.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Sep 2025 18:00:05 -0700 (PDT)
+Message-ID: <31f61f93-2e9d-565a-cd5e-4f668ed7d6c0@oss.qualcomm.com>
+Date: Tue, 23 Sep 2025 18:00:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
- <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com> <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com>
-In-Reply-To: <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 24 Sep 2025 08:57:05 +0800
-X-Gm-Features: AS18NWA2T2FJ5WODRMOqku7-Gx51ufQZ-1bBtbD01K3KvreFoFw78gqxKSyLVs4
-Message-ID: <CACGkMEv3pUBF3Uv2s3MM0Qn--fP3mwN92SqE9NX4gNuMALBTUg@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page size
-To: Sheng Zhao <sheng.zhao@bytedance.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	xieyongji@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 3/9] dt-bindings: phy: qcom-m31-eusb2: Add Glymur
+ compatible
+Content-Language: en-US
+From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-phy@lists.infradead.org
+References: <20250920032108.242643-1-wesley.cheng@oss.qualcomm.com>
+ <20250920032108.242643-4-wesley.cheng@oss.qualcomm.com>
+ <20250922201449.GA1235521-robh@kernel.org>
+ <554cd2ce-a617-9387-7379-a3c2b9de843c@oss.qualcomm.com>
+In-Reply-To: <554cd2ce-a617-9387-7379-a3c2b9de843c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 59mKuHNKW4E3iS_TC5kzE0Al1Dgpdymx
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d3429f cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZdW6uxA9NKXbfdqeeS2OGA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=1x5KiYs_k_UboVqHg6sA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX/c9LIQCJXZ+4
+ TZwa7m5IAyUyavOXk988gqoW/HSJAK1NHz1R9UIQ5Ctbmil0RGgNrJpUUH8+Gk8XZ8fWEMdP6Q+
+ pwHu6YTvKReJNxdehsnB1rB/8Hg3lP7z0eTfUBrVnhnRtT5wuOBGqo97Y4sKQ+lUuShs0l26457
+ g+ODQQd4GQ6/WiMYdCM3lFXZNgyFk43ILDTjmW4jqfvI0bND3MA4KRQ5+inLn05SbWeF0qg/6R3
+ TdvwM5/l3JQLvsrxRRSFIcq8RfZXQEptDkJDxDuLEGs7VdJxLqfigEL+/R8hHNtw3WONrKiWZYE
+ X6l6RINEIIlMkOZ2UY6YY0SXHGGWHvmcwj7dfpJiiI/biKLnibYlUkk0Hh/bb2ilDuPcq/zEECn
+ QN/XDgda
+X-Proofpoint-ORIG-GUID: 59mKuHNKW4E3iS_TC5kzE0Al1Dgpdymx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-23_07,2025-09-22_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-On Tue, Sep 23, 2025 at 8:37=E2=80=AFPM Sheng Zhao <sheng.zhao@bytedance.co=
-m> wrote:
->
->
->
-> On 2025/9/17 16:16, Jason Wang wrote:
-> > On Mon, Sep 15, 2025 at 3:34=E2=80=AFPM <sheng.zhao@bytedance.com> wrot=
-e:
-> >>
-> >> From: Sheng Zhao <sheng.zhao@bytedance.com>
-> >>
-> >> The allocation granularity of bounce pages is PAGE_SIZE. This may caus=
-e
-> >> even small IO requests to occupy an entire bounce page exclusively. Th=
-e
-> >> kind of memory waste will be more significant on arm64 with 64KB pages=
-.
-> >
-> > Let's tweak the title as there are archs that are using non 4KB pages
-> > other than arm.
-> >
->
-> Got it. I will modify this in v2.
->
-> >>
-> >> So, optimize it by using fixed 4KB bounce pages.
-> >>
-> >> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
-> >> ---
-> >>   drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++--------=
---
-> >>   drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
-> >>   2 files changed, 83 insertions(+), 42 deletions(-)
-> >>
-> >> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_=
-user/iova_domain.c
-> >> index 58116f89d8da..768313c80b62 100644
-> >> --- a/drivers/vdpa/vdpa_user/iova_domain.c
-> >> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
-> >> @@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iova_do=
-main *domain,
-> >>   static int vduse_domain_map_bounce_page(struct vduse_iova_domain *do=
-main,
-> >>                                           u64 iova, u64 size, u64 padd=
-r)
-> >>   {
-> >> -       struct vduse_bounce_map *map;
-> >> +       struct vduse_bounce_map *map, *head_map;
-> >> +       struct page *tmp_page;
-> >>          u64 last =3D iova + size - 1;
-> >>
-> >>          while (iova <=3D last) {
-> >> -               map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >> +               map =3D &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT=
-];
-> >
-> > BOUNCE_PAGE_SIZE is kind of confusing as it's not the size of any page
-> > at all when PAGE_SIZE is not 4K.
-> >
->
-> How about BOUNCE_MAP_SIZE?
 
-Fine with me.
 
->
-> >>                  if (!map->bounce_page) {
-> >> -                       map->bounce_page =3D alloc_page(GFP_ATOMIC);
-> >> -                       if (!map->bounce_page)
-> >> -                               return -ENOMEM;
-> >> +                       head_map =3D &domain->bounce_maps[(iova & PAGE=
-_MASK) >> BOUNCE_PAGE_SHIFT];
-> >> +                       if (!head_map->bounce_page) {
-> >> +                               tmp_page =3D alloc_page(GFP_ATOMIC);
-> >> +                               if (!tmp_page)
-> >> +                                       return -ENOMEM;
-> >> +                               if (cmpxchg(&head_map->bounce_page, NU=
-LL, tmp_page))
-> >> +                                       __free_page(tmp_page);
-> >
-> > I don't understand why we need cmpxchg() logic.
-> >
-> > Btw, it looks like you want to make multiple bounce_map to point to
-> > the same 64KB page? I wonder what's the advantages of doing this. Can
-> > we simply keep the 64KB page in bounce_map?
-> >
-> > Thanks
-> >
->
-> That's correct. We use fixed 4KB-sized bounce pages, and there will be a
-> many-to-one relationship between these 4KB bounce pages and the 64KB
-> memory pages.
->
-> Bounce pages are allocated on demand. As a result, it may occur that
-> multiple bounce pages corresponding to the same 64KB memory page attempt
-> to allocate memory simultaneously, so we use cmpxchg to handle this
-> concurrency.
->
-> In the current implementation, the bounce_map structure requires no
-> modification. However, if we keep the 64KB page into a single bounce_map
-> while still wanting to implement a similar logic, we may need an
-> additional array to store multiple orig_phys values in order to
-> accommodate the many-to-one relationship.
+On 9/22/2025 6:02 PM, Wesley Cheng wrote:
+> 
+> 
+> On 9/22/2025 1:14 PM, Rob Herring wrote:
+>> On Fri, Sep 19, 2025 at 08:21:02PM -0700, Wesley Cheng wrote:
+>>> Add the Glymur compatible to the M31 eUSB2 PHY, and use the SM8750 as
+>>> the fallback.
+>>>
+>>> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+>>> ---
+>>>   .../devicetree/bindings/phy/qcom,m31-eusb2-phy.yaml   | 11 ++++++-----
+>>>   1 file changed, 6 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/phy/qcom,m31-eusb2-phy.yaml 
+>>> b/Documentation/devicetree/bindings/phy/qcom,m31-eusb2-phy.yaml
+>>> index c84c62d0e8cb..b96b1ee80257 100644
+>>> --- a/Documentation/devicetree/bindings/phy/qcom,m31-eusb2-phy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/qcom,m31-eusb2-phy.yaml
+>>> @@ -15,9 +15,12 @@ description:
+>>>   properties:
+>>>     compatible:
+>>> -    items:
+>>> -      - enum:
+>>> -          - qcom,sm8750-m31-eusb2-phy
+>>> +    oneOf:
+>>> +      - items:
+>>> +          - enum:
+>>> +              - qcom,glymur-m31-eusb2-phy
+>>> +          - const: qcom,sm8750-m31-eusb2-phy
+>>> +      - const: qcom,sm8750-m31-eusb2-phy
+>>>     reg:
+>>>       maxItems: 1
+>>> @@ -53,8 +56,6 @@ required:
+>>>     - compatible
+>>>     - reg
+>>>     - "#phy-cells"
+>>> -  - clocks
+>>> -  - clock-names
+>>
+>> How is it compatible if clocks aren't required now? And clocks are
+>> suddenly no longer required on sm8750?
+>>
+> 
+> Hi Rob,
+> 
+> It depends on the clock subsystem.  On SM8750, we still need the clock 
+> entry, because we need to control the output of our CXO/reference clock 
+> to our HS PHY.  However, on chipsets like Glymur, some HS PHYs in our 
+> USB subsystem doesn't have this refclk output control.
+> 
 
-Or simply having a bitmap is sufficient per bounce_map?
+I've updated the bindings to keep it required for SM8750 and optional on 
+Glymur.
 
 Thanks
+Wesley Cheng
 
->
 > Thanks
->
-
+> Wesley Cheng
+> 
+>>>     - resets
+>>>     - vdd-supply
+>>>     - vdda12-supply
 
