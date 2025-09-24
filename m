@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-830936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08229B9AF29
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:01:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729F3B9AF35
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146C1173CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9B51B2812C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D001E314A75;
-	Wed, 24 Sep 2025 17:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B77315D48;
+	Wed, 24 Sep 2025 17:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U3elQ7GN"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V8SAu5ZI"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DF7313295
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01410314A98
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733279; cv=none; b=rSTUWA94wOBwhPpxfoCehkPvEkcDb4503F9ur/C1B5j7FXbiwVPkbKT1ySo3d4WEG5bNw8lKRzknUA0g/nAAjTEgqbwNuOE80HUDa/hqir6Irlx7talNzwqQHr2hzY/TqrXWTGnlgYr2vId1nWVELrzAhYGs32bQlGaFfJvIVbc=
+	t=1758733282; cv=none; b=K9bfnZa4xzdk1KNEJcGcYmXZI/ogy76Xr0w3QeSspaRHYKyqIcfYhEUX48a3s6v0n58yW9ifFKPvCtCCAfl1LeEJmkvFj/zYiOYQSMBrTFvG/yVXRgFGaqC4WoS+L9gllG7AbZ+qozbVb3qZINHdySj5uokP20oh0+Tlm96TmZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733279; c=relaxed/simple;
-	bh=kXDI7MEXFf6z8gjpvhdqltoRlqilkIpnmYKOs1pJ2QY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bvVpfZCtF3SXI6B44yGaUa5sdWOZFo+wamnTgFl1gCfq7/e83iBDs1kcT9T7UTDM8QzxOHofrMhF/3G4dmP/Us1xxcoWaVyOShgUZbi8npFt8Rq4SbOoJ0dCWPN6QPMEL7dG4RC5GATQBe8wCS3WYCvB+Z53y/bazzHm01DKlMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U3elQ7GN; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1758733282; c=relaxed/simple;
+	bh=1gqZ3MvQgJWh+xq3wbNtWr0VkL227CpxddKguEfWUHQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oaY/4OteFDGiEoRwyuMGhCGY+m9tmjNXqnl+03Ir964KFQmh4D0vj2TiFJfONi+nDmDGffgpnkwGWqAwZRfjzveQg89jo2PScJWhX02MI8BNLbaDRHiGstLDbwr2Etth+mTcxgsA4ptEIY0lavo4d7GXoM8HfyLMAtwSVrVrP7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V8SAu5ZI; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ODFQ4L024258
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:16 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OD0OpE029044
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=N/oDRnmqGat4xmVd4FvGyX
-	KUBtNVsnITDdUnNVC6S+A=; b=U3elQ7GND8JRW2U2fpbEX3a4DyuBDwJhxqS9FQ
-	x2RmRCwc6ps8b58XiGpPesoGFjhmrLy3kKWL+e8UIaPNlNd1a+OIIPEdNRlwJgts
-	iDwzJpBBJamBUX+3z7mIp1i4Yz3nBrAursF726M+8JPwd4Zc86IYliOW4MZRraMy
-	chodoQxxJdWnSWnZ9q1J7GwoaxE7Vbrl5pV3uj1QRPleRxBHlMt172lxQ0yoTF89
-	9/IaWiD4kaErpgsaFLwUYd5yKH0EJCE5lty1TORdLcAJAHJw4i2mjJeRWDzY378D
-	EawItb6wyHVE+7koqphel1I4nJ80tdamhyxrT2Drzuwi9vcg==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pJ5qWW3VgsVqvsqQFurOhps8jLb1RkvDdrsWirCL8PE=; b=V8SAu5ZIP9Z6TWnI
+	LCD0/oiBAiEGumg8glUQOLLV7E563EPnIHjMAB1tC7+81IhH+6haKYElHfs3QexK
+	DUlaJufTejCmZqxzOCPbQ1z3QbZJHHtBtK/tvY9vk+z2wpNT+sxJuFBqosOOTp0r
+	kB2XxFtUhWsZdXuyEg+BLWg3o8glZC164ku4AFWXFVZ8VPjjB542UrBpNSVY8+W2
+	YsvIYmkSldfJ8HcabHHiZl/52lPtjWimHt800dH6TeR+jRFw7nAWBJfWFSvvPkTB
+	NVNWWufFb6GtkEOkj+hCq3VMUN1Av/RszgPfobrmSu6G+mXd0HNKKCAjzRk8xklB
+	AFqC0g==
 Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp0c4wr-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnwfc5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:16 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32ee157b9c9so45172a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:01:16 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:01:19 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so42303a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:01:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758733275; x=1759338075;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N/oDRnmqGat4xmVd4FvGyXKUBtNVsnITDdUnNVC6S+A=;
-        b=VKbzFP0rZyzxOda0px/07a2tYCXE4QsYIdcOV3Tl8o19vt3emG+sdD0mclMYh04q4v
-         uBS066s2KW5N1pkopo5g8PcSPNwbvi/B9lyAv01kwhoMFo+0iMbndX7m8O7QaXde3Xh3
-         9jWSrb/hq9mC6OSBtaumUwbXWglSy/ySKJk9EDmWC/T2jQ/D/N85VVc7tOh2DcurKiur
-         eq93KtFRBz6CihVwe5qq2iLS+JzWOD+h+bAIu/Ioz/6EJoPVfqeg4vccvzKkDUusL4Fa
-         bYa2chmm7b/FB+umEU65JR3m2JmkAFUGVSRjIgSEJXq7qwMb5h+s2Wmr6qilOzyaAe2n
-         CGZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiJ91SgEEH2fN+2Ka5wL4MSiq595MKqWL2jabin87sY0kOPwqOB+iQNcHpSfCtkRC4zUR/qx5/exmmXvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz553xgARCYL//4CpFCWk/sCe+Jjn1rTBDVpBQRGE7YuZGhenrg
-	ifCCYRkXn11NlzOjD+C3E+h4HOgEgB7sHehU5ZDI+YtzYBnFu1aaOQMfd8yyJKKNbvBAzRJKrX9
-	0eLb1lH0ibwkCEh7uUvUWJe8REDwc1fHU4jEHMPTmOapXhn/Bi7jFQJtJXy3qXMsCvN4=
-X-Gm-Gg: ASbGncvMoHzWqaeQ4TLm4eKTep53uRcWgmusCaiy4IeDwQTH/An1YI5FKCoEkn/OIrk
-	U5g8TtaSAgUxfP2Psjv89gakjvzK979Hct66/UfyJJ2MA3AM2aN4reYr7RorxRq5djWfuWdxf5T
-	uqSlr6bl4DBnXvYlqqC1B/YN2zEKRxUKRPqIDKddZB8Dq/zOOT/Fa3BCV5x+ycZe6D1hXdcF4fg
-	Tf0MCnKE9G7lAPV9lmTdKr5T+TQk2oIAIDFTC01XodbP6RHrgoIc2S3jicug1tiOfflzrHejIU0
-	ZRJgb+s54ivz6QGUllVpzecYyx4MTnhge92Mj/cwprLhCzmX5p4fHCCFJFNtUvECfDN9YBhNNmO
-	XBBGUWAyJstR+X0muVi/L9mgvxg==
-X-Received: by 2002:a17:90b:364d:b0:32b:7d2f:2ee7 with SMTP id 98e67ed59e1d1-3342a22c945mr282053a91.13.1758733273968;
-        Wed, 24 Sep 2025 10:01:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENExJBcnMRSaIHCjd/DduchLrLj47zDfDf7++AjetgzThk/lhpjIGtQg+ChueQ7qA4WR/ppQ==
-X-Received: by 2002:a17:90b:364d:b0:32b:7d2f:2ee7 with SMTP id 98e67ed59e1d1-3342a22c945mr281996a91.13.1758733273086;
-        Wed, 24 Sep 2025 10:01:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758733278; x=1759338078;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pJ5qWW3VgsVqvsqQFurOhps8jLb1RkvDdrsWirCL8PE=;
+        b=sSXpfhW021CjsrSeZzxxUTO94ljzKtZel0Dy0Y6jjhyq6WEbGX8V0V0oSbI6l1n0eE
+         PAAmZL9b2UuhnObtEPwRocZ6cxefTNVXpQMw5tSQDb8dOZYdey6hww9kYYuAe6FKaiPu
+         LZQ+h9oMnP63yDgGBtjOMCzIwdaDCTA+Go1k2xqchGoCY0GIoO92v/Sxg6tuJwQO8Fow
+         0jlbZ1K097JH06yKwV7ANVz97Hy9IOONHhmbSwvKutzWRKrKdcPb4HlmG/sQHsnWHEei
+         HUnoOD+hPeu6QnN1J1qe3qmotThLrtcpMjallDdVUGUatzNNhrFYUnH+xzF8Eh/UaGjk
+         U9sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBb6qmo9vMTkZif1fNzIMWVTFDrXta4vkDj6SsbEfb8xeE55CFH+NOgOupy3TNLQ4j0RNml02babVhg44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzmwXBCBYXMW+XHxrW1wYjvlbfNAITeskQn0CVG0gGbsdIV1x4
+	gU2yPzjZ576iNJZvh/kwFOxathV//4rgTWHcN+wcvgeF9J4imk/iNfqhcbwdQKFLZrsBRiqt9ZW
+	Nu4ZcJez4TBXL5jqvxTRy2XP5tQdO2t1rv9B2oMg8rzmFj9uN+yIIwnXMWz1QzddWnLU=
+X-Gm-Gg: ASbGncvYSRi3+GgOihlp9KFSOleA6xY2osBnOcxyMkz6ZgpIhaMeTtHlXigh2cq4VHT
+	zNZsuEtp33m2Wg6wKd63ZGVUzZjayBauevS2g5reGAU9jED57XjGpKjsXhxiH2wGbjRLL0Rs0FY
+	hqIn6J2EWPYpQGeD7H9/JgmQV/XGSXVpxK1VFripSkN7aHwD2CIzTeh9Z5pvcQ/L4TJ9vMd5i2W
+	dnh6ioWGgizd280O0+/rrZKqTTcM08lUsVfeoqwpkBP4ieeDjkSzz+YPxdBx85LcfYzKvS3KnIO
+	2ZmICKbuXDK75KTowZut1uO3FQNMxJIkau/CvgBk2ReZ/6GKUzyFbfiFuqzFCuPFiKXrcCIb7tN
+	I3oVYHZGevMDn5OJ4vbmXrxFtaw==
+X-Received: by 2002:a17:90b:4d83:b0:32e:a10b:ce33 with SMTP id 98e67ed59e1d1-3342a2b94b5mr423344a91.21.1758733278147;
+        Wed, 24 Sep 2025 10:01:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1Gn2adVKxoUuEiLYPluX8ynbq2S8uNj2yDNuO4Gj9QlSI3rGTTUKHg3aCuwM5/o2xjxa5lQ==
+X-Received: by 2002:a17:90b:4d83:b0:32e:a10b:ce33 with SMTP id 98e67ed59e1d1-3342a2b94b5mr423249a91.21.1758733277343;
+        Wed, 24 Sep 2025 10:01:17 -0700 (PDT)
 Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bda09a0sm2931299a91.9.2025.09.24.10.01.09
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bda09a0sm2931299a91.9.2025.09.24.10.01.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 10:01:12 -0700 (PDT)
+        Wed, 24 Sep 2025 10:01:16 -0700 (PDT)
 From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Subject: [PATCH v2 0/3] pinctrl: Update dt-binding and driver to support
- Glymur PMICs
-Date: Wed, 24 Sep 2025 22:31:01 +0530
-Message-Id: <20250924-glymur-pinctrl-driver-v2-0-11bef014a778@oss.qualcomm.com>
+Date: Wed, 24 Sep 2025 22:31:02 +0530
+Subject: [PATCH v2 1/3] dt-bindings: pinctrl: qcom,pmic-gpio: Add GPIO
+ bindings for Glymur PMICs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,10 +92,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAM0j1GgC/13NwQqDMAzG8VeRnBdwmWXVVxkeShtdQJ1LtWyI7
- 74yD4Md/x/klw0iq3CEpthAOUmUx5SDTgX4u5t6Rgm5gUoyZU0V9sN7XBVnmfyiAwaVxIpsPfk
- LOWuCh3w7K3fy+rq39mjl55r55Rh/en72Z8d5FEwWu7Mz166ytaWqSQTtvn8Ap7+jD7AAAAA=
-X-Change-ID: 20250924-glymur-pinctrl-driver-e8c2c32a85dc
+Message-Id: <20250924-glymur-pinctrl-driver-v2-1-11bef014a778@oss.qualcomm.com>
+References: <20250924-glymur-pinctrl-driver-v2-0-11bef014a778@oss.qualcomm.com>
+In-Reply-To: <20250924-glymur-pinctrl-driver-v2-0-11bef014a778@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh@kernel.org>,
@@ -105,75 +105,122 @@ Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
         Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
         Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758733268; l=1571;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758733268; l=3159;
  i=kamal.wadhwa@oss.qualcomm.com; s=20241018; h=from:subject:message-id;
- bh=kXDI7MEXFf6z8gjpvhdqltoRlqilkIpnmYKOs1pJ2QY=;
- b=OfnaSG/Tgae/FcBfTGMWUQfl2So7nVlRvb/7ycVRmbTPHJpFn4oi8IScj3L10z5mQhkuL3h3p
- M1h3HHusEpyDryQzZotWbZ2oOzZFknSriVvhrCrBmPqve0nmG8QaTS5
+ bh=lI2WeMrIGoMrocQEBpzxd7VmrB4UTMw27mx1IjPUIFY=;
+ b=j/IxMuzmBn0o0t4CiORKs4DcAU/tHSoi6Nf7a79qlOn33c7hhN44F+d44mTA7LooPlJ3+aVm3
+ 6cI+I77YG03Cx/uGiwbEV5UuUX3b45huuVuL9ymuF1gQLecewgh1f2Y
 X-Developer-Key: i=kamal.wadhwa@oss.qualcomm.com; a=ed25519;
  pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
-X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d423dc cx=c_pps
+X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d423df cx=c_pps
  a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=xrc4ZGigH1M6lUekqJwA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: UGpGOs1JYBrWwVvNaMepfkYwWJ7vICTB
-X-Proofpoint-ORIG-GUID: UGpGOs1JYBrWwVvNaMepfkYwWJ7vICTB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfX8UrU+TpJOe+/
- jtfteXXfE93tdFOeakBZUOANQBC1O5iiQY8eEH4oXkyp+fI0CgskpVEDPnOSOk5ZYUOrRvQ3sTR
- qhLDpbCcMFZY98YbhRHhtaQt7y5tbpAOaLsqVrdBrKocgi08iHDqYCFqfrnuqvf7fQvc1nuKZSL
- eEAzCYcFN3uwC82t1hWsvwUI+uvEjOnZMNdTTUpaocgQXljMgJq59ChrrX8Ytmt1+MmsLvKGZhW
- C+zu/Y/nXAFq8H20gBPpwl9p8jrTNrGBxpvyMSXRVBUWk9OiUcQYQ2I4SRReslIm40g72iGUVCM
- hkb90DDFFNfegRvC10nO3WXEo3RC1MjpsOMzdCVMrLf4CGVG0dj7KtIRHptytl8sqzARs0FleTo
- EE/AFQjd
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=gVt0xI4JxzluFwnjjo4A:9
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-ORIG-GUID: ZjSm8V-rA0cGqbTH2PL-l5LEk9FuVKsx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfXycGesLzrXgzm
+ bJ909lvWHvqKJIWKx43ZfPwbll+IvZZCVvrTSb0dYrkJdGe4x9Za0ibrTFCrA3y5ze8GWTw5+y3
+ 4boUOxIwQBfUv4Zh/OIG/mOFYMzrjEIC3WyNRq+dMPlJfa9ywQSLC8TCBhABO/sg2cFJuLxpqSt
+ 7RsFNfjdHpcd4JjjCitkpK1v6f1mltzuWSk19gcJolKO3USx16jvhmAU7CQUJoVVE2lCIt/AcUo
+ hLJUN1WsbiXIXRYOEweLjbt+FZqLa5W4r8zoAeMXWtXUC7WHJLqX7ZOSRmv9evHdSq58ZSi3oTf
+ +Z0HGIb10JItekV5tc4jrdX3++XkFUadTkAe1Jwgy55uDs7sPspewqKbX3/iap3YQ6JnDxHr+jM
+ 7uuKj2rn
+X-Proofpoint-GUID: ZjSm8V-rA0cGqbTH2PL-l5LEk9FuVKsx
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
- adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230138
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
 
-This series contains patches to update the PINCTRL drivers
-and device tree bindings needed to support the new GPIO types
-for PMICs present on boards with Qualcomm's next-generation
-compute SoC - Glymur.
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
 
-Device tree changes are not included in this series and will
-be posted separately after the official announcement of the
-Glymur SoC.
+Update the Qualcomm Technologies, Inc. PMIC GPIO binding documentation
+to include compatible strings for PMK8850, PMH0101, PMH0104, PMH0110
+and PMCX0102 PMICs.
 
-Changes in v2:
-- Split into two series: SPMI and PINCTRL(this series)
-- Included the DT bindings in this series, previously posted separately.
-- Link to v1: https://lore.kernel.org/all/20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com/
-
+Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
 ---
-Anjelique Melendez (1):
-      pinctrl: qcom: spmi-gpio: Add PMCX0102, PMK8850 & PMH01XX PMICs support
-
-Jishnu Prakash (1):
-      dt-bindings: pinctrl: qcom,pmic-gpio: Add GPIO bindings for Glymur PMICs
-
-Subbaraman Narayanamurthy (1):
-      pinctrl: qcom: spmi-gpio: add support for {LV_VIN2, MV_VIN3}_CLK subtypes
-
  .../devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml       | 15 +++++++++++++++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                  |  9 +++++++++
- 2 files changed, 24 insertions(+)
----
-base-commit: dd1059140d0608262a3a39591360fc0101bddf68
-change-id: 20250924-glymur-pinctrl-driver-e8c2c32a85dc
-prerequisite-change-id: 20250924-glymur-spmi-v8-f1a57f489824:v2
-prerequisite-patch-id: a27e60b23189b89c17444ad76fbeaa7687a426d4
-prerequisite-patch-id: 6940e73d1975830ceb11b4e8bf1be2303e866e7d
+ 1 file changed, 15 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+index 5e6dfcc3fe9b3c935cdd1022ef9849dc1db2347a..8ae4489637f3d1505367a936cffbefa4d3fc262b 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+@@ -59,7 +59,11 @@ properties:
+           - qcom,pmc8180-gpio
+           - qcom,pmc8180c-gpio
+           - qcom,pmc8380-gpio
++          - qcom,pmcx0102-gpio
+           - qcom,pmd8028-gpio
++          - qcom,pmh0101-gpio
++          - qcom,pmh0104-gpio
++          - qcom,pmh0110-gpio
+           - qcom,pmi632-gpio
+           - qcom,pmi8950-gpio
+           - qcom,pmi8994-gpio
+@@ -68,6 +72,7 @@ properties:
+           - qcom,pmiv0104-gpio
+           - qcom,pmk8350-gpio
+           - qcom,pmk8550-gpio
++          - qcom,pmk8850-gpio
+           - qcom,pmm8155au-gpio
+           - qcom,pmm8654au-gpio
+           - qcom,pmp8074-gpio
+@@ -191,6 +196,8 @@ allOf:
+               - qcom,pm8950-gpio
+               - qcom,pm8953-gpio
+               - qcom,pmi632-gpio
++              - qcom,pmh0104-gpio
++              - qcom,pmk8850-gpio
+     then:
+       properties:
+         gpio-line-names:
+@@ -303,6 +310,8 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,pmcx0102-gpio
++              - qcom,pmh0110-gpio
+               - qcom,pmi8998-gpio
+     then:
+       properties:
+@@ -318,6 +327,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,pmh0101-gpio
+               - qcom,pmih0108-gpio
+     then:
+       properties:
+@@ -481,13 +491,18 @@ $defs:
+                  - gpio1-gpio22 for pm8994
+                  - gpio1-gpio26 for pm8998
+                  - gpio1-gpio22 for pma8084
++                 - gpio1-gpio14 for pmcx0102
+                  - gpio1-gpio4 for pmd8028
++                 - gpio1-gpio18 for pmh0101
++                 - gpio1-gpio8 for pmh0104
++                 - gpio1-gpio14 for pmh0110
+                  - gpio1-gpio8 for pmi632
+                  - gpio1-gpio2 for pmi8950
+                  - gpio1-gpio10 for pmi8994
+                  - gpio1-gpio18 for pmih0108
+                  - gpio1-gpio4 for pmk8350
+                  - gpio1-gpio6 for pmk8550
++                 - gpio1-gpio8 for pmk8850
+                  - gpio1-gpio10 for pmm8155au
+                  - gpio1-gpio12 for pmm8654au
+                  - gpio1-gpio12 for pmp8074 (holes on gpio1 and gpio12)
+
 -- 
-Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+2.25.1
 
 
