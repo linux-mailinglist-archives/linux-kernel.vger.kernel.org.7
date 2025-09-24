@@ -1,256 +1,239 @@
-Return-Path: <linux-kernel+bounces-830272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516E0B9941F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE25B99425
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C932E7A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD5B87AD7E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5910E2D9EFC;
-	Wed, 24 Sep 2025 09:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAC62D9EF3;
+	Wed, 24 Sep 2025 09:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDG0H0HV"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHUnwm+f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51E52D73B5
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14EA15624D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758707775; cv=none; b=mnZ4Dsz69L98YERq0CkvxQqYabXbVzB/KaYdickXwtDQFPDslKVfr2xI+1M/WGyt8nhkXTMLPR0KyNWd9FTo90IH+iYDvBdKwuJrDorD4RGP8hgx0CeHjtNLg+d1fvFtRb+EmjWCa6JHUrXwHOIox3pZulJP9nqsX61LJB9DJfc=
+	t=1758707781; cv=none; b=hL/jQEkvjKRuBEiapOPP/PWQGUeC4tubdplP4MbS88LWjxS2cJzegsV/CbV8OeBG2XdaDdNxbG5hWx9BXmaPQ2FM8uL8e1Ib2IdpUbQMCTPH62nd9b4zRLvVMlzMPM7Q+nHWfqcDQ4e28CAbgwomPNXvCm0caRkna9vzNrodn+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758707775; c=relaxed/simple;
-	bh=21JSh7YV6cM8xSPIPYnqxfeY9Z9RlI03qVsY0y6vUlw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=vC2D8ibNgMLFeS0p/vpzHsNS9LjhBt9h6pfIY9ZuN0l16aokBGGTuqFSyTjHLv6z5M5rtlL4cIA9DaLYeCesGvXJng2zkljNUCIdgq5vsY/88vZLEsurdwn8fPAFCRGvs7YDrzP0v+XAEGwAjczsvyIBmOY1xoSgq0qSJxOVZWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--glider.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDG0H0HV; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--glider.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45e037fd142so54804595e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758707768; x=1759312568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QAmycbMkPNpKo2rKRIkxeOAbE/X03s6JAmOKI9ShzKQ=;
-        b=HDG0H0HVje9+NV3lEn6QMBe2oGeGapsfRprgKQTDCFCFAzQNRBkMM41HjWZyJ620gh
-         XO9VeVO2lB/TYBvzpycezhXyITVENOlHnnnCk1fJfte75bbVczSmI9L3cD2n/OIAo1iU
-         RJ0O9s2IdVqFIg51IfwSq9ZFoL6ler+XXTWWLNW+BJ88771O9phV+sXMrjHY/XDAUj2G
-         sPd2dJY9yHeFEC8ivvmSF8JO45TMM8NyvNzmM645uj3WTS/l7VXSuj+FWZroDIyh3TUk
-         LK+jrorpri6Ay8QRNwdsP1rd7sZ/BkabvbTpEvPU88ux3Hxia/VUNwmy7aOMtbmnDd4y
-         BGSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758707768; x=1759312568;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QAmycbMkPNpKo2rKRIkxeOAbE/X03s6JAmOKI9ShzKQ=;
-        b=bTl3CSx9PAW5GxWmYgzUPSNb0jaM8YK52yTLmHDMqbStuXsAVQPdQMv5gC+gCFWZi9
-         0NNkGtHarldHLPGrGuKvbEEdQb6fuQZEvdGg0mYqBgdLOIYsp3onnCHUAYaChJTcM5QT
-         QjpKZ24Ye3wsTs03WxeYcUbcYQJrAovzDSH6CV75RfAka1H0GC+DGlyPCCwic7Hl1XVN
-         9TV44CtLzEyzcCPUSlQKEByMdWegik3Pev+KzqxtM+Uz+fYGoIfqoieve/GULUeRF8q1
-         KUOia3OtNoCzQviCyVAIkk6/VP7v1UVqm07/2FqyhcUMn1uk5XZNfy9Zm5Q06VaxwCvt
-         s8Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEjTs+JDTrrilrmyiaUidSP3QOP6z7PP3wNMnBuhp2GGvAg0ram4vfdRFpAVtvtvH0FJlLTRQcGqdwMaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFmWSJMfRrfrBXFSLqnvVgweEi99OaWYDjqHsooY9VNBSKtQrM
-	/9iRdL4jQhvWIVtB+fMdTQPU3STB5I93kfYo+kIi+8s3r23vzbQymMnjKgaDx2h/RNKz2j+4uqh
-	uW6bepw==
-X-Google-Smtp-Source: AGHT+IFcYpf+nNo8eIO//grBA5BZmYeaVIKAa87wo+W9+idFnU+8Z2dRZEyljZbwJZH4nEW9LUAy1FyA2Yk=
-X-Received: from wmsr5.prod.google.com ([2002:a05:600c:8b05:b0:46e:2897:9c17])
- (user=glider job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1f12:b0:465:a51d:d4
- with SMTP id 5b1f17b1804b1-46e1d97d858mr54128675e9.6.1758707768216; Wed, 24
- Sep 2025 02:56:08 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:56:04 +0200
+	s=arc-20240116; t=1758707781; c=relaxed/simple;
+	bh=ClDSNsxEPhNF0ekN1XGQiiFq78GuZoy43QGu+X9ArfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ea1yWFbnAJioC4dPb1gbL+5tAQ0yAN1arBi6irMy6WD11yCmH0k0jSC3DzCJX6QiFwwRMhn7qrylPDCixMNa4KeZW9MfhLHs4wbFz3k+tw3fS6CLlgiuCw2G846IOQH/MJSisoOLq+/Obu/3+H7eAEFd4erAM7V+a72yrX/Je/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHUnwm+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D6CC113CF;
+	Wed, 24 Sep 2025 09:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758707781;
+	bh=ClDSNsxEPhNF0ekN1XGQiiFq78GuZoy43QGu+X9ArfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BHUnwm+fbgsWeruPRRBkohrMPxiFAa2Y1mByEeOvW5abAxIwe5C5KILW1oR7GxrPJ
+	 ZTlGvOex40V7flGhwLtAu3pjOxT5faA8eCvAcPGGwu6rTQDm7KDfrSldpEDcnGKaDp
+	 yW/Fpv5m423C/h7ojVg2KgDBP5NkIY7hiYh3sGPvnY04H8PhjZdAX6YxyIOIvNSlp6
+	 n8xMVNwZhIhnzcVkVrDscJKKU1fNzOC3N3fpdPikz+1DLOYA8wKXVrAz+CDRoIm1hQ
+	 0LEFSyaeIN/OmOCiUn2EPxKgZoe3056nThOciruBx3YNgp+AWDnFks9HTGEcQCJk6R
+	 NWfP86VRN6Yyg==
+Date: Wed, 24 Sep 2025 11:56:18 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Devarsh Thakkar <devarsht@ti.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
+Message-ID: <20250924-rational-dalmatian-of-luxury-f8594f@penduick>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
+ <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
+ <20250915-active-placid-bustard-6e1faa@penduick>
+ <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
+ <20250923-debonair-earwig-of-abracadabra-940fa8@penduick>
+ <osdt4teotc6qvja734dyo7be35nzy5lo4sw4dcniaqicqb3o5l@gabq5adeliha>
+ <20250923103223.GA15509@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250924095604.1553144-1-glider@google.com>
-Subject: [PATCH v2] mm/memblock: Correct totalram_pages accounting with KMSAN
-From: Alexander Potapenko <glider@google.com>
-To: glider@google.com
-Cc: akpm@linux-foundation.org, david@redhat.com, vbabka@suse.cz, 
-	rppt@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	elver@google.com, dvyukov@google.com, kasan-dev@googlegroups.com, 
-	Aleksandr Nogikh <nogikh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="l34x2ubugpihgtc4"
+Content-Disposition: inline
+In-Reply-To: <20250923103223.GA15509@pendragon.ideasonboard.com>
+
+
+--l34x2ubugpihgtc4
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
+MIME-Version: 1.0
 
-When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
-for metadata instead of returning them to the early allocator. The callers,
-however, would unconditionally increment `totalram_pages`, assuming the
-pages were always freed. This resulted in an incorrect calculation of the
-total available RAM, causing the kernel to believe it had more memory than
-it actually did.
+On Tue, Sep 23, 2025 at 01:32:23PM +0300, Laurent Pinchart wrote:
+> On Tue, Sep 23, 2025 at 01:28:57PM +0300, Dmitry Baryshkov wrote:
+> > On Tue, Sep 23, 2025 at 11:38:17AM +0200, Maxime Ripard wrote:
+> > > On Mon, Sep 15, 2025 at 09:38:44PM +0300, Dmitry Baryshkov wrote:
+> > > > On Mon, Sep 15, 2025 at 10:42:22AM +0200, Maxime Ripard wrote:
+> > > > > On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
+> > > > > > > +/**
+> > > > > > > + * drm_atomic_build_readout_state - Creates an initial state=
+ from the hardware
+> > > > > > > + * @dev: DRM device to build the state for
+> > > > > > > + *
+> > > > > > > + * This function allocates a &struct drm_atomic_state, calls=
+ the
+> > > > > > > + * atomic_readout_state callbacks, and fills the global stat=
+e old states
+> > > > > > > + * by what the callbacks returned.
+> > > > > > > + *
+> > > > > > > + * Returns:
+> > > > > > > + *
+> > > > > > > + * A partially initialized &struct drm_atomic_state on succe=
+ss, an error
+> > > > > > > + * pointer otherwise.
+> > > > > > > + */
+> > > > > > > +static struct drm_atomic_state *
+> > > > > > > +drm_atomic_build_readout_state(struct drm_device *dev)
+> > > > > > > +{
+> > > > > > > +	struct drm_connector_list_iter conn_iter;
+> > > > > > > +	struct drm_atomic_state *state;
+> > > > > > > +	struct drm_mode_config *config =3D
+> > > > > > > +		&dev->mode_config;
+> > > > > > > +	struct drm_connector *connector;
+> > > > > > > +	struct drm_printer p =3D
+> > > > > > > +		drm_info_printer(dev->dev);
+> > > > > > > +	struct drm_encoder *encoder;
+> > > > > > > +	struct drm_plane *plane;
+> > > > > > > +	struct drm_crtc *crtc;
+> > > > > > > +	int ret;
+> > > > > > > +
+> > > > > > > +	drm_dbg_kms(dev, "Starting to build atomic state from hardw=
+are state.\n");
+> > > > > > > +
+> > > > > > > +	state =3D drm_atomic_state_alloc(dev);
+> > > > > > > +	if (WARN_ON(!state))
+> > > > > > > +		return ERR_PTR(-ENOMEM);
+> > > > > > > +
+> > > > > > > +	state->connectors =3D kcalloc(config->num_connector, sizeof=
+(*state->connectors), GFP_KERNEL);
+> > > > > > > +	if (WARN_ON(!state->connectors)) {
+> > > > > > > +		ret =3D -ENOMEM;
+> > > > > > > +		goto err_state_put;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	state->private_objs =3D kcalloc(count_private_obj(dev), siz=
+eof(*state->private_objs), GFP_KERNEL);
+> > > > > > > +	if (WARN_ON(!state->private_objs)) {
+> > > > > > > +		ret =3D -ENOMEM;
+> > > > > > > +		goto err_state_put;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	drm_for_each_crtc(crtc, dev) {
+> > > > > > > +		const struct drm_crtc_funcs *crtc_funcs =3D
+> > > > > > > +			crtc->funcs;
+> > > > > > > +		struct drm_crtc_state *crtc_state;
+> > > > > > > +
+> > > > > > > +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->na=
+me);
+> > > > > > > +
+> > > > > > > +		if (crtc_funcs->atomic_readout_state) {
+> > > > > > > +			crtc_state =3D crtc_funcs->atomic_readout_state(crtc);
+> > > > > > > +		} else if (crtc_funcs->reset) {
+> > > > > > > +			crtc_funcs->reset(crtc);
+> > > > > > > +
+> > > > > > > +			/*
+> > > > > > > +			 * We don't want to set crtc->state field yet. Let's save=
+ and clear it up.
+> > > > > > > +			 */
+> > > > > > > +			crtc_state =3D crtc->state;
+> > > > > > > +			crtc->state =3D NULL;
+> > > > > >=20
+> > > > > > Chancing the crtc->state pointer behind the back of the reset c=
+allback seems
+> > > > > > fragile. We never how if some other piece of the driver refers =
+to it
+> > > > > > (although illegally).
+> > > > >=20
+> > > > > I agree that it's clunky. I'm not sure who would use it at this p=
+oint
+> > > > > though: we're in the middle of the drm_mode_config_reset(), so the
+> > > > > drivers' involvement is pretty minimal.
+> > > > >=20
+> > > > > I did wonder if changing reset to return the object instead of se=
+tting
+> > > > > $OBJECT->state would be a better interface?
+> > > > >=20
+> > > > > > For now, wouldn't it be better to require a read-out helper for=
+ all elements
+> > > > > > of the driver's mode-setting pipeline?=A0 The trivial implement=
+ation would
+> > > > > > copy the existing reset function and keep crtc->state to NULL.
+> > > > >=20
+> > > > > I also considered that, but I'm not sure we can expect bridges to=
+ have
+> > > > > readout hooks filled for every configuration in the wild.
+> > > > >=20
+> > > > > But maybe we can look during drm_mode_config_reset() at whether a=
+ll the
+> > > > > objects have their hook filled, and if not fall back on reset for
+> > > > > everything.
+> > > > >=20
+> > > > > It would make the implementation easier, but missing bridges
+> > > > > implementations would trigger a mode change when it might actuall=
+y work
+> > > > > just fine since bridge state is pretty minimal.
+> > > >=20
+> > > > DP bridge drivers have a pretty big state (DPCD and all the feature=
+s).
+> > >=20
+> > > I meant drm_bridge_state. Subclasses would have their own implementat=
+ion
+> > > anyway.
+> > >=20
+> > > > Other bridge drivers randomly leak state to the non-state structs.
+> > >=20
+> > > I'm not sure what you mean by that though. Can you expand?
+> >=20
+> > I think I've seen bridge drivers which stored subclassed drm_bridge
+> > instead of drm_bridge_state or stored the data in the long-living data
+> > structures. YEs, that's a bug, which should be fixed on its own.
+>=20
+> There's one exception to the "all state in state structure" rules if I
+> understand things correctly (and I'm mentioning it here partly to be
+> corrected if my understanding is wrong). Active state data that needs to
+> be accessed from a non-sleepable context need to be copied to the
+> device-specific structure when the state is applied, as we can't take
+> the mutex protecting state access there. I'd expect that to be uncommon
+> for bridges.
 
-This patch refactors `memblock_free_pages()` to return the number of pages
-it successfully frees. If KMSAN stashes the pages, the function now
-returns 0; otherwise, it returns the number of pages in the block.
+It's not really about non-sleepable, it's more about everything that is
+outside of DRM's locking scheme. So interrupt handlers are one of those
+indeed, but CEC, ALSA, debugfs, etc. also are.
 
-The callers in `memblock.c` have been updated to use this return value,
-ensuring that `totalram_pages` is incremented only by the number of pages
-actually returned to the allocator. This corrects the total RAM accounting
-when KMSAN is active.
+Maxime
 
-Cc: Aleksandr Nogikh <nogikh@google.com>
-Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
+--l34x2ubugpihgtc4
+Content-Type: application/pgp-signature; name="signature.asc"
 
----                                                                        =
-                                                 =E2=94=82
-v2:                                                                        =
-                                                 =E2=94=82
-- Remove extern from the declaration of memblock_free_pages() in           =
-                                                 =E2=94=82
-  mm/internal.h as suggested by Mike Rapoport.                             =
-                                                 =E2=94=82
-- Fix formatting in the definition of memblock_free_pages() in             =
-                                                 =E2=94=82
-  mm/mm_init.c as suggested by Mike Rapoport.                              =
-                                                 =E2=94=82
-- Refactor memblock_free_late() to improve readability as suggested by     =
-                                                 =E2=94=82
-  David Hildenbrand.                                                       =
-                                                 =E2=94=82
----
- mm/internal.h |  4 ++--
- mm/memblock.c | 21 +++++++++++----------
- mm/mm_init.c  |  9 +++++----
- 3 files changed, 18 insertions(+), 16 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 45b725c3dc030..ac841c53653eb 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -742,8 +742,8 @@ static inline void clear_zone_contiguous(struct zone *z=
-one)
- extern int __isolate_free_page(struct page *page, unsigned int order);
- extern void __putback_isolated_page(struct page *page, unsigned int order,
- 				    int mt);
--extern void memblock_free_pages(struct page *page, unsigned long pfn,
--					unsigned int order);
-+unsigned long memblock_free_pages(struct page *page, unsigned long pfn,
-+				  unsigned int order);
- extern void __free_pages_core(struct page *page, unsigned int order,
- 		enum meminit_context context);
-=20
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 117d963e677c9..9b23baee7dfe7 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1826,6 +1826,7 @@ void *__init __memblock_alloc_or_panic(phys_addr_t si=
-ze, phys_addr_t align,
- void __init memblock_free_late(phys_addr_t base, phys_addr_t size)
- {
- 	phys_addr_t cursor, end;
-+	unsigned long freed_pages =3D 0;
-=20
- 	end =3D base + size - 1;
- 	memblock_dbg("%s: [%pa-%pa] %pS\n",
-@@ -1834,10 +1835,9 @@ void __init memblock_free_late(phys_addr_t base, phy=
-s_addr_t size)
- 	cursor =3D PFN_UP(base);
- 	end =3D PFN_DOWN(base + size);
-=20
--	for (; cursor < end; cursor++) {
--		memblock_free_pages(pfn_to_page(cursor), cursor, 0);
--		totalram_pages_inc();
--	}
-+	for (; cursor < end; cursor++)
-+		freed_pages +=3D memblock_free_pages(pfn_to_page(cursor), cursor, 0);
-+	totalram_pages_add(freed_pages);
- }
-=20
- /*
-@@ -2259,9 +2259,11 @@ static void __init free_unused_memmap(void)
- #endif
- }
-=20
--static void __init __free_pages_memory(unsigned long start, unsigned long =
-end)
-+static unsigned long __init __free_pages_memory(unsigned long start,
-+						unsigned long end)
- {
- 	int order;
-+	unsigned long freed =3D 0;
-=20
- 	while (start < end) {
- 		/*
-@@ -2279,14 +2281,15 @@ static void __init __free_pages_memory(unsigned lon=
-g start, unsigned long end)
- 		while (start + (1UL << order) > end)
- 			order--;
-=20
--		memblock_free_pages(pfn_to_page(start), start, order);
-+		freed +=3D memblock_free_pages(pfn_to_page(start), start, order);
-=20
- 		start +=3D (1UL << order);
- 	}
-+	return freed;
- }
-=20
- static unsigned long __init __free_memory_core(phys_addr_t start,
--				 phys_addr_t end)
-+					       phys_addr_t end)
- {
- 	unsigned long start_pfn =3D PFN_UP(start);
- 	unsigned long end_pfn =3D PFN_DOWN(end);
-@@ -2297,9 +2300,7 @@ static unsigned long __init __free_memory_core(phys_a=
-ddr_t start,
- 	if (start_pfn >=3D end_pfn)
- 		return 0;
-=20
--	__free_pages_memory(start_pfn, end_pfn);
--
--	return end_pfn - start_pfn;
-+	return __free_pages_memory(start_pfn, end_pfn);
- }
-=20
- static void __init memmap_init_reserved_pages(void)
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 5c21b3af216b2..9883612768511 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *ta=
-blename,
- 	return table;
- }
-=20
--void __init memblock_free_pages(struct page *page, unsigned long pfn,
--							unsigned int order)
-+unsigned long __init memblock_free_pages(struct page *page, unsigned long =
-pfn,
-+					 unsigned int order)
- {
- 	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
- 		int nid =3D early_pfn_to_nid(pfn);
-=20
- 		if (!early_page_initialised(pfn, nid))
--			return;
-+			return 0;
- 	}
-=20
- 	if (!kmsan_memblock_free_pages(page, order)) {
- 		/* KMSAN will take care of these pages. */
--		return;
-+		return 0;
- 	}
-=20
- 	/* pages were reserved and not allocated */
- 	clear_page_tag_ref(page);
- 	__free_pages_core(page, order, MEMINIT_EARLY);
-+	return 1UL << order;
- }
-=20
- DEFINE_STATIC_KEY_MAYBE(CONFIG_INIT_ON_ALLOC_DEFAULT_ON, init_on_alloc);
---=20
-2.51.0.534.gc79095c0ca-goog
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNPAQQAKCRAnX84Zoj2+
+drS5AYCbACSflp9Szn1uMHdWcNsZyepCh0EHnTJlkgZlttxxcQSgHbHyoJH4tjRK
+MTUqf+kBf2qd7ZxVEze61Lzugcyt+rUnFRWCRrOWHflQFmsgouGP93CYF/gE4/4M
+SMpizdLYSw==
+=5Yrb
+-----END PGP SIGNATURE-----
 
+--l34x2ubugpihgtc4--
 
