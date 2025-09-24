@@ -1,194 +1,227 @@
-Return-Path: <linux-kernel+bounces-831014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F0CB9B274
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3464AB9B257
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156BE383575
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459A01B2752A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D412314A9B;
-	Wed, 24 Sep 2025 17:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F0F3191BD;
+	Wed, 24 Sep 2025 17:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEQHzFzK"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h1IrTg3g"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981FC3164A1
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E913314B90;
+	Wed, 24 Sep 2025 17:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758736732; cv=none; b=Rfk4w727WVcpmJtNd9vMaQogjaqt0aVK+s+bsn4Ru0w5fJGNe0nhmPYU42iuQtGlJVW4TAP/XnUp6d85ua4pWqNON+sPdDtR7YpxlR6/1yeMVQGRf7icdKLNouN7XClqd6B+ZjE5GVh+YypLhjnV9tWXYRyiDvjnM8HYHMcpxOI=
+	t=1758736678; cv=none; b=YqbTDgWd0gId5kKBRVCAygQcUI8M8i2OM/jjX1qLbN35GjBlcnl/jnDy0jE7pvbQaIaZgTxKxnzyQbGqILMDCZ1w6Pvhsd1klvglCSGSvMGi5CJE2srKY1Eq4/OrjYFOtT/ihwjTLITIKalbW+xr1FLRQ5+LkEurzqmiQNlxaZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758736732; c=relaxed/simple;
-	bh=J9zIa1+ZcwGSSn740ye9fEQihDeL8OCDBGPNvWNOnyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/yAOjnKKnK+LHJMgxItejMPzmlvDIKOywckpZ2mOwQ4TRxVhmm1QNJrzAgxMHU4dyAxLQpTdi8yO2hG+Sc7h65rxAIUQBuEkzaU+9hrJbCjVDzjui8uMn0dLh3Lewhm6BZamD5oqgBkmRxp6bvGwgAWqXY9/axLDaCECG6fyF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEQHzFzK; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62fbc90e6f6so62279a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758736728; x=1759341528; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GKqJP+48MmB6+CsLCrP4WRsLC5jZbjywV4JQAy5jU3Y=;
-        b=eEQHzFzKaL2eE1QzzJj1/KTX3vzRF3zGSKLFoWK/SkA1Vwew8GzIpvDAz4ROp8BLjw
-         hgxlB88g0fJvBSXRwvqgbUD6W0V+sPPRLw+J7giq3yrDnbEOKL03CtC5zcHNAqm8BUsA
-         c6bsc7W9EcYhJ/lnYvlcoovIyrgHEbe70YGH+bS++NwVxhx6mOaZsqXalK1a2muT8Oz+
-         JpL3DUKMRoz9n7Cn6wOisuaatkTTmwP0lBV718N4yEeQ4Q0lJqsVODY20zktLhNUzH7a
-         UelIXpUeHbyGzi6QCQSEoHkXiV5L9eVa1z/GD8mls0sdyOEmFGjegZZgdOLQfx4GSJWB
-         iHEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758736728; x=1759341528;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GKqJP+48MmB6+CsLCrP4WRsLC5jZbjywV4JQAy5jU3Y=;
-        b=ncz6FLPLmMkSantJgs8riIMYa/tA5McjUkb6pYGlOzlxgqe71A0vewJfx8nb9bsLmd
-         6/PMVWzCf9ErFI74+hQ8P7j5MpG/XHwKLvAx+ZxmLXvoQinQvXeOJA5Ya4dBGzbvvUHn
-         sfgU/ityAnXmYS5bHFb4cCihtB8QfMljgTsV7DHdG/Pc2y0KzC28qVRK1IGRvvP40t6V
-         5OCg/Qu/t1yqlnYLLFKHv8XgOTUiEHcoDxKf6OryB9osgOaO4QEUD1Ip8+WeWLkQAX07
-         yd0WdwyJFdWY21vAt6M+GFReyEa4Mx10UNG22r1xBdFTAWZ9+umNN8iNu+SEVo7f0lZX
-         ijrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXW7rlAHPq/d+C+1n1/WlhQk36inL4sr0ZbYbv/bwcjOibttKg/zJEzGc7wau2ROKOgc9EoUmcOh9T7VvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd/+lZKNTZb1uCHw3h/ei9DGIpZU4BJ0s08A5tw8rRXn/PtVLv
-	zIwXlLYY6rF8UyyH/Caw7bmsZiMi/rEVPGdzIYK3JezhTh33DxLLvf5c
-X-Gm-Gg: ASbGnctzSE3IizVr8kqN+/5Qumd0Ac5ygyIKAIUjWhDx3rsSdbpOuWldAKcN9AMIu8Z
-	sofkDGKTgI7YnW5ewX89d+EZg5HHv66UGp8j+QDc+WUmq27y7iBSso9SxkFHLzn0s/R+2Pf07CF
-	ZPVKSmM9Knq3Wb3e1FUKVJDw2kDl3dVUlCFcu7eITeAw3B3JrF7Eb0dndh5eii15AX2qb3a+yc2
-	qNjYRCfMO7wxSbsf5TtzZ1n+qERKEDTFRQtgaA2sgEz+VRpvnCOvmuKR0I7+xzXtulESwO1TI8U
-	hzkqz0dN90ICJLl4H+S9qe14QNwRkxypNhsGcj4aOTSzfsDOvMGzxmfqQw9KV98MgrcjJMfEmUd
-	YLT7hf9fLvxS3yus=
-X-Google-Smtp-Source: AGHT+IGK48eDiJPLwUG6CwWCcjw8mwwOjz0+lrph0QUuGNIzekpn8VliJE1l3jHE+fdBUys0/PFSAA==
-X-Received: by 2002:a05:6402:180d:b0:62f:9cfb:7d34 with SMTP id 4fb4d7f45d1cf-6349fa97d25mr223912a12.38.1758736726861;
-        Wed, 24 Sep 2025 10:58:46 -0700 (PDT)
-Received: from hsukr3.. ([141.70.88.200])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6316acdfe14sm9080057a12.52.2025.09.24.10.58.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 10:58:46 -0700 (PDT)
-From: Sukrut Heroorkar <hsukrut3@gmail.com>
-To: Helge Deller <deller@gmx.de>,
-	Bernie Thompson <bernie@plugable.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Sukrut Heroorkar <hsukrut3@gmail.com>,
-	Zsolt Kajtar <soci@c64.rulez.org>,
-	Gonzalo Silvalde Blanco <gonzalo.silvalde@gmail.com>,
-	linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
-	dri-devel@lists.freedesktop.org (open list:FRAMEBUFFER LAYER),
-	linux-kernel@vger.kernel.org (open list)
-Cc: skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: [PATCH] fbdev: udlfb: make CONFIG_FB_DEVICE optional
-Date: Wed, 24 Sep 2025 19:57:38 +0200
-Message-ID: <20250924175743.6790-1-hsukrut3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758736678; c=relaxed/simple;
+	bh=ibBLmnWGd5dwikKX/unt0rlK10hiVA3T+Fur+t+XOY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QV3ir4PKx81Ve8HwtPiAT29UQtcA8B+ZiBot6vGPt0/7JpC1dbS483xFI4lS18NQ6ySjcZoH8Exx5vypTqqd5OZixdgncLFP5Rcn38pmNB4iKrz9Wm2BEjzbGIp+stPM0T7txuJ5rg0Y0eIbUoMvERn9mVg/g4rzGvkYbqUK2UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h1IrTg3g; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OFo5xN008363;
+	Wed, 24 Sep 2025 17:57:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=c1ejUn
+	Xihd2+WKV0LQPEZ9PHhxyatEp9b3+NMwlNL/k=; b=h1IrTg3gT/aQvvxIHfE5Ru
+	LZbXB9xGPTOy9865Qa5nToradB1xluobUFmyllwbMXqaRJckk/jqjp4AaJaxSYDx
+	0lCPf4aZaqJdHRySpfKwBYaLX2M6mAJunHM9YQPdIpAKVu1Tnrp/0btxTnUBTNaX
+	v+gbuSox34luogs8XgkIA+4ChTG1hpIGBvW1amvdAtpAZ2KT33qDQ0zB0CgLP95f
+	n6izNJwkyMT9vWWJG4jlt9iHudO9fsstw7Ws0aUis2JDZLia/RnIMYIpX25zHFEv
+	42TNTW48v0TVInVu4HB9dWrJ+C8kdpIb9vrMJk9Esw/py6i6CST1ZR9MDIEu17ew
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpkgh3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 17:57:53 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58OEgOQJ030397;
+	Wed, 24 Sep 2025 17:57:52 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a19mgg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Sep 2025 17:57:52 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58OHvpdu32965266
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Sep 2025 17:57:51 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6511B5805D;
+	Wed, 24 Sep 2025 17:57:51 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0DA985805A;
+	Wed, 24 Sep 2025 17:57:50 +0000 (GMT)
+Received: from [9.61.252.148] (unknown [9.61.252.148])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 24 Sep 2025 17:57:49 +0000 (GMT)
+Message-ID: <d346c265-6b0e-42ce-8275-7969c8e549da@linux.ibm.com>
+Date: Wed, 24 Sep 2025 10:57:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] PCI/IOV: Add missing PCI rescan-remove locking when
+ enabling/disabling SR-IOV
+To: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>
+Cc: Keith Busch <kbusch@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250826-pci_fix_sriov_disable-v1-0-2d0bc938f2a3@linux.ibm.com>
+ <20250826-pci_fix_sriov_disable-v1-1-2d0bc938f2a3@linux.ibm.com>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <20250826-pci_fix_sriov_disable-v1-1-2d0bc938f2a3@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=L50dQ/T8 c=1 sm=1 tr=0 ts=68d43121 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=RiiMxNVSmK5LPl13xBwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMCBTYWx0ZWRfX3It9hmbLatt7
+ 6c5scWjsIfMyQKORsuDs9SYW8iK987TkAKhqlMF35evIOarwEGebuPJtvWviT3Qy1FI/xlXagsH
+ MLS0qm4PujeSnzzq4cE+wMYYusvUlxH//YcxkG39WrUikKA0+WQFFzDY4aIXSQaZR9y2D/yq2XI
+ 3FL7H1HB/4VW7XRnuD/zyB8wIuLgCrGQgw9JMZtCJatyXktwW4z9kUK4VHcSJVWkqb1EPBhBtb/
+ nZqvj0q60lfTnYVOHM3jrluuccqAiUURGkG6p2SfeVLSaTu/zSIcrGs8Yz1gfE9Oo7AJAj/yeQR
+ rT7mps3bANwCHUhenPmvcXTaPI5c6DxvM1ktMeeDKvetnVz4TqG+5HPn9FlbtUkUzDfeQBNpYpc
+ wGxgx5Of
+X-Proofpoint-ORIG-GUID: X_G0C1SIkYgD_PsD6IiUr_EpkKD1kVuy
+X-Proofpoint-GUID: X_G0C1SIkYgD_PsD6IiUr_EpkKD1kVuy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1011 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200010
 
-The udlfb driver exposes sysfs attributes thus depends upon
-CONFIG_FB_DEVICE. This patch work wraps relavent code blocks
-with #ifdef CONFIG_FB_DEVICE so that the driver can still be
-built even when CONFIG_FB_DEVICE is not selected.
 
-This addresses an item in Documentation/gpu/TODO.rst.
+On 8/26/2025 1:52 AM, Niklas Schnelle wrote:
+> Before disabling SR-IOV via config space accesses to the parent PF,
+> sriov_disable() first removes the PCI devices representing the VFs.
+>
+> Since commit 9d16947b7583 ("PCI: Add global pci_lock_rescan_remove()")
+> such removal operations are serialized against concurrent remove and
+> rescan using the pci_rescan_remove_lock. No such locking was ever added
+> in sriov_disable() however. In particular when commit 18f9e9d150fc
+> ("PCI/IOV: Factor out sriov_add_vfs()") factored out the PCI device
+> removal into sriov_del_vfs() there was still no locking around the
+> pci_iov_remove_virtfn() calls.
+>
+> On s390 the lack of serialization in sriov_disable() may cause double
+> remove and list corruption with the below (amended) trace being observed:
+>
+>   PSW:  0704c00180000000 0000000c914e4b38 (klist_put+56)
+>   GPRS: 000003800313fb48 0000000000000000 0000000100000001 0000000000000001
+>         00000000f9b520a8 0000000000000000 0000000000002fbd 00000000f4cc9480
+>         0000000000000001 0000000000000000 0000000000000000 0000000180692828
+>         00000000818e8000 000003800313fe2c 000003800313fb20 000003800313fad8
+>   #0 [3800313fb20] device_del at c9158ad5c
+>   #1 [3800313fb88] pci_remove_bus_device at c915105ba
+>   #2 [3800313fbd0] pci_iov_remove_virtfn at c9152f198
+>   #3 [3800313fc28] zpci_iov_remove_virtfn at c90fb67c0
+>   #4 [3800313fc60] zpci_bus_remove_device at c90fb6104
+>   #5 [3800313fca0] __zpci_event_availability at c90fb3dca
+>   #6 [3800313fd08] chsc_process_sei_nt0 at c918fe4a2
+>   #7 [3800313fd60] crw_collect_info at c91905822
+>   #8 [3800313fe10] kthread at c90feb390
+>   #9 [3800313fe68] __ret_from_fork at c90f6aa64
+>   #10 [3800313fe98] ret_from_fork at c9194f3f2.
+>
+> This is because in addition to sriov_disable() removing the VFs, the
+> platform also generates hot-unplug events for the VFs. This being
+> the reverse operation to the hotplug events generated by sriov_enable()
+> and handled via pdev->no_vf_scan. And while the event processing takes
+> pci_rescan_remove_lock and checks whether the struct pci_dev still
+> exists, the lack of synchronization makes this checking racy.
+>
+> Other races may also be possible of course though given that this lack
+> of locking persisted so long obversable races seem very rare. Even on
+> s390 the list corruption was only observed with certain devices since
+> the platform events are only triggered by the config accesses that come
+> after the removal, so as long as the removal finnished synchronously
+> they would not race. Either way the locking is missing so fix this by
+> adding it to the sriov_del_vfs() helper.
+>
+> Just lik PCI rescan-remove locking is also missing in sriov_add_vfs()
+> including for the error case where pci_stop_ad_remove_bus_device() is
+> called without the PCI rescan-remove lock being held. Even in the non
+> error case adding new PCI devices and busses should be serialized via
+> the PCI rescan-remove lock. Add the necessary locking.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 18f9e9d150fc ("PCI/IOV: Factor out sriov_add_vfs()")
+> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+>   drivers/pci/iov.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index ac4375954c9479b5f4a0e666b5215094fdaeefc2..77dee43b785838d215b58db2d22088e9346e0583 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -629,15 +629,18 @@ static int sriov_add_vfs(struct pci_dev *dev, u16 num_vfs)
+>   	if (dev->no_vf_scan)
+>   		return 0;
+>   
+> +	pci_lock_rescan_remove();
+>   	for (i = 0; i < num_vfs; i++) {
+>   		rc = pci_iov_add_virtfn(dev, i);
 
-Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
----
-Note: this change has only been compile-tested.
+Should we move the lock/unlock to pci_iov_add_virtfn? As that's where 
+the device is added to the bus? Similarly move the locking/unlocking to 
+pci_iov_remove_virtfn?
 
- drivers/video/fbdev/Kconfig | 1 -
- drivers/video/fbdev/udlfb.c | 8 ++++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Thanks
+Farhan
 
-diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 1500dca8c416..40442b80de17 100644
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -1596,7 +1596,6 @@ config FB_SMSCUFX
- config FB_UDL
- 	tristate "Displaylink USB Framebuffer support"
- 	depends on FB && USB
--	depends on FB_DEVICE
- 	select FB_MODE_HELPERS
- 	select FB_SYSMEM_HELPERS_DEFERRED
- 	help
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index ccede85df1e1..de2e310054d4 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1382,6 +1382,7 @@ static int dlfb_setup_modes(struct dlfb_data *dlfb,
- 	return result;
- }
- 
-+#ifdef CONFIG_FB_DEVICE
- static ssize_t metrics_bytes_rendered_show(struct device *fbdev,
- 				   struct device_attribute *a, char *buf) {
- 	struct fb_info *fb_info = dev_get_drvdata(fbdev);
-@@ -1413,6 +1414,7 @@ static ssize_t metrics_cpu_kcycles_used_show(struct device *fbdev,
- 	return sysfs_emit(buf, "%u\n",
- 			atomic_read(&dlfb->cpu_kcycles_used));
- }
-+#endif
- 
- static ssize_t edid_show(
- 			struct file *filp,
-@@ -1486,6 +1488,7 @@ static const struct bin_attribute edid_attr = {
- 	.write = edid_store
- };
- 
-+#ifdef CONFIG_FB_DEVICE
- static const struct device_attribute fb_device_attrs[] = {
- 	__ATTR_RO(metrics_bytes_rendered),
- 	__ATTR_RO(metrics_bytes_identical),
-@@ -1493,6 +1496,7 @@ static const struct device_attribute fb_device_attrs[] = {
- 	__ATTR_RO(metrics_cpu_kcycles_used),
- 	__ATTR(metrics_reset, S_IWUSR, NULL, metrics_reset_store),
- };
-+#endif
- 
- /*
-  * This is necessary before we can communicate with the display controller.
-@@ -1702,6 +1706,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
- 		goto error;
- 	}
- 
-+#ifdef CONFIG_FB_DEVICE
- 	for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++) {
- 		attr = &fb_device_attrs[i];
- 		retval = device_create_file(info->dev, attr);
-@@ -1710,6 +1715,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
- 				 "failed to create '%s' attribute: %d\n",
- 				 attr->attr.name, retval);
- 	}
-+#endif
- 
- 	retval = device_create_bin_file(info->dev, &edid_attr);
- 	if (retval)
-@@ -1753,9 +1759,11 @@ static void dlfb_usb_disconnect(struct usb_interface *intf)
- 	/* this function will wait for all in-flight urbs to complete */
- 	dlfb_free_urb_list(dlfb);
- 
-+#ifdef CONFIG_FB_DEVICE
- 	/* remove udlfb's sysfs interfaces */
- 	for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
- 		device_remove_file(info->dev, &fb_device_attrs[i]);
-+#endif
- 	device_remove_bin_file(info->dev, &edid_attr);
- 
- 	unregister_framebuffer(info);
--- 
-2.43.0
-
+>   		if (rc)
+>   			goto failed;
+>   	}
+> +	pci_unlock_rescan_remove();
+>   	return 0;
+>   failed:
+>   	while (i--)
+>   		pci_iov_remove_virtfn(dev, i);
+> +	pci_unlock_rescan_remove();
+>   
+>   	return rc;
+>   }
+> @@ -762,8 +765,10 @@ static void sriov_del_vfs(struct pci_dev *dev)
+>   	struct pci_sriov *iov = dev->sriov;
+>   	int i;
+>   
+> +	pci_lock_rescan_remove();
+>   	for (i = 0; i < iov->num_VFs; i++)
+>   		pci_iov_remove_virtfn(dev, i);
+> +	pci_unlock_rescan_remove();
+>   }
+>   
+>   static void sriov_disable(struct pci_dev *dev)
+>
 
