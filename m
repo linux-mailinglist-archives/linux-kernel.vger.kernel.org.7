@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-830146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96ECB98E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086BAB98EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0F21884F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4464B188C838
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B1528135B;
-	Wed, 24 Sep 2025 08:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hpNCmf9d"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C028AB16;
+	Wed, 24 Sep 2025 08:34:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAA027CB38
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39BB285C89
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702850; cv=none; b=ArVPs4kfd/9oMg3OctsKTh9WE7ok7phjeCnfwNrd21bqe6/90IX3CSQnL1ZqOKKX8j2zw0C5vDvyYL17TDiZ+AYc0YNjlvviM08yc42TA4SAqfpH42/x4FcCCTWbKzZUzzJz1hWZrz1Z0kacfQkmPMy5UMIzGT42CddJeklbUXE=
+	t=1758702894; cv=none; b=eC01mXXbIxC0gEI0ucOq/DJn+o3ZqRuttkdbhpHzbJvCajfzHPP93I9JPIqDjZbaQPSk5LOfaSIZha/O5AUq+NWr30/hBO9yMMHhHpA25Ol8mv27AGWqYAyW+33MC+hV0oPVNB53GmJFEsCs+mdvxPvx/TOfE4+uxXU/y9U3glY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702850; c=relaxed/simple;
-	bh=OrATnpZDnlXdQH9ZHMeh5Yq3DhbnbcVfeDmwbff5INc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eY4bLWUzYf5amFaaxOx2dsLiSpbsRmzBCvjXnaH7m9op9Ba72g97/fksGvLm3kFwtYXfH0dCmda+Px0Fa7ZNjMq4ZToUpHWdgAGrJ06iGHpha/bsFlDiyFk2/RtYS0o3Caz73nBL242eOk08/0gX5ppkAxB3d4XTWQ6P5uIO+g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hpNCmf9d; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b2d92b52149so526927366b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:34:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758702847; x=1759307647; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T2GuLi6XyMMBKMY8TiQINu19CGtecqHLNQuiswEu7fo=;
-        b=hpNCmf9d4Pp/9eN5nue3g/dp6EQb4+Lh46VqpYOANYItMY/Ytm79PdECY6s+/vpJoz
-         06c/l693kzOuJZhCEbnJIsmH+lCB7C8sj812mKkj0EpwC3eGqOjcyxh/G6DHFxfdcfYA
-         J+Rsn5pJ1uvYysMDsyRwjjqx53K/4Hd2embuVraRQA7Uz0md/Bc5oPWdd9lDEnNw6o7R
-         hRhBvtrY49gYVykiMwj2/3LSQmGwYfyncvAv5ahdrKxQ3YorJmIIHk5K+lstlYgYZUFy
-         awV2QhdngNMfz6BTMyUPDVb0wrl46sQnbE+DLj7HiA/5PNsF83K00MQ93INPcTj6f5Vv
-         2/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758702847; x=1759307647;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T2GuLi6XyMMBKMY8TiQINu19CGtecqHLNQuiswEu7fo=;
-        b=j4Usdh2RGvQivZ84WgW7tnNBaTNK9+LZRaoZ0UttHprEXEWIcagbHUOJXTXr/kWCtK
-         J1FAEeItodtKeNXCnG/6QfxMC3OZqjQiQSGKIckBrupeiK+Y1ke3U6bkroNvHAczR/a8
-         fh+WHEmcD9q69UBSTPNyM6ysH+aWtnjOSptN7Qp52FjXPaPXNcAAnLob0Vqz3UNSwDZL
-         J6V+6YPjUaapk/WkLM9L081HIpn+VHOKHo4pkBqzsY5ZXFEpqGWLCosqatWjzo/lg0W5
-         RUWYIPMs5u+f9C5eFPYUoeaMR7uD525Xo3nQkOxtTT4+UCyp5bmQsPEROVN4w6prYfHo
-         HoJA==
-X-Gm-Message-State: AOJu0YzRiKZ5k9tPyDvvhqzlm+CYFI7RgydG66lt0CtA/ko20C6iEfaR
-	qym5Cx7gFAOATemr8OdN6uKh7KgBiuXGZJoSdLaI847m/t/LE96/uoqBppbqH56NUsmrh+fwluM
-	8LGTELek=
-X-Gm-Gg: ASbGncsRyF0XVkqTWtd+QThv0hKxX7/GJQ4MvZs2qZoj7jfqhAc4yiamjKStdC5K4ki
-	78WAb0AlWgd9+5pwqihUdN+BDaJq5GNVVlQHtZ+8Kv+y9BFRIfJUDX+4+M+g9dB3oVVMqyobybS
-	ZYqxjX5l0UnDIE0OLsSafcwyo9MdTx9kpJ26W8FJ/gbeGe8iS2ek0eH0xAIqS9CTcran7HZMkFC
-	tIDdeta2+Fu6wHPmoUgCRLb70Ge0LSdBeMrs9cKm3Mk0+7Lm4SmK9nw96//2A/oOW6tnKYlt2vS
-	HKuD5irnnjAFwr2FBhSFOmeb+HIJoGeNgat0BURzp0rmjVQ9JSYKrmfrIDzIq8nuLjl+WpkKWCB
-	9xLJN0VGZfcJ/62Zar9RrRw4SXJSbPZAIGBILdGiDwyMMSnFJFCJFYCq4OdipR0eX
-X-Google-Smtp-Source: AGHT+IH1aDoALWFRsO0oVLqVi+ToUZna4cdMnC32Rm3fsJgeudeKUR1iGh2aJbkhuYEWll04azdH2g==
-X-Received: by 2002:a17:907:7e88:b0:b2f:5c41:49c with SMTP id a640c23a62f3a-b30267964c0mr565741666b.3.1758702847411;
-        Wed, 24 Sep 2025 01:34:07 -0700 (PDT)
-Received: from rayden (h-37-123-177-177.A175.priv.bahnhof.se. [37.123.177.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b338b404a3dsm46227966b.11.2025.09.24.01.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 01:34:06 -0700 (PDT)
-Date: Wed, 24 Sep 2025 10:34:04 +0200
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: arm@kernel.org, soc@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	op-tee@lists.trustedfirmware.org
-Subject: [GIT PULL] TEE fix2 for v6.17
-Message-ID: <20250924083404.GA3747732@rayden>
+	s=arc-20240116; t=1758702894; c=relaxed/simple;
+	bh=4wvx639RnwwdY8F0v2Vj37kcv/o6/9JmJ8NAhXnPjto=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r+Snl3aSsVwH60rQZtjKgstpwBfBkfxVZ7Dg8e9re0ToDsw19zoF9fWIzRpt9rea+4ptTENX829605m63SWkw6TqK5YfIHhtOOa0td+LLlxPN9A3wvoMHj3UCKV7T7pTzh3ke9vdVA7QkAQD7puoMnAJASUSn35vHz+IOKPbaqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1v1KxR-0006Aj-7V; Wed, 24 Sep 2025 10:34:37 +0200
+From: Jonas Rebmann <jre@pengutronix.de>
+Subject: [PATCH v3 0/3] Mainline Protonic PRT8ML board
+Date: Wed, 24 Sep 2025 10:34:11 +0200
+Message-Id: <20250924-imx8mp-prt8ml-v3-0-f498d7f71a94@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAOt02gC/2XMSw6CMBSF4a2Qjq3pE4oj92EcgL3ATaSQFhsMY
+ e8WnBgc/ic530ICeIRALtlCPEQMOLgU8pSRR1e5Fija1EQwoVnBOMV+Nv1IRz+Z/kkZr0Gq3Kh
+ clyR9Rg8Nzrt3u6fuMEyDf+985Nv6lUrODlLklNHGMlWB5Tov2HUE174mPziczxbIxkXxS5gjI
+ RIhrVG1akBLC3/Euq4f9TOPKPIAAAA=
+X-Change-ID: 20250701-imx8mp-prt8ml-01be34684659
+To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Jonas Rebmann <jre@pengutronix.de>, 
+ Frank Li <Frank.Li@nxp.com>, David Jander <david@protonic.nl>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>
+X-Mailer: b4 0.15-dev-7abec
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1535; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=4wvx639RnwwdY8F0v2Vj37kcv/o6/9JmJ8NAhXnPjto=;
+ b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYsi4vFba0Pk8n2Oeim+bwmwF888J55+v+JZt43defuPjP
+ xVJK9vPdZSyMIhxMciKKbLEqskpCBn7XzertIuFmcPKBDKEgYtTACZyRZuRYatq8smImfserIta
+ ZfJgl1Nu1Ed3uVcp6fbZmmuSFr3lrWD4XxLwSyzYVJll52yVTfz9Z6anX9m37HnaiWym0rPZ9tO
+ rWQE=
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello arm-soc maintainers,
+This series adds the Protonic PRT8ML device tree as well as some minor
+corrections to the devicetree bindings used.
 
-Please pull this fix in the TEE subsystem.
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+---
+Changes in v3:
+- Add comment on the intentional limitation to 100Mbps RGMII
+- Link to v2: https://lore.kernel.org/r/20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de
 
-Thanks,
-Jens
+Changes in v2:
+- Dropped "ASoC: dt-bindings: asahi-kasei,ak4458: Reference common DAI
+  properties", applied to broonie/sound for-next (Thanks, Mark)
+- Updated description of the reset-gpios property in sja1105 binding to
+  address the issues of connecting this pin to GPIO (Thanks, Vladimir)
+- Added the fec, switch and phy for RJ45 onboard ethernet after
+  successful testing
+- Consistently use interrupts-extended
+- Link to v1: https://lore.kernel.org/r/20250910-imx8mp-prt8ml-v1-0-fd04aed15670@pengutronix.de
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+---
+Jonas Rebmann (3):
+      dt-bindings: net: dsa: nxp,sja1105: Add reset-gpios property
+      dt-bindings: arm: fsl: Add Protonic PRT8ML
+      arm64: dts: add Protonic PRT8ML board
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+ .../devicetree/bindings/net/dsa/nxp,sja1105.yaml   |   9 +
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts    | 501 +++++++++++++++++++++
+ 4 files changed, 512 insertions(+)
+---
+base-commit: ea21fa34164c9ea0a2a5b8714c7e36f54c7fb46e
+change-id: 20250701-imx8mp-prt8ml-01be34684659
 
-are available in the Git repository at:
+Best regards,
+--  
+Jonas Rebmann <jre@pengutronix.de>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-shm-register-fix-for-v6.17
-
-for you to fetch changes up to d5cf5b37064b1699d946e8b7ab4ac7d7d101814c:
-
-  tee: fix register_shm_helper() (2025-09-22 08:47:00 +0200)
-
-----------------------------------------------------------------
-TEE fix2 for v6.17
-
-Fixing incorrect error handling for a call to iov_iter_extract_pages().
-
-----------------------------------------------------------------
-Jens Wiklander (1):
-      tee: fix register_shm_helper()
-
- drivers/tee/tee_shm.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
