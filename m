@@ -1,99 +1,124 @@
-Return-Path: <linux-kernel+bounces-830126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE024B98C7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 895E2B98C85
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DBA2E1184
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC702E11FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C7725A34F;
-	Wed, 24 Sep 2025 08:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UaZBnTzB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619793D544
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6570127E07E;
+	Wed, 24 Sep 2025 08:19:06 +0000 (UTC)
+Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA733D544;
+	Wed, 24 Sep 2025 08:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701832; cv=none; b=V+NgoHhB4yx0YVt0n9cmViLAPc0EoGpvAbDnGJqQTgVfmMZ9EaQTajoMvbVSXCTgfye3nUKRPxujbe1j04trNSWwH4W1RGZRkRNmWEIUDdlVIhxY1GzT3nrtkpBOjEniYr+WVjgkWgPJYS5cuYr2T4RXCasUtiWlUt6W1PJRkK4=
+	t=1758701946; cv=none; b=adt1Z8E48lYqk7FynBr0eKYihE4xdVqs5KfO7ipbXNKonjky2T7p3/5Aa2K2iekkyI/o5V1m+AHazksI+OY8WNdNSbDTwz80sMcubaNorPmC2fPONnVEIrljLTXNnI7hKxtNeGVJIsw3KWODjszPq0YsnCJAZLQaFhONrWvfzps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701832; c=relaxed/simple;
-	bh=80TBCq2xtbZyQwcjgk75oUDRl3DELO/Ho2DPzv73C98=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o1Ma3YBHHUM/98bfAf2ioxDNWyPGIEVwz0uBIclwaMwglc/+W5eUEUr0XthY0KcUEySc2zocboQXv+JTuAi3cfBcCSu3Hc6oSAkvOKSVz9KHCsn7I9/qe5bMuAIqQNLI/XgdZr4cs1/rZJyJph80+efjLv2e6wOm7Qx5wII9vOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UaZBnTzB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B57D5C4CEE7;
-	Wed, 24 Sep 2025 08:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758701831;
-	bh=80TBCq2xtbZyQwcjgk75oUDRl3DELO/Ho2DPzv73C98=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UaZBnTzBosxoU0mr/La3OpGYNa7BmjoxfFelqB9/C7od+Q7f1WnTp9pU+r0kV+A+A
-	 WmFNXsaJD+IiNidYvB0jCdtBVqlmDdgLsRyS1/R41XUGtR5ZGtg7Lk/Gv1lgQVZuYK
-	 tTl4ax5VkEu2QqTrUjBdxQdiUbAUa2ONQXffNQsn/poQjL/+JEoQUiSg3MoPX4LKMI
-	 Bsf1F3tBuKNRtWvGbjCfZDHcp7G1jfp+y3s9s8nHb46uYDswwzFb6u2Y60DPcUjnGF
-	 GEgXkjndciK1Zgni08SrT8MZG+MWtgZUPCFPE3RFfmOOh5o/+Yc9pebjZWWveC8LKn
-	 +LbxcbUXjiohw==
-From: SeongJae Park <sj@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v1] mm: convert folio_page() back to a macro
-Date: Wed, 24 Sep 2025 01:17:09 -0700
-Message-Id: <20250924081709.63722-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250923140058.2020023-1-david@redhat.com>
-References: 
+	s=arc-20240116; t=1758701946; c=relaxed/simple;
+	bh=lZUCWci03AbglxggQWQQ4x0B8Eeqd3JY0hT4rfpA0ho=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=SLpu6z/pepmCInAHKzGYyIenCV8pS96K8ORdz/3snhGLe6heH97HtMAzKeEM2ut2W2K5K5Zg6S1vEa7s5eYFgTljY9+nq0TX4pPMKAt5V1z01iSPAD3RGfV1YMl+/sSHzndyoy2O82b5LJboGVaDiCHm1VygbSxJAJMMP66mBjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=165.227.155.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
+ ajax-webmail-app2 (Coremail) ; Wed, 24 Sep 2025 16:18:49 +0800 (GMT+08:00)
+Date: Wed, 24 Sep 2025 16:18:49 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
+To: "Conor Dooley" <conor@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v5 1/2] dt-bindings: clock: eswin: Documentation for
+ eic7700 SoC
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <20250923-popper-choice-397ce2df6966@spud>
+References: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
+ <20250923084739.1281-1-dongxuyang@eswincomputing.com>
+ <20250923-popper-choice-397ce2df6966@spud>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <78856df3.17ba.1997acdc444.Coremail.dongxuyang@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDHZpVpqdNoHNnaAA--.26233W
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEPAmjSy9QU+
+	QAAsG
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Tue, 23 Sep 2025 16:00:58 +0200 David Hildenbrand <david@redhat.com> wrote:
-
-> In commit 73b3294b1152 ("mm: simplify folio_page() and folio_page_idx()")
-> we converted folio_page() into a static inline function. However
-> briefly afterwards in commit a847b17009ec ("mm: constify highmem related
-> functions for improved const-correctness") we had to add some nasty
-> const-away casting to make the compiler happy when checking const
-> correctness.
-> 
-> So let's just convert it back to a simple macro so the compiler can
-> check const correctness properly. There is the alternative of
-> using a _Generic() similar to page_folio(), but there is not a lot of
-> benefit compared to just using a simple macro.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-[...]
+PiA+IAo+ID4gQWRkIGRldmljZSB0cmVlIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgdGhlIEVT
+V0lOIGVpYzc3MDAKPiA+IGNsb2NrIGNvbnRyb2xsZXIgbW9kdWxlLgo+ID4gCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBZaWZlbmcgSHVhbmcgPGh1YW5neWlmZW5nQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+
+IFNpZ25lZC1vZmYtYnk6IFh1eWFuZyBEb25nIDxkb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
+bT4KPiA+IC0tLQo+ID4gIC4uLi9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlh
+bWwgICB8ICA0MCArKwo+ID4gIC4uLi9kdC1iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNs
+b2NrLmggICB8IDM3OSArKysrKysrKysrKysrKysrKysKPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDQx
+OSBpbnNlcnRpb25zKCspCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwKPiA+ICBjcmVh
+dGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNs
+b2NrLmgKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvY2xvY2svZXN3aW4sZWljNzcwMC1jbG9jay55YW1sCj4gPiBuZXcgZmls
+ZSBtb2RlIDEwMDY0NAo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi40OTA1MzU0M2VjZmUKPiA+IC0t
+LSAvZGV2L251bGwKPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
+bG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwKPiA+IEBAIC0wLDAgKzEsNDAgQEAKPiA+ICsj
+IFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkK
+PiA+ICslWUFNTCAxLjIKPiA+ICstLS0KPiA+ICskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9z
+Y2hlbWFzL2Nsb2NrL2Vzd2luLGVpYzc3MDAtY2xvY2sueWFtbCMKPiA+ICskc2NoZW1hOiBodHRw
+Oi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiA+ICsKPiA+ICt0aXRs
+ZTogRXN3aW4gRUlDNzcwMCBTb0MgY2xvY2sgY29udHJvbGxlcgo+ID4gKwo+ID4gK21haW50YWlu
+ZXJzOgo+ID4gKyAgLSBZaWZlbmcgSHVhbmcgPGh1YW5neWlmZW5nQGVzd2luY29tcHV0aW5nLmNv
+bT4KPiA+ICsgIC0gWHV5YW5nIERvbmcgPGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tPgo+
+ID4gKwo+ID4gK2Rlc2NyaXB0aW9uOgo+ID4gKyAgVGhlIGNsb2NrIGNvbnRyb2xsZXIgZ2VuZXJh
+dGVzIGFuZCBzdXBwbGllcyBjbG9jayB0byBhbGwgdGhlIG1vZHVsZXMKPiA+ICsgIGZvciBlaWM3
+NzAwIFNvQy4KPiA+ICsKPiA+ICtwcm9wZXJ0aWVzOgo+ID4gKyAgY29tcGF0aWJsZToKPiA+ICsg
+ICAgY29uc3Q6IGVzd2luLGVpYzc3MDAtY2xvY2sKPiA+ICsKPiA+ICsgIHJlZzoKPiA+ICsgICAg
+bWF4SXRlbXM6IDEKPiA+ICsKPiA+ICsgICcjY2xvY2stY2VsbHMnOgo+ID4gKyAgICBjb25zdDog
+MQo+ID4gKwo+ID4gK3JlcXVpcmVkOgo+ID4gKyAgLSBjb21wYXRpYmxlCj4gPiArICAtIHJlZwo+
+ID4gKyAgLSAnI2Nsb2NrLWNlbGxzJwo+ID4gKwo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBm
+YWxzZQo+ID4gKwo+ID4gK2V4YW1wbGVzOgo+ID4gKyAgLSB8Cj4gPiArICAgIGNsb2NrLWNvbnRy
+b2xsZXJANTE4MjgwMDAgewo+ID4gKyAgICAgICAgY29tcGF0aWJsZSA9ICJlc3dpbixlaWM3NzAw
+LWNsb2NrIjsKPiA+ICsgICAgICAgIHJlZyA9IDwweDUxODI4MDAwIDB4MjAwPjsKPiA+ICsgICAg
+ICAgICNjbG9jay1jZWxscyA9IDwxPjsKPiA+ICsgICAgfTsKPiAKPiBObyBjbG9jayBpbnB1dCB0
+byB0aGlzIGJsb2NrPyBTdXJwcmlzZWQgdGhlcmUncyBub3Qgc29tZSBvZmYtY2hpcAo+IG9zY2ls
+bGF0b3IgdGhhdCBwcm92aWRlcyBhIHF1YWxpdHkgcmVmZXJlbmNlIGZvciB0aGUgaW50ZXJuYWwg
+UExMcyBldGMuCgpUaGVyZSBpcyBhbiBvc2NpbGxhdG9yIGFzIHRoZSBjbG9jayBpbnB1dC4gVGhl
+IGZyZXF1ZW5jeSBpcyAyNDAwMDAwMCBIeiwgYW5kCnRoZSBjbG9jayBuYW1lIGlzICJ4dGFsIi4g
+CldlIHdpbGwgdXBkYXRlIHRoZSBmb2xsb3dpbmcgZGVzY3JpcHRpb24gaW4gdGhlIG5leHQgcGF0
+Y2guCgpwcm9wZXJ0aWVzOgrCoCBjb21wYXRpYmxlOgrCoCDCoCBjb25zdDogZXN3aW4sZWljNzcw
+MC1jbG9jawoKwqAgcmVnOgrCoCDCoCBtYXhJdGVtczogMQoJCsKgIGNsb2NrczoKwqAgwqAgaXRl
+bXM6CiAgICAgIC0gZGVzY3JpcHRpb246IEV4dGVybmFsIDI0TUh6IG9zY2lsbGF0b3IgY2xvY2sK
+CsKgIGNsb2NrLW5hbWVzOgrCoCDCoCBpdGVtczoKICAgICAgLSBjb25zdDogeHRhbAoJwqDCoArC
+oCAnI2Nsb2NrLWNlbGxzJzoKwqAgwqAgY29uc3Q6IDEKCnJlcXVpcmVkOgrCoCAtIGNvbXBhdGli
+bGUKwqAgLSByZWcKwqAgLSBjbG9ja3MKwqAgLSBjbG9jay1uYW1lcwrCoCAtICcjY2xvY2stY2Vs
+bHMnCgphZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKCmV4YW1wbGVzOgrCoCAtIHwKwqAgwqAg
+Y2xvY2stY29udHJvbGxlckA1MTgyODAwMCB7CsKgIMKgIMKgIMKgIGNvbXBhdGlibGUgPSAiZXN3
+aW4sZWljNzcwMC1jbG9jayI7CsKgIMKgIMKgIMKgIHJlZyA9IDwweDUxODI4MDAwIDB4MjAwPjsK
+wqAgwqAgwqAgwqAgY2xvY2tzID0gPCZ4dGFsPjsKwqAgwqAgwqAgwqAgY2xvY2stbmFtZXMgPSAi
+eHRhbCI7CsKgIMKgIMKgIMKgICNjbG9jay1jZWxscyA9IDwxPjsKwqAgwqAgfTsKCgpwcm9wZXJ0
+aWVzOgrCoCBjb21wYXRpYmxlOgrCoCDCoCBjb25zdDogZXN3aW4sZWljNzcwMC1jbG9jawoKwqAg
+cmVnOgrCoCDCoCBtYXhJdGVtczogMQoJCsKgIGNsb2NrczoKwqAgwqAgaXRlbXM6CiAgICAgIC0g
+ZGVzY3JpcHRpb246IEV4dGVybmFsIDI0TUh6IG9zY2lsbGF0b3IgY2xvY2sKCsKgIGNsb2NrLW5h
+bWVzOgrCoCDCoCBpdGVtczoKICAgICAgLSBjb25zdDogeHRhbAoJwqDCoArCoCAnI2Nsb2NrLWNl
+bGxzJzoKwqAgwqAgY29uc3Q6IDEKCnJlcXVpcmVkOgrCoCAtIGNvbXBhdGlibGUKwqAgLSByZWcK
+wqAgLSBjbG9ja3MKwqAgLSBjbG9jay1uYW1lcwrCoCAtICcjY2xvY2stY2VsbHMnCgphZGRpdGlv
+bmFsUHJvcGVydGllczogZmFsc2U=
 
