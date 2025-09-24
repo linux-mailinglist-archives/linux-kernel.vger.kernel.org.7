@@ -1,184 +1,206 @@
-Return-Path: <linux-kernel+bounces-830468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4CBB99BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:03:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81351B99BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F50918932C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC77B16C3E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DDB306499;
-	Wed, 24 Sep 2025 12:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7809A305953;
+	Wed, 24 Sep 2025 12:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAZMVh/2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="lE7OU9/3";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="MiszbaIw"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B9A30596B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63D3019BA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758715264; cv=none; b=Zm3H2MTAMcnwDgjx/v8B4EooI0Pwux/tdSHjvuTjNLN+4dgK0jb4HAOKdRkhey2fKFw67bpeAUQ+eIFmzchiSPNb5aDcIX4mQp2cHR0MLcwHOHR9P1Dflb+HqGueYQTKYssqbSa3HkGum0qYJwle/EYLj4ullYvdLVZRcEgVs54=
+	t=1758715260; cv=none; b=R70Oll/VLlYDgONvuf9Lw6AqxKxlFY9yxAd0lJx1qzou0wdaAeRqVznPau/UhekIILoigG/RtXMus6vCqTT8VdJUravYGjcD1u2LH/eGYYgrAdmlpj31I5/+SnGr/TToYPvnJ3AbtQ8EyhDVVoRUZy/sPp8NUmeqCG2yQUbFp18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758715264; c=relaxed/simple;
-	bh=1x1tZkclSlUAFkeAbCTbg9ur9vKYhrQAjAn0c+iWPHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jFoD6AXaxILXNKLZJIysr5vEezWxDWDi+L/37IatC6/YXGmpYs9yqt3QpuaAlm1nOyXdQTqMvg9psqjdS6w4oxm8PAcGlJDU1Q/3jbqH81mVyhHGn2pX2xOG3QjGWAd5D21UFkgqZU2rqb4n/WFXAMCWUfPKEN5il+zC4aoLIPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAZMVh/2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2445806e03cso88048895ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:01:02 -0700 (PDT)
+	s=arc-20240116; t=1758715260; c=relaxed/simple;
+	bh=vgTbUdc3QBZFZR+KlBZwwdzs6Hto3QbFIsG1PtyAwhI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SwtpQFJ5hGPU1/7JyB72pLvqCMBhngZ8IZ174crPZdx3j32tbD9dDP6pb8em9zw7EI44xTx7uHKXQJ9kg4/4z1PRw8Qlwc4wY0X1ArYKJjU9PW/5yVWLGFw0E6fyo7JuCe0qieRfVlaNqAgFabrYZ2Ho4gWQU5M5LDesLwlCo3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=lE7OU9/3; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=MiszbaIw reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758715262; x=1759320062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6dXdR7Vr7GvNxroOAYy+aBhMqtIGh2YpUvjEzBf0MIg=;
-        b=HAZMVh/2JYtZudMoe4XXzvbN8cfJTp+1ewB3T/14JMdxAMmQUdV1sAPK4EhX5456pA
-         IJbDNXECjuz/otNjpvs39d1j3CcW3fWdwS76EkMnVuFa2VpJvSTbr/RsqnyuQxdSTxtj
-         dhy4qdtGkSJXzSTsgKrItD4dIzVmPmhcmXlHLcmQJwdad08oBW/pwZb9cj4ySnrJrQ3Y
-         EGyi0PL6oDC9i++W3JJ8HBzXDll0vzf0iyZuzMzN7QHw69E9EpzSm0FAmi2tpOvhGgCH
-         hBR4czKYJO+nVjr22x9NKy445yHJFosrRrF/jYzNWRXvyaL560zJFYv0dKiKUTMyUV3I
-         umvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758715262; x=1759320062;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6dXdR7Vr7GvNxroOAYy+aBhMqtIGh2YpUvjEzBf0MIg=;
-        b=CWfDVDWCMroWdhViflIzXVrT6WNu01jMBdYuaahmfhr2z8Ir0n31GFMq1vFIu6EDto
-         U6omTNJCJ2qG69CjBq4R4CR97llLSLPBTzBI/LBNgJ6bKZgcYbYngQpJM9hOsVwbOMdk
-         Za8aktWwGY4ZMQ7ND/lHo71wzs707/BzQqlEs387//8HtAK9V6wAVshIpMR4KSuAIftF
-         GVArjgD+6ykc75orZX5MUCHgTYf3ZeGGJj2Hn3K0Ql8IR33rBdZ5gL+vll2OznGz0imM
-         lMpt0Xolupuz1E3/drXRudtrH2WyEmfAWoOX/qTBUv6NW7z8JNEg5MUdEYyEGIZ6NXTB
-         pJ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKV+lYdNDoaiy3MQ1tSXn/TW9Qr1ZtAq7s63roi0fhTGYwzx26QbW+9iLS5E0u0niJXeTOMA/hi1GAvSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWN7sEb5+UljQn2csU5ekirvUiL4iqVHLe6Hgixk9OQYTwHEau
-	xDEi6QoC3a6lJfXe5LEFTsKs5+rihjnkO1dzQLrSs0aqMg7wWklpD4tE
-X-Gm-Gg: ASbGncuVIM1a34J3UjLJfNjAAJnOazcLj4MF6I27y5b2Q+Er5l/xtgiuZvd6jaC9zIe
-	B88YsoFcxmD83DSJzi8hATEYlfgF9HCERxCvL0A52rzOkhfSOY4wCQCByYgZ0HYSKTI5EsoWWBA
-	JbvTPEp3hyvMO9VSY7/lrw0mhMQmA630XVAjaqD+F8QJ+bMFrslSTzZMZWLMOZ06FPXLeOjD+lB
-	vGdTwYx8YXHPQ+oqOGPdXz7rzAvQAggkBElMLWeX9pqCXNEK5dSXJAsAysNtgmzAL+m8E+2B6/q
-	YI2a1/IqhWsk5vrTH847LtWlWBzdlYj4FNPktNaf2ji4WGGXcWHLzffNjQ6dWPrr5YhU4sNmAqp
-	o9v2V9kQ5IePjtnCU9h11zxs=
-X-Google-Smtp-Source: AGHT+IGVP919XNHolLvfLc++BjiI5XDU3e+i/BPRLdij8Ir9EMWggkhD6kjR2mYU+aqH5NAU4i53wQ==
-X-Received: by 2002:a17:903:2450:b0:268:f83a:835a with SMTP id d9443c01a7336-27cc9a91248mr60333305ad.60.1758715261649;
-        Wed, 24 Sep 2025 05:01:01 -0700 (PDT)
-Received: from localhost ([103.88.46.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053d25sm191276975ad.12.2025.09.24.05.00.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 05:01:01 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Rong Xu <xur@google.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Nam Cao <namcao@linutronix.de>,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org
-Cc: Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v5 23/23] MAINTAINERS: add entry for KStackWatch
-Date: Wed, 24 Sep 2025 19:59:29 +0800
-Message-ID: <20250924115931.197077-8-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250924115931.197077-1-wangjinchao600@gmail.com>
-References: <20250924115124.194940-1-wangjinchao600@gmail.com>
- <20250924115931.197077-1-wangjinchao600@gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1758715251; x=1790251251;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=GVeEbXZHLLVdgtkq3Rt5skmTBi/qzB86iEFJYe7MbOY=;
+  b=lE7OU9/3bOpNoJF2a3+QnZw4L+usGOV3ddvn2XgszSBCmtKwnwtGMD4z
+   3sv1c6BAch6cpQDjjhS1OvXyenEBrJRtHjALJwS4qgd/V0qWi47p3sK4O
+   de+GvIP+X7NLPIREE94byB5oRofCUJ51NnAUXM+OeI4mw5yPZzHYWJG/F
+   Q6GQ23nQ8r5vg5kHIio5jDNGTEkLJEHhXLKjTK7CEgWFki8Bz/2uY7aQy
+   UQC5Lh+/vIchvYjAzQh4g62DK7X0+pKPbBCjwqC5yggrqOyvx+Gpvz2BD
+   kjjPeHS79BEr+jjA+gJ4ZKbmXXOT9GDwCRpGCRFv4hZts/Rk7Ru2LHOl9
+   Q==;
+X-CSE-ConnectionGUID: SEZAPg5SSv+Xkd0I3Bz+rQ==
+X-CSE-MsgGUID: eazkGnp5TNGYZVKNdD1K2Q==
+X-IronPort-AV: E=Sophos;i="6.18,290,1751234400"; 
+   d="scan'208";a="46192635"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 24 Sep 2025 13:59:39 +0200
+X-CheckPoint: {68D3DD2B-5-690ADD0E-C022EA8D}
+X-MAIL-CPID: EA6A543783A22A079A34EFAE6113B43F_3
+X-Control-Analysis: str=0001.0A2D0325.68D3DD2B.0075,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2DAD11611D7;
+	Wed, 24 Sep 2025 13:59:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1758715174;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=GVeEbXZHLLVdgtkq3Rt5skmTBi/qzB86iEFJYe7MbOY=;
+	b=MiszbaIwL75n4NinMTq+BtlT448qY1P4vjFdNNNxGvnFo5VbY/XtEhFJx57K1X2drvQ8Wy
+	eFHuNGbe+zA4jYso57yNiZDcPKjj30UANNnydpV8lMLt57Qz+2EdIANvQtyZDigrVlQRP2
+	ThjtrAKGiMQhwQsXr6tTKoFhNeEKosH0CIqKc413ZDZQT3PRPlHH5KPEvWtCg7lyokJQMr
+	Aey54GL7SRvgoJW7b44SH158DUntQm3nCjEN3ztKX8uwwlMUPP9tRmr9yFey34nuOXa2wm
+	hRE4qUWIuBCM5kLf0QgnbQukWDG7pgJpaA8scFRKpdpXB/ChxnDRiWOQdBDXMQ==
+Message-ID: <e347ec137033975423c262bc4dce1132e1de04fe.camel@ew.tq-group.com>
+Subject: Re: [PATCH v6 1/2] arm64: entry: Skip single stepping into
+ interrupt handlers
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: mark.rutland@arm.com, daniel.thompson@linaro.org, dianders@chromium.org,
+  liwei391@huawei.com, mhiramat@kernel.org, maz@kernel.org, ardb@kernel.org,
+  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ will@kernel.org, catalin.marinas@arm.com, linux@ew.tq-group.com
+Date: Wed, 24 Sep 2025 13:59:32 +0200
+In-Reply-To: <20230202073148.657746-2-sumit.garg@linaro.org>
+References: <20230202073148.657746-1-sumit.garg@linaro.org>
+	 <20230202073148.657746-2-sumit.garg@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add a maintainer entry for Kernel Stack Watch.
+On Thu, 2023-02-02 at 13:01 +0530, Sumit Garg wrote:
+> Currently on systems where the timer interrupt (or any other
+> fast-at-human-scale periodic interrupt) is active then it is impossible
+> to step any code with interrupts unlocked because we will always end up
+> stepping into the timer interrupt instead of stepping the user code.
+>=20
+> The common user's goal while single stepping is that when they step then
+> the system will stop at PC+4 or PC+I for a branch that gets taken
+> relative to the instruction they are stepping. So, fix broken single step
+> implementation via skipping single stepping into interrupt handlers.
+>=20
+> The methodology is when we receive an interrupt from EL1, check if we
+> are single stepping (pstate.SS). If yes then we save MDSCR_EL1.SS and
+> clear the register bit if it was set. Then unmask only D and leave I set.
+> On return from the interrupt, set D and restore MDSCR_EL1.SS. Along with
+> this skip reschedule if we were stepping.
+>=20
+> Suggested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi Sumit,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 520fb4e379a3..3d4811ff3631 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13362,6 +13362,14 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
- F:	Documentation/dev-tools/kselftest*
- F:	tools/testing/selftests/
- 
-+KERNEL STACK WATCH
-+M:	Jinchao Wang <wangjinchao600@gmail.com>
-+S:	Maintained
-+F:	Documentation/dev-tools/kstackwatch.rst
-+F:	include/linux/kstackwatch_types.h
-+F:	mm/kstackwatch/
-+F:	tools/kstackwatch/
-+
- KERNEL SMB3 SERVER (KSMBD)
- M:	Namjae Jeon <linkinjeon@kernel.org>
- M:	Namjae Jeon <linkinjeon@samba.org>
--- 
-2.43.0
+I was wondering what the status of this patch is. [1] sounds like there wer=
+e
+remaining concerns, but I'm not sure about the details.
 
+The current state is very unsatisfactory, as I need to apply this patch eve=
+ry
+time I want to use KGDB on arm64. It is not only required for single-steppi=
+ng,
+but it also fixes 'continue' endlessly hitting the same breakpoint (until t=
+he
+breakpoint is deleted or disabled).
+
+Best,
+Matthias
+
+
+[1] https://lkml.org/lkml/2023/2/22/49
+
+> ---
+>  arch/arm64/kernel/entry-common.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-c=
+ommon.c
+> index cce1167199e3..568481f66977 100644
+> --- a/arch/arm64/kernel/entry-common.c
+> +++ b/arch/arm64/kernel/entry-common.c
+> @@ -231,11 +231,15 @@ DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_con=
+d_resched);
+>  #define need_irq_preemption()	(IS_ENABLED(CONFIG_PREEMPTION))
+>  #endif
+> =20
+> -static void __sched arm64_preempt_schedule_irq(void)
+> +static void __sched arm64_preempt_schedule_irq(struct pt_regs *regs)
+>  {
+>  	if (!need_irq_preemption())
+>  		return;
+> =20
+> +	/* Don't reschedule in case we are single stepping */
+> +	if (regs->pstate & DBG_SPSR_SS)
+> +		return;
+> +
+>  	/*
+>  	 * Note: thread_info::preempt_count includes both thread_info::count
+>  	 * and thread_info::need_resched, and is not equivalent to
+> @@ -471,19 +475,33 @@ static __always_inline void __el1_irq(struct pt_reg=
+s *regs,
+>  	do_interrupt_handler(regs, handler);
+>  	irq_exit_rcu();
+> =20
+> -	arm64_preempt_schedule_irq();
+> +	arm64_preempt_schedule_irq(regs);
+> =20
+>  	exit_to_kernel_mode(regs);
+>  }
+> +
+>  static void noinstr el1_interrupt(struct pt_regs *regs,
+>  				  void (*handler)(struct pt_regs *))
+>  {
+> +	unsigned long mdscr;
+> +
+> +	/* Disable single stepping within interrupt handler */
+> +	if (regs->pstate & DBG_SPSR_SS) {
+> +		mdscr =3D read_sysreg(mdscr_el1);
+> +		write_sysreg(mdscr & ~DBG_MDSCR_SS, mdscr_el1);
+> +	}
+> +
+>  	write_sysreg(DAIF_PROCCTX_NOIRQ, daif);
+> =20
+>  	if (IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) && !interrupts_enabled(regs))
+>  		__el1_pnmi(regs, handler);
+>  	else
+>  		__el1_irq(regs, handler);
+> +
+> +	if (regs->pstate & DBG_SPSR_SS) {
+> +		write_sysreg(DAIF_PROCCTX_NOIRQ | PSR_D_BIT, daif);
+> +		write_sysreg(mdscr, mdscr_el1);
+> +	}
+>  }
+> =20
+>  asmlinkage void noinstr el1h_64_irq_handler(struct pt_regs *regs)
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
