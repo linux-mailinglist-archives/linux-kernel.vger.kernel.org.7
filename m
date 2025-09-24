@@ -1,182 +1,144 @@
-Return-Path: <linux-kernel+bounces-830549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572EAB99F46
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:00:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4418B99F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3FD019C4C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAF3380F93
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDCB33993;
-	Wed, 24 Sep 2025 13:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918A62FB0B5;
+	Wed, 24 Sep 2025 13:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe5NoSOu"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCMTcW8/"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FD0433BC
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794DB2FD7AE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758718823; cv=none; b=Fx84U6h+48a7CDWS1Qyp+llsjWEcx1ATp9k68OIVN9O84YkfzTmxCseeDNnursqAXEM4PVAs5A/A1S3qmmapmB+HtlkpREZJDQwLxTPh/b/NvR5wFMrOovOfvB3ny26zgZeubCixIQO0WuBkU5JKOy7nreEgd0c6aGT5zoGw6Iw=
+	t=1758719102; cv=none; b=QbruSvInuJUtqjaKaIkFPmL48Abpql7wkoK93Esg1HaHgMX1X7g7oF/22FIwPHcUG8PuUoKtG8C9GR/a25AA3l7OjKWxH9srqByRw+Mmo5noBdYsOq2ODDcizjm+zyoem5tSYmo6I0D+qIZYV3uc/upCyp7TvSDMSPBnjYLP0Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758718823; c=relaxed/simple;
-	bh=7eCaqspkeWI4vNVpqbFq/9go1dzDlks7hS30C3QwfMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=byJiv7ijyLkxPAaa3BVNL15Fk7sjLHFFfmoqM/yOMshsxQkHPKyYI2dxTyDW2hQaCTqAKYBu5mdDgFV27Ip3L8F35/0eXpj+7EnRngWja6yOBmH6o+H8EI6v4dHGzeO1KmxxzS8Dt2wQczm1IA6YtMVJGmuOtK07krczA7Wdf+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pe5NoSOu; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1758719102; c=relaxed/simple;
+	bh=KMWRTBxhzUrCLpchCiypHr9RXPN/vVczjD1fykuzDjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kXrahj/+bi0NLXfoGaWIGYaewEzqWxwfMkN4IzyAqHUlItAAkyDCioa3oXsRuespGSoWIevdzWX0p65bRxKNqQZb61IvQfExIKvvdvXNn6UQqpzNkk+mZxmWTwSffIBmTKgoIPGz8iXq7ddjUq+T0y/oxvbPHjGkSriK9m78QF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCMTcW8/; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d69771e3eso13760965ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:00:22 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso5226124b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758718821; x=1759323621; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kOAtSuySMHUL7Eirjuaudouhdhjdq1cQExPV8WIdTNU=;
-        b=Pe5NoSOune+NT+mf7HqXTFksA24SyseeVj5j5UKXyTCHmNzV4IdK43ERtQ/c3eY+0K
-         HEHWyuyLQO/6STMDRHC0Jy/SxTChvjpO/9uAus3iTTwhhGmzloy++9G/kUOc7VMwc3Ia
-         VzlELnQyJfz1qtllQb+toiYCSL3wH+Q8QgJoxbvSVHiGsjJFuxpJd743vcBUzLQvvp7Y
-         Y7gTmuijEZWAm9Ce8X+JJrJFenXfHinKhFpRjptIt3VSM6QgtQikwsK+Mjat7qu8Ahah
-         2rScSpOvioINTlgtxgHBZiUMfCyaUWPdIQruv6WyGSGUq1ar1gBurcVkmmzE/MOISteA
-         AWmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758718822; x=1759323622;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758719100; x=1759323900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kOAtSuySMHUL7Eirjuaudouhdhjdq1cQExPV8WIdTNU=;
-        b=ixv+a3CrB4Z7t/LpvoLCHlNDqDwgVvfTYoCWr2sTRSRdKXu7YrGIyYF/9MN2J3JiPN
-         kfrNpyngDN/ItbMY2V3HKFLNXoOhsssKES6zRVE+snkFg7t1YPUfjr37zGPuj6329VAS
-         BTDMsNHjAPWvTx7QFSgrf4jX/HB6wRr5olhU8MdW0Fru1lliL39uxMfGwVFvaxtkww9v
-         RbvDbfPH7dWTJ5p4XVUd09EmAoKEE0Ir0THv4D7j4NDtgnWtPOuUatTd+tMaozYMP3k1
-         AJQyLtFpJn88ccwUF1zGWzULN6u/6AESrDqR5lcxUlAsnzECjhjVCiTrjHpZNselT5/6
-         BBcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVILARn6jzW9ylTSLt0+7felzg23hVKYAOf6HLue2SoM5m++KMUYgbiFvBT18Tk/Vk55EqzmlRifKXlYNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0+psjP7ggiN0l2v6Tsg+SxMlQTjhE7e8jZALeiGKlXnTMJcF6
-	cnP/yWAVyExI+n3wEZCI108G4EGxuSGyGcF54nrym8o0o4JisCPlhL6C
-X-Gm-Gg: ASbGncvenrBw1vdRGdWxQZjTtfM6MWKBu3cg1N7xIDtk/vmUS3wqt2sX8I10zKrFjOG
-	1o6kCw0UdovmUM5jR+mq10/VBP3UVKfOhZnMXzWkICKblGPzkMGOIRRh9vEVJ67D4dA2eJ0QGHs
-	8DjWYJFYEAqmF3Xgi/opNQ1qOR3s4UjlbXZo3OEIH4xDpm3fd7MJsA1X7igz1qkQ8wIvEBP+TTI
-	HxXgKVf8NLALUYBAQG/KVfLNtV3DVchrKKKX1GDDsuiiMQ1eveK0m9CcFEhyqX8mQdd6sh+/4uZ
-	WybDwiI1lJI6epD9QnKF497tfq/7/537IlMaPJBtaxVxuHgHecdBmF1+dWHWUNg3aeBx+vs56g8
-	CGk+hby3cVZBmN7cNnWFObpPbQ/9mhbY=
-X-Google-Smtp-Source: AGHT+IEz/eHDv8jJIje+aHMRfCzivvT3GIspIPDR9CA9OdPXfD3ArbyXDsN3eyUmiOe/qYSeJv+Ycg==
-X-Received: by 2002:a17:903:1212:b0:269:8d16:42d1 with SMTP id d9443c01a7336-27cc91e1fafmr67773455ad.50.1758718821220;
-        Wed, 24 Sep 2025 06:00:21 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3341bdb4cc8sm2383392a91.15.2025.09.24.06.00.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 06:00:20 -0700 (PDT)
-Date: Wed, 24 Sep 2025 10:01:08 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
-Message-ID: <aNPrlIYGrB8oSsfL@debian-BULLSEYE-live-builder-AMD64>
-References: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+        bh=ML8MT93NBaCozkqy3f5m8pHWK455oP1ORVjpuJLm5oc=;
+        b=JCMTcW8/ThqqXZ2v1sJ7Sv+jMJCFLhAKsRkpIKIeQIJXo8qGHTEJkWCLpwmwc5R0uY
+         GVtljqd3PmXKubL72WSIzqB35whCYQin+pDyaPoFn1BnVJKhUBiU6QBHi8CNpTH00n9W
+         IijKyO/MFWpwgp9vJKaEqPZ32c+mM4Cf+d1Vf3uNbNMJXjYsqc+lOyEoFVyK3D/SePFf
+         /MFGjQ9oKE/HmU4BzVJ7Ter8nolDFTqu++ZwA3Yr7aRrAvJyXBEHPWf1hVxmavcgfMac
+         bpaR9sib2RtwbhRir8RQf6XUv7utYEG75TQfYUXX5Uyfo2T2P6zykxw75XownAneuRoT
+         kl9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758719100; x=1759323900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ML8MT93NBaCozkqy3f5m8pHWK455oP1ORVjpuJLm5oc=;
+        b=wOhIHxzG0XM1DV2Vop9I27BUqPIsV9NWMu6hB4N6ssRXZ1KJNS1KOFuP1YplO8fb+v
+         xpL8v+zoHjdC8iUqfvvGg+wd15gZ/FF5DAwqBd5YT4g1lIA4E92/MY2HMgsFrojQnfpE
+         gY6g3j4UwnHxh379RuzKJFTjxaFmxBtG6SKdf7oetcuwiEutoQbzpBKB9tE3l6JKEfnq
+         3REAsCiUi79hvqQJOPiZQ/xQ/CWjxvOnHNM9Dp86FoD5cOC+HZYcVNjPpnwgcr/2TgON
+         Z0t/8WtiawQ7JFGMIFsHBkn5HqpCChDv06vk1HEnza1vDGdjeBsbp2KjXU1Z4qJmZqqK
+         /mJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyxbQp6Ri6SIs4oRCo6l4n6uAPrWtMgWUZLP00kjaxgZdZNKTeCHUCAjHZipQlc8KxZ3vPy8EqDFIxAI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoUTDUdJlYDutIr0q48RD9ZvXwSGEzVctF1F+XtJiICj6U55s2
+	FEZS9OgrsWO3GS0qAxQZX/T0w4KTGEcvngEYPQNCHy+IMkVMpJJPb5mKjbBrEu3DXMz9FDZ45wD
+	yZ6EWBTFnw7gLVyv3/mbu9Q6i/eLECW0=
+X-Gm-Gg: ASbGncusQNX/AtYkrAkrIRSR7fOHWBHVMzpiwdeO2Gc/mYDmvcc3yA5YLxXGUvhKPaT
+	J5QAKhosfbyua2tuSveIAVC2SD4YJklo7c6F0loJVLpDt6AqcShqyRdX2HOayhat0Xnd4IUC7hF
+	+fuxEvvq0/kZgo+msMakXFFxix8V1k2X6OyjKpdRapoMbSIzkuu9EFl84uvaxBtnMWAhJSE/RQQ
+	xHpfRnk
+X-Google-Smtp-Source: AGHT+IGCUZlb7GHgT5j+JVNTpOON3z17rHhaJH8wYaV5Fzq+5A7QIaXDxQAJZsuGjTC053XYov/IrdtaNcnRVtX6QBE=
+X-Received: by 2002:a05:6a20:6723:b0:2d5:e559:d241 with SMTP id
+ adf61e73a8af0-2d5e559e089mr4875908637.7.1758719099609; Wed, 24 Sep 2025
+ 06:04:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+References: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
+ <9bb9929a-8130-48da-983e-2901a7c3da36@lunn.ch> <CABh9gBew1=hbJvg1Mhg5dE7Lr_Z442_kbBX6zTs_6_C2NRyLbw@mail.gmail.com>
+ <7e6f568da28d7a63738b6ed22b33db3df4c478c9.camel@codeconstruct.com.au>
+In-Reply-To: <7e6f568da28d7a63738b6ed22b33db3df4c478c9.camel@codeconstruct.com.au>
+From: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Date: Wed, 24 Sep 2025 21:04:48 +0800
+X-Gm-Features: AS18NWDPd9WPADUis1pKLRli7PBC0PtWHTmrvMja5YpnlZ2VdCkq5JfPN2APv_M
+Message-ID: <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Sep 22, 2025 at 10:47=E2=80=AFAM Andrew Jeffery
+<andrew@codeconstruct.com.au> wrote:
+>
+> On Thu, 2025-09-18 at 10:21 +0800, Kevin Tung wrote:
+> > On Wed, Sep 17, 2025 at 11:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> w=
+rote:
+> > >
+> > > On Wed, Sep 17, 2025 at 03:48:08PM +0800, Kevin Tung wrote:
+> > > > Summary:
+> > > > Add device tree for the Meta (Facebook) Yosemite5 compute node,
+> > > > based on the AST2600 BMC.
+> > > >
+> > > > The Yosemite5 platform provides monitoring of voltages, power,
+> > > > temperatures, and other critical parameters across the motherboard,
+> > > > CXL board, E1.S expansion board, and NIC components. The BMC also
+> > > > logs relevant events and performs appropriate system actions in
+> > > > response to abnormal conditions.
+> > > >
+> > > > Kevin Tung (2):
+> > > >   dt-bindings: arm: aspeed: add Meta Yosemite5 board
+> > > >   ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
+> > >
+> > > The threading between your patches are broken? How did you send them?
+> > > git send-email? b4 send?
+> >
+> > Yes, the threading is broken. I initially used git send-email, but for
+> > some reason, only the cover letter was sent. I then sent the remaining
+> > dt-bindings and DTS patches separately as a follow-up.
+>
+> I recommend using b4, it helps blunt some of the sharp edges of git-
+> send-email.
+>
+> https://b4.docs.kernel.org/en/latest/
+>
+> Can you please send v2 of the series so that it's properly threaded,
+> after applying tags you've collected for the involved patches, and
+> checking your work with `make CHECK_DTBS=3Dy aspeed/aspeed-bmc-facebook-
+> yosemite5.dtb`?
+>
+> Andrew
 
-On 09/23, David Lechner wrote:
-> Fix temperature channel not working due to gain and offset not being
-> initialized. This was causing the raw temperature readings to be always
-> 8388608 (0x800000).
+Sure! I have sent v2 of the series using b4, and the patches are now
+properly threaded.
+I also checked the work with `make CHECK_DTBS=3Dy
+aspeed/aspeed-bmc-facebook- yosemite5.dtb`,
+and the warnings that appear are not related to these patches.
 
-Would
-'Fix temperature channel not working due to gain and offset not being
-initialized to their default values.'
-be a more accurate description?
-
-
-> 
-> To fix it, we just make sure the gain and offset values are set to the
-> default values and still return early without doing an internal
-> calibration.
-> 
-> While here, add a comment explaining why we don't bother calibrating
-> the temperature channel.
-> 
-> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-...
->  	for (i = 0; i < st->num_channels; i++) {
-> -
-> -		if (indio_dev->channels[i].type != IIO_VOLTAGE)
-> -			continue;
-> -
->  		/*
->  		 * For calibration the OFFSET register should hold its reset default
->  		 * value. For the GAIN register there is no such requirement but
-> @@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
->  		st->channels[i].cfg.calibration_offset = 0x800000;
->  		st->channels[i].cfg.calibration_gain = st->gain_default;
->  
-> +		/*
-> +		 * Only the main voltage input channels are important enough
-> +		 * to be automatically calibrated here.
-I think it would be more accurate to just say the offset and callibscale
-for temperature channel need to be at default values for the data sheet's
-equation for the temperature sensor to be accurate.
-
-
-> +		 */
-> +		if (indio_dev->channels[i].type != IIO_VOLTAGE)
-> +			continue;
-> +
->  		/*
->  		 * Full-scale calibration isn't supported at gain 1, so skip in
->  		 * that case. Note that untypically full-scale calibration has
-
-Maybe, instead of moving the 'if(... IIO_VOLTAGE)' check, this could alternatively
-be set when initializing the temperature channel at ad7124_parse_channel_config().
-
- 	if (num_channels < AD7124_MAX_CHANNELS) {
- 		st->channels[num_channels] = (struct ad7124_channel) {
- 			.nr = num_channels,
- 			.ain = FIELD_PREP(AD7124_CHANNEL_AINP, AD7124_CHANNEL_AINx_TEMPSENSOR) |
- 				FIELD_PREP(AD7124_CHANNEL_AINM, AD7124_CHANNEL_AINx_AVSS),
- 			.cfg = {
- 				.bipolar = true,
-+				.calibration_offset = 0x800000,
-+				.calibration_gain = st->gain_default,
- 			},
- 		};
- 
- 		chan[num_channels] = (struct iio_chan_spec) {
- 			.type = IIO_TEMP,
-
-
-Nevertheless, the current fix looks good to me as it is, so
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-
-> 
-> ---
-> base-commit: 411e8b72c181e4f49352c12ced0fd8426eb683aa
-> change-id: 20250923-iio-adc-ad7124-fix-temperature-channel-5900f7302886
-> 
-> Best regards,
-> -- 
-> David Lechner <dlechner@baylibre.com>
-> 
-> 
+Kevin
 
