@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-831237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AC2B9C298
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:40:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE3CB9C2A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 054DD7B2945
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:38:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E7424E113E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE11D32951B;
-	Wed, 24 Sep 2025 20:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD04D32896F;
+	Wed, 24 Sep 2025 20:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gQetrCAj"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LezvN7pK"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22655258EF3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D1D2868B5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758746361; cv=none; b=D+8QaKuxDgyzqIPEDkEUh6Q9053ojD7UCk5yqjwv1ifXIRGz6qFuqelhoOS/kjtdLBGBj7SCQx4qQETsgfZZKXiAm+jBZKi1BtBbgeSbZjvSvUE+qx7pWp6C1hkplAIHJOM0LBpX6hmZJZsldBtMHJolW0pp4w8UZl8WydgfpLM=
+	t=1758746421; cv=none; b=XoBCAvMajxqdZpQKWXXD2FOFgwdKvszpvv+LQRk5B6EpltCCIWeEKFRhGHLQJVDZhDA+fgsbxXPYhwCWMTr7BOZ2HYSrTh4vPXXTJi97gF9vg93jCpt1rglDt75FBUFjeJ42/bzp24SXY3nJ25Le67OslR4Q0tz0CQpn7BnHTPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758746361; c=relaxed/simple;
-	bh=3OB+OiR7aipUBr93oxJCcURJQ4mS1LlHNjNNKL2BlyU=;
+	s=arc-20240116; t=1758746421; c=relaxed/simple;
+	bh=GT1Z3zQ5tXrk46UXjX5RxfRkN7haq4MDk3g9uLlBYwA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=saxTrg+2YVrB9/UJ2YawlZ8vLHUykySgF2Xs5bq9FSXXr9AqaoHYV4N9EIqZl0Sn5c7yTgzeVe5F+0VpWrzDejIu00cKoXf3fnUlm+S0qWLzJPtzYXe8CzC60dlhcYIhEZ2nCP+VNNPr/jJzMfyFdV3Gi4YdeUznzvRbpchj3ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gQetrCAj; arc=none smtp.client-ip=209.85.166.49
+	 In-Reply-To:Content-Type; b=pNFwsPSkT7V6G0Xv/z/mqCba4bMrFEv61GoUn93lPKcqwwpchhL2E3Z14l5UCKp5gj9clJpdryl5d8l/UcHt4b9WFSPKrkDcd79sqySFj2VHsezxMArKPAhvIwv6uo+/nWMxb8NpicS6N4YI1mS3TdnVjJoorS+o6I14GGgLaEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LezvN7pK; arc=none smtp.client-ip=209.85.166.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8cc0cb783ffso26357539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:39:18 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-889b846c314so13749639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758746358; x=1759351158; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1758746418; x=1759351218; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JdD3K8oOTr2CNnAO9Xm+r51N/6GP07cpXL8zgDmSPuI=;
-        b=gQetrCAjIsKkM4Ksh1qe+BNhZq9ZLOhUlZSab873YDXxp1tardzmP/jCmI8wrjDm8c
-         EQj9/AhTKDqiWfm5n6Y1cXxacU/nrFXd0Qv33HG9m/hs3GbKnHB8RAmpu5mJ1f9tlbTQ
-         qtXaDhiJhbyVjY5xdBUjU24LMiZXP7BNncKRY=
+        bh=9PDdGlP7wUqpVFvBq+vcD4g0qwNo+YCXe03tGr3XqXM=;
+        b=LezvN7pKxzIth2tp1hq18bdbNdrD4EkwKMS6ncPYB85jfoFjVHSbYTbf06PRAD/9z5
+         7wceSrsCoTHUTMIEgiuvu5hus4/QBfqxEoMrVzxM2XAv9mw0OMg6qSV/uKwjmpFrzBz2
+         yp2qCPEETxXHt4Pdzldy9FxBihFYrBvq9gsew=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758746358; x=1759351158;
+        d=1e100.net; s=20230601; t=1758746418; x=1759351218;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdD3K8oOTr2CNnAO9Xm+r51N/6GP07cpXL8zgDmSPuI=;
-        b=CmBIhso+AinZbH8NtX387cWhukSYXShQB7ZAP4BBEwjKQ1yP5lfQmm6V5XDW61WHkd
-         F5WNFKo0tQM68YtajJVpmkP5PyT5ZllGbjTAILZW51d/uKmGeWviBIFyWuO6wGMbURhK
-         oxcXQCt40IzfT9Y+FIFzFWaW7L7qUIcW4UIQkNuDBL+5IcXouLW9QLUwz/GxBNXZKTOh
-         ghf79FueknNHXklzHlkA1n/IZKwcmHYjahJI4NgkD3wgxoeMdoN0agM6DSC0Xz7ibox3
-         mTl95+GjAYi22Lvk2uQ+JrUMlgCUCQWfk+EDrURiWWwf2+tyvipvbyu7xXeZC2AsXyoe
-         gABQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjBeLgLMjq/MM9C3JO1v4e8NWZcKIDEwg4Y2+8dgXT6rUaxIdpZbdfGruWZyBwDQGC391OXriKmAHhHYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc2Q1uZVf3aIWliXd9067Lg/95PVMA+dpBO67jKihjOinITz2V
-	aSoWLp7/4lhb4igrZZpWMC8cygLR8auzYNz72gqrP9MKmAzqmBv/WdDI09KMfO7AErg=
-X-Gm-Gg: ASbGncu8F0xP+uNdKhv+6x4MyOkp5Op5CUIm2V89krh/ibi5yR5/SGjT79j7LBc0vaz
-	bRBn2JDpFdmlmFwePtmwlMrWlwO19LK2vUn1muUrykFwiJcdkdBOiAb6gVVvXgp2Kg3YQpwbjHW
-	5xiX8jUGx22gRyFGrSDCe044kwIcxkwxI4ZMZGekXYidAC07YrFYIL7D2TIYL3MxZowzVrKFh0T
-	DAgOKwCG/IsVDmjmP8a0zC0f9p7JBYQCqgn/l9qhsyHpukbx5XJkbgqXe7jWOroQghugUkmvrNO
-	QiWSNaM+LNsuUgV3o3qt8gTopABgGFOe+YStQdxSXukGXPmiRzp4+b+eXD9+EjCc7fCNzGqij6v
-	A3yuj6mrdynMtYDxrH5DuSIrRqKzrJsEUkdA=
-X-Google-Smtp-Source: AGHT+IGbX7l8mmrEe1aN8ADpnz0w/9Ym/EoRBWc7+zWYE9DckTQZwComktGLTR80vh7d/pMDEfz9PQ==
-X-Received: by 2002:a05:6602:1510:b0:887:5335:1a59 with SMTP id ca18e2360f4ac-90168488dfamr134796039f.13.1758746358103;
-        Wed, 24 Sep 2025 13:39:18 -0700 (PDT)
+        bh=9PDdGlP7wUqpVFvBq+vcD4g0qwNo+YCXe03tGr3XqXM=;
+        b=hQbQ4+P+igPtItex+2/F1Qc3RlgFVQIBknFDNpXFyvXiCaSV7y9hhva7i5pHHgXeol
+         Y2qRYKsJGNNdl/hPwmW/KCYpeq0T64NaDsrNEGUfDr8fhI/pdFsgsT8t5oH30Mhm/RGK
+         tY2AUPE1hrl0Yc+4uC6w5dSl5EtwVLY4Z9B7KLoUuh835ObOU1Tm5hxPmjyzTmUHuyX7
+         NaNpBzhIiOTGtVZsiF/1Cpknc9GeLKS90yXcZSV6cXs08xSfiF6VWHRRswvVaMS3AcfG
+         Jgro2sP22dfekSpxfiT3dfgBkP2Jw6yK0VNBlkH8izt7aTEkM140LslfsBSAxWsyHctV
+         rBTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWlq0s4kvrLssETLKj2AYHPSCfIgnixorm6fz3u6lPfkgshld+RFzZFINDzXcUep7NC08kxEYsWkxpOE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+NjxWzxxg03iUYZek8/PmBDZbEHay5BHQhJxpXvpXv0t5CWr4
+	xmGfmnrcP3OoBN/A10HbrtaQSwqpKAkEOuOzIS3CXH4SBtYiLhmy353pePUYBnSoBGI=
+X-Gm-Gg: ASbGnct4tdgL7MFceofL/+UVWBfQzQRgu/VTqq11Cb/xX3/KZJFfYl/sQXpEBTmdkyy
+	EsNhgQKH8rOLewuHO0S5KB9aprOfHUulWkIdWyArADE7IiIrMZf9s34QNXl5L/iXEdY8OCxzK5J
+	4cUcX5y915wxOddcF5GF5G1s3DsuVCkY74HpeASKlnQmkIfjxDbSMPNK7lZ/BZxLVGAkdBBhNS6
+	TI5U9dqmnPay6FoIZnmDgfPRxbE9P3ekzfdN3EOD1l67m2OusRjWDbnBq7o6A1wJ+FnrSJW5Z6u
+	7tZY9Gg9G5V3BUm121PcBIVlRvjG88cDAPzLUmAICQbDk7X1zX/SL8ZB43sXJ/8IWYEL9jNyDOp
+	+rY5FU8Z+rt2AnG2YjYOIwjemB3jbLc6S85M=
+X-Google-Smtp-Source: AGHT+IEl66KjPbfHgezvX7WogNWPlR6drYL1cc+80f/7wHyxzxceno/Pv/D4A/ViWYjgRD45h23gsA==
+X-Received: by 2002:a05:6602:2d88:b0:89a:8809:1767 with SMTP id ca18e2360f4ac-901509454b7mr162008239f.2.1758746418319;
+        Wed, 24 Sep 2025 13:40:18 -0700 (PDT)
 Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-903f718019dsm1545739f.5.2025.09.24.13.39.16
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-9040fcf19eesm797539f.22.2025.09.24.13.40.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 13:39:17 -0700 (PDT)
-Message-ID: <21e8256b-5409-4420-9958-e89b716ddfe8@linuxfoundation.org>
-Date: Wed, 24 Sep 2025 14:39:16 -0600
+        Wed, 24 Sep 2025 13:40:17 -0700 (PDT)
+Message-ID: <4cd10eda-945c-4bd6-a077-1d9a104dba6c@linuxfoundation.org>
+Date: Wed, 24 Sep 2025 14:40:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,87 +78,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: vhci-hcd: Prevent suspending virtually attached
- devices
+Subject: Re: [PATCH 16/17] usb: vhci-hcd: Switch to dev_err_probe() in probe
+ path
 To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
  Valentina Manea <valentina.manea.m@gmail.com>, Shuah Khan
  <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Brian G. Merrell" <bgmerrell@novell.com>
-Cc: kernel@collabora.com, Greg Kroah-Hartman <gregkh@suse.de>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250902-vhci-hcd-suspend-fix-v3-1-864e4e833559@collabora.com>
- <71b47ce7-a799-42f1-acc7-e59e6ce13884@collabora.com>
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@collabora.com, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com>
+ <20250902-vhci-hcd-cleanup-v1-16-1d46247cb234@collabora.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <71b47ce7-a799-42f1-acc7-e59e6ce13884@collabora.com>
+In-Reply-To: <20250902-vhci-hcd-cleanup-v1-16-1d46247cb234@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/24/25 11:01, Cristian Ciocaltea wrote:
-> Hi,
+On 9/2/25 05:56, Cristian Ciocaltea wrote:
+> Replace pr_err() calls in vhci_hcd_probe() with dev_err_probe(), to
+> simplify error handling a bit and improve consistency.
 > 
-> On 9/2/25 3:15 PM, Cristian Ciocaltea wrote:
->> The VHCI platform driver aims to forbid entering system suspend when at
->> least one of the virtual USB ports are bound to an active USB/IP
->> connection.
->>
->> However, in some cases, the detection logic doesn't work reliably, i.e.
->> when all devices attached to the virtual root hub have been already
->> suspended, leading to a broken suspend state, with unrecoverable resume.
->>
->> Ensure the virtually attached devices do not enter suspend by setting
->> the syscore PM flag.  Note this is currently limited to the client side
->> only, since the server side doesn't implement system suspend prevention.
->>
->> Fixes: 04679b3489e0 ("Staging: USB/IP: add client driver")
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->> The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
->> prevent entering system suspend when at least one remote device is
->> attached to the virtual USB root hub.
->>
->> However, in some cases, the detection logic for active USB/IP
->> connections doesn't seem to work reliably, e.g. when all devices
->> attached to the virtual hub have been already suspended.  This will
->> normally lead to a broken suspend state, with unrecoverable resume.
->>
->> The first patch of the series provides a workaround to ensure the
->> virtually attached devices do not enter suspend.  Note this is currently
->> limited to the client side (vhci_hcd) only, since the server side
->> (usbip_host) doesn't implement system suspend prevention.
->>
->> IMPORTANT:
->>
->> Please note commit aa7a9275ab81 ("PM: sleep: Suspend async parents after
->> suspending children") from v6.16-rc1 introduced a regression which
->> breaks the suspend cancellation and hangs the system.
->>
->> A fix [1] has been already provided, which also landed soon after in
->> v6.16-rc7 under commit ebd6884167ea ("PM: sleep: Update power.completion
->> for all devices on errors").
->>
->> [1] https://lore.kernel.org/all/6191258.lOV4Wx5bFT@rjwysocki.net/
->> ---
->> Changes in v3:
->> - Moved all driver cleanup patches to a separate series:
->>    https://lore.kernel.org/all/20250902-vhci-hcd-cleanup-v1-0-1d46247cb234@collabora.com/
->> - Replaced FIXME with NOTE in the new comment block, as it refers to a
->>    potential cleanup of redundant code rather than addressing a
->>    functional issue
->> - Rebased remaining patch onto next-20250902
->> - Link to v2: https://lore.kernel.org/r/20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com
-> 
-> Just a kind reminder in case there's still a chance to get this and/or the
-> cleanup patches queued for v6.18.
-> 
-
-Sorry for the delay - it has been crazy few weeks for me.
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
 
 Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
 thanks,
 -- Shuah
-
 
