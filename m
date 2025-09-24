@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-830990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D34B9B16F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:40:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90769B9B172
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27A86381094
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFA538115A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8BA315D51;
-	Wed, 24 Sep 2025 17:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A344731690A;
+	Wed, 24 Sep 2025 17:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="N3MrS6ax"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YqWUDH+6"
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF9D1C831A
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B268315D4E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758735645; cv=none; b=IYG7mQDsvMvklBbp3TGm7Yzz9XSYAH5UxIdXkZTTIxzX5lmf7npoG+z2D8x9E7Ldax6kMXFTUWUOJhq+wKsIxQQI6Pin24RuO8dhNdGsu+3wJVZ76Hkxm84f3xExugoLbiv6wiQtXxM9FeoAjJBb/NsUwxFSMwrcoo3eul1D0s0=
+	t=1758735649; cv=none; b=Sw8bveh5+pxCRYp05b6J76cjnTfM7Y8h+fe5xOa/9wfp3gNVKzJ5USeKpXWugtvURzRNjiaDvCn2+sHeaed1T3oof7Keh6XMu6HkcBtuy6XRFLPF7hlm+OhL6oDmVICMI1DfgncBSDFk0iE1z9GZuFjsUOaXnBvJoJWnhBlxOKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758735645; c=relaxed/simple;
-	bh=sfaUPYbcUR5uxw3oJbUBesMeB1XFjcRlnsXjLc+qypQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RX6o/8BAvXCjqrFjEVaBWpK1euIQbl856YuO8Lnxjtvfj5hjmbcUMjezi4n2ALmr02nhN9wLXus7kwkdjWzf4vYhOLgXqCnvtjPjbLT38ppMAjnyNAzjafSwPp1m+q7oXrNyu+0jK1xw6vkPC5pOKuMmM6GK3KzZ7FoIJpyg50U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=N3MrS6ax; arc=none smtp.client-ip=213.97.179.56
+	s=arc-20240116; t=1758735649; c=relaxed/simple;
+	bh=QTeQ1KfJXQm/k1vh1EdR9VmVaDh2FxG4Z9/deBbkcU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SZvchNbbzqj15OFTm6J9mQEg4Ycy+znEHW0CB3CLEiILVY/kb2lFwUzrKhAluMX2OXo+RBZdF0pDloTkOjUkvZeAcqkIkEPEe+4DEUyUDkD6EPGmOT9XvueZ0Z8wPPIM2EaBT3ztxF3n8rAoHIbK20may38OL1pUUj5+hM4xH5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YqWUDH+6; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=AKqISWi5pFZ3HfusPO8StEZwUrSgKKkuNFc8w/cbCQM=; b=N3MrS6axRSCDgelm5aqIGeLCWJ
-	f/IRkEr9n9u5Q4L1qne/Lkx8FAG7mLkbvfUOlA24oi6dYKPiCgVh/7OP0iyRCwqETWEYymQDWxE5g
-	OiFmV3e4AqdS8592P53AQOa0W+9CtzWQ9GgUKGZrk8TPmZU+EKgRip+joyVJ9zavTqK5gkYY61KZs
-	z/DcbChyrdhIXbgRs5qrbu2M8IhQeb2+MBhO1aHywbBUocJsfGTsfzgcePU5ISYziIi2G8IjJYtGJ
-	EwunbGK1FINF4eops31fkn1YvkkRsDSpy2n/lgNpnT3gSOtf94JOmgL2VwFBi4VnPf8IT8MT1c1zp
-	oP2g57LQ==;
+	bh=O1svfcZ9VH/76WFGoREwGAwZmvZ0N9/uv3HXzR8Dmmc=; b=YqWUDH+6ic5bSW/v28hNGILXwK
+	LNSxd6pkvlKvAdF/hjq5qrL1xcQNrNB8YCgzf80190ncVKsnbGG2TIMwdkP+7fTmy0bwj4CSbbdk0
+	+IXi3fa+fIZmDn+lpSVBNSkZ5XEuzlC78L7SJ1vmifc5L3DkLUrGzV4vV1qbzGKAa/UnASUT6CBW8
+	OO8K+P8apJ2bbheogtSqWsuZ8ILgrP6jdVppsqUt6H4GRKwNJc1Qu246vCxOW7iPpHKNoIhc/z93W
+	UZvueLH4wm+tcup/YfxhcgSW+hyF5kdIRw4Jz2vTbIZ+AmJpFLns2mmuQ9yTJ0G8jRhfMIRyqWgrr
+	MqZSqU3Q==;
 Received: from [179.159.118.139] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1v1TTj-00Gz9Z-2r; Wed, 24 Sep 2025 19:40:31 +0200
+	id 1v1TTn-00Gz9Z-CY; Wed, 24 Sep 2025 19:40:36 +0200
 From: Mauricio Faria de Oliveira <mfo@igalia.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Vlastimil Babka <vbabka@suse.cz>
@@ -57,10 +58,12 @@ Cc: Oscar Salvador <osalvador@suse.de>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	kernel-dev@igalia.com
-Subject: [PATCH 0/3] mm/page_owner: add options 'print_handle' and 'print_stack' for 'show_stacks'
-Date: Wed, 24 Sep 2025 14:40:20 -0300
-Message-ID: <20250924174023.261125-1-mfo@igalia.com>
+Subject: [PATCH 1/3] mm/page_owner: add option 'print_handle' for 'show_stacks'
+Date: Wed, 24 Sep 2025 14:40:21 -0300
+Message-ID: <20250924174023.261125-2-mfo@igalia.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250924174023.261125-1-mfo@igalia.com>
+References: <20250924174023.261125-1-mfo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,74 +72,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Problem:
+For monitoring the memory usage per stack trace, it is more efficient to
+use the handle number as unique identifier of a stack trace than to, for
+example, read/hash all stack traces to uniquely identify them everytime.
 
-The use case of monitoring the memory usage per stack trace (or tracking
-a particular stack trace) requires uniquely identifying each stack trace.
+The handle number is a unique identifier for stack traces in stackdepot.
 
-This has to be done for every stack trace on every sample of monitoring,
-even if tracking only one stack trace (to identify it among all others).
+This patch adds the option 'print_handle' to print the handle number of
+stack traces in 'show_stacks'.
 
-Therefore, an approach like, for example, hashing the stack traces from
-'show_stacks' for calculating unique identifiers can become expensive.
+Testing:
 
-Solution:
+  - Without handles (default):
+  # cat /sys/kernel/debug/page_owner_stacks/show_stacks > f1
 
-Fortunately, the kernel can provide a unique identifier for stack traces
-in page_owner, which is the handle number in stackdepot.
+  - With handles (new option):
+  # echo 1 >/sys/kernel/debug/page_owner_stacks/print_handle
+  # cat /sys/kernel/debug/page_owner_stacks/show_stacks > f2
 
-Additionally, with that information, the stack traces themselves are not
-needed until the time when the memory usage should be associated with a
-stack trace (say, to look at a few top consumers), using handle numbers.
+  - Same number of lines for 'nr_base_pages' and 'handle':
+  # grep -c '^nr_base_pages:' f1
+  873
+  # grep -c '^handle:' f2
+  873
 
-This eliminates hashing and reduces filtering related to stack traces in
-userspace, and reduces text emitted/copied by the kernel.
+Signed-off-by: Mauricio Faria de Oliveira <mfo@igalia.com>
+---
+ mm/page_owner.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes:
-
-This patchset adds 2 options to configure the output of 'show_stacks':
- - print_handle: print the handle number of the stack traces (disabled)
- - print_stack: print the stack traces (enabled)
-
-Now, it is possible to sample with handles/without stacks, and do one last
-sample with handles and stacks to associate the handles with their stacks.
-
-Tested on next-20250922.
-
-Results:
-
-Numbers on a freshly booted system (gains should be higher after load,
-as more stack traces would be present); average time of 10 runs:
-
- - Baseline: 
-   average = 0.165
-   # cat /sys/kernel/debug/page_owner_stacks/show_stacks >file
-
- - Enable handles:
-   average = 0.165 (same)
-   # echo 1 >/sys/kernel/debug/page_owner_stacks/print_handle
-   # cat /sys/kernel/debug/page_owner_stacks/show_stacks >file
-
- - Enable handles, remove stack traces in userspace (example):
-   average = 0.167 (+1.2%)
-   # echo 1 >/sys/kernel/debug/page_owner_stacks/print_handle
-   # grep -v '^ ' /sys/kernel/debug/page_owner_stacks/show_stacks >file
-
- - Enable handles, disable stack traces in kernel:
-   average = 0.041 (-75.2%)
-   # echo 1 >/sys/kernel/debug/page_owner_stacks/print_handle
-   # echo 0 >/sys/kernel/debug/page_owner_stacks/print_stack
-   # cat /sys/kernel/debug/page_owner_stacks/show_stacks >file
-
-Mauricio Faria de Oliveira (3):
-  mm/page_owner: add option 'print_handle' for 'show_stacks'
-  mm/page_owner: add option 'print_stack' for 'show_stacks'
-  mm/page_owner: update Documentation with print_handle and print_stack
-
- Documentation/mm/page_owner.rst | 15 ++++++++++++++-
- mm/page_owner.c                 | 18 ++++++++++++++----
- 2 files changed, 28 insertions(+), 5 deletions(-)
-
+diff --git a/mm/page_owner.c b/mm/page_owner.c
+index c3ca21132c2c..420426749239 100644
+--- a/mm/page_owner.c
++++ b/mm/page_owner.c
+@@ -887,6 +887,7 @@ static void *stack_next(struct seq_file *m, void *v, loff_t *ppos)
+ }
+ 
+ static unsigned long page_owner_pages_threshold;
++static bool page_owner_print_handle;
+ 
+ static int stack_print(struct seq_file *m, void *v)
+ {
+@@ -908,6 +909,8 @@ static int stack_print(struct seq_file *m, void *v)
+ 
+ 	for (i = 0; i < nr_entries; i++)
+ 		seq_printf(m, " %pS\n", (void *)entries[i]);
++	if (page_owner_print_handle)
++		seq_printf(m, "handle: %d\n", stack_record->handle.handle);
+ 	seq_printf(m, "nr_base_pages: %d\n\n", nr_base_pages);
+ 
+ 	return 0;
+@@ -968,6 +971,8 @@ static int __init pageowner_init(void)
+ 			    &page_owner_stack_operations);
+ 	debugfs_create_file("count_threshold", 0600, dir, NULL,
+ 			    &proc_page_owner_threshold);
++	debugfs_create_bool("print_handle", 0600, dir,
++			    &page_owner_print_handle);
+ 
+ 	return 0;
+ }
 -- 
 2.48.1
 
