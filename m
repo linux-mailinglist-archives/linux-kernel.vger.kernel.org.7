@@ -1,142 +1,183 @@
-Return-Path: <linux-kernel+bounces-829884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F02B981E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F406BB981ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B964C1D01
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2814C4124
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789E1224234;
-	Wed, 24 Sep 2025 03:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DDC2264BA;
+	Wed, 24 Sep 2025 03:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="KeQxo4ia"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KZ7cFYp9"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013014.outbound.protection.outlook.com [40.107.159.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F224728F4;
-	Wed, 24 Sep 2025 03:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758683666; cv=none; b=NdExUFSxRQbzDrxwkarYrd8RQx18dpY+HPwwF4NPdYsC0FZYfKVd4tgqF1r8/HqEEI8HuVo1epTzU/EHTBvad/IfT2RQrKzfyO32hxGidwvVJYYxC6a3/8bj9V6Txf1P1AwF/3YpFtW+PKagu1hQ5WLYXlf2MqYuynfUv67Xffw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758683666; c=relaxed/simple;
-	bh=J7cjqqmGmaZOUF2MR4huwKNqe4ctVzq9atEsqXRsgSw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6iSbwqmwrgsksvjDzhWCYqR3QFTGyYTQsB6/iIR5RhmB9hm9enXbiLGggga4WgyF8zr6d0ievBOS72sA+KWHTxxvRUSmOV8/5Qth+Gus8bAeHwSaeOLQ+WXogDw3bx5IlJhMXrR6V+fwlqTBmYN6qFqZPT2wodSbjgS+tcG/Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=KeQxo4ia; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758683650;
-	bh=8plg955rJ+oOWjx5qksQHnCtK++GUsWnoWgH1rOaedc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=KeQxo4iaNBSQFrXfM9Z1QYTFvV4NyCDo3LQPNRtrw7CPNfm1AeN08/v7Atx/vOzIq
-	 Bsui+psjkWs1xtPO/VcwbQaT24Cc7VO+8eeG+Jz+ADn/V3l0wLL9KGhJUJv0DD9cO8
-	 yyANutXko2uVRiQjazMO9JEVe09gNVq5DuADAhsQ=
-X-QQ-mid: zesmtpip3t1758683646tf49888df
-X-QQ-Originating-IP: 1MO73cqQ/QgVrFm41SIJypanScGWd08wL3EKzL6AuWc=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 24 Sep 2025 11:14:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13436328211902165598
-EX-QQ-RecipientCnt: 13
-Date: Wed, 24 Sep 2025 11:13:58 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yixun Lan <dlan@gentoo.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
-	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
-Subject: Re: [PATCH 1/3] riscv: dts: spacemit: enable the i2c2 adapter on
- BPI-F3
-Message-ID: <B8749086963B3B54+aNNh9hw4TX6tVMdP@troy-wujie14pro-arch>
-References: <20250921210237.943370-1-aurelien@aurel32.net>
- <20250921210237.943370-2-aurelien@aurel32.net>
- <DC360EB139FD9DE5+aNH4l-7SP5KNu-Br@LT-Guozexi>
- <aNLyIvS-UFfplmpu@aurel32.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C97679EA;
+	Wed, 24 Sep 2025 03:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758683839; cv=fail; b=nqocYU1AVvK+LatIXXzhYBhv6bYo4OaxMXuCW4GndiXs3/ayLkKdt1DILKRQ+YbfwO8IDJGFYPCQZ+GJ7XZhrik5IwxXVAAuFFhx9aC5K8XGLiHE3naLDi1n5r8z1pq1r5ZF0k0vjECsj6gDJmzrvnyyiBAYtSrWJUpgFBe+aA4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758683839; c=relaxed/simple;
+	bh=Pa0NKRbR6MtddEuYE3PZLxk9XlfReqUlfRgKUqOnC/4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Nza4MNYzSzPoRydZKq13dFO9+AKDje7pEzvhbcXo75wshU0lWxhXDWarkYxKC31P91HaTHgw9fGepiraWhN+tXFmpaoGQIPZP1aw9Mual+ilD4YPseUIrG539t8vAqdXdSBniY1Nt1vu7jkEr7U1h81VA4WGbGZFLhbnzYm+ens=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KZ7cFYp9; arc=fail smtp.client-ip=40.107.159.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TJB5b9aiOo/Mf7/dcLZmFqpW92bL6p8QDdlSJgccXiuIZU4T+fVG5hklsiAjfik3ru5jtGB3Y1FAnQcM6LEEV1Gl4usfxYZCuSWcSUD3QLk/rkeRxgGn+p8WC2FuFSFOw6R+3i1W28+xHz1MCWkJR5NbI/ExoyOqOYSMtFtwM8aC+1by4efyUUfHM9EcmAFcUB17La1VjLNwgFnC0Jw7F80cv5S2Y791NZ1vXULI1lMBpso7DqXtpQIOHG2s4oqoMk7BuzzzNtbup7oMtbJeU+X5ZYFWpbTm0fydcKCKxL3ubpal2SIMyWTt31CY7Ap6Buozml7wbJbr4D7kOYlrsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ikCFmqZ1yQNtywVcLHW3Er9hFJtdeAdMbywy823Ng5I=;
+ b=cZo9nKCwlWVrIt9hcWryUlo94Fle3UN8UROovEqzCvZgAQF+WtxMnswZ+o+CsCGIGU4QNNSl5W4wh4jsEPvKFrIuQwGS4PSI5iIUaJiDtZ+1CBaR4VqlSV+XsZNHaQjdF30Mi6Jv1FcdF/CZFZb/ZAuaHAzmh3dbDosM1ln9hSmYZQ6aJN17VoaBkzryqCCR24yIhBpe5F+freyViPfY+JxgwbSEzHyFoDodJdNn1VVS4RIOH4GQR0sRxi9eIDGc1VXz1+SErxu/0lkmwPwiHpn/ZoO227TaYuToOPhTCZbYqfUe/2ImyZjtC9lBYhjYeHTlIyP2hqo4VN+lSm6icQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ikCFmqZ1yQNtywVcLHW3Er9hFJtdeAdMbywy823Ng5I=;
+ b=KZ7cFYp9Aecpj4mHFVl6MaQHmLcXM5k6a23BHpb7/rjIf9Zrgmn2YBwm7lB21wiovBWuwzAH5M3lMAUx0oddQB8D+T9KiLmIVXMqTg3cr3Omn6c+OO4vuuVr5PVbZ6r6L/vFMWzC5y7WtvxRLf4qWH4F4b3PxOMdb6pD50RsmAwxm5jzttPaJJL88j+DNypTMcmFoiDhx4gJhDr+X+/JK2OYdbt6v9+jwGnK5DEnJnSbINFyHWrIgqj/UQn4gRgLEbgQ5iak5KbKVgD+HuBc8YSrn5CGuhzXsfm/nD3szkTYd5iKXNNftAUiWt/SoLi5MnJiLJVNRWOopW0lZYd07A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8418.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::15)
+ by PAXPR04MB8767.eurprd04.prod.outlook.com (2603:10a6:102:20e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 03:17:11 +0000
+Received: from AS8PR04MB8418.eurprd04.prod.outlook.com
+ ([fe80::99c9:99a6:e6f3:7a9f]) by AS8PR04MB8418.eurprd04.prod.outlook.com
+ ([fe80::99c9:99a6:e6f3:7a9f%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 03:17:11 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	shenwei.wang@nxp.com,
+	peng.fan@nxp.com,
+	frank.li@nxp.com
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH V2 0/2] tty: serial: imx: improve the imx uart wakeup function
+Date: Wed, 24 Sep 2025 11:15:48 +0800
+Message-Id: <20250924031550.2516704-1-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0031.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::11) To AS8PR04MB8418.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3fa::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNLyIvS-UFfplmpu@aurel32.net>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NVjywrp/tdK0a7ZnYB++mZYqj9bmJBO1lVscCYOs0fpLBdbVGivrWHw0
-	UR6AA7vqzrCWZ0mY/MT3EDgEcZgCukkVZlNdfwtErdyIXSxRcJnW1BRFzEJRn+5Hb/CMx/b
-	z9Lb7ij52XS2gTCG9U0Icy5S5n2n2WJJGmTAUyfn5QFkDaUUXe3JioSNWVVz1Ne7ZB3n4Dd
-	pUDmpbq25XjTRwuNgUFCUtqj+39v1ygRIE1QAOghW9NQ9xHJfJ9xDdtJHIAm4l2RDAuoDkE
-	00g9LnGGe0S64aoehsIdXdfqf7Krd+z67bScXiAfzvcW0/ICZyWpEnjvt7H7Mfvyv7kUeG8
-	bVzWY3owyJYDflbwe92XZD9ptMO8KtIZJSITvjiTYHiZXcMwjrXtFgVmMLQ0Nu+61DopXrY
-	GJiLOMYXTovIAI3KrJ0HZFRQhtrYKuOx9Jsj3L3/1RQT7rAzefCpVDg7yfX8jmjiPE7z9vW
-	B4PEgF8WjjXp7U964ffLfrHlYvjaeiErq0RPjy2KDfqc4i6hbIdo2heiPnTeB/OYm8VKFhc
-	E7a6up3nB7kUtGzgR2Reiw6KVveC23/+yypEY2gcUMcIuYkxB/mEg9T2J4qMPr43zDw/F5A
-	H3dyzu8bK5U673McIAo+o8neauwHS2O4gt+s5Gn4cwsphPI+AZm2EXrwV8AcfSBAj1TfC2d
-	fdNDsMqrzBNxW+GBniEuhm1UPHN6OHVRdThlS0a/g+gcaGpi9BVIryxyZIWPENGkmPSN1mc
-	Ia7U5Md9DGOplAvc1aA4cWuOKM+w8eAA82yyDlyXwU5Ih4vDJwBN3O9DoylzkuQ8QCifUD1
-	+SMftzmMdP2pc271UCauvaKNgURnC2j41OIlDrMiVaA32+OdxUe5JiKDC0bgbRcxgvbXbgE
-	Pf0mpbe1nPxQ0ghq1gbPlkiO5/wQqf7XlJIGOUoQS7Ag4INap8Ou67jT7T/nh8K7ZxoII5u
-	r1JZsbls/MM8FBzHlAiwGbJaufdt1EQeFIFRgMFR5UrNGfXNupzuEy6hYFh3AjFmOMcdojD
-	S45yjKH1Sgg754tVnsvtOOcdQKrYA60thlr9hBm3YBcluaOdY93KDoxZ5+RBDZLxDW3cteK
-	fjNxgd2SMwdjA49tzUa7z9P704FmMx+ow==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8418:EE_|PAXPR04MB8767:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a5be32f-6678-41ca-74c0-08ddfb18d9d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|19092799006|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?l5r99DfuTRWFnWQdEqgp6rkkWruqFifXhFWVeOKThB97TIU0Moe25ol54Bva?=
+ =?us-ascii?Q?QvWZBDbY/thUV5ZDy5WTqFfA4GVBxanTEjR0hU2WxpCviWY/zd4unIdSnEwh?=
+ =?us-ascii?Q?RmP8ueQX6Hg+QUYHbsqI2T2ETS+PMgxWtNR9QJ+5Tt0c7O1CMyiru9j3lpLK?=
+ =?us-ascii?Q?6eZFUSYyTx1iglrxV5ghH78kHb+Tv5n6odKGnx15mk3Hq0OflB2FZHgBppUX?=
+ =?us-ascii?Q?DtjUHKuOTwAiyBsk9nLKvYQqRGZja5cVzjMyNwzz2V+0NIENSXJpE/9s98m5?=
+ =?us-ascii?Q?CfetyE4Ye/3t7+zEg/rIBUC8xWwFpOV1BL22Y55iaNwKW603ZX3xMN0462MW?=
+ =?us-ascii?Q?cPGqZ98lb49peCam8LpqRxe2tr++OCKNe5PTFrehqjVe1nIk3QJ+jmzQFDk2?=
+ =?us-ascii?Q?t91NJjn6QUjFjtKR6fZFAX8HG519J06mSoujpH6WOyFOdi3vDz5ID30/E0PS?=
+ =?us-ascii?Q?V0YC4h3zzkVN5zKqb3cXvTQiKSpxrETodfhNKQlhbQY93kWH7iPSLykklPUY?=
+ =?us-ascii?Q?1F+oSaO4r6aucNIVTwiZ8XuO9MbmQUe3F1qLNypp5llsFDn0ikl8GVTNb2U6?=
+ =?us-ascii?Q?ZRMa0dvlTNdfCk9mxBfI9wD4rSQAm1xldBQzFBOCccOkQP9DiGa9rL8HW2C0?=
+ =?us-ascii?Q?fIumJaSbiN3BaNUYCseqxNxOOpHI75ByA6jDtJVyOX7CLcQ9XD9yIiLimpq0?=
+ =?us-ascii?Q?jD5lh0OJPMh3dLt42StJUY0Kj/bkPFHslKP5iuGIq4Yhk7jQ6kuZN5Bz8vnA?=
+ =?us-ascii?Q?5CqCkyqRt/yw0W2p9YHZaasu0R4exHof1+Tdc7FC8Qru28URZ/bXviIbqAqb?=
+ =?us-ascii?Q?U6xGANEO9792XKMSiUu9QK+G17q2i4gzihA/k7dYxHzsH+98NkGiqo2hhKi6?=
+ =?us-ascii?Q?S4v0Lz9oHzzZ0baJ3DqYz9Atc11lgIsCx3joAEMDXrMM7ZbpStMg5vmrhvMu?=
+ =?us-ascii?Q?xTH4PUo6TPCwuyExn0kfR7w9eRfcK9+BqG8bSWIPXmcy/l/jWOdxh0rBnWpN?=
+ =?us-ascii?Q?7XC9hiFeq1OotxKzFGw5gpzCRZPBe6xBuJJADVs4G7we71OBEZx4zTrSxt5T?=
+ =?us-ascii?Q?D1zkLaumbqdBobPccfFn3h9FUfeseENiQnJVpXz1UX6UjhN3R0KIhcSq7OwR?=
+ =?us-ascii?Q?Iv32EbF3NYt+sO2FK641ILKK+ETbc1yZOTYQDshLJ1e7XMtItsZXw8Z8cQqt?=
+ =?us-ascii?Q?emhmjnl8yPE+CA1e+c8nAFi5a9qzHoKYLS5ws7i6bI7yXBofB/+aWIJ7/NXf?=
+ =?us-ascii?Q?b0gjJ4Y1sA1nS7eJ4aK2qMGhQgms6DYj6Ipty5Kgprf7DMIlCxXc12ofS8Gb?=
+ =?us-ascii?Q?IHry1kH2r6qYWHKnIKgAeF56vaSBpq6U2fHYji+0Qrg6O/wTUtKRj+aZfJ03?=
+ =?us-ascii?Q?1aBHFEp1ji7+j/2fLuxmEMrNHTjbyYgyK7HOpG32l1O3n9ILlQgfUBOCOyJG?=
+ =?us-ascii?Q?3vjGtISaVzhBDjAEd6tjtg8o8VWS6o1Okz3fYUymIgEjOUmC64odDQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8418.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(19092799006)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KX7tyKR47Fw/jkPa9KOjJtKGLwYbCSNIFJkTYiimBeh+PRIaoz90ja8zD0D5?=
+ =?us-ascii?Q?DJV14CjVp/fR6v3DXFiUMWWzhTurWJhDGMZ3zOSayStu9zYuhR8YvpyZbX4k?=
+ =?us-ascii?Q?OmxoFO1iX0xtpbKhj6X4QV6Agw6mpl+Z9nSXzs73r1hc1DTUJojR8jVYqU7w?=
+ =?us-ascii?Q?KsbKM4F94qEnVrcX+lix/8VzrZZ3lbrn5Ru7OodHWWY4ZJkGTVkIJBhkq8Kz?=
+ =?us-ascii?Q?dKkmmHQrDEcSr7I3y24MLwZAmiVuG+6FSpLMwnxbyln1O5NkHTDKQYoHApTK?=
+ =?us-ascii?Q?cN0aCbsaZj6vn6vtxdQdGRxIxPFuq02eHiaUO7HeWEhFEDH0icNO5SdSe4Ag?=
+ =?us-ascii?Q?nLKYBd98IYPt0IImhlSAEr95ED9HWeKLiiRTRzTEehsdPsGRDr/CQeBACkHc?=
+ =?us-ascii?Q?LSL49mvpZ+fnJbjCoFEJp6jU+EgjtRnbvcdaVDrAXbJ2Fxu9qF2PXzVthgMR?=
+ =?us-ascii?Q?PJfELxEdUcPvHsLi/xcG5ENHZXuc4m0YJ7PlSieUmkiv9mX8sHCh5p+v0xGR?=
+ =?us-ascii?Q?xRhdbDBab22+fT9Wfd+hsDLCzCe2uSHGgaJfRNHr+KP3XJKXXkN5rXN/UWRs?=
+ =?us-ascii?Q?MKERKBwJudWK/7eugAg3opDrwvc9CZMX7uEFZZN/8gqOwYEhP0Jbwus1z+G/?=
+ =?us-ascii?Q?bTqKe4AUucFI34jrDoNhY0EpyxxWOuw3/GmjVO+xJhUH6rGx2EOimARFRjcw?=
+ =?us-ascii?Q?CZoM6sW6Vrtj+qFGyOJ/61RAODRifWFDgtWcKSQDcxFnb2x39+NhntsnyIat?=
+ =?us-ascii?Q?8NM9nvNO496eG052oj3IJABRcqUWT6EgV6G4j8gWpzltEwmcO4EEcuTFySFf?=
+ =?us-ascii?Q?qSpc7WDD+0vtOOdYmTenZceX5Yks6Mj37/R5Jk9GWWQRFhjpRmaZkDrs92aJ?=
+ =?us-ascii?Q?7l2bccBMCEHNC0WFQ3F3sAcUjQ7vnDji8lcnN6I8WzClHI83PPDCS0FOgOSQ?=
+ =?us-ascii?Q?sMbt/gxNAibKndND8vuBMJUE7qNSZ1VphAXhZYKMNc/a6AtDKcnUle8yzfam?=
+ =?us-ascii?Q?qPt1BFC4fDlv0lzuLIxo+dSNEQZRwcx3sjvJVmepLA/lZOcMsx1RARkwAkWE?=
+ =?us-ascii?Q?zh5ZenvKyQEKRJgq7v39BrMJOt20o+E2L9DrMlrlHMEc0METhk2ynXJslP90?=
+ =?us-ascii?Q?Q9YcW8bfYo6r080OTkUpP9jstXylC210IKAptjeRN8Fz6RKK9zSY+P+YeNyk?=
+ =?us-ascii?Q?fBmfuaan+CAsVpLSk1GwcpxtxnZf8ZG7eCEtGwhURQe+5ahnkP//hHYDefs5?=
+ =?us-ascii?Q?UyL1Tq0qgTk1TBGfddi1TgR2TeJdX3oCynGY/vR5WTNp832f1Zi/kbig6Jme?=
+ =?us-ascii?Q?nWSt1/5BxNhonB/0pcvr6cRBhnnID5hcSSv/4jtyEwRY+3X5sELHrLit/euZ?=
+ =?us-ascii?Q?Jzlm/SId8Ordk98ZSlPLPW4xs7py8V4P3TrErbZBuplKmwEiaAaSfN9q3Q2/?=
+ =?us-ascii?Q?0Rkk0QlR2ioBrDlssOIbGDBbKvdtG6LG70XC6uC2WP+qYM3sQhvoYXjwi4ns?=
+ =?us-ascii?Q?Jfyt3dqwyM32fTkRqboTMi4KHa2MXZGN59y314nin6zewJvF8O4jNG7cKzin?=
+ =?us-ascii?Q?3SvPnybb4zjoYPOw/X303iGKp/sK3dIx/SNE8Axy?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a5be32f-6678-41ca-74c0-08ddfb18d9d3
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8418.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 03:17:11.5100
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UuKcU+VrvCDmh9gxOoSQVdi29LHKPASrLOiuj6Fgu4cwZ7mVYVUXJS2kCVk7LrRINgxfgfthCOHzgtltvI61iA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8767
 
-On Tue, Sep 23, 2025 at 09:16:50PM +0200, Aurelien Jarno wrote:
-> Hi Troy,
-> 
-> Thanks for the review.
-> 
-> On 2025-09-23 09:32, Troy Mitchell wrote:
-> > On Sun, Sep 21, 2025 at 11:01:41PM +0200, Aurelien Jarno wrote:
-> > > Define properties for the I2C adapter, and enable it on the BPI-F3. It
-> > > will be used by the 24c02 eeprom.
-> > > 
-> > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > > ---
-> > > --- a/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > > +++ b/arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi
-> > > @@ -92,6 +92,13 @@ gmac1-pins {
-> > >  		};
-> > >  	};
-> > >  
-> > > +	i2c2_0_cfg: i2c2-0-cfg {
-> > Should this be i2c2_4_cfg here?
-> > From what I see, in the initial version the second cell was meant
-> > to be the function number rather than the serial index.
-> 
-> Ok, I wasn't aware of that convention, I just reused the same numbering 
-> of the downstream 6.6 kernel. I'll fix that and use i2c2_4_cfg.
-I'm wrong..
-The second number isn't function number.
-You can find a more detailed discussion here:
-(riscv: dts: spacemit: define a SPI controller node)
+Make some improvements for imx uart wakeup function. The first patch adds
+device_may_wakeup() check before configuring the wake related registers.
+The second patch adds the wakeup event reporting support for imx uart.
 
-                - Troy
-> 
-> > It looks like the pwm part is also incorrect.
-> 
-> Yes, and also the submitted PCIE patches.
-> 
-> Aurelien
-> 
-> -- 
-> Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-> aurelien@aurel32.net                     http://aurel32.net
-> 
+Changes in V2:
+1. Improve the commit message as Peng suggested.
+2. Initialize the may_wake and wake_active variables to avoid build
+   warnings. 
+3. Move may_wake and wake_active above u32 ucr3.
+4. Use linux/irq.h instead of asm/irq.h to avoid build errors.
+
+Sherry Sun (2):
+  tty: serial: imx: Only configure the wake register when device is set
+    as wakeup source
+  tty: serial: imx: Add missing wakeup event reporting
+
+ drivers/tty/serial/imx.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
