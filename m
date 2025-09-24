@@ -1,306 +1,182 @@
-Return-Path: <linux-kernel+bounces-829954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D28B98501
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EABB98523
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C8317DF08
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264DA2A38A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BB42405E8;
-	Wed, 24 Sep 2025 05:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64B323B63C;
+	Wed, 24 Sep 2025 05:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="JXWbn3qF"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZOUvDTiK"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D452B1E5201;
-	Wed, 24 Sep 2025 05:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A07C141
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758693401; cv=none; b=gTUzF19YBVWQ8V/k/ZK40YMVp6M/kiV1t7BTD35kCxD54kf7kdMUwu5NQG82aehBOdGcs3P3J8e9P+FJQcxbKeeMgNMpMa8VeGl4Xur8eGprEFKfrELHJa/ujIte5+caVk7CJq/NSZzJkLeepDOFm1q7eOwNWpR+oLGAJ8Zn4tA=
+	t=1758693524; cv=none; b=N5ZQuC0+D0vicEsRnTWalT64E3nT0EbMGWWuk20NO1a8JnT/v6Ac3Dy1UZwpWYYoNfzASupTzLJ71eeJPyah6mUIuDUlxvzQqjJ5SQWu2ksNMqnOSf9RbT8GeOCOVxBKw2q7D2LZRheiXrjIp2+d8UhXm8xwZgDAROcPGkCVdYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758693401; c=relaxed/simple;
-	bh=bwgyWBYulhdadFRsIVdmz8W+VwdILFy44SNqPNPtnlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MSv7nM6wTRcvmYhj5PQ73bzlCS8/Gm0r6cMl3Q75fzsjytjYH8QCeLKfbq7+YJ64vQX3LJ8j05s2mTQOHWA6TIqg3OHxLKJZbVCqGqueiXARHK9D0PpZND1iUFr/Ex25DUWmf/1zBxsItDcn2wkHD1f3XT1QX8InbvnRhAPf9xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=JXWbn3qF; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [IPV6:2a01:599:c11:dc72:32f8:2997:5bae:168a] (tmo-123-4.customers.d1-online.com [80.187.123.4])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 58O5uXRf018900
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 07:56:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1758693394;
-	bh=bwgyWBYulhdadFRsIVdmz8W+VwdILFy44SNqPNPtnlA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=JXWbn3qF+ijOKSVHOT5WM8YzS4XVKRfiKBfUkzMZwJnmWOe5tDsh5YVr8X2qNZBFo
-	 eYxhFTnUxQiZGVhoSsBALwThSTllczH8GPfI2VhziCQXDVuy5BhFsq7VBQXAXO/r7W
-	 i8nw8YyhLPZrE3BNcRMt5qqumzggR2NViNylKJuo=
-Message-ID: <aacb449c-ad20-48b0-aa0f-b3866a3ed7f6@tu-dortmund.de>
-Date: Wed, 24 Sep 2025 07:56:33 +0200
+	s=arc-20240116; t=1758693524; c=relaxed/simple;
+	bh=dDp91U+AQmtz2SpNwgR5/+4xhufd3qCL9uGrROhCQ+c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=mHOJVKpSuwfF5H1lJv6R91Y/UqGaQG8Qkvw05M6i4sRWwk+o30Gi2QS3kcf2tpjFqVYMmyPslH7RBB6g3btb826sSIGHkNWp1Nh0hKCTyKm2HD8ZdVhXo3ySczaEmsSj5dFE9oZmWSgpyc+XpN8NFG3o+/NbBV7GN+QT8g9+2iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZOUvDTiK; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250924055839epoutp01ee274255b7a02d764d2f9c145c2ee3d4~oInAWe_Hl0168501685epoutp01m
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:58:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250924055839epoutp01ee274255b7a02d764d2f9c145c2ee3d4~oInAWe_Hl0168501685epoutp01m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758693519;
+	bh=UCB1XxSfKnxXgnA8T6WAHTu29rC7boLUIOja/oPIJzk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZOUvDTiKPXqM8uzigFbD39ZV3UkVpx9SIuOVoUF9RK+fFcl64IemB/2MSS0hbcvlk
+	 eUGoGvHuNMphHWCQsdOFt7ylstLElZO018As23ESHiw/KMZZZ7uYPGq4i8ddQbu1c9
+	 v1tYb0hGGsOaAX2t8SBNP9RpZ5LhBBUklFBhFEuQ=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250924055838epcas1p262a95f248cb818206ee30ab7e42c3a0c~oIm-kGRQN0075700757epcas1p2o;
+	Wed, 24 Sep 2025 05:58:38 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.36.223]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cWmPB27fXz2SSKj; Wed, 24 Sep
+	2025 05:58:38 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250924055837epcas1p460d67d7f1c900f5cc25c865cb636e950~oIm_3mWWB2706327063epcas1p4z;
+	Wed, 24 Sep 2025 05:58:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.253.100.173]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250924055837epsmtip14f3381069af90a29232b03eb53e37f1e~oIm_1Ej8f2471124711epsmtip1b;
+	Wed, 24 Sep 2025 05:58:37 +0000 (GMT)
+From: Yunji Kang <yunji0.kang@samsung.com>
+To: jaegeuk@kernel.org, chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Yunji Kang <yunji0.kang@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>,
+	Sunmin Jeong <s_min.jeong@samsung.com>
+Subject: [PATCH v3] f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE
+ mode
+Date: Wed, 24 Sep 2025 14:58:31 +0900
+Message-Id: <20250924055831.250805-1-yunji0.kang@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v5 4/8] TUN & TAP: Wake netdev queue after consuming
- an entry
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, eperezma@redhat.com,
-        stephen@networkplumber.org, leiyang@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org, Tim Gebauer <tim.gebauer@tu-dortmund.de>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250922221553.47802-5-simon.schippers@tu-dortmund.de>
- <20250923123101-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <20250923123101-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250924055837epcas1p460d67d7f1c900f5cc25c865cb636e950
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250924055837epcas1p460d67d7f1c900f5cc25c865cb636e950
+References: <CGME20250924055837epcas1p460d67d7f1c900f5cc25c865cb636e950@epcas1p4.samsung.com>
 
-On 23.09.25 18:36, Michael S. Tsirkin wrote:
-> On Tue, Sep 23, 2025 at 12:15:49AM +0200, Simon Schippers wrote:
->> The new wrappers tun_ring_consume/tap_ring_consume deal with consuming an
->> entry of the ptr_ring and then waking the netdev queue when entries got
->> invalidated to be used again by the producer.
->> To avoid waking the netdev queue when the ptr_ring is full, it is checked
->> if the netdev queue is stopped before invalidating entries. Like that the
->> netdev queue can be safely woken after invalidating entries.
->>
->> The READ_ONCE in __ptr_ring_peek, paired with the smp_wmb() in
->> __ptr_ring_produce within tun_net_xmit guarantees that the information
->> about the netdev queue being stopped is visible after __ptr_ring_peek is
->> called.
->>
->> The netdev queue is also woken after resizing the ptr_ring.
->>
->> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
->> ---
->>  drivers/net/tap.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
->>  drivers/net/tun.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
->>  2 files changed, 88 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
->> index 1197f245e873..f8292721a9d6 100644
->> --- a/drivers/net/tap.c
->> +++ b/drivers/net/tap.c
->> @@ -753,6 +753,46 @@ static ssize_t tap_put_user(struct tap_queue *q,
->>  	return ret ? ret : total;
->>  }
->>  
->> +static struct sk_buff *tap_ring_consume(struct tap_queue *q)
->> +{
->> +	struct netdev_queue *txq;
->> +	struct net_device *dev;
->> +	bool will_invalidate;
->> +	bool stopped;
->> +	void *ptr;
->> +
->> +	spin_lock(&q->ring.consumer_lock);
->> +	ptr = __ptr_ring_peek(&q->ring);
->> +	if (!ptr) {
->> +		spin_unlock(&q->ring.consumer_lock);
->> +		return ptr;
->> +	}
->> +
->> +	/* Check if the queue stopped before zeroing out, so no ptr get
->> +	 * produced in the meantime, because this could result in waking
->> +	 * even though the ptr_ring is full.
-> 
-> So what? Maybe it would be a bit suboptimal? But with your design, I do
-> not get what prevents this:
-> 
-> 
-> 	stopped? -> No
-> 		ring is stopped
-> 	discard
-> 
-> and queue stays stopped forever
-> 
-> 
+In f2fs_precache_extents(), For large files, It requires reading many
+node blocks. Instead of reading each node block with synchronous I/O,
+this patch applies readahead so that node blocks can be fetched in
+advance.
 
-I totally missed this (but I am not sure why it did not happen in my 
-testing with different ptr_ring sizes..).
+It reduces the overhead of repeated sync reads and improves efficiency
+when precaching extents of large files.
 
-I guess you are right, there must be some type of locking.
-It probably makes sense to lock the netdev txq->_xmit_lock whenever the 
-consumer invalidates old ptr_ring entries (so when r->consumer_head >= 
-r->consumer_tail). The producer holds this lock with dev->lltx=false. Then 
-the consumer is able to wake the queue safely.
+I created a file with the same largest extent and executed the test.
+For this experiment, I set the file's largest extent with an offset of 0
+and a size of 1GB. I configured the remaining area with 100MB extents.
 
-So I would now just change the implementation to:
-tun_net_xmit:
+5GB test file:
+dd if=/dev/urandom of=test1 bs=1m count=5120
+cp test1 test2
+fsync test1
+dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100 conv=notrunc
+dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100 conv=notrunc
 ...
-if ptr_ring_produce
-    // Could happen because of unproduce in vhost_net..
-    netif_tx_stop_queue
-    ...
-    goto drop
+dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
+reboot
 
-if ptr_ring_full
-    netif_tx_stop_queue
-...
+I also created 10GB and 20GB files with large extents using the same
+method.
 
-tun_ring_recv/tap_do_read (the implementation for the batched methods 
-would be done in the similar way):
-...
-ptr_ring_consume
-if r->consumer_head >= r->consumer_tail
-    __netif_tx_lock_bh
-    netif_tx_wake_queue
-    __netif_tx_unlock_bh
+ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
+  +-----------+---------+---------+-----------+
+  | File size | Before  | After   | Reduction |
+  +-----------+---------+---------+-----------+
+  | 5GB       | 101.8ms | 37.0ms  | 72.1%     |
+  | 10GB      | 222.9ms | 56.0ms  | 74.9%     |
+  | 20GB      | 446.2ms | 116.4ms | 73.9%     |
+  +-----------+---------+---------+-----------+
+Tested on a 256GB mobile device with an SM8750 chipset.
 
-This implementation does not need any new ptr_ring helpers and no fancy 
-ordering tricks.
-Would this implementation be sufficient in your opinion?
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
+Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
+---
+v2:
+ - Modify the readahead condition check routine for better code
+readability.
+ - Update the title from 'node block' to 'node blocks'.
 
->> The order of the operations
->> +	 * is ensured by barrier().
->> +	 */
->> +	will_invalidate = __ptr_ring_will_invalidate(&q->ring);
->> +	if (unlikely(will_invalidate)) {
->> +		rcu_read_lock();
->> +		dev = rcu_dereference(q->tap)->dev;
->> +		txq = netdev_get_tx_queue(dev, q->queue_index);
->> +		stopped = netif_tx_queue_stopped(txq);
->> +	}
->> +	barrier();
->> +	__ptr_ring_discard_one(&q->ring, will_invalidate);
->> +
->> +	if (unlikely(will_invalidate)) {
->> +		if (stopped)
->> +			netif_tx_wake_queue(txq);
->> +		rcu_read_unlock();
->> +	}
-> 
-> 
-> After an entry is consumed, you can detect this by checking
-> 
-> 	                r->consumer_head >= r->consumer_tail
-> 
-> 
-> so it seems you could keep calling regular ptr_ring_consume
-> and check afterwards?
-> 
-> 
-> 
-> 
->> +	spin_unlock(&q->ring.consumer_lock);
->> +
->> +	return ptr;
->> +}
->> +
->>  static ssize_t tap_do_read(struct tap_queue *q,
->>  			   struct iov_iter *to,
->>  			   int noblock, struct sk_buff *skb)
->> @@ -774,7 +814,7 @@ static ssize_t tap_do_read(struct tap_queue *q,
->>  					TASK_INTERRUPTIBLE);
->>  
->>  		/* Read frames from the queue */
->> -		skb = ptr_ring_consume(&q->ring);
->> +		skb = tap_ring_consume(q);
->>  		if (skb)
->>  			break;
->>  		if (noblock) {
->> @@ -1207,6 +1247,8 @@ int tap_queue_resize(struct tap_dev *tap)
->>  	ret = ptr_ring_resize_multiple_bh(rings, n,
->>  					  dev->tx_queue_len, GFP_KERNEL,
->>  					  __skb_array_destroy_skb);
->> +	if (netif_running(dev))
->> +		netif_tx_wake_all_queues(dev);
->>  
->>  	kfree(rings);
->>  	return ret;
->> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->> index c6b22af9bae8..682df8157b55 100644
->> --- a/drivers/net/tun.c
->> +++ b/drivers/net/tun.c
->> @@ -2114,13 +2114,53 @@ static ssize_t tun_put_user(struct tun_struct *tun,
->>  	return total;
->>  }
->>  
->> +static void *tun_ring_consume(struct tun_file *tfile)
->> +{
->> +	struct netdev_queue *txq;
->> +	struct net_device *dev;
->> +	bool will_invalidate;
->> +	bool stopped;
->> +	void *ptr;
->> +
->> +	spin_lock(&tfile->tx_ring.consumer_lock);
->> +	ptr = __ptr_ring_peek(&tfile->tx_ring);
->> +	if (!ptr) {
->> +		spin_unlock(&tfile->tx_ring.consumer_lock);
->> +		return ptr;
->> +	}
->> +
->> +	/* Check if the queue stopped before zeroing out, so no ptr get
->> +	 * produced in the meantime, because this could result in waking
->> +	 * even though the ptr_ring is full. The order of the operations
->> +	 * is ensured by barrier().
->> +	 */
->> +	will_invalidate = __ptr_ring_will_invalidate(&tfile->tx_ring);
->> +	if (unlikely(will_invalidate)) {
->> +		rcu_read_lock();
->> +		dev = rcu_dereference(tfile->tun)->dev;
->> +		txq = netdev_get_tx_queue(dev, tfile->queue_index);
->> +		stopped = netif_tx_queue_stopped(txq);
->> +	}
->> +	barrier();
->> +	__ptr_ring_discard_one(&tfile->tx_ring, will_invalidate);
->> +
->> +	if (unlikely(will_invalidate)) {
->> +		if (stopped)
->> +			netif_tx_wake_queue(txq);
->> +		rcu_read_unlock();
->> +	}
->> +	spin_unlock(&tfile->tx_ring.consumer_lock);
->> +
->> +	return ptr;
->> +}
->> +
->>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
->>  {
->>  	DECLARE_WAITQUEUE(wait, current);
->>  	void *ptr = NULL;
->>  	int error = 0;
->>  
->> -	ptr = ptr_ring_consume(&tfile->tx_ring);
->> +	ptr = tun_ring_consume(tfile);
->>  	if (ptr)
->>  		goto out;
->>  	if (noblock) {
->> @@ -2132,7 +2172,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
->>  
->>  	while (1) {
->>  		set_current_state(TASK_INTERRUPTIBLE);
->> -		ptr = ptr_ring_consume(&tfile->tx_ring);
->> +		ptr = tun_ring_consume(tfile);
->>  		if (ptr)
->>  			break;
->>  		if (signal_pending(current)) {
->> @@ -3621,6 +3661,9 @@ static int tun_queue_resize(struct tun_struct *tun)
->>  					  dev->tx_queue_len, GFP_KERNEL,
->>  					  tun_ptr_free);
->>  
->> +	if (netif_running(dev))
->> +		netif_tx_wake_all_queues(dev);
->> +
->>  	kfree(rings);
->>  	return ret;
->>  }
->> -- 
->> 2.43.0
-> 
+v3:
+ - Bug fix to allow more node pages to be readahead.
+ - Updated with test results.
+
+ fs/f2fs/data.c | 3 +++
+ fs/f2fs/f2fs.h | 1 +
+ fs/f2fs/node.c | 4 +++-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..ab3117e3b24a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	pgofs =	(pgoff_t)map->m_lblk;
+ 	end = pgofs + maxblocks;
+ 
++	if (flag == F2FS_GET_BLOCK_PRECACHE)
++		mode = LOOKUP_NODE_PRECACHE;
++
+ next_dnode:
+ 	if (map->m_may_create) {
+ 		if (f2fs_lfs_mode(sbi))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9d3bc9633c1d..3ce41528d48e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -651,6 +651,7 @@ enum {
+ 					 * look up a node with readahead called
+ 					 * by get_data_block.
+ 					 */
++	LOOKUP_NODE_PRECACHE,		/* look up a node for F2FS_GET_BLOCK_PRECACHE */
+ };
+ 
+ #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4254db453b2d..63e9ee7ab911 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -860,7 +860,9 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+ 			set_nid(parent, offset[i - 1], nids[i], i == 1);
+ 			f2fs_alloc_nid_done(sbi, nids[i]);
+ 			done = true;
+-		} else if (mode == LOOKUP_NODE_RA && i == level && level > 1) {
++		} else if ((mode == LOOKUP_NODE_RA ||
++                (mode == LOOKUP_NODE_PRECACHE))
++                && i == level && level > 1) {
+ 			nfolio[i] = f2fs_get_node_folio_ra(parent, offset[i - 1]);
+ 			if (IS_ERR(nfolio[i])) {
+ 				err = PTR_ERR(nfolio[i]);
+-- 
+2.34.1
+
 
