@@ -1,176 +1,117 @@
-Return-Path: <linux-kernel+bounces-830714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EBEEB9A5D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:52:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0920B9A5DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55F31B2700C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28391B272DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346ED30AD06;
-	Wed, 24 Sep 2025 14:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DE7311C17;
+	Wed, 24 Sep 2025 14:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fARj2G45"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBSRMagp"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ACE30E828
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A883101DF
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725421; cv=none; b=Aiy4vD6OkYfAAoh8MXmTjpEHYq6QcXkZGd4F92o/BHrhF/gBghVy4BcVFoO9UAW8nhijmvpR1gB1jdOBdMGr0oqCQP4fjgWUnI1YnzEmdcFWTA8FHhOIfaZNM41vbsqJxdaLe5De+AUymQqAhuncbVZs0EQ28oZZsDc2Rq9wFfc=
+	t=1758725424; cv=none; b=QJkHSBmHZx10OtMNvN/sNmu2OZRkd518Lxfmwf6HwzNGTOXgwSiWXART7IqqTH/52oa77Rmw5TZHkK4P+PeuI/V/4seBLteQvaq1zi0cX3DAjyGnuPbj61mcQ6tsXGZMssH0Gs8EGAxfYRiGUGihGB3iw15mNmztxlqYcSKN8f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725421; c=relaxed/simple;
-	bh=2v58a2Ms4SzGlOmfnHzQTJ6OquVF8bjJ7gbAV/oLr/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vrv7QQMTuiBQ3uEjPq6v0Xd8osDUhdAKQItbiZE/lNB1B1gXEdj93nlML0c0IHKbj/fI7KxXy4y0K/b3M4rbP8xtraN3bCn85road6bPhTScxrMi4XNsd2l3HkpJMTBRp1rF35l9SQVoS4pE9W043DjREl5la9Lj8hoOvQHzDrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fARj2G45; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ODFGbX019923
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LOIwUpILHzWH2xAe7aoOnVRAWvWSgZKyb6P3XpLFlVw=; b=fARj2G45QTES3xF3
-	dyIqhnpX2bS71VpsHfUetYxaCogmcz3MfySQjWE/ZAi9vp2NzOgULfu1DxXxGgwS
-	hjI7e/YU2z5jQUPfBtxT2fK1wVuzKiAbiKtp2te1u2WaLzxmKJf+uz6YwpOSObr9
-	xWJJekuXRUGl4dbyIt8ruaaltWCHbyylgQRTiulrnFxEKnqUZkOMt8/Yum66DVPV
-	jlTZs85r4lmEMYVQ+MNtebRtnvztSoKbA/fG6Q60GfnfMYJaPzFufKYU3oK7Tky5
-	mfly4svriCqsIxYG6s2i4ZOW7Ehi6zeHNMB4wM2qbuDOKIiyZNmGwA0hfYbIEBJU
-	W9XsSg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpdww89-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:13 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d40407c6acso3869881cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:50:13 -0700 (PDT)
+	s=arc-20240116; t=1758725424; c=relaxed/simple;
+	bh=BviqeMCj6xbZG75A9MR/UccuPgQG4y3Yp4Fdc2CDqkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nuRFh0QSIIjSz1YcVlKXOarCm13HPFYDmcZR07yW/+KZrERtZ1TLai+j19EtnF41kufTseDmunBOnRsLlzui/C80Pb2Wz5S97mtboYzEjxD5fQym3u4jpzQoH9OSFcQWgV7TLpTPsUsxzjLU4A0k1QJRfGewrts20VeEZFFo7EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBSRMagp; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-26983b5411aso49513015ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:50:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758725422; x=1759330222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zs6XTUkXRg23M8XSxTfnEtSzvo14dogaq4qf3KBzUtI=;
+        b=iBSRMagpnwwVM/fp51aan1J1lxdIc8wj+QbY3EHsTE9RZse72h1yjlsgHrSJAyfiD3
+         09A/HNdWCdEZPnwd+ost06FXF0/574d4EzZzW+0O9tTGq/OUTesvckc4E8OlQvTdJX38
+         dcn5FXxaf0thht5nWrBiMzY+uE97QmsSyOHWMP1QvJy1IoTmKZNXaSIEqEzy86cAA/QN
+         3LhlOeGCJOAEQokL/9EuK1h7OhTd220WwQYCPPeybxtMDFPm7h5YZ5WTWMVdOQECdwMn
+         eBTvQW2jZVXn4/DsRqO1SMfXLVjEZ1jL6cxSNvxujCc2T48YOkTVHloXAvgnp7Wp1o+/
+         hFJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758725412; x=1759330212;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOIwUpILHzWH2xAe7aoOnVRAWvWSgZKyb6P3XpLFlVw=;
-        b=am2VHZpFafAzd4PKFHVIVrCBpE7MaEYFpb6Kc1GuOKhJ5PVwekgKpvFP4+30FJE7qD
-         5g+aVa/RBCUp4Dar6+LpQEbPeqTMy5KihMMHFeShxWDw3T4spTOY8jn0VMwMH3M5HFh4
-         Rife72kR4xOwnx8XcDvSsuG4lfRFKmdtya92lCD/Z2GVXZgePKjmdqK2Il7aqk/7qZYu
-         lV4QIuVJzjtR0tJChj++dp37oNFlbZkLu9+jvmDL7cnCJTHv61JlZSjoiwBeiuAzCdEY
-         wecTmrSEuC/cjU0WA//jW2U7NEPxS4cvlL2Wg6bLyWj6VRTXd0SCGrJiPApzWME2upxx
-         FoTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvSa3NPlzIQ339q7F20jC6ScWXdIDjUs5Z5py6WHaLy17OO+u+cnR7p14HPF1e86vPP/KCbJw9gbhVK1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0NrV3h+ZkYP1ZRijoHRuWK5RevbX3TajrRvCDpwsTIT7jtK9F
-	mLT2YdwexpQnLuEbwRafQtYBpPUyYyHnJSrS7MCUIoK+j0dRCTxZqOCKZtwoJ3JpfxocHTJAqJP
-	ZVa/JWkt2YCRGJYAXudcPD0+Aky7tjypPp8NknlgvN5aCCodBmiwYTYD9o6CIhD8gWBA=
-X-Gm-Gg: ASbGncvjaYgiRzx1jaOHQGcstzMnhNf3SL90F/OG4JPAd0glxokRSCsLImMQjjx3jfa
-	ChoDIUL/3lLiBvdm44dI7En3Hy4onscIySvkweCH8blBtY9Doh3PuRKKlvXwXtXc1CtUtCmMaEu
-	ugnELUOiNoAFCYVPdZEKBl1G3tPMFoxfC6yxMbfGaQbo7tMUsa34IbZj3WJSvD+yKxxO4WST4MU
-	wcWcDpx4e1YddWVfN34H6eQlQxXRCpGoH/ISAgw+0SNQnRyAoR0UBg79YqxlbWsp+Jfp0OPZtqT
-	yZOI2qCiwkrKxhCd/SbfsiXF+Qpd7RcXDJ0C/e/AQb5RzgSMzqNKQsC0BOXxJgRoF+XKNt7mUKO
-	diwMV4dgxp39uv1IvjtAx9Q==
-X-Received: by 2002:ac8:5d92:0:b0:4b7:a9cf:91f with SMTP id d75a77b69052e-4da4b0490f1mr104651cf.8.1758725411642;
-        Wed, 24 Sep 2025 07:50:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/m7Ig+ntA4VCysUPYjwN26MObXEox0OR1XdnFAJSB9eyhSHSgSZI0IYmixSGdsHwEOjXGBQ==
-X-Received: by 2002:ac8:5d92:0:b0:4b7:a9cf:91f with SMTP id d75a77b69052e-4da4b0490f1mr104361cf.8.1758725410925;
-        Wed, 24 Sep 2025 07:50:10 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd1102d7asm1582827266b.76.2025.09.24.07.50.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 07:50:10 -0700 (PDT)
-Message-ID: <15c56c70-928a-4939-86a2-e7b81f1596a6@oss.qualcomm.com>
-Date: Wed, 24 Sep 2025 16:50:08 +0200
+        d=1e100.net; s=20230601; t=1758725422; x=1759330222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zs6XTUkXRg23M8XSxTfnEtSzvo14dogaq4qf3KBzUtI=;
+        b=cQtMEop8c7vTGuuY/cJWOqW+YILBWItDeYc+jRISfNTz1S10XUYfT11Ihb7HIOAMXx
+         HUqkyuwgRab/qpmD32FkJRIZ63PHg/D3WUqTSgWyT+g4MItI6viWZgTAsnK0+PC1/jke
+         Eudm9iKYs+igwLh9mlTM415N9yb6MiMFJYvErBQKKXKoAzOR9ZBjIp7h8KvAZIy6etuv
+         4uGdqpcXqQzgYB1ZzdbOrN6HRcAhsAQpwVWZeNhdq8/bmQbkWoWdjPreQRizHMocTxVx
+         QERWh5NL5MZ1SCg86dv4q6NWs7F7PpGNutrGRTTrD9eE2y77A8cw8p9JOZ+9VqZ8fSAf
+         vZ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXtCVUioVHgXXUBQZLTvB+4YdLuwzzHBAFcRtsPUrQI/4j2Go9Z7X5Ln1bKmJT5nN9d7DpaEUTRqf4j01o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSPWYCSbFmyzR82BuVSgHDaba+6fxIbzp+0RrAPibwEy93l/Dr
+	caCYRivPcCoG6Nz2ARnW7O3HzlSgDq2LQLJIUhYPzhpG5Ell2RDGLriu
+X-Gm-Gg: ASbGncsOLbqW2V46Eqq2LcokJu/w5fBlK0qVg1yMSivWnWMrrkazXRdWnpLB4KDt2tk
+	hCpbhMR4eu0ITAhR4YvWghXv6cpySrKCCwtSQTLe/9vaf5IjmOdEkXBNAgnkG1PUQyhOsnFeCHc
+	3dyKetAKpHLD3YKSIqHMd2KqpvVX0+kQ3EReb8NIZbK1QyTNdJ8JVVVOfc3lamD7gBs1PfUMvzr
+	TM1xjYH/9luCpzD0OlSWf1n9DurH/rGcmQR6DN+QOUbdsEYV/apGD9Endbth/tHKQJcwOul8w1k
+	xD5Chv/12GuarqBfzF6G3B+ebd1FJ71VrCMlYn8PFfuUcjeUg7Y2SAzRk7gHTDB0tHEOSxgr9OZ
+	G5HxMMNytXF+e5bVdu+dnOgKQh4AnEKttM9M=
+X-Google-Smtp-Source: AGHT+IFEVnMa+0Q7jFaXrSZSYdDF4WKGGwUE7RTEdlQrcVFTWGs7m29QTuWyQ8Z3+X+c9JfrngtzKQ==
+X-Received: by 2002:a17:903:8c6:b0:25c:ae94:f49e with SMTP id d9443c01a7336-27cc5bf416cmr79852045ad.37.1758725422109;
+        Wed, 24 Sep 2025 07:50:22 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26b59d6538bsm158340465ad.82.2025.09.24.07.50.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 07:50:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 24 Sep 2025 07:50:21 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: pali@kernel.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] hwmon: (dell-smm) Add support for automatic fan mode
+Message-ID: <fe494bc6-1e4e-4a81-8a6a-c6fb95160a65@roeck-us.net>
+References: <20250917181036.10972-1-W_Armin@gmx.de>
+ <20250917181036.10972-4-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] soc: qcom: smp2p: Add irqchip state support
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Lew <chris.lew@oss.qualcomm.com>
-References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
- <20250923-smp2p-v1-1-2c045af73dac@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250923-smp2p-v1-1-2c045af73dac@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: m51UJYlEdxmZ2aa2_J7SBMh-ctgMeYkU
-X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d40525 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Ficpkn55UaSewbb4THMA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: m51UJYlEdxmZ2aa2_J7SBMh-ctgMeYkU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX10M7q9PX5raN
- 5ba6baOs7xD1HNrrsGxpqc8S4EbNKvW11YGUxyoaKCXyvbVl6bgPkmAYAAUlzV+DzHfIkUY8GIy
- dyPcAKu8YXS1Zxm9hbJYeNPdE9S5/BXrQIeZJRcKcbhYhw3IGFOQvVPKZf/FBg5sDPhHiFKFyGw
- gUlHLOx2+7CZCMAl3rTVq31DQw50NTmhKabChgo721dmupTAz9SjSn81oUHJur+ijOSi58s2k7/
- +Z8GfHps/T/5thcG5UWOeKddhXthj0s2f2Fc3PN+xiu8K+5JSamMM4jaTufKPFbdym50ueKmpmr
- hC5eQIv4VWh9cFdc8CIbJ2MvGfkOeZWjugZeaI/xrtU6EzXarrsaUqaZ7RjjVlA1isUMuWk85iM
- pqcfWcw2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917181036.10972-4-W_Armin@gmx.de>
 
-On 9/24/25 6:18 AM, Jingyi Wang wrote:
-> From: Chris Lew <chris.lew@oss.qualcomm.com>
+On Wed, Sep 17, 2025 at 08:10:35PM +0200, Armin Wolf wrote:
+> Many machines treat fan state 3 as some sort of automatic mode,
+> which is superior to the separate SMM calls for switching to
+> automatic fan mode for two reasons:
 > 
-> A remoteproc booted during earlier boot stages such as UEFI or the
-> bootloader, may need to be attached to without restarting the remoteproc
-> hardware. To do this the remoteproc will need to check the ready and
-> handover states in smp2p without an interrupt notification.
+> - the fan control mode can be controlled for each fan separately
+> - the current fan control mode can be retrieved from the BIOS
 > 
-> Add support for the .irq_get_irqchip_state callback so remoteproc can
-> read the current state of the fatal, ready and handover bits.
+> On some machines however, this special fan state does not exist.
+> Fan state 3 acts like a regular fan state on such machines or
+> does not exist at all. Such machines usually use separate SMM calls
+> for enabling/disabling automatic fan control.
 > 
-> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
-> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  drivers/soc/qcom/smp2p.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
+> Add support for it. If the machine supports separate SMM calls
+> for changing the fan control mode, then the other interface is
+> ignored.
 > 
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index cb515c2340c1..e2cfd9ec8875 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -222,6 +222,39 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->  	}
->  }
->  
-> +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
-> +{
-> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-> +	unsigned int pid = smp2p->remote_pid;
-> +	char buf[SMP2P_MAX_ENTRY_NAME];
-> +	struct smp2p_smem_item *in;
-> +	struct smp2p_entry *entry;
-> +	size_t size;
-> +	int i;
-> +
-> +	in = qcom_smem_get(pid, smem_id, &size);
-> +	if (IS_ERR(in))
-> +		return;
-> +
-> +	smp2p->in = in;
-> +
-> +	/* Check if version is initialized and set to v2 */
-> +	if (in->version == 0)
-> +		return;
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 
-This doesn't seem to be fully in line with the comment
+Applied.
 
-Konrad
+Guenter
 
