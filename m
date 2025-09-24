@@ -1,152 +1,201 @@
-Return-Path: <linux-kernel+bounces-829876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F3EB981A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:56:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E37DB981AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26A2175E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0961B2081F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDDD225785;
-	Wed, 24 Sep 2025 02:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064A7224B05;
+	Wed, 24 Sep 2025 02:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmylvc5F"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PAZL+Whh"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013057.outbound.protection.outlook.com [40.107.162.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378054317D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758682563; cv=none; b=ferUPWtoFjLk5oPiOOdphF2RydlweCVRWlw4cjRS+hC69RyLSt7+cUaqrQu7pBbLbYodfg4FpGY5mWFOcru8ih+3Izu2QSzJoWtIFoY+XMexPi18fNVpPqwlycUprlstaB+hOzK+6gaQ669DO09ru7Dc69TPkNqYgdc/KbuAWl0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758682563; c=relaxed/simple;
-	bh=LP1aZBun3+jkx15ojdj7Rjv65YT07JMoONCYxkI1Gow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J4hqxsffgJL4hH7b94JXZTdVTh/Gc/jJ0hb6MEwBWaXeCYSVGd1Uo2h+TciALmeQZoVJM7zJd7yTJ1W0m7kgTd/W/210Uf0SefHGu3RPRkUpd7A4Ke/inWXlMzj0H7Cb0loj4AXJJ/pFHg7dFsegGLI/uqBL2m2GuRcW7yf37rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmylvc5F; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-77f67ba775aso500393b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758682561; x=1759287361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MMRETXGFwNVU6M9wzPozyz3115l+hikl117Pr5fgesY=;
-        b=nmylvc5FW7xoGzJxyEwoyPrwZH7RtfR9YNnob3HIx8ud1izMxnCTVa+ZAqqOUOy5xa
-         Qxj+MQ3kIecTrlVbdNxWN+lX85hcdrR+07yamutM9tlbGl6tIt6lEQuhHD7e92812FVU
-         AK8Vxxl8/9GsCnV21dpYgpUIR2lON58ZgwyrpSlElU3ocYcbOcn7dJkmQoQJHbNfAvIA
-         2pGzOBwvwcrlGElbs1vbJ03G7IEeLuM49JJAdZHFYYkuP7mwdJySKlPiqsCHiRmhN5Ib
-         qCdvzRJOrNDW3pWnMxHA8+PB0Wa/9fAKfNaRJ8ADHK2ANAElLJkqQaPLLOL96XC09hmB
-         UhnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758682561; x=1759287361;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MMRETXGFwNVU6M9wzPozyz3115l+hikl117Pr5fgesY=;
-        b=jLDWzBlD9iDcxrmpP3SYqZexVM/Ogh0lFAaZhv0/eEERJH6DW53Po1DqfW0CZLoH1H
-         YYF43opZoY2QThhlYaRtwihR264/DDiLjq+yERJmI/dgi2AqHuRyxI2oEQDyzFjTPK6x
-         HfbiqzgRyFr+9a+nqgoz96meQlIejt2qKNBN6vzrVwXDQxbnxeE6TcDLq9E/iMBckOfa
-         O53u5m7bnauh8ZslhC1rhGmqidP7NjSijwVAvmN36vojrJwmWZ7TZSI8tqG5tuU7oYda
-         Ake9kCtifJt9zsYcWQFkNCRW/s6/P8DQe9cq9EpDcdFS5iOPgYB/3A0Au3uzBZHjKID0
-         OuDQ==
-X-Gm-Message-State: AOJu0Yy5B5MM3zfdxNiIE83Kn+Qor35H4pYSufTOnIZuKuitsvRnN7+8
-	ZbOuFQbXTH6q2J21oMam9RSF8o36awNwIl9RqUeO9xUJWtEXW7ida2ka
-X-Gm-Gg: ASbGnctV3g9I0AOx/NL3wtD3uO+S0lOTL/EBIOn0XmrBNNvTmWQRD5A93qOAJu6azAk
-	AJ5qn0+MwbO1oLBXvrT/xh/EM+T5aJcaun8t6+aNzW6rJz0oV2zMdpK1B+HGSJdO0UG72duv5FW
-	H6qlyG8XStjzSCGs1GIlI1Gyb8ff2sqdHRwNb8i08uEyIyYWN3suj4RmkLCi+4WlFRJuEsK7joQ
-	xBksIU5AT/ULZKtRdii58w3toSbFYk5XZYPC4NSOrVEqyog1CjldxB3g/Kej+qh0PMA3L0TUFwu
-	RkfPqR/vbENSm8UPRAH2kxdSFveWc+rR11SS2/6AIsAR8Sik0FF76QsdaLU9sj1UhnRbzlxwG7w
-	H/8nu3JaVYJCKXgwudz8Y4HUImEp3NB55u0aQmw5vq1kvqKiOBJk=
-X-Google-Smtp-Source: AGHT+IGLsfif3M4Ae4fPfWq/9xMybr4m101+Ydzhkc+JwMmsr4jfwrdsMRN2wX6BznHZWqUGI72+hA==
-X-Received: by 2002:a05:6a00:228b:b0:772:5513:ba3b with SMTP id d2e1a72fcca58-77f5388d637mr5388097b3a.5.1758682561472;
-        Tue, 23 Sep 2025 19:56:01 -0700 (PDT)
-Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f613dbc5csm1619042b3a.59.2025.09.23.19.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 19:56:01 -0700 (PDT)
-From: Hongru Zhang <zhanghongru06@gmail.com>
-X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
-To: paul@paul-moore.com,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	zhanghongru@xiaomi.com
-Subject: [PATCH v2 2/2] selinux: improve bucket distribution uniformity of avc_hash()
-Date: Wed, 24 Sep 2025 10:55:53 +0800
-Message-ID: <5188e81963654bbe9d1e70fe6370a38fdf4ae677.1758633723.git.zhanghongru@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758633723.git.zhanghongru@xiaomi.com>
-References: <cover.1758633723.git.zhanghongru@xiaomi.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460704317D;
+	Wed, 24 Sep 2025 02:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758682650; cv=fail; b=rTQZlhCAxAvLG5Qy5wZHLtZpiWkLHROAA22SpNSZspmxMvfz/qKiLvSYOpTS9hn+JkeMGxlWKB4AWYhu+rZobmB6M6aMEY7/oPjf6niWAexNpvAaMOhJoaeHsVH7K4MWW4TiQNEP+PKV9Kq/Ne3G/3quzLpjjt6X7GEsFmx/7QA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758682650; c=relaxed/simple;
+	bh=o7Rc/n9BeTZ7ozrreu+ioPSaSN6I4nWKIB+rcf8L8as=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=sUqrm0d6BbtGaJo3m8Mofxc9THv2Eltxo3gC07fQjDKGCJujXy9w/3Shp1GeA8ji7EeZ2YO1G20Tl1+kcc6FR0E61ISrHPCbEWvCMZe7D514PbGamnEgYFgsaiv7WD7kPM97vf/ctbp3cxm5vTwqBUmEAqMFukr/EVxzXPCHFrE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PAZL+Whh; arc=fail smtp.client-ip=40.107.162.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eE7q8Uu/H1lWAvm+CW4V0E14gMsRdEswBFUu8KwOZUCJ4Se8ltphBpfkePf8aoByCw7tZ0LNGiC5S9QFOJA6h8yw9wd+iA0uo89cMxlcok9TNl0+XNa8QPCazYHWP69NnvizAa9wAH5wa9cYGRngZsluvcCm9ErYgzEdmp4eQskgRSKChsJvnTUkV4EKgUs7IdwjxEKlVoX0rcRFSfUa6MhKauaF3OgcgC0qh9+dgBtNfrEd+iD8Sdg2agjcMIue2ez38Q1/FJC/TCbWs1i+j0GwfHGaiX4w/QTwwsrDkTaFC6AMombUJJ/uSVWrhOoGM19d7cKlGxv2FjJ4Mn9hFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NYE8hAwinndOIZ9waEdQTrsRxJfQYhvtCtDOTS8MhP4=;
+ b=bcLWY3H3kaGMP8vNsGs1SacYI9I1PvHTBsIpDyJQrt1gjwq6I9X38rHl7nYH7oW3xam4LXHN0iTZR7x4gUxSXorE62jbx8/AAxWuEX4EyghwHoEGnjCMVNFIkAv0jXzA6BGIKW/w/OYb368hZbhYqalSICvZMf3mw45npdYv2j00MgUWnA3Tx+tsLTkcS0BrfIn7kGIiz1CFP18cIz3+QtdGjEGtJs+/EqEOiUNwfhZx6/QQR3U+q+uXXRZc+gsTk+OYgj51qIAU/2cqSMi50m7oOwv2BvuOqB4bEvfmuzilLDl7aVs/gJj/fivhJWbS3qnMihxIKwoQzjz3L65Fpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NYE8hAwinndOIZ9waEdQTrsRxJfQYhvtCtDOTS8MhP4=;
+ b=PAZL+Whh8JuGaBw/l58N+ZfSwK1AM3cbf0x/Si6e3vib9uwT6FrW+hUjajHV/axUKho6lIM/3SGIiVeiEHDepe+0NKTU2J4v+roIJ9pj9ADs0o7f2YpxWQ2qbohKpYzhXPktKPihuv5nKYGhYfr5Mk7EzmDlf8OVCVy/x2c2UDouj4+FBxgZsWWoSRycxmnvbqTryVCQnnEZczTaxsL2rhP63/JL9evkMPyzBPiYAPRYmpvFw2AnyOAf1qxXLYG9uxAqGnlgow5gMu1yeSzbELdXKt+cDrr68sFVwOunyWQGrK90K2Y71XDr0ytpkqPRe+SGJh7PD7ODHGBKIz0aSw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8418.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::15)
+ by AM9PR04MB7505.eurprd04.prod.outlook.com (2603:10a6:20b:285::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.8; Wed, 24 Sep
+ 2025 02:57:24 +0000
+Received: from AS8PR04MB8418.eurprd04.prod.outlook.com
+ ([fe80::99c9:99a6:e6f3:7a9f]) by AS8PR04MB8418.eurprd04.prod.outlook.com
+ ([fe80::99c9:99a6:e6f3:7a9f%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 02:57:24 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	shenwei.wang@nxp.com,
+	peng.fan@nxp.com,
+	frank.li@nxp.com
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH V2] tty: serial: fsl_lpuart: Add missing wakeup event reporting
+Date: Wed, 24 Sep 2025 10:56:07 +0800
+Message-Id: <20250924025607.2515833-1-sherry.sun@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0018.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::7) To AS8PR04MB8418.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3fa::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8418:EE_|AM9PR04MB7505:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56267e05-a63f-439e-478f-08ddfb161691
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|19092799006|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+SqVz74+2SI+D+n9LHSn4R13pGZnh3K25+1fBTuPwzQCT/NCQwcxC/PagSPU?=
+ =?us-ascii?Q?cNvIu/Rv4fV3Th6PuwtPExyVsBHU1TjcaOeNkcB1zP/s+kJuenQyUDRmEXTm?=
+ =?us-ascii?Q?fq/aLaQwQpYAfZxLi36kZzz8z9+oF9c1+aXdnrQPKikjaYKBYvVOrUbYwoXV?=
+ =?us-ascii?Q?7aymTq8SsGUJcfQYOxjhXiXBPfzEnLUbZOTbEfoLXH3DSch41eXB8fnB2x/W?=
+ =?us-ascii?Q?LgUNzaltnwapWNlIFM4rzeKWf0TOjVHhfdWgFUfLVGRJI3oMttylGMp4ej2c?=
+ =?us-ascii?Q?u9+orL6f3OxHDNzbk5nRtIttjftaBafBVBi78kn1p/SIHgE7tIoqdq3B9IAk?=
+ =?us-ascii?Q?rDKW3I/zDywBdHzUYAAnvgiOmuIi6Xr5oupNzV8jNAt/51/JCl756nSktJYM?=
+ =?us-ascii?Q?nY1MSeJVXNe5wkSTlHRUAbofWV9lfomBW1XxweNk9WFJ3FC1gfiEMjLM+Khc?=
+ =?us-ascii?Q?+Vp8D0UiukwddfzrKm0avxqHJ7cGM3D/ltcbFZ9tTfs5vi3kuT0DN0CxORvJ?=
+ =?us-ascii?Q?kSBBh7okJ+MUOkQivxan8RNxOLlHJhm1bA9T2FMXk5XamyPEaO9HbmXUW+H1?=
+ =?us-ascii?Q?2lJ7L3uMpf8EOJnZKfCxNE0tz/FswSE6v8b5Ycrma9cHpEYhsoO4Y9BltlKv?=
+ =?us-ascii?Q?U2XSYap86xUijgAhhP4QIcG1nTa9BGUsAa6TuCcIz4KByZSsKAn45RHdI9Cq?=
+ =?us-ascii?Q?b7fMLe3ZF8zqGeJ/x5e8U5OBgFj+fCLqdSWzKy1RIu7DLF6WgSSY/01HHFpF?=
+ =?us-ascii?Q?wpxwrpTDl668z1QBnZANNXwhB3JZ3rTIMmCz21v+HR23WpOST2gsuA6lXjav?=
+ =?us-ascii?Q?krwi70XWsSJ7at7U62LsevU4tQkBcLM4Cyk6NBRSecj+PCCd75Ol842Qf34q?=
+ =?us-ascii?Q?T4ZMjC2Ut6Ul5WYu/rU3ucDsXV5PUWIoCU4nZSwa7UmpVelm273ZMYBLS2Iz?=
+ =?us-ascii?Q?viIdbyspBIImggnnbUXKq9PP5D0mscgzX5eQlpUU68TFXll0PEVlU+nQ+aZW?=
+ =?us-ascii?Q?9hEQF+hozfhCzYEZo8OsQU0688zXWwwcZIG/l8zyE0dYk86QRWxEccvERqqI?=
+ =?us-ascii?Q?XIAQAHIbaqwJOWLYoxC/OL4hFFoX2kSIss1lhbnorTqsk/TcshHG7DpHXPAu?=
+ =?us-ascii?Q?9N6VKQtS1yrw8Ji5/E4qie5vf31lQVoN8XNazGNmFiuCNjmkxotGW2vd9O6/?=
+ =?us-ascii?Q?EoPpIkzJ3gFknN2X0iY2020SElFMhjFL971RAZ3XYz3gRN+xbuxoAy8AvTQd?=
+ =?us-ascii?Q?4xWZcSzeiIovgCR7PXASGXOzCQ87y2pwm4s8rSH3Mol3llfh5T0Ib2+KkhVN?=
+ =?us-ascii?Q?A2YW17u/4cxdzOi5nk1j3JIxa61f0Kc7JZv4DquEa6WMPVLmTVN7iit7Daee?=
+ =?us-ascii?Q?AY8VMz7uFgJ+f7B8VET3QYWg6nLZUcgBnbQVRDWiIfoptJ7Ra5BwLuTGFFAz?=
+ =?us-ascii?Q?sadacVR3XC4vMSs6MJd7RDPRRcLLJvi5VSbOHeb72W+xq8CfI7rPZqI6MZBq?=
+ =?us-ascii?Q?qlvRzzwUVvh2q5g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8418.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IsIl97yM/xs77hIkPHRA7hDJY33eieZ5zFYV7nKDAUPRUdKMfllSfX151VhF?=
+ =?us-ascii?Q?rVUm8AuUcIHMKX/iLRGK3QTF8c9rzyfaWHzbXAv7+COVm1+VH62FO/Yg6r+a?=
+ =?us-ascii?Q?Hp6h9Bb5YYwIv7Y71PdxDJWpimUXQedIwZfmBEvkXESjUOiAT8a7iV7Jbfbw?=
+ =?us-ascii?Q?tgrEKObRwJBhu6hDMgLvxEhMzKrTMQlGlkoRWTXefSQYYTe24bfnS8bfmKwf?=
+ =?us-ascii?Q?Zdu2cZP1BKSBDH6mKj3SD/V/445DSf7eOPICDcrgWVPtHcxkpuBILC41trfv?=
+ =?us-ascii?Q?nN274YuCUCgXI7CZ5pJuuAyhBD3BVHXObEzW/gZMWDr9q5+9jbXQrRp4ckRm?=
+ =?us-ascii?Q?gUY8lt7bBxsIZr0NpOspt1RUneg2OnHtxjhtFz4tcC86om9+sinwSEjlqMAi?=
+ =?us-ascii?Q?jk+1ZpVq2SBwQ5QtJ4tUPtGOmdwXhwyDLD7ha9JuW1slvciN+T4ucI+qKROX?=
+ =?us-ascii?Q?lSTuUIlS7WcDk/AtxBDbsSS0Y8NPMtF+UFqXeVP7zajlomJO4vC+OFCXe++A?=
+ =?us-ascii?Q?sw8i4Aw496VdHGl91+svTXvAoTCFSj6+GKF1Jb4+guz4ZfufWlx5GcGWbctJ?=
+ =?us-ascii?Q?Kj5gzZgeVCM75GVCpKy0q0Eu5zWn9swxAp/g5Fa9IZxB2dXt9J6EYaB2+DMF?=
+ =?us-ascii?Q?YMCCYBFcBFnbC0HvYwKqpb3igkHFjDJjs1Xgv6xYcqqIok6Nv2gbFEBzL7cN?=
+ =?us-ascii?Q?Gw7wRr8H3bOLhxqf6q6R7Fy1oyjsoPMRxqQm4B4+KPz6Nx9mpzkGRNaweIJw?=
+ =?us-ascii?Q?lJZljLtVmF58+ECjWk7AEJKuZEeD5DqYDPndI9aENvckJxyUzosWZ5wr9ABs?=
+ =?us-ascii?Q?HhCEhSobUlU0/mrOvmjoJXveiuraqPAW7bxqxVwIJISBkhAOfdDyKI15OAn8?=
+ =?us-ascii?Q?a+NID+EGh3cSBAKV8V9bMDzTCLVWLTybyqa6NeMVIgIYGVBxji7GR8sH2tUl?=
+ =?us-ascii?Q?OFlZ3rc7tQzHJQwAuo1n6XFB4Vku9QsRjeafNaltMtOo2gvvRJDEjruFxlhl?=
+ =?us-ascii?Q?lggod+bTqQCkqAFV0HodPIT2uyU3afc2BcvKahDYa4/FbUtUyy7MpNGV3DoR?=
+ =?us-ascii?Q?FHrCdZtR88f82A+zzfgLxldyfcBbyaa8s6Fp2aA8PCId6cXQq6lxtxSrarYO?=
+ =?us-ascii?Q?POG3qIhuWCrP3Sr3e63IiDEHIZqiJdcpakYDEV/g/HeAPYMM9rVCKJ6BGVoq?=
+ =?us-ascii?Q?vi/kXWKFkh9oEV1TK7A+bnvLH4VGp2XjoSYvfDRHNPKoDq9TU/5gWOUMzuWD?=
+ =?us-ascii?Q?kfv1HU225HLs0GI4XZkCDsHcqIEWbKFDc0433qJDbMjHAewQmGx8/92MxP//?=
+ =?us-ascii?Q?ZLKjJBCnVGbTlsAn+ZrBop258vvIY7FywXPKD6HJeovEA3Et6ypyOrZa5X+W?=
+ =?us-ascii?Q?qg0Fm54KkgpWZl6CwBqTvlxziJ0q76auVp4FE0MHYCrv/Zt4kqsfXNVbs+Bu?=
+ =?us-ascii?Q?zYpI0ctoVxuezKyj56kWttbfH0lzFuDd27gSjLIAeSpycwDWobS+T8R5j1BM?=
+ =?us-ascii?Q?/0KnWyY239ATecsaIna6UiwATjEsHa60tLYsU9/LzJhoVkXS4i0hFwWvag/e?=
+ =?us-ascii?Q?qIjJxk9dJMTpSba+yOs64KCrpbm8jdOIqx6aRFbX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56267e05-a63f-439e-478f-08ddfb161691
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8418.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 02:57:24.5411
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0mhHUpQByCr/LrodldkDaeeb4cdiGescaiw5ZmhXAXQJrZdHLbIE9Jm2v11Y57Of9ahmc4jQkCj0YAgXsbtNoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7505
 
-From: Hongru Zhang <zhanghongru@xiaomi.com>
+Current lpuart wakeup event would not report itself as wakeup source
+through sysfs. Add pm_wakeup_event() to support it.
 
-Under heavy stress testing (on an 8-core system sustaining over 50,000
-authentication events per second), sample once per second and take the
-mean of 1800 samples:
-+--------------------------+-----------------------------------------+
-|                          | bucket utilization rate / longest chain |
-|                          +--------------------+--------------------+
-|                          |      no-patch      |     with-patch     |
-+--------------------------+--------------------+--------------------+
-|  512 nodes,  512 buckets |      52.5%/7.5     |     58.2%/6.2      |
-+--------------------------+--------------------+--------------------+
-| 1024 nodes,  512 buckets |      68.9%/12.1    |     82.4%/8.9      |
-+--------------------------+--------------------+--------------------+
-| 2048 nodes,  512 buckets |      83.7%/19.4    |     94.8%/15.2     |
-+--------------------------+--------------------+--------------------+
-| 8192 nodes, 8192 buckets |      49.5%/11.4    |     61.9%/6.6      |
-+--------------------------+--------------------+--------------------+
-
-Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
+Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
 ---
- security/selinux/avc.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Changes in V2:
+1. Improve the commit message as Frank suggested.
+2. Move wake_active above u32 stat.
+3. Use (stat & (UARTSTAT_RDRF | UARTSTAT_RXEDGIF)) instead of (stat &
+   UARTSTAT_RDRF || stat & UARTSTAT_RXEDGIF).
+---
+ drivers/tty/serial/fsl_lpuart.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 7a7f88012865..d08f30d57bac 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -146,9 +146,23 @@ static struct kmem_cache *avc_xperms_data_cachep __ro_after_init;
- static struct kmem_cache *avc_xperms_decision_cachep __ro_after_init;
- static struct kmem_cache *avc_xperms_cachep __ro_after_init;
- 
-+/*
-+ * Advantages of this hash design:
-+ *     - Minimized collisions: Different inputs won't produce similar
-+ *       contributions
-+ *     - Bit diffusion: Each constant effectively scrambles input bits
-+ *     - Mathematical guarantee: These constants are theoretically analyzed
-+ *       and empirically validated
-+ *     - Complementarity: Three constants complement each other at the
-+ *       binary level
-+ */
-+#define C1 0x9E3779B9	/* 2^32 * Golden Ratio, classic constant for Knuth's
-+			   multiplicative hashing */
-+#define C2 0x85EBCA77	/* Large prime-like properties */
-+#define C3 0xC2B2AE35	/* Large prime-like properties, MurmurHash3 constant */
- static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index c9519e649e82..1bd7ec9c81ea 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -3087,6 +3087,8 @@ static int lpuart_suspend_noirq(struct device *dev)
+ static int lpuart_resume_noirq(struct device *dev)
  {
--	return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
-+	return (ssid * C1 + tsid * C2 + tclass * C3) & (avc_cache_slots - 1);
- }
+ 	struct lpuart_port *sport = dev_get_drvdata(dev);
++	struct tty_port *port = &sport->port.state->port;
++	bool wake_active;
+ 	u32 stat;
  
- /**
+ 	pinctrl_pm_select_default_state(dev);
+@@ -3098,6 +3100,12 @@ static int lpuart_resume_noirq(struct device *dev)
+ 		if (lpuart_is_32(sport)) {
+ 			stat = lpuart32_read(&sport->port, UARTSTAT);
+ 			lpuart32_write(&sport->port, stat, UARTSTAT);
++
++			/* check whether lpuart wakeup was triggered */
++			wake_active = stat & (UARTSTAT_RDRF | UARTSTAT_RXEDGIF);
++
++			if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport->port.irq)))
++				pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
+ 		}
+ 	}
+ 
 -- 
-2.43.0
+2.34.1
 
 
