@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-830948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C2C1B9AFA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23776B9AFB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591EF16C856
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816874C7A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EC5314A97;
-	Wed, 24 Sep 2025 17:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54C1314B71;
+	Wed, 24 Sep 2025 17:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULS2GW3y"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NW1mGYjc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182E9182B4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872B5314A90;
+	Wed, 24 Sep 2025 17:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733658; cv=none; b=rpuT2DKEe/aYujw4pOsUiQO9y22v7GyU4Edq0k2f6qm87MwAwVnKVIrkmeQGOkfjnwXStA5i5W0lxQD0SSJoPq7sCmGtKEdnWC0WJH3ibope2b4V2jSIeOQjkHukrTCzXBQBmHgCzfhAe1ISBfsVTPozyFYsXDyG7MZ6BbKtLh8=
+	t=1758733740; cv=none; b=h2FJSynou3X65LhkxwFhWUT3W8bowCG3aeHVTDpwiuNr5MgkwA5IRgxNhyIcwg0wIdqqwcWt+4Ho7HtyD3clK/bHEqHyF9eAe9qRZxrgPTZ+GlZrKZWvsL3YZES633YVl/qPEQ3i7Typc5TdoSKojPd49hKU9wXgZVLrSeMcqPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733658; c=relaxed/simple;
-	bh=YRqMp6ISqqJIV6UOnkn8eYwsVLH1TS5Pu0GLem32nEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4DYEoZ52kbN2ArN5uX6p9nqWJm3o5FWuv9PdKVIxkjQKWgTZVJTKtk39z5qf4Rpv/l9YyUKKtjF8EbIqVNI3bOezanLgE1KYHIpbryK6puAB7a0SDKIr2Fo8o+J4jXWO8kySoRj7xrNX4byJyQf8EbCNfAK0pvzMAgLIE+jX/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULS2GW3y; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee1317b1f7so54079f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758733655; x=1759338455; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6NbfoLkhV4bTIvaUN0MOx6IHZBFCN15l7e9hsA+QAk=;
-        b=ULS2GW3y9AuCFvtqep5b07Q9VowYRzoLSmjklDCoFNp2kzrzZ4+GDWb1zHUoM/8TCI
-         3NJjM7IWhUW6x2t+sD+ujEJ19oB//U9h7lNzZUXSj0DDVndcjzB8lFyhl49uN0F6DbiV
-         HDknavUsDGSAjvEDRLT65dPFSqV3dE+tGNb3ziVip3YQkIlmbb0Mr5N8VcfA3F2GlQ/3
-         NPG1sIdnv0zXBV1nxPPsmnbMM6ISjFrVvmQD54Q8CUmoGttEjoYXkNEFZ+91RsBfiDaP
-         W/isVbuXbx26d2K4LJfeeRecg8wxyxDaDfyAod6C5AgK5In1xE/I1rSnWVlsVre54x6+
-         agfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758733655; x=1759338455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N6NbfoLkhV4bTIvaUN0MOx6IHZBFCN15l7e9hsA+QAk=;
-        b=iHSD9Bn+v5Xcn1t2/Lf4t4dgbPAo9Yqj2jRVdInxJVdrMg4i8U4Cimw3HJZxTpuT9r
-         0cG4g1orFk3+1Lg/TtAbXe7YACc6nQBB9tMrG+jWvkXV1kirVXQmC61T9R2kA6CPep3L
-         jUpwt9V8tAn6BGtDTgbzIlBU4mg+n3jmC2RfHm22NwcsJazNQtTou/eGhPpqUsPU5Fsq
-         5Vsb+DsZmkVs3GXGrH25UJBmeBrdddOm4PKyhESJtx980RjqhJxwOEW921Ac2j1PTj6V
-         4x3uMi9o+w2WHD7IggasWVjv27j6EnWhziaLVszX+2wVooXZ5NduHdkQml7UAibqDIKQ
-         1y0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVfVOuPA/nMgUdwJTawIdrOTkjxtvYffJbrDAPaMHYMA5yyiYmjdDZyXZ9MT7AV35eOlz9iNJJw/2Rf+hw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXpx2GZ6NEzm0gVyH0K9Qc5iQEYps4k5RR7TInZ2E5Hu7DH646
-	VTfyWQP3QqPXn0nf1VK6bOFtcU90a2UJw5LsCE5DWxInTtlBB76RJAF5o0fF2zUn6vPkmgVWdwe
-	75g38MqnyVxy71/Qav7pGaWEzHt51YOs=
-X-Gm-Gg: ASbGncvZhf1TYV8vdXDOxkS576GYLujnsqYvZ2wJ4GBpr31Jkm/LKqDcmO0mf/NG4WO
-	iz3yyYBXzWtFA3G1qmqg/q9+MNyyyy4u60r1BEV63goGP3dmEzrksPaNC78SKS4xUb1IcwGxbqw
-	OZSYJInFfIx4exNdsJRO2AcG60OF+u+n+91Z8RPUuGeLt6smvUQpjXyjUz6ahDRei6GZQRuYURv
-	4CHew==
-X-Google-Smtp-Source: AGHT+IGFyiklRq02PW4vHdH74vwxnS++02d/GOkLHF4wm5gFcNuZkL59cR+2f4c3DDAA9zxiZ1Wld6PWNEY95CvQZhk=
-X-Received: by 2002:a05:6000:1848:b0:3ea:e0fd:28e8 with SMTP id
- ffacd0b85a97d-40e4ba3a4demr645051f8f.32.1758733655112; Wed, 24 Sep 2025
- 10:07:35 -0700 (PDT)
+	s=arc-20240116; t=1758733740; c=relaxed/simple;
+	bh=aeWps3hGKLyWKjZOJweWrTxcCTaDaWqTIIpaS/fAWuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvg/gUztUarV82A0it36aPERvs9LD9/5iNRum7pVImWwhhBobkfYuMWPW8taJANBhuqX8dgD64GliiHJ4Ew3amcOMWvQ9YckA93tv6MSvrS8nwEMS1BJXhhnzNz4lvzNMsJA0wFOzclr+pmbOVIivQzkaLGkqkpMXZnAJorv6xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NW1mGYjc; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758733738; x=1790269738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aeWps3hGKLyWKjZOJweWrTxcCTaDaWqTIIpaS/fAWuQ=;
+  b=NW1mGYjct/rMSOawycROsnZ8i+KmZ8uiXZBMjCshYfywVnZj/ediIyOX
+   HMkS6s96sEE1Ss20SPtFfWBEvIMYWCewSgP/aayrER/kutUL7a690dARF
+   6Efom90LxgJRXPG0JzdUlrRejAbOPMJiJZQ3aDH7AQ9VPW6MLOVpm4wAo
+   6qX5j9EHN8liEkkCTmUruh4/Kmqd5txbbovnA1BQlXVYlk2BxdDW2t/Jo
+   t36eXHRAFiQ+7yqPL40WlutRWfABR9fbm1EZ6AeRyw7L1SS+UXwYqOyOt
+   FMImumLnZ1xwGIRehuGunLaR0fjPcchXTM5m1/OUXta1IhRij5qG7U1dp
+   g==;
+X-CSE-ConnectionGUID: fuhOFHaSRii8kGSaGwI+9A==
+X-CSE-MsgGUID: s7p4dvMrTcSm0gmBMt4uJA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="83643412"
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="83643412"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 10:08:45 -0700
+X-CSE-ConnectionGUID: Yhq3NqxFTYOm0i0PtY1iGg==
+X-CSE-MsgGUID: dDWvxP7bSZ+FFgPaJk9r+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="181473381"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 24 Sep 2025 10:08:40 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1Sys-0004NB-0I;
+	Wed, 24 Sep 2025 17:08:38 +0000
+Date: Thu, 25 Sep 2025 01:07:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shenwei Wang <shenwei.wang@nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+	Shenwei Wang <shenwei.wang@nxp.com>
+Subject: Re: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Message-ID: <202509250023.gNpm32hs-lkp@intel.com>
+References: <20250922200413.309707-4-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-local_lock_internal_fix_shadow-v1-1-14e313c88a46@kernel.org>
- <CAADnVQK_Dt7Ag9nLQm2LDFoiB_ymorC017YXJ9ZC06VizEHt2A@mail.gmail.com>
- <5d6641e3-3e89-465a-aaf5-558dc97a7581@kernel.org> <3b16de2f-9298-452a-95d8-df2b4b668714@kernel.org>
-In-Reply-To: <3b16de2f-9298-452a-95d8-df2b4b668714@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 24 Sep 2025 18:07:23 +0100
-X-Gm-Features: AS18NWChg8mp5qIEM1LK50ssuRcLWSbbP4i_mais98rIDG0PL4F_WBgQHI72BB0
-Message-ID: <CAADnVQ+xGQGdR85R6EnX7Rrv+RqkrTfLjfdZOYJ4bPb9+Govyg@mail.gmail.com>
-Subject: Re: [PATCH] locking/local_lock: fix shadowing in __local_lock_acquire()
-To: Vincent Mailhol <mailhol@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922200413.309707-4-shenwei.wang@nxp.com>
 
-On Wed, Sep 24, 2025 at 4:07=E2=80=AFPM Vincent Mailhol <mailhol@kernel.org=
-> wrote:
->
-> On 24/09/2025 at 19:26, Vincent Mailhol wrote:
-> > On 24/09/2025 at 04:38, Alexei Starovoitov wrote:
-> >> On Tue, Sep 23, 2025 at 7:02=E2=80=AFAM Vincent Mailhol <mailhol@kerne=
-l.org> wrote:
-> >>>
-> >>> The __local_lock_acquire() macro uses a local variable named 'l'. Thi=
-s
-> >>> being a common name, there is a risk of shadowing other variables.
-> >>>
-> >>> For example, it is currently shadowing the parameter 'l' of the:
-> >>>
-> >>>   class_##_name##_t class_##_name##_constructor(_type *l)
-> >>>
-> >>> function factory from linux/cleanup.h.
-> >>>
-> >>> Both sparse (with default options) and GCC (with W=3D2 option) warn
-> >>> about this shadowing.
-> >>>
-> >>> This is a bening warning, but because the issue appears in a header,
-> >>> it is spamming whoever is using it. So better to fix to remove some
-> >>> noise.
-> >>>
-> >>> Rename the variable from 'l' to '__lock' (with two underscore prefixe=
-s
-> >>> as suggested in the Linux kernel coding style [1]) in order to preven=
-t
-> >>> the name collision.
-> >>
-> >> lockdep has __lock as a local variable.
-> >
-> > OK. I didn't saw this one.
-> >
-> > But there is a major difference between a shadowing in lockdep.c versus=
- a
-> > shadowing in an header: the shadowing warning is local to lockdep.c and=
- does not
-> > pollute the other users.
-> >
-> > My worry is only about the spam created by warnings in headers.
-> >
-> > Regardless, would renaming to __locked or __l instead of __lock help to=
- address
-> > your concern?
->
-> __locked was a bad suggestion. It could be named __local_lock (there is a=
-lready
-> a __local_lock() function like macro, but function like macro does not co=
-nflict
-> with variable names).
->
-> But now, my current preference goes to __ll (and also, to keep things
-> consistent, __tl for the trylock).
+Hi Shenwei,
 
-I think s/l/__l/ and s/tl/__tl/ is fine,
-but do it for all macros in that file,
-since renaming one is fishy. It doesn't fix what
-you're claiming to fix, hence the pushback.
+kernel test robot noticed the following build warnings:
 
-Better yet, learn to ignore overly verbose tools.
-sparse/checkpatch/gcc are not always correct.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on brgl/gpio/for-next shawnguo/for-next linus/master v6.17-rc7 next-20250923]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/dt-bindings-remoteproc-imx_rproc-Add-rpmsg-subnode-support/20250923-040844
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20250922200413.309707-4-shenwei.wang%40nxp.com
+patch subject: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+config: arm64-randconfig-r121-20250924 (https://download.01.org/0day-ci/archive/20250925/202509250023.gNpm32hs-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250925/202509250023.gNpm32hs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509250023.gNpm32hs-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpio/gpio-imx-rpmsg.c:410:44: sparse: sparse: Using plain integer as NULL pointer
+
+vim +410 drivers/gpio/gpio-imx-rpmsg.c
+
+   405	
+   406	static void imx_rpmsg_gpio_remove_action(void *data)
+   407	{
+   408		struct imx_rpmsg_gpio_port *port = data;
+   409	
+ > 410		port->info.port_store[port->idx] = 0;
+   411	}
+   412	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
