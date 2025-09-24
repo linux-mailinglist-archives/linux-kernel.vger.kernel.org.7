@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-830315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25E2B99627
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B52B99615
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF521890B73
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95423AC0EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0ABD2DC788;
-	Wed, 24 Sep 2025 10:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7040B2DC773;
+	Wed, 24 Sep 2025 10:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VMRVlyzU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teAk/W34"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7181C2DD5E2;
-	Wed, 24 Sep 2025 10:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DB53596D;
+	Wed, 24 Sep 2025 10:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708771; cv=none; b=u9P4dJpIBsA8uKcQFLLGBF5Eyjwurg1A6yoZSydgvkag84JfoNAuUTKUwKagZpxYnOnsJ2X4nC21ZfrnwhSexvN1dVU2qUhujb9eqFKe1zCZNxJgwNuE2WU4u9QV6+AMTBE+sd+77yRgptyPKMeFtFsQpjbqFzNo8Xtw/5YVRxM=
+	t=1758708760; cv=none; b=YtGF3BPKyaufYZxulF1l+HnxDz3sN28S2CyhdP9i8MXR6GoGmLIelltDn+iL2IWF/DYFCKuOQRPY50EZFpCaoeQ7sJi31JurOxu8nk7DmsMQrBmtGj+SF1uxaEl0j+X5+PtETKoRqbW/NTMgrno+sOILO+4eKSE5R5i9broHuAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708771; c=relaxed/simple;
-	bh=D5SpqLgtg8TrRXmvvRrz2Dlx97l0sLSkeQdtgoGX5SI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Na7D0Gvxf6S+4sCOrVneHZu0a35hLQxgDDzZR7dEyeNK5BDd043drH+KvY4r7JTH/+dpGe0l+19mKzvNgoQrAWchxK06Yn9zW3wQIAqFuoyH3n4JPBktqp8iJNdDIi52Tv/kB1A0bS3RlZ3x+9fdJmreszzihA+uc+kAAqitNEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VMRVlyzU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758708757;
-	bh=D5SpqLgtg8TrRXmvvRrz2Dlx97l0sLSkeQdtgoGX5SI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VMRVlyzUSQQ6kE9AdX4G3M8k1NdpJI3ti4OtMIMbU5YjZTZRFVE3fK3u9dYAJsWKm
-	 KTDi3BHax89UW6IWma1FtBPrvF1JfBjAk5ppvRXsqsK9Srd+rPB8g5AhKFpgVFE4hh
-	 Va1pk326vbWltn7cQG1WfchiRGBNZNSii0YRlp/xJ6sF5SLPAaAwHQEH8OmiqnKpGp
-	 My5v2lbNgBhZIpGAxnjE9cBy6nwjFvkZo7VANX22HaOfvONB3TPUQqeFVK+CCL6xPK
-	 QE+bsP4EReA0eLin783kd3yTi9GbfYORJ3zNeutH6qWSPZEr8czkMZs6NjXe/h8GxG
-	 GP/DeF1tVKs9w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 40F0E17E12A7;
-	Wed, 24 Sep 2025 12:12:37 +0200 (CEST)
-Message-ID: <30a75332-a7f9-41ed-a4e8-520b1e7c9bfe@collabora.com>
-Date: Wed, 24 Sep 2025 12:12:36 +0200
+	s=arc-20240116; t=1758708760; c=relaxed/simple;
+	bh=jb+RYxnvCgNCh4wlGf5pJ2xCgvY+hLEmDVthm8B/5V4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SFHzz8awgm0oXRmxL9k/nS3H98bABB8UXjQBx4+2XXBvUrXZi4lnLqZ+Lm74V4rOJ4lEDz8cbTc4h+mjRmL5eRpGqI711SjqtE5L1tQLyE3K0bbC+hqlTL54XlwP/bz3wDEFxxM57xvwxOQ367FVSVRdq+vWABb6yXSDKM1cgmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teAk/W34; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D047CC116C6;
+	Wed, 24 Sep 2025 10:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758708760;
+	bh=jb+RYxnvCgNCh4wlGf5pJ2xCgvY+hLEmDVthm8B/5V4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=teAk/W349aB3IgcENEqQsRTrzyv6F6YvIztgVNuEvvJA203yt1GLQCJnVtLwiXRNU
+	 2trMOFL01Z8owaIL4zRzulFIH+UKBG/YiLDEbGoq0f4c0qItr2CcFz56wPjSoA1coo
+	 tVSmMVZx0CcAF1npEQFSyPFUpAX0mJDsABi5X7uWKnO3J0P3kUzXTHxQRHB7DLTC3g
+	 hV4lyQbA8egEg4r1iZFMp96j8BfXzjDXGKErvHn5zKfXqrg2gbeHjr9uyGYAEqQMAa
+	 BMocuXXl9R5ZiBKvKd9UTKj+TprBlW3iMpf8H/pK7n4ipE7AoACeQXZkV5yP7VM5zS
+	 wvDMpjpUU6DoQ==
+Date: Wed, 24 Sep 2025 12:12:37 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound: soc: qcom: use sa8775p/ subdir for QCS9100 /
+ QCS9075
+Message-ID: <aNPEFQBexZF1fVZg@finisterre.sirena.org.uk>
+References: <20250918-lemans-evk-topo-v1-1-9680600e62d4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] remoteproc: mediatek: Support MT8189 SCP
-To: Huayu Zong <huayu.zong@mediatek.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Tinghan Shen <tinghan.shen@mediatek.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250924084422.4604-1-huayu.zong@mediatek.com>
- <20250924084422.4604-3-huayu.zong@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250924084422.4604-3-huayu.zong@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C+2j3+sNiN9FY548"
+Content-Disposition: inline
+In-Reply-To: <20250918-lemans-evk-topo-v1-1-9680600e62d4@oss.qualcomm.com>
+X-Cookie: Oh Dad!  We're ALL Devo!
 
-Il 24/09/25 10:44, Huayu Zong ha scritto:
-> Add SCP support for mt8189.
-> 
 
-Please split this in at least two commits, with the last one adding only the
-MT8189 platform data and compatible.
+--C+2j3+sNiN9FY548
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also, please clearly describe the new scp_secure_domain_reg write, as the current
-comment is not clear at all.
+On Thu, Sep 18, 2025 at 05:41:52AM +0300, Dmitry Baryshkov wrote:
+> All firmware for the Lemans platform aka QCS9100 aka QCS9075 is for
+> historical reasons located in the qcom/sa8775p/ subdir inside
+> linux-firmware. The only exceptions to this rule are audio topology
+> files. While it's not too late, change the subdir to point to the
+> sa8775p/ subdir, so that all firmware for that platform is present at
+> the same location.
 
-Anyway - the code looks good overall.
+This doesn't apply against current code, please check and resend.
 
-Cheers,
-Angelo
+--C+2j3+sNiN9FY548
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjTxBQACgkQJNaLcl1U
+h9DPMQf/Z5xZtQRt9bifUQ8z/Zb/xbYTJEZz6O0PEd2J8iN7iXWWCgehITO9Ox+R
+ADia43VjFlyBJhjEFaMozF8Dd/ccQ+VbJPnxo/FctCcGQ1Ssj3O1FbHtiGxf0NIJ
+gHkS+6CKPxp/SHUFBW39oQOHEV46+Rd2QppK32KXXtHl6PmXHcU1Ub/JsGt4j1uw
+3EtsFy0z8EZkJnArJ4ajjwJ7in7SYXShTSZdMEs4ZvyZosGKTWk9puuswQtKQm+X
+3Vsd4ZJwjKddQyD5ySpf94RzP/N/Gcymhv4EuBm1tvJw+c6qzWRonUJQeZJWS3zB
+RrxGpFqQfHzN8NbGNmi+BmrjG5C4Xg==
+=kEEh
+-----END PGP SIGNATURE-----
+
+--C+2j3+sNiN9FY548--
 
