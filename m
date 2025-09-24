@@ -1,240 +1,196 @@
-Return-Path: <linux-kernel+bounces-829917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE75B98310
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85618B98317
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5F22E60D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783BE1B21260
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40386238C23;
-	Wed, 24 Sep 2025 04:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63A91FFC48;
+	Wed, 24 Sep 2025 04:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a/aN7J+s"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="m0vDuDMF"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011070.outbound.protection.outlook.com [52.101.62.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD02F222582
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758687535; cv=none; b=HgLOucrQKange9DPgk10F+CYl0QNwR40Rp2WG10LjAl/hYSk9yAD4Y2qFeAs1aQa2Ry8DnTggO+Ky5nn6u0w/CdPzOjemNnjXa26GU4k4PxORxbi0pdESsD/2gYR4sC0DMbkWkbhTUZuVbWqzvr1kkD7LJi4+MGHVj4/yeMKhzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758687535; c=relaxed/simple;
-	bh=y3kDiWminIlh4cAMLwWiVIQUVLbdzIjh8+MBDi4VRcg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IUNeFt8+lJpowN3dtrwBQpAc+BnrljAifxTFV+HOhTdfA7zv0VM8liP5PWTSuQu2Jz9ETzaia8LSbABzEzyOKRTo7mHB4PtwYv2DSuUzaHTTFPCOi/mh8RaKNrJb0cpBT+qzAthgaIE0VvJ3vgE9NrEc+r49rNr4uFJ56u72nEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a/aN7J+s; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O2t2LG001952
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5MzWxFE6SmNE6Sd0JJ62qs2K1+TijFUt9wCgiHhJ3do=; b=a/aN7J+s1FOfcBmp
-	wS1htj8rZ/VJANYqKj7em0XEUvDVo+H/2JDakZOZiqDEreYdjjCIpBe/mxkVXN8H
-	iw0AkR1Byn4xSp7UcEL4LLaqBHkt1Gh+o5lKNpy1puzjMsPn2iUxJYVwljOZrMy6
-	V3uUpK9r88tTadzm2owewPU73Jb4RlJXfRpKJBfryd1S1DIguEwNodfC36webv8L
-	B/wMXVGraBCTrM4yI8Q6aJwUHNdqbR0vep2ni43mAn6OtBIArUiJI777wML4x3SA
-	pOphqqjywS/2mykTJY4O0Vb0ZzEd2e6OPeHQ+/oXAxmiqGRQR0aiDoRQdVw9iuvW
-	5NFdNg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fjvq8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:18:52 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-269af520712so70587015ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 21:18:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758687532; x=1759292332;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5MzWxFE6SmNE6Sd0JJ62qs2K1+TijFUt9wCgiHhJ3do=;
-        b=pLHnEyqpNRX0V8NQD1e3i40OkEia1FUO/SPPNdYDsq/MP2G3HcjWFyd5Dot+OC7jW3
-         torsj9i5LjOWE/O/BcQvwbdZdVLRvUH+p9gXQKC/JoFtJ9fRDGfuhpL9itjaLZpcVJKh
-         lKs/2OcQLBcI2HEcytCSst9PB42CRxCzZF+FjlfIFWnwZplVccAG5kp3N2Kaln4uZQ0x
-         y7WCjcRcXaf0WH+YADOinXOhUD73w90t5bxruqqUDntAtWGVfZOEYlNGJbqYm6yiecmd
-         mOqfgoWWa5FjTV7IAOBo7P0c1SvnmPP6ZXWrJ40NInBzsSLFaaUxzwanT0F7ayXBjLLP
-         tEag==
-X-Forwarded-Encrypted: i=1; AJvYcCXG0FfNwcRE2gLAb5iwWT8ZoK3JzSzpt5ud8iinThXRQ47MO6A21V6OcK9zKgdapQxw0oT4F/Bduu5AlcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztwHvb6gOqcawmPo2m6hqvNcmATp7+yWb+YrxcKvBCb68PssjR
-	sDQ8c+de5DJYuw/WmcnPtalXuvA6nMn/EVKqEDeF1Mf5ScHqSMVizSOa+2bokfFEd83nvDOqad9
-	QCHKUM7K1dRy0f6o5yjRYPruyCu4uQO/3IZh9Juq54PGA5psPWtsuxd5AN/unOIRKS6LgtxsJt7
-	k=
-X-Gm-Gg: ASbGncv4FYB/sHum9lG9GG6+EyYETFlGFjzWfIyBPItPq1+5ymyLDLOsW1MY7Y675ZT
-	9uAHIwYlQoCTtyKf+bb2F5LORuuneAsbrOon+zZqOZvxMr8sgGRYfvcKKKqwhSDUYtgM7DQ9d8v
-	JSoxNEWoQB0jItVP6xcarLnBWFcQUt5YkyM337BOd5KjNMTCS96eVW7YlZxpISuINejSb0R08Zz
-	vqrQWDZQ6kFpo91KmYdchZe9gBp80+/eVG4JOJuweJzbVBwcGOzAaX3F6cyfiyfzLjIf7qqEQuc
-	rMBYn3MUFs27bIdcKKwqemzXhLAF9WZMV44r2h5oab/V99ZjiOfDhUqJ9iLFxZBrwC6Hrv2X8Tv
-	fbi86nYDuUCN0eAs=
-X-Received: by 2002:a17:903:2c0b:b0:269:8edf:67f1 with SMTP id d9443c01a7336-27cc13808bbmr60166455ad.6.1758687531874;
-        Tue, 23 Sep 2025 21:18:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7r66V5B2kT2HM7RA4fkMlGVLXRBRzSC0bio+S3HcT4gSSi9reHGYc6Y5F2yK+Vb6ftbA61A==
-X-Received: by 2002:a17:903:2c0b:b0:269:8edf:67f1 with SMTP id d9443c01a7336-27cc13808bbmr60166235ad.6.1758687531388;
-        Tue, 23 Sep 2025 21:18:51 -0700 (PDT)
-Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2699363989fsm170133885ad.92.2025.09.23.21.18.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 21:18:51 -0700 (PDT)
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Date: Tue, 23 Sep 2025 21:18:43 -0700
-Subject: [PATCH 2/2] soc: qcom: smp2p: Add support for smp2p v2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEB84C85
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758687703; cv=fail; b=IDlqb98NSUQiI0a/4LSau2kShVOIA+Ew/2qiy5hBevbb3rwJP2Y98/V4HVH35xWsdXD8Om0sfb5e6dneizHZgwxm903zXYvg2nhJ9vq3+sebKdJxjA2BfCqs2WUvl80CpndMpcdPFr84FOpHXiXwSrgLe/HbmmTiFzCv9d9MrmA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758687703; c=relaxed/simple;
+	bh=GwF6YfRAj0H8l5RBRjt988Q7HGj3qyuqwQ76pz1FtHQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YrcWYgXJyrieaHjMOHsI337aOcigsSGfeJdTwFZY0BeSTF/ccRYXVq5ar+4F8znNkMg3jDsHGeEKWdc0alaNenLEdoOnI1eGHvjsKjxHEKlBMmRgRrBwIhb8Eryk99nDgEJG7+jdRQ6H8jMFqFioNszMTv8YkmNa5UJ4Zb0IP5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=m0vDuDMF; arc=fail smtp.client-ip=52.101.62.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X4vCRZZOe3WYweeYTj31BpnXvH8fm6iMkfQZvKEnZ9HnQSoR+xKxxsm0rjjeyhkWQeQQ59qCOixud09kLVA7rmNKm6FBX8t85MpfxITG4vI8Th8NDTfOkdcbibTLR0nxICNSFqjf0ElUN+yjS6oIfg+lSly2NrAtJMWmoaRgRV3glSydSplOH20qLAOs2RPMUTBBYHrBUS+C+r5BOQi7vc/uotnkrjuA95PaLcv5HV2LNkevwRsrh1LWnDABclo6LWDut4Eqt0c7ThM0AocGNgrt1w2aIqTRQUsAgdoqdjKMWQbZoP6fHHoyBOcWQlp9YHMohpEIx+F8pX8GhJf7eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d/IhMfN98hh/mDRA6wug1wbKKJeKppL7WZkp11+8nEI=;
+ b=aJTBo7S6fac9cofIH2GiLxZp2o1ikElvZA9Pprj9KwJW0b52r3N4nJPSwsVrXeaxY72v0OnTHodC+ffYlpGfnHy8yJpAwG7qzwFkNPTBuafs4u0Es06dwBEdCwM+TLPSSOkq7YZhaOKyCa0EEjU4/E2i6bLVWv8n4r7N6dmDZVmsgkqtSAGVwDZS67frK/JUKpjck5iKkb0EKdstIrZhQ0AzF5SS7tuHeQUmB8iYZeBRkAJm47xZoEkra8COkzHtpAjX5IQZf41xvmDcGGPiSGcWwletA8zv5Ekpvo56Rg6O9ZDQL7vKY4UFHZ1XS0UdxF2ZlEiQMNaQRrjR32Rutw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d/IhMfN98hh/mDRA6wug1wbKKJeKppL7WZkp11+8nEI=;
+ b=m0vDuDMFZHXhtGNjBKF/Cyb6/aKFP32g+DLHdihjy5FUjnXWooABLj0xSJMoopHsdva1ccSze0n8kjlitz7ChFaNIQci3bxKf0wa7NbE2Rt+ZlL+Tm9ik5iWqtBg9ezK6jV9lJ87HSkHnJg86/OxDShciAknTUFHSbFlEReZXL0=
+Received: from DM6PR10CA0007.namprd10.prod.outlook.com (2603:10b6:5:60::20) by
+ IA4PR12MB9762.namprd12.prod.outlook.com (2603:10b6:208:5d3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
+ 2025 04:21:39 +0000
+Received: from DS1PEPF0001709D.namprd05.prod.outlook.com
+ (2603:10b6:5:60:cafe::fa) by DM6PR10CA0007.outlook.office365.com
+ (2603:10b6:5:60::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Wed,
+ 24 Sep 2025 04:21:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS1PEPF0001709D.mail.protection.outlook.com (10.167.18.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 04:21:39 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 23 Sep
+ 2025 21:21:35 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 23 Sep
+ 2025 21:21:35 -0700
+Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 23 Sep 2025 21:21:31 -0700
+Message-ID: <dc37d8bd-66c4-439e-afb3-e01670f3e08c@amd.com>
+Date: Wed, 24 Sep 2025 09:51:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] sched/fair: Add more core cookie check in wake up
+ fast path
+To: Fernand Sieber <sieberf@amazon.com>
+CC: <mingo@redhat.com>, <peterz@infradead.org>,
+	<linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
+	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
+References: <cover.1758543008.git.sieberf@amazon.com>
+ <a68bf0acdad9995fab15105cb26bd25f7d0edc8b.1758543008.git.sieberf@amazon.com>
+ <a1ff6b87-48a9-436a-9b62-8664d5207884@amd.com>
+ <20250923093001.1218488-1-sieberf@amazon.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250923093001.1218488-1-sieberf@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250923-smp2p-v1-2-2c045af73dac@oss.qualcomm.com>
-References: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
-In-Reply-To: <20250923-smp2p-v1-0-2c045af73dac@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Chris Lew <chris.lew@oss.qualcomm.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758687528; l=3194;
- i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
- bh=Iv1mr0CsUVNvjD6gvfRUYbwxcg/epGGs6ZABQD1hV/k=;
- b=EU8eBSCHicFs67DlRHihnPl91dsbq99bdcVFpgiWeT1t22XtBq4SuigAYW3TRa2TFRM8Joc6P
- QvWns9Zje6PAdutnp3VcwsS1dUbDqhRnXh/fBhA3sPsH7lJGQfUVy2m
-X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
- pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
-X-Proofpoint-ORIG-GUID: ERXvCkXtb60A8DQXYecby8tLQ_diLbIa
-X-Proofpoint-GUID: ERXvCkXtb60A8DQXYecby8tLQ_diLbIa
-X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d3712d cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=Xvny5BtixxlE2jsoVxoA:9
- a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfXxq9pUf3+23ON
- XDT1faj5gxlP+Y6L5/e4svZjMQ9QLbGUOWWkta6BzUMWdTWjbVXIxz8i6AXAnCoQVik1MDC+5zK
- ZHaNzi9IwBwYCzWNVGJQ75bXxxe8Yc7E9YaB38nt3Al02C05NQXQ1eb8+5jJHdJv/ABHHSFxMeL
- 0L+Cgf+jkFGZX7Zew1AcsmTVj1Ryfn5ntjpKcweM3J9tifb8Mnxi5B0aXroZmgraH37PfKZ1afk
- v/5EecBgNQouHS9koKq+MYT3QnOhkWL1xRnJjhBgvgKb5GQPm7BYuX7mWG+xu9nPFQuCtYkDF/y
- G9vr5YhLu/QMcFFmVAzS+16sh9x9/K//sDEBj9dK3LTv9tfBuAPdiOjzOFsgSZzWNdDcGr2GK5V
- XCFtHgoj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_08,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709D:EE_|IA4PR12MB9762:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9efa2c3-43b8-400e-858b-08ddfb21dbcf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cy9tblNiVHlpdUhRL0dVdnFhR1lKQjNtSzJvd2NaOEJjTXhIR2d2Qk45R2Uz?=
+ =?utf-8?B?U0JCeUhCbm96MVdXTDlSOXhEVkFTYXBXZjV4ZGs4V3p5MkY5UkVlM043bWdH?=
+ =?utf-8?B?ZHd3ai9hUTBCSGgrWVJDcXcrQ0pzOTZjd1NKOXFzeENOUndnZWFTZjhxYm9h?=
+ =?utf-8?B?M2w5UnZrQkVvTWJHS29PTGNBSjc4OWk0TXI1dlFibks1dVhhZi9IRzJRUG4w?=
+ =?utf-8?B?OGg1R29QNVlEc3YzemtRNDZrbDRQbGxRWWk1cmtrT0k3OHVDTjJJS0p1bldS?=
+ =?utf-8?B?TDEwNDJlaDhDL3psWmh4MTZ6UnZjMjVLNXRzdmJnb2wxajJBek9vQVBUYmJZ?=
+ =?utf-8?B?Y1BSOENhQTVFUDR0MUNOOUMyUDB6MGttYms1dFpTdktOVlRUV1B5NjBNRDJ6?=
+ =?utf-8?B?WGVibFc5RTcrWnpSK2J3VmxOWHIzSDR2S2krcFE1cHoxUldzRUUrUjJJWkZF?=
+ =?utf-8?B?MnhWZUNXZ1FjWld0ekRVRWY5Z3c3YTNaQmtCWXlsL3ZTaStVOXJGaXhpR1Jt?=
+ =?utf-8?B?NjRURitOeC9LNnQyVEZnVG5weXBVdzBBRTFlZG4xbWZuU3U2OFBrY0YzU0xu?=
+ =?utf-8?B?aHNxV09KbVpxUk9jZGdldTNpcXltcktmVHVGa3NNalJlcEZBYUJWR1F6MUU4?=
+ =?utf-8?B?eC9CMTBXQVFXSU5ic1ExYzlaZzRnZ0JtVFc1U2lsZEpxZDBVdEdCcmp2NTFU?=
+ =?utf-8?B?L2FtY2dqMnZMTTcvd3lJUEd3REIzUGdoSlllb1JmZnpQWGJKVis1b1BRc2lt?=
+ =?utf-8?B?RlpWL2JjcndhR3ViNkRId1QrYWpKcGQxdjZUUDdmd0h4aExkTXhKMlJxdFRO?=
+ =?utf-8?B?a1l2SDZ5Tko4YmF4VHoyTE1jTDRlKys1aDlLb0hZQVM1TmRTaXdzYUYrbWlK?=
+ =?utf-8?B?SnlDUVdWSUkxZUhnU29hRjYwSk5DZ2x4MEJDQjJYdWlpN2VzTkM4cHhXcjFQ?=
+ =?utf-8?B?ZnVnYUhMR3B1WUZSb3RKRFVZYjArdzAzTmt2c2QyTTljdzF4akYzMytzVDV1?=
+ =?utf-8?B?eHplREtidm9oV29OWVhveDdzQnY3Zjg0TE5vWVNqd25ZOE94dXFoYllRWUxj?=
+ =?utf-8?B?TnBCNHdvaUhYRHhKQnAvZkRZSi9CeGdKUkNSWDdmd0I1TmtSSDdhSmdUZW9P?=
+ =?utf-8?B?a1FRVkN6YzdnL1NCNzd2VUNCcVRMYWJzZjRTVkRzMzhTSi8yRHYyckg1empa?=
+ =?utf-8?B?QW1uZ210YlhBSWRWdXFVUWRwNFlaVldUQTZmVDNlRVZESW5iOXhMQ3RkbUVl?=
+ =?utf-8?B?ZGJwbUlsRmRYSHg2NnlPZWxKYWVhSHlzb3kxc2dxSm53ZGJSVHA0NEpwU29X?=
+ =?utf-8?B?dUhBYVpjN2cvN3hJVDhzQlpJQzhCZytrMkFya1l1OGUyV0xTRThQMFllWFMz?=
+ =?utf-8?B?ZUdkK3pUME1VeCtqSTUrdFVMck15V2xEa0hnNDd5Yk96Y0FvQzE2TUxSNktj?=
+ =?utf-8?B?Zk1ycDRYQ3UrSERiU24xOEs3anhNYUkwREdnQXlVbXoxNEdCSjEwQjNEVDZC?=
+ =?utf-8?B?YWJJNW95RG1lWWJWUnd4MFdQaTgyUzFadnV0dDUrY2hoR09mZzZCSE90QTc0?=
+ =?utf-8?B?RlFQb0o3dDloZE9aRVVOcC9JaDNsSnBES01WVGhvWFBLZDZ3YkprelMvSmpH?=
+ =?utf-8?B?d3FpeFlaeUM2Qm1iS3d4aUNRRE9IbXNjSnNVRW1VK1VIZk9Ga2VWV2hUVFF0?=
+ =?utf-8?B?eWU5Und4RkFlQm1NUnFqaWM1cGtPTGw4eXlaY1lyQ0w1bnNyNzVSYkt4dFlw?=
+ =?utf-8?B?RU1XZFJTeUpRWE9BMmp0Mlp1N0Izc1hjbUd5cXRBbWhHM2l0M1I4UVFid0hi?=
+ =?utf-8?B?VEZmOW8wU2JTOWI3ODdwekUrcW9lOGRjYTBUSFpkdE9YTnRIOG1sVTlRTWtX?=
+ =?utf-8?B?WHRiSENIR2NzcEZVLzhxYjFJUDc3MDRqeXB2U3ZOMG40bXczVm4xY2l0eVZB?=
+ =?utf-8?B?TDhoOE1JdkRKZDlNdi9LRXZJc0F2WllFVTlNY3RnaTQvRDhKRlY0NmI5cWJR?=
+ =?utf-8?B?MkFQK1JqVXJnY2djOFhIR0R4UXByR1ZZbWRsZklTWXlyY3YyUzdHZ0RQcmVr?=
+ =?utf-8?Q?BQY2k/?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 04:21:39.5935
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9efa2c3-43b8-400e-858b-08ddfb21dbcf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709D.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9762
 
-From: Chris Lew <chris.lew@oss.qualcomm.com>
+Hello Fernand,
 
-Some remoteproc need smp2p v2 support, mirror the version written by the
-remote if the remote supports v2. This is needed if the remote does not
-have backwards compatibility with v1. And reset entry last value on SSR for
-smp2p v2.
+On 9/23/2025 3:00 PM, Fernand Sieber wrote:
+> Hi Prateek,
+> 
+> On 9/23/2025 2:25 PM, K Prateek Nayak wrote:
+>> So with Patch 1, you already check for cookie matching while entering
+>> select_idle_smt() and now, each pass of the loop again does a
+>> sched_core_cookie_match() which internally loops through the smt mask
+>> again! Seems wasteful.
+> 
+> Right. The change in select_idle_smt() is unnecessary.
+> 
+>> On an SMT-8 system, all the looping over smt mask per wakeup will add
+>> up. Is that not a concern? A single task with core cookie enabled will
+>> add massive overhead for all wakeup in the system.
+> 
+> In such a scenario there should generally be no looping because I introduced an
+> early return in patch 3 in __sched_core_cookie_match(). Perhaps it's worth
+> extracting this early return as standalone optimization patch? Something like
+> this:
 
-Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
-Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
----
- drivers/soc/qcom/smp2p.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+Yes, that would be great! Thank you. And also please include some
+benchmark numbers either in improved core utilization or the benchmark
+results actually improving from these changes.
 
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index e2cfd9ec8875..5ea64a83c678 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -48,10 +48,13 @@
- #define SMP2P_MAGIC 0x504d5324
- #define SMP2P_ALL_FEATURES	SMP2P_FEATURE_SSR_ACK
- 
-+#define SMP2P_VERSION_1 1
-+#define SMP2P_VERSION_2 2
-+
- /**
-  * struct smp2p_smem_item - in memory communication structure
-  * @magic:		magic number
-- * @version:		version - must be 1
-+ * @version:		version
-  * @features:		features flag - currently unused
-  * @local_pid:		processor id of sending end
-  * @remote_pid:		processor id of receiving end
-@@ -180,14 +183,23 @@ static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
- static bool qcom_smp2p_check_ssr(struct qcom_smp2p *smp2p)
- {
- 	struct smp2p_smem_item *in = smp2p->in;
-+	struct smp2p_entry *entry;
- 	bool restart;
- 
- 	if (!smp2p->ssr_ack_enabled)
- 		return false;
- 
- 	restart = in->flags & BIT(SMP2P_FLAGS_RESTART_DONE_BIT);
-+	restart = restart != smp2p->ssr_ack;
-+	if (restart && in->version > SMP2P_VERSION_1) {
-+		list_for_each_entry(entry, &smp2p->inbound, node) {
-+			if (!entry->value)
-+				continue;
-+			entry->last_value = 0;
-+		}
-+	}
- 
--	return restart != smp2p->ssr_ack;
-+	return restart;
- }
- 
- static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
-@@ -222,6 +234,20 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
- 	}
- }
- 
-+static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
-+{
-+	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-+	unsigned int pid = smp2p->remote_pid;
-+	struct smp2p_smem_item *in;
-+	size_t size;
-+
-+	in = qcom_smem_get(pid, smem_id, &size);
-+	if (IS_ERR(in))
-+		return 0;
-+
-+	return in->version;
-+}
-+
- static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
- {
- 	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
-@@ -516,6 +542,7 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
- 	struct smp2p_smem_item *out;
- 	unsigned smem_id = smp2p->smem_items[SMP2P_OUTBOUND];
- 	unsigned pid = smp2p->remote_pid;
-+	u8 in_version;
- 	int ret;
- 
- 	ret = qcom_smem_alloc(pid, smem_id, sizeof(*out));
-@@ -537,12 +564,14 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
- 	out->valid_entries = 0;
- 	out->features = SMP2P_ALL_FEATURES;
- 
-+	in_version = qcom_smp2p_in_version(smp2p);
-+
- 	/*
- 	 * Make sure the rest of the header is written before we validate the
- 	 * item by writing a valid version number.
- 	 */
- 	wmb();
--	out->version = 1;
-+	out->version = (in_version) ? in_version : 1;
- 
- 	qcom_smp2p_kick(smp2p);
- 
+It would be great to know how much things improve by :)
 
 -- 
-2.25.1
+Thanks and Regards,
+Prateek
 
 
