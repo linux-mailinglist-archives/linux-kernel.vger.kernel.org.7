@@ -1,163 +1,162 @@
-Return-Path: <linux-kernel+bounces-830878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED95B9AC53
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:53:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6240B9AC6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE16C1896BA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA1F1896ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BE91E1C02;
-	Wed, 24 Sep 2025 15:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6304F3128D8;
+	Wed, 24 Sep 2025 15:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFIueKdT"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uTEP9tP5"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431A1F03DE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A01721FF44
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758729189; cv=none; b=hns0G1d5RJSKhy48EvLsWI7+WkRr4DZpCoPbpZ1JyYlmZxJfPaTCjxiiYaInin2jR1ow8mZTB2uVUxMGpkACsrdKNccKptN5zteqJBuPUDRnGiVBc1fuBlssCqRVJ72vOr022zPJMP4xgklk234Vilap7ZmI++pVQ7BYPZg0dIs=
+	t=1758729229; cv=none; b=BWGHKLzcbGSov4Q2qDsKHE1yZWmSw9iOexoLan8ylyssgUgQCJiy/qGN3UAkUNnWv2oIE1JUyJ04mR5kGwq2B1YCW8CLnhPnjAB/2laccfSwbKSS29wEXn8MwMr5oLeNdMIJpkDQWS//jrEa3d9mFNUVtopHCyGUkptA2EUy7U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758729189; c=relaxed/simple;
-	bh=VT178yYCZMBRPny+L5bF5MeTxPfpCtbi4fIoBmP00o8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+hBRBtxJb9ksLSL72EluQCsEt0+73uhG/p9SrHTIcF7AlneE/e7ep0gWa7eXfu5LRZmGP5nChPAl7+30n2qV/BEIvNC0oSFtntV/a8a+S52O3ICQVdVOXncHOO5bPVh68yLokrUXHDtG86LA5TTJ8318nO2Cy7t9MOEXCQQPOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFIueKdT; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77d94c6562fso7021875b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:53:07 -0700 (PDT)
+	s=arc-20240116; t=1758729229; c=relaxed/simple;
+	bh=1PUNlHIAYtCH55z1RdMjhD1jhr0FPn3wNb7XI9Lq6xo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C1QI0EfjlH6nzveuSNUK/LMleQ4UBxD95VC4odcVfkD/EjTGQC95A6mkrar0V+Gu5moKPp4Pp8A2wOVDcRvlu4pRTdhrEvXwlWMeIQXiocG7nBDkrBLThV0pry6GGiMF+RAyWAIQkEsGnjKikS3rFrZqMHvyueG5vu9b20kIyRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uTEP9tP5; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-ea473582bcaso1300430276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758729187; x=1759333987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLFgCdLMh/r5hFbfHnhDFZlsrstBsRj7M+/SLEooJtQ=;
-        b=iFIueKdTTiB9B5tR8i1hdiMj03VLVLDH3bwi5nWmsTvOkrK4988HIeFviY54KnIeyb
-         Qv+ahD/WvSJLa85bsjsymR5Z/Ge+Btl1mXcfvl7aecJxNVKEXK5gYF0urVRSAc2sLS+G
-         xkWODTsxpT9fdAxGnFvm6ZXzYcEkLqXFE3qo2LdCaTTPsvku/fRd77/bI5L4GgMH7WoF
-         w7TjBSUd3ylmB+Rsc5XVXzUgiFwQt11yUNROodl4Z0O3tP38byu0/CV6sf1Z8OS7FxF1
-         Hk47eUWyDo78nYxp60BO0jQhYtq3qSQbjcCWm1tKcRe0fnRkH+lxZPkMYFmjDzisFBba
-         UmIA==
+        d=linaro.org; s=google; t=1758729227; x=1759334027; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ws36E4l6sDZ0NgTD31F0HXvzlU5qFwYdqyOPAZNL3c=;
+        b=uTEP9tP5bDcl9prhys/XUgupR6QJxTpv9JoRmKqdHXUbMNWG4f+BR66aO85uVUIHng
+         UufipDJlFFR+fSUCcpTk/pf8wIeuePmjMuIrpboHmSnsvY7Wa6VGz6N8HGmZ+qNcZdkY
+         wNrRkOhYTezFljyl7Y5bM98UTTcQxFsavDibS2RGGlneTvgFbq6iayoNBG0RoBW2kJct
+         0o4lzd9a0cCAwD+pQCyt634J+tFeqhFRvSR2mGZcnca8Nzz0pvTMlUM8MDMBAQSG7q/B
+         ++TR1Fp0acm7kIpz+hJlRyLkF1Gc67qqQ1v3kRQDsqrzSWW0IyCOrteGUO7pmS2ryNXl
+         eHdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758729187; x=1759333987;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YLFgCdLMh/r5hFbfHnhDFZlsrstBsRj7M+/SLEooJtQ=;
-        b=Dp51qLlcRd86XGJvq6ZBN8LI61rCmYnOkr+D5GRJdDij9zQThOlIyiHtyjYtTcMuT5
-         FwC/XjfiRuLFmMXrZ11DkIyAwh5HGrafr0Z6NkPd06FFIvpKSKzFaMS9CpjwFuhTJXc1
-         tQ59wBOBO3e+hulleN4/BC58zc/cpaGpzRG+eUfrlN4cZFnBkz+hzNKeWrWaw2Hel6/Y
-         8NM6NTwvvCbgYJbJ7ji3BVrqrs3Hno7gN0MDWxnSdarsELGio/b3c1iA5TXtP+XtxtTC
-         ed0YhydTcFVNrKIu8/HR1V0T2sIz5lR5thbgo1pPhnwk76tQRwwUVvN406C0yE43UEbI
-         Wpcg==
-X-Gm-Message-State: AOJu0YzX2QH3FUy95NHVX5+Y5Qt8vr6ee0u0WeOxBrts7m4mTPsCJgvd
-	PYVpWm8fenCSJ8BHkM93jyHcrzAFhvrvk/T8Uw4PrDpC7sKzB77Wy3MM
-X-Gm-Gg: ASbGnctaYoepURu5+7mZ6UlcbJhvqi4HnmAZotwfBNgCqN/foPzg9EO/p6VWvo+WrL1
-	TcuQKiRuArKNTqFupg34QD+3WkbwKu+8T6gkMa1LO9wEiLJlKoNklS19H6Dbfm1WBOcJUIXjrEi
-	sHRuxeaAGHm8xyZHX7v4eIjn6y/AT2o73v5cD/FkfUZVoCdeV+bBUsJA+aKM8iHNxPiLxSMPJ5V
-	tB7AFmelDvHN5NYXfvOJ45pRA4z0tYLxG3FeVbNbC6x1uCCiw9fuBUicFFA08/LJRp16HWVsW5L
-	4V3CFTg6QE92WXsCjOJz61bRUTeYoGoebUT3QbOokH9nACU1i1/lo5qp33gsCx2Mdyk9nJ3TEMV
-	L5GMnNeyuAPdHitr/AUaaD42RwCih4hmthn4PQKRLroaFKSF3UoBVSJ8PiEpQMIvySpfqwp0=
-X-Google-Smtp-Source: AGHT+IFVgSVMSm2vqmLG6DCS+JeXgQcaQs1Myt5b3EftOEQSBe/HHP3HWNYKBwBYn84yLRpiHo54rQ==
-X-Received: by 2002:a05:6a00:a8c:b0:77f:156d:f5b1 with SMTP id d2e1a72fcca58-780fceebcb7mr560901b3a.26.1758729187064;
-        Wed, 24 Sep 2025 08:53:07 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfe7607c8sm19130110b3a.58.2025.09.24.08.53.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 08:53:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5e76f825-a352-43b2-9d95-488064b52eba@roeck-us.net>
-Date: Wed, 24 Sep 2025 08:53:05 -0700
+        d=1e100.net; s=20230601; t=1758729227; x=1759334027;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ws36E4l6sDZ0NgTD31F0HXvzlU5qFwYdqyOPAZNL3c=;
+        b=VtUTcZKrZzF3nuKZE49u2HUWLKcy00TD+k/gR8k6SOn4x1r12tn/OGQr2fHTMufyLm
+         lxjfn/n0u8kOVDxOWtCA8eJ0d9nAjOFvBDKUog1RlJi80J37E5V24272lKiH9KoacEf9
+         admmPGCNlFpoOTbmjsjCJMezMr+NW5x/kqtW2ANf5ExXWTOOx9oyXRAnKcwOtkV05qKc
+         P0Ach+gLfCVLS/hpPSm33lMvV0RAR2gwVsPpMuE82DMJjWSwZvVnzkBQmKkzWDjiTo+e
+         c9vR37UE91QVLy/a99+qb4N1TsN2EVrb2rk55jNrFQxRDjWcCXJEMBHvxfmWIxC3Ldro
+         AeMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHzuSstcyzeEiTiS5n+gtV9Bx8p/G9rMW/fmP5Ha33jaR36VbxV1Pg9ln9cjJ2MHXDRQmqGoqgX6tusY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw89a1z/MDZyo8FAo9c4eUFq1eyIsFakzJP13NZoTjTc5c2KtJ8
+	xs08EHgiUkj1M4GzsGOwRXXQy4gIMrZETV9fok5nTH2sHCNiCfh1mHC3lmOs1y7tZIyBcVIb99/
+	+58lU/m95GbqP0zUAN8C+kdpaKJloUm2xdPxMOzg5DQ==
+X-Gm-Gg: ASbGncvyjrjP1xbBGbsrySS73aFxsjPaCB8GsH4fBbuJdKKlSokrz5VBPVvfYgsXV+1
+	/ZT/fnjaYAupWinVLq0lgJQn4RrJa32ZwWWVGp8CyT9w9HWLassYbYpWPSNjREMX5bMu/rU2AOD
+	I5zmVWT68tgyVqCncfi7Md/KyDd48SUJ+93wPfg6quY2EoLYIFVXWGTyFBcVz0QfodfqctiRsuL
+	dGd8LozGKQiwh8nQif2e1ser/F1NpofMC2fLw==
+X-Google-Smtp-Source: AGHT+IG/0HOlWN+Opy8mk1rlXCX6lREWcCWPZFITT3xAhxjSLe4cF9GNTsFZhuk9Ow8vzBprt7QptbBAX/tQMBdgAFw=
+X-Received: by 2002:a05:690e:1648:b0:633:b317:9cea with SMTP id
+ 956f58d0204a3-6361a90013cmr66977d50.8.1758729226717; Wed, 24 Sep 2025
+ 08:53:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] watchdog/hpwdt New maintianer
-To: Jerry Hoemann <jerry.hoemann@hpe.com>, linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, craig.lamparter@hpe.com
-References: <20250923190352.2517220-1-jerry.hoemann@hpe.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250923190352.2517220-1-jerry.hoemann@hpe.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-21-ulf.hansson@linaro.org> <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
+ <CAPDyKFqSyP3e=JRFYEuFefWVN5SYJWULU8SKzXmrThvyiVGXgg@mail.gmail.com>
+ <a904d953-acb2-44f6-81bd-118f7abd22da@nvidia.com> <614f726c-4d6d-463b-a8b3-26d3df590575@nvidia.com>
+In-Reply-To: <614f726c-4d6d-463b-a8b3-26d3df590575@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 24 Sep 2025 17:53:11 +0200
+X-Gm-Features: AS18NWBv34Nq6YjDF4uwQFfPTxm1VXqbNiERHa_duVzXNf8ehBq83NeR0ORga00
+Message-ID: <CAPDyKFoPOejFT+=OBoLTBXj5GYuHFwwnY9qGROTynrtHT=mCAw@mail.gmail.com>
+Subject: Re: [PATCH v3 20/24] pmdomain: core: Default to use
+ of_genpd_sync_state() for genpd providers
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/23/25 12:03, Jerry Hoemann wrote:
-> Update MAINTAINERS file with new contact.
-> 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+On Wed, 24 Sept 2025 at 13:41, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Hi Ulf,
+>
+> On 03/09/2025 13:33, Jon Hunter wrote:
+>
+> ...
+>
+> >>> Following this change I am seeing the following warning on our Tegra194
+> >>> devices ...
+> >>>
+> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
+> >>> 17000000.gpu
+> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 3960000.cec
+> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
+> >>> 15380000.nvjpg
+> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
+> >>> 154c0000.nvenc
+> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
+> >>> 15a80000.nvenc
+> >>>
+> >>> Per your change [0], the 'GENPD_FLAG_NO_SYNC_STATE' is set for Tegra
+> >>> and so should Tegra be using of_genpd_sync_state() by default?
+> >>
+> >> This is a different power-domain provider (bpmp) in
+> >> drivers/firmware/tegra/bpmp.c and
+> >> drivers/pmdomain/tegra/powergate-bpmp.c.
+> >>
+> >> For the bpmp we don't need GENPD_FLAG_NO_SYNC_STATE, as the
+> >> power-domain provider is described along with the
+> >> "nvidia,tegra186-bpmp" compatible string. In the other case
+> >> (drivers/soc/tegra/pmc.c) the "core-domain" and "powergates" are
+> >> described through child-nodes, while ->sync_state() is managed by the
+> >> parent-device-node.
+> >>
+> >> In the bpmp case there is no ->sync_state() callback assigned, which
+> >> means genpd decides to assign a default one.
+> >>
+> >> The reason for the warnings above is because we are still waiting for
+> >> those devices to be probed, hence the ->sync_state() callback is still
+> >> waiting to be invoked. Enforcing ->sync_state() callback to be invoked
+> >> can be done via user-space if that is needed.
+> >>
+> >> Did that make sense?
+> >
+> > Sorry for the delay, I was on vacation. Yes makes sense and drivers for
+> > some of the above drivers are not yet upstreamed to mainline and so this
+> > would be expected for now.
+>
+>
+> I have been doing more testing and do see a lot of "tegra-bpmp bpmp:
+> sync_state() pending due to" on our platforms for basically are driver
+> that is built as a module. It seems a bit noisy given that these do
+> eventually probe OK. I am wondering if this should be more of a
+> dev_info() or dev_dbg() print?
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Yes, I agree. We have had similar reports for other platforms too.
 
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 520fb4e379a3..11839d5f1c2e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10784,7 +10784,7 @@ S:	Supported
->   F:	drivers/misc/hpilo.[ch]
->   
->   HEWLETT PACKARD ENTERPRISE ILO NMI WATCHDOG DRIVER
-> -M:	Jerry Hoemann <jerry.hoemann@hpe.com>
-> +M:	Craig Lamparter <craig.lamparter@hpe.com>
->   S:	Supported
->   F:	Documentation/watchdog/hpwdt.rst
->   F:	drivers/watchdog/hpwdt.c
+I intend to send a patch for this in the next day or so.
 
+Kind regards
+Uffe
 
