@@ -1,91 +1,136 @@
-Return-Path: <linux-kernel+bounces-830909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E56BB9ADF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4200B9ADFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8859188BD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF463B9C74
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9DF31354D;
-	Wed, 24 Sep 2025 16:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0031355C;
+	Wed, 24 Sep 2025 16:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rv4cs34/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9b/0eOD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759A430B527;
-	Wed, 24 Sep 2025 16:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0278C230D35;
+	Wed, 24 Sep 2025 16:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758731091; cv=none; b=hTMzFv59WW9GDjql6FVvZ/Ldo+FUuswEaZmUCIWjeIKPnDjVBs/SCraZH6mY2ljKNYdSlV8pI6K2A6GlGfL6ASPf0pXRNPiEjgPc82BPHguRVbhTvjV87uBJy87U0VO59jeo6dtgi3m6N7WOvxsGCZH91vQyDS23NT+vaRVT7e8=
+	t=1758731126; cv=none; b=b0U9/a3obgVih2qASbbiciHLKr/1oRBhXN5NPXKFZPyD3pdf1oxRBTSZFcYmC3BAmju2su43BzdMFOWz/5fPc5pPvOMO/ZErS7YgRXXB5RFFaYdr25MjpS03UbValvi3LkwaH2GskP9OfNDdtiDdG++imBE2OVYfWg5Yzpn+FH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758731091; c=relaxed/simple;
-	bh=YDQXTVGOYTWva8EDpEwYuBr0RgnUKG4x/JRMrHY45WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FYR1ruZzyxZjLK/CuI7057Sc7XU+UQLgD1tfctbnFFwz43Yh1EwimOAcO3b6dklvdW+gjx24Kfsng96A3cZ9SdnApO+9k4uikk8HZ6PAoen/P24ovJEf/PRQ/sJEJ06qNCAPA4A3ZAI181K5r62JAcFWpqmr5gDBYj0F0apyyac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rv4cs34/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629B9C4CEE7;
-	Wed, 24 Sep 2025 16:24:50 +0000 (UTC)
+	s=arc-20240116; t=1758731126; c=relaxed/simple;
+	bh=fgpXWT75ZxeTBuFCW1gI/2m0CSg/b3re3eUKkgx1ud4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kG0LaflEa1X3wKPAUMKV2rtRjEBCdSizNpc8uBE7S71J0BzKgYbXmp3dYRrf3gxpKPTw/LoOXDDPYGujbhyu7DBvL9p+SJeWxP6c42ZU0F5igKy65EqsYOoIh9uu/i7ZF594x9oCf4A3yqfPsjB/n4vgbgcChN9lh9/oSlN5/fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9b/0eOD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D26C4CEF0;
+	Wed, 24 Sep 2025 16:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758731091;
-	bh=YDQXTVGOYTWva8EDpEwYuBr0RgnUKG4x/JRMrHY45WA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rv4cs34/Qim8+evoo8ovxwouSo7ZGm3TI9LuDHjLvPp+9BNsAW86i5ETDW2z9zgbS
-	 t1jCkRpP3DUkUTDh/pkjL6LwA58lCk3aAbmFSPmU+fs70OS8Ja80hE4+ougHuXWAdx
-	 a8vFkzPrjcaO1uCAFBl37t3oCls0JUSZ0fuZn0l9N1EV531V1cnesgWHxjrkr1Hao8
-	 r9rBsgtCOcl8qT7JR2g8zQ9SMGIHZ3sfQREqWI1i74rpoz0CvMeGDKWf/hLsg7wyNX
-	 lpAuzlykFkUGgmFZxwgjHgnBF312aBL288V6fwXbKcCgN4y/GEpY5+nI93lu030Fht
-	 FjJ6Fs4CbVVCA==
-Message-ID: <38a9db70-c6dc-40f0-a506-942fb799fa86@kernel.org>
-Date: Wed, 24 Sep 2025 11:24:49 -0500
+	s=k20201202; t=1758731125;
+	bh=fgpXWT75ZxeTBuFCW1gI/2m0CSg/b3re3eUKkgx1ud4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p9b/0eODI+0WiHkzdGKZpTPfe9jKNRfE1aDozQegoNWcsnAjYRLESrDU0dFHVLYRX
+	 wst6KBI3EiPsSa6+URpsXzkix7xah3HyncBIb9FU5M2eZMRGx34ayYO0cTeTEN5NEl
+	 Od/uH6K8LFTNFI0KeKeCOhHN/enttFrm65mpFaK7iLRlMmmAF/jX37kOxtBaO0pFDB
+	 EbxRv/8ZtqsemrNMovBaJGVsa/8ZhUVYwkYLKrJlxZc3akIa/FlWmK1hjKEdfdMbtp
+	 rCeWYIxPo5ytf28pcaFy/n5VfHKjfGIp5MXRdvVRgt9vLnTN8amf2TbsTVmVvrjCvI
+	 gUw7ocemPX/Ew==
+Date: Wed, 24 Sep 2025 09:25:18 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kbuild@vger.kernel.org,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Puranjay Mohan <puranjay@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] kconfig: Fix BrokenPipeError warnings in selftests
+Message-ID: <20250924162518.GA2827867@ax162>
+References: <20250923213120.make.332-kees@kernel.org>
+ <20250923213422.1105654-1-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen: take system_transition_mutex on suspend
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- "moderated list:XEN HYPERVISOR INTERFACE" <xen-devel@lists.xenproject.org>
-References: <20250921162853.223116-1-marmarek@invisiblethingslab.com>
- <a8d1d076-81b0-424e-b281-dfbd49130d38@suse.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <a8d1d076-81b0-424e-b281-dfbd49130d38@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923213422.1105654-1-kees@kernel.org>
 
-On 9/22/25 1:06 AM, Jürgen Groß wrote:
-> On 21.09.25 18:28, Marek Marczykowski-Górecki wrote:
->> Xen's do_suspend() calls dpm_suspend_start() without taking required
->> system_transition_mutex. Since 12ffc3b1513eb moved the
->> pm_restrict_gfp_mask() call, not taking that mutex results in a WARN.
->>
->> Take the mutex in do_suspend(), and use mutex_trylock() to follow
->> how enter_state() does this.
->>
->> Suggested-by: Jürgen Groß <jgross@suse.com>
->> Fixes: 12ffc3b1513eb "PM: Restrict swap use to later in the suspend 
->> sequence"
->> Link: https://lore.kernel.org/xen-devel/aKiBJeqsYx_4Top5@mail-itl/
->> Signed-off-by: Marek Marczykowski-Górecki 
->> <marmarek@invisiblethingslab.com>
->> Cc: stable@vger.kernel.org # v6.16+
+On Tue, Sep 23, 2025 at 02:34:17PM -0700, Kees Cook wrote:
+> The kconfig test harness ("make testconfig") was generating BrokenPipeError
+> warnings when running interactive tests like oldaskconfig and oldconfig:
 > 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+>   /usr/lib/python3/dist-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <_io.BufferedWriter name=12>
 > 
+>   Traceback (most recent call last):
+>     File "/srv/code/scripts/kconfig/tests/conftest.py", line 127, in oldaskconfig
+>       return self._run_conf('--oldaskconfig', dot_config=dot_config,
+>              ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>                             interactive=True, in_keys=in_keys)
+>                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   BrokenPipeError: [Errno 32] Broken pipe
 > 
-> Juergen
+> The issue occurred when the test framework attempted to write to stdin
+> after the conf subprocess had already exited.
+> 
+> Wrap stdin write operations in try/except to catch BrokenPipeError and
+> stop sending more input. Add explicit flush() after writes so we can see
+> delivery errors immediately. Ignore BrokenPipeError when closing stdin.
+> Explicitly call wait() to validate subprocess termination.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+> ---
+>  scripts/kconfig/tests/conftest.py | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kconfig/tests/conftest.py b/scripts/kconfig/tests/conftest.py
+> index 2a2a7e2da060..d94b79e012c0 100644
+> --- a/scripts/kconfig/tests/conftest.py
+> +++ b/scripts/kconfig/tests/conftest.py
+> @@ -81,7 +81,22 @@ class Conf:
+>                  # For interactive modes such as oldaskconfig, oldconfig,
+>                  # send 'Enter' key until the program finishes.
+>                  if interactive:
+> -                    ps.stdin.write(b'\n')
+> +                    try:
+> +                        ps.stdin.write(b'\n')
+> +                        ps.stdin.flush()
+> +                    except (BrokenPipeError, OSError):
+> +                        # Process has exited, stop sending input
+> +                        break
+> +
+> +            # Close stdin gracefully
+> +            try:
+> +                ps.stdin.close()
+> +            except (BrokenPipeError, OSError):
+> +                # Ignore broken pipe on close
+> +                pass
+> +
+> +            # Wait for process to complete
+> +            ps.wait()
+>  
+>              self.retcode = ps.returncode
+>              self.stdout = ps.stdout.read().decode()
+> -- 
+> 2.34.1
+> 
 
