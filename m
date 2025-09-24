@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-830928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCE8B9AED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:55:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB2FB9AEDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E206D4C71E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01D73A802C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608C314A75;
-	Wed, 24 Sep 2025 16:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B253148C4;
+	Wed, 24 Sep 2025 16:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXNRVo90"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Ilnq6lkI"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3C73148CD;
-	Wed, 24 Sep 2025 16:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862F621FF44
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758732902; cv=none; b=EeK/Eu8F4k4Kf8ilRdn0YbsWOzIIm9wuwFiVzxXXjR9oMbL2pQo2dv7+pOxzlWPC1MAWMYTQgCQhGUm7Fv0DIvEP9ikgBVuRk33u+zBr/U4+CyH4YVL5IHGyycJGDxi4R89MgHjr1F5MqpOimrISOzHmFZF7i51OfiSPsXeoifM=
+	t=1758733005; cv=none; b=pVPfu5ZDiThvpPpm6ie4mievuuZAR6koZRbDatlFanNLlJpszzvGN3N3jQJoqpjzhd06geC6/egmYioNV7aRTOKDf8q/L1Zt2CkzHZuUHn3kyMxluNiGt0e5P6NOpNvYr4jLDKs6uufw2grUPDGLVNneY5sfUVtrnw8oOPh2I5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758732902; c=relaxed/simple;
-	bh=ZSuvPKo4zP1BolcgaK42uPifYCuhAjff2p5QUMlhvj4=;
+	s=arc-20240116; t=1758733005; c=relaxed/simple;
+	bh=NJFkjrhUsdcy8+rn6IOt2BrBbyjXFEMbFh4NQH7fzls=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iyF2/Avs8UCp7h1amSfLjS9cqNBQe5JZAaq5n7g9WpUM2SmOOsHe5YLVFS3WutzWm3yse0X25zDwQRFj3IelEMFWoIHgpmhA6uwSQXi9U4Ag5SrHDLs7L0xGesWPFbST5UnpSexLxJZUeWYIOrHTc7AwZObw+wWt6H+rli8h/JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXNRVo90; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA2BC4CEE7;
-	Wed, 24 Sep 2025 16:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758732901;
-	bh=ZSuvPKo4zP1BolcgaK42uPifYCuhAjff2p5QUMlhvj4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uXNRVo90ZhjkmSGghzeTg1AwA9xcxiXQgqZpgm5694xcVDh65DWhbtAbUuhvC4kW2
-	 S9G9l6hbYLvXkhR22gbdk2HIL56L42VvBvOoDLKFBJsSSHik/yXb5ga0Hdc85cVbfp
-	 9jyZRYcEt70BjMBoUv8akRa2oY1lI8k56rOqHlCCb21jS2T2sxXBfflXO/31EzPRbf
-	 /3DgBIfF8p8LJG0whLwQzeyC/17xUvzlLw8l5G/UO3K5Et7wSie3pYZBhCm0pXCBxd
-	 Nr3u4c2rFgOBlW1liOJDY8TUbC5O2PDnYRB8S64t97UTzCvygkoORljvPSPHAS9Trp
-	 hqFj+McS5Oc6g==
-Date: Wed, 24 Sep 2025 09:54:55 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Simon Glass <sjg@chromium.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Nicolas Schier <nicolas@fjasle.eu>, Tom Rini <trini@konsulko.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	J =?iso-8859-1?Q?=2E_Neusch=E4fer?= <j.ne@posteo.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Han Shen <shenhan@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>, Rong Xu <xur@google.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] kbuild: Allow adding modules into the FIT ramdisk
-Message-ID: <20250924165455.GA1445061@ax162>
-References: <20250922224835.1918759-1-sjg@chromium.org>
- <20250922224835.1918759-5-sjg@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHfaiLYjATFKXvfjgrvhbfZvdYKp35Jv/3m+oKxkPguxeAiUpyoYrPbHB4M9L4RLPCe/Jdg8L6YIEahwmvZkMBKFKX+1GCQAf3XKZwrfoXURGX4S4ou732x5L7XHBQhpw1K84hrdgSeqPSpOLncyUNYtnXW3nuuZLQFmL7vd298=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Ilnq6lkI; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8db958b5b83so8812639f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1758733002; x=1759337802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQQzEQlairAj51+ohta7VWgLRglW4GQMtLef+NgHrEI=;
+        b=Ilnq6lkIreYeNvh6QcaDWO5gMaZIxU2FDQVNT4qS0SS0D9rSM1vuKG1ZCcscVyxf48
+         +DtqDHDY9bJREL22aqaFmFjkp9sVW91uUO3W8Ve3tybFfgBoonfHuX/o8BOEna0DVtNF
+         a8Ylc+TBfqHIpt9AMJzHSuN4Ulxz8mbTL0LOtnq/asQrSTSSsXktLUJuklcCFyljEzLK
+         FRQwAxTfwCcXqhjJZJ+4QaOk5/Jhf4iAK0n7Mg0DMi5Ut32x3ZkTptJ8XplCIaQ7rhb3
+         +DQSCtwy8gHTdiKv3Nc8kyX1zoXZKyILqZCJhBFhzWZvX2rX4vnWKvQi1W64Of3GyBUW
+         YYtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758733002; x=1759337802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQQzEQlairAj51+ohta7VWgLRglW4GQMtLef+NgHrEI=;
+        b=u/H1xZ4ODmEO80hMEMUlSjNAHm0MrtYasZQghYaZE/4aXqkhwJQSXxS3Vog4d8w6cU
+         Fxl8PDhc82HnOYX/eTE/5F/sj0PW/JKs96DucxrwQ7uwUG5D3GQpRUsPrhZxyi5SMi3Q
+         rYj2hO9hXqvA3LJPe9tCScasVTH8H771cS0kwZ/E9Z9yltCgIdjwbaXUp7e7LCmT2eyW
+         ipDCRmt43Ji9OgCocSb6XaDTeAqkiNvSBMRgNb0PgbXqawQLLvyry5mp0YJo8TJXkV/o
+         yx9ADhc3jpNOX5Xx2ce7CAUF3s7UUEZ4RSN0l6kgYJ/eI8t6WGNH2HDuyfcVeTEScpeC
+         ToUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnd3UszfB9+lVYdwFiVetVW+NxRLjxAnbaBTnrHwRgXyVNL8InBF06Z9POvEuoFoJvu+ype0n7z9xiMAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDbfSc3BMv3vPV2lnfTd9RZsV8o2B6QINkyK1XQSVLKBRS0d50
+	uspprD9vULZqYNGX2ipFo7cGlEtghY3FAi6ri2AkVpBd0/+fVK9hD15V5vCLCCYUrEw=
+X-Gm-Gg: ASbGncvcatlhEJpF/CH8E/a0KeF87vnaTzZJlrwj/aey/JuAiBNim+nyKe/remyP+C7
+	E8JSrm9x4iBFCK2Us4q19mI6aIWsEWvPDj98IuuG5kpJ/nbfiN+Et6UCW8Kq/LItq3HDBhQxJDw
+	+a05RFNqHuDrayIaJsx+x7MAK2tFaEjuvK40d8Br3OZpA9Gqr+iVICsRI8a/Piki0eMHuaasGqU
+	J9aek6Y761e3nOjyiPPp4fPnGAwOF1oUryK8ZXzuOJAwRZOlTx/qvhY3qzXzZXFFyYAGzl5XoDc
+	CAkwgHFSZky0MQ9VITSh+jLlagbu5pfJaa8D20IPgcAooNjFlXab0aL9DT8iRWmO9mwCi11CWzL
+	74GfZAZOjDxT67lVdrNtlfe70
+X-Google-Smtp-Source: AGHT+IGBqrqJ6aGPvymHhMG99f/WWRWdd/TLY3Hx8xLtGHi9mUrXvTzfn7rPTbE9CvxrAKE0HVc8sw==
+X-Received: by 2002:a05:6602:6081:b0:887:6854:b075 with SMTP id ca18e2360f4ac-901526045demr46544239f.2.1758733002472;
+        Wed, 24 Sep 2025 09:56:42 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8db17087bfdsm205980039f.8.2025.09.24.09.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 09:56:41 -0700 (PDT)
+Date: Wed, 24 Sep 2025 11:56:40 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Danil Skrebenkov <danil.skrebenkov@cloudbear.ru>
+Cc: pjw@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Charlie Jenkins <charlie@rivosinc.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RISC-V: cpu-hotplug fix
+Message-ID: <20250924-6e273138195103ca5b7912f6@orel>
+References: <20250919132849.31676-1-danil.skrebenkov@cloudbear.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,50 +89,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922224835.1918759-5-sjg@chromium.org>
+In-Reply-To: <20250919132849.31676-1-danil.skrebenkov@cloudbear.ru>
 
-On Mon, Sep 22, 2025 at 04:48:32PM -0600, Simon Glass wrote:
-> Support 'make image.fit FIT_MODULES=1' to put all the modules into a
-> ramdisk image within the FIT.
+On Fri, Sep 19, 2025 at 04:28:46PM +0300, Danil Skrebenkov wrote:
+> openSBI v1.7 adds harts checks for ipi operations. Especially it
+> adds comparison between hmask passed as an argument from linux
+> and mask of online harts (from openSBI side). If they don't
+> fit each other the error occurs.
 > 
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> Suggested-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> When cpu is offline, cpu_online_mask is explicitly cleared in
+> __cpu_disable. However, there is no explicit clearing of
+> mm_cpumask. mm_cpumask is used for rfence operations that
+> call openSBI RFENCE extension which uses ipi to remote harts.
+> If hart is offline there may be error if mask of linux is not
+> as mask of online harts in openSBI.
+> 
+> this patch adds explicit clearing of mm_cpumask for offline hart.
+> 
+> Signed-off-by: Danil Skrebenkov <danil.skrebenkov@cloudbear.ru>
 > ---
-
-Acked-by: Nathan Chancellor <nathan@kernel.org>
-
->  scripts/Makefile.lib | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  arch/riscv/kernel/cpu-hotplug.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 1d581ba5df66..2e880d9b4706 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -398,9 +398,15 @@ MAKE_FIT := $(srctree)/scripts/make_fit.py
->  # Use this to override the compression algorithm
->  FIT_COMPRESSION ?= gzip
+> diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
+> index a1e38ecfc8be..3f50d3dd76c6 100644
+> --- a/arch/riscv/kernel/cpu-hotplug.c
+> +++ b/arch/riscv/kernel/cpu-hotplug.c
+> @@ -54,6 +54,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
 >  
-> +# Set this to 1 to include an initrd with all the kernel modules
-> +FIT_MODULES ?= 0
-> +ifeq ($(FIT_MODULES),1)
-> +EXTRA := -B $(objtree) -m
-
-Not that I can imagine it being a big issue, it would be nice to
-potentially namespace this variable, like MAKE_FIT_EXTRA or
-MAKE_FIT_FLAGS?
-
-> +endif
-> +
->  quiet_cmd_fit = FIT     $@
->        cmd_fit = $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux \
-> -		--name '$(UIMAGE_NAME)' \
-> +		--name '$(UIMAGE_NAME)' $(EXTRA) \
->  		$(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
->  		$(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
->  		--compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
+>  	pr_notice("CPU%u: off\n", cpu);
+>  
+> +	clear_tasks_mm_cpumask(cpu);
+>  	/* Verify from the firmware if the cpu is really stopped*/
+>  	if (cpu_ops->cpu_is_stopped)
+>  		ret = cpu_ops->cpu_is_stopped(cpu);
 > -- 
 > 2.43.0
-> 
-> base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
-> branch: fita3
+>
+
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
