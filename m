@@ -1,250 +1,212 @@
-Return-Path: <linux-kernel+bounces-830630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DFEB9A2D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9ADBB9A325
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80FF04A7278
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:11:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5891F16469F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1BB305964;
-	Wed, 24 Sep 2025 14:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0DC3074A0;
+	Wed, 24 Sep 2025 14:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XWsIeH5m"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iPEuwlfM"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011005.outbound.protection.outlook.com [52.101.65.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D783054EB;
-	Wed, 24 Sep 2025 14:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758723083; cv=none; b=M6LOz5bxJGBfX57dblzXNWXH7XdyIG+eBl8P0PrxGupjxUB62Wh/l8F2UyhaOlEgzITdXocvBojLoCvwxLBRVVxQGkOLiSAq0Vw3kUYdW2y2kBJkmjAaDQtx9iZ50b6hbp9oNH+2pU+wTzDbCiKFEEX95S+NQgfDQhiyoHDOJNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758723083; c=relaxed/simple;
-	bh=SBJbzI+a5EDCmQJVqd66UPCcUKx8PMbrUQzAs3ufUz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WkmZbE9OHMSAm5XJ1b7xZL0CHIH1QzubqU9XNcfwdv/9dbUgf3EgC3cRU4gXJTfNKQiH4ACyQVgeU9ZTCKtDOLzRe236vODykodxYOQqd03m0kuDW1r0OPWsXaKeUYb41iX1jywaHAT2xBJamU9nEwERnUKUQk5KgXVyuayX/lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XWsIeH5m; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
-	Content-Type; bh=WqpeQ5qAYFhnm6GasJioV7bqqdYfgWz6OOnhDlY+7+U=;
-	b=XWsIeH5mq6Jnb2vVB5KXB7Lfm5A55xzGPNbED0L+TR5yyAm53MwbfXK5CnJOf5
-	NwcYMTTosJu4YEy+ghe9nDfwpTjL5IJAMd6ZUvO0q7KH/TWIAQYVPVDAc7J+NPib
-	5yVRwJLzG3MWPRLucN9oLCCyIM7IvKOLTAtmviSqgINHM=
-Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wB3u8rm+9NoN1RcDg--.14964S2;
-	Wed, 24 Sep 2025 22:10:47 +0800 (CST)
-From: GuangFei Luo <luogf2025@163.com>
-To: rafael@kernel.org
-Cc: dan.carpenter@linaro.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	luogf2025@163.com
-Subject: Re:[PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
-Date: Wed, 24 Sep 2025 22:10:45 +0800
-Message-ID: <20250924141047.1477743-1-luogf2025@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
-References: <CAJZ5v0htRTTj1QEEmhxBDxYA8oXkg_KP5YrfwyngELDY+Ns1EQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295DF306B39;
+	Wed, 24 Sep 2025 14:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758723256; cv=fail; b=MmqoEKwzyU68UAfoyqLvlCDJtzJdq/7lWDyi37tVYk0eY5Lxs0gPI22CQZKU/psftNn4S6q25i2EwDYPdoy3quF3kr4SJPT7hGJuFBxR0ddj3R5EnvLNP+iTcXY9hD2L2WrhSf1Ud++DD3seMYag7Nx84dpL4Ny8u8wQSe+mT+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758723256; c=relaxed/simple;
+	bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ALXPy02XtFaH5h8dy1aI3s+2q8T5BySbBl4lQVL2jboMTh8S9tH2NiIJWTUUB4/Y3Jvom1JU+Q9sv4z89UF9SPcQ42CxfzZAW8XskBEIoEcsW8YWRgQI+fF2a/m+Hu4qude6E1aPy9Too4R4qc20DZPYegIMM69hTNJ5Si46Rro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iPEuwlfM; arc=fail smtp.client-ip=52.101.65.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gh540P2aEH4axanDSETJ8NLoUoAiWZUh84Sn+t2ml+i331pSurZwpxJZmdwFOV8D+F8VT2e75pVA6HfM5HgJwtHAy9c1QwK6RuQmMampkDSEvUnX+CpSwU8rTPaKolnDkDQY+JCkjsxp63GDnew275QAoJL5AjchxC+VEf2rRRYkiUJqcsLY+MyzjOi1oVJQoe/ClkcZrZ4AX+E+IbdIFFY+zWwfZ8/Nj4psRhQjSvX/TnmhLGrlWMROz319nFI2CG46bexAKUBJyKa7WHXe9FzYSD6zn5QYkdiTubbDnROwRz8JWjI+1Xszb4o2uGq9VhFrZL/wuCCc+vuS2tiqdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
+ b=ejvlGX+MaOKfsg5AuOwEmLZIrOeemv9Z63/mk2v6ldUxkJgdXS5XOTSz17Pkyf737wjV9DycyxTDnFQH+Sq3zUKbuzykZg+cIVvGvr7qEzKCLzef+R/X/F1m+Q4eKoqXyJrQrlUxZicEUmt0YGqd3edYtcGqPgF7y6P4BngXBJ58/BRexQdKgQcwWeKKoPUNd0ZTKRCRnI1w9ULEujmixpCbor88MQl27x4TQvNQi7doBgEDW8XBzjrx8pK8BXxwqF2pBg+K9U30/jPHWyfKNNzNViQ68pEWBVc2b0c2/sDHAHndwbegPMCcMzjAhg+NfEZCRxWC+5QPrgf08GEGPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C14OYAc7cnZMJf20GUplVUGtSC1SKvqKVikb8C2YDuI=;
+ b=iPEuwlfMgrsLhF5KVTOZcsnmC6km4kNlvWSlY3ecXSoMQCAjGoW5cICpE/47cup43qcbZk7SHhXEHM6FWY+EIKJC3+Z7lNU4ZVROWvk8CYGHr9f9mf2JK5bAQcXnYPBwWKEFcJNVGwMqvniwYj6ZV1A4+TVoxdN912Fyu8ea9PBx2QotROcl5Mz2j73/ucPholYpWGV2ggAah6YA0VfR5tN8+fCTrUVLFew2CPsV6sv2DIrT3ujZQWeQtWdbaFniQJSLcAM6AMFT5UIsM3uTHqnukuO1ktueZEoLrtB4r8DFk6zib1iXHo6zIFEzHdOkT13IrtaYy/rZIsHkfqY7xQ==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PAXPR04MB8718.eurprd04.prod.outlook.com (2603:10a6:102:21d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 14:14:11 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 14:14:11 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Cristian Marussi <cristian.marussi@arm.com>, Sebin Francis
+	<sebin.francis@ti.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Marco Felsch
+	<m.felsch@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Brian Masney
+	<bmasney@redhat.com>, Dhruva Gole <d-gole@ti.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Thread-Topic: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Thread-Index:
+ AQHcJhsCzmRSrEp0oEyqjCzMN4tqC7SgpByAgAAO97CAAWsJAIAAIANwgAAPgwCAAAcZAIAAF/pA
+Date: Wed, 24 Sep 2025 14:14:11 +0000
+Message-ID:
+ <PAXPR04MB84594DDFFE47E67552718F77881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+ <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+ <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
+ <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <c34157c5-cd13-4e85-a9ee-22446111f633@ti.com> <aNPmydbv6Xm0Tj9B@pluto>
+In-Reply-To: <aNPmydbv6Xm0Tj9B@pluto>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PAXPR04MB8718:EE_
+x-ms-office365-filtering-correlation-id: dc926516-d70d-4df8-8c75-08ddfb74a23a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?KIDdcr2e2CFn7IfEkVzqGn1oVMaFfbvf2QatH0fNZMCrkL3d5lbg6iWx388B?=
+ =?us-ascii?Q?36S7pJezpZ4V/tdCbSelLBXVrpYQz5/oG1gYS+1QLmMu7ms+XpaS4I0x9e7h?=
+ =?us-ascii?Q?zAPeRH8aoDZaw5bhhw5gh2bs7i4L8GGpmYifVwjn4bn0pf6zz0Vgn+z1FLNT?=
+ =?us-ascii?Q?8EXDvx+Fsdn4+0oozxVYcMSIi4sNeQOptUvbgKPkagTlnH0O3luS9Y2z3QPe?=
+ =?us-ascii?Q?LXbsOwhh0YxqaY8y2vaUhmPz/cUM+NqxIEIsWHzsJVGaim925Spe5i5Xi6gN?=
+ =?us-ascii?Q?d1F7RQliaxd1MC6YEBvCAu2Sz8QRIue9tyTXSDBsYZaLwaq9m9JC8pwb+95w?=
+ =?us-ascii?Q?F3u2cLWPRjtNt6raEPnSuqEAb2xYgLAxiUvr+TUm4LD5hzz159LfuTlMAcEq?=
+ =?us-ascii?Q?REa4k07NChchGUuT/ZFQoyEufVGVa1uOHq8OCD35eEjh/PFB/7TAdBiJDiga?=
+ =?us-ascii?Q?+9IqwaitI/JLbbq2W5+YGQgKXOs53xmi9JGUbzJ+MYTMG3r+uytTv0uaXUEZ?=
+ =?us-ascii?Q?IdKd21/qGrYXl9SaqrnI1fbAqgu9U4BmjqgX9ixKY/lXQRkDqoci62zrxpBZ?=
+ =?us-ascii?Q?SN5jdogKWP8oIWGj0QOYfpngsOR+qwlodi3MheEM07yfEhfdAZzwW9V8f15b?=
+ =?us-ascii?Q?mq9ww6WLp7Un8o6pptmu4q4h6F7Zor1UfxykZDY9nGq0Mw+6+4m553O7XAqk?=
+ =?us-ascii?Q?Kp9YDXeups0B/LuYnotqn5BNUBSl6Z5tZq1uGVMMm0qXXnZ3eMXWo9ud2hQ7?=
+ =?us-ascii?Q?nLi8uH2Y8a5IQDe8vi8oy1IlUmxnMQhluiKcawWpc/8wZCQHH8Cb5Pga3TU2?=
+ =?us-ascii?Q?W5JuZdULfINRUtTbv+NpQgl42ojGmcxygg9XZKOLczd9bg89ArKcZ+ixOWJS?=
+ =?us-ascii?Q?vq0yAhYa60whOuiXwAtQjWpeNxy+nXU9LUwR12kT4ls0IRxInNlgjNIJkB2A?=
+ =?us-ascii?Q?5xp1Gb34iAr7BD8Dc41mnAQz02VyMpejaZQALPkeooit6eOBq7CLgs7rhNja?=
+ =?us-ascii?Q?DBE8j1fqhGaEKjWS3D5X1jCX6k9WwO0FcGNdAzcpLqyylADq2TpBYnPXVB2O?=
+ =?us-ascii?Q?5FS71w3AM+k9k1tSt8uuJTRsb/kuGFgDts6fN++qWd6IW1o55KR3qSeZoPzx?=
+ =?us-ascii?Q?LDLD066XFBKcIYGEHulZ7VO1gWlttfDTenwCz0g2flJXe/7Y/jLMm+Fe8jvI?=
+ =?us-ascii?Q?mQUVPNB9kmCjjKwbrpzTFj09AF5yuZOtv3/hKjbBOuOwRuhW9W43V7Kq9/Tq?=
+ =?us-ascii?Q?1g976+Yq/bYZIqT/9dymoPC25qEuHoWOcZ4YSYHRfyoVygiFzUvX10c1K/28?=
+ =?us-ascii?Q?rJcev/gzi/pTufv2aEEzT4Uk39ZnEn5YsQixCS8rs3Rr9MjACZL0diYR6Cdq?=
+ =?us-ascii?Q?pBTGkuVK5D2g/faOmc5l3czrsL1egYa5t7zz47Wnz6CskA6D1ZSfDjp31AS8?=
+ =?us-ascii?Q?OqODn01cctzh1zwBDSirs57L/siQQ0yaeRY/O9fEkFf1+JH65r51JPEPwGDh?=
+ =?us-ascii?Q?FGu6kbtwxn8sjlM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?CvYvFyB6h+t4G/ARSVwqjR4qTtxp4I+8GNQq00B88hH2MRaVDkK1sXGIJK47?=
+ =?us-ascii?Q?5Y20GSX2MX0wfHUs31OyLBEGU3DQyb9h8xAGpyvtMbDzdaey1xyXQHfYUdSE?=
+ =?us-ascii?Q?/JmpgbMIl0WjW3fFr6VCyGPJTfyxfD3pG/QU1UqD+Wbkz0no/iqGS+rMNfGk?=
+ =?us-ascii?Q?CHNG85rnBlwU06HMGb6R1C2ryealLZjegAvv6Gi+nnaBogXV/B8ozalH8KSl?=
+ =?us-ascii?Q?12FcRZHR5qHuUtZTZjjvtwWcK5uRezBuHXA1dsA/2W8WL03FVslJIsod6mIo?=
+ =?us-ascii?Q?FlRHQQNMivLCzGyBfAdmfmVSn42t19Dn2VijtZUVJMlOsDE7u8jJPahb5cFg?=
+ =?us-ascii?Q?hwItYrafq2ZAKTAPRjY3ftMnnOaoUhPAuS5CFX0MaoOGh3/WS53WA4emDZC7?=
+ =?us-ascii?Q?e5jtuPXRUVxSj0JaI5wzpAbeoHaB2Q77gJKWOFwMtOVYDfp3lE4Di9pN2kJ8?=
+ =?us-ascii?Q?8pChoiglZH7zNYpsl2o8xEmkF5ohS6zovUg0QHysYYjO/VQGqhA2iVzJljcH?=
+ =?us-ascii?Q?mSmmCaqMkEUnrzgFpZAhFpTSPoD7HF6n/zAOyeEW1Kc7I+kGEyJzZCQIMs7c?=
+ =?us-ascii?Q?vPgpFRjdErU6BeiR3er6DYwSPvMSvCs2EvffaFN03MojGYamSsUUWzg84a7l?=
+ =?us-ascii?Q?79xVRVxqtBtIMsTtsDS7q7XCOlmjbSScdkw9+7wN3iSR+wRSc5gd9bhcVbsg?=
+ =?us-ascii?Q?v9QhfYiQGbHUdSxNHEi03EG7JAQhL+yIwJNSYUL6DuIZBgKB5toUBzO84X+K?=
+ =?us-ascii?Q?3qII5i/GDPaO9rS06g70uSjDT4oyUdOrsOIemgp+QETx3/mMfpPxuet1Fhs1?=
+ =?us-ascii?Q?0EbC1mGOEYkAU7OxZNTyL+xHZgwpB9/fs5NFUV2EbG2x1ncsN4FhXO9dwH08?=
+ =?us-ascii?Q?99X1+wRq4NZSPJM5+gJVVvsr4kBvDvbDY6QlJ365ZDnKaPCnX8Nd2l9e+t8E?=
+ =?us-ascii?Q?p+DC+R+YEUjNOXkaxBmd+ZDTFB+X+wReIA0xz522UA558YkswhiGshauGsQP?=
+ =?us-ascii?Q?21BifwsBZ9YS1zMsZwVavwe0gblb0inesw9b4z4B8wUtQDHZPPx/Bl105Rtf?=
+ =?us-ascii?Q?ejfRUcCD33K3hrpPun+DnIr65lnww3wxJWOogmeW6ckJLmFoNgvbyI14fhke?=
+ =?us-ascii?Q?sd69jWBLPO3GA6choLRcB/Swb+VboH6H48Adg2yNZSL2zK/bKDB6hurr0yWx?=
+ =?us-ascii?Q?TxucmAKDLKwmBXQH9Y79NScNIvYi2XYFGyJ4C9L15FLTmZA9u1nmUFol8p6W?=
+ =?us-ascii?Q?rmmc1gI8s7uE4oujzZT1T6s/S4VQsnxKVF+HhqlW2NLkvlFKdRsacv87bWx1?=
+ =?us-ascii?Q?gYgho/09a6Zb926fGnhD0mrTvELCz8kUYYxE8md418ROB7csY2R8j9m0A8la?=
+ =?us-ascii?Q?jXEncuIoo2JbIIB0ot2rLNowoHsLClocxuDTBNGCKCyo3LssU7jg4lJ/0a6b?=
+ =?us-ascii?Q?X/efnmaAXZLXlsOX09kKBaRkxUHxVZQM93uAEU0JaZTBCcCucQdiQewf5yxy?=
+ =?us-ascii?Q?YVd6/qSFIHBwMO2qRhN8p1q9wn0vzzCSCFuf+5VYZ9VgPG5OMYUNVaUq+DSw?=
+ =?us-ascii?Q?WOvN2O4W2m4KYtjnjOg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wB3u8rm+9NoN1RcDg--.14964S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuFWrGF4fCF4xGr1UKFW8Crg_yoW7tr48pa
-	yUCFWYkF4UJF1UXw12qr1YvryYy3yrtryUWr9rGFy0k34q9F1xJr1UtFnrurZ8Cr4IkF48
-	ZF4xXa13Zr13ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zirb15UUUUU=
-X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbiPQ-SmWjT9ip7EAAAs1
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc926516-d70d-4df8-8c75-08ddfb74a23a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 14:14:11.2446
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 35zVaSG/JvSniGOtAsRcZFQGOt+Qz94BLHh++wXEz8w9GNDGdRf5fbEWTSe+9SdyNvnGm6VRdhVHdVCBVqLknQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8718
 
-> On Wed, Sep 24, 2025 at 12:38 AM GuangFei Luo <luogf2025@163.com> wrote:
-> >
-> > > On Tuesday, September 23, 2025 7:12:03 PM CEST Rafael J. Wysocki wrote:
-> > > > On Tue, Sep 23, 2025 at 6:14 PM GuangFei Luo <luogf2025@163.com> wrote:
-> > > > >
-> > > > > The functions battery_hook_add_battery(), battery_hook_remove_battery(),
-> > > > > and sysfs_remove_battery() already acquire locks, so their internal
-> > > > > accesses are safe.
-> > > >
-> > > > In fact, there are two locks in use, battery->sysfs_lock and
-> > > > hook_mutex.  The latter is used for managing hooks and the former is
-> > > > only used by sysfs_remove_battery(), so it only prevents that function
-> > > > from racing with another instance of itself.
-> > > >
-> > > > I would suggest using battery->sysfs_lock for protecting battery->bat
-> > > > in general.
-> > > >
-> > > > > acpi_battery_refresh() does check battery->bat, but its child
-> > > > > functions (sysfs_add_battery() and sysfs_remove_battery()) already
-> > > > > handle locking.
-> > > >
-> > > > What locking?  Before the $subject patch, sysfs_add_battery() doesn't
-> > > > do any locking at all AFAICS.
-> > > >
-> > > > > In acpi_battery_notify(), battery->bat has no lock. However, the
-> > > > > check of battery->bat is at the very end of the function. During
-> > > > > earlier calls, battery->bat has already been protected by locks, so
-> > > > > re-entry will not cause issues.
-> > > >
-> > > > All of the battery->bat checks and the code depending on them need to
-> > > > go under the same lock.  I'd use battery->sysfs_lock for this as
-> > > > already mentioned above.
-> > >
-> > > So my (untested) version of this fix is appended.
-> > >
-> > > Note that it explicitly prevents acpi_battery_notify() from racing with
-> > > addition/removal, PM notifications, and resume.
-> > >
-> > > ---
-> > >  drivers/acpi/battery.c |   36 +++++++++++++++++++++++-------------
-> > >  1 file changed, 23 insertions(+), 13 deletions(-)
-> > >
-> > > --- a/drivers/acpi/battery.c
-> > > +++ b/drivers/acpi/battery.c
-> > > @@ -92,7 +92,7 @@ enum {
-> > >
-> > >  struct acpi_battery {
-> > >       struct mutex lock;
-> > > -     struct mutex sysfs_lock;
-> > > +     struct mutex update_lock;
-> > >       struct power_supply *bat;
-> > >       struct power_supply_desc bat_desc;
-> > >       struct acpi_device *device;
-> > > @@ -904,15 +904,12 @@ static int sysfs_add_battery(struct acpi
-> > >
-> > >  static void sysfs_remove_battery(struct acpi_battery *battery)
-> > >  {
-> > > -     mutex_lock(&battery->sysfs_lock);
-> > > -     if (!battery->bat) {
-> > > -             mutex_unlock(&battery->sysfs_lock);
-> > > +     if (!battery->bat)
-> > >               return;
-> > > -     }
-> > > +
-> > >       battery_hook_remove_battery(battery);
-> > >       power_supply_unregister(battery->bat);
-> > >       battery->bat = NULL;
-> > > -     mutex_unlock(&battery->sysfs_lock);
-> > >  }
-> > >
-> > >  static void find_battery(const struct dmi_header *dm, void *private)
-> > > @@ -1072,6 +1069,9 @@ static void acpi_battery_notify(acpi_han
-> > >
-> > >       if (!battery)
-> > >               return;
-> > > +
-> > > +     guard(mutex)(&battery->update_lock);
-> > > +
-> > >       old = battery->bat;
-> > >       /*
-> > >        * On Acer Aspire V5-573G notifications are sometimes triggered too
-> > > @@ -1094,21 +1094,22 @@ static void acpi_battery_notify(acpi_han
-> > >  }
-> > >
-> > >  static int battery_notify(struct notifier_block *nb,
-> > > -                            unsigned long mode, void *_unused)
-> > > +                       unsigned long mode, void *_unused)
-> > >  {
-> > >       struct acpi_battery *battery = container_of(nb, struct acpi_battery,
-> > >                                                   pm_nb);
-> > > -     int result;
-> > >
-> > > -     switch (mode) {
-> > > -     case PM_POST_HIBERNATION:
-> > > -     case PM_POST_SUSPEND:
-> > > +     if (mode == PM_POST_SUSPEND || mode == PM_POST_HIBERNATION) {
-> > > +             guard(mutex)(&battery->update_lock);
-> > > +
-> > >               if (!acpi_battery_present(battery))
-> > >                       return 0;
-> > >
-> > >               if (battery->bat) {
-> > >                       acpi_battery_refresh(battery);
-> > >               } else {
-> > > +                     int result;
-> > > +
-> > >                       result = acpi_battery_get_info(battery);
-> > >                       if (result)
-> > >                               return result;
-> > > @@ -1120,7 +1121,6 @@ static int battery_notify(struct notifie
-> > >
-> > >               acpi_battery_init_alarm(battery);
-> > >               acpi_battery_get_state(battery);
-> > > -             break;
-> > >       }
-> > >
-> > >       return 0;
-> > > @@ -1198,6 +1198,8 @@ static int acpi_battery_update_retry(str
-> > >  {
-> > >       int retry, ret;
-> > >
-> > > +     guard(mutex)(&battery->update_lock);
-> > > +
-> > >       for (retry = 5; retry; retry--) {
-> > >               ret = acpi_battery_update(battery, false);
-> > >               if (!ret)
-> > > @@ -1230,7 +1232,7 @@ static int acpi_battery_add(struct acpi_
-> > >       if (result)
-> > >               return result;
-> > >
-> > > -     result = devm_mutex_init(&device->dev, &battery->sysfs_lock);
-> > > +     result = devm_mutex_init(&device->dev, &battery->update_lock);
-> > >       if (result)
-> > >               return result;
-> > >
-> > > @@ -1262,6 +1264,8 @@ fail_pm:
-> > >       device_init_wakeup(&device->dev, 0);
-> > >       unregister_pm_notifier(&battery->pm_nb);
-> > >  fail:
-> > > +     guard(mutex)(&battery->update_lock);
-> > > +
-> > >       sysfs_remove_battery(battery);
-> > >
-> > >       return result;
-> > > @@ -1281,6 +1285,9 @@ static void acpi_battery_remove(struct a
-> > >
-> > >       device_init_wakeup(&device->dev, 0);
-> > >       unregister_pm_notifier(&battery->pm_nb);
-> > > +
-> > > +     guard(mutex)(&battery->update_lock);
-> > > +
-> > >       sysfs_remove_battery(battery);
-> > >  }
-> > >
-> > > @@ -1297,6 +1304,9 @@ static int acpi_battery_resume(struct de
-> > >               return -EINVAL;
-> > >
-> > >       battery->update_time = 0;
-> > > +
-> > > +     guard(mutex)(&battery->update_lock);
-> > > +
-> > >       acpi_battery_update(battery, true);
-> > >       return 0;
-> > >  }
-> >
-> > Thanks for the detailed explanation and the updated version of the fix.
-> >
-> > I will test your suggested changes on my platform.
-> > After verification, I will send a v7 based on your suggestion.
-> 
-> Please just verify and I'll add a changelog and subject to the patch
-> and submit it.
-> 
-> Thanks!
+Hi Cristian,
 
-I have tested your updated patch on my laptop with battery hot-plug scenarios.
-Everything looks normal and I did not observe any issues.
+> Subject: Re: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for
+> NXP i.MX95
+>
+...
+=20
+>=20
+> So yes the ideal solutiomn would be to extend in a generic way the
+> SCMI framework so that you can add in these cases custom handling of
+> vendor extensions for standard protocols (and then generalize the
+> current clk-scmi IMX support and add the new TI one...)...but I have not
+> thought about this and I certainly dont have enough bandwidth now to
+> work on this
 
-Thanks!
+I see. So I get the point IMX SSC OEM is allowed, but need an elegant way
+to extend SCMI framework or extend clk-scmi.c in an elegant way to make
+it easier to support other platforms.=20
 
+...beside having already in the pipeline other stuff/fixes like
+> a proper fix for vendor drivers coex like Peng askes (rightly so a few
+> months ago)
+
+Thanks for working on that.
+
+I could continue give a look on this, if any suggestions, I would appreciat=
+e
+that.
+
+Thanks
+Peng
+
+>=20
+> Thanks,
+> Cristian
 
