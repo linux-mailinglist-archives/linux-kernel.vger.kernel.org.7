@@ -1,131 +1,189 @@
-Return-Path: <linux-kernel+bounces-830929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB2FB9AEDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F099BB9AEED
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01D73A802C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7491B27F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B253148C4;
-	Wed, 24 Sep 2025 16:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89443307AEB;
+	Wed, 24 Sep 2025 16:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Ilnq6lkI"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ejo8DnM3"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862F621FF44
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A3731282B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733005; cv=none; b=pVPfu5ZDiThvpPpm6ie4mievuuZAR6koZRbDatlFanNLlJpszzvGN3N3jQJoqpjzhd06geC6/egmYioNV7aRTOKDf8q/L1Zt2CkzHZuUHn3kyMxluNiGt0e5P6NOpNvYr4jLDKs6uufw2grUPDGLVNneY5sfUVtrnw8oOPh2I5s=
+	t=1758733048; cv=none; b=fvAuzUJgNzvv3PJ+6677ensmtjnLpmfOC/kv2Ori18TRqnV1pjE9Zeir37TM1KcYG9UKiQpOXYq5H0VVr2uB6BJPkttImVC6TJbuN0GQtpMJ/h09KLGOfnsfTnVDJL7PlNnPIxTLAanc7k2JzTmqr26jukwNguwaJ/R05LS9fLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733005; c=relaxed/simple;
-	bh=NJFkjrhUsdcy8+rn6IOt2BrBbyjXFEMbFh4NQH7fzls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHfaiLYjATFKXvfjgrvhbfZvdYKp35Jv/3m+oKxkPguxeAiUpyoYrPbHB4M9L4RLPCe/Jdg8L6YIEahwmvZkMBKFKX+1GCQAf3XKZwrfoXURGX4S4ou732x5L7XHBQhpw1K84hrdgSeqPSpOLncyUNYtnXW3nuuZLQFmL7vd298=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Ilnq6lkI; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-8db958b5b83so8812639f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:56:43 -0700 (PDT)
+	s=arc-20240116; t=1758733048; c=relaxed/simple;
+	bh=tPg4Wqz8J2TompQpzQza/5UmS8Zm70sbPvTEcMI6BDU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IOzPJ8/9HkVM/oqhnIL4Pdl/ww77GYud2RETc021FFYJ+EMFoTopjmUMVf2QCXrcU4rkOjMzuMzgwlZaqxZ525/Pb2Omuqzh0bojD/9Ns1f7BB1VbHekzQbSY33651pVZ05lch70tCSUWQTGedcz3b4usPODL4t2M0ePGRlSv0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ejo8DnM3; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77f32d99a97so60050b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:57:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758733002; x=1759337802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQQzEQlairAj51+ohta7VWgLRglW4GQMtLef+NgHrEI=;
-        b=Ilnq6lkIreYeNvh6QcaDWO5gMaZIxU2FDQVNT4qS0SS0D9rSM1vuKG1ZCcscVyxf48
-         +DtqDHDY9bJREL22aqaFmFjkp9sVW91uUO3W8Ve3tybFfgBoonfHuX/o8BOEna0DVtNF
-         a8Ylc+TBfqHIpt9AMJzHSuN4Ulxz8mbTL0LOtnq/asQrSTSSsXktLUJuklcCFyljEzLK
-         FRQwAxTfwCcXqhjJZJ+4QaOk5/Jhf4iAK0n7Mg0DMi5Ut32x3ZkTptJ8XplCIaQ7rhb3
-         +DQSCtwy8gHTdiKv3Nc8kyX1zoXZKyILqZCJhBFhzWZvX2rX4vnWKvQi1W64Of3GyBUW
-         YYtQ==
+        d=chromium.org; s=google; t=1758733047; x=1759337847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w7w7BZfusfh40TgUumBQVrwOU9Hw6Y9fKIpILWJTmpI=;
+        b=Ejo8DnM3kav7ByBkn3OXAdhFpXyC3Cdwo1tBD3NLsbxCprYwu36tZ6bcmMNBDKRe8X
+         17NwpQ6yXn0U8HM+UG1D/FjL27nQ9gpUCvxpQxVyt/koee3pfix4asxuG3spdJ03HPr+
+         AbHfXGURHM0/SYnLsdEH+yn5DdtyPRlkCndbk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758733002; x=1759337802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQQzEQlairAj51+ohta7VWgLRglW4GQMtLef+NgHrEI=;
-        b=u/H1xZ4ODmEO80hMEMUlSjNAHm0MrtYasZQghYaZE/4aXqkhwJQSXxS3Vog4d8w6cU
-         Fxl8PDhc82HnOYX/eTE/5F/sj0PW/JKs96DucxrwQ7uwUG5D3GQpRUsPrhZxyi5SMi3Q
-         rYj2hO9hXqvA3LJPe9tCScasVTH8H771cS0kwZ/E9Z9yltCgIdjwbaXUp7e7LCmT2eyW
-         ipDCRmt43Ji9OgCocSb6XaDTeAqkiNvSBMRgNb0PgbXqawQLLvyry5mp0YJo8TJXkV/o
-         yx9ADhc3jpNOX5Xx2ce7CAUF3s7UUEZ4RSN0l6kgYJ/eI8t6WGNH2HDuyfcVeTEScpeC
-         ToUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnd3UszfB9+lVYdwFiVetVW+NxRLjxAnbaBTnrHwRgXyVNL8InBF06Z9POvEuoFoJvu+ype0n7z9xiMAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDbfSc3BMv3vPV2lnfTd9RZsV8o2B6QINkyK1XQSVLKBRS0d50
-	uspprD9vULZqYNGX2ipFo7cGlEtghY3FAi6ri2AkVpBd0/+fVK9hD15V5vCLCCYUrEw=
-X-Gm-Gg: ASbGncvcatlhEJpF/CH8E/a0KeF87vnaTzZJlrwj/aey/JuAiBNim+nyKe/remyP+C7
-	E8JSrm9x4iBFCK2Us4q19mI6aIWsEWvPDj98IuuG5kpJ/nbfiN+Et6UCW8Kq/LItq3HDBhQxJDw
-	+a05RFNqHuDrayIaJsx+x7MAK2tFaEjuvK40d8Br3OZpA9Gqr+iVICsRI8a/Piki0eMHuaasGqU
-	J9aek6Y761e3nOjyiPPp4fPnGAwOF1oUryK8ZXzuOJAwRZOlTx/qvhY3qzXzZXFFyYAGzl5XoDc
-	CAkwgHFSZky0MQ9VITSh+jLlagbu5pfJaa8D20IPgcAooNjFlXab0aL9DT8iRWmO9mwCi11CWzL
-	74GfZAZOjDxT67lVdrNtlfe70
-X-Google-Smtp-Source: AGHT+IGBqrqJ6aGPvymHhMG99f/WWRWdd/TLY3Hx8xLtGHi9mUrXvTzfn7rPTbE9CvxrAKE0HVc8sw==
-X-Received: by 2002:a05:6602:6081:b0:887:6854:b075 with SMTP id ca18e2360f4ac-901526045demr46544239f.2.1758733002472;
-        Wed, 24 Sep 2025 09:56:42 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8db17087bfdsm205980039f.8.2025.09.24.09.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 09:56:41 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:56:40 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Danil Skrebenkov <danil.skrebenkov@cloudbear.ru>
-Cc: pjw@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Charlie Jenkins <charlie@rivosinc.com>, 
-	WangYuli <wangyuli@uniontech.com>, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RISC-V: cpu-hotplug fix
-Message-ID: <20250924-6e273138195103ca5b7912f6@orel>
-References: <20250919132849.31676-1-danil.skrebenkov@cloudbear.ru>
+        d=1e100.net; s=20230601; t=1758733047; x=1759337847;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w7w7BZfusfh40TgUumBQVrwOU9Hw6Y9fKIpILWJTmpI=;
+        b=MUVima+PFSdFDPHfQoeyFDw6kBDb5UzYf8laHiRsU0oRXqKj1kuKnZmwAeFOy7i+8j
+         qGxu0JFvP3OBTlHZjRuO5HkBwhahpe6VpMO5VOmisiPFDocudFTa03k4PDDdJWqgSaob
+         sCAGuwIsdQs152KMncLh4QSRM11i40tsL+n2P6vqkRpcu0J2gJHRT1OfJ3p5LstqG617
+         f16TywxFfCevkhEvptEIUbSH6WDW57lpdiSzhIBdl0hwKgdeCo3bc24Gro5ImM5qvnzc
+         jTeb0ttnHk0UY3M5ocJvHGxucc3oeAlwPxU2PZEu9vD6LZtZKgM5n1aEy+8ls+l+M7Bo
+         R2ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWNjdWXsLOXPe/5nBTgaz5v3SYh3lWtQdv9y1RqOttxAG2x49Bp29frYWi1ulsGPVoN6O55zJwPxK82VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS1gFAl8wIWCRMXldKzw6Dkk1HX2SP04V3TzWHEWQs16GGPHyB
+	1IDUuWRe3LzawUmk95NsvRdLpEkwCAhRFQkaf0N1ZU0sA2s+siCTbbrDvuXW9KqM0w==
+X-Gm-Gg: ASbGncvuJuaBJ03/9iUaZiXi6RDy3I4/aihNaC8KFnL3ynOdlAk9JFmj2/aMZppYXKI
+	C6AlueHS8UCkT0IwbwcDUX1pVhP7bYQQKQkaxep0w9gRRVy+TrRfef/xRszETxv+b+it5P72gKU
+	Lws7s6Uxx/DiymCjdnHiAG6dnIWZ5Mzpv0Smkl930w9/+hvnr1/Ph+jGrzeYoAYW0WuLp1MTqzP
+	brdygHI0FunnJYQOwnHBkuHAwuHPgYMCdI4+MDGOub9VwnxCSXaHgn5DkqyRls777kiGg8TgUEW
+	nhs/Y/QwZXpz5X8r2q/6qYIVZWr25em9TLRZ9Y0qF4hsWYdsXyMp0h8QxM1VLagtd8BXxUqI5/a
+	zifG7Ro6FX3NhbcOkhCdHW0yoqNBCebDuDW85QQPyz9OChfua4CGGP9udPg91
+X-Google-Smtp-Source: AGHT+IGx9dCGSc8hHfADXStah33h7Nc5K9qEOotJoi6vkmLXbBDnOjcgbEXkXllnVBgpY/TI8WgxrA==
+X-Received: by 2002:a05:6a00:8703:b0:77f:3a99:77b1 with SMTP id d2e1a72fcca58-780fce13c75mr503942b3a.9.1758733046668;
+        Wed, 24 Sep 2025 09:57:26 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:26d9:5758:328a:50f8])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77e0bb98790sm16815959b3a.9.2025.09.24.09.57.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 09:57:26 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ethan Zhao <etzhao1900@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@google.com>,
+	stable@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v2] PCI/sysfs: Ensure devices are powered for config reads
+Date: Wed, 24 Sep 2025 09:57:11 -0700
+Message-ID: <20250924095711.v2.1.Ibb5b6ca1e2c059e04ec53140cd98a44f2684c668@changeid>
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919132849.31676-1-danil.skrebenkov@cloudbear.ru>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 04:28:46PM +0300, Danil Skrebenkov wrote:
-> openSBI v1.7 adds harts checks for ipi operations. Especially it
-> adds comparison between hmask passed as an argument from linux
-> and mask of online harts (from openSBI side). If they don't
-> fit each other the error occurs.
-> 
-> When cpu is offline, cpu_online_mask is explicitly cleared in
-> __cpu_disable. However, there is no explicit clearing of
-> mm_cpumask. mm_cpumask is used for rfence operations that
-> call openSBI RFENCE extension which uses ipi to remote harts.
-> If hart is offline there may be error if mask of linux is not
-> as mask of online harts in openSBI.
-> 
-> this patch adds explicit clearing of mm_cpumask for offline hart.
-> 
-> Signed-off-by: Danil Skrebenkov <danil.skrebenkov@cloudbear.ru>
-> ---
->  arch/riscv/kernel/cpu-hotplug.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
-> index a1e38ecfc8be..3f50d3dd76c6 100644
-> --- a/arch/riscv/kernel/cpu-hotplug.c
-> +++ b/arch/riscv/kernel/cpu-hotplug.c
-> @@ -54,6 +54,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
->  
->  	pr_notice("CPU%u: off\n", cpu);
->  
-> +	clear_tasks_mm_cpumask(cpu);
->  	/* Verify from the firmware if the cpu is really stopped*/
->  	if (cpu_ops->cpu_is_stopped)
->  		ret = cpu_ops->cpu_is_stopped(cpu);
-> -- 
-> 2.43.0
->
+From: Brian Norris <briannorris@google.com>
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+max_link_width, current_link_speed, current_link_width,
+secondary_bus_number, and subordinate_bus_number all access config
+registers, but they don't check the runtime PM state. If the device is
+in D3cold or a parent bridge is suspended, we may see -EINVAL, bogus
+values, or worse, depending on implementation details.
+
+Wrap these access in pci_config_pm_runtime_{get,put}() like most of the
+rest of the similar sysfs attributes.
+
+Notably, max_link_speed does not access config registers; it returns a
+cached value [1]. So it needs no changes.
+
+[1] Caching was added to pcie_get_speed_cap() in v6.13 via commit
+    d2bd39c0456b ("PCI: Store all PCIe Supported Link Speeds").
+
+Fixes: 56c1af4606f0 ("PCI: Add sysfs max_link_speed/width, current_link_speed/width, etc")
+Cc: stable@vger.kernel.org
+Signed-off-by: Brian Norris <briannorris@google.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+
+Changes in v2:
+ * Don't touch max_link_speed; it's cached, so we don't actually touch
+   the hardware
+ * Improve commit message
+
+ drivers/pci/pci-sysfs.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index f28fdf6dfa02..af74cf02bb90 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -209,8 +209,14 @@ static ssize_t max_link_width_show(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
++	ssize_t ret;
+ 
+-	return sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
++	/* We read PCI_EXP_LNKCAP, so we need the device to be accessible. */
++	pci_config_pm_runtime_get(pdev);
++	ret = sysfs_emit(buf, "%u\n", pcie_get_width_cap(pdev));
++	pci_config_pm_runtime_put(pdev);
++
++	return ret;
+ }
+ static DEVICE_ATTR_RO(max_link_width);
+ 
+@@ -222,7 +228,10 @@ static ssize_t current_link_speed_show(struct device *dev,
+ 	int err;
+ 	enum pci_bus_speed speed;
+ 
++	pci_config_pm_runtime_get(pci_dev);
+ 	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
++	pci_config_pm_runtime_put(pci_dev);
++
+ 	if (err)
+ 		return -EINVAL;
+ 
+@@ -239,7 +248,10 @@ static ssize_t current_link_width_show(struct device *dev,
+ 	u16 linkstat;
+ 	int err;
+ 
++	pci_config_pm_runtime_get(pci_dev);
+ 	err = pcie_capability_read_word(pci_dev, PCI_EXP_LNKSTA, &linkstat);
++	pci_config_pm_runtime_put(pci_dev);
++
+ 	if (err)
+ 		return -EINVAL;
+ 
+@@ -255,7 +267,10 @@ static ssize_t secondary_bus_number_show(struct device *dev,
+ 	u8 sec_bus;
+ 	int err;
+ 
++	pci_config_pm_runtime_get(pci_dev);
+ 	err = pci_read_config_byte(pci_dev, PCI_SECONDARY_BUS, &sec_bus);
++	pci_config_pm_runtime_put(pci_dev);
++
+ 	if (err)
+ 		return -EINVAL;
+ 
+@@ -271,7 +286,10 @@ static ssize_t subordinate_bus_number_show(struct device *dev,
+ 	u8 sub_bus;
+ 	int err;
+ 
++	pci_config_pm_runtime_get(pci_dev);
+ 	err = pci_read_config_byte(pci_dev, PCI_SUBORDINATE_BUS, &sub_bus);
++	pci_config_pm_runtime_put(pci_dev);
++
+ 	if (err)
+ 		return -EINVAL;
+ 
+-- 
+2.51.0.536.g15c5d4f767-goog
+
 
