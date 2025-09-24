@@ -1,125 +1,134 @@
-Return-Path: <linux-kernel+bounces-829903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228DCB9827B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41628B98290
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5AD219C032E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9FD19C5537
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA453224234;
-	Wed, 24 Sep 2025 03:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01024233D9E;
+	Wed, 24 Sep 2025 03:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nrC4DWIb"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GCN4JXvy"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C082AE77
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 03:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2B44C98;
+	Wed, 24 Sep 2025 03:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758685806; cv=none; b=M2BBzW+3KEDDzN8fvv2bZaMc6bkJTVBjmXBqSvusED1LOA4+YmDiVv5zDSNjeH5BZnW/0DdYgjt2mKAMwA9G/a7Kskf9JnM0SNVx8/D1yK2ngEyI0nZJc7aqF6UwVN0bcRiPiRy4ZTH6Y8npfGbrAoVsEqMZPE+Gy0wqXEJbKzA=
+	t=1758686106; cv=none; b=Ow8dfzLCU9RT4i3QStWKVAVNgrikzlTVgBkZIrozGdKtC+d26CquYD5kUC9xuj6nsx1j30ORxTSRH6oNpJmxKNaa4N7Njy27VEKDJM/mje6qR++D1HRiRcojcY0Po23QfVC/9yZf2gMj44uKBqyKuE+a0pliEyl32dDnWHdT/ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758685806; c=relaxed/simple;
-	bh=s+7Gh+7gXKjvqZS4LNGpi8Df/1fvT5nOX+pQvwQOLQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lMXtGGjGM9p++fU2fHnjxCDh9TQedf1DtIqAr6S0kcrDi4+mYCK/ioF4s9XSuiIz1UmEcGegDbAyGT24tRioqyxYjIc6jwP8+Q/LOsw0Q3ogUzb1S5UQgTEqUj5zLcJRoz8Uc3lrIHQA+59PvGYXM1BhMwp07lW59zZX3yaJ6Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nrC4DWIb; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758685791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QfS2bmksKLmDtfQBfYaU21eiCkBRFD1BaUAUPpUXugo=;
-	b=nrC4DWIb6Pz8x6OBmlTOFkcjTjrrsXEHXS+Q/nY0vZze15vWlffJ6UENBRKU/DsZnCSIv4
-	xxyZDv8psShhzx3DOOojQXNTgzqluZwsjh8QBUKbZq0wrGDW+2gQbnq3DToQlercEP2iwK
-	Tq5IbrbbdnC4sWzjchZ9xp1iqwOPkB0=
-From: menglong.dong@linux.dev
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] tracing: fprobe: Fix to remove recorded module addresses from
- filter
-Date: Wed, 24 Sep 2025 11:49:39 +0800
-Message-ID: <9510801.CDJkKcVGEf@7940hx>
-In-Reply-To: <175867359903.600222.10400702167171128567.stgit@devnote2>
-References:
- <175867358989.600222.6175459620045800878.stgit@devnote2>
- <175867359903.600222.10400702167171128567.stgit@devnote2>
+	s=arc-20240116; t=1758686106; c=relaxed/simple;
+	bh=GLI4abl8FZ4HfkmnRdlogF0X6++XTS/tUyrTv2strik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7jg/n+NufNMx3/MNnaXg6HadiQr/1BBPuUINBjMSD3BDQmwMT0YChBg1ylQH2Bn+V10OZSbPLXudT+sZQ7NLLhQuoLdsVeJzqdxYqzi6T0Xh/I8OZSBGeks7NjID54bBc3K0HN0Sl0mO36eI5UTrASjkv3fIC2qnCdqe3hgLbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GCN4JXvy; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 22D034E40CF2;
+	Wed, 24 Sep 2025 03:54:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D3384606B6;
+	Wed, 24 Sep 2025 03:54:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF2FD102F1886;
+	Wed, 24 Sep 2025 05:54:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758686096; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=g+qDq5wTJI6x9EY39D0tJB9MH6r0WcMVdVhtkKarOt0=;
+	b=GCN4JXvy5Jr2Cc5svIW5gg1tIvUpzdNR4vXL3iilzXOvA0IDaSnXsAipk852bsHFxPGIar
+	8xzEeaC3wRS7xz17WwtS9be1O0lZdzovwkekvueR4jPF20QzmTvDy5Eq7nR2JGLrRuKNSg
+	Ku8B522sIzaksIy3APEcrUHJ7wxRltQdFreb3Em9UPhhxCvlEUtSvVjcr+qiOZXaP+j8Yl
+	IAewYMc7DqVeRLKEno1S6nCb+rdumy5n1bjCodVN71F+Mm5tjr8DpQQfvqkUvJdnPQmJIq
+	y4ltufGnQ4H3zsCCGOJOSY/k69w417eWj3go6jOn9ibxoz7FxppNR2aVFDu9SA==
+Message-ID: <ff7432c4-27ce-45a1-ac4d-c18d612ef04d@bootlin.com>
+Date: Wed, 24 Sep 2025 09:23:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 13/18] net: phy: marvell10g: Support SFP
+ through phy_port
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Romain Gantois <romain.gantois@bootlin.com>,
+ Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+References: <20250921160419.333427-1-maxime.chevallier@bootlin.com>
+ <20250921160419.333427-14-maxime.chevallier@bootlin.com>
+ <20250923182429.697b149b@kernel.org>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20250923182429.697b149b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025/9/24 08:26 Masami Hiramatsu (Google) <mhiramat@kernel.org> write:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+
+On 24/09/2025 06:54, Jakub Kicinski wrote:
+> On Sun, 21 Sep 2025 21:34:11 +0530 Maxime Chevallier wrote:
+>> +/**
+>> + * phy_port_restrict_mediums - Mask away some of the port's supported mediums
+>> + * @port: The port to act upon
+>> + * @mediums: A mask of mediums to support on the port
+>> + *
+>> + * This helper allows removing some mediums from a port's list of supported
+>> + * mediums, which occurs once we have enough information about the port to
+>> + * know its nature.
+>> + *
+>> + * Returns 0 if the change was donne correctly, a negative value otherwise.
 > 
-> Even if there is a memory allocation failure in fprobe_addr_list_add(),
-> there is a partial list of module addresses. So remove the recorded
-> addresses from filter if exists.
-> This also removes the redundant ret local variable.
+> kdoc likes colons after return so:
 > 
-> Fixes: a3dc2983ca7b ("tracing: fprobe: Cleanup fprobe hash when module unloading")
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/trace/fprobe.c |    7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>   Returns 0 -> Return: 0
+> 
+> sorry for only providing an automated nit pick..
 
-Hi, Masami. Should I send the V2 of the patch:
+It's OK, the series no longer applies with Russell's sfp_module_caps 
+series being here, so a new version is due anyway.
 
-  tracing: fprobe: optimization for entry only case
+Russell, I missed this series of yours as I wasn't available at all at 
+that time, but as this phy_port series has been in the pipe for quite a 
+while, and you commented on the used of sfp_parse_support et.al. that 
+was being replaced, I'd have appreciated to be in CC :(
 
-after this series applied?
+Given my schedule, next iteration is probably going to be for the next 
+cycle anyway so no harm :)
 
-Thanks!
-Menglong Dong
+Thanks,
+
+Maxime
 
 > 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index 12ec194fdfed..95e43814b85b 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -434,8 +434,9 @@ static int fprobe_addr_list_add(struct fprobe_addr_list *alist, unsigned long ad
->  {
->  	unsigned long *addrs;
->  
-> -	if (alist->index >= alist->size)
-> -		return -ENOMEM;
-> +	/* Previously we failed to expand the list. */
-> +	if (alist->index == alist->size)
-> +		return -ENOSPC;
->  
->  	alist->addrs[alist->index++] = addr;
->  	if (alist->index < alist->size)
-> @@ -497,7 +498,7 @@ static int fprobe_module_callback(struct notifier_block *nb,
->  	} while (node == ERR_PTR(-EAGAIN));
->  	rhashtable_walk_exit(&iter);
->  
-> -	if (alist.index < alist.size && alist.index > 0)
-> +	if (alist.index > 0)
->  		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
->  				      alist.addrs, alist.index, 1, 0);
->  	mutex_unlock(&fprobe_mutex);
-> 
-> 
-> 
-
-
-
+>> + */
+>> +int phy_port_restrict_mediums(struct phy_port *port, unsigned long mediums)
 
 
