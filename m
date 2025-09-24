@@ -1,200 +1,168 @@
-Return-Path: <linux-kernel+bounces-831412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F77BB9C96F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:33:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8728FB9C97E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF55D4A7DF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A415217FC61
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1CE27EFE9;
-	Wed, 24 Sep 2025 23:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2646B2BF010;
+	Wed, 24 Sep 2025 23:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="aO7GILTo"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jCuRNqUU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07DA1A9F8D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD3229D289
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758756803; cv=none; b=jnOx721uPRm6g5MYdWUoe9yhq5YrWZjxGfPon4oBfkSRqMZ90tOYnaAX/nWgVb0UIA5K4XvJUq6Kaq1vrp7xl5i8PaVHxCyLprS4HnEnX+U9Ypq1RSOcyBp6QBt/4+nm8s752XMs7sGk1Ce0ycJFLve5h06bw85F8rrc1brC3qY=
+	t=1758756807; cv=none; b=eRh9frOc2ypxiWDwdaMj30yGujg19eRojD1+8vzMuJagQUGThvEOgImlpsExZ/nCzQPFIq9DwralbIkDMc+Jf2gcxmKvV4RGwqGkbgxrKIhmm75Z1IOq9oiwNeoHWY2RnAXWH6wp6HTFHZv+d1jKsh2FLGi7/Zhv93iojUKpFAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758756803; c=relaxed/simple;
-	bh=BexvBLWe9ilLyfjQx7lfSxdU87TTc4v75SbAwVdNq3M=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=Nr4mqRRR8lTau73BlTmAWPrurkjZQ26ZxgEXVch5d+oEKsZPKH97HqXgN7TKbp0DA7KrJayG0YYPGJqkqsZClKCRFoWbwB7vC+4ObGqNSKo79EqMSG/hdJJRoPc+nz9OEXv/ic2UmYoK01NwUhPP4LcvAwfyAoDp/KAlbFX19zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=aO7GILTo; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-26983b5411aso3041725ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1758756800; x=1759361600; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M13+AL5iaWUxovfWXVCx02kI2l71HfeV5Z/VI+kVLQI=;
-        b=aO7GILToMkYEct6DtBRpGUTBHsLIv63pfOYkpzetm1mRbz2E7+odJiET1UIR9ZdTxI
-         A3HaDnP9StsazNVHfUACn+FQe1mMJDal6vAypgErjoHwFa6vrbdYzEYAGhcNxCDmUIvq
-         K3LGriXYzp4XY6Boyxbi9ap1ENgUu4ShdnmBeZ3RrSG5JAABiN4v1DEvnWpDoh6/7tOk
-         yB+21D8u589SMVCCWUrLkb4FXbBAxuKZZ05rB3z3eRvlpbOEIdTSZmEokl8zGLxkMErj
-         iQO/vhO2/lj+66x4Mxqlm/hdUXRahlO0JXQ9Og3apvKtamr5nuhdHJoC7xgXFTzr+fV+
-         Gcfw==
+	s=arc-20240116; t=1758756807; c=relaxed/simple;
+	bh=tlF/XmDSlCSzHpDbYIYkAuUDBatLs6VY5lZmH+8tSdw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qbQGmt61z9pbAmehvLGjPIhXnzZt3rI6M5i+qifUXTZ7/ElsfeeMDnuliH9EYK2SEkETseU9TP/OJbLeloCxa36jYF951edsw0MFwmWIVuJyPxabnf6STJvCmkSBjZQ6daHm5pRDFhpnoM5Dz4qnkHQmWMJYr04AZSSJWeE9wtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jCuRNqUU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OD1OeE025119
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:33:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VNIomdy5vQZBr0Xb1zY4tT
+	/Acpu4g0XVUwXNo3bXGx4=; b=jCuRNqUUMjb0jv51pmB8cl8BDgQTKqHaV+MSVh
+	voWepDXGh7ziPfsJsEKLw8cf8ckByRtvSAITRASobY7Rp+K8OquQQaO8YVgIAXw7
+	SE7KoVv0UD8q0q3nmHnH1PYxAFoZwWw6lFzFzOS4Xrs1JlQFFvQRhioBlSzHbQir
+	/5Yk6TnrO5U/Qj+w50tkFgR78EyE1p58UP1oJFC+xMT3Q9MiGVnh6OqNv9AtcVzk
+	+zZZRXdFujW3s2tBEVxsQShnhWIaiTLxlJcrwmfLpsBHIxUcnB3ALO/f3+nis5Kh
+	fKw2uQP9VQk99PGliSU6wISuLZFrOXulKYmQwDyQ5+T8sn8w==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv162gr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:33:24 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-330a4d5c4efso276083a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 16:33:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758756800; x=1759361600;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M13+AL5iaWUxovfWXVCx02kI2l71HfeV5Z/VI+kVLQI=;
-        b=euYrtAJ54/w3hbeVQ+jJLBFfEP+dujTIz0DnyZFiFd+79gg+Wt6NvD2Uvktv5U7J0M
-         tU4hMSKzq3MR2V0Z+kmrHdNnNLJq5XRb/ryI8V7B973xNvofaM5A7td110lKjvTbDh3K
-         Z4vwD86apXokjdLyvGo74gCar/f6ni1vCqSbEfGws/jzFG939G3BVww9Xr057+01ggLW
-         +SPEVX27IPHPjMjmdxeevOgD5vjh/dTTDw7IYtj1hVjVMRAuRB78PZo7gENyznKoYsqj
-         arqRRxHnUUJAyseFSaKkAYXBRbHJbu5QL1xVmt/gRbqNk1qB8DK9nI4qcxzEDiin9K9P
-         ONTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqjBMAMbw+gWa1F31WrwWsTCJ82qxGI3Db9vhogmbHQqXLf+cdfaPW6qGqEeVLWmeAV1uPg13v6JCGdsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIKSofRoyP94zXcUaayXmfeEFFsSJZqSFktIx38NWzbw471WpR
-	UQOSJG7AhMGv6dE2/0kim+xSaS1/7WxAEru4wcLpyyUFdKRifaiURBIvw2dtdGGYoyM=
-X-Gm-Gg: ASbGncvQb+LjGs2NK32VI4WU/ftUBrCSG2xp9akMu6/O0arCxr3u0hQ2X4izuHRosAc
-	LEPb01nW8OUqV5NzogK+ceIITHjkmEUHSyyBJ3KSvwhLVaIDKe0YxiQ716YET43RRGx4X5i8i1E
-	qbwkgJx9q6uo8VnMcOgBirJtVdLXEl2YAv4eIliySFh8FzSBD2uc0VzCiS4IRP2FIV24aGUCL71
-	NCHoXeL8NHoPsZv8bH2V19enffxhX8Kff3lNl8HPVdiIl3RlvSfHJA6WRgXUcCgctYIVpKv0VGo
-	eqdBrOtQimClICz1++eRCcyPU0EbG9veWYrZM4uv7bZa5HRhwco5BUcrAqAWo7ul9OKNEdi4K//
-	Pa0u0pBSXGe4xPzrREKzyvl3E8W+bZdTwjuJ+g6q9yegjlTXETXKPWOxxhRPESo0hdJXmhIw=
-X-Google-Smtp-Source: AGHT+IHrf/fFd6VIegG3nlmHmbRRevDnQaITsbK7dyzLoVqitycl0QpxaLZ5UAv8wQee8BzV4NI6EQ==
-X-Received: by 2002:a17:902:ce01:b0:271:479d:3ddc with SMTP id d9443c01a7336-27ed4a1a371mr14270405ad.15.1758756799797;
-        Wed, 24 Sep 2025 16:33:19 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d3ac4sm4542475ad.5.2025.09.24.16.33.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Sep 2025 16:33:19 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <294A93D3-4FBA-46E7-8814-1C7E0CC82359@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_F14A5A4F-4995-4DD7-853B-9A5FD1AB60CB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        d=1e100.net; s=20230601; t=1758756804; x=1759361604;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VNIomdy5vQZBr0Xb1zY4tT/Acpu4g0XVUwXNo3bXGx4=;
+        b=FKrsaTEcrdTYKuxpl63DWRVJqLjz9N34n2GiSX6uvOOhCiQ7t3ZSwUdrGHRqh7sfDY
+         kiEhVoaUsNaWSY606KL04h+gV2hiy9+WFngLKCs6OriV7erk1UPane6ph2wSF6ti3MqX
+         M+TgNH9juVuYixORsJoVmDEWMoUHcxmo6Cq2wA5zf0UdaF5t7ACBkI7gk/MZQpvwj7Kp
+         UsPE2jLCU6vhhiYjbf2VdswGgJ/S4wDtQmdXzshy5iYSFLyrv04WNLFRWXzq0eUKVt/M
+         BxiiQqKqWzNzb4UwyylSLn5W2hQA9N2K+BO1qCuVZXogPRR2WfpMHedzFHuVAxgy6Y1a
+         ltsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaysYdU71Vozqhz7++DsO0glqB/QuLYN9zGtjzhxnaByY0mnLF2LQm6ygOFcwaLWdBYypwamovvzdkUwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8XIGRRsxHIWDMV4iTgWbZtu1btmWLPk2yy+WywHSFAd1LTfGe
+	twwVxJSHyPtlN3s0N6IAxlG/+mSvOtCQq9biZqIq+xqzD1NlW5D6Wfky2k2BV/bTdpjXfmX3iB6
+	ZU/y4sDCovIhilrZjgUqWcYrRO8swx2qkWlnZqjCH3csqlKwaDTMeRRiP5S3nv/iYJBE=
+X-Gm-Gg: ASbGncvAMBPwxBO7R1/aiiXcicPpLXBhl+0OYXD/atYtu2HP/yMZeIiE4tHfxhVYk0W
+	jiUflrHsEdRQ6cWCLv5cwI4Q5WHhHZobfyOSLF0FwVLArPrkeG2dPBHQqt2O1uGetJBHqU+KzGS
+	k51jxt6UdiEDXHOwBW/0G19YBGOWzrMuNP/pssypVpDhxH9VaFvM97F6Z7GFvMy4YZvM5k87Ccw
+	5kPrFUPFXMp+iTVfeEt4DwHKAen6blEKViYFyVQFwZnd3vChhM7FJf4LrSfr5K//rY8R3qUnCLs
+	sn6XWkp4c4RFlGL2A8qFoAsUsQhWGrlVq8rpPLzwBVic4mhe9mo2qJ+NwbRWZc0eDByYx4Oiau7
+	pwaJceeqf4C8oOn0=
+X-Received: by 2002:a17:90b:17c3:b0:330:7a11:f111 with SMTP id 98e67ed59e1d1-3342a300367mr1473534a91.35.1758756803651;
+        Wed, 24 Sep 2025 16:33:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdtlLUNGJJSlyqnknrbjF3ipSmmLDcYIbOKelFSeVIJvhkvC4jn26Ddrkbxi9be3pwqyR8oQ==
+X-Received: by 2002:a17:90b:17c3:b0:330:7a11:f111 with SMTP id 98e67ed59e1d1-3342a300367mr1473516a91.35.1758756803192;
+        Wed, 24 Sep 2025 16:33:23 -0700 (PDT)
+Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53ca107sm392911a12.13.2025.09.24.16.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 16:33:22 -0700 (PDT)
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: [PATCH 0/6] Add PCIe support for Kaanapali
+Date: Wed, 24 Sep 2025 16:33:16 -0700
+Message-Id: <20250924-knp-pcie-v1-0-5fb59e398b83@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] ext4: fix allocation failure in ext4_mb_load_buddy_gfp
-Date: Wed, 24 Sep 2025 17:33:15 -0600
-In-Reply-To: <20250924011600.1095949-1-kartikey406@gmail.com>
-Cc: Theodore Ts'o <tytso@mit.edu>,
- linux-ext4 <linux-ext4@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-References: <20250924011600.1095949-1-kartikey406@gmail.com>
-X-Mailer: Apple Mail (2.3273)
-
-
---Apple-Mail=_F14A5A4F-4995-4DD7-853B-9A5FD1AB60CB
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Sep 23, 2025, at 7:16 PM, Deepanshu Kartikey <kartikey406@gmail.com> =
-wrote:
->=20
-> Fix WARNING in __alloc_pages_slowpath() when =
-ext4_discard_preallocations()
-> is called during memory pressure.
->=20
-> The issue occurs when __GFP_NOFAIL is used during memory reclaim =
-context,
-> which can lead to allocation warnings. Avoid using __GFP_NOFAIL when
-> the current process is already in memory allocation context to prevent
-> potential deadlocks and warnings.
-
-This quiets the memory allocation warning, but will result in a =
-filesystem
-error being generated (read-only or panic) if the allocation fails, if =
-you
-follow the code a few lines further down.  That is not good error =
-handling
-for a memory allocation failure during cache cleanup.
-
-When __GFP_NOFAIL was *always* passed, then the error could never be =
-hit,
-which is why it was put there in the first place.
-
-It looks like this function can return an error and the caller will =
-retry,
-so that would be preferable to causing the filesystem to abort in this =
-case.
-
-Cheers, Andreas
-
->=20
-> Reported-by: syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> Tested-by: syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
-> ---
-> fs/ext4/mballoc.c | 6 ++++--
-> 1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 5898d92ba19f..61ee009717f1 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -5656,9 +5656,11 @@ void ext4_discard_preallocations(struct inode =
-*inode)
-> 	list_for_each_entry_safe(pa, tmp, &list, u.pa_tmp_list) {
-> 		BUG_ON(pa->pa_type !=3D MB_INODE_PA);
-> 		group =3D ext4_get_group_number(sb, pa->pa_pstart);
-> +		gfp_t flags =3D GFP_NOFS;
-> +		if (!(current->flags & PF_MEMALLOC))
-> +			flags |=3D __GFP_NOFAIL;
->=20
-> -		err =3D ext4_mb_load_buddy_gfp(sb, group, &e4b,
-> -					     GFP_NOFS|__GFP_NOFAIL);
-> +		err =3D ext4_mb_load_buddy_gfp(sb, group, &e4b, flags);
-> 		if (err) {
-> 			ext4_error_err(sb, -err, "Error %d loading buddy =
-information for %u",
-> 				       err, group);
-> --
-> 2.43.0
->=20
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_F14A5A4F-4995-4DD7-853B-9A5FD1AB60CB
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+X-B4-Tracking: v=1; b=H4sIALx/1GgC/x3MQQrCMBBG4auUWTuQFgq1VxEXyfSPHaQxzIgIp
+ Xc3dfnB4+3kMIXT3O1k+KjrqzT0l45kjeUB1qWZhjCM4dpP/CyVqyhYcphCFklpBLW8GrJ+/6v
+ bvTlFByeLRdZzsEV/w+g4fuHf7elzAAAA
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, Qiang Yu <qiang.yu@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758756801; l=1250;
+ i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
+ bh=tlF/XmDSlCSzHpDbYIYkAuUDBatLs6VY5lZmH+8tSdw=;
+ b=GhjB8yFSJhE3XlM7FLgPQU2mx4t683odAMUdhaUPcxG1u0zlAsRUbnig06Uw5wi57WJUJm3AK
+ VABUOcz9YyuBnBBGiNns9LLItEdxBIUGRSTsNbmFS1JSSZCmADYc5i3
+X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
+ pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
+X-Proofpoint-GUID: X5YfvPSUCy8yTlO9rnuhXnsdZ19v3u31
+X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68d47fc4 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=xicjnEbRADQpFcw3uD4A:9
+ a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfX42gPPoEQODyj
+ 4sr7UCkHXkS/hAVwjWPjaNQiBRkgEOvC0g32s9yxlVILZgZyUGUHuM00dmpDDE41IIVxihXJQqs
+ Tu6ZNQn6KAzEsDBrz7nFZhEqf9A1tTyjAOTzKoecWdwI95gbCdg4qKhcP7hqIh5HzT5ft6M4UhL
+ f445twCvEjjuyjBAFJVwobbNK0PTg4T+gk03M/Y/PwBVJ2h6/jUf1HRV/W80HNI2Ub5SXB4Gehy
+ pcxs+Enaw7e/RS8kJRCajD2pProybF38OlUyLo20VqcUGN0bwD66xVxZX+LGSe4sl9FiXD6JO30
+ +rxYH9f2/S3nyVzoM6CXaFrppLjc52ZKHXR9r5eTsISbxA5PtNZmsXJt8gCU1UYj6NIeDdJZJO4
+ G8cWSEEV
+X-Proofpoint-ORIG-GUID: X5YfvPSUCy8yTlO9rnuhXnsdZ19v3u31
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+Describe PCIe controller and PHY. Also add required system resources like
+regulators, clocks, interrupts and registers configuration for PCIe.
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmjUf7sACgkQcqXauRfM
-H+A+2Q/+KhJn/qn6CJFMmsDY7t2UYqBz99PI3ZQiloG9zhN8TiA1Dm1sVIBfgjBO
-y97wluHI1O+Jg4ZvAsfXGDeCXazItLhxWaBSeV4BZcmQTZLXB71VfP9KNgMWkaLe
-h8zNtri+m3zE1/+KHr9K82HnufpLwg1jjOIrl3TBHElR8coCHb7QrQdvyvXlU30n
-2HN5kSwxCMdB4VbUxND0IQuTaIC928T2zDB4b+8A65cyBt6Fc5BqfaL/p0rhTZyh
-lqna+ssQ6U2ONnNY4/u2uDo/GfYzvWIKMn0uUjeK+ITFurr3keqtY9vveHFT7mol
-5eJsfzfM2ArYscESF4N8T5uEyBvN9nO2V++wpn76vK/uStlmN3miRP1YX24/Cw6N
-T/AtSLblEWP3+zYFkRp4As/1ZmktUCvm6XAT/XFvtjvQP6g50ZL/bOxRxMhVvvN4
-7lr0Pz0FtlkQIkkOZiJR5DlpUT+VK3msa2G7rr4CbB+gsC0vUZ9IkWVC+388rthT
-oCTu2Z5scLiaZAo54VOOELRL17h1iGi5vCT+eXEGrBbbtz/du0WAkbnUqrKSacps
-/x8invmHwsTVImMzX8bAJVy4klP+Ch5ntqna0NTjEfgV+nt6f1Q4bkRnDRKafyrE
-elZX8EiaAviMlq4xiPh2CRL+2drmqI48dQPQV5MWDSo4e8taIOc=
-=lAjr
------END PGP SIGNATURE-----
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+---
+Qiang Yu (6):
+      dt-bindings: PCI: qcom,pcie-sm8550: Add Kaanapali compatible
+      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Add Kaanapali compatible
+      phy: qcom-qmp: qserdes-txrx: Add QMP PCIe PHY v8-specific register offsets
+      phy: qcom-qmp: pcs-pcie: Add v8 register offsets
+      phy: qcom-qmp: qserdes-com: Add some more v8 register offsets
+      phy: qcom: qmp-pcie: add QMP PCIe PHY tables for Kaanapali
 
---Apple-Mail=_F14A5A4F-4995-4DD7-853B-9A5FD1AB60CB--
+ .../devicetree/bindings/pci/qcom,pcie-sm8550.yaml  |   1 +
+ .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   |   3 +
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 194 +++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v8.h    |  35 ++++
+ drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v8.h |  11 ++
+ .../qualcomm/phy-qcom-qmp-qserdes-txrx-pcie-v8.h   |  71 ++++++++
+ 6 files changed, 315 insertions(+)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250918-knp-pcie-cf080fccbb5e
+
+Best regards,
+-- 
+Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+
 
