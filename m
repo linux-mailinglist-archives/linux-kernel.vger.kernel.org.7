@@ -1,427 +1,239 @@
-Return-Path: <linux-kernel+bounces-830673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304B4B9A440
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:34:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3871CB9A458
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1589D7A2153
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D83442A4A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A4D307AEC;
-	Wed, 24 Sep 2025 14:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF8A307AD7;
+	Wed, 24 Sep 2025 14:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhtjSPTV"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CHGAHfM+"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013024.outbound.protection.outlook.com [52.101.72.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1921F63F9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758724463; cv=none; b=ndl5J6elIWFyAMyNlzJOSUCXJ0p1mAbFK7hK24KuyNd+0AMahQHA763fv0faB/oMhi3q/wnhA2jqGeNomxCxSrZduF43DoXlkm2Sp10K4Dtq/J3rObD5+aDlYuPYPTRsBiCpnbhp2iuDv2PySXlIl7xin5btiWtiQiYFtd6QrDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758724463; c=relaxed/simple;
-	bh=A9PimX6bUbgQ7SeUVDOv0qB4SMDat/5djDZWcI5N8yI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RUNnlbxpgrDQeqR7uy6vd2PBF6SXsinOase3pbS8QeYiu+Br+8Rv20B9CE5PCBO5zvtyi7fawZpHfVyGshRVinhN9bv0747U86IXlaR6nwLpK/lGHNjt3e42gR+v1446l/FyxEOQv3Hwhi3MiIfq3H9IcaclVlZLSJ5MGPbH6IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhtjSPTV; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso7690047f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758724459; x=1759329259; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FGuldXcjqf8OihVldC7MI7YO4JLmIiQzrU/Ak4hlUT8=;
-        b=NhtjSPTVz6CE3h3aDhfNIovy3mbAnnxgziyM+bPBfvo9A2UwJeIfhBwFJDtXGaTWEe
-         uGonJrwJx/3c98ZVLPIW45eSjanFE/fd4KVxLDrNEd0DrewnmE28toJjmOFOZ7IWHpNk
-         553OmJb34FcS/+n4iF09QPaWghFXF2n3jSsgPLKhzZZf4tjajXVIAd+0ltstLtXmADTt
-         BjI/tHjmVZLVV2KQU4b1RMoKl+lrMQFVZDKN9T4u37KDxO0yfK5sDWEBVlpts4ozz0vN
-         GXwdYqERFvmHBcpzu0SbLi7h7bHhfF8JP1WFPxN4mQ/F/eRHa+Dy2VBNKgsQCtBhhda1
-         ztoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758724459; x=1759329259;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FGuldXcjqf8OihVldC7MI7YO4JLmIiQzrU/Ak4hlUT8=;
-        b=PtiQM9DFN5bj3Z+yuDTK1/fSpaVdyNpTDU9gtljgE6fklKN3B5KahxCtiKCy0Fzwqv
-         LT+x3NV9wdZ/d/6K55fL8oZYc5J73fi+FEqJ2DzZFgdmAoxJ+Hx/D5aU6mC8h9EUXnK9
-         +9Qh90qdnGrqiqy/kw5+XLmuWR+It6xDmXR8WTaT/Z7ay1PvQP4DMOSRPVc9Xvlb46Je
-         p6loiYNfJArKPe/3BRaj1B+LjuoDkfHgFXxGuc9OyePC8Ad1YM4b547BTCXnw2fESS3i
-         uBeHG3zQsNzEyYu9SSYPEokQpS2X2hxnpudYVjmbBHsaZm1QrZz+5Ew6VMam4dciZu5g
-         IDIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAHDINC61Q8iVm0/YmHo/DZW7LT60jwhkIqxxRArcNOSn0WYI2Znq9riG0XFGhu/9YL4A1XEKbsVJSSos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5OGIZHhE9YzT2eUGj7XFeUNOLgnFYTR5a23CDt9hT1I10N5Rr
-	Dnvkrv8sUubAPGeonH1R+VHT5SPRpAUiUISFQClJ0janMRGdiELK5cgB
-X-Gm-Gg: ASbGncv9N3CE6fSwFss05H2fvgJuWEdVXYwNSsCw+qB8uIEIalLwN6PLXO61foORa7D
-	J/JO+Au4HYCdEEZnjY0fN7a3pMqFYgKlFWYgohqeM1H0uJyQEe4hEJwD4ziHv6p8tUWqCYm8OUF
-	xQVIHKtEQSUqf4IR6+50M+3yesYqLZKNTsS2hdg/8ZIEnrjt23cm6LoMuA6uE/hedDAAJSyffCA
-	WCZWsfToLiHBhLczlhcqW1MpM32fFCZn7X/i/7NFla52cHHgnY2y0DkFnyh4cc1ymT2QMRp3Fe4
-	5JPVzpIAIIUrh53pMjx6m7yl47cxHcjIGa8ZP0VgYTQIU3QEoIOCdXYYbdtORg75fsFqrKNI8La
-	T0jBE251A6jQ/iyFtn8HWeg==
-X-Google-Smtp-Source: AGHT+IGLJblPflhmFCHt94DviBP9O/s0y5YTbBNNacFFsu0nA3nuXpOv6LIYJxuAR0FgwMMN3hA1gg==
-X-Received: by 2002:a05:6000:220f:b0:3ec:3cac:7dfd with SMTP id ffacd0b85a97d-40e44c3da28mr207611f8f.26.1758724458762;
-        Wed, 24 Sep 2025 07:34:18 -0700 (PDT)
-Received: from [10.5.0.2] ([45.94.208.78])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbffaeasm28405985f8f.62.2025.09.24.07.34.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 07:34:18 -0700 (PDT)
-Message-ID: <404c05f20becd0fc8e3256425843187b40a3b625.camel@gmail.com>
-Subject: Re: [PATCH 3/7] iio: adc: add RZ/T2H / RZ/N2H ADC driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring	 <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd	 <sboyd@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, 	linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-clk@vger.kernel.org
-Date: Wed, 24 Sep 2025 15:34:45 +0100
-In-Reply-To: <20250923160524.1096720-4-cosmin-gabriel.tanislav.xa@renesas.com>
-References: 
-	<20250923160524.1096720-1-cosmin-gabriel.tanislav.xa@renesas.com>
-	 <20250923160524.1096720-4-cosmin-gabriel.tanislav.xa@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA3E1A9FA7;
+	Wed, 24 Sep 2025 14:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758724537; cv=fail; b=X3phj/qYdCC2uykN3c/G/Pibyd0PX+12KIa2IKortN1pF5EisWGWBN+9guuNy/iACk2j4/pVfnFp79dz1CvePNJZSUZli55ZVjLs2o3rngXRymRgXjFDkSHQtAsjwcYavCbmbzqHbUSSQKtrFWBNheUzoCOoBqb+aoTYKORKKQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758724537; c=relaxed/simple;
+	bh=7XGcz8ovMSwK+mcd4Ei/ZyrbGmMEmM30ZVrZ8TA0Ydo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JemRWWd20pjU1l9u5Vn8BOTYDZxBBYB3jCmDLfbokzcCpdJXc85/DIeFmvWuRX0yjJiljYMwCi2ChrCbReVpO9le3wyDEeTMK5rBLeyXih5l1m/m1JO5L6vofpkj++2ls8FGjR275ez/IUlJflzIbO/AVLpbsq4MJs5FD1DxAl4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CHGAHfM+; arc=fail smtp.client-ip=52.101.72.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PpV2SJdG4/2MbL5BjvrIQEEdBz+vjVWAfCYRByDnX9vUASk02W3VAGB108BNzRkWWD50m7XJxInOBAzDx/rDTdSwJ9lf0DTXk33FttQy6+li3TkUaOf2j5VPcwK+sxfRIAnRMx8kVBNuNn5JEE7Dt1SkwrkIX/Wtq3FY3Ietyw/M2ZCYr7fPtbKsIp/M8hBkWi1619w2Cy4B+8zy1oKHtaf3fA20S12LTEkpgqcVrwrLSdyjBQ9bqsQghk1+FO9Ah2CwHSVtCMIrGEKMPhLytAi6rO+Ic8ZPh9C40OiWK7S+vQfrtNT6BqNbPXLJYn/AYtTEaNbQY798ZJXIjHXdaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7XGcz8ovMSwK+mcd4Ei/ZyrbGmMEmM30ZVrZ8TA0Ydo=;
+ b=G9PvcEAoBnlcqdb0xGxaksr50LL/0hWwV01Y+uBGaXkgTsB0Dy0tQuhd9XCjDNZZvgdtTBpVEEFaihunrUd2hMlhd5E0/aP+PCuu2mGaQ07P3u19bwS0g6Yxmubb9B34eGEbT92oWwpPYMrM37M/9AYKxfoq+KwuvVEstQnLvF6GUD+GMvUpCDhDHgC1PwrKcLC5j8QA8d/UHSVl4CUgNFTj2xjgR2Sjg+Xg37mVfdITy/eJA5WHolCLu6tkjEo0BrSVuwopd3ezAgxn/sfwNKwUHoM/MmmKInhAlFfDE/ByN+hskB9ee5R7nWRxI9ZSrx6VedecOj6rnJwNEHwYEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7XGcz8ovMSwK+mcd4Ei/ZyrbGmMEmM30ZVrZ8TA0Ydo=;
+ b=CHGAHfM+SOcL6xync3LhYjl3M2drxyEEnl2NEyWQHYzeVnxkmCgYFLvlJtYBC7Ga3sLCZYz4lsTc0I9bwogR0XO219rrTKbGEzAs+DHgsXNd+sBsWT9EqCRng41vqH2IY/1j7N2s3/XUkfomEDbhS1/A/LlR/cAJ2SiqmYYSs3WL8sl/Mv5Hqz1+UMKKAXYQk5bz+TFsOk2TNaItp42e4TlGjCqo1gQOS7PB7qw3UDWyp85xvkfUI+vpm8Ibk7xR+4T76T8U7V71SXl4kjXjvSDacjItfJfm0xwx4gJfBTYEBdvAvQsbCl8Ggy28DKq+5UsovHkpcnPAgfNMAMgVBg==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI0PR04MB11537.eurprd04.prod.outlook.com (2603:10a6:800:2cb::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 14:35:31 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 14:35:31 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, Sebin Francis <sebin.francis@ti.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Marco Felsch <m.felsch@pengutronix.de>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Thread-Topic: [PATCH v4 5/5] clk: scmi: Support Spread Spectrum for NXP i.MX95
+Thread-Index:
+ AQHcJhsCzmRSrEp0oEyqjCzMN4tqC7SgpByAgAAO97CAAWsJAIAAIANwgAAfpwCAABEKsA==
+Date: Wed, 24 Sep 2025 14:35:30 +0000
+Message-ID:
+ <PAXPR04MB84592331881F5C0C529C7B66881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250915-clk-ssc-version1-v4-0-5a2cee2f0351@nxp.com>
+ <20250915-clk-ssc-version1-v4-5-5a2cee2f0351@nxp.com>
+ <5f508f1d-2d08-4687-86cd-d1944caa0a49@ti.com>
+ <PAXPR04MB8459CE9F22CD56A9BFDB5E78881DA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <082735e7-956b-4574-952e-06ba69db41f1@ti.com>
+ <PAXPR04MB84590D5AAAB56ED7E1CBDE05881CA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <20250924-dark-super-gharial-246400@sudeepholla>
+In-Reply-To: <20250924-dark-super-gharial-246400@sudeepholla>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI0PR04MB11537:EE_
+x-ms-office365-filtering-correlation-id: f566843b-6896-480a-048f-08ddfb779d01
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|19092799006|7416014|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?WUF2SzI5TWozOGNNaXk0MGxRUmxmRzNEVWx3QmozS0h6Mkd3NDFJdlRpc2c3?=
+ =?utf-8?B?M1NBb1hhYUZ6aXFaYTVLK0M3WVdBck1waFh5ckg1SW5QL1lha3lNNGVKUVpO?=
+ =?utf-8?B?QnJsQ0xybEEzdzZvTElTM1N0UGVrL0VQKzBIWEQ1ZnllUUtWeUJ5OE1IN29i?=
+ =?utf-8?B?L2l5QmNHR1ZIUDF6YnluSU9la3N5ZVBDQUkvTUJIQjNJN1kvMW1YTzJOZ0lU?=
+ =?utf-8?B?eUx4c1Q3SVR0MEJSdEJNRnpuUUx3SjJUY0QwejV6TWxvZHlsR3hvUGE2ZHhJ?=
+ =?utf-8?B?ekprY1JTTnhZckJYRDh6YkQ2Q3J2aGxXYXFjbnZmSi91WDBXNzNSc0RxZWo1?=
+ =?utf-8?B?QTRtd3Rwa2QvVzJvdmdWQkNJYkRIMFhDb2R0aCtxYytUMFpZc0ZkdlZCb01P?=
+ =?utf-8?B?bjJqZXFQNThLS21ZU3VWbVhKNEpsZFkrRys4MHRlc01Hb2hmUysvdWh5UWI5?=
+ =?utf-8?B?aUR0ODc3eVBieTZsb1JtOTdlYVB4TkhmZFhKQlFTb0E3UytSUitlT1gvS0dl?=
+ =?utf-8?B?d0FGVmlMQ0IyeHljZXh3RllTbGVVSVUyb1poK1c5M3FXaEtnR0Z3RzR6dm82?=
+ =?utf-8?B?Mm9YS1hlYUFneG1LR2dkTUpxOGxhY2tJcW44L2xFdU5ZUDhHVTJaUURQMW9n?=
+ =?utf-8?B?UWxZcHRWdGx3djdaZi9HMVdCWjNwcmZsSC9VamJmTlI4bldlbG1CdEc1THE5?=
+ =?utf-8?B?cUpud2o4TWw5RWd2b0tuZGtTZmU1ODlocGtpZ2dLKytaQngrL3JJTE9TQUx2?=
+ =?utf-8?B?b3IyMzFrWEk1aXJqaVNPaVhEUmlPR0FURXJoSUVXQkhiN1ZjKzlkbDV0SnJs?=
+ =?utf-8?B?Si9FbVA4WHBXeVMxR09zRXBPS3BGYjZEbWRkbXltTFJZNmdBNitrWVRzQWxQ?=
+ =?utf-8?B?OXpTVEM4NlNZZnlZazNjd1FFUUhoUDRvY0lmeXFHb2s4Q0FLOWgrN2lFTGlQ?=
+ =?utf-8?B?cmF5YjdnRUNya093SFA0ZndyTWgwQmUxdGpTRWF1NlpTWUIrTStHWk9DQmZt?=
+ =?utf-8?B?elp2bXl4QXNhdmxqcFRhaVNlakdIZDVaa3N6bnJQU01IQTRLMkJIcTFEUmZH?=
+ =?utf-8?B?ajh3ZzVQcStaQjhPaUtDaGZjSldldzUwdWpEV3p4WFRJSUV6cTQ5RmJSZ0VR?=
+ =?utf-8?B?Q0FoQUYwQWY2b2N2MXVYb2NOUWV3TnFpcldKKzZlaUE1ZGF1S2t1a1hvbW9J?=
+ =?utf-8?B?elNNL1BRaVo5SDFWWGRzTHlXU0EzemhmTC9pNnNyWjdEaUEvMi9sV3RhZW8x?=
+ =?utf-8?B?UnpPRVlEUTRrdVgrMlpaMzFQS1hZSnEwTUZNNjUzcGhOQU1DbVRPdkZwSGFU?=
+ =?utf-8?B?ZFBPNFBOZms0ZTZOVnVidVRNUmoyaER1eXcxM2hldzhQRW1maFl5SnhjU2Fx?=
+ =?utf-8?B?azl0SW8zUWF0TnJRK0lqbk9xVWtzeGdCMmRUVStIcGFVbWR1ajFWQkpNRm9F?=
+ =?utf-8?B?S294ZlI3cVdYTWRvUzBIaGZSNndHWStwL3dtZm5xUFdBOVp1KzBJMWRTRURy?=
+ =?utf-8?B?U2krVnI3WVhRKzdEZVdPTHhZWVNmVW9wV2kycFdBOUlhd3BEbGVRTjJnMjZN?=
+ =?utf-8?B?QmltcjYrRUVkdjZJTTlJaU83WFlteXFOZDVKK2c5dXkvMjBHNElmejczUm1Y?=
+ =?utf-8?B?aTFmQndQQSswSy9vTFlIMTNFa0p2YnRWWDI3bFZDc1NyaTBIcXBKd2d4RHJs?=
+ =?utf-8?B?aG04SEFsWG1jKzZMUDNDMDNrMkRkQnpkNmN6eHgvRlpTRyt5ZW5SWTBGR1lv?=
+ =?utf-8?B?K1ZRVml0VTBvRitpSTRvSll3UHg3UXNjRzE2dkw4cFBFTUowYm1iQ2VaUm5U?=
+ =?utf-8?B?ZzVqVmwwSlZwV0dUSk1QVVhwanFhWUl2RFR0QytncGs0dDN2M3BvMmdBVGRX?=
+ =?utf-8?B?MmhrUHd6aTUxdk9wWVd4V05kMnF1aUNLYzNZa0orZUNmbVJOcVhYaHIrY1FU?=
+ =?utf-8?B?NndsOGhZbVJhNmU4NFkySHhyczFGWTZkOGRLZlR2R3hUd1BXMndmVU9jY3lw?=
+ =?utf-8?Q?Te5cMqls4PyDVaPJuWZpbLwbycxFgM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?NHBsNExOV2hDYW1jK2VQNVpIdHljZlZmaVJiNm1lQjE3QWNOWlgyb1BlcGYv?=
+ =?utf-8?B?b0JzZzR4bklocmdOSEp5MHU1UVpQVDlSZUlnSlNtY3lFZVJHTnhDRW4wQnUr?=
+ =?utf-8?B?SURqM09Ya3h4OTIzcTBzT1RjR3ZBY1IxL05JR1k3Uzl5Nkw4TURJeE5YOURk?=
+ =?utf-8?B?M3YvMXhsaGtRRmp6MHBTUFJ5TnhMdldQU3NFZ1hpVnBHdXhzZk5qeHJ4Mzhh?=
+ =?utf-8?B?Q1d1TXZ2RHI0MkVUWmdMUlozMU4rSlpGZ2xRQUoyUmwzZC9uVi9Kb21xZXRK?=
+ =?utf-8?B?T1RuV2VqbDA2RHBKdTZKc01hNFZVcnpIdFZMc0xjRm5EeU9aOWtsS0tISXB5?=
+ =?utf-8?B?V3lMTTQ2U211Z2ZSOTIwakNWRU5BYVVOeTR6SmZHcVNqZndtSWVESEQzdjZM?=
+ =?utf-8?B?SXdIaEdrWDNhOHRLMlBsb0Y2dTNtcW42UE04YVkycE5DdUhRYVkvdGVqSmow?=
+ =?utf-8?B?UENnc0cvbmUxSFEvdEs1MGVndjRlT1kyOU1wQ2l6aERoam1Ha0FrMDdqYkpO?=
+ =?utf-8?B?WUdWZm9HMFVKdVM3SG4yci81djQrNjhoVlFpbnh3T05sT2VnSCtRcHl1RUtX?=
+ =?utf-8?B?R0c5WWRlRWpVU0Y0ZExMMktseTFXOGFYZjNjdE9tam1McUJKNjJPd2NZbVhj?=
+ =?utf-8?B?TUFSTVQ1bXhWaFhwcHVBTW5LZnRqeUJIWG1OYmlGS0lvQWp1em9vVHlsZjFJ?=
+ =?utf-8?B?V3VQRHBMLzVlamhsSmM5SHVaamcvSmdoTzNOeENZYXgwSmNnTk9YTlNYbmFI?=
+ =?utf-8?B?b09YaElid2ZibVRPeGNXcmltQnA2bEc2ckp0Q2E2YzdxbzlKcDVvL04rMktJ?=
+ =?utf-8?B?WVE2V0RJbnpiV1IxbFlkTzd0emxpYW50UjhqZG5mQWViSUlNanovWEczT0RF?=
+ =?utf-8?B?YVVkTkR3N2w2dzZUSnNtcFpMRWw4NG1YalQwWVRRSDZaZE9PNS9CaG9wY1hB?=
+ =?utf-8?B?UytxL3VMNDNLaXloVTFWMkMzQjhFanZNd0VUOVpjcFZ5T3hFaCsvMFlnNytx?=
+ =?utf-8?B?TkthaDByWlRoRmFVenR6ZWpnbXNRMVR4ZDY5NTdxWUJkdnZyTXpjNzVvQjF1?=
+ =?utf-8?B?VHlWZHZXcVFIaCt3RFFWSUlLencybEpEeVhCdXBCajdtWHRsdzgwSkpQbEdh?=
+ =?utf-8?B?dHU4QjhBenI2LzBVaVdGTjlkMlQ2NGZ4RWl2UmxIaW5YUGNYY2NNRjlTTEFv?=
+ =?utf-8?B?R3ArWDVYVHhqMlNGUnF2YkdNT3E4UmRkWEpEL1ZLL25CbXNxTUdFMFovb0w4?=
+ =?utf-8?B?Z3RyaHd6VlZiR0VrL3pyVFEyOEJ1d25HWVNOdVJRZTVkWjU3MGVhNWpkYXNo?=
+ =?utf-8?B?dW5KQ0FCRDFodDFKVHliT2VwMXVjbW9ZQ1N6NXhLbWZQOXhZaDZ1dGtxSkRo?=
+ =?utf-8?B?emgxcVZyVXBKa1M1d3FZRHRLbTZNSytnNDNDeUhnK1d5dFB6bk5wQkxUZXZ1?=
+ =?utf-8?B?dkwxZWVWOVM5TGFuMk1JeVhrYUVJcHV4bW5jMzBrT2hTU0xGTnZaWGdaOVBM?=
+ =?utf-8?B?NXVUYm5nT3ZOc1p3TkRJc2JPK2U4cG5PQWVoQnFYazNCS1V4YjRMbmhaZW9z?=
+ =?utf-8?B?VWkxSTNhMXhVeFppbytCYkRkWUJVaUtJZkp0YUlVTWxDTFUwWDludUVscUh5?=
+ =?utf-8?B?VE5rckNuejlRczVXWWV4OVNFYjczNnBLeWY5YitlZTdlV3JFRTFubWFtUVM1?=
+ =?utf-8?B?VHpnSWptd25MU3RiVUxDa3NtUW5zNzBUbHNad3RKS3Z6dWh6N1lLN3JwMXhw?=
+ =?utf-8?B?bVNUZW9CZDRkbVducGdMRWYxWDJsOHc4MkxyYS9XdFRmWnFuRjB2RDRVYUli?=
+ =?utf-8?B?eW9CaUJma2w2S2VGT0puSEF0RitFN0tBVVNWemhXREw3Mkx6Y3BjV29TZGNz?=
+ =?utf-8?B?WTdLaFZUVzI5cmJiYmlnME5GcTZRb25QQWhlaVZjdXI5MzJzODh2U2lvcGI5?=
+ =?utf-8?B?SXNDekxFdHN2WVRqT25sbG8vQlQ5Ujd0OHphNzhCSzkveElabDVKYUdVbGVB?=
+ =?utf-8?B?dytCNzdacytNUXNWaVdUY2NWQlB4dHhsTm5ndSt1V0NvaUpNZ2l5UGZOaTM4?=
+ =?utf-8?B?eEFvL2hTMHRBaHk2SG5JMXU3bGJoUzFUNEV5VG8rZ3A0V1ozUk9vU256RUVU?=
+ =?utf-8?Q?fV+k=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f566843b-6896-480a-048f-08ddfb779d01
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 14:35:30.9754
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wqwUoNMr/Y6MtCorDhn8hnvoyA4B+1tiZH6ibKHcmSMPt2nLLso+WoGZvEyCvdjGiGTEASXK11JCxdWP1YTI1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11537
 
-Hi Cosmin,
-
-Some comments/questions from me...
-=20
-On Tue, 2025-09-23 at 19:05 +0300, Cosmin Tanislav wrote:
-> Add support for the A/D 12-Bit successive approximation converters found
-> in the Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs.
->=20
-> RZ/T2H has two ADCs with 4 channels and one with 6.
-> RZ/N2H has two ADCs with 4 channels and one with 15.
->=20
-> Conversions can be performed in single or continuous mode. Result of the
-> conversion is stored in a 16-bit data register corresponding to each
-> channel.
->=20
-> The conversions can be started by a software trigger, a synchronous
-> trigger (from MTU or from ELC) or an asynchronous external trigger (from
-> ADTRGn# pin).
->=20
-> Only single mode with software trigger is supported for now.
->=20
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> ---
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 ++
-> =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/adc/rzt2h_adc.c | 328 +++++++++++++++++++++++++++++++++=
-+++
-> =C2=A04 files changed, 340 insertions(+)
-> =C2=A0create mode 100644 drivers/iio/adc/rzt2h_adc.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 07e0d37cf468..d550399dc390 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21828,6 +21828,7 @@ L:	linux-iio@vger.kernel.org
-> =C2=A0L:	linux-renesas-soc@vger.kernel.org
-> =C2=A0S:	Supported
-> =C2=A0F:	Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.=
-yaml
-> +F:	drivers/iio/adc/rzt2h_adc.c
-> =C2=A0
-> =C2=A0RENESAS RTCA-3 RTC DRIVER
-> =C2=A0M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 58a14e6833f6..cab5eeba48fe 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -1403,6 +1403,16 @@ config RZG2L_ADC
-> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the
-> =C2=A0	=C2=A0 module will be called rzg2l_adc.
-> =C2=A0
-> +config RZT2H_ADC
-> +	tristate "Renesas RZ/T2H / RZ/N2H ADC driver"
-> +	select IIO_ADC_HELPER
-> +	help
-> +	=C2=A0 Say yes here to build support for the ADC found in Renesas
-> +	=C2=A0 RZ/T2H / RZ/N2H SoCs.
-> +
-> +	=C2=A0 To compile this driver as a module, choose M here: the
-> +	=C2=A0 module will be called rzt2h_adc.
-> +
-> =C2=A0config SC27XX_ADC
-> =C2=A0	tristate "Spreadtrum SC27xx series PMICs ADC"
-> =C2=A0	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index d008f78dc010..ed647a734c51 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -123,6 +123,7 @@ obj-$(CONFIG_ROHM_BD79112) +=3D rohm-bd79112.o
-> =C2=A0obj-$(CONFIG_ROHM_BD79124) +=3D rohm-bd79124.o
-> =C2=A0obj-$(CONFIG_ROCKCHIP_SARADC) +=3D rockchip_saradc.o
-> =C2=A0obj-$(CONFIG_RZG2L_ADC) +=3D rzg2l_adc.o
-> +obj-$(CONFIG_RZT2H_ADC) +=3D rzt2h_adc.o
-> =C2=A0obj-$(CONFIG_SC27XX_ADC) +=3D sc27xx_adc.o
-> =C2=A0obj-$(CONFIG_SD_ADC_MODULATOR) +=3D sd_adc_modulator.o
-> =C2=A0obj-$(CONFIG_SOPHGO_CV1800B_ADC) +=3D sophgo-cv1800b-adc.o
-> diff --git a/drivers/iio/adc/rzt2h_adc.c b/drivers/iio/adc/rzt2h_adc.c
-> new file mode 100644
-> index 000000000000..d855a79b3d96
-> --- /dev/null
-> +++ b/drivers/iio/adc/rzt2h_adc.c
-> @@ -0,0 +1,328 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/completion.h>
-> +#include <linux/delay.h>
-> +#include <linux/iio/adc-helpers.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/property.h>
-> +
-> +#define RZT2H_NAME			"rzt2h-adc"
-> +
-> +#define RZT2H_ADCSR_REG			0x00
-> +#define RZT2H_ADCSR_ADIE_MASK		BIT(12)
-> +#define RZT2H_ADCSR_ADCS_MASK		GENMASK(14, 13)
-> +#define RZT2H_ADCSR_ADCS_SINGLE		0b00
-> +#define RZT2H_ADCSR_ADST_MASK		BIT(15)
-> +
-> +#define RZT2H_ADANSA0_REG		0x04
-> +#define RZT2H_ADANSA0_CH_MASK(x)	BIT(x)
-> +
-> +#define RZT2H_ADDR_REG(x)		(0x20 + 0x2 * (x))
-> +
-> +#define RZT2H_ADCALCTL_REG		0x1f0
-> +#define RZT2H_ADCALCTL_CAL_MASK		BIT(0)
-> +#define RZT2H_ADCALCTL_CAL_RDY_MASK	BIT(1)
-> +#define RZT2H_ADCALCTL_CAL_ERR_MASK	BIT(2)
-> +
-> +#define RZT2H_ADC_MAX_CHANNELS		16
-> +#define RZT2H_ADC_VREF_MV		1800
-> +#define RZT2H_ADC_RESOLUTION		12
-> +
-> +struct rzt2h_adc {
-> +	void __iomem *base;
-> +	struct device *dev;
-> +
-> +	struct completion completion;
-> +	/* lock to protect against multiple access to the device */
-> +	struct mutex lock;
-> +
-> +	const struct iio_chan_spec *channels;
-> +	unsigned int num_channels;
-> +
-> +	u16 data[RZT2H_ADC_MAX_CHANNELS];
-> +};
-> +
-> +static void rzt2h_adc_start_stop(struct rzt2h_adc *adc, bool start,
-> +				 unsigned int conversion_type)
-> +{
-> +	u16 mask;
-> +	u16 reg;
-> +
-> +	reg =3D readw(adc->base + RZT2H_ADCSR_REG);
-> +
-> +	if (start) {
-> +		/* Set conversion type */
-> +		reg &=3D ~RZT2H_ADCSR_ADCS_MASK;
-> +		reg |=3D FIELD_PREP(RZT2H_ADCSR_ADCS_MASK, conversion_type);
-> +	}
-> +
-> +	/* Toggle end of conversion interrupt and start bit. */
-> +	mask =3D RZT2H_ADCSR_ADIE_MASK | RZT2H_ADCSR_ADST_MASK;
-> +	if (start)
-> +		reg |=3D mask;
-> +	else
-> +		reg &=3D ~mask;
-> +
-> +	writew(reg, adc->base + RZT2H_ADCSR_REG);
-> +}
-> +
-> +static void rzt2h_adc_start(struct rzt2h_adc *adc, unsigned int
-> conversion_type)
-> +{
-> +	rzt2h_adc_start_stop(adc, true, conversion_type);
-> +}
-> +
-> +static void rzt2h_adc_stop(struct rzt2h_adc *adc)
-> +{
-> +	rzt2h_adc_start_stop(adc, false, 0);
-> +}
-> +
-
-I'm not 100% convince the above two helpers add much value given the usage =
-they
-have. I do understand that they make things a bit more readable but still..=
-.
-
-rzt2h_adc_start_stop(adc, false/true, ...) is already fairly clear about it=
-'s
-happening. Dont't feel strong about it anyways so up to you.
-
-> +static int rzt2h_adc_read_single(struct rzt2h_adc *adc, unsigned int ch,=
- int
-> *val)
-> +{
-> +	int ret;
-> +
-> +	ret =3D pm_runtime_resume_and_get(adc->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	guard(mutex)(&adc->lock);
-> +
-> +	reinit_completion(&adc->completion);
-> +
-> +	/* Enable a single channel */
-> +	writew(RZT2H_ADANSA0_CH_MASK(ch), adc->base + RZT2H_ADANSA0_REG);
-> +
-> +	rzt2h_adc_start(adc, RZT2H_ADCSR_ADCS_SINGLE);
-
-This is the only place where this is called. So we could just pass
-RZT2H_ADCSR_ADCS_SINGLE inside the function. Unless this will be extended i=
-n the
-near future?
-
-> +
-> +	/*
-> +	 * Datasheet Page 2770, Table 41.1:
-> +	 * 0.32us per channel when sample-and-hold circuits are not in use.
-> +	 */
-> +	ret =3D wait_for_completion_timeout(&adc->completion,
-> usecs_to_jiffies(1));
-> +	if (!ret) {
-> +		ret =3D -ETIMEDOUT;
-> +		goto disable;
-> +	}
-> +
-> +	*val =3D adc->data[ch];
-> +	ret =3D IIO_VAL_INT;
-> +
-> +disable:
-> +	rzt2h_adc_stop(adc);
-> +
-> +	pm_runtime_put_autosuspend(adc->dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void rzt2h_adc_set_cal(struct rzt2h_adc *adc, bool cal)
-> +{
-> +	u16 val;
-> +
-> +	val =3D readw(adc->base + RZT2H_ADCALCTL_REG);
-> +	if (cal)
-> +		val |=3D RZT2H_ADCALCTL_CAL_MASK;
-> +	else
-> +		val &=3D ~RZT2H_ADCALCTL_CAL_MASK;
-> +
-> +	writew(val, adc->base + RZT2H_ADCALCTL_REG);
-> +}
-> +
-> +static int rzt2h_adc_calibrate(struct rzt2h_adc *adc)
-> +{
-> +	u16 val;
-> +	int ret;
-> +
-> +	rzt2h_adc_set_cal(adc, true);
-> +
-> +	ret =3D read_poll_timeout(readw, val, val &
-> RZT2H_ADCALCTL_CAL_RDY_MASK,
-> +				200, 1000, true, adc->base +
-> RZT2H_ADCALCTL_REG);
-> +	if (ret) {
-> +		dev_err(adc->dev, "Calibration timed out: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (val & RZT2H_ADCALCTL_CAL_ERR_MASK) {
-> +		dev_err(adc->dev, "Calibration failed\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rzt2h_adc_set_cal(adc, false);
-
-Should we disable calibrations in the error path (or right after
-read_poll_timeout()) or it does not really matter?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int rzt2h_adc_read_raw(struct iio_dev *indio_dev,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec const *chan,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int *val, int *val2, long mask)
-> +{
-> +	struct rzt2h_adc *adc =3D iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		return rzt2h_adc_read_single(adc, chan->channel, val);
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val =3D RZT2H_ADC_VREF_MV;
-> +		*val2 =3D RZT2H_ADC_RESOLUTION;
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_info rzt2h_adc_iio_info =3D {
-> +	.read_raw =3D rzt2h_adc_read_raw,
-> +};
-> +
-> +static irqreturn_t rzt2h_adc_isr(int irq, void *private)
-> +{
-> +	struct rzt2h_adc *adc =3D private;
-> +	unsigned long enabled_channels;
-> +	unsigned int ch;
-> +
-> +	enabled_channels =3D readw(adc->base + RZT2H_ADANSA0_REG);
-> +	if (!enabled_channels)
-> +		return IRQ_NONE;
-
-Is the above possible at all? In rzt2h_adc_read_single() we do write the sa=
-me
-register...
-
-> +
-> +	for_each_set_bit(ch, &enabled_channels, adc->num_channels)
-> +		adc->data[ch] =3D readw(adc->base + RZT2H_ADDR_REG(ch));
-> +
-
-Is there any particular reason for reading all enabled channels in the IRQ =
-when
-we kind of just care for one channel? If there's nothing non obvious happen=
-ing
-It seems that the IRQ could just do complete(...) and reading the result in=
-=20
-rzt2h_adc_read_single()
-
-- Nuno S=C3=A1
-
+SGkgU3VkZWVwLA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgNS81XSBjbGs6IHNjbWk6IFN1
+cHBvcnQgU3ByZWFkIFNwZWN0cnVtIGZvcg0KPiBOWFAgaS5NWDk1DQo+IA0KPiBPbiBXZWQsIFNl
+cCAyNCwgMjAyNSBhdCAxMTo0Mzo1NkFNICswMDAwLCBQZW5nIEZhbiB3cm90ZToNCj4gPiA+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggdjQgNS81XSBjbGs6IHNjbWk6IFN1cHBvcnQgU3ByZWFkIFNwZWN0
+cnVtIGZvcg0KPiA+ID4gTlhQIGkuTVg5NQ0KPiA+IC4uLg0KPiA+ID4gPj4+ICAgICAgICBTQ01J
+X0NMT0NLX0NGR19PRU1fU1RBUlQgPSAweDgwLA0KPiA+ID4gPj4+ICsgICAgIFNDTUlfQ0xPQ0tf
+Q0ZHX0lNWF9TU0MgPSAweDgwLA0KPiA+ID4gPj4NCj4gPiA+ID4+IFRJIGlzIGFsc28gcGxhbm5p
+bmcgdG8gaW1wbGVtZW50IHRoZSBzYW1lIGluIG91ciB1cGNvbWluZw0KPiBwbGF0Zm9ybS4NCj4g
+PiA+ID4+IHNvIGNhbiB3ZSB1c2UgYSBnZW5lcmljIElEIGluc3RlYWQgb2YgdmVuZGVyIHNwZWNm
+aWMgbWVzc2FnZSBJRD8NCj4gPiA+ID4NCj4gPiA+ID4gSSB0cmllZCB0byBwdXNoIHRvIG5ldyBn
+ZW5lcmljIElEIFsxXSBpbiBoYWxmIGEgeWVhciBhZ28sIGJ1dCBpbg0KPiA+ID4gPiB0aGUgZW5k
+IEFSTSBkZWNpZGVkIG5vdCB0byBhZGQgZ2VuZXJpYyBJRCBmb3Igc3ByZWFkIHNwZWN0cnVtDQo+
+IHN1cHBvcnQuDQo+ID4gPiA+DQo+ID4gPiA+IFRvIGkuTVgsIGl0IGlzIHRvbyBsYXRlIHRvIHVz
+ZSBhIGdlbmVyaWMgSUQgYW5kIHdhaXRpbmcgc3BlYywgaS5NWA0KPiA+ID4gPiBmaXJtd2FyZSBo
+YXMgYmVlbiBwdWJsaWMgZm9yIHF1aXRlIHNvbWUgdGltZSBhbmQgcGFzc2VkIHNldmVyYWwNCj4g
+PiA+IGV4dGVybmFsIHJlbGVhc2VzLg0KPiA+ID4gPiBTbyBJIG5lZWQgdG8gdXNlIHdoYXQgb3Vy
+IGZpcm13YXJlIGFkZHMgYW5kIHNwZWMgYWxsb3dzOiB2ZW5kb3INCj4gPiA+ID4gZXh0ZW5zaW9u
+Lg0KPiA+ID4NCj4gPiA+IFRoYW5rcyBmb3IgdGhlIHF1aWNrIHJlc3BvbnNlLA0KPiA+ID4gU2lu
+Y2UgdGhpcyBpbXBsZW1lbnRhdGlvbiBpcyBzcGVjaWZpYyB0byBpLk1YLCBjYW4geW91IG1vdmUg
+dGhpcyB0bw0KPiA+ID4gYSB2ZW5kb3Igc3BlY2lmaWMgZmlsZSwgc28gdGhhdCBpdCB3aWxsIG5v
+dCBicmVhayBpLk1YJ3MgZmlybXdhcmUNCj4gPiA+IGFuZCBUSSBjYW4gaW1wbGVtZW50IFNTQyBp
+biBUSSBzcGVjaWZpYyBmaWxlLg0KPiA+DQo+ID4gaS5NWCBoYXMgZW5jb3VudGVyZWQgaXNzdWUg
+d2l0aCBwaW5jdHJsLXNjbWkuYyBhbmQgcGluY3RybC1pbXgtc2NtaS5jDQo+ID4gYm90aCBzdXBw
+b3J0cyBTQ01JIFBJTkNUUkwuIEN1cnJlbnQgbGludXggc2NtaSBkb2VzIG5vdCBzdXBwb3J0DQo+
+IGJvdGgNCj4gPiBkcml2ZXJzIGJ1aWx0IGluIGtlcm5lbCBpbWFnZSwgYmVjYXVzZSBzY21pIGRl
+dmxpbmsgaXNzdWUuDQo+ID4NCj4gPiBTdWRlZXAgc2FpZCBoZSB3b3VsZCBhZGRyZXNzIHRoZSBk
+ZXZsaW5rIGlzc3VlIGluIDYuMTkgY3ljbGUuDQo+ID4NCj4gDQo+IFllcyBpdCBpcyBhIGRpZmZl
+cmVudCBpc3N1ZSBJTU8gYW5kIG5vdGhpbmcgcmVsYXRlZCB0byB0aGlzLg0KPiANCj4gPiBHaXZl
+biB0aGUgY3VycmVudCBzaXR1YXRpb24sIEknbSBoZXNpdGFudCB0byBpbnRyb2R1Y2UgYSBuZXcg
+ZHJpdmVyDQo+ID4gc2F5aW5nIGNsay1pbXgtc2NtaS5jLg0KPiA+DQo+IA0KPiBZZXMgcGxlYXNl
+IGRvbid0LCBhbmQgSSBkb24ndCBzZWUgYSBzdHJvbmcgcmVhc29uIGZvciB0aGF0KHlldCkuDQo+
+IA0KPiBVbmxpa2UgdmVuZG9yIHByb3RvY29sLCB0aGVyZSBpcyBubyB3YXkgd2UgY2FuIG5vIHVw
+ZnJvbnQgaG93IHRoZQ0KPiB2ZW5kb3JzIGNhbiB1c2UgdGhpcyBpbiB0aGVpciBvd24gY29sb3Vy
+ZnVsIHdheS4gU28gSSBhbSBub3Qgc3VyZSBpZiB3ZQ0KPiBzdGFydCBidWlsZGluZyBzb21ldGhp
+bmcgZ2VuZXJpYyBmcm9tIHRoZSBzdGFydCBvciByZWZhY3RvciBhcyBtb3JlDQo+IHZlbmRvcnMg
+c3RhcnQgdXNpbmcgaXQuIEhhcmQgdG8gZGVjaWRlIPCfmYEuIExldHMgc2VlLCBuZWVkIHRvIHRo
+aW5rIGEgYml0Lg0KPiANCj4gSWYgUGVuZyBvciBTZWJpbiBvciBvdGhlcnMgaGF2ZSBzb21lIGlk
+ZWEsIHBsZWFzZSBwcm9wb3NlIG9yIHN0YXJ0IHRoZQ0KPiBkaXNjdXNzaW9uIHNvIHRoYXQgd2Ug
+Y2FuIGV2YWx1YXRlIHRoZSBhcHByb2FjaC4NCg0KSSB3b3VsZCBnaXZlIGEgbG9vayBhbmQgaG9w
+ZSB0aGVyZSBpcyBhbiBvdXRwdXQuIEkgd2lsbCBzdGFydA0KYSBuZXcgdGhyZWFkIHRvIGRpc2N1
+c3MuDQoNCkp1c3QgaW4gbXkgbWluZA0KRWFjaCBzdGFuZGFyZCBwcm90b2NvbCBoYXMgaXRzIG93
+biBPRU0gb3IgdmVuZG9yIGRlc2NyaXB0aW9uLCBpdCBtaWdodA0KYmUgaGFyZCB0byB1c2UgYSBn
+ZW5lcmljIHdheSB0byBzdXBwb3J0IGFsbCBzdGFuZGFyZCBwcm90b2NvbHMuDQoNCkl0IG1pZ2h0
+IGJlIGEgYml0IGVhc2llciB0byB1c2UgcGVyIHByb3RvY29sIGV4dGVuc2lvbi4NCg0KQW55d2F5
+LCBsZXQncyBkaXNjdXNzIGluIHRoZSBuZXcgdGhyZWFkIHdpdGggcG90ZW50aWFsIHNvbHV0aW9u
+cy4NCg0KVGhhbmtzDQpQZW5nLiANCg0KPiANCj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQo=
 
