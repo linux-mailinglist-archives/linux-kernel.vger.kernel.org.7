@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-830162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73800B98F16
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:41:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55583B98F1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B6E97B4DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:39:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16DC42E2B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77EE289E36;
-	Wed, 24 Sep 2025 08:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BoycKNLx"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AA6289E0B;
-	Wed, 24 Sep 2025 08:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3408D28A731;
+	Wed, 24 Sep 2025 08:41:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679828136E;
+	Wed, 24 Sep 2025 08:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703259; cv=none; b=PBA++Dgi5sZwPKkdvlKXJ+yx2a6goW14Ijgy2e/mXpcofLD+WnlgJufH2wpQV3tawiB7cammw65lE3Pkd6TxH3xm6SOetDYD5XcbCGzknr+srEGG/rBF+I9j/hXu8UwfJ5CsE4DAlVzMLzJdksUJUNFcElyXef1AgYgjImX54so=
+	t=1758703277; cv=none; b=YPwkXalxFYKiTQdvCbOIUvQZRBCtGlEKlCbHC62zoGYRNZTTdQ9USl7tDWCQgNcXHXEF5SHSIebCIRfH8KSmBgn6DaJYFWlyRUS2B2Vk6DX9GjvX9hf25VQFfI0gjUXQrKOq3Ro6nF02OcKgq+7344l3iQnUXEfgyQ7GH8L02H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703259; c=relaxed/simple;
-	bh=gXC0TIrjtt2H2hnirLrmLxXWil8GQdYIzvmwDbexWv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U2Rv5ssqu+/wekkh0q0WNkoObJd4ZTz86bGoOJet8RZM2olGiY8yg9B9BHJP1lHDJidMSuf55Bz0/OmcZACSz0oKYUt9D0GbCAfnSAoObQK78sB21DMbJkLNQdYeXTfhbwUZuE1Zp0HVSJ8Op2qd8ZMIk3DuUBuq6ufx+IzmjEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BoycKNLx; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758703255;
-	bh=gXC0TIrjtt2H2hnirLrmLxXWil8GQdYIzvmwDbexWv4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=BoycKNLxBpKS7o7K2G6u08bk0AR1/6FDaoLq4ouUHT8QbBwgx4d26LmjoT/bO82g0
-	 1Rch6X9SMSIdwBFJKcI2pBeuWgqhXojAyS5e6e0Evon/rc4tB07sIfIxp8IAo1FXs6
-	 H2aQVi/TMEbFnx+Lkb9jsFKCngH4iEUNFV5Rr/DlJKGoRBGyYe45j6IjcX6ieC3W1M
-	 0kNgKzPTkqpuNiEIHERnXlPLBNI/0uczTtIxRM4iDytO0urEBQe71zqlUSBDCgIRdE
-	 pWpQtV46syHtpRg5o43gP2l37ISIhLYQOMeT/m/IKXuXefmJqYdQ1KfXY71hY+qlbN
-	 AQsLsPZAepXTg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 14BD517E0237;
-	Wed, 24 Sep 2025 10:40:55 +0200 (CEST)
-Message-ID: <d2b9fae6-eb73-4484-9048-67c0c8507171@collabora.com>
-Date: Wed, 24 Sep 2025 10:40:54 +0200
+	s=arc-20240116; t=1758703277; c=relaxed/simple;
+	bh=QXn/qO4gV/dnfhpgMGyifJt/VNsT7VauOPD3mJA4Xok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCr03z+hFNXG+XvpFs32pTR+EIHwSSROxKki5dYK1bmIoDhnd2nZVnctS9PFjf28Z8I6GpKv5SPfkYz9xHcCYPvzJ4fB7OfG8YbuDRjUXRmRcNiW9hLEcyUKYdz2MP/7OLT+a4dp3CqALoMiKMZ2Pr0+j9rJ2MTO/Am+cQsqOuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40F6C106F;
+	Wed, 24 Sep 2025 01:41:01 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14D683F66E;
+	Wed, 24 Sep 2025 01:41:07 -0700 (PDT)
+Date: Wed, 24 Sep 2025 09:41:05 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "Kumar, Kaushlendra" <kaushlendra.kumar@intel.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"dakr@kernel.org" <dakr@kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] arch_topology: Fix incorrect error check in
+ topology_parse_cpu_capacity()
+Message-ID: <20250924-fancy-bull-of-opposition-0be83a@sudeepholla>
+References: <20250923094514.4068326-1-kaushlendra.kumar@intel.com>
+ <20250923-lurking-gaur-of-flowers-bb68f6@sudeepholla>
+ <LV3PR11MB8768C62AFE6332ECDE9366EFF51DA@LV3PR11MB8768.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI: mediatek-gen3: add support for Airoha AN7583
- SoC
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
- <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, upstream@airoha.com
-References: <20250923190711.23304-1-ansuelsmth@gmail.com>
- <20250923190711.23304-2-ansuelsmth@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250923190711.23304-2-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <LV3PR11MB8768C62AFE6332ECDE9366EFF51DA@LV3PR11MB8768.namprd11.prod.outlook.com>
 
-Il 23/09/25 21:07, Christian Marangi ha scritto:
-> Add support for Airoha AN7583 SoC that implement the same logic of
-> Airoha EN7581 with the only difference that only 1 PCIe line is
-> supported (for GEN3).
+On Tue, Sep 23, 2025 at 06:03:08PM +0000, Kumar, Kaushlendra wrote:
+> On Tue, Sep 23, 2025 at 3:30 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > On Tue, Sep 23, 2025 at 03:15:14PM +0530, Kaushlendra Kumar wrote:
+> > > Fix incorrect use of PTR_ERR_OR_ZERO() in 
+> > > topology_parse_cpu_capacity() which causes the code to proceed with 
+> > > NULL clock pointers. The current logic uses !PTR_ERR_OR_ZERO(cpu_clk) 
+> > > which evaluates to true for both valid pointers and NULL, leading to 
+> > > potential NULL pointer dereference in clk_get_rate().
+> > > 
+> > > Per include/linux/err.h documentation, PTR_ERR_OR_ZERO(ptr) returns:
+> > > "The error code within @ptr if it is an error pointer; 0 otherwise."
+> > > 
+> > > This means PTR_ERR_OR_ZERO() returns 0 for both valid pointers AND 
+> > > NULL pointers. Therefore !PTR_ERR_OR_ZERO(cpu_clk) evaluates to true 
+> > > (proceed) when cpu_clk is either valid or NULL, causing 
+> > > clk_get_rate(NULL) to be called when of_clk_get() returns NULL.
+> > > 
+> > > Replace with !IS_ERR_OR_NULL(cpu_clk) which only proceeds for valid 
+> > > pointers, preventing potential NULL pointer dereference in clk_get_rate().
+> > > 
+> > > Fixes: b8fe128dad8f ("arch_topology: Adjust initial CPU capacities 
+> > > with current freq")
+> > > Cc: stable@vger.kernel.org
+> > > 
+> > 
+> > I wonder if you missed my response on v1[1] before you sent v2/v3 so quickly.
+> > The reviewed by tag still stands, just for sake of tools:
+> > 
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > 
+> > --
+> > Regards,
+> > Sudeep
+> > 
+> > [1] https://lore.kernel.org/all/20250923-spectral-rich-shellfish-3ab26c@sudeepholla/
 > 
-> A dedicated compatible is defined with the pdata struct with the 1 reset
-> line.
+> Hi Sudeep,
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Thank you for the clarification and for providing the Reviewed-by tag!
+> 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+You are welcome.
 
+> You're absolutely right - I apologize for missing your v1 response before 
+> sending v2/v3. I was focused on addressing the feedback from other reviewers 
+> (particularly Markus Elfring's suggestions about commit message improvements 
+> and documentation compliance) and didn't properly check for your response first.
+> 
 
+Please take a look at these
+https://lkml.org/lkml/2020/6/28/157
+https://lkml.org/lkml/2024/6/25/1026
+https://lkml.org/lkml/2024/1/30/1116
+https://lkml.org/lkml/2025/9/2/812
+
+> I really appreciate you maintaining the Reviewed-by tag through the versions, 
+> and I'll make sure to check all responses more carefully before sending 
+> subsequent versions in the future.
+> 
+
+Thanks.
+
+> If possible you can ignore the later version of patch.
+> 
+
+Hmm, I see you have managed to send v4 before seeing my response on v1 and v3
+and hence didn't add my review tag 🙁.
+
+-- 
+Regards,
+Sudeep
 
