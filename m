@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-830707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204E8B9A57A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1811FB9A5A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30198178255
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79B41B269B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30E230B52C;
-	Wed, 24 Sep 2025 14:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2049330CB20;
+	Wed, 24 Sep 2025 14:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qqhpxicJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F6D5gP4Z"
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B95230AAC2;
-	Wed, 24 Sep 2025 14:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1C230B534
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725409; cv=none; b=qXDnb4s9MQZXYq15/X4RNn/ixmQaJyG91MGedZlgCC2HKgVMmh7/KFz6p3kIbbraIfKM67+NE8ADsFXOQ1JbTKBmFzCmjAOkhLJW1JrdA+Nt0OX38tj3ToH9rwYWCCz01kKsoApbeN3cMCZ8bxuh25xbVDqh8BhHMfdHigIcqR4=
+	t=1758725415; cv=none; b=ANVQdDmACBAuGrW0SF2kzz2iewWz7lIHtfr9k/VVBFy3XWVY/iLnVz38M95Lt5f+gXmE80tThpCON9udx/iGdP0IXJJKxdDaQNFMvWJ072dl9NrkLYyuC743RctMptyy7chx+E4J+L7wsZWdSrd/esRC75Sc68AYbpjYBHJtLrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725409; c=relaxed/simple;
-	bh=2nZ+xS75+GYRbPbEr1s2AotVB+FzRxeAkPwF05aNpcg=;
+	s=arc-20240116; t=1758725415; c=relaxed/simple;
+	bh=QntO1gbQ2O/QD7BJzXedroNY+5AyUr6I8y1Tc2DnWpc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UKMVhgqjST4i1ltD93xEsr37OuUkQWPl4aFvynOYhOTtqk3ZN0oCFwW2brNdkw2VlHhNSQegCX+6eeBSk0daY23JjWdFacVbpTP7SvF6TajSOKwjNtrHegrXhewAGamY5/yJe3s+/aJ+uyvNCSIGAPEy36IBRpykAK7zlERZnts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qqhpxicJ; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=TSuAbapA3O4OQNSrcZgAxI8DM0kh8m3JrfdaPTbpipn9LSSr7mmBzDrrMAdYBqahpb4Cx8lSOptzuvZ4JhCR+o0EGg7q2Pm8rHgz7d7vh1Npl4IQBiDsEJw6T69y2e7sX5FCPjx2N1uIRjfZHAUN/yp8krTemLJ+s8xtWRXvLsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F6D5gP4Z; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B00E01A0F84;
-	Wed, 24 Sep 2025 14:50:05 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 723FA1A0F85;
+	Wed, 24 Sep 2025 14:50:08 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 84DA560634;
-	Wed, 24 Sep 2025 14:50:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3FA22102F18D8;
-	Wed, 24 Sep 2025 16:50:02 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 41D2160634;
+	Wed, 24 Sep 2025 14:50:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6D02102F1916;
+	Wed, 24 Sep 2025 16:50:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758725404; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1758725407; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=3RHLVmk5+u09dFacYEQB1nNTSpeaQW6IgPoQKUHTSJA=;
-	b=qqhpxicJ3nT6tP8vOjipWOKU9C6vNsKRfUJfZf7w5wdRiQYVkFR+8ap2g2hJsp6hq1zPvy
-	+Hq8VVkEXVgGue85JcdaLgo7dLMy4s6r/Pq+DO5xR/KGvhfozEBZjwL27OgZeXrRYiTGW4
-	TThSZAepZ0w4o5uNCqh7aVC4kPYHSq9UoSPt5zWVmiLIOqZ2x5TGlgYM92vBP3YL2BM9uX
-	TktR5cjDV9ABu0LfV4gv23UGgIEevWOLXjrB8vMFQsO5PqGByYxg84sGxyaAzpdMbuBlL3
-	4TZH5zQG7W7ZJsQl7+hEjjAoyB9dI82A7LkTBsIu4hGVMyrQ7VPCQfp6oje06w==
+	bh=r25cJKSJ2aGWddtaZ7/M8QgHMa9Wnxi3zbsK79tDlrA=;
+	b=F6D5gP4Z8R00x6PcLAz9BBR7I2C6QEfXHApj9pUygMf9srO1z/DIzUZURM58nF/CBuY9LK
+	jaroQXixgh9qyNAteeaGKG1gPr4tNPVsQloLZYH9pcxf7igGyQDRJ6uYIdMKQN2bRLlxEp
+	d7bldqdtVWG9hZKkWVuDlyyKZxXKex6OJnVy9HsLEJOQfZrpcu9n8v/YVPJ433KcL6/rwD
+	gQSjsMxnhSUBK/PTQzKMVDtx2Wu9TwiGpBAtF0X9cW+snHdxoutwoeNibXrpC6k6x9FdYZ
+	mWHt2dB9/7xLAfkUJiiVtDOOlzvlW31jBtwoSC4uk3LZfnDH+STthZ9UQhdKhg==
 From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 24 Sep 2025 16:49:37 +0200
-Subject: [PATCH bpf-next v4 02/15] selftests/bpf: test_xsk: Initialize
- bitmap before use
+Date: Wed, 24 Sep 2025 16:49:38 +0200
+Subject: [PATCH bpf-next v4 03/15] selftests/bpf: test_xsk: Fix
+ __testapp_validate_traffic()'s return value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-xsk-v4-2-20e57537b876@bootlin.com>
+Message-Id: <20250924-xsk-v4-3-20e57537b876@bootlin.com>
 References: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
 In-Reply-To: <20250924-xsk-v4-0-20e57537b876@bootlin.com>
 To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
@@ -84,37 +84,35 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-bitmap is used before being initialized.
+__testapp_validate_traffic is supposed to return an integer value that
+tells if the test passed (0), failed (-1) or was skiped (2). It actually
+returns a boolean in the end. This doesn't harm when the test is
+successful but can lead to misinterpretation in case of failure as 1
+will be returned instead of -1.
 
-Initialize it to zero before using it.
+Return TEST_FAILURE (-1) in case of failure, TEST_PASS (0) otherwise.
 
 Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 ---
- tools/testing/selftests/bpf/test_xsk.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/bpf/test_xsk.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
-index 02250f29f9946d1ca701e30a900617056d91587b..679491b6b9dd80ccb2b92729141fb8715b874c6d 100644
+index 679491b6b9dd80ccb2b92729141fb8715b874c6d..8d7c38eb32ca3537cb019f120c3350ebd9f8c6bc 100644
 --- a/tools/testing/selftests/bpf/test_xsk.c
 +++ b/tools/testing/selftests/bpf/test_xsk.c
-@@ -1069,6 +1069,8 @@ static int receive_pkts(struct test_spec *test)
- 	u32 sock_num = 0;
- 	int res, ret;
+@@ -1725,7 +1725,10 @@ static int __testapp_validate_traffic(struct test_spec *test, struct ifobject *i
+ 			testapp_clean_xsk_umem(ifobj2);
+ 	}
  
-+	bitmap_zero(bitmap, test->nb_sockets);
+-	return !!test->fail;
++	if (test->fail)
++		return TEST_FAILURE;
 +
- 	ret = gettimeofday(&tv_now, NULL);
- 	if (ret)
- 		exit_with_error(errno);
-@@ -1259,6 +1261,8 @@ static int send_pkts(struct test_spec *test, struct ifobject *ifobject)
- 	DECLARE_BITMAP(bitmap, test->nb_sockets);
- 	u32 i, ret;
++	return TEST_PASS;
+ }
  
-+	bitmap_zero(bitmap, test->nb_sockets);
-+
- 	while (!(all_packets_sent(test, bitmap))) {
- 		for (i = 0; i < test->nb_sockets; i++) {
- 			struct pkt_stream *pkt_stream;
+ static int testapp_validate_traffic(struct test_spec *test)
 
 -- 
 2.51.0
