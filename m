@@ -1,131 +1,185 @@
-Return-Path: <linux-kernel+bounces-830699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC43B9A532
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:46:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A2FB9A52C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 16:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DD93236FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7243206A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD849221F00;
-	Wed, 24 Sep 2025 14:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9134721D3D2;
+	Wed, 24 Sep 2025 14:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hlbCyiLn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="chJSUAaT"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011035.outbound.protection.outlook.com [40.107.130.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4482305946;
-	Wed, 24 Sep 2025 14:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758725180; cv=none; b=rLtvezNXDDa2zVuU503uOXG48Zmzd1HzZPajusvoXn3hly7YiOiVXl3BXrbqhs5TYdMVjZ6ijOrar77yaeekBoQ6aL/pNXBGXj8VRlRBvpbF90OSpi+dAvo06cZqezOh1YqT+8KldJvWCGRZtn18RM7BBgmhkDq1iGsGm7LczrI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758725180; c=relaxed/simple;
-	bh=7j2wBjwip+TbAK+W6ajd/duuMORmgbd8rAemzHv7TWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAh0VZpsXDCSk9mbBXruonXTmSdx6vsFfKLCEuqrebJL0zis/vxe7amijc4wYjFu5szKqRiHkwA3uSRbqoXwVB7VutBsyrpBbLKueOeajW0jw4eGsSi/HEHsDHOVPv6iMMhxlHbwnNciS1TLW9lzy1obb11+tuBzdbkB9RljGGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hlbCyiLn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7783440E016D;
-	Wed, 24 Sep 2025 14:46:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ztbmEybf6PuW; Wed, 24 Sep 2025 14:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758725164; bh=/wOPi68hxXKhWt7shz/orRmYHj1GN+HaaQnjO0mEpDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hlbCyiLnZDCTMwp9X0mRmfGCD8cwx9J+N9zs6B3z17F000I+s+qAIx/XYrMTMuPD5
-	 CUqaIrGD0OY3QuXu7TFIv6exlu/9h1d7zm/X+j+CWnnEipxMP3kynpnp4SeHqKkJTX
-	 J2znK49rhNuR09y9y+zB+xDRHORZHX8bnE3flj4ic1B9SrRdWi5Yj3qFBVAKkDYrub
-	 vQ7/e6iDJROzNAhqMNGB7SXysNbAchEuSxZij2vS+k61s4pusHcm7wna8HE9EsWky4
-	 C0AsCfcCr5tVH/F6gYvZitTlbFCiOByKS1MX7SNC9wWRShh2IQeX/Vvra5FCTLbuKM
-	 0T8xr98aLeimH042GOqhkXvstgv0ZJF4b6LSUyKMTTfO3s/8VWpl9p8A/ItyCOYbnt
-	 PVDH/VAJP/CSGValSKlkbdeHY3gCCdfjiU09nNAXatq4AMfFM4947zcJYJDtRuWkdV
-	 r35UTo1IYMVcCv9/ypBDVhAQUVOYK+rkAdjWgZFEys4dLeo+JvHHUe//bfuDa5xhDq
-	 9NZ/ym4eKdXVSj7E1Mble8pmu2E+mfBlajMum5wMHG3tuOx3yoNYZN+GK5S4rLgBoK
-	 +J3fk26KUDAvegXaTcT1tUcx2FEc9Y7NzDesG57zykbvfnauweaolvHDB+PTqv75xp
-	 SAa2rEiCsAsuRRfe21zFgKdE=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C429C40E016A;
-	Wed, 24 Sep 2025 14:45:55 +0000 (UTC)
-Date: Wed, 24 Sep 2025 16:45:49 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Aithal, Srikanth" <sraithal@amd.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, KVM <kvm@vger.kernel.org>,
-	Ashish Kalra <Ashish.Kalra@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: AMD SNP guest kdump broken since linuxnext-20250908
-Message-ID: <20250924144549.GAaNQEHc-wy0M_JTtJ@fat_crate.local>
-References: <e8ace4cc-eb22-4117-b34d-16ecc1c8742d@amd.com>
- <aNPxLQBxUau-FWtj@google.com>
- <CAMj1kXHxUVowtCqBCKRE2_dv4TSUK6Kgwd46RzjjskAW8qYjHg@mail.gmail.com>
- <616d8f02-a4ea-4f9a-ad4f-8bcbc2ccc887@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC53242D8E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 14:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758725174; cv=fail; b=kUduqoaSk+gth3XBRjnVTdvfqTpIxpWiCbcneFoM2M6qpASaR4wnIl7xcU0geD1Roo5fwSlQ0s4p/A6H2qUxlszqxTY67yIKNy3RGlS2cKonVazphC8K9GaLMpzE9VOFg4M+c+ePXCxOrh6rr/OIxVhzrtvtX68q6emUFdy+fwE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758725174; c=relaxed/simple;
+	bh=iWNm3L3apcucINjjnJgJHaPpj69db3D2Pt31Ha12ZdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FqkW0kIr8Fpatj3oV9OzE7jqe3G+V+FJe4n7t1Hw4TUsl5jHvYotwfQ92g2z548Ynm+s9SYT3NXslkQ5rGL+d6nOBKAnNsBMtJDZSvoXUfnZltkJka0p1cNFvxUF1D46GibeUD01RK3oQh9wPElZ5zBBRjuj66mkkim84FgSbGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=chJSUAaT; arc=fail smtp.client-ip=40.107.130.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UN0qjMPQyqW5NSyJSN+u1bIs3SJlAKwjYtrkuBtRscEkCrbGYMX765ZwZCz13uX1or7+vnNUtndN5icmRxiVhegJ8grq7PrYdZp0sWIp9C+iam8kI6b5l2aU19oN0xdhYXVw4dTRWSL0RPW76pyRUOoi6pMCbWR9EbFfACD5vfsOfmYTWuR8fZsubfLswxz4Swb3SRb03A3++SLawSOkv6JNOxpggOypvWLwFCM1Mnnnoym9VPEfx6QqwuDGxWmuaLontMe/D9PlTJXjcyLFB7B1f5m9mlWFP9aF9M5MecDyhJvOOcCsXhyOeGFFlFRvFSuCpD2KiEr2BIEl/RGeuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HXSpbhwLUDDkDaRiWjoicUT5N2T/HZgomzMDNR8yQLI=;
+ b=SxMnx1sAxgmlJcI/fp0NFZX6ftMRt3lBa3Y1hU13UrVCKQ/+SOL9e7Iu8OJ0LaA/Wah8aPBPU+64v6inFwwYUA5DW7kjkhEe5YLnbxhja61p4KNuy8uobdSjK96wIdk94rEcM4Aekhrm2tm5e9YStTbDtF0euTfuYBlPsnXX5E/vI1Srp0/wuUEbWPmeYOlnhK/r7+z7H8zMWb5O847FUA5C9aOyXAlx99f2yyzspc8S8sN06ueZ/B5Xx+7LSoRtDpKC4aX3TVuOY86IlMS01VimSXRIrIzVw/W91/ZTgKRzAY4ZSres7TxK7e7fayxmfq/TLlW92hpDqQyFDwwpIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HXSpbhwLUDDkDaRiWjoicUT5N2T/HZgomzMDNR8yQLI=;
+ b=chJSUAaTOSl4/ledBqap/br5sKGp0zD8s+dYXiwJ4/5ZL1QITiQzEGUzEA9XdLJi52mEGgKZLQBCuQUeApxODl38wsKAjFaFpDomDOmCcs9phKkzkbe8EIgkTdvcEgvffDnvnL4pjWjATKkB7ILnS3MUQBdCYIq7ctSE+Uiq/Gm5TsBicFblal871CbPbKvKE8SpBkIcQnzjpK4q95St79ni1tgu9kCaxZtUG9SUiEmgJYMzdQxz2uwYSzeVrHA2vM45OgmKtH5cmf/YPluktpdPtv6kh2M4u7QEEg68YATnDOx9B3rx9LFXFkxIAD/HGuofyAC12HQsxrpake29fg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM9PR04MB8522.eurprd04.prod.outlook.com (2603:10a6:20b:431::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 14:46:10 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 14:46:09 +0000
+Date: Wed, 24 Sep 2025 10:46:01 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] drm/imx: drop unused module aliases
+Message-ID: <aNQEKc+7500FA/dj@lizhi-Precision-Tower-5810>
+References: <20250924092643.26113-1-johan@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924092643.26113-1-johan@kernel.org>
+X-ClientProxiedBy: SJ0PR05CA0200.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::25) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <616d8f02-a4ea-4f9a-ad4f-8bcbc2ccc887@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM9PR04MB8522:EE_
+X-MS-Office365-Filtering-Correlation-Id: d18fb006-89fa-4a23-429e-08ddfb7919a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|7416014|376014|19092799006|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zMaD0zgPcQccc3K6W+Ep+L9ZXZiTfxI8ztAXnlb7CCvTS4uP0J2U1i2l/vRF?=
+ =?us-ascii?Q?mrFK1+bL5TcCABQ8upYlRzf/D5LqgzLhhlkTbK965lS0R7a7WisxT57us420?=
+ =?us-ascii?Q?AAh0h6Xh+hNM32jZzLdXmuJv0JiLp2OR0Aui0OhYlc4/xokCInhZPxkr2rCu?=
+ =?us-ascii?Q?OYog5QXlz0ZSVp8m4Jvct/LOxpXlqrVZos8dkx3g5+l2bBEMTWGGwXYhaU2B?=
+ =?us-ascii?Q?9p76dq3dBpUPZuTPiu75msh76upmX0SRYtE3D735gCBdo3+2ZznT1TyPVmr/?=
+ =?us-ascii?Q?sm6Z7zukZ5wmEnj0Cf5aB2nVBuMKtNOVXjc+cH+sUj1hGkJIcqoX3dy4A24A?=
+ =?us-ascii?Q?Tq9tbilxmsA67jG0womZVIXNV0l318qTVCygPTIS6IuyeWBs8/w9BkfS3DXF?=
+ =?us-ascii?Q?ay+Wh+E7u/y8Y7bITXr/HCNK6k/U5mtLiqZjxYT05KHQdtTYV8F7tlwwkifE?=
+ =?us-ascii?Q?c7lJifS8sVLR1HUqOv1qOnpn79HbfDeC8m1bR37le/8C4XkmWand0PS4C9ZN?=
+ =?us-ascii?Q?3WSF36+cOkyviYbkH3SlTBucOe9priLMIihLxwbnXBW5a63Wkc4c7DGFT+M3?=
+ =?us-ascii?Q?aNU6IQUnOwTH050EkDQ6B85VEy3eyKz8FWwSVrRS41Mbl3t17r76pO3EEC6m?=
+ =?us-ascii?Q?B+yx2lwr4TEIR+y2fvEZE+joFk2zaVtSGEogVwElDSYhmNb4IXxN/jQRfBNZ?=
+ =?us-ascii?Q?M1SSkZCTBYShrb/CL8f+O6rsvWbGqyuNKWs+SOu5mmnwKPOrOwSKDoZZkCEO?=
+ =?us-ascii?Q?9uz0JcKIvKAQfIiibXFTcHFsfiRfMj4ypJEmbNi+9D3NOXYlXzIHYHviodTs?=
+ =?us-ascii?Q?ctyrnFC8GvhMyprDziU/BkFiImKB6pefUZFMHpfVeanamZguRUHRF+i/QfPJ?=
+ =?us-ascii?Q?MkdT+pe7Gpoe4qBrI45rxR86gP00Gdh4jxS1S9nXU8G6J2ZKy+GwGMo8+GLr?=
+ =?us-ascii?Q?bxOrnN4vjq86d1iF8teJpxeHhuYgnQ66b/oZlzlS5mOF6Qw2lN9QiRnn2M1E?=
+ =?us-ascii?Q?r3WAMllEU8HbJCSgdNw1NH9obJxjYupu5Q6bPzsMofGVBDXXjRhtL1y9I1G7?=
+ =?us-ascii?Q?1SMKH5yLT0FAIYBMTM6jMa9Y6VifMpZ5wmV9/qGXDqLD5SC3HbBf0yGPfVSO?=
+ =?us-ascii?Q?qWcdQbYIOrgxqfWFXv98HSlWWNpw9JeZyJ6pJib3SqIekiI4ninebELRlhel?=
+ =?us-ascii?Q?L5GsmW8WTeSBdfRBgCHs+BXAYj8j48GzLpMHY/jLcwOI+981Ncu/mJkSBaG9?=
+ =?us-ascii?Q?IMDtHeybtHy740ugu5BJ2f9NLeAESaXP/ied9rJIeJ01H/X4iHZA3qBLQ6HV?=
+ =?us-ascii?Q?fgO12W6W+6GY4kB0Qf6ISZxop2Nrqp8TY7PI3otKERFoFw4XbCsaF76JXpIE?=
+ =?us-ascii?Q?4R0xTvv1GU+5rkVLnOT5+lZcIgXPgcYdGor0fYGJ44PykLlA1WcI/hUGxvPl?=
+ =?us-ascii?Q?7calRKpjYS6hUhEKHly0jEP28dp7uqPviQy8INpqfsIG5VDeV9lS8Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tyDZ4j/eK46z/sWMENq8LowLOYHhCYC734LGtN1zZtx7MktrpY8m1AssSa8H?=
+ =?us-ascii?Q?2HD0pexBY7uVwMmOUSF7ar43Ug0bv27HZP/R6ahEbUMTSR5Lf2pwNkJ9bK7k?=
+ =?us-ascii?Q?bdz7YZu9uYo4fO5sCz09epOWcochcrbHvFSqY138SDpD1v5Kx8WeGr0NoPgi?=
+ =?us-ascii?Q?cv+CxXdC+4WfzHfH5xZpux6NFUVwqBuJ2fD4o5DPYurQsgtd0tS9wZTkbLZI?=
+ =?us-ascii?Q?5GVMPu2kCnixBh+x7c3nzDkvE9sj1YrdBdBu2Y8rilwJ7FlPmF6QvkfxgbMy?=
+ =?us-ascii?Q?41O2tQXFJdHiMqoUUaAV99eecX6mcLS22iCLSotiKqAMmDUDo/yjZoPEbRbI?=
+ =?us-ascii?Q?McM2/gIZ1l5SoG1NZUpUaLAZcRxXOj6QtFYSvi/RG99MuuQidGJFqI9E9QGz?=
+ =?us-ascii?Q?l2s3wmhFvyjFASLtVbkkbgSX844n+ht5QFA+r995whJOd4+56T8dgMh183Vn?=
+ =?us-ascii?Q?M/hpDXtvoHy2WEprusPGSLHHvdLtSHz/XCg95lRdMeNYMSUZM6F0QpKW5+Qd?=
+ =?us-ascii?Q?JEu8usxRRfD8LvgtLnYcEQskQXDStNhhUm6BfbjZQzTdBp4SO1b+Tz8X30/a?=
+ =?us-ascii?Q?WCGQEp0Ui1iBWVTtMlnFhxDgfUeV4k0wr2/zr/KsIrsiXL8INNbx81MJqFRX?=
+ =?us-ascii?Q?lxW4mHsfJJQmiZCgLjPgND+/gQys7hD88OqWvc+1O0Y+oEmrrtc/Fil6Gofd?=
+ =?us-ascii?Q?EkGW0KD5XmsMNtWqY1Qz5a3Q0HXPVi+nmuL3B18pNCAqvhi2Uf0xCgE5sYah?=
+ =?us-ascii?Q?cxqkCDKRVDrhgsYzEt+m5I5AS9Ra+pn6CmQtk/Wm7oIgg/QLrmJF3jA6m99b?=
+ =?us-ascii?Q?tpieU17RIs7299kgdBIxOL6ry7wJpEC4Iqz6qDuyvjb1Mil2K3/46XPmlXc3?=
+ =?us-ascii?Q?yCp6ga4aNs4GXRachESPdXmYexg4n3lA3pdTxCWjbW+k3uap8ku8WoZmyjZr?=
+ =?us-ascii?Q?UR7L47riwtOJ/RRSyNUXMpr3XnU1ddxys+NAW22CW9AO8jtB7KFYdbJQOxrl?=
+ =?us-ascii?Q?VfYPD5VcmRHQGGe+xFA9OskzIM6Z4n6ow93Ph9a83lvqzsq+/9eoOHY+4WDJ?=
+ =?us-ascii?Q?KXKy2yPqfbpx/3jMNrGhDNEhp+v4xPW2ckVzOMlbaYEF86r/+nUC1NTheVjU?=
+ =?us-ascii?Q?6Eq5mhJb0cjBgIKdrw7I9dKYSZOWiAe1iHSlsm5RmT2spY8TjhNvDuH1dt0s?=
+ =?us-ascii?Q?U0qCP4n9F/Qn6QkGKcF2HpT7oNA5FyABKVwCNiXM+9OWhZk7nxou/+edOh3T?=
+ =?us-ascii?Q?Ii6Oy+q6xlShZjhpDtVnYb1McSP2Lbn1XXrkQqZQSQjA2lbgXbM9zwbxBw4r?=
+ =?us-ascii?Q?Q7qYxDBgrEBWmvIOH5m2Dgs/jhcMUn0x1kn55wDrQlDaD6GdjnZMzin23H1r?=
+ =?us-ascii?Q?6ZN+0CnwYJrDZ1vQDX1nAD3/StB0we1aOCCxNpOH24Uzq/PsVq4qQm36Yy6H?=
+ =?us-ascii?Q?aci532bZ2ASSFnm5x8qWjcq02ryneoj6eFXf5ud/uaUyeKKJEI1xPCb8Tc8Y?=
+ =?us-ascii?Q?tTWJyoBjHetjXN2XOn6LiK+qu4FE3Ol2rigH29HjN35Bp/fgyNYTpRITtkEK?=
+ =?us-ascii?Q?mY2yL1fxLQYrulHEIu9Ecami1KIg5Gyxm8slGHp/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d18fb006-89fa-4a23-429e-08ddfb7919a6
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:46:09.9051
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j/JpA8ZA54/KMoSm4Cc52dhklhPfKRGgmsBA+6Le9Ko6GbCH8Y+NqzVTLU647HyjIWgg3JKgf7eDhxZPtLAShw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8522
 
-On Wed, Sep 24, 2025 at 08:13:35PM +0530, Aithal, Srikanth wrote:
-> On 9/24/2025 7:45 PM, Ard Biesheuvel wrote:
-> > Hi,
-> > 
-> > On Wed, 24 Sept 2025 at 15:25, Sean Christopherson <seanjc@google.com> wrote:
-> > > 
-> > > +Ard and Boris (and Tom for good measure)
-> > > 
-> > 
-> > Thanks for the cc, and apologies for the breakage.
-> > 
-> > Does this help?
-> > 
-> > --- a/arch/x86/boot/startup/sev-startup.c
-> > +++ b/arch/x86/boot/startup/sev-startup.c
-> > @@ -44,7 +44,7 @@
-> >   /* Include code shared with pre-decompression boot stage */
-> >   #include "sev-shared.c"
-> > 
-> > -void __init
-> > +void
-> >   early_set_pages_state(unsigned long vaddr, unsigned long paddr,
-> >                        unsigned long npages, const struct psc_desc *desc)
-> >   {
-> 
-> Tested this patch on top of 6.17.0-rc7-next-20250923 [https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tag/?h=next-20250923].
-> 
-> This patch fixes the issue reported for the SNP guest type. It was also
-> tested on [normal, SEV, SEV-ES] guest types, and kdump works fine on all.
-> 
-> Reported-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
-> Tested-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
+On Wed, Sep 24, 2025 at 11:26:39AM +0200, Johan Hovold wrote:
+> When fixing up a device reference leak in the tve drivers I noticed it
+> had an unused platform alias. This series drops unused aliases from the
+> imx drm drivers.
+>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Cool, thanks for testing.
-
-Ard, pls send a proper patch so that I can slap it ontop.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Johan
+>
+>
+> Johan Hovold (4):
+>   drm/imx/dw-hdmi: drop unused module alias
+>   drm/imx/ldb: drop unused module alias
+>   drm/imx/tve: drop unused module alias
+>   drm/imx/parallel-display: drop unused module alias
+>
+>  drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c      | 1 -
+>  drivers/gpu/drm/imx/ipuv3/imx-ldb.c          | 1 -
+>  drivers/gpu/drm/imx/ipuv3/imx-tve.c          | 1 -
+>  drivers/gpu/drm/imx/ipuv3/parallel-display.c | 1 -
+>  4 files changed, 4 deletions(-)
+>
+> --
+> 2.49.1
+>
 
