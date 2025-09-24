@@ -1,92 +1,114 @@
-Return-Path: <linux-kernel+bounces-830198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B92EB9908C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:07:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74812B9907A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE3A19C430C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:07:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360982E657D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994D42D592A;
-	Wed, 24 Sep 2025 09:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D952D541E;
+	Wed, 24 Sep 2025 09:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="HXyajomZ"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="No3ZD47h"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2F9285050
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E6F15ECCC
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704832; cv=none; b=XOWdargGAXtWGky5cBbNP7v2fx0tIyxDQm2SAYACoq8MY1GBVlP6UeNgbwa/8pvEzkhNPaW39qwA2ucVsm4CQxcKxwBwYAgnTeO87y9P5oH0QJjvkw0xp9YXCTjJMZWFASRvk3Na/vfAp6AxAs+y553DJe/uGtiMfkXrHfDvsU4=
+	t=1758704766; cv=none; b=IcZtumpnfXq7L2DXCUi84jPxmp1BuomMvjP58iDpCv/EHNHsCdF3z/lP450NIgf+DxXLglgsWFL6Be99i/9KT4pX9xC3ecNFIVB+Q6oMAEfOFYlIQ6fx/DkH6VTxyc+Ig7F7KT6c8V+Y6wWDZan+voDp9vsdbh3Vj0fWSrAqG9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704832; c=relaxed/simple;
-	bh=bQ0Y5BJrBIMtqOf4nS8BxFJArA/uaB3e3WHg0W76xAc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Bd8gORbaONAdVTj5fNeozVqEdA/B2wZbZ6hS0KCuajx2cNnA7LonK8U4mAtqjzaFOf5ZnTRGzhFMjaMCs6B5ea/M2qIkPaR5Ax5zbtJk3vtZQVdJiVsKAKqxNCXOuNdiJKaN18Drb/N7nCh3UTPaLXtEutC+c4C3ypeMpmBQytc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=HXyajomZ; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1758704823; bh=xAeeEVs4WChmaF+32tw8knZOFXiVYx5VdP7Qx6Dy/Os=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HXyajomZOI6tKoOAcsa+qrrtQSdOxliglEP6VQm951WiGo5J4hupk5a36THU8Aj0p
-	 Wd0cDwzoQBXS2/6EszU5e9bsryMaGT3CorVICN5j8fy1AoP8LvaBFEjWFR1k5W7cNj
-	 4340aZWcTMrX2BeW7wHL7sYCWcJNVcM+hLr+a0yA=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
-	id 16E17291; Wed, 24 Sep 2025 17:05:46 +0800
-X-QQ-mid: xmsmtpt1758704746tdvx7p767
-Message-ID: <tencent_364B6C75BD77B966CC3C1337A0968C36A609@qq.com>
-X-QQ-XMAILINFO: Ms5xyImz3IR/JpVpeFrcgs3oeukw3yrIOPh1HeK1fjW/nu5DrhomlK2blG4zZt
-	 5Xzik7ywEoYrZUmE+BGzyMiMtfjmeS6yJkOP3EMYIS1FnssF7bzdYs8IIBYdxiku7oxZEWArsh74
-	 +IbZ3Hna3F1Rj0uErhoioMITyzcBkk7Uc2ikbrcdytGzeuO08QLGbBsEjEYM/hKtlrsRXKxxGOB4
-	 KfQOUM6Q6mgCzRYHndNbd+99joLfSSx9l6eTwleqC+u87uKIg4DqKii3T9JZUkfnzgx1aqjGSH7P
-	 cKJ9Ax82qMJfGm706i5T3CBhENkAOMbXxCC/BHnBpDGEOJLTM8YR2Mdz5tuT1IpRMm64uSALvJxZ
-	 myA3cZl9oS7Uo/a+7MojD3oe/STHYZ77XBE24LGYsMZyNApx4HB4jdMQiHq5r2K9HAGZd+5hTUTA
-	 7O+L+MccWt5OL4h4Ae5aN7pzPYkL0KZC+hIfsjusODTOyt+esAJKtESNcW+wGx8YguyqorjCSypx
-	 WBXseVSiOTfjmSZLv/2G1VvVC6C3wEj7yZC+Ytbc51RO7t0ZyqasK0oxIf+v+tykGXK+fLMXinLs
-	 Age/9J2l7kIgPBv+ez0EPTB2Nr32QV2t5jSRYgU6lCjmTmG6MdbbdKu0chl5C02+C0jfp4rX8bb5
-	 4KRn30zGswK+aYmLgpcahA0DSdHpKTCK8VWU25IgZY2BdK/Xx/RW7FcR+I66KZaXr18OURJ8/GJA
-	 vRoyXx5wim22eJ7e0LErrYFSAw1HB4etqgwaM8Lfd1Rs+3PmlcnamuSxrmY6+e4cyQuUikkT5zcD
-	 6aLpTry+wI1immdOVr1leqSTosA/Bp5eNWu7B+KmALBMn0t9YStCF8PrqquqI5S/mtpXrq3JyNQZ
-	 PE/Kr+zeYL1/dsiEpwKh5sC/bp71MolG1Kg/FR2L+kIWAMpHwAzmBmDAcpBCbpW9Zfno/EH70MSg
-	 2d9GdYmd0rngbXRvS0LQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] WARNING: bad unlock balance in namespace_unlock
-Date: Wed, 24 Sep 2025 17:05:45 +0800
-X-OQ-MSGID: <20250924090544.1419047-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68d3a9d3.a70a0220.4f78.0017.GAE@google.com>
-References: <68d3a9d3.a70a0220.4f78.0017.GAE@google.com>
+	s=arc-20240116; t=1758704766; c=relaxed/simple;
+	bh=hV6pVJCy88z+Ez46hm5FvsCmrpZWxYrT9wmMYgVLqLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bIXJLynhip4MBTX3QLxpJLmNIlyHvL+W3Ii8Tb8jDj1Z95U+JxTwUJZq6Rv8QIvzJcTUXiRPj7ahInbM0DmuL0Od/t4ZpE0Esd4cSzXZzdcQ29N0Vpaw/1UPaidlpTjjpk1AokhJ39XqfxoZP6z7icNE1Pd1Uckjto/IBm2oI1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=No3ZD47h; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-367064ef8a9so30001581fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758704762; x=1759309562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hxEUHbOZ6w2gZYBHft0CTA/ULDWZ/SYwd+sBl17eLJY=;
+        b=No3ZD47hjgaFPxmRksDyPOSDuAyjKgEYOYNinXh3OjHiQNH4kHujlG20smGHMAi3lK
+         YdqoxHKNnhVY8heTbGBk3G6MGzS63YlJ34CWeGYlNjYdmDqJFXiqMKwRO6iXd/zFjmrf
+         Os607w95KHMvEGNTbN2Yz7DBXVMK6rj56iliKsP1Yf+LnLYkjqtaD5N4Ir0vmxiMfiYg
+         Wo4b2JNxDGFN4jPIBd2Lt3ngYNQbTXT/bEiVtN+yvFJkYVGAJEQUFHgaUavHj+AQWhTy
+         wIFb/WWKqZ9MzYWsPf/4XUS/SzZjjQ5hiA1rgPQfekmSW0mZhx+80sNM7lwqPxeIcu6H
+         8iew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758704762; x=1759309562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hxEUHbOZ6w2gZYBHft0CTA/ULDWZ/SYwd+sBl17eLJY=;
+        b=wiVnUnoD//UR9Bszov/a+572pZtQQPBpKiXmCQcuNwHnKASzM8YtvFBdwo0YgGiTIf
+         5HtjsHq9LqmsLWXaRAsHQXfGGCiR7n7lqcKwOZvuLcchxbjBq/5NhDTY8iqfxt/nW7e/
+         b26LrFKBZn9N2SqGeG6R0f6aNDeItCzDKS5078gmdgXDc4G/X3pvBVABtVReKvh3jfMn
+         XmNuxRPBZN4n1LAQYr6GFsMH1Ns4gntITWqo1ziEVSQWC6QhQIPUeatdUn6dbBaaXzF8
+         Aya8udr4O2/J9hapCZ90qT6wLk9TfMRwSoNm8nizjew1I09o7mMmf3xD9e06yv5Yfel4
+         sfZQ==
+X-Gm-Message-State: AOJu0YxT7QRhsarGYyOcuJggZEqAS80tad06vAVKOf+YLvls1KS4K7DV
+	RrohIdUGrwMCT6/oruJBYgQKlXLlLbmsVM0Q7MZ6IgFrWFIQTa9zDcSMca9Ua+XntXKMpaIuw2G
+	R3/SEDpCwXoB0xwJopw3L2nNVjveNq6od/zpANzJB7w==
+X-Gm-Gg: ASbGncvZc7sxKBiogzC2dUm0TcYrYoDvz52R4O0T3yhmJKzU3LFCUCeK4Nwl9GLCjIo
+	Emi+7g+IaRtTjCaNFcm12B6HXlkM6n6GevVo868PtIQSXNcKFCA8tiWz+yRERSfZNXPuRktTTE7
+	IWv7t7NYJJ03fKT5GetrTVJt9QGEKZ92KecV9bulef45SHHGfJImKnM900whCsW+v3vmWHxst01
+	DbaJUHpBlckr8z+3pBRfI+LDvr1ld7aEEgprmwB
+X-Google-Smtp-Source: AGHT+IH7Nmy3mld+qkzUDRq6dwD3hmciCwsBuq9DPFIP04OaJHup0AtZbCzJqBcnwyE12Mfaz2q5Ei5fZhlAOCiBhtM=
+X-Received: by 2002:a05:651c:234c:20b0:364:f7e2:3908 with SMTP id
+ 38308e7fff4ca-36d16bf698dmr16950931fa.26.1758704761910; Wed, 24 Sep 2025
+ 02:06:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250917153859.363593-1-marco.crivellari@suse.com> <20250924090330.7748Aaf-hca@linux.ibm.com>
+In-Reply-To: <20250924090330.7748Aaf-hca@linux.ibm.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 24 Sep 2025 11:05:50 +0200
+X-Gm-Features: AS18NWBgeCvLLAozlxVxWa0adq5AECdaXGbqHkUSh_nmAZ-djbth6cAkpVPaTbs
+Message-ID: <CAAofZF7gqhoQzRZh0=O8oAzCabMrGZ-rZkt18Vpc5BkNywVj2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] s390: replace wq users and add WQ_PERCPU to
+ alloc_workqueue() users
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Wed, Sep 24, 2025 at 11:03=E2=80=AFAM Heiko Carstens <hca@linux.ibm.com>=
+ wrote:
+> > Marco Crivellari (3):
+> >   drivers/s390: WQ_PERCPU added to alloc_workqueue users
+> >   s390/diag324: replace use of system_wq with system_percpu_wq
+> >   s390: replace use of system_wq with system_dfl_wq
+> >
+> >  arch/s390/kernel/diag/diag324.c  | 4 ++--
+> >  arch/s390/kernel/hiperdispatch.c | 2 +-
+> >  drivers/s390/char/tape_3590.c    | 2 +-
+> >  3 files changed, 4 insertions(+), 4 deletions(-)
+>
+> Series applied, thanks!
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ac1aedafe05e..c22febeda1ac 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4134,7 +4134,6 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
- 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
- 	if (IS_ERR(new)) {
- 		emptied_ns = new_ns;
--		namespace_unlock();
- 		return ERR_CAST(new);
- 	}
- 	if (user_ns != ns->user_ns) {
+Many thanks, Heiko!
 
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
