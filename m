@@ -1,100 +1,155 @@
-Return-Path: <linux-kernel+bounces-831082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A4FB9B7CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:30:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F8BB9B7DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDC62E7B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:30:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978053BF375
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33451281358;
-	Wed, 24 Sep 2025 18:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496CD242D69;
+	Wed, 24 Sep 2025 18:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YNMHctgJ"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="blzgtiUE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F86414EC73
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45BE1FDD;
+	Wed, 24 Sep 2025 18:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758738637; cv=none; b=TXVbQtqKv8UaeMFtNCVEQM8OoX1hhw/8brjGMiVVEHyM+TLvdiXrd0kXkrohwLqwOcOO9H7fmN44T0Szp33XygPfyzO7vsZyV1Cgdt/SZQJUDNyb8inDKMn9QY56uwaoq/NbYcWEWU+HZWvCDwlrFS1jjqQP/WzXC8uiQ1X++0I=
+	t=1758738760; cv=none; b=Q6tMqcTnWs04i9OngKrV/TI2GJ2X90RNBhCOOYwHqO3lrdhYSY8Dijdnghf4zXpx4oLVCLGYtei3b/pCILmhElhZMdcWiktYt7c+gNf94IilhykjhPH/JZkwj8G2KmTW6Grxj8UbENfBw78ZGxUsyKqUUum2m2k5EpBtmaZIv5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758738637; c=relaxed/simple;
-	bh=5nqj3fAD1h+T6SNvMIibru9X2ZJzXeYzWYfnhhFeYkU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SCyEUf3hA+1/RD1lijdEfJua6Os3fcVVQsVB6WW1Fel0NWdDamVgou4Bk+IIR7zPE2ChT5AMReqwxFIsYhRw1bE/C1xW2SCP3VQQKGfDQFaB+mAOuJfuYgmbhqqm8Y1AVHEUkIhhwYurAckha38iJG5eSjbvE58yS9nd6pkrMLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YNMHctgJ; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24458274406so2270435ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758738635; x=1759343435; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0orpj8kKzOLIoFLQuzfzAYvQ/6+/WjKNXq78Px6yaWs=;
-        b=YNMHctgJKvNLiiuciMWP0Qd/KXJO2e3UsIXkRSOHmzVdpg2DMpeed3UWO5JSYln4Mp
-         4CWZHU8bGCQJ4k4HkPnsXuOou340DaXsxpSc9teHjOikB7KLXCq1IDdjs4NDaAjZ6cww
-         H9F2CCqZSQFLIKyXRTzwnhe+buKEKnkHfwN9Jvc+axYCx+rRXrCVWSpiAORO59Ns+7En
-         /fF5jx3x0kazyT0M3osU+/99bASscx1w+JpHP7PlTZPXcT43aTDJkQ5gThjwbPwJsVtz
-         WEOOgIlBPsCzHvRTZtGlASd2wEA2m8L5XrO3ltMO8hbXKfFSyrOWVc+fEaaQhe9kP7mA
-         tTvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758738635; x=1759343435;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0orpj8kKzOLIoFLQuzfzAYvQ/6+/WjKNXq78Px6yaWs=;
-        b=T7qoUn9HALSO1IAK5wvjDCnC1LJPhtitelR29Hj6DXCBsKiErzpaOhJTl+sFvnhdbH
-         4JVbBlurwLfnh6wzwGv+Q/9/ofcjD3wQ5Dqqj6y9mrDXKDrcngx27ziFPZ9YzIu9ChLC
-         NS3H9BVp/0Lon4/voFyiD/93B4PGppJAR1GMfvdkHYTM68fWLHaiSRpWsJurk+NDQtH5
-         68qZ6FXlGKHkAdG7tdoZmulRR1BUcQeSZHwiiGTnZNaNau/2XD/D6raav+FqS7En2zaK
-         WOrejNmHMDqA88AEFOA4X1o6t58M3973twHaSxmTfyNYpK++CbkJtDGjH+VBAtESVBf7
-         Ql4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXUb9Zl3Kai+YLQKCwYAQ/1AOrcpa5vqX3qTNpZt0oKYq9ntA5IjIDAcCelg46NRTr6UbG49BTxSHZ8jio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzECKbqLtWNNfl8Pk+w7bkKauEncgj+VgGhWcRTbTzgcl9OWdZe
-	32chch3GMA6WeZJrMAYhjAdefphKWpTiWPaSqCKE7/0LECUA3/Vy59RvhqopJSkjOZ+01PC098I
-	7i0lQQw==
-X-Google-Smtp-Source: AGHT+IFXo1YtMlm/thVEKH/A2s96aBhqcFtzdeO84CUbY2jR86ggP7c4ogR8CeME5mE1AWN1GkR2fh/uCV4=
-X-Received: from plbml5.prod.google.com ([2002:a17:903:34c5:b0:269:b2a5:8823])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec8b:b0:264:ee2:c40f
- with SMTP id d9443c01a7336-27ed4a665e9mr6995435ad.52.1758738635595; Wed, 24
- Sep 2025 11:30:35 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:30:34 -0700
-In-Reply-To: <175873596698.2143185.9486968747074623197.b4-ty@google.com>
+	s=arc-20240116; t=1758738760; c=relaxed/simple;
+	bh=bWIP0s6qalOqwGClINFJAxRrfc9GlOcLTVMnDwKSddc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EWLYCMUlSWH98XNA4DfFRqUDBJsUQuRnqP0FvLvsiKDVBZCbFUksxlJtE4lPsCx/X+RuV1QxcHQzpg9l5Hv2MIz7SgPzwF1GdUCyx+qoxfgn2VYUc/F5S4B/4GQ6tW6msxM2E84Iu5GvVLJrihtQZ3As0uSuulcqlcoBnrmQTwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=blzgtiUE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758738759; x=1790274759;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bWIP0s6qalOqwGClINFJAxRrfc9GlOcLTVMnDwKSddc=;
+  b=blzgtiUEGnx8qO6OTLP9ztwgvDs3/JLki4ZipS/fC0i2ZhruVF2d5pc9
+   mPZTRXeHgiv47pjSdW1gyB8yy/VpDr6+0hNcROzuHYIhryo85zL0fF50v
+   hbQZWdXi1vODBNU/Cq1TXpz1bBQieZ1Mpl8+P2WkFvLM+yEZHOSs05hqR
+   zWPV+YKfkz61+PQ7itrPuke4wGlqWDrEkwAXRM+IzyX2Qp7vcLKdhK+Sc
+   X6FykMNMmc8Zg2amkdIzSvz9hYviP6+VvJ2Z4OCMsuxdQ2vQLZyo8LR9W
+   LvYxXrUMKQhwN8/OcsEbmABkDnU+pj5+jyARAaV/gdZiE1xEcD8nnRxKB
+   Q==;
+X-CSE-ConnectionGUID: hMI0beWjSWuBJ+q540HHwQ==
+X-CSE-MsgGUID: xXA89S2uSXmpjFztJg/HfQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="71291185"
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="71291185"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:32:38 -0700
+X-CSE-ConnectionGUID: gDmB2CbwT/+7lDKkxN4p+A==
+X-CSE-MsgGUID: wmLqxbxnQieeaEOwqUbiyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="182386249"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.203]) ([10.125.108.203])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 11:32:37 -0700
+Message-ID: <5490118a-7185-44fe-b816-b01c8ff75979@intel.com>
+Date: Wed, 24 Sep 2025 11:32:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919004639.1360453-1-seanjc@google.com> <175873596698.2143185.9486968747074623197.b4-ty@google.com>
-Message-ID: <aNQ4yrhId4s5vxt8@google.com>
-Subject: Re: [PATCH] KVM: x86: Don't treat ENTER and LEAVE as branches,
- because they aren't
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [RFC 0/5] parker: PARtitioned KERnel
+To: Fam Zheng <fam.zheng@bytedance.com>
+Cc: linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
+ linyongting@bytedance.com, songmuchun@bytedance.com,
+ satish.kumar@bytedance.com, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, yuanzhu@bytedance.com,
+ Ingo Molnar <mingo@redhat.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>, fam@euphon.net,
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, liangma@bytedance.com,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, guojinhui.liam@bytedance.com,
+ linux-pm@vger.kernel.org, Thom Hughes <thom.hughes@bytedance.com>
+References: <20250923153146.365015-1-fam.zheng@bytedance.com>
+ <40419dea-666e-4a8d-97a7-fa571d7122f4@intel.com>
+ <CAG+v+KZ4bRgVNiMDhNTeiOqqbEXCBD72K5SQZCo=m0xaQ2vauQ@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAG+v+KZ4bRgVNiMDhNTeiOqqbEXCBD72K5SQZCo=m0xaQ2vauQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 24, 2025, Sean Christopherson wrote:
-> On Thu, 18 Sep 2025 17:46:39 -0700, Sean Christopherson wrote:
-> > Remove the IsBranch flag from ENTER and LEAVE in KVM's emulator, as ENTER
-> > and LEAVE are stack operations, not branches.  Add forced emulation of
-> > said instructions to the PMU counters test to prove that KVM diverges from
-> > hardware, and to guard against regressions.
-> 
-> Applied to kvm-x86 misc, thanks!
+On 9/24/25 09:21, Fam Zheng wrote:
+...
+> The model and motivation here is not to split the domain and give
+> different shares to different sysadmins, it's intended for one kernel
+> to partition itself. I agree we shouldn't have different kernels here:
+> one old, one new, one Linux, one Windows... All partitions should run
+> a verified parker-aware kernel. Actually, it may be a good idea to
+> force the same buildid in kexec between the boot kernel and secondary
+> ones.
+Uhhh.... From the cover letter:
 
-Oh, and I opportunistically added the "1 MOV" pointed out by Chao.
+> Another possible use case is for different kernel instances to have
+> different performance tunings, CONFIG_ options, FDO/PGO according to
+> the workload.
 
-> [1/1] KVM: x86: Don't treat ENTER and LEAVE as branches, because they aren't
->       https://github.com/kvm-x86/linux/commit/e8f85d7884e0
-> 
-> --
-> https://github.com/kvm-x86/linux/tree/next
+Wouldn't the buildid change with CONIFG_ options and FDO/PGO?
+
+Thank you for posting this series. It's interesting and a thought
+provoking. But, that's where it stops for me. I don't think this
+approach has any future upstream. I probably won't look at it again,
+even if it hits my inbox. (I hope it _isn't_ sent again unless there is
+some *MAJOR* *MAJOR* change to the approach).
 
