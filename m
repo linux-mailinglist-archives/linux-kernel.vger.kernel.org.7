@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-830097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45478B98BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38B8B98B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04412A2BF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:03:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B5CF7A4DE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63CA2836B4;
-	Wed, 24 Sep 2025 08:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40501280328;
+	Wed, 24 Sep 2025 08:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BE8VXE70"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5rmQ2ks"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BED4265292
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB26E6FA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701018; cv=none; b=G4m22DjTP+AoU7Ei+HTiaB6NAwFg6ekqQ8J+TO9hShf8myZxHHyuVc9yGgw8FjNogCbKUiFatpbZ68wnGSCorcH6vdwE3dT2ws1P5llVgCtjXWwKnGt/PcYh5EdHJj7qBpazHSxVjhnzcsf8gOc5OwTLOE+ON2i1tpKbE8Iz1SA=
+	t=1758700987; cv=none; b=tAJ7uad+0kID+0mCgSvSEZxLM4m6JXPcr02/pIGVXZWGkmC+146F++EheJxrhQFljwoa42QeRiIpH9/HDoPX1R50Ba2UXj2O5Hcv07XMXc0VULrpWWB0Z6+GJ//90oBp9zWsldGvaeY3OKaMU6ln0QI24R1qos4w8+O9d+9BSsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701018; c=relaxed/simple;
-	bh=PSFacuoLsrD33DwWCB9zYIlIH1F9vW6/njf3D6cjvqw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=oxQ0FNiu3r1BWmllCb7sc5J0PqPWy4L5TtkRbenEqrMvP3fIOD++ZSsgjFRUkJdEPPW1mjwhCIZ8ME6isXd1THNPfMDwWYPPj/qrKDRwwW5vaPEXL8FNIEwF4ptl+vRB8ncnNpqNGvA42wkTo5POTj3rnqyCyLZh0W9XDOPa/UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BE8VXE70; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=Us3qc8q+lr4gCCXXPB9CTmjAy8+l/zrT5sp8S8hKBNk=; b=BE8VXE708sf3OPt7/JCXzlBfzy
-	OqmtjER85QCOFmWXEPJHiZ6OTADVmq/fVEc7IaBEXHT4r/R+56J0S5MHUj4ZbdgwSlDuyMdlIJFUo
-	/YCBecunwZoMdvH84Kxp5GDMoPSj5lxsrzdWqA8iEA85jaBB4fMVH51C7lzgd3KU8/Jmj9HTPOrc1
-	4OgTbuUBVH0YbpQRh8OHA7fJACUQcORxdcTIiVCmN2FGMsG/0FVIsElRU1HAag92G/GA8xKdhCCAr
-	dL+IqjHtwwQUwFXsB9dno2bCYJr7YzEz4MD/GekjB8mD1ZmHznV0s+1b4GmQrxP7mRR0foEWm7Yjd
-	9qxwjKlQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1KTO-00000008iB8-2bFI;
-	Wed, 24 Sep 2025 08:03:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 2DF8230300E; Wed, 24 Sep 2025 10:03:33 +0200 (CEST)
-Message-ID: <20250924080119.613695709@infradead.org>
-User-Agent: quilt/0.68
-Date: Wed, 24 Sep 2025 09:59:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: jpoimboe@kernel.org,
- rostedt@kernel.org
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org
-Subject: [PATCH 11/12] unwind: Implement compat fp unwind
-References: <20250924075948.579302904@infradead.org>
+	s=arc-20240116; t=1758700987; c=relaxed/simple;
+	bh=gZYO00dsgw1/sZf16O3pqxqviKudSlUhSQE7SGYKT4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I30kTpD2vQudZ0zhYD/Z22UfHNlvARv3nXO0+lcgF2hdkKdOslwYcmoHeCvU7JyQpenrkbCn5zR0olmrkcvYrF7xckq6AqjWZMktITN+QRo7jLq/rzy1IHAJr4vSfV4aVrCCNrAYfG8Ar3uWjdXoXkjBVjKBhUP5+m6kEckzhsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5rmQ2ks; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so10384282a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758700984; x=1759305784; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ehfc7lW7bxLwmLG05CxRKvZLBCPLLvWLd72j5jVN5N8=;
+        b=A5rmQ2ksjJV+pH7ww7oZxhdxMVAJ0gYbbfAM/WrQGTIw58y4P4Jk2lqIzo6/ORDGsB
+         12H5G2Bl7oHGfFvDzPhe4nB1SZ8Ij/ldLcOVUtaebURd9kfKxb0XWQiRG1cZoKLI2KaX
+         Bvv+VL4QOTY7UlAnBIRV4IpLSIChPshAK6gwQBRbuVla0mzqlLfYjGsECHPx2uO3amo9
+         yNU4NXW6yDQyIB7+DJ6RQXPWuAMdwq2AKVe/hrAnOhMc2WZ1ScOvIXQdwdE9LkCnJBKN
+         po+S88dsNg13plFmdClOuJcyCauaMueZ516nahpV4bfGpZGUy9v8MtDXc8+9fokE0wuP
+         I83g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758700984; x=1759305784;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ehfc7lW7bxLwmLG05CxRKvZLBCPLLvWLd72j5jVN5N8=;
+        b=LLtUmSFTNH5MU1kbl54fIBA2QMRjDhgv7KgMlX99i17yglKy/40FpKcW7Sf9natsop
+         jC6gLph4K4dyv461Cah8Vf5s0Th8JqXLwb2fIG2a5u5RmFdWrQgKim0+gKxxIF80Eo92
+         BLFKiVkGzVcy667aS/4hHDaOfAn5dGS3MIsw13MWkTXwdGIclzgxYpWqglPmtq34a9q6
+         yYTi98sYkufCvvcRl8nwzwHHzkVqP8liQn/0ZjDHS0PE4E+YPr3ZQD82txPHMO2PIbtu
+         nWULACkdAbJp4G5x6JoAFcP/5rox6r0HQA5qS0y8BlyebS7R2cTYjYKujoDLq+yUpYjt
+         plLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVmYVCVzaNRaDRGwlhn74rdj9s9r/2N8R7+YAZqyFcrFIoGsHG6XrBUYsNwhMYfbBy/NcNw79Bx+ofCsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwULZ8j1Nituj2ZTA8D4UYiXVNbobn5AhA0fGtiKCRWnh0HEEa4
+	+nJE7ykUC/qAr7VD9oG/7v/ceprd76czQXpD5lR1NvV3tjVXuw74r4Uhdm9PwepP7qS3kwQ2XkR
+	9o2Fa3X7zLd67igvsK8/PfieUEKeb28c=
+X-Gm-Gg: ASbGncsACe09UWfU6AGVvJlGff5wTESBaWFkHWRSvY1EI3S0CColYvsZbNoZ03mue8S
+	9i0V76LXUr5YstFipEDWH6kSz9MXo+cZ2yCPDB8vufI6Lm7DQPOTKoyw24Tge4nJGwOuTLHJVSS
+	D2BTzf7pf97mL3EWQ1YOot9rO0njcCGCNpyrZzJZLwQgmIYRPTM/4eZPEH8WSmuKw2gpfCq5Ck2
+	6XPprgOWdXK9UoLySXpbpLY5HSljDUJE2e4e7/IIv/wZ6l3SgKhMw==
+X-Google-Smtp-Source: AGHT+IFxLHXew9N/JexqdNTfDfR/A0LfnbXCLzDT8ABYFnADQGfGxHrMbIpi3ZFG4X939kYRjpoOubp/hHRjAOYou84=
+X-Received: by 2002:a05:6402:254e:b0:634:4e0:836f with SMTP id
+ 4fb4d7f45d1cf-63467795097mr4196054a12.1.1758700983944; Wed, 24 Sep 2025
+ 01:03:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <83171a57-cb40-4c97-b736-0e62930b9e5c@lunn.ch> <20250920181852.18164-1-viswanathiyyappan@gmail.com>
+ <20250924094741.65e12028.michal.pecio@gmail.com>
+In-Reply-To: <20250924094741.65e12028.michal.pecio@gmail.com>
+From: viswanath <viswanathiyyappan@gmail.com>
+Date: Wed, 24 Sep 2025 13:32:52 +0530
+X-Gm-Features: AS18NWA4QzzqyxonbnUZkhNBqNGPKS9vhQ2TwPcWTvWPtTGvwTC0T-6N-mfumR8
+Message-ID: <CAPrAcgMrowvfGeOqdWAo4uCZBdUztFY-WEmpwLyp-QthgYYx7A@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: usb: Remove disruptive netif_wake_queue in rtl8150_set_multicast
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: andrew@lunn.ch, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	david.hunter.linux@gmail.com, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	petkan@nucleusys.com, skhan@linuxfoundation.org, 
+	syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 24 Sept 2025 at 13:17, Michal Pecio <michal.pecio@gmail.com> wrote:
+>
+> It's not freeing which matters but URB completion in the USB subsystem.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/unwind_user_types.h |    1 +
- kernel/unwind/user.c              |   24 ++++++++++++++++++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
+Does URB completion include both successful and failed completions? I
+decided to go
+with "free urb" because I wasn't sure of that.
 
---- a/include/linux/unwind_user_types.h
-+++ b/include/linux/unwind_user_types.h
-@@ -36,6 +36,7 @@ struct unwind_user_state {
- 	unsigned long				ip;
- 	unsigned long				sp;
- 	unsigned long				fp;
-+	unsigned int				ws;
- 	enum unwind_user_type			current_type;
- 	unsigned int				available_types;
- 	bool					done;
---- a/kernel/unwind/user.c
-+++ b/kernel/unwind/user.c
-@@ -15,6 +15,21 @@ static const struct unwind_user_frame fp
- #define for_each_user_frame(state) \
- 	for (unwind_user_start(state); !(state)->done; unwind_user_next(state))
- 
-+static inline int
-+get_user_word(unsigned long *word, unsigned long base, int off, int size)
-+{
-+	unsigned long __user *addr = (void __user *)base + (off * size);
-+#ifdef CONFIG_COMPAT
-+	if (size == sizeof(int)) {
-+		unsigned int data;
-+		int ret = get_user(data, (unsigned int __user *)addr);
-+		*word = data;
-+		return ret;
-+	}
-+#endif
-+	return get_user(*word, addr);
-+}
-+
- static int unwind_user_next_fp(struct unwind_user_state *state)
- {
- 	const struct unwind_user_frame *frame = &fp_frame;
-@@ -29,21 +44,21 @@ static int unwind_user_next_fp(struct un
- 	}
- 
- 	/* Get the Canonical Frame Address (CFA) */
--	cfa += frame->cfa_off;
-+	cfa += state->ws * frame->cfa_off;
- 
- 	/* stack going in wrong direction? */
- 	if (cfa <= state->sp)
- 		return -EINVAL;
- 
- 	/* Make sure that the address is word aligned */
--	if (cfa & (sizeof(long) - 1))
-+	if (cfa & (state->ws - 1))
- 		return -EINVAL;
- 
- 	/* Find the Return Address (RA) */
--	if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
-+	if (get_user_word(&ra, cfa, frame->ra_off, state->ws))
- 		return -EINVAL;
- 
--	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
-+	if (frame->fp_off && get_user_word(&fp, cfa, frame->fp_off, state->ws))
- 		return -EINVAL;
- 
- 	state->ip = ra;
-@@ -100,6 +115,7 @@ static int unwind_user_start(struct unwi
- 	state->ip = instruction_pointer(regs);
- 	state->sp = user_stack_pointer(regs);
- 	state->fp = frame_pointer(regs);
-+	state->ws = compat_user_mode(regs) ? sizeof(int) : sizeof(long);
- 
- 	return 0;
- }
+> I think this description is needlessly complex, the essence is:
+>
+> rtl8150_start_xmit() {
+>         netif_stop_queue();
+>         usb_submit_urb(dev->tx_urb);
+> }
+>
+> rtl8150_set_multicast() {
+>         netif_stop_queue();
+>         netif_wake_queue();  <-- wakes up TX queue before URB is done
+> }
+>
+> rtl8150_start_xmit() {
+>         netif_stop_queue();
+>         usb_submit_urb(dev->tx_urb);    <-- double submission
+> }
 
+I wasn't sure how to describe the flow of execution in a multi threaded program.
+I will resubmit a v3 with this version of the execution flow
 
+> > Reported-and-tested-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=78cae3f37c62ad092caa
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
+>
+
+> Tested-by: Michal Pecio <michal.pecio@gmail.com>
+
+Thanks,
+Viswanath
 
