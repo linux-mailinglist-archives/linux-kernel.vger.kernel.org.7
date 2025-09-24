@@ -1,224 +1,296 @@
-Return-Path: <linux-kernel+bounces-830872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3CCB9AC06
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2895B9AC40
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD291882E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:44:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF05189563D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399E62D9EED;
-	Wed, 24 Sep 2025 15:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D55D30F7FF;
+	Wed, 24 Sep 2025 15:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HjakrQVQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=arturia.com header.i=@arturia.com header.b="a0oJvL8E"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5464C22127E;
-	Wed, 24 Sep 2025 15:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728647; cv=fail; b=fo27UF+RivAT7BQ78lF9+eQKcFCYc31iSRfVKSS7IIVQiIKHXb8mfbSgI2ClUGL9YX3UduvFiBanblMOW4BTCaA/Fuq+UQ8qBS+tQjxrR6ZiVexKFoLHNbi0MJdSYnKmrBgeK4/+mCY88ZDz5llBvQkMkIvvA835yNQN4MYUlNs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728647; c=relaxed/simple;
-	bh=OKGPd5s/GNiLXfww1bXr1bF27wcIn06rjCLARJDuh7k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=V7F3m4oO6ch4qUHlFciVlg8O5UdcolCiWUOM01y0O2EjG3BHA08+lMPIGs9zFE6xLtHDCFuFsECzaNgDp9PHuZhGOBpr5oXN9bEjgQATUqrmue1epTk2AIkQBMryLZbouwlOVWyOzbA4RBFLZ/pNFXsI4B6yIBn/jZkAbZZFNiE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HjakrQVQ; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758728646; x=1790264646;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=OKGPd5s/GNiLXfww1bXr1bF27wcIn06rjCLARJDuh7k=;
-  b=HjakrQVQGx5xULWDSACQfGl5kiFf4zrCD+PqoewVAneyPyPThabEonYx
-   dPUX8TLd7hyKQhYu3KNxJotiapkAIraWQEuQfs2WZ3uKCerOH0hFAwMRI
-   ruU6mWYNt3k++XkrAuczuqFDcDQZnPOTS4q4Ptz1wEnBRA+SzvuhHlOfm
-   bmOO60Ce+7upC/pF7C6NuaGESex80jRagWZgyYuszvX6470HxuieEoDKz
-   JOQFg4UuYDhWifV+RRptht+sjVdYGKBO8nqLpPfMlA93JYVK7ofH27gCu
-   XsFVo2MliKenV1amFCUSRPtd2HyK+Si4jypY5B6iZPKhUDbny7UWvNx6j
-   g==;
-X-CSE-ConnectionGUID: LTxV0MqJQt2MT6pimFLEMA==
-X-CSE-MsgGUID: iJF3e2UVSrudvkRLDLKBnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="83633090"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="83633090"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:44:05 -0700
-X-CSE-ConnectionGUID: WmgruapYQdujQiZWDhdSXg==
-X-CSE-MsgGUID: nmFG4YT8Sl+PvKCthINtBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="176185117"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 08:44:05 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 24 Sep 2025 08:44:03 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 24 Sep 2025 08:44:03 -0700
-Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.20) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 24 Sep 2025 08:44:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u4Bm7BgVsRQYxS+o3PC83kP3RyEwEwjfO4P4oX3XoeUNZp9h8uBEc6aqELwEXirhIsMzotrobYXhxM+JtorNzy7T7lqJA6A57IK7fAXyCEs1tAN/2Nbn/Oe50GrllhYevnHG5sgMlUfJUi7CK1YsDWCAQ+hLoC+eJsnNhcjKdjPGucwnZrR/YAnwcKy/c+WqTK4E1akkr+IBnp/GrzTLHjBH8jfaAlceCxtcVDSotdkx9PVcCsxZaqDhvI4k6070AlF/K6LEoga4Ujh9W/6AZKTUglK2qH28l+80SjOnWbHwez2120aBPe/AM8G5zAQ2tcDg1uFWcQD7O4JKL6aw6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6gxIPhMiAdz7Kf3gYAthL5aqtmPce05Uy43Z1Bzg7Rs=;
- b=LBZyc9PXQCv75gJJUT5KpvIAxaJgpOd0hV1/VAnOhPiYE/q7GbVqQk86Ce70sRWHyZw4Ntww3VdcRDCYnJPL4WNl9d4sfZN2Z9XJdu6nFfmjhWc4NpcUjxLNUFcPGOt4In42ugheubNnpKJM76D4Rza7rkxRG+R0oapwu4rFwKtel9THTCDYesyqu/O2pphA3UkoE0/f55Geaj6jnY+iEye8rTTrNIevRo6oFNBJiuVnIdCg4CwhHy6byCx6ZrK6mAjNmPXu4nh0yZ5MG+exnpAbznz6VSfiDWOBzvMd2iRRh9YWcWRHmXqQ/l6Nw9dhXLKoiUCf+mlVnNaJyR3Vlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com (2603:10b6:208:55c::11)
- by SA1PR11MB6824.namprd11.prod.outlook.com (2603:10b6:806:29e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 15:43:58 +0000
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2]) by IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2%5]) with mapi id 15.20.9115.020; Wed, 24 Sep 2025
- 15:43:58 +0000
-Date: Wed, 24 Sep 2025 10:45:59 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Guangshuo Li <lgs201920130244@gmail.com>, Alison Schofield
-	<alison.schofield@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Santosh Sivaraj <santosh@fossix.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH v2] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc()
- fails in ndtest_probe()
-Message-ID: <68d41237139f7_23bffa294a9@iweiny-mobl.notmuch>
-References: <20250923125953.1859373-1-lgs201920130244@gmail.com>
- <767ef629-519c-431d-9a89-224ceabf22be@intel.com>
- <aNLsXewwa0LXcRUk@aschofie-mobl2.lan>
- <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANUHTR9X2=VPHPY8r++SqHZu-+i7GGP7sqbGUnAx+M89iiYS4A@mail.gmail.com>
-X-ClientProxiedBy: MW4PR04CA0159.namprd04.prod.outlook.com
- (2603:10b6:303:85::14) To IA4PR11MB9131.namprd11.prod.outlook.com
- (2603:10b6:208:55c::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987DB1B4231
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758728920; cv=none; b=GQoPQfyUpOjzabf3NTADQhbPDk4TFR3e93zdFs8YmYydqd5T1oQQYtR+r4LemtvNt3nKqlj8yZGm7p3dmifX279HnnwTtXqZDAA4ellJ3/J+1gccvd5UOWQEr1M/50HDfOUK0J3cPLRiU3N0Lu3ruP9g4xnsb39cL33OJ/T4pcg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758728920; c=relaxed/simple;
+	bh=FNKsNLilWsQySnx+JaHNaL+3PDqiW1uMqoqV/cmu77c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ihQJIkhJLPLrQIkjIQeUTd1ba8kg20UUfpYAjheXJpLAmbJY0AgYppVT/N3hXa9NWcFR7gSlOX8tJ8ORThXQlQtegPuYcV5d0QuxGzLszdTZITFHzIEeUgdcbiKQyCV24PVeYgil4jY+fqBgyFn8iKeti3SH22PS97ZE9gw6EpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arturia.com; spf=pass smtp.mailfrom=arturia.com; dkim=pass (2048-bit key) header.d=arturia.com header.i=@arturia.com header.b=a0oJvL8E; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arturia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arturia.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4060b4b1200so15957f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arturia.com; s=arturia; t=1758728917; x=1759333717; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ga9wpd87ypEhIhE5XHNvwVyhbRbjt41ZUlw/++PjyKs=;
+        b=a0oJvL8EipjJ+8mZX2I3hYg2J8KsM7GrUb8jQX5ommoRJP570CsTIFeB2dJG6yjWNt
+         55cNZVI6cd641ZVQ36wGz13JNkeqUaKpN1mqd27yRmIyp5cMliImKpXQsfXFawByNGER
+         +7LwCPvVCh8sZBVelNDXaKMAofuTHA8Qpg/OCNuQleh1nhY4MxMkehvOHMc50d2CkI4j
+         kqccudbHzRLsXwUB6tMn0+jf38g3ZY+hr3EY16DZ7Bi0lKH6AB46QHMD1iTHNxaLr0ul
+         vXZCq4OteA6bENIfiioG2qBBJyHmyW+zByQP+xcK8/l0G9km9o9cgGP3ZXT/QBiY4oNX
+         tNVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758728917; x=1759333717;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ga9wpd87ypEhIhE5XHNvwVyhbRbjt41ZUlw/++PjyKs=;
+        b=liDQZe0kW1eAwL8qrQ/2L6rAi9QyJubt0C1IX7WQdquowU7/Yu/ZoHMaFEScISjbBO
+         M3UoiGIsFIHew8jTwRi5c+w7fWv9W7NNmNJOsE+0eO6tOnit/0ayjITbBMjtIzvfTTmq
+         q+pa4+q+fJO6jjWkQywuS181s24TgsiLeNlYyGybXx6/+8617F5vRsQ/aSl3P4Yuz3vF
+         umhKZiNJpEK5jdlqqLbMcpip4jxrNnw3VVaaOkcekWlS7Ykg6VtQaUHsmrnlBVYPq8pJ
+         6e0cZzxNSfaNsNCyU7wniUrU97E9Q0FE73lvLGwGGjZm44kKqsRiGfpLi2XEfXMzDDN7
+         GB2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKI6Xozfrcv7Ty8nZLUYIc6dSnBYiXzt6uS5Wx9TWPfjXATYmU6HqVsqoN+9E3mhvCgWzhWQYsRDvlF5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFENUkleGDgnxpi3hiFb4NQx3CXsm3kQwOhijcAJwz57dahbXo
+	9iuHctAXfj1Be5VdTksP1lbcGmLfelNDuYawZqGUjzXdD71mj6UxReWZoPCkmxv8DcY=
+X-Gm-Gg: ASbGncs9KfuDeUmXEAQtr8aVUrEnn3A7Z+Zo7c1fbBrp0WVsLQdVdm2spoaqG+zAPl5
+	SBtLezZXIM2T6LzSy0F6XZ0EZGU+mJyx1asIQtv3tuUl5Bjnc2IGnOhH46sHRnex5GFNrVAqaYW
+	nL0hql7ajZJghv9rS7InRwtiNUs3VaGQwdFkOmtct9fUTTsHVvlWNCKEtdcrdSjlqfNNPDtyK4p
+	TwcRcoYuCs69m+NLgQlK8y0Kn0S19gWgsXbGcLrUENAU8LTvspO33K2vDEufKu0Q8fzmZUskjQa
+	1Q8LdTx9F8sVslUsuK67PbCe2+tokr+0gDFq2TZ76K/Da4S4MlTZpvvSfI22a0o6Lnz2cNSQiyU
+	1oI5J+tykE/zoQTSqiITPpYmHL+N7s5XjwU4ICI0PSjfqiISn
+X-Google-Smtp-Source: AGHT+IGteDCuymW8jXqrVPp1LBIadB6oPStoD1tgjWbrgFvwIM1Si+KHLUQ/JYjhGxkaqDiiOa3zlg==
+X-Received: by 2002:a5d:5d0b:0:b0:3fa:ebaf:4c2f with SMTP id ffacd0b85a97d-40e4bb2f5c2mr317315f8f.30.1758728916768;
+        Wed, 24 Sep 2025 08:48:36 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:cb15:854c:e000:cf85:df87:23e6:2e45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407aebsm29694004f8f.14.2025.09.24.08.48.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 08:48:36 -0700 (PDT)
+From: Victor Krawiec <victor.krawiec@arturia.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tiwai@suse.de,
+	kees@kernel.org,
+	abdul.rahim@myyahoo.com,
+	jilliandonahue58@gmail.com,
+	jkeeping@inmusicbrands.com,
+	Victor Krawiec <victor.krawiec@arturia.com>
+Subject: [PATCH] usb: gadget: f_midi: allow customizing the USB MIDI interface string through configfs
+Date: Wed, 24 Sep 2025 17:48:21 +0200
+Message-ID: <20250924154822.205703-1-victor.krawiec@arturia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9131:EE_|SA1PR11MB6824:EE_
-X-MS-Office365-Filtering-Correlation-Id: aaca37d5-2f41-4116-3fec-08ddfb812d21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RzRJUzJmTDJIZU56TW9VQmFONHNuVzEwWlJTdVRkN0VDZTJpSmpzTkM2MW1K?=
- =?utf-8?B?VjExdStsSnViUmw4UDZjQTZ1cjZDTHVDQUZvcFFFbkYxQTVRcmN1NEl3Mm4z?=
- =?utf-8?B?QjhibzQ2b0NqK3NqT3YxS2xNZllXNUhOUW1wMVF0b0VTays3ZnpuYWk5MVZO?=
- =?utf-8?B?SHFJNVpHcFNyWVZiRVF6QXhFV2pjZW1sMFkzeWhsZ2kwT21LZzBIWFJuUzB6?=
- =?utf-8?B?V3RBSHZmb3NtZERESDRmN2lvMVlWeVlEdDRpdnJYbEFuZUVNYkt1NWtndHR1?=
- =?utf-8?B?WTNYVDJFdHdZcUExV1lBL0RJMzBZT3BnVFl1bnRRWWZaTy94MjFNVVBoUE5U?=
- =?utf-8?B?bnM3Y1l1RHRRZ05RM3dnWnNZTFZLYVJ1NDNldlFIT3BaZHRNalNRdXZSdTZB?=
- =?utf-8?B?NGFSdzdYSWZSMmIrQWlGUDViQ2V3MGI1WXQ1bDI4RllIWXVpZ09oQVNXVmtw?=
- =?utf-8?B?c09ydk43THhYK3Y0NUpRZ3BpbGhtRmdML1F1RDh3R3pwT3VWMjE3c0lGdGxj?=
- =?utf-8?B?QnNXYTJhOW1tR0ZQR254OURJSzh3emorWGZXdDhFVmhYYkN3bG9HWisraEV1?=
- =?utf-8?B?aFltN0hCU05lNHJvT3hCSGNQMlpkK2pOdG1GQWxNamVTYnpyU2c5Z2Z3RFpO?=
- =?utf-8?B?QUhTTEJjV0FubmNDcTlxNmNxQ2gvVG5rMWNDM1VwbytSU2tYUHNpRXkrV2hK?=
- =?utf-8?B?RW5tOWt2SXZCUXFlNjZQS0plOWxabW13SGVzTzN3Y2JOeEMzN2ZsVGlJTU9H?=
- =?utf-8?B?QUlNZ3l0YTcvSlV1UkVBUE1sVUtsSUc2Z0dtWExrc3pDSDRPbzBycEhmMks3?=
- =?utf-8?B?VEJjcE81dUxrdzlWRHJMTEt1VlVMU083elJ5bGxnUkg3M09RODlKdjgzMlNk?=
- =?utf-8?B?NkwvbnRpVlBObEhLNmVvNzZlaVdPWENZSW5JcHNreGJvZGhPdzZuTmo0OFZY?=
- =?utf-8?B?L01PMGo2MVhhYWVYTy9yZUtWQ1BpMFRuYUZCYTdFNVNXR2xHcVg1bisyMmpo?=
- =?utf-8?B?TTVlVzNMS2xvODBBN28yUnRDVU9RYVR5WlZNMlE3YlBRWVBwWE1UY1ZqM3ZZ?=
- =?utf-8?B?b2FLSmRGU2l4VXc3MlRVQVRQdzRpS094K3AvNk9oZ0dTdlJsd1ZmcXl2TnlP?=
- =?utf-8?B?VHhGMVV1dDkvRlY5NW1XNVIrMjRIampFUUZHWGNmVUxOcW90NG9RUktuc1Bp?=
- =?utf-8?B?clM1Z1FPdUR3Z05hWVFTVVdVaDRPVkhlMUFyQ1d0dldHSnFmZXZZNzJZTlEw?=
- =?utf-8?B?UVp4bUJCRHdnb2RvT0JXSWUxbExXZXZ0N0JCYVdqNkJpRWtRaTJTYmhwVXMy?=
- =?utf-8?B?TmxiVGVaRXpsb3M2SXk3U0crMWYvRnJXVTJYYVI1MjZqNnN4Q3l2UVM3VFZG?=
- =?utf-8?B?ejB6a2MremEwL1Z0WWc0Y1pQVU1GUXhxeThCanNpZEUzWEtTS0dTUVBJQmJS?=
- =?utf-8?B?b21lMUJTWm1JQklJaUQra1J3UmNnbmNFSytFV1llNnZHUU83M0JPc2FqOUsx?=
- =?utf-8?B?bVBQSjEyV2QxY005VS9aTTF2RGpNQ1Ixa2NJV1JERk1BOEFjdS92R1gvbFFu?=
- =?utf-8?B?c3ZhV2R5QUtUK1AzTUdCV2tQY2M4WERjenRqWVpJUldIR3dhYnJ0UGdNTkV5?=
- =?utf-8?B?R3dQZVJxM0g0SzVOYmFsNURLcGFqUVlsSE96WkdxTUhmdDZnSEliNEJGaXN5?=
- =?utf-8?B?YTltTUhpcU1FMEhzS0MxdWFGUy9reXFhUFNzTXJUODdnM2xOSmVocExsWDFO?=
- =?utf-8?B?UWNXc2NBYlZ2VUpaNXBWSnRzdVBKSlExTFNmM012Zm8yOGdXankyWjhqYWJ6?=
- =?utf-8?B?L2tJSEIvMU5rQWMwOGdjKyt5aDlXTzlpdGtmakhKaUxUcUlFejZNV1Y5WnJL?=
- =?utf-8?B?NjVYMUQ2Vi9hMVJkR1JtMmJzTHIzeDk5UXdUeHJ1OTk1RTJwLzFtMVlQeHZO?=
- =?utf-8?Q?iURy/WhIgeU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA4PR11MB9131.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OFNnM2hwWWExbEhrR0ZOSFpHVGUzYUlvcmJDTkFJMm1GeUdVeElmY3A5M2RC?=
- =?utf-8?B?WjhockJTbHg1c2E4VkUwRFphNGZHa3V0cThNTW1hZjNEYVpGcUE5dUtnbFBW?=
- =?utf-8?B?UXBJQjFUNExCZWR4elVZOWFueURybHIxZmpMZEhiV2pKTnBpT09uRDNiNWhm?=
- =?utf-8?B?anhTcWRuNVh4dE1IR0N6SEdLSnRheVdKNkFCZm1GN3FkNFJZaUdPbUM4QUZq?=
- =?utf-8?B?cno0eUZCUmdPUk16V2NvUkh2UDZUY2tOVG5VcU9UcWpqZ2JiNDh3Q3JFbVEx?=
- =?utf-8?B?dmFSVXhHY2l5MjY0SDdBVm1LQmQxeWpYS1Q5ZG12QkRIZjhDWlU2STdWVzA5?=
- =?utf-8?B?NjhOK0FoaVFxRE91UGZYNCtzY1NzYU5zbE9qbFRvM2V2QnhLS0JyOUdtd1lL?=
- =?utf-8?B?b2RMa2hQK3Qzc1FqUEs4SGwvcmFBNWt3TnJRUk94dHV0UnQ5ditjL1RDTUJD?=
- =?utf-8?B?eVNJQXp2TjdqYThqcDh5WEZobExGTUp0Ri9RWmdPb1ZhL0RNcnhjWUtGd2xq?=
- =?utf-8?B?RnIzbzBnNTNUdmVqN3VFaldIckYvWFd0Y2pibFphTDBwTWI4NHRpWlZlRVhM?=
- =?utf-8?B?U3M3WkQ1Tjlib1VDZDFSVDhFdldFYTNvdGgwNFExY0lGQmRPZWUvM3E1eWtD?=
- =?utf-8?B?QXMyM2h1Mm82UWZrK3RHY3I4cVo1alRlQkM4dmtCc050MmlRWVNJNXE3TVps?=
- =?utf-8?B?STU5Mkh4bThWZnBqTk5JRVNhdTdMMzY1UzVCTkFLTDJyYlExQ1g5UTRhVVdn?=
- =?utf-8?B?b3Z3aW4zWmVEcG45UHZpWnZISDllTFZmY1NodXdtd2tDWFFIOWxYQXBrV3Y4?=
- =?utf-8?B?dEE4d2xTdVlDVUJBWVplSkM2bEtsbytqMVU1M0NueEpycW5hQU53UVBwSjRF?=
- =?utf-8?B?R2hkM2Jxc2k2dk5HeW13dzhsWDhxRzJ5bTZsTmdIdmdlaFlIc25HMWhlRUZw?=
- =?utf-8?B?dlJ6RndTU2ptRXY2UGQvUW1HcDZBRGhaMzdQNmM1S2VMVVRneGtxQS92U1Nn?=
- =?utf-8?B?KzdFTGZhR0lQOURFVDdVNEgrODJLU2FOcmo0YUxOTW1BWmUvMElQSXVIdm5v?=
- =?utf-8?B?dmxIMHIxSVdBTXVUc01BR1R2Z3FYZGJ0NStHSkhZSDZ6QllKTVhsejNObnd3?=
- =?utf-8?B?UnBpdGVFSllJQTVkeHNHYmxWaFIxTFZydHdUL0dWd0ZxQ2tYcVg0OVhLaDFR?=
- =?utf-8?B?RUxPcUJYano2U1Y4cjd3VGNNSzRDSVkxaTMvZEx6RHpVV0tqYnNNZHF4dlUv?=
- =?utf-8?B?U2lJdHFtbGpNN2VCMHNDeUN3eGMrMDdrR0kyM0hMcHZidU5MalBZQVp5NmZI?=
- =?utf-8?B?VUJmQnZyTEUyTUhBQkdYbnFJTVBOb2VHekNVcGZ0ZkEvdE9aa0RGMGpWUTU3?=
- =?utf-8?B?ZXdnclppZmhhUG5MMVQwOFNkeTUyeSs4QmxWUUZPYkg2ZkYzMVYveG5QbllG?=
- =?utf-8?B?QjJnMHNFQ0xHV25aU2tuYWFudndwVGF0d2oycFpGcHk2MXVHdVpkelByWEFE?=
- =?utf-8?B?TDlSeTRhZ01MaDZLWjZHd3JUR0NaK0xXdTZ4UVcrRnQzWVplWDRoamJ2SzJx?=
- =?utf-8?B?NitieXM1bFpNanFMNnZlcU5lYkVLa0NYNlhmMCtnaGtpL3NhWUEvWnE4TEJ2?=
- =?utf-8?B?UWRwdnNlcFpwbjRjWDlFcm1COVdFNWFjb3loNkxTbllENmpPa2EzVE9MbVcw?=
- =?utf-8?B?S3BmckZGQnBUb0dxb2E1WHFyRXY3UlBzTDAxWTdZTjlIYXVxb0p4djAxa2dF?=
- =?utf-8?B?cmEzN0gzTW44NE1PNzFBZm9Bb2xXNXBZaDZjRDl5K1hYSXM2a3ppOE9YZzlM?=
- =?utf-8?B?QXZxZDAwbUNwY2Z0VXFpR0xwQ3BDdjJEVzUxcnYvZDMzWXMrNjdwbkJPaklF?=
- =?utf-8?B?Mys4ZERWWXlEaldIa0JnZWdYRTJSSnJmWVRhRm5lUTZkOUl2czE2S3lmUUNi?=
- =?utf-8?B?NGc0ZTk5SDllZTlBdjlrTm5uS1NyQlhJU1hSRWs5OW5xakFieWJyemJiajRN?=
- =?utf-8?B?MTlrYlZ5T3JWMUZtQ0dubFp6SlBhdlJ2K3MxM0gzcHNpM29qWkFxRHF1ZDdk?=
- =?utf-8?B?T3ZBZllXaWFOVy9RUGozOS9GL0FYSlV1Z21IYzl6Y0ZsQVpmNDcvbmxEUlN5?=
- =?utf-8?Q?Xs13RoKWb6ijSWHg+AM/E1Ise?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aaca37d5-2f41-4116-3fec-08ddfb812d21
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9131.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 15:43:58.5102
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JA0z3mppcpJbIh1ma7H/bhtGpC1PXDNKvToA4QM7P6XfDKAsddF20lfLkLNFZxAYdqv+SQhkTXKtcGRf7EwVDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6824
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Guangshuo Li wrote:
-> Hi Alison, Dave, and all,
-> 
-> Thanks for the feedback. I’ve adopted your suggestions. Below is what I
-> plan to take in v3.
+When using f_midi from configfs the USB MIDI interface string is hardcoded
+to 'MIDI function'.
 
-I would just post v3.  The review tags given on that version will be
-picked up when the patch is merged if it is ok.
+This USB string descriptor is used by some third-party OS or software to
+display the name of the MIDI device
 
-Thanks,
-Ira
+Since we add an additional string option a new macro block was created to
+factorize declarations
 
-[snip]
+Signed-off-by: Victor Krawiec <victor.krawiec@arturia.com>
+---
+ drivers/usb/gadget/function/f_midi.c | 108 +++++++++++++++------------
+ drivers/usb/gadget/function/u_midi.h |   8 +-
+ 2 files changed, 66 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
+index da82598fcef8..0a8af7d507d9 100644
+--- a/drivers/usb/gadget/function/f_midi.c
++++ b/drivers/usb/gadget/function/f_midi.c
+@@ -875,6 +875,7 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
+ 	struct usb_composite_dev *cdev = c->cdev;
+ 	struct f_midi *midi = func_to_midi(f);
+ 	struct usb_string *us;
++	struct f_midi_opts *opts;
+ 	int status, n, jack = 1, i = 0, endpoint_descriptor_index = 0;
+ 
+ 	midi->gadget = cdev->gadget;
+@@ -883,6 +884,10 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
+ 	if (status < 0)
+ 		goto fail_register;
+ 
++	opts = container_of(f->fi, struct f_midi_opts, func_inst);
++	if (opts->interface_string_allocated && opts->interface_string)
++		midi_string_defs[STRING_FUNC_IDX].s = opts->interface_string;
++
+ 	/* maybe allocate device-global string ID */
+ 	us = usb_gstrings_attach(c->cdev, midi_strings,
+ 				 ARRAY_SIZE(midi_string_defs));
+@@ -1178,59 +1183,62 @@ end:									\
+ 									\
+ CONFIGFS_ATTR(f_midi_opts_, name);
+ 
++#define F_MIDI_OPT_STRING(name)						\
++static ssize_t f_midi_opts_##name##_show(struct config_item *item, char *page) \
++{									\
++	struct f_midi_opts *opts = to_f_midi_opts(item);		\
++	ssize_t result;							\
++									\
++	mutex_lock(&opts->lock);					\
++	if (opts->name) {						\
++		result = strscpy(page, opts->name, PAGE_SIZE);		\
++	} else {							\
++		page[0] = 0;						\
++		result = 0;						\
++	}								\
++									\
++	mutex_unlock(&opts->lock);					\
++									\
++	return result;							\
++}									\
++									\
++static ssize_t f_midi_opts_##name##_store(struct config_item *item,	\
++					 const char *page, size_t len)	\
++{									\
++	struct f_midi_opts *opts = to_f_midi_opts(item);		\
++	int ret;							\
++	char *c;							\
++									\
++	mutex_lock(&opts->lock);					\
++	if (opts->refcnt > 1) {						\
++		ret = -EBUSY;						\
++		goto end;						\
++	}								\
++									\
++	c = kstrndup(page, len, GFP_KERNEL);				\
++	if (!c) {							\
++		ret = -ENOMEM;						\
++		goto end;						\
++	}								\
++	if (opts->name##_allocated)					\
++		kfree(opts->name);					\
++	opts->name = c;							\
++	opts->name##_allocated = true;					\
++	ret = len;							\
++end:									\
++	mutex_unlock(&opts->lock);					\
++	return ret;							\
++}									\
++									\
++CONFIGFS_ATTR(f_midi_opts_, name);
++
+ F_MIDI_OPT_SIGNED(index, true, SNDRV_CARDS);
+ F_MIDI_OPT(buflen, false, 0);
+ F_MIDI_OPT(qlen, false, 0);
+ F_MIDI_OPT(in_ports, true, MAX_PORTS);
+ F_MIDI_OPT(out_ports, true, MAX_PORTS);
+-
+-static ssize_t f_midi_opts_id_show(struct config_item *item, char *page)
+-{
+-	struct f_midi_opts *opts = to_f_midi_opts(item);
+-	ssize_t result;
+-
+-	mutex_lock(&opts->lock);
+-	if (opts->id) {
+-		result = strscpy(page, opts->id, PAGE_SIZE);
+-	} else {
+-		page[0] = 0;
+-		result = 0;
+-	}
+-
+-	mutex_unlock(&opts->lock);
+-
+-	return result;
+-}
+-
+-static ssize_t f_midi_opts_id_store(struct config_item *item,
+-				    const char *page, size_t len)
+-{
+-	struct f_midi_opts *opts = to_f_midi_opts(item);
+-	int ret;
+-	char *c;
+-
+-	mutex_lock(&opts->lock);
+-	if (opts->refcnt > 1) {
+-		ret = -EBUSY;
+-		goto end;
+-	}
+-
+-	c = kstrndup(page, len, GFP_KERNEL);
+-	if (!c) {
+-		ret = -ENOMEM;
+-		goto end;
+-	}
+-	if (opts->id_allocated)
+-		kfree(opts->id);
+-	opts->id = c;
+-	opts->id_allocated = true;
+-	ret = len;
+-end:
+-	mutex_unlock(&opts->lock);
+-	return ret;
+-}
+-
+-CONFIGFS_ATTR(f_midi_opts_, id);
++F_MIDI_OPT_STRING(id);
++F_MIDI_OPT_STRING(interface_string);
+ 
+ static struct configfs_attribute *midi_attrs[] = {
+ 	&f_midi_opts_attr_index,
+@@ -1239,6 +1247,7 @@ static struct configfs_attribute *midi_attrs[] = {
+ 	&f_midi_opts_attr_in_ports,
+ 	&f_midi_opts_attr_out_ports,
+ 	&f_midi_opts_attr_id,
++	&f_midi_opts_attr_interface_string,
+ 	NULL,
+ };
+ 
+@@ -1264,6 +1273,8 @@ static void f_midi_free_inst(struct usb_function_instance *f)
+ 	if (free) {
+ 		if (opts->id_allocated)
+ 			kfree(opts->id);
++		if (opts->interface_string_allocated)
++			kfree(opts->interface_string);
+ 		kfree(opts);
+ 	}
+ }
+@@ -1280,6 +1291,7 @@ static struct usb_function_instance *f_midi_alloc_inst(void)
+ 	opts->func_inst.free_func_inst = f_midi_free_inst;
+ 	opts->index = SNDRV_DEFAULT_IDX1;
+ 	opts->id = SNDRV_DEFAULT_STR1;
++	opts->interface_string = SNDRV_DEFAULT_STR1;
+ 	opts->buflen = 512;
+ 	opts->qlen = 32;
+ 	opts->in_ports = 1;
+diff --git a/drivers/usb/gadget/function/u_midi.h b/drivers/usb/gadget/function/u_midi.h
+index 2e400b495cb8..c9c396301a43 100644
+--- a/drivers/usb/gadget/function/u_midi.h
++++ b/drivers/usb/gadget/function/u_midi.h
+@@ -15,11 +15,15 @@
+ 
+ #include <linux/usb/composite.h>
+ 
++#define F_MIDI_OPT_STRING_DECLARE(name) \
++	char *name; \
++	bool name##_allocated; \
++
+ struct f_midi_opts {
+ 	struct usb_function_instance	func_inst;
+ 	int				index;
+-	char				*id;
+-	bool				id_allocated;
++	F_MIDI_OPT_STRING_DECLARE(id);
++	F_MIDI_OPT_STRING_DECLARE(interface_string);
+ 	unsigned int			in_ports;
+ 	unsigned int			out_ports;
+ 	unsigned int			buflen;
+
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+-- 
+2.43.0
+
 
