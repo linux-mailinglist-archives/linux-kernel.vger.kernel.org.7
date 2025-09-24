@@ -1,147 +1,219 @@
-Return-Path: <linux-kernel+bounces-830134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5D3B98DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:27:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB49EB98E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 453CC7A4652
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A809B4C409E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6122877C5;
-	Wed, 24 Sep 2025 08:26:23 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42BA284674;
+	Wed, 24 Sep 2025 08:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n6QsOmQE"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012003.outbound.protection.outlook.com [52.101.48.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFB328506F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702382; cv=none; b=qJGriJQ7CHblrsMfvYK1Mz0uUsSqAKn67wXJFRSq6OaY4SZYb2upfF9SN146HCcSvJoU620z4BLI6SmszY6w6IZXpaxCX4CrFwqY9lTVMhFVQ/36OiZao7yPDIUekpW1uqD849Li6/8+VOtsf961DZVmIqOj32WIax+EhnZXIe8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702382; c=relaxed/simple;
-	bh=+tUrgkxN/lp2KXqz828oyBVZ2yDGNOIKK7iRndNRB/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvoaulieK9Zt2ALqbW9sGJiAJMf9DRMiUhX2FRi/9WAobVZpQ6+DNQ07isODoW7D3xUevO3gFBVdPXKp2fBLBwpnAytbOy0KB6S1ofIjJJfhY4/Zwtw4cs04uXSsNP/VwdgujwBdgFAyWzY4/VMz26Ql6JZ6TlhcGHOU0BnVeyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso1541116a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:26:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758702379; x=1759307179;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ZeXGQPLJ237ts6pnuqslfPixY1clqbR+lLUJqF8pM0=;
-        b=kPhe3DfZYWxPhFidAvwD87LuJ24kVVw3jlaAPerkj6lKBJOxlZ9gCeSBOlZfKAqPgi
-         Lb79ml/dMeDM+BLlSGL8HqqIyxFSzSqzIWo1PSre6FZwwa4U4muAINK2Kl74Zg1qa2mG
-         93TtTIJknZEP6hKf1lx3SqII+UcXOM4qzJqkIPZxs+nMZRIa6vVjxW8SjlYhh3Mw2P+0
-         iEOmig88659c5rKZoNpIkp4hcSl/b0SRsTGlCxfuqgSLDMcwB1TYbvOpbhx/nSjcyJLF
-         kIalDJXMGXTwomXScUkxRalPAevOMXMjgdx8DBsZ5RKw+6OeYDpnCrYeadBMBVEiOZQH
-         CDdA==
-X-Forwarded-Encrypted: i=1; AJvYcCX88D28KFByD88cEz9rhZpVEJBFrwzGbf21aUEkNEX7FRHDBl8j3t8+1pzPIS+zXTrocESH1qGERLXDzyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRQQcBPhFxrNj5l0eH0iFyjCINN+19qG6lq+cV/xdxgDACiTGI
-	JIwLzm6ILw/9r7b0IlR96VnmEiSWlN8HO2qB0SVog3vVwOY4y114oWJ6FsrtDw==
-X-Gm-Gg: ASbGncvGAskdRnHYdda9EJgrcS1ahPh4e0T8SgbZFFx+duOmj9I9x17Hcjog+q5IPxL
-	Q3hlVxt2dE/wmPLkl27lc3jFFMLDffebIysNJNmuEvtE8JvLaTnthJ/5dfTla/aPwV4uJZMsyie
-	o8tt6LQtd/NV4SAmIgAxk3CgO1x1kamd97LOosmrOARe20sJgY2AqKjJJwPOVGXkFrh+jhMLSFq
-	KeeOapWNtcJoVJkM7k5/yw2NPtOPMJ1kPOlkj2rDV1vlI/V3Bk1kXjBhh5KNtczh9bSoiCSd1QF
-	+PTJJIM+lywTRd+DOlWfZyiKRFj6Ea8AoIXNmnhc0QYIdYmgFfuq87CymwW9XJn+c2ETaIb9Kma
-	febX0GUTWNHDHCg==
-X-Google-Smtp-Source: AGHT+IFvEGn77kjtA6Y8SK5uc34FRU7qFYS3L/ZCPGwLjDFkpKGYZCp8QtLrY/o9FuB9JVbNkzTzQQ==
-X-Received: by 2002:a05:6402:50ce:b0:627:f96f:aa7b with SMTP id 4fb4d7f45d1cf-634839a09a0mr1588732a12.7.1758702379165;
-        Wed, 24 Sep 2025 01:26:19 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:70::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5cfa60dsm12473716a12.4.2025.09.24.01.26.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 01:26:18 -0700 (PDT)
-Date: Wed, 24 Sep 2025 01:26:16 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andre Carvalho <asantostc@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v2 5/6] netconsole: resume previously
- deactivated target
-Message-ID: <aukchuzsfvztulvy4ibpfsw7srpbqm635e24azpcvnlgpmqxjm@e4mm3xoyvnu7>
-References: <20250921-netcons-retrigger-v2-0-a0e84006237f@gmail.com>
- <20250921-netcons-retrigger-v2-5-a0e84006237f@gmail.com>
- <t32t7uopvipphrbo7zsnkbayhpj5vgogfcagkt5sumknchmsia@n6znkrsulm4p>
- <4evp3lo4rg7lh2qs6gunocnk5xlx6iayruhb6eoolmah6qu3fp@bwwr3sf5tnno>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504EF283FDF
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758702398; cv=fail; b=CjDnBT2niGukWOfjF1msV6VcfemlO96EPyZT6p9qBXzK4y58qHKECE4O41+1XKYrPMvQ09Zy3SL8cCV6yAwCV6FgLaJJw4XIIosp/x8X4uL2GtgfU3l9EBnX0/9KfMHNLxo9Dv5ii0BQk0wuIzAo+uyS5q2L2c+IsVWqW0Gh+1s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758702398; c=relaxed/simple;
+	bh=M4Nd8zp/zEQtw+kz15SuWHKcVzJxEUQitQQX9XJ+RtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kd1HwW94dMJvJ7hQuRo75+NZZDgD+65Jn4fAcGnHtPtGb4l91AITTMZ3Q3r8V+PkeNQJ9SIG/rhdgtSs6xi4Z4DxPAAapG6aaIkUzAnsp2gY/6Bm2Nl7StsxA7EQbpSI91yTyV8dtqYTxGzkhrzTrNIVWGqpCnd8iYEKSZAQrrE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n6QsOmQE; arc=fail smtp.client-ip=52.101.48.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VvQpnYKCTDVSd7m9UHnWM9w2VjbfBnuyPbWyBy7twzVrBhh1DjjSTGY4/osJX0fP2j6vKyry+aEUIAx3u0Df+egQLz8Z5oAy7/vSZWte8HOCPCTH1E5ZLlh9tWE6M+ls8yNL4WF9g5exSEMI6Ax23TgqxgiJipFNo/qh50osp3HhBKZ70R1WKauQui2QwCq1qZ2PPseu8sM4UhTjY7PEpaoB5hdJXANCp+gBqlsor9RCmWOIiFKRNFA9tgxxUuZLTiWfALB+Rv1fp3GcStbHVQH/8NOPwL9R/cBi1WxpxOi2hz0oEGJOeUrz6BVMTWUD4dOSlUgN9xnidbJMmhaDRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AXB3haVWorDdyJnTEbDsxQI55aIffIXvKQn6RMuFo0A=;
+ b=RTOCgpx9wzD3I7H0GjkY5oeTq5I0qCl/iJBW60/8SlmMejXGosY9XWp7DHh+4i2Z7ywIyHlCWuo1GX6rbVAlDzRJ0fc8QCgtis59xKFbFFEFIOwx4mHZjR3GMwSlX5wNdowCSLULtqs3kq4zmhJDsQOgapJfkXEZupOAn05SEQ4HM4N3lkuLpvlo68xdvDgww3XI1Htp09nycdutAdZFu5wGHaGQcRbkGB0Is0sX8NydvpkDiQYbuS3517Al2wwFEWR/4p1FiNBfov7AOz3/fcKMnFbGqvzAaTyqRHMNl7YI8K1bqN02vYbZuuj1Rlwk8K2I7RVdrHMSNYOtqNtykg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AXB3haVWorDdyJnTEbDsxQI55aIffIXvKQn6RMuFo0A=;
+ b=n6QsOmQEJ08Isu5f3kED113kV+ZTBRBtj7JreuWlr1O1Ge7WfXy5St/R0WduzfHSHlgVKsp6cigJqsUGKYLQ2zqXUtWrt2ZBLpABKDOVJrfUyuPqZ7PKXCj2TgBI3tWmM7xxvj915pPN5zSJ1Qn3magEsHJ5AANpkhilptMP77zrxkTapXBHSvhgFs01hOCkXxwPXs244QhLPMraJlj8U2UxWvtOdezjWcUfjSlBBuAqEkSPgzkQtrIA5RluYwoU8fAHHtYrIww8kup4MZP1tmEGlgzUYcn0GWk2WrT0D23TxqqcD1GhKJ+VIGsPFE+XDUjIA2kTaBfC/uOoE+Nm3g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by MW4PR12MB6973.namprd12.prod.outlook.com (2603:10b6:303:20a::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
+ 2025 08:26:34 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
+ 08:26:34 +0000
+Date: Wed, 24 Sep 2025 10:26:24 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH 1/7] sched_ext: Use rhashtable_lookup() instead of
+ rhashtable_lookup_fast()
+Message-ID: <aNOrMNYJipF_nTGD@gpd4>
+References: <20250922013246.275031-1-tj@kernel.org>
+ <aNOMK1gk9if3UTgQ@gpd4>
+ <aNORzVQ6OVkPHAjS@slm.duckdns.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNORzVQ6OVkPHAjS@slm.duckdns.org>
+X-ClientProxiedBy: ZR0P278CA0170.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:45::12) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4evp3lo4rg7lh2qs6gunocnk5xlx6iayruhb6eoolmah6qu3fp@bwwr3sf5tnno>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW4PR12MB6973:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc0ef9b8-c4e6-4041-f402-08ddfb44123e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2q+TUtzvsv0APT4j2wLlF+Fr5m0ZifJR2mkPrlPb25Don2/h6mk/dj34dFBy?=
+ =?us-ascii?Q?V+sGoEMNcqzpyL9wg4M/OnOBl/jyl4HBOo9uXO28/Gj0r17ilr/hQQcvc93w?=
+ =?us-ascii?Q?ndx7ig0xFj/5Lyp5CYqy7DqVLeszdV9+OnJUyM+0xxanuJbo2UngSkNsxuhA?=
+ =?us-ascii?Q?vfbetxd0H57qTXdMvnZXG4WWGmT+SzB1+xqDDkKqhhMHlJ50KGmwpRe9q0Ej?=
+ =?us-ascii?Q?vN62pDABGMIiPTSLcBnboNFtovDiAnDLKJhc3xmCYjQzZ/fVdfdjVXSU/8DY?=
+ =?us-ascii?Q?ttWJ2878BzetVZI4k8T3o1BY+ATw6lJO6VHLKtU1DAGjEpNtJ9LrBdTGFhsy?=
+ =?us-ascii?Q?FOmkAFxbHzkdaM8+FVVae03ijkIQXRwvMm7IM9YR/t0UjzGIrlajszR/bapy?=
+ =?us-ascii?Q?LxStEbhgI1qjd97gfFzXyCWiOsBkMiTLjgVrAe/mItFlVJjYtz062fyFclEk?=
+ =?us-ascii?Q?wHxVwoX38t00ubTpo8eqU92JC4k//tAyD+V90Ku7cydZOHWeJFBKIQQQDPXp?=
+ =?us-ascii?Q?aewMq6tWI4c/Q/C+6msVJFJF/UKtsX04PYrDPr4wDlimP9NiJyIoRwHCbM9N?=
+ =?us-ascii?Q?va2sMV9WZUMxLxwepX7hxEjxvRmbT4LLSKxfRevcYmu/p8WDa+v34HsR1le1?=
+ =?us-ascii?Q?kNmHWWEQ2uEYNFyuuyp/gHdmXyq1AD5l17vfvF+it+7fVmay7vkPv5GYfgFC?=
+ =?us-ascii?Q?vPwzkDHz/M+oL+pyUygCqd70zi5t+UeC0p3aD2WDjl5pewsWgsJsabTGpT5W?=
+ =?us-ascii?Q?uiOaIuP2M84a7TRdDGPyj4pqL/I4x/ZPQDMyt2GliVlNn0nqIiD0LSTQQTcv?=
+ =?us-ascii?Q?TIqvXABpQgG/3WrE8F8f2IRxtgoyY/7ZAGALN+aXPZmaK/YuHEZgKWfzJJYU?=
+ =?us-ascii?Q?EgZAM5C0FF5pDoKRi3P03mU1ap/nGNGAe7lHcpvW9237yJT1SXsgb+fxmeui?=
+ =?us-ascii?Q?B9kax82OKnYC4F9HJFXivHftz+fqwYdAroC6dx9ONzVyfTvqcQBFuUORlK9M?=
+ =?us-ascii?Q?shFX9RMBDOL9oimLRMOLRN26FI/3/XqCnkky0e5wFN9SeLsjigXJXbFg1bby?=
+ =?us-ascii?Q?2UfRFzDemR65JPp/fdcxampOJlMkZOGUS09JNmONC84dUXCoYhPbtugXY7Y3?=
+ =?us-ascii?Q?6XjGKl5KZmxhcDFQa2TlYyJPhjsv3SDja4oKBEeHUDfCkrEt+BrllnG5JQO9?=
+ =?us-ascii?Q?oK5j0g4oqZNNHd/SEUt9iQgylvEwJ74Lv9c/ltFOsHZNSqvTsrJcYnp7DbRw?=
+ =?us-ascii?Q?74N0VqxOURvDtt27I8iNPCCFCIEx/6L1hRN0WpUiaO4wZsJN4+iO7XyYChWd?=
+ =?us-ascii?Q?2k8nCM1q58YWWUQPSosokr7RzkAxLgQA0fzigBfeSxC0jo5sT42meXQPbGw7?=
+ =?us-ascii?Q?llUatmnvQzAbXKbobvZ7wIyQYMQObLFplPHNcFKdyQ4qnaAWxhA0z/tguxp0?=
+ =?us-ascii?Q?+IY9obX71Ks=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1kzsmS+sg/WHbLBSo4D88kfYDT9Bb2uZsm0r4l9OX5ue0de675syjttoANIg?=
+ =?us-ascii?Q?hQa0t0Sg9e29YeGqzbWgFFcd8b6JeXYwotepDmjxaAM6rI/OCGR3xvvEi2XV?=
+ =?us-ascii?Q?4BzYXkUl1fcwYoMGgwecaxvP85gaA/C9aYZam1YGE+UWZlRp1T0T1sxrcIsz?=
+ =?us-ascii?Q?8IY1a4I/c3oCIc8uzcpOUD7JPDI9x5+g95l0aVgYONpeeF2aU92qvVdm9FLg?=
+ =?us-ascii?Q?41fx6YK6RijaqSgBvArmq/d6OzBbvJLJvvd0cYlAHOnDA0OA1jFYdJQAcUDy?=
+ =?us-ascii?Q?sTcopmWlIrvw4wFsCMlD/xRd1jQ32DlrRR2zK38Ev7iG5PBGPkF/WWeH1H6E?=
+ =?us-ascii?Q?MdvG6fVzThpvtkYviuitmMmzE2l70vvxNTQuTZUIOUCcAHm8wT/+mVIc9Myn?=
+ =?us-ascii?Q?hgVA9veKlzL7tjrXGsDKAqCh6eFJXcUaSQ6D70KyqMIf57xpwKw2SinKX4Hp?=
+ =?us-ascii?Q?acrCv4xE4VvLrqp77ZrX2J+n7VhBkPuHFdTIzYXyp9iAuE88sY6zGh7aUHig?=
+ =?us-ascii?Q?v3dY9byrgQroEA2AnuaB7DdsKCWN/B96XiSsPFOiXb4hsqTsLbYVryZE5qCD?=
+ =?us-ascii?Q?Z0pZwuVcCk7fDtgeyo8W5KIxQndQQw0dl5aO3nw1L/tL0fzlxzoKnjd7QXkl?=
+ =?us-ascii?Q?MC/5GmVfF0ywOjuV4YMAok9+1RUAqqp7YqTE101to9BuP2b866L9sLhAVMd9?=
+ =?us-ascii?Q?x8I6SyNkIu8LHOOcoaPu5aGmp0OFvtR6pr8Pkfw6X7SRA6lRC+OYXhFg27MQ?=
+ =?us-ascii?Q?FCagZE9GN89ipqA1KDqMGmZt4RFZjese9MdjurBiLa+VEFN+5PAMw4SY7AWN?=
+ =?us-ascii?Q?HhXkPGGak/IcSlVy0tB4XNIDlDd2+U3R2fchTSqVSXYjIZEeBpeyplNYXTkE?=
+ =?us-ascii?Q?CuYLA3dbCnCWLZD7Hc1Ewj6UT7wSjJ2PVDf9An61agtgIk86DRsLrF6DGwsf?=
+ =?us-ascii?Q?cdGbpPoHbz9DASClBoFqkSoEtKjIDn2J9ix1DifYsvNN7218lYQDzqBGSM3a?=
+ =?us-ascii?Q?3HS6xCcFRR/28kYT9we13Sji+irsP7sko8pc/hkzHZNdHkPLvgmqPWHcXb5J?=
+ =?us-ascii?Q?ZS4lVRWwqSz32L3ETFCXv00Xhsry3piE/QRBkU33ed+/UPKapdpGw8bEN6P7?=
+ =?us-ascii?Q?L6dyR0fefTbl5ZhzmWS1L+x1OJvJmmhKnjQt2WiMF4CSl7vE0AIHbhLV5Hr7?=
+ =?us-ascii?Q?C7Lw8s5bAwBgLqEbgntm2/wXGKPbtaYW/1V2eCixCQi70+M/nx5SQbRdVlyU?=
+ =?us-ascii?Q?or4FZlyb2Xo94JJzX+1nDt2jJt7R+qAbbkFclCk+j+VQRsIICTbh/3bf8M1K?=
+ =?us-ascii?Q?xFfihGC3q3js0j+Uqbjd85ywdUeJ484mwewcFm91Og/zc1zVOQhSF4KE31nd?=
+ =?us-ascii?Q?6PJ/1BV4sth6yMbslddPpw0/qRuz9AYfY1ikfcl6CpnU2nnlFqgtNZ4to5sU?=
+ =?us-ascii?Q?FEZhe0QXtgjWzE1yAQ8+x2wmDMMTH64frRHUPCqNkDYrcmNen7wznSd64OIi?=
+ =?us-ascii?Q?amj3P8GH2TfKYop+RbmzzyzpjP92a+v+IyZGiK5rzGkw7ViQAtnMUhBYs5Fq?=
+ =?us-ascii?Q?oOITi80PxMWik6MKv1nWig6Q6hde5IxbD8Pr8r3h?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc0ef9b8-c4e6-4041-f402-08ddfb44123e
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 08:26:34.5014
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zpVUdcBomCYYKWPJOhj8SvOWhFW6o6UmV63kHFFtPrRc+/yn9ehFCcs+opLMdw3Bmz9JQghbzemWbh1O8Z1CAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6973
 
-Hello Andre, 
-
-On Tue, Sep 23, 2025 at 08:30:39PM +0100, Andre Carvalho wrote:
-> On Tue, Sep 23, 2025 at 05:22:25AM -0700, Breno Leitao wrote:
-> > For targets that are set by the mac address, they don't necessarily get
-> > np.dev_name populated, do they?
+On Tue, Sep 23, 2025 at 08:38:05PM -1000, Tejun Heo wrote:
+> Hello,
+> 
+> On Wed, Sep 24, 2025 at 08:14:03AM +0200, Andrea Righi wrote:
+> > Hi Tejun
 > > 
-> > I am double checking netpoll_setup(), and if
-> > is_valid_ether_addr(np->dev_mac), I don't see np.dev_name being
-> > populated.
+> > On Sun, Sep 21, 2025 at 03:32:40PM -1000, Tejun Heo wrote:
+> > > The find_user_dsq() function is called from contexts that are already
+> > > under RCU read lock protection. Switch from rhashtable_lookup_fast() to
+> > > rhashtable_lookup() to avoid redundant RCU locking.
+> > > 
+> > > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > 
+> > It looks like the ttwu_queue() path isn't RCU read lock protected.
+> > With this applied:
+> > 
+> > [    6.647598] =============================
+> > [    6.647603] WARNING: suspicious RCU usage
+> > [    6.647605] 6.17.0-rc7-virtme #1 Not tainted
+> > [    6.647608] -----------------------------
+> > [    6.647608] ./include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+> > [    6.647610]
+> > [    6.647610] other info that might help us debug this:
+> > [    6.647610]
+> > [    6.647612]
+> > [    6.647612] rcu_scheduler_active = 2, debug_locks = 1
+> > [    6.647613] 1 lock held by swapper/10/0:
+> > [    6.647614]  #0: ffff8b14bbb3cc98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x20/0x90
+> > [    6.647630]
+> > [    6.647630] stack backtrace:
+> > [    6.647633] CPU: 10 UID: 0 PID: 0 Comm: swapper/10 Not tainted 6.17.0-rc7-virtme #1 PREEMPT(full)
+> > [    6.647643] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+> > [    6.647646] Sched_ext: beerland_1.0.2_g27d63fc3_x86_64_unknown_linux_gnu (enabled+all)
+> > [    6.647648] Call Trace:
+> > [    6.647652]  <IRQ>
+> > [    6.647655]  dump_stack_lvl+0x78/0xe0
+> > [    6.647665]  lockdep_rcu_suspicious+0x14a/0x1b0
+> > [    6.647672]  __rhashtable_lookup.constprop.0+0x1d5/0x250
+> > [    6.647680]  find_dsq_for_dispatch+0xbc/0x190
+> > [    6.647684]  do_enqueue_task+0x25b/0x550
+> > [    6.647689]  enqueue_task_scx+0x21d/0x360
+> > [    6.647692]  ? trace_lock_acquire+0x22/0xb0
+> > [    6.647695]  enqueue_task+0x2e/0xd0
+> > [    6.647698]  ttwu_do_activate+0xa2/0x290
+> > [    6.647703]  sched_ttwu_pending+0xfd/0x250
+> > [    6.647706]  __flush_smp_call_function_queue+0x1cd/0x610
+> > [    6.647714]  __sysvec_call_function_single+0x34/0x150
+> > [    6.647720]  sysvec_call_function_single+0x6e/0x80
+> > [    6.647726]  </IRQ>
+> > [    6.647726]  <TASK>
+> > [    6.647727]  asm_sysvec_call_function_single+0x1a/0x20
+> > 
+> > Should we revert this?
 > 
-> I was not expecting it to be the case either, bu my understanding is that 
-> np.dev_name does get populated by __netpoll_setup, which is called unconditionally 
-> at the end of netpoll_setup. __netpoll_setup eventually does:
-> 
-> np->dev = ndev;
-> strscpy(np->dev_name, ndev->name, IFNAMSIZ);
-> 
-> I've confirmed that for targets bound by mac, np->dev_name is empty before these
-> lines but then it is correctly populated here. For targets create by name,
-> np->dev_name is already correctly set prior to this. 
-> Please, let me know if I'm missing something.
+> IRQ is disabled, so it is in RCU protected region but the lockdep annotation
+> isn't happy with it. :-( I'll revert the patch for now.
 
-Thanks for confirming it. I think this might cause some semantics
-confusion for the user, given it is asking it to bind to mac, and later,
-netconsole is binding by dev_name.
+We just need this: https://lore.kernel.org/all/aL_4gCJibYMW0J98@gondor.apana.org.au/
 
-Let's say the following case:
+With this one lockdep is happy.
 
- 1) netconsole is configured to bind to mac X which happens to be on eth0.
- 2) there is a PCI downstream failure which causes a re-enumeration
- 3) netconsole will get DEACTIVATED during phase 2
- 4) After the re-enumeration, eth0 becomes some other and interface (not
- the one with mac X).
- 5) Now you are going to bind do eth0 which is not the one with mac X.
-
-> > Should we also compare that the mac doesn't match before returning?
-> 
-> Even though the above seem to work on my tests, I was not 100% sure we wanted
-> to also check the dev_name when we initially bound by mac.
-> I've also considered the approach below, which I think achieves what you are
-> suggesting:
-> 
-> if (!is_broadcast_ether_addr(nt->np.dev_mac)) {
-> 	if(memcmp(nt->np.dev_mac, ndev->dev_addr, ETH_ALEN))
-> 		return;
-> } else if (strncmp(nt->np.dev_name, ndev->name, IFNAMSIZ)) {
->         return;
-> }
-> 
-> Let me know if you prefer this approach, it would allow resuming targets in case
-> even if their dev_name changes.
-
-I would prefer this approach than the current one, this would avoid the
-problem above.
-
-The other option is to always populate the mac during netpoll setup and
-then always resume based on mac. This seems a more precise resume.
-
-In this case, if the device goes to DEACTIVATED, then np.dev_mac will be
-populated, and you only compare it to check if you want to resume it.
+-Andrea
 
