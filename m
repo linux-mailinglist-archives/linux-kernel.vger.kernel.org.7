@@ -1,202 +1,194 @@
-Return-Path: <linux-kernel+bounces-831322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F429B9C599
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:25:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4630B9C5A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8319A189D9D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:25:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 499B57ADD77
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4178B293B75;
-	Wed, 24 Sep 2025 22:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jXmEWFHr"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010045.outbound.protection.outlook.com [52.101.61.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6388296BC4;
+	Wed, 24 Sep 2025 22:25:22 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E8426B971;
-	Wed, 24 Sep 2025 22:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758752702; cv=fail; b=jwXu6Q97rUJ76djCYbNLBTo7mGY48jhEzOSaUuy86RuAOj768OkVaFeRSkd1HSIyzxEto/+F9yIaYU0R8GGk4TBGiVGbZLWV1qTJl5ipAa2pse+qRRunkI88G9O7wkcy0pusn8R2Yp3h0pStj4uQVSmDdYpacTavnmy57vaLgg0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758752702; c=relaxed/simple;
-	bh=dXSPGhkGJyr2X//8T28sL6TEdj0V/DsC8VmEw5dkqTs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PMWq45Bs7x9r/MiBczNYL9+EaKnNxi3vx/rg/kCn24vCkOzZWiI7CvBrCxTm5bJgXw4ViPybOAjSY0hRjvl9Typ+JEyBYnhC1UgpJYCkXWsLW8Z+BOYWGGQyq/pZI/mUKQmySvmS1vxjLXOwZ/gZmpL1Y+1JKlKX2JMOOYfwPAY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jXmEWFHr; arc=fail smtp.client-ip=52.101.61.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F+Hxg51ypPS7cXS/Bmm5hH1aV7pS2unE5izC1gqfhtcwitc+mrfROSLoqGDxwGgEUmBpZDFS2FeJfWlMqtP7T9niCBqpKfg1wy2LDj1JBIQys6IJtzyq0Hsjg6yRRggqrk0bjWFNf4knVYNW8y+G5dwm6ZQbYNrDhn9jWCay9qW3soOnKQQcYDnG7Mrne80PLmfHhkbk7H+L7sjvn2T/2XgbrN+s/yArop/HYxJuyy4MJxGNUF19CquOCHbDn8Z6Xyej6lh6pILaPNLY17Z+8d2+zLlvI2CewyCapRF+e2+ZdYlT+SLloW0FZviyUE+6nR93RaChXIm63S3QO0fx/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IkZYEsr2u99vnOrogtl2Mq23CTtOtnzDtWeqG2JRBcI=;
- b=HedBWeMd4R5p7qdIs09kcJcXLapwj8PHicAWjqbsKrh5Yr+WMbW58BUZIicpdVgGxM1Y+6E55CjEj8SVDrSIMYkYsg5mo7A187/oJJputuCE35cZWSCPPMWGOkrYENLbH1n0HsSA+kJwb2RRHFYE72gasODVMXvhYVDaBBW/p1Hj3qV13pGpTSZfrV5Q7Z5H6Mt7AgPsavGQPaTJ+PVQ1H/cnw2qLCArXvzoKwyI3X4SFmHcpQZ/Voi8/IN2GTS7EN9AOphUSuh+HzMaaHFqJ1kI6dPEYNJSthGmwPqBhvYAVXzWUrlHj0fbyHn+vcFShAi1EO5kawUK5Dc2H6wmnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IkZYEsr2u99vnOrogtl2Mq23CTtOtnzDtWeqG2JRBcI=;
- b=jXmEWFHrBcTwFmu1z3mRQgzlwxtqkdDKcQ6AHZLuKRQ1k+Kg/FF0gVVEAOVVE7orszFy1q3FwlbOTdeC/rVzftxl6yf4hJO0YMjNViKRUIYQ9NBRMWb5gaPyv67do8ikX80c0JuUNA7cXM2ZjMOXc2CUhQ65anInsViYG10CO7vj8LrqlMIKjsaSjRYRwNxz5W1wCxfWN26ajTC71KiJbWaatDcnbFU6gPXhOH+qanoEmloZvy9IwgLlobUR/mdG3ao92seriD7LSzCoqa0XD1ZIx56jzLU2SaOSRvPC0VH+ORXl+BJ88feI0hg4tV6HlC+4BMKWijZ/kjd6e+rzbg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 22:24:58 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9137.018; Wed, 24 Sep 2025
- 22:24:56 +0000
-Message-ID: <c267b886-b218-4f87-8153-873cb1d08c54@nvidia.com>
-Date: Wed, 24 Sep 2025 15:24:48 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/10] nova-core: gsp: Boot GSP
-To: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-References: <20250922113026.3083103-1-apopple@nvidia.com>
- <20250922113026.3083103-11-apopple@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250922113026.3083103-11-apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR13CA0016.namprd13.prod.outlook.com
- (2603:10b6:a03:180::29) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04B528E59E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758752722; cv=none; b=W8WzZvDfLYkk5d7EG0LS3A54+bGA7l1oLqYlaCXmgnxlyEesJAVLO5Gw4Uo3BD3XJKaCGDTYMK7UR5Fxe0u2kQT1EtCfS2jAC/jJOJ6nXzozY2LUVcYIC9PbiijLb+fqNX5ikxlVCgS37fJ8zER35WkBbKrhGyP1Nvq1775QBIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758752722; c=relaxed/simple;
+	bh=WZFQ4QbS4tuIRsIHYIq1heNMZZWIkgtQ3sE2KKCJL7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j+aRJj7ZFxzeSkSBeA9QJOcU+ZvKAsjkxG7Ev6lI8WUVepat3Ry7Ohb9qfVdTk5X+J3rHBFDVG9SSYLM7drJZO/sSDRolHbBhKFH7PZ1khYW4WRnJG2qvvFqlxtgEMgJKoJRjsVhrNADwkLNCqRFOqBovRONsqwcu37X0Nh1f+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f169d8153so418940b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:25:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758752720; x=1759357520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tOxR1T/V0SqrOvtqSwQkNFCuPzO0g7fl8l2lrbsCB4U=;
+        b=g8EMWg4Ya0JNJxo5Ihri2iLekRsHuy9/zFABBH9K315ZStNZhYi9bDMAmJOIu+1q95
+         0dGOdWclBh09FRTo59V6cpLxGJH6Jzzk7Lg1I274F+vRml+jE9iPQjxW96E2e+IsxDrx
+         Ve4F8E8ow0Fw+KqveZ+H7fFt2u+QaCfo/8LchArkNZvsyPED/1AGSZjNST9kHDj52Skp
+         kkjZugVQWLdDdRfMou6IYLUpsW1LYQUT+zapYuNdCtdS0VdMxYaWggGQP4/0MP64Eo2U
+         90yQ1FCuH7+Uxi6Uywy/SDrTywMkuc6BUhxrGsXkZ3BY220E7SnnlLWY4ia7j9mJQSBT
+         u4ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUKnONR7BpxIIRBtPX6o5v3/O10zLBQUuHNmXXwLRKMHeJ74uCa4BiIX1FMYgV8UMb+f0yFBxpzTa2ejjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItb2fe9arq50DGtRIYrIPHen6Sc1i0wsnxJ4CHF3KYU3HEjyy
+	Gw+wdN21X2ZsHUAAOW/kbiQ/BsIF6tnQd8/Su8LnyW+ExirZNNSjnAw=
+X-Gm-Gg: ASbGncv6nRJKikhOwTT2Z1MFSt3tZg+fjTOQUuZQQ+BU2fEl0YNbH4KrFamNUeTlYsF
+	mN/DMJQ0zFb+mM2ycFbPhlCyTzski7GQBPfFTGJedbpbdnQczBDjcpSjFwXyQBgFsflzPKvQ3r5
+	+3qYHAx3fIopOduygVfgoLscuJoNLukOgjjO70Q5dxQxuHtNoJnMmVZC7UqYJmUIHoF8mkv9A7b
+	GzRrOInt4z+51+ybR2QAEed58Si7Ya7syXGV6Sm8ekSXjdMbi4wYLDslfyrwe6+S1sDyyNqPNCn
+	Hrx3jbbjINupFP6ygs6cLknbodJ/tXoXAydtynaEbLV9vhjLIVtpnSsbt5zfhUArgsnQbXkq3RO
+	NXwO0UKoK2SBu9BuPDSP/FHE2ZD6geWJlDBDETfwrvJS7FylSTUgBJl+gqHADI/ftTDuHc2CQsL
+	AmwQDprtSxHMrXbGnEMmtuA383szl9J2Q8LFk8gCnO69Vf3z2FGKTyjHBMYTzDzuLSAA5xIXFzZ
+	6wByAE5oN0sSl8=
+X-Google-Smtp-Source: AGHT+IH39Y4AoWan18Zria3PfzUeTAXFMAr1O7HUFYefIPRhyAPFja93UNsI1NeluaQqtNNXWutFyA==
+X-Received: by 2002:a17:903:3201:b0:264:a34c:c62 with SMTP id d9443c01a7336-27ed4affb23mr11790205ad.61.1758752719615;
+        Wed, 24 Sep 2025 15:25:19 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3347224b6d0sm119663a91.11.2025.09.24.15.25.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 15:25:19 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH net-next] selftests: drv-net: Enable BTF
+Date: Wed, 24 Sep 2025 15:25:18 -0700
+Message-ID: <20250924222518.1826863-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CH3PR12MB9148:EE_
-X-MS-Office365-Filtering-Correlation-Id: 830a2242-a74b-4547-e9f9-08ddfbb930f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cEtSak0yU2s0T3MwLzZsNnhCMkFkSWlmTzFUbWpHdE5rTG9OUElYWjYzZjl2?=
- =?utf-8?B?WW4vYUNRRWxOdnd0WDVEWHBQYTVJNzNhbDNpanQ1STNuS2hqbUZQeGZUdFVV?=
- =?utf-8?B?Ync2UFJwMk55c281Um93NHhLVWhmVE50aUJhemR0TGlBZzNETndYZXkxaWZ3?=
- =?utf-8?B?dTNyVkhkY2RRbGkrV2puWFhtTG00eDAyRGJLTSsxclU0eHpDK2g5TUNnNTc1?=
- =?utf-8?B?K0h5aXF4UG1rSWd1Nzduc1liS3dkWjZ5TkJCTnVLSjVZWDJtY2hYTVFzM2pY?=
- =?utf-8?B?SlB1RktaTUpQSmdPQTVrK25ReHBQQllURkoyZTdxSWxKK0c0SUJrSTFQQTA0?=
- =?utf-8?B?Z3pSd0RGbFlzTXFUU2tvZk8xWVlZZXRGbzhYaXBaR2ppekozYmh3N1ZmSEl0?=
- =?utf-8?B?U2VSNWVCc1NqaW8vd1JFRjh0SWFRejB0a0lWYVRPRHBqVHY0N2NRNE1DNHhQ?=
- =?utf-8?B?ekRFNzJyRjI0STRjVWFFYU9zNWg4QnZweUd1eFFuWjZZa3FGRlNNWXRVdEhs?=
- =?utf-8?B?YVRIZE5zdkRBMEkwVEozQ3J0bTgxVXNPS3NOaDZ3UDNyMkIvK1ROMXltTWhm?=
- =?utf-8?B?OUxGUThuMG1BZHBLRk9VVmZReDdSUWJLcWdvbmMrNXlEMDI4VHBUNGdCOXZB?=
- =?utf-8?B?ZkxQczhIS1k5UzhzVStVd09Gb3djdTV4ZEFmYmcwNWVrai9TNmN1dnMzWlZD?=
- =?utf-8?B?S0FsYkEyaUN3endTU1g1cWZwTmJ0NmlkdmQ3cnNFS3NKS1FCeVU1RnJKQStS?=
- =?utf-8?B?ZmtZSk16VjFsS3hVNDZtMmg0dURuazl1TnZ6WlVFVEVLdHU4YjI5Vk5mOXNM?=
- =?utf-8?B?TEFEejRQNEhHSmg3YW9JY3dxWlRQcmQ5SkVTR0JPSUNPQ1p1ZGNLTTJBenpn?=
- =?utf-8?B?NnU5U05DN3lOR2l6RTh3bmh0ZC9nNjVWYnlHUFVNemdyRW5KSUNQeU1YMWtI?=
- =?utf-8?B?ZmtMbmxSR21QNzVxd2RtSm92eDNFRHFzc3VOMU1nVkVZSjMzMCtIZmYwcTFP?=
- =?utf-8?B?T3FvZjBVN0pXakMzaDVUczVwZTlNRk1SK000aFo4eUd4dDFTYi9iYURYdTZL?=
- =?utf-8?B?TFhDbEFicGVBTy9nRWUyV0kyVUIvTFFXTURSSUxHcmJWQjRkMXNJZEt0TnFG?=
- =?utf-8?B?VC9XZnNkV0tnNngyL0ZmeTZWeFJRV3NUWmJIVFlMMWxBNkpYSGU0Yk1RbTI3?=
- =?utf-8?B?VGZEQXIvcXV5SkRYN2FQL2dlREV6WlRoVy9mWC91MXV2L1ozdmhyTU1vOUQ4?=
- =?utf-8?B?MVE0V3RrenZZdTMzNm1oZXRma0JjLzlYWFkvbVRLOEV4OEs1SVU2aWhGZVB4?=
- =?utf-8?B?SW94Zy9TNmFPc2hCZThHdExWS01COW5KZVh6SFlsMWhSanBERE5XZDRIZGlB?=
- =?utf-8?B?ajJHSGlkVzRWTHp1eTlCZnB6L3RDMGNzeHE3bHdyU0UzdjBPY2laMmVoaE92?=
- =?utf-8?B?dThXSDQzdENjUmgrSXpDektpd24xN1BjclR2bzNZbm1TaFh1d0krNlViYU1x?=
- =?utf-8?B?NTM2NS9UbkkzZFVaaEdUQmpYMUhVVVJmK1pVTmVRdWV2VGVUZ3l0ZWVQeElF?=
- =?utf-8?B?V0ZmWEplenNTZktoOXRCd0RQR2NtVEhJNCtuWUJvVVc5N3lwRk1TbkJ6anR1?=
- =?utf-8?B?LzR4ZEUwdXY2cFVwbnFTelNZMW9Pb0V5RTQwUmI4b04vNVpPOTRGZEg5bHk2?=
- =?utf-8?B?TDZXZXdON0hhMU5KQUZtTlhvWUVTUWxzY0Znak1uR2FHbitUck9xT05kdlhV?=
- =?utf-8?B?WkVJYUtWMDRiSlJsdkpJd3FERXkxVnFuQVRZYTFSWlNWS293ZWlhYzlwUDVj?=
- =?utf-8?B?ZHFGdHpTMjhpMlVhTCt1SlVoRHdERTFaY1V2dDhHdGdNcjRqYkVXTWQxYTlX?=
- =?utf-8?B?YUhkUTJveVFGSlBBL25NSmNGOEt2NzRHN1Q2bE52ejMyWGpIQzlGT2NzRDdU?=
- =?utf-8?Q?vz83LzzP9js=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WGNLYTlyK3dqK3BzQWYrdEVzZkVSUHFLOTc3c2tmNHEyMVFlaGxLMkVXRHJx?=
- =?utf-8?B?dnVWbkkwS1I0RzlJcnVZalNYU0pTY3VOWnlxTDkzSjZBUDUrLzVYZ1hwaGFa?=
- =?utf-8?B?NnBqaW5GVkloMUpZN1ZoMWJhS2JWalhqS0N0WEU4OVRnWS9MaG9XTXB6NXRQ?=
- =?utf-8?B?NXRsUTZSZEVNRjdsR2pka25qQ1l4aGFLVkFnOGhjTGRESVVBek9lMFkvMlk1?=
- =?utf-8?B?eTNIYVpPTzR4aTZUUDhrNVRHY01nSnJCYXJCWk1QK2x6Sk5MdUNoakwwdDl0?=
- =?utf-8?B?bEFqSldLc2xad0xXcUtnUmluWTAxMUJBYXNKbkpTbDBOckJaY2F0eUNVZFRD?=
- =?utf-8?B?ZVZ1aUpTQTJ0aGdUN2RTenRUSElseVJNTDhkbGRQK1pEbjhFUVRmMU9BcUR2?=
- =?utf-8?B?T0xHYWdMSVJJVzVJRXJic0xwTkkzUFhtRjdQa29iVjVqaHhKdms1VEsxbVM2?=
- =?utf-8?B?dEw0cWlKdjNoUDVQa3ByQ1R2UVBnQ29ZbDdURWxscENzY1Z1OFhlajhCUDR3?=
- =?utf-8?B?am0wQzFHN2F3ODg4R1NBVGxqc05Nd2hpZmQvbG5Cay9QOU53QVJGL3N0Mjdj?=
- =?utf-8?B?aEtXNDEwOHlKRjhKaCsyb0dLbXpoU0t4MXRpVWtnSFpKR0pjMVJUdnJXWE1P?=
- =?utf-8?B?VlVMTlRVSDdTYUZxd3NtWnd4ZXMzc1FTc2R6SUpERitISTN5TDM5YjVkUk1L?=
- =?utf-8?B?YkNva2pnY2JZUU0rMGkvNnk2SzlxZ1JabnVTYlNjLzFSb3pxNVNZMzlTWEV6?=
- =?utf-8?B?QmtzNFcxUVdOVjRaaENvY3llZWM2UXhZUzNGQnY1MzZiTWt1Wm04L29aMmZq?=
- =?utf-8?B?cEUvaEhNdlo1SWhQTTNHazh3SXR3S0ZZMDcwQ083Q0xKWVVQbUZ1MXlJSFBL?=
- =?utf-8?B?bVpkZDkyNE5YdkZrWjNsc2UzMS81ai9nZU1uYlRKSUFhWlNPK3l0UUN4SjhV?=
- =?utf-8?B?SlkxbndUajBad3BZVlpJaXZUS2Q0K0V6WEZrTDVONldPTkplOFQxUTRmb2w1?=
- =?utf-8?B?dE5temdlemtyb21PanBNNEdPQmxMc08xYU9URmlkMDNUU0ZRbmZIK2oyUG5F?=
- =?utf-8?B?ODNoS1JkdXNqU1FFZWJ6SUNTQk12YzQreGVmOUV5b3RtRUd1TUlRTGdmaXYz?=
- =?utf-8?B?QmU5azJZZXhHMmkwdkwyRWc3V3FZTi9mSE5vS01XNG03Nm9seWhkWnYrYUQv?=
- =?utf-8?B?alh0V2FPbzN0Nlk2SVFrcFh2Z1pGbTBoQVprZk04V3pwMWNSbXZNSGdTdmlr?=
- =?utf-8?B?VzMrL3FIQnNtL0JTOHBMRmZrYnREMkQ5VXZpTDNXNUJTSkMyeVNHNGpFZkN6?=
- =?utf-8?B?NVBkbXZ1dzRQWVpiMjdMaXNhSVVyTXZtdDhyM2dKd0hwTGZUQnFYeDlWcTNq?=
- =?utf-8?B?L3RyRk5uQXRwOWtYOGRzT0JURk0zY0ZzWWlUVEgvaXhzSk90eDZUZXpYek9T?=
- =?utf-8?B?YlVPNm1sWWNHbkhXZGEwOWJWTmhMVU5wTmFQQVRMMHFlVWUxeXJsYjMxdjR0?=
- =?utf-8?B?WEtNZGFkN0xMQmdCSXJNWHNTUHlrSkE2bmlrTFh5R1RmUkxXblhjQnl2cnVT?=
- =?utf-8?B?ZEYwSms3dWhlYjFvclh4TTJMaFN2ZXM4aVFHWXVHa0FSMGJ2bEhnNUZPckZD?=
- =?utf-8?B?L0Nnb2pMVmdQWVpkVEZ0ZVc1bEE3LzU3SjNJeUIxRnBJWUNVUEpzL0daR1lw?=
- =?utf-8?B?aHBHQ0JGTitQZW9iUTBXZklXNUVqS2tWYmhTbis0Q1FFOU8reDB0UmE0c2hR?=
- =?utf-8?B?c29BL0JkNUQ4L0orUk95ZUh3R3hMWGFsdFhSNDVJaUgvTGF4eVY2UEhZT3Qz?=
- =?utf-8?B?RFRnRE1WMDZiTnpMTzRQam5wQVdYT0MvZFlxMmZ6MC93M0drbnNkeFhaOFpw?=
- =?utf-8?B?Wms0ZktpNU4zdXNOL01hOU9CR3hiZzNoZFd2V2Zub0Mrallrb2w2SnRCMmEw?=
- =?utf-8?B?Uzc5czBVMldoeEJ4TWNab1N1aFlFVThnQnZKOFNwODRuaUZLMWV6WU13TFUv?=
- =?utf-8?B?Vm1HVkdaZ250RUZrbWhtRjhDYmRDSjZpb3JUU2JualY0ekhmZ05CbG5YdEg1?=
- =?utf-8?B?WjRtYWFUL0ZHVEtYZVphQmYvZWt1RXkzVW5CcWhsMzRUQW9UNTkxV3dmOUFK?=
- =?utf-8?Q?L7XOd4GDTpf9tcIriNr69mMch?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 830a2242-a74b-4547-e9f9-08ddfbb930f2
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 22:24:56.6365
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W8z37wQPG20XDKkK2AR3EM49qF96yTKlV6V5lElkheMS6k09fNJJMPpOCq+YTq8ePzrBq/YiwBInHpKmxTkn6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
+Content-Transfer-Encoding: 8bit
 
-On 9/22/25 4:30 AM, Alistair Popple wrote:
+Commit fec2e55bdef ("selftests: drv-net: Pull data before parsing headers")
+added __ksym external symbol to xdp_native.bpf.c which now requires
+a kernel with BTF. Enable BTF for driver selftests.
 
-> +        // Match what Nouveau does here:
+Before:
 
-Silly nit: can we please delete the above comment? (And if you'd
-like to keep the note, then it can go in the commit log instead.)
+  # TAP version 13
+  # 1..10
+  # # Exception| Traceback (most recent call last):
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/ksft.py", line 244, in ksft_run
+  # # Exception|     case(*args)
+  # # Exception|     ~~~~^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 231, in test_xdp_native_pass_sb
+  # # Exception|     _test_pass(cfg, bpf_info, 256)
+  # # Exception|     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 209, in _test_pass
+  # # Exception|     prog_info = _load_xdp_prog(cfg, bpf_info)
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 114, in _load_xdp_prog
+  # # Exception|     cmd(
+  # # Exception|     ~~~^
+  # # Exception|     f"ip link set dev {cfg.ifname} mtu {bpf_info.mtu} xdpdrv obj {abs_path} sec {bpf_info.xdp_sec}",
+  # # Exception|     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # # Exception|     shell=True
+  # # Exception|     ^^^^^^^^^^
+  # # Exception|     )
+  # # Exception|     ^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/utils.py", line 75, in __init__
+  # # Exception|     self.process(terminate=False, fail=fail, timeout=timeout)
+  # # Exception|     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/utils.py", line 95, in process
+  # # Exception|     raise CmdExitFailure("Command failed: %s\nSTDOUT: %s\nSTDERR: %s" %
+  # # Exception|                          (self.proc.args, stdout, stderr), self)
+  # # Exception| net.lib.py.utils.CmdExitFailure: Command failed: ip link set dev eni30773np1 mtu 1500 xdpdrv obj /home/sdf/src/linux/tools/testing/selftests/net/lib/xdp_native.bpf.o sec xdp
+  # # Exception| STDOUT: b''
+  # # Exception| STDERR: b"libbpf: kernel BTF is missing at '/sys/kernel/btf/vmlinux', was CONFIG_DEBUG_INFO_BTF enabled?\nlibbpf: failed to find '.BTF' ELF section in /lib/modules/6.17.0-rc6-virtme/build/vmlinux\nlibbpf: failed to find valid kernel BTF\nlib
+  bpf: Error loading vmlinux BTF: -3\nlibbpf: failed to load object '/home/sdf/src/linux/tools/testing/selftests/net/lib/xdp_native.bpf.o'\n"
+  # not ok 1 xdp.test_xdp_native_pass_sb
+  ...
 
-I might be the one who actually added that comment at some point,
-but have since realized the error of my ways. haha
+After:
 
-Much of Nova is informed by Nouveau or Open RM or both, but I'd
-like to leave it out of the code proper unless it's really somehow
-key to have it there (and I can't think of any cases yet).
+  # TAP version 13
+  # 1..10
+  # ok 1 xdp.test_xdp_native_pass_sb
+  # ok 2 xdp.test_xdp_native_pass_mb
+  # ok 3 xdp.test_xdp_native_drop_sb
+  # ok 4 xdp.test_xdp_native_drop_mb
+  # ok 5 xdp.test_xdp_native_tx_sb
+  # ok 6 xdp.test_xdp_native_tx_mb
+  # # Ignoring SIGTERM (cnt: 2), already exiting...
+  # # Ignoring SIGTERM (cnt: 3), already exiting...
+  # # Exception| Traceback (most recent call last):
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/ksft.py", line 244, in ksft_run
+  # # Exception|     case(*args)
+  # # Exception|     ~~~~^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 506, in test_xdp_native_adjst_taa
+  # # Exception|     res = _test_xdp_native_tail_adjst(
+  # # Exception|         cfg,
+  # # Exception|         pkt_sz_lst,
+  # # Exception|         offset_lst,
+  # # Exception|     )
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 467, in _test_xdp_native_tail_adt
+  # # Exception|     recvd_str = _exchg_udp(cfg, port, test_str)
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/drivers/net/./xdp.py", line 72, in _exchg_udp
+  # # Exception|     with bkg(rx_udp_cmd, exit_wait=True) as nc:
+  # # Exception|          ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/utils.py", line 137, in __exit__
+  # # Exception|     return self.process(terminate=terminate, fail=self.check_fail)
+  # # Exception|            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/utils.py", line 85, in process
+  # # Exception|     stdout, stderr = self.proc.communicate(timeout)
+  # # Exception|                      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  # # Exception|   File "/usr/lib/python3.13/subprocess.py", line 1222, in communicate
+  # # Exception|     stdout, stderr = self._communicate(input, endtime, timeout)
+  # # Exception|                      ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  # # Exception|   File "/usr/lib/python3.13/subprocess.py", line 2128, in _communicate
+  # # Exception|     ready = selector.select(timeout)
+  # # Exception|   File "/usr/lib/python3.13/selectors.py", line 398, in select
+  # # Exception|     fd_event_list = self._selector.poll(timeout)
+  # # Exception|   File "/home/sdf/src/linux/tools/testing/selftests/net/lib/py/ksft.py", line 208, in _ksft_intr
+  # # Exception|     raise KsftTerminate()
+  # # Exception| net.lib.py.ksft.KsftTerminate
+  # # Stopping tests due to KsftTerminate.
+  # not ok 7 xdp.test_xdp_native_adjst_tail_grow_data
+  # # Totals: pass:6 fail:1 xfail:0 xpass:0 skip:0 error:0
 
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ tools/testing/selftests/drivers/net/config | 2 ++
+ 1 file changed, 2 insertions(+)
 
-thanks,
+diff --git a/tools/testing/selftests/drivers/net/config b/tools/testing/selftests/drivers/net/config
+index f27172ddee0a..da5a5a94fa6a 100644
+--- a/tools/testing/selftests/drivers/net/config
++++ b/tools/testing/selftests/drivers/net/config
+@@ -5,3 +5,5 @@ CONFIG_NETCONSOLE=m
+ CONFIG_NETCONSOLE_DYNAMIC=y
+ CONFIG_NETCONSOLE_EXTENDED_LOG=y
+ CONFIG_XDP_SOCKETS=y
++CONFIG_DEBUG_INFO_BTF=y
++CONFIG_DEBUG_INFO_BTF_MODULES=n
 -- 
-John Hubbard
+2.51.0
 
 
