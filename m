@@ -1,296 +1,152 @@
-Return-Path: <linux-kernel+bounces-830876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2895B9AC40
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03435B9AC46
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF05189563D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A539B17C63A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D55D30F7FF;
-	Wed, 24 Sep 2025 15:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003AF30C0E7;
+	Wed, 24 Sep 2025 15:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arturia.com header.i=@arturia.com header.b="a0oJvL8E"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="MH/NzWFm"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987DB1B4231
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE812FD7AE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728920; cv=none; b=GQoPQfyUpOjzabf3NTADQhbPDk4TFR3e93zdFs8YmYydqd5T1oQQYtR+r4LemtvNt3nKqlj8yZGm7p3dmifX279HnnwTtXqZDAA4ellJ3/J+1gccvd5UOWQEr1M/50HDfOUK0J3cPLRiU3N0Lu3ruP9g4xnsb39cL33OJ/T4pcg=
+	t=1758729033; cv=none; b=M691Ffb+hHxHDw1+U/rkcjY+yZhdqdfx7qUzMUjhkjPlbthXV5A05mqnCQxBCPKwzTy3BnH++/EG2DlssjcU8QThPgI/KFMuaDwZjLmOfskG5XYQRHLIfrhxq66QBtDRBSyo6bL13TSvYZT/+tPxbf5SLnwbjBJdHBnrdt2wUYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728920; c=relaxed/simple;
-	bh=FNKsNLilWsQySnx+JaHNaL+3PDqiW1uMqoqV/cmu77c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ihQJIkhJLPLrQIkjIQeUTd1ba8kg20UUfpYAjheXJpLAmbJY0AgYppVT/N3hXa9NWcFR7gSlOX8tJ8ORThXQlQtegPuYcV5d0QuxGzLszdTZITFHzIEeUgdcbiKQyCV24PVeYgil4jY+fqBgyFn8iKeti3SH22PS97ZE9gw6EpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arturia.com; spf=pass smtp.mailfrom=arturia.com; dkim=pass (2048-bit key) header.d=arturia.com header.i=@arturia.com header.b=a0oJvL8E; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arturia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arturia.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-4060b4b1200so15957f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:48:38 -0700 (PDT)
+	s=arc-20240116; t=1758729033; c=relaxed/simple;
+	bh=3HFVHU2A86JsxNXWuaSgCTlzKZ3pf22FDrMEBP9wlaM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dNaf/3DwrA6R+ah/xGc4v9z7CxnDlR4nsZNmx3HWZXaZ7zNhGzrZxfSojV1M6gmbU8nH7Io3ZVLrDajyZ6kDNsw/cSKe4shOUvwYn6ktUBdlfaGRBNaLWbvUVkRpSkL+iHwqrWxb/HOO7SILncu+cy4kpF3madJWJPb9JUad3H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=MH/NzWFm; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4c88e79866aso29910661cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arturia.com; s=arturia; t=1758728917; x=1759333717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ga9wpd87ypEhIhE5XHNvwVyhbRbjt41ZUlw/++PjyKs=;
-        b=a0oJvL8EipjJ+8mZX2I3hYg2J8KsM7GrUb8jQX5ommoRJP570CsTIFeB2dJG6yjWNt
-         55cNZVI6cd641ZVQ36wGz13JNkeqUaKpN1mqd27yRmIyp5cMliImKpXQsfXFawByNGER
-         +7LwCPvVCh8sZBVelNDXaKMAofuTHA8Qpg/OCNuQleh1nhY4MxMkehvOHMc50d2CkI4j
-         kqccudbHzRLsXwUB6tMn0+jf38g3ZY+hr3EY16DZ7Bi0lKH6AB46QHMD1iTHNxaLr0ul
-         vXZCq4OteA6bENIfiioG2qBBJyHmyW+zByQP+xcK8/l0G9km9o9cgGP3ZXT/QBiY4oNX
-         tNVQ==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1758729030; x=1759333830; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKYKt3wBpNWpKAvLvz/Y9fS8qlda2gni+8GdP2SiBRk=;
+        b=MH/NzWFmMK66WDJO0EcpeK4YNLynWzOQlyauaqvCkKb3hlA0JQn91tXAOyzlwp+b+o
+         +wo6IafMnp+3aS9zFGtnQKugNM3uebSQZJ/ab30xfp5WBXV2fBzdPTbd2Gn64JC1wJMS
+         mtLWtCQxbfwh9gO3CVdTwsorBka/UWYstT1vjOplFKOgKdOV2XHRFJ4dlv7G7/B3msSu
+         oLh54+K20hlX3OY4CacgIe6uSMLi77toaBXRIjX9yBgwYA2vnr1cNv+vIjNrHIqZIlAK
+         qQNmzgKhITzTwRRweswLiC5EqsUCB01mTUwvzvH1OKnbkcAEZKlqZadqHGJeVIAvewxX
+         QPuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758728917; x=1759333717;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ga9wpd87ypEhIhE5XHNvwVyhbRbjt41ZUlw/++PjyKs=;
-        b=liDQZe0kW1eAwL8qrQ/2L6rAi9QyJubt0C1IX7WQdquowU7/Yu/ZoHMaFEScISjbBO
-         M3UoiGIsFIHew8jTwRi5c+w7fWv9W7NNmNJOsE+0eO6tOnit/0ayjITbBMjtIzvfTTmq
-         q+pa4+q+fJO6jjWkQywuS181s24TgsiLeNlYyGybXx6/+8617F5vRsQ/aSl3P4Yuz3vF
-         umhKZiNJpEK5jdlqqLbMcpip4jxrNnw3VVaaOkcekWlS7Ykg6VtQaUHsmrnlBVYPq8pJ
-         6e0cZzxNSfaNsNCyU7wniUrU97E9Q0FE73lvLGwGGjZm44kKqsRiGfpLi2XEfXMzDDN7
-         GB2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWKI6Xozfrcv7Ty8nZLUYIc6dSnBYiXzt6uS5Wx9TWPfjXATYmU6HqVsqoN+9E3mhvCgWzhWQYsRDvlF5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFENUkleGDgnxpi3hiFb4NQx3CXsm3kQwOhijcAJwz57dahbXo
-	9iuHctAXfj1Be5VdTksP1lbcGmLfelNDuYawZqGUjzXdD71mj6UxReWZoPCkmxv8DcY=
-X-Gm-Gg: ASbGncs9KfuDeUmXEAQtr8aVUrEnn3A7Z+Zo7c1fbBrp0WVsLQdVdm2spoaqG+zAPl5
-	SBtLezZXIM2T6LzSy0F6XZ0EZGU+mJyx1asIQtv3tuUl5Bjnc2IGnOhH46sHRnex5GFNrVAqaYW
-	nL0hql7ajZJghv9rS7InRwtiNUs3VaGQwdFkOmtct9fUTTsHVvlWNCKEtdcrdSjlqfNNPDtyK4p
-	TwcRcoYuCs69m+NLgQlK8y0Kn0S19gWgsXbGcLrUENAU8LTvspO33K2vDEufKu0Q8fzmZUskjQa
-	1Q8LdTx9F8sVslUsuK67PbCe2+tokr+0gDFq2TZ76K/Da4S4MlTZpvvSfI22a0o6Lnz2cNSQiyU
-	1oI5J+tykE/zoQTSqiITPpYmHL+N7s5XjwU4ICI0PSjfqiISn
-X-Google-Smtp-Source: AGHT+IGteDCuymW8jXqrVPp1LBIadB6oPStoD1tgjWbrgFvwIM1Si+KHLUQ/JYjhGxkaqDiiOa3zlg==
-X-Received: by 2002:a5d:5d0b:0:b0:3fa:ebaf:4c2f with SMTP id ffacd0b85a97d-40e4bb2f5c2mr317315f8f.30.1758728916768;
-        Wed, 24 Sep 2025 08:48:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:cb15:854c:e000:cf85:df87:23e6:2e45])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407aebsm29694004f8f.14.2025.09.24.08.48.36
+        d=1e100.net; s=20230601; t=1758729030; x=1759333830;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wKYKt3wBpNWpKAvLvz/Y9fS8qlda2gni+8GdP2SiBRk=;
+        b=NZDfS1UeS8iWBYSP7Ldn7s3XUVVZMkhsenJhT+gHgRQRZ6x2rg8OmR4unOPoQu7tsA
+         l8P7OoxnRjVehUId0Y9EMM1zrZXxso8J1yhgQjiEi/ejBb42Jz8uOcrAapafe3uO/M2P
+         RZlDMMMuWvlwjcZ5bRHMxn+HuheuvJA/fBoS0hZEnu6VLCkTLOQqkOdbwh00TjP42IN0
+         uIbFnBzftQrLjrwabytDPFj5eB0o7HdkSFT/ma+mRLFf5UOoERuz3aX/K8VrcwZPbh/L
+         G75k13pPk51vmPKg4eWwSXJ7wXvhB5I7m2YAT2zb/XsNhAWJtAvRi53FooI+5phhmpcw
+         F5Kg==
+X-Gm-Message-State: AOJu0YzR+/lHi0rIlQmnQyuLF5hglPpYuqXl8a3YQ+6PPxILd0lUMI1X
+	wxT75RSJCq6rUubStXAPVrvQKAoQSMbdYj02n0EjodBY6Pw+gRbAOyIZWoDwPz/PElI=
+X-Gm-Gg: ASbGnct8SBwDXecMAtKu9F5Tx9isMen9J74Yfd5SkcaI+UyoJ8+hiekUwMb6nS4G0FY
+	W7nvNevSdRYpnq9QRUiBJovaWAKMJ1TrIy4s1y6g9WnEmK7W1ZLbiAeVm5tTs6EKwnzmqleZBc1
+	239qLLDKLM3B+SH6Xvi4MloVMjJ/tMh7AVHMDsEs8JhI58DVtWTnL9UeaZpEWWhGsZdpH5ScxVw
+	Curca/Ndqiz1TpV7jVjD5yyQ1atL8oAUwLWLnqJuoEzTfsHc4nyDuCQYU49mc4P991Iid/otxtC
+	JIt87UTKzTDEbc3iYGYaej6LLb4oyOPajFuF9ewcX9WHsarR4R8po9gMyLQ+eKp4qyr1Shd0Iob
+	JjCijgn2SnAlx+mJafgSCqsGZZIMW
+X-Google-Smtp-Source: AGHT+IHFDw/Eg5JWh7qPZieLyWp9NXunBGjbJijvunF0rhToS+dVyRBZ8XDISKVOXGkGM4owfaf9Vw==
+X-Received: by 2002:ac8:7d8e:0:b0:4cf:b74b:e1af with SMTP id d75a77b69052e-4da4c1aeacfmr3705331cf.63.1758729030340;
+        Wed, 24 Sep 2025 08:50:30 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79351f713a5sm109494106d6.44.2025.09.24.08.50.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:48:36 -0700 (PDT)
-From: Victor Krawiec <victor.krawiec@arturia.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tiwai@suse.de,
-	kees@kernel.org,
-	abdul.rahim@myyahoo.com,
-	jilliandonahue58@gmail.com,
-	jkeeping@inmusicbrands.com,
-	Victor Krawiec <victor.krawiec@arturia.com>
-Subject: [PATCH] usb: gadget: f_midi: allow customizing the USB MIDI interface string through configfs
-Date: Wed, 24 Sep 2025 17:48:21 +0200
-Message-ID: <20250924154822.205703-1-victor.krawiec@arturia.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 24 Sep 2025 08:50:29 -0700 (PDT)
+Message-ID: <b3c3a9b47a2075f6a0acc1ee501f885d4997679e.camel@ndufresne.ca>
+Subject: Re: [PATCH 1/2] media: iris: Add support for QC08C format for
+ decoder
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Markus Elfring <Markus.Elfring@web.de>, Dikshita Agarwal
+	 <dikshita.agarwal@oss.qualcomm.com>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>,  Bryan O'Donoghue	 <bod@kernel.org>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia	
+ <vikash.garodia@oss.qualcomm.com>
+Date: Wed, 24 Sep 2025 11:50:28 -0400
+In-Reply-To: <ce08ae79-8f7e-4a37-85b9-d86c10567881@web.de>
+References: 
+	<20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
+	 <ce08ae79-8f7e-4a37-85b9-d86c10567881@web.de>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-BGkOL5lJ8hoFaStaZV+n"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When using f_midi from configfs the USB MIDI interface string is hardcoded
-to 'MIDI function'.
 
-This USB string descriptor is used by some third-party OS or software to
-display the name of the MIDI device
+--=-BGkOL5lJ8hoFaStaZV+n
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since we add an additional string option a new macro block was created to
-factorize declarations
+Hi,
 
-Signed-off-by: Victor Krawiec <victor.krawiec@arturia.com>
----
- drivers/usb/gadget/function/f_midi.c | 108 +++++++++++++++------------
- drivers/usb/gadget/function/u_midi.h |   8 +-
- 2 files changed, 66 insertions(+), 50 deletions(-)
+Le mercredi 24 septembre 2025 =C3=A0 14:32 +0200, Markus Elfring a =C3=A9cr=
+it=C2=A0:
+> =E2=80=A6
+> > +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> > @@ -261,7 +261,10 @@ int iris_get_buffer_size(struct iris_inst *inst,
+> > =C2=A0		case BUF_INPUT:
+> > =C2=A0			return iris_dec_bitstream_buffer_size(inst);
+> > =C2=A0		case BUF_OUTPUT:
+> > -			return iris_yuv_buffer_size_nv12(inst);
+> > +			if (inst->fmt_dst->fmt.pix_mp.pixelformat =3D=3D
+> > V4L2_PIX_FMT_QC08C)
+> > +				return iris_yuv_buffer_size_qc08c(inst);
+> > +			else
+> > +				return iris_yuv_buffer_size_nv12(inst);
+> =E2=80=A6
+>=20
+> How do you think about to use a source code variant like the following?
+>=20
+> 			return (inst->fmt_dst->fmt.pix_mp.pixelformat =3D=3D
+> V4L2_PIX_FMT_QC08C)
+> 				? iris_yuv_buffer_size_qc08c(inst)
+> 				: iris_yuv_buffer_size_nv12(inst);
 
-diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-index da82598fcef8..0a8af7d507d9 100644
---- a/drivers/usb/gadget/function/f_midi.c
-+++ b/drivers/usb/gadget/function/f_midi.c
-@@ -875,6 +875,7 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
- 	struct usb_composite_dev *cdev = c->cdev;
- 	struct f_midi *midi = func_to_midi(f);
- 	struct usb_string *us;
-+	struct f_midi_opts *opts;
- 	int status, n, jack = 1, i = 0, endpoint_descriptor_index = 0;
- 
- 	midi->gadget = cdev->gadget;
-@@ -883,6 +884,10 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
- 	if (status < 0)
- 		goto fail_register;
- 
-+	opts = container_of(f->fi, struct f_midi_opts, func_inst);
-+	if (opts->interface_string_allocated && opts->interface_string)
-+		midi_string_defs[STRING_FUNC_IDX].s = opts->interface_string;
-+
- 	/* maybe allocate device-global string ID */
- 	us = usb_gstrings_attach(c->cdev, midi_strings,
- 				 ARRAY_SIZE(midi_string_defs));
-@@ -1178,59 +1183,62 @@ end:									\
- 									\
- CONFIGFS_ATTR(f_midi_opts_, name);
- 
-+#define F_MIDI_OPT_STRING(name)						\
-+static ssize_t f_midi_opts_##name##_show(struct config_item *item, char *page) \
-+{									\
-+	struct f_midi_opts *opts = to_f_midi_opts(item);		\
-+	ssize_t result;							\
-+									\
-+	mutex_lock(&opts->lock);					\
-+	if (opts->name) {						\
-+		result = strscpy(page, opts->name, PAGE_SIZE);		\
-+	} else {							\
-+		page[0] = 0;						\
-+		result = 0;						\
-+	}								\
-+									\
-+	mutex_unlock(&opts->lock);					\
-+									\
-+	return result;							\
-+}									\
-+									\
-+static ssize_t f_midi_opts_##name##_store(struct config_item *item,	\
-+					 const char *page, size_t len)	\
-+{									\
-+	struct f_midi_opts *opts = to_f_midi_opts(item);		\
-+	int ret;							\
-+	char *c;							\
-+									\
-+	mutex_lock(&opts->lock);					\
-+	if (opts->refcnt > 1) {						\
-+		ret = -EBUSY;						\
-+		goto end;						\
-+	}								\
-+									\
-+	c = kstrndup(page, len, GFP_KERNEL);				\
-+	if (!c) {							\
-+		ret = -ENOMEM;						\
-+		goto end;						\
-+	}								\
-+	if (opts->name##_allocated)					\
-+		kfree(opts->name);					\
-+	opts->name = c;							\
-+	opts->name##_allocated = true;					\
-+	ret = len;							\
-+end:									\
-+	mutex_unlock(&opts->lock);					\
-+	return ret;							\
-+}									\
-+									\
-+CONFIGFS_ATTR(f_midi_opts_, name);
-+
- F_MIDI_OPT_SIGNED(index, true, SNDRV_CARDS);
- F_MIDI_OPT(buflen, false, 0);
- F_MIDI_OPT(qlen, false, 0);
- F_MIDI_OPT(in_ports, true, MAX_PORTS);
- F_MIDI_OPT(out_ports, true, MAX_PORTS);
--
--static ssize_t f_midi_opts_id_show(struct config_item *item, char *page)
--{
--	struct f_midi_opts *opts = to_f_midi_opts(item);
--	ssize_t result;
--
--	mutex_lock(&opts->lock);
--	if (opts->id) {
--		result = strscpy(page, opts->id, PAGE_SIZE);
--	} else {
--		page[0] = 0;
--		result = 0;
--	}
--
--	mutex_unlock(&opts->lock);
--
--	return result;
--}
--
--static ssize_t f_midi_opts_id_store(struct config_item *item,
--				    const char *page, size_t len)
--{
--	struct f_midi_opts *opts = to_f_midi_opts(item);
--	int ret;
--	char *c;
--
--	mutex_lock(&opts->lock);
--	if (opts->refcnt > 1) {
--		ret = -EBUSY;
--		goto end;
--	}
--
--	c = kstrndup(page, len, GFP_KERNEL);
--	if (!c) {
--		ret = -ENOMEM;
--		goto end;
--	}
--	if (opts->id_allocated)
--		kfree(opts->id);
--	opts->id = c;
--	opts->id_allocated = true;
--	ret = len;
--end:
--	mutex_unlock(&opts->lock);
--	return ret;
--}
--
--CONFIGFS_ATTR(f_midi_opts_, id);
-+F_MIDI_OPT_STRING(id);
-+F_MIDI_OPT_STRING(interface_string);
- 
- static struct configfs_attribute *midi_attrs[] = {
- 	&f_midi_opts_attr_index,
-@@ -1239,6 +1247,7 @@ static struct configfs_attribute *midi_attrs[] = {
- 	&f_midi_opts_attr_in_ports,
- 	&f_midi_opts_attr_out_ports,
- 	&f_midi_opts_attr_id,
-+	&f_midi_opts_attr_interface_string,
- 	NULL,
- };
- 
-@@ -1264,6 +1273,8 @@ static void f_midi_free_inst(struct usb_function_instance *f)
- 	if (free) {
- 		if (opts->id_allocated)
- 			kfree(opts->id);
-+		if (opts->interface_string_allocated)
-+			kfree(opts->interface_string);
- 		kfree(opts);
- 	}
- }
-@@ -1280,6 +1291,7 @@ static struct usb_function_instance *f_midi_alloc_inst(void)
- 	opts->func_inst.free_func_inst = f_midi_free_inst;
- 	opts->index = SNDRV_DEFAULT_IDX1;
- 	opts->id = SNDRV_DEFAULT_STR1;
-+	opts->interface_string = SNDRV_DEFAULT_STR1;
- 	opts->buflen = 512;
- 	opts->qlen = 32;
- 	opts->in_ports = 1;
-diff --git a/drivers/usb/gadget/function/u_midi.h b/drivers/usb/gadget/function/u_midi.h
-index 2e400b495cb8..c9c396301a43 100644
---- a/drivers/usb/gadget/function/u_midi.h
-+++ b/drivers/usb/gadget/function/u_midi.h
-@@ -15,11 +15,15 @@
- 
- #include <linux/usb/composite.h>
- 
-+#define F_MIDI_OPT_STRING_DECLARE(name) \
-+	char *name; \
-+	bool name##_allocated; \
-+
- struct f_midi_opts {
- 	struct usb_function_instance	func_inst;
- 	int				index;
--	char				*id;
--	bool				id_allocated;
-+	F_MIDI_OPT_STRING_DECLARE(id);
-+	F_MIDI_OPT_STRING_DECLARE(interface_string);
- 	unsigned int			in_ports;
- 	unsigned int			out_ports;
- 	unsigned int			buflen;
+Please don't, this is less readable and have no explained technical advanta=
+ges.
 
-base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
--- 
-2.43.0
+Nicolas
 
+>=20
+>=20
+> Regards,
+> Markus
+
+--=-BGkOL5lJ8hoFaStaZV+n
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNQTRAAKCRDZQZRRKWBy
+9M4hAP4xMwFl82DVj9T4UD6n+w1SjuDmzrNmUl3WHwoFFThJMAD/de71Hs2BOyqL
+rqF9js4QRLUpv4wRTLhyGSuePA0+EQ0=
+=v93q
+-----END PGP SIGNATURE-----
+
+--=-BGkOL5lJ8hoFaStaZV+n--
 
