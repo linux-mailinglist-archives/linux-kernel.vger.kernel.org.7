@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-830286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA84B994DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:02:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED8FB994A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D082B3ADF04
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0B4320C78
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27D02DC330;
-	Wed, 24 Sep 2025 10:02:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E312DC349;
+	Wed, 24 Sep 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LF9VFVwz"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1E82DBF73;
-	Wed, 24 Sep 2025 10:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B012D9EFC;
+	Wed, 24 Sep 2025 10:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758708134; cv=none; b=Y9HBtKsFYsb+RUZjOoMFY23XU95Q4e5gHZ+Fw0De0B+TTUhxkBPvobnawM7vFOgvjFhdrlPAozyWGvGB9HF0nI2nr3jWSaVMH7sIRyC1DiNJX7qFy287T3pB5U8PgP+bbI3ksMalL8Q+JUSs99O5Iczxsa46Hxv4Y09ddnfJ11c=
+	t=1758708040; cv=none; b=tLsYC8702A0a2mPK7WHJs1K/oQnIm8tcpBFA1r+4RrA2ht+7Aw4YYzNy44o97HLTrjLvtXJ+An2lkfPHvnn2fF0vpMPnXV70UscVFpbgE38oTCa3leUuyJDVrTbsqP1GTZHxbrOn6rD9Ot+zDIDL1JZDiKCsnWyf8XC0q0CdYJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758708134; c=relaxed/simple;
-	bh=YV83d5P+swyKnsGwmGnZHWOibOGSsH0UvCNy1qVyH/Y=;
+	s=arc-20240116; t=1758708040; c=relaxed/simple;
+	bh=z+fwlVBh/936yHBLicaMurJ9k/AUaTgZnE8IkngmKIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhpQY/+BWSlhkk5EPQ17faDuNVde6Z5VblZFWJ0NJqEbOQKUXp4BbFSWGqlExvpDT/vtUQ8wzLHA1FwP6mp3v0KUpH48ZXndWznnBqr/hpHlWtHp8Gf1G85ZBI+0AeYZbzLTXiS4L3JjqXUXEWQD9u+maMFYfmkGr80pGAzCczY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36D5C4CEE7;
-	Wed, 24 Sep 2025 09:59:49 +0000 (UTC)
-Date: Wed, 24 Sep 2025 10:59:23 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
-	lorenzo.stoakes@oracle.com, usamaarif642@gmail.com,
-	yuzhao@google.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	baohua@kernel.org, voidice@gmail.com, Liam.Howlett@oracle.com,
-	cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
-	kaleshsingh@google.com, npache@redhat.com, riel@surriel.com,
-	roman.gushchin@linux.dev, rppt@kernel.org, ryan.roberts@arm.com,
-	dev.jain@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
-	surenb@google.com, hughd@google.com, willy@infradead.org,
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
-	byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
-	apopple@nvidia.com, qun-wei.lin@mediatek.com,
-	Andrew.Yang@mediatek.com, casper.li@mediatek.com,
-	chinwen.chang@mediatek.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-mm@kvack.org, ioworker0@gmail.com, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
- zero-filled subpages
-Message-ID: <aNPA--5AcqeFd6nl@arm.com>
-References: <20250922021458.68123-1-lance.yang@linux.dev>
- <aNGGUXLCn_bWlne5@arm.com>
- <a3412715-6d9d-4809-9588-ba08da450d16@redhat.com>
- <aNKJ5glToE4hMhWA@arm.com>
- <aNLHexcNI53HQ46A@arm.com>
- <f2fe9c01-2a8d-4de9-abd5-dbb86d15a37b@linux.dev>
- <aNOwuKmbAaMaEMb7@arm.com>
- <17dabd83-0849-44c9-b4a2-196af60d9676@redhat.com>
- <aNO7MrQt9oPT8Hic@arm.com>
- <791e0d59-0eb2-481f-bf8b-ba4b413d5ebd@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRRxgnZnZQhv/CiP0gPmNnk8pyPFOqeLw7R5cuqzO7pmu8XCS2kvR7TAESTh6o9xsD9CoSmRpSGnxriZvmI05ckKBNHvSwpu7yAGFg3dYwXkkeX+QFp2IVfjesXqezs2eIXleIhL5UNotfVBGRSuKxwF739CC49OOSGj6+Nln7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LF9VFVwz; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-33-231-nat.elisa-mobile.fi [85.76.33.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4744A169;
+	Wed, 24 Sep 2025 11:59:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758707949;
+	bh=z+fwlVBh/936yHBLicaMurJ9k/AUaTgZnE8IkngmKIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LF9VFVwzxv8LeHj9RNKIwHLqw4VGDlQ+RrRC9TeLUjbyWDq3O9yX0oP3Ucd/pNA+t
+	 mjzmJaKvgc8pPdD6TBY8lw425OyoSOtYapOmSeUIlbxWLTdpEqDwu2+IlxO0kVSTxW
+	 54JR7fErTfe+F4LHPNIyTTbV1zmiAjnwa6UnNumI=
+Date: Wed, 24 Sep 2025 12:59:59 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-spi@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 06/16] property: Drop DEVICE_DISABLED flag in
+ fwnode_graph_get_endpoint_by_id()
+Message-ID: <20250924095959.GF28073@pendragon.ideasonboard.com>
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+ <20250924074602.266292-7-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <791e0d59-0eb2-481f-bf8b-ba4b413d5ebd@redhat.com>
+In-Reply-To: <20250924074602.266292-7-sakari.ailus@linux.intel.com>
 
-On Wed, Sep 24, 2025 at 11:44:19AM +0200, David Hildenbrand wrote:
-> On 24.09.25 11:34, Catalin Marinas wrote:
-> > On Wed, Sep 24, 2025 at 11:13:18AM +0200, David Hildenbrand wrote:
-> > > On 24.09.25 10:50, Catalin Marinas wrote:
-> > > > On Wed, Sep 24, 2025 at 10:49:27AM +0800, Lance Yang wrote:
-> > > > > On 2025/9/24 00:14, Catalin Marinas wrote:
-> > > > > > So alternative patch that also fixes the deferred struct page init (on
-> > > > > > the assumptions that the zero page is always mapped as pte_special():
-> > > > > 
-> > > > > I can confirm that this alternative patch also works correctly; my tests
-> > > > > for MTE all pass ;)
-> > > > 
-> > > > Thanks Lance for testing. I'll post one of the variants today.
-> > > > 
-> > > > > This looks like a better fix since it solves the boot hang issue too.
-> > > > 
-> > > > In principle, yes, until I tracked down why I changed it in the first
-> > > > place - 68d54ceeec0e ("arm64: mte: Allow PTRACE_PEEKMTETAGS access to
-> > > > the zero page"). ptrace() can read tags from PROT_MTE mappings and we
-> > > > want to allow reading zeroes as well if the page points to the zero
-> > > > page. Not flagging the page as PG_mte_tagged caused issues.
-> > > > 
-> > > > I can change the logic in the ptrace() code, I just need to figure out
-> > > > what happens to the huge zero page. Ideally we should treat both in the
-> > > > same way but, AFAICT, we don't use pmd_mkspecial() on the huge zero
-> > > > page, so it gets flagged with PG_mte_tagged.
-> > > 
-> > > I changed that recently :) The huge zero folio will now always have
-> > > pmd_special() set.
-> > 
-> > Oh, which commit was this? It means that we can end up with
-> > uninitialised tags if we have a PROT_MTE huge zero page since
-> > set_pmd_at/set_pte_at() skips mte_sync_tags().
-> 
-> This one:
-> 
-> commit d82d09e482199e6bbc204df10b2082f764cbe1f4
-> Author: David Hildenbrand <david@redhat.com>
-> Date:   Mon Aug 11 13:26:25 2025 +0200
-> 
->     mm/huge_memory: mark PMD mappings of the huge zero folio special
-> 
->     The huge zero folio is refcounted (+mapcounted -- is that a word?)
->     differently than "normal" folios, similarly (but different) to the
->     ordinary shared zeropage.
-> 
-> 
-> It should be in mm-stable, to go upstream in the upcoming merge window. It's
-> been lurking in -next for a while now.
+Hi Sakari,
 
-Thanks. At least it's something to address in the next kernel version. I
-need to improve the MTE kselftests to catch the zero page scenarios.
+Thank you for the patch.
 
-> As it behaves just like the ordinary shared zeropage now, would we have to
-> zero/initialize the tags after allocating it?
+On Wed, Sep 24, 2025 at 10:45:52AM +0300, Sakari Ailus wrote:
+> No caller uses FWNODE_GRAPH_DEVICE_DISABLED flag when calling
+> fwnode_graph_get_endpoint_by_id(). Drop support for the flag entirely and
+> remove it from the documentation.
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Yes. Before pmd_special(), it was be done lazily via set_pmd_at(). I
-think it just needs a __GFP_ZEROTAGS. The only other place we use this
-flag is in vma_alloc_zeroed_movable_folio(), as an optimisation to avoid
-a separate loop for zeroing the tags after data.
+You can squash this with 07/16.
+
+> ---
+>  drivers/base/property.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index b52f7b3bbf84..7fc3257f223d 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -1239,9 +1239,6 @@ static bool fwnode_graph_remote_available(struct fwnode_handle *ep)
+>   * has not been found, look for the closest endpoint ID greater than the
+>   * specified one and return the endpoint that corresponds to it, if present.
+>   *
+> - * Does not return endpoints that belong to disabled devices or endpoints that
+> - * are unconnected, unless FWNODE_GRAPH_DEVICE_DISABLED is passed in @flags.
+> - *
+>   * Return: the fwnode handle of the local endpoint corresponding the port and
+>   * endpoint IDs or %NULL if not found.
+>   */
+> @@ -1252,13 +1249,12 @@ fwnode_graph_get_endpoint_by_id(const struct fwnode_handle *fwnode,
+>  	struct fwnode_handle *ep, *best_ep = NULL;
+>  	unsigned int best_ep_id = 0;
+>  	bool endpoint_next = flags & FWNODE_GRAPH_ENDPOINT_NEXT;
+> -	bool enabled_only = !(flags & FWNODE_GRAPH_DEVICE_DISABLED);
+>  
+>  	fwnode_graph_for_each_endpoint(fwnode, ep) {
+>  		struct fwnode_endpoint fwnode_ep = { 0 };
+>  		int ret;
+>  
+> -		if (enabled_only && !fwnode_graph_remote_available(ep))
+> +		if (!fwnode_graph_remote_available(ep))
+>  			continue;
+>  
+>  		ret = fwnode_graph_parse_endpoint(ep, &fwnode_ep);
 
 -- 
-Catalin
+Regards,
+
+Laurent Pinchart
 
