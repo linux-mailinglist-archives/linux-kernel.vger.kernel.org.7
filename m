@@ -1,180 +1,108 @@
-Return-Path: <linux-kernel+bounces-830827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6718B9AA6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1EFB9AA88
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F87D4C2EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:29:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EFC1886832
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3192C2FE570;
-	Wed, 24 Sep 2025 15:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC5230DED9;
+	Wed, 24 Sep 2025 15:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0CX7I7lo"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irQgTQzj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AE43148B8
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A7D30DEC4
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758727656; cv=none; b=o0bnsd7cCn9+RQhCk2CFkuKON3nLSvgIjvTp8h2WwFdRnQzPQKdbxA6zj7UPnWpceW2OoOnCEZxjoGrHLKoR19JYKlH/4Stc8PDxEUvksr92JkxCSCeoRJEVyjwAL6vqoX/kiNYgobAHiDDV4HoiLFAc1cxwy515Ia7Zh6OGsLk=
+	t=1758727690; cv=none; b=hGsqluHNUGLCuh0XyoQ4qoRZszAz5NeH0DixIeQVMSrD++7tg5cBHL816Se03awPeb7REsQXyMqtIZYOOc2iEJY7Oqt3Wk+XygokPwrOnXY0v99RO3WeAXJgFersjafTT8eKp0Uyv3RqmJySlWCpTfnOJx+5+7baQZMk/9GVWk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758727656; c=relaxed/simple;
-	bh=yPsv4tmUGpx19aaWjDO9Ojm0C3uT1FNckcRU2Atthqo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JOUj01tWThTwalcMB3TDHzYSOzeBpEdG871EAAo47oD4aUQH/MTLpS4QC8Tlv0imlxmox43Fz2WZaepfpbAGTdc2+4s14nLLdGVqi0fUwzUnOZ1GJmrpr1rU5tOnFHf7IDcjIKYZ89n+n4sH0L+mAEpsrMqhJFyiPqQx4Mik4pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0CX7I7lo; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b2f989de76eso113969866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:27:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758727653; x=1759332453; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPyujSEjHofHg9YDm/Jyl8IxXmB1G+6YXd/CQAOVg0g=;
-        b=0CX7I7loixeIXvyjRribwVAXyCXNuurxqeoHL6SfonIyrkGJl8iVsaPStkijx4sERE
-         NTi1mETxlsSB2BtqrKjcrd+ugQjkVX3rKZt81J91y5EqhAoOlUqjwDxr6HAmKKUqJkhB
-         ltvpO/gqIVG05zcQlvi4BBvGudqzfn2P9J5RLXmerahrBGiUS4kpMlED2OWsqZ65lM2q
-         pACui5rGBWJWGtwzrly41g5B5n2hLvePj5ZyyNYvipTHCEDO2UIzZZ448WM3UKhgBIf5
-         gFtnjjcO8mZX3JMRyapB57Rx/HZ2Zpkl1S8e/oc2OaAD2yKdGnkA/pVUieN1XPtAmgPd
-         iS2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758727653; x=1759332453;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPyujSEjHofHg9YDm/Jyl8IxXmB1G+6YXd/CQAOVg0g=;
-        b=XVyCZ7HixkdgR4CgIPGtRH42/iN7JBcRJVjTv1OUEQfeSUU0x5LMqj/bUBhDikIJep
-         f48AzWdSGCZV8w7HY6Ufb+H8R8m62U4ax6JJilaNJsdrGFzTsm7oLS/ZM/G00wqll/5Y
-         DwYqSGzK/9ouqyGFqJriDoDasSaGmrMwC+tiQ3MsK4AxYMevLU2b501VncjZlp2qwf+S
-         1Y8D6O5AUEOcaBwjKxR4kXo2e69rkpueELKKl6ZYeHNv4y+vm5tr2wS45ayOrTGlX9I5
-         nj2/gCgM/CYGQLbT4G8Ryjte2lpmgZaTdrtLHa/IRMUhnqV//ofeE5FFei8JCa1GTqsC
-         r9ng==
-X-Gm-Message-State: AOJu0YwQwU2DrxDzwEHP49ldfnanh06/uHvs958kitsWEZE0oocyhTbZ
-	TxCiRruOBT2ROdR3MDyGGTAiqMYzzNKjb2xVFpJM8OVx4BMXy2uUCqsQbtlhS+uHLxRTRj42Dg=
-	=
-X-Google-Smtp-Source: AGHT+IGhYJri2jw2StcIcnozNtBl5X8wH5wzUecPXuiOreaVtyiBeuhRrBBP2IZw5zrKucj7w3PXpApx
-X-Received: from ejcvk3.prod.google.com ([2002:a17:907:cbc3:b0:b29:9df3:352a])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:868e:b0:b0d:400:9182
- with SMTP id a640c23a62f3a-b34d97c9779mr811566b.22.1758727652921; Wed, 24 Sep
- 2025 08:27:32 -0700 (PDT)
-Date: Wed, 24 Sep 2025 17:26:59 +0200
-In-Reply-To: <20250924152651.3328941-9-ardb+git@google.com>
+	s=arc-20240116; t=1758727690; c=relaxed/simple;
+	bh=O/bKTpvQARqt8FVg/y21EPm0JoWae7amDRNYbxV7ONc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V83umjfmNwca+xV5qlHG++DbSS9xQQFtCCas1oVUadvpaTxDdjXShjdEWTCdRrP3jkTdXwqWppGMyNT+Y7of/ZPmwxrXZuN/9+IdTbBoYkQ6EfLf2TJF9RtE/ClrCX0jj4CHmmPm6gkYITs1ggnxuvR7M4BQQ/PXVBd8PAoVo4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irQgTQzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F31FC4CEE7;
+	Wed, 24 Sep 2025 15:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758727690;
+	bh=O/bKTpvQARqt8FVg/y21EPm0JoWae7amDRNYbxV7ONc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=irQgTQzjfSAjWwFVUQYTRj/oZ1GIQOmw6hdssvbkPidionp5q5qRBCVgMhNc71jUA
+	 RpsG9bOvIDFcynHxs5toNX9PmUeYLEkApMwKR07l/VKoaqMkKEi4uDMFbIKmpvCMF4
+	 FdTi3dHPyvwoX3cnCcLsFQKRZXASwWuDUzS3vQoQFz2Vn2adC+XM1YHWXIcklNt1p/
+	 wYGFAX22klRZ7NuqxsHnDpJjIRZeFh9CCAqb0si0AEFWD9ZP5V67PvFMS8xdbyMuBT
+	 V+OlOwvaf35CchUJqb0cx5b/InhHOicYhWFNucyh5gLSkC2/UiOMh2riv7Cjk+T1j/
+	 j0+7OvHvZ2RUg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,  Mike Rapoport <rppt@kernel.org>,
+  Alexander Graf <graf@amazon.com>,  Baoquan He <bhe@redhat.com>,
+  Changyuan Lyu <changyuanl@google.com>,  Chris Li <chrisl@kernel.org>,
+  Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush Yadav
+ <pratyush@kernel.org>,  kexec@lists.infradead.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] kho: add support for preserving vmalloc allocations
+In-Reply-To: <20250922143407.93e171f8b7c09eb21159a33e@linux-foundation.org>
+	(Andrew Morton's message of "Mon, 22 Sep 2025 14:34:07 -0700")
+References: <20250921054458.4043761-1-rppt@kernel.org>
+	<20250921054458.4043761-4-rppt@kernel.org>
+	<20250922131948.GX1391379@nvidia.com>
+	<20250922143407.93e171f8b7c09eb21159a33e@linux-foundation.org>
+Date: Wed, 24 Sep 2025 17:28:07 +0200
+Message-ID: <mafs0ikh7dg54.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924152651.3328941-9-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3342; i=ardb@kernel.org;
- h=from:subject; bh=CE858YGwYUY/DV8BNXHqb59oe3QHOpqPxAjPh5x7H10=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeMK78lkzuc7891fhPp9vvPkx4xPP3bezZiqJb6oYdLRh
- TEarxokO0pZGMS4GGTFFFkEZv99t/P0RKla51myMHNYmUCGMHBxCsBEGi8z/Hd1spzUWVpgZF90
- X8z6fe7v11eNVF17d278MLOa9d8kgWuMDPt8rfx/a1xa9mXKu5QAjQm8v38xlUyfPN/i54RAQVF zYS4A
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250924152651.3328941-16-ardb+git@google.com>
-Subject: [PATCH v4 7/7] arm64/efi: Call EFI runtime services without disabling preemption
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Mon, Sep 22 2025, Andrew Morton wrote:
 
-The only remaining reason why EFI runtime services are invoked with
-preemption disabled is the fact that the mm is swapped out behind the
-back of the context switching code.
+> On Mon, 22 Sep 2025 10:19:48 -0300 Jason Gunthorpe <jgg@nvidia.com> wrote:
+>
+>> > +static void kho_vmalloc_free_chunks(struct kho_vmalloc *kho_vmalloc)
+>> > +{
+>> > +	struct kho_vmalloc_chunk *chunk = KHOSER_LOAD_PTR(kho_vmalloc->first);
+>> > +
+>> > +	while (chunk) {
+>> > +		struct kho_vmalloc_chunk *tmp = chunk;
+>> > +
+>> > +		kho_vmalloc_unpreserve_chunk(chunk);
+>> > +
+>> > +		chunk = KHOSER_LOAD_PTR(chunk->hdr.next);
+>> > +		kfree(tmp);
+>> 
+>> Shouldn't this be free_page()?
+>
+> Or vfree()?
 
-The kernel no longer disables preemption in kernel_neon_begin().
-Furthermore, the EFI spec is being clarified to explicitly state that
-only baseline FP/SIMD is permitted in EFI runtime service
-implementations, and so the existing kernel mode NEON context switching
-code is sufficient to preserve and restore the execution context of an
-in-progress EFI runtime service call.
+It should be free_page(). The chunk isn't in the vmalloc-ed area, it is
+the metadata to track it. It gets allocated in new_vmalloc_chunk() using
+get_zeroed_page().
 
-Most EFI calls are made from the efi_rts_wq, which is serviced by a
-kthread. As kthreads never return to user space, they usually don't have
-an mm, and so we can use the existing infrastructure to swap in the
-efi_mm while the EFI call is in progress. This is visible to the
-scheduler, which will therefore reactivate the selected mm when
-switching out the kthread and back in again.
+>
+> Not sure why this code works - I'll suspend the series from linux-next
+> for now.
 
-Given that the EFI spec explicitly permits runtime services to be called
-with interrupts enabled, firmware code is already required to tolerate
-interruptions. So rather than disable preemption, disable only migration
-so that EFI runtime services are less likely to cause scheduling delays.
-To avoid potential issues where runtime services are interrupted while
-polling the secure firmware for async completions, keep migration
-disabled so that a runtime service invocation does not resume on a
-different CPU from the one it was started on.
+It only gets called in the error path and that didn't get hit during
+testing I suppose. Until v3 the chunk was being allocated using
+kzalloc() so I guess this got missed in the move to get_zeroed_page().
 
-Note, though, that the firmware executes at the same privilege level as
-the kernel, and is therefore able to disable interrupts altogether.
+I think Mike is out of office this week. Do you think this series is
+stable enough to land in the upcoming merge window? If so, I can send a
+v6 with the fix today.
 
-Acked-by: Will Deacon <will@kernel.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/kernel/efi.c | 23 ++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-index 85f65d5c863c..a81cb4aa4738 100644
---- a/arch/arm64/kernel/efi.c
-+++ b/arch/arm64/kernel/efi.c
-@@ -10,6 +10,7 @@
- #include <linux/efi.h>
- #include <linux/init.h>
- #include <linux/kmemleak.h>
-+#include <linux/kthread.h>
- #include <linux/screen_info.h>
- #include <linux/vmalloc.h>
- 
-@@ -168,7 +169,20 @@ asmlinkage efi_status_t efi_handle_corrupted_x18(efi_status_t s, const char *f)
- void arch_efi_call_virt_setup(void)
- {
- 	efi_runtime_assert_lock_held();
--	efi_virtmap_load();
-+
-+	if (preemptible() && (current->flags & PF_KTHREAD)) {
-+		/*
-+		 * Disable migration to ensure that a preempted EFI runtime
-+		 * service call will be resumed on the same CPU. This avoids
-+		 * potential issues with EFI runtime calls that are preempted
-+		 * while polling for an asynchronous completion of a secure
-+		 * firmware call, which may not permit the CPU to change.
-+		 */
-+		migrate_disable();
-+		kthread_use_mm(&efi_mm);
-+	} else {
-+		efi_virtmap_load();
-+	}
- 
- 	/*
- 	 * Enable access to the valid TTBR0_EL1 and invoke the errata
-@@ -193,7 +207,12 @@ void arch_efi_call_virt_teardown(void)
- 	 */
- 	uaccess_ttbr0_disable();
- 
--	efi_virtmap_unload();
-+	if (preemptible() && (current->flags & PF_KTHREAD)) {
-+		kthread_unuse_mm(&efi_mm);
-+		migrate_enable();
-+	} else {
-+		efi_virtmap_unload();
-+	}
- }
- 
- asmlinkage u64 *efi_rt_stack_top __ro_after_init;
 -- 
-2.51.0.534.gc79095c0ca-goog
-
+Regards,
+Pratyush Yadav
 
