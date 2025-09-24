@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-830405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A88B9991D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286FEB9991A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA507ADB63
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9856D4C3815
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545672E7BA3;
-	Wed, 24 Sep 2025 11:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA012E7BAD;
+	Wed, 24 Sep 2025 11:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=g001.emailsrvr.com header.i=@g001.emailsrvr.com header.b="SfQg2KBp";
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="UctSm/QS"
-Received: from smtp83.iad3b.emailsrvr.com (smtp83.iad3b.emailsrvr.com [146.20.161.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aw451M62"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFD42877DB
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04E922541B;
+	Wed, 24 Sep 2025 11:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713186; cv=none; b=XFKNwsb2yKNKzEkbLkulwwh5YWkhz6/Qy7UxOO343/Zaa4r0UBatHl4Nit7s/ReqwbQP1zAFfeiSCflBbOxjawrS19FuTeefOD7i1xPQeUIzI7fLPZBb8XKwJcg2BB5GBGdByGytScutvk3kClCNWLiUgyqW4dwesx92DF9hXY8=
+	t=1758713053; cv=none; b=kNlk7to7gwMz5FeYKNOeXkwYimV6H8blHcCGWp9TI+4LJc4eyZvOvud7Vb2XpEXBFOQGD7HJmdoTQnJ94s+gfJG1UKH+9utv4uXerUcSujNvKfWL9RER2NUo6Ke2dZtJ5KvP9iq/BZyK+LiFM1x6C0sIevB5YJUWo96ACXSWlw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713186; c=relaxed/simple;
-	bh=4sH1ny7lHaWXyvRBY7TW5YOvkqgtkY6ZmoIu2Cpl0jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VBA2kXhxwGvWjzhR8SMsqAj2rzxbvgz0zToD+X9tI5UL0flvvokVU4hAOzuE8ORe42lqJ3vk3Fr6jXrGm1aOQLxnD3rd+cipGGU22xt31u9VydGHjaCSCKiQj0LGuS0hMGcSdrhap2jrlMaBlpgiBxkoW6B9P8s1IAydIoteo4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=g001.emailsrvr.com header.i=@g001.emailsrvr.com header.b=SfQg2KBp; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=UctSm/QS; arc=none smtp.client-ip=146.20.161.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=g001.emailsrvr.com;
-	s=feedback; t=1758712873;
-	bh=4sH1ny7lHaWXyvRBY7TW5YOvkqgtkY6ZmoIu2Cpl0jI=;
-	h=Date:Subject:To:From:From;
-	b=SfQg2KBpe6VJO837nueW11qbFXKiaEDHhqerguDIb15PTmLxWLp13rSV6Z6mNmgPY
-	 F97vQdHn8ypdcRKf1IZI8Cc6ODiRVWarPJHkLq5X9KQ4dZ1jJs/hyUVi97THfNDu7N
-	 rAcFHttBqavU+6/AMPsEZNV1DafRZ+Abk3T2HmCM=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1758712873;
-	bh=4sH1ny7lHaWXyvRBY7TW5YOvkqgtkY6ZmoIu2Cpl0jI=;
-	h=Date:Subject:To:From:From;
-	b=UctSm/QSA9IZd7c+ZWFPD/bMk1qRCsgPa5tYR+llr9WqmemacWvZ92R68ZwGTgit5
-	 qZNnu7+VyeZ+qyV9/Nkstox6nxfYKUUFntBDapu6RFDcCk30ZVxodyIU/xu6F9rCBL
-	 9ABhKNohdWOhqOkSk4PoBNBCGTyK4gr3iaYuyPjQ=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp3.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 4BA914033B;
-	Wed, 24 Sep 2025 07:21:12 -0400 (EDT)
-Message-ID: <67b4ae93-f537-4674-bafe-2173232f70e0@mev.co.uk>
-Date: Wed, 24 Sep 2025 12:21:11 +0100
+	s=arc-20240116; t=1758713053; c=relaxed/simple;
+	bh=l60f/RSTs+a+EhA0GxHhEjYraeSuVIk+FgKQ8Yud31E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pSYtWKRXmIlzTOqet18ECydc9qKHiqlZ5Vo8qBv+GFzFQVTY+zLcxWL6JxBVeRoDff18Et2vfpSRfYqBBIaIfPN+HsOAmuB7SsINX+sOgNukogXoG9xrDBHDlKCZHz3dD93eygVfT4lVZn+7yaM7DIrDBypl7hPWveTxGePPeLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aw451M62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34365C4CEE7;
+	Wed, 24 Sep 2025 11:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758713052;
+	bh=l60f/RSTs+a+EhA0GxHhEjYraeSuVIk+FgKQ8Yud31E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aw451M62zUz5uFAP2OeKJCYKWEpB1Ofo636npyROCuXiY44Yceh/+bLA1p1N6uE28
+	 1Xgfoq1tK4csqrMEhmIBSuUMiBZJCklwJrzialVIeo7pdjHe3qSlmkP6sJKrltckBt
+	 yg03m3U+mfg3f4Rhg9boiqtKe3YpiiTzaI/K1eFJ3MxgMXsNJPxnxjFCg1pqjtFA2f
+	 NdtMKdBnzwQNjtdLLDwh1D5cE2x9dMDbc+IPL660Y/sY9ZvVmNF6u7vZjPfUHi0EP6
+	 +mw5n8wDsDKhz+9Tm9BbL+6dZsZzT458XYwxSZTk0ykfMvJyENgyz6guh0GhGOLM8V
+	 vDldMAsR/o0bg==
+Date: Wed, 24 Sep 2025 13:24:06 +0200
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Chen Yufeng <chenyufeng@iie.ac.cn>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <aNPU1h6hQ7DAC2KO@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] comedi: fix divide-by-zero in comedi_buf_munge()
-To: Deepanshu Kartikey <kartikey406@gmail.com>,
- H Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com
-References: <20250924102639.1256191-1-kartikey406@gmail.com>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20250924102639.1256191-1-kartikey406@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: d19ac750-f060-476a-aeb1-108d7f4f7e59-1-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PowpCBnIW/R5W19f"
+Content-Disposition: inline
 
-On 24/09/2025 11:26, Deepanshu Kartikey wrote:
-> The comedi_buf_munge() function performs a modulo operation
-> `async->munge_chan %= async->cmd.chanlist_len` without first
-> checking if chanlist_len is zero. If a user program submits a command with
-> chanlist_len set to zero, this causes a divide-by-zero error when the device
-> processes data in the interrupt handler path.
-> 
-> Add a check for zero chanlist_len at the beginning of the
-> function, similar to the existing checks for !map and
-> CMDF_RAWDATA flag. When chanlist_len is zero, update
-> munge_count and return early, indicating the data was
-> handled without munging.
-> 
-> This prevents potential kernel panics from malformed user commands.
-> 
-> Reported-by: syzbot+f6c3c066162d2c43a66c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f6c3c066162d2c43a66c
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
-> v2: Merged the chanlist_len check with existing early return
->      check as suggested by Ian Abbott
-> 
-> ---
->   drivers/comedi/comedi_buf.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
-> index 002c0e76baff..c7c262a2d8ca 100644
-> --- a/drivers/comedi/comedi_buf.c
-> +++ b/drivers/comedi/comedi_buf.c
-> @@ -317,7 +317,7 @@ static unsigned int comedi_buf_munge(struct comedi_subdevice *s,
->   	unsigned int count = 0;
->   	const unsigned int num_sample_bytes = comedi_bytes_per_sample(s);
->   
-> -	if (!s->munge || (async->cmd.flags & CMDF_RAWDATA)) {
-> +	if (!s->munge || (async->cmd.flags & CMDF_RAWDATA) || async->cmd.chanlist_len == 0) {
->   		async->munge_count += num_bytes;
->   		return num_bytes;
->   	}
 
-Looks good, thanks!
+--PowpCBnIW/R5W19f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Hi all,
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  drivers/net/can/spi/hi311x.c
+
+between commit:
+
+  6b69680847219 ("can: hi311x: fix null pointer dereference when resuming f=
+rom sleep before interface was enabled")
+
+=66rom the net tree and commit:
+
+  27ce71e1ce818 ("net: WQ_PERCPU added to alloc_workqueue users")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/net/can/spi/hi311x.c
+index 963ea8510dd9b,96f23311b4ee3..0000000000000
+--- a/drivers/net/can/spi/hi311x.c
++++ b/drivers/net/can/spi/hi311x.c
+
+--PowpCBnIW/R5W19f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjT1NEACgkQJNaLcl1U
+h9BteAf+IEeLcd9W8mlFBByfFO28DbxJRcAUE+pjdH4KCXxdRh6qeGClHlaiVKhK
+XmdrQy6IJ3oPS629u20ZwTC9adMvJ1SzPCNL++XlEW05tVLafBcb3/yrNYsoVgJD
+51mHHfE1ZFX9greDPHw53k5qc9gThzbCnuvofJPME8/0sfZX97D4F4Fb+vsmTZEE
+I3rUVhY4Z+9IhK5quhuxecuTNaFY4j4JmWZhKJew7e9oHepi2x/TvmGlJ/QzkMb2
+dwT/31ZHMlGrBB7nUpaNqdMQrYDydk6aLqLL1jPQRWRqSr/iwy+pckl5u6gZT7m8
+6qZByfHm6cG7V6DDD1RPLGrNtFkZxA==
+=UKIT
+-----END PGP SIGNATURE-----
+
+--PowpCBnIW/R5W19f--
 
