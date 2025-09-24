@@ -1,130 +1,108 @@
-Return-Path: <linux-kernel+bounces-830402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF143B998F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:19:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7D0B99905
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FE187A1BF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0EEC4C3B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A782E6CA7;
-	Wed, 24 Sep 2025 11:19:10 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271DF2E6100;
+	Wed, 24 Sep 2025 11:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s39B4XWh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565AB2AE68
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E802E11A6
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758712749; cv=none; b=PadITubrqh7/MPCjdGamlWbBbyfqY1gUfQmrh5om2xBqeu6b/0warXefVrQvp2k2FT1xpRvxFa8SpGcClll03uNcYgwDWl9ricBzrKSjOtl4PQ1cSK912E7TeizAFLT4US5ZY132/J4qZhVnHVbhSTD0cvhiQZTFW2kuE9wqoHc=
+	t=1758712921; cv=none; b=jr+ptJj58oHK/DPn9F+GCOeb/YKGQ8DJpXJDqcQTky1I9zJb7eORNz2+7likFiU8Ke4cD91yJpR4eiWB9wzDI6UgYIHROssEZzXKTa9AjQ9/Fh40IJPWAsWP3vNlbahVsDW702XuF3PZzY9pmC6N/znczp25ff0KQtxBy4QBecU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758712749; c=relaxed/simple;
-	bh=YknrDcOpf/SvyMml11gRcWZN+uxcgDYSCkSDE8ulFL0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZBGRWdeiiF9UfXHqallHl+M9r6+0ZBkZDf1HvtJwhwdUUpNqzoU0VdOxmRD2speq2rSsD5wibwhXtGtnwMzlxb9SvwPuJQ+IRG7Roqg+PiDm9F1wXQ+E+8BWUmmuRJNJeNGC/VJEzSXVu6MkFEwmr6U0mqmYOCRFR/3hnJn0Yvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4247661a0c9so83616155ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:19:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758712743; x=1759317543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uRK+TFZFSl/pCk/ND6mdOdAey833TmhbyTIAiPEk3PE=;
-        b=Nj8m7hJXD5V9uZfSk4vOd/ewtIefbxJjAv2HVIR35osVNaOV7r5jzgCRcJDACOjWEA
-         4MDfRdVgRAbtOv0CtEaQkIA3j8MXokKJNRAOurGBU+6+DiSPEpIgucYWFoLqMtfBw6la
-         wy2jlJOFGIIRdQ2TjhUWQGr+8EGT+txW3HKEy37YF8Okl7X3E4FyodDgxYArmDR5BS19
-         gjI3DmY+UVrlZf+Pa3BBD5vi3ygSz+uh9LUX5Xc4Ec4OtyQaKTvSKnleRnoleOlBP9ed
-         gw21ndAPQOclbev99UH5PzInd4bwPb4v6ba1UNKjLGurIAiHmvGLxNjZ8b2n7RpNLcEz
-         RDbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPT7Y3phjQxJqozAnU01g5dXBoIpH/uj88Y7JplbusGsNC+qNHffB+e+X66XhgzHCDs4B1DbS1hm86w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztbROq2cMFVkPU+MgXMAZukybgWVD3ruMUyLN2oZPIcIiKnygC
-	CHNOWg6J1x2XvrOus/TcRkHLq3RR0Njz91aZld5Lpf00pmZThB3vrs7PDT0sGDjAbAb7aqWsbrV
-	1Gr8SBc3GtBtByQamtSE77Q7YAGKBKG/CJAgV7dByA4vK7jUgbAK9dXSU53E=
-X-Google-Smtp-Source: AGHT+IGmYbY9poSwwRZ75wJ3lggbvx84fR6SBmnSzFYvkbaRVu1nsRZpDUkkI+k5F2SwKb2v+al5ipAYvwKLlLHtjy5nkjI01fy0
+	s=arc-20240116; t=1758712921; c=relaxed/simple;
+	bh=X7GIGF2FsHIBZtxGFEtJeOu9snmHHyv0w2PWFjS9Qgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCNZuYIy7lNSsESx/OrOGTPkibYeOWlwf1GVy6oFD9UqHyhf929rgte4eqbUJihRYnf9gXysWI3HBY85f7R2WXEKM8D0TAs0Hah7FPf5hX2Ht2LK7jw4IoYSJ+5uyklI+BAJzG2Bp3yV/b4gvJLRuRkXfzrgO4B17iiw8FnOnP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s39B4XWh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CCFC4CEF0;
+	Wed, 24 Sep 2025 11:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758712921;
+	bh=X7GIGF2FsHIBZtxGFEtJeOu9snmHHyv0w2PWFjS9Qgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s39B4XWh9JRah+ZAUcjPHW2yD9vovdGwxH8YMl7ATmxflxxhVFa3jkS4bi+x2461v
+	 DMhKUBVhWjxbkCcSWJoW1FNvG13n+f03NL5y+gZKSkB72Zj0Avh2/MMIvRF1G/f10T
+	 LM2rUFsnZDcdbuJcCYqwTIaQCh99pFaxoTbxKtA/9NuMEwLpVRDbO4oUNUbDDeVKG9
+	 6brUMHEjRNho9/i8UKZB0pVvwFiJjCFRbUkH6p4ELmpl8F8YATybQZZRmolcRLQi36
+	 RlChf13e6Ak06R40yk5iYFulIOX800XdQ2RH7zaPHoHwM3XS69i4dIsctIfAb4WSb4
+	 WcIAyA3xxQ7hA==
+Date: Wed, 24 Sep 2025 12:19:31 +0100
+From: Will Deacon <will@kernel.org>
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: Yushan Wang <wangyushan12@huawei.com>, Jonathan.Cameron@huawei.com,
+	yangyicong@hisilicon.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robin.murphy@arm.com, liuyonglong@huawei.com,
+	wanghuiqiang@huawei.com, prime.zeng@hisilicon.com,
+	hejunhao3@h-partners.com, linuxarm@huawei.com, fanghao11@huawei.com
+Subject: Re: [PATCH v3 5/9] drivers/perf: hisi: Extend the field of tt_core
+Message-ID: <aNPTwxnlXGbazFLR@willie-the-truck>
+References: <20250829101427.2557899-1-wangyushan12@huawei.com>
+ <20250829101427.2557899-6-wangyushan12@huawei.com>
+ <aNFMUdPJeJo9XU1e@willie-the-truck>
+ <3cc3fcdf-436a-9e73-a377-ed896d07a825@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3804:b0:424:8120:546 with SMTP id
- e9e14a558f8ab-42581eca60cmr91654955ab.32.1758712743368; Wed, 24 Sep 2025
- 04:19:03 -0700 (PDT)
-Date: Wed, 24 Sep 2025 04:19:03 -0700
-In-Reply-To: <tencent_7784EEC92ECA4CBAE7CAC6F592CEC6728906@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d3d3a7.a70a0220.4f78.001c.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context
- in hook_sb_delete
-From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cc3fcdf-436a-9e73-a377-ed896d07a825@huawei.com>
 
-Hello,
+On Tue, Sep 23, 2025 at 03:31:15PM +0800, Yicong Yang wrote:
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+> index bbd81a43047d..a52d98f1ed34 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+> +++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+> @@ -57,6 +57,11 @@
+>  #define L3C_V2_NR_EVENTS	0xFF
+> 
+>  HISI_PMU_EVENT_ATTR_EXTRACTOR(ext, config, 17, 16);
+> +/*
+> + * Remain the config1:0-7 for backward compatibility if some existing users
+> + * hardcode the config1:0-7 directly without parsing the sysfs attribute.
+> + */
+> +HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_core_deprecated, config1, 7, 0);
+>  HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_req, config1, 10, 8);
+>  HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_cfg, config1, 15, 11);
+>  HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_skt, config1, 16, 16);
+> @@ -95,6 +100,21 @@ static bool support_ext(struct hisi_l3c_pmu *pmu)
+>  	return l3c_pmu_ext->support_ext;
+>  }
+> 
+> +/*
+> + * tt_core was extended to cover all the CPUs sharing the L3 and was moved from
+> + * config1:0-7 to config2:0-*. Try it first and fallback to tt_core_deprecated
+> + * if user's still using the deprecated one.
+> + */
+> +static u32 hisi_l3c_pmu_get_tt_core(struct perf_event *event)
+> +{
+> +	u32 core = hisi_get_tt_core(event);
+> +
+> +	if (core)
+> +		return core;
+> +
+> +	return hisi_get_tt_core_deprecated(event);
+> +}
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: sleeping function called from invalid context in hook_sb_delete
+Perhaps we should be stricter about this and fail validation for events
+that specify both a non-zero tt_core and a non-zero tt_core_deprecated?
 
-BUG: sleeping function called from invalid context at fs/inode.c:1928
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6483, name: syz.0.17
-preempt_count: 1, expected: 0
-RCU nest depth: 0, expected: 0
-2 locks held by syz.0.17/6483:
- #0: ffff888028f400e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
- #0: ffff888028f400e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
- #0: ffff888028f400e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
- #1: ffff888028f40998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
- #1: ffff888028f40998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: hook_sb_delete+0xae/0xbc0 security/landlock/fs.c:1405
-Preemption disabled at:
-[<0000000000000000>] 0x0
-CPU: 0 UID: 0 PID: 6483 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x495/0x610 kernel/sched/core.c:8960
- iput+0x2b/0xc50 fs/inode.c:1928
- hook_sb_delete+0x6b7/0xbc0 security/landlock/fs.c:1468
- security_sb_delete+0x80/0x150 security/security.c:1467
- generic_shutdown_super+0xaa/0x2c0 fs/super.c:634
- kill_anon_super fs/super.c:1281 [inline]
- kill_litter_super+0x76/0xb0 fs/super.c:1291
- deactivate_locked_super+0xbc/0x130 fs/super.c:473
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8b7e78eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8b7f714038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007f8b7e9e5fa0 RCX: 00007f8b7e78eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000002c0
-RBP: 00007f8b7e811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f8b7e9e6038 R14: 00007f8b7e9e5fa0 R15: 00007ffe75b4a848
- </TASK>
-
-
-Tested on:
-
-commit:         ce7f1a98 Add linux-next specific files for 20250923
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13644f12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
-dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11724d34580000
-
+Will
 
