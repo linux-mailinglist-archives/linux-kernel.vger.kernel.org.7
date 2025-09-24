@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-831111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071BCB9B904
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9B9B9B90A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F632E5863
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D119D327778
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC281314B90;
-	Wed, 24 Sep 2025 18:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEB13191C9;
+	Wed, 24 Sep 2025 18:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZHAfAYq"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aCCgyhyn"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EC9248F48
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDD5313E0C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758739694; cv=none; b=fif/wao4Bis7EkmFJ29T20An7Nrj6e2f4I8tLU4VzY3DG85BlI7yVDlnxnprPFfqAvuc662EG2ZY5bFduRWaaBi6gI0ZD4Dt6FlVg85SLsGQH5NyNFLmHNIXOJeRdSLNDGVPkxl4AsKEpDxwJDTu8cJYAib3zRgkPd3GoExRopY=
+	t=1758739965; cv=none; b=gqhrNdqplMghzDSqBHs6c5hCla+7cc73g0gBn2xY6WWyKkct5/tgAWnucFv6nutG9iRCMyLnrfAlm/h/FnSPkpwOtOh1PJl9AFVBOtO7j/0WZ5xY6xVNm5To5hvSEGoyAjcHyPKIR06Rqrm0ZBxJ/DLdAljgQBzwMF2HFrIt3yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758739694; c=relaxed/simple;
-	bh=+cSLJVLKEj3BeCjUb5d6mRlp+LSIiYsL9/jVduhGhWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csWruOi3FVVG8V5L7wLRHGTLR10RWar9BZhjfNcoBms1yenOyiduT8pfBZRc258uyBsXxiZF6hAoplTQ5kiC3Vp3jZpF3u2EzK+JDeoPFu1TGWa+sFRFa+eBYDwFvVcDe5x2DRr5ug/64eIK8U/qkdPZRo/EXLpns95I5Sl6e+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jZHAfAYq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-25669596921so1461515ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:48:12 -0700 (PDT)
+	s=arc-20240116; t=1758739965; c=relaxed/simple;
+	bh=TrnfCbO733+lCXZrSFS09BJmX3fVRMEKZIVSt3/d0Dk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wpz3qKCio+uOb316YbjsY37HbHLa9uhxXHWDQRHkBOVFvVPD+0SkWJD/FXdTIW8heq2m0N782CEIV/UkNtIhLe5ftxkUlrgzaNVkWs+uN1lMDYODU7cro7oahFUVWCGjBxEnp+k//7SUSh71vuxJU7uy32bYg5C5WaApXjaaA6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aCCgyhyn; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63491fc16c3so174759a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:52:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758739692; x=1759344492; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkL6ZFw2eyDJxTR6geR0RUKNGEtDseea1wBQWsTFcXM=;
-        b=jZHAfAYqh2wPNbnXSA2asFxTrdqisDx26KybOumU8OilxXaJC1F+NfIwcZHMX2GyOT
-         jb6CkYBCNXknub4wyTWFCKqfQGr8vGSt4AvhGyc59+Ae0xlkApIUmj7a+7B9XpA87Yhb
-         hwn7+JDGUzMhohaGdBm+R2iyHXkf2wtLzoq7WVzku9yux41dZ+7AD+0F8At6x2rll3gi
-         cSmegGpBsWcCEb6mVOZYq+iPeVHLDeD+QFrpO2wQhgmjbo0tHNhuW+3JqXNQ8gzTyYyi
-         6qSDd+TDoWogLi7QM/gwdo5UAyUfLR+Wqlp0gFY8HbVKq0JfxN3l9E28MhYtQMFNcVtd
-         LJGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758739692; x=1759344492;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1758739962; x=1759344762; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hkL6ZFw2eyDJxTR6geR0RUKNGEtDseea1wBQWsTFcXM=;
-        b=eYcmUXfyheQNamv1XBJVrdY76xle1KJmoKiI3II2qsNq6+1EIKRAzdgJB6f6hby9ew
-         J2SkgGRZm+RE7o7ho5nswOb4KL3ng/ye+a5abEDFfpaGr4OyLzAUl6whDiJzZx/vNnPT
-         tIvGhz0fU2kFnJWLsTxM54zSK53nHKHgBuKIqhQCbKMIHneDr2uLaPSDu5jX3rkiZ6hZ
-         +qWbN8uYMABi9+GMMWxVS6U8Ppi5cqWqsI4qgJ0QJI/t6Mwbm8sjVOz/xWQNzvvKBFZ4
-         YfHVSHQS5TPyYSK96xY6jhCbM6g80oRUlAU2eu0o9Et4AJ+kwS9Yx9KeNy1zg7CsgJDg
-         TVZg==
-X-Gm-Message-State: AOJu0Yz1SC2aWgFkIuLNon3DLdGtjb/CwbhNmKw0pvf1W3kUxpnR7hDK
-	Il/CHiVnR25lqALBn7hXqXeVVlDSst7omOTzZMFvqzsH+nuHhoxZDwU4
-X-Gm-Gg: ASbGncuzv+i8WCvqY9d29z+7gvg+Eu4wUkLvZL3jE1J2Y2nye1mHYjP42Z6jjqKG270
-	0j3b1OnunlWEh0uWiRMxFqwv2UmrGbA+XbZ55UE4Dr6ggd0+C/PT/27/ib0cN7+Gm+WUgMDrOlw
-	2Psrzm5ce4qIboOxAKMMcijLJaGOlerlKG50E/vYRTPFwBu7r2mbqDRwP6sAb5NusiKgGAgInlV
-	4oOQ3OlCrhSuwtMy2YScgeJDCeXkRU8G2peZwWlIfnJMlSQ8FOFl9kGqr+huISHAQMqv8ILV42K
-	WDpVcBNyHOwYR7wK93Dc8F53FC/BhfF2KSn3dwbfkmf7sS5IJPSZRb++0rgEwWwixuuWvjtoNdp
-	qa9sCnuAem+Qi01xPms9XGR6Iqesqqst5tfbLRtFTHqqVFWaE4TcVvlCWsKiun/h+
-X-Google-Smtp-Source: AGHT+IGTxELwHOVAchfeV+Zua3SucLlubodBPLOiFSjPNAs1H57tvT0lzKr1jBAv6AHjCcpTAs5tCg==
-X-Received: by 2002:a17:903:b47:b0:267:bd8d:1b1 with SMTP id d9443c01a7336-27ed4a934b8mr5659715ad.50.1758739691900;
-        Wed, 24 Sep 2025 11:48:11 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df630sm198733655ad.81.2025.09.24.11.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 11:48:11 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:48:08 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v1] mm: convert folio_page() back to a macro
-Message-ID: <aNQ86GPdjRc2DoJN@fedora>
-References: <20250923140058.2020023-1-david@redhat.com>
+        bh=GxaSlzLAtScN1zJhK9/qnO+REZ+0VCMj1JhA1WOFJSg=;
+        b=aCCgyhynB3igypdVb3DPqjVcgWPnxv3ckeJreBI2LsAqX1tEbBcKqhazbLqacQCulP
+         ixOeKFxJjcpMGY9bF+gc9KT+AgLAdGfiOqxfUPiN7d7CdkooNa++nhvma1e4O9iq0LCI
+         JUADA9NJcDs1PSug+0z5oVsf3cd3ulS4TYGPDdcbK16CzKi3mcrlP3wlYTBtppzsjrYJ
+         JesSyvkOD/09Sfllou60fBch+xUVDkE7KPhhui6aqbZoTfCT1MwoZK0s+VKmb6vh7JQj
+         6QcMx7Tst7asfDqW+lmQHqlgzK4MnswKquyhGhwj4xgHvh2zKXd4y1T987R90DkggR+X
+         bX+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758739962; x=1759344762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GxaSlzLAtScN1zJhK9/qnO+REZ+0VCMj1JhA1WOFJSg=;
+        b=XgqCtb1N+npDTbPaGr9IO24T3OUnywFTS0HWiK5UDWJCf2bfQfYcfQeawmwslaWF+x
+         MKjnZWujn3hufuHYxxzyTGURYvQheFYU0zARRRS4XvMu/IarQzEsJp+hwyvLdq1qsxMx
+         dP01WBcNTGSqn7vgbNn1mOfnj8GDFhRma+VBz4/MmE7OzL9998pxEbvDLBx3+43/DAQL
+         KNqhTyfh/d07tHzM19XAnPdEPlZ8QeUkTzT7FuC3Vom6X/JHTzEQRSRg9Cq5U2ZomYBm
+         DTUx1GH4IUESsmbfauVGSJYN/XASLZFHc/EL70ecl9GZp3TybYMQ6N2L66SO6Ot4E7i0
+         kbGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkUtnF5su6jamIJyMsyt+ntb5g42CxuPyVSyUPPaV5joRA39KpypbyJ50nkjKLLn4wEAWisAAQG3ZdSSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0bLhUr7sTeTwnbBmzCfDsCZ3mznTfxQpbVGiDT8pJpTst3n5l
+	DCn2OIgQVOWGSm/9XHJA5GXoifyVrGc65l/C9/PxX9LJkob9FXfomwJVD9zpwQE98QFZH+KTbsV
+	/SAPDKYm6xgxhiwa6KIbUtKoiIFLeMA0xoBMsxkoeFw==
+X-Gm-Gg: ASbGncuSm8M3IBcXW1yZ+uDzWNZIY9PVBrQo/WRi2lH/2cTqmaxhSAyqs0//XTxMF2P
+	bucHGV5vTuuhlEIAQiqJCiFdrLd/ovS8M5e6LmrTzITFxga6sqxUp96xdwbOR2UjV2eo0oh0xKM
+	yN6unSXep+oxwUBtxCTf6qtocQPhTZYHx1+X9lar2ARNnj1wlIqPrKSPcxzt9t6KtRfXpqgZecB
+	8le6hA7IEhsARGLc0+4YTmAYUNx7okpXCw=
+X-Google-Smtp-Source: AGHT+IEfLas0BqTe4LbLvHMPVeWuRAoGKff3BYuwff4/8Ek1I05jBqtCoUMSm2S1LlFiIk3FPlHI234+b1Girt9Hnx0=
+X-Received: by 2002:a17:907:7e88:b0:b0c:6cae:51f5 with SMTP id
+ a640c23a62f3a-b34bb8f1a7amr87587566b.43.1758739961642; Wed, 24 Sep 2025
+ 11:52:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923140058.2020023-1-david@redhat.com>
+References: <20250911222501.1417765-1-max.kellermann@ionos.com>
+ <745741.1758727499@warthog.procyon.org.uk> <755695.1758728366@warthog.procyon.org.uk>
+In-Reply-To: <755695.1758728366@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 24 Sep 2025 20:52:30 +0200
+X-Gm-Features: AS18NWBX90PDeUbc5D76CTwvxhtp7GglnV1Nwwby_YGspEvXUsJA3vS2rse6AAs
+Message-ID: <CAKPOu+9Ym+dRHQiMvjvdisnb5jwca4_2ECbzOMLYso=xNvxeQQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/netfs: fix reference leak
+To: David Howells <dhowells@redhat.com>
+Cc: Paulo Alcantara <pc@manguebit.org>, Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 04:00:58PM +0200, David Hildenbrand wrote:
-> In commit 73b3294b1152 ("mm: simplify folio_page() and folio_page_idx()")
-> we converted folio_page() into a static inline function. However
-> briefly afterwards in commit a847b17009ec ("mm: constify highmem related
-> functions for improved const-correctness") we had to add some nasty
-> const-away casting to make the compiler happy when checking const
-> correctness.
-> 
-> So let's just convert it back to a simple macro so the compiler can
-> check const correctness properly. There is the alternative of
-> using a _Generic() similar to page_folio(), but there is not a lot of
-> benefit compared to just using a simple macro.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
+On Wed, Sep 24, 2025 at 5:39=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+> > > ... and frees the allocation (without the "call_rcu" indirection).
+> >
+> > Unfortunately, this isn't good.  The request has already been added to =
+the
+> > proc list and is removed in netfs_deinit_request() by netfs_proc_del_rr=
+eq() -
+> > but that means that someone reading /proc/fs/netfs/requests can be look=
+ing at
+> > it as you free it.
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Oh, right. I saw the linked list operations were protected by a
+spinlock, but I missed that this lock is not taken for traversal while
+reading proc. I'll send v2 with your suggested fix.
+
+> >
+> > You still need the call_rcu() - or you have to call synchronize_rcu().
+> >
+> > I can change netfs_put_failed_request() to do the call_rcu() rather tha=
+n
+> > mempool_free()/netfs_stat_d().
+>
+> How about:
+>
+> /*
+>  * Free a request (synchronously) that was just allocated but has failed =
+before
+>  * it could be submitted.
+>  */
+> void netfs_put_failed_request(struct netfs_io_request *rreq)
+> {
+>         int r;
+>
+>         /* New requests have two references (see netfs_alloc_request(), a=
+nd
+>          * this function is only allowed on new request objects
+>          */
+>         if (!__refcount_sub_and_test(2, &rreq->ref, &r))
+>                 WARN_ON_ONCE(1);
+
+You changed the refcount_read() check to an atomic decrement, but at
+this point, nobody cares for the reference counter anymore (and my
+check was just for bug-catching purposes).
+Why bother doing the decrement?
 
