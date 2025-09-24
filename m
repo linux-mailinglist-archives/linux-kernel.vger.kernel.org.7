@@ -1,209 +1,117 @@
-Return-Path: <linux-kernel+bounces-831271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41347B9C3DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:10:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFDFB9C509
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E8F7A39C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA3F3BD05C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B758E285C89;
-	Wed, 24 Sep 2025 21:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D5288C8B;
+	Wed, 24 Sep 2025 21:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cczReymv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c9CJ17iZ"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="ipFvi0I1"
+Received: from sonic308-55.consmr.mail.gq1.yahoo.com (sonic308-55.consmr.mail.gq1.yahoo.com [98.137.68.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4529623B62B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4A15E5BB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758748225; cv=none; b=Yd1bUtTzC+8utzWgwx6zo7MZqTlPHKD4Aq4JLtnQ8pl3IkHnysw5irwtM/wkpBSrZbBRNDbCPc3PyQvtPn8eaBUXPHlE2pzADY4m3RHsUsFTerl4tHF2YU66TEZRE3BsxXG+1Fsqhh+Z1Xc2JvkdchP+s2txXS2AIYOUjcVO2ew=
+	t=1758751114; cv=none; b=Utce9p16KQ7EjiaX6ZFOIYlDsbktvU62hYeHqQDmyUge62I6/kJnI156lKYh9ho50FyLVHdfFT7uMoQtU1667p/Zzos2K5h/hhUI56++x3c9wxQdH/LUZZDP9L1390eVpy0PzNsWhRAl6jPGSdcAQtIpRH5wjmMFsdrLNpagYVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758748225; c=relaxed/simple;
-	bh=RO0tKW3sL8F2joy6i6xwtQhE7IsCttedNvIzrzTpHl0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=fEk5CETNKeFwCDPLZPlB3f/XHFqTYxxA90iZ2Qo4C4eV1EhknBHtDoNw3cNJmCGI6lnTxyWgUmmvUBeV01yCMfQnbnTC5Eb19RKY6jQjT3PxWJL5+RUM1kSfrU7CT9tUet7KuBHOEk6va++8VI3xwpg54JkVfVrZ/XMh1O9oFOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cczReymv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c9CJ17iZ; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 85B44EC0177;
-	Wed, 24 Sep 2025 17:10:22 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 24 Sep 2025 17:10:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1758748222; x=1758834622; bh=s9
-	+E7CcmL2AGPTpCUHFVgVtr+tUxO40W8zKKqRop2qI=; b=cczReymveyjXCZMdrt
-	lU1QwRSFnbkIkKVN7i11AdGuU6ilXmCoswgGYUlplW671tG6ZZNjje+pSoUER4I8
-	9tsuWTSqziW3DcfMzqhMYyKWQYw38aKZCthg9TZu+IJW8Bh2u3yPcOeKq9bgl4gH
-	lBl/HszTkDrkCXqZN7+INEJRPxLLsbjnunp/yt1DwDihkGfKkXea5+hlzYlgDGz6
-	eSHNprUbOGES7BrikCBM75eAx3XwVG9a30lqF21yxaKwU9MxSwrXvtYDyE/lASPW
-	wVDHXeMUdj0BgmzFN3x6hrvIxmZCxrY/kLEwa2eslSQgeKFbLbGoJYa+eaFQ1FtM
-	kEgg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1758748222; x=1758834622; bh=s9+E7CcmL2AGPTpCUHFVgVtr+tUx
-	O40W8zKKqRop2qI=; b=c9CJ17iZCiLZfGonu96fi2VA8XlPuBZe9sXKSDWtxJVa
-	zzmSSH3bAxPc3Cg4RlLQasmLAa4URT7m0yh7hZbAkTPjqPPJl1TiKzQbDVCERRJW
-	O8sx7moJDVeEK9vc7pxvbvH55VYv8EiJlmyrjPNhB+e+JRyPyVcdj+R3GQfsriq/
-	y4wRZxON+PEgnnLFVCYrJiLy+jTUS5nt10WE7tc/O3lnlQwsynPxEmsR5cDyA5r0
-	fzCRka8gt3ab6Kh8KeC1gywOl6PBCNNloQnm7xrWJhz/Jd9jP9IS/i0T/V86+ig3
-	GBN4POJNsjvf3hVCedXPTQu15EHUr1zcnXyNW3tisQ==
-X-ME-Sender: <xms:Pl7UaA1raZNvRpMUQO-BzXY9VQuLsEv3J-xI6pcCxnUg-n0-REnjsQ>
-    <xme:Pl7UaF4Wm0v4j4U-DfoHzxqbWMy4bqK6xf-eyKptMsPtv2iniql3lnaG5cFVq7o2-
-    EcRrLNIeXjsn3zI3ytcdAEruGkeO8M0h0g-wjUFVLzqMHSYuoiv6oFF>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigeeihecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcuuegv
-    rhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpe
-    eggfeggfeiheeiudffkeeifeehveetffeuhefgheeutefgveetjeekheefvddtheenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgpdhpvghnghhuthhrohhnihigrdguvgenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhn
-    fhhrrgguvggrugdrohhrghdprhgtphhtthhopehsohgtsehlihhsthhsrdhlihhnuhigrd
-    guvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:Pl7UaOjeIud6WItB6tT9SsabL2OluFtbH2f_knyRz4FuCPapjiYC2Q>
-    <xmx:Pl7UaIXI6k-f_tqt98T2vZ_dwN0vZd3se_kirZOD0BFI63cjLP-7eQ>
-    <xmx:Pl7UaNWtMI7IFfT2Bd1SIHHOb2zN6j-kiwFoDcmbZFuFnK1GzXPDCw>
-    <xmx:Pl7UaIiAc8xzXYowpK6ydFENZrumS6S6zNpuLX05mDPAuNxRCX7g5w>
-    <xmx:Pl7UaOvQ8QKO-gvVOr0Wwl_0wTAgj2Uq5hu3vm51m9yAzndPdaJt0sBd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 26D8170006A; Wed, 24 Sep 2025 17:10:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758751114; c=relaxed/simple;
+	bh=r1vJ54PpSjSS8+lx4LeAIjSMmN1R6dNDEs4CzXxwzmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=CpwSQP5KaVg/Psusm9Li5FvlDsWBdvnHi6Ohijnha8afU4+gDFgpgp4SFJReNXfgdEszdW4TWHc661lj0xHXAnDRBYVqwh3fzzy2AqsmVcTkOEi/oPHAwRDgVnQFKo5iX9ihXO+dawwzv1Zo/OzzHXFUzYys0eURifkAQBwxuZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=ipFvi0I1; arc=none smtp.client-ip=98.137.68.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1758751112; bh=jN6DJ2DabP1eWXd2ZCkfZBFfvBMceXgI8xVTpnKQZYw=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=ipFvi0I1MiOIsA4Di02TYpqhwvOleOGCmWs9KyhJIuxeJRy+bevuOa5WfeOHAjFeb47US2SDNVqd8xfkmlqgg8vDBWK9lLMiDNvAFp81WF2nl7W8UhoB7FofDxDKgtH2fCbfjMeWUMJd60VGjxOCWAASFZsBjt85o/F2FuYuKGAdXmpqpBoy0TjcnIVYd5lsVH1NfmmPaOBbjckCCov3d22O7SbbjM0wj9L2EVtnRkTrOfVfPzkRm0DVmZmC9De3VcQIvpnUohTncaJbY5gtd9T0EwVdt7vpDi8OMRm4k9nG6eijLVAca7gjKiRYSRIYbDT0PokBzV2pWx0hRuqmfw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1758751112; bh=7+RC0agBPx2vHqENxiQxKNYT17dC++XQegpQTvn3h9e=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=OOFruUWZx0NXnm22qrJtHU/ddVjgiQ2R532QHJz6QdmSIO3K+IxWMZkIjp6epcU+tTY/hgEPiqF4TtLUJ3aXHYlHfjq5onk9cYIQr+6OAxYUuvkE/9IOiY1ScoQKCdEQROfGZI7CcmBGXmtdnQvn+fFoEkAwbMIQ4yEputiPWa6iMboCJqLJFgUxWwACVgWlLmSM4wO+gn9YEO9q12OyOsYxh/e/AR2pWKEfSzi+c7DYJekX9mRmlp7UyqEpQCGUKbSZK8/M3kyhwbOKpShzCzq+OZ2Cye79N3Ij9XVJqM6Wrrote4S0EoTiQayVRZp61RI+Ge2fbMO9fIXvMr0HGw==
+X-YMail-OSG: 2dBLu60VM1lJVqh50nKaV56YeAVyVCPNXE66YagbxIVXoh1G1S8D1idYGtJXYkH
+ TgYOsDejngV9UiVivoJYyoPwyC1gzPLUOOYxoF1wbNvkEvkgxdDwLuB9_uAaQXePv6MARiQE8BY5
+ gxroKge40p19X0FKrUtXIx_szkSbl2vT9.oq8WOLUkxJa3MwlsaL.GXM8V2Nz7Dqfo6M7E9Yf_Jm
+ zFrk0ocb79cLRO4ku_ghoes_cJqN2BWyqtRS_OcHg7FyUahhGmiBSZu4cIZvT.eQODAvm2OHbeCN
+ .UdnAcYjuGEuU_34mjiZRplOmDye8gT2btJ4eM0pQbIcINrVfzn54J4JS_USdO._7DDo5P4M7Kh8
+ GAT_o58RCG9u1kp3g14uy8DPeNQaAF8opnddue1wMwVi5irbjPhThXEu0B8g5Or1GD9ekwGRLHbu
+ aiHwIrIhHGJ4qV0WKCMrVLkrJ8zdBcKR0UwSjWeVIOvi3elQcYZC2ew7EhkRABoxy02QdjDtezEb
+ 4oucTpDSKmd7YYnAJwsaFI890GR9OtuFmxFKJ8HJQB_g5hsVy8NXPwdozJ9rloRfmDN0tYdo8viz
+ .BrT80Qy6KOgOyAxjQBxW6McSZbjRwOjIwtH2KCQ_SAhn1bSp0ahtYVur7fuZMKrgvR_lMOxo.OJ
+ V_aR6QWFanP8sCv7KI64bVHez74vYCwwZCLBypOq9Ajj81nuAXzLleVSDqMwNRCRNvpcJ0WhyGcZ
+ TOOxqdbg89aXOr2Hw0Cq.u0S18ujW1dQnWsoL8ArpZflaqZ..qJIC_WbDosJ6uKl2ziinW49VY6D
+ 2VArOuoQEXyShA61I8682R78y938UeCW5zZE00USCD1MUTU8i3K9kf9qxFH0kYn5GzIVj89WGsVa
+ 9SGwT0xSzqFukWRWB0GPwqPw4bZ1C38wlpoupEStRvQBjzDpbSrb19QjoVCql5MhAAt4NWA6tWSw
+ rSn2o_I_aPKF7gqS.pzAKDTS3JpcMIZBPPXwSjzpoGh__ATVO_s_JTfKBU62Q00VSUIXygDm1tmF
+ RyXedbyI1iRP5NkYHLTcMzi.DmIXTXKF1hl1BC8jeCeb6LppEZasn5vswvXqXCgSOFqrQJ4UhWO9
+ bP6IzKbfu1Z9xiHWhRyTrugebJddheNevYsfizrFULi_Zm93.EXVKBUzHevJ7cGTXBKA94hHWP2t
+ rvLfsvTPxRILtmjrX82AsOSj_iAcBudjZ1yFR_OqTzpXXhSeuflXIcaVCZXYfEORh3_LgmvxOFo0
+ VIVFl4cIg_geSPJlmijpYKHB7fHFjHUdsVZ9xrQrwSO1sEU4EX7BKaiuU0U_NAL_QtianMB93LSt
+ N9fpK3oaY7VDHqBqieI1CqG5nM6WtY2ZfuxjHU4Sxh_dBOakvJ8eIoKT0SHPZGkECWK0Hhkjj0dT
+ ubbI2500NrqHpUBkvtrsNFS3sApCB_s42e5VXJpz2fSpNHzmJgHp_JsJ1mEuLfJThonZCfB0xp56
+ c19F21DNMrVO2TQl5zZYlrufLQ3w5PRqkrFqfgA15AEegVea6EC4LErd8AR32tYb24QqqRi_LCYs
+ s.NlGLCdLfSr86Vv1kYvB_lmYdF3EfVwDVnrQMOdozgPlCD0kdLcL2Re8Y29Y5v1IvItgtZNKVwz
+ PSJ7P_5FZZoM4BuC0kWHwaZs7Di.yXbyPLBsVrONAQzYjghRgxqYoXYRXws8PAIA2Rm4rD7h40fA
+ P8AYy0HzCCZVnStCXB7xcn8_OtxYdf4YSlP5f3RzV7BgkLD1xsbJvotrRmZnrEvN0a8P9N7tCUMw
+ 85F6_Lzel3xwffFynOcNoI6mnbNwtbbe.N0c8vU0RfS9FByHviQ4SgTem2hBNGVgNA2xq9FeWflR
+ mn5xmcdWcifvIVGsWH1ZfUtCiR0PIQ2SzMnk8O8rj1mC57ss2OGaORxlbVyWpCNmP6ahzFclUfrE
+ kgRiPk2K3FQUEoNL1.U2sqt4UwHznh7DlueO3YdQx9UHBnG.wWNcu71RCHPTWPVUnvHxqlkMtg6e
+ M_1nzdrHQX1xIiE154WxLA_VZ0jBwvvxejrQGD05PhMeG7jSdkDtB8Q5eRBbFHbPmYqd5H.M3cbW
+ dEgPDaJFSAUuXXUgFRixeTFH9QQgBvVY0xK3S23MbLXLqSBX7txhBI2GXl39MvHph0_Oe5fX3RkU
+ 7uQ_g_aNZkoMXtJ7CzTpf7K71_y3g0Cy1nKzQ_3LPVUyEL2m6RNdA0fUpQr6aIUNODtk0WFwG9da
+ s5zWNtxHWSmsQXKCTgcdIGw3RvB8Qb_HcFPMmAwLkaMWf_Z3_GLkdvE_bWOYCLMCgHEKmSro-
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 25109569-baaa-48e3-a0f6-d2d9d39b81a3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Wed, 24 Sep 2025 21:58:32 +0000
+Received: by hermes--production-ir2-74585cff4f-twrgb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID c81868d836ce73f83f7e719b570d17ab;
+          Wed, 24 Sep 2025 21:18:02 +0000 (UTC)
+From: Ruben Wauters <rubenru09@aol.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Ruben Wauters <rubenru09@aol.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: add myself as maintainer for GUD
+Date: Wed, 24 Sep 2025 22:10:32 +0100
+Message-ID: <20250924211557.6687-2-rubenru09@aol.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 24 Sep 2025 23:08:56 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, soc@lists.linux.dev
-Message-Id: <6565e739-19d5-465a-9fb5-d918bcb24b56@app.fastmail.com>
-Subject: [GIT PULL] soc: fixes for 6.17, part 3
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+References: <20250924211557.6687-2-rubenru09.ref@aol.com>
 
-The following changes since commit 875691ceb8bd619de7791243b1cf6184ab534865:
+Since GUD has been without a maintainer for some time, and I have been
+working on it, This patch adds myself as maintainer for the GUD driver.
 
-  Merge tag 'at91-fixes-6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into arm/fixes (2025-09-03 23:02:54 +0200)
+Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 16f6013580e9..3fbeb41f8792 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7744,7 +7744,8 @@ F:	Documentation/devicetree/bindings/display/panel/panel-edp.yaml
+ F:	drivers/gpu/drm/panel/panel-edp.c
+ 
+ DRM DRIVER FOR GENERIC USB DISPLAY
+-S:	Orphan
++M:	Ruben Wauters <rubenru09@aol.com>
++S:	Maintained
+ W:	https://github.com/notro/gud/wiki
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+ F:	drivers/gpu/drm/gud/
+-- 
+2.49.1
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.17-3
-
-for you to fetch changes up to 13923775d5b0b47656e800bec7baf50a20474aaf:
-
-  Merge tag 'tegra-for-6.17-firmware-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into arm/fixes (2025-09-23 22:34:35 +0200)
-
-----------------------------------------------------------------
-soc: fixes for 6.17, part 3
-
-There are a few minor code fixes for tegra firmware, i.MX firmware and the
-eyeq reset controller, and a MAINTAINERS update as Alyssa Rosenzweig moves
-on to non-kernel projects. The other changes are all for devicetree files:
-
- - Multiple Marvell Armada SoCs need changes to fix PCIe, audio and SATA
- - A socfpga board fails to probe the ethernet phy
- - The two temperature sensors on i.MX8MP are swapped
- - Allwinner devicetree files cause build-time warnings
- - Two Rockchip based boards need corrections for headphone detection
-   and SPI flash
-
-----------------------------------------------------------------
-Alyssa Rosenzweig (1):
-      MAINTAINERS: remove Alyssa Rosenzweig
-
-Arnd Bergmann (8):
-      Merge tag 'mvebu-fixes-6.17-1' of git://git.kernel.org/pub/scm/linux/kernel/git/gclement/mvebu into arm/fixes
-      Merge tag 'reset-fixes-for-v6.17' of https://git.pengutronix.de/git/pza/linux into arm/fixes
-      Merge tag 'socfpga_dts_fix_for_v6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux into arm/fixes
-      Merge tag 'imx-fixes-6.17-2' of https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into arm/fixes
-      Merge tag 'sunxi-fixes-for-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into arm/fixes
-      Merge tag 'apple-soc-fixes-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux into arm/fixes
-      Merge tag 'v6.17-rockchip-dtsfixes2' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into arm/fixes
-      Merge tag 'tegra-for-6.17-firmware-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into arm/fixes
-
-Conor Dooley (1):
-      riscv: dts: allwinner: rename devterm i2c-gpio node to comply with binding
-
-Jihed Chaibi (2):
-      ARM: dts: armada-370-db: Fix stereo audio input routing on Armada 370
-      ARM: dts: kirkwood: Fix sound DAI cells for OpenRD clients
-
-Jimmy Hon (1):
-      arm64: dts: rockchip: Fix the headphone detection on the orangepi 5
-
-Johan Hovold (1):
-      reset: eyeq: fix OF node leak
-
-Josua Mayer (3):
-      arm64: dts: marvell: cn913x-solidrun: fix sata ports status
-      arm64: dts: marvell: cn9132-clearfog: disable eMMC high-speed modes
-      arm64: dts: marvell: cn9132-clearfog: fix multi-lane pci x2 and x4 ports
-
-Krzysztof Kozlowski (1):
-      ARM: dts: allwinner: Minor whitespace cleanup
-
-Lukas Bulwahn (1):
-      ARM: imx: Kconfig: Adjust select after renamed config option
-
-Marcin Juszkiewicz (1):
-      arm64: dts: rockchip: Add vcc supply for SPI Flash on NanoPC-T6
-
-Nobuhiro Iwamatsu (1):
-      ARM: dts: socfpga: sodia: Fix mdio bus probe and PHY address
-
-Peng Fan (4):
-      firmware: imx: Add stub functions for SCMI MISC API
-      firmware: imx: Add stub functions for SCMI LMM API
-      firmware: imx: Add stub functions for SCMI CPU API
-      arm64: dts: imx8mp: Correct thermal sensor index
-
-Russell King (Oracle) (1):
-      ARM64: dts: mcbin: fix SATA ports on Macchiatobin
-
-Thierry Reding (1):
-      firmware: tegra: Do not warn on missing memory-region property
-
- .get_maintainer.ignore                             |  1 +
- MAINTAINERS                                        |  2 -
- .../dts/allwinner/sun4i-a10-olinuxino-lime.dts     |  2 +-
- arch/arm/boot/dts/allwinner/sun8i-q8-common.dtsi   |  2 +-
- arch/arm/boot/dts/allwinner/sun8i-r40.dtsi         |  2 +-
- .../dts/allwinner/sun8i-v3s-netcube-kumquat.dts    |  2 +-
- .../dts/intel/socfpga/socfpga_cyclone5_sodia.dts   |  6 ++-
- arch/arm/boot/dts/marvell/armada-370-db.dts        |  2 +-
- .../boot/dts/marvell/kirkwood-openrd-client.dts    |  2 +-
- arch/arm/mach-imx/Kconfig                          |  2 +-
- arch/arm64/boot/dts/freescale/imx8mp.dtsi          |  4 +-
- arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi |  2 +
- arch/arm64/boot/dts/marvell/cn9130-cf.dtsi         |  7 ++--
- arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts |  6 ++-
- arch/arm64/boot/dts/marvell/cn9132-clearfog.dts    | 22 +++++++---
- arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi    |  8 ++++
- arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi |  1 +
- .../boot/dts/rockchip/rk3588s-orangepi-5.dtsi      |  3 +-
- .../boot/dts/allwinner/sun20i-d1-devterm-v3.14.dts |  2 +-
- drivers/firmware/tegra/bpmp-tegra186.c             |  5 ++-
- drivers/reset/reset-eyeq.c                         | 11 +++++
- include/linux/firmware/imx/sm.h                    | 47 ++++++++++++++++++++++
- 22 files changed, 113 insertions(+), 28 deletions(-)
 
