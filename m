@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-830062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E581FB98972
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD21B989D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3453B3E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B8F1B2104E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8631827E060;
-	Wed, 24 Sep 2025 07:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C94286424;
+	Wed, 24 Sep 2025 07:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OdtYy9Et"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W9sqPnn3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF9F1C84C7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C207728136B;
+	Wed, 24 Sep 2025 07:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758699851; cv=none; b=Ul/MgoBd2AKY+6kgAC1JyOo2+0OWWc5eAT4474mGl4XbAcSFe+ujxb7NmlKvgzRu/g2HmTH0b9AcMM8uhb7ts00DaOEyVvKzwNSI7FwoUo1r9jVSfYbtqO9qg0b/kOWTRq6dr1vsKeUIgpvdqyv8B7894EoLhdpq+teao2qM0SA=
+	t=1758699983; cv=none; b=sVRNHZEiOX9rX95sjkYd5XHnkX800HhNAGDgkZuWuBWrWBwH7qCFGY9lkIJZAPMf/l05le4hxfcedySX98+3fYH5+nQLp3ekimJ1INV59A52tw8DBy23zvNPV9o/oNV8KPbeisaC4BcVGB6zPqQUDxBB/iWEXOpzfX/A92hmxBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758699851; c=relaxed/simple;
-	bh=y52NIEdvB6H89kVa5Bf6kIfLO3o2wxq5rA7muF6Ttus=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=Y+5t7AihIapFyJOgyMRh+e6wEzvver161p/NQk1+l/uOXEHsGVWW7GfSE0HqxKSjaiX1qC46qo5JGigrKnHZEqCwXMBUrTtF+VgFC9cNzlMY1A9d0w9/G33OQH7UDZhnoPifzrj2JVJ4pZEAMCD4GWG3fnFKBBmP10nFyjGF5Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OdtYy9Et; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250924074406epoutp0223d2a6aba0299953aa85458da375a222~oKDFPcmSs1617616176epoutp02i
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:44:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250924074406epoutp0223d2a6aba0299953aa85458da375a222~oKDFPcmSs1617616176epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758699846;
-	bh=8MznWO4Eakb7UroODORiUGViNhVOOaZtf1/76Z7mtVo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=OdtYy9EtTxX0ClBlwSBHAfJiMjh591NMxorM12M+Fp96G8/T6v+UQw6JQDsSvnxUB
-	 N7zUog/ZWauV5clBOc9EsHZ4sQQoHqN5bCA67mnze1lUiYpMu7tUruZKT/VGqFC2PF
-	 fFmPg4j8vY69vNXqmTi94EjgXmI9oHsc4PJb828s=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250924074406epcas1p28ce30bf68c0c86eb826f9e4e656ef121~oKDEt-O_F0096100961epcas1p2D;
-	Wed, 24 Sep 2025 07:44:06 +0000 (GMT)
-Received: from epcas1p1.samsung.com (unknown [182.195.36.225]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cWpkt0d3hz6B9mL; Wed, 24 Sep
-	2025 07:44:06 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250924074405epcas1p3a116daa0efa4a22d1741437b0cf59f8d~oKDD03zKW0502905029epcas1p3S;
-	Wed, 24 Sep 2025 07:44:05 +0000 (GMT)
-Received: from localhost.localdomain (unknown [10.253.100.173]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250924074405epsmtip279e9ba81d4b06213adb5f19ab45fe0f4~oKDDyWMfv2576525765epsmtip2i;
-	Wed, 24 Sep 2025 07:44:05 +0000 (GMT)
-From: Yunji Kang <yunji0.kang@samsung.com>
-To: jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Yunji Kang <yunji0.kang@samsung.com>, Sungjong Seo <sj1557.seo@samsung.com>,
-	Sunmin Jeong <s_min.jeong@samsung.com>
-Subject: [PATCH v4] f2fs: readahead node blocks in F2FS_GET_BLOCK_PRECACHE
- mode
-Date: Wed, 24 Sep 2025 16:43:58 +0900
-Message-Id: <20250924074358.253759-1-yunji0.kang@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758699983; c=relaxed/simple;
+	bh=hGCimekiy4lQWMYOVtyy0ZshjTYtVpRm+lGYihUQeGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cMFKnkdXYijgRQBUMVIVCv6jUHPG8yoEp0CZ2UE8md4NONdowNdIqHmkMG76EL97B6b9iHYncFzB2LtWI4+mvjETt8E5WTex+Iql2lUyDuUX3zINntUVQbWXG/m8REEZK2RZGR4xTsDS2uXJnjI8/Poupqytkm35xWg4VTiYauw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W9sqPnn3; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758699982; x=1790235982;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hGCimekiy4lQWMYOVtyy0ZshjTYtVpRm+lGYihUQeGA=;
+  b=W9sqPnn30gIHTFYaYE8l0kwlCC71UJebi3jhMCh2PQkHtFq/BeZ66V93
+   hssEQ6pGVzQ31cYQiidAGg5nn37BBL2QnpZiqL3PWxDDAa8hb8mkVnBTv
+   oBmuuy4k/erkaNDKVaOELfgW4/Nlp0Ej4VEERDvRcfDlbheg80LsVCAfl
+   DyQYfv8Iih8/iR4HMZvcL9kO2EUTIJZo2heF4UFyt9uwq+3maz+zA7T8R
+   rMcTzCS9NZoI5Qs/Nzot6bGJg5//Xy8lEMRR8/mFdZ0w/FBnmewTppOUD
+   8aAHfM5luk09sQctGJ9h+fVkEgaWVKaFgUgo0kX4Zj3mX4zoTa2Fd5tvb
+   A==;
+X-CSE-ConnectionGUID: Dq6cbfYpT8aOLFhtbYikzg==
+X-CSE-MsgGUID: KW/ie6EPSxuBlRRnWXoKsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72346960"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="72346960"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:46:15 -0700
+X-CSE-ConnectionGUID: Krifw9XSTJ67QEUJYh4R3w==
+X-CSE-MsgGUID: KWcSzU2iTFWd0zPn4BtXGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
+   d="scan'208";a="176552706"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.128])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 00:46:05 -0700
+Received: from punajuuri.localdomain (unknown [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8A20F11F8D0;
+	Wed, 24 Sep 2025 10:46:02 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1v1KCQ-000000017Hk-1wde;
+	Wed, 24 Sep 2025 10:46:02 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux-acpi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH v2 00/16] Align availability checks on fwnode child node enumeration
+Date: Wed, 24 Sep 2025 10:45:46 +0300
+Message-ID: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,86 +111,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250924074405epcas1p3a116daa0efa4a22d1741437b0cf59f8d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250924074405epcas1p3a116daa0efa4a22d1741437b0cf59f8d
-References: <CGME20250924074405epcas1p3a116daa0efa4a22d1741437b0cf59f8d@epcas1p3.samsung.com>
 
-In f2fs_precache_extents(), For large files, It requires reading many
-node blocks. Instead of reading each node block with synchronous I/O,
-this patch applies readahead so that node blocks can be fetched in
-advance.
+Hello everyone,
 
-It reduces the overhead of repeated sync reads and improves efficiency
-when precaching extents of large files.
+Historically the fwnode property API has enumerated only available device
+nodes on OF whereas on ACPI, also nodes that haven't been present in the
+system have been provided. Both OF and ACPI have similar concepts of node
+availbility, on OF it's the "status" property present on device nodes and
+on ACPI the _STA object evaluates to device present, enabled and
+functional bits, of which the present and functional bits are currently
+being used to determine whether to enumerate a device.
 
-I created a file with the same largest extent and executed the test.
-For this experiment, I set the file's largest extent with an offset of 0
-and a size of 1GB. I configured the remaining area with 100MB extents.
+Two additional functions, fwnode_get_next_available_child_node() and
+fwnode_for_each_available_child_node(), have been provided to enumerate
+the available nodes only on ACPI, whereas on OF the implementation has
+been the same on the non-available variants. The motivation for providing
+these has very likely been to provide fwnode variants of the similarly
+named functions but the difference isn't justifiable from API consistency
+viewpoint.
 
-5GB test file:
-dd if=/dev/urandom of=test1 bs=1m count=5120
-cp test1 test2
-fsync test1
-dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100 conv=notrunc
-dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100 conv=notrunc
-...
-dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
-reboot
+This set switches the users away from the "available" fwnode API functions
+and later on removes them, aligning the functionality on all fwnode
+backends.
 
-I also created 10GB and 20GB files with large extents using the same
-method.
+since v1:
 
-ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
-  +-----------+---------+---------+-----------+
-  | File size | Before  | After   | Reduction |
-  +-----------+---------+---------+-----------+
-  | 5GB       | 101.8ms | 37.0ms  | 72.1%     |
-  | 10GB      | 222.9ms | 56.0ms  | 74.9%     |
-  | 20GB      | 446.2ms | 116.4ms | 73.9%     |
-  +-----------+---------+---------+-----------+
-Tested on a 256GB mobile device with an SM8750 chipset.
+- Move patch "ACPI: property: Make acpi_get_next_subnode() static" as
+  first.
 
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
----
-v2:
- - Modify the readahead condition check routine for better code
-readability.
- - Update the title from 'node block' to 'node blocks'.
+- Add missing parentheses and kernel-doc Return: section in
+  acpi_get_next_present_subnode() documentation and move the Return
+  section: of fwnode_graph_get_endpoint_by_id() to the end of the
+  documentation section (new patch for the latter).
 
-v3:
- - Bug fix to allow more node pages to be readahead.
- - Updated with test results.
+- Use device_get_next_child_node() instead of fwnode_get_next_child_node()
+  in flash LED driver drivers.
 
-v4:
- - Removed a specific condition for precache, 
-as using the existing mode (LOOKUP_NODE_RA) is sufficient.
+- Rework iterating port nodes in acpi_graph_get_next_endpoint() as
+  suggested by Andy (new patch).
 
+Sakari Ailus (16):
+  ACPI: property: Make acpi_get_next_subnode() static
+  ACPI: property: Use ACPI functions in acpi_graph_get_next_endpoint()
+    only
+  ACPI: property: Rework acpi_graph_get_next_endpoint()
+  ACPI: property: Return present device nodes only on fwnode interface
+  property: Move Return: section of fwnode_graph_get_endpoint_by_id()
+    down
+  property: Drop DEVICE_DISABLED flag in
+    fwnode_graph_get_endpoint_by_id()
+  property: Drop DEVICE_DISABLED flag in
+    fwnode_graph_get_endpoint_count()
+  property: Document that fwnode API returns available nodes
+  driver core: Use fwnode_for_each_child_node() instead
+  net: lan966x: Use fwnode_for_each_child_node() instead
+  Input: touch-overlay - Use fwnode_for_each_child_node() instead
+  media: thp7312: Use fwnode_for_each_child_node() instead
+  leds: Use fwnode_for_each_child_node() instead
+  leds: Use fwnode_get_next_child_node() instead
+  property: Drop functions operating on "available" child nodes
+  spi: cadence: Remove explicit device node availability check
 
- fs/f2fs/data.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/property.c                       | 42 +++++++++----
+ drivers/base/core.c                           | 10 ++--
+ drivers/base/property.c                       | 60 ++++---------------
+ drivers/input/touch-overlay.c                 |  2 +-
+ drivers/leds/flash/leds-rt4505.c              |  2 +-
+ drivers/leds/flash/leds-rt8515.c              |  2 +-
+ drivers/leds/flash/leds-sgm3140.c             |  3 +-
+ drivers/leds/flash/leds-tps6131x.c            |  2 +-
+ drivers/leds/leds-max5970.c                   |  2 +-
+ drivers/leds/leds-max77705.c                  |  2 +-
+ drivers/leds/rgb/leds-ktd202x.c               |  4 +-
+ drivers/leds/rgb/leds-ncp5623.c               |  2 +-
+ drivers/media/i2c/thp7312.c                   |  2 +-
+ .../ethernet/microchip/lan966x/lan966x_main.c |  2 +-
+ drivers/spi/spi-cadence-xspi.c                |  3 -
+ include/linux/acpi.h                          | 10 ----
+ include/linux/property.h                      | 14 +----
+ 17 files changed, 61 insertions(+), 103 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7961e0ddfca3..a20a99d7ba5b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 	pgofs =	(pgoff_t)map->m_lblk;
- 	end = pgofs + maxblocks;
- 
-+	if (flag == F2FS_GET_BLOCK_PRECACHE)
-+		mode = LOOKUP_NODE_RA;
-+
- next_dnode:
- 	if (map->m_may_create) {
- 		if (f2fs_lfs_mode(sbi))
 -- 
-2.34.1
+2.47.3
 
 
