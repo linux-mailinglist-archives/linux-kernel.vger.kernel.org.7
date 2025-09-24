@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-829887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D269DB981FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22B0B98207
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3F519C836C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330214C43F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54E1239562;
-	Wed, 24 Sep 2025 03:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29792244685;
+	Wed, 24 Sep 2025 03:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="cK9GFmrE"
+	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="j154YBC3"
 Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB1820E023;
-	Wed, 24 Sep 2025 03:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A4623B628;
+	Wed, 24 Sep 2025 03:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758683844; cv=none; b=PmSVI88YZicilNlLHUuWoMpJXHoyAJWIgxn2qNttjnMTgVoDMf6fVf2TuU4JoHGuph4+9gMokCITnuBkrKWA8IO/sXM+Ax75l/f6FfOm7LBQtPPasGLxJikYhG+DimKD6eKbofdqdpIKO9aDBIgTF27XZQ8/O2MyOwFvAsFIs6E=
+	t=1758683851; cv=none; b=s6S393d1dT6hFY4EKG2wY+5vlGJsl/QKnQFIjRerPEp/QOxCmcwaUjIlTDMkuDmBg9AXLe8/x14GOvmF7hIOPwtRoqQ+zDHIipjRRIplkdtU6TxAAIOmdoqnHOWcgmUGi+TuswYaAtraDLEgHmbh95MYWrZlanDRMHjWpxLUHvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758683844; c=relaxed/simple;
+	s=arc-20240116; t=1758683851; c=relaxed/simple;
 	bh=c7V474mTW5IspYQd1awSOV7f9p8Em3dMruZdyTMq0P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kAAdkGrobO4hqZ3VS3J8VmTwg4XCQYwRBKqBflG1DTFIhiqyfiHetIFrqFZh5tnnHTl5qgIGqA4Vz2rgeCgWFA9JUyePOWBSZsx57Ozr/WTA/KP2TF2cfrBG/Ugq9BcmPJwgqv5aVhCw6MfS50Vwy7d7zBOM5jCISU/FjDh+vrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=cK9GFmrE; arc=none smtp.client-ip=54.207.19.206
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JTXIbsyskXa6l5DiMZg2mFBHx+XTS9lynzvdngi+3Yv3FViMcddHiw8b8z33y6X1qDwewlFXDolZI0cpYHDhz58qaedaVk35elMAT2mfdSWIXdPytevagqwn1xzAWBnAHlzF9mDcWE27hDTHOjOQSVdX9oFvKBRcWjF42gg47pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=j154YBC3; arc=none smtp.client-ip=54.207.19.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simcom.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=simcom.com;
-	s=oxqy2404; t=1758683808;
+	s=oxqy2404; t=1758683826;
 	bh=kYs7tdBXiTXV0luFtV3IW+T23C6F01Eh7K9J1nRHWso=;
 	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=cK9GFmrED0JxR0EbGhqpI30TNwcw+mpAxIKoJIQ+vrgcshLBpDWxgUHypN4rkmiqT
-	 M1kHgRtbc+3GKn8bStpEwdM8xfch9Hpw7bKD+iy7nYE8KGkdkQZvgZTcydLkZxlnTU
-	 6Rpi5jd2slqE8z8wQfwrhpVCyW4lcoqqYmgh0N30=
-X-QQ-mid: esmtpgz11t1758683807tafb474eb
-X-QQ-Originating-IP: o2IbDyyME8aA/smVpXzpHmHqeEG9D/s/K/GvE1PuV1M=
+	b=j154YBC38BXqXfxXGS9tKe0wkVpYt4+sMgJ2UOBiy4+Ide0o0R6eCB2+ZYEWm5X1a
+	 RjWGyGG4fgrVqwxm9dmjpBiDHyY7Iypz4QVZ6pHg/FxZlnbyrwv+Z0OJ7eFQ8eiQQk
+	 0oOCSg40pJ/xEAlxMsY6N9j4VP8m6i9ZVBs1opAc=
+X-QQ-mid: zesmtpgz6t1758683824ta6f7e33b
+X-QQ-Originating-IP: rW6UeeFLQY+W3B0keoCsm6i4Mm8olRN7RA/GnwOcMHA=
 Received: from smart.. ( [113.233.137.23])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 24 Sep 2025 11:16:40 +0800 (CST)
+	id ; Wed, 24 Sep 2025 11:16:58 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6637117805200387109
+X-BIZMAIL-ID: 14064001251587895528
 EX-QQ-RecipientCnt: 5
 From: Xiaowei Li <xiaowei.li@simcom.com>
 To: Johan Hovold <johan@kernel.org>
@@ -52,8 +52,8 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Xiaowei Li <xiaowei.li@simcom.com>
 Subject: [PATCH v3] USB: serial: option: add SIMCom 8230C compositions
-Date: Wed, 24 Sep 2025 11:16:24 +0800
-Message-Id: <20250924031624.2784347-1-xiaowei.li@simcom.com>
+Date: Wed, 24 Sep 2025 11:16:50 +0800
+Message-Id: <20250924031650.2785000-1-xiaowei.li@simcom.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,22 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OUC5DGN0mB58p9ZWp4jYvfXYaQB7Z+ozyfezPw1NMkJvTTDSGYyL8nO2
-	uI29xHC9Be22SHdIKnHyKURMjs6FdZTdQm618MYy37Ykdn/Xl0XJqzh38ypJ0fQ0DMDrGoi
-	zSCNaTagGYYnwIc/FuCHY8aUEweMPWMCkVRilcvNYkgQgjayH202nIQvs7uI+FzWf5p2KVN
-	3/4k5Kx/a7SdPLZUAd5h78r0bsjqCufGvkT2tCqntBgZgiq+F/4qaQhtribFJgpjxOR3vJa
-	rmkvYo6l8H3ka7eTwg2IgfwJmTX2lz82GCX29dwFsCrz0dYVBonE39va0yDRderITkWAK49
-	nvh2qzWBt4s8m1mNJc6hlyKkUQc1GMZRxwLCDnsypqyHdIEWLwNR/se+iefg9HUJsP4q+b0
-	elA/dyRMp3dZFyEOiOZPWJ9Y8v7eLJufXaE7QqH4hNFl13knfmlGcokChEMRlCQXW3k40Uv
-	N+fiR4Sd5QAttC9iQ/fm+SerJEWuLzoT1olsTT97xIt7NBUtnLJZZfl51iWxbBknhkzGVyT
-	ie7UHOfKC5YFDAMGbb3KqOksvIJr+GQgFbwvVn+75qjIatxh3HYtP2nST73TBmN92zOD8Qy
-	/TSpLPfmcJpR4KpcU1f8HmX7RkIE4Si4YnV5fxx9ZMhf2ZiFB1IvE/doiZiQW9cN8VKE1aW
-	FLPYiwa+eWNozVyELRYoqF3kq8DmrhxXWqt4JCyEH2JfuOK9LBCTkeAuvTJBkO1z3XJ9im0
-	CxJAlhsVVHYv89fH8fhhqLICkAlWTvtDX0K+vsP9DeJkNA1bmDB7KUR2ekq5k+tk0wnoF50
-	wOHqWwsArnNDS73Nhqa8gpuwxxy7QGzW/OEF8jFDWFSzK7M4SCAjJ8tjzfmfFaTS7E1XKzw
-	F2wRxF3HXxnxuz/tX6bc4IWp0hDz/J9U4GnWiYz3xrypWg8LTkhbk5x7R3YXrwJjjGohbK6
-	jscZqiJjrP9L3Z9ryhjbJFaofmyiWs1oAWSsCmYLYKrKpgwdBmIr/4uge
+Feedback-ID: zesmtpgz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MRiFTjyIbtS1MKOJh5XvRWv+jTdAa2d7d1SHDdI6KeSJY6kj0LVDaMTL
+	1V3+Z0BzsdO7MTiAHT4ZSkkWHpqhNFfHMXlPkmT2Ey4msMXPx4jSUgHfoVFErhabR/+qDeS
+	4thxAMOgJRVRuAV3ryIzcpHbh8suilULoWaHjLcGhC93RP7B7ZFEbxQR1rhRX8dPibbmvx9
+	KyvX5UF9sYTHa3787oXsq9I1AjuslNCYrHqHl1Jqg6ucHvJuyLh5HvMApt/dJgGy+lAQoZE
+	Ol31O/PsIIwNbYzVeSwuMb+bHXhQkuwKkyAuWhIGEWKHRnWtT+UkTknSvexvfLiU5qWj/N4
+	Yc4HvHppyTdX9eYV8vO+ftqkA2sWaRh14i9JIDMfORmACEH/iXqXdOK+aPnI8smuo+7Vumj
+	BCsJmOr4aERP1dFkPJfQf9dN/ek7fwCgES9prwsHdhwvNHUMitReYH6J4sP4XnI8C62+K60
+	8LdvmOO2/pf83NwNOtAoateWM+uwLyWe1iiAGIGnAKbFr6fIPvomghgpEkYymMrS73oW4TD
+	O7YhU3BFsgPIJ5+5dhfTF9sp4pcCMPy/jVoaGf541wmX3trSGY/LXBUXQCoEDHN2VpFM1N3
+	str4F0qsVRmvq2TVOJ6dduYh/YZI/JkxopwzIcTGionr8IGjV/MD8MeXXM4LBd2PPXvlBrm
+	sTp4glIWx8j3a2wrMqWZb8p20zbBAzxA+ecmf4Ol1Qwbn32lGAb0x4jfV1sZ0vPibx/53ln
+	pF5eUqSPgSR4LqpPY9u9N4jljgVR4joz0/MQycppfXIunYWm1YRYcalAFfRY5uxNSPvnMEr
+	3M0kZSOI6YOZSBkydeN2oomYFurvNV0yQq/Z/fVLY86G0lsf9nOUvYhy7mS8KX0PxKS9TmT
+	dWNDaA1T5VdKiTWb6W65EBrUkiUUr4gJHpBzylJaz+ukHytnOjNrisjfPq9i8tQwWPRz3US
+	SV3nnQiMwEegDW4I3EdAml7HmXN+asrMLGIAI791YFFKBFbBIAxi/F1h9SmLnn1vR1cO4mN
+	PU2Huq+Dw/Yqq6BYekvglTfqZoBf3B95/FuFuqOmYvkkZJUDt78hksDMdJHXDQobGyJhAoQ
+	A==
 X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
 X-QQ-RECHKSPAM: 0
 
