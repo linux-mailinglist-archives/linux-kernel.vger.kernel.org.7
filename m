@@ -1,408 +1,312 @@
-Return-Path: <linux-kernel+bounces-830190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDD8B99038
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D01B99043
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E4F2E3AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2B919C294E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A342D541E;
-	Wed, 24 Sep 2025 09:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6DA28B7D7;
+	Wed, 24 Sep 2025 09:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CqeT8gQn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y5MZqWdd"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011042.outbound.protection.outlook.com [52.101.52.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2892D4B6D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704457; cv=none; b=RdJsfpE6G8RZfgJ4XGq+qjmjk6iU2mAPXbqn40yCoMRtwm/UOLpU4itspXsCWMwXfvkqnh6ojPv9TKTsxATXjdiUAVikxRUhGUFFK2B9oGPxArn5pZ0/A5Y8AeGCJg/Pfu58GCHoyaWT3AKii8plSy1yGti/jrF/NcaTznYD4sQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704457; c=relaxed/simple;
-	bh=Nh4aVWGuaiRZVqPL441CW5oZI1GWK7ZjIAMJm7moJUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNrCIPAEay0vGcP3JEPecAt9+nK5rjg1m7yiHLNpty3sKENwNmRtC/WlgiZ/SPKm0qVf0fmv0tKg7Hhv1UStF9PeQChs18aD5Xns+LQv9ewMWhpLQdD2bKoxcQbpmbu5xTWILX971Qv3qi92/HIylH+aIj9a4xtN1d9ozoy+2+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CqeT8gQn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758704454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aLs02NJP+bbyEGdjFVbfYO8s3w/0jWQxn/snmC8403w=;
-	b=CqeT8gQnSAb5mG85c4uRYBHbkc8LpNxNlBY6Cl2m5lsoQckLU5kNkjlLpEf9KPE7tPpsrp
-	DIzexfqkSRUZe8yacI1yjiANa1kCjDjeDhp7XaHUr43AokfyVKBwmEiUrefcXbA1x9/Wsb
-	9BCutiwo7YbHafhRLwyGVW8UwQVFvSs=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-141-F-WLLeZ_NzGUryKJrIgWEA-1; Wed, 24 Sep 2025 05:00:53 -0400
-X-MC-Unique: F-WLLeZ_NzGUryKJrIgWEA-1
-X-Mimecast-MFC-AGG-ID: F-WLLeZ_NzGUryKJrIgWEA_1758704452
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b2e9653a35aso302702366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:00:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758704452; x=1759309252;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aLs02NJP+bbyEGdjFVbfYO8s3w/0jWQxn/snmC8403w=;
-        b=EwoUaiSwPfmd8eqM1fycCTUKl4OvFyZkcp36DeuKOIyx8DXE/GUyrCfn+0vwXPE9Lo
-         PsA3nYLxko1OxCMKTksLBPzmnDhEP0xpnhLElVgdWVgOQGrUaOWCZjMRQ5Wz+sSrh4j/
-         rpCspQ9HP7tKRFfTvZzlElRMvUNJRYZmwKdK8v8PEgmCaJFpnhR7ie2rbxx6FaS4lFpq
-         CpztkSuaQ8JAdzIkD9b3o1IWJaQnP5y4IaTqEHsJjka5e7KsWcj+HMUNX6CJXPCE8WRg
-         h8omhGKUR2i1Tc8PIP/OVWdw4VSX9yIh6opKy+dXaILXCtvyJb4dmaSZz90yBto4la7M
-         z3Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8N/uRQrCAR27gLd9T1GF7y4NgPG7tw/qyYdXQ4domOIXM2tTrFLiyfjZ3RwKmPqWjVx15sz6O1UcVCeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnarNNkPU1xpxczDxntVopy5EVn72oWFFnAqqTQT7Jzf4sNh65
-	phyl4vZD7BRZk7iwkcswuSSIA9OsneRVLvrvZJfg2SNzecklAZ8oPqmJ2cAgCXjskrT0j5nJGZF
-	j49T57wKAEWjfEwCeCqaiKP0kR4hHYm5eswbffgsy9Pg9o+G2BgXbU5A2nCJ1+rEz+w==
-X-Gm-Gg: ASbGncu+8DO+8RdpSuBDMqgCc+zkVNpBMO8R22MVQSRAxDCxyYEg5KPQZ7pq4CzclVb
-	6F14tf9cangC8cttKNFfOaWBUlaVwyEoWswQNtQ+Aun8Jh3Lz/6uebdSBkvR1Xb0nU3dGVGHQgt
-	k48q66SEHAySensZlBIkOp7qXDy3QPXvFoc3G8Qgj7JA01rGObuKLki1Q5e3UfXfzpTyY5zJV31
-	2IvkkSmK9nZoP24mV3CUj+dawhCLFf5uBIP3S53Aidlzub5jerSf08lrq7/H+Ca5ffGIpaJZgH8
-	n/JdmbwT3V54nvaNXQC8IdYR/XfP
-X-Received: by 2002:a17:907:9482:b0:b1f:5e1:9f1c with SMTP id a640c23a62f3a-b3027d3f2damr533552166b.29.1758704451375;
-        Wed, 24 Sep 2025 02:00:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9UJN71fNOGfyW/6PFSyW+8a3intaX+vKq3ShzQOP5w4u3pGLhKrKfOxe0gV8M4eHlJvrd0g==
-X-Received: by 2002:a17:907:9482:b0:b1f:5e1:9f1c with SMTP id a640c23a62f3a-b3027d3f2damr533538766b.29.1758704449381;
-        Wed, 24 Sep 2025 02:00:49 -0700 (PDT)
-Received: from redhat.com ([31.187.78.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2928cd31a6sm903885066b.102.2025.09.24.02.00.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 02:00:48 -0700 (PDT)
-Date: Wed, 24 Sep 2025 05:00:46 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Simon Schippers <simon.schippers@tu-dortmund.de>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-	eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org,
-	Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: Re: [PATCH net-next v5 4/8] TUN & TAP: Wake netdev queue after
- consuming an entry
-Message-ID: <20250924045554-mutt-send-email-mst@kernel.org>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250922221553.47802-5-simon.schippers@tu-dortmund.de>
- <20250923123101-mutt-send-email-mst@kernel.org>
- <aacb449c-ad20-48b0-aa0f-b3866a3ed7f6@tu-dortmund.de>
- <20250924024416-mutt-send-email-mst@kernel.org>
- <a16b643a-3cfe-4b95-b76a-100f512cdb79@tu-dortmund.de>
- <20250924034534-mutt-send-email-mst@kernel.org>
- <9e7b0931-afde-4b14-8a6e-372bda6cf95e@tu-dortmund.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E082D6614;
+	Wed, 24 Sep 2025 09:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758704465; cv=fail; b=XYtJkLuRRmEVHFqQ+aX+nmg5VAJpENzQmjydWBKsKqdK23/SJVgvy3ru9ia4OzZ23Qt3FJbQ8IwaZ8Er3mKooSzJXy9bEE6SCHec2sNdvDWfw31kvOYZn7aOftlfoo9rOCXqU/UaykPdRzYd2cS8zcqFj+xuiUCGkvKbCDcXwCc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758704465; c=relaxed/simple;
+	bh=rOyOtZ0A3CelgjnwvsjJ6fkMF1tBawLvtyheooEehR8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=M8g/IoUYGlQyesG0IasfWquShAfA/eh4FBwTqZ8lOIyzJxT6eUyDCqN7HKBenZnt0MzMdwCCyTZx4sfRz+g5OxjZq0+StDbNVnkpaqiRCSDrurdUzmK3vPT3G55sLqxP5PnBbLpBoyajMlUkH/U9hP1Zsf7x4yS14iJ5vIRtLx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y5MZqWdd; arc=fail smtp.client-ip=52.101.52.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H5ohLgUroBka19mG6HHtdGfmI+FOOfjYyEdcKll7Ncn/1F6LrN7VJ2fLVc1VN1DJdoZXjpRIeizt0SLJGY3jbUQYZf3mZyDK4SWMzAxNKc7BZWhe21fyeEd98lqEfbjcPqMEF3YTuC+4ECmOVtfH8R+TkQCc450wQ10eS0u9ueqaEmmCD55QpffjIt9iY52mZUJWy2JqMVPrLbu0CjnhtARBfLeA86adf7WCEbm5CaBQcDidcNOImN2DLNYY24Tb33tUuGKLWbLA4LyAfvAeJWl+zsxrYXkyURTfPlNE0EDxw4wzNcwxZqX27Dl6yl2VMo6/32RKK5tGLIqtqWhMnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EcTIbAOFkHdP69zTFb/acdaEg0h0F1YOe1iqbBfhMrM=;
+ b=xTf9TNLGVUOipoB1DKa1kWqo5RlojIVRytkEOV4AJ1cgG+UBuXctGxQUs9/B8yIMNHQjqdBI4H9Eam/VInDQIAkVIwve+15ftZR9ZTQ0U11Bz4kmYmRL5ceRyIofxlY2spmeVMLwjEEI+pH4jxXL7P3QT0HO0j5LU+sa3f3WNWJpAi44z/n9HxRexw6Q6kdJc2WnRCruYx+5BLhdqS2zYvAqzBTIBtfRIUvblgC3tvB4lsiGROEuCKqlIRlw9MP8Xw6bROcTwhSKlQnu8QSWN6ZxwGO6km6ihwFQJFzD+Y/rJFSwE48IRY+VH3nGiGoSPO+SHGfVgUOldq5KI6g2aA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EcTIbAOFkHdP69zTFb/acdaEg0h0F1YOe1iqbBfhMrM=;
+ b=Y5MZqWddlVx8Tc8kLnen4TxeiBy0SWLgBUek1hNUs79qxkP0/Qc0ukRyP9rf3bx/Rn3GFSTzUfuFHaBpMyHG5UfyrcIU0buTFDn5B+LnJ4+2grebhyGFO5wxwXyKTsfJ7HbbgEpPm3L1xSWJ6KB5bkt40bgReOcfrqCOeOLNq20=
+Received: from DM4PR12MB6109.namprd12.prod.outlook.com (2603:10b6:8:ae::11) by
+ CH3PR12MB8332.namprd12.prod.outlook.com (2603:10b6:610:131::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
+ 2025 09:00:52 +0000
+Received: from DM4PR12MB6109.namprd12.prod.outlook.com
+ ([fe80::680c:3105:babe:b7e1]) by DM4PR12MB6109.namprd12.prod.outlook.com
+ ([fe80::680c:3105:babe:b7e1%4]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
+ 09:00:52 +0000
+From: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>
+To: Arnd Bergmann <arnd@arndb.de>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
+ Michal" <michal.simek@amd.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Rob Herring
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, =?iso-8859-2?Q?Przemys=B3aw_Gaj?= <pgaj@cadence.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"tommaso.merciai.xr@bp.renesas.com" <tommaso.merciai.xr@bp.renesas.com>,
+	"quic_msavaliy@quicinc.com" <quic_msavaliy@quicinc.com>, "S-k, Shyam-sundar"
+	<Shyam-sundar.S-k@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>, Kees Cook
+	<kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jarkko
+ Nikula <jarkko.nikula@linux.intel.com>, Jorge Marques
+	<jorge.marques@analog.com>, "linux-i3c@lists.infradead.org"
+	<linux-i3c@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+CC: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "Goud, Srinivas"
+	<srinivas.goud@amd.com>, "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>,
+	"manion05gk@gmail.com" <manion05gk@gmail.com>
+Subject: RE: [PATCH V7 3/4] i3c: master: Add endianness support for
+ i3c_readl_fifo() and i3c_writel_fifo()
+Thread-Topic: [PATCH V7 3/4] i3c: master: Add endianness support for
+ i3c_readl_fifo() and i3c_writel_fifo()
+Thread-Index: AQHcLKFhrxQvMAo9OkSHor4BRo6l1bShHNCAgADPJEA=
+Date: Wed, 24 Sep 2025 09:00:52 +0000
+Message-ID:
+ <DM4PR12MB61098EA538FCB7CED2E5C47B8C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
+ <20250923154551.2112388-4-manikanta.guntupalli@amd.com>
+ <13bbd85e-48d2-4163-b9f1-2a2a870d4322@app.fastmail.com>
+In-Reply-To: <13bbd85e-48d2-4163-b9f1-2a2a870d4322@app.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-09-24T07:41:57.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM4PR12MB6109:EE_|CH3PR12MB8332:EE_
+x-ms-office365-filtering-correlation-id: 9e0dc764-8109-4a17-e2c0-08ddfb48dd1e
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?P6y+8Ia7a3FWT3kTeBoxI8SGZbZbyi4prrUva708wZWkxcUlC4qpPVHGLD?=
+ =?iso-8859-2?Q?/nyZ8pxPX0dua+mYbU5T4OCA/vlX5aURpPuLnSf3AbiBjujsNsfyBUgk52?=
+ =?iso-8859-2?Q?/HQ0rZYuqf9yD15QqXOAG1AgaE67s08XO+BwrtNNUbR1wioQR/aIWu/b7j?=
+ =?iso-8859-2?Q?j6YvuJjAsWOP61N7uMZjeV27ikbYQ2dZX2UipnBBwGFY0xQ1DhzUm0Nmf8?=
+ =?iso-8859-2?Q?7jSE412PDxLVIH4ojSaAg7y5UM+rVfrT/HBsd4/3lXb0dkVXYDntu+Ohpt?=
+ =?iso-8859-2?Q?FnM3Ze1MrtTPSwsovCoET8x5eJkCL1Yh3TX7QdVXyDT9jt3HwARvpnnd1B?=
+ =?iso-8859-2?Q?wRgIzf9iFoXKUQBdbD0BficKszFBeO4LREXuHNuKlHCNhwZjVcTiWZGl3k?=
+ =?iso-8859-2?Q?icQArkcAMkek8UgOhhR4QoI8cEIsMepi/3dQeltsv0cwNHKWMl78nMLN7i?=
+ =?iso-8859-2?Q?W0gFtVZf0SucwzrLhGhX74Iuqi9WthPozUgn3AR6FX/HRapdQSOkwn6Ckp?=
+ =?iso-8859-2?Q?hDXrfySGpO2tueV4C1vTTur43OokNId05LL+t+vBNs79IKdXqAO95oUfSt?=
+ =?iso-8859-2?Q?ideYSvGxc1+NNJZoPsqYZJG9QfrQyk4ORMD7KQZWRmUNhcGFrQaokdN6cK?=
+ =?iso-8859-2?Q?1GRPBPa54DxY6cHS35DzF4hYxH31HGI/t+6LCYkAoz9+wafrE2cv+NaSQ7?=
+ =?iso-8859-2?Q?T+3sSeiOcucnLWYhwP5z5k2RCtY/swuFtKneVK1UTbqJzc27JPkiLdfdoV?=
+ =?iso-8859-2?Q?ffb2C8uNzqeTIvcP1tjmFABd7Yq6gG3aW7MDJSHNOk6mHOq+PjkPSsZGts?=
+ =?iso-8859-2?Q?SPyrkc2M1IUUWpSWWZyRigjYHxHHXuki8iB3/s+hP+3VMvFcJnU2gew+v2?=
+ =?iso-8859-2?Q?5WIpNASNEfLoamnjXslBG4AeiaiBKL2dcCWWCuDVYVKG0gu1hvGJWgqbB1?=
+ =?iso-8859-2?Q?4AvfKaDrhuUVebeDRSndPx9wXoXnn2uDEts3xrxPmJrlhsm42D2HWxTa6q?=
+ =?iso-8859-2?Q?aIXR7Kt8T/cVRADeZ7Qfs1K14GkLSOrVNzc/5Az6T2qR8y7B/kcBpbnw44?=
+ =?iso-8859-2?Q?sl0bVjaPqmT5Obj/dN1wOsV0UxPVZ3+QwUZqIjSl+oNOjb2i3ihXdsjjzo?=
+ =?iso-8859-2?Q?kQ1eYok4XrElz08yaE0WB/cvic6VKZpEYfoeReNOzVGrBbhto10Z1y0U6f?=
+ =?iso-8859-2?Q?1Yf7SEs5/zUusdF6OEzfJ7nmFuWSfm7zM6LKeuBcOHKZ5PgBC75qiZmKHo?=
+ =?iso-8859-2?Q?xu5I4x8M2YoQxEMf+fNmruWmv0YePPpHWfRlRedQZ4kYlHfz4oAS3xOvAl?=
+ =?iso-8859-2?Q?iA2esHUYZzlZNi9xHwolVXGzoI/lKzjcxQBVbLQ3yHxuR6wgVwHiUTMtWD?=
+ =?iso-8859-2?Q?lbkPrltpOHf+U19uge3TZomOu748ap9fa07yXphLozL0i9zY+P9UXJg4hs?=
+ =?iso-8859-2?Q?Yhl3g1acqpkrYa45knUgL4hH90jmBSqLR3kLUhKRpU3vO9pdpqPJUKjGDC?=
+ =?iso-8859-2?Q?8bXHAo8Ly0y/jiVr1QRM5IaBb5+0D5XdAyIzv7SEne/N7swJesXBdcJ8fx?=
+ =?iso-8859-2?Q?M3tJCheGs6e6jJWdpSpqXMFSerna?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?bWCbSOcZvaKOFtunA310+pMh/9TBNWeda2+BLs9sTlx5lFWHovfG5xMVMG?=
+ =?iso-8859-2?Q?i7jZBKuHCe2c9dObuIbmRHFdsPqguIGq8uVOXAwCu1OBfm6/v/ZYfdZP2N?=
+ =?iso-8859-2?Q?hW0md3oWOy2pZVPMRzaTh6wJK05g5gNou9TYWMSH/lo5KYzIoEq160xWA5?=
+ =?iso-8859-2?Q?sDzAXc8TeoQEV/+czVledq1/2RJVGXplDKIwOhoSqYhsN4pj3OBJ5I4TyO?=
+ =?iso-8859-2?Q?NzHqvpAVcnJx15nL2UPXKoutrH47TdkiUH7WptuS7Fm36zyMxF4h2ODTB2?=
+ =?iso-8859-2?Q?HCXSGVqrrLM2LvGIR+3YgpeXqE6bO19UduKdvmhe1cwINGFA+VlRxN5dvy?=
+ =?iso-8859-2?Q?5IxSLK+WosnW/fyBCDGO6Ezr3QQ/T3egp0eZ6tun5LmIdWyO8NRsvAwmXu?=
+ =?iso-8859-2?Q?iWOz1BaJxgIgdMyGzfn9SnOY926awEGeD/ZPC4wDJ2CGIQVml1fwvlYbY6?=
+ =?iso-8859-2?Q?y5JhYSlD9a9QGgjoYqSFibnld0S/7ZcY+BuP0JYQlVGiY6Mdjk9uwu2RJU?=
+ =?iso-8859-2?Q?Bb7VXGvhaNm20jpulqPXzkIfQa1ogKN0vjlNhqTftFZdI/AOykio2OAN4r?=
+ =?iso-8859-2?Q?vLCkBrCLPkKsT5ap9O4rpusjCgngNoToBYUPMMs3eL+5PizOf680j/+K0s?=
+ =?iso-8859-2?Q?8JpqYTcGQ4p1c5mTrWxYEctV+EcfZdKB9Lb8eCjRhEjFC6cGFoMUW8ZtnT?=
+ =?iso-8859-2?Q?0nsP9NUg/08aJURLoUMN3mavqXy8TFIqD7UGL8a323G+eOMJZS9CDCoCwv?=
+ =?iso-8859-2?Q?zZwR4Euwwiskbc2ynn1R+iEB62aMtu2/3pIf/mFaKsJ8+8AHYQUjYBoyBG?=
+ =?iso-8859-2?Q?GVk6K9yjxMvqwHK2D4RWYmN/VdQ5fB+l4kMTvEt7f4Swab+8Zg7ieZCcbb?=
+ =?iso-8859-2?Q?A8T19/SiFfQHP1biajDvf6OOGlEzoWv6q2Zi3pCPmw7nQNLtdClWL15EcU?=
+ =?iso-8859-2?Q?Q8P4iucD91rwQbPDjSJg1SweX6bEQwFB+swxjS+B99gxL7rhyoNzh8oLCZ?=
+ =?iso-8859-2?Q?iz6XTSH7oT7BuccIpZCbnbc+NAGPPxBAWqUzL63mFqd+43JFf+zQSb9Lfl?=
+ =?iso-8859-2?Q?mmynqYVR48jr0YiYo+Y9nb0fOwQxpERsCAyrATrLb21zFeGo4o6oEz6Exr?=
+ =?iso-8859-2?Q?Teo9xBrmPLZjYRnQA7173+4+uyXRfWLfTl4GI8LdAZh4xxASCxLtm1cerA?=
+ =?iso-8859-2?Q?FnG34v7C57BEFcLDk2mzslRPHVxLwfWgtJiTDr6431lkHBgVg3bgrhg7dy?=
+ =?iso-8859-2?Q?9nFlcVLWs3/rMztR2uogrlc4sPZBT12Rx/ujGNtvnsreJSHR4pWD0/UL8w?=
+ =?iso-8859-2?Q?7Nzhiwx7714guVRnPaPj+wDAtDNW4bq2mGvVdhNyrJfm7nWa9Iz0D3OJDR?=
+ =?iso-8859-2?Q?d/kLDcBkJHjOwjkO9xsrf4ncEQyj7WLoK513djwg+BvLwn7iu+WJ1xZ/lg?=
+ =?iso-8859-2?Q?nPZjaTyRNHQt5wffOx3PZ3NnpNXuPs7DdXewUoB87geBHwi4oj7GG8j+GP?=
+ =?iso-8859-2?Q?qSs9sI9CG86dhh9dG62P75Ox74wrUOqQYcSokEom6QjDGS4h/M01nyIvjn?=
+ =?iso-8859-2?Q?c0I2Q0S5VDE4niezCVtN3bJS0fPjRl3EkvS7GrPLf567UHMlNrR4rtdd3/?=
+ =?iso-8859-2?Q?Pvgf0m7k54Y5g=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e7b0931-afde-4b14-8a6e-372bda6cf95e@tu-dortmund.de>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e0dc764-8109-4a17-e2c0-08ddfb48dd1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2025 09:00:52.1976
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7YBL3CKj+QziRX2JOKZxyZjY7eGGkkaVQzQkqa6D33x+Oumo1zvTeImiHZHQURrDjumiqsN6+U4Sp9ZT7srsxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8332
 
-On Wed, Sep 24, 2025 at 10:40:04AM +0200, Simon Schippers wrote:
-> On 24.09.25 09:49, Michael S. Tsirkin wrote:
-> > On Wed, Sep 24, 2025 at 09:42:45AM +0200, Simon Schippers wrote:
-> >> On 24.09.25 08:55, Michael S. Tsirkin wrote:
-> >>> On Wed, Sep 24, 2025 at 07:56:33AM +0200, Simon Schippers wrote:
-> >>>> On 23.09.25 18:36, Michael S. Tsirkin wrote:
-> >>>>> On Tue, Sep 23, 2025 at 12:15:49AM +0200, Simon Schippers wrote:
-> >>>>>> The new wrappers tun_ring_consume/tap_ring_consume deal with consuming an
-> >>>>>> entry of the ptr_ring and then waking the netdev queue when entries got
-> >>>>>> invalidated to be used again by the producer.
-> >>>>>> To avoid waking the netdev queue when the ptr_ring is full, it is checked
-> >>>>>> if the netdev queue is stopped before invalidating entries. Like that the
-> >>>>>> netdev queue can be safely woken after invalidating entries.
-> >>>>>>
-> >>>>>> The READ_ONCE in __ptr_ring_peek, paired with the smp_wmb() in
-> >>>>>> __ptr_ring_produce within tun_net_xmit guarantees that the information
-> >>>>>> about the netdev queue being stopped is visible after __ptr_ring_peek is
-> >>>>>> called.
-> >>>>>>
-> >>>>>> The netdev queue is also woken after resizing the ptr_ring.
-> >>>>>>
-> >>>>>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> >>>>>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-> >>>>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
-> >>>>>> ---
-> >>>>>>  drivers/net/tap.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
-> >>>>>>  drivers/net/tun.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
-> >>>>>>  2 files changed, 88 insertions(+), 3 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
-> >>>>>> index 1197f245e873..f8292721a9d6 100644
-> >>>>>> --- a/drivers/net/tap.c
-> >>>>>> +++ b/drivers/net/tap.c
-> >>>>>> @@ -753,6 +753,46 @@ static ssize_t tap_put_user(struct tap_queue *q,
-> >>>>>>  	return ret ? ret : total;
-> >>>>>>  }
-> >>>>>>  
-> >>>>>> +static struct sk_buff *tap_ring_consume(struct tap_queue *q)
-> >>>>>> +{
-> >>>>>> +	struct netdev_queue *txq;
-> >>>>>> +	struct net_device *dev;
-> >>>>>> +	bool will_invalidate;
-> >>>>>> +	bool stopped;
-> >>>>>> +	void *ptr;
-> >>>>>> +
-> >>>>>> +	spin_lock(&q->ring.consumer_lock);
-> >>>>>> +	ptr = __ptr_ring_peek(&q->ring);
-> >>>>>> +	if (!ptr) {
-> >>>>>> +		spin_unlock(&q->ring.consumer_lock);
-> >>>>>> +		return ptr;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
-> >>>>>> +	 * produced in the meantime, because this could result in waking
-> >>>>>> +	 * even though the ptr_ring is full.
-> >>>>>
-> >>>>> So what? Maybe it would be a bit suboptimal? But with your design, I do
-> >>>>> not get what prevents this:
-> >>>>>
-> >>>>>
-> >>>>> 	stopped? -> No
-> >>>>> 		ring is stopped
-> >>>>> 	discard
-> >>>>>
-> >>>>> and queue stays stopped forever
-> >>>>>
-> >>>>>
-> >>>>
-> >>>> I totally missed this (but I am not sure why it did not happen in my 
-> >>>> testing with different ptr_ring sizes..).
-> >>>>
-> >>>> I guess you are right, there must be some type of locking.
-> >>>> It probably makes sense to lock the netdev txq->_xmit_lock whenever the 
-> >>>> consumer invalidates old ptr_ring entries (so when r->consumer_head >= 
-> >>>> r->consumer_tail). The producer holds this lock with dev->lltx=false. Then 
-> >>>> the consumer is able to wake the queue safely.
-> >>>>
-> >>>> So I would now just change the implementation to:
-> >>>> tun_net_xmit:
-> >>>> ...
-> >>>> if ptr_ring_produce
-> >>>>     // Could happen because of unproduce in vhost_net..
-> >>>>     netif_tx_stop_queue
-> >>>>     ...
-> >>>>     goto drop
-> >>>>
-> >>>> if ptr_ring_full
-> >>>>     netif_tx_stop_queue
-> >>>> ...
-> >>>>
-> >>>> tun_ring_recv/tap_do_read (the implementation for the batched methods 
-> >>>> would be done in the similar way):
-> >>>> ...
-> >>>> ptr_ring_consume
-> >>>> if r->consumer_head >= r->consumer_tail
-> >>>>     __netif_tx_lock_bh
-> >>>>     netif_tx_wake_queue
-> >>>>     __netif_tx_unlock_bh
-> >>>>
-> >>>> This implementation does not need any new ptr_ring helpers and no fancy 
-> >>>> ordering tricks.
-> >>>> Would this implementation be sufficient in your opinion?
-> >>>
-> >>>
-> >>> Maybe you mean == ? Pls don't poke at ptr ring internals though.
-> >>> What are we testing for here?
-> >>> I think the point is that a batch of entries was consumed?
-> >>> Maybe __ptr_ring_consumed_batch ? and a comment explaining
-> >>> this returns true when last successful call to consume
-> >>> freed up a batch of space in the ring for producer to make
-> >>> progress.
-> >>>
-> >>
-> >> Yes, I mean ==.
-> >>
-> >> Having a dedicated helper for this purpose makes sense. I just find
-> >> the name __ptr_ring_consumed_batch a bit confusing next to
-> >> __ptr_ring_consume_batched, since they both refer to different kinds of
-> >> batches.
-> > 
-> > __ptr_ring_consume_created_space ?
-> > 
-> > /* Previous call to ptr_ring_consume created some space.
-> >  *
-> >  * NB: only refers to the last call to __ptr_ring_consume,
-> >  * if you are calling ptr_ring_consume multiple times, you
-> >  * have to check this multiple times.
-> >  * Accordingly, do not use this after __ptr_ring_consume_batched.
-> >  */
+[Public]
+
+Hi,
+
+> -----Original Message-----
+> From: Arnd Bergmann <arnd@arndb.de>
+> Sent: Wednesday, September 24, 2025 12:21 AM
+> To: Guntupalli, Manikanta <manikanta.guntupalli@amd.com>; git (AMD-Xilinx=
+)
+> <git@amd.com>; Simek, Michal <michal.simek@amd.com>; Alexandre Belloni
+> <alexandre.belloni@bootlin.com>; Frank Li <Frank.Li@nxp.com>; Rob Herring
+> <robh@kernel.org>; krzk+dt@kernel.org; Conor Dooley <conor+dt@kernel.org>=
+;
+> Przemys=B3aw Gaj <pgaj@cadence.com>; Wolfram Sang <wsa+renesas@sang-
+> engineering.com>; tommaso.merciai.xr@bp.renesas.com;
+> quic_msavaliy@quicinc.com; S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>;
+> Sakari Ailus <sakari.ailus@linux.intel.com>; 'billy_tsai@aspeedtech.com'
+> <billy_tsai@aspeedtech.com>; Kees Cook <kees@kernel.org>; Gustavo A. R. S=
+ilva
+> <gustavoars@kernel.org>; Jarkko Nikula <jarkko.nikula@linux.intel.com>; J=
+orge
+> Marques <jorge.marques@analog.com>; linux-i3c@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Linux-Arch <lin=
+ux-
+> arch@vger.kernel.org>; linux-hardening@vger.kernel.org
+> Cc: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; Goud, Srinivas
+> <srinivas.goud@amd.com>; Datta, Shubhrajyoti <shubhrajyoti.datta@amd.com>=
+;
+> manion05gk@gmail.com
+> Subject: Re: [PATCH V7 3/4] i3c: master: Add endianness support for i3c_r=
+eadl_fifo()
+> and i3c_writel_fifo()
+>
+> On Tue, Sep 23, 2025, at 17:45, Manikanta Guntupalli wrote:
+> >  /**
+> >   * i3c_writel_fifo - Write data buffer to 32bit FIFO
+> >   * @addr: FIFO Address to write to
+> >   * @buf: Pointer to the data bytes to write
+> >   * @nbytes: Number of bytes to write
+> > + * @endian: Endianness of FIFO write
+> >   */
+> >  static inline void i3c_writel_fifo(void __iomem *addr, const void *buf=
+,
+> > -                              int nbytes)
+> > +                              int nbytes, enum i3c_fifo_endian endian)
+> >  {
+> > -   writesl(addr, buf, nbytes / 4);
+> > +   if (endian)
+> > +           writesl_be(addr, buf, nbytes / 4);
+> > +   else
+> > +           writesl(addr, buf, nbytes / 4);
+> > +
+>
+> This seems counter-intuitive: a FIFO doesn't really have an endianness, i=
+t is instead
+> used to transfer a stream of bytes, so if the device has a fixed endianes=
+s, the FIFO
+> still needs to be read using a plain writesl().
+>
+> I see that your writesl_be() has an incorrect definition, which would lea=
+d to the
+> i3c_writel_fifo() function accidentally still working if both the device =
+and CPU use
+> big-endian registers:
+>
+> static inline void writesl_be(volatile void __iomem *addr,
+>                             const void *buffer,
+>                             unsigned int count)
+> {
+>       if (count) {
+>               const u32 *buf =3D buffer;
+>               do {
+>                       __raw_writel((u32 __force)__cpu_to_be32(*buf), addr=
+);
+>                       buf++;
+>               } while (--count);
+>       }
+> }
+>
+> The __cpu_to_be32() call that you add here means that the FIFO data is sw=
+apped
+> on little-endian CPUs but not swapped on big-endian ones. Compare this to=
+ the
+> normal writesl() function that never swaps because it writes a byte strea=
+m.
+The use of __cpu_to_be32() in writesl_be() is intentional. The goal here is=
+ to ensure that the FIFO is always accessed in big-endian format, regardles=
+s of whether the CPU is little-endian or big-endian. On little-endian CPUs,=
+ this introduces the required byte swap before writing; on big-endian CPUs,=
+ the data is already in big-endian order, so no additional swap occurs.
+This guarantees that the FIFO sees consistent big-endian data, matching the=
+ hardware's expectation.
+
+>
+> >     if (nbytes & 3) {
+> >             u32 tmp =3D 0;
 > >
-> 
-> Sounds good.
-> 
-> Regarding __ptr_ring_consume_batched:
-> Theoretically the consumer_tail before and after calling the method could
-> be compared to avoid calling __ptr_ring_consume_created_space at each
-> iteration. But I guess it is also fine calling it at each iteration.
+> >             memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+> > -           writel(tmp, addr);
+> > +
+> > +           if (endian)
+> > +                   writel_be(tmp, addr);
+> > +           else
+> > +                   writel(tmp, addr);
+>
+> This bit however seems to fix a bug, but does so in a confusing way. The =
+way the
+> FIFO registers usually deal with excess bytes is to put them into the fir=
+st bytes of the
+> FIFO register, so this should just be a
+>
+>        writesl(addr, &tmp, 1);
+>
+> to write one set of four bytes into the FIFO without endian-swapping.
+>
+> Could it be that you are just trying to use a normal i3c adapter with lit=
+tle-endian
+> registers on a normal big-endian machine but ran into this bug?
+The intention here is to enforce big-endian ordering for the trailing bytes=
+ as well. By using __cpu_to_be32() for full words and writel_be() for the l=
+eftover word, the FIFO is always accessed in big-endian format, regardless =
+of the CPU's native endianness. This ensures consistent and correct data or=
+dering from the device's perspective.
 
-Hmm good point, though I worry about wrap-around a bit.
-
-
-> >>>
-> >>> consumer_head == consumer_tail also happens rather a lot,
-> >>> though thankfully not on every entry.
-> >>> So taking tx lock each time this happens, even if queue
-> >>> is not stopped, seems heavyweight.
-> >>>
-> >>>
-> >>
-> >> Yes, I agree — but avoiding locking probably requires some fancy
-> >> ordering tricks again..
-> >>
-> >>
-> >>>
-> >>>
-> >>>
-> >>>>>> The order of the operations
-> >>>>>> +	 * is ensured by barrier().
-> >>>>>> +	 */
-> >>>>>> +	will_invalidate = __ptr_ring_will_invalidate(&q->ring);
-> >>>>>> +	if (unlikely(will_invalidate)) {
-> >>>>>> +		rcu_read_lock();
-> >>>>>> +		dev = rcu_dereference(q->tap)->dev;
-> >>>>>> +		txq = netdev_get_tx_queue(dev, q->queue_index);
-> >>>>>> +		stopped = netif_tx_queue_stopped(txq);
-> >>>>>> +	}
-> >>>>>> +	barrier();
-> >>>>>> +	__ptr_ring_discard_one(&q->ring, will_invalidate);
-> >>>>>> +
-> >>>>>> +	if (unlikely(will_invalidate)) {
-> >>>>>> +		if (stopped)
-> >>>>>> +			netif_tx_wake_queue(txq);
-> >>>>>> +		rcu_read_unlock();
-> >>>>>> +	}
-> >>>>>
-> >>>>>
-> >>>>> After an entry is consumed, you can detect this by checking
-> >>>>>
-> >>>>> 	                r->consumer_head >= r->consumer_tail
-> >>>>>
-> >>>>>
-> >>>>> so it seems you could keep calling regular ptr_ring_consume
-> >>>>> and check afterwards?
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>>> +	spin_unlock(&q->ring.consumer_lock);
-> >>>>>> +
-> >>>>>> +	return ptr;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>>  static ssize_t tap_do_read(struct tap_queue *q,
-> >>>>>>  			   struct iov_iter *to,
-> >>>>>>  			   int noblock, struct sk_buff *skb)
-> >>>>>> @@ -774,7 +814,7 @@ static ssize_t tap_do_read(struct tap_queue *q,
-> >>>>>>  					TASK_INTERRUPTIBLE);
-> >>>>>>  
-> >>>>>>  		/* Read frames from the queue */
-> >>>>>> -		skb = ptr_ring_consume(&q->ring);
-> >>>>>> +		skb = tap_ring_consume(q);
-> >>>>>>  		if (skb)
-> >>>>>>  			break;
-> >>>>>>  		if (noblock) {
-> >>>>>> @@ -1207,6 +1247,8 @@ int tap_queue_resize(struct tap_dev *tap)
-> >>>>>>  	ret = ptr_ring_resize_multiple_bh(rings, n,
-> >>>>>>  					  dev->tx_queue_len, GFP_KERNEL,
-> >>>>>>  					  __skb_array_destroy_skb);
-> >>>>>> +	if (netif_running(dev))
-> >>>>>> +		netif_tx_wake_all_queues(dev);
-> >>>>>>  
-> >>>>>>  	kfree(rings);
-> >>>>>>  	return ret;
-> >>>>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> >>>>>> index c6b22af9bae8..682df8157b55 100644
-> >>>>>> --- a/drivers/net/tun.c
-> >>>>>> +++ b/drivers/net/tun.c
-> >>>>>> @@ -2114,13 +2114,53 @@ static ssize_t tun_put_user(struct tun_struct *tun,
-> >>>>>>  	return total;
-> >>>>>>  }
-> >>>>>>  
-> >>>>>> +static void *tun_ring_consume(struct tun_file *tfile)
-> >>>>>> +{
-> >>>>>> +	struct netdev_queue *txq;
-> >>>>>> +	struct net_device *dev;
-> >>>>>> +	bool will_invalidate;
-> >>>>>> +	bool stopped;
-> >>>>>> +	void *ptr;
-> >>>>>> +
-> >>>>>> +	spin_lock(&tfile->tx_ring.consumer_lock);
-> >>>>>> +	ptr = __ptr_ring_peek(&tfile->tx_ring);
-> >>>>>> +	if (!ptr) {
-> >>>>>> +		spin_unlock(&tfile->tx_ring.consumer_lock);
-> >>>>>> +		return ptr;
-> >>>>>> +	}
-> >>>>>> +
-> >>>>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
-> >>>>>> +	 * produced in the meantime, because this could result in waking
-> >>>>>> +	 * even though the ptr_ring is full. The order of the operations
-> >>>>>> +	 * is ensured by barrier().
-> >>>>>> +	 */
-> >>>>>> +	will_invalidate = __ptr_ring_will_invalidate(&tfile->tx_ring);
-> >>>>>> +	if (unlikely(will_invalidate)) {
-> >>>>>> +		rcu_read_lock();
-> >>>>>> +		dev = rcu_dereference(tfile->tun)->dev;
-> >>>>>> +		txq = netdev_get_tx_queue(dev, tfile->queue_index);
-> >>>>>> +		stopped = netif_tx_queue_stopped(txq);
-> >>>>>> +	}
-> >>>>>> +	barrier();
-> >>>>>> +	__ptr_ring_discard_one(&tfile->tx_ring, will_invalidate);
-> >>>>>> +
-> >>>>>> +	if (unlikely(will_invalidate)) {
-> >>>>>> +		if (stopped)
-> >>>>>> +			netif_tx_wake_queue(txq);
-> >>>>>> +		rcu_read_unlock();
-> >>>>>> +	}
-> >>>>>> +	spin_unlock(&tfile->tx_ring.consumer_lock);
-> >>>>>> +
-> >>>>>> +	return ptr;
-> >>>>>> +}
-> >>>>>> +
-> >>>>>>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-> >>>>>>  {
-> >>>>>>  	DECLARE_WAITQUEUE(wait, current);
-> >>>>>>  	void *ptr = NULL;
-> >>>>>>  	int error = 0;
-> >>>>>>  
-> >>>>>> -	ptr = ptr_ring_consume(&tfile->tx_ring);
-> >>>>>> +	ptr = tun_ring_consume(tfile);
-> >>>>>>  	if (ptr)
-> >>>>>>  		goto out;
-> >>>>>>  	if (noblock) {
-> >>>>>> @@ -2132,7 +2172,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-> >>>>>>  
-> >>>>>>  	while (1) {
-> >>>>>>  		set_current_state(TASK_INTERRUPTIBLE);
-> >>>>>> -		ptr = ptr_ring_consume(&tfile->tx_ring);
-> >>>>>> +		ptr = tun_ring_consume(tfile);
-> >>>>>>  		if (ptr)
-> >>>>>>  			break;
-> >>>>>>  		if (signal_pending(current)) {
-> >>>>>> @@ -3621,6 +3661,9 @@ static int tun_queue_resize(struct tun_struct *tun)
-> >>>>>>  					  dev->tx_queue_len, GFP_KERNEL,
-> >>>>>>  					  tun_ptr_free);
-> >>>>>>  
-> >>>>>> +	if (netif_running(dev))
-> >>>>>> +		netif_tx_wake_all_queues(dev);
-> >>>>>> +
-> >>>>>>  	kfree(rings);
-> >>>>>>  	return ret;
-> >>>>>>  }
-> >>>>>> -- 
-> >>>>>> 2.43.0
-> >>>>>
-> >>>
-> > 
-
+Thanks,
+Manikanta.
 
