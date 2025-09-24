@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-829831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9652DB97FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93EBB98006
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C691AE0A0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EB94A82CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD51F09A8;
-	Wed, 24 Sep 2025 01:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2761F4CB3;
+	Wed, 24 Sep 2025 01:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVrUYCWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQVVnCS0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007D56F305;
-	Wed, 24 Sep 2025 01:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100A14B953;
+	Wed, 24 Sep 2025 01:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758677030; cv=none; b=W3f/9t8aJxrKgbJdYUXadpN2qFkJvJFOHz9uT3t1BRbRq7uVNWQbu9AB2zrh3J2P3FKtSDqhY0bMssgkzGTrfS3RvpjUPtxZ6LOylP0ju05i2dPBnBwuiDcLzRnq39XOH7IHZtb9+QyFbVKSHnjiNymUcn+D3PbUEw4uns8MEjw=
+	t=1758677072; cv=none; b=uGFYXxhsTzBjlWNnbSh9oi79kUidbYHsDuecuEC49makQoywhT/5oNUP6iHkl/ogu0szIrxxBocS96y60qKWXKPxgIH7QhReDJ0LePGwthfqQ6g4xaiK2km3/eNsBUrmv9ZJ79cQp94fxzz/ueMi4k5ool1HG81G0AF4aXWLbaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758677030; c=relaxed/simple;
-	bh=2fqqjd+Rchrm9DPV7cf+RbmXNcv1N1kzNehE1I4JENc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCedf/BAjtaZWWbmZDgoeOCltDB6mlH24y8SkZcRBUaCob/KvQnS7tatVOlYKw+drP/x90kTJpFSR0r86pJl4gZdLDHHSr9IWvqEEqbw5tIYylU9KKiupk6oy17R13UBL+e73b94C9b6KRZJrBh82KvV7SC/NirEOibAg5CPVMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVrUYCWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E7EC113D0;
-	Wed, 24 Sep 2025 01:23:49 +0000 (UTC)
+	s=arc-20240116; t=1758677072; c=relaxed/simple;
+	bh=4nT0zPGLX2EGPKXvnIPJ3K4R/r9yo2It3m8dFaJbhn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MVcmOWuXgebDnYv5PafMzVkQ+5twzVMlr04Fnd2zd7/XoD6DZtYAWJwc+wEH/lCqQdlYEqDD02azf/volSAhT+ObMc5TYiyrtclFPMntyXbOX0o2u8FkuV/pPd15NlMVTtXTCSwulgT+MWWQz9NbkJ+8xI9og64Ab3g21bXY58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQVVnCS0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63CBC4CEF5;
+	Wed, 24 Sep 2025 01:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758677029;
-	bh=2fqqjd+Rchrm9DPV7cf+RbmXNcv1N1kzNehE1I4JENc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EVrUYCWdN/u/RRa3ng1+YzBwFtOQJLHoHLXOv7my5v3ozuQU3cuQEb8PIh5O9Y/6e
-	 U5d8Y6lZ8dGCbempPHQFFTL611q6Ugj5na8SYON7Q/k0RRr5fHGsII5tSbATWOnGJ5
-	 +mcdD1EBPA33L9Qs6tb8UNGZsGh5QCC5lcVpH15o7UvzImBZO8pfW52SoDxfSwnH34
-	 tdQ3rYGHIVaTeb9lyyQerCU5dfiKXq2CzzaPpVSupGy8H5TlgaUWph5quQxD6obHiT
-	 ewz1lWIU2dP5P+UVWD+RRWh/B/sYGd6JXJaF2WdqHK7EezZUV+b5XXxYJQaESWp/3E
-	 RRYuaKjx5sZhw==
-Date: Wed, 24 Sep 2025 04:23:46 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] tpm: Require O_EXCL for exclusive /dev/tpm access
-Message-ID: <aNNIIlZCQe8oocta@kernel.org>
-References: <cover.1758646791.git.noodles@meta.com>
- <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
+	s=k20201202; t=1758677072;
+	bh=4nT0zPGLX2EGPKXvnIPJ3K4R/r9yo2It3m8dFaJbhn8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CQVVnCS0cLpIk/4a4LNXWEdlDb7ljFy13ZlIFwUp4DQ1PP2SM2Y0RW5+Mveepj1b5
+	 IMEpPpvGuPyX+JWQHG46TqZ3u+a8OSatCoMVMHhvtMaFula8jjUJOhVeAFQVUE4eSR
+	 cHYOpyMyHFxVvsiCji/w+wSHs2qSFdlQUgVKloZQOhyBbFDgEA4d62J5zeeABG1dIR
+	 90M3XocHuNEyYPVPyEuotWHUdJ5j/wVDogBPAhKKfT1VgkysbNZFtvQBZZkkm/rPOZ
+	 m6DFWx9B2tkXETWFCisT4IPlMBHoraMTPRIGfFJzIzenFZwVD2noK8IU/LS3n+sloP
+	 Y6Q0i40gZetqQ==
+Date: Tue, 23 Sep 2025 18:24:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>
+Subject: Re: [PATCH net-next v13 13/18] net: phy: marvell10g: Support SFP
+ through phy_port
+Message-ID: <20250923182429.697b149b@kernel.org>
+In-Reply-To: <20250921160419.333427-14-maxime.chevallier@bootlin.com>
+References: <20250921160419.333427-1-maxime.chevallier@bootlin.com>
+	<20250921160419.333427-14-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83a323d597819d928da45b5b3914b37375c67869.1758646791.git.noodles@meta.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 06:10:28PM +0100, Jonathan McDowell wrote:
-> From: Jonathan McDowell <noodles@meta.com>
-> 
-> Given that /dev/tpm has not had exclusive access to the TPM since the
-> existence of the kernel resource broker and other internal users, stop
-> defaulted to exclusive access to the first client that opens the device.
-> Continue to support exclusive access, but only with the use of the
-> O_EXCL flag on device open.
-> 
-> Signed-off-by: Jonathan McDowell <noodles@meta.com>
-> ---
->  drivers/char/tpm/tpm-dev.c | 25 +++++++++++++++++++------
->  drivers/char/tpm/tpm-dev.h |  1 +
->  2 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-> index 80c4b3f3ad18..8921bbb541c1 100644
-> --- a/drivers/char/tpm/tpm-dev.c
-> +++ b/drivers/char/tpm/tpm-dev.c
-> @@ -19,15 +19,21 @@ static int tpm_open(struct inode *inode, struct file *file)
->  {
->  	struct tpm_chip *chip;
->  	struct file_priv *priv;
-> +	int rc;
->  
->  	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
->  
->  	/*
-> -	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
-> -	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
-> -	 * read lock.
-> +	 * If a client uses the O_EXCL flag then it expects to be the only TPM
-> +	 * user, so we treat it as a write lock. Otherwise we do as /dev/tpmrm
-> +	 * and use a read lock.
->  	 */
-> -	if (!down_write_trylock(&chip->open_lock)) {
-> +	if (file->f_flags & O_EXCL)
-> +		rc = down_write_trylock(&chip->open_lock);
-> +	else
-> +		rc = down_read_trylock(&chip->open_lock);
-> +
-> +	if (!rc) {
->  		dev_dbg(&chip->dev, "Another process owns this TPM\n");
->  		return -EBUSY;
->  	}
-> @@ -35,13 +41,17 @@ static int tpm_open(struct inode *inode, struct file *file)
->  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->  	if (priv == NULL)
->  		goto out;
-> +	priv->exclusive = (file->f_flags & O_EXCL);
->  
->  	tpm_common_open(file, chip, priv, NULL);
->  
->  	return 0;
->  
->   out:
-> -	up_write(&chip->open_lock);
-> +	if (file->f_flags & O_EXCL)
-> +		up_write(&chip->open_lock);
-> +	else
-> +		up_read(&chip->open_lock);
->  	return -ENOMEM;
->  }
->  
-> @@ -53,7 +63,10 @@ static int tpm_release(struct inode *inode, struct file *file)
->  	struct file_priv *priv = file->private_data;
->  
->  	tpm_common_release(file, priv);
-> -	up_write(&priv->chip->open_lock);
-> +	if (priv->exclusive)
-> +		up_write(&priv->chip->open_lock);
-> +	else
-> +		up_read(&priv->chip->open_lock);
->  	kfree(priv);
->  
->  	return 0;
-> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-> index f3742bcc73e3..0ad8504c73e4 100644
-> --- a/drivers/char/tpm/tpm-dev.h
-> +++ b/drivers/char/tpm/tpm-dev.h
-> @@ -17,6 +17,7 @@ struct file_priv {
->  	ssize_t response_length;
->  	bool response_read;
->  	bool command_enqueued;
-> +	bool exclusive;
->  
->  	u8 data_buffer[TPM_BUFSIZE];
->  };
-> -- 
-> 2.51.0
-> 
+On Sun, 21 Sep 2025 21:34:11 +0530 Maxime Chevallier wrote:
+> +/**
+> + * phy_port_restrict_mediums - Mask away some of the port's supported mediums
+> + * @port: The port to act upon
+> + * @mediums: A mask of mediums to support on the port
+> + *
+> + * This helper allows removing some mediums from a port's list of supported
+> + * mediums, which occurs once we have enough information about the port to
+> + * know its nature.
+> + *
+> + * Returns 0 if the change was donne correctly, a negative value otherwise.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+kdoc likes colons after return so:
 
-BR, Jarkko
+ Returns 0 -> Return: 0
+
+sorry for only providing an automated nit pick..
+
+> + */
+> +int phy_port_restrict_mediums(struct phy_port *port, unsigned long mediums)
+-- 
+pw-bot: cr
 
