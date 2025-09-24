@@ -1,271 +1,116 @@
-Return-Path: <linux-kernel+bounces-830397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54493B998C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5AAB99547
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EE117D493
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6304C5D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5202E719D;
-	Wed, 24 Sep 2025 11:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9882DC77C;
+	Wed, 24 Sep 2025 10:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Y1KCTSO4"
-Received: from mail-m1973199.qiye.163.com (mail-m1973199.qiye.163.com [220.197.31.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20ED72E62DA;
-	Wed, 24 Sep 2025 11:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.99
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Do/9BbTA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5402DCBE2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 10:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758712292; cv=none; b=ZckRI8p6LJFkdV8rYmu2zZvUREMl7lqbol4Q2Jx246fC1BMR/ETWCgMLMeWk0hg5BBq9xduz1bYdtMKCGZxdxOkgLNbjg/hh6xaGzEJtEcY3fvIcrX5rFDDTUX8FCwbv60zmAM7IBCfZPUuuIcZYgAjzrMzlB7mf+EUxgW2IbKI=
+	t=1758708213; cv=none; b=I6WC4ATMnZmZMq0U/NaiVlfAYrFteghnggFYb2yIEXmKspN5gPBtvFKAIN2VhroJcAu2V+WdzBCtonkGg93wV9DEsKe0Jrh1vAeCtQE1CYNTgHYRhuQXVZpifs1vAjfxHNnhGo20Z8lBizWgbjksq6Dgz0eujuEHKkAsjEtRgRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758712292; c=relaxed/simple;
-	bh=FFqCA/DgacmpT/aD9Fg5lKQhSph3nv3W23sHZZlJaOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=knLem874eokN5OePUGXHiPhPzlbQS69+TpIIB8Rzx7ph3m3aGsJJpzMoWC7fKeLKbT1T9K2BqeE3tPgVZMvkH3Vqoo8AiVlx87GRXi17LUdyzMzVVQZ89kJJAfrmDJ94gA9FCHejN9KTcuiZBjRssm7eIBLQIgXuXnCtSGR/3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Y1KCTSO4; arc=none smtp.client-ip=220.197.31.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23e8469d7;
-	Wed, 24 Sep 2025 17:55:40 +0800 (GMT+08:00)
-Message-ID: <86753f21-1996-4b93-acca-575a193a5bb8@rock-chips.com>
-Date: Wed, 24 Sep 2025 17:55:39 +0800
+	s=arc-20240116; t=1758708213; c=relaxed/simple;
+	bh=HYUoI22bV7rg9Ve/hq+9pc8VZtuwx3rsi1QoADu72Wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rb5gr4X4NHo2dcJk2fEP+Md1mlXhuhX9Vk88PsGn0WRIUrOGifxsOcctCB7SAZC3EW8ZykEYTInqu9pdFJPTNQJO+OAIOkqhmzjm9Y2FBNF702ijtr9961Znfe7pASOioGPodZYSHm0kzE3HOlbQafV5t6hVREHNsAoAvJJYl0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Do/9BbTA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gSzKkn95aJhKUUtAxX8yFbdOTN479L21009/xPVDxFo=; b=Do/9BbTAem0kA+Q3UuG6+kUz/j
+	vh3DfOVHftIdYUrDPfNtCoaHmbWkdEFIDpbf34DwCvE+BUJzEonIEQBtYixRmpBpoXGWXhE1BXB6A
+	s5k14jg2enZHfSlTEISDmr1IPs6CirYtrJGtyOjByHVcuCzGniPjCxQmEI/XYBB+fO+0ftoOd52r6
+	kITJfqsfSdGSyAmenmeqF+Am1eGxHjg6nh7CUNlFKyb7dfs9w8RKBmlZ+x3Ph/wyeGRqyu5STYM9H
+	0OFO+y/flDB9Np3xa+jIseXnBZ01CILGL98LPeU1cgiJyjFaqCMsCB7uK/RNiAONNsyJt1Uw47AFW
+	TyDwtTrw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1MG4-0000000DB3g-1DwZ;
+	Wed, 24 Sep 2025 09:57:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 23F8130043D; Wed, 24 Sep 2025 11:57:55 +0200 (CEST)
+Date: Wed, 24 Sep 2025 11:57:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org
+Subject: Re: [RFC PATCH v2 00/17] objtool: Function validation tracing
+Message-ID: <20250924095755.GY3245006@noisy.programming.kicks-ass.net>
+References: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
+ <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
+ <20250924091751.GX4068168@noisy.programming.kicks-ass.net>
+ <4c4afe3e-ac24-4891-9acd-1d493ea88eca@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] usb: typec: Add default HPD device when register
- DisplayPort altmode
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-2-kernel@airkyi.com>
- <mygbqhiom6pkwsadzz2bqf5bth3ogsbd6iku5a7r5swxrakein@fjhz7udnkcks>
- <e9cf0aa8-ed32-4ffb-a755-150742455808@rock-chips.com>
- <sgvrzhbhkzxbuybmws44kyenhfyppm3blijkarypcin4fiscvx@mnajrlmicyxi>
- <18f55fe7-7c68-4982-916d-11752325c667@rock-chips.com>
- <bh73nttewwhom2pqccfnapnfkrys3zljkykgqmh4hsdalqgyzi@gbl5oejxsp3z>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <bh73nttewwhom2pqccfnapnfkrys3zljkykgqmh4hsdalqgyzi@gbl5oejxsp3z>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a997b266d6203abkunm01a8f59e308014
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU0aQ1YeGB4eGh4eQ0xDSU1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=Y1KCTSO4JB2Doz2nmVMLfKoz+r0EQxAq+gYoHGZXqvPXCT0mGRZDywZEZRoz9311tm43dTuZoGPmpZjkh2jazaj46gvMoh7juipwzZ2A8MY5Xj1mu7G0oCk2vrCsLZaW5K1yYMFNQT3KLOdDEpcrpdoC/5TwZRDqAq6RE9DQtMQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=yJbQmL+TOmkpM0cLVkYWJb1/IVWYDpFb9n/hCp+37zE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c4afe3e-ac24-4891-9acd-1d493ea88eca@oracle.com>
 
-On 9/23/2025 6:40 PM, Dmitry Baryshkov wrote:
+On Wed, Sep 24, 2025 at 11:50:25AM +0200, Alexandre Chartre wrote:
+> 
+> On 9/24/25 11:17, Peter Zijlstra wrote:
+> > On Wed, Sep 24, 2025 at 09:36:49AM +0200, Peter Zijlstra wrote:
+> > 
+> > > >                        | <alternative.65c4e> alt 1/4 end
+> > > >   65c4e: os_xsave+0x2e | <alternative.65c4e> alt 2/4 begin
+> > > >   1c3d: .altinstr_replacement+0x1c3d | | xsaves64 0x40(%rbp)
+> > > >   65c53: os_xsave+0x33 | | xor %ebx,%ebx
+> > > >   65c55: os_xsave+0x35 | | test %ebx,%ebx - already visited
+> > > >                        | <alternative.65c4e> alt 2/4 end
+> > > >   65c4e: os_xsave+0x2e | <alternative.65c4e> alt 3/4 begin
+> > > >   1c38: .altinstr_replacement+0x1c38 | | xsavec64 0x40(%rbp)
+> > > >   65c53: os_xsave+0x33 | | xor %ebx,%ebx - already visited
+> > > >                        | <alternative.65c4e> alt 3/4 end
+> > > >   65c4e: os_xsave+0x2e | <alternative.65c4e> alt 4/4 begin
+> > > >   1c33: .altinstr_replacement+0x1c33 | | xsaveopt64 0x40(%rbp)
+> > > >   65c53: os_xsave+0x33 | | xor %ebx,%ebx - already visited
+> > > >                        | <alternative.65c4e> alt 4/4 end
+> > > >   65c4e: os_xsave+0x2e | <alternative.65c4e> alt default
+> > > >   65c4e: os_xsave+0x2e | xsave64 0x40(%rbp)
+> > > >   65c53: os_xsave+0x33 | xor %ebx,%ebx - already visited
+> > > 
+> > > I find it *very* hard to read these alternatives. If at all possible, I
+> > > think something like:
+> > > 
+> > >     65c4e: os_xsave+0x2e | xsave64	| xsaveopt64	| xsavec64	| xsaves64
+> > >     65c53: os_xsave+0x33 | xor %ebx,%ebx
+> > > 
+> > > Would be *much* easier to follow
+> > 
+> > Another option is to write it source-like:
+> > 
+> >    65c4e: os_xsave+0x2e | ALTERNATIVE("xsave64",
+> >                                       "xsaveopt64", X86_FEATURE_XSAVEOPT,
+> > 				     "xsavec64", X86_FEATURE_XSAVEC,
+> > 				     "xsaves64", X86_FEATURE_XSAVES);
+> >    65c53: os_xsave+0x33 | xor %ebx,%ebx
+> > 
+> > 
+> > We have the 'feature' bit, we'd just have to 'borrow' the feature
+> > strings from the kernel I suppose.
+> 
+> Yes, that would be very useful. But I will probably look at it for a next
+> set of patches.
 
-> On Tue, Sep 23, 2025 at 05:07:25PM +0800, Chaoyi Chen wrote:
->> On 9/23/2025 11:11 AM, Dmitry Baryshkov wrote:
->>
->>> On Tue, Sep 23, 2025 at 09:34:39AM +0800, Chaoyi Chen wrote:
->>>> On 9/23/2025 9:10 AM, Dmitry Baryshkov wrote:
->>>>
->>>>> On Mon, Sep 22, 2025 at 09:20:33AM +0800, Chaoyi Chen wrote:
->>>>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>>>
->>>>>> Add default DRM AUX HPD bridge device when register DisplayPort
->>>>>> altmode. That makes it redundant for each Type-C driver to implement
->>>>>> a similar registration process in embedded scenarios.
->>>>>>
->>>>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>>> ---
->>>>>>     drivers/usb/typec/altmodes/displayport.c | 27 ++++++++++++++++++++++++
->>>>>>     drivers/usb/typec/altmodes/displayport.h |  2 ++
->>>>>>     drivers/usb/typec/class.c                |  8 +++++++
->>>>>>     include/linux/usb/typec_altmode.h        |  2 ++
->>>>>>     4 files changed, 39 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
->>>>>> index 1dcb77faf85d..e026dc6e5430 100644
->>>>>> --- a/drivers/usb/typec/altmodes/displayport.c
->>>>>> +++ b/drivers/usb/typec/altmodes/displayport.c
->>>>>> @@ -14,6 +14,7 @@
->>>>>>     #include <linux/property.h>
->>>>>>     #include <linux/usb/pd_vdo.h>
->>>>>>     #include <linux/usb/typec_dp.h>
->>>>>> +#include <drm/bridge/aux-bridge.h>
->>>>>>     #include <drm/drm_connector.h>
->>>>>>     #include "displayport.h"
->>>>>> @@ -182,6 +183,10 @@ static int dp_altmode_status_update(struct dp_altmode *dp)
->>>>>>     				dp->pending_irq_hpd = true;
->>>>>>     		}
->>>>>>     	} else {
->>>>>> +		if (dp->port->hpd_dev)
->>>>>> +			drm_aux_hpd_bridge_notify(dp->port->hpd_dev,
->>>>>> +						  hpd ? connector_status_connected :
->>>>>> +							connector_status_disconnected);
->>>>> There should be no need for these calls. Once the HPD bridge is added to
->>>>> a correct fwnode, the drm_connector_oob_hotplug_event() calls should
->>>>> deliver the signal as expected.
->>>> It seems that only drm_bridge_connector can do this. I'm not sure if I remember correctly. I'll give it a try.
->>> Other connectors can implement the .oob_hotplug_event call. Calling
->>> drm_bridge_hpd_notify() also depends on the connector setting the
->>> callbacks via drm_bridge_hpd_enable(), a step which is done by only a
->>> few drivers.
->> Hmm, let's go over this again. First, drm_connector_oob_hotplug_event() requires a connector fwnode.
->>
->> On the Qualcomm platforms, the fwnode corresponds to the USB-C controller device node, so
->>
->> drm_connector_oob_hotplug_event(dp->connector_fwnode, ..) can handle them directly.
->>
->> But our platform doesn't use the USB-C controller device node as drm connector fwnode :(
-> This sounds like an issue to be fixed. Alternative option would be make
-> the AltMode code find your fwnode and report OOB events against it.
-> But... I reallly think that using connector's fwnode is the cleanest
-> solution. In the end, your final 'display' connector is the USB-C
-> connector present on the board. If your display has a USB-C connector,
-> that will be the socket that gets the cable from the display, etc.
->
->> So I use drm_dp_hpd_bridge_register() and drm_aux_hpd_bridge_notify() here, I think it just create a simple hpd bridge to bridge_list.
->>
->> But drm_connector_oob_hotplug_event() use connector_list instead of bridge_list.
-> The OOB interface was created by x86 people, but we successfully reused
-> it. I think that addign drm_bridge_hpd_notify() calls just duplicates
-> the effort unnecessarily.
-
-Yes, that commit comment said,  "It was proposed to add the displayport OF property to the DT bindings, but it was rejected in favor of properly describing the electrical signal path using of_graph."
-
-But in the embedded case, we don't seem to have the opportunity to describe this kind of of_graph relationship between drm connector and usb connector in usb-connector.yaml. On the Qualcomm platform, the DRM connector fwnode to correspond to the USB-C controller, which is a clean solution.
-
-However, on our platform we are using external USB-C controllers. In v4 and the previous versions, I focused on directly linking the USB-C controller with the DP controller. Referring to your suggest in [0], I think maybe this can be achieved with the help of the drm bridge chain. Assuming the bridge chain is like this:
-
-
-Other birdges ... ->PHY drm aux hpd bridge -> CDN-DP bridge -> DP to HDMI bridge or other bridge or nothing...
-
-
-We can use drm_bridge_chain_get_first_bridge() to get first bridge. In this case, that is drm aux hpd bridge from USB-C controller device. Next, we can obtain the fwnode corresponding to this bridge, and once we have it, we can set the connector's fwnode to it. In this way, drm_connector_oob_hotplug_event() can take effect.
-
-
-Would this be a good idea? Thanks.
-
-
-[0] https://lore.kernel.org/all/p3kgqn3euumhysckh4yyqavqv5y6any5zcrgkrcg3j5a7z7cyw@lfpkla5p3put/
-
-
->
->>
->>
->>>>>>     		drm_connector_oob_hotplug_event(dp->connector_fwnode,
->>>>>>     						hpd ? connector_status_connected :
->>>>>>     						      connector_status_disconnected);
->>>>>> @@ -206,6 +211,9 @@ static int dp_altmode_configured(struct dp_altmode *dp)
->>>>>>     	 * configuration is complete to signal HPD.
->>>>>>     	 */
->>>>>>     	if (dp->pending_hpd) {
->>>>>> +		if (dp->port->hpd_dev)
->>>>>> +			drm_aux_hpd_bridge_notify(dp->port->hpd_dev,
->>>>>> +						  connector_status_connected);
->>>>>>     		drm_connector_oob_hotplug_event(dp->connector_fwnode,
->>>>>>     						connector_status_connected);
->>>>>>     		sysfs_notify(&dp->alt->dev.kobj, "displayport", "hpd");
->>>>>> @@ -391,6 +399,9 @@ static int dp_altmode_vdm(struct typec_altmode *alt,
->>>>>>     			dp->data.status = 0;
->>>>>>     			dp->data.conf = 0;
->>>>>>     			if (dp->hpd) {
->>>>>> +				if (dp->port->hpd_dev)
->>>>>> +					drm_aux_hpd_bridge_notify(dp->port->hpd_dev,
->>>>>> +								  connector_status_disconnected);
->>>>>>     				drm_connector_oob_hotplug_event(dp->connector_fwnode,
->>>>>>     								connector_status_disconnected);
->>>>>>     				dp->hpd = false;
->>>>>> @@ -751,6 +762,18 @@ static const struct attribute_group *displayport_groups[] = {
->>>>>>     	NULL,
->>>>>>     };
->>>>>> +void dp_altmode_hpd_device_register(struct typec_altmode *alt)
->>>>>> +{
->>>>>> +	if (alt->svid != USB_TYPEC_DP_SID)
->>>>>> +		return;
->>>>>> +
->>>>>> +	alt->hpd_dev = drm_dp_hpd_bridge_register(alt->dev.parent->parent,
->>>>>> +						  dev_of_node(alt->dev.parent->parent));
->>>>> This needs at least a comment, what is dev.parent->parent. Also, the
->>>>> of_node is not correct here. It should be a node of the connector,
->>>>> rather than the device itself. Consider USB-C controllers which handle
->>>>> several USB-C connectors (e.g. UCSI). The DRM core won't be able to
->>>>> identify the correct bridge.
->>>> I think  alt.dev->parent->parent is the connector device. Am I missing something?
->>> As I wrote, it needs a comment (in the source file). No, it's not a
->>> connector device, it's a USB-C controller device. There is no guarantee
->>> that there is a separate struct device for the USB-C connector. On
->>> Qualcomm platforms, the device will point to the USB-C controller (TCPM
->>> or UCSI), which contain usb-c-connector(s) as child node(s) in DT.
->> Thanks for the clarification.
-> I think it should be fine to pass the fwnode of the usb-c connector that
-> is outside of the USB-C controller device (if that's what your platform
-> uses). But I think this should be:
-> - the usb-c-connector node
-> - it should be coming from the Type-C controller driver, you can't guess
->    it here.
->
->>
->>
->>>>
->>>>>> +	if (IS_ERR(alt->hpd_dev))
->>>>>> +		alt->hpd_dev = NULL;
->>>>>> +}
->>>>>> +EXPORT_SYMBOL_GPL(dp_altmode_hpd_device_register);
->>>>> Having the function here will bring a typec -> displayport dependency
->>>>> between drivers (which you didn't document). It means it won't be
->>>>> possible to build typec core into the kernel, having the DP AltMode
->>>>> driver in the module (which also doesn't sound like a good idea).
->>>> It make sense. Perhaps moving it into class.c would be a good idea.
->>>>
->>>>
->>>>>> +
->>>>>>     int dp_altmode_probe(struct typec_altmode *alt)
->>>>>>     {
->>>>>>     	const struct typec_altmode *port = typec_altmode_get_partner(alt);
->>>> -- 
->>>> Best,
->>>> Chaoyi
->>>>
->>>>
->>>> -- 
->>>> linux-phy mailing list
->>>> linux-phy@lists.infradead.org
->>>> https://lists.infradead.org/mailman/listinfo/linux-phy
->> -- 
->> Best,
->> Chaoyi
->>
--- 
-Best,
-Chaoyi
-
+Yes, like I said, I don't think we need to hold up the current set for
+this. But given how I struggle to read that alternative stuff, I figured
+we should explore alternatives :-)
 
