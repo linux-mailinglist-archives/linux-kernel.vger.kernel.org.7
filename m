@@ -1,188 +1,196 @@
-Return-Path: <linux-kernel+bounces-830577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341DFB9A047
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:21:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127CEB9A04D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31333A431E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A917B5DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115303019BA;
-	Wed, 24 Sep 2025 13:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B6F301494;
+	Wed, 24 Sep 2025 13:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b/i3PbXB"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013038.outbound.protection.outlook.com [40.93.196.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="as6UZ7nV"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21B61A76B1;
-	Wed, 24 Sep 2025 13:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720103; cv=fail; b=TTo2sS4IGvNo43WhUSuO5DU2iAbBHvn6Uw8pcyHDOsJGkrVr5sNNPEFGleVKlwnPFoicpTd2T7nuASMRS8Nt4JOCmShfDRVv7jPIsA0gXckdf8tceqEojt0Z6B/WLWd1FKYN3ksB9sCvNrOvaoxoMpRH2VC/xqhmQyS31978eiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720103; c=relaxed/simple;
-	bh=6cyzcjqjwWqShkFK0r2ATUaS/k0kqtQTY5SYc0hTvNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UW51KlDAVG8huY1abpESg0q/Jy3ovwInv1rqhPuxF2ZRmmI2O3jkz6yYTmrvBJyANQ6SZB0/lb8xwomeX4Xmg8gGllgIXCpCUGOLLPFs7FrzYC1GM+UWU7uPbiQsOixRSgJFNURmSjQwZalRClUOJadOExydUSiP4pw4GwqGyMs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b/i3PbXB; arc=fail smtp.client-ip=40.93.196.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NMt3KMV/1ZZsuHfhUMviQnCvxGgsbWRau+rvsdNrJz1DoHtXmdBamJU7EuhKWXu9BQEzHQt6ulNltbLsylIQxol5/Pczl9RPlZAYZUa60iAfeVrKuMC2eL7GGsgwLagP5Roo49nAnirF/xb3gTX7tpCuvdu1z9FXD5u2AzvAT02pyxhxD+1JBansSHul7Ztb5O82vvv6lza1gfvhXJYrxnPca5bCL8VuBPjxcYWdN5Z3HHB9z+pgTURQaa+f4Tpl9nKdtnchRUwmNNy8h7VDby2RorOtvsmR3iPBd7rkTJrjh1pc36TgvvNHWubDbJRSLfnTBQEiaDE7UnuX9s5CCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rCXwr+RWrUTMvr/UypLHPn2YvR6B31nKjA6ygTkUh+Q=;
- b=Ew844hjrer8KjVhBydTXNQssJ5CjxEP/yUjyUY+pygDrcDy4VROglh8vtYl6HguIw9Pjxfijl73NtRqe1ySRz5dy+T6+JsuNEE7aI/2J64MDlI8M61PmjzZ/Zi77dcZuKXe/KIRAGQp02TpE0+Ca5JzZIkmX0buxcmhJuAtJHakqZQAu4j89b3/N27b0Dk7UtooBd4Pr8j2DDjgjVirgsqO2xxQMRbPgrnPoKDHb/xHwr8tWR+nI+xSO6LX7bpbKRrCoZ3xM1LU+q+lSmS/m0fKuc/9z2NwH3YfPEXwUm9sM+aGjMS6U67uB5SzmquBkucsYiVfeNf13Gnl2aJiNLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rCXwr+RWrUTMvr/UypLHPn2YvR6B31nKjA6ygTkUh+Q=;
- b=b/i3PbXBKSm8bh9kqruZ6IB2KRTNupEZhRNv2iAisA399GpHmD60z3cyzj5Dg2uGBcyr2/vsnY6fmub1F2sLmFtevhJeZuFJiEeGVTFb4AmeflVk+M6O8JVkxNi2dzyOzldZ4mFKl92PFKGdpN9VuMndcQRAq5SwStob5JajjMjYr6jV4nrsIFWX41HQ1XQDwDk/TuLa4ik2ynW7RjxL2AvAmQDwxdy1sdkD+TiAOikR1onNrQvEukTWAXh3Jkr+fjxymj/ey4HNKsjIudd+7gy/s5Lh8tl1GI0mI3iHlazgXNw+OvY2IeD0czZ8GI84tCXyTESiwhi2+Ibmb//GCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by CH2PR12MB4200.namprd12.prod.outlook.com (2603:10b6:610:ac::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
- 2025 13:21:37 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.021; Wed, 24 Sep 2025
- 13:21:36 +0000
-Date: Wed, 24 Sep 2025 10:21:35 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding
- cq->cq_lock
-Message-ID: <20250924132135.GA2653699@nvidia.com>
-References: <20250822081941.989520-1-philipp.reisner@linbit.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822081941.989520-1-philipp.reisner@linbit.com>
-X-ClientProxiedBy: MN0P221CA0016.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:52a::19) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BF815B971
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758720148; cv=none; b=hL/EUatVcyYiGUtTw5tzEwSm2Kz1PSOPp4u+63HkJ/+gv3WGnhWMM7qLD3K8Xumdtyi5903/PFD40z2Pzwvs3NP+rOAlNVeiulLi056Eqi/HaUHy42qW2zkc3EUuzDWIdnp9mzTcQO7bdgwViRQ89X2KeYEhwZjlJf0geg1oBEU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758720148; c=relaxed/simple;
+	bh=lI2GHuw6RP6D9TulmrFtEisGBRAcx8RDL9OwlG6McYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a35TPKHz8qAZRQA9pBsxwGdg7+9Hj/uiRY5CmrdRga5PpozOCH/WMqUQk73TQL4ESf/kkeeO1fXhy4YtdjGyBL0fB7zCXtKcvNY8y0RBp7MecAlkbu0J+NV4eHveNRMPMXfxmeNlx8/Rsyjd3kxzHfOweWupkl8iBvIN2zGqiTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=as6UZ7nV; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7859d18aa33so2094779a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758720145; x=1759324945; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bk5S8ctIXq9wfVpD3CxClS13Cmu6hpYbPn+0lF9IlDg=;
+        b=as6UZ7nVVSlggYRk+wj4p08+r2MjmJXSxwkkmKCcEzCOVUsIhGQU2LUIOlk8AiZWxP
+         ldYkIbEjO6Z7rqHuCSuVm2MyQtA04xTj4vnRWXhKgk6OTjd5Dfa5nfcPwQtYwE1nDmSU
+         h+60j4xnus3NqVoWwHxaPGrrycIkyfsYIYEHKqzkbZvdqTs/wzdSAHMDmlFW0ML99C/m
+         QPZZ5ooX/+BWhItlcUwHNbVzeqhW01P6BD1UT+0tIK1XvOiu/j3CQ8kdAhj5hehZCN0l
+         0tKIY/B4jTqQjVLUD4w1soI6RmGNFdw3y3bdjjwbutvkRb3pD1IomuwfTEMFVkEOeJRV
+         O3yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758720145; x=1759324945;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bk5S8ctIXq9wfVpD3CxClS13Cmu6hpYbPn+0lF9IlDg=;
+        b=QbrqspPdCa+99u/teyFPwBwTif9FYXu/pxk8NDGTidWZe5158skCsln8Vdn5TB8bgu
+         IilxN8+3QvbWILTMy7o+ZgGnWHqUP4Csh1lE5ZZMYx8lLDR7GlsaHXNId/Dy9goF84uf
+         E1UGF6mvFzEQXHUHsIdaQizQ6PUeMV8XSjFyjfoeph6Trvz6v2zWJZkuv9nzlPHVlpAa
+         /5t+9X2OYvFbIeZ07UCm67FqznfgYSrK146HZEQ7SlPm7GhKnRBApsswjtOWgScsl4GN
+         r1e5ZF5PGUzX9eeEsHQmvOdeyfQfL05UhYLbrPPDUWwZmen1KmeNTU4KBs7Gab9A8Stt
+         cpqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr26kzE6PK2jgbv7DhygY+1+lLY4/usJ7oEpgcCjbJwuVYwRf9T3PIluMAcZtVKAerjDqY7wU7xtAs5KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6+fUEESGsnhQOeaMpajgirSupSC8/ZlPPzLImbXHxznIu0wIo
+	0DSDpxJ/gzYgeC9Kt2fQIfe8DUPSwxXX6sZKr5POLT9dIJE5pIj3ShDDFzlmB8gKHsA=
+X-Gm-Gg: ASbGncssSe17tI7lOZgHlQpN6VSL+4gLGK1N0+p8Ry3YUyPNMrB5d2seL8CwCSE30c9
+	CwORSKc9p+ZwnSlg36ithM1zgpkhzvz2gaZ54qQlkvEMZHg8R0Zj5Pc8YodBnj2syVQvSLlC7g2
+	DQSvq0iW9nYAC8rmnRx9d/SMmdvK20VBIM0QRrHtsas8aBTk0gwtEn3pDeOAi8n9ePsKwI0UUmZ
+	bhiWSaBqMn0JPEPR8etytZD/at5cfw8JxTGonNDpc17bb0IKN7L+HAIkgTBnhdcb/gZ4/xCiSO+
+	yEz/50oaVJjCqnm6NFqwPi1aU8wEop2QnK8cKr+bfnWfVtWMVFLnAwSuF+q4e9hGwUe0+4tuCVz
+	Yn1IRN7J8Xq4tC4zBn4uwqr/AQSvUcr/vqN8y/gFYIYqoTk0QkmoYYquDoNUu/FLk9/uy3Eer
+X-Google-Smtp-Source: AGHT+IF0AAKtC4K2vFos6O8AcfB8HOurhg3DtXtcY/Osy02ydHwxnuAFRkAy4WH1cbNpMhYIdPvEMw==
+X-Received: by 2002:a05:6830:25d6:b0:74a:52f8:6f40 with SMTP id 46e09a7af769-7914648876amr3753456a34.8.1758720144748;
+        Wed, 24 Sep 2025 06:22:24 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2? ([2600:8803:e7e4:1d00:5b03:6cc2:9ec:21f2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-634f97f8abfsm552478eaf.2.2025.09.24.06.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 06:22:23 -0700 (PDT)
+Message-ID: <f8af47c8-b2e4-45b6-8c2d-36f952327d00@baylibre.com>
+Date: Wed, 24 Sep 2025 08:22:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CH2PR12MB4200:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2794fc9a-4df5-48d9-7df5-08ddfb6d49e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U51lQhuQpD6GacDkAHnF4BO/Fh+VLkiTIkKbUruyxPmi0tEsjHux1XunqZRW?=
- =?us-ascii?Q?ktD+iP0E/uFAf5U8bQy3j3zUXBkU+eNCRIU5qGFxKuCRqMv4PGxjj0hcAplN?=
- =?us-ascii?Q?p7+vPcTM6xIYhwqoG7WHnXaxY+iWV3XGLv9LVTYg4POaPCKwQSkoyDPEhDF6?=
- =?us-ascii?Q?MqL1aJuW6x/AvWJL7I7v9JIJgciqH9DKDeuFe6cdVWTfep6c7RAe8+q8z3EM?=
- =?us-ascii?Q?tQfDNWOB6vOD9Qz5yqtm7UDixRfSv4EeCaj8Eby8pjq8AFAv1y5yS36+kXiZ?=
- =?us-ascii?Q?kk3vy29h7Qa9a+9L/+G5GqKE5EsO3XjlDyl+olXfacOTJJYXIUZvx5OeUL0U?=
- =?us-ascii?Q?MeC/ojf4SbBZ6gRIjY2eboi0J/T2/UHPJRcZEj4HDdKf2XUWxv4X+1DMPeO6?=
- =?us-ascii?Q?6feH05TGesBcVS7xdc1IxqYJ+FNvi0WhdS2ItyYIYV7WGVkfKwlSw5eOzMOK?=
- =?us-ascii?Q?gXlETpkfZcERHpTBnLeeZeszOcZE1At7zedgLo6CF7JsMkLgEYnw+EaMUqAH?=
- =?us-ascii?Q?AoKvD4sQmAmnrPQxd+fjYP7wlv2xTncYe/pONDF4xPzietvjIK1O5tEp7swy?=
- =?us-ascii?Q?uFeA56iLBpAzpc0qr5VUPs47KU6i+9z8HRHSaangMfOrc42+8Zbg1hjq3FJ0?=
- =?us-ascii?Q?EwA20+YRyxrjgoPqiiGYHziYWaoN4FsnEycUHANFMiuine5fB7q+JoetWhrg?=
- =?us-ascii?Q?/xndMhBMDpoux5P93+hxXl9zHJjmzIF8ncb0j8kvtR/t/JDGlGzGdtQbmOa3?=
- =?us-ascii?Q?dxMWnLfDbk/a4zfaYnIhhksIxGE3Nbxph+N/Gx+rJmvFhIEa7vdHGX5TkrAG?=
- =?us-ascii?Q?RZP6ByEjczImVTGJPvhmctfFx3Pp/G7uRhZA4eCBeSmctA+BEO4J5nwZ50qh?=
- =?us-ascii?Q?0QuZs0Cq3CHvW6Rifz1CaCK6PkqlBjCRDLPsdlN4ivohyTfp4xUDNyw65M1l?=
- =?us-ascii?Q?uBagkRbk7rlXoIyNqWkGRVlL7RY8usgRY0GG7IAVSEQ2fNXR3eT9zmOaaJXT?=
- =?us-ascii?Q?36nToc+7Z1vlxeD1hsx30BAc3pl+rsPL4UrAr/VkUR2aPxjnUCy4V45wLtNy?=
- =?us-ascii?Q?05jTKA1z2ZAjg6yiR1oMUlxpDN/WpyYnsGMeSrBDpuThoNTsQgSlgAvCSCZJ?=
- =?us-ascii?Q?/9jJJIpIcin4c98190tJoQFPWBlYJe4xM/b9TXy/aD2z749l1Ck9curcLgUd?=
- =?us-ascii?Q?L+mb85Apz0nPgmrRVo9RZmD50mOtALDly6RmlbN2hVAlJ9xqm7gYdP5wckz0?=
- =?us-ascii?Q?GC/XS3phclYLP3ZhZr4ZoY9RlXUm90vCgISy+rqM5bUxYOnYKegr1eA9iGc8?=
- =?us-ascii?Q?bi66NdP/rOhY/C+FmCO0iolmzaVpUI97pN7EDq5NpUUY46SSEANzSxGidosd?=
- =?us-ascii?Q?25b/iPiHbcFlqaWOQ3ME/WpVqaMMiXuE41zYYBuQB75njlfoq/sDlcQ2CMOh?=
- =?us-ascii?Q?n0iRZnXrz6Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0wN0yeMvyXCsv6i3DYel4gd+NCdlTjZqUzciwbudZqVwM4aiot1ZjVD0Sf2/?=
- =?us-ascii?Q?M3lARCeJepiPsFGeDwZwboOQJRCGm2m9mGNxWE1LDWuIYBdiAaXkFCYgYwrZ?=
- =?us-ascii?Q?m5i/VSm/SQoeJTQtY2DJPdFmcrryKKS4X8xn0WtuE9YZN2p1bbtaVbKYVW28?=
- =?us-ascii?Q?CUrl4Qivt1A74fXgZm35p1wg55Z12PfVhgFr9+ti/Dq9L7u8YLtPmSCEb2Wf?=
- =?us-ascii?Q?GzhabbzOfxKuGuSE41P1sagR0ZvF9mHBgqUKZ5V8OBeHapwCzdtcD1IWbZiB?=
- =?us-ascii?Q?tq/WHn4ife+wuxYYBIGJ2Y3lfm+qkvxU/WkVN3a9n+iVMmUCMRSVP4AAAl6w?=
- =?us-ascii?Q?s7p7U54sPoSJr1vwuDMFoA4w+jxI0ElB2lN0Xf9WRHeymLp2d9Tg3dNzxYO1?=
- =?us-ascii?Q?Rknk+EBUJvZtqwpVmAxTae5SuPWfamITmQZNeY+dy1njwAUoQ/WzKJAvNAQL?=
- =?us-ascii?Q?NdmCalo/oVkB5FCCyLgkCZtgEPq6aKHGgMhE5TNn2W6vW71DOPABMITD7+fs?=
- =?us-ascii?Q?MUW2DGHog7WQ/CW1ecX0cdOVTSXl1KTC2HU1K0R191Of3F8pi/JVhsHaFyAX?=
- =?us-ascii?Q?mcBPWbwgiA9fbhOdXAQ3xiHRCeV5poYc6TZ6oYrhaMq/3FArnZV4lSDkJ68D?=
- =?us-ascii?Q?yFH0qgX4YmAhgJt1umWHwt2ZHg3XYUKZ4kf4hbDUzmPfjDQp4mQERjCx2lDn?=
- =?us-ascii?Q?lCNCwrDHyjUU9ny4nffrJy1vjlRU5mPJqTqlQDsxuUGJ6XeXntNZT9lB3Iy4?=
- =?us-ascii?Q?h8LQbTcSZdChd3nmFvhKjvTFm3oonyrui1bLkg4jAH73DeD3Fj8gCBgobGpe?=
- =?us-ascii?Q?5ig1YOKg3lG7lT90xT+jppHjZNULqnBe3CS5ZMg4VDGdvr54/vdVy/jjWXo6?=
- =?us-ascii?Q?XPJVhVkNe4ErDWMzlkWTXwsNw6ovXueFAxfhGr0Wo2y+9vxeoYS25S+0nX8X?=
- =?us-ascii?Q?/dT+YY4+gsf2LFht2XdyxPZ0gStYNHKWoT2/+zDDkjpbuUgy/sWhlIWKubHP?=
- =?us-ascii?Q?IBkTPtkjw1wt3ErSEYZsZf41R4BHfDQ4i3JmpXq0wMrjo1GDUH1nOuGvyHng?=
- =?us-ascii?Q?ewvqE29t2EIWcRAWfRg5F+kS8w9AEtdS/1HMXjp2SYDjRhEs9Nz5WYJ/kN+e?=
- =?us-ascii?Q?5JX6GgMRmpn/uIdL9xXvZCE63yFVZL9ZK+Sv2EjT09TN7np6hsGreRw/MzpA?=
- =?us-ascii?Q?sjDsU7S9E2E4isvNYnpEOYHViypJSjLOQzQJmgVZPQ2BrjgRGpVODYfUJ9zh?=
- =?us-ascii?Q?gion3WXcdmdRJLs4SFDj8ZR4fhbvE8xGhWWz9UErlP9UfEpzZdwCNE9BE7Mf?=
- =?us-ascii?Q?4iQg/BXZoAKOT82r1UrGxIknISGgfJY+sXkmlygsHaxhAwWVcmWqluS8M1Et?=
- =?us-ascii?Q?B0yxgfFwZkZCspZvDN5YLqPCO+xBgwQ5E3+GAnEU4WeyD5eLWArc99qb1OMA?=
- =?us-ascii?Q?zVFKkU5qYx1a6JEfZfvy93Qs24RzZ8EMRGWi3TQX2VfmqiEQx90W3ZTKETSC?=
- =?us-ascii?Q?hTJ0WxVBEeiFVKWRtUtubcizNHdS50P2U7Q2hyshvBIJ3EbM6zQ9BITwOA37?=
- =?us-ascii?Q?wnuxknSANuTd2wu1OXBNDaKizIsfxVkyYdqVDqEc?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2794fc9a-4df5-48d9-7df5-08ddfb6d49e3
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 13:21:36.7942
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t6G1efRhrKFVcZT/J2KUGd6GVewn0SNwOg/LrlGMAn+VyQqX2DEjAWtGUSK0+uR9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: ad7124: fix temperature channel
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250923-iio-adc-ad7124-fix-temperature-channel-v1-1-e421c98c0d72@baylibre.com>
+ <aNPrlIYGrB8oSsfL@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aNPrlIYGrB8oSsfL@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
-> Allow the comp_handler callback implementation to call ib_poll_cq().
-> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
-> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+On 9/24/25 8:01 AM, Marcelo Schmitt wrote:
+> Hi,
 > 
-> The Mellanox and Intel drivers allow a comp_handler callback
-> implementation to call ib_poll_cq().
+> On 09/23, David Lechner wrote:
+>> Fix temperature channel not working due to gain and offset not being
+>> initialized. This was causing the raw temperature readings to be always
+>> 8388608 (0x800000).
 > 
-> Avoid the deadlock by calling the comp_handler callback without
-> holding cq->cq_lock.
+> Would
+> 'Fix temperature channel not working due to gain and offset not being
+> initialized to their default values.'
+> be a more accurate description?
+> 
+> 
+>>
+>> To fix it, we just make sure the gain and offset values are set to the
+>> default values and still return early without doing an internal
+>> calibration.
+>>
+>> While here, add a comment explaining why we don't bother calibrating
+>> the temperature channel.
+>>
+>> Fixes: 47036a03a303 ("iio: adc: ad7124: Implement internal calibration at probe time")
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+> ...
+>>  	for (i = 0; i < st->num_channels; i++) {
+>> -
+>> -		if (indio_dev->channels[i].type != IIO_VOLTAGE)
+>> -			continue;
+>> -
+>>  		/*
+>>  		 * For calibration the OFFSET register should hold its reset default
+>>  		 * value. For the GAIN register there is no such requirement but
+>> @@ -1531,6 +1527,13 @@ static int __ad7124_calibrate_all(struct ad7124_state *st, struct iio_dev *indio
+>>  		st->channels[i].cfg.calibration_offset = 0x800000;
+>>  		st->channels[i].cfg.calibration_gain = st->gain_default;
+>>  
+>> +		/*
+>> +		 * Only the main voltage input channels are important enough
+>> +		 * to be automatically calibrated here.
+> I think it would be more accurate to just say the offset and callibscale
+> for temperature channel need to be at default values for the data sheet's
+> equation for the temperature sensor to be accurate.
 
-I spent some time looking at this, and I think the basic statement
-above is right. The comp_handler should be able to call poll_cq/etc
+This is true for all channels, not just the temperature channel and
+there is an existing comment (partially visible above) that says
+something like this already.
 
-rxe holding a lock it used to push a CQE is not correct.
+> 
+> 
+>> +		 */
+>> +		if (indio_dev->channels[i].type != IIO_VOLTAGE)
+>> +			continue;
+>> +
+>>  		/*
+>>  		 * Full-scale calibration isn't supported at gain 1, so skip in
+>>  		 * that case. Note that untypically full-scale calibration has
+> 
+> Maybe, instead of moving the 'if(... IIO_VOLTAGE)' check, this could alternatively
+> be set when initializing the temperature channel at ad7124_parse_channel_config().
+> 
+>  	if (num_channels < AD7124_MAX_CHANNELS) {
+>  		st->channels[num_channels] = (struct ad7124_channel) {
+>  			.nr = num_channels,
+>  			.ain = FIELD_PREP(AD7124_CHANNEL_AINP, AD7124_CHANNEL_AINx_TEMPSENSOR) |
+>  				FIELD_PREP(AD7124_CHANNEL_AINM, AD7124_CHANNEL_AINx_AVSS),
+>  			.cfg = {
+>  				.bipolar = true,
+> +				.calibration_offset = 0x800000,
+> +				.calibration_gain = st->gain_default,
 
-However! The comp_handler is also supposed to be single threaded by
-the driver, I don't think ULPs are prepared to handle concurrent calls
-to comp_handler.
+st->gain_default has not been initialized at this point, so this would
+not work without more rearranging.
 
-Other HW drivers run their comp_handlers from an EQ which is both
-single threaded and does not exclude poll_cq/etc.
+>  			},
+>  		};
+>  
+>  		chan[num_channels] = (struct iio_chan_spec) {
+>  			.type = IIO_TEMP,
+> 
+> 
+> Nevertheless, the current fix looks good to me as it is, so
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> 
+>>
+>> ---
+>> base-commit: 411e8b72c181e4f49352c12ced0fd8426eb683aa
+>> change-id: 20250923-iio-adc-ad7124-fix-temperature-channel-5900f7302886
+>>
+>> Best regards,
+>> -- 
+>> David Lechner <dlechner@baylibre.com>
+>>
+>>
 
-So while removing the cq lock here is correct from the perspective of
-allowing poll_cq, I could not find any locking in rxe that made
-do_complete() be single threaded.
-
-Please send a v2, either explain how the do_complete is single
-threaded in a comment above the comp_handler call, or make it be
-single threaded.
-
-Thanks,
-Jason
 
