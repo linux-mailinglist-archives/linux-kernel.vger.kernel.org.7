@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-831055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFC0B9B5E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:17:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE61B9B646
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7451BC1DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D60D32E4D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEE131D399;
-	Wed, 24 Sep 2025 18:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BB4330D38;
+	Wed, 24 Sep 2025 18:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P9Qzs41f"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sl6ZgZWC"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C578732ED29
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F5432F763
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737289; cv=none; b=RAgiZbMvNXkQqvl7XxS1N25l9ge/XxBt0rHZ29ayDyQQtdYI8zlGencozIv7fJQm6IY72qpzjLFxdB41xw/DqlnF77BAp020ZHyG4F3fQfsGxBQsuoQ+KUFWcU+XQ/Bq25VbZcEhXkhXbpxtJKUlbf5PmyrLa+dAtaAfJvDJgDo=
+	t=1758737301; cv=none; b=q/QPDJ8+HpUpyrS4gK7wTSA6FNCzQe6MaHXflYCY3iprya5KVmmgta0IoJV2wdhURCj1G0RzkdJjP8VPS1T1aS59LzAe/5BIwVvBT1Gom0idPM/WmRPfwuafgE6lc1O+B8euCq7Ai9K5TtkHRuOJMK+iRtckcqs97Hx+J9zOrRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737289; c=relaxed/simple;
-	bh=WbrpXw7uGEedja6sryJIlijHjH7y3h6T6Btd6J3NpBU=;
+	s=arc-20240116; t=1758737301; c=relaxed/simple;
+	bh=EGhb0RvyQlm7iZwhsGxvU7M6C4b/2pTdXMLeRQfd0Qc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GqBUJYjLn/FXj7s5UW1cVDQYbCqwnSVCjZep6cd5nI7lZ4YgaCwZQqN0+492BewGca5lmRjTXXjirk9JXXatYh2YDp6q/uCb7+oyDLBJZhzHsgP/39MfM0kAvvVM9N6lX3fVv7oJhK5JqyENbuGcMv/HzDlZxE6tfq39x/kG/UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P9Qzs41f; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=SMuemUJ2JKni6vtX9RzverxN1a5NFAvRGhTQPG856OlB2lJfbaRh46nrYn50jgtxBPrZJPiPidieQdmnD3W5oItjy1xrYfZlgtlp4d4y7/8kHoLVNchGhKRwwxR5PVC22MpkWdxtgwvhC4LcHkTekkFiP7GmHElqA7leBEFDTwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sl6ZgZWC; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272b7bdf41fso987505ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:08:07 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2681642efd9so562575ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758737287; x=1759342087; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758737299; x=1759342099; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E114FBK/ER4h0NxFE7k/vJ0RM740rgem63GVoGqlxQY=;
-        b=P9Qzs41f4GlAS7183jz4uMCIJvODeIMvmUOmndRh6UUmC1XtwsvY3yKiHdFwpVclQN
-         aNAfs0850cw1CZolYC1NMLwj3TBgWakDt9Z0QBA6H0dPLR8k7sPYk3OVZaCfAulQojfi
-         AZo+Kgoul7689SieZwLjrBAus3emb3sSjCAk192K+IJppNxQaVcCwSG5Rf6k2eH4VJkx
-         2Tg8oZzao7V4pE75TheHddNI/2lbwF0Jxy8nzAFQV0j3tZo+elsAwigV+S5bSVKOD7TS
-         Nk7WKkt1e0ILdYeNOSYmGhQMwaagBZ70RNot6SrnjjBfNamHkZr4ChyKgWfXbY/mNVeV
-         KhDQ==
+        bh=bkuc/fF7H0VC8ANgHBpHu7wU6KQSXWbo1rt2SqB0zfk=;
+        b=Sl6ZgZWCW031UTCtuUJE5AydySna6reS/EAZZlm7cn5T9JMxggeTxWPE6mspkXw+Xk
+         ZeHwjazg6jT5VzWL8JeZBmQKnGWZuYocPFDowNggM1DdW6SRuoWkgJiXA+uvYUiYAitO
+         wZd1i2ihKf8C3jfdLEAiK5GtPAklt1bAsy1Mq9R0Pn21AtdM4UXp/nJEJDnCoDis60Vr
+         zNOCWEYdke6p//NMT29hADiZeb788ZRozV4o3dWKsX2U2RWXnEzIkGrZL8H7DKG1lDtW
+         QJJPSb1UuaMH9Nnn7UqngYNWswRlZNxsmUbscr1zPrzqs5EYLMna2KRAOP28E2xo0f2t
+         f7/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758737287; x=1759342087;
+        d=1e100.net; s=20230601; t=1758737299; x=1759342099;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E114FBK/ER4h0NxFE7k/vJ0RM740rgem63GVoGqlxQY=;
-        b=O+4uKD/usUVYI6ZCq/R1Ou6UfBVe8QXmciwRfg5ZUCd++5ZV+1BqftJ0AaftiZTLdK
-         CRi3OWpTpQv5V6k9pv3fwC7Am4abIzV8L7Db44dtxaCq454viuHTvakySvJJHdl278IH
-         MOcKznWbb1/TM1HHBkrECp2VcUDgt63m85bXUDOiMBC5/hGQ5MJ/NcGVb4JyT2oKfrTb
-         ZsO5k4TE3mMsYZy0hDwfCIg+FgOqr9TR+leptn1ug6egSD7QTongGN/x5R78X/jBjBzd
-         sja5MMo/vGy2s/H/KqSO/8Lqe9xMXEHBDo4xpo/0/l7AoFhzwx1/9E0Adft5sLdM/no7
-         iE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuCgc7UT6ELtOIkVV3JuNWQEDVQraRoihqgUUDZhKkIXHp24DixAwWOt/2AgSepKDbMsJRQfAtkpch5eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwitWyY29v7XwBT1IDA0o5U7zVQF03IivvQZAbJSoLAlbJz/JXB
-	l/M46vDTJC70nkfB8eeoogPZg/UogqCwCBE+qBeu6AXKkSh9PnRFpQXaIioNOU4Ae/8LlzVibPq
-	bu3IneQ==
-X-Google-Smtp-Source: AGHT+IEQILa7qWwOhEOCXJrBhALpzVM3hyQ7cpSMcpqaqrRIUDlUUT4XRCks8JQbnx6Az52uCL5tJS7hm04=
-X-Received: from plxe12.prod.google.com ([2002:a17:902:ef4c:b0:267:dbc3:f98d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e548:b0:272:1320:121f
- with SMTP id d9443c01a7336-27ed49ed435mr6197535ad.27.1758737287040; Wed, 24
- Sep 2025 11:08:07 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:07:30 -0700
-In-Reply-To: <20250909003952.10314-1-bagasdotme@gmail.com>
+        bh=bkuc/fF7H0VC8ANgHBpHu7wU6KQSXWbo1rt2SqB0zfk=;
+        b=dxkoCPiSRf4Xbn+s5ySKWoUV4FsVXzlfAi/qVEb5I5haqD32Vgt1AQXEEV91RiyEos
+         7KeDuChytfGDnJn/t1/uRBv1HvVuAbCIBbzpU4zdVSsmoKn9qkMRNCKK78rdCjyftIVn
+         e4emFsOmG0z2/zkJ3q7vb7u+eBops7+4zJRYxUO6OH1pPj+uE4XIuu7jZosGu9BE8+Lo
+         l/VAG/J4FYJ8tu4KlvR5fc3sONHbgHZxfYECpifLax8hl7sIypr9hKzVD8zJES+LtG80
+         OrB2RMYmbwF117Jsudaia0kXW0BP7kmPQnG+pXSAdwQQBU2P9s2hg5QiDuqKY8zhf7Um
+         rqtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAZdKy+CeOP3b7aEJ3fKVUT2WDYwUnUiDOkEc1Ewd6EYcjW/eb9Yfplf6mk4OpMG/4cTyOb8o7oyavcDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOIlUvkuuN9me2L/Fxdagp97J3xaXR0tPLpSHLFttpdHobK/Gm
+	CdMC34GSSzj5ekeXoE9CyWPMsLrdK+DgwLqdH+daRwfd3pXEYUF+QYKRhD9SZBTYnLecV15p8p6
+	ZS+FfIA==
+X-Google-Smtp-Source: AGHT+IFiip93Y8SalTeWn/bXmvAZdZQIdPnwJH/peLWIGmz1ar9OPzcSFYPt0DBwYf8tyRdYIRNJWiF5JtI=
+X-Received: from plss12.prod.google.com ([2002:a17:902:c64c:b0:269:ba45:78f9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19cb:b0:26d:58d6:3fb2
+ with SMTP id d9443c01a7336-27ed49b30fdmr7146075ad.12.1758737299218; Wed, 24
+ Sep 2025 11:08:19 -0700 (PDT)
+Date: Wed, 24 Sep 2025 11:07:32 -0700
+In-Reply-To: <20250919004639.1360453-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250909003952.10314-1-bagasdotme@gmail.com>
+References: <20250919004639.1360453-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <175873635915.2146060.11822371958338127087.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86: Fix hypercalls docs section number order
+Message-ID: <175873596698.2143185.9486968747074623197.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86: Don't treat ENTER and LEAVE as branches,
+ because they aren't
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux KVM <kvm@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Wanpeng Li <wanpengli@tencent.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 09 Sep 2025 07:39:52 +0700, Bagas Sanjaya wrote:
-> Commit 4180bf1b655a79 ("KVM: X86: Implement "send IPI" hypercall")
-> documents KVM_HC_SEND_IPI hypercall, yet its section number duplicates
-> KVM_HC_CLOCK_PAIRING one (which both are 6th). Fix the numbering order
-> so that the former should be 7th.
+On Thu, 18 Sep 2025 17:46:39 -0700, Sean Christopherson wrote:
+> Remove the IsBranch flag from ENTER and LEAVE in KVM's emulator, as ENTER
+> and LEAVE are stack operations, not branches.  Add forced emulation of
+> said instructions to the PMU counters test to prove that KVM diverges from
+> hardware, and to guard against regressions.
 
 Applied to kvm-x86 misc, thanks!
 
-[1/1] KVM: x86: Fix hypercalls docs section number order
-      https://github.com/kvm-x86/linux/commit/86bcd23df9ce
+[1/1] KVM: x86: Don't treat ENTER and LEAVE as branches, because they aren't
+      https://github.com/kvm-x86/linux/commit/e8f85d7884e0
 
 --
 https://github.com/kvm-x86/linux/tree/next
