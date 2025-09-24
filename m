@@ -1,191 +1,408 @@
-Return-Path: <linux-kernel+bounces-830189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E66AB99034
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDD8B99038
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346892E3939
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E4F2E3AC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B93627EFE1;
-	Wed, 24 Sep 2025 09:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A342D541E;
+	Wed, 24 Sep 2025 09:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="cDbNq5x+"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CqeT8gQn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE701143C69
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2892D4B6D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704426; cv=none; b=Dao6oplRZc4uOXS5L+AsracTMxuKvlmMA9SeGtGjz+17msefuZbZrl5GcRnVeG3tJiBUpu+AZGsW2UDaXmsRJSQSkb1rcQuEV3mRzTdzQnE7dmj+7tJpuZXKZbl6X0X1kuLXRQGL1mQa+y6M24f15m1y5xWp1l1KbAhgM648Kc4=
+	t=1758704457; cv=none; b=RdJsfpE6G8RZfgJ4XGq+qjmjk6iU2mAPXbqn40yCoMRtwm/UOLpU4itspXsCWMwXfvkqnh6ojPv9TKTsxATXjdiUAVikxRUhGUFFK2B9oGPxArn5pZ0/A5Y8AeGCJg/Pfu58GCHoyaWT3AKii8plSy1yGti/jrF/NcaTznYD4sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704426; c=relaxed/simple;
-	bh=KREqzAh+jF5y03UYPBqSwDgkT2GBym1KTxnXoZ8xOhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ChE5KZakzKJz1yekKzsh/Wo/LQ0wXWDSoQj9yUFih7CIK/RK45Iau6BYPanBa8KzcqA440h7sToa23J3W7ui9A1f+IQ9FK+sgEWSQEMl64ag840nbOyF/T8Dx+sEZhoTRCU1uGtfCeFqVd9wcfQfA8K0zDGY0oqddNTy/TIkwEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=cDbNq5x+; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=zanders.be; s=202002;
-	h=content-type:cc:to:subject:message-id:date:from:in-reply-to:references:
-	 mime-version:from;
-	bh=N2Vf72GOQ2rBbqeUFPI+Xp3IghKEqRQVXfDsNjYoGAk=;
-	b=cDbNq5x+fmA6hbs5aFEvdRh8DGzoDLBnNasm34n/waknU96ls8i6qWKOX3E0xeGe0lADafbhiqzaE
-	 CfUW5YOhqZTRcTwnmIuAKEv5F4E94mEbkYpEwfbrqpeioVV3LTAfKhTG2wwv9GdfDmMSKP+3bxJhmt
-	 NbreDH5J+5C4deIlvA4f2ROGkQ/0MhruOt9+HUjJp7Qn/RcyPrOjIuts9zzk/mDRISnQkUHFu9JWXf
-	 FVu0Bf2NmpiIWTM4cCXKMHfjsbFw6SOMM3v7Pxp4BGnscQ2HbIaa1SWLvK9h8mp7ww4jU7yVDIvk1k
-	 FNLN9tGHHI6GcZ1sRsKxPL8WFn1kz0w==
-X-MSG-ID: e1c1b5c8-9924-11f0-9d6a-00505681446f
-X-Forwarded-Encrypted: i=1; AJvYcCXONe4heeecJ2sCTdctl/2giv+PJWRjFMexHbALk6g1JFA9WkmpHY+gUj8y9otFxWrMzG65C8Bt4MbkIP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydfjo3uYBgWLe4OtG2XC00LOp0LfOre/ViZmjus0kyR+li5q7T
-	G8PtZe2vBOoZSQrUMtwJ803gKVY1Qr03cT8W+yfPtC0DgFtYtNE2FIy2vU4O9+ZC0YmxnNIO6uE
-	50H1cPDfpRG2V7PEZZPViLpEC1CYfIHU=
-X-Google-Smtp-Source: AGHT+IEt2Po3Zh8TWxmaqm1I069rKBI2qYFkrIMdeYUdpiFn2AcDDTB4HVUmDo7RlxKe6UfsvRaIqWHN6n4DrO+OxlQ=
-X-Received: by 2002:a05:690c:930e:10b0:72a:86fb:b436 with SMTP id
- 00721157ae682-758a246a801mr38421997b3.25.1758704412978; Wed, 24 Sep 2025
- 02:00:12 -0700 (PDT)
+	s=arc-20240116; t=1758704457; c=relaxed/simple;
+	bh=Nh4aVWGuaiRZVqPL441CW5oZI1GWK7ZjIAMJm7moJUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNrCIPAEay0vGcP3JEPecAt9+nK5rjg1m7yiHLNpty3sKENwNmRtC/WlgiZ/SPKm0qVf0fmv0tKg7Hhv1UStF9PeQChs18aD5Xns+LQv9ewMWhpLQdD2bKoxcQbpmbu5xTWILX971Qv3qi92/HIylH+aIj9a4xtN1d9ozoy+2+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CqeT8gQn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758704454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aLs02NJP+bbyEGdjFVbfYO8s3w/0jWQxn/snmC8403w=;
+	b=CqeT8gQnSAb5mG85c4uRYBHbkc8LpNxNlBY6Cl2m5lsoQckLU5kNkjlLpEf9KPE7tPpsrp
+	DIzexfqkSRUZe8yacI1yjiANa1kCjDjeDhp7XaHUr43AokfyVKBwmEiUrefcXbA1x9/Wsb
+	9BCutiwo7YbHafhRLwyGVW8UwQVFvSs=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-141-F-WLLeZ_NzGUryKJrIgWEA-1; Wed, 24 Sep 2025 05:00:53 -0400
+X-MC-Unique: F-WLLeZ_NzGUryKJrIgWEA-1
+X-Mimecast-MFC-AGG-ID: F-WLLeZ_NzGUryKJrIgWEA_1758704452
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b2e9653a35aso302702366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:00:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758704452; x=1759309252;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aLs02NJP+bbyEGdjFVbfYO8s3w/0jWQxn/snmC8403w=;
+        b=EwoUaiSwPfmd8eqM1fycCTUKl4OvFyZkcp36DeuKOIyx8DXE/GUyrCfn+0vwXPE9Lo
+         PsA3nYLxko1OxCMKTksLBPzmnDhEP0xpnhLElVgdWVgOQGrUaOWCZjMRQ5Wz+sSrh4j/
+         rpCspQ9HP7tKRFfTvZzlElRMvUNJRYZmwKdK8v8PEgmCaJFpnhR7ie2rbxx6FaS4lFpq
+         CpztkSuaQ8JAdzIkD9b3o1IWJaQnP5y4IaTqEHsJjka5e7KsWcj+HMUNX6CJXPCE8WRg
+         h8omhGKUR2i1Tc8PIP/OVWdw4VSX9yIh6opKy+dXaILXCtvyJb4dmaSZz90yBto4la7M
+         z3Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8N/uRQrCAR27gLd9T1GF7y4NgPG7tw/qyYdXQ4domOIXM2tTrFLiyfjZ3RwKmPqWjVx15sz6O1UcVCeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnarNNkPU1xpxczDxntVopy5EVn72oWFFnAqqTQT7Jzf4sNh65
+	phyl4vZD7BRZk7iwkcswuSSIA9OsneRVLvrvZJfg2SNzecklAZ8oPqmJ2cAgCXjskrT0j5nJGZF
+	j49T57wKAEWjfEwCeCqaiKP0kR4hHYm5eswbffgsy9Pg9o+G2BgXbU5A2nCJ1+rEz+w==
+X-Gm-Gg: ASbGncu+8DO+8RdpSuBDMqgCc+zkVNpBMO8R22MVQSRAxDCxyYEg5KPQZ7pq4CzclVb
+	6F14tf9cangC8cttKNFfOaWBUlaVwyEoWswQNtQ+Aun8Jh3Lz/6uebdSBkvR1Xb0nU3dGVGHQgt
+	k48q66SEHAySensZlBIkOp7qXDy3QPXvFoc3G8Qgj7JA01rGObuKLki1Q5e3UfXfzpTyY5zJV31
+	2IvkkSmK9nZoP24mV3CUj+dawhCLFf5uBIP3S53Aidlzub5jerSf08lrq7/H+Ca5ffGIpaJZgH8
+	n/JdmbwT3V54nvaNXQC8IdYR/XfP
+X-Received: by 2002:a17:907:9482:b0:b1f:5e1:9f1c with SMTP id a640c23a62f3a-b3027d3f2damr533552166b.29.1758704451375;
+        Wed, 24 Sep 2025 02:00:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9UJN71fNOGfyW/6PFSyW+8a3intaX+vKq3ShzQOP5w4u3pGLhKrKfOxe0gV8M4eHlJvrd0g==
+X-Received: by 2002:a17:907:9482:b0:b1f:5e1:9f1c with SMTP id a640c23a62f3a-b3027d3f2damr533538766b.29.1758704449381;
+        Wed, 24 Sep 2025 02:00:49 -0700 (PDT)
+Received: from redhat.com ([31.187.78.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2928cd31a6sm903885066b.102.2025.09.24.02.00.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 02:00:48 -0700 (PDT)
+Date: Wed, 24 Sep 2025 05:00:46 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	Tim Gebauer <tim.gebauer@tu-dortmund.de>
+Subject: Re: [PATCH net-next v5 4/8] TUN & TAP: Wake netdev queue after
+ consuming an entry
+Message-ID: <20250924045554-mutt-send-email-mst@kernel.org>
+References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
+ <20250922221553.47802-5-simon.schippers@tu-dortmund.de>
+ <20250923123101-mutt-send-email-mst@kernel.org>
+ <aacb449c-ad20-48b0-aa0f-b3866a3ed7f6@tu-dortmund.de>
+ <20250924024416-mutt-send-email-mst@kernel.org>
+ <a16b643a-3cfe-4b95-b76a-100f512cdb79@tu-dortmund.de>
+ <20250924034534-mutt-send-email-mst@kernel.org>
+ <9e7b0931-afde-4b14-8a6e-372bda6cf95e@tu-dortmund.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922155635.749975-1-maarten@zanders.be> <20250922155635.749975-3-maarten@zanders.be>
- <DD08QRGQSU2G.1GB9CNQJV82CW@kernel.org>
-In-Reply-To: <DD08QRGQSU2G.1GB9CNQJV82CW@kernel.org>
-From: Maarten Zanders <maarten@zanders.be>
-Date: Wed, 24 Sep 2025 11:00:02 +0200
-X-Gmail-Original-Message-ID: <CAPB_pELazUPccKa72_m7vb80Z7wLRO+PpgfeY-afDHSgg4eVNg@mail.gmail.com>
-X-Gm-Features: AS18NWAGL9X1sJYkTcifCnTT5NHwoBx9uBcyAzc1C4e3__AXI1BfaLZ_b9jOvOU
-Message-ID: <CAPB_pELazUPccKa72_m7vb80Z7wLRO+PpgfeY-afDHSgg4eVNg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mtd: spi-nor: macronix: use RDCR opcode 0x15
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Boris Brezillon <bbrezillon@kernel.org>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, chengminglin@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9e7b0931-afde-4b14-8a6e-372bda6cf95e@tu-dortmund.de>
 
-Hi Michael,
-
-> Why isn't that also true for this device? It supports SFDP. Does it
-> have a wrong value there?
-
-You're right. I started working on this issue in an older kernel and
-didn't check the full error path again on the most recent version. I
-noted that the CR opcode was still wrong and went ahead forward
-porting my patches without checking the erroneous behavior in the
-latest kernel. My bad!
-
-My particular part (MX25L12833F) has been working (by doing 8 bit SR
-writes) since 947c86e481a0 ("mtd: spi-nor: macronix: Drop the
-redundant flash info fields", 2025-04-07). This ensures that SFDP data
-is read and behavior after that is OK. Before that commit, the SFDP
-data wouldn't be read because the .size was filled in (and before that
-because of .no_sfdp_flags). That in turn triggered the 16 bit writes.
-
-> But I'm also not convinced that we should fix it that way. I just
-> had a look at a random macronix flash MX25L12805D and it doesn't
-> have that opcode. Thus, just adding that to all the macronix flashes
-> doesn't make much sense. But it also doesn't seem to have a WRSR
-> command that takes 16bits.. and the core unconditonally set
-> SNOR_F_HAS_16BIT_SR. Hum.
-
-Yes. That part (MX25L12805D) has the same ID code whilst it is not
-supporting SFDP, RDCR or 16 bit SR writes (according to the
-datasheet).
-With the current flash info & logic in core.c, it will no longer work
-at all as spi_nor_parse_sfdp() fails.
-
-Consider a different example: 8M devices MX25L6433F, MX25L6436F and
-MX25L6473F. The ID for these is 0xC22017. Flash info for this contains
-a .size field (probably because of the legacy MX25L6405D) so SFDP will
-not be parsed and we're falling back on the defaults - so it will do
-16 bit SR writes. CR will get corrupted due to wrong CR read opcode.
-
-So I believe this first problem boils down to the same ID representing
-both flashes with and without SFDP. If we want to keep supporting the
-old non-SFDP devices, the .size should be filled in for those ID's. Or
-we drop support for them altogether and make SFDP a hard requirement
-(solving the other issues in one go). But it should be consistent
-across the different sizes.
-
-> So maybe just clear the SNOR_F_HAS_16BIT_SR or add SNOR_F_NO_READ_CR
-> for the macronix flashes by default as a fix. Not sure what's better
-> here.
-
-SNOR_F_NO_READ_CR doesn't help: this will write all 0's to the CR in a
-16 bit SR write, which is not the default state of some parts
-mentioned earlier.
-Clearing SNOR_F_HAS_16BIT_SR could indeed be a solution for letting
-these parts work properly in this non-sfdp mode. But we probably
-shouldn't do it for *all* Macronix flashes?
-
-> Then on top of that you might add the RDCR opcode, although
-> I'm not sure for what it is used then.
-
-There wouldn't be a real use until someone starts actually
-implementing the features in the Macronix CR (like top/bottom SWP). Or
-untill someone else is changing SNOR_F_HAS_16BIT_SR logic due to
-additional SFDP/BFPT parsing. Which I still consider a risk due to the
-weak link.
-
-> > Fixes: 10526d85e4c6 ("mtd: spi-nor: Move Macronix bits out of core.c")
->
-> I doubt that this is the correct Fixes tag as this only moves code
-> around.
-
-Essentially, I meant 'since the beginning of macronix introduction'.
-In such a case, should we dig further through file renames & stale
-LTS's?
-
-Thanks for your input,
-Maarten
-
->
-> In any case, there seems to be another issue with your flash and the
-> SFDP tables.
->
-> -michael
->
-> [1] https://docs.kernel.org/driver-api/mtd/spi-nor.html
->
-> > Signed-off-by: Maarten Zanders <maarten@zanders.be>
-> > ---
-> >  drivers/mtd/spi-nor/macronix.c | 1 +
-> >  include/linux/mtd/spi-nor.h    | 3 +++
-> >  2 files changed, 4 insertions(+)
+On Wed, Sep 24, 2025 at 10:40:04AM +0200, Simon Schippers wrote:
+> On 24.09.25 09:49, Michael S. Tsirkin wrote:
+> > On Wed, Sep 24, 2025 at 09:42:45AM +0200, Simon Schippers wrote:
+> >> On 24.09.25 08:55, Michael S. Tsirkin wrote:
+> >>> On Wed, Sep 24, 2025 at 07:56:33AM +0200, Simon Schippers wrote:
+> >>>> On 23.09.25 18:36, Michael S. Tsirkin wrote:
+> >>>>> On Tue, Sep 23, 2025 at 12:15:49AM +0200, Simon Schippers wrote:
+> >>>>>> The new wrappers tun_ring_consume/tap_ring_consume deal with consuming an
+> >>>>>> entry of the ptr_ring and then waking the netdev queue when entries got
+> >>>>>> invalidated to be used again by the producer.
+> >>>>>> To avoid waking the netdev queue when the ptr_ring is full, it is checked
+> >>>>>> if the netdev queue is stopped before invalidating entries. Like that the
+> >>>>>> netdev queue can be safely woken after invalidating entries.
+> >>>>>>
+> >>>>>> The READ_ONCE in __ptr_ring_peek, paired with the smp_wmb() in
+> >>>>>> __ptr_ring_produce within tun_net_xmit guarantees that the information
+> >>>>>> about the netdev queue being stopped is visible after __ptr_ring_peek is
+> >>>>>> called.
+> >>>>>>
+> >>>>>> The netdev queue is also woken after resizing the ptr_ring.
+> >>>>>>
+> >>>>>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> >>>>>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> >>>>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+> >>>>>> ---
+> >>>>>>  drivers/net/tap.c | 44 +++++++++++++++++++++++++++++++++++++++++++-
+> >>>>>>  drivers/net/tun.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
+> >>>>>>  2 files changed, 88 insertions(+), 3 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> >>>>>> index 1197f245e873..f8292721a9d6 100644
+> >>>>>> --- a/drivers/net/tap.c
+> >>>>>> +++ b/drivers/net/tap.c
+> >>>>>> @@ -753,6 +753,46 @@ static ssize_t tap_put_user(struct tap_queue *q,
+> >>>>>>  	return ret ? ret : total;
+> >>>>>>  }
+> >>>>>>  
+> >>>>>> +static struct sk_buff *tap_ring_consume(struct tap_queue *q)
+> >>>>>> +{
+> >>>>>> +	struct netdev_queue *txq;
+> >>>>>> +	struct net_device *dev;
+> >>>>>> +	bool will_invalidate;
+> >>>>>> +	bool stopped;
+> >>>>>> +	void *ptr;
+> >>>>>> +
+> >>>>>> +	spin_lock(&q->ring.consumer_lock);
+> >>>>>> +	ptr = __ptr_ring_peek(&q->ring);
+> >>>>>> +	if (!ptr) {
+> >>>>>> +		spin_unlock(&q->ring.consumer_lock);
+> >>>>>> +		return ptr;
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
+> >>>>>> +	 * produced in the meantime, because this could result in waking
+> >>>>>> +	 * even though the ptr_ring is full.
+> >>>>>
+> >>>>> So what? Maybe it would be a bit suboptimal? But with your design, I do
+> >>>>> not get what prevents this:
+> >>>>>
+> >>>>>
+> >>>>> 	stopped? -> No
+> >>>>> 		ring is stopped
+> >>>>> 	discard
+> >>>>>
+> >>>>> and queue stays stopped forever
+> >>>>>
+> >>>>>
+> >>>>
+> >>>> I totally missed this (but I am not sure why it did not happen in my 
+> >>>> testing with different ptr_ring sizes..).
+> >>>>
+> >>>> I guess you are right, there must be some type of locking.
+> >>>> It probably makes sense to lock the netdev txq->_xmit_lock whenever the 
+> >>>> consumer invalidates old ptr_ring entries (so when r->consumer_head >= 
+> >>>> r->consumer_tail). The producer holds this lock with dev->lltx=false. Then 
+> >>>> the consumer is able to wake the queue safely.
+> >>>>
+> >>>> So I would now just change the implementation to:
+> >>>> tun_net_xmit:
+> >>>> ...
+> >>>> if ptr_ring_produce
+> >>>>     // Could happen because of unproduce in vhost_net..
+> >>>>     netif_tx_stop_queue
+> >>>>     ...
+> >>>>     goto drop
+> >>>>
+> >>>> if ptr_ring_full
+> >>>>     netif_tx_stop_queue
+> >>>> ...
+> >>>>
+> >>>> tun_ring_recv/tap_do_read (the implementation for the batched methods 
+> >>>> would be done in the similar way):
+> >>>> ...
+> >>>> ptr_ring_consume
+> >>>> if r->consumer_head >= r->consumer_tail
+> >>>>     __netif_tx_lock_bh
+> >>>>     netif_tx_wake_queue
+> >>>>     __netif_tx_unlock_bh
+> >>>>
+> >>>> This implementation does not need any new ptr_ring helpers and no fancy 
+> >>>> ordering tricks.
+> >>>> Would this implementation be sufficient in your opinion?
+> >>>
+> >>>
+> >>> Maybe you mean == ? Pls don't poke at ptr ring internals though.
+> >>> What are we testing for here?
+> >>> I think the point is that a batch of entries was consumed?
+> >>> Maybe __ptr_ring_consumed_batch ? and a comment explaining
+> >>> this returns true when last successful call to consume
+> >>> freed up a batch of space in the ring for producer to make
+> >>> progress.
+> >>>
+> >>
+> >> Yes, I mean ==.
+> >>
+> >> Having a dedicated helper for this purpose makes sense. I just find
+> >> the name __ptr_ring_consumed_batch a bit confusing next to
+> >> __ptr_ring_consume_batched, since they both refer to different kinds of
+> >> batches.
+> > 
+> > __ptr_ring_consume_created_space ?
+> > 
+> > /* Previous call to ptr_ring_consume created some space.
+> >  *
+> >  * NB: only refers to the last call to __ptr_ring_consume,
+> >  * if you are calling ptr_ring_consume multiple times, you
+> >  * have to check this multiple times.
+> >  * Accordingly, do not use this after __ptr_ring_consume_batched.
+> >  */
 > >
-> > diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-> > index e97f5cbd9aad..de3f3d963f86 100644
-> > --- a/drivers/mtd/spi-nor/macronix.c
-> > +++ b/drivers/mtd/spi-nor/macronix.c
-> > @@ -322,6 +322,7 @@ static int macronix_nor_late_init(struct spi_nor *nor)
-> >       if (!nor->params->set_4byte_addr_mode)
-> >               nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
-> >       nor->params->set_octal_dtr = macronix_nor_set_octal_dtr;
-> > +     nor->params->rdcr_opcode = SPINOR_OP_RDCR_MX;
-> >
-> >       return 0;
-> >  }
-> > diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-> > index cdcfe0fd2e7d..e35405b126c2 100644
-> > --- a/include/linux/mtd/spi-nor.h
-> > +++ b/include/linux/mtd/spi-nor.h
-> > @@ -92,6 +92,9 @@
-> >  #define SPINOR_OP_RD_EVCR      0x65    /* Read EVCR register */
-> >  #define SPINOR_OP_WD_EVCR      0x61    /* Write EVCR register */
-> >
-> > +/* Used for Macronix flashes only. */
-> > +#define SPINOR_OP_RDCR_MX    0x15    /* Read configuration register */
-> > +
-> >  /* Used for GigaDevices and Winbond flashes. */
-> >  #define SPINOR_OP_ESECR              0x44    /* Erase Security registers */
-> >  #define SPINOR_OP_PSECR              0x42    /* Program Security registers */
->
+> 
+> Sounds good.
+> 
+> Regarding __ptr_ring_consume_batched:
+> Theoretically the consumer_tail before and after calling the method could
+> be compared to avoid calling __ptr_ring_consume_created_space at each
+> iteration. But I guess it is also fine calling it at each iteration.
+
+Hmm good point, though I worry about wrap-around a bit.
+
+
+> >>>
+> >>> consumer_head == consumer_tail also happens rather a lot,
+> >>> though thankfully not on every entry.
+> >>> So taking tx lock each time this happens, even if queue
+> >>> is not stopped, seems heavyweight.
+> >>>
+> >>>
+> >>
+> >> Yes, I agree — but avoiding locking probably requires some fancy
+> >> ordering tricks again..
+> >>
+> >>
+> >>>
+> >>>
+> >>>
+> >>>>>> The order of the operations
+> >>>>>> +	 * is ensured by barrier().
+> >>>>>> +	 */
+> >>>>>> +	will_invalidate = __ptr_ring_will_invalidate(&q->ring);
+> >>>>>> +	if (unlikely(will_invalidate)) {
+> >>>>>> +		rcu_read_lock();
+> >>>>>> +		dev = rcu_dereference(q->tap)->dev;
+> >>>>>> +		txq = netdev_get_tx_queue(dev, q->queue_index);
+> >>>>>> +		stopped = netif_tx_queue_stopped(txq);
+> >>>>>> +	}
+> >>>>>> +	barrier();
+> >>>>>> +	__ptr_ring_discard_one(&q->ring, will_invalidate);
+> >>>>>> +
+> >>>>>> +	if (unlikely(will_invalidate)) {
+> >>>>>> +		if (stopped)
+> >>>>>> +			netif_tx_wake_queue(txq);
+> >>>>>> +		rcu_read_unlock();
+> >>>>>> +	}
+> >>>>>
+> >>>>>
+> >>>>> After an entry is consumed, you can detect this by checking
+> >>>>>
+> >>>>> 	                r->consumer_head >= r->consumer_tail
+> >>>>>
+> >>>>>
+> >>>>> so it seems you could keep calling regular ptr_ring_consume
+> >>>>> and check afterwards?
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>>> +	spin_unlock(&q->ring.consumer_lock);
+> >>>>>> +
+> >>>>>> +	return ptr;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>  static ssize_t tap_do_read(struct tap_queue *q,
+> >>>>>>  			   struct iov_iter *to,
+> >>>>>>  			   int noblock, struct sk_buff *skb)
+> >>>>>> @@ -774,7 +814,7 @@ static ssize_t tap_do_read(struct tap_queue *q,
+> >>>>>>  					TASK_INTERRUPTIBLE);
+> >>>>>>  
+> >>>>>>  		/* Read frames from the queue */
+> >>>>>> -		skb = ptr_ring_consume(&q->ring);
+> >>>>>> +		skb = tap_ring_consume(q);
+> >>>>>>  		if (skb)
+> >>>>>>  			break;
+> >>>>>>  		if (noblock) {
+> >>>>>> @@ -1207,6 +1247,8 @@ int tap_queue_resize(struct tap_dev *tap)
+> >>>>>>  	ret = ptr_ring_resize_multiple_bh(rings, n,
+> >>>>>>  					  dev->tx_queue_len, GFP_KERNEL,
+> >>>>>>  					  __skb_array_destroy_skb);
+> >>>>>> +	if (netif_running(dev))
+> >>>>>> +		netif_tx_wake_all_queues(dev);
+> >>>>>>  
+> >>>>>>  	kfree(rings);
+> >>>>>>  	return ret;
+> >>>>>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> >>>>>> index c6b22af9bae8..682df8157b55 100644
+> >>>>>> --- a/drivers/net/tun.c
+> >>>>>> +++ b/drivers/net/tun.c
+> >>>>>> @@ -2114,13 +2114,53 @@ static ssize_t tun_put_user(struct tun_struct *tun,
+> >>>>>>  	return total;
+> >>>>>>  }
+> >>>>>>  
+> >>>>>> +static void *tun_ring_consume(struct tun_file *tfile)
+> >>>>>> +{
+> >>>>>> +	struct netdev_queue *txq;
+> >>>>>> +	struct net_device *dev;
+> >>>>>> +	bool will_invalidate;
+> >>>>>> +	bool stopped;
+> >>>>>> +	void *ptr;
+> >>>>>> +
+> >>>>>> +	spin_lock(&tfile->tx_ring.consumer_lock);
+> >>>>>> +	ptr = __ptr_ring_peek(&tfile->tx_ring);
+> >>>>>> +	if (!ptr) {
+> >>>>>> +		spin_unlock(&tfile->tx_ring.consumer_lock);
+> >>>>>> +		return ptr;
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>> +	/* Check if the queue stopped before zeroing out, so no ptr get
+> >>>>>> +	 * produced in the meantime, because this could result in waking
+> >>>>>> +	 * even though the ptr_ring is full. The order of the operations
+> >>>>>> +	 * is ensured by barrier().
+> >>>>>> +	 */
+> >>>>>> +	will_invalidate = __ptr_ring_will_invalidate(&tfile->tx_ring);
+> >>>>>> +	if (unlikely(will_invalidate)) {
+> >>>>>> +		rcu_read_lock();
+> >>>>>> +		dev = rcu_dereference(tfile->tun)->dev;
+> >>>>>> +		txq = netdev_get_tx_queue(dev, tfile->queue_index);
+> >>>>>> +		stopped = netif_tx_queue_stopped(txq);
+> >>>>>> +	}
+> >>>>>> +	barrier();
+> >>>>>> +	__ptr_ring_discard_one(&tfile->tx_ring, will_invalidate);
+> >>>>>> +
+> >>>>>> +	if (unlikely(will_invalidate)) {
+> >>>>>> +		if (stopped)
+> >>>>>> +			netif_tx_wake_queue(txq);
+> >>>>>> +		rcu_read_unlock();
+> >>>>>> +	}
+> >>>>>> +	spin_unlock(&tfile->tx_ring.consumer_lock);
+> >>>>>> +
+> >>>>>> +	return ptr;
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>  static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+> >>>>>>  {
+> >>>>>>  	DECLARE_WAITQUEUE(wait, current);
+> >>>>>>  	void *ptr = NULL;
+> >>>>>>  	int error = 0;
+> >>>>>>  
+> >>>>>> -	ptr = ptr_ring_consume(&tfile->tx_ring);
+> >>>>>> +	ptr = tun_ring_consume(tfile);
+> >>>>>>  	if (ptr)
+> >>>>>>  		goto out;
+> >>>>>>  	if (noblock) {
+> >>>>>> @@ -2132,7 +2172,7 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
+> >>>>>>  
+> >>>>>>  	while (1) {
+> >>>>>>  		set_current_state(TASK_INTERRUPTIBLE);
+> >>>>>> -		ptr = ptr_ring_consume(&tfile->tx_ring);
+> >>>>>> +		ptr = tun_ring_consume(tfile);
+> >>>>>>  		if (ptr)
+> >>>>>>  			break;
+> >>>>>>  		if (signal_pending(current)) {
+> >>>>>> @@ -3621,6 +3661,9 @@ static int tun_queue_resize(struct tun_struct *tun)
+> >>>>>>  					  dev->tx_queue_len, GFP_KERNEL,
+> >>>>>>  					  tun_ptr_free);
+> >>>>>>  
+> >>>>>> +	if (netif_running(dev))
+> >>>>>> +		netif_tx_wake_all_queues(dev);
+> >>>>>> +
+> >>>>>>  	kfree(rings);
+> >>>>>>  	return ret;
+> >>>>>>  }
+> >>>>>> -- 
+> >>>>>> 2.43.0
+> >>>>>
+> >>>
+> > 
+
 
