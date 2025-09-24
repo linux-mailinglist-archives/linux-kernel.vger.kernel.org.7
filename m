@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-830120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E7CB98C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:11:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C85B98C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55011892D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C573AE8CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D6026E6FA;
-	Wed, 24 Sep 2025 08:11:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4918C28136B;
+	Wed, 24 Sep 2025 08:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E8VtmVm9"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB8C26FA6C;
-	Wed, 24 Sep 2025 08:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6BC280CF1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701502; cv=none; b=UsOXUWjzA4zoZpOtGHZJjiOt5W9wXHcBUA/vxAn92zYHEGUByktVjhkgtEz6QIO2PSbBOrVZaYUrSoo8+HvrPbZBOU0qN/RZyh8vVZbK2VyNmUdTOXKEKi+fAt7hY8MRrvpelLeoxLLBQvsDehm90NU5K2gwDPDUmwrIlaPnElA=
+	t=1758701526; cv=none; b=jIIJeGVeXT/kw90AIWN3YrHSZZregqKRBiyGuTifQK4rf4i20amhbuq752vUuPXmAzz+0LayQhYV7IrLNRszo0zZF2aBrpEhvvplLwRMeoBZo0Efe59J0kpTHvg9krrQQJY0nfPbn/Nhy199Ti2HGy6kwEb3/pgGH2tIR9UjHIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701502; c=relaxed/simple;
-	bh=TuzfO1x5Qxp6XF6jkj6gG95IxepDneOJdR398+iRhxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZFoGOC4QXAFahcLpctAMK0lkTJbwMaH0YDE27g8Gg07Z7yrmDxvGYrKPquA0El19FTas1YZMds0HeTMcuVkuziB6aL3xC7YqG8E7VHVCBQVWLhNo+/ut1+jUcWG1mGNKqL+N9sAJI0R+4akIurtNo/83SVdIJ6db+5nh/wiFgys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id CA9941A0765;
-	Wed, 24 Sep 2025 08:11:31 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id AC1B820027;
-	Wed, 24 Sep 2025 08:11:29 +0000 (UTC)
-Date: Wed, 24 Sep 2025 04:11:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] tracing: Ensure optimized hashing works
-Message-ID: <20250924041125.268a4ceb@batman.local.home>
-In-Reply-To: <20250923165908.2399256-1-mkoutny@suse.com>
-References: <20250923165908.2399256-1-mkoutny@suse.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758701526; c=relaxed/simple;
+	bh=VmkA7XO9iwCF3zoLLDk+sKiWrqkJeeL94QJkshniWFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p5EIS6OwW47Fb0u+x6ttuAmgAbKWkKfoTuBRTKCMSV/u4DWAwbCI1+spY81yf7stoOGWGmqFdEeOQByUk5Cpx2umOq4zRjbuuLmmG6u6wnS2TQoTvx/1DyyND6mtfb2GmDKFqCbkyIPmqY73WVJmukD1cLaErE03BmDQDbcWk7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E8VtmVm9; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-36c0b946cb5so23050671fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758701521; x=1759306321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VmkA7XO9iwCF3zoLLDk+sKiWrqkJeeL94QJkshniWFg=;
+        b=E8VtmVm9URhqNg+j8xJaQGu+VqOc4Kd2xTVxkG4u5vWblDIRsT6ur5+1X7Bw51RZhE
+         oPI7MVpoHRe2Gj8VeDoT4Bsa3wme+LaLrzhUaPXdJ7fjJX0zxG01kNkrotfxRMVrakLF
+         ucmHok/GTXYj75TySLC5mnA9RNc02SXrsyX1CXiRvbQ34tkswJlPeViZLBp/rVFMl7SU
+         L4U6kYbe2FeWuXPQUr0FBK0G4E4v4yvx0lppttA/6DZBDUDy/mufR+xYVLR1qDw1qm8T
+         rfFY4G76e1R6rYtitcLkXvS5yqTIFhzNPkMKWIfuUJHDCEkrD8jtKYGLytFJ6uXtx8wH
+         g8qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758701521; x=1759306321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VmkA7XO9iwCF3zoLLDk+sKiWrqkJeeL94QJkshniWFg=;
+        b=S5LaNtAgdDSat9oTZ2b3hszet+m2de3RzA6DOAXY4a5+lDFAz/pEm52DpGj3i2remM
+         oVzeEGFgf5Dk2JiP1+sJmSutoA7kBm2UO8r2sQfaNcCrgycAUEYcDtuHS2ZjcxWv6qAS
+         Kh5bfukbvxhV6kHgBpPcsIks2+UIfNTSHy4pOvYl/Hne2lvB6kIqpYYZulqVUQO2jOE7
+         IzRrQggmLYY4i9RXENVj3FD4pCqwzo8D0W+FV26lQFQatLIacQpEO1tOoWETjhAwdQc3
+         O7HmUJbLfM6s0h7IVeqVhMXpjA39gkDovmvK7zBXOGS64X1roZsJEDcFDlOINy/MvlNj
+         Wq7w==
+X-Gm-Message-State: AOJu0Yz9WjwA3bgunA3PsqvWxs93+Ydbf8PEnWReQ4+fxC0BN3XeNbZF
+	2VG+s3oAk2hRHHx1iGcDHSn2Ye+946c/fIRadPf4Y9n4gTwrXmPyEEBte6/jdFM28haOXegtqO8
+	0339SPy6kHRJDKb+d5nCHaQMckTwcdV9gXpCNfZ3vslT2jUitj44T
+X-Gm-Gg: ASbGnctwT8JIoOuzIFRZKrQBZM/dz5l4gLPksmj3vb6USfq6A+35V15hs89WjEqRoCl
+	N+hVxTyORuShBoGJsvSFMaHCkq5nj1o/xm6dQOZdW5PxhtpXh5cylCuwXzQwmWTYhpNztJkGcKJ
+	MWlvsjlarpOiS3pBnwAexVMrm4Zj1T+shufIdPHqU6ANkJy+aANu2fhUftMH3hESxzz9mxOVq4h
+	G6V2Y6YDjiJ16J6HVk0XWum43x6Oys2NOZFkfim3Ksa+Fx1/6o=
+X-Google-Smtp-Source: AGHT+IHPQ1a0UxwW+MuOyVJBRCeoASaGWNoAoc7NUPlGBb+q7qMkCVHVIzSZMXDix4Vz2Xa6LdPqxoU5tzdwpGZNqd4=
+X-Received: by 2002:a2e:bea3:0:b0:36e:4481:9eaf with SMTP id
+ 38308e7fff4ca-36e4481a41amr6707431fa.15.1758701521434; Wed, 24 Sep 2025
+ 01:12:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250917153859.363593-1-marco.crivellari@suse.com>
+ <20250917153859.363593-4-marco.crivellari@suse.com> <72d10c3f-c036-4813-a256-9d7adba4bfec@linux.ibm.com>
+In-Reply-To: <72d10c3f-c036-4813-a256-9d7adba4bfec@linux.ibm.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 24 Sep 2025 10:11:50 +0200
+X-Gm-Features: AS18NWD24pmUR_DcuMreVDvQhvWrlztpWLqsqSgOJKvqVmAcXh5G04QuDlvKZjU
+Message-ID: <CAAofZF5KbMqyrhraMJkuWYwyPtn+W10vMNa0LfPYF7ZEd5evdw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] s390: replace use of system_wq with system_dfl_wq
+To: Mete Durlu <meted@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Stat-Signature: 46wzynmgsprcx5aojibikh3teuzyb7mp
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: AC1B820027
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+/kNzYB6rvvZIbAZjGtVGQq1VwbFnmtZs=
-X-HE-Tag: 1758701489-236507
-X-HE-Meta: U2FsdGVkX19mbeoVmhTTWc6VqZFPoy5nSWEa2XqlSSBUL23RJLqCcF8ZYYYpo5kRuEZNHW2EVx7e5z/SUGIaloXGzJJW6Gy1DhwmbaXV3/nFJYtTvzfrx71KBx3p6ET1693JCJa68KwlThSHk8OP/eA3MjOB4aLq71LOfhQKLQtJ+A+wcbgC5yQ0CpoCo7Y4xQy90/NnlcMRK2K4sFGg8u7C8Mjz91uasjEeNkjW+AoyaVggBwX858/MlB2n5N2CJtXlSawIjpRfxSIFFW3E/sp1EYU9IT/1FEqw93zkwN+IE8xDQYKlPObVS1jaLnt8q2B/Bq8L7YbNzIbHUgfdav/St3r+Y4kGFDo2GKzl3DCmmJ3ukLxhbyuU5U7GVfFy8Toz5YVPR3cHzC6dYj13Ew==
 
-On Tue, 23 Sep 2025 18:59:07 +0200
-Michal Koutn=C3=BD <mkoutny@suse.com> wrote:
+On Wed, Sep 24, 2025 at 10:05=E2=80=AFAM Mete Durlu <meted@linux.ibm.com> w=
+rote:
+> [...]
+> Thank you for making the change from *_percpu_wq to *_dfl_wq.
+> I am not sure if its too late but you can have my r-b
+>
+> Reviewed-by: Mete Durlu <meted@linux.ibm.com>
 
-> If ever PID_MAX_DEFAULT changes, it must be compatible with tracing
-> hashmaps assumptions.
->=20
-> Link: https://lore.kernel.org/r/20240409110126.651e94cb@gandalf.local.hom=
-e/
-> Signed-off-by: Michal Koutn=C3=BD <mkoutny@suse.com>
-> ---
->  kernel/trace/trace_sched_switch.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> Drive-by flushing an old idea. Take it or leave it.
->=20
-> diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched=
-_switch.c
-> index cb49f7279dc80..aabae7daaac91 100644
-> --- a/kernel/trace/trace_sched_switch.c
-> +++ b/kernel/trace/trace_sched_switch.c
-> @@ -243,6 +243,8 @@ int trace_create_savedcmd(void)
->  int trace_save_cmdline(struct task_struct *tsk)
->  {
->  	unsigned tpid, idx;
-> +	/* so that map_pid_to_cmdline indexing is efficient */
-> +	BUILD_BUG_ON(!is_power_of_2(PID_MAX_DEFAULT));
+Many thanks, Mete! :-)
 
-Please move this to just above the test. And it doesn't need a comment,
-as it's obvious for why it needs to be a power of two when it's above
-the test.
+--=20
 
-> =20
->  	/* treat recording of idle task as a success */
->  	if (!tsk->pid)
+Marco Crivellari
 
-Like this:
-
-	/* treat recording of idle task as a success */
-	if (!tsk->pid)
-		return 1;
-
-+	BUILD_BUG_ON(!is_power_of_2(PID_MAX_DEFAULT));
-+
-	tpid =3D tsk->pid & (PID_MAX_DEFAULT - 1);
-
--- Steve
+L3 Support Engineer, Technology & Product
 
