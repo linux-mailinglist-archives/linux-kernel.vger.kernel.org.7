@@ -1,324 +1,79 @@
-Return-Path: <linux-kernel+bounces-830022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DB6B98791
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:09:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A8FB98797
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2214A1A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:09:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DA8B2E0B4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BD226AA94;
-	Wed, 24 Sep 2025 07:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E026A0D0;
+	Wed, 24 Sep 2025 07:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="LqJK2N2q"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bf-el.eu header.i=@bf-el.eu header.b="bOIFhe3W"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5861158874
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900A6213254
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 07:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758697786; cv=none; b=GpULX8s7Bi6vUYt3WnCGQiw8zcwyw/vaYy7jz9lynbpXHHpE6ljA+Pyo+begimV+AYWrZbd2Ijo/KNwCLZReqdL/7WmLk2VJvSPRjxYC3rWGNYZlKuEX/HhuD1RpGMwhBzl/htf62K9mQWy7xu4LMahPkOFeyVJmG8lFFr8JY0s=
+	t=1758697897; cv=none; b=SSYpwmCufJCVI5h/peCkomzVx5ELf+TPM62NUsL1BpqGLv31IKj6T0BrDbsk58xYzKVR9XAlGerttUSySZABWZfHmAWiR+WrmtB2gK3CoyvFbQyU/3g+Zso9PK8TGSx0jTaQus7vDegddzIOdMGekLw2z826LO3F9cIQVv7WWFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758697786; c=relaxed/simple;
-	bh=Bm/c0U+QlEQD70i9efmaOmqjKeHojdywtKbcNpxruKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3Ah16PH5Cjn+DTRSo9Ul+3a6RASvyN5A8XMpHecaGwet/0bkmgNcW+5ddzo+Y6rs5wK0dxvaegGY9QPkkWvTwI5YKrLnVsLfomw1co41NtV7usxfBxC03LbOkYfhFWl/VS0iwkVgAd75sVKClswNu3440pgEJWg0ej3j/166bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=LqJK2N2q; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3324523dfb2so3117652a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 00:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1758697784; x=1759302584; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MGSaf7ZfJ7JsnmRy0rZ4O/HGoiqMzyG6S1rWloOryz4=;
-        b=LqJK2N2q0XpLaz4JSfd8Noz1othgNxtoa2AIDuQqf2l3UdYipS0kBQwpH2ymojnyMF
-         IWzDeWwojeQnXBUEWaQA85cOI6ZOS5zvPOFBqu5ufvUOKiXjpeHj3982iVLht1l5nUV5
-         Of9zVN5IqOc4hO6L0ZjplRb7h3VUvp0Ehqg/PQkpohTavk/b+UtuNu2sb+kklhu+NDoz
-         Vg5dbDv+gbnJBow3/Gi+zeAQizq8yzU6tWgTMqBA4kKUKV6FUuJY8+XW6iE/ki5yEl6D
-         Tyk0sITh2Kp4KuTNR++H/lcHhsYIt8lnNOt6AoSwCtnoCSu7ptwwr9UKNSGPMQxXU0BM
-         lpeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758697784; x=1759302584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MGSaf7ZfJ7JsnmRy0rZ4O/HGoiqMzyG6S1rWloOryz4=;
-        b=v4CGDMRdRjnBslhP+XN27o6Cn3fVMMNdUVfrGjqnY1N4JjfUiBC6Ozy+Y+fiSvS+Vf
-         NcNNTqdJz8/5/EgCNyo6J50oYkTdbzxCS4LkC62b0cDIRtDN9xFXKrutSXNSz0vUwhpj
-         lrHadsLHXfzIidpGPnFNimJ3oRpTQJtUktTE2RxpWRGCNKrPOBCE1YLeHPWz8pv4y9fu
-         C/+RjGzfM0/QiLNboCjO0OGWXfCCo2FisGEjXYnLc/PnElhV6X7VVQGCosu5V3EcDE9f
-         S96AWqkaX9YwzsZvNS2oZ+sf/OxAcsIXyRnZ88xpF6J0U51j5OQCjw22uKt74Xcdpwh9
-         vnvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrQKPGxb+vPJzk4HCgEIvXl21y0mPssWooMeptsKlDWttpF2VM2lF/rH6eowuCG4riBv2De9alpy+vbbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylf5IwH448el3QR0sULRD7IejbIPq9XzQXXzy9GmZL81oBwWTp
-	yLYHCsGihb2qqiVxYPntwnH34tKvov+JVybsi4TTDu7VMIMpp2Xk/HIFzABc1Bm9Qpfv
-X-Gm-Gg: ASbGncsUTkNm2kgBIBSYdI2VIbrj4rs4v6ZtgsOCVz2oVqOZXxuT02bFBmfm+105W8I
-	Y+0xEmzea0p0w5464pS7nbNIzQkMrpNjwfFIBhFFgOX5ESxzuQ4KHds3NHF72RU3xsQjZPweV7t
-	EMgqjJ5CW+lc809q1QA32YBeWPc0MIdb4HKXMavDHpumRfLuXJPzLkNxkSpG+mhUrShu7EP4RON
-	s9kZprbRcFa83LVWfCmW+laASNAsYO5hAqHVijacWy6tfzGtiQFA61Q0JqaSlW4ocRgsUCfFcOw
-	HdcDPsKCLTwVkXZpRjwbSUAjeZvlDpM9N7y66xcYaN+s/nML2zqdtaX1WoUf5C0pMJ7CflF8iPW
-	Ln4vdQ5OPpENKpj7WofwNdpvJ
-X-Google-Smtp-Source: AGHT+IHDeqZt/SOvidUlhJ4b4qDw7MYr2ByXSViYNpQQw/M0IMB5DvSzkUwqcAW77jOCcL5kdmG88g==
-X-Received: by 2002:a17:90b:4a42:b0:32e:18fb:f05f with SMTP id 98e67ed59e1d1-332a95977damr6615787a91.20.1758697783954;
-        Wed, 24 Sep 2025 00:09:43 -0700 (PDT)
-Received: from sultan-box ([79.127.217.41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be14601sm1314858a91.14.2025.09.24.00.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 00:09:43 -0700 (PDT)
-Date: Wed, 24 Sep 2025 00:09:39 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, mario.limonciello@amd.com,
-	richard.gong@amd.com, anson.tsao@amd.com,
-	Alexey Zagorodnikov <xglooom@gmail.com>
-Subject: Re: [PATCH v4 3/7] media: platform: amd: Add isp4 fw and hw interface
-Message-ID: <aNOZM2fj1X9TfZSF@sultan-box>
-References: <20250911100847.277408-1-Bin.Du@amd.com>
- <20250911100847.277408-4-Bin.Du@amd.com>
- <aNB0P18ytI1KopWI@sultan-box>
- <df5f52eb-0480-4d59-b930-e8336a993831@amd.com>
+	s=arc-20240116; t=1758697897; c=relaxed/simple;
+	bh=cxvr5CAsSZRJDNdRYtMZoIj357oOZL4e7J9kjcd5Bb8=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=q/vXAOIfe83NR7no7JyIgnJOcMuYAwoDVyB1wEDviyH8WL2Rs1wVzkIh+cpv2aqGjJr8vGiOww6vQVCHBJ02DGdoAQuPr8e97m7wvz+xOide54HF10b7pVvPrl1c0efBZlVS13Vh9bWM8sPU+Iw+zF1uf8eJaJvGbvi92gD94Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bf-el.eu; spf=pass smtp.mailfrom=bf-el.eu; dkim=pass (2048-bit key) header.d=bf-el.eu header.i=@bf-el.eu header.b=bOIFhe3W; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bf-el.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bf-el.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bf-el.eu;
+	s=ds202509; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cxvr5CAsSZRJDNdRYtMZoIj357oOZL4e7J9kjcd5Bb8=; b=bOIFhe3WyZ+y7LoK/dFFRYtOxP
+	LYFuJmS6t4YShNLgHigm5/jFqCIlX3GVaLttKv4CsLraxKynl1Pel/H9xMoyd24sT3UPkpeumRk36
+	YLhfAAXBOlswzYJJGQfwPM4f4P8a48Ma1f+F54JCbr411cXqck1iPZVmi+wjkOT2W61M+uWPXZCZL
+	X4tH7OoxFTpk5ZcXxW/gOSHxJBALXeyAPq0U+zAK++kRK7DvbI7n4/mNKHkIG+oSZ8Eb/g42ZGCUc
+	thFVvjdxRHmF1M/QDquxoLByoFIM0wboxuOV1tYEU6B8WYIHJBsMYEJiAi1e1wwaiISvpNT75PbYK
+	GXaEyJhA==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1v1Jex-00FTAE-Oq
+	for linux-kernel@vger.kernel.org;
+	Wed, 24 Sep 2025 09:11:27 +0200
+Message-ID: <e7d7a1d9-4fa1-4b9a-828c-42e96d490f68@bf-el.eu>
+Date: Wed, 24 Sep 2025 09:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df5f52eb-0480-4d59-b930-e8336a993831@amd.com>
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bf-el.eu>
+Subject: Updated URL to shortform (was Unification in Bitstreams OS, Fair Pay
+ Philosophy, Low JItter)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 05:24:11PM +0800, Du, Bin wrote:
-> On 9/22/2025 5:55 AM, Sultan Alsawaf wrote:
-> > On Thu, Sep 11, 2025 at 06:08:43PM +0800, Bin Du wrote:
-> > > +	if (!mem_info)
-> > > +		return NULL;
-> > > +
-> > > +	mem_info->mem_size = mem_size;
-> > 
-> > mem_info->mem_size is not used anywhere, remove it.
-> > 
-> 
-> Actually, mem_size will be used in following patches in isp4_subdev.c, so,
-> i'd like to keep it.
+Updated my web to use the shortform BF as mentioned in earlier mail.
 
-Ah, I didn't notice, my apologies.
+https://www.bf-el.eu/
 
-> > > +	for (i = 0; i < buf_size / sizeof(u32); i++)
-> > > +		checksum += buffer[i];
-> > > +
-> > > +	surplus_ptr = (u8 *)&buffer[i];
-> > 
-> > Change cast to `(const u32 *)`
-> > 
-> 
-> Sure, will modify in the next version. I guess you mean `(const u8 *)`
+I also added to my youtube channel Crow Tracker (best of "Sound Trackers"):
 
-Yes, it should be `(const u8 *)`, apologies for the typo.
+https://www.youtube.com/watch?v=OaS0rwFs-PQ&list=PLWKu0MveW-Ku4iISMdeNmhPBlGnTJ7xxY&index=2
 
-> > > +
-> > > +	guard(mutex)(&ispif->cmdq_mutex);
-> > > +
-> > > +	list_for_each_entry_safe(buf_node, tmp_node, &ispif->cmdq, list) {
-> > > +		list_del(&buf_node->list);
-> > > +		kfree(buf_node);
-> > > +	}
-> > 
-> > Move the whole list to a local LIST_HEAD(free_list) variable and then release
-> > the lock. Then you can list_for_each_entry_safe() without needing to do a
-> > list_del() every time, and you won't need to hold the lock the whole time.
-> > 
-> 
-> Thanks for the suggestion, seems that will make code complicated, e.g. this
-> is the suggested implementation in my mind if i don't get you wrong,
-> 
-> void isp4if_clear_cmdq(struct isp4_interface *ispif)
-> {
-> 	struct isp4if_cmd_element *buf_node;
-> 	struct isp4if_cmd_element *tmp_node;
-> 	LIST_HEAD(free_list);
-> 
-> 	{
-> 		guard(mutex)(&ispif->cmdq_mutex);
-> 		if (list_empty(&ispif->cmdq))
-> 			return;
-> 		free_list = ispif->cmdq;
-> 		INIT_LIST_HEAD(&ispif->cmdq);
-> 	}
-> 
-> 	list_for_each_entry_safe(buf_node, tmp_node, &free_list, list) {
-> 		bool quit = false;
-> 
-> 		if (buf_node->list.next == &ispif->cmdq)
-> 			quit = true;
-> 		kfree(buf_node);
-> 		if (quit)
-> 			return;
-> 	}
-> }
-> So, I'd like to keep previous implementation by removing list_del and adding
-> INIT_LIST_HEAD, so this will be the code after refine,
-> 
-> void isp4if_clear_cmdq(struct isp4_interface *ispif)
-> {
-> 	struct isp4if_cmd_element *buf_node;
-> 	struct isp4if_cmd_element *tmp_node;
-> 
-> 	guard(mutex)(&ispif->cmdq_mutex);
-> 
-> 	list_for_each_entry_safe(buf_node, tmp_node, &ispif->cmdq, list)
-> 		kfree(buf_node);
-> 	INIT_LIST_HEAD(&ispif->cmdq);
-> }
-> It's much simpler, and based on our test, for command and buffer queue, the
-> elements in the queue won't exceed 5 when run to here, so the lock time will
-> be very short. What do you think?
+If adhering to Kawai Bit, maybe there will be fair pay money.
 
-This is what I am thinking (with cmdq_mutex replaced with a spin lock):
+Light!
 
-void isp4if_clear_cmdq(struct isp4_interface *ispif)
-{
-	struct isp4if_cmd_element *buf_node, *tmp_node;
-	LIST_HEAD(free_list);
-
-	scoped_guard(spinlock, &ispif->cmdq_lock)
-		list_splice_init(&ispif->cmdq, &free_list);
-
-	list_for_each_entry_safe(buf_node, tmp_node, &free_list, list)
-		kfree(buf_node);
-}
-
-> > > +	struct isp4if_cmd_element *cmd_ele = NULL;
-> > > +	struct isp4if_rb_config *rb_config;
-> > > +	struct device *dev = ispif->dev;
-> > > +	struct isp4fw_cmd cmd = {};
-> > 
-> > Use memset() to guarantee padding bits of cmd are zeroed, since this may not
-> > guarantee it on all compilers.
-> > 
-> 
-> Sure, will do it in the next version. Just a question, padding bits seem
-> never to be used, will it cause any problem if they are not zeroed?
-
-Padding bits, if there are any, are used by isp4if_compute_check_sum() and are
-also sent to the firmware.
-
-> > > +
-> > > +	ret = isp4if_insert_isp_fw_cmd(ispif, stream, &cmd);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "fail for insert_isp_fw_cmd camId (0x%08x)\n", cmd_id);
-> > > +		if (cmd_ele) {
-> > > +			isp4if_rm_cmd_from_cmdq(ispif, cmd_ele->seq_num, cmd_ele->cmd_id);
-> > 
-> > Using isp4if_rm_cmd_from_cmdq() sort of implies that there is a risk that
-> > cmd_ele may have been removed from the list somehow, even though the fw cmd
-> > insertion failed? In any case, either make it truly safe by assuming that it's
-> > unsafe to dereference cmd_ele right now, or just delete cmd_ele directly from
-> > the list under the lock.
-> > 
-> 
-> Good consideration, so will change it to following in the next version,
-> ret = isp4if_insert_isp_fw_cmd(ispif, stream, &cmd);
-> if (ret) {
-> 	dev_err(dev, "fail for insert_isp_fw_cmd camId %s(0x%08x)\n",
-> 		isp4dbg_get_cmd_str(cmd_id), cmd_id);
-> 	if (cmd_ele) {
-> 		cmd_ele = isp4if_rm_cmd_from_cmdq(ispif, seq_num, cmd_id);
-> 		kfree(cmd_ele);
-> 	}
-> }
-> The final cmd_ele to be freed will come from cmdq which will be protected by
-> mutex, so it will be safe.
-
-Looks good to me!
-
-> > > +static int isp4if_send_buffer(struct isp4_interface *ispif, struct isp4if_img_buf_info *buf_info)
-> > > +{
-> > > +	struct isp4fw_cmd_send_buffer cmd = {};
-> > 
-> > Use memset() to guarantee padding bits are zeroed, since this may not guarantee
-> > it on all compilers.
-> > 
-> 
-> Sure, will do it in the next version. as mentioned above, padding bits seem
-> never to be used, will it cause any problem if they are not zeroed?
-
-Padding bits, if there are any, are used by isp4if_compute_check_sum() and are
-also sent to the firmware.
-
-> > > +
-> > > +	guard(mutex)(&ispif->bufq_mutex);
-> > > +
-> > > +	list_for_each_entry_safe(buf_node, tmp_node, &ispif->bufq, node) {
-> > > +		list_del(&buf_node->node);
-> > > +		kfree(buf_node);
-> > > +	}
-> > 
-> > Move the whole list to a local LIST_HEAD(free_list) variable and then release
-> > the lock. Then you can list_for_each_entry_safe() without needing to do a
-> > list_del() every time, and you won't need to hold the lock the whole time.
-> > 
-> 
-> Same comments as above cmdq
-
-This is what I am thinking (with bufq_mutex replaced with a spin lock):
-
-void isp4if_clear_bufq(struct isp4_interface *ispif)
-{
-	struct isp4if_img_buf_node *buf_node, *tmp_node;
-	LIST_HEAD(free_list);
-
-	scoped_guard(spinlock, &ispif->bufq_lock)
-		list_splice_init(&ispif->bufq, &free_list);
-
-	list_for_each_entry_safe(buf_node, tmp_node, &free_list, node)
-		kfree(buf_node);
-}
-
-> > > +struct isp4_interface {
-> > > +	struct device *dev;
-> > > +	void __iomem *mmio;
-> > > +
-> > > +	struct mutex cmdq_mutex; /* used for cmdq access */
-> > > +	struct mutex bufq_mutex; /* used for bufq access */
-> > 
-> > It makes more sense for cmdq_mutex and bufq_mutex to be spin locks since they
-> > are only held briefly for list traversal.
-> > 
-> 
-> I'd like to keep them as mutex, because 1.no sync with hard/soft interrupt
-> is needed, 2.Not very time critical 3.Make guard mutex optimization
-> possible. What do you think?
-
-For very quick/short critical sections that don't sleep, it makes more sense to
-use a spin lock. A mutex lock is heavy when it needs to sleep on contention,
-which isn't worth it if the critical section has very few instructions.
-
-Also, guard and scoped_guard are available for spin locks too, as shown in my
-replies above.
-
-> > > +
-> > > +#endif
-> > 
-> > Add /* _ISP4_INTERFACE_ */
-> > 
-> 
-> Sure, will add it in the next version and check all header files. BTW, will
-> change the macro name to _ISP4_INTERFACE_H_ to align with others
-
-Good catch, sounds good.
-
-Sultan
 
