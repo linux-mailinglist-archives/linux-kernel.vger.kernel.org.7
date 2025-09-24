@@ -1,186 +1,152 @@
-Return-Path: <linux-kernel+bounces-829959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61328B9854C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:00:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC417B98551
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8A987A52AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 05:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D284818953CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E32723FC41;
-	Wed, 24 Sep 2025 05:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DD723D7EE;
+	Wed, 24 Sep 2025 06:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="W9850TNI"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g+bee02u"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA8C141;
-	Wed, 24 Sep 2025 05:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE231D6DB5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758693596; cv=none; b=BGp0t6Lnl0e3QuEebDkmWXhLEOD+q6+xnDKWL6rD7dvm958Oy17CbS4yLC9UceUr4y8hJP47Z6jj0B5DdqTuxO6ykJKS7nV549/Ysod1zAwGyXvZbY+FjU4q4xm1GR1wSh0XU/JGt7dCFJQK6vme4KVPQbI7yGuYWU9B0+z0Dhs=
+	t=1758693763; cv=none; b=F9v4WSjlDUiOKb/i/rmwQMG0AQjtslE1iAf5f3ryk7TMpcxWtBG593hgU7VNplYl2eKFuMnmP1a3MSqvdL9ywj3gZnqf06fS0vjMuZUotZyWNJCQfjcyn7vlW3TqnqJU4xGPPg17IcBvDho54cWlW/i5wQjA2jYteq6Vu03Cu/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758693596; c=relaxed/simple;
-	bh=N2MGgVh3FQGohtqhW0fhGVQOd6N06pK4oL5dFsa3MZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udhG4LUz1lg8qHNCmcZM5Up7j8LY0XHIj481LUUyxpTTe/BD/fqqvyKkHzPMqw43kC8AiJYU42eneNUeVavlhwHtUQj8IiNfVy3rm1l+qtC/y4J2/uZZKaGHaGLZLjYJkdKv8zxzAXkY1v3GgaxDpUF2tS9RL7BldJ818FNn9XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=W9850TNI; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from [IPV6:2a01:599:c11:dc72:32f8:2997:5bae:168a] (tmo-123-4.customers.d1-online.com [80.187.123.4])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 58O5xkO8020717
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 24 Sep 2025 07:59:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1758693587;
-	bh=N2MGgVh3FQGohtqhW0fhGVQOd6N06pK4oL5dFsa3MZA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=W9850TNIaMIc0VoXTP2OIKP2SMr62bBBkcBJxATnh10lO6SaJrvucmmzYGEH9J1fa
-	 WjL92bHKsvKmMhntMlNzps1dqcW4CIOlec4c9Vd8uIITOl+PSJ8+2CWT49N2w8WcLh
-	 L1mGHE423T54HZHRSbjqqIDzp3uAkQpx3/CohHYU=
-Message-ID: <96058e18-bb1e-46d1-99aa-9fdffb965e44@tu-dortmund.de>
-Date: Wed, 24 Sep 2025 07:59:46 +0200
+	s=arc-20240116; t=1758693763; c=relaxed/simple;
+	bh=Vt9MfymYDQwEvit0KVgc2ClANbmnauv0q5tPcOx97N8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=sF4gtghOLnvbe1id5jsrXwhaeUK94HHD8dKE2ucIvnwDpZd7EQ3lqeC7lVXsVRtnc6Ska7khOWrlaK2StdkNmHnNf/hHgP8APD1ikG36FjIcluWlZOBvRMIRltvScN68h+QaF8hv3vEu0/EBBiIWzo7zE6Izg47nEqPXhMg+3QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g+bee02u; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso9472737a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758693762; x=1759298562; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XD1WIzYiMatnlzgDrUYCZrBYkmo/k2ltaCjRnSuYXHQ=;
+        b=g+bee02uuZQwV13yywMc7eeb2pGv32IMXeB9DNbFlUprEFJBN41IniEXPV3Jhn0uIY
+         xbwlCkeYi29m8fLgrNYNYpY0cU4yQHNH63ZMtZtd4ugAhInRFIS7ygCcT5R/vozfLrPM
+         Ny/SQ4c7h/LYr+56JlcfaZgx2fTNV9aBeGl9p3l8aQGyg9Qf8GdgfzOcwBEqSr2KSCIt
+         OhiuhYNUR3HyynsAZalDxcTzIf39kg4C+CLYPkgpXECr7iqhMtZs+bvqVkH00GbA8t1J
+         7HVhHYlXlTz1BLxhLyUEARQQMJkHKtpRwenVskcUYB79nykpO+K4ovolHESreoA+1lnO
+         3RjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758693762; x=1759298562;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XD1WIzYiMatnlzgDrUYCZrBYkmo/k2ltaCjRnSuYXHQ=;
+        b=PSRK3qt4aIwNxmdx3EQJp7P5eNkHcvd9XZFGdz/JVPRUpeOXwxlsA2Xuto8JkzTBSA
+         t/kMgw5IcGpxt7dQ22VcviaVTvLALDY1eDIcqRtSq5d4hxQ6tM5K7WYI4tAMwuEHyIi4
+         sJPQ8pRV7NTUzitP/fvnkO010EZXBKnDT5YMHNpRNZwk+MP+9ZtY10Dtev6OODuJlGx5
+         f4nndSEtgurbYU2dCAvLM/RcC87+Y7TjNVFF8U2c6bhqCw9HG4PkY1goR/5Xm4UbHz4k
+         9D3rNcfAlf3IIq8dUrNfmIraeZq7uTxbxuPGEIsI6giEmWwrNRgwyyqsCLNHeqrJ5P+G
+         CL5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUXLvu4AsZf6mwrBTb5wtsIHHr1bFUs5FJf+JAlQXhT7DjNiJ/mWaSxJQoSeQx3fYA0KNmgmXq/MUnwsYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWHtqKaaGR2OGlMDbRjyayst0P56f3ieN5b9eXHaU/Dco+svl2
+	gWR/P4SLCpHkPLthXsjPgyg9KDlb/Lg/uQLMXqDodhWBlBkRn6pvljEhTOBIdWcB0CrLogs3m5d
+	PIKhnFZuUyQ==
+X-Google-Smtp-Source: AGHT+IFL4L1MIYQhQl9in5iuhGuEVE1aJyAQn07XgjJnmT2SlWg3JCnZlvrYcGnXKswwwax36O9bLO/ZdUsV
+X-Received: from pjbfr17.prod.google.com ([2002:a17:90a:e2d1:b0:32b:65c6:661a])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2543:b0:32e:7bbc:bf13
+ with SMTP id 98e67ed59e1d1-332a96f9bd1mr5398943a91.34.1758693761729; Tue, 23
+ Sep 2025 23:02:41 -0700 (PDT)
+Date: Tue, 23 Sep 2025 23:02:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net-next v5 0/8] TUN/TAP & vhost_net: netdev queue flow
- control to avoid ptr_ring tail drop
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, eperezma@redhat.com,
-        stephen@networkplumber.org, leiyang@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-        kvm@vger.kernel.org
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
- <20250923105531-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <20250923105531-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
+Message-ID: <20250924060229.375718-1-irogers@google.com>
+Subject: [PATCH v1 00/10] perf vendor events intel update
+From: Ian Rogers <irogers@google.com>
+To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Caleb Biggers <caleb.biggers@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 23.09.25 16:55, Michael S. Tsirkin wrote:
-> On Tue, Sep 23, 2025 at 12:15:45AM +0200, Simon Schippers wrote:
->> This patch series deals with TUN, TAP and vhost_net which drop incoming 
->> SKBs whenever their internal ptr_ring buffer is full. Instead, with this 
->> patch series, the associated netdev queue is stopped before this happens. 
->> This allows the connected qdisc to function correctly as reported by [1] 
->> and improves application-layer performance, see our paper [2]. Meanwhile 
->> the theoretical performance differs only slightly:
->>
->> +------------------------+----------+----------+
->> | pktgen benchmarks      | Stock    | Patched  |
->> | i5 6300HQ, 20M packets |          |          |
->> +------------------------+----------+----------+
->> | TAP                    | 2.10Mpps | 1.99Mpps |
->> +------------------------+----------+----------+
->> | TAP+vhost_net          | 6.05Mpps | 6.14Mpps |
->> +------------------------+----------+----------+
->> | Note: Patched had no TX drops at all,        |
->> | while stock suffered numerous drops.         |
->> +----------------------------------------------+
->>
->> This patch series includes TUN, TAP, and vhost_net because they share 
->> logic. Adjusting only one of them would break the others. Therefore, the 
->> patch series is structured as follows:
->> 1+2: New ptr_ring helpers for 3 & 4
->> 3: TUN & TAP: Stop netdev queue upon reaching a full ptr_ring
-> 
-> 
-> so what happens if you only apply patches 1-3?
-> 
+Update events and some metrics to the latest perfmon versions:
+ - alderlake 1.34
+ - arrowlake 1.13
+ - emeraldrapids 1.20
+ - grandridge 1.10
+ - graniterapids 1.15
+ - lunarlake 1.18
+ - meteorlake 1.17
+ - sapphirerapids 1.35
+ - sierraforest 1.12
 
-The netdev queue of vhost_net would be stopped by tun_net_xmit but will
-never be woken again.
+Ian Rogers (10):
+  perf vendor events intel: Update alderlake events to v1.34
+  perf vendor events intel: Update arrowlake events to v1.13
+  perf vendor events intel: Update emeraldrapids events to v1.20
+  perf vendor events intel: Update grandridge events to v1.10
+  perf vendor events intel: Update graniterapids events to v1.15
+  perf vendor events intel: Update lunarlake events to v1.18
+  perf vendor events intel: Update meteorlake events to v1.17
+  perf vendor events intel: Update pantherlake events to v1.00
+  perf vendor events intel: Update sapphirerapids events to v1.35
+  perf vendor events intel: Update sierraforest events to v1.12
 
->> 4: TUN & TAP: Wake netdev queue after consuming an entry
->> 5+6+7: TUN & TAP: ptr_ring wrappers and other helpers to be called by 
->> vhost_net
->> 8: vhost_net: Call the wrappers & helpers
->>
->> Possible future work:
->> - Introduction of Byte Queue Limits as suggested by Stephen Hemminger
->> - Adaption of the netdev queue flow control for ipvtap & macvtap
->>
->> [1] Link: 
->> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffective-on-tun-device
->> [2] Link: 
->> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
->>
->> Links to previous versions:
->> V4: 
->> https://lore.kernel.org/netdev/20250902080957.47265-1-simon.schippers@tu-dortmund.de/T/#u
->> V3: 
->> https://lore.kernel.org/netdev/20250825211832.84901-1-simon.schippers@tu-dortmund.de/T/#u
->> V2: 
->> https://lore.kernel.org/netdev/20250811220430.14063-1-simon.schippers@tu-dortmund.de/T/#u
->> V1: 
->> https://lore.kernel.org/netdev/20250808153721.261334-1-simon.schippers@tu-dortmund.de/T/#u
->>
->> Changelog:
->> V4 -> V5:
->> - Stop the netdev queue prior to producing the final fitting ptr_ring entry
->> -> Ensures the consumer has the latest netdev queue state, making it safe 
->> to wake the queue
->> -> Resolves an issue in vhost_net where the netdev queue could remain 
->> stopped despite being empty
->> -> For TUN/TAP, the netdev queue no longer needs to be woken in the 
->> blocking loop
->> -> Introduces new helpers __ptr_ring_full_next and 
->> __ptr_ring_will_invalidate for this purpose
->>
->> - vhost_net now uses wrappers of TUN/TAP for ptr_ring consumption rather 
->> than maintaining its own rx_ring pointer
->>
->> V3 -> V4:
->> - Target net-next instead of net
->> - Changed to patch series instead of single patch
->> - Changed to new title from old title
->> "TUN/TAP: Improving throughput and latency by avoiding SKB drops"
->> - Wake netdev queue with new helpers wake_netdev_queue when there is any 
->> spare capacity in the ptr_ring instead of waiting for it to be empty
->> - Use tun_file instead of tun_struct in tun_ring_recv as a more consistent 
->> logic
->> - Use smp_wmb() and smp_rmb() barrier pair, which avoids any packet drops 
->> that happened rarely before
->> - Use safer logic for vhost_net using RCU read locks to access TUN/TAP data
->>
->> V2 -> V3: Added support for TAP and TAP+vhost_net.
->>
->> V1 -> V2: Removed NETDEV_TX_BUSY return case in tun_net_xmit and removed 
->> unnecessary netif_tx_wake_queue in tun_ring_recv.
->>
->> Thanks,
->> Simon :)
->>
->> Simon Schippers (8):
->>   __ptr_ring_full_next: Returns if ring will be full after next
->>     insertion
->>   Move the decision of invalidation out of __ptr_ring_discard_one
->>   TUN, TAP & vhost_net: Stop netdev queue before reaching a full
->>     ptr_ring
->>   TUN & TAP: Wake netdev queue after consuming an entry
->>   TUN & TAP: Provide ptr_ring_consume_batched wrappers for vhost_net
->>   TUN & TAP: Provide ptr_ring_unconsume wrappers for vhost_net
->>   TUN & TAP: Methods to determine whether file is TUN/TAP for vhost_net
->>   vhost_net: Replace rx_ring with calls of TUN/TAP wrappers
->>
->>  drivers/net/tap.c        | 115 +++++++++++++++++++++++++++++++--
->>  drivers/net/tun.c        | 136 +++++++++++++++++++++++++++++++++++----
->>  drivers/vhost/net.c      |  90 +++++++++++++++++---------
->>  include/linux/if_tap.h   |  15 +++++
->>  include/linux/if_tun.h   |  18 ++++++
->>  include/linux/ptr_ring.h |  54 +++++++++++++---
->>  6 files changed, 367 insertions(+), 61 deletions(-)
->>
->> -- 
->> 2.43.0
-> 
+ .../pmu-events/arch/x86/alderlake/cache.json  |   36 +
+ .../pmu-events/arch/x86/arrowlake/cache.json  |   46 +-
+ .../pmu-events/arch/x86/arrowlake/memory.json |    6 +-
+ .../pmu-events/arch/x86/arrowlake/other.json  |    2 +-
+ .../arch/x86/emeraldrapids/cache.json         |   63 +
+ .../arch/x86/emeraldrapids/emr-metrics.json   |   12 +
+ .../arch/x86/emeraldrapids/uncore-cache.json  |   11 +
+ .../arch/x86/emeraldrapids/uncore-memory.json |   22 +
+ .../arch/x86/emeraldrapids/uncore-power.json  |    2 -
+ .../pmu-events/arch/x86/grandridge/cache.json |   20 +-
+ .../graniterapids/uncore-interconnect.json    |   10 +-
+ .../arch/x86/graniterapids/uncore-memory.json |  112 ++
+ .../pmu-events/arch/x86/lunarlake/cache.json  |   46 +-
+ .../pmu-events/arch/x86/lunarlake/memory.json |    6 +-
+ .../pmu-events/arch/x86/lunarlake/other.json  |    2 +-
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |   20 +-
+ .../pmu-events/arch/x86/meteorlake/cache.json |   36 +
+ .../arch/x86/pantherlake/cache.json           | 1207 ++++++++++-
+ .../arch/x86/pantherlake/counter.json         |    9 +-
+ .../arch/x86/pantherlake/floating-point.json  |  286 +++
+ .../arch/x86/pantherlake/frontend.json        |  535 +++++
+ .../arch/x86/pantherlake/memory.json          |  106 +-
+ .../arch/x86/pantherlake/other.json           |   44 +
+ .../arch/x86/pantherlake/pipeline.json        | 1776 ++++++++++++++++-
+ .../arch/x86/pantherlake/uncore-memory.json   |   26 +
+ .../arch/x86/pantherlake/virtual-memory.json  |  248 +++
+ .../arch/x86/sapphirerapids/cache.json        |   63 +
+ .../arch/x86/sapphirerapids/spr-metrics.json  |   12 +
+ .../arch/x86/sapphirerapids/uncore-cache.json |   11 +
+ .../x86/sapphirerapids/uncore-memory.json     |   22 +
+ .../arch/x86/sapphirerapids/uncore-power.json |    2 -
+ .../arch/x86/sierraforest/cache.json          |   61 +-
+ .../x86/sierraforest/uncore-interconnect.json |   10 +-
+ .../arch/x86/sierraforest/uncore-io.json      |    1 -
+ .../arch/x86/sierraforest/uncore-memory.json  |  103 +-
+ 35 files changed, 4712 insertions(+), 262 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/floating-point.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/other.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/uncore-memory.json
+
+-- 
+2.51.0.534.gc79095c0ca-goog
+
 
