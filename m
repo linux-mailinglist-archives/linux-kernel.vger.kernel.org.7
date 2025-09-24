@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-830384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A26B99855
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37D1B9985C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AFF19C6101
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:02:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4634F7ABBF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D052E427C;
-	Wed, 24 Sep 2025 11:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QzOCyjeF"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255332E4266;
+	Wed, 24 Sep 2025 11:02:10 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900EB2DECD3;
-	Wed, 24 Sep 2025 11:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CCF2DECD3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711717; cv=none; b=fHzd8H/SUk/GFInSRtYqZY9bbZCfdnHtPTVsqdmb6rmwHeREZ+xgfAM0p5o2MizGPAz3+1ua4WRUL6T8dNBHcZ2Jtmuke3xezR2KUdCvBCLTYFpMBo94bB3elKno83QbHklIvfj+Nx796bY2kfPIq7JGu3i8heZLGfkTfeL7qOI=
+	t=1758711729; cv=none; b=C5jzsZUOrwYEX4XYE/+EuGTGZsPRVI6F7zPGCzWofNd8o9PfuNrm+pn9Wro3pbkSE7P1Kzlx+DttUp+IJ4UrSIASovXIxHC7Rh2UOyKbh6Ng3lI1KHyJYwwX8RdB4SSY5GBHPQthEq5UZ1r9S5F/TazJNqPeU4mpI53zFwpIl38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711717; c=relaxed/simple;
-	bh=cr4qWuS/qeNoGn2r3UvjRXrjCPoHcvjyAE2TZOBIwK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c+CoXshz4OnCplC8MnckHvo9ZD9WHzZzX2CbV9NatCiE5dbc14GT7aqlDK2kWXH1PbFLkEi9qS6QqC6JN5EsgIq4jDBZw7N/sM9sbVZjOd1yfNfpsGLfe9I+A9YRGiAuxzArZXsZzFgvH2xO3xmPA69YTwZUJcBVFfetuliRlLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QzOCyjeF; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58O9MwjE007064;
-	Wed, 24 Sep 2025 11:01:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=zCmu1PRApsVncooi0pNqkyzI+iNQK
-	2CT/pGQIAlwKq8=; b=QzOCyjeFwZZTZ680JqataNNz16/V1YMzkHrjazpooAB8L
-	hJ3OTitLWM3OyJiv+/0gH+tENckua8raBuwqop6RqWfGjyF6gngodWfEeSocI8R8
-	qgwFuNigvnL+bY+wwz5Wvb9r4BrC1DupOB77Wb21dT2kOehuCj0fBBmnxnj1G7BN
-	SbchOBKRFqgYHvktAIO3RXCgbajZkZvwMOjL3y7i9ae76lzAZbeJnds7g7CSXxTw
-	n5GWmQaYKjo/mpzxxoq1I3qMT5Qpx87KA0nLpmcTmQQB/M9TU7R/2TNCujI7VWjW
-	jtkgW25IYjw32XJcuuCUqgthXsthJFcr1CnOtmF/w==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499jv17mk6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 11:01:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58O9cQkh040890;
-	Wed, 24 Sep 2025 11:01:38 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49a950k9f1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 11:01:38 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58OB1Yma003988;
-	Wed, 24 Sep 2025 11:01:34 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49a950k9e2-1;
-	Wed, 24 Sep 2025 11:01:33 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: selvin.xavier@broadcom.com, kalesh-anakkur.purayil@broadcom.com,
-        jgg@ziepe.ca, leon@kernel.org, linux-rdma@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 rdma-next] RDMA/bnxt_re: improve clarity in ALLOC_PAGE handler
-Date: Wed, 24 Sep 2025 04:01:27 -0700
-Message-ID: <20250924110130.340195-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1758711729; c=relaxed/simple;
+	bh=Tb9enl8DiV6BO7835oLvIgPigsCcIfJUYclx9xA1aNw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OO5ieHPbx2vv+JoBAVuP5GnLqRPpi8JCgTSfzitJ9wo8kYx7pdq3pUbkdaTEIbSMdwnWMTnXNbiw37YMG3A9fqj6gxtResVRmJhkdDFvk8BKrvm4HldaVZWEno7hQcwXm8cONBhHJH8vkG927Oi+vK+YSizMXjXLjsIoj238aBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42575c5c876so41001875ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758711723; x=1759316523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u14xAhFIYJ8iBrwgxzSPy3VprpDahf7H052DcuYQois=;
+        b=l13qP/MLQU9POVOTXn2OJILd1ocwd6OMuSaUnR0GlP2U+aw2CvONND7buzW3LNieLk
+         dQ/gzpjsbYBtBQ4YTE90w4W6Y7VZmqq4bMyeAb3J9uNHdFymzePVx72S5oBKuRLhwZl6
+         pE7nSdRQzAKGJoJTXprT2Hgw6GKRREtKoQ7Vy0IqV+c0Bl+vi7VSznVxh0w+dMkpcOHF
+         4feyU+IRFsvZPEY9ACq+LaqrsSZp3v002jxovh45k3M6hWzfTFTwjgRsiGiVkGoAcv/X
+         TKoBA6I4bGV72Vp7IhvY8LDcaSbScpxM2Yslp57oekn2VIIj/AWu5vZAuxz0Gq/LU3cy
+         l8iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUta9dun4BdcZ8tt1+I0X2tsCsl6l4hDPdrfTPefdJ5L4BsliLJbDPvmTaPjnWp60r1FPopT7aqhN0QV8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7QaYwCbMGMsv/lpiNdCgHUvnJjqvFq/kBbXfJhUAVwALNmSjH
+	8Zyw+p3q4+KW6onZxOPWBBaKyJCWT/jVbaPwYE7xqI4IxQVqHAp+ULnREtqHJaScqTT7BL2lkw6
+	jrtELWum2YJpo9T/HwMRehe78HEhsBbvlAJliXFOCzy5p2FxX5n3eRK8Y854=
+X-Google-Smtp-Source: AGHT+IH+siDKdFbZtTVGW7dEqtBN8fVjf37uuXsXnaxWSUi3MPhiVKouuoIOYEvnmll1Nb6gVcfOyLsShM3X1S1juwr/6D+VKpm3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_03,2025-09-22_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509240094
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMyBTYWx0ZWRfX3CNqDwlp7wJy
- Hdc5IwqQu2LI4loqLXTdb7cwg+CE+befGQAu8NbVffOZZsRvM3Lp0jNeKmBwP5qFk0ZaE6LRIdG
- d0ulHUR2s0zNni50Z42XDqivT4B4d9eCKavwkNNOBPc/12Suc9OxszQfMMi7U6D9KeQKeDwwA9Q
- ufuOdpPJxH3zoKeGYgbkVrCB8hS+dFuhmvTx46xizMMO5VAt9DpN6akRpxDEK7Qo0feoBrrYrir
- ePd6oGpMPQL7so0ci54emfpcrns8/mPNeN/bgu/WanRpvm57Klyyts5BeljrNdSVa96fkEHht8R
- En4+TZTe381jDUG9aUx/5VumCTBThNYmqq0ulry0OubeEPyteR5IELsiUfqJrgTyYb2Mb+8iZU7
- uj7iAm5oQXO/iYYk8Vms0FyteNsI4A==
-X-Proofpoint-GUID: Cf-pPq_lhvrXMoWW70YWGaW1pP06MkxJ
-X-Authority-Analysis: v=2.4 cv=YrMPR5YX c=1 sm=1 tr=0 ts=68d3cf94 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=Q-fNiiVtAAAA:8 a=UKki0cc_KDZAvk2E3YUA:9
- cc=ntf awl=host:12086
-X-Proofpoint-ORIG-GUID: Cf-pPq_lhvrXMoWW70YWGaW1pP06MkxJ
+X-Received: by 2002:a05:6e02:2181:b0:424:71e8:3a2e with SMTP id
+ e9e14a558f8ab-42581e7a670mr75765285ab.16.1758711722915; Wed, 24 Sep 2025
+ 04:02:02 -0700 (PDT)
+Date: Wed, 24 Sep 2025 04:02:02 -0700
+In-Reply-To: <20250924100341.1255033-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d3cfaa.a70a0220.1b52b.02c9.GAE@google.com>
+Subject: Re: [syzbot] [fs?] [mm?] WARNING: bad unlock balance in hugetlb_vmdelete_list
+From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Update uverbs_copy_to call to use sizeof(dpi) instead of sizeof(length)
-when copying the device page index (DPI) back to user space. Both dpi
-and length are declared as u32, so this change has no functional impact
-but makes the code clearer.
+Hello,
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
----
-v1 ->  v2
-added Reviewed-by: Kalesh AP
----
- drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in hugetlb_vma_assert_locked
 
-diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-index 8236d82e9a67..4dab5ca7362b 100644
---- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-+++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-@@ -4746,7 +4746,7 @@ static int UVERBS_HANDLER(BNXT_RE_METHOD_ALLOC_PAGE)(struct uverbs_attr_bundle *
- 		return err;
- 
- 	err = uverbs_copy_to(attrs, BNXT_RE_ALLOC_PAGE_DPI,
--			     &dpi, sizeof(length));
-+			     &dpi, sizeof(dpi));
- 	if (err)
- 		return err;
- 
--- 
-2.50.1
+------------[ cut here ]------------
+WARNING: mm/hugetlb.c:368 at hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368, CPU#1: syz.0.28/6594
+Modules linked in:
+CPU: 1 UID: 0 PID: 6594 Comm: syz.0.28 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368
+Code: 2e e8 97 6e a1 ff eb 0c e8 90 6e a1 ff eb 05 e8 89 6e a1 ff 5b 41 5c 41 5d 41 5e 41 5f 5d e9 da 41 6a 09 cc e8 74 6e a1 ff 90 <0f> 0b 90 eb e5 e8 69 6e a1 ff 90 0f 0b 90 eb da 48 c7 c1 70 7c e4
+RSP: 0018:ffffc90003637368 EFLAGS: 00010293
+RAX: ffffffff821f22cc RBX: 0000000000000000 RCX: ffff888030330000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff520006c6e70 R12: ffff888026856500
+R13: 1ffff1100bd744fc R14: dffffc0000000000 R15: 0000000000000080
+FS:  00007fb2310906c0(0000) GS:ffff8881258c5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb23108ff98 CR3: 0000000075cce000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ huge_pmd_unshare+0x2c8/0x540 mm/hugetlb.c:7622
+ __unmap_hugepage_range+0x6e3/0x1aa0 mm/hugetlb.c:5901
+ unmap_hugepage_range+0x32e/0x410 mm/hugetlb.c:6089
+ hugetlb_vmdelete_list+0x189/0x1f0 fs/hugetlbfs/inode.c:495
+ hugetlb_vmtruncate fs/hugetlbfs/inode.c:643 [inline]
+ hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:881
+ notify_change+0xc1a/0xf40 fs/attr.c:546
+ do_truncate+0x1a4/0x220 fs/open.c:68
+ handle_truncate fs/namei.c:3516 [inline]
+ do_open fs/namei.c:3899 [inline]
+ path_openat+0x306c/0x3830 fs/namei.c:4054
+ do_filp_open+0x1fa/0x410 fs/namei.c:4081
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_open fs/open.c:1460 [inline]
+ __se_sys_open fs/open.c:1456 [inline]
+ __x64_sys_open+0x11e/0x150 fs/open.c:1456
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb23018eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb231090038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fb2303e5fa0 RCX: 00007fb23018eec9
+RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
+RBP: 00007fb230211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fb2303e6038 R14: 00007fb2303e5fa0 R15: 00007fff95fa5748
+ </TASK>
+
+
+Tested on:
+
+commit:         ce7f1a98 Add linux-next specific files for 20250923
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=129a4d34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
+dashboard link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17b2cce2580000
 
 
