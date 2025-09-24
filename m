@@ -1,150 +1,109 @@
-Return-Path: <linux-kernel+bounces-829872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E87B98187
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:51:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23D43B9818E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFA316F46B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6141B208EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B82A2248A5;
-	Wed, 24 Sep 2025 02:51:39 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA35B1F91D6;
-	Wed, 24 Sep 2025 02:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6AA2236E8;
+	Wed, 24 Sep 2025 02:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="hJ5sdKPV"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898C02147F9;
+	Wed, 24 Sep 2025 02:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758682298; cv=none; b=iBx7VBhesJOOGPLjYD2myJ6RWAkMGkfZhsDM9PWQkajXKcy1IymLPgAPXCLWVEpkGpF/2XwrUabto2TMuyxu1+w5O08nVKTNQUNLYUzAOn55q9IEt8wgkNfnnA/LqUPv3TxToy5bZlbWSN7onmPc31pGgmLr1rruIhEBfLmjPTQ=
+	t=1758682523; cv=none; b=dFUj6o4WRYe/wLZPrU8cvWlCftokbxnf0VJj7g1Aqi9gtXXRaFw/+v+VqR0o/NL2VZv1Z0l62UzyO+izyxzXRs+LFEjpDFT4obYuGDLUY/iqUHmkXU75mTqbgq5CBaQhwwHz8Due7k5j2j0o6iIuVsbJKwz6TDswcv2kSc8ZWEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758682298; c=relaxed/simple;
-	bh=3oLB6vCE1DfzkqZf/vAwDz1ydYPw5Afe+K3kLP/dAMw=;
+	s=arc-20240116; t=1758682523; c=relaxed/simple;
+	bh=5USoQlt1ooy6nsU5wNWS0UuXPfJFYjaLYXbt2w23uRc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGUQyvF5HmSAem38ABWnX07lR4nTlP5DV5ugG6vfVkGYkxgL+EUYTCqmuHbzmNf6/7WNjw5eYyyhjeh1FKHKdTZczosw9CYKsVwgF4nf7G/FPdKNCOvOb8Igop6uEkNy3nIh3jUaC21HCyZECj8LAA37q2gtL07zrH2KzN2r5j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz16t1758682260t98e3d42d
-X-QQ-Originating-IP: AbOZ0NN9SNEvHEDbZxb+4svvgPghtDBuBPNPgeZ/T+s=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 24 Sep 2025 10:50:58 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13274150697629646599
-Date: Wed, 24 Sep 2025 10:50:58 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, joerg@jo-so.de, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v13 5/5] net: rnpgbe: Add register_netdev
-Message-ID: <CB1199BE018DD3DE+20250924025058.GB292859@nic-Precision-5820-Tower>
-References: <20250922014111.225155-1-dong100@mucse.com>
- <20250922014111.225155-6-dong100@mucse.com>
- <20250923181639.6755cca4@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujxaJzigfaR6zSWfuIFfYEsXxsvMUk2Qc6bMjX9H0as/4bo8ogkvL09ZPQ6hKGKY3dH8vOY9S+vlX4z/9WUSwD13/LV5axeqjZoUS9tCCHdqkdgH458Ie1euCOhd6okyaQtzXXcS//fJTLlo+m3W7yC6Fzy4WgJPcpTs2xsS+KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=hJ5sdKPV; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 71D2214C2D3;
+	Wed, 24 Sep 2025 04:55:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1758682512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MX1GFon4vtGfl3JPV2segkelrrqe31tGsosMdNjHGMA=;
+	b=hJ5sdKPVVMSh4D/n8dTonzlrtP9kYbkiC+NljV5Ye4WJVBEtf8fQ51NS3nZDVsYQo4f9ze
+	5HlbesLSqt6FCIxAltkg9pb1rx+4hFPF2tE4oZLvsUUL73pK+ddjoOJJXxBgNy081snmtY
+	2+l2BZINztx6tZgdKen37vO0B2LFSheezsCaXVyR3nnTvsamyq+eDzhWt9i0x859Q4I8Af
+	Kg2uDDkxS/V7gmKfHX1077yxz3TNFZ3uCjXHQNAgSWk8VC/3dCOV2bU2GnI6U0RdCNENSE
+	9EFSoZsLJqA6ozrpjTPsn+re8N+q26buYZvjEw1KhV94Mg24J433Fq6dF1sBDw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 35aa545c;
+	Wed, 24 Sep 2025 02:55:07 +0000 (UTC)
+Date: Wed, 24 Sep 2025 11:54:52 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Eric Sandeen <sandeen@redhat.com>, v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ericvh@kernel.org, lucho@ionkov.net, linux_oss@crudebyte.com,
+	dhowells@redhat.com
+Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
+Message-ID: <aNNdfO4WIJmBQ2uO@codewreck.org>
+References: <20250730192511.2161333-1-sandeen@redhat.com>
+ <aIqa3cdv3whfNhfP@codewreck.org>
+ <6e965060-7b1b-4bbf-b99b-fc0f79b860f8@sandeen.net>
+ <aJ6SPLaYUEtkTFWc@codewreck.org>
+ <20250815-gebohrt-stollen-b1747c01ce40@brauner>
+ <aJ-eNBtjEuYidHiu@codewreck.org>
+ <fe6ecd47-2c6d-45b4-a210-230a162b39b2@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250923181639.6755cca4@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MijavZDuOhz7yv5Z4Dt2sQhXQGPZTdV+gAL8akzkl3xjzXPLE2Wy2kSp
-	0FVeTaKqOSaY+ZJzuH20boS+NF6eU8UQFVTOWDtuhJ1dwPDfszYEF1/S1Q7cDUZ7WzkYTys
-	kdH0y9rLTTl+rlqr5QJiLdKzRxaQBHVVc5eC4y03mOjdyruSwstc0DCxbozwLSVTHeWiIug
-	KlSEoPKBbICUCMtIPlL+9o243BmbQwFxJiTx+7h8sL2ZlyWlrY27/RfhNWMYwPXf2eLABcx
-	aU12xH/giU/1wWWA9rF3rmPXs8FKW+BQ9hl/PNxjv5EhMyj8Jjzc45FqIasx6XeUGggbKDo
-	VbO/8bM5o53x9ZHu1igyQI87YbDkmgyRmXB9lUx0n/bKpK3ge2tmRiBE4S0tDiCTk/ALxPV
-	atfZ2PMG0nkCQo8h9nm/v+iT9mz/TlheRWN2+7O6rPrUr4zi0ZyjtC80oJo0tYO4U/J/PIw
-	w5RQ1DjpEuk90UHnRy0AVVJWkV8xhNyMidY9mSpNG6DZOTx7s8VrecBTLGfXtzS82/Ey2Jl
-	oW9nxga43B6PDps4lYy2Lh9PHj8lm7pJ2AQNcY9x9c+Pjsr2aON/9a7mDfsNRuNc/su7HcJ
-	0OqhvLuH0OBjwOF10g4t+pVgvh98VnTiPpwu799Xv1whIpyubRSetkN+vgLCxIoafqjE4uM
-	xtcjKZ3/4dspAAqxbGv0YYKkXJ6NZWOM6UFMngnGDKg8AtZJRPl/Sw+VNP48de7NdpmQKJk
-	2tT6bXRDbTTJ4Zmhg5GVxgQWAGvRWZLy4PbJMT3Muu8tTuB5pOeXg1LSz8kj5bKy4Zllm/f
-	0gAQBkhwuYqu4j7ITo7l4APBgWWW9S36vs7e7tgIkIjsXnZ9mV7TJ4B8OSgOitit5nYrbhd
-	wtRwbjuI6hJi8Mbm0pvMYrEJufgy6whJLQw8RNSq4x1H6AX/TsJcnBN1TA9oejHTurXmDQa
-	NkRm4HsJoF9sZmPEW8ffXnfH3eqUGm2zXnKa09ccoR3VC1Wcekv3BpytJjFckigHfBDUD2P
-	jBg2HcGC243mkvBlSgNfGghfvA2mf5Wdw7GoYnauXq6AZRO49e
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <fe6ecd47-2c6d-45b4-a210-230a162b39b2@sandeen.net>
 
-Hi, Jakub:
-
-On Tue, Sep 23, 2025 at 06:16:39PM -0700, Jakub Kicinski wrote:
-> On Mon, 22 Sep 2025 09:41:11 +0800 Dong Yibo wrote:
-> > +static const struct mucse_hw_operations rnpgbe_hw_ops = {
-> > +	.reset_hw = rnpgbe_reset,
-> > +	.get_perm_mac = rnpgbe_get_permanent_mac,
-> > +	.mbx_send_notify = rnpgbe_mbx_send_notify,
+Eric Sandeen wrote on Tue, Sep 23, 2025 at 05:21:14PM -0500:
+> On 8/15/25 3:53 PM, Dominique Martinet wrote:
+> > Christian Brauner wrote on Fri, Aug 15, 2025 at 03:55:13PM +0200:
+> >> Fyi, Eric (Sandeen) is talking about me, Christian Brauner, whereas you
+> >> seem to be thinking of Christian Schoenebeck...
+> > 
+> > Ah, yes.. (He's also in cc, although is name doesn't show up in his
+> > linux_oss@crudebyte mail)
+> > 
+> > Well, that makes more sense; I've picked up the patches now so I think
+> > it's fine as it is but happy to drop the set if you have any reason to
+> > want them, just let me know.
 > 
-> Please don't add abstraction layers, you only have one set of ops right
-> now call them directly. The abstractions layers make the code harder to
-> follow.
-> 
+> Hi Dominique - not to be pushy, but any chance for this in the current
+> merge window, if it's had enough soak time? If not it's not really urgent,
+> I just don't want it to get lost.
 
-Ok, remove abstraction layers in this series. I will add abstraction
-layers when adding more sets of ops.
+Thanks for the mail;
 
-> > +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
-> > +				     struct net_device *netdev)
-> > +{
-> > +	dev_kfree_skb_any(skb);
-> > +	netdev->stats.tx_dropped++;
-> 
-> Please add your own stats, the stats in struct net_device
-> are deprecated and should not be used by new drivers.
-> 
+This ran into a syzbot bug a while ago and I've been meaning to check
+the v9ses setup as I wrote here:
+https://lkml.kernel.org/r/aKlg5Ci4WC11GZGz@codewreck.org
 
-Got it, I will fix this.
+Unfortunately I still haven't gotten around to it; my feeling is that
+Edward's patch only papers over the issue and there's a problem with two
+sessions hanging around when we really only should have one to avoid
+such "woops I'm looking at the wrong one" errors.
 
-> >  	err = rnpgbe_init_hw(hw, board_type);
-> >  	if (err) {
-> >  		dev_err(&pdev->dev, "Init hw err %d\n", err);
-> >  		goto err_free_net;
-> >  	}
-> > +	/* Step 1: Send power-up notification to firmware (no response expected)
-> > +	 * This informs firmware to initialize hardware power state, but
-> > +	 * firmware only acknowledges receipt without returning data. Must be
-> > +	 * done before synchronization as firmware may be in low-power idle
-> > +	 * state initially.
-> > +	 */
-> > +	err = hw->ops->mbx_send_notify(hw, true, mucse_fw_powerup);
-> > +	if (err) {
-> 
-> Don't you have to power it down on errors later in this function?
+If we can clear that up this week I'll happily retake the patches and I
+think it can still make it this window, but I honestly don't think I'll
+have time to look on my end sorry
 
-I will add an lable err_powerdown to handle errors later in this function.
-
-err_powerdown:
-         /* notify powerdown only powerup ok */
-         if (!err_notify) {
-                 err_notify = rnpgbe_send_notify(hw, false, mucse_fw_powerup);
-                 if (err_notify)
-                         dev_warn(&pdev->dev, "Send powerdown to hw failed %d\n",
-                                  err_notify);
-         }
-
-> -- 
-> pw-bot: cr
-> 
-
-thanks for your feedback.
-
+-- 
+Dominique
 
