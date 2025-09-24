@@ -1,132 +1,139 @@
-Return-Path: <linux-kernel+bounces-830615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9C7B9A1F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343E8B9A1F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5144A593F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C780C19C7EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB44305050;
-	Wed, 24 Sep 2025 13:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E71305962;
+	Wed, 24 Sep 2025 13:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biIpIQMr"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="X7IJvaid"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7422FFDCF
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A632303A1E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758722160; cv=none; b=l6ChhdWn0wy0539J2X98RVKaBpgMSZ26LlPydvYMygZX/iSXWYKc6+RhDdwZXHoEmeM9JFSTbmCBL6+dbwTEKb7D9u7+mfM48/UJBIp7KhZgLPkmHNgUMl99hMUSiyqFq00m6SOQXpLUNNuMVm2TcfffwFOfKXd3cmTp6a4Hn4k=
+	t=1758722162; cv=none; b=hu2zl2u6iUXhMSAxVNNmMEP7jQEBix3E3xno9Uj8ku6GPTUq+2J4SOyyaAktrRorNtDljOVAeSdEH5Rm8MpB+DebSE1u7b900Ok5VB0IvV1eZ4oUNuE0qiLrDrqvfTOUPmE/JGJYBYPfScd+kYO5hXHZ1Cmur7x4pmuzPVh/0e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758722160; c=relaxed/simple;
-	bh=DcpJ689quYGtSVJ/jZ50x9baeFfRVXjVK6frpcghcfw=;
+	s=arc-20240116; t=1758722162; c=relaxed/simple;
+	bh=ujEzAbhMAzaWS5a8Q68eG96tR7K2Da3jAUXEFVNDAhc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZjSFT7hiygPquIbehRaljHPbVCHX8PS84FNbNVtOI87zGswJ2kdOogo8SNtrHJxO4sDeKHkB6/HLZkULB4LvTQ6jmEJW+wXc942RCwtlRAVDm3XA0ss1Xeva8OBmeeLA86g4WcZmdDhg/jiX9Z+G5b/zkeQVULrLb7OO5KEK8l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biIpIQMr; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57d5ccd73dfso3598541e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:55:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=QyIh7j0hODwn69T0mbVo+fjW/yXTWqVZA/znXsDy+vFXBWXGctX97mDhbh6h7KX4n6xdC+0bRTZFgokX5tb9SRodR4M5dPBc4Klt/A0a35zmOBzz1m9NFGacd4XSOV+zAXy+PW8F+J0tzKX5sGjEcbf0VCiaiLpgIaJIPmCjLhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=X7IJvaid; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3306d93e562so6143614a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:56:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758722157; x=1759326957; darn=vger.kernel.org;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1758722159; x=1759326959; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pZpCdxXN+Lj5Wtx0PEqxVxK+0pszwy0+LCFjR3ki0Po=;
-        b=biIpIQMrF4TaUkg6rBPvACClC/j4cy4SwIWwmLA3rCb7ltLj0AZCuHItI/pC3HJ0ul
-         3wJ977BgMlQ39W68QF+J4sONffg9pW727zOyFJG8pmDmNuZRXTauufu6vKQTRt9p+H/Q
-         mGdHHo+oQYgTaVq7IKQ2rSGx8hPYUvc2c0PGdkip2cYVMiJ3BQlx+pLSilXMqXU5earQ
-         0Zcz6HaSSipBi3uHjIl9KNe7znWQ3DpPu0olWUT1cdcmusPaBTaV89jGHwb45r5BI1IL
-         N9BTJOo3dh8jFXBLByC5EQUmJIUJ1aLfguqKGfTCjjiIA44heOZicGAwIgzL3A3y8/un
-         udzw==
+        bh=b4DZQg31vv1EGe7YHwiBVuSS1/ZU1wpTEBVNkfgNEhE=;
+        b=X7IJvaidIVJzNA37xf/lQKsQrDx/QbP2hbS+ce6GeBKaOkgooZYFWN4Hd2w/8s7eHR
+         6BCKGbCuMfbgIV2ODm6wGipb/9YO/FDGa4xq5MM+uHAzhJy/NHtGWMYVbsuY4mcMS9p5
+         oHYdqfGdWkAunGh7DqNHzNdusIAxJo1B+YNpPB+YJhGxB1EpI7oz0YyuixrK96AMfkGG
+         FQvmofzA1lOAICZxHZiyqfxvA91FbNa0fmZLEL7fV/kmfSez+0ITvBsAzxzfAXt58sun
+         DerlwwnMB2fD2e1moSeHVPpnsfr/5tjvGhv+PMh+bErWYLnhGyyTfesKKPNqEP81oBxM
+         LwQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758722157; x=1759326957;
+        d=1e100.net; s=20230601; t=1758722159; x=1759326959;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pZpCdxXN+Lj5Wtx0PEqxVxK+0pszwy0+LCFjR3ki0Po=;
-        b=j7+vexMa+4jOOpf1JCp5EZTXOSDK6Waw7Q6/JHaTq0fTPCKzjNWJHoYPip5eCw3Bd6
-         WaXBGc3EZJ4O7h9cjdyEqeozkAg0GVv6dzUdSxTR/gcCyAOhnRnxJBnmXBhaFK1LbpDe
-         631uKYurYd7mldWnfGGWFvEXrEAoVtK2f07OLiIFPpTNXj8eHe+WdYAl9l339BJwr8Rg
-         yYvyRl29cvzhmUBleAYcH3oKrG2mTvhT1nb4xxVaH2GYrEHNMWqSb7DtnNHG3XFDiQJN
-         UL6+uNV3pym7cN7Mz1Yo1owOsTm2dFRH/dfIt4001iTQa7ztpSQ/Pra3o3hco62766iI
-         b8qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoYn7fPjI5JA3GE2SMDBOCKQBaPaiOEkdzYidnbeaUg31IIrkyBItBJ3E/Yytj29rITfS2wJmezUz4xlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVtkw2NxqTIioYhB+yy358TmAW2n/FtxkATUMiBS57osyybLHI
-	0RU9Nhff0griLbUqVzmYEQxY/iHhBEMoqxF+27uO2BoAhEqnfW2jUOgZmeXSqAiWw79+jEQ66bo
-	HTdqctMpUuRDWU7n1wdWgB+dKi2tZ3zo=
-X-Gm-Gg: ASbGncuYbFade4Su46zQ7H1j7cvxp3i9ptkWyDGwzUyeNIyBwF5Sh7xhQGzQBACIZSb
-	X3Z0bzw9+1pzlJv+tMdTjKamqV9Sgs+3+JbJR5VegW0Q44ChqoB3ZmbY2dJAywDcUKJckUKzvza
-	XD7AKIouByQ9Zaa0AR/0vpPSyofDJlECJ5/iCICr8hIIPpgdo/hJhD4qYOn2zaCneheSg0kA//k
-	ooT/sbv/jI5vviV/PCbj8fYd+dJgfWsZ3hknUDFkg==
-X-Google-Smtp-Source: AGHT+IFFrQiSJq3sO4DDheNScCAZEm7ChSSXL0OrRgD+E9nQCbhqy0d6xm+S7jAokm2e7jUsgL24742yoK4fyiXLJlA=
-X-Received: by 2002:a05:6512:2903:b0:577:1168:5e44 with SMTP id
- 2adb3069b0e04-580732fc04cmr1917640e87.38.1758722156813; Wed, 24 Sep 2025
- 06:55:56 -0700 (PDT)
+        bh=b4DZQg31vv1EGe7YHwiBVuSS1/ZU1wpTEBVNkfgNEhE=;
+        b=vvZ1rI0LpEYM/ADg9GqcZCj6XFZaz9R4gMbZ05d3zOf9ZjEiig3yiBw9n5/v6d4XCX
+         EjMUMUMVai7l84mC77DWaTsSt0Nahib2TlUhodWYdOMMlXD5M7+2CUy2b1eaj1lpCsFu
+         nVqysZid8MVs8jz1S5gx6HY6aWEuRmCSEDLQlcRwO8ht6v4XnKBv2qK2CIgnUJn7Wy6A
+         FPajCZ/huptCOrkl/08twsrnB4oiONTcaVAMgSFGyFOJompEOlxeJiZCtEOjYkjP8N18
+         9POV/A9QJjgz7cOKyluR789HesZcSNXyBKfQbXxcik50g8ZGbeIQ3zMqZQUQ0th1LDu5
+         9NsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGfof4k0ZQI2QXrhvP1DUOiexXJHNTg9ZUVSl0CVu/gLcQiYPBDgTGRhlLbrnQ24K5kSsR5W894lzcVAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUABZvz+n5lItbDvDGabL69lRCn8Q7XM0hCXBhzpPTPUDaKPAR
+	zun2dhO7L0nvvMULVqyrEXlG+965Bd6inlv4Faz1+Ai4tuVKdTgJp0Bd/jzvyJwORq9YOyWEXf2
+	Lm1a5+opCQEcgn2jbWg+Ejh58OhMD8jYgnvPnb63g
+X-Gm-Gg: ASbGncvkAlqD/XrZ6rmtGnsNHVm38jV1u9kFPcPftwAch1P/swsFZYUx+vNvIFrvxPm
+	oWo7FH9iaCp2ocCsoQ6x3GV9GTdRvMaeOvgYHddIQOozSREPS2yKNXgXeNLhNWnvj5pNv5xUHQo
+	d8ixm9IEzrdMQrELrKZBt6otC4hfUeont0Wqoe49zhfZpRAWiYwp9iUzAkSaHHFT8u71mhdnBVd
+	SMGVQv90axncp+hHmw=
+X-Google-Smtp-Source: AGHT+IHXbY4TxwtVWknJYQ/5Bht7+LECqN/91gP590u8montoaQ+gGtcVF5NMOWukYG+NKgo0+ZGo6Sxvl/LKJemuHI=
+X-Received: by 2002:a17:90b:4c45:b0:32e:a59f:b25d with SMTP id
+ 98e67ed59e1d1-332a9705e25mr7813584a91.30.1758722159437; Wed, 24 Sep 2025
+ 06:55:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922192412.885919229@linuxfoundation.org>
-In-Reply-To: <20250922192412.885919229@linuxfoundation.org>
-From: Dileep malepu <dileep.debian@gmail.com>
-Date: Wed, 24 Sep 2025 19:25:44 +0530
-X-Gm-Features: AS18NWBDacVBK1YPgwur6lrJBXLhApl2Qt6ZIWcyrgcUSkgfBZfG1VuayMkdzxc
-Message-ID: <CAC-m1rryCr1KGcCWYWkd47sy92-SP0+3WFqsU2mPSxmesQr4yg@mail.gmail.com>
-Subject: Re: [PATCH 6.16 000/149] 6.16.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
+References: <20250918150811.259596-1-thorsten.blum@linux.dev>
+In-Reply-To: <20250918150811.259596-1-thorsten.blum@linux.dev>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Wed, 24 Sep 2025 09:55:47 -0400
+X-Gm-Features: AS18NWBdTWkiF1IRVXYt0unyFSpP7neFh7jhnbWQjRR_W61SWXUjoIYrMw2FMpM
+Message-ID: <CAOg9mSTEV9A7s_MYK+msgJRzvUS_R6FB+dOvvkDOmeDrUH92Wg@mail.gmail.com>
+Subject: Re: [PATCH] fs/orangefs: Replace kzalloc + copy_from_user with memdup_user_nul
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org, 
+	linux-kernel@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 1:12=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.16.9 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 24 Sep 2025 19:23:52 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.16.9-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Thanks, that looks better in several ways. I ran it through xfstests,
+and have added it to my linux-next tree...
 
-Build and boot tested 6.16.9-rc1 using qemu-x86_64. The kernel was
-successfully built and booted in a virtualized environment without
-issues.
+-Mike
 
-Build
-kernel: 6.16.9-rc1
-git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-.git
-git commit: fef8d1e3eca6557cae4f0149eb2071123c473c26
-
-Tested-by: Dileep Malepu <dileep.debian@gmail.com>
-
-Best regards
-Dileep Malepu.
+On Thu, Sep 18, 2025 at 11:08=E2=80=AFAM Thorsten Blum <thorsten.blum@linux=
+.dev> wrote:
+>
+> Replace kzalloc() followed by copy_from_user() with memdup_user_nul() to
+> simplify and improve orangefs_debug_write(). Allocate only 'count' bytes
+> instead of the maximum size ORANGEFS_MAX_DEBUG_STRING_LEN, and set 'buf'
+> to NULL to ensure kfree(buf) still works.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  fs/orangefs/orangefs-debugfs.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugf=
+s.c
+> index 1c375fb65018..79267b3419f2 100644
+> --- a/fs/orangefs/orangefs-debugfs.c
+> +++ b/fs/orangefs/orangefs-debugfs.c
+> @@ -440,14 +440,13 @@ static ssize_t orangefs_debug_write(struct file *fi=
+le,
+>                 count =3D ORANGEFS_MAX_DEBUG_STRING_LEN;
+>         }
+>
+> -       buf =3D kzalloc(ORANGEFS_MAX_DEBUG_STRING_LEN, GFP_KERNEL);
+> -       if (!buf)
+> -               goto out;
+> -
+> -       if (copy_from_user(buf, ubuf, count - 1)) {
+> +       buf =3D memdup_user_nul(ubuf, count - 1);
+> +       if (IS_ERR(buf)) {
+>                 gossip_debug(GOSSIP_DEBUGFS_DEBUG,
+> -                            "%s: copy_from_user failed!\n",
+> +                            "%s: memdup_user_nul failed!\n",
+>                              __func__);
+> +               rc =3D PTR_ERR(buf);
+> +               buf =3D NULL;
+>                 goto out;
+>         }
+>
+> --
+> 2.51.0
+>
 
