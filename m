@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-830998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EC1B9B1C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23EB1B9B1CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 19:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA62189556E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC36716733D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D43314B71;
-	Wed, 24 Sep 2025 17:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0467F315D4E;
+	Wed, 24 Sep 2025 17:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QixLh/Ms"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HO3rF3uB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3B72FBE05;
-	Wed, 24 Sep 2025 17:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540B52FBE05;
+	Wed, 24 Sep 2025 17:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758736219; cv=none; b=kAS2SI6NWrR78/DdZAkqKBQ/LQBcbhxb2JKwhPqdlGtrjwz2GVjafkREhIl5MxEIPr3aMwWprARIQV9CZGQisnRgRM4g0OlqqlH3IEnUDgCUKUyTS3U5mOfquH2Z/ohxJpA2h2xu3Wyu5N3S3EQVOsg5ifEua8rY47iQpdtazT8=
+	t=1758736230; cv=none; b=LD7v0v1ZlPSE1kzurYByicUMv0GIzZfnjBLVIs204fYvB3Z5sXDMVRCVB79i519w3mz3r1MsPkpWInNANxl3hXaR6Z7bgywWMEwCxTKMtzWzn42QhNzKNXoiPd0HNvqEe09E3wh8fPw4fMXAbgGfMTslTfLhw+xWMvgmdLbMwqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758736219; c=relaxed/simple;
-	bh=RZSQgzHalNou2TmX2DVvWqNggX+/vPzil+m6zaYL60A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SOb69/NPqfj6mxzJyMzgL+t2w48sc3cOXdLkAQHsf3XRUHulYbS7y0pzgm91/SAyXQLG5+Q0uC2s72r5w8WngQtutnBPAd7rLaT7JizMMdIf0TvffiLXUQjPHz+kiSIxObyVDJz0H2j9jNA2+Wzkvb4yIS6zbOrTm7+HYyNLqlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QixLh/Ms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AB6C4CEE7;
-	Wed, 24 Sep 2025 17:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758736219;
-	bh=RZSQgzHalNou2TmX2DVvWqNggX+/vPzil+m6zaYL60A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QixLh/MsFggy1pHtJynGjUowoIyzuTiOp0JvwoT1eBpSHgJP+PZXyhD/cTTCdeSOH
-	 nK5MZMfRRKGTBeD+300GjEMx7Mp6Jwru+W3S4pHnSHdFvZICkPz8lCbqEEjGYZHmy5
-	 ySt7o2MYH9TJna9PnIlsb55Rv1xBFstiICkdvGT6ZcsQhB5P9XJZKiDE3Gyt4WW58x
-	 tJmFEmm4/twTovrKe/C4CJTjj9r76As6pI6cXlIij0vQThaeg/SBlenvXSjZF0BVRL
-	 1/+7a5aB1HZnDsunQvd2T9rjrevG9Rnkhg8BRJIq2aOJ+RISWjJC0RYrK5OgMVluMO
-	 PPvsi448tAolA==
-From: "Mario Limonciello (AMD)" <superm1@kernel.org>
-To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK),
-	Mario Limonciello <superm1@kernel.org>
-Subject: [PATCH] cpufreq/amd-pstate: Use sysfs_match_string() for epp
-Date: Wed, 24 Sep 2025 12:50:16 -0500
-Message-ID: <20250924175016.709957-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758736230; c=relaxed/simple;
+	bh=xB7pPlWW0+eiQnT8mrW75khUnjKN0I9h+uNbHWk55Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BkTKBmU9wb6Qmf4QqkkjH5ZLAnHJ1SYz3W779IYaMHhuKPEy9OnVDQsFbM2cMeLpr6x+ts1+w7jgxWRtqWpgI1FxBkiAZz40RDlM90bWAzKRXlrAv3M7TGs8IymV5zqRjh8OMvJPThzxk9QzG60lVdb2J8QipT9jgPYiT1CkkpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=HO3rF3uB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+vJ1dOlsQQaSGt9wLwAFi3DtF1NLVEuTTQ4UpKnYZ3M=; b=HO3rF3uBCQ2jcVMAxeZgSdPp+w
+	8JkNip2tIfNxVFlpWPPVkI3BxcxjT7OnUMTN+u9aYpdeRIv/Z9nfvGmfCqFFLocvpncoMTU5AwrkI
+	GV91ILjtr0b025Bd2tFtERmWPEgLfydMGRbR6Kkz9kOtIt8R+KhJO3N4o8dzZ/RcLDeIWSHByJTuh
+	I8aS1ggLI1BYgbwVQZNMs+x+aNZ0IqLloKs2pVEMtkg7neTQ9XzTSoonUdT7AOxQyVR7yg7kQVeaw
+	lZ7J5eK6Fi/eEXF2iAgmf8NpuEfoORJxZQZD/gDLQXImTU2ZIActbAJNmtXC3rWEy4r+Ijg2uaRNS
+	aCqWKUXQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55252)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v1TdH-000000000z7-0TDa;
+	Wed, 24 Sep 2025 18:50:23 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v1TdE-000000007L9-04ys;
+	Wed, 24 Sep 2025 18:50:20 +0100
+Date: Wed, 24 Sep 2025 18:50:19 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: David Yang <mmyangfl@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce
+ PHY_INTERFACE_MODE_REVSGMII
+Message-ID: <aNQvW54sk3EzmoJp@shell.armlinux.org.uk>
+References: <20250922131148.1917856-1-mmyangfl@gmail.com>
+ <20250922131148.1917856-3-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922131148.1917856-3-mmyangfl@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Rather than scanning the buffer and manually matching the string
-use the sysfs macros.
+On Mon, Sep 22, 2025 at 09:11:40PM +0800, David Yang wrote:
+> The "reverse SGMII" protocol name is a personal invention, derived from
+> "reverse MII" and "reverse RMII", this means: "behave like an SGMII
+> PHY".
 
-Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
----
- drivers/cpufreq/amd-pstate.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Sorry to mess you around, but... I've been getting further with stmmac's
+PCS stuff (I've started again with it) and I've come to realise that the
+stmmac driver is full of worms here.
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index ba2adea03db1..b8af6cad9e2c 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1157,15 +1157,10 @@ static ssize_t store_energy_performance_preference(
- 		struct cpufreq_policy *policy, const char *buf, size_t count)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
--	char str_preference[21];
- 	ssize_t ret;
- 	u8 epp;
- 
--	ret = sscanf(buf, "%20s", str_preference);
--	if (ret != 1)
--		return -EINVAL;
--
--	ret = match_string(energy_perf_strings, -1, str_preference);
-+	ret = sysfs_match_string(energy_perf_strings, buf);
- 	if (ret < 0)
- 		return -EINVAL;
- 
+I think we need to have a bigger discussion here.
+
+Today, we have:
+
+- PHY_INTERFACE_MODE_REVMII
+- PHY_INTERFACE_MODE_REVRMII
+
+which both complement their _MII and _RMII definitions. So, it seems
+entirely sensible to also introduce REVSGMII to complement SGMII.
+
+However, stmmac hardware supports "reverse" mode for more than just
+SGMII, also RGMII and SMII. The driver doesn't support SMII, and is
+actually buggy - despite having the DT configuration knobs (which
+are used), the hardware is never actually configured to operate in
+"reverse" mode (it never has the GMAC_CONFIG_TC bit set to allow the
+core to, in effect, act as a PHY.) That said, the core does have
+it's SGMII rate adapter switched from using the incoming inband word
+to using the MAC configuration.
+
+So, while I thought this would be useful for stmmac, given that all
+the platforms we have today aren't actually using "reverse SGMII"
+mode, I don't think this will be useful there.
+
+If we go round the route of adding REVSGMII, we are also opening
+the path to also having REVSMII, and all four REVRGMII* as well.
+Is this a good idea?
+
+Would it be better to have phy_interface_t + reverse-mode flag
+and accept REVMII and REVRMII as a pecularity? That's probably
+going to be a very painful change.
+
+Andrew, any views?
+
 -- 
-2.51.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
