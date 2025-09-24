@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-829833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A756AB98009
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EC0B9800F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1022E7235
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07574A6084
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F38F1F416A;
-	Wed, 24 Sep 2025 01:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549E81F4C8B;
+	Wed, 24 Sep 2025 01:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCEaO9Vd"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJxNz7Cq"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5B21E8322
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050B1E8322
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758677291; cv=none; b=JTle0CSDXslV2/oeKLZXlI/5X/50zt7pidlAOcD4F6PWKiKjKv9WmcxjppA308jPVdptTFwzKAG1buFp5afOVuQRr85LU5y+5N7BWSfiqYZCXC+rWIes+mQFtuVrAKelpgUdNGekvvruljqMDYCbfjeQK6akTbXy27ycho9PxAY=
+	t=1758677304; cv=none; b=LorDhsXf8AVg/74CeaFHi26vZHIMOoXLeGCwIhaOW5UXDYLxRyKxTFY4N4L/kkrDX2urG9L2jYAZegAx+pHtveRTccnud7hRLUe9SIcWSVW0vUgBO4dvDQAUTW9EJ1uCxhSADxjjEQbN2gaqvlBzZueKMd7GBiO5eDrzV6nFNkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758677291; c=relaxed/simple;
-	bh=poWi75Yc6NYPElhMs5/ZuU6q2IMR/SklZd/8AY6sAXw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=H7PZb5C0CQEgljjoEB9Hsv6FZ4agt60R6iMm8iN42h9alnllo6pZPqzZoJFiovKIxEzNE3mlLdpn1OkgqhfgN5qBRmFawnDir8WNALAF6JKm2igajIQtUZEFrw9ZPyquO8v6Cdhctc3P95cybhPRBBt69J9HKRwgY2X+MKwz+YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCEaO9Vd; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1758677304; c=relaxed/simple;
+	bh=19hk+LqNI5XDabxjhXafIBVwjhECKzWuy7AL6boNFpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iuQgezAkkjPmeRqp7ZcgLte1+YTy0hnnUzOsxFjwYxaZ4DYyQq5+zuwhv/O/39Pscv4mDJWd3zTbAecAV2tlPVrLpVV/76VqhyfCn1pZUkHcucjIcaOe4u+p+IBVE4bO6C/57STaEi/POm6KHSTric5u3e8t8oFmFV/9tIeZyVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJxNz7Cq; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77f1f8a114bso457888b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:28:10 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77f5d497692so1290653b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758677289; x=1759282089; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yy4kHwwkNWnxgbcRxW1OuHCY9cgZlZgFiKZ2jZqYCGY=;
-        b=mCEaO9Vd4rGDBwTjEQjeKEwRPlt6mbARMEnA25OQpCWcb57VsxrkgZaSDy5IoZH7xC
-         qcY0OvQn0hkEwI4X3Y9I9oo7AASxeST0+KMImPfHxgB2NJtB+1+gtp2kqBPAwQif+xu5
-         AjqVtyQwjIe+DlpnKZ3fXVGD/I5nLPU/4pOoI3fKT6bEm/p/8BY2vNbRJOZBp++5Dwup
-         JhxYxbvJZEkxJ1rFHVaVV8oMXJeBoYAeQ2/OecUCPsRLW0f9L27nYQstsZ0xN5fiE2Ka
-         ze7TbD7Iv00REzJMqVQNQfrJB8MSiNnli7NBVv6aX8JSZMbsa20zo+6B4s49J6S4WPbv
-         lz0A==
+        d=gmail.com; s=20230601; t=1758677302; x=1759282102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNaBmcK1g7tsyculUAXfjKLZdvr7GDVhE7z0HdXPkB8=;
+        b=VJxNz7Cq0Igsm8KBow0N0DGGGhREY9CbrtRb4DthEhSov5A70HWlk7hquA9naJ6Q0o
+         HoAyAUBgLQ4aLMgckm1nOhWJhyAPwZ+rg3F8KBEJznQ7RFyx4ogc7EvjSVkP9gU6lHoZ
+         cZJeyoGYkR1kTVzNMgypelzF24B+fx+CwwfDS1RucauqYKNk1dHhxkhoDTSgba9sxLDE
+         bPuJw7UeOhzobJN/9bZsGWKxcy5zVQt0b+SAIFpZUgg6+EFqgiojfTnuRfIJiJZEDacK
+         iMdlwaotu1tHTCbGogyD+CnOFWvPAc+1bi6iym44iK7qtvN16gG2ns5PRuIS0yDY85I4
+         G5WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758677289; x=1759282089;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yy4kHwwkNWnxgbcRxW1OuHCY9cgZlZgFiKZ2jZqYCGY=;
-        b=mfuP++VzY/faoXekkgvGXQz+FTVrHvqK1rDmeTDBbaR+HRY6XIdQ6yzyu38JSxn9+R
-         1z8TTEoasiwQEZJLymjg7vmK+qhwuKE8JBtdiUstWyYXTwTYPmxNIrw/86pRXFhlEhFm
-         aK1KGWngOphm2E+a96fsgmwRqAzKtcjt/Efs0FkbcewhmEuvPS4sHR95/yo6UCL22Z7a
-         H95BLdzgab+Kgo8hwkNO7fZYICWwByn8QPMkoVd0dABywIgwDmBGb0voqZFBzitBInLr
-         ip4vcb3n6JD7eR0dHIA6inOytQsH86xFIl2SBLJr/GIgugJNMvAjS8b2GJMzVdHT0kUR
-         4bBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPwB914v+Ib5jXwWfG+GQVxn4x2OfXcXNk4r2rIbKx2AcJ+8TZ6+Pn/8GGs7DPa7OfPv0rbeCYSMVCuYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz2/9I2b1cUEceMRefI9uZsE75u9LNImNtFpYyOGgWA1X4CmpM
-	JIGgOmc0g5YjJYH22rg3jRqCEq2jbdkn8xvOunp7uNeeRAZgF8AK9vY07msXF3Yi
-X-Gm-Gg: ASbGncvZUkLhwEpD5F5mClzKOjgKxwaJBlw2iIWvZ7u2zv/VOOAYxGtV4TaaWMWOBOI
-	DsO3tmZx+iozcE3BvbeTegLLAxxlnaPpDsBDXJuztu8XjCbqFjD3wBEpy9Yup5fkThKozUDQHtt
-	kYNfZpUwKKu7MmqIZ42y3PgeAaSi3czLXnIu3cyhCtaYzqm6wiU/EPAEUMQ6mTsu9dEcQhXK68v
-	bWlcNrJA7zSewmG1irYM0HhKifJ5c5MEf9DJs7hLrKHy2oKB0gQW+c6DIudVoeNIQoxe9tHC/xU
-	FCN9ihvmrAo9Mzgf13yRWAhIHPyJHDMnfZ29APxAWou9rLLB1GUj+Hzxnt6SrHt32VnUDaZ7c/1
-	7RTxjmDIIMIEwv9N24xz29XfUgwqsvN+BSHg=
-X-Google-Smtp-Source: AGHT+IHy0fwa9ia585w/vIXgoIdJqbR7sJnmq+74ZviBcey7HI8Q7oDjtgRzWWmIN+HBbbgjxaGGDA==
-X-Received: by 2002:a05:6a00:3d51:b0:77f:2b7d:ee01 with SMTP id d2e1a72fcca58-77f6972e7d5mr759595b3a.1.1758677289526;
-        Tue, 23 Sep 2025 18:28:09 -0700 (PDT)
-Received: from smtpclient.apple ([58.247.22.16])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f1979547fsm11026739b3a.31.2025.09.23.18.28.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Sep 2025 18:28:09 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1758677302; x=1759282102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNaBmcK1g7tsyculUAXfjKLZdvr7GDVhE7z0HdXPkB8=;
+        b=bBz9vounredhf5RjbLRkRb0MArtkMaMMPTu8pfAcJ2nJLHUwO37owW+bJ7X4jAlEll
+         tPNgAswb1H+eLswTc79abimF3PosyoW2l3EKb6F8uXHFpSyLJdpBSuVbbR7uU1ZQcP/Y
+         tKFW2vzcKFLf+KHX530YQPRRTxETSc+h0j6gyY9/oNdV04tT/UquGQATzKePruqwMPlL
+         dumsmX4XPX78F8ngZECFHORTrPKfdQTn/MJtokyCuecnfJsm8qqzbds95B865d0TfmI3
+         DiKDx+hxjwAXR6v2NGuJSXaK86w5u8n6mKQN8bwKH+VQ8icsW0nzBC771ctS3iFh2hh5
+         HxxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcBQkyfZu+SOvMlDRJvtPge73M4aWRx+JNWvz/SGPiW4C7bJTf6XaqtEw1KdlnrMFGgDihbrRjpUocI60=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6791FD04LVSo66gl5oh0ea7AjXmvF0qNyqNXw/QYAgojNWoQy
+	VZ8V3Jqw+J96qWhSHfDSQQGKFPMp2PlOEGPRypbPwPClQDaxZe/NirmTF3CfgeuIrcE=
+X-Gm-Gg: ASbGncttPA9X0ti2zdeh+QpcsRC8LZ6fdP3Dy7uuRY+ZOhUQFAPXis9ywCEUpcgCoOx
+	NxwbibgfNum5LooAf0aAdiDu66EppJVJ9jy7FSbOyR9i6k8R9mkTDOpYGaGdra5u0qR2C44buzT
+	hl20676BQJKFpRZati54ZrCssts49DKvV55HAj/aq2Q7VUKx9zo2B+i0TBRsAcpX1FWNvhciQa6
+	GkC553uZZl7791KeFs/ZaMfSeycOoZxG4618wHJKzaMYWVBXOGAFpVfDLZW8h1LntH7wzcDQk6Z
+	HByV+eOcnwn1WFdAt1wK9j0hTzMcdKd1v6yvthJ0Pw1T+oZgL3tNWmtQNVX8GeUXf+5hveHUiNE
+	ecddoimrQncgWIxQ7/W0cY9l0735OtU5npUXZC+KWS632SUbPKKDjvjpNGuyu0bDaADFuc5MFR5
+	jk3Q==
+X-Google-Smtp-Source: AGHT+IEtAt1brf7bOZfywQUNzTcIp9ZaeKJDD5QwEYNs2WxUGFQmKQ2sv8z9OUBVuDDhakBgEvfhEQ==
+X-Received: by 2002:a05:6a20:b298:b0:2df:8271:f079 with SMTP id adf61e73a8af0-2df8271fb80mr400111637.10.1758677302521;
+        Tue, 23 Sep 2025 18:28:22 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:a860:817b:dcc:3e4a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55199e08f1sm12644501a12.24.2025.09.23.18.28.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 18:28:22 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Subject: [PATCH] nsfs: reject file handles with invalid inode number
+Date: Wed, 24 Sep 2025 06:58:15 +0530
+Message-ID: <20250924012815.1096559-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with
- GCC 11.1.0
-From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
-In-Reply-To: <2eddc77bea32f3baa47cfb1bafb4e20edfe00417.camel@ibm.com>
-Date: Wed, 24 Sep 2025 09:27:15 +0800
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Xiubo Li <xiubli@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1D65AD7F-DEE2-48DC-8C5D-5814B53FA0A5@gmail.com>
-References: <1AD55673-B7F4-4DB7-AE80-1AC81709F65A@gmail.com>
- <e6987f0268bd7bceddbd6ec53fa174d07cfa3114.camel@ibm.com>
- <C8E92D42-0336-45DD-A415-EA8588DE731D@gmail.com>
- <d6ccd709466d1460baf6e9b0bcec212007172622.camel@ibm.com>
- <A246BD33-C009-4C12-94E7-E95CABB94D04@gmail.com>
- <2eddc77bea32f3baa47cfb1bafb4e20edfe00417.camel@ibm.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Slava,
+Reject nsfs file handles that claim to have inode number 0, as no
+legitimate namespace can have inode 0. This prevents a warning in
+nsfs_fh_to_dentry() when open_by_handle_at() is called with malformed
+file handles.
 
-I apologize for the confusion with multiple patch versions. Here is one =
-single formal patch that I have thoroughly tested and verified on =
-multiple platforms:
+The issue occurs when userspace provides a file handle with valid
+namespace type and ID but claims the namespace has inode number 0.
+The namespace lookup succeeds but triggers VFS_WARN_ON_ONCE() when
+comparing the real inode number against the impossible claim of 0.
 
-**Testing verification**:
-- Successfully tested on macOS with `git am`
-- Successfully tested on Windows with `git am`=20
-- Verified using `git apply --check` and `patch --dry-run`
-- Confirmed to apply cleanly to Linux v6.17-rc6 (commit =
-f83ec76bf285bea5727f478a68b894f5543ca76e)
+Since inode 0 is reserved in all filesystems and no namespace can
+legitimately have inode 0, we can safely reject such handles early
+to prevent reaching the consistency check that triggers the warning.
+
+Testing confirmed that other invalid inode numbers (1, 255) do not
+trigger the same issue, indicating this is specific to inode 0 rather
+than a general problem with incorrect inode numbers.
+
+
+Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Tested-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 
 ---
+ fs/nsfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-=46rom f83ec76bf285bea5727f478a68b894f5543ca76e Mon Sep 23 09:05:00 2025
-From: Huazhao Chen <lyican53@gmail.com>
-Date: Mon, 23 Sep 2025 09:00:00 +0800
-Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() =
-with GCC
-11.1.0
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 32cb8c835a2b..42672cec293c 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -469,7 +469,8 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+ 
+ 	if (fh_len < NSFS_FID_SIZE_U32_VER0)
+ 		return NULL;
+-
++	if (fid->ns_inum == 0)
++		return NULL;
+ 	/* Check that any trailing bytes are zero. */
+ 	if ((fh_len > NSFS_FID_SIZE_U32_LATEST) &&
+ 	    memchr_inv((void *)fid + NSFS_FID_SIZE_U32_LATEST, 0,
+-- 
+2.43.0
 
-When x & 0x1FFFF equals zero, __builtin_clz() is called with a zero
-argument, which results in undefined behavior. This can happen during
-ceph's consistent hashing calculations and may lead to incorrect
-placement group mappings.
-
-Fix by checking if the masked value is non-zero before calling
-__builtin_clz(). If the masked value is zero, use the expected
-result of 16 directly.
-
-Signed-off-by: Huazhao Chen <lyican53@gmail.com>
----
-net/ceph/crush/mapper.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 3a5bd1cd1..000f7a633 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -262,7 +262,7 @@ static __u64 crush_ln(unsigned int xin)
-       * do it in one step instead of iteratively
-       */
-      if (!(x & 0x18000)) {
--               int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-+               int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) =
-- 16 : 16;
-              x <<=3D bits;
-              iexpon =3D 15 - bits;
-      }
---=20
-2.39.5 (Apple Git-154)
-
----
-
-**Important clarification about git diff format**:=20
-I understand your confusion about the line numbers. The "@@ -262,7 =
-+262,7 @@" header is **git's automatic context display format**, not an =
-indication of which line I'm trying to modify. Here's what it means:
-
-- `-262,7`: Git shows 7 lines of context starting from line 262 in the =
-original file
-- `+262,7`: Git shows 7 lines of context starting from line 262 in the =
-modified file =20
-- **The actual code change is on line 265**: `int bits =3D =
-__builtin_clz(x & 0x1FFFF) - 16;`
-
-This is exactly the line you referenced in your message [1]. Git =
-automatically chooses context lines to make patches unambiguous - I did =
-not manually specify line 262.
-
-**Cross-platform testing results**:
-- macOS: `git am` successful=20
-- Windows: `git am` successful  =20
-- Validation: `git apply --check` and `patch --dry-run` both pass=20
-
-The patch is ready for your review and should apply without any issues.
-
-I would be grateful if you could review this patch again. If you =
-encounter any issues during application, please let me know and I'll be =
-happy to provide additional assistance.
-
-Thank you for your patience and thorough review process.
-
-Best regards,
-Huazhao Chen
-
-[1] =
-https://elixir.bootlin.com/linux/v6.17-rc6/source/net/ceph/crush/mapper.c#=
-L265=
 
