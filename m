@@ -1,128 +1,105 @@
-Return-Path: <linux-kernel+bounces-830867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F87B9ABF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FF3B9ABEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7854177FC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998993B8CD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BFD3128DE;
-	Wed, 24 Sep 2025 15:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29CC21257E;
+	Wed, 24 Sep 2025 15:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9yx0b8N"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="MUHZEFJB"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62F531283E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD61311AC;
+	Wed, 24 Sep 2025 15:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758728383; cv=none; b=bs8CZeSlTI2HZVjqD8Ap8O1k+bpuWLBEDxPtL/iuedzhNCA6sMPtfmXRVIWOk5r55H025AErtkq6Bc2je8aZNhlSHt0ZZac3SWNzTXNXtDBq64x28Az0aHgIRsc8hpFPuZEdqZsFj9vi2lwVDjGZc7epzyV0hpeixSbVEi40ppQ=
+	t=1758728478; cv=none; b=HSx58SIYEYsl+ZixymgYygjOvHY6GN2p/7Ufc5Da6NEXruIhdJgd0VgY6GmOhrc3/T0XL53Xouea0u3JkRGru5Sleb9ptjzlanwFUn86D6Y3MLQba/hRrHlUUhQUOF3lzFcMLB+4IqvsgxtIT1DzU9lSMt5u7gGOZHg0Rh1ZsFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758728383; c=relaxed/simple;
-	bh=v/Cr/IL70HpmLDXq0/COC0G/ZI+89mZIjWnRZv6XJNQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=T4mMKME7BW8oPYa118mYJTdeAqbDknLg7KyfBKuG3Q5JPb1+FqqDFv00LpOdVYY1Gff4ab0pDY+D9scAqMYmhdVuvmhOmnmEbOrd3DnE2ke8dKinOzRGxgk6ruyJMcLxUb84qGlyP5ZgIsAso+6kPnxbEu0lALSJHaWehX1wSVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9yx0b8N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758728380;
+	s=arc-20240116; t=1758728478; c=relaxed/simple;
+	bh=oruTVOwqS+pyeenDdFLUFLxtU28+2G+F9Cak8KQH8gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRSnnJPR+67yKKIt/ViLIdRycs5Ikvc3zDHCrtPKgHynGlbcPPjrWDd08q3xvmfoQW+e1/InBC++5vLG4Eb4OXtw4bQP5eSFmGoBIFNlQLaoUjDofo19eroOabq4CNeEEX7X2rdPl/J+DjA67v3TBBh+mQ2jpeKD9GepSvC0YUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=MUHZEFJB; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cX1KN1r3xz9tSm;
+	Wed, 24 Sep 2025 17:41:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1758728472;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VW0CPi1vI6VVLJVg3ytdkJ52tq0kRHmrUbFeTNhR9kk=;
-	b=h9yx0b8N9JqmYZKxpE8ekMm28YHebC9XtlfGc+TGY6RjBNHKZZxU4IpDKlecxG2VnhRiEH
-	595cUXXkHBtJWCuN3VXRWukXV7UMhDcKiaNlhn6h2O7O8MEaR5Wz6ZsKdSjDOShMIAhbiZ
-	1ZwOqsXrXWib8JRRMRO9PTebEc3y8QY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-472-4lk1vFx3OCKtwoH6h-Rr2A-1; Wed,
- 24 Sep 2025 11:39:35 -0400
-X-MC-Unique: 4lk1vFx3OCKtwoH6h-Rr2A-1
-X-Mimecast-MFC-AGG-ID: 4lk1vFx3OCKtwoH6h-Rr2A_1758728374
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 097E318002E0;
-	Wed, 24 Sep 2025 15:39:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ABDF41800451;
-	Wed, 24 Sep 2025 15:39:29 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <745741.1758727499@warthog.procyon.org.uk>
-References: <745741.1758727499@warthog.procyon.org.uk> <20250911222501.1417765-1-max.kellermann@ionos.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.org>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    linux-stable@vger.kernel.org
-Subject: Re: [PATCH] fs/netfs: fix reference leak
+	bh=QUcY6dWrJzii9UCjkBsQm4njeVeP/FMhTiIiLYETlag=;
+	b=MUHZEFJBFsgaH4/5o640P+9MKZjztmba/YrI5CLWEeLq/kivx7Qvix4W7FM0WJGoL/egk0
+	RpGZXuSOpNWSKA5xScI56J0Ux/GJhhfDBAWBxwWJlucWa106gaL+C971564Haovqhg1Xj2
+	7claMMRAfVpSb/vfMarZ6Bq4uKvcwKimBPsCU2I06WiRovO9tViOAqi8GLSb7WfPIZEHcV
+	QxVuzVApH8v6mxGu25Cx6QiNxoetAnW1yaAgYKmYRztZoOVCR08+9wD8lBOY+bUgJ3mwZf
+	2DEp5I2Bysnn3YgdhLrRJSQWpNFIHLVU8hkneIV0D0I54r9By65NAtAcmrSjwg==
+Date: Wed, 24 Sep 2025 21:10:56 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in print_reg_state()
+Message-ID: <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+ <20250923174738.1713751-1-listout@listout.xyz>
+ <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <755694.1758728365.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 24 Sep 2025 16:39:26 +0100
-Message-ID: <755695.1758728366@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
 
-David Howells <dhowells@redhat.com> wrote:
+On 24.09.2025 09:32, Alexei Starovoitov wrote:
+> On Wed, Sep 24, 2025 at 1:43 AM Brahmajit Das <listout@listout.xyz> wrote:
+> >
+> > Syzkaller reported a general protection fault due to a NULL pointer
+> > dereference in print_reg_state() when accessing reg->map_ptr without
+> > checking if it is NULL.
+> >
+...snip...
+> > -       if (type_is_map_ptr(t)) {
+> > +       if (type_is_map_ptr(t) && reg->map_ptr) {
+> 
+> You ignored earlier feedback.
+> Fix the root cause, not the symptom.
+> 
+> pw-bot: cr
 
-> > ... and frees the allocation (without the "call_rcu" indirection).
-> =
+I'm not sure if I'm headed the write direction but it seems like in
+check_alu_op, we are calling adjust_scalar_min_max_vals when we get an
+BPF_NEG as opcode. Which has a call to __mark_reg_known when opcode is
+BPF_NEG. And __mark_reg_known clears map_ptr with
 
-> Unfortunately, this isn't good.  The request has already been added to t=
-he
-> proc list and is removed in netfs_deinit_request() by netfs_proc_del_rre=
-q() -
-> but that means that someone reading /proc/fs/netfs/requests can be looki=
-ng at
-> it as you free it.
-> =
+	/* Clear off and union(map_ptr, range) */
+	memset(((u8 *)reg) + sizeof(reg->type), 0,
+	       offsetof(struct bpf_reg_state, var_off) - sizeof(reg->type));
 
-> You still need the call_rcu() - or you have to call synchronize_rcu().
-> =
-
-> I can change netfs_put_failed_request() to do the call_rcu() rather than
-> mempool_free()/netfs_stat_d().
-
-How about:
-
-/*
- * Free a request (synchronously) that was just allocated but has failed b=
-efore
- * it could be submitted.
- */
-void netfs_put_failed_request(struct netfs_io_request *rreq)
-{
-	int r;
-
-	/* New requests have two references (see netfs_alloc_request(), and
-	 * this function is only allowed on new request objects
-	 */
-	if (!__refcount_sub_and_test(2, &rreq->ref, &r))
-		WARN_ON_ONCE(1);
-
-	trace_netfs_rreq_ref(rreq->debug_id, r, netfs_rreq_trace_put_failed);
-	netfs_free_request(&rreq->cleanup_work);
-}
-
-David
-
+-- 
+Regards,
+listout
 
