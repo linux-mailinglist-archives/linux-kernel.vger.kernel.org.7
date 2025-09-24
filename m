@@ -1,202 +1,153 @@
-Return-Path: <linux-kernel+bounces-830412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E41AB99944
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC717B9992F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C144A74AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D1BA4A6FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFAA2EC08D;
-	Wed, 24 Sep 2025 11:29:19 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FFA2E7BD0;
+	Wed, 24 Sep 2025 11:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6kVCJUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FCA2E92A3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5D02E7BAE;
+	Wed, 24 Sep 2025 11:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758713358; cv=none; b=o/yKkWnZHbYqTWr5/Qis/PaivmA6miiHozzNg3inRfYkkGxxar0s09FhXy0OldTf7fkkw04H73tk0HJobosuydWCKYTCBzbP2YKs058rm091bK8y8zHqYqGLfB5gBav6i9ExF2BeghcTlaSlXyOhTOvAZmI75CvcEQcbm54mwjM=
+	t=1758713306; cv=none; b=QNWlSVhX6oXkQkz9O2KqcvJcWEZy3jaRyQTcD3RjcoX9SSI9LQSlB4BhNXJx7my4wLcA2k+exL58cHVY+0LPkUV7pzMA5h35BltYEIFhG5NVQiWl6qyyYML0lhVjboG97tNs5jV2+fVbyir55j7GL+8TDTSLMaQbl/REd3FEChw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758713358; c=relaxed/simple;
-	bh=zXdkaMm5737zgERF24VLXd45g2arQuRVjH0AXNbu7xU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hvQNGSCIC/Bii3aDxNCqwdPWuFiSa7Y/5SBDM+yJHd+tNsny1h+4Z5jVz6F5L3Kx2CpAGiM+N74TSbb/42scz73pqALkKhjFYjWzvcUz9OKX9K3Ktn7Xkw2hT9WR3vin5qhEjBBH0xYyAsPZwiXG0QZIvVKkRgZLfAjotx421d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 58OBSUU6074425
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Sep 2025 19:28:30 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
- (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Wed, 24 Sep 2025
- 19:28:30 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
-        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
-        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
-        <ben717@andestech.com>, <inochiama@gmail.com>,
-        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
-        <shradha.t@samsung.com>, <randolph.sklin@gmail.com>,
-        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
-Subject: [PATCH v4 3/5] riscv: dts: andes: Add PCIe node into the QiLai SoC
-Date: Wed, 24 Sep 2025 19:28:18 +0800
-Message-ID: <20250924112820.2003675-4-randolph@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250924112820.2003675-1-randolph@andestech.com>
-References: <20250924112820.2003675-1-randolph@andestech.com>
+	s=arc-20240116; t=1758713306; c=relaxed/simple;
+	bh=g0mEPqrjAhRTXIvJsgGonBI+aYxFehEStiN+fbiF7lc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=FgTbbaX9DW0z0RESlrV8ZrvslsZQ5/sUX2l36iLZnyOotxPVol9wKqwMdjshamQlyN/QrViv0jetvrhr11mvn9mYZ58AeKW6eB+OLd4kcAaeANbA7BgAJj1MqYMbpvj48Uesif9fQntn9O6ef3P61fbkar+EB9BfZdTJNrIoOtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6kVCJUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7A0C4CEE7;
+	Wed, 24 Sep 2025 11:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758713305;
+	bh=g0mEPqrjAhRTXIvJsgGonBI+aYxFehEStiN+fbiF7lc=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=Y6kVCJUmte+uXJqvJMhuy0MMwlx+jh+aqiYE/7C/Nr9Bja3JXDH2pFctlA8nfZY2V
+	 xutkQiANavxpQAvcIGUaGH+kisu8SyK9hTdERq30iuTQwmiIuyCOVax4/0vKfjTMmF
+	 CkzP47fLHp6kJ/PlmYxn7aHVz/9sg2WHny/s4URW+dqGBtmx5CtwvoVQmjTg5SVkJC
+	 jlOtMIzTQ3jw0C4tTgegc26N802DSVKj/bV597Futke0J6tOEW89WFFgBMKg0+lYiy
+	 MuiAmeQ34dKDkzOxcD9GZVC0uTJpfdagfeAizrQr3jfhIRs34eHn2dc8cIjAm7ZH/F
+	 HcW+WZLYSwdnA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 58OBSUU6074425
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 24 Sep 2025 13:28:18 +0200
+Message-Id: <DD0ZTZM8S84H.1YDWSY7DF14LM@kernel.org>
+Cc: "Benno Lossin" <lossin@kernel.org>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
+ Norov" <yury.norov@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh>
+ <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+ <2025092125-urban-muppet-1c2f@gregkh>
+ <DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org>
+ <2025092432-entrust-citizen-0232@gregkh>
+In-Reply-To: <2025092432-entrust-citizen-0232@gregkh>
 
-Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
+On Wed Sep 24, 2025 at 12:52 PM CEST, Greg KH wrote:
+> Ok, great, but right now it's not doing that from what I am seeing when
+> reading the code.  Shouldn't IoMem::new() take that as an argument?
 
-Signed-off-by: Randolph Lin <randolph@andestech.com>
----
- arch/riscv/boot/dts/andes/qilai.dtsi | 112 +++++++++++++++++++++++++++
- 1 file changed, 112 insertions(+)
+That's correct, neither IoMem nor pci::Bar do consider it yet; it's on the =
+list
+of things that still need to be done.
 
-diff --git a/arch/riscv/boot/dts/andes/qilai.dtsi b/arch/riscv/boot/dts/andes/qilai.dtsi
-index de3de32f8c39..69669111d9fb 100644
---- a/arch/riscv/boot/dts/andes/qilai.dtsi
-+++ b/arch/riscv/boot/dts/andes/qilai.dtsi
-@@ -182,5 +182,117 @@ uart0: serial@30300000 {
- 			reg-io-width = <4>;
- 			no-loopback-test;
- 		};
-+
-+		bus@80000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x44 0x00000000 0x04 0x00000000 0x04 0x00000000>;
-+			ranges = <0x00 0x80000000 0x00 0x80000000 0x00 0x20000000>,
-+				 <0x00 0x04000000 0x00 0x04000000 0x00 0x00001000>,
-+				 <0x00 0x00000000 0x20 0x00000000 0x20 0x00000000>;
-+
-+			pci@80000000 {
-+				compatible = "andestech,qilai-pcie";
-+				device_type = "pci";
-+				reg = <0x00 0x80000000 0x00 0x20000000>, /* DBI registers */
-+				      <0x00 0x04000000 0x00 0x00001000>, /* APB registers */
-+				      <0x00 0x00000000 0x00 0x00010000>; /* Configuration registers */
-+				reg-names = "dbi", "apb", "config";
-+
-+				linux,pci-domain = <0>;
-+				bus-range = <0x0 0xff>;
-+				num-viewport = <4>;
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x00 0xf0000000>,
-+					 <0x43000000 0x01 0x00000000 0x01 0x00000000 0x1f 0x00000000>;
-+
-+				#interrupt-cells = <1>;
-+				interrupts = <0xf 0x4>;
-+				interrupt-names = "msi";
-+				interrupt-parent = <&plic>;
-+				interrupt-map-mask = <0 0 0 0>;
-+				interrupt-map = <0 0 0 1 &plic 0xf 0x4>,
-+						<0 0 0 2 &plic 0xf 0x4>,
-+						<0 0 0 3 &plic 0xf 0x4>,
-+						<0 0 0 4 &plic 0xf 0x4>;
-+			};
-+		};
-+
-+		bus@a0000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x44 0x00000000 0x04 0x00000000 0x04 0x00000000>;
-+			ranges = <0x00 0xa0000000 0x00 0xa0000000 0x00 0x20000000>,
-+				 <0x00 0x04001000 0x00 0x04001000 0x00 0x00001000>,
-+				 <0x00 0x00000000 0x10 0x00000000 0x08 0x00000000>;
-+
-+			pci@a0000000 {
-+				compatible = "andestech,qilai-pcie";
-+				device_type = "pci";
-+				reg = <0x00 0xa0000000 0x00 0x20000000>, /* DBI registers */
-+				      <0x00 0x04001000 0x00 0x00001000>, /* APB registers */
-+				      <0x00 0x00000000 0x00 0x00010000>; /* Configuration registers */
-+				reg-names = "dbi", "apb", "config";
-+
-+				linux,pci-domain = <1>;
-+				bus-range = <0x0 0xff>;
-+				num-viewport = <4>;
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x0 0xf0000000>,
-+					 <0x43000000 0x01 0x00000000 0x01 0x00000000 0x7 0x00000000>;
-+
-+				#interrupt-cells = <1>;
-+				interrupts = <0xe 0x4>;
-+				interrupt-names = "msi";
-+				interrupt-parent = <&plic>;
-+				interrupt-map-mask = <0 0 0 0>;
-+				interrupt-map = <0 0 0 1 &plic 0xe 0x4>,
-+						<0 0 0 2 &plic 0xe 0x4>,
-+						<0 0 0 3 &plic 0xe 0x4>,
-+						<0 0 0 4 &plic 0xe 0x4>;
-+			};
-+		};
-+
-+		bus@c0000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			dma-ranges = <0x44 0x00000000 0x04 0x00000000 0x04 0x00000000>;
-+			ranges = <0x00 0xc0000000 0x00 0xc0000000 0x00 0x20000000>,
-+				 <0x00 0x04002000 0x00 0x04002000 0x00 0x00001000>,
-+				 <0x00 0x00000000 0x18 0x00000000 0x08 0x00000000>;
-+
-+			pci@c0000000 {
-+				compatible = "andestech,qilai-pcie";
-+				device_type = "pci";
-+				reg = <0x00 0xc0000000 0x00 0x20000000>, /* DBI registers */
-+				      <0x00 0x04002000 0x00 0x00001000>, /* APB registers */
-+				      <0x00 0x00000000 0x00 0x00010000>; /* Configuration registers */
-+				reg-names = "dbi", "apb", "config";
-+
-+				linux,pci-domain = <2>;
-+				bus-range = <0x0 0xff>;
-+				num-viewport = <4>;
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x0 0xf0000000>,
-+					 <0x43000000 0x01 0x00000000 0x01 0x00000000 0x7 0x00000000>;
-+
-+				#interrupt-cells = <1>;
-+				interrupts = <0xd 0x4>;
-+				interrupt-names = "msi";
-+				interrupt-parent = <&plic>;
-+				interrupt-map-mask = <0 0 0 0>;
-+				interrupt-map = <0 0 0 1 &plic 0xd 0x4>,
-+						<0 0 0 2 &plic 0xd 0x4>,
-+						<0 0 0 3 &plic 0xd 0x4>,
-+						<0 0 0 4 &plic 0xd 0x4>;
-+			};
-+		};
-+
- 	};
- };
--- 
-2.34.1
+> But, that feels odd as our current iomem api in C doesn't care about
+> endian issues at all because it "assumes" that the caller has already
+> handle this properly and all that the caller "wants" is to write/read to
+> some memory chunk and not twiddle bits.
 
+Yet it seems to be the correct place to deal with it. As mentioned below, r=
+egmap
+could just become part of an I/O backend implementation to do exactly that.
+
+>> (Actually, we could even implement an I/O backend that uses regmap.)
+>
+> That would probably be best to do eventually as most platform drivers
+> use regmap today as it's the sanest api we have at the moment.
+
+I agree it's what we should do eventually.
+
+>> So, I think the register!() stuff is rather orthogonal.
+>
+> I think it's very relevant as people seem to just be "assuming" that all
+> the world (hardware and cpus) are little-endian, while in reality, they
+> are anything but.  As proof, the code that uses this register!() logic
+> today totally ignores endian issues and just assumes that it is both
+> running on a little-endian system, AND the hardware is little-endian.
+>
+> As a crazy example, look at the USB host controllers that at runtime,
+> have to be queried to determine what endian they are running on and the
+> kernel drivers have to handle this "on the fly".  Yes, one can argue
+> that the hardware developers who came up with that should be forced to
+> write the drivers as penance for such sins, but in the end, it's us that
+> has to deal with it...
+>
+> So ignoring it will get us quite a ways forward with controlling sane
+> hardware on sane systems, but when s390 finally realizes they can be
+> writing their drivers in rust, we are going to have to have these
+> conversations again :)
+
+I think it's not really that anyone is ignoring it (intentionally). It's tw=
+o
+different things that should be addressed here; yet they are related:
+
+  (1) Implementation of an abstract representation of a register that drive=
+rs
+      can interact with.
+
+  (2) The I/O layer that lays out the raw data on the physcial bus.
+
+The register!() macro intends to provide an abstract representation of a
+register for drivers to interact with. Think of it as an abstract box, wher=
+e the
+memory layout does not matter at all -- could be anything.
+
+Theoretically, this abstraction could even store every single field of a
+register in its own u32 or u64, etc. Of course, that's a waste of memory, w=
+hich
+is why we're using this bitfield thing instead.
+
+The only thing that matters is that there is a contract between the struct
+representing a register (generated by the register!() macro) and the I/O ba=
+ckend
+layer that lays out the raw value on the bus.
+
+This works attempts to address (1), whereas you are (rightfully) asking for=
+ (2).
+And I think the answer for (2) simply is, we still have to address it.
 
