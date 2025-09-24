@@ -1,240 +1,191 @@
-Return-Path: <linux-kernel+bounces-830561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88CCCB99FAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD60BB9A018
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E919C61B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746B92A42C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEED26C38D;
-	Wed, 24 Sep 2025 13:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="CnXnrd2J"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31B82FC012;
+	Wed, 24 Sep 2025 13:19:26 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF7D11713
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9947F2D541B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719443; cv=none; b=NruBvPvfwqeMDnhyeYmaMf4pKRYyAcEOL1gDi3omUz7TbBwKfBwEyzO3Yh1pHoJq8eFLaAG++ZvDcUB4P/40o3YYSTIkbEGXV5PXpwb2Fql7VgdI77cru8Ddrwpyyx+Jr54vHaIwRIztK5K6409FjMDZipoguH/jWfxGAwC+V2c=
+	t=1758719966; cv=none; b=lj52SBjiJO5QG0w3Kew2pVk4IjlYOlb9zVGxYlzwQ/IxcqnGY7+zUGSO02mGM7cYhb2razBHANJersD+syd/13k5qQur+5wmHEQ6p1ismZqqlYKgPjAgARy8AmqxbkDT5paXeAKD0Ec9abPfcKRFEZLVO2NLLHkat2Tsm6i3Wb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719443; c=relaxed/simple;
-	bh=Vm+enzay0EtJU3tmUcJTW9sdXcV1GXPE3QWm2ac4Uk0=;
-	h=Date:Message-ID:From:Subject:To:In-Reply-To:References; b=G7PH6Oc8CDybOA0NemF+WLFFcIvrR0vfPPFcZJ5KGshdl2Uht4w2IdG2NHTTXjLGmOz4q76p3VkfHa4Zf8z+P0kz+E9MXhdqqlbz/sXpI9kqCilyisc9dV9paiKc23ZC6U37PmpR1A1xsp+O+4NWQPxg+s4wFeXkdERWVmEd8X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=CnXnrd2J; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:References:In-Reply-To:To:
-	Subject:From:Message-ID:Date:Reply-To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nk1HfuVFuLnLujBiaC6+cv0KJ5hj9Q7odgwOaGzF5wA=; b=CnXnrd2JN7NM5M9p6AGRSoEJJw
-	oWEnVNIYVNnQrx2Pqq3rFvC6wsAIpo4knJPX2zYq66v/fLVWQ7xoxgdXK7PoutJD2+g8zkZZsnLAi
-	hp0eDUHbmi09kE9BMc7acDhRyWK3dnYJUixgvP++c3l+zrEuMFh4cxAvWqDuDMr1/fSeiANetgiDg
-	R2rgonI8aPv37Vk6reGTJqHgQMZLQghT8YJFf16B5tsJjIWqzuN7aLf9z7qEt0VRwpDXKA955P7+l
-	Q98mtM2gkmQ+Hycsauz8Ecb7SHAYLrsHMJcwt4vFQvJHmp6CnmEsXJCbkhbZlGTmaqQ3PiFFXLnpx
-	K7Fxv/mw==;
-Received: from host-79-47-48-17.retail.telecomitalia.it ([79.47.48.17] helo=localhost)
-	by imap4.hz.codethink.co.uk with utf8esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1v1PGF-001Qne-5P; Wed, 24 Sep 2025 14:10:20 +0100
-Date: Wed, 24 Sep 2025 15:10:19 +0200
-Message-ID: <d6fcbedf0daf259e2f96a1e0cc666cff@codethink.co.uk>
-From: Matteo Martelli <matteo.martelli@codethink.co.uk>
-Subject: Re: BUG/WARN issues in kernel/sched/rt.c under stress-ng with
- crgoup-v2
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Dooks
-	<ben.dooks@codethink.co.uk>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Marcel Ziswiler
-	<marcel.ziswiler@codethink.co.uk>, Matteo Martelli
-        <matteo.martelli@codethink.co.uk>
-In-Reply-To: <9edb5b8d-8660-4699-b041-bd74329a14e9@arm.com>
-References: <3308bca2-624e-42a3-8d98-48751acaa3b3@codethink.co.uk>
-	<d6abff7f5f9ee5e41f19cb1f9d02de29@codethink.co.uk>
-	<9edb5b8d-8660-4699-b041-bd74329a14e9@arm.com>
-Sender: matteo.martelli@codethink.co.uk
+	s=arc-20240116; t=1758719966; c=relaxed/simple;
+	bh=z/C4wkQC8gaVbvYtfUOzohgsubPk5RoreYsa0amGnQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JiiTUbeBBo6IkfHJKiVgzK8UFB53o0YEaWqwk+uiWCYXTw2YoE780o5CryesrlhNiCr1VyBSe6d8Smo4Q97AxYR8/FlkRs0fuzCUuI00I8WCauzRxXPNXkFpzTwKf5mg/ys1t4XXHMcM/iyBD37UJ/cpMKTtUtiN70ex+bnz0kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2445806e03cso89094405ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:19:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758719963; x=1759324763;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tIlYzxGhD3l9eBjwM++AWTKEOipfMDPpBnbYVK8JQsQ=;
+        b=YU7GZMp+oQaDK1XugBdJdWdkCydpDCpsK8KIL3f7p7r3Rq0Pzdessqf9hFIpusr025
+         wDRrY1tVuLWViTW3xvRU231CJ5+O5MeNyGT8GO2+gjGsjFz6oyhOHuS3GGfUt39Sicnt
+         9zHNbSQ6IZW7jdrqfg+kADIZXWI7oEBOlHPij3IeetoLqrqi5+BuOFbSpWCwJzeq88uk
+         m9oH8P25dgKIdKWWVfWZDSwhPl609fwkClhjAF6BCG6mFF6fQ82hv0nPZYflnV0nm4ZU
+         0M2UNLLij2Iagzy0OPbcEOknWygDgzVwhXBsjxh5UwCboMabOVfZZlHolMlo4O6Rn/8Q
+         8Yug==
+X-Forwarded-Encrypted: i=1; AJvYcCWAtr2jzK3nWM4FXqcte93hUUAvDJ3zjfzqVKptzDNyBaSpN0ghiyiYi1oevcM/lTQ8HlaUnD1mdKfqvbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBQMgsgaQDGSJsRIbrQl2EmI9GO898+C5589GZQk9EgS34VUb5
+	XpJpPqBKJUUfsW4noxvweAtfwbxlFeOPGRWJHh39xAVl1vpxm6OdVb//8Cpl4Qa+
+X-Gm-Gg: ASbGnctZBm6D4fxQu3GKyEWafjUTjQPD6SA1TejTLieF/fd5HdjgSXdnkxe45ILJrVK
+	TgxNizyntrA+xtTt3ilGPiYqx7wpGDvND9uHi/gcEbnFItG0zOl3UcYjQvT+yW1iqfU1d55nFm0
+	p8YPC7LzvveG+fT+omzQVMgSExau022mkXp68nFAt7K+YpicYRJPg6vibxhNrEVpzlxjqCekq0l
+	RmLUvuuTtcxxtKt2sq5LK765iINIWnnrqApSxmHfUd69KCdbn86oL9Hn3ULK5GGbY4/QXfV/RYp
+	XUjXanCAQoJDeNVEleb53xAdYZN6kdWjslKpnMOeEhyGkQlfQQFGofFi8z5Gt8R4Yzf+OuUaSus
+	fdjbp6kbuGEYc+TuuUT3rxgO1JAAfE2uD5IiwatX6cpu+a1kVmqh3t31iM1bWH96d
+X-Google-Smtp-Source: AGHT+IGIc/5EP8Nd2Afd3tOQFvfLlxRTUQitQMc2enRdTKW5CTHrmcS6Yc4HzNTyKXacib/+tNY4Sw==
+X-Received: by 2002:a17:903:196b:b0:24e:e5c9:ecfd with SMTP id d9443c01a7336-27cc79c8a81mr72702345ad.42.1758719963534;
+        Wed, 24 Sep 2025 06:19:23 -0700 (PDT)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com. [209.85.210.176])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b551b31ebb2sm14160988a12.6.2025.09.24.06.19.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 06:19:23 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77d94c6562fso6818480b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:19:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaBOjb+7f0lTe9gLptWkDIDqoJmVABcoowE3II6BIU9gla+w8xVf/mUy895aEdSXUy+qpTCrS2rn9Yrig=@vger.kernel.org
+X-Received: by 2002:a05:6102:4426:b0:5a1:17e3:ea9d with SMTP id
+ ada2fe7eead31-5a578c96363mr2082608137.25.1758719489139; Wed, 24 Sep 2025
+ 06:11:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250903161718.180488-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250903161718.180488-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Sep 2025 15:11:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUT2Nv9cEw1VsSeRQfNsK7-CxWqDN+S=Txkv6DXMDdCOQ@mail.gmail.com>
+X-Gm-Features: AS18NWB3LiRE7h2GD3dAO4aR_IhRpZe13Ufoocoh6CaSUdYv9A8x5d9icvSRroc
+Message-ID: <CAMuHMdUT2Nv9cEw1VsSeRQfNsK7-CxWqDN+S=Txkv6DXMDdCOQ@mail.gmail.com>
+Subject: Re: [PATCH v8 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dietmar,
+Hi Prabhakar,
 
-On Tue, 23 Sep 2025 20:14:18 +0200, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> On 19.09.25 18:37, Matteo Martelli wrote:
-> > Hi all,
-> > 
-> > On Fri, 19 Sep 2025 12:10:34 +0100, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> >> We are doing some testing with stress-ng and the cgroup-v2 enabled
-> >> (CONFIG_RT_GROUP_SCHED) and are running into WARN/BUG within a minute
-> >> related to user-space calling sched_setattr() and possibly other calls.
-> >>
-> >> At the moment we're not sure if the WARN and BUG calls are entirely
-> >> correct, we are considering there may be some sort of race condition
-> >> which is causing incorrect assumptions in the code.
-> >>
-> >> We are seeing this kernel bug in pick_next_rt_entity being triggered
-> >>
-> >> 	idx = sched_find_first_bit(array->bitmap);
-> >> 	BUG_ON(idx >= MAX_RT_PRIO);
-> >>
-> >> Which suggests that the pick_task_rt() ran, thought there was something
-> >> there to schedule and got into pick_next_rt_entity() which then found
-> >> there was nothing. It does this by checking rq->rt.rt_queued before it
-> >> bothers to try picking something to run.
-> >>
-> >> (this BUG_ON() is triggered if there is no index in the array indicating
-> >>   something there to run)
-> >>
-> >> We added some debug to find out what the values in pick_next_rt_entity()
-> >> with the current rt_queued and the value it was when pick_task_rt()
-> >> looked, and we got:
-> >>
-> >>     idx 100 bigger than MAX_RT_PRIO 100, queued = 0 (queued was 1)
-> >>
-> >> This shows the code was entered with the rt_q showing something
-> >> should have been queued and by the time the pick_next_rt_entity()
-> >> was entered there seems to be nothing (assuming the array is in
-> >> sync with the lists...)
-> >>
-> >> I think the two questions we have are:
-> >>
-> >> - Is the BUG_ON() here appropriate, should a WARN_ON_ONCE() and
-> >>    return NULL be the best way of handling this? I am going to try
-> >>    this and see if the system is still runnable with this.
-> >>
-> >> - Are we seeing a race here, and if so where is the best place to
-> >>    prevent it?
-> >>
-> >> Note, we do have a few local backported cgroup-v2 patches.
-> >>
-> >> Our systemd unit file to launch the test is here:
-> >>
-> >> [Service]
-> >> Type=simple
-> >> Restart=always
-> >> ExecStartPre=/bin/sh -c 'echo 500000 > 
-> >> /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
-> >> ExecStartPre=/bin/sh -c 'echo 500000 > 
-> >> /sys/fs/cgroup/system.slice/stress-sched-long-system.service/cpu.rt_runtime_us'
-> >> ExecStart=sandbox-run /usr/bin/stress-ng --temp-path /tmp/stress-ng 
-> >> --timeout=0 --verify --oom-avoid --metrics --timestamp 
-> >> --exclude=enosys,usersyscall --cpu-sched 0 --timeout 60 --verbose 
-> >> --stressor-time
-> >> Environment=SANDBOX_RO_BINDMOUNTS="/usr/share/stress-ng"
-> >> Environment=SANDBOX_RW_BINDMOUNTS="/var/log /sys /proc /dev /tmp/stress-ng"
-> >> Environment=SANDBOX_EXTRA_ARGS="--cwd /tmp/stress-ng --keep_caps 
-> >> --disable_rlimits --disable_clone_newuser"
-> >> Slice=system.slice
-> >> OOMPolicy=continue
-> 
-> [...]
-> 
-> > Hi all,
-> > 
-> > To provide some more context, we have found out this issue while running
-> > some tests with stress-ng scheduler stressor[1] and the RT throttling
-> > feature after enabling the RT_GROUP_SCHED kernel option. Note that we
-> > also have PREEMPT_RT enabled in our config.
-> > 
-> > I've just reproduced the issue on qemu-x86_64 with a debian image and kernel
-> > v6.17-rc6. See below the steps to reproduce it.
-> > 
-> > cd linux
-> > git reset --hard v6.17-rc6 && git clean -f -d
-> > 
-> > # Apply patch to expose RT_GROUP_SCHED interface to userspace with cgroupv2
-> > b4 shazam --single-message https://lore.kernel.org/all/20250731105543.40832-17-yurand2000@gmail.com/
-> 
-> Don't get this one ... you just pick a single patch from the RFC
-> patch-set '[RFC PATCH v2 00/25]  Hierarchical Constant Bandwidth Server' ?
-> 
-> https://lore.kernel.org/r/20250731105543.40832-1-yurand2000@gmail.com
-> 
+On Wed, 3 Sept 2025 at 18:17, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add MIPI DSI support for the Renesas RZ/V2H(P) SoC. Compared to the
+> RZ/G2L family, the RZ/V2H(P) requires dedicated D-PHY PLL programming,
+> different clock configuration, and additional timing parameter handling.
+> The driver introduces lookup tables and helpers for D-PHY timings
+> (TCLK*, THS*, TLPX, and ULPS exit) as specified in the RZ/V2H(P) hardware
+> manual. ULPS exit timing depends on the LPCLK rate and is now handled
+> explicitly.
+>
+> The implementation also adds support for 16 bpp RGB format, updates the
+> clock setup path to use the RZ/V2H PLL divider limits, and provides new
+> .dphy_init, .dphy_conf_clks, and .dphy_startup_late_init callbacks to
+> match the RZ/V2H sequence.
+>
+> With these changes, the RZ/V2H(P) can operate the MIPI DSI interface in
+> compliance with its hardware specification while retaining support for
+> existing RZ/G2L platforms.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yes, I was looking for a way to set the cpu.rt_runtime_us param for a
-specific cgroup from a systemd unit, in order to control the max CPU
-bandwidth allowed for a systemd slice. Since systemd depracated support
-for cgroupv1 I picked that patch to export them via cgroupv2. To my
-understanding, with that patch, setting the rt_runtime_us and
-rt_period_us parameters via cgroupv2 should have the same effect as
-setting them via cgroupv1. Of course I could have missed something and
-that could be one reason for the issue. I will better look into it and
-try to see if the issue is still reproducible with cgroupv1.
+Thanks for your patch!
 
-> 
-> > # Build kernel with defconfig + PREEMPT_RT=y and RT_GROUP_SCHED=y
-> > make mrproper
-> > make defconfig
-> > scripts/config -k -e EXPERT
-> > scripts/config -k -e PREEMPT_RT
-> > scripts/config -k -e RT_GROUP_SCHED
-> > make olddefconfig
-> > make -j12
-> > 
-> > # Download a debian image and run qemu
-> > wget https://cdimage.debian.org/images/cloud/sid/daily/20250919-2240/debian-sid-nocloud-amd64-daily-20250919-2240.qcow2
-> > qemu-system-x86_64 \
-> >     -m 2G -smp 4 \
-> >     -nographic \
-> >     -nic user,hostfwd=tcp::2222-:22 \
-> >     -M q35,accel=kvm \
-> >     -drive format=qcow2,file=debian-sid-nocloud-amd64-daily-20250919-2240.qcow2 \
-> >     -virtfs local,path=.,mount_tag=shared,security_model=mapped-xattr \
-> >     -monitor none \
-> >     -append "root=/dev/sda1 console=ttyS0,115200 sysctl.kernel.panic_on_oops=1" \
-> >     -kernel arch/x86/boot/bzImage
-> > 
-> > # Then inside guest machine
-> > # Install stress-ng
-> > apt-get update && apt-get install stress-ng
-> > 
-> > # Create the stress-ng service. It sets the group RT runtime to 500ms
-> > # (50% BW) via the cgroupv2 interface then it starts the stress-ng
-> > # scheduler stressor. Also note the cpu affinity set to a single CPU
-> > # which seems to help the issue to be more reproducible.
-> 
-> I assume this is the 'AllowedCPUs=0' line in the systemd service file.
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
 
-Yes, correct.
+> +/**
+> + * rzv2h_dphy_find_timings_val - Find timing parameter value from lookup tables
+> + * @freq: Input frequency in Hz
+> + * @index: Index to select timing parameter table (see enum rzv2h_dsi_timing_idx)
+> + *
+> + * Selects the timing table for the requested parameter, finds the
+> + * frequency range entry and returns the register value to program:
+> + *
+> + *   register_value = timings->base_value + table_index
+> + *
+> + * Note: frequency table entries are stored as small integers (units of 10):
+> + *       threshold_in_hz = (unsigned long)table_entry * 10 * MEGA
+> + *
+> + * Return: timing register value to be programmed into hardware
+> + */
+> +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
+> +{
+> +       const struct rzv2h_mipi_dsi_timings *timings;
+> +       u16 i;
+> +
+> +       /* Get the timing table structure for the requested parameter */
+> +       timings = &rzv2h_dsi_timings_tables[index];
+> +
+> +       /*
+> +        * Search through frequency table to find appropriate range
+> +        * timings->hsfreq[i] contains frequency values from HW manual
+> +        * Convert to Hz by multiplying by 10 * MEGA.
+> +        */
+> +       for (i = 0; i < timings->len; i++) {
+> +               unsigned long hsfreq = timings->hsfreq[i] * 10 * MEGA;
+> +
+> +               if (freq <= hsfreq)
+> +                       break;
+> +       }
+> +
+> +       /* If frequency exceeds table range, use the last entry */
+> +       if (i == timings->len)
+> +               i--;
+> +
+> +       /*
+> +        * Calculate final register value:
+> +        * - timings->base_value: base value for this timing parameter
+> +        * - i: index into frequency table (0-based)
+> +        * Combined they give the exact register value to program
+> +        */
+> +       return timings->base_value + i;
+> +};
 
-> 
-> > echo "[Unit]
-> > Description=Mixed stress with long in the system slice
-> > After=basic.target
-> > 
-> > [Service]
-> > AllowedCPUs=0
-> > Type=simple
-> > Restart=always
-> > ExecStartPre=/bin/sh -c 'echo 500000 > /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
-> > ExecStart=/usr/bin/stress-ng --timeout=0 --verify --oom-avoid --metrics --timestamp --exclude=enosys,usersyscall --cpu-sched 0 --
-> 
-> 
-> I assume you get 4 stressors since you run 'qemu -smp 4'? How many
-> stress-ng related tasks have you running in
-> 'system.slice/stress-sched-long-system.service'? And all of them on CPU0?
+Unneeded semicolon.
 
-Yes, with --cpu-sched 0, stress-ng is using 4 scheduler stressors all
-running on CPU 0. To my understanding each scheduler stressor forks 16
-stress-ng child tasks [1], this is confirmed by the number of stress-ng
-tasks running on the system. The test itself is not particularly
-meaningful, it just reflects the setup I had when I found the BUG_ON.
+Gr{oetje,eeting}s,
 
-> [...]
-> 
+                        Geert
 
-[1]: https://github.com/ColinIanKing/stress-ng/blob/V0.19.04/stress-cpu-sched.c#L66
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Matteo Martelli
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
