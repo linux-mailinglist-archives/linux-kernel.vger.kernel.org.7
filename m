@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-831205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE37B9BD6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:20:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56117B9BD79
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15EF0188FCB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1420C3814B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D122327A3C;
-	Wed, 24 Sep 2025 20:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC04B328567;
+	Wed, 24 Sep 2025 20:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cpocQpIw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nXUXa+Ia"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmYsDnER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FC62153E7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D103161B7;
+	Wed, 24 Sep 2025 20:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758745195; cv=none; b=AagJrmjqqdn+yQzQ9lcvAEs/nSuCRHA3VhjirZnX8sUvBJAvP9Vp3QwIGaGXbP8/5DFYLaLj/38xwITIeB8nDjV5swlV6hM1t4oLPKp3JKQ2h8ybv/Py8GEeLxknXIlBwJ4E5mz8n+UAxc7qDDFMEin0RLoh+UkzHbXRJSf/rhY=
+	t=1758745238; cv=none; b=QZ9ZqoshPlyGMLlrv/dMWSUHvncGHLmGvzvdC0Ugzzr+Wbxd1PbZdDUb5UliqKfCGB7/SwR1snRbab0/qUj/E0RfommUusTi8VpJibVwLSfQ2phtM/Rve2YJhrLinooMiUrqt3rmaBDUtW/YF02GnZCZzImal8j8D3jPaBLR8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758745195; c=relaxed/simple;
-	bh=anqkefCNMWyPcnqMK6cJcJvYpV7ovYdZub/cUscZBrc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=X3r9HSsY3QdnTg2A0rBRENPFkM+jt+VcO9O3HnbupYrSNZPSrIHunktxjhA0JGWF4oX6W0NO1dJQKzBit1LFmlk9yLEY5+2KJlwDlk0HlIH54YIJJvFJe5Ss/dSPKr7nVgUcxnHiLCgGlrteCP9YotQOPorXyShGWabTU3bRIeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cpocQpIw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nXUXa+Ia; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3FF64EC01A7;
-	Wed, 24 Sep 2025 16:19:52 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 24 Sep 2025 16:19:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1758745192;
-	 x=1758831592; bh=m8FTw+V0SHUIhk9QAZOvCPg7GbCZfkE73XxcAK3HRvw=; b=
-	cpocQpIwrcUOSlbCkz3Q6P4cmFbBy9OnxrQXVU8fZy+1ag0e1MIMW43vie+IR1Zv
-	znhl3qHeXeGy9K5o4xFNx+W6JZvpXyB5Su/WlnBir9I/aOsqEtdXlki2BbXuF1Mp
-	YgkZeJtwNEJ4rGl71vQCCNbz0IDYedx0gePQ+tU/xw0VKki7KGkVZeVogtZQkWeX
-	lQIDxdRg7ubzrjcNgGGFk0GvV6CIUv+nkoJPz+8zF85nj7plDqpHiOK/x1EUpOL4
-	GlqbwC91kFEHHw4gn5dNtWRHxAcV152fZR0RE7Psv48OqB6vZZvZu2G38E4faaDJ
-	H24r4DweenAGf38wDvMNrw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758745192; x=
-	1758831592; bh=m8FTw+V0SHUIhk9QAZOvCPg7GbCZfkE73XxcAK3HRvw=; b=n
-	XUXa+IalwlRDv8bv0wOI4v/Fgwz2XA+iow02LdhRhbDR+nWa6bo4P9gT60eCu1Fz
-	bVZLSaLxouQ4//NuH+PgQQbnXSvKHA1yzjPKLIUqYqv4zIyxUEdEWYSbmNKpj8pB
-	zBALQJw0MDV3WM4QuOZAD4MEVbfq8IR4jki0OnNisMEx59iTm5jDCOqiR9KAkmMs
-	ZbHYLoIO52RQsn/WZr9QMnzhL6cylW/QZ409E0WjM7D/eg5ZbsH3tVGDd0I9bpZ4
-	lr2Mx87wtyXelnpFaXZOYfYn9mm7iq5WU2yiXoXZDMpAV1o3wd0qATu83U9ZogHZ
-	CG4IBhzs4vhiWz57Edhlg==
-X-ME-Sender: <xms:Z1LUaHgVnEyQdPi9R-0v9y9rP8Pjv_a0NpPhW9AfA6BXPqh_pG7zrQ>
-    <xme:Z1LUaO3H7Y-fL1iXX_Hm2TfZ0O7R3Py-xVFv3J67JfwQz2MH3zE3SKQxH46UkW_Gk
-    fPbFz-pGwwKueH1MLfYLDGTBTYXgJWucMfdJPUUZwsS5aBllpIAlU4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigeehhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopehmrghnihhkrghnthgrrdhguhhnthhuphgrlhhlihesrghmugdrtghomh
-    dprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomhdprhgt
-    phhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpd
-    hrtghpthhtohepghgrshhtmhgrihgvrhesghhmrghilhdrtghomhdprhgtphhtthhopegr
-    rhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqiheftgeslhhish
-    htshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehfrhgrnhhkrdhlihesnhig
-    phdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinh
-    gvvghrihhnghdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Z1LUaAxNFHMOREkqCmAiqLK0kVFUXn7NEDSl03-6lt2zPVP7A1luNw>
-    <xmx:Z1LUaEtMj706rlCTvQJXFZfdVdVaCHO1KvcxBy6q3QecJC05INzl7A>
-    <xmx:Z1LUaDDauZxDXUOkgzFsdGu2IXAnv2kUn_c4HJenpYX9mVvlpqxGyQ>
-    <xmx:Z1LUaGHtNPGtn62llmgvJ099ab7pgUzs4YhNbfXSdrVrvOi0vFFfag>
-    <xmx:aFLUaFfT1aUE0B7TavoJicZNHn_2752eUGLhE1ShqnCFQeIe_os41zoN>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 88C5E700065; Wed, 24 Sep 2025 16:19:51 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758745238; c=relaxed/simple;
+	bh=bLS/hlN1lD3wNbOZhcabpYcqxPoG7q6gXbeLI6MYs8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7sRZNlPACGDrBmXTR1Uzw3S/D7F2+Wh20jHE5bNZcl8hRddlnSLFHbiGYbxE6dZz67YfKvHgXE2udaACXuLi8wlIef0z43wt4vl26Q4yyey19wzG+hc5jh8JfmX/wPIElynElqhqjSdNGWcf/9c0zv3LsmkxSJCwau6WhvdACQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmYsDnER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC72CC4CEE7;
+	Wed, 24 Sep 2025 20:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758745238;
+	bh=bLS/hlN1lD3wNbOZhcabpYcqxPoG7q6gXbeLI6MYs8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GmYsDnERidGaRvMZ1cNNX059PHnnjFiRUPfKMH2PnR23eRJCo8HOQsNrExO7aJRWF
+	 OuuDss9BcUD7/dw8LFS0lLT+stIfFvFnWnhP4AurL6zQXPo1ZV0mP8dDBBtj3pGvnV
+	 3d5KYr9CYGOCGCR+yoei9Ujwk+V4kiBqBoAj2qq4wwzjr4OsuC04Mol6S/O624w9W8
+	 bJl1wDvh71jlT8Q9+7NK1ijjby8KTZ8LYWmpHd4cTvIcAxHnl6w/GtI+0gZEfa49t4
+	 OD/7j/WkobP6BnWpG5uUd72FS8+dAp7fSzvN+EMY/X1eHeKbULVu2qyaW3Xe3423hs
+	 XPSAOzXxL9fkQ==
+Date: Wed, 24 Sep 2025 22:20:33 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Alexandr Sapozhnkiov <alsp705@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, lvc-project@linuxtesting.org, 
+	Krzysztof Karas <krzysztof.karas@intel.com>
+Subject: Re: [PATCH] gpu: i915: fix error return in mmap_offset_attach()
+Message-ID: <ammcxcfamq6f6ip35ccre4an7tcnksksifrjy2alq3eh3eqgai@hvsmgmw5i35n>
+References: <20250924124852.11-1-alsp705@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AywbbuUSWNC3
-Date: Wed, 24 Sep 2025 22:19:31 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jorge Marques" <gastmaier@gmail.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Jorge Marques" <jorge.marques@analog.com>, "Frank Li" <Frank.Li@nxp.com>,
- "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>,
- "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <d86da0ed-8293-4356-bc73-98492d08ee8c@app.fastmail.com>
-In-Reply-To: 
- <ikwkapgsfntog67hwi2aapdadlq2wy7oydjz6i75gbhgxxd6fc@3e3lxh7xkgy6>
-References: <20250924150303.3601429-1-arnd@kernel.org>
- <ikwkapgsfntog67hwi2aapdadlq2wy7oydjz6i75gbhgxxd6fc@3e3lxh7xkgy6>
-Subject: Re: [PATCH] i3c: fix big-endian FIFO transfers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924124852.11-1-alsp705@gmail.com>
 
-On Wed, Sep 24, 2025, at 19:01, Jorge Marques wrote:
-> On Wed, Sep 24, 2025 at 05:02:53PM +0200, Arnd Bergmann wrote:
-> Can you fix, as Nuno pointed, to:
->
->    		writesl(addr, &tmp, 1);
->
-> as in the original drivers, and adding this information to the cover for
-> further clarification.
+Hi Alexandr,
 
-Sent v2 now with those two changes.
+Please, verision the patch: this is [PATCH v2].
 
-      Arnd
+On Wed, Sep 24, 2025 at 03:48:50PM +0300, Alexandr Sapozhnkiov wrote:
+> Return value of function drm_vma_node_allow_once(), 
+> called at i915_gem_mman.c:672, is not checked.
+
+You've been asked to improve the commit log, but you didn't.
+Please reply to this email with the commit log improved as
+suggested.
+
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+
+You forgot to add the r-b tag you received.
+
+> ---
+
+you are missing the changelog.
+
+>  drivers/gpu/drm/i915/gem/i915_gem_mman.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> index 75f5b0e871ef..eb76f8f2bd95 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> @@ -758,8 +758,11 @@ mmap_offset_attach(struct drm_i915_gem_object *obj,
+>  	mmo = insert_mmo(obj, mmo);
+>  	GEM_BUG_ON(lookup_mmo(obj, mmap_type) != mmo);
+>  out:
+> -	if (file)
+> -		drm_vma_node_allow_once(&mmo->vma_node, file);
+> +	if (file) {
+> +		err = drm_vma_node_allow_once(&mmo->vma_node, file);
+> +		if (err)
+> +			goto err;
+> +	}
+
+I agree with the change.
+
+Thank you,
+Andi
+
+>  	return mmo;
+>  
+>  err:
+> -- 
+> 2.43.0
 
