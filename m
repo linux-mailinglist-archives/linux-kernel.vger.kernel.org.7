@@ -1,424 +1,202 @@
-Return-Path: <linux-kernel+bounces-830241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB62B992C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:35:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1667CB992E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0449B3A00DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F82D2E76EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945F72D5957;
-	Wed, 24 Sep 2025 09:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FA12D837C;
+	Wed, 24 Sep 2025 09:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="H1wJB2Qd"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iNbL4DyD"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441002D0C72
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6923C516
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758706509; cv=none; b=GXUlVRaUjM/MWV3UsxJ5jOep1LGdBoGal8NTI8leGhDEjzX/CkHYun+uEYl+OMVi1Y+in1puoA9CXpqxlBiKnP7mZGxfedDCAX6f3yg+1HR9uq89OPLy/dXJU5IIfjrn6iU/Zf41XSi5usajx7Ini9FrkerdLSIb3tJ9O4hxKnw=
+	t=1758706577; cv=none; b=kUylm+rp1hlav/ACzZu02SFmhwqxOjeej1J5Xg4ksKANDrH71Qx6IQpNI2Jtyiz2DG8ymlQ5PcqqZBk/uhjPzRuEt2V64VjyDuuoTto775JL12/dIbVr0M2VKde7dLnne3/YA/2B0ccFVtDmxD+0yIAX79oRli0v7xMU4djXASs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758706509; c=relaxed/simple;
-	bh=dtv6qQSyv8wNo01XrYxi1x44Q05Hfd0zs/RAWWaxCRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRYds3Qy16GozHhGPahYx3RXHy5TrqkG7GX6HveAPVth0mbVQo//1T+csth4OIWa7eVQl7GQxlED+rb98TErgxwwFDboLyFrS65sxrVr06BrJBowLl3acijpPAyOR/W4/cWMbFwvEN6vPuYGMJBa/3aNbnfuzoDtJA/5fHT4bmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=H1wJB2Qd; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b256c8ca246so955672866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:35:02 -0700 (PDT)
+	s=arc-20240116; t=1758706577; c=relaxed/simple;
+	bh=ZPS5vkPDC0Z1dLXwG4FwSnQiGQrzsW4kSKnPvivEQWE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UkVo5twrjRuXBz5WbTuxFM/TKjYI71mG7zQ45fFv6nbgMeXB2+tHbeK0WkDgDAdp8wAE7Y7/Qgr/jJAVWOtgdqB463maYKCIwVGDAFsfvOErjcMXaGuDlSUJtm5VK/IEt4+zX0gZZ4GIEA0wYBmAYRmYiiWeyoTP/FLOoDjcl7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iNbL4DyD; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so10558181a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758706501; x=1759311301; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+ihV7jV/UICW3GYPXjrr7V6munvA5WIXtGqiGQ9m6w=;
-        b=H1wJB2QdJ4HGB2jfyua6uAjg3GIt6plIPqechsrUiUENO5ea3WKs6LBnjkurf4Eh9A
-         ZcieqBMJUVyS3TwHmZvdsHK8rB39jX28glHy+nJzSoA152f+QZNuIzd6yWi33LIDCDQK
-         y1UMlXbHe+EtwJO/zsIbJTv2t1MOvAUfH+OLJeHOv68w+TXJHfk+PFnR4g//o8RoIiEK
-         vC4mcsGgFytnNLq93srqF5qE6V4+lYUoIiSWVb7ggWBDDJ9Iof9hN2XVlsY3OZXRsChJ
-         jckyJl+KO1nVdoZjJpXAboqOjrq/Se5HP8MRdVorfm55M+4BVjjIPyWdxHs5jDccgi1c
-         X4zA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758706569; x=1759311369; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J5Q6p/KiNHqv49UA1SnTb+Yaprb1pd/5n2oQ6uG61w0=;
+        b=iNbL4DyD49Ce/I47kjnhiUV0CwUsrV6oxWEVgd05Vo+07/K28XVtvKZ6ABD3hRPM0F
+         vbBbpOtPUtPOEH67q/T1cmXASzHYLsHC9F+42IWta9adzrcIzrTj6xdCZl1Pqg0+v/DW
+         Wq/L9AS3q8X4viuWH95UzxvAeiw4Psg0dh3i3JqsZmii3zv3XvglqYLLqt+GihXxGaPb
+         oTPYvIXdI0DVCaI5Jv3b//D9c/xaAPaBH98iWwn783cackdHrjKKWYUbtmlLilGyTRDJ
+         sJlKOrM+qScnqQDcESF+r4338czrGbZodKz3fdEfZX3Xlxh5LvsVhHxL3a5t3wcMhp6Q
+         jawg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758706501; x=1759311301;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7+ihV7jV/UICW3GYPXjrr7V6munvA5WIXtGqiGQ9m6w=;
-        b=fa+TaEoSov/XJlQjFgktBWLuzoAJX0RmuHYa3zwlknFMmtN7hLc3xeV4Z1ydl+qoMT
-         wmC8yIJLyuiiM8Xl6jSsBiihXZ4a4jMLpc80xoZzCABg62NAbQTYp59/4Zgm93RCs/2A
-         QKnSrWaRZsC/Bziakf1khyQ9yseJbTPMs5EaAPtOWwBOR9/tHm63GK4g5on+QqwUykN+
-         5HJuRjYhOtTU9MGFKKq4nFrR4TKrOPdfMle+D2kw9U6VMRZNC9zHrVk3/xHuHaHsq3iz
-         0NzUyOnT9uh2hjvN7QGG0OJwTj0jMhGfjAShU0/VW8e7vt/0z7FmvNBlFNjHaspPA/Q8
-         219g==
-X-Forwarded-Encrypted: i=1; AJvYcCXeKofKPFxj5N0PHn23XQEwjGRk0h7NiNibQZ0VS7BDJADXqW7/zhEuBMQ3u5afRH/n8mTrzzCENB7uhVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8WyorfoaZiEI7vdqoRmQde3P7af4Qk6Vh494cRcmx5AlS7896
-	uSglzfJfBl+H9PtdmmSwTGg3FLgpXbki2zqll6bCSkn2lNgeaqOTAMzHeOC+DCcEK9A=
-X-Gm-Gg: ASbGncvErpLKg0vX6wsXq/IRczoRz08BSILoBzd/Q4h+itQbcgJSsm//wtzB1HPn+Oi
-	cFKugRNt+GFKLi6VeKp2gHf2qVmf6MrbTdAILAZqhwNGn+ifr90AS07kKM+kVkSTkELuqtcV1Hy
-	yQ6z0b8jlJjuDz0T6pn4ZkYPorMWK4GOHk1v8GV2H7Xf9o5MvQ0Ptil0ZEDo71/LpB1J4j7o50P
-	7hgeOOvXfZqdudSOvYbeXDbEoSqli3n8vQ/vCZ/CZzbEFOZ8B1Qv71Xas7l7g+iQKPwQrpfCC+Z
-	PHrgwWStG5N/NnV73LfCxtNeLrOinf997UPNY0HwK3vbh7kEB7N9v+MOwnEVjHBGjm6a8QdDm7i
-	6azNIUivycMxBOQ8lbUOPsO2jRg==
-X-Google-Smtp-Source: AGHT+IFOqkCP6uCn+xuTQwfoECo9gdpCJo1Fnr9mCXr8jQsSVZtd2TBLjEJ0j31UiSIYq1cXct6rFA==
-X-Received: by 2002:a17:907:3e04:b0:b04:31c6:a41f with SMTP id a640c23a62f3a-b302af26175mr616109566b.41.1758706501354;
-        Wed, 24 Sep 2025 02:35:01 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b26847b9f37sm1153007366b.18.2025.09.24.02.35.00
+        d=1e100.net; s=20230601; t=1758706569; x=1759311369;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J5Q6p/KiNHqv49UA1SnTb+Yaprb1pd/5n2oQ6uG61w0=;
+        b=Ao25CNVqQrRG1p+S7xtrTZ3hHLJER2MY9j41ApcLaseplTujdu1Bv/aaJgA321jPoA
+         CpMOnWSMlgARyZtiC/GCfMzVunOLTQ9Ul3rtwP1crQ1dw7OuHFLv1fq6uQylGPsROUlA
+         TBv3mJwI8KX/88YdJhVgVYwXo6njlbN093sRgsFZbNkQEoBHl58tnPHrERcL1uUcPxQy
+         cTZ3ZonaQJ0F5wv6aXjycWCZOWO96RRI+2UvTnJ5NpRpUTn/pXl4nxD5KZ7og0hgPaOh
+         YA6gSQvq3W8KiY5xr7bb7VzwwsqrRMB3NVMhRY7byhQ7Fv0PKPwSPBKZ8yBPWI0DZGQu
+         YneQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTWzhNTuW++VQRAaq8BLoGTipbzOxSbC9zIfCYf2Onuc8P6HZ+F04baQPHhiXr6tM0oFCeHbRefGF/1/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6PhT8SyUxHYfLMSYP8I7aOg/i48/J5kz6wTn/NTgH0bK2Ozov
+	9CQptvt3RidWCHop/pu2HLkjQhQWDhqW4QyE0swCIfLLIRkMyjbG8O9yil315f2IIlo=
+X-Gm-Gg: ASbGnctDJnWOL+6xDu2+UzpiExAhI/zCYfnP23pLo2rac/jfbMZ0guJ8AGi778zaMQN
+	yU1ME5y/G0JCtZ4DLfm4UgW9/Mc9xSUf2Op2cJeUX6TLTKo9p5/oi7bCr8yY/UWUVe9BCJ/Azz3
+	Zun9MHCjEBrkakn26rPQ8aNMu5bfQ3HiTSiDsPfAOiQvDaCmfurvzrptruRuwNYe0+qIYlugnQ7
+	3RnXXNVoQShJnviYJf90izfWy16oYqyJY1h9DHLVtbceTdzg9n6JAgIBh4OrloskaTD5obHGBaB
+	x5hzUMFxA002JEHJG7RS9raY9X9eIaCzH7DQAU0pDfhGjui6sVxV4GG66COgRxtm1ixjsuX4ZR4
+	gYfRKDSUorZmZv5Q=
+X-Google-Smtp-Source: AGHT+IFrVuMeV3DxBIcNMAPLjIp8Ym4ceTLMZRcoC30nbyeaEZUcstVPsEO8E6Kunah/gyUeusxbdw==
+X-Received: by 2002:a17:907:94d1:b0:b0f:29f3:94f7 with SMTP id a640c23a62f3a-b3020c37aaemr508846066b.0.1758706569095;
+        Wed, 24 Sep 2025 02:36:09 -0700 (PDT)
+Received: from localhost ([195.52.61.108])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-62fa5f14e64sm12481067a12.25.2025.09.24.02.36.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 02:35:00 -0700 (PDT)
-Date: Wed, 24 Sep 2025 11:34:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [RFC 0/1] serial: 8250: nbcon_atomic_flush_pending() might
- trigger watchdog warnigns
-Message-ID: <aNO7Qjv_iSUSifTv@pathway.suse.cz>
-References: <20250822142502.69917-1-pmladek@suse.com>
- <84qzwzbr90.fsf@jogness.linutronix.de>
- <aNFR45fL2L4PavNc@pathway.suse.cz>
- <84348eju8a.fsf@jogness.linutronix.de>
+        Wed, 24 Sep 2025 02:36:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84348eju8a.fsf@jogness.linutronix.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=f7cc4d2a582e78fc50c0277a2c40522eee0e153b07f7e60887709f76b82e;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 24 Sep 2025 11:36:00 +0200
+Message-Id: <DD0XG03P3KDH.5763ZFCO92H0@baylibre.com>
+Cc: "Nishanth Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ "Tero Kristo" <kristo@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vishal
+ Mahaveer" <vishalm@ti.com>, "Kevin Hilman" <khilman@baylibre.com>, "Dhruva
+ Gole" <d-gole@ti.com>, "Sebin Francis" <sebin.francis@ti.com>, "Akashdeep
+ Kaur" <a-kaur@ti.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: ti: k3-am62p5-sk: Set wakeup-source
+ system-states
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Kendall Willis" <k-willis@ti.com>, "Markus Schneider-Pargmann"
+ <msp@baylibre.com>
+X-Mailer: aerc 0.21.0
+References: <20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com> <20250812-topic-am62-dt-partialio-v6-15-v2-7-25352364a0ac@baylibre.com> <20250923182450.5rqwz2pkn2gjt2vh@uda0506412>
+In-Reply-To: <20250923182450.5rqwz2pkn2gjt2vh@uda0506412>
 
-On Mon 2025-09-22 19:08:45, John Ogness wrote:
-> On 2025-09-22, Petr Mladek <pmladek@suse.com> wrote:
-> > On Mon 2025-08-25 13:06:27, John Ogness wrote:
-> >> On 2025-08-22, Petr Mladek <pmladek@suse.com> wrote:
-> >> > There are clearly visible two points where nbcon_atomic_flush_pending()
-> >> > took over the ownership from a lover priority context. I believe that:
-> >> >
-> >> >   + 1st occurrence is triggered by the "WARNING: CPU: 2 PID: 1 at
-> >> >     arch/x86/..." line printed with NBCON_PRIO_EMERGENCY.
-> >> >
-> >> >   + 2nd occurrence is triggered by the "Kernel panic - not syncing:
-> >> >     Hard LOCKUP" line printed with NBCON_PRIO_PANIC.
-> >> >
-> >> > There were flushed more than 2500lines, about 240kB of characters,
-> >> > in the NBCON_PRIO_EMERGENCY before the hardlockup detector
-> >> > triggered panic.
-> >> >
-> >> > If I count it correctly, a serial console with the speed 115200 baud/sec
-> >> > would be able to emit about 11.5kB/sec. And it would take about 20sec
-> >> > to emit the 240kB of messages.
-> >> >
-> >> > => softlockup is quite realistic
-> >> >
-> > Well, the original problem happened on bare metal. And the problem
-> > was reporoducible even with the extra touch_nmi_watchog() in
-> > univ8250_console_write_atomic().
-> >
-> > By other words, touch_nmi_watchog() delays hardlockup report
-> > only on the given CPU.
-> >
-> > An solution is to touch the watchdog also in nbcon_reacquire_nobuf()
-> > because it might get blocked from known reasons. Something like:
-> >
-> > Alternative solution would be to release the console ownership in
-> > __nbcon_atomic_flush_pending_con() between each record. It might
-> > give the kthread a chance to restore the IRQ setting an continue.
-> >
-> > It might be better. But we would need to make sure that the kthread
-> > would stay blocked until the emergency context flushes all messages.
-> > Otherwise, the kthread would repeatedly lose the console ownership
-> > in the middle of the message when __nbcon_atomic_flush_pending_con()
-> > would acquire the context with NBCON_EMERGENCY_PRIO for the next
-> > pending message.
-> >
-> > We might need similar handshake also between panic and emergency
-> > context.
-> >
-> > I am not sure if this is worth the complexity.
-> >
-> > What do you think?
-> 
-> Originally I had implemented the atomic flushing to release between
-> records. The problem is, as you mentioned, that the threaded printers
-> keep jumping back in. So you end up with lots of "replaying previous
-> printk message" from the atomic printer taking over all the time. This
-> is visible from a simple WARN() and it is ugly as hell.
-> 
-> Trying to make the output clean is quite tricky. Mainly because the
-> lower-prio context (which may or may not be the kthread printer) and the
-> higher-prio context need to understand each other's intentions and
-> somehow coordinate. My code started to look like I was implementing a
-> second layer of ownership (indended ownership) and/or some type of
-> bizarre scheduling with "printing-prio boosting" and/or "proxy console
-> ownership". It was a lot of code to make emergency blocks look sane.
+--f7cc4d2a582e78fc50c0277a2c40522eee0e153b07f7e60887709f76b82e
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-I tried to implement some naive solution, see below. I think that
-it can be described as the 2nd layer of ownership.
+Hi Kendall,
 
-It does not look that complicated. It might be because I used it only
-in two paths which do the writing. And it is possible that it does
-not work properly.
+On Tue Sep 23, 2025 at 8:24 PM CEST, Kendall Willis wrote:
+> On 11:15-20250812, Markus Schneider-Pargmann wrote:
+>> The CANUART pins of mcu_mcan0, mcu_mcan1, mcu_uart0 and wkup_uart0 are
+>> powered during Partial-IO and IO+DDR and are capable of waking up the
+>> system in these states. Specify the states in which these units can do a
+>> wakeup on this board.
+>>=20
+>
+> nit: s/"IO+DD"/"I/O Only + DDR"
+>
+>> Note that the UARTs are not capable of wakeup in Partial-IO because of
+>> of a UART mux on the board not being powered during Partial-IO.
+>>=20
+>> Add pincontrol definitions for mcu_mcan0 and mcu_mcan1 for wakeup from
+>> Partial-IO. Add these as wakeup pinctrl entries for both devices.
+>>=20
+>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>>=20
+>> - Merge devicetree nodes in k3-am62p5-sk.dts
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 71 ++++++++++++++++++++++++++=
++++++++
+>>  1 file changed, 71 insertions(+)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/d=
+ts/ti/k3-am62p5-sk.dts
+>> index 899da7896563b43021de14eda1b0058a5c6d36da..a2dffb5e243f543c90081eea=
+cdc0758b38bd0eb9 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
+>> @@ -762,12 +762,52 @@ AM62PX_MCU_IOPAD(0x028, PIN_OUTPUT, 0)	/* (D7) WKU=
+P_UART0_TXD */
+>>  		>;
+>>  		bootph-all;
+>>  	};
+>> +
+>> +	mcu_mcan0_tx_pins_default: mcu-mcan0-tx-default-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
+>> +		>;
+>> +	};
+>> +
+>> +	mcu_mcan0_rx_pins_default: mcu-mcan0-rx-default-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x038, PIN_INPUT, 0) /* (B3) MCU_MCAN0_RX */
+>> +		>;
+>> +	};
+>> +
+>> +	mcu_mcan0_rx_pins_wakeup: mcu-mcan0-rx-wakeup-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x038, PIN_INPUT | WKUP_EN, 0) /* (B3) MCU_MCAN0_RX */
+>> +		>;
+>> +	};
+>> +
+>> +	mcu_mcan1_tx_pins_default: mcu-mcan1-tx-default-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x03c, PIN_OUTPUT, 0) /* (E5) MCU_MCAN1_TX */
+>> +		>;
+>> +	};
+>> +
+>> +	mcu_mcan1_rx_pins_default: mcu-mcan1-rx-default-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x040, PIN_INPUT, 0) /* (D4) MCU_MCAN1_RX */
+>> +		>;
+>> +	};
+>> +
+>> +	mcu_mcan1_rx_pins_wakeup: mcu-mcan1-rx-wakeup-pins {
+>> +		pinctrl-single,pins =3D <
+>> +			AM62X_IOPAD(0x040, PIN_INPUT | WKUP_EN, 0) /* (D4) MCU_MCAN1_RX */
+>> +		>;
+>> +	};
+>>  };
+>>=20
+>
+> AM62PX_MCU_IOPAD should be used for consistency.
 
-Then I got another idea. It might even easier.
+Thanks for your reviews, everything fixed for the next version.
 
-> In the end I decided to keep things simple and let the kthread printer
-> busy-wait,
+Best
+Markus
 
-I think that it might actually be enough to block the kthread when
-any CPU is in emergency context, for example, by using a global
-atomit counter.
+--f7cc4d2a582e78fc50c0277a2c40522eee0e153b07f7e60887709f76b82e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There should not be problem with panic because
-nbcon_context_try_acquire() fails on non-panic CPUs anyway.
+-----BEGIN PGP SIGNATURE-----
 
-I am going to try this approach.
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaNO7gBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlMl
+JgEA/mISSoRZhk6VfAJFaK9lIaKSXc+xnPgUPVfC4DEzh/UBANaYGyPZmqpr68a/
+lc3eBY0abnF1USiw+jz0CqS7BpgA
+=evl8
+-----END PGP SIGNATURE-----
 
-> possibly with interrupts disabled. Your suggestion of adding
-> touch_nmi_watchdog() to nbcon_reacquire_nobuf() would also follow that
-> line of simplicity. The simplicity comes at the cost of possibly having
-> two CPUs dedicated to atomically flushing a single console (one that is
-> actually printing and one that is the busy-waiting normal-prio printer).
-
-Yup.
-
-> Note that for PREEMPT_RT the hardware interrupts are not actually
-> disabled. That is not an excuse to keep things this way, just a
-> reminder. Non-RT may also want to use that 2nd CPU for something useful,
-> in which case we would need the higher-prio printer to somehow
-> temporarily yield ownership to the lower-prio printer. And quite
-> frankly, that is not something the nbcon console ownership model was
-> designed to support.
-
-Good to know.
-
-> If we can come up with an elegant way to handle the temporary transfer
-> while preserving clean output, I am all for it. I will take another look
-> and see if I can come up with a _proper_ (no duct tape) solution.
-
-I am not sure if you already started working on it. I rather share
-my naive ideas early so that I do not duplicate the effort.
-It is possible that you have been there.
-
-Anyway, here is POC of an API which blocks writing/flushing
-in a context with a lower priority:
-
-From 5d8f9c61c8f67096feca5972c5e7f751c8371b9f Mon Sep 17 00:00:00 2001
-From: Petr Mladek <pmladek@suse.com>
-Date: Wed, 24 Sep 2025 10:42:26 +0200
-Subject: [POC] printk/nbcon: Allow to release console context after each
- record in atomic_flush
-
-It gives nbcon_reacquire_nobuf() to acquire the ownership to clean up
-the console after the interrupted write_thread() call and allow
-to preempt the printk kthread.
-
-Add an API to block writing/flushing messages in a context with
-lower priority. Otherwise, it would start flushing a pending
-message and get interrupted again by the higher priority context.
-
-The API is used in both code paths which try to acquire the nbcon
-console ownership and try to write a message using
-nbcon_emit_next_record().
-
-The priority field is set in nbcon unsafe context which
-prevents takeovers. The context must not clear it after
-loosing the console ownership.
-
-Failure to reserve the flush priority is handled the same way
-as a failure to get the context ownership. So, it might somehow
-work.
-
-Warning: This is just a POC. The code is not tested.
-
-FIXME: The clearing of the flush priority is racy. It might
-       clear a value set by another context when it was
-       cleared by a higher priority context in the mean
-       time.
-
-       There are ways to fix it.
-
-       But wait! It might be enough to synchronize normal vs. emergency
-       context. Non-panic context won't be able to get
-       the ownership anyway.
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
----
- include/linux/console.h |  2 +
- kernel/printk/nbcon.c   | 86 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 86 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/console.h b/include/linux/console.h
-index 8f10d0a85bb4..51750f92673f 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -326,6 +326,7 @@ struct nbcon_write_context {
-  * @nbcon_seq:		Sequence number of the next record for nbcon to print
-  * @nbcon_device_ctxt:	Context available for non-printing operations
-  * @nbcon_prev_seq:	Seq num the previous nbcon owner was assigned to print
-+ * @nbcon_flush_prio:   Priority of a context flushing the console
-  * @pbufs:		Pointer to nbcon private buffer
-  * @kthread:		Printer kthread for this console
-  * @rcuwait:		RCU-safe wait object for @kthread waking
-@@ -461,6 +462,7 @@ struct console {
- 	atomic_long_t		__private nbcon_seq;
- 	struct nbcon_context	__private nbcon_device_ctxt;
- 	atomic_long_t           __private nbcon_prev_seq;
-+	enum nbcon_prio		__private nbcon_flush_prio;
- 
- 	struct printk_buffers	*pbufs;
- 	struct task_struct	*kthread;
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index 646801813415..575b2628e0b2 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -911,6 +911,78 @@ bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt)
- }
- EXPORT_SYMBOL_GPL(nbcon_exit_unsafe);
- 
-+/**
-+ * nbcon_context_get_flush_prio - Reserve writing by the given context priority
-+ * @wctxt:	The write context which wants to write messages
-+ *
-+ * The function allows to reserve rights for emitting/flushing messages with
-+ * the priority of the given context.
-+ *
-+ * It signalizes an intention to flush pending messages.
-+ *
-+ * The motivation is to allow releasing the nbcon console ownership after
-+ * each emitted message and still block any context with a lower priority
-+ * from flushing the pending messages. It prevents repeated interrupts
-+ * of the lower priority context in the middle of the message.
-+ *
-+ * Return:	True when the write context might try to flush messages.
-+ *		False when a context with a higher priority is flushing
-+ *		messages.
-+ *
-+ * FIXME: Maybe, only the NORMAL vs. EMERGENCY context is interesting.
-+ *	  Both these context will get blocked when there is a panic
-+ *	  in progress,
-+ *
-+ * It might be enough to synchronize kthread vs. emergency_enter/exit API.
-+ * Well, there is also the legacy kthread.
-+ */
-+int nbcon_context_get_flush_prio(struct nbcon_write_context *wctxt)
-+{
-+	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+	struct console *con = ctxt->console;
-+	ret = true;
-+
-+	if (!nbcon_context_try_acquire(ctxt, false))
-+		return false;
-+
-+	if (!nbcon_context_enter_unsafe(ctxt))
-+		return false;
-+
-+	if (con->nbcon_flush_prio <= ctxt->prio)
-+		con->nbcon_flush_prio = ctxt->prio;
-+	else
-+		ret = false;
-+
-+	if (!nbcon_context_exit_unsafe(ctxt))
-+		ret = false;
-+
-+	nbcon_context_release(ctxt);
-+
-+	return ret;
-+}
-+
-+void nbcon_context_put_flush_prio(struct nbcon_write_context *wctxt)
-+{
-+	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
-+	struct console *con = ctxt->console;
-+	ret = 0;
-+
-+	if (!nbcon_context_try_acquire(ctxt, false))
-+		return -EPERM;
-+
-+	if (!nbcon_context_enter_unsafe(ctxt))
-+		return -EAGAIN;
-+
-+	con->nbcon_flush_prio = NBCON_PRIO_NONE;
-+
-+	if (!nbcon_context_exit_unsafe(ctxt))
-+		ret = -EAGAIN;
-+
-+	nbcon_context_release(ctxt);
-+
-+	return ret;
-+}
-+
- /**
-  * nbcon_reacquire_nobuf - Reacquire a console after losing ownership
-  *				while printing
-@@ -1120,6 +1192,8 @@ static bool nbcon_emit_one(struct nbcon_write_context *wctxt, bool use_atomic)
- 		cant_migrate();
- 	}
- 
-+	if (!nbcon_context_get_flush_prio(wctxt))
-+		goto out;
- 	if (!nbcon_context_try_acquire(ctxt, false))
- 		goto out;
- 
-@@ -1135,6 +1209,7 @@ static bool nbcon_emit_one(struct nbcon_write_context *wctxt, bool use_atomic)
- 		goto out;
- 
- 	nbcon_context_release(ctxt);
-+	nbcon_context_put_flush_prio(wctxt);
- 
- 	ret = ctxt->backlog;
- out:
-@@ -1505,10 +1580,13 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
- 	ctxt->prio			= nbcon_get_default_prio();
- 	ctxt->allow_unsafe_takeover	= allow_unsafe_takeover;
- 
--	if (!nbcon_context_try_acquire(ctxt, false))
-+	if (!nbcon_context_get_flush_prio(&wctxt);
- 		return -EPERM;
- 
- 	while (nbcon_seq_read(con) < stop_seq) {
-+		if (!nbcon_context_try_acquire(ctxt, false))
-+			return -EPERM;
-+
- 		/*
- 		 * nbcon_emit_next_record() returns false when the console was
- 		 * handed over or taken over. In both cases the context is no
-@@ -1523,10 +1601,14 @@ static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
- 				err = -ENOENT;
- 			break;
- 		}
-+
-+		nbcon_context_release(ctxt);
- 	}
- 
--	nbcon_context_release(ctxt);
-+	nbcon_context_put_flush_prio(&wctxt);
-+
- 	return err;
-+
- }
- 
- /**
--- 
-2.51.0
-
-I am going to try an easier approach which would just block the
-kthread when any CPU is in emergency context.
-
-Best Regards,
-Petr
+--f7cc4d2a582e78fc50c0277a2c40522eee0e153b07f7e60887709f76b82e--
 
