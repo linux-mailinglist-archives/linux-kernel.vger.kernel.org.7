@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-830184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986B9B9900C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:57:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDB9B99015
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E631168EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:57:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F377A6E5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFE82D0C8F;
-	Wed, 24 Sep 2025 08:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfPW3Vlz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13122557A;
-	Wed, 24 Sep 2025 08:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460A62D0C72;
+	Wed, 24 Sep 2025 08:57:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905EF2557A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758704242; cv=none; b=jJKhZGjBTVENyxID+A4eL6pTWz4wdgcXONnP57CIZWnsvcVkCi0/6aAzvqW8FcYOvTz0h9GlVRe1aNf8DCBESHupSaonbz98NAceTBnPQkd110ZqeWqWioENaTasGqnii7XI6Jxqln/CDeAY1AEXiA8W9BXvfPqi9UK/+a4EEMo=
+	t=1758704271; cv=none; b=KLRg279ZHK29FDw/zNKyVOcI3sO8WXUBlAQKFoFdqmVj41l+yQrQpDv3pfY3wUSCcIvO5a3jiR2KoswAkV7fVRmn0wU+kotNxaLvMS/xOFHNi8BkrdHUOHM/P3OsKcutWvCuIspiplZrTVeV6IDjVf1wkPhNvvEIh0Wx8IWmVGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758704242; c=relaxed/simple;
-	bh=kvkpUlFHOMa5WGOYjzBXAHR8vBGu8aMkOK8bYu8QwYI=;
+	s=arc-20240116; t=1758704271; c=relaxed/simple;
+	bh=cXGV0okpqUEWPwKXCfr2tuHmvSgWqSUR7ptaiibITVY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lc6DD3L5/E3CiYBAzvYRRdxSlWjZ+cmmbcKTcHwDk/MQLB2f9gvqZxbM018svPPAZqa+UhBoqaxY/kfSj24lHaT6jlM2BdbT2xImu7bE0ZFmNEWFmPkE4BdcLaaN7zbQP0a/sz67P1NduDaPN+I1aIdNCD2FWkPYpunuCDR4KRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfPW3Vlz; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758704240; x=1790240240;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kvkpUlFHOMa5WGOYjzBXAHR8vBGu8aMkOK8bYu8QwYI=;
-  b=gfPW3VlzO8viLrEAEJ9DbdbPzzNToG3WpiFfrxaJuYwJRthp0TFwWA1h
-   Fpnc68QoAhPZV3Dh7I9PxyyHlq3OMoRuDJTr0CsoHuTSZxsO0p+c7J04G
-   rQOMgGmgfPCnsDbnLFivtwVtV0wTeWv0h5C5OzeXhnIXVq4/sTxKwK7b8
-   Jz3MXjXYUvUERMgFI1WRyemsxCDnKY5V+dG1NYI9WfkPPleoY/LzDrN8o
-   8WWoST4zdb1CAlnSyJA48akL4g4lYj3XhIF/+D9+Tj2hVPnRV7wp7/+9v
-   C7ESXpqgkIwMR2Q2YURzvu1d5em1pw1jSYzkdLgzkcwCZY1pXhJ0okFqA
-   Q==;
-X-CSE-ConnectionGUID: B1YraC4qQpOMrIbzl3jfPQ==
-X-CSE-MsgGUID: 80vPEZbVSS28xurH0Lknwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="61166405"
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="61166405"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 01:57:20 -0700
-X-CSE-ConnectionGUID: 9dz6sw87TnCEgt1/+f18CA==
-X-CSE-MsgGUID: F/TN14jWRIeSgK593yRD2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="177381649"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 01:57:16 -0700
-Message-ID: <19889f85-cfd0-4283-bd32-935ef92b3b93@linux.intel.com>
-Date: Wed, 24 Sep 2025 16:57:14 +0800
+	 In-Reply-To:Content-Type; b=giyuvDN8bVT0hMMOlZrSHwgzS7d9nqa5V+EboSu0Ojq7ZKDhdnufEb+dBOS7GK2Hy835EDI+Umq5Y80xYUDjoo8y7BKAVScL5MaLPWVGWpjQYxRjRxMb8v7TpvtBFV4AoyEbSJFypg6GVrNdBNxgbmXjkVgDMaR5ZRXwZbIvM0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC73C106F;
+	Wed, 24 Sep 2025 01:57:40 -0700 (PDT)
+Received: from [10.164.18.52] (MacBook-Pro.blr.arm.com [10.164.18.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FBC53F5A1;
+	Wed, 24 Sep 2025 01:57:46 -0700 (PDT)
+Message-ID: <a751762a-b5ca-45c4-95c6-a5dc63231c66@arm.com>
+Date: Wed, 24 Sep 2025 14:27:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,85 +41,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/16] x86/virt/tdx: Improve PAMT refcounters
- allocation for sparse memory
-To: "Huang, Kai" <kai.huang@intel.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "mingo@redhat.com"
- <mingo@redhat.com>, "kas@kernel.org" <kas@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Annapurve, Vishal" <vannapurve@google.com>, "Gao, Chao"
- <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "x86@kernel.org" <x86@kernel.org>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-7-rick.p.edgecombe@intel.com>
- <f1018ab125eb18f431ddb3dd50501914b396ee2b.camel@intel.com>
- <e455cb2c-a51c-494e-acc1-12743c4f4d3f@linux.intel.com>
- <7ad102d6105b6244c32e0daebcdb2ac46a5dcc68.camel@intel.com>
+Subject: Re: [PATCH v1] mm: convert folio_page() back to a macro
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
+References: <20250923140058.2020023-1-david@redhat.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <7ad102d6105b6244c32e0daebcdb2ac46a5dcc68.camel@intel.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20250923140058.2020023-1-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
+On 23/09/25 7:30 pm, David Hildenbrand wrote:
+> In commit 73b3294b1152 ("mm: simplify folio_page() and folio_page_idx()")
+> we converted folio_page() into a static inline function. However
+> briefly afterwards in commit a847b17009ec ("mm: constify highmem related
+> functions for improved const-correctness") we had to add some nasty
+> const-away casting to make the compiler happy when checking const
+> correctness.
+>
+> So let's just convert it back to a simple macro so the compiler can
+> check const correctness properly. There is the alternative of
+> using a _Generic() similar to page_folio(), but there is not a lot of
+> benefit compared to just using a simple macro.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
 
-On 9/24/2025 2:50 PM, Huang, Kai wrote:
-> On Tue, 2025-09-23 at 17:38 +0800, Binbin Wu wrote:
->>>> +/*
->>>> + * Allocate PAMT reference counters for the given PFN range.
->>>> + *
->>>> + * It consumes 2MiB for every 1TiB of physical memory.
->>>> + */
->>>> +static int alloc_pamt_refcount(unsigned long start_pfn, unsigned long end_pfn)
->>>> +{
->>>> +	unsigned long start, end;
->>>> +
->>>> +	start = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(start_pfn));
->>>> +	end   = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(end_pfn + 1));
->>> (sorry didn't notice this in last version)
->>>
->>> I don't quite follow why we need "end_pfn + 1" instead of just "end_pfn"?
->>>
->>> IIUC this could result in an additional 2M range being populated
->>> unnecessarily when the end_pfn is 2M aligned.
->> IIUC, this will not happen.
->> The +1 page will be converted to 4KB, and will be ignored since in
->> tdx_find_pamt_refcount() the address is divided by 2M.
->>
->> To handle the address unaligned to 2M, +511 should be used instead of +1?
-> OK. Thanks for catching.  But I still don't get why we need end_pfn + 1.
->
-> Also, when end_pfn == 511, would this result in the second refcount being
-> returned for the @end, while the intention should be the first refcount?
->
-> For example, assuming we have a range [0, 2M), we only need one refcount.
-> And the PFN range (which comes from for_each_mem_pfn_range()) would be:
->
->      start_pfn == 0
->      end_pfn   == 512
->
-> This will results in @start pointing to the first refcount and @end
-> pointing to the second, IIUC.
->
-> So it seems we need:
->
->      start = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(start_pfn));
->      end   = (unsigned long)tdx_find_pamt_refcount(PFN_PHYS(end_pfn) - 1));
->      start = round_down(start, PAGE_SIZE);
->      end   = round_up(end, PAGE_SIZE);
-
-Checked again, this seems to be the right version.
-
->
-> ?
+Reviewed-by: Dev Jain <dev.jain@arm.com>
 
 
