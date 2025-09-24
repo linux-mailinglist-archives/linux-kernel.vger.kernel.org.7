@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-830156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4420B98ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D788B98E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D416A1893CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0650189317A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295FF285078;
-	Wed, 24 Sep 2025 08:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C729A2882C9;
+	Wed, 24 Sep 2025 08:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9/INM+v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cZiP2itX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCB544C63
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B823287274;
+	Wed, 24 Sep 2025 08:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758703047; cv=none; b=GSZr+iNKuLF/fErjkO/FCq0tDV4zVHZds19efespBzYhuz+HgPtP3Ql0kLJIn3mHUW3wyq6UjSOfPK+/33Itglfamtj7wCkE9CdmH6B5CK0hG5nRykAwDhHCYE+79/+2dQQxPdZ+bQlnKD0/BKV0mHIWJZjq/tIymvTKp3WgqQQ=
+	t=1758702893; cv=none; b=m3ck3g2ryF4qoV3i5jbtG1baWWiSsigMHtKrjlRI3tT/jn7zqQ5I3xNW1MjVVgXpYdh9hKj1F+Z/ADa1kalyK08HbPEwe+iBTVhrJIc16w9KbOYH3plpkqOJFEShLJ0Kjg0YL8Ptp6Flx+ieFV/VafxY6Jo6XEMFUMaLZGsXsEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758703047; c=relaxed/simple;
-	bh=aiYWON9keCHVLc9yflSZEXEK9goh/Y/UPRDevhSJw2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Grjxi0i93uwirPdQdS6dK8Ylh58/NzV9NB8BQ+d9FCrdMXIIQa3tFSnSYkYO3crUZPffybLLaDu9MPKbBiJkUCCThhzVlLKZ0t5Sz/faERUTCGuUMnBP1tQcMnjfj5JTStUKpFlxG4fGS07MyOYXgAq5UGvlUEkrq852+s8v5Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9/INM+v; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758703045; x=1790239045;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aiYWON9keCHVLc9yflSZEXEK9goh/Y/UPRDevhSJw2I=;
-  b=f9/INM+vosACSTj+ewyfEMOJJarLvOcbWi6v3eDLki/4+NCx9iDqgGps
-   DiqArW47kSCs/mIjBQ8pOl8gP84OPKVVGYTUUIAcSohMOPwCpAz1ETcW4
-   pHQES+cCT5ypqpJDWA1pkwYZAoQOUO14eMHPaC8uf6dZz25q2Ao76UvPn
-   2jAoCNnAY2AJF0aTi3dZKxQsfFv6yspP65UgrpPVogKiMpEf7LhgIN1Mg
-   6veGnfUWi4ZgxaN3Zfx+KKk7BNgI4rxmWtc1UXGpUkoHAsrROgnzx0W/+
-   04X4lIAM5vxI2oTOEeL096K31l25xCx54uEWejGhFSaPkPTgjnCKy6a4z
-   A==;
-X-CSE-ConnectionGUID: xjiIHQ/XQWCdcl9/Ni+adA==
-X-CSE-MsgGUID: g046XSBuR7OqCCNvJ7zqtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61046160"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61046160"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 01:37:24 -0700
-X-CSE-ConnectionGUID: ru6bNs7BT2yNJ8TgyvhTCQ==
-X-CSE-MsgGUID: c2clMeV4QQan3ug7lEcuxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; 
-   d="scan'208";a="207915048"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa001.fm.intel.com with ESMTP; 24 Sep 2025 01:37:22 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Disallow dirty tracking if incoherent page walk
-Date: Wed, 24 Sep 2025 16:34:46 +0800
-Message-ID: <20250924083447.123224-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758702893; c=relaxed/simple;
+	bh=NQpn5On1CpZYeSoKNe+8hbK1OW/Ka5jHDW6U1lstCec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ewGY+ohzFQcxkgU4Q+S84w4XqJj/hMiaV32oTQjdbl+eqG7TnjAh5n9paU34zBKbQwLX7MjxbuoIYLLLzalyEE0QafpYFPC9VaPcYoVp6EpXT8PVbjjkdgvGYPRLpS9G4yTV1JNoAAOIoZBZANDwfvLTfLYKW8NpVz1zbgLSOOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cZiP2itX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758702888;
+	bh=NQpn5On1CpZYeSoKNe+8hbK1OW/Ka5jHDW6U1lstCec=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=cZiP2itXfdkJ6bbHkHMc2AZFZnMBN6qhCADI9XHKsDoH5Z3UxvU6pg5TTTvCd4QRV
+	 hOQgX+AhF/IqbVDwCzcOROKW0HRKTgmzmHvPIAVItTLVm74ghMKsSzxLwQYsRwETbZ
+	 iYn9P5sjyEpUq1c61LYGKYlNNHlxfdW64Dcgc+ELgLiws4ZjkA8xnUZeS2RJYglPf5
+	 mo3wei2LNmW5X4+Zhlx3kSrG+t0IAD4flPr/gKEs2QyqCAfyLLex8r9fS8GHywc53Z
+	 +bY9qM9I1OyLO/eHrBWHMYMR2Wv5dboev/iZwmtHu8dnP8J6sV6aDrYfufNsv6GFE5
+	 7uzks4ph2dvEQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 32A5A17E0C21;
+	Wed, 24 Sep 2025 10:34:48 +0200 (CEST)
+Message-ID: <b520c02c-f405-4310-92b7-7301f9f29e28@collabora.com>
+Date: Wed, 24 Sep 2025 10:34:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm64: dts: airoha: Add AN7583
+ compatible
+To: Christian Marangi <ansuelsmth@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250923185340.21526-1-ansuelsmth@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250923185340.21526-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dirty page tracking relies on the IOMMU atomically updating the dirty bit
-in the paging-structure entry. For this operation to succeed, the paging-
-structure memory must be coherent between the IOMMU and the CPU. In
-another word, if the iommu page walk is incoherent, dirty page tracking
-doesn't work.
+Il 23/09/25 20:53, Christian Marangi ha scritto:
+> Add Airoha AN7583 compatible to the list of enum for Airoha Supported
+> SoCs.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-The Intel VT-d specification, Section 3.10 "Snoop Behavior" states:
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-"Remapping hardware encountering the need to atomically update A/EA/D bits
- in a paging-structure entry that is not snooped will result in a non-
- recoverable fault."
-
-To prevent an IOMMU from being incorrectly configured for dirty page
-tracking when it is operating in an incoherent mode, mark SSADS as
-supported only when both ecap_slads and ecap_smpwc are supported.
-
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index d09b92871659..2c261c069001 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -541,7 +541,8 @@ enum {
- #define pasid_supported(iommu)	(sm_supported(iommu) &&			\
- 				 ecap_pasid((iommu)->ecap))
- #define ssads_supported(iommu) (sm_supported(iommu) &&                 \
--				ecap_slads((iommu)->ecap))
-+				ecap_slads((iommu)->ecap) &&           \
-+				ecap_smpwc(iommu->ecap))
- #define nested_supported(iommu)	(sm_supported(iommu) &&			\
- 				 ecap_nest((iommu)->ecap))
- 
--- 
-2.43.0
 
 
