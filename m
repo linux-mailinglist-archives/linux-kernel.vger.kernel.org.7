@@ -1,205 +1,94 @@
-Return-Path: <linux-kernel+bounces-830427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14ABB99A23
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:45:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19F4B99A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306C47A8FCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA23B19C42C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4083002AB;
-	Wed, 24 Sep 2025 11:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119F32FE567;
+	Wed, 24 Sep 2025 11:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jh8c1K4S";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C7vL6spw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MIpKcCJw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kN1hFlA+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXB/+eis"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB552FE050
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5782FE054
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758714291; cv=none; b=dgsO2ORprHw+lDvnioDLfxhd1Ba3sLhCPlVKbWJ7apHBxa2c+147tqW/vCNtBOIOMSl50p9Q9F5ZTUbUxx+jMyVMdgi75zEMSWRD7ChSxKx+ro1hJBoc6XL0/KYtR9sIgS5uRNlDwBcugsRcLmqU3QL6GexnnJ+EnPaPNsc3kqY=
+	t=1758714286; cv=none; b=DEIX5JPSjMXqKTC/AfhiHdrx58oKamtmSuquJ2O6zp5oLE6JWbCGgiFvpHXt8UF+HltSuVO1PIgFvQyfRkRxTxWm9Z+8HLpVPwnjkgdT2r5vXuFsJ5gyxU9SXtONTjHPNoCQ+VRoQs8xfl+Hnn5/k9Cbvm1qK0yQb33b/CbVS+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758714291; c=relaxed/simple;
-	bh=ZF/2YJf/3hk1WnFFGmKp58iB33fSlI9ga1Ks8oQhQDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbGtjRkyF3D+nGndKmSLydx94we9gXfXC4muLCo/X3hnLCkfPVQ7IH0HSjpP10+VdYbVhQV5XCBx0lHsw26PCrK5wB28USpxKf3GOpxA7pOofZSO/uKWf6D6Q3LnU4cXTnUxBwdWztXzK+/jx65Joo0rAmw52uKcaQFZixEWzaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jh8c1K4S; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C7vL6spw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MIpKcCJw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kN1hFlA+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 34A9A339E6;
-	Wed, 24 Sep 2025 11:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758714283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4K7nLBghDQ+hhXNa2jMGJw9MQn/kd43m81nuCAHG3rs=;
-	b=Jh8c1K4S3uWfZtKGbEfX1f26/hWL/2WIAbJk39kA3nG0KNjSPPC7NGlB/t1Ao4xZw6zBtf
-	lhgi1UO2XkMBuV39bplBbOhxfRltdV3OdQ+XTQqZlnqJuzX5CnQbF2VbXh+WD3XjZlkyls
-	WZz+dNx0QUkaBMHEdfkW39FZFw5VmeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758714283;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4K7nLBghDQ+hhXNa2jMGJw9MQn/kd43m81nuCAHG3rs=;
-	b=C7vL6spwXTX+BAa1MWnxNjRkEiqLl8ciZT+rX1B/6l72YcR+mxcnIfJKGnLFlhzRFKT51S
-	swU2PHReuTXKWRDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MIpKcCJw;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kN1hFlA+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758714282; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4K7nLBghDQ+hhXNa2jMGJw9MQn/kd43m81nuCAHG3rs=;
-	b=MIpKcCJw6C3fNGBFTcAto1fC14pfBH7HhsyQc3KxYXVnG3oJdQ9JBTrdmKGon4qO4hW9kU
-	tM07smMTR6GytOzwKjmNNoZKhcCGMJm3pxcSc+nd+aA/Y/ayz7QNX5ZD1KYAuIZP2cY0Qy
-	utmbDcuklyQ92dFzNYK9ia69AwUgBTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758714282;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4K7nLBghDQ+hhXNa2jMGJw9MQn/kd43m81nuCAHG3rs=;
-	b=kN1hFlA+DeA7ARQvzk9IgMKe/6BLzq6UMRHuk88nu22EA2jbjEpg/MV5kbEAPwwbFYRYB1
-	skxwFFzcNZnsOODQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2915013ACB;
-	Wed, 24 Sep 2025 11:44:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MGHACarZ02hYQwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Sep 2025 11:44:42 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D91ACA0A9A; Wed, 24 Sep 2025 13:44:41 +0200 (CEST)
-Date: Wed, 24 Sep 2025 13:44:41 +0200
-From: Jan Kara <jack@suse.cz>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] nsfs: handle inode number mismatches gracefully in
- file handles
-Message-ID: <2zwxsyxcz7qcm2fpbxjqfolik3he6kq4amtx4qrbsabsv7huoi@xjbd2sqhkysx>
-References: <20250924113745.1262174-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1758714286; c=relaxed/simple;
+	bh=I8E5+njcKXsXjDyzwZ0OooFrSkL9LuY0bLNsmsEwEGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=siYE/vSwQzb0fqocQzOirPbyxh7NDJab+1CTksTW312Qrlp4MBb7JfIgac6MyTunXv/zxH4cfT0W4grbWQSdF/e2ytJ9nX4PS0f790dzewf8dh5Dd2KtktPB9jOyeKXeE+repqvScD6+fXZdzkZP408pj8gaJQELKrQAHtaLn7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXB/+eis; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0CA7C16AAE;
+	Wed, 24 Sep 2025 11:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758714286;
+	bh=I8E5+njcKXsXjDyzwZ0OooFrSkL9LuY0bLNsmsEwEGs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cXB/+eisiIQ/qmXyGMN7t2JE5xXBMwFC25K6l8waVxyY+TPk0+0XHHvqr9wkH8C71
+	 w4rX50nEcvzYj+LIhjdZ8BXkVfGq1BsrCW7bwHsj5b1YlxDrp9LAfw4ctqkOf6Wgqy
+	 c/QLuVJjnF8JE2oaqA91h8XWfBrbV7j2LDeoOW8dcyU50jk5q3u70q4J9cRNqh2efT
+	 zV09hbaVfR9ATYkY+xNQjv1rRB2GZVcUk7VrHqhla7fgYP9t8DwIwkdvgdCEpt85Na
+	 alsJ7pnbmTLg9OC6yklDLMQpqaEVUG0hOqHI4c4w5X6WhXD0DaLzv2ZnXRmjcjZYqd
+	 mHzjhCYO+j4tw==
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: dinguyen@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] nios2: updates for v6.18
+Date: Wed, 24 Sep 2025 06:44:44 -0500
+Message-ID: <20250924114444.33618-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.42.0.411.g813d9a9188
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924113745.1262174-1-kartikey406@gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 34A9A339E6
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[9eefe09bedd093f156c2];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
 
-On Wed 24-09-25 17:07:45, Deepanshu Kartikey wrote:
-> Replace VFS_WARN_ON_ONCE() with graceful error handling when file
-> handles contain inode numbers that don't match the actual namespace
-> inode. This prevents userspace from triggering kernel warnings by
-> providing malformed file handles to open_by_handle_at().
-> 
-> The issue occurs when userspace provides a file handle with valid
-> namespace type and ID that successfully locates a namespace, but
-> specifies an incorrect inode number. Previously, this would trigger
-> VFS_WARN_ON_ONCE() when comparing the real inode number against the
-> provided value.
-> 
-> Since file handle data is user-controllable, inode number mismatches
-> should be treated as invalid input rather than kernel consistency
-> errors. Handle this case by returning NULL to indicate the file
-> handle is invalid, rather than warning about what is essentially
-> user input validation.
-> 
-> Changes in v2:
-> - Handle all inode number mismatches, not just zero, as suggested by Jan Kara
-> - Replace warning with graceful error handling for better architecture
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-This 'Changes' bit belongs below the diffstat (so that it doesn't get
-included in git commit log). Otherwise looks good so feel free to add:
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+are available in the Git repository at:
 
-								Honza
+  git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/nios2_update_for_v6.18
 
-> 
-> Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
->  fs/nsfs.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 32cb8c835a2b..002d424d9fa6 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -490,8 +490,9 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
->  
->  		VFS_WARN_ON_ONCE(ns->ns_id != fid->ns_id);
->  		VFS_WARN_ON_ONCE(ns->ops->type != fid->ns_type);
-> -		VFS_WARN_ON_ONCE(ns->inum != fid->ns_inum);
-> -
-> +		/* Someone is playing games and passing invalid file handles? */
-> +		if (ns->inum != fid->ns_inum)
-> +			return NULL;
->  		if (!refcount_inc_not_zero(&ns->count))
->  			return NULL;
->  	}
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+for you to fetch changes up to a20b83cf45be2057f3d073506779e52c7fa17f94:
+
+  nios2: ensure that memblock.current_limit is set when setting pfn limits (2025-08-25 05:55:01 -0500)
+
+----------------------------------------------------------------
+NIOS2: update for v6.18
+- Replace __ASSEMBLY__ with __ASSEMBLER__ in headers
+- Set memblock.current_limit when setting pfn limits
+
+----------------------------------------------------------------
+Simon Schuster (1):
+      nios2: ensure that memblock.current_limit is set when setting pfn limits
+
+Thomas Huth (2):
+      nios2: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+      nios2: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+ arch/nios2/include/asm/entry.h       |  4 ++--
+ arch/nios2/include/asm/page.h        |  4 ++--
+ arch/nios2/include/asm/processor.h   |  4 ++--
+ arch/nios2/include/asm/ptrace.h      |  4 ++--
+ arch/nios2/include/asm/registers.h   |  4 ++--
+ arch/nios2/include/asm/setup.h       |  4 ++--
+ arch/nios2/include/asm/thread_info.h |  4 ++--
+ arch/nios2/include/asm/traps.h       |  2 +-
+ arch/nios2/include/uapi/asm/ptrace.h |  4 ++--
+ arch/nios2/kernel/setup.c            | 15 +++++++++++++++
+ 10 files changed, 32 insertions(+), 17 deletions(-)
 
