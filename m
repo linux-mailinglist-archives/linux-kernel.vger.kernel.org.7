@@ -1,199 +1,170 @@
-Return-Path: <linux-kernel+bounces-830128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EE7B98C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F74BB98C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108E519C6CD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289E019C6B8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C52281371;
-	Wed, 24 Sep 2025 08:20:38 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113F7283FEB;
+	Wed, 24 Sep 2025 08:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/2jcezO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCD32248A5
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56734275B01;
+	Wed, 24 Sep 2025 08:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702037; cv=none; b=XEVzegr2iyuAzw3XLGFv+2DS95tulYBC15hPQT2K8r2eVhNT2JfploHocsaFNxJ+gqIG3umciUdr2XwAA9KWHzLVvNEQdFqJh6HxrnC7xvU2+5/zChUy6kxOWuxN2Dk0+x0PfDF9bYR/v2vtzUfdhN/+MqjxtGIcV9DGN1eQXOg=
+	t=1758702046; cv=none; b=RwEZ6DfhHQ4Hb3/BAo8R+16TMWLO4C97GrnzmOLsp5ETjYNbIslN9z6RZI5hvp7ciryunfa2lyxk/WRuZr4qyR5QgnhwqVN4RzoAXmE+V+NUizC/HjE/fF9v/nFtdn+vd1MM50Phl2neSGjykU0HHJXT0jannsnkb6fREjTpHa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702037; c=relaxed/simple;
-	bh=flOJLFL3xJk2PXNLmjIG+HPkaN/Q2kPZzbCwWQCrYWE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NiHTdWbcA85WDY9XEXmC+JHjuV+++hgke1WAfXbV+bfdyimzHU6ZHFZVjjNpxomEh6RIB02bRVkf/IGB0q5e6dnHSRVIAjzgaSyyeTzxNs1tdyMwm2+arTtZSN2bCnA1bFakUud3Rn7NDnmoM5hXxJ1nWI6M50YQsWANdtls1F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8a559429a55so1362525639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:20:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758702035; x=1759306835;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MNXjmEKdISx8T7B/Gd2AgAd/JGBrN2p3ir6T9+nHFp4=;
-        b=WcI/KTdz8RLBXY+wxAiSpkniY1VFZVL0ci32FTDuQj+17svgJzuCgpJSIW8D5meqMM
-         yA2BpDT6qo/1FJwRZsQ77wpjf2M2YdgkMOyWxC6HLzvOqpqxdjV7I8ioibwbs6OMeDiQ
-         /U8L79jJbhfLYWRb+BExY3ZgZlFuBkK7JNImU30sOjS272TVRIgARtMKsYNLf67JAwnv
-         vOMX/WPa0joEd0yTXvi2i8qcnbdb355/m6Ixi/eCdI0UpiBff/YoDpn2GqIBjSixhHGd
-         qcc8GNEk+uEN23OSqU99PdmXFgBmi79Sc1eniW3mK0VqePb0nb9kAInU2mAvEXMXkWHV
-         MwTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVT6SkM5mTWAEXG02LVcyiLqfSMEfIF32Ve/Y47O/A47Aime8RD+RZuC09QPSH6ZRZ2U2JGnRH7Il7BeIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3k2I3NIIO9ECJALUJT1eiRmXGGiJLF8p5VBN0hLp/U882S0Vg
-	TqmB1EF2TCRNW3AUBguzT7GLQ3agwzICHAotdZC7sNf90EgiiaBQdUn7ZcEdjT15ak549q4iMRz
-	0faqaSzbl5gdAZ6+0RUA7r3oR9SdNq26oITku/nGEPwtgfBVJpDjHR04726U=
-X-Google-Smtp-Source: AGHT+IHKEKhWxQ82TOyIHKlC68GGcLX1M2ncukPjXMVFkUbdIEB/2CONfnDZ1lsKwufG9TszvUa/UqU9By9A/mQVmMwvkXOXlKeK
+	s=arc-20240116; t=1758702046; c=relaxed/simple;
+	bh=OMVgMraFH2BxIgIwSSNP58DDxZoVjL8AimA5niTsHMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lt/cCah9p9ltvsIslZcZYdKfHTEzz00zCyl6wZlInaQHGueWOCMlADLIfrjeo+NexnfWRn/mRzfbA50PiTZua76AdmVe5ArB+mTWtdDzeuY2LO9eQh9PoYAbytidMc+/hh/KTcoOwsivsVGQsNTImy6cG42Ap9RRifrN87iqWbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/2jcezO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9901EC4CEE7;
+	Wed, 24 Sep 2025 08:20:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758702046;
+	bh=OMVgMraFH2BxIgIwSSNP58DDxZoVjL8AimA5niTsHMQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=I/2jcezO8WKzYNvURUI9PkJH5jEF2WQWuNxspv/8Q8LCn4x+sOGPLqqLoV5k7yMmD
+	 YEzHXKWZU6p5EyHI+LznjgFNY4/zaavnmXbA0HTkHFmGnVn01iTShvfgJihVaYyP2W
+	 tGBZ4TVMfqx9RgMGUSMuL7Da7FXRX7FKDlcytmpopp5vpLVidz/haY6anElC/SbBkP
+	 UZ9npSyxcbaMtWbtFThgpJsxLD273YE9y8aA5HJZW43d4mXE+8WK2QLJOAfFMMrolm
+	 yw0kr1qiQjkhLEKGxKGnWMFGG9gVqu2YrGLrLeuSHSba0JtnynrD+P7TQA75OCinsK
+	 LND0PhRzD+/Jg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E3B75CE0B73; Wed, 24 Sep 2025 01:20:41 -0700 (PDT)
+Date: Wed, 24 Sep 2025 01:20:41 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 0/34] Implement RCU Tasks Trace in terms of SRCU-fast and
+ optimize
+Message-ID: <1b362ccc-fa86-404c-ab58-15370cef7240@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
+ <CAADnVQKNxGFOWN7-HmzObYobW2y33g-i3xsNSkKicx88hqe70w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2169:b0:424:7f5a:9423 with SMTP id
- e9e14a558f8ab-42581e6f594mr77178695ab.19.1758702035210; Wed, 24 Sep 2025
- 01:20:35 -0700 (PDT)
-Date: Wed, 24 Sep 2025 01:20:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d3a9d3.a70a0220.4f78.0017.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING: bad unlock balance in namespace_unlock
-From: syzbot <syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKNxGFOWN7-HmzObYobW2y33g-i3xsNSkKicx88hqe70w@mail.gmail.com>
 
-Hello,
+On Wed, Sep 24, 2025 at 09:49:23AM +0200, Alexei Starovoitov wrote:
+> On Tue, Sep 23, 2025 at 4:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > Hello!
+> >
+> > This series re-implements RCU Tasks Trace in terms of SRCU-fast,
+> > reducing the size of the Linux-kernel RCU implementation by several
+> > hundred lines of code.  It also removes a conditional branch from the
+> > srcu_read_lock_fast() implementation in order to make SRCU-fast a
+> > bit more fastpath-friendly.  The patches are as follows:
+> >
+> > 1.      Re-implement RCU Tasks Trace in terms of SRCU-fast.
+> >
+> > 2.      Remove unused ->trc_ipi_to_cpu and ->trc_blkd_cpu from
+> >         task_struct.
+> >
+> > 3.      Remove ->trc_blkd_node from task_struct.
+> >
+> > 4.      Remove ->trc_holdout_list from task_struct.
+> >
+> > 5.      Remove rcu_tasks_trace_qs() and the functions that it calls.
+> >
+> > 6.      context_tracking: Remove
+> >         rcu_task_trace_heavyweight_{enter,exit}().
+> >
+> > 7.      Remove ->trc_reader_special from task_struct.
+> >
+> > 8.      Remove now-empty RCU Tasks Trace functions and calls to them.
+> >
+> > 9.      Remove unused rcu_tasks_trace_lazy_ms and trc_stall_chk_rdr
+> >         struct.
+> >
+> > 10.     Remove now-empty show_rcu_tasks_trace_gp_kthread() function.
+> >
+> > 11.     Remove now-empty rcu_tasks_trace_get_gp_data() function.
+> >
+> > 12.     Remove now-empty rcu_tasks_trace_torture_stats_print() function.
+> >
+> > 13.     Remove now-empty get_rcu_tasks_trace_gp_kthread() function.
+> >
+> > 14.     Move rcu_tasks_trace_srcu_struct out of #ifdef
+> >         CONFIG_TASKS_RCU_GENERIC.
+> >
+> > 15.     Add noinstr-fast rcu_read_{,un}lock_tasks_trace() APIs.
+> >
+> > 16.     Remove now-unused rcu_task_ipi_delay and TASKS_TRACE_RCU_READ_MB.
+> >
+> > 17.     Create a DEFINE_SRCU_FAST().
+> >
+> > 18.     Use smp_mb() only when necessary in RCU Tasks Trace readers.
+> >
+> > 19.     Update Requirements.rst for RCU Tasks Trace.
+> >
+> > 20.     Deprecate rcu_read_{,un}lock_trace().
+> >
+> > 21.     Mark diagnostic functions as notrace.
+> >
+> > 22.     Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
+> >
+> > 23.     Create an srcu_expedite_current() function.
+> >
+> > 24.     Test srcu_expedite_current().
+> >
+> > 25.     Create an rcu_tasks_trace_expedite_current() function.
+> >
+> > 26.     Test rcu_tasks_trace_expedite_current().
+> >
+> > 27.     Make DEFINE_SRCU_FAST() available to modules.
+> >
+> > 28.     Make SRCU-fast available to heap srcu_struct structures.
+> >
+> > 29.     Make grace-period determination use ssp->srcu_reader_flavor.
+> >
+> > 30.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+> >
+> > 31.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+> >
+> > 32.     Require special srcu_struct define/init for SRCU-fast readers.
+> >
+> > 33.     Make SRCU-fast readers enforce use of SRCU-fast definition/init.
+> >
+> > 34.     Update for SRCU-fast definitions and initialization.
+> 
+> Maybe it's just me, but the patch set is too fine grained.
+> These 34 patches could be squashed into a handful for better
+> review. All these steps: add smp_mb(), make it conditional,
+> make it more conditional, remove one field,
+> remove another field is a distraction from actual logic at the end.
 
-syzbot found the following issue on:
+Fair enough!
 
-HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=151b8d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=91ae0b9529ab8226
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d671007a95cd2835e05
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131b8d34580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a194e2580000
+I was quite distracted while doing this work, so did it in baby steps to
+avoid having to do any sort of complex debugging.  My plan is to continue
+testing it, and if the tests continue passing, restructure the patch
+series, then send v2.  You are quite right, and I will (for example)
+consolidate the "Remove" patches.  And at that point, the "squash"
+feature of "git rebase" will be my friend.  ;-)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3f1b65edb63f/disk-ce7f1a98.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b132cb8d99cd/vmlinux-ce7f1a98.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/80f316094043/bzImage-ce7f1a98.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com
-
-=====================================
-WARNING: bad unlock balance detected!
-syzkaller #0 Not tainted
--------------------------------------
-syz.3.25/6203 is trying to release lock (namespace_sem) at:
-[<ffffffff82401096>] namespace_unlock+0x486/0x760 fs/namespace.c:1705
-but there are no more locks to release!
-
-other info that might help us debug this:
-no locks held by syz.3.25/6203.
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6203 Comm: syz.3.25 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0xdc/0xf0 kernel/locking/lockdep.c:5298
- __lock_release kernel/locking/lockdep.c:5527 [inline]
- lock_release+0x212/0x3e0 kernel/locking/lockdep.c:5889
- up_write+0x2d/0x420 kernel/locking/rwsem.c:1642
- namespace_unlock+0x486/0x760 fs/namespace.c:1705
- class_namespace_excl_destructor fs/namespace.c:96 [inline]
- copy_mnt_ns+0x6e5/0x880 fs/namespace.c:4176
- create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
- unshare_nsproxy_namespaces+0x11c/0x170 kernel/nsproxy.c:218
- ksys_unshare+0x4c8/0x8c0 kernel/fork.c:3198
- __do_sys_unshare kernel/fork.c:3269 [inline]
- __se_sys_unshare kernel/fork.c:3267 [inline]
- __x64_sys_unshare+0x38/0x50 kernel/fork.c:3267
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7cd618eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7cd6feb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007f7cd63e6180 RCX: 00007f7cd618eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040020000
-RBP: 00007f7cd6211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7cd63e6218 R14: 00007f7cd63e6180 R15: 00007ffc3db53b78
- </TASK>
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x3, magic = 0xffffffff8e48df00, owner = 0xffff88803389dac0, curr 0xffff88803408dac0, list not empty
-WARNING: kernel/locking/rwsem.c:1381 at __up_write kernel/locking/rwsem.c:1380 [inline], CPU#0: syz.3.25/6203
-WARNING: kernel/locking/rwsem.c:1381 at up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643, CPU#0: syz.3.25/6203
-Modules linked in:
-CPU: 0 UID: 0 PID: 6203 Comm: syz.3.25 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
-RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
-Code: d0 48 c7 c7 80 ff aa 8b 48 c7 c6 a0 01 ab 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 83 37 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 74 37 c3 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc90003d2faf0 EFLAGS: 00010296
-RAX: 4aab14382228fb00 RBX: ffffffff8e48df00 RCX: ffff88803408dac0
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1c3a654 R12: ffff88803389dac0
-R13: ffffffff8e48df58 R14: ffffffff8e48df00 R15: 1ffffffff1c91be1
-FS:  00007f7cd6feb6c0(0000) GS:ffff888125a0a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33163fff CR3: 0000000027b4e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- namespace_unlock+0x486/0x760 fs/namespace.c:1705
- class_namespace_excl_destructor fs/namespace.c:96 [inline]
- copy_mnt_ns+0x6e5/0x880 fs/namespace.c:4176
- create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
- unshare_nsproxy_namespaces+0x11c/0x170 kernel/nsproxy.c:218
- ksys_unshare+0x4c8/0x8c0 kernel/fork.c:3198
- __do_sys_unshare kernel/fork.c:3269 [inline]
- __se_sys_unshare kernel/fork.c:3267 [inline]
- __x64_sys_unshare+0x38/0x50 kernel/fork.c:3267
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7cd618eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7cd6feb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007f7cd63e6180 RCX: 00007f7cd618eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040020000
-RBP: 00007f7cd6211f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f7cd63e6218 R14: 00007f7cd63e6180 R15: 00007ffc3db53b78
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+							Thanx, Paul
 
