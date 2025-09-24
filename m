@@ -1,124 +1,199 @@
-Return-Path: <linux-kernel+bounces-830127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895E2B98C85
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09EE7B98C8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC702E11FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108E519C6CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6570127E07E;
-	Wed, 24 Sep 2025 08:19:06 +0000 (UTC)
-Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA733D544;
-	Wed, 24 Sep 2025 08:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C52281371;
+	Wed, 24 Sep 2025 08:20:38 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCD32248A5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758701946; cv=none; b=adt1Z8E48lYqk7FynBr0eKYihE4xdVqs5KfO7ipbXNKonjky2T7p3/5Aa2K2iekkyI/o5V1m+AHazksI+OY8WNdNSbDTwz80sMcubaNorPmC2fPONnVEIrljLTXNnI7hKxtNeGVJIsw3KWODjszPq0YsnCJAZLQaFhONrWvfzps=
+	t=1758702037; cv=none; b=XEVzegr2iyuAzw3XLGFv+2DS95tulYBC15hPQT2K8r2eVhNT2JfploHocsaFNxJ+gqIG3umciUdr2XwAA9KWHzLVvNEQdFqJh6HxrnC7xvU2+5/zChUy6kxOWuxN2Dk0+x0PfDF9bYR/v2vtzUfdhN/+MqjxtGIcV9DGN1eQXOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758701946; c=relaxed/simple;
-	bh=lZUCWci03AbglxggQWQQ4x0B8Eeqd3JY0hT4rfpA0ho=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=SLpu6z/pepmCInAHKzGYyIenCV8pS96K8ORdz/3snhGLe6heH97HtMAzKeEM2ut2W2K5K5Zg6S1vEa7s5eYFgTljY9+nq0TX4pPMKAt5V1z01iSPAD3RGfV1YMl+/sSHzndyoy2O82b5LJboGVaDiCHm1VygbSxJAJMMP66mBjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=165.227.155.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Wed, 24 Sep 2025 16:18:49 +0800 (GMT+08:00)
-Date: Wed, 24 Sep 2025 16:18:49 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Conor Dooley" <conor@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v5 1/2] dt-bindings: clock: eswin: Documentation for
- eic7700 SoC
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250923-popper-choice-397ce2df6966@spud>
-References: <20250923084637.1223-1-dongxuyang@eswincomputing.com>
- <20250923084739.1281-1-dongxuyang@eswincomputing.com>
- <20250923-popper-choice-397ce2df6966@spud>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1758702037; c=relaxed/simple;
+	bh=flOJLFL3xJk2PXNLmjIG+HPkaN/Q2kPZzbCwWQCrYWE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NiHTdWbcA85WDY9XEXmC+JHjuV+++hgke1WAfXbV+bfdyimzHU6ZHFZVjjNpxomEh6RIB02bRVkf/IGB0q5e6dnHSRVIAjzgaSyyeTzxNs1tdyMwm2+arTtZSN2bCnA1bFakUud3Rn7NDnmoM5hXxJ1nWI6M50YQsWANdtls1F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8a559429a55so1362525639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:20:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758702035; x=1759306835;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MNXjmEKdISx8T7B/Gd2AgAd/JGBrN2p3ir6T9+nHFp4=;
+        b=WcI/KTdz8RLBXY+wxAiSpkniY1VFZVL0ci32FTDuQj+17svgJzuCgpJSIW8D5meqMM
+         yA2BpDT6qo/1FJwRZsQ77wpjf2M2YdgkMOyWxC6HLzvOqpqxdjV7I8ioibwbs6OMeDiQ
+         /U8L79jJbhfLYWRb+BExY3ZgZlFuBkK7JNImU30sOjS272TVRIgARtMKsYNLf67JAwnv
+         vOMX/WPa0joEd0yTXvi2i8qcnbdb355/m6Ixi/eCdI0UpiBff/YoDpn2GqIBjSixhHGd
+         qcc8GNEk+uEN23OSqU99PdmXFgBmi79Sc1eniW3mK0VqePb0nb9kAInU2mAvEXMXkWHV
+         MwTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT6SkM5mTWAEXG02LVcyiLqfSMEfIF32Ve/Y47O/A47Aime8RD+RZuC09QPSH6ZRZ2U2JGnRH7Il7BeIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3k2I3NIIO9ECJALUJT1eiRmXGGiJLF8p5VBN0hLp/U882S0Vg
+	TqmB1EF2TCRNW3AUBguzT7GLQ3agwzICHAotdZC7sNf90EgiiaBQdUn7ZcEdjT15ak549q4iMRz
+	0faqaSzbl5gdAZ6+0RUA7r3oR9SdNq26oITku/nGEPwtgfBVJpDjHR04726U=
+X-Google-Smtp-Source: AGHT+IHKEKhWxQ82TOyIHKlC68GGcLX1M2ncukPjXMVFkUbdIEB/2CONfnDZ1lsKwufG9TszvUa/UqU9By9A/mQVmMwvkXOXlKeK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <78856df3.17ba.1997acdc444.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDHZpVpqdNoHNnaAA--.26233W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEPAmjSy9QU+
-	QAAsG
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+X-Received: by 2002:a05:6e02:2169:b0:424:7f5a:9423 with SMTP id
+ e9e14a558f8ab-42581e6f594mr77178695ab.19.1758702035210; Wed, 24 Sep 2025
+ 01:20:35 -0700 (PDT)
+Date: Wed, 24 Sep 2025 01:20:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d3a9d3.a70a0220.4f78.0017.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING: bad unlock balance in namespace_unlock
+From: syzbot <syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-PiA+IAo+ID4gQWRkIGRldmljZSB0cmVlIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgdGhlIEVT
-V0lOIGVpYzc3MDAKPiA+IGNsb2NrIGNvbnRyb2xsZXIgbW9kdWxlLgo+ID4gCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBZaWZlbmcgSHVhbmcgPGh1YW5neWlmZW5nQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+
-IFNpZ25lZC1vZmYtYnk6IFh1eWFuZyBEb25nIDxkb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNv
-bT4KPiA+IC0tLQo+ID4gIC4uLi9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlh
-bWwgICB8ICA0MCArKwo+ID4gIC4uLi9kdC1iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNs
-b2NrLmggICB8IDM3OSArKysrKysrKysrKysrKysrKysKPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDQx
-OSBpbnNlcnRpb25zKCspCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwKPiA+ICBjcmVh
-dGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNs
-b2NrLmgKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9jbG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvY2xvY2svZXN3aW4sZWljNzcwMC1jbG9jay55YW1sCj4gPiBuZXcgZmls
-ZSBtb2RlIDEwMDY0NAo+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi40OTA1MzU0M2VjZmUKPiA+IC0t
-LSAvZGV2L251bGwKPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
-bG9jay9lc3dpbixlaWM3NzAwLWNsb2NrLnlhbWwKPiA+IEBAIC0wLDAgKzEsNDAgQEAKPiA+ICsj
-IFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkK
-PiA+ICslWUFNTCAxLjIKPiA+ICstLS0KPiA+ICskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9z
-Y2hlbWFzL2Nsb2NrL2Vzd2luLGVpYzc3MDAtY2xvY2sueWFtbCMKPiA+ICskc2NoZW1hOiBodHRw
-Oi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPiA+ICsKPiA+ICt0aXRs
-ZTogRXN3aW4gRUlDNzcwMCBTb0MgY2xvY2sgY29udHJvbGxlcgo+ID4gKwo+ID4gK21haW50YWlu
-ZXJzOgo+ID4gKyAgLSBZaWZlbmcgSHVhbmcgPGh1YW5neWlmZW5nQGVzd2luY29tcHV0aW5nLmNv
-bT4KPiA+ICsgIC0gWHV5YW5nIERvbmcgPGRvbmd4dXlhbmdAZXN3aW5jb21wdXRpbmcuY29tPgo+
-ID4gKwo+ID4gK2Rlc2NyaXB0aW9uOgo+ID4gKyAgVGhlIGNsb2NrIGNvbnRyb2xsZXIgZ2VuZXJh
-dGVzIGFuZCBzdXBwbGllcyBjbG9jayB0byBhbGwgdGhlIG1vZHVsZXMKPiA+ICsgIGZvciBlaWM3
-NzAwIFNvQy4KPiA+ICsKPiA+ICtwcm9wZXJ0aWVzOgo+ID4gKyAgY29tcGF0aWJsZToKPiA+ICsg
-ICAgY29uc3Q6IGVzd2luLGVpYzc3MDAtY2xvY2sKPiA+ICsKPiA+ICsgIHJlZzoKPiA+ICsgICAg
-bWF4SXRlbXM6IDEKPiA+ICsKPiA+ICsgICcjY2xvY2stY2VsbHMnOgo+ID4gKyAgICBjb25zdDog
-MQo+ID4gKwo+ID4gK3JlcXVpcmVkOgo+ID4gKyAgLSBjb21wYXRpYmxlCj4gPiArICAtIHJlZwo+
-ID4gKyAgLSAnI2Nsb2NrLWNlbGxzJwo+ID4gKwo+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBm
-YWxzZQo+ID4gKwo+ID4gK2V4YW1wbGVzOgo+ID4gKyAgLSB8Cj4gPiArICAgIGNsb2NrLWNvbnRy
-b2xsZXJANTE4MjgwMDAgewo+ID4gKyAgICAgICAgY29tcGF0aWJsZSA9ICJlc3dpbixlaWM3NzAw
-LWNsb2NrIjsKPiA+ICsgICAgICAgIHJlZyA9IDwweDUxODI4MDAwIDB4MjAwPjsKPiA+ICsgICAg
-ICAgICNjbG9jay1jZWxscyA9IDwxPjsKPiA+ICsgICAgfTsKPiAKPiBObyBjbG9jayBpbnB1dCB0
-byB0aGlzIGJsb2NrPyBTdXJwcmlzZWQgdGhlcmUncyBub3Qgc29tZSBvZmYtY2hpcAo+IG9zY2ls
-bGF0b3IgdGhhdCBwcm92aWRlcyBhIHF1YWxpdHkgcmVmZXJlbmNlIGZvciB0aGUgaW50ZXJuYWwg
-UExMcyBldGMuCgpUaGVyZSBpcyBhbiBvc2NpbGxhdG9yIGFzIHRoZSBjbG9jayBpbnB1dC4gVGhl
-IGZyZXF1ZW5jeSBpcyAyNDAwMDAwMCBIeiwgYW5kCnRoZSBjbG9jayBuYW1lIGlzICJ4dGFsIi4g
-CldlIHdpbGwgdXBkYXRlIHRoZSBmb2xsb3dpbmcgZGVzY3JpcHRpb24gaW4gdGhlIG5leHQgcGF0
-Y2guCgpwcm9wZXJ0aWVzOgrCoCBjb21wYXRpYmxlOgrCoCDCoCBjb25zdDogZXN3aW4sZWljNzcw
-MC1jbG9jawoKwqAgcmVnOgrCoCDCoCBtYXhJdGVtczogMQoJCsKgIGNsb2NrczoKwqAgwqAgaXRl
-bXM6CiAgICAgIC0gZGVzY3JpcHRpb246IEV4dGVybmFsIDI0TUh6IG9zY2lsbGF0b3IgY2xvY2sK
-CsKgIGNsb2NrLW5hbWVzOgrCoCDCoCBpdGVtczoKICAgICAgLSBjb25zdDogeHRhbAoJwqDCoArC
-oCAnI2Nsb2NrLWNlbGxzJzoKwqAgwqAgY29uc3Q6IDEKCnJlcXVpcmVkOgrCoCAtIGNvbXBhdGli
-bGUKwqAgLSByZWcKwqAgLSBjbG9ja3MKwqAgLSBjbG9jay1uYW1lcwrCoCAtICcjY2xvY2stY2Vs
-bHMnCgphZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKCmV4YW1wbGVzOgrCoCAtIHwKwqAgwqAg
-Y2xvY2stY29udHJvbGxlckA1MTgyODAwMCB7CsKgIMKgIMKgIMKgIGNvbXBhdGlibGUgPSAiZXN3
-aW4sZWljNzcwMC1jbG9jayI7CsKgIMKgIMKgIMKgIHJlZyA9IDwweDUxODI4MDAwIDB4MjAwPjsK
-wqAgwqAgwqAgwqAgY2xvY2tzID0gPCZ4dGFsPjsKwqAgwqAgwqAgwqAgY2xvY2stbmFtZXMgPSAi
-eHRhbCI7CsKgIMKgIMKgIMKgICNjbG9jay1jZWxscyA9IDwxPjsKwqAgwqAgfTsKCgpwcm9wZXJ0
-aWVzOgrCoCBjb21wYXRpYmxlOgrCoCDCoCBjb25zdDogZXN3aW4sZWljNzcwMC1jbG9jawoKwqAg
-cmVnOgrCoCDCoCBtYXhJdGVtczogMQoJCsKgIGNsb2NrczoKwqAgwqAgaXRlbXM6CiAgICAgIC0g
-ZGVzY3JpcHRpb246IEV4dGVybmFsIDI0TUh6IG9zY2lsbGF0b3IgY2xvY2sKCsKgIGNsb2NrLW5h
-bWVzOgrCoCDCoCBpdGVtczoKICAgICAgLSBjb25zdDogeHRhbAoJwqDCoArCoCAnI2Nsb2NrLWNl
-bGxzJzoKwqAgwqAgY29uc3Q6IDEKCnJlcXVpcmVkOgrCoCAtIGNvbXBhdGlibGUKwqAgLSByZWcK
-wqAgLSBjbG9ja3MKwqAgLSBjbG9jay1uYW1lcwrCoCAtICcjY2xvY2stY2VsbHMnCgphZGRpdGlv
-bmFsUHJvcGVydGllczogZmFsc2U=
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=151b8d34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=91ae0b9529ab8226
+dashboard link: https://syzkaller.appspot.com/bug?extid=0d671007a95cd2835e05
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131b8d34580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a194e2580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3f1b65edb63f/disk-ce7f1a98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b132cb8d99cd/vmlinux-ce7f1a98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80f316094043/bzImage-ce7f1a98.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0d671007a95cd2835e05@syzkaller.appspotmail.com
+
+=====================================
+WARNING: bad unlock balance detected!
+syzkaller #0 Not tainted
+-------------------------------------
+syz.3.25/6203 is trying to release lock (namespace_sem) at:
+[<ffffffff82401096>] namespace_unlock+0x486/0x760 fs/namespace.c:1705
+but there are no more locks to release!
+
+other info that might help us debug this:
+no locks held by syz.3.25/6203.
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6203 Comm: syz.3.25 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_unlock_imbalance_bug+0xdc/0xf0 kernel/locking/lockdep.c:5298
+ __lock_release kernel/locking/lockdep.c:5527 [inline]
+ lock_release+0x212/0x3e0 kernel/locking/lockdep.c:5889
+ up_write+0x2d/0x420 kernel/locking/rwsem.c:1642
+ namespace_unlock+0x486/0x760 fs/namespace.c:1705
+ class_namespace_excl_destructor fs/namespace.c:96 [inline]
+ copy_mnt_ns+0x6e5/0x880 fs/namespace.c:4176
+ create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
+ unshare_nsproxy_namespaces+0x11c/0x170 kernel/nsproxy.c:218
+ ksys_unshare+0x4c8/0x8c0 kernel/fork.c:3198
+ __do_sys_unshare kernel/fork.c:3269 [inline]
+ __se_sys_unshare kernel/fork.c:3267 [inline]
+ __x64_sys_unshare+0x38/0x50 kernel/fork.c:3267
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7cd618eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7cd6feb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007f7cd63e6180 RCX: 00007f7cd618eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040020000
+RBP: 00007f7cd6211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7cd63e6218 R14: 00007f7cd63e6180 R15: 00007ffc3db53b78
+ </TASK>
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x3, magic = 0xffffffff8e48df00, owner = 0xffff88803389dac0, curr 0xffff88803408dac0, list not empty
+WARNING: kernel/locking/rwsem.c:1381 at __up_write kernel/locking/rwsem.c:1380 [inline], CPU#0: syz.3.25/6203
+WARNING: kernel/locking/rwsem.c:1381 at up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643, CPU#0: syz.3.25/6203
+Modules linked in:
+CPU: 0 UID: 0 PID: 6203 Comm: syz.3.25 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__up_write kernel/locking/rwsem.c:1380 [inline]
+RIP: 0010:up_write+0x3a2/0x420 kernel/locking/rwsem.c:1643
+Code: d0 48 c7 c7 80 ff aa 8b 48 c7 c6 a0 01 ab 8b 48 8b 14 24 4c 89 f1 4d 89 e0 4c 8b 4c 24 08 41 52 e8 83 37 e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6d fd ff ff 48 c7 c1 74 37 c3 8f 80 e1 07 80 c1 03
+RSP: 0018:ffffc90003d2faf0 EFLAGS: 00010296
+RAX: 4aab14382228fb00 RBX: ffffffff8e48df00 RCX: ffff88803408dac0
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: dffffc0000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1c3a654 R12: ffff88803389dac0
+R13: ffffffff8e48df58 R14: ffffffff8e48df00 R15: 1ffffffff1c91be1
+FS:  00007f7cd6feb6c0(0000) GS:ffff888125a0a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b33163fff CR3: 0000000027b4e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ namespace_unlock+0x486/0x760 fs/namespace.c:1705
+ class_namespace_excl_destructor fs/namespace.c:96 [inline]
+ copy_mnt_ns+0x6e5/0x880 fs/namespace.c:4176
+ create_new_namespaces+0xd1/0x720 kernel/nsproxy.c:78
+ unshare_nsproxy_namespaces+0x11c/0x170 kernel/nsproxy.c:218
+ ksys_unshare+0x4c8/0x8c0 kernel/fork.c:3198
+ __do_sys_unshare kernel/fork.c:3269 [inline]
+ __se_sys_unshare kernel/fork.c:3267 [inline]
+ __x64_sys_unshare+0x38/0x50 kernel/fork.c:3267
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7cd618eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7cd6feb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007f7cd63e6180 RCX: 00007f7cd618eec9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040020000
+RBP: 00007f7cd6211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7cd63e6218 R14: 00007f7cd63e6180 R15: 00007ffc3db53b78
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
