@@ -1,219 +1,129 @@
-Return-Path: <linux-kernel+bounces-829823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2041B97FBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:15:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA350B97FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 03:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEEC2E573F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51F24C0015
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 01:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A953E1F91D6;
-	Wed, 24 Sep 2025 01:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBCD1DB95E;
+	Wed, 24 Sep 2025 01:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZ/zqcZk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuBwAsZD"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA8CC2E0;
-	Wed, 24 Sep 2025 01:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C551C27
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 01:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758676501; cv=none; b=LLAWBdUXr7FNwhq6qSSv9n7Uutg2vj1WXlD71RL0JSEHRJYWzTkR2RjjzqIjtx0EZ4nHQzyyX1C5OCwDWqAedGeOmSA74ZsxGgwBLrOWU0blPDQ3Ai63f19hD3gnpmPLhaKnIXySZU5Mc5eoGeZM3ydFBI4qHxpl+LI94sBcHwU=
+	t=1758676569; cv=none; b=Ku4Zn9WQCfyU6QnxGjrLVL91tCTeMPBHcQnTpu7Gx0tm9mVCu3T4NvA05HBVzT67+Jf2sXjBnNSkXqGUD7o/R+dAZS37UY2UvHJypTb3sfQCuiuaIV4DSAKDdGOD6CihgBWBNaF1JxhQvUgujIeCtZ42rC+IAhXn24WPIsRHIqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758676501; c=relaxed/simple;
-	bh=JiyOmmu/L6xN4AZgB4LR7xvyam9W9RhGmQa4QapilEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1RiLZVUfU69IV7C+RbGTpf4cI/HadfzDJ4/4Xeix5TYMGYx9fepe4ZNCBROU3nzAmuITM03hCRDNJrWJkQQCVE82WnxEMvyWwwUfhVrAxS1Db78VRkgcFiRqBT/JXyXamU0zU0PyjVFqbIJ+fqMihVlwYL9gKGdKgQCei/y2m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZ/zqcZk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E66BC4CEF5;
-	Wed, 24 Sep 2025 01:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758676500;
-	bh=JiyOmmu/L6xN4AZgB4LR7xvyam9W9RhGmQa4QapilEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FZ/zqcZkm0D/xt1+chS6mxJJOiE8I38yy/DlTyqjG4JvHHBlpZLo/F39MX7D04vZF
-	 F/gib6LLCrzF5W7evXTtXUsEYdkUkmwpYDvnrO5q3nP2Nm7lHCMEgiVPKY9ZgDjHcb
-	 4Pbvsg0tJL2DSjUc8L/47lqXUWVnoQqFljSUdCsB+qKtMINKs03hSgm+acglGZgqi3
-	 YYyauwd+qCCRdtZYEkrHLhBEEQPBFSMPNkDXLfNqkpdj9BsK+BicIom1gI3IzHFK+4
-	 Vp7yqgmhsBh+MOaYABntnmzmyvdtSOmNoHZSu+MMNET+nuOSk7jvdcbdV21+xTwZSq
-	 Aj03abyr+HC+A==
-Date: Wed, 24 Sep 2025 04:14:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jonathan McDowell <noodles@earth.li>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Ensure exclusive userspace access when using
- /dev/tpm<n>
-Message-ID: <aNNGECfE2izNx2LM@kernel.org>
-References: <cover.1758646791.git.noodles@meta.com>
- <5497b6bbaaed64fbd245aff0190904c9beba714b.1758646791.git.noodles@meta.com>
+	s=arc-20240116; t=1758676569; c=relaxed/simple;
+	bh=AwRt98PLF+0uNY1wnFqWynqXeGH365J0oHAiztHFnH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXiA5wA0wm7EKZ6JVN2Ll7CZJbKdjx/qJc8lwTbcYf06Ljape6+AlBA3ha6apWJ2yb+FjQNQhHon1gMkJVetHKD+mkJ3rWm+D9CrjARmFMigKOg99SnheFYuhQAP2MOC9rLlJ1Mmo8ytiJqxEFB+b53gYRbg0s/O+3Xu+F006i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuBwAsZD; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77f358c7b8fso341415b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 18:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758676567; x=1759281367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CmYWM8Z/roMtlrp5aO89HRVded3LToe4TxL6a/RxYVM=;
+        b=JuBwAsZDV8bxKw2V8nhnIVTWY1wWutWmAhVw6qN2UbXCKA9NXu7RIqLmUTTki90TjF
+         anXdaAcAfBhq3SH+RhN8nYdyCF3uR3krbuxBBHZt+HitBfXNKIWS2pPtDXLv+FwgzkRt
+         5ONrXm1LEeP25h0MfVKGeYH8uk8kxRJO6om1e9zUmZb8i/PAXX+jnBsdpE84h8KddCfx
+         ribQeWBG99ISSQWHdy+Z4Ea16YpADZHv+eyymHIxnINKt9/M6u4U3Vwp6i+exdLN6r5h
+         lt9hMEUPumMtSuvCEL16qyDvDtweOrEyUSHqBWCr5PD30H4wSLW2voSAZGRFEVMiYugA
+         +tKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758676567; x=1759281367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CmYWM8Z/roMtlrp5aO89HRVded3LToe4TxL6a/RxYVM=;
+        b=Wz/gx32Tbg2B0bIbXkQ0ASTD68nZZvg9aGL/hIENYl66/kAjvj+oDpBdFya+wYYyHd
+         iiqPc5FQWU2/Yi3Q5UQGPmEnmFR+xnX+xG58fY0U/Y6p+jeYZahTNNvXQwaasoiDu2G9
+         uEUguV87acZz86kj9AcbCy6JMjgvzmKx/vl1B7DMZEjv9E4ndS3so8XGwV5xQPTad9MY
+         8VykkoQNiBlw5Gz7ngIilj9MLGhXEX8D+4eWogkLmFps5qMcub3lOPmZy0xH5VWvZa1d
+         kwncrviPWY/hy6uGUX7YdEARpgktK2ysZM1yTdneG2K8xQFk4uJ1wUICM7tf4xFHfAdt
+         7JUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4ermESDMa0bKfpE6J30v7+G/solcrLu2FzJpiabiqqDLJgskABoyIw6I6GBQoz9iYkjY5KBU7LiwTeEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMdVf8jVLF2NCT2dhRtFzhDJZ1WQF0hjvjcbmPIelkuLRPIcrV
+	cWN8H9SpkJzv1ClXu594KCKaJXIDh6fq1UrwZNxmhNDFfa4Bl/WPZw33utEU8ifhvww=
+X-Gm-Gg: ASbGncu72cMtiWhVamrKVELAHp/yZgg7wMq9RwNzpWgshpTg7XOd6vXWHrbUMOzXQHy
+	Nu9pNcL2BOmx9D70SEPbLjLc11Z4D6oyvhg+HFe8uN9p7GpmGWBOWz44wVqqsYw1HJblBGnjZwS
+	6Nf2e3dLYflFVWWcNY4lBEF2E/0WhL+uWbCuHwSzQG1io6zTRd7exxP53ecx8hzFnZ/t973ZiLu
+	DFpqQBNnATy5Jh+zFnVixWxWLM3uHzJZQ1BSboLjxDbg8Cgzem5yyBt9efSTfMccEGxp5GE0ttD
+	5JVE75J78TTni3BF4lSe+bNVswY8hs5l1u3RYeFgDECeeY9yUg8lwtozpO3fr0HFkpbNZtoE96v
+	MXKLnKykSabsEvIkwWbA+AAVgmcCcDsCg5eRVCdjptRATeCPCRv9XnU/hy8BJ6OkKzQx33i5puY
+	a7nJD1YJ4TC3tHJLgz8eLqi65Rd8HbbNM=
+X-Google-Smtp-Source: AGHT+IF2K4ME6oNGnHPP6a6Wh//Hbt1hnABF98AbnESIlitVBHjYmmiLru3v79EEvbaMsrGAJWCvsg==
+X-Received: by 2002:a17:903:230b:b0:267:8b4f:df36 with SMTP id d9443c01a7336-27ec13cce7cmr6823895ad.29.1758676567287;
+        Tue, 23 Sep 2025 18:16:07 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:a860:817b:dcc:3e4a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980368fe3sm169878605ad.151.2025.09.23.18.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 18:16:06 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: tytso@mit.edu
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
+Subject: [PATCH] ext4: fix allocation failure in ext4_mb_load_buddy_gfp
+Date: Wed, 24 Sep 2025 06:46:00 +0530
+Message-ID: <20250924011600.1095949-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5497b6bbaaed64fbd245aff0190904c9beba714b.1758646791.git.noodles@meta.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 06:10:00PM +0100, Jonathan McDowell wrote:
-> From: Jonathan McDowell <noodles@meta.com>
-> 
-> There is an is_open lock on /dev/tpm<n> that dates back to at least
-> 2013, but it only prevents multiple accesses via *this* interface. It is
-> perfectly possible for userspace to use /dev/tpmrm<n>, or the kernel to
-> use the internal interfaces, to access the TPM. For tooling expecting
-> exclusive access, such as firmware updates, this can cause issues.
-> 
-> Close the userspace loophole by changing the simple bit lock to a full
-> read/write mutex. Direct /dev/tpm<n> access needs an exclusive write
-> lock, the resource broker continues to allow concurrent access *except*
-> when /dev/tpm<n> is open.
-> 
-> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+Fix WARNING in __alloc_pages_slowpath() when ext4_discard_preallocations()
+is called during memory pressure.
 
-I'm mostly thinking should be tag it as bug fix and backport or not.
+The issue occurs when __GFP_NOFAIL is used during memory reclaim context,
+which can lead to allocation warnings. Avoid using __GFP_NOFAIL when
+the current process is already in memory allocation context to prevent
+potential deadlocks and warnings.
 
-> ---
-> v2: Change error path label to err instead of out. Rework commit
->     message.
-> 
->  drivers/char/tpm/tpm-chip.c  |  1 +
->  drivers/char/tpm/tpm-dev.c   | 14 ++++++++------
->  drivers/char/tpm/tpmrm-dev.c | 20 ++++++++++++++++++--
->  include/linux/tpm.h          |  3 ++-
->  4 files changed, 29 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index e25daf2396d3..8c8e9054762a 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -338,6 +338,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
->  
->  	mutex_init(&chip->tpm_mutex);
->  	init_rwsem(&chip->ops_sem);
-> +	init_rwsem(&chip->open_lock);
->  
->  	chip->ops = ops;
->  
-> diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-> index 97c94b5e9340..80c4b3f3ad18 100644
-> --- a/drivers/char/tpm/tpm-dev.c
-> +++ b/drivers/char/tpm/tpm-dev.c
-> @@ -22,10 +22,12 @@ static int tpm_open(struct inode *inode, struct file *file)
->  
->  	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
->  
-> -	/* It's assured that the chip will be opened just once,
-> -	 * by the check of is_open variable, which is protected
-> -	 * by driver_lock. */
-> -	if (test_and_set_bit(0, &chip->is_open)) {
-> +	/*
-> +	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
-> +	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
-> +	 * read lock.
-> +	 */
-> +	if (!down_write_trylock(&chip->open_lock)) {
->  		dev_dbg(&chip->dev, "Another process owns this TPM\n");
->  		return -EBUSY;
->  	}
-> @@ -39,7 +41,7 @@ static int tpm_open(struct inode *inode, struct file *file)
->  	return 0;
->  
->   out:
-> -	clear_bit(0, &chip->is_open);
-> +	up_write(&chip->open_lock);
->  	return -ENOMEM;
->  }
->  
-> @@ -51,7 +53,7 @@ static int tpm_release(struct inode *inode, struct file *file)
->  	struct file_priv *priv = file->private_data;
->  
->  	tpm_common_release(file, priv);
-> -	clear_bit(0, &priv->chip->is_open);
-> +	up_write(&priv->chip->open_lock);
->  	kfree(priv);
->  
->  	return 0;
-> diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-> index c25df7ea064e..13322dd9ac9e 100644
-> --- a/drivers/char/tpm/tpmrm-dev.c
-> +++ b/drivers/char/tpm/tpmrm-dev.c
-> @@ -17,19 +17,34 @@ static int tpmrm_open(struct inode *inode, struct file *file)
->  	int rc;
->  
->  	chip = container_of(inode->i_cdev, struct tpm_chip, cdevs);
-> +
-> +	/*
-> +	 * Only one client is allowed to have /dev/tpm0 open at a time, so we
-> +	 * treat it as a write lock. The shared /dev/tpmrm0 is treated as a
-> +	 * read lock.
-> +	 */
-> +	if (!down_read_trylock(&chip->open_lock)) {
-> +		dev_dbg(&chip->dev, "Another process owns this TPM\n");
-> +		return -EBUSY;
-> +	}
-> +
->  	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->  	if (priv == NULL)
-> -		return -ENOMEM;
-> +		goto err;
->  
->  	rc = tpm2_init_space(&priv->space, TPM2_SPACE_BUFFER_SIZE);
->  	if (rc) {
->  		kfree(priv);
-> -		return -ENOMEM;
-> +		goto err;
->  	}
->  
->  	tpm_common_open(file, chip, &priv->priv, &priv->space);
->  
->  	return 0;
-> +
-> +err:
-> +	up_read(&chip->open_lock);
-> +	return -ENOMEM;
->  }
->  
->  static int tpmrm_release(struct inode *inode, struct file *file)
-> @@ -40,6 +55,7 @@ static int tpmrm_release(struct inode *inode, struct file *file)
->  	tpm_common_release(file, fpriv);
->  	tpm2_del_space(fpriv->chip, &priv->space);
->  	kfree(priv);
-> +	up_read(&fpriv->chip->open_lock);
->  
->  	return 0;
->  }
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index b0e9eb5ef022..548362d20b32 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -22,6 +22,7 @@
->  #include <linux/cdev.h>
->  #include <linux/fs.h>
->  #include <linux/highmem.h>
-> +#include <linux/rwsem.h>
->  #include <crypto/hash_info.h>
->  #include <crypto/aes.h>
->  
-> @@ -168,7 +169,7 @@ struct tpm_chip {
->  	unsigned int flags;
->  
->  	int dev_num;		/* /dev/tpm# */
-> -	unsigned long is_open;	/* only one allowed */
-> +	struct rw_semaphore open_lock;
->  
->  	char hwrng_name[64];
->  	struct hwrng hwrng;
-> -- 
-> 2.51.0
-> 
+Reported-by: syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+Tested-by: syzbot+fd3f70a4509fca8c265d@syzkaller.appspotmail.com
+---
+ fs/ext4/mballoc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 5898d92ba19f..61ee009717f1 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -5656,9 +5656,11 @@ void ext4_discard_preallocations(struct inode *inode)
+ 	list_for_each_entry_safe(pa, tmp, &list, u.pa_tmp_list) {
+ 		BUG_ON(pa->pa_type != MB_INODE_PA);
+ 		group = ext4_get_group_number(sb, pa->pa_pstart);
++		gfp_t flags = GFP_NOFS;
++		if (!(current->flags & PF_MEMALLOC))
++			flags |= __GFP_NOFAIL;
+ 
+-		err = ext4_mb_load_buddy_gfp(sb, group, &e4b,
+-					     GFP_NOFS|__GFP_NOFAIL);
++		err = ext4_mb_load_buddy_gfp(sb, group, &e4b, flags);
+ 		if (err) {
+ 			ext4_error_err(sb, -err, "Error %d loading buddy information for %u",
+ 				       err, group);
+-- 
+2.43.0
 
-BR, Jarkko
 
