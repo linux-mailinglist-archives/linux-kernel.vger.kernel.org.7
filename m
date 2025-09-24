@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-831336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B652B9C62D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E335DB9C643
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF88A19C6C97
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:51:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A3D4A05B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D61288538;
-	Wed, 24 Sep 2025 22:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0566D28488A;
+	Wed, 24 Sep 2025 22:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="LvTaCmAj";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="DOI+ZmiX"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="JCkCMpg9"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CAD27E066;
-	Wed, 24 Sep 2025 22:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85CE25FA1D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758754278; cv=none; b=OeoAxb1g+1PC3icPJhZ51DZerxtIUysYXaE+YMjn9lmBV1Ax36Q/hV2zdzbiylHY1LMqcJUb5JX98H0abowXWdA9ACh/rypDlKBQbIbtivJnYY92FozBWjm8wF3IqBanMnwE8OtyUjdPv6Gl3aq03ZV8zUcSUnta1uOg7IbJSEs=
+	t=1758754321; cv=none; b=WxVllYLvurHjxYmzh3azd+sT+Qho+MeGAP03j9kFwxp7iHnfM7kY+sYgM2faomj/lj3qZ6RmtwoAkG68xFDPRLwaZ4sYgbXdBFlzZ0qvb8/Lf1EqZh2pU7ykdhpFOCJLkKE9feaeWfqdZ29o34QAiAp5MIhx9xNAZNgjl8F89Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758754278; c=relaxed/simple;
-	bh=h83iygs2s9Ldl3h7B7pFWbWQJHVrhWeWQeGcW05NHaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTDQEJnJ/ZhwUlF8fnaHor9jf8aZ3+wu0L0P2MRB7GS18SvjHXKmYPu373OJHSelIxtNJmt2BamzLFfptt0i3HSXEQgVv/yuIPeeuCfAZNVV2TMjHvyz/5FqZicwzHL4gMSFTj6LHLxbCImbJ8NA6kE12EbrkrIy0XINNRbg4NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=LvTaCmAj; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=DOI+ZmiX; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 1E82360279; Thu, 25 Sep 2025 00:51:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1758754273;
-	bh=9wVF5HzDtmu1OxUD7YMD/AGvt/7TIpkUXfx7yqLSTbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LvTaCmAjq+XGwhNuFsAfAv7lWiQ6oG2RXVnEyXkyZFg5/ZzGs/p+9dHqSLbYDe8W3
-	 Jh8W7lZmc/cjp3KQ0wuI6lOmZZeXlpf2nNP66MffMQtqHn7UdYTQzZz6akuteE3xk3
-	 OnZURmegY3v49GsdfhOmSpYEu9Yl1vXIh92yNNu9AA5UEuqEZ+3gRsyzieS/xMja96
-	 3mFF3nof5Vrlejd0jnpYwyccDP+k5RPmMEbx9wPq8rvaKiKsj47g2fV0q26BJyuTlJ
-	 X/NyIHOZhGXzfEmfZZYH7eB4JkrSe9avi4xszWk+Br6EWjSn8qE2+ZfvAN7N/aADFn
-	 OnByCDX6OnY+A==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id D72BF60262;
-	Thu, 25 Sep 2025 00:51:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1758754269;
-	bh=9wVF5HzDtmu1OxUD7YMD/AGvt/7TIpkUXfx7yqLSTbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DOI+ZmiXU3AkYTL0/N3fDBqzp70sfzB1ct7EQFd+i7h6tZrmN8D4kyDd0NlgbqESh
-	 6uLXMijdd9xW8CdWfmN3UupoXwDDebrQ/7Xstu1eXta2+WTgYT7gt27GTHbJRuqxIF
-	 KN/jEKI5ps5Eb2CMVNufIPJktFqR3h5lkKE7dn5x6EqYqQYSCuBuazD0oIMWQpAibG
-	 SvQhTtk/Blvtv9IhLV5wD/M2ftmg0VX4bWxYN++uFj/5WlDiw3FHIPb0zVjTONYbBp
-	 Lizek8QtZ0jYOHxE6rgXlpUSxzqY0LXu9+m9zQwVo7EmJgvl1ffEL+fTwL3xRca+o1
-	 dWxG0YXogPJfg==
-Date: Thu, 25 Sep 2025 00:51:07 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Elad Yifee <eladwf@gmail.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata
- action for nft flowtables
-Message-ID: <aNR12z5OQzsC0yKl@calendula>
-References: <20250912163043.329233-1-eladwf@gmail.com>
- <CA+SN3sp6ZidPXhZnP0E4KQyt95pp_-M9h2MMwLozObp9JH-8LQ@mail.gmail.com>
- <aMnnKsqCGw5JFVrD@calendula>
- <CA+SN3srpbVBK10-PtOcikSphYDRf1WwWjS0d+R76-qCouAV2rQ@mail.gmail.com>
- <aMpuwRiqBtG7ps30@calendula>
- <CA+SN3spZ7Q4zqpgiDbdE5T7pb8PWceUf5bGH+oHLEz6XhT9H+g@mail.gmail.com>
+	s=arc-20240116; t=1758754321; c=relaxed/simple;
+	bh=IYb7VmkC8waq1uiEkTNs1ha+Uf22LW177xDsSZHKOyE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Gv0PfYqWSmAYbppFcOrKZYr/XfClO8usJDHz3bWXKQmKbv1aOnVLjx2mTTESMUpMF4IqDCctoINkrTMCF7s67kaufwhzJXIjX96cU9b30L1PWxLeScJsgxHlsaJ1vOTsjc9pvt3NtkvSlolayRfD8jg+g3aPgVHWMkKWM3VS7b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=JCkCMpg9; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1758754318;
+	bh=IYb7VmkC8waq1uiEkTNs1ha+Uf22LW177xDsSZHKOyE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=JCkCMpg9pMvCG5sdzhc/l9xavadn3mVYqBUWq+pWTTDU3r7/d4AWUZCljoC1cWS7U
+	 fDA1Fm21fmLvxNdElU/Dn4buonvrfMmPZXnnToA2MLYjgrOTPbTvs+y8CedNIYA0B8
+	 M/12NGGm6Z3KqTxAS5c4AWa+axj2Mkbgz0UcfNwM=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id D4A7940293; Wed, 24 Sep 2025 15:51:58 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id D29D74028E;
+	Wed, 24 Sep 2025 15:51:58 -0700 (PDT)
+Date: Wed, 24 Sep 2025 15:51:58 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>, 
+    Kiryl Shutsemau <kirill@shutemov.name>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Brendan Jackman <jackmanb@google.com>, 
+    David Hildenbrand <david@redhat.com>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+    Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+    kernel-team@meta.com
+Subject: Re: [PATCH v2 1/4] mm/page_alloc/vmstat: Simplify refresh_cpu_vm_stats
+ change detection
+In-Reply-To: <20250924204409.1706524-2-joshua.hahnjy@gmail.com>
+Message-ID: <fdb56260-8235-eb20-05cd-491fd512cec0@gentwo.org>
+References: <20250924204409.1706524-1-joshua.hahnjy@gmail.com> <20250924204409.1706524-2-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+SN3spZ7Q4zqpgiDbdE5T7pb8PWceUf5bGH+oHLEz6XhT9H+g@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Sep 17, 2025 at 08:33:49PM +0300, Elad Yifee wrote:
-> On Wed, Sep 17, 2025 at 11:18 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > Just to make sure we are on the same page: Software plane has to match
-> > the capabilities of the hardware offload plan, new features must work
-> > first in the software plane, then extend the hardware offload plane to
-> > support it.
-> 
-> Thanks - I see what you meant now.
-> 
-> This isn’t a new feature that needs to be implemented in software
-> first. We’re not introducing new user semantics, matches, or actions
-> in nft/TC. no datapath changes (including the flowtable software
-> offload fast path). The change only surfaces existing CT state
-> (mark/labels/dir) as FLOW_ACTION_CT_METADATA at the hardware offload
-> boundary so drivers can use it for per-flow QoS, or simply ignore it.
->
-> When a flow stays in software, behavior remains exactly as today,
-> software QoS continues to use existing tools (nft/TC setting
-> skb->priority/mark, qdiscs, etc.). There’s no SW-HW mismatch
-> introduced here.
+On Wed, 24 Sep 2025, Joshua Hahn wrote:
 
-You have to show me there is no mismatch.
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index d1d037f97c5f..77e7d9a5f149 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2561,10 +2561,10 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+>   * Called from the vmstat counter updater to decay the PCP high.
+>   * Return whether there are addition works to do.
+>   */
+> -int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
+> +bool decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
+>  {
+>  	int high_min, to_drain, batch;
+> -	int todo = 0;
+> +	bool todo;
 
-This is exposing the current ct mark/label to your hardware, the
-flowtable infrastructure (the software representation) makes no use of
-this information from the flowtable datapath, can you explain how you
-plan to use this?
+	todo = false
 
-Thanks.
+is needed here.
+
 
