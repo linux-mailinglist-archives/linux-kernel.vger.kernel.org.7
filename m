@@ -1,156 +1,192 @@
-Return-Path: <linux-kernel+bounces-830803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A94B9A935
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB239B9A944
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972672E1FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157901B252B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945C530F55C;
-	Wed, 24 Sep 2025 15:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC73310774;
+	Wed, 24 Sep 2025 15:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IUtPtt4Q"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="BooTx5Mn"
+Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A752307AFA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C51307AFA;
+	Wed, 24 Sep 2025 15:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758727356; cv=none; b=JRMepZxe9Nq0wv8UJmtbf4LKYX9PHvyKujJZu+H+3xb35qEA2IR6Om8Vp9Zq1jn8BEf9RqXeleKtDPc8caG5W9JChvN3WtYKQfXFlFH38W1ykqyQMpvai4BHP1zV1sfREPxfzDdrdjT4enGJ4zkHGWYBeLZ9tJ+M30GtcUNUg6o=
+	t=1758727364; cv=none; b=LByAvfFqjtXPDgGgkLXUz17qmOPiiOhpw1SK+vZqNBxVlMV29/Dmj31CNvmd0FZvv8VmCD19B792jeGUObWXmrjCv5dg7wDefWj5RJ4Da0y/BFHaGpgepFm+46TX+IQZyJjpa7B+h0/9mPN/siiur43F5z3hwB0zrhsl4rOMgi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758727356; c=relaxed/simple;
-	bh=JsPnfKtr3MiLoJ8hsPpReBdY4CePyEpwU2RLe/kafMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YhUj2dte10LRmUKzd6wls4UmnOsjtt6WbkvYdCAdldtGt3z5p3fZFTvMTmWGAMQ3dfn9uErKRhu7dgcaPy/WLRbazNhLDD6Hu6+zaduXgG30wVeGt6kiipWHcjKdVaUMwnznkzKp4ugcdJkuaZxgeQhLlfxQn4BFGX584cIR17M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IUtPtt4Q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24457f581aeso68783415ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:22:35 -0700 (PDT)
+	s=arc-20240116; t=1758727364; c=relaxed/simple;
+	bh=boCNRJaDJe5DVCwMhY/OC0YANe+R12MkBrGvEOzU35U=;
+	h=From:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PfemqIJ+QaYO7JHpUfe8cT9h6bfZo/EvC13mIJFGzO8m6lqFcBvaDIYWljLzt6rI97z7RVbT5Sw6fNMRWkK4/D4VIBu0UhYXChnDT1DobEo4IEi9xzSYqcZCWipTX4Gn5/b7/Ke3RZAhfkSRKdTj0VUjRVLY/fcdTdS3QgG1SZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=BooTx5Mn; arc=none smtp.client-ip=3.64.237.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758727354; x=1759332154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AGkkH3On4e9g/uKbOlSYkJKHveGl2HpttCc7mFGVIhA=;
-        b=IUtPtt4QMF4dmK6apSmFMwFJuhKA57iGeFW37hTkKPyLSnPXMA4CwRwHc31TOTREin
-         Ak5OjSWLuEIQ799KRxh2bYPfDvRzOeO2Rx8DjNWh0QIKfynsnI5ZfDXFUArQM7atArJW
-         eR3nGYCgqNGPYREYqHbL6eu9M3d3Tc/FZ1nRE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758727354; x=1759332154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AGkkH3On4e9g/uKbOlSYkJKHveGl2HpttCc7mFGVIhA=;
-        b=lMhpCxEjB13CydgT238VdjhSa27q0uhzBL0ufxmcYIwoJMnJu5YGwfsmKaF9oUVR25
-         Lt5k1VH5wSR3AbgiyJAoTldunaZ0lAV5/IkfH/4h/GG3veH1mAfov0DmyXys/3Vz8GWu
-         LoMQaSdOYNI9SHQ2ERfVqNEqVIc2yJ3B6vGT1l/hN1kHW+DAhAGz3gSSoutzj9QOij6g
-         k9+p6+iSZNnfuTXVBz57hudEkiMoXFQFLOb5xrs5eglcH4hBfbpC/xGxvIEa3tEbAtAl
-         eul8YIYeVwz+Uvtv/dkJM8tZxqBUvoNPmOBEly8M2YYNuzlTDKYGHciEfbKJIl0y+dAe
-         mw+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXrUHvfU1zH9QiltKkAADwLXCcwiQNRIyDzu1k/T2Ajfof+cJzTgpOZ20cR58tgKe0eCpv/61IFmGAVs3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz99tMguYzhj1QWYS9ulJZiYJmllIj8HH7Bn0BKEMbnNrPSYILG
-	xFUYFi19kTolfDE9KT3ztxGSMu5etixyWgOhNs9zwAvb3zv24gknvRZfI0qVHln7hgo3c++iMTq
-	azNY=
-X-Gm-Gg: ASbGncsMRNaXkz/+Ec9MjqKgWIT38759Erc/RcSigNLEN2afTAasMcylwCMLK9jJfpL
-	GWbJuEO37xWcNMXNBX8x2gVS3UrHjtKQBp6D5BpZJ8tBLs0NknYyNvIEYzLeEmC4Jd/DNZ3Y8WV
-	lCo7fYpMuwC6mMvjwI/sxUQI7E4ByheFM5XpLEWGi8yKQdUFJLLQHHDfQPbfSY/h/ssfF8jyICO
-	izNChZHNcM+zBW9z5fdFwhTWDpIjjapipr0+TCm6vbzKjk30yBuLoE8/4xuA50og8lDuNc89+9c
-	OZdZXHbK7w9BDtPQGkpRXa08lSXBJGdf+iVmSfdAjGvkuRoT21Fvx94jDmM/1pg9+53WuvLN45x
-	j0jfHPrxkdg7xzqqqDzhH5z3X2j8TruemLnODUbpid/jBWSGTusJL4PTLI0213674wA==
-X-Google-Smtp-Source: AGHT+IFtBuJw5MP85/dd3tQ5nJplmFbKn/eWqgTz0d8ei8HzKGKOM5ShOy/XFjp5BlkJZjARj+PPPA==
-X-Received: by 2002:a17:903:acf:b0:261:e1c0:1c44 with SMTP id d9443c01a7336-27ed4ac2af1mr977145ad.40.1758727354465;
-        Wed, 24 Sep 2025 08:22:34 -0700 (PDT)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com. [209.85.214.180])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053dd5sm195573185ad.26.2025.09.24.08.22.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 08:22:34 -0700 (PDT)
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27a6c3f482dso26823515ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:22:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVF/L/IMfPW7Y6uJntXL0D58pw22hso3N1xLIEXRzGNZvaG6XojYPrzmlLJUJBm5tDO8qUqaHznT34AQVY=@vger.kernel.org
-X-Received: by 2002:a17:902:c94d:b0:278:daab:7940 with SMTP id
- d9443c01a7336-27ed4a3dfa8mr1337745ad.17.1758727353184; Wed, 24 Sep 2025
- 08:22:33 -0700 (PDT)
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1758727362; x=1790263362;
+  h=from:cc:subject:date:message-id:references:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=+UU/9USrfzM95aGLT2Fsiof0dffr8QNJGxTG3aI9K58=;
+  b=BooTx5Mn3qLDJcFOlp1Am9z2RE+yF8z2YOc1+F6ec4HoepLQDBx9RufZ
+   VHYOQ/FOHUHV9b/nQtyp1vB5GmcABGY5huNeM27IfA4Wv0TMglSZqfiaA
+   10nGxuuEix4bYpLHps0TELJLD1QBAbhau6pNSqwuG1eu4zG5YLBAqmabK
+   3hg8n0O5CIe4oR44148qHyJNgnBYatV/kbEndUNYubTM3npO8ElhofRYc
+   BFvJ2X02i4vlSkEWUzTJDEvr7iMWKkM5fb863581UcJIy/rAQwlDOb3rO
+   T4MFoUBbpRWb1FwFG6e8wm7/TDLMtzRxfi2bwBONyazuKk+LAR8+vTuw3
+   A==;
+X-CSE-ConnectionGUID: nvEDSrW2SqWzBBNRU6SmrQ==
+X-CSE-MsgGUID: 2Yf5dc86RUi62WhOIbT3ag==
+X-IronPort-AV: E=Sophos;i="6.18,290,1751241600"; 
+   d="scan'208";a="2519318"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 15:22:25 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:11349]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.33.43:2525] with esmtp (Farcaster)
+ id 03c68cf9-a36f-49f5-a600-2aaa8ed6dfea; Wed, 24 Sep 2025 15:22:25 +0000 (UTC)
+X-Farcaster-Flow-ID: 03c68cf9-a36f-49f5-a600-2aaa8ed6dfea
+Received: from EX19D015EUB002.ant.amazon.com (10.252.51.123) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 24 Sep 2025 15:22:25 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB002.ant.amazon.com (10.252.51.123) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Wed, 24 Sep 2025 15:22:24 +0000
+Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
+ EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
+ 15.02.2562.020; Wed, 24 Sep 2025 15:22:24 +0000
+From: "Roy, Patrick" <roypat@amazon.co.uk>
+CC: "Roy, Patrick" <roypat@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org"
+	<maz@kernel.org>, "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
+	<will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "luto@kernel.org"
+	<luto@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>,
+	"willy@infradead.org" <willy@infradead.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "david@redhat.com" <david@redhat.com>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com"
+	<surenb@google.com>, "mhocko@suse.com" <mhocko@suse.com>, "song@kernel.org"
+	<song@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org"
+	<ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
+	<martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "kpsingh@kernel.org"
+	<kpsingh@kernel.org>, "sdf@fomichev.me" <sdf@fomichev.me>,
+	"haoluo@google.com" <haoluo@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "peterx@redhat.com"
+	<peterx@redhat.com>, "jannh@google.com" <jannh@google.com>,
+	"pfalcato@suse.de" <pfalcato@suse.de>, "shuah@kernel.org" <shuah@kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "Cali,
+ Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "derekmn@amazon.co.uk"
+	<derekmn@amazon.co.uk>, "tabba@google.com" <tabba@google.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>
+Subject: [PATCH v7 04/12] KVM: guest_memfd: Add stub for
+ kvm_arch_gmem_invalidate
+Thread-Topic: [PATCH v7 04/12] KVM: guest_memfd: Add stub for
+ kvm_arch_gmem_invalidate
+Thread-Index: AQHcLWcH60RhAO+AlEuiH93VYclyIg==
+Date: Wed, 24 Sep 2025 15:22:24 +0000
+Message-ID: <20250924152214.7292-1-roypat@amazon.co.uk>
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+In-Reply-To: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827100959.83023-1-cuiyunhui@bytedance.com>
- <20250827100959.83023-2-cuiyunhui@bytedance.com> <CAD=FV=WiZ5=4Ck3G2gme=ey6uYQhi-3Wo32DpLj9P53wxGCojw@mail.gmail.com>
- <CAEEQ3wnHzL6KVaW=RAkoMNSoM+HW11n=5miFwkw7=LQw+375Gw@mail.gmail.com>
-In-Reply-To: <CAEEQ3wnHzL6KVaW=RAkoMNSoM+HW11n=5miFwkw7=LQw+375Gw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 24 Sep 2025 08:22:21 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XYGmayve1ujv9oqRrJaq-D6g7pRygvQf31WfEMsT3g8Q@mail.gmail.com>
-X-Gm-Features: AS18NWDf2q3VkrTezxWiqMq5MaW03lcJwh8tH3BwlSFCZCG9Jd79C5JfcXHF2sY
-Message-ID: <CAD=FV=XYGmayve1ujv9oqRrJaq-D6g7pRygvQf31WfEMsT3g8Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 1/2] watchdog: refactor watchdog_hld functionality
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, atish.patra@linux.dev, anup@brainfault.org, will@kernel.org, 
-	mark.rutland@arm.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, catalin.marinas@arm.com, 
-	masahiroy@kernel.org, suzuki.poulose@arm.com, maz@kernel.org, 
-	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, mingo@kernel.org, 
-	lihuafei1@huawei.com, akpm@linux-foundation.org, jpoimboe@kernel.org, 
-	rppt@kernel.org, kees@kernel.org, thomas.weissschuh@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Sep 23, 2025 at 7:41=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.com=
-> wrote:
->
-> Hi Doug,
->
-> On Sat, Aug 30, 2025 at 5:34=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
-> >
-> > Hi,
-> >
-> > On Wed, Aug 27, 2025 at 3:10=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance=
-.com> wrote:
-> > >
-> > > Move watchdog_hld.c to kernel/, and rename arm_pmu_irq_is_nmi()
-> > > to arch_pmu_irq_is_nmi() for cross-arch reusability.
-> > >
-> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > ---
-> > >  arch/arm64/kernel/Makefile                   | 1 -
-> > >  drivers/perf/arm_pmu.c                       | 2 +-
-> > >  include/linux/nmi.h                          | 1 +
-> > >  include/linux/perf/arm_pmu.h                 | 2 --
-> > >  kernel/Makefile                              | 2 +-
-> > >  {arch/arm64/kernel =3D> kernel}/watchdog_hld.c | 8 ++++++--
-> > >  6 files changed, 9 insertions(+), 7 deletions(-)
-> > >  rename {arch/arm64/kernel =3D> kernel}/watchdog_hld.c (97%)
-> >
-> > I'm not a huge fan of the perf hardlockup detector and IMO we should
-> > maybe just delete it. Thus spreading it to support a new architecture
-> > isn't my favorite thing to do. Can't you use the buddy hardlockup
-> > detector?
-> >
-> > That being said, I did a quick look at your patch. I'm pretty sure you
-> > can't just move the arm64 "watchdog_hld.c" to be generic. Won't
-> > hw_nmi_get_sample_period() conflict with everyone else's (x86 and
-> > powerpc)?
->
-> After discussing whether to remove watchdog perf, it still seems
-> necessary to keep advancing with it. For the code, we just need to
-> decorate hw_nmi_get_sample_period() with __weak, right?
-
-That would probably work, but IMO you should make sure you can figure
-out how to at least compile the x86/powerpc kernels to confirm.
-
--Doug
+Add a no-op stub for kvm_arch_gmem_invalidate if=0A=
+CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=3Dn. This allows defining=0A=
+kvm_gmem_free_folio without ifdef-ery, which allows more cleanly using=0A=
+guest_memfd's free_folio callback for non-arch-invalidation related=0A=
+code.=0A=
+=0A=
+Signed-off-by: Patrick Roy <roypat@amazon.co.uk>=0A=
+---=0A=
+ include/linux/kvm_host.h | 2 ++=0A=
+ virt/kvm/guest_memfd.c   | 4 ----=0A=
+ 2 files changed, 2 insertions(+), 4 deletions(-)=0A=
+=0A=
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h=0A=
+index 8b47891adca1..1d0585616aa3 100644=0A=
+--- a/include/linux/kvm_host.h=0A=
++++ b/include/linux/kvm_host.h=0A=
+@@ -2573,6 +2573,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t gfn, vo=
+id __user *src, long npages=0A=
+ =0A=
+ #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
+ void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end);=0A=
++#else=0A=
++static inline void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end=
+) { }=0A=
+ #endif=0A=
+ =0A=
+ #ifdef CONFIG_KVM_GENERIC_PRE_FAULT_MEMORY=0A=
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c=0A=
+index 08a6bc7d25b6..55b8d739779f 100644=0A=
+--- a/virt/kvm/guest_memfd.c=0A=
++++ b/virt/kvm/guest_memfd.c=0A=
+@@ -429,7 +429,6 @@ static int kvm_gmem_error_folio(struct address_space *m=
+apping, struct folio *fol=0A=
+ 	return MF_DELAYED;=0A=
+ }=0A=
+ =0A=
+-#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
+ static void kvm_gmem_free_folio(struct folio *folio)=0A=
+ {=0A=
+ 	struct page *page =3D folio_page(folio, 0);=0A=
+@@ -438,15 +437,12 @@ static void kvm_gmem_free_folio(struct folio *folio)=
+=0A=
+ =0A=
+ 	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));=0A=
+ }=0A=
+-#endif=0A=
+ =0A=
+ static const struct address_space_operations kvm_gmem_aops =3D {=0A=
+ 	.dirty_folio =3D noop_dirty_folio,=0A=
+ 	.migrate_folio	=3D kvm_gmem_migrate_folio,=0A=
+ 	.error_remove_folio =3D kvm_gmem_error_folio,=0A=
+-#ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE=0A=
+ 	.free_folio =3D kvm_gmem_free_folio,=0A=
+-#endif=0A=
+ };=0A=
+ =0A=
+ static int kvm_gmem_setattr(struct mnt_idmap *idmap, struct dentry *dentry=
+,=0A=
+-- =0A=
+2.51.0=0A=
+=0A=
 
