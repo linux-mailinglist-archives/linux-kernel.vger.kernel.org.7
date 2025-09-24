@@ -1,207 +1,106 @@
-Return-Path: <linux-kernel+bounces-830470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617B2B99BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D862B99B2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007D51B24925
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86A73255E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F9E2D5940;
-	Wed, 24 Sep 2025 12:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIl/oEgj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C712FF67C;
+	Wed, 24 Sep 2025 11:58:45 +0000 (UTC)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAC41F428C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69F82FF16E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758715386; cv=none; b=DU282HAZOW4PsRgSJwYpTeNubUJ2Ka00vEHwfX0Y4FndWeoCWkwQVCf5vACdYF5WZhcJoFCxdrKIKiuO612e98yXGV5AD8Ys+pF5VV4GtC1TuGqpVf2pvSttkGp+C0EtnsliW+4NI8QKnR8l5IllMt5dKOC/f1ZpoH1ck8OkeKo=
+	t=1758715124; cv=none; b=aZ8myM8ExrkbB/ticFKJOif+D3TUHVRCfGNLkwjfa20yciF4Fz59UjTiKGWREpKjC+nUhZSJFOV1v88l9I37WpRQo02k8gd+uwgnCRTuhZOm7VtamIA5pUScuDjQDHJtEBnLUaG7aLRiLf3+1FZs55iuM5MPDQ6cDn0PPutC5jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758715386; c=relaxed/simple;
-	bh=+B+OUhZLRp5+DRENRW7wYa36d4OKd15N5WpwYCavEfY=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=Qk5+wrzZX3wkTOJT8yPVvEln4CKmKjzsUs4Pq4WPUPfhPeLOCqodbe8xlEf/5Zi367gl4HKWQirXUJEGLFRjuRxXAik7AGXDZ2IcWI1NVxNJ7XO/XI8umL7H2ELpU5FxrylhmOzl8EoXkEPohraIvIsObLEmeebA0P9yq2phn4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIl/oEgj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F62C4CEE7;
-	Wed, 24 Sep 2025 12:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758715385;
-	bh=+B+OUhZLRp5+DRENRW7wYa36d4OKd15N5WpwYCavEfY=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=GIl/oEgjiQWlSVEcLI/9NArayrrZAoMUU3Z+tIkjUX/s4WYgLvYf0D4iE4xhIdp2b
-	 kA5I0Xw+i8UyJPgVwnsakxFoDYtC68D0VxqenNPz4YwZL1RWHjpH4zCR/QkaFiCJdQ
-	 SWY7jKRQMHeIDDjxyMkhuuN39oa9sWFC+UYBLXK2PfSVBLJcEqQaOr6Tke6Tq/ySFf
-	 5+ELWbvm06BPolc29fw1B+qC2Gm9Muha8egxrA5YYn0nhX3GUXRJb8viL+MYJ5PS7G
-	 kFR4aNOj6mIWKK/4cIE1xicxOS9VffzOlZ9tmp+7c3Q95uQ5Q+AcySpJq34AHB6z4A
-	 niknm7OEMYSzA==
-Content-Type: multipart/signed;
- boundary=ffb5be01501268f325e693a8443cb813f8a298cbd0b29ab9e4f70b750bdd;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 24 Sep 2025 13:57:34 +0200
-Message-Id: <DD10GE4EOCD7.CPTN7198QFUV@kernel.org>
-Subject: Re: [PATCH 2/2] mtd: spi-nor: macronix: use RDCR opcode 0x15
-Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Pratyush Yadav"
- <pratyush@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Richard Weinberger" <richard@nod.at>, "Vignesh Raghavendra"
- <vigneshr@ti.com>, "Boris Brezillon" <bbrezillon@kernel.org>,
- <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <chengminglin@mxic.com.tw>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Maarten Zanders" <maarten@zanders.be>
-X-Mailer: aerc 0.16.0
-References: <20250922155635.749975-1-maarten@zanders.be>
- <20250922155635.749975-3-maarten@zanders.be>
- <DD08QRGQSU2G.1GB9CNQJV82CW@kernel.org>
- <CAPB_pELazUPccKa72_m7vb80Z7wLRO+PpgfeY-afDHSgg4eVNg@mail.gmail.com>
-In-Reply-To: <CAPB_pELazUPccKa72_m7vb80Z7wLRO+PpgfeY-afDHSgg4eVNg@mail.gmail.com>
+	s=arc-20240116; t=1758715124; c=relaxed/simple;
+	bh=CH80Zg8QJziib3a9s+6lE/c7RM05j9no03yn3eyIRBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DZUgl8wgbe+VoHt6OnVSfmAb6ETyhgy+l2bd7jCOU1k/ddpV2Z6hBfkzgWDe+rutVIRlp+E6dkX6HVV/AWHf3ruhjoMJALreQV37wJIHVLoyuDWJToK2UOamTFA0k2zgXGpVY44K1MU9SVIHWhR9mRtcCuBegENu+O6lWgt8VnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-54bc08ef45dso965899e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:58:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758715118; x=1759319918;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1F+3NjRjW7oCcKmojh3L12WB2Mn5ermgaswG3WtQQkE=;
+        b=lIDg99M9SDQB5Ua/xkzhCmgNCqjllFw5jzvLrVmKan2o6k6FBpmQeS2HqfGOxdBTkn
+         WTA4cQayXt9c8D9KlrO/4oA8fSAB5Yb+HhTINaCrt0hkXo8nEFtqZWX5XUXtnNRaom6x
+         +CWtxxlt6meVYgD+7A0IxVSpC0jTehj0aswYhbWyJ3xWdkhljqU3wuzUMNPqeFOCp6A0
+         U+OryKH+apjwv5hkTPMgV8XtoSwBOhUwJWKyWfHVGmCsuiTZ/Az1mecFA6UHrSpD8OBI
+         sIAAevb5A+Ge3S9lSUFBs6n8Mvch0VQcQtuGRSuZLNgjQ7QQsqPOlioEoq0VkJYDUc+x
+         mciw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgynlQSmVDUdvrZHJ5Tqi8ddiXNup+4ypLLu374Woqb5cEZqMN6QCSm8fHan+RoY8vueVLSEiLV/1/81A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFqiD25bPCQYcFf4WwzcxXYNgwMBIiyoKAG6Goh6l6UCr+uuz3
+	qKaEjCGF7pPgZCawHcC91cbheCaL/CIp/r3KhuMsCp08IPg3WpcirGIe+CJ9enz4
+X-Gm-Gg: ASbGncv1yplZrkTuso+rF829xC2V6pfAFJiEmkYg3NtgX7UNUxUWX3QfkcrsQTcK7W8
+	K/r8IXb/OeC7zNgcR6jsnyJNu55B23GdCEYq31u7FqubSDnqv5bkhZbCoiAVuuMdPFd8mFXJgMP
+	0MyTyai6d4KVEPaZVFUbxhqOYuzVm86+cnJULSIGfnS8kJV45hdOlXHUEpUhNeyIOyzQp5teXOz
+	6UJDtL9rU2l9McezKVxZo5IwBJUT4g4bnsEYFp6rqx0PRDlrjEg6OyMcrwcgHRl+nuesFNp7Unp
+	G00L9SRNW+jvuaoY5V8mxuPdjpHb4oGbbjP4LEZHIYZhv02Z9DKTSPx/QTrVUWemo1o2f4Ylwcy
+	Lh/Lt8Nc7Nd0RXzkC9eIWD7jdPG+dsybkVGPyy9QGpd7CCmt6XJfUJt3CYVSc
+X-Google-Smtp-Source: AGHT+IGzfKbVkZfZ6cqCX7wMhAlEVGzBR+VyoYvv3ZDU+sEsbU5jtJ/qXSbEh1HhElcNGKPs8+MKIA==
+X-Received: by 2002:a05:6122:1daa:b0:544:9f73:9b46 with SMTP id 71dfb90a1353d-54bcb1c1485mr2154125e0c.16.1758715118457;
+        Wed, 24 Sep 2025 04:58:38 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54a91edb1f0sm2725836e0c.10.2025.09.24.04.58.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 04:58:38 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8e3eaa30c71so5681356241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:58:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVz0nK9OBV5MbEYNAPIqXbTIhBB2fsBV1JUCdBiNYvPk7wA+IL5ufFhYgeG1BcCZBSpUNmF1Gysve4ixB0=@vger.kernel.org
+X-Received: by 2002:a05:6102:32d0:b0:515:a84d:45a8 with SMTP id
+ ada2fe7eead31-5a5800da2bemr2283926137.20.1758715117607; Wed, 24 Sep 2025
+ 04:58:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250923174951.1136259-1-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20250923174951.1136259-1-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 24 Sep 2025 13:58:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVdoJsr_zopj511gx3Gb8e3NmLyG4ge1ReZJG9A2SOXew@mail.gmail.com>
+X-Gm-Features: AS18NWCEqlWzRSEZwc-etvpzN2cuJ6XqdlAjQdzvmM1IviyM4O9XNmvx6ad4ciE
+Message-ID: <CAMuHMdVdoJsr_zopj511gx3Gb8e3NmLyG4ge1ReZJG9A2SOXew@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: remove extra semicolons
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---ffb5be01501268f325e693a8443cb813f8a298cbd0b29ab9e4f70b750bdd
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi Maarten, Hi Cheng,
-
-On Wed Sep 24, 2025 at 11:00 AM CEST, Maarten Zanders wrote:
-> > Why isn't that also true for this device? It supports SFDP. Does it
-> > have a wrong value there?
+On Tue, 23 Sept 2025 at 19:50, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> Semicolons after end of function braces are unnecessary, remove them.
 >
-> You're right. I started working on this issue in an older kernel and
-> didn't check the full error path again on the most recent version. I
-> noted that the CR opcode was still wrong and went ahead forward
-> porting my patches without checking the erroneous behavior in the
-> latest kernel. My bad!
->
-> My particular part (MX25L12833F) has been working (by doing 8 bit SR
-> writes) since 947c86e481a0 ("mtd: spi-nor: macronix: Drop the
-> redundant flash info fields", 2025-04-07). This ensures that SFDP data
-> is read and behavior after that is OK. Before that commit, the SFDP
-> data wouldn't be read because the .size was filled in (and before that
-> because of .no_sfdp_flags). That in turn triggered the 16 bit writes.
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-A missing size only *mandates* a configuration by SFDP. But that's
-not true the other way around. If there is a size, SFDP might still
-be evaluated and will overwrite any static configuration. But for
-your flash, that's not the case, because of legacy behavior this is
-only done for flashes which are multi i/o, see
-spi_nor_init_params_deprecated(). Sigh. What a mess.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.19.
 
-But in any case, commit 947c86e481a0 ("mtd: spi-nor: macronix: Drop the
-redundant flash info fields") is clearly wrong as it will drop
-support for older flashes which doesn't feature SFDP. Cheng can you
-look into that please?
+Gr{oetje,eeting}s,
 
-> > But I'm also not convinced that we should fix it that way. I just
-> > had a look at a random macronix flash MX25L12805D and it doesn't
-> > have that opcode. Thus, just adding that to all the macronix flashes
-> > doesn't make much sense. But it also doesn't seem to have a WRSR
-> > command that takes 16bits.. and the core unconditonally set
-> > SNOR_F_HAS_16BIT_SR. Hum.
->
-> Yes. That part (MX25L12805D) has the same ID code whilst it is not
-> supporting SFDP, RDCR or 16 bit SR writes (according to the
-> datasheet).
-> With the current flash info & logic in core.c, it will no longer work
-> at all as spi_nor_parse_sfdp() fails.
+                        Geert
 
-Yes! I fully agree.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Consider a different example: 8M devices MX25L6433F, MX25L6436F and
-> MX25L6473F. The ID for these is 0xC22017. Flash info for this contains
-> a .size field (probably because of the legacy MX25L6405D) so SFDP will
-> not be parsed and we're falling back on the defaults - so it will do
-> 16 bit SR writes. CR will get corrupted due to wrong CR read opcode.
-
-Yes, but again not because of the populated .size but because it
-doesn't have any multi i/o flags set.
-
-> So I believe this first problem boils down to the same ID representing
-> both flashes with and without SFDP. If we want to keep supporting the
-> old non-SFDP devices, the .size should be filled in for those ID's. Or
-> we drop support for them altogether and make SFDP a hard requirement
-> (solving the other issues in one go). But it should be consistent
-> across the different sizes.
-
-Honestly, Macronix is know for duplicating flash id with flashes
-incompatible with each other. I have mixed feelings about reverting
-the commit mentioned above. On one hand, it takes the very easy way
-to just brush off support for older flashes without even mentioning
-it. On the other hand, it seems that only Guenter Roeck noticed.
-
-> > So maybe just clear the SNOR_F_HAS_16BIT_SR or add SNOR_F_NO_READ_CR
-> > for the macronix flashes by default as a fix. Not sure what's better
-> > here.
->
-> SNOR_F_NO_READ_CR doesn't help: this will write all 0's to the CR in a
-> 16 bit SR write, which is not the default state of some parts
-> mentioned earlier.
-
-Mh? You've said:
-
-  Other Macronix parts avoid this issue because their SFDP data
-  specifies that CR is not read (BFPT_DWORD15_QER_SR2_BIT1_NO_RD),
-  and the driver assumes CR defaults to all zeroes which matches the
-  hardware register.
-
-Also isn't that the same behavior as with the SFDP? But I agree,
-that if the clearing the SNOR_F_HAS_16BIT_SR is probably better.
-
-> Clearing SNOR_F_HAS_16BIT_SR could indeed be a solution for letting
-> these parts work properly in this non-sfdp mode. But we probably
-> shouldn't do it for *all* Macronix flashes?
-
-Well as I said it's a mess right now. Moving forward we should
-probably have a static configuration and try to parse via SFDP even
-on non-SFDP flashes. Pratyush, any opinions?
-
->
-> > Then on top of that you might add the RDCR opcode, although
-> > I'm not sure for what it is used then.
->
-> There wouldn't be a real use until someone starts actually
-> implementing the features in the Macronix CR (like top/bottom SWP). Or
-> untill someone else is changing SNOR_F_HAS_16BIT_SR logic due to
-> additional SFDP/BFPT parsing. Which I still consider a risk due to the
-> weak link.
->
-> > > Fixes: 10526d85e4c6 ("mtd: spi-nor: Move Macronix bits out of core.c"=
-)
-> >
-> > I doubt that this is the correct Fixes tag as this only moves code
-> > around.
->
-> Essentially, I meant 'since the beginning of macronix introduction'.
-> In such a case, should we dig further through file renames & stale
-> LTS's?
-
-Probably, the patches won't be backported automatically anyway
-because of the conflicts. But it might be a good argument to have a
-(manual) backported fix.
-
--michael
-
---ffb5be01501268f325e693a8443cb813f8a298cbd0b29ab9e4f70b750bdd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaNPcrhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jxPgGAyj2fme+/9AWLihM5hMd39RF55aKY78Xs
-JiQeGZNLHUqO6L7ok3y4ItkGMcXvPe3GAYDTFH6pCXSrAFcmDtjIdP0NAfYKfQUB
-g3kxNYwgwIm9jK0jDYBNOt0Ip6SxHfkOwRg=
-=Bv9D
------END PGP SIGNATURE-----
-
---ffb5be01501268f325e693a8443cb813f8a298cbd0b29ab9e4f70b750bdd--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
