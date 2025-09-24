@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-831298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4D6B9C4D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6E6B9C4D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 23:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B017AA59
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3540E17CF6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 21:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1692528488A;
-	Wed, 24 Sep 2025 21:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B6525B1CE;
+	Wed, 24 Sep 2025 21:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lxv8VUY/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="H1LgXzaN"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286C625484D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800C925484D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758750538; cv=none; b=W+2BXKKKubTNqjzCbFNyU+un1HFBCeW4S37Zg8YGoBit29VPYcU6DpafFoD/ppais5SixpZMy7vDvPFCibtku/Rx7MDDucxP61eo9+qP4yJ6se9AZu9tCVaKVGt/pDWNe4bH0v7gxoRc2Pw9W5z22wgAq89nQYILRnzrPVfCtuw=
+	t=1758750525; cv=none; b=EKReYCBJNLSgyNxeT9WchR2xMaW/V2hwYLV6XhBh9Gj5Za/ntMyFRKq6RDypP7YEzGTOsD05fH+WZBFpfcD63LVMsWkgY8NZ4gqJMbR+/ez1Hs22rl3NqeGovvT8mRA3cti/O2bWManGU9JajBf/r6rEJHBLAnEWy+1yYxXhYyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758750538; c=relaxed/simple;
-	bh=LwHAJMWEWezja30W7awpKO7lKGm9NbfVkdhRpvtnsiU=;
+	s=arc-20240116; t=1758750525; c=relaxed/simple;
+	bh=aE05OVLTPmqhXmuWSJP7DGx8docC8xqiHGoDzUsPDyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmFlKjx/uKv1SkfmG3f/hywypCjQUkyCONO2vemUsuP+tH/7brlcqf1gqMm2V+5P08yGMmkjDldYboZxeioLJWZIT3k8XFCwK32f1L7PpG/De53t/r7XE3L2rKhdgxWgzYi6Zt4FPkW20HV/iHwcwXwUMTkHkT6fjXYr7/3IvaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lxv8VUY/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A77F615E9;
-	Wed, 24 Sep 2025 23:47:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758750449;
-	bh=LwHAJMWEWezja30W7awpKO7lKGm9NbfVkdhRpvtnsiU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lxv8VUY/RVeZSuXBzGOE7RYuGxIfSOa14TPaHMg0+44v8VzcMgR5Oe4zi3+naWfC5
-	 RWwmec+bZnl4gBDBEhT/582QZQdokuJBInJRMdV/wNvY+vPJAuVA91NT/b+8vZbaw6
-	 hj5ZF5GWItdByQ+16ZYXPAamHySHr4rx2aQxLP6Q=
-Date: Thu, 25 Sep 2025 00:48:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Riesch <michael.riesch@collabora.com>,
-	Marek Vasut <marek.vasut@mailbox.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH] drm/panel: sitronix-st7789v: fix sync flags for
- t28cp45tn89
-Message-ID: <20250924214820.GA24727@pendragon.ideasonboard.com>
-References: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbu5WUn1VCT6WAjbStc4veI1fthfNGPGTauPjQiT7JfqhK4bh/rvEuXCPaQJNYG+P2AWr9MgXJBdJC68O8j2nrJj4hqWU1YNVVJeHq2dcwFXJWOXmA+3i8EvTXYHzX58Ct6v3QLExmQaMU0qdMymcCzM+LFckxxYnwGIiyQ+itA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=H1LgXzaN; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Sd+w
+	mIZ22PON20TAEBc1B2ghCmV0byKiM0bDhr9fIoA=; b=H1LgXzaN0Gla79rJu83C
+	1ULDX42H6uWXMkzrD2+evEaZykaKTEv2tl/+33dqdWOygqY7J42e9/kZViV0hBbk
+	C1/7Y0v5eE8l2udX0J+owfxIcmepS1ipdPfDVLNoQXipYvsDH4dQ8tqnoLEtwViU
+	dhIP1ODk6hCdKywo72ON0SDarPx/GmsR+cc58GJDdLRanS3c8RKJfnkRZytcOpHy
+	ydkiv6Nif87GaH5GeZWXndg1AQRXus+wwztArU5tXSeoq86oANz/J4IG7JbYlH14
+	5Te3lLG4qwHpH2geyPmsO/PuqIk2H0Znj9NmdMly1R8ASXb0O5CWms3X2l+SOdPq
+	VA==
+Received: (qmail 1627587 invoked from network); 24 Sep 2025 23:48:41 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Sep 2025 23:48:41 +0200
+X-UD-Smtp-Session: l3s3148p1@UXkNBJM/VLAujntL
+Date: Wed, 24 Sep 2025 23:48:40 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 8/8] ARM: dts: r9a06g032: Add support for GPIO
+ interrupts
+Message-ID: <aNRnOFTvaThW-CJE@shikoro>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+ <20250922152640.154092-9-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oA4k4Hyef5iRiZPB"
 Content-Disposition: inline
-In-Reply-To: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
+In-Reply-To: <20250922152640.154092-9-herve.codina@bootlin.com>
 
-On Wed, Sep 24, 2025 at 11:46:30PM +0200, Sebastian Reichel wrote:
-> From: Sebastian Reichel <sebastian.reichel@collabora.com>
-> 
-> I planned to set the polarity of horizontal and vertical sync, but
-> accidentally described vertical sync twice with different polarity
-> instead.
-> 
-> Note, that there is no functional change, because the driver only
-> makes use of DRM_MODE_FLAG_P[HV]SYNC to divert from the default
-> active-low polarity.
-> 
-> Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Closes: https://lore.kernel.org/all/20250923132616.GH20765@pendragon.ideasonboard.com/
-> Fixes: a411558cc143 ("drm/panel: sitronix-st7789v: add Inanbo T28CP45TN89 support")
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+--oA4k4Hyef5iRiZPB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> ---
->  drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> index 04d91929eedda092b966b8cffdef5b267748f190..dedf0a390a88dd45a8179e2d22e872128c87cfda 100644
-> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> @@ -261,7 +261,7 @@ static const struct drm_display_mode t28cp45tn89_mode = {
->  	.vtotal = 320 + 8 + 4 + 4,
->  	.width_mm = 43,
->  	.height_mm = 57,
-> -	.flags = DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC,
-> +	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_PVSYNC,
->  };
->  
->  static const struct drm_display_mode et028013dma_mode = {
-> 
-> ---
-> base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
-> change-id: 20250924-t28cp45tn89-fix-0931500ee88a
 
--- 
-Regards,
+> +			/*
+> +			 * interrupt-map has to be updated according to GPIO
+> +			 * usage. The src irq (0 field) has to be updated with
+> +			 * the needed GPIO interrupt number.
+> +			 * More items can be added (up to 8). Those items must
+> +			 * define one GIC interrupt line among 103 to 110.
+> +			 */
+> +			interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
 
-Laurent Pinchart
+Okay, so my main concern here was that we setup some "random" default
+mapping for each board. Which is not true because this node is disabled
+by default. So, maybe we could rephrase the paragraph like
+
+/*
+ * Example mapping entry. Board DTs need to overwrite 'interrupt-map'
+ * with their specific mapping. Check the irqmux binding documentation
+ * for details.
+ */
+
+? I will see if I can provide a useful board addition for the DB400
+boards...
+
+
+--oA4k4Hyef5iRiZPB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjUZzMACgkQFA3kzBSg
+KbZDWw/+LIaZhl2ByaLjrNPnnLEpJsF6SPa2bCt/qWEa+M+GcWNL1EEi4e1wQBiR
+17inwvsmdCWn89uISn7xnbZiSOwGleG0czZZuJ8C6cdJr5Fja8uyG6xmmDFrsry+
+3lvewd2LoyWjvpH4lgflQNgyEmdrX4eOAbCerjpWNj8VwVJoyR1M0ocgA6eYB7c9
+MFb8eZhFw1i94IPvu0quRllCTU4bLLR/V2EAGNtKIIgnDtTULA17Uy8/V0coLxVI
+bM+wa5LHu+AsK1cmmj6IMEtgS0Y85icRuasZKydP5GFcbKIlQjSACAi6LwMLOpJi
+AiODOhnW7O/VKEMfuxquz4vEjJq5EmBoNv8WvBfzuhKwUClRYAWVFet3nZDF5knj
+BbXyd+nxx95o1QhCikrCgUns2XgCcLQotv4aLkAhGdpWvw13yJEbcm2VpVgvXRJ7
+z0+SyP5ocEMFMZDPZkdEirj3yEwDIqWn3gxMkEFCvQ8fpZ+yU910A5Oapby0iKX5
+FCPHAW1bgi5udUpewhnavxzJuKCDP8H+89OrnZ5uRyHvoZrUOez56c+Fj81HZH2+
+bmGc9SJSCJNerb0o3VvMkygH5EEmqHtTtwVQl4p8iXNktH7c5efPUd2fJxvsZ0ew
+5VYePdwIK5f40wkupqLJLW7pE5KwgbHKY4tUF58HK3vWAeiy24w=
+=v8Q/
+-----END PGP SIGNATURE-----
+
+--oA4k4Hyef5iRiZPB--
 
