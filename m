@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-829854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0575BB980F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF6BB980FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 04:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F352A418C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4D92A7247
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 02:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361E121CA03;
-	Wed, 24 Sep 2025 02:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624D321C176;
+	Wed, 24 Sep 2025 02:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/0F5IW2"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="A5MwtSpk"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0022D21A420
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F86218AB4;
+	Wed, 24 Sep 2025 02:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758679870; cv=none; b=laePDfoq6AhIEh6TbUGg480IDwz2LdWAbFVnl+4XWb5BAsFcK73LTImzRKcBYQWkWhBTRU1kisVdPV2A7XwQG5uNQN7WBcPYrjmnPj9Cgcdcl/QjE58RVlq72y23FzjAtrOSaD966orT0vyFaw6uGs2/gm4slQgB1azCSosruBU=
+	t=1758680017; cv=none; b=WATMoYCEZqcHm6fq2KfPCK5w0MaxVYhQZyQu3KyUV36qNBZHzSbiUcu83EQXleh/ZwQrwocumhiGvPNKpc/DfON7G5XTSOIK1eoD7JEByWWOC/UmBnw6aR9ceYHxpjPDz0kk4brP3V86f+6OcitH/TFx5/r2+NBwEkEvBl1Dkt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758679870; c=relaxed/simple;
-	bh=OYiasxquy8Ze2zIJBLJFSCiZmNRsfanuS7kvIdTNk3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UxbzUPRKPyEg7wXtRK7bhOS+QDPZdlebmj9f6+hNv8HZ/nmhiB/csxEUWZTuLoFAF4B73sCQnl2SgFar1I3YE614udpav3tWx1YKFGftBRzMZLoqAfcrVYwLx/xob5PIZYN2qtKa0qi/EelkBTWrs0AbYZz0ZC+DZmHvX8bQVNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/0F5IW2; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso5224080b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 19:11:08 -0700 (PDT)
+	s=arc-20240116; t=1758680017; c=relaxed/simple;
+	bh=75gJs9kCB4GtmOyT/l1Wj0RBq7NK2ywXUcAlhD7QHDE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JPJk1Qeq3kMsHDZvQeYUpQ2QJrK99a3YnyyCQEeZxbuJqpIutEx36fnjITfXUViqA4i3KN95HuYdlM9Yae0t7dOQshj2DCqpO/XPAhf9B3EBBOahtzi2+w2EQeBmBFQn9aU87zyxwwDnagqxAazWVmolDFoRzXPSLdHFTdcyhsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=A5MwtSpk; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758679868; x=1759284668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=jp4tyt8gueRX0+NdIoVvSA3V+6xnYgJd59pm1XSI/N4=;
-        b=c/0F5IW29tYvc1Su84TjDWmLCHdK2cYqtVfsrKDA09RkwIfEjUTJY4/95hQGxUiOI5
-         7XA4+EKQ0ymhDN7WsfrfunZrg0OCNpmoQpOg7MEq9AI52+CAhQSXFkpVPc0d3BBfyS7b
-         LZZRj54xIGZ7u5v2KU1C3QaorYrajPAvgGDgW2+zAm6r2a+o+7BiMhda/TiYJGfEDABY
-         2k0GX+hQNG/t+ibDNGUxfdRxgz++e4EjaxrUv/jAJna918PDXWFSwGpO7dKckv0BgpDR
-         9llcpk8EyZWgmZbe1c1WBjZH+U71ZAveiqKMPJFO5d/7zPOuZkjMi3RNgL5rwXPu5CXL
-         lCog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758679868; x=1759284668;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jp4tyt8gueRX0+NdIoVvSA3V+6xnYgJd59pm1XSI/N4=;
-        b=cKe58l2cuzaZXIgIOc/WjEeEsQgNbYUWwDuq2ZH2cGVLaPV5Xh4f1o7QNBSmuIPsSq
-         NuC6Jr7kjsNgUZVFT6JgB3hou5jaAJUDINTaGaHNS7PC2jlTixJXNWQy/H20B0HgSf8s
-         23hqYL7Shz4EiA9Ffjpx+gh4UnX9LmFu/4Yd/8Lf0OrsVhPzfcdkDF9isGXJVcmM716P
-         sRj4lIFoFjRErE4frdFbTmn134v5sul7zHhiPN40LOA7vg/DU7ImVyMuDxehNo6LcXNZ
-         HXuL804GrJaiLj1CKV3Okf02A3sEJyhvrlZgVIHWkJPYZIBxrluidnkLAau/k4fCpS4A
-         6K3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUupaK6mAPcsNQ6Qko/rVM5CjgOtifBANehLHSKrtLswsT88Mj3xkzVQFDSJlNDgK5ahpkJ8GSFuwXVa2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkeCRKbGy5JEsOm/Gi7KDZcZuHCuVFfwBUhx0dVMUq27dGAV33
-	AzXIqq3W7cPcyQt9FmglVJwLvvwH4Nx4ovOfD+EzIi47oVqTlYQNMOWh
-X-Gm-Gg: ASbGncs4d26UrfrPeplqnb9scAgEc7LjwwngcO5+SHhlKDFrVVKy+43+ueYeaZxVvxR
-	cxSEOrckGj6Wv4jts9J6x+Q7oI5Z3tkHHBpu60L4JnIPt9WHvDwHJ0Jhg5L/rC1mkDm5jFYrSg6
-	4ruqqi4quDlHxOsBcaEJHAuNlHW4y1zQF3MrI8jaj7EdG5CznATBbQ21IBfNKJj/J6jNNnPaJNQ
-	VnNEnyBdS28mHWogHSu9ocvvLfSpZwXSj98zmw453x+z/NVVNWR+2U0yarZc29ezqvxWTJh4sb1
-	FHwK+aB8n4XIcLDNfq/2v9vEFecvfO+l+ong8jjF+hjxXib/D2OKAOis5mZ4WJJdvBXPH6BM3iA
-	8Ht1w/4hFwQo1tfTZsWEajdBpV55Jqhxuk/ow01VvIx0DIEobAA81TxTadztOjyC9H7qVLOM=
-X-Google-Smtp-Source: AGHT+IEdFXMgXTqkh1Xek0/P5pNvl6O05dXWKTzDiYECiFGYEuAs7Qzt3hnDwDnBc6w/OXNClh2Gug==
-X-Received: by 2002:a05:6a20:e291:b0:24d:6501:b49c with SMTP id adf61e73a8af0-2cff367b751mr6975746637.29.1758679868125;
-        Tue, 23 Sep 2025 19:11:08 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b554aa612e7sm7168822a12.8.2025.09.23.19.11.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Sep 2025 19:11:07 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <a97486df-9f15-4280-8cb3-d77f4cf223df@roeck-us.net>
-Date: Tue, 23 Sep 2025 19:11:05 -0700
+	d=codeconstruct.com.au; s=2022a; t=1758680013;
+	bh=B4+vMC3mMORtvsHhkWNQq4UX2Am1Y6Z4F6Rf3tApsxQ=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=A5MwtSpk99lhf+43cgkAKPPojgLx74pqY+r+UQSh4x/5AiKNOiHZgfCH2HNZ4xHL/
+	 PO4mbROfKEipns/AEsgGIC3OVbEwfj+7LkRhufn7AijYUfXbqTFgdS2/0HRr8m+l3n
+	 Fa9OOm0nJK+5zUEQmCfsOAC/CJ3YySS+tqc7M3xul4f9p9/9D2rdkXv0b/X68vX6sb
+	 8jNkuIzkI8J+3K/oQYMbUN4cOyFp1ifU89pCZ7b5fZKDYWg985Hxe1CB4wDowxEJj+
+	 FCxECcS1NSweh+r859CgR+ADCcGoLCRUaJKMqQF9pZo3kLAPqM81ihaVQyerjjbPmW
+	 PL7hsmRlFRX7g==
+Received: from [IPv6:2405:6e00:243d:a853:dbe5:4849:b82e:5665] (unknown [120.20.205.123])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E7AED647A7;
+	Wed, 24 Sep 2025 10:13:31 +0800 (AWST)
+Message-ID: <9990f63e533c538ca95c3a2bd3401d27f031c330.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 0/2] Add device tree for ASRock Rack ALTRAD8 BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rebecca Cran <rebecca@bsdio.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	 <joel@jms.id.au>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 24 Sep 2025 11:43:30 +0930
+In-Reply-To: <2cecaf0b-9fb4-49f9-a346-ea3f44627a15@bsdio.com>
+References: <20250917180428.810751-1-rebecca@bsdio.com>
+	 <dd660ce0388afb61e476f164335600f3fc2b1fb6.camel@codeconstruct.com.au>
+	 <2cecaf0b-9fb4-49f9-a346-ea3f44627a15@bsdio.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add support for Microchip EMC1812
-To: Jonathan Cameron <jic23@kernel.org>,
- Marius Cristea <marius.cristea@microchip.com>
-Cc: David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, jdelvare@suse.com,
- linux-hwmon@vger.kernel.org
-References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
- <20250920123340.1b1d03be@jic23-huawei>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250920123340.1b1d03be@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 9/20/25 04:33, Jonathan Cameron wrote:
-> On Wed, 17 Sep 2025 15:21:56 +0300
-> Marius Cristea <marius.cristea@microchip.com> wrote:
-> 
->> This is the iio driver for EMC1812/13/14/15/33 multichannel Low-Voltage
->> Remote Diode Sensor Family. The chips in the family have one internal
->> and different numbers of external channels, ranging from 1 (EMC1812) to
->> 4 channels (EMC1815).
->> Reading diodes in anti-parallel connection is supported by EMC1814, EMC1815
->> and EMC1833.
->>
->> Current version of driver does not support interrupts, events and data
->> buffering.
-> Hi Marius,
-> 
-> For a temperature monitoring device like this, the opening question is
-> always why not HWMON?
-> 
-> There are various reasons we have temp sensors in IIO but mostly they are not
-> described as being monitors and this one is.
-> 
-> IIO may well be the right choice for this part, but good to lay out your
-> reasoning and +CC the hwmon list and maintainers.  There is an emc1403
-> driver already in hwmon, so perhaps compare and contrast with that.
-> 
-> I've +CC Jean, Guenter and list to save sending a v2 just to do that.
-> 
+Hi Rebecca,
 
-At first glance it looks like the series is (mostly ?) register compatible
-to the chips supported by the emc1403 driver, so it should be straightforward
-to add support for the emc180x series to that driver.
+On Mon, 2025-09-22 at 14:47 -0600, Rebecca Cran wrote:
+> On 9/21/25 20:40, Andrew Jeffery wrote:
+>=20
+> > On Wed, 2025-09-17 at 12:04 -0600, Rebecca Cran wrote:
+> > > aspeed-bmc-asrock-altrad8.dts:578.16-581.6: Warning (unique_unit_addr=
+ess_if_enabled): /ahb/spi@1e630000/flash@0/partitions/code@400000: duplicat=
+e unit-address (also used in node /ahb/spi@1e630000/flash@0/partitions/tfa@=
+400000)
+> > It seems odd that the partitions intersect. Are the offsets correct? If
+> > they are, can you add comments to the DTS discussing what's going on
+> > there?
+> I'll delete the code partition. I added it to make it easier for my=20
+> script to flash both TF-A and UEFI areas at once.
 
-Guenter
+Okay, thanks.
 
+> >=20
+> > > aspeed-bmc-asrock-altrad8.dtb: gpio@1c (nxp,pca9557): '#address-cells=
+', '#size-cells', 'gpio@0', 'gpio@1', 'gpio@2', 'gpio@3', 'gpio@4', 'gpio@5=
+', 'gpio@6', 'gpio@7' do not match any of the regexes: '^(hog-[0-9]+|.+-hog=
+(-[0-9]+)?)$', '^pinctrl-[0-9]+$'
+> > > 	from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yam=
+l#
+> > This one needs fixing.
+>=20
+> I'm confused, because in the existing device tree files I'm only seeing=
+=20
+> 'hog' used in the &gpio node, while 'pca[0-9]+' is commonly used as the=
+=20
+> node names for pca95xx devices.
+
+The error above is referring to properties and sub-nodes of your
+nxp,pca9557 compatible node, rather than the name of the node itself.
+That said, node names are preferred to be generic (e.g. gpio@) rather
+than specific.
+
+>=20
+> Does the gpio-pca95xx.yaml file need to be updated?
+>=20
+
+It depends on what you're trying to achieve. At v6.17-rc1 no other
+devicetree in the kernel defines an nxp,pca9557 node as you have here
+with gpio@ subnodes, and neither does the gpio-pca95xx.yaml binding
+allow them. What caused you to add them?
+
+I expect what you need to do is remove those sub-nodes, along with
+#address-cells and #size-cells.
+
+Andrew
 
