@@ -1,176 +1,189 @@
-Return-Path: <linux-kernel+bounces-830769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6AEAB9A783
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DFAB9A923
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7035D161AD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6171B24261
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63AC30ACF7;
-	Wed, 24 Sep 2025 15:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I08/LofM"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB658462;
-	Wed, 24 Sep 2025 15:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B1930EF71;
+	Wed, 24 Sep 2025 15:20:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5EE30CDA6;
+	Wed, 24 Sep 2025 15:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726399; cv=none; b=EqfIz9iWG+S8zmYHvpEDYjQxXbu4PmO3vCMw6+6uzvTZlaav+uuN7WUXg3LDUCo8Oxm7RgvZzHFeR5nQwhvZWwgO0GO9TyIL9AsmnewqVgtr0+TPFOhExtLNs0Q4/RK+koFEoFrpLlm8IB6GSGUvhQwVj56MUYadQkHAlpZy57I=
+	t=1758727237; cv=none; b=Uddlmylhj0cJIkHWBvBKjm4wFHl9H5VxOeqrMjj1j6Imyhgjh4QOkliDj5D6wxS4dRKEEyme5yxH5dfug2nCw/IOAWTZ25uFzcbTlDMOa9ghN328DtDUn5b3QGkAId3xWP2bEg4AJnAK5rw7ihCOpM1F6NW8fRdyAmhX5byi5RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726399; c=relaxed/simple;
-	bh=lTo0mxD7UgzpTGzWkwz+NQb+tgBlMPnQN8ycWHq9SLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OVJZwc0Ri7Ck3TSMV+LU19ATDP3CmnsITYL8bo/P5XQ1y9KolKsx0ZXIcbgmKPTdoFk3CXPFEJdeNaiSx9m+4xRzx95FtrTUZ71rnoKg6tti2AO2uNsOPGxGw9/yqiy2UuAG7GBAKQDPa/ASeLWIlQcnRKCiOCRtGRSafZYpQTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I08/LofM; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58OF6PtQ1723564;
-	Wed, 24 Sep 2025 10:06:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758726385;
-	bh=C12jodyvOYQRYMZFpqYTb+c/4y9abagksNSdTyo4T44=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=I08/LofMj2RI/rOoDeTKdx4rSNujCNumeQYa3+g+1ITPPWqSZB7t6qNhnq8u4v0f3
-	 Y5H3Lg0h3Sp2xiNKlv3iIeSklhbwmfjLBmqMtmTr3fTIhd/1y5g+aa5c3yS/svqRRg
-	 6toQp4zOnV8xl6MJJaDVlkIQhUZpH0VJRewWNK7c=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58OF6PxL2521207
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 24 Sep 2025 10:06:25 -0500
-Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 24
- Sep 2025 10:06:25 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 24 Sep 2025 10:06:25 -0500
-Received: from [10.250.32.49] ([10.250.32.49])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58OF6O2G2203485;
-	Wed, 24 Sep 2025 10:06:24 -0500
-Message-ID: <76e12732-9a39-409d-aa60-44622fe42ec5@ti.com>
-Date: Wed, 24 Sep 2025 10:06:24 -0500
+	s=arc-20240116; t=1758727237; c=relaxed/simple;
+	bh=NUgMFd1DP4iApIqk7SLIwHxdIBK3tE7nt9mFkQcSPH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YE8WglqfqjyldUfd9+65UfvY1yOS14tH5n5Y9JpVIP8XqB5P36pvoUszaVp3L/XldtVe2rbKOcMlPfK1MTkwbJro2c3N2o9BAHm+UyWpzGfjAJQve+0Vjvj+9nLkF7X6hu13cr2V0JrlFq96cmU7rWD6gC+USwkvVLT8DW9BV1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cX0Z81XR9z9sVT;
+	Wed, 24 Sep 2025 17:07:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 7JBvIGokpC-x; Wed, 24 Sep 2025 17:07:12 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cX0Z80gXXz9sVR;
+	Wed, 24 Sep 2025 17:07:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 05FB98B768;
+	Wed, 24 Sep 2025 17:07:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id EeCTNJu2vLct; Wed, 24 Sep 2025 17:07:11 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B2BF38B763;
+	Wed, 24 Sep 2025 17:07:10 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v3] net: wan: framer: Add version sysfs attribute for the Lantiq PEF2256 framer
+Date: Wed, 24 Sep 2025 17:06:47 +0200
+Message-ID: <77a27941d6924b1009df0162ed9f0fa07ed6e431.1758726302.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance of
- decoder
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        "jackson.lee"
-	<jackson.lee@chipsnmedia.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
-        "bob.beckett@collabora.com" <bob.beckett@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lafley.kim"
-	<lafley.kim@chipsnmedia.com>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        Nas
- Chung <nas.chung@chipsnmedia.com>
-References: <20250922055255.116-1-jackson.lee@chipsnmedia.com>
- <20250922055255.116-5-jackson.lee@chipsnmedia.com>
- <1f59f00d-eff7-4c65-a504-227df0de75d2@ti.com>
- <d4b7cc51f1bd7fcf88066e8510f950ec90cfb5aa.camel@collabora.com>
- <PU4P216MB114923D47D5AD77D5D32D56FED1CA@PU4P216MB1149.KORP216.PROD.OUTLOOK.COM>
- <6eed102e2aa739e5026ee545a38ddacf09058bbb.camel@collabora.com>
-Content-Language: en-US
-From: Brandon Brnich <b-brnich@ti.com>
-In-Reply-To: <6eed102e2aa739e5026ee545a38ddacf09058bbb.camel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758726407; l=3835; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=NUgMFd1DP4iApIqk7SLIwHxdIBK3tE7nt9mFkQcSPH8=; b=w2Ex0uy0q9ZKCt7WkNFVTS7mpr1zxnBazlqSSHvD8KPCMlDk4Jkifqjn/R+uhGXp0s2AR9gEG ZiNdUB3EIQ0BCHEchCO7TeGUgJUg8EkPDlUkcTQ0bC+r4VTK2VWpdHC
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Nicolas and Jackson,
+Lantiq PEF2256 framer has some little differences in behaviour
+depending on its version.
 
-On 9/24/2025 8:20 AM, Nicolas Dufresne wrote:
-> Hi Jackson,
-> 
-> Le mercredi 24 septembre 2025 à 01:14 +0000, jackson.lee a écrit :
->> Hi Nicolas
->>
->>> -----Original Message-----
->>> From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->>> Sent: Tuesday, September 23, 2025 3:00 AM
->>> To: Brandon Brnich <b-brnich@ti.com>; jackson.lee
->>> <jackson.lee@chipsnmedia.com>; mchehab@kernel.org; hverkuil-
->>> cisco@xs4all.nl; bob.beckett@collabora.com
->>> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; lafley.kim
->>> <lafley.kim@chipsnmedia.com>; hverkuil@xs4all.nl; Nas Chung
->>> <nas.chung@chipsnmedia.com>
->>> Subject: Re: [PATCH v5 4/4] media: chips-media: wave5: Improve performance
->>> of decoder
->>>
->>> Hi Brandon,
->>>
->>> Le lundi 22 septembre 2025 à 12:32 -0500, Brandon Brnich a écrit :
->>>>> -	/*
->>>>> -	 * During a resolution change and while draining, the firmware
->>>>> may
->>>>> flush
->>>>> -	 * the reorder queue regardless of having a matching decoding
->>>>> operation
->>>>> -	 * pending. Only terminate the job if there are no more IRQ
->>>>> coming.
->>>>> -	 */
->>>>> -	wave5_vpu_dec_give_command(inst, DEC_GET_QUEUE_STATUS,
->>>>> &q_status);
->>>>> -	if (q_status.report_queue_count == 0 &&
->>>>> -	    (q_status.instance_queue_count == 0 ||
->>>>> dec_info.sequence_changed)) {
->>>>> -		dev_dbg(inst->dev->dev, "%s: finishing job.\n",
->>>>> __func__);
->>>>> -		pm_runtime_mark_last_busy(inst->dev->dev);
->>>>
->>>> Patch is failing to apply here to linux-next because these redundant
->>>> calls have already been removed[0].
->>>
->>> Which have not been merged back from the RC into media-committers/next,
->>> forcing to skip a cycle. Jackson, feel free to rebase on linux-next like
->>> Brandon suggest.
->>
->> Then should I make v6 patch series based on Linux-next ?
-> 
-> I've asked advises from the other maintainers, and the answer is no. Basing it
-> on our next branch for linux-media submission is the correct thing to do. Its
-> too late for this cycle, but be reassured we will improve our process in future
-> iterations to reduce the risk of this happening.
-> 
-> Feel free to send a rebased patch to Brandon, having more testing is always
-> good.
+Add a sysfs attribute to allow user applications to know the
+version.
 
-Sorry for the confusion here, I was unaware that the patches weren't 
-present in -next on linux-media tree. Typically I just do all my testing 
-on the linux-next branch. I will make sure to use linux-media in the future.
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v3:
+- Added documentation Documentation/ABI/testing/sysfs-driver-framer-pef2256
 
-No need to share the patch with me, I already rebased it to build and 
-start my own testing.
+v2: https://lore.kernel.org/all/2e01f4ed00d0c1475863ffa30bdc2503f330b688.1758089951.git.christophe.leroy@csgroup.eu
+- Split version_show() prototype to 80 chars
+- Make DEVICE_ATTR_RO(version) static
 
-Thanks,
-Brandon
+v1: https://lore.kernel.org/all/f9aaa89946f1417dc0a5e852702410453e816dbc.1757754689.git.christophe.leroy@csgroup.eu/
+---
+ .../ABI/testing/sysfs-driver-framer-pef2256   |  8 +++++++
+ drivers/net/wan/framer/pef2256/pef2256.c      | 24 +++++++++++++++----
+ 2 files changed, 27 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-framer-pef2256
 
-> 
-> cheers,
-> Nicolas
-> 
->>
->> Thanks
->> Jackson
->>
->>>
->>> regards,
->>
->>> Nicolas
+diff --git a/Documentation/ABI/testing/sysfs-driver-framer-pef2256 b/Documentation/ABI/testing/sysfs-driver-framer-pef2256
+new file mode 100644
+index 000000000000..ead1ae84ef2a
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-framer-pef2256
+@@ -0,0 +1,8 @@
++What:		/sys/bus/platform/devices/xxx/version
++Date:		Sep 2025
++Contact:	netdev@vger.kernel.org
++Description:	Reports the version of the PEF2256 framer
++
++		Access: Read
++
++		Valid values: Represented as string
+diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
+index 1e4c8e85d598..a2166b424428 100644
+--- a/drivers/net/wan/framer/pef2256/pef2256.c
++++ b/drivers/net/wan/framer/pef2256/pef2256.c
+@@ -37,6 +37,7 @@ struct pef2256 {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	enum pef2256_version version;
++	const char *version_txt;
+ 	struct clk *mclk;
+ 	struct clk *sclkr;
+ 	struct clk *sclkx;
+@@ -114,6 +115,16 @@ enum pef2256_version pef2256_get_version(struct pef2256 *pef2256)
+ }
+ EXPORT_SYMBOL_GPL(pef2256_get_version);
+ 
++static ssize_t version_show(struct device *dev, struct device_attribute *attr,
++			    char *buf)
++{
++	struct pef2256 *pef2256 = dev_get_drvdata(dev);
++
++	return sysfs_emit(buf, "%s\n", pef2256->version_txt);
++}
++
++static DEVICE_ATTR_RO(version);
++
+ enum pef2256_gcm_config_item {
+ 	PEF2256_GCM_CONFIG_1544000 = 0,
+ 	PEF2256_GCM_CONFIG_2048000,
+@@ -697,7 +708,6 @@ static int pef2256_probe(struct platform_device *pdev)
+ 	unsigned long sclkr_rate, sclkx_rate;
+ 	struct framer_provider *framer_provider;
+ 	struct pef2256 *pef2256;
+-	const char *version_txt;
+ 	void __iomem *iomem;
+ 	int ret;
+ 	int irq;
+@@ -763,18 +773,18 @@ static int pef2256_probe(struct platform_device *pdev)
+ 	pef2256->version = pef2256_get_version(pef2256);
+ 	switch (pef2256->version) {
+ 	case PEF2256_VERSION_1_2:
+-		version_txt = "1.2";
++		pef2256->version_txt = "1.2";
+ 		break;
+ 	case PEF2256_VERSION_2_1:
+-		version_txt = "2.1";
++		pef2256->version_txt = "2.1";
+ 		break;
+ 	case PEF2256_VERSION_2_2:
+-		version_txt = "2.2";
++		pef2256->version_txt = "2.2";
+ 		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+-	dev_info(pef2256->dev, "Version %s detected\n", version_txt);
++	dev_info(pef2256->dev, "Version %s detected\n", pef2256->version_txt);
+ 
+ 	ret = pef2556_of_parse(pef2256, np);
+ 	if (ret)
+@@ -835,6 +845,8 @@ static int pef2256_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	device_create_file(pef2256->dev, &dev_attr_version);
++
+ 	return 0;
+ }
+ 
+@@ -849,6 +861,8 @@ static void pef2256_remove(struct platform_device *pdev)
+ 	pef2256_write8(pef2256, PEF2256_IMR3, 0xff);
+ 	pef2256_write8(pef2256, PEF2256_IMR4, 0xff);
+ 	pef2256_write8(pef2256, PEF2256_IMR5, 0xff);
++
++	device_remove_file(pef2256->dev, &dev_attr_version);
+ }
+ 
+ static const struct of_device_id pef2256_id_table[] = {
+-- 
+2.49.0
 
 
