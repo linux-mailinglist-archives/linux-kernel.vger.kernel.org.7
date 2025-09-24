@@ -1,213 +1,133 @@
-Return-Path: <linux-kernel+bounces-830033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E94DB9884F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:24:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3770DB98858
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1627B19C7C59
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F393C2E3EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 07:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756592765E2;
-	Wed, 24 Sep 2025 07:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10D6274FE8;
+	Wed, 24 Sep 2025 07:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CligES47"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013032.outbound.protection.outlook.com [52.101.83.32])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xl00O5BZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cPHeNHtq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B196F277C87;
-	Wed, 24 Sep 2025 07:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758698658; cv=fail; b=fANirxVWF6ua40XPpNbQdHTuDuGkFeBCLiOpgsoqheQ2cJVAngG0FBkHal+av+Nf6cXImrPR/JHu4W7RdcB8JX0Z9B2wPhOGfPi6961hG4FY8sbSmaTrKnr3esPTnDsu5WaksSlWFnVUXusgRRqxxdoGZmlAgHaAl67xnZUl48w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758698658; c=relaxed/simple;
-	bh=UlaCrmPOng2Ex32GctbCL+S+SMwvOwg0PX3qpc4JhX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DX65mgpf8QWezf+OOb+Pv3VAfJDhNcpEzyBoCU02Wf0iq0R/+IgFoGH383aXAhmvlsJa1uniGliE/T4rGIuD62jBaXwqAhrIBQVNIxuudkspAFA5LBim6LsHEaHloOR7Yecotd2+dV/VbMMZKr8mtYArInkCQDO1pMxTxEPdORM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CligES47; arc=fail smtp.client-ip=52.101.83.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yQvDfZnL8x0fH5bYZT9mjgeqkc1gBr/wzl9ABp4nWKESWZx0oDvxNi9keRewap5mvAFUj/anSyF4MIHwcpIYohv1WBL6+FtKM1m1yX5sGRYopucihjQ+zdVT3K42i6EtD1zkgFs3pIzoRfKMp+7bK4IsyLySpb8oD+oX5Ahqap8AzyZ9kfCb73stYD3uksbiX49F59s+rHXshifzI9W5AdjVOmWmR7dLGKrtg8Y0iLYtKCDSY2/h32sqIhCwLLFr/bgmqDjM+BVEhg3HYeJGB5COOjbnS525+zqa7KSZCRhzq45hLUpthfP0ZStMl0Q4mPUQ4arde78RA0TySSZhJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xbj7KMFOecHJ2qDwJCN87Tph+T0NsVu1XNu/Fp76H+s=;
- b=CAeEdyf13r5oGK9UhNrRY/EFV4ok+JoiOSPxA/IlwswqSKTe5sF8sf1rccS61jsATo+8N2QWXNw8AMoZFPTtpAjWLhK//4vfp/g8akireLZn46B6Xrr15IGDgSDZvqMNe2tJRcAwpzOJs9PO90/ocYVs3yi6bcCLuynNn8YSpVEHXlelPVwKRM7CIe2UITTmObOJ1D4Rv3QI3n4lPt34GikU0gUlIEgm1CUiDSOa7m4d6DBDB9I4WcOl7cygC4qROcOH+uwVsNSmtaTJSdfLv9gtxIfm/eNcRbaCpWjeamHthZYP+UkrRzYyIYngVw6Qc6lUeoa4I494F4l2oihkeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xbj7KMFOecHJ2qDwJCN87Tph+T0NsVu1XNu/Fp76H+s=;
- b=CligES47uGwR3g9ZwhZGzNc3RM1gyQBabiBC9ksQbnHodoi9ck+7PnevOQ1I2ZA5+xUvAB73vgtgbfzdZJ5mnwFLveMQmlmDHOBk2D/eocYiYr3VIUWAiewhYUq4YTbYMCt3RsBMf6flh5f8iD1dbBm7lZOAUrrLQLULxs2g+SVKc6n328gRT7BMzvJ1wiois3sFEd3DngVicbTCqHUmGcDyrnLgWY3lD+iXQVd1B4dFPbFUa4WnpwObnsmqUDpJtBzWU1Qma+Iu0Hh1GfO+VlIV99ubYHja85+InZikgTlbQT9+9Twc5LokzwWK08FVqpcqZ7GEiYIuHrs/yQ/X4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19)
- by PAXPR04MB8271.eurprd04.prod.outlook.com (2603:10a6:102:1ca::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 07:24:12 +0000
-Received: from AS8PR04MB8833.eurprd04.prod.outlook.com
- ([fe80::209c:44e4:a205:8e86]) by AS8PR04MB8833.eurprd04.prod.outlook.com
- ([fe80::209c:44e4:a205:8e86%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 07:24:12 +0000
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: frank.li@nxp.com,
-	jingoohan1@gmail.com,
-	l.stach@pengutronix.de,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	stable@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v6 4/4] PCI: dwc: Don't return error when wait for link up in dw_pcie_resume_noirq()
-Date: Wed, 24 Sep 2025 15:23:24 +0800
-Message-Id: <20250924072324.3046687-5-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250924072324.3046687-1-hongxing.zhu@nxp.com>
-References: <20250924072324.3046687-1-hongxing.zhu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0019.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::12) To AS8PR04MB8833.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0417E2741A0;
+	Wed, 24 Sep 2025 07:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758698709; cv=none; b=JvOOKp4wmmamQ26MazY260XO3dUuau9trHQLiOMb4yMg9ACQCyq3DGm8eX4C98fMEbY+RqelW20B42hXuZdOGpiOwffRdM2/cZ6mhi/Xw7PmTkwDkb53526kLJoYgUNEmpzwe1wP9TPcEaGJpFsMULpT3xCBGgyheYHb4Pqo32Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758698709; c=relaxed/simple;
+	bh=3Xf53nHR/n97vlqvgNQnY/Qdii8msVG0oxEiJF655kc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=udBh5MOvnlDg3P4ye4IOOhZPXYS8YCm0NI4sUPDZhVi4q900FdoGr0grauUwN66V+pyD6Zf5raWypVSqUun6gHUiDmQzhE7m1YdRqc+u8Wq4IZ7y8ake++nhbckd/0l021GqXIOr9QibCDeVBHsMgH2TBWZHUQx+GwK+v6g3Anw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xl00O5BZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cPHeNHtq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 24 Sep 2025 07:24:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758698698;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7wkPNUQqz+2PeDx+vdg3F0rD/CUoqYG/jHjM1ol0eQ=;
+	b=xl00O5BZlqXOIJerJ7RDCGOaOEp0yP52rNV2L39nZ36w2PSTVjNR/ky/Mps+sJ2bY7FY3J
+	x9ZtWrVTvKJGS0v3NLSy/DA/BmuWdDTLCji6oeNxsPBKBraC+DqUZp6MXS7VdBnOiJlb80
+	Psz/QpyBJg3c9ISRMcW3XsY7FVUEA4kQJDMY52FJtdKic5GnmbiYi4vCjwYGIHO8wiYclz
+	wEuqGSva99JSk0EWXop1KBBdbfWj1oKJTw/c0/iS3nduv+WBV/DSRDtpA8II82enu3CTQX
+	2dxGWHoXlsm4RSEFhnsz5fffTfk4QUGJn0RFIxrsyIZPPC8+opl76ql6CGIyng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758698698;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7wkPNUQqz+2PeDx+vdg3F0rD/CUoqYG/jHjM1ol0eQ=;
+	b=cPHeNHtqGJlCEqd1c3GegDPoqKraT7v6IqEFWgqoejpodjVhlc1YHDgPOQv5EwH7EYWff0
+	DDdbQZM3Zd083oDg==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/urgent] futex: Use correct exit on failure from
+ futex_hash_allocate_default()
+Cc: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "Steven Rostedt (Google)" <rostedt@goodmis.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250918130945.-7SIRk8Z@linutronix.de>
+References: <20250918130945.-7SIRk8Z@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8833:EE_|PAXPR04MB8271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1fa8be6a-da01-4281-4515-08ddfb3b5bfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|52116014|7416014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YFus7Z3q7kv3DgusTzJEkXdQXH/sz6ke20+E5T6oKPbbFmK6NdIAnuAiMgRm?=
- =?us-ascii?Q?mmv0DP4rQ0QRqFd9uQS0lyZY+tBex1e9x2VR5OzoXaeut2QInLs0fgLIZRbI?=
- =?us-ascii?Q?qnUv04/Fh8qvWYrW6Kwlc8R1BuJqXSeQMpPsCl9jWaIE51QB/N5lsm4i9+h2?=
- =?us-ascii?Q?yKvPEiHbK5XmYyy+J4dli3zXg7jNaSrV2WuZRvHjPNFvmaPhTYa4x7wjJ+PP?=
- =?us-ascii?Q?L7wM8bUxIabR67OT0bPTFhf6X0Km9xLYPl8jqK6Ay4d+mg7YqI4mi0GU8RJR?=
- =?us-ascii?Q?3OIPgU0qPEvFuZgN+KkB1sywQ+o37mJyJIibyQVzMGfOGiuL55ZWALxiEH8j?=
- =?us-ascii?Q?/bVDPUgqwT+WzZj6WaQgXtuc3Mf00rDxULWMevLbRjixQqjimc/170GQHbz4?=
- =?us-ascii?Q?uPR+sM/IZd/omJ5v7xvPXcVvCXKjjH3NUT1zYlcR5QTcfFkZY+Fhx4jplG7/?=
- =?us-ascii?Q?5W9QPV1yvHMxdiLE2zE81HBDHLsy54SvJGYFESrbBgK7kiO98j2ShTSK7TMb?=
- =?us-ascii?Q?K4Zz+Dl13GuLhL4zahCmIEg1DnWE5I4asY5relp6oco/xN4ZIjKxwYeiDAiH?=
- =?us-ascii?Q?uyTdQ0Zg8yzYaCYH6PilDhGPfB0onO3B2wAXsCrNqT46wapxzXz7MbuD3RWc?=
- =?us-ascii?Q?i45proV4uhwYHJ0VyJwIVKr4N9qyrKBpmNuRjU17tr9EzOPLpLgFK/funoQk?=
- =?us-ascii?Q?mkq2jeMo/XFkTjSe2S+eKOeUIpMY0L46mGq+0/TmskoCN0MhgPpYI3xMVvok?=
- =?us-ascii?Q?KdFzmKfuARKkH8zAy8XGzNCQKT0NwiidVxdoRtC72ETFsPUDGT0Vipougdy3?=
- =?us-ascii?Q?7Z8P4/L5SI3JVT8SAUdquV2CEzZpe68ojbsYSqqmNXKDN0iWvEkgflRQK6d1?=
- =?us-ascii?Q?PrVQPFBMp76MNF+EB7nwkWMeD8zmvGw+0JDuFqN6pdZDshpAkwHb5WrU+gxd?=
- =?us-ascii?Q?3CZlBmuGT1y9qHqcN2wYgtNN9SQJp302rKw86h1PSs/5p4VuUlN8JDvUUoh1?=
- =?us-ascii?Q?lKHEnpJ0vO3Ff3k6CYovE5lcjXCIlU5zaK0B4NLsQsqcBYBeW0Zfz8mj8K7E?=
- =?us-ascii?Q?gyfQz7t3LrVCl0qv+VtwPTk0fQfDDOvnmwASEh0B29R4I1hmqDFElgLMXFv4?=
- =?us-ascii?Q?FpArumRtknJKslZ/nI2BLWgHv6RDB/FE8LtKvePK14ZqCOryc7wrTZL6eFKL?=
- =?us-ascii?Q?jKHi2im2A/LTX9Yfoi8EOOTbffJsgx5lH1OyujhWhszkzAYds9YzwVutUV3U?=
- =?us-ascii?Q?F/Qgq8KohLUKN+MLIWdIvqdPiXtFWzgCa+AdHpiX6qbQ9oHd5kESL50iCRcX?=
- =?us-ascii?Q?s54jNvVkGe+eP0VWiflW44pGtKazubkRlN0vA2tgxkH/rzxiLkDSoSmbcptW?=
- =?us-ascii?Q?T8Za1MQ7Glbjy+j4nSg6GWChCVD6FZ8q+KuRrvSYoaIkKwuH1FwjM1DZ2huA?=
- =?us-ascii?Q?J/PeIrW328WBnlV4wugNnx2OjpajaO4sugYQdS9nWpOEKKr4nnw+C8NJFI/T?=
- =?us-ascii?Q?rX2tHByY/o2Gzr0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8833.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VK8Bwi4y8oZ5GYOfL63j2GiYI7e6L21VqKTUYjOr2VXbxtfGz9G8Bp4vpdvs?=
- =?us-ascii?Q?sBC7AoMq0UaKhf/PO0YZmAYSKsNN5zUoQR3jm6+FGhofYzl++u2I1JFszBNj?=
- =?us-ascii?Q?UP8VfB/4rQiOz4d+J4f3FaqfzP7kOijkOCSipTacvsjh2SU2/Z3l1e90XVkD?=
- =?us-ascii?Q?WWB9P2nZ01nfeFsUKBwEmSAJNe+oRnIXwFSh0OwzUsCds+vLBIZCbsdhtsB+?=
- =?us-ascii?Q?NPTj4PPwJKz5jNGVFld0c3Hli7nW48v1638+4vUZPxMNRuJRp4DCxdKBXO5e?=
- =?us-ascii?Q?KGjhkgVPnNZ20/8ajv3hMrayqPTN49kWFs8mrPvid8v5ZpLCuD2JvZ7MAb6m?=
- =?us-ascii?Q?q9lCRDQ3WpuYtllXGpfM1vg/jOdAwLj8JWQloEUTcJ0ZOKCtt+f8vPvps7dz?=
- =?us-ascii?Q?N9qI8RcWI70mr52LHwdCQHeSph5p7wxJqeMLmjWlwiuVXnt0wK9wRL+SWrfq?=
- =?us-ascii?Q?+YuAa9e3nYh7dxhjh02TyaTOCUjNGilaSm0xuDo9JujMnE0A/7MIWpzBAVF3?=
- =?us-ascii?Q?s3PR8IIniFEZa4X9V/8jiaoAhAvE6VJeE9N4TCDuguOrq25zkmwK/qtXIfIs?=
- =?us-ascii?Q?NPVdVGDlzj5OjcSESgfynqsoVvkRYiZeA9YD+N3j3NccLwq2hazRDKD85hRl?=
- =?us-ascii?Q?EA/Stb6goQVo2gRhCJS2umhhRV79Q5Kgg+caMn9cBgbGZvjqsKt4zSNoFIfo?=
- =?us-ascii?Q?o2zYb9PoBOSBYyd1kAcoGkjJyI5vUcVsNHxByPXTFKFHCyVMXUfl+t0c85Eh?=
- =?us-ascii?Q?YeKJTzZvGxzjWi+CZmi4qhDvPGMov35AY9vcgFcLckQHf+vmp9J/BRVyiBWn?=
- =?us-ascii?Q?1V9p5tkQyoQQ83s09sA4JdK2KiAXhmO08LTW3WxXVbrXWRjVA2sy9WaraFcW?=
- =?us-ascii?Q?wskD5xn6Cn9xHTSMuekSjaE1wawIq7EUJr0zMxv31fOI2ccRmW6nJnfvJh32?=
- =?us-ascii?Q?3Qztr3u/8a/qDpbQvdqBtnYSe7SwExntcCQhFQ3xLbAubPgsPsNN463JSZ4c?=
- =?us-ascii?Q?MUwTZXYH3YhCIKVLjQnbWqk8USuavzwcOWGH3fFvTs62QeN4zND2dPJLlYOx?=
- =?us-ascii?Q?LCenZuuoNmM+8T4hpWXqbSM7hYPO94SZ+5Arx3f3wCN8HPUc1Q9nOVlCqOYG?=
- =?us-ascii?Q?0lIqfgnBqOwoc/2jhh8gUl8QVaYpzFB4ISWS2qeQjRHKqwoRLNeX2yfJFHfZ?=
- =?us-ascii?Q?Z0EIrgue+xRp817q29Y6kIEN9BYssculX0RP7IMv7HgriKUbe4pwseVNasIw?=
- =?us-ascii?Q?mcORgOozL+BCczN0zjWKbqslsvslZGQScUP+/xcbBmb+ge5yn2iZ5VMTEDKE?=
- =?us-ascii?Q?hy8kJrGivXwsZcVAycoIsUPN94HXUROquNBk0tJbK3zAseSDoPipmhdeN4cp?=
- =?us-ascii?Q?QhEHKzj+kTNTRlo78G/HTqb6okOEHZeeW0FpZJSYEHJWY8FuSl3/iBe0lO/E?=
- =?us-ascii?Q?2t0sY58LsRG06NDd5n6QKbdJ+YXWBESRHwrsske/y7BlNzf5KVKjjff0YJNS?=
- =?us-ascii?Q?LF5MAg82YupvFk4y7KMt/T/he2LNtY/fSWB9z2j4Sq7rbPK7sUqLsnra83JQ?=
- =?us-ascii?Q?HZyIJ/0CL9cTz8PlUotdeQ8oXxxWHmJ6k546aBXN?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1fa8be6a-da01-4281-4515-08ddfb3b5bfb
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8833.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 07:24:12.6781
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FEVHPRTxnnhFYQQODp4jUo+weiZ83yf40Mk+Xi3rGtztUnRQKkappe1sO92GGHRKIiBjE7pzmMw+LNZp2ZzLhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8271
+Message-ID: <175869869389.709179.4541234801013742071.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-When waiting for the PCIe link to come up, both link up and link down
-are valid results depending on the device state.
+The following commit has been merged into the locking/urgent branch of tip:
 
-Since the link may come up later and to get rid of the following
-mis-reported PM errors. Do not return an -ETIMEDOUT error, as the
-outcome has already been reported in dw_pcie_wait_for_link().
+Commit-ID:     4ec3c15462b9f44562f45723a92e2807746ba7d1
+Gitweb:        https://git.kernel.org/tip/4ec3c15462b9f44562f45723a92e2807746=
+ba7d1
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Thu, 18 Sep 2025 15:09:45 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 24 Sep 2025 09:20:02 +02:00
 
-PM error logs introduced by the -ETIMEDOUT error return.
-imx6q-pcie 33800000.pcie: Phy link never came up
-imx6q-pcie 33800000.pcie: PM: dpm_run_callback(): genpd_resume_noirq returns -110
-imx6q-pcie 33800000.pcie: PM: failed to resume noirq: error -110
+futex: Use correct exit on failure from futex_hash_allocate_default()
 
-Cc: stable@vger.kernel.org
-Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+copy_process() uses the wrong error exit path from futex_hash_allocate_defaul=
+t().
+After exiting from futex_hash_allocate_default(), neither tasklist_lock
+nor siglock has been acquired. The exit label bad_fork_core_free unlocks
+both of these locks which is wrong.
+
+The next exit label, bad_fork_cancel_cgroup, is the correct exit.
+sched_cgroup_fork() did not allocate any resources that need to freed.
+
+Use bad_fork_cancel_cgroup on error exit from futex_hash_allocate_default().
+
+Fixes: 7c4f75a21f636 ("futex: Allow automatic allocation of process wide fute=
+x hash")
+Reported-by: syzbot+80cb3cc5c14fad191a10@syzkaller.appspotmail.com
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Closes: https://lore.kernel.org/all/68cb1cbd.050a0220.2ff435.0599.GAE@google.=
+com
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index b303a74b0fd7..c4386be38a07 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -1084,10 +1084,9 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
- 	if (ret)
- 		return ret;
- 
--	ret = dw_pcie_wait_for_link(pci);
--	if (ret)
--		return ret;
-+	/* Ignore errors, the link may come up later */
-+	dw_pcie_wait_for_link(pci);
- 
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(dw_pcie_resume_noirq);
--- 
-2.37.1
-
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c4ada32..6ca8689 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2295,7 +2295,7 @@ __latent_entropy struct task_struct *copy_process(
+ 	if (need_futex_hash_allocate_default(clone_flags)) {
+ 		retval =3D futex_hash_allocate_default();
+ 		if (retval)
+-			goto bad_fork_core_free;
++			goto bad_fork_cancel_cgroup;
+ 		/*
+ 		 * If we fail beyond this point we don't free the allocated
+ 		 * futex hash map. We assume that another thread will be created
 
