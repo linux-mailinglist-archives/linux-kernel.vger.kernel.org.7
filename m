@@ -1,246 +1,75 @@
-Return-Path: <linux-kernel+bounces-830483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CFDB99CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:19:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14ECEB99CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 14:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718BD1B20565
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D7819C0EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 12:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338362FF67C;
-	Wed, 24 Sep 2025 12:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF392FF67C;
+	Wed, 24 Sep 2025 12:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctoQ0scU"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0sflKan"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797B14EC46
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EE414EC46
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 12:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758716346; cv=none; b=Pg4ce3xHDjZLVdDsxQ0LsuHv+87cA1WQOtT/FUp5qcjIkoC4FDyFcDKrR5ygKsCQDxcoKbQ0OADzckJF//EsAdCLXC1q7MYROrLOj4OniGwSE1dNih8CkpTcFru+y8iW0nIMLt+RG5/ZU6amRiEops8RehTfl8rLOUKxrQ4xrkY=
+	t=1758716488; cv=none; b=BBV43AmEuIosWD+yxpYj50bPcV9+PVRciKPyLULf3jQXv9Nn+I1l7Wo5amwoUH0WBhNGLSAPGVgSIeAVuB0Im6TxVexI2VnyBdmgoqQcmxWENDgZUPvhvu71apCmJxM4SjOzrZHpKfdQLeDO2YWO/1hhanzrwiL6E4MX6FL16EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758716346; c=relaxed/simple;
-	bh=TAObwE9kmytBPXBOSqBLKzuNHBV04FYjzO6uMK/yEhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mPX5ku19fyWqZxKlPLbVtHsYPKfxgc1ku5ktC/qlgB7QGz3XNycvztwzoZT26Yfq67+gMfx8YjvUHreDQhRfrHcimBCQsX0KpObWE2ov3JGSRmLG2EqtBhFQvlYrpwUGBK81riinkb6mqFAxE2U2WVovl099tCNBb9UnOvO6Gr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctoQ0scU; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so4745960e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 05:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758716343; x=1759321143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Viin6TuBjIiAgZfSdR4TvqbJlDCKh1ntkn3hWS0V/fU=;
-        b=ctoQ0scUJE+Jo/qe2Wp8X1CPl+F1hL2Z4EbamJQCY6OnY16RwlXW/UwNqoWbo8fJ2K
-         H3/HRA7wgNhH9mC+WHE7EWPGSSfCGvIRNphcgO7nvX4PipcDlv1+UlEGrG0AkNedzJFy
-         yv6dRvkVBXciQ20KbMYTr4VKitqNOx3CI80BnxKiDKYbcKkydy7R1Up7qhhwv4QSGkrc
-         ekxEpnuEmrpvWdCs12iltDOOacJp8qpZFeB5lpXXkNeLjBqt+/SZePTxgi+0W2QYx2Xp
-         dF26BugoTt5O2Xg5Qi6ujVfgV/lQrRqd9Y+FRP8GuJqiGO3ovb4qrUoRdSyS9jIoIQJ0
-         NK+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758716343; x=1759321143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Viin6TuBjIiAgZfSdR4TvqbJlDCKh1ntkn3hWS0V/fU=;
-        b=iQbxKrRKSqJQpukO7z4oODs8h2BDqTnoIferTxrvKbPtxVIJ13RAj6OMr7tM+XrIw/
-         Kmt2lOQ69eaWJWzjBFLE1/7Cf8Zg2R6lFqKJIzqQt8iVLXrvx174fIHZ0tMyBPkZn6sp
-         6zaju+Il9250v5zVREe7BAaDVeWFuItbEf9QMQBABpiQxo2LCk0IdbwYW1lnlXC+qeyE
-         6u1gLe1OnphkS1ZQKtIB61oXxRe/ZIpSwNpBYGfqR9WhXX0cV3oxkhXKTc0TfrAvhGrn
-         TsHaPTVFUoWRuPnqyJwbxFgL6XkkYSO8Gs9qgbpEXWIbcg/wpK3itqupqqDex92ESC2S
-         8tyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWku0mJjxQr07Qbrn0X1EhJN1dFOSelMYtTv9XulyJ6NmdG16djg7/VVmk2jl8GX9Bphng7AqQ7R0hDU0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDOt74SFL6EZXTODjltiDhiAdMVrN5AAd8LZETtIuGfqc2KZv9
-	TJA8kwH7KIYhj6HTeDkmjDJPNx6p4uifQYNhREuQhc0fNRuMNnpDhI+aNSkT4XrCMbNbbLTVNQy
-	QJkLRVVx3KT3zzG6Cm/qBX9jC3iL3tJo=
-X-Gm-Gg: ASbGncvrnIDmcK2x8b7OTBN442eOyk1BFHx6amA+ioVUxk/uLwb5tp3Othpkk9C2S+v
-	4UM32ZUgP9v59eTrz7r365nK8qxroxnMX0RoBxUYPAr5nrr1031gusJ33Kk8PwLum2Mk0xHPot2
-	BpmaFAglFf63L8V+opZfvB/iTFnyAxsSaIKip/Ynh+9XyCMoQKcdwGSDiJLYsXo6oFvEjLJ4Slq
-	t/wgOSIhLPoQAXGzf1xLThPDdd8Rz6JEMXWoRqEUA==
-X-Google-Smtp-Source: AGHT+IH19KyEvVApP8Ygpl7PGIGjBWQEeNHARbTawPM6HHgmEIfzlGsjO8pj/xKYNhVCvX3w0gOzQQTIpznCq0dRwcY=
-X-Received: by 2002:a05:6512:33cc:b0:57d:d62e:b205 with SMTP id
- 2adb3069b0e04-58070dfa09dmr2192192e87.18.1758716342549; Wed, 24 Sep 2025
- 05:19:02 -0700 (PDT)
+	s=arc-20240116; t=1758716488; c=relaxed/simple;
+	bh=cg9tYmgUiVVW1uumNXt/D1iRzUoownQi8iUjG0i70yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGoQV2qD8co58ctvvM8cRiLDc0RVQTSfWF3qX0lbBWcYSAHIY0dagZXQ9PyLkEi9R5HrbbAxQLRjb9ZYsI6OGroS1aD1GfIjmOc/Kh+fIPen3j1s7VSFF9GIDE09hAKZ19jAsYewTulnIeu6hvdcR1JswzqefPFAeCMZ+l932Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0sflKan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7235C4CEE7;
+	Wed, 24 Sep 2025 12:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758716487;
+	bh=cg9tYmgUiVVW1uumNXt/D1iRzUoownQi8iUjG0i70yg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A0sflKanrsVC28RO9dbNQruISzbMYiXxZzT6SBvxD5jNpox2TzFkC4kHIeE6in8b/
+	 muEyjTKXRQYoK9rY8DM1CYCoVexSDOrUXF4UaQP4kO4KhK1qP6AF6YeiGSUIM2T8gB
+	 Hf+spIRlBDCQrxD6QRGcP7k82pyLoq9nBqr6pV8qaRGVIorEhh8SH200WWxvkA048Y
+	 InGiISMKBwuxUdw/SeWb7XhpCD5fPFQNyfgBqHv2h3Y/7bRBpdWRpPDvXnBYg9fqK7
+	 4EYVd2MBrfTM01rEL+nzFhb7JhvZaYmrq72uqjMFRZpFo1n5eL3HSI48mSgu8KWi8i
+	 KO/KvlXkMH4Eg==
+Date: Wed, 24 Sep 2025 14:21:24 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Madhur Kumar <madhurkumar004@gmail.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com, 
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com, simona@ffwll.ch, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915: i915_pmu: Use sysfs_emit() instead of sprintf()
+Message-ID: <wd42hb6kriwk7wlunhlei5tnbslbckdaomsmhrcjx33wta3vga@ozds23vg7ez6>
+References: <20250923195051.1277855-1-madhurkumar004@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923120902.1844458-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250923120902.1844458-2-thorsten.blum@linux.dev>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Wed, 24 Sep 2025 21:18:46 +0900
-X-Gm-Features: AS18NWCK3rkwobJwuTNUJVl58SJ2S98ySrw3W3vZ9WzHEoGhmsYxNHDOnQ1rRrE
-Message-ID: <CAKFNMonHxWSxW72Af8F_3Mhx39iO5hgVKAhTjpHVKsTBOQ-Z8g@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: replace vmalloc + copy_from_user with vmemdup_user
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923195051.1277855-1-madhurkumar004@gmail.com>
 
-On Tue, Sep 23, 2025 at 9:10=E2=80=AFPM Thorsten Blum wrote:
->
-> Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
-> improve nilfs_ioctl_clean_segments() and nilfs_ioctl_set_suinfo(). Use
-> kvfree() to free the buffers created by vmemdup_user().
->
-> Use u64_to_user_ptr() instead of manually casting the pointers and
-> remove the obsolete 'out_free' label.
->
-> No functional changes intended.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
+Hi Madhur,
 
-Thank you for your patch proposal.
+On Wed, Sep 24, 2025 at 01:20:51AM +0530, Madhur Kumar wrote:
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
 
-This patch involves rewriting using vmemdup_user(), u64_to_user_ptr(),
-and kvfree(), which to me appear to be equivalent transformations that
-improve readability.
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-However, I would like to actually perform build tests in different
-environments (to confirm in multiple environments that the typecheck
-for __u64 in u64_to_user_ptr passes without any problems, and that no
-side effects appear with the static coding checker).  Also, since it
-touches parts related to the operation of user-space programs such as
-nilfs_cleanerd and nilfs-resize, I would like to confirm that actual
-device tests pass while changing the allocation sizes.
-
-So, rather than rushing it into the upcoming merge window, please let
-me schedule this to be sent upstream in the cycle after that.
-
-If there are any issues, I would like to provide feedback.
-
-Regards,
-Ryusuke Konishi
-
->  fs/nilfs2/ioctl.c | 35 ++++++++++-------------------------
->  1 file changed, 10 insertions(+), 25 deletions(-)
->
-> diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
-> index 3288c3b4be9e..e17b8da66491 100644
-> --- a/fs/nilfs2/ioctl.c
-> +++ b/fs/nilfs2/ioctl.c
-> @@ -49,7 +49,7 @@ static int nilfs_ioctl_wrap_copy(struct the_nilfs *nilf=
-s,
->                                                    void *, size_t, size_t=
-))
->  {
->         void *buf;
-> -       void __user *base =3D (void __user *)(unsigned long)argv->v_base;
-> +       void __user *base =3D u64_to_user_ptr(argv->v_base);
->         size_t maxmembs, total, n;
->         ssize_t nr;
->         int ret, i;
-> @@ -836,7 +836,6 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
-node, struct file *filp,
->                 sizeof(struct nilfs_bdesc),
->                 sizeof(__u64),
->         };
-> -       void __user *base;
->         void *kbufs[5];
->         struct the_nilfs *nilfs;
->         size_t len, nsegs;
-> @@ -863,7 +862,7 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
-node, struct file *filp,
->          * use kmalloc() for its buffer because the memory used for the
->          * segment numbers is small enough.
->          */
-> -       kbufs[4] =3D memdup_array_user((void __user *)(unsigned long)argv=
-[4].v_base,
-> +       kbufs[4] =3D memdup_array_user(u64_to_user_ptr(argv[4].v_base),
->                                      nsegs, sizeof(__u64));
->         if (IS_ERR(kbufs[4])) {
->                 ret =3D PTR_ERR(kbufs[4]);
-> @@ -883,20 +882,14 @@ static int nilfs_ioctl_clean_segments(struct inode =
-*inode, struct file *filp,
->                         goto out_free;
->
->                 len =3D argv[n].v_size * argv[n].v_nmembs;
-> -               base =3D (void __user *)(unsigned long)argv[n].v_base;
->                 if (len =3D=3D 0) {
->                         kbufs[n] =3D NULL;
->                         continue;
->                 }
->
-> -               kbufs[n] =3D vmalloc(len);
-> -               if (!kbufs[n]) {
-> -                       ret =3D -ENOMEM;
-> -                       goto out_free;
-> -               }
-> -               if (copy_from_user(kbufs[n], base, len)) {
-> -                       ret =3D -EFAULT;
-> -                       vfree(kbufs[n]);
-> +               kbufs[n] =3D vmemdup_user(u64_to_user_ptr(argv[n].v_base)=
-, len);
-> +               if (IS_ERR(kbufs[n])) {
-> +                       ret =3D PTR_ERR(kbufs[n]);
->                         goto out_free;
->                 }
->         }
-> @@ -928,7 +921,7 @@ static int nilfs_ioctl_clean_segments(struct inode *i=
-node, struct file *filp,
->
->  out_free:
->         while (--n >=3D 0)
-> -               vfree(kbufs[n]);
-> +               kvfree(kbufs[n]);
->         kfree(kbufs[4]);
->  out:
->         mnt_drop_write_file(filp);
-> @@ -1181,7 +1174,6 @@ static int nilfs_ioctl_set_suinfo(struct inode *ino=
-de, struct file *filp,
->         struct nilfs_transaction_info ti;
->         struct nilfs_argv argv;
->         size_t len;
-> -       void __user *base;
->         void *kbuf;
->         int ret;
->
-> @@ -1212,18 +1204,12 @@ static int nilfs_ioctl_set_suinfo(struct inode *i=
-node, struct file *filp,
->                 goto out;
->         }
->
-> -       base =3D (void __user *)(unsigned long)argv.v_base;
-> -       kbuf =3D vmalloc(len);
-> -       if (!kbuf) {
-> -               ret =3D -ENOMEM;
-> +       kbuf =3D vmemdup_user(u64_to_user_ptr(argv.v_base), len);
-> +       if (IS_ERR(kbuf)) {
-> +               ret =3D PTR_ERR(kbuf);
->                 goto out;
->         }
->
-> -       if (copy_from_user(kbuf, base, len)) {
-> -               ret =3D -EFAULT;
-> -               goto out_free;
-> -       }
-> -
->         nilfs_transaction_begin(inode->i_sb, &ti, 0);
->         ret =3D nilfs_sufile_set_suinfo(nilfs->ns_sufile, kbuf, argv.v_si=
-ze,
->                         argv.v_nmembs);
-> @@ -1232,8 +1218,7 @@ static int nilfs_ioctl_set_suinfo(struct inode *ino=
-de, struct file *filp,
->         else
->                 nilfs_transaction_commit(inode->i_sb); /* never fails */
->
-> -out_free:
-> -       vfree(kbuf);
-> +       kvfree(kbuf);
->  out:
->         mnt_drop_write_file(filp);
->         return ret;
-> --
-> 2.51.0
->
+Thanks,
+Andi
 
