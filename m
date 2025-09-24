@@ -1,96 +1,138 @@
-Return-Path: <linux-kernel+bounces-831200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063E5B9BD55
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EA1B9BD5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 405B17B607C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:16:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB29F7B7983
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810BE328575;
-	Wed, 24 Sep 2025 20:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177C1328578;
+	Wed, 24 Sep 2025 20:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yl1cBxGL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="NESutuBM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="I+Wi1wBs"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC829328578
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8D30BF55;
+	Wed, 24 Sep 2025 20:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758745071; cv=none; b=mIBrSSh7SbnMhqoaNLJX6ueudqtEvZchc9r9gktcfdsc7bP7W/Qw7hGv9prGS4348ZluXe/0yi7HkAP8BXQbxKhjho9dcqM/e9PGne5qdgb/d/2YsOpSyNbF6gnVRTZa15qIUjdoGFtAwxA69NQMuVV0o7uNEMnSuaDQbZ55r24=
+	t=1758745096; cv=none; b=J+ugFa8FGQEHh/f8BVyxlGw7KiFafMD/t7L9cptQi3/VqUDdVMOdlREah05vvWQ8HC0irrezoWo0+ZEnyQBqgAgBIrZT81IIJTo3/5myee8JjbNSOttzvmuIBcl14UjULXaClzxp+kzxPLyaex1L4rOz6QwJH1KFuTzf6SmZnYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758745071; c=relaxed/simple;
-	bh=87PpMdhKz4da+xy5/E826ZZFF9DIRJqOQ7VddMx3ig0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tQm0clCY20tztvBuGdFe46hR1fxzFOz39LB2rVyntTWtGa7dZatiABZ9C/59rkmkwILbbKcJr5Q6JltEKV37jfoevhShCaiETlVDiEBav5qYjFfiLbjKMo+6ycxd2Ii4AW2kYL7rjTbsUbpzlsjQirCacmuIIx0KwdZrLHyQyN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yl1cBxGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96670C116D0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758745071;
-	bh=87PpMdhKz4da+xy5/E826ZZFF9DIRJqOQ7VddMx3ig0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Yl1cBxGL2pw9yOMixoVnf7y1DArd74x+TMTTh7agOKoksCpwsqIOOfev5E+GmHKFm
-	 /bsUcOS6QAGMSWCLGjfbuJ4pDw5whmQYEPVewY9o3DrqCBqwlfKagmsbfNdqlXDYcv
-	 +Xa8QXSvP848R7ed1Gqp5EJvhCeRFaCgXIRCYXSIk23im0N+dIrt8pPnz8fu8Vepxe
-	 c+/AbIeWrOLEi9+huEQyyzqNZpkKxRqDhh8Ll3X92+aIZj4Q8w17ycBNZtwXOFWZ6C
-	 ugv9L+adMCG2V8IXZtdrw9hzV1s/CvXa8hMsOmHpr1AQJhnI0/7P59Avz3ucx5JZ8f
-	 Nbd0dTw1a1fmw==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6218fc7c6b7so58919eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:17:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxJyoUrIc89OUU4o6oZvLUv9B1QakYkTYNUDGLxm/bE8CWIbHOp6ruqjwbWpRwbSandnURfqhEGEP1ED8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVTAQ8xZc0wnucum6g9pUNyYanzRJkL+K+4SY5w2DF21cBSEm4
-	cwmE4Oo/Kc3i2hceZt9v1VLUPq6+OwF6B6dJcg0C8WmJjZTU8D9DvRGkFMnTl/BgPrLUzSc+NJU
-	/lBGlGvi35xGIbZAzHGsclXbjUcRQBT0=
-X-Google-Smtp-Source: AGHT+IHK/rT9LaKq4Op3qK5AtbzD/0aTqXSDsBghtMhmZ+izMQjP+v45O7plShVAaGwV6VcU2Eu0TFLt0ndLHXuWZaU=
-X-Received: by 2002:a05:6820:220f:b0:624:f051:dcd9 with SMTP id
- 006d021491bc7-63a299e8384mr489709eaf.0.1758745070874; Wed, 24 Sep 2025
- 13:17:50 -0700 (PDT)
+	s=arc-20240116; t=1758745096; c=relaxed/simple;
+	bh=EqYtmV7TAcM2X9vdFPDPz8hYQ+v6LDf37ftyviq9hac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJNnZaq6DoqzXX1oQsIk71Q1ECbEr10xObYfEhBmVO1Hmr3Q9v84Dz2yVFKmSB6SBupVLW9J4oiDmIDNgoRj65fF9s8Gxq6otHsOXCJxne/OLWxvnWudlsWsGGSKJy0M8Ic7MY1hiOGKBeqE2kRQFmUbqYmexkuBWxTJMmjs1OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=NESutuBM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=I+Wi1wBs; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 2FCEE1D0016F;
+	Wed, 24 Sep 2025 16:18:11 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Wed, 24 Sep 2025 16:18:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1758745091; x=
+	1758831491; bh=qIL7VdXNc2rL1a7aBbmlZN+TWI2aTIAh5NhrmccsOLI=; b=N
+	ESutuBMKprzGKlasl7bB81yqy3kNgkqfZ/UrWV+AaOPeCVMUJdwZHbOfI91qWYmo
+	pxSPQNPTMFT2rsMuegkN/lo5eI3spvBa1jvkr3FmCn1HgsUkPRJmD2w9YQZJJpg/
+	pWlHu3m+revuwLWpcE7Sk2IHDS0xc6zFHxKYWJCzysPieOIMfcBqaYMx3iiSC010
+	JKxN8d2czIlZjc6OUagwa5eRw2qH8BYlt7P2aW9lIxhdiRW0DD3jrMXSNc5ja/S7
+	Vr0PabSaH4TOptfoJdh6m7ytatm2zT0fEk6G02ZIoMQKnxl3/knKRLswqGWYScLP
+	C2hsryEmMEqhs71BlNTcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758745091; x=1758831491; bh=qIL7VdXNc2rL1a7aBbmlZN+TWI2aTIAh5Nh
+	rmccsOLI=; b=I+Wi1wBsacBuJbno012P9WTIM0Cx3c71U2kTZGHV6/qcNvOFp3U
+	ASiCDQhgrjPYLulxT1oGNRR8YhKuT6Pe5t4jhzYw3F6rNztxNkAqiIxivOQbicLQ
+	ke/xUXK/TmUCuchdILH6DuMqQVKvE1yA0LJxBbvNHjmJN1HInJkN5H1rvkQNaf15
+	xNlJEXEjqceQrZi3pA4Jm7aPLJxanJ24P7xjdp66MLmIVmDMs6jdF+BSkM3E3yVd
+	z82mZ7oAkWyJnv0lmYiheRbOuSatpQQ7JGA11hMosVlPW54Crs8d/v/3UukTpVYm
+	HPP7aV/0RaMXmZ+xZXAuy3YXy43gxD3xYdw==
+X-ME-Sender: <xms:AlLUaGx5YXB7uYB5WWY8tRLHtkPWJJ-m3MxnVgtqVAMzSRJXlxIwMA>
+    <xme:AlLUaIQyKt10OPXJ57PRh0betJur52udFVb3cRphm5iLJC5esTxLdlgDasJ-Z6HwW
+    30a9qFehtFDmk8NNd9q12CtXzsySirVioZwFREo7OOIpL7j8Hgn9w>
+X-ME-Received: <xmr:AlLUaDKDyrFU71yvBdqch4Nan_xSbZaynVrsKiK2RFq_RX3Bc4GAPyjIS8nm>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
+    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
+    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
+    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvg
+    hmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohho
+    ghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtg
+    hpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghv
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:AlLUaPXYorV4qVyqlw1XAr2VdhCvVVutANTxN-0EVoa2uwx_J1mvmQ>
+    <xmx:AlLUaHRAmaYAOa_CXD8gtWAVfVVtU3h44Hg1tfzaBMHn2fShAHr4wA>
+    <xmx:AlLUaHAvkQRlISgtDaalEozoftsNbfBPpI46sN2MSIBv2cafBHjntQ>
+    <xmx:AlLUaGIW_jSQWWfjv_0yquDg5o69PNOq2ryL-X1aKu7_n7tsRYQIfg>
+    <xmx:AlLUaEzfnFaENQof4-wtZVQc70sNIK-rZjLPViKWRULNAKMtDCzOvzh2>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Sep 2025 16:18:09 -0400 (EDT)
+Date: Wed, 24 Sep 2025 22:18:08 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2][next] tls: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <aNRSACsf_h3ePDhf@krikkit>
+References: <aNMG1lyXw4XEAVaE@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923150625.1.If11a14e33d578369db48d678395d0323bdb01915@changeid>
- <20250924052846.vaoehgsrj5ejanhg@lcpd911>
-In-Reply-To: <20250924052846.vaoehgsrj5ejanhg@lcpd911>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 24 Sep 2025 22:17:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hMMK+42RALk7yZUnyHwOYcRrmen7tLortcORS+A3nMWw@mail.gmail.com>
-X-Gm-Features: AS18NWBEtOwwOTKsVXwk1xFFVUoajeGugPjONQTYd6PnKqzNAiTR5feiTvwA-hI
-Message-ID: <CAJZ5v0hMMK+42RALk7yZUnyHwOYcRrmen7tLortcORS+A3nMWw@mail.gmail.com>
-Subject: Re: [PATCH] ABI: sysfs-devices-power: Document time units for *_time
-To: Dhruva Gole <d-gole@ti.com>, Brian Norris <briannorris@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arjan van de Ven <arjan@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aNMG1lyXw4XEAVaE@kspp>
 
-On Wed, Sep 24, 2025 at 7:28=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
->
-> On Sep 23, 2025 at 15:06:26 -0700, Brian Norris wrote:
-> > Many .../power/... time-related attributes have an "_ms" suffix and als=
-o
-> > include language in their ABI description to make clear that their time
-> > is measured in milliseconds. 'runtime_suspended_time' and
-> > 'runtime_active_time' have neither, and it takes me a nontrivial amount
-> > of time to poke through the source to confirm that they are also
-> > measured in milliseconds.
-> >
-> > Update the doc with "millisecond" units.
-> >
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > ---
->
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Thanks for the updated patch.
 
-Applied as 6.18 material under an adjusted subject and with a slightly
-edited changelog.
+A process nit: the correct subject prefix for this type of work within
+networking would be [PATCH net-next v2] (indicating it targets the
+"net-next" tree).
 
-Thanks!
+2025-09-23, 22:45:10 +0200, Gustavo A. R. Silva wrote:
+> Remove unused flexible-array member in struct tls_rec and, with this,
+> fix the following warning:
+> 
+> net/tls/tls.h:131:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Also, add a comment to prevent people from adding any members
+> after struct aead_request, which is a flexible structure --this is
+> a structure that ends in a flexible-array member.
+
+Once that warning is enabled, re-adding a field after aead_req will
+not be allowed by the compiler, right?  The comment is probably not
+really needed, but since there are "must be first" comments all over
+include/net, I guess it's useful.
+
+Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
+
+-- 
+Sabrina
 
