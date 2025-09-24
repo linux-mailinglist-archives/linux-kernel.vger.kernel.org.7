@@ -1,201 +1,206 @@
-Return-Path: <linux-kernel+bounces-830778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29870B9A7A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CF7B9A7FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 17:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EFA71B24187
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6A93AB7C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2E130C34B;
-	Wed, 24 Sep 2025 15:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F1630C340;
+	Wed, 24 Sep 2025 15:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GzbxCt3M"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m8JX20G0"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684F30C340
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC4D30C61D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 15:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758726531; cv=none; b=r0NiDY6lfMu+h3A6t3kkuo6nMZiV/o5BJuMWUL8hgZDhvVB9FwCWEW09H9kK3czkSO/0XpnX1Cv6d65GE5YN/l5fi5esk7/mEmTdn4hn1xeADsoXWiT9Er4X3l+/FyGTCB49Lc+YfJieGhK3hZtoofKfTlnejIbTX+t31CpG5ek=
+	t=1758726535; cv=none; b=gsM9v0sc4UFp/3m/YQGMYZbdNjhjrnhFCLM1ZEhVWi89W0KxN1uVtqpmVQY4CLGOg14rZgCqqzEhNkyeKlzs1sNSHvd9eFD3IFWlx8hG5iUsd7DyucrgeI6FkolY3uhyNc9Nh7yrY0TYzkbz9dIOmzTDfNSGqWvNpHtHVYble0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758726531; c=relaxed/simple;
-	bh=uv//tTQkdWUOMylUjOz31Zc7MGTY0kN4NR2rEqP2pKI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=twAx+9UylW2TwyUz77plV0YmxCbI+vTbmwfQSeEpCA/mVqbtAI5bPvzqCc3BYHIroS7EZRVCIkRXDQXZucDgcbGf1Zsex1Vhx1wz1Hpbm4EEiCMjgUXErY7L8/ufD/ZjwsNhR23k4gQaTZv07ffbPL6oertplK5hWY3flLC34PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GzbxCt3M; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26c209802c0so53103295ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 08:08:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758726529; x=1759331329; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mtm7YfP7BSI3RTZ9+FG8XqmZhlh22m357qfVk/qkxE8=;
-        b=GzbxCt3MpAgMygR+L5VBtXpBYr1sfYesrkNK7CMT7+ATGm9uPpekoJRgI2bc2aXECK
-         iEF49JonXfM4Z6mp9bsR1uXg7hEZpq3Z6mwtzViuugoApm5IzK1qKoDup3ihfAlaUipV
-         Xazt44X0DzgCHG4YwRV7Fd7euOj4c+FFqArtw8DETvX0a+3d7VEOOFisNO4hNdO3lJKT
-         l3OwELr/ytLsP56IDuh7TvDfywg+F3WO3ex2Pbk17HtqHWRE9zAfUCMm0hPAojHIRAaU
-         NVSdw+KD67K2o5V1k1rBV+aXnNuhhHUkWK0N3QkAYQsI6ftsmLtSzVrs66IdQImkD0Pn
-         /vXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758726529; x=1759331329;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mtm7YfP7BSI3RTZ9+FG8XqmZhlh22m357qfVk/qkxE8=;
-        b=pRxe/Oyp+2PsDyg7Rmr81ZqeNqfhUI/0nyFNUEO381VieK2v8kKnOAIYewqwzJZr7V
-         Sa0Ayk8PmZv8t3NbC5hz8Q+6udYoFpMdKACIaXJhmPGFDvDur2g3OrkROIZzByq9l0JM
-         HtaUeXLzTgt4ItYSn/qMVGOX8m93hzKk+2Q27W4qHYELNgEurqKCZwNQlen2c4bBj9sL
-         PgQHhFL2gQFV81t9ureIdZly5ncJ2nGRDQC9+uorhM72UwBL7mH9jLn8r5wy7E9jAVjl
-         L0KYpF8QzoeQlC3vgpGhiFY1+KwWMT4f6E5v63dZIWdpwls8WYGAxsb0v2S7UaXKzm9A
-         hpLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrWUx5FxdpirB+rqTAxd1rk7FOjwDGC0bC0yw3OBgdeHoV81Zxg2jN4ZRYmTIvW0YkPN/u3I17oArhMIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpwXX8yqnMWzCD0WK4IiEyxubEQKblpVF/howvZQWywnNI+wZP
-	sQ3F2C2V4hMgP3U3nBYag68rQxg5TIT51ZsmxLt2u1TA/svpVyXOjlHi2nON4YaB+cc=
-X-Gm-Gg: ASbGncvIw2ftpqjTtk8+AGf11oT8CmHz1w7i4ehY8GFBBSYfaKSCScjDKMiQhYB8S4h
-	1QyjjcAiQDEw+VWDQYQ/zKNxxvkIVkkgnZzp8s0q5J/m/nunVQxXacMNRjog2tgHCazQXGOSd6l
-	U4uywRuQNetlU79AdNZMRss5GpCJ2wfaKSY8sLoXNjYSBbLUMeAGRVODlyku+O12PAXPTIDiDmj
-	v8TJEvj4itg7XxqprKXgKLp+bzkn/F5psBd+9ez4FXOauSPmWVk5X9sQ4Yy+P7y1gkyY4htSk0a
-	PhMlwkUOK4QuUgSS52JTOBmDViJpIx4+Yd/RpHtIEctRICu3c5Qdo/eyn409wntp+QiqcT9U3AD
-	LpquqjH4bMaNTnUP5
-X-Google-Smtp-Source: AGHT+IEEfbkQbo6VyHZL6DNe6uKS5V8miS4VoGJIvm14SbYPZxktKLOnaj7fLoQ1xnJPrs48EB5euw==
-X-Received: by 2002:a17:902:c409:b0:269:96db:939 with SMTP id d9443c01a7336-27ed4af3882mr21675ad.58.1758726529408;
-        Wed, 24 Sep 2025 08:08:49 -0700 (PDT)
-Received: from [127.0.1.1] ([112.64.61.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26b59d6538bsm158717445ad.82.2025.09.24.08.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 08:08:49 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Wed, 24 Sep 2025 23:08:12 +0800
-Subject: [PATCH v3 3/3] drm/msm/dsi: Support dual panel use case with
- single CRTC
+	s=arc-20240116; t=1758726535; c=relaxed/simple;
+	bh=6dgUDu9jBHBCpZ3eyTLN4yqD52BDSDkQsSRXB4EAv4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=KHzDTMgbWKRIZQgdw4/fuOUyROtsTlv48oIxTJm3tmul4Ch5vY/eALn/CHI6JvB5a/0xLcIXCBZXe9XhQRYJDUvrUKGg19avMNd5FgsigSqIAv2Ooq66dWH3dEAqeBwhStFDqTPPsyhDKoPO6gHkE9TL8fqSE3LYuMkdhNlNtEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m8JX20G0; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758726522; x=1759331322; i=markus.elfring@web.de;
+	bh=Fxtcx4A1lIkBA+fnaYrI+5nN3wIMjoN2Kn6vJd6kzOg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=m8JX20G0Z5T/yaReHQNndEHofQqCM2lvX0rw2l9sy/Wt78/bOJDfI/hhg+ShEgHq
+	 mfHj6mM8B6HPGOzqYrP0bbiqxkYCUgmDhKOku6acHyttAy2plKI3DeIJg2m9Xqign
+	 lrpNwmgO21vthUFEaCKPpFumukR4VHKaWHD/cwsZVhtsrMxXzOmo7KTwcYm2+e2b8
+	 t8xg+tFfMbFjVKoD/cD9gBfiWdpm3TXNiRIE4yku4djdE9aNF7dGqh3Lk1JA8lUKE
+	 uKx88TwqHBt1ElKaXZW/jNQcleKJV9LgbVsGHxmCaR0YAVhKnEIs9OQ7eaaHfuDzI
+	 Wn054SAqQ1yn1Ri8nQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.191]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJWsc-1um6533Xei-00Yx6f; Wed, 24
+ Sep 2025 17:08:41 +0200
+Message-ID: <1071f2af-39be-425b-bdb0-7f004a6e8f65@web.de>
+Date: Wed, 24 Sep 2025 17:08:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-dsi-dual-panel-upstream-v3-3-6927284f1098@linaro.org>
-References: <20250924-dsi-dual-panel-upstream-v3-0-6927284f1098@linaro.org>
-In-Reply-To: <20250924-dsi-dual-panel-upstream-v3-0-6927284f1098@linaro.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Jun Nie <jun.nie@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758726499; l=3407;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=uv//tTQkdWUOMylUjOz31Zc7MGTY0kN4NR2rEqP2pKI=;
- b=cbwhi38kXfeCUrP4iZc3vGzSS+7SXsK87SMxbLuZ9SDfEikysPiAQH8mgdl2o1BXHWxilRTI6
- p1c+UJbkOexAxVBPSqmtKoMbjP0ZBRrXe9yAPnK5V74UKYdfcPyy0MI
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH] cocci: drm: report devm-allocated arguments and
+ fields
+To: Oleg Petrov <o.petrov@ispras.ru>, cocci@inria.fr,
+ dri-devel@lists.freedesktop.org, lvc-project@linuxtesting.org,
+ Julia Lawall <Julia.Lawall@inria.fr>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <20250924140126.23027-1-o.petrov@ispras.ru>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>,
+ Maxime Ripard <mripard@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Vadim Mutilin <mutilin@ispras.ru>
+In-Reply-To: <20250924140126.23027-1-o.petrov@ispras.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uZrWTvaoGpbDSZWsF91sFFye+hH7BZIZdED6uBooGDJEiUcJfaE
+ 7UACdoAp5MMPfoQMjAZ+r6Zj+UgH9dthLqgBDL/un/peke4LAq5DduG8chUXdJZCZIU+Qc+
+ QBwUG8Iyc/2gn9DBG36YEGj+s3/pD3AcW8sYy9LeFnQ0WAHkffA1sr8LZXwMAU3e/bPudWy
+ 19whwCdVwJht8mnxv6O4w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8tbrgLiUt60=;1mJvOUB5Vk9P8qigUFuC9CamA7Z
+ 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
 
-Support a hardware configuration where two independent DSI panels are
-driven by a single, synchronous CRTC. This configuration uses a bonded
-DSI link to provide a unified vblank for both displays.
+> Add two Coccinelle rules: (1) flag a devres-managed pointer
+> passed to a drm-init function, and (2) flag a devres-managed
+> pointer assigned to a field of drm-managed struct. =E2=80=A6
 
-This allows application software to treat the two displays as a single,
-wide framebuffer with a synchronized refresh cycle, simplifying rendering
-logic for side-by-side panel arrangements.
+I suggest to start each enumeration item on a separate text line.
 
-At the DSI host level, the frame width for each link must be that of an
-individual panel. The driver therefore halves the CRTC's horizontal
-resolution before configuring the DSI host and any DSC encoders, ensuring
-each panel receives the correct half of the framebuffer.
 
-While the DSI panel driver should manage two panels togehter.
-1. During probe, the driver finds the sibling dsi host via device tree
-phandle and register the 2nd panel to get another mipi_dsi_device.
-2. Set dual_panel flag on both mipi_dsi_device.
-3. Prepare DSC data per requirement from single panel.
-4. All DSI commands should be send on every DSI link.
-5. Handle power supply for 2 panels in one shot, the same is true to
-   brightness.
-6. From the CRTC's perspective, the two panels appear as one wide display.
-   The driver exposes a DRM mode where the horizontal timings (hdisplay,
-   hsync_start, etc.) are doubled, while the vertical timings remain those
-   of a single panel. Because 2 panels are expected to be mounted in
-   left/right position.
+Would you like to refer to =E2=80=9CCoccinelle: api:=E2=80=9D in the patch=
+ prefix?
 
-To maintain synchronization, both DSI links are configured to share a
-single clock source, with the DSI1 controller using the clock provided
-to DSI0 as below.
 
-&mdss_dsi1 {
-   assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE1_CLK_SRC>,
-		     <&dispcc DISP_CC_MDSS_PCLK1_CLK_SRC>;
-   assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
-}
+=E2=80=A6> +// Copyright: (C) 2025 Oleg Petrov ISPRAS
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
----
- drivers/gpu/drm/msm/dsi/dsi_host.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Would another delimiter be helpful between the personal name and the organ=
+isation identifier?
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index de51cb02f267205320c5a94fc4188413e05907e6..1fddcea7f86547258be18a51a0a3e3f96f6c3838 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -177,6 +177,7 @@ struct msm_dsi_host {
- 	bool registered;
- 	bool power_on;
- 	bool enabled;
-+	bool is_dual_panel;
- 	int irq;
- };
- 
-@@ -935,7 +936,10 @@ static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
- 			return;
- 		}
- 
--		dsc->pic_width = mode->hdisplay;
-+		if (msm_host->is_dual_panel)
-+			dsc->pic_width = hdisplay;
-+		else
-+			dsc->pic_width = mode->hdisplay;
- 		dsc->pic_height = mode->vdisplay;
- 		DBG("Mode %dx%d\n", dsc->pic_width, dsc->pic_height);
- 
-@@ -1609,6 +1613,7 @@ static int dsi_host_attach(struct mipi_dsi_host *host,
- 	if (dsi->lanes > msm_host->num_data_lanes)
- 		return -EINVAL;
- 
-+	msm_host->is_dual_panel = dsi->dual_panel;
- 	msm_host->channel = dsi->channel;
- 	msm_host->lanes = dsi->lanes;
- 	msm_host->format = dsi->format;
-@@ -2492,6 +2497,9 @@ enum drm_mode_status msm_dsi_host_check_dsc(struct mipi_dsi_host *host,
- 	if (!msm_host->dsc)
- 		return MODE_OK;
- 
-+	if (msm_host->is_dual_panel)
-+		pic_width = mode->hdisplay / 2;
-+
- 	if (pic_width % dsc->slice_width) {
- 		pr_err("DSI: pic_width %d has to be multiple of slice %d\n",
- 		       pic_width, dsc->slice_width);
 
--- 
-2.34.1
+=E2=80=A6> +virtual report
+> +virtual org
 
+The restriction on the support for two operation modes will need further d=
+evelopment considerations.
+
+
+=E2=80=A6> +devm =3D \(devm_kzalloc\|devm_kcalloc\|devm_kmalloc\|devm_kmal=
+loc_array\)(...);
+
+Would it be nicer to write such SmPL disjunctions on multiple lines?
+
+
+=E2=80=A6> +@script:python depends on report@
+> +p << badarg.p;
+> +@@
+> +msg =3D "WARNING devm-allocated argument in a drm-init; use drmm-init f=
+amily (or drmm-alloc)."
+> +coccilib.report.print_report(p[0], msg)
+
+I would like to point out once more that such data can be printed
+also without an extra variable like =E2=80=9Cmsg=E2=80=9D.
+
+
+> +@script:python depends on org@
+> +p << badarg.p;
+> +@@
+> +msg =3D "WARNING devm-allocated argument in a drm-init; use drmm-init f=
+amily (or drmm-alloc)."
+> +coccilib.org.print_report(p[0], msg)
+
+Would the following method call be more appropriate?
+
+coccilib.org.print_todo(p[0],
+                        "WARNING: devm-allocated argument in a drm-init; u=
+se drmm-init family (or drmm-alloc).")
+
+
+Regards,
+Markus
 
