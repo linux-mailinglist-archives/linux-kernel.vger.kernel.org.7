@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-830129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F74BB98C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 636DCB98C9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 10:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289E019C6B8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A91119C74B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113F7283FEB;
-	Wed, 24 Sep 2025 08:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194C22820BF;
+	Wed, 24 Sep 2025 08:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/2jcezO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdNDeoVE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56734275B01;
-	Wed, 24 Sep 2025 08:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EFA2248A5;
+	Wed, 24 Sep 2025 08:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758702046; cv=none; b=RwEZ6DfhHQ4Hb3/BAo8R+16TMWLO4C97GrnzmOLsp5ETjYNbIslN9z6RZI5hvp7ciryunfa2lyxk/WRuZr4qyR5QgnhwqVN4RzoAXmE+V+NUizC/HjE/fF9v/nFtdn+vd1MM50Phl2neSGjykU0HHJXT0jannsnkb6fREjTpHa0=
+	t=1758702093; cv=none; b=fpXZVagucqCeRyRPRbEVJLDxqCsO3GxMORTl13cSTXQOgLgxBSJ6wtW4h39Gm66zdbQDsKuo4hnF13B9lgVCTkQNBGSn/sx0TEOlWxEMK+T92/Pu8b9wRwk18qvYPBf6d2CmaluHylSDqddVsJLf7YUalRz38jrpbZYj6YvZMtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758702046; c=relaxed/simple;
-	bh=OMVgMraFH2BxIgIwSSNP58DDxZoVjL8AimA5niTsHMQ=;
+	s=arc-20240116; t=1758702093; c=relaxed/simple;
+	bh=UI+LGXvxoHRFGbjRfV+A4wqbLa/YUdmYzLCl0Mrv0Zk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lt/cCah9p9ltvsIslZcZYdKfHTEzz00zCyl6wZlInaQHGueWOCMlADLIfrjeo+NexnfWRn/mRzfbA50PiTZua76AdmVe5ArB+mTWtdDzeuY2LO9eQh9PoYAbytidMc+/hh/KTcoOwsivsVGQsNTImy6cG42Ap9RRifrN87iqWbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/2jcezO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9901EC4CEE7;
-	Wed, 24 Sep 2025 08:20:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1h94fNjY6S1yVx8p/38lLIoszWq7yH1RKKPyggzZhuOLOAxPRuZnQLu1/qZDeW7qx0YCTU7Qj0G2qISanpgjCJJSRXNobo5KICKah97YUBIn3z1c+1J1kXnzoZlJP5gJXjkHDfvifzWuMCb99ITqq4MmWx98XSPt1lSvvVvMEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdNDeoVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8002C4CEE7;
+	Wed, 24 Sep 2025 08:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758702046;
-	bh=OMVgMraFH2BxIgIwSSNP58DDxZoVjL8AimA5niTsHMQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=I/2jcezO8WKzYNvURUI9PkJH5jEF2WQWuNxspv/8Q8LCn4x+sOGPLqqLoV5k7yMmD
-	 YEzHXKWZU6p5EyHI+LznjgFNY4/zaavnmXbA0HTkHFmGnVn01iTShvfgJihVaYyP2W
-	 tGBZ4TVMfqx9RgMGUSMuL7Da7FXRX7FKDlcytmpopp5vpLVidz/haY6anElC/SbBkP
-	 UZ9npSyxcbaMtWbtFThgpJsxLD273YE9y8aA5HJZW43d4mXE+8WK2QLJOAfFMMrolm
-	 yw0kr1qiQjkhLEKGxKGnWMFGG9gVqu2YrGLrLeuSHSba0JtnynrD+P7TQA75OCinsK
-	 LND0PhRzD+/Jg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E3B75CE0B73; Wed, 24 Sep 2025 01:20:41 -0700 (PDT)
-Date: Wed, 24 Sep 2025 01:20:41 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 0/34] Implement RCU Tasks Trace in terms of SRCU-fast and
- optimize
-Message-ID: <1b362ccc-fa86-404c-ab58-15370cef7240@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
- <CAADnVQKNxGFOWN7-HmzObYobW2y33g-i3xsNSkKicx88hqe70w@mail.gmail.com>
+	s=k20201202; t=1758702092;
+	bh=UI+LGXvxoHRFGbjRfV+A4wqbLa/YUdmYzLCl0Mrv0Zk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bdNDeoVE/eb0pX3zlIW+r0D/iJ1u1izTyWJVH1EXYvZPgiHzWc+6AZU8CEmm9zQzV
+	 3l64jhAX6o1C99QhPNd7M8s0Uix4UOzlEjY5aduo7SeqpjrOYdv5M+6+cplfWCST+w
+	 cqvaus5s6BYwL8QxymBDRpBCOtcPUw60MYQjhbT93BV5/bJA6HEBX8tCODGwkGb5ht
+	 KTd9VpdvQY/4D840ogT/fvlgjOwDRg8aLdfiIVYcJ5HBbLrpyrIlQWvbjBnhcMpL0u
+	 uAiyytgPNT3B3LlZ4A2J2HijqAFLR5/zPGFmbVjLxVhQvVNUufkkM5lLzBvWQ+R529
+	 hEto4nJZYSqGg==
+Date: Wed, 24 Sep 2025 13:51:23 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>, 
+	iommu@lists.linux.dev, Anders Roxell <anders.roxell@linaro.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
+	Xingang Wang <wangxingang5@huawei.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] PCI: Fix ACS enablement for Root Ports in DT
+ platforms
+Message-ID: <oig5w7dnrdpgvzuqu4johs526qe57x7dkurd2abllqyvpavvti@s3pwtoduusfr>
+References: <20250910-pci-acs-v1-0-fe9adb65ad7d@oss.qualcomm.com>
+ <20250918141102.GO1326709@ziepe.ca>
+ <tzlbsnsoymhjlri5rm7dw5btb2m2tpzemtyqhjpa2eu3josf5c@uivuvkpx3wep>
+ <20250923162139.GC2547959@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,105 +67,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKNxGFOWN7-HmzObYobW2y33g-i3xsNSkKicx88hqe70w@mail.gmail.com>
+In-Reply-To: <20250923162139.GC2547959@ziepe.ca>
 
-On Wed, Sep 24, 2025 at 09:49:23AM +0200, Alexei Starovoitov wrote:
-> On Tue, Sep 23, 2025 at 4:21 PM Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > Hello!
-> >
-> > This series re-implements RCU Tasks Trace in terms of SRCU-fast,
-> > reducing the size of the Linux-kernel RCU implementation by several
-> > hundred lines of code.  It also removes a conditional branch from the
-> > srcu_read_lock_fast() implementation in order to make SRCU-fast a
-> > bit more fastpath-friendly.  The patches are as follows:
-> >
-> > 1.      Re-implement RCU Tasks Trace in terms of SRCU-fast.
-> >
-> > 2.      Remove unused ->trc_ipi_to_cpu and ->trc_blkd_cpu from
-> >         task_struct.
-> >
-> > 3.      Remove ->trc_blkd_node from task_struct.
-> >
-> > 4.      Remove ->trc_holdout_list from task_struct.
-> >
-> > 5.      Remove rcu_tasks_trace_qs() and the functions that it calls.
-> >
-> > 6.      context_tracking: Remove
-> >         rcu_task_trace_heavyweight_{enter,exit}().
-> >
-> > 7.      Remove ->trc_reader_special from task_struct.
-> >
-> > 8.      Remove now-empty RCU Tasks Trace functions and calls to them.
-> >
-> > 9.      Remove unused rcu_tasks_trace_lazy_ms and trc_stall_chk_rdr
-> >         struct.
-> >
-> > 10.     Remove now-empty show_rcu_tasks_trace_gp_kthread() function.
-> >
-> > 11.     Remove now-empty rcu_tasks_trace_get_gp_data() function.
-> >
-> > 12.     Remove now-empty rcu_tasks_trace_torture_stats_print() function.
-> >
-> > 13.     Remove now-empty get_rcu_tasks_trace_gp_kthread() function.
-> >
-> > 14.     Move rcu_tasks_trace_srcu_struct out of #ifdef
-> >         CONFIG_TASKS_RCU_GENERIC.
-> >
-> > 15.     Add noinstr-fast rcu_read_{,un}lock_tasks_trace() APIs.
-> >
-> > 16.     Remove now-unused rcu_task_ipi_delay and TASKS_TRACE_RCU_READ_MB.
-> >
-> > 17.     Create a DEFINE_SRCU_FAST().
-> >
-> > 18.     Use smp_mb() only when necessary in RCU Tasks Trace readers.
-> >
-> > 19.     Update Requirements.rst for RCU Tasks Trace.
-> >
-> > 20.     Deprecate rcu_read_{,un}lock_trace().
-> >
-> > 21.     Mark diagnostic functions as notrace.
-> >
-> > 22.     Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
-> >
-> > 23.     Create an srcu_expedite_current() function.
-> >
-> > 24.     Test srcu_expedite_current().
-> >
-> > 25.     Create an rcu_tasks_trace_expedite_current() function.
-> >
-> > 26.     Test rcu_tasks_trace_expedite_current().
-> >
-> > 27.     Make DEFINE_SRCU_FAST() available to modules.
-> >
-> > 28.     Make SRCU-fast available to heap srcu_struct structures.
-> >
-> > 29.     Make grace-period determination use ssp->srcu_reader_flavor.
-> >
-> > 30.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
-> >
-> > 31.     Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
-> >
-> > 32.     Require special srcu_struct define/init for SRCU-fast readers.
-> >
-> > 33.     Make SRCU-fast readers enforce use of SRCU-fast definition/init.
-> >
-> > 34.     Update for SRCU-fast definitions and initialization.
+On Tue, Sep 23, 2025 at 01:21:39PM -0300, Jason Gunthorpe wrote:
+> On Tue, Sep 23, 2025 at 09:07:49PM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Sep 18, 2025 at 11:11:02AM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Sep 10, 2025 at 11:09:19PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > This issue was already found and addressed with a quirk for a different device
+> > > > from Microsemi with 'commit, aa667c6408d2 ("PCI: Workaround IDT switch ACS
+> > > > Source Validation erratum")'. Apparently, this issue seems to be documented in
+> > > > the erratum #36 of IDT 89H32H8G3-YC, which is not publicly available.
+> > > 
+> > > This is a pretty broken device! I'm not sure this fix is good enough
+> > > though.
+> > > 
+> > > For instance if you reset a downstream device it should loose its RID
+> > > and then the config cycles waiting for reset to complete will trigger SV
+> > > and reset will fail?
+> > > 
+> > 
+> > No. Resetting the Ethernet controller connected to the switch downstream port
+> > doesn't fail and we could see that the reset succeeds.
 > 
-> Maybe it's just me, but the patch set is too fine grained.
-> These 34 patches could be squashed into a handful for better
-> review. All these steps: add smp_mb(), make it conditional,
-> make it more conditional, remove one field,
-> remove another field is a distraction from actual logic at the end.
+> Reset it by up/down the PCI link?
+> 
 
-Fair enough!
+We did both FLR (dev/reset) and SBR (bus/reset_subordinate), both succeeds.
 
-I was quite distracted while doing this work, so did it in baby steps to
-avoid having to do any sort of complex debugging.  My plan is to continue
-testing it, and if the tests continue passing, restructure the patch
-series, then send v2.  You are quite right, and I will (for example)
-consolidate the "Remove" patches.  And at that point, the "squash"
-feature of "git rebase" will be my friend.  ;-)
+> > Maybe the bus number was still captured by the device.
+> 
+> Maybe, but I don't think that is spec conformat behavior.
+> 
 
-							Thanx, Paul
+This device is not spec conformant in many areas tbh. But my suggestion would be
+to follow the vendor suggested erratum until any reported issues.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
