@@ -1,394 +1,174 @@
-Return-Path: <linux-kernel+bounces-830581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0ACB9A07D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A95B9A08A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A80E3A508B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:28:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A0D189F67B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E989430277D;
-	Wed, 24 Sep 2025 13:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F69B30214B;
+	Wed, 24 Sep 2025 13:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMnbHh58"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4Jw7hSh"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39E21ADFFB;
-	Wed, 24 Sep 2025 13:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795B013FEE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758720527; cv=none; b=VqeYd/Af7vHhX0dgiOgNs2cGsCMD43qMAKXdPTg0A7SCk9eaXfbuDF74xeMBvlsMB+2PbWEIVO9zfsntBebtGFBHC1GarPYe9NQu2PyaZPLBJhhyoLA26ON9sXSSQ/YA4R+lDy3JMyPKlN8zdeyPxFlSBGPjuNkdn+eZ4iqifNc=
+	t=1758720671; cv=none; b=eIiSD0qLIYtf+DhfjF+gwAPnnVhz8zfjffm2x5W4DtMApzZZwg3kPzAzfc4i2LsM4AtYn/DHjnD7aQadSfXplJZzUwjA2/fVtCFtPt88J+VByNDEEkqhfUdrsWBGWCJqk2Fn9eOlMNK0tICHq630b9BE0EKccpqe0dKRLBJuZO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758720527; c=relaxed/simple;
-	bh=ECLDkssgzzs/zAyW85AovNWJBwLlkh7rXuyl0VEp6RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3Jw0i8Zkz211I0Dm19WKeh11JacG26aBDGhVW/8whEr6ldjqeWRHJ6x2zy4xsTeZBhbS4cH5PLVCWQ88DhLiPzlL5VGb3KUH3xuaEVxAACilzGPgx8JH1aa+MTAy5WasQAUwSbkPPSlXrYXJmNeJDRnZ/wnZlteLPbQYd4x6Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMnbHh58; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F20C4CEE7;
-	Wed, 24 Sep 2025 13:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758720527;
-	bh=ECLDkssgzzs/zAyW85AovNWJBwLlkh7rXuyl0VEp6RY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EMnbHh581wcIH2tBVJrSo2df6RRbppI/ljrTK3x8z/Q9xvs7usggd//vspg8uO8Sf
-	 48+KOO21EXxLN/O6J5EG6iLiqU2f/ml3qaVCzWy4AvXTuuaHqf+FP8ryTA4Gsighl8
-	 Z4vQX7e95mKulQN4joZpH/aLglYwMz1J/yRe1XcAjL8lnG5xrAMHiCEy4jUBZpJYKr
-	 0ErAExzg8idqx+ygqQYw7wiZFXAf1nmp8GKETtdgLCC1F5kZ0UvQuOdGPuhBO/YPOH
-	 /soKR+GjmZGuIGSL1izXt6CubhNUGl1YJTXDHW28i/k3Cs/Trwm0sRO6RnUQrhRCZj
-	 miaUIhS84MAlQ==
-Message-ID: <27e36fdb-3107-4e7b-b402-fd72ea5c4d61@kernel.org>
-Date: Wed, 24 Sep 2025 14:28:43 +0100
+	s=arc-20240116; t=1758720671; c=relaxed/simple;
+	bh=46Xxj40QWyWAnu3jMesyuN/ZQk0DISGVbez5MDqEi+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qPZlj6HWYgYm+Rby6ENeanzpDMqhZIjmXZxaF4q6zBAw1O8kJu3+yeKWE90CufPR2bE2s7sewBVmSV3W8MB6/6du8f2Bujit40rHCwY28QE+Vm6wYG3z3ogfHd79kr4Jhxjsa1X1oE2LpeQ7BLAmkCD/+v6XF71B/OqW9lwdL3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4Jw7hSh; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-72ce9790acdso63831557b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758720667; x=1759325467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8o/bKsm97JI+1qdk5N1JW8cXmeYcYmwcOzqbBYKqO7k=;
+        b=R4Jw7hShU4EUiHUiSodMZuOyEFRG1unHDRJWdejF0JnHlXLNrZgqg5wFW1FecSTPJy
+         ptBEqwezJ7D8PrPBCr+v0AzIdsQTM1SdolplSumzKwHFgVKAVS5OvZFnL6tOCGTBnFTw
+         BYyYks7VE75GfKnG97DEbruHvYYTyS96iuTvzE6BFgP8B6XfZfbESaCKT4I8urnN/+Mi
+         D0iZu5DyE4rgA9jPkxRXh0SXKsQ/HAYiaBmYp31Iqq5Gg9fFTT3hVCNB+xq8hET5wKDh
+         eeqzuC1pKVF6/4+rYzrsSEaLb7gMpgmru4a1Sy83/mhRjcFXJmPPwPwz347hO7lhTBRj
+         QnuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758720667; x=1759325467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8o/bKsm97JI+1qdk5N1JW8cXmeYcYmwcOzqbBYKqO7k=;
+        b=G0V+hNo2mFzlVVIzYInoRrK37P84Ed5uNw0JY4EBk6zAYbyC/4xkmyi/+CkWE5JEzO
+         IR/Jlub49o4LDHVqrnwI8U7Hebqc6/3auGASlUKwkAXkxKYTqFx+WW0k6ECEN2gbSSAO
+         9/RtlZoqxFrJYcxqPemBW5ItWbsYg7DzyxO7QI9QGFiddEStgDpnZGCUtln03bvirpnB
+         Hn/0jQHtJKwww5ZhphWVd0xfi6rKKzwa22OaimpNVBo+TtyNEynVHdUBW7qf8R8031PW
+         5eJZS3aB7covwbjw997CHRXB9UIZYX+V8tNmzf/pycJIbgChHNEKbtYDpxowQu0jeqit
+         ArXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPGGZRi6yAMCHboI2OdUdkU6WvfgYDbeBntRZXjtnNJu91I+EkTdkeCxsSESwVGEEQARNTnSdRpvKS2fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybdozLZPWoVRxWFmxpFseLImJ4oVdKFE7k9QPswad5+rvwVOwM
+	erQPJDPrCYmbGc2uJlxsjOCVdRgsfSiC5Gy+U5tEILY0Qkm7B2/ko/HTGQ8I9l14FQ/seQjtrAp
+	dro3kagJX6CDPaTuJN3gxTLcX6p+snIc=
+X-Gm-Gg: ASbGncvvu4Gp+lUj4804J6HlXwfFCw1Fba0akyKyGEyHxFZ7h913abTQNIk2LWpoIvD
+	ekwDr5QdVVLPc74Dk4p7i8bVrMqukwymw9upQsgoLX7W47QJlY2LWtarAshddEu6oiZJFLJF5Wk
+	tMDT7XZdWTDy+6VuEPWbf8CUQhizO89fexNJjSrjgEtsV+fypqx5MXj5EO522OnMrMvZNFH4ujd
+	J8FLFCywq3aBQ0ywQ==
+X-Google-Smtp-Source: AGHT+IHigQU1SwnbWbVt1/aemZ0rPCMfZqnHtTtQdJGn9ZTnDZqlnur9YC7rS9LNtus8SBzPJRH3iPXI+diPpCNf4V4=
+X-Received: by 2002:a05:690c:2c0d:b0:762:772b:917d with SMTP id
+ 00721157ae682-762772b94b8mr7441717b3.49.1758720667090; Wed, 24 Sep 2025
+ 06:31:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: iris: Add support for QC08C format for decoder
-To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
- <OyMR2y907eHs6rnnO6bzy52LY_t8KXKscM-nTPu48x3NCYFU4mza-uz0HqnQlYqPg2JtDB8AhCtGAa26Cbq4PA==@protonmail.internalid>
- <20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250923060614.539789-1-dongml2@chinatelecom.cn>
+ <aNI_-QHAzwrED-iX@gondor.apana.org.au> <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>
+ <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
+In-Reply-To: <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 24 Sep 2025 21:30:55 +0800
+X-Gm-Features: AS18NWA1CfSWZmw6na-YTZ-8p6J_kZkV2o8XdVYVoFzGsKTU8FazQhmxkraJz4g
+Message-ID: <CADxym3ZA7FsdeA3zz34V7mHHjBC358UoJjrpV6wieZ1LF2aFxA@mail.gmail.com>
+Subject: Re: [PATCH] rhashtable: add likely() to __rht_ptr()
+To: NeilBrown <neil@brown.name>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, tgraf@suug.ch, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/09/2025 16:47, Dikshita Agarwal wrote:
-> Introduce handling for the QC08C format in the decoder.
-> Update format checks and configuration to enable decoding of QC08C
-> streams.
+On Tue, Sep 23, 2025 at 7:31=E2=80=AFPM NeilBrown <neilb@ownmail.net> wrote=
+:
+>
+> On Tue, 23 Sep 2025, Menglong Dong wrote:
+> > On Tue, Sep 23, 2025 at 2:36=E2=80=AFPM Herbert Xu <herbert@gondor.apan=
+a.org.au> wrote:
+> > >
+> > > Menglong Dong <menglong8.dong@gmail.com> wrote:
+> > > > In the fast path, the value of "p" in __rht_ptr() should be valid.
+> > > > Therefore, wrap it with a "likely". The performance increasing is t=
+iny,
+> > > > but it's still worth to do it.
+> > > >
+> > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > > > ---
+> > > > include/linux/rhashtable.h | 5 +++--
+> > > > 1 file changed, 3 insertions(+), 2 deletions(-)
+> > >
+> > > It's not obvious that rht_ptr would be non-NULL.  It depends on the
+> > > work load.  For example, if you're doing a lookup where most keys
+> > > are non-existent then it would most likely be NULL.
+> >
+> > Yeah, I see. In my case, the usage of the rhashtable will be:
+> > add -> lookup, and rht_ptr is alway non-NULL. You are right,
+> > it can be NULL in other situations, and it's not a good idea to
+> > use likely() here ;)
+>
+> Have you measured a performance increase?  How tiny is it?
+>
+> It might conceivably make sense to have a rhashtable_lookup_likely() and
+> rhashtable_lookup_unlikely(), but concrete evidence of the benefit would
+> be needed.
 
-Since QC08C is a Qualcomm specific pixel format, you should detail in 
-your commit log exactly what the packing/ordering of pixels is.
+I made a more accurate bench testing:  call the rhashtable_lookup()
+100000000 times.
 
-In other words tell the reader more about QC08C.
+Without the likely(), it cost  123697645ns. And with the likely(), only
+84507668ns.
 
-> 
-> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> ---
->   drivers/media/platform/qcom/iris/iris_buffer.c     |  5 +-
->   .../platform/qcom/iris/iris_hfi_gen1_command.c     | 12 +++--
->   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 18 ++++++-
->   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  1 +
->   drivers/media/platform/qcom/iris/iris_instance.h   |  7 ++-
->   .../media/platform/qcom/iris/iris_platform_gen2.c  |  1 +
->   drivers/media/platform/qcom/iris/iris_utils.c      |  3 +-
->   drivers/media/platform/qcom/iris/iris_vdec.c       | 61 ++++++++++++++++++----
->   8 files changed, 89 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index c0900038e7defccf7de3cb60e17c71e36a0e8ead..83dcf49e57ec1473bc4edd26c48ab0b247d23818 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -261,7 +261,10 @@ int iris_get_buffer_size(struct iris_inst *inst,
->   		case BUF_INPUT:
->   			return iris_dec_bitstream_buffer_size(inst);
->   		case BUF_OUTPUT:
-> -			return iris_yuv_buffer_size_nv12(inst);
-> +			if (inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C)
+I add the likely() not only to the __rht_ptr(), but also rht_for_each_rcu_f=
+rom()
+and rhashtable_lookup().
 
-It'd be nice to get a pointer to the final level of indireciton you need 
-generally, instead of these very->long->lists->of.indirections.
+Below is the part code of the testing:
 
-Please consider getting a final pointer as much as possible especially 
-in functions where you end up writing those long chains over and over again.
+    for (i =3D 0; i < num_elems; i++) {
+        objs[i] =3D kmalloc(sizeof(**objs), GFP_KERNEL);
+        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, objs[i]);
+        objs[i]->key =3D i;
+        INIT_RHT_NULLS_HEAD(objs[i]->node.next);
+        ret =3D rhashtable_insert_fast(&ht, &objs[i]->node, bench_params);
+        KUNIT_ASSERT_EQ(test, ret, 0);
+    }
 
-> +				return iris_yuv_buffer_size_qc08c(inst);
-> +			else
-> +				return iris_yuv_buffer_size_nv12(inst);
->   		case BUF_DPB:
->   			return iris_yuv_buffer_size_qc08c(inst);
->   		default:
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-> index e1788c266bb1080921f17248fd5ee60156b3143d..e458d3349ce09aadb75d056ae84e3aab95f03078 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-> @@ -774,20 +774,21 @@ static int iris_hfi_gen1_set_raw_format(struct iris_inst *inst, u32 plane)
->   		pixelformat = inst->fmt_dst->fmt.pix_mp.pixelformat;
->   		if (iris_split_mode_enabled(inst)) {
->   			fmt.buffer_type = HFI_BUFFER_OUTPUT;
-> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
-> -				HFI_COLOR_FORMAT_NV12_UBWC : 0;
-> +			fmt.format = HFI_COLOR_FORMAT_NV12_UBWC;
-> 
->   			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
->   			if (ret)
->   				return ret;
-> 
->   			fmt.buffer_type = HFI_BUFFER_OUTPUT2;
-> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FORMAT_NV12 : 0;
-> +			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
-> +				HFI_COLOR_FORMAT_NV12 : HFI_COLOR_FORMAT_NV12_UBWC;
-> 
->   			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
->   		} else {
->   			fmt.buffer_type = HFI_BUFFER_OUTPUT;
-> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FORMAT_NV12 : 0;
-> +			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
-> +				HFI_COLOR_FORMAT_NV12 : HFI_COLOR_FORMAT_NV12_UBWC;
-> 
->   			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
->   		}
-> @@ -806,6 +807,9 @@ static int iris_hfi_gen1_set_format_constraints(struct iris_inst *inst, u32 plan
->   	const u32 ptype = HFI_PROPERTY_PARAM_UNCOMPRESSED_PLANE_ACTUAL_CONSTRAINTS_INFO;
->   	struct hfi_uncompressed_plane_actual_constraints_info pconstraint;
-> 
-> +	if (inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C)
-> +		return 0;
-> +
->   	pconstraint.buffer_type = HFI_BUFFER_OUTPUT2;
->   	pconstraint.num_planes = 2;
->   	pconstraint.plane_format[0].stride_multiples = 128;
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> index 4ce71a14250832440099e4cf3835b4aedfb749e8..5ad202d3fcdc57a2b7b43de15763a686ce0f7bd7 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> @@ -422,6 +422,20 @@ static int iris_hfi_gen2_set_level(struct iris_inst *inst, u32 plane)
->   						  sizeof(u32));
->   }
-> 
-> +static int iris_hfi_gen2_set_opb_enable(struct iris_inst *inst, u32 plane)
-> +{
-> +	u32 port = iris_hfi_gen2_get_port(inst, plane);
-> +	u32 opb_enable = iris_split_mode_enabled(inst);
-> +
-> +	return iris_hfi_gen2_session_set_property(inst,
-> +						  HFI_PROP_OPB_ENABLE,
-> +						  HFI_HOST_FLAGS_NONE,
-> +						  port,
-> +						  HFI_PAYLOAD_U32,
-> +						  &opb_enable,
-> +						  sizeof(u32));
-> +}
-> +
->   static int iris_hfi_gen2_set_colorformat(struct iris_inst *inst, u32 plane)
->   {
->   	u32 port = iris_hfi_gen2_get_port(inst, plane);
-> @@ -429,7 +443,8 @@ static int iris_hfi_gen2_set_colorformat(struct iris_inst *inst, u32 plane)
-> 
->   	if (inst->domain == DECODER) {
->   		pixelformat = inst->fmt_dst->fmt.pix_mp.pixelformat;
-> -		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FMT_NV12 : 0;
-> +		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ?
-> +			HFI_COLOR_FMT_NV12 : HFI_COLOR_FMT_NV12_UBWC;
->   	} else {
->   		pixelformat = inst->fmt_src->fmt.pix_mp.pixelformat;
->   		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FMT_NV12 : 0;
-> @@ -527,6 +542,7 @@ static int iris_hfi_gen2_session_set_config_params(struct iris_inst *inst, u32 p
->   		{HFI_PROP_SIGNAL_COLOR_INFO,          iris_hfi_gen2_set_colorspace             },
->   		{HFI_PROP_PROFILE,                    iris_hfi_gen2_set_profile                },
->   		{HFI_PROP_LEVEL,                      iris_hfi_gen2_set_level                  },
-> +		{HFI_PROP_OPB_ENABLE,                 iris_hfi_gen2_set_opb_enable             },
+    /* for CPU warm up */
+    for (i =3D 0; i < 1000000000; i++) {
+        u32 key =3D 0;
+        struct bench_obj *found;
 
+        found =3D rhashtable_lookup(&ht, &key, bench_params);
+        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, found);
+        KUNIT_ASSERT_EQ(test, found->key, key);
+    }
 
-As I read this code I end up asking myself "what does OPB" mean ?
+    rcu_read_lock();
+    t0 =3D ktime_get();
+    for (i =3D 0; i < 100000000; i++) {
+        u32 key =3D 0;
+        struct bench_obj *found;
 
-For preference the introduction of OPB would be its own patch with its 
-own commit log that explains OPB as an individual thing.
+        found =3D rhashtable_lookup(&ht, &key, bench_params);
+        if (unlikely(!found)) {
+            pr_info("error!\n");
+            break;
+        }
+    }
+    t1 =3D ktime_get();
+    rcu_read_unlock();
 
-You can enable your QC08C format as an additional step.
-
-
->   		{HFI_PROP_COLOR_FORMAT,               iris_hfi_gen2_set_colorformat            },
->   		{HFI_PROP_LINEAR_STRIDE_SCANLINE,     iris_hfi_gen2_set_linear_stride_scanline },
->   		{HFI_PROP_TIER,                       iris_hfi_gen2_set_tier                   },
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> index aa1f795f5626c1f76a32dd650302633877ce67be..1b6a4dbac828ffea53c1be0d3624a033c283c972 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
-> @@ -91,6 +91,7 @@ enum hfi_seq_header_mode {
->   #define HFI_PROP_BUFFER_MARK			0x0300016c
->   #define HFI_PROP_RAW_RESOLUTION		0x03000178
->   #define HFI_PROP_TOTAL_PEAK_BITRATE		0x0300017C
-> +#define HFI_PROP_OPB_ENABLE			0x03000184
->   #define HFI_PROP_COMV_BUFFER_COUNT		0x03000193
->   #define HFI_PROP_END				0x03FFFFFF
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
-> index 5982d7adefeab80905478b32cddba7bd4651a691..11134f75c26dd1f6c92ba72fbf4e56e41a72de64 100644
-> --- a/drivers/media/platform/qcom/iris/iris_instance.h
-> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
-> @@ -15,12 +15,17 @@
->   #define DEFAULT_WIDTH 320
->   #define DEFAULT_HEIGHT 240
-> 
-> -enum iris_fmt_type {
-> +enum iris_fmt_type_out {
->   	IRIS_FMT_H264,
->   	IRIS_FMT_HEVC,
->   	IRIS_FMT_VP9,
->   };
-> 
-> +enum iris_fmt_type_cap {
-> +	IRIS_FMT_NV12,
-> +	IRIS_FMT_UBWC,
-> +};
-> +
->   struct iris_fmt {
->   	u32 pixfmt;
->   	u32 type;
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> index 36d69cc73986b74534a2912524c8553970fd862e..69c952c68e939f305f25511e2e4763487ec8e0de 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
-> @@ -691,6 +691,7 @@ static const u32 sm8550_venc_input_config_params[] = {
->   };
-> 
->   static const u32 sm8550_vdec_output_config_params[] = {
-> +	HFI_PROP_OPB_ENABLE,
->   	HFI_PROP_COLOR_FORMAT,
->   	HFI_PROP_LINEAR_STRIDE_SCANLINE,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_utils.c b/drivers/media/platform/qcom/iris/iris_utils.c
-> index 85c70a62b1fd2c409fc18b28f64771cb0097a7fd..e2f1131de43128254d8211343771e657e425541e 100644
-> --- a/drivers/media/platform/qcom/iris/iris_utils.c
-> +++ b/drivers/media/platform/qcom/iris/iris_utils.c
-> @@ -34,7 +34,8 @@ int iris_get_mbpf(struct iris_inst *inst)
-> 
->   bool iris_split_mode_enabled(struct iris_inst *inst)
->   {
-> -	return inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_NV12;
-> +	return inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_NV12 ||
-> +		inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C;
->   }
-> 
->   void iris_helper_buffers_done(struct iris_inst *inst, unsigned int type,
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-> index ae13c3e1b426bfd81a7b46dc6c3ff5eb5c4860cb..7fa745c6bf8950d192c2d2fc1770c4b6fd7b8c4c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-> @@ -67,7 +67,7 @@ void iris_vdec_inst_deinit(struct iris_inst *inst)
->   	kfree(inst->fmt_src);
->   }
-> 
-> -static const struct iris_fmt iris_vdec_formats[] = {
-> +static const struct iris_fmt iris_vdec_formats_out[] = {
->   	[IRIS_FMT_H264] = {
->   		.pixfmt = V4L2_PIX_FMT_H264,
->   		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-> @@ -82,12 +82,35 @@ static const struct iris_fmt iris_vdec_formats[] = {
->   	},
->   };
-> 
-> +static const struct iris_fmt iris_vdec_formats_cap[] = {
-> +	[IRIS_FMT_NV12] = {
-> +		.pixfmt = V4L2_PIX_FMT_NV12,
-> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-> +	},
-> +	[IRIS_FMT_UBWC] = {
-> +		.pixfmt = V4L2_PIX_FMT_QC08C,
-> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-> +	},
-> +};
-> +
->   static const struct iris_fmt *
->   find_format(struct iris_inst *inst, u32 pixfmt, u32 type)
->   {
-> -	unsigned int size = ARRAY_SIZE(iris_vdec_formats);
-> -	const struct iris_fmt *fmt = iris_vdec_formats;
-> +	const struct iris_fmt *fmt = NULL;
-> +	unsigned int size = 0;
->   	unsigned int i;
-> +	switch (type) {
-> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-> +		fmt = iris_vdec_formats_out;
-> +		size = ARRAY_SIZE(iris_vdec_formats_out);
-> +		break;
-> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> +		fmt = iris_vdec_formats_cap;
-> +		size = ARRAY_SIZE(iris_vdec_formats_cap);
-> +		break;
-> +	default:
-> +		return NULL;
-> +	}
-> 
->   	for (i = 0; i < size; i++) {
->   		if (fmt[i].pixfmt == pixfmt)
-> @@ -103,8 +126,21 @@ find_format(struct iris_inst *inst, u32 pixfmt, u32 type)
->   static const struct iris_fmt *
->   find_format_by_index(struct iris_inst *inst, u32 index, u32 type)
->   {
-> -	const struct iris_fmt *fmt = iris_vdec_formats;
-> -	unsigned int size = ARRAY_SIZE(iris_vdec_formats);
-> +	const struct iris_fmt *fmt = NULL;
-> +	unsigned int size = 0;
-> +
-> +	switch (type) {
-> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
-> +		fmt = iris_vdec_formats_out;
-> +		size = ARRAY_SIZE(iris_vdec_formats_out);
-> +		break;
-> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> +		fmt = iris_vdec_formats_cap;
-> +		size = ARRAY_SIZE(iris_vdec_formats_cap);
-> +		break;
-> +	default:
-> +		return NULL;
-> +	}
-> 
->   	if (index >= size || fmt[index].type != type)
->   		return NULL;
-> @@ -126,9 +162,10 @@ int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f)
->   		f->flags = V4L2_FMT_FLAG_COMPRESSED | V4L2_FMT_FLAG_DYN_RESOLUTION;
->   		break;
->   	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> -		if (f->index)
-> +		fmt = find_format_by_index(inst, f->index, f->type);
-> +		if (!fmt)
->   			return -EINVAL;
-> -		f->pixelformat = V4L2_PIX_FMT_NV12;
-> +		f->pixelformat = fmt->pixfmt;
->   		break;
->   	default:
->   		return -EINVAL;
-> @@ -157,7 +194,7 @@ int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
->   		}
->   		break;
->   	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> -		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
-> +		if (!fmt) {
->   			f_inst = inst->fmt_dst;
->   			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
->   			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
-> @@ -238,10 +275,11 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
->   		inst->crop.height = f->fmt.pix_mp.height;
->   		break;
->   	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-> +		if (!(find_format(inst, f->fmt.pix_mp.pixelformat, f->type)))
-> +			return -EINVAL;
-> +
->   		fmt = inst->fmt_dst;
->   		fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-> -		if (fmt->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12)
-> -			return -EINVAL;
->   		fmt->fmt.pix_mp.pixelformat = f->fmt.pix_mp.pixelformat;
->   		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, 128);
->   		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, 32);
-> @@ -268,7 +306,8 @@ int iris_vdec_validate_format(struct iris_inst *inst, u32 pixelformat)
->   {
->   	const struct iris_fmt *fmt = NULL;
-> 
-> -	if (pixelformat != V4L2_PIX_FMT_NV12) {
-> +	fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> +	if (!fmt) {
->   		fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
->   		if (!fmt)
->   			return -EINVAL;
-> 
-> --
-> 2.34.1
-> 
-
+>
+> Thanks,
+> NeilBrown
 
