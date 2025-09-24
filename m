@@ -1,406 +1,106 @@
-Return-Path: <linux-kernel+bounces-830211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA55B9910C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446AAB990ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F603B1339
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2B819C6372
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5DB2D6619;
-	Wed, 24 Sep 2025 09:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F47A2D63F6;
+	Wed, 24 Sep 2025 09:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SIIVKC0K"
-Received: from mail-m49244.qiye.163.com (mail-m49244.qiye.163.com [45.254.49.244])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rz86vAIF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B990F27FD6D;
-	Wed, 24 Sep 2025 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.244
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A120200BA1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705625; cv=none; b=br6/D3zq8vjuizb/29V/6wDAgWrLoAyUdgGwcFjqIazJ6Jo1E6diKCUZPFSuENfMBvGz8/2E89RA1G0fYSut6zMxWoeFccTb9/T3hsI7woD9rXn1DdVSqdghriu1PW5OpygtZxSuVn+WbYmKfLnThJ6tuFb+Av4POmSqWGs/7EU=
+	t=1758705477; cv=none; b=uTH+FKT3+QX9I/2oP2jr53ULgC69vjN0m7fpq/b1PCX6wRbZjX2dFmPtzbcWaUMp3R8+AVSPLQwGPkv0rFXCISwqMlOokXbcCQ+vOFT+hxrCRnAZ9wALk7NDRROd6BhGbZGngQxiLBvw9eN/MVfqXr3KcK6Y8/BseFg98Qy+5XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705625; c=relaxed/simple;
-	bh=zvuaIBezae1RX+XceIMs7N16ukgHasYSr72AnjpJu78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JufTo/n/zOkcEjYkYqzzChQ51IAA7N+MxWC7Vd/C8yqjVnCtPaaqOkOx3Qsw/f6wXaWX9AU/7tDObswdNkHt6xX5LnWfQK2Vt7TOxnzUSb8g340edJLnlPK/dqLsE58BXsLUmMfP896I3jB4KcmKcbGqIUv82h4IZA2RO22tUQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SIIVKC0K; arc=none smtp.client-ip=45.254.49.244
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23e6e465e;
-	Wed, 24 Sep 2025 17:14:58 +0800 (GMT+08:00)
-Message-ID: <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
-Date: Wed, 24 Sep 2025 17:14:57 +0800
+	s=arc-20240116; t=1758705477; c=relaxed/simple;
+	bh=xg7GZW/rJphiTlukpOcrakNgzK2BFUfsxpYCPWK89aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QM8TwxCoq6U5p0dQyrclTV9PbmdVaWv89m8WvY7PmtzfokvDWiRr1FqzwI3WYZKmMmTaWQuxkqVLqEQpLj4NMI/fQjdAIY2dgAmtAJrPKSzpaf9K42jQDfarPXhK+jLqRt+X41wT9zOWhAU1font0XYwiJXcqU1gNiyf4n6nrz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rz86vAIF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=izBkuHLeazq1xWoDKzp63Y1vbF3xEzSp/MoEgcjLdxM=; b=Rz86vAIFq3UamqtKF/wGwG0fPs
+	T0LgBhY+S7A6CbJ8nIbq7gjDGcVpaQC570mcFOuwLEkikBf5nvZyR9NalKdVs5HvAymOPYo8oOnFv
+	nTpoN13h7xi4fonQcJ/F0T0czjNDQc1wk9iwwtBBNERnZhNM0KrxKB68AQxlnE5LlHXrW2rYrAtpc
+	aF01WAzyQ2Bx+RDvbPWpz5Jd0zxB83ggs56BcaEZBu/geZhRGCR4zsmlOMB0K6zZW0ANSto16QVd8
+	Zh17+Swb9+Pil9RKABB9wrGozOWx0i6X9Ztb9l9B1fI3Kp1JUEa4ev7xuT/2mXU36JAn867lyes6F
+	b4ng+CVg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1LdI-00000008iVE-1MLD;
+	Wed, 24 Sep 2025 09:17:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2CF1730033D; Wed, 24 Sep 2025 11:17:51 +0200 (CEST)
+Date: Wed, 24 Sep 2025 11:17:51 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jpoimboe@kernel.org
+Subject: Re: [RFC PATCH v2 00/17] objtool: Function validation tracing
+Message-ID: <20250924091751.GX4068168@noisy.programming.kicks-ass.net>
+References: <20250619145659.1377970-1-alexandre.chartre@oracle.com>
+ <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-11-damon.ding@rock-chips.com>
- <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a997b012a9d03a3kunma77a41314d83e6
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0lLGFYYThlNHRoYTExIGE9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=SIIVKC0KCUfR3nN+GwLw5v1/d4nod3YY7POL/H/Aej0LixL+qxLVD844b2/VCZfclXxzPPwO/oNBO9jDa42GjKd43wjkFDTNJjfqKY+ZY0iN6DlVPuSUDboyvbLbvDuf+zmcSY2ijFYoVv1s0+P3csBiG0zXa77c3DWq97j2i3s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=r5/iUgL09RJK6WKifG6s6DOa6jDb3+QyMuclggS9aU0=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924073649.GT4067720@noisy.programming.kicks-ass.net>
 
-Hi Dmitry,
+On Wed, Sep 24, 2025 at 09:36:49AM +0200, Peter Zijlstra wrote:
 
-On 9/12/2025 7:03 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
->> Apply drm_bridge_connector helper for Analogix DP driver.
->>
->> The following changes have been made:
->> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
->>    and &drm_connector_helper_funcs.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - Remove &analogix_dp_device.connector.
->> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
->>    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
->> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
->>    &drm_bridge_funcs.edid_read().
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ------
->>
->> Changes in v2:
->> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
->>    DRM_BRIDGE_OP_EDID.
->> - Add analogix_dp_bridge_edid_read().
->> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
->>    patches.
->>
->> Changes in v3:
->> - Rebase with the new devm_drm_bridge_alloc() related commit
->>    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
->>    API").
->> - Expand the commit message.
->> - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
->>    bridge is available.
->> - Remove unnecessary parameter struct drm_connector* for callback
->>    &analogix_dp_plat_data.attach.
->> - In order to decouple the connector driver and the bridge driver, move
->>    the bridge connector initilization to the Rockchip and Exynos sides.
->>
->> Changes in v4:
->> - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
->>    &drm_connector.
->> - Rename the &analogix_dp_plat_data.bridge to
->>    &analogix_dp_plat_data.next_bridge.
->>
->> Changes in v5:
->> - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
->>    for next bridge attachment of Exynos side.
->> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
->>    the downstream device is a panel, a bridge or neither.
->> - Remove the calls to &analogix_dp_plat_data.get_modes().
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
->>   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
->>   drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
->>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
->>   include/drm/bridge/analogix_dp.h              |   3 +-
->>   5 files changed, 95 insertions(+), 96 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 9bf91d7595d6..156114170c4d 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -856,44 +856,38 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
->>   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
->>   }
->>   
->> -static int analogix_dp_get_modes(struct drm_connector *connector)
->> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	const struct drm_edid *drm_edid;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	int num_modes = 0;
->>   
->> -	if (dp->plat_data->panel) {
->> +	if (dp->plat_data->panel)
->>   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
->> -	} else {
->> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->>   
->> -		drm_edid_connector_update(&dp->connector, drm_edid);
->> -
->> -		if (drm_edid) {
->> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
->> -			drm_edid_free(drm_edid);
->> -		}
->> -	}
->> +	if (dp->plat_data->next_bridge)
->> +		num_modes += drm_bridge_get_modes(dp->plat_data->next_bridge, connector);
+> >                       | <alternative.65c4e> alt 1/4 end
+> >  65c4e: os_xsave+0x2e | <alternative.65c4e> alt 2/4 begin
+> >  1c3d: .altinstr_replacement+0x1c3d | | xsaves64 0x40(%rbp) 
+> >  65c53: os_xsave+0x33 | | xor %ebx,%ebx 
+> >  65c55: os_xsave+0x35 | | test %ebx,%ebx - already visited
+> >                       | <alternative.65c4e> alt 2/4 end
+> >  65c4e: os_xsave+0x2e | <alternative.65c4e> alt 3/4 begin
+> >  1c38: .altinstr_replacement+0x1c38 | | xsavec64 0x40(%rbp) 
+> >  65c53: os_xsave+0x33 | | xor %ebx,%ebx - already visited
+> >                       | <alternative.65c4e> alt 3/4 end
+> >  65c4e: os_xsave+0x2e | <alternative.65c4e> alt 4/4 begin
+> >  1c33: .altinstr_replacement+0x1c33 | | xsaveopt64 0x40(%rbp) 
+> >  65c53: os_xsave+0x33 | | xor %ebx,%ebx - already visited
+> >                       | <alternative.65c4e> alt 4/4 end
+> >  65c4e: os_xsave+0x2e | <alternative.65c4e> alt default
+> >  65c4e: os_xsave+0x2e | xsave64 0x40(%rbp) 
+> >  65c53: os_xsave+0x33 | xor %ebx,%ebx - already visited
 > 
-> This will be already handled by drm_bridge_connector, it will use the
-> last bridge in chain which implements OP_EDID or OP_MODES (with OP_EDID
-> having higher priority).
+> I find it *very* hard to read these alternatives. If at all possible, I
+> think something like:
 > 
-
-Indeed, I will keep the drm_panel_get_modes() and remove 
-drm_bridge_get_modes() in this commit.
-
->>   
->>   	return num_modes;
->>   }
->>   
->> -static struct drm_encoder *
->> -analogix_dp_best_encoder(struct drm_connector *connector)
->> +static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
->> +							   struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->> +	const struct drm_edid *drm_edid = NULL;
->>   
->> -	return dp->encoder;
->> -}
->> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+>    65c4e: os_xsave+0x2e | xsave64	| xsaveopt64	| xsavec64	| xsaves64
+>    65c53: os_xsave+0x33 | xor %ebx,%ebx
 > 
-> return drm_edid_read_ddc(...);
-> 
+> Would be *much* easier to follow
 
-Will do in v6.
+Another option is to write it source-like:
 
->>   
->> +	return drm_edid;
->> +}
->>   
->> -static int analogix_dp_atomic_check(struct drm_connector *connector,
->> -				    struct drm_atomic_state *state)
->> +static int analogix_dp_bridge_atomic_check(struct drm_bridge *bridge,
->> +					   struct drm_bridge_state *bridge_state,
->> +					   struct drm_crtc_state *crtc_state,
->> +					   struct drm_connector_state *conn_state)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> -	struct drm_display_info *di = &connector->display_info;
->> -	struct drm_connector_state *conn_state;
->> -	struct drm_crtc_state *crtc_state;
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->> +	struct drm_display_info *di = &conn_state->connector->display_info;
->>   	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
->>   
->>   	if (is_rockchip(dp->plat_data->dev_type)) {
->> @@ -905,35 +899,18 @@ static int analogix_dp_atomic_check(struct drm_connector *connector,
->>   		}
->>   	}
->>   
->> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
->> -	if (WARN_ON(!conn_state))
->> -		return -ENODEV;
->> -
->>   	conn_state->self_refresh_aware = true;
->>   
->> -	if (!conn_state->crtc)
->> -		return 0;
->> -
->> -	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
->> -	if (!crtc_state)
->> -		return 0;
->> -
->>   	if (crtc_state->self_refresh_active && !dp->psr_supported)
->>   		return -EINVAL;
->>   
->>   	return 0;
->>   }
->>   
->> -static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
->> -	.get_modes = analogix_dp_get_modes,
->> -	.best_encoder = analogix_dp_best_encoder,
->> -	.atomic_check = analogix_dp_atomic_check,
->> -};
->> -
->>   static enum drm_connector_status
->> -analogix_dp_detect(struct drm_connector *connector, bool force)
->> +analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
->>   {
->> -	struct analogix_dp_device *dp = to_dp(connector);
->> +	struct analogix_dp_device *dp = to_dp(bridge);
->>   	enum drm_connector_status status = connector_status_disconnected;
->>   
->>   	if (dp->plat_data->panel)
->> @@ -945,21 +922,11 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
->>   	return status;
->>   }
->>   
->> -static const struct drm_connector_funcs analogix_dp_connector_funcs = {
->> -	.fill_modes = drm_helper_probe_single_connector_modes,
->> -	.detect = analogix_dp_detect,
->> -	.destroy = drm_connector_cleanup,
->> -	.reset = drm_atomic_helper_connector_reset,
->> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> -};
->> -
->>   static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   				     struct drm_encoder *encoder,
->>   				     enum drm_bridge_attach_flags flags)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_connector *connector = NULL;
->>   	int ret = 0;
->>   
->>   	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
->> @@ -967,31 +934,8 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
->>   		return -EINVAL;
->>   	}
->>   
->> -	if (!dp->plat_data->next_bridge) {
->> -		connector = &dp->connector;
->> -		connector->polled = DRM_CONNECTOR_POLL_HPD;
->> -
->> -		ret = drm_connector_init(dp->drm_dev, connector,
->> -					 &analogix_dp_connector_funcs,
->> -					 DRM_MODE_CONNECTOR_eDP);
->> -		if (ret) {
->> -			DRM_ERROR("Failed to initialize connector with drm\n");
->> -			return ret;
->> -		}
->> -
->> -		drm_connector_helper_add(connector,
->> -					 &analogix_dp_connector_helper_funcs);
->> -		drm_connector_attach_encoder(connector, encoder);
->> -	}
->> -
->> -	/*
->> -	 * NOTE: the connector registration is implemented in analogix
->> -	 * platform driver, that to say connector would be exist after
->> -	 * plat_data->attch return, that's why we record the connector
->> -	 * point after plat attached.
->> -	 */
->>   	if (dp->plat_data->attach) {
->> -		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
->> +		ret = dp->plat_data->attach(dp->plat_data, bridge);
->>   		if (ret) {
->>   			DRM_ERROR("Failed at platform attach func\n");
->>   			return ret;
->> @@ -1095,14 +1039,21 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
->>   }
->>   
->>   static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
->> +					struct drm_atomic_state *state,
->>   					const struct drm_display_mode *mode)
->>   {
->>   	struct analogix_dp_device *dp = to_dp(bridge);
->> -	struct drm_display_info *display_info = &dp->connector.display_info;
->>   	struct video_info *video = &dp->video_info;
->>   	struct device_node *dp_node = dp->dev->of_node;
->> +	struct drm_connector *connector;
->> +	struct drm_display_info *display_info;
->>   	int vic;
->>   
->> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
->> +	if (!connector)
->> +		return;
->> +	display_info = &connector->display_info;
->> +
->>   	/* Input video interlaces & hsync pol & vsync pol */
->>   	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
->>   	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
->> @@ -1186,7 +1137,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->>   	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
->>   	if (!new_crtc_state)
->>   		return;
->> -	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
->> +	analogix_dp_bridge_mode_set(bridge, old_state, &new_crtc_state->adjusted_mode);
->>   
->>   	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
->>   	/* Not a full enable, just disable PSR and continue */
->> @@ -1302,7 +1253,11 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
->>   	.atomic_enable = analogix_dp_bridge_atomic_enable,
->>   	.atomic_disable = analogix_dp_bridge_atomic_disable,
->>   	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
->> +	.atomic_check = analogix_dp_bridge_atomic_check,
->>   	.attach = analogix_dp_bridge_attach,
->> +	.get_modes = analogix_dp_bridge_get_modes,
->> +	.edid_read = analogix_dp_bridge_edid_read,
->> +	.detect = analogix_dp_bridge_detect,
->>   };
->>   
->>   static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
->> @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
->>   
->>   int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   {
->> +	struct drm_bridge *bridge = &dp->bridge;
->>   	int ret;
->>   
->>   	dp->drm_dev = drm_dev;
->> @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
->>   		return ret;
->>   	}
->>   
->> -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
->> +	if (dp->plat_data->panel)
->> +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
->> +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
->> +	else if (dp->plat_data->next_bridge)
->> +		/* If the next is a bridge, the supported operations depend on the next bridge */
->> +		bridge->ops = 0;
-> 
-> And what if the next bridge is dp_connector without a separate HPD pin?
+  65c4e: os_xsave+0x2e | ALTERNATIVE("xsave64",
+                                     "xsaveopt64", X86_FEATURE_XSAVEOPT,
+				     "xsavec64", X86_FEATURE_XSAVEC,
+				     "xsaves64", X86_FEATURE_XSAVES);
+  65c53: os_xsave+0x33 | xor %ebx,%ebx
 
-This case was indeed not taken into account.
 
-If the next is a bridge, it should be better to set DRM_BRIDGE_OP_DETECT 
-and return connector_status_connected in analogix_dp_bridge_detect(). 
-This ensures the connection status remains connected for both the 
-dp-connector and the bridges without DRM_BRIDGE_OP_DETECT.
-
-> 
->> +	else
->> +		/* In DP mode, the EDID parsing and HPD detection should be supported */
->> +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
->> +
->> +	bridge->of_node = dp->dev->of_node;
->> +	bridge->type = DRM_MODE_CONNECTOR_eDP;
->> +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
->> +	if (ret)
->> +		goto err_unregister_aux;
->> +
->> +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
->>   	if (ret) {
->>   		DRM_ERROR("failed to create bridge (%d)\n", ret);
->>   		goto err_unregister_aux;
-> 
-
-Best regards,
-Damon
-
+We have the 'feature' bit, we'd just have to 'borrow' the feature
+strings from the kernel I suppose.
 
