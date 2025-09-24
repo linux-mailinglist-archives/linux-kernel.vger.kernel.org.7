@@ -1,166 +1,173 @@
-Return-Path: <linux-kernel+bounces-831099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7BEB9B8AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:42:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BFDB9B8BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2463216FED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A261BC1C44
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856273064A0;
-	Wed, 24 Sep 2025 18:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BFC3064A0;
+	Wed, 24 Sep 2025 18:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PATM6Mun"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LZR+Ulfz"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E2931AF12
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8400313D72
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758739294; cv=none; b=AxC2ufEdoUsFwmbXYJMBheAANrIj14OuWn3A22Q8RJzetAWNY7XD5o8b4eG/WO+0TUs9phWI3Cpbm4r6bGO94AiKJ8f6cInsGQXfRVesFCRykmwU9oNTG0RjStZy4p6+FNgZXLvT4/cbOcnp45NkaDCiSJ3AX9+gzuEIVQHhXR0=
+	t=1758739325; cv=none; b=rDRKtwIhxq1mVBYR1gz8q/bTz6QZwdLcdwgx/1AWad8jDCEaX3xX0KaKqqo0IghNGRs6NSMTvY1O63Q0o7G4GDPYsEO8QQthE11OA2H7W9GuWZVMN4e/gdI2W7IKwMU8Ea+JpDWCIPFCMjYGfEGRn43GUTMwc7rZqJWE7/5IsF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758739294; c=relaxed/simple;
-	bh=AmtVRRJ1jDNsgzknhAmzKa0wOzllfT760U23kBlxD+M=;
+	s=arc-20240116; t=1758739325; c=relaxed/simple;
+	bh=QlAfzwYudRHesOZoA0cxTGtSQ8bsNVkEIUREwZTUKXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxvAvr/9lgVmYBnSmQ/1eocxvZB3uIPUDQhz0ePpC7S7Thb/PEjOcx6dRQgNiLAHBmZXxASiZqVj9qOn1iYlLndN6QU/9sd+aKTgiKLGxueDd2oKwSUbAZOdp1Kjh4LBqj/7cIFiww/yNWiAOvYbqJr5tMpGDQ5oMSLe4ifMw6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PATM6Mun; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=+/I1
-	ab4olDmDZGHkFb/TQwI1UB8ySlew2Es2bhyLFxc=; b=PATM6MunPPhQrDkXlA25
-	6VcLtNz5L6k6gV4cHOpLAqoYi324j5/ewZlnrXU3FSQ5AnzLu/aKcTuw8juOZ1I6
-	UqhizFzH3f7WitkIJhx9OGq2vBfe6efaUzCMamNCDIn945n41H7Cub1LVbpfmhN7
-	3pJ/CEv1xOo81DrULWfegDEHWxurwj5ZfRPutZhirkMsRbUXaFuUyckFdoqtaYmW
-	pkSuvpXzrM2nQzuqtah9mv7RZFWlpUmRGvjw59XD0Q9nAhQE8WFyGUOQvsN1nflh
-	3YPLpEbhlC5H0A1QJ3rD11xTs0jQfwC2WLkZeZ/sIqw0xbd5TCTlKvIU3nfrNgmN
-	EA==
-Received: (qmail 1587696 invoked from network); 24 Sep 2025 20:41:21 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Sep 2025 20:41:21 +0200
-X-UD-Smtp-Session: l3s3148p1@TSMiZpA/OIoujntL
-Date: Wed, 24 Sep 2025 20:41:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aNQ7UOniYss92EIS@ninjato>
-References: <20250922152640.154092-1-herve.codina@bootlin.com>
- <20250922152640.154092-8-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nuyONNZdFhyiKQ+c4IDLGUnBhv7dgUsWiRrIC8xwBmhXAF1Aq3oZjA8huqNEKGjFIRJW4O5l5jnH+/vz4WM1c2uqjADQpjomZv83JMjNJMh50YMR2lEL34VX6+121uvK7RwlOYthzxkTOnCaghqiHBucYEvKiWufs3WGGa61cD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LZR+Ulfz; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ff9PWlpoEgGNmgBhVmVmUyMch2yLaudF062SSixoSks=; b=LZR+UlfzupKLTgs0xTw/aVPflV
+	H6aqUF06QzDfU78BAMXLTFRLvy8MeX0dhxXeZ41le5CQuM3lkY58E0tyt6ER9xh7Va8Jd9JKojhCQ
+	lpFMBkamqR2A7stIUXM4dFYevlqsYGkpiBhBT7Gqn1JYeLhpoLS40bijJm7xhbeJp1AdUjrHf1cpQ
+	X9vMaqcBkOyZWjpYJo3At52mUOL23dKJE1yr6bYswvU6T41TRyzfiRqnnjzUb63Gw3VbVxt3QslPq
+	fHcyA7WUqU/3SgHCh0o17HMRbGOimMpYqcXb4N4BcTJngbYfGT3nxGPGiyZ4ciFMU4QVN2WiUadYK
+	8HFdnoqQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1URD-00000008oEH-3Q42;
+	Wed, 24 Sep 2025 18:42:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BC1EB30043D; Wed, 24 Sep 2025 20:41:58 +0200 (CEST)
+Date: Wed, 24 Sep 2025 20:41:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: jpoimboe@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] objtool/x86: Fix NOP decode
+Message-ID: <20250924184158.GZ3245006@noisy.programming.kicks-ass.net>
+References: <20250924134507.288529132@infradead.org>
+ <20250924134644.154610650@infradead.org>
+ <b6aaa53d-2658-491a-9308-32ae2b5aefb1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sPDzEL5A/+tREXwg"
-Content-Disposition: inline
-In-Reply-To: <20250922152640.154092-8-herve.codina@bootlin.com>
-
-
---sPDzEL5A/+tREXwg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b6aaa53d-2658-491a-9308-32ae2b5aefb1@oracle.com>
 
-Hi Herve,
+On Wed, Sep 24, 2025 at 07:34:00PM +0200, Alexandre Chartre wrote:
+> 
+> On 9/24/25 15:45, Peter Zijlstra wrote:
+> > For x86_64 the kernel consistently uses 2 instructions for all NOPs:
+> > 
+> >    90       - NOP
+> >    0f 1f /0 - NOPL
+> > 
+> > 
+> > Notably:
+> > 
+> >   - REP NOP is PAUSE, not a NOP instruction.
+> > 
+> >   - 0f {0c...0f} is reserved space,
+> >     except for 0f 0d /1, which is PREFETCHW, not a NOP.
+> > 
+> >   - 0f {19,1c...1f} is reserved space,
+> >     except for 0f 1f /0, which is NOPL.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >   tools/objtool/arch/x86/decode.c |   12 +++++++-----
+> >   1 file changed, 7 insertions(+), 5 deletions(-)
+> > 
+> > --- a/tools/objtool/arch/x86/decode.c
+> > +++ b/tools/objtool/arch/x86/decode.c
+> > @@ -494,7 +494,8 @@ int arch_decode_instruction(struct objto
+> >   		break;
+> >   	case 0x90:
+> > +		if (prefix != 0xf3) /* REP NOP := PAUSE */
+> > +			insn->type = INSN_NOP;
+> >   		break;
+> 
+> So this covers NOP1 (0x90) and NOP2 (0x66 0x90), right?
 
-On Mon, Sep 22, 2025 at 05:26:38PM +0200, Herve Codina (Schneider Electric)=
- wrote:
-> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
->=20
-> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> IRQ lines out of the 96 available to wire them to the GIC input lines.
->=20
-> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
-m>
+Yes. Everything with opcode 0x90, except 0xf3 0x90, which as stated is
+PAUSE.
 
-Thanks for improving the driver and removing the requirement of a fixed
-ordering!
+> >   	case 0x9c:
+> > @@ -547,13 +548,14 @@ int arch_decode_instruction(struct objto
+> >   		} else if (op2 == 0x0b || op2 == 0xb9) {
+> > +			/* ud2, ud1 */
+> >   			insn->type = INSN_BUG;
+> > +		} else if (op2 == 0x1f) {
+> > +			/* 0f 1f /0 := NOPL */
+> > +			if (modrm_reg == 0)
+> > +				insn->type = INSN_NOP;
+> >   		} else if (op2 == 0x1e) {
+> 
+> And this covers all other NOPs (0x0f 0x1f ...), including NOP6 which has
+> a 0x66 preifx (0x66 0xf 0x1f ...) ?
 
-> +static u32 rzn1_irqmux_output_lines[] =3D {
+Sorta, it accepts everything with opcode 0f 1f and modrm_reg==0, which is
+how NOPL is encoded.
 
-const?
+Both: 66 66 66 66 66 66 66 66 66 66 66 66 66 66 90 (NOP15)
+And:  66 66 66 66 66 66 66 0f 1f 84 00 00 00 00 00 (NOP15)
 
-> +	103, 104, 105, 106, 107, 108, 109, 110
-> +};
+will be accepted here as max length instructions. The kernel will not
+actually use those, since a bunch of micro archs have decode penalties
+for too many prefixes.
 
-=2E..
+> From arch/x86/include/asm/nops.h we have:
 
-> +	for (i =3D 0; i < ARRAY_SIZE(rzn1_irqmux_output_lines); i++) {
-> +		if (parent_args->args[1] =3D=3D rzn1_irqmux_output_lines[i])
-> +			return i;
-> +	}
+You're looking at old code :-)
 
-Do we want a check here if the index has already been used in cases of
-an improper 'interrupt-map'? I'd think it would be nice to have but I
-would also not really require it.
+> /*
+>  * Generic 64bit nops from GAS:
+>  *
+>  * 1: nop
+>  * 2: osp nop
+>  * 3: nopl (%eax)
+>  * 4: nopl 0x00(%eax)
+>  * 5: nopl 0x00(%eax,%eax,1)
+>  * 6: osp nopl 0x00(%eax,%eax,1)
+>  * 7: nopl 0x00000000(%eax)
+>  * 8: nopl 0x00000000(%eax,%eax,1)
 
-=2E..
+ * 9: cs nopl 0x00000000(%eax,%eax,1)
+ * 10: osp cs nopl 0x00000000(%eax,%eax,1)
+ * 11: osp osp cs nopl 0x00000000(%eax,%eax,1)
 
-> +	ret =3D rzn1_irqmux_setup(dev, np, regs);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to setup mux\n");
-> +
-> +	return 0;
+>  */
+> #define BYTES_NOP1      0x90
+> #define BYTES_NOP2      0x66,BYTES_NOP1
+> #define BYTES_NOP3      0x0f,0x1f,0x00
+> #define BYTES_NOP4      0x0f,0x1f,0x40,0x00
+> #define BYTES_NOP5      0x0f,0x1f,0x44,0x00,0x00
+> #define BYTES_NOP6      0x66,BYTES_NOP5
+> #define BYTES_NOP7      0x0f,0x1f,0x80,0x00,0x00,0x00,0x00
+> #define BYTES_NOP8      0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00
 
-Maybe just
+#define BYTES_NOP9      0x2e,BYTES_NOP8
+#define BYTES_NOP10     0x66,BYTES_NOP9
+#define BYTES_NOP11     0x66,BYTES_NOP10
 
-	return rzn1_irqmux_setup(dev, np, regs);
+But yes, first two are NOP and then it switches to NOPL for 3 bytes and
+longer (2 opcode, 1 modrm). Where for 11 bytes we have:
 
-The driver core will report a failed probe already.
+ - 3 prefixes
+ - 2 opcode
+ - 1 modrm
+ - 1 sib
+ - 4 displacement
 
-It still works, so:
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Happy hacking,
-
-   Wolfram
-
-
---sPDzEL5A/+tREXwg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjUO0wACgkQFA3kzBSg
-Kbb7sg/9FlraWenace/wEziJTaN0z5SDtlFavT/tff2xkVPYo/YHX2RD+UF+eP3v
-7KsuMhwUUnLUsY5I1m76gFwa7iwZpY7ADInuWm3oyR79pUvsCUkdK6bCzHyqGZow
-3ITIkEPIVBAjDnGO+tmaXk9WdbpfxwUTbPYhKDxa1f/szLqf0uvDWmmSb3RoQZE5
-r9EBKV9modMar30ppBO6rk1F268MNB/mNGNNS6hqfGYROzHirS7trjP7+8+zSuMX
-idjZzgLdfO2QyWYwcfBCqz6i3LbqWk7HnG02vm4r1MhgMv3Nzi2WKu9MV7NRPh6w
-12JgK8xECSKisTYDJ+paD/ALarKM9tvZ4PI63MMzscCatrLvILLW9nH7EouSjnKc
-RDBhRElN6LSwQidhRLcF1KgKKMmL3AvPvbk8L0Ywjq+ziJ2qpaDWKMr+f2pLylS4
-Wy0X1Owdu/1fTSrjmgrksEqA1nIEAOvjjtJQW/MyjF+KzrnrlpBXlWUtjzinf893
-CeHqKzRiWue0rbjsPfW5CLmbfuqkn5k5+TnjPclMNnFmZAv3hIYdeGYxZ/JwaaVm
-eKoCp9FYTemfmqdeLjZp0FGBcnsvHx+wyzxb+YCI/ypJJyB94x7ikmawUgLmFPfm
-FR93LoSrFnEV8wg9hrPKn/RTwb3U9k4j9pRuAkSZQe4KnzhLWkg=
-=mmQN
------END PGP SIGNATURE-----
-
---sPDzEL5A/+tREXwg--
 
