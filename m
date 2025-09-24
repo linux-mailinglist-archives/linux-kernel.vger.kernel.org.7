@@ -1,428 +1,242 @@
-Return-Path: <linux-kernel+bounces-830388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B533B9986B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:04:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A5AB9986E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF91217A98C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C22E3A13B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492F32E62A8;
-	Wed, 24 Sep 2025 11:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6152B2E5B36;
+	Wed, 24 Sep 2025 11:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LxuEm00k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfBi+CGz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="grT3aDMy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JfBi+CGz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="grT3aDMy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56E2E5B2E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA1726E6E4
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758711861; cv=none; b=nH8eSISRznVDVqKoB+Nxc8r1e478cjCZHJVGzwvU1jEu58MSH50Cq67b211JT97ACMKRusmNiDhF1PdFWfyyJVUwL9ixJAQ0F3WYx4wq+pbNUAeyrqSupw4Pl7Nu8jSJ/dcNIj/kPWfLJfO4I/XckW0GCBFwddlUEig4O/RHlmE=
+	t=1758711908; cv=none; b=o7CmgadY+jXxs8LY1QSfgYYusWsSYQAlplkatU5PRCzCQdaIw6ssG3t7pLYgxSRtfoI/CUzPVUH3wUZkdmL6wdz8FaNQsIZmeiHL8XVF8JiE62uf4hBDNJ6wYpvzRrv2B4fyU4FhPsUxQhVvkYphIz4qnA5ywewRpi73Q6GqEtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758711861; c=relaxed/simple;
-	bh=iQPbGo+q89ygrQb6G+t3T6tJmVxFEjLBCuU/THpeC6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sXOVpfQwAbKL55gwaGUAsK4FF2xX4qyKZjL9e1yti4pltFFqTWAh6SlRbwlSEXWkANlS2bslFBMezUaOyiV32FfSIbdaxyyQiFHuzFZYAD0TLtwLy3GMhDFDUAzo286EsWVH74QU+7dxSQn7oEOUb16W1Hzankew7qUuqQailqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LxuEm00k; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758711854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mrljuIrpmbITb85jGMlf+AU3g1TLxbNe5fHByQmiOw4=;
-	b=LxuEm00kX9gseM2gkfSaQow0iT+GHXGXbhscl9wskZSYzS3i3UmbFmxIbUCSGt3sxJGwAl
-	ZHyqak9LYk6pGcw49n+LG3k6VLAI1QX2EYq7Vd4PcVPwgyPsDyArgxtvVQPO9BT3wu4wJJ
-	aW3trNlgJ9O9e4p69gHkg7DO5wH6q7Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-r9FPMZbmO_eYfzWQglmTdQ-1; Wed, 24 Sep 2025 07:04:12 -0400
-X-MC-Unique: r9FPMZbmO_eYfzWQglmTdQ-1
-X-Mimecast-MFC-AGG-ID: r9FPMZbmO_eYfzWQglmTdQ_1758711852
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e1b906bf3so21673175e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 04:04:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758711851; x=1759316651;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mrljuIrpmbITb85jGMlf+AU3g1TLxbNe5fHByQmiOw4=;
-        b=WUkwtc15sykjG+UfcKwqISWTePQI0Gyj+gUKVXTJTsWiNQOcS3XtYVc77LrhS0AHtX
-         rVtGhIoW9Dyusl7Rald9FF0uXRE2ssSJXdkD/jdV05RVAg4zh+YUwO/8LxrQ5N0lWYA2
-         rSsZun7aYbtBoCBvf1OgbzULjXcVmQ68/YxYkWcA9MsAkG2gSWeI7TN3ooi2f5dTx46q
-         lKmyLrrQmVNheA2dVHowUhAPjpnmEDsgJ3Ebi6G+zflvr2/HFqTHyEsv1xAMiaQP8TDb
-         NTLBCZY0C4/4qA4BSwup8C5b+o8HdXJ9TuStg2W7kiqSIWUYZUjBptClXjkkPs7iZvJn
-         uS/w==
-X-Gm-Message-State: AOJu0YzC+PSIjS7aZZtVMAjyIJ8lDEeaiCtDwi7yCriAGQdxFQJquudd
-	aDF1PgKEs125yHn0nneozdtbDmKFCqdg+AWJm9MhZ0z9bJk5lqbhIMNaOJgH5XGdTKYndBZksRS
-	cJqNSPD2I4yZhp5CF5vRz55nV2o5wh+5qlXpgjncKV4U/nVIyBHDMzWcU8QSNYm7tZA==
-X-Gm-Gg: ASbGnct5uA45762PXXPTLea/fddwnrzjCFIFiKhUBTYXZIYYhTdL+red9IP+hDFWchG
-	yWCL2z1tK0/oQjjKahJaqpUVMH+robQPlKZFifd4ukjawxtXYyIiM2Ev/wX9/RGhLlmC1g3++dM
-	JxCl95mFY5DrQyr4XcDsci4m3xallmMwUtmd1lC+agDnS8twCfY9gNquNUIQqZbuIhBAHMAVgTs
-	TDpX7qrk0Qvo0b1k1yjKLqtgTrMxIicGPEy8EOiGFydQbz9XoEmVqcrH2wyhZY1kXB0pKsZKuN9
-	n5Dfg5SYyiapPTjROv/+TrlXNFKswM/JCm/uOiiWrpCZewM/t648hUTOf15nCNGVt5UrVVttxAg
-	OZ3SJsJ/M8uNfXrDeZEmmsxp9FUC0IOMZYAsSQP524QfhlfB2kOS77qdI54bgkXifQg==
-X-Received: by 2002:a05:600c:1c08:b0:46d:d6f0:76d8 with SMTP id 5b1f17b1804b1-46e1dac9fcemr74296505e9.35.1758711851517;
-        Wed, 24 Sep 2025 04:04:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExYOxpci5QLmPvizPk29ikl+FA6dmszx1aCY/b5DkFPNIURQjjjajZAf2da25kjbr5619Hpw==
-X-Received: by 2002:a05:600c:1c08:b0:46d:d6f0:76d8 with SMTP id 5b1f17b1804b1-46e1dac9fcemr74296065e9.35.1758711851051;
-        Wed, 24 Sep 2025 04:04:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f14:2400:afc:9797:137c:a25b? (p200300d82f1424000afc9797137ca25b.dip0.t-ipconnect.de. [2003:d8:2f14:2400:afc:9797:137c:a25b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab6a514sm26958575e9.22.2025.09.24.04.04.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 04:04:10 -0700 (PDT)
-Message-ID: <c7a2ad6e-68cb-4689-b72e-6e7ebfcf5e64@redhat.com>
-Date: Wed, 24 Sep 2025 13:04:08 +0200
+	s=arc-20240116; t=1758711908; c=relaxed/simple;
+	bh=8A5MmysxBhtmG5TdDxNcLAWj+kAlErz7UozgaIhk7AI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bu9QjULg72fZxmm+Qf5sZ4cK0I9QiRMq073UCu/UOo47SVj73r8eJxl1g04O3X1i40ktDSzybw7xyeMyjESqh4x8FmNXvgmOs0kX52z2Q294Mhg2qbV1pEv1QF1zPmhw2JU99xR9Z5tbzdrcv7O3b+pajXZjYyyTvhDIFQvyp6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfBi+CGz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=grT3aDMy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JfBi+CGz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=grT3aDMy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0F1BA33C4D;
+	Wed, 24 Sep 2025 11:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758711904; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
+	b=JfBi+CGzFoX1/os0W15NAGOv4NRE8Asz6VNN7TDWOHuN+8ogddwt8df7bQjgo1ynAXaL6n
+	OtTiMWz+tHFLBwGBaRyngfGuNA/F1my0AUp54f0C5hy6pxCgtvYdEJ9CJH1u0gEcDNEsYg
+	hNmiTFwrJpJN+0SXpRHTvtP1qHSLZuY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758711904;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
+	b=grT3aDMyg+m8kRfBET4t1nq4wtLBiRvAX633IJRDpNoTCHyR+uUaqf5fJ+TMWl8hd35txV
+	LrymM7ZOqxy7yyAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758711904; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
+	b=JfBi+CGzFoX1/os0W15NAGOv4NRE8Asz6VNN7TDWOHuN+8ogddwt8df7bQjgo1ynAXaL6n
+	OtTiMWz+tHFLBwGBaRyngfGuNA/F1my0AUp54f0C5hy6pxCgtvYdEJ9CJH1u0gEcDNEsYg
+	hNmiTFwrJpJN+0SXpRHTvtP1qHSLZuY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758711904;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IN730g8TVV3pXRYVV4cU5ljS04QgWjzQ/7HWfHgg/fY=;
+	b=grT3aDMyg+m8kRfBET4t1nq4wtLBiRvAX633IJRDpNoTCHyR+uUaqf5fJ+TMWl8hd35txV
+	LrymM7ZOqxy7yyAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F14A013A61;
+	Wed, 24 Sep 2025 11:05:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oyefOl/Q02h7NQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 24 Sep 2025 11:05:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B167CA0A9A; Wed, 24 Sep 2025 13:05:03 +0200 (CEST)
+Date: Wed, 24 Sep 2025 13:05:03 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid
+ context in hook_sb_delete
+Message-ID: <fnxbqe3nlcptxqcs7tkt6qnacupkxu2xn4duwc6g6n2bk4tstb@hi2gl5cwishr>
+References: <68d32659.a70a0220.4f78.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 01/15] mm/zone_device: support large zone device private
- folios
-To: Balbir Singh <balbirs@nvidia.com>, Zi Yan <ziy@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
- dri-devel@lists.freedesktop.org, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-2-balbirs@nvidia.com>
- <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
- <f026c5a1-ec51-4fa5-bc58-c2d690f9248c@nvidia.com>
- <87F52459-85DC-49C3-9720-819FAA0D1602@nvidia.com>
- <891b7840-3cde-49d0-bdde-8945e9767627@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <891b7840-3cde-49d0-bdde-8945e9767627@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68d32659.a70a0220.4f78.0012.GAE@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[12479ae15958fc3f54ec];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,syzkaller.appspot.com:url,storage.googleapis.com:url,appspotmail.com:email,goo.gl:url,googlegroups.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
 
-On 23.09.25 05:47, Balbir Singh wrote:
-> On 9/19/25 23:26, Zi Yan wrote:
->> On 19 Sep 2025, at 1:01, Balbir Singh wrote:
->>
->>> On 9/18/25 12:49, Zi Yan wrote:
->>>> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
->>>>
->>>>> Add routines to support allocation of large order zone device folios
->>>>> and helper functions for zone device folios, to check if a folio is
->>>>> device private and helpers for setting zone device data.
->>>>>
->>>>> When large folios are used, the existing page_free() callback in
->>>>> pgmap is called when the folio is freed, this is true for both
->>>>> PAGE_SIZE and higher order pages.
->>>>>
->>>>> Zone device private large folios do not support deferred split and
->>>>> scan like normal THP folios.
->>>>>
->>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>>> Cc: David Hildenbrand <david@redhat.com>
->>>>> Cc: Zi Yan <ziy@nvidia.com>
->>>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->>>>> Cc: Rakie Kim <rakie.kim@sk.com>
->>>>> Cc: Byungchul Park <byungchul@sk.com>
->>>>> Cc: Gregory Price <gourry@gourry.net>
->>>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->>>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>>> Cc: Oscar Salvador <osalvador@suse.de>
->>>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>>>> Cc: Nico Pache <npache@redhat.com>
->>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>>> Cc: Dev Jain <dev.jain@arm.com>
->>>>> Cc: Barry Song <baohua@kernel.org>
->>>>> Cc: Lyude Paul <lyude@redhat.com>
->>>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>>> Cc: David Airlie <airlied@gmail.com>
->>>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>>> ---
->>>>>   include/linux/memremap.h | 10 +++++++++-
->>>>>   mm/memremap.c            | 34 +++++++++++++++++++++-------------
->>>>>   mm/rmap.c                |  6 +++++-
->>>>>   3 files changed, 35 insertions(+), 15 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
->>>>> index e5951ba12a28..9c20327c2be5 100644
->>>>> --- a/include/linux/memremap.h
->>>>> +++ b/include/linux/memremap.h
->>>>> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *page)
->>>>>   }
->>>>>
->>>>>   #ifdef CONFIG_ZONE_DEVICE
->>>>> -void zone_device_page_init(struct page *page);
->>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order);
->>>>>   void *memremap_pages(struct dev_pagemap *pgmap, int nid);
->>>>>   void memunmap_pages(struct dev_pagemap *pgmap);
->>>>>   void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
->>>>> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn);
->>>>>   bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
->>>>>
->>>>>   unsigned long memremap_compat_align(void);
->>>>> +
->>>>> +static inline void zone_device_page_init(struct page *page)
->>>>> +{
->>>>> +	struct folio *folio = page_folio(page);
->>>>> +
->>>>> +	zone_device_folio_init(folio, 0);
->>>>
->>>> I assume it is for legacy code, where only non-compound page exists?
->>>>
->>>> It seems that you assume @page is always order-0, but there is no check
->>>> for it. Adding VM_WARN_ON_ONCE_FOLIO(folio_order(folio) != 0, folio)
->>>> above it would be useful to detect misuse.
->>>>
->>>>> +}
->>>>> +
->>>>>   #else
->>>>>   static inline void *devm_memremap_pages(struct device *dev,
->>>>>   		struct dev_pagemap *pgmap)
->>>>> diff --git a/mm/memremap.c b/mm/memremap.c
->>>>> index 46cb1b0b6f72..a8481ebf94cc 100644
->>>>> --- a/mm/memremap.c
->>>>> +++ b/mm/memremap.c
->>>>> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
->>>>>   void free_zone_device_folio(struct folio *folio)
->>>>>   {
->>>>>   	struct dev_pagemap *pgmap = folio->pgmap;
->>>>> +	unsigned long nr = folio_nr_pages(folio);
->>>>> +	int i;
->>>>>
->>>>>   	if (WARN_ON_ONCE(!pgmap))
->>>>>   		return;
->>>>>
->>>>>   	mem_cgroup_uncharge(folio);
->>>>>
->>>>> -	/*
->>>>> -	 * Note: we don't expect anonymous compound pages yet. Once supported
->>>>> -	 * and we could PTE-map them similar to THP, we'd have to clear
->>>>> -	 * PG_anon_exclusive on all tail pages.
->>>>> -	 */
->>>>>   	if (folio_test_anon(folio)) {
->>>>> -		VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
->>>>> -		__ClearPageAnonExclusive(folio_page(folio, 0));
->>>>> +		for (i = 0; i < nr; i++)
->>>>> +			__ClearPageAnonExclusive(folio_page(folio, i));
->>>>> +	} else {
->>>>> +		VM_WARN_ON_ONCE(folio_test_large(folio));
->>>>>   	}
->>>>>
->>>>>   	/*
->>>>> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
->>>>>   	case MEMORY_DEVICE_COHERENT:
->>>>>   		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
->>>>>   			break;
->>>>> -		pgmap->ops->page_free(folio_page(folio, 0));
->>>>> -		put_dev_pagemap(pgmap);
->>>>> +		pgmap->ops->page_free(&folio->page);
->>>>> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
->>>>>   		break;
->>>>>
->>>>>   	case MEMORY_DEVICE_GENERIC:
->>>>> @@ -480,14 +479,23 @@ void free_zone_device_folio(struct folio *folio)
->>>>>   	}
->>>>>   }
->>>>>
->>>>> -void zone_device_page_init(struct page *page)
->>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order)
->>>>>   {
->>>>> +	struct page *page = folio_page(folio, 0);
->>>>
->>>> It is strange to see a folio is converted back to page in
->>>> a function called zone_device_folio_init().
->>>>
->>>>> +
->>>>> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
->>>>> +
->>>>>   	/*
->>>>>   	 * Drivers shouldn't be allocating pages after calling
->>>>>   	 * memunmap_pages().
->>>>>   	 */
->>>>> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
->>>>> -	set_page_count(page, 1);
->>>>> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
->>>>> +	folio_set_count(folio, 1);
->>>>>   	lock_page(page);
->>>>> +
->>>>> +	if (order > 1) {
->>>>> +		prep_compound_page(page, order);
->>>>> +		folio_set_large_rmappable(folio);
->>>>> +	}
->>>>
->>>> OK, so basically, @folio is not a compound page yet when zone_device_folio_init()
->>>> is called.
->>>>
->>>> I feel that your zone_device_page_init() and zone_device_folio_init()
->>>> implementations are inverse. They should follow the same pattern
->>>> as __alloc_pages_noprof() and __folio_alloc_noprof(), where
->>>> zone_device_page_init() does the actual initialization and
->>>> zone_device_folio_init() just convert a page to folio.
->>>>
->>>> Something like:
->>>>
->>>> void zone_device_page_init(struct page *page, unsigned int order)
->>>> {
->>>> 	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
->>>>
->>>> 	/*
->>>> 	 * Drivers shouldn't be allocating pages after calling
->>>> 	 * memunmap_pages().
->>>> 	 */
->>>>
->>>>      WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
->>>> 	
->>>> 	/*
->>>> 	 * anonymous folio does not support order-1, high order file-backed folio
->>>> 	 * is not supported at all.
->>>> 	 */
->>>> 	VM_WARN_ON_ONCE(order == 1);
->>>>
->>>> 	if (order > 1)
->>>> 		prep_compound_page(page, order);
->>>>
->>>> 	/* page has to be compound head here */
->>>> 	set_page_count(page, 1);
->>>> 	lock_page(page);
->>>> }
->>>>
->>>> void zone_device_folio_init(struct folio *folio, unsigned int order)
->>>> {
->>>> 	struct page *page = folio_page(folio, 0);
->>>>
->>>> 	zone_device_page_init(page, order);
->>>> 	page_rmappable_folio(page);
->>>> }
->>>>
->>>> Or
->>>>
->>>> struct folio *zone_device_folio_init(struct page *page, unsigned int order)
->>>> {
->>>> 	zone_device_page_init(page, order);
->>>> 	return page_rmappable_folio(page);
->>>> }
->>>>
->>>>
->>>> Then, it comes to free_zone_device_folio() above,
->>>> I feel that pgmap->ops->page_free() should take an additional order
->>>> parameter to free a compound page like free_frozen_pages().
->>>>
->>>>
->>>> This is my impression after reading the patch and zone device page code.
->>>>
->>>> Alistair and David can correct me if this is wrong, since I am new to
->>>> zone device page code.
->>>> 	
->>>
->>> Thanks, I did not want to change zone_device_page_init() for several
->>> drivers (outside my test scope) that already assume it has an order size of 0.
->>
->> But my proposed zone_device_page_init() should still work for order-0
->> pages. You just need to change call site to add 0 as a new parameter.
->>
+Hello!
+
+Added Landlock guys to CC since this is a bug in Landlock.
+
+On Tue 23-09-25 15:59:37, syzbot wrote:
+> syzbot found the following issue on:
 > 
-> I did not want to change existing callers (increases testing impact)
-> without a strong reason.
+> HEAD commit:    ce7f1a983b07 Add linux-next specific files for 20250923
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=118724e2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1be6fa3d47bce66e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1376e27c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e78e2580000
 > 
->>
->> One strange thing I found in the original zone_device_page_init() is
->> the use of page_pgmap() in
->> WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order)).
->> page_pgmap() calls page_folio() on the given page to access pgmap field.
->> And pgmap field is only available in struct folio. The code initializes
->> struct page, but in middle it suddenly finds the page is actually a folio,
->> then treat it as a page afterwards. I wonder if it can be done better.
->>
->> This might be a question to Alistair, since he made the change.
->>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/c30be6f36c31/disk-ce7f1a98.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ae9ea347d4d8/vmlinux-ce7f1a98.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d59682a4f33c/bzImage-ce7f1a98.xz
 > 
-> I'll let him answer it :)
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com
+> 
+> BUG: sleeping function called from invalid context at fs/inode.c:1928
 
-Not him, but I think this goes back to my question raised in my other 
-reply: When would we allocate "struct folio" in the future.
+The first catch from the new might_sleep() annotations in iput().
 
-If it's "always" then actually most of the zone-device code would only 
-ever operate on folios and never on pages in the future.
+> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6028, name: syz.0.17
+> preempt_count: 1, expected: 0
+> RCU nest depth: 0, expected: 0
+> 2 locks held by syz.0.17/6028:
+>  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+>  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+>  #0: ffff8880326bc0e0 (&type->s_umount_key#48){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
+>  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:351 [inline]
+>  #1: ffff8880326bc998 (&s->s_inode_list_lock){+.+.}-{3:3}, at: hook_sb_delete+0xae/0xbd0 security/landlock/fs.c:1405
+> Preemption disabled at:
+> [<0000000000000000>] 0x0
+> CPU: 0 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  __might_resched+0x495/0x610 kernel/sched/core.c:8960
+>  iput+0x2b/0xc50 fs/inode.c:1928
+>  hook_sb_delete+0x6b5/0xbd0 security/landlock/fs.c:1468
 
-I recall during a discussion at LSF/MM I raised that, and the answer was 
-(IIRC) that we will allocate "struct folio" as we will initialize the 
-memmap for dax.
+Indeed looks like a bug because we can call iput() while holding
+sb->s_inode_list_lock in one case in hook_sb_delete().
 
-So essentially, we'd always have folios and would never really have to 
-operate on pages.
+								Honza
 
+>  security_sb_delete+0x80/0x150 security/security.c:1467
+>  generic_shutdown_super+0xaa/0x2c0 fs/super.c:634
+>  kill_anon_super fs/super.c:1281 [inline]
+>  kill_litter_super+0x76/0xb0 fs/super.c:1291
+>  deactivate_locked_super+0xbc/0x130 fs/super.c:473
+>  cleanup_mnt+0x425/0x4c0 fs/namespace.c:1327
+>  task_work_run+0x1d4/0x260 kernel/task_work.c:227
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
+>  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+>  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+>  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+>  do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc08e18eec9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffcd5efff18 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 00007fc08e3e5fa0 RCX: 00007fc08e18eec9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000002c0
+> RBP: 00007fc08e211f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fc08e3e5fa0 R14: 00007fc08e3e5fa0 R15: 0000000000000002
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 -- 
-Cheers
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
