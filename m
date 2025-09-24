@@ -1,106 +1,220 @@
-Return-Path: <linux-kernel+bounces-831250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7F7B9C2FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AA2B9C2FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 22:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0819B2E5170
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368B63A7B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3113C8F54;
-	Wed, 24 Sep 2025 20:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3D21E573F;
+	Wed, 24 Sep 2025 20:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iG/slZ7l"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKYeSRcI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3DD23B0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7538F54;
+	Wed, 24 Sep 2025 20:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758746830; cv=none; b=K5ByL9hFB7cVyIWxzXXMm+/948irWFNpj36p0mvXQI94V3s3Us5RxwkLR0yFZo/1xA3edWjqh6afQDNBobpVA9qfZce8hjMdakA5ZoCzjwXiNbpODD/fzEJL4ZEtGXAvQRwwkHYdw63FnX1muP8POtSfsVwkrP3ZymOgMQ0v9Ro=
+	t=1758746861; cv=none; b=mgvtS29YEAKHpskrSuGOjQGOBvowHmNQSlpVGWyb0wtYdKqyfmcLdiAFoEyJaPYdvZC/vd3bkD3tQOxBSNNBPyAUpim/n9QjhzQTiOEtXPOaa/xTagYc7qnQGwwpentBOUDnd9atYBfzgas4sgJxbpD4WHoxkVIwa06rkaKu20M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758746830; c=relaxed/simple;
-	bh=/wubRCVudmsrBQ30JtUy96kLo/ANA1UJeqjl03QRQeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laYGF9S3CjWt3UHYNFr4ZhuJTMEkPd9JAM1Z5rCBwK5Td//55cfYQ1o95tV7uDvTpSfG9tt5ArGgrS4IdUUQEuLUIo4UOUL6iTsFUHgWz4p6/ApfS0tcHooZEvtagCz3FN6Hc40Xpdn6ML0B8R1P3yNK2WD2j8CgrCn1beaDxoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iG/slZ7l; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781001e3846so186873b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758746828; x=1759351628; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Uz5b/SWGJp4PVPnMnGvykn1mjKR+ltxumCbS3PwzZAA=;
-        b=iG/slZ7lkyXHk1VVZwD53ZP0ndSkryBkiAjhAYqWSIWQ0l+zBElACOmhDnryNF4Fmw
-         a40vvoti9EbK0JRogbKVq/8OWprzajvRbxj5TufMjkltTcsV/6ySitiwViOgKcTIuoUr
-         vx73XjTjxUYFuZVtVgTUoHcwmlWjtdbMT4CeHXNvGe3accqV5PbK9APlGFg6oegJZYRu
-         sf4xoUwhLxw4bvzYHC5rr4+kQh9ojYelDt6RsVcdz9LgMBdDocAZnd+6hRlvZzB+VX5B
-         YMPM1IJenBHowbGABA5EOBjDmCSDtxOi3Po7EE+iN/yTKQuB9eOYOS7gVBG6VoMW0eQQ
-         pBdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758746828; x=1759351628;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uz5b/SWGJp4PVPnMnGvykn1mjKR+ltxumCbS3PwzZAA=;
-        b=uKaq4GPRqVp4VG5IaEjhrOV5SW1NKaU3dm0HJyjsjthLXz6fLyE6iF/bntEcDub2jP
-         aJt3VBNzqLBB/on2EnJu2+HsQbORgT9sXzvwk7WqvlZJKu2KftkSJqjijeUlvo4Rsr1Z
-         OSOMvQTVaibwW32kPQM19beTVOnD3eIpxc0C+VSCr/wMu/sr6VZpRfwO19EbHjZ2B5OZ
-         1WPFKMWSDKk14vj+YE1GGJjLwBJhWJkPE6AZMNIrSzLjK3990SX6n+L7S7GNNqsa6Dy9
-         MYofdwREZRtMKAKMCehPxwr/sdWQr68TLEcvD24ttWpkBdAfNMh7NK6Y+uK3Cx6xrCZ3
-         9HVA==
-X-Forwarded-Encrypted: i=1; AJvYcCViN5LCFU5Cpk9sTEUF4/6e/cbMKm7I5orbpf1cnW58yzlX42IjCfo4/psYBZADF/XzZmQIij9siqD4Zu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyam5JLRMQkXU2asuJNKFBezmiJrNQTsfEGCdmZmw1V9wO6GGJx
-	eOZNlAmg1DtPVlOkcrE0qrtP0++Qoygg+dUQnaGf99md7bDOuFq6AOP9
-X-Gm-Gg: ASbGncsAZEbcUPmsPNqNRg993rz0pxl/dnE9XtENbHQr/n/fTlCoVQPR3HUGcgcb4lt
-	B9S8xJqUUAqMwpcwKx7oKObJCGc2mbZpsoy2W/Okjq9Fb4kHOEECUB0Y0NKcOkPfNW08/lGsjj9
-	8J865SyCvII6MnzFSkvO8mgjdP9Jng3khwa2IMSqE5shFNQUieU5T0/XD2bx/yyF5Rrr1Wvz+ku
-	qCvNuv2gjuaTu8uNXJ7gKhWTd6AAD9k+T9TT4IqejMIf8OeRRpVq1G86MboFLKMLofA+W4rnwwF
-	tyb5VKIRRfw6yXsLAGfCwP4aNvDOBj0RzsE6O6lPS2i/uZX+dL/Ti55CeH33amY6qLdrGlgfZRC
-	8cTQdd7kEBFgCy84boTk4XYGhGE1z5oOI4Q==
-X-Google-Smtp-Source: AGHT+IFhtij1snqb5YmNiUxxhLFAlPngjUoBWbojYxm4jaQCU68Yvkxe8ZDdSxWBPwsKHM5RwYoZgQ==
-X-Received: by 2002:a05:6a20:6a27:b0:2df:37cb:6b7c with SMTP id adf61e73a8af0-2e7c42295fcmr1088119637.3.1758746828457;
-        Wed, 24 Sep 2025 13:47:08 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f4c4:bad6:f33e:ddc9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c52eee5fsm180456a12.0.2025.09.24.13.47.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 13:47:07 -0700 (PDT)
-Date: Wed, 24 Sep 2025 13:47:05 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: j.ne@posteo.net
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ps2-gpio - fix typo
-Message-ID: <bcv4wihu47ala7jtv4daczh7olarwdbdbsfpoj4l5yk2dj6vrq@5axihop6vn6w>
-References: <20250923-ps2-typo-v1-1-03d2468acc32@posteo.net>
+	s=arc-20240116; t=1758746861; c=relaxed/simple;
+	bh=bJYJBqlXTzP4LxCJJVAzGlHEXx8Sbc86kRJMUYL7MwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qOeR8Z7owfMRwdVC3IVNuEVHnK/qQ0dO1ZoHL9DTwRWQrI5hEakMYy4s9KKxVioBrtQ6Gja1lZabv6gzcQFrIkqO7Gyo5cEvNcU/7EZS+0FxeAis5do2xTEfKYrydJx8fKTpT/1F+WTHz1R6n9pQYfEUJ/ciVkmeSLebR1RoPjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKYeSRcI; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758746860; x=1790282860;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bJYJBqlXTzP4LxCJJVAzGlHEXx8Sbc86kRJMUYL7MwI=;
+  b=BKYeSRcIUN7Wxgf71uqAVmIQfhLjXrU2DMbjBSiipAintLoHvsY22Kdy
+   ng5TZGeizhRm2/bEf9v7baTe3P5lBj46mFQxS40/UBK59ttnR8J5DpjvN
+   2fzyFLEZdherKIxu3Xt0psPWod4Ruv0mZtqO57/DnmjJDFCT8MiF1MXM9
+   LjTmPPepi6IPL67WzBq7qXMrQfrXBiv00ak7Ikk6Sj/eA4PDzQXtxjmnh
+   q0X/d3YUTkncrIbOk0hkL7A8BvpBigqg4bxJem601JAD0jpvR1EDTnMt8
+   Vg2iA72zmE1vZkRiqAcLNpvrc3H2i09FKWoSvUsqGpieEkt1iDTrS/zC1
+   g==;
+X-CSE-ConnectionGUID: Y1DndV6HRIC6wwQLFz77oQ==
+X-CSE-MsgGUID: ju0lgYwMSC2Dh0nabE1ScQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64863856"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64863856"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 13:47:24 -0700
+X-CSE-ConnectionGUID: RDn9y3GTQrepCIm/Tkhnng==
+X-CSE-MsgGUID: yTuw40yBTt+6y3vSC8rEaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="182287343"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.218]) ([10.125.108.218])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 13:47:22 -0700
+Message-ID: <28d78d2b-c17d-4910-9f28-67af1fbb10ee@intel.com>
+Date: Wed, 24 Sep 2025 13:47:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250923-ps2-typo-v1-1-03d2468acc32@posteo.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 20/20] cxl/pmem: Add CXL LSA 2.1 support in cxl pmem
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134213epcas5p139ba10deb2f4361f9bbab8e8490c4720@epcas5p1.samsung.com>
+ <20250917134116.1623730-21-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-21-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 02:14:50AM +0200, J. Neuschäfer via B4 Relay wrote:
-> From: "J. Neuschäfer" <j.ne@posteo.net>
+
+
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> Add support of CXL LSA 2.1 using NDD_REGION_LABELING flag. It creates
+> cxl region based on region information parsed from LSA.
 > 
-> "The data line must be sampled" makes much more sense than what was
-> previously written, and given that "s" and "d" are neighbors on the
-> QWERTY keybord, it was probably a typo.
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/cxl/core/pmem_region.c | 53 ++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h              |  4 +++
+>  drivers/cxl/pmem.c             |  2 ++
+>  3 files changed, 59 insertions(+)
 > 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> diff --git a/drivers/cxl/core/pmem_region.c b/drivers/cxl/core/pmem_region.c
+> index 665b603c907b..3ef9c7d15041 100644
+> --- a/drivers/cxl/core/pmem_region.c
+> +++ b/drivers/cxl/core/pmem_region.c
+> @@ -290,3 +290,56 @@ int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
+>  	return rc;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_pmem_region, "CXL");
+> +
+> +static int match_free_ep_decoder(struct device *dev, const void *data)
+> +{
+> +	struct cxl_decoder *cxld = to_cxl_decoder(dev);
 
-Applied, thank you.
+I think this is needed if the function is match_free_ep_decoder().
 
--- 
-Dmitry
+if (!is_endpoint_decoder(dev))
+	return 0;
+
+> +
+> +	return !cxld->region;
+> +}
+
+May want to borrow some code from match_free_decoder() in core/region.c. I think the decoder commit order matters?
+
+> +
+> +static struct cxl_decoder *cxl_find_free_ep_decoder(struct cxl_port *port)
+> +{
+> +	struct device *dev;
+> +
+> +	dev = device_find_child(&port->dev, NULL, match_free_ep_decoder);
+> +	if (!dev)
+> +		return NULL;
+> +
+> +	/* Release device ref taken via device_find_child() */
+> +	put_device(dev);
+
+Should have the caller put the device.
+
+> +	return to_cxl_decoder(dev);
+> +}
+> +
+> +void create_pmem_region(struct nvdimm *nvdimm)
+> +{
+> +	struct cxl_nvdimm *cxl_nvd;
+> +	struct cxl_memdev *cxlmd;
+> +	struct cxl_pmem_region_params *params;
+> +	struct cxl_root_decoder *cxlrd;
+> +	struct cxl_decoder *cxld;
+> +	struct cxl_region *cxlr;
+> +
+> +	if (!nvdimm_has_cxl_region(nvdimm))
+> +		return;
+> +
+> +	lockdep_assert_held(&cxl_rwsem.region);
+> +	cxl_nvd = nvdimm_provider_data(nvdimm);
+> +	params = nvdimm_get_cxl_region_param(nvdimm);
+> +	cxlmd = cxl_nvd->cxlmd;
+> +	cxlrd = cxlmd->cxlrd;
+> +
+> +	 /* TODO: Region creation support only for interleave way == 1 */
+> +	if (!(params->nlabel == 1))
+> +		dev_info(&cxlmd->dev,
+> +			 "Region Creation is not supported with iw > 1\n");
+
+Why not just exit here. Then the else is not necessary.
+
+Also maybe deb_dbg().
+
+> +	else {
+> +		cxld = cxl_find_free_ep_decoder(cxlmd->endpoint);
+> +		cxlr = cxl_create_region(cxlrd, CXL_PARTMODE_PMEM,
+> +					 atomic_read(&cxlrd->region_id),
+> +					 params, cxld);
+> +		if (IS_ERR(cxlr))
+> +			dev_info(&cxlmd->dev, "Region Creation failed\n");
+
+dev_warn()
+
+> +	}
+> +}
+> +EXPORT_SYMBOL_NS_GPL(create_pmem_region, "CXL");
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index f01f8c942fdf..0a87ea79742a 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -910,6 +910,7 @@ cxl_create_region(struct cxl_root_decoder *cxlrd,
+>  bool is_cxl_pmem_region(struct device *dev);
+>  struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+>  int devm_cxl_add_pmem_region(struct cxl_region *cxlr);
+> +void create_pmem_region(struct nvdimm *nvdimm);
+>  #else
+>  static inline bool is_cxl_pmem_region(struct device *dev)
+>  {
+> @@ -923,6 +924,9 @@ static inline int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
+>  {
+>  	return 0;
+>  }
+> +static inline void create_pmem_region(struct nvdimm *nvdimm)
+> +{
+> +}
+>  #endif
+>  
+>  void cxl_endpoint_parse_cdat(struct cxl_port *port);
+> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
+> index 38a5bcdc68ce..0cdef01dbc68 100644
+> --- a/drivers/cxl/pmem.c
+> +++ b/drivers/cxl/pmem.c
+> @@ -135,6 +135,7 @@ static int cxl_nvdimm_probe(struct device *dev)
+>  		return rc;
+>  
+>  	set_bit(NDD_LABELING, &flags);
+> +	set_bit(NDD_REGION_LABELING, &flags);
+>  	set_bit(NDD_REGISTER_SYNC, &flags);
+>  	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
+>  	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
+> @@ -155,6 +156,7 @@ static int cxl_nvdimm_probe(struct device *dev)
+>  		return -ENOMEM;
+>  
+>  	dev_set_drvdata(dev, nvdimm);
+> +	create_pmem_region(nvdimm);
+>  	return devm_add_action_or_reset(dev, unregister_nvdimm, nvdimm);
+>  }
+>  
+
 
