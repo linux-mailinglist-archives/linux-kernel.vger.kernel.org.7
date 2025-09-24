@@ -1,189 +1,227 @@
-Return-Path: <linux-kernel+bounces-831074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2387B9B775
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8C3B9B745
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 20:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F893BEB52
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9DA1884812
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 18:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD32322547;
-	Wed, 24 Sep 2025 18:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0CB30C60A;
+	Wed, 24 Sep 2025 18:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZXfW0sDe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFAm77gf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B9D31D727
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385CA8834;
+	Wed, 24 Sep 2025 18:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758737952; cv=none; b=cEgj0qhk8nBeYKaNfVGuVSDnRXokLRIPZR/DVOvh4YAUFxdVgfcHK9qBh7HPyz1ebSCgPVl/JymszmCmqRpG9n7HT2T6zzQ2RfLkyuMdRWKSRdBqLFjgRP5M93IrlHL1PdzTwIgylAkHnA+KEX7rJ/g9a3tkOg6zyJeyH5z+nJQ=
+	t=1758738157; cv=none; b=rbXSLWMCmjBwsJOxn8kvp8RKEmH471zXg3ll+r5DgfH3Y7QAZhTyGsddI+mFc27ShhNGMCzTtIWH7XSF0fB4FlqX9J08azAKSKT6q7xZ7rse6UKn/xYreJdM7ajZ9IkXJX/oLm1fpUvkBz+/kauYQc9vgqaoqTsSlidS9pmWQVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758737952; c=relaxed/simple;
-	bh=/teJlWbOiy711s826a7v+SpOfK1BJbJESGoYo6DPnLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QVzQAXBS3vfCw1QgCkpSpQWjuh/b09DycpMTxcVJEkJkn8WLOZ5k7uhDnD3MkQDNrXzccgg0Ekea8B37SbbKGomSQmzii1Tc2Gn/oYH2dYtHlJY1O2qHvP2hGUxblUiAf+yDbF3MjFUiYWOdzX1rdZljCNUCONl+5TmNVKheSt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZXfW0sDe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758737949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+GVKNWNi5HMo/lBrmWhAcg83rtAIgDpsQXqdRYrctmM=;
-	b=ZXfW0sDeZ1TMr/+gJtYJjgM/9BXoFDStAVj5k1xn1ciQSMP9AhuGe6C8lQBRb66XTuXY7N
-	oVwTLjGG0Fuaj3jh3iKWfgHPR7xp2yQ8dM4DYxeU/9mmYc9CIMk/OLhhWnJJiFIowVL1Py
-	Wh1H8qNWObowmkREFLRoADxAaIDBx4s=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302-xNMKmEE5MiOasmNKap_nlg-1; Wed, 24 Sep 2025 14:19:07 -0400
-X-MC-Unique: xNMKmEE5MiOasmNKap_nlg-1
-X-Mimecast-MFC-AGG-ID: xNMKmEE5MiOasmNKap_nlg_1758737947
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46b15e6f227so249715e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 11:19:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758737946; x=1759342746;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+GVKNWNi5HMo/lBrmWhAcg83rtAIgDpsQXqdRYrctmM=;
-        b=VSe2uT+IMx5O4LxCnKmKzkHJHfMntNe1vsB6YGt6IYIMGSdfutgrQtEJ+68A4i78uZ
-         A07KtA1IR+Fr6aUbYYkOOhM2k6vUgBvpMtANXUM1XVOEVx+tjmqE9y3KU3pg8mg4JVOw
-         ybOKzKFZxR+GX967Q3FOtuk+LKZN4/iBS105CKbTDqVSzFDdYvzTvF3Oi7fKnKTP46Ww
-         ZKQ5xWfWFBxWTCZOxljT1oOwVZoXfJO49o5C+6QfPVySNqTW1BBZJU3GAS7TL5WpI10c
-         K/nZ1ROmwkNLpllqlHKvuIHWv/Me/rVsNhU2bIyzyzuInmzxvEYTvUkjvByiTe9bWBsd
-         luqw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Zf6voz4oxxB1aHpbJNYXjnwBD+KTbLqK900HvReSccGkQFJPtSP3jvBF04WuhJ4glIqWDLs+aRvbKvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhvhVnQ3DTidgdpLhXZd6kAz0m9reb2CNzsW+d4OsPIQpEp2Vr
-	gIcaO5U1X+V9bOArkChl0N1GQOL1I8UmwBAYYouviT3LvkuH+HcDLMSfoBkiC/6SRcTGN34ONvN
-	41guwL3YaW79HKhCBqWZIwglXRHt1yF4UaKOMGZW5oFMoUdvzP8fi/6tV33m5EhOamA==
-X-Gm-Gg: ASbGncsbbba53dbyFA+E+0xQX36NsxE/noHObldJ4rr3Z2X6vSIMhwkpvPXNFQAIjg/
-	N/W3iQZTYtBQI5+1PIA5BDThcz0Cclhjjg4GnSQ89DDKe8AMWufxDeZx5oCsFC79ZCks8ycUYwc
-	BQYbv3ubuVisDPJh/avx8VXwIAxzjmJkGzDtncX2aa2hG42omf1wHXf06Wo6AsvID6J9TCn7f0v
-	Nf4lshLISQUsRHiSzv2ZTcjxF/9ud6mEDoN5FFgBCAB6UpMaps8LhpCMFvyXtmo6iqTpkEL25F0
-	12Q3MPfg/nQriBJZ2Z+PKOHrH+8qKSdovv/fzZXErv0x5y+WjK69ekmL7DeOnRZYTykG9tBE
-X-Received: by 2002:a05:600c:1f16:b0:45f:2cf9:c229 with SMTP id 5b1f17b1804b1-46e3292ea63mr9349075e9.0.1758737946371;
-        Wed, 24 Sep 2025 11:19:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWiZOUG5fae31rurFMM73vXO6jc0v8mG1U6clMBR7MZT6xxje1XWRB74TlFYPhZbJta7VNSw==
-X-Received: by 2002:a05:600c:1f16:b0:45f:2cf9:c229 with SMTP id 5b1f17b1804b1-46e3292ea63mr9348115e9.0.1758737945821;
-        Wed, 24 Sep 2025 11:19:05 -0700 (PDT)
-Received: from [192.168.3.141] (p57a1a5c4.dip0.t-ipconnect.de. [87.161.165.196])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996da2sm50902695e9.5.2025.09.24.11.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 11:19:05 -0700 (PDT)
-Message-ID: <1b01ebab-a43e-4344-ae38-50f0a031332f@redhat.com>
-Date: Wed, 24 Sep 2025 20:19:00 +0200
+	s=arc-20240116; t=1758738157; c=relaxed/simple;
+	bh=2b/LWMnsO2J1FjXmPze+F7AJ0aqzSAOQ/28PhZ3Io24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwLBiLXMEwkZcdcLbk5JTDNt07aoStWRpQhK6GnpTqnEstlmylaWjC867MQYxNYpZSf28cxeSeA/fxbq/S51vTEPXMUYtUg/Bf+N1D6h/z9hve3kYp/gh5Os6yRK8qMLIJTDSqXhcOA7PMmhrZCuiVNnHoqky4LLIs5+jyIVXfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFAm77gf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BCBC4CEE7;
+	Wed, 24 Sep 2025 18:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758738156;
+	bh=2b/LWMnsO2J1FjXmPze+F7AJ0aqzSAOQ/28PhZ3Io24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iFAm77gf73wgLpMVHWWCMk1Eq7gfUsDnVg7Cg6HNjaHtFQaUwnyBndbrldxgPVqHQ
+	 ZzGDB3+WS/WBRZNIGOrooGH+M4D0JksDsvTZn0myHKjhCmJsO4qZDvkh49mIdjh6gX
+	 qpa48IV7v4Mk+DiPkbSb1pUkv+QL4bHp+J2Xnar71V+f8nezoSpqtwJje8jByvb50N
+	 nYo03Zr1f5Gw+V+uCZDODovjg7bz+6BmpaxBhmlBi3A7au1+XEt2s6bDWqE5QPA6LZ
+	 a9a/j4de2f6dQNFDjaLk8nF/s4HsrEccLcf9GzEVwD7W/tBPJEDMBJlmMLa12b7mWg
+	 YcDgGvJl/wfBg==
+Date: Wed, 24 Sep 2025 23:52:29 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntb@lists.linux.dev, imx@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] PCI: endpoint: pci-epf-vntb: Add MSI doorbell
+ support
+Message-ID: <ejhs6fb2nmfhnjswhrvd7iwyddwvvr5nv6bu7dt4aypbiecyfb@wza667q2x4qp>
+References: <20250915-vntb_msi_doorbell-v2-0-ca71605e3444@nxp.com>
+ <20250915-vntb_msi_doorbell-v2-3-ca71605e3444@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM
- guest-memfd
-To: Shivank Garg <shivankg@amd.com>, willy@infradead.org,
- akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org,
- seanjc@google.com, vbabka@suse.cz
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
- xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com,
- josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com,
- jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- tabba@google.com, ackerleytng@google.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
- jack@suse.cz, hch@infradead.org, cgzones@googlemail.com,
- ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
- chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
- jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
- yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20250827175247.83322-2-shivankg@amd.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915-vntb_msi_doorbell-v2-3-ca71605e3444@nxp.com>
 
-On 27.08.25 19:52, Shivank Garg wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1] and can be applied
-> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> Merge branch 'guest-memfd-mmap' into HEAD)
+On Mon, Sep 15, 2025 at 06:22:46PM -0400, Frank Li wrote:
+> Add MSI doorbell support to reduce latency between PCI host and EP.
 > 
+> Before this change:
+>   ping 169.254.172.137
+>   64 bytes from 169.254.172.137: icmp_seq=1 ttl=64 time=0.575 ms
+>   64 bytes from 169.254.172.137: icmp_seq=2 ttl=64 time=1.80 ms
+>   64 bytes from 169.254.172.137: icmp_seq=3 ttl=64 time=8.19 ms
+>   64 bytes from 169.254.172.137: icmp_seq=4 ttl=64 time=2.00 ms
+> 
+> After this change:
+>   ping 169.254.144.71
+>   64 bytes from 169.254.144.71: icmp_seq=1 ttl=64 time=0.215 ms
+>   64 bytes from 169.254.144.71: icmp_seq=2 ttl=64 time=0.456 ms
+>   64 bytes from 169.254.144.71: icmp_seq=3 ttl=64 time=0.448 ms
+> 
+> Change u64 db to atomic_64 because difference doorbell may happen at the
+> same time.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change in v2
+> - update api pci_epf_set_inbound_space
+> - atomic_64 should be enough, which just record doorbell events, which is
+> similar with W1C irq status register.
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 153 +++++++++++++++++++++++---
+>  1 file changed, 136 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> index 83e9ab10f9c4fc2b485d5463faa2172500f12999..06c13f26db1c6e55d23769e98e2cfd80da693a20 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> @@ -36,11 +36,13 @@
+>   * PCIe Root Port                        PCI EP
+>   */
+>  
+> +#include <linux/atomic.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+>  
+> +#include <linux/pci-ep-msi.h>
+>  #include <linux/pci-epc.h>
+>  #include <linux/pci-epf.h>
+>  #include <linux/ntb.h>
+> @@ -126,12 +128,13 @@ struct epf_ntb {
+>  	u32 db_count;
+>  	u32 spad_count;
+>  	u64 mws_size[MAX_MW];
+> -	u64 db;
+> +	atomic64_t db;
+>  	u32 vbus_number;
+>  	u16 vntb_pid;
+>  	u16 vntb_vid;
+>  
+>  	bool linkup;
+> +	bool msi_doorbell;
+>  	u32 spad_size;
+>  
+>  	enum pci_barno epf_ntb_bar[VNTB_BAR_NUM];
+> @@ -258,9 +261,9 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+>  
+>  	ntb = container_of(work, struct epf_ntb, cmd_handler.work);
+>  
+> -	for (i = 1; i < ntb->db_count; i++) {
+> +	for (i = 1; i < ntb->db_count && !ntb->msi_doorbell; i++) {
+>  		if (ntb->epf_db[i]) {
+> -			ntb->db |= 1 << (i - 1);
+> +			atomic64_or(1 << (i - 1), &ntb->db);
+>  			ntb_db_event(&ntb->ntb, i);
+>  			ntb->epf_db[i] = 0;
+>  		}
+> @@ -319,7 +322,24 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+>  
+>  reset_handler:
+>  	queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler,
+> -			   msecs_to_jiffies(5));
+> +			   ntb->msi_doorbell ? msecs_to_jiffies(500) : msecs_to_jiffies(5));
+> +}
+> +
+> +static irqreturn_t epf_ntb_doorbell_handler(int irq, void *data)
+> +{
+> +	struct epf_ntb *ntb = data;
+> +	int i = 0;
+> +
+> +	for (i = 1; i < ntb->db_count; i++)
+> +		if (irq == ntb->epf->db_msg[i].virq) {
+> +			atomic64_or(1 << (i - 1), &ntb->db);
+> +			ntb_db_event(&ntb->ntb, i);
+> +		}
+> +
+> +	if (irq == ntb->epf->db_msg[0].virq)
 
-Heads-up: I'll queue this (incl. the replacement patch for #4 from the 
-reply) and send it tomorrow as a PR against kvm/next to Paolo.
+So doorbell 0 is supposed to trigger the command handler? Is it documented
+somewhere?
+
+> +		queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler, 0);
+> +
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  /**
+> @@ -500,6 +520,90 @@ static int epf_ntb_configure_interrupt(struct epf_ntb *ntb)
+>  	return 0;
+>  }
+>  
+> +static int epf_ntb_db_bar_init_msi_doorbell(struct epf_ntb *ntb,
+> +					    struct pci_epf_bar *db_bar,
+> +					    const struct pci_epc_features *epc_features,
+> +					    enum pci_barno barno)
+> +{
+> +	struct pci_epf *epf = ntb->epf;
+> +	dma_addr_t low, high;
+> +	struct msi_msg *msg;
+> +	size_t sz;
+> +	int ret;
+> +	int i;
+> +
+> +	ret = pci_epf_alloc_doorbell(epf,  ntb->db_count);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < ntb->db_count; i++) {
+> +		ret = request_irq(epf->db_msg[i].virq, epf_ntb_doorbell_handler,
+> +				  0, "vntb_db", ntb);
+> +
+> +		if (ret) {
+> +			dev_err(&epf->dev,
+> +				"Failed to request doorbell IRQ: %d\n",
+> +				epf->db_msg[i].virq);
+> +			goto err_request_irq;
+> +		}
+> +	}
+> +
+> +	msg = &epf->db_msg[0].msg;
+> +
+> +	high = 0;
+> +	low = (u64)msg->address_hi << 32 | msg->address_lo;
+> +
+> +	for (i = 0; i < ntb->db_count; i++) {
+> +		struct msi_msg *msg = &epf->db_msg[i].msg;
+> +		dma_addr_t addr = (u64)msg->address_hi << 32 | msg->address_lo;
+> +
+> +		low = min(low, addr);
+> +		high = max(high, addr);
+> +	}
+> +
+> +	sz = high - low + sizeof(u32);
+> +
+> +	ret = pci_epf_set_inbound_space(epf, sz, barno,
+> +					epc_features, 0, low);
+
+Should this new API be used in pci-epf-test also?
+
+- Mani
 
 -- 
-Cheers
-
-David / dhildenb
-
+மணிவண்ணன் சதாசிவம்
 
