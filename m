@@ -1,158 +1,172 @@
-Return-Path: <linux-kernel+bounces-830261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0267AB993AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4250DB993B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFD04A4CB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC243A7E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F354B2D8DD6;
-	Wed, 24 Sep 2025 09:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C25C2D978D;
+	Wed, 24 Sep 2025 09:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBmDAu54"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="knzpppIY"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E436DBE49
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC21E520E;
+	Wed, 24 Sep 2025 09:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758707280; cv=none; b=Ez2kVdlQDAFdo7FWwxISL5Pto0xuGjdKNbn5xjhPdQib09g64T5GfOJQaiJtDNKrjuz0OyHJG7tbXmgC3axb/iy6CgFfLZvebUD//Lk3FiQU9A29+GJC519QeHUgOyJlP16MhuBB1fPAV1MhzvPzinJH3DeGyfMtkqnzqzlBJzE=
+	t=1758707321; cv=none; b=d6N3FwmF5xhQ98op+67ACT7CF2kBEc7XkS+BwKQiuuF5KctXSNhx+ysu+E814JBTWqtGEeAmSqAt8XQe+cwsSwBrtXtuN+z956lzCDYGcR0N8R6JCUvJ9k9p61Vxz/xgAPEUxXRCZlEwCsshps2wFmR/2B/pcqA+dfcLWI2lXh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758707280; c=relaxed/simple;
-	bh=clfk60SyfYqZmt5Z+z2CI7XpK9tr1yr5nZ4/ERZNp8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BMFA2QaZn6gHWVthAI9uM379mGNVib8RRQKMMMA5DwMIcZE5G8nwie7mWwFEZ0FMasS2c6qj26Tl5jGMTXlh2d5Oin8zVqfK6jeqgDDaZdf7FR8TSVK1MdkeAYFzplDWOTKf65XOQ+gB15i6EQjzdWNSFCbs5cdN0pwLfhDAF28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBmDAu54; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so441922f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758707273; x=1759312073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+/yAQIJHy6zgxStgmA8+woCe8XjoAU5txYeFqYzfH0=;
-        b=TBmDAu54boe1929wX6EsDoCVrvE/jUZZAnve83MwzzbSDage2TOPdDqeiu57zquv89
-         MsQ2vmzbzwFb6EtVKBxHdmYCX7iR7tztLSaV9vdcpOAc4OmXNtxxgZlPXxHzKd5bo2Yv
-         2AifCbs0RUr8mfArXWqlLsN+yYOYF8SNZh1b/d4/3vAcrYsUCT9mNUGywXjkKJQmmxpl
-         phRRS/PM5vSb3P93bJ9Z8URbPvnX1ibRokI6wn0haVwhsgc7raTD5xT7snLrTGbLYgQz
-         tJUuorK+PJl7YBvkNhSwdU1h/gHx9baE8/+7Aurprb7nsx8coYfuBzdfN6YklgJ1Oe7f
-         Tosw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758707273; x=1759312073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v+/yAQIJHy6zgxStgmA8+woCe8XjoAU5txYeFqYzfH0=;
-        b=qVNqZxuWsrGePPtIsTWeyZw2X9ErJXJwl6sm99dnLsJqT3+Jh5e32u9Ybsc/Hg7X10
-         NskTwJyzbqsQLuJT788q8C1V1mPqyBg0DYNqZT8xnWjDIswIcM9oOTlcysdlE7RZptYh
-         myVSKwgHNqOhsPh7e3JAJ1Rf47lkZRldejUBrlMoE/FZIWjhMivljqtZn5x3zaLR2xPY
-         4gVdEzFm/w1T4cC1Huv2zEiYei/tvwq0w7VDKBIcdSsUD2cLRySMo39pqJ4KQTDRRIJq
-         bQetgx5ht5vE1U0ck2ZLzHAUg9BKhlcSbIbIQlWTCkNPJaAzYBX5+Uu6BHTCNO5fpsak
-         dtMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZD896y+kXd2gTvLuGDQQWRFhzsNqhak2dh8x9MTIu+MvDxAWdXTidypYAWcVq3Zc7IZ3LR19NpeZ73ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXdsr5Q/o8bzYZ6jtiJ7wTVhpiuGTWxqTntyvJQdmG6Ih5gW5U
-	Z+0OImjtkQXV3CoLm6eX87x6auk0AVXfxet7lODKNS+lzPlk+43SVxhyaDgKOs6ut6rEUwsriYG
-	ieM6Bq1E/0ehpNlhag+Zj17Ybjr6VFNA=
-X-Gm-Gg: ASbGncvY/zm1vexGIL37TYQARRb7F2vsjaBK4jdcrcPxrvLwSEsY7KQrWPUXXDW2Att
-	MWCkNCziSi7Ci33teEoWPGB2xjLN2sJat9SpaB1Ar/2wsBWRMUPB11D0s6bGHIC8xbMdSEQoNK1
-	oEEYFxhi/wZqa0tkbBe7Guob91dHHDp4maxOs3fYICYqoSj9dSAc6pwxGod3y6OxQkJTx5VYDVA
-	LNDSarvnYmJeJFW1N4=
-X-Google-Smtp-Source: AGHT+IGNEyOFTkhhfZ+ODCUH/TtmGTf98EryrfgpvlPOBPzYZ9gdhhQMDlm+uYotpfaf5G/L0rt+YloNfDg3NmGpD8g=
-X-Received: by 2002:a5d:5d84:0:b0:3fc:54ff:edbb with SMTP id
- ffacd0b85a97d-40abe09400fmr1871286f8f.9.1758707273143; Wed, 24 Sep 2025
- 02:47:53 -0700 (PDT)
+	s=arc-20240116; t=1758707321; c=relaxed/simple;
+	bh=0XQqldii0ogvEJhYIqs/UJNHv33XTocGr6ZCVQejLTY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYBvNrrt2IOi62PLQ/xMScUojuGzNSAZ7wjjlTwZVeAURoqYL0UbJl9COFoB26eM++icUCWxRcikCeD2l2eQUnyTrfzKWXzOXxK4OQ2GNjRx2s2syNkPZEDhYyQpi7tkU4MIsr6dLDziEow95ZpwZvLc6oH1vFm6dlXBqhRxWvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=knzpppIY; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58O9mBjm1184080;
+	Wed, 24 Sep 2025 04:48:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758707291;
+	bh=1H55ciLspOeaCKCXcKZzvxqPw6u58HfYhWx4Xna4xhg=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=knzpppIY0BIWPBurE0M6oLPHGa5ORu2DOjWBhowrJkDpAYEcxpqJMDRW18of3zWtF
+	 3RVc3GwGMKl/BVBGuhCyf0L6Tbb6LNQlYwgYsp0v5hOzMe98EUMN7QCJa3+TZredDJ
+	 ZqBD27/soL2M/4A8uZ2H9jsKiVNvGUEc6XQUnz8U=
+Received: from DFLE211.ent.ti.com (dfle211.ent.ti.com [10.64.6.69])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58O9mBMW2348214
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 24 Sep 2025 04:48:11 -0500
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 24 Sep
+ 2025 04:48:10 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 24 Sep 2025 04:48:10 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58O9m96d1811362;
+	Wed, 24 Sep 2025 04:48:10 -0500
+Date: Wed, 24 Sep 2025 15:18:09 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Brian Norris <briannorris@chromium.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        <kunit-dev@googlegroups.com>, Len Brown <lenb@kernel.org>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] PM: runtime: Make put{,_sync}() return 1 when
+ already suspended
+Message-ID: <20250924094809.g7vuy75vm3gqzc4d@lcpd911>
+References: <20250829003319.2785282-1-briannorris@chromium.org>
+ <20250829003319.2785282-2-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916215301.664963-1-jolsa@kernel.org> <20250916215301.664963-3-jolsa@kernel.org>
- <CAEf4BzYTJcq=Kk6W9Gz90gM=mw2fS2T-QBurUhdjBNinReDSjQ@mail.gmail.com> <20250924084956.GW3245006@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250924084956.GW3245006@noisy.programming.kicks-ass.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 24 Sep 2025 11:47:42 +0200
-X-Gm-Features: AS18NWAjVTpnvN9YoNCHY8qLaBt16TRzfs-v53h1ST40PSwW1aqo1PKnsvSDwoI
-Message-ID: <CAADnVQJ6CFD6D9gDb5R=ZnAiXVVJxMe+V3Mv+qniwD13-28MTQ@mail.gmail.com>
-Subject: Re: [PATCHv4 bpf-next 2/6] uprobe: Do not emulate/sstep original
- instruction when ip is changed
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250829003319.2785282-2-briannorris@chromium.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Sep 24, 2025 at 11:15=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Tue, Sep 16, 2025 at 03:28:52PM -0700, Andrii Nakryiko wrote:
-> > On Tue, Sep 16, 2025 at 2:53=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wr=
-ote:
-> > >
-> > > If uprobe handler changes instruction pointer we still execute single
-> > > step) or emulate the original instruction and increment the (new) ip
-> > > with its length.
-> > >
-> > > This makes the new instruction pointer bogus and application will
-> > > likely crash on illegal instruction execution.
-> > >
-> > > If user decided to take execution elsewhere, it makes little sense
-> > > to execute the original instruction, so let's skip it.
-> > >
-> > > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  kernel/events/uprobes.c | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> > >
-> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > > index 7ca1940607bd..2b32c32bcb77 100644
-> > > --- a/kernel/events/uprobes.c
-> > > +++ b/kernel/events/uprobes.c
-> > > @@ -2741,6 +2741,13 @@ static void handle_swbp(struct pt_regs *regs)
-> > >
-> > >         handler_chain(uprobe, regs);
-> > >
-> > > +       /*
-> > > +        * If user decided to take execution elsewhere, it makes litt=
-le sense
-> > > +        * to execute the original instruction, so let's skip it.
-> > > +        */
-> > > +       if (instruction_pointer(regs) !=3D bp_vaddr)
-> > > +               goto out;
-> > > +
-> >
-> > Peter, Ingo,
-> >
-> > Are you guys ok with us routing this through the bpf-next tree? We'll
-> > have a tiny conflict because in perf/core branch there is
-> > arch_uprobe_optimize() call added after handler_chain(), so git merge
-> > will be a bit confused, probably. But it should be trivially
-> > resolvable.
->
-> Nah, I suppose that'll be fine. Thanks!
+On Aug 28, 2025 at 17:28:27 -0700, Brian Norris wrote:
+> The pm_runtime.h docs say pm_runtime_put() and pm_runtime_put_sync()
+> return 1 when already suspended, but this is not true -- they return
+> -EAGAIN. On the other hand, pm_runtime_put_sync_suspend() and
+> pm_runtime_put_sync_autosuspend() *do* return 1.
+> 
+> This is an artifact of the fact that the former are built on rpm_idle(),
+> whereas the latter are built on rpm_suspend().
+> 
+> There are precious few pm_runtime_put()/pm_runtime_put_sync() callers
+> that check the return code at all, but most of them only log errors, and
+> usually only for negative error codes. None of them should be treating
+> this as an error, so:
+> 
+>  * at best, this may fix some case where a driver treats this condition
+>    as an error, when it shouldn't;
+> 
+>  * at worst, this should make no effect; and
+> 
+>  * somewhere in between, we could potentially clear up non-fatal log
+>    messages.
 
-Thanks! Applied.
+Right, just doing a $> git grep -A5 "= pm_runtime_put"    gave me quite a few
+callers who actually do check the return codes, and in some cases even
+directly backpropagate them! So like you say with this patch best case even
+might fix a few cases where it's unnecessary.
 
-Jiri,
-in the future, please keep the whole history in the cover letter.
-v1->v2, v2->v3. Just v4 changes are nice, but pls copy paste
-previous cover letters and expand them.
-Also please always include links to previous versions in the cover.
-Search on lore sucks. Links in the cover are a much better
-way to preserve the history.
+
+> 
+> Fix the pm_runtime_already_suspended_test() while tweaking the behavior.
+> The test makes a lot more sense when these all return 1 when the device
+> is already suspended:
+> 
+>     pm_runtime_put(dev);
+>     pm_runtime_put_sync(dev);
+>     pm_runtime_suspend(dev);
+>     pm_runtime_autosuspend(dev);
+>     pm_request_autosuspend(dev);
+>     pm_runtime_put_sync_autosuspend(dev);
+>     pm_runtime_put_autosuspend(dev);
+> 
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+>  drivers/base/power/runtime-test.c | 8 ++------
+>  drivers/base/power/runtime.c      | 3 +++
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/base/power/runtime-test.c b/drivers/base/power/runtime-test.c
+> index 263c28d5fc50..1be18e871f1d 100644
+> --- a/drivers/base/power/runtime-test.c
+> +++ b/drivers/base/power/runtime-test.c
+> @@ -43,15 +43,11 @@ static void pm_runtime_already_suspended_test(struct kunit *test)
+>  	KUNIT_EXPECT_EQ(test, 0, pm_runtime_barrier(dev)); /* no wakeup needed */
+>  
+>  	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
+> -	/*
+> -	 * We never actually left RPM_SUSPENDED, but rpm_idle() still treats
+> -	 * this as -EAGAIN / "runtime PM status change ongoing".
+> -	 */
+> -	KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put(dev));
+> +	KUNIT_EXPECT_EQ(test, 1, pm_runtime_put(dev));
+>  
+>  	pm_runtime_get_noresume(dev);
+>  	KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
+> -	KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put_sync(dev));
+> +	KUNIT_EXPECT_EQ(test, 1, pm_runtime_put_sync(dev));
+>  
+>  	KUNIT_EXPECT_EQ(test, 1, pm_runtime_suspend(dev));
+>  	KUNIT_EXPECT_EQ(test, 1, pm_runtime_autosuspend(dev));
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 3e84dc4122de..17cf111d16aa 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -498,6 +498,9 @@ static int rpm_idle(struct device *dev, int rpmflags)
+>  	if (retval < 0)
+>  		;	/* Conditions are wrong. */
+>  
+> +	else if ((rpmflags & RPM_GET_PUT) && (retval == 1))
+> +		;	/* put() is allowed in RPM_SUSPENDED */
+> +
+
+No objections from my side,
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
