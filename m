@@ -1,71 +1,69 @@
-Return-Path: <linux-kernel+bounces-829963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-829964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5ADB9855A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E127B9855D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 08:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1C11B2204C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63BE81B22113
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 06:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E7323A9AE;
-	Wed, 24 Sep 2025 06:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8326923D7F8;
+	Wed, 24 Sep 2025 06:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hFigz3g+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JRfGfZ63"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25929242917
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1415724A05D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758693769; cv=none; b=gzSQbJVf4jyLgW6AzYdBn1A2R/hkszw49javO1PAS+T/wDt4POCNcRx83h7zCGQK2cNf5+ISaTNDK8nQWP2EGVqOUdFL+aKsa3p8aLEIHMU2mqfkoq7ZD3u77K9AdIdUlY6uX3npt5pMFwG942EgT3jHyKo2ZngHFinmsO70p0Y=
+	t=1758693771; cv=none; b=ZngoC7Ne08QppBqrkt7ouw08oUIqR9adCbe8LdpWuBkd9I7PO+ABVAhKIjYJgpSNY2bFP6sAZzDKE6Epns5h+FewZp/YVeFIg5tbqzvfK/F2vp+cqQxDhPKa+oaaeTzb4EnZyEoV5kmqeoCaLat+VWkxt4DELxJIBEd1uasihXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758693769; c=relaxed/simple;
-	bh=G05VyvU0N5uhjnSrrF/geI2hZKh6FySdqAEyBY1XOYk=;
+	s=arc-20240116; t=1758693771; c=relaxed/simple;
+	bh=VlBzm4sQ+K7RqzqDXx9u2XN09xpSsntef8scOgjmO6c=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=OmyECY26mh5v2OZiSo2AEGDCMy9F2TFAQV+vaNHFHNlmD6Dm5T+fu9rijiDdcjZ+au8g5oCISvrTEyYLsbGOp6anCDopMdd8djWDJnmj6fgKB/Jo9Vq2l64gXREl6rcfTBsEXr4Ye45bxNAhbqJA0AodY72ve/6VVmKO8SZN5q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hFigz3g+; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=ldAXCc0MzchlThSMUMIuxRI2zXy+XmfAcJjdhOHAX39nO4pNQQchh1NXQhtRk1qLAyWKJ9Dg7bn/q3zlkaexNDkESOp5DtZ9NDcg2DQaU1F9TrWXR/zn3eGXbDanGk3fehwj2Jn1pjKmAEQmnjbkcU4a8uDCaMtRQbuDVgiNQ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JRfGfZ63; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2698b5fbe5bso79424615ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:02:47 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2699ebc0319so67508115ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Sep 2025 23:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758693767; x=1759298567; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7esYR5O7rY91DsdevqWBWe3XdUF6QXDR+9sTQTIIzCM=;
-        b=hFigz3g+2706G3qZXVCwkhPyPQx0GQFERxE1nBOTZdARQytO/A+Vg1+apHa6e9JmTw
-         34g0AZ1Z1MB7ZaL4MnROrUeOrvYiJ1ZUhoIGIhj64Ec/8sL7lcwml2sdcw9KjF8X5l57
-         HVSsjhI20BamloA2k0vt8v38EsvFGAwrIItlnLzsYl39sIoTWKRZdeLqDEcrAyHeqjaa
-         qSPGQHiVSMWsnI/j1fDVvsJoJr3rkh4WJxGNv3O1wV8crB3e0J4kIyZA/pdXvtUbAgoN
-         JDN4rZoswARzlENAoTmRM0VTxuq/5aPbHf8UTnuZMYeXxWOeSGIf55Vdj5fER5TIShwA
-         weHw==
+        d=google.com; s=20230601; t=1758693769; x=1759298569; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=plTyOlm01Lu+32dYRONMwBTr1DEdYenlGFnsI+q2WIg=;
+        b=JRfGfZ63uplY/3kO0SH/mnxwrO0qw0P3/Ss+vQShCoGCy6L2xMZElzQscMKjSU5SHf
+         Es3+sx+SuzXcTfI1HofQUTxAs4PbtPohhWV5A1XpR52jg0g/5x20azRWjUH3tKd1eY8L
+         CJ75IMUmrSCcIXkzf8gqupTanfjHHC87JY+nSqTWHScCcTDX7+q0jA21IwB1nfbLP2aH
+         zD2+1kzyMWkmiBEyr3MCOR6retTJV9/Iwh5ZFpKuukX9SuL36BwFkP5BGSxe5jBbnFp5
+         CbGB5JqRDUb51Ytsvoiim4Lr8sffXYvEYwVvU2GPci4OHSsxzWJ3HxMfN7YsaX4A5Cz5
+         dwSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758693767; x=1759298567;
-        h=content-transfer-encoding:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7esYR5O7rY91DsdevqWBWe3XdUF6QXDR+9sTQTIIzCM=;
-        b=J6PLz+nMLmaTVIHJJ16RmvvOamvgEtZ82qce/YTXgTuK9JfNOs7SvOO8j26s+aGu1p
-         epRMp1cfVktNf4YeUO7to+lSwkRnzd2tAVHTNagfkEJ0I4Wpsr9OjU8DRlFcucRrsolH
-         Qwia+/+KqH5Brymf4oHqiOC2elcIqS/cVrBqgB/CnTqK0AQyA8w3KIkEriHQ3jQwmx+R
-         xGXtk8xtZq4CWTWPfnlcqrEsaER7nlRMzS4beuW7RL4cGZzLjZcP5UOqTLR6yPYA2phs
-         HDSEzR0GzTP4Rs3MuW/Nf6zhYEQCMvUAhyCnItk20rkbTN+q6ZTc136cG1qgM1T70aRj
-         8oag==
-X-Forwarded-Encrypted: i=1; AJvYcCVHl/ewtWQcFYDh6U8R67V2G/8ieQDC3N2m1IPbTSPQKtFtOol5BfsyIIB5jB+DGSTFL+Ztkz6NdixjebI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwePgyXBygECA0t1F0SFQG0K8U19gd3whKWbKUKI8B2Xrg9iXuQ
-	+86pcgjuKQbI2w/KY9PvLQ79f4IUlZ0FTR/ZPySNjxWopak+Bl42azoi8Nyhpmg7GRwJwfNDv4H
-	3632exit5Ww==
-X-Google-Smtp-Source: AGHT+IGn7wPgDO7Q9dvd+aCwAYTdX4+B0bqhJ2HPvWxOTlIIvq2uwS/H+uG/opQREC37YWfZJrP9I2CqVsy5
-X-Received: from plblo4.prod.google.com ([2002:a17:903:4344:b0:274:e523:6f5a])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88d:b0:24c:7bc6:7ac7
- with SMTP id d9443c01a7336-27cc21f7f9fmr70523855ad.18.1758693767429; Tue, 23
- Sep 2025 23:02:47 -0700 (PDT)
-Date: Tue, 23 Sep 2025 23:02:22 -0700
+        d=1e100.net; s=20230601; t=1758693769; x=1759298569;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=plTyOlm01Lu+32dYRONMwBTr1DEdYenlGFnsI+q2WIg=;
+        b=TKikLB3YXkoKPESF3Wka6ANyRhS01IJ6Uh3mbnxtD0n2IblDsQp2t5Rm7Sa4c5c6TT
+         K8qV2sSf9nDs6VWLp1Iv5w9hkwydrTH8bPTZODWJych4DyKbqvXqFXyXZkH8STMggptB
+         gjK47TMGbDsabRvn6zFKCBwQzv1CzXXqweMgL45sLoBJ2ebehffwlqRsEs7B9PM61242
+         hehUwczUsYQ1soM2wm3UXSNNmtLceeiFBM3cxioKLPg4ojwt88kA8BF/1/5JrZSJgQbc
+         sAad86S4LcbkLRWL6QeLJ9Gu042I2f6m8iAsE+p7j0DgMjdgFJdPcy9LM1O4cUaxA5yg
+         E/hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE1a69ssNn3WvGkIe9zAjK9fqGfbSweRE5PfKS0+3NVSOCydEahz/AbS/OmxTsREdIYHTWE9HReMFSfmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIVsx97X3mPNboqPAJWJbYotmH55cafoQwDA+6g8pLf9kpxdGM
+	EDWro3KxVvz+DaSra3rjSJzgmkRqmEK+hgUrA/KCSVwkIuNNZrd5tD3C5FCwsrK7cQSrdI2ehmm
+	zzwBYOfVCKA==
+X-Google-Smtp-Source: AGHT+IHLH36G0jqLqswFH+QMg2Fx2jrBGAbZ/gMyA8lOGOWb1W/XupEgWZBVdhuGX7CQVIvpG4t7VJBhwVqL
+X-Received: from plec19.prod.google.com ([2002:a17:902:f313:b0:269:937c:75b3])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c7:b0:27d:69de:edca
+ with SMTP id d9443c01a7336-27d69def40amr48076015ad.13.1758693769329; Tue, 23
+ Sep 2025 23:02:49 -0700 (PDT)
+Date: Tue, 23 Sep 2025 23:02:23 -0700
 In-Reply-To: <20250924060229.375718-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250924060229.375718-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250924060229.375718-4-irogers@google.com>
-Subject: [PATCH v1 03/10] perf vendor events intel: Update emeraldrapids
- events to v1.20
+Message-ID: <20250924060229.375718-5-irogers@google.com>
+Subject: [PATCH v1 04/10] perf vendor events intel: Update grandridge events
+ to v1.10
 From: Ian Rogers <irogers@google.com>
 To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -88,284 +86,127 @@ To: Thomas Falcon <thomas.falcon@intel.com>, Peter Zijlstra <peterz@infradead.or
 	Caleb Biggers <caleb.biggers@intel.com>, linux-kernel@vger.kernel.org, 
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Update emeraldrapids events to v1.20 released in:
-https://github.com/intel/perfmon/commit/868b433955f3e94126420ee9374b9e0a6ce=
-2d83e
-https://github.com/intel/perfmon/commit/43681e2817a960d06c5b8870cc6d3e5b7b6=
-feeb9
+Update grandridge events to v1.10 released in:
+https://github.com/intel/perfmon/commit/c3028836415b8b5d31b8439eefc087492148c19f
 
 Event json automatically generated by:
 https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- .../arch/x86/emeraldrapids/cache.json         | 63 +++++++++++++++++++
- .../arch/x86/emeraldrapids/emr-metrics.json   | 12 ++++
- .../arch/x86/emeraldrapids/uncore-cache.json  | 11 ++++
- .../arch/x86/emeraldrapids/uncore-memory.json | 22 +++++++
- .../arch/x86/emeraldrapids/uncore-power.json  |  2 -
+ .../pmu-events/arch/x86/grandridge/cache.json | 20 +++++++++----------
  tools/perf/pmu-events/arch/x86/mapfile.csv    |  2 +-
- 6 files changed, 109 insertions(+), 3 deletions(-)
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json b/tool=
-s/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-index e96f938587bb..26568e4b77f7 100644
---- a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-+++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-@@ -1,4 +1,67 @@
- [
-+    {
-+        "BriefDescription": "Hit snoop reply with data, line invalidated."=
-,
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_FE",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne will now be (I)nvalidated: removed from this core's cache, after the dat=
-a is forwarded back to the requestor and indicating the data was found unmo=
-dified in the (FE) Forward or Exclusive State in this cores caches cache.  =
-A single snoop response from the core counts on all hyperthreads of the cor=
-e.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x20"
-+    },
-+    {
-+        "BriefDescription": "HitM snoop reply with data, line invalidated.=
-",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_M",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne will now be (I)nvalidated: removed from this core's caches, after the da=
-ta is forwarded back to the requestor, and indicating the data was found mo=
-dified(M) in this cores caches cache (aka HitM response).  A single snoop r=
-esponse from the core counts on all hyperthreads of the core.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x10"
-+    },
-+    {
-+        "BriefDescription": "Hit snoop reply without sending the data, lin=
-e invalidated.",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.I_HIT_FSE",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne will now be (I)nvalidated in this core's caches without forwarded back t=
-o the requestor. The line was in Forward, Shared or Exclusive (FSE) state i=
-n this cores caches.  A single snoop response from the core counts on all h=
-yperthreads of the core.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x2"
-+    },
-+    {
-+        "BriefDescription": "Line not found snoop reply",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.MISS",
-+        "PublicDescription": "Counts responses to snoops indicating that t=
-he data was not found (IHitI) in this core's caches. A single snoop respons=
-e from the core counts on all hyperthreads of the Core.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x1"
-+    },
-+    {
-+        "BriefDescription": "Hit snoop reply with data, line kept in Share=
-d state.",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_FE",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne may be kept on this core in the (S)hared state, after the data is forwar=
-ded back to the requestor, initially the data was found in the cache in the=
- (FS) Forward or Shared state.  A single snoop response from the core count=
-s on all hyperthreads of the core.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x40"
-+    },
-+    {
-+        "BriefDescription": "HitM snoop reply with data, line kept in Shar=
-ed state",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_M",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne may be kept on this core in the (S)hared state, after the data is forwar=
-ded back to the requestor, initially the data was found in the cache in the=
- (M)odified state.  A single snoop response from the core counts on all hyp=
-erthreads of the core.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x8"
-+    },
-+    {
-+        "BriefDescription": "Hit snoop reply without sending the data, lin=
-e kept in Shared state.",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x27",
-+        "EventName": "CORE_SNOOP_RESPONSE.S_HIT_FSE",
-+        "PublicDescription": "Counts responses to snoops indicating the li=
-ne was kept on this core in the (S)hared state, and that the data was found=
- unmodified but not forwarded back to the requestor, initially the data was=
- found in the cache in the (FSE) Forward, Shared state or Exclusive state. =
- A single snoop response from the core counts on all hyperthreads of the co=
-re.",
-+        "SampleAfterValue": "1000003",
-+        "UMask": "0x4"
-+    },
-     {
-         "BriefDescription": "L1D.HWPF_MISS",
-         "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json =
-b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
-index af0a7dd81e93..f8dbb8a8263d 100644
---- a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
-@@ -39,6 +39,18 @@
-         "MetricName": "cpi",
-         "ScaleUnit": "1per_instr"
+diff --git a/tools/perf/pmu-events/arch/x86/grandridge/cache.json b/tools/perf/pmu-events/arch/x86/grandridge/cache.json
+index 877052db1490..9abddb06a837 100644
+--- a/tools/perf/pmu-events/arch/x86/grandridge/cache.json
++++ b/tools/perf/pmu-events/arch/x86/grandridge/cache.json
+@@ -286,7 +286,7 @@
      },
-+    {
-+        "BriefDescription": "The average number of cores that are in cstat=
-e C0 as observed by the power control unit (PCU)",
-+        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0 / pcu_0@UNC_P_=
-CLOCKTICKS@ * #num_packages",
-+        "MetricGroup": "cpu_cstate",
-+        "MetricName": "cpu_cstate_c0"
-+    },
-+    {
-+        "BriefDescription": "The average number of cores are in cstate C6 =
-as observed by the power control unit (PCU)",
-+        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6 / pcu_0@UNC_P_=
-CLOCKTICKS@ * #num_packages",
-+        "MetricGroup": "cpu_cstate",
-+        "MetricName": "cpu_cstate_c6"
-+    },
      {
-         "BriefDescription": "CPU operating frequency (in GHz)",
-         "MetricExpr": "CPU_CLK_UNHALTED.THREAD / CPU_CLK_UNHALTED.REF_TSC =
-* #SYSTEM_TSC_FREQ / 1e9",
-diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json=
- b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
-index f453202d80c2..92cf47967f0b 100644
---- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
-+++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
-@@ -311,6 +311,17 @@
-         "UMask": "0x2",
-         "Unit": "CHA"
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_1024",
+@@ -297,7 +297,7 @@
      },
-+    {
-+        "BriefDescription": "Distress signal asserted : DPT Remote",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0xaf",
-+        "EventName": "UNC_CHA_DISTRESS_ASSERTED.DPT_NONLOCAL",
-+        "Experimental": "1",
-+        "PerPkg": "1",
-+        "PublicDescription": "Distress signal asserted : DPT Remote : Coun=
-ts the number of cycles either the local or incoming distress signals are a=
-sserted. : Dynamic Prefetch Throttle received by this tile",
-+        "UMask": "0x8",
-+        "Unit": "CHA"
-+    },
      {
-         "BriefDescription": "Egress Blocking due to Ordering requirements =
-: Down",
-         "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.jso=
-n b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
-index 90f61c9511fc..30044177ccf8 100644
---- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
-+++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
-@@ -3129,6 +3129,28 @@
-         "PublicDescription": "Clock-Enabled Self-Refresh : Counts the numb=
-er of cycles when the iMC is in self-refresh and the iMC still has a clock.=
-  This happens in some package C-states.  For example, the PCU may ask the =
-iMC to enter self-refresh even though some of the cores are still processin=
-g.  One use of this is for Monroe technology.  Self-refresh is required dur=
-ing package C3 and C6, but there is no clock in the iMC at this time, so it=
- is not possible to count these cases.",
-         "Unit": "iMC"
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_128",
+@@ -308,7 +308,7 @@
      },
-+    {
-+        "BriefDescription": "Throttle Cycles for Rank 0",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x46",
-+        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT0",
-+        "Experimental": "1",
-+        "PerPkg": "1",
-+        "PublicDescription": "Throttle Cycles for Rank 0 : Counts the numb=
-er of cycles while the iMC is being throttled by either thermal constraints=
- or by the PCU throttling.  It is not possible to distinguish between the t=
-wo.  This can be filtered by rank.  If multiple ranks are selected and are =
-being throttled at the same time, the counter will only increment by 1. : T=
-hermal throttling is performed per DIMM.  We support 3 DIMMs per channel.  =
-This ID allows us to filter by ID.",
-+        "UMask": "0x1",
-+        "Unit": "iMC"
-+    },
-+    {
-+        "BriefDescription": "Throttle Cycles for Rank 0",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x46",
-+        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT1",
-+        "Experimental": "1",
-+        "PerPkg": "1",
-+        "PublicDescription": "Throttle Cycles for Rank 0 : Counts the numb=
-er of cycles while the iMC is being throttled by either thermal constraints=
- or by the PCU throttling.  It is not possible to distinguish between the t=
-wo.  This can be filtered by rank.  If multiple ranks are selected and are =
-being throttled at the same time, the counter will only increment by 1.",
-+        "UMask": "0x2",
-+        "Unit": "iMC"
-+    },
      {
-         "BriefDescription": "Precharge due to read, write, underfill, or P=
-GT.",
-         "Counter": "0,1,2,3",
-diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json=
- b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
-index 9482ddaea4d1..71c35b165a3e 100644
---- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
-@@ -178,7 +178,6 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0x35",
-         "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0",
--        "Experimental": "1",
-         "PerPkg": "1",
-         "PublicDescription": "Number of cores in C0 : This is an occupancy=
- event that tracks the number of cores that are in the chosen C-State.  It =
-can be used by itself to get the average number of cores in that C-state wi=
-th thresholding to generate histograms, or with other PCU events and occupa=
-ncy triggering to capture other details.",
-         "Unit": "PCU"
-@@ -198,7 +197,6 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0x37",
-         "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6",
--        "Experimental": "1",
-         "PerPkg": "1",
-         "PublicDescription": "Number of cores in C6 : This is an occupancy=
- event that tracks the number of cores that are in the chosen C-State.  It =
-can be used by itself to get the average number of cores in that C-state wi=
-th thresholding to generate histograms, or with other PCU events and occupa=
-ncy triggering to capture other details.",
-         "Unit": "PCU"
-diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-ev=
-ents/arch/x86/mapfile.csv
-index 8daaa8f40b66..dec7bdd770cf 100644
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_16",
+@@ -319,7 +319,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_2048",
+@@ -330,7 +330,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_256",
+@@ -341,7 +341,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_32",
+@@ -352,7 +352,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_4",
+@@ -363,7 +363,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_512",
+@@ -374,7 +374,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_64",
+@@ -385,7 +385,7 @@
+     },
+     {
+         "BriefDescription": "Counts the number of tagged load uops retired that exceed the latency threshold defined in MEC_CR_PEBS_LD_LAT_THRESHOLD - Only counts with PEBS enabled.",
+-        "Counter": "0,1",
++        "Counter": "0,1,2,3,4,5,6,7",
+         "Data_LA": "1",
+         "EventCode": "0xd0",
+         "EventName": "MEM_UOPS_RETIRED.LOAD_LATENCY_GT_8",
+diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-events/arch/x86/mapfile.csv
+index dec7bdd770cf..888d38e49766 100644
 --- a/tools/perf/pmu-events/arch/x86/mapfile.csv
 +++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-@@ -9,7 +9,7 @@ GenuineIntel-6-4F,v23,broadwellx,core
- GenuineIntel-6-55-[56789ABCDEF],v1.25,cascadelakex,core
- GenuineIntel-6-DD,v1.00,clearwaterforest,core
- GenuineIntel-6-9[6C],v1.05,elkhartlake,core
--GenuineIntel-6-CF,v1.16,emeraldrapids,core
-+GenuineIntel-6-CF,v1.20,emeraldrapids,core
+@@ -12,7 +12,7 @@ GenuineIntel-6-9[6C],v1.05,elkhartlake,core
+ GenuineIntel-6-CF,v1.20,emeraldrapids,core
  GenuineIntel-6-5[CF],v13,goldmont,core
  GenuineIntel-6-7A,v1.01,goldmontplus,core
- GenuineIntel-6-B6,v1.09,grandridge,core
---=20
+-GenuineIntel-6-B6,v1.09,grandridge,core
++GenuineIntel-6-B6,v1.10,grandridge,core
+ GenuineIntel-6-A[DE],v1.12,graniterapids,core
+ GenuineIntel-6-(3C|45|46),v36,haswell,core
+ GenuineIntel-6-3F,v29,haswellx,core
+-- 
 2.51.0.534.gc79095c0ca-goog
 
 
