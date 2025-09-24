@@ -1,115 +1,194 @@
-Return-Path: <linux-kernel+bounces-830225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F296BB991CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:26:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E65B991D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 11:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0845E3A6F2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:26:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 040A57AD8C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 09:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6C42DCF45;
-	Wed, 24 Sep 2025 09:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDA12D5923;
+	Wed, 24 Sep 2025 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey0BczqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxM4ZsY0"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6FF2D8363;
-	Wed, 24 Sep 2025 09:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E882D73B3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 09:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758705848; cv=none; b=GPZ48GNHD9opPNteqH9vVKxbn49huLur9y2xUC5fwg+PxQc4OQCPfhzIp2iOe3rRSupT65/MC08s8m/ijYdSg9+ZHeudjzxPUvoeJTMHLbGI0ytqhQejSZcMqC1TFwbvKagn5a6Lc/7hlPEP2Gj8YjPYmvygcddTfO1uPnGXnpo=
+	t=1758705929; cv=none; b=D+exMnQOjH0ks6NPXxR/fZmgxKOh3dNiZh7vVdrriVFu12VCH/dG+QiHHGW7WdkCQqUM0+zZTFJhT/Aem2GNw82s98GLJizf8By1nPNXxCF9pXZsUljk1i6T31ikOzv73/b/TbB2ey2jQYTwWh+4yPbRoAaNGVD5DsgKqe2c+uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758705848; c=relaxed/simple;
-	bh=FbH2PxM9Sa714CpGO8aSH1L22ExqG/uqX8DLAEhiDTw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wu+nMLEIo8SX43dlwEXz6lwFxP+4lm+9yamHVMSSIJNcgG2KNx/PruyZYFN5RzGId9pU1pPBmNILsK+B1UyLpAihDn9x54f0lK+YryzXkREjsJ0xwREx0B6oUPEUl7YBzC7D65AzEu9bf4psIEHCnLJgMkBqh/zjqPgXm8cIcjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey0BczqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF0ACC2BCF5;
-	Wed, 24 Sep 2025 09:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758705847;
-	bh=FbH2PxM9Sa714CpGO8aSH1L22ExqG/uqX8DLAEhiDTw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ey0BczqL6dYH/unFgLtYuNlx8y2o+WJ3+f9Bl6p7cP/NiewiJxQFyhyFCWdP0IFix
-	 V3OZJttFhXnN1JxrbueUP0ra2QAstZ7Kb1G59RyJLtDFKyvYcfJLbUQXkQvBidFfIt
-	 JDhFdqKMKHwccninPz+v6JdvQxChTnIfUwSDzyKRkeFSZ5q2vtIWdmhA6B1+i1S1nC
-	 mY4TVTmY92n6vWTsTcYFY1n37ARN5iXLY2E4aIzcmt/LxIRhNINk7epTXSgJ5XrTGt
-	 CN5vmnAcgCdUs+T1/YXFfjiVPj1ERenyKobYEoc8kkSyew13jWz47Tb2IgL52ivEnp
-	 i1q1SGnltRhBA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6161CAC5B3;
-	Wed, 24 Sep 2025 09:24:07 +0000 (UTC)
-From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Date: Wed, 24 Sep 2025 09:24:02 +0000
-Subject: [PATCH v6 9/9] MAINTAINERS: add entry for inv_icm45600 6-axis imu
- sensor
+	s=arc-20240116; t=1758705929; c=relaxed/simple;
+	bh=pS+IlvLEaIJ4tBBXKqLLbtg8/zzsidU12L3xTeivLQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fuw2ZO2zZvjNIO4Z8YINqdKaPVO6UsG+XYOyC1lejZ8SGNwUE07NT7mFrr4qWIHEHsKgkjgCiRyDJWg5LczIwRYTsQ0iHleYCuEJJhgXntnhogKWq2zVD/uD1lETle6FbBNELvJqUMxr+20HSpjLdEy+yltmQ0qMKskBWRN8PFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxM4ZsY0; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e931c71a1baso7395237276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 02:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758705923; x=1759310723; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xXhsS4TYQDsQipG2bqEWA0Eq2yU/6y2r8vtgidiAyQw=;
+        b=hxM4ZsY0zUsVz4eGDPkHTpxow0CjiXfYlrmCkCHPxFSleH0VLs211s9q6TsLLmLUzc
+         x+fxDt79x7S2cYDS3k0y42xC9xf163D5UMoMnKr2KmtCd08OlMOc0hicJFYzVV73lb5H
+         PSBdKvw2xuKD9LLV8o5RlZVHkEUwnXQGWl5d1q6V1N7QXigknrQaR7RbU2O/BdFvdEvh
+         w2rkzgUAM5VdaR+QsRDDWXTqWTfZQnI2sSQrW6a7MxwNE+JkxE4geeJHP05fil1Ei8sr
+         7KlBGbFERMgBKumREjexFJR3FwRbUSwGWDnDsglk81H2e3nwi1j+QPFdF4QW+sOpx62H
+         xkEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758705923; x=1759310723;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xXhsS4TYQDsQipG2bqEWA0Eq2yU/6y2r8vtgidiAyQw=;
+        b=u3FlETfVhqutYNoyOAwJEzk7ieJEu5xKNs5Vsr+nXVuP4h8oEqPevheBYTWUH8wYi3
+         eEXXXS0yA6Q0HvxXecG75YO+ciuCQL0luRR06e6ktGVSszWxC0fZKut0t2Gar3FKJpIo
+         GmuzU+LxyUQd4Lc6QTFpkrePUChLQ0J3JaBBbQtZTY+nVu8sf1Frs2ZiX3lxwLvxEOse
+         Ld93mNYt68hPES8A3765KpS6gANLmpPDUO1fzqyXiA9D8F16HBW4sE3bG5I28IguHl+k
+         HRLikUtbayQb2rlZbMuZYXDFOv/ylCk0uL1/RUrlxlFs+tx0lNS/DFaHjYF7t/rePKJ2
+         cdbQ==
+X-Gm-Message-State: AOJu0Yw1DwzFnwRJXKqpu1Q+TV048gPNXe4FrqJs+yqoP7eMAk8gj9Pn
+	kmugmNBkstpoo6kJpQedActKemJ3yAVfb0KPi3jWHBU8NG3ZJ7gx2N8WFwLG9OqrHXErKmrjOsh
+	VMAFN4ZQDWH7y1tCeADxBZCSl1/Km9/4=
+X-Gm-Gg: ASbGnctWU3MmhQb8ddK+Al6aJMZsjJKfN57Cy1Zu1DiwiS28z0wNbnFIbI/HCEas8xq
+	7vNylieOAMSLE59yT7xfhGSYDdIETpkNIWaMosVtrWrXIESQZESptM4gDTicEJhRykY/J6uIICU
+	z8fqdNz3kD48dIDiwX1NrLZRWhQVolG4/ophAhmQcC27CwWDo+OY07diZ38dM4H0ezjtRQjCyF4
+	yN6Rw==
+X-Google-Smtp-Source: AGHT+IG5RI+CkthhygK6O+jFB5eU/qgMHmvyydgjwwNBaUBcmyupjXedBsilOUmrjVzf6mx+TypvmUbYWwiicAaFSeU=
+X-Received: by 2002:a05:6902:120b:b0:eb3:782c:66b1 with SMTP id
+ 3f1490d57ef6-eb3782c691emr761557276.21.1758705922959; Wed, 24 Sep 2025
+ 02:25:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250924-add_newport_driver-v6-9-76687b9d8a6e@tdk.com>
-References: <20250924-add_newport_driver-v6-0-76687b9d8a6e@tdk.com>
-In-Reply-To: <20250924-add_newport_driver-v6-0-76687b9d8a6e@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Remi Buisson <remi.buisson@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758705845; l=945;
- i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
- bh=d1EOGq7hV4R8ODh9Pkno9yFBZYn1snN6feaEcuqfxYw=;
- b=jO9aEgfgV1aFZf5kL7w+Zecte86+IBTqd9F1PyaQRwrg4psXoUeaUonoxzdArkC74MOryQilu
- brdWSBp/WhEAS0rMaT+Z5YXomtBwSGsr/tkWjOEVxBvVxHw8olnrJzT
-X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
- pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
-X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
- auth_id=372
-X-Original-From: Remi Buisson <remi.buisson@tdk.com>
-Reply-To: remi.buisson@tdk.com
+References: <CAFRLqsUm4M2HTQuO7ORXVE4tScuSTjhjeAVek-7JTBgb9i3wrQ@mail.gmail.com>
+In-Reply-To: <CAFRLqsUm4M2HTQuO7ORXVE4tScuSTjhjeAVek-7JTBgb9i3wrQ@mail.gmail.com>
+From: Cen Zhang <zzzccc427@gmail.com>
+Date: Wed, 24 Sep 2025 17:25:11 +0800
+X-Gm-Features: AS18NWCBKCgMedF-9O18pbVUzamgu5CuffRutkm7TCJjhDTyaUIOmSLWoJWAw5w
+Message-ID: <CAFRLqsVNSj=MCNWVsoXA335LAhvz=oELZi8kg+yFnwWW9A3jrg@mail.gmail.com>
+Subject: Re: [BUG] Bluetooth: hci_sync: Fix race in hci_cmd_sync_dequeue_once
+ causing list corruption GPF
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
+Cc: linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 
+	zhenghaoran154@gmail.com, r33s3n6@gmail.com, linux-bluetooth@vger.kernel.org, 
+	"gality369@gmail.com" <gality369@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Remi Buisson <remi.buisson@tdk.com>
+Hi all,
 
-Add MAINTAINERS entry for InvenSense ICM-45600 IMU device.
+Apologies for the previous mail =E2=80=94 the bug report formatting was not=
+ correct.
 
-Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Sorry for the noise and thank you for your understanding.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f090c2f6e63a0d255a025885cc4573f5802ef159..02d8787ab768a2d0b8b72a2c909e56a0f2010c04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12815,6 +12815,14 @@ F:	Documentation/ABI/testing/sysfs-bus-iio-inv_icm42600
- F:	Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
- F:	drivers/iio/imu/inv_icm42600/
- 
-+INVENSENSE ICM-456xx IMU DRIVER
-+M:	Remi Buisson <remi.buisson@tdk.com>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+W:	https://invensense.tdk.com/
-+F:	Documentation/devicetree/bindings/iio/imu/invensense,icm45600.yaml
-+F:	drivers/iio/imu/inv_icm45600/
-+
- INVENSENSE MPU-3050 GYROSCOPE DRIVER
- M:	Linus Walleij <linus.walleij@linaro.org>
- L:	linux-iio@vger.kernel.org
+Best regards,
+Cen Zhang
 
--- 
-2.34.1
-
-
+Cen Zhang <zzzccc427@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=8824=E6=97=A5=
+=E5=91=A8=E4=B8=89 17:22=E5=86=99=E9=81=93=EF=BC=9A
+>
+> hci_cmd_sync_dequeue_once() used to: (1) call
+> hci_cmd_sync_lookup_entry() which takes and releases
+> cmd_sync_work_lock, returning a raw pointer to the entry (2) later
+> call hci_cmd_sync_cancel_entry() (re=E2=80=91taking the lock) and
+> list_del()/kfree() the same entry
+>
+> Between (1) and (2) the cmd_sync worker thread (hci_cmd_sync_work())
+> can concurrently:
+>
+> lock cmd_sync_work_lock
+> list_del() and remove the same entry
+> unlocked
+>
+> So the list entry was accessed after it had already been deleted,
+> leading to a wild memory access.
+> The detailed stack trace is shown below.
+>
+> Oops: general protection fault, probably for non-canonical address
+> 0xff7aaf8000000004: 0000 [#1] SMP KASAN PTI
+> KASAN: maybe wild-memory-access in range [0xfbd59c0000000020-0xfbd59c0000=
+000027]
+> CPU: 0 UID: 0 PID: 323 Comm: kworker/u17:6 Not tainted
+> 6.17.0-rc5-ge5bbb70171d1-dirty #21 PREEMPT(voluntary)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> Workqueue: hci11 hci_conn_timeout
+> RIP: 0010:__list_del include/linux/list.h:195 [inline]
+> RIP: 0010:__list_del_entry include/linux/list.h:218 [inline]
+> RIP: 0010:list_del include/linux/list.h:229 [inline]
+> RIP: 0010:_hci_cmd_sync_cancel_entry net/bluetooth/hci_sync.c:647 [inline=
+]
+> RIP: 0010:hci_cmd_sync_cancel_entry net/bluetooth/hci_sync.c:851 [inline]
+> RIP: 0010:hci_cmd_sync_dequeue_once+0x660/0x950 net/bluetooth/hci_sync.c:=
+870
+> Code: c6 fc 48 8b 03 48 89 44 24 28 4c 8d 78 08 4d 89 fe 49 c1 ee 03
+> 48 b9 00 00 00 00 00 fc ff df 4d 8d 24 0e 4c 89 e0 48 c1 e8 03 <0f> b6
+> 04 08 84 c0 0f 85 4d 02 00 00 45 0f b6 24 24 31 ff 44 89 e6
+> RSP: 0018:ffff88811a597b10 EFLAGS: 00010a02
+> RAX: 1f7ab38000000004 RBX: ffff88810d76df80 RCX: dffffc0000000000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: dead000000000122 R08: ffff88811a597aef R09: 1ffff110234b2f5d
+> R10: dffffc0000000000 R11: ffffed10234b2f5e R12: fbd59c0000000021
+> R13: 1ffffda20435db7e R14: 1bd5a00000000021 R15: dead000000000108
+> FS:  0000000000000000(0000) GS:ffff88826d216000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fb9aea860b8 CR3: 0000000102d50000 CR4: 00000000000006f0
+> Call Trace:
+>  <TASK>
+>  hci_cancel_connect_sync+0x1bb/0x2e0
+>  hci_abort_conn+0x4b5/0x9a0 net/bluetooth/hci_conn.c:2958
+>  hci_conn_timeout+0x3a8/0x540 net/bluetooth/hci_conn.c:579
+>  process_one_work kernel/workqueue.c:3236 [inline]
+>  process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
+>  worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
+>  kthread+0x3d4/0x800 kernel/kthread.c:463
+>  ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+>
+> After our analysis,may be we can fix this by making these two
+> operations in hci_cmd_sync_dequeue_once() atomic =E2=80=94 i.e. protectin=
+g
+> both under the same lock as below:
+>
+>  bool hci_cmd_sync_dequeue_once(struct hci_dev *hdev,
+>                                hci_cmd_sync_work_func_t func,
+>                                void *data, hci_cmd_sync_work_destroy_t de=
+stroy)
+>  {
+> -       struct hci_cmd_sync_work_entry *entry;
+> -
+> -       entry =3D hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
+> -       if (!entry)
+> -               return false;
+> -
+> -       hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
+> -       return true;
+> +       struct hci_cmd_sync_work_entry *entry;
+> +
+> +       mutex_lock(&hdev->cmd_sync_work_lock);
+> +       entry =3D _hci_cmd_sync_lookup_entry(hdev, func, data, destroy);
+> +       if (!entry) {
+> +               mutex_unlock(&hdev->cmd_sync_work_lock);
+> +               return false;
+> +       }
+> +       _hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
+> +       mutex_unlock(&hdev->cmd_sync_work_lock);
+> +       return true;
+>  }
 
