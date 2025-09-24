@@ -1,131 +1,240 @@
-Return-Path: <linux-kernel+bounces-830560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-830561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A657AB99FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CCCB99FAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 15:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631F7172A75
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E919C61B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Sep 2025 13:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39B302162;
-	Wed, 24 Sep 2025 13:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEED26C38D;
+	Wed, 24 Sep 2025 13:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ri6jia+k"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="CnXnrd2J"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8758F302CB2
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF7D11713
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 13:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758719279; cv=none; b=No5TlBKxQ234Gpr8yQrVTYb2eXveZHsHAmlMLyVMC0K8RpQtW5PnNlF3n158LvD3aAY3Cin+g1ztt3fK9pgu9jloxXqFwgSIz4U5T2c/uyZ+ZmMNufHLoLH1HJy5q9JcgR0QYvFNIRwNKhMymVnVcss8yK1/cbq3YLB1jhU6AuQ=
+	t=1758719443; cv=none; b=NruBvPvfwqeMDnhyeYmaMf4pKRYyAcEOL1gDi3omUz7TbBwKfBwEyzO3Yh1pHoJq8eFLaAG++ZvDcUB4P/40o3YYSTIkbEGXV5PXpwb2Fql7VgdI77cru8Ddrwpyyx+Jr54vHaIwRIztK5K6409FjMDZipoguH/jWfxGAwC+V2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758719279; c=relaxed/simple;
-	bh=S9krJNAXbYfiBjHOowFzU/MHlCd/viA3rjI5GntmR2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GE8tTJZNC7DgORhpUIoMknn/Cj1cySzU0PdYVC1bEGxGzbBir6re09cC+Ny83ZLknuzjhv8j9g9YMQaRqQS4szqg2toMpckvKXbYO6O3P3uma9Cr36zu/y7ErI4xTjMLz2gWll4Gypfj6A9mLwVjQFd+9kGs/3uBYaT7h+o544k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=ri6jia+k; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b29ebf9478bso524422066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 06:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1758719275; x=1759324075; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rr4AHNLZpak0/qwDXluW3tBh9480ZbWvsfmpnJ8cepg=;
-        b=ri6jia+kH8MzxsCjDOfjBG5/rql5gUUYEJor0TBAwkcYjQdyoCALbQnxfxBYIq2Nae
-         uIfWi1tXgg1EOC2hLTzDBLJrQz4buKIgM6gtE7mSQf1TlayQbPS5P/D+r+rkfxPnI2hl
-         kXiwCDLovVxqPsi7dBvbbwYhfrzE1fpkhOJCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758719275; x=1759324075;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rr4AHNLZpak0/qwDXluW3tBh9480ZbWvsfmpnJ8cepg=;
-        b=HKSebEZ3MBI02TepnUHo7GbYtlS+pEC50xwq6T4y94H328ecYThxXIWuq8Tywbq+Fj
-         GLFyBTKFrvdzQ1Gli0nR8XGwyhhKjUfSFPJvM7mD3tbVb+idFa1gVcNRtPBQQaEgjxBT
-         gnGZeDPO7J2DoZvwKGsCMuvsr8VB3ZrpGvw6srSw0Xku7QYssttWlK/qWG8izA3uTuBx
-         KG4hO6PoLHm3FOcdQvSr3tpg0u0I9bD2nC+raqB1+3t5A3e0+ZURAKysAr4brvB6MGwR
-         4Tpdlz8voWtyyVKgm40Z+ONfFipdi0pCSUyDM+5FCWMxVXPL3fQLuHbop8KyaERH5XVn
-         qbDw==
-X-Gm-Message-State: AOJu0Yzons6iQxf9Q1VZ6Fc/Eii8uPPJU5lIVU+kBG36Y8wRkEKjBGZs
-	X6yKLc3JfJ3TXOMpQo31axBHbvP/y7XhY8I26ldHZSuNgBa1WWWw+Bl0b8Sv5AGSkX8gHjWEnqt
-	Iv3tsTEE=
-X-Gm-Gg: ASbGncuWzqbsq0TbCIaUCws+K+lDCrE6APSisojo5Z9VsNyLO7tve8A6lfrc9JunQmO
-	w2TbkRFH3Z2+JLokvi+1LIkvEGnXpV+BQGo9++9W40tuMu/ELA7IzNiPuW0Y8jS7QLc+SmJNf9Z
-	YbaJO4rZi42dLIhDqYOw7L5zIH8qB3bHoJPyAaEz6FvuIcXAsJQsw+T3Y9rUNfdK6h5R9LjgsOa
-	K2BsXKHh2S8rIc2A2bs6eYmpz/SU3iaH7VyMs45kCgDMG4C2eudTlt6CSEVFEmmpM9FS0pHH7O5
-	iYm7g9SUn5x7nOWCJNRJ3V5Ft95JCTQ1QIpPxAYtOI0q34CZkwwc3+IIgxXIcgAQ6vY92NJWZea
-	KoPAhA502OEi2LQn2Tfy8ZjmnTNCMNUG6XZhHksIqaqby0e816umRzX1yB3u/ZXXpw3xw0MLmxm
-	w3aTk/gctpf1T7p5k/wbutH0D0ClGGuvLkypeGJ8EeKAirjhAGVKLSSaoTowU=
-X-Google-Smtp-Source: AGHT+IFx9RJ+/2IFWtcGeD4AIDWcZcKVdKo7r0/4aN/+yno0pYXxsSMoGTi5NzRLLyVL5lFzEdLoFQ==
-X-Received: by 2002:a17:906:6a03:b0:afe:dd76:7cd4 with SMTP id a640c23a62f3a-b302b21c432mr677014766b.57.1758719275523;
-        Wed, 24 Sep 2025 06:07:55 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com (host-82-56-38-125.retail.telecomitalia.it. [82.56.38.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f382b0sm1574379866b.2.2025.09.24.06.07.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 06:07:55 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH 3/3] ARM: mxs_defconfig: enable sound drivers for imx28-amarula-rmm
-Date: Wed, 24 Sep 2025 15:07:46 +0200
-Message-ID: <20250924130749.3012071-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250924130749.3012071-1-dario.binacchi@amarulasolutions.com>
-References: <20250924130749.3012071-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758719443; c=relaxed/simple;
+	bh=Vm+enzay0EtJU3tmUcJTW9sdXcV1GXPE3QWm2ac4Uk0=;
+	h=Date:Message-ID:From:Subject:To:In-Reply-To:References; b=G7PH6Oc8CDybOA0NemF+WLFFcIvrR0vfPPFcZJ5KGshdl2Uht4w2IdG2NHTTXjLGmOz4q76p3VkfHa4Zf8z+P0kz+E9MXhdqqlbz/sXpI9kqCilyisc9dV9paiKc23ZC6U37PmpR1A1xsp+O+4NWQPxg+s4wFeXkdERWVmEd8X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=CnXnrd2J; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:References:In-Reply-To:To:
+	Subject:From:Message-ID:Date:Reply-To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nk1HfuVFuLnLujBiaC6+cv0KJ5hj9Q7odgwOaGzF5wA=; b=CnXnrd2JN7NM5M9p6AGRSoEJJw
+	oWEnVNIYVNnQrx2Pqq3rFvC6wsAIpo4knJPX2zYq66v/fLVWQ7xoxgdXK7PoutJD2+g8zkZZsnLAi
+	hp0eDUHbmi09kE9BMc7acDhRyWK3dnYJUixgvP++c3l+zrEuMFh4cxAvWqDuDMr1/fSeiANetgiDg
+	R2rgonI8aPv37Vk6reGTJqHgQMZLQghT8YJFf16B5tsJjIWqzuN7aLf9z7qEt0VRwpDXKA955P7+l
+	Q98mtM2gkmQ+Hycsauz8Ecb7SHAYLrsHMJcwt4vFQvJHmp6CnmEsXJCbkhbZlGTmaqQ3PiFFXLnpx
+	K7Fxv/mw==;
+Received: from host-79-47-48-17.retail.telecomitalia.it ([79.47.48.17] helo=localhost)
+	by imap4.hz.codethink.co.uk with utf8esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1v1PGF-001Qne-5P; Wed, 24 Sep 2025 14:10:20 +0100
+Date: Wed, 24 Sep 2025 15:10:19 +0200
+Message-ID: <d6fcbedf0daf259e2f96a1e0cc666cff@codethink.co.uk>
+From: Matteo Martelli <matteo.martelli@codethink.co.uk>
+Subject: Re: BUG/WARN issues in kernel/sched/rt.c under stress-ng with
+ crgoup-v2
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Dooks
+	<ben.dooks@codethink.co.uk>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Marcel Ziswiler
+	<marcel.ziswiler@codethink.co.uk>, Matteo Martelli
+        <matteo.martelli@codethink.co.uk>
+In-Reply-To: <9edb5b8d-8660-4699-b041-bd74329a14e9@arm.com>
+References: <3308bca2-624e-42a3-8d98-48751acaa3b3@codethink.co.uk>
+	<d6abff7f5f9ee5e41f19cb1f9d02de29@codethink.co.uk>
+	<9edb5b8d-8660-4699-b041-bd74329a14e9@arm.com>
+Sender: matteo.martelli@codethink.co.uk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Enable TLV320AIC3X I2C codec and simple-card support used on Amarula
-rmm board.
+Hi Dietmar,
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+On Tue, 23 Sep 2025 20:14:18 +0200, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> On 19.09.25 18:37, Matteo Martelli wrote:
+> > Hi all,
+> > 
+> > On Fri, 19 Sep 2025 12:10:34 +0100, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
+> >> We are doing some testing with stress-ng and the cgroup-v2 enabled
+> >> (CONFIG_RT_GROUP_SCHED) and are running into WARN/BUG within a minute
+> >> related to user-space calling sched_setattr() and possibly other calls.
+> >>
+> >> At the moment we're not sure if the WARN and BUG calls are entirely
+> >> correct, we are considering there may be some sort of race condition
+> >> which is causing incorrect assumptions in the code.
+> >>
+> >> We are seeing this kernel bug in pick_next_rt_entity being triggered
+> >>
+> >> 	idx = sched_find_first_bit(array->bitmap);
+> >> 	BUG_ON(idx >= MAX_RT_PRIO);
+> >>
+> >> Which suggests that the pick_task_rt() ran, thought there was something
+> >> there to schedule and got into pick_next_rt_entity() which then found
+> >> there was nothing. It does this by checking rq->rt.rt_queued before it
+> >> bothers to try picking something to run.
+> >>
+> >> (this BUG_ON() is triggered if there is no index in the array indicating
+> >>   something there to run)
+> >>
+> >> We added some debug to find out what the values in pick_next_rt_entity()
+> >> with the current rt_queued and the value it was when pick_task_rt()
+> >> looked, and we got:
+> >>
+> >>     idx 100 bigger than MAX_RT_PRIO 100, queued = 0 (queued was 1)
+> >>
+> >> This shows the code was entered with the rt_q showing something
+> >> should have been queued and by the time the pick_next_rt_entity()
+> >> was entered there seems to be nothing (assuming the array is in
+> >> sync with the lists...)
+> >>
+> >> I think the two questions we have are:
+> >>
+> >> - Is the BUG_ON() here appropriate, should a WARN_ON_ONCE() and
+> >>    return NULL be the best way of handling this? I am going to try
+> >>    this and see if the system is still runnable with this.
+> >>
+> >> - Are we seeing a race here, and if so where is the best place to
+> >>    prevent it?
+> >>
+> >> Note, we do have a few local backported cgroup-v2 patches.
+> >>
+> >> Our systemd unit file to launch the test is here:
+> >>
+> >> [Service]
+> >> Type=simple
+> >> Restart=always
+> >> ExecStartPre=/bin/sh -c 'echo 500000 > 
+> >> /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
+> >> ExecStartPre=/bin/sh -c 'echo 500000 > 
+> >> /sys/fs/cgroup/system.slice/stress-sched-long-system.service/cpu.rt_runtime_us'
+> >> ExecStart=sandbox-run /usr/bin/stress-ng --temp-path /tmp/stress-ng 
+> >> --timeout=0 --verify --oom-avoid --metrics --timestamp 
+> >> --exclude=enosys,usersyscall --cpu-sched 0 --timeout 60 --verbose 
+> >> --stressor-time
+> >> Environment=SANDBOX_RO_BINDMOUNTS="/usr/share/stress-ng"
+> >> Environment=SANDBOX_RW_BINDMOUNTS="/var/log /sys /proc /dev /tmp/stress-ng"
+> >> Environment=SANDBOX_EXTRA_ARGS="--cwd /tmp/stress-ng --keep_caps 
+> >> --disable_rlimits --disable_clone_newuser"
+> >> Slice=system.slice
+> >> OOMPolicy=continue
+> 
+> [...]
+> 
+> > Hi all,
+> > 
+> > To provide some more context, we have found out this issue while running
+> > some tests with stress-ng scheduler stressor[1] and the RT throttling
+> > feature after enabling the RT_GROUP_SCHED kernel option. Note that we
+> > also have PREEMPT_RT enabled in our config.
+> > 
+> > I've just reproduced the issue on qemu-x86_64 with a debian image and kernel
+> > v6.17-rc6. See below the steps to reproduce it.
+> > 
+> > cd linux
+> > git reset --hard v6.17-rc6 && git clean -f -d
+> > 
+> > # Apply patch to expose RT_GROUP_SCHED interface to userspace with cgroupv2
+> > b4 shazam --single-message https://lore.kernel.org/all/20250731105543.40832-17-yurand2000@gmail.com/
+> 
+> Don't get this one ... you just pick a single patch from the RFC
+> patch-set '[RFC PATCH v2 00/25]  Hierarchical Constant Bandwidth Server' ?
+> 
+> https://lore.kernel.org/r/20250731105543.40832-1-yurand2000@gmail.com
+> 
 
----
+Yes, I was looking for a way to set the cpu.rt_runtime_us param for a
+specific cgroup from a systemd unit, in order to control the max CPU
+bandwidth allowed for a systemd slice. Since systemd depracated support
+for cgroupv1 I picked that patch to export them via cgroupv2. To my
+understanding, with that patch, setting the rt_runtime_us and
+rt_period_us parameters via cgroupv2 should have the same effect as
+setting them via cgroupv1. Of course I could have missed something and
+that could be one reason for the issue. I will better look into it and
+try to see if the issue is still reproducible with cgroupv1.
 
- arch/arm/configs/mxs_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> > # Build kernel with defconfig + PREEMPT_RT=y and RT_GROUP_SCHED=y
+> > make mrproper
+> > make defconfig
+> > scripts/config -k -e EXPERT
+> > scripts/config -k -e PREEMPT_RT
+> > scripts/config -k -e RT_GROUP_SCHED
+> > make olddefconfig
+> > make -j12
+> > 
+> > # Download a debian image and run qemu
+> > wget https://cdimage.debian.org/images/cloud/sid/daily/20250919-2240/debian-sid-nocloud-amd64-daily-20250919-2240.qcow2
+> > qemu-system-x86_64 \
+> >     -m 2G -smp 4 \
+> >     -nographic \
+> >     -nic user,hostfwd=tcp::2222-:22 \
+> >     -M q35,accel=kvm \
+> >     -drive format=qcow2,file=debian-sid-nocloud-amd64-daily-20250919-2240.qcow2 \
+> >     -virtfs local,path=.,mount_tag=shared,security_model=mapped-xattr \
+> >     -monitor none \
+> >     -append "root=/dev/sda1 console=ttyS0,115200 sysctl.kernel.panic_on_oops=1" \
+> >     -kernel arch/x86/boot/bzImage
+> > 
+> > # Then inside guest machine
+> > # Install stress-ng
+> > apt-get update && apt-get install stress-ng
+> > 
+> > # Create the stress-ng service. It sets the group RT runtime to 500ms
+> > # (50% BW) via the cgroupv2 interface then it starts the stress-ng
+> > # scheduler stressor. Also note the cpu affinity set to a single CPU
+> > # which seems to help the issue to be more reproducible.
+> 
+> I assume this is the 'AllowedCPUs=0' line in the systemd service file.
 
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index 3b08c63b6de4..603fb003b223 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -100,6 +100,8 @@ CONFIG_SND=y
- CONFIG_SND_SOC=y
- CONFIG_SND_MXS_SOC=y
- CONFIG_SND_SOC_MXS_SGTL5000=y
-+CONFIG_SND_SOC_TLV320AIC3X_I2C=y
-+CONFIG_SND_SIMPLE_CARD=y
- CONFIG_USB=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_STORAGE=y
--- 
-2.43.0
+Yes, correct.
 
-base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
-branch: microgea-rmm-audio
+> 
+> > echo "[Unit]
+> > Description=Mixed stress with long in the system slice
+> > After=basic.target
+> > 
+> > [Service]
+> > AllowedCPUs=0
+> > Type=simple
+> > Restart=always
+> > ExecStartPre=/bin/sh -c 'echo 500000 > /sys/fs/cgroup/system.slice/cpu.rt_runtime_us'
+> > ExecStart=/usr/bin/stress-ng --timeout=0 --verify --oom-avoid --metrics --timestamp --exclude=enosys,usersyscall --cpu-sched 0 --
+> 
+> 
+> I assume you get 4 stressors since you run 'qemu -smp 4'? How many
+> stress-ng related tasks have you running in
+> 'system.slice/stress-sched-long-system.service'? And all of them on CPU0?
+
+Yes, with --cpu-sched 0, stress-ng is using 4 scheduler stressors all
+running on CPU 0. To my understanding each scheduler stressor forks 16
+stress-ng child tasks [1], this is confirmed by the number of stress-ng
+tasks running on the system. The test itself is not particularly
+meaningful, it just reflects the setup I had when I found the BUG_ON.
+
+> [...]
+> 
+
+[1]: https://github.com/ColinIanKing/stress-ng/blob/V0.19.04/stress-cpu-sched.c#L66
+
+Best regards,
+Matteo Martelli
 
