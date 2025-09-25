@@ -1,237 +1,110 @@
-Return-Path: <linux-kernel+bounces-833386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156E2BA1D42
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:38:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA18BA1DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD604741548
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C091163E5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9EE323F4D;
-	Thu, 25 Sep 2025 22:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ooibd3jB"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87057323416
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D19B321F32;
+	Thu, 25 Sep 2025 22:40:58 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92502882C9;
+	Thu, 25 Sep 2025 22:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758839822; cv=none; b=VvtqGwwCLLL9dzJWS4/kOHvKiiTOylMbJyXi1hfI4AeQeZePyUIMRy+WYhYbNSdbaKblye7zd/FIVPkxxIQYrkQ1VlnfXlAIjbzJPR/H4tpxPszrWzALExHuEHOz7BnJMF7u0MYUfeBcvm4Ig98ZCep8WUyMB9wjkWaIf+YL9tQ=
+	t=1758840058; cv=none; b=JzzmVGLNnRUhhkePVz5uO5xRA0HzyhrEL9rhzUmUdnC2yj6zaX1CRXTRnCvjjQvhRv6gFR7X4Wl3e2rREgvK1dWlOJv1vHa1R4N4JXf3mY3TlJ4Iz4UKtUlfiDoVW/M+8uW4LJ04GqMmHFjjdhn1YKjjjRznzfSbT0qddG+23Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758839822; c=relaxed/simple;
-	bh=IdiL0QVw/tqt1r4LN5If+UZvZcbzadyuABdWrHXda08=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XISoa3+AihRZ5HrcoxnsO9vo14rizfI7+lnwucjyQScPqMaXNGbxPL3Pl1f0ucSm9aXE1rY5ikAbM6SMiYy4gfibAtwjappyvch9gKRnXntN7omqKHGDNCF+1T9d0NwcJCRbvOvO/BdQSiR+gz6YCnBWk0mBmSX3wYe9qwL6mvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ooibd3jB; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nogikh.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e36f2c502so5177015e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758839819; x=1759444619; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fnlnPp5SVgoywMm6mKsvRxqefojZasCSZLs06Rb69PE=;
-        b=Ooibd3jBpUStt89k73zNtTy6ck9CFYsXDrUTO9Kz3WTDwlASijOlvLJXHn7BlKiXhP
-         aAHlISdxpzHp7qqly2QdeI6eDmhknftN3lIa+IP8Y0bIdl8HiMOFZHTl9hQTONBG5AzI
-         PZKgaKsUw99sqw0fmtF1QBs4YBiJoEE5+ZhUQdowFa3ZhZ4UfLMdLzI/rdsY6v+AWFlv
-         3M4WjqP3fPYeKY4EqH90sB/VMfNAz5im4/WKIrKf6isuHoU8tM4MMFfzprQDKKpYy0eD
-         dvD7/anOTjaOvnGl3UYglGKuReEfe19Wco98TgBHWho0V5/ACOE2MxGnhPCkIfMb9KML
-         gZoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758839819; x=1759444619;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fnlnPp5SVgoywMm6mKsvRxqefojZasCSZLs06Rb69PE=;
-        b=Q9shVNJ9DkNptX2sqIgpoQ/ABGRJ8JE5HqQQSRccf6fKHSZPFEKR0cViePbt2fl0gr
-         bc9/ow5s8O9m+XmDVkK+5fLVLZMcF4P99B3l6mD0P6j11rE7WlzWFyFIqRoSFAUxMXzU
-         ZxVFgdO2dz9hNTzYTAOyjiAev0njv7YsRnbG0fT+y2Iy2C9yesaiq1JeC58iDCQg+nW9
-         X3JXxsZUK6dFbLQqEErTYNYIUlGFFGs78r8ZhjseHVpoUPWW8ps0WAIsjRjZO5GMvhY1
-         g3LIZT3G4semaPEsNnIwVFncaF1UQUrzMkuVRBk3/XtPyPkvVKG8X5fLfqtbhY+j+kYl
-         dUmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHPk7BAEsAxtkRbutrSHMOSJbHiINOzDFEkU/pZbiamwGkYAgGunnOouk22tC0wXAnN5DXvHHE2ZFoymA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6IfTZQTIfQ9dHO07/Vs0TM/Jm2hG5zMYfWamuxyklsXPTu5/R
-	PK56uzpiFkuqkKYY8xs7TVtxKR45pSh6hFCE6LJsApRzSC3IgPFepeeyizKrkhtcgOQ6ViMVxRS
-	rF+EKAw==
-X-Google-Smtp-Source: AGHT+IE6eE03ybhO5FKaeiSe9kjaKIGFUexUZXA9SWxY2NL2z9iESUSTgz3k5f0JjWDQY3KSV1+PeCQBo+I=
-X-Received: from wmbgx15.prod.google.com ([2002:a05:600c:858f:b0:46e:2121:d406])
- (user=nogikh job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:a43:b0:46d:d949:daba
- with SMTP id 5b1f17b1804b1-46e329a7fe3mr53069425e9.4.1758839818992; Thu, 25
- Sep 2025 15:36:58 -0700 (PDT)
-Date: Fri, 26 Sep 2025 00:36:56 +0200
+	s=arc-20240116; t=1758840058; c=relaxed/simple;
+	bh=R0ZC9HDSPtzDblgCKz4awGmG6PvRPYu/gPFIahGawM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IJGFIr+OWlFvAt12diw54JC8AvpkEj654ANks7TggkGzTT4UA9N39tdXcm8Du2MN+qbimtEpTQztAyJ2xiSSGSonAAvSliT3PnE3LAZCLuASQ30O6ADrIvqrSPEywkDw8LMRUBijc4eVOVJZIBgaz51vBkMa1wHtR+mqhtZZFZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: eUfWO2cDTZKZgWZwCslw0g==
+X-CSE-MsgGUID: AmBBRPKRSDCldcM8ZJsiwQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Sep 2025 07:40:49 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.2])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 991F0400CF0A;
+	Fri, 26 Sep 2025 07:40:44 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] Add ADCs support for RZ/T2H and RZ/N2H
+Date: Fri, 26 Sep 2025 01:40:02 +0300
+Message-ID: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20250925223656.1894710-1-nogikh@google.com>
-Subject: KMSAN: uninit-value in eth_type_trans
-From: Aleksandr Nogikh <nogikh@google.com>
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, glider@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hello net developers,
+Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs include three
+12-Bit successive approximation A/D converters.
 
-I hit the following kernel crash when I try to boot a CONFIG_KMSAN=y kernel on qemu:
+RZ/T2H has two ADCs with 4 channels and one with 6.
+RZ/N2H has two ADCs with 4 channels and one with 15.
 
-KMSAN: uninit-value in eth_type_trans
+Add support for them.
 
-Could you please have a look?
+V2:
+ * pick up Reviewed-by from Geert
+ * dt-bindings: move required after patternProperties
+ * dt-bindings: describe 16 channels, but limit per-SoC to 6 / 15
+ * dt-bindings: use uppercase for clock descriptions
+ * remove max-channels property and find it from parsed channel subnodes
+ * remove start/stop wrappers
+ * stop calibration even on failure
+ * move data reading to rzt2h_adc_read_single() instead of interrupt
+ * handler
 
-Kernel: torvalds
-Commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
-Config: https://raw.githubusercontent.com/google/syzkaller/refs/heads/master/dashboard/config/linux/upstream-kmsan.config
+Cosmin Tanislav (7):
+  clk: renesas: r9a09g077: Add ADC modules clock
+  dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
+  iio: adc: add RZ/T2H / RZ/N2H ADC driver
+  arm64: dts: renesas: r9a09g077: Add ADCs support
+  arm64: dts: renesas: r9a09g087: Add ADCs support
+  arm64: dts: renesas: rzt2h/rzn2h-evk: enable ADCs
+  arm64: defconfig: enable RZ/T2H / RZ/N2H ADC driver
 
-Qemu command to reproduce:
+ .../iio/adc/renesas,r9a09g077-adc.yaml        | 160 +++++++++
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  69 ++++
+ .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  28 ++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  69 ++++
+ .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  64 ++++
+ .../dts/renesas/rzt2h-n2h-evk-common.dtsi     |  79 +++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a09g077-cpg.c           |   3 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rzt2h_adc.c                   | 306 ++++++++++++++++++
+ 12 files changed, 798 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
+ create mode 100644 drivers/iio/adc/rzt2h_adc.c
 
-qemu-system-x86_64 -m 8G -smp 2,sockets=2,cores=1 -machine pc-q35-10.0 \
--enable-kvm -display none -serial stdio -snapshot \
--device virtio-blk-pci,drive=myhd -drive file=~/buildroot_amd64_2024.09,format=raw,if=none,id=myhd \
--kernel ~/linux/arch/x86/boot/bzImage -append "root=/dev/vda1" -cpu max \
--net nic,model=e1000 -net user,host=10.0.2.10,hostfwd=tcp:127.0.0.1:10021-:22
+-- 
+2.51.0
 
-The command used the buildroot image below: 
-$ wget 'https://storage.googleapis.com/syzkaller/images/buildroot_amd64_2024.09.gz'
-$ gunzip buildroot_amd64_2024.09.gz
-
-Full symbolized report:
-
-BUG: KMSAN: uninit-value in eth_skb_pkt_type include/linux/etherdevice.h:627 [inline]
-BUG: KMSAN: uninit-value in eth_type_trans+0x4ee/0x980 net/ethernet/eth.c:165
- eth_skb_pkt_type include/linux/etherdevice.h:627 [inline]
- eth_type_trans+0x4ee/0x980 net/ethernet/eth.c:165
- e1000_receive_skb drivers/net/ethernet/intel/e1000/e1000_main.c:4005 [inline]
- e1000_clean_rx_irq+0x1256/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4465
- e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
- __napi_poll+0xda/0x850 net/core/dev.c:7506
- napi_poll net/core/dev.c:7569 [inline]
- net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
- handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
- common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
- asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
- native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
- pv_native_safe_halt+0x17/0x20 arch/x86/kernel/paravirt.c:81
- arch_safe_halt arch/x86/kernel/process.c:756 [inline]
- default_idle+0xd/0x20 arch/x86/kernel/process.c:757
- arch_cpu_idle+0xd/0x20 arch/x86/kernel/process.c:794
- default_idle_call+0x41/0x70 kernel/sched/idle.c:122
- cpuidle_idle_call kernel/sched/idle.c:190 [inline]
- do_idle+0x1dc/0x790 kernel/sched/idle.c:330
- cpu_startup_entry+0x60/0x80 kernel/sched/idle.c:428
- rest_init+0x1df/0x260 init/main.c:744
- start_kernel+0x76e/0x960 init/main.c:1097
- x86_64_start_reservations+0x28/0x30 arch/x86/kernel/head64.c:307
- x86_64_start_kernel+0x139/0x140 arch/x86/kernel/head64.c:288
- common_startup_64+0x13e/0x147
-
-Uninit was stored to memory at:
- skb_put_data include/linux/skbuff.h:2753 [inline]
- e1000_copybreak drivers/net/ethernet/intel/e1000/e1000_main.c:4339 [inline]
- e1000_clean_rx_irq+0x870/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4384
- e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
- __napi_poll+0xda/0x850 net/core/dev.c:7506
- napi_poll net/core/dev.c:7569 [inline]
- net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
- handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
- common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
- asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
-
-Uninit was stored to memory at:
- swiotlb_bounce+0x470/0x640 kernel/dma/swiotlb.c:-1
- __swiotlb_sync_single_for_cpu+0x9e/0xc0 kernel/dma/swiotlb.c:1567
- swiotlb_sync_single_for_cpu include/linux/swiotlb.h:279 [inline]
- dma_direct_sync_single_for_cpu kernel/dma/direct.h:77 [inline]
- __dma_sync_single_for_cpu+0x50d/0x710 kernel/dma/mapping.c:370
- dma_sync_single_for_cpu include/linux/dma-mapping.h:381 [inline]
- e1000_copybreak drivers/net/ethernet/intel/e1000/e1000_main.c:4336 [inline]
- e1000_clean_rx_irq+0x7dc/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4384
- e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
- __napi_poll+0xda/0x850 net/core/dev.c:7506
- napi_poll net/core/dev.c:7569 [inline]
- net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
- handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
- common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
- asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
-
-Uninit was stored to memory at:
- swiotlb_bounce+0x470/0x640 kernel/dma/swiotlb.c:-1
- swiotlb_tbl_map_single+0x2956/0x2b20 kernel/dma/swiotlb.c:1439
- swiotlb_map+0x349/0x1050 kernel/dma/swiotlb.c:1584
- dma_direct_map_page kernel/dma/direct.h:-1 [inline]
- dma_map_page_attrs+0x614/0xef0 kernel/dma/mapping.c:169
- dma_map_single_attrs include/linux/dma-mapping.h:469 [inline]
- e1000_alloc_rx_buffers+0x96d/0x1600 drivers/net/ethernet/intel/e1000/e1000_main.c:4616
- e1000_configure+0x16fe/0x1930 drivers/net/ethernet/intel/e1000/e1000_main.c:377
- e1000_open+0x985/0x14d0 drivers/net/ethernet/intel/e1000/e1000_main.c:1388
- __dev_open+0x7c2/0xc40 net/core/dev.c:1682
- __dev_change_flags+0x3ae/0x9b0 net/core/dev.c:9549
- netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
- dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
- devinet_ioctl+0x162d/0x2570 net/ipv4/devinet.c:1199
- inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
- sock_do_ioctl+0x9f/0x480 net/socket.c:1238
- sock_ioctl+0x70b/0xd60 net/socket.c:1359
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
- __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
- x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_frozen_pages_noprof+0x648/0xe80 mm/page_alloc.c:5171
- __alloc_pages_noprof+0x41/0xd0 mm/page_alloc.c:5182
- __page_frag_cache_refill+0x57/0x2a0 mm/page_frag_cache.c:59
- __page_frag_alloc_align+0xd0/0x690 mm/page_frag_cache.c:103
- __napi_alloc_frag_align net/core/skbuff.c:248 [inline]
- __netdev_alloc_frag_align+0x1b7/0x1f0 net/core/skbuff.c:269
- netdev_alloc_frag include/linux/skbuff.h:3408 [inline]
- e1000_alloc_frag drivers/net/ethernet/intel/e1000/e1000_main.c:2074 [inline]
- e1000_alloc_rx_buffers+0x276/0x1600 drivers/net/ethernet/intel/e1000/e1000_main.c:4584
- e1000_configure+0x16fe/0x1930 drivers/net/ethernet/intel/e1000/e1000_main.c:377
- e1000_open+0x985/0x14d0 drivers/net/ethernet/intel/e1000/e1000_main.c:1388
- __dev_open+0x7c2/0xc40 net/core/dev.c:1682
- __dev_change_flags+0x3ae/0x9b0 net/core/dev.c:9549
- netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
- dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
- devinet_ioctl+0x162d/0x2570 net/ipv4/devinet.c:1199
- inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
- sock_do_ioctl+0x9f/0x480 net/socket.c:1238
- sock_ioctl+0x70b/0xd60 net/socket.c:1359
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
- __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
- x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-
---
-Aleksandr
 
