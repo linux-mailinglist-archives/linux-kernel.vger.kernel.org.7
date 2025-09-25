@@ -1,87 +1,102 @@
-Return-Path: <linux-kernel+bounces-832915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7435BBA0BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:07:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16456BA0C04
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A58A624F3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA103B5B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F38F30C34E;
-	Thu, 25 Sep 2025 17:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04930B52D;
+	Thu, 25 Sep 2025 17:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upWO0S7b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="l5sRIKuV"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7286B19F40B;
-	Thu, 25 Sep 2025 17:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820007; cv=none; b=rLNg4rogckLfVMcGkqxVtc3GyNWytWLiyMpgUBx2t2ViWsfdeGyoNLc7U0f1RdiVPzWijvCAnNy90mj1AwMOPOliRDJqfc1hYLt9ZY6DJzvjtwHmu7RNWHvUorI3KajysL0VHoP9L/s0k2/bZar24WAQUaLnKBnUVtQgn6EqYjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820007; c=relaxed/simple;
-	bh=0/lEVkFCh2G2v1BOOAgB1PBGgF4nPu4QaLTafq24y38=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lYvjuWLzKKOP1TR24CYBMCjaPQNrTsk9r6/QRmxOm2OkyjJgAbx2inu9V3LZPuRtjpp50GOUNnKQtXo/agzBAFth1ZJRT0XBPurpt804l56Mtj2KULH1LqTPNGWjgXvDZfsctg/GbUal5hTi2cdu9uK0H9BE+6Lfg20NAWmw8ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upWO0S7b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DBFC4CEF0;
-	Thu, 25 Sep 2025 17:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758820006;
-	bh=0/lEVkFCh2G2v1BOOAgB1PBGgF4nPu4QaLTafq24y38=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=upWO0S7bR6lOGUVbFT6fNQorUegPsIW2KzRvVSSYxrjXCDBH5BO9geR5os56F0pZb
-	 JV1ojavERVX0XO4Ep8TWtr1SpRnSKTcR5XXzz4rBGuVoe5T/9WEXO74GWaF8OJFTjf
-	 fKcWtQVfSh8m8CbMhExOhaRlP2XtyIXyuOj9ASXXs5vYx0xv/aEWU8oWsEz9I/vxJ6
-	 f4Vu3mXdb/8lV3n509DBU4trOB7+9tuUmwNLLLZ1u6XcOEhFPzPseaLVifEy8sJ+S4
-	 J4YINXX3sB5DH2eC0GW6QERlkVqy8XNMNNfykOvQAS0l+64UdbxWWyJ8mob9198qeq
-	 Ubhc7j5Hlk4fA==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, 
- Manivannan Sadhasivam <mani@kernel.org>
-Cc: robh@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-In-Reply-To: <20250922081057.15209-1-mani@kernel.org>
-References: <20250922081057.15209-1-mani@kernel.org>
-Subject: Re: [PATCH] PCI: tegra194: Rename variable 'root_bus' to
- 'root_port_bus' in tegra_pcie_downstream_dev_to_D0()
-Message-Id: <175882000155.393581.9846354008561006249.b4-ty@kernel.org>
-Date: Thu, 25 Sep 2025 22:36:41 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F6B3081BB;
+	Thu, 25 Sep 2025 17:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758820108; cv=pass; b=V/ESndzAN4L9GaENXa918s5GWbUT2pLXzEwhhpHRpbpXYdg+sKKUN71OVaFGbja+juS4CE4xVNJr7QCITnDiDtyAjK7+kZtpj/56rUG//yBkUJiZNFFJ5MCEHXpCzUgCl44s0YdNEUdPeimKPWg+D7y3u+HVxW3zD9fe0GRwvns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758820108; c=relaxed/simple;
+	bh=xh7K/XJFQ6KkEtm/OLCF3JPZG7ct8pPnp/RtlikI1UA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l84ZpN8TnsnMUb/VGUkJaVSoqOX//UAM4g/op/s3gp70reg8PugakgaAlz2vzLTDLY6tvhwMNY2AKYxnNMJgInNO3JuF2vgFANIRiD2DbjiCOsIa2Gz2kIuzX7Upv136Sq/VEEVsjx4a8ZcSZ7u+Sw0m9qDfA7F7wrfamCVXn0c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=l5sRIKuV; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1758820071; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PE5glDIsYYr7d4pKIscD4HkL/+QqyqDxWnAkaQe/NBQ5PEk0Djp/pd3gdknSw5LJ7o2I1kp+xCG4qBtGlCPxIMdBMI0PK4TBNhiG1pcgKOgwku9ffJcNb2KvWK6Aa2X6twhan+OCCTljOGpq389Al6Ckk5OkKHCmGPIMG4zskFs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758820071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xh7K/XJFQ6KkEtm/OLCF3JPZG7ct8pPnp/RtlikI1UA=; 
+	b=FySJUk52uxt/fWGi5Ma/0yIkUjR5kRBlSaenMNSNfu/UTj+/vcfS+ZVU70Su6VMHRFs8nikDn/hOBEPF8Ut6vfz0M4AK7mLb/Tp7LUYA5sTfNcASQoT3qg/ySZWL8fAmWxZ+ZpvPj1Ay9IusATNIk6LjIxvl9umRhTTWQjGHask=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758820071;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=xh7K/XJFQ6KkEtm/OLCF3JPZG7ct8pPnp/RtlikI1UA=;
+	b=l5sRIKuV6EnO3zuk5usTtk3gAlssOPDKZAWjYt6QRJ7KxG0XlH5PAxSXZ9LV4L8P
+	K27KcsZ9I7CceXQPnIzcnspF6yfPE9rxBz/9as7VzwC+v/3j1BIDUEvB85CJyBaY2y6
+	Bslw0a+cYcqbdLEgq9iiIBPlUFpxQLnO7XTs2tbo=
+Received: by mx.zohomail.com with SMTPS id 1758820067677192.5730499183651;
+	Thu, 25 Sep 2025 10:07:47 -0700 (PDT)
+Message-ID: <01e7eccd-3529-4d12-8ad2-fd9e034a026d@yukuai.org.cn>
+Date: Fri, 26 Sep 2025 01:07:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] blk-cgroup: use cgroup lock and rcu to protect
+ iterating blkcg blkgs
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ tj@kernel.org, ming.lei@redhat.com, nilay@linux.ibm.com, hch@lst.de,
+ josef@toxicpanda.com, axboe@kernel.dk, akpm@linux-foundation.org,
+ vgoyal@redhat.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250925081525.700639-1-yukuai1@huaweicloud.com>
+ <20250925081525.700639-2-yukuai1@huaweicloud.com>
+ <bc6fe04d-3245-40dd-aa30-c3a3acb670c2@acm.org>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <bc6fe04d-3245-40dd-aa30-c3a3acb670c2@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+Hi,
 
-On Mon, 22 Sep 2025 13:40:57 +0530, Manivannan Sadhasivam wrote:
-> In tegra_pcie_downstream_dev_to_D0(), PCI devices are transitioned to D0
-> state. For iterating over the devices, first the downstream bus of the Root
-> Port is searched from the Root bus. But the name of the variable that holds
-> the Root Port downstream bus is named as 'root_bus', which is wrong.
-> 
-> So rename the variable to 'root_port_bus'. Also, move the comment on
-> 'bringing the devices to D0' to where the state is set exactly.
-> 
-> [...]
+在 2025/9/25 23:57, Bart Van Assche 写道:
+> On 9/25/25 1:15 AM, Yu Kuai wrote:
+>> It's safe to iterate blkgs with cgroup lock or rcu lock held, prevent
+>> nested queue_lock under rcu lock, and prepare to convert protecting
+>> blkcg with blkcg_mutex instead of queuelock.
+>
+> Iterating blkgs without holding q->queue_lock is safe but accessing the
+> blkg members without holding that lock is not safe since q->queue_lock
+> is acquired by all code that modifies blkg members. Should perhaps a new
+> spinlock be introduced to serialize blkg modifications?
+>
+No need for a new lock, I think blkcg->lock can do that.
 
-Applied, thanks!
+Thanks,
+Kuai
 
-[1/1] PCI: tegra194: Rename variable 'root_bus' to 'root_port_bus' in tegra_pcie_downstream_dev_to_D0()
-      commit: d7c0300fea06e3ad43986840ccfbb0f1c449529b
-
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
-
+> Thanks,
+>
+> Bart.
+>
 
