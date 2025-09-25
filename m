@@ -1,98 +1,222 @@
-Return-Path: <linux-kernel+bounces-832029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3187B9E2D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:02:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387F0B9E2E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C977A17F52B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E43422D54
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5A3279DC3;
-	Thu, 25 Sep 2025 09:02:04 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F8F248896;
+	Thu, 25 Sep 2025 09:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tAvmyMHk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366BD219A7D;
-	Thu, 25 Sep 2025 09:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F0721A92F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790923; cv=none; b=O3tB1/Oayt8ZVX9pFqZGwZmDzJOjKsXZIaHCoT+QmRPp7YWTFiK+ACDNHV8fCZo4T/Qk59/hV63F89YXTZgplnRTsvbwOBbvyP/i4UTGHhsZWoUmC88GNkrI5Xs02TJAhKZ19wD6nOKC8VtEpjbOhnjAVPDqCqT9EFwyvcXM8A8=
+	t=1758790941; cv=none; b=RiIIQ56YIv5T7UXfqtmGu2HgIFi2CgxTkO4KmIyjs3awmwo9AsEbMSJIvkXt24DR57diIFeioim+nf2bDJkH5BUmrgBWzLdE2oYxbD9+8F8uGLZ2MUnGUqchKW7tocSqHy92fylrs1GcCPtEfICccjVur0Rqt3WvNmQBZXRTwls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790923; c=relaxed/simple;
-	bh=maIJ4TR91gEWbjfND2qRjo0K5H/zlUG2zC0c1SuCbrQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=J1zJVdaqfJY6+mcg5EhwU40XUV/WIzdEKuDS7JZZQfPcin3Zy0SExoylFcI9e3IClyGMA66qfQALlVRJQK90qHBhsUTKfSEmsxA0FX+j/ZQdh1mG9VDes0+MP6O2ok0VaOsRMgP/vNF4YA7+45J6VUj1h/sItwfpsxFmdhnSR6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cXSQ62wYBzKHMvJ;
-	Thu, 25 Sep 2025 17:01:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D2791A084B;
-	Thu, 25 Sep 2025 17:01:58 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCXW2MEBdVoThULAw--.12884S3;
-	Thu, 25 Sep 2025 17:01:58 +0800 (CST)
-Subject: Re: [PATCH 5/7] md/raid10: fix any_working flag handling in
- raid10_sync_request
-To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
- namhyung@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250917093508.456790-1-linan666@huaweicloud.com>
- <20250917093508.456790-6-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2d94765c-219b-75f5-30fa-79a7324ba525@huaweicloud.com>
-Date: Thu, 25 Sep 2025 17:01:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758790941; c=relaxed/simple;
+	bh=TmD6NzhQIklOOJTQVpmQteSOnmmHjADGWKhNTP93vnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OeFruxvg6oPLXu8qBwNiUm6WJs22Y83v8lfkNG/+LXJ3AW492DZE9Jz/TJOyEV55P9Hsrz+/X75FwqY8nLX9D0zU8Ya+x/8ZJbuEDDN1/I7rxL6Oqe/DAfizujY7bM0LuG1v0+7gZYk+0qSc/ktolS3JcTIbk++/jqhXydf2iA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tAvmyMHk; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3fa528f127fso513943f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758790938; x=1759395738; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5Qe3xfGFmIVMF6CqhJOdRE5h4PSOi9dIsttGyzx+Zh0=;
+        b=tAvmyMHkou0jqZn9MMiTAJqjDCGfxVmd/e1a1FvpkZdHfEKHJSERV8jLnZbuydHXov
+         aiD+MWOC/8tdUsvD4iVaHcBq5W+KB7wAU3MfNdudSZIq045nOHSxmgPDMFhMkTxIuExZ
+         rKr4AllHfqtUD0WoWf5mqvwnKDrFJifyKULIDalJLnl6iYlBC6XSqm72eIQuV07ct+qV
+         Jj24rsT/UaXDc7G/0ceqV8T47A7BtxjnIEElfmMPZ9oogNI9pLsOF2lm4HIdMW25GRld
+         ymvuctR6pdPeQGnCRiHQDZ0kXVug0GgQMUT/BZ7os9qACRmejVIJHB5vRSP8El+AcQB7
+         FOtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758790938; x=1759395738;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Qe3xfGFmIVMF6CqhJOdRE5h4PSOi9dIsttGyzx+Zh0=;
+        b=IUAxPGLz7Rta7BWaz+ZnUQc5DaC52lALFFhHocyaOaQ1B8uvwVMbRRJ3qHPfUJtSzy
+         cABvQ8ETf7OtCoy2G8QzC3IJP119UvzIPWGGhnVxPa/Ki8tcyGEs1JdWgTGrx+neUJUa
+         1kyKYbXfVTYDH8Qsdw9QfoEVMOAkb7MQnp3ozgRXYawi1higDVU97OZBEjaMSxEFS8s6
+         Y0VGQXih01cJ6xz/Zd5o78B1l8P/ey6AlVb95vza8Rt0U3fBSmkfJXfBtF5M1ZdwJl/M
+         3RAUOE5IHX6PAQmBXCLizvfbNvf3nfzQGpYV4QZmFqCqISP8MlxosVAqMQZh9x2aI552
+         I8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCXib2uo5IN+9cOS4emvu9r+ogsYcnVDRIbS6uBwTFFUdnIcONjPEB2sMVVqTKVq83UsEBCIM88c9t/896w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjkXsOG8YUSPKP3ZZrEOTrvWmtfMmVzI4Kt1WbRTdfUiY3hUxc
+	Qtpd0o7ZAHMCNZJJTS6o8EGwMhHsw321xbWXnstyA96m6vmzYE5o7c0tUe2/jp9c764=
+X-Gm-Gg: ASbGnctrT7Sj5eR0oL6708jiIjcJtscQPge/4FwT8DEUd5bad62ymOSSi3zdC1FcElg
+	UtQOexgUtMGiIOQ+1pgskSnXq5xGkunZ7OiC+fvut6GWdCM1fldPf6XMGdVe9qXr0Ii63QGHqA1
+	vt6lwnitzqBHa5JRST8Zr0kZqzIz2oyrY7Eb6VX4bQCnxA3gUrNRgENWoWdQgOhuXSqbyaDUqoj
+	DACmjVHaOhlgEUa4pPk1O8MqMKr7uS2Q2wWMQn/QB6+jimDIDQKpvkujp5TLWIjZaOJkPfgtjUb
+	ygeXEd9a94t2gXL8JPV1709XmhC+tR9dHcAjuiQp9bxn8ukCG8vtepL5dTAh8/2rrl45vA6itUQ
+	NdhyqJMQOhJQyWgrwe44WB50P636uvMa0DK/8qpKCLmWjXa2SwAJfGmTI0/Q1h/SEEQ096Zr+iC
+	OX9fejV5R+meEqVWRCQP/d
+X-Google-Smtp-Source: AGHT+IG6omy3mi4l5IjwhwiD+yQndxiCA+tBSpwYG7hEz4IaSuBeLRkN2eEbLT+qy6PzJRqtHh6D9g==
+X-Received: by 2002:a05:6000:2dc1:b0:3d0:e221:892e with SMTP id ffacd0b85a97d-40f6617670dmr1826060f8f.27.1758790937794;
+        Thu, 25 Sep 2025 02:02:17 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm2143861f8f.24.2025.09.25.02.02.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 02:02:17 -0700 (PDT)
+Message-ID: <69e8c15d-108e-4832-849e-a23c7ddfe625@linaro.org>
+Date: Thu, 25 Sep 2025 10:02:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250917093508.456790-6-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXW2MEBdVoThULAw--.12884S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrXFWDWF15Kr1xKF45ury8Krg_yoWxGrXEka
-	y5tFZ5Xr4Iyr1Iyw15GryIqr4Sgay5Wws5ua4DtryrZa4ava48Kas0g3Z5ZF43XFZ0gasx
-	C3W0qr9IvrsF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUpwZcUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/9] dt-bindings: clock: qcom: Add Kaanapali video clock
+ controller
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Taniya Das <taniya.das@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250924-knp-mmclk-v1-4-d7ea96b4784a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ÔÚ 2025/09/17 17:35, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan<linan122@huawei.com>
+On 25/09/2025 00:56, Jingyi Wang wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
 > 
-> In raid10_sync_request(), 'any_working' indicates if any IO will
-> be submitted. When there's only one In_sync disk with badblocks,
-> 'any_working' might be set to 1 but no IO is submitted. Fix it by
-> setting 'any_working' after badblock checks.
+> Add device tree bindings for the video clock controller on Qualcomm
+> Kaanapali SoC.
 > 
-> Fixes: e875ecea266a ("md/raid10 record bad blocks as needed during recovery.")
-> Signed-off-by: Li Nan<linan122@huawei.com>
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
->   drivers/md/raid10.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-
+>   .../bindings/clock/qcom,sm8450-videocc.yaml        |  3 ++
+>   include/dt-bindings/clock/qcom,kaanapali-videocc.h | 58 ++++++++++++++++++++++
+>   2 files changed, 61 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index b31bd8335529..e6beebd6a36e 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -15,6 +15,7 @@ description: |
+>     domains on SM8450.
+>   
+>     See also:
+> +    include/dt-bindings/clock/qcom,kaanapali-videocc.h
+>       include/dt-bindings/clock/qcom,sm8450-videocc.h
+>       include/dt-bindings/clock/qcom,sm8650-videocc.h
+>       include/dt-bindings/clock/qcom,sm8750-videocc.h
+> @@ -22,6 +23,7 @@ description: |
+>   properties:
+>     compatible:
+>       enum:
+> +      - qcom,kaanapali-videocc
+>         - qcom,sm8450-videocc
+>         - qcom,sm8475-videocc
+>         - qcom,sm8550-videocc
+> @@ -61,6 +63,7 @@ allOf:
+>           compatible:
+>             contains:
+>               enum:
+> +              - qcom,kaanapali-videocc
+>                 - qcom,sm8450-videocc
+>                 - qcom,sm8550-videocc
+>                 - qcom,sm8750-videocc
+> diff --git a/include/dt-bindings/clock/qcom,kaanapali-videocc.h b/include/dt-bindings/clock/qcom,kaanapali-videocc.h
+> new file mode 100644
+> index 000000000000..cc0d41b895c9
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,kaanapali-videocc.h
+> @@ -0,0 +1,58 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_KAANAPALI_H
+> +#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_KAANAPALI_H
+> +
+> +/* VIDEO_CC clocks */
+> +#define VIDEO_CC_AHB_CLK					0
+> +#define VIDEO_CC_AHB_CLK_SRC					1
+> +#define VIDEO_CC_MVS0_CLK					2
+> +#define VIDEO_CC_MVS0_CLK_SRC					3
+> +#define VIDEO_CC_MVS0_FREERUN_CLK				4
+> +#define VIDEO_CC_MVS0_SHIFT_CLK					5
+> +#define VIDEO_CC_MVS0_VPP0_CLK					6
+> +#define VIDEO_CC_MVS0_VPP0_FREERUN_CLK				7
+> +#define VIDEO_CC_MVS0_VPP1_CLK					8
+> +#define VIDEO_CC_MVS0_VPP1_FREERUN_CLK				9
+> +#define VIDEO_CC_MVS0A_CLK					10
+> +#define VIDEO_CC_MVS0A_CLK_SRC					11
+> +#define VIDEO_CC_MVS0A_FREERUN_CLK				12
+> +#define VIDEO_CC_MVS0B_CLK					13
+> +#define VIDEO_CC_MVS0B_CLK_SRC					14
+> +#define VIDEO_CC_MVS0B_FREERUN_CLK				15
+> +#define VIDEO_CC_MVS0C_CLK					16
+> +#define VIDEO_CC_MVS0C_CLK_SRC					17
+> +#define VIDEO_CC_MVS0C_FREERUN_CLK				18
+> +#define VIDEO_CC_MVS0C_SHIFT_CLK				19
+> +#define VIDEO_CC_PLL0						20
+> +#define VIDEO_CC_PLL1						21
+> +#define VIDEO_CC_PLL2						22
+> +#define VIDEO_CC_PLL3						23
+> +#define VIDEO_CC_SLEEP_CLK					24
+> +#define VIDEO_CC_TS_XO_CLK					25
+> +#define VIDEO_CC_XO_CLK						26
+> +#define VIDEO_CC_XO_CLK_SRC					27
+> +
+> +/* VIDEO_CC power domains */
+> +#define VIDEO_CC_MVS0A_GDSC					0
+> +#define VIDEO_CC_MVS0_GDSC					1
+> +#define VIDEO_CC_MVS0_VPP1_GDSC					2
+> +#define VIDEO_CC_MVS0_VPP0_GDSC					3
+> +#define VIDEO_CC_MVS0C_GDSC					4
+> +
+> +/* VIDEO_CC resets */
+> +#define VIDEO_CC_INTERFACE_BCR					0
+> +#define VIDEO_CC_MVS0_BCR					1
+> +#define VIDEO_CC_MVS0_VPP0_BCR					2
+> +#define VIDEO_CC_MVS0_VPP1_BCR					3
+> +#define VIDEO_CC_MVS0A_BCR					4
+> +#define VIDEO_CC_MVS0C_CLK_ARES					5
+> +#define VIDEO_CC_MVS0C_BCR					6
+> +#define VIDEO_CC_MVS0_FREERUN_CLK_ARES				7
+> +#define VIDEO_CC_MVS0C_FREERUN_CLK_ARES				8
+> +#define VIDEO_CC_XO_CLK_ARES					9
+> +
+> +#endif
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
