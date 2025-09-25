@@ -1,201 +1,134 @@
-Return-Path: <linux-kernel+bounces-831611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7C4B9D1E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD3B9D1E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37BF31B274B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F17EF1B2740B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21611E9B31;
-	Thu, 25 Sep 2025 02:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="UyGqNu7T"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDA11DDA24
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758766675; cv=none; b=psiUsmpac6sr7LfcvXXki88Utp5le7hA+Bd8ECHqyCacClTsXD0yER3H254TLuTL8bbroB0OJEDrUpdzSpSXIHfCWs9jQgnYUp0TTGlqfQDEyDFv9rJYl0w8afymwXIJ5/v+2yk0VKClooip1PgszxnPVLfSy5rRHJz1X4Nz1Ak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758766675; c=relaxed/simple;
-	bh=b0buBmbL7bhvDKCcmegp+vUX/gOszwA/zehkm3eakvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HedK1M4Cqu/B9lqqEU1g+A/kqq2mLOsHoGh/UY7Yl8NsGcZVaYvszCn0652munKMZ65GMh4YaEUwhIEsMZIGxQB0lxz2QalvZljaaOfBTew09hq3fWee0UmWAbobYWuNCsUFqJUfWsMJMeC4ZGP01GcQYY6PtKAS7oywOCl4Bek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=UyGqNu7T; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id C4DD714C2D3;
-	Thu, 25 Sep 2025 04:17:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1758766670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JNMQ8lWb9g6VQAwABshsItEru2CDZ3amHqDj+pLRKs0=;
-	b=UyGqNu7ThAQ9eAuTnZ3BfOFc9UDGvzN0qHccMhl+OMsGV58nEemEWcg3OpsB72ZePd3Pp9
-	nQGAYBqLYWCde0MO2Ue2JTVsrfj0MQOut+Q6BTTz/EYuKkxW0GnC0HqKsMUdHrsCHnu8sj
-	LmBRpAVxVO7lbxjzVIAZ049TCXoIHvwWTC7t3L5dhpNzoeMpjvcs3y+C+gh2J4NXFxmTQY
-	epQs+RO7aUWM5mlwSvkPhNXNk08h4SWrv3Be5SX53ClLLmpsnPBfo1djPjE6WGohW+eYLc
-	HfUc1ss871ALSsF2bQ/l091gqpm1UtfPa/djLcjhJq+zXyVGoD1qHwUfF25/wg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id c7d01c14;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9B61E7660;
 	Thu, 25 Sep 2025 02:17:46 +0000 (UTC)
-Date: Thu, 25 Sep 2025 11:17:31 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: Edward Adam Davis <eadavis@qq.com>, ericvh@kernel.org,
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
-	lucho@ionkov.net,
-	syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Subject: Re: [PATCH next V2] 9p: Correct the session info
-Message-ID: <aNSmO8iou5dJ1VHq@codewreck.org>
-References: <tencent_074BFE748F778366103D0B36E0971837E809@qq.com>
- <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
- <aKlg5Ci4WC11GZGz@codewreck.org>
- <1edd88ee-30a8-4cfd-aa88-c181c4ab3f48@redhat.com>
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA1015746F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758766665; cv=none; b=Xp7MBpva9F3DfYfR1mrLeiA559VYpCeQh0IbBJKOY6RFlnm3BuFILMlP7Fsa0c+FKHN1yyDxMQ1pWKTV35bNuDX6Dd34H8JQm8GMbrqhU9/b6Wkmqa1LEFaFIAUsuYUGE+naXjbJzC7W+3NOugD+1kKuU0cQUvNWFN0RhEKjMcE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758766665; c=relaxed/simple;
+	bh=xWiGGfBsPM+Vpar2QxqxiM++mze4uDBoSCQmvttXBD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WI6BrYDYXBadgmd9bc+i8PwuVjr063Lz7eTMuyfd4/6VyLp/j8ai78IgfnDwA7/G06YCiCNw9uJR7J2SpGOfiJmAqFCIMY9ldiYQCYtQ18duYvPChjqIwNbuJi8wy2HeXhh/O78PKXK+ecMwrew4yoP1oJ0whcKyO99vkp3XGAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cXHLG6dwBzTh3F;
+	Thu, 25 Sep 2025 10:12:54 +0800 (CST)
+Received: from kwepemr500001.china.huawei.com (unknown [7.202.194.229])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7EA3B180B63;
+	Thu, 25 Sep 2025 10:17:33 +0800 (CST)
+Received: from [10.174.179.35] (10.174.179.35) by
+ kwepemr500001.china.huawei.com (7.202.194.229) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 25 Sep 2025 10:17:31 +0800
+Message-ID: <620d202a-6078-4b5d-a42a-8a52543bc14a@huawei.com>
+Date: Thu, 25 Sep 2025 10:17:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1edd88ee-30a8-4cfd-aa88-c181c4ab3f48@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] mm: add PMD-level huge page support for
+ remap_pfn_range()
+To: Matthew Wilcox <willy@infradead.org>
+CC: <akpm@linux-foundation.org>, <david@redhat.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>, <ziy@nvidia.com>,
+	<baolin.wang@linux.alibaba.com>, <npache@redhat.com>, <ryan.roberts@arm.com>,
+	<dev.jain@arm.com>, <baohua@kernel.org>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <anshuman.khandual@arm.com>,
+	<yangyicong@hisilicon.com>, <ardb@kernel.org>, <apopple@nvidia.com>,
+	<samuel.holland@sifive.com>, <luxu.kernel@bytedance.com>,
+	<abrestic@rivosinc.com>, <yongxuan.wang@sifive.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-riscv@lists.infradead.org>, <wangkefeng.wang@huawei.com>,
+	<chenjun102@huawei.com>
+References: <20250923133104.926672-1-yintirui@huawei.com>
+ <20250923133104.926672-3-yintirui@huawei.com>
+ <aNMhiZ4FiEE1Rk_T@casper.infradead.org>
+From: Yin Tirui <yintirui@huawei.com>
+In-Reply-To: <aNMhiZ4FiEE1Rk_T@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemr500001.china.huawei.com (7.202.194.229)
 
-Eric Sandeen wrote on Wed, Sep 24, 2025 at 05:19:11PM -0500:
-> > What I'm not following now is how the v9ses is created/handled around
-> > the new mount API:
-> > - in v9fs_get_tree a v9ses is allocated and passed along in
-> > fc->s_fs_info (that this patches now uses)
+
+
+On 9/24/2025 6:39 AM, Matthew Wilcox wrote:
+> On Tue, Sep 23, 2025 at 09:31:04PM +0800, Yin Tirui wrote:
+>> +			entry = pte_clrhuge(pfn_pte(pmd_pfn(old_pmd), pmd_pgprot(old_pmd)));
 > 
-> This one should exist for the lifetime of the mount, and is the real,
-> live session info.
+> This doesn't make sense.  And I'm not saying you got this wrong; I
+> suspect in terms of how things work today it's actually necessary.
+> But the way we handle this stuff is so insane.
+
+Thank you for pointing this out and the broader context.
+
 > 
-> > - but in v9fs_init_fs_context then a `v9fs_context` is created that
-> > also embeds (not a pointer) a v9ses struct, which is accessed through
-> > fc->fs_private as the code before this patch.
+> pte_clrhuge() should not exist.  If we have a PTE, it can't have the
+> huge bit set, by definition (don't anybody mention hugetlbfs because
+> that is an entirely separate pile of broken horrors).  I understand what
+> you're trying to do here.  You want to construct a PTE that points to
+> the same address as the first page of the PMD and has the same
+> permissions.  But that *should* be written as:
 > 
-> This one should be ephemeral, used to hold options during mount/remount.
-> (see the patch description for
-> "9p: create a v9fs_context structure to hold parsed options")
+> 	entry = pfn_pte(pmd_pfn(old_pmd), pmd_pgprot(old_pmd)));
 > 
-> The idea is that the v9ses within the v9fs_context is used to hold
-> state/options while parsing or reconfiguring. Its lifetime is only during
-> mount/remount, and freed in v9fs_free_fc when that is done.
+> right?  Now, pmd_pgprot() might or might not want to return the huge bit
+> set.  I'm not sure.  Perhaps you could have a look through and figure it
+
+I've tested this on arm64, and pmd_pgprot() does return the huge bit 
+set, which is exactly why I added pte_clrhuge().
+
+> out.  But pfn_pte() should never return a PTE with the huge bit set.
+> So if it is set in the pgorot on entry, it should filter it out.
 > 
-> Before it is freed, at the end of mount/remount, the values stored in it
-> are copied into the "live" v9ses in v9fs_apply_options().
+> There are going to be consequences to this.  Maybe there's code
+> somewhere that relies on pfn_pte() returning a PTE with the huge bit
+> set.  Perhaps it's hugetlbfs.
 
-Thanks for clarifying this;
+I'll try to refactor pfn_pte() and related functions to filter out the 
+huge bit set and test its impact on hugetlbfs.
 
-I had which is a pointer and which is embedded wrong on the first
-reading so I first wrote that this should be ok if we could just null
-the pointer in fs_private to avoid access after the copy, but the
-temporary values are the embedded ones we can't "unaccess"...
-Hmm, do we need anything else in fs_private after v9fs_apply_options()?
-Would it make sense to call v9fs_free_fc() early on and null the full
-fs_private in or after v9fs_apply_options()?
-
-Using a different struct tailored for mount options is certainly more
-appropriate if you have the time to do it, but as long as the risk of
-accessing "the wrong one" goes away I'm fine either way, so if you think
-nulling fs_private is possible without too much churn I think that's
-good enough.
-
-What do you think?
-
-
-
-> >> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-> >> index f6065b5e0e5d..bcb6ebdb8037 100644
-> >> --- a/fs/9p/vfs_super.c
-> >> +++ b/fs/9p/vfs_super.c
-> >> @@ -49,8 +49,7 @@ static int v9fs_set_super(struct super_block *s, struct fs_context *fc)
-> >>  static int v9fs_fill_super(struct super_block *sb, struct fs_context *fc)
-> >>  {
-> >>  	int ret;
-> >> -	struct v9fs_context	*ctx = fc->fs_private;
-> >> -	struct v9fs_session_info *v9ses = &ctx->v9ses;
-> >> +	struct v9fs_session_info *v9ses = sb->s_fs_info;
 > 
-> This seems correct (though we can get rid of *fc too right?) 
-
-(Sounds right as nothing else seems to use fc)
-
-> To get here (v9fs_fill_super), we've gone through:
+> But we have to start cleaning this garbage up.  I did some work with
+> e3981db444a0 and the commits leading up to that.  See
+> https://lkml.kernel.org/r/20250402181709.2386022-12-willy@infradead.org
 > 
-> v9fs_get_tree(fc)
-> 	// this will be our real live v9ses for the mount
-> 	v9ses = kzalloc(sizeof(struct v9fs_session_info), GFP_KERNEL);
+> I'd like pte_clrhuge() to be deleted from x86, not added to arm and
+> riscv.
 > 
->         v9fs_session_init(v9ses, fc)
-> 		// copies fc/context options in context v9ses
-> 		// into the "real" v9ses
->                 v9fs_apply_options(v9ses, fc)
-> 		// inits maxdata on the real, live v9ses
-> 		v9ses->maxdata = v9ses->clnt->msize - P9_IOHDRSZ;
-> 
-> 	fc->s_fs_info = v9ses;	// real, live v9ses on fc->s_fs_info now.
->         sb = sget_fc(fc, NULL, v9fs_set_super);
-> 		s->s_fs_info = fc->s_fs_info; // live v9ses on s->fs_info now
->                 err = set(s, fc)
-> 			v9fs_set_super(s, fc)
-> 				// assigns s->s_fs_info to fc->s_fs_info
-> 				// but I think this is redundant
-> 				// and should be removed
+I completely agree with the goal of deleting pte_clrhuge() rather than 
+expanding it. I'll study your referenced work and align my approach with 
+your efforts.
 
-My reading is that we need it, because the super block isn't the fs
-context, and we need it for v9fs_umount_begin (it doesn't help that the
-field name is the same between both structs, and that some super_block
-variables are just 's' and others are 'sb', but I think that's the only
-place where it's used)
+Would you recommend I address the pfn_pte() and related function 
+refactoring as part of this patch series, or should I submit it as a 
+separate patch series?
 
-At this point these are both the "real live" v9ses so that should be
-fine as far as I can see.
-
-> 				*v9ses = fc->s_fs_info;
-> 	                        s->s_fs_info = v9ses;
-> 				return set_anon_super(s, NULL);
-> 
->         v9fs_fill_super(sb, fc)
-> 
-> and yes, with my patch were were using the option-holding "v9ses" here,
-> not the actual, fully initialized, legitimate v9ses for this mount, and
-> because v9ses->maxdata is not something that gets options parsed into it,
-> it was unset, and it so hit this bug. :(
-> 
-> Going back to the prior explanation of the fc context, it's probably
-> a better idea to not re-use the v9ses struct "for convenience" and
-> make a new dedicated structure just for option parsing, so unset
-> structure members aren't even present and therefore inaccessible.
-> I'm sorry for the mistake.
-> 
-> I should spin up a new version of the series fixing this and the
-> uint32/int32 difference you spotted as well
-
-That would be great!
-
-I'm not sure the unsigned makes much different ultimately, but might as
-well make it a fsparam_s32 as you suggested...
-Now I understand the lifecycle a bit better I can have another read with
-that in mind before merging, and we can do the nulling fs_private or
-other "make sure this bug doesn't come back" later if you don't have
-time, I'm leaving this up to you.
-
-> and credit Edward for his fix in the new commit log somehow?
-
-I've never really been sure what kind of tag is appropriate in this
-case, but I assume any mention would be welcome :)
-
-
-Thanks,
 -- 
-Dominique Martinet | Asmadeus
+Best regards,
+Yin Tirui
+
 
