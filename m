@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-832676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497E6BA0126
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:51:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65C5BA0186
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737A619C26E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BA53A8E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9C02E0925;
-	Thu, 25 Sep 2025 14:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE50E2E1EE0;
+	Thu, 25 Sep 2025 14:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIupcSCT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="Mm34qHhN"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C772DCF77
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758811861; cv=none; b=FMxNInp0qUpuWEkr3ggTvfzC4fepoqamglJO2grpFuuKcxUN3DDMbztXyL6ALzMZMyB77pOwMQbMLhoSS4fTXuiZ8qxVQqOm8aeEHN78fLpwUgksp4YzSRlBlheqAxVFxqsmJX8A3c28FlUD0ZH5pXl1Byn2KaLJBJvLPIH2Wwk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758811861; c=relaxed/simple;
-	bh=DG2szuPxxWOHgNT641pBDumcSqXth3pE37RvglgNcHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Je+2S42McetQrDKnJ7UDMtBtW0eeEoiUuRKqq1cSGKKuy3st+OHRAVE3W5NOyMzZB/EgefmZA3bUbVRo4ixa6tlQ4q5fvonxldG7uTFZ0Brx5nGYGNYbI2OXkCh5dSL2JMa1ScWRl/6nk2JlTyjtBEIU8HW3EyaY5hRgn9AO50U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIupcSCT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53405C4CEF0;
-	Thu, 25 Sep 2025 14:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758811860;
-	bh=DG2szuPxxWOHgNT641pBDumcSqXth3pE37RvglgNcHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VIupcSCTrVT0YiVHqMeNRGIe/vr4LAnwufvWyVQeLdEWcQwSFVC2jTtzVOn3K9btF
-	 omG8wlNRw5mDIWRVhKDd5bmAeX/nRPN++AytukjHVzHmIdqd3iMEzu4R1Y0ExOXnLF
-	 VmFIdOmH7Kv35IVJgOShYC/JYj8b4MSf4HrmePnC8ywzvjZUj7oF5C5gBjVRDWCq73
-	 N7uaKlPORfA0S9bpy4Tj+cBnOcNQut+e5rNeUMrzRCTdwzzCshobDgJDU1ila4SxrR
-	 S+0w79fE1fKKhWzORLWq++nfH+8LE6kmOrCrP7CvqBMysOuua3P4TzzBNXj922B2d2
-	 1yCq4SNlcdCMg==
-Date: Thu, 25 Sep 2025 17:50:53 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org,
-	david@redhat.com, vbabka@suse.cz, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, elver@google.com, dvyukov@google.com,
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>
-Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with
- KMSAN
-Message-ID: <aNVWzaxq82UI3wWO@kernel.org>
-References: <20250924100301.1558645-1-glider@google.com>
- <20250925123759.59479-1-sj@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6601D63CD;
+	Thu, 25 Sep 2025 14:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758812258; cv=pass; b=PhAcH+OvZfKMk+g3RAIpKoTDigWxHm97tbxOogd4ckNFQ6Pc5jQkleJ0EhywCx79ofvn60unXAduip/NzOQ5eWdgntJmPcODjFTUQUzmrCMhRcybdDWTWTVkiT0GvgGcsvjqeHr1LPhi8fd6sBsWKocWhrLgMRpJvzRckSM2F4I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758812258; c=relaxed/simple;
+	bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XcH7+PKTtGa0R1aKb1UPnbtwQk2EPqrZ+JjHySyDezoUHCHjgUfJs6aTXV+ojQCc+FBkVnEK7qkv2pchx9cJwU77uIVPQZTi8npS/b+kxBUVGJgUrXMn1Z2bV6SGXFSXgxfDe5Y6NGCH4I0MlcgUn7s2ZOj1RsoZ/qJdf1CkZqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=Mm34qHhN; arc=pass smtp.client-ip=81.169.146.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1758811893; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=Wks9rFjMhMdlauncy0O2xHQ8iLMFrFV/ZaN9v+Z5DUUE0lXiF7YwKtEy6IptAaOxF8
+    o4k6q1bZ+9lT+elaZg53SVOzsuCOxZ4J1/lbD5Nckr4fVonNhpz3q0byHPLnSpl+Dkam
+    F4J0Z/A3ax0nXLcT5AF6FCZp/QIGgEGRF1aCH2ybYwQ4p91Frhi2je/g7VZYNMn4RPxI
+    vOgxZQT/7+r8r9YFx3lyTZZkYv4IoUGZb3cvt3lLAHpng4Z7+JuT2xI2L0vyXkaCKWZp
+    pQRfFTi4ZFOAECaTyMiEMR+De+P5ngcsfiZP7cOxCxKkjhPGPuB5Zzi7jMAvT4/TsmD0
+    8jSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758811893;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
+    b=LIFtXBwTszLh9HoiFQc1yS4sgyk0LoiS5113ewqEEIG+DVA0gG6R9RiBqjRYD8iH4C
+    J41Kk3dIEYZEy36OagCWfzsF3vyzzA7mMFGBduLbxr1CMnKE8zsF9UYOCp482ai/JEUr
+    68hO7DzHlT5XFhEkDTCSR7FzHpTbcGhVlT8egTHRy8S6QgdEa8L3cpedQlY146h9ZzR+
+    ocht5bABnC3QQEF7s0BpQ/ptkAyq4MTV/txuHNcCjsmxgajSGj/ypzUMorrChQmLvTSo
+    VlWbBrJqP3LhdrvY2y46L0yrSuGfsyXq6GYV0g1H1UZ+LCcWSKu78aLrBnzW5ZP7XcwL
+    s7CQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758811893;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
+    b=Mm34qHhNTsea0MirIPe5semBUhMVOTn1fO7cupkZP0mqxMSExyWh7D/jetMOQwuLmD
+    R0SZUtu3Iry1eP29hilXDHO53dlNXGFE3psDKXx6fodOZRa6kJV2CaNWpfpObV3bQkJT
+    fXPLF0QyV4nQpQ4lcVKAzhd7AoI+DgfXu2tYMb3h/2gdI89eIY1ZE/dWJbjNWmELSoe3
+    yxvclB5iw6m7jwBF6YA2Nvge84Uh2+y+qcjGWzD17J9tBxPEt84nY5V8NJoHMNCRs901
+    ExX/4gIyKtDIzk2bJDk2jDmYaq7YSJDqKJ3S5WX044qUc/HwjQIY7tVqrds7vBTCWALj
+    c0Gg==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0DBslXBtZUxPOub3IZqk"
+Received: from [10.176.235.211]
+    by smtp.strato.de (RZmta 53.3.2 AUTH)
+    with ESMTPSA id z9ebc618PEpWESA
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 25 Sep 2025 16:51:32 +0200 (CEST)
+Message-ID: <af99ce08cf20977d92f3b993f3b989b91d172c79.camel@iokpp.de>
+Subject: Re: [PATCH v1 1/3] rpmb: move rpmb_frame struct and constants to
+ common header
+From: Bean Huo <beanhuo@iokpp.de>
+To: Avri Altman <Avri.Altman@sandisk.com>, "avri.altman@wdc.com"
+ <avri.altman@wdc.com>, "bvanassche@acm.org" <bvanassche@acm.org>, 
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "jejb@linux.ibm.com"
+ <jejb@linux.ibm.com>,  "martin.petersen@oracle.com"
+ <martin.petersen@oracle.com>, "can.guo@oss.qualcomm.com"
+ <can.guo@oss.qualcomm.com>, "ulf.hansson@linaro.org"
+ <ulf.hansson@linaro.org>,  "beanhuo@micron.com" <beanhuo@micron.com>,
+ "jens.wiklander@linaro.org" <jens.wiklander@linaro.org>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Thu, 25 Sep 2025 16:51:32 +0200
+In-Reply-To: <PH7PR16MB6196C3B7F5186F3E63C05A3FE51CA@PH7PR16MB6196.namprd16.prod.outlook.com>
+References: <20250923153906.1751813-1-beanhuo@iokpp.de>
+	 <20250923153906.1751813-2-beanhuo@iokpp.de>
+	 <PH7PR16MB6196C3B7F5186F3E63C05A3FE51CA@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925123759.59479-1-sj@kernel.org>
 
-On Thu, Sep 25, 2025 at 05:37:59AM -0700, SeongJae Park wrote:
-> Hello,
-> 
-> On Wed, 24 Sep 2025 12:03:01 +0200 Alexander Potapenko <glider@google.com> wrote:
-> 
-> > When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
-> > for metadata instead of returning them to the early allocator. The callers,
-> > however, would unconditionally increment `totalram_pages`, assuming the
-> > pages were always freed. This resulted in an incorrect calculation of the
-> > total available RAM, causing the kernel to believe it had more memory than
-> > it actually did.
-> > 
-> > This patch refactors `memblock_free_pages()` to return the number of pages
-> > it successfully frees. If KMSAN stashes the pages, the function now
-> > returns 0; otherwise, it returns the number of pages in the block.
-> > 
-> > The callers in `memblock.c` have been updated to use this return value,
-> > ensuring that `totalram_pages` is incremented only by the number of pages
-> > actually returned to the allocator. This corrects the total RAM accounting
-> > when KMSAN is active.
-> > 
-> > Cc: Aleksandr Nogikh <nogikh@google.com>
-> > Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > Reviewed-by: David Hildenbrand <david@redhat.com>
-> [...]
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *tablename,
-> >  	return table;
-> >  }
-> >  
-> > -void __init memblock_free_pages(struct page *page, unsigned long pfn,
-> > -							unsigned int order)
-> > +unsigned long __init memblock_free_pages(struct page *page, unsigned long pfn,
-> > +					 unsigned int order)
-> >  {
-> >  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
-> >  		int nid = early_pfn_to_nid(pfn);
-> >  
-> >  		if (!early_page_initialised(pfn, nid))
-> > -			return;
-> > +			return 0;
-> >  	}
-> 
-> I found this patch on mm-new tree is making my test machine (QEMU) reports much
-> less MemTotal even though KMSAN is disabled.  And modifying the above part to
-> be considered as free success (returning '1UL << order') fixed my issue.
-> Because the commit message says the purpose of this change is only for
-> KMSAN-stashed memory, maybe the above behavior change is not really intended?
-> 
-> I'm not familiar with this code so I'm unsure if the workaround is the right
-> fix.  But since I have no time to look this in deep for now, reporting first
+On Wed, 2025-09-24 at 06:12 +0000, Avri Altman wrote:
+> > From: Bean Huo <beanhuo@micron.com>
+> >=20
+> > Move struct rpmb_frame and RPMB operation constants from MMC block
+> > driver to include/linux/rpmb.h for reuse across different RPMB
+> > implementations (UFS, NVMe, etc.).
+> UFS RPMB differs from mmc RPMB in several levels:
+> =C2=A0- 9 vs. 5 operations
+> =C2=A0- frame structure: extended 4k
+> =C2=A0- rpmb unit descriptor
+> etc.
+> And as time goes on, this gap is likely to become larger,
+> As mmc is not very likely to introduce major changes.
+>=20
+> Thus, you might want to consider having an internal ufs header - will sim=
+plify
+> things in the future.
+>=20
+> Thanks,
+> Avri
 
-With DEFERRED_STRUCT_PAGE_INIT we count totalram_pages in
-memblock_free_all() but actually free them in deferred_init_memmap() and
-deferred_grow_zone().
 
-So returning '1UL << order' is a correct workaround, but the proper fix
-should update totalram_pages in the deferred path IMHO.
+Avri,
 
--- 
-Sincerely yours,
-Mike.
+thanks, I got your points.
+
+In normal mode, UFS RPMB uses the same 512-byte frame format as eMMC RPMB,
+with the same fields (MAC, nonce, counter, address, etc.). That=E2=80=99s w=
+hy it makes
+sense to keep a single definition of the frame struct in include/linux/rpmb=
+.h,
+so both eMMC and UFS RPMB drivers can reuse it without duplication.
+
+The major differences only exist in UFS RPMB advanced mode, correct?
+
+For advanced mode, our plan is to introduce a UFS-specific header for the
+additional features (extended 4K frame, new opcodes, descriptors), so that
+UFS can evolve independently without breaking the shared interface.
+
+let's firstly enable UFS RPMB in normal mode, since its OP-TEE application =
+is
+avaiable in OP-TEE OS, the custoemr can use it simply. As discussed with Je=
+ns,
+we can move next step for advanced RPMB for UFS, is this ok for you?
+
+
+Kind regards,
+Bean
+
+
 
