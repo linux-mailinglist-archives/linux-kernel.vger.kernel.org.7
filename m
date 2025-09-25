@@ -1,218 +1,289 @@
-Return-Path: <linux-kernel+bounces-833442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB316BA1F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0726BA1F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5DDA1C017E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:28:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D34EE7B8CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE6F2ED87F;
-	Thu, 25 Sep 2025 23:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6442ED153;
+	Thu, 25 Sep 2025 23:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DwT+46v9"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013066.outbound.protection.outlook.com [40.107.201.66])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEE7kUMD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF5C2ECD05;
-	Thu, 25 Sep 2025 23:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758842867; cv=fail; b=hvj68TnT0/VzlVdYL2jlOgJJxBfRyBsuxWBDlPX57jnQ/yuYRdoaxVwrU3jinB82HRUqc0q386vfSHmcTNx7T0ifT7j5jpdDH1c5rhGspq5lnnLzL2nd5yZ2Yr0jaoqSu/4T9YoHUn760RIujxbTi81BgP+H6pKqp82Mz6Zf+I8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758842867; c=relaxed/simple;
-	bh=ZP/LMyOXa8nhj22UKHcP/CUmaCu/+g1bjouk1ZsSvHg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aZef4hi/cBv/wu+okvsI1VUOFs/XxLycAC2cosO97jIcd48OGJtHvmmg4CCJzpE+JQaaNHYicLmDpmPUO2J3+ILxBXtw/13PS0euq2zyjlqBhYwL2DIdOvYDa0QRp2Oo6x1EXS2nur4WM2iKjp4VxYFGhWstPielzZKFYF/yBL4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DwT+46v9; arc=fail smtp.client-ip=40.107.201.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qt9VEdUwQesg+7WEp0gqhgbyBZbTo3pzS7tkVftZjUfE7TMSHw3S01Fc8B+5gOZe/pFFgm96YtSJ7os2pKyc4gVJpHmJ9kpsbgtqEMmLnc3p3n5P7i4/cifjDRwT/WqdB/jRy3F22ZahXEQ4VvVrpQVwqWgU+ZNgk0MWVyEMc5IVYG7IAB651/JSloaVSec7Wb5WSsKqiwpOuhu8J8T4SjvSIXflXj3GDRFwv9KcB9SfW0egJQxQ4CdRhcAuWwWrC4kUD9kIB/AhDDtRHajUTc4dvbbyePV6at+nc1hyYPLyGsg93XFAn+kWENshDqHwa717TZbh6KOD1CJzYifojA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w2chXq+DKWvqgyNjBKLbGUiq213ejexhLM8WcaFB26Y=;
- b=A16j6NjbF++6uEBv0pLfp3Wx4SVtKcphwZHuAp+1nzjdEiaArTPh8t1ZVZFku3/BT/nmVgrZdxq/CMYC/bbYd+goWBkbw8lKLAEI2cCisX6AqklXkaJ21rnxIzIGq8Hj45ymNaDJoLPSfvDGCvLe5vJZUKEPUSODIQMjsrA3elBmYekLZwwID9ai5IZ35yZRhAPkjj9ECte09ZWFvJJHbAMOnjGjXkEztP2MY4ArFbP50kwOhbn4zAe7/OWJ51PMUWx4souKIsf/WWJhcjd9marp2qtXsODCyuQ0rdG8XoWFbwY8x+sRYRMXaS/6EcqsADu6ttWwAM+0YralQfO03w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w2chXq+DKWvqgyNjBKLbGUiq213ejexhLM8WcaFB26Y=;
- b=DwT+46v9MSkbAp5UhqwTlVgjEqtqxolX455b6L4nMqxza554l4r1dcf92swIANEzXg2S90ou92BR5mwwyMg0XNfG8cQVUcXhgfGhdAxa4dYSgfDGAleIu+4+SJyTh1FwL0FU8ojm0Wn0lm9kLy2LyXA5ZKZI1N6pk5vop9Q0TO+DowS6t7pYVWjq3etK5YiPCzQKfpQWMwNuqCc0fmZ1xBFGFh3t2VJdlwMhwZYAJbnU4G796gSFYc6spBlnaDLHSiNSZOqb1i3+J8n/vAOiGU3907FTx2Blkzd4/rWOquBMgb3BNyNYJd78w3v0F8Jnbimwt0tYAcnOP3E8T1UjvA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by BN7PPFED9549B84.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6e7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Thu, 25 Sep
- 2025 23:27:42 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9137.018; Thu, 25 Sep 2025
- 23:27:42 +0000
-Message-ID: <142cd07d-c251-463a-83b2-246d6af278d1@nvidia.com>
-Date: Thu, 25 Sep 2025 16:27:08 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] rust: pci: display symbolic PCI vendor and class
- names
-To: Alexandre Courbot <acourbot@nvidia.com>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20250925013359.414526-1-jhubbard@nvidia.com>
- <DD1JORQ8539K.1H5X1SIF7J3WD@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <DD1JORQ8539K.1H5X1SIF7J3WD@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0018.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::23) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D592EC54B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758842845; cv=none; b=O9esDmkG3vzpY6O6Qr7bKUEwss1Y0j6BeA7yq/rGOPsU7G3E+vstMnhH4Ta9RE3psupsfbVCNC9g3kJyh1ri5AOZ942K7XNGNRKKl1vIthimF9CBOYlQBYaugumF0jUaBfL1ivbok3UHhzzcBQ+laf85dy+kKV35/InkQy63HSA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758842845; c=relaxed/simple;
+	bh=drOGN/2SSppJuULVXhq8xBsiy4/uFibNLwTavAfIOWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuZNZn5/ITF+D4cDx8B+azPCC+7riO1Mg0CBqOJ5AoyIK3irMtWMDqZ5f3W8glmVBM6zrHfeqNIqn/23HMDTNNXwRLPaQMiGBZ5tPvwS9fLLhH3P50P4OGAqsuYcR0gAgfr2NAOYmfhhmaAjI3cC7dxUuX1h4DxSXMB8n1D+2J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEE7kUMD; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758842843; x=1790378843;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=drOGN/2SSppJuULVXhq8xBsiy4/uFibNLwTavAfIOWE=;
+  b=jEE7kUMDwM7kuqdm5EO0jC5Jdn0D3nuca5ZxIHg/gIvX7oEz4ZyXlGKd
+   02DgWMJ7MKiSfSSzHNOLBf04QWLBDf8cAfNoTdTzPt0J9Bz6QmmFF+8Bx
+   n8McpGbhvWZGhatpij6mnBVOx5lrccJF5NSCkvu6dbhEpbSVbTZbMSC64
+   r7hxWrtN3PbubYB0WJwowKfEaS/sIkrqYP0A0VaSlqUAwswXqo/0lCjQw
+   BV8E0fK3c9EiRnQ2Q1gCmIEWsIGM/xmg6ZQztdIO2c7u7NOnmR1GmzdCJ
+   MtNjfVjRyosp6WCRHrJTqABTS5etH8gpmPNL+sFQ4nbCrNcEu+5BasgRn
+   A==;
+X-CSE-ConnectionGUID: Hx6lc5UNTf64bINUkgjn9w==
+X-CSE-MsgGUID: EFBBuYrnQBqjXGXDG3StJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="71793956"
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="71793956"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 16:27:23 -0700
+X-CSE-ConnectionGUID: p+T+aV1+TjOS4Ucj/SAz7w==
+X-CSE-MsgGUID: 490zB1/NTwyc/BGbckgXWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="177395951"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 25 Sep 2025 16:27:21 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1vMs-0005jB-1l;
+	Thu, 25 Sep 2025 23:27:18 +0000
+Date: Fri, 26 Sep 2025 07:27:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Radu Rendec <rrendec@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [PATCH 1/1] samples: Add irqchip test driver
+Message-ID: <202509260730.o2TJUGJS-lkp@intel.com>
+References: <20250923232905.1510547-2-rrendec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|BN7PPFED9549B84:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61f164ca-7a7e-46c5-2e33-08ddfc8b1fe5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UFhMSXRuUXhNNDBkc0lacTJTcDRhZ3BFSnRhdVNIaTdVcjg5dTlzclB0RTFU?=
- =?utf-8?B?ZW5rRDlMWTU4azlzNmhpM2YxaWxXaUVrSHdMSXREczJ3SytjN01CNjJUN25X?=
- =?utf-8?B?VEJzOHU2Rlh2bThiWnBlOHNtbCtPN2ljYXlpODg4V0ZIbTN6TFVlOHgwT1NY?=
- =?utf-8?B?Qi80akQvLzdqeFpRR0ZQd21tNjJkUDRkRkhBamdnZHB2TWVBRDVwQmdQVGZ0?=
- =?utf-8?B?V09zeVhJS0lUNDkxMzVzMktvUTN3cS9tYzZFdmpyemIzcjRaZFVWMk44a3V0?=
- =?utf-8?B?ZGphaFp4RnJlOTRNWG5pTWtmdXJrWng3akR5VmZ5UjBaZkZYSGFtWFhpWE5o?=
- =?utf-8?B?TW53ZGk0ME1adGE5RWhkU2wySGpTc3N5SHdlYmpOMXB4eVZ1cmhZZ3o2NkJm?=
- =?utf-8?B?dFNZdzUzaXk3ZWJOUHNhQzRmcVczY1FDUVpzL3NRdy9pZFYrQlhJL3lCSUt3?=
- =?utf-8?B?aHV0WEtqcjMyYXVCMTBVS0JIZmtpNjdMb0dNVHRPNVpUZTJndnBjRFBUWVFE?=
- =?utf-8?B?bDM0RWpUaGU1Z1ZWUnlvbFc4MVJodHp1TXJmclFsODBoMHFRR29lT0hvN1Jj?=
- =?utf-8?B?KzhBbGZkTmN4TlJaMEl0Mlk2ZUYvMitRdXc5d010YThNMWpUUzQ2OWxCcWNh?=
- =?utf-8?B?bElkU2lFdkY1VmpHNm4zRUxXeUMyZGxETTVHbUMrSVRLbDEwSVVoajhXalRk?=
- =?utf-8?B?KzZNeHplbjlUTFlGUERyMFp2aEd3aG1pVXVDdTNCTVVHTDdGM2IzV25JYU5u?=
- =?utf-8?B?elowSEdLM042empVZHcvWlh4NU5jbWN3dCtmdUZ4MDFSZlJzWEZJNWVON09Q?=
- =?utf-8?B?RTJJcDJmaDFYbVpzblpCKzc4eDhvVTV3S25wa1Yrc0NYTUJOV3NMWWVwc3kz?=
- =?utf-8?B?c1lZYkdIbllWcVU4MzRhUkxINXh3Um1NR1V1WDNML210bW5nZUxBUnQ1bWFk?=
- =?utf-8?B?YkhFcVZOVE81T3g0Ny9qaFB0ZHlNVmRVcE8yWm9wbHFPcFdGdHpEeG9xKzhN?=
- =?utf-8?B?cGRvRnZ2aE1RdDFiaW9BRmh5RWNUNnVlMHBtS3VTajFXdnB0WkRYVTh5Kzkv?=
- =?utf-8?B?SXFsL2NoaEFuMFoybitTNm1zTFlRamRlSlloRzcrREhWY0d2ZUtDQ3JUMFlI?=
- =?utf-8?B?SC9zQUY1bTZDY2F5ZzRvUnZVQkNteHRSUG5VdTFIb0NaTTc3b2VOb1hUMGl2?=
- =?utf-8?B?UEZFN3RUYzdaRTZ0VVovODZqV0p6dCt6Nm1BcWlGTlplZ3pGWHZSMnk0UzRU?=
- =?utf-8?B?ZkQ1QmNneWFXb0djRXlpTDh3aWV0b3lyVkpYalNkQmowZFJTT2hmTmZnZnYv?=
- =?utf-8?B?MzNFTmwyc2R0Mnh6cWtJZ1IxVTA5b1VRQ0R1V2VjZEo4MmkyZ2ZoSGczM1la?=
- =?utf-8?B?dGZCWERJWXlhdTFMTHl5U2FjazZMT3FiYUdHcUd5MUU4WDVVbHdmdEErWFdH?=
- =?utf-8?B?MUtJNzREWU02ZzJJMXdyYzhtZ0tXOE43c21aYkpDWGVLUS9sUjdTL01vN1l4?=
- =?utf-8?B?aEsrdVhKVks4SXFrVDdvMUdaN21RbGVXUE9lQ2NRcFhRWnQ4R3ZDNkp3Ynho?=
- =?utf-8?B?NjJDMmJYcTl6MU5lNk1tZUt3UjY1c3JGckJoZjcrMllLUFdvK1ptVGovc3VS?=
- =?utf-8?B?U1lZWlA0azVtNEwzcVg4OHZaRTVRZnFtZ21XUG11WjRwcUxUUnJUNEplUDdN?=
- =?utf-8?B?ZjNaM3N2dzMwdkxoU2JEb3pjbjBoQWl3Skt0eDl2b0ovc2VjOVppU3JOSzFj?=
- =?utf-8?B?RXhrblE3Q1cvNW12WHo3TFdnR0ViZ0JUQVNuV3dZUnJTSnFKQXRQYndNaXY3?=
- =?utf-8?B?OCt4a0poREhIUzRNcGk1YW5BU0YyL2xYU29qMG02T3k5VUo2UHduMS9ZUXZy?=
- =?utf-8?B?OTVicTk3ZjJMMnkrNVJVbkpLaHR0M1B2dzRMMmMrNTd5UEp4Nk9aRUl0Wmgv?=
- =?utf-8?Q?dcpw/XZbV1E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZlRIQnB3Z1h6T3A2a0twWGdpOWpJSkhKM2x1cWhpSzYrMEsyd0J0aGFKbFkx?=
- =?utf-8?B?bjBCZ3lyVTEyVmpZYS9aQWYwUmZVVlRjUThHL2dnODZlWFBvbDVmdjRYcm9V?=
- =?utf-8?B?b250Uk9BMktzNHhSVHI0eUM3enpYNTQwM2loNE5PMkREUnBXWlRZUmllek5Y?=
- =?utf-8?B?bW1jd0JwZmdoNTNtOWEwZWFZYnMxWGlURDdaa2hKbWhwSTMrNGM5ZnRscVE0?=
- =?utf-8?B?SitBQmo3TFlzZDl4c0lwcFVQd3lrS2pJZTJRbDNuRFFpY0NlSGF6ZWczMDln?=
- =?utf-8?B?SklJYmZLYXRIVTcyRU42S2Zjc2FaYnpoRmlpa2VFTEtRbDZ0UzM4Rk1paHBP?=
- =?utf-8?B?R1F6WURCTHFSR1dQMTB3NGtkaDlFTFhXRG5IVnBPOEtxM1ltQVhBNk82TWtD?=
- =?utf-8?B?NnBEamVNNEt1TmZUczZIOW81OGpPMWMrNHpWYko3MFVZZXhaK2l0MlB1eTJj?=
- =?utf-8?B?STBiOHFjLzNkUk9yamZpL1l2VGtmRDVsUVllejcvWFFUa0s4N0VhQlVLaGdB?=
- =?utf-8?B?L0F1Ni9mYUxhcWFZTmJjUGRTQnJxb045SEJzcjNCemVBOHk1ZlNBeGd6OXBu?=
- =?utf-8?B?aWsrN0NmOG9ERlJVaWZnQ1dBOHdMWjVaZ0hFWnFTVTNKalRhbjlybE50WndH?=
- =?utf-8?B?cDFnclFqQVN1TzhlMVdXLytEUjZEK1hVYlBBendhc0pMRE1hVVlnWVIwbVJh?=
- =?utf-8?B?TzdDSXpYYkpvNnRndDJFK3NTaytWWDlLQXg0ZytJUndkZzFJUDF3aTlQaElj?=
- =?utf-8?B?bzVKanBrRm1BNTlQajh5b1BVakFZZ0dyK3VOeW5VdWtRTXNxVjZibVZGMVFB?=
- =?utf-8?B?Y2NhR1VKbkdRY0IyUUtSMzdMUTNFekUxQTVDd1FSL0dsY290MU43QWRHVzJa?=
- =?utf-8?B?UjVMMkNmZXhLNHdnM2IwL2lmNE53S1FjSGlkekJNWEtIMGhxVDFPdlFUbzBR?=
- =?utf-8?B?T3htTnB6cXR3dVJWcU1wMDVwYnJ6b0FuZHR0a1lRN092QUdlT1BrNzFPL3RV?=
- =?utf-8?B?SFFNUVFsNGhHRytUT3pzS0pFREFubitpYmJiMDQyVXg2VWtiWDdzZDh3NTBn?=
- =?utf-8?B?a1lOM0NDa3U5SXdFTW9vcGJ4bGIvNmdpdC9ibmZvOGdDNjYwL0dLWFRhemk0?=
- =?utf-8?B?N3orQ0Y5UnVJcHcwU1I2WWh4ZW9Wa1Bxb1lMeDUyMlVVTkpPdjhmM3ZuZUYw?=
- =?utf-8?B?eFVIcUlGa0dLcFAzN1M5MXdzbllKckEzREVLZkpDbXpIUTR3aWlCL3ZGNUdn?=
- =?utf-8?B?UlZsMzk4K1BrY2h2aXFzYUNQRVNyeXdqUWl6SkZkVUh6TzRsVnFJT0lVL1JS?=
- =?utf-8?B?UFBtenRnenZTZFRwcFp5SFJaTFY1TGZhQTJwSkk5Mnh2TGMyUUgvTWEwMzlt?=
- =?utf-8?B?NUs5VzdGdDJacW82bVVvOU9la095aWFVRkt0Z2VTL2VOQnVFdU9ObDlEb1Av?=
- =?utf-8?B?R3RSVkJwMUtHTmE1SlBYNHZvUms2Z3NQVGtNbmJ2U2pzOEk3c0tSS1ovek9s?=
- =?utf-8?B?ei9RT3RHSnV4UVBFa1FnbVd3d1F0Ryt3SGdxR09zcEZ5U1UrOHJqM2Jpbk85?=
- =?utf-8?B?TDZ0SnVzUTFScElKVmN1blo1Y2VoT1BHNzJWdXp3ZnY1anlCU3pXNUxkN2Zr?=
- =?utf-8?B?MWJabzVTNnhFYjNPeHg5VjFGSHA2dEZzN3k5K1krWFViYlpuek1wY2M1RmFW?=
- =?utf-8?B?Q2FYL2h5TXRnVjl4YUFHdnRzeExnRzJiVzFKaWY0bi9BS09PS3pQOTNrb1c1?=
- =?utf-8?B?ei9iUG5pODVqcTJyY3YrWXYwMWZpU1JvL2orTERLQ0tYVE9mSlJ6Um9TdnlG?=
- =?utf-8?B?aWxXTTJJOWN2TTBmWEVQUER3UVFoZ3NzRTJmN3lKUE85dEZFV2dtVk5QbEYy?=
- =?utf-8?B?TzdWTksremhESVhOUGJ5dVk5OGtpTk5VUmJ6czVDWmpYTzVkT1pVWUpOK3dJ?=
- =?utf-8?B?eksvVDZrNDIxaHVvWGc2S0VLVkljenQzTzBMVHFZRm4vZlY1T2dtdE5tZ2xn?=
- =?utf-8?B?TWN3NzRmMWY1dTFaYStaYkFNOE8wMWJTc2YzK0ErRWpwL2lVWDNlNWJwQjF6?=
- =?utf-8?B?dE5ZclhXeXhXWm11aXhLU2dTWjBGeThNaThjNmpqTmpqQUFmWGV3UzlqMW5Q?=
- =?utf-8?Q?KLB+cEWoaKuwC06MTADTd0f7/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61f164ca-7a7e-46c5-2e33-08ddfc8b1fe5
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 23:27:42.3844
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DFLkElZGJA7ieNjvQoaWSEr1I0n1/zXxKrBv+MCkycpE4+aPLhkJE2ID98JRGOlIKhIIQ7HP1YcQmDvTxGjxYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPFED9549B84
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923232905.1510547-2-rrendec@redhat.com>
 
-On 9/24/25 8:01 PM, Alexandre Courbot wrote:
-> On Thu Sep 25, 2025 at 10:33 AM JST, John Hubbard wrote:
->> Hi,
->>
->> This applies to:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
->>
->> It's a small follow up to these commits in that same branch:
->>
->> commit 5e20962a9fc8 ("rust: pci: provide access to PCI Vendor values")
->> commit ed78a01887e2 ("rust: pci: provide access to PCI Class and Class-related items")
->>
->> Danilo, I've added your Suggested-by to these.
->>
->> John Hubbard (2):
->>   rust: pci: display symbolic PCI class names
->>   rust: pci: display symbolic PCI vendor names
->>
->>  rust/kernel/pci/id.rs | 36 +++++++++++++++++++++++-------------
->>  1 file changed, 23 insertions(+), 13 deletions(-)
-> 
-> The series,
-> 
-> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Hi Radu,
 
-Thanks for the review, Alex!
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.17-rc7 next-20250925]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Radu-Rendec/samples-Add-irqchip-test-driver/20250924-073245
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250923232905.1510547-2-rrendec%40redhat.com
+patch subject: [PATCH 1/1] samples: Add irqchip test driver
+config: i386-randconfig-015-20250926 (https://download.01.org/0day-ci/archive/20250926/202509260730.o2TJUGJS-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509260730.o2TJUGJS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509260730.o2TJUGJS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> samples/irqchip/irqc_test.c:187:10: error: use of undeclared identifier 'irq_domain_free_irqs_common'; did you mean 'irq_domain_free_irqs'?
+     187 |         .free = irq_domain_free_irqs_common,
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                 irq_domain_free_irqs
+   include/linux/irqdomain.h:651:20: note: 'irq_domain_free_irqs' declared here
+     651 | static inline void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs) { }
+         |                    ^
+>> samples/irqchip/irqc_test.c:186:3: error: field designator 'alloc' does not refer to any field in type 'const struct irq_domain_ops'
+     186 |         .alloc = root_alloc,
+         |         ~^~~~~~~~~~~~~~~~~~
+>> samples/irqchip/irqc_test.c:187:3: error: field designator 'free' does not refer to any field in type 'const struct irq_domain_ops'
+     187 |         .free = irq_domain_free_irqs_common,
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> samples/irqchip/irqc_test.c:188:3: error: field designator 'translate' does not refer to any field in type 'const struct irq_domain_ops'
+     188 |         .translate = irq_domain_translate_onecell,
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> samples/irqchip/irqc_test.c:198:13: error: use of undeclared identifier 'irq_chip_ack_parent'
+     198 |         .irq_ack = irq_chip_ack_parent,
+         |                    ^
+>> samples/irqchip/irqc_test.c:199:22: error: use of undeclared identifier 'irq_chip_set_affinity_parent'; did you mean 'irq_set_affinity_hint'?
+     199 |         .irq_set_affinity = irq_chip_set_affinity_parent,
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                             irq_set_affinity_hint
+   include/linux/interrupt.h:404:19: note: 'irq_set_affinity_hint' declared here
+     404 | static inline int irq_set_affinity_hint(unsigned int irq,
+         |                   ^
+>> samples/irqchip/irqc_test.c:219:19: error: no member named 'parent' in 'struct irq_domain'
+     219 |                 .fwnode = irqd->parent->fwnode,
+         |                           ~~~~  ^
+>> samples/irqchip/irqc_test.c:236:20: error: no member named 'parent_data' in 'struct irq_data'
+     236 |                         virq + i, d, d->parent_data);
+         |                                      ~  ^
+   include/linux/printk.h:587:34: note: expanded from macro 'pr_info'
+     587 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                                         ^~~~~~~~~~~
+   include/linux/printk.h:514:60: note: expanded from macro 'printk'
+     514 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                            ^~~~~~~~~~~
+   include/linux/printk.h:486:19: note: expanded from macro 'printk_index_wrap'
+     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                                 ^~~~~~~~~~~
+>> samples/irqchip/irqc_test.c:237:3: error: call to undeclared function 'irq_domain_set_hwirq_and_chip'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     237 |                 irq_domain_set_hwirq_and_chip(irqd, virq + i, hwirq + i,
+         |                 ^
+>> samples/irqchip/irqc_test.c:256:9: error: call to undeclared function 'irq_domain_alloc_irqs_parent'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     256 |         return irq_domain_alloc_irqs_parent(irqd, virq, nr_irqs, &parent_fwspec);
+         |                ^
+   samples/irqchip/irqc_test.c:256:9: note: did you mean 'irq_domain_alloc_irqs'?
+   include/linux/irqdomain.h:645:19: note: 'irq_domain_alloc_irqs' declared here
+     645 | static inline int irq_domain_alloc_irqs(struct irq_domain *domain, unsigned int nr_irqs,
+         |                   ^
+   samples/irqchip/irqc_test.c:269:10: error: use of undeclared identifier 'irq_domain_free_irqs_common'; did you mean 'irq_domain_free_irqs'?
+     269 |         .free = irq_domain_free_irqs_common,
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                 irq_domain_free_irqs
+   include/linux/irqdomain.h:651:20: note: 'irq_domain_free_irqs' declared here
+     651 | static inline void irq_domain_free_irqs(unsigned int virq, unsigned int nr_irqs) { }
+         |                    ^
+   samples/irqchip/irqc_test.c:268:3: error: field designator 'alloc' does not refer to any field in type 'const struct irq_domain_ops'
+     268 |         .alloc = hier_alloc,
+         |         ~^~~~~~~~~~~~~~~~~~
+   samples/irqchip/irqc_test.c:269:3: error: field designator 'free' does not refer to any field in type 'const struct irq_domain_ops'
+     269 |         .free = irq_domain_free_irqs_common,
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   samples/irqchip/irqc_test.c:270:3: error: field designator 'translate' does not refer to any field in type 'const struct irq_domain_ops'
+     270 |         .translate = irq_domain_translate_onecell,
+         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> samples/irqchip/irqc_test.c:438:14: error: call to undeclared function 'irq_domain_create_hierarchy'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     438 |         hier_irqd = irq_domain_create_hierarchy(root_irqd, 0, NUM_TOTAL_IRQS_HIER,
+         |                     ^
+   samples/irqchip/irqc_test.c:438:14: note: did you mean 'irq_domain_create_legacy'?
+   include/linux/irqdomain.h:324:20: note: 'irq_domain_create_legacy' declared here
+     324 | struct irq_domain *irq_domain_create_legacy(struct fwnode_handle *fwnode, unsigned int size,
+         |                    ^
+>> samples/irqchip/irqc_test.c:438:12: error: incompatible integer to pointer conversion assigning to 'struct irq_domain *' from 'int' [-Wint-conversion]
+     438 |         hier_irqd = irq_domain_create_hierarchy(root_irqd, 0, NUM_TOTAL_IRQS_HIER,
+         |                   ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     439 |                                                 hier_fwnode, &hier_ops, NULL);
+         |                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   16 errors generated.
 
 
-thanks,
+vim +187 samples/irqchip/irqc_test.c
+
+   166	
+   167	/*
+   168	 * Parent IRQ domains *must* use the new API (i.e. alloc/free vs. map) to
+   169	 * support hierarchy, for the following reasons:
+   170	 *   - The child .alloc() function calls irq_domain_alloc_irqs_parent().
+   171	 *   - The irq_domain_alloc_irqs_hierarchy() is just a thin wrapper around
+   172	 *     irq_domain_alloc_irqs_hierarchy().
+   173	 *   - Finally, irq_domain_alloc_irqs_hierarchy() explicitly checks that
+   174	 *     the (parent) domain implements the alloc() function and returns an
+   175	 *     error otherwise.
+   176	 *
+   177	 * Furthermore, Documentation/core-api/irq/irq-domain.rst clearly states that
+   178	 * the new API must be used for all domains to support hierarchy.
+   179	 *
+   180	 * Note: The .free() function is also part of the new API and is mandatory but
+   181	 *       there is a default implementation that we can use. If we do not
+   182	 *       implement this function and .alloc() fails for whatever reason, we get
+   183	 *       an oops as the IRQ framework tries to rollback whatever has been done.
+   184	 */
+   185	static const struct irq_domain_ops root_ops = {
+ > 186		.alloc = root_alloc,
+ > 187		.free = irq_domain_free_irqs_common,
+ > 188		.translate = irq_domain_translate_onecell,
+   189	};
+   190	
+   191	/*
+   192	 * Since hierarchical interrupts are mapped 1:1 in all domains along the path,
+   193	 * CPU affinity is not shared with other interrupts. Use the parent handlers to
+   194	 * set the affinity in the root domain.
+   195	 */
+   196	static const struct irq_chip hier_chip = {
+   197		.name = "TEST-HIER-IC",
+ > 198		.irq_ack = irq_chip_ack_parent,
+ > 199		.irq_set_affinity = irq_chip_set_affinity_parent,
+   200	};
+   201	
+   202	/*
+   203	 * For a GPIO IRQ chip, this is gpiochip_hierarchy_irq_domain_alloc(), and the
+   204	 * ops pointer is set in gpiochip_hierarchy_setup_domain_ops(), called from
+   205	 * gpiochip_hierarchy_add_domain(). See full stack sample below in testirq_init().
+   206	 *
+   207	 * This function is called indirectly by irq_create_fwspec_mapping() through
+   208	 * irq_domain_alloc_irqs_locked().
+   209	 *
+   210	 * How to search for other examples:
+   211	 *   grep -rn '\.alloc\>' drivers/gpio/
+   212	 *   grep -rn '\<irq_domain_alloc_irqs_parent\>' drivers/irqchip/
+   213	 */
+   214	static int hier_alloc(struct irq_domain *irqd, unsigned int virq,
+   215			      unsigned int nr_irqs, void *data)
+   216	{
+   217		struct irq_fwspec *fwspec = data;
+   218		struct irq_fwspec parent_fwspec = {
+ > 219			.fwnode = irqd->parent->fwnode,
+   220			.param_count = 1,
+   221		};
+   222		irq_hw_number_t hwirq;
+   223		unsigned int type;
+   224		int ret, i;
+   225	
+   226		pr_info("[%s] virq = %u, nr_irqs = %u\n", irqd->name, virq, nr_irqs);
+   227	
+   228		ret = irq_domain_translate_onecell(irqd, fwspec, &hwirq, &type);
+   229		if (ret)
+   230			return ret;
+   231	
+   232		for (i = 0; i < nr_irqs; i++) {
+   233			struct irq_data *d = irq_get_irq_data(virq + i);
+   234	
+   235			pr_info("\tvirq = %u, data = %pS, parent = %pS\n",
+ > 236				virq + i, d, d->parent_data);
+ > 237			irq_domain_set_hwirq_and_chip(irqd, virq + i, hwirq + i,
+   238						      &hier_chip, NULL);
+   239		}
+   240	
+   241		/*
+   242		 * We're not done yet, we still need to allocate interrupts in the
+   243		 * parent domain. If we just "return 0" at this point, the upstream
+   244		 * call to irq_create_fwspec_mapping() fails with -EINVAL.
+   245		 *
+   246		 * By now, the framework has already allocated a struct irq_data for
+   247		 * each virq, for both our domain (hier) and the parent domain (root).
+   248		 * So, irq_get_irq_data(virq) and irq_get_irq_data(virq)->parent_data
+   249		 * are both non-null. The problem is that parent_data->chip is NULL,
+   250		 * and this fails the sanity checks in irq_domain_trim_hierarchy()
+   251		 * (called from irq_domain_alloc_irqs_locked()).
+   252		 */
+   253	
+   254		parent_fwspec.param[0] = hwirq;
+   255	
+ > 256		return irq_domain_alloc_irqs_parent(irqd, virq, nr_irqs, &parent_fwspec);
+   257	}
+   258	
+
 -- 
-John Hubbard
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
