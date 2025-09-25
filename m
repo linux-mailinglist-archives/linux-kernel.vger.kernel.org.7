@@ -1,138 +1,163 @@
-Return-Path: <linux-kernel+bounces-831978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C155B9E0F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:31:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08986B9E0FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07332384FDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:31:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B24FC4E24BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460812B9BA;
-	Thu, 25 Sep 2025 08:31:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D84A1E;
-	Thu, 25 Sep 2025 08:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F3F23E350;
+	Thu, 25 Sep 2025 08:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="T+IJyVVN"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422E4A1E;
+	Thu, 25 Sep 2025 08:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758789064; cv=none; b=a+Hhi0/dXUjcgJ/wv1DX2qd+66Hi7uJw9gnXFVLC3flU0fU7o8aN28GeiyDTJBFEDk7m9w63oHi1bkrzTvfCK/5ZWWfCckvkY2uVmPOzXshRbfovqdUPmtAhFjzb0kcR7AmTCbvFE7hz/5hcSd+zUTb867GH1+LgWOSq1hBcr58=
+	t=1758789101; cv=none; b=oNHphkNisc662ajEeMLzHTNUz9mroIIcJvLJv+Aiq2mVYgm2m7fW0Z/lJRoD1vNd93J+nnfV/6W5zaHsG9mGWz5ylLQsyIngihMGKNVIVS/enx6ufdU1e7pTo74cVfFmUVkt2sDD4Hnc3Y/d/J6KK41JjL+cqe6HXsYJEUbARAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758789064; c=relaxed/simple;
-	bh=+uJqoi3SYoxurYDCKXDjHIF1Tvq4+DywBDsjroC94+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZPSSeHNz9uJfghT4fypWl+k4rXIczLzPpntEnBINDj0kclq10HB27w/Pnxa7h5inJZ0gLjrGJbZLJDyJLAtz5Gs/L0SqIlr1K0XOyrvOO1Q9GEPkmcARuGmleT4SMJYIUprwWrq+JrlxaVeHbmCGIQm20KKPklh1gWhOWFM6lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF5251692;
-	Thu, 25 Sep 2025 01:30:52 -0700 (PDT)
-Received: from [10.57.1.72] (unknown [10.57.1.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B97F53F694;
-	Thu, 25 Sep 2025 01:30:57 -0700 (PDT)
-Message-ID: <331bea5f-cfab-49fb-87e4-7ec31523c2c3@arm.com>
-Date: Thu, 25 Sep 2025 09:30:55 +0100
+	s=arc-20240116; t=1758789101; c=relaxed/simple;
+	bh=yFYhkPuT/6A+p396/AaW7nUVSxNun1mpGc9c2AuPclQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UNmFUD/SvZc/CTlAAJ87H4CF6kgqfDD+O+DxdQRlVNZTKkjf7LDG+9FY27+IUNR2yLL2Q8u9AehrnJcuu1xjUZHxzLIuQmGSlBFVSOz5fKvRHsITOvtl7sYEQDXzhs1i1JYvWWH2G4bgGwyBd11Hy4GiQTZqf98rNm/a+BL3qt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=T+IJyVVN; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1758789091; x=1759048291;
+	bh=HpijlZHR5DUt6PmUIjo0upRoVIpNNUVq0oY9+LHi5f4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=T+IJyVVNaWWoXP4nthGqcQO5fwDpdXCD8l3nXgAWY6N7pVBlh5shN/8oaS/llryh6
+	 tK/BqU0hN3bjgNk/i5QivujHIWqKUJJAJYYCkBuW8INeB9duy5xnkbmF6E+fXVFBu1
+	 JOVAI1NyvnV29d6FmFDaKgMIAroUEdgCrj0fh699rGDUNnW4azEC8OtzKt1lvk4az9
+	 K07jeMkKbh3PdbNNmlQP4pVgztgoaqYJgUaIiEbjUtnbTp5VwvxRaMBEYkOZKkwXrF
+	 b66SLa0hP7l0NFObLLSesxnVTiuLhYeujnpA31e0QUAbcJFwHCfFKg6C1jdT2xJb/b
+	 i3GFQEY4CQQyg==
+Date: Thu, 25 Sep 2025 08:31:28 +0000
+To: Benno Lossin <lossin@kernel.org>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
+Message-ID: <aNT92mzGsXfOsg2j@mango>
+In-Reply-To: <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 870cca1f6b9d5e243eceb95fbee6f6457768dce3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
-Content-Language: en-GB
-To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
- robin.murphy@arm.com, ilkka@os.amperecomputing.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, mark.rutland@arm.com, treding@nvidia.com,
- jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
- sdonthineni@nvidia.com
-References: <20250923001840.1586078-1-bwicaksono@nvidia.com>
- <20250923001840.1586078-2-bwicaksono@nvidia.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250923001840.1586078-2-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 23/09/2025 01:18, Besar Wicaksono wrote:
-> Add interface to get ACPI device associated with the
-> PMU. This ACPI device may contain additional properties
-> not covered by the standard properties.
-> 
+Hi,
 
-Ok, but who needs this ? I couldn't see any users in the series.
-Did I miss something ?
+I finally found time to seriously work on completing this.
 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->   drivers/perf/arm_cspmu/arm_cspmu.c | 22 ++++++++++++++++++++++
->   drivers/perf/arm_cspmu/arm_cspmu.h |  9 +++++++++
->   2 files changed, 31 insertions(+)
-> 
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
-> index efa9b229e701..75b2d80f783e 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
-> @@ -1090,6 +1090,28 @@ static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
->   
->   	return 0;
->   }
-> +
-> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu)
-> +{
-> +	char hid[16];
-> +	char uid[16];
-> +	struct acpi_device *adev;
-> +	const struct acpi_apmt_node *apmt_node;
-> +
-> +	apmt_node = arm_cspmu_apmt_node(cspmu->dev);
-> +	if (!apmt_node || apmt_node->type != ACPI_APMT_NODE_TYPE_ACPI)
-> +		return NULL;
-> +
-> +	memset(hid, 0, sizeof(hid));
-> +	memset(uid, 0, sizeof(uid));
-> +
-> +	memcpy(hid, &apmt_node->inst_primary, sizeof(apmt_node->inst_primary));
-> +	sprintf(uid, "%u", apmt_node->inst_secondary);
-> +
-> +	adev = acpi_dev_get_first_match_dev(hid, uid, -1);
-> +	return adev;
-> +}
-> +EXPORT_SYMBOL_GPL(arm_cspmu_acpi_dev_get);
->   #else
->   static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
->   {
-> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
-> index 19684b76bd96..9c5f11f98acd 100644
-> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
-> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
-> @@ -8,6 +8,7 @@
->   #ifndef __ARM_CSPMU_H__
->   #define __ARM_CSPMU_H__
->   
-> +#include <linux/acpi.h>
->   #include <linux/bitfield.h>
->   #include <linux/cpumask.h>
->   #include <linux/device.h>
-> @@ -222,4 +223,12 @@ int arm_cspmu_impl_register(const struct arm_cspmu_impl_match *impl_match);
->   /* Unregister vendor backend. */
->   void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match);
->   
-> +#if defined(CONFIG_ACPI)
-> +/**
-> + * Get ACPI device associated with the PMU.
-> + * The caller is responsible for calling acpi_dev_put() on the returned device.
-> + */
-> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu);
-> +#endif
-If we need this, why not add an empty stub for !CONFIG_ACPI case ? 
-Similar to what we do for other cases.
+There a few questions that turned up for me, though.
 
-Suzuki
+On 250702 1303, Benno Lossin wrote:
+>=20
+> We shouldn't call this a reference. Also we should start the first
+> paragraph with how this trait enables the usage of `Owned<Self>`.
 
-> +
->   #endif /* __ARM_CSPMU_H__ */
+Did you come up with any  suggesting what to call it? `Owned<T>` holds a
+pointer to `T`. C++ would call it a smart pointer, but I guess that's also
+not a good name in Rust.
+
+>=20
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that:
+> > +/// - The [`release()`](Ownable::release) method leaves the underlying=
+ object in a state which the
+> > +///   kernel expects after ownership has been relinquished (i.e. no da=
+ngling references in the
+> > +///   kernel is case it frees the object, etc.).
+>=20
+> This invariant sounds weird to me. It's vague "a state which the kernel
+> expects" and difficult to use (what needs this invariant?).
+
+The whole matter of what exactly are the safety conditions here is a bit
+confusing, I find:
+
+- That the passed `T` is (and stays) valid is a requirement on
+  `Owned::from_raw`.
+- That `Ownable::release()` is called with a live and unused `T` is a
+  requirement for that function call.
+
+I understand things like this then, that implementing `Ownable` is unsafe
+because `Owned<T>::drop()` calls the unsafe `T::release()`.
+
+So the requirement is basically:
+
+- it is safe to call `T::release()` _once_ on a `T` stored on an `Owned<T>`
+  if the `Owned<T>` isn't used anymore afterwards.
+
+Not sure how to phrase that in a non-confusing way.
+
+I went with this now:
+
+"Implementers must ensure that the [`release()`](Self::release) function
+frees the underlying object in the correct way for a valid, owned object
+of this type."
+
+> Maybe we should give `Ownable` the task to document the exact ownership
+> semantics of `T`?
+
+> > +pub struct Owned<T: Ownable> {
+> > +    ptr: NonNull<T>,
+> > +    _p: PhantomData<T>,
+> > +}
+> > +
+> > +// SAFETY: It is safe to send `Owned<T>` to another thread when the un=
+derlying `T` is `Send` because
+> > +// it effectively means sending a `&mut T` (which is safe because `T` =
+is `Send`).
+>=20
+> How does this amount to sending a `&mut T`?
+
+Right, good point. I have to guess, but likely the reasoning was, that
+Owned<T> is a wrapper around `*T` and has exclusive access, so somehow
+equivalent to `&mut T`.
+
+> I guess this also needs to be guaranteed by `Owned::from_raw`... ah the
+> list grows...
+>=20
+> I'll try to come up with something to simplify this design a bit wrt the
+> safety docs.
+
+I added "`ptr` points to a valid instance of `T`" to the safety
+requirements of `Owned::from_raw`. I think this should imply such things,
+because a valid instance of `T` clearly has to be Send/Sync, if it is
+implemented for the type `T`, no?
+
+> > +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+> > +
+> > +// SAFETY: It is safe to send `&Owned<T>` to another thread when the u=
+nderlying `T` is `Sync`
+> > +// because it effectively means sharing `&T` (which is safe because `T=
+` is `Sync`).
+>=20
+> Same here.
+
+Isn't it okay here? All you can do with an `&Owned<T>` is to obtain a `&T`
+from it.
+
+Best regards,
+
+Oliver
 
 
