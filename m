@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-831900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B01BB9DD76
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A149AB9DD7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CD91B233CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9783A6CA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE212E7193;
-	Thu, 25 Sep 2025 07:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16C82E8B76;
+	Thu, 25 Sep 2025 07:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXhrS+Np"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D75B2BB13
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Ozzw1ei2"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027921917CD
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758784861; cv=none; b=iDiQM+YEB+9VFgC+JaVcEHVNibHMPd4S18/Yvbc8ERWF8qPtYxFNgpW+K1Oy8PHUvaxXmzFIxYu/P8cp77aFAjjKrErjQ6wlBtAOUJfRp8KAj29l0z6g4BnrYp1ILOKDoP8ZHXy18YRfDw/8FIqeJT6QU07DoTMzb0DdLOE05Lc=
+	t=1758785077; cv=none; b=rwrHAipid4Xzfv9izasnckw3SeM1LHkpndNSRJ866MZbwuEqKiEUz/gH2/VHPYYtJ+zQiL9WCCrV+AchciWA/5BRPoDEVkX6YkgR+mJHdSCecCJICKPfRKjtQKqAGEgh7viLad8YzCkdsMPNw7HCbrKtcm20OPiHuSoX3HOmck0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758784861; c=relaxed/simple;
-	bh=jvyoCWMpgS5D9iwfX/HzulNvpEIivhHRZX6iVNM2pSc=;
+	s=arc-20240116; t=1758785077; c=relaxed/simple;
+	bh=gXkC48jZEfx26QB8BC/bIEiwPwA7tHHefTHOyazdGUI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SemV0LPSaAncsFAP6LjIxtq7tiBOskaB+ZtEOxwARso4U8Ojl7F30hoPHp/le8cMArzt2gOAAyqCn3Jm1EwMulEQJp/ymEwNxuTlZwyiE4FGN3zE6nCXMbYGYa8o8U+doz51YBkSNyGQMS14YOZAxlKg5TpodgmPtm8QI/CZfFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXhrS+Np; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso452820f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758784858; x=1759389658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GK9C8KtH9+DmOnUEwg3Z7jsK5ZGy4qBPWOBOcMNRJw=;
-        b=VXhrS+NpDcrGky9yv6X4TvGd8qCVzJe9VqoFhw3LgVo03Eph9qY5D7Hp06PJD2pwbS
-         eLVbRHZMgIWxfcbKQ9TL1wHNt1fcRFqWNaXYKmIRvqQw5BBxFbFyFL7dWfZlAa3gfn/L
-         cEEInTbeKovSLTpcMpEoHY468bKjdxbtpltsBazte8p+Qt0Wa6jaPHvzmo4U6t0J9iB0
-         EolQhM8QCelGbCgX1curvg7glQEQhQgJl9ieehSSiWfnHZLa5Iv6TMTDhATMaYei7tam
-         0LETtm8DyTXEv6cyN5PqblPjTkF9KAslKxXdwNjSHrSetq+6qIKEL0k6bvnV3ef11fPx
-         ZWIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758784858; x=1759389658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5GK9C8KtH9+DmOnUEwg3Z7jsK5ZGy4qBPWOBOcMNRJw=;
-        b=hLbBwpDBZLY/QmUAyW/czlM1s+kQvlf1H3pQvm+SDW66VzcnjHDsahV3MxMRs6dVVS
-         GiMJB94BqUeuitTY28Z6Y8Fjs1WtkiL20SxvnB9fbpgqz6jIYlfDSC0/fYXeVT0H5FFa
-         beYRKMZgRd8tUA0M3V+CcQ/ThFY11nqhv+D7BoJ+IuCqpw8fSLaHC1T8RjKYlyJPSU7S
-         VF4QwCIrKo6lVLFxj3Hjo+9Cng6WNpIh3RXAPNLdt9PMkkFyMukL1r/2uDjBMAYk3FWn
-         bQw0sBw5CRtwdkW95fORhMfvoIJdfSBUu2Uj2XQ/VIz06JK4irLfyj06QAkso3Jzhvuh
-         Qc7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlHwrXnzl+4dhHyQbi8409lMtzVXtEmrE+qutBD688x/z28oBsbCvGULEELeo1EewxxYIGKB88j92O3Pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7UFDeDxr9VMsaF2jsdme9q0aPUokgKCuqlbVPMhWQRF1QupUZ
-	DBIAgxNRLr+xYr8MV4qsUpnbkUaVhZEptsVMixb8qGDfbjKU71Q/ynQ7pJ0pjwmk8tqhAA==
-X-Gm-Gg: ASbGncvikwS1rkSirw036F8ML0ngDaI/hdbYx//dniaX4GvDYMHwckXjHBk2gP0rxID
-	mza8W5w55r2j/QPFdlqURXsgng9Qj+b705LlaMSmsPJVELlmsUjRLuHvB5sMcSLn0tc5Vxv/a9M
-	mtC7QWojX6mELWcuK6jSCAczJ5CbhhcaNfsLpIGsb3s0ubonE36qUtt5zX+iyfcM5Bk5WiZalsP
-	GWZwJwRiQKLZ2FoJtJLcxqS0QHmqPRPzqIsJJRaphx5/SEQotN6i0A5rEwdQciwnjxmE88d4xHD
-	LAfYwj/Z0JOo2B6nWl9JaIqy9p1iLrwH9wKbPSK7OIabwaVZenlMfkTbY6SFj9zWljdMJmSuSgv
-	IySaIzZajuTkaHF1oMJadBugqOVvOVxMyPkS/zqzHbpA=
-X-Google-Smtp-Source: AGHT+IGZPO/i3EVx1oz0F6ZoZjaPP23o7cGrNgiXJrqYKEIkHenYM007xkUk74i7Lp80iQ9soiKOCA==
-X-Received: by 2002:a05:6000:3102:b0:3ee:3dce:f672 with SMTP id ffacd0b85a97d-40e492fdc2emr1826364f8f.4.1758784857530;
-        Thu, 25 Sep 2025 00:20:57 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32c10823sm12335125e9.3.2025.09.25.00.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 00:20:57 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:20:55 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: alexandre.belloni@bootlin.com
-Cc: Jorge Marques <jorge.marques@analog.com>, Frank Li <Frank.Li@nxp.com>, 
-	kernel test robot <lkp@intel.com>, linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: master: adi: fix number of bytes written to fifo
-Message-ID: <5cwo5whsjmyruxmx4kl4opy6qylzzyoodeyqubgpxnlzcgd3ik@2n3gbz5dqtdk>
-References: <20250924195600.122142-1-alexandre.belloni@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Br4cX9+rAg209dqd0cyU6vBW3AmtEPIdjv+Kpuchx6AOvVMAkILGJMKUdkPSupXIDY6jRol4vbfZ0Ua8u6tcgWruzaPNM3GdhEspYv7S7uF7aDXrLHBUG4ARzHndj9Kp3nZaC8lid25SjNUzVoBRc+kCaA068cwSElbaf628nm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Ozzw1ei2; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 0809014C2D3;
+	Thu, 25 Sep 2025 09:24:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1758785068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WI9AYV+82PBrcw5NdTsFHSifmbsZ04mfKgfiRuz3TZk=;
+	b=Ozzw1ei2SNuqyisGytcqz4ZhjWAL1KKfd1OmmmVBBO3OSSnzN1fzP/X64c0kA7v3oDzv3E
+	W9par3r/fRtikXfQZEJ0wa8LFTX6yimExg3OLgxExYszVqKYaiqtG1KC3LSQAahjbzx/NH
+	1e9j9sCloCpm1pA4TuVNq/qmAB6jvSrYC88WjediT23kZr/OW3sO9wsmJc2JwQLzcDwUr4
+	GqerXuEt6wUupmmkgwRKQZy+txL1Li5/OagDOnW2fpqLISSiwKVxyo99QenUB+0AiDPt8+
+	VK1+nu+3+tf+XwzFfsgTViiCp2414zdXoKIvTcnSWFlCr4cQhibliAg726BGzA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 0d3338cf;
+	Thu, 25 Sep 2025 07:24:24 +0000 (UTC)
+Date: Thu, 25 Sep 2025 16:24:09 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Edward Adam Davis <eadavis@qq.com>, ericvh@kernel.org,
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+	lucho@ionkov.net,
+	syzbot+30c83da54e948f6e9436@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [PATCH next V2] 9p: Correct the session info
+Message-ID: <aNTuGdJwihpa3Ixh@codewreck.org>
+References: <tencent_074BFE748F778366103D0B36E0971837E809@qq.com>
+ <tencent_85467F89852EDEEEF58C8F67D446F592F106@qq.com>
+ <aKlg5Ci4WC11GZGz@codewreck.org>
+ <1edd88ee-30a8-4cfd-aa88-c181c4ab3f48@redhat.com>
+ <aNSmO8iou5dJ1VHq@codewreck.org>
+ <45072767-8ed5-4abc-895b-9a4f5429bd3e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250924195600.122142-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <45072767-8ed5-4abc-895b-9a4f5429bd3e@redhat.com>
 
-On Wed, Sep 24, 2025 at 09:56:00PM +0200, alexandre.belloni@bootlin.com wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Eric Sandeen wrote on Wed, Sep 24, 2025 at 11:29:16PM -0500:
+> On 9/24/25 9:17 PM, Dominique Martinet wrote:
+> > Using a different struct tailored for mount options is certainly more
+> > appropriate if you have the time to do it, but as long as the risk of
+> > accessing "the wrong one" goes away I'm fine either way, so if you think
+> > nulling fs_private is possible without too much churn I think that's
+> > good enough.
+> > 
+> > What do you think?
 > 
-> adi_i3c_master_wr_to_tx_fifo computes the maximum number of bytes that can be
-> sent to the fifo but never makes use of it, actually limit the number of bytes
-> sent.
+> I think that in retrospect, (ab)using the full v9ses was a poor choice by
+> me, it clearly caused confusion (for me!)
+
+I definitely won't complain if we get a dedicated struct :)
+
+> > My reading is that we need it, because the super block isn't the fs
+> > context, and we need it for v9fs_umount_begin (it doesn't help that the
+> > field name is the same between both structs, and that some super_block
+> > variables are just 's' and others are 'sb', but I think that's the only
+> > place where it's used)
+> > 
+> > At this point these are both the "real live" v9ses so that should be
+> > fine as far as I can see.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202509190505.fKGvEJRa-lkp@intel.com/
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/i3c/master/adi-i3c-master.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I said remove because sget_fc() does s->s_fs_info = fc->s_fs_info, and
+> then v9fs_set_super essentially does s->s_fs_info = fc->s_fs_info again,
+> so I think it's redundant but I'll look again when I'm less sleepy. 
+
+Ah, I had missed the setting in sget_fc() -- you're right, we should get
+rid of the one in v9fs_set_super()
+(or actually, get rid of v9fs_set_super altogether and pass
+set_anon_super() directly to sget_fc())
+
+
+> > Now I understand the lifecycle a bit better I can have another read with
+> > that in mind before merging, and we can do the nulling fs_private or
+> > other "make sure this bug doesn't come back" later if you don't have
+> > time, I'm leaving this up to you.
 > 
-> diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi-i3c-master.c
-> index 18597ba1f1c3..82ac0b3d057a 100644
-> --- a/drivers/i3c/master/adi-i3c-master.c
-> +++ b/drivers/i3c/master/adi-i3c-master.c
-> @@ -135,7 +135,7 @@ static void adi_i3c_master_wr_to_tx_fifo(struct adi_i3c_master *master,
->  
->  	n = readl(master->regs + REG_SDO_FIFO_ROOM);
->  	m = min(n, nbytes);
-> -	i3c_writel_fifo(master->regs + REG_SDO_FIFO, buf, nbytes);
-> +	i3c_writel_fifo(master->regs + REG_SDO_FIFO, buf, m);
->  }
-Reviewed-by: Jorge Marques <jorge.marques@analog.com>
->  
->  static void adi_i3c_master_rd_from_rx_fifo(struct adi_i3c_master *master,
-> -- 
-> 2.51.0
-> 
+> Sounds good. Thanks again, and sorry for somehow completely missing this
+> thread earlier.
+
+No worry, I should have re-sent a ping earlier as well.
+
+> (Assume we've missed this merge window by now, so I probably won't rush
+> on this but will try to do it sooner than later.)
+
+Alright, I don't think we want to rush this, so let's get this next
+cycle :)
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
