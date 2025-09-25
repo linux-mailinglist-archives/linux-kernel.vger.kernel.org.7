@@ -1,167 +1,169 @@
-Return-Path: <linux-kernel+bounces-832830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C73BBA0838
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:59:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55691BA0845
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB28188BF5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:00:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE777B405A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8589F3054F5;
-	Thu, 25 Sep 2025 15:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421643043B0;
+	Thu, 25 Sep 2025 15:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoYNbEM5"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="fafCsRUw"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5730A302760
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B682EBBB8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758815966; cv=none; b=eSdMsygyw82R9VaDiCs9K4Bxp5MwzhX9xe5tXJ55qS5L0iuYxaHqmIGBim5voypfxzbNER0Vw/wLJMWW9Dh1QfZ5DMncBAVynqYSXFWo9M5XWzsb/z2p3TZCKjSsA15L4jIYQEx24f40rCr+50ZN4r34jGgW/Ft7p3YPEEUd8rA=
+	t=1758815995; cv=none; b=ojrNaBbAuawBOEjN4os2XXK1s52/BMwvuQD3s9NbHr5BvTNLIgIFsecPajrnUOuEqsUaxd3yeB3+GuogF0vcK8wU3wZoTefEpEPthFOqkBxAFxdCqTQLEKFiQQ/Xq5VU7I3qRx6UeCDTyKXXQXLm0bF6noQCslVtqmRSxDDWEd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758815966; c=relaxed/simple;
-	bh=2eZlHWvOxIgL3EbW7gHH6le+1fHOsCXZEgZKoMQwuOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LW/xd44iQZqdihWsBLfzHr9yDLTnPUEWUBTbzYpgTDr8+Es29Hz4vx+OXHA+I4y3nPNfDm3wZHRQ8cSZjQ/ULMPgp+PnGx1Zh0htOORZvUZXdjjTcKSV99dzBUddGrYRgRleTbalS4vmv4xyfpGPr8qPyisZ7dCSEJgqVwUC6Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DoYNbEM5; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77f32d99a97so1172706b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:59:25 -0700 (PDT)
+	s=arc-20240116; t=1758815995; c=relaxed/simple;
+	bh=WAe304FWHEAyw7CqK4KrU6asr7XLuQd7BTQEDpcK5nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B0ebUDvEYyjyMiN8lu7EYNffV3m77XVXIKSPXJFltNttfv5KkCYei3uJZHU393gZtDixibHzFAX3aj7qDjFvPFy7t84xom9faEfM2vv9lvK6DLqPx2ydxBdveEN6t426i55OQsZ9+jY42ZWSe0wkVrULOE2mCbFU+6ePQeDzrRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=fafCsRUw; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77f198bd8eeso920817b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758815964; x=1759420764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0haNpnskPhHv+Hqq/prkArlkxvbNwI7IdrC7Jtj5DeM=;
-        b=DoYNbEM5TpV3Z17OMjOy0uqsyvDFPyTPoxJtD1dejAxtus7VVtREu/92QrEICzDkak
-         XXHXWYZEGsj8SojYj8cs+ADE0O0xLL8+UmwqzvENiIpKQDxYGu6SomHWrffZEBP4dcek
-         reXpACfda0+NllIHbcuELyWIu6iUwFchCkquLQ2Y7JaAc9WgqDkUcsA6cESIu2CMp69d
-         kArKgaYRi8NKfSg/UidWeR4WC8difCzB2ERHOvDaASUPTfT6eUsNQuj3J9JI8pXI9p/x
-         MvVf/xn0SE64gdKi/I/WJohf0+W2Nxz7III1vOIcijBlUX7agCOSgaLQepFc7z2b9GfD
-         YCZQ==
+        d=purestorage.com; s=google2022; t=1758815993; x=1759420793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5XBEq8QoZNrsUfm/LIlDnw2hOYxn9vY9Sj8fl398cE=;
+        b=fafCsRUwq7m4AV115+nrwrhdLT2d/KMe9L1emObNRLmtv9xPQwV2DSXb3ZzaJ2OiEs
+         u07T9RRgGFYGE0VJnS09j6ulM5F/lao2hC6agJR2fq7c17kq9hvIvpr4D15uuOyqhp0t
+         ivsjHtiMY9ttaa87Br+td+QMyOjcdW3/AWod2t2t5Z91ByqOz4kdK8kMCBesUjgQwrxZ
+         Y5v7NqChtQIwhIlLmZbZDOX0I6IHyVrxYW5QpUHC1hV4OjHOOPDxK8IQiw7GN+FYutsY
+         WtN7iJ8lObiCnCQv5oj8Ard4jOyzFzT3GaaeA78LcC5GTmgBEPjOwqZUG8Ha2jkr0hOg
+         SSsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758815964; x=1759420764;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0haNpnskPhHv+Hqq/prkArlkxvbNwI7IdrC7Jtj5DeM=;
-        b=gXj9SzL7iJpuD1Lq/eN6u3HZFTipkoLQzWIExJcnZ+K867XWNrnKXHSHEyRHRh4o9+
-         1mAzszpTxKfpn3VW8ur6oC0wUiLBRQA1P20jzpoVvOSyjAJ9t1UsD9u4hzP4PTkHu3IF
-         rsnqot6gpHUO9Y3dKhzqBTFFFmJdK/Zxyh6ExVxk3n6oVbAYR5clAdbMsBm+wo4rIl/2
-         y1wGfAj18FfgCs23G30OTM5LCNR0riiDzvlDu8CJG2FXg1YgWClPzcXU2WvWxUAZUd1/
-         jnes1dmlZ44+++trtoFc8HVTZcQYmCee1meZ0voZ83jZP+jfwz1coW74SdusRnet1h+j
-         e9WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLTfxUNg2ZnJa72b7nzou5OiIqZ49jAT4PjpdBZZ40C8y8ntyXwyvKEX5LnQJOEwLh0LZzVxcflUJYmBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLY1B01zPq0trpky1LCVx19jkiUFOGU+D7xWYdoA6alQCcKASn
-	OgNbrF7bcbbssfehQztA9vLGT37KIoLMtp364Vys5B9WXcZzAOln4A+L
-X-Gm-Gg: ASbGncuBluswTuIEhuUdMxE8TwiR70deKEGng8plFq7IE86ILnoqt+pcm/aTdz3XWY+
-	JVkM/JGQBthl/dgOExlKeAjsl9pGLQYc0lzM3eVAbE/dpfCrLQZCB6Gcv2ATLPJpoJieJJAcfoa
-	n6TCaQRnsOO3bzE5LOj1/qlqyqBX9yAQ90ULZ/6chmnXNPm8l4+7+cJlSA+BHxz8Zu6CXKoMGxQ
-	9iDYFht2tdoAr9Wvs7t6PQ21eOBJSOXCSrnEspcJR3Ty7ex+oygmXg3dwuilPTJODbgPp+kb5NB
-	9a3ZTiRc5qHSUkxEDWIhoLk1xkRwHOkr4Q4d1zblnrGRwF9UI5q80NcDptUUl03pdxIhO9UnP+v
-	g8xiqQ/a5oR7Q400DRl6I7WK+9hYUvVuONxwfnyvY8HyzIfBXFYq1dU6hpW9+vZjy+Mne60Z1Rx
-	DyQnft3HDiy1GQ
-X-Google-Smtp-Source: AGHT+IEhAQcRgo74RGno0MIUNQs86Uz784EwSabYzAQVGz1THpiA0aDqQT0LiijW0GN3h3wpllQpcA==
-X-Received: by 2002:a05:6a21:207:b0:2ed:997b:44b5 with SMTP id adf61e73a8af0-2ed997b52c3mr1885758637.37.1758815964344;
-        Thu, 25 Sep 2025 08:59:24 -0700 (PDT)
-Received: from debian.domain.name ([223.181.105.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238cafasm2320354b3a.4.2025.09.25.08.59.17
+        d=1e100.net; s=20230601; t=1758815993; x=1759420793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5XBEq8QoZNrsUfm/LIlDnw2hOYxn9vY9Sj8fl398cE=;
+        b=eFVyPZ/ySeCicFTWnPgkb8gFiALNYzaZOn1ZWexPnOzgrRHJXgkTQzS8aJ3Vt6dmGT
+         /24QrliJA+bSAmoSMmnd+8i1WreQGUZPYYJhc/5NVHUoyZbCcji6UBWGxPP/Al7tdYcR
+         JmGsZ+qLnd2Ti11bOxbkxqqv4a/QMZbES2vI0UxW8N+HsJpSm9dhRkDG1NiJZWTP2rhS
+         eMU6ySQM0MyXAT9/zAdFu60qeIl+vtvSaUHgLs8p0RTqhH1Gug380YFJKL/dz5Etu7bz
+         l/cFRz71LBjs6UId7TuyLp0sqDJVKhp3djXpwk5c9Jv+ILvg9qBhX2abIyM7BFfUbrut
+         LsPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbR/yluNAqJN09YBiMhijmJt3LPbFTyKpzl+Xu0ZlFN6ANMFR/MZC/trnWbqF5aGe4l9RyYV/Qi6vEd/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0qXMPWfmjq0YekAnDD1XFtJfom9kQ7iMXXiZbuKzEfQtdB1Hk
+	W5NMAmVV04T92FRYFdB3z6hWJDxJXNYxy0/rb86jR5wPd+K0+b5IgPCxSm5Yu/BEkME=
+X-Gm-Gg: ASbGncsaBlB9tI+AIcCUdMYMZqxw+1pT8SMCzIjq9HzDQ44C8xU4bkSWWiFDy8P7Nnf
+	ySVNS0gxfDBrqc8aS8RAy513C0/Qg438H+12d3eqUgUJBag64p4YFOFAaQOXu5mSS0a4djpi3Vg
+	xesmV3wcg/ncb05rjvCiSyQ1j5Jw/TKtj/n8ki0eZz1a6EoImqM6arkxOWJizdN/AguRJzVXPeL
+	6B05HwFd6wJsufaammYtD0NYnUO8Wu0vyCRdSpHP8BOPbcKfvGYOpEdy8eAloRI9OPX03nwhXQ7
+	EeIQZ51WiSdGmwu4ldvfaGdiNx3BLE5xaR5sFH/s6A/QWp7N58Zo2Xk6lxkWcsPOguVmTXSa4iW
+	5yD/FhvnjPUf+BU8f+Pk5inDK2E95
+X-Google-Smtp-Source: AGHT+IE3MC+4196hdWgsoD1Z2JwahZdWiuJ/E8gO1X15jtnyZAibsQAfl1r6vLcaWOJ2ok+XUXafKg==
+X-Received: by 2002:a05:6a20:7f97:b0:2cb:5f15:ebfa with SMTP id adf61e73a8af0-2e7dab12a8dmr3887775637.60.1758815992627;
+        Thu, 25 Sep 2025 08:59:52 -0700 (PDT)
+Received: from medusa.lab.kspace.sh ([2601:640:8202:6fb0::bed8])
+        by smtp.googlemail.com with UTF8SMTPSA id d2e1a72fcca58-78102b250bfsm2310854b3a.61.2025.09.25.08.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:59:23 -0700 (PDT)
-From: I Viswanath <viswanathiyyappan@gmail.com>
-To: richardcochran@gmail.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	david.hunter.linux@gmail.com,
-	I Viswanath <viswanathiyyappan@gmail.com>,
-	syzbot+94d20db923b9f51be0df@syzkaller.appspotmail.com
-Subject: [PATCH net v3] ptp: Add a upper bound on max_vclocks
-Date: Thu, 25 Sep 2025 21:29:08 +0530
-Message-ID: <20250925155908.5034-1-viswanathiyyappan@gmail.com>
-X-Mailer: git-send-email 2.47.3
+        Thu, 25 Sep 2025 08:59:52 -0700 (PDT)
+Date: Thu, 25 Sep 2025 08:59:50 -0700
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Amit Chaudhary <achaudhary@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, randyj@purestorage.com,
+	jmeneghi@redhat.com, emilne@redhat.com,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] nvme-multipath: Skip nr_active increments in RETRY
+ disposition
+Message-ID: <20250925155950.GA4013-mkhalfella@purestorage.com>
+References: <20250924224319.4557-1-achaudhary@purestorage.com>
+ <aNR4m9wrO5cgFZIe@kbusch-mbp>
+ <20250925011427.GC3269-mkhalfella@purestorage.com>
+ <aNVVIP3WE7POT498@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNVVIP3WE7POT498@kbusch-mbp>
 
-syzbot reported WARNING in max_vclocks_store.
+On 2025-09-25 08:43:44 -0600, Keith Busch wrote:
+> On Wed, Sep 24, 2025 at 06:14:27PM -0700, Mohamed Khalfella wrote:
+> > On 2025-09-24 17:02:51 -0600, Keith Busch wrote:
+> > > On Wed, Sep 24, 2025 at 03:43:18PM -0700, Amit Chaudhary wrote:
+> > > >  static inline void nvme_start_request(struct request *rq)
+> > > >  {
+> > > > -	if (rq->cmd_flags & REQ_NVME_MPATH)
+> > > > +	if ((rq->cmd_flags & REQ_NVME_MPATH) && (!nvme_req(rq)->retries))
+> > > >  		nvme_mpath_start_request(rq);
+> > > >  	blk_mq_start_request(rq);
+> > > >  }
+> > > 
+> > > Using "retries" is bit indirect as a proxy for multipath active counts.
+> > > Could this be moved to the mpath start instead, directly using the flag
+> > > that accounts for the path? This also helps to keep track if the command
+> > > gets retried across a user toggling the policy to "qd".
+> > > 
+> > > ---
+> > > diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> > > index 3da980dc60d91..1c630967ddd40 100644
+> > > --- a/drivers/nvme/host/multipath.c
+> > > +++ b/drivers/nvme/host/multipath.c
+> > > @@ -182,7 +182,8 @@ void nvme_mpath_start_request(struct request *rq)
+> > >         struct nvme_ns *ns = rq->q->queuedata;
+> > >         struct gendisk *disk = ns->head->disk;
+> > > 
+> > > -       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
+> > > +       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD &&
+> > > +           !(nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE)) {
+> > >                 atomic_inc(&ns->ctrl->nr_active);
+> > >                 nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
+> > >         }
+> > > --
+> > 
+> > 193         nvme_req(rq)->flags |= NVME_MPATH_IO_STATS;
+> > 194         nvme_req(rq)->start_time = bdev_start_io_acct(disk->part0, req_op(rq),
+> > 195                                                       jiffies);
+> > 
+> > Doing it this way might messup with stats accounting because the two
+> > lines above will be executed on request retry. I do not think we need
+> > that, right?
+> 
+> Yeah, but we can use the other flag to know if it's already been
+> accounted:
+> 
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -182,12 +182,14 @@ void nvme_mpath_start_request(struct request *rq)
+>         struct nvme_ns *ns = rq->q->queuedata;
+>         struct gendisk *disk = ns->head->disk;
+> 
+> -       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
+> +       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD &&
+> +           !(nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE)) {
+>                 atomic_inc(&ns->ctrl->nr_active);
+>                 nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
+>         }
+> 
+> -       if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
+> +       if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq) ||
+> +           nvme_req(rq)->flags & NVME_MPATH_IO_STATS)
+>                 return;
+> 
+>         nvme_req(rq)->flags |= NVME_MPATH_IO_STATS;
 
-This occurs when the argument max is too large for kcalloc to handle.
-
-Extend the guard to guard against values that are too large for
-kcalloc
-
-Reported-by: syzbot+94d20db923b9f51be0df@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=94d20db923b9f51be0df
-Tested-by: syzbot+94d20db923b9f51be0df@syzkaller.appspotmail.com
-Fixes: 73f37068d540 ("ptp: support ptp physical/virtual clocks conversion")
-Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
----
-This can be reproduced by executing: 
-
-echo x > /sys/devices/virtual/ptp/ptp0/max_vclocks
-
-where x > KMALLOC_MAX_SIZE/(sizeof(int)) which computes to 1048576 on
-my system
-
-What would be a reasonable value for PTP_MAX_VCLOCKS_LIMIT?
-
-KMALLOC_MAX_SIZE/(sizeof(int)) is the absolute max value for which the 
-memory allocation won't fail
-
-v1:
-Link: https://lore.kernel.org/linux-mm/20250922170357.148588-1-viswanathiyyappan@gmail.com/
-
-v2:
-- Moved the validation to max_vclocks_store
-Link: https://lore.kernel.org/netdev/20250923160622.8096-1-viswanathiyyappan@gmail.com/
-
-v3:
-- Removed RFC tag from the patch
-
- drivers/ptp/ptp_private.h | 1 +
- drivers/ptp/ptp_sysfs.c   | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ptp/ptp_private.h b/drivers/ptp/ptp_private.h
-index b352df4cd3f9..f329263f33aa 100644
---- a/drivers/ptp/ptp_private.h
-+++ b/drivers/ptp/ptp_private.h
-@@ -22,6 +22,7 @@
- #define PTP_MAX_TIMESTAMPS 128
- #define PTP_BUF_TIMESTAMPS 30
- #define PTP_DEFAULT_MAX_VCLOCKS 20
-+#define PTP_MAX_VCLOCKS_LIMIT (KMALLOC_MAX_SIZE/(sizeof(int)))
- #define PTP_MAX_CHANNELS 2048
- 
- enum {
-diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
-index 6b1b8f57cd95..200eaf500696 100644
---- a/drivers/ptp/ptp_sysfs.c
-+++ b/drivers/ptp/ptp_sysfs.c
-@@ -284,7 +284,7 @@ static ssize_t max_vclocks_store(struct device *dev,
- 	size_t size;
- 	u32 max;
- 
--	if (kstrtou32(buf, 0, &max) || max == 0)
-+	if (kstrtou32(buf, 0, &max) || max == 0 || max > PTP_MAX_VCLOCKS_LIMIT)
- 		return -EINVAL;
- 
- 	if (max == ptp->max_vclocks)
--- 
-2.47.3
-
+This works. However, I find Amit's change more straight forward to
+understand. nvme_mpath_start_request()/nvme_mpath_end_request() are
+called when request started/ended respectively. For a request that has
+been retried on the same path nvme_mpath_start_request() need not be
+called again. Such retry should be transparent to multipath layer.
 
