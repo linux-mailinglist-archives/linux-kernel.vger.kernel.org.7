@@ -1,558 +1,284 @@
-Return-Path: <linux-kernel+bounces-831837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C38B9DAB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:38:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB72FB9DB55
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7129C3A4C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078581B22DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326E82EC0AC;
-	Thu, 25 Sep 2025 06:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F1D2EA483;
+	Thu, 25 Sep 2025 06:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mMYNAR4j"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012001.outbound.protection.outlook.com [40.93.195.1])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fOPGaQD0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623E02EBDF2;
-	Thu, 25 Sep 2025 06:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758782023; cv=fail; b=lssHUaPu8qsdFgS/cNtq36oRWh/qsZZKdMiTcgnpFzRcay2jzW6H2TEoj8/MFJNjIV6BWCALFuUnA1f6S3bEH3qApCmtvLxzmxxShQ8H0NRtkRjhsEhlS0sxmmeF/O5atVfn3TBA2tHNXIup04GrWkfWsqNqtJwpb//m+tLo6UI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758782023; c=relaxed/simple;
-	bh=a9pK29yiDulSYASVjHLAPzLow3t0Ka9PIgnfh8mPYXQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Qku8mh3CEazyNgIP5VdddfsxRcVbLMvqmkKq5zn/bW50Xnn7l7nHQK1jT1rAydltOL/WqFGFXqCIQDjCFs+T2oiRV06nqRKt5lwAEVimvucXbGb6jDyd6l7Jo8VV2jGZQNK5BA9WYONdMfnecmYEDOnc3BcLYYJhjH3LlnSz4cU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mMYNAR4j; arc=fail smtp.client-ip=40.93.195.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pv9VNyVPqaZuWpTjs/hGlbZPiCmaQhT0gPApAiU1UrXTGeSuY7CwM8pZ8qVE0kzpl6/FihrbBf/IChrICVlWZMIELnqsVHaNsW3uJWQRJH/Cx4CElfMBrrL8H2XsC3hLnMsHt3b8GqmGAje6i8GtgVTrcEXK1sBbAo6kjOYkg0S6cfkllvVwJDF5hLt9P5w4q6W06TpLSDj6LiM9jqvKa0PMs5wd/34TnxtIKVhnRDMFicC7tq9r1mNWZU0zBHi9u++o7/RIod0jH1mLH6wylgLWawo9nSt3vmjOzNlO20/jE/beDiRdEg+ASqjNBIKWQy/+ttB57IOk79xqZB4yyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l3d/+HAepxOekFMNhxnzDaS9pXEMQxhri0eS8XVmQJQ=;
- b=LZAgi1WOuAgLvjtMlV8jHKBYJzxMWXQdIyaQ4N37ZF2mjxvIMsJ7mEa/lCa0nJmnGKvBfDlFPrE9xQnNy3rTsVGBpAT+R1AvL+70A3RtiZMddtSjGFJyjqXAmT9m0FWPO9peBC8R4dAC8xgUNjeD3o9jUvhELmjaMWPj3Yw9KlFWzqdH5iwY18ewZQh6yEA+66KOGCtLvdYTSc2BvM/1X1OhrkWV3u+nTmsGfhSlHxsTvhSv9BaGHycWoZlGdQJy34oBUatV6qV85xCGRCyvIZx72S0xeyCUIejDA5kli922EK2lm9ZzlWWLvP08PO8iQAt9iQzJGdvkRd3+AHyNDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l3d/+HAepxOekFMNhxnzDaS9pXEMQxhri0eS8XVmQJQ=;
- b=mMYNAR4jWKZ7FO8NF5talhBCCcxLbGYdwotfSQt+A9KBWcEQREzxPkJJMbCKybrdLHd/+Ng9lHE3xPfrZll8YaAIRWBuZtkZPFLIF/brx9o9wEGm6c1rH23tKGN3ojrBdBa2q1ZvnNdMf3tPBp38adRiz295b4QtaYsvbxsJK07w+a7if3t6REpFWHvcTxdCnBHGGN3xX0k/8OyFfLLoeIgnjBw91+By6EE3YqLbUuizgacpuNuzLm9uzoBEHN0NQvV0Hg2JK9Fzmmag2CB5qgm9djZxSerQiiBCGb0yIIONW0a1mzG9gqLhVYj13SfuwYBktnZ8FI7E/tsV68nS0Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
- BY5PR12MB4196.namprd12.prod.outlook.com (2603:10b6:a03:205::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Thu, 25 Sep
- 2025 06:33:34 +0000
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.9137.015; Thu, 25 Sep 2025
- 06:33:34 +0000
-Message-ID: <83ec74cb-02c3-4be4-a182-c2c69619abaf@nvidia.com>
-Date: Wed, 24 Sep 2025 23:33:31 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 18/29] arm_mpam: Register and enable IRQs
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Xin Hao <xhao@linux.alibaba.com>,
- peternewman@google.com, dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-19-james.morse@arm.com>
-Content-Language: en-US
-From: Fenghua Yu <fenghuay@nvidia.com>
-In-Reply-To: <20250910204309.20751-19-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0247.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::12) To DM6PR12MB2667.namprd12.prod.outlook.com
- (2603:10b6:5:42::28)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185A134BA2C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758782119; cv=none; b=sgS27kAo6FtcdC73UXfTrFBlNafUvxGh+obcLnTerj1jlgUDHcRlCfgYq+wCKFcpqa5ezblPVzGANIqiU/L67QBVS0uueLELUGrqffj7C+bRJ8qRaJGzOaC+N/GqkNiU1o9qkdz0StmxgRTpoSVt2kfKVdxbx3QgG8W3SzinSuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758782119; c=relaxed/simple;
+	bh=8CzwFeH+yIXjlzWaCoSk23WgOJJjLFsIX6nHBB9c3UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cFM/BlQdtBLSbVTbstJ3Qgb2KNJCVz5owsbYWofAG3w8pCoBwe9tyStzq7luZDnuDMxpIWUNvz8Rcxlh89cgfBmdjKnlPKMpXUqrtCc+dN91hd2OZ2OdpRwQsjG9uJzsr06bId9wiDcwymX1wUIKYv69HUnF2IhsIRHahn2o4/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fOPGaQD0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0Aw55018033
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:35:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aAc7gWKSiz+kYOTOknPiCGQw/8WrCJW6B2yOu/tuGb4=; b=fOPGaQD0KuBhZmJO
+	ZYOE+zxFLvEL41s+ZbCxghdzzHfd4XyTfp/BRmp/5WLl0b8NpfYSvST0z8whpJoQ
+	SOCw02IRPGxfqo6DZ8fKIF2eFw6T7hYOlXfqVm+KteSkllkCHdno9pdc9jyW3RH4
+	4ZjTi7NNXWmQyIjE9294pFXSNN7XEW5kY4vMWZjfQ7xbqofB4j5tAA3bjuE3y0eZ
+	XCh10CfFNqr3tDV11dhrqVzQwcl+tZBPu8A0cfF94+5tISwie5OCxjvMu7XP1KqB
+	a56Mkj8ggXI+BC3s+KyUAakJM/nEmcEpNtrlmr3enNejpCmlD32iPOFiRT7qc9hm
+	i98jjQ==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kkb0qg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:35:16 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b56ae0c8226so471476a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:35:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758782110; x=1759386910;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAc7gWKSiz+kYOTOknPiCGQw/8WrCJW6B2yOu/tuGb4=;
+        b=LOhXScRl6of45XswYqGETCw+wIrc6NYvjwukSMTa3ZAU/Fhw3Xpo4PCCWdRw13Yu0X
+         CouJ+bD4TgsW7lcaVO+eGJRtduWgAbrMg1xuDEdEJXNP0UPZ87kI1ng0YN6JNJy0sHna
+         Zn8rlwHXtpbfuD/fxOhjh/sddkX4yPJf6hHVIMNjhSu/vCgeiFUhIRM+449HG6dfP14X
+         YlQC87Xd5vpXA9s/oQU226VwxHPeS1Beir3KEYIsucWqE9yLQm2UIBxpGOaUYfndadt8
+         8xbxiZUvoQfrcyVCPqzg01Cs3bWtaigesX4umOaCOEWLhsWEb9HJ3WjO7kM6tQTK9il+
+         4CSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXM13hNdwIf3ypggZSe8gMqIzIDbhZfdedTIDk7hlMYX8Q1IkSc/Bs7A6KtOBrwht8qjWgQfgFtlNA4irk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGsER0pTjd9OuIQv26GNR1jaL4rHZqbaAJC4962RxvOmKBLiNu
+	qUP0u3PPPLU2yVPS1D5GJkpLc8ZPmExPXf9wqFNQFot5SsuzxuyDhZ4HjWHqUrlVhCPxXKKWuZo
+	FuaskiEjZGv03TpWsgujgkkAzDTbvYSIEI4SNKJLtPh1uBmNZudQqpEyqEiAgYLgKZ8Q=
+X-Gm-Gg: ASbGncvHRFeH7PFBk/x0W5t1D2pIN8aUrcfYrua2s17VZI+2CUxghX72ZvgaOyi9D95
+	K7tqkiLwP58fpI9agsUiiYJ8Ke85BZ+9ge3iLEMGdKGLG2WIEd970Uz5hVWNMc3erw4eSIhS57G
+	EpsiFOMd9tME4PY3l9XUyuDWWzUllsukhEioznsZ96ef67Tzji6BA/wBnnNiw9dDlmhweKC3lwm
+	ciSbR4hIPz+NDRkxFiaUPpIl+h+hs/FPT43h6XXpB5YGqMqosyzi5UyzRcRBitHu9elhB26jpDg
+	3ZJlqOk6HbWummupVEhZLoy+gHMU9WkaBpxb3/l3ew7tAPZ3iu/SNX6lxXMXmb2cIoXNTUI5bf+
+	K1rDavNmhbTbkEbYNVzju1GdSMtzu3PtPQcsNM9zCJg9/hx9n9JC4jHMeio8=
+X-Received: by 2002:a05:6a21:32aa:b0:2dd:5de9:5372 with SMTP id adf61e73a8af0-2e7be9f1e47mr3129243637.1.1758782110266;
+        Wed, 24 Sep 2025 23:35:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgX1HSnRnVr9goBSIcjsYZH7K8MTQ2VofCEQX3a7oGkITnuM6yXYGhavG7od74rBEAOisGKQ==
+X-Received: by 2002:a05:6a21:32aa:b0:2dd:5de9:5372 with SMTP id adf61e73a8af0-2e7be9f1e47mr3129202637.1.1758782109774;
+        Wed, 24 Sep 2025 23:35:09 -0700 (PDT)
+Received: from [10.190.200.181] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b2865bsm982437b3a.64.2025.09.24.23.35.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 23:35:09 -0700 (PDT)
+Message-ID: <1d373c80-8589-424a-bd12-1a14784cca71@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 12:05:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|BY5PR12MB4196:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62dcfe80-19db-4116-3922-08ddfbfd7327
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Rm1Ba0gzQmlzQzA4R0Z0L0hGU29lS2NRYWNDdFhzTTFSL29aT0Vib3dqQXAz?=
- =?utf-8?B?cWhPL1dDQkpTNElmck5rMUl4eml3bVh4V1pIRVdYNXRUemhuNDJHeWdUTjM1?=
- =?utf-8?B?N1JiZ05iaFJ2em9hZXdHK2NsSmxvWTJlejJnUzhyZlViaTgvR1hWY2tKTENk?=
- =?utf-8?B?c3hPMVhCdC9SYThoQmNZQUFybjRUY0NvZDE4YkpnTWlvTDU2b1hRQ25mSm5T?=
- =?utf-8?B?ekt5SUs0TEJDOEt2ODRDZjdlTGNBMTRHMXBDVmpNUURhNlNZT2g0eHZJcVQy?=
- =?utf-8?B?cnJDV3lXNFJWZklVNnRnWkZQYTgxY0I5bWZ5ek93SENWTDFCc0cxT2ZhWUo1?=
- =?utf-8?B?bG9HYk5rdE8zUmxLL0xpODBzSEE0R2oreTNWejR1b3cvWmdadlVpRkR4UVhs?=
- =?utf-8?B?RENUNE40bEVmbDF5djV3czQrWkt3ek1kc0JnZTVUS1ArTVR2bVhEcFdaaGhY?=
- =?utf-8?B?ZW5pdWplYnJIbnlCTytQN2lvTmQxYW9kYW5LS0d1bVZNMm1rek5LTXR5aURl?=
- =?utf-8?B?YXNzSmoyakY5N2IyUkd1MmZmRVBGZWE3a3RUeE9qS3pGM3ZQTXpGaWJzT3Vl?=
- =?utf-8?B?aFVUUUhFQlBpY1BaUEM5UlA5N3YzMXZ0SVM4RWN4TStMYStEUjg5ZFRDeUFq?=
- =?utf-8?B?aGgrVjBScFYrZ3ZiZXhBZmlZcGVZM0pEcERwdUlDNUFaMjJ0dmoyVEtVaXR0?=
- =?utf-8?B?UXdwbk11V3crOXNPTFVTdWkrUEUvSlI3bWVCS3hTY1NKK1F4aG5DMU1EOUJY?=
- =?utf-8?B?ckMreUQybHIrV1Q2dFp3NWw1MFpNcUpqZHZ5VDRrT25aSlhCZDRRa2pNY0xQ?=
- =?utf-8?B?QlN2ZXMydWJTa1Rzc2ZqdlVrV2tZRjd3Q3ptYXJMdC8ycGp4Sno3ZWVJZ2h2?=
- =?utf-8?B?TDdWRHllRW1ISUZ4QkhjNFhNbGEvZnlTaW04dTZmZ1NFbDJjUjVMOXB1RWZJ?=
- =?utf-8?B?NmVTcS91dGE1aXVOQ2oraFlJc3h0Sm5XRjI3cDFCNnNQVGZJY2pPd2l6NEI5?=
- =?utf-8?B?cHN2YVI2bnpXL2d2bCthT0JCTUw0S2JzcWY1aVkzWEFIcHB1UnBRZW9HOHdq?=
- =?utf-8?B?bGxLU0VIK25nRk5GMzk4RnNXcEFrN0dlK2liK1laUVdoTWw4QlZjU3RWVnhy?=
- =?utf-8?B?cEQrTnpZTXV6YjF6bzNnNVMxVTBHMmtPdXRSZmROVkd2V0N2OUJscFBKSHpy?=
- =?utf-8?B?c0hvNHBlT2docWFLcXFXS0o4cVhhTU5RL2w1N1NmMkFkeFN5am43VTJpUTRS?=
- =?utf-8?B?QnA1NDhMMklDeTEvZThHcXZoOERhMmdxby9QYWJEdnhOeHJYRFpsbnZCY2NN?=
- =?utf-8?B?UmpLUVR5ZExzVVUvR3NXS3BDMHlqYkJVbXpxTHpHMEIrdmhQNmtVYXpzbGlz?=
- =?utf-8?B?ZDU3eVVVREdFeGVUcHZpUGo4dmxuSldSRkphQmV0VFlSb0MzKzJQR2JWdDcw?=
- =?utf-8?B?VlZDNjBlT3IxM0VWZGljdXhmdnVVNDJiMFpsWVF1Wnp6bit5RTFsV0k3SFNo?=
- =?utf-8?B?bDFleVp6c05rN3hwZHh3WnlZK1VaRnFTaC85SEtFK3hIRG9RUVl2MlRKc3h1?=
- =?utf-8?B?dENoZ1c0a0VOY21yMXl1NkVialphZjJuazd6eTFNTGkyRXlDa0trdVdrQ2J2?=
- =?utf-8?B?QmZjRmdwQjlzUUVtc0psS2lBWmFSZ05lZjN0YjFKM3RLUytTWlpjUCtheGQr?=
- =?utf-8?B?SXZQWGRZV1I2dW45REFuWjMxS2RvcUxuUVl2T2owT1RsdTM4RFlUeFFmcDY5?=
- =?utf-8?B?a2ZMUzczV1dYUUU2V0tiUmpicTAxcDRmZldIb0UxKzMwdE9Bd3BuTmJWMUxI?=
- =?utf-8?B?TmN3R1dSK0xFa1ROK0Z4bnQwS0FaY0IxTHdxdFJ4Z1NDSS9ObllSMWFMdE1T?=
- =?utf-8?B?VGZ4bXFhMk94eHNXZzZreWUxVmt1a0NDTWdOSUhINE9JSjRWb0lRUGdLS0hn?=
- =?utf-8?Q?uQ76PnliDq2CCG9ga/8xiT34ROD4fgs2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YmNVbUg0UTZnQ0RKd3kzeVlVdm40dzdPaDE2MGNKaGpWZ3BTa1g4VlFNZFhx?=
- =?utf-8?B?Q1cvaWxxZGdUb1lsOXd5Qmt4ZzlmWGIxMVg0cm92Mk5kbWREMTBGeEVBWldl?=
- =?utf-8?B?QUpmRzQxVi9ITjRQQkQxNkZ4YklRVmNiSVlZbTZDNWUvZ2VJeThiK0ExWjRY?=
- =?utf-8?B?MVYydlgyZXRGTnFHMk4yT1RnakpzQzgrUDlmTWhyRElxdm5hcTB2UWVtZEY4?=
- =?utf-8?B?UGNzdlRUdTE2Y1MydGh4YUZVZGRvajZGWGxEQWVOOGV3bjFnNkJQaWpNMlU2?=
- =?utf-8?B?YXRteGpVQ0FJTjlyMFB0RWVsNUJiSUh0RkZxOEdkMHkwbkQ5VThmeWRxMzhp?=
- =?utf-8?B?VDB0VHBnWmlsVHh5d3RiR0lKeGx2aFF4Ukg4aGluNWp2eFo2K016TldjREw2?=
- =?utf-8?B?cDdqTkdrM0FFTW9sWDJTZDVYQjlkdmtPK0FiQkFxcGNheEwrU3IzejNTT005?=
- =?utf-8?B?L1JMNk9ZcTgyazNCeVRMRjZBQlZHOEZBSnBkenhXTnJSZGgwZnc2dHF6dDky?=
- =?utf-8?B?TjUxS1ZnQUlkdHAyMDdnVWM2L1J5TDdUMm5JWTFoM1M4djRqWHVkUG5Xdkhv?=
- =?utf-8?B?M1FXeDBVT25nWUhwQXZyNzJuaTJOM0dtSmwwQjhHZDZIT2tzV1lkVkx3MVNn?=
- =?utf-8?B?WFlaQm1ldHBTc2dYTGZvYndWUnp1VC8rVFVnZzh2anZZZnA4MHBNdDJjQ3Nu?=
- =?utf-8?B?cWVZUjUwV0dtbUdFeWNpbk1SM1ZPVDhTL3hRd0ppWVNTZWVzM3NlaEhLNE80?=
- =?utf-8?B?cFp4SzI2TUVUQ21MWXNXZDhCY1BKdUF0bGRuc2FzY21sNC9BTVRnQzQ3MHNI?=
- =?utf-8?B?RFJpV1RZSVdrSHdSZUF4SXNnMVFnOEdTZ0kzZmhNMi9SQlBvTnllT0FZbUQr?=
- =?utf-8?B?TmQ3L2dvemxrMW05NkUvZUx2aUR0ZUZBck5ZNlhWLzNNTnBSMEVkVS9EcXNK?=
- =?utf-8?B?OHlTVHlvUVF3ZUFOclRicm8wWnlhakZOcVVIVzRaV1pKRmhwbklmUk05TGp2?=
- =?utf-8?B?MFRrR2o2VWNrbmsxUXdZbjZyMFU1cXd1dzN5M0ptY1Z6UjBSQ3V0MzEzNS9o?=
- =?utf-8?B?WFlMM1ErQ09vaFJPZUVOd0RKS29XdzNlVTVkVXBhVWs5aCt4QnoxNTVkbFVP?=
- =?utf-8?B?dzdMTkRNVHVQcDVONTRaKzEwcEs5Wmk0UUxTanI0U21jKzN1c3l6SFZkOTdm?=
- =?utf-8?B?ZnBRRk9PekpuaWZkQ2N2Y29NS2d5RTRGZXZCOEhHV1JrSTdQTUZKNk10cE5Y?=
- =?utf-8?B?cjNFSXJRUy9MclJtdmwzSXRqZ2FpdUUyL01XeFhxdEJyT1h3Tjd5ZTUxeG95?=
- =?utf-8?B?RHI3ck85cGtGS1lnT0RJVkZhOVFvSVAvSUN6aHlGUXFIOUdZRmZXMXo2dHA2?=
- =?utf-8?B?NnVWeEE3Ui9Ed0tpdStZbWYyT1hhYjlTZlhicDhJcG5leU5XWHUwbjkyWEtk?=
- =?utf-8?B?REpVUFZldHNIZTFFK3htb2V2UHlwbGxUQ1VINjRmOUkxazYyZGJKUXNidVZ4?=
- =?utf-8?B?YTZyYkN0cHltWGtVZlB5K29xREp6OGh2WkxQemI0OEw5dHppUk5UQXZXMUlL?=
- =?utf-8?B?Tm1KRFhjVTJoNzRrZ1dwQVR1QzRjQmc4RW54U3VQdU5meU5ZVXAxTmtSeVdI?=
- =?utf-8?B?bHEwWng5S2had25ZZEh4aXF0RnlyaUNIcUozS2JrdWt1WTBWVUNZZll2WTlM?=
- =?utf-8?B?Tkxhemtka2o0eWIwVGNPRUZIallGV2tob2VzeDY0Mm0vS3IxbktWSktKNkV0?=
- =?utf-8?B?bkVhQjZ2VGVLQVUwMzlld1FCeS9HeXdsVTRKRjA2L2FWc1JVUFIrUWlyaFdv?=
- =?utf-8?B?d3I1RERoTEdNaXZkSkROMmpjRkhRcVo3SnF3SFRmckNQRXF1M2ppaUdKU3o2?=
- =?utf-8?B?dXJRazBYdm9PQjlNQzhhNWJnV0luZEMvRlZoNHNaOGIwSmlaWXZlOERhcjhD?=
- =?utf-8?B?MlhFbkJkM21XL0VFT2lhaVNWbE4zd3Q5VDBQSkZCNU5ZbUV1T0JUSHFaTWx4?=
- =?utf-8?B?Sm1DU3BSWTRGM2FxcUFMWDZFaUlSVWQxUm9ZRUJLWGszS251dmNwemZ5R3VI?=
- =?utf-8?B?RXVMSzBpZ0ZEL1JMbVIyZWVKK2xCUFRzQnA1QTlva3ExeXVvNE5heThBL3B3?=
- =?utf-8?Q?fubIyLIMSDa+LmSTrZqALTdGF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62dcfe80-19db-4116-3922-08ddfbfd7327
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 06:33:34.1697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +0gIRbxx5Cf8ZKPLOeZecsTj9Z3btsqryx+HCH6/cMmW6FQXfJ+MdxzYX+/iV3owHIDakRfOf1L8zjWp5Ci1Ew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4196
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/24] arm64: dts: qcom: Introduce Glymur SoC dtsi and
+ Glymur CRD dts
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
+        Maulik Shah <maulik.shah@oss.qualcomm.com>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Taniya Das <taniya.das@oss.qualcomm.com>,
+        Taniya Das <taniya.das@qualcomm.com>,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>,
+        Qiang Yu <qiang.yu@oss.qualcomm.com>,
+        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>,
+        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
+Content-Language: en-US
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: AVECTkhEvndY_rX85Y4xNw61g070pcVA
+X-Proofpoint-ORIG-GUID: AVECTkhEvndY_rX85Y4xNw61g070pcVA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfX5uWE6GeRCWaD
+ GlTvGd/zMV2Yt2fwmK1GNqUS2+Kc8E8gKhp66CiLNKn598dvLcANcsgTRIs6+/kRJLxxgp+fpCD
+ BE72s5ILIF7ov0MHHWMg64x16Tme3qmrapIeQyJNYa1uYC3zhZT5LVGz3/5Dz074HfEwd9Wv1SX
+ YheoVwGYVg313I05fO4+Zih1x1GJRmlvOdrGaRGTu+Zp0W9I/MOYmkI8LVL+0fvEDEdSvx28FTr
+ vetVuLnS/rf1C9cezpEgFIQRDw1XxlX4PDKxLnDwi7FLJWmDWTyYSDU9x/M7aAka44GbP8JN7W2
+ DMN0EuCEKTF0mt+7ylas9jei6dH/ZACTM5CXalXdOQqdyP/qEPJeZMWpwmDOKhnp6zsimstw8Wr
+ Ck2OnmkU
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d4e2a4 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
+ a=qC_FGOx9AAAA:8 a=_QuE1zyTwyAq7hhy9skA:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22 a=fsdK_YakeE02zTmptMdW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
 
-Hi, James,
-
-On 9/10/25 13:42, James Morse wrote:
-> Register and enable error IRQs. All the MPAM error interrupts indicate a
-> software bug, e.g. out of range partid. If the error interrupt is ever
-> signalled, attempt to disable MPAM.
+On 9/25/2025 11:58 AM, Pankaj Patil wrote:
+> Introduce dt-bindings and initial device tree support for Glymur, 
+> Qualcomm's next-generation compute SoC and it's associated 
+> Compute Reference Device (CRD) platform.
 >
-> Only the irq handler accesses the ESR register, so no locking is needed.
-> The work to disable MPAM after an error needs to happen at process
-> context as it takes mutex. It also unregisters the interrupts, meaning
-> it can't be done from the threaded part of a threaded interrupt.
-> Instead, mpam_disable() gets scheduled.
+> https://www.qualcomm.com/products/mobile/snapdragon/laptops-and-tablets/snapdragon-x2-elite
+> https://www.qualcomm.com/news/releases/2025/09/new-snapdragon-x2-elite-extreme-and-snapdragon-x2-elite-are-the-
 >
-> Enabling the IRQs in the MSC may involve cross calling to a CPU that
-> can access the MSC.
+> The base support enables booting to shell with rootfs on NVMe,
+> demonstrating functionality for PCIe and NVMe subsystems.
+> DCVS is also enabled, allowing dynamic frequency scaling for the CPUs.
+> TSENS (Thermal Sensors) enabled for monitoring SoC temperature and
+> thermal management. The platform is capable of booting kernel at EL2
+> with kvm-unit tests performed on it for sanity.
 >
-> Once the IRQ is requested, the mpam_disable() path can be called
-> asynchronously, which will walk structures sized by max_partid. Ensure
-> this size is fixed before the interrupt is requested.
+> Features enabled in this patchset:
+> 1. DCVS: CPU DCVS with scmi perf protocol
+> 2. PCIe controller and PCIe PHY
+> 3. NVMe storage support
+> 4. Clocks and reset controllers - GCC, TCSRCC, DISPCC, RPMHCC
+> 5. Interrupt controller
+> 6. TLMM (Top-Level Mode Multiplexer)
+> 7. QUP Block
+> 8. Reserved memory regions
+> 9. PMIC support with regulators
+> 10. CPU Power Domains
+> 11. TSENS (Thermal Sensors)
+> 12. Remoteproc - SOCCP, ADSP and CDSP
+> 13. RPMH Regulators
+> 14. USB 
 >
-> CC: Rohit Mathew <rohit.mathew@arm.com>
-> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+> Dependencies:
+>
+> dt-bindings:
+> 1. https://lore.kernel.org/all/20250918140249.2497794-1-pankaj.patil@oss.qualcomm.com/
+> 2. https://lore.kernel.org/all/20250918141738.2524269-1-pankaj.patil@oss.qualcomm.com/
+> 3. https://lore.kernel.org/all/20250919133439.965595-1-pankaj.patil@oss.qualcomm.com/
+> 4. https://lore.kernel.org/all/20250919140952.1057737-1-pankaj.patil@oss.qualcomm.com/
+> 5. https://lore.kernel.org/all/20250919141440.1068770-1-pankaj.patil@oss.qualcomm.com/
+> 6. https://lore.kernel.org/all/20250919142325.1090059-1-pankaj.patil@oss.qualcomm.com/
+> 7. https://lore.kernel.org/all/20250920113052.151370-1-pankaj.patil@oss.qualcomm.com/
+> 8. https://lore.kernel.org/all/20250924-knp-pmic-binding-v1-1-b9cce48b8460@oss.qualcomm.com/
+> 9. https://lore.kernel.org/linux-arm-msm/20250924183726.509202-1-sibi.sankar@oss.qualcomm.com/T/#m46501fe9edb880fc11f69442eaf4d2855f7e4608
+> 10. https://lore.kernel.org/linux-arm-msm/20250925002034.856692-1-sibi.sankar@oss.qualcomm.com/
+> 11. https://lore.kernel.org/linux-arm-msm/20250924144831.336367-1-sibi.sankar@oss.qualcomm.com/
+>
+> rpmh-regulators:
+> 1. https://lore.kernel.org/all/20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com/
+>
+> PMICs:
+> 1. https://lore.kernel.org/linux-arm-msm/20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com/ (Patch 8-11)
+>
+> PMIC-Glink:
+> 1. https://lore.kernel.org/all/20250919175025.2988948-1-anjelique.melendez@oss.qualcomm.com/
+> 2. https://lore.kernel.org/all/20250924232631.644234-1-anjelique.melendez@oss.qualcomm.com/
+>
+> spmi/pinctrl:
+> 1. https://lore.kernel.org/all/20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com/
+>
+> PCI:
+> 1. https://lore.kernel.org/all/20250903-glymur_pcie5-v4-0-c187c2d9d3bd@oss.qualcomm.com/
+>
+> Remoteproc:
+> 1. https://lore.kernel.org/all/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/
+> 2. https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
+> 3. https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
+>
+> USB:
+> 1. https://lore.kernel.org/all/20250925005228.4035927-1-wesley.cheng@oss.qualcomm.com/T/#mb7879fdba16496554a53c3726d90f94b6063dd09
+>
+> Linux-next based git tree containing all Glymur related patches is available at:
+> https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/tree/glymur?ref_type=heads
+>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
-> Changes since v1:
->   * Made mpam_unregister_irqs() safe to race with itself.
->   * Removed threaded interrupts.
->   * Schedule mpam_disable() from cpuhp callback in the case of an error.
->   * Added mpam_disable_reason.
->   * Use alloc_percpu()
+> Changes in v2:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v1: https://lore.kernel.org/r/20250925-v3_glymur_introduction-v1-0-5413a85117c6@oss.qualcomm.com
 >
-> Changes since RFC:
->   * Use guard marco when walking srcu list.
->   * Use INTEN macro for enabling interrupts.
->   * Move partid_max_published up earlier in mpam_enable_once().
 > ---
->   drivers/resctrl/mpam_devices.c  | 277 +++++++++++++++++++++++++++++++-
->   drivers/resctrl/mpam_internal.h |  10 ++
->   2 files changed, 284 insertions(+), 3 deletions(-)
+> Jyothi Kumar Seerapu (1):
+>       arm64: dts: qcom: glymur: Add QUPv3 configuration for serial engines
 >
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index a9d3c4b09976..e7e4afc1ea95 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -14,6 +14,9 @@
->   #include <linux/device.h>
->   #include <linux/errno.h>
->   #include <linux/gfp.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdesc.h>
->   #include <linux/list.h>
->   #include <linux/lockdep.h>
->   #include <linux/mutex.h>
-> @@ -166,6 +169,24 @@ static u64 mpam_msc_read_idr(struct mpam_msc *msc)
->   	return (idr_high << 32) | idr_low;
->   }
->   
-> +static void mpam_msc_zero_esr(struct mpam_msc *msc)
-> +{
-> +	__mpam_write_reg(msc, MPAMF_ESR, 0);
-> +	if (msc->has_extd_esr)
-> +		__mpam_write_reg(msc, MPAMF_ESR + 4, 0);
-> +}
-> +
-> +static u64 mpam_msc_read_esr(struct mpam_msc *msc)
-> +{
-> +	u64 esr_high = 0, esr_low;
-> +
-> +	esr_low = __mpam_read_reg(msc, MPAMF_ESR);
-> +	if (msc->has_extd_esr)
-> +		esr_high = __mpam_read_reg(msc, MPAMF_ESR + 4);
-> +
-> +	return (esr_high << 32) | esr_low;
-> +}
-> +
->   static void __mpam_part_sel_raw(u32 partsel, struct mpam_msc *msc)
->   {
->   	lockdep_assert_held(&msc->part_sel_lock);
-> @@ -754,6 +775,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   		pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
->   		msc->partid_max = min(msc->partid_max, partid_max);
->   		msc->pmg_max = min(msc->pmg_max, pmg_max);
-> +		msc->has_extd_esr = FIELD_GET(MPAMF_IDR_HAS_EXTD_ESR, idr);
->   
->   		mutex_lock(&mpam_list_lock);
->   		ris = mpam_get_or_create_ris(msc, ris_idx);
-> @@ -768,6 +790,9 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->   		mutex_unlock(&msc->part_sel_lock);
->   	}
->   
-> +	/* Clear any stale errors */
-> +	mpam_msc_zero_esr(msc);
-> +
->   	spin_lock(&partid_max_lock);
->   	mpam_partid_max = min(mpam_partid_max, msc->partid_max);
->   	mpam_pmg_max = min(mpam_pmg_max, msc->pmg_max);
-> @@ -895,6 +920,13 @@ static void mpam_reset_msc(struct mpam_msc *msc, bool online)
->   	}
->   }
->   
-> +static void _enable_percpu_irq(void *_irq)
-> +{
-> +	int *irq = _irq;
-> +
-> +	enable_percpu_irq(*irq, IRQ_TYPE_NONE);
-> +}
-> +
->   static int mpam_cpu_online(unsigned int cpu)
->   {
->   	int idx;
-> @@ -906,6 +938,9 @@ static int mpam_cpu_online(unsigned int cpu)
->   		if (!cpumask_test_cpu(cpu, &msc->accessibility))
->   			continue;
->   
-> +		if (msc->reenable_error_ppi)
-> +			_enable_percpu_irq(&msc->reenable_error_ppi);
-> +
->   		if (atomic_fetch_inc(&msc->online_refs) == 0)
->   			mpam_reset_msc(msc, true);
->   	}
-> @@ -959,6 +994,9 @@ static int mpam_cpu_offline(unsigned int cpu)
->   		if (!cpumask_test_cpu(cpu, &msc->accessibility))
->   			continue;
->   
-> +		if (msc->reenable_error_ppi)
-> +			disable_percpu_irq(msc->reenable_error_ppi);
-> +
->   		if (atomic_dec_and_test(&msc->online_refs))
->   			mpam_reset_msc(msc, false);
->   	}
-> @@ -985,6 +1023,51 @@ static void mpam_register_cpuhp_callbacks(int (*online)(unsigned int online),
->   	mutex_unlock(&mpam_cpuhp_state_lock);
->   }
->   
-> +static int __setup_ppi(struct mpam_msc *msc)
-> +{
-> +	int cpu;
-> +	struct device *dev = &msc->pdev->dev;
-> +
-> +	msc->error_dev_id = alloc_percpu(struct mpam_msc *);
-> +	if (!msc->error_dev_id)
-> +		return -ENOMEM;
-> +
-> +	for_each_cpu(cpu, &msc->accessibility) {
-> +		struct mpam_msc *empty = *per_cpu_ptr(msc->error_dev_id, cpu);
-> +
-> +		if (empty) {
-> +			dev_err_once(dev, "MSC shares PPI with %s!\n",
-> +				     dev_name(&empty->pdev->dev));
-> +			return -EBUSY;
-> +		}
-> +		*per_cpu_ptr(msc->error_dev_id, cpu) = msc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mpam_msc_setup_error_irq(struct mpam_msc *msc)
-> +{
-> +	int irq;
-> +
-> +	irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +	if (irq <= 0)
-> +		return 0;
-> +
-> +	/* Allocate and initialise the percpu device pointer for PPI */
-> +	if (irq_is_percpu(irq))
-> +		return __setup_ppi(msc);
-> +
-> +	/* sanity check: shared interrupts can be routed anywhere? */
-> +	if (!cpumask_equal(&msc->accessibility, cpu_possible_mask)) {
-> +		pr_err_once("msc:%u is a private resource with a shared error interrupt",
-> +			    msc->id);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   /*
->    * An MSC can control traffic from a set of CPUs, but may only be accessible
->    * from a (hopefully wider) set of CPUs. The common reason for this is power
-> @@ -1060,6 +1143,10 @@ static int mpam_msc_drv_probe(struct platform_device *pdev)
->   			break;
->   		}
->   
-> +		err = mpam_msc_setup_error_irq(msc);
-> +		if (err)
-> +			break;
-> +
->   		if (device_property_read_u32(&pdev->dev, "pcc-channel",
->   					     &msc->pcc_subspace_id))
->   			msc->iface = MPAM_IFACE_MMIO;
-> @@ -1318,11 +1405,172 @@ static void mpam_enable_merge_features(struct list_head *all_classes_list)
->   	}
->   }
->   
-> +static char *mpam_errcode_names[16] = {
-> +	[0] = "No error",
-> +	[1] = "PARTID_SEL_Range",
-> +	[2] = "Req_PARTID_Range",
-> +	[3] = "MSMONCFG_ID_RANGE",
-> +	[4] = "Req_PMG_Range",
-> +	[5] = "Monitor_Range",
-> +	[6] = "intPARTID_Range",
-> +	[7] = "Unexpected_INTERNAL",
-> +	[8] = "Undefined_RIS_PART_SEL",
-> +	[9] = "RIS_No_Control",
-> +	[10] = "Undefined_RIS_MON_SEL",
-> +	[11] = "RIS_No_Monitor",
-> +	[12 ... 15] = "Reserved"
-> +};
-> +
-> +static int mpam_enable_msc_ecr(void *_msc)
-> +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, MPAMF_ECR_INTEN);
-> +
-> +	return 0;
-> +}
-> +
-> +/* This can run in mpam_disable(), and the interrupt handler on the same CPU */
-> +static int mpam_disable_msc_ecr(void *_msc)
-> +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t __mpam_irq_handler(int irq, struct mpam_msc *msc)
-> +{
-> +	u64 reg;
-> +	u16 partid;
-> +	u8 errcode, pmg, ris;
-> +
-> +	if (WARN_ON_ONCE(!msc) ||
-> +	    WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
-> +					   &msc->accessibility)))
-> +		return IRQ_NONE;
-> +
-> +	reg = mpam_msc_read_esr(msc);
-> +
-> +	errcode = FIELD_GET(MPAMF_ESR_ERRCODE, reg);
-> +	if (!errcode)
-> +		return IRQ_NONE;
-> +
-> +	/* Clear level triggered irq */
-> +	mpam_msc_zero_esr(msc);
-> +
-> +	partid = FIELD_GET(MPAMF_ESR_PARTID_MON, reg);
-> +	pmg = FIELD_GET(MPAMF_ESR_PMG, reg);
-> +	ris = FIELD_GET(MPAMF_ESR_RIS, reg);
-> +
-> +	pr_err_ratelimited("error irq from msc:%u '%s', partid:%u, pmg: %u, ris: %u\n",
-> +			   msc->id, mpam_errcode_names[errcode], partid, pmg,
-> +			   ris);
-> +
-> +	/* Disable this interrupt. */
-> +	mpam_disable_msc_ecr(msc);
-> +
-> +	/*
-> +	 * Schedule the teardown work. Don't use a threaded IRQ as we can't
-> +	 * unregister the interrupt from the threaded part of the handler.
-> +	 */
-> +	mpam_disable_reason = "hardware error interrupt";
-> +	schedule_work(&mpam_broken_work);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static irqreturn_t mpam_ppi_handler(int irq, void *dev_id)
-> +{
-> +	struct mpam_msc *msc = *(struct mpam_msc **)dev_id;
-> +
-> +	return __mpam_irq_handler(irq, msc);
-> +}
-> +
-> +static irqreturn_t mpam_spi_handler(int irq, void *dev_id)
-> +{
-> +	struct mpam_msc *msc = dev_id;
-> +
-> +	return __mpam_irq_handler(irq, msc);
-> +}
-> +
-> +static int mpam_register_irqs(void)
-> +{
-> +	int err, irq;
-> +	struct mpam_msc *msc;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	guard(srcu)(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
-> +				 srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		/* The MPAM spec says the interrupt can be SPI, PPI or LPI */
-> +		/* We anticipate sharing the interrupt with other MSCs */
-> +		if (irq_is_percpu(irq)) {
-> +			err = request_percpu_irq(irq, &mpam_ppi_handler,
-> +						 "mpam:msc:error",
-> +						 msc->error_dev_id);
-> +			if (err)
-> +				return err;
-> +
-> +			msc->reenable_error_ppi = irq;
-> +			smp_call_function_many(&msc->accessibility,
-> +					       &_enable_percpu_irq, &irq,
-> +					       true);
-> +		} else {
-> +			err = devm_request_irq(&msc->pdev->dev,irq,
-> +					       &mpam_spi_handler, IRQF_SHARED,
-> +					       "mpam:msc:error", msc);
-> +			if (err)
-> +				return err;
-> +		}
-> +
-> +		set_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags);
-> +		mpam_touch_msc(msc, mpam_enable_msc_ecr, msc);
-> +		set_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void mpam_unregister_irqs(void)
-> +{
-> +	int irq, idx;
-> +	struct mpam_msc *msc;
-> +
-> +	cpus_read_lock();
-> +	/* take the lock as free_irq() can sleep */
-> +	idx = srcu_read_lock(&mpam_srcu);
-guard(srcu)(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
-> +				 srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags))
-> +			mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags)) {
-> +			if (irq_is_percpu(irq)) {
-> +				msc->reenable_error_ppi = 0;
-> +				free_percpu_irq(irq, msc->error_dev_id);
-> +			} else {
-> +				devm_free_irq(&msc->pdev->dev, irq, msc);
-> +			}
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +	cpus_read_unlock();
-> +}
-> +
+> Kamal Wadhwa (10):
+>       arm64: dts: qcom: glymur-crd: Add RPMH regulator rails
+>       arm64: dts: qcom: glymur: Add SPMI PMIC arbiter device
+>       arm64: dts: qcom: Add PMCX0102 pmic dtsi
+>       arm64: dts: qcom: Add SMB2370 pmic dtsi
+>       arm64: dts: qcom: Update pmh0104 dtsi for Glymur CRD
+>       arm64: dts: qcom: Update the pmh0110.dtsi for Glymur
+>       arm64: dts: qcom: glymur: Add PMICs dtsi for CRD
+>       arm64: boot: dts: glymur-crd: Add Volume down/up keys support
+>       arm64: dts: qcom: glymur-crd: Avoid RTC probe failure
+>       arm64: dts: qcom: glymur: Add PMIC glink node
+>
+> Manaf Meethalavalappu Pallikunhi (1):
+>       arm64: dts: qcom: glymur: Enable tsens and thermal zone nodes
+>
+> Maulik Shah (1):
+>       arm64: dts: qcom: glymur: Add cpu idle states
+>
+> Pankaj Patil (3):
+>       dt-bindings: arm: qcom: Document Glymur SoC and board
+>       arm64: defconfig: Enable Glymur configs for boot to shell
+>       arm64: dts: qcom: Introduce Glymur base dtsi and CRD dts
+>
+> Prudhvi Yarlagadda (1):
+>       arm64: dts: qcom: glymur: Add support for PCIe5
+>
+> Qiang Yu (1):
+>       arm64: dts: qcom: glymur-crd: Add power supply and sideband signal for pcie5
+>
+> Sibi Sankar (3):
+>       arm64: dts: qcom: glymur: Enable pdp0 mailbox
+>       arm64: dts: qcom: glymur: Enable ipcc and aoss nodes
+>       arm64: dts: qcom: glymur: Add remoteprocs
+>
+> Taniya Das (2):
+>       arm64: dts: qcom: glymur: Enable cpu dvfs for CPU scaling
+>       arm64: dts: qcom: glymur: Add display clock controller device
+>
+> Wesley Cheng (1):
+>       arm64: dts: qcom: glymur: Add USB support
+>
+>  Documentation/devicetree/bindings/arm/qcom.yaml |    5 +
+>  arch/arm64/boot/dts/qcom/Makefile               |    1 +
+>  arch/arm64/boot/dts/qcom/glymur-crd.dts         |  795 +++
+>  arch/arm64/boot/dts/qcom/glymur-pmics.dtsi      |   19 +
+>  arch/arm64/boot/dts/qcom/glymur.dtsi            | 7445 +++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/pmcx0102.dtsi          |  179 +
+>  arch/arm64/boot/dts/qcom/pmh0104.dtsi           |   84 +
+>  arch/arm64/boot/dts/qcom/pmh0110.dtsi           |   66 +-
+>  arch/arm64/boot/dts/qcom/smb2370.dtsi           |   45 +
+>  arch/arm64/configs/defconfig                    |    6 +
+>  10 files changed, 8644 insertions(+), 1 deletion(-)
+> ---
+> base-commit: fdcd2cfdf0db0a8b8299de79302465f790edea27
+> change-id: 20250923-v3_glymur_introduction-e22ae3c868a2
+>
+> Best regards,
+Please ignore this series, it was marked as v2 by mistake.
 
-[SNIP]
-
-Thanks.
-
--Fenghua
-
+Thanks,
+Pankaj
 
