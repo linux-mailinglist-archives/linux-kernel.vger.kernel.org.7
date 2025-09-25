@@ -1,84 +1,76 @@
-Return-Path: <linux-kernel+bounces-831697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB2AB9D585
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841E3B9D588
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 931967B384A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363364A653D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C642E764B;
-	Thu, 25 Sep 2025 03:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48991BC9E2;
+	Thu, 25 Sep 2025 03:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yNmC8hHI"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011069.outbound.protection.outlook.com [40.107.208.69])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="R8I04f9b"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012038.outbound.protection.outlook.com [52.101.66.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655BF2E6CBE;
-	Thu, 25 Sep 2025 03:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D3F2AE8D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.38
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758772587; cv=fail; b=fWyeOshntD9ZBLtPomsPk8HfLNq5BjBVq3ELaDqN9q6MnqpQOuVJZCXPTa6YhAtIRR0kSpF1i2uh4GkzbvG/j3/up6upOyCRNbDLLuE1CG+tHkeSpoiv8oKGtKbnWatk63tWbWzKfeHf1RHB5U7bctKT96o2WYeYmlKn3mXRB7o=
+	t=1758772728; cv=fail; b=AIQ/e8/hpaqXTCnhsKWYK/haBbs2MyGKb0JpI/aci/a9zjrHojFyuPqNP35YeMwY6rkX/9tO8NNhhqvr2T87Y7OfQNSIHZE0gHqBFOO20XOnPIZuDsKUrfJ1UUuce4XuOQIjT9MiumuglbKMhDEG+G/LBxFC3S5Eovr2tJ4W4v4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758772587; c=relaxed/simple;
-	bh=/rrPm1pUbyN/amhlIVsP3CcPbFKtqVgDObugNpGHQpQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CSWzj7ZfJYboYRVIb7qNTuwnA6W73HIxK0s3hajgoQSeaUwBXrqCTPm9kzsSt4bqb1E/GdxySvieQ57zUqZH6oYhUMNJik8L6Nte7mpXcibBt5sBEoV1l2W1aIg6Qw6kc8vm0WSRjcNwCnfT/wYhdDcR/z6rzbnzK3xa5/j/q/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yNmC8hHI; arc=fail smtp.client-ip=40.107.208.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1758772728; c=relaxed/simple;
+	bh=fwclC1CvZeOcEg5msJTvI+uTatit+/1IcFeeVMnhgmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lh1rtBzMWnNfM45q7Z+svuOWyPmGF9ito6t2qPJIXUdbqpWFFAFkJg3AJJvXSJ5tKkUDBOW9gedmNmnFs2FwwxXjz5oupcclQeb4He+LcfvhC39jSjWfc3BP0QiupqAZPquZXd9Fgf8NWuUC6TbYP6l/kyYU0kFBXHDXQ16Y0s8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=R8I04f9b; arc=fail smtp.client-ip=52.101.66.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=skNqkDOOZ07rb10j1nc69s1wRGBsCKG/AB/iZ5biS/k0NPqgxGHAPJMiIiRO/5fnFrZ368UL394cZBOCG2lxDZq8vs0z0hVmiEaXAs5SLeeax/Nxlih7TWBV8db/ffrlGboG2YW8msP2ztRgH+GdT4Ixh99swtah+ibydORnCnC8DVuQL5DwIerzq/Zad+sxCU6DxVx8NSNlXx2OmnyZQwyCjbxfHJUHSdZqJfaMG8p/nCuJ4udAbBmM4Az/wIJqV+xijOsA3+ytUepxcS31BvgwnBCp2hA60JEYYp/6s0OUKbdSRsXgPv1WLVp0DfH3fhxrI0TiiJD4DNKyoIaKIw==
+ b=KTh9GOHvma4skRSbisHUqM9S8QPz19YmUOXwdw7tU9UWxsXuU4HIGFeJM8tXAut7WzrlwoZt8ZajVBbN4N0qtEZ6fLcfXpX8hkQBUUr74W77dyiyODpf9Ug9bhRzmugCk4BYgh3u0gjSslR9SvReK/ij2vy9OXemNE4dvAaqQ0QneA16ZXGSBNlW63wQ37g0tVIsbPTwXtsVmtkATo0aK49U/JayxCam02wfJsK4P7S71XgFa59D2n7WPQ4Js/qiaft3q8i/pVKuG712iGvnwm2Zpv/nd3Ld9V7hhKq+tZ5cdsaJhB3ORhJ8JBfhpuYX1Rvb7wbduJtjrXu7hiCkMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UJr+sDfY5UjFNKHoKr3oLlSegeSakAYmtUX0zjUBzRM=;
- b=UdieVrONnKWVgSSq6h/tPn53AuGEUTgVKCKVynPoP2bcosHlsWvojama/HU9GALaD7jCahzoC3rCLVsScxUOdEi9NWSOjy8vb+4dFDy99awxpbhLr4XhROXPLpzL8b9awySEAo3jOZvl7ln9pef1v4OmiuuEjSAqtoG4rkoZFipyxhJ9Jk9FVgxqVAoYPwFq1VwoQFccJVbfG+tqgbIIN+Kjtr7Vgxk/F8YEwi/azgWqbt7EptyH7YhZq+Hbj2BJkIMQtgwOt7P4enUdpgGFfQKn4wHsS+6TMAj2Sk3kKMvV1SdOE4WO35P0qj3xZ0+F8IHG3TuXT3fB2xDHzugrxw==
+ bh=2wCCyfYeRD2IFSBTLmGsU159j7Tj1QVsG95hOkKGvgg=;
+ b=wK8B1/kXDlLHpSAMGlQ7rUN95GOTrj4MgxlTLIFBoBi2foM5piReseW80V9HsQXEB5xOlDON1aPvtYgZ8id8YPS76umwBNndQE4aniMUgMrcjsuLMXA7iwv7HDUBb4IGon9EWV0imgeYUj8otil41zuGGkB56YQOY9tp00RyvzoGUQhuowoVaMdLBeKXwRAXxW7gP1Jqf8ozjnOvOqqHhL04OMjSsiKA5ZjaXwJnyKz95n1CHiMtKNiZ2f068TPjyhP1NRYokfNffLW8okSSgAdjP2mJ07rbmjEg9YHYp17slqZGQSKWxWyu5lrkwthe4nbOuJNZKuleC5MSg8xdoA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UJr+sDfY5UjFNKHoKr3oLlSegeSakAYmtUX0zjUBzRM=;
- b=yNmC8hHI58FfThq1HH3kOZkZF2ciSbwk2myqmmIK4RJlcwACe4wfgG/tvkImXZ3t4+lhLTR2A9/zeU3i4HZ3sswBq0RURshfndD716GiXc7XvdZxfuWP1Acf47gJH7yfEBuradPg1jWJNIRZiV9Iu4Gbawm66ZiftIcSdvN/Yo4=
+ bh=2wCCyfYeRD2IFSBTLmGsU159j7Tj1QVsG95hOkKGvgg=;
+ b=R8I04f9biuLmEgqj49iepbf6M5UL9iGKe2FU4nDIqjm9bESqwFxvmMXtdxKrX981c8tDm6J9NAX3kCNbu6NRcI+V+x/Yksr9sNe31y7XAGGb9hGoDWeJ+Sdb0wKgANvJpqaqamkuhE431p6d3XCi6Ln+Cla8ChBi8aW5ZJXA/zv+ptqrg3Fs7JojP8oZ3mQMN2YSakhNW9AEH+rXBrwXdAUhTglI7dhcjG2L/Tx08neQywtrWK5ECSgBCM/imsJxNr/JT3GtaVH6jZR0wo4TLJNne67E/F+Js9AGysl5EcUvlkFUiPqLS8ow7PhkkIs9Ak5SK6UxalWC0OMYvgUdiQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by SA0PR12MB4479.namprd12.prod.outlook.com (2603:10b6:806:95::24) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM8PR04MB7267.eurprd04.prod.outlook.com (2603:10a6:20b:1df::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
- 2025 03:56:22 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 03:56:22 +0000
-Message-ID: <2f6c190d-aed0-4a27-8b20-1a4833d7edf7@amd.com>
-Date: Thu, 25 Sep 2025 11:56:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] media: platform: amd: Add isp4 fw and hw interface
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
- Alexey Zagorodnikov <xglooom@gmail.com>
-References: <20250911100847.277408-1-Bin.Du@amd.com>
- <20250911100847.277408-4-Bin.Du@amd.com> <aNB0P18ytI1KopWI@sultan-box>
- <df5f52eb-0480-4d59-b930-e8336a993831@amd.com> <aNOZM2fj1X9TfZSF@sultan-box>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aNOZM2fj1X9TfZSF@sultan-box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0013.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::9) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Thu, 25 Sep
+ 2025 03:58:44 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 03:58:44 +0000
+Date: Wed, 24 Sep 2025 23:58:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-phy@lists.infradead.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] phy: freescale: Initialize priv->lock
+Message-ID: <aNS96z6GZb8sUdOy@lizhi-Precision-Tower-5810>
+References: <20250925013806.569658-1-xiaolei.wang@windriver.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925013806.569658-1-xiaolei.wang@windriver.com>
+X-ClientProxiedBy: BYAPR11CA0082.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::23) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,360 +78,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SA0PR12MB4479:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2ea0e16-b87e-4f7f-c902-08ddfbe77dc3
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM8PR04MB7267:EE_
+X-MS-Office365-Filtering-Correlation-Id: e209ac5a-03e7-4e09-88b9-08ddfbe7d1c2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|1800799024|7416014|52116014|366016|19092799006|38350700014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TWc5SkY4UmgvSGQrU3JHWWhUR2p6aGpMdmhCZnZXWXVpWDI3blhtN2tKZjZi?=
- =?utf-8?B?bTZmUnpGQ3YvY21VVitDOVhMMnczVUlsMkdyWWtmL01QOXhYeTlBcjZVU29n?=
- =?utf-8?B?RFhuR01meFg0RFl0bWV4Mis1bW96WXZGb09aQ05RUk1CTWdrN1V6S3FNQ01P?=
- =?utf-8?B?MCtIZ3NhT0RDbzN1SjZVakhmS0g4SFMzMTdKWis5QmpMSVVtRlZlWU9hYmFr?=
- =?utf-8?B?NmlsOXduWlV0WXlWSGY0disxMWZQekZmNzNxczhoRDJDMHd2L1piQjJIRWVD?=
- =?utf-8?B?TG5uU3dmSFFpK1laNURKNkRoazNYTEdaeE56bi9SalZ5bFNqWHJmY1dSVHVY?=
- =?utf-8?B?VUYyVWJ3TnVwNTgyaWdNbmhzcG5tTGdjeW8vMExxdjV0OEJUQkN1R0tJM1FL?=
- =?utf-8?B?cnJVQlVTWU9YSmxQNUFhQVBPeEg5Nm1mM2s2Sk1FSCt6RjFjQUI0LzJMaVlT?=
- =?utf-8?B?NDYwS3cyc3RqNUw2ZHZYVmdxb1paTVBLMmFKUkxudHo3NnZpME9rWXlLT3Nn?=
- =?utf-8?B?MkE5SGloWi8rTnU5SFdXWnBXdGh2NGE5N3V6V1NCZFVmazAxRFNUeFc1YWYx?=
- =?utf-8?B?MzYxN3hLdFBHOHNLd0d0TW1CcFhTVlE4WDdDWkZIYVZNRXRhRkY0UloxOSt0?=
- =?utf-8?B?S0JZTjgvcGRmNG1nTDJIalNzNlNzeThJbUMyUkhpL01YQXZGSU9qMFJGdDdi?=
- =?utf-8?B?T0Zxa3E5QnBFbGNXa1lnWldZZDRKZHJocU1iTDVvTGplZEFIbytTbVJCemEy?=
- =?utf-8?B?SU82WVJVZjJkY1lCVXVWSG1XZmE3QTF6Z2xRL2czUTBlSmtDLytJRGFBMEFC?=
- =?utf-8?B?Tm9UVGk2bmhSRVgvTUVyTU9DY0tCdkhSNUdEeVVCZnR5YmhlSWo2Y0g5eFha?=
- =?utf-8?B?bzZCVy9BbGV4SzFqOW5SNTJxblQvbjU1aGNWYm56S3FpemY1U0trUnRGQzVy?=
- =?utf-8?B?U3lGY25SNHYxVENuNEt4cXJvY0dXRkh4Tzlmd3JBQ1lISnpnb0k3Y3dGTStR?=
- =?utf-8?B?c1JENnpqK2lVRWxULzdXM01RUlc0WTFiZkVodWdDSmZiNVlTVExYc0pnV2E1?=
- =?utf-8?B?RXZHK2JjYk0vR1VxYXdOc2hPcHJid3hPbkN5Um9vL3VlVFNIWHRpSGV5RjhJ?=
- =?utf-8?B?MUFKYk14VVVUaUpPN1JJNEFDOU1ZbWxQa3JlZkRWa1RCcm5wM0xab2lmNzlM?=
- =?utf-8?B?NEx2VHhmMG9lZmlrOTJ2RkxyMkJ4UmZhMFNLa2lBV1AyTnVSVGFVN09CcEhq?=
- =?utf-8?B?RVIwNW9OeTVjNGtLQkRCbG1nNU56aUgySEdlNEFXYzZLVnFvSmxxQURQUzZO?=
- =?utf-8?B?cU8wOC9BYkc5RlVGSlNROU81V1NJMEFrdmtTdVViSHdEYmpzMm9YVXU1RXk3?=
- =?utf-8?B?WUdhUHdQamJSSXg3YkovL01rR2lqdDduazNtVDh2c0JNdnVDVTk0YlpFMEVm?=
- =?utf-8?B?bUpSUS9paG9yRVlOY1VTUEIyS3hCM1lKaWlmdk42Uzl5YjlRZW1QRmNIc25I?=
- =?utf-8?B?eTgyM0lvT0l3eHVrOUtWelVPc01FMGhuMXExRVBhVXFEUm1pMjlmd0dnYVdT?=
- =?utf-8?B?Wi9xUUJ4T1pyRGpTTlhWUmdVMEp4RHcwLzVJMUJubFpZQUZGbVJ4WG1rTlBo?=
- =?utf-8?B?OHN4MVV0MHFHa2FwRVdpejFoNXJBd29kQ01IYjBGVHdybnVFSFF0Y2xsR0Zp?=
- =?utf-8?B?eEcvK3JEbGNQaU50VjJORTBGdnJhdndRVW02NVV4Ukl4OTVnUFE3QndlTk9L?=
- =?utf-8?B?MVBSajh0WmhiSGI3bklDcFkzazZ1T3hGdWo1WGd3Ykx2MWd6TXBpblBRLzQ0?=
- =?utf-8?B?bGlvdHFZYzZzT3hoRUZuVXdHaXVMdGkrU1dmVTEzamdGVCtTNDRNS2VwTFBw?=
- =?utf-8?B?QzB4NmxqNTBmeGVjNUpIcjl2ZDRlOXkrcDdtUjdPN0xkcFlJSWwvZ0tQMU56?=
- =?utf-8?Q?RIHqa/b/t5n0h8+rOOmPNb/O8Ww7OgaE?=
+ =?us-ascii?Q?mCXImGLVA3jtOg8ip7RLshTS/np4ILLeaqp/mpCR/Ae2pvyV3TELoexe6Ekv?=
+ =?us-ascii?Q?lJYvE/Hp6XZM1Tp/nTd6TSTx1fc+7qc2DN70SSmBP8NjluPNJjBGyxwxiPOr?=
+ =?us-ascii?Q?xFTuEa2c+GZ4BvjUx8cS4CkQJl97cWsE4OnGJpsMC09d6z/PxE1LGc0BbQJK?=
+ =?us-ascii?Q?/Kd4GLyW6T8iT7rKwFEIaHhEuWusEOnjLs6aR7gSiJXZY/GXJ4sq6nZCz0/6?=
+ =?us-ascii?Q?ti0Esrp9kb1tR0NL2RxdVKie94/s8CqIZ6gIeyhgdTaqez0ETSeVJw7mj8T8?=
+ =?us-ascii?Q?HA+lDyeNFBaVg0FqGrHM7tKeV24YZycGKI7D3fRDiQQ8Gc7X7ct4S9IznIGf?=
+ =?us-ascii?Q?sXRED3Tm+eovOMqEsIrEmScSugM/ycK4wbm8abVnqmo5V3Ltu+fc0OvfFN25?=
+ =?us-ascii?Q?kITpUplnPm2OthT/5OuAcq/ojHB+uC9K2+pFTyV9WNu0PlJtKjuGorNE7gni?=
+ =?us-ascii?Q?N2l+eKpramiym/k6hSE4Gs0FpmDIN44tOIWXASlQZ458BR++QfS5akNTxSSI?=
+ =?us-ascii?Q?UwRSik2M3NMeAhznVGqKxaGngR7tD0sJWglujPFjGEjdYSWbhle/Ahy9sosF?=
+ =?us-ascii?Q?GclHcdRsIMMBlSHXlDAxoLT6yO/5HP3kjEgfDX3SKPxlDxjkz1FIjNnqVI5V?=
+ =?us-ascii?Q?nktJlxYih7x9lQnwQWn1dhComocnTcbhkwBAIa/VmNKvgWRsU7tJmZ6jIgBa?=
+ =?us-ascii?Q?0wjQ/ZC47gFHKN+1Uc3OLLUJM4XRoxLLrpjWhcB722ONWhThHTgZ41RDmFCd?=
+ =?us-ascii?Q?2zXA++y4Taf3hMLr0e69kQOWkZz4hqDjxIXyhFPdEtOTK+JaJHJuG24cGucj?=
+ =?us-ascii?Q?5PrkqARqAZqrooyExghxET1MTwGbRNb9GxUoJrWpixy5EvBhIgP7wx2tewNb?=
+ =?us-ascii?Q?s+Nn9JIoQrTJx43ISgD+4L0WuZoisfX0A7wzupcLR7Pr0g/MudCEouV4fK+d?=
+ =?us-ascii?Q?PnCRoS6b+PPEPLRBLylta3NL1QTcBlkghgDLVNubVhqCdh3aLArQeoTB0DHo?=
+ =?us-ascii?Q?zipnn9TgOuc84/ZSxU6s1E+zrpThvL9m7gkz5IYBWwxOOBrT7e+L+X7Beh4P?=
+ =?us-ascii?Q?cnIK40ncsV17VJ9aqOYzYHaOT0+NGIYJFKOiPSPsTr3RC2qXoGHCvf6/p427?=
+ =?us-ascii?Q?yGUheXfoC80JvEfIVGLnOdDuU3jVuiB2xSfzwP7ENg/CJho6/rOgLXkbfILv?=
+ =?us-ascii?Q?kAzxYRBnCt+E/VF/lgXuBntlkjSrziUx65n1+BeF6q731PlHeImOjW86gPvX?=
+ =?us-ascii?Q?IB2nm6hgGx47BaAxfNAkOJzSu97yGYZO4MFyHBuWs+OP6h+TTmHjjoIAcM+6?=
+ =?us-ascii?Q?v289wSxcrQOwPGXOvinQ3OWjk3TrjNpB5XzavhmbQPDi+V7Vjvt5V9vVq7R8?=
+ =?us-ascii?Q?IriptZFQBNxURByY1Q2q9x8fjVzf3L/3aIgiw119lSprdw4hCCz3WmCJ+ZXJ?=
+ =?us-ascii?Q?kU0MChN1A9A=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(52116014)(366016)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N1QyZFBGMllyV01IN0d5eDErTlBjWGFrMkpLcWxzajRGMnhYUkdGQ2F6RG5s?=
- =?utf-8?B?VllweWhJd3NQUE4zOTFFK0RWV0c4ek9lZHJUTlMwUWhrY1BlYU5QVlRpMUkv?=
- =?utf-8?B?ZEJ6ay92a01XUkxabGdZQzhSTFVsRmVlR1dBZlBBVnNHeEYrc3prUTdiNE5D?=
- =?utf-8?B?am80NU5pVlYyOXBXWFNKanRteWRQWXNjd28zWXQrcW5na29zUU9zcUpqbHlM?=
- =?utf-8?B?WERxc1pnOTkwaHJQQ3NOb1ZCNGpNRlBrMlJVd0lMYVRybnppZFRxRHVnbWRl?=
- =?utf-8?B?Y2IvcGR2ZUFDM0ZIUkxyR0Vnb3I4WXhNeDAvNmw5M3lHNjUzNjhoTmdYcjJS?=
- =?utf-8?B?aWJzVVo1Z0ZMT0gzVlF0WWZjamNlSG5CWXVTYUhvd1VjUGJJOW9mZ2NNbHVP?=
- =?utf-8?B?aWVzamZPWGV4MXlZQ2t2dlkwNU8rOG9sOVk2ZisyOGlUNitFdWRlNUNEZ21W?=
- =?utf-8?B?MVRHWk9pNTl6OVJDclBBV1R3RlZ4U0xrZjhFWnRMTEgxb0R4bWNzZXlpZzhq?=
- =?utf-8?B?a3VGNnB2V3Nva05OaFN5U1E1V090bGdSbG5qQm9TTmlIcEZIVW5mdkJWbzlN?=
- =?utf-8?B?UytTc1ROVllTU3haL2U3a3g4UGNENkkyNlFHVmtqZVVNMUxic1JPeEdJZUJX?=
- =?utf-8?B?VlFiMCtZLzhSWlUzdkExb3VEU0xOTTZQLzQwWWJIVGR6eVF4THdTbUhVK0sz?=
- =?utf-8?B?dVQvT3pGcU5BT29QWnF5SlBUVGdDdUU2M2dmbUM2NTZERUllRExIZGlMYXBt?=
- =?utf-8?B?ZnRyVjRrazlCaXN3NFJ2UjhoS2RTeGdaaWc1VzlIOVFibnNaS3d1ZktmbWpN?=
- =?utf-8?B?ZHhLNkFYSVBTYTJSN29LYnE1TnIvTDFzMnJvRGxwL25vbmxqQkRjaXpMRE1H?=
- =?utf-8?B?T3o3OUlhM3JJSEQ0UmloMmt1VlphdWJkWVNJcVJIM2NzL0R1VnRSQURkc091?=
- =?utf-8?B?eStUbUI5U0xWUkgzODJvNXMwWHpqTGQ3MC9HNEZObGZ5QkRRWGlWQ2JwNWxB?=
- =?utf-8?B?U2lkTytoSjI0WjZhN2FaNE0xU1lzMXViQno1WWxCamdOTDB4YmdjT3h2TDh2?=
- =?utf-8?B?dWwxSGthRkQyVnBSdGZaY2JCNXVYcTAyKzNoNjgzazRpaUZvSE9iTW1SN1FU?=
- =?utf-8?B?ckZJN0trTC80VzRLMFBmbzlsU2YrR0ZDaWNreTF1RExFY21PRDFuR0srNUd2?=
- =?utf-8?B?V1UrSFBMVStNYXBaYklRNnVmUVNhaUkrZXVDaUMzeUVGNUdzL2ZpbmpWcHpZ?=
- =?utf-8?B?alVCVmZDZHFLMjBYanV1SzJiS0xiMkt2RDdtQXhjcDNZdTdhR1ZaUEpZU1Zo?=
- =?utf-8?B?TkVPTkZVenlGV2x1QVBaSWl5QkJvR1JPQlRpNmxLbU5sbW1NeEJlWDdEK1lv?=
- =?utf-8?B?ZnRzN3NxREVINGhtY001bUI5akxYL09wZVlIZGlGYmUzUW40WDNLNFZMcDQw?=
- =?utf-8?B?T1pxM0pMOGRmV2FTY2FIV2o3dmM0M2JJZGpnN3VOY2dPOXlDM2NMaWtoUDR3?=
- =?utf-8?B?eENMT1EwajBEZGN6cHEwWmRUTDZObFVkRjNteG5aNmRBdXZGNnNSZFkvOUJY?=
- =?utf-8?B?MnRyRHcrZmxwZFhUN0c0bHZMbFRtWXV4WjhISE5RbTc1Y3JlUVBOT1JMNmpM?=
- =?utf-8?B?b1RibmpuT1BRUmlaaUZHSGlkQzF0ZkxkNlU0OGkxNGJvUzhuU2ZMMTh0OTli?=
- =?utf-8?B?S1dKdDNlTm8wdUI0bGtjRVBHK3Fkb2dXWFd6RU5FSW84NElVdFI0THZqZmZp?=
- =?utf-8?B?RHRtbGdIT1VwMm40RmlJNEVoMmRYVFAza29BZmNiUk1HMmdKaG8wYlRoclRX?=
- =?utf-8?B?WUxRZXpkOEZIczExSk8wajh1N3JIZ3pOaFZjRkZNMU5iV0w5ZEtkSllkOHZW?=
- =?utf-8?B?TUZFWFNPb3NRZjQwcmZSS3NoejJGNmEvZkwyZUcvTmYwUU1TNVBFNVBqdGdk?=
- =?utf-8?B?Tzh1S1FHZzdQbUNhYnFyeGZVR1FLNEM4RmFxeHJhRnY5cDltQzdEVGg1Q2ZI?=
- =?utf-8?B?dDZwSFovc0NxdmxuaHZ3dnQ0MkxRUXpYdGgrRCtuck9ZeTVFckcvMEdPeFlW?=
- =?utf-8?B?aUhGVGVOQ2diakNrc0FKWi9zNHBUUzZqcHUvOHJ0MmIrZUl2Q2ZINTZPWlBF?=
- =?utf-8?Q?Rclk=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2ea0e16-b87e-4f7f-c902-08ddfbe77dc3
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+ =?us-ascii?Q?AWnfMObfDtjwdmDJ/uzHfbrN/ZoJZBCGb1Vz05LOcYdyMoc55jmLMUauWBUy?=
+ =?us-ascii?Q?P8cQxgLD+jgr9E7V67g6++nfsoHWA9nb4DRSKEx/NMGm8RJdsPH3GcNabGy8?=
+ =?us-ascii?Q?zYtKYn2eh1vOVnRDzMODoRWJPX8I4pE/GsyJiMWUrh2j4uqvu1VkFeiwwh0o?=
+ =?us-ascii?Q?ncjyoH8KL763rwQ9yv2IDq8DorjFCTZ41xgtz0HVOik6ANDo5gOJMs6FFqhb?=
+ =?us-ascii?Q?Lx28moB0Hj4YX0UMTvJUFmyy2s523yTTenzlbociVJZ2uHEZR+/g5LbJWBvZ?=
+ =?us-ascii?Q?mmPJFhIBke9o1dBLh2C0c8V9SyWqDTbFnNue18Op5x77mYV+lBqG6fvRdP3A?=
+ =?us-ascii?Q?4MLEI3uZPjA8oniNBmXbPEP59E+rlK1K0r6IlqNHrHZPwVoj1qQpl9fCfglj?=
+ =?us-ascii?Q?fBaPK+RWP/0lfhU6mmFFGG2NxFG9y1oua21IN3ZJ5QR2zFIst8QwlsGr8UDM?=
+ =?us-ascii?Q?jM7SMP9+yn44CFgIVREWNKLFcxmOU2NY4pXGvmE9oVPliniR4tP1ecIpifdB?=
+ =?us-ascii?Q?hDAj3cqrlyl/dZ2jEM6QHJ0FAKjC+sAhNJNSuz2hggtGVAOA7VCLrmkg/arF?=
+ =?us-ascii?Q?jsEjyWjd1Z5JfV4+eS62rfODLPf46x+f5FtEEV1lQn6xxc6b+ogyyJOlgZlv?=
+ =?us-ascii?Q?DjRw7fuh5X4w15GKk+0ZnWrilKyzBxC3k02FhrCFRuZ63qh/vGgs2Fb45m4K?=
+ =?us-ascii?Q?g9n3KLgAIgfvhQPYhO/XgREyiihqKslO0GfsjO6rKOmK8AEIBENX8P0ZRBI7?=
+ =?us-ascii?Q?rFICr8CLvA6AFA0nz6PHqKV2popXY0H5SHvZCWWh2v3TCJs9Qv+TX8UhbV4p?=
+ =?us-ascii?Q?BeWemgYBcu+c/aL8P7jTT6zTAwgjL2fxrRpm+oOB9lb5qBEFhJjeddOgTQR5?=
+ =?us-ascii?Q?yqDX+S/1coqZJy01d3Z8ZvhL9XpRYDe7tOR+pxarR/hH+s5JNvxWsiQ3lz/S?=
+ =?us-ascii?Q?5zxoPU4SbfBf1bGoG7V4FB63fnsbEgp3ZkIJSOPSbqb9woIF/VZkURU7aEC1?=
+ =?us-ascii?Q?fuk+PYbP8/9OHJai3DaGSd+l4Xcc+yc51pBWnQri8ax+D4wwd2dJJMxZBLjI?=
+ =?us-ascii?Q?nXyoU6eYcrOnSS97je9f/TxEbKlAF79g77TtN2njICJymssY4p0fVAWMxK8E?=
+ =?us-ascii?Q?yHwTNGxfM0+8PD8l5vmVqUhLcSCZq/RdfxJnk/O36gzU7TiGSI2S44KNygxY?=
+ =?us-ascii?Q?h6a5/wOel1Qf+AWgUPcEAHsmS4SSD6bnZumu7Wf9/mi6HQRcwXAtKGgLgWhv?=
+ =?us-ascii?Q?/Lbk7pPAn5rZGrBP+t5QzayaKJocbJE4VUNjFnSnB6AF89XQwclim38DBjWN?=
+ =?us-ascii?Q?syRPz9yGwUAeCwoaSkovxU5wdJHK6nZhpei4Zet0giP94iOANLcgJVb0qHZL?=
+ =?us-ascii?Q?UiuskUx+g/4oW/ysY4kUoDqfLqvhzdppIb49BaB2wuDQalzYnfkwGNm6Q8Wi?=
+ =?us-ascii?Q?mrrR7+u61JVg22DsSvNca95ZUPpw7ifUqUK4ODpLyx0OjTxG/3/iYUUfPtgk?=
+ =?us-ascii?Q?QSG9j65N/w8+a9Buuu4nQVwYzjutxvsj8vZ5KmdxQUeC/PmlgAIzmKss3C+v?=
+ =?us-ascii?Q?so6rWODzUrt97JwHKDjUoc9cD0+4DJZ+EMBVYhKS?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e209ac5a-03e7-4e09-88b9-08ddfbe7d1c2
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 03:56:22.5757
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 03:58:43.9339
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RX9OxeEwJqnmmQxHts68cjWeDfmqXnWfeGIfLZNqN848DGf0w54xvdboA80sRi3T
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4479
+X-MS-Exchange-CrossTenant-UserPrincipalName: oUu8XO+L4Frju3QhIQnuf4iQsGQFxj2V8RbjgudrxdTeLlNFkF13auT3A9rcVDLl5ddknWQ1zQAoKRgWFec5Zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7267
 
-Thanks Sultan.
+On Thu, Sep 25, 2025 at 09:38:06AM +0800, Xiaolei Wang wrote:
+> Initialize priv->lock to fix the following warning.
+>
+> WARNING: CPU: 0 PID: 12 at kernel/locking/mutex.c:577 __mutex_lock+0x70c/0x8b8
+>  Modules linked in:
+>  Hardware name: Freescale i.MX8QM MEK (DT)
+>  Call trace:
+>   __mutex_lock+0x70c/0x8b8 (P)
+>   mutex_lock_nested+0x24/0x30
+>   imx_hsio_power_on+0x4c/0x764
+>   phy_power_on+0x7c/0x12c
+>   imx_pcie_host_init+0x1d0/0x4d4
+>   dw_pcie_host_init+0x188/0x4b0
+>   imx_pcie_probe+0x324/0x6f4
+>   platform_probe+0x5c/0x98
+>   really_probe+0xbc/0x29c
+>   __driver_probe_device+0x78/0x12c
+>   driver_probe_device+0xd8/0x160
+>   __device_attach_driver+0xb8/0x138
+>   bus_for_each_drv+0x84/0xe4
+>   __device_attach_async_helper+0xb8/0xdc
+>   async_run_entry_fn+0x34/0xe0
+>   process_one_work+0x220/0x694
+>   worker_thread+0x1c0/0x36c
+>   kthread+0x14c/0x224
+>
+> Fixes: 82c56b6dd24f ("phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY driver support")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
 
-On 9/24/2025 3:09 PM, Sultan Alsawaf wrote:
-> On Tue, Sep 23, 2025 at 05:24:11PM +0800, Du, Bin wrote:
->> On 9/22/2025 5:55 AM, Sultan Alsawaf wrote:
->>> On Thu, Sep 11, 2025 at 06:08:43PM +0800, Bin Du wrote:
->>>> +	if (!mem_info)
->>>> +		return NULL;
->>>> +
->>>> +	mem_info->mem_size = mem_size;
->>>
->>> mem_info->mem_size is not used anywhere, remove it.
->>>
->>
->> Actually, mem_size will be used in following patches in isp4_subdev.c, so,
->> i'd like to keep it.
-> 
-> Ah, I didn't notice, my apologies.
-> 
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-It's okay. Actually, it is not used in this patch, so I don't think you 
-are wrong :)
-
->>>> +	for (i = 0; i < buf_size / sizeof(u32); i++)
->>>> +		checksum += buffer[i];
->>>> +
->>>> +	surplus_ptr = (u8 *)&buffer[i];
->>>
->>> Change cast to `(const u32 *)`
->>>
->>
->> Sure, will modify in the next version. I guess you mean `(const u8 *)`
-> 
-> Yes, it should be `(const u8 *)`, apologies for the typo.
-> 
-
-Never mind, just coding details, what's most important is the idea, 
-thanks for that.
-
->>>> +
->>>> +	guard(mutex)(&ispif->cmdq_mutex);
->>>> +
->>>> +	list_for_each_entry_safe(buf_node, tmp_node, &ispif->cmdq, list) {
->>>> +		list_del(&buf_node->list);
->>>> +		kfree(buf_node);
->>>> +	}
->>>
->>> Move the whole list to a local LIST_HEAD(free_list) variable and then release
->>> the lock. Then you can list_for_each_entry_safe() without needing to do a
->>> list_del() every time, and you won't need to hold the lock the whole time.
->>>
->>
->> Thanks for the suggestion, seems that will make code complicated, e.g. this
->> is the suggested implementation in my mind if i don't get you wrong,
->>
->> void isp4if_clear_cmdq(struct isp4_interface *ispif)
->> {
->> 	struct isp4if_cmd_element *buf_node;
->> 	struct isp4if_cmd_element *tmp_node;
->> 	LIST_HEAD(free_list);
->>
->> 	{
->> 		guard(mutex)(&ispif->cmdq_mutex);
->> 		if (list_empty(&ispif->cmdq))
->> 			return;
->> 		free_list = ispif->cmdq;
->> 		INIT_LIST_HEAD(&ispif->cmdq);
->> 	}
->>
->> 	list_for_each_entry_safe(buf_node, tmp_node, &free_list, list) {
->> 		bool quit = false;
->>
->> 		if (buf_node->list.next == &ispif->cmdq)
->> 			quit = true;
->> 		kfree(buf_node);
->> 		if (quit)
->> 			return;
->> 	}
->> }
->> So, I'd like to keep previous implementation by removing list_del and adding
->> INIT_LIST_HEAD, so this will be the code after refine,
->>
->> void isp4if_clear_cmdq(struct isp4_interface *ispif)
->> {
->> 	struct isp4if_cmd_element *buf_node;
->> 	struct isp4if_cmd_element *tmp_node;
->>
->> 	guard(mutex)(&ispif->cmdq_mutex);
->>
->> 	list_for_each_entry_safe(buf_node, tmp_node, &ispif->cmdq, list)
->> 		kfree(buf_node);
->> 	INIT_LIST_HEAD(&ispif->cmdq);
->> }
->> It's much simpler, and based on our test, for command and buffer queue, the
->> elements in the queue won't exceed 5 when run to here, so the lock time will
->> be very short. What do you think?
-> 
-> This is what I am thinking (with cmdq_mutex replaced with a spin lock):
-> 
-> void isp4if_clear_cmdq(struct isp4_interface *ispif)
-> {
-> 	struct isp4if_cmd_element *buf_node, *tmp_node;
-> 	LIST_HEAD(free_list);
-> 
-> 	scoped_guard(spinlock, &ispif->cmdq_lock)
-> 		list_splice_init(&ispif->cmdq, &free_list);
-> 
-> 	list_for_each_entry_safe(buf_node, tmp_node, &free_list, list)
-> 		kfree(buf_node);
-> }
-> 
-
-Many thanks for the reference code, it's concise and easy to understand, 
-will incorporate it into the next version.
-
->>>> +	struct isp4if_cmd_element *cmd_ele = NULL;
->>>> +	struct isp4if_rb_config *rb_config;
->>>> +	struct device *dev = ispif->dev;
->>>> +	struct isp4fw_cmd cmd = {};
->>>
->>> Use memset() to guarantee padding bits of cmd are zeroed, since this may not
->>> guarantee it on all compilers.
->>>
->>
->> Sure, will do it in the next version. Just a question, padding bits seem
->> never to be used, will it cause any problem if they are not zeroed?
-> 
-> Padding bits, if there are any, are used by isp4if_compute_check_sum() and are
-> also sent to the firmware.
-> 
-
-Yes, this will impact the checksum value. However, based on my 
-understanding, it will not affect the error detection outcome, since the 
-firmware uses the same padding bits during both checksum calculation and 
-comparison. I apologize for the minor disagreement—I just want to avoid 
-introducing redundant code, especially given that similar scenarios 
-appear a lot. Originally, we used memset in the initial version, but 
-switched to { } initialization in subsequent versions based on review 
-feedback. Please feel free to share your ideas, if you believe it is 
-still necessary, we will add them.
-
->>>> +
->>>> +	ret = isp4if_insert_isp_fw_cmd(ispif, stream, &cmd);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "fail for insert_isp_fw_cmd camId (0x%08x)\n", cmd_id);
->>>> +		if (cmd_ele) {
->>>> +			isp4if_rm_cmd_from_cmdq(ispif, cmd_ele->seq_num, cmd_ele->cmd_id);
->>>
->>> Using isp4if_rm_cmd_from_cmdq() sort of implies that there is a risk that
->>> cmd_ele may have been removed from the list somehow, even though the fw cmd
->>> insertion failed? In any case, either make it truly safe by assuming that it's
->>> unsafe to dereference cmd_ele right now, or just delete cmd_ele directly from
->>> the list under the lock.
->>>
->>
->> Good consideration, so will change it to following in the next version,
->> ret = isp4if_insert_isp_fw_cmd(ispif, stream, &cmd);
->> if (ret) {
->> 	dev_err(dev, "fail for insert_isp_fw_cmd camId %s(0x%08x)\n",
->> 		isp4dbg_get_cmd_str(cmd_id), cmd_id);
->> 	if (cmd_ele) {
->> 		cmd_ele = isp4if_rm_cmd_from_cmdq(ispif, seq_num, cmd_id);
->> 		kfree(cmd_ele);
->> 	}
->> }
->> The final cmd_ele to be freed will come from cmdq which will be protected by
->> mutex, so it will be safe.
-> 
-> Looks good to me!
-> 
-
-Thanks for the confirmation.
-
->>>> +static int isp4if_send_buffer(struct isp4_interface *ispif, struct isp4if_img_buf_info *buf_info)
->>>> +{
->>>> +	struct isp4fw_cmd_send_buffer cmd = {};
->>>
->>> Use memset() to guarantee padding bits are zeroed, since this may not guarantee
->>> it on all compilers.
->>>
->>
->> Sure, will do it in the next version. as mentioned above, padding bits seem
->> never to be used, will it cause any problem if they are not zeroed?
-> 
-> Padding bits, if there are any, are used by isp4if_compute_check_sum() and are
-> also sent to the firmware.
-> 
-
-Same comments as above
-
->>>> +
->>>> +	guard(mutex)(&ispif->bufq_mutex);
->>>> +
->>>> +	list_for_each_entry_safe(buf_node, tmp_node, &ispif->bufq, node) {
->>>> +		list_del(&buf_node->node);
->>>> +		kfree(buf_node);
->>>> +	}
->>>
->>> Move the whole list to a local LIST_HEAD(free_list) variable and then release
->>> the lock. Then you can list_for_each_entry_safe() without needing to do a
->>> list_del() every time, and you won't need to hold the lock the whole time.
->>>
->>
->> Same comments as above cmdq
-> 
-> This is what I am thinking (with bufq_mutex replaced with a spin lock):
-> 
-> void isp4if_clear_bufq(struct isp4_interface *ispif)
-> {
-> 	struct isp4if_img_buf_node *buf_node, *tmp_node;
-> 	LIST_HEAD(free_list);
-> 
-> 	scoped_guard(spinlock, &ispif->bufq_lock)
-> 		list_splice_init(&ispif->bufq, &free_list);
-> 
-> 	list_for_each_entry_safe(buf_node, tmp_node, &free_list, node)
-> 		kfree(buf_node);
-> }
-> 
-
-Very good reference, will update in the next version.
-
->>>> +struct isp4_interface {
->>>> +	struct device *dev;
->>>> +	void __iomem *mmio;
->>>> +
->>>> +	struct mutex cmdq_mutex; /* used for cmdq access */
->>>> +	struct mutex bufq_mutex; /* used for bufq access */
->>>
->>> It makes more sense for cmdq_mutex and bufq_mutex to be spin locks since they
->>> are only held briefly for list traversal.
->>>
->>
->> I'd like to keep them as mutex, because 1.no sync with hard/soft interrupt
->> is needed, 2.Not very time critical 3.Make guard mutex optimization
->> possible. What do you think?
-> 
-> For very quick/short critical sections that don't sleep, it makes more sense to
-> use a spin lock. A mutex lock is heavy when it needs to sleep on contention,
-> which isn't worth it if the critical section has very few instructions.
-> 
-> Also, guard and scoped_guard are available for spin locks too, as shown in my
-> replies above.
-> 
-
-Thank you for the detailed explanation. Really appreciate the insights 
-and will make sure to include these updates in the next version.
-
->>>> +
->>>> +#endif
->>>
->>> Add /* _ISP4_INTERFACE_ */
->>>
->>
->> Sure, will add it in the next version and check all header files. BTW, will
->> change the macro name to _ISP4_INTERFACE_H_ to align with others
-> 
-> Good catch, sounds good.
-> 
-> Sultan
-
--- 
-Regards,
-Bin
-
+> v1: https://patchwork.kernel.org/project/imx/patch/20250923141611.1295395-1-xiaolei.wang@windriver.com/
+>
+> v2: Use devm_mutex_init() instead of mutex_init()
+>
+>  drivers/phy/freescale/phy-fsl-imx8qm-hsio.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c b/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
+> index 5dca93cd325c..977d21d753a5 100644
+> --- a/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
+> +++ b/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
+> @@ -533,7 +533,7 @@ static struct phy *imx_hsio_xlate(struct device *dev,
+>
+>  static int imx_hsio_probe(struct platform_device *pdev)
+>  {
+> -	int i;
+> +	int i, ret;
+>  	void __iomem *off;
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> @@ -545,6 +545,9 @@ static int imx_hsio_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	priv->dev = &pdev->dev;
+>  	priv->drvdata = of_device_get_match_data(dev);
+> +	ret = devm_mutex_init(dev, &priv->lock);
+> +	if (ret)
+> +		return ret;
+>
+>  	/* Get HSIO configuration mode */
+>  	if (of_property_read_string(np, "fsl,hsio-cfg", &priv->hsio_cfg))
+> --
+> 2.43.0
+>
 
