@@ -1,220 +1,234 @@
-Return-Path: <linux-kernel+bounces-832364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AE8B9F14D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:05:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA42B9F15C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B122D18918DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637953AA264
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6C32E92B7;
-	Thu, 25 Sep 2025 12:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17372FD1A7;
+	Thu, 25 Sep 2025 12:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="fwNTZLUV"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MVhNeyWU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765A9196C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E86274040
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758801920; cv=none; b=PYUAS0j9tM9EI0VCATaCk2FKdZcBKVpXZkY2GM3G4aVTQHRWoUXZzY4gXZth/0ilDfVGWZm+TymW+iNQbLsJ4jToCx/dLEpzlRUlE2zplYYCWtimLpJYwNn1HNhsEuB2iMtBgZYzIHJFG8B1BhBEeUNTI4/Y9IodM7IMFXIC6FE=
+	t=1758802075; cv=none; b=ChGKFkrGS5a1+kTadO44lPHQFfox41iSq5gty4S0ajm03vtJob7izdFWssIedEbnhpwOIBd/bkbu6wED0u44Kn8ySRn173mnskecHgShvacS8dFNw391k3rKFpJi3Zs4izmNX1wd7iVyHobBGWy3jO7XpWiY/4d8BdToDg0qTuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758801920; c=relaxed/simple;
-	bh=YmP8inoUwD7SAXG/UDicvfE5R8iqwygFOMLbQgaKGO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkGrT/ONtmlWsBUxX86EC6oVCLg+OW64qRY85JWP6jlvIc18bsDL+AntNoJOLwESD16hruzFU1eZc7navV18xI5kRLJroUgRcsB/knuxwC7rp8SsFZZFyL2O2ExXqywVheJpnL7pJIPYQYZN5xkrtr+7Md82MTJuU2svOR3TaKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=fwNTZLUV; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b54a74f9150so800432a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758801917; x=1759406717; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OJfaYk/ADjggZbX1yowJutgFsALZbqt+nLjwb73l1ow=;
-        b=fwNTZLUVn5sMW4aFsE1i38SaLlHDsxLyEvs9Exfvixf1cqIkg1nLYkk/ZxlJ8m6aF8
-         1UJAqWhzAmv6KNkDtHZUP0WPzknavp0pJPQJIzJTL1i0LFHlBpQPtRD4OfvOiHbWADp7
-         NHWG6W4Y8eBIRBwogyjCn12FZiXdVIDJo6hyKZC0RnH6eTxiwspA29cfeSiv1l5sD1Hd
-         qLAsMjcpWFOuA33xT141DFX1KfCdBtFT/jv7yldhQ3vrVZcLfBph7PQl9NStkpNjRmDl
-         OO2sNYEmEHXbx3E4ZesRj1RTw6ZIaCe9TtKtBoeXp1uK7gBg6sKGbq3NVedJVt8UjtoE
-         lj+w==
+	s=arc-20240116; t=1758802075; c=relaxed/simple;
+	bh=gDa8eibeTR7pD9qAnsrm2yPwQpm8Mans4IJPZGjSg7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gU6LeD28/S8L8h7ASwDjoVqReKaIz1eUiMGKHxw7cuatIikIgo1O6SuTd6m2790MPGb5vkeKYPfb+Qn13VxVD0dVXKbeVkkAqRAfeBxXUZ2LiOTapPKkRCvbVZshm4+IqP+9tSQHpESZ7Q4tZknegWWO0sphAb6Es4CcgaI7V/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MVhNeyWU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9JnOC025358
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:07:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	weJXdfLjyQOO+L4dDrsKUb0fFZpTyYgiDzGUPHQ1E7E=; b=MVhNeyWU53c1/Vab
+	+ZEeaIyP1GMeNzcIEME/uOAOKSwudXZCFrgmhyzviUteAmPXI5L7afpJWJ+zhUbn
+	QTxQ+JHVbzj/hIETS2UrEDV2tPxbkQxOUblFrdaVAlTZ8Adb3OnxXsWFHHmO8sGj
+	O/mHigFvPV54NDBmOR0Zl9IwFcLtcaXAbbJT77++itdHkT0bT4Nu0YFlyAlBeLjg
+	pM4Mrgi7BCGH/hUft4iWeH6l86Y/ysvuTw9E1aCT5klEZAIlD9W6LyRQ0fkCHCXP
+	O+TojUIJyVm706PfK8C3Ys7j3Y9C9yxAvM/fwgPeXWEyRS0i5Kjpgf5V00pThYDh
+	Vokdxw==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyf0auv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:07:52 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-85db8cb38ccso9149985a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:07:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758801917; x=1759406717;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OJfaYk/ADjggZbX1yowJutgFsALZbqt+nLjwb73l1ow=;
-        b=uLzwfbFnWHdd2rEozon5ywf4G3ZOU0eToPzU/w62ej8PGZcKhKu8xBK//PG6gKcvAf
-         fVKo4fL94JH/7t/fFuTK7Ezr7MKyqNFqyMv2VrQXCeFihzI0YOpekz9Jd/9mkWhEkdZh
-         ZhzkG2hkg5zHTj4eDDPyyiI9x/NMgi7Pp22/QgvsSndilnSpRcnZ3Nx/7VBAVE+GyFbb
-         RzQTvo95D/oISQl3Wioxc2h6rvuvK57c+6JinrGgBBeiuGuGaB8cuZ89S+kJG0wLSvPG
-         S1OYMVRnhzQ6e4SAYhSLWb3PyzNtIhetCQ5TSLwZtBOnEIPxev/NapK7RNG8PkfZa50S
-         Ia5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDBWD68tNfHhS5zanCPZhgCuT8uvhzUyzZ+z63IPiOpDKg8KHKEk/6O+6o9cdmSeeKceu/oMNGf6tDFpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzBQQIUZp0kkuJDtJcoaYwrKSDTTYn8sGRlGH5y9K5nJJuweWB
-	EFIjMovFZma3ZF8oWsVwiNMGnK+nwTopKkUsMzbluXMugrE6M3v4NeoMKP99dToryQ==
-X-Gm-Gg: ASbGncvnDKysTTWNXwH60Rgc89Fb5wm/hPoW5k1TPh3p+C+rVdhtowLECxfCLv3JnTW
-	S8fKhi0RDMQ0QzB4q6udcGGJWayvC39fbQ4bWQdUrSCMDrIn4NxogryDYe8kkvMui1sM+T+sMAV
-	bNlTkuU/Aei89yVYnvtej/c2L08mqPaxZo8Gpr3g84JE/mbNGx/XC9+SjNpZPoOHd05jEN2A9T+
-	19teGbyvZqpIXTzhvjLShsR+WGJhEYk0QP4X8yURNl4DWbgt85oq6WNdAnBvK0nrfZWlI19fN9E
-	VhFU8rZCi2suzAbLYLcYMqcS4D/FtDfqQLhM6+nnmbH8/WIh7udlv+h9qC8SBhW5mF/C4r0HdyM
-	Bj9Cdf70EDU7bv9qt1cdxF9t7CbCkk/0BepbLyg1zbxV1fppVVw==
-X-Google-Smtp-Source: AGHT+IHqDDMF0tlP8h5tvW7t+b2FQfev+/Ajro6sb/nuFtAvbnjpVZtZ8hg7uw1gVHICdtgAY3cdOA==
-X-Received: by 2002:a17:903:fa5:b0:26e:49e3:55f0 with SMTP id d9443c01a7336-27ed4a1a37cmr39285025ad.16.1758801916505;
-        Thu, 25 Sep 2025 05:05:16 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6716081sm22930815ad.53.2025.09.25.05.05.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 05:05:15 -0700 (PDT)
-Date: Thu, 25 Sep 2025 20:05:04 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH 1/4] sched/fair: Propagate load for throttled cfs_rq
-Message-ID: <20250925120504.GC120@bytedance>
-References: <20250910095044.278-1-ziqianlu@bytedance.com>
- <20250910095044.278-2-ziqianlu@bytedance.com>
- <58a587d694f33c2ea487c700b0d046fa@codethink.co.uk>
- <20250924113354.GA120@bytedance>
- <db7fc090-5c12-450b-87a4-bcf06e10ef68@amd.com>
- <20250925092938.GB120@bytedance>
- <72706108-f1c3-4719-a65c-c7c5d76f9b1e@amd.com>
+        d=1e100.net; s=20230601; t=1758802071; x=1759406871;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=weJXdfLjyQOO+L4dDrsKUb0fFZpTyYgiDzGUPHQ1E7E=;
+        b=sirh9bgA15NTMXsg8yqGyZws84rc7D3xOtTLNj9HRn/IAcpGOmycHUSzKmyZHF7kBm
+         UseGfISOA3JBY4H+dtXnHoyY12h3kgxtZeetzNaTytaKkAKDw3rBMdoX2izoBZdHeAZO
+         1ytFds9TeULlAQ/xe3vWVIXem39H5hqlwlcsMfRK6NiBOUcRCjDnHMzWXIy35Ca8gWuE
+         y2mOKdw5WRownVWgNfVj7TWjC3oPQn+geVBYJrDr2mO9tYSk7R7tViHBD5ii+zFjWS5x
+         VeK6jw/RQFb2Zh27Rpjvm27e+16CvmzozIvpXwZsj2W8TbNaIf7qPt/cNMvCKRXhbvSN
+         Rxmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTAXWAC8aXgztoss0MH1CnhkVLr9t0gSQ4AL7T+mt/S4KeZooZJdOA/TukSQwfsHv2nkoSxbvABCcwxaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5H52Q6d6vdJIzd8JbixdnF6mKwmnjd2UeEqqb8hmmYlga58+6
+	8SzUeT1mH+P7XgKBZ5pRLzs3KK3kzjaIiTrui9w2yQ4ud3SVx/TOWKBomZdlP74aSV1kKiQ4r6T
+	zCJxh8LpLD5MApOoLAt3KLEJUl8waIrqZkBLbPbX33YOjP+WwUZ0S/r/QAbmsiToCkR0=
+X-Gm-Gg: ASbGncv5oxwrdFJVzS2J4O/Skq6IuWqpRBD7TFPRspXpVOjp7uQvw0IBXFo7Rc2G/9f
+	uh2rn7LWf1RE2mNWUwk7dh8TCJjEl0LZAO30JwQXu7pv519f5egMZ+k6+IfsMe3jlBNSStM5pjm
+	GzsFmET/1YqqGEmvhJD4ZNtl5vw4/jt+gxSZmS7SvifXmuhegUIcOMVjYZMfR7dDUQkYnUV9A5P
+	QKlKiNPszq+cufa3bIQS5k0pbAuDRAwZfoLxEmVn33akuSY3pKTHeygDwbrdNiUD0aRosSlvxWF
+	I2zE7nE5QR2clu3Bq4cWn36rScqvO+h5+0F/zQP7t06KMMZRx9Ebpwtkfymssduu7iMiqUEq2Fi
+	v72CDMTH7vxDwCui/sJ/6dg==
+X-Received: by 2002:a05:622a:11d1:b0:4cd:3f47:9786 with SMTP id d75a77b69052e-4da4924fb20mr26435451cf.7.1758802071068;
+        Thu, 25 Sep 2025 05:07:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/x3fu4OCkYicD8u3aPyJRoZkA+aM3Y3MPrBYWZinB0wQz9Ef6J8V+YzHMOdkXzgoavSWDRQ==
+X-Received: by 2002:a05:622a:11d1:b0:4cd:3f47:9786 with SMTP id d75a77b69052e-4da4924fb20mr26435031cf.7.1758802070376;
+        Thu, 25 Sep 2025 05:07:50 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353efb8903sm154374366b.33.2025.09.25.05.07.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 05:07:49 -0700 (PDT)
+Message-ID: <df671650-a5af-4453-a11d-e8e2a32bd1ab@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 14:07:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72706108-f1c3-4719-a65c-c7c5d76f9b1e@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] usb: typec: ucsi_glink: Increase buffer size to
+ support UCSI v2
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
+        heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc: lumag@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
+        quic_bjorande@quicinc.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250924232631.644234-1-anjelique.melendez@oss.qualcomm.com>
+ <20250924232631.644234-3-anjelique.melendez@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250924232631.644234-3-anjelique.melendez@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: BezLGcxgYjK2xATU3vun0zegdD7TIyg5
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d53098 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=IeecORiGvqfwQRmb6Z8A:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX1xFmFnzLRSZx
+ T4Tkbjyt9AKzxuQSI+LL0Kd8jWxypOtB/hwtctP9YgEERdKXWk+OgQt5OF0HywPxioU5KkR55ns
+ OzynaHUNdkmztz3MyIpV5B3QHw3A0TFOzOC6m//SsactoEItnW0hHjizFni15A4zLz5OKp1PblU
+ BTtdaLo2G5LqBehG0PzJdijLCsYtT35sizeUGdqGOt6JsdbJFASnxYBQ9ebSKsJrKqarM9gfBFA
+ orWWDfvMoe3U3l80rPBGUDrPBrDc6obMhe8rBBzTCBtajiCGFP93lilsPlwMQzHVdxXFowoCZpC
+ fErKS2NxUoYiA2bpJ1tnKLaOX/UaMvrX6K3AsWG20fRwAZWdDBPZVz/9a5zjUurGIqSZe5xif09
+ I3EG/914
+X-Proofpoint-ORIG-GUID: BezLGcxgYjK2xATU3vun0zegdD7TIyg5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-On Thu, Sep 25, 2025 at 04:52:25PM +0530, K Prateek Nayak wrote:
+On 9/25/25 1:26 AM, Anjelique Melendez wrote:
+> UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
+> 16 bytes to 256 bytes each for the message exchange between OPM and PPM
+> This makes the total buffer size increase from 48 bytes to 528 bytes.
+> Update the buffer size to support this increase.
 > 
-> 
-> On 9/25/2025 2:59 PM, Aaron Lu wrote:
-> > Hi Prateek,
-> > 
-> > On Thu, Sep 25, 2025 at 01:47:35PM +0530, K Prateek Nayak wrote:
-> >> Hello Aaron, Matteo,
-> >>
-> >> On 9/24/2025 5:03 PM, Aaron Lu wrote:
-> >>>> [   18.421350] WARNING: CPU: 0 PID: 1 at kernel/sched/fair.c:400 enqueue_task_fair+0x925/0x980
-> >>>
-> >>> I stared at the code and haven't been able to figure out when
-> >>> enqueue_task_fair() would end up with a broken leaf cfs_rq list.
-> >>
-> >> Yeah neither could I. I tried running with PREEMPT_RT too and still
-> >> couldn't trigger it :(
-> >>
-> >> But I'm wondering if all we are missing is:
-> >>
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index f993de30e146..5f9e7b4df391 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -6435,6 +6435,7 @@ static void sync_throttle(struct task_group *tg, int cpu)
-> >>  
-> >>  	cfs_rq->throttle_count = pcfs_rq->throttle_count;
-> >>  	cfs_rq->throttled_clock_pelt = rq_clock_pelt(cpu_rq(cpu));
-> >> +	cfs_rq->pelt_clock_throttled = pcfs_rq->pelt_clock_throttled;
-> >>  }
-> >>  
-> >>  /* conditionally throttle active cfs_rq's from put_prev_entity() */
-> >> ---
-> >>
-> >> This is the only way we can currently have a break in
-> >> cfs_rq_pelt_clock_throttled() hierarchy.
-> >>
-> > 
-> > Great finding! Yes, that is missed.
-> > 
-> > According to this info, I'm able to trigger the assert in
-> > enqueue_task_fair(). The stack is different from Matteo's: his stack is
-> > from ttwu path while mine is from exit. Anyway, let me do more analysis
-> > and get back to you:
-> > 
-> > [   67.041905] ------------[ cut here ]------------
-> > [   67.042387] WARNING: CPU: 2 PID: 11582 at kernel/sched/fair.c:401 enqueue_task_fair+0x6db/0x720
-> > [   67.043227] Modules linked in:
-> > [   67.043537] CPU: 2 UID: 0 PID: 11582 Comm: sudo Tainted: G        W           6.17.0-rc4-00010-gfe8d238e646e-dirty #72 PREEMPT(voluntary)
-> > [   67.044694] Tainted: [W]=WARN
-> > [   67.044997] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> > [   67.045910] RIP: 0010:enqueue_task_fair+0x6db/0x720
-> > [   67.046383] Code: 00 48 c7 c7 96 b2 60 82 c6 05 af 64 2e 05 01 e8 fb 12 03 00 8b 4c 24 04 e9 f8 fc ff ff 4c 89 ef e8 ea a2 ff ff e9 ad fa ff ff <0f> 0b e9 5d fc ff ff 49 8b b4 24 08 0b 00 00 4c 89 e7 e8 de 31 01
-> > [   67.048155] RSP: 0018:ffa000002d2a7dc0 EFLAGS: 00010087
-> > [   67.048655] RAX: ff11000ff05fd2e8 RBX: 0000000000000000 RCX: 0000000000000004
-> > [   67.049339] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ff11000ff05fd1f0
-> > [   67.050036] RBP: 0000000000000001 R08: 0000000000000000 R09: ff11000ff05fc908
-> > [   67.050731] R10: 0000000000000000 R11: 00000000fa83b2da R12: ff11000ff05fc800
-> > [   67.051402] R13: 0000000000000000 R14: 00000000002ab980 R15: ff11000ff05fc8c0
-> > [   67.052083] FS:  0000000000000000(0000) GS:ff110010696a6000(0000) knlGS:0000000000000000
-> > [   67.052855] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   67.053404] CR2: 00007f67f8b96168 CR3: 0000000002c3c006 CR4: 0000000000371ef0
-> > [   67.054083] Call Trace:
-> > [   67.054334]  <TASK>
-> > [   67.054546]  enqueue_task+0x35/0xd0
-> > [   67.054885]  sched_move_task+0x291/0x370
-> > [   67.055268]  ? kmem_cache_free+0x2d9/0x480
-> > [   67.055669]  do_exit+0x204/0x4f0
-> > [   67.055984]  ? lock_release+0x10a/0x170
-> > [   67.056356]  do_group_exit+0x36/0xa0
-> > [   67.056714]  __x64_sys_exit_group+0x18/0x20
-> > [   67.057121]  x64_sys_call+0x14fa/0x1720
-> > [   67.057502]  do_syscall_64+0x6a/0x2d0
-> > [   67.057865]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Great! I'll try stressing this path too.
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> ---
 
-I now also see other paths leading to enqueue_task_fair() too, so I
-think this is the same problem as seen by Matteo.
+[...]
 
-> P.S. Are you seeing this with sync_throttle() fix too?
+>  static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
+> @@ -131,18 +143,34 @@ static int pmic_glink_ucsi_read_message_in(struct ucsi *ucsi, void *val, size_t
+>  static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned int offset,
+>  					const void *val, size_t val_len)
+>  {
+> -	struct ucsi_write_buf_req_msg req = {};
+> -	unsigned long left;
+> +	struct ucsi_v2_write_buf_req_msg req = {};
+> +	unsigned long left, max_buf_len;
+> +	size_t req_len;
+>  	int ret;
+>  
+> +	memset(&req, 0, sizeof(req));
 
-Nope, your finding fixed it for me :)
+= {} already zero-initializes the struct
 
-I added some trace prints but due to too many traces, it keeps losing
-those critical ones.
 
-Anyway, I think I've figured out how it happened: during
-online_fair_sched_group() -> sync_throttle(), the newly onlined cfs_rq
-didn't have pelt_clock_throttled synced. Suppose its parent's pelt clock
-is throttled, then in propagate_entity_cfs_rq(), this newly onlined
-cfs_rq is added to leaf list but its parent is not. Now
-rq->tmp_alone_branch points to this newly onlined cfs_rq, waiting for
-its parent to be added(but this didn't happen).
+>  	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
+>  	req.hdr.type = MSG_TYPE_REQ_RESP;
+>  	req.hdr.opcode = UC_UCSI_WRITE_BUF_REQ;
+> +
+> +	if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
+> +		req_len = sizeof(struct ucsi_v2_write_buf_req_msg);
+> +		max_buf_len = UCSI_BUF_V2_SIZE;
+> +	} else if (ucsi->ucsi->version) {
+> +		req_len = sizeof(struct ucsi_v1_write_buf_req_msg);
+> +		max_buf_len = UCSI_BUF_V1_SIZE;
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (offset + val_len > max_buf_len)
+> +		return -EINVAL;
+> +
+>  	memcpy(&req.buf[offset], val, val_len);
+>  
+>  	reinit_completion(&ucsi->write_ack);
+>  
+> -	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
+> +	ret = pmic_glink_send(ucsi->client, &req, req_len);
 
-Then another task wakes up and gets enqueued on this same cpu, all its
-ancestor cfs_rqs are already on the list so list_add_leaf_cfs_rq()
-didn't manipulate rq->tmp_alone_branch. At the end of the enqueue,
-assert will fire.
+This code keeps the 'reserved' field zeored out for v1, but it does so 
+in a fragile and implicit way :/
 
-I'm thinking we should add an assert_list_leaf_cfs_rq() at the end of
-propagate_entity_cfs_rq() to capture other potential problems.
+>  	if (ret < 0) {
+>  		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
+>  		return ret;
+> @@ -216,12 +244,39 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
+>  
+>  static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
+>  {
+> -	const struct ucsi_read_buf_resp_msg *resp = data;
+> +	u8 *buf = ((struct ucsi_v2_read_buf_resp_msg *)data)->buf;
+> +	u32 ret_code, max_len;
+> +	u32 buf_len = 0;
+> +
+> +	if (ucsi->ucsi->version) {
+> +		if (ucsi->ucsi->version >= UCSI_VERSION_2_0)
+> +			buf_len = UCSI_BUF_V2_SIZE;
+> +		else
+> +			buf_len = UCSI_BUF_V1_SIZE;
+> +	} else if (!ucsi->ucsi_registered) {
+> +		/*
+> +		 * If UCSI version is not known yet because device is not registered,
+> +		 * choose buffer size which best fits incoming data
+> +		 */
+> +		if (len > sizeof(struct pmic_glink_hdr) + UCSI_BUF_V2_SIZE)
+> +			buf_len = UCSI_BUF_V2_SIZE;
+> +		else
+> +			buf_len = UCSI_BUF_V1_SIZE;
+> +	}
+>  
+> -	if (resp->ret_code)
+> +	max_len = sizeof(struct pmic_glink_hdr) + buf_len + sizeof(u32);
+> +
+> +	if (len > max_len)
+> +		return;
+> +
+> +	if (buf_len > len - sizeof(struct pmic_glink_hdr) - sizeof(u32))
+> +		buf_len = len - sizeof(struct pmic_glink_hdr) - sizeof(u32);
 
-Hi Matteo,
+Is this expected to happen?
 
-Can you test the above diff Prateek sent in his last email? Thanks.
+Konrad
+
+> +
+> +	memcpy(&ret_code, buf + buf_len, sizeof(u32));
+> +	if (ret_code)
+>  		return;
+>  
+> -	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
+> +	memcpy(ucsi->read_buf, buf, buf_len);
+>  	complete(&ucsi->read_ack);
+>  }
+>  
 
