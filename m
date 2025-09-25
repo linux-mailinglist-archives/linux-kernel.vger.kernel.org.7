@@ -1,142 +1,367 @@
-Return-Path: <linux-kernel+bounces-831727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313FCB9D69C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:58:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE733B9D6A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0AA1BC1C79
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618BF380C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A972E7BBA;
-	Thu, 25 Sep 2025 04:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7172A2E6CB6;
+	Thu, 25 Sep 2025 05:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIrchR3u"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oOx8wv3z"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68A2219E8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C31A2BB13
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758776277; cv=none; b=B4zz9rad/ZHH3eErNWSkA25KgxIArSf+fXuH97B2uoLrdEf8kfpaDZX8SloBVRHf/uY5RYIi+jtJcGPiePujyD0VTJhF1iAvBQvF6d3ShR+OAQzd5m9v+Ujydw3iwzAAsdKYRerLm5U08RVq7jz6QeFPxpTBzyvQerkRvbWpDzw=
+	t=1758776520; cv=none; b=cYy45eLGDgahihKy26Vl1BSAWvSvL/926ww8u3uRDkh2blrOLOO3Gw/e3VTsv47RwRKY6SZ71dV6e2guH8M6OqGOMzxCDKCqDNDJo1bfXcEUvVnowJrqEjUEOlFw7bLwMH46/zz1aI1oH/7A6NaQtGKN/oHRg7LjuYxOYxpkUZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758776277; c=relaxed/simple;
-	bh=kPzxEfe/YqVDgMWOwGmf5DpkjVmJd2Ha6+d5aCqeKDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWe+kP6OwmeYInrOWRotzZT9b7cexji8XaMpUHSghJgAmsBgXgLyGZ6rHTBH+Xs45p/GXgorqpruk8upzG/MHN9i3PWKtFpeU2BUWPWNzvIXL70TDTzWtw2VxNvVyaMxi4kjV2z6rYWZ2ijoOxA41fyl7Rn4K1pV4dPgEs7dDfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VIrchR3u; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78104c8cbb4so199679b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:57:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758776275; x=1759381075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MWG5UfuLfU/6okMWpcwd8oWIgSQHkPLDSZpFhqy7ksQ=;
-        b=VIrchR3uzufvtqAAfTEWhg/OOPHwM7oJgoRlVzPbnWmMU2xMloLrqG2s8k/P4wSPeB
-         ba7TPxwrM8b75XVEmtmqNFXjMt8JjCOSSn5F7OkBwG78SLUhBeRtDbg+SCoUdzVl5tKn
-         oGYSNiJbMnKJkUdPmwEZOvybrPafbDDZ5HmgybJsEEgmMCsePIDPAjMcmK6rkh1uFMc/
-         Zoc9VOjUh+aOU2SThGFUS/PvrEJ6zXsMjl3tdq5sM9hzL2ZKfxqhMB10wnGjCLJ3rBF6
-         hbkwPhzRNG+a5umt8iD6z8dkJkY9BLslO/UCUARK/N3drOvXzRBpEMznrH9FLL/oSEnd
-         Ww2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758776275; x=1759381075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MWG5UfuLfU/6okMWpcwd8oWIgSQHkPLDSZpFhqy7ksQ=;
-        b=uZG7FdRTLclgGixJ4dvWrmzYZgmZsJ4t4TCrWbOEGOToyP/VQh+mjy8kLlSMz0qSvh
-         c729QAac53NdIL/bjYliigO1jjY8jPmdLYkvBFUprYvMpHsCa3SbnlPYFBkzVkWH5Kw5
-         I36GZe/8dsyIUeMkAfRWJFEns80NmBYreNke36twEPeP2hZUU7WhBDuHpxZyKtPYWFQY
-         QcTlxgaG54TTbWxH5WJkniw0naVouft8E+xcYuAElDPDKTTHj9r/oYZwcZ+QFg5Z8ZTh
-         Nbv3ATgmp5JMXltN8hsRkbp+4HzgAootfHhUacGg9Lc3hb2DEWMx7t0ZDj0IuWJD8hFl
-         5nqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxFFfiucW8HFaaPxxhgLcUsPacP5GsWRo0ripQMjoNBIuy1OqZtCL9Q7FToPbvgZlvIODmmDCv2XIMtdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFuSMk/HGLkrowRv1mCguU3YbI+ptrzn7uP5lBbkAOyGcwJKfw
-	LfDw1BeI/3wwuj+VU/zw93XtVgX7TYJkvAzxONXDhk++Mu7Rgm22OQnT
-X-Gm-Gg: ASbGncuPVfVFgdAtNYzUei+XfjYn1bMFSkzqgiy2JBeNBqoWI88m7+zbkXtSv/uI9H0
-	alaM7M7eeZf++oxwFvOkpwctOszwxF9hjZyeb9QNpmRqOFiTymETEPG4aZXw28Nc3WX6LeYQKJk
-	MYEAEfCKxw0Fb7sFNtEd18xvOsGrtstHCPb4u98p7OHEJ5hleFRTi9N4E+4+Fb5KDZkSCnssg+h
-	6U5Gm50HKz2R7AqLN85Bb8ZM2whwjgm0IpLFQ4IZsSHDQJmu5SbBeUfpAdJf+CegZmnzVzZDJ7W
-	jdIjZ6WCqDfBcoJToZ9UQVe8gEnAJANYUyfuprSCTcucZfSmU6hKr7ere5hyYWgi+mWUTaYkl9K
-	dadgo+W1qZguneQ8kr/VGt9+PncBjugjr/RmwpubNi1CQKJGztg==
-X-Google-Smtp-Source: AGHT+IHE0hCkhuBmmUoBQffjMXTlW6TG7kVeaCmRhK+UDQsUnhS7aMf4l0Fb5LPcRfVZ10wDV1Wdkg==
-X-Received: by 2002:a05:6a00:2341:b0:77f:67e8:fd with SMTP id d2e1a72fcca58-780fcdfd789mr2323162b3a.3.1758776274966;
-        Wed, 24 Sep 2025 21:57:54 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c07696sm708827b3a.74.2025.09.24.21.57.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 21:57:54 -0700 (PDT)
-Date: Thu, 25 Sep 2025 12:57:51 +0800
-From: Yu-Chun Lin <eleanor15x@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
-	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
-	"visitorckw@gmail.com" <visitorckw@gmail.com>
-Subject: Re: [PATCH rtw-next] wifi: rtw89: Replace hardcoded strings with
- helper functions
-Message-ID: <aNTLz+SO4AAUeo96@visitorckw-System-Product-Name>
-References: <20250921154410.1202074-1-eleanor15x@gmail.com>
- <715313b943d84cfeb3a337dc20be5f6a@realtek.com>
- <aNLDga29Wp1nwhem@visitorckw-System-Product-Name>
- <51518b935e7649e3b5413e3a119d549b@realtek.com>
- <aNS+Hk5QTzGq+AUO@visitorckw-System-Product-Name>
- <0990f8ee74574a30a585f2e0e3831837@realtek.com>
+	s=arc-20240116; t=1758776520; c=relaxed/simple;
+	bh=k1rZGTiD7CVpbTvoCPkyanLPbDaL3rN09yFWJWkkzYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UJnkBcgAJi8fF12uwiAkIU9DpBf/GThOPbCICA4+UPYSG6wIIzh2qU02KLRoGHja6fNFWxMizRv7nESk7178jkZZSpksYmRm9BYNWvgRCINjCTw2nc4NtHVSFJXlRzEYlFBB24Parqs6gxNvZszEi82DO6zAxSWrvmq1aFI5lyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oOx8wv3z; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONb1Bu031091;
+	Thu, 25 Sep 2025 05:01:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MN2tnA
+	fnGlck7Rsei5B/P8+lpSp3GTi1Q+AmY1Zur1E=; b=oOx8wv3zKcKXmg69XMEaxA
+	yQhPWmgvd6JT8uZ2fPXKeeNEVKEOdqiArhmxWNOQTD6Dwr0WZBOK7CRMf8LYeMsH
+	gvM4LoLTBd0ZaBInmzgqu4H1RUYoSETQb0WBMwV8+HChRJx9Bw7LwOulNwStt7my
+	XPMy7djUy4rGCsJGfcH+NK0eo3E35L7/RQ3HYq4cbXqYaBiJwpaNMc07QG/udV7G
+	SFqyL65TOthCTJCssQ/pbj2CHn0sGobJ1pD2IKE2iK1qEoAd2iLQfmSV1IklEF+f
+	L2OXsLSKpjR8DgR2hVm74loyuh9Wk0G5EapmEaqnl2xu/F4F9wuMW4Kzia1/wE6w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpkjuy3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 05:01:36 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58P51Zvn015387;
+	Thu, 25 Sep 2025 05:01:35 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpkjuxu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 05:01:35 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58P25AbO013638;
+	Thu, 25 Sep 2025 05:01:34 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a8tjkvwr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 05:01:34 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58P51XBv30737112
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 05:01:33 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CBD058054;
+	Thu, 25 Sep 2025 05:01:33 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A57058062;
+	Thu, 25 Sep 2025 05:01:27 +0000 (GMT)
+Received: from [9.124.219.167] (unknown [9.124.219.167])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 25 Sep 2025 05:01:26 +0000 (GMT)
+Message-ID: <b68642ac-ca2a-4775-8a1f-02cf7681545e@linux.ibm.com>
+Date: Thu, 25 Sep 2025 10:31:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0990f8ee74574a30a585f2e0e3831837@realtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drivers/base/node: merge register_one_node() and
+ register_node() to a single function.
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>
+References: <cover.1758736423.git.donettom@linux.ibm.com>
+ <40257b5228dec05e5b252f02438608eb8d681a2d.1758736423.git.donettom@linux.ibm.com>
+ <d168030f-388c-4f58-987f-648bba5b32f9@csgroup.eu>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <d168030f-388c-4f58-987f-648bba5b32f9@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=L50dQ/T8 c=1 sm=1 tr=0 ts=68d4ccb0 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=SjcnzaKMAlRwm5DwMEMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMCBTYWx0ZWRfX45B6zbHKyZRX
+ RmaE9tMomAboEh11SIIQtwrc5aIE5LDKAA58dbFTElPBqHQKJ7NBfOGtlARUrHTlT26gb9Pw02F
+ mlB2l9wylmVOfZJDugijAYYuRNhweOtKJ3K56tapJAiiS2IArxlJ9z0LS+7lkksQOrg5vRLjocF
+ OGHxulma3QNMQoZq87RBMKAlDVb4kkZbLrelLQzB3PfPJa+6QVnbMaHjqajt32ZZv5zNfZbwp1V
+ GoZbLSzxm7isGvzSK6umsibzLZg4p2OUaO9Wre4fd8kmn8J0X7HyEJPedmA3ptY3WuMhuBlgkUq
+ sl7HrAnOq/9PB5OxWnSLfeV6EoQo5DNxRXahaEPJM13wQSPbCgpbEdEngiQtjqGSJ1PPiFfUMP/
+ OxlrP/5s
+X-Proofpoint-ORIG-GUID: nDz6CfkzRf8RD5ZsudI_nJg10Yi4ws5Z
+X-Proofpoint-GUID: T2oKshh1afhTQ4fDnfTuV6XWrE2-IoOP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200010
 
-On Thu, Sep 25, 2025 at 04:28:40AM +0000, Ping-Ke Shih wrote:
-> Yu-Chun Lin <eleanor15x@gmail.com> wrote:
-> > On Wed, Sep 24, 2025 at 12:43:56AM +0000, Ping-Ke Shih wrote:
-> > > Yu-Chun Lin <eleanor15x@gmail.com> wrote:
-> > > > On Mon, Sep 22, 2025 at 05:50:50AM +0000, Ping-Ke Shih wrote:
-> > > > > Yu-Chun Lin <eleanor15x@gmail.com> wrote:
-> > > > > > Replace hardcoded strings with 'str_on_off()', 'str_enable_disable()',
-> > > > > > and 'str_read_write()'.
-> > > > > >
-> > > > > > The change improves readability and enables potential string deduplication
-> > > > > > by the linker, which may slightly reduce binary size.
-> > > > >
-> > > > > Have you measured the change of binary size? Maybe you can share the result
-> > > > > here.
-> > > > >
-> > > >
-> > > > I tested the patch and did not observe any measurable change in the binary size.
-> > > > The commit message was refers to the description in string-choice.h:
-> > > >
-> > > > "3) Deduping by the linker, which results in a smaller binary file."
-> > >
-> > > It might rely on LTO (link-time optimization).
-> > >
-> > 
-> > I re-tested with 'LTO_CLANG=y', and the code size remains unchanged before
-> > and after the patch. I will remove the statement
-> > ("may slightly reduce binary size") from the v2 commit message.
-> > 
-> 
-> What is the .o you checked? Have you also checked size of .ko?
-> I guess (sorry I'm not familiar with LTO) that LTO only takes effect
-> at least doing partial link. 
-> 
-> As the changes of your patch, maybe you can check rtw89_8851b.o or
-> rtw89_8851b.ko.
+
+On 9/25/25 12:45 AM, Christophe Leroy wrote:
+>
+>
+> Le 24/09/2025 à 20:40, Donet Tom a écrit :
+>> register_one_node() and register_node() are small functions.
+>> This patch merges them into a single function named register_node()
+>> to improve code readability.
+>
+> This is unclear.
+>
+> What it really does is it folds register_node() into its only caller 
+> which is register_one_node() and then it renames register_one_node() 
+> into register_node().
+
+Yes, you are right. I will add proper explanations in the next version.
+
+>
+>>
+>> No functional changes are introduced.
+>>
+>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>> ---
+>>   arch/powerpc/platforms/pseries/pci_dlpar.c |  2 +-
+>>   arch/x86/mm/numa.c                         |  4 +-
+>>   drivers/base/node.c                        | 52 +++++++++-------------
+>>   include/linux/node.h                       |  4 +-
+>>   mm/memory_hotplug.c                        |  4 +-
+>>   mm/mm_init.c                               |  2 +-
+>>   6 files changed, 28 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c 
+>> b/arch/powerpc/platforms/pseries/pci_dlpar.c
+>> index aeb8633a3d00..8c77ec7980de 100644
+>> --- a/arch/powerpc/platforms/pseries/pci_dlpar.c
+>> +++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
+>> @@ -29,7 +29,7 @@ struct pci_controller *init_phb_dynamic(struct 
+>> device_node *dn)
+>>       nid = of_node_to_nid(dn);
+>>       if (likely((nid) >= 0)) {
+>>           if (!node_online(nid)) {
+>> -            if (register_one_node(nid)) {
+>> +            if (register_node(nid)) {
+>>                   pr_err("PCI: Failed to register node %d\n", nid);
+>>               } else {
+>>                   update_numa_distance(dn);
+>> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+>> index c24890c40138..7a97327140df 100644
+>> --- a/arch/x86/mm/numa.c
+>> +++ b/arch/x86/mm/numa.c
+>> @@ -262,7 +262,7 @@ void __init init_gi_nodes(void)
+>>        * bringup_nonboot_cpus
+>>        *  cpu_up
+>>        *   __try_online_node
+>> -     *    register_one_node
+>> +     *    register_node
+>>        * because node_subsys is not initialized yet.
+>>        * TODO remove dependency on node_online
+>>        */
+>> @@ -303,7 +303,7 @@ void __init init_cpu_to_node(void)
+>>            * bringup_nonboot_cpus
+>>            *  cpu_up
+>>            *   __try_online_node
+>> -         *    register_one_node
+>> +         *    register_node
+>>            * because node_subsys is not initialized yet.
+>>            * TODO remove dependency on node_online
+>>            */
+>> diff --git a/drivers/base/node.c b/drivers/base/node.c
+>> index 6b6e55a98b79..eab620e29c78 100644
+>> --- a/drivers/base/node.c
+>> +++ b/drivers/base/node.c
+>> @@ -638,33 +638,6 @@ static void node_device_release(struct device *dev)
+>>       kfree(to_node(dev));
+>>   }
+>>   -/*
+>> - * register_node - Setup a sysfs device for a node.
+>> - * @num - Node number to use when creating the device.
+>> - *
+>> - * Initialize and register the node device.
+>> - */
+>> -static int register_node(struct node *node, int num)
+>> -{
+>> -    int error;
+>> -
+>> -    node->dev.id = num;
+>> -    node->dev.bus = &node_subsys;
+>> -    node->dev.release = node_device_release;
+>> -    node->dev.groups = node_dev_groups;
+>> -    error = device_register(&node->dev);
+>> -
+>> -    if (error) {
+>> -        put_device(&node->dev);
+>> -    } else {
+>> -        hugetlb_register_node(node);
+>> -        compaction_register_node(node);
+>> -        reclaim_register_node(node);
+>> -    }
+>> -
+>> -    return error;
+>> -}
+>> -
+>>   /**
+>>    * unregister_node - unregister a node device
+>>    * @node: node going away
+>> @@ -869,7 +842,13 @@ void 
+>> register_memory_blocks_under_node_hotplug(int nid, unsigned long 
+>> start_pfn,
+>>   }
+>>   #endif /* CONFIG_MEMORY_HOTPLUG */
+>>   -int register_one_node(int nid)
+>> +/*
+>> + * register_node - Setup a sysfs device for a node.
+>> + * @nid - Node number to use when creating the device.
+>> + *
+>> + * Initialize and register the node device.
+>> + */
+>> +int register_node(int nid)
+>>   {
+>>       int error;
+>>       int cpu;
+>> @@ -880,14 +859,23 @@ int register_one_node(int nid)
+>>           return -ENOMEM;
+>>         INIT_LIST_HEAD(&node->access_list);
+>> -    node_devices[nid] = node;
+>>   -    error = register_node(node_devices[nid], nid);
+>> +    node->dev.id = nid;
+>> +    node->dev.bus = &node_subsys;
+>> +    node->dev.release = node_device_release;
+>> +    node->dev.groups = node_dev_groups;
+>> +
+>> +    error = device_register(&node->dev);
+>>       if (error) {
+>> -        node_devices[nid] = NULL;
+>> +        put_device(&node->dev);
+>>           return error;
+>>       }
+>>   +    node_devices[nid] = node;
+>> +    hugetlb_register_node(node);
+>> +    compaction_register_node(node);
+>> +    reclaim_register_node(node);
+>> +
+>>       /* link cpu under this node */
+>>       for_each_present_cpu(cpu) {
+>>           if (cpu_to_node(cpu) == nid)
+>> @@ -980,7 +968,7 @@ void __init node_dev_init(void)
+>>        * to already created cpu devices.
+>>        */
+>>       for_each_online_node(i) {
+>> -        ret =  register_one_node(i);
+>> +        ret =  register_node(i);
+>>           if (ret)
+>>               panic("%s() failed to add node: %d\n", __func__, ret);
+>>       }
+>> diff --git a/include/linux/node.h b/include/linux/node.h
+>> index 2c7529335b21..4dcf876cd0b4 100644
+>> --- a/include/linux/node.h
+>> +++ b/include/linux/node.h
+>> @@ -168,7 +168,7 @@ static inline int 
+>> hotplug_node_notifier(notifier_fn_t fn, int pri)
+>>   #ifdef CONFIG_NUMA
+>>   extern void node_dev_init(void);
+>>   /* Core of the node registration - only memory hotplug should use 
+>> this */
+>> -extern int register_one_node(int nid);
+>> +extern int register_node(int nid);
+>
+> extern keyword is pointless on functions prototypes.
+>
+> checkpatch.pl usually complains about that.
+>
+> I know previous prototype was extern and all surrounding also are, but 
+> it is not because mistakes were done in the past that you have to 
+> continue doing the same mistakes.
 >
 
-I built all related files directly into the kernel, so my measurement was
-on the size of the entire vmlinux, not individual .o files or modules.
+Thank you for the comment. I will address it in the next version.
 
+
+>
+>
+>>   extern void unregister_one_node(int nid);
+>>   extern int register_cpu_under_node(unsigned int cpu, unsigned int 
+>> nid);
+>>   extern int unregister_cpu_under_node(unsigned int cpu, unsigned int 
+>> nid);
+>> @@ -181,7 +181,7 @@ extern int 
+>> register_memory_node_under_compute_node(unsigned int mem_nid,
+>>   static inline void node_dev_init(void)
+>>   {
+>>   }
+>> -static inline int register_one_node(int nid)
+>> +static inline int register_node(int nid)
+>>   {
+>>       return 0;
+>>   }
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index 0be83039c3b5..6c050d867031 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -1311,7 +1311,7 @@ static int __try_online_node(int nid, bool 
+>> set_node_online)
+>>         if (set_node_online) {
+>>           node_set_online(nid);
+>> -        ret = register_one_node(nid);
+>> +        ret = register_node(nid);
+>>           BUG_ON(ret);
+>>       }
+>>   out:
+>> @@ -1542,7 +1542,7 @@ int add_memory_resource(int nid, struct 
+>> resource *res, mhp_t mhp_flags)
+>>           goto error_memblock_remove;
+>>       if (ret) {
+>>           node_set_online(nid);
+>> -        ret = register_one_node(nid);
+>> +        ret = register_node(nid);
+>>           if (WARN_ON(ret)) {
+>>               node_set_offline(nid);
+>>               goto error_memblock_remove;
+>> diff --git a/mm/mm_init.c b/mm/mm_init.c
+>> index df614556741a..e1a19a3dadd7 100644
+>> --- a/mm/mm_init.c
+>> +++ b/mm/mm_init.c
+>> @@ -1909,7 +1909,7 @@ void __init free_area_init(unsigned long 
+>> *max_zone_pfn)
+>>           free_area_init_node(nid);
+>>             /*
+>> -         * No sysfs hierarchy will be created via register_one_node()
+>> +         * No sysfs hierarchy will be created via register_node()
+>>            *for memory-less node because here it's not marked as 
+>> N_MEMORY
+>>            *and won't be set online later. The benefit is userspace
+>>            *program won't be confused by sysfs files/directories of
+>
+>
 
