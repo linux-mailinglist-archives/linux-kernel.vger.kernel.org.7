@@ -1,215 +1,205 @@
-Return-Path: <linux-kernel+bounces-832087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F14B9E4EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2CEB9E570
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC20175036
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D511BC676D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FA2EA75C;
-	Thu, 25 Sep 2025 09:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6Qtwvmr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEB22ED848;
+	Thu, 25 Sep 2025 09:27:16 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F3B2E9ECC;
-	Thu, 25 Sep 2025 09:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC572EB87A;
+	Thu, 25 Sep 2025 09:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758792320; cv=none; b=Xsa1r9l05AmW04CVmF9pKji4rjMHWW3V5/4ndTMEJawBsKIQGvaUzZsjcf6i3Nr5by3m5Ra20DclVSFaAJZaEpxQcFiaCthEn2M+pj9Zz2wEFPCVOc0Ogx8Haeu5/UAoagksjDQYyglcv4/yhAfvvOJqOf0wAGiwD78lTySD+JQ=
+	t=1758792436; cv=none; b=jY5Ct9Zu7++yEsMOPkGuWoyJJND5iflpLzIxNqF20aR8EfLRwY9RxGxeK4az+MAx+X1DmJgdUM3GC8lrOVUjMHfT2O/qcoOaX/GgdRy5YfhkaZRbOnV6ZG2MSPU6Cegihl8APyVEnfjxmTOBVh6R926NzjlXZoRDlNZ1dF7RmBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758792320; c=relaxed/simple;
-	bh=QnpfcFBQ5y1ajLhLSaa9D98NMjKab3ak3j8y6wQMZK8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U2bzU1tM/9YByeOGRUy+7z7Qa1MMbKv/uXyWholNR0wi0SVlQqFEeqErvbP21IIHs+wKERZuxn9n0QUw1pPSUaNhjfZe1Tvpn88EzE+5hNX/76G88ToPtCc/2lmr8htZLVVWCJqdyqBgK5Jwap8wyB3hkwvoYM9hEuNvwSxjIkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6Qtwvmr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5283EC16AAE;
-	Thu, 25 Sep 2025 09:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758792320;
-	bh=QnpfcFBQ5y1ajLhLSaa9D98NMjKab3ak3j8y6wQMZK8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=i6QtwvmrD8WTicilLzKyJemuZ0ig/4NtBiH10+mCcBdBEeVe0kKZ5CcPALvMHxpLW
-	 Iyf73b06/lDPaXY5YOHyIFTAJ9HasLsLerhV4dyM51PgfbScv9aahihDm7XXW/zNeH
-	 7gMLLDkTbXLxu3MK7mvmvzbRjFSkD2X8uRmuVKN3rDnDPNlTiDqBwUfrk4NyG2N4Ke
-	 nmHnjemWLCa+2U+oGG4OJOrHr7/NZ2xJpmfSwCazV+qRk4Y3Y7FdNGfy1tkCcP+dQZ
-	 S59O9DTJK5F0uh1HdaLlTmPvme6E8LGaBv4tXvYaEOjoeFirE9eZwrE1tQ5uwkyyQD
-	 3/RqKjquS/d3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46789CAC5B5;
-	Thu, 25 Sep 2025 09:25:20 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Thu, 25 Sep 2025 17:25:19 +0800
-Subject: [PATCH v5 4/4] ALSA: doc: add docs about improved quirk_flags in
- snd-usb-audio
+	s=arc-20240116; t=1758792436; c=relaxed/simple;
+	bh=zWanX7nogCI8mfA/RsGYcnEjUlgWHFo5O2SiXQ82ETU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hmXDY/yySFNkX98VPwxdVv6ZGMCta537St+V4dZLau/oEtdWulRM5wa+E34kTV/jCN6ZK4yx3z3Bd9KnjUzt+tCzrHXM08FaNtJI4m5ZRZCF9YnSBkg2CuPv7dsky+E2pgrW65kaxTvKM4bNTfTAwQMvuQoIeqKaKYN67v4VHis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cXSz61QV3zKHN4B;
+	Thu, 25 Sep 2025 17:26:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1DDD91A1696;
+	Thu, 25 Sep 2025 17:27:06 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgD3CGHeCtVovAkNAw--.52999S4;
+	Thu, 25 Sep 2025 17:27:04 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 00/13] ext4: optimize online defragment
+Date: Thu, 25 Sep 2025 17:25:56 +0800
+Message-ID: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-sound-v5-4-2593586ff350@uniontech.com>
-References: <20250925-sound-v5-0-2593586ff350@uniontech.com>
-In-Reply-To: <20250925-sound-v5-0-2593586ff350@uniontech.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
- Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
- kernel@uniontech.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758792317; l=6701;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=D3poYh0GYU+tFf7qnpPKUesjmRl5ytfmzzsTuIWMHmQ=;
- b=Jf+f4ibh9/Lt5l5mLXKCcsRSqBjapHFreV4PC6YPgtBrtubTli4o6CUwIujEGcYdwWctQRNW6
- xOVRtRl0LeoAB+0Y46GpnpCDC4KZGL2pXCvVyGD8mk0+Nv6yThbY6Ed
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3CGHeCtVovAkNAw--.52999S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1rAFWkJw1xWrW3JFykGrg_yoWrtw4Upa
+	yakr1xtrWkJw1kW3yxZFs2qryYkw4rGr47CF4UJr15GF1rJFyFqFW8ta98ZFy8AFWxZ34Y
+	va1Iyr1Uu3WUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Just briefly described about the option.
+Changes since v1:
+ - Fix the syzbot issues reported in v1 by adjusting the order of
+   parameter checks in mext_check_validity() in patches 07 and 08.
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/sound/alsa-configuration.rst | 108 ++++++++++++++++++++---------
- 1 file changed, 75 insertions(+), 33 deletions(-)
+v1: https://lore.kernel.org/linux-ext4/20250923012724.2378858-1-yi.zhang@huaweicloud.com/
 
-diff --git a/Documentation/sound/alsa-configuration.rst b/Documentation/sound/alsa-configuration.rst
-index a2fb8ed251dd0294e7a62209ca15d5c32c6adfae..0a4eaa7d66ddd05e7c7378596a351bb6ea17f9ba 100644
---- a/Documentation/sound/alsa-configuration.rst
-+++ b/Documentation/sound/alsa-configuration.rst
-@@ -2297,39 +2297,81 @@ skip_validation
-     of the unit descriptor instead of a driver probe error, so that we
-     can check its details.
- quirk_flags
--    Contains the bit flags for various device specific workarounds.
--    Applied to the corresponding card index.
--
--        * bit 0: Skip reading sample rate for devices
--        * bit 1: Create Media Controller API entries
--        * bit 2: Allow alignment on audio sub-slot at transfer
--        * bit 3: Add length specifier to transfers
--        * bit 4: Start playback stream at first in implement feedback mode
--        * bit 5: Skip clock selector setup
--        * bit 6: Ignore errors from clock source search
--        * bit 7: Indicates ITF-USB DSD based DACs
--        * bit 8: Add a delay of 20ms at each control message handling
--        * bit 9: Add a delay of 1-2ms at each control message handling
--        * bit 10: Add a delay of 5-6ms at each control message handling
--        * bit 11: Add a delay of 50ms at each interface setup
--        * bit 12: Perform sample rate validations at probe
--        * bit 13: Disable runtime PM autosuspend
--        * bit 14: Ignore errors for mixer access
--        * bit 15: Support generic DSD raw U32_BE format
--        * bit 16: Set up the interface at first like UAC1
--        * bit 17: Apply the generic implicit feedback sync mode
--        * bit 18: Don't apply implicit feedback sync mode
--        * bit 19: Don't closed interface during setting sample rate
--        * bit 20: Force an interface reset whenever stopping & restarting
--          a stream
--        * bit 21: Do not set PCM rate (frequency) when only one rate is
--          available for the given endpoint.
--        * bit 22: Set the fixed resolution 16 for Mic Capture Volume
--        * bit 23: Set the fixed resolution 384 for Mic Capture Volume
--        * bit 24: Set minimum volume control value as mute for devices
--          where the lowest playback value represents muted state instead
--          of minimum audible volume
--        * bit 25: Be similar to bit 24 but for capture streams
-+    The option provides a refined and flexible control for applying quirk
-+    flags.  It allows to specify the quirk flags for each device, and can
-+    be modified dynamically via sysfs.
-+    The old usage accepts an array of integers, each of which applies quirk
-+    flags on the device in the order of probing.
-+    E.g., ``quirk_flags=0x01,0x02`` applies get_sample_rate to the first
-+    device, and share_media_device to the second device.
-+    The new usage accepts a string in the format of
-+    ``VID1:PID1:FLAGS1;VID2:PID2:FLAGS2;...``, where ``VIDx`` and ``PIDx``
-+    specify the device, and ``FLAGSx`` specify the flags to be applied.
-+    ``VIDx`` and ``PIDx`` are 4-digit hexadecimal numbers, and can be
-+    specified as ``*`` to match any value.  ``FLAGSx`` can be a set of
-+    flags given by name, separated by ``|``, or a hexadecimal number
-+    representing the bit flags.  The available flag names are listed below.
-+    An exclamation mark can be prefixed to a flag name to negate the flag.
-+    For example, ``1234:abcd:mixer_playback_min_mute|!ignore_ctl_error;*:*:0x01;``
-+    applies the ``mixer_playback_min_mute`` flag and clears the
-+    ``ignore_ctl_error`` flag for the device 1234:abcd, and applies the
-+    ``skip_sample_rate`` flag for all devices.
-+
-+        * bit 0: ``get_sample_rate``
-+          Skip reading sample rate for devices
-+        * bit 1: ``share_media_device``
-+          Create Media Controller API entries
-+        * bit 2: ``align_transfer``
-+          Allow alignment on audio sub-slot at transfer
-+        * bit 3: ``tx_length``
-+          Add length specifier to transfers
-+        * bit 4: ``playback_first``
-+          Start playback stream at first in implement feedback mode
-+        * bit 5: ``skip_clock_selector``
-+          Skip clock selector setup
-+        * bit 6: ``ignore_clock_source``
-+          Ignore errors from clock source search
-+        * bit 7: ``itf_usb_dsd_dac``
-+          Indicates ITF-USB DSD-based DACs
-+        * bit 8: ``ctl_msg_delay``
-+          Add a delay of 20ms at each control message handling
-+        * bit 9: ``ctl_msg_delay_1m``
-+          Add a delay of 1-2ms at each control message handling
-+        * bit 10: ``ctl_msg_delay_5m``
-+          Add a delay of 5-6ms at each control message handling
-+        * bit 11: ``iface_delay``
-+          Add a delay of 50ms at each interface setup
-+        * bit 12: ``validate_rates``
-+          Perform sample rate validations at probe
-+        * bit 13: ``disable_autosuspend``
-+          Disable runtime PM autosuspend
-+        * bit 14: ``ignore_ctl_error``
-+          Ignore errors for mixer access
-+        * bit 15: ``dsd_raw``
-+          Support generic DSD raw U32_BE format
-+        * bit 16: ``set_iface_first``
-+          Set up the interface at first like UAC1
-+        * bit 17: ``generic_implicit_fb``
-+          Apply the generic implicit feedback sync mode
-+        * bit 18: ``skip_implicit_fb``
-+          Don't apply implicit feedback sync mode
-+        * bit 19: ``iface_skip_close``
-+          Don't close interface during setting sample rate
-+        * bit 20: ``force_iface_reset``
-+          Force an interface reset whenever stopping & restarting a stream
-+        * bit 21: ``fixed_rate``
-+          Do not set PCM rate (frequency) when only one rate is available
-+          for the given endpoint
-+        * bit 22: ``mic_res_16``
-+          Set the fixed resolution 16 for Mic Capture Volume
-+        * bit 23: ``mic_res_384``
-+          Set the fixed resolution 384 for Mic Capture Volume
-+        * bit 24: ``mixer_playback_min_mute``
-+          Set minimum volume control value as mute for devices where the
-+          lowest playback value represents muted state instead of minimum
-+          audible volume
-+        * bit 25: ``mixer_capture_min_mute``
-+          Similar to bit 24 but for capture streams
- 
- This module supports multiple devices, autoprobe and hotplugging.
- 
+
+Original Description:
+
+Currently, the online defragmentation of the ext4 is primarily
+implemented through the move extent operation in the kernel. This
+extent-moving operates at the granularity of PAGE_SIZE, iteratively
+performing extent swapping and data movement operations, which is quite
+inefficient. Especially since ext4 now supports large folios, iterations
+at the PAGE_SIZE granularity are no longer practical and fail to
+leverage the advantages of large folios. Additionally, the current
+implementation is tightly coupled with buffer_head, making it unable to
+support after the conversion of buffered I/O processes to the iomap
+infrastructure.
+
+This patch set (based on 6.17-rc7) optimizes the extent-moving process,
+deprecates the old move_extent_per_page() interface, and introduces a
+new mext_move_extent() interface. The new interface iterates over and
+copies data based on the extents of the original file instead of the
+PAGE_SIZE, and supporting large folios. The data processing logic in the
+iteration remains largely consistent with previous versions, with no
+additional optimizations or changes made. 
+
+Additionally, the primary objective of this set of patches is to prepare
+for converting the buffered I/O process for regular files to the iomap
+infrastructure. These patches decouple the buffer_head from the main
+extent-moving process, restricting its use to only the helpers
+mext_folio_mkwrite() and mext_folio_mkuptodate(), which handle updating
+and marking pages in the swapped page cache as dirty. The overall coding
+style of the extent-moving process aligns with the iomap infrastructure,
+laying the foundation for supporting online defragmentation once the
+iomap infrastructure is adopted.
+
+Patch overview:
+
+Patch 1:    Fix an off-by-one issue.
+Patch 2:    Fix a minor issue related to validity checking.
+Patch 3-5:  Introduce a sequence counter for the mapping extent status
+            tree, this also prepares for the iomap infrastructure.
+Patch 6-8:  Refactor the mext_check_arguments() helper function and the
+            validity checking to improve code readability.
+Patch 9-13: Drop move_extent_per_page() and switch to using the new
+            mext_move_extent(). Additionally, add support for large
+            folios.
+
+With this patch set, the efficiency of online defragmentation for the
+ext4 file system can also be improved under general circumstances. Below
+is a set of typical test obtained using the fio e4defrag ioengine on the
+environment with Intel Xeon Gold 6240 CPU, 400G memory and a NVMe SSD
+device.
+
+  [defrag]
+  directory=/mnt
+  filesize=400G
+  buffered=1
+  fadvise_hint=0
+  ioengine=e4defrag
+  bs=4k         # 4k,32k,128k
+  donorname=test.def
+  filename=test
+  inplace=0
+  rw=write
+  overwrite=0   # 0 for unwritten extent and 1 for written extent
+  numjobs=1
+  iodepth=1
+  runtime=30s
+
+  [w/o]
+   U 4k:    IOPS=225k,  BW=877MiB/s      # U: unwritten extent-moving
+   U 32k:   IOPS=33.2k, BW=1037MiB/s
+   U 128k:  IOPS=8510,  BW=1064MiB/s
+   M 4k:    IOPS=19.8k, BW=77.2MiB/s     # M: written extent-moving
+   M 32k:   IOPS=2502,  BW=78.2MiB/s
+   M 128k:  IOPS=635,   BW=79.5MiB/s
+
+  [w]
+   U 4k:    IOPS=246k,  BW=963MiB/s
+   U 32k:   IOPS=209k,  BW=6529MiB/s
+   U 128k:  IOPS=146k,  BW=17.8GiB/s
+   M 4k:    IOPS=19.5k, BW=76.2MiB/s
+   M 32k:   IOPS=4091,  BW=128MiB/s
+   M 128k:  IOPS=2814,  BW=352MiB/s 
+
+
+Best Regards,
+Yi.
+
+
+Zhang Yi (13):
+  ext4: fix an off-by-one issue during moving extents
+  ext4: correct the checking of quota files before moving extents
+  ext4: introduce seq counter for the extent status entry
+  ext4: make ext4_es_lookup_extent() pass out the extent seq counter
+  ext4: pass out extent seq counter when mapping blocks
+  ext4: use EXT4_B_TO_LBLK() in mext_check_arguments()
+  ext4: add mext_check_validity() to do basic check
+  ext4: refactor mext_check_arguments()
+  ext4: rename mext_page_mkuptodate() to mext_folio_mkuptodate()
+  ext4: introduce mext_move_extent()
+  ext4: switch to using the new extent movement method
+  ext4: add large folios support for moving extents
+  ext4: add two trace points for moving extents
+
+ fs/ext4/ext4.h              |   3 +
+ fs/ext4/extents.c           |   2 +-
+ fs/ext4/extents_status.c    |  27 +-
+ fs/ext4/extents_status.h    |   2 +-
+ fs/ext4/inode.c             |  28 +-
+ fs/ext4/ioctl.c             |  10 -
+ fs/ext4/move_extent.c       | 773 ++++++++++++++++--------------------
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |  97 ++++-
+ 9 files changed, 486 insertions(+), 457 deletions(-)
 
 -- 
-2.51.0
-
+2.46.1
 
 
