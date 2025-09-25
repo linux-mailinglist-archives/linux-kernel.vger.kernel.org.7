@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-832271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11743B9EC83
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:46:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CB9B9EC9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A270142464A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18B1D2A6581
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27582FB0B0;
-	Thu, 25 Sep 2025 10:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009692FB97F;
+	Thu, 25 Sep 2025 10:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="joVRSOVc"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nRkrYaX0"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477872FAC1B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A652FB60D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758796977; cv=none; b=sxjufqMYDZ/gVp9ilz6+lVTm6AonRSPK6wUkBKFmRuo65xIIM+IVutb439Hv12UhWNBVnOBYoecWf8JRgza5AqZJqkJIsmwmItzORP0Uwz978IOVBTB0WheJ/H9sXPdWrGisiLBATpulD0hAGNLGYuSAsFRWBP49Km6Ms8Dk38o=
+	t=1758796981; cv=none; b=EPsf6PirBDwndpQkhZtJiEJBqWW7/2hu9/1+EJPYnKaosuCWcRF5riKIrB3kNQITaqlEgMB96MnUBWYvlvbD/FlMLm6rSNg+vHdA2Y524wyfsvxTpBOk2ezCQYGsikWzK7XSjbfuU+jw3PcHVEUzrwZdHuTRHgBdyq6S9Ox91CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758796977; c=relaxed/simple;
-	bh=6hJQu8sVuECIpGG1zcQBiA8+IoZKHEuXd1Po+itz8bY=;
+	s=arc-20240116; t=1758796981; c=relaxed/simple;
+	bh=/5pkXjPpN0sngp2+34OymDrtqBNoNX+U7d/io6qp5Es=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nQaxdsuqfSTyC2xd5KeVh+O4AyNu2WWhcdhJnqb4YnqW3vIzxz7xdOLU0edoqJP9ylNhjQjssyYhUDKFF+QjgPkRulDCYRTs6JYzd6djFYA3/abhKfznjjYvSEcuLUteJ/LIZqZ5/s11GE0vnmwLYrMWPOIVQWBFoW1jSuJgTcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=joVRSOVc; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=N+uJgoszKow8duXbZjMgL6Xh4JG0Q8LF901rNrDDtD1eldA34ru4FGgZy6qwE11KrWzgd7ELoqGc0rzdsrYMnRKAZxyxnpu6tGxvhUtaN+OLSu4bDbz49CDXFE0BkU3tGs9Gf3biEP8BlpJej/TrJh5Rt1VwZdxXsVO7eGq86j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nRkrYaX0; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P90EbO027782
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:55 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P943Ee018678
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:59 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J8CLWFz7RuVZjswljNK7uzTq6+mx1G/m7eJ8hvj0C84=; b=joVRSOVc/dm0JlQb
-	PhYDpKrP1FGgPA3nBgvwjqWPuCImILBpZtq0TD4+fvgAbqnUj6gDmiRKX6FoEh1T
-	5bquaprrLQS0jLF0MAZ/4wXER42RYVIGYu5aKEB+PGHYW++DfEw4WmU9TGmOhWgO
-	G9vMTObCTlZeGtIxtaEZoxsVIUBkzBCxHUkGhUTdP9VyYL7f6ZmHIUfkZW9oVf1O
-	bjrt6bhj8yYx/HHXy64Dk6sCPxtgngk+6xvICtQum/Y8RXHpMJbalvLEPtNEFcUD
-	Cp1Nqj6VTlKuU2tQMJIzPWi2MM/AO/Fd0+TknvJRxPR9EtPjHglBCNNIp1k6w9Ec
-	Z6FCow==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmp05b7-1
+	iydgY1LUDTo5t6BA4ObGI8R41OpdAyNguw2a/tO9Pqs=; b=nRkrYaX0ccm+54Gc
+	xR009GHxidyIx+sqYaaV8OCNgLJKyVp7yyS6spKnGID/LTtNgbbi9WMOf19sQLS9
+	0UtSri5YorUNZqKjA6efgsfCj2tWXKbSs+cGjLvAnJjKuKng7u58sOyk3YpyIYRW
+	DBSTNbZzAzKlCnf8fj9Ok34j3yy71k/JrM+0dHJyZAIgaH7MtjxRQ5k6sDy5V+7i
+	LEknfjsbx/sIw2tFedPl06VqKQu9XDX4IwYGZe8i7HZtm3IVaBGkp9gTaWTp5ynp
+	C9BV2NQMEZ884DP0dzBQBKXp2CWcJhLQhaobHoVo2wxyjW1x8cvFwq0YsMKZoslP
+	qUfjAw==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kkbre4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:55 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-267fa90a2fbso19438365ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:42:54 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:58 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-26985173d8eso14592305ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:42:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758796974; x=1759401774;
+        d=1e100.net; s=20230601; t=1758796977; x=1759401777;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J8CLWFz7RuVZjswljNK7uzTq6+mx1G/m7eJ8hvj0C84=;
-        b=lw1/SRnjjs3E5ZltTtC6Qv/y7lTEPiOw973ENCK3Ls2xAB//nAN03KR18l6DBlngkG
-         kB0SfqtMHZoIGOAp+ctHodxxM1OU8+h2vTdVI/lRPz18zghPkDKZnuz5fa/AS4SOcLw6
-         iqRf6QqeESamKT9gKHc/NTiF7nANYRxtFb37pVCdvRDgyNxLMH9HtLKI1Xa4fDUDZXwr
-         nQVbeWZSu50eMyfJbSoyElgynGARIsy1GCf+07FX5ZjWmyd0JjJTz27ZY0ySBSRYA1RL
-         WklcUX6fkpt1Q23Mc1jyN5UXjxRac5p2YgTSKm2i0WEKxLEX3wvEFHuuKcItqXZXelZF
-         IzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjcxBUnqckSPkxujDdRPQ5HnTLKRuZbr1lywQ/pqkTDGVzHrupFoAPROmUCCnLBkGT4qus0lrIGpaGr+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2xW/UDtVtpgbI7/bl0eETEgSxq13sN6z7NOFui9h55CDTRt4g
-	Y+I/Ray4ifDJwJg66Tie3pA6pGwRugONluWS23l5HFee/5nJxwcVL6+mDLucZdCu6Z4lI5Ujjo4
-	hadR4N8q5vVW7DBczDtvVIIC8zM97E8ofHzhanoYicnRBaHMP5dGMqxkYy3LWX9zBOOM=
-X-Gm-Gg: ASbGncsp18Pnj+gm3r5/tMs5mC/DgYgfW/pRkpAkpmOcGKXWRJlmBALnknLkscbTfRA
-	dTXMMAMkbVlNXWO0qW4+sCW6fG2HxJ6eE48zBx56tJ9pfsoOH6SDLxAovOxJIGwAdjIsfi9I8tb
-	GwSsjhfzUCe/iuqtxm+egE+B0BdA7Mlu5mVLw2hezFFQUqG07EcTMrdXDfTchXbHyWFFsxWHm2r
-	KUzxWKh7S7tX2QdcAtbEdpLuhd15rPcIwuwKr8zvQtF/CoychCLOY7qceEEaeGEvnBsITpNWRVO
-	col/QlwRK3DHBn2c73W8U2OWRBsI2tgp7ahbVqMm8lxiW9HXRmB7lSzOUTPXGmmrAqdMEy46SCw
-	A1kYurl2QKajMV/1CM77zPWAOc4c=
-X-Received: by 2002:a17:902:ec85:b0:267:9601:dca0 with SMTP id d9443c01a7336-27ed7218e13mr24248975ad.27.1758796973820;
-        Thu, 25 Sep 2025 03:42:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0G8/NZgKJnhaVOdgJM09KwUXkWI+O18jBUOCePLdswg8OrdCjedFCc4xPV83qBAglXjkWmg==
-X-Received: by 2002:a17:902:ec85:b0:267:9601:dca0 with SMTP id d9443c01a7336-27ed7218e13mr24248715ad.27.1758796973333;
-        Thu, 25 Sep 2025 03:42:53 -0700 (PDT)
+        bh=iydgY1LUDTo5t6BA4ObGI8R41OpdAyNguw2a/tO9Pqs=;
+        b=o1K+Az2CNs8w2WmSyBdnq0++AOG8V5AhszZoUCxUjbZWsIaPeYsXQ3KppbCABdoQ39
+         4Yy+MZFhb9qEp3AlVG9QtBHWnjKhVZjfE84xfp5bR4gpz4Cs35l880JHR1P0UpJEbSkH
+         6FiUUME7rutDYPjlEZQ0XsZ5tMzJuZA0zrJK9umOzTdUNK1j5TJwOyylAq1TgrxsL47a
+         Wv3V4bXaerfnwvqfSPWXE8hOXD5aMx/4sJtSJ2Qey49StCFpRm7ak5PaQq31Dgst0GIz
+         n8l7lVnYVIHPBZifhQocSroLYIUpnB+Af/xDIQR1a0pt3d7/4zIFIDVCAtIF4iWVb8aG
+         FQAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbBpxPWA9ou36PMRHINO4n4yG73r3ZkyF9J8k9KNt0EwJCbLrrGkmIniYwghzo3ystGxINP4U0bSWcIeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcijLptInjdjFErRCYLNX3MZlfKpDROyA5oIAluwG6Bx+jN6o7
+	TesY4VJNQihCrU4JPdDuoVAztRWC42dFdL8hTNH9peUF/zMNMbtenT83FgVA7d1RGsDPy5uzS8S
+	dNuOgnycA+URIXUfkzaRimMzrlIhquP3iiEGsbxH9Uv5DVcohpHuRTS1e2xqW/uxRp4k=
+X-Gm-Gg: ASbGncsXpBd4Rv+qt3uyuIBT1rpB/4AONPYr4CmvPgMQNpXH6cWxBc5T3R+1oW2fRQI
+	97SGuLXoD3xXlQqZ0vx3/KvTrjUzR4es76iJA9EDPVP1X4ScIdiVpZABTsEbs1cd/wZ4UtMFe2n
+	SE4P11olUVJrrc/RerqPaeeuXsQiIhECp0bUZsfZnC7UAYV3PpBtGhH7Y8E1ODe0TGmHyQjVCIq
+	0kF985ngvRK3+iNkmEDX6nGPhjudhSjnhr7NNusKnHqMYIGHiyWrQJoV/2KhKMJpygMfV3L1TwP
+	yIR1YVJS7QnUWUTN6Im6GVS5TL7YN/Zz9nvKNMhkeX0ru6TYDAkEnhAX1D7A6CrV2nmntvskLDw
+	RT988dms1uvitD8g3IiSdYBT01w4=
+X-Received: by 2002:a17:903:b43:b0:267:776b:a31a with SMTP id d9443c01a7336-27ed4a3de4emr32276685ad.29.1758796977376;
+        Thu, 25 Sep 2025 03:42:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxKVDsVMPULyZ/DU5Ie+q6w5upoknAYNtCbzBGaI7SzJWJ9721tGfRbvvNYwecSStc7+vR7g==
+X-Received: by 2002:a17:903:b43:b0:267:776b:a31a with SMTP id d9443c01a7336-27ed4a3de4emr32276355ad.29.1758796976753;
+        Thu, 25 Sep 2025 03:42:56 -0700 (PDT)
 Received: from jiegan-gv.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6727ea7sm21046845ad.61.2025.09.25.03.42.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6727ea7sm21046845ad.61.2025.09.25.03.42.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 03:42:53 -0700 (PDT)
+        Thu, 25 Sep 2025 03:42:56 -0700 (PDT)
 From: Jie Gan <jie.gan@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 18:42:31 +0800
-Subject: [PATCH v2 1/3] coresight: tmc: add the handle of the event to the
- path
+Date: Thu, 25 Sep 2025 18:42:32 +0800
+Subject: [PATCH v2 2/3] coresight: change helper_ops to accept
+ coresight_path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-fix_helper_data-v2-1-edd8a07c1646@oss.qualcomm.com>
+Message-Id: <20250925-fix_helper_data-v2-2-edd8a07c1646@oss.qualcomm.com>
 References: <20250925-fix_helper_data-v2-0-edd8a07c1646@oss.qualcomm.com>
 In-Reply-To: <20250925-fix_helper_data-v2-0-edd8a07c1646@oss.qualcomm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
@@ -105,114 +105,271 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758796966; l=3140;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758796966; l=10066;
  i=jie.gan@oss.qualcomm.com; s=20250909; h=from:subject:message-id;
- bh=tHg1S0/CMUeFUXHjzpKxW+80GxEVQnIjGvOC2sWdHXQ=;
- b=45YdQeepVPMs1UJloA72VJbiseOSEnSPvY2N9hB65a2vqAiKihPLdSEGOvAeVAcsWyyueiMy7
- lsX3i2P8+rUC80cqx/w+RsXyQIrecHWkUkf06n9rVmK/BMnntQdMKKH
+ bh=/5pkXjPpN0sngp2+34OymDrtqBNoNX+U7d/io6qp5Es=;
+ b=MsffQBQWUdHv31AvMS22ul6FI3b0OlhsBajjXz/doH874bxtxhasuYMtcKNlFmlWiF6xuDUNO
+ KcGTMe63BuFCIVyFUvUbbz3YcHdaEJi5F/UxjgVQjlY/INrSJadb3RW
 X-Developer-Key: i=jie.gan@oss.qualcomm.com; a=ed25519;
  pk=3LxxUZRPCNkvPDlWOvXfJNqNO4SfGdy3eghMb8puHuk=
-X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d51caf cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=ck2vDrGU2QCsmqff:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=vzhER2c_AAAA:8
- a=7CQSdrXTAAAA:8 a=EUspDBNiAAAA:8 a=3z9VKJkIq1Abr3NU0PoA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22 a=0YTRHmU2iG2pZC6F1fw2:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-ORIG-GUID: fZcIaqLOEh_9t5eOaWKLZVcbi7GF6qVW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX+KoxFhRZn/bU
- crymufopWuIoquco4VlEk6upejNPIIFmFmWUaL5CGQqnARJnLsAt6dcN2U03kjApYO2BdR8k363
- AIAu/iISQMO9FtUWRqQj2phTViuNIPwXN/vBy8uEDFmEJOSRsmv/XVBD5tRUdJ1ASnK8MT4aNV+
- Bcg12GrNrg4XnqUIZkSVcPy9UPSCd1mKrAc6g4+nRxCrlnthUFFu1sUcemHWU30c5C5W5EFRBm2
- tvnXoyZaC7lmKK5wzBj58Y5HySdK8vhVXmPZLNMKXTjioV2Ae/JuTk24F2TkcDMx+C64UakoQ4G
- CW3j2K+qU5wCcxXv0Zb9HRKrU8RL0qEOhXDgkV1LzQaLqhfhUJw8xJxbAW2YFCWJ+45GqFsxMUh
- HTY6Iw2A
-X-Proofpoint-GUID: fZcIaqLOEh_9t5eOaWKLZVcbi7GF6qVW
+X-Proofpoint-GUID: KYFUh_1T7e-fQ1BkKIJSYfoujdi_SXps
+X-Proofpoint-ORIG-GUID: KYFUh_1T7e-fQ1BkKIJSYfoujdi_SXps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfX2dH+QTkVGD4Y
+ N5frhqdglGDEcZOmJx47j8KfjgHnuEELVA3hpEwSpuzcIJ/q1l5wCMsMPodj8GJ5SGi0Ox5iWrl
+ MYRzeFWMVXZG8XaY+/fjkYjPvoLhh27e3TyFeZE4Gtc2STzIHb8hurXSPwBvRKBSVzu/iFAFcX7
+ lKtCLSQdgJAly3o8fr+2b4Vflol0Af1+deYf5ZI7j63O/WiW9BejOaNjcIct+Ezop0usu7ZPI2p
+ 0VsYC1s6gGO1bL5w1H6szC8pUSMIUQWLnkXmGmAZ5TvWXEAcfHD5ySSFEdRlzdrYvI3BeY0Wlow
+ ba+XxvXXLhFxfKMiYZvNMbZ04jGpsQVOu8Q8vl++sgwwpjXHJcA8JzFZHy7TE1fLqXywBP9dqCJ
+ 6d7RFHQ1
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d51cb2 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=vzhER2c_AAAA:8 a=7CQSdrXTAAAA:8
+ a=EUspDBNiAAAA:8 a=Gv9EIBWDmE4dLvOUe8gA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22 a=0YTRHmU2iG2pZC6F1fw2:22 a=a-qgeE7W1pNrGK8U0ZQC:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
 
-From: Carl Worth <carl@os.amperecomputing.com>
+Update the helper_enable and helper_disable functions to accept
+coresight_path instead of a generic void *data, as coresight_path
+encapsulates all the necessary data required by devices along the path.
 
-The handle is essential for retrieving the AUX_EVENT of each CPU and is
-required in perf mode. It has been added to the coresight_path so that
-dependent devices can access it from the path when needed.
-
-The existing bug can be reproduced with:
-perf record -e cs_etm//k -C 0-9 dd if=/dev/zero of=/dev/null
-
-Showing an oops as follows:
-Unable to handle kernel paging request at virtual address 000f6e84934ed19e
-
-Call trace:
- tmc_etr_get_buffer+0x30/0x80 [coresight_tmc] (P)
- catu_enable_hw+0xbc/0x3d0 [coresight_catu]
- catu_enable+0x70/0xe0 [coresight_catu]
- coresight_enable_path+0xb0/0x258 [coresight]
-
-Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
-Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
+Tested-by: Carl Worth <carl@os.amperecomputing.com>
+Reviewed-by: Carl Worth <carl@os.amperecomputing.com>
 Reviewed-by: Leo Yan <leo.yan@arm.com>
-Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
 Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c |  1 +
- drivers/hwtracing/coresight/coresight-tmc-etr.c  |  3 ++-
- include/linux/coresight.h                        | 10 ++++++----
- 3 files changed, 9 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-catu.c      | 10 +++++-----
+ drivers/hwtracing/coresight/coresight-core.c      | 20 ++++++++++++--------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c |  9 +++------
+ drivers/hwtracing/coresight/coresight-cti-core.c  |  5 +++--
+ drivers/hwtracing/coresight/coresight-cti.h       |  5 +++--
+ drivers/hwtracing/coresight/coresight-tmc-etr.c   |  4 ++--
+ drivers/hwtracing/coresight/coresight-tmc.h       |  3 ++-
+ include/linux/coresight.h                         |  5 +++--
+ 8 files changed, 33 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index f677c08233ba..5c256af6e54a 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -520,6 +520,7 @@ static void etm_event_start(struct perf_event *event, int flags)
- 		goto out;
+diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+index a3ccb7034ae1..69b36bae97ab 100644
+--- a/drivers/hwtracing/coresight/coresight-catu.c
++++ b/drivers/hwtracing/coresight/coresight-catu.c
+@@ -397,7 +397,7 @@ static int catu_wait_for_ready(struct catu_drvdata *drvdata)
+ }
  
- 	path = etm_event_cpu_path(event_data, cpu);
-+	path->handle = handle;
- 	/* We need a sink, no need to continue without one */
- 	sink = coresight_get_sink(path);
- 	if (WARN_ON_ONCE(!sink))
+ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
+-			  void *data)
++			  struct coresight_path *path)
+ {
+ 	int rc;
+ 	u32 control, mode;
+@@ -425,7 +425,7 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
+ 	etrdev = coresight_find_input_type(
+ 		csdev->pdata, CORESIGHT_DEV_TYPE_SINK, etr_subtype);
+ 	if (etrdev) {
+-		etr_buf = tmc_etr_get_buffer(etrdev, cs_mode, data);
++		etr_buf = tmc_etr_get_buffer(etrdev, cs_mode, path);
+ 		if (IS_ERR(etr_buf))
+ 			return PTR_ERR(etr_buf);
+ 	}
+@@ -455,7 +455,7 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
+ }
+ 
+ static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
+-		       void *data)
++		       struct coresight_path *path)
+ {
+ 	int rc = 0;
+ 	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+@@ -463,7 +463,7 @@ static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
+ 	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+ 	if (csdev->refcnt == 0) {
+ 		CS_UNLOCK(catu_drvdata->base);
+-		rc = catu_enable_hw(catu_drvdata, mode, data);
++		rc = catu_enable_hw(catu_drvdata, mode, path);
+ 		CS_LOCK(catu_drvdata->base);
+ 	}
+ 	if (!rc)
+@@ -488,7 +488,7 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
+ 	return rc;
+ }
+ 
+-static int catu_disable(struct coresight_device *csdev, void *__unused)
++static int catu_disable(struct coresight_device *csdev, struct coresight_path *path)
+ {
+ 	int rc = 0;
+ 	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 3267192f0c1c..f44ec9e5b692 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -355,17 +355,20 @@ static bool coresight_is_helper(struct coresight_device *csdev)
+ }
+ 
+ static int coresight_enable_helper(struct coresight_device *csdev,
+-				   enum cs_mode mode, void *data)
++				   enum cs_mode mode,
++				   struct coresight_path *path)
+ {
+-	return helper_ops(csdev)->enable(csdev, mode, data);
++	return helper_ops(csdev)->enable(csdev, mode, path);
+ }
+ 
+-static void coresight_disable_helper(struct coresight_device *csdev, void *data)
++static void coresight_disable_helper(struct coresight_device *csdev,
++				     struct coresight_path *path)
+ {
+-	helper_ops(csdev)->disable(csdev, data);
++	helper_ops(csdev)->disable(csdev, path);
+ }
+ 
+-static void coresight_disable_helpers(struct coresight_device *csdev, void *data)
++static void coresight_disable_helpers(struct coresight_device *csdev,
++				      struct coresight_path *path)
+ {
+ 	int i;
+ 	struct coresight_device *helper;
+@@ -373,7 +376,7 @@ static void coresight_disable_helpers(struct coresight_device *csdev, void *data
+ 	for (i = 0; i < csdev->pdata->nr_outconns; ++i) {
+ 		helper = csdev->pdata->out_conns[i]->dest_dev;
+ 		if (helper && coresight_is_helper(helper))
+-			coresight_disable_helper(helper, data);
++			coresight_disable_helper(helper, path);
+ 	}
+ }
+ 
+@@ -479,7 +482,8 @@ void coresight_disable_path(struct coresight_path *path)
+ EXPORT_SYMBOL_GPL(coresight_disable_path);
+ 
+ static int coresight_enable_helpers(struct coresight_device *csdev,
+-				    enum cs_mode mode, void *data)
++				    enum cs_mode mode,
++				    struct coresight_path *path)
+ {
+ 	int i, ret = 0;
+ 	struct coresight_device *helper;
+@@ -489,7 +493,7 @@ static int coresight_enable_helpers(struct coresight_device *csdev,
+ 		if (!helper || !coresight_is_helper(helper))
+ 			continue;
+ 
+-		ret = coresight_enable_helper(helper, mode, data);
++		ret = coresight_enable_helper(helper, mode, path);
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+index c586495e9a08..abed15eb72b4 100644
+--- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
++++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+@@ -156,17 +156,14 @@ static int ctcu_set_etr_traceid(struct coresight_device *csdev, struct coresight
+ 	return __ctcu_set_etr_traceid(csdev, traceid, port_num, enable);
+ }
+ 
+-static int ctcu_enable(struct coresight_device *csdev, enum cs_mode mode, void *data)
++static int ctcu_enable(struct coresight_device *csdev, enum cs_mode mode,
++		       struct coresight_path *path)
+ {
+-	struct coresight_path *path = (struct coresight_path *)data;
+-
+ 	return ctcu_set_etr_traceid(csdev, path, true);
+ }
+ 
+-static int ctcu_disable(struct coresight_device *csdev, void *data)
++static int ctcu_disable(struct coresight_device *csdev, struct coresight_path *path)
+ {
+-	struct coresight_path *path = (struct coresight_path *)data;
+-
+ 	return ctcu_set_etr_traceid(csdev, path, false);
+ }
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
+index 8fb30dd73fd2..bfbc365bb2ef 100644
+--- a/drivers/hwtracing/coresight/coresight-cti-core.c
++++ b/drivers/hwtracing/coresight/coresight-cti-core.c
+@@ -799,14 +799,15 @@ static void cti_pm_release(struct cti_drvdata *drvdata)
+ }
+ 
+ /** cti ect operations **/
+-int cti_enable(struct coresight_device *csdev, enum cs_mode mode, void *data)
++int cti_enable(struct coresight_device *csdev, enum cs_mode mode,
++	       struct coresight_path *path)
+ {
+ 	struct cti_drvdata *drvdata = csdev_to_cti_drvdata(csdev);
+ 
+ 	return cti_enable_hw(drvdata);
+ }
+ 
+-int cti_disable(struct coresight_device *csdev, void *data)
++int cti_disable(struct coresight_device *csdev, struct coresight_path *path)
+ {
+ 	struct cti_drvdata *drvdata = csdev_to_cti_drvdata(csdev);
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-cti.h b/drivers/hwtracing/coresight/coresight-cti.h
+index 8362a47c939c..4f89091ee93f 100644
+--- a/drivers/hwtracing/coresight/coresight-cti.h
++++ b/drivers/hwtracing/coresight/coresight-cti.h
+@@ -216,8 +216,9 @@ int cti_add_connection_entry(struct device *dev, struct cti_drvdata *drvdata,
+ 			     const char *assoc_dev_name);
+ struct cti_trig_con *cti_allocate_trig_con(struct device *dev, int in_sigs,
+ 					   int out_sigs);
+-int cti_enable(struct coresight_device *csdev, enum cs_mode mode, void *data);
+-int cti_disable(struct coresight_device *csdev, void *data);
++int cti_enable(struct coresight_device *csdev, enum cs_mode mode,
++	       struct coresight_path *path);
++int cti_disable(struct coresight_device *csdev, struct coresight_path *path);
+ void cti_write_all_hw_regs(struct cti_drvdata *drvdata);
+ void cti_write_intack(struct device *dev, u32 ackval);
+ void cti_write_single_reg(struct cti_drvdata *drvdata, int offset, u32 value);
 diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index b07fcdb3fe1a..1040f73f0537 100644
+index 1040f73f0537..b9bdbc745433 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
 +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1327,7 +1327,8 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+@@ -1325,9 +1325,9 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+ }
+ 
  struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
- 				   enum cs_mode mode, void *data)
+-				   enum cs_mode mode, void *data)
++				   enum cs_mode mode,
++				   struct coresight_path *path)
  {
--	struct perf_output_handle *handle = data;
-+	struct coresight_path *path = data;
-+	struct perf_output_handle *handle = path->handle;
+-	struct coresight_path *path = data;
+ 	struct perf_output_handle *handle = path->handle;
  	struct etr_perf_buffer *etr_perf;
  
- 	switch (mode) {
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+index cbb4ba439158..95473d131032 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.h
++++ b/drivers/hwtracing/coresight/coresight-tmc.h
+@@ -442,7 +442,8 @@ struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
+ void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
+ void tmc_etr_remove_catu_ops(void);
+ struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
+-				   enum cs_mode mode, void *data);
++				   enum cs_mode mode,
++				   struct coresight_path *path);
+ extern const struct attribute_group coresight_etr_group;
+ 
+ #endif
 diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 6de59ce8ef8c..2626105e3719 100644
+index 2626105e3719..2bee2e3bb1c6 100644
 --- a/include/linux/coresight.h
 +++ b/include/linux/coresight.h
-@@ -332,12 +332,14 @@ static struct coresight_dev_list (var) = {				\
- 
- /**
-  * struct coresight_path - data needed by enable/disable path
-- * @path_list:              path from source to sink.
-- * @trace_id:          trace_id of the whole path.
-+ * @path_list:		path from source to sink.
-+ * @trace_id:		trace_id of the whole path.
-+ * @handle:		handle of the aux_event.
+@@ -424,8 +424,9 @@ struct coresight_ops_source {
   */
- struct coresight_path {
--	struct list_head	path_list;
--	u8			trace_id;
-+	struct list_head		path_list;
-+	u8				trace_id;
-+	struct perf_output_handle	*handle;
+ struct coresight_ops_helper {
+ 	int (*enable)(struct coresight_device *csdev, enum cs_mode mode,
+-		      void *data);
+-	int (*disable)(struct coresight_device *csdev, void *data);
++		      struct coresight_path *path);
++	int (*disable)(struct coresight_device *csdev,
++		       struct coresight_path *path);
  };
  
- enum cs_mode {
+ 
 
 -- 
 2.34.1
