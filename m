@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-833171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72433BA1591
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:23:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA4ABA1594
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA927405EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC677405DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E423B63E;
-	Thu, 25 Sep 2025 20:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BE5303A14;
+	Thu, 25 Sep 2025 20:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nq1H7LSp"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Da12jCvK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960229DB88
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04A623B63E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758831816; cv=none; b=LL5wnISyafIdOmNphZcnObGXpq6Inmw4xyW7U9T5SgWOtbPIBQHjGYawZ11guSRPLshVlDpJSJpcjNVE4ZJ40FrRX7coGiXQAHAXdkEO/EhJROTS97xwjf/DxnK93CZ+kS590cAioTy+Wqq21cG8ZkdRK2wkSFotkWunOSdqjZ8=
+	t=1758831855; cv=none; b=PGPZh8W0clIPderI00KSQDDNxnYryvZt7srLuvd21lSAbzryWcl/vX7K/XgqT/IHpcH76da9uDO7GhnDg2LqHao84fAk0L6ssOApInuaKOsFa3rO9BSUWz2aphy+hYON++zV6bQuDrk9Fagf/qAue5hQmfUHPj7XBEBHin2QvJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758831816; c=relaxed/simple;
-	bh=td66PIlhApSZ4D+Sp/TobwpEiSogFiaRkVnohZ+t+4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdjaLvU39DKbl4cPrSek2I59F2ZF4t/VusVJesFvMqNlYPHOBtSDVJkc3atokPzHj5sLk/gA5R8cAUwJpbjytA6lpmUwM+fJyCjetsKlwrUuSqH6zvNHvzIcCU6vJ8/D2wzbhFef1TBtHdhaBSDVMdIG+isw2dIbvIBkv48fP9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nq1H7LSp; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-634a4829c81so1977608a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758831813; x=1759436613; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s1bYAQWgh8lcWFAZmtY0iaXciP/sTuFCRFgS7NXhX+g=;
-        b=Nq1H7LSpy15D7uk23LYrOZtakKA0r+OvFqqsasUYMf/25IFPdp7pU69MWIszIk+jY7
-         6RXpezRBuRDMhKdeNsOY7WV+40soordkU3qSV2yWcV80wn7rqWBvfj+rCVOduolaSm1B
-         2GVhfS2ETXCRloe0nnMvwEk0Uz++/cxmXJHRQ/2MJxSvfjyfspwEW4NuYALAnOd0GhU3
-         IEjFdnnjjH26audVbuquJkVrCV/9OJ7bBJLBNn2GfYGetTKwGIMWmTKykZ0vvwfeSedE
-         JDVVJCyJQ7s6M86mi18RkSOVjM0RwOO3xWFYtJ+W9lcVm4I2Mrho+f629WWJxY7yuXCk
-         zHEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758831813; x=1759436613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s1bYAQWgh8lcWFAZmtY0iaXciP/sTuFCRFgS7NXhX+g=;
-        b=F1h/abLBbMjTTuYwug90TqvPhU1OATM5HMYLkGcnJR708FKxphgSue0zNC0srIG5d1
-         fudur5r6N9GmdXcQ/UtREksKu7UZRa9kvjvTG9plThfN2d3PtGZmcZ79rV5JAOmxCtWy
-         tpzRJF9PljI/UyQb8jSrbEXuYNB+fmO4AbXT05s2fqLVLcCSK4wU83LuCf7gpnStdEXX
-         EYm9z9QfDk16HiqtHWGzNEv9nysZ5lGDZi6HqBanFTZTuqUUGmAdyj9aDX4DV/7HsnJn
-         CN0UrPlP6k170wLya6TS+TBCNZyA+4bnzEnYzpVO2kd1MVkFUKZcLYsHouZBhpuE4LJV
-         KrhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8xujPnozrrU1Gv6T34CpFcMwOlkKNJKY2O9isfQyZAyOLBzIsb8iOHyGV6MRerBFnmczsTDHlFzp+PUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4446WtTT1wkZ6PGa69ykH7YUfbGqYLmvvbwjXFuzwh+RRBcPV
-	1MbZiVCUymHaxP9D2kRrwvsCM7fPG7S0MrqCKSyfjBiEE1rg0tsRYZaM
-X-Gm-Gg: ASbGncvED6PpgoiA1k97q4vCFx5VBMDnzKQMAdiIT+pAyV2Pjjs1pFWsXuw2kGM5Fwx
-	dPK9qv9sYzHw5DBNx+jjB5gF7YINQl8qdKYN86xsZ59aUazWDMeeEup0LOPCTUP9KulnA6M4j/7
-	WaMQwhvAAdT7IQ9d7DyFcbym6jGrztoSdMiWeYqoBsFs1yT7wWD9jD4z+zZkN/mKTrcitOcWuzJ
-	+/V4UbTej0yrkYxInzVJQVwo4zaDCsv1KKE371JvE9hevXzG8Hz2ceb4WL8bDDQMcNNIB5miFky
-	mErYQoMdEY1YdVhbqf30wUPGBPoX1PcBiPiGt1dZ0mgnAWepJUdX493U/LZ6YCIBOhUoTgZmC40
-	pI8Np4nFXNAu8cY1nteQC00FTeMxYf5FGt9L4aKVIr9w3vAD3QNmOSuIo
-X-Google-Smtp-Source: AGHT+IGqvwLYaPf8rG1hxOPXGZojb1e4fn6NzWC8RmwxoyjdA7WNDhaFbcZDEpLG2UefoKTeaxPvjg==
-X-Received: by 2002:a05:6402:35cc:b0:634:b7a2:3e8e with SMTP id 4fb4d7f45d1cf-634b7a24529mr145549a12.22.1758831812146;
-        Thu, 25 Sep 2025 13:23:32 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a366116esm1729436a12.21.2025.09.25.13.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 13:23:31 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 4957FBE2DE0; Thu, 25 Sep 2025 22:23:30 +0200 (CEST)
-Date: Thu, 25 Sep 2025 22:23:30 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: AlanSong-oc <AlanSong-oc@zhaoxin.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	CobeChen@zhaoxin.com, TonyWWang-oc@zhaoxin.com, YunShen@zhaoxin.com,
-	GeorgeXue@zhaoxin.com, LeoLiu-oc@zhaoxin.com, HansHu@zhaoxin.com,
-	Larry Wei <larryw3i@yeah.net>, 1113996@bugs.debian.org
-Subject: Re: [PATCH] crypto: padlock-sha - Add support for Zhaoxin processor
-Message-ID: <aNWkwiHk7sFkHEVp@eldamar.lan>
-References: <20250611101750.6839-1-AlanSong-oc@zhaoxin.com>
- <aEpgKQ1I0VDSfhO0@gondor.apana.org.au>
- <0575ec9d-a6b8-4932-a1aa-9646813957a2@zhaoxin.com>
- <aFkdNoQFmr8-x4cu@gondor.apana.org.au>
- <bcaaccf4-4048-48a0-a9f9-64902a16a049@zhaoxin.com>
+	s=arc-20240116; t=1758831855; c=relaxed/simple;
+	bh=slC/4P0RsWxy7aIL8063QZr9t5aaGLRX+ts628BnJrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QkEauIN63HmOmSQXEQf6V8JfWI36rIqSeD5UmGkGDMf7G0t1GIeWyuGd1sKK6uA48YrtuNJZoGLz1wgj8ov5pIaLYdxbj8eBTFBFUchLg2OZcdHMgSmCAGdT+wfjHNwqX22plGZUUyMlTcaiV4TsYUUtwt24r1MYntX3I1WvBKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Da12jCvK; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758831854; x=1790367854;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=slC/4P0RsWxy7aIL8063QZr9t5aaGLRX+ts628BnJrU=;
+  b=Da12jCvKxLXDQDu5nBnyRl7g3a/TqGaGDzPIBKXBVtt3WFH3FE4KKixF
+   v1vHMHehsusalX+lbJ95JB+Zk89EQVRG0MKCnjPQW2yEKBR72Iyjt4euE
+   Wg2+jS2x14SJUy2xcb7H6KWN0xJdLrr9YNb8qDgff4XzAQCBTpbglHBpI
+   ZSRaEZx9rRzVKXQiEkxUZ9YaKuFcsLdHbUmOI09TI2vXXOm/TpFB2qmFf
+   zW9ChVyMzXk+rTpJWBXfayo3ztHsOohHnbY06VHNCreP44lzuFDuBO6ie
+   CTkg6WliKimieQ9rLIgVPtfkoMJJ/HcmrxQnhPgnjGbUYKM44HV/tPd0F
+   g==;
+X-CSE-ConnectionGUID: VHmpSr16RUaq4hBwIgby/w==
+X-CSE-MsgGUID: 07QvEic8SuqGwqNwipyCBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61085307"
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="61085307"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:24:13 -0700
+X-CSE-ConnectionGUID: 6gr1JL/yQKiAf+2CVcC66A==
+X-CSE-MsgGUID: 4LgWa1IfS9mUPDKobq41Jg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="176557599"
+Received: from ray2.jf.intel.com (HELO [10.24.81.144]) ([10.24.81.144])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:24:12 -0700
+Message-ID: <c04d4c9d-e868-4883-af92-26f142bc84be@intel.com>
+Date: Thu, 25 Sep 2025 13:24:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcaaccf4-4048-48a0-a9f9-64902a16a049@zhaoxin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Fix stale IOTLB entries for kernel address space
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 9/18/25 22:39, Lu Baolu wrote:
+> This solution introduces a deferred freeing mechanism for kernel page
+> table pages, which provides a safe window to notify the IOMMU to
+> invalidate its caches before the page is reused.
 
-On Wed, Jun 25, 2025 at 09:51:56AM +0800, AlanSong-oc wrote:
-> On 6/23/2025 5:24 PM, Herbert Xu wrote:
-> > Thanks for the explanation.  There is no requirement to use struct
-> > sha1_state.  Just supply a custom version of the struct for the
-> > shash descriptor that includes the necessary space.
-> > 
-> > IOW do the copy in the rarely used export/import functions, instead
-> > of on every hash operation.
-> 
-> Sorry for the late reply. Thank you for your suggestion and review.
-> 
-> I will send an updated patch soon.
+I think all the activity has died down and I everyone seems happy enough
+with how this looks. Right?
 
-FWIW, Larry Wei reported this issue as well in a separate Debian bug
-report at https://bugs.debian.org/1113996 .
-
-So far there was no patch applied to mainline if I'm correct. Did that
-felt through the cracks?
-
-Regards,
-Salvatore
+So is this something we should prod Andrew to take through the mm tree,
+or is it x86-specific enough it should go through tip?
 
