@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-832123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD8DB9E672
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:36:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292A0B9E67C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9439C38774D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D321BC47D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FF9264F9C;
-	Thu, 25 Sep 2025 09:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366582EACF2;
+	Thu, 25 Sep 2025 09:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qn1Wh4DD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wes68xN3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Qn1Wh4DD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wes68xN3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArBjsOVE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682F3225408
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88872E9ECF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758792787; cv=none; b=tMIzEiZx0jk3g4MyHYzzzIraJzoEAwPIwMTH2qoMGlnqCqQMfrsVCr2UVhDRKmo/Ns92N5eEm1gyNiQRmIpCmCc1xs2eb3fAWQHLLKeegE2q2McgSHiusO9EbyqcqoxlP9jrSuLUa0+hX97etBLSx5KB7FKV3+oSWjjLDg/NX2o=
+	t=1758792827; cv=none; b=HU2EQBxDVJElxonwZiCTx9PoQINmZZ6RYnxCsvDjPDWKunxXkZSmkCJM3nDMAtTZ7DU4fN1wLcs/ST5Bp5scaD/tkFcbSIRfS3Vb57tXG0TXYaDYZheMHlOez7UwMKDTPVOdBxmLSONv6K2ACXcVWOOzPXyWiYxEdxWraHmsMpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758792787; c=relaxed/simple;
-	bh=+r7/EFuu/Z4+g80XOn67kdjppy2mS5EV6emp4qNg3J8=;
+	s=arc-20240116; t=1758792827; c=relaxed/simple;
+	bh=wgFW2Qy2mAdqpU7Ouy5ArqSzkyXxatRw2BRfBdgtwhg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nbUomuMW4HsERodLoXVnI5DIFSXuxjfHaEQE0Fs6JzYNf/w4DId0JgJMYA58I/SNOsBpZzMueT0V6lx+kJ/dDVPCyI+sRaaaf7B7nJNNPLwsyIyxT311bGRna+kwn8I9pmoa3CFlwACoqQS7spyRGLX7VDFSXIBQ5tuZHv8YBh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qn1Wh4DD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wes68xN3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Qn1Wh4DD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wes68xN3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 58B454E624;
-	Thu, 25 Sep 2025 09:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758792778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=L3rlpHNzxg9DWzZtQEUz4OL8HorgR512OB+9APh0cmXKGMxJPRaf9bvaeTZfvNduVm9XYYLLNCefrDpmeTe6TWwscjGHWw/AGdl4a/VwwLKSPSvGRIFCJNuTm22rn9LFgbzy8ghPky8KvBopXhZcNVYok003yQAMGyFTn4It4iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArBjsOVE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758792824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PktsIKsXT7+WofBjDIwf6iQfwyP9CFogd6p16sia/gQ=;
-	b=Qn1Wh4DDYle+RfyQF6cuLRawJoaacWpKkQtAwZ/8906+o4FSfhGe8DZYISx04MwIHczF+j
-	ttZJdjtHDGEj2vWNED1HKxNXSV1t8HdmX3t/tY8UjvK4Olx1l5V5jcp/Ibz96R6Iz1uhxG
-	yBycnKOlJeZ6swJQXK06LJNE1Tr8Rek=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758792778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PktsIKsXT7+WofBjDIwf6iQfwyP9CFogd6p16sia/gQ=;
-	b=wes68xN3HKt4ysa7pijHIcKrJPMnh189kIxorhTj28QtII11L2cPWpE76KIgHVJg5tCczJ
-	K0NHosrQJlpiOJCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758792778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PktsIKsXT7+WofBjDIwf6iQfwyP9CFogd6p16sia/gQ=;
-	b=Qn1Wh4DDYle+RfyQF6cuLRawJoaacWpKkQtAwZ/8906+o4FSfhGe8DZYISx04MwIHczF+j
-	ttZJdjtHDGEj2vWNED1HKxNXSV1t8HdmX3t/tY8UjvK4Olx1l5V5jcp/Ibz96R6Iz1uhxG
-	yBycnKOlJeZ6swJQXK06LJNE1Tr8Rek=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758792778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PktsIKsXT7+WofBjDIwf6iQfwyP9CFogd6p16sia/gQ=;
-	b=wes68xN3HKt4ysa7pijHIcKrJPMnh189kIxorhTj28QtII11L2cPWpE76KIgHVJg5tCczJ
-	K0NHosrQJlpiOJCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 015FE13869;
-	Thu, 25 Sep 2025 09:32:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8MShOUgM1WjnWwAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Thu, 25 Sep 2025 09:32:56 +0000
-Message-ID: <3d2252ef-92a2-4717-a472-3e5b275419ce@suse.de>
-Date: Thu, 25 Sep 2025 12:32:54 +0300
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UQxV2N8dYSlRevMplPP+7X68Vqzpbc0LIY+aAribQjo=;
+	b=ArBjsOVEfL7M7O0+ETjNVFKtOvB9GGcI35VFEvnJGzd07vOL50kQ8+yD2agEdGbK5aN92p
+	OXRP824Tz7IumlHT/DkTyydQ0RNkzX+RY49VwDoi0z4kxmriDbLqzon4GU5U/HI3NphtO4
+	uIqCyXuLXTSSPrCv8zzR2Fas+ZtSmM4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-176-hyYyIXVsNAqqiN7UuTOckw-1; Thu, 25 Sep 2025 05:33:42 -0400
+X-MC-Unique: hyYyIXVsNAqqiN7UuTOckw-1
+X-Mimecast-MFC-AGG-ID: hyYyIXVsNAqqiN7UuTOckw_1758792822
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e23a66122so5270025e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:33:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758792821; x=1759397621;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UQxV2N8dYSlRevMplPP+7X68Vqzpbc0LIY+aAribQjo=;
+        b=RYrq9Zuz+X1bcfay2LYKosuw6zJnl/O0+v5pUKIh57cPOSoLkje8GMrY2dUa5in59Y
+         iRvbxxyOhHJ1ZbTKCfHl6kNXYgnEESB3lY1j6xJavpehIZrqA6PgG5eQOD1at5X+YNwv
+         WpWWc484YmtDruIIzexoOBxIIzHfwLeT+yYQxhgdbr+/vLqZ2ZkDj+kLCc/5aRB18q7M
+         UzS0RKPbTnog0WNoEcj5noD8FUaApVxJNFj6IKxCnQod64vUhHkhSktjYHuY48tgqea3
+         wIwJL+B0lMoxHtmHnBPEalRFxs2maT+Typ/oAG+HE7ULTWfkNSJjJzBW90JtK3tByjkw
+         Abyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYziYMEpYEslpNTqelnKM9wzKTtAMxdq8+1WtiNkfpGA/RdkyLv8aOvuUJtprAvE71T/9ohs/eGF1v3o8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw09qYAjC5qoXbD6ICu9FqRCGUpVndeWK89rU1wSG50w0VqD4ax
+	CuzzHYaq+oMUvyX4hdI6Kw1lgrIGuMv8L1/SVgR3Ui9A5If9fSQUqWqF0pIN78oszkFyd78MaCE
+	1Uxqts6TQ9k6r2/uUfuCVMCR5Goai763EeDahG4ZZFp6x84awK4tHecE0qqgmWV3nKQ==
+X-Gm-Gg: ASbGncsy3gBiI7CgOYdmLjQfRhj9q8Z9F+iGUILqu2Zesbl9/kXtqJEixdsvBIki8Z5
+	feOqNfMP68QZwWTkwbvRGOJpGbGnpUtDWkeuWkHeiP+WjBkX/9kS1yNurQUrCapvg/TbOJ09HAf
+	aD8rAo06yVi3Y69vmqfLRMRALgzNgVnTcdpdph1jQsRva3jO+P73y9HLseTtk/bdRvV8VlS9PlH
+	xoQxH6kcdjl0uVXaDA2G7fEIipZfrNZ39VnM4pbXiPlf8I2+Rh2cwKgYfjsBL+xYRNGCqZJHmUS
+	/IH3bMFSAVVa0MXWHgoKCBBaK+8BhP3bksSurJ9sRuTGzGBYSPswOutb+SFEZbm3bol02oXgFPL
+	2lOdI15Ks/yAI0EUa1NfTffeNe2FWy1k6F70UQFkEYuwVKIePLsBVgmpkUD029Wk3ENfk
+X-Received: by 2002:adf:a3c9:0:b0:410:3a4f:12c8 with SMTP id ffacd0b85a97d-4103a4f171dmr1075310f8f.20.1758792821516;
+        Thu, 25 Sep 2025 02:33:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZcXl4pYQPZQ0U4/pa9bQrhuaKgjWJziO9jJ5iUdtLGhTCrjOfRbjX4KoPsMAZSVZkv1fopg==
+X-Received: by 2002:adf:a3c9:0:b0:410:3a4f:12c8 with SMTP id ffacd0b85a97d-4103a4f171dmr1075287f8f.20.1758792821120;
+        Thu, 25 Sep 2025 02:33:41 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm2265662f8f.24.2025.09.25.02.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 02:33:40 -0700 (PDT)
+Message-ID: <c24d7fdf-4c4b-4379-a538-ae5847bf57e9@redhat.com>
+Date: Thu, 25 Sep 2025 11:33:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,126 +89,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask from
- a processor container
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-2-james.morse@arm.com>
+Subject: Re: [PATCH] mm: move rmap of mTHP upon CoW reuse
+To: Kiryl Shutsemau <kirill@shutemov.name>, Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250925085429.41607-1-dev.jain@arm.com>
+ <427kxhljdcrn7thput727j6vpqvxtalistn6yoq6ykdpbe5435@sn7a4rh7zcdo>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20250910204309.20751-2-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <427kxhljdcrn7thput727j6vpqvxtalistn6yoq6ykdpbe5435@sn7a4rh7zcdo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLj7mp877dpkcx5p1r49fdbjkp)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
 
-Hi James,
-
-On 9/10/25 11:42 PM, James Morse wrote:
-> The ACPI MPAM table uses the UID of a processor container specified in
-> the PPTT to indicate the subset of CPUs and cache topology that can
-> access each MPAM System Component (MSC).
+On 25.09.25 11:31, Kiryl Shutsemau wrote:
+> On Thu, Sep 25, 2025 at 02:24:29PM +0530, Dev Jain wrote:
+>> At wp-fault time, when we find that a folio is exclusively mapped, we move
+>> folio->mapping to the faulting VMA's anon_vma, so that rmap overhead
+>> reduces. This is currently done for small folios (base pages) and
+>> PMD-mapped THPs. Do this for mTHP too.
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>> mm-selftests pass.
+>>
+>>   mm/memory.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 7e32eb79ba99..ec04d2cec6b1 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -4014,6 +4014,11 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+>>   	 * an additional folio reference and never ended up here.
+>>   	 */
+>>   	exclusive = true;
+>> +
+>> +	if (folio_trylock(folio)) {
+>> +		folio_move_anon_rmap(folio, vma);
+>> +		folio_unlock(folio);
+>> +	}
 > 
-> This information is not directly useful to the kernel. The equivalent
-> cpumask is needed instead.
+> Maybe take the folio lock earlier in wp_can_reuse_anon_folio() to cover
+> large folio handling too and avoid trylock here.
 > 
-> Add a helper to find the processor container by its id, then walk
-> the possible CPUs to fill a cpumask with the CPUs that have this
-> processor container as a parent.
+> Something like this (untest):
 > 
-> CC: Dave Martin <dave.martin@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->  * Replaced commit message with wording from Dave.
->  * Fixed a stray plural.
->  * Moved further down in the file to make use of get_pptt() helper.
->  * Added a break to exit the loop early.
-> 
-> Changes since RFC:
->  * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
-> 
-> Changes since RFC:
->  * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
->  * Added missing : in kernel-doc
->  * Made helper return void as this never actually returns an error.
-> ---
->  drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  3 ++
->  2 files changed, 86 insertions(+)
-> 
-
-<snip>
-
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 812a7d9f6531..d95cf670b6a8 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3843,6 +3843,7 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+>   	 * an additional folio reference and never ended up here.
+>   	 */
+>   	exclusive = true;
+> +	folio_move_anon_rmap(folio, vma);
+>   unlock:
+>   	folio_unlock_large_mapcount(folio);
+>   	return exclusive;
+> @@ -3858,8 +3859,15 @@ static bool __wp_can_reuse_large_anon_folio(struct folio *folio,
+>   static bool wp_can_reuse_anon_folio(struct folio *folio,
+>   				    struct vm_area_struct *vma)
+>   {
+> -	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && folio_test_large(folio))
+> -		return __wp_can_reuse_large_anon_folio(folio, vma);
+> +	bool exclusive = false;
 > +
-> +/**
-> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
-> + *                                       processor container
-> + * @acpi_cpu_id:	The UID of the processor container.
-> + * @cpus:		The resulting CPU mask.
-> + *
-> + * Find the specified Processor Container, and fill @cpus with all the cpus
-> + * below it.
-> + *
-> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
-> + * Container, they may exist purely to describe a Private resource. CPUs
-> + * have to be leaves, so a Processor Container is a non-leaf that has the
-> + * 'ACPI Processor ID valid' flag set.
-> + *
-> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> +	if (!folio_trylock(folio))
+> +		return false;
 
-Leftover, drop this.
+No, there is no need for that.
 
-> + */
-> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
-> +{
-> +	struct acpi_pptt_processor *cpu_node;
-> +	struct acpi_table_header *table_hdr;
-> +	struct acpi_subtable_header *entry;
+-- 
+Cheers
 
-<snip>
-
-regards,
-~Stan
+David / dhildenb
 
 
