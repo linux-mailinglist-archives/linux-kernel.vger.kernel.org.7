@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-832348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81C4B9F095
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7D8B9F0A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BE018959A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803BC3AABAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EA62FBDE0;
-	Thu, 25 Sep 2025 11:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E052FD1BA;
+	Thu, 25 Sep 2025 11:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NJkX5mhk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ghK7Gy6U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638A32FC866
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9140C2FC864
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758801336; cv=none; b=HLhaVEbNlBJjDj0WNPaJDucjNvBMXRojBCTnygTG7D7K2LAh9rH2HTnRpQw0As2YBt5MmTLM0+ceO5ono3D/+iNfxy8OjBmcXpGE6MyP0bYf3Yk/2++HviIrDAlFqBvcwtDSliiyzQhCyJ+9wU3CVrlQZAgG9dbf/KhOczun28w=
+	t=1758801363; cv=none; b=IIbaURExKsyKDqV+Fp+bspTkxmffKXTVH6WkryilVDymmVg2faGwrP6dLvONcsDDkfJJJDTJIJ6a40joGXvU3MSVgSD1oMv0ETj23p4qsQHL0jEbMKQx5z2n4Im8DE5B8wfHKP/f/7NbCj0FzxOg7iDSIL+gTOZv8WggVFmNOS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758801336; c=relaxed/simple;
-	bh=+fP0M0ulLkKRfiYmi7kvzBtJSxdpLTHFIV0AyZ8rGr4=;
+	s=arc-20240116; t=1758801363; c=relaxed/simple;
+	bh=yl52+8t16PBY6bibfVojwBzJQIRHVSQe2DfRABhpTfs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WzxqK4VTfhbEtCMEVQTVMfRzVcJ9EsfDXLQ3h7o+p33iIe/74WwWXZ1wn1jJZNsIo3ZQFOmXyo/LWB60zQjxew1MNJUBEaMf3LCK67DNPe8MXD24cSbgG8VTJ1w6LOkEF1HAZIWUKFaYVPyHSF2Qjjyt83MiW6lmY8owk9MwrM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NJkX5mhk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758801333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SCbRU8MveS1pgXPDEzPy2kt340UB03o/vXxtaoaDWAc=;
-	b=NJkX5mhkzxPQya2MmhiH+5FEF5FrSa/jZgUe0ZAhDzuxe1kxrRIy7OCxkqaQPJvWGNIy2o
-	Ln6ICBCKbDUORdGzzvRKmYcNsmJMRT0hegRBfMGEQkzmnflfaFeXerfNE0c2O+Lq5XktxX
-	KX5yI6nOhq4tmUqpUfNjulCHks6m+4I=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-217-SiW0HjrXPdCl1QD6gL0s5w-1; Thu, 25 Sep 2025 07:55:32 -0400
-X-MC-Unique: SiW0HjrXPdCl1QD6gL0s5w-1
-X-Mimecast-MFC-AGG-ID: SiW0HjrXPdCl1QD6gL0s5w_1758801331
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e375dab7dso1915025e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:55:32 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=kXT5s0wSY8euXUFc6Q0n4YQto7gly/vKj3p8HOYB6/tCxiTA3CRuU0LiUW8yW7bOUAJhJ9DItidwJ2if6sajWbgHBdWVCfItNyWyrUk54Q1NNXOB43MK2CXlZWGw1QGGWFZIAXIZaRjkrwHOk60n2GXf/xCjsZ4J8+N/iqk/Mfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ghK7Gy6U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9l5s1029974
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:56:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BGho4vei24vHpadg3iVDOtkY/sdrfcEeDXVF20xwVL8=; b=ghK7Gy6U3dP69nus
+	K1EkoylRUWcWiCXq0RJWUTUIDslnKTYIHtym5SsrlCV3DqbpJ0wmWG+Qwox+Rkqo
+	RYHN7hqkRRN0CgBNpntNwi4aqvODBgLrJ9YOjIYqZRZvSWzL8cLJnNbbS36VvlzJ
+	Emq8L3BY1a0PDv2NF3CvlLZbHu+MxBTVzEz7tSbBUWepAP9McKfal87L3qLf3yyN
+	bJ5B3haiQ1PHNUle9LGPf90aKlFbeRvadOQLjp9ZcDnyvee23rnt5jm0mzWKbnR5
+	t4ms2exDANoscV2QbpvVNnGKKtBtDa6zHwFDvhNgu64wwQ6Do9ARbw48SbsF+eaC
+	NXjFrw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fqudt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:56:00 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7cc365ab519so2171656d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:56:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758801331; x=1759406131;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SCbRU8MveS1pgXPDEzPy2kt340UB03o/vXxtaoaDWAc=;
-        b=KchdMO2UpUO/z3iLhcD6+yJd1U6WtHM3LK8z02aata31Tmk11ePjE0jYEiRPvnh9zA
-         mUd5AwryMExTnGRJxyZ27NJLfnUARN7mvmMo4PgtaV8/ybd8efuh14OGgLepGPiaUuY4
-         u5Iod4X9IFYDjj2NU4bLOXXIHId+33XiRIwxWYlfKnBnYpXEobjYxCq8M21Aqu6M7AKV
-         I9VGtGRHwzzljSWMn9mxwjCJ4LlVOgaqndwY3Pi6KpR3R59wsR3RPp0bB2mKH+dGGrg1
-         KuP3xH8GrdlSr95+vdgiXauqfK2GLrvQ49c3hZzR70UXJ2Bf/14k6sb+sMF0oVQXQv5Y
-         8BZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXJdtgjclt7j52PQEFSBUJRC/X0uXAGFF8i62/6Phjf2pqgD9wll+RpeJztYY71iceIii2SeM4psGJSUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytXDfSjFDLneIOeZmRKXAP0g1NpBEH46UOJdyl4m0MF+zImRci
-	wlbqiG14zXGwD3IelhgZAMbglPKmq8+G2eXHig19GeFZiD5mNYTDk9lwwFl4HRx0/c3Wvb+KAva
-	qnw4TObfagK2vchdc2UolDyHxrrIGY4rldkAiBThSWvTR04HG1wPjwWkNqby4WmbhZQ==
-X-Gm-Gg: ASbGnctXtjE4VG4fi0gss6wGhGPjHBW8oVl8rxu0jQo8om8I9gyrXDGZMKKD6vfo8qg
-	SeIIRUi95iCKj28IpjLYhtPJNiSjLmFhApgVxMPX5MmVdSnvguB0uQtGX24BhVOpYlRqNK7KL/P
-	2XwfHvC6Gk8/rIXYBXRk+fnaY4gGlI/FbI0U75/Iri4vg9SjODmNYCYC8qgbJfiaSLu4xBPXD5g
-	t/g9Staz59FKBSQaXEP9njVuyde/f5xJmqiudJEjP3CKQlEK5pST3n3KGfeD+2UoTs0G6Wovfdo
-	Avjr5tMyRRLXYdHo14YbnhxmM1TMSwkZaW2xNgdNcBKZ9dyHYV3A8T8kENezbELuzwkNf1jS7sf
-	yf7Fj/aN1nGkMCPxOE7YkQWtz5b2l5b3OD1NuzLlUzh4I4mRPQnVNv61Y9ZQ03xuAv/bR
-X-Received: by 2002:a05:600c:c83:b0:46e:1c2d:bc84 with SMTP id 5b1f17b1804b1-46e329eb10emr33699215e9.17.1758801330661;
-        Thu, 25 Sep 2025 04:55:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHt88AWAVfrsW7XtYeqx9eAlzDx2ZLFWRXrQuLhkskEblyKaQxcWglP3fS9EKwD9xW0YpDiXg==
-X-Received: by 2002:a05:600c:c83:b0:46e:1c2d:bc84 with SMTP id 5b1f17b1804b1-46e329eb10emr33698205e9.17.1758801329980;
-        Thu, 25 Sep 2025 04:55:29 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b562d8sm31593705e9.0.2025.09.25.04.55.26
+        d=1e100.net; s=20230601; t=1758801359; x=1759406159;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BGho4vei24vHpadg3iVDOtkY/sdrfcEeDXVF20xwVL8=;
+        b=RQ2NQEBMd4YHONPCrEdmBiTYIAHZPydcf9/bZWolslgq4Sx+HlhhadgiGJkjxOtfM7
+         M/cjj4aaZEkHX8GsqegEY0Ll6Avnfv0KB+eSEPQHoO5oLHVtSHPLg2jhV2CqqbWMpv/N
+         DpcaCthw7JtDQtPI8suYe5cVoD2OJewNzeY9Wk+6VAMKD9DssisRhdjPZeQFx2wPP++E
+         K4+KA3bztaTMxrK7PD24pXMajC02d8t9FfwDyqtF1myefGX0NffKvMNs2hsYVHVmvXil
+         zqxXcPSjtn6jTk5kkQcThRPW3ohSNo3m5PIRO46tERfgaYcwO9qEgU62tqST0Zv0MVQZ
+         ISQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3DOly9zjbPc4Z9DLaXk9fKVctIMAUKJrE26xIQK5Af4oC2a+BcitRc3VbaZvPv9QlcRSgYan29Qm3o6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMa3PTOuoActcUrmPbWt1Qt6i1iruuMN8uRJKCh5jEDM7tImFj
+	kSWVMRvfXFpes7rQuYpKxuky1ICmuntLpejycp7Awv4gf7wcXr0xi2BS0BT6LlpYMPSgoOPjAPr
+	YD7HiepH1Iq1dujyP2z6bvQySAEK1gioo1P+6n0tG3rPwazwPI2w0Uj39KzK+tfMXIC8=
+X-Gm-Gg: ASbGncsZ6cMhA0e9sWMLBDAvuV2EtpWar39TDh20N9siGpZPurap4+MA0L1FzFKv80Q
+	Em0S5HWKM5EohYBjLpHeHbGo5C6k5QYzwg5v3ktr5OCymlklgwt9xe7WRu72O0TfnoF2/7EhG35
+	tHXTAKZ4dxoypI4LR5AJQLmPKZrCMRcE1L4E6Eh+9/VIMjL9C8lBO8VqXEzUayNFvVXJdMtxeIF
+	SDgkv7i8plJczXLPrKia4auBYQO2DKGOkBDY2kcBBYJO9nc57qmGpDKvTWKhx9WimlT4F0iBS8+
+	8Ip2iajmGfl80v8WZn40jCpolMVIVObo/w4MfYo8plv2qAQ2unKhU2dQUFovlJe0IBkMb+x0iIG
+	cqJMcZyl6b/uzw2D4Pxf0fA==
+X-Received: by 2002:ac8:5d08:0:b0:4d7:9039:2e87 with SMTP id d75a77b69052e-4da47c063ffmr28296821cf.1.1758801359244;
+        Thu, 25 Sep 2025 04:55:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFfws3DHjZ7NiFj2AF7AaqOeOE+RAgqdSMayjchEUwDWrTLQ8HNN+0mGYgmyc++RfEn9OQlxA==
+X-Received: by 2002:ac8:5d08:0:b0:4d7:9039:2e87 with SMTP id d75a77b69052e-4da47c063ffmr28296531cf.1.1758801358755;
+        Thu, 25 Sep 2025 04:55:58 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353e5d168dsm160195466b.4.2025.09.25.04.55.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 04:55:29 -0700 (PDT)
-Message-ID: <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
-Date: Thu, 25 Sep 2025 13:55:26 +0200
+        Thu, 25 Sep 2025 04:55:58 -0700 (PDT)
+Message-ID: <ee4f25d6-d04a-42fd-8b72-6b272e750b9c@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 13:55:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,234 +89,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-To: "Garg, Shivank" <shivankg@amd.com>,
- Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, pbonzini@redhat.com,
- shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org,
- viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org,
- chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com,
- kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com,
- dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com,
- joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
- gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
- thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
- kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org,
- cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org,
- ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com,
- papaluri@amd.com, yuzhao@google.com, suzuki.poulose@arm.com,
- quic_eberman@quicinc.com, linux-bcachefs@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250827175247.83322-2-shivankg@amd.com>
- <20250827175247.83322-7-shivankg@amd.com> <diqztt1sbd2v.fsf@google.com>
- <aNSt9QT8dmpDK1eE@google.com> <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] dt-bindings: phy: Add QMP UFS PHY compatible for
+ Kaanapali
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-ufs-v1-0-42e0955a1f7c@oss.qualcomm.com>
+ <20250924-knp-ufs-v1-2-42e0955a1f7c@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-ufs-v1-2-42e0955a1f7c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: PHRqR0CMj3GkBHtpRXuW7kIY2OKLOlT5
+X-Proofpoint-GUID: PHRqR0CMj3GkBHtpRXuW7kIY2OKLOlT5
+X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d52dd0 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=mUVx_TFFIgGiSlsxcIcA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX63G4CTvLip9h
+ s3lrvupPZhdGGwx/cOEUW1U3jW5qBMOGjW66a0WwW+FtsRSuooFaYd0aImtF5fLQJ3dGMpQZ/vI
+ 0Z4smqxr+qfbpTP8vpppCRyB+I/kF8tfW4TShtOlY90LN0Sw2YvPsSdSUCgNDwIHOxngsZfpNUI
+ LyoW6UD81o+J31ruNkM/gqSRQTa/PxwN0Q6uLOf3WLMF+0cr4JLwvObiawUIf+mYoWRo3not5wb
+ xBUBQNhZY23DBjUb6aynagJnHRS16Ev4KamDbVBlmB+G1uN1sZRO0u7Ux32H8td5OfYWkUmJ4Uc
+ wrCWXk3TKZDm/FamVLTo5MOzinVismQ7SQ8LKlrkguA+1vAm9fQ21slDqa3xtdyFc9Pfur9XtWG
+ zmogG+W1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
 
-On 25.09.25 13:44, Garg, Shivank wrote:
+On 9/25/25 1:29 AM, Jingyi Wang wrote:
+> Document the QMP UFS PHY compatible for Qualcomm Kaanapali to support
+> physical layer functionality for UFS found on the SoC. Use fallback to
+> indicate the compatibility of the QMP UFS PHY on the Kaanapali with that
+> on the SM8750.
 > 
-> 
-> On 9/25/2025 8:20 AM, Sean Christopherson wrote:
->> My apologies for the super late feedback.  None of this is critical (mechanical
->> things that can be cleaned up after the fact), so if there's any urgency to
->> getting this series into 6.18, just ignore it.
->>
->> On Wed, Aug 27, 2025, Ackerley Tng wrote:
->>> Shivank Garg <shivankg@amd.com> writes:
->>> @@ -463,11 +502,70 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
->>>   	return true;
->>>   }
->>>
->>> +static struct inode *kvm_gmem_inode_create(const char *name, loff_t size,
->>> +					   u64 flags)
->>> +{
->>> +	struct inode *inode;
->>> +
->>> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
->>> +	if (IS_ERR(inode))
->>> +		return inode;
->>> +
->>> +	inode->i_private = (void *)(unsigned long)flags;
->>> +	inode->i_op = &kvm_gmem_iops;
->>> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
->>> +	inode->i_mode |= S_IFREG;
->>> +	inode->i_size = size;
->>> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
->>> +	mapping_set_inaccessible(inode->i_mapping);
->>> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
->>> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
->>> +
->>> +	return inode;
->>> +}
->>> +
->>> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
->>> +						  u64 flags)
->>> +{
->>> +	static const char *name = "[kvm-gmem]";
->>> +	struct inode *inode;
->>> +	struct file *file;
->>> +	int err;
->>> +
->>> +	err = -ENOENT;
->>> +	/* __fput() will take care of fops_put(). */
->>> +	if (!fops_get(&kvm_gmem_fops))
->>> +		goto err;
->>> +
->>> +	inode = kvm_gmem_inode_create(name, size, flags);
->>> +	if (IS_ERR(inode)) {
->>> +		err = PTR_ERR(inode);
->>> +		goto err_fops_put;
->>> +	}
->>> +
->>> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
->>> +				 &kvm_gmem_fops);
->>> +	if (IS_ERR(file)) {
->>> +		err = PTR_ERR(file);
->>> +		goto err_put_inode;
->>> +	}
->>> +
->>> +	file->f_flags |= O_LARGEFILE;
->>> +	file->private_data = priv;
->>> +
->>> +	return file;
->>> +
->>> +err_put_inode:
->>> +	iput(inode);
->>> +err_fops_put:
->>> +	fops_put(&kvm_gmem_fops);
->>> +err:
->>> +	return ERR_PTR(err);
->>> +}
->>
->> I don't see any reason to add two helpers.  It requires quite a bit more lines
->> of code due to adding more error paths and local variables, and IMO doesn't make
->> the code any easier to read.
->>
->> Passing in "gmem" as @priv is especially ridiculous, as it adds code and
->> obfuscates what file->private_data is set to.
->>
->> I get the sense that the code was written to be a "replacement" for common APIs,
->> but that is nonsensical (no pun intended).
->>
->>>   static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->>>   {
->>> -	const char *anon_name = "[kvm-gmem]";
->>>   	struct kvm_gmem *gmem;
->>> -	struct inode *inode;
->>>   	struct file *file;
->>>   	int fd, err;
->>>
->>> @@ -481,32 +579,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->>>   		goto err_fd;
->>>   	}
->>>
->>> -	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
->>> -					 O_RDWR, NULL);
->>> +	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
->>>   	if (IS_ERR(file)) {
->>>   		err = PTR_ERR(file);
->>>   		goto err_gmem;
->>>   	}
->>>
->>> -	file->f_flags |= O_LARGEFILE;
->>> -
->>> -	inode = file->f_inode;
->>> -	WARN_ON(file->f_mapping != inode->i_mapping);
->>> -
->>> -	inode->i_private = (void *)(unsigned long)flags;
->>> -	inode->i_op = &kvm_gmem_iops;
->>> -	inode->i_mapping->a_ops = &kvm_gmem_aops;
->>> -	inode->i_mode |= S_IFREG;
->>> -	inode->i_size = size;
->>> -	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
->>> -	mapping_set_inaccessible(inode->i_mapping);
->>> -	/* Unmovable mappings are supposed to be marked unevictable as well. */
->>> -	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
->>> -
->>>   	kvm_get_kvm(kvm);
->>>   	gmem->kvm = kvm;
->>>   	xa_init(&gmem->bindings);
->>> -	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
->>> +	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
->>
->> I don't understand this change?  Isn't file_inode(file) == inode?
->>
->> Compile tested only, and again not critical, but it's -40 LoC...
->>
->>
-> 
-> Thanks.
-> I did functional testing and it works fine.
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
 
-I can queue this instead. I guess I can reuse the patch description and 
-add Sean as author + add his SOB (if he agrees).
+I can confirm the SW expectations are identical, down to the programming
+sequences (mostly, there's some minor adjustments that MAY be specific
+to 8750/8750QRD, but IDK if that matters or if the docs haven't been
+updated)
 
-Let me take a look at the patch later in more detail.
+Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
--- 
-Cheers
-
-David / dhildenb
+Konrad
 
 
