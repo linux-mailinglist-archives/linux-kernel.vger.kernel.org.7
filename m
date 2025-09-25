@@ -1,169 +1,105 @@
-Return-Path: <linux-kernel+bounces-832451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A022B9F5A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F411B9F5B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874D21892E4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65BD02A25BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB51DE4FB;
-	Thu, 25 Sep 2025 12:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C0B1EFF8B;
+	Thu, 25 Sep 2025 12:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYzxyT9z"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="SLxFpjDp"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1231CAA85
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C2C1DF979;
+	Thu, 25 Sep 2025 12:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804683; cv=none; b=C7zvgZDeqc6Sww96eaFTxiuQ9kS5UsQBZlkFbLxqFlnKVBoWpu1XVWPGOYIA675UQ7KYee7CgWCmmg1BV65g5/LkjgoUykoinivvhadQ2z9+26AskH6fZ3tKRCfKM90Sz8GeBCx0i+9lIOiJjPpO9UR2VJYwlRzLq3xyi0SsycI=
+	t=1758804715; cv=none; b=V3O9tj8N3HzzCjRqs74h1tWQUL2iBmKHDiIpNQbh061r9/F7g+YusiHAS/f9rH5yQqgUxju53LBRxmm6eA5qoXceXffiqXKtLj9RCgrYVXQ5R2OCmZg3vfAhZJQJvCLaUghvdIHgQMC+IWIRn2rvj9VYqOM4asQqf5KrjFt9Hio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804683; c=relaxed/simple;
-	bh=fCBaS7/TlYHyrtTGKXrdd4PcmBCn/NRFYN2zqKwb4mA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rcp5sxsV50FtLD5+sZ71Jy4I/dq0D0XIhD3V+Z6/nCscmNbKHd5JiJD+vbJWzS0qbYduorpabkUG3nOySNaFxTzlvY/MrCaredOxrOm3hY7Q0ksb0jtW3io45AuxNXAPRi23Uwg+oZ6OtFhz1fZLegH4f6ExrBqGC9nw1vvUkYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYzxyT9z; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so1093660a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758804681; x=1759409481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Y+QHu/58Ua/X7dBROxwIF10Ht/mCbydwR7yMHO0GFU=;
-        b=OYzxyT9zAjmtdhmvplh6ECWQi6UuI4udtoyV9YzPeoFcSrXVqvCzNmFLWSWbxQ5nbH
-         Ber4rm4CsZ5/nQ6E+eQDgT75yHmVDgg2h0shWZGGOfZohZm68KNON42Xo9apshAcU5PG
-         MgMSmmwpkddHXovR9Lgtq3YN7oVRwUoeeSRFeZPT/yehuXhPv6h6UzX5NxIBwcTxe5E9
-         noDduQlWjRptMPgePSH0AdPiR8jmX1/JiO4LXzWw3zFHXEPW2m5K+sJYzYgH5yia49Ji
-         sG0ShoWCzZnvJD4k/E1KctSBgS3Umkp1p9Ri6NwO+5Dzanx3U4WEKdPxTeYljOwhxBUQ
-         +Xug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758804681; x=1759409481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Y+QHu/58Ua/X7dBROxwIF10Ht/mCbydwR7yMHO0GFU=;
-        b=FgbGyVSpTh9eOKcp0iwFUdUCW1t3t18nQ7RzD43XXIFo4Y9EzUbtckTi++dIDZfYH3
-         i7PU2OcybMd/zmIc7Vy3cRhBY6NWdPTTBnEYHLHMkoTdKDHR04FFyodabzssC4DNJOQg
-         Nfnq27bhIB37ph68Is7CmssracWw0v1TO0wYhuq78Z65ihJ/R1f7kU4BnS1lnHOYfKhG
-         KFm78kmFpTQuHtoSSCFMJurV3kQDnqRGTCMCozjbRYqfo1EgNrXpGYFiUVxw64t+nRGh
-         HOnxtvTO/asccQ2Um42EfsIAYiDjGur8KtPEJRteYOuP+XG3mr5eUUqrSsnKKVNI4uG+
-         Jkjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvINkQjeywv64xyuVKIo9lmJMmvIrPPF2g3xVG3d8e7a3p2g/y0sxK6f8HPqriWcR3A6lmwctxn54JFE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziPAXq88gaqPXh8/JQrviEpRKrD9RSVehlaYBE6b0O/l2LSq0z
-	lO7JJIGBneZOYa627hudQWrzCuAJbz0fAAIdWeNtKDUDVcjba0ClcvWvFywweRMDdzJTM4d/VQn
-	+WmbG6kSZlCvMmy/ZLxn5bXbanoNmliA=
-X-Gm-Gg: ASbGncvWrTrzcbmgyWYmgghHHPxObVbOzlHXBJOdUva7ZNkdNRlkCmrccu7Ypkk4Jgv
-	WFwuhsa+bXnxnlCqcLoBhbUW5f2bM+Ou1A7XApfe2jY9z31cNWIROICRzCDaDuFF8eHZUVT6N8R
-	QnnQiuDvzH+6fN4HogT0+n9HdF3Se8lEkJ3Q16enIHXWlAXUmf24Eb79ssMAqxpkR8LI8T+m2wr
-	uWl6U0=
-X-Google-Smtp-Source: AGHT+IFhi4xltKU6TZWCCwtzswOj5FvsvZXm44XkezkVkcM4F8corx/pr8JlfpOrqeNtbBzgArl0Y6bNYT7UNcV4yRo=
-X-Received: by 2002:a17:90b:180f:b0:329:f535:6e4b with SMTP id
- 98e67ed59e1d1-3342a2e8ac2mr4215441a91.37.1758804681113; Thu, 25 Sep 2025
- 05:51:21 -0700 (PDT)
+	s=arc-20240116; t=1758804715; c=relaxed/simple;
+	bh=0oKGHYWyAMVkFfkN4CphbsNXX0lCYuXfk3CFspImQTk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaSEtXEUkWffYvC/4QQ/9Mp+nbuevYXmrbcrxCuCl4XNi3mC9VKhwsizgIhBMo7UsOq5vXJJPnH6WCd3VjqPCLhiyVXRyooXLdsY+W6zYwNQ9l5CKhePvL54AbhM9rowXVM/SQtYYIWcX6/UyEln7+TrLc+t++olbLDjreejCcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=SLxFpjDp; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PBN406008262;
+	Thu, 25 Sep 2025 05:51:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=qhC9nuF/E36QxvciCK22cHK
+	aklsWI1zOOWPbsfGRKl0=; b=SLxFpjDpUyOiONE4P27jlzHF/nTen31cqr/UDVu
+	HZ+Dzb/pBZ21HdPySOdRgiatGu/vWPp7YvrlUtncI3/kuqz5It/11dr28g1wm4ib
+	KwLHnDKVJVSxiblZdNutEEdKQr/YB/Uq45TczkVykMyZCKpTFmN76Po9VEWYocZF
+	ppvDADON2DJeH3V0BMh/2en6s3XmgCiGw0h1HbdMKY5PhFX33Rkqhbp77rmm4Y3b
+	OdUqrXCqk/odSFVQUab1TfFyRred/wn2eBN9rbbeqvxG0Zwl3k2DCDRJpsdlXEK+
+	yKlTJz2BJGSZRu3VtnoNJjib+7Z3x/PUa7qZZTEespdQo6g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49d4thr5k7-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 05:51:39 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 25 Sep 2025 05:51:37 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 25 Sep 2025 05:51:37 -0700
+Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
+	by maili.marvell.com (Postfix) with ESMTP id 30EA13F7043;
+	Thu, 25 Sep 2025 05:51:37 -0700 (PDT)
+From: Sathesh B Edara <sedara@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>, <vburru@marvell.com>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
+        <andrew@lunn.ch>, <srasheed@marvell.com>
+CC: <sedara@marvell.com>
+Subject: [net-next PATCH v2 0/2] Add support to retrieve hardware channel information
+Date: Thu, 25 Sep 2025 05:51:32 -0700
+Message-ID: <20250925125134.22421-1-sedara@marvell.com>
+X-Mailer: git-send-email 2.36.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1758633723.git.zhanghongru@xiaomi.com> <5188e81963654bbe9d1e70fe6370a38fdf4ae677.1758633723.git.zhanghongru@xiaomi.com>
-In-Reply-To: <5188e81963654bbe9d1e70fe6370a38fdf4ae677.1758633723.git.zhanghongru@xiaomi.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 25 Sep 2025 08:51:10 -0400
-X-Gm-Features: AS18NWCoG_eFZ1r7KuFm5jkK7b7rT1gpr9P99y3JZSAqAeHHkpK2UHVqE35X22g
-Message-ID: <CAEjxPJ7DgWyQYwfR4T2FZCw6f5SLx0O0jgoW3oyoQi7G8dsWQw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] selinux: improve bucket distribution uniformity of avc_hash()
-To: Hongru Zhang <zhanghongru06@gmail.com>
-Cc: paul@paul-moore.com, omosnace@redhat.com, linux-kernel@vger.kernel.org, 
-	selinux@vger.kernel.org, zhanghongru@xiaomi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: aEVG3Q6B6FfYSFfsTlE7tXONk319J5rl
+X-Authority-Analysis: v=2.4 cv=L+0dQ/T8 c=1 sm=1 tr=0 ts=68d53adb cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=M5GUcnROAAAA:8 a=PlYhftpBkXA4JvsghnwA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: aEVG3Q6B6FfYSFfsTlE7tXONk319J5rl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDEwNyBTYWx0ZWRfX3J1yfTDoaHIW Hw2zLJKGMd+GqkElZlh0Itu14xYca4nHWhwU49nTnF0Z917GJMH3XmzVSPZLawo737Ynb6Pvhbl n6ZZx4mbJWro6fDjhY/q022NaoVkDXW8OC5tQ4W8vxBlkRwCJGQVsOd9Z4yz2dZLKgws6W5WjQ6
+ LY4xhkPZeBoZW+EbwNYbVNoi9AJNwOB4/ZMTpcfGmRQMtpUEVq9mkoH2Nk4C1lXEgY3yql6lbje yaj92jbclgpgcuva5AVu+DcSLKIkhZ98QuiDXHpzzojLOYCjdJXfnVBr+R8ufF/GMkGZ8VHTSeW X4g2qUn9c7KNWojTz0is/Hr/h9go+1gLkCPVam2zOcNLILvmVpcFiDDCSvYVbF5PkYrv9habjIz uY2+sZsX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
 
-On Tue, Sep 23, 2025 at 10:56=E2=80=AFPM Hongru Zhang <zhanghongru06@gmail.=
-com> wrote:
->
-> From: Hongru Zhang <zhanghongru@xiaomi.com>
->
-> Under heavy stress testing (on an 8-core system sustaining over 50,000
-> authentication events per second), sample once per second and take the
-> mean of 1800 samples:
-> +--------------------------+-----------------------------------------+
-> |                          | bucket utilization rate / longest chain |
-> |                          +--------------------+--------------------+
-> |                          |      no-patch      |     with-patch     |
-> +--------------------------+--------------------+--------------------+
-> |  512 nodes,  512 buckets |      52.5%/7.5     |     58.2%/6.2      |
-> +--------------------------+--------------------+--------------------+
-> | 1024 nodes,  512 buckets |      68.9%/12.1    |     82.4%/8.9      |
-> +--------------------------+--------------------+--------------------+
-> | 2048 nodes,  512 buckets |      83.7%/19.4    |     94.8%/15.2     |
-> +--------------------------+--------------------+--------------------+
-> | 8192 nodes, 8192 buckets |      49.5%/11.4    |     61.9%/6.6      |
-> +--------------------------+--------------------+--------------------+
->
-> Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
+This patch series introduces support for retrieving hardware channel
+configuration through the ethtool interface for both PF and VF.
 
-Can you re-run the latency tests from the 1st patch and provide the
-results with this one applied?
-Also, checkpatch.pl reports the following warnings; please fix:
-WARNING: Block comments use * on subsequent lines
-#47: FILE: security/selinux/avc.c:160:
-+#define C1 0x9E3779B9 /* 2^32 * Golden Ratio, classic constant for Knuth's
-+    multiplicative hashing */
+Sathesh B Edara (2):
+  octeon_ep: Add support to retrieve hardware channel information
+  octeon_ep_vf: Add support to retrieve hardware channel information
 
-WARNING: Block comments use a trailing */ on a separate line
-#47: FILE: security/selinux/avc.c:160:
-+    multiplicative hashing */
+ drivers/net/ethernet/marvell/octeon_ep/octep_ethtool.c | 10 ++++++++++
+ .../ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c   | 10 ++++++++++
+ 2 files changed, 20 insertions(+)
 
-total: 0 errors, 2 warnings, 24 lines checked
+Find V1 here:
+https://lore.kernel.org/netdev/20250923094120.13133-1-sedara@marvell.com/
 
-> ---
->  security/selinux/avc.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 7a7f88012865..d08f30d57bac 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -146,9 +146,23 @@ static struct kmem_cache *avc_xperms_data_cachep __r=
-o_after_init;
->  static struct kmem_cache *avc_xperms_decision_cachep __ro_after_init;
->  static struct kmem_cache *avc_xperms_cachep __ro_after_init;
->
-> +/*
-> + * Advantages of this hash design:
-> + *     - Minimized collisions: Different inputs won't produce similar
-> + *       contributions
-> + *     - Bit diffusion: Each constant effectively scrambles input bits
-> + *     - Mathematical guarantee: These constants are theoretically analy=
-zed
-> + *       and empirically validated
-> + *     - Complementarity: Three constants complement each other at the
-> + *       binary level
-> + */
-> +#define C1 0x9E3779B9  /* 2^32 * Golden Ratio, classic constant for Knut=
-h's
-> +                          multiplicative hashing */
-> +#define C2 0x85EBCA77  /* Large prime-like properties */
-> +#define C3 0xC2B2AE35  /* Large prime-like properties, MurmurHash3 const=
-ant */
->  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
->  {
-> -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
-> +       return (ssid * C1 + tsid * C2 + tclass * C3) & (avc_cache_slots -=
- 1);
->  }
->
->  /**
-> --
-> 2.43.0
->
+V2:
+- Corrected channel counts to combined.
+
+-- 
+2.36.0
+
 
