@@ -1,105 +1,133 @@
-Return-Path: <linux-kernel+bounces-832071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE29B9E459
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E082B9E474
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA65516B159
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019411BC4B06
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B042E8B8F;
-	Thu, 25 Sep 2025 09:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B187D2DE71A;
+	Thu, 25 Sep 2025 09:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0RZZ1Rb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzq15rjT"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB9D1552FD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DF72D9EF5
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758791981; cv=none; b=IZ4up6Ay4/tnFR29eLzz4RdbEVhLp87/1JoghqoXJCCwhiOW4NKu449lQf83FyGTm8jOwzgONqHKEQDD32gLh8cO5nQQqkMoBKtfJ2bI+cXSHd+h/eA5ga6OqXwth4A3GLio5ror1YDPObbzF8iVby7j2nZlpD231TzOPg5CNY0=
+	t=1758792083; cv=none; b=ryKf7piOjmROHwPprrSBhX2kpiYH6lTm8pIgk/q31BM6FRNKmDQyUFRUcf5yCSXdjN0Gs1r0eGj+phck0ZSU8+lb+qLIvNyFFyoX40m6vyGI/nx+sfBjfXvhwE9GjMh62Vit3/ZGnGC3gGvOG4B7qitbxbnN/lmKqWz7iL1FQNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758791981; c=relaxed/simple;
-	bh=AQqMJQUBDrq9kxPLr/qGEjxf9utS86NJR0MoZy6d1v4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfBj1ZYRjYGnhJfpMppMAJXGKziIJCroXT0xXCuXGGakI0kpToZ6lPaA3PD3tvY+LfY24Oqr3ukMQ+f6sggKWYF14f7sifcprxyCXZ3DEWxdqF48t9QdJudmYtcLgMnvbHW09PzCV26i6izc6T/OxOxgToSK2FYUqBkWth4ihgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0RZZ1Rb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C96BDC4CEF0;
-	Thu, 25 Sep 2025 09:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758791980;
-	bh=AQqMJQUBDrq9kxPLr/qGEjxf9utS86NJR0MoZy6d1v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k0RZZ1RbKWAAkwlLtYKHcY7S4z/MVWCM50D//MM7NbnU4x0VQ104OQW68HBeAYRYE
-	 Gk60I4tro2JMqe3Qjc8LwqFxAq2mJlq+lKwYDTQWUkX3AkNoBii2ZDZfEvqZN3rEM3
-	 A3jYcewOMAlaG7c+WSx11wDrWKMqV5Bcp+7l8t8kM9isRSp+OuRBU+FwhwS9ueFh46
-	 0/QAkKl2M040I2KBKOwHwNMlJg2blEiveia9uQcZQJmWSKPe2WfUhlSKJLGTLszk2K
-	 Fb5QnhvksFC9LTB8hhqUzWg6e7ye1m3pyxoM4nRn+bZFFpXmDoPpHtCOVBTNV3MagN
-	 yOB/K5Ig541Lg==
-Date: Thu, 25 Sep 2025 12:19:30 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Miu <jasonmiu@google.com>
-Cc: Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Steven Chen <chenste@linux.microsoft.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC v1 0/4] Make KHO Stateless
-Message-ID: <aNUJIsElr5L5uxNv@kernel.org>
-References: <20250917025019.1585041-1-jasonmiu@google.com>
+	s=arc-20240116; t=1758792083; c=relaxed/simple;
+	bh=jUgn42r5a8mNNBXp0C9lNyB4hr+HTa+eeMoWV7f//J8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VKwDryh7RR4YSHNkBz3nF6Akl3s2+89XAFv/zQQoLVHWAZ3zVJuTanwG0x6szz524B7xrg3I46a7BEYqlbgpCrNdqktnaq6QsWg+79L8apmEZLEq7POudjjgdosa/rTORXh+ONAr+SunY7PoHmSwn8GkABvih7KJRtTmEpR2O1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lzq15rjT; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27ee41e074dso719025ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758792081; x=1759396881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jUgn42r5a8mNNBXp0C9lNyB4hr+HTa+eeMoWV7f//J8=;
+        b=lzq15rjTodpavZM6PxRaiAzce2nvWNVMxUwAdXCUxt4xCPpRdSxfGvREwNzS2YsxZ4
+         /UIGFgzGF3YgC3JBp0AR5fql3a7GJHPtHq8jSwNKN0kXISPEUM5qzwh4O1WgrLWagfns
+         hDtldiukKc91WRlOblv8nqlkx03j/M2yCEIKBqVeLk2CFomuvRORdf8a6jfbqctugMkG
+         THIZMCNPyzwl/lFILtsLKPAqB4b8qPlsk20qzQyEiSAh6iLvEFInKYrhgdZRW1uHJlxA
+         gXiIniq/luVHLum0jpNLETTjBSgK1lwzLQ00eLVfIvJE76x5WGWZ/wGVIzL/0rL+CoD4
+         BQNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758792081; x=1759396881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jUgn42r5a8mNNBXp0C9lNyB4hr+HTa+eeMoWV7f//J8=;
+        b=ff3/IDhG6ZbBq/jyHjyPDzjUSgDSPigUnza6lQu9oLS9m7npbDky2lmxclsNcytZLU
+         qJr9kgPjveXbNue76SxPi3Fgj8ax9v13QfL5o0RxXsZvp6HeTSHB4ihJJNyzk/Fjxf7Z
+         1O808ESzTmf6+0atvXNe1dLj7vNwUuucBIU6OQPfQxXzP66xoV85Gp2s13biHqqaLUVf
+         oV7qbC+umNfKW4V7Tu3Nveni1n4zuCChVfWyII5KPAZhOdhQflI/r/u8cB6MrZA+dCd8
+         DK8NNe1fH7HgjU3/Qspo0obTynwAqvdD6XWQXKDbH6IsKNz/gvIO2R6CxYmKwpF8Uv5Q
+         GDjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUlOxzh+frdtb2NR4bwtUF4qEP5nRsnpRu37RbAU/7bq/32bqBVfxr/LPXYZxBLP+QxWSnDkT7UZ3S7SY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP8cFb0HUO638w7031Jn4EO+ZlBwszCymx8pfz/eqi9tJfn+yc
+	QMCt56d4DYIbRkxKPeSA38aTpaV8pZemUPNbvkUboGEvpxGxbYq8i1QH
+X-Gm-Gg: ASbGncspk/pxTii08rDBbvDgGq84geEomaFrOViYyb958kKnDA6y9QQ2pFT2+wEO6Uh
+	fY0nKEAQpwIPzs3e9ux6Ve9V2DMpLqQ4lYE+mtB+o1mVGWhgYt0RBm7sBmHajg+66PWZHnN9QEJ
+	tTXexbu2WTCeloQXTgRCrRIkDBtRpa7eDu/TfYiD13ofJF2e0twJ4Miau5hqnN5fVyzmAOMyjZN
+	RKdWeRKq2caDEf131P6XNVMGEACJKW57RXyjB0Q+gel+eT07FCNSwrPnC1oRUqJveWkEV3k+s8l
+	d6HzrCJ5t1YK9WEeSgMoM24l9Z1GeWVhWXdFxWOwGvTWB6sUKcVjSvnmi3f5ivXb1Jtds+jjoms
+	Zhv3GQUzL6gvLnOjdFelQUY4xDtelbAir7iPvJj4MEg==
+X-Google-Smtp-Source: AGHT+IFnE3x/HOJtgYIO/KfGDkE6OL9Yv5CTm7GbsosRRNTd2+C/2E/tc4yHiROdLQZc06HYbTLMNQ==
+X-Received: by 2002:a17:903:384b:b0:260:df70:f753 with SMTP id d9443c01a7336-27ed4a7eadamr32620015ad.38.1758792081013;
+        Thu, 25 Sep 2025 02:21:21 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.16.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cdfafsm18251855ad.30.2025.09.25.02.21.16
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 25 Sep 2025 02:21:20 -0700 (PDT)
+From: Liangbin Lian <jjm2473@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	quentin.schulz@cherry.de,
+	kever.yang@rock-chips.com,
+	naoki@radxa.com,
+	honyuenkwun@gmail.com,
+	inindev@gmail.com,
+	ivan8215145640@gmail.com,
+	neil.armstrong@linaro.org,
+	mani@kernel.org,
+	dsimic@manjaro.org,
+	pbrobinson@gmail.com,
+	alchark@gmail.com,
+	didi.debian@cknow.org,
+	jjm2473@gmail.com,
+	jbx6244@gmail.com
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: dts: rockchip: introduce LinkEase EasePi R1
+Date: Thu, 25 Sep 2025 17:20:34 +0800
+Message-ID: <20250925092037.13582-1-jjm2473@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917025019.1585041-1-jasonmiu@google.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Jason,
+LinkEase EasePi R1 [1] is a high-performance mini router.
 
-On Tue, Sep 16, 2025 at 07:50:15PM -0700, Jason Miu wrote:
-> This series transitions KHO from an xarray-based metadata tracking
-> system with serialization to using page table like data structures
-> that can be passed directly to the next kernel.
-> 
-> The key motivations for this change are to:
-> - Eliminate the need for data serialization before kexec.
-> - Remove the former KHO state machine by deprecating the finalize
->   and abort states.
-> - Pass preservation metadata more directly to the next kernel via the FDT.
+Specification:
+- Rockchip RK3568
+- 2GB/4GB LPDDR4 RAM
+- 16GB on-board eMMC
+- 1x M.2 key for 2280 NVMe (PCIe 3.0)
+- 1x USB 3.0 Type-A
+- 1x USB 2.0 Type-C (for USB flashing)
+- 2x 1000 Base-T (native, RTL8211F)
+- 2x 2500 Base-T (PCIe, RTL8125B)
+- 1x HDMI 2.0 Output
+- 12v DC Jack
+- 1x Power key connected to PMIC
+- 2x LEDs (one static power supplied, one GPIO controlled)
 
-If we pass the preservation metadata directly between the kernels, it means
-that any change to that data structure will break compatibility between the
-new and old kernels. With serialization this is less severe because a more
-recent kernel can relatively easy have backward compatible deserialization.
+[1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
 
-I'm all for removing KHO state machine, but that does not necessarily mean
-we must remove the serialization of memory persistence metadata?
+Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
+---
+Changes in v2:
+- Change deprecated "rockchip,system-power-controller" to "system-power-controller"
+- Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473@gmail.com/
 
-For example, we can do the serialization at kernel_kexec() time and if we
-want to avoid memory allocations there we might preallocate pages for
-khoser_mem_chunk's as amount of bitmaps grow.
-
-It also would be interesting to see how much time is saved if we remove the
-serialization.
-
--- 
-Sincerely yours,
-Mike.
+---
 
