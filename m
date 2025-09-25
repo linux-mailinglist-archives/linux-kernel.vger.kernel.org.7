@@ -1,88 +1,95 @@
-Return-Path: <linux-kernel+bounces-831529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32409B9CE94
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:36:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE96DB9CEC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F380189F87C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D597B3BA9E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1883C2D3EE3;
-	Thu, 25 Sep 2025 00:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD872D948E;
+	Thu, 25 Sep 2025 00:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mH6sUjJd"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlBVio2i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BC32D320E;
-	Thu, 25 Sep 2025 00:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF382D8779;
+	Thu, 25 Sep 2025 00:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758760553; cv=none; b=AWGU45TPyDHDiZ6h8g5lfkxWRvnt/TRvhZF9dvGaAw278Q6naeWMmAUFqsZTrtFA/EAtTprwSjgQ84zVXh/bqaYpTy2qwvtCeVyXysbRXKwKvXYjnX9XY1Qnrn4uLF5GtZ4MppKqA/On/ngQbRxpl5qvpLCYiEoV5cTtvK06VmE=
+	t=1758761434; cv=none; b=gpedhQt9vbYmj13AmZmyOouDqncEWdSVhGVw2rhMvDySck9FXCJ69jzQz19xd1+9OYfWhQoXfueee0fKPOsARoOwzqvxQhKlP/93IWbSPzlacFLTdx7EK27vO1IH0axf2xLVSVwvdZiOxKE0ysDmpou6bLFbJhFIe4E6Z/mnD8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758760553; c=relaxed/simple;
-	bh=IoOKWP7KCWx1/+dfW5jgvFGaEP12J8ouah4qQKtJ3lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1fQMsMGBImgYuRK6nJWBX4IxlHruxm/a11+pb4psymDtfFWyHFoJ10/HzM1++ciB6GJbiUDr64MQ0q/NGgwqNVlbrd3F11ti1U3aLmBMQ8pJZPf0cQOx/Qpmm2ep6Ejm2OFo7mMPTVkxT+X8gHrUJtsxo12kZ+n7BqBTaCo8KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mH6sUjJd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BAB9C4CEF8;
-	Thu, 25 Sep 2025 00:35:52 +0000 (UTC)
+	s=arc-20240116; t=1758761434; c=relaxed/simple;
+	bh=XOOkukC4VBKca5IOF3g1gxbksVfqEtPDXKSOv6aZJ6M=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PitrURTSRJfs/5waFyqkiS9LjRDDV0YKSWd5uArFeRCL90nXy/QVOiLfGVnE3qIU+19nIEhc1wVDNbugqiPcOo7c32i9EnRhvLgt1pfFQcI+hFAKCan7YkWI0kavlgiDA97b4BRfBgE4Bf7avK+mNqKBUHo5H2Di4lc6csXREzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlBVio2i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71153C4CEE7;
+	Thu, 25 Sep 2025 00:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758760553;
-	bh=IoOKWP7KCWx1/+dfW5jgvFGaEP12J8ouah4qQKtJ3lM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mH6sUjJd74NBnJk4fJcsViXsgvP0pS8U/fJGqs9SHCJwV/x/wSy7jNWPU7YNFSUep
-	 bSM+DvvFEJqlFvV8lDR9JiYJ+24VVwJwhZsq7E7etT0cbgJLQl+4XE+aLZraTtJFBY
-	 ccaI22dbyMNOvoNAhQwygpfHjT6R2dsHWDU6qOxntvFqbU/Z7oRQZVNICJxHgqPnoK
-	 +luos9WjycvfvQccolMNlfWNtjVvLwAOl0yx3ZoyzqPR0vhEYDVesFVCe3W6WYsWGG
-	 Cks8roMCWbNSqBH7KzKT7dqJZRMxtJX5vfBlN0WZpdG3kCDXBC58pebaN8eGyZa/dy
-	 zN9eZZnlCxfuw==
-Date: Wed, 24 Sep 2025 17:35:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean
- <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v11 5/5] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <20250924173551.2e09b168@kernel.org>
-In-Reply-To: <CAAXyoMNBHgG-DFv16ua-T__iBXg=chFQ6TNoXdZvk4VP2aYESA@mail.gmail.com>
-References: <20250922131148.1917856-1-mmyangfl@gmail.com>
-	<20250922131148.1917856-6-mmyangfl@gmail.com>
-	<20250923174737.4759aaf4@kernel.org>
-	<CAAXyoMNBHgG-DFv16ua-T__iBXg=chFQ6TNoXdZvk4VP2aYESA@mail.gmail.com>
+	s=k20201202; t=1758761433;
+	bh=XOOkukC4VBKca5IOF3g1gxbksVfqEtPDXKSOv6aZJ6M=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=VlBVio2iMgXvqEyLcf41FZ2CNuk7hIoesYpzkCBN+fzY49feMVpOKOIghYuviyYEM
+	 Bbb9qNTILFHLmb0Cg89PVJd0XNOu940IBX903KNSnk2OYi9Le72ej1scmkjXkmRlpN
+	 IabmxMccz2P2dQ8j4gkUlcpxrW32Bx3hFneVS0VxfjJbIcj7XKa1omhSbknfYr9q9N
+	 nlxCYnQ8Sn9LLQ2tuRrUQ18h2o/Rc+YFnErrGc1PjcxO81SmJy3BwfQfRyS1HWf491
+	 FeSPHdIotQcp+uWRfl9Rw0YYmZrXq99D8yeAEMrAfdKZMsSdN3s/BJP2h14sxBFz8/
+	 JMlHQHE0LDkuQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACB239D0C20;
+	Thu, 25 Sep 2025 00:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] dt-bindings: net: ethernet-controller: Fix grammar in
+ comment
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175876142949.2757835.17340441622511646948.git-patchwork-notify@kernel.org>
+Date: Thu, 25 Sep 2025 00:50:29 +0000
+References: <20250923-dt-net-typo-v1-1-08e1bdd14c74@posteo.net>
+In-Reply-To: <20250923-dt-net-typo-v1-1-08e1bdd14c74@posteo.net>
+To: =?utf-8?b?Si4gTmV1c2Now6RmZXIgPGoubmVAcG9zdGVvLm5ldD4=?=@codeaurora.org
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Wed, 24 Sep 2025 20:33:57 +0800 Yangfl wrote:
-> On Wed, Sep 24, 2025 at 8:47=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> =
-wrote:
-> > > +             cancel_delayed_work_sync(&pp->mib_read);
-> > > +     }
-> > > +
-> > > +     dsa_unregister_switch(&priv->ds); =20
-> >
-> > The work canceling looks racy, the port can come up in between
-> > cancel_work and dsa_unregister ? disable_delayed_work.. will likely
-> > do the job. =20
->=20
-> Are you sure about this? There are many others who use
-> cancel_delayed_work_sync in their teardown methods (for example
-> ar9331_sw_remove). If that is true, they should be fixed too.
+Hello:
 
-Not at all! I'll gladly accept an explanation of why the code is
-correct. "Someone else is doing it too" is not an explanation.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 23 Sep 2025 01:10:01 +0200 you wrote:
+> From: "J. Neuschäfer" <j.ne@posteo.net>
+> 
+> "difference" is a noun, so "sufficient" is an adjective without "ly".
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+>  Documentation/devicetree/bindings/net/ethernet-controller.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> [...]
+
+Here is the summary with links:
+  - dt-bindings: net: ethernet-controller: Fix grammar in comment
+    https://git.kernel.org/netdev/net-next/c/1d7e08325090
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
