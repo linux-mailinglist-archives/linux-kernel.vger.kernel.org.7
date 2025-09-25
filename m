@@ -1,79 +1,113 @@
-Return-Path: <linux-kernel+bounces-831495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACDBB9CD18
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57B1B9CD3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CEE165619
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0853B3723
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D067494;
-	Thu, 25 Sep 2025 00:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E594E72639;
+	Thu, 25 Sep 2025 00:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgltNu3V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rl5MdRO4"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF515A8;
-	Thu, 25 Sep 2025 00:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1DC189
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758758874; cv=none; b=MkVzUTWzde2iYKt1e84YVqqcccLUI+9i/zUCU8oEHLxfocZ2Y1lbqk8m0RLCL8eOQ+HYVdIjbZ+8yqovH/YIcYsSotCdloc42dh3Ysqm329P/WRvqSO13wdgJ7YcMhMcQfLj3q95QJDzt108cAEtTaZZJ8gs+qZ18ozG4PPBNtE=
+	t=1758759352; cv=none; b=OPSpPz6sU7fWwhfMlLoE68qhQ0d+kTSduckZqDqzAuLG8QzvKyae+r6lgNHPFnzmMbwoSbhGtLkGsfWlJkqZNymo23IE8QfuidDeefb0URurkzPL1BNA9hQB1H2qt+DPRa3p5YZ3hj90O9HGynbKGa/2hc5bcJXA1gCk3XZWEt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758758874; c=relaxed/simple;
-	bh=m6ioeAahwYn62n7FAjt3QVV1qWaVhFS/3tj0n6LSVy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ap2lTvj8iMQXe1Q0NPwFrQ+jnjg9ENiz3WDVRnptlNAK/cym6J/GfjHnKJEWf3aew2r/cll0GhM4+kWsgs7N2kfD2CidjN7YT7frLogVafyZWfT1vhXcpoOUt5DWE9nAvBPGQJnYcGxy9oNjWOER2WD6vZ2OOM0joiA0WjO8Q20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgltNu3V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0AEC4CEE7;
-	Thu, 25 Sep 2025 00:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758758873;
-	bh=m6ioeAahwYn62n7FAjt3QVV1qWaVhFS/3tj0n6LSVy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GgltNu3VeW9hAzcEQsPyG8v6HItnlzF7d7HiS3FHq2+DBakU2vk520GbnYKCo3xpK
-	 5CDA/pwMb8K/pevecaT4kP1i89Ok/gWBDUWwknX8OZ6jf7yol+43UakIyHOPOP9SFx
-	 wWpDtql4UgcYxVquM3yPKcPrnIxiR2q/lA8xi8+Rfwbk2JpduI28lno00FFQYWknyn
-	 BU0aVdM/c21imPEVGqjHXKlK9k0s12HjeGbG7FwQ60PP1Hq7U0RefFy/xxpTce67k1
-	 g56Xgo7eNhTZzkFCaUYQdK5MacZ/x/hGCK7qFoOtkRrX4lo1ABSzYeNLx5ztw1xnCZ
-	 OJJwMNDUWO8YA==
-Date: Thu, 25 Sep 2025 02:07:49 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: Qii Wang <qii.wang@mediatek.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, ~postmarketos/upstreaming@lists.sr.ht, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] dt-bindings: i2c: i2c-mt65xx: Document MediaTek
- MT6878 I2C
-Message-ID: <4izbn5l6v3qiddvflzckw4xac2ckaymiun57dqbzcp7etz4v6o@icgh7egzdgqi>
-References: <20250920-mt6878-i2c-bringup-v2-1-70a951f10be9@mentallysanemainliners.org>
+	s=arc-20240116; t=1758759352; c=relaxed/simple;
+	bh=dT04tKkxXqfM/jbVnRQes+SiBhpZ7W17hcuTYujfUPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYnVUuMW7xHUeI3kTgFWy6W64/RjM7tK5yhunKCat6By/XsYkbSk26qMQCouFwxKhmimxqNTVSSn6dI7/jhJ2T6EVPjEbV48GdJUmzElH40Oe1xH7iPSK+rAhMEvZYrjhDnQQEnoMjFFZPIODWcOxHjmlHGRj3tNcMpCwqZ2v90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rl5MdRO4; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cXDl53gZvz9tfZ;
+	Thu, 25 Sep 2025 02:15:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758759345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bTtDLT8H2plsrrvyz4ktwDsg5w24dGcjLmDpwykIzss=;
+	b=rl5MdRO4kh7Cu1/5cEAoVYY6++WFy7gocUO6QYAvoShlRgs3056mqhgjfayP+2PcjyWXtO
+	d9JHB2InCx9/0ATXWHcD0hlhqVegLCwZUen6+SLgp40Ba+N3Ixkq2X56oVfXPPiK6OzeRt
+	gDwhClZYD1hJACc3DKyuCXgsg2wT3b4o7XjSw69BZfyR+AKY+48NYMIlKTlDrlG+LK3AsB
+	4WAWFFpSaK7+X03Pv35KXE4kNHBtBp2pfSD9loNaqIYHpoAnA1G/BjzXScHK5lUuqWqOE3
+	049qYq+Wjjsxcu3r2ISTvAYVHVal79U4jCN5XCR7XhAjJ8vOxpTnSv3+HxuEMQ==
+Message-ID: <6e50e9fb-10f5-48e6-bc04-ec66ca90a626@mailbox.org>
+Date: Thu, 25 Sep 2025 02:15:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920-mt6878-i2c-bringup-v2-1-70a951f10be9@mentallysanemainliners.org>
+Subject: Re: [PATCH] drm/panel: sitronix-st7789v: fix sync flags for
+ t28cp45tn89
+To: Sebastian Reichel <sre@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michael Riesch <michael.riesch@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+References: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: wfjs4nj6e736ezfw8su1auuimktxzj6j
+X-MBO-RS-ID: 93eb9d9084b88f6345c
 
-Hi Igor,
-
-On Sat, Sep 20, 2025 at 07:22:52PM +0200, Igor Belwon wrote:
-> Document the I2C controllers found in the MediaTek MT6878 SoC, by adding
-> a new compatible string for the controllers. Their design is compatible
-> with the design from the MediaTek MT8188 SoC.
+On 9/24/25 11:46 PM, Sebastian Reichel wrote:
+> From: Sebastian Reichel <sebastian.reichel@collabora.com>
 > 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-
-merged to i2c/i2c-host.
-
-Thanks,
-Andi
+> I planned to set the polarity of horizontal and vertical sync, but
+> accidentally described vertical sync twice with different polarity
+> instead.
+> 
+> Note, that there is no functional change, because the driver only
+> makes use of DRM_MODE_FLAG_P[HV]SYNC to divert from the default
+> active-low polarity.
+> 
+> Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Closes: https://lore.kernel.org/all/20250923132616.GH20765@pendragon.ideasonboard.com/
+> Fixes: a411558cc143 ("drm/panel: sitronix-st7789v: add Inanbo T28CP45TN89 support")
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>   drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> index 04d91929eedda092b966b8cffdef5b267748f190..dedf0a390a88dd45a8179e2d22e872128c87cfda 100644
+> --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+> @@ -261,7 +261,7 @@ static const struct drm_display_mode t28cp45tn89_mode = {
+>   	.vtotal = 320 + 8 + 4 + 4,
+>   	.width_mm = 43,
+>   	.height_mm = 57,
+> -	.flags = DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC,
+> +	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_PVSYNC,
+Is this panel somehow special with its NHSYNC / PVSYNC , compared to the 
+other supported panels, which all use PHSYNC / PVSYNC ? I would expect 
+all of these DSI TCON to use the same polarity, how come this one needs 
+NHSYNC ?
 
