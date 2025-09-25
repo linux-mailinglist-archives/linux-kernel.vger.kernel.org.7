@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-832062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4498BB9E412
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:16:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA5DB9E420
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C95384641
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFEF1BC5A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A72F2EB5B5;
-	Thu, 25 Sep 2025 09:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LlGrJ+p1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7A92D9EF5;
+	Thu, 25 Sep 2025 09:15:33 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C02EB5B2
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B135523D2A3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758791653; cv=none; b=cLDJfFhFvhBSyU2n1SCulOf3UFjEptQkpvqYiF1JwUnGwC8b+CRDSun4y/ZGN7QLhHzynGbGv1J6Vd/IJvhsKWfIYXP5t2IYBdZDPdKp9t9Jartl9XXgwGLnNimwPnIeeHvz7eSDDb9EFcfASarGHEAH5nWpAik8MSjR7mDajgM=
+	t=1758791733; cv=none; b=NGEWjp7bmRBtvDeb91318MxqfGaLMRBPQdhvGGkKDMX2GMxn6CunEYtNgW3EaXMR5vqiXpxedE/1YFaTs57xbIXTuHLN9RBKaTl8VR3vRsc0w9B/4UX9D3pEfgyFMFmyXgjG5dES7ZYs67Gd6K18CjTSLrqPnA/fEU492d04HHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758791653; c=relaxed/simple;
-	bh=dhAvVfijdadFzcvvMQkMrLMToA6mRc1iW9Alz5EVGW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I7dpqSGckKkndeXm4HtBsqtvATSe+pDHKytt5EfS6XYHGBRuLdTKXWk97FlvlCiJHlNLhAxx+TCMr1HLgDMndW1RP3WiI9dZMSkriwg0RMrEfb2QPPW95qbG52u/JBqzbpVy3BJV8XJyVTogThI8RLSRO92LqM4PXlMX2oeGKLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LlGrJ+p1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758791651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cf9XEk98f14e3UW071J22fCW3YBlBlMBvlocBw8g7Y8=;
-	b=LlGrJ+p1Ek2QpZfDyz8TnOWXYKq2l43lYu/Z4AVezlnbzkp/cUaFXstEM3UOv4UYcZnn8W
-	tZURIVmNyvC7OCcvj+OutvDW/da/2secq3GYNkjFTxRafBA4a6lWYFZk4zWjM08f0z6cc4
-	55x1eSAq7eGNaxFtV+Xby33Ed1FI7LI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-Xnjbk29pOK-ZYQCjyGME7g-1; Thu,
- 25 Sep 2025 05:14:09 -0400
-X-MC-Unique: Xnjbk29pOK-ZYQCjyGME7g-1
-X-Mimecast-MFC-AGG-ID: Xnjbk29pOK-ZYQCjyGME7g_1758791648
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7455E18002C0;
-	Thu, 25 Sep 2025 09:14:08 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.91])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A48C01956095;
-	Thu, 25 Sep 2025 09:14:04 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: "Michael S . Tsirkin " <mst@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>,
-	Cindy Lu <lulu@redhat.com>,
-	jasowang@redhat.com,
-	linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Laurent Vivier <lvivier@redhat.com>,
-	virtualization@lists.linux.dev,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v4 6/6] vduse: bump version number
-Date: Thu, 25 Sep 2025 11:13:35 +0200
-Message-ID: <20250925091335.1964283-7-eperezma@redhat.com>
-In-Reply-To: <20250925091335.1964283-1-eperezma@redhat.com>
-References: <20250925091335.1964283-1-eperezma@redhat.com>
+	s=arc-20240116; t=1758791733; c=relaxed/simple;
+	bh=yLpv0PFi8W/6YRqGsAfPEAUF3jl1XRJOR9IniZyc8F4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T6/EJo3GxWKJIN61sqG/hT1mJTrBS6A9kEKbkY4JrSaq+LRhWf22pDN7lLrZvUm8Kf2gxUpPBB7b5RqGEh+wonCr5WMZKRiEGu5yEzqH5gOjekZXVfKtFAyEKr9A92NFGQHZZA/3dQao/8iwp5jtLvjYtYjyn/cg21YkpmqeCwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cXShp30phztTCF;
+	Thu, 25 Sep 2025 17:14:34 +0800 (CST)
+Received: from kwepemh100012.china.huawei.com (unknown [7.202.181.97])
+	by mail.maildlp.com (Postfix) with ESMTPS id 040A4180B69;
+	Thu, 25 Sep 2025 17:15:27 +0800 (CST)
+Received: from huawei.com (10.175.103.91) by kwepemh100012.china.huawei.com
+ (7.202.181.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 25 Sep
+ 2025 17:15:26 +0800
+From: Wang ShaoBo <bobo.shaobowang@huawei.com>
+To: <deller@gmx.de>
+CC: <bobo.shaobowang@huawei.com>, <leijitang@huawei.com>,
+	<tzimmermann@suse.de>, <qianqiang.liu@163.com>, <daniel.vetter@ffwll.ch>,
+	<linux-kernel@vger.kernel.org>, <xiexiuqi@huawei.com>
+Subject: [RFC PATCH] tty: vt: Fix vc_origin buffer copy overflow in fbcon_prepare_logo()
+Date: Thu, 25 Sep 2025 17:15:25 +0800
+Message-ID: <20250925091525.767477-1-bobo.shaobowang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemh100012.china.huawei.com (7.202.181.97)
 
-Finalize the series by advertising VDUSE API v1 support to userspace.
+I got some KASAN report as below:
 
-Now that all required infrastructure for v1 (ASIDs, VQ groups,
-update_iotlb_v2) is in place, VDUSE devices can opt in to the new
-features.
+BUG: KASAN: slab-use-after-free in fbcon_prepare_logo+0x61e/0xc90
+Read of size 14 at addr ffff88812c9a4c38 by task syz.0.3549/19016
 
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+CPU: 0 PID: 19016 Comm: syz.0.3549 Not tainted 6.6.0+ #80
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x72/0xa0
+ print_address_description.constprop.0+0x6b/0x3d0
+ ? fbcon_prepare_logo+0x61e/0xc90
+ print_report+0xba/0x280
+ ? fbcon_prepare_logo+0x61e/0xc90
+ ? kasan_addr_to_slab+0xd/0xa0
+ ? fbcon_prepare_logo+0x61e/0xc90
+ kasan_report+0xaf/0xe0
+ ? fbcon_prepare_logo+0x61e/0xc90
+ kasan_check_range+0x100/0x1c0
+ __asan_memcpy+0x23/0x60
+ fbcon_prepare_logo+0x61e/0xc90
+ fbcon_init+0xeb9/0x1db0
+ ? __pfx_drm_fb_helper_set_par+0x10/0x10
+ visual_init+0x310/0x5c0
+ do_bind_con_driver.isra.0+0x627/0xbd0
+ store_bind+0x60b/0x710
+ ? __pfx_store_bind+0x10/0x10
+ dev_attr_store+0x5a/0x90
+ ? __pfx_dev_attr_store+0x10/0x10
+ sysfs_kf_write+0x145/0x1b0
+ kernfs_fop_write_iter+0x367/0x580
+ ? __pfx_sysfs_kf_write+0x10/0x10
+ new_sync_write+0x1b1/0x2d0
+ ? __pfx_new_sync_write+0x10/0x10
+ ? rb_commit+0x121/0x910
+ ? avc_policy_seqno+0xe/0x20
+ ? selinux_file_permission+0x129/0x5d0
+ ? security_file_permission+0xa8/0x700
+ vfs_write+0x71a/0x960
+ ksys_write+0x12e/0x260
+
+fbcon_init()
+	-> vc_resize()
+	//success resize vc_origin buffer size=224=7(cols)*2*16(rows)
+	-> bcon_prepare_logo(vc, info, old_cols, old_rows,
+                            new_cols, new_rows)
+	//old_cols=256，old_rows=4，new_cols=7，new_rows=16
+
+There happened to be a vc_origin buffer copy overflow error in
+fbcon_prepare_logo(), scrolling screen down when using old cols
+after vc resize would trigger out of lower bound of vc_origin buffer.
+
+Fixes: 6104c37094e7 ("fbcon: Make fbcon a built-time depency for fbdev")
+Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
 ---
- drivers/vdpa/vdpa_user/vduse_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/core/fbcon.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index 8fd34fc67574..63fcde57e2f4 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -2165,7 +2165,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 
- 		ret = -EINVAL;
--		if (api_version > VDUSE_API_VERSION)
-+		if (api_version > VDUSE_API_VERSION_1)
- 			break;
- 
- 		ret = 0;
-@@ -2232,7 +2232,7 @@ static int vduse_open(struct inode *inode, struct file *file)
- 	if (!control)
- 		return -ENOMEM;
- 
--	control->api_version = VDUSE_API_VERSION;
-+	control->api_version = VDUSE_API_VERSION_1;
- 	file->private_data = control;
- 
- 	return 0;
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index ac3c99ed92d1..6fa81d0297a0 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -610,6 +610,8 @@ static void fbcon_prepare_logo(struct vc_data *vc, struct fb_info *info,
+ 		/* We can scroll screen down */
+ 		r = q - step - cols;
+ 		for (cnt = rows - logo_lines; cnt > 0; cnt--) {
++			if (r < (unsigned short *) vc->vc_origin)
++				break;
+ 			scr_memcpyw(r + step, r, vc->vc_size_row);
+ 			r -= cols;
+ 		}
 -- 
-2.51.0
+2.25.1
 
 
