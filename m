@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-833159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDFBBA1503
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:09:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DDBBA1506
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC1A44A3508
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:09:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B0D7A5297
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD25C323F74;
-	Thu, 25 Sep 2025 20:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1398E3294F7;
+	Thu, 25 Sep 2025 20:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UB00AgtV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZCOasC2a"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71EE32858A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A332897A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758830669; cv=none; b=tyQpj9ZR7qpx6GLpIy7cH6Ko9kOmB7yNYvaUNn2B0KFFyXr78B+nKZVZDY1nhJJxTU7Tle0OkWs506yU03MKTPi3Z5NIojhUoqBemLb55taw6I8H08qvqOkMSVzgafmAHHm+a0pMeI4ZJRuLwzGnkNWzM1LvbVzpxYPzaVCyADY=
+	t=1758830670; cv=none; b=nKh167G5eBQfv9nXOQHCR3J2/4JksMyuZzLq/B/bc4zv5jkC9YinU3iJ5rluT/d7b9JOA8ymJrhBjFH+nKhbSLztoFPUA62bAELbFuvfkRlrsUOpp7SPlqbb/x1ZKmSijST1DTinUNOMQ0cEAKJUV94/OkdA34ppqP5Wf1gJ7Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758830669; c=relaxed/simple;
-	bh=GTDzyftXvBl8MpKeSXIIhicwNVfPwqh8GuSLto2mY4k=;
+	s=arc-20240116; t=1758830670; c=relaxed/simple;
+	bh=KKZ76b6f1fVw3YfuVP6not30dWXnaMRHgFBHlr5XoWI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gXUU60Nr7WJx7KVBSu2a+ZWVnTViC63UEoJgdES3wgBk46l7Rw+wPfKU4uccJBlrA9ISbU/60A70Hv+hEXWYelaHuiVbTFeo/NqwcQ4pNTg9Rm9ssYjlXKS72QS6bIk6QhXLjYNb5ZpkvFbxssE1eRKrukQ2O16w5ns/gZXvFBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UB00AgtV; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=XT4WQTcGTKcfZoEmyhs0l+8WEwYmVQ02b87Q1Tm5E5cvFWeaFhoaa3/oY36I7yAnhPmphJj9wFzYdbGjP97vU11lQDAjagJ5+Gjliv703n3iUcybLo5zdNXSrfWkQlFmuyF13FEVceql3JfHY7D9/ZR4pJAnlQv8tOjm+Uf60n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZCOasC2a; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758830668; x=1790366668;
+  t=1758830669; x=1790366669;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=GTDzyftXvBl8MpKeSXIIhicwNVfPwqh8GuSLto2mY4k=;
-  b=UB00AgtVGG1Ij5DsrUX9gENCGBXFVlhJpXGfSH2EdTj79KueagvAxkFl
-   WD2ZZ3YPN8aHKVEhR0k+h1eNoVhsInM7BnKaA2NHRj4CzQHGTyLnWDY5Q
-   2M3Gp4EKK8lMScNlAnQrDofcVmZE/Os7RjjVQxNdsGij5X7ebuGOe9JYO
-   uqKGYvn8Z9Sp6qqKTL4QeNrszkYolqgdriExrtwOOiqC9A/QEQVmc996t
-   YvmDSabYZStDuhZ//CsxsNvIYBJLnObtdsAga0sGxq1sRv+yQiM3lM1CF
-   0ziPgTxjZJlu4JKpPUI0kSGISe774mgkUop/MmzN1IAZ8hbf2MSDgZs0n
+  bh=KKZ76b6f1fVw3YfuVP6not30dWXnaMRHgFBHlr5XoWI=;
+  b=ZCOasC2a8x53YLPd1wYO87N/DsPsdIJ898xc7Pg09cffcwxClemMSIIt
+   moWuwFEYTlGKl2WaZHyR04Vi1dNWQFc9BPoT/n75jJXMfoaNCeCFwqFw9
+   CrHwOUgJC+e5QFcZB5+zVI8dVrlpuIaZpHWaS9Vvs9hTCd1Tu8vvG58P3
+   EIjO2h/VnNsjEZ1W707Y0rzy3dD3bej6/vOczPWx5LTh1vK76xQMKM15I
+   w/YA8j8OyDPoJo2LMUhvyIrJD0uQLj8gtJpRpT8J/ilaDrNgPUjKSLYEg
+   J3jaMgTlplyAKYHaUSnQjKBYHyRId2YXAAZt1OEbL1gLPk6MmLQretnpv
    Q==;
-X-CSE-ConnectionGUID: Nq9otCerSh6JRtc1ExbGsA==
-X-CSE-MsgGUID: jBPjfwqQQ5iiAcjl9NGYgA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61074403"
+X-CSE-ConnectionGUID: GAKD21lvSEeehCrPCczG5g==
+X-CSE-MsgGUID: Oniw8+rnTp+p6kw/JZcahg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61074412"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61074403"
+   d="scan'208";a="61074412"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
   by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:04:16 -0700
-X-CSE-ConnectionGUID: 131bugDMR2O3RoYVfQTXDA==
-X-CSE-MsgGUID: vM1dP+P6RW2K3Eoa/a++BA==
+X-CSE-ConnectionGUID: K0RKm+OUSNqvhPHncTdHuA==
+X-CSE-MsgGUID: 02TGTeRXQN2qyC4Yyn4/+g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="177003709"
+   d="scan'208";a="177003714"
 Received: from inaky-mobl1.amr.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.206])
   by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:04:16 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -71,9 +71,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v11 30/31] x86,fs/resctrl: Update Documentation for package events
-Date: Thu, 25 Sep 2025 13:03:24 -0700
-Message-ID: <20250925200328.64155-31-tony.luck@intel.com>
+Subject: [PATCH v11 31/31] fs/resctrl: Some kerneldoc updates
+Date: Thu, 25 Sep 2025 13:03:25 -0700
+Message-ID: <20250925200328.64155-32-tony.luck@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250925200328.64155-1-tony.luck@intel.com>
 References: <20250925200328.64155-1-tony.luck@intel.com>
@@ -85,149 +85,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update resctrl filesystem documentation with the details about the
-resctrl files that support telemetry events.
+resctrl event monitoring on Sub-NUMA Cluster (SNC) systems sums the
+counts for events across all nodes sharing an L3 cache.
+
+Update the kerneldoc for rmid_read::sum and the do_sum argument to
+mon_get_kn_priv() to say these are only used on the RDT_RESOURCE_L3
+resource.
+
+Add Return: value description for l3_mon_domain_mbm_alloc(),
+resctrl_l3_mon_resource_init(), and domain_setup_l3_mon_state()
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- Documentation/filesystems/resctrl.rst | 100 ++++++++++++++++++++++----
- 1 file changed, 87 insertions(+), 13 deletions(-)
+ fs/resctrl/internal.h              | 4 ++--
+ arch/x86/kernel/cpu/resctrl/core.c | 2 ++
+ fs/resctrl/monitor.c               | 2 +-
+ fs/resctrl/rdtgroup.c              | 5 +++--
+ 4 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index 006d23af66e1..cb6da9614f58 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -168,13 +168,12 @@ with respect to allocation:
- 			bandwidth percentages are directly applied to
- 			the threads running on the core
- 
--If RDT monitoring is available there will be an "L3_MON" directory
-+If L3 monitoring is available there will be an "L3_MON" directory
- with the following files:
- 
- "num_rmids":
--		The number of RMIDs available. This is the
--		upper bound for how many "CTRL_MON" + "MON"
--		groups can be created.
-+		The number of RMIDs supported by hardware for
-+		L3 monitoring events.
- 
- "mon_features":
- 		Lists the monitoring events if
-@@ -400,6 +399,19 @@ with the following files:
- 		bytes) at which a previously used LLC_occupancy
- 		counter can be considered for re-use.
- 
-+If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
-+with the following files:
-+
-+"num_rmids":
-+		The number of RMIDs supported by hardware for
-+		telemetry monitoring events.
-+
-+"mon_features":
-+		Lists the telemetry monitoring events that are enabled on this system.
-+
-+The upper bound for how many "CTRL_MON" + "MON" can be created
-+is the smaller of the L3_MON and PERF_PKG_MON "num_rmids" values.
-+
- Finally, in the top level of the "info" directory there is a file
- named "last_cmd_status". This is reset with every "command" issued
- via the file system (making new directories or writing to any of the
-@@ -505,15 +517,40 @@ When control is enabled all CTRL_MON groups will also contain:
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
--	This contains a set of files organized by L3 domain and by
--	RDT event. E.g. on a system with two L3 domains there will
--	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
--	directories have one file per event (e.g. "llc_occupancy",
--	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
--	files provide a read out of the current value of the event for
--	all tasks in the group. In CTRL_MON groups these files provide
--	the sum for all tasks in the CTRL_MON group and all tasks in
--	MON groups. Please see example section for more details on usage.
-+	This contains directories for each monitor domain. One set for
-+	each instance of an L3 cache, another set for each processor
-+	package. The L3 cache directories are named "mon_L3_00",
-+	"mon_L3_01" etc. The package directories "mon_PERF_PKG_00",
-+	"mon_PERF_PKG_01" etc.
-+
-+	Within each directory there is one file per event. For
-+	example the L3 directories may contain "llc_occupancy", "mbm_total_bytes",
-+	and "mbm_local_bytes". The PERF_PKG directories may contain "core_energy",
-+	"activity", etc. The info/`*`/mon_features files provide the full
-+	list of event/file names.
-+
-+	"core energy" reports a floating point number for the energy (in Joules)
-+	consumed by cores (registers, arithmetic units, TLB and L1/L2 caches)
-+	during execution of instructions summed across all logical CPUs on a
-+	package for the current RMID.
-+
-+	"activity" also reports a floating point value (in Farads).
-+	This provides an estimate of work done independent of the
-+	frequency that the CPUs used for execution.
-+
-+	Note that these two counters only measure energy/activity
-+	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
-+	caches, etc.). They do not include L3 cache, memory, I/O
-+	devices etc.
-+
-+	All other events report decimal integer values.
-+
-+	In a MON group these files provide a read out of the current
-+	value of the event for all tasks in the group. In CTRL_MON groups
-+	these files provide the sum for all tasks in the CTRL_MON group
-+	and all tasks in MON groups. Please see example section for more
-+	details on usage.
-+
- 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
- 	directories for each node (located within the "mon_L3_XX" directory
- 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-@@ -1506,6 +1543,43 @@ Example with C::
-     resctrl_release_lock(fd);
-   }
- 
-+Debugfs
-+=======
-+In addition to the use of debugfs for tracing of pseudo-locking
-+performance, architecture code may create debugfs directories
-+associated with monitoring features for a specific resource.
-+
-+The full pathname for these is in the form:
-+
-+    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
-+
-+The presence, names, and format of these files may vary
-+between architectures even if the same resource is present.
-+
-+PERF_PKG_MON/x86_64
-+-------------------
-+Three files are present per telemetry aggregator instance
-+that show status.  The prefix of
-+each file name describes the type ("energy" or "perf") which
-+processor package it belongs to, and the instance number of
-+the aggregator. For example: "energy_pkg1_agg2".
-+
-+The suffix describes which data is reported in the file and
-+is one of:
-+
-+data_loss_count:
-+	This counts the number of times that this aggregator
-+	failed to accumulate a counter value supplied by a CPU.
-+
-+data_loss_timestamp:
-+	This is a "timestamp" from a free running 25MHz uncore
-+	timer indicating when the most recent data loss occurred.
-+
-+last_update_timestamp:
-+	Another 25MHz timestamp indicating when the
-+	most recent counter update was successfully applied.
-+
-+
- Examples for RDT Monitoring along with allocation usage
- =======================================================
- Reading monitored data
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 223a6cc6a64a..0dd89d3fa31a 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -96,8 +96,8 @@ extern struct mon_evt mon_event_all[QOS_NUM_EVENTS];
+  * @list:            Member of the global @mon_data_kn_priv_list list.
+  * @rid:             Resource id associated with the event file.
+  * @evt:             Event structure associated with the event file.
+- * @sum:             Set when event must be summed across multiple
+- *                   domains.
++ * @sum:             Set for RDT_RESOURCE_L3 when event must be summed
++ *                   across multiple domains.
+  * @domid:           When @sum is zero this is the domain to which
+  *                   the event file belongs. When @sum is one this
+  *                   is the id of the L3 cache that all domains to be
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 48ed6242d136..78c176e15b93 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -418,6 +418,8 @@ static int domain_setup_ctrlval(struct rdt_resource *r, struct rdt_ctrl_domain *
+  * l3_mon_domain_mbm_alloc() - Allocate arch private storage for the MBM counters
+  * @num_rmid:	The size of the MBM counter array
+  * @hw_dom:	The domain that owns the allocated arrays
++ *
++ * Return:	%0 for success; Error code otherwise.
+  */
+ static int l3_mon_domain_mbm_alloc(u32 num_rmid, struct rdt_hw_l3_mon_domain *hw_dom)
+ {
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index c0e1b672afce..4cc310b9e78e 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -1811,7 +1811,7 @@ static void closid_num_dirty_rmid_free(void)
+  * Resctrl's cpuhp callbacks may be called before this point to bring a domain
+  * online.
+  *
+- * Returns 0 for success, or -ENOMEM.
++ * Return: %0 for success; Error code otherwise.
+  */
+ int resctrl_l3_mon_resource_init(void)
+ {
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 16b088c5f2be..04765dad3d31 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -3037,7 +3037,8 @@ static void rmdir_all_sub(void)
+  * @rid:    The resource id for the event file being created.
+  * @domid:  The domain id for the event file being created.
+  * @mevt:   The type of event file being created.
+- * @do_sum: Whether SNC summing monitors are being created.
++ * @do_sum: Whether SNC summing monitors are being created. Only set
++ *          when @rid == RDT_RESOURCE_L3.
+  */
+ static struct mon_data *mon_get_kn_priv(enum resctrl_res_level rid, int domid,
+ 					struct mon_evt *mevt,
+@@ -4281,7 +4282,7 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
+  * at mount time. This means the rdt_l3_mon_domain::mbm_states[] and
+  * rdt_l3_mon_domain::rmid_busy_llc allocations may be larger than needed.
+  *
+- * Returns 0 for success, or -ENOMEM.
++ * Return: %0 for success; Error code otherwise.
+  */
+ static int domain_setup_l3_mon_state(struct rdt_resource *r, struct rdt_l3_mon_domain *d)
+ {
 -- 
 2.51.0
 
