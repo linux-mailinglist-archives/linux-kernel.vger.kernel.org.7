@@ -1,228 +1,320 @@
-Return-Path: <linux-kernel+bounces-832646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187F4BA0018
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9631FBA0024
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87404E185D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0613B0431
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A862C08D9;
-	Thu, 25 Sep 2025 14:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5822D0601;
+	Thu, 25 Sep 2025 14:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Brg+Wosi"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012016.outbound.protection.outlook.com [52.101.53.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UMdN1DI6"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42011FCFEF;
-	Thu, 25 Sep 2025 14:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810461; cv=fail; b=vFhd6NA6eQvw7eC6hAyXU7k1wAsnhNnztanId6fXqbdY2wj2SDl0ylSoo4hQs/jrNCSnUkK5+AsWZYwr5QJzVjo2y3I6CE+ft9O1LcxVLXN82biIF14i2yANQb9jcs2z55QfJqo4J74sSiuSdQ5sfLMltZK/wZYX8tSXm644CRE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810461; c=relaxed/simple;
-	bh=DkIKUw2rRCSpU/aR6BGTqHm4DqV16iI7ITKsi+W3Nn8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q7849RfvOeYyA2+uVcQBlqsqjAW+2c1I3zgkKEDX89VIlroCZr8Vx7VHG06izZvfL+ggPnWYBGb9y16AoNKzuVm1IFMUts5FTmvwVOFVzohXdrKq3zX6X3tiFlKjAefawW0j/X5YA656LBs4Gw5MBw5wx3qdFdDndEx1yPDQJ0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Brg+Wosi; arc=fail smtp.client-ip=52.101.53.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OH45Hh73fdwPmBTew70jHDqgnTCq+3SFv+gaDdBMYrAX/9n4Ih7V6wZBaO/6HR3FKZT/k2a/qcYJk4fix2EYZwclWtAfvkWSyYs8fYeFMMmUA9DpzwuXg+pxrlMKKIxvPCKuIdPCJH9UObgt6CmtwEysrhRl//R0I9IBhE3AIspdCfwXzdyNn9FZIEZ+lNrPzLbnS8dypMaf8LA6uqGyYSaQSMfJn/McZNkmVe2pAmVrFI2fqA6KRFRYfGiRJ7Cil8JDcReMzFtlB8h0MmEC9dcT1ZUh4S08VStKeQtYNeXSbaPYWGsnrW6vXIqyuLAu1mpBljQKkfFPqjg1mksGXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DkIKUw2rRCSpU/aR6BGTqHm4DqV16iI7ITKsi+W3Nn8=;
- b=BJwFsLKY8KDLhZvGswnv03JQFr1W5Q8QVL1m4QS1dpzpoBYO3w/FgHyrRsNu0sIecZd+Ox766wy9/8uRQNk9LiQeLGkMsheel3u9anVweFUhyG9w2MwZh1dPGUE+bOMeXki20U/65I/8fzISUB9Z3fihaw79vl0ZbnFW9najZ6e4Wo2bvL2KBby5uXUfnudAXEuK/fjB4N8fYA8mu18iT5Zi/JmYheD7DOjQIYChOeLaw28KfT35lLTCdDeYb6Xgtf3QzJaxhQPQanncO1IuY9JsG3QOxib8pUm30YaUgkSK7dUV9LJ37QJS32S2DZOolX6YA0hGp69C8W8v/+a1kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DkIKUw2rRCSpU/aR6BGTqHm4DqV16iI7ITKsi+W3Nn8=;
- b=Brg+WosiKAOLBw63PzZ+1iMl/psm8H/9jFF3zh+O79boanbSgQc3e5irnZ8Agw6CvJyIEaFNswdwuv1jXWKqOPoMlC8v0zglXI9fYlU+jijmfb8mTN2GJqD8M5v8xm8Gz+ImtDnTqNZv2zxHtDAdDRGX4bsqsh+EAIS0xPT1AAcdNC2/dEr3vRuSoiNkNKr5jalIN0zyb1iYmcohGzSUFXFDNVxsRiOlIFk4L2Y8gUsxICThV8sOOrkI481+sHpfBdekO0aowFb8jn+q28Ee//VuxCZcXWdDoor8vjObc+NI6Z4lWdLsv/MYwNbXQEDzJM9kOfGW7yt7S+0LsARopg==
-Received: from PH7PR11MB6005.namprd11.prod.outlook.com (2603:10b6:510:1e0::19)
- by SA1PR11MB7129.namprd11.prod.outlook.com (2603:10b6:806:29d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 25 Sep
- 2025 14:27:36 +0000
-Received: from PH7PR11MB6005.namprd11.prod.outlook.com
- ([fe80::4f64:b0b5:4ed2:39ae]) by PH7PR11MB6005.namprd11.prod.outlook.com
- ([fe80::4f64:b0b5:4ed2:39ae%2]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 14:27:36 +0000
-From: <Marius.Cristea@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <jic23@kernel.org>,
-	<nuno.sa@analog.com>, <dlechner@baylibre.com>, <conor+dt@kernel.org>,
-	<andy@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: temperature: add support for
- EMC1812
-Thread-Topic: [PATCH 1/2] dt-bindings: iio: temperature: add support for
- EMC1812
-Thread-Index: AQHcJ83FPaMIgUra40qI+G7qPK2KobSYB5UAgAv54YA=
-Date: Thu, 25 Sep 2025 14:27:36 +0000
-Message-ID: <afd35ed13aec9f895335303e078926491885b9a9.camel@microchip.com>
-References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
-	 <20250917-iio-emc1812-v1-1-0b1f74cea7ab@microchip.com>
-	 <0bc1b77c-bbbc-4e8a-a792-fb7e30a2a789@baylibre.com>
-In-Reply-To: <0bc1b77c-bbbc-4e8a-a792-fb7e30a2a789@baylibre.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB6005:EE_|SA1PR11MB7129:EE_
-x-ms-office365-filtering-correlation-id: 82010598-40a5-44bb-9772-08ddfc3faca7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?R1lheUdyTW5UemQxZ2xhZ3BwWWptVS82WCtrL2lPRFVxVXNNb3RoWnJXR3Vs?=
- =?utf-8?B?YjVISXRPSWp1NzZrd3EwTEU5VVJJRXd4clJlem9HRlkrOWQxUHpOYnkyQWRT?=
- =?utf-8?B?NXRTNFM4eVlvUWR0TndMRWpNWVRjZkdIczBUVXZkS082Rm9TZ2Nxd0xXNFU0?=
- =?utf-8?B?M01WMDZHS05SQVAzaUdOUml5TVVvUi95ZUt0TENISk1DbWJ1bGhSQjVQOUQ3?=
- =?utf-8?B?elpJS2YrVFRIaG5peUFTeGQvUEhpK2RkdjRpVzI0cXMzQVNCMlJtTzFDallO?=
- =?utf-8?B?Zk9TcGlxU2RnYkwxQTdla3JoS3JWb2tBVWpoOWtEbUQvL09ORHcwRUpUUFJM?=
- =?utf-8?B?VERhWUVDSnVGRmZUTGJuWFQ1cTQxdElqeTRGOG9DR2VNYzljZkN4Z0xQZm41?=
- =?utf-8?B?UUxHT242NkQrRmdna0ZKVGNJa0pZeE1zSEtnMEdnM3lnaFV6ZmFwN2t1WGhK?=
- =?utf-8?B?VG1LalpRTFdBcGtOek5ZRmdLKzJQWkxGRndNUG9NckZCUWRib3RCSmU3c1lI?=
- =?utf-8?B?U2IvNGRtMEVYV3JSYnd2bDdaenVNVG94YmZLaWhoWnRWbFpIbGFBOEVNdDB0?=
- =?utf-8?B?R1NabHpVd0o4N2wrK2tnbTc5WEc0S3puZjZIR1dSTEIrbTVzN1JCclhCdEd6?=
- =?utf-8?B?SmJhMjNHMzQxYWYyMENiTnFxNWk4d1JRbGVjMlBUV2Uxb2cwZHRmYS91NjQ0?=
- =?utf-8?B?NU1XUWM0ZGNPbzJ4K3QxeERSdzJEMTJRTjM1dHhtWnpMNnhQNTUrcmdlQlRN?=
- =?utf-8?B?bmpYS2NjU0pKU2FGUWJMdnRiZ0VTZUc2Y1RPV1JRVFBpZkdxWU9XenFxQVRj?=
- =?utf-8?B?WHk5WnVDVmwvU1gxVGZyMFB4Q2FtM2dHR2pxZ1c1QTM1RTQ3VlEzK1VyVnBx?=
- =?utf-8?B?azhkbzFlKzlrY2s2MXYvMlRiQmVBQllnWTRqRzluR1NqL2dzeXd1N1hyWTZZ?=
- =?utf-8?B?QS9mZFRqREFMbWR3NENPS1g1b1h1MUpPaC96MHpvZEpQZGtrWWFUY3BtWGZX?=
- =?utf-8?B?Q0VJSmlEZHNodCtZYmZlamxDeExwc3BwVU9BakpUcGdxQWdDOWk3RVJ5Si9W?=
- =?utf-8?B?K3AwWU1rYzBhYno5bFlOZnZYWXJFZ1p6dmc4RVlkc3pRQjZoYmRtUFkyK3hK?=
- =?utf-8?B?VUxKMUhYcmlKbVUvd2N0WWErdVNwNE02NjdwYmxLR2hVZ3BGUVJ5alB3T0M0?=
- =?utf-8?B?ekh4YUNtTUJXOEFwQmU2WjNCNlBWd3d4bm5nSjAva3hBOHhQMFZRaFRFODli?=
- =?utf-8?B?T1I5ZTNOVkR2UnNQT2hVb1ZpQTI3cU83S1ZpNW83RERJSVI3YlRFc243ODhE?=
- =?utf-8?B?MHcvbkpZSFYrM0VBVDhmUmQ0UFdtbVU0eXUzamw0anFJNmZuRC9aOHBKYVpJ?=
- =?utf-8?B?dXMxWjJQZWdrVjl6bnpwOXpQYjBLN3p4WkZ1Y2R2YXdkUFZqTlU3RFI0UDc5?=
- =?utf-8?B?MnovR3EvcGJEVWFlL0p6TjlUODhCVjRubE5tVTJxWDBSbFB5d0VPT3loc3Qx?=
- =?utf-8?B?bkIzZndNdFd1Tnc5dGhqQjFxTGhCL3lkTDlzT1NQMGdVRzJRMUkzNnRqVFFs?=
- =?utf-8?B?UkdTYlozN1BQQ1l1VEM5bmhaVWVIRlZoNGtYaStISTNKTHRtTExHNGhOd1BC?=
- =?utf-8?B?NWZ6RzFkNFhjazhaRGVxRFlyNVhVcHB1MFRHRmpWbVh6Ukd3YVRPeDIxNHlK?=
- =?utf-8?B?ck9sN1creDRDSkZCRXVZSkw4UmVsUFpISWhLSmczTEdjOTI4VjZXK2ZKZTRx?=
- =?utf-8?B?OEUxdjh2OUFXYzFUckc2b1Z2WWt4cWplM3Z6ODE5ZkhVNyt6enFrdTVhREtT?=
- =?utf-8?B?VXVpNkJFejVYUDR0ODZuMVFCMnFvMU1sa1F4Y0JKdm1peWNuUkl1dVhwSkpN?=
- =?utf-8?B?MFJPeWpENjhPUzBldTZSUm94b0VrN2VPeXZvNURZQ1BtdWU0amhVL05UMUFq?=
- =?utf-8?Q?mamehvkclIHLqaDSMnBY2OsAettR8IhB?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6005.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Kzd6dTNoSW1Sdzdvd1NiQkFqNkI2WGtmRG9hUTlRaXFQc21kYWp6S3d1NDRL?=
- =?utf-8?B?SEI0RTBrVFhqNGp4U3BDYytaeWNJSUhtNDFZc2I0aVpnbVFrTlhFd0VzQzdQ?=
- =?utf-8?B?MnMyNHhDeFROWFVhUFVNNTFWV0FtdmZFMzZNbGkvQ1ozUjJrQkZNZHhadWI2?=
- =?utf-8?B?U0JnckNYelZhSlAzd2Y0TFA5RDU5TlBLTXBtd0VPU3FvOTUrYk1VVGVOM0Uz?=
- =?utf-8?B?MXBVS0NQYTFJYUw4SHREWUlCYUJLaVFjR1h1dWk5NWVpZjNRclJUcy9BMlhh?=
- =?utf-8?B?ODgwa05Fa1J0VDRsbnppdWhxYTk4SnYwOGZoODdLVmRrTHVvZGhtZThqdkJW?=
- =?utf-8?B?NlNPY21zYWpaV2kzUEZ0ZnRiamJkYjl3RkxOWkNjaGZ2UDhGVndoeHBOelpQ?=
- =?utf-8?B?bmh1TE5tZFoyVmg3K3pjTjluTFRYV1h2ejFjRzl4NmZOalhRREpUQmw2NHBm?=
- =?utf-8?B?YlQ3NkxQd2dIWjFQVmhFcEtRdFduMFJ6T1E5VFdRb1QrOHpqQW1ES25QdXFH?=
- =?utf-8?B?UmQ4cTRDVm1rN2xOMkk5WWhpTTJjVGJla3VRMGJ0UkxBZ2lnMUtCUGtaVUpr?=
- =?utf-8?B?S0lDNFRMUlpWUHFjM1lTV3lpM1p0VTBFeEoyNEo3OXd1OU5NR0JsQXFhQ3Zp?=
- =?utf-8?B?SzB1WS9iNkt5MmxwTG1sTGNEanBZbkpETkVkOGFmUEV6Y01CbExiTkhvWEVZ?=
- =?utf-8?B?anJhU0habnVnSzB4MW8zT2NGcXpCaFhYdkNoZWhxK3NnQ3lQMndKZVA3R3Ix?=
- =?utf-8?B?WWpENVdmc3VNcXU5Z3JPMFlzbE1UWTFldTFrcjdkOG9iTExGYlhNVXNUVWl6?=
- =?utf-8?B?dUw3R3VtMnM0cHhoMXlmSTIvaXpPTDNWcVRBaUZySUozanI0SUtDSjg2cVZs?=
- =?utf-8?B?TmQ2WVdMNzJlMTNQTWdzekd5S2ZvTVE4RldOZ2FEa2JtUi9RbE5vYW4rdzkv?=
- =?utf-8?B?VDhZUjNsN0MwcWlDRFpRL2tydzVWc0ZPMUFGREZxcFhTWVgzNG4xSjFsZDNr?=
- =?utf-8?B?VDhGS25LTXFiZExxTXdyRC9yYzUrRTFEcS9BbDFFanlUL2JkcFZDVEhnOWFu?=
- =?utf-8?B?QlV2T0RVa1dxeTFlUjFyTUJKazZiaHF5aVF5MGZ5a2pIUUVLRmVleGFOV3Bp?=
- =?utf-8?B?Q1hhZ0drQ2VQVHR2VmVBbXlUYVNQTzhOVkpQLzNIOSsyZHlDR3BWdU55NjVt?=
- =?utf-8?B?NExUa2NuN2tlbGFPeUhWd2lJOXlOSXh4L3gxSm91akN3QjFuSnZoc1VqbTdS?=
- =?utf-8?B?QVFLUTRpNTVBcFBtbVYrVHk1NnlHbTJUQ09EekViNDhLbjFGdHBRaVUzczAr?=
- =?utf-8?B?T2lWVVZCQW1ndnZhUjVPaW53d1lCWnBreHNlUHY5VzFHSUtCMVBxQkdLa2tp?=
- =?utf-8?B?azFldEVrb2RPb1lmVUg3azhzalRVWVgvbnlMcWpzdlcvVXlwcWhCTFlqdytO?=
- =?utf-8?B?T0lPdDJYR21JZW1TN2pMT3lqT1Bwb1Brb3VaVzhGeldRTFY1MUJJOGFVTG9P?=
- =?utf-8?B?S0dOTmQwSmlCRjgzY29LcHk1aVpnTyt2QXAwM0VhbklHMzFoelhuR2FCRVYx?=
- =?utf-8?B?RkRHdXJYT0YwTmtHZVRDQUNiQmJYaWJqNWVvL2hOQWxHQzlVckk0dWVkdWFu?=
- =?utf-8?B?WVdnZ05SOFRpeDJOVG52elhQNE1jNXVXYzZHSm9MRWo3MEJ6WUEraytvZDBv?=
- =?utf-8?B?VjFvM1V5azZ6UC9NSzFRR0YyeWlKcGtJNzhxcjgyQ1g3VzRNbTlkMGhUaTRk?=
- =?utf-8?B?L3J0b2xRTm5iVWR2bjJlQmRUZ0RQUXNjdnN3dzNRcWVjT0JaSllESmRERkw2?=
- =?utf-8?B?Wk5BNWJSck1HU25GRjBLcy9UbVpDRnV5THY4Q2lsMWpYd254cjcrbHhMNzcv?=
- =?utf-8?B?SW5DSE5zUXZwVHJKTXUraHBURU91UUlsdjlpd3p5bEp3Wk93bWIxMUtGUnNB?=
- =?utf-8?B?eUR3NElYUWRhZm9lL3RoN3U4MVdEVEcwZUhjaWpxZUUyNENQZDdWTXVSY1Rv?=
- =?utf-8?B?N0VRYjIyek1kc1hPMkNtWk9yM01NZHNaOE8xM1dQQnNNcWdBZ3FHUWRacHpG?=
- =?utf-8?B?Q1JHenhKemZEdC96R1BLVmJMVlhZYlhYclRVV2FXNTVOSjdVZ0xhOVVhUjEw?=
- =?utf-8?B?MWpxUlZjU1d0V0ZENG01eE5xRjIyWGprbk93NWQvSklnWjNZeE50akpKSFU2?=
- =?utf-8?Q?ex8vlQNIE7pPmhN7OpFHDbw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7A9F1366B37CCC429483C31BE0FACA18@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145CF2C0F8C;
+	Thu, 25 Sep 2025 14:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758810499; cv=none; b=fmoLTIgnhFrhpiqk6JfVUej8dwX5i4WCBht3vE5rCVJkkwGe7KEilIpz9lztXB5cAz3YCwupgCrCGZpNtrhes0jz7Da9jN/I2aSAePiWo3ymL9IbV67tjZSqdcXcnrjVluWdCZ8iREfn1Q3yhozYLwcFy6xryxhEYGEMd4SjXOs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758810499; c=relaxed/simple;
+	bh=vW7j2KWCOfJfuZMh3iWYpO1pCvtswVmOTtWQRB2BEdQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=poXzHd0wlsczIWQhy7UrXgF6eHJwd+Wi5EleHacMPBx8yMqYf9wbqrsjPpGErUmLFkPmq2STbc68syi3xsUt0Mz5BCbn08gOVyFgllOqAbB5aAAADrx5sKFHjW1g38Ssq1RYeA2ULvYMahNGj0jbVWMN20EZXJvQgq0YE3aVYZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UMdN1DI6; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P7cfm3027646;
+	Thu, 25 Sep 2025 14:28:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3HyxuZ
+	+gavaQ6q/gkoxk1mSPJPimkLJjL2E2gKKwKkM=; b=UMdN1DI6DdXqCKT94/MFSJ
+	EE8ypqYGbr4neS+suRFI3w9QTyrZoufCp2Z5cjUUXtD/7isFvO4MqZ+C+S2WiKcP
+	CpgXIq526/GwrnoD9sGkY+05wzT3eCvvU6rVeF72/fESOmGC2EkNL93lB9fHS1ms
+	5Gjh1tMO4yhdRTxY/idZb7LK2D/rKE7Rc1WxotI9Xfa0kATXa1/d9Z6MJqWgDHQv
+	Dl+ty2xdB09MNJvwMrwmIr2utacRrfNMoD3UBJLran03fXjYdo7sX3IuNFqd/Mxx
+	cRRIyxPP9q1PP2luT3xYw80JCSdPAsQamfhXivJUUE7lKg+oIHAFx0biXARRUPNQ
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky6ec81-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 14:28:09 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PD9AjY008311;
+	Thu, 25 Sep 2025 14:28:08 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yy6gbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 14:28:08 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PES67T41550500
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 14:28:07 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D95485805E;
+	Thu, 25 Sep 2025 14:28:06 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 497E658056;
+	Thu, 25 Sep 2025 14:28:05 +0000 (GMT)
+Received: from [9.111.71.247] (unknown [9.111.71.247])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 25 Sep 2025 14:28:05 +0000 (GMT)
+Message-ID: <d22cb26b864362454ace07ed5fcb9758c40ee32e.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 07/10] s390/pci: Store PCI error information for
+ passthrough devices
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc: alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
+        mjrosato@linux.ibm.com
+Date: Thu, 25 Sep 2025 16:28:04 +0200
+In-Reply-To: <20250924171628.826-8-alifm@linux.ibm.com>
+References: <20250924171628.826-1-alifm@linux.ibm.com>
+	 <20250924171628.826-8-alifm@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6005.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82010598-40a5-44bb-9772-08ddfc3faca7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 14:27:36.5993
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5mf2y54DUjNPkmU21aZfc1zMLFTCs4/TSS+UjrpIGasUPDT1LmL7m2T/DGOY5isTffu7OODYmFq+DDXEosZkIf9ogPcMGSEZvZswWjfNywE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7129
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gEqyHAxMd8WOw0AvtrnpLCnMhoue5R1M
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX3b9scm/F1/Kq
+ GcbabaQ6tIbylgkDQiWSP3zGw2is0JwvJMDBBjvuHTPKzZqy7RfL7Z2ETjRc30wWxbmaY4WxXWQ
+ k83hReqbKY6hxpnI0TK+6GwBENtGteaEjDVxdvLiOBRMkdvGc3MOtS6TVcBTEAxarHOA82Zx1+W
+ mreOQhfO/K4d0DjEBYGDv9uXxqXqGQvywxNa6q7rKfW3NrB9MQKfR/kDIpYhVw+afELQcNnete3
+ 3CEx8bOfx2jODDpG6gDW3NCZejN3VNNkcLtPaU0PnwSk05k2QfHnVwuRepY4XSHDtnXe80SoNRC
+ 8ovrep0Uut0gXO5REGRxnchhiRtDqyGiNfgm4mXdqqx8ZouI7cxpwAM1GMVsJPlJyCOFQtt21Qj
+ aSteWWbE
+X-Authority-Analysis: v=2.4 cv=XYGJzJ55 c=1 sm=1 tr=0 ts=68d55179 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=NDtGctlWJZRkknF2ZLwA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: gEqyHAxMd8WOw0AvtrnpLCnMhoue5R1M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 clxscore=1015 adultscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
 
-SGkgRGF2aWQsDQoNCiAgVGhhbmsgeW91IGZvciB0aGUgZmVlZGJhY2ssDQoNCk9uIFdlZCwgMjAy
-NS0wOS0xNyBhdCAxODozNCAtMDUwMCwgRGF2aWQgTGVjaG5lciB3cm90ZToNCj4gRVhURVJOQUwg
-RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UN
-Cj4ga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiA5LzE3LzI1IDc6MjEgQU0sIE1h
-cml1cyBDcmlzdGVhIHdyb3RlOg0KPiA+IFRoaXMgaXMgdGhlIGRldmljZXRyZWUgc2NoZW1hIGZv
-ciBNaWNyb2NoaXAgRU1DMTgxMi8xMy8xNC8xNS8zMw0KPiA+IE11bHRpY2hhbm5lbCBMb3ctVm9s
-dGFnZSBSZW1vdGUgRGlvZGUgU2Vuc29yIEZhbWlseS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5
-OiBNYXJpdXMgQ3Jpc3RlYSA8bWFyaXVzLmNyaXN0ZWFAbWljcm9jaGlwLmNvbT4NCj4gPiAtLS0N
-Cj4gPiDCoC4uLi9paW8vdGVtcGVyYXR1cmUvbWljcm9jaGlwLGVtYzE4MTIueWFtbMKgwqDCoMKg
-wqDCoMKgwqAgfCAyMjMNCj4gPiArKysrKysrKysrKysrKysrKysrKysNCj4gPiDCoE1BSU5UQUlO
-RVJTwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDYgKw0KPiA+IMKgMiBmaWxlcyBjaGFuZ2Vk
-LCAyMjkgaW5zZXJ0aW9ucygrKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQNCj4gPiBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9paW8vdGVtcGVyYXR1cmUvbWljcm9jaGlwLGVtYzE4
-DQo+ID4gMTIueWFtbA0KPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lp
-by90ZW1wZXJhdHVyZS9taWNyb2NoaXAsZW1jMTgNCj4gPiAxMi55YW1sDQo+ID4gbmV3IGZpbGUg
-bW9kZSAxMDA2NDQNCj4gPiBpbmRleA0KPiA+IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
-MDAwMDAwMDAwMDAuLjg5OGQ2ZDI0Njc0NmUyMjljYjAwNGY0NDcNCj4gPiA4NzJlZTZiZDVhNjUw
-NzQNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrDQo+ID4gYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvaWlvL3RlbXBlcmF0dXJlL21pY3JvY2hpcCxlbWMxOA0KPiA+IDEyLnlh
-bWwNCj4gPiBAQCAtMCwwICsxLDIyMyBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiAoR1BMLTIuMCBPUiBCU0QtMi1DbGF1c2UpDQo+ID4gKyVZQU1MIDEuMg0KPiA+ICstLS0NCj4g
-PiArJGlkOg0KPiA+IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL2lpby90ZW1wZXJhdHVy
-ZS9taWNyb2NoaXAsZW1jMTgxMi55YW1sIw0KPiA+ICskc2NoZW1hOiBodHRwOi8vZGV2aWNldHJl
-ZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4gPiArDQo+ID4gK3RpdGxlOiBNaWNyb2No
-aXAgRU1DMTgxMi8xMy8xNC8xNS8zMyBtdWx0aWNoYW5uZWwgdGVtcGVyYXR1cmUNCj4gPiBzZW5z
-b3INCj4gPiArDQo+ID4gK21haW50YWluZXJzOg0KPiA+ICvCoCAtIE1hcml1cyBDcmlzdGVhIDxt
-YXJpdXMuY3Jpc3RlYUBtaWNyb2NoaXAuY29tPg0KPiA+ICsNCj4gPiArZGVzY3JpcHRpb246IHwN
-Cj4gPiArwqAgVGhlIE1pY3JvY2hpcCBFTUMxODEyLzEzLzE0LzE1LzMzIGlzIGEgaGlnaC1hY2N1
-cmFjeSAyLXdpcmUNCj4gPiBtdWx0aWNoYW5uZWwNCj4gPiArwqAgbG93LXZvbHRhZ2UgcmVtb3Rl
-IGRpb2RlIHRlbXBlcmF0dXJlIG1vbml0b3IuDQo+ID4gKw0KPiA+ICvCoCBUaGUgZGF0YXNoZWV0
-IGNhbiBiZSBmb3VuZCBoZXJlOg0KPiA+ICvCoMKgwqANCj4gPiBodHRwczovL3d3MS5taWNyb2No
-aXAuY29tL2Rvd25sb2Fkcy9hZW1Eb2N1bWVudHMvZG9jdW1lbnRzL01TTEQvUHJvZHVjdERvY3Vt
-ZW50cy9EYXRhU2hlZXRzL0VNQzE4MTItMy00LTUtMzMtRGF0YS1TaGVldC1EUzIwMDA1NzUxLnBk
-Zg0KPiANCj4gVGhlIHBpbm91dHMgb2YgdGhlc2UgY2hpcHMgbG9vayBuZWFybHkgaWRlbnRpY2Fs
-IHRvIE1DUDk5OFguDQo+IFdvdWxkIGl0IG1ha2Ugc2Vuc2UgdG8gc2hhcmUgYSBzaW5nbGUgYmlu
-ZGluZ3MgZG9jdW1lbnQgZm9yIHRoZXNlPw0KPiBPciBtYXliZSB0aGVyZSB3b3VsZCBiZSB0b28g
-bWFueSBpZjogYmxvY2tzIGFuZCBrZWVwaW5nIGl0IHNlcGFyYXRlDQo+IGlzIGZpbmUuDQo+IA0K
-PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1paW8vMjAyNTA4MjkxNDM0NDcuMTg4OTMt
-Mi12aWN0b3IuZHVpY3VAbWljcm9jaGlwLmNvbS8NCj4gDQo+IA0KDQpJIGtub3cgdGhhdCB0aGUg
-Y2hpcCBsb29rcyBuZWFybHkgaWRlbnRpY2FsIHdpdGggTUNQOTk4WCwgYnV0IGJlaW5nIHR3bw0K
-ZGlmZmVyZW50IGZhbWlseSBvZiBkZXZpY2VzIGFuZCBoYXZpbmcgZGlmZmVyZW50IGZ1bmN0aW9u
-cyBpbnNpZGUsIEkNCndvdWxkIGxpa2UgdG8ga2VlcCB0aGUgYmluZGluZyBzZXBhcmF0ZSwgb3Ro
-ZXJ3aXNlIHRoZXJlIHdpbGwgYmUgdG9vDQptYW55IGNvbmRpdGlvbnMuDQoNCg0KVGhhbmtzLA0K
-TWFyaXVzDQo=
+On Wed, 2025-09-24 at 10:16 -0700, Farhan Ali wrote:
+> For a passthrough device we need co-operation from user space to recover
+> the device. This would require to bubble up any error information to user
+> space.  Let's store this error information for passthrough devices, so it
+> can be retrieved later.
+>=20
+> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/pci.h      | 28 ++++++++++
+>  arch/s390/pci/pci.c              |  1 +
+>  arch/s390/pci/pci_event.c        | 95 +++++++++++++++++++-------------
+>  drivers/vfio/pci/vfio_pci_zdev.c |  2 +
+>  4 files changed, 88 insertions(+), 38 deletions(-)
+>=20
+> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+> index f47f62fc3bfd..40bfe5721109 100644
+> --- a/arch/s390/include/asm/pci.h
+> +++ b/arch/s390/include/asm/pci.h
+> @@ -116,6 +116,31 @@ struct zpci_bus {
+>  	enum pci_bus_speed	max_bus_speed;
+>  };
+> =20
+> +/* Content Code Description for PCI Function Error */
+> +struct zpci_ccdf_err {
+> +	u32 reserved1;
+> +	u32 fh;                         /* function handle */
+> +	u32 fid;                        /* function id */
+> +	u32 ett         :  4;           /* expected table type */
+> +	u32 mvn         : 12;           /* MSI vector number */
+> +	u32 dmaas       :  8;           /* DMA address space */
+> +	u32 reserved2   :  6;
+> +	u32 q           :  1;           /* event qualifier */
+> +	u32 rw          :  1;           /* read/write */
+> +	u64 faddr;                      /* failing address */
+> +	u32 reserved3;
+> +	u16 reserved4;
+> +	u16 pec;                        /* PCI event code */
+> +} __packed;
+> +
+> +#define ZPCI_ERR_PENDING_MAX 4
+> +struct zpci_ccdf_pending {
+> +	u8 count;
+> +	u8 head;
+> +	u8 tail;
+> +	struct zpci_ccdf_err err[ZPCI_ERR_PENDING_MAX];
+> +};
+
+Thanks this looks more reasonably sized.=20
+
+> +
+>  /* Private data per function */
+>  struct zpci_dev {
+>  	struct zpci_bus *zbus;
+> @@ -191,6 +216,8 @@ struct zpci_dev {
+>  	struct iommu_domain *s390_domain; /* attached IOMMU domain */
+>  	struct kvm_zdev *kzdev;
+>  	struct mutex kzdev_lock;
+> +	struct zpci_ccdf_pending pending_errs;
+> +	struct mutex pending_errs_lock;
+>  	spinlock_t dom_lock;		/* protect s390_domain change */
+>  };
+> =20
+--- snip ---
+> +static void zpci_store_pci_error(struct pci_dev *pdev,
+> +				 struct zpci_ccdf_err *ccdf)
+> +{
+> +	struct zpci_dev *zdev =3D to_zpci(pdev);
+> +	int i;
+> +
+> +	mutex_lock(&zdev->pending_errs_lock);
+> +	if (zdev->pending_errs.count >=3D ZPCI_ERR_PENDING_MAX) {
+> +		pr_err("%s: Maximum number (%d) of pending error events queued",
+> +				pci_name(pdev), ZPCI_ERR_PENDING_MAX);
+
+So for a vfio-pci user which doesn't pick up the error information but
+does reset on error and thus recovers we would leave just the 4 first
+errors that occurred in the pending_errs and get this message once. I
+think that is okay and maybe even preferrable since most errors are,
+well, errors. And often the first time something went wrong is the
+interesting one. So I think this makes sense.
+
+> +		mutex_unlock(&zdev->pending_errs_lock);
+> +		return;
+> +	}
+> +
+> +	i =3D zdev->pending_errs.tail % ZPCI_ERR_PENDING_MAX;
+> +	memcpy(&zdev->pending_errs.err[i], ccdf, sizeof(struct zpci_ccdf_err));
+> +	zdev->pending_errs.tail++;
+> +	zdev->pending_errs.count++;
+> +	mutex_unlock(&zdev->pending_errs_lock);
+> +}
+> +
+> +void zpci_cleanup_pending_errors(struct zpci_dev *zdev)
+> +{
+> +	struct pci_dev *pdev =3D NULL;
+> +
+> +	mutex_lock(&zdev->pending_errs_lock);
+> +	pdev =3D pci_get_slot(zdev->zbus->bus, zdev->devfn);
+
+I think you missed my comment on the previous version. This is missing
+the matching pci_dev_put() for the pci_get_slot().
+
+> +	if (zdev->pending_errs.count)
+> +		pr_info("%s: Unhandled PCI error events count=3D%d",
+> +				pci_name(pdev), zdev->pending_errs.count);
+> +	memset(&zdev->pending_errs, 0, sizeof(struct zpci_ccdf_pending));
+> +	mutex_unlock(&zdev->pending_errs_lock);
+> +}
+> +EXPORT_SYMBOL_GPL(zpci_cleanup_pending_errors);
+> +
+>=20
+--- snip ---
+> =20
+> @@ -322,12 +340,13 @@ static void __zpci_event_error(struct zpci_ccdf_err=
+ *ccdf)
+>  		break;
+>  	case 0x0040: /* Service Action or Error Recovery Failed */
+>  	case 0x003b:
+> -		zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
+> +		zpci_event_io_failure(pdev, pci_channel_io_perm_failure, ccdf);
+>  		break;
+>  	default: /* PCI function left in the error state attempt to recover */
+> -		ers_res =3D zpci_event_attempt_error_recovery(pdev);
+> +		ers_res =3D zpci_event_attempt_error_recovery(pdev, ccdf);
+>  		if (ers_res !=3D PCI_ERS_RESULT_RECOVERED)
+> -			zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
+> +			zpci_event_io_failure(pdev, pci_channel_io_perm_failure,
+> +					ccdf);
+
+Nit: I'd just keep the above on one line. It's still below the 100
+columns limit and just cleaner on one line.
+
+>  		break;
+>  	}
+>  	pci_dev_put(pdev);
+> diff --git a/drivers/vfio/pci/vfio_pci_zdev.c b/drivers/vfio/pci/vfio_pci=
+_zdev.c
+> index a7bc23ce8483..2be37eab9279 100644
+> --- a/drivers/vfio/pci/vfio_pci_zdev.c
+> +++ b/drivers/vfio/pci/vfio_pci_zdev.c
+> @@ -168,6 +168,8 @@ void vfio_pci_zdev_close_device(struct vfio_pci_core_=
+device *vdev)
+> =20
+>  	zdev->mediated_recovery =3D false;
+> =20
+> +	zpci_cleanup_pending_errors(zdev);
+> +
+>  	if (!vdev->vdev.kvm)
+>  		return;
+> =20
 
