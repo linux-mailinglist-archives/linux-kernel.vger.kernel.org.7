@@ -1,330 +1,236 @@
-Return-Path: <linux-kernel+bounces-832814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFAF7BA073F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:51:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09C0BA0757
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9882617766B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E271BC7526
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885E72FD1B8;
-	Thu, 25 Sep 2025 15:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEFC304BBD;
+	Thu, 25 Sep 2025 15:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OYrYCmdz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="nMRP0eTn"
+Received: from fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.57.120.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083F735940
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5263009E7;
+	Thu, 25 Sep 2025 15:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.57.120.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758815454; cv=none; b=gAee4ubuewLsiiRn5KZVkFLU8IWcgVBKzRVKoMEkgrI5Q8mlYO4S1ygHjDahUeWFOtpMu2DoVTtpeKTbv3WgUQ7icqYvMZJdJ56JeGz8fmjIr+AKsqcO4qa9MMiIr1dSaFd2mbg4oJZhxjLiUfMfgCJStXtDtygsCVe4Je3zcoM=
+	t=1758815470; cv=none; b=k3cgL7xICyJ0Fx1koQvUJo69qZQ/e9Ex+3d/zJ8X/NkMwgoMPa6WTQnDPmvGCCk/IB0W/ZusmFt4ImGRE5aySJ5g56Z6gvpPm6PWJAvlIhhM0jDWI9SN1msOIICh9huoh/YD4ipi0ZKblmt2mlYPIazxatzEU+qkREacabTB368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758815454; c=relaxed/simple;
-	bh=cYB0M+8+ahurjp0iU8zPZAdcS0LpChTmtkqqTn+gX1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lUwTmJx4J/ZsZlXB0YzSMY9noy33w2JU7YhaEZJ218TlCouSIoe3eoG67fvah/v5O9x5l4UDUlpn/w9WKyyd0eH4vCAQ2HZhUppis0kBRzQiEYFVKCZLo4VO5IV3YKnI5lKCUzjItQElsvMGox2Eqs+BMughLM78E6+Y+qXR89w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OYrYCmdz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758815452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6RjxFh7v91T99kL52zo94RvBCcAm3O2bx/ycpMxare0=;
-	b=OYrYCmdzKBClBFCbG35goyTOQErDP+e2fQ7Re5N2t/JGalQvQBOvxNf1eGe9ufcaGdgTzM
-	63uTyPlgKfr4v2rkTznYvAfD+7xrUSSU1lhMvIdnYq531ESIgT2Jvb9/MtCIHGT2cskPqJ
-	QWTXOIdWVcUDyN1Sru2h9y9ANny5JVE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-523-kd_lsOV_NNu5fb4DjW8b8Q-1; Thu, 25 Sep 2025 11:50:50 -0400
-X-MC-Unique: kd_lsOV_NNu5fb4DjW8b8Q-1
-X-Mimecast-MFC-AGG-ID: kd_lsOV_NNu5fb4DjW8b8Q_1758815449
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45f2b9b99f0so7033505e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:50:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758815449; x=1759420249;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RjxFh7v91T99kL52zo94RvBCcAm3O2bx/ycpMxare0=;
-        b=JyBjO7feaSfK3cyNhHYou0i+3WFh04Zgv0+WFB0V667S/3q6ohw3cbP6IRDpErcQzu
-         jYvDupW8o26qiS5XVW9ivOob9gHgtDDaLrCa86QdMFPG3/S2x0Bcos+tapVxoVJcFPid
-         wvd6YtnmbwXtSap8JLUHmMpn16T4NZA+FgjRfMizOSJVyYidjC9lVstj/lm/0WyXdxJN
-         4G2Fz5Z9Fs3ZBFhjyKLya98inYR45M7pM4vVRzqY/cPFnFViUQe2+K4qOCvEyo0WgnZT
-         gxzjtRaRNq1nr+urlZ9eWGPRkL3OchEQH/bBJFLxi2eXjSJfhT8PVjBKCRgJ5ViBhGIn
-         5gSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHpW8Jine0A0gLVvJlD3cMEVCtga2GLtAdgZRNoIlRa+ku8NSI9dVip/qkYQNVNlpt7gA+Zy0pychDMfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJBjZqLmK8GyiFtWv5EtNF0LFPaUgok4U1l8gm0tU8CLWeHjel
-	LRpjBwGSh581Itvray3JFS+yl1D18Kpmof7clLjiJHVQNM7kT7VjE9fIoB0C7ugcXXg9Pmvdzgl
-	DTvOhqjgQUpcbmlIqgLEft2Yr8rnSoE58G+/imdHXlmxXOZnYFLHsJIXPrxOG14j5+A==
-X-Gm-Gg: ASbGncswhsCBRCnDuNHNPq20gk0m3XpwqS1UQaYHYMoqBaPfpzxzlha53WnHRJct+To
-	bfeSkAkPR6rbjZ9AOKGBT1IlqSsHexvpuHm4eKNpW9j+rHwwwIZEAINpoE/+uaYe0T5tf+WxAH5
-	y7nKKkL86clvpBUh2u4FWv8hyDhBpxM343sG3FzKljOsklXU3P9oOdTm9OoAdUFBO4MlnoCCukM
-	njLDatAmF8jcK2/HcGxofdSaYydjcEg7i3mzjBqwsFWTfAx6gVrdlWTFQEIQD8X4Db1k0x5OBRA
-	ZoEjFoNY4e5ouXJlaSIUko6EZpLmQ1+qCLMgMsxkG56uOXffrXGH0yArWnDaJxZh3YENgG5RCy6
-	LzPpN
-X-Received: by 2002:a05:600c:c05a:b0:46e:24a4:c247 with SMTP id 5b1f17b1804b1-46e33c37045mr27726445e9.5.1758815449331;
-        Thu, 25 Sep 2025 08:50:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH42p5wF1MbXLgLRLpmMdmx3fmatgjwkfbDLkTnb0zUzAZiwpeDhVqHHmRs7ZpOiR0kwuKXgg==
-X-Received: by 2002:a05:600c:c05a:b0:46e:24a4:c247 with SMTP id 5b1f17b1804b1-46e33c37045mr27726145e9.5.1758815448852;
-        Thu, 25 Sep 2025 08:50:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996da2sm96398255e9.5.2025.09.25.08.50.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 08:50:48 -0700 (PDT)
-Message-ID: <d2b91aea-02d6-4fbf-9ada-ef831936c773@redhat.com>
-Date: Thu, 25 Sep 2025 17:50:47 +0200
+	s=arc-20240116; t=1758815470; c=relaxed/simple;
+	bh=1zJrM66fVkwnfU3UUcGE70VbzHy7CLNUeSpYY+Xki2w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mrk/gkFTyH8bntvfoEvX1g20sv8dbD1HWURB84mYogFJ7ueBLKk9KOtXGE9A/+hhocfBIRu0uizRKso+fXocAlfNnDVp93Ubh7eEi7Q0QjKjvMDEiD2BBoDmSsxTWdjJJrHWoSXV92bjepb9YviaGEvK7z6WcOXF+qJ5xy4zsBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=nMRP0eTn; arc=none smtp.client-ip=52.57.120.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazoncorp2; t=1758815468; x=1790351468;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WShG4YI0EGKByiTLIIIv3ML54YmgGR7q846KIAo0FmA=;
+  b=nMRP0eTn4yjAeULMcJ/LseWpqFTFGyC0dxKGAfigGbkc336t72YRe7YG
+   ouYk5hxZ4+AdEK9RmjoqQUp8vcaTokaj5zvpIVklugM2fVlVkowv6YkET
+   Ju3JLRTPcQp/g3UOs/TJtv4LvEVY+Kui6/EigqpcCozKmXd1Dk9211LSG
+   DyJALc5Rn3nQx/1Cy3k+9KUSV+ojuGz31m1GtsBVxQr3BLgbVyrzhr9w2
+   0bf7m/XYtE98SOXAJb7kw3FyywCq1kuWpSztclT5gLwgr3Y+68jlZ/JLz
+   4bLYWyfe+YYfGoIzb/PTnTL7qDEvS+YX/5gAFsXca6M3H9OEILbNE5982
+   g==;
+X-CSE-ConnectionGUID: MbVH1R0YThKQmA86zMa6Xg==
+X-CSE-MsgGUID: 2fM976tAQQK5Fw3KY2GCFw==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751241600"; 
+   d="scan'208";a="2580762"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-012.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 15:50:57 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:31648]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.9.61:2525] with esmtp (Farcaster)
+ id 1b0aa563-dc9d-47cc-b8c8-5261ca8f0b3b; Thu, 25 Sep 2025 15:50:57 +0000 (UTC)
+X-Farcaster-Flow-ID: 1b0aa563-dc9d-47cc-b8c8-5261ca8f0b3b
+Received: from EX19D015EUB001.ant.amazon.com (10.252.51.114) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 25 Sep 2025 15:50:54 +0000
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19D015EUB001.ant.amazon.com (10.252.51.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 25 Sep 2025 15:50:53 +0000
+Received: from EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a]) by
+ EX19D015EUB004.ant.amazon.com ([fe80::2dc9:7aa9:9cd3:fc8a%3]) with mapi id
+ 15.02.2562.020; Thu, 25 Sep 2025 15:50:53 +0000
+From: "Roy, Patrick" <roypat@amazon.co.uk>
+To: "david@redhat.com" <david@redhat.com>
+CC: "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"ackerleytng@google.com" <ackerleytng@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "andrii@kernel.org"
+	<andrii@kernel.org>, "ast@kernel.org" <ast@kernel.org>, "bp@alien8.de"
+	<bp@alien8.de>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "corbet@lwn.net"
+	<corbet@lwn.net>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>, "eddyz87@gmail.com"
+	<eddyz87@gmail.com>, "haoluo@google.com" <haoluo@google.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "Thomson, Jack" <jackabt@amazon.co.uk>, "jannh@google.com"
+	<jannh@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com"
+	<jhubbard@nvidia.com>, "joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>, "jolsa@kernel.org"
+	<jolsa@kernel.org>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, "luto@kernel.org"
+	<luto@kernel.org>, "martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"maz@kernel.org" <maz@kernel.org>, "mhocko@suse.com" <mhocko@suse.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "oliver.upton@linux.dev"
+	<oliver.upton@linux.dev>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"peterx@redhat.com" <peterx@redhat.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "pfalcato@suse.de" <pfalcato@suse.de>, "Roy, Patrick"
+	<roypat@amazon.co.uk>, "rppt@kernel.org" <rppt@kernel.org>, "sdf@fomichev.me"
+	<sdf@fomichev.me>, "seanjc@google.com" <seanjc@google.com>,
+	"shuah@kernel.org" <shuah@kernel.org>, "song@kernel.org" <song@kernel.org>,
+	"surenb@google.com" <surenb@google.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "tabba@google.com" <tabba@google.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"will@kernel.org" <will@kernel.org>, "willy@infradead.org"
+	<willy@infradead.org>, "x86@kernel.org" <x86@kernel.org>, "Cali, Marco"
+	<xmarcalx@amazon.co.uk>, "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+Thread-Topic: [PATCH v7 06/12] KVM: guest_memfd: add module param for
+ disabling TLB flushing
+Thread-Index: AQHcLjQso34Q5KN2CUWRdaSrXlVTqQ==
+Date: Thu, 25 Sep 2025 15:50:53 +0000
+Message-ID: <20250925155051.2959-1-roypat@amazon.co.uk>
+References: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+In-Reply-To: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] drm/panic: Add kunit tests for drm_panic
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250908090341.762049-1-jfalempe@redhat.com>
- <20250908090341.762049-3-jfalempe@redhat.com>
- <20250910-fascinating-hungry-lemur-1d9f49@houat>
- <5e9dc5b5-9671-4a72-b926-8b526ebf9059@redhat.com>
- <20250923-silent-mole-of-luxury-9feabc@penduick>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250923-silent-mole-of-luxury-9feabc@penduick>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 23/09/2025 11:57, Maxime Ripard wrote:
-> On Wed, Sep 10, 2025 at 05:16:49PM +0200, Jocelyn Falempe wrote:
->> On 10/09/2025 10:33, Maxime Ripard wrote:
->>> Hi,
->>>
->>> On Mon, Sep 08, 2025 at 11:00:30AM +0200, Jocelyn Falempe wrote:
->>>> Add kunit tests for drm_panic.
->>>> They check that drawing the panic screen doesn't crash, but they
->>>> don't check the correctness of the resulting image.
->>>>
->>>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->>>> ---
->>>>
->>>> v2:
->>>>    * Add a few checks, and more comments in the kunit tests. (Maxime Ripard).
->>>>
->>>>    MAINTAINERS                            |   1 +
->>>>    drivers/gpu/drm/drm_panic.c            |   4 +
->>>>    drivers/gpu/drm/tests/drm_panic_test.c | 198 +++++++++++++++++++++++++
->>>>    3 files changed, 203 insertions(+)
->>>>    create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 402fe14091f1..e9be893d6741 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -8480,6 +8480,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->>>>    F:	drivers/gpu/drm/drm_draw.c
->>>>    F:	drivers/gpu/drm/drm_draw_internal.h
->>>>    F:	drivers/gpu/drm/drm_panic*.c
->>>> +F:	drivers/gpu/drm/tests/drm_panic_test.c
->>>>    F:	include/drm/drm_panic*
->>>>    DRM PANIC QR CODE
->>>> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
->>>> index 1e06e3a18d09..d89812ff1935 100644
->>>> --- a/drivers/gpu/drm/drm_panic.c
->>>> +++ b/drivers/gpu/drm/drm_panic.c
->>>> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
->>>>    {
->>>>    	drm_panic_qr_exit();
->>>>    }
->>>> +
->>>> +#ifdef CONFIG_DRM_KUNIT_TEST
->>>> +#include "tests/drm_panic_test.c"
->>>> +#endif
->>>> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tests/drm_panic_test.c
->>>> new file mode 100644
->>>> index 000000000000..d5d20dd2aa7c
->>>> --- /dev/null
->>>> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
->>>> @@ -0,0 +1,198 @@
->>>> +// SPDX-License-Identifier: GPL-2.0 or MIT
->>>> +/*
->>>> + * Copyright (c) 2025 Red Hat.
->>>> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
->>>> + *
->>>> + * KUNIT tests for drm panic
->>>> + */
->>>> +
->>>> +#include <drm/drm_fourcc.h>
->>>> +#include <drm/drm_panic.h>
->>>> +
->>>> +#include <kunit/test.h>
->>>> +
->>>> +#include <linux/units.h>
->>>> +#include <linux/vmalloc.h>
->>>> +
->>>> +/* Check the framebuffer color only if the panic colors are the default */
->>>> +#if (CONFIG_DRM_PANIC_BACKGROUND_COLOR == 0 && \
->>>> +	CONFIG_DRM_PANIC_FOREGROUND_COLOR == 0xffffff)
->>>> +#define DRM_PANIC_CHECK_COLOR
->>>> +#endif
->>>> +
->>>> +struct drm_test_mode {
->>>> +	const int width;
->>>> +	const int height;
->>>> +	const u32 format;
->>>> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
->>>> +	const char *fname;
->>>> +};
->>>> +
->>>> +/*
->>>> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
->>>> + */
->>>> +#define DRM_TEST_MODE_LIST(func) \
->>>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
->>>> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
->>>> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
->>>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
->>>> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
->>>> +
->>>> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
->>>> +	.width = w, \
->>>> +	.height = h, \
->>>> +	.format = f, \
->>>> +	.draw_screen = draw_panic_screen_##name, \
->>>> +	.fname = #name, \
->>>> +	}, \
->>>> +
->>>> +static const struct drm_test_mode drm_test_modes_cases[] = {
->>>> +	DRM_TEST_MODE_LIST(user)
->>>> +	DRM_TEST_MODE_LIST(kmsg)
->>>> +	DRM_TEST_MODE_LIST(qr_code)
->>>> +};
->>>> +#undef DRM_PANIC_TEST_MODE
->>>> +
->>>> +static int drm_test_panic_init(struct kunit *test)
->>>> +{
->>>> +	struct drm_scanout_buffer *priv;
->>>> +
->>>> +	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
->>>> +	KUNIT_ASSERT_NOT_NULL(test, priv);
->>>> +
->>>> +	test->priv = priv;
->>>> +
->>>> +	drm_panic_set_description("Kunit testing");
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +/*
->>>> + * Test drawing the panic screen, using a memory mapped framebuffer
->>>> + * Set the whole buffer to 0xa5, and then check that all pixels have been
->>>> + * written.
->>>> + */
->>>> +static void drm_test_panic_screen_user_map(struct kunit *test)
->>>> +{
->>>> +	struct drm_scanout_buffer *sb = test->priv;
->>>> +	const struct drm_test_mode *params = test->param_value;
->>>> +	char *fb;
->>>> +	int fb_size;
->>>> +
->>>> +	sb->format = drm_format_info(params->format);
->>>> +	fb_size = params->width * params->height * sb->format->cpp[0];
->>>> +
->>>> +	fb = vmalloc(fb_size);
->>>> +	KUNIT_ASSERT_NOT_NULL(test, fb);
->>>> +
->>>> +	memset(fb, 0xa5, fb_size);
->>>> +
->>>> +	iosys_map_set_vaddr(&sb->map[0], fb);
->>>> +	sb->width = params->width;
->>>> +	sb->height = params->height;
->>>> +	sb->pitch[0] = params->width * sb->format->cpp[0];
->>>> +
->>>> +	params->draw_screen(sb);
->>>> +
->>>> +#ifdef DRM_PANIC_CHECK_COLOR
->>>> +	{
->>>> +		int i;
->>>> +
->>>> +		for (i = 0; i < fb_size; i++)
->>>> +			KUNIT_ASSERT_TRUE(test, fb[i] == 0 || fb[i] == 0xff);
->>>> +	}
->>>> +#endif
->>>
->>> I'm not really fond of the ifdef here. Could you turn this into a
->>> function, and return that it's valid if the colors don't match what you
->>> expect?
->>
->> Yes, I can rework this.
->>>
->>>> +	vfree(fb);
->>>> +}
->>>> +
->>>> +/*
->>>> + * Test drawing the panic screen, using a list of pages framebuffer
->>>> + * No checks are performed
->>>
->>> What are you testing then if you aren't checking anything?
->>
->> It tests that there are no access to an unmapped page.
->> But I can add the same check that with the "map" case.
->> It just requires more work to map the pages.
-> 
-> I wasn't really arguing about adding more stuff, just that the
-> documentation didn't really explain what was going on. Just saying "I'm
-> checking that doing this succeeds" is definitely enough for me.
-> 
-Ok, I will update the documentation accordingly.
-
->>>
->>>> + */
->>>> +static void drm_test_panic_screen_user_page(struct kunit *test)
->>>> +{
->>>> +	struct drm_scanout_buffer *sb = test->priv;
->>>> +	const struct drm_test_mode *params = test->param_value;
->>>> +	int fb_size;
->>>> +	struct page **pages;
->>>> +	int i;
->>>> +	int npages;
->>>> +
->>>> +	sb->format = drm_format_info(params->format);
->>>> +	fb_size = params->width * params->height * sb->format->cpp[0];
->>>> +	npages = DIV_ROUND_UP(fb_size, PAGE_SIZE);
->>>> +
->>>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
->>>> +	KUNIT_ASSERT_NOT_NULL(test, pages);
->>>> +
->>>> +	for (i = 0; i < npages; i++) {
->>>> +		pages[i] = alloc_page(GFP_KERNEL);
->>>> +		KUNIT_ASSERT_NOT_NULL(test, pages[i]);
->>>
->>> KUNIT_ASSERT_* return immediately, so you're leaking the pages array
->>> here.
->>>
->> yes, I can fix that, but is it important to not leak when the test fails?
-> 
-> kunit tests can be compiled as module and run on live systems, so yes.
-> It can also lead to subsequent test failures if you deplete the system
-> of a resource the next test will need.
-
-ok, understood, I will fix the leaks in those tests.
-
-> Maxime
-
-
--- 
-
-Jocelyn
-
+On Thu, 2025-09-25 at 12:02 +0100, David Hildenbrand wrote:=0A=
+> On 24.09.25 17:22, Roy, Patrick wrote:=0A=
+>> Add an option to not perform TLB flushes after direct map manipulations.=
+=0A=
+>> TLB flushes result in a up to 40x elongation of page faults in=0A=
+>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation=
+=0A=
+>> of memory population, which is inacceptable when wanting to use direct=
+=0A=
+>> map removed guest_memfd as a drop-in replacement for existing workloads.=
+=0A=
+>>=0A=
+>> TLB flushes are not needed for functional correctness (the virt->phys=0A=
+>> mapping technically stays "correct", the kernel should simply not use it=
+=0A=
+>> for a while), so we can skip them to keep performance in-line with=0A=
+>> "traditional" VMs.=0A=
+>>=0A=
+>> Enabling this option means that the desired protection from=0A=
+>> Spectre-style attacks is not perfect, as an attacker could try to=0A=
+>> prevent a stale TLB entry from getting evicted, keeping it alive until=
+=0A=
+>> the page it refers to is used by the guest for some sensitive data, and=
+=0A=
+>> then targeting it using a spectre-gadget.=0A=
+>>=0A=
+>> Cc: Will Deacon <will@kernel.org>=0A=
+>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>=0A=
+>> ---=0A=
+>>   include/linux/kvm_host.h | 1 +=0A=
+>>   virt/kvm/guest_memfd.c   | 3 ++-=0A=
+>>   virt/kvm/kvm_main.c      | 3 +++=0A=
+>>   3 files changed, 6 insertions(+), 1 deletion(-)=0A=
+>>=0A=
+>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h=0A=
+>> index 73a15cade54a..4d2bc18860fc 100644=0A=
+>> --- a/include/linux/kvm_host.h=0A=
+>> +++ b/include/linux/kvm_host.h=0A=
+>> @@ -2298,6 +2298,7 @@ extern unsigned int halt_poll_ns;=0A=
+>>   extern unsigned int halt_poll_ns_grow;=0A=
+>>   extern unsigned int halt_poll_ns_grow_start;=0A=
+>>   extern unsigned int halt_poll_ns_shrink;=0A=
+>> +extern bool guest_memfd_tlb_flush;=0A=
+>>=0A=
+>>   struct kvm_device {=0A=
+>>       const struct kvm_device_ops *ops;=0A=
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c=0A=
+>> index b7129c4868c5..d8dd24459f0d 100644=0A=
+>> --- a/virt/kvm/guest_memfd.c=0A=
+>> +++ b/virt/kvm/guest_memfd.c=0A=
+>> @@ -63,7 +63,8 @@ static int kvm_gmem_folio_zap_direct_map(struct folio =
+*folio)=0A=
+>>       if (!r) {=0A=
+>>               unsigned long addr =3D (unsigned long) folio_address(folio=
+);=0A=
+>>               folio->private =3D (void *) ((u64) folio->private & KVM_GM=
+EM_FOLIO_NO_DIRECT_MAP);=0A=
+>> -             flush_tlb_kernel_range(addr, addr + folio_size(folio));=0A=
+>> +             if (guest_memfd_tlb_flush)=0A=
+>> +                     flush_tlb_kernel_range(addr, addr + folio_size(fol=
+io));=0A=
+>>       }=0A=
+>>=0A=
+>>       return r;=0A=
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c=0A=
+>> index b5e702d95230..753c06ebba7f 100644=0A=
+>> --- a/virt/kvm/kvm_main.c=0A=
+>> +++ b/virt/kvm/kvm_main.c=0A=
+>> @@ -95,6 +95,9 @@ unsigned int halt_poll_ns_shrink =3D 2;=0A=
+>>   module_param(halt_poll_ns_shrink, uint, 0644);=0A=
+>>   EXPORT_SYMBOL_GPL(halt_poll_ns_shrink);=0A=
+>>=0A=
+>> +bool guest_memfd_tlb_flush =3D true;=0A=
+>> +module_param(guest_memfd_tlb_flush, bool, 0444);=0A=
+> =0A=
+> The parameter name is a bit too generic. I think you somehow have to=0A=
+> incorporate the "direct_map" aspects.=0A=
+=0A=
+Fair :)=0A=
+=0A=
+> Also, I wonder if this could be a capability per vm/guest_memfd?=0A=
+=0A=
+I don't really have any opinions on how to expose this knob, but I=0A=
+thought capabilities should be additive? (e.g. we only have=0A=
+KVM_ENABLE_EXTENSION(), and then having a capability with a negative=0A=
+polarity "enable to _not_ do TLB flushes" is a bit weird in my head).=0A=
+Then again, if people are fine having TLB flushes be opt-in instead of=0A=
+opt-out (Will's comment on v6 makes me believe that the opt-out itself=0A=
+might already be controversial for arm64), a capability would work.=0A=
+=0A=
+> Then, you could also nicely document the semantics, considerations,=0A=
+> impact etc :)=0A=
+=0A=
+Yup, I got so lost in trying to figure out why flush_kernel_tlb_range()=0A=
+didnt refused to let itself be exported that docs slipped my mind haha.=0A=
+=0A=
+> -- =0A=
+> Cheers=0A=
+> =0A=
+> David / dhildenb=0A=
+> =0A=
+=0A=
+Best,=0A=
+Patrick=0A=
+=0A=
 
