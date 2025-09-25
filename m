@@ -1,256 +1,101 @@
-Return-Path: <linux-kernel+bounces-832859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369BABA0964
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FFFBA096D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:25:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6E5387C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14DC620553
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF0030B53C;
-	Thu, 25 Sep 2025 16:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2713D307492;
+	Thu, 25 Sep 2025 16:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwcIO6K4"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j2Di+Id6"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E253306491
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F23054F6;
+	Thu, 25 Sep 2025 16:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758817436; cv=none; b=KBukXNb58q1XAm8QHtFPyc+YN2P60NCQPqbMFyFecozq+YTUaXJWgrfWD+LyU6nks2BKU10nAGNExz1BuIGlqNDFnMbENx5Ty7iOEPEJFktKD9x9byFoI/OhrO3TAfM4Fz2Yt5AD9XBkQJgSXZR3Cqrz77eBj9ZkW0UKtsed310=
+	t=1758817460; cv=none; b=JlE/kF/CJA/DkWWR/udROmsQbmAQfgYsrQfyEHs2BPKCbHOrVWENHfX1zR+5vpNC4xCv946QgJwBpZOmdNQLK0RzaH2exdeOJ0O5ur4CFkuG2vX6OOFPXx+9zPmAS4gLrYTE7dBF6RPxl9OJSyv8MFbAUd6f96sNyqufFiqZeUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758817436; c=relaxed/simple;
-	bh=gQpZKL9PYN00DxqOhZ2zLTrFv9ZJsPxReul3Hvo1omc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ne0XSThVPRPWMoQyWPFjGjXdeKNEs9AXB5HTLgBMZLVY2wu+z83rMLMLVQXEU3se7J5vdfv9Vlo06q30csLvpheJumue+N0p5AE60MlzQvDkz+4Q8hlsb2ZvLYMVo+zlZiSCbFATLP7otEjXfqduQM2NFKxjBIIcoM54g8eFLpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwcIO6K4; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so7913505e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758817432; x=1759422232; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aly97HE4DbfA98BoW1r98QzzxmSOsTSspnaWMcDHFeI=;
-        b=RwcIO6K4UkCEIzl3A+n2uk8TzfU+nJlneRBdYxKx3rk+WkD10IRJG/jY09S0gZhkWY
-         5QveVH3Akfc8KD2o/jnCVYOo/SxQR8A8MrhTmRXCRn2ouMB5145n/JtTrbTXr9CFXM5r
-         OMBnteRFgfZIOy+YHL7YUjxVAKEVypqZncVErVp2uSHBeND+ZiwO29xi/4uWtzY/XDdM
-         XfTRv8W06+/uAr9rX+TMvLf/3epqGAHURMexrLpo8g6yxAiRX+7AP7hFqMoAIlrHTLqs
-         ljkiLeqrGGQZyPlw/WGOH/u27rInhEhB56mL8yD/IJyFJm1M0PPKVqgB3ga5BsWO2A9d
-         6Yhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758817432; x=1759422232;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aly97HE4DbfA98BoW1r98QzzxmSOsTSspnaWMcDHFeI=;
-        b=WDgHSPuj2fGHoFXxMrY1BnJBSf+2IHKOI6IzVZ+y+iSIJc67roLxgZOpz3yMlNcjln
-         SLBukYprc3mSLOrZqkTFlCSlo1W+SBxT+KKgo/sg3VO6yeNV1qDNxY3+5P4Z09jV+sm0
-         uaQIEqWQ+6UHFXk3c7E/QVMVy+sIvzboAzp41AJErHVDwbCwXmNNTEfOYI52vyd9g06l
-         WiZu9BfoTZvrO1bp37JCm7xdq1/OnDqG5wYsXXlxt9emCWA0koIJbTD48I2N3GywzTVr
-         wH5rafCb2SwuvyWoXlXbSu+LZrZRpZJyhx9co5CaxtUQ/GwoazXsiWL6QpmiGOQ6b94+
-         kZtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWghmSNu+kAInyYSl5+hALpd50xGKBxR+3n7ULKujnYa+7TjcybFIqSrG/R1SSHjliJ3DhBRVFnsfZgFqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHMf+IkLUFgl/OLnV1EFjO1LZPkyanL9gVgJfXA7So3HNc/Occ
-	5Jz7+QHFI4cdmqP7dooNJCSqvXYfP2N4f+Ahe/spidfU3je1Qhwnga+c
-X-Gm-Gg: ASbGncsgPts3SkLJQ9/NEZpPJbilZMEAEY/g7jeAzL/33UvXZWPOzgyochxCNlwQzGg
-	olksbiK8xNBUHcpqiS/7OacZUL5c2UwGgGvjf2VOOYoI4+ktRsBL2iGNY6M3eRL1ajDyDxDioMa
-	f8EBFuiSGRlXhO9YFYA+rB4VynlG6VrdZROjiEWcXdkUPusTPVnbaVk/T9SRz+/xP5u0ltEV1su
-	wHPScECW5aSEk1AbH8LBh/A2fkDKhgLtSljXd9LDukI5JAq4EqG5hwFFBlF5GFA1TbdwWxcZpoH
-	22Q1mB2XYabY5vV//JjQzhx5AnR+ji9GgEeBJAi7KSjn8k4HRP77x6LPqbdlTtKTWZdRNajJUpm
-	WHGjDk+1FRQlO7c7kNMjnrBt9NV2L1BaMoaTZj+8fRfm3kaw9gUb8jUtBj1h5Yo8IyhRwzw0=
-X-Google-Smtp-Source: AGHT+IFhkM3OKIYZ93q3zFo4tpZKrSRaN1CT2/veh5W7Rq8BDbOwn+wtTdHslVzv0uNMo1/McPbcEg==
-X-Received: by 2002:a05:600c:489a:b0:459:d8c2:80b2 with SMTP id 5b1f17b1804b1-46e329af060mr29111225e9.7.1758817432312;
-        Thu, 25 Sep 2025 09:23:52 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm3534819f8f.24.2025.09.25.09.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:23:51 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	upstream@airoha.com
-Subject: [PATCH v3 4/4] PCI: mediatek: add support for Airoha AN7583 SoC
-Date: Thu, 25 Sep 2025 18:23:18 +0200
-Message-ID: <20250925162332.9794-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925162332.9794-1-ansuelsmth@gmail.com>
-References: <20250925162332.9794-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1758817460; c=relaxed/simple;
+	bh=ZseXcKJOoFZwJc+bmSlC9mOKhka3TjWkK31x0E+BHRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mpo9hjc8Bz0uSdkU3VthowgWzFeukqgu6CulWdsM8qdlegMNO8r4hXTZ/LLkkehXlrIEzrLkfkOG5zpLktxts0Yi9h0HGw6v8ZZSQLJ/Ojd0xOtNwsPLP8zY/F6NFW1JqrpJlVPH9tEqvmVFq3DSq+70EaIayxkdCy7fOk9cv/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j2Di+Id6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1758817454;
+	bh=ZseXcKJOoFZwJc+bmSlC9mOKhka3TjWkK31x0E+BHRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j2Di+Id6LYcdiJsOkoU4u8V2kFwnn3m3bUt2gNI+v2W7wHw8taZU6GPWSuaJe/fPr
+	 0/TQQVrgaiLyk55MmajgsiXsnx2nujbfLQwt/x6AHg1WnGZitAca6X0Vyh0VfSnxgg
+	 g/gDT3CbinJR+AXQwv9pfagU+rVJI+YQ4yX+ehWM=
+Date: Thu, 25 Sep 2025 18:24:02 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
+	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-kernel@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH v3 05/12] tools/nolibc: implement %m if errno is not
+ defined
+Message-ID: <a8e4b65c-8d1d-49ac-8f33-00a46a8b9f11@t-8ch.de>
+References: <20250924142059.527768-1-benjamin@sipsolutions.net>
+ <20250924142059.527768-6-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250924142059.527768-6-benjamin@sipsolutions.net>
 
-Add support for the second PCIe line present on Airoha AN7583 SoC.
+On 2025-09-24 16:20:52+0200, Benjamin Berg wrote:
+> From: Benjamin Berg <benjamin.berg@intel.com>
+> 
+> For improved compatibility, print %m as "unknown error" when nolibc is
+> compiled using NOLIBC_IGNORE_ERRNO.
+> 
+> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
 
-This is based on the Mediatek Gen1/2 PCIe driver and similar to Gen3
-also require workaround for the reset signals.
+Thanks for taking care of this.
 
-Introduce a new bool to skip having to reset signals and also introduce
-some additional logic to configure the PBUS registers required for
-Airoha SoC.
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/pci/controller/pcie-mediatek.c | 85 +++++++++++++++++++-------
- 1 file changed, 63 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 24cc30a2ab6c..640d1f1a6478 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -147,6 +147,7 @@ struct mtk_pcie_port;
-  * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-  * @need_fix_device_id: whether this host's device ID needed to be fixed or not
-  * @no_msi: Bridge has no MSI support, and relies on an external block
-+ * @skip_pcie_rstb: Skip calling RSTB bits on PCIe probe
-  * @device_id: device ID which this host need to be fixed
-  * @ops: pointer to configuration access functions
-  * @startup: pointer to controller setting functions
-@@ -156,6 +157,7 @@ struct mtk_pcie_soc {
- 	bool need_fix_class_id;
- 	bool need_fix_device_id;
- 	bool no_msi;
-+	bool skip_pcie_rstb;
- 	unsigned int device_id;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
-@@ -679,28 +681,30 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 		regmap_update_bits(pcie->cfg, PCIE_SYS_CFG_V2, val, val);
- 	}
- 
--	/* Assert all reset signals */
--	writel(0, port->base + PCIE_RST_CTRL);
--
--	/*
--	 * Enable PCIe link down reset, if link status changed from link up to
--	 * link down, this will reset MAC control registers and configuration
--	 * space.
--	 */
--	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
--
--	/*
--	 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
--	 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
--	 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
--	 */
--	msleep(100);
--
--	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
--	val = readl(port->base + PCIE_RST_CTRL);
--	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
--	       PCIE_MAC_SRSTB | PCIE_CRSTB;
--	writel(val, port->base + PCIE_RST_CTRL);
-+	if (!soc->skip_pcie_rstb) {
-+		/* Assert all reset signals */
-+		writel(0, port->base + PCIE_RST_CTRL);
-+
-+		/*
-+		 * Enable PCIe link down reset, if link status changed from link up to
-+		 * link down, this will reset MAC control registers and configuration
-+		 * space.
-+		 */
-+		writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-+
-+		/*
-+		 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
-+		 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
-+		 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
-+		 */
-+		msleep(100);
-+
-+		/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-+		val = readl(port->base + PCIE_RST_CTRL);
-+		val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-+		       PCIE_MAC_SRSTB | PCIE_CRSTB;
-+		writel(val, port->base + PCIE_RST_CTRL);
-+	}
- 
- 	/* Set up vendor ID and class code */
- 	if (soc->need_fix_class_id) {
-@@ -1105,6 +1109,33 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		goto put_resources;
- 
-+	if (device_is_compatible(dev, "airoha,an7583-pcie")) {
-+		struct resource_entry *entry;
-+		struct regmap *pbus_regmap;
-+		resource_size_t addr;
-+		u32 args[2], size;
-+
-+		/*
-+		 * Configure PBus base address and base address mask to allow the
-+		 * hw to detect if a given address is accessible on PCIe controller.
-+		 */
-+		pbus_regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+								   "mediatek,pbus-csr",
-+								   ARRAY_SIZE(args),
-+								   args);
-+		if (IS_ERR(pbus_regmap))
-+			return PTR_ERR(pbus_regmap);
-+
-+		entry = resource_list_first_type(&host->windows, IORESOURCE_MEM);
-+		if (!entry)
-+			return -ENODEV;
-+
-+		addr = entry->res->start - entry->offset;
-+		regmap_write(pbus_regmap, args[0], lower_32_bits(addr));
-+		size = lower_32_bits(resource_size(entry->res));
-+		regmap_write(pbus_regmap, args[1], GENMASK(31, __fls(size)));
-+	}
-+
- 	return 0;
- 
- put_resources:
-@@ -1205,6 +1236,15 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.setup_irq = mtk_pcie_setup_irq,
- };
- 
-+static const struct mtk_pcie_soc mtk_pcie_soc_an7583 = {
-+	.skip_pcie_rstb = true,
-+	.need_fix_class_id = true,
-+	.need_fix_device_id = false,
-+	.ops = &mtk_pcie_ops_v2,
-+	.startup = mtk_pcie_startup_port_v2,
-+	.setup_irq = mtk_pcie_setup_irq,
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- 	.need_fix_class_id = true,
- 	.need_fix_device_id = true,
-@@ -1215,6 +1255,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- };
- 
- static const struct of_device_id mtk_pcie_ids[] = {
-+	{ .compatible = "airoha,an7583-pcie", .data = &mtk_pcie_soc_an7583 },
- 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
--- 
-2.51.0
-
+> ---
+>  tools/include/nolibc/stdio.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
+> index 724d05ce6962..1f16dab2ac88 100644
+> --- a/tools/include/nolibc/stdio.h
+> +++ b/tools/include/nolibc/stdio.h
+> @@ -321,11 +321,13 @@ int __nolibc_printf(__nolibc_printf_cb cb, intptr_t state, size_t n, const char
+>  				if (!outstr)
+>  					outstr="(null)";
+>  			}
+> -#ifndef NOLIBC_IGNORE_ERRNO
+>  			else if (c == 'm') {
+> +#ifdef NOLIBC_IGNORE_ERRNO
+> +				outstr = "unknown error";
+> +#else
+>  				outstr = strerror(errno);
+> -			}
+>  #endif /* NOLIBC_IGNORE_ERRNO */
+> +			}
+>  			else if (c == '%') {
+>  				/* queue it verbatim */
+>  				continue;
+> -- 
+> 2.51.0
+> 
 
