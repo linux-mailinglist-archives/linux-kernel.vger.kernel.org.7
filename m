@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-832599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655D6B9FDCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:12:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40220B9FE36
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446911C2551C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3F8D562308
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316DF29D289;
-	Thu, 25 Sep 2025 14:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68B22D46CC;
+	Thu, 25 Sep 2025 14:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cfvq3jlm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWuWl3JO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8050128C5AA;
-	Thu, 25 Sep 2025 14:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33109221FC8;
+	Thu, 25 Sep 2025 14:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758809164; cv=none; b=kFIBtvMLYAggS2w/8lcisThGNHannxDUqT9SJPbuWG1T4TaD8DVR4LwfZ1AJNGniq7aCMB87L2gRXJZCgj/3Q7FF7419b0YX4TZe85Otao3YfMUYYYWTZvT54epzF08/ZXxC82SzEEzM4AO+VsmXfy7YiuF03tlzlEdCMCFbba8=
+	t=1758809188; cv=none; b=LBHQjGJ3+Fhg4AyP+uYBboGPY/vjaJzQqcB/dA9jyLKPwionyHcsypoNftQur5kywAuHZ3vmLYbxQNDYOW8WFr5dfpm+1bMy/D9XRTF0r5U5cMvJusxGXNZ/xJYS3yoAUMz9BeHvNEbw09pXQZw0tp9I4OnJ5PDRHS/KZ5s2JJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758809164; c=relaxed/simple;
-	bh=qwOjyCwOolTaR7EQcx24KznBowYJ5bSUlzg8zcIWqRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dP0wQgwj5dsaRDtvhSfTtDtrukIkiBQMnWftHCuoYn9Sia5GCyF5HLq5wnj8NNDocKCAqfZ02JWxDUYUaP84wu65N1RiqxoiBbux07hX28LFbCjgCxG9twYXvgyLGIfK7PAkPZqTaEIJxcWmw0uhvJht878zC8Og8LbjmA/oxbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cfvq3jlm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9E6C113D0;
-	Thu, 25 Sep 2025 14:06:02 +0000 (UTC)
+	s=arc-20240116; t=1758809188; c=relaxed/simple;
+	bh=JZaRkLJomBSdsRDEvpNByeOgtyybOCR1lGmXJvP8BFY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LUn7+fXnFauH2nfMCclX1xlJlouWWfyT79vgEmPSDL21p89VyDvzYFGDKr0NLi8S4WK69IkmVmWtMq3xxx/+QtedJsVFdk/hingW2NGEW1OrIYCgT9kexZ79zVjb4Juty4RPsTRIYVhqrkxxIV67TwLTDVVXEcyBaaAkEMKK2AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWuWl3JO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B97C8C4CEF0;
+	Thu, 25 Sep 2025 14:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758809164;
-	bh=qwOjyCwOolTaR7EQcx24KznBowYJ5bSUlzg8zcIWqRA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Cfvq3jlm5e+UZMh8wPmiquqDrNqEbxS8utvnrArCLQUcVJT7kxD79D26OijzUKSNV
-	 mqhl/Tzz21zSIsHRENfpvyEac/B0Q/ovzxTymWi82kjXQ703hasJM7EbwgULEXv4Vo
-	 nfta7z6QiqxR0HzmOMkO7NkNGi1k9RuyKB77ZiKsV8Re7riS1iPDbzvXcRPzEVnXw7
-	 hw8M5P2qk4Q7l4TtlPnWiIKNnPamKhwQ3P61Av1MMm6c9c7gGrGlb5IbnlOLvMydT0
-	 EIUMUwGJMH0GC6a3ShRbiIXmytVOs6pmdYxcI+aANtbeDazR3Ds0ZsedtxjFh2YVWK
-	 DSXnqoJjwfRDw==
-Date: Thu, 25 Sep 2025 15:05:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the tip tree with the bpf-next tree
-Message-ID: <aNVMR5rjA2geHNLn@sirena.org.uk>
+	s=k20201202; t=1758809187;
+	bh=JZaRkLJomBSdsRDEvpNByeOgtyybOCR1lGmXJvP8BFY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UWuWl3JO3I1hyQnyCuRFoMUj1Qt8daxDMicwUYK9zZCern+4HLS9pUwbsfmRVCf4n
+	 GjCaYCks8GPJgvmd6J/+r9b/xwQ3Pdm5ik8Vj0lWbax/1ffxb/0DbR/AUWu2izkGzK
+	 qztRMiBw0wJasoBpeN1Trc3sHxB7dCSa2pKDqGYcV1NwtS9PJuG+sMCtZE40ZmJpoF
+	 JQMpAQ5uQSYjT5gAJCjt+HVqn6OTTcGloysWtzlR886x1zl/hbazGZtLFoF/JiYAqr
+	 SEjPJ0uJt/HQ8JMHXmWI5+0UBbhWj2aophDg3QgaZTV8zsDmI2kpi9sPzTTB1f6H86
+	 baxi76HXACwhA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAABCAC5B1;
+	Thu, 25 Sep 2025 14:06:27 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Subject: [PATCH net-next v3 0/2] net: stmmac: Drop frames causing HLBS
+ error
+Date: Thu, 25 Sep 2025 22:06:12 +0800
+Message-Id: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5LAhVdHCP2VDM+na"
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFRM1WgC/12OQQ6CMBBFr0JmbQ0dLFBW3sMY08IgTbCYtmkwh
+ LvbdGHU5c+f9/5s4MkZ8tAVGziKxpvFplAdCugnZe/EzJAyYImilJyzadb+hkyMwyDo1FZjiZC
+ On45Gs2bRBSwFZmkNcE3NZHxY3CsvRJ77f1nkjLNe10JQK6XQzVnNgZw69ssjOyJ+c+LDYeKww
+ brWqNJD8ofb9/0NjG7N9t8AAAA=
+X-Change-ID: 20250911-hlbs_2-5fdd5e483f02
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758809186; l=1247;
+ i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
+ bh=JZaRkLJomBSdsRDEvpNByeOgtyybOCR1lGmXJvP8BFY=;
+ b=cjIvuKTzoFGnXBwe3ISNMpVhnpZwew0JHYG4Cg3JIILuwsqz/31E73x5REcfTS+HOiIBAxP40
+ 5LpEvSW8hGRBsW89XRb0Ndgdh0Hd8lnVPVPYxTf5ljE4KsOiQFCMIH5
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
+ with auth_id=494
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
+
+This patchset consists of following patchset to avoid netdev watchdog
+reset due to Head-of-Line Blocking due to EST scheduling error.
+ 1. Drop those frames causing HLBS error
+ 2. Add HLBS frame drops to taprio stats
+
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+---
+Changes in v3:
+- Split commit into 2 and add this cover letter
+- Updated the commit messages with expansion for HLBS and DFBS
+- Link to v2: https://lore.kernel.org/r/20250915-hlbs_2-v2-1-27266b2afdd9@altera.com
+
+Changes in v2:
+- Removed unnecessary parantheses
+- Link to v1: https://lore.kernel.org/r/20250911-hlbs_2-v1-1-cb655e8995b7@altera.com
+
+---
+Rohan G Thomas (2):
+      net: stmmac: est: Drop frames causing HLBS error
+      net: stmmac: tc: Add HLBS drop count to taprio stats
+
+ drivers/net/ethernet/stmicro/stmmac/common.h     | 1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_est.c | 9 ++++++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_est.h | 1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c  | 7 +++++--
+ 4 files changed, 13 insertions(+), 5 deletions(-)
+---
+base-commit: 12de5f0f6c2d7aad7e60aada650fcfb374c28a5e
+change-id: 20250911-hlbs_2-5fdd5e483f02
+
+Best regards,
+-- 
+Rohan G Thomas <rohan.g.thomas@altera.com>
 
 
---5LAhVdHCP2VDM+na
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the tip tree got a conflict in:
-
-  kernel/events/uprobes.c
-
-between commit:
-
-  4363264111e12 ("uprobe: Do not emulate/sstep original instruction when ip=
- is changed")
-
-=66rom the bpf-next tree and commit:
-
-  ba2bfc97b4629 ("uprobes/x86: Add support to optimize uprobes")
-
-=66rom the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc kernel/events/uprobes.c
-index c2ff256dd6419,996a81080d563..0000000000000
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@@ -2741,13 -2765,9 +2765,16 @@@ static void handle_swbp(struct pt_regs=20
- =20
-  	handler_chain(uprobe, regs);
- =20
- +	/*
- +	 * If user decided to take execution elsewhere, it makes little sense
- +	 * to execute the original instruction, so let's skip it.
- +	 */
- +	if (instruction_pointer(regs) !=3D bp_vaddr)
- +		goto out;
- +
-+ 	/* Try to optimize after first hit. */
-+ 	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-+=20
-  	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
-  		goto out;
- =20
-
---5LAhVdHCP2VDM+na
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVTEYACgkQJNaLcl1U
-h9AWmwf/YB690biEQ07FUoa3KLaQrXJTZruYuUwKmf8CRoxxjfKjozPZcgIE6ah8
-H18vF/wTtFPWIa5p63xsn27T2qp+O733k8hPEG3/78oUZnN1AE5G04FKvTp1Z1K9
-siCQIXz9RmwFT4g6FUHbyri+e8f3ydtdgYFA3MXQPJPk1gH76WdOvtiXzn9eGat1
-LuoM0sW0W06Qfa7eyHIBOObhzWXGdPszAyQZh6ozbDp7dFqqnoiaYoVBGPuUUopX
-3JnTjliiXenSVutfh2zFPCd6P2Dm4ArVhYop5bXZnetownHP3HKUZHxwVGiv72tm
-nmtl0xjNXo0hEPGZXwChzKewy6T48g==
-=CP6V
------END PGP SIGNATURE-----
-
---5LAhVdHCP2VDM+na--
 
