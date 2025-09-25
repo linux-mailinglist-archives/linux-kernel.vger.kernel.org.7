@@ -1,102 +1,151 @@
-Return-Path: <linux-kernel+bounces-833322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7BDBA1AFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F8FBA1AA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D33C97BDD35
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1DC17933A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243373218D8;
-	Thu, 25 Sep 2025 21:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CF5279358;
+	Thu, 25 Sep 2025 21:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OGhtGj3U"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gIFat5Te"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8384F32128D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64833FC2;
+	Thu, 25 Sep 2025 21:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758836784; cv=none; b=b7Co0eB8ohxxXLPoJRsggzYy7lO6hTE6CyQxUckLwHlNh4LzDGISZCtldj1YfOkPJHSiqPOw+pf6jT8OwaA2XaVbQ4UZrbO5hw8mjyJpwaECHTJlnLG8GRG15teSGVcSrsnkwwDyNZbfX9LBZgA9VGkcOhylOyf/xvEZtuWiEEo=
+	t=1758836814; cv=none; b=Ie++Wtf/qI76eS/cKKbZg1DeCfcsPy35KmeXXCIA7RmJewN91uwt0zJ2vaYDVzLdByfuPQ+mUHEPRKZT3aNTQpsFwh09XCU7iXlnr08Hy8GJ7dvTz064juV+tVL6DoY//v0rwQ2CdERYI5zF1pfjNNAfa1vJLVR4FmuAclSbN24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758836784; c=relaxed/simple;
-	bh=tf3+NCwDdfrUfesghafUqKE5MStmQh9pxyBMY46dNdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FzZq8mwgzAQxc7WC1qGiP+k0Oo47qpVQPvy7XlrsbuELuoCEeQkDiabl7Qp5zgDh7KfneWUtjbFMOjm8MLemUf1dSU+k8MB83voLhWUbzXmifgSi6hT+DlG1cjFQcWp6EZOn3V/iBeOc1Ltlh0wF6GgD/hcaowursO9NYWspMz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OGhtGj3U; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=tf3+
-	NCwDdfrUfesghafUqKE5MStmQh9pxyBMY46dNdA=; b=OGhtGj3UoMALkb9FxkRX
-	hAJMEeJr+8grQPU2HsYaIB5Lyz3I/jraFvmhycFWMKNzsfiwcwgIEzjFSLWXOf1e
-	Gi3s7QLOu+5GV2xFDhpOFJQ5/2EPa2zZN51XiiIAFkF+EJa08qzfl0XIE8bJ+8/r
-	m1OkuSzwNzjBlCqibYgOe5Ik6e1T8RryxZp1VQM90uqcO7wWLEWAPL/OYUSndkEr
-	cZDXKRQR8QerFUQNmyyxiSK3VZyD3LrWqnOnMBPwkHKh9geaT5ohe53LIakXqZ55
-	3a2Xe3+y3eGt0PN09m7sZG3aJ3H+byuZKTKWcjCIgGfUY/y8lZkwXuQtrA3ahQh5
-	VA==
-Received: (qmail 2023196 invoked from network); 25 Sep 2025 23:46:20 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 23:46:20 +0200
-X-UD-Smtp-Session: l3s3148p1@f0p+Gac/XJIujntx
-Date: Thu, 25 Sep 2025 23:46:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: andi.shyti@kernel.org, orsonzhai@gmail.com,
-	baolin.wang@linux.alibaba.com, patrice.chotard@foss.st.com,
-	zhang.lyra@gmail.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: busses: Fix some spelling errors
-Message-ID: <aNW4K6YfrDxhT7Y0@shikoro>
-References: <20250827094344.424700-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1758836814; c=relaxed/simple;
+	bh=WKpoc9+9K5GGgKrOubiqmZ+Fm1Kf3gzxbsj2jNle1hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cLB7vIW/XX8p5qXcY5+GA5Pw7+KaInx/QPG2qW895yi0pwJR/VBaA96PVChWKntGU5czilngurvLb6XnNEAebMlVYZDI+TfezlEoIntL1+eawZGaaCivE9ulnuDbnjAWkBKfe/iIPrhs05Fz9lGiUvrwBnIF5MyoeULEjJPrOgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gIFat5Te; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PImZPZ018041;
+	Thu, 25 Sep 2025 21:46:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Hm9hP/
+	63NIlAC2AM2rcR859l86G4CCxgjB4jsqGxKe0=; b=gIFat5TeP6kCBAolsemnoC
+	RLgO309c6OhZN0RrnehSUq9Nu32vZCuhE80nGR7YO2WWDZJGMHXq0tr0rrQ320g1
+	jakFWiEUMKXm/dHNZs2XjH3tnrWpNeHRPG+Ic8voAUm5fcowBhYYbPOJo++Qh6Q2
+	OtUaWyX1WNXApiqWqqq7WhJQ2aUwAsOjqBGL64R3NxgDaOcgejnUcJG/dkvkXwiR
+	/VDATYdmKYOPtyA+BUaBvGScHILNFPg5K003X4cFNV+t+8dIVOpeReeJwkoCNiqp
+	pTgtgRWGo7cqEV4RbbHnu0drIQaqJExug+E/rmHdlWyLiC3R8bk3AwqpH9vnIqYw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbd8u3c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 21:46:42 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58PLkfVV028392;
+	Thu, 25 Sep 2025 21:46:41 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbd8u39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 21:46:41 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PLdq9F006428;
+	Thu, 25 Sep 2025 21:46:40 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpgvyq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 21:46:40 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PLkaGK43778482
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 21:46:36 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7391620043;
+	Thu, 25 Sep 2025 21:46:36 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8966720040;
+	Thu, 25 Sep 2025 21:46:35 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.87.151.15])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Thu, 25 Sep 2025 21:46:35 +0000 (GMT)
+Date: Thu, 25 Sep 2025 23:46:33 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+        "D.
+ Wythe" <alibuda@linux.alibaba.com>,
+        Dust Li <dust.li@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang
+ <wenjia@linux.ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        Tony Lu
+ <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH net-next v3 2/2] net/smc: handle -ENOMEM from
+ smc_wr_alloc_link_mem gracefully
+Message-ID: <20250925234633.3f0db19c.pasic@linux.ibm.com>
+In-Reply-To: <30a1dc4e-e1ef-43bd-8a63-7a8ff48297d2@redhat.com>
+References: <20250921214440.325325-1-pasic@linux.ibm.com>
+	<20250921214440.325325-3-pasic@linux.ibm.com>
+	<cd1c6040-0a8f-45fb-91aa-2df2c5ae085a@redhat.com>
+	<20250925170524.7adc1aa3.pasic@linux.ibm.com>
+	<30a1dc4e-e1ef-43bd-8a63-7a8ff48297d2@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="INvyPOss5gw3lfXr"
-Content-Disposition: inline
-In-Reply-To: <20250827094344.424700-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=F/Jat6hN c=1 sm=1 tr=0 ts=68d5b842 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=gcIiauuOHNroVWZtbkkA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX1UaTgoUMjRDy
+ AAalRIIPJZ0fRvRVZp8FA/ouqDsLpQ+3HLpf/XofMIOO2zjm/gylEWzrZClbujy9TjBY1yYVtxv
+ hP/KDkMCasCWhd+GtNUcyzbTkvtpmeFKZHs1DM+ZJtXUVs3C5EySoyY4v7GtoA3VZJu3HwnEkXz
+ CZI/ZTwkEGK93uErxDgIsIWa7dM946fVlwTmyIAx5fWMkzOhm/EWPFjKNKIrIcDjYsGm3ccxl47
+ AJm0ikpzFAdCCx5SRLgdNOT4q4K2FAZtZEDWwaX9OWgOAilE7VDcShm/T3Y0aRj9CkZMvJKPw9p
+ L9NmT//8oDaWbZEVfIYDMrjwlXowNtdUYSKPr/TeLbMYlSuroQOTrowPiYhrOqZji443fjarjRW
+ WMOqd0mEvrmOir39DFfDjfDCVyqypg==
+X-Proofpoint-GUID: 6ZFowF36Cau9lYzkJEqovgmnubqUtIbW
+X-Proofpoint-ORIG-GUID: JSD8DgPPMK9RnzsH7PPWtR66_XcfgGw2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
 
+On Thu, 25 Sep 2025 17:41:29 +0200
+Paolo Abeni <pabeni@redhat.com> wrote:
 
---INvyPOss5gw3lfXr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > So I would prefer sticking to the current logic.  
+> 
+> Ok, makes sense to me. Please capture some of the above either in the
+> commit message or in a code comment.
 
-On Wed, Aug 27, 2025 at 05:43:44PM +0800, Xichao Zhao wrote:
-> Fix spelling errors in some comments.
->=20
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+I will make sure to add to the commit message that the ratio is preserved
+when backing off and spell out the old values the 'we give up condition'.
+Maybe add some more words on possible implications for v4.
 
-Applied to for-next, thanks!
+Thank you very much for your review!
 
-
---INvyPOss5gw3lfXr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVuCsACgkQFA3kzBSg
-KbascQ//ZeRn2CT+ztmeiyCsiALzGbSeEXEAilLCWxSkQf2NLoJi4fnNsM1k0afa
-RF5rfG5MKmKHZ8OGR1xJ48R2C3M4HCFB2Z1j7qk2UOWflLeV2/3FRyQwDXYK4RGt
-F+I2PqukQd6Tg0to/Pgs8BtOTvvXe8xcg6o2KXLeAcOByyFvqNlloPly6bMZaw2Z
-f2DV6u7Uklh8P0XrhGbiOMKI53yfQp/dO0h+mSwzTiwweXBd9Bt5PokeKMwPq1uo
-7LIFZNkwIWc0BUUsEZudul+si92VI9HYa3ZPmIi2HqHHvLFJzPQb3tK3Bz23nZ3h
-oc+R4v1EJZkhMuEWjm4VRF1JunkNROQ9WGz5VD01yAQNJrzina49DbGzbDp9rCAT
-G+H7+yk8uIu6KmX51l4X0c+oxV15jSNmGoG4J0duewE5ZrEfxFZo2xrreo757YqG
-pHCP4K1FfdUGAFQcYNOc1Hb0Xsm11TOEoFjAko/neuGKw87kF6ctSBjSiN52zXPi
-SQ+G5SRwGfT/Qx/89O/+hRzKF45JB4B1AIfR618F2ILozz14ujqrgB8S79dYnE1x
-oFHbgJCsr/efGhEL0V3CgErYzBWeN5GcNGvyAa331XOeDVfTJOloqEVD7/cPCRpY
-/RaCaArFHkLyLt8gMFhDysgoNPYkZqDVRJtj5dcDQ8AtL5gZP3k=
-=Ck0D
------END PGP SIGNATURE-----
-
---INvyPOss5gw3lfXr--
+Regards,
+Halil
 
