@@ -1,121 +1,215 @@
-Return-Path: <linux-kernel+bounces-832946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99384BA0D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37108BA0D13
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0531BC7F0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B0D3AAB38
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEFC30E823;
-	Thu, 25 Sep 2025 17:23:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A2D30CD82;
+	Thu, 25 Sep 2025 17:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxM8MUMP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C254F30CD95
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E1D30C343;
+	Thu, 25 Sep 2025 17:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820998; cv=none; b=LKRK2NEBjeP3DCrE0lvjeusrTRSLuWkFPbkixLocbAT43CWQ86U3OlSAxaLfKqTybuJG7SnjZHGLCEO1kf6IiZ56I368FSYNNDSkyIXNby2zhsCzxWNVvvJ3W81jFUE/5lv+q9MZw7MuGXE07XVWjfSbKf7652ZI1Of/uyzApk8=
+	t=1758820994; cv=none; b=JG6rotD5UekE63bjTyVkYsQR+Y7d5EkScaZgLIO9775e9uOLQLSxZ0Y6DUSMq7f42wpzKSkdKYJyfkJOLaxokMK4mopoK1Wh6aRgVXRdO5p6Zzma8KoTj6qO10l1sFYW8CradDWoPZxC3rXBBJxOTvZqii9YOxiaELbcKiI7rRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820998; c=relaxed/simple;
-	bh=hV7kWSbUXgR4pgG8d1HMAVkG/Zftdd5SK/3zrvWp1cM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mviYbpIeERSwVTafKSwZj3u/B1A3qpkmiSLDhWyCmdH6Mbtk+bsQKP36/UBL2mHMicgLy1HEGBNJROHoSjG7u6YuiiX/jBZRfUxq4Cf/12425bP59cs78qcrWcER+oFUMoXgHvMnbN3H52jL8ydfc01pgBKuNE1NLzfPlMw4rpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cXgVL4L9xz67j73;
-	Fri, 26 Sep 2025 01:21:14 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21E7F1402F0;
-	Fri, 26 Sep 2025 01:23:11 +0800 (CST)
-Received: from localhost (10.47.28.112) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 25 Sep
- 2025 18:23:09 +0100
-Date: Thu, 25 Sep 2025 18:23:08 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Gregory Price <gourry@gourry.net>
-CC: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>, Wei Xu
-	<weixugc@google.com>, David Rientjes <rientjes@google.com>, Matthew Wilcox
-	<willy@infradead.org>, Bharata B Rao <bharata@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<dave.hansen@intel.com>, <hannes@cmpxchg.org>, <mgorman@techsingularity.net>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <raghavendra.kt@amd.com>,
-	<riel@surriel.com>, <sj@kernel.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
-	<xuezhengchu@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
-	<byungchul@sk.com>, <kinseyho@google.com>, <joshua.hahnjy@gmail.com>,
-	<yuanchu@google.com>, <balbirs@nvidia.com>, <alok.rathore@samsung.com>,
-	<yiannis@zptcorp.com>, "Adam Manzanares" <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <20250925182308.00001be4@huawei.com>
-In-Reply-To: <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
-References: <20250910144653.212066-1-bharata@amd.com>
-	<aMGbpDJhOx7wHqpo@casper.infradead.org>
-	<aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
-	<7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
-	<CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
-	<20250917174941.000061d3@huawei.com>
-	<5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
-	<20250925160058.00002645@huawei.com>
-	<aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
-	<20250925162426.00007474@huawei.com>
-	<aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758820994; c=relaxed/simple;
+	bh=t2//roIbCIlmxsTNxuZSq0Qg7Row5ASpt4n46USYK/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pDCYwsfJGIk+TH21BNs6KZ4iPguhdl66vyQBAa071oQGfDGDVy21BV3SWL/5TDqTdg+R4FJKSXQOIYbxgppK0eIn3jm8EbrwL5bVpn58hC4CCOL3SXQsTppTVlyQWvLSJVKVDnTI+/aBLdHQj01Qhvrm2U0MqXeihUcMI6rbeDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxM8MUMP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12286C4CEF0;
+	Thu, 25 Sep 2025 17:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758820994;
+	bh=t2//roIbCIlmxsTNxuZSq0Qg7Row5ASpt4n46USYK/s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CxM8MUMPcGIFn0l+Zb4XXihEFJ9xl6DLBjOgFiZ6tOHuO4lBMZQ3nlT4YBiIyb+wH
+	 FskHTARFVpYLUvxdlDRqjE7cJkI27l7ZHPKAZU0YkS0Zfc/kWKsGoIagPuZbXFWZnR
+	 HFwqsLnsIuQV1Q6P7nGWmX99BikNNCxMqVPCafvEmj7JSfBhq4v8V5HBAarzt8/mIu
+	 9SO71Cp8MMusWESVxcX5jus30ZABRZ0/AXV/O+drKl8zHMl/u/xZbGYS33s5cfvLNt
+	 EddkirD6zJe++vaKp/uzwHOrEaqjcbPY3fEOsN8uyafJ6HvOXNpTKF+pIYOJBpcHVD
+	 8U3P5+yIO/txw==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Subject:
+ [PATCH v2 3/4] ACPI: CPPC: Do not use CPUFREQ_ETERNAL as an error value
+Date: Thu, 25 Sep 2025 19:23:09 +0200
+Message-ID: <12773788.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <3925838.kQq0lBPeGt@rafael.j.wysocki>
+References:
+ <8605612.T7Z3S40VBb@rafael.j.wysocki> <3925838.kQq0lBPeGt@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 25 Sep 2025 12:06:28 -0400
-Gregory Price <gourry@gourry.net> wrote:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> On Thu, Sep 25, 2025 at 04:24:26PM +0100, Jonathan Cameron wrote:
-> > The CoW thing only works because it's a permissions fault at point of
-> > asking for permission to write (so way before it goes into the cache).
-> > Then you can check margins to make sure you can still sink all outstanding
-> > writes if they become uncompressible and only let the write through if safe
-> > - if not promote some stuff before letting it proceed.
-> > Or you just promote on write and rely on the demotion path performing those
-> > careful checks later.
-> >  
-> 
-> Agreed.  The question is now whether you can actually enforce page table
-> bits not changing.  I think you'd need your own fault handling
-> infrastructure / driver for these pages.
-> 
-> This does smell a lot like a kernel-internal dax allocation interface.
-> There was a bunch of talk about virtualizing zswap backends, so that
-> might be a nice place to look to insert this kind of hook.
-> 
-> Then the device driver (which it will definitely need) would have to
-> field page faults accordingly.
-> 
-> It feels much more natural to put this as a zswap/zram backend.
-> 
-Agreed.  I currently see two paths that are generic (ish).
+Instead of using CPUFREQ_ETERNAL for signaling an error condition
+in cppc_get_transition_latency(), change the return value type of
+that function to int and make it return a proper negative error
+code on failures.
 
-1. zswap route - faulting as you describe on writes.
-2. Fail safe route - Map compressible memory it into a VM (or application)
-   you don't mind killing if we loose that promotion race due to
-   pathological application.  The attacker only disturbs memory allocated
-   to that application / VM so the blast radius is contained.
+No intentional functional impact.
 
-Jonathan
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> ~Gregory
+v1 -> v2:
+   * Change cppc_get_transition_latency() return value data type to int
+   * Make it return -ENODATA on errors (Mario)
+   * Update its callers accordingly
+   * Adjust the subject and changelog
+   * Add a missing empty code line to cppc_get_transition_latency()
+
+The modifications of this patch don't affect any other patches in the series:
+
+https://lore.kernel.org/linux-pm/8605612.T7Z3S40VBb@rafael.j.wysocki/
+
+---
+ drivers/acpi/cppc_acpi.c       |   15 ++++++++-------
+ drivers/cpufreq/amd-pstate.c   |    8 ++++----
+ drivers/cpufreq/cppc_cpufreq.c |    4 ++--
+ include/acpi/cppc_acpi.h       |    6 +++---
+ 4 files changed, 17 insertions(+), 16 deletions(-)
+
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -1876,7 +1876,7 @@ EXPORT_SYMBOL_GPL(cppc_set_perf);
+  * If desired_reg is in the SystemMemory or SystemIo ACPI address space,
+  * then assume there is no latency.
+  */
+-unsigned int cppc_get_transition_latency(int cpu_num)
++int cppc_get_transition_latency(int cpu_num)
+ {
+ 	/*
+ 	 * Expected transition latency is based on the PCCT timing values
+@@ -1889,31 +1889,32 @@ unsigned int cppc_get_transition_latency
+ 	 *              completion of a command before issuing the next command,
+ 	 *              in microseconds.
+ 	 */
+-	unsigned int latency_ns = 0;
+ 	struct cpc_desc *cpc_desc;
+ 	struct cpc_register_resource *desired_reg;
+ 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu_num);
+ 	struct cppc_pcc_data *pcc_ss_data;
++	int latency_ns = 0;
+ 
+ 	cpc_desc = per_cpu(cpc_desc_ptr, cpu_num);
+ 	if (!cpc_desc)
+-		return CPUFREQ_ETERNAL;
++		return -ENODATA;
+ 
+ 	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
+ 	if (CPC_IN_SYSTEM_MEMORY(desired_reg) || CPC_IN_SYSTEM_IO(desired_reg))
+ 		return 0;
++
+ 	else if (!CPC_IN_PCC(desired_reg))
+-		return CPUFREQ_ETERNAL;
++		return -ENODATA;
+ 
+ 	if (pcc_ss_id < 0)
+-		return CPUFREQ_ETERNAL;
++		return -ENODATA;
+ 
+ 	pcc_ss_data = pcc_data[pcc_ss_id];
+ 	if (pcc_ss_data->pcc_mpar)
+ 		latency_ns = 60 * (1000 * 1000 * 1000 / pcc_ss_data->pcc_mpar);
+ 
+-	latency_ns = max(latency_ns, pcc_ss_data->pcc_nominal * 1000);
+-	latency_ns = max(latency_ns, pcc_ss_data->pcc_mrtt * 1000);
++	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_nominal * 1000);
++	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_mrtt * 1000);
+ 
+ 	return latency_ns;
+ }
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -872,10 +872,10 @@ static void amd_pstate_update_limits(str
+  */
+ static u32 amd_pstate_get_transition_delay_us(unsigned int cpu)
+ {
+-	u32 transition_delay_ns;
++	int transition_delay_ns;
+ 
+ 	transition_delay_ns = cppc_get_transition_latency(cpu);
+-	if (transition_delay_ns == CPUFREQ_ETERNAL) {
++	if (transition_delay_ns < 0) {
+ 		if (cpu_feature_enabled(X86_FEATURE_AMD_FAST_CPPC))
+ 			return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
+ 		else
+@@ -891,10 +891,10 @@ static u32 amd_pstate_get_transition_del
+  */
+ static u32 amd_pstate_get_transition_latency(unsigned int cpu)
+ {
+-	u32 transition_latency;
++	int transition_latency;
+ 
+ 	transition_latency = cppc_get_transition_latency(cpu);
+-	if (transition_latency  == CPUFREQ_ETERNAL)
++	if (transition_latency < 0)
+ 		return AMD_PSTATE_TRANSITION_LATENCY;
+ 
+ 	return transition_latency;
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -310,9 +310,9 @@ static int cppc_verify_policy(struct cpu
+ 
+ static unsigned int get_transition_latency_from_cppc(unsigned int cpu)
+ {
+-	unsigned int transition_latency_ns = cppc_get_transition_latency(cpu);
++	int transition_latency_ns = cppc_get_transition_latency(cpu);
+ 
+-	if (transition_latency_ns == CPUFREQ_ETERNAL)
++	if (transition_latency_ns < 0)
+ 		return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_USEC;
+ 
+ 	return transition_latency_ns / NSEC_PER_USEC;
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -160,7 +160,7 @@ extern unsigned int cppc_khz_to_perf(str
+ extern bool acpi_cpc_valid(void);
+ extern bool cppc_allow_fast_switch(void);
+ extern int acpi_get_psd_map(unsigned int cpu, struct cppc_cpudata *cpu_data);
+-extern unsigned int cppc_get_transition_latency(int cpu);
++extern int cppc_get_transition_latency(int cpu);
+ extern bool cpc_ffh_supported(void);
+ extern bool cpc_supported_by_cpu(void);
+ extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
+@@ -216,9 +216,9 @@ static inline bool cppc_allow_fast_switc
+ {
+ 	return false;
+ }
+-static inline unsigned int cppc_get_transition_latency(int cpu)
++static inline int cppc_get_transition_latency(int cpu)
+ {
+-	return CPUFREQ_ETERNAL;
++	return -ENODATA;
+ }
+ static inline bool cpc_ffh_supported(void)
+ {
+
+
 
 
