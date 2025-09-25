@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-832821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF047BA07B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EF6BA07A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256EF382FC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4E24E75F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6948F302CA3;
-	Thu, 25 Sep 2025 15:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C6D2FFFBE;
+	Thu, 25 Sep 2025 15:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QLJsLSRf"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ON6CbBYB"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B73288C26
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E02A3043C8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758815679; cv=none; b=IF0rD8IqdOqXSPjITkSQMvTLFRfyB2fTgAOzYu8bHMhoEg0ZyeaH7+jw7bDKHX+szBxybMoVzh8lZ30NDhRQeAGDne+fEh4/OBK7tdlt2GEE5Fl/CyhKYF7va3OtDy61l8hwhaq6L1FZmgw6FTAyB7PgYluZW2VNu4I4VcQYJ8Y=
+	t=1758815626; cv=none; b=KetZF4mVmF2HUQOXN3gxoYi124WNcDMjFrFsEtDUzL/2Bnut9ZHBjF6RNkbyMnxjvyYc/XhVvPCgy47TKCn0arqmEKTEop246aaxOGqCkY/F31f90T7pviDcy1ljOkXnv879w7Rcz7VhGQSQUaCffHulP5nBBw7migjIkhlqlWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758815679; c=relaxed/simple;
-	bh=ojCNNYW52cZuOXTTZ1C9ikWFiXRXEas5maODIAHgHzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DHlHXoUf6xtB+08ZbaoYAuXjfjX58ujfd4c7kKJyz5kCuDIiXc43SHKw5VxWT52L3k5tGnLH75Y7SeJvGcX+vfiGPfdR09eYGiLDXHWCozvRiJE/SxG/hWnTLlTHFbBxbTEihn/d7CA2dd8RkuiDopFjtc15Nnmqq1TAwpSi7Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QLJsLSRf; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1758815626; c=relaxed/simple;
+	bh=vqa5P6oczfhyljtf37ARWG4nhCr1jF20jEq+N4qGoAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qpCBkfUhmzuTh0H3R5SswpaPwJby4Bj4k5yra33Vf1Hb416IbUI+tyI9CkBvWFTbkgCQYrx/F4WLWPJdEL+uQMk76LnzgyM92LJuMRCMhnuUrFL9jUFdq/Dr8pqVjI5wm3reooiLJ/tKPSd7jBbSwig2IIZLvnj0WYvP1D+a2QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ON6CbBYB; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27c369f898fso13373085ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:54:38 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46cb53c5900so12669315e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:53:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758815678; x=1759420478; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758815622; x=1759420422; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6unFOdw+25OSo9KKla+RTEP3PML4rL1MzRrdobrk3g=;
-        b=QLJsLSRfGr3Xn6JteVlV6Hv3KJRmQLgdaEHBILafIiCbTAsrbnXqjYpJXVqbDHtGCb
-         KxK2VgW0+Y0UuEEOCR8gUyS5woBzagnubLCc/lzzYpIQOJDkou7lINHCcEXq9efQMSVM
-         k/FQ2EMFew/OCPLEBtb+hIs0MpLpEXAhmn1Q6fsNeFcf/sysGVT77jCgN8j7uGCsd36s
-         A8L2BWG9TKAV/Mfa9r0zuVkLh93SpmqYZ1FzohSGyc96paZdBmhnQ1mD17gBW31SwqpE
-         H/rg+JgZbGRZ4wYsQA8jm+NMjyKHSHyly0ICamOU0DqZvwNpr6HZJnNsqmjZ+y06h/Jw
-         agQQ==
+        bh=aJqNYQ4cdfTFLv2z2ldssPg3Z08F+8b/OmsBnqjGcYc=;
+        b=ON6CbBYBY7xb6rmXno9lxNNU8smXMHCG5OeWILtLySOFg3YO5xiwSBbcG4wbbyHM6U
+         L17X7WGwbD8tQR9a9Y41mjivYaPohcQoqaiqXa6hJ5arT8brd6T+pQp+/U3gCtAJ1hmI
+         x0m1Ni+NqgAbXRPVnf7c7M1jerBxgsuLHpdvaI0hazrPO72m7o4A1HLDryubSggB8SOi
+         8XEqTnHhc3AFUN71CWhFnTi2EtDLHDkssiGDNLL3CQdEOgRTWq3nlJ9zrBPqua4kqAXo
+         qfoFIzRa8hZcOz0gwLe8v6hu+PyOAzRk1Wv1rU2QO9krSCLB5h7fXpv1NIpN982znRnM
+         nsgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758815678; x=1759420478;
+        d=1e100.net; s=20230601; t=1758815622; x=1759420422;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N6unFOdw+25OSo9KKla+RTEP3PML4rL1MzRrdobrk3g=;
-        b=rpF/Q5TGW822ClHVKa/isGD265yZ8psCNr29r6L0cQ1Y/aSI4P7mmHIYWIc+fY/Ozd
-         lEQuQZYNOFlD/GFMccJH1qZFLnIS0TgP3bPMEbqSEgwVjIc2pYVdMkfoev0+TRGpAI/W
-         yJevsJ1GYWCi+rb3889SI1gx0D+jsXN+456THlCGo0Sarv9sbjwsPX8xUq4LjHcYB9LX
-         VpbDvT7CpuHci85EvSviAa4amtbXaM68I3ZEy5EJvwtmktfNXN+UpjkRgXP9cx1uUY9b
-         IgVWroEwRjmY7gSpQnVizklZXSpsdRl1uZZYVjt7RzN9ftMq/mD8Hs1InALpSBQK2o+R
-         pFBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMjh9sZpjkj++YFquma7iTBNTuDcLQaztUeb1hpW6IB/YAekQRJtWHL3nZ3OxCHF0ke5ZR8MMr6YbSy80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDxFAVZVCdJ8CeU1TZaiPlevgM9MgLze1EtF0geuolaX+CNIMd
-	G6y63M5a4dee8hlCoh/zgamBta4ryjfIjdRgUJgZfxPmL9zHx/Pq3W9o
-X-Gm-Gg: ASbGncupnpLfXrp8UZC1GTQEL4odMQBtn30/UkxFxasq0w1v3EOXY4Aa8VA7wzocn3W
-	AcNZ82m0k8e0BTXN1MQMZpO9mGfMqx0/0QPjgGe/XzHCs6Bjw4cNfvP9ONt7Hl6vnQxoOp5pCsl
-	ZkAfaBDFmS9Rws4X0VxgR8XugnpncUriMrpBOEIkKy9IdceO6EbFMURbE79mYmf3pFPTbP3oqwy
-	8HHiPuTQ5VklZkjrbL+tZRFQVMyz/QGS8ggbDwL3PoY1ZfAsb6UHp4nC0NHR+rb56r/8dyYi/n+
-	Osaiygs0I22I7wfCIW/EH8vTtvLAP5Nz0B/jBNoRvR8FrpJIKJuP+nmUbjZcsHwB9P+uAjj9iyJ
-	aMicku7TOHRiwQwCzS0lYmV0zYnkS7+/Mc/NSmPtflVY8XbNobgtT+ozTxsA=
-X-Google-Smtp-Source: AGHT+IHKoV/EsaWFkrx9mF3ourWO41vWtjCVPz6Q9L0J1SKmQKG2p4xEQAcHF4vrEpICY0p71LH0zw==
-X-Received: by 2002:a17:903:3843:b0:264:7bf5:c520 with SMTP id d9443c01a7336-27ed4a56b3bmr39363515ad.44.1758815677577;
-        Thu, 25 Sep 2025 08:54:37 -0700 (PDT)
-Received: from weg-ThinkPad-P16v-Gen-2.. ([2804:30c:166c:ce00:217:3714:c805:7cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ad15e6sm28447355ad.143.2025.09.25.08.54.34
+        bh=aJqNYQ4cdfTFLv2z2ldssPg3Z08F+8b/OmsBnqjGcYc=;
+        b=bGuc65p+ariQBCKFLV7y8txkaJH5JlLbVnbbB1OmE0pJTrwb2TSTAOgq7qtN7aaIYu
+         cF70hSPjwNsakCgWN6PQhDdO7nBAoDu+qQAYRsZM9u44D7So5gG+NxreTrhP0RPT84+g
+         BRbvYehuUR3CKexg/Etk/PJQO0SDEoQjPRVBDFKDunpNtl9u6Zitwwnzi50ICLyyGabg
+         3lu9zs/YDO2zNLvnquKwKpNrK4mvtt7L5ib5qrV7xUEEJiqL1y84agCKzjcpdButdLT9
+         adQErZhpGHuZCj4xGMDsR8PN/lONFqeHNUZwEHRVlIr3Xl1wrrKlW6ezW7+U6wZPUcLi
+         0cBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyTDbZe4sbGuKFmEknX6JB092aEu/N7gG04rSj8HubBqSf74ScU6fbFUCEzjSOBuHc26r3LjQIQHNbme0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxwZXFJAcmSWJnnKqb9+0PEv3Hq5zAKtoaQAPYs8XxW5/M+k+e
+	jF50YKl6srnFZLiUk7EE70RqMljQVKgtjt2tdPcYp4Q7y+rJLxb23pkn
+X-Gm-Gg: ASbGncu2xQTAvtPbZAysz87yDGcsy11rZmY10mZ1YW5k5cm/QNnJ1W+1F428zWBGiWF
+	tzChPOY/Ios77/ALCUIv6HUQXj/iebRohdRFBWNX2JZycPR+eIkB3v9t1tYcE+9Nm+nzwMTaeuN
+	7iLBwEl4beGW5Ak5EoEJSkYj8CM0ZbRcTgGogVRA7jqbM70o9zAqyMjqcH3yXXeiNH2XwUzk5S1
+	92+rbfOP6u/kwtUZM6GZTzrlo5a8+dLHcRm7/agwDvJ/bRwxLUhBrighhEIYXCll5yAnB+MkPrJ
+	J4JuM6X5B5dlM0ahZ0aBdm/pIwxn0mNorxtjrEaMaN83iDn3xyFYNd6wIYtibwYwZ3Xj/k6OHEI
+	BwBQCj2tf/c9mPZ18AyINYeOgLLn2Qa+p323k2oE2ulWHyu0B5kR/uAEi/G0aWC3IcEyohNL3Bc
+	aGnbWoFg==
+X-Google-Smtp-Source: AGHT+IFdx6Jo6h2Zlp0z9KNqZKsNTsBYY7KcgSjHFZWdKQaN+BPd2cWlPTLOF0WlCzxaWRiRR5GgVg==
+X-Received: by 2002:a05:600c:8b16:b0:45f:2bc1:22d0 with SMTP id 5b1f17b1804b1-46e32aff787mr40556945e9.33.1758815622333;
+        Thu, 25 Sep 2025 08:53:42 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm98449995e9.7.2025.09.25.08.53.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:54:37 -0700 (PDT)
-From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	yuezhang.mo@sony.com
-Cc: linux-fsdevel@vger.kernel.org,
+        Thu, 25 Sep 2025 08:53:41 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
-	syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
-Subject: [PATCH] exfat: check for utf8 option change in exfat_reconfigure
-Date: Thu, 25 Sep 2025 12:53:06 -0300
-Message-ID: <20250925155306.394763-1-pedrodemargomes@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-arm-kernel@lists.infradead.org,
+	upstream@airoha.com
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v3 1/2] dt-bindings: PCI: mediatek-gen3: Add support for Airoha AN7583
+Date: Thu, 25 Sep 2025 17:53:08 +0200
+Message-ID: <20250925155330.6779-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,28 +102,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Check for utf8 option change since it depends on iocharset
+Introduce Airoha AN7583 SoC compatible in mediatek-gen3 PCIe controller
+binding.
 
-Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3e9cb93e3c5f90d28e19
-Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+This differ from the Airoha EN7581 SoC by the fact that only one Gen3
+PCIe controller is present on the SoC.
+
+The compatible have -gen3 tag as the Airoha AN7583 SoC have both GEN2
+and GEN3 PCIe controller and it's required to differentiate them as
+different schema are required for the 2 PCIe Controller variant.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- fs/exfat/super.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes v3:
+- Add review tag
+- Add comments for compatible inconsistency
+Changes v2:
+- Fix alphabetical order
 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index e1cffa46eb73..500eb9c20657 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -762,6 +762,7 @@ static int exfat_reconfigure(struct fs_context *fc)
- 	 * inodes or dentries, they cannot be modified dynamically.
- 	 */
- 	if (strcmp(new_opts->iocharset, cur_opts->iocharset) ||
-+	    new_opts->utf8 != cur_opts->utf8 ||
- 	    new_opts->keep_last_dots != cur_opts->keep_last_dots ||
- 	    new_opts->sys_tz != cur_opts->sys_tz ||
- 	    new_opts->time_offset != cur_opts->time_offset ||
+ .../bindings/pci/mediatek-pcie-gen3.yaml      | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie-gen3.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie-gen3.yaml
+index 0278845701ce..1ca9594a9739 100644
+--- a/Documentation/devicetree/bindings/pci/mediatek-pcie-gen3.yaml
++++ b/Documentation/devicetree/bindings/pci/mediatek-pcie-gen3.yaml
+@@ -58,6 +58,7 @@ properties:
+           - const: mediatek,mt8196-pcie
+       - const: mediatek,mt8192-pcie
+       - const: mediatek,mt8196-pcie
++      - const: airoha,an7583-pcie-gen3
+       - const: airoha,en7581-pcie
+ 
+   reg:
+@@ -276,6 +277,26 @@ allOf:
+ 
+         mediatek,pbus-csr: false
+ 
++  - if:
++      properties:
++        compatible:
++          const: airoha,an7583-pcie-gen3
++    then:
++      properties:
++        clocks:
++          maxItems: 1
++
++        clock-names:
++          items:
++            - const: sys-ck
++
++        resets:
++          minItems: 1
++
++        reset-names:
++          items:
++            - const: phy-lane0
++
+   - if:
+       properties:
+         compatible:
 -- 
-2.43.0
+2.51.0
 
 
