@@ -1,184 +1,145 @@
-Return-Path: <linux-kernel+bounces-831614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7724EB9D20D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:19:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EFDB9D360
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308B6425252
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBEF17E453
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6921F1DDA24;
-	Thu, 25 Sep 2025 02:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB9027F754;
+	Thu, 25 Sep 2025 02:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KcJ9qBim"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GsGZ+ILQ"
+Received: from mail-m32118.qiye.163.com (mail-m32118.qiye.163.com [220.197.32.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFF1D27E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6302818E1F;
+	Thu, 25 Sep 2025 02:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758766760; cv=none; b=GPC5G7Ck/PzT1snw2b1FoioRMBFx3euF4QVy85MP1Vvvi0sWcLmui3njlnTwdk5qCsjH9aexjZU1BeNSQe/YlHHByV7RGZdOGhDajixl2z9WhPFDKMre492cK8xgHYH5ni7e68GWKUG1mrCjA1cQr8IUcb4gHNYADCT5MAWBMC4=
+	t=1758767696; cv=none; b=OKEeOFCeDifgUJMuhiwULeNPqdrms0es72KwQk3Je+GNpS9/XfsPMdt07mSuRSe0JhsoNh5xFRxlT1PsZBSQnJjvCKNmjJkdB67vz4Gerr0YWhFIcRGlVfokxT3j0hHDFFH8DZTaDkQ3pOis2GK2+jDIyEKX88rzQCW1KFmwBr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758766760; c=relaxed/simple;
-	bh=V0o0RUbSBp5pz28ZYimBAnWbI9+qlIN8juPN5I30FXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jl9QrAMKmsWIsSv9nkD6EF9RWnouEbb5VV+WzFcBkgRVf7ub4oH6F0M1WbxxjKCOfOOL4c0z2NfRLiShbwro4ktljbuiy1YKOk0YhUDXXezV7xx3y6ns9bpNWWAm6a9/rxa69A54vOz2n0wjHluhHTXMBnXaz8VTqWsBAv2djK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KcJ9qBim; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0dRVp002118
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:19:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=kXk60tSvBFJFBNcCoJMszP6h
-	av8IWwZrJglPAylRH68=; b=KcJ9qBimdnC4DcQ9taZSKFlEBr65ZwgcP691v3rR
-	rVBr+bJOKGlI7De2HUw/QaU80Zor7DjqZT4daVHVTDgRLtgDeguznlTSq1ssCAIX
-	SKrDS7FnshiAIjqMrFr8foGlk3n3PopOtyyeBKqP+bpMH4AFd3ry/8yzEP3HqpNj
-	WgF5phMsGUnfe31Y07O40j0MimurZujxMWVw5rsIp9bJjGEmZJ0hlBx9517haYC1
-	6zm7Kh58VygsJgmQbqC57zfsPwe3o8uJs73z4lxF9XgJETc9fl6Xu0/0y3KdRrrh
-	uSmPOVafU5cq87OBUHsAnfXB6nv0//HbjL41ij3xTRb6BQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499k98pe22-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:19:18 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4bf85835856so14599161cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:19:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758766757; x=1759371557;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXk60tSvBFJFBNcCoJMszP6hav8IWwZrJglPAylRH68=;
-        b=WJOC2Pp5HBAU1afBxjmwVpyjB3RQ/6q2PbxySgUyns/JaJJMXY/DxwexILy8FPogt9
-         TNRB3aa8L91IuIiLUy7Dr4q1omjryaW8ZZHvmqNuHXOJrIRcSwPMQjCmmVZENsNMM9vQ
-         Te4FCqrkim7xF+MEO6AN9RnORWYiO915SzmNLhyqlLcisxXipq2OCef8QqM/Q/5wDVXD
-         aUpm9nDkUYXY/pbNQ5gfprC+x1MCoY+mzXKVTwY0pQboeGRTvzHvVoF17p9f5Y59lozv
-         LxLpKt0SJ990lctojfglhTygAZaRw1mGzCXepdUrGC1h9tOpxc4IQFdvt4fIlFQRpGLb
-         bUiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZnDvMWuhUUbiW4jF/nEt9OfNcmBWqLUYxLkV0GlHDpGgie/w3zWVVtP+Xd4ENx+0eLgEyG44+Or1/5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr5D/OoW0I/HCw1DtzzZmnJmD3kma3ZIq7qnk5A+6HwGX8kCo/
-	aSuSM0RSzgmhDf6+FoLJdGv7faTIgEVMXHtnYQ6GHQ0vahJMHH4z4ma/m3j4O2FX9mf4y05Z0oc
-	gWOdZFZrV8bPzWfiqM7yTAaJcxB7znDZAGDqnDt0FrVTK0vyB6tWqRGpGubi+l5w3FUg=
-X-Gm-Gg: ASbGncsrWA2m3wPfSjVGHQDdq+T9CxLYj0TIQBTNyl7SZ/4Vu4+DBZZYKgkIEYftUjl
-	izyhTl6GAo7iDsUfZsM2UneGkZmiFgBL/4dSr8782oMJymFi9dl2a3KwoFYi9BpzjIDEpdPtWG5
-	VxUEwFyBGCYv5z1xlqRMPqm1EIXbIjnmKZ6ZYKagyVkUwnmEMdF8BC+z+Y1mXdY8i4aX35i0WSS
-	THAjjxABDzueTj47jsIgHMwL1mxR5pN+oKBT7ikQwb6LtPuu7AAndgslqGjZ1FhV9FuoP2SPTM1
-	fO2xA8PPD0ZI6vO3cwzZ/S2azqX8onJepbdZwUd8ujGhQMe8CQ+1BkcVyfkQR7abkQzEipvtsTt
-	VYp+Szh9coXH50sMdwF1sPLN5hY5MRFaFQ1p1sArvov6mgeE1qyiZ
-X-Received: by 2002:ac8:5712:0:b0:4b2:8ac4:f097 with SMTP id d75a77b69052e-4dacdce3156mr13155431cf.33.1758766757175;
-        Wed, 24 Sep 2025 19:19:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkHoyd8pfNk/u0CL0VcNtv5YsWD3I6SuFs5XOWMFIZNGOfOtmwhgR8TS+cBKd/zfDeZIjh2w==
-X-Received: by 2002:ac8:5712:0:b0:4b2:8ac4:f097 with SMTP id d75a77b69052e-4dacdce3156mr13155191cf.33.1758766756673;
-        Wed, 24 Sep 2025 19:19:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831343111asm244566e87.19.2025.09.24.19.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 19:19:14 -0700 (PDT)
-Date: Thu, 25 Sep 2025 05:19:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH 1/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
- Kaanapali ADSP
-Message-ID: <h4lk5psnwx3ma3um2sozhcdccwhmgmbje2lgjks2czcrzn4mre@svtnbyzvrivw>
-References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
- <20250924-knp-remoteproc-v1-1-611bf7be8329@oss.qualcomm.com>
+	s=arc-20240116; t=1758767696; c=relaxed/simple;
+	bh=WAKSdZimExURYkoPahxIIftutzZ+xBPrZRgJUwbZYO4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVgcbeVh7WLWqG14KRreqa5mUEi/31tMUJYwJxSffTcgibJNPyHpR8MB0KhooEs3ieNdMpYYF51hQDrnXA+M4qVC3McQS7M9nWwvw14e8iX2oXPusH1uEamAiHPnyXpP/GLZRN6KGRp5iNmgbfhTrziuA9GnXnIFYMW3Yu8xk1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GsGZ+ILQ; arc=none smtp.client-ip=220.197.32.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23f99a352;
+	Thu, 25 Sep 2025 10:19:27 +0800 (GMT+08:00)
+Message-ID: <be24f371-3afa-47ce-a5e8-26f3fac9b6ba@rock-chips.com>
+Date: Thu, 25 Sep 2025 10:19:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-knp-remoteproc-v1-1-611bf7be8329@oss.qualcomm.com>
-X-Proofpoint-GUID: F27W0FbiPfhqv7CPyDmamOcDS8P-LDNu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxOCBTYWx0ZWRfX0Ylt6EP9lJfF
- bNp5+brqVh07vuMTnVooN3sBJaHJ2+Dyw3243cffl4/Tph+AMg9Z0BbQklPylkWda5DsMVTUuL0
- nKkyd7ZgqtDkOmbVtGCdMHHBCsTnYFEhVL9xta9V/TU2ngixbLX9yeEkJXnuks5iKwjUWPRJSkX
- pqgl5YiYgbX/2s72rRtAOeCw9ebKJf8hS3H02k3H/l+NiRW1LVBKDnD7scr3GjQUwV/kHM4wkke
- 8PNgqseYR2ml8a7OVr1uv2HzJaihtfx0okk3HqyAQIGgbajEKuJkg9zJpFZtgO3/WAlwJTLXPlF
- l9N0lmeG+H+MLYw8zUNUCUiIIcZ7Y6KJitO2TfOdA6pAjR0xA1FlokakxEJUQrQBgxfXPZznJ/t
- gY55rvVf
-X-Proofpoint-ORIG-GUID: F27W0FbiPfhqv7CPyDmamOcDS8P-LDNu
-X-Authority-Analysis: v=2.4 cv=Dp1W+H/+ c=1 sm=1 tr=0 ts=68d4a6a6 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=TG0ozkzLEzouTHCdhgAA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200018
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 15/17] drm/bridge: analogix_dp: Remove panel disabling
+ and enabling in analogix_dp_set_bridge()
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20250912085846.7349-1-damon.ding@rock-chips.com>
+ <20250912085846.7349-16-damon.ding@rock-chips.com>
+ <tywxkfjhulxsgdphngtfs24whslbkmnza7yx2sb7c4ulea6val@46pi6e2sjs6c>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <tywxkfjhulxsgdphngtfs24whslbkmnza7yx2sb7c4ulea6val@46pi6e2sjs6c>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a997eab1b8503a3kunm2418fa8d88dbd
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGksfSFZLQ0NNT0tPSB1JGhhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=GsGZ+ILQSnhzfvkwCAq4Z5+SIR0C9MOYar77DGQSbSeGev+Jr7L0Oq+AJf75d65bd6zyRrxMuhWK8gclELJ4evu+yYA7/9XQBUMFnRBep9EUwls+dIUpkvslnvd0hq55ReRjD8rAi0041WcrraaNBRTCVlfzPkJmY1YFlPIkZ8k=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=RPN3KyxMz8emyUFUk3HlxuaTyBLn7qeeJmHvt/BIWwI=;
+	h=date:mime-version:subject:message-id:from;
 
-On Wed, Sep 24, 2025 at 04:37:22PM -0700, Jingyi Wang wrote:
-> Document compatible for Qualcomm Kaanapali SoC ADSP PAS which looks fully
-> compatible with SM8750, which can fallback to SM8550 except for one more
-> interrupt ("shutdown-ack").
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> index 2dd479cf4821..be9e2a0bc060 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> @@ -28,7 +28,9 @@ properties:
->            - qcom,x1e80100-adsp-pas
->            - qcom,x1e80100-cdsp-pas
->        - items:
-> -          - const: qcom,sm8750-adsp-pas
-> +          - enum:
-> +              - qcom,kaanapali-adsp-pas
-> +              - qcom,sm8750-adsp-pas
->            - const: qcom,sm8550-adsp-pas
->        - items:
->            - const: qcom,sm8750-cdsp-pas
-> @@ -95,6 +97,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,kaanapali-adsp-pas
+Hi Dmitry,
 
-This one and the next entry are redundant. Do you see why?
-
->                - qcom,sm8750-adsp-pas
->      then:
->        properties:
-> @@ -185,6 +188,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,kaanapali-adsp-pas
->                - qcom,sm8550-adsp-pas
->                - qcom,sm8650-adsp-pas
->                - qcom,sm8750-adsp-pas
+On 9/12/2025 7:09 PM, Dmitry Baryshkov wrote:
+> On Fri, Sep 12, 2025 at 04:58:44PM +0800, Damon Ding wrote:
+>> The &drm_panel_funcs.enable() and &drm_panel_funcs.disable() mainly
+>> help turn on/off the backlight to make the image visible, and the
+>> backlight operations are even needless if drm_panel_of_backlight() or
+>> drm_panel_dp_aux_backlight() is applied, in which case the enabling
+>> and disabling process just add necessary delays.
 > 
-> -- 
-> 2.25.1
+> Not necessary, it can actually be turning the panel off and on. Maybe
+> it's worth squashing this patch into the panel_bridge conversion as it
+> will point out that these functions are still being called at a correct
+> times by the DRM bridge framework.
 > 
 
--- 
-With best wishes
-Dmitry
+Will do in v6.
+
+>>
+>> Therefore, it should make sense to remove panel disabling and move
+>> panel enabling after analogix_dp_set_bridge() finished.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 7 +------
+>>   1 file changed, 1 insertion(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 66d0cca1f268..c98058e9c917 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -749,9 +749,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
+>>   {
+>>   	int ret;
+>>   
+>> -	/* Keep the panel disabled while we configure video */
+>> -	drm_panel_disable(dp->plat_data->panel);
+>> -
+>>   	ret = analogix_dp_train_link(dp);
+>>   	if (ret) {
+>>   		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
+>> @@ -771,9 +768,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
+>>   		return ret;
+>>   	}
+>>   
+>> -	/* Safe to enable the panel now */
+>> -	drm_panel_enable(dp->plat_data->panel);
+>> -
+>>   	/* Check whether panel supports fast training */
+>>   	ret = analogix_dp_fast_link_train_detection(dp);
+>>   	if (ret)
+>> @@ -1156,6 +1150,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>>   	while (timeout_loop < MAX_PLL_LOCK_LOOP) {
+>>   		if (analogix_dp_set_bridge(dp) == 0) {
+>>   			dp->dpms_mode = DRM_MODE_DPMS_ON;
+>> +			drm_panel_enable(dp->plat_data->panel);
+>>   			return;
+>>   		}
+>>   		dev_err(dp->dev, "failed to set bridge, retry: %d\n",
+>> -- 
+>> 2.34.1
+>>
+> 
+
+Best regards,
+Damon
+
 
