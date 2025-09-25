@@ -1,123 +1,142 @@
-Return-Path: <linux-kernel+bounces-831726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4880CB9D693
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313FCB9D69C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A6C380531
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:54:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0AA1BC1C79
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021012E7BAE;
-	Thu, 25 Sep 2025 04:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A972E7BBA;
+	Thu, 25 Sep 2025 04:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DuiiI+sN"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIrchR3u"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF662E6CD8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68A2219E8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758776083; cv=none; b=LrrinE/TXSZ85jxzpLB02mTenGtxbt3RlOIcxZ2hEB8YICt5AidI+mhJyIKMLCuizhfQ79JBfoPMpqtiblDBo7GlBJdtIPgaUiGOIbrF0q7uDnzaKjMVE6TTlivCKK/3XQir8SJk+1INdZGN7l/FIQEUDbSO07yJK/ursPlarn0=
+	t=1758776277; cv=none; b=B4zz9rad/ZHH3eErNWSkA25KgxIArSf+fXuH97B2uoLrdEf8kfpaDZX8SloBVRHf/uY5RYIi+jtJcGPiePujyD0VTJhF1iAvBQvF6d3ShR+OAQzd5m9v+Ujydw3iwzAAsdKYRerLm5U08RVq7jz6QeFPxpTBzyvQerkRvbWpDzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758776083; c=relaxed/simple;
-	bh=rwFjnBd/arunXm3tp0XfDKTYREgqSAQUlx1L0O8iPLg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WVOqlD2G6KVgm3DUIepQcJ/1NZrsy72p3lZPlzeVZawoqymCqx8ONlZoKDWguWzf2qcfFizKLxr56E75yB1WZ7ftPOvYYvB1XZEbl3XN87X+KCqiwRkHN6/mHFGsCTGX+CsBI27880pp34Ry7uGsi9lN4aAvXg2gYxysbFrVNBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DuiiI+sN; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-36639c30bb7so5108731fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:54:41 -0700 (PDT)
+	s=arc-20240116; t=1758776277; c=relaxed/simple;
+	bh=kPzxEfe/YqVDgMWOwGmf5DpkjVmJd2Ha6+d5aCqeKDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWe+kP6OwmeYInrOWRotzZT9b7cexji8XaMpUHSghJgAmsBgXgLyGZ6rHTBH+Xs45p/GXgorqpruk8upzG/MHN9i3PWKtFpeU2BUWPWNzvIXL70TDTzWtw2VxNvVyaMxi4kjV2z6rYWZ2ijoOxA41fyl7Rn4K1pV4dPgEs7dDfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VIrchR3u; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78104c8cbb4so199679b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758776080; x=1759380880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AfOJlNr1JeVzQacNsJApm6u3eklKPliDP0EOZ1wC62c=;
-        b=DuiiI+sN2rfnSnmhoELKNcQaxFUwfYvWCtWx7eDqipFUGnqbLDhyFpruGG2OyCL8eJ
-         dnw8UOppbNLUmg2S5fBHa72faZdTW0+mAqCzCK6jUdm0Axy7tLwGcUk8ZGb5TZMxjb8F
-         Mzo/fY8D28IvwJTOyD1s7oeiJk6UJV0l2sI5c=
+        d=gmail.com; s=20230601; t=1758776275; x=1759381075; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MWG5UfuLfU/6okMWpcwd8oWIgSQHkPLDSZpFhqy7ksQ=;
+        b=VIrchR3uzufvtqAAfTEWhg/OOPHwM7oJgoRlVzPbnWmMU2xMloLrqG2s8k/P4wSPeB
+         ba7TPxwrM8b75XVEmtmqNFXjMt8JjCOSSn5F7OkBwG78SLUhBeRtDbg+SCoUdzVl5tKn
+         oGYSNiJbMnKJkUdPmwEZOvybrPafbDDZ5HmgybJsEEgmMCsePIDPAjMcmK6rkh1uFMc/
+         Zoc9VOjUh+aOU2SThGFUS/PvrEJ6zXsMjl3tdq5sM9hzL2ZKfxqhMB10wnGjCLJ3rBF6
+         hbkwPhzRNG+a5umt8iD6z8dkJkY9BLslO/UCUARK/N3drOvXzRBpEMznrH9FLL/oSEnd
+         Ww2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758776080; x=1759380880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AfOJlNr1JeVzQacNsJApm6u3eklKPliDP0EOZ1wC62c=;
-        b=aBg/9eZHXbGgu/Ahci1LyykxbpviAfL/cx61sVicm3x/Jgzo1iEr7BfpwizHhK52po
-         QcF4MSPj+r8uMGKDuTMMacR1N4IZ3JsBGuVdROuXroRwGU3wEDpLfz39jaxpswH9L/Qb
-         2Ksm0vh8JfWCQ6xJBWr7+nYB5V5Zct3Lbt1mMZlENE2uIIpOdf27zOU5Otx4hOvJE+pP
-         tuGeTd6fkdxbWx9+v82CxlNds3guFjBkZW+0TJRZYo0b3S++WDZByIXmi8FH4V7lrGe1
-         7VGYWXkhD4aaVVX/oN8h6qQD+pgFg3dp1fn+Y+XAapFYum5n0dStvrvJcJELxZ6yCikT
-         Tj9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXDKMDcU6pYrthOM81DEKlJ0k4Q34JdN0ozOg4gKgv49xx+FScpcLXHpXeXC/pttLRikqnTgSvVzAfvLQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztCf29MW3aQhn5RVlxpzZgCw6i4RvGwkMueZUzPUDlgifC8Ok2
-	w+TpexpgW7TJAWPbUJoOfYPz/xlUR4NASrUHuJL0+5E6GCB1fhSaxndMjSVBzuu+PKMF6W0u1Z1
-	BdfW2hjn/9P7WOdM20CwXRcY52+ytt15rFewszGG3
-X-Gm-Gg: ASbGncuRoLZubq0hmV6YL1AkMamJyB2BcvZCPEwU7cdiv7bS8AZu5Togz7bIiSQUAAL
-	8gi5cvu1ns0MLgVJS36Mlf6mJbahaYLtjsQ4rHf122CVR1yX3yVM2Fy5l+j44h2YOPg2m9XQUBe
-	qBfKCd9FkZpOaoomdh8NKHWsdZ/wdBghYa1zaZLbH3C1V0VKKDgCP84g9T+wBqudsLDebp6C6Go
-	flkOcQSvzaoJcn6A5+SZOSX4LjADcBwMQGn1A==
-X-Google-Smtp-Source: AGHT+IF0+5f68ueTJchiy8OVva2aPyot+zNZ1LmHpjgzKmp8yTmlbDcDBtW5B2Jmd8k/IXzMW6KzTG/3d0FIWAKFPI8=
-X-Received: by 2002:a2e:bcc8:0:b0:365:b79:8845 with SMTP id
- 38308e7fff4ca-36f7e795878mr4719381fa.10.1758776079768; Wed, 24 Sep 2025
- 21:54:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758776275; x=1759381075;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MWG5UfuLfU/6okMWpcwd8oWIgSQHkPLDSZpFhqy7ksQ=;
+        b=uZG7FdRTLclgGixJ4dvWrmzYZgmZsJ4t4TCrWbOEGOToyP/VQh+mjy8kLlSMz0qSvh
+         c729QAac53NdIL/bjYliigO1jjY8jPmdLYkvBFUprYvMpHsCa3SbnlPYFBkzVkWH5Kw5
+         I36GZe/8dsyIUeMkAfRWJFEns80NmBYreNke36twEPeP2hZUU7WhBDuHpxZyKtPYWFQY
+         QcTlxgaG54TTbWxH5WJkniw0naVouft8E+xcYuAElDPDKTTHj9r/oYZwcZ+QFg5Z8ZTh
+         Nbv3ATgmp5JMXltN8hsRkbp+4HzgAootfHhUacGg9Lc3hb2DEWMx7t0ZDj0IuWJD8hFl
+         5nqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxFFfiucW8HFaaPxxhgLcUsPacP5GsWRo0ripQMjoNBIuy1OqZtCL9Q7FToPbvgZlvIODmmDCv2XIMtdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFuSMk/HGLkrowRv1mCguU3YbI+ptrzn7uP5lBbkAOyGcwJKfw
+	LfDw1BeI/3wwuj+VU/zw93XtVgX7TYJkvAzxONXDhk++Mu7Rgm22OQnT
+X-Gm-Gg: ASbGncuPVfVFgdAtNYzUei+XfjYn1bMFSkzqgiy2JBeNBqoWI88m7+zbkXtSv/uI9H0
+	alaM7M7eeZf++oxwFvOkpwctOszwxF9hjZyeb9QNpmRqOFiTymETEPG4aZXw28Nc3WX6LeYQKJk
+	MYEAEfCKxw0Fb7sFNtEd18xvOsGrtstHCPb4u98p7OHEJ5hleFRTi9N4E+4+Fb5KDZkSCnssg+h
+	6U5Gm50HKz2R7AqLN85Bb8ZM2whwjgm0IpLFQ4IZsSHDQJmu5SbBeUfpAdJf+CegZmnzVzZDJ7W
+	jdIjZ6WCqDfBcoJToZ9UQVe8gEnAJANYUyfuprSCTcucZfSmU6hKr7ere5hyYWgi+mWUTaYkl9K
+	dadgo+W1qZguneQ8kr/VGt9+PncBjugjr/RmwpubNi1CQKJGztg==
+X-Google-Smtp-Source: AGHT+IHE0hCkhuBmmUoBQffjMXTlW6TG7kVeaCmRhK+UDQsUnhS7aMf4l0Fb5LPcRfVZ10wDV1Wdkg==
+X-Received: by 2002:a05:6a00:2341:b0:77f:67e8:fd with SMTP id d2e1a72fcca58-780fcdfd789mr2323162b3a.3.1758776274966;
+        Wed, 24 Sep 2025 21:57:54 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c07696sm708827b3a.74.2025.09.24.21.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 21:57:54 -0700 (PDT)
+Date: Thu, 25 Sep 2025 12:57:51 +0800
+From: Yu-Chun Lin <eleanor15x@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
+	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
+	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
+	"visitorckw@gmail.com" <visitorckw@gmail.com>
+Subject: Re: [PATCH rtw-next] wifi: rtw89: Replace hardcoded strings with
+ helper functions
+Message-ID: <aNTLz+SO4AAUeo96@visitorckw-System-Product-Name>
+References: <20250921154410.1202074-1-eleanor15x@gmail.com>
+ <715313b943d84cfeb3a337dc20be5f6a@realtek.com>
+ <aNLDga29Wp1nwhem@visitorckw-System-Product-Name>
+ <51518b935e7649e3b5413e3a119d549b@realtek.com>
+ <aNS+Hk5QTzGq+AUO@visitorckw-System-Product-Name>
+ <0990f8ee74574a30a585f2e0e3831837@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924133552.28841-1-johan@kernel.org>
-In-Reply-To: <20250924133552.28841-1-johan@kernel.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 25 Sep 2025 12:54:28 +0800
-X-Gm-Features: AS18NWCf3jNifuSG2T8itLUmSv-v41oBGMU6IUYuN3HfGIanTdAfEHlrZ5xZLDM
-Message-ID: <CAGXv+5FDyB5U+ec62D9E_ULvsDm7GCddpQqw15eQqN5oVPohDw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] media: mediatek: fix VPU device leaks on probe
-To: Johan Hovold <johan@kernel.org>
-Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, 
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
-	Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0990f8ee74574a30a585f2e0e3831837@realtek.com>
 
-On Wed, Sep 24, 2025 at 9:36=E2=80=AFPM Johan Hovold <johan@kernel.org> wro=
-te:
+On Thu, Sep 25, 2025 at 04:28:40AM +0000, Ping-Ke Shih wrote:
+> Yu-Chun Lin <eleanor15x@gmail.com> wrote:
+> > On Wed, Sep 24, 2025 at 12:43:56AM +0000, Ping-Ke Shih wrote:
+> > > Yu-Chun Lin <eleanor15x@gmail.com> wrote:
+> > > > On Mon, Sep 22, 2025 at 05:50:50AM +0000, Ping-Ke Shih wrote:
+> > > > > Yu-Chun Lin <eleanor15x@gmail.com> wrote:
+> > > > > > Replace hardcoded strings with 'str_on_off()', 'str_enable_disable()',
+> > > > > > and 'str_read_write()'.
+> > > > > >
+> > > > > > The change improves readability and enables potential string deduplication
+> > > > > > by the linker, which may slightly reduce binary size.
+> > > > >
+> > > > > Have you measured the change of binary size? Maybe you can share the result
+> > > > > here.
+> > > > >
+> > > >
+> > > > I tested the patch and did not observe any measurable change in the binary size.
+> > > > The commit message was refers to the description in string-choice.h:
+> > > >
+> > > > "3) Deduping by the linker, which results in a smaller binary file."
+> > >
+> > > It might rely on LTO (link-time optimization).
+> > >
+> > 
+> > I re-tested with 'LTO_CLANG=y', and the code size remains unchanged before
+> > and after the patch. I will remove the statement
+> > ("may slightly reduce binary size") from the v2 commit message.
+> > 
+> 
+> What is the .o you checked? Have you also checked size of .ko?
+> I guess (sorry I'm not familiar with LTO) that LTO only takes effect
+> at least doing partial link. 
+> 
+> As the changes of your patch, maybe you can check rtw89_8851b.o or
+> rtw89_8851b.ko.
 >
-> This series fixes VPU device leaks during probe of the mdp and two codec
-> drivers.
->
-> Included is also a minor documentation update to make it clear that the
-> VPU lookup helper returns the device with an incremented refcount.
->
-> Johan
->
->
-> Johan Hovold (3):
->   media: mediatek: vcodec: fix device leak on codec init
->   media: mediatek: mdp: fix device leak on probe
->   media: mediatek: amend vpu_get_plat_device() documentation
 
-Whole series is
+I built all related files directly into the kernel, so my measurement was
+on the size of the entire vmlinux, not individual .o files or modules.
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
->
->  drivers/media/platform/mediatek/mdp/mtk_mdp_core.c  |  7 +++++--
->  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c      | 13 +++++++++++++
->  drivers/media/platform/mediatek/vpu/mtk_vpu.h       |  2 +-
->  3 files changed, 19 insertions(+), 3 deletions(-)
->
-> --
-> 2.49.1
->
->
 
