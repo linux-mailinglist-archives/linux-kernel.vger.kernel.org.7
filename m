@@ -1,139 +1,102 @@
-Return-Path: <linux-kernel+bounces-833035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907F4BA10DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B88BA10E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AA14A04A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D56D1C2089A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A4A31A804;
-	Thu, 25 Sep 2025 18:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC8F31A7EB;
+	Thu, 25 Sep 2025 18:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUE9gCqu"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="Hzw3mcq+"
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7E31A554
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76FA944;
+	Thu, 25 Sep 2025 18:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758825672; cv=none; b=I5sC6uqXepb+9QO9s66Fsyf6lY7ddl1kit1scWTSnDALxj4V2TSaqDs8/4G6VjfNv/xnRtsdxHUL6JJm81JkZvWYjqjCJ4MWd6Vpv0Ye57MxmknUK7+u3FQ9epbSWlrAOeePR8/ZSHvjIuXvnBkYW/RoZK7D/W3jOlRS2EZIJeM=
+	t=1758825733; cv=none; b=Sy9kHhqfKsJcLstXbU2lx6LRYbHwc75HAOe+n8/cxwVNJDJQQEglbWHCsQBlzqnt5fIVnPb057/hqd1bpsPH3lI2K0vIWKOtA/sYGOqNbZRDXDlRDHyBum1AUo3mHUBkWIaGY2W0Prc+Z3MU9OWodNIpF12l3u6HW2cSyM2OH1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758825672; c=relaxed/simple;
-	bh=4HyO/Omc0vHIbcGIr8eQR588wv9P0GcwZPgiYarPRNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tcj8oaC43uNZZIT2vFRRM1t3k+94JTCrs8oWaqXXjKl0RK+9gCBmz9wVqKVX2i0lGaP2xB4F9O5IDaINwlm4/2ImT5r7N4oT2sy+hAUe/28Soj4/rrmSWTTg7D9s3aT8JqvLl2GgK1LiSTLD9ydvTHw/cuyw2tuR/4u/7ZJrPDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUE9gCqu; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so1659840a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758825670; x=1759430470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rEVxXuxy2iSH4P0+ikQL58PMDB8CgXAp3tIeCVGBulg=;
-        b=aUE9gCquWkY78WVnTKFKVQAruEQAmRQoQo/hME6eATizrCtxhHIO7IYiwddQ9VsI/3
-         A229sduPkRgv4LfibQDVu9P6E1WJ4hcp+X6H4yjeRdOJgUIN3dJ7VR30Xt7fEtX97OmW
-         ikoUJI+CkB6Tr6LMhPmCBmxePi2obhObTjmiJzUXIyGzfjnzz8XSVI4a+lF1IvDuQpkE
-         7uFBlYbuHW97pyl2emPLDS48OiTM7uN7O5QUrYVIvukBO4QFjYQzxMzVwEHrFOhZbLMG
-         WSTtX7RAijyieeYneTWjA4TwG2jqbr2ftZg3pj87SjI0gp9fLF6LHX1ryuY3zddQPy/s
-         auqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758825670; x=1759430470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rEVxXuxy2iSH4P0+ikQL58PMDB8CgXAp3tIeCVGBulg=;
-        b=VNaTqdjaLPO0zJ+tOADnxUf8CzjQGuzuFASLRNl8SUUlGu6G8jlvOe1mOMALyHNm9x
-         cHfGJnRtUzZEWzy1W2bcqe/6z/eTKrLLptEANxzT9kXxVXEBM7OvjEGXY+APx9qwASRM
-         gEfgListJEUgKmQ1eLIyUh1OO43/TgcWepUoFfR3ZpFyxCHNSasjKshQ2B3ub7TIaniJ
-         pKqWVOBHSAWfivnkOjdfskkZH3zClKw26TcNnSpruc+ULl9ntTiSeTvFX9586Q/8ZG76
-         T6KiYcUiLgUub59WgjV8nuev16D1wG8o9xpu+rIfaMi/7zPNQG1yRzAo2GNFlVE2fd3t
-         b65Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgXBGhVtSpuqApfzRMGY3OvEoIOCELKGAhCKHrXTiHvmldiFxUxP7i5puIuvK3g0pZSTnH4iJRNK4M6i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyExqM0YvyJzUETjIbnNJDR+vmIrm570NurlNc5TE8yYNgDlXM8
-	Mb6MGW5Zl+oyto1XrDOzM5l6r95hC70+YHI44NPIWA517XoRelL+1W7GL1YXVCEWl71BRcCayVh
-	TU2vPoKIWYCLzmxvuYLM96fKqkEH5/ag=
-X-Gm-Gg: ASbGncvwgCSE92z5ktbuWTlv8bpQ0a+JD5tlSbNz6zdR4EPBiP9OWn5gt5bblGetHGO
-	2Hin9b9QOOONZQzO8DpossjfgLj1zgsEg2nXfkiW6aEgNd/dut7Uz1F2HCY/5AdAl5D9vg+utCJ
-	CHqpWzeZmIQ7mh0EWP1V4GnWOrDvnLWVLJvekXSZduCMCLL5B9RpEs4VQe/GmmG82Q7e9akhqk9
-	kO+gVAu0DiZdH8NHo0UZ8U=
-X-Google-Smtp-Source: AGHT+IGif1F0rH2+wJaNW1qXDTLPrW2/+7ZSS24YvD5gYvwrK7txwD5NgoCPK+1mrFy90rRGnvqMUSh5PdeT8seK+mo=
-X-Received: by 2002:a17:90a:a783:b0:330:6c5a:4af4 with SMTP id
- 98e67ed59e1d1-3342a2df0e7mr3743478a91.35.1758825669903; Thu, 25 Sep 2025
- 11:41:09 -0700 (PDT)
+	s=arc-20240116; t=1758825733; c=relaxed/simple;
+	bh=hwdRBdcNsUcmJ+K59rhrs4+nWsrkgB4EhcUZpsI5j80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qts4u7m71/XChM4DV9jK8HB7eHVhP+UGGbKL4TQNN78BNz6Cp7ilBxihLDqNGkwqnAxnpQZRFReJMQgLxqD/mQYfCm8KmTXbxML48ck80XIkWQgcv4w30M8MgNPl4+5gfpNqcHeoJZ+VBmHE+QDiTv0n7ThM3TiAZOby0PBbFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=Hzw3mcq+; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4cXjHf1kdyzB0l2;
+	Thu, 25 Sep 2025 20:42:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1758825726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4M9ZLcJXSUwaRGj/k1GlEUNg5wyMgiEIgqlESuJ1/6g=;
+	b=Hzw3mcq+AVY81LTaC0SSB8oxE+jGFoe7pC61gcWKxetESd5455tlFKHFeG079J557dH+6H
+	Y28e9w9FjoUJLocBPU1mKOQDG4iHLPlTEeijcjbbZ6CRkPsrCEWxSdtnWV6GmdVX7KOu92
+	hIbRZf7hqdhizSzHMMX+UFGHaqYN6qqb56YY6n356gfzpq2VXDwflGleH7016w6XT+5oVE
+	U3QQicxaYNgGtJNutGZwv/Ngb7+iyQSi23cvueqZNL7cW07feL6I7D6QH9B56TEHiOMjf3
+	roUB2m1cDVXyM8dBv+lzb6JxeKPfNLHGyZqxBXzkIMVVRoSnLWX4zb+BBJYGrw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::102 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
+From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
+To: linux-btrfs@vger.kernel.org
+Cc: clm@fb.com,
+	dsterba@suse.com,
+	wqu@suse.com,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>,
+	Boris Burkov <boris@bur.io>
+Subject: [PATCH v2] btrfs: ioctl: Fix memory leak on duplicated memory
+Date: Thu, 25 Sep 2025 20:41:39 +0200
+Message-ID: <20250925184139.403156-1-mssola@mssola.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop> <20250923142036.112290-19-paulmck@kernel.org>
-In-Reply-To: <20250923142036.112290-19-paulmck@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 25 Sep 2025 11:40:54 -0700
-X-Gm-Features: AS18NWDkeNOIzlcIpXV73ff3DZBfv87h1AghtZqbjYi5a1vEtT0YGqQqdWBwurE
-Message-ID: <CAEf4BzazpB6XHL+HRO0HaegiwCUpXaTi+QSnPAxsW9BHBL=50Q@mail.gmail.com>
-Subject: Re: [PATCH 19/34] rcu: Update Requirements.rst for RCU Tasks Trace
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, Andrii Nakryiko <andrii@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cXjHf1kdyzB0l2
 
-On Tue, Sep 23, 2025 at 7:21=E2=80=AFAM Paul E. McKenney <paulmck@kernel.or=
-g> wrote:
->
-> This commit updates the documentation to declare that RCU Tasks Trace
-> is implemented as a thin wrapper around SRCU-fast.
->
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: <bpf@vger.kernel.org>
-> ---
->  .../RCU/Design/Requirements/Requirements.rst         | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Doc=
-umentation/RCU/Design/Requirements/Requirements.rst
-> index f24b3c0b9b0dc6..4a116d7a564edc 100644
-> --- a/Documentation/RCU/Design/Requirements/Requirements.rst
-> +++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-> @@ -2779,12 +2779,12 @@ Tasks Trace RCU
->  ~~~~~~~~~~~~~~~
->
->  Some forms of tracing need to sleep in readers, but cannot tolerate
-> -SRCU's read-side overhead, which includes a full memory barrier in both
-> -srcu_read_lock() and srcu_read_unlock().  This need is handled by a
-> -Tasks Trace RCU that uses scheduler locking and IPIs to synchronize with
-> -readers.  Real-time systems that cannot tolerate IPIs may build their
-> -kernels with ``CONFIG_TASKS_TRACE_RCU_READ_MB=3Dy``, which avoids the IP=
-Is at
-> -the expense of adding full memory barriers to the read-side primitives.
-> +SRCU's read-side overhead, which includes a full memory barrier in
-> +both srcu_read_lock() and srcu_read_unlock().  This need is handled by
-> +a Tasks Trace RCU API implemented as thin wrappers around SRCU-fast,
-> +which avoids the read-side memory barriers, at least for architectures
-> +that apply noinstr to kernel entry/exit code (or that build with
-> +``CONFIG_TASKS_TRACE_RCU_NO_MB=3Dy``.
+On 'btrfs_ioctl_qgroup_assign' we first duplicate the argument as
+provided by the user, which is kfree'd in the end. But this was not the
+case when allocating memory for 'prealloc'. In this case, if it somehow
+failed, then the previous code would go directly into calling
+'mnt_drop_write_file', without freeing the string duplicated from the
+user space.
 
-For my own education (and due to laziness to try to figure this out on
-my own), what's the situation where you'd want to stick to the
-old-school "heavy-weight" SRCU vs SRCU-fast variant?
+Fixes: 4addc1ffd67a ("btrfs: qgroup: preallocate memory before adding a relation")
+Reviewed-by: Boris Burkov <boris@bur.io>
+Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
+---
+ fs/btrfs/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
->  The tasks-trace-RCU API is also reasonably compact,
->  consisting of rcu_read_lock_trace(), rcu_read_unlock_trace(),
-> --
-> 2.40.1
->
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 185bef0df1c2..8cb7d5a462ef 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3740,7 +3740,7 @@ static long btrfs_ioctl_qgroup_assign(struct file *file, void __user *arg)
+ 		prealloc = kzalloc(sizeof(*prealloc), GFP_KERNEL);
+ 		if (!prealloc) {
+ 			ret = -ENOMEM;
+-			goto drop_write;
++			goto out;
+ 		}
+ 	}
+
+--
+2.51.0
 
