@@ -1,223 +1,140 @@
-Return-Path: <linux-kernel+bounces-833029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E12BA1099
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:33:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A311BA10A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1DF21C2104C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161E1627485
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DE931A7EB;
-	Thu, 25 Sep 2025 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18A7319870;
+	Thu, 25 Sep 2025 18:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR2I3TF/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7afA9uF"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3774E1DE3DC;
-	Thu, 25 Sep 2025 18:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4199305E2F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758825197; cv=none; b=t2NZfD4mKKMAvLpMYIQBd46Pv+0C4r9EIpaqIpUHuRcsDfx9OVSgzjzmeDnBS5M772P1PZKJXFvz1qnXdIeG8Pn5tM1Z8M/hWjLgw/Eztm1+OiHwRHqhDrM6vx8VLyvnsmY9yPs9+NcphHuxf8R8Tx3r5pWsbtJD0uHsTfrn4hY=
+	t=1758825355; cv=none; b=VtPmkafpQUtemO3pH25KHuQorgxkPr4u6ZUkiolTNc8onGpdVWN0T2YBEPkZezgIN3j+2eydkWrgCygrPxOmnLtilEzyjiYCI8VUBLc3+cXS2BFrTbrF3OHXr/KTtc46cw7Uu1XYgbI6I+B0TO8PCbZpBC623xTJItR2TxUlirY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758825197; c=relaxed/simple;
-	bh=2dXXjcfz6yo54Czf0POycwQADijPXlf9dzGU92OlDes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ReZBggPD3sZHTm8pe1vdXfdMnmRMHXYU/xk5fHN9PoeTglAmuDo4MItNPgy2go++11yn3ODHx9EpDReNyAkrx81OD5VwcVF8Gy+kX/SxLIHKW2k2YQGCmDbEaT7S8uKXIKq5GtkqCCuEyR7HOQ/wUBRXRPDIJfCK+EKP6jsEn3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR2I3TF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F44C4CEF0;
-	Thu, 25 Sep 2025 18:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758825196;
-	bh=2dXXjcfz6yo54Czf0POycwQADijPXlf9dzGU92OlDes=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SR2I3TF/Ds/kHUzB2cy5A0+kI0XPezSj4XITnqaz80Zr4nCr8KunVC6s0hGMHjTHq
-	 H9ZgYeBnUfY8h5c6JOu3tiZtnSWOWe5iXxewnmaj3sZBKesoQijO7C6w1DO+er+zcZ
-	 AhLOpE2eXn1UpetqAbjrm8GB4mGF7zXf+JUAKeq0pNKuLozzWLDJy/vb/pKosHRHa9
-	 +4z0njWLRykWfuvYKT5UgpsVFB50E/k3/ymX6pTxTcNRoHF2ML9djwSjys6Ma04hq9
-	 J4ezQR+NbUmJAAZfn/FEowIyb4MQRe3YtwUwdyNIZbn7BekhY90XvfMdKUSsvPdjHV
-	 4MknFy7pus1BQ==
-Message-ID: <3b982e8d-4ce7-4186-b5f0-f7495be3a3ed@kernel.org>
-Date: Thu, 25 Sep 2025 13:33:14 -0500
+	s=arc-20240116; t=1758825355; c=relaxed/simple;
+	bh=Bi1Uuo53Q5CXqwh3RsmaCHmWXceXypMlgALV1Rp/tuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t1MiJ1NZQx4AKL6Sa2HJLpxkI6Pb3AVWmkFlUppQZXH/KA8eQQEBt71eXnxpZ3ERNrrbdmEKDiWEGBpZugqelv5//TcsLZnaLZlZZMWFtWjxEO62D5JymNBx/1T/oSnLcBc+LUMOF2hA+8FMc9mRclnBzC3KZWQX4Qh5K5xg/yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7afA9uF; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6228de280a4so2441682a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758825352; x=1759430152; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bi1Uuo53Q5CXqwh3RsmaCHmWXceXypMlgALV1Rp/tuY=;
+        b=H7afA9uFeIAIhDnir7CGNnDLGMYJXs7ZcRF4sZVHzVb1PFoMyA0i3HEq4O8hNfxSt2
+         kYQ0tPuSfoazono6vMGkUTph/p7qcfI0yf0jmpWjOXuLljeOHIuZHIzh5+wZZN8FigeZ
+         mEdjJRP6qhKgl1HNtzS6hBhGIUu/U6zpyEc4RRGT5zxPOJr73VR5PMpp0T1sMZh1p8BI
+         5824PYvqeNv9j7TOGwPxXR4Csp8bKEdQqZVWu426kc/rXgGPat1c1naVmxwineNu/Uyj
+         Rc0ip0TgCLQb1xTVxil+HI31/i7QDF5a5tnNKrQOe8HPcE80zAGAgz2OF+Epwqzims08
+         DEGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758825352; x=1759430152;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bi1Uuo53Q5CXqwh3RsmaCHmWXceXypMlgALV1Rp/tuY=;
+        b=aKJayx0/ATlXsBRI202/5ka7MWzJ1QZNlZiSQi74ZzAF7yXu1eIWCNN0bUtvhjNiRX
+         ImXhpidCZZtptjIoIJ1j1NVOvQgFgx6UfHvdQ67HkRtBi7p1AkGHTyLlCLvKiMZlxPQ+
+         bHOvUz35sRmlGyQRa6m7pgcb9HtEngvcb7DpXCj+rPzwhSq61p9bkiphxRHq2cO7k/sL
+         E3LuucWcq4nc/RAXnZzPyHuM5ssUiNr1uhLkUWXjTpk1gGI04SXugzUKB2mKqPKjWtji
+         9tURnOSJkT73xJU9gUFvFBinOupC8qDxFaC5p2HEHjMCDaFC0BvkM+ySb3NtamcmQm6c
+         zCUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQyP+0ZLiAxIJoMWLEKtCKLCRZUkJGxgACRvGTjWqWygGaNk9HPFSBpPWVsoXztEdRM212AqUvZVHCQPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBi6uusge0IbY9JwvivCXuIhp64cfYcxjLx7WDXUG2Sgtyj5kB
+	S/BIiDx8MhjoNKDmhVQxV5WHhyZVLvA5CX0y39hI0GU0ce6oEfeIEJFYgJARnlLrsjYqAmIQ/be
+	gO+vjKIEBFqW4EK/4dSRjRmqCsDnX8YOHm5FG
+X-Gm-Gg: ASbGncsEgu80cbt15wfPWknzp1axAgKDQ74amuRfqCCgTK6eOQz3cRgSvb0tAKgLIx1
+	P3MrnPjWb7x2I8/nlq6T5UUywyf3htMJ9tZvWuLhMfyz/C+QrWBL5TE7JnKIl/vbB9hHwyasu3c
+	GWSedtb5ztRbh7zgXFknnKShl1awb2v11OP0OzGrC4jxpeLZXVTY8FBSfVyGc8YdgiZqfJOt0/2
+	/n94qiF+cyFikKEDDZqUMc4ELzl5cHZY/p3dw==
+X-Google-Smtp-Source: AGHT+IH413xX0HEBq8HeJ0623YfA3SWPRb2Ewtd8iVR1fSYF2CuXZlC3B0kzlJGqzC75xqy66MxFQdZIAALwIXFJtBw=
+X-Received: by 2002:a05:6402:4308:b0:634:4e56:ba02 with SMTP id
+ 4fb4d7f45d1cf-6349fa7e715mr3780736a12.23.1758825351801; Thu, 25 Sep 2025
+ 11:35:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] ACPI: CPPC: Do not use CPUFREQ_ETERNAL as an error
- value
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
- <3925838.kQq0lBPeGt@rafael.j.wysocki> <12773788.O9o76ZdvQC@rafael.j.wysocki>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <12773788.O9o76ZdvQC@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250913-fix-prctl-pdeathsig-race-v1-1-44e2eb426fe9@gmail.com>
+ <ef4878fe-3edf-4bd0-bb33-116ced1a4eb8@gmail.com> <20250922154819.c3049158ca006e1561ff5dcb@linux-foundation.org>
+ <20250923120344.GA12377@redhat.com> <CAGudoHED4nx8QT-yw-zdcUApUyvt2HCOR9c3SQ3tAm9J7Q1jEQ@mail.gmail.com>
+ <20250925162759.GA25838@redhat.com>
+In-Reply-To: <20250925162759.GA25838@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 25 Sep 2025 20:35:39 +0200
+X-Gm-Features: AS18NWB7BtNUEI1wJTPWnxplTD27NCLDlN24Y0bXsruylwfHC3OfXRKF7JxKgD0
+Message-ID: <CAGudoHGiO8vfyzuRmVHePR_TCeMSXjOv1TFpQ3i8Jk9+RMmTtQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel: Prevent prctl(PR_SET_PDEATHSIG) from racing with
+ parent process exit
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, 
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+It struck me that this mail thread is perhaps a little rude towards
+Demi, so I would like to state the reported race is legitimate and if
+it was reported against come core functionality it would count as
+"good spotting". It just so happens this is a corner case to something
+not-that-imporant and the proposed fix is rather heavy-weight (despite
+being perfectly sensible), so there is quite a bit of reluctance.
 
+With that out of the way...
 
-On 9/25/2025 12:23 PM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Instead of using CPUFREQ_ETERNAL for signaling an error condition
-> in cppc_get_transition_latency(), change the return value type of
-> that function to int and make it return a proper negative error
-> code on failures.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Sep 25, 2025 at 6:29=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+> > That's very
+> > nasty as the full fence is quite expensive.
+>
+> Well, the exit_notify() path is already heavy, not sure smp_mb() or
+> smp_store_mb(real_parent, reaper) can add a noticeable difference.
+>
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Well the tasklist consumers already suffer a lot of avoidable
+overhead, but I'm going to save the spiel about it. Maybe instead I
+will post a patch to remove some. ;)
 
-> ---
-> 
-> v1 -> v2:
->     * Change cppc_get_transition_latency() return value data type to int
->     * Make it return -ENODATA on errors (Mario)
->     * Update its callers accordingly
->     * Adjust the subject and changelog
->     * Add a missing empty code line to cppc_get_transition_latency()
-> 
-> The modifications of this patch don't affect any other patches in the series:
-> 
-> https://lore.kernel.org/linux-pm/8605612.T7Z3S40VBb@rafael.j.wysocki/
-> 
-> ---
->   drivers/acpi/cppc_acpi.c       |   15 ++++++++-------
->   drivers/cpufreq/amd-pstate.c   |    8 ++++----
->   drivers/cpufreq/cppc_cpufreq.c |    4 ++--
->   include/acpi/cppc_acpi.h       |    6 +++---
->   4 files changed, 17 insertions(+), 16 deletions(-)
-> 
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1876,7 +1876,7 @@ EXPORT_SYMBOL_GPL(cppc_set_perf);
->    * If desired_reg is in the SystemMemory or SystemIo ACPI address space,
->    * then assume there is no latency.
->    */
-> -unsigned int cppc_get_transition_latency(int cpu_num)
-> +int cppc_get_transition_latency(int cpu_num)
->   {
->   	/*
->   	 * Expected transition latency is based on the PCCT timing values
-> @@ -1889,31 +1889,32 @@ unsigned int cppc_get_transition_latency
->   	 *              completion of a command before issuing the next command,
->   	 *              in microseconds.
->   	 */
-> -	unsigned int latency_ns = 0;
->   	struct cpc_desc *cpc_desc;
->   	struct cpc_register_resource *desired_reg;
->   	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu_num);
->   	struct cppc_pcc_data *pcc_ss_data;
-> +	int latency_ns = 0;
->   
->   	cpc_desc = per_cpu(cpc_desc_ptr, cpu_num);
->   	if (!cpc_desc)
-> -		return CPUFREQ_ETERNAL;
-> +		return -ENODATA;
->   
->   	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
->   	if (CPC_IN_SYSTEM_MEMORY(desired_reg) || CPC_IN_SYSTEM_IO(desired_reg))
->   		return 0;
-> +
->   	else if (!CPC_IN_PCC(desired_reg))
-> -		return CPUFREQ_ETERNAL;
-> +		return -ENODATA;
->   
->   	if (pcc_ss_id < 0)
-> -		return CPUFREQ_ETERNAL;
-> +		return -ENODATA;
->   
->   	pcc_ss_data = pcc_data[pcc_ss_id];
->   	if (pcc_ss_data->pcc_mpar)
->   		latency_ns = 60 * (1000 * 1000 * 1000 / pcc_ss_data->pcc_mpar);
->   
-> -	latency_ns = max(latency_ns, pcc_ss_data->pcc_nominal * 1000);
-> -	latency_ns = max(latency_ns, pcc_ss_data->pcc_mrtt * 1000);
-> +	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_nominal * 1000);
-> +	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_mrtt * 1000);
->   
->   	return latency_ns;
->   }
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -872,10 +872,10 @@ static void amd_pstate_update_limits(str
->    */
->   static u32 amd_pstate_get_transition_delay_us(unsigned int cpu)
->   {
-> -	u32 transition_delay_ns;
-> +	int transition_delay_ns;
->   
->   	transition_delay_ns = cppc_get_transition_latency(cpu);
-> -	if (transition_delay_ns == CPUFREQ_ETERNAL) {
-> +	if (transition_delay_ns < 0) {
->   		if (cpu_feature_enabled(X86_FEATURE_AMD_FAST_CPPC))
->   			return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
->   		else
-> @@ -891,10 +891,10 @@ static u32 amd_pstate_get_transition_del
->    */
->   static u32 amd_pstate_get_transition_latency(unsigned int cpu)
->   {
-> -	u32 transition_latency;
-> +	int transition_latency;
->   
->   	transition_latency = cppc_get_transition_latency(cpu);
-> -	if (transition_latency  == CPUFREQ_ETERNAL)
-> +	if (transition_latency < 0)
->   		return AMD_PSTATE_TRANSITION_LATENCY;
->   
->   	return transition_latency;
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -310,9 +310,9 @@ static int cppc_verify_policy(struct cpu
->   
->   static unsigned int get_transition_latency_from_cppc(unsigned int cpu)
->   {
-> -	unsigned int transition_latency_ns = cppc_get_transition_latency(cpu);
-> +	int transition_latency_ns = cppc_get_transition_latency(cpu);
->   
-> -	if (transition_latency_ns == CPUFREQ_ETERNAL)
-> +	if (transition_latency_ns < 0)
->   		return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_USEC;
->   
->   	return transition_latency_ns / NSEC_PER_USEC;
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -160,7 +160,7 @@ extern unsigned int cppc_khz_to_perf(str
->   extern bool acpi_cpc_valid(void);
->   extern bool cppc_allow_fast_switch(void);
->   extern int acpi_get_psd_map(unsigned int cpu, struct cppc_cpudata *cpu_data);
-> -extern unsigned int cppc_get_transition_latency(int cpu);
-> +extern int cppc_get_transition_latency(int cpu);
->   extern bool cpc_ffh_supported(void);
->   extern bool cpc_supported_by_cpu(void);
->   extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
-> @@ -216,9 +216,9 @@ static inline bool cppc_allow_fast_switc
->   {
->   	return false;
->   }
-> -static inline unsigned int cppc_get_transition_latency(int cpu)
-> +static inline int cppc_get_transition_latency(int cpu)
->   {
-> -	return CPUFREQ_ETERNAL;
-> +	return -ENODATA;
->   }
->   static inline bool cpc_ffh_supported(void)
->   {
-> 
-> 
-> 
+I realized I never checked how often processes are exiting while still
+having children -- for legitimate workloads this is probably not that
+common either, so the fence would not even show up in typical usage?
 
+This could be answered with bpftrace over a bunch of workloads if
+someone cares to investigate.
+
+> > I don't know if makes any sense to add this.
+>
+> Neither me.
+>
+> OK. I won't argue with this patch. At least the usage of tasklist_lock is=
+ well
+> documented.
+>
+
+ye.. avoiding smp_mb may be a case of "premature optimization", except
+it is also simpler, so that's a really tough call. good news is that
+it's not mine to make ;-)
+
+I guess if the lock acquire goes in the sky is not going to fall,
+worst case this can get revisited later. So fwiw I would be leaning
+towards accepting the patch as well for the time being.
 
