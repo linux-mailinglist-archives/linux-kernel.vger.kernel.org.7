@@ -1,251 +1,218 @@
-Return-Path: <linux-kernel+bounces-832081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58D1B9E4A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4844B9E4BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91428424AE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 523813B71AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C927AC59;
-	Thu, 25 Sep 2025 09:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD922E8DED;
+	Thu, 25 Sep 2025 09:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFi5QdXp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwdpB008"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C62DE71A;
-	Thu, 25 Sep 2025 09:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFC827AC59;
+	Thu, 25 Sep 2025 09:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758792166; cv=none; b=mTH4g6d9lo1W4/xWcYtIWBRP5tbs0+zbVABptrE7IcQlONuIDEy5pt6Ck1MSLf+zPjsbsWaJzmIhwwAbRB7UwyfmrQqmQ9h5Bc+JhJRBRoW40yneSAGLi1gQUFswTb5JqKWp0mwqCoiecndDiuvRWGFMf8itYN734Qxahkg1C0s=
+	t=1758792234; cv=none; b=t+FQsbGWChqfke15pxVcIonk77A95wRqfS+HqWFg5x2Wh98rQaGzFwkfTSrO4JW50KY3ftP297pceEExbGgiQtUGCfByPWWtHR1P0/TK6KMIbUbZMjxYK7uIMSvvzANXyoeoKZfdrT23b61mqSFNls/I7qoApN/GZI5jFbSlee0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758792166; c=relaxed/simple;
-	bh=MR44boVKHWx7J8V80/L147ARrhRQ5rTfMFmzDF/Cnyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwbyKO+IJVNMc/3ZBcY1EHmlOwVjVKTMa/wfKPp2xwOl2EUKAuZc4DjAUjnDldgmbCGuswCmnE4nhPCSRU5bST/ymKXrLKT4Tn8o6XSScEXqlqKjm4TVP+/E7zfFIniTiVQ3e3bCMo3RHPNrBTWxJ+HjlpyA53NZyiFkUBBYGvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFi5QdXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823B2C4CEF0;
-	Thu, 25 Sep 2025 09:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758792166;
-	bh=MR44boVKHWx7J8V80/L147ARrhRQ5rTfMFmzDF/Cnyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HFi5QdXpegI+f87kOQy95vbTr9xn/cuNgSpsAd33hvErpjNaBtVaCR4nuLtTwDhVr
-	 Im3k5vvVkhR13t3QNvh/qiT9TH0j2q/8Ns5R1CefY/LO/orPDfNwyhMM1pBYC30Iya
-	 +7Gfq7ar1A4LZ0NylLS2li6d1J9XUnj5BQ/uSeNwdhTMOvtJe65rJTE2IPCqd5B+gX
-	 kNVh56gYpcbBgcfL9Iloc6vVKteCSAKnjo6xnSeN7VN9U/y4djPHkKIIoa5YVmqZ93
-	 awhvidmEGBmklOefcZLZumvHtv8UxldvKYsR26DCW/L/KZf/27oostn4WyifKMzLIM
-	 C0BN5KzKXKV2A==
-Date: Thu, 25 Sep 2025 14:52:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
-	Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntb@lists.linux.dev, imx@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] PCI: endpoint: pci-epf-vntb: Add MSI doorbell
- support
-Message-ID: <qm7jvvvywqmegynkghxbfn6pwfdlkboowa45sqbvygpetkiyj4@ovve44f7qvpr>
-References: <20250915-vntb_msi_doorbell-v2-0-ca71605e3444@nxp.com>
- <20250915-vntb_msi_doorbell-v2-3-ca71605e3444@nxp.com>
- <ejhs6fb2nmfhnjswhrvd7iwyddwvvr5nv6bu7dt4aypbiecyfb@wza667q2x4qp>
- <aNRZxAU0n1hvYeEZ@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1758792234; c=relaxed/simple;
+	bh=9Vd9zg0JVBI7yLRIMM72AGWASsNCJnc82xMBZ35PrWk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BbazmzKUWsaf6Me2c2hImPPfu0WyOHqPMVeTD0lLE9ApPTBU6eI8lAXmkjkGL9ZwY0YZmLe7euQM6tLRB1Mr0fyGGRdjVAOCgd9P+HCFFjEa/QrFicy+EP06DlWleTVN2Sw5HS1jVgxRvU/WqBm1j1/M2bHZm7y3PEr7ULaBDac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwdpB008; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758792232; x=1790328232;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=9Vd9zg0JVBI7yLRIMM72AGWASsNCJnc82xMBZ35PrWk=;
+  b=hwdpB0087w4YvFZuGoaHDqHGBs8WWpwol8B1WGbK3aeSbCv7PKG1SQXG
+   iWeeEsJYPLqEaLI6KWwY4+mMj/Y/zkONcInK0+7YoM07fMTjvp4Gfh99r
+   umP2LYPFftXzDo0t/pf2AMBjCHSiZBMG6E3AWcFL+jxwnaFsmDtTOL7u2
+   Ip3Td/oCQu3E/+D90/e8tiTwIAqw0CjdDLHLGPpWGcjQQ16VKYegLMljO
+   MxZIrCj9herzvkMg+AG0M/Cy7rhe34Nz+xRAR2++dDGvxAUIDuVmYCIEr
+   6tI8yLXlJw6u5fmz9X/rW9JOVoKS7roKkAikOKrfaZhxOtNWVZRzgcIeh
+   Q==;
+X-CSE-ConnectionGUID: +mwF8UDYRhWcK0Kz7awJGQ==
+X-CSE-MsgGUID: o/FffolfTbOQNi1ZBosKVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61018019"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61018019"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 02:23:51 -0700
+X-CSE-ConnectionGUID: MWZ7/qLHQuOhd28y8/DFPQ==
+X-CSE-MsgGUID: zlRQloHVQY2u7IUYJkPpXA==
+X-ExtLoop1: 1
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.48])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 02:23:49 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 25 Sep 2025 12:23:45 +0300 (EEST)
+To: Daniel <dany97@live.ca>
+cc: Matan Ziv-Av <matan@svgalib.org>, Hans de Goede <hansg@kernel.org>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7] platform/x86: lg-laptop: Fix WMAB call in
+ fan_mode_store()
+In-Reply-To: <MN2PR06MB55989CB10E91C8DA00EE868DDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
+Message-ID: <6368d0dc-6e7c-ce4f-9f9b-df26a84f8120@linux.intel.com>
+References: <MN2PR06MB55989CB10E91C8DA00EE868DDC1CA@MN2PR06MB5598.namprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aNRZxAU0n1hvYeEZ@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Sep 24, 2025 at 04:51:16PM -0400, Frank Li wrote:
-> On Wed, Sep 24, 2025 at 11:52:29PM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Sep 15, 2025 at 06:22:46PM -0400, Frank Li wrote:
-> > > Add MSI doorbell support to reduce latency between PCI host and EP.
-> > >
-> > > Before this change:
-> > >   ping 169.254.172.137
-> > >   64 bytes from 169.254.172.137: icmp_seq=1 ttl=64 time=0.575 ms
-> > >   64 bytes from 169.254.172.137: icmp_seq=2 ttl=64 time=1.80 ms
-> > >   64 bytes from 169.254.172.137: icmp_seq=3 ttl=64 time=8.19 ms
-> > >   64 bytes from 169.254.172.137: icmp_seq=4 ttl=64 time=2.00 ms
-> > >
-> > > After this change:
-> > >   ping 169.254.144.71
-> > >   64 bytes from 169.254.144.71: icmp_seq=1 ttl=64 time=0.215 ms
-> > >   64 bytes from 169.254.144.71: icmp_seq=2 ttl=64 time=0.456 ms
-> > >   64 bytes from 169.254.144.71: icmp_seq=3 ttl=64 time=0.448 ms
-> > >
-> > > Change u64 db to atomic_64 because difference doorbell may happen at the
-> > > same time.
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > > change in v2
-> > > - update api pci_epf_set_inbound_space
-> > > - atomic_64 should be enough, which just record doorbell events, which is
-> > > similar with W1C irq status register.
-> > > ---
-> > >  drivers/pci/endpoint/functions/pci-epf-vntb.c | 153 +++++++++++++++++++++++---
-> > >  1 file changed, 136 insertions(+), 17 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > > index 83e9ab10f9c4fc2b485d5463faa2172500f12999..06c13f26db1c6e55d23769e98e2cfd80da693a20 100644
-> > > --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > > +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > > @@ -36,11 +36,13 @@
-> > >   * PCIe Root Port                        PCI EP
-> > >   */
-> > >
-> > > +#include <linux/atomic.h>
-> > >  #include <linux/delay.h>
-> > >  #include <linux/io.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/slab.h>
-> > >
-> > > +#include <linux/pci-ep-msi.h>
-> > >  #include <linux/pci-epc.h>
-> > >  #include <linux/pci-epf.h>
-> > >  #include <linux/ntb.h>
-> > > @@ -126,12 +128,13 @@ struct epf_ntb {
-> > >  	u32 db_count;
-> > >  	u32 spad_count;
-> > >  	u64 mws_size[MAX_MW];
-> > > -	u64 db;
-> > > +	atomic64_t db;
-> > >  	u32 vbus_number;
-> > >  	u16 vntb_pid;
-> > >  	u16 vntb_vid;
-> > >
-> > >  	bool linkup;
-> > > +	bool msi_doorbell;
-> > >  	u32 spad_size;
-> > >
-> > >  	enum pci_barno epf_ntb_bar[VNTB_BAR_NUM];
-> > > @@ -258,9 +261,9 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
-> > >
-> > >  	ntb = container_of(work, struct epf_ntb, cmd_handler.work);
-> > >
-> > > -	for (i = 1; i < ntb->db_count; i++) {
-> > > +	for (i = 1; i < ntb->db_count && !ntb->msi_doorbell; i++) {
-> > >  		if (ntb->epf_db[i]) {
-> > > -			ntb->db |= 1 << (i - 1);
-> > > +			atomic64_or(1 << (i - 1), &ntb->db);
-> > >  			ntb_db_event(&ntb->ntb, i);
-> > >  			ntb->epf_db[i] = 0;
-> > >  		}
-> > > @@ -319,7 +322,24 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
-> > >
-> > >  reset_handler:
-> > >  	queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler,
-> > > -			   msecs_to_jiffies(5));
-> > > +			   ntb->msi_doorbell ? msecs_to_jiffies(500) : msecs_to_jiffies(5));
-> > > +}
-> > > +
-> > > +static irqreturn_t epf_ntb_doorbell_handler(int irq, void *data)
-> > > +{
-> > > +	struct epf_ntb *ntb = data;
-> > > +	int i = 0;
-> > > +
-> > > +	for (i = 1; i < ntb->db_count; i++)
-> > > +		if (irq == ntb->epf->db_msg[i].virq) {
-> > > +			atomic64_or(1 << (i - 1), &ntb->db);
-> > > +			ntb_db_event(&ntb->ntb, i);
-> > > +		}
-> > > +
-> > > +	if (irq == ntb->epf->db_msg[0].virq)
-> >
-> > So doorbell 0 is supposed to trigger the command handler? Is it documented
-> > somewhere?
-> 
-> I missed my very old patch in drivers/ntb/hw/epf/ntb_hw_epf.c to use
-> doorbell 0 as trigger command handler, this path should never triggered.
-> 
-> db 0 is not used in ntb_hw_epf.c
-> 
-> >
-> > > +		queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler, 0);
-> > > +
-> > > +	return IRQ_HANDLED;
-> > >  }
-> > >
-> > >  /**
-> > > @@ -500,6 +520,90 @@ static int epf_ntb_configure_interrupt(struct epf_ntb *ntb)
-> > >  	return 0;
-> > >  }
-> > >
-> > > +static int epf_ntb_db_bar_init_msi_doorbell(struct epf_ntb *ntb,
-> > > +					    struct pci_epf_bar *db_bar,
-> > > +					    const struct pci_epc_features *epc_features,
-> > > +					    enum pci_barno barno)
-> > > +{
-> > > +	struct pci_epf *epf = ntb->epf;
-> > > +	dma_addr_t low, high;
-> > > +	struct msi_msg *msg;
-> > > +	size_t sz;
-> > > +	int ret;
-> > > +	int i;
-> > > +
-> > > +	ret = pci_epf_alloc_doorbell(epf,  ntb->db_count);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	for (i = 0; i < ntb->db_count; i++) {
-> > > +		ret = request_irq(epf->db_msg[i].virq, epf_ntb_doorbell_handler,
-> > > +				  0, "vntb_db", ntb);
-> > > +
-> > > +		if (ret) {
-> > > +			dev_err(&epf->dev,
-> > > +				"Failed to request doorbell IRQ: %d\n",
-> > > +				epf->db_msg[i].virq);
-> > > +			goto err_request_irq;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	msg = &epf->db_msg[0].msg;
-> > > +
-> > > +	high = 0;
-> > > +	low = (u64)msg->address_hi << 32 | msg->address_lo;
-> > > +
-> > > +	for (i = 0; i < ntb->db_count; i++) {
-> > > +		struct msi_msg *msg = &epf->db_msg[i].msg;
-> > > +		dma_addr_t addr = (u64)msg->address_hi << 32 | msg->address_lo;
-> > > +
-> > > +		low = min(low, addr);
-> > > +		high = max(high, addr);
-> > > +	}
-> > > +
-> > > +	sz = high - low + sizeof(u32);
-> > > +
-> > > +	ret = pci_epf_set_inbound_space(epf, sz, barno,
-> > > +					epc_features, 0, low);
-> >
-> > Should this new API be used in pci-epf-test also?
-> 
-> Needn't, because pcie-epf-test default set system memory as bar's space.
-> switch to MMIO when enable doorbell and switch back to system memory.
-> 
-> size alignment already consider at bar initilization, and we can't change
-> bar's size after bind now.
-> 
+On Wed, 24 Sep 2025, Daniel wrote:
 
-The memory and size are allocated during pci_epf_test_bind(), I agree. But
-that's for memory allocated through pci_epf_alloc_space(). So if the MSI region
-has size restrictions (as taken care by this API), it should be handled in the
-pci-epf-test driver as well.
+> When WMAB is called to set the fan mode, the new mode is read from either
+> bits 0-1 or bits 4-5 (depending on the value of some other EC register).
+> Thus when WMAB is called with bits 4-5 zeroed and called again with
+> bits 0-1 zeroed, the second call undoes the effect of the first call.
+> This causes writes to /sys/devices/platform/lg-laptop/fan_mode to have
+> no effect (and causes reads to always report a status of zero).
+> 
+> Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
+> When the fan mode is returned from WMAB it always has this form, so
+> there is no need to preserve the other bits.  As a bonus, the driver
+> now supports the "Performance" fan mode seen in the LG-provided Windows
+> control app, which provides less aggressive CPU throttling but louder
+> fan noise and shorter battery life.
+> 
+> Also correct the documentation to reflect that 0 corresponds to the
+> default mode (what the Windows app calls "Optimal") and 1 corresponds
+> to the silent mode.
+> 
+> Signed-off-by: Daniel Lee <dany97@live.ca>
+> Tested-by: Daniel Lee <dany97@live.ca>
+> Fixes: dbf0c5a6b1f8 ("platform/x86: Add LG Gram laptop special features driver")
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=204913#c4
+> ---
+> V1 -> V2: Replace bitops with GENMASK() and FIELD_PREP()
+> V2 -> V3: Add parentheses next to function name in summary line
+>           Use full name in signoff
+> V3 -> V4: Add include for linux/bitfield.h
+>           Remove "FIELD" from bitmask macro names
+> V4 -> V5: Rename `status` to `mode` in fan_mode_show()
+> V5 -> V6: Reword commit message body
+> V6 -> V7: Add Link: to relevant bugzilla comment
 
-Otherwise, we will end up with different implementations between EPF drivers.
+Thanks. I've replaced the commit in the review-ilpo-fixes branch with this 
+one.
 
-- Mani
+>  .../admin-guide/laptops/lg-laptop.rst         |  4 +--
+>  drivers/platform/x86/lg-laptop.c              | 34 ++++++++-----------
+>  2 files changed, 16 insertions(+), 22 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
+> index 67fd6932c..c4dd534f9 100644
+> --- a/Documentation/admin-guide/laptops/lg-laptop.rst
+> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+> @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
+>  Fan mode
+>  --------
+>  
+> -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
+> -the fan silent mode.
+> +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
+> +Optimal/Silent/Performance respectively.
+>  
+>  
+>  USB charge
+> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
+> index 4b57102c7..6af6cf477 100644
+> --- a/drivers/platform/x86/lg-laptop.c
+> +++ b/drivers/platform/x86/lg-laptop.c
+> @@ -8,6 +8,7 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/acpi.h>
+> +#include <linux/bitfield.h>
+>  #include <linux/bits.h>
+>  #include <linux/device.h>
+>  #include <linux/dev_printk.h>
+> @@ -75,6 +76,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
+>  #define WMBB_USB_CHARGE 0x10B
+>  #define WMBB_BATT_LIMIT 0x10C
+>  
+> +#define FAN_MODE_LOWER GENMASK(1, 0)
+> +#define FAN_MODE_UPPER GENMASK(5, 4)
+> +
+>  #define PLATFORM_NAME   "lg-laptop"
+>  
+>  MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
+> @@ -274,29 +278,19 @@ static ssize_t fan_mode_store(struct device *dev,
+>  			      struct device_attribute *attr,
+>  			      const char *buffer, size_t count)
+>  {
+> -	bool value;
+> +	unsigned long value;
+>  	union acpi_object *r;
+> -	u32 m;
+>  	int ret;
+>  
+> -	ret = kstrtobool(buffer, &value);
+> +	ret = kstrtoul(buffer, 10, &value);
+>  	if (ret)
+>  		return ret;
+> +	if (value >= 3)
+> +		return -EINVAL;
+>  
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+> -	if (!r)
+> -		return -EIO;
+> -
+> -	if (r->type != ACPI_TYPE_INTEGER) {
+> -		kfree(r);
+> -		return -EIO;
+> -	}
+> -
+> -	m = r->integer.value;
+> -	kfree(r);
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
+> -	kfree(r);
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
+> +	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
+> +		FIELD_PREP(FAN_MODE_LOWER, value) |
+> +		FIELD_PREP(FAN_MODE_UPPER, value));
+>  	kfree(r);
+>  
+>  	return count;
+> @@ -305,7 +299,7 @@ static ssize_t fan_mode_store(struct device *dev,
+>  static ssize_t fan_mode_show(struct device *dev,
+>  			     struct device_attribute *attr, char *buffer)
+>  {
+> -	unsigned int status;
+> +	unsigned int mode;
+>  	union acpi_object *r;
+>  
+>  	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+> @@ -317,10 +311,10 @@ static ssize_t fan_mode_show(struct device *dev,
+>  		return -EIO;
+>  	}
+>  
+> -	status = r->integer.value & 0x01;
+> +	mode = FIELD_GET(FAN_MODE_LOWER, r->integer.value);
+>  	kfree(r);
+>  
+> -	return sysfs_emit(buffer, "%d\n", status);
+> +	return sysfs_emit(buffer, "%d\n", mode);
+>  }
+>  
+>  static ssize_t usb_charge_store(struct device *dev,
+> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+ i.
+
 
