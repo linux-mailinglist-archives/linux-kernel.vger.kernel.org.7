@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-832914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFADBA0BE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:06:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7435BBA0BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F38716C15D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A58A624F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF9C30AAC2;
-	Thu, 25 Sep 2025 17:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F38F30C34E;
+	Thu, 25 Sep 2025 17:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLEgG49U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upWO0S7b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F7519F40B;
-	Thu, 25 Sep 2025 17:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7286B19F40B;
+	Thu, 25 Sep 2025 17:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820003; cv=none; b=M2ITgFB5guHEFX9WoAV560Lf7LU8eUXBYhDd6AobbQ+UigWbtK73OwCTr960kJuDGVrjnbf4q1+WlmlIjG4HycAxRfWfvV0iMl5LPlqfOKjHb+kZiEL1oKUadqazoJJdvpaT6kzJsJNPedXn3vd52v5vAGgXuvNUUqnOJWR5w+4=
+	t=1758820007; cv=none; b=rLNg4rogckLfVMcGkqxVtc3GyNWytWLiyMpgUBx2t2ViWsfdeGyoNLc7U0f1RdiVPzWijvCAnNy90mj1AwMOPOliRDJqfc1hYLt9ZY6DJzvjtwHmu7RNWHvUorI3KajysL0VHoP9L/s0k2/bZar24WAQUaLnKBnUVtQgn6EqYjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820003; c=relaxed/simple;
-	bh=FQnMJ4nzbSCJNz2iuEs2EI/NSyonioY+gldaU1Xzzho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5DjoDqxGuAFFSUNjWb+8Jv/F4rpj/GMPJx1lRqpiHvQZqQM3+F2j+mdU+YyI/HAc85Tnnc4Bvl2FlCyg7tieEdEfduJQGy/99/KCSMQUy4MTOncSefef2SpUAK7dbCpPFLv1W2uqT7EJobLFfQHf/bPbBWE/7p0y2Pxxz7lvms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLEgG49U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A18C4CEF5;
-	Thu, 25 Sep 2025 17:06:42 +0000 (UTC)
+	s=arc-20240116; t=1758820007; c=relaxed/simple;
+	bh=0/lEVkFCh2G2v1BOOAgB1PBGgF4nPu4QaLTafq24y38=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lYvjuWLzKKOP1TR24CYBMCjaPQNrTsk9r6/QRmxOm2OkyjJgAbx2inu9V3LZPuRtjpp50GOUNnKQtXo/agzBAFth1ZJRT0XBPurpt804l56Mtj2KULH1LqTPNGWjgXvDZfsctg/GbUal5hTi2cdu9uK0H9BE+6Lfg20NAWmw8ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upWO0S7b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DBFC4CEF0;
+	Thu, 25 Sep 2025 17:06:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758820003;
-	bh=FQnMJ4nzbSCJNz2iuEs2EI/NSyonioY+gldaU1Xzzho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rLEgG49UFRdBGutH8VK+dJVxK/A35OeQF1z2hCe64FKkzzkGXMphnQDehqXCOz+Cz
-	 BhIFmYQnoNh27AdNzF8epRVr3UO0NwfSF1RDfck9PeJGgulI5sEX6K+veyf03lbql8
-	 GQpAW5LhukYoHB0rp/Frog5hZ+6WXNVzI7tC8HG7se2BoHdOHnfV8Ap8cYLauhGL2q
-	 6qrJRRUP1y30e3EqiKmgdcnn9pGGxLWbDJgOLQgOS4LSCyxEtbmMaV5cpD1WuEwHQg
-	 PHD8Sn+3flmlttsZb1Dq8EcliQ0KC1ABTm6H3HfCPqrz/rjRsknmeQx4nNaM2KtpRh
-	 sTMvyKXQ/+RNA==
-Date: Thu, 25 Sep 2025 12:06:40 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: [PATCH 06/24] arm64: dts: qcom: glymur: Enable pdp0 mailbox
-Message-ID: <bugtpjwk77lcpa4jjox62ulmy56nf6yykzpr2ryifqqpeig6gp@45lzpngcpo2z>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-6-24b601bbecc0@oss.qualcomm.com>
- <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
+	s=k20201202; t=1758820006;
+	bh=0/lEVkFCh2G2v1BOOAgB1PBGgF4nPu4QaLTafq24y38=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=upWO0S7bR6lOGUVbFT6fNQorUegPsIW2KzRvVSSYxrjXCDBH5BO9geR5os56F0pZb
+	 JV1ojavERVX0XO4Ep8TWtr1SpRnSKTcR5XXzz4rBGuVoe5T/9WEXO74GWaF8OJFTjf
+	 fKcWtQVfSh8m8CbMhExOhaRlP2XtyIXyuOj9ASXXs5vYx0xv/aEWU8oWsEz9I/vxJ6
+	 f4Vu3mXdb/8lV3n509DBU4trOB7+9tuUmwNLLLZ1u6XcOEhFPzPseaLVifEy8sJ+S4
+	 J4YINXX3sB5DH2eC0GW6QERlkVqy8XNMNNfykOvQAS0l+64UdbxWWyJ8mob9198qeq
+	 Ubhc7j5Hlk4fA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, 
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: robh@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+ linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+In-Reply-To: <20250922081057.15209-1-mani@kernel.org>
+References: <20250922081057.15209-1-mani@kernel.org>
+Subject: Re: [PATCH] PCI: tegra194: Rename variable 'root_bus' to
+ 'root_port_bus' in tegra_pcie_downstream_dev_to_D0()
+Message-Id: <175882000155.393581.9846354008561006249.b4-ty@kernel.org>
+Date: Thu, 25 Sep 2025 22:36:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu, Sep 25, 2025 at 05:23:07PM +0900, Krzysztof Kozlowski wrote:
-> On Thu, 25 Sept 2025 at 15:33, Pankaj Patil
-> <pankaj.patil@oss.qualcomm.com> wrote:
-> >
-> > From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> >
-> > Enable pdp0 mailbox node on Glymur SoCs.
-> >
-> > Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/glymur.dtsi | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> > index 66a548400c720474cde8a8b82ee686be507a795f..ae013c64e096b7c90c0aa4cfc50f078a85518acb 100644
-> > --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> > @@ -4065,6 +4065,14 @@ watchdog@17600000 {
-> >                         interrupts = <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>;
-> >                 };
-> >
-> > +               pdp0_mbox: mailbox@17610000 {
-> > +                       compatible = "qcom,glymur-cpucp-mbox", "qcom,x1e80100-cpucp-mbox";
-> > +                       reg = <0 0x17610000 0 0x8000>, <0 0x19980000 0 0x8000>;
-> > +                       interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       #mbox-cells = <1>;
-> > +                       qcom,rx-chans = <0x7>;
-> > +               };
+
+On Mon, 22 Sep 2025 13:40:57 +0530, Manivannan Sadhasivam wrote:
+> In tegra_pcie_downstream_dev_to_D0(), PCI devices are transitioned to D0
+> state. For iterating over the devices, first the downstream bus of the Root
+> Port is searched from the Root bus. But the name of the variable that holds
+> the Root Port downstream bus is named as 'root_bus', which is wrong.
 > 
-> Again one node per patch. this is really pointless, please read
-> submitting patches before posting.
+> So rename the variable to 'root_port_bus'. Also, move the comment on
+> 'bringing the devices to D0' to where the state is set exactly.
 > 
+> [...]
 
-In this series I certainly agree with you.
+Applied, thanks!
 
-This is most definitely part of the next patch, which is core support
-that should have been part of the introduction of the CPU nodes in the
-initial patch.
+[1/1] PCI: tegra194: Rename variable 'root_bus' to 'root_port_bus' in tegra_pcie_downstream_dev_to_D0()
+      commit: d7c0300fea06e3ad43986840ccfbb0f1c449529b
 
-Regards,
-Bjorn
+Best regards,
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
 
-> New Soc is one logical change. One.
 
