@@ -1,115 +1,171 @@
-Return-Path: <linux-kernel+bounces-831648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A507B9D3B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77CEB9D393
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24AE7B45FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A89AA4A37EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25DD2E612E;
-	Thu, 25 Sep 2025 02:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A54C2E54DE;
+	Thu, 25 Sep 2025 02:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="d1PH1lyP"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J58/SCUf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22AE2E62BE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A422DECD6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758768458; cv=none; b=q3ipYjOCFsny+EtqbbIPU1Y8R5n9Vtbyl55ky0vAPJsugD6zr1M9/q/yG7zKILDi4yX5yKAhwhdyUOtI3lN+0jwYqMIjLdxZXGSeLT+SzGScIgMK7aBHtVyy6523jo6dnSrjPkpUO2bJ2OgM+3rzgAIsrnlGcUWH1virgEUnen0=
+	t=1758768240; cv=none; b=LSMhdZDQJcM84Hc/86gke6q27u1xanhYND1gTB/GyA7h4tLYeHIdP+0Ul8s+WArBXGdXZXM2nGRYxqYGxQLtqj6eV6t/Pa73HS1quzZqidHQ+1t/vCFhXoVlTROoWTMiRsnSFoBeZWmDBc0K9ZmOs95BRQtANTk5tgw4ltHqH8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758768458; c=relaxed/simple;
-	bh=19ujwnFXj88kacwo85PIaKscRN1Zn0ix4HoQX5JW+mk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TM7ntXloR5y5zp56D47+zK/KlTDx0xYf9ZcFJB2wefmd5b9LWR8e43z5eKWsI8uCiM1Uunqc/TrgZZWC6gNnep+xa2lfnC5DUhc16ki7sdlKv+cBa33v7XB4dVoE69yxNrZOWfQ/GuL2se4YMDI/7elgqkCL5hY+6zBkysfAyk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=d1PH1lyP; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1758768416;
-	bh=oUVIgw1hSqZOvYR+N4LRnpAUQ/Srtvh3WmwHHoH7NH0=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=d1PH1lyPpy/QlnSO1KC4JSc/WMYgddpPAJy4+Hr9LFsJU+o0qQVrPSQduQ1z4KVPp
-	 Ee6PT4Jc7zCCXfQzO6mwjKYQOVBsvrvPcePLTeHT4EkurOue+8MkXArtY7xxr2mqUG
-	 KdUXvws+DsawtjdEt+e0laTxAdu8WlHDVXAz4Yws=
-X-QQ-mid: esmtpsz19t1758768389t5149b116
-X-QQ-Originating-IP: IPWBwPHDWCio8nJn3Kphf0rZ+QSFAF3ARlWGDRkJ5Lk=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 25 Sep 2025 10:46:27 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16810204573868226589
-EX-QQ-RecipientCnt: 6
-From: Wentao Guan <guanwentao@uniontech.com>
-To: chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	niecheng1@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] LoongArch: defconfig: enable NLS_ISO8859_1
-Date: Thu, 25 Sep 2025 10:43:01 +0800
-Message-Id: <20250925024301.1283742-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1758768240; c=relaxed/simple;
+	bh=S7vb/zf3V2GaassUXCT9UJV1Et/9TJiqD8ubx2PkhwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XmXbci2yKoIDzCqQND0TG1aiCN9M9fQrRMkEo7GtXY7HHtCjnUVL4ASYex6595rm2ozjCelWq9Y7Gui+8pTAJyedRyu6tkVY2Y3yhbAUp/s0qWSmq3TKUFZujpaac7+XT2hPrz9/DS1ddL5HW34ZinBsEzFStTVSN9DOgWNcMWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J58/SCUf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC73C4CEF7
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758768240;
+	bh=S7vb/zf3V2GaassUXCT9UJV1Et/9TJiqD8ubx2PkhwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J58/SCUfWipwZ1MVIpQEBYOUxqgqodgM0cUqxO+6oYTnwX30OAYYFnF0WKJxi5SU3
+	 1YOU1P/IZqOtiBNDhKnXN1z4ovoCMhsotskp189F0RKKNay05fweIgyzg2e3gFkOa+
+	 mrEzWgOqJIw9XZ1B1L1AdSJy3OwrymPL9j/QShB/+lcZEezrx+noPCD585qWFJNKzN
+	 6E6HdZZvyCsVBaO63lJCmSambbsyS5Xwl45MRs1Bl9W47XafA1DEa4nLWflPswoZ74
+	 CUlx92J4FcsuHOfMtemFUEOhpKfKnlSdBytdl9IRLQmzaeKqeOP4mbfyhOZCLS3Mji
+	 uaOs9TbYVJNTg==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62fc686dc41so354020a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:44:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxcusJSVKGNaAGznEJd77JtU87PL065FErwobeefleAwJPBIWoDqCR5m0MmHrl178dn1j/JTrlchrPz7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7s+8clTc0Bm1PHwODN7Qn1uLJIPaJvjFx7g8FakPuUS05Lnqn
+	Og4jDHU7FRfOHYnWhVXh8q7tEHkzV1Vwm6bcsO/H/a6xCzwsygMp5hG3J7y9ZnfyXa4EV6rgjeR
+	Uql1m4wrpH7ajmydRUcItwQRjCF0T9B0=
+X-Google-Smtp-Source: AGHT+IFAKAis+f8CsaeB/ZYEn6Mbsm0qvkYWWb/1JIaJw+bN7o9FCGRKh+44tCSaadZ6c4rMcagZJ6G9mHVPClZ1tck=
+X-Received: by 2002:a17:907:3f1e:b0:b11:c9df:7a73 with SMTP id
+ a640c23a62f3a-b34bd34a2b0mr217761266b.57.1758768239043; Wed, 24 Sep 2025
+ 19:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: OddG9bJrw+wO99H0+kBP8l/Vm8yAmfeyKKqyWK4a6sDgdCuKLHPkKyDe
-	f7s4kLFnqhXoQgWQ9JRchVLwxVwNVGZsmjViMrxHOAhTNB2lpzIQGiCTzXgE/h0lcbr1nE/
-	8G/JxTNvYHG0HU96QjtiKVGwOd02KsDJhhdVZzQEuMh4DPQ8wlctwhw9FECHGM978PRSvLk
-	8+G1L9Fh5S8g+LnLCkBIFvshDPi4EDSaekpupJLuVTNcduX5hMxB9BmXWTuthElwzmqqJfl
-	rOsnUesoy4EeEPbX8M+2EKEcH8Pcx3T/MdSbZvLhGtiWdr7xpeg4C6y8j3zQe4/jYP8g00z
-	1V9cizYaakKW4rWoJogbD5NZ0X5ZWMTRqJV4krAXG6j6n0EIAV6WnqGYoRlYqH1CAcow7o5
-	YQENgqUaYbCCPeb9jLrkRPM51th9ghqdhcBXTqDvDrASHWYDDNERrBXQtbWQxisD81xL6xU
-	LQisI/BcLIiWBriUDNXSQxHAl/ZOD/XkLNugO8yKEmaQx+N1c2pMdWm+YHFZjZK4Kn+ani4
-	DgHKkTdKcRXi5kqLp0KJgOEGzsWjRV2RUtqF+RTDUYECtzTM3LOt+x8m0jqtfzs/di2FSpj
-	djSk3UDQIav+56ItTg+NSwY2+ifK0xpCDj3pmlNHLpUNGlwOgRNE4+zFfuykGRNBdxG7ohg
-	UqVYColJsK3OK4keolTJiTuFuU+KmEJdo0qwQYcpg5o21EPVqqTXdV49l5vY8nC7BrHjolO
-	xsObgxnQrx6+Ni/lMd3c57hvNyqH/oY9cgbWMBrMPPn3xRAUmE43xXCyMaPxxpnLoFWwK5W
-	JE2CZTDit9D0IusSky3T9c6xvQSeOQiBIKD+We2n4JNyulXXn7k6sJVI86r24u6a8riTlLP
-	5kEvsVgWbaZ4q/lleGvqSWDKJMT48pPiS+ii9kx1LwRYtf3h+C2FWgj9DZSCnzisd7J4EVO
-	hiMYd7GXtpoYa5QsItNGn289Nh69fMoh7nPFXnFyaWTivDKGykyGkqTiuu7u3aXCQUPs+mz
-	pTJbGgDi8ujdHiy+9IDFxRnJ2lfriGKKQMilVvjnbPZ+gmJdxI
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+References: <20250919093615.30235-1-yangtiezhu@loongson.cn> <20250919093615.30235-2-yangtiezhu@loongson.cn>
+In-Reply-To: <20250919093615.30235-2-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 25 Sep 2025 10:43:44 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4fdfB3fH0DnfgxNimPBsjiOGQZV-w0g63d7TVDOK5-zw@mail.gmail.com>
+X-Gm-Features: AS18NWDZZeQr-H2-K3eeVtlqTGrlSQzrQ7P8GUhNaKX_KK-BVvdywIo1Js7nnoc
+Message-ID: <CAAhV-H4fdfB3fH0DnfgxNimPBsjiOGQZV-w0g63d7TVDOK5-zw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] LoongArch: Only link libstub to final vmlinux
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, loongarch@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-NLS_DEFAULT is "iso8859-1",so enable CONFIG_NLS_ISO8859_1.
-To solve the problem that I found EFI partition(FAT) mount failed,
-systemd say "Failed to mount boot-efi.mount - /boot/efi",
-and booting to emergency mode.
+Hi, Tiezhu,
 
-It is similar to commit
-efe1e08bca9a("riscv: defconfig: enable NLS_CODEPAGE_437, NLS_ISO8859_1")
+On Fri, Sep 19, 2025 at 5:36=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> the following objtool warning:
+>
+>   vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+>   falls through to next function __efistub_exit_boot_func()
+>
+> This is because efi_boot_kernel() doesn't end with a return instruction
+> or an unconditional jump, then objtool has determined that the function
+> can fall through into the next function.
+>
+> At the beginning, try to do something to make efi_boot_kernel() ends with
+> an unconditional jump instruction, but this modification seems not proper=
+.
+>
+> Since the efistub functions are useless for stack unwinder, they can be
+> ignored by objtool. After many discussions, no need to link libstub to
+> the vmlinux.o, only link libstub to the final vmlinux.
+>
+> Link: https://lore.kernel.org/lkml/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5=
+rcxzxxanzetd@6rrlpjnjsmuy/
+> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  Makefile                | 1 +
+>  arch/loongarch/Makefile | 5 ++++-
+>  scripts/link-vmlinux.sh | 5 ++---
+>  3 files changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 9771619ac596..b8e7c63ae3d1 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1201,6 +1201,7 @@ KBUILD_VMLINUX_OBJS :=3D built-in.a $(patsubst %/, =
+%/lib.a, $(filter %/, $(libs-y)
+>  KBUILD_VMLINUX_LIBS :=3D $(filter-out %/, $(libs-y))
+>
+>  export KBUILD_VMLINUX_LIBS
+> +export KBUILD_VMLINUX_LIBS_PRELINK
+>  export KBUILD_LDS          :=3D arch/$(SRCARCH)/kernel/vmlinux.lds
+>
+>  ifdef CONFIG_TRIM_UNUSED_KSYMS
+Why does the LoongArch patch modify the common parts? Since the whole
+series is small enough, I suggest modifying everything in a single
+patch. And the single patch can be merged via the efi tree.
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
----
- arch/loongarch/configs/loongson3_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Huacai
 
-diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-index 34eaee0384c92..b1dabce266e9c 100644
---- a/arch/loongarch/configs/loongson3_defconfig
-+++ b/arch/loongarch/configs/loongson3_defconfig
-@@ -1030,6 +1030,7 @@ CONFIG_9P_FS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_CODEPAGE_936=y
- CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
- CONFIG_NLS_UTF8=y
- CONFIG_DLM=m
- CONFIG_KEY_DH_OPERATIONS=y
--- 
-2.20.1
-
+> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+> index a3a9759414f4..e9c61f76a045 100644
+> --- a/arch/loongarch/Makefile
+> +++ b/arch/loongarch/Makefile
+> @@ -164,7 +164,10 @@ CHECKFLAGS +=3D $(shell $(CC) $(KBUILD_CPPFLAGS) $(K=
+BUILD_CFLAGS) -dM -E -x c /dev
+>  endif
+>
+>  libs-y +=3D arch/loongarch/lib/
+> -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/lib=
+.a
+> +
+> +ifdef CONFIG_EFI_STUB
+> +KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libstub=
+/lib.a
+> +endif
+>
+>  drivers-y              +=3D arch/loongarch/crypto/
+>
+> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> index 51367c2bfc21..b3cbff31d8a9 100755
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -61,12 +61,11 @@ vmlinux_link()
+>         shift
+>
+>         if is_enabled CONFIG_LTO_CLANG || is_enabled CONFIG_X86_KERNEL_IB=
+T; then
+> -               # Use vmlinux.o instead of performing the slow LTO link a=
+gain.
+>                 objs=3Dvmlinux.o
+> -               libs=3D
+> +               libs=3D"${KBUILD_VMLINUX_LIBS_PRELINK}"
+>         else
+>                 objs=3Dvmlinux.a
+> -               libs=3D"${KBUILD_VMLINUX_LIBS}"
+> +               libs=3D"${KBUILD_VMLINUX_LIBS} ${KBUILD_VMLINUX_LIBS_PREL=
+INK}"
+>         fi
+>
+>         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
+> --
+> 2.42.0
+>
 
