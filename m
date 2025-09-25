@@ -1,137 +1,903 @@
-Return-Path: <linux-kernel+bounces-832745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3DCBA02D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328E4BA0433
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE4754E3A09
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361FC4C576C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E282E3B11;
-	Thu, 25 Sep 2025 15:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62AC2E54D3;
+	Thu, 25 Sep 2025 15:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="FjuLb5Qe"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="JkaiAFLn"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADC91EDA2C;
-	Thu, 25 Sep 2025 15:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0653A2E229E;
+	Thu, 25 Sep 2025 15:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813239; cv=none; b=a7Elz/sDBfzIUhaimEp8mJvfj1rj9K4aDeV2f9075bGvqw6Am4BsyS7ECUfyLisInHlmjYO1cT1Sz3auwrwv0/IaQzZXW5EB+w4iEVOJaZRigIQROkl6wwAqbVOsN1SdDbX3jvZ3hrrftiPzmgfkXJjRBjsAtFtbDmCxaeM0Jlo=
+	t=1758813358; cv=none; b=QQnqgRli/uOcOxpPPvNBe/FLheWhhF15D9YVtmVQENUyBNsMKf4uydy2PJiso5sqj0Uv3KShFEtOdjtqqhcjW6iyCyPHZ4g5Kmgp2JjIBbY//8oHN7zGeck/wr4cFTJhcy/E3tQpvP8AwkJ1On1iUlDb48NW/pl2ViB5+rneVEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813239; c=relaxed/simple;
-	bh=5KE8fEuMRN+X+ribjZhvbgmmDFjpZg6ol18Jr3kvPrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhlABq+4JHmO9t5EE+8Xx9k6af/SDDXrMY55FPa9CMoD2HwBbTYOK24OEzvZSKFa25HsoxtdnBHcymRGSmMO9evgN8494sB5KlO+HkHTEIS1KLE2ADVzAEhD2MvmgmpeXxzIm0yAXShlhPdo6NkBQ8+nZmG0+uwqeFy0BDB/uQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=FjuLb5Qe; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=UDJZn+Ac105Mb+HZvbqF0SQyoV4T7vt8zW8zHN4DfEs=; b=FjuLb5Qe0+5d/Lni02o9LBjSc4
-	2dApprgTByuxUAkrMsUhw8/HbA1RUUewfMLoHmuuW33HDmTSywegQWxdCS7rLDhYLtA8EwYPE0xmB
-	is9/YDeUfJTtykd6YBX07J2fmRS55B7Nc8/BTuj6jDTVI6qOLRtCRR2DF/FxLwgHYZNiIJV0WhFMy
-	/0ffaDemtIadvO/yoNv4Edidv32B8EQvqFh6zS9uHHIIhmQYou4Jz8I7HW48H8Ki7xObykwtZsUsY
-	fHltIuET40ZsyBszgHt0JL91MYq51Skf9beXKdz/3N2A+IV3+W+viofwEuE/G9HQYIsrtZex6Jxpy
-	TV3lzT1g==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1v1nfP-0004us-0G;
-	Thu, 25 Sep 2025 17:13:55 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1v1nfP-0006DC-08;
-	Thu, 25 Sep 2025 17:13:54 +0200
-Message-ID: <6e8951bb-a869-4230-a2a5-c303b4434598@iogearbox.net>
-Date: Thu, 25 Sep 2025 17:13:53 +0200
+	s=arc-20240116; t=1758813358; c=relaxed/simple;
+	bh=tJrOXystcWjcDdAY/SZZ/6NDoPI1wAotNAkQMshDHio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TG+2ECXeWZI7NTvJA/1TAqtEB9R/j6KvhIIgRy1e2EykNppknuff7KAH2S30q6Cb5A4dChNjgEalhwri2vJsjmzWZNEoPN0gGiNW/ET5iNMqnE4riZ2z45pLy6sjHXiJMTDTmBEwcY5GuLMG4norLizCR0/iRV1oJYNge5kA92Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=JkaiAFLn; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cXcjf4nGlz9shl;
+	Thu, 25 Sep 2025 17:15:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1758813350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+gqSCV43vP02HmQZDfJt7QoMMnj3VeLcaMIaXUC54e8=;
+	b=JkaiAFLnXcW5CPLe2m5btktj/8851LM+yWUIolAowB/jW1k4A6EEXkrk+ggDwDX4it2RnX
+	6Yb4h8XYDDaoIpaGok7PzdIr7KugBYx7yLyitXI9lUqDGhSfOlmVBnGFbX3LleANJZ4kPY
+	CtlDFGv1HWcNMyr8KcgG8bwdccuLJ+i20d+LOXXqmRsfx7np/E+Z8P1LoPBK3AfNeGCsMp
+	8sdcWixQAnPMxN9ipY/a4FFs19EIRXTPx0t9cCq/42mJ28vWYD3/9ASMZ7qupuzNnGfw/i
+	xvYT4+e5nRxr3jSnFYELMyWnCU/9FmDZlKrQMSIbcJ3EsYKQNWhSRylYrEfTTw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Fri, 26 Sep 2025 01:15:14 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
+Message-ID: <2025-09-25-azure-rubber-flair-menus-42bRw8@cyphar.com>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
+ <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] bpf: Remove duplicate crypto/sha2.h header
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, ast@kernel.org
-Cc: andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- Abaci Robot <abaci@linux.alibaba.com>
-References: <20250925092800.2012758-1-jiapeng.chong@linux.alibaba.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20250925092800.2012758-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27773/Thu Sep 25 10:27:35 2025)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5jlfeujlcvjslrig"
+Content-Disposition: inline
+In-Reply-To: <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
+X-Rspamd-Queue-Id: 4cXcjf4nGlz9shl
 
-On 9/25/25 11:28 AM, Jiapeng Chong wrote:
-> ./include/linux/bpf.h: crypto/sha2.h is included more than once.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=25501
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Jiapeng, is this one and the bpftool one the only two such patches you have
-for bpf or is there more to come? Asking in case there is more, then lets
-consolidate all of them into one for bpf kernel side and one for bpf tooling
-side to reduce too much noise from this..
+--5jlfeujlcvjslrig
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
+MIME-Version: 1.0
 
-Thanks,
-Daniel
+On 2025-09-25, Alejandro Colomar <alx@kernel.org> wrote:
+> Hi Aleksa,
+>=20
+> On Thu, Sep 25, 2025 at 01:31:25AM +1000, Aleksa Sarai wrote:
+> > This is loosely based on the original documentation written by David
+> > Howells and later maintained by Christian Brauner, but has been
+> > rewritten to be more from a user perspective (as well as fixing a few
+> > critical mistakes).
+> >=20
+> > Co-authored-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > Co-authored-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  man/man2/fsconfig.2 | 729 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 729 insertions(+)
+> >=20
+> > diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..a2d844a105c74f17af640d6=
+991046dbd5fa69cf0
+> > --- /dev/null
+> > +++ b/man/man2/fsconfig.2
+> > @@ -0,0 +1,729 @@
+> > +.\" Copyright, the authors of the Linux man-pages project
+> > +.\"
+> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > +.\"
+> > +.TH fsconfig 2 (date) "Linux man-pages (unreleased)"
+> > +.SH NAME
+> > +fsconfig \- configure new or existing filesystem context
+> > +.SH LIBRARY
+> > +Standard C library
+> > +.RI ( libc ,\~ \-lc )
+> > +.SH SYNOPSIS
+> > +.nf
+> > +.B #include <sys/mount.h>
+> > +.P
+> > +.BI "int fsconfig(int " fd ", unsigned int " cmd ,
+> > +.BI "             const char *_Nullable " key ,
+> > +.BI "             const void *_Nullable " value ", int " aux );
+> > +.fi
+> > +.SH DESCRIPTION
+> > +The
+> > +.BR fsconfig ()
+> > +system call is part of
+> > +the suite of file-descriptor-based mount facilities in Linux.
+> > +.P
+> > +.BR fsconfig ()
+> > +is used to supply parameters to
+> > +and issue commands against
+> > +the filesystem configuration context
+> > +associated with the file descriptor
+> > +.IR fd .
+> > +Filesystem configuration contexts can be created with
+> > +.BR fsopen (2)
+> > +or be instantiated from an extant filesystem instance with
+> > +.BR fspick (2).
+> > +.P
+> > +The
+> > +.I cmd
+> > +argument indicates the command to be issued.
+> > +Some commands supply parameters to the context
+> > +(equivalent to mount options specified with
+> > +.BR mount (8)),
+> > +while others are meta-operations on the filesystem context.
+> > +The list of valid
+> > +.I cmd
+> > +values are:
+> > +.RS
+> > +.TP
+> > +.B FSCONFIG_SET_FLAG
+> > +Set the flag parameter named by
+> > +.IR key .
+> > +.I value
+> > +must be NULL,
+> > +and
+> > +.I aux
+> > +must be 0.
+> > +.TP
+> > +.B FSCONFIG_SET_STRING
+> > +Set the string parameter named by
+> > +.I key
+> > +to the value specified by
+> > +.IR value .
+> > +.I value
+> > +points to a null-terminated string,
+> > +and
+> > +.I aux
+> > +must be 0.
+> > +.TP
+> > +.B FSCONFIG_SET_BINARY
+> > +Set the blob parameter named by
+> > +.I key
+> > +to the contents of the binary blob
+> > +specified by
+> > +.IR value .
+> > +.I value
+> > +points to
+> > +the start of a buffer
+> > +that is
+> > +.I aux
+> > +bytes in length.
+> > +.TP
+> > +.B FSCONFIG_SET_FD
+> > +Set the file parameter named by
+> > +.I key
+> > +to the open file description
+> > +referenced by the file descriptor
+> > +.IR aux .
+> > +.I value
+> > +must be NULL.
+> > +.IP
+> > +You may also use
+> > +.B \%FSCONFIG_SET_STRING
+> > +for file parameters,
+> > +with
+> > +.I value
+> > +set to a null-terminated string
+> > +containing a base-10 representation
+> > +of the file descriptor number.
+> > +This mechanism is primarily intended for compatibility
+> > +with older
+> > +.BR mount (2)-based
+> > +programs,
+> > +and only works for parameters
+> > +that
+> > +.I only
+> > +accept file descriptor arguments.
+> > +.TP
+> > +.B FSCONFIG_SET_PATH
+> > +Set the path parameter named by
+> > +.I key
+> > +to the object at a provided path,
+> > +resolved in a similar manner to
+> > +.BR openat (2).
+> > +.I value
+> > +points to a null-terminated pathname string,
+> > +and
+> > +.I aux
+> > +is equivalent to the
+> > +.I dirfd
+> > +argument to
+> > +.BR openat (2).
+> > +See
+> > +.BR openat (2)
+> > +for an explanation of the need for
+> > +.BR \%FSCONFIG_SET_PATH .
+> > +.IP
+> > +You may also use
+> > +.B \%FSCONFIG_SET_STRING
+> > +for path parameters,
+> > +the behaviour of which is equivalent to
+> > +.B \%FSCONFIG_SET_PATH
+> > +with
+> > +.I aux
+> > +set to
+> > +.BR \%AT_FDCWD .
+> > +.TP
+> > +.B FSCONFIG_SET_PATH_EMPTY
+> > +As with
+> > +.BR \%FSCONFIG_SET_PATH ,
+> > +except that if
+> > +.I value
+> > +is an empty string,
+> > +the file descriptor specified by
+> > +.I aux
+> > +is operated on directly
+> > +and may be any type of file
+> > +(not just a directory).
+> > +This is equivalent to the behaviour of
+> > +.B \%AT_EMPTY_PATH
+> > +with most "*at()" system calls.
+> > +If
+> > +.I aux
+> > +is
+> > +.BR \%AT_FDCWD ,
+> > +the parameter will be set to
+> > +the current working directory
+> > +of the calling process.
+> > +.TP
+> > +.B FSCONFIG_CMD_CREATE
+> > +This command instructs the filesystem driver
+> > +to instantiate an instance of the filesystem in the kernel
+> > +with the parameters specified in the filesystem configuration context.
+> > +.I key
+> > +and
+> > +.I value
+> > +must be NULL,
+> > +and
+> > +.I aux
+> > +must be 0.
+> > +.IP
+> > +This command can only be issued once
+> > +in the lifetime of a filesystem context.
+> > +If the operation succeeds,
+> > +the filesystem context
+> > +associated with file descriptor
+> > +.I fd
+> > +now references the created filesystem instance,
+> > +and is placed into a special "awaiting-mount" mode
+> > +that allows you to use
+> > +.BR fsmount (2)
+> > +to create a mount object from the filesystem instance.
+> > +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
+> > +If the operation fails,
+> > +in most cases
+> > +the filesystem context is placed in a failed mode
+> > +and cannot be used for any further
+> > +.BR fsconfig ()
+> > +operations
+> > +(though you may still retrieve diagnostic messages
+> > +through the message retrieval interface,
+> > +as described in
+> > +the corresponding subsection of
+> > +.BR fsopen (2)).
+> > +.IP
+> > +This command can only be issued against
+> > +filesystem configuration contexts
+> > +that were created with
+> > +.BR fsopen (2).
+> > +In order to create a filesystem instance,
+> > +the calling process must have the
+> > +.B \%CAP_SYS_ADMIN
+> > +capability.
+> > +.IP
+> > +An important thing to be aware of is that
+> > +the Linux kernel will
+> > +.I silently
+> > +reuse extant filesystem instances
+> > +depending on the filesystem type
+> > +and the configured parameters
+> > +(each filesystem driver has
+> > +its own policy for
+> > +how filesystem instances are reused).
+> > +This means that
+> > +the filesystem instance "created" by
+> > +.B \%FSCONFIG_CMD_CREATE
+> > +may, in fact, be a reference
+> > +to an extant filesystem instance in the kernel.
+> > +(For reference,
+> > +this behaviour also applies to
+> > +.BR mount (2).)
+> > +.IP
+> > +One side-effect of this behaviour is that
+> > +if an extant filesystem instance is reused,
+> > +.I all
+> > +parameters configured
+> > +for this filesystem configuration context
+> > +are
+> > +.I silently ignored
+> > +(with the exception of the
+> > +.I ro
+> > +and
+> > +.I rw
+> > +flag parameters;
+> > +if the state of the read-only flag in the
+> > +extant filesystem instance and the filesystem configuration context
+> > +do not match, this operation will return
+> > +.BR EBUSY ).
+> > +This also means that
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +commands issued against
+> > +the "created" filesystem instance
+> > +will also affect any mount objects associated with
+> > +the extant filesystem instance.
+> > +.IP
+> > +Programs that need to ensure
+> > +that they create a new filesystem instance
+> > +with specific parameters
+> > +(notably, security-related parameters
+> > +such as
+> > +.I acl
+> > +to enable POSIX ACLs\[em]\c
+> > +as described in
+> > +.BR acl (5))
+> > +should use
+> > +.B \%FSCONFIG_CMD_CREATE_EXCL
+> > +instead.
+> > +.TP
+> > +.BR FSCONFIG_CMD_CREATE_EXCL " (since Linux 6.6)"
+> > +.\" commit 22ed7ecdaefe0cac0c6e6295e83048af60435b13
+> > +.\" commit 84ab1277ce5a90a8d1f377707d662ac43cc0918a
+> > +As with
+> > +.BR \%FSCONFIG_CMD_CREATE ,
+> > +except that the kernel is instructed
+> > +to not reuse extant filesystem instances.
+> > +If the operation
+> > +would be forced to
+> > +reuse an extant filesystem instance,
+> > +this operation will return
+> > +.B EBUSY
+> > +instead.
+> > +.IP
+> > +As a result (unlike
+> > +.BR \%FSCONFIG_CMD_CREATE ),
+> > +if this operation succeeds
+> > +then the calling process can be sure that
+> > +all of the parameters successfully configured with
+> > +.BR fsconfig ()
+> > +will actually be applied
+> > +to the created filesystem instance.
+> > +.TP
+> > +.B FSCONFIG_CMD_RECONFIGURE
+> > +This command instructs the filesystem driver
+> > +to apply the parameters specified in the filesystem configuration cont=
+ext
+> > +to the extant filesystem instance
+> > +referenced by the filesystem configuration context.
+> > +.I key
+> > +and
+> > +.I value
+> > +must be NULL,
+> > +and
+> > +.I aux
+> > +must be 0.
+> > +.IP
+> > +This is primarily intended for use with
+> > +.BR fspick (2),
+> > +but may also be used to modify
+> > +the parameters of a filesystem instance
+> > +after
+> > +.B \%FSCONFIG_CMD_CREATE
+> > +was used to create it
+> > +and a mount object was created using
+> > +.BR fsmount (2).
+> > +In order to reconfigure an extant filesystem instance,
+> > +the calling process must have the
+> > +.B CAP_SYS_ADMIN
+> > +capability.
+> > +.IP
+> > +If the operation succeeds,
+> > +the filesystem context is reset
+> > +but remains in reconfiguration mode
+> > +and thus can be reused for subsequent
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +commands.
+> > +If the operation fails,
+> > +in most cases
+> > +the filesystem context is placed in a failed mode
+> > +and cannot be used for any further
+> > +.BR fsconfig ()
+> > +operations
+> > +(though you may still retrieve diagnostic messages
+> > +through the message retrieval interface,
+> > +as described in
+> > +the corresponding subsection of
+> > +.BR fsopen (2)).
+> > +.RE
+> > +.P
+> > +Parameters specified with
+> > +.BI FSCONFIG_SET_ *
+> > +do not take effect
+> > +until a corresponding
+> > +.B \%FSCONFIG_CMD_CREATE
+> > +or
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +command is issued.
+> > +.SH RETURN VALUE
+> > +On success,
+> > +.BR fsconfig ()
+> > +returns 0.
+> > +On error, \-1 is returned, and
+> > +.I errno
+> > +is set to indicate the error.
+> > +.SH ERRORS
+> > +If an error occurs, the filesystem driver may provide
+> > +additional information about the error
+> > +through the message retrieval interface for filesystem configuration c=
+ontexts.
+> > +This additional information can be retrieved at any time by calling
+> > +.BR read (2)
+> > +on the filesystem instance or filesystem configuration context
+> > +referenced by the file descriptor
+> > +.IR fd .
+> > +(See the "Message retrieval interface" subsection in
+> > +.BR fsopen (2)
+> > +for more details on the message format.)
+> > +.P
+> > +Even after an error occurs,
+> > +the filesystem configuration context is
+> > +.I not
+> > +invalidated,
+> > +and thus can still be used with other
+> > +.BR fsconfig ()
+> > +commands.
+> > +This means that users can probe support for filesystem parameters
+> > +on a per-parameter basis,
+> > +and adjust which parameters they wish to set.
+> > +.P
+> > +The error values given below result from
+> > +filesystem type independent errors.
+> > +Each filesystem type may have its own special errors
+> > +and its own special behavior.
+> > +See the Linux kernel source code for details.
+> > +.TP
+> > +.B EACCES
+> > +A component of a path
+> > +provided as a path parameter
+> > +was not searchable.
+> > +(See also
+> > +.BR path_resolution (7).)
+> > +.TP
+> > +.B EACCES
+> > +.B \%FSCONFIG_CMD_CREATE
+> > +was attempted
+> > +for a read-only filesystem
+> > +without specifying the
+> > +.RB ' ro '
+> > +flag parameter.
+> > +.TP
+> > +.B EACCES
+> > +A specified block device parameter
+> > +is located on a filesystem
+> > +mounted with the
+> > +.B \%MS_NODEV
+> > +option.
+> > +.TP
+> > +.B EBADF
+> > +The file descriptor given by
+> > +.I fd
+> > +(or possibly by
+> > +.IR aux ,
+> > +depending on the command)
+> > +is invalid.
+> > +.TP
+> > +.B EBUSY
+> > +The filesystem context associated with
+> > +.I fd
+> > +is in the wrong state
+> > +for the given command.
+> > +.TP
+> > +.B EBUSY
+> > +The filesystem instance cannot be reconfigured as read-only
+> > +with
+> > +.B \%FSCONFIG_CMD_RECONFIGURE
+> > +because some programs
+> > +still hold files open for writing.
+> > +.TP
+> > +.B EBUSY
+> > +A new filesystem instance was requested with
+> > +.B \%FSCONFIG_CMD_CREATE_EXCL
+> > +but a matching superblock already existed.
+> > +.TP
+> > +.B EFAULT
+> > +One of the pointer arguments
+> > +points to a location
+> > +outside the calling process's accessible address space.
+> > +.TP
+> > +.B EINVAL
+> > +.I fd
+> > +does not refer to
+> > +a filesystem configuration context
+> > +or filesystem instance.
+> > +.TP
+> > +.B EINVAL
+> > +One of the values of
+> > +.IR name ,
+> > +.IR value ,
+> > +and/or
+> > +.I aux
+> > +were set to a non-zero value when
+> > +.I cmd
+> > +required that they be zero
+> > +(or NULL).
+> > +.TP
+> > +.B EINVAL
+> > +The parameter named by
+> > +.I name
+> > +cannot be set
+> > +using the type specified with
+> > +.IR cmd .
+> > +.TP
+> > +.B EINVAL
+> > +One of the source parameters
+> > +referred to
+> > +an invalid superblock.
+> > +.TP
+> > +.B ELOOP
+> > +Too many links encountered
+> > +during pathname resolution
+> > +of a path argument.
+> > +.TP
+> > +.B ENAMETOOLONG
+> > +A path argument was longer than
+> > +.BR PATH_MAX .
+> > +.TP
+> > +.B ENOENT
+> > +A path argument had a non-existent component.
+> > +.TP
+> > +.B ENOENT
+> > +A path argument is an empty string,
+> > +but
+> > +.I cmd
+> > +is not
+> > +.BR \%FSCONFIG_SET_PATH_EMPTY .
+> > +.TP
+> > +.B ENOMEM
+> > +The kernel could not allocate sufficient memory to complete the operat=
+ion.
+> > +.TP
+> > +.B ENOTBLK
+> > +The parameter named by
+> > +.I name
+>=20
+> There's no such parameter.  (I guess you meant 'key'?)
+
+Ah yes, I did mean "key". The same mistake was repeated for two EINVAL
+cases above as well:
+
+    EINVAL One of the values of *name*, value, and/or aux were set to a
+           non-zero value when cmd required that they be zero (or NULL).
+
+    EINVAL The parameter named by *name* cannot be set using the type
+           specified with cmd.
+
+Do you want me to send another version or would you able to fix it when
+you apply?
+
+Thanks.
+
+> Cheers,
+> Alex
+>=20
+> > +must be a block device,
+> > +but the provided parameter value was not a block device.
+> > +.TP
+> > +.B ENOTDIR
+> > +A component of the path prefix
+> > +of a path argument
+> > +was not a directory.
+> > +.TP
+> > +.B EOPNOTSUPP
+> > +The command given by
+> > +.I cmd
+> > +is not valid.
+> > +.TP
+> > +.B ENXIO
+> > +The major number
+> > +of a block device parameter
+> > +is out of range.
+> > +.TP
+> > +.B EPERM
+> > +The command given by
+> > +.I cmd
+> > +was
+> > +.BR \%FSCONFIG_CMD_CREATE ,
+> > +.BR \%FSCONFIG_CMD_CREATE_EXCL ,
+> > +or
+> > +.BR \%FSCONFIG_CMD_RECONFIGURE ,
+> > +but the calling process does not have the required
+> > +.B \%CAP_SYS_ADMIN
+> > +capability.
+> > +.SH STANDARDS
+> > +Linux.
+> > +.SH HISTORY
+> > +Linux 5.2.
+> > +.\" commit ecdab150fddb42fe6a739335257949220033b782
+> > +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> > +glibc 2.36.
+> > +.SH NOTES
+> > +.SS Generic filesystem parameters
+> > +Each filesystem driver is responsible for
+> > +parsing most parameters specified with
+> > +.BR fsconfig (),
+> > +meaning that individual filesystems
+> > +may have very different behaviour
+> > +when encountering parameters with the same name.
+> > +In general,
+> > +you should not assume that the behaviour of
+> > +.BR fsconfig ()
+> > +when specifying a parameter to one filesystem type
+> > +will match the behaviour of the same parameter
+> > +with a different filesystem type.
+> > +.P
+> > +However,
+> > +the following generic parameters
+> > +apply to all filesystems and have unified behaviour.
+> > +They are set using the listed
+> > +.BI \%FSCONFIG_SET_ *
+> > +command.
+> > +.TP
+> > +\fIro\fP and \fIrw\fP (\fB\%FSCONFIG_SET_FLAG\fP)
+> > +Configure whether the filesystem instance is read-only.
+> > +.TP
+> > +\fIdirsync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
+> > +Make directory changes on this filesystem instance synchronous.
+> > +.TP
+> > +\fIsync\fP and \fIasync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
+> > +Configure whether writes on this filesystem instance
+> > +will be made synchronous
+> > +(as though the
+> > +.B O_SYNC
+> > +flag to
+> > +.BR open (2)
+> > +was specified for
+> > +all file opens in this filesystem instance).
+> > +.TP
+> > +\fIlazytime\fP and \fInolazytime\fP (\fB\%FSCONFIG_SET_FLAG\fP)
+> > +Configure whether to reduce on-disk updates
+> > +of inode timestamps on this filesystem instance
+> > +(as described in the
+> > +.B \%MS_LAZYTIME
+> > +section of
+> > +.BR mount (2)).
+> > +.TP
+> > +\fImand\fP and \fInomand\fP (\fB\%FSCONFIG_SET_FLAG\fP)
+> > +Configure whether the filesystem instance should permit mandatory lock=
+ing.
+> > +Since Linux 5.15,
+> > +.\" commit f7e33bdbd6d1bdf9c3df8bba5abcf3399f957ac3
+> > +mandatory locking has been deprecated
+> > +and setting this flag is a no-op.
+> > +.TP
+> > +\fIsource\fP (\fB\%FSCONFIG_SET_STRING\fP)
+> > +This parameter is equivalent to the
+> > +.I source
+> > +parameter passed to
+> > +.BR mount (2)
+> > +for the same filesystem type,
+> > +and is usually the pathname of a block device
+> > +containing the filesystem.
+> > +This parameter may only be set once
+> > +per filesystem configuration context transaction.
+> > +.P
+> > +In addition,
+> > +any filesystem parameters associated with
+> > +Linux Security Modules (LSMs)
+> > +are also generic with respect to the underlying filesystem.
+> > +See the documentation for the LSM you wish to configure for more detai=
+ls.
+> > +.SH CAVEATS
+> > +.SS Filesystem parameter types
+> > +As a result of
+> > +each filesystem driver being responsible for
+> > +parsing most parameters specified with
+> > +.BR fsconfig (),
+> > +some filesystem drivers
+> > +may have unintuitive behaviour
+> > +with regards to which
+> > +.BI \%FSCONFIG_SET_ *
+> > +commands are permitted
+> > +to configure a given parameter.
+> > +.P
+> > +In order for
+> > +filesystem parameters to be backwards compatible with
+> > +.BR mount (2),
+> > +they must be parseable as strings;
+> > +this almost universally means that
+> > +.B \%FSCONFIG_SET_STRING
+> > +can also be used to configure them.
+> > +.\" Aleksa Sarai
+> > +.\"   Theoretically, a filesystem could check fc->oldapi and refuse
+> > +.\"   FSCONFIG_SET_STRING if the operation is coming from the new API,=
+ but no
+> > +.\"   filesystems do this (and probably never will).
+> > +However, other
+> > +.BI \%FSCONFIG_SET_ *
+> > +commands need to be opted into
+> > +by each filesystem driver's parameter parser.
+> > +.P
+> > +One of the most user-visible instances of
+> > +this inconsistency is that
+> > +many filesystems do not support
+> > +configuring path parameters with
+> > +.B \%FSCONFIG_SET_PATH
+> > +(despite the name),
+> > +which can lead to somewhat confusing
+> > +.B EINVAL
+> > +errors.
+> > +(For example, the generic
+> > +.I source
+> > +parameter\[em]\c
+> > +which is usually a path\[em]\c
+> > +can only be configured
+> > +with
+> > +.BR \%FSCONFIG_SET_STRING .)
+> > +.P
+> > +When writing programs that use
+> > +.BR fsconfig ()
+> > +to configure parameters
+> > +with commands other than
+> > +.BR \%FSCONFIG_SET_STRING ,
+> > +users should verify
+> > +that the
+> > +.BI \%FSCONFIG_SET_ *
+> > +commands used to configure each parameter
+> > +are supported by the corresponding filesystem driver.
+> > +.\" Aleksa Sarai
+> > +.\"   While this (quite confusing) inconsistency in behaviour is true =
+today
+> > +.\"   (and has been true since this was merged), this appears to mostl=
+y be an
+> > +.\"   unintended consequence of filesystem drivers hand-coding fsparam=
+ parsing.
+> > +.\"   Path parameters are the most eggregious causes of confusion.
+> > +.\"   Hopefully we can make this no longer the case in a future kernel.
+> > +.SH EXAMPLES
+> > +To illustrate the different kinds of flags that can be configured with
+> > +.BR fsconfig (),
+> > +here are a few examples of some different filesystems being created:
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +int fsfd, mntfd;
+> > +\&
+> > +fsfd =3D fsopen("tmpfs", FSOPEN_CLOEXEC);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "inode64", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "uid", "1234", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "huge", "never", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "casefold", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOEXEC);
+> > +move_mount(mntfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH);
+> > +\&
+> > +fsfd =3D fsopen("erofs", FSOPEN_CLOEXEC);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "/dev/loop0", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE_EXCL, NULL, NULL, 0);
+> > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOSUID);
+> > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> > +.EE
+> > +.in
+> > +.P
+> > +Usually,
+> > +specifying the same parameter named by
+> > +.I key
+> > +multiple times with
+> > +.BR fsconfig ()
+> > +causes the parameter value to be replaced.
+> > +However, some filesystems may have unique behaviour:
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +\&
+> > +int fsfd, mntfd;
+> > +int lowerdirfd =3D open("/o/ctr/lower1", O_DIRECTORY | O_CLOEXEC);
+> > +\&
+> > +fsfd =3D fsopen("overlay", FSOPEN_CLOEXEC);
+> > +/* "lowerdir+" appends to the lower dir stack each time */
+> > +fsconfig(fsfd, FSCONFIG_SET_FD, "lowerdir+", NULL, lowerdirfd);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower2", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower3", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower4", 0);
+> > +.\" fsconfig(fsfd, FSCONFIG_SET_PATH, "lowerdir+", "/o/ctr/lower5", AT=
+_FDCWD);
+> > +.\" fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "lowerdir+", "", lowerdirf=
+d);
+> > +.\" Aleksa Sarai: Hopefully these will also be supported in the future.
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "xino", "auto", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfs_export", "off", 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
+> > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> > +.EE
+> > +.in
+> > +.P
+> > +And here is an example of how
+> > +.BR fspick (2)
+> > +can be used with
+> > +.BR fsconfig ()
+> > +to reconfigure the parameters
+> > +of an extant filesystem instance
+> > +attached to
+> > +.IR /proc :
+> > +.P
+> > +.in +4n
+> > +.EX
+> > +int fsfd =3D fspick(AT_FDCWD, "/proc", FSPICK_CLOEXEC);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "hidepid", "ptraceable", 0);
+> > +fsconfig(fsfd, FSCONFIG_SET_STRING, "subset", "pid", 0);
+> > +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+> > +.EE
+> > +.in
+> > +.SH SEE ALSO
+> > +.BR fsmount (2),
+> > +.BR fsopen (2),
+> > +.BR fspick (2),
+> > +.BR mount (2),
+> > +.BR mount_setattr (2),
+> > +.BR move_mount (2),
+> > +.BR open_tree (2),
+> > +.BR mount_namespaces (7)
+> >=20
+> > --=20
+> > 2.51.0
+> >=20
+> >=20
+>=20
+> --=20
+> <https://www.alejandro-colomar.es>
+> Use port 80 (that is, <...:80/>).
+
+
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--5jlfeujlcvjslrig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaNVcghsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+PLAEA+Pe9f3/9JGKv2KyP6jN2
+zNt+pFKVq4OX14sFrOWNQlUA/i/ECea37xZ+m4f6i97P0M0XaIpkniftBvrVQnNf
+GnEC
+=GwTv
+-----END PGP SIGNATURE-----
+
+--5jlfeujlcvjslrig--
 
