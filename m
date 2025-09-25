@@ -1,169 +1,284 @@
-Return-Path: <linux-kernel+bounces-831926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DFBB9DEAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834F8B9DEB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777311BC2D2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E8D1BC2DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFBF247293;
-	Thu, 25 Sep 2025 07:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977F24167A;
+	Thu, 25 Sep 2025 07:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFtl34MH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxMVl0qB"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FE61A4F12
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4E71A4F12
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758786631; cv=none; b=Z/Z6lpnWpsVVz06zEKLdmRJ45s1flDogpVdtJbvDyvs/PaNYodX336YUzLXyE6PH780JkaWH1xz+nsErELfX+B9vZ8YtqXios2G8HDviBI8R+XyObDq9tbEgZo2dSKkjDDdLWIvJhDyE2hw756duCRNX3pfNfD7PJx4EER+vWig=
+	t=1758786669; cv=none; b=XRAwLK9zLADAW54SPKOxfCsoBls+0VnrpRi7u2YEUZWtGS5eONXcLzoK9x9cdX8nIuVjd9rbVPF7QXvUb2LG23CXpC8uGexFlUPzrn7Aar3+fM+pw8VT83r7CITl58fSy5QOkIyVBjk4ZugiqmTqFK8/zVj6Ijb+MEUfKmD4ftA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758786631; c=relaxed/simple;
-	bh=pG/Q971b1BZFzAfjLzpQOwgWsWGJ89XMSXFxhthPg18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GiP2DjzUVdg/9k3nIJQmg3SOoT3sw0DAptmPt5b7Eg8xYbUVKEMD0cQzWVzYrR+INnPjtHnWN2+N9wdSjzrmmK4no8JPGK9roTSBdUcYLhCHzxOwfwz5oxeiJQG7jWfTIeRwj74IhFGrHHKu9yK4hA6d7wKpiYho+4bXb0ASsgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AFtl34MH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758786626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PS5Egckwip3kpQ3auepdZqUlYFAXDV6RIIbMKmniWX0=;
-	b=AFtl34MHSDxzWpo3LpSzTfnSThjzHJMNEYkKjqWawmSDb0HbCOfuhTPPAK0qjOdZWgTdyP
-	0zMbEite4pWw5vIxjHInjpGz/8u8xDy7kUSUyg4ugs3zQQDNPr6idvAnnWatVQT5Gn5U+j
-	GMpWgc7o7sJwAzkartKaZpKIXIKU4IA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-IOka1BbfOZ-eScNdCQIxZQ-1; Thu, 25 Sep 2025 03:50:21 -0400
-X-MC-Unique: IOka1BbfOZ-eScNdCQIxZQ-1
-X-Mimecast-MFC-AGG-ID: IOka1BbfOZ-eScNdCQIxZQ_1758786620
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b986a7b8aso3503995e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:50:21 -0700 (PDT)
+	s=arc-20240116; t=1758786669; c=relaxed/simple;
+	bh=8POI4Z8NIgZ9eWulLcxOFUXzrhQybf9IS1kQegq4pqU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VfX/5y1ZMyKzJA7+Ea3ZvS09TdGo3tqU1dg40qqEgsd4eFy2ozL2o3Yr5e8le61nEpJOpmyLOb70dYVJq1ypELVZZJWoRm+JhavsvJd5bZVm5+siuv8/e6Jfc4J3hrkbvudnLuB3LHzzTGJfosaplOTiqd3omeeM0a+sPW74pPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxMVl0qB; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e29d65728so3819125e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758786665; x=1759391465; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8POI4Z8NIgZ9eWulLcxOFUXzrhQybf9IS1kQegq4pqU=;
+        b=BxMVl0qB/IhbbwwcS/ND2xQVShrlSPHTg9FpdxPlaYnf/e3pccXQ5rEE5zluSPXmB+
+         2j6fudl3ismmVblhVI6j8xU5X7x1zmCoaRlaCHXIEw2rRNUrogOHU8WNf4hHt8LbAIam
+         XIOyHrzrYbgU7z0S020+RtC+693Zd1i7QDD7JEjRtKjzHaGDfRZXRn2R2FT/BnY4CxSE
+         9Ra9eYJs0KBsXLMU/7vl951R2KoRR5Q5N7t6QesBW8sx++y7Wz8bZtHG9IGBz+4Xl/aa
+         umPi1tmAzHiX47T4hix1u9k99gO1jrkrPPVmcVdkEEaaDVr1ZQyzfaT+a6UGvBIupja/
+         448w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758786620; x=1759391420;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PS5Egckwip3kpQ3auepdZqUlYFAXDV6RIIbMKmniWX0=;
-        b=YcNeEgWR+tfX8A7atH7SuoumQBjDBF/BEcjjwwFmlqG0u2vX9m51QVyuVc5wJVZzhB
-         /M5U/OXOwj8WryuuzS5sFN38UUTIgwWPak0Dx2LzXt9Km2NKucbkVmGNNp5FoUZ4+Ke8
-         ON51NiG8WXHIQKkbnK6Tf+v1oeWZpKKk00q5/9LG6sJqUO79fldiwUrPXsb/xVn5gRPn
-         bWo2dGLIe/V2ljxNElf6IZ+GiClhYsvGffpR23Y3ZDrt5OywmCz6/01No4rL+9059h9y
-         FUaEZjUSOUwWeqj8uxYwUQrHmQSBc6bhoYMebr4f6kErQp+kE6pUXxUSxyNB3ElBQKWQ
-         SMvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY6Bwp9qaxiWWX4tQoQtcsm0xA6Bj5ME8TVy0TNhKxJyCAhVnvkbGluPwE6OE7w6TXv0KzEWNIfgWNXKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI7Cm1eeFFkfjsyhmlQ3/OtqTXF7glH1cMZoivS1GMnDhswVQ+
-	UJLj/DARtP1d4QGItaXOmJ3Kq3feA89sKMQMsQmKZvDQiBgw21NcmAyzNMI/7dYUhThSOKG7vM7
-	LouaSqTMZwY2XUc5+a40u09iUstFFXn0A4mvkSfxLpY7G0mw6CosYdWLNi4oDmX3e4g==
-X-Gm-Gg: ASbGncv6/Q8OMmZ5TgB1D870HC+NL1tldaG0mO4yRN0tvm7PR1yPelgxEHI6R6uiprK
-	M0zIseV3tbNVn+GtR04grN8X5WMcXcTLmFnrA6FEIRhTVoTWzH7co6Ts+xCeQ5H8gHdjdEXGgIE
-	TBLj+h/O/rrJbw6wk0npilObB7J2PkC7bqPs2O4CBiqX/YlGVYkwPURVHl9mnlb8trtMkFvhkAH
-	pqRSP0HJ8suGt+teh1GA59sYmuYjvHNRPUIo8l3X+LMqzC7nRMCcP1RI78yOLyjO/aSgwUu7Mm5
-	+lNQKPRgbJXmQlxZbzuGqndGWmdc42tpg1rv/6fwSWdwx56ta3n/UYh9vKAioLLlNyaW5BupaF2
-	V/1PSy8GxA/1eeMpFgY5pfvAkvSyM+q7yGGBkwCR925NoTmkMHlo7v/V9kHY6fcNb3VwQ
-X-Received: by 2002:a05:600c:8010:b0:46e:2861:9eb7 with SMTP id 5b1f17b1804b1-46e329a47e3mr23949795e9.5.1758786620283;
-        Thu, 25 Sep 2025 00:50:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQPBxj85AmxAty3smB36wxmjDTQBXHlcB5P2ykV/icka50+WwoUgia/33jh3o/rv5KJU1flQ==
-X-Received: by 2002:a05:600c:8010:b0:46e:2861:9eb7 with SMTP id 5b1f17b1804b1-46e329a47e3mr23949625e9.5.1758786619856;
-        Thu, 25 Sep 2025 00:50:19 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5602df0sm1836031f8f.36.2025.09.25.00.50.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 00:50:19 -0700 (PDT)
-Message-ID: <bf5c64c4-cea2-4132-bdbb-6400f852ab52@redhat.com>
-Date: Thu, 25 Sep 2025 09:50:17 +0200
+        d=1e100.net; s=20230601; t=1758786665; x=1759391465;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8POI4Z8NIgZ9eWulLcxOFUXzrhQybf9IS1kQegq4pqU=;
+        b=lLM0hXXYEPJ2M8U469J9q1gEyUKDUMG+3XXRFXp+rkoj7GGQTI9X4xJxykjAEYaFDV
+         vG8MeVE234FA+DvRRUxr+vIioald9nOu3ZNfvcrr458bjASOlGh3QmTOUeusWdnUnouz
+         UCE+t9ytb/SwiSx9c1UZh1/qqznf9jbddpLhwSj19UWdvyoP9cN8v9795WeG6hwirkik
+         rYUefrSNssRvO3SY8IlMbJHNMSQCeHGgmhrRj7rt+PV3NqGyo2riZCDUjg2PuK2k2ktc
+         Ky3GzcTn2hmyyOeLz/NoDui3StQ3x2osawBKFBfutdRVNFpzqhrkLlLCqZUWvz/wzMxP
+         WuYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiD3MgUk7PK785tnSKzBgxaexLGOvna95dBifnfL9HmYGLskCP8HbhMaNdSpHv+pWJRQVer+ls/d97NiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7epZlZZ7jEq/3N/ZwE9ZhpmwpgKoLuONEDwB94XrR1GluVbYw
+	RC8umubZTYJ1naQVzQNLZQGsg6H1o6gCUBtMxS6MyDtxsVsjk09EA4yM
+X-Gm-Gg: ASbGncsLJvGiDZ0I6ytfhNYihB8FH2/gDzsB7rglzM92htRtg8pGnargsg7engKDA2j
+	4cDDrUz5mIhxSfefDGrnP9ExCBR5CCTFf3gYxPy6zL0A1Vnv7hd2StPCLAFndd18e4fLJCw/tq2
+	RJWJaqk0KdRd+Lm3WMvEJiylApf00EL1G7FansX318ldWZjrGspCYudx8Efy0Na+Xsqcc0yUoxN
+	VHpWGgTOkqWwEaqGjlUIZ9kFE5uRreX5JKqf9rZwUtXZKwALhPdcBTkuYgT+bgj9SrSstTF81Se
+	sxhAIu2OJAzAUWXFbYpjl3VXRW1SLLN3d0izBue3FZv6wc31Gis/XRXtVGgBx68yn3UnP5uaVPv
+	x8ycWInvrEh9S9X5302cV6w==
+X-Google-Smtp-Source: AGHT+IGUuGO0MctI5suTsLaRzPLAL3wVtTajfyppJ7wHXCpSF63TKkBkV3h0klrqzYRmhS5fxuQM5A==
+X-Received: by 2002:a5d:5d84:0:b0:3ee:14e9:23d2 with SMTP id ffacd0b85a97d-40e447770abmr2010911f8f.8.1758786665164;
+        Thu, 25 Sep 2025 00:51:05 -0700 (PDT)
+Received: from [10.5.0.2] ([45.94.208.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31f62sm64575345e9.15.2025.09.25.00.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 00:51:04 -0700 (PDT)
+Message-ID: <37d47af4f4d5220764efc5870630fdfc1e9be2c9.camel@gmail.com>
+Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>, Jorge Marques
+	 <gastmaier@gmail.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jorge Marques	
+ <jorge.marques@analog.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Frank Li <Frank.Li@nxp.com>, Arnd
+ Bergmann <arnd@arndb.de>, "linux-i3c@lists.infradead.org"	
+ <linux-i3c@lists.infradead.org>, "linux-kernel@vger.kernel.org"	
+ <linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
+ Michal" <michal.simek@amd.com>
+Date: Thu, 25 Sep 2025 08:51:33 +0100
+In-Reply-To: <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250924201837.3691486-1-arnd@kernel.org>
+	 <2wtpklapw5ogsevuvk2l4ngvw7hymer2y4cc454h47u2d7tq44@4mknmpk5yzil>
+	 <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ksm: Fix potential NULL pointer dereference
-To: Fushuai Wang <wangfushuai@baidu.com>, akpm@linux-foundation.org,
- xu.xin16@zte.com.cn, chengming.zhou@linux.dev
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, cuigaosheng1@huawei.com
-References: <20250925031358.80983-1-wangfushuai@baidu.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20250925031358.80983-1-wangfushuai@baidu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 25.09.25 05:13, Fushuai Wang wrote:
-> The stable_tree_search() function may return an error pointer
-> (NULL or ERR_PTR(...)). The current code does not check for
-> these cases before dereferencing the returned value.
+On Thu, 2025-09-25 at 07:37 +0000, Guntupalli, Manikanta wrote:
+> [Public]
+>=20
+> Hi,
+>=20
+> > -----Original Message-----
+> > From: Jorge Marques <gastmaier@gmail.com>
+> > Sent: Thursday, September 25, 2025 12:47 PM
+> > To: Arnd Bergmann <arnd@kernel.org>
+> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>; Jorge Marques
+> > <jorge.marques@analog.com>; Wolfram Sang <wsa+renesas@sang-
+> > engineering.com>; Frank Li <Frank.Li@nxp.com>; Arnd Bergmann
+> > <arnd@arndb.de>; Guntupalli, Manikanta <manikanta.guntupalli@amd.com>;
+> > linux-
+> > i3c@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+> >=20
+> > On Wed, Sep 24, 2025 at 10:18:33PM +0200, Arnd Bergmann wrote:
+> > > From: Arnd Bergmann <arnd@arndb.de>
+> > >=20
+> > > Short MMIO transfers that are not a multiple of four bytes in size
+> > > need a special case for the final bytes, however the existing
+> > > implementation is not endian-safe and introduces an incorrect byteswa=
+p
+> > > on big-endian kernels.
+> > >=20
+> > > This usually does not cause problems because most systems are
+> > > little-endian and most transfers are multiple of four bytes long, but
+> > > still needs to be fixed to avoid the extra byteswap.
+> > >=20
+> > > Change the special case for both i3c_writel_fifo() and
+> > > i3c_readl_fifo() to use non-byteswapping writesl() and readsl() with =
+a
+> > > single element instead of the byteswapping writel()/readl() that are
+> > > meant for individual MMIO registers. As data is copied between a FIFO
+> > > and a memory buffer, the writesl()/readsl() loops are typically based
+> > > on __raw_readl()/ __raw_writel(), resulting in the order of bytes in
+> > > the FIFO to match the order in the buffer, regardless of the CPU
+> > > endianess.
+> > >=20
+> > > The earlier versions in the dw-i3c and i3c-master-cdns had a correct
+> > > implementation, but the generic version that was recently added broke=
+ it.
+> > >=20
+> > > Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and
+> > > i3c_writel_fifo()")
+> > > Cc: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > > This was a recent regression, the version in 6.16 still works, but
+> > > 6.17-rc is broken.
+> > >=20
+> > > v2 changes:
+> > > =C2=A0- add code comments
+> > > =C2=A0- write correct data buffer
+> > > ---
+> > > =C2=A0drivers/i3c/internals.h | 12 ++++++++++--
+> > > =C2=A01 file changed, 10 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h index
+> > > 0d857cc68cc5..79ceaa5f5afd 100644
+> > > --- a/drivers/i3c/internals.h
+> > > +++ b/drivers/i3c/internals.h
+> > > @@ -38,7 +38,11 @@ static inline void i3c_writel_fifo(void __iomem *a=
+ddr,
+> > > const
+> > void *buf,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u3=
+2 tmp =3D 0;
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 me=
+mcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writel(=
+tmp, addr);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+ writesl() instead of writel() to keep FIFO
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+ byteorder on big-endian targets
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+/
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writesl=
+(addr, &tmp, 1);
+> > > =C2=A0=C2=A0=C2=A0 }
+> > > =C2=A0}
+> > >=20
+> > > @@ -55,7 +59,11 @@ static inline void i3c_readl_fifo(const void __iom=
+em
+> > > *addr,
+> > void *buf,
+> > > =C2=A0=C2=A0=C2=A0 if (nbytes & 3) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u3=
+2 tmp;
+> > >=20
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp =3D=
+ readl(addr);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+ readsl() instead of readl() to keep FIFO
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+ byteorder on big-endian targets
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=
+/
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 readsl(=
+addr, &tmp, 1);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 me=
+mcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
+> > > =C2=A0=C2=A0=C2=A0 }
+> > > =C2=A0}
+> > Reviewed-by: Jorge Marques <jorge.marques@analog.com>
+> > > --
+> > > 2.39.5
+> > >=20
+>=20
+> This patch fixes the sub-word transfer case on big-endian kernels, but it
+> still does not address the scenario of little-endian kernels accessing bi=
+g-
+> endian FIFOs.
+>=20
 
-We discussed this in [1] where Willy clarified that there is no 
-de-referencing happening [2].
+I would argue that's something for callers of these functions to care about=
+.
 
-So no, this is not required.
+- Nuno S=C3=A1
 
-Consider "&kfolio->page" currently being a "(struct page *) kfolio", 
-which is just a pointer cast and no de-referencing.
-
-[1] 
-https://lore.kernel.org/linux-mm/20241024032300.2501949-1-cuigaosheng1@huawei.com/
-[2] https://lore.kernel.org/linux-mm/Zzdrnod2zcTeI-Nt@casper.infradead.org/
-
--- 
-Cheers
-
-David / dhildenb
-
+> With the current version, i3c_writel_fifo() and i3c_readl_fifo() only wor=
+k
+> when the FIFO has the same endianness as the CPU. On platforms such as th=
+e
+> ZCU102 (Zynq UltraScale+ MPSoC, Cortex-A53, little-endian), the I3C FIFOs=
+ are
+> big-endian, and this patch alone is not sufficient - transfers fail in th=
+at
+> configuration.
+>=20
+> We have validated this on ZCU102, and the mismatch between LE kernel and =
+BE
+> FIFO is still an issue.
+>=20
+> On top of this fix, explicit FIFO endianness support is required, as prop=
+osed
+> in [PATCH v7 3/4] "i3c: master: Add endianness support for i3c_readl_fifo=
+()
+> and i3c_writel_fifo()". That approach adds an endian argument and uses
+> writesl_be()/readsl_be() where necessary, e.g.:
+>=20
+> static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int nbytes, enum =
+i3c_fifo_endian endian)
+> {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (endian)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 writesl_be(addr, buf, nbytes / 4);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 writesl(addr, buf, nbytes / 4);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (nbytes & 3) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 u32 tmp =3D 0;
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (endian)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writesl_=
+be(addr, &tmp, 1);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 else
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 writesl(=
+addr, &tmp, 1);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> }
+>=20
+>=20
+> Thanks,
+> Manikanta.
 
