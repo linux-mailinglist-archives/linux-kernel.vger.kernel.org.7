@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-833189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D3FBA15FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:37:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95CEBA15F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC1F387660
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0E51B25ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E7D320A09;
-	Thu, 25 Sep 2025 20:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ABA320A08;
+	Thu, 25 Sep 2025 20:36:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22161244671;
-	Thu, 25 Sep 2025 20:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325103164AA;
+	Thu, 25 Sep 2025 20:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758832604; cv=none; b=nyCnDKCbRnlJieShJ3rFVHp4CHk+R+Ruf0flsBOCWvaLilVkNDse68Va7zNwAG98DW0xe8GUXGJbeMykAuepVd6J5iaaOeAr9Sv3PVrOyW+tS3Z4o0K+4ILXtKz2QeGLvURYVCYRdAK5argKnRoX0dY6JM+9F6Zch5Pn0xQIhiA=
+	t=1758832605; cv=none; b=RSgY7MW7seFmDe+MCkXgPCMDpr91EkK454fkpbO5DNXxwLXJwgdzdLamuaouygy5AFizyF+Xyjd4wcITeLgw4tTPizOE8ToqdIV7db9AXqqyEewg9x9MjzpoY3fEfpHHqRAm27CxfkVCFjP+jdDdf6MGfUXFiB6pWD+I/s0BaIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758832604; c=relaxed/simple;
-	bh=w/5+NBFblRZAJMBL6+0s5P24iFBjWfwZcAMTUFnRiUE=;
+	s=arc-20240116; t=1758832605; c=relaxed/simple;
+	bh=MXI05lzB2MxvNIXy4Yb0bT1lPRjp0/t3s80/eNONFew=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JPP+lPodIZ58GYPjzrXSBP2tVV1Uez0Pzg/ycwijfO2Ke3rj+mS4vU7LdE5PkdnvC2hSPHJDdrkR8aZBP4mgZQQYvDRld2GIY/ECtf97SDF8i9KXgnMyp2TjheH+7RWooEEYWX4bf/Ctmlt6tMrI7ML6vtdd/CqIwSu418s1Czw=
+	 MIME-Version; b=BchOPonA0KaPb+e6xIqIP02QoyCZiqHEYQcUzSZY6SX/RsPDJqmM5vr+SecSI2iQHbrlNkbdL/uuJO/dMJjY23N5R93hd4DFHG+h5atmNaZVY0Xn9utkv84a3BwSlCcrDuoVx7oNUbYwZYiyqTYOp3cE/b/X+rgnnsuFc7pxd7Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 505781692;
-	Thu, 25 Sep 2025 13:36:31 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 727F31C2B;
+	Thu, 25 Sep 2025 13:36:34 -0700 (PDT)
 Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3F3C3F694;
-	Thu, 25 Sep 2025 13:36:36 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC06B3F694;
+	Thu, 25 Sep 2025 13:36:39 -0700 (PDT)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -48,9 +48,9 @@ Cc: sudeep.holla@arm.com,
 	d-gole@ti.com,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 06/10] firmware: arm_scmi: Add System Telemetry driver
-Date: Thu, 25 Sep 2025 21:35:50 +0100
-Message-ID: <20250925203554.482371-7-cristian.marussi@arm.com>
+Subject: [PATCH 07/10] firmware: arm_scmi: Add System Telemetry ioctls support
+Date: Thu, 25 Sep 2025 21:35:51 +0100
+Message-ID: <20250925203554.482371-8-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250925203554.482371-1-cristian.marussi@arm.com>
 References: <20250925203554.482371-1-cristian.marussi@arm.com>
@@ -62,1418 +62,449 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new SCMI System Telemetry driver which gathers platform Telemetry
-data through the new the SCMI Telemetry protocol and expose all of the
-discovered Telemetry data events on a dedicated pseudo-filesystem that
-can be used to interactively configure SCMI Telemetry and access its
-provided data.
+Extend the filesystem based interface with special 'control' file that can
+be used to configure and retrieve SCMI Telemetry data in binary form using
+the alternative ioctls-based ABI described in uapi/linux/scmi.h.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
- drivers/firmware/arm_scmi/Kconfig             |   10 +
- drivers/firmware/arm_scmi/Makefile            |    1 +
- .../firmware/arm_scmi/scmi_system_telemetry.c | 1364 +++++++++++++++++
- 3 files changed, 1375 insertions(+)
- create mode 100644 drivers/firmware/arm_scmi/scmi_system_telemetry.c
+ .../firmware/arm_scmi/scmi_system_telemetry.c | 402 ++++++++++++++++++
+ 1 file changed, 402 insertions(+)
 
-diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-index e3fb36825978..9e51b3cd0c93 100644
---- a/drivers/firmware/arm_scmi/Kconfig
-+++ b/drivers/firmware/arm_scmi/Kconfig
-@@ -99,4 +99,14 @@ config ARM_SCMI_POWER_CONTROL
- 	  called scmi_power_control. Note this may needed early in boot to catch
- 	  early shutdown/reboot SCMI requests.
- 
-+config ARM_SCMI_SYSTEM_TELEMETRY
-+	tristate "SCMI System Telemetry driver"
-+	depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
-+	help
-+	  This enables SCMI Systemn Telemetry support that allows userspace to
-+	  retrieve ARM Telemetry data made available via SCMI.
-+
-+	  This driver can also be built as a module.  If so, the module will be
-+	  called scmi_system_telemetry.
-+
- endmenu
-diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index fe55b7aa0707..20f8d55840a5 100644
---- a/drivers/firmware/arm_scmi/Makefile
-+++ b/drivers/firmware/arm_scmi/Makefile
-@@ -18,3 +18,4 @@ obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
- obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
- 
- obj-$(CONFIG_ARM_SCMI_POWER_CONTROL) += scmi_power_control.o
-+obj-$(CONFIG_ARM_SCMI_SYSTEM_TELEMETRY) += scmi_system_telemetry.o
 diff --git a/drivers/firmware/arm_scmi/scmi_system_telemetry.c b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
-new file mode 100644
-index 000000000000..2fec465b0f33
---- /dev/null
+index 2fec465b0f33..f591aad10302 100644
+--- a/drivers/firmware/arm_scmi/scmi_system_telemetry.c
 +++ b/drivers/firmware/arm_scmi/scmi_system_telemetry.c
-@@ -0,0 +1,1364 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SCMI - System Telemetry Driver
-+ *
-+ * Copyright (C) 2025 ARM Ltd.
-+ */
+@@ -21,6 +21,8 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ 
++#include <uapi/linux/scmi.h>
 +
-+#include <linux/atomic.h>
-+#include <linux/bitfield.h>
-+#include <linux/dcache.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/fs.h>
-+#include <linux/kstrtox.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/overflow.h>
-+#include <linux/scmi_protocol.h>
-+#include <linux/slab.h>
-+#include <linux/sprintf.h>
-+#include <linux/string.h>
-+#include <linux/uaccess.h>
-+
-+#define TLM_FS_MAGIC		0x75C01C80
-+#define TLM_FS_NAME		"stlmfs"
-+#define TLM_FS_MNT		"arm_telemetry"
-+
-+#define MAX_AVAILABLE_INTERV_CHAR_LENGTH	25
-+#define MAX_BULK_LINE_CHAR_LENGTH		64
-+#define MAX_PROP_PER_DE				12
-+
-+static DEFINE_MUTEX(scmi_tlm_mtx);
-+static struct super_block *scmi_tlm_sb;
-+
-+static atomic_t scmi_tlm_instance_count = ATOMIC_INIT(0);
-+
-+struct scmi_tlm_setup;
-+struct scmi_tlm_priv {
-+	char *buf;
-+	size_t buf_sz;
-+	int buf_len;
-+	int (*bulk_retrieve)(const struct scmi_tlm_setup *tsp,
-+			     int res_id, int *num_samples,
-+			     struct scmi_telemetry_de_sample *samples);
-+};
-+
-+/**
-+ * struct scmi_tlm_buffer  - Output Telemetry buffer descriptor
-+ * @used: Current number of used bytes in @buf
-+ * @buf: Actual buffer for output data
-+ *
-+ * This describes an output buffer which will be made available to each r/w
-+ * entry file_operations.
-+ */
-+struct scmi_tlm_buffer {
-+	size_t used;
-+#define SCMI_TLM_MAX_BUF_SZ	128
-+	unsigned char buf[SCMI_TLM_MAX_BUF_SZ];
-+};
-+
-+/**
-+ * struct scmi_tlm_setup  - Telemetry setup descriptor
-+ * @dev: A reference to the related device
-+ * @ops: A reference to the protocol ops
-+ * @ph: A reference to the protocol handle to be used with the ops
-+ */
-+struct scmi_tlm_setup {
-+	struct device *dev;
-+	struct scmi_protocol_handle *ph;
-+	const struct scmi_telemetry_proto_ops *ops;
-+};
-+
-+/**
-+ * struct scmi_tlm_class  - Telemetry class descriptor
-+ * @name: A string to be used for filesystem dentry name.
-+ * @mode: Filesystem mode mask.
-+ * @flags: Optional misc flags that can slighly modify provided @f_op behaviour;
-+ *	   this way the same @scmi_tlm_class can be used to describe multiple
-+ *	   entries in the filesystem whose @f_op behaviour is very similar.
-+ * @f_op: Optional file ops attached to this object. Used to initialized inodes.
-+ * @i_op: Optional inode ops attached to this object. Used to initialize inodes.
-+ *
-+ * This structure describes a class of telemetry entities that will be
-+ * associated with filesystem inodes having the same behaviour, i.e. the same
-+ * @f_op and @i_op: this way it will be possible to statically define a set of
-+ * common descriptors to describe all the possible behaviours and then link it
-+ * to the effective inodes that will be created to support the set of DEs
-+ * effectively discovered at run-time via SCMI.
-+ */
-+struct scmi_tlm_class {
-+	const char *name;
-+	umode_t mode;
-+	const int flags;
-+#define	TLM_IS_STATE	BIT(0)
-+#define	TLM_IS_GROUP	BIT(1)
-+#define IS_STATE(_f)	((_f) & TLM_IS_STATE)
-+#define IS_GROUP(_f)	((_f) & TLM_IS_GROUP)
-+	const struct file_operations *f_op;
-+	const struct inode_operations *i_op;
-+};
-+
-+#define TLM_ANON_CLASS(_n, _f, _m, _fo, _io)	\
-+	{					\
-+		.name = _n,			\
-+		.flags = _f,			\
-+		.f_op = _fo,			\
-+		.i_op = _io,			\
-+		.mode = _m,			\
-+	}
-+
-+#define DEFINE_TLM_CLASS(_tag, _ns, _fl, _mo, _fop, _iop)	\
-+	static const struct scmi_tlm_class _tag =		\
-+		TLM_ANON_CLASS(_ns, _fl, _mo, _fop, _iop)
-+
-+/**
-+ * struct scmi_tlm_inode  - Telemetry node descriptor
-+ * @tsp: A reference to a structure holding data needed to interact with
-+ *	 the SCMI instance associated to this inode.
-+ * @cls: A reference to the @scmi_tlm_class describing the behaviour of this
-+ *	 inode.
-+ * @priv: Generic private data reference.
-+ * @de: SCMI DE data reference.
-+ * @grp: SCMI Group data reference.
-+ * @info: SCMI instance information data reference.
-+ * @parent: A reference to the parent inode if any.
-+ * @dentry: A reference to the dentry associated to this inode.
-+ * @vfs_inode: The embedded VFS inode that will be initialized and plugged
-+ *	       into the live filesystem at mount time.
-+ *
-+ * This structure is used to describe each SCMI Telemetry entity discovered
-+ * at probe time, store its related SCMI data, and link to the proper
-+ * telemetry calss @scmi_tlm_class: all of these created descriptors are stored
-+ * then in a root-to-leaves order at probe time, so that at mount time they can
-+ * be used to build the needed filesystem entries in the proper order making use
-+ * of the embeddded @vfs_inode.
-+ */
-+struct scmi_tlm_inode {
-+	const struct scmi_tlm_setup *tsp;
-+	const struct scmi_tlm_class *cls;
-+	union {
-+		const void *priv;
-+		const struct scmi_telemetry_de *de;
-+		const struct scmi_telemetry_group *grp;
-+		const struct scmi_telemetry_info *info;
-+	};
-+	struct scmi_tlm_inode *parent;
-+	struct dentry *dentry;
-+	struct inode vfs_inode;
-+};
-+
-+#define to_tlm_inode(t)	container_of(t, struct scmi_tlm_inode, vfs_inode)
-+
-+#define TLM_INODE_SETUP(_ti, _tsp, _cls, _parent, _ptr)		\
-+({								\
-+	typeof(_ti) _t = _ti;					\
-+	struct scmi_tlm_inode *_ino;				\
-+								\
-+	if (_t->num_nodes >= _t->max_nodes)			\
-+		return -ENOSPC;					\
-+								\
-+	_ino = scmi_tlm_inode_create(_tsp, _cls, _parent, _ptr);\
-+	if (!_ino)						\
-+		return -ENOMEM;					\
-+								\
-+	_t->all_nodes[_t->num_nodes++] = _ino;			\
-+								\
-+	_ino;							\
-+})
-+
-+#define	MAX_INST_NAME		32
-+
-+#define TOP_NODES_NUM		32
-+#define NODES_PER_DE_NUM	12
-+#define NODES_PER_GRP_NUM	 9
-+
-+/**
-+ * struct scmi_tlm_instance  - Telemetry instance descriptor
-+ * @id: Progressive number identifying this probed instance; it will be used
-+ *	to name the top node at the root of this instance.
-+ * @name: Name to be used for the top root node of the instance. (tlm_<id>)
-+ * @node: A node to link this in the list of all instances.
-+ * @tsp: A reference to the SCMI instance data.
-+ * @top_cls: A class to represent the top node behaviour.
-+ * @top_inode: A reference to the inode at the top of this instance tree.
-+ * @max_nodes: Maximum number of entries that can be hold in @all_nodes.
-+ * @num_nodes: Number of nodes effectively initialized in @all_nodes
-+ * @all_nodes: An array to keep track of all the initialized TLM nodes that
-+ *	       have been created as a result of the usual probe time SCMI
-+ *	       enumeration process.
-+ * @info: A handy reference to this instance SCMI Telemetry info data.
-+ *
-+ * The most notable field in this structure is the @all_nodes array, which
-+ * keeps tracks of all of the nodes that has been initialized at probe time,
-+ * one for each SCMI Telemetry discovered entity disposed in a strict
-+ * parent-child order: this way at mount time this array can be scanned in its
-+ * natural order and each contained inode is initialized and plugged into the
-+ * SCMI Telemetry filesystem tree.
-+ */
-+struct scmi_tlm_instance {
-+	int id;
-+	char name[MAX_INST_NAME];
-+	struct list_head node;
-+	struct scmi_tlm_setup *tsp;
-+	struct scmi_tlm_class top_cls;
-+	struct scmi_tlm_inode *top_inode;
-+	int max_nodes;
-+	int num_nodes;
-+	struct scmi_tlm_inode **all_nodes;
-+	const struct scmi_telemetry_info *info;
-+};
-+
-+static int scmi_telemetry_instance_register(struct super_block *sb,
-+					    struct scmi_tlm_instance *ti);
-+
-+static LIST_HEAD(scmi_telemetry_instances);
-+
-+static inline int
-+__scmi_tlm_generic_open(struct inode *ino, struct file *filp,
-+			int (*bulk_op)(const struct scmi_tlm_setup *tsp,
-+				       int res_id, int *num_samples,
-+				       struct scmi_telemetry_de_sample *samples))
+ #define TLM_FS_MAGIC		0x75C01C80
+ #define TLM_FS_NAME		"stlmfs"
+ #define TLM_FS_MNT		"arm_telemetry"
+@@ -953,6 +955,404 @@ DEFINE_TLM_CLASS(grp_available_interval_tlmo, "available_update_intervals_ms",
+ DEFINE_TLM_CLASS(grp_intervals_discrete_tlmo, "intervals_discrete",
+ 		 TLM_IS_GROUP, 0400, &intrv_discrete_fops, NULL);
+ 
++static long
++scmi_tlm_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
 +{
-+	struct scmi_tlm_priv *tp;
++	const struct scmi_telemetry_info *info = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
 +
-+	tp = kzalloc(sizeof(*tp), GFP_KERNEL);
-+	if (!tp)
-+		return -ENOMEM;
-+
-+	tp->bulk_retrieve = bulk_op;
-+
-+	filp->private_data = tp;
-+
-+	return nonseekable_open(ino, filp);
-+}
-+
-+static int scmi_tlm_priv_release(struct inode *ino, struct file *filp)
-+{
-+	struct scmi_tlm_priv *tp = filp->private_data;
-+
-+	kfree(tp->buf);
-+	kfree(tp);
++	if (copy_to_user(uptr, &info->base, sizeof(info->base)))
++		return -EFAULT;
 +
 +	return 0;
 +}
 +
-+static ssize_t scmi_tlm_all_des_write(struct file *filp,
-+				      const char __user *buf,
-+				      size_t count, loff_t *ppos)
++static long
++scmi_tlm_intervals_get_ioctl(const struct scmi_tlm_inode *tlmi,
++			     unsigned long arg, bool is_group)
 +{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
++	struct scmi_tlm_intervals ivs, *tlm_ivs;
++	void * __user uptr = (void * __user)arg;
++
++	if (copy_from_user(&ivs, uptr, sizeof(ivs)))
++		return -EFAULT;
++
++	if (!is_group) {
++		const struct scmi_telemetry_info *info = tlmi->priv;
++
++		tlm_ivs = info->intervals;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++
++		tlm_ivs = grp->intervals;
++	}
++
++	if (ivs.num != tlm_ivs->num)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, tlm_ivs,
++			 sizeof(*tlm_ivs) + sizeof(u32) * ivs.num))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_de_config_set_ioctl(const struct scmi_tlm_inode *tlmi,
++			     unsigned long arg, bool all)
++{
 +	const struct scmi_telemetry_info *info = tlmi->priv;
 +	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-+	const struct scmi_tlm_class *cls = tlmi->cls;
-+	bool enable;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_de_config tcfg = {};
 +	int ret;
 +
-+	ret = kstrtobool_from_user(buf, count, &enable);
-+	if (ret)
-+		return ret;
++	if (copy_from_user(&tcfg, uptr, sizeof(tcfg)))
++		return -EFAULT;
 +
-+	/* When !IS_STATE imply that is a tstamp_enable operation */
-+	if (IS_STATE(cls->flags) && !enable) {
-+		ret = tsp->ops->all_disable(tsp->ph, false);
++	if (!all)
++		return tsp->ops->state_set(tsp->ph, false, tcfg.id,
++					   (bool *)&tcfg.enable,
++					   (bool *)&tcfg.t_enable);
++
++	for (int i = 0; i < info->base.num_des; i++) {
++		const struct scmi_telemetry_de *de = info->des[i];
++
++		ret = tsp->ops->state_set(tsp->ph, false, de->info->id,
++					  (bool *)&tcfg.enable,
++					  (bool *)&tcfg.t_enable);
 +		if (ret)
 +			return ret;
-+	} else {
-+		for (int i = 0; i < info->base.num_des; i++) {
-+			const struct scmi_telemetry_de *de = info->des[i];
-+
-+			ret = tsp->ops->state_set(tsp->ph, false, de->info->id,
-+						  IS_STATE(cls->flags) ? &enable : NULL,
-+						  !IS_STATE(cls->flags) ? &enable : NULL);
-+			if (ret)
-+				return ret;
-+		}
 +	}
-+
-+	return count;
-+}
-+
-+static const struct file_operations all_des_fops = {
-+	.open = nonseekable_open,
-+	.write = scmi_tlm_all_des_write,
-+};
-+
-+static ssize_t scmi_tlm_obj_enable_write(struct file *filp,
-+					 const char __user *buf,
-+					 size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-+	const struct scmi_tlm_class *cls = tlmi->cls;
-+	bool enabled, is_group = IS_GROUP(cls->flags);
-+	int ret, res_id;
-+
-+	ret = kstrtobool_from_user(buf, count, &enabled);
-+	if (ret)
-+		return ret;
-+
-+	res_id = !is_group ? tlmi->de->info->id : tlmi->grp->info->id;
-+	ret = tsp->ops->state_set(tsp->ph, is_group, res_id,
-+				  IS_STATE(cls->flags) ? &enabled : NULL,
-+				  !IS_STATE(cls->flags) ? &enabled : NULL);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t scmi_tlm_obj_enable_read(struct file *filp, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	const bool *enabled_state, *tstamp_enabled_state;
-+	char o_buf[2];
-+	bool enabled;
-+
-+	if (!IS_GROUP(tlmi->cls->flags)) {
-+		enabled_state = &tlmi->de->enabled;
-+		tstamp_enabled_state = &tlmi->de->tstamp_enabled;
-+	} else {
-+		enabled_state = &tlmi->grp->enabled;
-+		tstamp_enabled_state = &tlmi->grp->tstamp_enabled;
-+	}
-+
-+	enabled = IS_STATE(tlmi->cls->flags) ? *enabled_state : *tstamp_enabled_state;
-+	o_buf[0] = enabled ? 'Y' : 'N';
-+	o_buf[1] = '\n';
-+
-+	return simple_read_from_buffer(buf, count, ppos, o_buf, 2);
-+}
-+
-+static const struct file_operations obj_enable_fops = {
-+	.open = nonseekable_open,
-+	.write = scmi_tlm_obj_enable_write,
-+	.read = scmi_tlm_obj_enable_read,
-+};
-+
-+static int scmi_tlm_open(struct inode *ino, struct file *filp)
-+{
-+	struct scmi_tlm_buffer *data;
-+
-+	/* Allocate some per-open buffer */
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	filp->private_data = data;
-+
-+	return nonseekable_open(ino, filp);
-+}
-+
-+static int scmi_tlm_release(struct inode *ino, struct file *filp)
-+{
-+	kfree(filp->private_data);
 +
 +	return 0;
 +}
 +
-+static ssize_t
-+scmi_tlm_update_interval_read(struct file *filp, char __user *buf,
-+			      size_t count, loff_t *ppos)
++static long
++scmi_tlm_de_config_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
 +{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	struct scmi_tlm_buffer *data = filp->private_data;
-+	unsigned int active_update_interval;
++	const struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_de_config tcfg = {};
++	int ret;
 +
-+	if (!data)
-+		return 0;
++	if (copy_from_user(&tcfg, uptr, sizeof(tcfg)))
++		return -EFAULT;
 +
-+	if (!IS_GROUP(tlmi->cls->flags))
-+		active_update_interval = tlmi->info->active_update_interval;
-+	else
-+		active_update_interval = tlmi->grp->active_update_interval;
++	ret = tsp->ops->state_get(tsp->ph, tcfg.id,
++				  (bool *)&tcfg.enable, (bool *)&tcfg.t_enable);
++	if (ret)
++		return ret;
 +
-+	if (!data->used)
-+		data->used =
-+			scnprintf(data->buf, SCMI_TLM_MAX_BUF_SZ, "%u, %d\n",
-+				  SCMI_TLM_GET_UPDATE_INTERVAL_SECS(active_update_interval),
-+				  SCMI_TLM_GET_UPDATE_INTERVAL_EXP(active_update_interval));
++	if (copy_to_user(uptr, &tcfg, sizeof(tcfg)))
++		return -EFAULT;
 +
-+	return simple_read_from_buffer(buf, count, ppos, data->buf, data->used);
++	return 0;
 +}
 +
-+static ssize_t
-+scmi_tlm_update_interval_write(struct file *filp, const char __user *buf,
-+			       size_t count, loff_t *ppos)
++static long
++scmi_tlm_config_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg,
++			  bool is_group)
++{
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_config cfg;
++
++	if (!is_group) {
++		const struct scmi_telemetry_info *info = tlmi->priv;
++
++		cfg.enable = !!info->enabled;
++		cfg.current_update_interval = info->active_update_interval;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++
++		cfg.enable = !!grp->enabled;
++		cfg.t_enable = !!grp->tstamp_enabled;
++		cfg.current_update_interval = grp->active_update_interval;
++	}
++
++	if (copy_to_user(uptr, &cfg, sizeof(cfg)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_config_set_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg,
++			  bool is_group)
++{
++	const struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_config cfg = {};
++	bool grp_ignore;
++	int res_id;
++
++	if (copy_from_user(&cfg, uptr, sizeof(cfg)))
++		return -EFAULT;
++
++	if (!is_group) {
++		res_id = SCMI_TLM_GRP_INVALID;
++		grp_ignore = true;
++	} else {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++		int ret;
++
++		res_id = grp->info->id;
++		grp_ignore = false;
++		ret = tsp->ops->state_set(tsp->ph, true, res_id,
++					  (bool *)&cfg.enable,
++					  (bool *)&cfg.t_enable);
++		if (ret)
++			return ret;
++	}
++
++	return tsp->ops->collection_configure(tsp->ph, res_id, grp_ignore,
++					      (bool *)&cfg.enable,
++					      &cfg.current_update_interval,
++					      NULL);
++}
++
++static long
++scmi_tlm_de_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	const struct scmi_tlm_de_info *de_info;
++	struct scmi_tlm_de_info dei;
++
++	if (copy_from_user(&dei, uptr, sizeof(dei)))
++		return -EFAULT;
++
++	de_info = tsp->ops->de_info_get(tsp->ph, dei.id);
++	if (!de_info)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, de_info, sizeof(*de_info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_des_list_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_info *info = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
++	int num_des = info->base.num_des;
++	struct scmi_tlm_des_list dsl;
++
++	if (copy_from_user(&dsl, uptr, sizeof(dsl)))
++		return -EFAULT;
++
++	if (dsl.num_des < num_des)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, &num_des, sizeof(num_des)))
++		return -EFAULT;
++
++	if (copy_to_user(uptr + sizeof(num_des), info->des_store,
++			 info->base.num_des * sizeof(*info->des_store)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_de_value_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_de_sample sample;
++	int ret;
++
++	if (copy_from_user(&sample, uptr, sizeof(sample)))
++		return -EFAULT;
++
++	ret = tsp->ops->de_data_read(tsp->ph,
++				     (struct scmi_telemetry_de_sample *)&sample);
++	if (ret)
++		return ret;
++
++	if (copy_to_user(uptr, &sample, sizeof(sample)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grp_info_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_group *grp = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
++
++	if (copy_to_user(uptr, grp->info, sizeof(*grp->info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grp_desc_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_group *grp = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_grp_desc grp_desc;
++	unsigned int num_des = grp->info->num_des;
++
++	if (copy_from_user(&grp_desc, uptr, sizeof(grp_desc)))
++		return -EFAULT;
++
++	if (grp_desc.num_des < num_des)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, &num_des, sizeof(num_des)))
++		return -EFAULT;
++
++	if (copy_to_user(uptr + sizeof(num_des), grp->des,
++			 sizeof(*grp->des) * num_des))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long
++scmi_tlm_grps_list_get_ioctl(const struct scmi_tlm_inode *tlmi, unsigned long arg)
++{
++	const struct scmi_telemetry_info *info = tlmi->priv;
++	void * __user uptr = (void * __user)arg;
++	int num_grps = info->base.num_groups;
++	struct scmi_tlm_grps_list gsl;
++
++	if (copy_from_user(&gsl, uptr, sizeof(gsl)))
++		return -EFAULT;
++
++	if (gsl.num_grps < num_grps)
++		return -EINVAL;
++
++	if (copy_to_user(uptr, &num_grps, sizeof(num_grps)))
++		return -EFAULT;
++
++	if (copy_to_user(uptr + sizeof(num_grps), info->grps_store,
++			 info->base.num_groups * sizeof(*info->grps_store)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long scmi_tlm_des_read_ioctl(const struct scmi_tlm_inode *tlmi,
++				    unsigned long arg, bool single,
++				    bool is_group)
++{
++	const struct scmi_tlm_setup *tsp = tlmi->tsp;
++	void * __user uptr = (void * __user)arg;
++	struct scmi_tlm_data_read bulk, *bulk_ptr;
++	int ret, grp_id = SCMI_TLM_GRP_INVALID;
++
++	if (copy_from_user(&bulk, uptr, sizeof(bulk)))
++		return -EFAULT;
++
++	bulk_ptr = kzalloc(struct_size(bulk_ptr, samples, bulk.num_samples),
++			   GFP_KERNEL);
++	if (!bulk_ptr)
++		return -ENOMEM;
++
++	if (is_group) {
++		const struct scmi_telemetry_group *grp = tlmi->priv;
++
++		grp_id = grp->info->id;
++	}
++
++	bulk_ptr->num_samples = bulk.num_samples;
++	if (!single)
++		ret = tsp->ops->des_bulk_read(tsp->ph, grp_id,
++					      &bulk_ptr->num_samples,
++			  (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
++	else
++		ret = tsp->ops->des_sample_get(tsp->ph, grp_id,
++					       &bulk_ptr->num_samples,
++			  (struct scmi_telemetry_de_sample *)bulk_ptr->samples);
++	if (ret)
++		goto out;
++
++	if (copy_to_user(uptr, bulk_ptr, sizeof(*bulk_ptr) +
++			 bulk_ptr->num_samples * sizeof(bulk_ptr->samples[0])))
++		ret = -EFAULT;
++
++out:
++	kfree(bulk_ptr);
++
++	return ret;
++}
++
++static long scmi_tlm_unlocked_ioctl(struct file *filp, unsigned int cmd,
++				    unsigned long arg)
 +{
 +	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	const struct scmi_tlm_setup *tsp = tlmi->tsp;
 +	bool is_group = IS_GROUP(tlmi->cls->flags);
-+	unsigned int update_interval_ms = 0, secs = 0;
-+	int ret, grp_id, exp = -3;
-+	char *kbuf, *p, *token;
 +
-+	kbuf = memdup_user_nul(buf, count);
-+	if (IS_ERR(kbuf))
-+		return PTR_ERR(kbuf);
-+
-+	p = kbuf;
-+	token = strsep(&p, " ");
-+	if (!token) {
-+		/* At least one token must exist to be a valid input */
-+		ret = -EINVAL;
-+		goto err;
++	switch (cmd) {
++	case SCMI_TLM_GET_INFO:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_CFG:
++		return scmi_tlm_config_get_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_SET_CFG:
++		return scmi_tlm_config_set_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_GET_INTRVS:
++		return scmi_tlm_intervals_get_ioctl(tlmi, arg, is_group);
++	case SCMI_TLM_GET_DE_CFG:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_config_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SET_DE_CFG:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_config_set_ioctl(tlmi, arg, false);
++	case SCMI_TLM_GET_DE_INFO:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_DE_LIST:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_des_list_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_DE_VALUE:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_de_value_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SET_ALL_CFG:
++		return scmi_tlm_de_config_set_ioctl(tlmi, arg, true);
++	case SCMI_TLM_GET_GRP_LIST:
++		if (is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grps_list_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_GRP_INFO:
++		if (!is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grp_info_get_ioctl(tlmi, arg);
++	case SCMI_TLM_GET_GRP_DESC:
++		if (!is_group)
++			return -EOPNOTSUPP;
++		return scmi_tlm_grp_desc_get_ioctl(tlmi, arg);
++	case SCMI_TLM_SINGLE_SAMPLE:
++		return scmi_tlm_des_read_ioctl(tlmi, arg, true, is_group);
++	case SCMI_TLM_BULK_READ:
++		return scmi_tlm_des_read_ioctl(tlmi, arg, false, is_group);
++	default:
++		return -ENOTTY;
 +	}
-+
-+	ret = kstrtouint(token, 0, &secs);
-+	if (ret)
-+		goto err;
-+
-+	token = strsep(&p, " ");
-+	if (token) {
-+		ret = kstrtoint(token, 0, &exp);
-+		if (ret)
-+			goto err;
-+	}
-+
-+	kfree(kbuf);
-+
-+	update_interval_ms = SCMI_TLM_BUILD_UPDATE_INTERVAL(secs, exp);
-+
-+	grp_id = !is_group ? SCMI_TLM_GRP_INVALID : tlmi->grp->info->id;
-+	ret = tsp->ops->collection_configure(tsp->ph, grp_id, !is_group, NULL,
-+					     &update_interval_ms, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+
-+err:
-+	kfree(kbuf);
-+	return ret;
 +}
 +
-+static const struct file_operations current_interval_fops = {
-+	.open = scmi_tlm_open,
-+	.read = scmi_tlm_update_interval_read,
-+	.write = scmi_tlm_update_interval_write,
-+	.release = scmi_tlm_release,
-+};
-+
-+static ssize_t scmi_tlm_de_read(struct file *filp, char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-+	struct scmi_tlm_buffer *data = filp->private_data;
-+	int ret;
-+
-+	if (!data)
-+		return 0;
-+
-+	if (!data->used) {
-+		struct scmi_telemetry_de_sample sample;
-+
-+		sample.id = tlmi->de->info->id;
-+		ret = tsp->ops->de_data_read(tsp->ph, &sample);
-+		if (ret)
-+			return ret;
-+
-+		data->used = scnprintf(data->buf, SCMI_TLM_MAX_BUF_SZ,
-+				       "%llu: %016llX\n", sample.tstamp,
-+				       sample.val);
-+	}
-+
-+	return simple_read_from_buffer(buf, count, ppos, data->buf, data->used);
-+}
-+
-+static const struct file_operations de_read_fops = {
-+	.open = scmi_tlm_open,
-+	.read = scmi_tlm_de_read,
-+	.release = scmi_tlm_release,
-+};
-+
-+static ssize_t
-+scmi_tlm_enable_read(struct file *filp, char __user *buf, size_t count,
-+		     loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	char o_buf[2];
-+
-+	o_buf[0] = tlmi->info->enabled ? 'Y' : 'N';
-+	o_buf[1] = '\n';
-+
-+	return simple_read_from_buffer(buf, count, ppos, o_buf, 2);
-+}
-+
-+static ssize_t
-+scmi_tlm_enable_write(struct file *filp, const char __user *buf, size_t count,
-+		      loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	enum scmi_telemetry_collection mode = SCMI_TLM_ONDEMAND;
-+	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-+	bool enabled;
-+	int ret;
-+
-+	ret = kstrtobool_from_user(buf, count, &enabled);
-+	if (ret)
-+		return ret;
-+
-+	ret = tsp->ops->collection_configure(tsp->ph, SCMI_TLM_GRP_INVALID, true,
-+					     &enabled, NULL, &mode);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static const struct file_operations tlm_enable_fops = {
-+	.open = nonseekable_open,
-+	.read = scmi_tlm_enable_read,
-+	.write = scmi_tlm_enable_write,
-+};
-+
-+static ssize_t
-+scmi_tlm_intrv_discrete_read(struct file *filp, char __user *buf,
-+			     size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	bool discrete;
-+	char o_buf[2];
-+
-+	discrete = !IS_GROUP(tlmi->cls->flags) ?
-+		tlmi->info->intervals->discrete : tlmi->grp->intervals->discrete;
-+
-+	o_buf[0] = discrete ? 'Y' : 'N';
-+	o_buf[1] = '\n';
-+
-+	return simple_read_from_buffer(buf, count, ppos, o_buf, 2);
-+}
-+
-+static const struct file_operations intrv_discrete_fops = {
-+	.open = nonseekable_open,
-+	.read = scmi_tlm_intrv_discrete_read,
-+};
-+
-+static ssize_t
-+scmi_tlm_reset_write(struct file *filp, const char __user *buf, size_t count,
-+		     loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	int ret;
-+
-+	ret = tlmi->tsp->ops->reset(tlmi->tsp->ph);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static const struct file_operations reset_fops = {
-+	.open = nonseekable_open,
-+	.write = scmi_tlm_reset_write,
-+};
-+
-+static int sa_u32_get(void *data, u64 *val)
-+{
-+	*val = *(u32 *)data;
-+	return 0;
-+}
-+
-+static int sa_u32_set(void *data, u64 val)
-+{
-+	*(u32 *)data = val;
-+	return 0;
-+}
-+
-+static int sa_u32_open(struct inode *ino, struct file *filp)
-+{
-+	return simple_attr_open(ino, filp, sa_u32_get, sa_u32_set, "%u\n");
-+}
-+
-+static int sa_s32_open(struct inode *ino, struct file *filp)
-+{
-+	return simple_attr_open(ino, filp, sa_u32_get, sa_u32_set, "%d\n");
-+}
-+
-+static int sa_x32_open(struct inode *ino, struct file *filp)
-+{
-+	return simple_attr_open(ino, filp, sa_u32_get, sa_u32_set, "0x%X\n");
-+}
-+
-+static const struct file_operations sa_x32_ro_fops = {
-+	.open = sa_x32_open,
-+	.read = simple_attr_read,
-+	.release = simple_attr_release,
-+};
-+
-+static const struct file_operations sa_u32_ro_fops = {
-+	.open = sa_u32_open,
-+	.read = simple_attr_read,
-+	.release = simple_attr_release,
-+};
-+
-+static const struct file_operations sa_s32_ro_fops = {
-+	.open = sa_s32_open,
-+	.read = simple_attr_read,
-+	.release = simple_attr_release,
-+};
-+
-+static ssize_t
-+scmi_de_impl_version_read(struct file *filp, char __user *buf, size_t count,
-+			  loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	struct scmi_tlm_buffer *data = filp->private_data;
-+
-+	if (!data)
-+		return 0;
-+
-+	if (!data->used)
-+		data->used = scnprintf(data->buf, SCMI_TLM_MAX_BUF_SZ,
-+				       "%pUL\n", tlmi->info->base.de_impl_version);
-+
-+	return simple_read_from_buffer(buf, count, ppos, data->buf, data->used);
-+}
-+
-+static const struct file_operations de_impl_vers_fops = {
-+	.open = scmi_tlm_open,
-+	.read = scmi_de_impl_version_read,
-+	.release = scmi_tlm_release,
-+};
-+
-+static ssize_t scmi_string_read(struct file *filp, char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_priv *tp = filp->private_data;
-+
-+	if (!tp->buf) {
-+		struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+		const char *str = tlmi->priv;
-+
-+		tp->buf = kasprintf(GFP_KERNEL, "%s\n", str);
-+		if (!tp->buf)
-+			return -ENOMEM;
-+
-+		tp->buf_len = strlen(tp->buf) + 1;
-+	}
-+
-+	return simple_read_from_buffer(buf, count, ppos, tp->buf, tp->buf_len);
-+}
-+
-+static int scmi_tlm_priv_open(struct inode *ino, struct file *filp)
-+{
-+	return __scmi_tlm_generic_open(ino, filp, NULL);
-+}
-+
-+static const struct file_operations string_ro_fops = {
-+	.open = scmi_tlm_priv_open,
-+	.read = scmi_string_read,
-+	.release = scmi_tlm_priv_release,
-+};
-+
-+static ssize_t scmi_available_interv_read(struct file *filp, char __user *buf,
-+					  size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_priv *tp = filp->private_data;
-+
-+	if (!tp->buf) {
-+		struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+		struct scmi_tlm_intervals *intervals;
-+		int len = 0;
-+
-+		intervals = !IS_GROUP(tlmi->cls->flags) ?
-+			tlmi->info->intervals : tlmi->grp->intervals;
-+		tp->buf_len = intervals->num * MAX_AVAILABLE_INTERV_CHAR_LENGTH;
-+		tp->buf = kzalloc(tp->buf_len, GFP_KERNEL);
-+		if (!tp->buf)
-+			return -ENOMEM;
-+
-+		for (int i = 0; i < intervals->num; i++) {
-+			u32 ivl;
-+
-+			ivl = intervals->update_intervals[i];
-+			len += scnprintf(tp->buf + len, tp->buf_len - len,
-+					 "%u,%d ",
-+					 SCMI_TLM_GET_UPDATE_INTERVAL_SECS(ivl),
-+					 SCMI_TLM_GET_UPDATE_INTERVAL_EXP(ivl));
-+		}
-+		tp->buf[len - 1] = '\n';
-+	}
-+
-+	return simple_read_from_buffer(buf, count, ppos, tp->buf, tp->buf_len);
-+}
-+
-+static const struct file_operations available_interv_fops = {
-+	.open = scmi_tlm_priv_open,
-+	.read = scmi_available_interv_read,
-+	.release = scmi_tlm_priv_release,
-+};
-+
-+static const struct scmi_tlm_class tlm_tops[] = {
-+	TLM_ANON_CLASS("all_des_enable", TLM_IS_STATE, 0600, &all_des_fops, NULL),
-+	TLM_ANON_CLASS("all_des_tstamp_enable", 0, 0600, &all_des_fops, NULL),
-+	TLM_ANON_CLASS("current_update_interval_ms", 0, 0600, &current_interval_fops, NULL),
-+	TLM_ANON_CLASS("intervals_discrete", 0, 0400, &intrv_discrete_fops, NULL),
-+	TLM_ANON_CLASS("available_update_intervals_ms", 0, 0400,
-+		       &available_interv_fops, NULL),
-+	TLM_ANON_CLASS("de_implementation_version", 0, 0400, &de_impl_vers_fops, NULL),
-+	TLM_ANON_CLASS("tlm_enable", 0, 0600, &tlm_enable_fops, NULL),
-+	TLM_ANON_CLASS(NULL, 0, 0, NULL, NULL),
-+};
-+
-+DEFINE_TLM_CLASS(reset_tlmo, "reset", 0, 0200, &reset_fops, NULL);
-+
-+static const struct inode_operations tlm_dir_inode_ops = {
-+	.lookup = simple_lookup,
-+};
-+
-+static const struct inode_operations tlm_file_inode_ops = { };
-+
-+DEFINE_TLM_CLASS(des_dir_cls, "des", 0, 0700, NULL, &tlm_dir_inode_ops);
-+DEFINE_TLM_CLASS(name_tlmo, "name", 0, 0400, &string_ro_fops, NULL);
-+DEFINE_TLM_CLASS(ena_tlmo, "enable", TLM_IS_STATE, 0600, &obj_enable_fops, NULL);
-+DEFINE_TLM_CLASS(tstamp_ena_tlmo, "tstamp_enable", 0, 0600, &obj_enable_fops, NULL);
-+DEFINE_TLM_CLASS(type_tlmo, "type", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(unit_tlmo, "unit", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(unit_exp_tlmo, "unit_exp", 0, 0400, &sa_s32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(instance_id_tlmo, "instance_id", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(compo_type_tlmo, "compo_type", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(compo_inst_id_tlmo, "compo_instance_id", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(tstamp_exp_tlmo, "tstamp_exp", 0, 0400, &sa_s32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(persistent_tlmo, "persistent", 0, 0400, &sa_u32_ro_fops, NULL);
-+DEFINE_TLM_CLASS(value_tlmo, "value", 0, 0400, &de_read_fops, NULL);
-+
-+static struct scmi_tlm_inode *
-+scmi_tlm_inode_create(const struct scmi_tlm_setup *tsp,
-+		      const struct scmi_tlm_class *cls,
-+		      struct scmi_tlm_inode *parent, const void *priv)
-+{
-+	struct scmi_tlm_inode *tlmi;
-+
-+	tlmi = devm_kzalloc(tsp->dev, sizeof(*tlmi), GFP_KERNEL);
-+	if (!tlmi)
-+		return NULL;
-+
-+	tlmi->cls = cls;
-+	tlmi->parent = parent;
-+	tlmi->tsp = tsp;
-+	tlmi->priv = priv;
-+
-+	return tlmi;
-+}
-+
-+static int scmi_telemetry_des_initialize(struct device *dev,
-+					 struct scmi_tlm_instance *ti)
-+{
-+	struct scmi_tlm_setup *tsp = ti->tsp;
-+	struct scmi_tlm_inode *des_top_inode;
-+
-+	des_top_inode = TLM_INODE_SETUP(ti, tsp, &des_dir_cls, NULL, NULL);
-+
-+	for (int i = 0; i < ti->info->base.num_des; i++) {
-+		const struct scmi_telemetry_de *de = ti->info->des[i];
-+		struct scmi_tlm_de_info *dei = de->info;
-+		struct scmi_tlm_inode *de_dir_inode;
-+		struct scmi_tlm_class *de_tlm_cls;
-+
-+		de_tlm_cls = devm_kzalloc(tsp->dev, sizeof(*de_tlm_cls), GFP_KERNEL);
-+		if (!de_tlm_cls)
-+			return -ENOMEM;
-+
-+		de_tlm_cls->name = devm_kasprintf(dev, GFP_KERNEL, "0x%04X", dei->id);
-+		if (!de_tlm_cls->name)
-+			return -ENOMEM;
-+
-+		de_tlm_cls->mode = 0700;
-+		de_tlm_cls->i_op = &tlm_dir_inode_ops;
-+		de_dir_inode = TLM_INODE_SETUP(ti, tsp, de_tlm_cls, des_top_inode, de);
-+
-+		if (de->name_support)
-+			TLM_INODE_SETUP(ti, tsp, &name_tlmo, de_dir_inode, dei->name);
-+
-+		TLM_INODE_SETUP(ti, tsp, &ena_tlmo, de_dir_inode, de);
-+		if (de->tstamp_support) {
-+			TLM_INODE_SETUP(ti, tsp, &tstamp_ena_tlmo, de_dir_inode, de);
-+			TLM_INODE_SETUP(ti, tsp, &tstamp_exp_tlmo, de_dir_inode,
-+					&dei->tstamp_exp);
-+		}
-+
-+		TLM_INODE_SETUP(ti, tsp, &type_tlmo, de_dir_inode, &dei->type);
-+		TLM_INODE_SETUP(ti, tsp, &unit_tlmo, de_dir_inode, &dei->unit);
-+		TLM_INODE_SETUP(ti, tsp, &unit_exp_tlmo, de_dir_inode,
-+				&dei->unit_exp);
-+		TLM_INODE_SETUP(ti, tsp, &instance_id_tlmo, de_dir_inode,
-+				&dei->instance_id);
-+		TLM_INODE_SETUP(ti, tsp, &compo_type_tlmo, de_dir_inode,
-+				&dei->compo_type);
-+		TLM_INODE_SETUP(ti, tsp, &compo_inst_id_tlmo, de_dir_inode,
-+				&dei->compo_instance_id);
-+		TLM_INODE_SETUP(ti, tsp, &persistent_tlmo, de_dir_inode,
-+				&dei->persistent);
-+
-+		TLM_INODE_SETUP(ti, tsp, &value_tlmo, de_dir_inode, de);
-+	}
-+
-+	dev_info(dev, "Found %d Telemetry DE resources.\n", ti->info->base.num_des);
-+
-+	return 0;
-+}
-+
-+DEFINE_TLM_CLASS(version_tlmo, "version", 0, 0400, &sa_x32_ro_fops, NULL);
-+
-+static int scmi_tlm_bulk_on_demand(const struct scmi_tlm_setup *tsp,
-+				   int res_id, int *num_samples,
-+				   struct scmi_telemetry_de_sample *samples)
-+{
-+	return tsp->ops->des_bulk_read(tsp->ph, res_id, num_samples, samples);
-+}
-+
-+static int scmi_tlm_data_open(struct inode *ino, struct file *filp)
-+{
-+	return __scmi_tlm_generic_open(ino, filp, scmi_tlm_bulk_on_demand);
-+}
-+
-+static int scmi_tlm_buffer_fill(struct device *dev, char *buf, size_t size,
-+				int *len, int num,
-+				struct scmi_telemetry_de_sample *samples)
-+{
-+	int idx, bytes = 0;
-+
-+	/* Loop till there space for the next line */
-+	for (idx = 0; idx < num && size - bytes >= MAX_BULK_LINE_CHAR_LENGTH; idx++) {
-+		bytes += scnprintf(buf + bytes, size - bytes,
-+				   "0x%04X %llu %016llX\n", samples[idx].id,
-+				   samples[idx].tstamp, samples[idx].val);
-+	}
-+
-+	if (idx < num) {
-+		dev_err(dev, "Bulk buffer truncated !\n");
-+		return -ENOSPC;
-+	}
-+
-+	if (len)
-+		*len = bytes;
-+
-+	return 0;
-+}
-+
-+static int scmi_tlm_bulk_buffer_allocate_and_fill(struct scmi_tlm_inode *tlmi,
-+						  struct scmi_tlm_priv *tp)
-+{
-+	const struct scmi_tlm_setup *tsp = tlmi->tsp;
-+	const struct scmi_tlm_class *cls = tlmi->cls;
-+	struct scmi_telemetry_de_sample *samples;
-+	bool is_group = IS_GROUP(cls->flags);
-+	int ret, num_samples, res_id;
-+
-+	num_samples = !is_group ? tlmi->info->base.num_des :
-+		tlmi->grp->info->num_des;
-+	tp->buf_sz = num_samples * MAX_BULK_LINE_CHAR_LENGTH;
-+	tp->buf = kzalloc(tp->buf_sz, GFP_KERNEL);
-+	if (!tp->buf)
-+		return -ENOMEM;
-+
-+	res_id = is_group ? tlmi->grp->info->id : SCMI_TLM_GRP_INVALID;
-+	samples = kcalloc(num_samples, sizeof(*samples), GFP_KERNEL);
-+	if (!samples) {
-+		kfree(tp->buf);
-+		return -ENOMEM;
-+	}
-+
-+	ret = tp->bulk_retrieve(tsp, res_id, &num_samples, samples);
-+	if (ret) {
-+		kfree(samples);
-+		kfree(tp->buf);
-+		return ret;
-+	}
-+
-+	ret = scmi_tlm_buffer_fill(tsp->dev, tp->buf, tp->buf_sz, &tp->buf_len,
-+				   num_samples, samples);
-+	kfree(samples);
-+
-+	return ret;
-+}
-+
-+static ssize_t scmi_tlm_generic_data_read(struct file *filp, char __user *buf,
-+					  size_t count, loff_t *ppos)
-+{
-+	struct scmi_tlm_inode *tlmi = to_tlm_inode(file_inode(filp));
-+	struct scmi_tlm_priv *tp = filp->private_data;
-+	int ret;
-+
-+	if (!tp->buf) {
-+		ret = scmi_tlm_bulk_buffer_allocate_and_fill(tlmi, tp);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return simple_read_from_buffer(buf, count, ppos, tp->buf, tp->buf_len);
-+}
-+
-+static const struct file_operations scmi_tlm_data_fops = {
++static const struct file_operations scmi_tlm_ctrl_fops = {
 +	.owner = THIS_MODULE,
-+	.open = scmi_tlm_data_open,
-+	.read = scmi_tlm_generic_data_read,
-+	.release = scmi_tlm_priv_release,
++	.open = nonseekable_open,
++	.unlocked_ioctl = scmi_tlm_unlocked_ioctl,
 +};
 +
-+DEFINE_TLM_CLASS(data_tlmo, "des_bulk_read", 0, 0400, &scmi_tlm_data_fops, NULL);
-+
-+static int scmi_tlm_bulk_single_read(const struct scmi_tlm_setup *tsp,
-+				     int res_id, int *num_samples,
-+				     struct scmi_telemetry_de_sample *samples)
-+{
-+	return tsp->ops->des_sample_get(tsp->ph, res_id, num_samples, samples);
-+}
-+
-+static int scmi_tlm_single_read_open(struct inode *ino, struct file *filp)
-+{
-+	return __scmi_tlm_generic_open(ino, filp, scmi_tlm_bulk_single_read);
-+}
-+
-+/* TODO
-+ * Could be better with a .poll fops since single sample
-+ * reads trigger an asynchronous request.
-+ */
-+static const struct file_operations scmi_tlm_single_sample_fops = {
-+	.owner = THIS_MODULE,
-+	.open = scmi_tlm_single_read_open,
-+	.read = scmi_tlm_generic_data_read,
-+	.release = scmi_tlm_priv_release,
-+};
-+
-+DEFINE_TLM_CLASS(single_sample_tlmo, "des_single_sample_read", 0, 0400,
-+		 &scmi_tlm_single_sample_fops, NULL);
-+
-+static const struct scmi_tlm_class tlm_grps[] = {
-+	TLM_ANON_CLASS("enable", TLM_IS_STATE | TLM_IS_GROUP, 0600, &obj_enable_fops, NULL),
-+	TLM_ANON_CLASS("tstamp_enable", TLM_IS_GROUP, 0600, &obj_enable_fops, NULL),
-+	TLM_ANON_CLASS(NULL, 0, 0, NULL, NULL),
-+};
-+
-+DEFINE_TLM_CLASS(grp_data_tlmo, "des_bulk_read", TLM_IS_GROUP, 0400,
-+		 &scmi_tlm_data_fops, NULL);
-+
-+DEFINE_TLM_CLASS(groups_dir_cls, "groups", 0, 0700, NULL, &tlm_dir_inode_ops);
-+
-+DEFINE_TLM_CLASS(grp_single_sample_tlmo, "des_single_sample_read", TLM_IS_GROUP,
-+		 0400, &scmi_tlm_single_sample_fops, NULL);
-+
-+DEFINE_TLM_CLASS(grp_composing_des_tlmo, "composing_des", TLM_IS_GROUP, 0400,
-+		 &string_ro_fops, NULL);
-+
-+DEFINE_TLM_CLASS(grp_current_interval_tlmo, "current_update_interval_ms",
-+		 TLM_IS_GROUP, 0600, &current_interval_fops, NULL);
-+
-+DEFINE_TLM_CLASS(grp_available_interval_tlmo, "available_update_intervals_ms",
-+		 TLM_IS_GROUP, 0400, &available_interv_fops, NULL);
-+
-+DEFINE_TLM_CLASS(grp_intervals_discrete_tlmo, "intervals_discrete",
-+		 TLM_IS_GROUP, 0400, &intrv_discrete_fops, NULL);
-+
-+static int scmi_telemetry_groups_initialize(struct device *dev,
-+					    struct scmi_tlm_instance *ti)
-+{
-+	struct scmi_tlm_setup *tsp = ti->tsp;
-+	struct scmi_tlm_inode *groups_top_inode;
-+
-+	if (ti->info->base.num_groups == 0)
-+		return 0;
-+
-+	groups_top_inode = TLM_INODE_SETUP(ti, tsp, &groups_dir_cls, NULL, NULL);
-+
-+	for (int i = 0; i < ti->info->base.num_groups; i++) {
-+		const struct scmi_telemetry_group *grp = &ti->info->groups[i];
-+		struct scmi_tlm_class *grp_tlm_cls;
-+		struct scmi_tlm_inode *grp_dir_inode;
-+
-+		grp_tlm_cls = devm_kzalloc(tsp->dev, sizeof(*grp_tlm_cls), GFP_KERNEL);
-+		if (!grp_tlm_cls)
-+			return -ENOMEM;
-+
-+		grp_tlm_cls->name = devm_kasprintf(dev, GFP_KERNEL, "%u", grp->info->id);
-+		if (!grp_tlm_cls->name)
-+			return -ENOMEM;
-+
-+		grp_tlm_cls->mode = 0700;
-+		grp_tlm_cls->i_op = &tlm_dir_inode_ops;
-+
-+		grp_dir_inode = TLM_INODE_SETUP(ti, tsp, grp_tlm_cls,
-+						groups_top_inode, grp);
-+
-+		for (const struct scmi_tlm_class *gto = tlm_grps; gto->name; gto++)
-+			TLM_INODE_SETUP(ti, tsp, gto, grp_dir_inode, grp);
-+
-+		TLM_INODE_SETUP(ti, tsp, &grp_composing_des_tlmo, grp_dir_inode,
-+				grp->des_str);
-+
-+		TLM_INODE_SETUP(ti, tsp, &grp_data_tlmo, grp_dir_inode, grp);
-+		TLM_INODE_SETUP(ti, tsp, &grp_single_sample_tlmo, grp_dir_inode, grp);
-+
-+		if (ti->info->per_group_config_support) {
-+			TLM_INODE_SETUP(ti, tsp, &grp_current_interval_tlmo,
-+					grp_dir_inode, grp);
-+			TLM_INODE_SETUP(ti, tsp, &grp_available_interval_tlmo,
-+					grp_dir_inode, grp);
-+			TLM_INODE_SETUP(ti, tsp, &grp_intervals_discrete_tlmo,
-+					grp_dir_inode, grp);
-+		}
-+	}
-+
-+	dev_info(dev, "Found %d Telemetry GROUPS resources.\n",
-+		 ti->info->base.num_groups);
-+
-+	return 0;
-+}
-+
-+static int scmi_tlm_root_instance_initialize(struct device *dev,
-+					     struct scmi_tlm_instance *ti)
-+{
-+	struct scmi_tlm_setup *tsp = ti->tsp;
-+
-+	/*
-+	 * Allocate space for all possible nodes, i.e. in order:
-+	 *  - top level nodes
-+	 *  - all DE subdirs contained in des/
-+	 *  - all DE proeperties files inside each 0xNNNN/ DE subdir
-+	 *  - all GRPS subdirs contained in groups/
-+	 *  - all GRPS proeperties files inside each <N>/ GRP subdir
-+	 */
-+	ti->max_nodes = TOP_NODES_NUM + ti->info->base.num_des +
-+		NODES_PER_DE_NUM * ti->info->base.num_des +
-+		ti->info->base.num_groups +
-+		NODES_PER_GRP_NUM * ti->info->base.num_groups;
-+	ti->all_nodes = devm_kcalloc(tsp->dev, ti->max_nodes,
-+				     sizeof(*ti->all_nodes), GFP_KERNEL);
-+	if (!ti->all_nodes)
-+		return -ENOMEM;
-+
-+	scnprintf(ti->name, MAX_INST_NAME, "tlm_%d", ti->id);
-+
-+	/* Allocate top instance node */
-+	ti->top_cls.name = ti->name;
-+	ti->top_cls.mode = 0755;
-+	/*
-+	 * Do NOT register the top_node root in all_nodes[] since it is
-+	 * treated differently at mount time
-+	 */
-+	ti->top_inode = scmi_tlm_inode_create(tsp, &ti->top_cls, NULL, NULL);
-+
-+	for (const struct scmi_tlm_class *tlmo = tlm_tops; tlmo->name; tlmo++)
-+		TLM_INODE_SETUP(ti, tsp, tlmo, NULL, ti->info);
-+
-+	if (ti->info->reset_support)
-+		TLM_INODE_SETUP(ti, tsp, &reset_tlmo, NULL, NULL);
-+
-+	TLM_INODE_SETUP(ti, tsp, &version_tlmo, NULL, &ti->info->base.version);
-+	TLM_INODE_SETUP(ti, tsp, &data_tlmo, NULL, ti->info);
-+	TLM_INODE_SETUP(ti, tsp, &single_sample_tlmo, NULL, ti->info);
-+
-+	return 0;
-+}
-+
-+static struct scmi_tlm_instance *scmi_tlm_init(struct scmi_tlm_setup *tsp,
-+					       int instance_id)
-+{
-+	struct device *dev = tsp->dev;
-+	struct scmi_tlm_instance *ti;
-+	int ret;
-+
-+	ti = devm_kzalloc(dev, sizeof(*ti), GFP_KERNEL);
-+	if (!ti)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ti->info = tsp->ops->info_get(tsp->ph);
-+	if (!ti->info) {
-+		dev_err(dev, "invalid Telemetry info !\n");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	ti->id = instance_id;
-+	ti->tsp = tsp;
-+
-+	ret = scmi_tlm_root_instance_initialize(dev, ti);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ret = scmi_telemetry_des_initialize(dev, ti);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ret = scmi_telemetry_groups_initialize(dev, ti);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return ti;
-+}
-+
-+static int scmi_telemetry_probe(struct scmi_device *sdev)
-+{
-+	const struct scmi_handle *handle = sdev->handle;
-+	struct scmi_protocol_handle *ph;
-+	struct device *dev = &sdev->dev;
-+	struct scmi_tlm_instance *ti;
-+	struct scmi_tlm_setup *tsp;
-+	const void *ops;
-+
-+	if (!handle)
-+		return -ENODEV;
-+
-+	ops = handle->devm_protocol_get(sdev, sdev->protocol_id, &ph);
-+	if (IS_ERR(ops))
-+		return dev_err_probe(dev, PTR_ERR(ops),
-+				     "Cannot access protocol:0x%X\n",
-+				     sdev->protocol_id);
-+
-+	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
-+	if (!tsp)
-+		return -ENOMEM;
-+
-+	tsp->dev = dev;
-+	tsp->ops = ops;
-+	tsp->ph = ph;
-+
-+	ti = scmi_tlm_init(tsp, atomic_fetch_inc(&scmi_tlm_instance_count));
-+	if (IS_ERR(ti))
-+		return PTR_ERR(ti);
-+
-+	mutex_lock(&scmi_tlm_mtx);
-+	list_add(&ti->node, &scmi_telemetry_instances);
-+	if (scmi_tlm_sb) {
-+		int ret;
-+
-+		/*
-+		 * If the file system was already mounted by the time this
-+		 * instance was probed, register explicitly, since the list
-+		 * has been scanned already.
-+		 */
-+		mutex_unlock(&scmi_tlm_mtx);
-+		ret = scmi_telemetry_instance_register(scmi_tlm_sb, ti);
-+		if (ret)
-+			return ret;
-+		mutex_lock(&scmi_tlm_mtx);
-+	}
-+	mutex_unlock(&scmi_tlm_mtx);
-+
-+	dev_set_drvdata(&sdev->dev, ti);
-+
-+	return 0;
-+}
-+
-+static void scmi_telemetry_remove(struct scmi_device *sdev)
-+{
-+	struct device *dev = &sdev->dev;
-+	struct scmi_tlm_instance *ti;
-+	bool enabled = false;
-+	int ret;
-+
-+	ti = dev_get_drvdata(&sdev->dev);
-+
-+	/* Stop SCMI Telemetry collection */
-+	ret = ti->tsp->ops->collection_configure(ti->tsp->ph,
-+						 SCMI_TLM_GRP_INVALID, true,
-+						 &enabled, NULL, NULL);
-+	if (ret)
-+		dev_warn(dev, "Failed to stop Telemetry collection\n");
-+
-+	list_del(&ti->node);
-+}
-+
-+static const struct scmi_device_id scmi_id_table[] = {
-+	{ SCMI_PROTOCOL_TELEMETRY, "telemetry" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-+
-+static struct scmi_driver scmi_telemetry_driver = {
-+	.name = "scmi-telemetry-driver",
-+	.probe = scmi_telemetry_probe,
-+	.remove = scmi_telemetry_remove,
-+	.id_table = scmi_id_table,
-+};
-+
-+static const struct super_operations tlm_sops = {
-+	.statfs = simple_statfs,
-+	.drop_inode = generic_delete_inode,
-+};
-+
-+static struct inode *
-+scmi_tlm_inode_initialize(struct super_block *sb, umode_t mode,
-+			  struct scmi_tlm_inode *tlmi)
-+{
-+	struct inode *inode;
-+
-+	if (!tlmi)
-+		return NULL;
-+
-+	inode = &tlmi->vfs_inode;
-+	if (unlikely(inode_init_always(sb, inode)))
-+		return NULL;
-+
-+	inode_sb_list_add(inode);
-+	inode->i_ino = get_next_ino();
-+	inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
-+	simple_inode_init_ts(inode);
-+
-+	if (S_ISDIR(mode)) {
-+		inode->i_op = &tlm_dir_inode_ops;
-+		inode->i_fop = &simple_dir_operations;
-+	} else if (S_ISREG(mode)) {
-+		inode->i_op = &tlm_file_inode_ops;
-+		inode->i_fop = tlmi ? tlmi->cls->f_op : NULL;
-+	}
-+
-+	inode->i_private = (void *)tlmi->priv;
-+
-+	return inode;
-+}
-+
-+static struct dentry *
-+scmi_tlm_node_add(struct super_block *sb, struct dentry *parent,
-+		  const char *name, umode_t mode, struct scmi_tlm_inode *tlmi)
-+{
-+	struct inode *ino;
-+	struct dentry *dentry;
-+
-+	ino = scmi_tlm_inode_initialize(sb, mode, tlmi);
-+	if (!ino)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dentry = d_alloc_name(parent, name);
-+	if (!dentry)
-+		return ERR_PTR(-ENOMEM);
-+
-+	tlmi->dentry = dentry;
-+	d_add(dentry, ino);
-+
-+	return dentry;
-+}
-+
-+static int scmi_telemetry_instance_register(struct super_block *sb,
-+					    struct scmi_tlm_instance *ti)
-+{
-+	struct dentry *top;
-+
-+	/* AT first create instance top dir ... */
-+	top = scmi_tlm_node_add(sb, sb->s_root, ti->top_cls.name,
-+				S_IFDIR | ti->top_cls.mode, ti->top_inode);
-+	if (IS_ERR(top))
-+		return PTR_ERR(top);
-+
-+	/*
-+	 * Scan the array of tlm_inode pre-initialized with SCMI Telemetry
-+	 * discovered entities and map it into the filesystem .
-+	 */
-+	for (int i = 0; i < ti->num_nodes; i++) {
-+		struct scmi_tlm_inode *tlmi = ti->all_nodes[i];
-+		struct dentry *dentry, *parent;
-+		umode_t mode;
-+
-+		/* Check sanity of node tree */
-+		if (WARN_ON_ONCE(!tlmi))
-+			continue;
-+
-+		parent = !tlmi->parent ? top : tlmi->parent->dentry;
-+		mode = (tlmi->cls->f_op ? S_IFREG : S_IFDIR) | tlmi->cls->mode;
-+		dentry = scmi_tlm_node_add(sb, parent, tlmi->cls->name, mode, tlmi);
-+		if (IS_ERR(dentry))
-+			return PTR_ERR(dentry);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct scmi_tlm_inode root_tlm;
-+
-+static int tlm_fill_super(struct super_block *sb, void *data, int silent)
-+{
-+	struct inode *root_inode;
-+	struct dentry *root_dentry;
-+	struct scmi_tlm_instance *ti;
-+
-+	sb->s_magic = TLM_FS_MAGIC;
-+	sb->s_op = &tlm_sops;
-+
-+	/* create root inode (directory) */
-+	root_inode = scmi_tlm_inode_initialize(sb, S_IFDIR | 0755, &root_tlm);
-+	if (!root_inode)
-+		return -ENOMEM;
-+
-+	root_dentry = d_make_root(root_inode);
-+	if (!root_dentry)
-+		return -ENOMEM;
-+
-+	sb->s_root = root_dentry;
-+	list_for_each_entry(ti, &scmi_telemetry_instances, node) {
-+		int ret;
-+
-+		ret = scmi_telemetry_instance_register(sb, ti);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	guard(mutex)(&scmi_tlm_mtx);
-+	if (!scmi_tlm_sb)
-+		scmi_tlm_sb = sb;
-+
-+	return 0;
-+}
-+
-+static struct dentry *tlm_mount(struct file_system_type *fs_type, int flags,
-+				const char *dev_name, void *data)
-+{
-+	return mount_nodev(fs_type, flags, data, tlm_fill_super);
-+}
-+
-+static void tlm_kill_sb(struct super_block *sb)
-+{
-+	kill_litter_super(sb);
-+}
-+
-+//XXX Move to new fs_context-based MOUNT process !!! (see debugfs_parse_param)
-+static struct file_system_type scmi_telemetry_fs = {
-+	.owner = THIS_MODULE,
-+	.name = TLM_FS_NAME,
-+	.mount = tlm_mount,
-+	.kill_sb = tlm_kill_sb,
-+	.fs_flags = 0,
-+};
-+
-+static int __init scmi_telemetry_init(void)
-+{
-+	int ret;
-+
-+	ret = scmi_register(&scmi_telemetry_driver);
-+	if (ret)
-+		return ret;
-+
-+	ret = sysfs_create_mount_point(fs_kobj, TLM_FS_MNT);
-+	if (ret && ret != -EEXIST) {
-+		scmi_unregister(&scmi_telemetry_driver);
-+		return ret;
-+	}
-+
-+	ret = register_filesystem(&scmi_telemetry_fs);
-+	if (ret) {
-+		sysfs_remove_mount_point(fs_kobj, TLM_FS_MNT);
-+		scmi_unregister(&scmi_telemetry_driver);
-+	}
-+
-+	return ret;
-+}
-+module_init(scmi_telemetry_init);
-+
-+static void __exit scmi_telemetry_exit(void)
-+{
-+	int ret;
-+
-+	ret = unregister_filesystem(&scmi_telemetry_fs);
-+	if (!ret)
-+		sysfs_remove_mount_point(fs_kobj, TLM_FS_MNT);
-+	else
-+		pr_err("Failed to unregister %s\n", TLM_FS_NAME);
-+
-+	scmi_unregister(&scmi_telemetry_driver);
-+}
-+module_exit(scmi_telemetry_exit);
-+
-+MODULE_AUTHOR("Cristian Marussi <cristian.marussi@arm.com>");
-+MODULE_DESCRIPTION("ARM SCMI Telemetry Driver");
-+MODULE_LICENSE("GPL");
++DEFINE_TLM_CLASS(ctrl_tlmo, "control", 0, 0600, &scmi_tlm_ctrl_fops, NULL);
++DEFINE_TLM_CLASS(grp_ctrl_tlmo, "control", TLM_IS_GROUP, 0600,
++		 &scmi_tlm_ctrl_fops, NULL);
++
+ static int scmi_telemetry_groups_initialize(struct device *dev,
+ 					    struct scmi_tlm_instance *ti)
+ {
+@@ -989,6 +1389,7 @@ static int scmi_telemetry_groups_initialize(struct device *dev,
+ 		TLM_INODE_SETUP(ti, tsp, &grp_composing_des_tlmo, grp_dir_inode,
+ 				grp->des_str);
+ 
++		TLM_INODE_SETUP(ti, tsp, &grp_ctrl_tlmo, grp_dir_inode, grp);
+ 		TLM_INODE_SETUP(ti, tsp, &grp_data_tlmo, grp_dir_inode, grp);
+ 		TLM_INODE_SETUP(ti, tsp, &grp_single_sample_tlmo, grp_dir_inode, grp);
+ 
+@@ -1050,6 +1451,7 @@ static int scmi_tlm_root_instance_initialize(struct device *dev,
+ 	TLM_INODE_SETUP(ti, tsp, &version_tlmo, NULL, &ti->info->base.version);
+ 	TLM_INODE_SETUP(ti, tsp, &data_tlmo, NULL, ti->info);
+ 	TLM_INODE_SETUP(ti, tsp, &single_sample_tlmo, NULL, ti->info);
++	TLM_INODE_SETUP(ti, tsp, &ctrl_tlmo, NULL, ti->info);
+ 
+ 	return 0;
+ }
 -- 
 2.51.0
 
