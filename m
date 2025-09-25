@@ -1,199 +1,457 @@
-Return-Path: <linux-kernel+bounces-832176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844E2B9E8EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:06:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08267B9E8FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 461AE4E3191
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162441BC2523
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816252E9EC9;
-	Thu, 25 Sep 2025 10:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3345C2882B6;
+	Thu, 25 Sep 2025 10:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gsVWAo2s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co/lHs+q"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D0727FD7D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6B414EC73
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758794787; cv=none; b=E5Q3IGYbXimPLoXywkydXvu7kjU6OG5wf8bICiAW4V/WIocGiixS2z693ScisJMjG4LhYSlpzdAUOJBFIKaS6NoOaCQPlU+DxSpoBFNozhvkkc1O5/R438AcedLrxOIIwI/tXwfFIpxO8wV2MQkMPUI41x2wf3KKHDIm0/vG9cw=
+	t=1758794851; cv=none; b=lakd9OeLQWrTbc/gGv1tXncXitH7sYvcNHqGJYpvOOTnK/JSInqVmKuRbjfpcNmpLwf7X/6CRgaGQ7t+SdZgCRZpRETrpWN80uMf04RlUg2eD6gtPU/8guRn649KTdcZLdaOkEJHCE8Zw3c3o0waJRHsv+yiLFxvXxs9kotgivg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758794787; c=relaxed/simple;
-	bh=KGbUjEpAkc4sIly8VUpEuSI3Y23L9o7q3N8FeciH2h8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jXzWoJXLlqY7eX30g0fFHg/tU75/dIr3x0X8guntXdzTbut26I43zzjD9LExuL1cImIyaGEHmyRbO0H3/1Ew+sl77oT7MXlXbex9diw/j9jfMqASPST13b55xkAEiKOFt/C63ocARKE/e/SAo19HsQEAoBKL8HVBHH/jpNBcd74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gsVWAo2s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758794785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UQ1yIMrrwyU17r+tTnLpblX0dAaSzYGyBKLGlXcYZwI=;
-	b=gsVWAo2sH+yllTUmWTrcEyVwuYMcz4DKkodKi1TF6JHV3Kw0e3ZMmocDj9IKJh5RDiU2Ju
-	KfBPNeTysS5snqGW6XflUS62yhFeK5hSk7/qe19zJUoDqJjI+Ccs/YS3ddTMxJ84rxG4Ir
-	AjEOBXOTc2NU66CTb15cPu6YdpKOZnw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-3QcfviJ2OLWThA3Sa7asXQ-1; Thu, 25 Sep 2025 06:06:23 -0400
-X-MC-Unique: 3QcfviJ2OLWThA3Sa7asXQ-1
-X-Mimecast-MFC-AGG-ID: 3QcfviJ2OLWThA3Sa7asXQ_1758794782
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45df7e734e0so3515585e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:06:23 -0700 (PDT)
+	s=arc-20240116; t=1758794851; c=relaxed/simple;
+	bh=rFy/sAVpE33mTE9Ro6oXr14+P+7ZyrAS5jnU7fHzki4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WWGZWNIjqGJQrIHtgRoS9wXtwKH7qjjJycJfXv36GtDKOF2MEtzxtXQvRIphmrS77uov33urVspmow7dZp2huU0k9e6TUeicTcF5YgtV14vuUZjAzVnAfsDWmjBNk/vrvR/SPMdxO8uZlDJxmmnVKLTgtcQgVA4yP7Kp5xeXLkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co/lHs+q; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b00a9989633so152883866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758794847; x=1759399647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
+        b=co/lHs+q9tCk6n63T7oEqDY5tUvNB/rzjvdylC087NLiKPwT1Zxgh6gEciLY1Shz43
+         AJDJ8e1D/iZGh4DUX0+YpqWrXJvBxs1iEGAksjdLwPwIDm9Q+Tzz63GMHG03c52OnQSF
+         gYmNOGv8OaJdnMg4U9ADZLxGBV+usv/qIPeCSMfyJcKbMZk0A+fo4zPToTmPQLaGv4ii
+         SSMvWUKHf9DZo/F0rRsByFoLyZR9FEhRbAG5+w8CAR1qmyo+1R2xtWrTMi1Haq8T+oWR
+         M8t5ORjCixyofiAj3UrdtIWdz9pU3bxqpzojxcnru9wYR7TxE4DvyINcLo6ZEbljJ/Tb
+         1ArA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758794782; x=1759399582;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UQ1yIMrrwyU17r+tTnLpblX0dAaSzYGyBKLGlXcYZwI=;
-        b=HUHmivY7R367//u0TY/hs5OQNCJUxwQMLBku3FouzkjKFvk8qVlMxjT3bNgaDFnhUp
-         Gl9eITIHyUQPRxYa/TMnHxbNPiVMtMJObA37Z6oWIAE0swyboT9BMqYN+kT6kD921z12
-         /bePrDl7t9za1wCkjTdWxrBV+b3I4j8vs1A7DH+ROJISsGq2pK1VSCva1BY1QhosJ6ac
-         XbB4hYmHQHTagaUjZuDYf9PSFlCqr0rHxfTjro3g669SxF6YRuJQFNJ6fhaRdNa8pLpm
-         57UpJKIzfE+C5zEehJp9aKynH7PVcElYzlieJQ3RrzDtUrchvtbuUTO2Qr8fJeyWuyEQ
-         qIhA==
-X-Gm-Message-State: AOJu0YzvRzC8Eg3WGX4GtjoZCUk3jGuUzpnaLmcHsKJE3Vx20fNgCmM5
-	dAeyL12J9XvefFtNjuAQd6M3KvnqqgY1a3KfS0mJ8R6bN6V75sr86UhenJup7vSUfNnBSn72O10
-	tTE/OPww2Qa7X3HvbffSyVp91g70EK2epSVRXtbgsvNgFQhxu2wtBh/bHMDuioWlVQpv+TcTLgg
-	==
-X-Gm-Gg: ASbGncsoUYTje4Zir5raioLy/w4Eghy/ce+yS0sJpEC24I5KcTWpiN/9Qm2UGqhC1Sj
-	+qBijHFn10dXJmq35QTEdhVZ7ZgCzFJuRsQ8eIDL5IwCFQN34ikr/Ubog7Cuxa/a91yMUtrXd98
-	MJO41iYNxxrhBfAelPT1+hQtTO4I6UCJYOXPlvscYnUKNC66AAFu5AsveX7q5WS1LBEfsXV9znq
-	wBXwPLcyXm5KGrdCGqlkIbsYvkRELni72e+YGHWW5dkLe1t90T3w5+GzMxNssmMNROTDq1A0XEK
-	viD9EbKOH9m++d8csnnbgL5yIm+SOJcYS5q8Nu/+770WXdq2wbODUBexlucJoL8wuOyS0Kwt8gq
-	qUUaqMJ1kEh+QxbukuMX8EP1VmKkHMfNekLOdeSQzOLIzsxpt5ZBhnHu0sib2wrk6Un0S
-X-Received: by 2002:a05:600c:1e87:b0:46e:27f7:80ce with SMTP id 5b1f17b1804b1-46e329e51c2mr23724885e9.23.1758794781992;
-        Thu, 25 Sep 2025 03:06:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXJl4bhmMZAV2Ov8ckXqohzCkRtHDu295sdMoIicohDcdpvJzXAjcv+ktFKrVhD9D0sp0u6g==
-X-Received: by 2002:a05:600c:1e87:b0:46e:27f7:80ce with SMTP id 5b1f17b1804b1-46e329e51c2mr23724515e9.23.1758794781570;
-        Thu, 25 Sep 2025 03:06:21 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31f1dsm70034495e9.13.2025.09.25.03.06.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:06:20 -0700 (PDT)
-Message-ID: <c9a0f531-bba6-48a1-bb50-639fb4f2dfb6@redhat.com>
-Date: Thu, 25 Sep 2025 12:06:18 +0200
+        d=1e100.net; s=20230601; t=1758794847; x=1759399647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
+        b=bLkAMkgc9CPHdg9/AxIatk+7nRZtFsJQx4r6yID9iaiR9+qNFtSFq9YpIQA/o5zo2b
+         vsf652yuMjKQEo7F7eKjzO95yPqLPD6zRfY3MBoNMdRn8GbWHubc4ZIizSc2HX6cWOn+
+         41lRABzCfomF3Njcfr4t59cF3IoZQ+CW46ejvINYJZVrh6pJ5rLl3Rgwk8qkImEgGcM8
+         Kjv5HmfnEIhz86tOamybqJW3g8Kzmy8Hul/Tdv4762lUasMrv2IHzANUCp9oUJqdmFOr
+         0HjdL5FnZEQ6XZX98JCXd7pd9pjRjWJCmKrTrFYQidnLKpDoHML0PFJxw34RVzq+bWH6
+         FC4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ/BzO8E+mZWBHF05yQZXjddZ6zxUklkKkR4PIQ0iokSqQN99p9/L60WC9Ri1Bdi9JuqOu1fRCHfzJEiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylP3El+iTGjyY0EZYiayhCWHsrradKgsp5jvO4rY7MrlGwZPJQ
+	109ZA2FHdo9oo1TAk3klDLUtgaZFVaFiwVYOEJtqZXrlu1cTAcFhp1srw7Oa4QcqD6yeSZzDYxJ
+	nWUjiCzTFIT10dbTj4Y8p3MCpdZW9NIk=
+X-Gm-Gg: ASbGnctweAJcuCVgM0Tv5SyUAdWIZwzBFlWbppHmwd/RyM3/Y0rntPJAk2gkrhInCtD
+	A4CsrYCAts3s7o2T8kFZtCpfxwV9vKwK9cYP5T6NXTbzZD9fAptoPCbdGBp3nAgTYXu2r+54Y+8
+	qmKRuP9btE32fpYC+G7Z9ND3gxyVq9kDRLgTPaZX8ipdcGRg6+PWS2GWzmeqe/kRXK7RL6fJOvH
+	BQA6iEoXLRevxKaT7xfm7aMPvZPw/fd2RskKw==
+X-Google-Smtp-Source: AGHT+IHnjX1pG8TAryPQlkrDhzXnesEsM78CxhQPCj7SV7L5RRG+rd032XQ0sOmqzmFns8RoyZIP2E4vF4R8O9SgsVc=
+X-Received: by 2002:a17:907:720b:b0:b2d:38eb:d12f with SMTP id
+ a640c23a62f3a-b354cc2c49fmr191751466b.19.1758794846407; Thu, 25 Sep 2025
+ 03:07:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 04/15] mm/huge_memory: implement device-private THP splitting
-To: Zi Yan <ziy@nvidia.com>, Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
- dri-devel@lists.freedesktop.org, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-5-balbirs@nvidia.com>
- <7987AB89-4E80-4A0D-8736-E95F998698DA@nvidia.com>
- <a77b03b8-508b-4bad-8913-fb825ecd8a0d@nvidia.com>
- <F6F6DB2E-C08B-417A-A8CB-3E759FE2C3A7@nvidia.com>
- <901c82e7-0442-4791-b249-b035f8ee428d@nvidia.com>
- <B24E4F6A-F61B-4E9B-A2FE-4004C62A3DD2@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <B24E4F6A-F61B-4E9B-A2FE-4004C62A3DD2@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250923104710.2973493-1-mjguzik@gmail.com> <20250923104710.2973493-4-mjguzik@gmail.com>
+In-Reply-To: <20250923104710.2973493-4-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 25 Sep 2025 12:07:13 +0200
+X-Gm-Features: AS18NWBbppLQvOh16nxVRueCI4eRmKFPlkIfNmlj21eycccVTLBfnR3npYDOJvk
+Message-ID: <CAGudoHGuFSfSCZcoky+5wX1QfVpg-tj42c2SJijfT7ke_6tR7Q@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] Manual conversion of ->i_state uses
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
+	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>> Even if this is the only call site, there is no guarantee that
->>> there will be none in the future. I am not sure why we want caller
->>> to handle this special case. Who is going to tell the next user
->>> of RMP_USE_SHARED_ZEROPAGE or caller to try_to_map_unused_to_zeropage()
->>> that device private is incompatible with them?
->>>
->>
->> I don't disagree, but the question was why are device private pages even making
->> it to try_to_map_unused_to_zeropage()>>
-> 
-> Then, it could be done in remove_migration_pte():
-> 
-> if (rmap_walk_arg->map_unused_to_zeropage &&
-> 	!folio_is_device_private(folio) &&
-> 	try_to_map_unused_to_zeropage(&pvmw, folio, idx))
-> 	continue;
-> 
-> Maybe I am too hung up on this and someone else could pat on my back and
-> tell me it is OK to just do this at the only caller instead. :)
+allmodconfig build was done on this patchset but somehow one failure was mi=
+ssed:
 
-I think we shouldn't set a flag for a folio that does not make any 
-sense. Just like we don't set the flag for non-anon folios?
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index e9538e91f848..71ec043f7569 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -427,7 +427,7 @@ static void afs_fetch_status_success(struct
+afs_operation *op)
+        struct afs_vnode *vnode =3D vp->vnode;
+        int ret;
 
-In addition, we could add a 
-VM_WARN_ON_ONCE(folio_is_device_private(folio)) in 
-try_to_map_unused_to_zeropage(), to catch any future abuse.
+-       if (vnode->netfs.inode.i_state & I_NEW) {
++       if (inode_state_read(&vnode->netfs.inode) & I_NEW) {
+                ret =3D afs_inode_init_from_status(op, vp, vnode);
+                afs_op_set_error(op, ret);
+                if (ret =3D=3D 0)
 
--- 
-Cheers
 
-David / dhildenb
+I reran the thing with this bit and now it's all clean. I think this
+can be folded into the manual fixup patch (the one i'm responding to)
+instead of resending the patchset
 
+On Tue, Sep 23, 2025 at 12:47=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+>
+> Takes care of spots not converted by coccinelle.
+>
+> Nothing to look at with one exception: smp_store_release and
+> smp_load_acquire pair replaced with a manual store/load +
+> smb_wmb()/smp_rmb(), see I_WB_SWITCH.
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>  Documentation/filesystems/porting.rst | 2 +-
+>  fs/bcachefs/fs.c                      | 8 ++++----
+>  fs/btrfs/inode.c                      | 8 ++++----
+>  fs/dcache.c                           | 2 +-
+>  fs/fs-writeback.c                     | 6 +++---
+>  fs/inode.c                            | 8 ++++----
+>  fs/ocfs2/inode.c                      | 2 +-
+>  fs/xfs/xfs_reflink.h                  | 2 +-
+>  include/linux/backing-dev.h           | 7 ++++---
+>  include/linux/fs.h                    | 2 +-
+>  include/linux/writeback.h             | 4 ++--
+>  include/trace/events/writeback.h      | 8 ++++----
+>  12 files changed, 30 insertions(+), 29 deletions(-)
+>
+> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
+stems/porting.rst
+> index 85f590254f07..0629611600f1 100644
+> --- a/Documentation/filesystems/porting.rst
+> +++ b/Documentation/filesystems/porting.rst
+> @@ -211,7 +211,7 @@ test and set for you.
+>  e.g.::
+>
+>         inode =3D iget_locked(sb, ino);
+> -       if (inode->i_state & I_NEW) {
+> +       if (inode_state_read(inode) & I_NEW) {
+>                 err =3D read_inode_from_disk(inode);
+>                 if (err < 0) {
+>                         iget_failed(inode);
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 687af0eea0c2..8c7efc194ad0 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -347,7 +347,7 @@ static struct bch_inode_info *bch2_inode_hash_find(st=
+ruct bch_fs *c, struct btre
+>                         spin_unlock(&inode->v.i_lock);
+>                         return NULL;
+>                 }
+> -               if ((inode->v.i_state & (I_FREEING|I_WILL_FREE))) {
+> +               if ((inode_state_read(&inode->v) & (I_FREEING|I_WILL_FREE=
+))) {
+>                         if (!trans) {
+>                                 __wait_on_freeing_inode(c, inode, inum);
+>                         } else {
+> @@ -411,7 +411,7 @@ static struct bch_inode_info *bch2_inode_hash_insert(=
+struct bch_fs *c,
+>                  * only insert fully created inodes in the inode hash tab=
+le. But
+>                  * discard_new_inode() expects it to be set...
+>                  */
+> -               inode->v.i_state |=3D I_NEW;
+> +               inode_state_set(&inode->v, I_NEW);
+>                 /*
+>                  * We don't want bch2_evict_inode() to delete the inode o=
+n disk,
+>                  * we just raced and had another inode in cache. Normally=
+ new
+> @@ -2224,8 +2224,8 @@ void bch2_evict_subvolume_inodes(struct bch_fs *c, =
+snapshot_id_list *s)
+>                 if (!snapshot_list_has_id(s, inode->ei_inum.subvol))
+>                         continue;
+>
+> -               if (!(inode->v.i_state & I_DONTCACHE) &&
+> -                   !(inode->v.i_state & I_FREEING) &&
+> +               if (!(inode_state_read(&inode->v) & I_DONTCACHE) &&
+> +                   !(inode_state_read(&inode->v) & I_FREEING) &&
+>                     igrab(&inode->v)) {
+>                         this_pass_clean =3D false;
+>
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 8e2ab3fb9070..d2f7e7c57a36 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -3856,7 +3856,7 @@ static int btrfs_add_inode_to_root(struct btrfs_ino=
+de *inode, bool prealloc)
+>                 ASSERT(ret !=3D -ENOMEM);
+>                 return ret;
+>         } else if (existing) {
+> -               WARN_ON(!(existing->vfs_inode.i_state & (I_WILL_FREE | I_=
+FREEING)));
+> +               WARN_ON(!(inode_state_read(&existing->vfs_inode) & (I_WIL=
+L_FREE | I_FREEING)));
+>         }
+>
+>         return 0;
+> @@ -5745,7 +5745,7 @@ struct btrfs_inode *btrfs_iget_path(u64 ino, struct=
+ btrfs_root *root,
+>         if (!inode)
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       if (!(inode->vfs_inode.i_state & I_NEW))
+> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
+>                 return inode;
+>
+>         ret =3D btrfs_read_locked_inode(inode, path);
+> @@ -5769,7 +5769,7 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrf=
+s_root *root)
+>         if (!inode)
+>                 return ERR_PTR(-ENOMEM);
+>
+> -       if (!(inode->vfs_inode.i_state & I_NEW))
+> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
+>                 return inode;
+>
+>         path =3D btrfs_alloc_path();
+> @@ -7435,7 +7435,7 @@ static void btrfs_invalidate_folio(struct folio *fo=
+lio, size_t offset,
+>         u64 page_start =3D folio_pos(folio);
+>         u64 page_end =3D page_start + folio_size(folio) - 1;
+>         u64 cur;
+> -       int inode_evicting =3D inode->vfs_inode.i_state & I_FREEING;
+> +       int inode_evicting =3D inode_state_read(&inode->vfs_inode) & I_FR=
+EEING;
+>
+>         /*
+>          * We have folio locked so no new ordered extent can be created o=
+n this
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 2cb340c52191..bc275f7364db 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -1981,7 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct=
+ inode *inode)
+>         spin_lock(&inode->i_lock);
+>         __d_instantiate(entry, inode);
+>         WARN_ON(!(inode_state_read(inode) & I_NEW));
+> -       inode->i_state &=3D ~I_NEW & ~I_CREATING;
+> +       inode_state_clear(inode, I_NEW | I_CREATING);
+>         /*
+>          * Pairs with the barrier in prepare_to_wait_event() to make sure
+>          * ___wait_var_event() either sees the bit cleared or
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index f521ef30d9a4..72424d3314aa 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -475,11 +475,11 @@ static bool inode_do_switch_wbs(struct inode *inode=
+,
+>         switched =3D true;
+>  skip_switch:
+>         /*
+> -        * Paired with load_acquire in unlocked_inode_to_wb_begin() and
+> +        * Paired with smp_rmb in unlocked_inode_to_wb_begin() and
+>          * ensures that the new wb is visible if they see !I_WB_SWITCH.
+>          */
+> -       smp_store_release(&inode->i_state,
+> -                         inode_state_read(inode) & ~I_WB_SWITCH);
+> +       smp_wmb();
+> +       inode_state_clear(inode, I_WB_SWITCH);
+>
+>         xa_unlock_irq(&mapping->i_pages);
+>         spin_unlock(&inode->i_lock);
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 4b54aba2e939..f9f3476c773b 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -829,7 +829,7 @@ static void evict(struct inode *inode)
+>          * This also means we don't need any fences for the call below.
+>          */
+>         inode_wake_up_bit(inode, __I_NEW);
+> -       BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
+> +       BUG_ON(inode_state_read(inode) !=3D (I_FREEING | I_CLEAR));
+>
+>         destroy_inode(inode);
+>  }
+> @@ -1895,7 +1895,7 @@ static void iput_final(struct inode *inode)
+>
+>         state =3D inode_state_read(inode);
+>         if (!drop) {
+> -               WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+> +               inode_state_set(inode, I_WILL_FREE);
+>                 spin_unlock(&inode->i_lock);
+>
+>                 write_inode_now(inode, 1);
+> @@ -1906,7 +1906,7 @@ static void iput_final(struct inode *inode)
+>                 state &=3D ~I_WILL_FREE;
+>         }
+>
+> -       WRITE_ONCE(inode->i_state, state | I_FREEING);
+> +       inode_state_assign(inode, state | I_FREEING);
+>         if (!list_empty(&inode->i_lru))
+>                 inode_lru_list_del(inode);
+>         spin_unlock(&inode->i_lock);
+> @@ -2964,7 +2964,7 @@ void dump_inode(struct inode *inode, const char *re=
+ason)
+>         pr_warn("%s encountered for inode %px\n"
+>                 "fs %s mode %ho opflags 0x%hx flags 0x%x state 0x%x count=
+ %d\n",
+>                 reason, inode, sb->s_type->name, inode->i_mode, inode->i_=
+opflags,
+> -               inode->i_flags, inode->i_state, atomic_read(&inode->i_cou=
+nt));
+> +               inode->i_flags, inode_state_read(inode), atomic_read(&ino=
+de->i_count));
+>  }
+>
+>  EXPORT_SYMBOL(dump_inode);
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index 549f9c145dcc..50218209d04d 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -152,7 +152,7 @@ struct inode *ocfs2_iget(struct ocfs2_super *osb, u64=
+ blkno, unsigned flags,
+>                 mlog_errno(PTR_ERR(inode));
+>                 goto bail;
+>         }
+> -       trace_ocfs2_iget5_locked(inode->i_state);
+> +       trace_ocfs2_iget5_locked(inode_state_read(inode));
+>         if (inode_state_read(inode) & I_NEW) {
+>                 rc =3D ocfs2_read_locked_inode(inode, &args);
+>                 unlock_new_inode(inode);
+> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
+> index 36cda724da89..86e87e5936b5 100644
+> --- a/fs/xfs/xfs_reflink.h
+> +++ b/fs/xfs/xfs_reflink.h
+> @@ -17,7 +17,7 @@ xfs_can_free_cowblocks(struct xfs_inode *ip)
+>  {
+>         struct inode *inode =3D VFS_I(ip);
+>
+> -       if ((inode->i_state & I_DIRTY_PAGES) ||
+> +       if ((inode_state_read(inode) & I_DIRTY_PAGES) ||
+>             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_DIRTY) ||
+>             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_WRITEBACK) ||
+>             atomic_read(&inode->i_dio_count))
+> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+> index e721148c95d0..07a60bbbf668 100644
+> --- a/include/linux/backing-dev.h
+> +++ b/include/linux/backing-dev.h
+> @@ -289,10 +289,11 @@ unlocked_inode_to_wb_begin(struct inode *inode, str=
+uct wb_lock_cookie *cookie)
+>         rcu_read_lock();
+>
+>         /*
+> -        * Paired with store_release in inode_switch_wbs_work_fn() and
+> -        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+> +        * Paired with smp_wmb in inode_do_switch_wbs() and ensures that =
+we see
+> +        * the new wb if we see cleared I_WB_SWITCH.
+>          */
+> -       cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
+H;
+> +       cookie->locked =3D inode_state_read(inode) & I_WB_SWITCH;
+> +       smp_rmb();
+>
+>         if (unlikely(cookie->locked))
+>                 xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
+);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 06bece8d1f18..73f3ce5add6b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2656,7 +2656,7 @@ static inline int icount_read(const struct inode *i=
+node)
+>   */
+>  static inline bool inode_is_dirtytime_only(struct inode *inode)
+>  {
+> -       return (inode->i_state & (I_DIRTY_TIME | I_NEW |
+> +       return (inode_state_read(inode) & (I_DIRTY_TIME | I_NEW |
+>                                   I_FREEING | I_WILL_FREE)) =3D=3D I_DIRT=
+Y_TIME;
+>  }
+>
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index a2848d731a46..5fcb5ab4fa47 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -193,7 +193,7 @@ void inode_io_list_del(struct inode *inode);
+>  static inline void wait_on_inode(struct inode *inode)
+>  {
+>         wait_var_event(inode_state_wait_address(inode, __I_NEW),
+> -                      !(READ_ONCE(inode->i_state) & I_NEW));
+> +                      !(inode_state_read(inode) & I_NEW));
+>  }
+>
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+> @@ -234,7 +234,7 @@ static inline void inode_attach_wb(struct inode *inod=
+e, struct folio *folio)
+>  static inline void inode_detach_wb(struct inode *inode)
+>  {
+>         if (inode->i_wb) {
+> -               WARN_ON_ONCE(!(inode->i_state & I_CLEAR));
+> +               WARN_ON_ONCE(!(inode_state_read(inode) & I_CLEAR));
+>                 wb_put(inode->i_wb);
+>                 inode->i_wb =3D NULL;
+>         }
+> diff --git a/include/trace/events/writeback.h b/include/trace/events/writ=
+eback.h
+> index 1e23919c0da9..70c496954473 100644
+> --- a/include/trace/events/writeback.h
+> +++ b/include/trace/events/writeback.h
+> @@ -120,7 +120,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
+>                 /* may be called for files on pseudo FSes w/ unregistered=
+ bdi */
+>                 strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
+>                 __entry->ino            =3D inode->i_ino;
+> -               __entry->state          =3D inode->i_state;
+> +               __entry->state          =3D inode_state_read(inode);
+>                 __entry->flags          =3D flags;
+>         ),
+>
+> @@ -719,7 +719,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+>                 strscpy_pad(__entry->name,
+>                             bdi_dev_name(inode_to_bdi(inode)), 32);
+>                 __entry->ino            =3D inode->i_ino;
+> -               __entry->state          =3D inode->i_state;
+> +               __entry->state          =3D inode_state_read(inode);
+>                 __entry->dirtied_when   =3D inode->dirtied_when;
+>                 __entry->cgroup_ino     =3D __trace_wb_assign_cgroup(inod=
+e_to_wb(inode));
+>         ),
+> @@ -758,7 +758,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+>                 strscpy_pad(__entry->name,
+>                             bdi_dev_name(inode_to_bdi(inode)), 32);
+>                 __entry->ino            =3D inode->i_ino;
+> -               __entry->state          =3D inode->i_state;
+> +               __entry->state          =3D inode_state_read(inode);
+>                 __entry->dirtied_when   =3D inode->dirtied_when;
+>                 __entry->writeback_index =3D inode->i_mapping->writeback_=
+index;
+>                 __entry->nr_to_write    =3D nr_to_write;
+> @@ -810,7 +810,7 @@ DECLARE_EVENT_CLASS(writeback_inode_template,
+>         TP_fast_assign(
+>                 __entry->dev    =3D inode->i_sb->s_dev;
+>                 __entry->ino    =3D inode->i_ino;
+> -               __entry->state  =3D inode->i_state;
+> +               __entry->state  =3D inode_state_read(inode);
+>                 __entry->mode   =3D inode->i_mode;
+>                 __entry->dirtied_when =3D inode->dirtied_when;
+>         ),
+> --
+> 2.43.0
+>
 
