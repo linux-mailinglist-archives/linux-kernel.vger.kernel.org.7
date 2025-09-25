@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-831864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E207B9DBB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831FAB9DB9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E81B3ADB4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB31E19C3F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F6C2E8B8F;
-	Thu, 25 Sep 2025 06:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BB22E8B98;
+	Thu, 25 Sep 2025 06:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TAYWWN5G"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ft5uzJdn"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9210F1D5CFB;
-	Thu, 25 Sep 2025 06:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79CB288C2D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758783128; cv=none; b=RzK3knXD8Z0JFT2VLlujafV9ODcVYPQvswEsC+8praePW6+Xyz0IryRY/dblXJXnQbnf0NJJIqd4KtvqdTfShmlUruuNEKHlVst+c0hkhlS2Yon+7gVPCrc3wfspLw68bokeuZnvs6XABA87fDPB2UQyGM3sxDZlMt+e7R1fkfw=
+	t=1758783030; cv=none; b=uHO2gYzqtb3S3V9GWBcrl5zIGlMxA8UPJ9b0CFS6fzTn+XgGrmn7aWcQl+tEX8R+M4Sx+UitrD8nTwhePDaIJdHKjEL3r3zOAeMD8x9vEUfKms2ankcBCothleR1uYTB89J7w2LHWyVKQnogkFPJRg2v5iRDbETSaJ4GGsKxAiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758783128; c=relaxed/simple;
-	bh=fQQ50PR0PgPFlQf8/sEwyfSHGzGT2RZAT2YH1IjmRCw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RcPNp6rB/gaNicJuj0N6WF974Yac2TjgstHfEYZU6IQ5SByhw/OlksQ4Kqz4HXtRMr9p/+46FRln3b7UidFUL0opkBjRqeSuBxG3OpDoLRP9QEenmCVNziqUzYzLw9j/5QN8NDrqyEedBRpWtn+JWTYmMvZh0vZzVIBG4zyeFIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TAYWWN5G; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758783126; x=1790319126;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fQQ50PR0PgPFlQf8/sEwyfSHGzGT2RZAT2YH1IjmRCw=;
-  b=TAYWWN5Ge9rppGyFC9C+Oo86tCphHndQs2nid0dB8omKPSngiZjzXh72
-   XQYMJ9+qmGHCYkDlCT+7HCwt6WuxfOp1GKFndLZlv3WKF1BLEW8uwnN+0
-   Wvp8r9jjCaJvdi4W/tcVCuGtBTvo0svGcjMrQLI4JHciCyPyNVmREjBBK
-   7VADXgwgrTP/Bq/WxCV6KIaAve6rZJBHYTg2QsgGS6AjcvEVLNf+DAf82
-   TnB6UNpIvCXIlYfYhDANJ3zQCCDlmvTLcOytQVj0IpjgffX7hYtOZQGEH
-   9SRxpUuZ2q0QqIVqw4GCCUjGY7MzR/8i/J+qrQpUmZVDmOQZo5ey02YZa
-   Q==;
-X-CSE-ConnectionGUID: h7nOp6bzTJGeaKMDNeEAFQ==
-X-CSE-MsgGUID: TZOrH604Rhim90OYIMkirg==
-X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
-   d="scan'208";a="46965777"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2025 23:51:58 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 24 Sep 2025 23:51:19 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 24 Sep 2025 23:51:17 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <rmk+kernel@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next] net: phy: micrel: Fix lan8814_config_init
-Date: Thu, 25 Sep 2025 08:47:02 +0200
-Message-ID: <20250925064702.3906950-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758783030; c=relaxed/simple;
+	bh=Dt5KswCCqFPRf4u4rnxljQ70zWX66Ck+w414xBA7gCk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sd121WKEBic1X20wv/LGmFtU1K5jUI0DNJorsaiOfRfK3uK2Ktil+zaADTkRsVQ7Fqqtm7xM8xNQpBtuVVvXafIfuQ5BBv7N7cmH2CAD5plWpuDXgMOESc7UZa4F6o9zLCr4X1Afw/NDj2b86uvsR80Lbxv+zZpKD7KbZoTbAoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ft5uzJdn; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so3438565e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758783027; x=1759387827; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4A7uHFyGsqg+/5gcAVyLzJeZKPdXHFpebcPVRaYpAr0=;
+        b=Ft5uzJdnIKRgS7AoCC/3Qf+9chNRN/xp2PBYMwZfrTVExAA0GeFO8bKG+FpNxQl4aF
+         iFcBgwCiEfHe2m3Zgn43RTS/meY1z+YXLUQQ6tz9VHfZnHQZBk1ngsv8Hr+TjUsFAADn
+         nMX3a7d3ssN2I1sZ8/c2LPpnnwpvlptKWt18PL+6nUG5htGDh/29cLF12WNO9rf9PAAI
+         uaHzSArBNZvU51kOiJVrIBKdBh/yTTqlPihE32LNuqGoc0x2MHv1TT7XgUE/XMqBYhnx
+         ieWTY5g8wwOn4es1XagDFbZnmdFVBH//Err4SKrcRXFZkyLY8XkX+foUK5TjsUX/Mq/M
+         eeDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758783027; x=1759387827;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4A7uHFyGsqg+/5gcAVyLzJeZKPdXHFpebcPVRaYpAr0=;
+        b=dNM7xJ75/5Li7EGTKNOSb2X++dfjygxl5N4LWJigZ2Apu5MA2SgqptM8GjQdLGH2xD
+         R4AJ13lHFsr1QhYRjj6C6cmkL0O7hz6NAmhdCCMoHezLSubZv+3vCbKaBnD6cTTCX3yu
+         xSCDG2u+XG4luFQUCn29uDrw2uSZGlCCaU5zKSKhFlWvTjuAmkJzsQwEHTggLljWwq6Z
+         +0YAeuPkFEoIDGHjJL6Hhs7nBE3Ci1Nd+ibguCqNigLS8jdRZRLPIT3/wXJploDg+9tR
+         80c4ID5BEMjh/+2lCD5a05b0o3fTlnN5uzwStxx6tvBWSNXfdrHoAjk7yyOAIFj2QzKr
+         7BVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxyII7PQs9kKlx+ia0ImB5mdiamJobyz6WzIHOwLOn+qtqPGDxwavmKr5/AfCnbIynYuaQfJy57a140C0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdclUGC0/DDMZ2YNfoair7OwLZdL3g7T9tw+s5qAjQfpz6ty8r
+	wKSa013EN6XGWOvXVUDMnnRQ5fdwn7ind11Q8ffY2ufK9vrnYs4m0BI7
+X-Gm-Gg: ASbGnctse/uEbpPq2t1Dkm5ke5SosX1G8sxRiD3WdjsGPNjlw+pVlCUoYM7EVO4I6NI
+	6VuSrgYlqsm04urHA9U9F2ZDZ9H/703tfl16nxAgAg/lpHkHzExAqjaMN8OLuca64R5gF8YolAW
+	buttz9GCEI3ydm7m4eA7Ver3dIa7wRjq8ZNvYKZUT4XBJ5w7lpgFO23TWle4eQ6VZHZggUHa5Mm
+	XqMp/ipe3ZGeu6+iG5Uql/kpdVxS/mJrsk3EW8Tt4ncwj2kL3XM9kO5cMY7M8mdVQL2RNx5xnKb
+	6usMbzBFgwtRFbW+e1qqhnWMfQVUwexhz6/U4BpV+ATeA7lINcOOuzYumUwSVFUMq3YqPi3g
+X-Google-Smtp-Source: AGHT+IFDrBvdqgW3dfAsa53PUDyLwpuKBZY/PKiwkfqmYxUGGh4GPPrCN0aoqOBwEKILDjVmZ7uA8g==
+X-Received: by 2002:a05:600c:35ca:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-46e329ab712mr24367705e9.11.1758783026884;
+        Wed, 24 Sep 2025 23:50:26 -0700 (PDT)
+Received: from krava ([2a02:8308:a00c:e200::31e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf6ecbsm20412955e9.22.2025.09.24.23.50.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 23:50:26 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 25 Sep 2025 08:50:24 +0200
+To: Feng Yang <yangfeng59949@163.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
+	catalin.marinas@arm.com, will@kernel.org, revest@chromium.org,
+	alexei.starovoitov@gmail.com, olsajiri@gmail.com, andrii@kernel.org,
+	ast@kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: Fix the bug where bpf_get_stackid returns
+ -EFAULT on the ARM64
+Message-ID: <aNTmMGC3iYoAlfUU@krava>
+References: <20250925020822.119302-1-yangfeng59949@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925020822.119302-1-yangfeng59949@163.com>
 
-The blamed commit introduced the function lanphy_modify_page_reg which
-as name suggests it, it modifies the registers. In the same commit we
-have started to use this function inside the drivers. The problem is
-that in the function lan8814_config_init we passed the wrong page number
-when disabling the aneg towards host side. We passed extended page number
-4(LAN8814_PAGE_COMMON_REGS) instead of extended page
-5(LAN8814_PAGE_PORT_REGS)
+On Thu, Sep 25, 2025 at 10:08:22AM +0800, Feng Yang wrote:
+> From: Feng Yang <yangfeng@kylinos.cn>
+> 
+> When using bpf_program__attach_kprobe_multi_opts on ARM64 to hook a BPF program
+> that contains the bpf_get_stackid function, the BPF program fails
+> to obtain the stack trace and returns -EFAULT.
+> 
+> This is because ftrace_partial_regs omits the configuration of the pstate register,
+> leaving pstate at the default value of 0. When get_perf_callchain executes,
+> it uses user_mode(regs) to determine whether it is in kernel mode.
+> This leads to a misjudgment that the code is in user mode,
+> so perf_callchain_kernel is not executed and the function returns directly.
+> As a result, trace->nr becomes 0, and finally -EFAULT is returned.
+> 
+> Therefore, the assignment of the pstate register is added here.
+> 
+> Fixes: b9b55c8912ce ("tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs")
+> Closes: https://lore.kernel.org/bpf/20250919071902.554223-1-yangfeng59949@163.com/
+> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
 
-Fixes: a0de636ed7a264 ("net: phy: micrel: Introduce lanphy_modify_page_reg")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Tested-by: Jiri Olsa <jolsa@kernel.org>
 
----
-this is targeting net-next and not net because the blamed commit doesn't
-exist on net
----
- drivers/net/phy/micrel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+thanks,
+jirka
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 0b42400e5e098..79ce3eb6752b6 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -4367,7 +4367,7 @@ static int lan8814_config_init(struct phy_device *phydev)
- 			       LAN8814_QSGMII_SOFT_RESET_BIT);
- 
- 	/* Disable ANEG with QSGMII PCS Host side */
--	lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+	lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
- 			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
- 			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA,
- 			       0);
--- 
-2.34.1
-
+> ---
+>  arch/arm64/include/asm/ftrace.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+> index bfe3ce9df197..ba7cf7fec5e9 100644
+> --- a/arch/arm64/include/asm/ftrace.h
+> +++ b/arch/arm64/include/asm/ftrace.h
+> @@ -153,6 +153,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+>  	regs->pc = afregs->pc;
+>  	regs->regs[29] = afregs->fp;
+>  	regs->regs[30] = afregs->lr;
+> +	regs->pstate = PSR_MODE_EL1h;
+>  	return regs;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
 
