@@ -1,252 +1,151 @@
-Return-Path: <linux-kernel+bounces-832739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A455DBA03A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:20:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C30BA037A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D1F5E581E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F027B560349
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F80F2ED165;
-	Thu, 25 Sep 2025 15:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A92C2F617C;
+	Thu, 25 Sep 2025 15:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aJTLYxvI"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOS89OB8"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EA2E7192
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FD72E2DF3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812861; cv=none; b=KABADTXyGI58t0KSIS5TM7cnWPpgUs6DdFmtK9arAaKpDjm+ZfSXtM3tY7oo06+f6MlQYC3YgFGdBZ+znm8WyyO4ZPCaFMNqHu31K0Aa4t0RtZYNdmi89zZXTVDOpnFeEDZXQwmrEGzq8yxO7w9SbMhSv+3DDIkk8OlblPJoxwY=
+	t=1758812879; cv=none; b=EUpKP1t4KLQFnxArZ74yKYJqDqnkE2HYfmUx+JGpnXcAdhtRpKtMvkTKahrKbCHsk2AUtusLrV0GrFvh1D5N82HT8id5Dj3agypEIt4ddcMRv4cYT3g+bd+DpCf9VkUz61FwgWf7F2I8DFOoD3VPJFdPygNo2nrUFIJ7tgal8Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812861; c=relaxed/simple;
-	bh=KTPdMDFNOlFP4wpn+4ognk+Lj8iX++1s9077Y5P+yK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W2Bu8Rk4Uk44wDN3KKPURESBZ5RcmslFvVkXarMBZFWs+gEKtrLOGpWUpcm40/j0MYyt4AyimELQc3bMnoAylleLHeNabfeXyvGWn5VMU1FkO893jhrXq6sCxkmuSK5Wso2C1YCcVl3bOZV/gis5eJZs+a0/twP0OYKm0xeMlxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aJTLYxvI; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d60501806so10304087b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:07:39 -0700 (PDT)
+	s=arc-20240116; t=1758812879; c=relaxed/simple;
+	bh=PwfgS4qfIfkc+imXtu/sSZXrBqwExZR+rgZwO0IBYGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfayII6m+az2yIKUCTB26196ia9qnlglr0OJqWIk+z6vben3LEpVQiNPe1vUEbOw8lrjptraemGzIYOjVRMGVAb7eXUO7ylsla7/gL+xqcOjHufizfc1ZpYCAUMBJrX8drPUtngzikzA6/Wl/hJggHzLHU5Em/aIfXvzOFnashk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOS89OB8; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7761b83fd01so1165858b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758812858; x=1759417658; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EpLopcviAyL+cm/HeEUTCBhC6Rw+eg0eRJGycPnbyFI=;
-        b=aJTLYxvIYw5XyCMD56WfTg/RkJSK9UKyiSG1C35yBBBCBD1smzAgzBXtz3EayzXUje
-         WaVlqNxq1ASSZQkT0jDhDAL4nYtFbsIoG4kSoESEIgiLH2IFVWqbsW9jCCpe80FDx6Z1
-         01Di0NlJF/9GIVKVXLKYKjEa4FmownW//OQyflTabDfa2MdaDWJ3MGVD41MYlmS/TKv1
-         x4zD04gl7qXdRFDPSaPZX5f+PZopD+KE024ZQcnIm/LS+FhLmiEZnnbzC6dPYDrLFyO+
-         q6eDUEdy11SA2DpJoYR7r0Xvzlw0ESPm0XP4x9kjol6DaSnTbOa4t1i9BqqLYlVGDUGw
-         FAvw==
+        d=gmail.com; s=20230601; t=1758812877; x=1759417677; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jE5cIH8mYsDicp+BwKdnhTTJHAMEhvsJen2js1pJiH8=;
+        b=NOS89OB8QhgwX7LkwleAPOmUqR7YMHjWOMKiWPH4Xrg2/5PNpKvgPqvK8fbjkBK2+R
+         3ty/DNv/6qItYt0g5KH2hC7swFJa2orXFscTjT+11NqJfp4tiORGHloMCrhQOpK2TX+g
+         vpTlsfvylAWX8BNr3EbMxCDma37slkMJr6APSAA/N2ud5/g8rvJdauOEe7prdR0H9it2
+         NseZ89Ia3w3M/ElW9RwCAZYToE+6p6pqIUjxDkPjZiJKdzQAU8+QA5Lm+xTlPhSvp7We
+         GG3+tI2YAQ8ZpL8yEFE6cJIY5RriJpIQaUD+oZH3t7wC3MfqtLbLhi6KhXyUoVOmXHqV
+         SR6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758812858; x=1759417658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EpLopcviAyL+cm/HeEUTCBhC6Rw+eg0eRJGycPnbyFI=;
-        b=utMvRz4HRjGsFAJMx0nqRYdCgpvs9sepoDEA6+nwZgO8XSWeMWBcAAP6INwsA+CxqF
-         CCY/bLrlry5VXzZbxchFvHAqPOo3BqsBVKHZgpJPJW/gmjjAwp7xg0Yz1UvNSmw8lIKy
-         SrfTo5YsZ2r5ZhUsaeZ0P9b57F0mA48JOOR/mZPSaVS+atzh6vJ2dvYlvFkbFcvPb+HY
-         1g254eVdlyhWC+HpiFRC0DVcV+yDpnLRGRaGhtKAiLoob5vg0jBhI0waXAyIrE/oHvMJ
-         xQP2V89ruIouQykw81RJIhsRqI7jqqb1v8cTZZMYvxAwPUoOmiXGMhAWH7qXeR3IPhJL
-         Y+uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnJi7kBj9e8ANZuMLH7FjAyM2IFEYQeaqajSsj2fEDS+WtRT2Rufq/Ed4B4vyV+P+16Ftq5m7iM8bHuj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9tMMaiPvGUf0YRZeJR2NiwimBX41jGDT0PJ8V6IXTFEp+r+7R
-	gcQAzDHBtUZeOJcYuEruAtmrkd0TZzbnmlIkC7mobRQyTmzPii0bFeq5EyfxrqHPnofpYFi7Wyd
-	0W9NMsbCIusBvHzLB3r/3SJsqYZGp89iJLizwlZqX/A==
-X-Gm-Gg: ASbGncuFqjxMPaZL7opfiBa+xDqVhHtTiOS9HFI356LJSM1K9zg2T+uRMmg4tIjBE61
-	az8hmgCgaLqwQK57OkcN+pW3lOmHXQPkSbtK6zL07yI0u6K8zxquF4pgjnWWiP0xa2JL6/B9JlK
-	6lylRAKia/KhWWFh27x932PaXl1/JGOPjJtDExsn6NPhyO1JyMyY5TKa9WlR1uyCK0ntNG88bJ
-X-Google-Smtp-Source: AGHT+IGJjpOjF1gEoONMW3eJFJViXG5AodzdaKYdKIgJXeEIkqy8REpwSvtzJ3VcNK/DtFxa4Brmx09wKn93tzbNHDU=
-X-Received: by 2002:a05:6902:729:b0:eb3:c364:37e with SMTP id
- 3f1490d57ef6-eb3c3640c1fmr1374039276.30.1758812857890; Thu, 25 Sep 2025
- 08:07:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758812877; x=1759417677;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jE5cIH8mYsDicp+BwKdnhTTJHAMEhvsJen2js1pJiH8=;
+        b=Sb9P8bmqIMZ5khWuAL5UgpT4nTcV05N/R/9gaYJg+67LR8kcG3LbviX25liDmP7xWx
+         ukVJUDQeKmMOJGhSQIju0aIgLiR5q72LdBjR9LbExgA4XCPAfuQg+bzIZ9B8fU6pLOWT
+         xHw17DxAQyRAGiLhBogXKt5BlQIylDoPWZuE86WzTiBSSQUsrQpFE7kHdemRDZ7iitRd
+         f61UWyKIoBohHcIPYS/Gk77W6txJek9FWzLKQTVW4AiuamesutkWzR5/8GJ8ZwEuwq+0
+         hgayzjn/G+KCalI3W9YlD6i7WKXN1jwuBRKol30RE0Bjz2ewFvcTeVPDdURmBfTKWjHd
+         azow==
+X-Forwarded-Encrypted: i=1; AJvYcCU8mgNw/YiyHa0XmM+iEtWEmileP2NLb27ykFZ6mRelcGK5xFkqYmDyxf2WzY/6iSfmF6VAhRla7jyZbJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw10ehaSNFouljUF8hdEB9MMzHh8C4r6vX6UHmYDSPtVDxMYJss
+	7lLzIThO0qWmU73rWXFyyVbDUQCuBTB6v+t3yuy1OM8CEht6TSjqtOfo
+X-Gm-Gg: ASbGncsWJPjd5oo66afR7HgrnpQ20z8xL63Euf7YMyhhkDbzR6IqQug+M23wVQXTY6r
+	8lvaJgpGoG6hNKMCz4rVMqCP1WzWcz5TDUYXE60w8mhfMS1aPuJTGLiGASm/aK8jwCB2BHlmy0d
+	xEI/wSYNFRjBNDrOttB3Oj4HrdRUbMcRzOaNs0/nHdKWVs5FpCH3/VZ94rmXU0TxYSc0rnL9Fbq
+	ZtTbNRAZ1EK9Ml1awSM+hM+DbFMn0sg4gw6PVG8WofWcfgccdstZ9ZlV+KVC8iK2ZbLIaJR4bCb
+	0KzClSfPd6nSSwKsnbrCkU8PAMDzR+BtB2Q1+iBhdMbYB0yMetZ0Wl0HjDrupifAmkNYkMudv4C
+	zQ4agYzNXArt8d6v46U+/GMJ+LzDPHtnCmM4=
+X-Google-Smtp-Source: AGHT+IHxwbqMwtSUpRB97Nr0rknalbSvu7cUrpdQGoGrEFmAeq73TNUTzNKC1zhtc24Ag7rMTXMpnw==
+X-Received: by 2002:a05:6a20:9188:b0:2e0:9b1a:6417 with SMTP id adf61e73a8af0-2e7d37fba87mr4692452637.53.1758812876869;
+        Thu, 25 Sep 2025 08:07:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53cb975sm2506233a12.18.2025.09.25.08.07.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 08:07:56 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 25 Sep 2025 08:07:55 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: wenswang@yeah.net
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jdelvare@suse.com, corbet@lwn.net, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hwmon: add MP2925 and MP2929 driver
+Message-ID: <ae5ad599-e857-4124-b6a0-61196a763109@roeck-us.net>
+References: <20250918080349.1154140-1-wenswang@yeah.net>
+ <20250918080603.1154497-1-wenswang@yeah.net>
+ <20250918080603.1154497-2-wenswang@yeah.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922094146.708272-1-sunjunchao@bytedance.com>
- <20250922132718.GB49638@noisy.programming.kicks-ass.net> <aNGQoPFTH2_xrd9L@infradead.org>
- <20250922145045.afc6593b4e91c55d8edefabb@linux-foundation.org>
- <20250923071607.GR3245006@noisy.programming.kicks-ass.net> <dndr5xdp3bweqtwlyixtzajxgkhxbt2qb2fzg6o2wy5msrhzi4@h3klek5hff5i>
-In-Reply-To: <dndr5xdp3bweqtwlyixtzajxgkhxbt2qb2fzg6o2wy5msrhzi4@h3klek5hff5i>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Thu, 25 Sep 2025 23:07:24 +0800
-X-Gm-Features: AS18NWCEIRypu1nYMSOfm4MhEFu5D4ZSJZwTJZewijiycz6KgR4n8DcFX7UDH-8
-Message-ID: <CAHSKhteCMv0fUmDKHdKXhg=D-rz-Jmze5ei-Up16vMsNEy898w@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 0/3] Suppress undesirable hung task warnings.
-To: Jan Kara <jack@suse.cz>
-Cc: Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Hellwig <hch@infradead.org>, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lance.yang@linux.dev, 
-	mhiramat@kernel.org, agruenba@redhat.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918080603.1154497-2-wenswang@yeah.net>
 
-Hi,
+On Thu, Sep 18, 2025 at 04:06:03PM +0800, wenswang@yeah.net wrote:
+> From: Wensheng Wang <wenswang@yeah.net>
+> 
+> Add support for MPS VR mp2925 and mp2929 controller. This driver exposes
+> telemetry and limit value readings and writtings.
+> 
+> Signed-off-by: Wensheng Wang <wenswang@yeah.net>
 
-On Wed, Sep 24, 2025 at 6:34=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 23-09-25 09:16:07, Peter Zijlstra wrote:
-> > On Mon, Sep 22, 2025 at 02:50:45PM -0700, Andrew Morton wrote:
-> > > On Mon, 22 Sep 2025 11:08:32 -0700 Christoph Hellwig <hch@infradead.o=
-rg> wrote:
-> > >
-> > > > On Mon, Sep 22, 2025 at 03:27:18PM +0200, Peter Zijlstra wrote:
-> > > > > > Julian Sun (3):
-> > > > > >   sched: Introduce a new flag PF_DONT_HUNG.
-> > > > > >   writeback: Introduce wb_wait_for_completion_no_hung().
-> > > > > >   memcg: Don't trigger hung task when memcg is releasing.
-> > > > >
-> > > > > This is all quite terrible. I'm not at all sure why a task that i=
-s
-> > > > > genuinely not making progress and isn't killable should not be re=
-ported.
-> > > >
-> > > > The hung device detector is way to aggressive for very slow I/O.
-> > > > See blk_wait_io, which has been around for a long time to work
-> > > > around just that.  Given that this series targets writeback I suspe=
-ct
-> > > > it is about an overloaded device as well.
-> > >
-> > > Yup, it's writeback - the bug report is in
-> > > https://lkml.kernel.org/r/20250917212959.355656-1-sunjunchao@bytedanc=
-e.com
-> > >
-> > > Memory is big and storage is slow, there's nothing wrong if a task
-> > > which is designed to wait for writeback waits for a long time.
-> > >
-> > > Of course, there's something wrong if some other task which isn't
-> > > designed to wait for writeback gets stuck waiting for the task which
-> > > *is* designed to wait for writeback, but we'll still warn about that.
-> > >
-> > >
-> > > Regarding an implementation, I'm wondering if we can put a flag in
-> > > `struct completion' telling the hung task detector that this one is
-> > > expected to wait for long periods sometimes.  Probably messy and it
-> > > only works for completions (not semaphores, mutexes, etc).  Just
-> > > putting it out there ;)
-> >
-> > So the problem is that there *is* progress (albeit rather slowly), the
-> > watchdog just doesn't see that. Perhaps that is the thing we should loo=
-k
-> > at fixing.
-> >
-> > How about something like the below? That will 'spuriously' wake up the
-> > waiters as long as there is some progress being made. Thereby increasin=
-g
-> > the context switch counters of the tasks and thus the hung_task watchdo=
-g
-> > sees progress.
-> >
-> > This approach should be safer than the blk_wait_io() hack, which has a
-> > timer ticking, regardless of actual completions happening or not.
->
-> I like the idea. The problem with your patch is that the progress is not
-> visible with high enough granularity in wb_writeback_work->done completio=
-n.
-> That is only incremented by 1, when say a request to writeout 1GB is queu=
-ed
-> and decremented by 1 when that 1GB is written. The progress can be observ=
-ed
-> with higher granularity by wb_writeback_work->nr_pages getting decremente=
-d
-> as we submit pages for writeback but this counter still gets updated only
-> once we are done with a particular inode so if all those 1GB of data are =
-in
-> one inode there wouldn't be much to observe. So we might need to observe
-> how struct writeback_control member nr_to_write gets updated. That is
-> really updated frequently on IO submission but each filesystem updates it
-> in their writepages() function so implementing that gets messy pretty
-> quickly.
->
-> But maybe a good place to hook into for registering progress would be
-> wbc_init_bio()? Filesystems call that whenever we create new bio for writ=
-eback
-> purposes. We do have struct writeback_control available there so through
-> that we could propagate information that forward progress is being made.
->
-> What do people think?
+I'll have to drop this series. Reason:
 
-Sorry for the late reply. Yes, Jan, I agree =E2=80=94 your proposal sounds
-both fine-grained and elegant. But do we really have a strong need for
-such detailed progress tracking?
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/mp2925.c
+...
+> +
+> +static int mp2925_write_word_data(struct i2c_client *client, int page, int reg,
+> +				  u16 word)
+> +{
+> +	int ret;
+> +
+> +	switch (reg) {
+> +	case PMBUS_VIN_OV_FAULT_LIMIT:
+> +	case PMBUS_VIN_OV_WARN_LIMIT:
+> +	case PMBUS_VIN_UV_WARN_LIMIT:
+> +	case PMBUS_VIN_UV_FAULT_LIMIT:
+> +		/*
+> +		 * The PMBUS_VIN_OV_FAULT_LIMIT, PMBUS_VIN_OV_WARN_LIMIT,
+> +		 * PMBUS_VIN_UV_WARN_LIMIT and PMBUS_VIN_UV_FAULT_LIMIT
+> +		 * of MP2925 is linear11 format, and the exponent is a
+> +		 * constant value(5'b11100)， so the exponent of word
+> +		 * parameter should be converted to 5'b11100(0x1C).
+> +		 */
+> +		ret = pmbus_write_word_data(client, page, reg,
+> +					    mp2925_linear_exp_transfer(word, 0x1C));
+> +		if (ret < 0)
+> +			return ret;
+> +		break;
+> +	case PMBUS_VOUT_OV_FAULT_LIMIT:
+> +	case PMBUS_VOUT_UV_FAULT_LIMIT:
+> +		ret = pmbus_write_word_data(client, page, reg,
+> +					    (ret & ~GENMASK(11, 0)) |
+                                             ^^^
 
-In background writeback, for example, if the bandwidth is very low
-(e.g. avg_write_bandwidth=3D24), writeback_chunk_size() already splits
-pages into chunks of MIN_WRITEBACK_PAGES (1024). This is usually
-enough to avoid hung task warnings, so reporting progress there might
-be sufficient.
+As 0-day rightfully reports, ret is not initialized here. Datasheets for both chips
+are not published (actually the chips don't officially exist), so I can not figure out
+the expected behavior myself. FWIW, available datasheets suggest that the bits are unused,
+so if that is not correct please provide evidence that writing anything but 0 into those
+bits is needed.
 
-I=E2=80=99m also a bit concerned that reporting progress on every
-wbc_init_bio() could lead to excessive wakeups in normal or
-high-throughput cases, which might have side effects. Please correct
-me if I=E2=80=99m missing something.
+While at it, please also provide evidence that the chips exist in the first place
+and that this is not a "let's see what he accepts" submission.
 
->
->                                                                 Honza
->
-> > ---
-> >
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index a07b8cf73ae2..1326193b4d95 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -174,9 +174,10 @@ static void finish_writeback_work(struct wb_writeb=
-ack_work *work)
-> >               kfree(work);
-> >       if (done) {
-> >               wait_queue_head_t *waitq =3D done->waitq;
-> > +             bool force_wake =3D (jiffies - done->stamp) > HZ/2;
-> >
-> >               /* @done can't be accessed after the following dec */
-> > -             if (atomic_dec_and_test(&done->cnt))
-> > +             if (atomic_dec_and_test(&done->cnt) || force_wake)
-> >                       wake_up_all(waitq);
-> >       }
-> >  }
-> > @@ -213,7 +214,7 @@ static void wb_queue_work(struct bdi_writeback *wb,
-> >  void wb_wait_for_completion(struct wb_completion *done)
-> >  {
-> >       atomic_dec(&done->cnt);         /* put down the initial count */
-> > -     wait_event(*done->waitq, !atomic_read(&done->cnt));
-> > +     wait_event(*done->waitq, ({ done->stamp =3D jiffies; !atomic_read=
-(&done->cnt); }));
-> >  }
-> >
-> >  #ifdef CONFIG_CGROUP_WRITEBACK
-> > diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-d=
-ev-defs.h
-> > index 2ad261082bba..197593193ce3 100644
-> > --- a/include/linux/backing-dev-defs.h
-> > +++ b/include/linux/backing-dev-defs.h
-> > @@ -63,6 +63,7 @@ enum wb_reason {
-> >  struct wb_completion {
-> >       atomic_t                cnt;
-> >       wait_queue_head_t       *waitq;
-> > +     unsigned long           stamp;
-> >  };
-> >
-> >  #define __WB_COMPLETION_INIT(_waitq) \
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-
-
-Thanks,
---=20
-Julian Sun <sunjunchao@bytedance.com>
+Guenter
 
