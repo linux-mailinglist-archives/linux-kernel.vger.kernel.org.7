@@ -1,89 +1,71 @@
-Return-Path: <linux-kernel+bounces-831861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC9B9DB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E207B9DBB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E3E3A18AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E81B3ADB4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD9086359;
-	Thu, 25 Sep 2025 06:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F6C2E8B8F;
+	Thu, 25 Sep 2025 06:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOErJtPt"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TAYWWN5G"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B6414AD20
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9210F1D5CFB;
+	Thu, 25 Sep 2025 06:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758782707; cv=none; b=XTspGb98ruxf1wo3cKDsACPyoddBEOr9QMPhYLO1RGRYSS12A6evsN1vJOCBuBcPc/oMSd1ggOtvqHiTVPwJxXz8M7YvezgUQgl08VIeVm0kChZ+Dp8kSdZYpAPhzfmB5A4vbx6RxP2hyjNL50Y8dfED5bf7E3MHmaHpVl9f+fU=
+	t=1758783128; cv=none; b=RzK3knXD8Z0JFT2VLlujafV9ODcVYPQvswEsC+8praePW6+Xyz0IryRY/dblXJXnQbnf0NJJIqd4KtvqdTfShmlUruuNEKHlVst+c0hkhlS2Yon+7gVPCrc3wfspLw68bokeuZnvs6XABA87fDPB2UQyGM3sxDZlMt+e7R1fkfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758782707; c=relaxed/simple;
-	bh=bbqdLAvx27nbu3tvSbwfNO0qFRmAy4gvrfSqHxZwiK8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XgOMs5wR8hZrobVD0YIdO1tURqxTTkg4H2Ir5sgFtXNuRDGVYJWgCCgDpG7bEM+D/XEqzWsmBLLes9l70faqR7c+aydE0D81DmiVkYRaBOFt1//8Qup5BAbha9JdMy+WmQUXJ4fzaOQws9gT5RUZ/cni976geRqVk8zaXQQPKsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOErJtPt; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-780f6632e64so352458b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758782705; x=1759387505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qwRwggwBb3rmsP7hAuRkEzNpFvdy0j6v2pW8m7D4xoA=;
-        b=BOErJtPtPIlL50AlEKWQF5O9rzjcHibYvL4dcE7QWM5k1kSnVFI3wOJk7zIcwAAqTk
-         V7sk8fThZqOgJeVh01vDBL09eiD5rBW1ooD4LxYimxK8OPiNBDy/nVqTdaV6l0U5DKPh
-         R+MVjYxn4xLMum5EgLASY03UnRUaNmQx+Mxt4I800Y21zPUVQwW1ueg3Oa0pThcProO6
-         uQiG6/Bz8vXDdAzPM3XIHV5YUDj0Fan00wxsw0RbzzORgjnChsvHu7yk/gNu/eIWzgLM
-         zL1X0Bn+xtzMpVmUrvbT/opvCqSkq2MRQwvuU4fg7Fm1/boKFxd8FREDPd75+W74RDnC
-         IP4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758782705; x=1759387505;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qwRwggwBb3rmsP7hAuRkEzNpFvdy0j6v2pW8m7D4xoA=;
-        b=KDP6nGAM8H6QGA6AFN1mAtqPYRI11LeoKrRRIg5kG1+0RbiMWyJh/UnkIZRKsA98FL
-         6HAGYcaOznovlX/0sjFSe7XCJkmlZzGeRuaTq/R6OJUe+ycuQOmazCG7INC7hlaxNiYl
-         l5mpXYCjn6xMIlWLcuy+MascUkZceKb/+xdunRY6xi/AHEarAr2l2Ec8CHtr1zpAvQbO
-         NOb6TtYfN+u6fG4FJyLzXl8Hncj+uxBfIb6x6JtDX1sJXZRdCZPlMop+gbGKjkZp59nO
-         pvq03IFkUW37GRn7m6XGoBWZj0KoDmFx0ECOX1HvT/mog5fYx/XUX3+WrdHlkvrVgBHr
-         3tBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAKQuuqaPnaOWj+1cJtbLh+e4grBCxFEgNif2YR7r/x6gKsCkJmP67+psqVI1a/4njc6ARUfwrvEbzQEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTIQR84WkME49suTXRDkY5Gra9rSyu9IhZgLPH0vso92duMA78
-	rPFd2npoMy7dXIRItNpfqVYDogXT60BLTVCs01CcQcu7tS17/X2Ivd/a
-X-Gm-Gg: ASbGnctPXU/nkea9bvAX6Zqar3omINrtP90im3o89v5avfGHREUwDObQQYiQegVTdwm
-	Xmatue6kU0Apu3+dPamNBVEtlT/U55BDfrNHUvII3iCPyjAAi54JqanmFIswLCTxlAfoxT/Wnqs
-	7GschUkVBbLtl5FNnhvn3FhJXF0DINHk9kROMd63FfLUWgc79S35gq1OfANAu0DK1el898BfnW7
-	D2rvOkMPkAHBxzOrIwMGJApUlfzkOZ4fnV1KWknyLjinFb1j7swh8rvrxDcEb6kHlSVVO1oDVW0
-	iLkENE0cxmPLNIY0vmDv7PYh82ZYv7mwhfb6bjfmsVeiRcZV1TyRcZRlj/eJCkT5IPklS8TU54b
-	JeKLkcrkBaWOWHKEPf4E1fRavRfC2M1AqwvE=
-X-Google-Smtp-Source: AGHT+IHt19jtOEnBkeB66T1h510FySIpowgoYjHbNvNGdh2zxGfDHDDIanQQL8ZzNs+QeMAQPJrNJg==
-X-Received: by 2002:a17:902:ebc8:b0:271:6af4:15c with SMTP id d9443c01a7336-27ed4a91a97mr31723675ad.36.1758782705016;
-        Wed, 24 Sep 2025 23:45:05 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:1f22:92a4:6034:d4c4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ad21e9sm13507665ad.144.2025.09.24.23.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 23:45:04 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Santosh Sivaraj <santosh@fossix.org>,
-	nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v3] nvdimm: ndtest: Return -ENOMEM if devm_kcalloc() fails in ndtest_probe()
-Date: Thu, 25 Sep 2025 14:44:48 +0800
-Message-ID: <20250925064448.1908583-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758783128; c=relaxed/simple;
+	bh=fQQ50PR0PgPFlQf8/sEwyfSHGzGT2RZAT2YH1IjmRCw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RcPNp6rB/gaNicJuj0N6WF974Yac2TjgstHfEYZU6IQ5SByhw/OlksQ4Kqz4HXtRMr9p/+46FRln3b7UidFUL0opkBjRqeSuBxG3OpDoLRP9QEenmCVNziqUzYzLw9j/5QN8NDrqyEedBRpWtn+JWTYmMvZh0vZzVIBG4zyeFIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TAYWWN5G; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758783126; x=1790319126;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fQQ50PR0PgPFlQf8/sEwyfSHGzGT2RZAT2YH1IjmRCw=;
+  b=TAYWWN5Ge9rppGyFC9C+Oo86tCphHndQs2nid0dB8omKPSngiZjzXh72
+   XQYMJ9+qmGHCYkDlCT+7HCwt6WuxfOp1GKFndLZlv3WKF1BLEW8uwnN+0
+   Wvp8r9jjCaJvdi4W/tcVCuGtBTvo0svGcjMrQLI4JHciCyPyNVmREjBBK
+   7VADXgwgrTP/Bq/WxCV6KIaAve6rZJBHYTg2QsgGS6AjcvEVLNf+DAf82
+   TnB6UNpIvCXIlYfYhDANJ3zQCCDlmvTLcOytQVj0IpjgffX7hYtOZQGEH
+   9SRxpUuZ2q0QqIVqw4GCCUjGY7MzR/8i/J+qrQpUmZVDmOQZo5ey02YZa
+   Q==;
+X-CSE-ConnectionGUID: h7nOp6bzTJGeaKMDNeEAFQ==
+X-CSE-MsgGUID: TZOrH604Rhim90OYIMkirg==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="46965777"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Sep 2025 23:51:58 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 24 Sep 2025 23:51:19 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Wed, 24 Sep 2025 23:51:17 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <rmk+kernel@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net-next] net: phy: micrel: Fix lan8814_config_init
+Date: Thu, 25 Sep 2025 08:47:02 +0200
+Message-ID: <20250925064702.3906950-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,61 +73,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-devm_kcalloc() may fail. ndtest_probe() allocates three DMA address
-arrays (dcr_dma, label_dma, dimm_dma) and later unconditionally uses
-them in ndtest_nvdimm_init(), which can lead to a NULL pointer
-dereference under low-memory conditions.
+The blamed commit introduced the function lanphy_modify_page_reg which
+as name suggests it, it modifies the registers. In the same commit we
+have started to use this function inside the drivers. The problem is
+that in the function lan8814_config_init we passed the wrong page number
+when disabling the aneg towards host side. We passed extended page number
+4(LAN8814_PAGE_COMMON_REGS) instead of extended page
+5(LAN8814_PAGE_PORT_REGS)
 
-Check all three allocations and return -ENOMEM if any allocation fails,
-jumping to the common error path. Do not emit an extra error message
-since the allocator already warns on allocation failure.
+Fixes: a0de636ed7a264 ("net: phy: micrel: Introduce lanphy_modify_page_reg")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-Fixes: 9399ab61ad82 ("ndtest: Add dimms to the two buses")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 ---
-changelog:
-v3:
-- Add NULL checks for all three devm_kcalloc() calls and goto the common
-  error label on failure.
-
-v2:
-- Drop pr_err() on allocation failure; only NULL-check and return -ENOMEM.
-- No other changes.
+this is targeting net-next and not net because the blamed commit doesn't
+exist on net
 ---
- tools/testing/nvdimm/test/ndtest.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/phy/micrel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/nvdimm/test/ndtest.c b/tools/testing/nvdimm/test/ndtest.c
-index 68a064ce598c..8e3b6be53839 100644
---- a/tools/testing/nvdimm/test/ndtest.c
-+++ b/tools/testing/nvdimm/test/ndtest.c
-@@ -850,11 +850,22 @@ static int ndtest_probe(struct platform_device *pdev)
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 0b42400e5e098..79ce3eb6752b6 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -4367,7 +4367,7 @@ static int lan8814_config_init(struct phy_device *phydev)
+ 			       LAN8814_QSGMII_SOFT_RESET_BIT);
  
- 	p->dcr_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
- 				 sizeof(dma_addr_t), GFP_KERNEL);
-+	if (!p->dcr_dma) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
- 	p->label_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
- 				   sizeof(dma_addr_t), GFP_KERNEL);
-+	if (!p->label_dma) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
- 	p->dimm_dma = devm_kcalloc(&p->pdev.dev, NUM_DCR,
- 				  sizeof(dma_addr_t), GFP_KERNEL);
--
-+	if (!p->dimm_dma) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
- 	rc = ndtest_nvdimm_init(p);
- 	if (rc)
- 		goto err;
+ 	/* Disable ANEG with QSGMII PCS Host side */
+-	lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
++	lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
+ 			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
+ 			       LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA,
+ 			       0);
 -- 
-2.43.0
+2.34.1
 
 
