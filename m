@@ -1,215 +1,109 @@
-Return-Path: <linux-kernel+bounces-832305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6360B9EDE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E561B9EDEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF98A1B27442
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396C31B27453
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBE32F6173;
-	Thu, 25 Sep 2025 11:11:26 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4486C2F656B;
+	Thu, 25 Sep 2025 11:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qi/ti6+U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737A02EE60F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F993279DC9;
+	Thu, 25 Sep 2025 11:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758798686; cv=none; b=fwi95DswdGVb5oASkoy8qlf86FNv1jcsMajdwobuGQmNRYBjJEd/jYpBgWNMijvP1suMOFPmZTpzE9xKQ8XXAlW2NXVYyQ1L+PjoiC6JLGFZiOA7Ixh79qibqCYV9L2zDySPyhldlf4lToeFXLu52QGUxKkiZSWvnyBOTr/oNvU=
+	t=1758798766; cv=none; b=WQpPX/dO1Da9Fx14SKDDqpEQanF2MJEjjj//AcOyJXOKuypudZRfTxu/1kNNYmXBSUVLHs6Crertgb+TNF9EDRsLvy0CUTP1EH99srduY9Y/uUPP4Cs09eB+USPKwdtzBqBMbfWwn19jGlPvSoIcTbr6kPsZEbIZLQUjcxIoeqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758798686; c=relaxed/simple;
-	bh=RPGqskfNBJK2KMmXjQXlBPrIMbJaFtxk9HC8aROB+yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ECKJi6OXRKIxaWhYs8XZOSWLzvarkcbQtdsB939yRSydNqA4wIbThoZDR17bCYxAy4hrANiGqHzejs34gcK5yrvvRKh+tCn2iCPnipOcBMD+TTDvfTLcBEXk9VYaHncF070w4/K1Vh1jBYM2vVDpyH9hyJfAiozzGAizQEbCSPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cXWCH6TvDz24hsP;
-	Thu, 25 Sep 2025 19:07:39 +0800 (CST)
-Received: from dggpemr200006.china.huawei.com (unknown [7.185.36.167])
-	by mail.maildlp.com (Postfix) with ESMTPS id BBC1C140149;
-	Thu, 25 Sep 2025 19:11:14 +0800 (CST)
-Received: from [10.67.110.83] (10.67.110.83) by dggpemr200006.china.huawei.com
- (7.185.36.167) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 25 Sep
- 2025 19:11:14 +0800
-Message-ID: <eaee73bd-21cc-4da2-86a8-fe6a9576ab51@huawei.com>
-Date: Thu, 25 Sep 2025 19:11:13 +0800
+	s=arc-20240116; t=1758798766; c=relaxed/simple;
+	bh=wfla3Y1dSOons3njeFEIdGceO7zZYUF9LjcXnMti018=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D6H9yvvYJuKPhFetkznIGrmllPBL1bqpFPvShxjzcZNFF7hr/P+D3BPwWjRGDRUXPrfiOEC1zvRntlnNDWJCSh28Le1DsCOZEzynyfaMeep3BFVAKNlM1k7TLfsnpR23ZWTQuUp+aNfCxXUvjHZ7es1Cl6rCrECn9MRcSrLVm/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qi/ti6+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E44C4CEF0;
+	Thu, 25 Sep 2025 11:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758798766;
+	bh=wfla3Y1dSOons3njeFEIdGceO7zZYUF9LjcXnMti018=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qi/ti6+UFCn/UIlo3PwLexk1yaz/R6xiLWxHGTGD3mB0dB04GgRsXqKVfnRTjk8yR
+	 5x3q9UjODw+3r71sYYtUc7xf6xKEPx/0bIYcSMpTafCYt7Fs+TArK9+DDxph/ZcleQ
+	 A3HkSq4HL2/jyPqD4TLhqEjhb9hDFSy1hN+8ynZ1SqYLuwkQFiJ16yTF65UiKXxptu
+	 GGjSRKJYeTQYCOQ0m+GfXntvJ8/mgOufm7qEoN/kU2rvpX/bqvNii6AxbcY4tilT4v
+	 m7xmALPJZiroYgymzgTiBrsbaiPMbpxPi4xO4z6E45wB+PczS7Y3aTUf3NviBcdIdv
+	 /S3f///+7Kp6g==
+Date: Thu, 25 Sep 2025 12:12:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in
+ set_id_regs
+Message-ID: <bb46cc46-f177-4cc7-b0d0-c7970d8d7a6d@sirena.org.uk>
+References: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
+ <87ikh7ya8y.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu
- hotplug
-To: SeongJae Park <sj@kernel.org>
-CC: Andrew Morton <akpm@linux-foundation.org>, "Paul E . McKenney"
-	<paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	<damon@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <zouyipeng@huawei.com>, Hugh Dickins
-	<hughd@google.com>
-References: <20250920104220.1399-1-sj@kernel.org>
-Content-Language: en-US
-From: Xinyu Zheng <zhengxinyu6@huawei.com>
-In-Reply-To: <20250920104220.1399-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemr200006.china.huawei.com (7.185.36.167)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/zaKCw9JkNIMK2ix"
+Content-Disposition: inline
+In-Reply-To: <87ikh7ya8y.wl-maz@kernel.org>
+X-Cookie: Shipping not included.
 
 
+--/zaKCw9JkNIMK2ix
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/20/2025 6:42 PM, SeongJae Park wrote:
-> On Fri, 19 Sep 2025 20:56:56 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
-> 
->> On Thu, 18 Sep 2025, SeongJae Park wrote:
->>
->>> Hello,
->>>
->>> On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
->>>
->>>> A softlockup issue was found with stress test:
-> [...]
->> This had me worried for a while: thought we might be needing to change
->> lots of other places, and scatter cond_resched()s here and there.
->>
->> But no: no need for cond_resched()'s, this is all just a confusion about
->> where pmd migration entries are handled: a pmd migration entry is accepted
->> by pmd_trans_huge_lock(), but is not accepted by pmd_trans_huge().
->>
->> See fs/proc/task_mmu.c for mm_walk examples of trying pmd_trans_huge_lock(),
->> then pte_offset_map_lock() if it failed, or ACTION_AGAIN if that failed too.
->>
->> When I ACTION_AGAINed damon_mkold_pmd_entry() and damon_young_pmd_entry()
->> in 6.5, I didn't realize that the pmd migration entries were reaching the
->> pte_offset_map_lock(), with corrupt results (or did pmd_bad() filter them
->> out? I didn't think so, but it'll take me too long now to work out whether
->> a pmd migration entry counts as pmd_bad or not); but knew that the new
->> pte_offset_map_lock() filtered them out safely if there was a race.
->>
->> But they've been reaching it without any race, so yes the ACTION_AGAIN
->> would send the mm_walk back again and again for as long as the pmd
->> migration entry remained there: not good, and Xinyu finds a lockup
->> when hotplugging CPU without preemption.
-> 
-> Thank you for your detailed and kind explanation, Hugh!
-> 
->>
->> My suggested patch below (please take it over SJ, and do with it what
->> you will), converting damon_mkold_pmd_entry() and damon_young_pmd_entry()
->> to use pmd_trans_huge_lock() as I'd been expecting, so handling the
->> pmd migration entry up in that block.  (Side note: patch against 6.17-rc,
->> but I see mm.git adds also a damos_va_stat_pmd_entry(), which would
->> better be converted to the same pmd_trans_huge_lock() pattern -
->> though I notice you're not setting ACTION_AGAIN in that one.)
->>
->> But I have to admit, there's very little gained by using ACTION_AGAIN
->> in these functions: it helps not to miss the range when racing against
->> THP collapse or split, but you're already content to miss the extent
->> if it has a pmd migration entry, and there can still be an instant when
->> the range which used to have a page table does not yet show the THP.
->>
->> So if you prefer a smaller fix (but a larger source file!), just
->> dropping the walk->action = ACTION_AGAIN lines should be good enough.
-> 
-> I agree all your points.
-> 
-> I'd prefer the smaller source file following your suggested change below (using
-> pmd_trans_huge_lock()) in long term.  But, for a short term, I'd prefer the
-> smaller fix (dropping walk->action = ACTION_AGAIN) since it should also be
-> merged into stable@, up to 6.5.y.
-> 
-> So, I'd like to suggest as following.  Let's drop the
-> 'walk->action = ACTION_AGAIN' like the below attached one, for now.  After it
-> is confirmed to fix the issue and merged into relevant trees including stable
-> trees, let's revisit the code to cleanup following pmd_trans_huge_lock()
-> pattern.
-> 
-> Please let me know if I'm missing something, or you have other opinions.
-> 
-> Xinyu, could you please test if the below attached patch fixes your issue and
-> let us know the result?
-> 
-> If Xinyu confirms the validity of the fix and no one objects to the above plan,
-> I will post the fix as a formal one with a better commit message.
-> 
+On Wed, Sep 24, 2025 at 07:29:49PM +0100, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
 
-Hi, SJ. The below attached patch is works!
+> > ---
+> > base-commit: 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
 
-These days, I reproduced the same softlockup scenario for three times. 
-It can be reproduced around an hour when I increase the memory pressure.
-Then I patched the below fix, and ran the same testcase whole day, 
-softlock didn't trigger again.
+> $ git show 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
+> fatal: bad object 5db15c998c390efbe5c82f6cda77cb896a3a6a3e
 
-Sorry for the long wait. Thanks again for your solution and explanation!
+> What's the point of indicating a base commit if that's not something I
+> can find? You should never base any work on top of something that
+> isn't a stable tag.
 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
-> 
-> ==== >8 ====
->  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-> From: SeongJae Park <sj@kernel.org>
-> Date: Sat, 20 Sep 2025 03:35:34 -0700
-> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-> 
-> For a quick fix of a softlockup issue:
-> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-> From: SeongJae Park <sj@kernel.org>
-> Date: Sat, 20 Sep 2025 03:35:34 -0700
-> Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-> 
-> For a quick fix of a softlockup issue:
-> https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->   mm/damon/vaddr.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-> index 8c048f9b129e..7e834467b2d8 100644
-> --- a/mm/damon/vaddr.c
-> +++ b/mm/damon/vaddr.c
-> @@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
->   	}
->   
->   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->   		return 0;
-> -	}
->   	if (!pte_present(ptep_get(pte)))
->   		goto out;
->   	damon_ptep_mkold(pte, walk->vma, addr);
-> @@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
->   #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
->   
->   	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
-> -	if (!pte) {
-> -		walk->action = ACTION_AGAIN;
-> +	if (!pte)
->   		return 0;
-> -	}
->   	ptent = ptep_get(pte);
->   	if (!pte_present(ptent))
->   		goto out;
+This was due to you having applied the LSFE patch but that application
+not yet being visible to me at the time I did the rebase (I've noticed
+occasional slow mirroring on kernel.org recently, possibly it was that),
+I needed to base on the already applied patch so that I could check that
+the test binary worked properly.
 
+--/zaKCw9JkNIMK2ix
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Xinyu Zheng
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVI6gACgkQJNaLcl1U
+h9CWEQf+LhWPmI+TiqBpNhHF4rThKI4mBv/BM3yn+6w5SjGK/aQgfPXoKuBSa8gF
+eajZSipUrKXtenT9qN2VJu1n02ahuNh75Issa/SipMwbkjRYseunEUSZoLzfvfaW
+5aVqnQ21GIOtoQLj3as1wfVRVMQw/fntDTJBAp+NFQYPh6Iky4TPkgnSG9PTqfGJ
+MiCU4IupB+pg+zebaH/fG69j2YHS9kegvJS+E+uLa7vkE0TEsc8qUXvxQz0TSvhU
+8e0XJ3GMu3okoXZ9iNxRcVrcuG1VuBruhSG7In9NpaThNs7ilXDF+eTcOVlhDvtO
+9FRj1mHPSl4l8O0vp3BzuFgeiR8oyQ==
+=IRxn
+-----END PGP SIGNATURE-----
+
+--/zaKCw9JkNIMK2ix--
 
