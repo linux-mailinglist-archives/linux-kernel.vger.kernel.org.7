@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-831582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798F8B9D10C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:51:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F95B9D118
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355743B7A13
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:51:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903C3326507
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859132DECD3;
-	Thu, 25 Sep 2025 01:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7E82DF12E;
+	Thu, 25 Sep 2025 01:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lKOaJ3SB"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3iADYCR"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79DD1C27
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE2E2DEA9D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758765099; cv=none; b=KYAtvuIRZJW+G6LgKAM4OydpxrV7Us3E0qjOaC4qAX9su9L9LuHbw9Dk+JR0zT4TsNT5mhGt0Kp2wSiRMS52iGnTdl6xovYlOD4+XTjhbRYQjIwjrIXEsMfVKDhW4ULsHhuepiIgO6a6UM/2GymYIfmzvqCz98rrctOrTJWDXYc=
+	t=1758765470; cv=none; b=soZYtZXZR9Rv8d+R8OeYGWsH49KR/lqJAyfe/LC0OzHDwlBeEqYdwY9dqK+2xLq7jG3BfSbdcGgegOej2EKHCgKYgKjQ+wRh2LNNCh7ubDy/xK8jt2OCWJ39Rmn1/lqJLnzYruVLu7Ee2d7lB3QmBohEPs5knUQm/3Wap0wKGTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758765099; c=relaxed/simple;
-	bh=qWisjqzAzLapzP18lcgOkOsr63awJhoc1WFtffJ1YQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBLhhXqGU/3pwFBpK6sN75mok52QacRUhG7TW2l9DnIwvoy4+95lovlfAbk2Mp1/v+yrYKTFx3i0jE6dMWVWyFdR581C7fgi6Cgtw4S0b21ooAgutIjULB6TnyYNLwihW0Gz0nQ56y/INzp/tmNuLtnX3qsbzSHa9C6h3i32leQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lKOaJ3SB; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <82c7e76c-326f-45c9-bff7-1f27bf0c689c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758765095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7HUVTfySCPpJobw6VEmN77jlwIzcnV4lJ/T+C7o0eaw=;
-	b=lKOaJ3SBuqZIZ+s+JaUif+AcgaS20/Ih8fQqOOxB7WPlflnEnXunJXwwaZCGcv/2uy/LX+
-	IR0coaNv4bP+O7+y8eUj7iGCAXR7HhmyNh6NxL4IdtkJt+MdOeD3W6vjSpW9PQOLEAQW0t
-	UYGjEev+j3RWd0slDPPOOsDoi2xTp/8=
-Date: Thu, 25 Sep 2025 09:51:25 +0800
+	s=arc-20240116; t=1758765470; c=relaxed/simple;
+	bh=BzE2nWlHaSb09IJHmQN5hhf4/KfURbjwUnfIYkRiAM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHSxlj6JLZVE2VbvH4h3DlZI4t9DPuZsrMMhBXB+SfLDjB9z1CjUuiNjqwwY+42Fs3vxohy2GWHpnYuRXvsJD6Mf9l+QlozuL3MPFIBRlMzOfdWaAR0Jxq8eI/nAXr6A8vzzw+2Fj68ocIxzgQLgLP/Xm+2wRTQRLoUlU3endsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3iADYCR; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62fc14af3fbso840542a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758765467; x=1759370267; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzE2nWlHaSb09IJHmQN5hhf4/KfURbjwUnfIYkRiAM8=;
+        b=i3iADYCRoiSH0HlgpBlG6Uvh1LClCZa1ZyZW1UtYjJWenhLmjNv141j/EGTi9ThmIr
+         ymIlMQuZ4tRP1/yJUWhjxhLHO4kJZJQC6yPe8kkO6WkuUmnXxu850IikYq38NqkyfWrU
+         KJmHNHAEjB3Y4BEMsSqwDcVTgEx1uSmTs8P5DqU3XR5L5h1m7Mr3f2hxfY2wLNdMJkih
+         m+nUgwA/0/bh32BNXB9OohK2fJ4EBNzOws8wQebGqmSHUs75mikvC7Uj14ZLCeRp1CN6
+         H36YPpY+dAjd7gggJ2ozy90kCsL7kKfML3UFel7MwWZej1Km+ASP33ZlLEEY5hCAIVR8
+         rDGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758765467; x=1759370267;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BzE2nWlHaSb09IJHmQN5hhf4/KfURbjwUnfIYkRiAM8=;
+        b=Nn7qkaSiYT7kMg7kDdxs/UplPmgJiyQuB7A5/j2W45LlZ0LOmW3VlJlK+7nRcFmNM5
+         /ojYs5vMY97rIKlodb/lJpe0IARykuSr12VqO1wSXpQ/bcX2GHyL81jC3OUjm1e6Mvje
+         D1vYOU2Cri6sQPMfr2QPxcuEWCOIZRbj6bHQRGZVLAREINjENi1Tqful/EzESPk2N4yE
+         XzW/PNZqS4iISmcNc0oWYcwBLx+EuAA8Xwi73XsQJKFduuQau58SXCu3g5TwMatdvls/
+         d8cucshPIIzJeZdLZFZAOU7s/3Nuykztarwyp3waP2XnPvAb629aNRGChgoJvYeBxFPu
+         PuSw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+leDRbaWXalj1CJUyvLV2eSZ7fW0Wa54/mveT/7OwUe3loViypdB8/kHpV/X3qpAWM9/DFNfkU4SUltE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDoOZct5gjgNA+FRcQ+1oF89o//NIOyRkpfoQrDraMKjMKhjL2
+	IrUo4ZB0HNaKho3zOUpLSOBnKubEMj9FucE7ltZPv6CpoBYwqtfkL2GIyvJF5Z4lqnEckC+YcO/
+	pT9OqLAZFCniyl7EjELgYmcW+OM57P4M=
+X-Gm-Gg: ASbGncv9bBQjCaY8uZ+SB83DgxeDVftBtoY3L3QxJFf+WqadsWpdkJJ9fa+me6CFbun
+	W8FEiyHc4NQoQ1KP/u5aS1imfuLYHHfiOMViGfn7DgHmS/AQJBvkwXgYod2ezqDIpKaqLAUiMYo
+	To70JXBJluU/h+bexrWZG/MwWZzfswL5Xa0Ge+2nIvT431InXWcc+yKX+bPJzYZ6CDmw06Fr/Yx
+	RNVK2q8nVxCjZkrylCKG1qek2KITYJzOGmrmVsGI8YaJ7gImyi0/B/P
+X-Google-Smtp-Source: AGHT+IF+/+JTZumqPSyotdgOAvpzeHBPXP4w8U2968XjiTAnXz6ZQtIbPEAD2FTktGdPpJGqn+Q97s4zzwKHhgbTGFk=
+X-Received: by 2002:a05:6402:13cd:b0:626:4774:2420 with SMTP id
+ 4fb4d7f45d1cf-6349fa71749mr1317160a12.20.1758765467408; Wed, 24 Sep 2025
+ 18:57:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: Update Rust index translation and add
- reference label
-To: Ben Guo <benx.guo@gmail.com>, alexs@kernel.org, dzm91@hust.edu.cn,
- corbet@lwn.net, ojeda@kernel.org, alex.gaynor@gmail.com,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
- tmgross@umich.edu, dakr@kernel.org
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20250924235114.209967-1-benx.guo@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250924235114.209967-1-benx.guo@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250924134350.264597-1-viswanathiyyappan@gmail.com> <20250924161835.63e9a44f@kernel.org>
+In-Reply-To: <20250924161835.63e9a44f@kernel.org>
+From: viswanath <viswanathiyyappan@gmail.com>
+Date: Thu, 25 Sep 2025 07:27:35 +0530
+X-Gm-Features: AS18NWDW6_dN93pbRL3G38WQSpiXZWIIBNijqFMY5K6yqGxEhObamRG-8b5i7SE
+Message-ID: <CAPrAcgOQmBHkehYTpeLds9yobofXhxJmxAa2Nq80b1T3HFZZ0w@mail.gmail.com>
+Subject: Re: [PATCH net v3] net: usb: Remove disruptive netif_wake_queue in rtl8150_set_multicast
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: michal.pecio@gmail.com, edumazet@google.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, petkan@nucleusys.com, pabeni@redhat.com, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com, 
+	syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-
-在 9/25/25 7:51 AM, Ben Guo 写道:
-> Update the translated rust/index.rst with new contents,
-> and add a reference label in rust/general-information.rst so
-> that index.rst can link to it properly.
+On Thu, 25 Sept 2025 at 04:48, Jakub Kicinski <kuba@kernel.org> wrote:
 >
-> Fixes in rust/index.rst:
-> - Fixed broken quick-start.rst cross-reference
+> On Wed, 24 Sep 2025 19:13:50 +0530 I Viswanath wrote:
+> > Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
 >
-> Update the translation through commit d0b343605f1b
-> ("kernel-docs: Add new section for Rust learning materials")
->
-> Signed-off-by: Ben Guo <benx.guo@gmail.com>
+> Sorry, one more nit - please spell out your first name, not just
+> the initial (in Author/From and SoB).
+> --
+> pw-bot: cr
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+I know it's uncommon but "I Viswanath" is actually my legal name
 
-
-Thanks,
-
-Yanteng
-
-> ---
->   .../zh_CN/rust/general-information.rst        |  1 +
->   .../translations/zh_CN/rust/index.rst         | 32 ++++++++++++++++++-
->   2 files changed, 32 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/translations/zh_CN/rust/general-information.rst b/Documentation/translations/zh_CN/rust/general-information.rst
-> index 251f6ee2bb44..9b5e37e13f38 100644
-> --- a/Documentation/translations/zh_CN/rust/general-information.rst
-> +++ b/Documentation/translations/zh_CN/rust/general-information.rst
-> @@ -13,6 +13,7 @@
->   
->   本文档包含了在内核中使用Rust支持时需要了解的有用信息。
->   
-> +.. _rust_code_documentation_zh_cn:
->   
->   代码文档
->   --------
-> diff --git a/Documentation/translations/zh_CN/rust/index.rst b/Documentation/translations/zh_CN/rust/index.rst
-> index b01f887e7167..10413b0c17c0 100644
-> --- a/Documentation/translations/zh_CN/rust/index.rst
-> +++ b/Documentation/translations/zh_CN/rust/index.rst
-> @@ -10,7 +10,35 @@
->   Rust
->   ====
->   
-> -与内核中的Rust有关的文档。若要开始在内核中使用Rust，请阅读quick-start.rst指南。
-> +与内核中的Rust有关的文档。若要开始在内核中使用Rust，请阅读 quick-start.rst 指南。
-> +
-> +Rust 实验
-> +---------
-> +Rust 支持在 v6.1 版本中合并到主线，以帮助确定 Rust 作为一种语言是否适合内核，
-> +即是否值得进行权衡。
-> +
-> +目前，Rust 支持主要面向对 Rust 支持感兴趣的内核开发人员和维护者，
-> +以便他们可以开始处理抽象和驱动程序，并帮助开发基础设施和工具。
-> +
-> +如果您是终端用户，请注意，目前没有适合或旨在生产使用的内置驱动程序或模块，
-> +并且 Rust 支持仍处于开发/实验阶段，尤其是对于特定内核配置。
-> +
-> +代码文档
-> +--------
-> +
-> +给定一个内核配置，内核可能会生成 Rust 代码文档，即由 ``rustdoc`` 工具呈现的 HTML。
-> +
-> +.. only:: rustdoc and html
-> +
-> +   该内核文档使用 `Rust 代码文档 <rustdoc/kernel/index.html>`_ 构建。
-> +
-> +.. only:: not rustdoc and html
-> +
-> +   该内核文档不使用 Rust 代码文档构建。
-> +
-> +预生成版本提供在：https://rust.docs.kernel.org。
-> +
-> +请参阅 :ref:`代码文档 <rust_code_documentation_zh_cn>` 部分以获取更多详细信息。
->   
->   .. toctree::
->       :maxdepth: 1
-> @@ -20,6 +48,8 @@ Rust
->       coding-guidelines
->       arch-support
->   
-> +你还可以在 :doc:`../../../process/kernel-docs` 中找到 Rust 的学习材料。
-> +
->   .. only::  subproject and html
->   
->      Indices
+Thanks
+Viswanath
 
