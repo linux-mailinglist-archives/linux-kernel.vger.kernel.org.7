@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-832455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B36CB9F5C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 402C0B9F5B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC0117E650
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50327189DC2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B764E202F7B;
-	Thu, 25 Sep 2025 12:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CD31E00B4;
+	Thu, 25 Sep 2025 12:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Zq4aiuHa"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knufJr5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC191E1C02;
-	Thu, 25 Sep 2025 12:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206201C8611;
+	Thu, 25 Sep 2025 12:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804716; cv=none; b=njHm1HibVzD1/09SuXttI3r8MuxOfu/VqCBkA0w9h8ZlSnunj9f1511BUDOZe0CWp/T5KQoMMdQgDyudlX4Fno1jMecZ9TUP5rvWNDjeUsMGWo4WgHJ/soIg2B4OvmMdY/f+g3tmTWv4mNaOnqu4/1s8BC4kqBEy5UDgbgoJsOE=
+	t=1758804713; cv=none; b=Dp4mvkfbcDvCZHZrOBqcIpxdBJ3E18OZ/VpU9pTAjAqoJImypK4nKADnWeUb3zsOXDFP3C9D9SjJeBVI+LW+nBjEJmNjda15BJcQOJSbcgPnFPw3PUG/A4qKz74ExndQnymzEB4Wi9+FKxOeEHkzBcrbq/fc51L2uA0/2JBEf3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804716; c=relaxed/simple;
-	bh=SrWBA+fG0FATeWTgMS90uZ+rxrWCIl5OPnIzxi9p4Vw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IAcAL1LTwfhL2Eo8Lt2dJ0/Hu3n5C7uEBaL3M6DieSOu1M2XKSYmnFHeWpfiviO8c9yt8buPUB8BAajIoMUebDJ0DtafNlhr9FvGgGwvJQyd5TychhXfXHZdGqLV8b5cjQd6cbCXfWT456eIUIVF7z0swEBaCYo2YXlia40yqaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Zq4aiuHa; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PBN407008262;
-	Thu, 25 Sep 2025 05:51:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=d
-	PigCg841OhkiFo7jxpHcgnZDvHisFBeV9xk+zKSkOs=; b=Zq4aiuHa5Xss9Ai3z
-	zklFbDI/cCqLvFc8d07uNimDRgeG9LcL5lCRcVj9PTpXH+6941aOLZTg1JMFDHvl
-	QihKmXMCeYTQpjKmcSAI/hlacVncc5PKVwxW3AjagsKecJkoi7PFpFUc9WnjPF7s
-	Ds+BIqYkwOfguQzCAX8weAK7Tw6Gr2tJzEJqe8pa65USt3ViYSgtWxMIhS+yE8/I
-	L5sHQywogxXpmQABBU8hMnnFu7nO8vmTdTv1PG1QgvLRH3/dCY9LLXzula3sjMu/
-	1EmIBo7YxOv/vMg7rzQYugZ9+V7Yf/rRZuxpI0V0T4OpZ/GfcFYzfsCy7a7Ie4uD
-	7exaw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49d4thr5k7-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 05:51:40 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 25 Sep 2025 05:51:38 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 25 Sep 2025 05:51:38 -0700
-Received: from sburla-PowerEdge-T630.sclab.marvell.com (unknown [10.106.27.217])
-	by maili.marvell.com (Postfix) with ESMTP id 5AB453F7043;
-	Thu, 25 Sep 2025 05:51:38 -0700 (PDT)
-From: Sathesh B Edara <sedara@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>, <vburru@marvell.com>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
-        <andrew@lunn.ch>, <srasheed@marvell.com>
-CC: <sedara@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>
-Subject: [net-next PATCH v2 2/2] octeon_ep_vf: Add support to retrieve hardware channel information
-Date: Thu, 25 Sep 2025 05:51:34 -0700
-Message-ID: <20250925125134.22421-3-sedara@marvell.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20250925125134.22421-1-sedara@marvell.com>
-References: <20250925125134.22421-1-sedara@marvell.com>
+	s=arc-20240116; t=1758804713; c=relaxed/simple;
+	bh=mO1eURmsQ/Q67GVCleK7Z0UQWNq3rMCZKy4D+DzPFzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGOn32gyasgm+gkMGXM4ScdjD0EeOe4e9H9ITHvF/FB8XY+0yenWYopWf28j00eHsGmJvgMcjOPJqhK7mv89u2kvK51vZBzKA/gDfoyXaGfdeJLLYlh36Lt74KegbxIvSohY5nEeMtPkZvqt7QOogCE5z6/my0MxrAyV1LqHU6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knufJr5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0117C4CEF0;
+	Thu, 25 Sep 2025 12:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758804712;
+	bh=mO1eURmsQ/Q67GVCleK7Z0UQWNq3rMCZKy4D+DzPFzU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=knufJr5WE1keDJ9mqbAtEZ1ArQdYVue5Q49Wtujs25pDpg1IU+gTJb5zb+GZN0Ztj
+	 32Yoh7w14n8CQ/Bz9XKhQuEqkgpnKz2u5iSM+K6oJ1fBf2nJ8v4a1aGpKg0ZfSxa5d
+	 /2/p2cuDjy4JaEMe7Owi7PSLPDKz0Y59fNJk2CPlQfP3v+I7RmFA0A7Hc5wiLGwUcS
+	 QNG0sxJfxYV3+MTC8/oCq82CIZHreuCcuaOZ0smQdvcMsCHrHiZNUiXNVmuaTuacJG
+	 mUk1mthDKUUfiwGJJtsNq+ORbti3iE0GmAW+DoNBAaMuhddeXWkL25yjUArWuyDbpN
+	 yrG4gxGudy2Ig==
+Date: Thu, 25 Sep 2025 13:51:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+	yijie.yang@oss.qualcomm.com,
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] regulator: dt-bindings: qcom,rpmh: Add support for
+ PMR735D
+Message-ID: <584e307c-527b-4bf4-b9b8-13497021637f@sirena.org.uk>
+References: <20250924-knp-regulator-v1-0-d9cde9a98a44@oss.qualcomm.com>
+ <20250924-knp-regulator-v1-1-d9cde9a98a44@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: P8wB8cu6BFWuSjyggoUHxwWbB4qocS1c
-X-Authority-Analysis: v=2.4 cv=L+0dQ/T8 c=1 sm=1 tr=0 ts=68d53adc cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=M5GUcnROAAAA:8 a=p1zdzuy5FtcdZHaGWb8A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: P8wB8cu6BFWuSjyggoUHxwWbB4qocS1c
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDEwNyBTYWx0ZWRfXzwTLe+R5sO4x 7R/Jmw5pGiVZL61E57u+WCv7+TPUKCcOA+s29igRtt1/ptOfGK6pGja91eIVIVjLkGOmxwWW8Bu t1blWIB7Swuk82czM01vgsdBnSEtweSEoAsDofatGedRAJAIodwHoWHCFsyon9JkaaTNpg2OhGL
- UHrmkdbjgKyaSF8L7Nzmrg0Q/y0gjfr4nIcBLYdUG4G03+r2HzE/gAS2r4XJH1RktgqHpX1HiSb iv+o+DkeaWeyauoCa0ck7MVOp238tbyHub+ocBXkeZWGwN7RZTsza4EtNdzvgtT1uKLk1RDSfVY +loNLYPmq6ISguMt1p1jtiLspF2XKMuhjyoTNtO/J9OXz/vyVAHuJwQ+0Q0fY319L7ilAPrv0I8 fMKNZIAu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ldOXRTuo48jZKpOF"
+Content-Disposition: inline
+In-Reply-To: <20250924-knp-regulator-v1-1-d9cde9a98a44@oss.qualcomm.com>
+X-Cookie: The only perfect science is hind-sight.
 
-This patch introduces support for retrieving hardware channel
-configuration through the ethtool interface.
 
-Signed-off-by: Sathesh B Edara <sedara@marvell.com>
----
-Find V1 here:
-https://lore.kernel.org/netdev/20250923094120.13133-3-sedara@marvell.com/
+--ldOXRTuo48jZKpOF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-V2:
-- Corrected channel counts to combined.
+On Wed, Sep 24, 2025 at 04:30:47PM -0700, Jingyi Wang wrote:
+> From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+>=20
+> Add support for PMR735D PMIC used on Kaanapali boards.
 
- .../ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c   | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+This doesn't apply against current code, please check and resend.
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
-index d60441928ba9..241a7e7c7ad2 100644
---- a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
-@@ -244,6 +244,15 @@ static int octep_vf_get_link_ksettings(struct net_device *netdev,
- 	return 0;
- }
- 
-+static void octep_vf_get_channels(struct net_device *dev,
-+				  struct ethtool_channels *channel)
-+{
-+	struct octep_vf_device *oct = netdev_priv(dev);
-+
-+	channel->max_combined = CFG_GET_PORTS_MAX_IO_RINGS(oct->conf);
-+	channel->combined_count = CFG_GET_PORTS_ACTIVE_IO_RINGS(oct->conf);
-+}
-+
- static const struct ethtool_ops octep_vf_ethtool_ops = {
- 	.get_drvinfo = octep_vf_get_drvinfo,
- 	.get_link = ethtool_op_get_link,
-@@ -251,6 +260,7 @@ static const struct ethtool_ops octep_vf_ethtool_ops = {
- 	.get_sset_count = octep_vf_get_sset_count,
- 	.get_ethtool_stats = octep_vf_get_ethtool_stats,
- 	.get_link_ksettings = octep_vf_get_link_ksettings,
-+	.get_channels = octep_vf_get_channels,
- };
- 
- void octep_vf_set_ethtool_ops(struct net_device *netdev)
--- 
-2.36.0
+--ldOXRTuo48jZKpOF
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVOuIACgkQJNaLcl1U
+h9B1SggAhSi7EbAtG3IgIfC9DG7kpX8kB+GyDZ9GpmTAMIRLybUZmwjAqGe72hoM
+KJ1m8kUvxIzi3dNG1NovOzBE0Hr0MUrR78YFosMWC2U979/HjxIL6ZwMOnNTNsj8
+Kd4VEwwNm3i/FFwsf8yPa4Nwq9DX4jq2kj7fK9XZQDbKSWiCrDpndw49b9Bhebwd
+DA6ET8YrxqUREddRZp1hoMshYoaUjM485tz5Sdk1w8aD1m/8KpiMCi/svnlj+Qlk
+keszR+HB39shfC12lep3bgfIRDnKGBrf5ZpjwpggzlONbE9rtuUgPBAiUzRPosJK
+xIztDMVU7wPZv1N65P8m8IEG3OyzCg==
+=CgSr
+-----END PGP SIGNATURE-----
+
+--ldOXRTuo48jZKpOF--
 
