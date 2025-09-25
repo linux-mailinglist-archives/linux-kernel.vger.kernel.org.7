@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-832558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BEEB9FAAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:51:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDEFB9FAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824C11C2358F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:52:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 913A47A8DE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C904F28640C;
-	Thu, 25 Sep 2025 13:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C6E28688C;
+	Thu, 25 Sep 2025 13:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="cFH2JIgg"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R5Plug5K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B162857E0;
-	Thu, 25 Sep 2025 13:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7935821C9EA;
+	Thu, 25 Sep 2025 13:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808300; cv=none; b=pSpQ3vBfF7gdcpTvN7SDc1wASQTT0/FjwUu+xF65vOqB8LPieGRS+Ou3lPkaviAftfXIuV+iE40QrhTbPvcQwxlU2kOh2sPesJHnzOyKP33gdcehgPgyKuerakJuhenYePsCu2JQHCPFdbnfbQnbQ1XKm63/9fc6Geaez3jhTIY=
+	t=1758808406; cv=none; b=RRqZJrcAN3ddjJ5EpQzZgNyrvRjFZWzlp/9Izj4upFNqmbvyh0socX2Dosc+QFO4qwH7U83JpoDwxfiT1CJoHXMfDQksDk3CPMH39YBBMKDGZozhKuUqNxs1JnEnyGnusDMeL0A6hCRdyh7gTkyfv31brPic6n9Ch1R3OGdW+WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808300; c=relaxed/simple;
-	bh=7FOgkvPEVFvHSY6hM/MXtsvWwWlIh/rDe96Ph55s3+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hVZiEbVYh+Qr8HsuZquceeWDSJa3us/XaP8H3/vpMY/XLLc1T7x17aJaADIq8Jx9L83ikTA1i5RzRXk39hHOFe++S0EoyviwUsf5QXJWztzCCn+pAWPqOBVH7oPQ/zYRQM8bomFD6lg8a88CgcGEUmcpb8aP5oCuqt39iassbNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=cFH2JIgg; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cXZrR16t1z9t1q;
-	Thu, 25 Sep 2025 15:51:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1758808295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FmBHdSzcnzvZsnXY5Q9rMzWlKRDhxC8ATS01bHnMLaM=;
-	b=cFH2JIgg9T6q2pL4VcFHsDJgLtWj7ieoOtqlvAqvIiRlp7doyAcDgHVAqNe8kErSDjK4fD
-	p8DIiAHu1iYwi/kg1CAQkvIozTp+ZhKyIvPhoTy46yzEzt07Y3H1JjfPkr6xLoqxNFBx7r
-	s5TKZyDbgceeIQOHekzeHU/swEtto9DbY6FxxGa1zy9OT49m5jh61Y7P/AVz0TU3A0BYaJ
-	xl/y0uC4Jt6+Nr1PYTzFyfkWfQtB2/7dmUjL6JQgx6jmYvaUt3ZWg4KuOVcgOZIIZ6DRwG
-	ULR5UbUT3CpmUTWB9HFo6fERH5gMs4yvhNs8Lw+/zWY+4ZkLbpKpn4RgjK3ung==
-Message-ID: <29ee0c03-d1d9-44f9-bdde-5c336459b097@mailbox.org>
-Date: Thu, 25 Sep 2025 15:51:32 +0200
+	s=arc-20240116; t=1758808406; c=relaxed/simple;
+	bh=3Fpb6XuuqQ4tMU4I4bBktsh7QB2mNAlQIyyGYi1/dBI=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=jss5czph4Y3ksmEO//7kj68Mr3aeUIzT0dQCSWJlfzrrWo0xueP5qRt4TvCLx9oafQ9JCkynTudm0LTTMNRFEpH80W+SjT1YD8IaAp7/LoZ4MgpOhH1k5dATMeC2QNCdNrG1Y9yRyctVq9XZS902cXPBvULAOSRLpp2M3OXocbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R5Plug5K; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758808405; x=1790344405;
+  h=mime-version:content-transfer-encoding:in-reply-to:
+   references:subject:from:cc:to:date:message-id;
+  bh=3Fpb6XuuqQ4tMU4I4bBktsh7QB2mNAlQIyyGYi1/dBI=;
+  b=R5Plug5Kknz77ZcC7comZpgJiNGaSQAdhLfCGxAa6ZByePxF+68NOZdj
+   heqPT/OnfYG5nAWn8quIEs0GuDHFhRsoYT0s2KDxC7m3XTXxudwCVk/Bm
+   G/2xwWeilbWhYAiC0PE1gIgmCCse4HNXDcDri/s/0gUAEiFcGjZpBhole
+   epZLRdxWdF88RFONDDAp9PPCq+p0ZaWRqTWe08uhabyupS0k7YV1yVN5c
+   gXOlbiuUGdTXN1XCpvQkewZTMqhaE9vPYiGfxcBImFRfL6H8sT8eND+G9
+   m+UnT6Dl9TStX7L/Bk2HqUqoxm7eA+OowHK0AsKbSEb9pUK6+wisXAv5M
+   g==;
+X-CSE-ConnectionGUID: uwkl/IkTRBWiypZvvVSmHw==
+X-CSE-MsgGUID: mIzlA4LSQGq16ANuedSr3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="72483961"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="72483961"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 06:53:24 -0700
+X-CSE-ConnectionGUID: S83XiSvdTkuU5U9a9mz0ag==
+X-CSE-MsgGUID: k+N4f4txRSG/qaHV5GcjmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="176914592"
+Received: from dev-409.igk.intel.com (HELO localhost) ([10.211.128.26])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 06:53:21 -0700
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] PCI: rcar-host: Add static assertion to check
- !PCI_LOCKLESS_CONFIG
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Magnus Damm <magnus.damm@gmail.com>,
- Marek Vasut <marek.vasut+renesas@gmail.com>, Rob Herring <robh@kernel.org>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20250923234644.82890-1-marek.vasut+renesas@mailbox.org>
- <ebcvi2mput6dyx5omlcvapjt6mwzrpq4h6c4o3kyfdxfrin35x@d75pxu652f6u>
- <85a97019-2f80-4104-b27a-6578612af1e4@mailbox.org>
- <mc5sglju5r7zubnnuzmnl6nf2t5xdz7x6rqbx26dnl5hzvnyhi@ydp767j7gqx5>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <mc5sglju5r7zubnnuzmnl6nf2t5xdz7x6rqbx26dnl5hzvnyhi@ydp767j7gqx5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 21d77f7660fcf8238b8
-X-MBO-RS-META: jrqdj3j9gydzh1ru6f6cfw78wdqkneyi
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ammcxcfamq6f6ip35ccre4an7tcnksksifrjy2alq3eh3eqgai@hvsmgmw5i35n>
+References: <20250924124852.11-1-alsp705@gmail.com> <ammcxcfamq6f6ip35ccre4an7tcnksksifrjy2alq3eh3eqgai@hvsmgmw5i35n>
+Subject: Re: [PATCH] gpu: i915: fix error return in mmap_offset_attach()
+From: Chris Wilson <chris.p.wilson@linux.intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,  intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, lvc-project@linuxtesting.org, Krzysztof Karas <krzysztof.karas@intel.com>
+To: Alexandr Sapozhnkiov <alsp705@gmail.com>, Andi Shyti <andi.shyti@kernel.org>
+Date: Thu, 25 Sep 2025 15:51:42 +0200
+Message-ID: <175880830233.2803386.1327911402611756316@DEV-409>
+User-Agent: alot/0.10
 
-On 9/24/25 6:00 AM, Manivannan Sadhasivam wrote:
-> On Wed, Sep 24, 2025 at 05:34:55AM +0200, Marek Vasut wrote:
->> Hello Manivannan,
->>
->> On 9/24/25 5:25 AM, Manivannan Sadhasivam wrote:
->>> On Wed, Sep 24, 2025 at 01:46:18AM +0200, Marek Vasut wrote:
->>>> This driver can not function correctly without PCIe subsystem level
->>>> config space access serialization. In case PCI_LOCKLESS_CONFIG is
->>>> ever enabled on ARM, complain loudly so the driver can be updated
->>>> accordingly.
->>>>
->>>
->>> This limitation applies to almost all host controller drivers except those used
->>> on Intel platforms like VMD and Hyper-V. So this would require adding the
->>> Kconfig dependency for all those, not just for RCAR.
->>
->> Correct.
->>
->>> We could also add the dependency to the arch Kconfig, but there is still a
->>> possibility that if the driver is used on a platform selecting
->>> PCI_LOCKLESS_CONFIG, it would be broken silently. So adding the dependency to
->>> the individual drivers that suffer from the limitation seems to be the right
->>> thing to do.
->>
->> Would you like me to send a few more patches which add !PCI_LOCKLESS_CONFIG
->> into per-driver Kconfig entries, at least for drivers where I am sure they
->> suffer from this currently hypothetical issue ...
->>
-> 
-> Sure.
-> 
->>> Also, I'm not in favor of adding static_assert with Kconfig dependency in place.
->> ... and drop the static assert ?
->>
->> Then the drivers would at least be marked accordingly.
-> 
-> Yes. Better than what we have currently.
-This is now done in
+Quoting Andi Shyti (2025-09-24 22:20:33)
+> >       mmo =3D insert_mmo(obj, mmo);
+> >       GEM_BUG_ON(lookup_mmo(obj, mmap_type) !=3D mmo);
+> >  out:
+> > -     if (file)
+> > -             drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +     if (file) {
+> > +             err =3D drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +             if (err)
+> > +                     goto err;
 
-[PATCH] PCI: controller: Mark controllers which cannot do lockless 
-config access with !PCI_LOCKLESS_CONFIG
-
-I hope I got all of them.
+You cannot jump to err here, as that will try to free(mmo) which either
+was not allocated by the caller, or ownership has already been
+transferred to the mmo tree. It is sufficient to just return the err.
+-Chris
 
