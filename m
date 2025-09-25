@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-831640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EFDB9D360
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:35:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C6B9D213
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EBEF17E453
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5959B4262D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB9027F754;
-	Thu, 25 Sep 2025 02:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2920298D;
+	Thu, 25 Sep 2025 02:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GsGZ+ILQ"
-Received: from mail-m32118.qiye.163.com (mail-m32118.qiye.163.com [220.197.32.118])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NPBG/+dF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6302818E1F;
-	Thu, 25 Sep 2025 02:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38533D27E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758767696; cv=none; b=OKEeOFCeDifgUJMuhiwULeNPqdrms0es72KwQk3Je+GNpS9/XfsPMdt07mSuRSe0JhsoNh5xFRxlT1PsZBSQnJjvCKNmjJkdB67vz4Gerr0YWhFIcRGlVfokxT3j0hHDFFH8DZTaDkQ3pOis2GK2+jDIyEKX88rzQCW1KFmwBr8=
+	t=1758766934; cv=none; b=Typ5Q3cLYEPKVLdOAzb8E0YrtUUFuIRPVuE1Xk9RVKWVc5OIa/PMV4hFtSX8B0kOM2xTj7p9UuQS4BviwfwoCmGqS1mL9Lso/1IBTcOuo39Qhz/GpT1dRgVD/5/xgJ5Iw9h+5hL8sOPBUaK2Qw+jYRf+myZ5AN5grkbzwicIqPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758767696; c=relaxed/simple;
-	bh=WAKSdZimExURYkoPahxIIftutzZ+xBPrZRgJUwbZYO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jVgcbeVh7WLWqG14KRreqa5mUEi/31tMUJYwJxSffTcgibJNPyHpR8MB0KhooEs3ieNdMpYYF51hQDrnXA+M4qVC3McQS7M9nWwvw14e8iX2oXPusH1uEamAiHPnyXpP/GLZRN6KGRp5iNmgbfhTrziuA9GnXnIFYMW3Yu8xk1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GsGZ+ILQ; arc=none smtp.client-ip=220.197.32.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 23f99a352;
-	Thu, 25 Sep 2025 10:19:27 +0800 (GMT+08:00)
-Message-ID: <be24f371-3afa-47ce-a5e8-26f3fac9b6ba@rock-chips.com>
-Date: Thu, 25 Sep 2025 10:19:26 +0800
+	s=arc-20240116; t=1758766934; c=relaxed/simple;
+	bh=SAIzaDdMUAJ2rdHG/AL+FmlpaSt9Uj9wjE7RUoqyGf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxW7IIOd3nW5V0T1t6JFALFz3i2RI+Uq/doRPpvqvMQv0HizRX6Bhm0+3pSNXa948+ViK2Bkq+8f4Q6+7phoukAkYSvAVyoIDRKH31ZDOzg2GyEjltTk/EINtHkaq1HZE3TwsEcyvBWQGMRcPQBq+IPvR05Tbg0s4Z4Z7paFhdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NPBG/+dF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P1J95K029706
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:22:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=dQYPg3HhOquErMj0zn5jCR2P
+	8Pl8Yt8r6+LWmbHs99w=; b=NPBG/+dFYB119H9dlqihCt0+3kwEGd98EYVnJVKs
+	uLyeXaGmFyDgi1l0qSRS06KZ9R3tWlxqEERD+vZdblMx9t2kB8D+iFvotGX29Eto
+	Ow1Xh+vvPi8+PfSzlQ3es/HfxoDsRKNEQlW1zLm+pPTRhpwgS0qJ77TRuCpnmEim
+	htn1k8BbeAaKZC9PLzO/hIxAzN921VYnAqh5e5EViF/mE+9Y/oRac2GHZ035ryrf
+	I6YlUjJkPMdRCD0BnE81wFU4r5xOqhCk1QRLAqMlWTmw0oNJ5lxiEXsxC78xaXtC
+	13TxMy79hCmKcXjdOaoLxUNehk0VswTM2oazY0zEu5DAig==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fpa7q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:22:12 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d38dbc0e29so16368651cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:22:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758766931; x=1759371731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dQYPg3HhOquErMj0zn5jCR2P8Pl8Yt8r6+LWmbHs99w=;
+        b=Zq+4l8hVV/byOIlgWxWI/uMZ+iII90tukMi75/8BeWJ0/WwRhKbpbMXGyoGrpBTM0u
+         gbqfG+kFAQXkgimTro75qFm+DYJXOk+opZqOYgSD+jPspDT1d5NrsQ5ipb/ASJS004L3
+         jQIeokRHC6sCl2+UadtIm2jZ/kfd1Q5Qi/BCVE0Cy2JB321mph1WD6k2MRDe36SLICW0
+         a2yQttxjHrPkMhl6gfgxx5Pmspl/DcOmeq+meMWwH3bh8KjVmvp3sIuLGEZbTuC2MAMY
+         bF8U3zrOJn3DIfjzaA+aZIP5AAO7oC83pkQSXXFP5tIJ3mp2sGf0C0/ylfJK+JWgjIcL
+         TP8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW5hNPfNJHj8MKemTjtDPfKRXkI6/DakpCtXzrxqJpjm1EhbXwVnJiyapEZYf1kdbeaPtzzU7cKTfOMWbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkq0/Hj6YzuFhOIrHbyQ2korWdYe8MHT3hrCFPhHP2Bn1/Yl9g
+	Z4I77YsEGOe/k20CiOoDQmUSKoBtah3ngEPHbo3jOO5+etE0TaKje1z2qgW2nVZyVczU17GLPJT
+	HfF4sHmphYs5hWhvxvoMX9vIOufkqxROHLlL28bknTXCq2n7v3lHndd6QPs+pr72xHKg=
+X-Gm-Gg: ASbGncvY7i3QC3uXvrwx9YEGF2VWg0cUAsE9c0ULPr9wgm+lKshibREF36J+mnjuNs4
+	UWT7raj8aVQjQeOlpy/M1C8aDg3kohn237S7dCYiYFENbEI5Tnq11mR+Y4NfiJR03OdrJT0LywY
+	K5pOgu2SyBARCfM4Z/EAxgF4uvkgYtocxc+K8WQWMRFqwIcSNT9MSgGTBCTp9EDDsvoew+f6RtQ
+	r74Oo7qM8mOX3WggR/8kJaY8gxfaF0+Ffj++Idf6xj+bATK/Df+nBIr9aNo+hJ6GTAMn+nkLL4h
+	uEtbYO4hTCjN9IuTqKVEN1GdrH01+A2t4lVFIAnNoaKzZj6AMkcX0ngGB3ajxOuxwdCmTTcYAYa
+	xs4mYZXmXCNt7CqGbzi3fjec4PC9NSNiGu3DcSbMXuJAClSBM+bZ4
+X-Received: by 2002:ac8:590c:0:b0:4da:207:f0ee with SMTP id d75a77b69052e-4da48b8f2c0mr24381421cf.32.1758766931047;
+        Wed, 24 Sep 2025 19:22:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoOC/fEzI4rceoqPp5oihtG2BcGKgFCO8hZQHirGiAevUv0zoMqSlWcGxq7wq4yqj1AzFK0g==
+X-Received: by 2002:ac8:590c:0:b0:4da:207:f0ee with SMTP id d75a77b69052e-4da48b8f2c0mr24381281cf.32.1758766930642;
+        Wed, 24 Sep 2025 19:22:10 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316656989sm241066e87.90.2025.09.24.19.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 19:22:09 -0700 (PDT)
+Date: Thu, 25 Sep 2025 05:22:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Subject: Re: [PATCH] soc: qcom: pd-mapper: Add Kaanapali compatible
+Message-ID: <vyto6pxsld2h4vhzzmxvnyu34vil7fgefnzauz4adjipkpjbde@ejszs2z4hlsy>
+References: <20250924-knp-pdmapper-v1-1-fcf44bae377a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/17] drm/bridge: analogix_dp: Remove panel disabling
- and enabling in analogix_dp_set_bridge()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-16-damon.ding@rock-chips.com>
- <tywxkfjhulxsgdphngtfs24whslbkmnza7yx2sb7c4ulea6val@46pi6e2sjs6c>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <tywxkfjhulxsgdphngtfs24whslbkmnza7yx2sb7c4ulea6val@46pi6e2sjs6c>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a997eab1b8503a3kunm2418fa8d88dbd
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGksfSFZLQ0NNT0tPSB1JGhhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=GsGZ+ILQSnhzfvkwCAq4Z5+SIR0C9MOYar77DGQSbSeGev+Jr7L0Oq+AJf75d65bd6zyRrxMuhWK8gclELJ4evu+yYA7/9XQBUMFnRBep9EUwls+dIUpkvslnvd0hq55ReRjD8rAi0041WcrraaNBRTCVlfzPkJmY1YFlPIkZ8k=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=RPN3KyxMz8emyUFUk3HlxuaTyBLn7qeeJmHvt/BIWwI=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924-knp-pdmapper-v1-1-fcf44bae377a@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: -u5xO96mIdp3UhRWl7GKzxPu9emMJtM0
+X-Proofpoint-GUID: -u5xO96mIdp3UhRWl7GKzxPu9emMJtM0
+X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d4a754 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=97l5mCijwCuAxZHkA_EA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX2qHwcCdsARNX
+ EjLgK5oNQdr+0V7FirH9L4cSpfmv5GpaVcAiB/iwMEq3Va3fF7LYyy8L97r4Ea25ZZVPjLD4z00
+ +27jzTNB1jv9vkieqyKPsSk+gXV10IjprEtyht9SMISr2IJhAyv0IW+WDWBMU1b5fKw1GYcIBgd
+ DWIVhLwYe+Foc6n1e2jhOol9EfgJQ3CKvWJS7axRa7/6wIL89FLwYDGdnNhsb4T3j31H43SkG9b
+ 8bkr0MjDB3YNMAQbWrFl4odXzzAFG/r8HwCJ9mVN1FiLoRM3ozSJZT6J4EkFN/6+UBH52ImX0S6
+ ARgTLv0emVhKYdypvC7iigyuUeItrVCEuvtKMi+TSUcJM6ectZAjNP/t5YEAiQoKOxNYwjpel0p
+ gvh9b6vZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
 
-Hi Dmitry,
-
-On 9/12/2025 7:09 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 12, 2025 at 04:58:44PM +0800, Damon Ding wrote:
->> The &drm_panel_funcs.enable() and &drm_panel_funcs.disable() mainly
->> help turn on/off the backlight to make the image visible, and the
->> backlight operations are even needless if drm_panel_of_backlight() or
->> drm_panel_dp_aux_backlight() is applied, in which case the enabling
->> and disabling process just add necessary delays.
+On Wed, Sep 24, 2025 at 04:58:09PM -0700, Jingyi Wang wrote:
+> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 > 
-> Not necessary, it can actually be turning the panel off and on. Maybe
-> it's worth squashing this patch into the panel_bridge conversion as it
-> will point out that these functions are still being called at a correct
-> times by the DRM bridge framework.
+> Add support for the Qualcomm Kaanapali SoC to the protection
+> domain mapper. Kaanapali shares the same protection domain
+> configuration as SM8550, so reuse the existing SM8550 domain data.
 > 
+> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  drivers/soc/qcom/qcom_pd_mapper.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Will do in v6.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
->>
->> Therefore, it should make sense to remove panel disabling and move
->> panel enabling after analogix_dp_set_bridge() finished.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 7 +------
->>   1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 66d0cca1f268..c98058e9c917 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -749,9 +749,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
->>   {
->>   	int ret;
->>   
->> -	/* Keep the panel disabled while we configure video */
->> -	drm_panel_disable(dp->plat_data->panel);
->> -
->>   	ret = analogix_dp_train_link(dp);
->>   	if (ret) {
->>   		dev_err(dp->dev, "unable to do link train, ret=%d\n", ret);
->> @@ -771,9 +768,6 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
->>   		return ret;
->>   	}
->>   
->> -	/* Safe to enable the panel now */
->> -	drm_panel_enable(dp->plat_data->panel);
->> -
->>   	/* Check whether panel supports fast training */
->>   	ret = analogix_dp_fast_link_train_detection(dp);
->>   	if (ret)
->> @@ -1156,6 +1150,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->>   	while (timeout_loop < MAX_PLL_LOCK_LOOP) {
->>   		if (analogix_dp_set_bridge(dp) == 0) {
->>   			dp->dpms_mode = DRM_MODE_DPMS_ON;
->> +			drm_panel_enable(dp->plat_data->panel);
->>   			return;
->>   		}
->>   		dev_err(dp->dev, "failed to set bridge, retry: %d\n",
->> -- 
->> 2.34.1
->>
-> 
 
-Best regards,
-Damon
-
+-- 
+With best wishes
+Dmitry
 
