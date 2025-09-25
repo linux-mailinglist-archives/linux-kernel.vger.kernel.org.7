@@ -1,123 +1,188 @@
-Return-Path: <linux-kernel+bounces-831773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E77FB9D8AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:12:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74F3B9D8C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5F44A7FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F64E19C7E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A16C2E8E0C;
-	Thu, 25 Sep 2025 06:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FD2E92C7;
+	Thu, 25 Sep 2025 06:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qqkzfmjy"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kI1IlVOn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9F32E8B71
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94F62E8B96;
+	Thu, 25 Sep 2025 06:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758780727; cv=none; b=SIhpWOS7LhgQnt/NkzhdGPuVLb/0YQwxTmLpA7wFWlRP5Cchg+XktmDI02bcWJe51TVq0YpFUimqlt1iS+TFKMmxpW4cU6vuVsQfBRghNjhttyOeIT3TFzrF23rRUmiGie5va2EzGBT1lSSK9ouuYNxUDr/AVoWelJcGHDlgYuU=
+	t=1758780864; cv=none; b=kgTpK7IAQQwONj/Oec4rQsu703Z6RkRqALuYgsOpVbIuZWOLoDgJwvxy3YhKW0T8ZX5VPYW5KEfgp7+w5e1fzz30KpDjEQzo1hL4Tu2s1qFY/HhC2sScDhCuqE6J1tdtXbJ2JspZXl0OHW4kH4NYacAzMDwEXClAm8z1BNXw8E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758780727; c=relaxed/simple;
-	bh=uSFb8MHXwLqA9OKwUwZ9qPfEDx9KKhVW9XfP9kuC53s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KCx0OTS+N2wrSL64Bykzu4cx2JZfqzQFf5jLnCHEcvr8EfDO7Boo1mBckTXZix436gdR+tkgToK/FKcE5IsZlgtJo7zvUq0RTET3UqXFIMl0dIMKdgsZkMwIoukWcR7gFuVLBiQ42WXxXwXq1fcVJb3nKXYQ3jY6CHOrB/rhEts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qqkzfmjy; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e1e318f58so4780505e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758780722; x=1759385522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yEYWGfF11/g3FTMFlorTwEZrbGBIs3tO9z9pPNiHJAo=;
-        b=qqkzfmjyigSpLUoNqAMuAQPl/zPXizRaJfpLiXhw2cfQSwVL8u7D95BnPvpPfPoA04
-         c7DPuIq+tHha0AqLofEqBwuLohznbyQTmFnioXKf18DW04Tma9rsEaqu67ZxtHuW1YTh
-         SEK+jdgVOgwOdcUUudwlrEk0K6tqdtiSgdFO3IR8N+KoEe/C8V9Nque9V3Jv/Xb3yNeB
-         Gro94cqz5bWoY5+kR2qM1bVW6F41cM5/NlgqWbNlrN4E0uQ9Hy4BWBktjrMiCXWr82iB
-         iIg3aGdJ586DTiy+EhmAXH+NVFYsSsAhMFOZPsE1NTTdlMOOZvEVlsgRFd82pyXpAxlP
-         qQJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758780722; x=1759385522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yEYWGfF11/g3FTMFlorTwEZrbGBIs3tO9z9pPNiHJAo=;
-        b=Qng9kYUynL21GpyVqRJvHUfHEeV8vBFAet0lBd0EvC1eeAwVMn+MQxIv1gNxE501m5
-         Ve2leffeNga1SXTs+lZPPPGTz7QgkCvK3sfQsrBLgue56VvxCr0JUuVXmFv9zq930Rub
-         mk4lzIjeMvXVLFzWM9OiKsXXJVXpBegVg7tkcXQYs0sdaAQ4BkdrWzXoE/rFRR420v5t
-         g0GWgA6E/MbPapd3ixbn9fo0kwfA1zbJJvwmEcvSud2SmXqFc6JkAjDl76wu3mYPWgPu
-         qU/8m3uYEYsb0AVzEBR60kPAZ03SIHu4U6SpKyUPcXVypjK0OacZKMNEWw4gjKq18kmo
-         +67Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYLX2qvYkWl0qjYSpzF4cUtSymYGlUeGMXww67eAHfW0LUN66gm7iWMZo3R00T/KhZraYdoz5xpjpO97k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxcTfT6MBuCFQmXGb8TIph18auk5DJLE6KnuRN6M6B5jX6z1y9
-	llig+WufdP4e1PShgUYrOipN55gKcC8ZwCPEsPMdEytJrCbsyJcWpCz35JbG9Tn39a8=
-X-Gm-Gg: ASbGncu4IbkDmYz5ffCZ8uQk9xP2Enq8dMJAuvzYpaBP7h3Ioywcd9HR6FRgEVTeOj3
-	3D5iKvZWEe9Dur9Xggm+CNCIxDBoYGBDrmbeH4U2Z92DZHAL/ipXwXRSQjdCbzC/74rkBskJekl
-	NU2AYGAWOs0Bb0Iov3W8tVqaOT6iuBMCbfOjY1EyMcmA5iNzKUBg+SQRZ77+5m3y2LfIMW4Ksbk
-	HHykESjhbJDLxG7nnbnr0ipqmMevskiLLx7OJnEJyiVWo1Nx+UzFc1YgoCuzt/AUl5yBQgqiGp3
-	gtiphVBjjq4uQZlQxusrJMZzNhrV5w19wP/kL9Mx7669LpF6bq4nvIGtvO4EarMwiCllJu4ZE8M
-	dgEAIQ5BFspfty8GE0Rxa/llcXAc=
-X-Google-Smtp-Source: AGHT+IFRkpqclsNYUNbGMkAuZhXHS3Qv2yCkSEuPjzYXQeiL3SAyG+ATQky02YBh1lI/bsu4q3uPPA==
-X-Received: by 2002:a05:6000:2381:b0:3e5:47a9:1c7a with SMTP id ffacd0b85a97d-40e4a52475bmr1878562f8f.62.1758780722328;
-        Wed, 24 Sep 2025 23:12:02 -0700 (PDT)
-Received: from localhost ([41.210.143.179])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc5602f15sm1453105f8f.39.2025.09.24.23.12.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 23:12:02 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:11:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Andreas Koensgen <ajk@comnets.uni-bremen.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+	s=arc-20240116; t=1758780864; c=relaxed/simple;
+	bh=73rRDPOsJT3cODBZ1vTdZ/565gIVbG9t2DSJXUQYCmo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CkVli/gfYvzrRKoG6l4xZhze5S6WPbzFCkXxynotISq19c13PLMhNoEAVYQ/29Jfb0z4oWkJPLR/ZnuMZ7OlJRYlotpZoKIAHtm7imaXcN8TKxrRYF/FzZKy6fhsCSI02Rpu9utGGgFE5iRaG4qH2GsI4I05efSNX/TypxSWwQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kI1IlVOn; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758780863; x=1790316863;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=73rRDPOsJT3cODBZ1vTdZ/565gIVbG9t2DSJXUQYCmo=;
+  b=kI1IlVOnbAKrjvD4Dr8R9e4UZ87a1E7A4nyMa3oLZPqxBmWOWwimqkOh
+   U9mkNb1oHm9HIM7mCmwyinWxWRaOP9QKC7WZgq1hwJc7hgk687jeleTtH
+   zCHoeG4+t2Moa2W97cF8bbwPZ7MDXcgH8CNAS1KDIk5N8/lap7lRLE3NH
+   +t6wutLQp6gonNE9pa6yvOE1sVfclbKK71/I4YAsO9Wj6MODJy6BM8rOg
+   YHdrezeNMBu3XO/GanbNCoRlClRO3ONoevnUdpQiTAicLec4h7fhp+vhz
+   jcer4TM7H/sgK2nbXY1cxUvp9H4BxsUqjDvSpgZ9WQ+0FF3iLVIdzn0B/
+   g==;
+X-CSE-ConnectionGUID: iIsFff5EQDadROxjW2E61A==
+X-CSE-MsgGUID: 3vaasjN6QgW3lD05pqvo5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="61139500"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="61139500"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 23:14:22 -0700
+X-CSE-ConnectionGUID: ciWD4v70SX+oYfBYM0vj1w==
+X-CSE-MsgGUID: G3fFtTAzS56daeEMqmRAyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="181528291"
+Received: from spr.sh.intel.com ([10.112.230.239])
+  by orviesa004.jf.intel.com with ESMTP; 24 Sep 2025 23:14:17 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	broonie@kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
 	linux-kernel@vger.kernel.org,
-	syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
-Subject: Re: [PATCH net-next v2] 6pack: drop redundant locking and refcounting
-Message-ID: <aNTdLU7amoq0bCnS@stanley.mountain>
-References: <20250925051059.26876-1-dqfext@gmail.com>
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v4 02/17] perf/x86: Setup the regs data
+Date: Thu, 25 Sep 2025 14:11:58 +0800
+Message-Id: <20250925061213.178796-3-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
+References: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925051059.26876-1-dqfext@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 01:10:59PM +0800, Qingfang Deng wrote:
-> The TTY layer already serializes line discipline operations with
-> tty->ldisc_sem, so the extra disc_data_lock and refcnt in 6pack
-> are unnecessary.
-> 
-> Removing them simplifies the code and also resolves a lockdep warning
-> reported by syzbot. The warning did not indicate a real deadlock, since
-> the write-side lock was only taken in process context with hardirqs
-> disabled.
-> 
-> Reported-by: syzbot+5fd749c74105b0e1b302@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68c858b0.050a0220.3c6139.0d1c.GAE@google.com/
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> ---
-> v2: add Closes tag
->  - https://lore.kernel.org/netdev/20250923060706.10232-1-dqfext@gmail.com/
-> 
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Thanks!
+The current code relies on the generic code to setup the regs data.
+It will not work well when there are more regs introduced.
+Introduce a X86-specific x86_pmu_setup_regs_data().
+Now, it's the same as the generic code. More X86-specific codes will be
+added later when the new regs.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ arch/x86/events/core.c       | 32 ++++++++++++++++++++++++++++++++
+ arch/x86/events/intel/ds.c   |  4 +++-
+ arch/x86/events/perf_event.h |  4 ++++
+ 3 files changed, 39 insertions(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index f4afef16cbab..92678f61f819 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -1685,6 +1685,38 @@ static void x86_pmu_del(struct perf_event *event, int flags)
+ 	static_call_cond(x86_pmu_del)(event);
+ }
+ 
++void x86_pmu_setup_regs_data(struct perf_event *event,
++			     struct perf_sample_data *data,
++			     struct pt_regs *regs)
++{
++	u64 sample_type = event->attr.sample_type;
++
++	if (sample_type & PERF_SAMPLE_REGS_USER) {
++		if (user_mode(regs)) {
++			data->regs_user.abi = perf_reg_abi(current);
++			data->regs_user.regs = regs;
++		} else if (!(current->flags & PF_KTHREAD)) {
++			perf_get_regs_user(&data->regs_user, regs);
++		} else {
++			data->regs_user.abi = PERF_SAMPLE_REGS_ABI_NONE;
++			data->regs_user.regs = NULL;
++		}
++		data->dyn_size += sizeof(u64);
++		if (data->regs_user.regs)
++			data->dyn_size += hweight64(event->attr.sample_regs_user) * sizeof(u64);
++		data->sample_flags |= PERF_SAMPLE_REGS_USER;
++	}
++
++	if (sample_type & PERF_SAMPLE_REGS_INTR) {
++		data->regs_intr.regs = regs;
++		data->regs_intr.abi = perf_reg_abi(current);
++		data->dyn_size += sizeof(u64);
++		if (data->regs_intr.regs)
++			data->dyn_size += hweight64(event->attr.sample_regs_intr) * sizeof(u64);
++		data->sample_flags |= PERF_SAMPLE_REGS_INTR;
++	}
++}
++
+ int x86_pmu_handle_irq(struct pt_regs *regs)
+ {
+ 	struct perf_sample_data data;
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index c0b7ac1c7594..e67d8a03ddfe 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2126,8 +2126,10 @@ static void setup_pebs_adaptive_sample_data(struct perf_event *event,
+ 			regs->flags &= ~PERF_EFLAGS_EXACT;
+ 		}
+ 
+-		if (sample_type & (PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER))
++		if (sample_type & (PERF_SAMPLE_REGS_INTR | PERF_SAMPLE_REGS_USER)) {
+ 			adaptive_pebs_save_regs(regs, gprs);
++			x86_pmu_setup_regs_data(event, data, regs);
++		}
+ 	}
+ 
+ 	if (format_group & PEBS_DATACFG_MEMINFO) {
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 2b969386dcdd..12682a059608 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -1278,6 +1278,10 @@ void x86_pmu_enable_event(struct perf_event *event);
+ 
+ int x86_pmu_handle_irq(struct pt_regs *regs);
+ 
++void x86_pmu_setup_regs_data(struct perf_event *event,
++			     struct perf_sample_data *data,
++			     struct pt_regs *regs);
++
+ void x86_pmu_show_pmu_cap(struct pmu *pmu);
+ 
+ static inline int x86_pmu_num_counters(struct pmu *pmu)
+-- 
+2.34.1
 
 
