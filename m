@@ -1,158 +1,146 @@
-Return-Path: <linux-kernel+bounces-833249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F335FBA187F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A94BA1895
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8641C24A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A829C741FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165A532142E;
-	Thu, 25 Sep 2025 21:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD8332142E;
+	Thu, 25 Sep 2025 21:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B8sZz5an"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="j7GI8KR5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GzHyPI6K"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FFF2D0606
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C772D0606;
+	Thu, 25 Sep 2025 21:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758835693; cv=none; b=Sp9iVDMIYOXYODgHRKixEfCwLA0+B8zjFjJY4MutkklQGz8765SU+u+VePeeqRHiYlpbNoOxKpXpC4B6FOsHZnAobWm8wRoaWenyeLwgoGEw2aNA7J4TPdC0+kgAHjI1wuuLZJJGW2khpuxR0O5L9KHX1fCYQg3i5iJb+AGZ5UA=
+	t=1758835778; cv=none; b=X/UACUVxwA7zKZfqmA+ElscME/mWblU8rIr/HlkQWNBgfZIneJgbru1rZu3eMvROjy0lbUZXvMEwbKLmb0LNd3P+HKBsDEYiV4QV3N+312ZyKTrRQBM9u/gEB2KDJiAaNtFqe/jZivMrboTsVMFZapQk7cHm2KQnyxECtl6suhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758835693; c=relaxed/simple;
-	bh=mGf87w9ZJVllgijc5JEtI9vZxiYgE1xsayOGWYC3GHc=;
+	s=arc-20240116; t=1758835778; c=relaxed/simple;
+	bh=nU0iYwCQnlSmw5yBlXrF7I66fGXmBwqxgfW69Er0acI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrrPQU5OyDn+cQoA90iYRDVEH8yH9a6+FifM136TVHsQ9ROIu/79BxhciRydy+lG4qOaDS17ltwcbgQdWael0+K+SrY+G2KjLFUZUpepcJNWxM1x5yXIV7uD8c2o9NRh0ifdJ4VvnbSoBOga9xIitU+aw07WirI0LYxjjSghBUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B8sZz5an; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIQMvU022820
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:28:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xVJa3hRBr3b8zN4SyC/HCbPD
-	O2Mv7vIE7SFYZLeD+YA=; b=B8sZz5anXZPlbzTc9hWAN039PM5eI/vPGLR9keVD
-	lp79P3PfevuRe+d5Kc1Zaz8mlSd11QLO931d5PcKqGVijyYlGPGB1nXoKRUwNdBF
-	r3mDHD73DhqAZQh3wDMrj68lJ+5USVUq75bsLx66tk2WZrp/3QORyHSOEcvLe9wf
-	y8omFZDmX2TZuDBkSmtRMFPvf83NQiUaucsmNvvZSrZGrMqRnyJixksO4+y1EztY
-	VnHysQoE83yxbJZqAyvpNyBOsYtcUUGmarQWl/TG5ay+HJFznS5hOU4wO+7GGm46
-	GcJtkNrDyZm9WdrSfEoFfeVC0G+0eeIKz5SsHpJie/v9/A==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0qrews-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:28:11 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4dbd8484abbso17768351cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:28:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758835690; x=1759440490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xVJa3hRBr3b8zN4SyC/HCbPDO2Mv7vIE7SFYZLeD+YA=;
-        b=QCQZzA22yMgsY+QjMGDq73EkmLdSzCrarj9Q5Z6BeR2INVeLkCzZk/4DIu0FEKNRqT
-         0YJODr/2r4Zkl2VXbDyzp9cPOEgo3GYyuvIrFkzB+B5oX7soVnLtj2G+GVSrm8YSp5Bc
-         q0WRr4TiaDTDLHIsy1xPSVp7MBWghiIJFAGbOGZvMwguX6heTnLVrnVWhTvfb8rK7vjB
-         V6+lIGRLmuiYUyBKHqaq/LsS8KmX6WXmZFPPszgWY/Yp/Py2SzEpVeu5ikGxojhqGkKo
-         X7jgiP6r78L9azzMEjZePV9xkugBzDsAvfecM9t/CqAPBFFZx8wDnHQ53xreUsFjNoV2
-         gJTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHvT3PMJH84NqMs5A0SApCrkBQgplpMuecmKMQEi5kwn4SEyt+Dp1NeMKy3uujtA7JC+MELf2KCm4jf2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRsmkhfvdEGxG6QR3PM//lKmYpvyVu5KduVvVANpLK1cWqSx61
-	AKy2iFhUhOhBP0aUhGFucdMZgflD/e98NRQXJozSfeLrqenuQ6GuihUqvpsyaxC2elQDfq9zjNE
-	D84sFIJmOV3MBHzdPgPESZv8ArpRPI19BA45ijtWigsQYTZ64hiynjG0uN736DBZ7Tec=
-X-Gm-Gg: ASbGncsoCPSGPTo1V3nSPD3Lb8ZhueI8nuUca5B0XXSqBUfbi1Cs/iK3exztV8pDZn5
-	BhptdnvmXdQQnuPfxT0pogYgZU4rn010Rp2PZGyIY1OYzUsDiFQdaIvOwrcepZW/SPMCs3EwWlP
-	bq0GlJvqbe1dBYKkWb3yGWDLC+Be9/HJPHfav5EGy76IKRBJwV+nPVZJMctyEhMDtBBFeKN1gFz
-	WkAzX7wk24i2GeRU/i6f0rYFt6jW2wHss6lt6AngHWikBhRV6jjNdux1cVANKZrkYPUDGJlmBXo
-	hrA7uDo9hUBc93n9iLNQ4Wt9zmYleE6i9hmJv0GjJlvqT3MgbzEb+KustZVWiWoRWTSci8JQbZb
-	lsPnTJgwg2v5wLBGXkqjeuPSTtkE+hEtEiUqlODFu+pus76Kz1mnu
-X-Received: by 2002:a05:622a:4208:b0:4b6:2360:accd with SMTP id d75a77b69052e-4da4d125b3bmr70727611cf.79.1758835689966;
-        Thu, 25 Sep 2025 14:28:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERpLILMpHgYah/4YChT5n6vChPATcZxT+HTlD/SkOj7T7pjCCewNbSF+lhHTpWFPOyyIoKdQ==
-X-Received: by 2002:a05:622a:4208:b0:4b6:2360:accd with SMTP id d75a77b69052e-4da4d125b3bmr70727131cf.79.1758835689375;
-        Thu, 25 Sep 2025 14:28:09 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313dd66fesm1132195e87.54.2025.09.25.14.28.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 14:28:08 -0700 (PDT)
-Date: Fri, 26 Sep 2025 00:28:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-Subject: Re: [PATCH 7/9] clk: qcom: clk-alpha-pll: Update the PLL support for
- cal_l
-Message-ID: <wbabc2pjwe2ir6pb2nd5s3hfaf6y7nd6baabjl3rdgawtsdxq3@ncedo6jio7rz>
-References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
- <20250924-knp-clk-v1-7-29b02b818782@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+EltLBSzCbIA6QnNZoqh/lX8lcf92PHSsVkWuUVqRmF98RtvXt1+LqxzGgOgOy5YNQM8DArG2jc3D7olZCsnTZ8JrfheInAbe1bm9hWf4XCqACt/VrNxNrIbeK3Lc3Eq22UpABgOEvT/DuPM4e+btMhh9bT2r1vF3jSXOBdGq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=j7GI8KR5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GzHyPI6K; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4953BEC0232;
+	Thu, 25 Sep 2025 17:29:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 25 Sep 2025 17:29:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1758835774; x=1758922174; bh=GC/Q1ACXxMMzMjnRKBYD0oL9mQX91Hl7
+	49jKbfI6tmw=; b=j7GI8KR5XQuAPHpemdB2VcGSpCpLuq7LnMMLHFDNj2agL3ai
+	ZIygT2mnvcxkG2JsoHIcTpaNRteNADcwuee2GN5D5j9UA1ZViSuW01M5geBRk3ed
+	wpeBFeDR6PxJKo5CKk90qiN208nE7ORrP17n5mu7wMc4N5eisEkV6GKEXG168dPO
+	pkJ7qR+Cq6GqT22yWEaFkIcuC1m3/JQJ5euaxyUMvi6UEehkFWsLscfELZkAL4Az
+	Zf2YnrQZZq3Ts+96a7i9bCL5GMnOYibltZNVSpPBZCZFkeXc8qIi1yiZhPDQwbxF
+	7eaB1eAkJITOr2IO/mU4wQZ7l/CMIbXGiVJqCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758835774; x=
+	1758922174; bh=GC/Q1ACXxMMzMjnRKBYD0oL9mQX91Hl749jKbfI6tmw=; b=G
+	zHyPI6KwJ+QnhkIt2tlCN6h2GmvzDCajIcOYY+0ebJU9U8O/kqFQxFTImcS1LQXK
+	wJ466j7fA8J6q439hrbbBNNb7OF15VGYP0/MAyTr+35c7zPod4d6W4Z18FjX1tiV
+	iOkS+OM2GYZ90uyU9IY/vLuV29G4w2Kdjm+oGeobUWxGxJ6Sxo4nxgvajRnDqgOZ
+	xo0QFZmwI4S7pgEwvNR48OdPVL9BewLtwdBvrSzHdjLHObdX23EZ6qTRxDh6WXuF
+	r4m+XWjZsDHmm0ruhy0i1lxxPWFG7nD5wstyQuMuj+2+9WqyfcXo/svIo/5x/2Lu
+	YcQqwnBR/pK9AwoT5IhJw==
+X-ME-Sender: <xms:PbTVaJQFBu7l7xbm-4uRSe7bQ7aT2-2Wu7QVDSGUxKsPdWkPYtF0yg>
+    <xme:PbTVaKClegVWNrXfTjRqSpNVYdDGtOeuQis6cDIMKD2hmSPkVoM7KvLffdcYmgwFU
+    LrmVuNPbl-5kvUS-78u_H33rfBhxsQVg0l2lQvUEwNuArpQ47FlP4M>
+X-ME-Received: <xmr:PbTVaJuMBiZbdoqCOrU0sgx4Po3Ea5G2gs42Kw_EHkjdvlUUZF9oYTpYjRO4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeehjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepufgrsghrihhn
+    rgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrghilhdrnhgvtheqnecuggftrf
+    grthhtvghrnhepgfdvgeeitefffedvgfdutdelgeeihfegueehteevveegveejudelfeff
+    ieehledvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopedufedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfihilhhfrhgvugdrmhgrlhhlrgifrgesfi
+    gutgdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthho
+    pegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheplhhinhhugidqkh
+    hsvghlfhhtvghsthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhh
+    nhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:PbTVaA-oazsC8BJcTfkOJ8vUa6ykrdG59jE5HhAy-4YL7kax1sEZYQ>
+    <xmx:PbTVaIRHxpNYSbQveFqxdroIGYzm5DLY3EoingIQJ95gRT-E5ZEdww>
+    <xmx:PbTVaKWe2FdsMab3YxlN6o0Wok2KDB5oIvauWQisOLEo3MBrll0xpg>
+    <xmx:PbTVaC9KwJxUg0_8w7aPen79M-P3hHvWfQnnxVUDU7iHLGEDtGnUrg>
+    <xmx:PrTVaOTXwRaSAvuDIxXJ-Gbp4mzIvO5SLsP_5GMsqNe8s9J4IQ-5XzP8>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Sep 2025 17:29:33 -0400 (EDT)
+Date: Thu, 25 Sep 2025 23:29:31 +0200
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] net/tls: support maximum record size limit
+Message-ID: <aNW0OxiN8M2hv7Qu@krikkit>
+References: <20250923053207.113938-1-wilfred.opensource@gmail.com>
+ <aNQvgD7AvFe7-sAv@krikkit>
+ <4a83e2f526013516e2827a4ff8899b0437d08a25.camel@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250924-knp-clk-v1-7-29b02b818782@oss.qualcomm.com>
-X-Proofpoint-GUID: JCuXPPFeJcJDurqZ8nMS158Juv3NupkY
-X-Proofpoint-ORIG-GUID: JCuXPPFeJcJDurqZ8nMS158Juv3NupkY
-X-Authority-Analysis: v=2.4 cv=api/yCZV c=1 sm=1 tr=0 ts=68d5b3eb cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=QDpnt0wtCZc4EWvjjt8A:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX0BFCENaMbKAp
- qs8zuM7hLa+hdda2WPdQuyoSmQzc5NH+Py+2iGzK+ezW0BSegg7GPYhf+uwmE+HK7tdwJlX3cw4
- 0fO3DYk3tpZC2nz3AANi/vm3jr5m2r1h1FCgbjOxa3P5QDboiL1mTXYubdxIeS53mkpXzllaxN7
- RiPfqSO3xYvk7NQ6VFp1bWocwU3fcmjDc1dlBCy3UR82lqpok5sWnDuhKLkw/eikJUOIeBd170o
- urjp6lZ3pmOV1Qr0j10aNBHkHFwZMogPE5cZGVJtMs770dAezjyaHMQ4doq4OjVnoLphkqZrkro
- eCbCx+/ubs2d2HFbvOCbJgaaqqRFB2Qf+vX13bBbK2kVI36uC6yoQAeUuetswvOMJabcXKZRF44
- BvgB/upLl0Lhaa8UQaLHKhU3TqX7Zg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 adultscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4a83e2f526013516e2827a4ff8899b0437d08a25.camel@wdc.com>
 
-On Wed, Sep 24, 2025 at 03:58:59PM -0700, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Recent QCOM PLLs require the CAL_L field to be programmed according to
-> specific hardware recommendations, rather than using the legacy default
-> value of 0x44. Hardcoding this value can lead to suboptimal or incorrect
-> behavior on newer platforms.
-> 
-> To address this, introduce a `cal_l` field in the PLL configuration
-> structure, allowing CAL_L to be set explicitly based on platform
-> requirements. This improves flexibility and ensures correct PLL
-> initialization across different hardware variants.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 6 +++++-
->  drivers/clk/qcom/clk-alpha-pll.h | 1 +
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
+2025-09-25, 05:39:14 +0000, Wilfred Mallawa wrote:
+> On Wed, 2025-09-24 at 19:50 +0200, Sabrina Dubroca wrote:
+> > > @@ -1111,6 +1180,11 @@ static int tls_get_info(struct sock *sk,
+> > > struct sk_buff *skb, bool net_admin)
+> > >  			goto nla_failure;
+> > >  	}
+> > >  
+> > > +	err = nla_put_u16(skb, TLS_INFO_TX_RECORD_SIZE_LIM,
+> > > +			  ctx->tx_record_size_limit);
+> > 
+> > I'm not sure here: if we do the +1 adjustment we'd be consistent with
+> > the value reported by getsockopt, but OTOH users may get confused
+> > about seeing a value larger than TLS_MAX_PAYLOAD_SIZE.
+> Makes sense to keep the behaviour the same as getsockopt() right? So
+> add the +1 changes here based on version (same as getsockopt()). In
+> which case, it should never exceed TLS_MAX_PAYLOAD_SIZE.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
+The max value for 1.3 is TLS_MAX_PAYLOAD_SIZE+1 (after adjustment),
+since it's the max value that will be accepted by setsockopt (after
+passing the "value - 1 > TLS_MAX_PAYLOAD_SIZE" check). And it's the
+value most users will see since it's the default.
 
 -- 
-With best wishes
-Dmitry
+Sabrina
 
