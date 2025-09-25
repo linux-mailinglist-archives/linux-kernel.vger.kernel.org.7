@@ -1,59 +1,87 @@
-Return-Path: <linux-kernel+bounces-833193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FFBBA1600
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F924BA160C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280F21B280A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20E81B283DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D490632143D;
-	Thu, 25 Sep 2025 20:36:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B4431E0F0;
-	Thu, 25 Sep 2025 20:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F325C31FED7;
+	Thu, 25 Sep 2025 20:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLQjiq6K"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36D835940
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758832614; cv=none; b=H8x2fhkyCGXslPdNZqADFR2GOGnpcYhrxW1wbW78EYezqxklY7w5IRm2GBoaoaw5uVhVd9fzmtivE3nX8omt6q3VJjZ/YmiLxmUkwIm9/DdG6XH3yLcTENHN8b+BJ8zjfCvVgyv/o1GauM1kdzDBEgpsCuFg0HS3t5IvtLiZIdk=
+	t=1758832689; cv=none; b=ESKGOMZ/EYYKKHlCiOynSKMOylr6Z9hO8vPjECXhkQhBIaXcjShDQpn5CctgIagkTpsXSwpK4eQfIj9RYCo57fdA06T502bP/rb4/8ZdCvZ6I6F6L9vvUeBvQ35kYVTgWHCWiSi633SIbqHCYGoEjBBKqUtBVI33FkSBvmT2isw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758832614; c=relaxed/simple;
-	bh=Hm2Qd5r+67hzVASCM80xs+J6rdkp6prOWAVTiQnZvME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NKaxN2Zec5dQta5Qe4C3F1y75QWh4yCkMoIPeVqTyWwar7xR/4Q/3QSiyy3WM/yI0R4iKxq7jd1N1QuHr+jU3xuv2BUYDZMp7LCOz0qAWbn8RymMScTJBNJr0QpILjPaDmA8VHaeCK1D5ihFAE3GyplD0oaaUnDrOAEdO5efXD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A99861692;
-	Thu, 25 Sep 2025 13:36:43 -0700 (PDT)
-Received: from pluto.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15BFA3F694;
-	Thu, 25 Sep 2025 13:36:48 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org,
-	d-gole@ti.com,
-	souvik.chakravarty@arm.com,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH 10/10] firmware: arm_scmi: Use new Telemetry traces
-Date: Thu, 25 Sep 2025 21:35:54 +0100
-Message-ID: <20250925203554.482371-11-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925203554.482371-1-cristian.marussi@arm.com>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1758832689; c=relaxed/simple;
+	bh=gyNOq+vjfFASVKnd7byhOaLzYQarFIGc/atZTUlby8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4a3d+VjRYA7YUttPy69+Ria33067jSkBSFXHp76gWy/HF81ca0Kr8rS9787E1ooiQ1Tm+4OgbepEB435XLNlwX0EhkXZNCb6YYLMvRJD1NdcCeMdAMoIJZb4gZMqFx61KnngcSMW34+gR8iX8eiO2FIqtFu4M+mfFWgctaSmvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLQjiq6K; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-854585036e8so154905285a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758832687; x=1759437487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3obq1lco9YVj92DdZN2mSKLWVBc5lwf9ZWKpWyI424=;
+        b=YLQjiq6K2dM44ICNa0zmZrpdkZA/T65SEnJWHLYSb8ZooTOHVnPhjydsSyTf/TBmhY
+         J2sN47Xvwj/dMkeMl9+OAXPWTrVn9AY3kNaEVfK5EziHXJ7rUZeERtCcuCz+KQTFX/FE
+         wvEW4s0yYQ7VzHjDVzNRoniY5Nhu9anUmZV17hbwHT7tc/pdJ3OQhBSkmD9xMXGbplif
+         gpB0YLWF6vUNiDMQpbBJxtS1FwmYmenAljfy57PVxqsxR3mnWrnSMZkPHY0VUhrx7PaV
+         Oi9OWYcRcAMEDjrcCMEBGH2fEwM7bjW1JEE4qSFy5aP2Pc3IYgm/HYwmcJIzXa692gkQ
+         ms1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758832687; x=1759437487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/3obq1lco9YVj92DdZN2mSKLWVBc5lwf9ZWKpWyI424=;
+        b=BYDiWl5ADyTZwoJN38H+UaISTw/f+vQtSqnxmKogBIXdgTq/AH8SzOwTR/TOa+Bahv
+         NQX5ifRzBiY5y8bcjLLRpiYpJxQzAvehh1FPnzinGZFk7idZhQxHqH3DuhXiR/wSD8kW
+         V/rhnHJga+bPLMaKDgP3inJBeGt8EEYW8G9mcg0LZFl9KDLlpAhXx9e0Oc6W3HN7VTms
+         IYhCKoPaeX/Km/ibXAi6wEht+gcSxEQPzllIRl/F4pkD2mTQA4Fhso+i3TxpHuaUYs+A
+         PyNeKYqq6VfeZxOTc/mwzfuoCDjR9qUHhCHVHVATmEGTVZg+yhFXR5eFyNBB+yAK5iQ6
+         LMDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8PsHakG7QIce+A0IRjSVEGzb/6AV6duB6ACAbBgQovCk/tmBa1B5ye+AMLKb7bTQaYxT9kS3u2WX6SUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWknlvxgybQ4JlyRLRMzzMUpwGWxT15qI2LK0CTnRCqyGVb8Ky
+	InxYnIecoRADntj9I8rrwWS9uaBIFo29MFqm19aXxF7GeSmIwxDvC4np
+X-Gm-Gg: ASbGncsQCRIJiBRN0xdj4l1w6PqIC9siu/HAdAoIa0nJ/JooAo7He53oBAFuxWu+lbF
+	B+8tyekwkYpEJhKez/wjLX6ZVMuQhUE5mHrRK3zpWRMwfxnKam9dlQxGRiYX7ZrlfHcp32f3bEf
+	dC13Gr3HfX6Mex3NDnZT31dCtWYno0vfCqk6/xiFHZzRhXUpc1kNgUBRbhCgKYUqyL30l+6znEt
+	S4IoNe8ou3HkbTWnGqiHeZx8ciJIUzKYleVOpOCXPDF4QEP2AA007o6aqjIXq8UNPeJ64tDt1tC
+	uRuC4nGMy7MoZBBgjaJGG/J2S0iPGpXWL7uQ4WD1h74NhpMxwgJZxqywrm8dnOXHVXzwTEJ/yz9
+	lBjaZZjwXlpi+3TiAvkNAwBHRGH8P0qtdVWYccnJ6Zt4=
+X-Google-Smtp-Source: AGHT+IHbYhfGDjyNvmvJZMKZPPt40kN0VMaibW2U8d0/Cl6QStbX0UHbkCPSSEtNvMQu3xpUc9rC6g==
+X-Received: by 2002:a05:6214:20a9:b0:726:91d:bdb8 with SMTP id 6a1803df08f44-7fc45172a40mr80850616d6.55.1758832686606;
+        Thu, 25 Sep 2025 13:38:06 -0700 (PDT)
+Received: from rpthibeault-XPS-13-9305.. ([23.233.177.113])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8016cf8f949sm16430056d6.54.2025.09.25.13.38.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 13:38:06 -0700 (PDT)
+From: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>,
+	ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+Subject: [PATCH] ntfs3: fix uninit memory after failed mi_read in mi_format_new
+Date: Thu, 25 Sep 2025 16:36:59 -0400
+Message-ID: <20250925203701.223744-2-rpthibeault@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,179 +90,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Track failed SHMTI accesses and received notifications.
+attr_insert_range() called from ntfs_fallocate() has 2 different
+code paths that trigger mi_read() (which calls ntfs_read_bh).
+If the first mi_read() -> ntfs_read_bh() fails with an IO error, it
+leaves an uninitialized buffer in the buffer cache.
+The second mi_read() -> ntfs_read_bh() then uses that buffer,
+where we get KMSAN warning "uninit-value in ntfs_read_bh".
 
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+The fix is to check if mi_read failed in mi_format_new.
+
+Reported-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
+Tested-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+Fixes: 4342306f0f0d5 ("fs/ntfs3: Add file operations and implementation")
+Signed-off-by: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
 ---
- drivers/firmware/arm_scmi/telemetry.c | 57 ++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 9 deletions(-)
+ fs/ntfs3/record.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firmware/arm_scmi/telemetry.c b/drivers/firmware/arm_scmi/telemetry.c
-index f03000c173c2..aa706518e5b6 100644
---- a/drivers/firmware/arm_scmi/telemetry.c
-+++ b/drivers/firmware/arm_scmi/telemetry.c
-@@ -23,6 +23,8 @@
- #include "protocols.h"
- #include "notify.h"
- 
-+#include <trace/events/scmi.h>
-+
- /* Updated only after ALL the mandatory features for that version are merged */
- #define SCMI_PROTOCOL_SUPPORTED_VERSION		0x10000
- 
-@@ -1021,8 +1023,10 @@ static void scmi_telemetry_tdcf_blkts_parse(struct telemetry_info *ti,
- 
- 	/* Check for spec compliance */
- 	if (USE_LINE_TS(payld) || USE_BLK_TS(payld) ||
--	    DATA_INVALID(payld) || (PAYLD_ID(payld) != 0))
-+	    DATA_INVALID(payld) || (PAYLD_ID(payld) != 0)) {
-+		trace_scmi_tlm_access(0, "BLK_TS_INVALID", 0, 0);
- 		return;
-+	}
- 
- 	/* A BLK_TS descriptor MUST be returned: it is found or it is crated */
- 	bts = scmi_telemetry_blkts_lookup(ti->dev, &ti->xa_bts, payld);
-@@ -1031,6 +1035,9 @@ static void scmi_telemetry_tdcf_blkts_parse(struct telemetry_info *ti,
- 
- 	/* Update the descriptor with the lastest TS*/
- 	scmi_telemetry_blkts_update(shmti->last_magic, bts);
-+
-+	trace_scmi_tlm_collect(bts->last_ts, (u64)payld,
-+			       bts->last_magic, "SHMTI_BLK_TS");
- }
- 
- static void scmi_telemetry_tdcf_data_parse(struct telemetry_info *ti,
-@@ -1046,8 +1053,10 @@ static void scmi_telemetry_tdcf_data_parse(struct telemetry_info *ti,
- 
- 	id = PAYLD_ID(payld);
- 	de = xa_load(&ti->xa_des, id);
--	if (!de)
-+	if (!de) {
-+		trace_scmi_tlm_access(id, "DE_INVALID", 0, 0);
- 		return;
-+	}
- 
- 	tde = to_tde(de);
- 	/* Update DE location refs if requested: normally done only on enable */
-@@ -1094,6 +1103,8 @@ static void scmi_telemetry_tdcf_data_parse(struct telemetry_info *ti,
- 		tde->last_ts = tstamp;
- 	else
- 		tde->last_ts = 0;
-+
-+	trace_scmi_tlm_collect(0, de->info->id, tde->last_val, "SHMTI_DE_UPDT");
- }
- 
- static int scmi_telemetry_tdcf_line_parse(struct telemetry_info *ti,
-@@ -1139,8 +1150,10 @@ static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
- 		fsleep((SCMI_TLM_TDCF_MAX_RETRIES - retries) * 1000);
- 
- 		startm = TDCF_START_SEQ_GET(tdcf);
--		if (IS_BAD_START_SEQ(startm))
-+		if (IS_BAD_START_SEQ(startm)) {
-+			trace_scmi_tlm_access(0, "MSEQ_BADSTART", startm, 0);
- 			continue;
+diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
+index 714c7ecedca8..98d2e5517077 100644
+--- a/fs/ntfs3/record.c
++++ b/fs/ntfs3/record.c
+@@ -431,13 +431,18 @@ int mi_format_new(struct mft_inode *mi, struct ntfs_sb_info *sbi, CLST rno,
+ 		seq = rno;
+ 	} else if (rno >= sbi->mft.used) {
+ 		;
+-	} else if (mi_read(mi, is_mft)) {
+-		;
+-	} else if (rec->rhdr.sign == NTFS_FILE_SIGNATURE) {
+-		/* Record is reused. Update its sequence number. */
+-		seq = le16_to_cpu(rec->seq) + 1;
+-		if (!seq)
+-			seq = 1;
++	} else {
++		err = mi_read(mi, is_mft);
++		if (err) {
++			return err;
 +		}
- 
- 		/* On a BAD_SEQ this will be updated on the next attempt */
- 		shmti->last_magic = startm;
-@@ -1152,18 +1165,25 @@ static int scmi_telemetry_shmti_scan(struct telemetry_info *ti,
- 
- 			used_qwords = scmi_telemetry_tdcf_line_parse(ti, next,
- 								     shmti, update);
--			if (qwords < used_qwords)
-+			if (qwords < used_qwords) {
-+				trace_scmi_tlm_access(PAYLD_ID(next),
-+						      "BAD_QWORDS", startm, 0);
- 				return -EINVAL;
-+			}
- 
- 			next += used_qwords * 8;
- 			qwords -= used_qwords;
- 		}
- 
- 		endm = TDCF_END_SEQ_GET(eplg);
-+		if (startm != endm)
-+			trace_scmi_tlm_access(0, "MSEQ_MISMATCH", startm, endm);
- 	} while (startm != endm && --retries);
- 
--	if (startm != endm)
-+	if (startm != endm) {
-+		trace_scmi_tlm_access(0, "TDCF_SCAN_FAIL", startm, endm);
- 		return -EPROTO;
-+	}
- 
- 	return 0;
- }
-@@ -1544,6 +1564,8 @@ static void scmi_telemetry_scan_update(struct telemetry_info *ti, u64 ts)
- 			tde->last_ts = tstamp;
- 		else
- 			tde->last_ts = 0;
 +
-+		trace_scmi_tlm_collect(ts, de->info->id, tde->last_val, "FC_UPDATE");
++		if (rec->rhdr.sign == NTFS_FILE_SIGNATURE) {
++			/* Record is reused. Update its sequence number. */
++			seq = le16_to_cpu(rec->seq) + 1;
++			if (!seq)
++				seq = 1;
++		}
  	}
- }
  
-@@ -1622,8 +1644,11 @@ static int scmi_telemetry_tdcf_de_parse(struct telemetry_de *tde,
- 		fsleep((SCMI_TLM_TDCF_MAX_RETRIES - retries) * 1000);
- 
- 		startm = TDCF_START_SEQ_GET(tdcf);
--		if (IS_BAD_START_SEQ(startm))
-+		if (IS_BAD_START_SEQ(startm)) {
-+			trace_scmi_tlm_access(tde->de.info->id, "MSEQ_BADSTART",
-+					      startm, 0);
- 			continue;
-+		}
- 
- 		/* Has anything changed at all at the SHMTI level ? */
- 		scoped_guard(mutex, &tde->mtx) {
-@@ -1639,11 +1664,16 @@ static int scmi_telemetry_tdcf_de_parse(struct telemetry_de *tde,
- 		if (DATA_INVALID(payld))
- 			return -EINVAL;
- 
--		if (IS_BLK_TS(payld))
-+		if (IS_BLK_TS(payld)) {
-+			trace_scmi_tlm_access(tde->de.info->id,
-+					      "BAD_DE_META", 0, 0);
- 			return -EINVAL;
-+		}
- 
--		if (le32_to_cpu(payld->id) != tde->de.info->id)
-+		if (le32_to_cpu(payld->id) != tde->de.info->id) {
-+			trace_scmi_tlm_access(tde->de.info->id, "DE_INVALID", 0, 0);
- 			return -EINVAL;
-+		}
- 
- 		/* Data is always valid since NOT handling BLK TS lines here */
- 		*val = LINE_DATA_GET(&payld->l);
-@@ -1667,10 +1697,16 @@ static int scmi_telemetry_tdcf_de_parse(struct telemetry_de *tde,
- 		}
- 
- 		endm = TDCF_END_SEQ_GET(tde->eplg);
-+		if (startm != endm)
-+			trace_scmi_tlm_access(tde->de.info->id, "MSEQ_MISMATCH",
-+					      startm, endm);
- 	} while (startm != endm && --retries);
- 
--	if (startm != endm)
-+	if (startm != endm) {
-+		trace_scmi_tlm_access(tde->de.info->id, "TDCF_DE_FAIL",
-+				      startm, endm);
- 		return -EPROTO;
-+	}
- 
- 	guard(mutex)(&tde->mtx);
- 	tde->last_magic = startm;
-@@ -1840,6 +1876,9 @@ scmi_telemetry_msg_payld_process(struct telemetry_info *ti,
- 			tde->last_ts = LINE_TSTAMP_GET(&payld->tsl);
- 		else
- 			tde->last_ts = 0;
-+
-+		trace_scmi_tlm_collect(timestamp, tde->de.info->id, tde->last_val,
-+				       "MESSAGE");
- 	}
- }
- 
+ 	memcpy(rec, sbi->new_rec, sbi->record_size);
 -- 
-2.51.0
+2.43.0
 
 
