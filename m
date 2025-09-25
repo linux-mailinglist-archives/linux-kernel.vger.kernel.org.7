@@ -1,102 +1,96 @@
-Return-Path: <linux-kernel+bounces-832394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CB4B9F3B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:27:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6784CB9F253
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8E419C5B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:27:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315284E4F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8712FF14D;
-	Thu, 25 Sep 2025 12:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB92305058;
+	Thu, 25 Sep 2025 12:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="lMq0Zdbl"
-Received: from mail-m19731118.qiye.163.com (mail-m19731118.qiye.163.com [220.197.31.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="knIl4HKq"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8012FC897;
-	Thu, 25 Sep 2025 12:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C764F2FF669;
+	Thu, 25 Sep 2025 12:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758803247; cv=none; b=rS693tfqH464JJIKgRWVFDjPsoeyVok/rcR/QkItWLOGE6lXrFZHPkAMpvtH+X9cb5U/Rq8SufHAUjqtYCNB7+FVtLtctKlH4JI5ZaYl/jTNFYUEEVMni9MtyM6llK6hlpkU+ihgRwYgnnLXCMB1vRhWL0Sfl7s5bxUYyBZrsGY=
+	t=1758802449; cv=none; b=bYeWsWEKmiDv5Gm6MCPX1UUf/pennl32JcW1YVeuaN9VOe9a2QQOPwos5+oDSGTZoYtjW3DrAcmOjfWm1dkU2cPF76GzwD568Y1Iynt5aXPbbb2zAApP1ncSjXEdlNp6Z9alz4oy25pOM3p97wOie3g0fXY2iBFnvHMQNp+I26c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758803247; c=relaxed/simple;
-	bh=gYBSjV3A3ooxiOPwbQrY6yaQ+S7lDvaqMNSGiSIoVDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f9wxnkDodKESzMMcS8Iq9oMHbyyJ5cxh0Y/DMzMm2mz2Ty2oUtmCZeIdONH0DhdJr9Ky9OSQZ63leIy1mD+BZU2OOTDa8ycjpQv2W1QPXU5WbvicGBRe0yPX2/6kCG6jVwCV35h065jdMFwVy2L2p4hDJ4xqouSFfLGzSs78kxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=lMq0Zdbl; arc=none smtp.client-ip=220.197.31.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from albert-OptiPlex-7080.. (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 240dfac53;
-	Thu, 25 Sep 2025 20:11:56 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: arnd@arndb.de
-Cc: adrian.hunter@intel.com,
-	bst-upstream@bstai.top,
-	catalin.marinas@arm.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	gordon.ge@bst.ai,
-	krzk+dt@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1758802449; c=relaxed/simple;
+	bh=h6H6ZhBZe1gKHmrNubWc5sUylhRVOXzZrHkkLa0lGmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oTl1frbLHWkf1JdWoJKfqdrVdy6CHIDCjqf4mEQNO6d04VmKT+a2XKlRhOTln8D/P6AvrfbPlVCYmBZ1tn4Ze3G+aGaXVb/9n6THIwRy4Z/ffvBNGLkZy0BbthGBEyfKhw477SunRZXAnE/QL7gmKKY7hatHg9K281x5px0DqAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=knIl4HKq; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost.localdomain (unknown [178.69.159.70])
+	by mail.ispras.ru (Postfix) with ESMTPSA id B7AC840A327F;
+	Thu, 25 Sep 2025 12:13:57 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru B7AC840A327F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1758802438;
+	bh=2EVHtjacVStoLork7wasnNmEVZ79Lr/9XpsbjrB7eNs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=knIl4HKqaY0s6G0NSAM2HxjkVhzFpA/5HTSdLKOvFZsClpI2sxMITnXQHsTQbWzcx
+	 ztXQB99p2WXyKSHHSa6P8m0QpPiknIGoXo0r2NbH6jjiTO5rqNMH41mxikeN0XTGds
+	 X2O21CPWLMR07Tj4cfXfbxh0cg8Oj7bsHNcli4PA=
+From: Matvey Kovalev <matvey.kovalev@ispras.ru>
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Matvey Kovalev <matvey.kovalev@ispras.ru>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	will@kernel.org,
-	yangzh0906@thundersoft.com
-Subject: Re: [PATCH 0/9] arm64: introduce Black Sesame Technologies C1200 SoC and CDCU1.0 board
-Date: Thu, 25 Sep 2025 20:11:54 +0800
-Message-ID: <20250925121155.2401934-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250925090412.2068216-1-yangzh0906@thundersoft.com>
-References: <20250925090412.2068216-1-yangzh0906@thundersoft.com>
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] fix error code overwriting in smb2_get_info_filesystem()
+Date: Thu, 25 Sep 2025 15:12:34 +0300
+Message-ID: <20250925121255.1407-1-matvey.kovalev@ispras.ru>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9980c98bf209cckunm0dbea3318270a9
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaT04ZVkNOS0NKSh0ZT0pCT1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=lMq0ZdblTM4Zv2oMG3N+IorP8ydfWF/POg1If0IxGoUdZpVXrgamH/KY+J5nm03NYw1du4yJQMv12lrKqKLjh5RdA40kpajnglkSyGdO8hNpW9vHCtTkuls4L3JFqxzTZqPUg1DjwcWPvdkKPPFQsrwAwYGCOtKsvuT5kiIIRuI=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=eo5MQOkGyElXlEHPuquWDvolz5tCt5MH2A2PG0iQrcA=;
-	h=date:mime-version:subject:message-id:from;
 
-On Thu, Sep 25, 2025 at 05:03:57PM +0800, Albert Yang wrote:Subject: Re: [PATCH] splitting SoC and MMC parts
+If client doesn't negotiate with SMB3.1.1 POSIX Extensions, 
+then proper error code won't be returned due to overwriting.
 
-Hi Arnd,
+Return error immediately.
 
-I may have missed an important detail in my previous note. If I split
-out the MMC-related patches and submit only the SoC parts first, I
-cannot validate the SoC on real hardware: both the kernel and the root
-filesystem live on the MMC device. Without the MMC stack (DT bindings
-and the controller driver), the board does not boot to userspace, so I
-cannot properly verify the SoC/DT changes in isolation.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Would you prefer that I:
-- keep the MMC pieces in the same series for initial bring-up; or
-- validate everything locally, then send only the SoC/DT parts first and
-  follow up with the MMC binding/driver as a separate series?
+Fixes: e2f34481b24db ("cifsd: add server-side procedures for SMB3")
+Cc: stable@vger.kernel.org
+Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
+---
+ fs/smb/server/smb2pdu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I’m not entirely sure which approach best matches the normal workflow,
-so your guidance would be appreciated. I can proceed whichever way you
-think is most appropriate.
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index a565fc36cee6d..a1db006ab6e92 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -5628,7 +5628,8 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
+ 
+ 		if (!work->tcon->posix_extensions) {
+ 			pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
+-			rc = -EOPNOTSUPP;
++			path_put(&path);
++			return -EOPNOTSUPP;
+ 		} else {
+ 			info = (struct filesystem_posix_info *)(rsp->Buffer);
+ 			info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
+-- 
+2.43.0.windows.1
 
-Thanks for the review and suggestions.
-
-Best regards,
-Albert 
 
