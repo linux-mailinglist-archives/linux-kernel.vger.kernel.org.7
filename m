@@ -1,448 +1,90 @@
-Return-Path: <linux-kernel+bounces-832889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A49BA0AC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:41:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF26BA0AE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7266622096
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE87C2A19F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E533093BF;
-	Thu, 25 Sep 2025 16:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB3B3081A9;
+	Thu, 25 Sep 2025 16:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYUa2XtA"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1UcREtj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E606C30CDBA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E3422B8AB;
+	Thu, 25 Sep 2025 16:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758818465; cv=none; b=gwoh9a3jXiWe19625e/B8N0Dkkv0Li8NWWeQFap2G0/4eBtlSxxQWIXDYySoqJ/jhGOCz4VKElf81oBCTtH5raMfUOQRg4n66FtzEdDaYASdg/i8UTkBEcTkJsAarv6oqr/Rnq8BUqwKmlXgFXg+d35IsZnKIUgAH2wTLG/ZDaQ=
+	t=1758818572; cv=none; b=iMtaqlTHgvU7UxhDJIVPyUVQ3nKa/Yev0iPVSQmoeZ/gqES+foAVotvethWl6f6PEagmMrZa43oRKtb+kKuaPrk52N3WB5G0geg6OiVuM5GnrcKCKtUuqtjfockYB/3nW/SuYWNDph3aTVP7PTEHoUBD1cGkHpGRcktiRr3lP3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758818465; c=relaxed/simple;
-	bh=92ASqdcSPm9BmsGmjylo71OwE0aYoMQvzZJLBsNtjJ4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TitXFobJaNuWt4NVi/pf8MRU3Sctuvulr2r9Pfkynl/wOqCP1maNKJnLa/NpAzt/Q0kSuH44QK/E+lV9EzBHRkYojzflAxDaDBIXOSHKaSpNECuffPQ9AmtkBOwd/nJ2OlGaDJUBjWFv4sea9a4WpuzKD8yfYn+n5Hb+I9oV+RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYUa2XtA; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e23a6617dso11933995e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758818460; x=1759423260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9LxBMDD1yW2cRLIMVl2GNWKnA4OGcUT+oQ6/h+umA3Q=;
-        b=TYUa2XtAmuCNm2bBC10XH4DHHz8UQWGuo6QgLMhZwcsn5HK/9S2ybLTGE1sf5UCYAx
-         Dv4BqyihDAmlW0Y4MXVTikbQiOxPzS8QohkPKsP22j9m3flrm06vtpJI+q/apPY75Ozk
-         tesJvBRRaZLvBdcNRpBQZtBY9s1ULkHeDtoMmFl33TTcYjlMs1aBBP0KzITbuzQB8NSk
-         TEt4mLjnC2Kt/TM6HldbezXox31O5zXqcVUk2b5epGTUJJH1sJjSHsGK6vI0hUEgCOcn
-         IQrLQnB6mrwJewO3/7dZJqX71ha9a4z4+WiPfJXgn0VwaoMxJflyqjD274jdZd++HZJz
-         Hgew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758818460; x=1759423260;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9LxBMDD1yW2cRLIMVl2GNWKnA4OGcUT+oQ6/h+umA3Q=;
-        b=NAIDgEztaLVzceBtR3hq64lda9NfGCZ5Hl65APuWPmxOZ3ACz5eM1FvZKiGaMyIPup
-         Cy46ujW09W9/APZ6xcN9EpV7hIPsol5OWhxKwDxDc+UW27QY62PYvuOCyf22/5TePHTk
-         JnA8PwvVatTEFaSdyFgxrgvNCN1eCfmDCic4rDkpAHYdEOl7q43ZtgdwntqYCHJe/Avl
-         SSTDK8ALAV2gjiZMOakgFD4QykeF/TAzxqNUU+1fFAGq6AiHlrv5uRoxsnLHbDp/XwSI
-         QVwfiupJmf6sLP+cxQzR2+npe3TMAFkVwht8FFfdH/mqOA7R8Ev5ykLJLmuQv4maOlf3
-         kJGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWMyCDbuC4APQhaGHHoEvztWwOlRoX+5ihattgwqvVm9Fl3n2nwiKz861ufWkuo0FERt3eGXjjhLQ30xI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0TSkXsvzA7rBEwbhc0q0YFrMOZZtmBQN+acz0CBDUuY6VYC14
-	4GiGdDg2DdaS/Ba5kJA/NNGSJcm9qGc/3j/9zwo4ydsE8Ukg3BzoiPuC
-X-Gm-Gg: ASbGncsmNAp9zJdhDsjPK1L9/i2ypOX3H5C6D5MwDW15/CVzcjQy6DCDbS83SdsbprN
-	rUdJe3bBoW9NoPRWBwjfsJFRppg2W7B3A8GTsq9q6MGVleQv3GFokfBRRb/agm2aK9E9bblVx87
-	tjl5BoK0ni9YFkrT3QOLeHZvDIo4NfWMjYBH+BqvaAMfQ83t4p2FV1tx69sHIcrzrC1iqb3EalF
-	JOx37heDs1Gm46wUszFIb7a3t9gPDEPsUW7WxLkKNNLTGe4g2/fNaF0IL+FGfX20IH7pWx8l1xX
-	0wdT1s2nCdozgW8PZiKMMDWZj8Xb0Igctl118fIDDYhAl0bLC2en0CBfBCqXZG/N2pG5pfu19iL
-	AsEusWrgh1KidCxso1o4E/VN49nGXusKmODfeKgeAt7JfuDL1mHL54hrB5nk1oDaI9XuQRNI=
-X-Google-Smtp-Source: AGHT+IExfxLQP0OtZR24kaI6Ai8bGttKWCyGV0/rgDeuZM/zR6/K7Ljjmp2ReHcTyLgoCzf16+ewSA==
-X-Received: by 2002:a05:600c:c04b:10b0:46e:2d0d:8053 with SMTP id 5b1f17b1804b1-46e32a30481mr36197235e9.18.1758818460191;
-        Thu, 25 Sep 2025 09:41:00 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-40fc6921f4esm3591904f8f.44.2025.09.25.09.40.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:40:59 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	John Crispin <john@phrozen.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 4/4] arm64: dts: Add Airoha AN7583 SoC and AN7583 Evaluation Board
-Date: Thu, 25 Sep 2025 18:40:37 +0200
-Message-ID: <20250925164038.13987-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925164038.13987-1-ansuelsmth@gmail.com>
-References: <20250925164038.13987-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1758818572; c=relaxed/simple;
+	bh=5i6ha+N8IEneXDI60JExaJWalQFZv2+fTq6zUyyVfEI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=javXilQF7PsVHnMH0Bp75F91MPTGZ1xdSJrq1uLpvZKeNJilernE5EgGlFLkr4phhdtwu4aLUuFZLWWplNSWFgYOPJrqLhnDR8zMogFx4E4zIRmkbnTECP3zkL1iSaRv4HZV4vnGolMXRBVAdOWb3lvTcOVTN11j3TE2u7Ueg3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1UcREtj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3384BC4CEF0;
+	Thu, 25 Sep 2025 16:42:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758818571;
+	bh=5i6ha+N8IEneXDI60JExaJWalQFZv2+fTq6zUyyVfEI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=T1UcREtjMCiQRCxVKqys2FBCPxFP2kBwEpP31NIbI9agCgzAiQDdB61Vq47QCZASe
+	 g6ql46VT2P2wPYnPy2H7lCnsx0eZHIdTtRNFRgspXDm6Om152EICwOP0hCsqSNz9ER
+	 BiojBWy4Ve3jUwvXlxpdSp3J9/KTKC3tjY2wuwSYOBfezy5NynaxKtzRmYwhqli7l/
+	 qh+PLHc3B2o2x1ibgRvopyqXNQH6XJ9dli0MZn96lUOkWYsjlLOCdmD2sgPqWT7n8a
+	 /TWiaeLjJovaQmt2Ld29UPijqk/xTOIvIAwxq8mN1FW9o6i8ikbdIlulbhdCyUsdVF
+	 ZRu3BaLy/9lLA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: linux-pci@vger.kernel.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: stable@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org
+In-Reply-To: <20250922150811.88450-1-marek.vasut+renesas@mailbox.org>
+References: <20250922150811.88450-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH] PCI: tegra: Convert struct tegra_msi mask_lock into
+ raw spinlock
+Message-Id: <175881856680.391347.7490964130330685469.b4-ty@kernel.org>
+Date: Thu, 25 Sep 2025 22:12:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Introduce Airoha AN7583 SoC initial DTSI and AN7583 Evaluation Board
-DTS and add the required entry in the Makefile.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm64/boot/dts/airoha/Makefile       |   1 +
- arch/arm64/boot/dts/airoha/an7583-evb.dts |  22 ++
- arch/arm64/boot/dts/airoha/an7583.dtsi    | 283 ++++++++++++++++++++++
- 3 files changed, 306 insertions(+)
- create mode 100644 arch/arm64/boot/dts/airoha/an7583-evb.dts
- create mode 100644 arch/arm64/boot/dts/airoha/an7583.dtsi
+On Mon, 22 Sep 2025 17:07:48 +0200, Marek Vasut wrote:
+> The tegra_msi_irq_unmask() function may be called from a PCI driver
+> request_threaded_irq() function. This triggers kernel/irq/manage.c
+> __setup_irq() which locks raw spinlock &desc->lock descriptor lock
+> and with that descriptor lock held, calls tegra_msi_irq_unmask().
+> 
+> Since the &desc->lock descriptor lock is a raw spinlock , and the
+> tegra_msi .mask_lock is not a raw spinlock, this setup triggers
+> 'BUG: Invalid wait context' with CONFIG_PROVE_RAW_LOCK_NESTING=y .
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/airoha/Makefile b/arch/arm64/boot/dts/airoha/Makefile
-index ebea112ce1d7..7a604ae249b5 100644
---- a/arch/arm64/boot/dts/airoha/Makefile
-+++ b/arch/arm64/boot/dts/airoha/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- dtb-$(CONFIG_ARCH_AIROHA) += en7581-evb.dtb
-+dtb-$(CONFIG_ARCH_AIROHA) += an7583-evb.dtb
-diff --git a/arch/arm64/boot/dts/airoha/an7583-evb.dts b/arch/arm64/boot/dts/airoha/an7583-evb.dts
-new file mode 100644
-index 000000000000..910ceaa6af42
---- /dev/null
-+++ b/arch/arm64/boot/dts/airoha/an7583-evb.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/dts-v1/;
-+
-+#include "an7583.dtsi"
-+
-+/ {
-+	model = "Airoha AN7583 Evaluation Board";
-+	compatible = "airoha,an7583-evb", "airoha,an7583";
-+
-+	aliases {
-+		serial0 = &uart1;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x2 0x00000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/airoha/an7583.dtsi b/arch/arm64/boot/dts/airoha/an7583.dtsi
-new file mode 100644
-index 000000000000..77b8590e242b
---- /dev/null
-+++ b/arch/arm64/boot/dts/airoha/an7583.dtsi
-@@ -0,0 +1,283 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x0>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			enable-method = "psci";
-+			clocks = <&cpufreq>;
-+			clock-names = "cpu";
-+			power-domains = <&cpufreq>;
-+			power-domain-names = "perf";
-+			next-level-cache = <&l2>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			reg = <0x1>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			enable-method = "psci";
-+			clocks = <&cpufreq>;
-+			clock-names = "cpu";
-+			power-domains = <&cpufreq>;
-+			power-domain-names = "perf";
-+			next-level-cache = <&l2>;
-+			#cooling-cells = <2>;
-+		};
-+
-+		l2: l2-cache {
-+			compatible = "cache";
-+			cache-size = <0x80000>;
-+			cache-line-size = <64>;
-+			cache-level = <2>;
-+			cache-unified;
-+		};
-+	};
-+
-+	cpufreq: cpufreq {
-+		compatible = "airoha,en7581-cpufreq";
-+
-+		operating-points-v2 = <&smcc_opp_table>;
-+
-+		#power-domain-cells = <0>;
-+		#clock-cells = <0>;
-+	};
-+
-+	cpu_opp_table: opp-table-cpu {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			required-opps = <&smcc_opp0>;
-+		};
-+
-+		opp-550000000 {
-+			opp-hz = /bits/ 64 <550000000>;
-+			required-opps = <&smcc_opp1>;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			required-opps = <&smcc_opp2>;
-+		};
-+
-+		opp-650000000 {
-+			opp-hz = /bits/ 64 <650000000>;
-+			required-opps = <&smcc_opp3>;
-+		};
-+
-+		opp-7000000000 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			required-opps = <&smcc_opp4>;
-+		};
-+
-+		opp-7500000000 {
-+			opp-hz = /bits/ 64 <750000000>;
-+			required-opps = <&smcc_opp5>;
-+		};
-+
-+		opp-8000000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			required-opps = <&smcc_opp6>;
-+		};
-+
-+		opp-8500000000 {
-+			opp-hz = /bits/ 64 <850000000>;
-+			required-opps = <&smcc_opp7>;
-+		};
-+
-+		opp-9000000000 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			required-opps = <&smcc_opp8>;
-+		};
-+
-+		opp-9500000000 {
-+			opp-hz = /bits/ 64 <950000000>;
-+			required-opps = <&smcc_opp9>;
-+		};
-+
-+		opp-10000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			required-opps = <&smcc_opp10>;
-+		};
-+
-+		opp-10500000000 {
-+			opp-hz = /bits/ 64 <1050000000>;
-+			required-opps = <&smcc_opp11>;
-+		};
-+
-+		opp-11000000000 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			required-opps = <&smcc_opp12>;
-+		};
-+
-+		opp-11500000000 {
-+			opp-hz = /bits/ 64 <1150000000>;
-+			required-opps = <&smcc_opp13>;
-+		};
-+
-+		opp-12000000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			required-opps = <&smcc_opp14>;
-+		};
-+	};
-+
-+	smcc_opp_table: opp-table-smcc {
-+		compatible = "operating-points-v2";
-+
-+		smcc_opp0: opp-0 {
-+			opp-level = <0>;
-+		};
-+
-+		smcc_opp1: opp-1 {
-+			opp-level = <1>;
-+		};
-+
-+		smcc_opp2: opp-2 {
-+			opp-level = <2>;
-+		};
-+
-+		smcc_opp3: opp-3 {
-+			opp-level = <3>;
-+		};
-+
-+		smcc_opp4: opp-4 {
-+			opp-level = <4>;
-+		};
-+
-+		smcc_opp5: opp-5 {
-+			opp-level = <5>;
-+		};
-+
-+		smcc_opp6: opp-6 {
-+			opp-level = <6>;
-+		};
-+
-+		smcc_opp7: opp-7 {
-+			opp-level = <7>;
-+		};
-+
-+		smcc_opp8: opp-8 {
-+			opp-level = <8>;
-+		};
-+
-+		smcc_opp9: opp-9 {
-+			opp-level = <9>;
-+		};
-+
-+		smcc_opp10: opp-10 {
-+			opp-level = <10>;
-+		};
-+
-+		smcc_opp11: opp-11 {
-+			opp-level = <11>;
-+		};
-+
-+		smcc_opp12: opp-12 {
-+			opp-level = <12>;
-+		};
-+
-+		smcc_opp13: opp-13 {
-+			opp-level = <13>;
-+		};
-+
-+		smcc_opp14: opp-14 {
-+			opp-level = <14>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	sys_hclk: clk-oscillator-100mhz {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "sys_hclk";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@9000000 {
-+			compatible = "arm,gic-v3";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			reg = <0x0 0x09000000 0x0 0x20000>,
-+			      <0x0 0x09080000 0x0 0x80000>,
-+			      <0x0 0x09400000 0x0 0x2000>,
-+			      <0x0 0x09500000 0x0 0x2000>,
-+			      <0x0 0x09600000 0x0 0x20000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-+		};
-+
-+		crypto@1e004000 {
-+			compatible = "airoha,an7583-eip93", "airoha,en7581-eip93",
-+				     "inside-secure,safexcel-eip93ies";
-+			reg = <0x0 0x1fb70000 0x0 0x1000>;
-+
-+			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		uart1: serial@1fbf0000 {
-+			compatible = "ns16550";
-+			reg = <0x0 0x1fbf0000 0x0 0x30>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <1843200>;
-+		};
-+
-+		watchdog@1fbf0100 {
-+			compatible = "airoha,an7583-wdt", "airoha,en7581-wdt";
-+			reg = <0x0 0x1fbf0100 0x0 0x38>;
-+
-+			clocks = <&sys_hclk>;
-+			clock-names = "bus";
-+		};
-+	};
-+};
+Applied, thanks!
+
+[1/1] PCI: tegra: Convert struct tegra_msi mask_lock into raw spinlock
+      commit: 39ec28d01d565030aa28d87a212d201c252c072e
+
+Best regards,
 -- 
-2.51.0
+Manivannan Sadhasivam <mani@kernel.org>
 
 
