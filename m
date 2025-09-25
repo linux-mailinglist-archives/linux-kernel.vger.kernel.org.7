@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-831549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD179B9CFCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB354B9CFD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686FF425CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E221BC211B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1E27D77D;
-	Thu, 25 Sep 2025 01:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAFC2DEA73;
+	Thu, 25 Sep 2025 01:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnDr83f4"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Imr1cMDk"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D9114A4F9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613202DE719
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758762867; cv=none; b=Q/4F2zX08qdRD1Hh/iJT4E3SxhFmZRYpgAvcOH56heNbM0FIAFTB8XIw27Bidy4i1fFcNKAKHtc3ACoe6ceJ/7bc3nBISGsnaoDWwXOv0Jyp0aY9l1CDLHyPmrEm5goa6hVO24FTkdXPJnR5Nkfsx6ZX0879kVIRrc2wul1Xxbw=
+	t=1758762872; cv=none; b=lNAxPLHigGjj/iB25TYNEy1uUEsroYoH4G7tBvjN+VGRZc/RWT//WBKIU2clT3WbAcnzQIcOn2JljvdL9eTO9N5d+SPX6CD2t4rJMzEfmhNsab6ql1Kwmaabsj8wRKeEEfHyGoiPtp0hguUrHJ0HKvbHC3PCwCgOTO6SHi8KbzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758762867; c=relaxed/simple;
-	bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oOnYqyYs0+nbrL6r2mmtOTXrJcVA15NwFQUg8n8oh+0IwaNGqJP87x99IBEBhPipgChJhuNe3jEK98yDtffcZlh/SCMADnaoFjaWNJ8rNYloexxlRGk8m/6iky13XcoYNfSaGcw4GrS5HzTay9EFKEBNw7Q7yqvwiimVAil8bCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnDr83f4; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5796051ee6aso74945e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:14:25 -0700 (PDT)
+	s=arc-20240116; t=1758762872; c=relaxed/simple;
+	bh=r5v69HYaD2Ruqrjim4BqbYx3ZoP5J4GuM3iCZ54pbRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUR/UFXNvSy565yYRq5yUhF06ec80/mt76guPhpH+jpOJ7DsJgVBFLRKQBxf0HkIf93XQ+jgR8vlTvKkBcjqqBUIBVxoxvqPIqU5aX77/8NZ/Gh3fmABd4xkuuk4n3QPKWEnqqbozuauHx3yhW2HA6I8FYFqm/UBFUGGeHpYtQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Imr1cMDk; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77f41086c11so490690b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:14:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758762864; x=1759367664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
-        b=fnDr83f48auqbjRYF4Y6KvqdmvKbB3cs6dlVIm7KiM7j1eJ06N3ArCQ4yTz+h07KlU
-         PpVRoYfHeRy9rRVTIK3e/l75MB72N7diH348vv1nUicM4Rh3TQrLTbroojQrQc9zpXsA
-         r0ZqA6bmPTKq82T1TUsmPpMvRhLH6DmN+UXKw7yYf8nh4RQ8ej4AItHW+e9bBVUyoG1m
-         1jBWjQZblmG1lnXWYMKQFlAta+N1FEGPSbiCsrsA0n5k2XfizgjB1k79Kjg4X3JBs6VG
-         5/laSI7st20twiB76eeYzQ2yiETRHiibcN7FoqZvEbVzvCJWp7v8mdgOFw2Gi55MvzhT
-         YNTg==
+        d=purestorage.com; s=google2022; t=1758762869; x=1759367669; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpH3vDieEOf5P6kACxecFbAgag5Z9fa9GewUJ4RQEl0=;
+        b=Imr1cMDk5wMOzJvUI7n7SEQTned/STtdSdtCxuEkanbVx+xcIPbMFk48xakUP1CE7U
+         yld6vzTroEas27TVoSAre+MasIilRmpqOlkZmewue+Y4wJpHzlYXffzTuSQJYLd50sR6
+         NldfnXIflvrHguBcRnd/wL6JCv9qqQbU/C5HxhxFk6nffWM7Hf+x5rGAWVG5icDZ1l4g
+         2+BHunM5wlUfLo665JwRNlswDN/XjEA8l2tcgVTAMCLC+iLb+9OxYS62YKoykhSZQFsP
+         3GUqUyFr0YmBUg2sHg6XJf10OxZPOf16fI3iK6gluDAcufSbgycOsGnS3QXTAgei9x/u
+         DnJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758762864; x=1759367664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
-        b=bFvY+s3udRJze6Ibff1NaHYQwzfQtg41rW/LiMA5BEjxJP2iqIue6iuBJJ0E+C5WSs
-         inLpOJS2XykF/PQcAWU6vA/QxNgh9nwcIuz3bue1fASd1WT3t/9UIRkB9re0SuUJLsGM
-         Ysh+SfXOTOuG9nUesa492h8aDJRgFgl5EHYqD0+TXli2qoZNuX77UCLzV5VaW8Eju4/h
-         NURW0Ph2fSXeCKDmnQUd7R0qQ2rifLXaUtV7F9gmBGyUMfaMWCZcWdE94IKV7HjxmVHi
-         6dAHCS5bhZ8Q9OGuY2Hp1QZYzzAm5MbgYfNJvqPMYFVcAkRVrenTYXh3t34FBoYAAzKY
-         fKAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHtPUEpHgk3yYzqU0+Lq2JKrvGneCxjtjJft2cQRUl+JbMwKxXE9XO6s7C0FbneVoXLNo3Mx2/lYb6v2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywddt1IUY/VN1jIF1/5krj2yLjZmzPF5JALOfKsAW26YGmJGpxb
-	DI6lJQB+U3g2K9zcxaCThzF6Od601msrVzOldK9qqZCVty8760x2SMBr+dm2RZmiHPYvVENKh03
-	HtagZ+7iw82xZ+Mt4CtGLd98rqScFVhg=
-X-Gm-Gg: ASbGncsmadWfwlUkfcAE1N74X5zOzRSXFGSQlzl8XOjrGC4lj55ntN9XpwMnJisfU09
-	QE8J6cnmMJmZMZWb/gIM9HssTE+lJ1MlYCeRGCV3nrIHUCU8vYGVIGnObJN5Imo87+SNh79+5zQ
-	lW72a1nN2056jW3p6mj/x3w9rpevGazudMcoiYl34tcY7MpsM2XLGNbIHZRs041iYCMAW2B30xD
-	7+rv+tW
-X-Google-Smtp-Source: AGHT+IEDxOEhug5hAKaoFRD60f715RVpOz3j3GIYEQmZZCl+PN792xxfVmyqR8cZcVtXVUn2rZBzgNmHAva7CXKAXjw=
-X-Received: by 2002:a05:651c:41c5:10b0:365:4fd1:a15b with SMTP id
- 38308e7fff4ca-36f7ff189f4mr1625801fa.7.1758762863690; Wed, 24 Sep 2025
- 18:14:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758762869; x=1759367669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EpH3vDieEOf5P6kACxecFbAgag5Z9fa9GewUJ4RQEl0=;
+        b=RwKYxfXdjgPi5g9kMg47Undk26NaZxpBVBDLUCGkbI+ELvrS5MUd2mRSt/9v1Thsoa
+         AmhJGmZ/1M4Xt7Mh73CQhownoc4c4pOT65mwI5jY2EwlJNRv0YD71j2gV1rRl88pXSt8
+         AQaR083qLSTNr5n6k16Rgd+9LKuMRD+GqJhqepse7KtaHH/UVH/icT9e7lr41+9zaZYc
+         LV6ay5u7cpuPYvwPH9f1yiGOZ9ktH4TIrxwDJ8qEJrDzL1Iy8qPPZCI+JEzCM2ajK4wn
+         cHsa+clGGFt/fFVOcEfDQ5PiYdkjH+GX0IgdIh99etKS5bi67Tq2SM989fKB8rwIpi56
+         lr1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzsy4GUTDBBoAo2GaQigC5XG54r4P3qKd+DUpko+m4gVLaPslAYusfCkeiuPyoka+JrJsQanXuGHeVmI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGzu0xZX7SfsQ20lagKfcNKvb8R8DLTjMF5KTNkKjbH8gKs/ds
+	YYdOx46Trjoiw9l0aGX0edPnvCw6nG57ioQeGrM2UxotZA3o3FiIOM7YUFhiI73jyEw=
+X-Gm-Gg: ASbGncv7Ji06wNmUDHnZQaPNHG7VL72O65V4bWHOETBpSvFrcps6ViTnhiKINDueuTX
+	zXgyakSJNheC82K58ksl0SinhIiNTw44oBwnt9sKldNpMMlU+tVVAefIT0MOUMr6hFYvaJUjBG+
+	DF2yu7l8U5Ug6aG/V29OHPxAQFO3TiDRESNDQlHjU4pott2uo/sUpWTrCc4Eh40KwFo53fGkJU1
+	NuQxD4l8OSfDtvwmo0fBdk8pzA3SBpHQExZQxOfwk5sk4s2YlFCjPZxDgTbMi60ImOfn0g3U9iX
+	fEQQgmyiZABr8CXJflH44+MDm3AR9loeqSfYihG5I+lq6p4CSKFpjqBRCRsUlzqRKveub0fA/40
+	rHdrXB46a12OifogHKkLUb0nMiOwXoIoOyCN2N4lP954=
+X-Google-Smtp-Source: AGHT+IFbdkdawYQ5DW+wMtEwe5sjA9aOuzPxMZ0/627qe7vqGZqDMaJiDojubyykTXfFK/7YWQNpJA==
+X-Received: by 2002:a05:6a20:1588:b0:2d5:e559:d24b with SMTP id adf61e73a8af0-2e7cdda1022mr1961101637.32.1758762869339;
+        Wed, 24 Sep 2025 18:14:29 -0700 (PDT)
+Received: from medusa.lab.kspace.sh ([208.88.152.253])
+        by smtp.googlemail.com with UTF8SMTPSA id d2e1a72fcca58-7810238ca29sm337965b3a.6.2025.09.24.18.14.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 18:14:28 -0700 (PDT)
+Date: Wed, 24 Sep 2025 18:14:27 -0700
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Amit Chaudhary <achaudhary@purestorage.com>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, randyj@purestorage.com,
+	jmeneghi@redhat.com, emilne@redhat.com,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] nvme-multipath: Skip nr_active increments in RETRY
+ disposition
+Message-ID: <20250925011427.GC3269-mkhalfella@purestorage.com>
+References: <20250924224319.4557-1-achaudhary@purestorage.com>
+ <aNR4m9wrO5cgFZIe@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
- <aNGQ66CD9F82BFP-@infradead.org> <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
- <31091c95-1d0c-4e5a-a53b-929529bf0996@acm.org> <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
- <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
-In-Reply-To: <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 25 Sep 2025 09:14:12 +0800
-X-Gm-Features: AS18NWBK4dJcK_-7IGtI0VoZd54sZXtNSb7uUlofZ2Iu7nxMDq9z6uDViCFW05A
-Message-ID: <CAGWkznFe4W0M4NE_ZjiSC6+28tHqJoah6dmP+X1aP6oCCTTe2Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop driver
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@android.com>, 
-	Christoph Hellwig <hch@infradead.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com, 
-	Minchan Kim <minchan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNR4m9wrO5cgFZIe@kbusch-mbp>
 
-On Wed, Sep 24, 2025 at 6:05=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
->
-> On Wed, Sep 24, 2025 at 5:13=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gma=
-il.com> wrote:
-> >
-> > loop google kernel team. When active_depth of the cgroupv2 is set to
-> > 3, the loop device's request I2C will be affected by schedule latency
-> > which is introduced by huge numbers of kworker thread corresponding to
-> > blkcg for each. What's your opinion on this RFC patch?
->
-> There are some issues on this RFC patch:
->
-> - current->plug can't be touched by driver, cause there can be request
-> from other devices
->
-> - you can't sleep in loop_queue_rq()
->
-> The following patchset should address your issue, and I can rebase & rese=
-nd
-> if no one objects.
->
-> https://lore.kernel.org/linux-block/20250322012617.354222-1-ming.lei@redh=
-at.com/
-Thanks for the patch, that is what I want.
->
-> Thanks,
->
->
-> >
-> > On Wed, Sep 24, 2025 at 12:30=E2=80=AFAM Bart Van Assche <bvanassche@ac=
-m.org> wrote:
-> > >
-> > > On 9/22/25 8:50 PM, Zhaoyang Huang wrote:
-> > > > Yes, we have tried to solve this case from the above perspective. A=
-s
-> > > > to the scheduler, packing small tasks to one core(Big core in ARM)
-> > > > instead of spreading them is desired for power-saving reasons. To t=
-he
-> > > > number of kworker threads, it is upon current design which will cre=
-ate
-> > > > new work for each blkcg. According to ANDROID's current approach, e=
-ach
-> > > > PID takes one cgroup and correspondingly a kworker thread which
-> > > > actually induces this scenario.
-> > >
-> > > More cgroups means more overhead from cgroup-internal tasks, e.g.
-> > > accumulating statistics. How about requesting to the Android core tea=
-m
-> > > to review the approach of associating one cgroup with each PID? I'm
-> > > wondering whether the approach of one cgroup per aggregate profile
-> > > (SCHED_SP_BACKGROUND, SCHED_SP_FOREGROUND, ...) would work.
-> > >
-> > > Thanks,
-> > >
-> > > Bart.
-> >
->
+On 2025-09-24 17:02:51 -0600, Keith Busch wrote:
+> On Wed, Sep 24, 2025 at 03:43:18PM -0700, Amit Chaudhary wrote:
+> >  static inline void nvme_start_request(struct request *rq)
+> >  {
+> > -	if (rq->cmd_flags & REQ_NVME_MPATH)
+> > +	if ((rq->cmd_flags & REQ_NVME_MPATH) && (!nvme_req(rq)->retries))
+> >  		nvme_mpath_start_request(rq);
+> >  	blk_mq_start_request(rq);
+> >  }
+> 
+> Using "retries" is bit indirect as a proxy for multipath active counts.
+> Could this be moved to the mpath start instead, directly using the flag
+> that accounts for the path? This also helps to keep track if the command
+> gets retried across a user toggling the policy to "qd".
+> 
+> ---
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index 3da980dc60d91..1c630967ddd40 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -182,7 +182,8 @@ void nvme_mpath_start_request(struct request *rq)
+>         struct nvme_ns *ns = rq->q->queuedata;
+>         struct gendisk *disk = ns->head->disk;
+> 
+> -       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
+> +       if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD &&
+> +           !(nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE)) {
+>                 atomic_inc(&ns->ctrl->nr_active);
+>                 nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
+>         }
+> --
+
+193         nvme_req(rq)->flags |= NVME_MPATH_IO_STATS;
+194         nvme_req(rq)->start_time = bdev_start_io_acct(disk->part0, req_op(rq),
+195                                                       jiffies);
+
+Doing it this way might messup with stats accounting because the two
+lines above will be executed on request retry. I do not think we need
+that, right?
 
