@@ -1,106 +1,140 @@
-Return-Path: <linux-kernel+bounces-832989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE35BA0ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71475BA0ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472BF168C82
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26C0387AF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5A630DD17;
-	Thu, 25 Sep 2025 17:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A4E30DEC4;
+	Thu, 25 Sep 2025 17:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APkvGxvA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lblUjUi+"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB3627FB35;
-	Thu, 25 Sep 2025 17:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD76A27FB35
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758821994; cv=none; b=ojncwI56Y1PcdnFjrKsPDNEnqzoX8Tu2+t3042Za1QICrunBh87bunByVjTZFqbmAfLsUg0uCTx06bOPMhAgwlQUZ7mGX+/hYJJ89tUzvWbIQ9dEOgjwTq0Jg/p1k/9K9+rtH5uE3C2ELRbp9sWYwce1eBQSVYK6NqUkt/Uo6Ys=
+	t=1758822128; cv=none; b=hUWas3hfP0iCLPjRmyvxyWbV+WRRazlVxrIH+slnNKtjTFldGRemh+V1dtOpu9nTKTSpjH+cA5JXKUE/bqhWATINMsO+m1LvUkvEWytZ4hQyi0Vg0as3cEDX/Q75mFR64MkeDpzqwvdXGnK1KD8+8EKv0HRj/YfLL+PB/K0vqZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758821994; c=relaxed/simple;
-	bh=3y9u8nIalasBRWSOH1au4kb2W+k7XBRecWocQUU3wBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVp9Jq9HxsofeEHauY2BDrq8W/cgnokOQGg+mxs8L48RHrzy41DasckpX+XMFUT24VHec6gWvES2EfiD3QoHEeGeyJE3Ti1nhNt0q3LOirx3AdlHPcBKT2k4EfyaFZIy2+mLRlWhujVj47I7vOlatwxnbNktlSIGdwDt2bH4grc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APkvGxvA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D052C4CEF0;
-	Thu, 25 Sep 2025 17:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758821993;
-	bh=3y9u8nIalasBRWSOH1au4kb2W+k7XBRecWocQUU3wBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=APkvGxvAYFyEKsvw9qfwlJVGvtVPsL0Nqmlon1db2oAOzy521Diog12LtPVNjGoOE
-	 XtcbLW/0xifUCFDZ/ILXVgPDGJaFWjfar+7zYZQds2pSL3+VT0ae8feqpGBdbU7G9j
-	 CIie1q+5ZV+8fjlLq6f/w3vcOlGLh/yrOaf4egQUnxrS9PqnLA8Hr3FHd+u6/5XOc0
-	 MhE4iBFHvoP/J10G0E6PysirYrrJpQxPKkC5vTHXCkgF4aTL16R85zLdKFJ7eesFDS
-	 JOew3hgNWYze0LF6XzCDUbgE0/0IC86CYXiGNg9OXQCPBSeIXc4NigIz/hXciikocI
-	 j1aPlsD9eHBbg==
-Date: Thu, 25 Sep 2025 13:39:49 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the arm64 tree with the kbuild tree
-Message-ID: <20250925173949.GA489036@ax162>
-References: <aNU-sG84vqPj7p7G@sirena.org.uk>
+	s=arc-20240116; t=1758822128; c=relaxed/simple;
+	bh=Q0C+GcWsIdI1fnXmWm4ajyjzM8VnrnF2eGZbypkHLns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jUaZlNguLRTRsEY4QzaZuo6B+bwbvwChgS55+R1hXlBzuMLH64t6ko0ADsiL4SxHRXUBCrJ8joJ98iDrG0bTYQwh1erAfRBm3Zx5foz3aJ2AuCfd8X9yK31GQZ7cNWibV5VPNXYHm012BzMWsz5h9HEMLG1h0NBQccMDGeuzahs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lblUjUi+; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b55517e74e3so1339393a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758822126; x=1759426926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q0C+GcWsIdI1fnXmWm4ajyjzM8VnrnF2eGZbypkHLns=;
+        b=lblUjUi+iRXWIaITQHyS170jEb0AUrfB6Jnr9WNHvSMEOnUPibqSuQthDdZlw3WbrA
+         cty2yxJe28A6U3LOVOWBYG1o69LL3oTRsGpGzgsa+prHsCRFeUf3FACtKXiAeJJ+uCmB
+         zjYHi+xVyZ18SarrEu5ZMs4y/q3byDLDjw4OnBB18vRuZAA7TrQ5zaUgy2fLSm3L5hOy
+         22e26OhDLBduPwcJEtXOpnzwI2Tue7aeh1WXsUWBgaWf/WzRPwYvUTPHswDhnU3qxExU
+         XVpPf30PEnMtsocIaCmNvm4E6RiOjMfj5yGWEPptVnQGiDQNnXJREeQx/fyU8+difcUR
+         E1oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758822126; x=1759426926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q0C+GcWsIdI1fnXmWm4ajyjzM8VnrnF2eGZbypkHLns=;
+        b=XCXo/rdxvU/QLeKAbe2xemgjuUzf+K+LhWSdzc7hqtahjHCEMyRwgi2vfFyZCF+tKK
+         X//tlc5uul5E4JllTf/jxf1Jl0a6fL6LwMK5IL2zIN4OlC5MgaZJMm96o6+jFtwo8p8B
+         NMzxqPUiujhPTaisLB3aguqVOl5Bn0wj7kuZK7P2VL8n7QiM7w2jmCIy81XJU2aoDT+b
+         cXG1bj0lamwosT7Y1ATL7CPM3YX/NYaPBZ5KKDRJsHwoO3Zz/fwaBCIITHmAuloXZp7m
+         YmQZbKy+0OVuMDPQQPsNxw9M8pnVcIDZz2/M0i77GAu5GQ4UdZtuEAtUE4dRJF2tBXOw
+         kBuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLbp7OwuBRBNJjFkDApWvZYFZNmN0TXo1tVJ52D9B01CiuThqDcLH+oL19SNIU13xPKfXVoMPNTumi1zU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQ/fFuUAR00XDlejNGLJ3LkHYPWzka1XNcKYY0ys5FiYUyC82
+	9w/Jd3DOTWr2FUVVW1uP7sGS9R3Faix6i7v9szaxkNEGhlbPLmwouyqjfLN8kzW+GOvZhhk11oC
+	TJ2pZwf574ECFWdiGsqnG2PBJ21iaAMsYo9fxi4Py
+X-Gm-Gg: ASbGncsbTT7mtPhZ+5tOHQl2wLkjjIWGJuTapX8CMQy/vQq1uLyZu5Kon5PhS4Qo6Lp
+	b0rab3ZRYytWxxwI/OntGourWRFY6OAw0wjxU4aBuqgmji3kNLK66SmKb77OFeG//0bcdDenCUg
+	tdGcNM7LdOLxt+2Ljofz4dmyppx1QggEfq443gxSDomjG28AAoGvSHDlIIo7NT7o4AlFh9ErtIx
+	k0UHnFNXG48BMphEPVBgn7zphrS6DnGOiDxcv4G6uC3NgPbw/g4d4Yw/A==
+X-Google-Smtp-Source: AGHT+IE8fZfiMAKwOs7niSD9BX/4zeM++qOK8XkYs9sJvWK03cPeMUDsj+MQhuTv/z3HmriYuvenopAgCx/WzRY0Ux8=
+X-Received: by 2002:a17:903:1c9:b0:266:120a:29c7 with SMTP id
+ d9443c01a7336-27ed49df403mr45939175ad.6.1758822125802; Thu, 25 Sep 2025
+ 10:42:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNU-sG84vqPj7p7G@sirena.org.uk>
+References: <20250925131102.386488-1-jiayuan.chen@linux.dev>
+In-Reply-To: <20250925131102.386488-1-jiayuan.chen@linux.dev>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 25 Sep 2025 10:41:54 -0700
+X-Gm-Features: AS18NWC0bXQ6KDKAlvYCCTk0lL_ZFofDc8WBtNT4TAUqExU1UFsi6nLUMOWH8-g
+Message-ID: <CAAVpQUAA7Z7iF4eDs+f0jyx-eHUzgbArTCjd-4X7LbzOMVckZA@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] tcp: fix spurious RST during three-way handshake
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: netdev@vger.kernel.org, mrpre@163.com, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org, 
+	Xuanqiang Luo <xuanqiang.luo@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 02:08:00PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the arm64 tree got a conflict in:
-> 
->   arch/arm64/Kconfig
-> 
-> between commit:
-> 
->   23cb0514208da ("arm64: Remove tautological LLVM Kconfig conditions")
-> 
-> from the kbuild tree and commit:
-> 
->   1cf89b6bf660c ("arm64: Kconfig: Make CPU_BIG_ENDIAN depend on BROKEN")
-> 
-> from the arm64 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc arch/arm64/Kconfig
-> index 56eec3586ff77,69bde40e19e23..0000000000000
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@@ -1492,6 -1494,8 +1494,7 @@@ choic
->   
->   config CPU_BIG_ENDIAN
->   	bool "Build big-endian kernel"
->  -	# https://github.com/llvm/llvm-project/commit/1379b150991f70a5782e9a143c2ba5308da1161c
->  -	depends on (AS_IS_GNU || AS_VERSION >= 150000) && BROKEN
-> ++	depends on BROKEN
->   	help
->   	  Say Y if you plan on running a kernel with a big-endian userspace.
->   
+On Thu, Sep 25, 2025 at 6:11=E2=80=AFAM Jiayuan Chen <jiayuan.chen@linux.de=
+v> wrote:
+>
+> When the server receives the final ACK of the three-way handshake,
+> tcp_v4_syn_recv_sock::inet_ehash_nolisten::inet_ehash_insert() first
+> removes the request_sock from the ehash bucket and then inserts the
+> newly created child sock. This creates a race window where the first
+> incoming data packet from the client can fail to find either an
+> ESTABLISHED or SYN_RECV socket, causing the server to send a spurious RST=
+.
+>
+> The root cause is the lockless lookup in __inet_lookup_established(). A
+> concurrent lookup operation may not find any valid socket during the brie=
+f
+> period between the removal of the request_sock and the insertion of the
+> child sock.
+>
+> To fix this and keep lockless lookup, we need:
+> 1. Insert the child sock into the ehash bucket first.
+> 2. Then remove the request_sock.
+>
+> This ensures the bucket is never left empty during the transition.
+>
+> The original inet_ehash_insert() logic first attempted to remove osk,
+> inserting sk only upon successful removal. We changed this to:
+> check for osk's existence first. If present, insert sk before removing os=
+k
+> (ensuring the bucket isn't empty). If osk is absent, take no action. This
+> maintains the original function's intent while eliminating the window whe=
+re
+> the hashtable bucket is empty.
+>
+> Both sockets briefly coexist in the bucket. During this short window, new
+> lookups correctly find the child socket. For a packet that has already
+> started its lookup and finds the lingering request_sock, this is also saf=
+e
+> because inet_csk_complete_hashdance() contains the necessary checks to
+> prevent the creation of multiple child sockets for the same connection.
+>
+> Fixes: 079096f103fac ("tcp/dccp: install syn_recv requests into ehash tab=
+le")
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 
-Thanks for the heads up, this looks correct to me.
+Xuanqiang is working on the fix.
 
-Cheers,
-Nathan
+https://lore.kernel.org/netdev/20250925021628.886203-1-xuanqiang.luo@linux.=
+dev/
 
