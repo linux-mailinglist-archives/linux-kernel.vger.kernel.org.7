@@ -1,256 +1,148 @@
-Return-Path: <linux-kernel+bounces-831687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9152B9D51C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE49B9D531
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C794A0830
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:37:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901161BC0CF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94DC2DEA80;
-	Thu, 25 Sep 2025 03:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5232E6CB6;
+	Thu, 25 Sep 2025 03:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UgTSuc6K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="dxZjIb72"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85275233134
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39A6233134;
+	Thu, 25 Sep 2025 03:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758771474; cv=none; b=TYJlMYM2F6Lpi9ckotf9pqOpjCuae7iAhfyQ2aufdhwUnno2qE3/eCuOpqc0TO5HsmBvnmlgOM+G+wxy40jVl4zKKuR8upBCgQdzxFwPbr5szubuAI7XIc/Wo4zz5peO6Dp75DdNPqmFdaL9/7Zl2hRR0px+koYQ9rBqf7MDZh0=
+	t=1758771577; cv=none; b=Ngh/ljjI+UIMblyIGCeQyu6Sx7ZkerDgff3UE71oD7gdtY71ykRk90J6M9ercLSJNiW8Vf8NOZxkQTNvqzhjK97eXjzj9T33Ip8y5PDvMomc1LUaRAOANCpes/P5gmHzkaIjrj5FmkRrJkEHtnqSt/vm5sNUH1ppq26pWag690A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758771474; c=relaxed/simple;
-	bh=SwJ8n9QRRLb939UHBqsh+5lwtzA2jD8olcgzZwVK72A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfjLma39VpNppYfA4UwVVDQyOhjOcGSSNwyU6QAHrmh5FhIwZktKPrpvAYt50lD7hbi7148le/as7hYH40qrRyj7TRRQi7xJksoqqE4r0+lWJ75kyJ0OPjECe/Np1khSuVsLU8oqoLjSRZMhjdLGjVfUN1CME3oTgCw5wbiD3PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UgTSuc6K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONvNDa017438
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:37:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=n78nIIomQavWQosZYQPTeoTh
-	4ytOcFS5L4hdEAU6XLI=; b=UgTSuc6KmCehqi8ARRkarzQ/yMYshdS5YZXikwc2
-	7kEv0mWOqAoVbz2YicphPD1AnKPWlRK1yp+Fmhm3SFLF2E1yvaljAw4k8AtMELg6
-	inG7Gz+JOnDV0mhleHIvoHBYxyJFyI7901v6BlbPPK5iouwon9LWTXsbaCKBEIOH
-	eimYo1z8/aAmfxm60mIIoxRFz+QEjrkNqCiCRZ+GJ9ejdR8KsVANgS51pb2xPN7c
-	PxENgsIhvFIwfVK0cSmGzFd+nlsjppggHlen3kj+tEcsjeH6bQCmWkOlOu5d61Zi
-	ArtvXKWsEGrwwYRd1VJG9Jo9uQVCHTZDYJdJP3/srrRK0A==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvjyxr3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:37:51 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-81b8d38504fso174650585a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:37:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758771470; x=1759376270;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n78nIIomQavWQosZYQPTeoTh4ytOcFS5L4hdEAU6XLI=;
-        b=i6JDkEnsyJn5yNRv0ypWj2bfLXB9PQhSfd4M1le3zeTpU/s++ovnCIAc9aOTZBn1Lu
-         L1zfEvTlrRkyKWTAWW0plOrokJ/hlewqsBbLGQfIVNYj5E6szDjG6qsyj54/tEWg2gQZ
-         J/128++c+hlqprUhWlVrIo91ekghUups2/8tA1Zyo08cv5u3w0hDCsWW8vxrU5ZrBeyG
-         0OPHNm+0UuY+4SHYBWQwtPqaWRxNAY0pIuHugv28w1yXfG3wUOXo4dvzK2PnU2dY9826
-         0NpwFzNG8HALfRPqPaiM9KVCbUnwPMAppR7U/7rx/ga2gWY7lPIj6d5St4U84TvAw0aH
-         vnLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvIXPsrLiPUJaDHLU8uLeHJs6+FjkSpbXqjGkaCRotKYioIpE1Kzc/vZZTX/fWJ4rsH/jFDVQzNWUvOr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgNRFyI1TADektW16IrI5hgoEVeJqN1Dhnm9hBnbfvzJ5y5xeO
-	3UUSjR02sHGL1tw2Evz16dTTMmnJPOSGZuviuI0t6UKt17uFsslSHetptDjVbF/ySP3eCg0SkWu
-	wpRI2FebmG0OKdDGPRLPbaVyWU8YijWIWCv3Kqu7fYBLzPZDl40HaEPbF8gXiQ/0Xu2g=
-X-Gm-Gg: ASbGncsjp7QckTPbuqx+5++tzt3gqEayIdFSlHks0oNhB2wsDGXgnGgjZ67PgzV0cn4
-	PbJxpbxvgKRCMyEqayNi6qrzQW4GKZQmiEeMN0mcahHQudG/1V5/ii8FhrQDd4Mx+9UPe60rT4K
-	aTYZeOmHvnypd0upwZCWdEnF8BvVNNNIfu+igrCMekN6/kBFXTfXCvBEdoxXb8hyfhZvfpbJ5au
-	GhJH0xr2IgExnRgtMOSsu/z+nbp30qy10GfLUcyj4y1lVR62QWVDVsN1AhHjksaNTUz4FM9Z9i2
-	sK2bWC6qI0a/XbmHfAqsOPjq4MxDf+suCPx3Dp273qMCIQPle+w4VCp6cIpIV9zFgYBw+QmGKoZ
-	9WlG8f+AESnew79YxpsNqTQehUtm+RNsvP3z++0Sk7bQQVNX+abDp
-X-Received: by 2002:a05:620a:2907:b0:80a:72d7:f0cd with SMTP id af79cd13be357-85aed8cbc11mr225517085a.56.1758771469852;
-        Wed, 24 Sep 2025 20:37:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/Mkya6v8AWWGYf6q1L7jR77pkQxfEZnuvWyLMjPjoG8YIV9rwp0IrPi1ugpz+EuhpXNM8VQ==
-X-Received: by 2002:a05:620a:2907:b0:80a:72d7:f0cd with SMTP id af79cd13be357-85aed8cbc11mr225513785a.56.1758771469267;
-        Wed, 24 Sep 2025 20:37:49 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb7bfb413sm2245821fa.56.2025.09.24.20.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 20:37:47 -0700 (PDT)
-Date: Thu, 25 Sep 2025 06:37:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
-        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
-        andy.yan@rock-chips.com, dianders@chromium.org,
-        m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
- drm_bridge_connector helper
-Message-ID: <ykj7xrnpagbtftr7wt2vkyc4d4u4k5nmxsir433jzz7lhc3oq3@gaq4kicsrlpr>
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-11-damon.ding@rock-chips.com>
- <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
- <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
+	s=arc-20240116; t=1758771577; c=relaxed/simple;
+	bh=XPuiJTetrA6TzrhKGeU6oChWLgdR6/7myg5dufXg3MY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rN/NbHh5tyOhHBg8bU9DjUfErKwtrAQxaMu5UbQdq0X7WuyEypvrz/22JjZ4soCA9r4MirFJlY3iamPwF7kXN5C7qrQDhVnslhaDa4y7Sq2k6MCgCnXOpxQAsvXsKityV+aSf2MxwmL3L+7Xv8R8XK9J001/jq/hcD1AhCH+5C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=dxZjIb72; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58P3dEgeD589309, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758771554; bh=UBK/F3gJ4sbQkkaxgyTqVjw8gDtHVjsoI3s75BRHtoY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=dxZjIb72q2Yt/ZUzQ2OLkwbjmMQdOEQfZd7Om1WS7xyAbndzVsTIbc8mE3i2ctVbp
+	 GPt2JAk9LAIgw734JvvhMvhITwlvVbp+4/ROs1rw0xRYIlUn+nb3hSjcrpACdAg47V
+	 K6Pd1JvUW1dJCbVEmZF8MfRfSp2hu+0nwGr+U2OHxuTdQzIdQsCICrgaN4UNCcEV3r
+	 4ugIRSPFwPBV4GiBkh+iCBUNbVAOKZ59UAw12klcd/BrCkJ98nlE66ukAuCFg/k5/c
+	 zxQcwlchdC1HynxnQUbVf3gQlbRx1oujQafiYSABdxQpVnJPn5iJC+TtKqJ5HszMND
+	 ne4kO2rJ+XeWQ==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58P3dEgeD589309
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 11:39:14 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 25 Sep 2025 11:39:15 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 25 Sep 2025 11:39:14 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Thu, 25 Sep 2025 11:39:14 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next 5/6] wifi: rtw89: process TX wait skbs for USB via C2H handler
+Thread-Topic: [PATCH rtw-next 5/6] wifi: rtw89: process TX wait skbs for USB
+ via C2H handler
+Thread-Index: AQHcKjJdzKHdGQymJEGBjGH1ND0qlLSjQH4w
+Date: Thu, 25 Sep 2025 03:39:14 +0000
+Message-ID: <c2c40bed311c4f05948cf2541c64ea30@realtek.com>
+References: <20250920132614.277719-1-pchelkin@ispras.ru>
+ <20250920132614.277719-6-pchelkin@ispras.ru>
+In-Reply-To: <20250920132614.277719-6-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2870c278-3c65-4d8f-ace3-1fd5b03af2b4@rock-chips.com>
-X-Proofpoint-ORIG-GUID: v7riDoeqjMvMpjiXLZht1p-3X8EQQf2t
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX6eV0uuyP5w/Q
- unXtzirfoperTTG6hNMVsv0yfkcFVJ/4nyCr3Hr+0t/LuT0xSWPsQd7rTE240jH0psMpi+i2uTj
- GSG8w4ELNQ6HwygZZMsiK1MKXfhjMXAjYtosYnrWc0Jj07VtVlXt1J595hcvxYjhExfsA4g7xsg
- vfPARk1q/0mGD2fmwso/s4VCiYpgcipBlvPAyebnFxQHNv2nfaCLbnwqw3RG6GNCQHFTEBeKSdT
- qGi6hyxe2/VhR8FawVRnJ3Y47EC7xRf9Z7GKMrcFAS41GMsPZIRmtQSCtExmrfF/m9XP8y63Qnr
- qLNLvGy57iGEy95yCC5AXqGQmyOqzf3LMLKAEkI2F/zRI6sj9nIaAQAxEBLfqjq6Z63BeohfgwM
- 90I4Hxk6
-X-Proofpoint-GUID: v7riDoeqjMvMpjiXLZht1p-3X8EQQf2t
-X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d4b90f cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=e-wIutcIwHs2mBw2ZVAA:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
- clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
 
-On Wed, Sep 24, 2025 at 05:14:57PM +0800, Damon Ding wrote:
-> Hi Dmitry,
-> 
-> On 9/12/2025 7:03 PM, Dmitry Baryshkov wrote:
-> > On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
-> > > Apply drm_bridge_connector helper for Analogix DP driver.
-> > > 
-> > > The following changes have been made:
-> > > - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
-> > >    and &drm_connector_helper_funcs.
-> > > - Remove unnecessary parameter struct drm_connector* for callback
-> > >    &analogix_dp_plat_data.attach.
-> > > - Remove &analogix_dp_device.connector.
-> > > - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
-> > >    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
-> > > - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
-> > >    &drm_bridge_funcs.edid_read().
-> > > 
-> > > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> > > 
-> > > ------
-> > > 
-> > > Changes in v2:
-> > > - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
-> > >    DRM_BRIDGE_OP_EDID.
-> > > - Add analogix_dp_bridge_edid_read().
-> > > - Move &analogix_dp_plat_data.skip_connector deletion to the previous
-> > >    patches.
-> > > 
-> > > Changes in v3:
-> > > - Rebase with the new devm_drm_bridge_alloc() related commit
-> > >    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
-> > >    API").
-> > > - Expand the commit message.
-> > > - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
-> > >    bridge is available.
-> > > - Remove unnecessary parameter struct drm_connector* for callback
-> > >    &analogix_dp_plat_data.attach.
-> > > - In order to decouple the connector driver and the bridge driver, move
-> > >    the bridge connector initilization to the Rockchip and Exynos sides.
-> > > 
-> > > Changes in v4:
-> > > - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
-> > >    &drm_connector.
-> > > - Rename the &analogix_dp_plat_data.bridge to
-> > >    &analogix_dp_plat_data.next_bridge.
-> > > 
-> > > Changes in v5:
-> > > - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> > >    for next bridge attachment of Exynos side.
-> > > - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
-> > >    the downstream device is a panel, a bridge or neither.
-> > > - Remove the calls to &analogix_dp_plat_data.get_modes().
-> > > ---
-> > >   .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
-> > >   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
-> > >   drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
-> > >   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
-> > >   include/drm/bridge/analogix_dp.h              |   3 +-
-> > >   5 files changed, 95 insertions(+), 96 deletions(-)
-> > > 
-> > > @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
-> > >   int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
-> > >   {
-> > > +	struct drm_bridge *bridge = &dp->bridge;
-> > >   	int ret;
-> > >   	dp->drm_dev = drm_dev;
-> > > @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
-> > >   		return ret;
-> > >   	}
-> > > -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
-> > > +	if (dp->plat_data->panel)
-> > > +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
-> > > +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
-> > > +	else if (dp->plat_data->next_bridge)
-> > > +		/* If the next is a bridge, the supported operations depend on the next bridge */
-> > > +		bridge->ops = 0;
-> > 
-> > And what if the next bridge is dp_connector without a separate HPD pin?
-> 
-> This case was indeed not taken into account.
-> 
-> If the next is a bridge, it should be better to set DRM_BRIDGE_OP_DETECT and
-> return connector_status_connected in analogix_dp_bridge_detect(). This
-> ensures the connection status remains connected for both the dp-connector
-> and the bridges without DRM_BRIDGE_OP_DETECT.
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> TX wait skbs need to be completed when they are done.  PCIe part does thi=
+s
+> inside rtw89_pci_tx_status() during RPP processing.  Other HCIs use a
+> mechanism based on C2H firmware messages.
+>=20
+> Store a sequence number in a TX wait object so that it'll be possible to
+> identify completed items inside C2H handler.  No need to add the
+> corresponding skb to the &txcb->tx_ack_queue on USB part.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-Maybe OP_EDID | OP_DETECT? I think, we need to fix drm_bridge_connector
-to stop preferring OP_EDID bridges over OP_MODES if the latter one is
-enountered later in the chain. In other words inside
-drm_bridge_connector_init() clear bridge_edid if OP_MODES is encountered
-and vice versa. This way you can always declare OP_EDID here (after
-converting to panel bridge) and then letting panel's OP_MODES take over
-mode declaration. Would you please include such a patch in the next
-iteration?
+[...]
 
-> 
-> > 
-> > > +	else
-> > > +		/* In DP mode, the EDID parsing and HPD detection should be supported */
-> > > +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
-> > > +
-> > > +	bridge->of_node = dp->dev->of_node;
-> > > +	bridge->type = DRM_MODE_CONNECTOR_eDP;
-> > > +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
-> > > +	if (ret)
-> > > +		goto err_unregister_aux;
-> > > +
-> > > +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
-> > >   	if (ret) {
-> > >   		DRM_ERROR("failed to create bridge (%d)\n", ret);
-> > >   		goto err_unregister_aux;
-> > 
-> 
-> Best regards,
-> Damon
-> 
+> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
+ess/realtek/rtw89/mac.c
+> index 831e53aedccc..79409eb4d028 100644
+> --- a/drivers/net/wireless/realtek/rtw89/mac.c
+> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
+> @@ -5477,6 +5477,7 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, stru=
+ct sk_buff *c2h, u32 len)
+>  {
+>         u8 sw_define =3D RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
+>         u8 tx_status =3D RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
+> +       struct rtw89_tx_wait_info *wait;
+>         struct sk_buff *cur, *tmp;
+>         unsigned long flags;
+>         u8 *n;
+> @@ -5485,6 +5486,16 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, str=
+uct sk_buff *c2h, u32 len)
+>                     "C2H TX RPT: sn %d, tx_status %d\n",
+>                     sw_define, tx_status);
+>=20
+> +       rcu_read_lock();
+> +       list_for_each_entry_rcu(wait, &rtwdev->tx_waits, list) {
+> +               if (wait->sn =3D=3D sw_define) {
+> +                       wait->tx_done =3D tx_status =3D=3D RTW89_TX_DONE;
+> +                       complete_all(&wait->completion);
+> +                       break;
+> +               }
+> +       }
+> +       rcu_read_unlock();
+> +
 
--- 
-With best wishes
-Dmitry
+Since we can get 'wait' from RTW89_TX_SKB_CB(), can we just use
+rtwdev->tx_rpt_queue?
+
+Also, call rtw89_core_tx_wait_complete() to complete wait?
+
+>         spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
+>         skb_queue_walk_safe(&rtwdev->tx_rpt_queue, cur, tmp) {
+>                 n =3D (u8 *)RTW89_TX_SKB_CB(cur)->hci_priv;
+
+
 
