@@ -1,218 +1,165 @@
-Return-Path: <linux-kernel+bounces-831601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F4CB9D197
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1582B9D19C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1B541776A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D583ACE5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D2E2E1758;
-	Thu, 25 Sep 2025 02:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8852DF3D9;
+	Thu, 25 Sep 2025 02:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="UZwiZDZN"
-Received: from sg-1-14.ptr.blmpb.com (sg-1-14.ptr.blmpb.com [118.26.132.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gfUnTKVx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A112E11C3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A96C2E0921
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758766216; cv=none; b=V2VE7ay3yzsoVhnSucGrHexNwUObdx58FSvOqXVZ+6TI96OSwcJJOG35gI2PAdAVwyUMmFNnnivij0hIBXVLqJlCAjufgGEm2g8mPCPgHokEXiamTX2IcLLygXcwqpBpi6A3LqPhHhvQdUV4y3/QU9DVj2J7Uq3moQPQG334VMo=
+	t=1758766223; cv=none; b=ljGuSvLFVbVM9bvB/KCWMaY5Stg1uihNn2p7/QH5RU+yQWs1b1l4nH9HThLhMf57phuBRowYAlZauAwzCTQ3lksdyPrAXBBa0XFBBXIL8lCtt1pt7uJ1a/YxRMy0O5p/ErQJ5+XRwCXOjKK0b7DJVtO/3GPR7rsYDaceDZMnNlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758766216; c=relaxed/simple;
-	bh=hLOd4eZ1dh0MKpzD0cTXo99Xd/8sx4SY3H/hPWV8cP4=;
-	h=Mime-Version:In-Reply-To:From:Message-Id:To:Subject:Content-Type:
-	 References:Cc:Date; b=ZQUqT6CFGz5BnIybZtUVMWdSuQfhiZ8VipBbcm96IwVuOU4yz0RcnVX3IwPIhBOoKuppyJGuvyAMrvpPklQCNm/b8pWJEDpLEkvXvKdH8As34F/a5xUiO/R+nyuobhm407rURH/xeXX/oWpcIOv9GEDuTaH082Ppc2akeQIv+6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=UZwiZDZN; arc=none smtp.client-ip=118.26.132.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1758766192;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=esxiSXJVAf692v1GQuzD2vDj9cm0Pc2N16YVXiroVfk=;
- b=UZwiZDZN0IpOkzW524FhPr+gF8lyRXWARG4oKR64dKI1+eXm5ogoUX0O8+RWZjZMS0S7x1
- gZDF5OvfgWBuBqIjajNxi61mP+CT2FCC4v/7sRS3sGihkX5TtxfHqGlW7NUXAC4CciuAsw
- GAufHuASzb47jWf8Kre4rDiyyD7FgsdNivBbJpnqsfBJnHrkW1O62hsfFOd415LNLzuxCF
- +5nec5Us3AwxJKjZGA7cuGnqd95nBAK969YmDGKNV/02sJuwmd/jVT6Uc8pdQRaNw+wTBa
- 5ziXGUz/S5Np2U9Zpt4R2yLMPlTrgSioXyGM7MeDMgVVq0S/8QNPWTK4SpJFgw==
+	s=arc-20240116; t=1758766223; c=relaxed/simple;
+	bh=bjee08JRPy0I62XUoi+pR4Sr5AISrB+/yfRGenhZsNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frRGszX8351epNaUn7Jv2ThcYjHS1XdHeE3QbkN5Un0rVRLKGHq4i2TBOgg3tmvi3SGIyyXIzqoeyyifGOs3axvL/L4QC3atTwGmbriydKBzLUjS5vEHWGoia/exCuod7ddC4QYDNhqFjq/3IWBQr3JyMr4hyMk+WhgP5nt9nsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gfUnTKVx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONqWoE023856
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:10:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=C/7uHCKAmdWyZHNd0/dLgQZx
+	NGpO7Z+I9wSgi4aQWpw=; b=gfUnTKVxKRrXAnjEvnmU379FIOSq0pBrvmZrUcpr
+	i2ca7c6etOZPd92L7yYWVfmZb//GRUIONVaEeH4/kC+q3KbTI1Sal/hx2niUO7VR
+	Okf3/wm3C0AD/RBZIg7zh4B/V3BTGYAwNu6Df7mv0b6ryFB/tdUPwGJzYWvuRjHV
+	qyiiwqEiQ9xs84pobZjXX8ncipxxmxlNoXHV7B7bsX+BtK5IV/jFH+VE60uOzq/M
+	WwO4PmPu7sXXTem20yz31z8Le07FlzGLVHy3ttdPJqQv60hW1lDR26WVSzVcHGsC
+	y11+WmSP/ZZHd5QVCQZfMjlmAyR2U1Mwi4mazGxWEdwoYQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp0ddrh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:10:20 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b78fb75a97so4927111cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:10:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758766219; x=1759371019;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C/7uHCKAmdWyZHNd0/dLgQZxNGpO7Z+I9wSgi4aQWpw=;
+        b=BZ7zT7cm1QB0bGWE/Erx/FfXBlHhcEH94a1e7StmCEDD3Ag1zoshXEm0NzImbKKd/X
+         9lMTbH6uA+ZwizMD51sG16kZPAf6f7ag0SrVMDZWFxr9Vq+aF70fXH0IC2WRO3ja9v6T
+         xe4SVd6boQSwNjAREMW9J0fu40N9opnL1eVVU0PzjxzImd9IKo6Itg2P4L6fKhr+plOr
+         sVPe75eiEFoMVIpXg3twNdQLNSM2JAA0pXbkR9HtKOkOot3dPv+Zslp74MC/iQgAWHlC
+         0vIH3q26YFeDAxMtDL2lnK/TA6fqIMHHot6XZOqIJWkpEDebBKTxdKPSVwXEklcVQDmr
+         MUdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXO6ZrPXXzSfhmUD4jkwO+LY6G42ABsoP9VC+8Hcbt1tZTnxookBNz25vbPEszNMmdtdaRNJ5vAptf3Djs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya4oxuBt9StWqk40INfp28WlZu2I9qGaZOltuCAfbXM17vE+Eh
+	GjtlwMnX5knhTDRF9dwmz9oSlpApx75jSt/sWdaJ+cdgUm+9as9col8WnoVcfmyit1mVVj+Oc+g
+	i/mJjgIWlB0E1XeuEtJyEjm6hIDvrmlFBzfw4ixUXw9yMB/TM+AqJr7ecGbkgYDGZLq4=
+X-Gm-Gg: ASbGncsY43vxhhEi/0Rsm8zrInd6GltIwzEZlpsbb/hqYAD8tRJED5/VB6LNm2GVSxv
+	G6Upaua3zhQCAXJ3D2QwNBd740ekC4IbfKToLg2d8gwLH7wL1w505AqvwORWDqxyy5eGoDubK4P
+	IZ7zW623YW2WxEzPnp/aPSGljjs2pax/9I8mVs5trYRk5nUEztkbLTQYPz6GeZLxlBUElb70OtH
+	Vtl5A22ntiqVhLyUu4y1GCWrXTTBU0PCYnq/6HtiUzjSTjT/AiF0lTaF8r1DS26FvQQmExg5h0o
+	bWvVCEMFNqDZuq8HLHbXB9tRT4kkYCOSU4Nrr1o2Ej0a8+oNYMhj9sxgyBV5rsUsV4/bZYMXrBd
+	ibGAPWPZPn1Dw1fa65JB+zo7ty/uCunmxY+08JHwCggPQIL87hkJ4
+X-Received: by 2002:a05:622a:8cf:b0:4d6:173a:8729 with SMTP id d75a77b69052e-4da47354eb9mr29433941cf.10.1758766219508;
+        Wed, 24 Sep 2025 19:10:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvUUmMZkLOjmwfUxC0iVnkbYdMU7OcIFMO4AR+CisgKDy2LIfUOS6Qp9qM3Rb+mOQMi+xa4g==
+X-Received: by 2002:a05:622a:8cf:b0:4d6:173a:8729 with SMTP id d75a77b69052e-4da47354eb9mr29433481cf.10.1758766218832;
+        Wed, 24 Sep 2025 19:10:18 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313dd67c4sm239442e87.55.2025.09.24.19.10.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 19:10:16 -0700 (PDT)
+Date: Thu, 25 Sep 2025 05:10:13 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH 15/20] arm64: dts: qcom: kaanapali-mtp: Enable modem
+Message-ID: <iexa64nrdqmwitvunl3inmgtmhufphl3p4p2kbvhgcsb2y6l7j@5tpt23yd6jzh>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-15-3fdbc4b9e1b1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-In-Reply-To: <20250924-7e9764acec6722b5ef29ce7d@orel>
-Received: from [127.0.0.1] ([222.128.9.250]) by smtp.feishu.cn with ESMTPS; Thu, 25 Sep 2025 10:09:49 +0800
-X-Lms-Return-Path: <lba+268d4a46e+ae3fc8+vger.kernel.org+xiangwencheng@lanxincomputing.com>
-From: "BillXiang" <xiangwencheng@lanxincomputing.com>
-Message-Id: <fe1f3a3e-a6e2-4d4d-b7da-0f4689bda34a@lanxincomputing.com>
-X-Original-From: BillXiang <xiangwencheng@lanxincomputing.com>
-User-Agent: Mozilla Thunderbird
-To: "Andrew Jones" <ajones@ventanamicro.com>
-Subject: Re: [PATCH] riscv: Move user-visible sbi ext ids to uapi
-Content-Type: text/plain; charset=UTF-8
-References: <20250917085246.1430354-1-xiangwencheng@lanxincomputing.com> <20250923-5498566fbd48a3dfd61ecd08@orel> <1be32bd0-a3d1-4fea-8f22-e050f664907b@lanxincomputing.com> <20250924-7e9764acec6722b5ef29ce7d@orel>
-Cc: <anup@brainfault.org>, <kvm-riscv@lists.infradead.org>, 
-	<linux-kernel@vger.kernel.org>, <paul.walmsley@sifive.com>, 
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, 
-	<atishp@rivosinc.com>
-Date: Thu, 25 Sep 2025 10:09:48 +0800
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924-knp-dts-v1-15-3fdbc4b9e1b1@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d4a48c cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=noE4yVIB50t1Y-xfs_8A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: huK2naeXYEzROgMGmR8ZnP0ZJ8HYYqUK
+X-Proofpoint-ORIG-GUID: huK2naeXYEzROgMGmR8ZnP0ZJ8HYYqUK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfXxfbpeG2SLapE
+ PkH0XzBTJ9HsolBynreLFRofG4wKvZrZftlQit8EBUJt08B5ywlkg9vHwIJ1J1kECbh7EYIvG2t
+ rOLvp109UHV4EBulwrqsM0EItENCZr26fiSt6Slb/3kgL9v7kJqf+a+0UM77PJQZZr8fmwBCcbH
+ DnkiNb5mbXBY9Z3GRRMX9Ba9L77XizFXWHqknlzWndCj1A7WwoBq+B4NR0iE1Jt8DGyFKR4FDRn
+ G6mWBjS6NhC0Vt2Uf+YZYJCUGmY3hwO6s1mIsGk4NncBSaixEZe2+kM+fzk6+I7jOFXfY+Pd+qr
+ oCIthjjyi+yBZVEUmJUDvMaxNqhV9pUnsDL+mVEz7HTxPSvHV3BUZRQphpNS4WZXJRvq+yOI2fI
+ ECOxn/cG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230138
 
-On 9/24/2025 8:54 PM, Andrew Jones wrote:
-> On Wed, Sep 24, 2025 at 10:35:25AM +0800, BillXiang wrote:
->> On 9/24/2025 4:14 AM, Andrew Jones wrote:
->>> On Wed, Sep 17, 2025 at 04:52:46PM +0800, BillXiang wrote:
->>>> Move those sbi ext ids to uapi because they will be forwarded
->>>> to user space by kvm.
->>>
->>> We don't need to publish the IDs in UAPI since they are already known to
->>> userspace by reading the SBI spec. Indeed QEMU already defines all of
->>> these except for the experimental range.>
->>> What problem are you trying to solve?
->>
->>
->> I'm working on rust-vmm[1], which auto-generates the ID constants
->> from uapi/kvm.h via bindgen[2]. Any ID that isn't exported there is
->> invisible to us. I expect other VMMs besides QEMU will need these
->> numbers as well, so let's keep one canonical definition in the UAPI
->> headers for everyone to share.
+On Wed, Sep 24, 2025 at 05:17:32PM -0700, Jingyi Wang wrote:
+> Enable the MODEM on Kaanapali MTP board.
 > 
-> But KVM isn't the authority on these IDs, the spec is. KVM and its
-> userspaces are just some implementations of SBI. M-mode software
-> and other hypervisors also implements SBI.
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> For Rust you can use https://docs.rs/sbi-spec/latest/sbi_spec/ to get
-> the constants you're looking for.
+> diff --git a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+> index 2949579481a9..8d1b3278389e 100644
+> --- a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
+> @@ -1263,6 +1263,14 @@ &remoteproc_cdsp {
+>  	status = "okay";
+>  };
+>  
+> +&remoteproc_mpss {
+> +	firmware-name = "qcom/kaanapali/modem.mbn",
+> +			"qcom/kaanapali/modem_dtb.mbn";
+> +
+> +	/* Modem crashes after some time for OEMPD load failure */
+> +	status = "fail";
 
-This is a good idea. I'll try it.
+I can't call this 'enable'. Why is it crashing?
 
-Thanks,
-bill
+> +};
+> +
+>  &remoteproc_soccp {
+>  	firmware-name = "qcom/kaanapali/soccp.mbn",
+>  			"qcom/kaanapali/soccp_dtb.mbn";
+> 
+> -- 
+> 2.25.1
+> 
 
-> 
-> Thanks,
-> drew
-> 
->>
->>
->> [1] https://github.com/rust-vmm
->> [2] https://crates.io/crates/bindgen
->>
->>>
->>> Thanks,
->>> drew
->>>
->>>>
->>>> Signed-off-by: BillXiang <xiangwencheng@lanxincomputing.com>
->>>> ---
->>>>    arch/riscv/include/asm/sbi.h      | 16 +-----------
->>>>    arch/riscv/include/uapi/asm/sbi.h | 43 +++++++++++++++++++++++++++++++
->>>>    2 files changed, 44 insertions(+), 15 deletions(-)
->>>>    create mode 100644 arch/riscv/include/uapi/asm/sbi.h
->>>>
->>>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->>>> index 341e74238aa0..e196feaabb2e 100644
->>>> --- a/arch/riscv/include/asm/sbi.h
->>>> +++ b/arch/riscv/include/asm/sbi.h
->>>> @@ -10,13 +10,12 @@
->>>>    #include <linux/types.h>
->>>>    #include <linux/cpumask.h>
->>>>    #include <linux/jump_label.h>
->>>> +#include <uapi/asm/sbi.h>
->>>>    
->>>>    #ifdef CONFIG_RISCV_SBI
->>>>    enum sbi_ext_id {
->>>>    #ifdef CONFIG_RISCV_SBI_V01
->>>>    	SBI_EXT_0_1_SET_TIMER = 0x0,
->>>> -	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
->>>> -	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
->>>>    	SBI_EXT_0_1_CLEAR_IPI = 0x3,
->>>>    	SBI_EXT_0_1_SEND_IPI = 0x4,
->>>>    	SBI_EXT_0_1_REMOTE_FENCE_I = 0x5,
->>>> @@ -37,13 +36,6 @@ enum sbi_ext_id {
->>>>    	SBI_EXT_NACL = 0x4E41434C,
->>>>    	SBI_EXT_FWFT = 0x46574654,
->>>>    
->>>> -	/* Experimentals extensions must lie within this range */
->>>> -	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
->>>> -	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
->>>> -
->>>> -	/* Vendor extensions must lie within this range */
->>>> -	SBI_EXT_VENDOR_START = 0x09000000,
->>>> -	SBI_EXT_VENDOR_END = 0x09FFFFFF,
->>>>    };
->>>>    
->>>>    enum sbi_ext_base_fid {
->>>> @@ -263,12 +255,6 @@ enum sbi_pmu_ctr_type {
->>>>    #define SBI_PMU_STOP_FLAG_RESET BIT(0)
->>>>    #define SBI_PMU_STOP_FLAG_TAKE_SNAPSHOT BIT(1)
->>>>    
->>>> -enum sbi_ext_dbcn_fid {
->>>> -	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
->>>> -	SBI_EXT_DBCN_CONSOLE_READ = 1,
->>>> -	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
->>>> -};
->>>> -
->>>>    /* SBI STA (steal-time accounting) extension */
->>>>    enum sbi_ext_sta_fid {
->>>>    	SBI_EXT_STA_STEAL_TIME_SET_SHMEM = 0,
->>>> diff --git a/arch/riscv/include/uapi/asm/sbi.h b/arch/riscv/include/uapi/asm/sbi.h
->>>> new file mode 100644
->>>> index 000000000000..d29ac0abeefe
->>>> --- /dev/null
->>>> +++ b/arch/riscv/include/uapi/asm/sbi.h
->>>> @@ -0,0 +1,43 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->>>> +/*
->>>> + * Copyright (C) 2025 Lanxincomputing Corporation or its affiliates.
->>>> + *
->>>> + * Authors:
->>>> + *     BillXiang <xiangwencheng@lanxincomputing.com>
->>>> + */
->>>> +
->>>> +#ifndef _UAPI_ASM_RISCV_SBI_H
->>>> +#define _UAPI_ASM_RISCV_SBI_H
->>>> +
->>>> +
->>>> +enum SBI_EXT_ID {
->>>> +	/*
->>>> +	* The CONSOLE_GETCHAR/CONSOLE_PUTCHAR SBI calls cannot be
->>>> +	* handled in kernel so they will be forwarded to userspace by kvm.
->>>> +	*/
->>>> +	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
->>>> +	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
->>>> +	/*
->>>> +	* Both SBI experimental and vendor extensions are
->>>> +	* unconditionally forwarded to userspace by kvm.
->>>> +	*/
->>>> +	/* Experimentals extensions must lie within this range */
->>>> +	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
->>>> +	SBI_EXT_EXPERIMENTAL_END = 0x08FFFFFF,
->>>> +
->>>> +	/* Vendor extensions must lie within this range */
->>>> +	SBI_EXT_VENDOR_START = 0x09000000,
->>>> +	SBI_EXT_VENDOR_END = 0x09FFFFFF,
->>>> +};
->>>> +
->>>> +/*
->>>> +* The SBI debug console functions are unconditionally
->>>> +* forwarded to the userspace by kvm.
->>>> +*/
->>>> +enum sbi_ext_dbcn_fid {
->>>> +	SBI_EXT_DBCN_CONSOLE_WRITE = 0,
->>>> +	SBI_EXT_DBCN_CONSOLE_READ = 1,
->>>> +	SBI_EXT_DBCN_CONSOLE_WRITE_BYTE = 2,
->>>> +};
->>>> +
->>>> +#endif /* _UAPI_ASM_RISCV_SBI_H */
->>>> \ No newline at end of file
->>>> -- 
->>>> 2.43.0
+-- 
+With best wishes
+Dmitry
 
