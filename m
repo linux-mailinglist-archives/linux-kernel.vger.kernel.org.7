@@ -1,885 +1,595 @@
-Return-Path: <linux-kernel+bounces-832324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A95B9EEA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:32:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9DFB9EEBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6F319C7CEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06A019C83EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B3D2FABE9;
-	Thu, 25 Sep 2025 11:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7352FAC00;
+	Thu, 25 Sep 2025 11:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZSRDNib"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QYQxthQS"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E837A2F9D95;
-	Thu, 25 Sep 2025 11:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5902FABE4
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758799937; cv=none; b=Pw4VMc3rG9IHgVMe7XEHbX3JqCjX6qtd3RJvjpklPg6FRsD3qD3lTONGFrq/CsZWEApZey6hkIGfIVM10rotUib6JTt0AI9M57B3aNPzLNc/LpTPU6H398TKt+KdrYir0s3v3OK02sqcwsnEGJ1UhG5ytMj00q+J1ATcZfPs1j4=
+	t=1758800008; cv=none; b=upA8aw44bfayVcMkrb2salHnwDXPM+W1eTq7iYEcpBHEN7sIkj+CJwMihDfoDW9KQ9S1FeNY7qtAJXNnxuP+wob7C0mwLIoyq2Uph0aAIH8Mk+ozrUyKfI/+TF0p+Kv0b2ZQSCeH2PjkZ9MJ+T82IKqqP5X+IEXPCI0lCw+9Jzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758799937; c=relaxed/simple;
-	bh=tXGQs4PCcoVS8d8vf3xLaYGItw8hP7gn7LZzDeZoGx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHb4X0zEaKfilZGPPwkxVjwGouWVInd9VGkp520f1MFwGT2sZVhwdeToYINcN3X7JhlG2KnvsnMJRRjAHYK/UcSl1YhjLDHip9McjCx6N/mVsSt4Vg8lL4XABrPMwclsBANDnW0priScCLk7bIREmyGKM8DjrIJ/oIertf4i0Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZSRDNib; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC7ABC4CEF7;
-	Thu, 25 Sep 2025 11:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758799936;
-	bh=tXGQs4PCcoVS8d8vf3xLaYGItw8hP7gn7LZzDeZoGx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NZSRDNib2ggkJaGNbggL8B93RKxD6KNmgBnoR5i/EnenqSFUBtxai/jxg7DJvM45T
-	 rFzAy4Hc0yN1Ptk4r1Ghd4qTfs2plSzHW9kapSNJhQCDXpile+SXKhaXoMd5J1NOTC
-	 79R+tlND6Mv4amQoPnY55BAdq/5HCkXGIOHFDYZe6jNa5GJjFAwvKCl2EwHzDH3Z6p
-	 d2dc1ihXopGO/Y0tsW6/unzaibhNI79uNcpCWan8fQKOnTxcqKQHFJ/2rSRThbgMzL
-	 zTmiI5DCl6QIi5fylwOQ1P508rRIIANY/OvDd15jo+d0RCXj0l4y957HNDvG33oMNc
-	 rdju5vSqwKNqw==
-Date: Thu, 25 Sep 2025 13:32:09 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
+	s=arc-20240116; t=1758800008; c=relaxed/simple;
+	bh=tWPOJ54fBiTdw0gvZyVcZpoXiuKoSj+4PGphxIupgUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IFo99uQGgTmTXToa2lo5kVChBz7l4UbLNbOfUdsAWbe1Ln6QBNDk93z5WphSPYK0C0erazbcDplM3CTOTLXqvkIM2U/0jsoXIFp2HchesQw9SgRBDHBByMJjrPH0PtDGdljAGIFgxEocqAEvk1WXFK6RxVhjB6RIbnZ0A6DvwQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QYQxthQS; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250925113319euoutp01bf99df1b4ff9388dac1452a1f40ac70d~og0ffw-KW1906119061euoutp01I
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:33:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250925113319euoutp01bf99df1b4ff9388dac1452a1f40ac70d~og0ffw-KW1906119061euoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758799999;
+	bh=P9Ec1jWSnugXGZ5AkUhPYGjEOqiEduJxMg/sOLnZKhE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=QYQxthQSgPfwqLeihsdey0uww1aNQ/9yFDm+tAB3lJqkpE258tUh1PNxcdB4tKExy
+	 rt+xsxspMKiKg6h1O8Hvag6ddBsa1m6iaoFVFkajmnAIwMsoHQHVKg2NstM+GgAwBe
+	 GEhYX3l3mp+AESfELWYqTSfj4uzVfnTmgFb8zBg4=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250925113318eucas1p2941e2087b8992d315bf1349a6221fb45~og0e1T7Gk2754227542eucas1p2V;
+	Thu, 25 Sep 2025 11:33:18 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250925113317eusmtip294bf20309d95bb94e0b2138a8a118478~og0dvyGCE0683706837eusmtip2-;
+	Thu, 25 Sep 2025 11:33:17 +0000 (GMT)
+Message-ID: <3c0ce788-0e31-4cde-bfc2-e4add5818348@samsung.com>
+Date: Thu, 25 Sep 2025 13:33:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="22f5tmtkurpbpcq3"
-Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 4/7] pwm: Add Rust driver for T-HEAD TH1520 SoC
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida
+	<daniel.almeida@collabora.com>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <ca2ftwfducf4swuoondajiid642mctilh4lt3grgxpnup3nhag@tyuwyasfw4uj>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250925113318eucas1p2941e2087b8992d315bf1349a6221fb45
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250820083544eucas1p2be0157353ec1201b0651292792429aa4
+X-EPHeader: CA
+X-CMS-RootMailID: 20250820083544eucas1p2be0157353ec1201b0651292792429aa4
+References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
+	<CGME20250820083544eucas1p2be0157353ec1201b0651292792429aa4@eucas1p2.samsung.com>
+	<20250820-rust-next-pwm-working-fan-for-sending-v14-4-df2191621429@samsung.com>
+	<ca2ftwfducf4swuoondajiid642mctilh4lt3grgxpnup3nhag@tyuwyasfw4uj>
 
 
---22f5tmtkurpbpcq3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 3/8] man/man2/fsconfig.2: document "new" mount API
-Message-ID: <brqynohvpwo4hqdepvqks3hluq3jng6bnd7xtensee5adgtxem@3ughtcvv57si>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-3-028fb88023f2@cyphar.com>
 
-Hi Aleksa,
+On 9/19/25 09:10, Uwe Kleine-König wrote:
+> Hello,
+> 
+> actually I intended to give my feedback as a patch, but I'm not fluent
+> enough in Rust yet :-\, so here come my thoughts in text only.
 
-On Thu, Sep 25, 2025 at 01:31:25AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
->=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  man/man2/fsconfig.2 | 729 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 729 insertions(+)
->=20
-> diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a2d844a105c74f17af640d699=
-1046dbd5fa69cf0
-> --- /dev/null
-> +++ b/man/man2/fsconfig.2
-> @@ -0,0 +1,729 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fsconfig 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fsconfig \- configure new or existing filesystem context
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fsconfig(int " fd ", unsigned int " cmd ,
-> +.BI "             const char *_Nullable " key ,
-> +.BI "             const void *_Nullable " value ", int " aux );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fsconfig ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR fsconfig ()
-> +is used to supply parameters to
-> +and issue commands against
-> +the filesystem configuration context
-> +associated with the file descriptor
-> +.IR fd .
-> +Filesystem configuration contexts can be created with
-> +.BR fsopen (2)
-> +or be instantiated from an extant filesystem instance with
-> +.BR fspick (2).
-> +.P
-> +The
-> +.I cmd
-> +argument indicates the command to be issued.
-> +Some commands supply parameters to the context
-> +(equivalent to mount options specified with
-> +.BR mount (8)),
-> +while others are meta-operations on the filesystem context.
-> +The list of valid
-> +.I cmd
-> +values are:
-> +.RS
-> +.TP
-> +.B FSCONFIG_SET_FLAG
-> +Set the flag parameter named by
-> +.IR key .
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.TP
-> +.B FSCONFIG_SET_STRING
-> +Set the string parameter named by
-> +.I key
-> +to the value specified by
-> +.IR value .
-> +.I value
-> +points to a null-terminated string,
-> +and
-> +.I aux
-> +must be 0.
-> +.TP
-> +.B FSCONFIG_SET_BINARY
-> +Set the blob parameter named by
-> +.I key
-> +to the contents of the binary blob
-> +specified by
-> +.IR value .
-> +.I value
-> +points to
-> +the start of a buffer
-> +that is
-> +.I aux
-> +bytes in length.
-> +.TP
-> +.B FSCONFIG_SET_FD
-> +Set the file parameter named by
-> +.I key
-> +to the open file description
-> +referenced by the file descriptor
-> +.IR aux .
-> +.I value
-> +must be NULL.
-> +.IP
-> +You may also use
-> +.B \%FSCONFIG_SET_STRING
-> +for file parameters,
-> +with
-> +.I value
-> +set to a null-terminated string
-> +containing a base-10 representation
-> +of the file descriptor number.
-> +This mechanism is primarily intended for compatibility
-> +with older
-> +.BR mount (2)-based
-> +programs,
-> +and only works for parameters
-> +that
-> +.I only
-> +accept file descriptor arguments.
-> +.TP
-> +.B FSCONFIG_SET_PATH
-> +Set the path parameter named by
-> +.I key
-> +to the object at a provided path,
-> +resolved in a similar manner to
-> +.BR openat (2).
-> +.I value
-> +points to a null-terminated pathname string,
-> +and
-> +.I aux
-> +is equivalent to the
-> +.I dirfd
-> +argument to
-> +.BR openat (2).
-> +See
-> +.BR openat (2)
-> +for an explanation of the need for
-> +.BR \%FSCONFIG_SET_PATH .
-> +.IP
-> +You may also use
-> +.B \%FSCONFIG_SET_STRING
-> +for path parameters,
-> +the behaviour of which is equivalent to
-> +.B \%FSCONFIG_SET_PATH
-> +with
-> +.I aux
-> +set to
-> +.BR \%AT_FDCWD .
-> +.TP
-> +.B FSCONFIG_SET_PATH_EMPTY
-> +As with
-> +.BR \%FSCONFIG_SET_PATH ,
-> +except that if
-> +.I value
-> +is an empty string,
-> +the file descriptor specified by
-> +.I aux
-> +is operated on directly
-> +and may be any type of file
-> +(not just a directory).
-> +This is equivalent to the behaviour of
-> +.B \%AT_EMPTY_PATH
-> +with most "*at()" system calls.
-> +If
-> +.I aux
-> +is
-> +.BR \%AT_FDCWD ,
-> +the parameter will be set to
-> +the current working directory
-> +of the calling process.
-> +.TP
-> +.B FSCONFIG_CMD_CREATE
-> +This command instructs the filesystem driver
-> +to instantiate an instance of the filesystem in the kernel
-> +with the parameters specified in the filesystem configuration context.
-> +.I key
-> +and
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.IP
-> +This command can only be issued once
-> +in the lifetime of a filesystem context.
-> +If the operation succeeds,
-> +the filesystem context
-> +associated with file descriptor
-> +.I fd
-> +now references the created filesystem instance,
-> +and is placed into a special "awaiting-mount" mode
-> +that allows you to use
-> +.BR fsmount (2)
-> +to create a mount object from the filesystem instance.
-> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
-> +If the operation fails,
-> +in most cases
-> +the filesystem context is placed in a failed mode
-> +and cannot be used for any further
-> +.BR fsconfig ()
-> +operations
-> +(though you may still retrieve diagnostic messages
-> +through the message retrieval interface,
-> +as described in
-> +the corresponding subsection of
-> +.BR fsopen (2)).
-> +.IP
-> +This command can only be issued against
-> +filesystem configuration contexts
-> +that were created with
-> +.BR fsopen (2).
-> +In order to create a filesystem instance,
-> +the calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.IP
-> +An important thing to be aware of is that
-> +the Linux kernel will
-> +.I silently
-> +reuse extant filesystem instances
-> +depending on the filesystem type
-> +and the configured parameters
-> +(each filesystem driver has
-> +its own policy for
-> +how filesystem instances are reused).
-> +This means that
-> +the filesystem instance "created" by
-> +.B \%FSCONFIG_CMD_CREATE
-> +may, in fact, be a reference
-> +to an extant filesystem instance in the kernel.
-> +(For reference,
-> +this behaviour also applies to
-> +.BR mount (2).)
-> +.IP
-> +One side-effect of this behaviour is that
-> +if an extant filesystem instance is reused,
-> +.I all
-> +parameters configured
-> +for this filesystem configuration context
-> +are
-> +.I silently ignored
-> +(with the exception of the
-> +.I ro
-> +and
-> +.I rw
-> +flag parameters;
-> +if the state of the read-only flag in the
-> +extant filesystem instance and the filesystem configuration context
-> +do not match, this operation will return
-> +.BR EBUSY ).
-> +This also means that
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +commands issued against
-> +the "created" filesystem instance
-> +will also affect any mount objects associated with
-> +the extant filesystem instance.
-> +.IP
-> +Programs that need to ensure
-> +that they create a new filesystem instance
-> +with specific parameters
-> +(notably, security-related parameters
-> +such as
-> +.I acl
-> +to enable POSIX ACLs\[em]\c
-> +as described in
-> +.BR acl (5))
-> +should use
-> +.B \%FSCONFIG_CMD_CREATE_EXCL
-> +instead.
-> +.TP
-> +.BR FSCONFIG_CMD_CREATE_EXCL " (since Linux 6.6)"
-> +.\" commit 22ed7ecdaefe0cac0c6e6295e83048af60435b13
-> +.\" commit 84ab1277ce5a90a8d1f377707d662ac43cc0918a
-> +As with
-> +.BR \%FSCONFIG_CMD_CREATE ,
-> +except that the kernel is instructed
-> +to not reuse extant filesystem instances.
-> +If the operation
-> +would be forced to
-> +reuse an extant filesystem instance,
-> +this operation will return
-> +.B EBUSY
-> +instead.
-> +.IP
-> +As a result (unlike
-> +.BR \%FSCONFIG_CMD_CREATE ),
-> +if this operation succeeds
-> +then the calling process can be sure that
-> +all of the parameters successfully configured with
-> +.BR fsconfig ()
-> +will actually be applied
-> +to the created filesystem instance.
-> +.TP
-> +.B FSCONFIG_CMD_RECONFIGURE
-> +This command instructs the filesystem driver
-> +to apply the parameters specified in the filesystem configuration context
-> +to the extant filesystem instance
-> +referenced by the filesystem configuration context.
-> +.I key
-> +and
-> +.I value
-> +must be NULL,
-> +and
-> +.I aux
-> +must be 0.
-> +.IP
-> +This is primarily intended for use with
-> +.BR fspick (2),
-> +but may also be used to modify
-> +the parameters of a filesystem instance
-> +after
-> +.B \%FSCONFIG_CMD_CREATE
-> +was used to create it
-> +and a mount object was created using
-> +.BR fsmount (2).
-> +In order to reconfigure an extant filesystem instance,
-> +the calling process must have the
-> +.B CAP_SYS_ADMIN
-> +capability.
-> +.IP
-> +If the operation succeeds,
-> +the filesystem context is reset
-> +but remains in reconfiguration mode
-> +and thus can be reused for subsequent
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +commands.
-> +If the operation fails,
-> +in most cases
-> +the filesystem context is placed in a failed mode
-> +and cannot be used for any further
-> +.BR fsconfig ()
-> +operations
-> +(though you may still retrieve diagnostic messages
-> +through the message retrieval interface,
-> +as described in
-> +the corresponding subsection of
-> +.BR fsopen (2)).
-> +.RE
-> +.P
-> +Parameters specified with
-> +.BI FSCONFIG_SET_ *
-> +do not take effect
-> +until a corresponding
-> +.B \%FSCONFIG_CMD_CREATE
-> +or
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +command is issued.
-> +.SH RETURN VALUE
-> +On success,
-> +.BR fsconfig ()
-> +returns 0.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +If an error occurs, the filesystem driver may provide
-> +additional information about the error
-> +through the message retrieval interface for filesystem configuration con=
-texts.
-> +This additional information can be retrieved at any time by calling
-> +.BR read (2)
-> +on the filesystem instance or filesystem configuration context
-> +referenced by the file descriptor
-> +.IR fd .
-> +(See the "Message retrieval interface" subsection in
-> +.BR fsopen (2)
-> +for more details on the message format.)
-> +.P
-> +Even after an error occurs,
-> +the filesystem configuration context is
-> +.I not
-> +invalidated,
-> +and thus can still be used with other
-> +.BR fsconfig ()
-> +commands.
-> +This means that users can probe support for filesystem parameters
-> +on a per-parameter basis,
-> +and adjust which parameters they wish to set.
-> +.P
-> +The error values given below result from
-> +filesystem type independent errors.
-> +Each filesystem type may have its own special errors
-> +and its own special behavior.
-> +See the Linux kernel source code for details.
-> +.TP
-> +.B EACCES
-> +A component of a path
-> +provided as a path parameter
-> +was not searchable.
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EACCES
-> +.B \%FSCONFIG_CMD_CREATE
-> +was attempted
-> +for a read-only filesystem
-> +without specifying the
-> +.RB ' ro '
-> +flag parameter.
-> +.TP
-> +.B EACCES
-> +A specified block device parameter
-> +is located on a filesystem
-> +mounted with the
-> +.B \%MS_NODEV
-> +option.
-> +.TP
-> +.B EBADF
-> +The file descriptor given by
-> +.I fd
-> +(or possibly by
-> +.IR aux ,
-> +depending on the command)
-> +is invalid.
-> +.TP
-> +.B EBUSY
-> +The filesystem context associated with
-> +.I fd
-> +is in the wrong state
-> +for the given command.
-> +.TP
-> +.B EBUSY
-> +The filesystem instance cannot be reconfigured as read-only
-> +with
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +because some programs
-> +still hold files open for writing.
-> +.TP
-> +.B EBUSY
-> +A new filesystem instance was requested with
-> +.B \%FSCONFIG_CMD_CREATE_EXCL
-> +but a matching superblock already existed.
-> +.TP
-> +.B EFAULT
-> +One of the pointer arguments
-> +points to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +.I fd
-> +does not refer to
-> +a filesystem configuration context
-> +or filesystem instance.
-> +.TP
-> +.B EINVAL
-> +One of the values of
-> +.IR name ,
-> +.IR value ,
-> +and/or
-> +.I aux
-> +were set to a non-zero value when
-> +.I cmd
-> +required that they be zero
-> +(or NULL).
-> +.TP
-> +.B EINVAL
-> +The parameter named by
-> +.I name
-> +cannot be set
-> +using the type specified with
-> +.IR cmd .
-> +.TP
-> +.B EINVAL
-> +One of the source parameters
-> +referred to
-> +an invalid superblock.
-> +.TP
-> +.B ELOOP
-> +Too many links encountered
-> +during pathname resolution
-> +of a path argument.
-> +.TP
-> +.B ENAMETOOLONG
-> +A path argument was longer than
-> +.BR PATH_MAX .
-> +.TP
-> +.B ENOENT
-> +A path argument had a non-existent component.
-> +.TP
-> +.B ENOENT
-> +A path argument is an empty string,
-> +but
-> +.I cmd
-> +is not
-> +.BR \%FSCONFIG_SET_PATH_EMPTY .
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B ENOTBLK
-> +The parameter named by
-> +.I name
+Hi,
+Thanks, will do my best to address the comments
 
-There's no such parameter.  (I guess you meant 'key'?)
+> 
+> On Wed, Aug 20, 2025 at 10:35:39AM +0200, Michal Wilczynski wrote:
+>> Introduce a PWM driver for the T-HEAD TH1520 SoC, written in Rust and
+>> utilizing the safe PWM abstractions from the preceding commit.
+>>
+>> The driver implements the pwm::PwmOps trait using the modern waveform
+>> API (round_waveform_tohw, write_waveform, etc.) to support configuration
+>> of period, duty cycle, and polarity for the TH1520's PWM channels.
+>>
+>> Resource management is handled using idiomatic Rust patterns. The PWM
+>> chip object is allocated via pwm::Chip::new and its registration with
+>> the PWM core is managed by the pwm::Registration RAII guard. This
+>> ensures pwmchip_remove is always called when the driver unbinds,
+>> preventing resource leaks. Device managed resources are used for the
+>> MMIO region, and the clock lifecycle is correctly managed in the
+>> driver's private data Drop implementation.
+>>
+>> The driver's core logic is written entirely in safe Rust, with no unsafe
+>> blocks, except for the Send and Sync implementations for the driver
+>> data, which are explained in the comments.
+>>
+>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>> ---
+>>  MAINTAINERS               |   1 +
+>>  drivers/pwm/Kconfig       |  11 ++
+>>  drivers/pwm/Makefile      |   1 +
+>>  drivers/pwm/pwm_th1520.rs | 355 ++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> For consistency I would prefer this file to be named pwm-th1520.rs. I
+> tried to fix that but then the compiler was unhappy. I guess a minus in
+> a filename just doesn't work for Rust?
+
+In Rust by default the Rust module is called the same as the file. And
+the module names can't contain hyphens. I think technically this could
+be overridden by 'path' attribute, but it's probably just better to use
+underscores '_' like other Rust drivers.
+
+> 
+>>  4 files changed, 368 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 5d7c0676c1d00a02b3d7db2de88b039c08c99c6e..d79dc21f22d143ca8cde6a06194545fbc640e695 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -21741,6 +21741,7 @@ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+>>  F:	drivers/pinctrl/pinctrl-th1520.c
+>>  F:	drivers/pmdomain/thead/
+>>  F:	drivers/power/sequencing/pwrseq-thead-gpu.c
+>> +F:	drivers/pwm/pwm_th1520.rs
+>>  F:	drivers/reset/reset-th1520.c
+>>  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>>  F:	include/dt-bindings/power/thead,th1520-power.h
+>> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+>> index 2b608f4378138775ee3ba4d53f682952e1914118..dd6db01832ee985e2e588a413a13df869a029d3d 100644
+>> --- a/drivers/pwm/Kconfig
+>> +++ b/drivers/pwm/Kconfig
+>> @@ -729,6 +729,17 @@ config PWM_TEGRA
+>>  	  To compile this driver as a module, choose M here: the module
+>>  	  will be called pwm-tegra.
+>>  
+>> +config PWM_TH1520
+>> +	tristate "TH1520 PWM support"
+>> +	depends on RUST
+>> +	select RUST_PWM_ABSTRACTIONS
+>> +	help
+>> +	  This option enables the driver for the PWM controller found on the
+>> +	  T-HEAD TH1520 SoC.
+>> +
+>> +	  To compile this driver as a module, choose M here; the module
+>> +	  will be called pwm-th1520. If you are unsure, say N.
+>> +
+>>  config PWM_TIECAP
+>>  	tristate "ECAP PWM support"
+>>  	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+>> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+>> index ff4f47e5fb7a0dbac72c12de82c3773e5582db6d..5c15c95c6e49143969389198657eed0ecf4086b2 100644
+>> --- a/drivers/pwm/Makefile
+>> +++ b/drivers/pwm/Makefile
+>> @@ -67,6 +67,7 @@ obj-$(CONFIG_PWM_STMPE)		+= pwm-stmpe.o
+>>  obj-$(CONFIG_PWM_SUN4I)		+= pwm-sun4i.o
+>>  obj-$(CONFIG_PWM_SUNPLUS)	+= pwm-sunplus.o
+>>  obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
+>> +obj-$(CONFIG_PWM_TH1520)	+= pwm_th1520.o
+>>  obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
+>>  obj-$(CONFIG_PWM_TIEHRPWM)	+= pwm-tiehrpwm.o
+>>  obj-$(CONFIG_PWM_TWL)		+= pwm-twl.o
+>> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..5ef887b1b5dfed92c5d4b87a7d48f673352a257e
+>> --- /dev/null
+>> +++ b/drivers/pwm/pwm_th1520.rs
+>> @@ -0,0 +1,355 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
+>> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
+>> +
+>> +//! Rust T-HEAD TH1520 PWM driver
+>> +//!
+>> +//! Limitations:
+>> +//! - The period and duty cycle are controlled by 32-bit hardware registers,
+>> +//!   limiting the maximum resolution.
+>> +//! - The driver supports continuous output mode only; one-shot mode is not
+>> +//!   implemented.
+>> +//! - The controller hardware provides up to 6 PWM channels.
+>> +//! - Reconfiguration is glitch free - new period and duty cycle values are
+>> +//!   latched and take effect at the start of the next period.
+>> +//! - Polarity is handled via a simple hardware inversion bit; arbitrary
+>> +//!   duty cycle offsets are not supported.
+>> +//! - Disabling a channel is achieved by configuring its duty cycle to zero to
+>> +//!   produce a static low output. Clearing the `start` does not reliably
+>> +//!   force the static inactive level defined by the `INACTOUT` bit. Hence
+>> +//!   this method is not used in this driver.
+>> +//!
+>> +
+>> +use core::ops::Deref;
+>> +use kernel::{
+>> +    c_str,
+>> +    clk::Clk,
+>> +    device::{Bound, Core, Device},
+>> +    devres,
+>> +    io::mem::IoMem,
+>> +    of, platform,
+>> +    prelude::*,
+>> +    pwm, time,
+>> +};
+>> +
+>> +const TH1520_MAX_PWM_NUM: u32 = 6;
+>> +
+>> +// Register offsets
+>> +const fn th1520_pwm_chn_base(n: u32) -> usize {
+>> +    (n * 0x20) as usize
+>> +}
+>> +
+>> +const fn th1520_pwm_ctrl(n: u32) -> usize {
+>> +    th1520_pwm_chn_base(n)
+>> +}
+>> +
+>> +const fn th1520_pwm_per(n: u32) -> usize {
+>> +    th1520_pwm_chn_base(n) + 0x08
+>> +}
+>> +
+>> +const fn th1520_pwm_fp(n: u32) -> usize {
+>> +    th1520_pwm_chn_base(n) + 0x0c
+>> +}
+>> +
+>> +// Control register bits
+>> +const TH1520_PWM_START: u32 = 1 << 0;
+>> +const TH1520_PWM_CFG_UPDATE: u32 = 1 << 2;
+>> +const TH1520_PWM_CONTINUOUS_MODE: u32 = 1 << 5;
+>> +const TH1520_PWM_FPOUT: u32 = 1 << 8;
+>> +
+>> +const TH1520_PWM_REG_SIZE: usize = 0xB0;
+>> +
+>> +fn ns_to_cycles(ns: u64, rate_hz: u64) -> u64 {
+>> +    const NSEC_PER_SEC_U64: u64 = time::NSEC_PER_SEC as u64;
+>> +
+>> +    (match ns.checked_mul(rate_hz) {
+>> +        Some(product) => product,
+>> +        None => u64::MAX,
+>> +    }) / NSEC_PER_SEC_U64
+>> +}
+>> +
+>> +fn cycles_to_ns(cycles: u64, rate_hz: u64) -> u64 {
+>> +    const NSEC_PER_SEC_U64: u64 = time::NSEC_PER_SEC as u64;
+>> +
+>> +    // Round up
+>> +    let Some(numerator) = cycles
+>> +        .checked_mul(NSEC_PER_SEC_U64)
+>> +        .and_then(|p| p.checked_add(rate_hz - 1))
+>> +    else {
+>> +        return u64::MAX;
+>> +    };
+>> +
+>> +    numerator / rate_hz
+> 
+> Does cycles_to_ns(18446744074, 66000000) yield u64::MAX or u64::MAX /
+> 66000000? Reading through the docs I found I think it's the former. I
+> guess we don't reach these spheres in the driver, but conceptually the
+> latter would be better and I think that's relevant as this is the first
+> Rust driver and so very likely will be the blueprint for further
+> drivers.
+> 
+> Further below you're using saturating_sub(), is there a similar variant
+> for multiplication that could simplify this function to
+> 
+> 	let numerator = cyles
+> 	  .saturating_mul(NSEC_PER_SEC_U64)
+> 	  .saturating_add(rate_hz - 1);
+> 
+> 	numerator / rate_hz
+> 
+> ?
+
+Yeah I think this would work
+
+> 
+> Additionally I'd add a comment that this should be replaced by
+> mul_u64_u64_div_u64_roundup() once that exists in Rust. (Sigh, I just
+> notice we still don't have that in C yet.)
+
+Sure
+
+> 
+>> +}
+>> +
+>> +/// Hardware-specific waveform representation for TH1520.
+>> +#[derive(Copy, Clone, Debug, Default)]
+>> +struct Th1520WfHw {
+>> +    period_cycles: u32,
+>> +    duty_cycles: u32,
+>> +    ctrl_val: u32,
+>> +    enabled: bool,
+>> +}
+>> +
+>> +/// The driver's private data struct. It holds all necessary devres managed resources.
+>> +#[pin_data(PinnedDrop)]
+>> +struct Th1520PwmDriverData {
+>> +    #[pin]
+>> +    iomem: devres::Devres<IoMem<TH1520_PWM_REG_SIZE>>,
+>> +    clk: Clk,
+>> +}
+>> +
+>> +// This `unsafe` implementation is a temporary necessity because the underlying `kernel::clk::Clk`
+>> +// type does not yet expose `Send` and `Sync` implementations. This block should be removed
+>> +// as soon as the clock abstraction provides these guarantees directly.
+>> +// TODO: Remove those unsafe impl's when Clk will support them itself.
+>> +
+>> +// SAFETY: The `devres` framework requires the driver's private data to be `Send` and `Sync`.
+>> +// We can guarantee this because the PWM core synchronizes all callbacks, preventing concurrent
+>> +// access to the contained `iomem` and `clk` resources.
+>> +unsafe impl Send for Th1520PwmDriverData {}
+>> +
+>> +// SAFETY: The same reasoning applies as for `Send`. The PWM core's synchronization
+>> +// guarantees that it is safe for multiple threads to have shared access (`&self`)
+>> +// to the driver data during callbacks.
+>> +unsafe impl Sync for Th1520PwmDriverData {}
+>> +
+>> +impl pwm::PwmOps for Th1520PwmDriverData {
+>> +    type WfHw = Th1520WfHw;
+>> +
+>> +    fn round_waveform_tohw(
+>> +        chip: &pwm::Chip<Self>,
+>> +        _pwm: &pwm::Device,
+>> +        wf: &pwm::Waveform,
+>> +    ) -> Result<pwm::RoundedWaveform<Self::WfHw>> {
+>> +        let data = chip.drvdata();
+>> +
+>> +        if wf.period_length_ns == 0 {
+> 
+> Please add a dev_dbg! here for consistency with the wf.period_length_ns
+> != 0 case here.
+> 
+>> +            return Ok(pwm::RoundedWaveform {
+>> +                status: 0,
+>> +                hardware_waveform: Th1520WfHw {
+>> +                    enabled: false,
+>> +                    ..Default::default()
+>> +                },
+>> +            });
+>> +        }
+>> +
+>> +        let rate_hz = data.clk.rate().as_hz() as u64;
+>> +
+>> +        let period_cycles = ns_to_cycles(wf.period_length_ns, rate_hz).min(u64::from(u32::MAX));
+> 
+> What happens if you get period_cycles = 0 here?
+
+How about add an if for early return ? Like below:
+	if period_cycles == 0 {
+            dev_dbg!(
+                chip.device(),
+                "Requested period {} ns is too small for clock rate {} Hz, disabling PWM.\n",
+                wf.period_length_ns,
+                rate_hz
+            );
+
+            return Ok(pwm::RoundedWaveform {
+                status: 0,
+                hardware_waveform: Th1520WfHw {
+                    enabled: false,
+                    ..Default::default()
+                },
+            });
+        }
 
 
-Cheers,
-Alex
+> 
+>> +        let mut duty_cycles = ns_to_cycles(wf.duty_length_ns, rate_hz).min(u64::from(u32::MAX));
+>> +
+>> +        let mut ctrl_val = TH1520_PWM_CONTINUOUS_MODE;
+>> +
+>> +        let is_inversed = wf.duty_length_ns > 0
+>> +            && wf.duty_offset_ns > 0
+>> +            && wf.duty_length_ns + wf.duty_offset_ns >= wf.period_length_ns;
+> 
+> For
+> 	duty_length_ns =   0x8000000000000000
+> 	duty_offset_ns =   0x8000000000000000
+> 	period_length_ns = 0xffffffffffffffff
+> 
+> this should evaluate to true (right?) but if + overflows in the same way
+> in Rust as it does in C, you get is_inversed = false here.
+> 
+> The safe condition is
+> 
+> 	wf.duty_offset_ns >= wf.period_length_ns - wf.duty_length_ns
+> 
+> here.
 
-> +must be a block device,
-> +but the provided parameter value was not a block device.
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix
-> +of a path argument
-> +was not a directory.
-> +.TP
-> +.B EOPNOTSUPP
-> +The command given by
-> +.I cmd
-> +is not valid.
-> +.TP
-> +.B ENXIO
-> +The major number
-> +of a block device parameter
-> +is out of range.
-> +.TP
-> +.B EPERM
-> +The command given by
-> +.I cmd
-> +was
-> +.BR \%FSCONFIG_CMD_CREATE ,
-> +.BR \%FSCONFIG_CMD_CREATE_EXCL ,
-> +or
-> +.BR \%FSCONFIG_CMD_RECONFIGURE ,
-> +but the calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit ecdab150fddb42fe6a739335257949220033b782
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH NOTES
-> +.SS Generic filesystem parameters
-> +Each filesystem driver is responsible for
-> +parsing most parameters specified with
-> +.BR fsconfig (),
-> +meaning that individual filesystems
-> +may have very different behaviour
-> +when encountering parameters with the same name.
-> +In general,
-> +you should not assume that the behaviour of
-> +.BR fsconfig ()
-> +when specifying a parameter to one filesystem type
-> +will match the behaviour of the same parameter
-> +with a different filesystem type.
-> +.P
-> +However,
-> +the following generic parameters
-> +apply to all filesystems and have unified behaviour.
-> +They are set using the listed
-> +.BI \%FSCONFIG_SET_ *
-> +command.
-> +.TP
-> +\fIro\fP and \fIrw\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether the filesystem instance is read-only.
-> +.TP
-> +\fIdirsync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Make directory changes on this filesystem instance synchronous.
-> +.TP
-> +\fIsync\fP and \fIasync\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether writes on this filesystem instance
-> +will be made synchronous
-> +(as though the
-> +.B O_SYNC
-> +flag to
-> +.BR open (2)
-> +was specified for
-> +all file opens in this filesystem instance).
-> +.TP
-> +\fIlazytime\fP and \fInolazytime\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether to reduce on-disk updates
-> +of inode timestamps on this filesystem instance
-> +(as described in the
-> +.B \%MS_LAZYTIME
-> +section of
-> +.BR mount (2)).
-> +.TP
-> +\fImand\fP and \fInomand\fP (\fB\%FSCONFIG_SET_FLAG\fP)
-> +Configure whether the filesystem instance should permit mandatory lockin=
-g.
-> +Since Linux 5.15,
-> +.\" commit f7e33bdbd6d1bdf9c3df8bba5abcf3399f957ac3
-> +mandatory locking has been deprecated
-> +and setting this flag is a no-op.
-> +.TP
-> +\fIsource\fP (\fB\%FSCONFIG_SET_STRING\fP)
-> +This parameter is equivalent to the
-> +.I source
-> +parameter passed to
-> +.BR mount (2)
-> +for the same filesystem type,
-> +and is usually the pathname of a block device
-> +containing the filesystem.
-> +This parameter may only be set once
-> +per filesystem configuration context transaction.
-> +.P
-> +In addition,
-> +any filesystem parameters associated with
-> +Linux Security Modules (LSMs)
-> +are also generic with respect to the underlying filesystem.
-> +See the documentation for the LSM you wish to configure for more details.
-> +.SH CAVEATS
-> +.SS Filesystem parameter types
-> +As a result of
-> +each filesystem driver being responsible for
-> +parsing most parameters specified with
-> +.BR fsconfig (),
-> +some filesystem drivers
-> +may have unintuitive behaviour
-> +with regards to which
-> +.BI \%FSCONFIG_SET_ *
-> +commands are permitted
-> +to configure a given parameter.
-> +.P
-> +In order for
-> +filesystem parameters to be backwards compatible with
-> +.BR mount (2),
-> +they must be parseable as strings;
-> +this almost universally means that
-> +.B \%FSCONFIG_SET_STRING
-> +can also be used to configure them.
-> +.\" Aleksa Sarai
-> +.\"   Theoretically, a filesystem could check fc->oldapi and refuse
-> +.\"   FSCONFIG_SET_STRING if the operation is coming from the new API, b=
-ut no
-> +.\"   filesystems do this (and probably never will).
-> +However, other
-> +.BI \%FSCONFIG_SET_ *
-> +commands need to be opted into
-> +by each filesystem driver's parameter parser.
-> +.P
-> +One of the most user-visible instances of
-> +this inconsistency is that
-> +many filesystems do not support
-> +configuring path parameters with
-> +.B \%FSCONFIG_SET_PATH
-> +(despite the name),
-> +which can lead to somewhat confusing
-> +.B EINVAL
-> +errors.
-> +(For example, the generic
-> +.I source
-> +parameter\[em]\c
-> +which is usually a path\[em]\c
-> +can only be configured
-> +with
-> +.BR \%FSCONFIG_SET_STRING .)
-> +.P
-> +When writing programs that use
-> +.BR fsconfig ()
-> +to configure parameters
-> +with commands other than
-> +.BR \%FSCONFIG_SET_STRING ,
-> +users should verify
-> +that the
-> +.BI \%FSCONFIG_SET_ *
-> +commands used to configure each parameter
-> +are supported by the corresponding filesystem driver.
-> +.\" Aleksa Sarai
-> +.\"   While this (quite confusing) inconsistency in behaviour is true to=
-day
-> +.\"   (and has been true since this was merged), this appears to mostly =
-be an
-> +.\"   unintended consequence of filesystem drivers hand-coding fsparam p=
-arsing.
-> +.\"   Path parameters are the most eggregious causes of confusion.
-> +.\"   Hopefully we can make this no longer the case in a future kernel.
-> +.SH EXAMPLES
-> +To illustrate the different kinds of flags that can be configured with
-> +.BR fsconfig (),
-> +here are a few examples of some different filesystems being created:
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd;
-> +\&
-> +fsfd =3D fsopen("tmpfs", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "inode64", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "uid", "1234", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "huge", "never", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "casefold", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOEXEC);
-> +move_mount(mntfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH);
-> +\&
-> +fsfd =3D fsopen("erofs", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "/dev/loop0", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE_EXCL, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NOSUID);
-> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +Usually,
-> +specifying the same parameter named by
-> +.I key
-> +multiple times with
-> +.BR fsconfig ()
-> +causes the parameter value to be replaced.
-> +However, some filesystems may have unique behaviour:
-> +.P
-> +.in +4n
-> +.EX
-> +\&
-> +int fsfd, mntfd;
-> +int lowerdirfd =3D open("/o/ctr/lower1", O_DIRECTORY | O_CLOEXEC);
-> +\&
-> +fsfd =3D fsopen("overlay", FSOPEN_CLOEXEC);
-> +/* "lowerdir+" appends to the lower dir stack each time */
-> +fsconfig(fsfd, FSCONFIG_SET_FD, "lowerdir+", NULL, lowerdirfd);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower2", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower3", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "lowerdir+", "/o/ctr/lower4", 0);
-> +.\" fsconfig(fsfd, FSCONFIG_SET_PATH, "lowerdir+", "/o/ctr/lower5", AT_F=
-DCWD);
-> +.\" fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "lowerdir+", "", lowerdirfd);
-> +.\" Aleksa Sarai: Hopefully these will also be supported in the future.
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "xino", "auto", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfs_export", "off", 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +And here is an example of how
-> +.BR fspick (2)
-> +can be used with
-> +.BR fsconfig ()
-> +to reconfigure the parameters
-> +of an extant filesystem instance
-> +attached to
-> +.IR /proc :
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd =3D fspick(AT_FDCWD, "/proc", FSPICK_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "hidepid", "ptraceable", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "subset", "pid", 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.EE
-> +.in
-> +.SH SEE ALSO
-> +.BR fsmount (2),
-> +.BR fsopen (2),
-> +.BR fspick (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
->=20
-> --=20
-> 2.51.0
->=20
->=20
+OK will change it thanks.
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+> 
+>> +        if is_inversed {
+>> +            duty_cycles = period_cycles - duty_cycles;
+>> +        } else {
+>> +            ctrl_val |= TH1520_PWM_FPOUT;
+>> +        }
+>> +
+>> +        let wfhw = Th1520WfHw {
+>> +            period_cycles: period_cycles as u32,
+>> +            duty_cycles: duty_cycles as u32,
+> 
+> This casts period_cycles and duty_cycles from an u64 to an u32, right?
+> Can you please add a comment that shortly explains why these values fit
+> into an u32?
 
---22f5tmtkurpbpcq3
-Content-Type: application/pgp-signature; name="signature.asc"
+Will add a comment.
 
------BEGIN PGP SIGNATURE-----
+> 
+>> +            ctrl_val,
+>> +            enabled: true,
+>> +        };
+>> +
+>> +        dev_dbg!(
+>> +            chip.device(),
+>> +            "clk_rate: {}Hz Requested: period {}ns, duty {}ns, offset {}ns -> HW: period {} cyc, duty {} cyc, ctrl 0x{:x}\n",
+> 
+> " " before the units please.
+> 
+> I want to establish
+> 
+> 	"{}/{} [+{}]", duty_length_ns, period_length_ns, duty_offset_ns
+> 
+> as the typical way to emit a waveform. Please use that consistently.
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjVKDIACgkQ64mZXMKQ
-wqntERAAiDY2vjaGN0Ex0POakH9zwsWJsbo2XzdBCQJ+A5AY8MN4qDdkVO0w7mBN
-ZSuJa3M1QwMO3eocjW4qYErR4Jt+GYrXyRvcA7s3NpQ0KthkGfw8rt1qrxPLuJQH
-saR6KdigCOYDnTl9N5kz1iV5Gjc3D/V6LjONcbZVVbqP5VK8prugosbCU6tz1a4g
-f6JKOE+BWKni8rIXpGcwdWfnqoPxyxOyOjTnxKnSOQQDnia2qOCnwM6/4m+DoWEj
-DXIo+FCHdfIhqhIy3IBqWXdHRIXWSQA0imdrRUG/kl03sI7FBT66lzwMXQZ7HiQV
-7nD1aSckXP6pf2wot4g/hvItrLvO/ZrAJntjH1ugaov+NIRD+H7VlLZCB6is8EEX
-BexVFxtNz/bnxKhFWUIe7zheauWJWA/IrjvDlnFtCwOG2AV46BHP0M5zVfsRQsoS
-n7h8fnXDJucNsQV0bVTQPFoEhvHuGSG4lXeMTt4IH8nCWlF1OloBcItrTYw4Ybmn
-boKwyF/brbGbO7BlDh4Ddx+ciwdIdVuM3GcsG+Vf4+PMcDxaRvZOiB7Zn7u/amva
-F80JP9NYjqvWkunQqdnjscpXtBwvf9IwmdajHD5HT/QHE6OrAwVpvK4H8mqDn0wN
-FPl/JN7dUR4s2qWqjT8qE+Jss7v/Ckm0cYaia1Hzv2tfiXjer3E=
-=JXIc
------END PGP SIGNATURE-----
+Sure, thanks
 
---22f5tmtkurpbpcq3--
+> 
+>> +            rate_hz,
+>> +            wf.period_length_ns,
+>> +            wf.duty_length_ns,
+>> +            wf.duty_offset_ns,
+>> +            wfhw.period_cycles,
+>> +            wfhw.duty_cycles,
+>> +            wfhw.ctrl_val
+>> +        );
+>> +
+>> +        Ok(pwm::RoundedWaveform {
+>> +            status: 0,
+>> +            hardware_waveform: wfhw,
+>> +        })
+>> +    }
+>> +
+>> +    fn round_waveform_fromhw(
+>> +        chip: &pwm::Chip<Self>,
+>> +        _pwm: &pwm::Device,
+>> +        wfhw: &Self::WfHw,
+>> +        wf: &mut pwm::Waveform,
+>> +    ) -> Result {
+>> +        let data = chip.drvdata();
+>> +        let rate_hz = data.clk.rate().as_hz() as u64;
+>> +
+>> +        wf.period_length_ns = cycles_to_ns(u64::from(wfhw.period_cycles), rate_hz);
+> 
+> Here I wonder again about wfhw.period_cycles = 0.
+> 
+>> +        let duty_cycles = u64::from(wfhw.duty_cycles);
+>> +
+>> +        if (wfhw.ctrl_val & TH1520_PWM_FPOUT) != 0 {
+>> +            wf.duty_length_ns = cycles_to_ns(duty_cycles, rate_hz);
+>> +            wf.duty_offset_ns = 0;
+>> +        } else {
+>> +            let period_cycles = u64::from(wfhw.period_cycles);
+>> +            let original_duty_cycles = period_cycles.saturating_sub(duty_cycles);
+>> +
+>> +            // For an inverted signal, `duty_length_ns` is the high time (period - low_time).
+>> +            wf.duty_length_ns = cycles_to_ns(original_duty_cycles, rate_hz);
+>> +            // The offset is the initial low time, which is what the hardware register provides.
+>> +            wf.duty_offset_ns = cycles_to_ns(duty_cycles, rate_hz);
+>> +        }
+>> +
+>> +        Ok(())
+>> +    }
+>> +
+>> +    fn read_waveform(
+>> +        chip: &pwm::Chip<Self>,
+>> +        pwm: &pwm::Device,
+>> +        parent_dev: &Device<Bound>,
+>> +    ) -> Result<Self::WfHw> {
+>> +        let data = chip.drvdata();
+>> +        let hwpwm = pwm.hwpwm();
+>> +        let iomem_accessor = data.iomem.access(parent_dev)?;
+>> +        let iomap = iomem_accessor.deref();
+>> +
+>> +        let ctrl = iomap.try_read32(th1520_pwm_ctrl(hwpwm))?;
+>> +        let period_cycles = iomap.try_read32(th1520_pwm_per(hwpwm))?;
+>> +        let duty_cycles = iomap.try_read32(th1520_pwm_fp(hwpwm))?;
+>> +
+>> +        let wfhw = Th1520WfHw {
+>> +            period_cycles,
+>> +            duty_cycles,
+>> +            ctrl_val: ctrl,
+>> +            enabled: duty_cycles != 0,
+>> +        };
+>> +
+>> +        dev_dbg!(
+>> +            chip.device(),
+>> +            "PWM-{}: read_waveform: Read hw state - period: {}, duty: {}, ctrl: 0x{:x}, enabled: {}",
+>> +            hwpwm,
+>> +            wfhw.period_cycles,
+>> +            wfhw.duty_cycles,
+>> +            wfhw.ctrl_val,
+>> +            wfhw.enabled
+>> +        );
+>> +
+>> +        Ok(wfhw)
+>> +    }
+>> +
+>> +    fn write_waveform(
+>> +        chip: &pwm::Chip<Self>,
+>> +        pwm: &pwm::Device,
+>> +        wfhw: &Self::WfHw,
+>> +        parent_dev: &Device<Bound>,
+>> +    ) -> Result {
+>> +        let data = chip.drvdata();
+>> +        let hwpwm = pwm.hwpwm();
+>> +        let iomem_accessor = data.iomem.access(parent_dev)?;
+>> +        let iomap = iomem_accessor.deref();
+>> +        let was_enabled = pwm.state().enabled();
+> 
+> The driver would be a tad more robust if was_enabled is determined from
+> the hardware registers instead. (And also it helps not to add another
+> dependency on pwm.state which I'd like to get rid of in the long run
+> with waveforms being the canonical representation internally.)
+
+I checked and it seems to me like I can make it work with HW registers,
+will include that in next revision.
+
+> 
+>> +
+>> +        if !wfhw.enabled {
+> 
+> dev_dbg! here for consistence please.
+> 
+>> +            if was_enabled {
+>> +                iomap.try_write32(wfhw.ctrl_val, th1520_pwm_ctrl(hwpwm))?;
+>> +                iomap.try_write32(0, th1520_pwm_fp(hwpwm))?;
+>> +                iomap.try_write32(wfhw.ctrl_val | TH1520_PWM_CFG_UPDATE, th1520_pwm_ctrl(hwpwm))?;
+>> +            }
+>> +            return Ok(());
+>> +        }
+>> +
+>> +        iomap.try_write32(wfhw.ctrl_val, th1520_pwm_ctrl(hwpwm))?;
+>> +        iomap.try_write32(wfhw.period_cycles, th1520_pwm_per(hwpwm))?;
+>> +        iomap.try_write32(wfhw.duty_cycles, th1520_pwm_fp(hwpwm))?;
+>> +        iomap.try_write32(wfhw.ctrl_val | TH1520_PWM_CFG_UPDATE, th1520_pwm_ctrl(hwpwm))?;
+>> +
+>> +        // The `TH1520_PWM_START` bit must be written in a separate, final transaction, and
+>> +        // only when enabling the channel from a disabled state.
+>> +        if !was_enabled {
+>> +            iomap.try_write32(wfhw.ctrl_val | TH1520_PWM_START, th1520_pwm_ctrl(hwpwm))?;
+>> +        }
+>> +
+>> +        dev_dbg!(
+>> +            chip.device(),
+>> +            "PWM-{}: Wrote (per: {}, duty: {})",
+>> +            hwpwm,
+>> +            wfhw.period_cycles,
+>> +            wfhw.duty_cycles,
+>> +        );
+>> +
+>> +        Ok(())
+>> +    }
+>> +}
+> 
+> Best regards
+> Uwe
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
