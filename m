@@ -1,184 +1,165 @@
-Return-Path: <linux-kernel+bounces-832903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A1EBA0B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239E3BA0B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9896F4A0614
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EAD1BC4F05
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749A13081A9;
-	Thu, 25 Sep 2025 16:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D550307AF9;
+	Thu, 25 Sep 2025 16:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFA442zc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="U7aAdhsn"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22604C81
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CF719F40B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758819468; cv=none; b=o5afE045D/XJ44p9iNQtkI6h75HZGTQv57DB7NBK3GXPiHuQDzgZWWTnPPLpreKi9U7oOpWHJ+ajnQFQQZsFwjfK1Ur4DR47SSjyKb50cjcBmiHhOim20w6CFbx1fXqTwwlPVhUEltaFbqzXs2SFzttfubaCLhi17OZEZomONrs=
+	t=1758819509; cv=none; b=BGKvI4r33HOlrhQXtgo5GN9Ske5mHPhVwfoGP8Onbp4h7fzT1vpJyyCl5GE1jkQitS7/tOjjl5HYrHqRzlO2e5ONelMM3azhExpUiPwG4tsQHDnzugj5QA4eFxmbBHDwb3wMWI4z59L1/TuPZUPtP2X4Fy7ukiIC4lL6MZydims=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758819468; c=relaxed/simple;
-	bh=lr5Z6NLA9dLOR8qt7qLbQlNjXD+YxSwYH9bx7AKeXl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kPrV8aWwK2bedSuLhJkrkSmQ20lzfTui1yxXMoSw0fzFfhrK4l1Z1IeZVWpo1P8yq7kIdAx9fOQTdQC7+capWwPWjRliTOzDBFP9CxSZ/MfdhgTeInOnL2rGntHJN6X2HW1vKgS0NYN9FORiQIZTCEp7DUA9ocQ1t5LdLmx9amQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFA442zc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F656C4CEF7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758819468;
-	bh=lr5Z6NLA9dLOR8qt7qLbQlNjXD+YxSwYH9bx7AKeXl4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SFA442zcygNNjQa8s7tnnAIwXnxSXQ4MKTic75JNr+grewUsxb9HwuDR/KD96s2FL
-	 Bch2XZLAVLtZXMNsgaAZh6OPdd7hnn0dJt4bqaH0yZL+X18lmTiJsDCe0LkoEyuagX
-	 kfwuGOciIbtpfgE5CxnbcuB9YP6WG7vqHIArXGmgW64PJHvlJYFwavhmiMCGpjnpGb
-	 b465EfAwgplZPlSpG8HuXNY6QrwgMLa6v/Hm9OWKZCSeeRkX3fGMpouUwbHBsLbcMf
-	 E2MBUHOn75hHi/gfbb5sXVzmknLIljBz3auITaFBlAQ1d3s2bLz0x4cSxwSUcBHBIl
-	 WdmVBB0s4tkuQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-30cce892b7dso797116fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:57:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrEfG+QMNWZbStyKoVQeeshODXAFBEHyE9zldkwPpE6qIIx5kG/YpVZL44oV/OqCsuYsAh6F2cg0g0jGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy02yAL/PmnxewFPO4Qci1zsqT5zNMhT/2QaSgKRL8GEqvxPLig
-	AjbdfiKFS1nnCL9XdKEwvzVrf63Z7d9C2F7hJpK5A7lkrmCO7C+sPtIOPmQlWQX7H+oVI1+TAU6
-	P8YVzEeg8n/Uijr44kvsXYXIL1cwX45s=
-X-Google-Smtp-Source: AGHT+IG/Hwlhw7Kmhk29io5+M/aUHFxNEkmbZeByTyv7iAynfGzITiV0lwRxzw/7pcwV5slgMGiUlh69fvtpELsM3HM=
-X-Received: by 2002:a05:6870:2192:b0:308:51fe:ea07 with SMTP id
- 586e51a60fabf-35ebf3edb68mr1711647fac.1.1758819467946; Thu, 25 Sep 2025
- 09:57:47 -0700 (PDT)
+	s=arc-20240116; t=1758819509; c=relaxed/simple;
+	bh=+yHaFHvXClIDnXnv3QL0b/flkdlelcna8Kjpvqu6Iwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qX3wZN+prWy0EQcrbIx/y7RLBPc+YA89k+dV+/wOJXlHR51WIns21JA4mIeMZdTsJcIi35SnnHQMX9s0QqLHybWDM5+OJWN6lVDYHGokP3s5QhkLX6hqOpO9/a9PVRU/M9VuAuEByeXZH8cTBrEqxVyud9ZiDE9to0NV5yc0qE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=U7aAdhsn; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1758819500;
+ bh=dO7rc3cmOaRYh8vW051GrFKq6chUM5fRR/SwUUFClf4=;
+ b=U7aAdhsn/xeYG8Yk5Lj3BYUgR7p1Sx/688hAhRU6WXr9GzbW4vzYZIxM9GWQAbhGwSq4gaw/d
+ ChNfJrQ2F8wmXovqY+9zYcdWpEzdKWsPqEPsOSWDXiuexIZyK6xiKPv9Yg52P3YStLZ6o+WGYSH
+ 9c5LocqPfPaZ830Ah6QlawpQFFLVnGshsrm5gZ+XKPoxylHDtH6dwh5z3u174cPwbAyUJUa/xAw
+ CG/xCAvAZlsFeVUltoxAd30t+YupF0Hl1ces8VKbnAxASywUWtMr2Sxyn94LX1bgE28sbFZ1sPB
+ Mjk6HjkQANSfqk3jUwmwbRF/dO2fRZIW60YFWAfAQA/w==
+X-Forward-Email-ID: 68d574a2af9b5343f17d00e7
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.2.14
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <da752790-da17-4d26-b9b2-8240b38b3276@kwiboo.se>
+Date: Thu, 25 Sep 2025 18:58:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8605612.T7Z3S40VBb@rafael.j.wysocki> <3925838.kQq0lBPeGt@rafael.j.wysocki>
- <99b90797-50ef-46e9-87a8-5a02b24d4aa6@amd.com>
-In-Reply-To: <99b90797-50ef-46e9-87a8-5a02b24d4aa6@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 25 Sep 2025 18:57:36 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gxqNoX1CAAAuVtmYM5Hm-5nOGwLXo9hF=z3zPdVVNrCg@mail.gmail.com>
-X-Gm-Features: AS18NWAkOFz_tnd-IJqjB1Mqxi937XcHy3ls7bwUg-QEfi-13Op95DLTv0L4V7o
-Message-ID: <CAJZ5v0gxqNoX1CAAAuVtmYM5Hm-5nOGwLXo9hF=z3zPdVVNrCg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] ACPI: CPPC: Replace CPUFREQ_ETERNAL with
- CPPC-specific symbol
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>, 
-	LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Prashanth Prakash <pprakash@codeaurora.org>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Linux ACPI <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] arm64: dts: rockchip: Fix the 1Ghz ethernet on Qnap
+ TS433
+To: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "ukleinek@debian.org" <ukleinek@debian.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
+References: <20250925092923.2184187-1-heiko@sntech.de>
+ <20250925092923.2184187-3-heiko@sntech.de>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250925092923.2184187-3-heiko@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025 at 6:35=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
->
->
-> On 9/25/2025 10:46 AM, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Instead of using CPUFREQ_ETERNAL for signaling error conditions in
-> > cppc_get_transition_latency(), introduce CPPC_NO_DATA specifically
-> > for this purpose and update all of the callers of this function to
-> > use it.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >   drivers/acpi/cppc_acpi.c       |    6 +++---
-> >   drivers/cpufreq/amd-pstate.c   |    4 ++--
-> >   drivers/cpufreq/cppc_cpufreq.c |    2 +-
-> >   include/acpi/cppc_acpi.h       |    4 +++-
-> >   include/linux/cpufreq.h        |    3 ---
-> >   5 files changed, 9 insertions(+), 10 deletions(-)
-> >
-> > --- a/drivers/acpi/cppc_acpi.c
-> > +++ b/drivers/acpi/cppc_acpi.c
-> > @@ -1897,16 +1897,16 @@ unsigned int cppc_get_transition_latency
-> >
-> >       cpc_desc =3D per_cpu(cpc_desc_ptr, cpu_num);
-> >       if (!cpc_desc)
-> > -             return CPUFREQ_ETERNAL;
-> > +             return CPPC_NO_DATA;
-> >
-> >       desired_reg =3D &cpc_desc->cpc_regs[DESIRED_PERF];
-> >       if (CPC_IN_SYSTEM_MEMORY(desired_reg) || CPC_IN_SYSTEM_IO(desired=
-_reg))
-> >               return 0;
-> >       else if (!CPC_IN_PCC(desired_reg))
-> > -             return CPUFREQ_ETERNAL;
-> > +             return CPPC_NO_DATA;
-> >
-> >       if (pcc_ss_id < 0)
-> > -             return CPUFREQ_ETERNAL;
-> > +             return CPPC_NO_DATA;
-> >
-> >       pcc_ss_data =3D pcc_data[pcc_ss_id];
-> >       if (pcc_ss_data->pcc_mpar)
-> > --- a/drivers/cpufreq/amd-pstate.c
-> > +++ b/drivers/cpufreq/amd-pstate.c
-> > @@ -875,7 +875,7 @@ static u32 amd_pstate_get_transition_del
-> >       u32 transition_delay_ns;
-> >
-> >       transition_delay_ns =3D cppc_get_transition_latency(cpu);
-> > -     if (transition_delay_ns =3D=3D CPUFREQ_ETERNAL) {
-> > +     if (transition_delay_ns =3D=3D CPPC_NO_DATA) {
-> >               if (cpu_feature_enabled(X86_FEATURE_AMD_FAST_CPPC))
-> >                       return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
-> >               else
-> > @@ -894,7 +894,7 @@ static u32 amd_pstate_get_transition_lat
-> >       u32 transition_latency;
-> >
-> >       transition_latency =3D cppc_get_transition_latency(cpu);
-> > -     if (transition_latency  =3D=3D CPUFREQ_ETERNAL)
-> > +     if (transition_latency  =3D=3D CPPC_NO_DATA)
-> >               return AMD_PSTATE_TRANSITION_LATENCY;
-> >
-> >       return transition_latency;
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -312,7 +312,7 @@ static unsigned int get_transition_laten
-> >   {
-> >       unsigned int transition_latency_ns =3D cppc_get_transition_latenc=
-y(cpu);
-> >
-> > -     if (transition_latency_ns =3D=3D CPUFREQ_ETERNAL)
-> > +     if (transition_latency_ns =3D=3D CPPC_NO_DATA)
-> >               return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_U=
-SEC;
-> >
-> >       return transition_latency_ns / NSEC_PER_USEC;
-> > --- a/include/acpi/cppc_acpi.h
-> > +++ b/include/acpi/cppc_acpi.h
-> > @@ -41,6 +41,8 @@
-> >
-> >   #define CPPC_ENERGY_PERF_MAX        (0xFF)
-> >
-> > +#define CPPC_NO_DATA (unsigned int)(-1)
-> > +
->
-> Would it be cleaner to just change all the functions that can return
-> CPPC_NO_DATA to int instead of unsigned int and instead use -ENODATA?
+Hi Heiko,
 
-Yes, that'll work too.
+On 9/25/2025 11:29 AM, Heiko Stuebner wrote:
+> While I want to remember that the dwmac on the TS433 was working at some
+> point, it seems I had my network always connected to the 2.5G nic after
+> that "point". And testing now revealed that the gmac does not actually
+> manages to transfer data.
+> 
+> Currently the gmac is set to rgmii-id with no rx-/tx-delay values set
+> which makes the driver use default values. Setting the delays to 0
+> also does not provide a working interface.
+> 
+> The vendor kernel is running with phy-mode set to rgmii and delays of
+>     tx_delay = 0x3c, rx_delay = 0x2f
+> 
+> As Andrew points out often, those delay values "are magic" and rgmii-id
+> should definitly be used "with small values" for delays, if really needed.
+> 
+> The Rockchip vendor-kernel actually contains additional code in the dwmac
+> driver to use the loopback function of a phy to find a window of usable
+> delay values. Code can be found for example on [0] and the process is
+> described in a document called "Rockchip GMAC RGMII Delayline Guide"
+> which has made its way onto the internet in a lot of places [1].
+> 
+> So I used this process, with the interface set to rgmii-id to get values
+> for this mode, which are in face lower than the ones for rgmii with
+>     tx_delay = 0x21, rx_delay = 0x15
+> and results in a working interface on the dwmac.
+> 
+> [0] https://github.com/armbian/linux-rockchip/blob/rk-6.1-rkr6.1/drivers/net/ethernet/stmicro/stmmac/dwmac-rk-tool.c
+> [1] https://gitlab.com/firefly-linux/docs/-/blob/rk356x/firefly/Common/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
+> 
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> index 5656554ca284..e8af92a011d6 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> @@ -257,6 +257,8 @@ &gmac0_tx_bus2
+>  		     &gmac0_rx_bus2
+>  		     &gmac0_rgmii_clk
+>  		     &gmac0_rgmii_bus>;
+> +	rx_delay = <0x15>;
+> +	tx_delay = <0x21>;
 
-I'll send an update of this patch shortly.
+I do not understand why defining rx/tx_delay would change anything.
 
-> >   /* Each register has the folowing format. */
-> >   struct cpc_reg {
-> >       u8 descriptor;
-> > @@ -218,7 +220,7 @@ static inline bool cppc_allow_fast_switc
-> >   }
-> >   static inline unsigned int cppc_get_transition_latency(int cpu)
-> >   {
-> > -     return CPUFREQ_ETERNAL;
-> > +     return CPPC_NO_DATA;
-> >   }
-> >   static inline bool cpc_ffh_supported(void)
-> >   {
+Setting these should currently not have any effect on the driver code
+when phy-mode=rgmii-id is used, see below (next-20250924, dwmac-rk.c):
+
+
+	switch (bsp_priv->phy_iface) {
+	case PHY_INTERFACE_MODE_RGMII:
+		dev_info(dev, "init for RGMII\n");
+		bsp_priv->ops->set_to_rgmii(bsp_priv, bsp_priv->tx_delay,
+					    bsp_priv->rx_delay);
+		break;
+	case PHY_INTERFACE_MODE_RGMII_ID:
+		dev_info(dev, "init for RGMII_ID\n");
+		bsp_priv->ops->set_to_rgmii(bsp_priv, 0, 0);
+		break;
+
+
+I have played around with a few patches that changes this and apply the
+rx/tx_delay for rgmii-id modes (both Linux and U-Boot), see top of [2]
+for Linux patches. Will try to get them on ML in a few days.
+
+Currently, rk3588-firefly-itx-3588j.dts is the only RK board that define
+rx/tx_delay and use rgmii-id mode, would be good to not define any more
+rgmii-id + rx/tx_delay combo to reduce impact of a possible future
+driver change.
+
+[2] https://github.com/Kwiboo/linux-rockchip/commits/next-20250924-rk3528/
+
+Regards,
+Jonas
+
+>  	status = "okay";
+>  };
+>  
+
 
