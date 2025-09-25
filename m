@@ -1,163 +1,154 @@
-Return-Path: <linux-kernel+bounces-831548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47547B9CFBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:12:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD179B9CFCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0259C424E0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686FF425CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 01:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE862DE6ED;
-	Thu, 25 Sep 2025 01:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1E27D77D;
+	Thu, 25 Sep 2025 01:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GW2SESp0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnDr83f4"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F027D77D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D9114A4F9
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758762730; cv=none; b=H9DxEmOL+8M21yvMpzAjkeIKb6VFl64ZKrrj+/EnkCgT/PjEbl+UmILgzMFC3fd2SUAXzQU8d/5c/Byw+qR6InkUGCVImWag0MxV8FH+1QVHyiVRvo9enIJ215+Jdt4H8UOW4BsUthCNcCXe3y6KwcdG0hQ+za9Mukig5RIyZAg=
+	t=1758762867; cv=none; b=Q/4F2zX08qdRD1Hh/iJT4E3SxhFmZRYpgAvcOH56heNbM0FIAFTB8XIw27Bidy4i1fFcNKAKHtc3ACoe6ceJ/7bc3nBISGsnaoDWwXOv0Jyp0aY9l1CDLHyPmrEm5goa6hVO24FTkdXPJnR5Nkfsx6ZX0879kVIRrc2wul1Xxbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758762730; c=relaxed/simple;
-	bh=DrXL8HLxC9CP4klpaZkd6+ccqYpqaBZIzbay4Qvc77o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ecj6PhB1rwnCJL9QzDy7/HGevktUIspza3sFcIP4MjR0L81JUuFm/C1hp3aYcgGzKlQfS/hXF6UvvQzpRSx1Val+gRyLIaCn7vlfH73z3lJIyrwX9oxx2b4SkOL7nhJixjBnyebFHF8USsgCUysZlGhxYb0nmoU8o1SnY8D+JCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GW2SESp0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ODFGe5030031
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:12:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=MQ6UCFt1uTELNNSw3dM2CC6N
-	2IBuWYa+2G5IROr44dA=; b=GW2SESp0Y2UoreJfxhsyh1KpoIzdgPedByV7K8GT
-	xnezcHj08w11Pvw++EUhS2lAkKRNHvhBaXOyNh0gtSPHpmFXdUbiNdE58fX1mb47
-	Yh/PyOSpG/GIE5e+R5cl6NMbrVb4uLE+HudYfzVl7yr5JMYizzXoBQNv/3aYWEZO
-	gA9kQ7N4WwNqWWv+3Gg22pXP3riAaHFFRn8bPM5YgNwgZj9sLcx1JIR5vli8E96l
-	Mk74PeRqjlNX6uselFBQYO8Yl34rz6ToNda7kBT+1eSDSi6xWCaUwo/HnPRu0fSy
-	5oT/n1jS5xxxPGJ7pQjK4LSwql4D8IylfOy6lleO0KGVRA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499n1fp4x5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:12:08 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d6a82099cfso10325931cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:12:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758762727; x=1759367527;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1758762867; c=relaxed/simple;
+	bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oOnYqyYs0+nbrL6r2mmtOTXrJcVA15NwFQUg8n8oh+0IwaNGqJP87x99IBEBhPipgChJhuNe3jEK98yDtffcZlh/SCMADnaoFjaWNJ8rNYloexxlRGk8m/6iky13XcoYNfSaGcw4GrS5HzTay9EFKEBNw7Q7yqvwiimVAil8bCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnDr83f4; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5796051ee6aso74945e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 18:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758762864; x=1759367664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MQ6UCFt1uTELNNSw3dM2CC6N2IBuWYa+2G5IROr44dA=;
-        b=ZsaejnNqD8JEZxL6pYSsYUMI/aCj4x9x7UYkheEGMnSCc79i20nNOS9Rxzb1Nfqcxy
-         T/3cvstQ2JSVQkkBSgTMLobMWpxDORVASo2QIZ92tVTD+NS/kI0d8RwzcNmCWTw1/1+L
-         4Dp1PddfrTwAyR0XYBNB/U1fF+iRCO/msO3X6Esm8EHIm1RvyupQsiXIB6GiwK94wqdr
-         yzQPcb0fduHAKHK/+hsWm74pcbNDHHsbK1R32UcB3cDM9JkJQMOQJwSqb9telT84Efey
-         h2oI3Po0QAAPJPfEChDHxElJCT9Mzmszdkr5+EnAJundrtWDiLePKOH4EPM/LON6XXcF
-         QKWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKpgL1h2ljfFsNz52gHwPRgFPsAifV6/yKoSAb3vUrtPIQ39fnnM/Y0tHmSAegEJ8WaXhs2Dt2thGv5FM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8EzJsOV5mpiayJGjV5JNcm5Odm5A8jRGc1WV6g7f8jq+YBfC
-	kfBJpdV8LLyOYPBk5uZpRAyt+064s3aho/eE6Md+/MNJtHTRfIsTZvCeRoxqE/QaXIiBBZ9ujV4
-	JxUKWKKzW4F/80fRoySrdbXxMG2eX2+WQIBKwXQ1rNwM3hDaxS8eJ0N8n8KrJFoBNY8M=
-X-Gm-Gg: ASbGncte6eq0TYsTyWNTNEwcCBlnkxA3XljERbWs6xx4H27vhqTAHbSE2WSUKP0g3F4
-	7Sd2gmDEKWCL+FcmG/OBOTzTURJlgiTWDiu4mux3Y6944fREvg23rAK0X2GUjBLiZX8NfTJBZsM
-	xhnrDvyve4k3TvnnW6Q4voCQytn+aoIrdwhDRS2XbNQyW4OwVnmu1imJDeKFOlzYw2VGqwfCdMq
-	1XKgvB1XTdX2uEFNca2E66EY25qfmee7IIOrY+0fhZSG2GfrUtLY6109KxsQqrPib54Y68C+8rB
-	a9FrhO/f+sC+woO5TLwYFWVwNSK8M/Q2WvHEIkZ7oIcE01Lnq+jJcdm+YqNub8JLiLdmpwAeqBC
-	NeZMbx2+K19vNDIrTBjIG4OSoY0Yu8kfBxkdz8Z2ulWs4YBNt9s/U
-X-Received: by 2002:ac8:5f53:0:b0:4b7:7d98:d3d8 with SMTP id d75a77b69052e-4da4dcc6b08mr24709301cf.75.1758762726587;
-        Wed, 24 Sep 2025 18:12:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEW8TqfUiIdyjOYKHmfe38ArP3DQyQEl0zmpp3cjDaI2nOnb8fwmpNUD155WV/L9oKMabVPXQ==
-X-Received: by 2002:ac8:5f53:0:b0:4b7:7d98:d3d8 with SMTP id d75a77b69052e-4da4dcc6b08mr24709041cf.75.1758762726137;
-        Wed, 24 Sep 2025 18:12:06 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313fc02c1sm198591e87.60.2025.09.24.18.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 18:12:05 -0700 (PDT)
-Date: Thu, 25 Sep 2025 04:12:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] dt-bindings: phy: qcom,qmp-usb: Add Glymur USB
- UNI PHY compatible
-Message-ID: <5mwqf4djs2jee4x6edplwmd5ugucoi4wazrzjoiw2p5ndiv6h2@6xqnnavp2a4i>
-References: <20250925005228.4035927-1-wesley.cheng@oss.qualcomm.com>
- <20250925005228.4035927-3-wesley.cheng@oss.qualcomm.com>
+        bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
+        b=fnDr83f48auqbjRYF4Y6KvqdmvKbB3cs6dlVIm7KiM7j1eJ06N3ArCQ4yTz+h07KlU
+         PpVRoYfHeRy9rRVTIK3e/l75MB72N7diH348vv1nUicM4Rh3TQrLTbroojQrQc9zpXsA
+         r0ZqA6bmPTKq82T1TUsmPpMvRhLH6DmN+UXKw7yYf8nh4RQ8ej4AItHW+e9bBVUyoG1m
+         1jBWjQZblmG1lnXWYMKQFlAta+N1FEGPSbiCsrsA0n5k2XfizgjB1k79Kjg4X3JBs6VG
+         5/laSI7st20twiB76eeYzQ2yiETRHiibcN7FoqZvEbVzvCJWp7v8mdgOFw2Gi55MvzhT
+         YNTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758762864; x=1759367664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CmJEc8PuIKQeVF/j4Q0UrN5IUEGXQ70xxORlJFMbhVQ=;
+        b=bFvY+s3udRJze6Ibff1NaHYQwzfQtg41rW/LiMA5BEjxJP2iqIue6iuBJJ0E+C5WSs
+         inLpOJS2XykF/PQcAWU6vA/QxNgh9nwcIuz3bue1fASd1WT3t/9UIRkB9re0SuUJLsGM
+         Ysh+SfXOTOuG9nUesa492h8aDJRgFgl5EHYqD0+TXli2qoZNuX77UCLzV5VaW8Eju4/h
+         NURW0Ph2fSXeCKDmnQUd7R0qQ2rifLXaUtV7F9gmBGyUMfaMWCZcWdE94IKV7HjxmVHi
+         6dAHCS5bhZ8Q9OGuY2Hp1QZYzzAm5MbgYfNJvqPMYFVcAkRVrenTYXh3t34FBoYAAzKY
+         fKAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHtPUEpHgk3yYzqU0+Lq2JKrvGneCxjtjJft2cQRUl+JbMwKxXE9XO6s7C0FbneVoXLNo3Mx2/lYb6v2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywddt1IUY/VN1jIF1/5krj2yLjZmzPF5JALOfKsAW26YGmJGpxb
+	DI6lJQB+U3g2K9zcxaCThzF6Od601msrVzOldK9qqZCVty8760x2SMBr+dm2RZmiHPYvVENKh03
+	HtagZ+7iw82xZ+Mt4CtGLd98rqScFVhg=
+X-Gm-Gg: ASbGncsmadWfwlUkfcAE1N74X5zOzRSXFGSQlzl8XOjrGC4lj55ntN9XpwMnJisfU09
+	QE8J6cnmMJmZMZWb/gIM9HssTE+lJ1MlYCeRGCV3nrIHUCU8vYGVIGnObJN5Imo87+SNh79+5zQ
+	lW72a1nN2056jW3p6mj/x3w9rpevGazudMcoiYl34tcY7MpsM2XLGNbIHZRs041iYCMAW2B30xD
+	7+rv+tW
+X-Google-Smtp-Source: AGHT+IEDxOEhug5hAKaoFRD60f715RVpOz3j3GIYEQmZZCl+PN792xxfVmyqR8cZcVtXVUn2rZBzgNmHAva7CXKAXjw=
+X-Received: by 2002:a05:651c:41c5:10b0:365:4fd1:a15b with SMTP id
+ 38308e7fff4ca-36f7ff189f4mr1625801fa.7.1758762863690; Wed, 24 Sep 2025
+ 18:14:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925005228.4035927-3-wesley.cheng@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: v0isJ7qhoPtCPIlQNC4JjZditLajOXmM
-X-Proofpoint-GUID: v0isJ7qhoPtCPIlQNC4JjZditLajOXmM
-X-Authority-Analysis: v=2.4 cv=No/Rc9dJ c=1 sm=1 tr=0 ts=68d496e8 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=95jUwCB-LgHD7RhpIBUA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzNyBTYWx0ZWRfX5wt7iVI6ysnG
- h5dCvz3qh2/zU3vDE1ryZYiYt5GNuW6C7bzLdP57om+ILxd4D8goxLGXrGcskOYYDacV3pz+cS2
- 8KPCISjcWxW0MWdHj4fVKYctv/j1Vj6ntvELKkeL1KxkhCMOIREs6oBQf9gnpHTOBcRPmlFSbvp
- dUWpd1ffJp+mBbLoMSYY0+mCOOcFkr1E7b6Txyfjfn+v8Oi9pCcZl+9opaVKwX1skeWEfccLWAQ
- 9hIGdlmtZiAg0xHx07lABieqNkuyQ0P4x2z6aYWEIUvqJIC+6uk4TFq4gGxW7xQgtRkhCENI5qB
- CNcOO0nFqrC9OuqZSKwUbDB6wC/yZrWrIP4DnBcK6+j1eIC7mM0wVkWnLXJNEz4V+iU55PWjSPv
- 9tSJ0tjw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 malwarescore=0
- phishscore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200037
+References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
+ <aNGQ66CD9F82BFP-@infradead.org> <CAGWkznGf1eN-iszG21jGNq13C9yz8S0PW03hLc40Gjhn6LRp0Q@mail.gmail.com>
+ <31091c95-1d0c-4e5a-a53b-929529bf0996@acm.org> <CAGWkznGv3jwTLW2nkBds9NrUeNQ1GHK=2kijDotH=DN762PyEQ@mail.gmail.com>
+ <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
+In-Reply-To: <CAFj5m9K4yv4wkX2bhXSOf141dY9O96WdNfjMMYXCOoyM_Fdndg@mail.gmail.com>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Thu, 25 Sep 2025 09:14:12 +0800
+X-Gm-Features: AS18NWBK4dJcK_-7IGtI0VoZd54sZXtNSb7uUlofZ2Iu7nxMDq9z6uDViCFW05A
+Message-ID: <CAGWkznFe4W0M4NE_ZjiSC6+28tHqJoah6dmP+X1aP6oCCTTe2Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop driver
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@android.com>, 
+	Christoph Hellwig <hch@infradead.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, steve.kang@unisoc.com, 
+	Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 24, 2025 at 05:52:20PM -0700, Wesley Cheng wrote:
-> The Glymur USB subsystem contains a multiport controller, which utilizes
-> two QMP UNI PHYs.  Add the proper compatible string for the Glymur SoC.
-> 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> ---
->  .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml   | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> index a1b55168e050..b0ce803d2b49 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> @@ -16,6 +16,7 @@ description:
->  properties:
->    compatible:
->      enum:
-> +      - qcom,glymur-qmp-usb3-uni-phy
->        - qcom,ipq5424-qmp-usb3-phy
->        - qcom,ipq6018-qmp-usb3-phy
->        - qcom,ipq8074-qmp-usb3-phy
-> @@ -62,6 +63,8 @@ properties:
->  
->    vdda-pll-supply: true
->  
-> +  refgen-supply: true
-
-Which device is going to provide this supply?
-
-> +
->    "#clock-cells":
->      const: 0
->  
-
--- 
-With best wishes
-Dmitry
+On Wed, Sep 24, 2025 at 6:05=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
+>
+> On Wed, Sep 24, 2025 at 5:13=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gma=
+il.com> wrote:
+> >
+> > loop google kernel team. When active_depth of the cgroupv2 is set to
+> > 3, the loop device's request I2C will be affected by schedule latency
+> > which is introduced by huge numbers of kworker thread corresponding to
+> > blkcg for each. What's your opinion on this RFC patch?
+>
+> There are some issues on this RFC patch:
+>
+> - current->plug can't be touched by driver, cause there can be request
+> from other devices
+>
+> - you can't sleep in loop_queue_rq()
+>
+> The following patchset should address your issue, and I can rebase & rese=
+nd
+> if no one objects.
+>
+> https://lore.kernel.org/linux-block/20250322012617.354222-1-ming.lei@redh=
+at.com/
+Thanks for the patch, that is what I want.
+>
+> Thanks,
+>
+>
+> >
+> > On Wed, Sep 24, 2025 at 12:30=E2=80=AFAM Bart Van Assche <bvanassche@ac=
+m.org> wrote:
+> > >
+> > > On 9/22/25 8:50 PM, Zhaoyang Huang wrote:
+> > > > Yes, we have tried to solve this case from the above perspective. A=
+s
+> > > > to the scheduler, packing small tasks to one core(Big core in ARM)
+> > > > instead of spreading them is desired for power-saving reasons. To t=
+he
+> > > > number of kworker threads, it is upon current design which will cre=
+ate
+> > > > new work for each blkcg. According to ANDROID's current approach, e=
+ach
+> > > > PID takes one cgroup and correspondingly a kworker thread which
+> > > > actually induces this scenario.
+> > >
+> > > More cgroups means more overhead from cgroup-internal tasks, e.g.
+> > > accumulating statistics. How about requesting to the Android core tea=
+m
+> > > to review the approach of associating one cgroup with each PID? I'm
+> > > wondering whether the approach of one cgroup per aggregate profile
+> > > (SCHED_SP_BACKGROUND, SCHED_SP_FOREGROUND, ...) would work.
+> > >
+> > > Thanks,
+> > >
+> > > Bart.
+> >
+>
 
