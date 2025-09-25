@@ -1,107 +1,433 @@
-Return-Path: <linux-kernel+bounces-832150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29305B9E7A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:44:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5E9B9E7A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2517732145A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ED623A3EEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25152EBB9B;
-	Thu, 25 Sep 2025 09:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C904C2EA464;
+	Thu, 25 Sep 2025 09:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ejb1ZWzK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHcrExrl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D10D2E9ECC
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5302EA16C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758793425; cv=none; b=dvgor1kpCndpurguel9NDBC0s8Cwx/jJrtWTubwEmRrmUU6/IEMjSkKw+Xlu3fsONbRGT5X34wSvOfWRSLq3hYUsjOzqlePuo6ScPxPKvk6JMJhrgrmkDb1YC+Q2gOMTzShZBnCchTndzPS4WOrDP4ZTe/XOevoGhZlcWDlwois=
+	t=1758793438; cv=none; b=tQO7s3G1DPleLabX92XM02rqABDedqWCFwj8VnCcpKxA2l/Wdijdm7naPLoWcneqVomNm/hRgVa7AVtuQvzjkxJG2/EUrGujvbt3djlrGO/UaGsu4PwLqZK+hzI3msGX8AOvutUe+AeKOKrcABwy+vlxYhZO3PlmlTpT2A10L/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758793425; c=relaxed/simple;
-	bh=Do01lFFcNDYlGWQcYjdNtP19mQ6XNKmi0AumEvwX5Ps=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kRxG48A0NniwZir/9XNqWlTjt+5+jEW8x3TTzaE1aZA3XVMxjXJ3qvj3fMFiV9l9+qYE1TPjtJuoAB/c6tt7IIL+Eo6vksbeSza6d0INQhKkyKidjQMyFvBvpXbq3v2/Kq9jhub38wzKmN7OKHgwp3Ayx44W3nc8+JoetmL8L18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ejb1ZWzK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b30ead58e0cso128554666b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1758793422; x=1759398222; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DCZnhATrsjVbGiYUB4fIkwGkbNdpLbfL2naMCtBsqWk=;
-        b=ejb1ZWzKMQ+OA0tMn5zstNHptY7noPUmqwPqyJDNU6aDYIMvt82QRnT8xTJD1ihoBJ
-         7B9vxKxH4awaIV9NdCiNG7td5miuaQwWTJ67rPZjL17tB+dGU4/nAavaqqOKayT3XInq
-         T5Jw2XsDJhkD9NhyngmlA35CLrEyjiv1rWsToTy0ZIKcDv2eqTx4gLPCC/vOBquSKFHy
-         FLp5lZxdg00uEZamVjC3azW2I7TZU4ulhoFrclmb3Wsw1I+dGt/O2kXLcTzgy/K5hMP9
-         1PpxnH+8PGuBYRS95j71ZzV751T+29yVszYhKL1VfjQbSWT+IYt+jf5cnxGrczW5+eSW
-         QcPg==
+	s=arc-20240116; t=1758793438; c=relaxed/simple;
+	bh=x/LZWRGmcf0e+J8ngIb3ZyGctnp639Z28hFh/h2k5nE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRC7Dwn+QfMSOXbBijwNJGuL0oy7pACQzDif+Epp+sCyUlMnNAK6WSWRnH6bQ/ScNawT4s0ZPMtQwUos+ReC2j7uJ7AhjRKMR631yRxy6CDDOZlRT7RSVYrCJv2i1RBMBdNS/y6nEVWyBmrwMRJ2hhct9YoGHa1WRm3tcd+ehuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KHcrExrl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758793434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6vydMaXs1eVl1UKvh2REpAhtxjKBRH6HzbTsqKiDoNg=;
+	b=KHcrExrlH+nPjnhrq8nhmDSN9qlMgYNsLovPOhofiJMYazP59PWu81PsAaKT5/EElQcoQK
+	M74Ng5dkP7pYeAnV1WnvTiFtTzB7uO8o/23hwVZqvwDF+9xGJhaMOVI2DN1WusIMfOmwgn
+	lp/6tUzS8qCiSZ9TWdcOP68YPtBxSiE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-416-fWWzib-BNzuqhKXZW52qWg-1; Thu, 25 Sep 2025 05:43:53 -0400
+X-MC-Unique: fWWzib-BNzuqhKXZW52qWg-1
+X-Mimecast-MFC-AGG-ID: fWWzib-BNzuqhKXZW52qWg_1758793432
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e31191379so4787585e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:43:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758793422; x=1759398222;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DCZnhATrsjVbGiYUB4fIkwGkbNdpLbfL2naMCtBsqWk=;
-        b=q9KFtOU1I644r03hdbIoV80PEFXPKU4U0g2ZwCc/f6oTluHGc0BB0rD2tfwgh3kH2p
-         SzGWJRXclAd027MsnmDqyjwgym1p+sLmmvRQiNO8nLEd2auvOA8fjDOvtFMrD+Y2+6Rm
-         vKAfXxMrKAo9yy38gIB6oHqsJy3fpblrj1EIUm9OOymFR/W+DU88Y3Onmxg74J1XvWBY
-         0RQ7MFlitTJlAre83Cx3CzeT2RMUoGmfkC58MeNc/UZnSTb5sNapJBdQU03YG9m+kMy5
-         gXF0athObkNKlVdLrBZl1uiY8enKjp4tUA98cGA5xXGL42jKV40SRvpaTIdjiucsy5Eq
-         Baxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe5i2zYoezrUklzMM3pfy7X6thh1bmXaMwSwm+KdHxp4uR9gihZlEWGtC+ZnldahifKoqz23Ni5GVzkvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTQ8tnjtvioVZWUtaKBaYfn4L558QFR/lpjSiVI8KUeugEQFav
-	XoqU9uFPSob7psxjS4ekR/gONEV3983kL+LMMOi7aO+JQHNhV2/yQ/q0TV+kSSqhZg4=
-X-Gm-Gg: ASbGncv+NglG4RFB/S+JjnPrKAUnKyb0tLAa6qEb394feo0QYw/jIworMFGl7DQdIYB
-	4ypZhdPrPDudS0P8pM2CHR2l72d/wwQNTooo4MtdB0FHfQpHe++2H4oWx2NvBjljERQFb7P4Xkq
-	p1QMlhO4puyvTFrlt+o1iHQ5pzOC6NXOWoOAwLZ7yaRNziouDSkYQGje7WsZLaAIxdB+GSO67pf
-	+to4t/Fb9oeVPtXg2XdWHZ6Da9/ZvyKlLYPHCxDP+IQG251O07UghTn/xt9h+wwvExP8k2dBVTz
-	kXbq2QyKXdLluFSOmtRPAmAbPEFzhxP+ckr40slVOYwRMh/VY97ttnaaj6f3szjS32pB4oyfmqF
-	x9dTI0YxED3IN2WQ=
-X-Google-Smtp-Source: AGHT+IHtjYY4u3ev2M33gy9xtE76ugh5Zae/dWOU8GUtMm4PBGTQ07Z0LKjhRfz3yyXn30W6EI50iw==
-X-Received: by 2002:a17:907:94c2:b0:b2d:604d:acc9 with SMTP id a640c23a62f3a-b34ba93cd00mr280580766b.35.1758793421736;
-        Thu, 25 Sep 2025 02:43:41 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac6:d677:295f::41f:5e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f74fbsm129383166b.51.2025.09.25.02.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 02:43:41 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Cc: davem@davemloft.net,  edumazet@google.com,  kuba@kernel.org,
-  pabeni@redhat.com,  donald.hunter@gmail.com,  andrew+netdev@lunn.ch,
-  ast@kernel.org,  daniel@iogearbox.net,  hawk@kernel.org,
-  john.fastabend@gmail.com,  matttbe@kernel.org,  chuck.lever@oracle.com,
-  jdamato@fastly.com,  skhawaja@google.com,  dw@davidwei.uk,
-  mkarsten@uwaterloo.ca,  yoong.siang.song@intel.com,
-  david.hunter.linux@gmail.com,  skhan@linuxfoundation.org,
-  horms@kernel.org,  sdf@fomichev.me,  netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
-  linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH RFC 0/4] Add XDP RX queue index metadata via kfuncs
-In-Reply-To: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com> (Mehdi Ben
-	Hadj Khelifa's message of "Tue, 23 Sep 2025 22:00:11 +0100")
-References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
-Date: Thu, 25 Sep 2025 11:43:39 +0200
-Message-ID: <87h5wq50l0.fsf@cloudflare.com>
+        d=1e100.net; s=20230601; t=1758793432; x=1759398232;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6vydMaXs1eVl1UKvh2REpAhtxjKBRH6HzbTsqKiDoNg=;
+        b=eD/K1fAzGdiSnVcR7i2EE/ixSBQdWo4GnsA83MwJ3FIBKRbCrr1IdyKH/GmacbmBJI
+         ICy6x7fNbvU2kGCGC51fl4XVtnFuLm+ULaeLhhk0y5JrxvMspkFJ7pOycXnNLwc6jAjo
+         iMJ6gJSza/0SLCp0FZQyUnxl1RfNfAkDLqYFlqI3HH9I+hsGXVDrZJ+pNZd+aF+PZBGV
+         x7TH5E+h5vZv/1gNsrebeG7efRYZcj6pkLxb2j2L8QRgaIW8YicEHjdtXPwy5gLZiPO0
+         cDd3tze6/cl+9rThmGCwWLbMe4V778OriIO5FrLLRfkEpj+TNCz33CsSZZwiQrqn6RgJ
+         apxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMG9i2lzDjhrmkCG0EqqsENW36EkRK2e8nvx8rrt4Is+Q59DhQRGX+XR+14Xx7jbekDv0Rr4XZ7oKCKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG+DTLVOfXCm5TfBwYtPFuqqt2jn2kBAdh0g460ErxIPSnsTOn
+	o9K6ArcG4LXGSAFfdvztkUSAfZiiO93db9DKt3zV3ohuxKRMvBXBxpqXM3gGR8F8QsulOlcoMlN
+	PYFr2cbAK6jtzisoryvY6nrvJ70yKJCaoyOOVnuBpMf42ck9uN53YgxRTtxwT3UcFjA==
+X-Gm-Gg: ASbGncsxJw5m2jBNHT3Y+I72aEPDKqjumYd0xWWvDHg5AdnZLNr35Pz/X5kezfXwqEU
+	DSBSOdM5/9xNHgalPwpjX+kIWkZ1vcbjy9GGoqPRSAKbVntRV9ofpa5O3fp1WXIwI2DboyX0Gs5
+	NFNyKoaXqXmQEIsznhEktZxmH7HIr7GKe5CLXlKqrR/pfEQZLLv6ousiLOUcxZsXA5FBnTGCiEl
+	QXLDiSZM7nYQRc4DKk8Agb5BWUx3tdLs4nzGhn2ZnxDJgTgm7nGTCBt1RdMObooUrLaklaae9EC
+	GgOuZPsQJ7z16wLuQTMceOfC+hWeuOjHucQcVEPJoKLsTSZuKJPCQjl8+c0a0gfUDR/cpDHXk1s
+	f6+sQrZLrVWxcsstVhg/xnACkiG1syXbtNMvMl+j1NJZivpnTbW+SVihjGvzp9kzBvxTR
+X-Received: by 2002:a05:600c:5296:b0:45f:2cd5:507c with SMTP id 5b1f17b1804b1-46e32a131admr24812725e9.36.1758793431927;
+        Thu, 25 Sep 2025 02:43:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWz4LdemSwADsOpu90+REN4fMccxBh2uGX6ZV9Mxd0bjbe/Oflr7dE6fLA/sZVqFh7dcnOWg==
+X-Received: by 2002:a05:600c:5296:b0:45f:2cd5:507c with SMTP id 5b1f17b1804b1-46e32a131admr24812405e9.36.1758793431361;
+        Thu, 25 Sep 2025 02:43:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf70dcsm26209145e9.23.2025.09.25.02.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 02:43:50 -0700 (PDT)
+Message-ID: <1b6741fe-20ed-4a47-8e9b-24bd199f23f4@redhat.com>
+Date: Thu, 25 Sep 2025 11:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 01/15] mm/zone_device: support large zone device private
+ folios
+To: Alistair Popple <apopple@nvidia.com>, Zi Yan <ziy@nvidia.com>
+Cc: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>, Oscar Salvador
+ <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-2-balbirs@nvidia.com>
+ <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
+ <9c263334-c0f3-4af0-88a8-8ed19ef6b83d@redhat.com>
+ <66A59A5C-B54E-484F-9EB8-E12F6BD1CD03@nvidia.com>
+ <lcuuqa3e3txmhb55c5q3s6unugde4hp2wsmvkahgddeicyn2tp@xdx2zqjmd4ol>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <lcuuqa3e3txmhb55c5q3s6unugde4hp2wsmvkahgddeicyn2tp@xdx2zqjmd4ol>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 23, 2025 at 10:00 PM +01, Mehdi Ben Hadj Khelifa wrote:
->  This patch series is intended to make a base for setting
->  queue_index in the xdp_rxq_info struct in bpf/cpumap.c to
->  the right index. Although that part I still didn't figure
->  out yet,I m searching for my guidance to do that as well
->  as for the correctness of the patches in this series.
+On 25.09.25 01:58, Alistair Popple wrote:
+> On 2025-09-25 at 03:36 +1000, Zi Yan <ziy@nvidia.com> wrote...
+>> On 24 Sep 2025, at 6:55, David Hildenbrand wrote:
+>>
+>>> On 18.09.25 04:49, Zi Yan wrote:
+>>>> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
+>>>>
+>>>>> Add routines to support allocation of large order zone device folios
+>>>>> and helper functions for zone device folios, to check if a folio is
+>>>>> device private and helpers for setting zone device data.
+>>>>>
+>>>>> When large folios are used, the existing page_free() callback in
+>>>>> pgmap is called when the folio is freed, this is true for both
+>>>>> PAGE_SIZE and higher order pages.
+>>>>>
+>>>>> Zone device private large folios do not support deferred split and
+>>>>> scan like normal THP folios.
+>>>>>
+>>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>>> Cc: Zi Yan <ziy@nvidia.com>
+>>>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>>>> Cc: Rakie Kim <rakie.kim@sk.com>
+>>>>> Cc: Byungchul Park <byungchul@sk.com>
+>>>>> Cc: Gregory Price <gourry@gourry.net>
+>>>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>>>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>>>> Cc: Nico Pache <npache@redhat.com>
+>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>>> Cc: Dev Jain <dev.jain@arm.com>
+>>>>> Cc: Barry Song <baohua@kernel.org>
+>>>>> Cc: Lyude Paul <lyude@redhat.com>
+>>>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>>>> Cc: David Airlie <airlied@gmail.com>
+>>>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>>>>> Cc: Matthew Brost <matthew.brost@intel.com>
+>>>>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>>>> ---
+>>>>>    include/linux/memremap.h | 10 +++++++++-
+>>>>>    mm/memremap.c            | 34 +++++++++++++++++++++-------------
+>>>>>    mm/rmap.c                |  6 +++++-
+>>>>>    3 files changed, 35 insertions(+), 15 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+>>>>> index e5951ba12a28..9c20327c2be5 100644
+>>>>> --- a/include/linux/memremap.h
+>>>>> +++ b/include/linux/memremap.h
+>>>>> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *page)
+>>>>>    }
+>>>>>
+>>>>>    #ifdef CONFIG_ZONE_DEVICE
+>>>>> -void zone_device_page_init(struct page *page);
+>>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order);
+>>>>>    void *memremap_pages(struct dev_pagemap *pgmap, int nid);
+>>>>>    void memunmap_pages(struct dev_pagemap *pgmap);
+>>>>>    void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
+>>>>> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn);
+>>>>>    bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+>>>>>
+>>>>>    unsigned long memremap_compat_align(void);
+>>>>> +
+>>>>> +static inline void zone_device_page_init(struct page *page)
+>>>>> +{
+>>>>> +	struct folio *folio = page_folio(page);
+>>>>> +
+>>>>> +	zone_device_folio_init(folio, 0);
+>>>>
+>>>> I assume it is for legacy code, where only non-compound page exists?
+>>>>
+>>>> It seems that you assume @page is always order-0, but there is no check
+>>>> for it. Adding VM_WARN_ON_ONCE_FOLIO(folio_order(folio) != 0, folio)
+>>>> above it would be useful to detect misuse.
+>>>>
+>>>>> +}
+>>>>> +
+>>>>>    #else
+>>>>>    static inline void *devm_memremap_pages(struct device *dev,
+>>>>>    		struct dev_pagemap *pgmap)
+>>>>> diff --git a/mm/memremap.c b/mm/memremap.c
+>>>>> index 46cb1b0b6f72..a8481ebf94cc 100644
+>>>>> --- a/mm/memremap.c
+>>>>> +++ b/mm/memremap.c
+>>>>> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>>>>>    void free_zone_device_folio(struct folio *folio)
+>>>>>    {
+>>>>>    	struct dev_pagemap *pgmap = folio->pgmap;
+>>>>> +	unsigned long nr = folio_nr_pages(folio);
+>>>>> +	int i;
+>>>>>
+>>>>>    	if (WARN_ON_ONCE(!pgmap))
+>>>>>    		return;
+>>>>>
+>>>>>    	mem_cgroup_uncharge(folio);
+>>>>>
+>>>>> -	/*
+>>>>> -	 * Note: we don't expect anonymous compound pages yet. Once supported
+>>>>> -	 * and we could PTE-map them similar to THP, we'd have to clear
+>>>>> -	 * PG_anon_exclusive on all tail pages.
+>>>>> -	 */
+>>>>>    	if (folio_test_anon(folio)) {
+>>>>> -		VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
+>>>>> -		__ClearPageAnonExclusive(folio_page(folio, 0));
+>>>>> +		for (i = 0; i < nr; i++)
+>>>>> +			__ClearPageAnonExclusive(folio_page(folio, i));
+>>>>> +	} else {
+>>>>> +		VM_WARN_ON_ONCE(folio_test_large(folio));
+>>>>>    	}
+>>>>>
+>>>>>    	/*
+>>>>> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
+>>>>>    	case MEMORY_DEVICE_COHERENT:
+>>>>>    		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
+>>>>>    			break;
+>>>>> -		pgmap->ops->page_free(folio_page(folio, 0));
+>>>>> -		put_dev_pagemap(pgmap);
+>>>>> +		pgmap->ops->page_free(&folio->page);
+>>>>> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
+>>>>>    		break;
+>>>>>
+>>>>>    	case MEMORY_DEVICE_GENERIC:
+>>>>> @@ -480,14 +479,23 @@ void free_zone_device_folio(struct folio *folio)
+>>>>>    	}
+>>>>>    }
+>>>>>
+>>>>> -void zone_device_page_init(struct page *page)
+>>>>> +void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>>>>    {
+>>>>> +	struct page *page = folio_page(folio, 0);
+>>>>
+>>>> It is strange to see a folio is converted back to page in
+>>>> a function called zone_device_folio_init().
+>>>>
+>>>>> +
+>>>>> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>>> +
+>>>>>    	/*
+>>>>>    	 * Drivers shouldn't be allocating pages after calling
+>>>>>    	 * memunmap_pages().
+>>>>>    	 */
+>>>>> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
+>>>>> -	set_page_count(page, 1);
+>>>>> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>>>> +	folio_set_count(folio, 1);
+>>>>>    	lock_page(page);
+>>>>> +
+>>>>> +	if (order > 1) {
+>>>>> +		prep_compound_page(page, order);
+>>>>> +		folio_set_large_rmappable(folio);
+>>>>> +	}
+>>>>
+>>>> OK, so basically, @folio is not a compound page yet when zone_device_folio_init()
+>>>> is called.
+>>>>
+>>>> I feel that your zone_device_page_init() and zone_device_folio_init()
+>>>> implementations are inverse. They should follow the same pattern
+>>>> as __alloc_pages_noprof() and __folio_alloc_noprof(), where
+>>>> zone_device_page_init() does the actual initialization and
+>>>> zone_device_folio_init() just convert a page to folio.
+>>>>
+>>>> Something like:
+>>>>
+>>>> void zone_device_page_init(struct page *page, unsigned int order)
+>>>> {
+>>>> 	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>>>>
+>>>> 	/*
+>>>> 	 * Drivers shouldn't be allocating pages after calling
+>>>> 	 * memunmap_pages().
+>>>> 	 */
+>>>>
+>>>>       WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>>>> 	
+>>>> 	/*
+>>>> 	 * anonymous folio does not support order-1, high order file-backed folio
+>>>> 	 * is not supported at all.
+>>>> 	 */
+>>>> 	VM_WARN_ON_ONCE(order == 1);
+>>>>
+>>>> 	if (order > 1)
+>>>> 		prep_compound_page(page, order);
+>>>>
+>>>> 	/* page has to be compound head here */
+>>>> 	set_page_count(page, 1);
+>>>> 	lock_page(page);
+>>>> }
+>>>>
+>>>> void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>>> {
+>>>> 	struct page *page = folio_page(folio, 0);
+>>>>
+>>>> 	zone_device_page_init(page, order);
+>>>> 	page_rmappable_folio(page);
+>>>> }
+>>>>
+>>>> Or
+>>>>
+>>>> struct folio *zone_device_folio_init(struct page *page, unsigned int order)
+>>>> {
+>>>> 	zone_device_page_init(page, order);
+>>>> 	return page_rmappable_folio(page);
+>>>> }
+>>>
+>>> I think the problem is that it will all be weird once we dynamically allocate "struct folio".
+>>>
+>>> I have not yet a clear understanding on how that would really work.
+>>>
+>>> For example, should it be pgmap->ops->page_folio() ?
+>>>
+>>> Who allocates the folio? Do we allocate all order-0 folios initially, to then merge them when constructing large folios? How do we manage the "struct folio" during such merging splitting?
+>>
+>> Right. Either we would waste memory by simply concatenating all “struct folio”
+>> and putting paddings at the end, or we would free tail “struct folio” first,
+>> then allocate tail “struct page”. Both are painful and do not match core mm’s
+>> memdesc pattern, where “struct folio” is allocated when caller is asking
+>> for a folio. If “struct folio” is always allocated, there is no difference
+>> between “struct folio” and “struct page”.
+> 
+> As mentioned in my other reply I need to investigate this some more, but I
+> don't think we _need_ to always allocate folios (or pages for that matter).
+> The ZONE_DEVICE code just uses folios/pages for interacting with the core mm,
+> not for managing the device memory itself, so we should be able to make it more
+> closely match the memdesc pattern. It's just I'm still a bit unsure what that
+> pattern will actually look like.
 
-What is the use case/movtivation behind this work?
+I think one reason might be that in contrast to ordinary pages, 
+zone-device memory is only ever used to be used for folios, right?
+
+Would there be a user that just allocates pages and not wants a folio 
+associated with it?
+
+It's a good question of that would look like when we have dynamically 
+allocated struct folio ...
+
+> 
+>>>
+>>> With that in mind, I don't really know what the proper interface should be today.
+>>>
+>>>
+>>> zone_device_folio_init(struct page *page, unsigned int order)
+>>>
+>>> looks cleaner, agreed.
+> 
+> Agreed.
+> 
+>>>>
+>>>>
+>>>> Then, it comes to free_zone_device_folio() above,
+>>>> I feel that pgmap->ops->page_free() should take an additional order
+>>>> parameter to free a compound page like free_frozen_pages().
+> 
+> Where would the order parameter come from? Presumably
+> folio_order(compound_head(page)) in which case shouldn't the op actually just be
+> pgmap->ops->folio_free()?
+
+Yeah, that's also what I thought.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
