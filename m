@@ -1,130 +1,220 @@
-Return-Path: <linux-kernel+bounces-832562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E02B9FAD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684F3B9FAFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71EAD1C23673
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:54:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABEB3826F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D6E28726C;
-	Thu, 25 Sep 2025 13:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABEF285C8A;
+	Thu, 25 Sep 2025 13:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="ET1k/Pud";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g4pYieGS"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLJWKHAG"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006D22857F1
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EE2286419
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808408; cv=none; b=EiGbMYCjugEmjyOldN3Oz7N7H9+FmdLQ7Cd3O3rxPneYgOcFR/b4D1vNPHiclQE1oO7HoTHcZnYSPK0lyouN8c22PUE/5QjmRsqWluDaYbq9LLVnFmmm2BeDgMB0DIoEIG4YFoE4J5UU1ibzuxenFs8vfnnBOxdl/tcwR2LEnO8=
+	t=1758808453; cv=none; b=nhjnQs0xxPc0y96ZuEIp/YtnwlVnukfzJxO5TXNqhAhRP7jlpLMV8JMWHLexzqOdX4rn5OdSuClAFdj+ij6AMclMTYSg93SsYcFN7L5SQE2QSq1BMedWNF7+3ALtCzp6xKtw3Ql0TCUNFAVkfCg9G2p/3QfeSA3OXPv4kRTVOIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808408; c=relaxed/simple;
-	bh=xTBK7dUb5kmaHMlvfQnaGNqVqOP+cx+e9lSwk9PUkys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X89kSZc+LtPWNfSL79WSLFNTZi2uWTklFqG0I2ciUURMtdISMFRcWbc+r+9tQQUzmCE4HKs+UfyGxXFjKF1EWoSF2EXOLRc8CiePxgpPv9AH54rmfy6joC7BJJjFQZiMjKN6VddsX57K+eplNpzjOeINVWW9PoQzLvNGHMmuKP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=ET1k/Pud; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g4pYieGS; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id F1C12140008A;
-	Thu, 25 Sep 2025 09:53:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 25 Sep 2025 09:53:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1758808404; x=
-	1758894804; bh=nbtXT8zEFemx2Nk5Z8fbjoImx297rkcdm6/1JnClD8I=; b=E
-	T1k/PudVKc94Q7EuCxtPy5vjaLIZ9BKHoMrMgvTPVb8VeGFlNShex481xoRF6LSg
-	QjizZRKeogddqOCmgeR838snoRo5BR2nPnkBlZxqsIMdPT1g5QjIKt1YAGxdtGol
-	sxQKP0x2plUVEFZlZtxTFRB42oSAU7U61u+BBNMmcZhUCHTaMxxrQPp+SVDaRKfL
-	xoKY1COh33dIz1bOQAvcsfDIUdraj6g6Vj2RUd+OwcrPQ72OFO867FnRGunGpFgm
-	s+acjW/0mp6/5Nn2Aygyb0w64QF6jaauvPtIJwGhbOhnc5SbPySpDzOlOxyk5ta5
-	bT/E+ZTIYJagQpES0PP5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758808404; x=1758894804; bh=nbtXT8zEFemx2Nk5Z8fbjoImx297rkcdm6/
-	1JnClD8I=; b=g4pYieGSEhYYtRZ5lhCpgSXgDdkbzxrXZNxuQC/7TyYfbMQzj67
-	aN+zSy3rN3OOlJtloklaEG3xwvuG2RF2W5CyFySuPVAtIupsX6cPDUfMGhDrwmLi
-	sCWlf36BAacsgKFxFBDxArvE3A4V+8ydkAbV9oz/OhoWM1vhLncHJ36J1VXO5kJO
-	ZWr/HbjVjTJl5kwj8eXZSB6ino0S7O6M9GaDXwPDSmYXay7gY8bJdbFFaHCVV/rH
-	t0HFFzgneUp+KOKs+gIQgiBEOsCctGU2kyZLBB3mz06UYdI8MV8k/INjo+3bMkBv
-	h92KcGqtqwACTin7wVlLdpM+Qr1Mchyq95Q==
-X-ME-Sender: <xms:VEnVaCvqsYhjmne3CwTFsWbd2l7L8-0EJmWD0m3rZRVgG27Zb95OYQ>
-    <xme:VEnVaPPZkR5IpusbkkCfvCTOXFbJkeCgqfMfU1LGFb-v6LMddtxA3efm8I2iHrJPz
-    H8378eE5UafyPjmS0-PI7acWnBsXOTnFG2tFYIDnJZ5umDNHBl6uw>
-X-ME-Received: <xmr:VEnVaA2aTx6GehIM8pFtXgx_RThllIHAVMdLU2hOscK5LZKyKqnqvBXb24RMm9RWzlp23TJJl12MH8cgLBZQPAu8i4MUn6Idi6o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiieeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
-    dtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhudekff
-    ehkeffudduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhnpehk
-    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgt
-    phhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefle
-    egqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhkphesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:VEnVaLPG2cAne7lMYYPEu-JP2YT2i9ht8WxyIq-AdUD5MzWyc8vBkw>
-    <xmx:VEnVaA12FZqJE0oXD_vm_nvRB8zN4pgG8jk4eWP_68Q_5edwea9f9g>
-    <xmx:VEnVaCGyXWDAr4WCS8aLbVqFcegmiCtL8UjqkcLQnH03yOFv80YfoA>
-    <xmx:VEnVaN6LRHhwJQDjNMPTK5Uu3iRkkRhQ6xH4DUtU1P0ICx2SX8BHlg>
-    <xmx:VEnVaHE9iwTenuhlKMIAuh-sLldKP3gRi28wLZJ6YYsKY82zu33T8-gH>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 09:53:23 -0400 (EDT)
-Date: Thu, 25 Sep 2025 22:53:21 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] firewire: core: suppress overflow warning when computing
- jiffies from isochronous cycle
-Message-ID: <20250925135321.GA329042@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20250924131140.261686-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1758808453; c=relaxed/simple;
+	bh=GEMmqrP/RK6YlUrlIRTRGi0wnwQ4oY7ol2RY5xlPCRg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qouRK59dsESTc279XPzi4jE6LKy89WRhBLFtCfUtxRuSsEjM/T6Gyhvzd9oGEN0woG2Ui83jUDevFq3wRJ+hTj7GALRd24leN/ntNwqEnlUwFvVBakLsL05FPHY63TaN2Zal9eHz9iFTDowV9Xcw3WMdsh6nbiPHm7fyADVJre0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLJWKHAG; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-80ff41475cdso3215036d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758808450; x=1759413250; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nN1kM5+gletp/n333+wlIxoZSFpVAQ/wESePzoHRX5k=;
+        b=JLJWKHAGUWUD5n+daBh1yvQGe+dkjXTvaQXgJ1gmVtp4/mSWBBVvDEvDZOsH14YnrZ
+         +4I9IX/aidqSUCt3sibrJFJnr0RwxqLxgzAt4VEEacDZZO4O1Laf+tOX3G4V4cTfBPCw
+         bjIP9BOOzDaNXyOUAKYNmgyM4L0E1MZFIuDEO2bj/sH2avsvDJezLh0N+lPD9a19jzxK
+         yeY5HNqR8L6Yhoy+/Q6rEcpPf+JC9Qdfdr4/64oDMBqyByZAAmlntiaPfXZP5ATtOjbV
+         ojxH2IetDyfVotGuZXPMhb6N6WVjDG3PPc6Pzu2FZVXLnpUdRLsdHuzlUyEPnlmgoLK9
+         pvHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758808450; x=1759413250;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nN1kM5+gletp/n333+wlIxoZSFpVAQ/wESePzoHRX5k=;
+        b=bO0hFZChcvS3wxZJdkYcOevyvUD+H+2b/GLSRMKFxptVn5LeQ7V9Kt0+5sDBtYBn+V
+         Koc56+RSlBlw5/Romi7aL8zoeoGZ6IIRVUbhr6o/E8vusa6GXWmhkN9NTskVbp3MLEr9
+         hnSVc6sizAHyKx4JlyhGHX5TYlZCtz3KszQtdrW/11uly/zW98+Z79iuIYFf0BbGR8LV
+         dmIa6esD3/NO1812HHpbQCxS67XBxTgWjRD+oyfyXE7dgWbiER7Ghb3KlOHA+6dW/jak
+         KiNWXV1pyA/AcMwUrKZgIBniuYf0BS6SGO7hP/NNhCGmUWEdKwAGJf/u4fMhBYFN9CYR
+         UjaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXea3TQa/5pZ6qazbhgEwPwEeAgVdcAvNCaG7M1OMgyxcKLuNw2NZ1wX2a7zFNdc0vHOUxRTDP8GdGbPpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSjvVJFO7Rwk0UpW29mqg0h3DuMvy7eBdHfQUHJM4CQ6Yb9wVf
+	jkXRFCzyz2H1jbbeBhOufXszdyx1LbF75OVQ26CWvpFH5Sh6vSYNTsN/
+X-Gm-Gg: ASbGnctyQAd8xJhUkrh5fJhSMy4nmCmmNi4kp1cbqry4d8sRLI3tDaYQeDoAszyY+Sv
+	Xu8Hg6cjhPwB9KKTFZY67IeyCuN8I6vR/lcu9p+UKXrWawMqcmdPN+xpxESNpzXDKlqJoKgoJmd
+	2rROF0PjLVHbeHor3hegsvnsCuFBom4vrGkk2beaHjgXMfECx/4TMSxJb4K/1V7eQKc89egDhn+
+	g6u3IN8RGQcOfqFCM9iKiRe1+dA3ipT9qmF6+foSch9UsUbccRgnnK61cemYX4FvDPlb0FvVkCK
+	Zrhq20Jmem/Z5PBRibaqzv8mTnHWIzCXuoArnXxP1Nx7JxcaOwgZ3F2ppQH03llFIWoHiq/AMtU
+	7cAI6hbr8eQxCJ+E+AS+Dv3KAonVBEmkybA+P2VFcmw4u3zNn11No8muZUbf9QlP38Q+eOjW2BI
+	WrYQALk7Omk2vPwY0gnKx92rQAo2uMbooMcoSUqXFxlOSc+zbtKYZXxM+DelMaxvposz0l
+X-Google-Smtp-Source: AGHT+IG8iotWiF9WZ9QNmLnrLYD4Bm/T3WD/aC7e1ZFkIy8L1i0Vs2M7Ocbk3KWdS/5CartACRQexA==
+X-Received: by 2002:a05:6214:258a:b0:80f:517d:2647 with SMTP id 6a1803df08f44-80f517d27e1mr14445326d6.22.1758808449532;
+        Thu, 25 Sep 2025 06:54:09 -0700 (PDT)
+Received: from 137.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:7c:b286:dba3:5ba8])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.53.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 06:54:08 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+Date: Thu, 25 Sep 2025 09:53:48 -0400
+Message-Id: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924131140.261686-1-o-takashi@sakamocchi.jp>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG1J1WgC/32PzU7EMAyEX6XKmSA7SV3aE++B9pAfpxuJtktSK
+ tCq707a5cCJi6WxNDPf3EXhnLiIobmLzFsqaZmrUE+N8Fc7jyxTqFooUC10CNIvmaUvaz5Pmsc
+ iMVprSasIMYhqvGWO6esMfbs8dOaPz5q9Pp7C2VJDlmlK69BEHclpIqNBMRJH9OR6BG1sp0JsW
+ zKB3IsVf5kq4kGkAH9hDqxgXO+oRwU+DhuSONqvqaxL/j4XbnjW/zdmQwkSVGcUsO36nl/Hyab
+ 350orLvu+/wD88s8sMgEAAA==
+X-Change-ID: 20250710-core-cstr-cstrings-1faaa632f0fd
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Jens Axboe <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1758808436; l=3853;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=GEMmqrP/RK6YlUrlIRTRGi0wnwQ4oY7ol2RY5xlPCRg=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QO/26UCYVrC1IViagcUS26Xk65Ejp4ZjzAzAyQQVar2N9GQH7mgOjszrNtLW6r94x8eZkRa/Pgk
+ CZf+Ko+eviwM=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Wed, Sep 24, 2025 at 10:11:40PM +0900, Takashi Sakamoto wrote:
-> The multiplication by USEC_PER_SEC (=1000000L) may trigger an overflow
-> warning with 32 bit storage. In the case of the subsystem the input value
-> ranges between 800 and 16000, thus the result always fits within 32 bit
-> storage.
-> 
-> This commit suppresses the warning by using widening conversion to 64 bit
-> storage before multiplication, then using narrowing conversion to 32 bit
-> storage.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202509170136.b5ZHaNAV-lkp@intel.com/
-> Fixes: 379b870c28c6 ("firewire: core: use helper macros instead of direct access to HZ")
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> ---
->  drivers/firewire/core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This series depends on step 3[0].
 
-Applied to for-next branch.
+Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+can be taken through Miguel's tree (where the previous series must go).
 
+Link: https://lore.kernel.org/all/20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com/ [0]
 
-Regards
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v2:
+- Rebase.
+- Add two patches to address new code.
+- Drop incorrectly applied Acked-by tags from Danilo.
+- Link to v1: https://lore.kernel.org/r/20250710-core-cstr-cstrings-v1-0-027420ea799e@gmail.com
 
-Takashi Sakamoto
+---
+Tamir Duberstein (19):
+      drivers: net: replace `kernel::c_str!` with C-Strings
+      gpu: nova-core: replace `kernel::c_str!` with C-Strings
+      rust: auxiliary: replace `kernel::c_str!` with C-Strings
+      rust: clk: replace `kernel::c_str!` with C-Strings
+      rust: configfs: replace `kernel::c_str!` with C-Strings
+      rust: cpufreq: replace `kernel::c_str!` with C-Strings
+      rust: device: replace `kernel::c_str!` with C-Strings
+      rust: firmware: replace `kernel::c_str!` with C-Strings
+      rust: kunit: replace `kernel::c_str!` with C-Strings
+      rust: macros: replace `kernel::c_str!` with C-Strings
+      rust: miscdevice: replace `kernel::c_str!` with C-Strings
+      rust: net: replace `kernel::c_str!` with C-Strings
+      rust: pci: replace `kernel::c_str!` with C-Strings
+      rust: platform: replace `kernel::c_str!` with C-Strings
+      rust: seq_file: replace `kernel::c_str!` with C-Strings
+      rust: str: replace `kernel::c_str!` with C-Strings
+      rust: sync: replace `kernel::c_str!` with C-Strings
+      rust: io: replace `kernel::c_str!` with C-Strings
+      rust: regulator: replace `kernel::c_str!` with C-Strings
+
+ drivers/block/rnull.rs                |  2 +-
+ drivers/cpufreq/rcpufreq_dt.rs        |  5 ++---
+ drivers/gpu/drm/nova/driver.rs        | 10 +++++-----
+ drivers/gpu/nova-core/driver.rs       |  6 +++---
+ drivers/net/phy/ax88796b_rust.rs      |  7 +++----
+ drivers/net/phy/qt2025.rs             |  5 ++---
+ rust/kernel/clk.rs                    |  6 ++----
+ rust/kernel/configfs.rs               |  9 +++++----
+ rust/kernel/cpufreq.rs                |  3 +--
+ rust/kernel/device.rs                 |  4 +---
+ rust/kernel/device/property.rs        |  6 +++---
+ rust/kernel/firmware.rs               |  6 +++---
+ rust/kernel/io/mem.rs                 |  7 +++----
+ rust/kernel/kunit.rs                  | 11 ++++-------
+ rust/kernel/net/phy.rs                |  6 ++----
+ rust/kernel/platform.rs               |  6 +++---
+ rust/kernel/regulator.rs              |  9 +++------
+ rust/kernel/seq_file.rs               |  4 ++--
+ rust/kernel/str.rs                    |  5 ++---
+ rust/kernel/sync.rs                   |  5 ++---
+ rust/kernel/sync/completion.rs        |  2 +-
+ rust/kernel/workqueue.rs              |  8 ++++----
+ rust/macros/kunit.rs                  | 10 +++++-----
+ rust/macros/module.rs                 |  2 +-
+ samples/rust/rust_configfs.rs         |  5 ++---
+ samples/rust/rust_driver_auxiliary.rs |  4 ++--
+ samples/rust/rust_driver_faux.rs      |  4 ++--
+ samples/rust/rust_driver_pci.rs       |  4 ++--
+ samples/rust/rust_driver_platform.rs  | 30 ++++++++++++++----------------
+ samples/rust/rust_misc_device.rs      |  3 +--
+ scripts/rustdoc_test_gen.rs           |  4 ++--
+ 31 files changed, 88 insertions(+), 110 deletions(-)
+---
+base-commit: f3f6b3664302e16ef1c6b91034a72df5564d6b8a
+change-id: 20250710-core-cstr-cstrings-1faaa632f0fd
+prerequisite-change-id: 20250201-cstr-core-d4b9b69120cf:v16
+prerequisite-patch-id: e0ca756f740ab0ce7478bbf6510948ba89529a2f
+prerequisite-patch-id: 6d8dbdf864f79fc0c2820e702a7cb87753649ca0
+prerequisite-patch-id: 7d4d1d036043a85dcbaf0d09ea85768120efe094
+
+Best regards,
+--  
+Tamir Duberstein <tamird@gmail.com>
+
 
