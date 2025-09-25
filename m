@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-833031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2136EBA10AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC33BA10B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B47B07B555A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6B16C0337
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D86319873;
-	Thu, 25 Sep 2025 18:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SWw4JtDb"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC32831A061;
+	Thu, 25 Sep 2025 18:36:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386C53191DC
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BD43191C9;
+	Thu, 25 Sep 2025 18:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758825379; cv=none; b=Jp1KPJLiVFT7dvvNEXXYMOfUUXgaNCvljDgXi9JzvOaIC25TPLnUr3j2E9WyafsAWeQR3w/8qA/u2df0NU7+6rcvMULw+9EpHmWYyqfcPypcSQjgf1dIZbgDJVe6HEFu6+vos2uMQqv9QE1CQom4U0JtlddFCGd53NB5+P/UsgI=
+	t=1758825416; cv=none; b=UbmEyIEBIdVjPZTS/Uo6zaIYx/AhdUHt2BdMtfe1SRk/AYkh5bvAC7zRUb9Lwd76RLovAA33Q4VDGmWYGjM0ilB3erERsgou7PKuYGwauQ3XM8MLkh5iefRhJTmKanS7Yc37+taxpj28hBVHTAg0RuzFkSm2jBXDmaj1A9P7EL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758825379; c=relaxed/simple;
-	bh=yTNcLmgvEDy9EISXeXBi6gHdiwI9LV3MmdEt8b5e8bU=;
+	s=arc-20240116; t=1758825416; c=relaxed/simple;
+	bh=sxFKez82qQVo5EWMBQ+NHEwO3z/ScVrpa3kUSDWZ7co=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adJgauskNvY7FdCdedEPeM26yrsh2xAyihHgfmdKbCQkLmlnXP2keZnW4cN5IL7kAhB2yORjV70sC6hjUUHp0sWhOO5eeBn5oF8NxPoOcl5GywT5b4D0umH8d+gnKrzjWrxkIn/3GzKo+qIUBHpMzX165ysmy/IOP0m/Gm/Cq/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SWw4JtDb; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so1553721a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758825377; x=1759430177; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bv1I4Ic9wC08aXBbFZJljZdZZSbHg/OBO6m8rXTaTQA=;
-        b=SWw4JtDbnI5I5wPq+33qixxb/11l6orQ0QZL5Sp5ZzVpec00eZJtfXey5rHg7D8fxI
-         wI5TPYyWlO9L0BRvmSh8QDDi7hbC0sLvdHBXkeouPjDKiq/yemCq7m+mHl3d02ei20z8
-         AgtMaWkOpXWvW0nD9NkSNwscGHy2JUaWz6FWY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758825377; x=1759430177;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bv1I4Ic9wC08aXBbFZJljZdZZSbHg/OBO6m8rXTaTQA=;
-        b=hW55jmbswSUaDdOpCAm38vAt9HaytNzkBeW+sc/5QpD4M+dBuE3eOFSXTRZpA5xjFq
-         12SOthDqZytSmnak41ziMfaT3wqkgvaBlGoZsYiZl+Uw7B9Jmz1FzivZw5fMVIdhL/ZQ
-         G59lfb8bnKSvw7VFxWc3d37BC7hZOtYRcZ3DO+3rx6ogmSBGk3xE3a5Vf8n9DcX22PdM
-         gbcXw2msGx83vEwUJ/Y8DgHJND5JJMiFp5qF+p5EwC2jkhqscaCegiPRZdQUV11rznG0
-         4JsmdX4fSMzRqcpn9aC6SkSsJj3fG2/eP8OYvOP/sA0h5Gb3QDZQ0f6w8CIdKFbf/km1
-         Gx/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUh+7WFTwUpohl9bIhJdh/7sAZCV31KpQ0JN51+UWNrx2S9ub1qCydNQyAboKdLH2GCo03punbyYTu+4gA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOxvKU2TkyI+RJfWgUqCd1bXoX76F0Bmj6hsVBDovaEskBKDeg
-	lWzWix/g0WXTxkY6qQn1Bw0SGZz1PSUWTijxWM5oldaxgFQ7tUsI+Zx2DF6l3I/aag==
-X-Gm-Gg: ASbGnctQV1tusVs3zNUoL9SQE/QnBxToZNRJ6uqFrSaRsH+tgJPUgVI1LTvtdQliYbi
-	wbUaA5/SHUIK+RiTEp5M8eEH2AtrEjGMS4eLpYF4lujMGgPA9rHsAWEH8kMZcCgM5sG03O6Rz9c
-	eskFc2cz/fuWdkVbyFeP2jkUWdOqCIISIhx9ONJml0PLKSMFzNm+lr3SFf2rAAWoP8cMV3p/D0C
-	h+ZANcGtbJH4IaX0LF0vcai1U1FssDS+5W6qIOHrE7sCjAQNxPUC/UMBTKS1zREmP6FoS+4uXsM
-	xd6h7DlP4oKgObpD/F35CRV+Vnxac5TPO5cjCqDpRcL4lothIOMDTYrAm+cOWQLkdbtJ8dIz5Kg
-	2ST1PTZkuTUF2Apee0Nh1DFcS4D6sXPAWEC2KcgyARct2jdrH0m7aiITiNh1O
-X-Google-Smtp-Source: AGHT+IF4Y09r+bkOF6lRkbwV+GQ7Ev0ePJgiaG1Uy2xMtT1jRRDOL9DCdlnx7ksb5G87YR8/J7GrzQ==
-X-Received: by 2002:a17:90b:3884:b0:32e:9a24:2dd4 with SMTP id 98e67ed59e1d1-3342a257202mr4886405a91.14.1758825377384;
-        Thu, 25 Sep 2025 11:36:17 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:ef44:9df6:231a:cd29])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b57c55a0ef3sm2756772a12.37.2025.09.25.11.36.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 11:36:16 -0700 (PDT)
-Date: Thu, 25 Sep 2025 11:36:15 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	kunit-dev@googlegroups.com, Len Brown <lenb@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] PM: runtime: Add basic kunit tests for API contracts
-Message-ID: <aNWLnxtxS1tqiqbC@google.com>
-References: <20250829003319.2785282-1-briannorris@chromium.org>
- <CAJZ5v0gGKsR0bVayyTXy1W9FLwVfG1S+gseH7jPKtggzZFNpfA@mail.gmail.com>
- <aMHjOJGaKi9cwbsn@google.com>
- <CAJZ5v0iELLPYBS6FKmX=DhoyQ2tDq9F9DAzuV0A8etv0dGeJvQ@mail.gmail.com>
- <aNMWa0SD5l4Cb6G_@google.com>
- <CAJZ5v0jnPsVrULF9+S-e+HvT+bik=+WA7FfXzFg5vfO8WhTy9Q@mail.gmail.com>
- <CAJZ5v0i0_r_=rsPzLmST7cZtGjHCP73t9aoXdVFa81J9nJmzsQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgcW8pq9HWTqUnDh1Y5EqR+IwO6makGgn8wMWWLeCarenq1o9twlYe7pRB44U09KMBYGXRamT/PnsuyZBZhwwkKfzxlO+r5dCh2aZDP5l5k/MGGnjJwCrp8TtxOaBAGwoWNeLDM0XoeFgoFATMEaiAIK9rny6o1mE/Eut6TapUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDFBC4CEF0;
+	Thu, 25 Sep 2025 18:36:53 +0000 (UTC)
+Date: Thu, 25 Sep 2025 19:36:50 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	Carlos O'Donell <codonell@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Szabolcs Nagy <nsz@port70.net>,
+	Rich Felker <dalias@libc.org>, libc-alpha@sourceware.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] arm64/gcs: Support reuse of GCS for exited
+ threads
+Message-ID: <aNWLwkn1fJDvWUyu@arm.com>
+References: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
+ <20250921-arm64-gcs-exit-token-v1-1-45cf64e648d5@kernel.org>
+ <aNVx9vlgi8t81V6Y@arm.com>
+ <38d629f2-99bb-4b13-a6ed-a4126d130b1f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0i0_r_=rsPzLmST7cZtGjHCP73t9aoXdVFa81J9nJmzsQ@mail.gmail.com>
+In-Reply-To: <38d629f2-99bb-4b13-a6ed-a4126d130b1f@sirena.org.uk>
 
-On Wed, Sep 24, 2025 at 07:34:31PM +0200, Rafael J. Wysocki wrote:
-> On Wed, Sep 24, 2025 at 7:32 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > On Tue, Sep 23, 2025 at 11:51 PM Brian Norris <briannorris@chromium.org> wrote:
-> > > On Fri, Sep 19, 2025 at 06:58:50PM +0200, Rafael J. Wysocki wrote:
-> > > > Yeah, so I'd prefer to change this particular thing entirely,
-> > > > especially in the face of
-> > > >
-> > > > https://lore.kernel.org/linux-pm/5049058.31r3eYUQgx@rafael.j.wysocki/
-> > > >
-> > > > which quite obviously doesn't take the return value of
-> > > > pm_runtime_put() and pm_runtime_put_sutosuspend() into account.
-> > > >
-> > > > I would like these two functions to be void.
-> > >
-> > > Sure, I think inspecting put() return codes is generally a bad idea.
-> > > 'void' would be cool with me, although maybe a bit impractical now,
-> > > considering how many users look at the current return code.
-> >
-> > For pm_runtime_put() it's not that bad.  I have ~20 patches changing
-> > all of the code looking at its return value to stop doing that.
-> >
-> > Interestingly enough, there's only one piece of that code (USB core)
-> > doing anything remotely useful with that return value.  Everything
-> > else is just garbage IMV.
-> >
-> > > So at a minimum, I'd separate "make 'em void" from my "document and test the
-> > > API" work.
-> >
-> > But you can just skip them.
-> >
-> > > Really, I'm mostly looking at this area because I have to support driver
-> > > developers trying to learn how to use the runtime PM API, and they
-> > > wonder about the return codes. So if they exist, I'd at least like them
-> > > to make sense.
-> >
-> > Sure.
-> >
-> > That said, as far as pm_runtime_put() and pm_runtime_put_autosuspend()
-> > are concerned, you may as well just say "discard their return values,
-> > you don't want to have to deal with them, and never ever pass them
-> > verbatim to the callers of your code".
-
-Sounds reasonable.
-
-I'll drop any unit test expectations for pm_runtime_put() and
-pm_runtime_put_autosuspend() return codes. But I'll leave
-pm_runtime_put_sync().
-
-> > > Anyway, for the particulars of this test: I can try to adapt the comment
-> > > language a bit. But are you suggesting I shouldn't even try patch 2,
-> > > which fixes the pm_runtime_put() return codes?
-> >
-> > Not really.
-> >
-> > > > Of course, there are existing users that check their return values,
-> > > > but I'm not sure how much of a real advantage from doing that is.
-> >
-> > Well, see above. :-)
-> >
-> > >  At least some of those users appear to not exactly know what they are
-> > > doing.
-> >
-> > Almost none of them do nonsense.
+On Thu, Sep 25, 2025 at 06:01:07PM +0100, Mark Brown wrote:
+> On Thu, Sep 25, 2025 at 05:46:46PM +0100, Catalin Marinas wrote:
+> > On Sun, Sep 21, 2025 at 02:21:35PM +0100, Mark Brown wrote:
 > 
-> s/none/all/ (sorry)
+> > > +	} else if (task == current &&
+> > > +		   task->thread.gcs_el0_mode & PR_SHADOW_STACK_EXIT_TOKEN) {
+> 
+> > I checked the code paths leading here and task is always current. But
+> > better to keep the test in case the core code ever changes.
+> 
+> We can't have scheduled?  That's actually a pleasant surprise, that was
+> the main hole I was thinking of in the cover letter.
 
-Ha, thanks for the clarification :)
+Well, double-check. AFAICT, gcs_free() is only called on the exit_mm()
+path when a thread dies.
 
-Brian
+I think gcs_free() may have been called in other contexts before the
+cleanups you had in 6.16 (there were two more call sites for
+gcs_free()). If that's the case, we could turn these checks into
+WARN_ON_ONCE().
+
+> > > +		/*
+> > > +		 * We can't do anything constructive if this fails,
+> > > +		 * and the thread might be exiting due to being in a
+> > > +		 * bad state anyway.
+> > > +		 */
+> > > +		put_user_gcs(cap_val, cap_ptr, &ret);
+> > > +
+> > > +		/*
+> > > +		 * Ensure the new cap is ordered before standard
+> > > +		 * memory accesses to the same location.
+> > > +		 */
+> > > +		gcsb_dsync();
+> > > +	}
+> 
+> > The only downside is that, if the thread did not unwind properly, we
+> > don't write the token where it was initially. We could save the token
+> > address from clone3() and restore it there instead.
+> 
+> If we do that and the thread pivots away to another GCS and exits from
+> there then we'll write the token onto a different stack.  Writing onto
+> the location that userspace provided when creating the thread should be
+> fine for glibc's needs but it feels like the wrong assumption to bake
+> in, to me it feels less bad to have to map a new GCS in the case where
+> we didn't unwind properly.  There will be overhead in doing that but the
+> thread is already exiting uncleanly so imposing a cost doesn't seem
+> disproportionate.
+
+You are right, that's the safest. glibc can always unmap the shadow
+stack if the thread did not exit properly.
+
+That said, does glibc ensure the thread unwinds its stack (and shadow
+stack) on pthread_exit()? IIUC, it does, at least for the normal stack,
+but I'm not familiar with the codebase.
+
+-- 
+Catalin
 
