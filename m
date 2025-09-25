@@ -1,140 +1,158 @@
-Return-Path: <linux-kernel+bounces-832319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E212B9EE79
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54765B9EE7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF313A938B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0066D38541F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD2D2F83DA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57842F8BC6;
 	Thu, 25 Sep 2025 11:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r15s5vts"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="BO2bFX3O"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA902F7AC8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF762F7ACE
 	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758799763; cv=none; b=YBcELrMNASfg6Qwj8M6+LH3PEXfzPuQThTWN1y+2UAnotlOCBb+1jYBnELX+iye7QYYqBDDrDzg4v8WJ1amwAIz8qJVhoKGWngAHQkNSRSw6wxqMc205g/wdfTVQmop+iVlhTO1HY75d5LeLpBwUvY3REnC8sAQ25zpE31ly+jU=
+	t=1758799763; cv=none; b=sXFqBKiZqQLTWQMQRgR2PmGTa6aPRjj9nnCUBot09raeICDBaCWa04RMfXG9SHBb8CCwKc6Tdvh4u28ZipZ+T94lXu7mjTDbcsezHk2DM7/dBxRFmRjrwRspcCSlBTzWM2pZt/AeHAUoY2ssQoWK9Yyhl9kFS9oDJio0E0Il/VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758799763; c=relaxed/simple;
-	bh=spYHYnkrSSHwtTKTP6qwxijxAXFvaPMhOoJbbi3y1G4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I43r5PJnLZ9lnx180wj6tXvZM7P8x2fmja986coM/YXlB1UQXpcs2nNHpemX9PIx3n7ii7Y1Yw6MukqF5jGNifFJ5zf0s2xJOR5snyHB2JOpbqJ2B5HpFcI4L/WLhaBboMpa7uBR20q/t8FJmRCx4YUYEjbCBvUd3k/fGnDEAl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r15s5vts; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3331adeadbso260670066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:29:20 -0700 (PDT)
+	bh=N4eb4ivmGU3+zSAOaLguUis7kF3GWbFjQPyW/QLtbVE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FMwr797xnv1pRPC4mf5Z0TWe0SmfjSxmByVcjDakcCM93RZrVZ/nwGBIX0tlvPthztXy95WRHcrAlO8SP4FlSyAOvsdlCL46EvDkCpgFqO1et+71NGstvoGuBtkxrKhTtHPeWdLqvE7to1kliFSKXylksrknYg+KoyoXEoBScA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=citrix.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=BO2bFX3O; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=citrix.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e317bc647so5834175e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758799759; x=1759404559; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y6tx3wGYofCquH8IJZF9cxaNXEG6TMvxnaVWQMdTML0=;
-        b=r15s5vtscaa03tiCNBbv4gRWbMb66XAVJ+ZiMrTqPDeBwkmn4L576yLh/tFosJLJL4
-         8civHZtp5Q5gmeQKDTeJuS58mVFae8bhR5EsrHQYtewoej1lGm2HB/m6Z10HW6DMzWCS
-         TJyBU5V9o4L7uV4/tWcUzxLjZi06H0JwswHHCu8OdGGB08CR44AUqi8sLje5D8KuqcZt
-         /LemIprCECiVzF0cLsHbD1KH6UhablHdjNYK/FeVeKxfd/CWJthx0qxJ9rksrqd+0CAO
-         GCpMASmZZE2SMKaC8RuYPb5AZcp6ssFepOOVnNkVkdMavKVzkZBo/1SYaDQVx77iSrad
-         7o/A==
+        d=citrix.com; s=google; t=1758799760; x=1759404560; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QqSgSXAv1zJap9Vi/qpQS5Qzz4ZHVJdj7cYYe5fWEc=;
+        b=BO2bFX3OUmiRZEyq0Pe64ST2ZyhexGiul6e7+J4tlo6lqsFnyihEkqNyHg8KCKBvdu
+         AF7JIEJ/1BjjaFc2gGSRdNmCY/WtnWRB6Pde/JQhOwQSWyNShmerrujR2WnCQZKd9NuD
+         WtOVj1Dy6zd2F0IU2405o4qzaJOd6ojwnfHoU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758799759; x=1759404559;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758799760; x=1759404560;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y6tx3wGYofCquH8IJZF9cxaNXEG6TMvxnaVWQMdTML0=;
-        b=Q/cFfUOrEYz89INnE/s4qgMucDXTiC4/w11kMYsjbDEdPi1UJDwKMd6AeZQI9kV7of
-         4rBOa4vkTass8s+j0AiXB5qAks0HUXXqVtJaye0Z4UOSUUd/pGCi9EJ8O08is+XQHqoo
-         3ItRcXWdatBnc1T0ZEdQxgtgKBQsNy1edztcqo70XQcMCIvDaPMdDbK4sw4yySK2UF9O
-         EFILG1fdQi+lV4PDiT6VMzrtpF67kUE/bUQDkvjE6mTYEEB98i5JJACzJzuo5dRviW1g
-         ZI5xcbnCinn7NkpP+AHgFe//Cp61Aev/wImN3Xy6wxZ5GiNVdGHDG3MSX0jtdkfPC42+
-         s+4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUO4tn8j4os/Ddzk35t0PTtlJ/PYKR/+ZQ8S0//6a6FdbYlzT5jbpDIPlSTAK2PdVsrQK9y9gNfNd1Ul5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe5Bzg924vFULQIk2vBO8FMM+Sr1UnqeO5kAO+xtmqKMGnw6R7
-	jO/1jBl8SDhPCFWFUMYPg5b3d40BLi0AO5x8e9Ur34ZKCWc1nhi/hoDU057yiwBDfdg=
-X-Gm-Gg: ASbGnculBYYrbun6kOuD/A6/zQNLd/BshiLli4UCemLlkcWO8GDjpWp629n4JoWZOT1
-	SkHuKlzL0h1AXXoC4etsIdhYuuNMwrkn1ro+xW4ljANBcjSP6ziO3Ej18QN/zgZpTw+kjMoWs7N
-	tH8z5jaVRkr0F5w/NaTl3pMqCKfouyQuw3ubupnnGTNUxOb92TMfZeEsuyGdgIJIfLYlt6h43TQ
-	sezayaHtsRQHgIYUjBUM5UKh3huOooOm8lIR4AV2bNVsOzINbKh41lFJpmh0j22S+G0/Z/ci9Op
-	A6gCohM/CdefFo424cqXJZp1LlVcIhq0RUC26Nb7fn55AWvd8FoR8Hs519ZfwYTeToFendpsJLH
-	lEvf2XxhIVU6+i6Geo6HJPg==
-X-Google-Smtp-Source: AGHT+IECd6eD0NG/1EjdBoivaaCFD3fdU9kTeEF04JLjXlrzueCjrWn5Mmy5qgRiQjAwXUsp8liKjA==
-X-Received: by 2002:a17:907:f1ea:b0:b04:6f77:9cff with SMTP id a640c23a62f3a-b354c83d684mr239529766b.27.1758799759330;
+        bh=/QqSgSXAv1zJap9Vi/qpQS5Qzz4ZHVJdj7cYYe5fWEc=;
+        b=JzC3yW9FBdcoBwKYev1/qtoIlW4F7s9rPn5yqYlX+DTQWSM1Vthv5W1nYR0x9kbSES
+         WjcE2WEIeI5UZ7aTvRUYwWGVP2PcfLrqb9cc3Fe9Tecd2VTjD18Vws36PpLMJwoYzHFw
+         pfsj2v08A1q4o1xgjNChN1/s1lhE6jedCxrwRaDRyJzFtKOV3Ym88lVR9qWK4OQUEZDi
+         84tcUJ7UDpfHODg+GRvuASQUmm145rSmJLsoMJ0VmTEPs6uaWv6TpemXxulLe3rZxdNA
+         SPqUMlykb5cQAfiNGSKmL9PzzG134NqMQ40ucLzsyB/TQsS+y6IypFCclYWU8rdYD/Oh
+         8QXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDrg8xigQvr7Ilt+WBe8AnH4uIBdz5u+zt36rWIExoCJ00Z+FYaukyQDI8Ty/PDNF8553duDC/tufnY8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx437IUwGK9IoiSPx3TXzKL/twNkaYjrvu0BcA5Zf2ADk/kds+l
+	Is9GoZ1s3DNIWwSxaU1fDlx6zbWRkct0uLNUPNU0Zr9rN924OftbWZ7D+kxm3AcAhKw=
+X-Gm-Gg: ASbGncsRWYuoOOPmW9fe/sxpNnShCJ7CCBrx6eA3UJ5FNiVeOROaMCeq+Jdqy7nZvaF
+	ztw/HuYxBVrM70XcnLgXkID3i/Augo1up4tYKpdT5pHBet/yOZSdW3v2Ro42cmP5Ob9T19MKYsp
+	i7CcXUAHD/YaeZTjuHxhzeq53jFJ0AQyVGEdjEB5zmSelMUj6j+o+m52zD8eEOifwIZQ4efs5ue
+	rAaqjFjTiZGv+C94kNg64rfledfr2sJGA46UJ9lZY0s3pdiAm6YvFBT6rN7YKVlaqsEK0nJ+6DR
+	SlRku2KjMKxFGPNxNGCtgxmTfYudg11hR66mI4ok2bDdtRb4dyThAieOMBbmP2h6LDFg1qRM6kR
+	RHpz4iQEe+cMRWRltrZ0GuSN2NRAaBQjuSKpzBiQDgnXOkp7EH2DHfIZAT3wSfpWEDDPR
+X-Google-Smtp-Source: AGHT+IHge0s3ENO9hXY4jtmVnktkVDEoCmSrCOlJG/8t/OJbeLunduZZ8YtR9kYMBs3+Gab25eMfPw==
+X-Received: by 2002:a05:600c:8a1b:20b0:45b:43cc:e558 with SMTP id 5b1f17b1804b1-46e32a185f0mr25214145e9.35.1758799759650;
         Thu, 25 Sep 2025 04:29:19 -0700 (PDT)
-Received: from linaro.org ([86.121.170.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353e5d1643sm147578866b.22.2025.09.25.04.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 04:29:18 -0700 (PDT)
-Date: Thu, 25 Sep 2025 14:29:17 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Subject: Re: [PATCH v2 23/24] arm64: dts: qcom: glymur: Add USB support
-Message-ID: <keashhd5gvckff75a4ot2km3saivdetaaxmag5fnp7dnoiisxl@u7tmkokpfdmu>
-References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v2-23-8e1533a58d2d@oss.qualcomm.com>
- <dzjj344c6zlkg4rvi455xoedhd4d2kjvodi6yftv7svhvvmxbz@kwq7rkq45tms>
- <66a5084e-3f7a-452d-ad5b-5867528f57a5@oss.qualcomm.com>
+Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bede2csm29692415e9.17.2025.09.25.04.29.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 04:29:19 -0700 (PDT)
+Message-ID: <a2f6775f-0be5-401b-bc01-effd3f428482@citrix.com>
+Date: Thu, 25 Sep 2025 12:29:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66a5084e-3f7a-452d-ad5b-5867528f57a5@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+To: peterz@infradead.org
+Cc: alexandre.chartre@oracle.com, jpoimboe@kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20250925104251.GZ4067720@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH 3/3] objtool/x86: Fix NOP decode
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20250925104251.GZ4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25-09-25 12:59:20, Konrad Dybcio wrote:
-> On 9/25/25 12:54 PM, Abel Vesa wrote:
-> > On 25-09-25 11:58:29, Pankaj Patil wrote:
-> >> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> >>
-> >> The Glymur USB system contains 3 USB type C ports, and 1 USB multiport
-> >> controller.  This encompasses 5 SS USB QMP PHYs (3 combo and 2 uni) and 5
-> >> M31 eUSB2 PHYs.  The controllers are SNPS DWC3 based, and will use the
-> >> flattened DWC3 QCOM design.
-> >>
-> >> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> >> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> >> ---
-> 
-> [...]
-> 
-> >> +
-> >> +		usb_1_ss0: usb@a600000 {
-> > 
-> > This is usb_1_ss0, but then you have usb1_ss1 ? 
-> 
-> I'm in favor of just calling it USB0/1/2/MP/HS because that's what it is..
-> 
-> [...]
-> 
-> >> +			dr_mode = "peripheral";
-> >> +
-> >> +			status = "disabled";
-> > 
-> > So you have the glue defined above, but not the actual controller (compatible snps,dwc3) ?
-> > 
-> > I don't see how this would work.
-> > 
-> > Same for all other controllers.
-> 
-> good morning!
-> 
-> 6e762f7b8edc ("dt-bindings: usb: Introduce qcom,snps-dwc3")
+> I've made that:
+>
+> 	case 0x90:                                                                                                                                                                                                                        
+> 		if (rex_b) /* XCHG %r8, %rax */ 
+> 			break; 
+>
+> 		if (prefix == 0xf3) /* REP NOP := PAUSE */ 
+> 			break; 
+>
+> 		insn->type = INSN_NOP; 
+> 		break;
 
-Hmm, missed that one.
+Legacy prefixes can come in any order.  What is F3 66 90 ?
 
-Fair enough. Scratch that last comment then.
+Also, VEX/EVEX/REX2 want excluding too, all of which can encode rex_b
+differently.
+
+Is it really only rex_b which prevents NOP becoming a pause, or is it
+any REX prefix?  I would have thought it was any REX prefix.
+
+~Andrew
+
 
