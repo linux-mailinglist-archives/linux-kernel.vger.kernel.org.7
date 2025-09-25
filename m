@@ -1,190 +1,145 @@
-Return-Path: <linux-kernel+bounces-833092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B81BA132E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3538BA133D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25DF173371
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F969176619
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A774E286D6D;
-	Thu, 25 Sep 2025 19:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3B01DF27D;
+	Thu, 25 Sep 2025 19:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KD4UESJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n6pMUdgg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55A1DF27D;
-	Thu, 25 Sep 2025 19:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFECA31C56F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828762; cv=none; b=eoEsDZ4pwWGiWYudfgtNg0Tk9LXLnV1RPlU9mIr8BhYOnPRRdLyu7YcsVsOsI1zSpbIp/mWbD1YZNSxsV4NP9NtG9h2SMTsfcug090pDvtun56HyHD6mKGQkIXiaGOQuz0GNPFCQu6CWzy51wjQ2o8c5xnOkAo/7JsGmKiY3ofQ=
+	t=1758828786; cv=none; b=louguRWJ9TVLZlmlExGbIzB+7uGS+vYwZEjMMoZX06+jfm5ykPbS3a2L5zLgYkD3uImEUTBUwk7GVWqMJnyQjMpOeWcE1S5/X/4oEdqM9d4gzxIW4v4rD8WHxuJ8JKfPMTRhrynVfUrsRDFzIkioVLfcTmgm8zuy0tNsZTHWmIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828762; c=relaxed/simple;
-	bh=Q7zBrhkXL+QEFEwSrEBMPAMPNdfhwRLoImRblFYfg/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9IWwm4UrfU14LMM5S6OtKiU8PgM0POGk2XXAW/g8+ackQAAHyKQF7dmxqRfIkNE6xB4gW4LNn0Meav4N4KyKL2E0ufZlnO1fwcJ6Aa23f5Jpr10Too2uKp1sVJeAnHG0A329N+nmX8vCKK75OrdvHrdEGEsu/LdgJPteTArLe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KD4UESJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D24C4CEF0;
-	Thu, 25 Sep 2025 19:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758828761;
-	bh=Q7zBrhkXL+QEFEwSrEBMPAMPNdfhwRLoImRblFYfg/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KD4UESJ+/d5OSgRCVG1EGR+DXMCKgVjDgZWvk9JK8gptv9FbN7TIfS0qbCFvNx1a5
-	 FC5UhMvt4QCPz0f3v1agezp//gZUI30XLiXuzJSemOehNWFCSGP9mWw2X1n2NUcZ09
-	 kji4fjuJyQrmnGLByzDakZrBU7Dl4+IGzkFLKk6D26xLDfphmYvW72H6PHyX7QKI0p
-	 v+2Klz4AsuiastgKCGypqyOqgSOvmVuMbPlix7jUziROeV3hdzodfxMay6SMkmYr0g
-	 fd+61eNjs0hVyKO/THAB1yCSret4M0t1L+X8PEx6ygkSazgSfs1bePzyWcHxXz+mHp
-	 JASXtUtZRH0NA==
-Date: Thu, 25 Sep 2025 20:32:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?utf-8?B?5L2V5qyi?= <hehuan1@eswincomputing.com>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,
-	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com,
-	luyulin@eswincomputing.com, dongxuyang@eswincomputing.com,
-	zhangsenchuan@eswincomputing.com, weishangjuan@eswincomputing.com,
-	lizhi2@eswincomputing.com, caohang@eswincomputing.com
-Subject: Re: Re: Re: [PATCH v2 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add
- Eswin EIC7700
-Message-ID: <20250925-await-rotting-fe5d368bc2fd@spud>
-References: <20250912093451.125-1-hehuan1@eswincomputing.com>
- <20250912093713.142-1-hehuan1@eswincomputing.com>
- <20250912-pork-oaf-3480d3d0ef67@spud>
- <674372d7.16fd.199751b489c.Coremail.hehuan1@eswincomputing.com>
- <20250924-visiting-sasquatch-c58f782ff686@spud>
- <7e07388c.187f.199803c99cf.Coremail.hehuan1@eswincomputing.com>
+	s=arc-20240116; t=1758828786; c=relaxed/simple;
+	bh=TnBEnMqj9PcBFYUsBVb09AJzYDc97RSDWF7EDvNsZr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ou4QN1D/niLt/ydS0aYpiynQ5Yb84F4JLV6mpUOZh146Bp1bP0g4F+rTeKIbyqQkGJOqo+Kr22hWW8CpGo4aZ8PVljCs35YSarY18LTQGRJef915o5mYZUyF30Dpt+5zxH+6NZkr67ZJKOWn2TF3IauIQHPqIWESHflFxxu3mVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n6pMUdgg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIUuCv006031
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TnBEnMqj9PcBFYUsBVb09AJzYDc97RSDWF7EDvNsZr4=; b=n6pMUdgg7o1HOrgY
+	EhGqoBKaP6P2x8Bf+fJ0BEpsE9y7I9q+ZUsYD9Upeuz+1qp3rab4zpH6l0DAbCoH
+	pGmpyB/yuXh5Jd47KllaZk53mhlUdOuw4ydqth+gkoXHHIgTQdrDzi47c8soowfa
+	etPQT3hvO3eavu8XhEpS77QWY3YVZlzSSvKI5qX3j+4mO+/NU+gMsgj6Y1XEXw4U
+	WhDf1QgSRAOXGbm3uHmYMh9PSrAWdsA0Uhd4Y8u0pC/419B4xZOj0S2e7LND0PPA
+	QK9hgYURCbFTagVrzz0yEQN4QwrN+JkNtFJaoRotH10ta5A2cVZdvP8VY2o0fkb7
+	T7EO9Q==
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db3204ka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:33:04 +0000 (GMT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-893656f5776so165556039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758828783; x=1759433583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TnBEnMqj9PcBFYUsBVb09AJzYDc97RSDWF7EDvNsZr4=;
+        b=rBPkNfjJsR+lOVnmTS5qzPP0SWH7E8t/4LEhvmyaHHpXL1Q17Jvlk2hEy8seAnV/VR
+         rcoRKLyggFYjfX5nGXUGEEn9iQo2ZExJLnfyDHCz/M2zq/p9Om6cJyTPqk6HTBlUtDrJ
+         4GDsTTufkHWQJGohGYdWGpl5Z4jyONLULWkEmVL/nG4k4u8LCJigavyc53E4l0NN7wgr
+         EXdSQC+sDwPKnbqZY4N5FUjYbWOWnD75NjJjvJj0Jc4PsGARBvkBH7ahh1f2/O/qQz5P
+         R5rWnt50Qi113giwUCi+EYl6tlQ21c1zZ2aAZURn4SiSKLM7CC5J/SJOWKM5V1w+iB3P
+         hOyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhagyuN4oO1wZuY5P7i8S9cT15+UpKijIvC2Q5lCkTx5OLDvvcl0KBazNz9QV0phQKJYEiUoeDNQLLutA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZIUOdjH4H/I9SSE1d9UL5uKsn52RXFJcp5STFtAgibDhTZLle
+	heWPTntkBvnmcv4Wa3K4oq8ryf+8jh22bccwNwzBnqN+lI/11LJ9g3SEJbjmMGenpGa0T9yrA8b
+	tP0uWvlU2Uhx/OIVKI6IkshO9Q8CDfmhoKYMtTWg7KjYCnMO1/oOhgbhdJGHDqGg6NuQtN7TVkA
+	P8ryXkGR3aCwAp+qaLsTE4v1tPdO1nziLcGoUxgvx4rg==
+X-Gm-Gg: ASbGncvA/bDSkZpfHJ8J/g/6Ulh4xRfndbyjZz9HcptHPLi4DcelrA6f8SnvBYMh6DQ
+	BnSg3oYy8hyt+MHKrOJCFzDLFHZatoBbAPBtp41H+EAKDpVSjULz6zExlcXeR/51MbSXelfjfah
+	KWysBppsa/rvlRSddLVx41vMJUUDps5EuXI4t4a+436l4Q3JnFF73ht+0IzOkKxpPbRa9P2/JDn
+	vL50b7v
+X-Received: by 2002:a05:6e02:471c:b0:425:70b9:243c with SMTP id e9e14a558f8ab-425955e5344mr62881315ab.14.1758828783017;
+        Thu, 25 Sep 2025 12:33:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM8FpReApr0CA3Q3i/iHZMzcvXpITYuK0dqKpybMbm53VSYRwCkGk4q3clx06ZAwPs9BfYLZtd0oAmaJMnlD0=
+X-Received: by 2002:a05:6e02:471c:b0:425:70b9:243c with SMTP id
+ e9e14a558f8ab-425955e5344mr62880955ab.14.1758828782638; Thu, 25 Sep 2025
+ 12:33:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Kuwu3IZdfqn/2FGR"
-Content-Disposition: inline
-In-Reply-To: <7e07388c.187f.199803c99cf.Coremail.hehuan1@eswincomputing.com>
-
-
---Kuwu3IZdfqn/2FGR
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com> <20250924-knp-cam-v1-1-b72d6deea054@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-cam-v1-1-b72d6deea054@oss.qualcomm.com>
+From: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 21:32:51 +0200
+X-Gm-Features: AS18NWBmOViIv5jdU4dSvUosy08SUKDUBUh2nCRDhTzk4mlZzt1vwqBX05hLiQM
+Message-ID: <CAFEp6-38buo3WafiiXUEUs8n-=SKgacMD44gGAd1pnEDAsizCQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali compatible
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bryan O'Donoghue" <bod@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Authority-Analysis: v=2.4 cv=ao6/yCZV c=1 sm=1 tr=0 ts=68d598f0 cx=c_pps
+ a=WjJghted8nQMc6PJgwfwjA==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=EUspDBNiAAAA:8 a=i1QE4n8HBj4RHUU_w4AA:9 a=QEXdDO2ut3YA:10
+ a=CtjknkDrmJZAHT7xvMyn:22
+X-Proofpoint-ORIG-GUID: _8P7n0blY3qpu6u1XkSIWuboiGtGTRNO
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MiBTYWx0ZWRfX8D5NAl3uRE6W
+ nZ/jHjjHPMbTlfWeSuhy0cE9sHUACKnXqXFAqJmTVhOVrw59DIP0uUdg+s8tQPHmJBSOLfhWlYI
+ +aUy34ncXsvcXp3fbazJweu9wfn4jLVbAjvMaNZAP2Wk3dryDVBhcyw1nWjK1sIzALcs0YsevcY
+ PB5Nz85zIdAn3O69cy6hcq1Ohi4r1407zliwpn5iw7wYCTSyqQ0wUeGRPRdttDrxCOUjKneOuIa
+ otLyy0PYlzG0mySLWVj5kZnZzMoki9YA3zT4YNqmVAuhwRJ4vtnvGWvr+ylVXAa6hofnnzl48rF
+ /COmBM9IKq+0sdD6Y9bGZYPNTNrfUxp+9fRM1P9RiKX9IERESgzSiceQ3d7oe0Zxw04vVBBi9fB
+ u/3dGFZYyemZqRjCXiy/FQmxL8cUlw==
+X-Proofpoint-GUID: _8P7n0blY3qpu6u1XkSIWuboiGtGTRNO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250172
 
-On Thu, Sep 25, 2025 at 05:37:59PM +0800, =E4=BD=95=E6=AC=A2 wrote:
-> Dear Conor,
-> Thank you for your valuable and professional suggestions.
-> Please find our explanations embedded below your comments in the
-> original email.
+On Thu, Sep 25, 2025 at 2:02=E2=80=AFAM Jingyi Wang
+<jingyi.wang@oss.qualcomm.com> wrote:
+>
+> From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+>
+> Add Kaanapali compatible consistent with CAMSS CCI interfaces. The list
+> of clocks for Kaanapali requires its own compat string and definition.
+> This changes the minimum number of `clocks` and `clock-names`.
+>
+> - const: cam_top_ahb
+> - const: cci
 
-FWIW, there's no need to thank me on every mail!
-> > > > As a result, I'm also suspicious of your hsp-sp-csr, but these at l=
-east
-> > > > appear to be internal clocks if your description is to be believed.
-> > > > I'd like you to explain exactly what those clocks do and what the "=
-HSP"
-> > > > actually is. What other peripherals use it?
-> > >=20
-> > > Thank you for raising this. Your concerns regarding the hsp-sp-csr
-> > > clocks are valid.
-> > > The functionality and purpose of the HSP (hsp-sp-csr) were explained
-> > > in our previous patch series for the USB module. The relevant
-> > > discussion can be found here:
-> > > https://lore.kernel.org/linux-usb/17731a13.1cce.19974dfc64d.Coremail.=
-caohang@eswincomputing.com/
-> > > Please let us know this explanation has addressed your doubts. We're
-> > > happy to provide further details if needed.
-> >=20
-> > I'll address this on the usb thread, thanks for the explanation there.
-> >=20
-> > > > Also, your driver turns on this hsp clock but never turns it off. S=
-ame
-> > > > for the power.
-> > >=20
-> > > The writes to hsp_int_status and hsp_pwr_ctrl are not enabling clocks
-> > > or power rails.They are stability assertions.
-> >=20
-> > Do you still need to "remove" the assertions if the driver is removed,
-> > and the clocks get disabled? Or is that not a concern, because the
-> > hardware can't do anything relevant without the driver loaded? If it;s
-> > not a concern, then that seems okay to me.
->=20
-> The writes to hsp_int_status and hsp_pwr_ctrl are just status indicators.
-> They assert that clocks and voltages are stable. There is no need to clear
-> these assertions when the driver is removed or clocks are disabled. This
-> is because the hardware cannot perform any relevant operations without the
-> driver loaded. Whether these registers are written or not has no impact on
-> hardware behavior when the clocks are off.
-
-Okay, cool. That sounds fine to me.
-
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        compatible:
-> > > > > +          contains:
-> > > > > +            const: eswin,eic7700-dwcmshc
-> > > > > +    then:
-> > > > > +      properties:
-> > > > > +        resets:
-> > > > > +          minItems: 4
-> > > > > +          maxItems: 4
-> > > > > +        reset-names:
-> > > > > +          items:
-> > > > > +            - const: arstn
-> > > > > +            - const: phy_rst
-> > > > > +            - const: prstn
-> > > > > +            - const: txrx_rst
-> > > >=20
-> > > > How come you're so drastically different to the other devices?
-> > > > Also, putting "_rst" in a reset name is pointless. These are all re=
-sets
-> > > > after all by nature.sdhci_eic7700_dt_parse_clk_phases
-> > >=20
-> > > We have simplified the names as follows:
-> > > reset-names:
-> > > =C2=A0 items:
-> > > =C2=A0 =C2=A0 - const: axi
-> > > =C2=A0 =C2=A0 - const: phy
-> > > =C2=A0 =C2=A0 - const: bus
-> > > =C2=A0 =C2=A0 - const: txrx
-> > > Regarding the functionality of these resets:
-> > > prst and arst: correspond to the resets for the bus and AXI domains.
-> > > txrx: is used for the reset of the internal transmit and receive clock
-> > > domains.
-> > > phy: is used for the reset of the internal PHY.
-> > > This will be corrected in the next patch. Is this correct?
-> >=20
-> > I don't know if it is correct or not, but it looks better than before.
-> > Can you explain why you aren't using the "normal" 5 resets that other
-> > devices do?
->=20
-> Our reset naming is based on our hardware's reset design. Although we do
-> not follow the typical 5-reset naming used by other vendors, the
-> functionality is equivalent. Each of our resets covers the corresponding
-> hardware domains. There is no one-to-one correspondence, but our
-> implementation includes all necessary reset functionality.
-
-Okay. It's just unusual that you have something significantly different
-to what the other 10+ devices have. It's fine to be different if your
-hardware genuinely is not the same.
-
---Kuwu3IZdfqn/2FGR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWY0wAKCRB4tDGHoIJi
-0h8KAP45iWm75QmtNcSKgVbZiDWVgmRSvDiADiSbvBTty0+RGgD+N8ETSimrVEn4
-UMnPO87K8SCzSSn7LfGyL/myiqJmDw8=
-=z2EA
------END PGP SIGNATURE-----
-
---Kuwu3IZdfqn/2FGR--
+The recently introduced qcom,qcm2290-cci has the same definition with
+two clocks, ahb, and cci.
 
