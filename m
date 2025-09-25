@@ -1,208 +1,129 @@
-Return-Path: <linux-kernel+bounces-832987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A21BA0EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CF3BA0EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D801C250AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A575A3206BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9F30C342;
-	Thu, 25 Sep 2025 17:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17E730E853;
+	Thu, 25 Sep 2025 17:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/TftEX8"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LECEnIDu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71EB433AD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DB423A9B3;
+	Thu, 25 Sep 2025 17:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758821764; cv=none; b=lgG90cfbNkacjHtmpD84SCnspE9q0FCH5Fmy4iAMNBksZEyBTOV0jQseee8lfxcDdEGvhPME1TnrDSwk5ooBm6P5f2+lEmt62N/2XhvrIv444qomguzTDTuXc+INnHo4VRHxT27lsMHbFr43CYfv+br0atbGOynWGNik5kuc49U=
+	t=1758821906; cv=none; b=lJB/5VJN4yMUzb4+0rZ/7nRZl3uLXSBe+G/0Rq291NjuQFkFYLkXccssDDZJJrow7co36lVkfp8XjvzzIDpD4fZbvKhpJCSxdtVDB4LgZ0zMgNuUZyOGdT3KDRAjPIfu5jyL2dN/WXbVPhBhU/IsFktOBm0zvhSyxfgs6bAe5FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758821764; c=relaxed/simple;
-	bh=6X+Kwq99hJ6RldFuwAIqGeWDneu3vOuSsUP6CqzbVfk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WMcUbVBE8HANXmBA9m+6bnHGqSR7yrCUgY0eow8Bzt+Vb2Z1+817Ci5ejsnY2IdUWtOf6imwskHYC4PtvKxi6KTar7SXYD89K/e4Shn/XBcpNHSkh5rOY7Ha51WyiTJ41KO/+bLzS9TRyFnSLkdfXvWlAibG4fP+5PMMAgIHMig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/TftEX8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A28C116C6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758821763;
-	bh=6X+Kwq99hJ6RldFuwAIqGeWDneu3vOuSsUP6CqzbVfk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r/TftEX8EQYkqXGinosO6v7+qLQSZOXcE9dnQBYpDp2u9Wh4HkKGsITtSdPYO6eH0
-	 XENj/ROS4rFfbRHo3by8it045lyMpNB5eVEvfBOAJztTy3pTLYdzgUK4UmLEp6k89j
-	 C3T8EXVe7RGe9Q8qH8kKLA85q170G+QKA40ZXkEoiqXTePUb92B4fPar7ecv4T+qbY
-	 UT9gIAlXrJBZ6CIF1++J2xHOq2Isg6iDiVkI3s19DFv1lYsHdEgNQJAydZ6wZ+Ztx3
-	 ElMyJRKcloqBy7Dy3B5HGqgnkWzl8FTT4ibZh1JXkuQT4sGNMJBIMxpNq3WeN5mop5
-	 Cm6+743FC0nFA==
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-633c1b740c5so152870d50.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:36:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXyhw64dSZeBuZVxp3N36DUopNYU8/EaKI/YVOSmzp1/VcsR6+XOryKILflM3W/9uMioHkikKwoke1tF48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC8UvKMWMIhCIRWShzMNiOyh2HPf7TJg4J8RSGxEf0lfFL/tqs
-	5aueusMxudZJv9CmQ/shNVKM9/idcuneDG4iaCagfq05fzv189Y+/7FPEJIJEzYZydKCtNPiTfH
-	YkkHZ8FwXG7xrH5nMsCLwKWlNGP0MrsUYIyGsl7mjdg==
-X-Google-Smtp-Source: AGHT+IHiAaqrhjdBeWzemxxoy5Q/R4D0Bg1Krf9r3MkkhdAeLx/hi/f4ggBJoQJ1TWCnJxEIcknHVa4xwmbnHdx/DUg=
-X-Received: by 2002:a53:7212:0:b0:624:1660:ba01 with SMTP id
- 956f58d0204a3-6361a82db92mr2632679d50.37.1758821762606; Thu, 25 Sep 2025
- 10:36:02 -0700 (PDT)
+	s=arc-20240116; t=1758821906; c=relaxed/simple;
+	bh=1LH556iOEvDvaNX9cAl8yXja5P0kvfvek8B+Iho9Lfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1MS9OD0XIX6rYHPvg2KMXhwuvE6yB97r+VTDVE3ZXeBSJXR2wsOM5XKvPvmWzvRtw1yKZa3/5rtzVH74pkKEIfaDTZtnlpOxWN3g3I2y0fSX3w8ehR7PDjC0jV0BMLUuZVBA7i8J2GYcShY8Tp3pWQktGWtmZBBwLixz8K/mNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LECEnIDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD7AC4CEF0;
+	Thu, 25 Sep 2025 17:38:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758821905;
+	bh=1LH556iOEvDvaNX9cAl8yXja5P0kvfvek8B+Iho9Lfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LECEnIDudWUhi7SL8s8T5/iKw58kUPxai3/4HEYfO6tGmbiafc7XTh/ftk3VUNgim
+	 UzLtxhOcSlUnUrShJyIRb1FBg9gP3JPQ5TJoXjSU04dpps7qOQPNbhovANWCc12Dx/
+	 bTHrze6gLuPVAaGQcWk77b/sOyTOR5MFYUC9gNeo=
+Date: Thu, 25 Sep 2025 19:38:22 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/2] rust: usb: add initial USB abstractions
+Message-ID: <2025092529-schilling-impeach-c71a@gregkh>
+References: <20250825-b4-usb-v1-0-7aa024de7ae8@collabora.com>
+ <2025092520-sharply-everyone-4a5d@gregkh>
+ <DD1X19KZHSEF.1W9SU66HVJM9V@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com>
-In-Reply-To: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 25 Sep 2025 10:35:51 -0700
-X-Gmail-Original-Message-ID: <CACePvbW=-KZhU_qi4UUw7Pjbz4o=SQwHmQyEOkxhpMvdetbPCg@mail.gmail.com>
-X-Gm-Features: AS18NWCdaLC1Wp3RSMP0da3-Fs18-J7lkLeP98ZrcoaPfKuh1jdrt-Zu6iPTusQ
-Message-ID: <CACePvbW=-KZhU_qi4UUw7Pjbz4o=SQwHmQyEOkxhpMvdetbPCg@mail.gmail.com>
-Subject: Re: [PATCH V2] mm: swap: check for stable address space before
- operating on the VMA
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Cc: david@redhat.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	akpm@linux-foundation.org, shikemeng@huaweicloud.com, kasong@tencent.com, 
-	nphamcs@gmail.com, bhe@redhat.com, baohua@kernel.org, 
-	zhangpeng.00@bytedance.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DD1X19KZHSEF.1W9SU66HVJM9V@kernel.org>
 
-?
-
-On Wed, Sep 24, 2025 at 11:12=E2=80=AFAM Charan Teja Kalla
-<charan.kalla@oss.qualcomm.com> wrote:
->
-> It is possible to hit a zero entry while traversing the vmas in
-> unuse_mm() called from swapoff path and accessing it causes the
-> OOPS:
->
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000446--> Loading the memory from offset 0x40 on the
-> XA_ZERO_ENTRY as address.
-> Mem abort info:
->   ESR =3D 0x0000000096000005
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x05: level 1 translation fault
->
-> The issue is manifested from the below race between the fork() on a
-> process and swapoff:
-> fork(dup_mmap())                        swapoff(unuse_mm)
-> ---------------                         -----------------
-> 1) Identical mtree is built using
->    __mt_dup().
->
-> 2) copy_pte_range()-->
->         copy_nonpresent_pte():
->        The dst mm is added into the
->     mmlist to be visible to the
->     swapoff operation.
->
-> 3) Fatal signal is sent to the parent
-> process(which is the current during the
-> fork) thus skip the duplication of the
-> vmas and mark the vma range with
-> XA_ZERO_ENTRY as a marker for this process
-> that helps during exit_mmap().
->
->                                      4) swapoff is tried on the
->                                         'mm' added to the 'mmlist' as
->                                         part of the 2.
->
->                                      5) unuse_mm(), that iterates
->                                         through the vma's of this 'mm'
->                                         will hit the non-NULL zero entry
->                                         and operating on this zero entry
->                                         as a vma is resulting into the
->                                         oops.
->
-> The proper fix would be around not exposing this partially-valid tree to
-> others when droping the mmap lock, which is being solved with [1]. A
-> simpler solution would be checking for MMF_UNSTABLE, as it is set if
-> mm_struct is not fully initialized in dup_mmap().
->
-> Thanks to Liam/Lorenzo/David for all the suggestions in fixing this
-> issue.
->
-> [1] https://lore.kernel.org/all/20250815191031.3769540-1-Liam.Howlett@ora=
-cle.com/
->
-> Fixes: d24062914837 ("fork: use __mt_dup() to duplicate maple tree in dup=
-_mmap()")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-> ---
->
-> V1:
->    -- Checking for xa_zero_entry() instead of most cleaner way of
-> checking for MMF_UNSTABLE
->    -- https://lore.kernel.org/linux-mm/20250808092156.1918973-1-quic_char=
-ante@quicinc.com/
->
->  mm/swapfile.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 890b410d77b6..10760240a3a2 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -2389,6 +2389,8 @@ static int unuse_mm(struct mm_struct *mm, unsigned =
-int type)
->         VMA_ITERATOR(vmi, mm, 0);
->
->         mmap_read_lock(mm);
-> +       if (check_stable_address_space(mm))
-> +               goto unlock;
-
-This is checking the MMF_UNSTABLE bit in the mm flags.
-What is the locking requirement for accessing the mm flags MMF_UNSTABLE bit=
-?
-Here we hold the mm mmap read lock.
-
-As far as I can tell, there are two paths that can set that bit.
-
-1) dup_mm()
-It holds the mm mmap write lock. This path is fine due to the write lock.
-So far the above race against dup_mm(), adding this  check is fine.
-
-2)  __oom_reap_task_mm()
-It holds the mmap read lock when setting the MMF_UNSTABLE as far as I can t=
-ell.
-So checking the MMF_UNSTABLE with another __oom_reap_task_mm() does
-not exclude each other.
-This is more of a question for oom reaping.
-Does MMF_UNSTABLE have the test vs set racing here? It seems this
-check does not protect against  __oom_reap_task_mm(). I have no idea
-if this race is triggerable. Just want someone else to double check if
-my understanding is correct or not.
-
-I can see this patch does protect the intended race in dup_mm() vs
-unuse_mm(), it adds value.
-
-Chris
-
-
-
->         for_each_vma(vmi, vma) {
->                 if (vma->anon_vma && !is_vm_hugetlb_page(vma)) {
->                         ret =3D unuse_vma(vma, type);
-> @@ -2398,6 +2400,7 @@ static int unuse_mm(struct mm_struct *mm, unsigned =
-int type)
->
->                 cond_resched();
->         }
-> +unlock:
->         mmap_read_unlock(mm);
->         return ret;
+On Thu, Sep 25, 2025 at 03:29:25PM +0200, Danilo Krummrich wrote:
+> On Thu Sep 25, 2025 at 2:52 PM CEST, Greg Kroah-Hartman wrote:
+> > Yes, this is not a normal way that bindings will probably be merged into
+> > the tree, but as I consulted deeply with the USB maintainer about this
+> > topic while eating some good Paris pizza and French wine this week while
+> > at the Kernel Recipes conference, I think that this deserves an
+> > exception as they agree this can be merged now and they will be
+> > responsible for any fallout.[1]
+> 
+> If you rather have it "staging" in-tree that's of course up to you. :)
+> 
+> But, I'd prefer not to expose the incorrect conversion between a
+> &usb::Interface<Ctx> and a &usb::Device<Ctx> for a full release in Linus' tree.
+> 
+> Besides other implications, this conversation also implies that
+> &usb::Device<Core> can be derived from &usb::Interface<Core>, which semantically
+> means that if the USB interface's device lock is held we infer that the device
+> lock of the USB device is held as well.
+> 
+> I know the code isn't even built, but I don't want people reading the code to
+> take wrong conclusions from that.
+> 
+> Also, it's dead code anyways, so maybe just apply the following hunk?
+> 
+> Thanks,
+> Danilo
+> 
+> diff --git a/rust/kernel/usb.rs b/rust/kernel/usb.rs
+> index 8899e7520b58..9bc3478cf561 100644
+> --- a/rust/kernel/usb.rs
+> +++ b/rust/kernel/usb.rs
+> @@ -340,18 +340,6 @@ fn as_ref(&self) -> &device::Device<Ctx> {
+>      }
 >  }
-> --
-> 2.34.1
->
+> 
+> -impl<Ctx: device::DeviceContext> AsRef<Device<Ctx>> for Interface<Ctx> {
+> -    fn as_ref(&self) -> &Device<Ctx> {
+> -        // SAFETY: `self.as_raw()` is valid by the type invariants. For a valid interface,
+> -        // the helper should always return a valid USB device pointer.
+> -        let usb_dev = unsafe { bindings::interface_to_usbdev(self.as_raw()) };
+> -
+> -        // SAFETY: The helper returns a valid interface pointer that shares the
+> -        // same `DeviceContext`.
+> -        unsafe { &*(usb_dev.cast()) }
+> -    }
+> -}
+> -
+>  // SAFETY: Instances of `Interface` are always reference-counted.
+>  unsafe impl AlwaysRefCounted for Interface {
+>      fn inc_ref(&self) {
+
+Cool, I'll be glad to apply this, can you resend it with a real
+signed-off-by line?
+
+And we can always submit fixes during the -rc cycle for 6.18, for stuff
+like this, so there's no immediate rush at the moment to get this
+"perfect".
+
+thanks,
+
+greg k-h
 
