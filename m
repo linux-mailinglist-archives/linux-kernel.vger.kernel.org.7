@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-832298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E50B9ED9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 231ABB9EDAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C694A7AC250
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:00:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8547ADFAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB8F2F5A33;
-	Thu, 25 Sep 2025 11:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F9A2F617E;
+	Thu, 25 Sep 2025 11:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UaHLNbYI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agBtVbfR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445A1D6AA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8633F2F5463
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758798124; cv=none; b=b68++34PMxusoO0M5strYG0lQejb89zOTbVWxNvKD4nkw/9Tk1M8Y4Q8r7S2VjuY7epIliFvHkR+qMiiQO6/Cv/9GrCCP6B5fiaIYUDgqR0yhD6DwB2KmyEAv7Z1nw9XmRYuucvmr8JSkcv1U7xEiu/KzbmLYCqgu+dctce3IOA=
+	t=1758798181; cv=none; b=pNsFVh+1BoeqH9P8pPJTZ5e3TmpsyivbmtDdm4lLpfOiXStZzmGMN+g6MXyke1B/IZ87x+WSvQ9mFG9Y3wCD8h8eIXnhAF7wSuZ0Ojk6VxTTG67S25jS2s9SLmkTg9MNTFKCInsguksdT3+rabV6gUJSMYY4YoQHuJtJNc58loI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758798124; c=relaxed/simple;
-	bh=lyqvYkaj60Ar7s+jyDByOfyVX7oJIz27/Tgp2lKRwyM=;
+	s=arc-20240116; t=1758798181; c=relaxed/simple;
+	bh=SPatiG92lX3auhrm3NKSVGGSWaunSoiZhUXuxVMKexQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C5C+WVkWweJnAf3l8DCKSU+AxrXlACXiVRbaTIQUYVQjmzrvKGYDEZ8C9rD2krYvsoc+//vDmoHIL+kOAO3JSROvG3xqBcNeySt4sjS8eu3lPJKP0Fejc3H1iSLt20fzfC2Ei2QD8xlPL1jjAydImxWulMvUa7Pin0RqnkZfPwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UaHLNbYI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9YPcd019923
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:02:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uoboDRGVeObKR91G3EO3aEnY8YgnQu8Hx+ipZZBWW9I=; b=UaHLNbYIpjYG/4wn
-	quPNAWqtEhVSvsEzGl1GkBOBf6skkFbgERjI7EXKST7okCHpgHtWkNHO+7h8JeGl
-	UjG1qAsUIKa0AYHzX3JVeW9Yi4H1YnB00WbyN80qMmn5Q9TnwBOUl2XgjpZRdoGj
-	8kLDX8QJLE+sjRFYydm9yr3492/Z/k2hu4GvMFuJ/4i/do3MEA1pFSBbZiYkhb+x
-	9or1Vtp1PNpMiQy8TgqJcrAjpXMi3lAzTk98FdooinCUn78/PfR9jFD12Hs1HU4C
-	VX6BNedjwID2pk02u7Ds3vjUnLyMsqKQATKIfJ6RGy1ilVmiDB5+Bez/NKOPNi4m
-	vYBZQQ==
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpe12cn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:02:01 +0000 (GMT)
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-58ff35db2ffso28803137.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:02:01 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=f5IskWWTALPgeHXznhM/IJQkyM/8ycdoeWtyZWxMI9tZ2LUsNMQbVkD/zm1bsdmdv+UYYk3AJLo4du89MvRQg1zNPj+It4qesqmRawWeRHtiGhyO2Ow4oHUCYGdOm60BtQZwNA8G73Te6f1DdHnVNSL+WWzmY6rSgUvCgd8ARVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agBtVbfR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758798178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=r/0to4OyeGm89Kw4M6wzRihwRzmpUZBpw2U3yaSo+SQ=;
+	b=agBtVbfR/CDX62ZoTjQe3JL2DvpN2tvcwRsuc9yztOA828Br8uHlzDG56G03045wsv/U/8
+	Typ9Sex658vDfJ509O5ol2e8YOCFIWXlwaGBxwOeXsdvKVJZpSuZ53LsjBKm7ehK8Mgi+4
+	qtg1lZOXLuEQoq+WBusxCzLO0WBEEk0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-4T_Alf6qMLiJoM3RkZxhqQ-1; Thu, 25 Sep 2025 07:02:57 -0400
+X-MC-Unique: 4T_Alf6qMLiJoM3RkZxhqQ-1
+X-Mimecast-MFC-AGG-ID: 4T_Alf6qMLiJoM3RkZxhqQ_1758798176
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e38957979so883845e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:02:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758798120; x=1759402920;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uoboDRGVeObKR91G3EO3aEnY8YgnQu8Hx+ipZZBWW9I=;
-        b=A88vO+cz0ZY1t0WhVH6zXCHHCzAFQdfTWej5Cr91QkMs/6BBUszhlNl1C7Z3MgT8Es
-         vIyuD4Qn9ivge6XaV0npXG9B/IS8aEpWcOrOfvitTSpZCPDT4lEQg4j71AyaBmk+njl+
-         ZgTnBs7BXj+7eJewcDjBhyPJ97qHZJgiaNLNZ88Mx5w3gsoxJxHXPf69IcZOW1wKvyes
-         xJMT/9nC9mx6PjfTyS1VAAcbmj0iU4e7xjujVgsYPFSZa/a2/vLAfwWBaFEwFHSdYIr4
-         dg3J44Cn3sB/8lpP78NbNMxIFcIDYBc/K7JYtIbIioZ7cpjFvdyft/Sp/hBe76q13dTA
-         dHPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCqTgR04/BDpb6flXrynw7WLHwqE1WYcSZ36S6L2pXJ3TBTjCWUP/evRNvmU5bnCVlY62kBmMU5jAN7iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRpT85OAgRFl5VnizEMoLBlyTVuMkfFY0r4hDygUVOUX09nVQd
-	jhT//M1dX+EPdGWY3s02a5mWGL1UuPRYTXlHf5UxXjCiRPb+ouTo5q5LWrq+ul9gN6RcXTLkHHv
-	oXGtjz3fXk648VsT12DlTtGoFZ4vodrMO63et8emPQQFaKe12vTnfElim1kxKWvip4J4=
-X-Gm-Gg: ASbGncsdIvgz3N0TRd+4kPHeWfxIZfKiU9biCwH4uRyz/zpYF08B+mRnv1r20nSNYIA
-	ajm+FTmvHOwx1yNBCx2QfKhZjWuz1b8cW9au+5osex7QSo/JCQzgI/pnqJWfoH4EiakV/YZxhVW
-	D5j2cMZAzof3viOTiwg3z6XHxvjaafNX9oBCsXxQ5QgLFW2949uGG8NSS2Bn+DsWSswNjkgTrct
-	7aZ2S/Wn7JA9LlUPnK/VaJKtiApSPVkZQoAItYcnrbZMeZ7GEIk4vrx/Bx95kAmdNsOM0CuKWRt
-	vZO36w4s+ygnZet6JZouzZuqzF2Z0L9xXClnWdf21WOgTat0Whppo62Wst2bog603LWu8usgmbS
-	eyUWavx9Zjfgz/ZfJlXDr1g==
-X-Received: by 2002:a05:6122:5206:b0:544:6d56:eef1 with SMTP id 71dfb90a1353d-54bea256d02mr371010e0c.2.1758798120534;
-        Thu, 25 Sep 2025 04:02:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUnV9/bgYJlti2LIjsmZdaGX4KyPswd967D0dRbVBEJzWZibflvSmHCF+zSid3IwWgYek4Lg==
-X-Received: by 2002:a05:6122:5206:b0:544:6d56:eef1 with SMTP id 71dfb90a1353d-54bea256d02mr370965e0c.2.1758798119699;
-        Thu, 25 Sep 2025 04:01:59 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31bdesm70750585e9.11.2025.09.25.04.01.57
+        d=1e100.net; s=20230601; t=1758798176; x=1759402976;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r/0to4OyeGm89Kw4M6wzRihwRzmpUZBpw2U3yaSo+SQ=;
+        b=ldiiwynZ2UlNQn5l94cgUl+HnAypon1cndXoFT5CzpEa0XuD/X9mmTCBLpCDJEhWc4
+         +GV62NkzW6QOC7FSBwjm9W9mfTxwqP0LkKP13e3dc00UUovt56Ay1A1bS4+suft4MgjG
+         8uE9anixyEbLG6dzCDRD5KGtEaYiqQruq7HNzp04o8goooLkgJ16XeTqfTWS8ivv4Xbi
+         uvJQdRgLuNKkRfsSYUDmTc5e2EDPDK+wJW4n8LI4aTZ4I5GU7OtP7UNDSEPT+saNaoOq
+         NUQP4dDocucS8WOo7qoavygG6atQ5PFLg5G4VGT/XEMxUPMhpXXY2wiQ2T/a47OfLl/n
+         L4Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDnZxhb+qKLzsea5dTOe/cSt5XO4bhcUC/4kuShuPB2SBsAsJW0hxND8LqHr2nxDrLBDvHCKcQdE1CG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1fjZcsMMZ7gotQOkGGBr3tEthjj5H4Fxa0k8aIgA/MUkrvd3
+	HObHpk1IB0uCgLgX6bmgHJTXtrMUDP46YLQp19TgmsLd7WV+DPgZQlfrD2D09IiKpaWvCsH6Pw1
+	1D5HWaLJAmBHxEt2zPOs/XWx737uiX2y90AnGGX6BB0Ow+9M29dwdTlggpcPBgrkpyA==
+X-Gm-Gg: ASbGnctQEyGFM9JeuveDvUYosgV2mlXFWpRTfJ4ZCRoBjuDi/TnZ6Ro6lqNG3b8rm2b
+	yeU2stZCw0uif/J2t/J/rC7/HDt0GTHdFhPYBdHB12l+DWT1vXkYDKMC5fVJRwuR4fHJ3RkfHWU
+	lc/5xfMDgD25T0PFEliOTyin7osj6kjdVX7HtuHF7mwCyPohYTfGeHIhXgqwB4gtrxrydngmVfs
+	WWV1hb/4BvMQWU5XdfAce1/xSoriqlFwyOlOfupK3aEd7M0lFam43L+DTAHDcGx79DJyeJCh0FA
+	9mhxmcnJmv8lhmyZ9XW1NXDDCzuLsnOWScXP97uUUN2GGs1lcliPS4itD7BLfnbTj8korrYKKCK
+	Ece0dYGPksnL/UqRRKuhehWs9Vx97/UiGqrUAoQpmwWDE1fFiuwCkwN9098Vx2sF25W6e
+X-Received: by 2002:a5d:64e6:0:b0:3ea:6680:8fb5 with SMTP id ffacd0b85a97d-40e458a939fmr2659875f8f.2.1758798175634;
+        Thu, 25 Sep 2025 04:02:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaRjs0B05ZyXvh1d6jlu1Ktfb++k8xqGa0tdnYe8v/SeU1yGa2CE1nYchZ3/8IlcM8uOiw9Q==
+X-Received: by 2002:a5d:64e6:0:b0:3ea:6680:8fb5 with SMTP id ffacd0b85a97d-40e458a939fmr2659768f8f.2.1758798174621;
+        Thu, 25 Sep 2025 04:02:54 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72facf9sm2650164f8f.13.2025.09.25.04.02.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 04:01:58 -0700 (PDT)
-Message-ID: <a49f3f75-c882-4635-9be3-a433b7fe32c8@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 13:01:56 +0200
+        Thu, 25 Sep 2025 04:02:53 -0700 (PDT)
+Message-ID: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+Date: Thu, 25 Sep 2025 13:02:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,81 +89,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/24] arm64: dts: qcom: glymur-crd: Add RPMH regulator
- rails
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
+ "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+ <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
+ "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
+ <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
+ "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
+ "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
+ <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
+ "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
+ <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "Cali, Marco" <xmarcalx@amazon.co.uk>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ "Thomson, Jack" <jackabt@amazon.co.uk>,
+ "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
+ "tabba@google.com" <tabba@google.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>
+References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
+ <20250924152214.7292-1-roypat@amazon.co.uk>
+ <20250924152214.7292-3-roypat@amazon.co.uk>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250924152214.7292-3-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: jtjYL7CP2-qo8aRzxJuzgl1k31bXaiFE
-X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d5212a cx=c_pps
- a=P2rfLEam3zuxRRdjJWA2cw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=mWQtOVyK00dPacU1zP8A:9
- a=QEXdDO2ut3YA:10 a=ODZdjJIeia2B_SHc_B0f:22
-X-Proofpoint-GUID: jtjYL7CP2-qo8aRzxJuzgl1k31bXaiFE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX/1n+v/D7L90x
- DKW8F53ujayfTx0gBUlws/7Tst0Zazk8x2II4xTvw5YWun/XTpilzjkB/moQaR74BA42ZWw1kbS
- 9eTqpduTw2YiFYxdIYDXa58snXvVITeJc8d1LMTFlDy/iIChZ08IC91+Fhus9Z7ItV+LsgjlawH
- vPUOdqHdjtmUkvuG3UWNt8sPOJwSqxBsiyB0S3hUEi+OL0t4XulJ088VrA/iCSp9j5kJ8WLm8g3
- bO53ixZyDKvIM5ysZEoLx69EbQJtNHBVdfS2++RhmWzRpHumhOZLo/5zcru77+bAlyzyxLqy8Up
- TZXvHnDNJ6LEJyJQjm4J/IQ0ZifhKPsFHJvOwKr4Bio1O9iBxKYEhUZRb2q+ZsJLLAhLqpj/JQj
- 05nRkC9H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230020
 
-On 9/25/25 8:32 AM, Pankaj Patil wrote:
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+On 24.09.25 17:22, Roy, Patrick wrote:
+> Add an option to not perform TLB flushes after direct map manipulations.
+> TLB flushes result in a up to 40x elongation of page faults in
+> guest_memfd (scaling with the number of CPU cores), or a 5x elongation
+> of memory population, which is inacceptable when wanting to use direct
+> map removed guest_memfd as a drop-in replacement for existing workloads.
 > 
-> Add RPMH regulator rails for Glymur CRD.
+> TLB flushes are not needed for functional correctness (the virt->phys
+> mapping technically stays "correct", the kernel should simply not use it
+> for a while), so we can skip them to keep performance in-line with
+> "traditional" VMs.
 > 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> Enabling this option means that the desired protection from
+> Spectre-style attacks is not perfect, as an attacker could try to
+> prevent a stale TLB entry from getting evicted, keeping it alive until
+> the page it refers to is used by the guest for some sensitive data, and
+> then targeting it using a spectre-gadget.
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
 > ---
+>   include/linux/kvm_host.h | 1 +
+>   virt/kvm/guest_memfd.c   | 3 ++-
+>   virt/kvm/kvm_main.c      | 3 +++
+>   3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 73a15cade54a..4d2bc18860fc 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -2298,6 +2298,7 @@ extern unsigned int halt_poll_ns;
+>   extern unsigned int halt_poll_ns_grow;
+>   extern unsigned int halt_poll_ns_grow_start;
+>   extern unsigned int halt_poll_ns_shrink;
+> +extern bool guest_memfd_tlb_flush;
+>   
+>   struct kvm_device {
+>   	const struct kvm_device_ops *ops;
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index b7129c4868c5..d8dd24459f0d 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -63,7 +63,8 @@ static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
+>   	if (!r) {
+>   		unsigned long addr = (unsigned long) folio_address(folio);
+>   		folio->private = (void *) ((u64) folio->private & KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+> -		flush_tlb_kernel_range(addr, addr + folio_size(folio));
+> +		if (guest_memfd_tlb_flush)
+> +			flush_tlb_kernel_range(addr, addr + folio_size(folio));
+>   	}
+>   
+>   	return r;
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index b5e702d95230..753c06ebba7f 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -95,6 +95,9 @@ unsigned int halt_poll_ns_shrink = 2;
+>   module_param(halt_poll_ns_shrink, uint, 0644);
+>   EXPORT_SYMBOL_GPL(halt_poll_ns_shrink);
+>   
+> +bool guest_memfd_tlb_flush = true;
+> +module_param(guest_memfd_tlb_flush, bool, 0444);
 
-[...]
+The parameter name is a bit too generic. I think you somehow have to 
+incorporate the "direct_map" aspects.
 
-> +	regulators-1 {
-> +		compatible = "qcom,pmcx0102-rpmh-regulators";
-> +		qcom,pmic-id = "C_E0";
-> +		vdd-s1-supply = <&vph_pwr>;
-> +		vdd-s8-supply = <&vph_pwr>;
-> +
-> +		vreg_s1c_e0_0p3: smps1 {
-> +			regulator-name = "vreg_s1c_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s8c_e0_0p3: smps8 {
-> +			regulator-name = "vreg_s8c_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>
+Also, I wonder if this could be a capability per vm/guest_memfd?
 
-Both of these regulators, having no consumers, will be parked to 0.3 V
-(the lower bound)
+Then, you could also nicely document the semantics, considerations, 
+impact etc :)
 
-There are other similar cases in this patch
+-- 
+Cheers
 
-Does the board still boot with all the expected functionality with only
-patches 1-9 applied?
+David / dhildenb
 
-Konrad
 
