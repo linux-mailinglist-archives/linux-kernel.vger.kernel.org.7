@@ -1,168 +1,271 @@
-Return-Path: <linux-kernel+bounces-832002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EEF6B9E1F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:51:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026B7B9E207
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60D524E20A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C25165C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95603277CB8;
-	Thu, 25 Sep 2025 08:51:02 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540A9277C8F;
+	Thu, 25 Sep 2025 08:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="caXwaOu5"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011031.outbound.protection.outlook.com [52.101.65.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEE48488;
-	Thu, 25 Sep 2025 08:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790262; cv=none; b=j1XcSQsTwyKohQogMskBqcGdNVRnIk562nB9d6xxD6HL6LQFgD3iVzdoa/NpJDWqJo309cWWl/C55EGw+nJ6zrpZbHjY4YdJAhxMT3hesI1qwdgDzAwkmcob7++L1PcGEBMb2p9IHWp/jO7GViS+iRPeli/W/3jmQOhQW6pC5oU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790262; c=relaxed/simple;
-	bh=kqyPgax74q2Ym86nQVylM9PwqrF1xsefWTR2RkwFBQw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UlBbNo4IBj8ZixVHcBBFmdLw37MVrwB0gQhAl7bMv3VpbO4utwrECvrjIQexmbTOgn2NI3HP9YbKj7ZRX08vMzDpi8x5oUByYfRHgR8MyoGrLrA8B2vgd+qsnSbxyVzsJOHCS9jvLhPzatRDQw7lXR9eJp5hFw5ZvtDkQkkhS0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cXS9N44q6zKHMny;
-	Thu, 25 Sep 2025 16:50:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6F2771A1339;
-	Thu, 25 Sep 2025 16:50:56 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCna2NuAtVodzcKAw--.12961S3;
-	Thu, 25 Sep 2025 16:50:56 +0800 (CST)
-Subject: Re: [PATCH 3/7] md: cleanup MD_RECOVERY_ERROR flag
-To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
- namhyung@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250917093508.456790-1-linan666@huaweicloud.com>
- <20250917093508.456790-4-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d8b4e30a-c711-f5b4-4c48-3c8a7e62c85f@huaweicloud.com>
-Date: Thu, 25 Sep 2025 16:50:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01CA277C8D;
+	Thu, 25 Sep 2025 08:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.31
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758790281; cv=fail; b=bswsTNCIB91nhtgb0NhTSYkasqCAvBZXI884GpB/SyWzlIam6kBzRXUghy7Xo7JFtOLNy+vDT9POBdfPBm9yiOfl3donhCagUVemVKczLhUUSRMXDYUI0ctAMFwltArZTf5u3PvFohKXTFbD31YfrU46VJx6v0trHNMdnLmVOFg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758790281; c=relaxed/simple;
+	bh=kftweQz6xZhQKdWRPNwywgGVXwDQudgRoYcDbVlD2cs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DPUaCjpgeHqrW0eaV0xvmsk+lAGztrsYoiVQj+lRejrKlBqJE4MIeF87meiqFoDL2pDe1WUXKBGnEb8dNijp5I+AKVgpaOnaE3xmkaafB2vYDGqWRxIEWN+tLsVDHrr4vrqDdTdYXOG2GlCjw/c6v94etPaSpukJQ0/upc7feNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=caXwaOu5; arc=fail smtp.client-ip=52.101.65.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gwgo4V0+eCI59EWw18uFD/LlmvFuG7iesDf5kiMGZZfxRVNw4+4F6Cryi92We59n2EHtvv9Mu8/cZoRROm9v3e7B+dGpzTi1rGmytMVb2zTcVGUtTGiFmHz0jwLZqv8nHcI1UEGETM9pVe06s9viA4SpD8Qsgo4PkLC43Gb5MhZzdq96im3QqiEC8twAvRkEPxmT9BgB2BzxkFy1fe1zgtMJqe1aSx2DyhigGLts/B6/1MHOhH4hwt7KqwKRqTJaz21cB1P3OflGkUe69x7TwADWIVoJWD95tCC2PPu34c9QBP//+UmOimdUDG3Rtwtc8S3Q+4jEcI+OEeh072E1aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZMh6ah17x+1eac7jggdvsG3nehFaR3TpqV0p6I+siJw=;
+ b=HofzAubxUbKXFl4GV/04RuPHtFp8uejAFQzm2VdH+ZPsVpvFBYdTMPo8B3T5PQ/bjIVwlxbNk9btCB4HNG779iWV63wCQ/9EQVf7TPwknsUp46iCNkdNsOoMig3MzqtQJE8JAYB0QigWxSUFD5zAfGbj8XAsuJUkP09UAo4h6ImeRQ9cAoLKnFYDI5f6AopQP8aXCuIdVWICPaiuOfp7XVIy+hC0IeE7tISp1I/ZA5Mv4OS6jJasc8fHNArgyvx8QmLeNTqtAYk4WOllEUQigoef1YfL8xH46jJ8QMh/rs16ChMMMc9V29QQy1mphS0Jg3DK4ektWNFWE4NtNHvzYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZMh6ah17x+1eac7jggdvsG3nehFaR3TpqV0p6I+siJw=;
+ b=caXwaOu5jDkzQq21r8XlkEFoWKeJHKb9wu90k7jPM0acirsFvF7zAHWN5j8QAfM9B6XpuasTr7A0aD+KJT1vh9dNWAx/SxbVejq866vF7N4cu8SgCdUNYMacBmbDFsNuGzHpI2Emy6EOheredn5UKDxWLhp1Ev1LMLw7Dnb5EWoxzZtww2KPGwQw2e2Nzlj0JVVHG84VT412uC6ULzeorMjLYrilnbkiBAsOeDHN3SDRfte48oxbBX6nRBZWeby4MqAk0KmAeFG/x9WQkEUwgOhn1AGTBpdGW6m0PQEmQYUuqynYrW1O2seWti5PoRehdbaRNrK8fp1w9K28Y+csYQ==
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
+ by VI0PR04MB10289.eurprd04.prod.outlook.com (2603:10a6:800:242::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
+ 2025 08:51:12 +0000
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 08:51:11 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: Frank Li <frank.li@nxp.com>
+CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"jirislaby@kernel.org" <jirislaby@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan
+	<peng.fan@nxp.com>, "linux-serial@vger.kernel.org"
+	<linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH V2 2/2] tty: serial: imx: Add missing wakeup event
+ reporting
+Thread-Topic: [PATCH V2 2/2] tty: serial: imx: Add missing wakeup event
+ reporting
+Thread-Index: AQHcLQG9neSop8RAeEmPmvgiHbrCIrSia9QAgAErJ+A=
+Date: Thu, 25 Sep 2025 08:51:11 +0000
+Message-ID:
+ <DB9PR04MB842963CA515E645566CFD2B4921FA@DB9PR04MB8429.eurprd04.prod.outlook.com>
+References: <20250924031550.2516704-1-sherry.sun@nxp.com>
+ <20250924031550.2516704-3-sherry.sun@nxp.com>
+ <aNQFzKY33OWobpcy@lizhi-Precision-Tower-5810>
+In-Reply-To: <aNQFzKY33OWobpcy@lizhi-Precision-Tower-5810>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR04MB8429:EE_|VI0PR04MB10289:EE_
+x-ms-office365-filtering-correlation-id: 39e36830-dd98-4b1f-1201-08ddfc10ad8f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|376014|366016|1800799024|7053199007|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?w9wkW7cwliOPJGeZLqLMeENXjXVFnxuM7qvBeVH5q2DNLuRoMkYT6FswfYvp?=
+ =?us-ascii?Q?IqfHbilBwNoXCTkFG3aQq0519rp1zMYwANYFduDzrUuyjT4F1gh3eWJFP2VM?=
+ =?us-ascii?Q?cC5h7IHRnJeOErdE7N9rLoxoSyqqjdjyZYOJU8yJ+M33QGv0jWIowdHfRCWG?=
+ =?us-ascii?Q?faARn3o8OUmkA07qOdAe5coiP+FD6CWRezkvqTTxhopyFYuJoTUn2Fg/+VBS?=
+ =?us-ascii?Q?0Ex3X11ZMr0lGk3B2IVR9Tcm2bi6OY2AIsC0L02IzwR7Bt3QlHaNlRU4DJKe?=
+ =?us-ascii?Q?9JN45fmsMUxdrtIEhX+UBboR11EjaF2lnnqYYZN8OOtSqucaB2fh0TBhu9C4?=
+ =?us-ascii?Q?jHFWeGqvyNBs2heg6ACo36xOqeBy1ftm1pJG4lzGLyK8Mmo78byHmi2AUIrv?=
+ =?us-ascii?Q?e+9XjM+UC9aNXIa6jyD9SecV4Ugs1ruFKiAg4722/QemRooXSDAKk8as73hM?=
+ =?us-ascii?Q?03hQcuzNICKlP70JZGi7Yzv/LhC78LEXcSroN6n8MSjw4Cvvs4PnSiErz1Lo?=
+ =?us-ascii?Q?Y0JfD32wzztQ4GDvdWKDIS5NyiMH0K1lCKRCKUqN4Ii12YZFpZFRpph1HV0s?=
+ =?us-ascii?Q?1VLhlRB0OTKasp6vwoD03kD+NiGVyWvspS4T4Y2M4fypsmatBH3VOgEc6Ig1?=
+ =?us-ascii?Q?0eQmdklUUpnwqLbqkXA+QmArvDAzx6f+nT5SKPKCgdQ3K4pEwtU+CBwSqXci?=
+ =?us-ascii?Q?1kE9ncbpnRHq6eVWR08Z0djLE5tomnYyGCEBe17lqRHo5CR81ZOw3OpmU+Y7?=
+ =?us-ascii?Q?8dPAWZVbs/ADLScGgFRFB3lW3TbHg6Twyayf8qGOEACUZ8pVjleKzj6AWBfG?=
+ =?us-ascii?Q?ZOqDQj+04rbUmkoJfPhAfECmLVStbbxhfWAP/7/REn6cNgWuZ6RkQf/jO0xw?=
+ =?us-ascii?Q?c6cdt7TKM3f9Ywp5gMmSz9gGTFCOiFsHVQD1guxJdEf1DJwkw9H7fnk5l0Of?=
+ =?us-ascii?Q?dm4e0XBQMWeloXyslLMOki8ScdN9sj+oGla9kSpGfNLs8BU0VUoMoAY3DmHD?=
+ =?us-ascii?Q?rIs0zL3I+rJq5SQR+YY65karJlJRQhATRen+07r5SjbvK+chw3K5SYyZaOza?=
+ =?us-ascii?Q?ZtsSAVx2D2FLR5qfns4ZODmGcyxkDLcNbfyZGRS47+3cVFQxFDSJasDh1XKl?=
+ =?us-ascii?Q?cew5Y0oQTdmb2rAOjOmiOAw1+WO/V/WvdL+YN5XyAP8I64+lexYDoHwes+Vr?=
+ =?us-ascii?Q?JNB7na92BWO12sj5k6nm1BESTCbjNXPHBmGT+ZC6LUBbM3U9XiSd891s/ZfH?=
+ =?us-ascii?Q?PnII3LHgxtK/2PndMmwRRbLo9lDlX5O5zxGtT7xNwWYazv8ZOzi4Qn5wAlon?=
+ =?us-ascii?Q?j2JAiEGPnXxk3ITidxgCAROwFBY0CW4W7YbqR6E09iAoLdNNGMPcWbPGrm9m?=
+ =?us-ascii?Q?SRSvI7q8I5QBqT2rPLyfiy2bgSXuFORCdBleAM581RHLv0r+rwQwjVLp9jyk?=
+ =?us-ascii?Q?QV6S0tg8cmXk457JapBXhj/bIMVk3i7JuyGamp77MkwvzsXFVTxgp/xvWXSt?=
+ =?us-ascii?Q?hygbKcpZsQNcslM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(1800799024)(7053199007)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?kBUS52t1TBers2Io6c1ltWFkNT8JpMNUjyo5NaQH5XAkeqClnYT2IlmxSN3W?=
+ =?us-ascii?Q?7+SKoj/yppv2BuU/Qbc+y2qVluq4+HVnb/M3btYWr8MZI02IF5qS/zI6dbZC?=
+ =?us-ascii?Q?Top6XSZH+PJo+pX5JZcjpOrERzv2OFyj/KoWf/sDssnMsTPP8LfHU1owq+H6?=
+ =?us-ascii?Q?6QBGerSQrD6HGVJnBTnX9Tn017Zw9jkzRQQeUv4YUxjQ3Gqqcr9iLVshaUte?=
+ =?us-ascii?Q?TGdjjyD52BduV0YD9blbxDp+RwXAccoiWFGaKFsuhR6BpYGEtf48A6wJX49n?=
+ =?us-ascii?Q?lfVzrhIf59peogbM9agyynZfRb7hW3QSQGSljTVCqRL1jk+K3gJB/7WDpiN4?=
+ =?us-ascii?Q?s66sVaTIIxQm6RyndrFhLiNRrF5/3VcaKivU70RLxoD/fjuMnL27nIZOF0Xc?=
+ =?us-ascii?Q?Q1BXEBWyWIi/p29oJYYuOxVwBzk6/n0Vh/TbdAUaV61Ij8FJiaFrD1lGeGgN?=
+ =?us-ascii?Q?8KFxXnnQhDfKkBKSeOk3t2BLjRU6VXR2FVEKOnbmB/TTRE5LKIHIiC4j6soA?=
+ =?us-ascii?Q?faYymPn89NIkseiDxRxFIXMlFESuZYNfcBubetIbewT6xAHn5Pm11WG8JsZg?=
+ =?us-ascii?Q?jCkgjJl0A+FiyigdA9en9UWDf3/WXFSKtO5Pkacqjtwf4zKNeqOSCcz4UcEt?=
+ =?us-ascii?Q?Cc8IvQtRxvSyvB4uSOztk40taNinOCjtoCIVv5Nkcu482u+xg1r4FMu9SUkG?=
+ =?us-ascii?Q?Q8rIcxTclUK1hASSiZqzvumgN7Fuyl/Z7l4DQl668ckjMRPQB9e2zvXIDDRN?=
+ =?us-ascii?Q?Kz/GeAYzrhI1NyjhETSU6khU4ArS8naEERD1RiRYDHPErX2WPyasvk+B4WTm?=
+ =?us-ascii?Q?Pfe6CYFDR3hJUSuTUfrhAe2Ztv5gxfNgbhwLskbo9TZ6iGWIjykcba63oOBk?=
+ =?us-ascii?Q?bCAN++cycP13rSRp20FIl3nGDCwtQaFJSKDV2aGgLAJXV3/ZZ0NDIht6rtnr?=
+ =?us-ascii?Q?67CSAp8SwOwLvyCv2X+KCB1eiSL2k6E/r2NiiCphrH2TlgGvep1y3+khBv+M?=
+ =?us-ascii?Q?Uthg1d9Vt9jJQoHuMYvhNfsJyJ5LkW2XmcPZBzJcSXvm2vCI1vPur340xrdg?=
+ =?us-ascii?Q?7ZWPgSupiGIslAotpytmfmwBZl9r05kz878cTCdVBbxzQ+OthLbfParJt9MJ?=
+ =?us-ascii?Q?Dag/y7WzMPtffbozehT/113SvSEEeDse+y7fD+ICftYx9Ve81wivbjKt/SSk?=
+ =?us-ascii?Q?K3qK7e7OqSXSAye6qBlugZtkThZxOK5oxHFYT5kIIQqwIO1qPws75ktP3SXN?=
+ =?us-ascii?Q?PQ2ZYDQZdZ2KHdlz4EJLQnBV2zf3S1Zz9aPfR/mu239G6bmkf+QrEiFOVQC4?=
+ =?us-ascii?Q?21O6eiY9GyhVsFE81MtBfvuxqNNgvHpYdJbt7yN+ynbdI7tcUyqEcIV8QHpN?=
+ =?us-ascii?Q?+c90TVIUAqNArAXmB9vJZe/25B3KuRtUYe2wbyO2pkgKlpp+vgtWcXf8Y+X/?=
+ =?us-ascii?Q?QBrg+eBQ6S9qHWZAvNKAaQR8rkCzu69qyJQfWcd0iHlancTiztEzWs3zf38g?=
+ =?us-ascii?Q?jcjg6RfP2IByd7L1JgD0v/7uA+qHInOSp4Fjyq6ZE2SKiwz4DfxyXVRfvnKI?=
+ =?us-ascii?Q?8na63nojkdXatBgWqm4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250917093508.456790-4-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCna2NuAtVodzcKAw--.12961S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4Uuw17Jw13Kr18uw1rJFb_yoW5CFWfpa
-	93JF9IyrWUAFW3ZFWqqa4DJF95Zr1jyFWqyFWa93yfJasYyF17GFy5u3W7JrWDt34vyF4F
-	q3s5GrsxZF18WaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39e36830-dd98-4b1f-1201-08ddfc10ad8f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 08:51:11.7821
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VbGCRMqNjmLwnt6N7SEOFOuNi7kJPuKfc+nsyH1J8/VmHCUJINOcwTC7dN+Aba3SssVk6/M/bC0pX9hIosKTGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10289
 
-Hi,
 
-ÔÚ 2025/09/17 17:35, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
-> 
-> The MD_RECOVERY_ERROR flag prevented bad sectors from updating
-> 'resync_offset' when badblocks failed to set during sync errors.
-> Now that failure to set badblocks definitively marks the disk as
-> Faulty, this flag is redundant. In both scenarios (successful
-> badblock marking or disk fault), the bad sectors becomes unreadable
-> and its handling is considered completed.
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.h |  2 --
->   drivers/md/md.c | 22 ++++------------------
->   2 files changed, 4 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index ba567b63afd3..07a22f3772d8 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -644,8 +644,6 @@ enum recovery_flags {
->   	MD_RECOVERY_FROZEN,
->   	/* waiting for pers->start() to finish */
->   	MD_RECOVERY_WAIT,
-> -	/* interrupted because io-error */
-> -	MD_RECOVERY_ERROR,
->   
->   	/* flags determines sync action, see details in enum sync_action */
->   
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 05b6b3145648..c4d765d57af7 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -8949,7 +8949,6 @@ void md_sync_error(struct mddev *mddev)
->   {
->   	// stop recovery, signal do_sync ....
->   	set_bit(MD_RECOVERY_INTR, &mddev->recovery);
-> -	set_bit(MD_RECOVERY_ERROR, &mddev->recovery);
->   	md_wakeup_thread(mddev->thread);
->   }
->   EXPORT_SYMBOL(md_sync_error);
-> @@ -9598,7 +9597,6 @@ void md_do_sync(struct md_thread *thread)
->   	wait_event(mddev->recovery_wait, !atomic_read(&mddev->recovery_active));
->   
->   	if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-> -	    !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
 
-Not sure why this is removed, otherwise LGTM.
+> -----Original Message-----
+> From: Frank Li <frank.li@nxp.com>
+> Sent: Wednesday, September 24, 2025 10:53 PM
+> To: Sherry Sun <sherry.sun@nxp.com>
+> Cc: gregkh@linuxfoundation.org; jirislaby@kernel.org; shawnguo@kernel.org=
+;
+> s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
+> Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
+> linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org;
+> imx@lists.linux.dev
+> Subject: Re: [PATCH V2 2/2] tty: serial: imx: Add missing wakeup event
+> reporting
+>=20
+> On Wed, Sep 24, 2025 at 11:15:50AM +0800, Sherry Sun wrote:
+> > Current imx uart wakeup event would not report itself as wakeup source
+> > through sysfs. Add pm_wakeup_event() to support it.
+> >
+> > Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> > ---
+> >  drivers/tty/serial/imx.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c index
+> > 87d841c0b22f..b83f5c9c722c 100644
+> > --- a/drivers/tty/serial/imx.c
+> > +++ b/drivers/tty/serial/imx.c
+> > @@ -30,7 +30,7 @@
+> >  #include <linux/iopoll.h>
+> >  #include <linux/dma-mapping.h>
+> >
+> > -#include <asm/irq.h>
+> > +#include <linux/irq.h>
+> >  #include <linux/dma/imx-dma.h>
+> >
+> >  #include "serial_mctrl_gpio.h"
+> > @@ -2700,8 +2700,8 @@ static void imx_uart_enable_wakeup(struct
+> imx_port *sport, bool on)
+> >  	struct tty_port *port =3D &sport->port.state->port;
+> >  	struct tty_struct *tty;
+> >  	struct device *tty_dev;
+> > -	bool may_wake =3D false;
+> > -	u32 ucr3;
+> > +	bool may_wake =3D false, wake_active =3D false;
+>=20
+> You use bit OR at follow code. so wake_active should not bool type.
+> change it u32.
 
-Thanks,
-Kuai
+Hi Frank, thanks for pointing this out, this does need improvement.
+I'd still prefer to use a bool type for wake_active, since it indicates whe=
+ther uart wakeup was triggered.
+Maybe add !!()  would make it clearer.
 
->   	    mddev->curr_resync >= MD_RESYNC_ACTIVE) {
->   		mddev->curr_resync_completed = mddev->curr_resync;
->   		sysfs_notify_dirent_safe(mddev->sysfs_completed);
-> @@ -9607,24 +9605,12 @@ void md_do_sync(struct md_thread *thread)
->   
->   	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
->   	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
-> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
-> +			mddev->curr_resync = MaxSector;
-> +
->   		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
-> -			if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
-> -				if (mddev->curr_resync >= mddev->resync_offset) {
-> -					pr_debug("md: checkpointing %s of %s.\n",
-> -						 desc, mdname(mddev));
-> -					if (test_bit(MD_RECOVERY_ERROR,
-> -						&mddev->recovery))
-> -						mddev->resync_offset =
-> -							mddev->curr_resync_completed;
-> -					else
-> -						mddev->resync_offset =
-> -							mddev->curr_resync;
-> -				}
-> -			} else
-> -				mddev->resync_offset = MaxSector;
-> +			mddev->resync_offset = mddev->curr_resync;
->   		} else {
-> -			if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
-> -				mddev->curr_resync = MaxSector;
->   			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
->   			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
->   				rcu_read_lock();
-> 
+-                       wake_active |=3D usr1 & USR1_RTSD;
++                       wake_active |=3D !!(usr1 & USR1_RTSD);
 
+Best Regards
+Sherry
+
+>=20
+> Frank
+> > +	u32 ucr3, usr1;
+> >
+> >  	tty =3D tty_port_tty_get(port);
+> >  	if (tty) {
+> > @@ -2716,12 +2716,14 @@ static void imx_uart_enable_wakeup(struct
+> > imx_port *sport, bool on)
+> >
+> >  	uart_port_lock_irq(&sport->port);
+> >
+> > +	usr1 =3D imx_uart_readl(sport, USR1);
+> >  	ucr3 =3D imx_uart_readl(sport, UCR3);
+> >  	if (on) {
+> >  		imx_uart_writel(sport, USR1_AWAKE, USR1);
+> >  		ucr3 |=3D UCR3_AWAKEN;
+> >  	} else {
+> >  		ucr3 &=3D ~UCR3_AWAKEN;
+> > +		wake_active =3D usr1 & USR1_AWAKE;
+> >  	}
+> >  	imx_uart_writel(sport, ucr3, UCR3);
+> >
+> > @@ -2732,10 +2734,14 @@ static void imx_uart_enable_wakeup(struct
+> imx_port *sport, bool on)
+> >  			ucr1 |=3D UCR1_RTSDEN;
+> >  		} else {
+> >  			ucr1 &=3D ~UCR1_RTSDEN;
+> > +			wake_active |=3D usr1 & USR1_RTSD;
+> >  		}
+> >  		imx_uart_writel(sport, ucr1, UCR1);
+> >  	}
+> >
+> > +	if (wake_active && irqd_is_wakeup_set(irq_get_irq_data(sport-
+> >port.irq)))
+> > +		pm_wakeup_event(tty_port_tty_get(port)->dev, 0);
+> > +
+> >  	uart_port_unlock_irq(&sport->port);
+> >  }
+> >
+> > --
+> > 2.34.1
+> >
 
