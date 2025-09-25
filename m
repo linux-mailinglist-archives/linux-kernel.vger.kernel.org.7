@@ -1,220 +1,324 @@
-Return-Path: <linux-kernel+bounces-831723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DC4B9D66F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6694B9D687
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9FF1B24A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699B3326915
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EA52E762E;
-	Thu, 25 Sep 2025 04:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F042E7BA2;
+	Thu, 25 Sep 2025 04:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="befOMnmr"
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CV6c2crv"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828662E719D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A472BA4A;
+	Thu, 25 Sep 2025 04:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758775437; cv=none; b=Xm8H5EyQsGA+5k/ZR90VsyqBBhxZ5VnbO0XaAiKULxqW0uHU6lUgQaDFLMBGSZ0EO7fWR4NPPGqWKTYtAB0OsW7tFBV9yMGNPw3tvMAMiKldKyMzIhiDlVqDCqp23sP5WzcORymXTB+6FmXbjEQlkUuZuLSrZV4KQHNp3HDhy6s=
+	t=1758775727; cv=none; b=lLBH6C/HbSkJmtgJ1L/zlndV6njqwtOZK79PMN3q6A44xCA5zNCgqocKURgKxCmUA2PtWYXEQ7LX80E/uvRiyGFXZbuQZq0kfesoZfvQPUhBI4lhXI/AmwctUsqsxH391O1lVMoIUf52+OBVIZ4kHve8RUGfLZyxyKYV3kKlYXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758775437; c=relaxed/simple;
-	bh=PGqrRhdMWce1Hj8sN1qPC6ME+4yXRSkg7MLsCSpcBNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qowGfsB9h7p7lfs4uhRLwIMosukizVnbMVqT4RUfVjhaVZdris5GkpZIA9mclWtikPSAIoj33J+fJpXnTWLsIwxcQK0noVFBLt4OR4dy3WLBiTkfpwSHp1RWn6enooNuZvDLenCfAo5h3SelJdJxds0GChR0ScjvtYkzXh7FMcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=befOMnmr; arc=none smtp.client-ip=74.125.224.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-6352c8b683eso340306d50.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:43:55 -0700 (PDT)
+	s=arc-20240116; t=1758775727; c=relaxed/simple;
+	bh=cBX2L8Tt36X9JlVQ7rj/qaCk64VpITjTxZ/Nyg2gDKM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qulO3n9Mg/CVYxoDTIFcqyXwpxca5glPD2So+HN+kKnoy54qyfpvX8RfjMna6zr+9KMblfdC3VdtHxIL/g9B0AQssJ4x9m3HAvuvr/N9rndzq6IhWv42D2eLZJCe+2Xs3ShRMOVMrypJgUwyPfg1jWiLe+BOBYHxw4VCYnBGwfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CV6c2crv; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758775434; x=1759380234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1oJ0z/i9UwoXPf+FRdpG+d9rqB85q6G/tg6yqdMdAbE=;
-        b=befOMnmrxh4vJYQWGi6vRPyPQln0ja/KE+lvpxxAPyzrJ7/1ha9IJ7Lf9tTUfCh4fz
-         wR3D4hgO5y2Ti1ATY7BQDA1OnOUz5KEJYmr+jwQ3MPiqc9wluPxEauWkx2g6GAb7tQWF
-         KWDD7TOG/xMqzFK5+kqW/mr6AmnKjwp6YzFkmued3EVu1SjTf8g5/qfxH1c6yVhUUA3K
-         drvqq5Kvsh1YM4n7JYQczceZDaNentHuS8SgRsu/L82ReigkByKt0y+SP3bL0refn449
-         QHaIkZOkjy8uRfyFiMwlgoiwrOrHi4NJGxOWHrwYemy1jkrME+++mIXF6Qms0GNzAUdt
-         51ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758775434; x=1759380234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1oJ0z/i9UwoXPf+FRdpG+d9rqB85q6G/tg6yqdMdAbE=;
-        b=iXroLMh3ANdE/B4SIcGW85s0f+Hakve8E/yQi15UjXbIGhAu9nkKimTlOL6roxHVFz
-         uDqi7lI9761FQkSY0ZbqaCm/D5ztS55Wtpf9l8/KlYWcYVZPK1az5Obz15yxqXJDQkxC
-         VeBoC5JT0lLhjAsdD6p2uRCU+/qNTHhMf64SgaCA8K1IOIcnz3E6Ou3nWjTj8Q755JSV
-         7D+IYRyrycBqUW4XyGSz4LDin+9r+j4/IuVEYRaVKX0K/TFadOYU4vP/6YP89o5iWO0F
-         dm8gAd1G/DtK1bflUrM7MiME9jY3FeWdXKQsqz9K9g2SBTUfTlX0ll/QbTWaOeEy5K/r
-         SloA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNxhYRwb3dbD6GdXTY8x3HQZ1Q9YkW+rqyvXJlyywurEroG3qQw3JwymaQ3GEhzyFzmpqxpUm3QOK++HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBlJ26sPRwkBqjdyMTKR94xANwRwxwjNZ1mq8r3PvBoJKMU2uZ
-	OsfSXoz8122qJRHtMyrjztuOJuIKdm7PvNNge0MHVDLi1WhmOD72QIUm/gxPyxA70kt/JUD4Ovd
-	h5NO2svGXSne7SuLKX7scfTegFoDdsUh0zgY0om8FEg==
-X-Gm-Gg: ASbGncs9xGE9eNfJ2nXOuLzIBpeTX+Xd7qY4kxMb87l/n9X5irrb3BfIJGh+q4MtEOE
-	b2seAxo7xo8Z0aAznUKS6UcZrKQ3P2iwBb7j9tFZHts56M50qrw6wSwFgQZg9dfvB6RWWa1gFIC
-	Y86ZnV2IjxaQEqOq6Hrkr5Uo8jyMfCH1Hh+jGO/pjL9HbLNl/yKFko6NcoCqBE3GE3KHS9DxBQi
-	DFZIYFFqkgTWhv0uZWGpV+r3g4JjheMRVc3fw==
-X-Google-Smtp-Source: AGHT+IFrDu14o9eG1G/hd/jmgmyyF5h7kKgIrglBSkEsXTmL19swhPH9YqIMrOxeKGPXFw+V8ureBREiZfTmlkcgTpM=
-X-Received: by 2002:a05:690e:2146:b0:633:961a:bd46 with SMTP id
- 956f58d0204a3-6361a85f9a2mr1236698d50.25.1758775434361; Wed, 24 Sep 2025
- 21:43:54 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1758775715;
+	bh=pL4il6Mcz3AjJ60/DLAuos3cvtVE8VY2cOJbTK/DwQU=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=CV6c2crvVUcHe2qjR9Qzl+GBuzhFgZhDC/szv3jlJ/Pa00f7kT7OIlNqsBnJjaaVz
+	 BbD2qw3qLncAoOw6Ax3rHRYC9M7IOMMwHLWIl6Gpvu4OfRLfWMmWYqBNsbgBhjYTID
+	 KQH9PrHekbp/0YF6kK3Jjz29RixtMsxdZK9YO/5Hx07CvzbT+Es2VoqAQ8W1S6LApg
+	 oOsBk4Q5nupg0ITnrhbqsBw8NUs8WblmNsobylyNkk5GBXASYnwEZWUupxQLC4lftV
+	 RPMYdEbdOKonJsWx024g6oOGk6LQRJ4cJ5/N8nU2INgPOfdLFCGCqDSpsSliqNElva
+	 fe5bHpil9CRjA==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1C98264743;
+	Thu, 25 Sep 2025 12:48:33 +0800 (AWST)
+Message-ID: <005c9928cde01c8a3bf4840692eddf13f2c08282.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 3/4] pinctrl: aspeed: Add AST2700 pinmux support
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+ 	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ linus.walleij@linaro.org, 	brgl@bgdev.pl, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, 	linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, 	openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, BMC-SW@aspeedtech.com
+Date: Thu, 25 Sep 2025 14:18:31 +0930
+In-Reply-To: <20250904103401.88287-4-billy_tsai@aspeedtech.com>
+References: <20250904103401.88287-1-billy_tsai@aspeedtech.com>
+	 <20250904103401.88287-4-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-dsi-dual-panel-upstream-v3-0-6927284f1098@linaro.org>
- <20250924-dsi-dual-panel-upstream-v3-3-6927284f1098@linaro.org> <v3tfzspjck2oqppelx7bmi5uflhs47ixw6tjmq2d7inauzfo7k@gxebj3buyuni>
-In-Reply-To: <v3tfzspjck2oqppelx7bmi5uflhs47ixw6tjmq2d7inauzfo7k@gxebj3buyuni>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 25 Sep 2025 12:43:43 +0800
-X-Gm-Features: AS18NWDgoGjQmOdf_hz0GeNod_X081dyusIHBuXhWh7GwxfQWDtv3U1S9TJ5f90
-Message-ID: <CABymUCMvczXHM-cOXNko77xDVxX8Q6MA2AEZcGx_Yg6TWosMAg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] drm/msm/dsi: Support dual panel use case with
- single CRTC
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=B9=B4=
-9=E6=9C=8825=E6=97=A5=E5=91=A8=E5=9B=9B 03:21=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Sep 24, 2025 at 11:08:12PM +0800, Jun Nie wrote:
-> > Support a hardware configuration where two independent DSI panels are
-> > driven by a single, synchronous CRTC. This configuration uses a bonded
-> > DSI link to provide a unified vblank for both displays.
-> >
-> > This allows application software to treat the two displays as a single,
-> > wide framebuffer with a synchronized refresh cycle, simplifying renderi=
-ng
-> > logic for side-by-side panel arrangements.
->
-> I'd like to understand how is it framed on the overall system design
-> level. If it's a panel controlled over the DSI interface, it's fine
-> since we can broadcast commands over two DSI links. What if the panel
-> (or bridge) is controlled via I2C / SPI?
+Hi Billy,
 
-You mean there is only DSI data and all configuration is done via I2C/SPI,
-right? I do not have a real use case so far, but it can be supported in the
-same way. Panel driver finds the sibling panel via device tree to get the
-peer I2C/SPI first. All commands are send to every bus in panel driver.
+On Thu, 2025-09-04 at 18:34 +0800, Billy Tsai wrote:
+> This patch adds pinmux support for the AST2700, which includes two SoC
+> configurations:
+> - SoC0 closely resembles previous generations of ASPEED BMC SoCs, allowin=
+g
+> =C2=A0 the reuse of existing macros and callback functions.
+> - SoC1, however, introduces a new logic for configuring pin functions.
+> =C2=A0 Therefore, new g7_set_mux and gpio_request_enable functions are
+> =C2=A0 implemented to properly configure the pinctrl registers using the
+> =C2=A0 pin_cfg table and to resolve GPIO request errors.
 
->
-> >
-> > At the DSI host level, the frame width for each link must be that of an
-> > individual panel. The driver therefore halves the CRTC's horizontal
-> > resolution before configuring the DSI host and any DSC encoders, ensuri=
-ng
-> > each panel receives the correct half of the framebuffer.
->
-> >
-> > While the DSI panel driver should manage two panels togehter.
-> > 1. During probe, the driver finds the sibling dsi host via device tree
-> > phandle and register the 2nd panel to get another mipi_dsi_device.
-> > 2. Set dual_panel flag on both mipi_dsi_device.
-> > 3. Prepare DSC data per requirement from single panel.
-> > 4. All DSI commands should be send on every DSI link.
-> > 5. Handle power supply for 2 panels in one shot, the same is true to
-> >    brightness.
-> > 6. From the CRTC's perspective, the two panels appear as one wide displ=
-ay.
-> >    The driver exposes a DRM mode where the horizontal timings (hdisplay=
+Do you mind splitting support for soc0 and soc1 into separate patches?
+Having taken a brief look I think we're also due for some further
+separation of the code. Particularly, isolating the patch for soc0
+would be nice, as the register design for soc1 is just _so_ much nicer,
+and I'd like to avoid dragging the baggage of previous generations
+along with it.
+
+>=20
+> The driver supports:
+> - All 12 GPIO-capable pins in SoC0
+> - All 212 GPIO-capable pins in SoC1
+>=20
+> Additionally, this patch introduces several pseudo-ball definitions for
+> specific configuration purposes:
+> - USB function selection
+> - JTAG target selection
+> - PCIe RC PERST configuration
+> - SGMII PHY selection
+>=20
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+> =C2=A0drivers/pinctrl/aspeed/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 =
+8 +
+> =C2=A0drivers/pinctrl/aspeed/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> =C2=A0.../pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c=C2=A0=C2=A0 |=C2=A0 503=
+ ++++
+> =C2=A0.../pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c=C2=A0=C2=A0 | 2523 ++++=
++++++++++++++
+> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 47 +
+> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0=C2=A0 11 +-
+> =C2=A0drivers/pinctrl/aspeed/pinmux-aspeed.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 35 +-
+
+The impression I get from the changes to the latter three files here is
+that the soc0 support might even be different enough to warrant
+separation from the previous generations as well. You're defining
+similar-but-different structs and macros to what we already have. If
+the those are genuinely necessary (not yet resolved), I'd rather they
+be their own driver.
+
+> =C2=A07 files changed, 3123 insertions(+), 5 deletions(-)
+> =C2=A0create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c
+> =C2=A0create mode 100644 drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c
+>=20
+> diff --git a/drivers/pinctrl/aspeed/Kconfig b/drivers/pinctrl/aspeed/Kcon=
+fig
+> index 1a4e5b9ed471..16743091a139 100644
+> --- a/drivers/pinctrl/aspeed/Kconfig
+> +++ b/drivers/pinctrl/aspeed/Kconfig
+> @@ -31,3 +31,11 @@ config PINCTRL_ASPEED_G6
+> =C2=A0	help
+> =C2=A0	=C2=A0 Say Y here to enable pin controller support for Aspeed's 6t=
+h
+> =C2=A0	=C2=A0 generation SoCs. GPIO is provided by a separate GPIO driver=
+.
+> +
+> +config PINCTRL_ASPEED_G7
+> +	bool "Aspeed G7 SoC pin control"
+> +	depends on (ARCH_ASPEED || COMPILE_TEST) && OF
+> +	select PINCTRL_ASPEED
+> +	help
+> +	=C2=A0 Say Y here to enable pin controller support for Aspeed's 7th
+> +	=C2=A0 generation SoCs. GPIO is provided by a separate GPIO driver.
+> diff --git a/drivers/pinctrl/aspeed/Makefile b/drivers/pinctrl/aspeed/Mak=
+efile
+> index db2a7600ae2b..1713f678a984 100644
+> --- a/drivers/pinctrl/aspeed/Makefile
+> +++ b/drivers/pinctrl/aspeed/Makefile
+> @@ -6,3 +6,4 @@ obj-$(CONFIG_PINCTRL_ASPEED)	+=3D pinctrl-aspeed.o pinmux=
+-aspeed.o
+> =C2=A0obj-$(CONFIG_PINCTRL_ASPEED_G4)	+=3D pinctrl-aspeed-g4.o
+> =C2=A0obj-$(CONFIG_PINCTRL_ASPEED_G5)	+=3D pinctrl-aspeed-g5.o
+> =C2=A0obj-$(CONFIG_PINCTRL_ASPEED_G6)	+=3D pinctrl-aspeed-g6.o
+> +obj-$(CONFIG_PINCTRL_ASPEED_G7) +=3D pinctrl-aspeed-g7-soc0.o pinctrl-as=
+peed-g7-soc1.o
+> \ No newline at end of file
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c b/drivers/pi=
+nctrl/aspeed/pinctrl-aspeed-g7-soc0.c
+> new file mode 100644
+> index 000000000000..86da889cc010
+> --- /dev/null
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc0.c
+> @@ -0,0 +1,503 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/bits.h>
+> +#include <linux/device.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/pinctrl/machine.h>
+> +#include <linux/pinctrl/pinconf.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include "pinctrl-aspeed.h"
+> +#include "../pinctrl-utils.h"
+> +
+> +#define SCU200 0x200 /* System Reset Control #1=C2=A0 */
+> +
+> +#define SCU400 0x400 /* Multi-function Pin Control #1=C2=A0 */
+> +#define SCU404 0x404 /* Multi-function Pin Control #2=C2=A0 */
+> +#define SCU408 0x408 /* Multi-function Pin Control #3=C2=A0 */
+> +#define SCU40C 0x40C /* Multi-function Pin Control #3=C2=A0 */
+> +#define SCU410 0x410 /* USB Multi-function Control Register=C2=A0 */
+> +#define SCU414 0x414 /* VGA Function Control Register=C2=A0 */
+> +
+> +#define SCU480 0x480 /* GPIO18A0 IO Control Register */
+> +#define SCU484 0x484 /* GPIO18A1 IO Control Register */
+> +#define SCU488 0x488 /* GPIO18A2 IO Control Register */
+> +#define SCU48C 0x48c /* GPIO18A3 IO Control Register */
+> +#define SCU490 0x490 /* GPIO18A4 IO Control Register */
+> +#define SCU494 0x494 /* GPIO18A5 IO Control Register */
+> +#define SCU498 0x498 /* GPIO18A6 IO Control Register */
+> +#define SCU49C 0x49c /* GPIO18A7 IO Control Register */
+> +#define SCU4A0 0x4A0 /* GPIO18B0 IO Control Register */
+> +#define SCU4A4 0x4A4 /* GPIO18B1 IO Control Register */
+> +#define SCU4A8 0x4A8 /* GPIO18B2 IO Control Register */
+> +#define SCU4AC 0x4AC /* GPIO18B3 IO Control Register */
+> +
+> +enum {
+> +	AC14,
+> +	AE15,
+
+Are the ball enums necessary? Historically we haven't needed it as the
+undefined macro symbols were just used for token-pasting or
+stringification purposes.
+
+> +	AD14,
+> +	AE14,
+> +	AF14,
+> +	AB13,
+> +	AB14,
+> +	AF15,
+> +	AF13,
+> +	AC13,
+> +	AD13,
+> +	AE13,
+> +	PORTA_U3, // SCU410[1:0]
+> +	PORTA_U2, // SCU410[3:2]
+> +	PORTB_U3, // SCU410[5:4]
+> +	PORTB_U2, // SCU410[7:6]
+> +	PORTA_U3_XHCI, // SCU410[9]
+> +	PORTA_U2_XHCI, // SCU410[9]
+> +	PORTB_U3_XHCI, // SCU410[10]
+> +	PORTB_U2_XHCI, // SCU410[10]
+> +	PORTA_MODE, // SCU410[25:24]
+> +	PORTB_MODE, // SCU410[29:28]
+> +	PORTA_U2_PHY,
+> +	PORTA_U3_PHY,
+> +	PORTB_U2_PHY,
+> +	PORTB_U3_PHY,
+> +	JTAG_PORT,
+> +	PCIERC0_PERST,
+> +	PCIERC1_PERST,
+> +};
+> +
+> +GROUP_DECL(EMMCG1, AC14, AE15, AD14);
+> +GROUP_DECL(EMMCG4, AC14, AE15, AD14, AE14, AF14, AB13);
+> +GROUP_DECL(EMMCG8, AC14, AE15, AD14, AE14, AF14, AB13, AF13, AC13, AD13,=
+ AE13);
+> +GROUP_DECL(EMMCWPN, AF15);
+> +GROUP_DECL(EMMCCDN, AB14);
+> +GROUP_DECL(VGADDC, AD13, AE13);
+> +GROUP_DECL(VB1, AC14, AE15, AD14, AE14);
+> +GROUP_DECL(VB0, AF15, AB14, AF13, AC13);
+
+For the previous generation drivers my philosophy was "keep things that
+go together together," so signal descriptors, groups and functions were
+all located around the definition for one or a set of balls.
+
+Given I'm potentially escaping maintenance of ASPEED pinctrl drivers
+for the 2700 onwards I won't complain too much, but was this a specific
+choice to break from that approach? You're defining all the groups,
+then all the functions, then all the configurations.=20
+
+*snip*
+
+
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c b/drivers/pi=
+nctrl/aspeed/pinctrl-aspeed-g7-soc1.c
+> new file mode 100644
+> index 000000000000..7c5a5e208f63
+> --- /dev/null
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g7-soc1.c
+>=20
+
+*snip*
+
+> +
+> +FUNCFG_DESCL(C16, PIN_CFG(ESPI1, SCU400, GENMASK(2, 0), 1),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(LPC1, SCU400, GENMASK(2, 0), 2),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(SD, SCU400, GENMASK(2, 0), 3),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(DI2C0, SCU400, GENMASK(2, 0), 4),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(VPI, SCU400, GENMASK(2, 0), 5));
+> +FUNCFG_DESCL(C14, PIN_CFG(ESPI1, SCU400, GENMASK(6, 4), (1 << 4)),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(LPC1, SCU400, GENMASK(6, 4), (2 << 4))=
 ,
-> >    hsync_start, etc.) are doubled, while the vertical timings remain th=
-ose
-> >    of a single panel. Because 2 panels are expected to be mounted in
-> >    left/right position.
-> >
-> > To maintain synchronization, both DSI links are configured to share a
-> > single clock source, with the DSI1 controller using the clock provided
-> > to DSI0 as below.
-> >
-> > &mdss_dsi1 {
-> >    assigned-clocks =3D <&dispcc DISP_CC_MDSS_BYTE1_CLK_SRC>,
-> >                    <&dispcc DISP_CC_MDSS_PCLK1_CLK_SRC>;
-> >    assigned-clock-parents =3D <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
-> > }
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/dsi/dsi_host.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/d=
-si/dsi_host.c
-> > index de51cb02f267205320c5a94fc4188413e05907e6..1fddcea7f86547258be18a5=
-1a0a3e3f96f6c3838 100644
-> > --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> > @@ -177,6 +177,7 @@ struct msm_dsi_host {
-> >       bool registered;
-> >       bool power_on;
-> >       bool enabled;
-> > +     bool is_dual_panel;
-> >       int irq;
-> >  };
-> >
-> > @@ -935,7 +936,10 @@ static void dsi_timing_setup(struct msm_dsi_host *=
-msm_host, bool is_bonded_dsi)
-> >                       return;
-> >               }
-> >
-> > -             dsc->pic_width =3D mode->hdisplay;
-> > +             if (msm_host->is_dual_panel)
-> > +                     dsc->pic_width =3D hdisplay;
-> > +             else
-> > +                     dsc->pic_width =3D mode->hdisplay;
-> >               dsc->pic_height =3D mode->vdisplay;
-> >               DBG("Mode %dx%d\n", dsc->pic_width, dsc->pic_height);
-> >
-> > @@ -1609,6 +1613,7 @@ static int dsi_host_attach(struct mipi_dsi_host *=
-host,
-> >       if (dsi->lanes > msm_host->num_data_lanes)
-> >               return -EINVAL;
-> >
-> > +     msm_host->is_dual_panel =3D dsi->dual_panel;
-> >       msm_host->channel =3D dsi->channel;
-> >       msm_host->lanes =3D dsi->lanes;
-> >       msm_host->format =3D dsi->format;
-> > @@ -2492,6 +2497,9 @@ enum drm_mode_status msm_dsi_host_check_dsc(struc=
-t mipi_dsi_host *host,
-> >       if (!msm_host->dsc)
-> >               return MODE_OK;
-> >
-> > +     if (msm_host->is_dual_panel)
-> > +             pic_width =3D mode->hdisplay / 2;
-> > +
-> >       if (pic_width % dsc->slice_width) {
-> >               pr_err("DSI: pic_width %d has to be multiple of slice %d\=
-n",
-> >                      pic_width, dsc->slice_width);
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(SD, SCU400, GENMASK(6, 4), (3 << 4)),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(DI2C1, SCU400, GENMASK(6, 4), (4 << 4)=
+),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(VPI, SCU400, GENMASK(6, 4), (5 << 4)))=
+;
+> +FUNCFG_DESCL(C11, PIN_CFG(ESPI1, SCU400, GENMASK(10, 8), (1 << 8)),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(LPC1, SCU400, GENMASK(10, 8), (2 << 8)=
+),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(SD, SCU400, GENMASK(10, 8), (3 << 8)),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(DI2C3, SCU400, GENMASK(10, 8), (4 << 8=
+)),
+> +	=C2=A0=C2=A0=C2=A0=C2=A0 PIN_CFG(VPI, SCU400, GENMASK(10, 8), (5 << 8))=
+);
+
+If we're going to continue the macro soup we need to take the
+opportunity to clean this up. You shouldn't need to open-code the
+shifts like this, the data model needs more thought.
+
+*snip*
+
+> +
+> +static const struct aspeed_g7_pincfg pin_cfg[] =3D {
+> +	PINCFG_PIN(C16),=C2=A0=C2=A0=C2=A0 PINCFG_PIN(C14),=C2=A0=C2=A0 PINCFG_=
+PIN(C11),
+> +	PINCFG_PIN(D9),	=C2=A0=C2=A0=C2=A0 PINCFG_PIN(F14),=C2=A0=C2=A0 PINCFG_=
+PIN(D10),
+
+My preference is that this array definition be one entry per line,
+sorted, that way we don't get weird alignment or reflow affecting the
+remainder of the struct if we change things in the middle.
+
+Cheers,
+
+Andrew
 
