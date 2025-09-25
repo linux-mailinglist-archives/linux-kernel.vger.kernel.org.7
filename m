@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-832907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D522DBA0B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:01:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CF0BA0BA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B9B322CE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:01:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B417B90F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4E130AAC6;
-	Thu, 25 Sep 2025 17:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761013090FB;
+	Thu, 25 Sep 2025 17:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="i2O+j1xW"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT6pw6+g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE3719F40B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1384C81;
+	Thu, 25 Sep 2025 17:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758819651; cv=none; b=mBx6Ps0CRz4h+RsfDDLVQZoHt2D5ZuFab4X7T88JO6F3MqbUbJePOXR3NANsE1G15IHR9drE3iylI+OdW1qfAKnBAqvv8x9b1V18fNLvhCTzDb4BUIAUPiTSsVHwHQlOuc4b5xibO+SH1goeunag8GcnC5AIlC4pFnibh85FJt4=
+	t=1758819675; cv=none; b=KORu62zi9JCgEGdCk3EIB9FEWr8KcHuLNK1ijnpDnzaJt4rVMPOuYmcC9Qs0stuLozyHB03K4SgeophWYAyqraxkX7+6sVM/X1nEbu+E6gwu0PWk2hd5/DLuSIjcWmGjLvLuth38gtGMvCbVihjZGt2fZARrpFTKqIH6zSbCZtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758819651; c=relaxed/simple;
-	bh=I05h8u0SFr9/4TJUsNnPeAu/tA6ABoOLA6xZrja1dbY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tWKRrbOF3vnfNKin9xcObC8xCfZoBPWDQbfG5RVhVxo1odxeJz+qoTmaDRo9XimEHbvo6Li5+1LNurFn+z4jYGdb1TfWduITX2J1fU+PyIGDEyQHQZJd5zMfmPPJ78RXkSLXUcKy8nuMG/0DJFDpepOMRL6Xs3O+5Kw65dJvlJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=i2O+j1xW reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id HfMWRPWFOnfZ8FAx; Thu, 25 Sep 2025 13:00:48 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=ZoyP8fGnqM26PsOxNgiKVQnAhlePUULlRDGm9LoSQ0M=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=i2O+j1xWrkScw4V0CR5y
-	2tv/ggW54AEcOLvS+1hmewHl4npvif/qd7gf3jckBRmAHkv6UYVrBQPP56XwBNJwflUc3hrze17vt
-	8DWsBdy1siYFZy2/YMk0mOT85tHOm2h4wiDlEp9dsz0lqN29oX1LM4+5LSg/m+irHdt8QI2vVo=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14213015; Thu, 25 Sep 2025 13:00:48 -0400
-Message-ID: <ec5bed6f-195f-486c-8905-bf63c663c212@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Thu, 25 Sep 2025 13:00:47 -0400
+	s=arc-20240116; t=1758819675; c=relaxed/simple;
+	bh=O1Q9AD/Y0daQmPvqlI9fuDLvv2ewhUT+6wpWRDKQqr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVTpFaQMnWKyr5cvhM51XIdHGV1mqlnFgAAfBoNAbXSkt7gXOq+Ekgok5YBvtvuf/20QX2DVyZ7ppIYwhn2220NV1hf5Kb08r2z6ZUcHsZVKe43VwOGyim2CxSj4i1z0vVehUa4sPftImG49tMrTKQR6+Zk7zq+75C7HkeLGvGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT6pw6+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C938C4CEF0;
+	Thu, 25 Sep 2025 17:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758819674;
+	bh=O1Q9AD/Y0daQmPvqlI9fuDLvv2ewhUT+6wpWRDKQqr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iT6pw6+gWV8s3l5E4cZeQbmxqmeklnwdSowwMU7NvSCLlTBEkwlQk8668NkNmecpe
+	 IaGAgAmwoVM95JQJ9Bi7gFJppo8Q3BuGbgJAPvQMtUA8Ts5v06LLcOirvc1rUrXhyi
+	 4qQvdUqI8kGdmB04ByWVSjSUVOtNzo8A3OaHkC5RXVCbNHZ6cPW67LuXFQtzUag0Vk
+	 1dVzQQ7lVv8SDPMiZf8kEH++jMl4uIQrxdQvyEfXEmhNhecIaLO2TjS5ra7+dK/Yzb
+	 X6ewLT22p6QlXt2nm1OGYZdfwGCfQKGTKje+pt4HjJldlRgVWrqMxlRD/cDKfuD2GY
+	 sZ/52E292BsEQ==
+Date: Thu, 25 Sep 2025 18:01:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Christian Brauner <brauner@kernel.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	Carlos O'Donell <codonell@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Szabolcs Nagy <nsz@port70.net>,
+	Rich Felker <dalias@libc.org>, libc-alpha@sourceware.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] arm64/gcs: Support reuse of GCS for exited
+ threads
+Message-ID: <38d629f2-99bb-4b13-a6ed-a4126d130b1f@sirena.org.uk>
+References: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
+ <20250921-arm64-gcs-exit-token-v1-1-45cf64e648d5@kernel.org>
+ <aNVx9vlgi8t81V6Y@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
-Content-Language: en-US
-X-ASG-Orig-Subj: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
-From: Tony Battersby <tonyb@cybernetics.com>
-To: Xose Vazquez Perez <xose.vazquez@gmail.com>,
- Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net, KERNEL ML <linux-kernel@vger.kernel.org>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
- <2cc10189-6953-428e-b34e-b1c714fc0eae@cybernetics.com>
- <0669b097-0bf1-4895-9c2a-5e953aebbfab@gmail.com>
- <8056aa80-7e5a-4cb3-804c-d9c7f8bd6d55@gmail.com>
- <46422ab9-9088-4d9c-b93d-31083f8b9398@cybernetics.com>
-In-Reply-To: <46422ab9-9088-4d9c-b93d-31083f8b9398@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1758819648
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 2009
-Content-Transfer-Encoding: quoted-printable
-X-ASG-Debug-ID: 1758819648-1cf43947df3a5940001-xx1T2L
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3c3n0rvpVVOjrHBw"
+Content-Disposition: inline
+In-Reply-To: <aNVx9vlgi8t81V6Y@arm.com>
+X-Cookie: Shipping not included.
 
-On 9/25/25 12:04, Tony Battersby wrote:
-> On 9/25/25 11:30, Xose Vazquez Perez wrote:
->> On 9/25/25 2:49 PM, Xose Vazquez Perez wrote:
->>
->>> If you want to review the firmware changelog, mainly: FCD-1183 (FCD-3=
-71, ER147301), FCD-259, ER146998
->>> (from 9.00.00 to 9.15.05 [06/10/25]):
->>> https://www.marvell.com/content/dam/marvell/en/drivers/2025-06-10-rel=
-ease/fw_release_notes/Fibre_Channel_Firmware_Release_Notes.pdf
->>>
->>> It's look like all 2{678}xx devices/chips are affected by this bug.
->>> Perhaps the Marvel crew could provide more information on this.
->> 267x, or older, is still on 8.08, so apparently it's free of this bug:
->> https://www.marvell.com/content/dam/marvell/en/drivers/release-matrix/=
-release-matrix-qlogic-fc-sw-posting-by-release-matrix.pdf
->>
->> 2870 / 2770 :        9.15.06 FW
->> 2740 / 2760 / 269x : 9.15.01 FW
->> 267x :               8.08.231 FW
-> I am still trying to figure out what macros to use to test for the
-> affected HBAs.=C2=A0 So far I have:
->
-> if (IS_QLA27XX(ha) || IS_QLA28XX(ha))
->
-> But all the ISP numbers are pretty confusing.=C2=A0 I have a number of =
-8, 16,
-> 32, and 64 Gbps HBAs lying around to test, but I am sure I don't have
-> every possible model.
->
-> There are a number of items under "Changes and Fixes from v9.08.00 to
-> v9.09.00" that might be related to the problem that I was experiencing.=
-=C2=A0
-> For example=C2=A0FCD-1076 sounds similar except that the SRR problem wa=
-s with
-> the CTIO queue rather than the ATIO queue.=C2=A0 I could expand the "ba=
-d
-> firmware" versions to include v9.04.00 - v9.08.00, since=C2=A0v9.04.00
-> introduced ER147301 and v9.09.00 fixed FCD-1183.
->
-> Thanks,
-> Tony
->
-This is what I found by checking the PCI IDs on some of my HBAs:
 
-not affected
-QLE2672 16 Gbps ISP2031 8.08.231 FW
+--3c3n0rvpVVOjrHBw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-affected
-QLE2694 16 Gpbs ISP2071 (tested)
-QLE2742 32 Gbps ISP2261 (not tested)
-QLE2872 64 Gpbs ISP2281 (not tested)
+On Thu, Sep 25, 2025 at 05:46:46PM +0100, Catalin Marinas wrote:
+> On Sun, Sep 21, 2025 at 02:21:35PM +0100, Mark Brown wrote:
 
-So the following check should cover them:
+> > +	} else if (task == current &&
+> > +		   task->thread.gcs_el0_mode & PR_SHADOW_STACK_EXIT_TOKEN) {
 
-if (IS_QLA27XX(ha) || IS_QLA28XX(ha))
+> I checked the code paths leading here and task is always current. But
+> better to keep the test in case the core code ever changes.
 
-Tony
+We can't have scheduled?  That's actually a pleasant surprise, that was
+the main hole I was thinking of in the cover letter.
 
+> > +		/*
+> > +		 * We can't do anything constructive if this fails,
+> > +		 * and the thread might be exiting due to being in a
+> > +		 * bad state anyway.
+> > +		 */
+> > +		put_user_gcs(cap_val, cap_ptr, &ret);
+> > +
+> > +		/*
+> > +		 * Ensure the new cap is ordered before standard
+> > +		 * memory accesses to the same location.
+> > +		 */
+> > +		gcsb_dsync();
+> > +	}
+
+> The only downside is that, if the thread did not unwind properly, we
+> don't write the token where it was initially. We could save the token
+> address from clone3() and restore it there instead.
+
+If we do that and the thread pivots away to another GCS and exits from
+there then we'll write the token onto a different stack.  Writing onto
+the location that userspace provided when creating the thread should be
+fine for glibc's needs but it feels like the wrong assumption to bake
+in, to me it feels less bad to have to map a new GCS in the case where
+we didn't unwind properly.  There will be overhead in doing that but the
+thread is already exiting uncleanly so imposing a cost doesn't seem
+disproportionate.
+
+--3c3n0rvpVVOjrHBw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVdVIACgkQJNaLcl1U
+h9DKLwf/ZZs+qbNGg0ahxmWOTIgk8umedSfGIuB6yoLJVkgIjRv+fhkm19+a7ih7
+cBVeUNXJQc6SnE8sBnTU3ETo7CAK6lcnKJI/auXKN2LbKuc2Aw95tYmF6g1JRs8j
+Mby5a2btMhAc2gSz5Bz+mmGY34D7cfYOn6rtF5n0dhNnWIbuh0zNvuRXooR8barG
+d74uA5v3XTsGbKnSXLYJJjFqbsysAXlFz5XVq0P/ZWNm6zWzeGF6oj+F+AGSXI+8
+4A9eMJl0mZ8VVVNcGcYP+qw0l2L8jLOWUrPc8KFCW7aKlSZwjtbWVY7so5ikHHNd
+0iI/PRPttN4lzP5lojrLGvLOCoQ4Kw==
+=YY2v
+-----END PGP SIGNATURE-----
+
+--3c3n0rvpVVOjrHBw--
 
