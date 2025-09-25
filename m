@@ -1,274 +1,160 @@
-Return-Path: <linux-kernel+bounces-831519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EBFB9CE1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:23:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A76B9CE24
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D811BC53E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592441BC521D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E48715E5BB;
-	Thu, 25 Sep 2025 00:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C84F1A5B9E;
+	Thu, 25 Sep 2025 00:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HU/FyQXV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ScMDx0NO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6E60B8A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2222119F40B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758759632; cv=none; b=OfH2/70D/m+3tJtGS3yBbxrpcmN2qU4ReQa3QDKnr4wpioJnCjeL8tFZvBgmUrIAjSNcPrxj5cv3AtuI0TghP8snS8ps0DpUpPqwN0FF5VucJ48jEnl8WKoctVRF7qvLo4PrU4sPIgBY/dqWKxPfBtBpWzScqMcedFHSAOsMXjg=
+	t=1758759644; cv=none; b=SLWThL8el0Y2IOhcdx59Ce2qEgcuPvmmFuO+RCiYKKR+H4D9QEtrBjrO0zXqwduviL49AGxJ33MCNm1P0Gyy4FTRTlF6NVEs//uW6s0yhiMS4Rdpv409S+o9/yT53XgNsi6KhrMEsHfCIuOuNMhcBIX530oJE20kMcRw1VtR4JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758759632; c=relaxed/simple;
-	bh=z6RG1NzBqpZcXxw7lAJMb1E2Y3MSfyoy5GWNYgAnZDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rmpHfwhOnMtfChm+RCCCcb+g1GTavPZpA436eShwli/RMKaeX3lYCeoMIgJdpjjndoB8ssoc3s4KPOFb7R6OvEGt/QE4m9kKA34LIaA2HGm+8kRoxJi4caV2IlPIqBGP0IvRPScy+myn4wjkF0mSpLpedveZ9V3MUD3J75IGeY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HU/FyQXV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758759628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tBdXmbBK+zYgY+FkDU0KfDCA9hAmOijbFD22Agl/pNA=;
-	b=HU/FyQXVo9YEgTbifWTNqTE8d0kkggU9H1zjAkoAFx3ONnwi4B2PQUMJKXclkrrdd09t3x
-	suyNbBnEKVebC2Bw4aQiLalCEYtB8z9lqE8wH5r2A0WYiTpnzGMXs3moYVL195wd2oqpII
-	xOQblwIp1wYokvqAYJOXMLBUYitg67Y=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-XLLsNRR1NnOLdkXCQrqcHA-1; Wed, 24 Sep 2025 20:20:24 -0400
-X-MC-Unique: XLLsNRR1NnOLdkXCQrqcHA-1
-X-Mimecast-MFC-AGG-ID: XLLsNRR1NnOLdkXCQrqcHA_1758759624
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-780f914b5a4so390615b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:20:24 -0700 (PDT)
+	s=arc-20240116; t=1758759644; c=relaxed/simple;
+	bh=Vzfs1LFFHiEdWORr77vIh2SKYYdoMh/m5AROS8rGlOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H1LQqgSj0M+771b97bWDNh41vMKuseJbBLiPZhvu8xl9ep0sW5a3w8bsBY7oaQGnu1B8UvnJKex0866IiAT9AmQZOcDzoBXCTZIi5Tk59J9t0uKSoRD5WsGjhP8N776FaEwYOKLaYPzPRrWDA7d1MdmYHX0o2jaySYkrkTdhBEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ScMDx0NO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONHgN3027912
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=SRwI25fTueoRl7qygb8baE/cMAE47EtTbSA
+	vuT0E+/g=; b=ScMDx0NOAQFKWHw2nHLMv3URVQ/y8V03PU1enZD+vdz1oIAdot9
+	Qf41y+YQWug4hnJgyF4NuyRlNCl5JwQvRiZMvqVRHAfRzaLWCSauMamVXMayd/do
+	1n3vfKDU6SaYOdBGOeKudzQ6Ubcc6NKhXQnqFCGE/lH79YEnmFguAYPlz9DVjQAD
+	cdNYYiBu4+/G3kxX6fW3whgFiJxWZsgxQ5N2b2kF2mesQwbi8k7oc9Bu2D+VfH25
+	2azjRWQO8koO85WJBmTHLXrl4myTrdg6K/3QsZkr4n2hhqAQibq+S/4PK7Wy2Mlr
+	QDm230Rgfny3tBDV1hWajJsFlV8Zp8iPgdg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnxgja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:42 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b55118e2d01so245721a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:20:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758759624; x=1759364424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tBdXmbBK+zYgY+FkDU0KfDCA9hAmOijbFD22Agl/pNA=;
-        b=C7MRRhqj0v4IzZ1pyCm/hKu2kuNyPee1g1JQcm8L9ItvBUUBa2Mh7YUEK6dCxvCnDe
-         5DYBrOPpDeSIrIMVFOYHX8IhS3FcxM1u8qzIq6euIYrHsocf/jhF0gtRcM/eRMGwfTWF
-         9b1bPHkSR548EHs1bGW4TcRguBmX/w5HdKVWbeztmRomoHigC3Jmuaf/EaIXYuavqXXv
-         8RiRbzhuv26GmNerOX/UvZGgLYqg6beinZlFdZS4bXDywkwsf40kvmaQGjjLZIs+7wgC
-         5fzGdhvfUrHro70S9Hqllimf5GtSwj33rUxMkTt4SV5CrZEp3fHp7OB6ozeFz1JPEG5f
-         4+tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXPaSR3GvI8hFeUaNnvCcnNg3XOyPCwOHTKJk5/jSyJglaezbysK7ktcJnmjSfFYQ7mBFdjGGDn8F1ZeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWdA7GDdhe+TD6XB5WA1rhmvtW3oosJu8uEE4OsUb1BM7RFZhZ
-	j62iGDwN4NnlXKSfdjAH4TuIocEwzjg+rUcLrNACJDNp+E0Y5VLHlKoihmp5n5NfdKieR0tAQiK
-	ZU8BLLU2vpLKW+G5MYd7seaoisG0813SS/qrpnEbEormBlYBUfCYHKa38YFx6hJOe+uXgOWaFS4
-	BfWsRaPBLYjMrwjQtScIn3ELr2HC4Wuruyp1iBtCWX
-X-Gm-Gg: ASbGncvTlK7vS70LbeBSA0PRNYKtJxsaLfBwRyfdzpmrs36e2LEFQpZXB5acp26Tlhm
-	wsl6FD/YmsSZNgflUyNTF9/Djpm3ST09LBFujqoYAVbO1skULlXgZ1CWa9V4/MUW3X5BkWm1VAV
-	Egcu5YLSbwH3humWPJcA==
-X-Received: by 2002:a05:6a20:a126:b0:24c:dd96:54f2 with SMTP id adf61e73a8af0-2e7bf47c13emr1926784637.1.1758759623736;
-        Wed, 24 Sep 2025 17:20:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvLMAV/8B1P5qPCLtvGQU0+RKs7N8f4KhEHl70VSOnWY8mLTxXSnMrb+lx7ACU9ZyiJFWSTtOBh9B3XvN3V9E=
-X-Received: by 2002:a05:6a20:a126:b0:24c:dd96:54f2 with SMTP id
- adf61e73a8af0-2e7bf47c13emr1926740637.1.1758759623163; Wed, 24 Sep 2025
- 17:20:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758759641; x=1759364441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SRwI25fTueoRl7qygb8baE/cMAE47EtTbSAvuT0E+/g=;
+        b=rv52YeGGmhD7WhtJDP+gIYaegL+kv4WT35kuENNPGwjvOxJ7HkxkoDTATC4qe5leqc
+         CS5kdT0YQyAPXCFLqOVR8ayXkBHAk9R8lgMc2uUQUPLNLV3CUGjg8rfh3vkjwz0N9DSl
+         h+B/TKsy7/qX4YbN3sGz07yQAMiuOmp/eZ8ml4flm4S3eWXINgH1ZZm5BplrtFFzfeEy
+         oWA/4TG2TgmwaG94O7o7fdG1PC63jmdlIEknDzKtJdcFmksAAcI6+9VN55JUA10RsIIG
+         cDxnYPVgrVV5E1PFXjflROr7DKA+BLQBSQYL4jiUOAyL/zMcGLrWetjQsUKK3IpyNItI
+         GRGg==
+X-Gm-Message-State: AOJu0YyiO/y9HWK2RjXFxAbiDeYInOMXw5gQAHu3xny2/LO2n4JTFkcw
+	2EP/x0SnLfZ9L38FbHW5s/JD7/BrV/97PfYLgBjqiiBMJgnMwgeFLQbF/ar6lqOKw6BZ+adfXA5
+	w501I2/vkru22nDM1T5vZ78lSkJ2RWJiFG17LeqabSG6zCp4eTKQrwi2+sC5HdL4W0PI=
+X-Gm-Gg: ASbGnctMrq6i1DoDmPffub0mxDvjagbGiGKTM20RpygLFFTbywKWo5qWzUoFGvwK/tH
+	/PfPn4rmAmGdC4ORNWqVQPNZU07GJSFOBbhkW3vn49fmksBuMWNU6XLEHeqEYYXyil4WVrLSMuG
+	SCFiY8OpsOJlrTDf/ZN1CQeWS/l1SDi8COS4JuOm2D8krSP5PvPnmAzJA9N5iorQacuRJWt37Y+
+	BnxUO1nSclVp29DWj2i0hp1CjxrWsNuG5uoL2O+9UrXtkxbZDhyAkEWQsg9GtqJkQSuhQo66vxo
+	7Pc7uaFsyCpCOo18A99VtekUocvcQRE1B49Slykx09OVrljIyArCkdJVT4v4S2n0Mtz16oX19Aj
+	jJtb/PEfH9DtQR4EorMe9XXPSvGve842MPDn2Qc3HOLNeo4W+A9FlZL4=
+X-Received: by 2002:a17:902:da89:b0:267:f7bc:673c with SMTP id d9443c01a7336-27ed4ab0972mr14591555ad.44.1758759640789;
+        Wed, 24 Sep 2025 17:20:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEogoEQohZMX5Lzntajc5fLs0ei/8RmKQ+VYDghSleW2B2SrVgQJCo7h3MdCRBt+jNzWkvEIQ==
+X-Received: by 2002:a17:902:da89:b0:267:f7bc:673c with SMTP id d9443c01a7336-27ed4ab0972mr14591355ad.44.1758759640309;
+        Wed, 24 Sep 2025 17:20:40 -0700 (PDT)
+Received: from hu-sibis-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69a9668sm4740155ad.112.2025.09.24.17.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 17:20:39 -0700 (PDT)
+From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        jingyi.wang@oss.qualcomm.com, andersson@kernel.org,
+        mathieu.poirier@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: remoteproc: qcom,pas: Document SoCCP PAS for Glymur
+Date: Thu, 25 Sep 2025 05:50:34 +0530
+Message-Id: <20250925002034.856692-1-sibi.sankar@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
- <CACGkMEuvT3=a+6LyaFZFmCZzGS5tntPSbSJg=h6FAHdk89pC8g@mail.gmail.com>
- <2739dcc3-7c38-492c-854a-731298396a0c@bytedance.com> <CACGkMEv3pUBF3Uv2s3MM0Qn--fP3mwN92SqE9NX4gNuMALBTUg@mail.gmail.com>
- <aed938d0-e70a-4af6-9950-d4d0b7d6a93f@bytedance.com> <CACGkMEv4TZOAyxaTkCvZ4rgyVsPet+r3pNSauHaGOYHim3Loag@mail.gmail.com>
- <b5bc34c2-b82a-475d-ba15-a7f67495b56a@bytedance.com>
-In-Reply-To: <b5bc34c2-b82a-475d-ba15-a7f67495b56a@bytedance.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 25 Sep 2025 08:20:11 +0800
-X-Gm-Features: AS18NWDdt4kY5KPqivF5QVdC5EV0coiQzHRAXlVturRFKt4v3-LoM7ZWGsG5sK0
-Message-ID: <CACGkMEsLg-oi3BU1EgRVb2hB9P1bfxEyZoH03+vtEGe=YmNQHg@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page size
-To: Sheng Zhao <sheng.zhao@bytedance.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	xieyongji@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d48ada cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=y6Zk4y2S2ODVn_eFbNIA:9
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-ORIG-GUID: g22WxbTq3C9XaHR9aeJEowMJjdrC0KrR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX3dH0+W3ReR7c
+ PXnbBv1cNgkxFVt8fCyKIhPMYibl3WzbWNvUVLfifGoKTqpR7XXy6/PB19UVwepg0+yEOP86GYl
+ D06ot/lKKTosIcsZE6RSxYDjvLMa7Mzk3xmlGwKY5Pw6ODBRCFiTu6jIUJfcIvOUwBiYj7FV15A
+ N2+SWbeFKD1DTb6fwESAxdripizzRqfI57jjEjOnPO6RTXCmMdkKb2Hn8DyTuUBeJOLcLMK31hx
+ 3WFhyLOrPuD+sG2Qy62PoLgZkmcFktXAzyJ7bLfQRXBsp5JkiLFX0jsun/bRAsBhYFDH5cFWW3S
+ sz2NER1E7mCgNVjcfPwDeTaHjqUtnKEisiCnGdzWWkKd0Slj4bgxx6mfmf/KscuZobykUzfKTpi
+ 5FvvP/cN
+X-Proofpoint-GUID: g22WxbTq3C9XaHR9aeJEowMJjdrC0KrR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
 
-On Wed, Sep 24, 2025 at 2:38=E2=80=AFPM Sheng Zhao <sheng.zhao@bytedance.co=
-m> wrote:
->
->
->
-> On 2025/9/24 12:15, Jason Wang wrote:
-> > On Wed, Sep 24, 2025 at 12:05=E2=80=AFPM Sheng Zhao <sheng.zhao@bytedan=
-ce.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2025/9/24 08:57, Jason Wang wrote:
-> >>> On Tue, Sep 23, 2025 at 8:37=E2=80=AFPM Sheng Zhao <sheng.zhao@byteda=
-nce.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 2025/9/17 16:16, Jason Wang wrote:
-> >>>>> On Mon, Sep 15, 2025 at 3:34=E2=80=AFPM <sheng.zhao@bytedance.com> =
-wrote:
-> >>>>>>
-> >>>>>> From: Sheng Zhao <sheng.zhao@bytedance.com>
-> >>>>>>
-> >>>>>> The allocation granularity of bounce pages is PAGE_SIZE. This may =
-cause
-> >>>>>> even small IO requests to occupy an entire bounce page exclusively=
-. The
-> >>>>>> kind of memory waste will be more significant on arm64 with 64KB p=
-ages.
-> >>>>>
-> >>>>> Let's tweak the title as there are archs that are using non 4KB pag=
-es
-> >>>>> other than arm.
-> >>>>>
-> >>>>
-> >>>> Got it. I will modify this in v2.
-> >>>>
-> >>>>>>
-> >>>>>> So, optimize it by using fixed 4KB bounce pages.
-> >>>>>>
-> >>>>>> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
-> >>>>>> ---
-> >>>>>>     drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++--=
---------
-> >>>>>>     drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
-> >>>>>>     2 files changed, 83 insertions(+), 42 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/v=
-dpa_user/iova_domain.c
-> >>>>>> index 58116f89d8da..768313c80b62 100644
-> >>>>>> --- a/drivers/vdpa/vdpa_user/iova_domain.c
-> >>>>>> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
-> >>>>>> @@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iov=
-a_domain *domain,
-> >>>>>>     static int vduse_domain_map_bounce_page(struct vduse_iova_doma=
-in *domain,
-> >>>>>>                                             u64 iova, u64 size, u6=
-4 paddr)
-> >>>>>>     {
-> >>>>>> -       struct vduse_bounce_map *map;
-> >>>>>> +       struct vduse_bounce_map *map, *head_map;
-> >>>>>> +       struct page *tmp_page;
-> >>>>>>            u64 last =3D iova + size - 1;
-> >>>>>>
-> >>>>>>            while (iova <=3D last) {
-> >>>>>> -               map =3D &domain->bounce_maps[iova >> PAGE_SHIFT];
-> >>>>>> +               map =3D &domain->bounce_maps[iova >> BOUNCE_PAGE_S=
-HIFT];
-> >>>>>
-> >>>>> BOUNCE_PAGE_SIZE is kind of confusing as it's not the size of any p=
-age
-> >>>>> at all when PAGE_SIZE is not 4K.
-> >>>>>
-> >>>>
-> >>>> How about BOUNCE_MAP_SIZE?
-> >>>
-> >>> Fine with me.
-> >>>
-> >>>>
-> >>>>>>                    if (!map->bounce_page) {
-> >>>>>> -                       map->bounce_page =3D alloc_page(GFP_ATOMIC=
-);
-> >>>>>> -                       if (!map->bounce_page)
-> >>>>>> -                               return -ENOMEM;
-> >>>>>> +                       head_map =3D &domain->bounce_maps[(iova & =
-PAGE_MASK) >> BOUNCE_PAGE_SHIFT];
-> >>>>>> +                       if (!head_map->bounce_page) {
-> >>>>>> +                               tmp_page =3D alloc_page(GFP_ATOMIC=
-);
-> >>>>>> +                               if (!tmp_page)
-> >>>>>> +                                       return -ENOMEM;
-> >>>>>> +                               if (cmpxchg(&head_map->bounce_page=
-, NULL, tmp_page))
-> >>>>>> +                                       __free_page(tmp_page);
-> >>>>>
-> >>>>> I don't understand why we need cmpxchg() logic.
-> >>>>>
-> >>>>> Btw, it looks like you want to make multiple bounce_map to point to
-> >>>>> the same 64KB page? I wonder what's the advantages of doing this. C=
-an
-> >>>>> we simply keep the 64KB page in bounce_map?
-> >>>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>
-> >>>> That's correct. We use fixed 4KB-sized bounce pages, and there will =
-be a
-> >>>> many-to-one relationship between these 4KB bounce pages and the 64KB
-> >>>> memory pages.
-> >>>>
-> >>>> Bounce pages are allocated on demand. As a result, it may occur that
-> >>>> multiple bounce pages corresponding to the same 64KB memory page att=
-empt
-> >>>> to allocate memory simultaneously, so we use cmpxchg to handle this
-> >>>> concurrency.
-> >>>>
-> >>>> In the current implementation, the bounce_map structure requires no
-> >>>> modification. However, if we keep the 64KB page into a single bounce=
-_map
-> >>>> while still wanting to implement a similar logic, we may need an
-> >>>> additional array to store multiple orig_phys values in order to
-> >>>> accommodate the many-to-one relationship.
-> >>>
-> >>> Or simply having a bitmap is sufficient per bounce_map?
-> >>>
-> >>
-> >> Yes, using a bitmap can mark the usage status of each 4KB, but it may
-> >> not simplify things overall.
-> >>
-> >> - we will inevitably need to add an additional array per bounce_map to
-> >> store the orig_phys corresponding to each 4KB for subsequent copying
-> >> (vduse_domain_bounce).
-> >
-> > I may miss something, the PAGE_SIZE is 64KB in this case, why do we
-> > need to store per 4KB orig_phys?
-> >
->
-> Since one orig_phys originates from one IO request. If we want the
-> minimum size of bounce pages occupied by an IO request to be 4KB instead
-> of 64KB. we need to store their respective orig_phys values for each 4KB
-> corresponding to the IO request.
->
-> In other words, we may not be able to guarantee that the orig_phys
-> values of all IO requests within the same 64KB memory page are
-> contiguous, so we need to store them separately.
+Document compatible for Qualcomm Glymur SoC SoCCP (SoC Control Processor)
+PAS which is fully compatible with Kaanapali.
 
-Ok, let's leave a comment to explain this design.
+Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+---
 
-Thanks
+Dependencies:
+[1] Add initial remoteproc support for Kaanapali SoC
+https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
 
->
-> Thanks
-> >>
-> >> - compared to the current commit, this modification may only be a
-> >> structural change and fail to reduce the amount of changes to the code
-> >> logic. For instance, cmpxchg is still required.
-> >
-> > Thanks
-> >
-> >>
-> >>
-> >> Thanks
-> >>
-> >>> Thanks
-> >>>
-> >>>>
-> >>>> Thanks
-> >>>>
-> >>>
-> >>
-> >
->
+This patch depends on patch 4/5 of ^^ series
+
+[2] Add support for remoteproc early attach
+https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
+
+ .../bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml    | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
+index 79f678f5f7d9..8089e0869ed2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
+@@ -17,8 +17,13 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - qcom,kaanapali-soccp-pas
++    oneOf:
++      - items:
++          - enum:
++              - qcom,glymur-soccp-pas
++          - const: qcom,kaanapali-soccp-pas
++      - enum:
++          - qcom,kaanapali-soccp-pas
+ 
+   reg:
+     maxItems: 1
+-- 
+2.34.1
 
 
