@@ -1,441 +1,222 @@
-Return-Path: <linux-kernel+bounces-831828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCC9B9DA47
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6854B9D9E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B17A07A7F47
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB0016A81A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0642F39A0;
-	Thu, 25 Sep 2025 06:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCECB2ECD32;
+	Thu, 25 Sep 2025 06:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JfzGkdcu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FN3G5Ure"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21682F3C0F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A226D2ECD05
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758781817; cv=none; b=hyn9/ru1yvXXeRs9VzOuDIHA/WFg3SYk032OfjcC/3W256NoMDhilYgZ9qd9Sr1TguSojVstho5BNb0uiJAI33uJCPS2tbALv9yQDbquWdokkCwMWAkVVDfSYgrq7uDY52PkTMkgvuhKubvN2VQpTb5fvLAoi0eFOhz4kjHLsj4=
+	t=1758781788; cv=none; b=Qu3hmvB6yqCXRjAN8CoUuyrvbvWm4qUWd6DVMCvDHHu/EBxPVdodZLKjXQL0rRttPwYCIsMgpAkd2NQJ8MAihx+l1B4K0RlSbTOtwmYw0Ex2LikU6ClkllNTv8T8fpC0GQg0T8Vk7Mas26lyiRJjkKieAucTHux1hxfbS9+rzYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758781817; c=relaxed/simple;
-	bh=V3DwzMhHyM+I6pHrP+uB1wED6tjExyI8wGLVQ1sZbgQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=reDV23KeqnZdS6xbrPMDbdHOx0WWcoXoVQRMYmyUt8gqQ7n+NNfyIxMQIGBLA3iOg13XugT9T2oGM6gOa+gtgsiKaqkAKEAFCc3R17+wQEjkVA18JaQM3QHipkWOXzh/nFk7XOO0w4PBX4DKTM43Wn/jYgbmgooIT3qQUV+z/nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JfzGkdcu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0JS0j017434
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:30:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uG7od70k/i9Kw+psrJ8W2o6B74N7yBSqMRRkTzry7hs=; b=JfzGkdcu1dUxPcB9
-	CTI19k6lLwbQR1hejA216JnPw2fHiXE2awZi2bdzfMRAaLIkjfbshi6iD1RfKbgq
-	nIPhU3GCnE02pLjU3XLptmmkrul5DGKLF1TpXQHf64c8/stIeWXSXFzdoChvieGg
-	rPNO0V8xDK/5gppnmFJmRh2yIG9cbnWwgq9bxka2wwIrmrqLDaezzD/dXCJqxS1S
-	K7ja1oH/chATp9wN6Io2NP4b2Jq6VQwKpPg+EDti0qt4bMu5MphyJFan5+n+j/SE
-	MidsKzqIlk3ooXa6H5H80O7ByqqEhItfGEQdSLl/jVTuP8oQ3as76gS+8rz0D9az
-	+7e7Lg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvk0bua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:30:15 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7810289cd5eso689260b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:30:15 -0700 (PDT)
+	s=arc-20240116; t=1758781788; c=relaxed/simple;
+	bh=ocfCkwFjc0I4FHV5WpKQR66vTwtaBg8ZxSR4+GATfs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ncq4Ag0vJ0T4zsqY3YHlFDW/bnX5xR5w96+270WtcsWA3SdmTuA6xC9Ed6M1fiEmoyjRdbQalTcNXYDaFTwb0+fJwxpqyceFmo8Ud2Oi5n8U8v5EEiqYxIXaH9fW6RtpCOku39eV5qeklyBwHUboNts9RznArE6kgkhvsB89E/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FN3G5Ure; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-78100be28easo414226b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758781785; x=1759386585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8V0lwTpuXsxcfHaxZsvIL+kGsolkwkY6GPwdx3nz5yU=;
+        b=FN3G5Ure85ZtEYeDbkv9FedXs2pJw7g2ZLmenevZnB2LnRVbOoZdY+Juj1V+yIlxhi
+         n5FKxrBqNVqhCmR7UcwY8wBivXmbYqPj4NBoe2FicsmXe4d8gApsr9+ylzgON/FrS5fg
+         cEPW9p89vml0j6suBVkqePeQoPvg/BGlAWcYPKki8aergL7DlCnT5pA9vB+rxwZ/uhyy
+         WDryJz1cZNHomIsKYOFA1SzfMU30nk3vxDV5p1H2bEUQ8zqkHYcPjs9F8nXLaf8bk7za
+         hlAEctKAlVa+nhVP0g85fzDkIBKfn9Dzei55V6RydwISTS8/Mevvrj+hO44EK5pGbaq3
+         bnDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758781814; x=1759386614;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uG7od70k/i9Kw+psrJ8W2o6B74N7yBSqMRRkTzry7hs=;
-        b=MnJvqHSO4IUQL+dKZLaTSDBY7Wu3SU0/IXK1mNr/ltuayyP5LxIrAsDaa2/zuYN0gF
-         RiAa/8x1eszxmgjFJSVQ9TDeVNGc/Z6DAob7nZh5KogKc/yyA6x9PoRZliLtn7ZNA3L/
-         lbjrqVgWnvH2JPSKreSrUEm97fjYkHsQtTtBBVI53Sn1sVVRV0R02hvFvuc2vmcl6bEv
-         C1gAbpd4r6UEJeh9f5/KOgmOOa1/KqtF79SOB7bMEnpRzKEonWGhoattaXcqPaPA1YwL
-         G7cU679q1tdRBZ4b6IO9TABXaLDO7zH/K8fWVS5zuEszU8BFyXRCNTlakDQKqdORXiHY
-         N4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAoRfwjNSXVOk6HGIOomlNrbro04rMc6e+OTHZABg3khVjz2ougJEG08W6dM2lHv7tLVVXMHp52hRVQWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFxQWuy/JkYgK1rA4lKxM/Lc4vBporV9rMIWIUVD03y1cziM6d
-	qbco0NicROe9c4c6NyMCwBnhLMpSZ9MXwS0BpTL6mexf8Oqq7pijY8RA+Ud4/8ne5MuBdnuVEdZ
-	xPKczFBda6pzVMpgNpha0trVkaes4vjuw3NKmu5aTvzKSzNHC87wmNCEYv7qO+lfHdm8=
-X-Gm-Gg: ASbGncuwh63CDEwBhFXUI/JlBhfQfYWgf7pn12AoUFKr96YKvRfITBTG2kNRh8eXjbV
-	Wy3GEF7ipZJG6MNb1GiQBvCWrZPY1WLweRRS0RSSiZ29AD/UmJigTXanG8alW4eeOUFwS/PKcij
-	JO8aCHVdxjTH3lP6Lj6cFmjMFHodW/HONErl4ljaj9gB4CwtsNESm7hMtgw9C7JaGFW4WiJIS5A
-	DFpbcczBsx+bV1lzskcWMbrAinxWKuLjfm++Vcm5gctUmuiqEhe+729AuZM82K44DOXEJRryKa/
-	Fe5WZUUMoFTUxwRVafbIqog9sWoejBAfjik70VeDzK2jjG7UBOdxFAOAbLNxB9ZrZ2sQZmoDCTe
-	D6KdJqbE6iGENcFYQ3Fl/gLVNDSPMRHeS7AE9+hgiKQxDUljZJf2Dc4cM4Mku
-X-Received: by 2002:a05:6a00:2e1f:b0:77e:a3ca:4208 with SMTP id d2e1a72fcca58-780fcea307fmr2958935b3a.21.1758781814007;
-        Wed, 24 Sep 2025 23:30:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQPd0TE1eKYuyKpPDehcx5W+QqdsgoaJuQncMo5gRQZDfz0sC+9dqyrWdcCaP3Bv4LudrCZw==
-X-Received: by 2002:a05:6a00:2e1f:b0:77e:a3ca:4208 with SMTP id d2e1a72fcca58-780fcea307fmr2958884b3a.21.1758781813455;
-        Wed, 24 Sep 2025 23:30:13 -0700 (PDT)
-Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810239136dsm952962b3a.5.2025.09.24.23.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 23:30:13 -0700 (PDT)
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 11:58:30 +0530
-Subject: [PATCH v2 24/24] arm64: dts: qcom: glymur: Add remoteprocs
+        d=1e100.net; s=20230601; t=1758781785; x=1759386585;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8V0lwTpuXsxcfHaxZsvIL+kGsolkwkY6GPwdx3nz5yU=;
+        b=hkfVgI3z7Ydmu4XlauNXsbA1deavWdWejeXFvZflyL3PZj7UKqJu0NGA2IsF5VyfVG
+         FjFA5/h6DR89TXZrh30TMUUqo8uf79VAKXjmleoDGoBXKyksWr1a4q4/3qSGqR0MDCfb
+         zWXjxaIddnAto6622eDV8Cr4eqEMm/qySiTlftC19CclB6sM0sifxx9iMKu/TVjMD80v
+         RdAwhpVY3HprlWZWXr0d9+fq2baL2MgfVBzTCQrqHTz3Fk2H6HXs3DL2Z+faziyKdG8m
+         dYSqp+Jmcrfx7gfe1Rum7/WvzIXMUFac4toHcQnf/sX/NtDxFuUnj1tZtoSbSgpaGu2f
+         fguQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV58Wti7PxewBmf/E9RJKTES6L96glB7fZhwbHQ7kV1oZmUsm4ugS5r3k8YeM+Wf5/OBrbz0Buu0h/pWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJSNMSs/c1idrArrWTMXJRCA4FWf88DCVjPmW7wAMwAv+y0cBD
+	XGDJjVjO13d6ErUTkq0bvttT64RC/qrfNbFrzRpWoBAVzPG9gvBMCfL9Bnm4VQ7XjBE=
+X-Gm-Gg: ASbGncuh9bYB2DAAN4/cgdrpsQ6+ht528yckCy6KzJs4ss7GlF2qsUImxg892Qh7f1R
+	gNVBDmHjSWwAVyMRgbXkVuNpX9b/etuEdQEKdovsyVecehxTj9MIGO/93Qj2c3Dj+OjkPbiIEJe
+	ETnOhdwhRiHGVy1o72COdCfuOx85uxO1tlj8K1GXGrxz4DpEfTjmxvmiS1dpswXEUgV19P9g+Wu
+	UnObxdUm+XgTFDGcA61v9xRY6aI8MYPaSTVvQlqCfwWshzfyF4ajfPGUm+ewHC5e6P/WMLQBvOi
+	LC8+cpmswJ2yFNYp4JNZdyKeYfoKkgfnqRlc5n/yzCPYZcc18qHvAFkf7wOHhZeuHFa1W2EU4zk
+	xQuFP9IkQB8o0tB4BnqoGO1/8+gLHvo4eiSpR0wbO6p+/fkmf/dT/EeGPRw==
+X-Google-Smtp-Source: AGHT+IG1LqAYu9jhNBG55xyv+UGKIWKzgZ4CKtKvlXs/Xd5vgIieh3XV27iBoLmTtXwYy9tOxqb0JQ==
+X-Received: by 2002:a05:6a20:3ca2:b0:2d5:e559:d23a with SMTP id adf61e73a8af0-2e7d3db6116mr3182046637.55.1758781784872;
+        Wed, 24 Sep 2025 23:29:44 -0700 (PDT)
+Received: from [100.82.90.25] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b2ec47sm961356b3a.50.2025.09.24.23.29.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 23:29:44 -0700 (PDT)
+Message-ID: <77114896-5a7a-413d-afa1-7d0a17312c99@bytedance.com>
+Date: Thu, 25 Sep 2025 14:29:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
+ offline
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
+ david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+ <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
+ <aNP-rT1neQB0EdyQ@hyeyoo>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <aNP-rT1neQB0EdyQ@hyeyoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-v3_glymur_introduction-v2-24-8e1533a58d2d@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
-In-Reply-To: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: 9MJEXj_8xMMk22Lda36HkbJp76WgEdkn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX54436RhB5PSi
- Vy2v6mYk2p10I9gaPyXmI4tPa7cbbJy3c0q2sZZdI3jvoYzKw7TXpQIcqqOSOy1lgjbRSK0O8TA
- QGVwRYQRrRpsNCCdj+rG6dz2RNfFn6NVqJaynyljNZ34BDzQaWJ1UZ2twvdmHEr6GYhi6pXvg1+
- 20D3Rz/N0RlfNdWHhl1qszxaJeIQM2O0QHzEq86z6T+6yDfcABQSAmgw1xmjGPOHZQI5/aYAr9e
- rBf6SFdKaX6VhhPgMMlCDR/uCKTHKDKrfGTcngxjVZoFIfU5xAz/zVcsi4pBDnj84oL0CUYgNB1
- mrcZoX+aqrDZA+d8Tjyj5NuMBRlJV7SLduFvYX4oYk7Ucj3fawZrwI3jgjX25BpfYOYl86cZllS
- 6Y//RJzQ
-X-Proofpoint-GUID: 9MJEXj_8xMMk22Lda36HkbJp76WgEdkn
-X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d4e177 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=kLNDb2lwuo9xn5iZXl0A:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
- clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
 
-From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Hi Harry,
 
-Add remoteproc PAS loader for ADSP, CDSP and SoCCP with its SMP2P nodes.
+On 9/24/25 10:22 PM, Harry Yoo wrote:
+> On Tue, Sep 23, 2025 at 05:16:25PM +0800, Qi Zheng wrote:
+>> In the future, we will reparent LRU folios during memcg offline to
+>> eliminate dying memory cgroups, which requires reparenting the split queue
+>> to its parent.
+>>
+>> Similar to list_lru, the split queue is relatively independent and does
+>> not need to be reparented along with objcg and LRU folios (holding
+>> objcg lock and lru lock). So let's apply the same mechanism as list_lru
+>> to reparent the split queue separately when memcg is offine.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   include/linux/huge_mm.h |  2 ++
+>>   include/linux/mmzone.h  |  1 +
+>>   mm/huge_memory.c        | 39 +++++++++++++++++++++++++++++++++++++++
+>>   mm/memcontrol.c         |  1 +
+>>   mm/mm_init.c            |  1 +
+>>   5 files changed, 44 insertions(+)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index f327d62fc9852..a0d4b751974d2 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -417,6 +417,7 @@ static inline int split_huge_page(struct page *page)
+>>   	return split_huge_page_to_list_to_order(page, NULL, ret);
+>>   }
+>>   void deferred_split_folio(struct folio *folio, bool partially_mapped);
+>> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
+>>   
+>>   void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>   		unsigned long address, bool freeze);
+>> @@ -611,6 +612,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
+>>   }
+>>   
+>>   static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+>> +static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
+>>   #define split_huge_pmd(__vma, __pmd, __address)	\
+>>   	do { } while (0)
+>>   
+>> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> index 7fb7331c57250..f3eb81fee056a 100644
+>> --- a/include/linux/mmzone.h
+>> +++ b/include/linux/mmzone.h
+>> @@ -1346,6 +1346,7 @@ struct deferred_split {
+>>   	spinlock_t split_queue_lock;
+>>   	struct list_head split_queue;
+>>   	unsigned long split_queue_len;
+>> +	bool is_dying;
+>>   };
+>>   #endif
+> 
+> The scheme in Muchun's version was:
+> 
+> retry:
+> queue = folio_split_queue(folio);
+> spin_lock(&queue->split_queue_lock);
+> if (folio_memcg(folio) != folio_split_queue_memcg(folio, queue)) {
+>      /* split queue was reparented, retry */
+>      spin_unlock(&queue->split_queue_lock);
+>      goto retry;
+> }
+> /* now we have a stable mapping between the folio and the split queue */
+> spin_unlock(&queue->split_queue_lock);
+> 
+> Oh, I see. We can't use this scheme yet because we don't reparent LRU
+> folios. (I was wondering why we're adding is_dying property)
 
-Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/glymur-crd.dts |  21 +++
- arch/arm64/boot/dts/qcom/glymur.dtsi    | 234 ++++++++++++++++++++++++++++++++
- 2 files changed, 255 insertions(+)
+Right. And reparenting THP split queue independently can avoid the
+following situations:
 
-diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-index 100519aa5a7cd905285d3aa41ebe5f63ae00aeef..17c8f1a4f4061303982a210b7690783c96ef80b2 100644
---- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-@@ -548,6 +548,27 @@ nvme_reg_en: nvme-reg-en-state {
- 	};
- };
- 
-+&remoteproc_adsp {
-+	firmware-name = "qcom/glymur/adsp.mbn",
-+			"qcom/glymur/adsp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/glymur/cdsp.mbn",
-+			"qcom/glymur/cdsp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
-+&remoteproc_soccp {
-+	firmware-name = "qcom/glymur/soccp.mbn",
-+			"qcom/glymur/soccp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
- &tlmm {
- 	pcie5_default: pcie5-default-state {
- 		clkreq-n-pins {
-diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-index c48d3a70820e551822c5322761528159da127ca6..a131cd6c3d9e7f14ed1c4aef4b68e1860cc3bca5 100644
---- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-+++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-@@ -782,6 +782,82 @@ smem_mem: smem-region@ffe00000 {
- 
- 	};
- 
-+	smp2p-adsp {
-+		compatible = "qcom,smp2p";
-+
-+		interrupts-extended = <&ipcc GLYMUR_MPROC_LPASS
-+					     IPCC_MPROC_SIGNAL_SMP2P
-+					     IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&ipcc GLYMUR_MPROC_LPASS IPCC_MPROC_SIGNAL_SMP2P>;
-+
-+		qcom,smem = <443>, <429>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <2>;
-+
-+		smp2p_adsp_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		smp2p_adsp_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-cdsp {
-+		compatible = "qcom,smp2p";
-+
-+		interrupts-extended = <&ipcc GLYMUR_MPROC_CDSP
-+					     IPCC_MPROC_SIGNAL_SMP2P
-+					     IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&ipcc GLYMUR_MPROC_CDSP IPCC_MPROC_SIGNAL_SMP2P>;
-+
-+		qcom,smem = <94>, <432>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <5>;
-+
-+		smp2p_cdsp_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		smp2p_cdsp_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-soccp {
-+		compatible = "qcom,smp2p";
-+
-+		interrupts-extended = <&ipcc GLYMUR_MPROC_SOCCP
-+					     IPCC_MPROC_SIGNAL_SMP2P
-+					     IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&ipcc GLYMUR_MPROC_SOCCP
-+				IPCC_MPROC_SIGNAL_SMP2P>;
-+
-+		qcom,smem = <617>, <616>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <19>;
-+
-+		soccp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		soccp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	clk_virt: interconnect-0 {
- 		compatible = "qcom,glymur-clk-virt";
- 		#interconnect-cells = <2>;
-@@ -2417,6 +2493,59 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
-+		remoteproc_soccp: remoteproc-soccp@d00000 {
-+			compatible = "qcom,glymur-soccp-pas", "qcom,kaanapali-soccp-pas";
-+			reg = <0x0 0x00d00000 0x0 0x200000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 10 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack",
-+					  "pong",
-+					  "wake-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>;
-+			power-domain-names = "cx",
-+					     "mx";
-+
-+			memory-region = <&soccp_mem>,
-+					<&soccpdtb_mem>;
-+
-+			qcom,smem-states = <&soccp_smp2p_out 0>,
-+					   <&soccp_smp2p_out 10>,
-+					   <&soccp_smp2p_out 9>,
-+					   <&soccp_smp2p_out 8>;
-+			qcom,smem-state-names = "stop",
-+						"wakeup",
-+						"sleep",
-+						"ping";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts-extended = <&ipcc GLYMUR_MPROC_SOCCP
-+							     IPCC_MPROC_SIGNAL_GLINK_QMP
-+							     IRQ_TYPE_EDGE_RISING>;
-+				mboxes = <&ipcc GLYMUR_MPROC_SOCCP
-+						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+				qcom,remote-pid = <19>;
-+				label = "soccp";
-+
-+			};
-+		};
-+
- 		usb_mp_hsphy0: phy@fa1000 {
- 			compatible = "qcom,glymur-m31-eusb2-phy",
- 				     "qcom,sm8750-m31-eusb2-phy";
-@@ -2944,6 +3073,57 @@ pcie5_phy: phy@1b50000 {
- 			status = "disabled";
- 		};
- 
-+		remoteproc_adsp: remoteproc@6800000 {
-+			compatible = "qcom,glymur-adsp-pas", "qcom,sm8550-adsp-pas";
-+			reg = <0x0 0x06800000 0x0 0x10000>;
-+
-+			iommus = <&apps_smmu 0x1000 0x0>;
-+
-+			interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd RPMHPD_LCX>,
-+					<&rpmhpd RPMHPD_LMX>;
-+			power-domain-names = "lcx",
-+					     "lmx";
-+
-+			interconnects = <&lpass_lpicx_noc MASTER_LPASS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+
-+			memory-region = <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
-+
-+			qcom,qmp = <&aoss_qmp>;
-+
-+			qcom,smem-states = <&smp2p_adsp_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts-extended = <&ipcc GLYMUR_MPROC_LPASS
-+							     IPCC_MPROC_SIGNAL_GLINK_QMP
-+							     IRQ_TYPE_EDGE_RISING>;
-+				mboxes = <&ipcc GLYMUR_MPROC_LPASS
-+						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+			};
-+		};
-+
- 		tcsr_mutex: hwlock@1f40000 {
- 			compatible = "qcom,tcsr-mutex";
- 			reg = <0x0 0x01f40000 0x0 0x20000>;
-@@ -5311,6 +5491,60 @@ nsp_noc: interconnect@320c0000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		remoteproc_cdsp: remoteproc@32300000 {
-+			compatible = "qcom,glymur-cdsp-pas", "qcom,sm8550-cdsp-pas";
-+			reg = <0x0 0x32300000 0x0 0x10000>;
-+
-+			iommus = <&apps_smmu 0x2000 0x400>;
-+
-+			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_cdsp_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_cdsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_cdsp_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_cdsp_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_cdsp_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MXC>,
-+					<&rpmhpd RPMHPD_NSP>;
-+			power-domain-names = "cx",
-+					     "mxc",
-+					     "nsp";
-+
-+			interconnects = <&nsp_noc MASTER_CDSP_PROC QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+
-+			memory-region = <&cdsp_mem>,
-+					<&q6_cdsp_dtb_mem>;
-+
-+			qcom,qmp = <&aoss_qmp>;
-+
-+			qcom,smem-states = <&smp2p_cdsp_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts-extended = <&ipcc GLYMUR_MPROC_CDSP
-+							     IPCC_MPROC_SIGNAL_GLINK_QMP
-+							     IRQ_TYPE_EDGE_RISING>;
-+				mboxes = <&ipcc GLYMUR_MPROC_CDSP
-+						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+				label = "cdsp";
-+				qcom,remote-pid = <5>;
-+			};
-+		};
-+
- 		sram: sram@81e08000 {
- 			compatible = "mmio-sram";
- 			reg = <0x0 0x81e08600 0x0 0x300>;
+```
+acquire child and parent split_queue_lock
+acquire child and parent objcg_lock
+acquire child and parent lru lock
 
--- 
-2.34.1
+reparent THP split queue
+reparent objcg
+reparent LRU folios
+
+release child and parent lru lock
+release child and parent objcg_lock
+release child and parent split_queue_lock
+```
+
+> 
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 48b51e6230a67..de7806f759cba 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1094,9 +1094,15 @@ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
+>>   	struct deferred_split *queue;
+> 
+> 
+> For now it's safe to not call rcu_read_lock() here because memcgs won't
+> disappear under us as long as there are folios to split (we don't reparent
+> LRU folios), right?
+
+Right. We will add rcu_read_lock() when reparenting LRU folios.
+
+Thanks,
+Qi
+
+> 
+>>   	memcg = folio_memcg(folio);
+>> +retry:
+>>   	queue = memcg ? &memcg->deferred_split_queue :
+>>   			&NODE_DATA(folio_nid(folio))->deferred_split_queue;
+>>   	spin_lock(&queue->split_queue_lock);
+>> +	if (unlikely(queue->is_dying == true)) {
+>> +		spin_unlock(&queue->split_queue_lock);
+>> +		memcg = parent_mem_cgroup(memcg);
+>> +		goto retry;
+>> +	}
+>>   	return queue;
+>>   }
+> 
 
 
