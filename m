@@ -1,163 +1,147 @@
-Return-Path: <linux-kernel+bounces-832218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D1AB9EACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E080B9EADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDD93AF873
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064B21BC1803
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833FF2EB86D;
-	Thu, 25 Sep 2025 10:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735922EB875;
+	Thu, 25 Sep 2025 10:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hN8krS+j"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjqP/U1R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C15F2629C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DE62629C;
+	Thu, 25 Sep 2025 10:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758796346; cv=none; b=YBzBj/WS5Wkk7O8RW8PasfsWxYcEdU0csCjK7o4aRabvTY60ly+To0qk7R2FClMoCXEcViLwX70zDyjTlkj4x1ER9fFVMMmJg3Es07iBaAoVFGWg2839DO5bjOJImDFSKXYiNNj3CtxDiYyq0UidjMY3S6C7HFpBfZhwaAN/uZk=
+	t=1758796395; cv=none; b=osp9OEvvhF06GuJoG7pJNmWTyVSrZF3HLs7kvJ87rGvjveAGKiynS8hQNOdEWiJR1HDf5Au5Mhq7nRY3z7cZdId5wuQKKp9yqnznCurjuRDTkRtSIRGxQ3JlXexrF5Wc1xi+N44f1cfBzCQrTAe+XN6DVYsOVEmF4tc8pc5//iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758796346; c=relaxed/simple;
-	bh=HQTOdtr+qdx/m72wmgNGbMLdeMwcxfr4c+KhH4Yq9Yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JsxyaEgrW1uKccdIHg9bFeqSnyA9+36Sag133/H1zcHeVSu8puYEtO+HfnWtGRzVTdoefZkos0xLCniHiL4lbuN1arAnFZ6nI7GFxlRt0lQSeKk69M7P0dh2rBdGLw3+J62k/RFTI1i6QmFH7Dh/wbfbaWS5FVHXgKGoKqqxTA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hN8krS+j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9RtK2025283
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:32:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V9EPLkOHQ+nW8B50CQSYf+2qcs/EKYauVlPSbGFcsJ0=; b=hN8krS+j6Q6It3fX
-	2yBlB5BwVf0ue8wDEyBE1q13UwrQwf5fixN+AIrnFi3jR5oJCsKp2Cn1UR2ePKYU
-	1y/+Q4UNWBT/md9GCbeUFzMZhznD4CNLfs6+UFDeiTpdHL5DCPaRBWr4VsrmFh5N
-	a6zCRLJVuDu4NbBntQMWGoCe5h0eDLgJGy402nf+X7Nd89UEWqguXMe5wpLZfySJ
-	D24bx6DvlOxC6Te6ghZ+NbEhTr7e0UpukYPnFvO3UX6OjCh7UpCKmDHMct0mIXyv
-	r1q+ec+8lFNOZcIQLDvITiiWj+l1qrr/UcdupO5Eo0FhBEjumAfKg18HTxIp1UFa
-	OGF8jQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyf032c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:32:24 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-85e95d986e2so1523885a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:32:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758796343; x=1759401143;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9EPLkOHQ+nW8B50CQSYf+2qcs/EKYauVlPSbGFcsJ0=;
-        b=OS3clwprecqGzVHTncSRxBLBSxooVWkWlmqv/zDj7RY9NEDvKUGE0nuWWNme0zUMZM
-         dK76GtYMwYUGeFclUKiGGlOhIMiVyNz13JZXtF3UjhZcb0BaqNzjVCxl5SsUoLQ5g9m9
-         t6B9ulr2wQJ7earkWPI4MAHqaSS97vDsVp9zV1NpXWeZMT9rmnYG7tRxXq7H3gBbzkvs
-         jUGUeuGzDz90YwtoB724b11PevDGcCvpBaQ6ayO0Q8NQxA/5vwMODcoSbtsNexPDRS9t
-         rFmTtafjq8OpHa9XhsSH5uhnatj3VaA1ylsX60aH2HeShdAEjHtuJSrm6YVPpdIDA5FP
-         51mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpv8TkMODUvXgjD7iCcZkqqOnByokqg9xfE7FcYDh6Lr/h5Tzw+/IY2mfiIGGvvmmGah1qdsGOWb4zjOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbPBE1byuPWChtSinuopBChgywMuInsbD8zGtolAPdkHHuv99X
-	egiej8JjyLSNnbe0/I6RkkyhtB2iGPVJfoZhuqkzeXe54bhRZTViMcOzWlMkLfPhrKDz26XTiSD
-	TaSRc4vZ5Qje9r28vEshTHZPJpx1C86LesCAbsPjvC14fALUUHEUtWa8y/QAEYC9mBt0=
-X-Gm-Gg: ASbGnctjzs/+F5VoTnczdGyxUq6hB6UbPTUMrjmVwOqoJ58idrUwwVsG/QVXNfOr1RV
-	mv7Cgto4tWx2CQKZCzQZ5r4rG0LBkAau4mvK3kNaGhS65W5ceEsQAsTM45JW5BMntQ25Y4byy1C
-	2BBs1BmWpkMVNdhf6N4WOp9C9QJMR4zebHrCwOmgc+VJDVq33Cgpn6P3/u4dRvLdUU9cZlI50hl
-	7PvO2+jAiIzhDynAeFQLKzCDym4drLSx1dZF4/h3ynbU4jDeEItSVSquIwNwVNHIH97wja/Csva
-	xYT1+BRC1JkQD1xwJmz19MvtDI7utRyLxOXh6G265RprPixsINu7q5vSamunrX240t5xxfUQiB7
-	yp68wjxPRHwXYeafInC9cWw==
-X-Received: by 2002:a05:620a:468e:b0:850:75d6:3da8 with SMTP id af79cd13be357-85ae8d1be1fmr217526685a.10.1758796343230;
-        Thu, 25 Sep 2025 03:32:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrfUlNU55bcz4nXz0i0xu/T6mVDI/gqlomCgirM5MRBRQq4GVnXDHqldtsjAxpYhpAFaGLdg==
-X-Received: by 2002:a05:620a:468e:b0:850:75d6:3da8 with SMTP id af79cd13be357-85ae8d1be1fmr217524285a.10.1758796342683;
-        Thu, 25 Sep 2025 03:32:22 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f7506sm136913966b.52.2025.09.25.03.32.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:32:22 -0700 (PDT)
-Message-ID: <09b2ee28-ee2b-46a8-b273-110fb0b4d8a7@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 12:32:20 +0200
+	s=arc-20240116; t=1758796395; c=relaxed/simple;
+	bh=XnjnLjB9jLK1CNnStRu7DYFWYWCWzY1n0+gzU7pDaRo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jYa9FYI0Z15BnpP2BcPPSlG0IV4ysEwuwRZartPDx2K46sLLwWEpq7ReulBAkqcphCQPJoks0wyBMtcdzfu9PuQYaLiB2ABSsgWfBeypbXQctpeqKtlgxX/gLWr7mc9gwmx6a5vFdvklHhCE/oXdHYoKls1ZFJ4SIXAhYDNiCxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjqP/U1R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A34FC4CEF0;
+	Thu, 25 Sep 2025 10:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758796395;
+	bh=XnjnLjB9jLK1CNnStRu7DYFWYWCWzY1n0+gzU7pDaRo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kjqP/U1RUYC8ttxWgoquA0rJFAxvoo36gkjRmyfhkCFiPgIYiWgQbTW0g/q0GdhwP
+	 kcjAHqxz9ukRocdEkgErSRIDXcjv1kqlSRtcc8HqqqmvNxbVRt5EI8Yub+xl/IAbte
+	 jhDzaZII2KsJx/JlUwggsNqg3O0Wh8xeldoWJ+nJVU87oZDqUalxJtRz9FjYh8IhCx
+	 7H1NwmBeJMxuVXgEpPZV9X5vkn+06cSdBzwQtb3twyjH/+ihywmh8IXvCUEVMuQbEp
+	 fVUvzK3O06N3k9EbZ0d0U1xvD4PYaQGuD3VUyFFdeeXmSMe43BEeRLf+jamia4/rfD
+	 BM+3gBnAZkiBQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 00/15] mptcp: pm: special case for c-flag +
+ luminar endp
+Date: Thu, 25 Sep 2025 12:32:35 +0200
+Message-Id: <20250925-net-next-mptcp-c-flag-laminar-v1-0-ad126cc47c6b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/24] arm64: dts: qcom: glymur: Add PMIC glink node
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-18-24b601bbecc0@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250925-v3_glymur_introduction-v1-18-24b601bbecc0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 72CyBQpppZBMCOeMaQiOK6A8j8uF0RJZ
-X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d51a38 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=XhRRIRvm7l31mynVaKEA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX7PxMGjafQTfe
- qEyBJA3WHpl42VxNOi3OdeHYg3IdfL62M+7kDgIKn6t0sl9jIUOkR/vQsBwCsHxzeMUBHEhvTSs
- bJciq1ZTwnvQN9pIDVQL+6wJCJpTiNpuHb1JXRsSNQPjZm4+Xka2RbXZ8rFDx7I4Oq1wp6s8oO/
- Evi1ekjAw2NvP7SlWtpJAGxxKhHXyh+J2hUBGXKHF5XcFgT4d0xlZRgMzjPJb5jPvZE/iFvA7Ge
- i3bjwjhvAAh+1d9xCzdezzUJsF8UROpf4/5gD27CXW+V8/es/kmPo+xqC9xc+xNrGYg2osR+Olq
- OswzIgOdeb/jBOAE4kkIWW4MJOSPeprPbIsoCyj8U0HXyQHWD/7SsxAt8PntjBGpuEgFaBUQam5
- 0O8YoGhS
-X-Proofpoint-ORIG-GUID: 72CyBQpppZBMCOeMaQiOK6A8j8uF0RJZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
+X-B4-Tracking: v=1; b=H4sIAEQa1WgC/zWMQQqAIBAAvxJ7bqHEoPpKdDBda6FMVEKI/p4EH
+ eYwh5kbIgWmCGN1Q6CLI5+uSFtXoDflVkI2xUE0omsG0aGjVMgJD5+0R412Vyvu6mCnAtpeSkH
+ SyMUMUB4+kOX8/Sf4U5if5wX1Prr9eQAAAA==
+X-Change-ID: 20250925-net-next-mptcp-c-flag-laminar-f8442e4d4bd9
+To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3538; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=XnjnLjB9jLK1CNnStRu7DYFWYWCWzY1n0+gzU7pDaRo=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKuSgU2tv76anJcrnbRuQtHlN3koy2sunZs0vpR+z/wM
+ ftFhxNyHaUsDGJcDLJiiizSbZH5M59X8ZZ4+VnAzGFlAhnCwMUpABNplmRkmBLr/ORdjmb/ybp3
+ ltVc9nbFU7l9CkoP9nFFR0ud7df/yfA/rMfzzt6KoxJszuyhixJ2sFbycFziU93yXPnhmZMPP0/
+ lAwA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On 9/25/25 8:32 AM, Pankaj Patil wrote:
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> 
-> Add the pmic glink node with connectors.
-> 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur-crd.dts | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> index b04c0ed28468620673237fffb4013adacc7ef7ba..3f94bdf8b3ccfdff182005d67b8b3f84f956a430 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> @@ -79,6 +79,34 @@ key-volume-up {
->  			wakeup-source;
->  		};
->  	};
-> +
-> +	pmic-glink {
-> +		compatible = "qcom,sm8550-pmic-glink",
+Here are some patches for the MPTCP PM, including some refactoring that
+I thought it would be best to send at the end of a cycle to avoid
+conflicts between net and net-next that could last a few weeks.
 
-You *must* include a glymur compatible
+The most interesting changes are in the first and last patch, the rest
+are patches refactoring the code & tests to validate the modifications.
 
-> +			     "qcom,pmic-glink";
+- Patches 1 & 2: When servers set the C-flag in their MP_CAPABLE to tell
+  clients not to create subflows to the initial address and port -- e.g.
+  a deployment behind a L4 load balancer like a typical CDN deployment
+  -- clients will not use their other endpoints when default settings
+  are used. That's because the in-kernel path-manager uses the 'subflow'
+  endpoints to create subflows only to the initial address and port. The
+  first patch fixes that (for >=v5.14), and the second one validates it.
 
-Are you sure this is still compatible with 8550 after this
-series landed?
+- Patches 3-14: various patches refactoring the code around the
+  in-kernel PM (mainly): split too long functions, rename variables and
+  functions to avoid confusions, reduce structure size, and compare IDs
+  instead of IP addresses. Note that one patch modifies one internal
+  variable used in one BPF selftest.
 
-https://lore.kernel.org/linux-arm-msm/20250917-qcom_battmgr_update-v5-0-270ade9ffe13@oss.qualcomm.com/
+- Patch 15: ability to control endpoints that are used in reaction to a
+  new address announced by the other peer. With that, endpoints can be
+  used only once.
 
-Konrad
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Notes:
+ - Patches 1 & 2 are sent to net-next on purpose: to delay a bit the
+   backports, just in case. Plus we are at the end of a cycle, and not
+   to delay the other refactoring patches.
+ - Sorry, I wanted to send this series earlier on, but due to some
+   unrelated issues (and holiday), it got delayed. Most patches are
+   pure refactoring ones.
+
+---
+Matthieu Baerts (NGI0) (15):
+      mptcp: pm: in-kernel: usable client side with C-flag
+      selftests: mptcp: join: validate C-flag + def limit
+      mptcp: pm: in-kernel: refactor fill_local_addresses_vec
+      mptcp: pm: in-kernel: refactor fill_remote_addresses_vec
+      mptcp: pm: rename 'subflows' to 'extra_subflows'
+      mptcp: pm: in-kernel: rename 'subflows_max' to 'limit_extra_subflows'
+      mptcp: pm: in-kernel: rename 'add_addr_signal_max' to 'endp_signal_max'
+      mptcp: pm: in-kernel: rename 'add_addr_accept_max' to 'limit_add_addr_accepted'
+      mptcp: pm: in-kernel: rename 'local_addr_max' to 'endp_subflow_max'
+      mptcp: pm: in-kernel: rename 'local_addr_list' to 'endp_list'
+      mptcp: pm: in-kernel: rename 'addrs' to 'endpoints'
+      mptcp: pm: in-kernel: remove stale_loss_cnt
+      mptcp: pm: in-kernel: reduce pernet struct size
+      mptcp: pm: in-kernel: compare IDs instead of addresses
+      mptcp: pm: in-kernel: add laminar endpoints
+
+ include/uapi/linux/mptcp.h                        |  11 +-
+ net/mptcp/pm.c                                    |  32 +-
+ net/mptcp/pm_kernel.c                             | 569 ++++++++++++++--------
+ net/mptcp/pm_userspace.c                          |   2 +-
+ net/mptcp/protocol.h                              |  21 +-
+ net/mptcp/sockopt.c                               |  22 +-
+ tools/testing/selftests/bpf/progs/mptcp_subflow.c |   2 +-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh   |  11 +
+ 8 files changed, 441 insertions(+), 229 deletions(-)
+---
+base-commit: a1f1f2422e098485b09e55a492de05cf97f9954d
+change-id: 20250925-net-next-mptcp-c-flag-laminar-f8442e4d4bd9
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
