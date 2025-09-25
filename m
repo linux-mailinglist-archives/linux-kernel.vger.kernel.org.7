@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-833366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479E0BA1C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C445BA1CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4DC740BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:25:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C44F5628E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C63321F32;
-	Thu, 25 Sep 2025 22:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713482E9EBE;
+	Thu, 25 Sep 2025 22:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Rzdesp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GXdEBbxB"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7822417E6;
-	Thu, 25 Sep 2025 22:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219512749E3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758839133; cv=none; b=UtvPShxdTyrQy98HIfrqQAAgpi/YHCLT/Voiy0YmmF85i53l4HEIDRc1HWqJhnzVQLla9PtLAELVWRwO+HoTFrfyH1z/cujxXyJTjydqmYgFxnXfvNnNAEz8tMthVL+Q0PQ8C5SaSzWEmVknm7CbReALxiYnk0egM8DcKRv4ipQ=
+	t=1758839177; cv=none; b=cQcwzgMu5ZeiTKVPhsnevIAZS+ZjNSMcU4gOPN6ZF1hp7LLEr3+gOhzqMtBWz7vQ9SrNP5GxIpCoqYX+8gXmA2/tNxf1UJph8W8DBcGApUplcCr2fDddP3lQ8c8pxkQVle/xhDUh0DgGOP90dbp+s2bdLiae/fGjrBITaY5rXoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758839133; c=relaxed/simple;
-	bh=My89Bjn9x/oeIFIFuiMOx2L+DJYICs3nInHDnUf4iYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxGt/a0PODDDp87UdqYUpYCggSVcEse5yhynvcCaU/n5/785oTzCKyyLItbUx/5eD70olDwRN+HsYFE/Uw8WZeN7kUZJswc2XkQ9ZHWxkr56hOQuHid83qn2vPzGZjBMB5pOHDO/oKdRziUlB02VsYQyYKhVsGJRmVCZ57UcmLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Rzdesp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9C4C4CEF0;
-	Thu, 25 Sep 2025 22:25:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758839132;
-	bh=My89Bjn9x/oeIFIFuiMOx2L+DJYICs3nInHDnUf4iYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O2RzdespN28+DOiemh/RlFMEIo5UpiImbn0v0A/Z2p/mkztJ9oh7VFzk57XXbaq5Z
-	 p+KgaOFZWH9Im/dM0CtFtEaD3fQF0ueB//MulJsF5rR5FNk2J2wABakYhdHkk1vCs4
-	 Ri73bZI2gG61wJvMn/E6zf33XeM9xUHiQ04nVazJozm9LFpFtoAFphbMnDldwrjj5S
-	 V4XT/xwH4XYcNkyENhRY9BDd0gpiZSesp/2LpwaqL07aCKbOayBF9zTTb3LBzUY0RV
-	 iEFMcvL90Lep+wkY+SV8TA6L+OwPqZ+taj11zbG8zPFADssBHvrMjyaL52qrEO6tg7
-	 g9Gq53DV/KYOQ==
-Message-ID: <8a9a6955-ccb7-4acc-b6ec-7f180126bba5@kernel.org>
-Date: Fri, 26 Sep 2025 00:25:20 +0200
+	s=arc-20240116; t=1758839177; c=relaxed/simple;
+	bh=lTCfAhOCCFujviUGkPpU3RVShb+sKb6mxlJP5kOiJCY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=NM7uash2EGgtKs1Gg2LNII1vKVdYVpLGqiGe3VUKD5xBIwV4tfVOlJ9olUuCFGATkDByn+btrsXrVka6F6Kg5sd/trAam4qpl0skcohEvSt9UIurIzKoCAXuebgUlchLgDmIsez7M9qS7ez8FIKMZBBqi780K3Fcsh4FwzgZnGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GXdEBbxB; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
+	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YYqXCwQWRl1v5mvc0PqGxp32U7oTfoGl3dZTYyV2InM=; b=GXdEBbxBNwjLB0z/eTfkbQ92sO
+	uPDNPCJ+qJP8BT9qX5RTyBSWDT3M87lQlTUrRDh5G8SunIxNw1CBNq37Zb1kXuxwqS6A/raQtuzd6
+	3mCr7BOSgputcxoch3j27pFdAA7IRDGotL5aJrZ81L6qfZnwFwr0AXWU4qfIvhFPvAR2+3GstJzLE
+	bh8JbmLctN/rgjSbRNaz4Ja0GbUjN3LeUh17EeuufiNMM7eYHhcUGCvzBSXsH3UaaDutzLo/6oVmv
+	gJX3wV4XDBpMl/7bdIxaomtxuw68Yr2qCYktIpQO4urdq1+pmPWpwHvSB/uX+s18t4pI6Ttn6Vvs+
+	EZh7r+LQ==;
+Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
+	by fanzine2.igalia.com with esmtps 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1v1uPZ-000LnT-JT; Fri, 26 Sep 2025 00:26:01 +0200
+Received: from webmail.service.igalia.com ([192.168.21.45])
+	by mail.igalia.com with esmtp (Exim)
+	id 1v1uPX-00ENcu-H2; Fri, 26 Sep 2025 00:26:01 +0200
+Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
+	by webmail with esmtp (Exim 4.96)
+	(envelope-from <mfo@igalia.com>)
+	id 1v1uPW-00BoW8-32;
+	Fri, 26 Sep 2025 00:25:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with
- C-Strings
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Breno Leitao <leitao@debian.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- Jens Axboe <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
- <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Thu, 25 Sep 2025 19:25:59 -0300
+From: Mauricio Faria de Oliveira <mfo@igalia.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka
+ <vbabka@suse.cz>, Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Brendan Jackman
+ <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan
+ <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com
+Subject: Re: [PATCH 1/3] mm/page_owner: add option 'print_handle' for
+ 'show_stacks'
+In-Reply-To: <20250925202817.795114-1-joshua.hahnjy@gmail.com>
+References: <20250925202817.795114-1-joshua.hahnjy@gmail.com>
+Message-ID: <d05a76ffe2969b8542db961ef1f41a0e@igalia.com>
+X-Sender: mfo@igalia.com
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Report: NO, Score=-4.6, Tests=ALL_TRUSTED=-3,AWL=-2.376,BAYES_50=0.8,URIBL_DBL_BLOCKED_OPENDNS=0.001,URIBL_ZEN_BLOCKED_OPENDNS=0.001
+X-Spam-Score: -45
+X-Spam-Bar: ----
 
-On 9/25/25 3:54 PM, Tamir Duberstein wrote:
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
+On 2025-09-25 17:28, Joshua Hahn wrote:
+> On Wed, 24 Sep 2025 14:40:21 -0300 Mauricio Faria de Oliveira <mfo@igalia.com> wrote:
 > 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> For monitoring the memory usage per stack trace, it is more efficient to
+>> use the handle number as unique identifier of a stack trace than to, for
+>> example, read/hash all stack traces to uniquely identify them everytime.
+>> 
+>> The handle number is a unique identifier for stack traces in stackdepot.
+>> 
+>> This patch adds the option 'print_handle' to print the handle number of
+>> stack traces in 'show_stacks'.
+> 
+>> @@ -887,6 +887,7 @@ static void *stack_next(struct seq_file *m, void *v, loff_t *ppos)
+>>  }
+>>  
+>>  static unsigned long page_owner_pages_threshold;
+>> +static bool page_owner_print_handle;
+> 
+> Hi Mauricio,
+> 
+> Quick nit -- If I understand your cover letter correctly, you want
+> page_owner_print_handle to be false by default, should we initialize this
+> to false?
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+Hey Joshua,
+
+In this case, it is not needed, as static variables don't need to be
+initialized to false/0. This is handled as an error in checkpatch.pl,
+so it should not be added even for completeness.
+
+Thanks for checking this.
+
+-- 
+Mauricio
 
