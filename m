@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-832460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443E5B9F60F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90DBB9F678
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E167D2A1B62
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0C33A3C6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663C9217704;
-	Thu, 25 Sep 2025 12:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2B2211460;
+	Thu, 25 Sep 2025 13:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QtbQxVaZ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKgCikrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3FD202F7B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED2220102B;
+	Thu, 25 Sep 2025 13:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804990; cv=none; b=L1AjZ1A4BnB0tKCOHnifs4n/9eM19FL511+Wq1Xdf24O7RKB4dxRvPwAEbyct4x/0ffJP1YTCXXRwMuomDV+YoZGVPHy2QZNgCVRzx5mwxUePhjL/vg/51hIRvFVVM3c1tST5vqsnSrvaSSgcaDQTqwyfAGJLHmF1OlP0QlR914=
+	t=1758805512; cv=none; b=lj/3fIvqqrBcLuC9Mqrxt5lpug8FMNVUCNzTFXCI1JrH9wWZ++zelnWB1cyxiCpHeeYVDIcmUavWvx2oHfio8D2/E3aFWCChEi+ybWAf1kZc8C3sS3ud6mtyZLiSn0f/vWpLj8UtRZ3FXIsRcfkQUeVikicZVo6Xdq1C10vhWZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804990; c=relaxed/simple;
-	bh=zfRD2NhN+jwJe3TpYl4kyedsa+MtS16LR2jcIuY5Nvo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=X2sJLLs4SjN5FiYkHf7048Ciz0ohK01bwRxqk9ofY5qJ1kdBErnGadOqOkvtBxJcfavJDml/+xio6N+S8iNEW0qdo0kXw2oYC942D8XWnWzd1INgjl5bpANbm6d0101tgeNK8uMGgBmOq64U6WxX2wUqxJkD0Od4af+5uz93D40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QtbQxVaZ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250925125626epoutp02906bd442a3995338109f8d3f86172dc6~oh9EW9IBW2265922659epoutp02L
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:56:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250925125626epoutp02906bd442a3995338109f8d3f86172dc6~oh9EW9IBW2265922659epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758804986;
-	bh=emDBLi0S/XbmKkKrMOpftjZrfm/X9R0ePHepVQNumuQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QtbQxVaZMOTNc9SnArQhy8kECydiSbgkE1EbrdK/+rwbFbGzjCGWD4WyQVJPmIlUX
-	 HItoYfWfS7m53kw74lLQ/vxWMdBbAaEZuFq8/sTQeaRXWDjfAeNEL9P36pCFVF+COD
-	 nhuKf1d36jWfm7Jr80YHl992P7YbebM9tAJq8YuE=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250925125625epcas5p102b8b73d66fa1c644f6d5253a6572ba5~oh9DtWlVI0620606206epcas5p1e;
-	Thu, 25 Sep 2025 12:56:25 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cXYcm6mD9z6B9m5; Thu, 25 Sep
-	2025 12:56:24 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609~oh9CQvnaO2772627726epcas5p1X;
-	Thu, 25 Sep 2025 12:56:24 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250925125620epsmtip23c875d90d5ac17a4285aaef1ddbd0109~oh8__yXQ-1425914259epsmtip2k;
-	Thu, 25 Sep 2025 12:56:20 +0000 (GMT)
-From: Raghav Sharma <raghav.s@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, sunyeal.hong@samsung.com,
-	shin.son@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, chandan.vn@samsung.com,
-	dev.tailor@samsung.com, karthik.sun@samsung.com, Raghav Sharma
-	<raghav.s@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add CMU_MFC clock DT nodes
-Date: Thu, 25 Sep 2025 18:34:57 +0530
-Message-Id: <20250925130457.3476803-4-raghav.s@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250925130457.3476803-1-raghav.s@samsung.com>
+	s=arc-20240116; t=1758805512; c=relaxed/simple;
+	bh=tBH6b/012H4Tj3wKXmB4ra2XVLYC8PL8Cd50q+FllFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyDyrrfAJ6wv9M8QzB5dHPepyzs79dWlt5/bC3/yYHwl8vO8iU4okLGM652iOLgGwbzjmwi1/wDo2BJPfPBMMJmjGULSV64gkYFLCZl7Tl5chNgq+H6UIZSRVLjbZmD7buu0kSl0FQFts+mod0hlyiBWE2P2g2oxC09/+5QGAoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKgCikrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0075C4CEF0;
+	Thu, 25 Sep 2025 13:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758805511;
+	bh=tBH6b/012H4Tj3wKXmB4ra2XVLYC8PL8Cd50q+FllFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lKgCikrbATt1bRGTTX39ZjdL0+5WywwS0FCeUS8sm1FJVn3Cbskm8B++rV/M8Uw+1
+	 cTB1mnZ9883WWFoU9+1KS2yRBMcfIANsnI331ZlHPxq+6eO48CbTPc2poK9h0fxxtG
+	 wamLElqify2KdQBYUTZIaJpdpgCXE3/VbAcDIyKVM3Ahs2+rdOfF0BfGjoA9SeE0uo
+	 SM6deBCAMmHDL28Kyt1e2cS4zoF87NT5iNMbU8wLwwW17xPgg4VPLSA5VvpGwXbx2M
+	 TliN8NPDOjStbnrovbqsATLb3U+TgGBodmTzBvVnaoC08AWaX/X6fn8Tot6RaoLNMJ
+	 aIyDXyZaHCO5g==
+Date: Thu, 25 Sep 2025 08:05:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: linux-phy@lists.infradead.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Josua Mayer <josua@solid-run.com>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 phy 12/16] dt-bindings: phy: lynx-28g: add compatible
+ strings per SerDes and instantiation
+Message-ID: <20250925130510.GA451343-robh@kernel.org>
+References: <20250923194445.454442-1-vladimir.oltean@nxp.com>
+ <20250923194445.454442-13-vladimir.oltean@nxp.com>
+ <20250924135429.GA1523283-robh@kernel.org>
+ <20250924154534.cyyfi2aez46iu2sw@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609
-References: <20250925130457.3476803-1-raghav.s@samsung.com>
-	<CGME20250925125624epcas5p1b8da5d2cca89128d286f740b9896c609@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924154534.cyyfi2aez46iu2sw@skbuf>
 
-Add required dt node for CMU_MFC block, which provides
-clocks for MFC IP
+On Wed, Sep 24, 2025 at 06:45:34PM +0300, Vladimir Oltean wrote:
+> Hi Rob,
+> 
+> On Wed, Sep 24, 2025 at 08:54:29AM -0500, Rob Herring wrote:
+> > > +description: |
+> > 
+> > Don't need '|' if no formatting to preserve.
+> 
+> Thanks, will drop.
+> 
+> > > +  "#address-cells":
+> > > +    const: 1
+> > > +    description: "Address cells for child lane nodes"
+> > 
+> > You don't need generic descriptions of common properties.
+> 
+> Ok, I'll also drop the description from #size-cells but keep it in
+> #phy-cells (less obvious).
+> 
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 0
+> > > +    description: "Size cells for child lane nodes"
+> > > +
+> > >    "#phy-cells":
+> > > +    description: "Number of cells in PHY specifier (legacy binding only)"
+> > >      const: 1
+> > >  
+> > > @@ -32,9 +124,51 @@ examples:
+> > >      soc {
+> > >        #address-cells = <2>;
+> > >        #size-cells = <2>;
+> > > -      serdes_1: phy@1ea0000 {
+> > > -        compatible = "fsl,lynx-28g";
+> > > +
+> > > +      serdes_1: serdes@1ea0000 {
+> > > +        compatible = "fsl,lx2160a-serdes1";
+> > >          reg = <0x0 0x1ea0000 0x0 0x1e30>;
+> > > -        #phy-cells = <1>;
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <0>;
+> > > +
+> > > +        phy@0 {
+> > > +          reg = <0>;
+> > > +          #phy-cells = <0>;
+> > > +        };
+> > 
+> > There's really no difference between having child nodes 0-7 and 8 phy 
+> > providers vs. putting 0-7 into a phy cell arg and 1 phy provider. 
+> > 
+> > The only difference I see is it is more straight-forward to determine 
+> > what lanes are present in the phy driver if the driver needs to know 
+> > that. But you can also just read all 'phys' properties in the DT with a 
+> > &serdes_1 phandle and determine that. Is that efficient? No, but you 
+> > have to do that exactly once and probably has no measurable impact.
+> > 
+> > With that, then can't you simply just add a more specific compatible:
+> > 
+> > compatible = "fsl,lx2160a-serdes1", "fsl,lynx-28g";
+> > 
+> > Then you maintain some compatibility.
+> > 
+> > Rob
+> 
+> With the patches that have been presented to you thus far -- yes, this
+> is the correct conclusion, there is not much of a difference. But this
+> is not all.
 
-Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+That's all I can base my conclusion on if you don't tell me more...
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index d19d71faa6f8..6ee74d260776 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -1449,6 +1449,19 @@ ufs_0_phy: phy@16e04000 {
- 			status = "disabled";
- 		};
- 
-+		cmu_mfc: clock-controller@19c00000 {
-+			compatible = "samsung,exynosautov920-cmu-mfc";
-+			reg = <0x19c00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>,
-+				 <&cmu_top DOUT_CLKCMU_MFC_MFC>,
-+				 <&cmu_top DOUT_CLKCMU_MFC_WFD>;
-+			clock-names = "oscclk",
-+				      "mfc",
-+				      "wfd";
-+		};
-+
- 		pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
--- 
-2.34.1
+> If I want in the future to apply the properties from
+> Documentation/devicetree/bindings/phy/transmit-amplitude.yaml to just
+> one of the lanes, how would I do that with just 1 phy provider? It's not
+> so clear. Compared to 8 phy providers, each with its OF node => much
+> easier to structure and to understand.
 
+That's unfortunate that binding wasn't designed to support more than 
+1 instance. You could do:
+
+lane@0 {
+  reg = <0>;
+  tx-p2p-microvolt = <123>;
+};
+
+lane@1 {
+  reg = <1>;
+  tx-p2p-microvolt = <123>;
+};
+
+Yeah, that's about what you had, but it avoids changing the cell size. 
+That should be a bit simpler to implement in the driver and to add to 
+existing DTs as a fixup (because you don't have to change 'phys' entries 
+everywhere).
+
+Another option is go to cell size of 2 and stick the voltage in a cell. 
+That approach doesn't work well if you have a 3rd, 4th, etc. cell to add 
+later for more properties.
+
+Your overlaying the old and new bindings approach works too. That 
+approach is fine with me.
+
+Rob
 
