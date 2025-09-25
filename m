@@ -1,222 +1,190 @@
-Return-Path: <linux-kernel+bounces-833347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA57BBA1BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A0BBA1BD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62D81C00895
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69632560D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134DD31353D;
-	Thu, 25 Sep 2025 22:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F0B2EA491;
+	Thu, 25 Sep 2025 22:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PcEXW0dK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TYVM4wR8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AE314A8E;
-	Thu, 25 Sep 2025 22:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB2346B5
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758837965; cv=none; b=OMNCem88wDehPbgEx0eImF1F5K1mzjdTUYGQtVmJaBWivP4Y1vYhBX1X2gjSdHJ3pX9iucaIrpyTxbG2XdwnObwjobSzS0kCdFXzIG8fhuoNVR+3pVNQsx+tnXHMagQktKoK2shlqulg0nNQ/RALAymyGArdt83b9miAZZDRVJU=
+	t=1758838053; cv=none; b=R1lzkXE65k5+TmAy6DmfFgzF0CejX5eER7c+OLBXubV75+pMLiNc8Dd01KD9QjkxR2lohVlcMUL/uV3Mr8sk8D6AFp75EqoViXUQjEQyPSrncTANnHwvEJ26yAMGqfkpJvldNrEKpf0XRwF9vzBESowkjL+PKACXouM2sVf4EBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758837965; c=relaxed/simple;
-	bh=dgahcYI50uIA6amKSI62BYH+n1qIuOu+Xr2tu6p9RJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l+q3LhwN6R34ts+nVMTtypPOPDG/UDl4ExzhAqn/ks17CCtMsch5O+iwIFokbpYyoFBgsVbDDKEjItSAbcc8ZJm7RDMWxZes7jW8p0G9S47IbtquS8xHJbmEEviYGyvA8hFMhAYCuGChqZvfJ62VDTCxOAQOSRL5qCQ1IzQT814=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PcEXW0dK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PImKV2030005;
-	Thu, 25 Sep 2025 22:05:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=K7IRn6
-	bG/6nky59M0Oo2KeM1fFNlrak9irHbIR1LLzI=; b=PcEXW0dKW/ZzIaNcLcP6o7
-	QAf48rO1q7z311g0AC5Ji40dVw5nhc8D9LbIyTUyZ0pvggELKOrFl/gTeNQ7rxRC
-	YfQiiBjLbYlr4hZ/T3iQ2Kg2kYFlIlizRospe55sblNmyXKLl2wac0dIHUfNEGCK
-	peypBAhhnfb3HKH87DGXggWcnp4mTqb2bK/1iZb7eYfe3O6Hm/tE57GwVJ/zv4tK
-	mVSwQVEndzrDq/Wq6vfROPOBv4ZrOgXuebdJ1mjGhB6Xi0phE4/7Mis0gAEwDFfi
-	SVnxm7bbngxZjdhcEViue/Mph4XrkU5Yi9RYIWuFPrqcPKaZChFFelZIisVK71wg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbagwe4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 22:05:57 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PLe3sj014307;
-	Thu, 25 Sep 2025 22:05:56 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49dawm0yue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 22:05:56 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PM5twN25952884
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 22:05:55 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8F40158050;
-	Thu, 25 Sep 2025 22:05:55 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 13D9258045;
-	Thu, 25 Sep 2025 22:05:54 +0000 (GMT)
-Received: from [9.61.254.10] (unknown [9.61.254.10])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Sep 2025 22:05:53 +0000 (GMT)
-Message-ID: <82ab0e33-43ab-4b65-b24f-9ea83a859d62@linux.ibm.com>
-Date: Thu, 25 Sep 2025 15:05:43 -0700
+	s=arc-20240116; t=1758838053; c=relaxed/simple;
+	bh=ieyYodZ9Ttan4EgWf3O3arMBEsUN3+HWD1UxStvOQ1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdCYlmH3fs68h5Ecqh3u2XPURGGa3EP5BXdKqYVzmly/KY8+D2avY0du7vjlKp5iTpZvUJWK/VpDxvlIEpcSMFKZzTpWDY9iv2fkt/ULrpK9r9u4xuUdpEiWPa7lxw63mLyb1OU1F1UYYikQrWMs+l7dgjWBCAzuRrArTJZxxSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TYVM4wR8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPZ1B027516
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:07:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=GnhBNlMLToijg17nNqJ1S6A4
+	kSgBLyw9c+uskKRflGQ=; b=TYVM4wR8VvW2O/i75QaPcilIuMM91cXxdTPax7I9
+	+2uHfpEve16urYdgGOKhgG5U2n76sFLJ1dUylFZB+A+jMjqrY6ZeKrcxdI3U7IDU
+	foBYLU4h5Ew1HcQefw0sY25n5ukE0x/dp7T7+H8kb3P1Iyi1ssrG5tbCyj1vMuI2
+	vE6goOjZH6g9eUQ77h7rVTon+k+fPXHj9AJ5A4IaZtv6oCl7jj0kwGHIg9tEwqRP
+	ZuZw7D7ZXjXa5TWiRSt7SVeyiEbQI97cS0I9GtscDL/M9NypyEBVw6rZ+nWZi+QG
+	77RZNSMWd3ZT5XnGgoPtt7Y/LgBjQx2CyrxlVm42np1g0A==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0q0ha3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:07:30 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5ecf597acso33905261cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:07:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758838050; x=1759442850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GnhBNlMLToijg17nNqJ1S6A4kSgBLyw9c+uskKRflGQ=;
+        b=nANBZFYRlSmPX95tiGb2o1g6bX25j6m120ewS/s3VJT6lEgSSZR1dnnH3mWI/xEbi5
+         j+a1oVF2wVttH+xrk5JeHQFZYyXSLkvmhv3g4XmTUokZ62X6qICTv1ocbmtxhCuEuJqW
+         eMxQAZL2oEuRefGzZWp0cCwrmxjD7R+K6Atcf8bOURwAsUcOsElivVWRVtE35xOXx4+L
+         +GU6eTIYA9xC7iyq9iCqGJjyFKSCzFQ6BMWDUfR0yfNeCDda+kHzZCU48ITKKO+b5S+u
+         EqWMveDV92eazyvGTDBtHIWSEna/YlJsRyHMMqH/7izFVJxWA++4S/VndsRa9xdRPeMT
+         kR5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwbKT6dluJGAM1CKkuP+2gkpM1FpBbWRnRfLUe1ID3nDH1ajxZQJg1FLc3tGEfaDCtqpPj3Du2KDMAt/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOjbYmCK6xppb3EfaBiE38vsfCCV7oZUEm4dVqPBA8hjYMmoci
+	+0rBXFuKudSEhxdwBHfoFjtMPmNGN+C3ALoS7y+pWLtRBfq0KoQfyXTu4e/aL7jMwucXIEwtxOL
+	lzUFDoyo6+dydbJo4jAkNjO5NmkuKGTrqXFgCLRZ40K1SxXUqSu1HgEUcsHuX5zk0hLE=
+X-Gm-Gg: ASbGncuPDmWN3inZG4vH15M744lBf0k2Rrh39hFpiHa7ItZCj4XGSKrwQUZbtj2SrOz
+	ypscAMEgtI0+VWvruURuodt1UbqsiWxAnr3W5ElU8rWMd3Yw7thfAfw6PcNSuMUh4G/7jPkCVoO
+	rx1/dLRSmgalQMHN5NBgQ0xKl3x/jG9dh6Z1WAHrVkQW1XTb33ZKJtvnCrpkuAI0+cZGH+Rf2DY
+	14mpCAFuuNPtoohHSB1PfMo5Fx6Pzd8A9RHwedjOQRwFVbW+xAUcv9Pix/aPzUv2rbaYBTY5SX5
+	gPNUGqGxXNJq4CMs8JfC9lsOdOACDErMmrXOAMJbmhgiVmOCj4PHZIJZB77/tyOWNcUpbBtC3TR
+	uVXsB7KoE9keotFVKy2vHGKtGhcpAQBk0vMrnJVs2CJG7vTaihYUP
+X-Received: by 2002:a05:622a:4012:b0:4b3:4f82:2b2a with SMTP id d75a77b69052e-4da4744e220mr69209891cf.4.1758838049451;
+        Thu, 25 Sep 2025 15:07:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+kiDioj7XNNOSUiRVIvZJf7NJTXJJKSATGhjuKbjf+uCQ8OyI87CrBJMN/jv48N8Iqu/Vnw==
+X-Received: by 2002:a05:622a:4012:b0:4b3:4f82:2b2a with SMTP id d75a77b69052e-4da4744e220mr69209361cf.4.1758838048863;
+        Thu, 25 Sep 2025 15:07:28 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313430bd6sm1169840e87.21.2025.09.25.15.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 15:07:27 -0700 (PDT)
+Date: Fri, 26 Sep 2025 01:07:26 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Hui Pu <Hui.Pu@gehealthcare.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/connector: allow a .destroy callback for
+ drmm-allocated connectors
+Message-ID: <ycbx4fxqppxuopcd64i6lt7qlcsa75iv4z6q4aka7igt7pntc7@bf3toot46wxo>
+References: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-0-f0736e1c73ee@bootlin.com>
+ <20250925-drm-bridge-alloc-getput-bridge-connector-v1-1-f0736e1c73ee@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI/IOV: Add missing PCI rescan-remove locking when
- enabling/disabling SR-IOV
-To: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>
-Cc: Keith Busch <kbusch@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250826-pci_fix_sriov_disable-v1-0-2d0bc938f2a3@linux.ibm.com>
- <20250826-pci_fix_sriov_disable-v1-1-2d0bc938f2a3@linux.ibm.com>
- <d346c265-6b0e-42ce-8275-7969c8e549da@linux.ibm.com>
- <9fb43fc399ac5917605b7bc721c4b0affb8ca255.camel@linux.ibm.com>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <9fb43fc399ac5917605b7bc721c4b0affb8ca255.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: N2eU3qL5PwiwqGVOyQl1CGnycvZfnP5l
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfXywC3eHLPAczg
- bb+hIriYgiTrcBDlydpWi5pVIN5prxkyDLOoJ68BPNdsFBjDNodO6CY0apYMAPvSrC68RmR3MCQ
- w9SHZC7o1THHA6Z8F2PpXI2q2wlzpgDEthfgXUqv9lrtHGYk7a8UFfhb2G6MfC86O/Wbs2MmFm0
- AJDJRt2soKtLGLZCGfDIu/fWsTNJ9o62s+TrVjSOEOX1yOYNKVr6DEo5ZTeu5pRwecWfTx+FoJF
- ywRxP6JcxaM42EsnxTza6OIbjPBzQpExq5VWWOMRXmeZ/PZe7bhAW/IpS2sEHmMbX54BePV8LoT
- mBvXXJwmKXGTErIhMfBX8pi0lTZ9bcmwKYIy5guS/TgdSnb6hw1KB3/DsyoP3Fra9IeD+fY8SC/
- ca5x7p+z/I1tgBGJWncghW7z3IqEug==
-X-Proofpoint-ORIG-GUID: N2eU3qL5PwiwqGVOyQl1CGnycvZfnP5l
-X-Authority-Analysis: v=2.4 cv=B6W0EetM c=1 sm=1 tr=0 ts=68d5bcc5 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=f7japnTVbOoWgXTj3B8A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-1-f0736e1c73ee@bootlin.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX7r9Rnt3pnwc+
+ 8f83nsHxJ3ETBoCtjB1uPCDhX3Ps5GwY57Odanr2D5vHNpiSi0XYG0WHVCo4g33xzfXiMi+XbdE
+ LbG1HzQSbKKH/0Fw6xxjpkEXS9lMCXkNKylzeC99IBssOZugKP+6hbsq++S7fneSVQQIXU98res
+ wa2t8FijXs1w3i0K5bWLxSB2fo8c+pGCjv6u7VN9wi4YoYU2/TtYoA6B51E8SpwFCwWaeIRnh63
+ yTKhVaVQN3PyKmoH4AKSmdb1bz6BLtrIVw1NkaTSKGGiTrZEg9q6mYyfogLjL11FlwNBRM2z4kk
+ 8o0euaexrXcq4QnrALu9ESYVQ2Ek1OTRVYiH8lzBVxtqNpcQwINWU/3r4VK91y4PD7Hepzg9dAd
+ s7RrivfiCLNTY/+rrwsc5oK+eQJE5A==
+X-Proofpoint-GUID: a3ZPy030-VNMvBBld8YEYKQPHIx7INVk
+X-Proofpoint-ORIG-GUID: a3ZPy030-VNMvBBld8YEYKQPHIx7INVk
+X-Authority-Analysis: v=2.4 cv=JsX8bc4C c=1 sm=1 tr=0 ts=68d5bd23 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=P-IC7800AAAA:8 a=LsQKV8oFGlUMgrd0jhAA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=d3PnA9EDa4IxuAV0gXij:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- phishscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
+On Thu, Sep 25, 2025 at 07:19:49PM +0200, Luca Ceresoli wrote:
+> Some code is going to need connector-specific cleanup actions (namely
+> drm_bridge_connector will need to put refcounted bridges).
+> 
+> The .destroy callback is appropriate for this task but it is currently
+> forbidden by drmm_connector_init(). Relax this limitation and document it.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> ---
+> 
+> The other obvious approach would be adding a separate .cleanup callback for
+> the cleanup-only actions. I tried both, they both apparently work, so any
+> arguments and opinions on which approach is best within the overall DRM
+> design would be very useful here.
 
-On 9/25/2025 12:48 AM, Niklas Schnelle wrote:
-> On Wed, 2025-09-24 at 10:57 -0700, Farhan Ali wrote:
->> On 8/26/2025 1:52 AM, Niklas Schnelle wrote:
->>> Before disabling SR-IOV via config space accesses to the parent PF,
->>> sriov_disable() first removes the PCI devices representing the VFs.
->>>
->>> Since commit 9d16947b7583 ("PCI: Add global pci_lock_rescan_remove()")
->>> such removal operations are serialized against concurrent remove and
->>> rescan using the pci_rescan_remove_lock. No such locking was ever added
->>> in sriov_disable() however. In particular when commit 18f9e9d150fc
->>> ("PCI/IOV: Factor out sriov_add_vfs()") factored out the PCI device
->>> removal into sriov_del_vfs() there was still no locking around the
->>> pci_iov_remove_virtfn() calls.
->>>
->>> On s390 the lack of serialization in sriov_disable() may cause double
->>> remove and list corruption with the below (amended) trace being observed:
->>>
->>>    PSW:  0704c00180000000 0000000c914e4b38 (klist_put+56)
->>>    GPRS: 000003800313fb48 0000000000000000 0000000100000001 0000000000000001
->>>          00000000f9b520a8 0000000000000000 0000000000002fbd 00000000f4cc9480
->>>          0000000000000001 0000000000000000 0000000000000000 0000000180692828
->>>          00000000818e8000 000003800313fe2c 000003800313fb20 000003800313fad8
->>>    #0 [3800313fb20] device_del at c9158ad5c
->>>    #1 [3800313fb88] pci_remove_bus_device at c915105ba
->>>    #2 [3800313fbd0] pci_iov_remove_virtfn at c9152f198
->>>    #3 [3800313fc28] zpci_iov_remove_virtfn at c90fb67c0
->>>    #4 [3800313fc60] zpci_bus_remove_device at c90fb6104
->>>    #5 [3800313fca0] __zpci_event_availability at c90fb3dca
->>>    #6 [3800313fd08] chsc_process_sei_nt0 at c918fe4a2
->>>    #7 [3800313fd60] crw_collect_info at c91905822
->>>    #8 [3800313fe10] kthread at c90feb390
->>>    #9 [3800313fe68] __ret_from_fork at c90f6aa64
->>>    #10 [3800313fe98] ret_from_fork at c9194f3f2.
->>>
->>> This is because in addition to sriov_disable() removing the VFs, the
->>> platform also generates hot-unplug events for the VFs. This being
->>> the reverse operation to the hotplug events generated by sriov_enable()
->>> and handled via pdev->no_vf_scan. And while the event processing takes
->>> pci_rescan_remove_lock and checks whether the struct pci_dev still
->>> exists, the lack of synchronization makes this checking racy.
->>>
->>> Other races may also be possible of course though given that this lack
->>> of locking persisted so long obversable races seem very rare. Even on
->>> s390 the list corruption was only observed with certain devices since
->>> the platform events are only triggered by the config accesses that come
->>> after the removal, so as long as the removal finnished synchronously
->>> they would not race. Either way the locking is missing so fix this by
->>> adding it to the sriov_del_vfs() helper.
->>>
->>> Just lik PCI rescan-remove locking is also missing in sriov_add_vfs()
->>> including for the error case where pci_stop_ad_remove_bus_device() is
->>> called without the PCI rescan-remove lock being held. Even in the non
->>> error case adding new PCI devices and busses should be serialized via
->>> the PCI rescan-remove lock. Add the necessary locking.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 18f9e9d150fc ("PCI/IOV: Factor out sriov_add_vfs()")
->>> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
->>> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
->>> ---
->>>    drivers/pci/iov.c | 5 +++++
->>>    1 file changed, 5 insertions(+)
->>>
->>> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
->>> index ac4375954c9479b5f4a0e666b5215094fdaeefc2..77dee43b785838d215b58db2d22088e9346e0583 100644
->>> --- a/drivers/pci/iov.c
->>> +++ b/drivers/pci/iov.c
->>> @@ -629,15 +629,18 @@ static int sriov_add_vfs(struct pci_dev *dev, u16 num_vfs)
->>>    	if (dev->no_vf_scan)
->>>    		return 0;
->>>    
->>> +	pci_lock_rescan_remove();
->>>    	for (i = 0; i < num_vfs; i++) {
->>>    		rc = pci_iov_add_virtfn(dev, i);
->> Should we move the lock/unlock to pci_iov_add_virtfn? As that's where
->> the device is added to the bus? Similarly move the locking/unlocking to
->> pci_iov_remove_virtfn?
->>
->> Thanks
->> Farhan
->>
->>
-> I contemplated this as well. Most of the existing uses of
-> pci_lock/unlock_rescan_remove() are relatively coarse grained covering
-> e.g. the scanning of a whole bus. So I tried to keep this in line with
-> that such that all the VFs are added in a single critical section.
->
-> Thanks,
-> Niklas
+Would it be better to use drmm-reset actions. I think the check here
+makes much more help overall than harm in your case, so I'd suggest
+leaving it in place.
 
-Makes sense, the patch LGTM.
-Reviewed-by: Farhan Ali <alifm@linux.ibm.com>
+> ---
+>  drivers/gpu/drm/drm_connector.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 272d6254ea4784e97ca894ec4d463beebf9fdbf0..bd0220513a23afcb096b0c4c4d2b957b81f21ee1 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -513,7 +513,8 @@ static void drm_connector_cleanup_action(struct drm_device *dev,
+>   *
+>   * The connector structure should be allocated with drmm_kzalloc().
+>   *
+> - * The @drm_connector_funcs.destroy hook must be NULL.
+> + * The @drm_connector_funcs.destroy hook must only do connector-specific
+> + * cleanups if any is needed, not dealloacte the connector.
+>   *
+>   * Returns:
+>   * Zero on success, error code on failure.
+> @@ -526,9 +527,6 @@ int drmm_connector_init(struct drm_device *dev,
+>  {
+>  	int ret;
+>  
+> -	if (drm_WARN_ON(dev, funcs && funcs->destroy))
+> -		return -EINVAL;
+> -
+>  	ret = drm_connector_init_and_add(dev, connector, funcs, connector_type, ddc);
+>  	if (ret)
+>  		return ret;
+> 
+> -- 
+> 2.51.0
+> 
 
-Thanks
-Farhan
-
-
+-- 
+With best wishes
+Dmitry
 
