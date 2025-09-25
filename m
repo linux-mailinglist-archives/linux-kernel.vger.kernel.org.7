@@ -1,262 +1,90 @@
-Return-Path: <linux-kernel+bounces-832777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73087BA04B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E67BA08A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8966F7BC7DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588E13BBD3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279202E54DE;
-	Thu, 25 Sep 2025 15:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA12306B14;
+	Thu, 25 Sep 2025 16:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meBnsbbr"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2VsaC8b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6139B2E229E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B1D30597E;
+	Thu, 25 Sep 2025 16:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758814017; cv=none; b=PWkDyH8MgbgLQN9pjgGk6Xqk8Q/DdkUhzT+PnHT/ke8D4XpnD7mGJlgR1LYWaFrzwNXXLdav8PEaHc/75e6KOiO/jBBU1siy8s/6GB/7rXGEFvc/DLZPR8iEwBkdExi6yJy3MfaO3A9yzkQESsVEDvKuKFR8FDuPXgMLrWyk3UE=
+	t=1758816285; cv=none; b=R0TWjRBAyhy2raQ0uyob4MUTp3wT0ZKaixWxur/kZntfq7miuF40IaazzryBGpMUTeECqIB8Wfa0e+cVuuubvVBEbkMG+uvCBETso2FJkkAeGaeBDLeUoMzJ3UnxfpvHUe4sIG+hSpG0DjvnjaDVSz6CWdBT12taS0sn8miDxZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758814017; c=relaxed/simple;
-	bh=M0BwKYTKOwG+97x6OWWGb8iaLDGyWUbHd+kuVNpzX7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdSw4Li/ch0FsJuUsxd6P7AcoNlCUWhiAK0YhoAzWWnImyPGRaRz2wdAWgkl2/4/d4KTRlPikJLLrwdVCryDnW+Vfb6Xc0TC/p0OV8y20B5ad93/m4irNTffqJkEgKZNu5WZ6ZyZrufaRrtetitb0Da4pkniOVSaGx28Wufl/w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=meBnsbbr; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b2b7d5ff690so24206866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758814014; x=1759418814; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E4GUf5N/3YbcyD+8Oivhe9ak/JJo3vnWEVVy0baHt1Y=;
-        b=meBnsbbrQ1+cXIu2KeE0B3YgAaOSWBbJrVnA99keKkpM5KoVSMU5A5Vq5EE9up5xe2
-         kHkKdybgqxtc/+y9ax8DvQXWnxd8ZX6Af3leR2HrF/K5Vy1/IUOwDiTqB6e1L10p0hgp
-         UGDEM6nsIGly5RVa78NWZSmwSXLDlrK0UdzSo0ctLeznsML0LI68/PEQZiVcv1n7i+MK
-         LxwsQx4790bk1j2YKtEwoVnllMqVUUFQOztT2SdSVI9AQbmm7h+URIyS2npl43j4XVGU
-         6A1jQIFi8vxczMzd1UjcRRWRGZvZ2E0ZMxgoGexsjKoi5/OY2xXHC7ptBVPd/oFxPK2Q
-         9tYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758814014; x=1759418814;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4GUf5N/3YbcyD+8Oivhe9ak/JJo3vnWEVVy0baHt1Y=;
-        b=VDMTYcaPztEuV/9KrXxgWdHtHFPmt17NjWI7ouBGWNaIw0zDg4I1kUBPgntJVtcOlp
-         wcKFuFA19I8qW2FE20GOUVz6gsICugLVkYFxmPTJPY+R28WJYlDDB7TjK27ngsxE9czF
-         6lW9ChuFUxvoJqQAsKPNA/e0A5OI99z3h4EB5LATaHEHFLz0zAyx166wIMiKGYLsLfWZ
-         ozPWvD2JLTjOalMAPffUq7LOjtpb+62QE2KK6gKxFXhdG2dYfR/420VRg71gA45sdit0
-         JZObWF7RhhlwrXWSxd+M88jTvGmmWHydLdZyoA5wcXCOKTQ6f/uRAH9/yGJzR9tVY5Ex
-         LQOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7rjOTJ0XNCBKXjJhjWFtSV0R+I6jb7c/GC+qA/GESdK1AItzsUcOXrk7dTol84G3ZwttdB/HTEqLxZik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyis04xCW5B9TAGBytzsTdEZ5lX14Pu1c0a1/E8zbnmsHudMr2L
-	XaQ+5m1jP5v+6t5FnQEPdvSstkUsb6P1vyEB0pb2mu+5HwmtLqjFL+iu
-X-Gm-Gg: ASbGncvptlxuzM1nvVGgCdaW+09ozi9puyQ+5oLd6ML6vPbK3/KwFRYpiwOgNx8VfPl
-	rO6lk4pRD/PkKsIjEk5SGMHKKzzp0T+aQJglX20+Tb5eiK8zZ0kXPY/CjPMdUjK8xipBR8tPsJg
-	FpXkBzAvDMkBnvuOYlrbSkQm9E4EkkJBRET4b8XDmIZ0wwiJG0wQCaSusgSO2AB8CvaCbYMYFt5
-	JXj8uHWqx4+zi2BMt45Iu4byOHzRY8yiPOS01/UAl2+eI6lyXRMqzayx4r2ack7736Y8qAvIUYS
-	d+xxY+ki9TN9S15UTnduFiDqwXs25KTlGCJKBuc2/bsg8SDQqD1dfEhAv1FC8o/W6GWEIgUr6P3
-	RQvq9m+39nBa3M1WQf5NZniF+3343Hbz/tAsSMGdEhw==
-X-Google-Smtp-Source: AGHT+IGDiS7N74oVbf2PUhKEBndwAEuvYhlHAhqWKLDD7n6ktQyQUWHg2Hw3sa9zB3n6Bnm5oDSerA==
-X-Received: by 2002:a17:907:1c15:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b34bde1e594mr225468166b.7.1758814013323;
-        Thu, 25 Sep 2025 08:26:53 -0700 (PDT)
-Received: from [192.168.1.105] ([165.50.26.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353f87511dsm192990966b.43.2025.09.25.08.26.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 08:26:53 -0700 (PDT)
-Message-ID: <4b77c830-2a7d-444a-adeb-4d1370f8923f@gmail.com>
-Date: Thu, 25 Sep 2025 17:26:48 +0100
+	s=arc-20240116; t=1758816285; c=relaxed/simple;
+	bh=J4lfDJvJgocwerP41ChdYCyqljRyihOByw2tDqIsf/0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=VrQxG1ju9A6/syvS2j2BouqHonWx1ddXLEFx7BnEpuFc4RY/F8j/bLgEw10sdwqOnwf++PYQNKj7+9VShZp/PpVeHXoVgyc3Hc3wVQXX8AjKiSfQd9MQqwAL51HOs2H9U5gnAe/6zvRVAazek3g0efWcTAvHbnysJ4XIIXMw/2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2VsaC8b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DBD4C4CEF5;
+	Thu, 25 Sep 2025 16:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758816284;
+	bh=J4lfDJvJgocwerP41ChdYCyqljRyihOByw2tDqIsf/0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=I2VsaC8bw4xCfIrNIpD1bNAl+0M2V2X1yr6BfxIQWRuKkpujsnlGPvTTgbhN+H46K
+	 CS8iZ7KQwSNoYBxUa3fV9xrwrtBUaa3zShjwn9+GsIFEPScHG06lFcG7CER/G14reF
+	 jKZ97z1grrkrJOoidPf9wm8jCb8n/Qa+8LBmooC8JP1PCoWLc6jr4CmYl9wb5L1X6J
+	 OJOVZKuzSsyQgT5NYRseInCHnm+nAFwG8GZmAZkkmbwgA2MKcG84clKVOkKxGJRgzu
+	 /T2h9fTtNvfUJQNDfqyGbOuSN1vsCNxYVM0206IExEQl+GxbDPurjctd+pqLfjDhqi
+	 sUlcOBOgn96Dw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests/bpf: Prepare to add -Wsign-compare for
- bpf tests
-To: Daniel Borkmann <daniel@iogearbox.net>, andrii@kernel.org,
- eddyz87@gmail.com, ast@kernel.org, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com,
- ameryhung@gmail.com, toke@redhat.com, houtao1@huawei.com,
- emil@etsalapatis.com, yatsenko@meta.com, isolodrai@meta.com,
- a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com,
- vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
- gregkh@linuxfoundation.org, paul@paul-moore.com,
- bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
- mrpre@163.com, jakub@cloudflare.com
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
- mptcp@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
- <20250925103559.14876-4-mehdi.benhadjkhelifa@gmail.com>
- <5ad26663-a3cc-4bf4-9d6f-8213ac8e8ce6@iogearbox.net>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <5ad26663-a3cc-4bf4-9d6f-8213ac8e8ce6@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 25 Sep 2025 18:04:38 +0200
+Message-Id: <DD20C3S0YCK0.25BIXD409WED2@kernel.org>
+Subject: Re: [PATCH 0/2] rust: pci: display symbolic PCI vendor and class
+ names
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "John Hubbard" <jhubbard@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250925013359.414526-1-jhubbard@nvidia.com>
+In-Reply-To: <20250925013359.414526-1-jhubbard@nvidia.com>
 
-On 9/25/25 4:04 PM, Daniel Borkmann wrote:
-> On 9/25/25 12:35 PM, Mehdi Ben Hadj Khelifa wrote:
->> -Change only variable types for correct sign comparisons
->>
->> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> 
-> Pls write some better commit messages and not just copy/paste the same 
-> $subj/
-> message every time; proper sentences w/o the weird " -" indent.
+On Thu Sep 25, 2025 at 3:33 AM CEST, John Hubbard wrote:
+> This applies to:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
 
-Understood, though the changes are very similar / are the same with the 
-same goal that's why it made sense to me to do that and I will remove 
-the - in future commits.> Also say
-> why
-> this is needed in the commit message, and add a reference to the commit 
-> which
-> initially added this as a TODO, i.e. 495d2d8133fd ("selftests/bpf: 
-> Attempt to
-> build BPF programs with -Wsign-compare"). 
-I will do that in the upcoming version.
+This is an old tree, the new one is:
 
-> If you group these, then maybe 
-> also
-> include the parts of the compiler-emitted warnings during build which are
-> relevant to the code changes you do here.
+https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git=
+/
 
-Okay. I will do that. Should i send a v4 with the recommended changes 
-but not including the rest of the files meaning the ones that I haven't 
-uploaded in this patch series which contain type casting or should i 
-just make changes for these files in this series?
-Also will it be better if dropped these versions and made a new patch 
-with v1?
+> John Hubbard (2):
 
-Thank you for your review and time Daniel.
-Regards,
-Mehdi
->> ---
->>   tools/testing/selftests/bpf/progs/test_xdp_dynptr.c          | 2 +-
->>   tools/testing/selftests/bpf/progs/test_xdp_loop.c            | 2 +-
->>   tools/testing/selftests/bpf/progs/test_xdp_noinline.c        | 4 ++--
->>   tools/testing/selftests/bpf/progs/uprobe_multi.c             | 4 ++--
->>   .../selftests/bpf/progs/uprobe_multi_session_recursive.c     | 5 +++--
->>   .../selftests/bpf/progs/verifier_iterating_callbacks.c       | 2 +-
->>   6 files changed, 10 insertions(+), 9 deletions(-)
->>
->> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c b/ 
->> tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
->> index 67a77944ef29..12ad0ec91021 100644
->> --- a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
->> +++ b/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
->> @@ -89,7 +89,7 @@ static __always_inline int handle_ipv4(struct xdp_md 
->> *xdp, struct bpf_dynptr *xd
->>       struct vip vip = {};
->>       int dport;
->>       __u32 csum = 0;
->> -    int i;
->> +    size_t i;
->>       __builtin_memset(eth_buffer, 0, sizeof(eth_buffer));
->>       __builtin_memset(iph_buffer_tcp, 0, sizeof(iph_buffer_tcp));
->> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_loop.c b/ 
->> tools/testing/selftests/bpf/progs/test_xdp_loop.c
->> index 93267a68825b..e9b7bbff5c23 100644
->> --- a/tools/testing/selftests/bpf/progs/test_xdp_loop.c
->> +++ b/tools/testing/selftests/bpf/progs/test_xdp_loop.c
->> @@ -85,7 +85,7 @@ static __always_inline int handle_ipv4(struct xdp_md 
->> *xdp)
->>       struct vip vip = {};
->>       int dport;
->>       __u32 csum = 0;
->> -    int i;
->> +    size_t i;
->>       if (iph + 1 > data_end)
->>           return XDP_DROP;
->> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c b/ 
->> tools/testing/selftests/bpf/progs/test_xdp_noinline.c
->> index fad94e41cef9..85ef3c0a3e20 100644
->> --- a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
->> +++ b/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
->> @@ -372,7 +372,7 @@ bool encap_v4(struct xdp_md *xdp, struct ctl_value 
->> *cval,
->>       next_iph_u16 = (__u16 *) iph;
->>       __pragma_loop_unroll_full
->> -    for (int i = 0; i < sizeof(struct iphdr) >> 1; i++)
->> +    for (size_t i = 0; i < sizeof(struct iphdr) >> 1; i++)
->>           csum += *next_iph_u16++;
->>       iph->check = ~((csum & 0xffff) + (csum >> 16));
->>       if (bpf_xdp_adjust_head(xdp, (int)sizeof(struct iphdr)))
->> @@ -423,7 +423,7 @@ int send_icmp_reply(void *data, void *data_end)
->>       iph->check = 0;
->>       next_iph_u16 = (__u16 *) iph;
->>       __pragma_loop_unroll_full
->> -    for (int i = 0; i < sizeof(struct iphdr) >> 1; i++)
->> +    for (size_t i = 0; i < sizeof(struct iphdr) >> 1; i++)
->>           csum += *next_iph_u16++;
->>       iph->check = ~((csum & 0xffff) + (csum >> 16));
->>       return swap_mac_and_send(data, data_end);
->> diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi.c b/tools/ 
->> testing/selftests/bpf/progs/uprobe_multi.c
->> index 44190efcdba2..f99957773c3a 100644
->> --- a/tools/testing/selftests/bpf/progs/uprobe_multi.c
->> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi.c
->> @@ -20,13 +20,13 @@ __u64 uretprobe_multi_func_3_result = 0;
->>   __u64 uprobe_multi_sleep_result = 0;
->> -int pid = 0;
->> +__u32 pid = 0;
->>   int child_pid = 0;
->>   int child_tid = 0;
->>   int child_pid_usdt = 0;
->>   int child_tid_usdt = 0;
->> -int expect_pid = 0;
->> +__u32 expect_pid = 0;
->>   bool bad_pid_seen = false;
->>   bool bad_pid_seen_usdt = false;
->> diff --git a/tools/testing/selftests/bpf/progs/ 
->> uprobe_multi_session_recursive.c b/tools/testing/selftests/bpf/progs/ 
->> uprobe_multi_session_recursive.c
->> index 8fbcd69fae22..017f1859ebe8 100644
->> --- a/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
->> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
->> @@ -3,6 +3,7 @@
->>   #include <bpf/bpf_helpers.h>
->>   #include <bpf/bpf_tracing.h>
->>   #include <stdbool.h>
->> +#include <stddef.h>
->>   #include "bpf_kfuncs.h"
->>   #include "bpf_misc.h"
->> @@ -10,8 +11,8 @@ char _license[] SEC("license") = "GPL";
->>   int pid = 0;
->> -int idx_entry = 0;
->> -int idx_return = 0;
->> +size_t idx_entry = 0;
->> +size_t idx_return = 0;
->>   __u64 test_uprobe_cookie_entry[6];
->>   __u64 test_uprobe_cookie_return[3];
->> diff --git a/tools/testing/selftests/bpf/progs/ 
->> verifier_iterating_callbacks.c b/tools/testing/selftests/bpf/progs/ 
->> verifier_iterating_callbacks.c
->> index 75dd922e4e9f..72f9f8c23c93 100644
->> --- a/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
->> +++ b/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
->> @@ -593,7 +593,7 @@ int loop_inside_iter_volatile_limit(const void *ctx)
->>   {
->>       struct bpf_iter_num it;
->>       int *v, sum = 0;
->> -    __u64 i = 0;
->> +    __s32 i = 0;
->>       bpf_iter_num_new(&it, 0, ARR2_SZ);
->>       while ((v = bpf_iter_num_next(&it))) {
-> 
+Applied to driver-core-testing, thanks!
 
+>   rust: pci: display symbolic PCI class names
+>   rust: pci: display symbolic PCI vendor names
+
+    [ Remove #[inline] for Vendor::fmt(). - Danilo ]
 
