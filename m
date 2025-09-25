@@ -1,211 +1,214 @@
-Return-Path: <linux-kernel+bounces-832862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271E3BA097C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:25:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D41BA0988
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E310620CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32DE53A8D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E003064B8;
-	Thu, 25 Sep 2025 16:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C825C305E20;
+	Thu, 25 Sep 2025 16:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPGQOCdC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NvX5voEo"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D963054CE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6F3054F6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758817544; cv=none; b=e+1elo1J3JSPtlsA3n/axi5EaUoJFGotGstu6+432UpM1NgTpocGxV7Jk4QtEvltRLB4jw0AjRlZ2rsPfrkmxWdfo4Vh/n5TIaZ+mMCx/jQPcBV/beqWXW94/mWtdZCYqCPzIyDea3xmRuBoWfP7vyyH9qs6u6SM6xhPwDswclQ=
+	t=1758817664; cv=none; b=E7hmB8LR1K3HjoVMg7wN1GpOInkrlJWfQ6EI9OLWYct7Ia0TkYdfNvutgQ+zzFYzpJEnVMlqucqSGflrBRrBAKjVdx/B4PQm5bd9TZUByhyorVX5yENLKt3Ne1+t/Ib/UeVF5VJrG11LXYxPzmA/4/P/anbwJgcWwC2or3Us4E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758817544; c=relaxed/simple;
-	bh=e2zTOUXdFrzwKW6u+2BZRJvKLeVeKwka9WRmiQrAMKE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gY4iBI57t0nmRDt4khTNGzujhIypzxopQ3q76iLsf5iE34MjVEHJ9N0dfo5iuZoFgNKl4F0SM0pYY0TZbzh8kEGgHdvFHXDtMOiiFQIlL8lW1sWiKfjItUTiALSEKwOnivyjsq13JImXkAwfQ5gUF+SN0c/JqfsVdZZecfBFjjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPGQOCdC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0308469a4so752328f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:25:42 -0700 (PDT)
+	s=arc-20240116; t=1758817664; c=relaxed/simple;
+	bh=SxFf/oqmf8wsFyNShi7os46aSF+pNg5cTkW3tzLLWn8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Io1EZpj810tuG6hvfWycYJZWuHhhJb80BQYeI6JtFg1955GSEwSKpjF/VNkEM3VcPwC455DeCH/SlTMasygajKJcLJK78zvTlxgcF2pje2E+tP7nC7UvCSdBg/PgpBDlbvd6IBohwysMo3cP5hg2CNqwJ8tuTcp84DjEIFTS01M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NvX5voEo; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-4256ec84b8fso665ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758817541; x=1759422341; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sp90x0HI2604VafoUtGiosJXSBDN/QH7OATIlIgLDsg=;
-        b=KPGQOCdC5XPB1/J8eD/D2m2IQe9ey4w1pU0lFDgu0rBjbdlsLfTMCcW8gjxup3EE2d
-         vwGRuphi2MRe65mp4c6zCM5ooqfYNJWJl+jm03jOAuzAAQf3aRS5YMhmvPJzobwkev4D
-         ujytbH4Xd6O6hXctlcBK6KF62ZdfC13ozys4wdm0r8zBtLDBaZsqcDgCLZd+2DF05oc3
-         C82AGnfGksYADjMFOCk2MfC+HJ7C2D9vhEzmkTlJnGCluskTEPpuM7UV0A3H9ygKRdMS
-         S1f84YsVcBTeryfm35SuXmfDuEFO4wYv9erN4eylrXd4XGdWdCI6leP+jdBV3z99jk+f
-         +uBQ==
+        d=google.com; s=20230601; t=1758817661; x=1759422461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8alXX8Vx5P1PMvrrz8A15t1lUKetKpLPe18RveHqZ44=;
+        b=NvX5voEojIzHf5dfxL7ylNaTywGL5YBvNap6In8d97Ul3cVzvUcf3AfyisGsIf6z6k
+         RniKZ5rTm5EddylBwmwxlK7xxJEAqkwRFnDBdvCIjDWANPinkR3ykaLpCDgXOWQQQUUA
+         fprBUt0TjpBXY74KSv3w9wOa4t1BQVJkl4l5+Iim49xPYdcThYtHzSUYE8Dmgszhc8kv
+         q2IbVT+uGPdqmMvn12M3ShFGYNfE2XaCHw08QpEZk+g9eOuma+f8La3l/vHkmX3LNe2M
+         70z3//WEz7abQr7+2WFMkWdc7EaqBOiARY/7jwYmb/Dk4b05NJMyg13EpVneO02ID+vi
+         zt+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758817541; x=1759422341;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sp90x0HI2604VafoUtGiosJXSBDN/QH7OATIlIgLDsg=;
-        b=Ias0Bp4rkB9pGEjlv0K3yYxqwIzJg8WdAwdHbsiq7pxtSzpQ7h3dMRwMkH8y7wC61D
-         vqs/TSqDLpRV6a8kq0m+OzMkTERsl4EYQFDXzdgBfvT9XIlIM6JOwNMVHy9UcGXpA9Bs
-         103gTOc9vD8PkDqnHkbHDghPHYq0b1+hrZxMYLxPg7lF7n+Ugew6j899DrWYNiXPa/bd
-         3gwoOQhc4NoRbsifRqkCKinJd1iHu5LVABkIiouzfa1NQmU40e0D0c9z/yv04CUpdEDk
-         CG2qYd2DSJkpQuW8g8ROga6ucOYQJto1DXrgJsVypc1koyAcJO/QLx+xXSMwDblX4MHd
-         G9fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhonuWTvcQXq0F2M67UxGTjxn3bvhFuqmHHbx5nN5GL6bFblyjPAPMJCfOJWOE1hb4jeJV4zK0sd3jaeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCtneH4l6gKkE9SBUydTvE+MTvx+erKJCENKU1WJGd3u1PxLRu
-	be1bPGcune/hTMWbVtEMr+5Z8qqIv0LWXDe7S0ivv+9zryZcMdLQjYi8
-X-Gm-Gg: ASbGnctnlFK24DEXCTlEonuKnfrwJnDZdriLTCCcrKC1XcsyGr+gXgMExr9Yy9DlobG
-	ssxYuRRR1NwTD6qWO7dQhiX9gGcYdWGttE5T1ZNDawPC1bV+wpmQV9LHW1pbj3dbpgEg5k4bkFy
-	vP4qyBE8sKbl8sVT4vTvXoyLio+qNFYUb2vhukwDDc2xitJCNf4UiKrBZskRGQjvvHVuNGPHrsp
-	lcnZ08E5VucuwdIwveFHwyfB9UBTCG0FQIagtWgwE9w6qcClAMRwy+IkkacQyuYY3OlupQAP2x1
-	5Zwze0FgHB3bsFbtzD5/wZCN63Pb2NeuZCtmAgeO4FxNqZys04f1K61dYY9SM4C5q587iKmqWXE
-	C/1+5NzKrB3sJB7hqagVtR+A5iWXRnz4L7/b2BKHE/U/eRiGQZAoNA8sjow==
-X-Google-Smtp-Source: AGHT+IE6mWeX6t2AH8HBB+UpOYdjBBRGFMRn/aYCb3judhabM8SWtsPgFs4uiI3dBuK0IPElmXVzNA==
-X-Received: by 2002:a05:6000:4387:b0:3ec:1fff:3b25 with SMTP id ffacd0b85a97d-40e3a2eef9emr4065514f8f.0.1758817541137;
-        Thu, 25 Sep 2025 09:25:41 -0700 (PDT)
-Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fac4a5e41sm3950563f8f.0.2025.09.25.09.25.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:25:40 -0700 (PDT)
-Message-ID: <9df66167c205e341bd5896376e06950aa7bd7240.camel@gmail.com>
-Subject: Re: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current
- with security= on commandline
-From: Filip Hejsek <filip.hejsek@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>,
-  "Serge E. Hallyn"	 <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	regressions@lists.linux.dev
-Date: Thu, 25 Sep 2025 18:25:39 +0200
-In-Reply-To: <CAHC9VhQ-c65UJS+dRaRFn_D=Sq++QXePTsCkN+cV5BVQEbf9fQ@mail.gmail.com>
-References: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
-	 <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
-	 <cd35aa283cf010188a3b0e318f2c16655224767c.camel@gmail.com>
-	 <CAHC9VhQ-c65UJS+dRaRFn_D=Sq++QXePTsCkN+cV5BVQEbf9fQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        d=1e100.net; s=20230601; t=1758817661; x=1759422461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8alXX8Vx5P1PMvrrz8A15t1lUKetKpLPe18RveHqZ44=;
+        b=Dz/8XT2RcyMbyvJm9MHI9LvVIA9KaXywweQkRd/DxTmVy+/wlr93PqCObJ7AzdW8QS
+         IHbwFGHM/aJuHbkf/0tl+u+CwQOImz4RBYnoQGfoynZNGhmTW4WSJkPAKmJfSbNEWsFU
+         ddBubx0U9TcioNrUYZWTLkTSl7rakIuYYNSAnvi3g7IRO3RJVvuoJ7/Ki36ClvAFyPw+
+         A5+LVLnVoh0zUwbSsvCl+9BwVSMIY2pxo2WrGC2cojsDrIXoWz/O0lpYIQ7mR5+P/2nK
+         emTce52/0tvydE9JQ0uGUjUlGeOmlIHMp37E4xsXVa+X2oEu7+pUDbYMfp1hoURqpHfe
+         2HRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrI2yMyQNesBHZVSxiZNo2UTn4y/KewIje7q/fUpsZMJi95BiOJHQNixNMukglz4fGPoSGvUDGPkggskM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvU3p9qXdZhLdQYWHOObqp4oP2POB4xT5bWOa8zH42TBGrCqTV
+	leB/47M5K+FU6hNrGZwngCUmJUb7aza82BH4vGg8OdDeBQ+6eKzTG6lUHi3rf0UUgwr7UArRQac
+	FHTqYZACjjj2nliY4BPJ1l/0rCtFr+gBbn2OB/IS9
+X-Gm-Gg: ASbGncsBzHR/g9x3nI2e4skWDbhh4cZLPJhDkj13JT6tEOEvAydS35cEJWAcaL6MIYn
+	AlX8B+4Y4mn2T/kPYmQZvxdGUCfNjl6MuUeQhbHRinW/KcbrQjaDrW7kr/55V/vHi9plD8aJ3PS
+	t4y5BxnPT0s41ZSMiLwbcRl9RQnf3X/oktuOYe5uUZrJlZ5/jgnTkjbQS7jB05ZoKGUhhLPWO5f
+	NP1x9lPYlgO+cCtxgpGdy76Txh1sXZwS5AOvqGPXeHo
+X-Google-Smtp-Source: AGHT+IE0U/Akn6KfZdQi3hMHKTNsTfXUBE073v8846IgqYIdAQipp1ZoMFszJSAgEACETdUsriBu3KVMJALctBt0kw0=
+X-Received: by 2002:a05:622a:1819:b0:4b3:8ee:521b with SMTP id
+ d75a77b69052e-4da23acea56mr8611721cf.0.1758817660558; Thu, 25 Sep 2025
+ 09:27:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz> <20250910-slub-percpu-caches-v8-8-ca3099d8352c@suse.cz>
+In-Reply-To: <20250910-slub-percpu-caches-v8-8-ca3099d8352c@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 25 Sep 2025 09:27:29 -0700
+X-Gm-Features: AS18NWDS5gKmUrtto-cMdIoznAg_NnCQ2mSnzIo1N59ebSpUh4KtZjXH7s5mmh0
+Message-ID: <CAJuCfpEL1n+yVJDK0UWxP9CYgu28z6yLUzDWXBKyF0Oyukt1XA@mail.gmail.com>
+Subject: Re: [PATCH v8 08/23] slab: allow NUMA restricted allocations to use
+ percpu sheaves
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-09-25 at 11:28 -0400, Paul Moore wrote:
-> On Thu, Sep 25, 2025 at 10:56=E2=80=AFAM Filip Hejsek <filip.hejsek@gmail=
-.com> wrote:
-> > On Wed, 2025-09-24 at 17:24 -0400, Paul Moore wrote:
-> > > On Sat, Sep 13, 2025 at 1:01=E2=80=AFPM Filip Hejsek <filip.hejsek@gm=
-ail.com> wrote:
-> > > >=20
-> > > > Hello,
-> > > >=20
-> > > > TLDR: because of bpf lsm, putting security=3Dselinux on commandline
-> > > >       results in /proc/*/attr/current returning errors.
-> > > >=20
-> > > > When the legacy security=3D commandline option is used, the specifi=
-ed lsm
-> > > > is added to the end of the lsm list. For example, security=3Dapparm=
-or
-> > > > results in the following order of security modules:
-> > > >=20
-> > > >    capability,landlock,lockdown,yama,bpf,apparmor
-> > > >=20
-> > > > In particular, the bpf lsm will be ordered before the chosen major =
-lsm.
-> > > >=20
-> > > > This causes reads and writes of /proc/*/attr/current to fail, becau=
-se
-> > > > the bpf hook overrides the apparmor/selinux hook.
-> > >=20
-> > > What kernel are you using?
-> >=20
-> > I'm using Arch Linux kernel, which is very close to mainline. I have
-> > also tested my own build from git sources (I used a stripped down
-> > config which I based on config from Arch). Example in QEMU:
-> >=20
-> > $ qemu-system-x86_64 -nodefaults -accel kvm -cpu host -smp cpus=3D2 -m =
-1G -display none -kernel ~/git/linux/arch/x86/boot/bzImage -initrd ./initra=
-mfs.img -serial mon:stdio -append 'console=3DttyS0 security=3Dselinux'
-> > :: mounting '' on real root
-> > mount: /new_root: no valid filesystem type specified.
-> > ERROR: Failed to mount '' on real root
-> > You are now being dropped into an emergency shell.
-> > sh: can't access tty; job control turned off
-> > [rootfs ~]# uname -a
-> > Linux archlinux 6.17.0-rc7-00020-gcec1e6e5d1ab #3 SMP PREEMPT_DYNAMIC T=
-hu Sep 25 16:28:02 CEST 2025 x86_64 GNU/Linux
-> > [rootfs ~]# mount -t securityfs securityfs /sys/kernel/security
-> > [rootfs ~]# cat /proc/cmdline
-> > console=3DttyS0 security=3Dselinux
-> > [rootfs ~]# cat /sys/kernel/security/lsm; echo
-> > capability,landlock,lockdown,yama,bpf,selinux
-> > [rootfs ~]# cat /proc/self/attr/current
-> > cat: read error: Invalid argument
-> >=20
-> > (Note: In this example, uname reports archlinux, but that's only
-> > because I based the config on Arch config, it's not actually an Arch
-> > kernel.)
-> >=20
-> > Maybe the different behavior is caused by a different config? You can
-> > find the Arch config at [1]. Based on Fedora package sources, I think
-> > their config has
-> >=20
-> >    CONFIG_LSM=3D"lockdown,yama,integrity,selinux,bpf,landlock,ipe"
-> >=20
-> > while the Arch config has
-> >=20
-> >    CONFIG_LSM=3D"landlock,lockdown,yama,integrity,bpf"
->=20
-> That's interesting, you're running a LSM that isn't normally run in
-> your distro and you're not properly initializing it (no policy load).
-> Both are acceptable, but you're definitely operating in the
-> corner-iest of corner cases ;)
->=20
-> I'd have to look at the relevant code, but I suspect that with
-> "selinux" missing from the CONFIG_LSM list and you manually specifying
-> it on the kernel command line with "security=3Dselinux" you are getting
-> it placed at the very end as opposed to what I saw (I have "selinux"
-> in my CONFIG_LSM list).  It's further complicated by the fact that the
-> procfs call into the LSM's security_getprocattr() hook is going to
-> pass a 0/zero into the hook as the @lsmid which means "first
-> available".
->=20
-> Considering that the "security=3D" parameter is a legacy option, I'd
-> encourage you to try the "lsm=3D" parameter (make sure you specify the
-> full list of LSMs you want, in order) to see if that works.
+On Wed, Sep 10, 2025 at 1:01=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> Currently allocations asking for a specific node explicitly or via
+> mempolicy in strict_numa node bypass percpu sheaves. Since sheaves
+> contain mostly local objects, we can try allocating from them if the
+> local node happens to be the requested node or allowed by the mempolicy.
+> If we find the object from percpu sheaves is not from the expected node,
+> we skip the sheaves - this should be rare.
+>
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Yes, that works.
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-The problem isn't that there wouldn't be any working configuration. The
-problem is that a userspace program (in my case CRIU) was broken and I
-had to spend time figuring out what the cause of the issue was. I'm not
-the only one who encountered this issue [1]. I know that at least
-Manjaro Linux used to ship a grub config with security=3Dapparmor at some
-point (and maybe still does). I no longer use Manjaro Linux, but I
-still had this parameter left in my grub config.
-
-[1]: https://github.com/checkpoint-restore/criu/issues/2033
-
-So in reporting this issue, I was just hoping to help future users
-avoid the same problem. If you think this is a waste of time, feel free
-to ignore this (and sorry I didn't make this clear in the first email).
-
-Lastly, I will offer a few thoughts:
- * The fact that the security parameter can break programs like this is
-   highly non-obvious and undocumented.
- * The BPF LSM hook which causes this breakage is useless, because a
-   BPF program cannot be attached to it. I think it would make sense to
-   just remove it.
- * Switching to using /proc/*/attr/<lsm>/* solves the problem from the
-   userspace side. Unfortunately, selinux does not have its
-   subdirectory in attr.
-
-Kind regards,
-Filip Hejsek
+> ---
+>  mm/slub.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 46 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 9699d048b2cd08ee75c4cc3d1e460868704520b1..3746c0229cc2f9658a589416c=
+63c21fbf2850c44 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4888,18 +4888,43 @@ __pcs_replace_empty_main(struct kmem_cache *s, st=
+ruct slub_percpu_sheaves *pcs,
+>  }
+>
+>  static __fastpath_inline
+> -void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
+> +void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp, int node)
+>  {
+>         struct slub_percpu_sheaves *pcs;
+> +       bool node_requested;
+>         void *object;
+>
+>  #ifdef CONFIG_NUMA
+> -       if (static_branch_unlikely(&strict_numa)) {
+> -               if (current->mempolicy)
+> -                       return NULL;
+> +       if (static_branch_unlikely(&strict_numa) &&
+> +                        node =3D=3D NUMA_NO_NODE) {
+> +
+> +               struct mempolicy *mpol =3D current->mempolicy;
+> +
+> +               if (mpol) {
+> +                       /*
+> +                        * Special BIND rule support. If the local node
+> +                        * is in permitted set then do not redirect
+> +                        * to a particular node.
+> +                        * Otherwise we apply the memory policy to get
+> +                        * the node we need to allocate on.
+> +                        */
+> +                       if (mpol->mode !=3D MPOL_BIND ||
+> +                                       !node_isset(numa_mem_id(), mpol->=
+nodes))
+> +
+> +                               node =3D mempolicy_slab_node();
+> +               }
+>         }
+>  #endif
+>
+> +       node_requested =3D IS_ENABLED(CONFIG_NUMA) && node !=3D NUMA_NO_N=
+ODE;
+> +
+> +       /*
+> +        * We assume the percpu sheaves contain only local objects althou=
+gh it's
+> +        * not completely guaranteed, so we verify later.
+> +        */
+> +       if (unlikely(node_requested && node !=3D numa_mem_id()))
+> +               return NULL;
+> +
+>         if (!local_trylock(&s->cpu_sheaves->lock))
+>                 return NULL;
+>
+> @@ -4911,7 +4936,21 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t g=
+fp)
+>                         return NULL;
+>         }
+>
+> -       object =3D pcs->main->objects[--pcs->main->size];
+> +       object =3D pcs->main->objects[pcs->main->size - 1];
+> +
+> +       if (unlikely(node_requested)) {
+> +               /*
+> +                * Verify that the object was from the node we want. This=
+ could
+> +                * be false because of cpu migration during an unlocked p=
+art of
+> +                * the current allocation or previous freeing process.
+> +                */
+> +               if (folio_nid(virt_to_folio(object)) !=3D node) {
+> +                       local_unlock(&s->cpu_sheaves->lock);
+> +                       return NULL;
+> +               }
+> +       }
+> +
+> +       pcs->main->size--;
+>
+>         local_unlock(&s->cpu_sheaves->lock);
+>
+> @@ -5011,8 +5050,8 @@ static __fastpath_inline void *slab_alloc_node(stru=
+ct kmem_cache *s, struct list
+>         if (unlikely(object))
+>                 goto out;
+>
+> -       if (s->cpu_sheaves && node =3D=3D NUMA_NO_NODE)
+> -               object =3D alloc_from_pcs(s, gfpflags);
+> +       if (s->cpu_sheaves)
+> +               object =3D alloc_from_pcs(s, gfpflags, node);
+>
+>         if (!object)
+>                 object =3D __slab_alloc_node(s, gfpflags, node, addr, ori=
+g_size);
+>
+> --
+> 2.51.0
+>
 
