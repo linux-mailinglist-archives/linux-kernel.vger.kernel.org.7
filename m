@@ -1,191 +1,222 @@
-Return-Path: <linux-kernel+bounces-831681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A7B9D4EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:22:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0E3B9D4F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DB707B5C1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FF1D3B3D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186012E7166;
-	Thu, 25 Sep 2025 03:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED2B34BA52;
+	Thu, 25 Sep 2025 03:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DNQ7Qxab"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYTiIABD"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B4134BA52
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9D814F70
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758770558; cv=none; b=mn4M/6w9555FltPc/IBH0B0HRzryUBshdXnJha/9fZuthpE7v/6swh2ButkLgbSc+n7KqmJ3lH9EZdMQKMf+1jrEFaaAqDnKe8Q1efdkXt8pA+hYObeeNh18D1ghO8JZ+GYaLcg2Rq8WkCRQk+KyZ7TpU+aIslWZWFwaiKZnq94=
+	t=1758770641; cv=none; b=ea5F62QPIIeHjLhvIIBaxzaBAWC2aQ6Y5Qh9Jq/1u8O1WVABkI+rr9Rs5e/vXmzc15sgBmcQwLxHBjLKT40Fu+QOOKnzzXUQNGbB0HCYvY1MAPwlvTzNPkrz0IdiWKpsLlabVXZy1cBLOD1stsbDPOMz9YVD/MNt1LEWH8d6qgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758770558; c=relaxed/simple;
-	bh=6pmeTUqKLAywnwstwRk80ICI60VTQgJd12zVbpW8u88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgEkZESQeFZbtvmm41OjAWH5LYHpwHeM8jUWH+BTRHBfQHW0GbEoh4JJPTANA28DLwi0KZBFZZhEdZMfZ9sEXE2OoWfHlmiWrq9McBWi9PnLNfBJIlBRTR1T2Mye5c4HxNZGhJ3nUcTMwVPbv6SlYRBDPYT0t8Ga/lXkTtI0tyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DNQ7Qxab; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P17Id7016452
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:22:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=cpArUBkBwSCGSXirYH+a+MgH
-	TCrTiPbzylW7/OuHCvc=; b=DNQ7QxabAyvg9uEPlYgehRAKOktqYaejEjwFOyAZ
-	/ac4Rf4Zl2Z63RH3YpptKjE7xpJclHanT2KLfcT+JuyO8quzgoISSaKoT9R+PZDD
-	+MRm8cGsyUYz509hI/35e1ivnXQ03+mZGzG126a0xL38cTcBBEQ6vUchsi5P09J3
-	hf27GT0up7zM20LK1f3njmN8x5Yxdm5NcLXEMabTztb6hAsGs/3/IqIrtYmeK4JZ
-	S3wqEbBLG2lBcyHh4axmPWWgNk0Km/oH08aqWyck7fyxrUnLKBTOoAANNDKfQ+Oz
-	k6ZKnI2EijzsbdSQDhVrHCsYmi6Xe2AkwWNIHTtLNKShuQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3nyjd60-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:22:36 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4cbfc51331dso7045801cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:22:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758770555; x=1759375355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1758770641; c=relaxed/simple;
+	bh=X1tNOR4EnqLn3peT9DJH4NTpUhI6OCjta/1nUUQxGwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AkEZj1kJMmHBHEy3yBAQ7JPNUXa2HCX2p6RFoo0XdLhc9ROk+LWSnF0uvLmXex8QbKOWRadOVjQvt3jqMS1mSaTPaMyuQRCruobWE/F3QBjbBhSss9JMheegFnN7m2nC5cdscJe1JRE7jfAg+Af2YeI28SfIHz+fKGfqQdaDPXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYTiIABD; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eda3a38ceso245595ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758770639; x=1759375439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cpArUBkBwSCGSXirYH+a+MgHTCrTiPbzylW7/OuHCvc=;
-        b=thtv+4EAnYFeQLW2F1u4ZAK/hszmnXmBMzpV2/7isB1ejix0cRppzDJ5kriD0SiZC8
-         jNep+dFcComAkp+ff5vriofxDVS5MxQ3OSbfavrGk8gasZY1PFQXzEJJTj41p5k+owdn
-         oM7MMQYh7PQhWkXaGPMrp+V2sxJTJ4Q2rJhvbT36KN2FOtRllZ5qQEgnxc6fCsp7059J
-         FJ5lIirW1s51GNQGzPDbiHqjRkFysqF+sOfT/9u8zNsuRFeo53jExSD533/Ds/Tq90HN
-         XCZuY/Pupvc3r0KqR/18EAF+PUhVRX/BTMZi8N/oc4jQjSRATyT0gc63iLbhnqru1Z8q
-         KWAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT9yZXuJdbbH73lMxbm3MRU/pqxgs2MgqwqBeqSkcuFR1DMqgS7gyQuQ4033RRqzrkFSQpLm99u9wLlpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwzt+TuZtbb5G5R2ksSk22XGVnpvKNiyWb/tgjTS8n5KxDwy90
-	9KCpWscEfi8C23wNggG+xOe8d6zpAgmgb7pliLjF7iXHxaF9JsYTP+wFUTpY7kTSkD/wkGWF+6G
-	UV4nX0OLBaH5gJTvupydLyLwZ/qAsCIG6/7Mmi7Vlqo4EEaxBTUloMag7JFQKeLWWA/4=
-X-Gm-Gg: ASbGncvs0WiqpQBUyS/GLRzo5fdNGg+/cSd8QeQGnwV48wZNVO2gE5enNTKdkkv0pSW
-	Qgs1rE890jzLIpLP0HZ7YZZ/YsRpFfUMfy+SOlWugraWPyJEl2Ua9h5ll8c3yzhsMknxZLzptNJ
-	kSnSykcBdWjsYqmALWJsNOlB8waLqU3eke1oBrsphHy9dkxQrqs53UJP+dNpvTt8Zz0QkoNAwTu
-	zh9zYnqBluz5vzj6JOeABSejjnDeiGbg4hCDeNOTlc6BKkZAlYCthWatvVNRX+LUECGNGp14H16
-	HBy5FD8JeVpqAsoBUaeFYTl5og3u60XRbY6kUzLqm+IqRKpBfTmhf9OYVDxqY6VUzuxlbICqVMB
-	Pl8564gIKBj7yPI2Rl87Sfl1NPfqm9emcprevaqYuyKDTKbwDRDIi
-X-Received: by 2002:a05:622a:5508:b0:4d6:3a5a:269d with SMTP id d75a77b69052e-4da4c39c529mr25537641cf.67.1758770554799;
-        Wed, 24 Sep 2025 20:22:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTUdtmrhyn0t7zzPYoXxLVVNyi0tAdluJQRBBaRFKrF7eL5xwBNXuv++LT/1rjvjlu3hyNzA==
-X-Received: by 2002:a05:622a:5508:b0:4d6:3a5a:269d with SMTP id d75a77b69052e-4da4c39c529mr25537391cf.67.1758770554315;
-        Wed, 24 Sep 2025 20:22:34 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665624esm285483e87.69.2025.09.24.20.22.33
+        bh=6ALtdxioioVUPdZ249fa6+reQMnKejsflkFYaDtWyvw=;
+        b=hYTiIABDckKcfkyFSuS5Qr0FhdCDJKkAY+aZOITXKrZjcomTbbNh7XFKf3NhH88jNM
+         2wx5JhM/r6VX74q+vk3MuGX99jcnxWiCOyHBjc56BXsrvRqTjrLkh9bL1zRCBEMfU9rL
+         eiAnJbDcnDR+5c4d5XNVuQCivNkJ04Vv7Jk0xnzZlMrvxBU0L4+6U6H+yaSvtXJJ8vk2
+         RKYWGB6f7KkOHGPPgQ8T7bZF1bYiMIBGE5qoC7jEj9cXPihRMpb3iHDfczzgNhy1c3dg
+         rizdQrTSGHxGPUbexyJ6VDEwsz4TZTtiAU4IYL+a8WrukbW8uwsyc/mv6PRWgdBHCtZO
+         SSCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758770639; x=1759375439;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6ALtdxioioVUPdZ249fa6+reQMnKejsflkFYaDtWyvw=;
+        b=SvMG+5+rzABXrF3hgMNmbU4fBoLZjn6LDTkPW7EfW+jqz+OkxckTcKKFxYksdNQwJT
+         Rxj9Mas1Kj77oKrSjSD7vrZ1x7xjRu/YZO/3yIerLdeqpEZt0CdGo/ZSS0snAOlT56uX
+         UTVMVd2TcUWPiZx/MxEMAsuOB0Xf3tU1BUyRUAPbEwVPnqAJ9T3zNpnchstyjPTi6kS4
+         Mj6pn9lryI5tPLop2WY/Dqvri+EjhyEviLjfxRfZ5PnS4PMM+ccHwllPTtxrjkXtwaGz
+         CaUBleZ6XVhqDl37qcTfaPmsb1eeaRIWavTHbJBZwnClF4sxfQ7PiQdbEzcLCHUAfOG9
+         +XLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4/tiDFL5U6+HqDrHSCT4wDkApsxLY6raAOv484NiRpYQDDAhRjZQC8gR4l1LSitjDtVCTBRCI3kv/Dy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlnbrtRyUw2f2JOXRfuQ9Dtm3tx+9Pt55zlH6wWn6spfM7WCsh
+	4dl/S2plij5Oh/JLfc2PIGpML+dvd3o9M0mOvbUrhz5SxNkgB/6Usqe8
+X-Gm-Gg: ASbGncuSl8Z5DriRCU0uoCWx79SsSRaHslmSU1kARFXjEPJN4QxtPd5HKsGp+VgFoft
+	kqlZMw79hQjMbOdDnc0Nmjr8WIGZ0oxCSVCMKG6UX2yNNg2soB5YDryfRtW5MkkfUSMUmS3Mqes
+	8LE3chjCLKciSysMonWOHG9PTGmdIXOTcbcPyAhWBUCH8/EhzDZW1tNBPLktwryGOB5JgOUW/KO
+	j75Z7DTE6YuQo3eCt+fe2AKMn0i5g44B9y1Wgb+EDDtxIJyb3DTURk4yte5/TOh2U95QlovSEA5
+	hrQZ5EcfAFA/R23Hn+0Wz5AC7KjiosGaFoK1/3WY2tR0ER2NOaJxbH+ZHLwCGTcXoFODshDAROt
+	2S7JaNb4Sj2lX64cW/1LvyOI=
+X-Google-Smtp-Source: AGHT+IExiuoke1BO1yKig9GT9/NXxGRxhsCiCsu8+WVeI+rNb6cIW7R9xXIvDy8Jo/2hG/yxkf2Ddw==
+X-Received: by 2002:a17:902:f551:b0:274:506d:7fe5 with SMTP id d9443c01a7336-27ed4a17347mr12353165ad.4.1758770639109;
+        Wed, 24 Sep 2025 20:23:59 -0700 (PDT)
+Received: from rock-5b.. ([45.32.55.39])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3342a3cab8fsm503548a91.1.2025.09.24.20.23.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 20:22:33 -0700 (PDT)
-Date: Thu, 25 Sep 2025 06:22:31 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-        Tengfei Fan <tengfei.fan@oss.qualcomm.com>
-Subject: Re: [PATCH 02/20] arm64: dts: qcom: Introduce Kaanapali SoC
-Message-ID: <oitgxbjkjftsq6an6dbtqrb2vfwrpv7tybmo4zck24hzh7p6gr@4gochzskawnm>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-2-3fdbc4b9e1b1@oss.qualcomm.com>
+        Wed, 24 Sep 2025 20:23:58 -0700 (PDT)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: airlied@gmail.com,
+	broonie@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujianfeng1994@gmail.com,
+	lumag@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	quic_abhinavk@quicinc.com,
+	simona@ffwll.ch,
+	sophon@radxa.com,
+	tzimmermann@suse.de
+Subject: Re: [PATCH] drm/display: add hw_params callback function to drm_connector_hdmi_audio_ops
+Date: Thu, 25 Sep 2025 11:23:38 +0800
+Message-ID: <20250925032338.20243-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <5au5p32oyouifgmqlnl7unm6n7tbxq45wpwpqx57xoepiucmxw@tjqlbh2a57yk>
+References: <5au5p32oyouifgmqlnl7unm6n7tbxq45wpwpqx57xoepiucmxw@tjqlbh2a57yk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-knp-dts-v1-2-3fdbc4b9e1b1@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=EuPSrTcA c=1 sm=1 tr=0 ts=68d4b57c cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=7sPlXishrNHXYsHdOZMA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: F78asSauMDobEQWOO1YYTQTpJzuTGapp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA5MCBTYWx0ZWRfX7B5D2vg2K+8D
- 2haD+d0IEasSW6tbeDv8AWUN/QxuX8GXgN24/SYgf1+IJQw1glP/HwX/szkF/8raG23kf1JuidL
- Hj7zgk2lU4rzBe2RSfcEMUif9qBlM9vnkaSD/1XSGw611F3EDEf/C9K+41wrUViObhCTinjTaBN
- vtcG/cGd26fjmuz6WxtlX5HV/ZYzBpO+ihKjmWXkOkcS0DCdTo+vYmIL1Sk0sqoTPHR5ND0r+lv
- 1GQ1+DNyX3Nvyp50RjrUw12AevNHPVDQfTE3tLGUxEF2Y6ey1QmZmiLYZQDhJRqI0xqFjSnOHVs
- djSzZdAwVjYtAb9tnpNrxgN7SVr2CAKiDNMKyYTDhRwsQELw6/w2aaaqMzDcqUt+j6xDMmhS05N
- tkSPea4P
-X-Proofpoint-ORIG-GUID: F78asSauMDobEQWOO1YYTQTpJzuTGapp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220090
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 24, 2025 at 05:17:19PM -0700, Jingyi Wang wrote:
-> Kaanapali is Snapdragon SoC from Qualcomm.
-> 
-> Features added in this patch:
-> - CPUs with PSCI idle states and cpufreq
-> - Interrupt-controller with PDC wakeup support
-> - Timers, TCSR Clock Controllers
-> - Reserved Shared memory
-> - GCC and RPMHCC
-> - TLMM
-> - Interconnect with CPU BWMONs
-> - QuP with uart
-> - SMMU
-> - RPMHPD
-> - UFS with Inline Crypto Engine
-> - LLCC
-> - Watchdog
-> 
-> Written with help from Raviteja Laggyshetty(added interconnect nodes),
-> Taniya Das(added Clock Controllers and cpufreq), Jishnu Prakash
-> (added rpmhpd), Nitin Rawat(added ufs) and Gaurav Kashyap(added ICE).
-> 
-> Co-developed-by: Tengfei Fan <tengfei.fan@oss.qualcomm.com>
-> Signed-off-by: Tengfei Fan <tengfei.fan@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 1320 +++++++++++++++++++++++++++++++
->  1 file changed, 1320 insertions(+)
-> 
-> +
-> +	soc: soc@0 {
-> +		compatible = "simple-bus";
-> +
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		dma-ranges = <0 0 0 0 0x10 0>;
-> +		ranges = <0 0 0 0 0x10 0>;
-> +
-> +		gcc: clock-controller@100000 {
-> +			compatible = "qcom,kaanapali-gcc";
-> +			reg = <0x0 0x00100000 0x0 0x1f4200>;
-> +
-> +			clocks = <&bi_tcxo_div2>,
-> +				 <0>,
-> +				 <&sleep_clk>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
+Hi,
 
-You have UFS clocks. Why are they <0> here?
+On Thu, 25 Sep 2025 06:08:58 +0300, Dmitry Baryshkov wrote:
+>> [   14.055198] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+>> [   14.067225] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+>> [   14.089925] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+>> [   14.105988] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+>> [   14.106027] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+>> [   14.122707] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_prepare() started
+>
+>From this log I don't see, why the function would fail in the way you've
+>described. Could you please post (for comparison) a trace log without
+>your patch?
 
-> +
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
+Here is the trace log without mu patch:
 
--- 
-With best wishes
-Dmitry
+[   14.093437] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   14.105285] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   14.127546] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   14.144819] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   14.144855] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   14.652233] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   14.659556] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   14.666326] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   14.677484] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   14.690897]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   14.699779] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a660_gmu.bin from new location
+[   14.702160] [drm] Loaded GMU firmware v3.1.10
+[   14.714573] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   14.721910] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   14.721923] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   15.231216] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   15.238577] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   15.245323] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   15.256528] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   15.269943]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   15.279988] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   15.279997] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   15.785610] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   15.792908] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   15.799687] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   15.811261] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   15.825865]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   15.843283] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   15.843300] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   15.991449] rfkill: input handler disabled
+[   16.349109] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   16.356529] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   16.363279] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   16.374539] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   16.388835]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   16.399355] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   16.399371] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   16.905665] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   16.913032] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   16.919837] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   16.931141] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   16.946106]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   16.958230] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   16.958242] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   17.464922] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   17.472219] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   17.478985] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   17.490126] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   17.503539]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   17.513599] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   17.513606] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   18.019162] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   18.026682] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   18.033427] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   18.044729] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   18.058144]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   18.068168] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   18.068176] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   18.574028] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   18.581321] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   18.588086] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   18.599667] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   18.613127]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   18.646419] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   18.646443] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   19.152583] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   19.160139] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   19.166909] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   19.178407] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   19.191821]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   19.222661] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   19.222678] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   19.730557] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   19.738156] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   19.744933] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   19.756633] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   19.770042]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   19.789888] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   19.799242] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   19.799252] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   20.308857] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   20.316540] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   20.323280] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   20.334923] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   20.348392]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   20.358449] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   20.358456] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   20.865298] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   20.873431] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   20.880197] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   20.891777] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   20.905293]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+[   20.924421] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
+[   20.924455] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
+[   21.431143] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
+[   21.439239] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
+[   21.445985] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
+[   21.457877] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
+[   21.471375]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
+
+Best regards,
+Jianfeng
 
