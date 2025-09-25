@@ -1,385 +1,169 @@
-Return-Path: <linux-kernel+bounces-831945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A87B9DF5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CE0B9DF5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47DE038422F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7F04C1DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA552E973C;
-	Thu, 25 Sep 2025 08:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2gspQ2j+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mW8ZkwYc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD02326AA94;
+	Thu, 25 Sep 2025 08:02:20 +0000 (UTC)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82EF23D280;
-	Thu, 25 Sep 2025 08:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451002343BE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758787311; cv=none; b=t9c+8Z8+DKn+dbvSgM0mKbwnTA3qhX8MhSgXTPEu18nDIG5sNFpt9O+944ovYuhVBSNRlm02vE+Cot+BSdc2q4xdEfGVav4ewOYyVBx+0NzFDC5Wz/i0xSR3P6jhR72ELPRgXxQKbc9mnJdX7tVvf5nQy3sgArfsBLUco9E87HI=
+	t=1758787340; cv=none; b=T46mVDEfo82OTBof0Owa0Y2qxS4O9xkGW0QBcpD2smEp7c4a3Af4P0xWLgfRypm6T7H1Is7yC2f7WhB5uNOsasDfYbjo7iFmKLMCYvfNE2HwhjaqmDlrNgfyZzOXIfMBW3Y45dzyEahFc83TwkYLG00L0S49BMYzOkl0/Myb3I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758787311; c=relaxed/simple;
-	bh=jhACT2/GljQCHkLHvUpQ2gEmL2P7mPmaveMMRt1q98c=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LrdZN2yKuq47GiVDAV82E32VFJjPXaUs2TzGW3lnSsLUwLLFuAgd+oKxmj3K6TeG4XudPLWYSOsEYbcXCZ9U+c6Cy/Iq+8/tpWYdAUpHs4DNRAuyjnvipmxah9fn0Jr687Um40gBPoKMNTU9NZ94X/8yDekpY8GpWOWd7mXiCXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2gspQ2j+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mW8ZkwYc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 25 Sep 2025 08:01:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758787308;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dySMKTaxeHt1COLMoOFQ5TizVzelFZe85PmV7ej23nw=;
-	b=2gspQ2j+PcwT4yTTpDZSYjR8YDTbvVSM/C8D1UifZV23qBSq35Qq9mdnBrqCKyWzmDvvgK
-	ofjfbEvdtvuHalCVkQP4JsPWaVoMYDyc5IZ8af3QjC8AakEbP4Uki2CzwW9YebCB/guat5
-	TbQph79mxQya8yWsc8uXI7imG/B7hAe+MPp9pUTktKVS1aKhgUJAIjw1qA6mrGZRWcLN0Y
-	+AmJUDg+n+mdfe03rE/0bLQNEMOwyLFM3VtYoc15vnsySU8OhDmSJ5pljOMLH2d2i5JD+s
-	GvPYZer2I0oQRR8xdYFbS5uQmzSjIlQzA2JPt6ipiL3D6xnxZ9S6rquElAck1w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758787308;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dySMKTaxeHt1COLMoOFQ5TizVzelFZe85PmV7ej23nw=;
-	b=mW8ZkwYcFkqvC/XZPE7zSBMl0BYtsd4RDjKWUaIW0VAvdQe3p/ensEppB5fi7b0Nwu7qDK
-	0SPGlYMisa6fHMBA==
-From: "tip-bot2 for Menglong Dong" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] arch: Add the macro COMPILE_OFFSETS to all the
- asm-offsets.c
-Cc: Menglong Dong <dongml2@chinatelecom.cn>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250917060916.462278-2-dongml2@chinatelecom.cn>
-References: <20250917060916.462278-2-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1758787340; c=relaxed/simple;
+	bh=NdLPCWYGKs4Nnl4f/TPtkkAAU2xiHmYr81MGuS2MbZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H9EuZrBxnGU8a5nfkFlt+9K7lVL22YUY354LuACLF8hl5ncrJOBVBn0TlZs2Omnv7gg2h1H9fld8lLSBCX3b2jHcdJS7GmLlbhqlFw4REhK1M5SQEhpkEWw0T6YcwbY/elnC1nm44GkuDMrtKnGviK2hWjAPlRx1kOFp6kpGs5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-5997f407c85so237584137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:02:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758787335; x=1759392135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rUcMlfE8b4AOAO2p/aFN45tB3uALYO0TSoBHD4chZzo=;
+        b=ivIHRrGvUktTNwVuzCoGwso1H5oQZMCLW8ijmGjh0JCyge8RBfQG2YyN079Qj3l4U6
+         E55F9FG1AXy6JzdVQfSr1EidNBPVdIz0moQ9sY8PPGsIEtschWz58kn5izyQohGBDa4q
+         WQyVbuilCZJAigF1mIeXG8Ytyt+Pj8Hg+rZAUhXivlUwmSjBYWQXOJCAZwocKNZDK4kW
+         QOjUh7WTI1Mp2tltERgd5Z5b41gR6jtzMm7p7xC7P9vG9ARjpV2VdcY10SW7tSYxe8Nw
+         bb+kK68pXHWx1Csipgy52HUwRMACjTGrD7pK1tt0iz6Q3047beFR0+Gzj0NO8EZdnsto
+         lrTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhR4oNqxvyMpAFYBOWBDJhPidp0H+OjO29j9AKcZFEn5FnJT306fHzgYz2I5wGaxs8LY0BOS3Socf8PNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQlKR2ml0xfJU+pTn8cwC39fL9b8KJRPYCy1mypXHY+oUEey9v
+	ntGU8QU1g5KV7OtVt4mCQdzezRWUBHT2OjqiEW1vVL26xi0UE7XSa0uDUptvGvG9
+X-Gm-Gg: ASbGnct4G8BeT096MWQXD08BnMHY2xeWUCtZNJsAGDlaQjYuLJlqOtktoHok/f/Oyrh
+	PI9dXr+NPfewj7ykBgra94Un+6e51xqKVLn6aV7GTMYGCdMLIjY/ZNlY86JWqJp+Cbybrq0QcnG
+	GSFWUfm7VkJeRDT/7arEw1k6W7YLiOfq6vXtCEeiWfnKFKbqFTruA2XaOZqLMDfKwXJaCboOrb6
+	kB7Lmb4udu8DQ2nLEVn4bJNo4e04vuO6uw4Zs7WcfuHv/ZmLGIxSP/eMBquI/5n++DrAWuZ+hL/
+	NWEtjgoTQYQ2eJkzV3PQ64GmEn2Y1So/K4UpfVw7eG3X6SLdevCIEFgEqQe/k4VHzEAx5zNDF+9
+	0m+NNPiul/URjLHsgAEtwH4fdtMINWLrhkJTPIzGw/3mkOcVWhs/6GlYkFB1az/d9
+X-Google-Smtp-Source: AGHT+IFN6jAtsJVphyY4WoNIbz+IdQoe795OWL3z0Pucfc1/VcMinON7rprp35IYMeD5z+xrwlER/w==
+X-Received: by 2002:a05:6102:3591:b0:520:4054:6b9 with SMTP id ada2fe7eead31-5acc604a9fbmr1136523137.9.1758787334736;
+        Thu, 25 Sep 2025 01:02:14 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5ae389da765sm361826137.11.2025.09.25.01.02.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 01:02:13 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-54aa4b86b09so411351e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:02:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVwzbnGVEIL7cwwnzszxHhdn661utynxoCVd/vLQIf5oBDdBi9yv127X2z7oJteGLbLNhzcSoMbImTBlzo=@vger.kernel.org
+X-Received: by 2002:a05:6122:90f:b0:542:2912:664f with SMTP id
+ 71dfb90a1353d-54bea2f2d56mr980779e0c.10.1758787332548; Thu, 25 Sep 2025
+ 01:02:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175878730677.709179.14637583267067625885.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
+ <20250910-make-compound-literals-normal-again-v1-2-076ee7738a0b@linaro.org>
+ <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com> <CAMRc=Mej9fQk-1zYKhPK6aWdptXKvjq28TywRyP+iZExRuX9og@mail.gmail.com>
+In-Reply-To: <CAMRc=Mej9fQk-1zYKhPK6aWdptXKvjq28TywRyP+iZExRuX9og@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Sep 2025 10:02:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXgoj+XuKhruEmMpjZignuM9fJLp8NJ0=ZLw8KdFKohsA@mail.gmail.com>
+X-Gm-Features: AS18NWCyYwXSHgwWU9cjWnhwFzyaiaKh315kbRG5kwTsoewxQN_WDT2npG3qPmE
+Message-ID: <CAMuHMdXgoj+XuKhruEmMpjZignuM9fJLp8NJ0=ZLw8KdFKohsA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: use more common syntax for compound literals
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Avi Fishman <avifishman70@gmail.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+	Benjamin Fair <benjaminfair@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matt.redfearn@blaize.com>, 
+	Neil Jones <neil.jones@blaize.com>, 
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, Hoan Tran <hoan@os.amperecomputing.com>, 
+	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev, 
+	linux-unisoc@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the sched/core branch of tip:
+Hi Bartosz,
 
-Commit-ID:     35561bab768977c9e05f1f1a9bc00134c85f3e28
-Gitweb:        https://git.kernel.org/tip/35561bab768977c9e05f1f1a9bc00134c85=
-f3e28
-Author:        Menglong Dong <menglong8.dong@gmail.com>
-AuthorDate:    Wed, 17 Sep 2025 14:09:13 +08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 25 Sep 2025 09:57:15 +02:00
+On Thu, 25 Sept 2025 at 09:52, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> On Thu, Sep 25, 2025 at 9:48=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Thu, 11 Sept 2025 at 12:02, Bartosz Golaszewski <brgl@bgdev.pl> wrot=
+e:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > The (typeof(foo)) construct is unusual in the kernel, use a more typi=
+cal
+> > > syntax by explicitly spelling out the type.
+> >
+> > Thanks for your patch, which is now commit da3a88e9656c17a3 ("pinctrl:
+> > use more common syntax for compound literals") in pinctrl/for-next
+> >
+> > > Link: https://lore.kernel.org/all/20250909-gpio-mmio-gpio-conv-part4-=
+v1-13-9f723dc3524a@linaro.org/
 
-arch: Add the macro COMPILE_OFFSETS to all the asm-offsets.c
+This is the origin link to the patch (by you) that started the discussion.
 
-The include/generated/asm-offsets.h is generated in Kbuild during
-compiling from arch/SRCARCH/kernel/asm-offsets.c. When we want to
-generate another similar offset header file, circular dependency can
-happen.
+> >
+> > Looks like you (slightly) missed your target. The correct link is:
+> >
+> >     Link: https://lore.kernel.org/aMAP9hAWars0T83r@smile.fi.intel.com
 
-For example, we want to generate a offset file include/generated/test.h,
-which is included in include/sched/sched.h. If we generate asm-offsets.h
-first, it will fail, as include/sched/sched.h is included in asm-offsets.c
-and include/generated/test.h doesn't exist; If we generate test.h first,
-it can't success neither, as include/generated/asm-offsets.h is included
-by it.
+This is the link to the comment (by Andy) that questioned the construct.
 
-In x86_64, the macro COMPILE_OFFSETS is used to avoid such circular
-dependency. We can generate asm-offsets.h first, and if the
-COMPILE_OFFSETS is defined, we don't include the "generated/test.h".
+> >
+> > > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> This is a link to the discussion with Andy as per Linus Torvalds'
+> recent request to use the Link: tag to point to actually useful
+> information rather than just the patch's origin. Linus Walleij doesn't
+> use b4 so the origin link you'd normally expect to be added
+> automatically is not there at all. That's probably what caused the
+> confusion.
 
-And we define the macro COMPILE_OFFSETS for all the asm-offsets.c for this
-purpose.
+I know ;-)
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/alpha/kernel/asm-offsets.c      | 1 +
- arch/arc/kernel/asm-offsets.c        | 1 +
- arch/arm/kernel/asm-offsets.c        | 2 ++
- arch/arm64/kernel/asm-offsets.c      | 1 +
- arch/csky/kernel/asm-offsets.c       | 1 +
- arch/hexagon/kernel/asm-offsets.c    | 1 +
- arch/loongarch/kernel/asm-offsets.c  | 2 ++
- arch/m68k/kernel/asm-offsets.c       | 1 +
- arch/microblaze/kernel/asm-offsets.c | 1 +
- arch/mips/kernel/asm-offsets.c       | 2 ++
- arch/nios2/kernel/asm-offsets.c      | 1 +
- arch/openrisc/kernel/asm-offsets.c   | 1 +
- arch/parisc/kernel/asm-offsets.c     | 1 +
- arch/powerpc/kernel/asm-offsets.c    | 1 +
- arch/riscv/kernel/asm-offsets.c      | 1 +
- arch/s390/kernel/asm-offsets.c       | 1 +
- arch/sh/kernel/asm-offsets.c         | 1 +
- arch/sparc/kernel/asm-offsets.c      | 1 +
- arch/um/kernel/asm-offsets.c         | 2 ++
- arch/xtensa/kernel/asm-offsets.c     | 1 +
- 20 files changed, 24 insertions(+)
+Given the "Suggested-by: Andy", shouldn't the link point to the email
+with the actual suggestion?
 
-diff --git a/arch/alpha/kernel/asm-offsets.c b/arch/alpha/kernel/asm-offsets.c
-index e9dad60..1ebb058 100644
---- a/arch/alpha/kernel/asm-offsets.c
-+++ b/arch/alpha/kernel/asm-offsets.c
-@@ -4,6 +4,7 @@
-  * This code generates raw asm output which is post-processed to extract
-  * and format the required data.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/types.h>
- #include <linux/stddef.h>
-diff --git a/arch/arc/kernel/asm-offsets.c b/arch/arc/kernel/asm-offsets.c
-index f77deb7..2978da8 100644
---- a/arch/arc/kernel/asm-offsets.c
-+++ b/arch/arc/kernel/asm-offsets.c
-@@ -2,6 +2,7 @@
- /*
-  * Copyright (C) 2004, 2007-2010, 2011-2012 Synopsys, Inc. (www.synopsys.com)
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/sched.h>
- #include <linux/mm.h>
-diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
-index 123f4a8..2101938 100644
---- a/arch/arm/kernel/asm-offsets.c
-+++ b/arch/arm/kernel/asm-offsets.c
-@@ -7,6 +7,8 @@
-  * This code generates raw asm output which is post-processed to extract
-  * and format the required data.
-  */
-+#define COMPILE_OFFSETS
-+
- #include <linux/compiler.h>
- #include <linux/sched.h>
- #include <linux/mm.h>
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 30d4bbe..b6367ff 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -6,6 +6,7 @@
-  *               2001-2002 Keith Owens
-  * Copyright (C) 2012 ARM Ltd.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/arm_sdei.h>
- #include <linux/sched.h>
-diff --git a/arch/csky/kernel/asm-offsets.c b/arch/csky/kernel/asm-offsets.c
-index d1e9035..5525c8e 100644
---- a/arch/csky/kernel/asm-offsets.c
-+++ b/arch/csky/kernel/asm-offsets.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#define COMPILE_OFFSETS
-=20
- #include <linux/sched.h>
- #include <linux/kernel_stat.h>
-diff --git a/arch/hexagon/kernel/asm-offsets.c b/arch/hexagon/kernel/asm-offs=
-ets.c
-index 03a7063..50eea9f 100644
---- a/arch/hexagon/kernel/asm-offsets.c
-+++ b/arch/hexagon/kernel/asm-offsets.c
-@@ -8,6 +8,7 @@
-  *
-  * Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/compat.h>
- #include <linux/types.h>
-diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/asm-=
-offsets.c
-index db1e4bb..3017c71 100644
---- a/arch/loongarch/kernel/asm-offsets.c
-+++ b/arch/loongarch/kernel/asm-offsets.c
-@@ -4,6 +4,8 @@
-  *
-  * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
-  */
-+#define COMPILE_OFFSETS
-+
- #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/mm.h>
-diff --git a/arch/m68k/kernel/asm-offsets.c b/arch/m68k/kernel/asm-offsets.c
-index 906d732..67a1990 100644
---- a/arch/m68k/kernel/asm-offsets.c
-+++ b/arch/m68k/kernel/asm-offsets.c
-@@ -9,6 +9,7 @@
-  * #defines from the assembly-language output.
-  */
-=20
-+#define COMPILE_OFFSETS
- #define ASM_OFFSETS_C
-=20
- #include <linux/stddef.h>
-diff --git a/arch/microblaze/kernel/asm-offsets.c b/arch/microblaze/kernel/as=
-m-offsets.c
-index 104c3ac..b4b67d5 100644
---- a/arch/microblaze/kernel/asm-offsets.c
-+++ b/arch/microblaze/kernel/asm-offsets.c
-@@ -7,6 +7,7 @@
-  * License. See the file "COPYING" in the main directory of this archive
-  * for more details.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/init.h>
- #include <linux/stddef.h>
-diff --git a/arch/mips/kernel/asm-offsets.c b/arch/mips/kernel/asm-offsets.c
-index 1e29efc..5debd9a 100644
---- a/arch/mips/kernel/asm-offsets.c
-+++ b/arch/mips/kernel/asm-offsets.c
-@@ -9,6 +9,8 @@
-  * Kevin Kissell, kevink@mips.com and Carsten Langgaard, carstenl@mips.com
-  * Copyright (C) 2000 MIPS Technologies, Inc.
-  */
-+#define COMPILE_OFFSETS
-+
- #include <linux/compat.h>
- #include <linux/types.h>
- #include <linux/sched.h>
-diff --git a/arch/nios2/kernel/asm-offsets.c b/arch/nios2/kernel/asm-offsets.c
-index e3d9b7b..88190b5 100644
---- a/arch/nios2/kernel/asm-offsets.c
-+++ b/arch/nios2/kernel/asm-offsets.c
-@@ -2,6 +2,7 @@
- /*
-  * Copyright (C) 2011 Tobias Klauser <tklauser@distanz.ch>
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/stddef.h>
- #include <linux/sched.h>
-diff --git a/arch/openrisc/kernel/asm-offsets.c b/arch/openrisc/kernel/asm-of=
-fsets.c
-index 710651d..3cc826f 100644
---- a/arch/openrisc/kernel/asm-offsets.c
-+++ b/arch/openrisc/kernel/asm-offsets.c
-@@ -18,6 +18,7 @@
-  * compile this file to assembler, and then extract the
-  * #defines from the assembly-language output.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/signal.h>
- #include <linux/sched.h>
-diff --git a/arch/parisc/kernel/asm-offsets.c b/arch/parisc/kernel/asm-offset=
-s.c
-index 757816a..9abfe65 100644
---- a/arch/parisc/kernel/asm-offsets.c
-+++ b/arch/parisc/kernel/asm-offsets.c
-@@ -13,6 +13,7 @@
-  *    Copyright (C) 2002 Randolph Chung <tausq with parisc-linux.org>
-  *    Copyright (C) 2003 James Bottomley <jejb at parisc-linux.org>
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/types.h>
- #include <linux/sched.h>
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offs=
-ets.c
-index b3048f6..a4bc80b 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -8,6 +8,7 @@
-  * compile this file to assembler, and then extract the
-  * #defines from the assembly-language output.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/compat.h>
- #include <linux/signal.h>
-diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
-index 6e8c0d6..7d42d3b 100644
---- a/arch/riscv/kernel/asm-offsets.c
-+++ b/arch/riscv/kernel/asm-offsets.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2012 Regents of the University of California
-  * Copyright (C) 2017 SiFive
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/kbuild.h>
- #include <linux/mm.h>
-diff --git a/arch/s390/kernel/asm-offsets.c b/arch/s390/kernel/asm-offsets.c
-index 95ecad9..a891566 100644
---- a/arch/s390/kernel/asm-offsets.c
-+++ b/arch/s390/kernel/asm-offsets.c
-@@ -4,6 +4,7 @@
-  * This code generates raw asm output which is post-processed to extract
-  * and format the required data.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/kbuild.h>
- #include <linux/sched.h>
-diff --git a/arch/sh/kernel/asm-offsets.c b/arch/sh/kernel/asm-offsets.c
-index a0322e8..429b6a7 100644
---- a/arch/sh/kernel/asm-offsets.c
-+++ b/arch/sh/kernel/asm-offsets.c
-@@ -8,6 +8,7 @@
-  * compile this file to assembler, and then extract the
-  * #defines from the assembly-language output.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/stddef.h>
- #include <linux/types.h>
-diff --git a/arch/sparc/kernel/asm-offsets.c b/arch/sparc/kernel/asm-offsets.c
-index 3d9b985..6e660bd 100644
---- a/arch/sparc/kernel/asm-offsets.c
-+++ b/arch/sparc/kernel/asm-offsets.c
-@@ -10,6 +10,7 @@
-  *
-  * On sparc, thread_info data is static and TI_XXX offsets are computed by h=
-and.
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <linux/sched.h>
- #include <linux/mm_types.h>
-diff --git a/arch/um/kernel/asm-offsets.c b/arch/um/kernel/asm-offsets.c
-index 1fb1223..a69873a 100644
---- a/arch/um/kernel/asm-offsets.c
-+++ b/arch/um/kernel/asm-offsets.c
-@@ -1 +1,3 @@
-+#define COMPILE_OFFSETS
-+
- #include <sysdep/kernel-offsets.h>
-diff --git a/arch/xtensa/kernel/asm-offsets.c b/arch/xtensa/kernel/asm-offset=
-s.c
-index da38de2..cfbced9 100644
---- a/arch/xtensa/kernel/asm-offsets.c
-+++ b/arch/xtensa/kernel/asm-offsets.c
-@@ -11,6 +11,7 @@
-  *
-  * Chris Zankel <chris@zankel.net>
-  */
-+#define COMPILE_OFFSETS
-=20
- #include <asm/processor.h>
- #include <asm/coprocessor.h>
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
