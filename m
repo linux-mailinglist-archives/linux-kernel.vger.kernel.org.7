@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-832770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0156BA059B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D17BA058C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52CA621FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:24:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0F94A2F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F152E62D0;
-	Thu, 25 Sep 2025 15:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839582FC876;
+	Thu, 25 Sep 2025 15:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="RAiKRMDD"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WyQKFE7s"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24AD2E1EF4
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635F02E5404
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813515; cv=none; b=sryRQoyWBuHeMfSO9LjJnc5K0dSoff4p4N96yoVAsHkILb1FgWi6GZe77mSY2bv4D9OleKthxbau3B1XEW5JKLsMHMQH4YMU2jCV+qZyzeHFMD022lHxWB0Zb/9/EzqW+hDMf47vMO43FSEcclAndoB2UhjJOk5sE0aSUWUwOzw=
+	t=1758813551; cv=none; b=tzJpNrx+2C1NQz22vOHgWtQ0FPilyAHC8S+coHKOgDPb//rRo3I1X5y7uW92mm8NnzZoelAHYowik8wUp9GF70bjkUJsSA1sLfIDeS/8LIy1+H7Ffm3crzdlcf0Ron20XSRymYgRAlkr2eSgMoU2IHzj6mDFgetIJTBvLtS4d30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813515; c=relaxed/simple;
-	bh=tQp8C7wGPgq++JIxelAFePt8Uis1yK/nhOg9KL0bUXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXF/dkTmYUT+zCFh9cuBxFP7Z1kxd+AkzgODJa3a4XpNv6PbvEw/ko8+T0UpZUtMneuhkW6bBk86Exf/N/xC5gNMx94nUkIa1we04Pw2we5/rcftRH9WJJv86bdrA9tw0KMvSorbk5YmB9Kk2Y68+OOaz0tWOlBonoQ1lOVdvX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=RAiKRMDD; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-4258ac8f64dso9610435ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:18:33 -0700 (PDT)
+	s=arc-20240116; t=1758813551; c=relaxed/simple;
+	bh=EB/Og+b+iGBdj3yiP+ao1ybCVJ+QxFP61rwkgwxjfZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hfCQf4S5t4Y3mymb0uZXauuXzQYspz/IFVGMZoT78WsCFCh7h5KLtuy8Tw/fvZLSGhuZEWeKRMCPALgcRmp/cOJsXbgPP30i4xKF9CBq8lNs8YTXOL6cmk2ikfQyFci7QAGBJooH4ZBkPBehpb/aEsu+hkTziOQhF+S7j06omuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WyQKFE7s; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27eeafd4882so19655ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1758813513; x=1759418313; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uTV7SOBwRvtCz9nLHK3fWm3pn4TCNp2vMjiqO7XDDco=;
-        b=RAiKRMDDzY246oBTI+rAokQQrKvUOSk9wT4F7KaB2nvbrRQbQYCMq8IYy0s0gcn3wq
-         Id473Hq2nZAI1yro60IEL4lPHG4JNJBnQ9t4wi5WZvVwUr2ABsugO37GDmBeBpHyMNvR
-         /PLx+dMyu2PdyojV3UjTmdV3ahvyW3qDXW58vAwOehfi8hjtz5nUSq6jtuSjsV80trT9
-         ErggfreMhfyfSN1xIgzyVYz+wi9x3teC8FHmRKYlCd4fqqtAqQx8mxYp9aMJQBBWnnmE
-         0pvHRpN6beW5UCa4LcxF8IBR+UCc8ObRV8sERsSnFxJSuYXk6rqpSvSQ1+64gBJ8F38V
-         YPKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813513; x=1759418313;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1758813550; x=1759418350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uTV7SOBwRvtCz9nLHK3fWm3pn4TCNp2vMjiqO7XDDco=;
-        b=JZWzGJsF9/251WdZVpY+KX5NaO82E69v841Um9cTXsHcx3Fz+THeE5vJ5UM0I/akWm
-         mUSjB9LvX+jujmkqlKiaIXQseFHMogq/6AfPsiBaEqMjCOsyQvd3qzUnAm8xgp+uVYa5
-         vcQWiz03pXBtfe2gojRYPsIthIlQkq3FuTUPSpP5uhgLIPGuO4AforfK5b6ICu+ShKOH
-         PMVG7yFYKjLBwz3DWIV9R6cEQfSm1Qemm1WOM9JN8iJ14lpHprdZ1Fl+jJdGFjA4yYRj
-         a6b7JQ7o2t0p1vdANIF+Ir/uruhr0h5N7ocrgah7zu+slJK/2+hSkmSMuwPiHGwm7BHb
-         G/SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOn8kGFVZgU7XdxoJLMZyAl2VDEL9osKNu3dpbrr4sSwXJZGFvNCdWL6f2ZINQqG654I/799ayvaDRSQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz7S+bfibp2uMLvZuwKFLkC8bIq4D1DFNe2imPDwdkJ2Em95yd
-	+no2HxCy8YvWHWiuM+3qoc0bICIYHq1kdA1Wu1V2o868pU6ja7LLGg2AilkXS/8CKps=
-X-Gm-Gg: ASbGnctSnLFRdYBJh5yLhdz3dUSFkTmU/2zgAtQ2iYdhXFa8i4R3QaVdRaEOK3/JaYt
-	fS6/1MQQfByW9BkLF+9KYe0TW6XPuzTGzIXdMFmtW9wIDblJoIO+TH+IEuyqxUdHPXpDj9gfgJ/
-	XyL3rBh26g5IePBAllOxqXXkbB34h+if8KT2okDvx4mUEw9aDf5kfc/lp5Avzf9QxwTxMuLtG2W
-	rW1YUN7+iTrUol7NhzztJ7PF97/14S2L6i1ZZRtsnMVjLsDv+wJwGQp2ZQQH0eOpB0B/XiEw0Hw
-	MBQsKcEnVji9qZj5OXkM3Tpg6UE7ISBIngF2jwonie0ZohD521oicawqJZzLrq5K/AMki3b9D1D
-	F+mQkCv3pFf6c+AXZvvjutKlBV0dX8DmJUIaBFkKUsmK9Hlc8QOtC+sUsUXGbrqgwrbpko5ayhC
-	Q=
-X-Google-Smtp-Source: AGHT+IEE6BSjkeOHtrqgDMGp6UEs/8XlcmOungL2XSRC4po6mROif6Vk6dLzPa16z642TGp7LJtOhg==
-X-Received: by 2002:a05:6e02:3789:b0:424:7633:9e72 with SMTP id e9e14a558f8ab-42595653cb6mr54081225ab.30.1758813512638;
-        Thu, 25 Sep 2025 08:18:32 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (50-32-2-77.vng01.dlls.pa.frontiernet.net. [50.32.2.77])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-56a647da50fsm909985173.15.2025.09.25.08.18.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:18:32 -0700 (PDT)
-Date: Thu, 25 Sep 2025 11:18:29 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>,
-	Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, dave.hansen@intel.com, hannes@cmpxchg.org,
-	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
-	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
-	nifan.cxl@gmail.com, xuezhengchu@huawei.com,
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
-	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com,
-	Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <aNVdRdXVzXSm_4SJ@gourry-fedora-PF4VCD3F>
-References: <20250910144653.212066-1-bharata@amd.com>
- <aMGbpDJhOx7wHqpo@casper.infradead.org>
- <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
- <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
- <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
- <20250917174941.000061d3@huawei.com>
- <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
- <20250925160058.00002645@huawei.com>
- <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+        bh=SU3JGvSGpyxpYzs0mUzQDCmIqY2mfW9vcvUuf9tvqIc=;
+        b=WyQKFE7sn1IvC+r1MGMMQYmiJR52EFsMA2ZplcpDT8B+Z8ygBpEjVXsybIKfNXs6CA
+         Deu+USxcRK113IN7izPYoE9k1wD05o9WgZEuaeByqx/C/jfheXWhmFRetN7Z8Ulhl+6V
+         kf8rADpVgpxZi83nLa6rGrlsiCwNQhQPdaFmk8WjXrjp4VN3V0LOict2m21v8O3SFqUt
+         pIIvRuZMfay0TdZegZBmboUWnmoQtupdY40hHzSVXL9/O29fm5W/GUpSDG92YHxR6pFm
+         1uuSdYFf+Ay7Xcl8/Qy314pbbC9OA3QDP8OdoUl0ch3jd7w7f1ObW/By1E7NcVvLwUu0
+         ZhDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758813550; x=1759418350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SU3JGvSGpyxpYzs0mUzQDCmIqY2mfW9vcvUuf9tvqIc=;
+        b=s1dRNnt1pDKfD+cAgy1jkRk2NQeSTwcUuJvsmY+KV4I6UwjqfsINqENyfIN7u2R9u6
+         Ta5Q8hXcRufHCAVnDOu7++GKpiTvVk+ddsZi5TGG6+1bTLQ9UdG5ejZGvCw8KFH5CL3a
+         zsn7i86yipBkRW9ceYUkt2nACN4ngf0yRZtE/TFbwUK/jn46dgMpkVQ9cdREuUjLm3Mh
+         Y6pcQwxxz/TWGXfa8fWxOtXAlDr3xoSpDN/M8zglEemcnI6UM7KsmlMy9VfQoHt7YJ4X
+         qe1VyN+t/C6I80Skp8jdXzh57QfJiMNumV5LLujUssoJmFne6BxDxQjDrIUOEfNDzrps
+         7XPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUioxa719i6bwtNEdGcyyG6ukOHtJtxAtVkFqVsLXud8aAzcJVyj0+BwQaEg6sWXpaPp0TekvsvmPqdG8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFX5M4Mtg/ggHzY5UGdIq+9JT2FueZrk16op8MTcgSCgytx8pt
+	j3Z+qMd1RdWJv+huMcsiaDtIzwKBq+k7y6oczYoZO3TMjLXpE0YRpwO3DlHLFhmQIeGxYu6ruFq
+	eZkKkA2yyiVDYDnYF19jDDfwEoR96q0s5ky1kJZcH
+X-Gm-Gg: ASbGnctvB4OmlVyT3xVVHeMDZ0B3HYjOx5zo5rUrv/wZYKmvsZA/Db9yjrtUUZbLVRn
+	8L8KpjJutSv2bwCEFm8idULZ39ToRYVrWgBitIRyWMaf8v+VwYEVibck1zJmfPjxtS4YCv0BmLs
+	1gD8T5R7bF9opS57AuXVZ18xzMJ9QlWQzBr/1IYIlA4lQkHARkW6dPHm/DVI1rnL/iv949QoDfv
+	9gyEPjf7Cxo7d34GLnbd8b8amW6iMqEAV8ZV+584xpWQy6R5bGn
+X-Google-Smtp-Source: AGHT+IGGL5fE/W5NbXgeUTpmEaMrB5ESy2RBa3qikd1fthwkw7Q1SE7y+sOgT/6eBODaZrn1GFR0hZtrZyq2JqZvysA=
+X-Received: by 2002:a17:903:90c:b0:267:d7f8:4054 with SMTP id
+ d9443c01a7336-27ed3fe68a4mr5269935ad.16.1758813549164; Thu, 25 Sep 2025
+ 08:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+References: <20250925112614.78061-1-m.heidelberg@cab.de>
+In-Reply-To: <20250925112614.78061-1-m.heidelberg@cab.de>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 25 Sep 2025 08:18:58 -0700
+X-Gm-Features: AS18NWB00MrDrgFULezqEiwJlL7_KKyqX1CRRHQHckecyYPzcM1Cc0pyvFtw7eA
+Message-ID: <CAP-5=fX3rdL6zrZozPNS8LiTpD8S2vfMs_3QPDQYdxk49t2VWw@mail.gmail.com>
+Subject: Re: [PATCH] perf: fix duplicated words in documentation and comments
+To: Markus Heidelberg <m.heidelberg@cab.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 11:08:59AM -0400, Gregory Price wrote:
-> On Thu, Sep 25, 2025 at 04:00:58PM +0100, Jonathan Cameron wrote:
-> > Now, if we can put this into a special pool where it is acceptable to drop the writes
-> > and return poison (so the application crashes) then that may be fine.
-> > 
-> > Or block writes.   Running compressed memory as read only CoW is one way to
-> > avoid this problem.
-> >
-> 
-> This is an interesting thought.  If you drop a write and return poison,
-> can you instead handle the poison message as a fault and promote on
-> fault?  Then you might just be able to turn this whole thing into a
-> zswap backend that promotes on write.
+On Thu, Sep 25, 2025 at 4:26=E2=80=AFAM Markus Heidelberg <m.heidelberg@cab=
+.de> wrote:
 >
+> - "the the"
+> - "in in"
+> - "a a"
+>
+> Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
 
-I just realized this would require some mechanism to re-issue the write.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-So yeah, you'd have to do this via some some heroic page table
-enforcement.  The key observation here is that zswap hacks off all the
-page table entries - rather than leave them present and readable.  In
-this design, you want to leave them present and readable, and therefore
-need some way to prevent entries from changing out from under you.
+Thanks,
+Ian
 
-> Then you don't particular care about stronger isolation controls
-> (except maybe keeping kernel memory out of those regions).
-> 
-> ~Gregory
+> ---
+>  tools/perf/Documentation/perf-diff.txt | 2 +-
+>  tools/perf/builtin-script.c            | 2 +-
+>  tools/perf/util/hwmon_pmu.h            | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Document=
+ation/perf-diff.txt
+> index f3067a4af294..58efab72d2e5 100644
+> --- a/tools/perf/Documentation/perf-diff.txt
+> +++ b/tools/perf/Documentation/perf-diff.txt
+> @@ -285,7 +285,7 @@ If specified the 'Weighted diff' column is displayed =
+with value 'd' computed as:
+>
+>    - period being the hist entry period value
+>
+> -  - WEIGHT-A/WEIGHT-B being user supplied weights in the the '-c' option
+> +  - WEIGHT-A/WEIGHT-B being user supplied weights in the '-c' option
+>      behind ':' separator like '-c wdiff:1,2'.
+>      - WEIGHT-A being the weight of the data file
+>      - WEIGHT-B being the weight of the baseline data file
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index d9fbdcf72f25..f731b6de7f23 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -223,7 +223,7 @@ enum {
+>         OUTPUT_TYPE_MAX
+>  };
+>
+> -// We need to refactor the evsel->priv use in in 'perf script' to allow =
+for
+> +// We need to refactor the evsel->priv use in 'perf script' to allow for
+>  // using that area, that is being used only in some cases.
+>  #define OUTPUT_TYPE_UNSET -1
+>
+> diff --git a/tools/perf/util/hwmon_pmu.h b/tools/perf/util/hwmon_pmu.h
+> index dc711b289ff5..d1e403c8b70b 100644
+> --- a/tools/perf/util/hwmon_pmu.h
+> +++ b/tools/perf/util/hwmon_pmu.h
+> @@ -37,7 +37,7 @@ enum hwmon_type {
+>  /**
+>   * enum hwmon_item:
+>   *
+> - * Similar to enum hwmon_type but describes the item part of a a sysfs f=
+ilename.
+> + * Similar to enum hwmon_type but describes the item part of a sysfs fil=
+ename.
+>   *
+>   * This enum is exposed for testing.
+>   */
+> --
+> 2.43.0
+>
 
