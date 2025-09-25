@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-832636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FC5B9FF99
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E94B9FF7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5A22E6419
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2745E189236B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B7429B8DD;
-	Thu, 25 Sep 2025 14:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B5929B79A;
+	Thu, 25 Sep 2025 14:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P10p1Bol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dLm06J0p"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4267929ACF0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8823529AB11;
+	Thu, 25 Sep 2025 14:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758809949; cv=none; b=e4RYFQYK/qLEvhFyMCzIervfTDa9n+iu+7bbzGmin2YtKL1JhdNnLtrBxLFOrxc6B27gGtT7zauae+DMcG69zzusPQJyANwbCmLSv2u+07krXqPIThK63IUR4fk3UiQ+x+OZo1cbocA7TdhA4M2dDIIAp+LLSyXh3WFsOdzh7C4=
+	t=1758809971; cv=none; b=ufvJeWZC6QH08zv/KPt/WIhyYTHysnEZS19K432yTQ8Ovk4lCfLyn3dktGzzVBLBJE4v3XWgv4PZ6Z72lM6QDtMnVTIF1SeotsAPv3vWs+2ersrIrBvLuvRCJUJofrXsjQL7wNLvHr0Ua61p/XzSM2slH+W7eftXBHUJgEFYxgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758809949; c=relaxed/simple;
-	bh=xZ7S3nqF/uCv7oKg/+aOeVioeR4Vef53GYe13Yz0v1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bLGosjYu3JqVA6F19fFeSPSLRzStdAumbeyEnGWGYORJ6NF2atcPtYoYuFL+F7kjDJNlTjT5gUbALWjJ0dKd9gXYmr+SCgxdGGJ2NxhloJ33wsM+lKXyf9fzJuPIeui/6DD4UmOXgTzOXsPvi7bx8D6bCl1bRhGRYFg1NcAay70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P10p1Bol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4847C4CEF5
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758809948;
-	bh=xZ7S3nqF/uCv7oKg/+aOeVioeR4Vef53GYe13Yz0v1o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P10p1BolWutB0LVlMyvMODDuCxyD/Pu6k9no/ZD/BJNPRQhEG7O9vr82jvmg9lQPd
-	 ALiDPQOWiNsnV1nyRCjFuA65gfHKzRjjXB3SHrBqx5CCchbrUzvGSQcAmFwMfKPtRd
-	 RNEV65/DMsjyhY012z27Nt+69VDqZh3oaPnnjipDj2Aks/VLS2B5jaTn4jYTWfS90u
-	 tC9drAOOQBVWjVC/HWLgR8DZJv57zgkqxG842Ln0H4YJoY5BLl/7QfXvZE8Z9VET7k
-	 BegRQa3k4F4AAvwrPrMLDvVD7HCwAkq4gXuBJxx/+LdASzC1d2yOXyhLxCICtEuyEK
-	 HJKkNT8u7Czrw==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso2188482a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:19:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVSqGmwgW7Kz9gvuXwadn43rC/z09uL9o2/2+aWRTVT1lmZP0sJR1xJiyeFOO3oFmKbRnfuZw3wzLiuhAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq21KKJYNHvi4T7FGqEV1XcK21zDTgKwK12uE+uTI0QdlhzZ7R
-	97hf+bUxMFegqJxhSqpCCTjO2poo5N4kImbPsC8AMm/OcGr/d8OsarCPKhBNw7leneXYHeMoQUE
-	ZFlIF2uwRA6MeQBcIxZwkatgDEH4RRH8=
-X-Google-Smtp-Source: AGHT+IG1C5McH1X+RCLkE8po2jvWdRMzSMQxrOvQPYKmhz5XMUtco3ArvNGBTdwn8fhYoF/Sb3lma/uLmunxVdu/mIY=
-X-Received: by 2002:a05:6402:184e:b0:626:8e29:8d42 with SMTP id
- 4fb4d7f45d1cf-6349fa9e8f4mr2392469a12.37.1758809947384; Thu, 25 Sep 2025
- 07:19:07 -0700 (PDT)
+	s=arc-20240116; t=1758809971; c=relaxed/simple;
+	bh=t7xFgnh5MgrwO3gD07DVPaBNwLpzNwehzftgcOddfZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLw+1vLULRnZXRcgFUA5GpvjoSSn2ja4zZwSdxrdxJ5gSxqvtQ+0f4C9gMfo+2sBWIbtYmLwCgwGkEXlEryVx9G7+kWqAzHZjXBCCgWFQlVSi1XogDebeiVquVvKajqK/kLX79qX8vuqEKCtoEmgkD+xUtbni/kMt0BWFc1Z+Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dLm06J0p; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0tvvhk7kaFoub2LyK/A4hB18ZONEl+pKYHKqNPFI5nk=; b=dLm06J0p7oEXoCKsX8k1lfe87z
+	JhvusHQiSWY5y6udVzhqDKqbSzfGwBO/Zsjwe9x0xqengE4nX/kJN4NhRoBbzqfj0o7tJkpRlGoge
+	1mqXHqaNQCAGPai3ZngbJuXiQjZtcTsPJNFOl6vQskAb/7HBzXA3yfsLFBrgioIWl16g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v1mob-009TTy-7Y; Thu, 25 Sep 2025 16:19:21 +0200
+Date: Thu, 25 Sep 2025 16:19:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parvathi Pudi <parvathi@couthit.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, danishanwar@ti.com,
+	rogerq@kernel.org, pmohan@couthit.com, basharath@couthit.com,
+	afd@ti.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, pratheesh@ti.com,
+	prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
+	rogerq@ti.com, krishna@couthit.com, mohan@couthit.com
+Subject: Re: [PATCH net-next 0/3] RSTP SWITCH support for PRU-ICSSM Ethernet
+ driver
+Message-ID: <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch>
+References: <20250925141246.3433603-1-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925121255.1407-1-matvey.kovalev@ispras.ru>
-In-Reply-To: <20250925121255.1407-1-matvey.kovalev@ispras.ru>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 25 Sep 2025 23:18:55 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-+wag9SD0XJ4YujHKkwj=ZcEZnvi2YN=JVuwSQL2MTTg@mail.gmail.com>
-X-Gm-Features: AS18NWCMhJ4GUO15qHIbUjXm3H20fAomj3nx4Dd8QGtgtrrR5JjlY4ePbqe2aOE
-Message-ID: <CAKYAXd-+wag9SD0XJ4YujHKkwj=ZcEZnvi2YN=JVuwSQL2MTTg@mail.gmail.com>
-Subject: Re: [PATCH] fix error code overwriting in smb2_get_info_filesystem()
-To: Matvey Kovalev <matvey.kovalev@ispras.ru>
-Cc: Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925141246.3433603-1-parvathi@couthit.com>
 
-On Thu, Sep 25, 2025 at 9:14=E2=80=AFPM Matvey Kovalev <matvey.kovalev@ispr=
-as.ru> wrote:
->
-> If client doesn't negotiate with SMB3.1.1 POSIX Extensions,
-> then proper error code won't be returned due to overwriting.
->
-> Return error immediately.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: e2f34481b24db ("cifsd: add server-side procedures for SMB3")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
-Applied it to #ksmbd-for-next-next.
-Thanks!
+On Thu, Sep 25, 2025 at 07:32:09PM +0530, Parvathi Pudi wrote:
+> Hi,
+> 
+> The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
+> (ICSSM), which provides the foundational support for Ethernet functionality
+> over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
+> net-next recently [1].
+> 
+> This patch series enhances the PRU-ICSSM Ethernet driver to support
+> RSTP SWITCH mode, which has been implemented based on "switchdev" and
+> interacts with "mstp daemon" to support Rapid Spanning Tree Protocol
+> (RSTP) as well.
+
+Is there anything in this patchset which is specific to RSTP? In
+general, there is no difference between STP and RSTP. STP is generally
+done in the kernel as part of the kernel bridge code. RSTP does it in
+user space. But the hardware driver does not care if it is STP or
+RSTP, it is the same API to the layer above.
+
+	Andrew
 
