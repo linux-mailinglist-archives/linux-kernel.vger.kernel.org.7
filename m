@@ -1,69 +1,51 @@
-Return-Path: <linux-kernel+bounces-832289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BF1B9ED37
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B63AB9ED43
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CE6175EB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1009C177CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7DE2F90E6;
-	Thu, 25 Sep 2025 10:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2BB2F5A30;
+	Thu, 25 Sep 2025 10:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="g/WnpFmT"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbYZ0G0G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E822F5A05
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6345F2F5306;
+	Thu, 25 Sep 2025 10:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797665; cv=none; b=gBOEm8ieEPVgN4B4oa29HI1aVOooD4GckS6S1IQBjvAKyXCnqZoXynYycsScG3esUtgjQDF9FKvUHWGD1V6Uy8LhKi+px7h85cJvjPlQ/HDJbejEuHWhgFtMZQ0Tdky5Kq2Izdma+VJyKG1xu7R1+gTriV8tnp/bJmI6OH8xy4k=
+	t=1758797706; cv=none; b=IFocQK19ulS7KyEdZZg/sEFh1KFhHNoueUhymn+dNjgQWTm+lwg6SybqAjGytMhFLPjofilLqArB8GaB9eIB3angTcfw64rmilQ014o8yDYM7lIZHzX1D4xU9UV6/qrRTeQu4whf4zXHePOiNEBR9Z9SD0JvF1pm/F/gtpybTHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797665; c=relaxed/simple;
-	bh=ppkpFu7LN0UmEwlbZ2LjmG3X3CuagEiDP1aYMiHSU0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtWvUbaAFmJQDFHL1zJvpWEsOrDI8WaKCIx2y+UlMKazbvXOcqw29pkeDu7reGfMNf9R+QOvLjuaOUp5N/8bcDlohiXWtX5jFwADgKHVbD+sVlf7Dq4dzRk69hx9OyUpzDljF2urUS0CkwFvCge2z/+zArDFaiOAO9+Zk1e/CgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=g/WnpFmT; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ppkp
-	Fu7LN0UmEwlbZ2LjmG3X3CuagEiDP1aYMiHSU0w=; b=g/WnpFmTS27BXVSZdc9S
-	dSmUno7FamUCex+xNe/x+9+XXr1c3kLhTeqVKqfZEW4hxesla1a5ilTFtIEANWkZ
-	f5xZnhVUcKH8Zubl3YrZwv2LbEq+FltpGAsmknncZZWCNWhcdlhu+QWxoM0Jth71
-	MwTFImDxE1vcV5TOSez+Zai+mTs7Yl0/aqcgtIKF7VwG7RSjmsSBlA8Ewodu+7Rs
-	kignesNuPNjojOpCJL/WyLvDPIfOuHoig7gNYvqc1uAHOwuckPoe+My9l416F+Pd
-	mOXtWKBAmQj035BzrhfbCqz6ZEjI+mALUzSnY8DqDP1FmV9xpszCh9s2l84JsBTh
-	7A==
-Received: (qmail 1835891 invoked from network); 25 Sep 2025 12:54:21 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 12:54:21 +0200
-X-UD-Smtp-Session: l3s3148p1@hxXX/Z0/UrggAwDPXwQHAL/S9V79e5yL
-Date: Thu, 25 Sep 2025 12:54:21 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: =?utf-8?Q?Jean-Fran=C3=A7ois?= Lessard <jefflessard3@gmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
- iterators
-Message-ID: <aNUfXftqGmX8skbp@shikoro>
-References: <20250902190443.3252-1-jefflessard3@gmail.com>
- <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
- <aLlgpUlHp7t8P4dQ@shikoro>
- <aLljGIcjAjQhC2uS@smile.fi.intel.com>
- <aMF0xW9rBrSK--Cl@shikoro>
- <aMSehiADcCEpfJUa@shikoro>
- <aMexwC-nB2IQEr8C@smile.fi.intel.com>
+	s=arc-20240116; t=1758797706; c=relaxed/simple;
+	bh=D8W3bQnf2XHInbGBCwq56KuARNHwa01r61Ta/ol8QxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KlFhoR0SSB2AOcS7qrhoZ+k0mC/s8SGrScxibIxhiOi1sLtjqzhWGQ1jbGieLdbyF3/yFURlMvVAYz0//FGhYz13su7z4MptHn6YhvOmSIXbKa/Yss9iqHbVORnOzVF5B9ucjmR02dsRQ213CQNwOOuN5Vfffj63KuJdda9RTBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbYZ0G0G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35472C4CEF0;
+	Thu, 25 Sep 2025 10:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758797706;
+	bh=D8W3bQnf2XHInbGBCwq56KuARNHwa01r61Ta/ol8QxY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mbYZ0G0Gj5aVT2ZRtwWyrpEvE1/jfPebE6q0QvXrxZnQpDGsZLVryIObGmdsMtaTS
+	 c1TAaCkXC4ZFgkMVZd1la0Y1yV5+hCRhcgdkTr1ZqTcN0K1wz5Jv0CqPgaUPXp6sGF
+	 zS27QpuKHGqqGtd41VV9k9xcxM3aAPcVC+FQEgZ4T0ZFmU4vTJv+It0eqENpoLmwrl
+	 aPsIbglVhw0Dc/GEu12Wav0KeT6zgrOcSOEkqn80Pqqa6K7H25CsvzwS3GlNUUwQmY
+	 dj6uCu1+I4EdplP6jPYqVzoI2fPEsORlKrhBxeVPbSy0oUf6I189BAO5iPF2wV4QT0
+	 KzImWRL/Wkfig==
+Date: Thu, 25 Sep 2025 11:55:02 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Missing signoff in the ksmbd tree
+Message-ID: <392013e6-3012-46a1-a2b9-4ee932eca80f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,39 +53,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WWFfwp8c3QS64Ifd"
+	protocol="application/pgp-signature"; boundary="j3y/bAktTNFNT/rV"
 Content-Disposition: inline
-In-Reply-To: <aMexwC-nB2IQEr8C@smile.fi.intel.com>
+X-Cookie: Shipping not included.
 
 
---WWFfwp8c3QS64Ifd
+--j3y/bAktTNFNT/rV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+Commit
 
-Since there are no further comments, I pull this into my branch now? I
-was waiting for feedback, but I'll take it as 'no news, good news'
+  d76f0acc84fa7 ("smb: server: make use of ib_alloc_cq_any() instead of ib_alloc_cq()")
 
+is missing a Signed-off-by from its author.
 
---WWFfwp8c3QS64Ifd
+--j3y/bAktTNFNT/rV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVH10ACgkQFA3kzBSg
-KbbHFQ/9E1eiGuQcw81QqjiJvd9fXSz6aXssKtBrBYeTD6d8Iteoxon+/Q+OVHyM
-iocbvOx8DibmfDtjVKa7Pkv+UIgFWTbbGgrwx6GtSVqcghGSVw8Ykw2CishGlVx8
-e8NNX0RSzhVIl9NMubFcNilYuIen0moQ4ffCYsTqKgZgGWk6YqksJfTYQ7Gn79sx
-0TxdLWz75HohA5thzOcBfIVH3qwf9jCJHPSmQYW2uYIkdNRhab3Wskc3aEqozpUp
-ZAlqFAO1wiSgTkyA7p/LFjWzpLdYPQvOn2M4uy/trMjptgHr6Jbrz1EK+ZQaXm7p
-nM0wSIoV+f/3r7Qbd+r3KD2ZJZrQxrT1K6kSIDnk4UL/j1ijJkh7rS23udptFCs2
-6/mmBBqQHlpFuvVn1+Dv6XCg3sf0e8RlCYPubf6a4ZgGltx7QqaSnYaW4nRdeHzo
-+RNqbzT8oiNtslqr8XgefdIZLaK+BFg+1vxjvRuEHlc8bWsGUAqY/MMkY6Vgdhnn
-aJytXDjUZgaHsHno4WCPA/AHlt8xHlnoPio/HhI7+DbISk6h0tmwIuAFaLNN1i2t
-YebLRkCH0QDLa3mEDy65EHqiHo12XK/VCRacMjfd+o4cA/dq9KjbClOk1o5q2Llp
-KqhzSsdWlimX1Y7wI7gO4Kj/oCkrjyBBYIrLv8vPNQQ0B9U5hIg=
-=KSlp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVH4UACgkQJNaLcl1U
+h9CtaQf/bPWh9obEGBxo+sRw71sV56uylAfCiOkSdiDz7adIOOYsTbiVeoZhgn/y
+unxTQv2TvaGutsjkOAMoidIk4+TNukPuRoH8Yk/sfMfsazW39e44AU1Wj38ljvOw
+/7n+ibrmtSypHNBOskRMyNqw65fKHnN3lOo0UH43FVpI/JCEHGOxmnGXLjwR+1LQ
+5fs0FtzyNT/Q+3GeL0y3ec3xmz/IVlrKLd8mYAYwvbVWo8Ui1FjfO3Wrsj9NAPHb
+qaPqnXdKJgnHB/f8rBiQmMHeK9D+jiRBgmrA++zQXvfPxaG2RhLyx9bKUyoNZVhR
+aFkYuEeOTvP+Q72DSBOKY5FdXbIypA==
+=yXB4
 -----END PGP SIGNATURE-----
 
---WWFfwp8c3QS64Ifd--
+--j3y/bAktTNFNT/rV--
 
