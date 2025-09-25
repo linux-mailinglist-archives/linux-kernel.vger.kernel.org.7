@@ -1,173 +1,183 @@
-Return-Path: <linux-kernel+bounces-833371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FB6BA1CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE56BA1D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5232A739D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB12774166D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283C5322A0E;
-	Thu, 25 Sep 2025 22:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8B2323F7F;
+	Thu, 25 Sep 2025 22:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bjINOmhW"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JsCiFT/5"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6EE3218D1
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8950C323F7A;
+	Thu, 25 Sep 2025 22:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758839502; cv=none; b=RmOEKy2o3hD7g+VnEQq6FbifOzulxBTyfkjfMNSHvfHToNfqhee7sqbIzdmOhxiMJoGgmqNpV6XnnYak0/vAMbWP85xhNsC7qaPkKajL5polgJGPljRJE7aSuTMlD+g6KAuABSUHCPoyvRcLSYiJEh5paxR6b9cweIlZHKnPRvo=
+	t=1758839834; cv=none; b=PvCfjCW+YemHLyah/POt4HQLLwLBinHbFbxjR8Nhr+h6IohyMiIxHSjonFNzh7xVx4eiLnO+nOcSFaak+XDPas2P7Mw3KH7zpfMIy1pLzrJhkiD5GoGDmiM+Zk1ZBXXj/Eydh2/vAsFUtjlXvF7OhiTVa6Mxre99oJaAvUM3NHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758839502; c=relaxed/simple;
-	bh=51K/RWydM2PjyVWXirdBujcKFN1Wi7wrBw7jteFADDQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMkP3mQemQXa+s+1ZsQOJkcBT7S1dp6KauMOhoSQUXM4BfJHOOH3Kz2Aka2DlqlUXZjGtiUR/ZCLmfaIBPxBceDFjTnsaJiG/8PJXyzRTucccvUppnMcQjW1H0TUG2STY24C6NEqb6lWHmyDAXBsRjczHgjgPZgZCbj249pgMIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bjINOmhW; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-59eb88955d8so576659137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758839500; x=1759444300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D8gdJ7wKziz18TkLvoXgJuOhaMotEm6Z4D28IrFTO2s=;
-        b=bjINOmhWlPyicnTfAhtasLSin7j+OJyo3wJRNq4WobLpPqQcGRw+ivPdVK32wIkJ1N
-         9L5wSGn1yCxyIFEisZmXNKp/zjoqEC4Ya6IPpEfAADz/XE/s81hqqdqhpFdbLVOIBiQK
-         7VJ9UAPAWA6m1EdHg9J330ID+uCB22eSCDwOUvQ1PjAYYu3LEa4r7ax3sKHe7NzIfV3P
-         DfyUrp9crecyJkdsJmlO0uItDk7/nke1Rqc/cHeubIDK9+33NZQHsQ47g3JrVb+3NaI/
-         sHeFcsPdKcMVh79SNySV/BW4/z9A24xpIgggWwJxQLxSG5jcGIUKPHttoqXwPIMdFswH
-         2vSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758839500; x=1759444300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D8gdJ7wKziz18TkLvoXgJuOhaMotEm6Z4D28IrFTO2s=;
-        b=oMaT9ewLRxyN9vCnTTGnaL1q60gYKywQaxKRNfTo3Ew36/RFKja7LLCAAee9pkSDKc
-         Z052KE9aKNQ6lxfd0msSV/PjNpseqkkdkyS7N7eFel0bATsYOQBp/mC1CaoHsksVlfcr
-         c8DkTGQYxd0i6gycZkpm+dQ+kqSAydW7HrYkwfc0NIXJP4jko7ilrndYypQndpynnu+H
-         QPIcDu0T7enq45PgzKYe5kgupPChGNr3b5aU9XSNJSG+5nnw9XXzNPcoh4Na7U49dlkx
-         JG4BPzA8CrAPpMDVTKNe3LfrVwVDOSZIdigwDvuytKLywlsP9CwhSD1K6gjpFjh5B0o2
-         x9oA==
-X-Forwarded-Encrypted: i=1; AJvYcCVye+n311nhENcWhMxArCRYX+bTNdscroQ92lQTp3Zg7AhEBCJuauoOGWjwXn8OH03xpAtbA35THFcBBys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDcF3y8FGkku+WmV4rF+8GiuH8EP6pug4s8iC97EmLxrXYohWT
-	cqroxYBxJtjo7sZssqbnNKRfrm6naUh1aUbr6X7JARb7xbR2avYlRgyZfxFv/4Qd901eEXVedDJ
-	LqttsN/p8Bt6kCE4QPgd2PqOEleU7Rqc/d16DN485
-X-Gm-Gg: ASbGnctzcVf5teBvBEiLvR71b6g4hnpqvSXT+nu95TXJzHa9d2glQ7+GPamd3YoKeUD
-	Vqwn2VG++1OMpTPZd4D15wJFgSbfUGnvAv9/Jn/Mc7N01x9v4xtf5np+Od1klq+6kNeTHGU5fa6
-	Cw5g7vuovEVO9ITP/Bk4lRz6lttapM5L7uBFaScHR9Qalu8kKmGD70e2/MsSBMhOkzrrpspPN6y
-	E3BDt9cG/V7kDwZwLHV/oo3a/MB3zdmfTCo42m1ZM59
-X-Google-Smtp-Source: AGHT+IFLlk6iDpEvaZjhHPcTDawfBx/XYJFVbUN5Hu8c0lEpBCCCVTWZi91ZCI4VwGOJE/tK3T8mihQAbe8ugPAiQBI=
-X-Received: by 2002:a05:6102:5488:b0:5a2:8ace:c921 with SMTP id
- ada2fe7eead31-5acc4a1eaefmr2368837137.4.1758839499299; Thu, 25 Sep 2025
- 15:31:39 -0700 (PDT)
+	s=arc-20240116; t=1758839834; c=relaxed/simple;
+	bh=HxwYsUkXekwK8672F34j4o5hHpRLRgvnBqtRsFvVCNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4ehId0rFnkdVrzS+lFTWssEmbEqdSH258mw1Ri/N22E4KoCkfSopqy1dtJk+WftX9J3JmiF8nZEWy+COCaQnN8hTpMf2qIJCPOzvNeKsSfzJSSGAjUjSqAYJ9VCkjyfABihwvnlzyNu4nIMnIPTEe9hX7ISahNT9wp3eZ/7HNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JsCiFT/5; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PMPSnN027686;
+	Thu, 25 Sep 2025 22:32:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=QcuASX6IaoM2io3PjC9a4EWZCXLWp
+	mZqlVKNev2x7nA=; b=JsCiFT/57THM4V+8T8wMlPkYjwiUPGtrXzqqiFdOI4VBy
+	wiC7fNPjWVYGB3YoDyvK3JD2BlZv0vTUiDg0sg0CqMCMih5fCRCfQdH+3q9y/SZG
+	Rb4SvBtOl6H2ySbBwyCofcbu1f0ZsVA/XZgW4/fy2iE7EnxMcqZl7irN5XmreXyX
+	2Ur0jXWixui3pgGgww2btGXEgiADaUyoJfZWaRIsEB3kW1ieWZiza5EuyjKKfB7l
+	krO/bC/Nwi6k23XdTzOCfEnbubyM+zsdogeRuOGCnEjEF8wjuW8CGup4nedGDZjI
+	KU4Tz6PVXZBEk+AY9P7coryTh5jR/yi0bynuO290A==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49degjg04v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 22:32:00 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58PL1dcF025730;
+	Thu, 25 Sep 2025 22:32:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49dd9tjhjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 22:32:00 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58PMVxHO023089;
+	Thu, 25 Sep 2025 22:31:59 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49dd9tjhj2-1;
+	Thu, 25 Sep 2025 22:31:59 +0000
+From: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: saeed.mirzamohammadi@oracle.com, smueller@chronox.de,
+        vegard.nossum@oracle.com
+Subject: [PATCH] crypto: pcrypt - Fix recursive instantiation by using proper instance naming
+Date: Thu, 25 Sep 2025 15:31:24 -0700
+Message-ID: <20250925223125.515570-1-saeed.mirzamohammadi@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <20250701114733.636510-21-ulf.hansson@linaro.org> <4478f28b-47f8-4049-bf17-b7fc95cfac65@nvidia.com>
- <CAPDyKFqSyP3e=JRFYEuFefWVN5SYJWULU8SKzXmrThvyiVGXgg@mail.gmail.com>
- <a904d953-acb2-44f6-81bd-118f7abd22da@nvidia.com> <614f726c-4d6d-463b-a8b3-26d3df590575@nvidia.com>
-In-Reply-To: <614f726c-4d6d-463b-a8b3-26d3df590575@nvidia.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 25 Sep 2025 15:31:02 -0700
-X-Gm-Features: AS18NWACHkwlAZcjEriaXRqurBvXndQI9uNxb7x206sV9Gbmg4UhlXtVn8x_XjM
-Message-ID: <CAGETcx9CpOgtPSDK_qPRQ_u58w3fedSFAfFzugXW4eYq2TLECw@mail.gmail.com>
-Subject: Re: [PATCH v3 20/24] pmdomain: core: Default to use
- of_genpd_sync_state() for genpd providers
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ mlxlogscore=999 bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2509150000
+ definitions=main-2509250207
+X-Proofpoint-GUID: gF4CcgfOpOM-Wg3JxZ3ws4s6Ux0SdxAv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDIwNyBTYWx0ZWRfXzWYnXj9nmvas
+ k8gbkQ7jjaJ9OFZPhojNBnUfCyj3JmrKLaSHjvjSJoncr+hIgg0P04FLwPWyaNjPHW1oAU7S/ej
+ w4HLLwh5F/lO9FDxMm6CxV6IvViHrCj/h6mGZz4eO5Z/1rloz0DhCCLdU83GTSes89Wu7wx8yoH
+ 4orTTObivvHlLfGJWtexO+6cXmOh2GXL1PG64HtezYzpmkLOd8AIqRCIVzC8plY65irIVgEiTjr
+ K5HFAHvWhUVWLUxFJt8Imck6SvUEYtED5HFfbJVIvsjlW4ALb6cOjCqbb3MX4WcNloSbHZ0PrkA
+ py3jjWRUhGk3mTcdPE5eC7I3d/FFXM5WIn5SURiUrwZD+2BSvrMxi/l1Kg7ZfP94R9t1qzO9Sym
+ fSgtTGLDrxuPcADHkXfGEW21oqXx1PPGTAcc53zog1U+STJFCbo=
+X-Proofpoint-ORIG-GUID: gF4CcgfOpOM-Wg3JxZ3ws4s6Ux0SdxAv
+X-Authority-Analysis: v=2.4 cv=H4jWAuYi c=1 sm=1 tr=0 ts=68d5c2e0 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=kZmX_PnipvbHtk_YSgsA:9
+ cc=ntf awl=host:13622
 
-On Wed, Sep 24, 2025 at 4:41=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
-> Hi Ulf,
->
-> On 03/09/2025 13:33, Jon Hunter wrote:
->
-> ...
->
-> >>> Following this change I am seeing the following warning on our Tegra1=
-94
-> >>> devices ...
-> >>>
-> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
-> >>> 17000000.gpu
-> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to 3960000.=
-cec
-> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
-> >>> 15380000.nvjpg
-> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
-> >>> 154c0000.nvenc
-> >>>    WARNING KERN tegra-bpmp bpmp: sync_state() pending due to
-> >>> 15a80000.nvenc
-> >>>
-> >>> Per your change [0], the 'GENPD_FLAG_NO_SYNC_STATE' is set for Tegra
-> >>> and so should Tegra be using of_genpd_sync_state() by default?
-> >>
-> >> This is a different power-domain provider (bpmp) in
-> >> drivers/firmware/tegra/bpmp.c and
-> >> drivers/pmdomain/tegra/powergate-bpmp.c.
-> >>
-> >> For the bpmp we don't need GENPD_FLAG_NO_SYNC_STATE, as the
-> >> power-domain provider is described along with the
-> >> "nvidia,tegra186-bpmp" compatible string. In the other case
-> >> (drivers/soc/tegra/pmc.c) the "core-domain" and "powergates" are
-> >> described through child-nodes, while ->sync_state() is managed by the
-> >> parent-device-node.
-> >>
-> >> In the bpmp case there is no ->sync_state() callback assigned, which
-> >> means genpd decides to assign a default one.
-> >>
-> >> The reason for the warnings above is because we are still waiting for
-> >> those devices to be probed, hence the ->sync_state() callback is still
-> >> waiting to be invoked. Enforcing ->sync_state() callback to be invoked
-> >> can be done via user-space if that is needed.
-> >>
-> >> Did that make sense?
-> >
-> > Sorry for the delay, I was on vacation. Yes makes sense and drivers for
-> > some of the above drivers are not yet upstreamed to mainline and so thi=
-s
-> > would be expected for now.
->
->
-> I have been doing more testing and do see a lot of "tegra-bpmp bpmp:
-> sync_state() pending due to" on our platforms for basically are driver
-> that is built as a module.
+The pcrypt template recursively instantiates itself because it copies
+the child algorithm's cra_name directly, causing naming collisions with
+the larval instance. When aead_register_instance() fails with -EEXIST,
+the larval wait mechanism re-runs the lookup and finds the pcrypt instance
+instead of the real child algorithm, leading to pcrypt(pcrypt(...))
+recursion.
 
-It being "built as a module" is not reason enough for this warning to
-happen though. One of the main points of fw_devlink is for things to
-work just as well with modules.
+Fix by using crypto_inst_setname() instead of memcpy, ensuring pcrypt
+instances are named "pcrypt(<child>)" rather than reusing the child's name.
+This eliminates the naming collision that triggers the re-lookup mechanism.
 
-In this particular system, do you never plan to load the modules? Or
-is the module load just missing this timeout by a few seconds or
-something?
+Also apply the same fix to cryptd for consistency, even though it doesn't
+exhibit the same recursion issue.
 
-If these can be turned off, why not turn these off using the sysfs
-file or the timeout commandline option to turn them off? You are
-burning power by leaving these on. A warning seems appropriate to me.
+To reproduce:
+python -c "import socket; socket.socket(socket.AF_ALG,
+socket.SOCK_SEQPACKET, 0).bind(('aead', 'pcrypt(ccm(aes))'))"
+...
+OSError: [Errno 36] File name too long
 
--Saravana
+Before the patch (/proc/crypto):
+name  : ccm(aes)
+driver: pcrypt(pcrypt(...(pcrypt(ccm_base(ctr-aes-aesni,cbcmac(aes-aesni))))...))
+[and 9 other ccm(aes) instances.]
+
+After the patch (/proc/crypto):
+name  : pcrypt(ccm(aes))
+driver: pcrypt(ccm_base(ctr-aes-aesni,cbcmac(aes-aesni)))
+
+Fixes: 5068c7a883d1 ("crypto: pcrypt - Add pcrypt crypto parallelization wrapper")
+Fixes: 4e0958d19bd8 ("crypto: cryptd - Add support for skcipher")
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Closes: https://lore.kernel.org/linux-crypto/4c0e7a68-254e-4f71-a903-952415c609d9@oracle.com
+Signed-off-by: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+---
+ crypto/cryptd.c | 9 ++++-----
+ crypto/pcrypt.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/crypto/cryptd.c b/crypto/cryptd.c
+index 31d022d47f7a0..b3342cb840d15 100644
+--- a/crypto/cryptd.c
++++ b/crypto/cryptd.c
+@@ -210,12 +210,11 @@ static void cryptd_type_and_mask(struct crypto_attr_type *algt,
+ static int cryptd_init_instance(struct crypto_instance *inst,
+ 				struct crypto_alg *alg)
+ {
+-	if (snprintf(inst->alg.cra_driver_name, CRYPTO_MAX_ALG_NAME,
+-		     "cryptd(%s)",
+-		     alg->cra_driver_name) >= CRYPTO_MAX_ALG_NAME)
+-		return -ENAMETOOLONG;
++	int err;
+ 
+-	memcpy(inst->alg.cra_name, alg->cra_name, CRYPTO_MAX_ALG_NAME);
++	err = crypto_inst_setname(inst, "cryptd", alg);
++	if (err)
++		return err;
+ 
+ 	inst->alg.cra_priority = alg->cra_priority + 50;
+ 	inst->alg.cra_blocksize = alg->cra_blocksize;
+diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+index 7fc79e7dce44a..78f6cdc5fb551 100644
+--- a/crypto/pcrypt.c
++++ b/crypto/pcrypt.c
+@@ -224,11 +224,11 @@ static void pcrypt_free(struct aead_instance *inst)
+ static int pcrypt_init_instance(struct crypto_instance *inst,
+ 				struct crypto_alg *alg)
+ {
+-	if (snprintf(inst->alg.cra_driver_name, CRYPTO_MAX_ALG_NAME,
+-		     "pcrypt(%s)", alg->cra_driver_name) >= CRYPTO_MAX_ALG_NAME)
+-		return -ENAMETOOLONG;
++	int err;
+ 
+-	memcpy(inst->alg.cra_name, alg->cra_name, CRYPTO_MAX_ALG_NAME);
++	err = crypto_inst_setname(inst, "pcrypt", alg);
++	if (err)
++		return err;
+ 
+ 	inst->alg.cra_priority = alg->cra_priority + 100;
+ 	inst->alg.cra_blocksize = alg->cra_blocksize;
+-- 
+2.50.1
+
 
