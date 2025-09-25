@@ -1,92 +1,138 @@
-Return-Path: <linux-kernel+bounces-832548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11B8B9FA37
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:44:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD75B9FA5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B644D4A36DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101E418990D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B29275AE1;
-	Thu, 25 Sep 2025 13:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06212274FC2;
+	Thu, 25 Sep 2025 13:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iDwQTQjf"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gwqrv2UA"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BB22727FD;
-	Thu, 25 Sep 2025 13:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B23A288D6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807852; cv=none; b=g8jISNTJM9ounx9QtRjdkf1sZySXJvxCCPISg2A/tclNxVVJt7D89WPgrYB8YHZTZAkJhuX++z2/vGvHQmsyOt0zBOGZUahhhOPVp0CHzAfIvt4MH+kAVBdF81BKkfw89z6S5XvIYUbX0/m+XZagLKFzwDUBdouNCN1WfMhYYwQ=
+	t=1758807899; cv=none; b=VhhaURH9EBhuznfrf4InkhfvvUEOk/P0beoYeMUTOZToRvKr/QHeVcxU9HF8ELlZed2MCtlqTB7QU6WqPOM/zunaQp378g3FG8JLRAZUHctSgZFcdNnKxPj9yTtcNaAH4dk3afh0nC83fDjBjBploNW4UJDhVqi+RWuQxBjaRxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807852; c=relaxed/simple;
-	bh=z0nrjmYw4OalvIuVx9M/Xqt3AoRAIrJYUKWWh5/SgpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NKICBlGmMMMQ6vwNAk0kZfek9kCJR6bQ9HKr999RjH3G+BwCKeRlR8cRATcm7LMBXKMnSysdmRJRWA36lHzN9R/nIlqPjLe/eKeA8W3SQsZoeGy0ZJcllQQzjamcPf9azlB87es5H0h5H4Vk5Tg53HMJlj4Z6OgjtNJSGK8CJ5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iDwQTQjf; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758807842;
-	bh=z0nrjmYw4OalvIuVx9M/Xqt3AoRAIrJYUKWWh5/SgpU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iDwQTQjf+5aoYii8V7TIlFrezpbgSWVarP0i3pxD7eLDrfSa7YofMaSS2KBC12M6e
-	 XucJJgfriXb0oON4oX0H4VjHWsqgpr7i3ZGaBZlfPVjvcIJ4/BvCjMj5m4q1bJ2bpN
-	 eqzaOHFhyvVBmrCS8BtaUMyjB7rcKIQauoqRAQmodaDfYkw+FhuEr8V9cPnrhnzPNX
-	 Qdio0coW3QiE1eUIYNGQgaGwiUzG8T7axx0hkl2Yy/dw0hSaqfpxpwIeo2kEYVQkt9
-	 +wASpjhxocwK+CEIL0FDe4EE7h8QkOwegCUEy/a3DbsLH60WSnJCsKvnXM0DeH5ynl
-	 K29dDioXgk/XA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 89CB317E108C;
-	Thu, 25 Sep 2025 15:44:02 +0200 (CEST)
-Message-ID: <a1224727-0d33-4e62-a538-8013115848be@collabora.com>
-Date: Thu, 25 Sep 2025 15:44:01 +0200
+	s=arc-20240116; t=1758807899; c=relaxed/simple;
+	bh=Z0F6rvv+vHHHgqN2/7WrnWaBdoTfLfsx+4E1sr2dpYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tIwlnq1m1dA580Q8eRa5tmqJDpM79as+4i3CJMNxRkWS31zeA69WqA4BdMmZ52GRf6662p7SNGGYW5JU6Ahff6E1jvcQXnBqoDo4dC8Hx/qoERB9ufW6u6Ai7Y8Erq+jW2cnOTHKgjZ5rwYXiJZHep+Y8ZDHuY3eqiqRVg/zEgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gwqrv2UA; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4bb7209ec97so1147441cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758807896; x=1759412696; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
+        b=Gwqrv2UA8Ax9RMydlVr9JpasaE19jt+Hwkk1c1vdYAnZtfqiEPHsQxMynF99pQG/IS
+         S8OZxZo7rqlTttZ3/KiyDoN0eF9CvW3U1Icncy+Vggtt5ITg3cvEEsINE3Bdw+YLiJwU
+         ZojJSpH0r+jF79v9bGTUMSEHIqlAHs1SqWv4KwDamrYyOyvJ5/Y+CRDgO6R6/M02lhWf
+         yoJjCmNGR924SUhz6cp0Tw82lX9eW9B3yhFYRk1nxobrOLdS0qBVgDRUn84dFLu3YqcN
+         UIXJRlB4/unDwbCsUBg7V+Mm9yc+pUkWa6oPuU2w03cAMTxNxJ4MXZtvPj58sDGwGO7S
+         /v5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758807896; x=1759412696;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
+        b=v/N6cNTRrLr2UBzauae86JNSPrO1LwfmT3F6dsmvcbzTPk0y/d3rSm1smIb1AJjgUI
+         0b95Qd45gOctfvv2L5fa1dPlJlDK77WJD2jelN6wm59cXas6y5dYCQBb7g9rmk+irM6G
+         z+K8K8cNS3OH8QVj9sg+e74ox0Hadx1a7+gb/QosTMXVp+dQDVelDj4qWyPOt0M7Kv9x
+         RDOIykPr/R2RJfI9Ngx0gOpFmdfHtTz6cS6PKuRJUzCvV07jh17IUzanK+nHSGjsuTpR
+         4P/AUvNSfsiQRKgFndY5sZB952pdK/qv8yzPVaf8a3QSbNmQF2A5EUyac+tXfE7p4LWU
+         FAHw==
+X-Forwarded-Encrypted: i=1; AJvYcCURsSOobpIKMi+tPDL1SRhcaNw+TKDZmKFrLoT4FwC+ruR2jESYEW7MKBb1kC5kRUT1h8dfj1k57q2K3Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlSq6uHwaCIOz8yrJIi6Vtdg5MRDiESPXq+dM7zT2WiIl4kiO5
+	sAfn2PTrCXtWyEJo2F0mzyBwQIKiCBDMF4lvManjp5GXiqvoiRa6183ExiWU9pU82zweDjFrRXX
+	pzTO9o3Vep9g/YHaap1xCK/Wz5unN41QnE3wtx2XH
+X-Gm-Gg: ASbGncvwKXTtfEAw72kqKvxqaoFNQ8y9MPviJFvxYf1uBMO1rypqErUQ0yjyHhra83Y
+	zbNI6LOcQoqiS7GtL/amx8moOz4Eha+0gFPHCGkThDLsz6rxtUgjtlVbaj4xrlwFyKJLO/TYnYb
+	dww0HsZn1kc8kvONzwQOoyV40lS/09n29OcRj/rr+CvM+a21cbY5H8w2WbkNZsDXVFxPb7fcFgs
+	6XH7qGPNqQrDWjHw9oU2JPzWw==
+X-Google-Smtp-Source: AGHT+IHMjlzJoU4go98o9OLI3ONqf4XSyVwqhgPkrMYYKQ3q5Z+I56IySJAtT5Z6pWwXAgA4n71MeTiHJXaU1zjAWA0=
+X-Received: by 2002:ac8:5996:0:b0:4b6:2d44:13c4 with SMTP id
+ d75a77b69052e-4da2f12a974mr6481551cf.10.1758807895145; Thu, 25 Sep 2025
+ 06:44:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: platform: mtk-mdp3: fix device leaks at probe
-To: Johan Hovold <johan@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Moudy Ho <moudy.ho@mediatek.com>
-References: <20250924143919.11183-1-johan@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250924143919.11183-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
+ <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
+ <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
+ <aNVFrZDAkHmgNNci@google.com>
+In-Reply-To: <aNVFrZDAkHmgNNci@google.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 25 Sep 2025 14:44:18 +0100
+X-Gm-Features: AS18NWD8QPp_e9025CtzHt-1GmqDfc-4KC-skp25M5mSn0nTsRNLyfZiLblKLT4
+Message-ID: <CA+EHjTz=PnAOdjaPuHRnXE+CTUHCKVSnf-LA6bgwKpWbapy_0Q@mail.gmail.com>
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+To: Sean Christopherson <seanjc@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
+	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
+	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
+	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
+	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
+	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
+	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com, 
+	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
+	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
+	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
+	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
+	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Il 24/09/25 16:39, Johan Hovold ha scritto:
-> Make sure to drop the references taken when looking up the subsys
-> devices during probe on probe failure (e.g. probe deferral) and on
-> driver unbind.
-> 
-> Similarly, drop the SCP device reference after retrieving its platform
-> data during probe to avoid leaking it.
-> 
-> Note that holding a reference to a device does not prevent its driver
-> data from going away.
-> 
-> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
-> Cc: stable@vger.kernel.org	# 6.1
-> Cc: Moudy Ho <moudy.ho@mediatek.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+On Thu, 25 Sept 2025 at 14:41, Sean Christopherson <seanjc@google.com> wrote:
+>
+> On Thu, Sep 25, 2025, David Hildenbrand wrote:
+> > On 25.09.25 13:44, Garg, Shivank wrote:
+> > > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
+> > > I did functional testing and it works fine.
+> >
+> > I can queue this instead. I guess I can reuse the patch description and add
+> > Sean as author + add his SOB (if he agrees).
+>
+> Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
+> this would have been handled in a new version.  If they are ok with the changes,
+> I would prefer they remain co-authors.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+These changes are ok by me.
+/fuad
 
-
+> Regarding timing, how much do people care about getting this into 6.18 in
+> particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
+> little nervous.
 
