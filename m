@@ -1,137 +1,215 @@
-Return-Path: <linux-kernel+bounces-832563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A03B9FAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:54:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1FDB9FB42
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6848F1C23638
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBE673826D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3797E285C81;
-	Thu, 25 Sep 2025 13:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2301128C5AA;
+	Thu, 25 Sep 2025 13:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="YX1qmtg/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TE4pco7y"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyBSanWh"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666042857EF
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35917289E08
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808435; cv=none; b=brzD8dHBFQPrbKDysSgmMO1lmtSqXM24jWuOpRG3sXNcublTYajHPJTej8xGZ2+63gig1ZUbP27lpesE1R1+Cqz6qDzkMbYRnWUdFEcHlNRTVSnucLshJYHcDP4fjjSH1Hxp9u2EvbU8DUCWadFMtzsc3CxXP/+uxBSrC+oZVzc=
+	t=1758808470; cv=none; b=k2L6+bYK9W9tfRtYV095Vyio8zuvL7UTXv/dkwKXRBmL22j/Z3fIJ74DqDgn+l1FZiGvSZsDLl87sXjI4bkBpDf2KZO2nBig+LI6nqVkn1WONJH2Bryz2cQpYMJpu3bqvUuZatZR1ECI6p5GLZQAKh1wYd1CENs7VV3BBe6HzrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808435; c=relaxed/simple;
-	bh=8LmXZYY9H0C7YgNc+hA3aoQj5E1DlCbVyuK047EghYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YfkyPBqvQzYFeRNownhJUGy1cSX/0a/WfQVqBYYIGUvvjp3w9rFceXv2Hlbka5cW/mLmqPwzvt5qzppyAKy7Ci3l8ttf48cDbZyS9aDBh9gLHtdNh/5ngA2ClEQohVaQy2bTcapvZ/XP7MHCEArbBdSG25NWhaawfF2OKi3pL0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=YX1qmtg/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TE4pco7y; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8ECE2EC0216;
-	Thu, 25 Sep 2025 09:53:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 25 Sep 2025 09:53:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1758808432; x=
-	1758894832; bh=AiRHqq7wL/NJSbdSEbfd7e9YXRXtuAk83mydyQfwhT4=; b=Y
-	X1qmtg/R+7Q3U/12dID8sAW/ycgODBw8/OM1ERAzFt32ABBdFd4EINx1uZ1zlooY
-	O6HIAgCDRkpN+eLvie1HMrFd4iClAX4pe6408RPosi2wGdnTWV/jGoBz8E6YknLk
-	wZ8XV2v/S3a0TEmD+Xhq4T6uGh3htalgtleV8ZgWuV0b6OCoVr8nCFYg2Jt9fJDu
-	XOwwQKcSYChMjAMuiUPrg3xtqxn7vaatLDq4BmmjDVwy+RfiSCWEqQoKbVv2iM3C
-	tUJXGyqzsrso7eOPUgGIWgI0vBoMYIYSdW8vieYIRYSJDv/BHwf1hFC6met+rKAt
-	+I76lqun65CUiJwdVBOPw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758808432; x=1758894832; bh=AiRHqq7wL/NJSbdSEbfd7e9YXRXtuAk83my
-	dyQfwhT4=; b=TE4pco7y/1NeyYOsXLY4dSTFn7auzq+mKeDx884sby6XgftsuB/
-	MjgeOSk76lxnjl9GOdvlqmuqe3AeZU+WSoxyAsdFhMgpmqXMas50Ane3tKTagZ5K
-	tuHM4GElwv3SmliRdFF4KLaiDNVcnyz7bgFM24Au9oavM1igr22E+S2CDQgkj7ES
-	PXIl1a6L2iPYWktGWhPCwSdhcqN2b0kXYaRi/hkSdbgHtynVrfgR+lFAajLcBawm
-	Y2LFu5kKBMT+bQB7JVVx/YB95shJdoX7OW62HOkLvpZd2NrVp27sG+PUHw/aJ1xl
-	YOqt334g7DVXN74hTQJ76gaLdqvf+mHPaqQ==
-X-ME-Sender: <xms:cEnVaKMpRkndViu3-fKQpSsG7PWJTI_QCGZoWwfweBLMttIFjL2KPA>
-    <xme:cEnVaG51ZiAj5yKQVAW6nDtA_Zw9s1XnCcuRwNBIFphXtazsKtnl2fHEfbZIctC3G
-    Dksn8SD0UA3MyAObUn74KZrxsjiDA_sGFNKD8Kw13rNXw8Xw638i8do>
-X-ME-Received: <xmr:cEnVaI1RT2gpYS0UIF71X7bwNnf6tFH3AijBmk3skh5RvZSozBXtxlrRwEvruFlkpZpTxFjWs4FsdmTwpzEuW6k7GzHh9K5NDNU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiieeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
-    dtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhudekff
-    ehkeffudduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhnpehk
-    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgt
-    phhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefle
-    egqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cEnVaHZSnr5smPm7vezn-IrOlndJe1tNWO3zOvBZGRBIYGCVRnnsbA>
-    <xmx:cEnVaADT25uaRImMgeNRKsQxTJKj0Q88Z2SYYArkJPLLgvE_pK8xPA>
-    <xmx:cEnVaJ_O_BGSlDM1T1FWsgI5jsE-sSFMd6t93QSympC-HGgY4hT5Dw>
-    <xmx:cEnVaA_cWFsUIK2oSWpuCgHs3YahbjQD9aZOnCKPYW-77jWzRtT-iw>
-    <xmx:cEnVaJivElb0FhmgCYiQkA1Xd8NARUHhh1g4Si8JCL5z_1a_u0kWMmhQ>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 09:53:51 -0400 (EDT)
-Date: Thu, 25 Sep 2025 22:53:49 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] firewire: core: revert "serialize topology
- building and bus manager work"
-Message-ID: <20250925135349.GB329042@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20250924124212.231080-1-o-takashi@sakamocchi.jp>
- <20250924131823.262136-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1758808470; c=relaxed/simple;
+	bh=a28D2oz73aX2HfdAyFfsKbL334Gi28aqVXRfaJ6AmKs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ANE1qAsp2JDvn0PLqzzmYHKmSQBWvnzT1WqPgl0nPae//e0z8I9YiDJp1qs8XaUY0oOB0ZQfk1L/++UgxKP3oaLDflX/nPF091KKPCrTrciwMVoNYrmAmX/Zu6BeTzXskr1KhI6imreQzZQ9pecaftALJJeBQ+LoHb0GRySSmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyBSanWh; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4d41154079aso5773811cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758808467; x=1759413267; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gUijmF9iuJuAB0zjmMxkDhFa2siruE3gGN7H1MY79is=;
+        b=JyBSanWhIqVHtczXr/C06BJjsuqkRhHbMql48boYTQ32gkEZOpJsuQ6rWfL+xNVjAr
+         YWsoQMJH97FKLsoaBsYw0NIw29bWbQCRciYbebnQKoY+Ni3PyI62sPxBXyK89TtcY2d7
+         6TbQkU97tLv0hYvsOofthnMlKpzRVqL+ZzDbxPNQbC9fMG/QXCkm7YQOl9/znwXosUp4
+         DEK3jW7hC9zFrwKq/uvslUuNdWXB1pgVEQUnMuys54qHWIV1uGfzaDvTXQMrYrVE6nXT
+         lqxGwvV0KdRCWqUnqRIwGau9LbCl95dgBoVxnrJEa4y3BhDB7vpHAnQslcxHLc3uwGhE
+         k1Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758808467; x=1759413267;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gUijmF9iuJuAB0zjmMxkDhFa2siruE3gGN7H1MY79is=;
+        b=R4vWTDrCiEli3048ZWwYYm6qAMKHZeO6UG3/U71NVkXulRiYH2oSgy7nuj6OQnTx+d
+         un12CnnPJzynpXDak5sL4dev0j4PCRdcFzD3ZTT53LwUAKwdaxen23EFaZE+n7xOcvZh
+         n6Do6zYC66hWSSRDkb1lHyuXkKhc5Fuj4nFEPZyq0jOx4A+/YIEkp6ei+uh/Twbwjqcb
+         C5hJ1bPoKx+0rNJQ/0WtzLN38L3oM70xT7VAzSe6AAJgfLhXQTc3CyPSLLjNHIZOljWw
+         rrivzpsw3o1yvqvz60knhwt1vsrqDxfgGWx5ViR5YUTl4LLS1J7As4pgu0/41W9/Torj
+         XrEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDOlaYS6D8qRGWZ2u/INwSe5KTetEFMM+jwPlZesoTxs3M26zWdrbxhRNpCPZivLUhVBoAd2Wd08jRT2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD8TaK+J0xdjHbvQw6q61Y7U45xWjmfVNO+6+81bVH9ZxuYBLz
+	JKYZiBKst+RRrNzmHnnqlr3nsQgAB6VMDl7oyAp2g8a4LTBG+k+xyS1U
+X-Gm-Gg: ASbGncsqnTzceI60JxaV5heyJsSmPLw2YHDl4ZRCTTg6S8R1gZ+ca4/GUcevpZH7l63
+	gw1Bo5OxC2gQ9yLldvO2+eReTHXaMM7Pl/Td+nAl/6GmltTMUAV3foq5B4/+bN+zUGO0PJ54Ay3
+	djKYDtUzVL1NZpbE+BX3RxbakMRJ6byaX4l6eHz5QdE8ke+CaSBZ4adZTa0es9aMpzAgZeJ7HNh
+	xeXdRZ0sWIdpJt4RZWYdTdRkQP3q/ql+G1P7ERCEpNw7G74mp7Ag8NtCZbK8JkSC1cGCviYoP3Q
+	SL0JiQ8jeSNL7beEmkdNb1uz0LlSqB8f1qI0XQqvF4Y9AmcCZZSzNuzIbrxwxzlF5QFpn4AycZW
+	BhS3pbNl/CCoJ/K+m83PD/4yzbczqg+aMI8sgqD1HPjbmTgkJBaBMAA7NrpgSe/Y+DXgcEKhwt+
+	Jv7zZJZ8GDX3a6Vdnuc7Ao+AvCKQgL4wEksp93qlcZnu248aOH0wLSb8Gb9VGGMLMEdxjy
+X-Google-Smtp-Source: AGHT+IFfyTZ0Kg2oYHDkA6MZ/FXiX6A/UvU5m7OAHMKeDgQlNpiMwRGrpCfne5Uk/q1fSoRc2LB+qg==
+X-Received: by 2002:a05:6214:1301:b0:766:30e3:eb9e with SMTP id 6a1803df08f44-7fc3a0df24fmr47841866d6.37.1758808466670;
+        Thu, 25 Sep 2025 06:54:26 -0700 (PDT)
+Received: from 137.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:7c:b286:dba3:5ba8])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80135968d5esm11536916d6.12.2025.09.25.06.54.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 06:54:25 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 25 Sep 2025 09:53:50 -0400
+Subject: [PATCH v2 02/19] gpu: nova-core: replace `kernel::c_str!` with
+ C-Strings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924131823.262136-1-o-takashi@sakamocchi.jp>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250925-core-cstr-cstrings-v2-2-78e0aaace1cd@gmail.com>
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Jens Axboe <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openssh-sha256; t=1758808436; l=2917;
+ i=tamird@gmail.com; h=from:subject:message-id;
+ bh=a28D2oz73aX2HfdAyFfsKbL334Gi28aqVXRfaJ6AmKs=;
+ b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
+ MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
+ QHLcRDKGO1UNO1Fhu+96/NdqIONmVEz9UH+4kwXhhoYDAdY/CR9wCCd91BlfzpgIkfI2NRm4QuH
+ Pm2Zu/FAx5Qo=
+X-Developer-Key: i=tamird@gmail.com; a=openssh;
+ fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-On Wed, Sep 24, 2025 at 10:18:21PM +0900, Takashi Sakamoto wrote:
-> Hi,
-> 
-> The patchset that serialized bm_work() and fw_core_handle_bus_reset()
-> was merged without sufficient consideration of the race condition during
-> fw_card removal.
-> 
-> This patchset reverts some commits and restores the acquisition of the
-> fw_card spin lock.
-> 
-> [1] https://lore.kernel.org/lkml/20250917000347.52369-1-o-takashi@sakamocchi.jp/
-> 
-> Changes from v1:
-> * Fulfill cover-letter title
-> 
-> Takashi Sakamoto (2):
->   Revert "firewire: core: shrink critical section of fw_card spinlock in
->     bm_work"
->   Revert "firewire: core: disable bus management work temporarily during
->     updating topology"
-> 
->  drivers/firewire/core-card.c     | 38 +++++++++++++++++++++++++-------
->  drivers/firewire/core-topology.c |  8 -------
->  2 files changed, 30 insertions(+), 16 deletions(-)
+C-String literals were added in Rust 1.77. Replace instances of
+`kernel::c_str!` with C-String literals where possible.
 
-Applied to for-next branch.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Benno Lossin <lossin@kernel.org>
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+ drivers/gpu/drm/nova/driver.rs  | 10 +++++-----
+ drivers/gpu/nova-core/driver.rs |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/gpu/drm/nova/driver.rs b/drivers/gpu/drm/nova/driver.rs
+index b28b2e05cc15..87480ee8dbae 100644
+--- a/drivers/gpu/drm/nova/driver.rs
++++ b/drivers/gpu/drm/nova/driver.rs
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+-use kernel::{auxiliary, c_str, device::Core, drm, drm::gem, drm::ioctl, prelude::*, types::ARef};
++use kernel::{auxiliary, device::Core, drm, drm::gem, drm::ioctl, prelude::*, types::ARef};
+ 
+ use crate::file::File;
+ use crate::gem::NovaObject;
+@@ -22,12 +22,12 @@ pub(crate) struct NovaData {
+     major: 0,
+     minor: 0,
+     patchlevel: 0,
+-    name: c_str!("nova"),
+-    desc: c_str!("Nvidia Graphics"),
++    name: c"nova",
++    desc: c"Nvidia Graphics",
+ };
+ 
+-const NOVA_CORE_MODULE_NAME: &CStr = c_str!("NovaCore");
+-const AUXILIARY_NAME: &CStr = c_str!("nova-drm");
++const NOVA_CORE_MODULE_NAME: &CStr = c"NovaCore";
++const AUXILIARY_NAME: &CStr = c"nova-drm";
+ 
+ kernel::auxiliary_device_table!(
+     AUX_TABLE,
+diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
+index 274989ea1fb4..2f1a37be3107 100644
+--- a/drivers/gpu/nova-core/driver.rs
++++ b/drivers/gpu/nova-core/driver.rs
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+-use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
++use kernel::{auxiliary, bindings, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
+ 
+ use crate::gpu::Gpu;
+ 
+@@ -35,7 +35,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
+         pdev.set_master();
+ 
+         let bar = Arc::pin_init(
+-            pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0")),
++            pdev.iomap_region_sized::<BAR0_SIZE>(0, c"nova-core/bar0"),
+             GFP_KERNEL,
+         )?;
+ 
+@@ -44,7 +44,7 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
+                 gpu <- Gpu::new(pdev, bar)?,
+                 _reg: auxiliary::Registration::new(
+                     pdev.as_ref(),
+-                    c_str!("nova-drm"),
++                    c"nova-drm",
+                     0, // TODO[XARR]: Once it lands, use XArray; for now we don't use the ID.
+                     crate::MODULE_NAME
+                 )?,
 
-Regards
+-- 
+2.51.0
 
-Takashi Sakamoto
 
