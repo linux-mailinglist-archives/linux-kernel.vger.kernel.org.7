@@ -1,292 +1,132 @@
-Return-Path: <linux-kernel+bounces-832031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF220B9E2FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:05:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842B0B9E300
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53781889CA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70AB3B0282
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E60727A122;
-	Thu, 25 Sep 2025 09:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IanQIRNM"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708626FA5B;
+	Thu, 25 Sep 2025 09:05:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C7D191493
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB768488
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758791092; cv=none; b=L1ZpPTmO6r9XjRK6C51TQumQWpMmuA2oSewZYNChtstaQmytG2arQEtozfg6K2PLf+hb/YvlGWP/supc66P2HI+OLiGvSwokonPfnOi7Vm/a7+HorX5MtSfHTN4mEFSTrN7NvDcGCiCX93w8beTfurm4by6O3UBOacZgUT5EO3I=
+	t=1758791104; cv=none; b=Hbkzv7U+0u+BHaGIakq3jX89lJNvqIWV/ewBRtx+5VSvBDEzt6aT8HGsrQYRfDUgUlAqaw8IVGu/VSVYhsw/f2bzma91eza4/lxnn68FIwdwo0UzDVlBjfODsN3DC9XGHu4mRETcs61k5oLeMm5BjiEfwdOdxW115n/CLtEobgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758791092; c=relaxed/simple;
-	bh=GiwBbWtoB2tfwoPzjKROuEEggM8W+m2R48BbdsJ/qW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M70sElBc5Sxvqc6sn2IftLvHjw1ma0h+jkB6aA8/323U/NdOboiF175sviBSbne3R4gqEdNkeJFsYXi9FgjPJBRrKaHJ488p6k5f7ht+ECoWUaBnK6RIg0YR0dSGSwBZqTnIpxMpKkP1h1hQWDgJsyUC8N+GCFrp0zstGVwBAKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IanQIRNM; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46b7580f09eso4299225e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758791088; x=1759395888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=52cJq27fTrRB0shrC+OriI/jG8WLskY0nr0nR3oM2xU=;
-        b=IanQIRNMwJ+YzYUAvzhZ0ZP0Q6vA5t/zs7D+UFw0RElRVvHyBz42ptgBmZgsBpCR0b
-         5WAwxzeoihbknb/6xyKg2NKO2jRWP52ED3kef/0wzaM4nBTvEHnZiUxQIEFIru2JsaaV
-         WBMPH1a8aP3uzFipNfxSV3T0C8tn5qZiTgcoNIDoVXL8Ed+XDwkI9xN5asN3Jmup7f9x
-         iF2NPAO1yS1p9ywqN1fSG1pUiOoe3tpcecuhmC+GGYINSRUo2BOy1vQ9tzrMwT5Q/Zfh
-         4pdHcs3gJywA6Hk/7EW+06JKCJQaSR9+uIgfGwLlCPutdXQihpMobPySGmzMTumrrkDK
-         9dfA==
+	s=arc-20240116; t=1758791104; c=relaxed/simple;
+	bh=ENoRoXPrhyLv5DEJI3cEjHwsC6+A5zmiK7ACdvJnyTQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YELi6UBqa4oiSrqnnpzOqQ7SQvZmlXrSNMetpJcOs9w9bxrxorXE+RHgIc/Uk+V56ALPNFXLItpnkm9zenzoJjTZELRfo34Cq8UUVMFA82AwALgGDfu8g3ttSzCNSV/3Ayry77r6Exk8IIM5XBgO+pjU5XJRG8+Br9DfY7PWhWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42594b7f2ddso9904605ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:05:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758791088; x=1759395888;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758791102; x=1759395902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=52cJq27fTrRB0shrC+OriI/jG8WLskY0nr0nR3oM2xU=;
-        b=pan+0KGbYvCrhFTWc4tmY0VBT0mxIJ/07LKC1/cp6pXPd2MFB4FRtMrAsMa/h9TmXO
-         KZu6V+2WXCY5VhN4bue3tzZgjDLRoWo26OHzDTxepaMYsUbf+Kjz34KYP+D2s2k4C0F1
-         0zOH6aHEuowqSmBD0v3uUoXXd8iRIL/D/kcfAS8xhgU4iqgaInYF5kJqENRvyJeG8Hh+
-         vNGjB+NpEeUHGHjE9X2kYNj6UrPNU44wB/13QRgTYG+PXOqQZHobqOwNLMedB37oiQSl
-         c0FG8ykiv0BfVmlELz4jwRLNv6lUeRuPsWpYUmHTza7yrbIAVlLKhC0EdHyMuWNMILUx
-         5UtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsNCxp2zY07JbPrieSlKlfqHJCO+EFS04aMwVeHDo5F85eNW4yqfXVVQFi4Apc1nFAIW64CC5/URcg5OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnBi8dIF4V8XQw2tfIQmvnQCfppnUGrpkK4g+R2IFSgVuZ0APD
-	uX9ycuzkjLsRQ7edRez1nZW4LJPNjyg3n+rFBRDGn6jl9dxwTIU31/cF/Uks+YZtOD0=
-X-Gm-Gg: ASbGnctEfkIvcPeDxlQ8eFQijE+WV5hyyjx6x17zdPoGMqTcTitOfvQ4bzpPgNjjzBw
-	gCy+jWig8sDkoosO45qXbp0EZ/KgCRbz3oBMctrgW5mh6zLL8apRRl1oSnio9zywHllBQCew6Hv
-	QMp+rUuxetjoeBWcf+iPOnV3toev82sFdpe32cQOfMIqtj2q4L5NUrNyDK9CVw8+BCl+/LsvxFO
-	zO7uflpuRraOxHNqUZ56GVxCvskr2arECqkfnw4zSIDaA7yU00NiNkhNU5LklcOJHe8y2k6sxbI
-	XC4FVLff9nOfQfbRwsCDrdXk1JJ/O8fHkwY08FecZzW0jeoNVWEhO3OGgq2DrL1HCX233a3GJSS
-	M0S/zGWA3qAStO23aeq3qSOO3FwX1F++D1fmpfVNvd4DglKjnmxe6gGzXK6IVKQQ3LdBtgkUnyj
-	+SUx6uMzlLEJZWwkGR3EUK
-X-Google-Smtp-Source: AGHT+IErNyAgA6Qo/uMNdIgcGBbOskM97JAo4kEppskCvZUmBIRp8NL7i5asdGJupVwWIHvszpenhQ==
-X-Received: by 2002:a05:600c:a43:b0:45b:7b54:881 with SMTP id 5b1f17b1804b1-46e329a0e5dmr26627875e9.1.1758791088108;
-        Thu, 25 Sep 2025 02:04:48 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm80767955e9.7.2025.09.25.02.04.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:04:47 -0700 (PDT)
-Message-ID: <19c66c0e-e784-4403-abae-c4cd92f4a150@linaro.org>
-Date: Thu, 25 Sep 2025 10:04:45 +0100
+        bh=bLHA2C9953oAHyPn2w2N6kgA/umlQX7Hn7svRva9lHU=;
+        b=mXR0ZSb5zxhp2PaS+jpFcU/GKp7/4wQGNKb2jLXlXkV9ho/aBOzEECLvi1MtyArWER
+         aWWYTZFiXfrq8Rre5g97WH09Z1CgLg4o3b54G46xe4aNxGrs+toABxwNLLQx0p92jjtp
+         LrrKHYzhCo8TEfAJpsAqYrDeLTm37+xtKGbt7T4LP/lMqHWOVM6h2dA+rjK7T/MH5I01
+         Ivdz8d4sDU0Eevmlqs/jJ20rpAEIPu7IBwyVBikOTmcSoZ/nO6DzrvNEUXHsUbVx+ne2
+         00sEVMEgqAAAryrXfUvjeBmyc1GUt2+aWdrpnghNT3nPAXa9uHdyaU6OdFCfTZGLQY2h
+         WolA==
+X-Gm-Message-State: AOJu0Yy1FxtUCOXZKisV217T+iVQghVd9RFJIQw8Ngef3/NPraD8Giz/
+	alrCXwQAZcBX1Whco7ylu98zSZlE+/+zXzbl7dLimiCmx62nVG05nSEM0sbQ1uWf79osqqXSUf0
+	EUwXtmKv9Lr3/svywS2c/h7OSYZ/JHrjKmdOUMV2zJ1iocw0TdZtfVB7lRPI=
+X-Google-Smtp-Source: AGHT+IFj4dXPJDfHVk8U8AT3JmZ7qzAdyw4NbiMSnjjWIkkPZUO/7EMKioWEXgJPFg5dOSjcjY361BXoFftzQb5ZtCpZ9JCHmu8Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/9] dt-bindings: clock: qcom: document the Kaanapali GPU
- Clock Controller
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-5-d7ea96b4784a@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250924-knp-mmclk-v1-5-d7ea96b4784a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c00c:0:b0:424:8c15:888a with SMTP id
+ e9e14a558f8ab-42595685dedmr32193935ab.32.1758791102453; Thu, 25 Sep 2025
+ 02:05:02 -0700 (PDT)
+Date: Thu, 25 Sep 2025 02:05:02 -0700
+In-Reply-To: <905bb5a8bc3e969ef332dd604864ba67b93e1a85.1758789532.git.xiaopei01@kylinos.cn>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d505be.a00a0220.303701.0005.GAE@google.com>
+Subject: Re: [syzbot] [fs?] [mm?] WARNING: bad unlock balance in hugetlb_vmdelete_list
+From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiaopei01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/09/2025 00:56, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add bindings documentation for the Kaanapali Graphics Clock and Graphics
-> power domain Controller.
-> 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->   .../bindings/clock/qcom,kaanapali-gxclkctl.yaml    | 63 ++++++++++++++++++++++
->   .../bindings/clock/qcom,sm8450-gpucc.yaml          |  2 +
->   include/dt-bindings/clock/qcom,kaanapali-gpucc.h   | 47 ++++++++++++++++
->   .../dt-bindings/clock/qcom,kaanapali-gxclkctl.h    | 12 +++++
->   4 files changed, 124 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml b/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml
-> new file mode 100644
-> index 000000000000..31398aec839d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kaanapali-gxclkctl.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,kaanapali-gxclkctl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics power domain Controller on Kaanapali
-> +
-> +maintainers:
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
-> +
-> +description: |
-> +  Qualcomm graphics power domain control module provides the power
-> +  domains on Qualcomm SoCs. This module exposes the GDSC power domain
-> +  which helps the recovery of Graphics subsystem.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,kaanapali-gxclkctl
-> +
-> +  power-domains:
-> +    description:
-> +      Power domains required for the clock controller to operate
-> +    items:
-> +      - description: GFX power domain
-> +      - description: GMXC power domain
-> +      - description: GPUCC(CX) power domain
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - '#power-domain-cells'
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@3d68024 {
-> +            compatible = "qcom,kaanapali-gxclkctl";
-> +            reg = <0 0x3d68024 0x0 0x8>;
-> +            power-domains = <&rpmhpd RPMHPD_GFX>,
-> +                            <&rpmhpd RPMHPD_GMXC>,
-> +                            <&gpucc 0>;
-> +            #power-domain-cells = <1>;
-> +        };
-> +    };
-> +...
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> index 44380f6f8136..6feaa32569f9 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> @@ -14,6 +14,7 @@ description: |
->     domains on Qualcomm SoCs.
->   
->     See also::
-> +    include/dt-bindings/clock/qcom,kaanapali-gpucc.h
->       include/dt-bindings/clock/qcom,milos-gpucc.h
->       include/dt-bindings/clock/qcom,sar2130p-gpucc.h
->       include/dt-bindings/clock/qcom,sm4450-gpucc.h
-> @@ -26,6 +27,7 @@ description: |
->   properties:
->     compatible:
->       enum:
-> +      - qcom,kaanapali-gpucc
->         - qcom,milos-gpucc
->         - qcom,sar2130p-gpucc
->         - qcom,sm4450-gpucc
-> diff --git a/include/dt-bindings/clock/qcom,kaanapali-gpucc.h b/include/dt-bindings/clock/qcom,kaanapali-gpucc.h
-> new file mode 100644
-> index 000000000000..e8dc2009c71b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,kaanapali-gpucc.h
-> @@ -0,0 +1,47 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_KAANAPALI_H
-> +#define _DT_BINDINGS_CLK_QCOM_GPU_CC_KAANAPALI_H
-> +
-> +/* GPU_CC clocks */
-> +#define GPU_CC_AHB_CLK						0
-> +#define GPU_CC_CB_CLK						1
-> +#define GPU_CC_CX_ACCU_SHIFT_CLK				2
-> +#define GPU_CC_CX_GMU_CLK					3
-> +#define GPU_CC_CXO_AON_CLK					4
-> +#define GPU_CC_CXO_CLK						5
-> +#define GPU_CC_DEMET_CLK					6
-> +#define GPU_CC_DPM_CLK						7
-> +#define GPU_CC_FF_CLK_SRC					8
-> +#define GPU_CC_FREQ_MEASURE_CLK					9
-> +#define GPU_CC_GMU_CLK_SRC					10
-> +#define GPU_CC_GPU_SMMU_VOTE_CLK				11
-> +#define GPU_CC_GX_ACCU_SHIFT_CLK				12
-> +#define GPU_CC_GX_GMU_CLK					13
-> +#define GPU_CC_HUB_AON_CLK					14
-> +#define GPU_CC_HUB_CLK_SRC					15
-> +#define GPU_CC_HUB_CX_INT_CLK					16
-> +#define GPU_CC_HUB_DIV_CLK_SRC					17
-> +#define GPU_CC_MEMNOC_GFX_CLK					18
-> +#define GPU_CC_PLL0						19
-> +#define GPU_CC_PLL0_OUT_EVEN					20
-> +#define GPU_CC_RSCC_HUB_AON_CLK					21
-> +#define GPU_CC_RSCC_XO_AON_CLK					22
-> +#define GPU_CC_SLEEP_CLK					23
-> +
-> +/* GPU_CC power domains */
-> +#define GPU_CC_CX_GDSC						0
-> +
-> +/* GPU_CC resets */
-> +#define GPU_CC_CB_BCR						0
-> +#define GPU_CC_CX_BCR						1
-> +#define GPU_CC_FAST_HUB_BCR					2
-> +#define GPU_CC_FF_BCR						3
-> +#define GPU_CC_GMU_BCR						4
-> +#define GPU_CC_GX_BCR						5
-> +#define GPU_CC_XO_BCR						6
-> +
-> +#endif
-> diff --git a/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h b/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> new file mode 100644
-> index 000000000000..460e21881c4f
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,kaanapali-gxclkctl.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GX_CLKCTL_KAANAPALI_H
-> +#define _DT_BINDINGS_CLK_QCOM_GX_CLKCTL_KAANAPALI_H
-> +
-> +/* GX_CLKCTL power domains */
-> +#define GX_CLKCTL_GX_GDSC				0
-> +
-> +#endif
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in hugetlb_vma_assert_locked
+
+------------[ cut here ]------------
+WARNING: mm/hugetlb.c:368 at hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368, CPU#0: syz.0.41/6582
+Modules linked in:
+CPU: 0 UID: 0 PID: 6582 Comm: syz.0.41 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368
+Code: 2e e8 e7 42 a1 ff eb 0c e8 e0 42 a1 ff eb 05 e8 d9 42 a1 ff 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9a a0 6a 09 cc e8 c4 42 a1 ff 90 <0f> 0b 90 eb e5 e8 b9 42 a1 ff 90 0f 0b 90 eb da 48 c7 c1 70 b5 e4
+RSP: 0018:ffffc9000217f388 EFLAGS: 00010293
+RAX: ffffffff821f540c RBX: 0000000000000000 RCX: ffff88807af68000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff5200042fe74 R12: ffff88805df6aa00
+R13: 1ffff110064fdfc4 R14: dffffc0000000000 R15: 0000000000000080
+FS:  00007fc7b46136c0(0000) GS:ffff8881257be000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc7b45f2d58 CR3: 0000000077790000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ huge_pmd_unshare+0x2c8/0x540 mm/hugetlb.c:7622
+ __unmap_hugepage_range+0x6e3/0x1aa0 mm/hugetlb.c:5901
+ unmap_hugepage_range+0x32e/0x410 mm/hugetlb.c:6089
+ hugetlb_vmdelete_list+0x171/0x1c0 fs/hugetlbfs/inode.c:494
+ hugetlb_vmtruncate fs/hugetlbfs/inode.c:641 [inline]
+ hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:879
+ notify_change+0xc1a/0xf40 fs/attr.c:546
+ do_truncate+0x1a4/0x220 fs/open.c:68
+ handle_truncate fs/namei.c:3596 [inline]
+ do_open fs/namei.c:3979 [inline]
+ path_openat+0x306c/0x3830 fs/namei.c:4134
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_open fs/open.c:1460 [inline]
+ __se_sys_open fs/open.c:1456 [inline]
+ __x64_sys_open+0x11e/0x150 fs/open.c:1456
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc7b378eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc7b4613038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fc7b39e5fa0 RCX: 00007fc7b378eec9
+RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
+RBP: 00007fc7b3811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc7b39e6038 R14: 00007fc7b39e5fa0 R15: 00007ffc872255b8
+ </TASK>
+
+
+Tested on:
+
+commit:         b5a4da2c Add linux-next specific files for 20250924
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f02f12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=841973c5ab4f4157
+dashboard link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1581ed34580000
+
 
