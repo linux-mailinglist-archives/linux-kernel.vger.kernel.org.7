@@ -1,67 +1,66 @@
-Return-Path: <linux-kernel+bounces-832793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C69BA05C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:34:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06923BA0610
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F1B1748BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8601C24393
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46EE3043CA;
-	Thu, 25 Sep 2025 15:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B203054CB;
+	Thu, 25 Sep 2025 15:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJhomZjc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emLiPHCn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19308303C9B;
-	Thu, 25 Sep 2025 15:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC712F6180
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758814334; cv=none; b=fmJzqe/uMsM6XooIWgGnBJt/2m+v4tS+8uUJ59lMP6OmnIu0mB95hYxlhLb2tUAwu4QHcWesFEXQDOEnmN3r10j3gTu+o9oLw61VohxsQ4uzlvVOnsHwFfiymFCFvYMRz4kW1VigRuTUmgYojKblBDLHuAPzhI04iXtJRyvHFpY=
+	t=1758814337; cv=none; b=Rwv1BfKWzx7tTpX78TgnAyAVCmzUvoZcSebKmi6LXdosSsYSx3aq4lLIpsfD3UMjnlAz/59HSedYAJxHgF6AwX8z7bJYtBGagjCv2WZRD7rV/+0MYF3WprEOn+/PtG3jkOEGVQQFjySvkLzjxs7Kad9mz02llsHoDaGp6BuGi7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758814334; c=relaxed/simple;
-	bh=nJtC9h9+MFddQfow64tKhZDUie+SLtMhzJFDXayXg1Q=;
+	s=arc-20240116; t=1758814337; c=relaxed/simple;
+	bh=lOn+sMnUt7bIPp7bcc5ObRMjOMjVuljGt0F5zR+sAQY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f4EUkCMJZdsZeS7CrHbxL2989jlvlMO17lonK4JnITDqIaCxSkU1D0Y67gL3M2vcD/tkZwacNhCC9FTzuLViTJ7/EqkSrlXvYpo57uYk+uNIawhoFvZtK87EcOBdEIIEn/pQC1+QcJQHUNhb44vmTBnF6sQPFd2/4KuA1ieaQPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJhomZjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25FFFC4CEF7;
-	Thu, 25 Sep 2025 15:32:10 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aFys8NzQLd9668PCbdUjyrP+OFnagANAQyGmANbU16lheZxvoIveoqdH8d6XTflcMd7zew9fbmxYpO9OuJdJTX0HltCBPqLA0IV8k3Eb+tVS+MsrvuSD2+2mv9gi9J9Y9LrcyH4oAIzMr3hjVr0k9AdbddE7uIABohOJ9lCKXUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emLiPHCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F7AC4CEF5;
+	Thu, 25 Sep 2025 15:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758814333;
-	bh=nJtC9h9+MFddQfow64tKhZDUie+SLtMhzJFDXayXg1Q=;
+	s=k20201202; t=1758814337;
+	bh=lOn+sMnUt7bIPp7bcc5ObRMjOMjVuljGt0F5zR+sAQY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bJhomZjcuVQrsHtrwBqbU+0MZQ0FrWB1VHntRw2PT8v8rBNupBnMn33m3k4k9UV8K
-	 YZnj3knKOay2cX3MtpylgvUzKVndJtBYnW2Gi+sYrsdiQs670EN5OqM5BGm3lGwCQ3
-	 nIMDTD0aGLZpRwy2MtdkVa0YMXWbEc22xktR+l0p5evgMyAOthM2CHVcc6qrkrKunf
-	 N7dI23kY6Ry7Yoz3hn2VVAibpDeTSvoLSO6VdS2AE3bDnswUpL5hbbfnnwm3/UDNwj
-	 nqJn3PaNjQcbb2wKbjMtkZUwxkYPQuhwXgn7/2KR98ki2uBY3LN0rhEf7KPKTgkR1i
-	 MTt4XfjJb6KVQ==
+	b=emLiPHCnSA5Cs7xjZUozLm9BjPLfe8KcKq6xpZlQjtIQpI4PrhCJCOMWCK8rUYLAC
+	 /nK0eNvRQ4LzvMGt1WTaHOR/dJ1i9cwJasfhfUF8T+IJ0pLCOC5tfwCwxdMn7oC4/o
+	 AIbUByDpAjl4kegFbETjHoHvitIpX5JHtrK+8OJ47Js2z4OnCKTRQOOrkntoRMJrXD
+	 vfpHFc5WFjq0wkjQBLEn4xtPkQnB6w+PT84AZ3n7/ecdWcWwb9QVqqxjMwHATGjjC4
+	 02MkHR+n17hA8t8YkZof0+0pn1Xkfbe9Z3g6+clraom3d8Kp4jRafNB3wZ/gNsJKBu
+	 /lEgxl+xygLug==
 From: Will Deacon <will@kernel.org>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	revest@chromium.org,
-	olsajiri@gmail.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	Feng Yang <yangfeng59949@163.com>
-Cc: kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
+To: mark.rutland@arm.com,
 	linux-arm-kernel@lists.infradead.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: Fix the bug where bpf_get_stackid returns -EFAULT on the ARM64
-Date: Thu, 25 Sep 2025 16:32:02 +0100
-Message-Id: <175880516935.3262599.14788507714084459007.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Yicong Yang <yangyicong@huawei.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	jonathan.cameron@huawei.com,
+	prime.zeng@hisilicon.com,
+	linuxarm@huawei.com,
+	yangyicong@hisilicon.com,
+	wangyushan12@huawei.com,
+	hejunhao3@h-partners.com,
+	yangyccccc@gmail.com
+Subject: Re: [PATCH] drivers/perf: hisi: Add tt_core_deprecated for compatibility
+Date: Thu, 25 Sep 2025 16:32:03 +0100
+Message-Id: <175880472273.3260342.8602469761490497790.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250925020822.119302-1-yangfeng59949@163.com>
-References: <20250925020822.119302-1-yangfeng59949@163.com>
+In-Reply-To: <20250925033123.5836-1-yangyicong@huawei.com>
+References: <20250925033123.5836-1-yangyicong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,24 +70,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 25 Sep 2025 10:08:22 +0800, Feng Yang wrote:
-> When using bpf_program__attach_kprobe_multi_opts on ARM64 to hook a BPF program
-> that contains the bpf_get_stackid function, the BPF program fails
-> to obtain the stack trace and returns -EFAULT.
+On Thu, 25 Sep 2025 11:31:23 +0800, Yicong Yang wrote:
+> Previously tt_core is defined as config1:0-7 which may not cover all
+> the CPUs sharing L3C on platforms with more than 8 CPUs in a L3C. In
+> order to support such platforms extend tt_core to 16 bits, since no
+> spare space in config1, tt_core was moved to config2:0-15.
 > 
-> This is because ftrace_partial_regs omits the configuration of the pstate register,
-> leaving pstate at the default value of 0. When get_perf_callchain executes,
-> it uses user_mode(regs) to determine whether it is in kernel mode.
-> This leads to a misjudgment that the code is in user mode,
-> so perf_callchain_kernel is not executed and the function returns directly.
-> As a result, trace->nr becomes 0, and finally -EFAULT is returned.
+> Though linux expects the users to retrieve the control encoding from
+> sysfs first for each option, it's possible if user doesn't follow
+> this and hardcoded tt_core in config1. So add an option
+> tt_core_deprecated for config1:0-7 for backward compatibility.
 > 
 > [...]
 
 Applied to arm64 (for-next/core), thanks!
 
-[1/1] tracing: Fix the bug where bpf_get_stackid returns -EFAULT on the ARM64
-      https://git.kernel.org/arm64/c/fd2f74f8f3d3
+[1/1] drivers/perf: hisi: Add tt_core_deprecated for compatibility
+      https://git.kernel.org/arm64/c/a084c3c4a267
 
 Cheers,
 -- 
