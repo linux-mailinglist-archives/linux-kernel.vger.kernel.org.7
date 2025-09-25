@@ -1,85 +1,374 @@
-Return-Path: <linux-kernel+bounces-833085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603BBBA12D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A87BA12E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67BCB7B1B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83771177458
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A7631C56F;
-	Thu, 25 Sep 2025 19:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6391D31BCB4;
+	Thu, 25 Sep 2025 19:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KybBiZJ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AV1u3umb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E6731A06A;
-	Thu, 25 Sep 2025 19:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CE531BC8F
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828478; cv=none; b=JBjsUvAy5ECnKnQ23hmjT5PEdRDq20ERHzP2QmaRcrrIzxZ38T/R4I/kt3tgStPzfiRbatBYow8xXebDrA/hMmKJFbxPazOVnKxF/bTkI7D3SLB635al2NjhFMzgH6ukHYpKzepNuljrS6lYT9uNxjWdIrEYfK439AsCfSIn550=
+	t=1758828536; cv=none; b=C9MAz3Q9O0PLmDGyptaG4k/0u0Te+2kqsLqBKqV0HV4J4jchItTm+dPhYxEABMoK6ytSgYqUBUKpIZWD8bV1zsQMBb6JgomxS3qUiJTnMCF7yYVcUex4+JNodyld17cK2KUYezKx0JR8N2VGxbfa0DbqyXNtt8/X3yIbgyOu6o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828478; c=relaxed/simple;
-	bh=SGyD42+nLFRtpF3/nqqtTJzH1KFD5FuhGSNA+fxfXeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMcM4Jq08njjK42ARQiRsrwQdvmjiD2p8EPDVodkpJ+xhUytXxmLgO06ISn3rhFgxZeEi1vaqpgDGIc/7LjrnvZO91FyOFnyg1d17Ua1QVguO/EyWOcG65qDWcn8FyzjvN4rJkwczQ4k6nVLyw8ACTXj16HZfMmDaazGeSOBJYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KybBiZJ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 608D9C4CEF0;
-	Thu, 25 Sep 2025 19:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758828478;
-	bh=SGyD42+nLFRtpF3/nqqtTJzH1KFD5FuhGSNA+fxfXeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KybBiZJ0ch51ly9WQsjmpgbbq20GqiUSeM4iBIdm2j2C/eBB3CK3ihYFy65E3q6gS
-	 0zhDCrME8xglux+xfW16Eg7+PCA0WL0EMNSq6XxVpLYVoFI6XVccwAEkE/b3ZVuDyd
-	 0kwk/rTBxJ5ZjrdDv13YCsRergtm++rBm9C3RUQk5MyFw2sCB3C2jsB6lz9xtO8FSZ
-	 Jhbsfts4Yycfgp2AI8+xmeWdhSZat7nw6uBZ2gVROh8DhfhYJ+a67ub3jbpQwn9PP4
-	 ClcNsE29npPnzCgmhL4Xchy4WJqn0HBP4dvLhZ8qDXbbToxU24QcODs7QrFZRnWxx6
-	 9Zn2YSyPKV+Wg==
-Date: Thu, 25 Sep 2025 20:27:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	ukleinek@debian.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 5/6] dt-bindings: arm: rockchip: add TS233 to
- RK3568-based QNAP NAS devices
-Message-ID: <20250925-reborn-degree-799bec1f7ac6@spud>
-References: <20250925092923.2184187-1-heiko@sntech.de>
- <20250925092923.2184187-6-heiko@sntech.de>
+	s=arc-20240116; t=1758828536; c=relaxed/simple;
+	bh=kOCORXCAXXJ2qj0YE5bKRj+HTBCxeKD9S0E68rhLDkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdPiO6vfau7uI5hKrqGOefnWISioIVzaJS1ByCRDvdO1OXcD9Biv/JmoRzWDtKrjCt7PbNe6hx18YU20xJoO3ffI2mPPs+aiB60+VhLtcJRVC8lBvwUtPoeGp4RE+tYtsZ3lDo9zwotPAyCBZ6an6d5brmUbWyxUuUkmg0xP1cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AV1u3umb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758828533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Bq7ppmqVgZHliLbZBRvvT4qAn03nm4JKVOlNO1X6M5U=;
+	b=AV1u3umb3hAJ0jcLxmdhLYawnY0G3iX1qbhr/VYpjd2MkS1bb516uC2cZCceG9a3Dfz0QQ
+	0L1P/WseG94jvUw92qeeP6wreJBTJL0QdHJSQ+NjosQXZkOorpwMjSWXdWELAX7B5Ab/Sk
+	Dz33CVrxT32WL8X1SGZiyFj1Olb8N7s=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-113-cBnBcFQiMryVx8vBMrGy0w-1; Thu, 25 Sep 2025 15:28:52 -0400
+X-MC-Unique: cBnBcFQiMryVx8vBMrGy0w-1
+X-Mimecast-MFC-AGG-ID: cBnBcFQiMryVx8vBMrGy0w_1758828531
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45df7e734e0so7057355e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:28:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758828531; x=1759433331;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bq7ppmqVgZHliLbZBRvvT4qAn03nm4JKVOlNO1X6M5U=;
+        b=E16/N5brTRHgOsMD5qswVD50b2HkZtiLi7piLVuPOeGH3ego6JFN/K6F1afaKeOgyl
+         dDHGAPT1zRFakb4YyJN9xVL3n8aY62+b5euXuMJV9bk0MxBNKBrshClwE5pKuKBgKss2
+         Q8iFt2ATr/iSAKbV/sjnmAJes9vJ035caVQupnhR2fLySytOQTB4Bpl9vYmLMrSTi2df
+         bQ5sI/2i9iKVy43GdfTeMJJDJ0V9TPMGRBzyZj1giMsSzl0jshHxIdINRYiLJXYiWGk2
+         HO8NStiRBMAVt/QjSJXmkVmoosMN4w+BexKV6d6ClPpdVJP0bHSsGlF2JyLVDmaksj5V
+         8ZLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV64ZM0esxECiM02wIhRScPeNUJpwXr87f6lLRnO8nzfXU5lFcELq7OoKsLRPlXYaH1gDwcL8rDa0N4Zt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAoGAtDKZBMDoAqAFtWhUpuOHFcJKgDizFxRuazMD7uDxdaeCf
+	gsbKf68qAd11fDqIUvLz2RcEo8DbC6KCtwm+5VE/eMWMrE8IbmoMTuqkPxdQ9dG0XO+H00pqUHb
+	pKiny+bopqq1gDW91POn6sCx7AIitFBep3M2NM9kN7J/MSCt7nphgj8TcEpn6C0m6XA==
+X-Gm-Gg: ASbGncuFMQBBzCVCvXskGHjSb1dLWBP9B6vXqb29fcGhJYDwyz0UiyN8IG9FtLmwp+j
+	JgKow1+3peSKg7TlPU77pEIS3WloZL2x2UFIut5SG7tWhmKzMnQbF9QzdRx0Jn9EYpCAHCoP8fA
+	XZFJDvzI7F2zJ0+ytRSg9otvlpHfTEDA7+skss8xyHl6f9iQ2oyDdUv+emyQyahUfq/oaemvQXz
+	iX8rZijLiKnATJZpfcOOh1NOTQlA0dV4uPgnE+mhjS2ZyP1Eft5ZsyHyTgW8nqU+u+QRsM7p/c5
+	C3Awu2Ka0zHwCKaHp3j2XnUfPgXoW2YevAFgAvklhdUGSrg3DW2qz/wnU8MIXCFmMsrL0qIWatC
+	H2G5aoJw4KLyk70nm5szuae8qydMMFTOdKRa921IZs584xE14SrjZfyW+EVsCzuEZIey4
+X-Received: by 2002:a05:600c:a43:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e329e4aa5mr41391075e9.22.1758828530782;
+        Thu, 25 Sep 2025 12:28:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdB5XKgMH2Lxe6a6vu2Xy7Adch2dis5Y1Fy7OCZ/mT526GuwLzR5bO47EzrRa1c7ysWrxW0w==
+X-Received: by 2002:a05:600c:a43:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-46e329e4aa5mr41390605e9.22.1758828530238;
+        Thu, 25 Sep 2025 12:28:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc749b8f9sm3988405f8f.50.2025.09.25.12.28.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 12:28:49 -0700 (PDT)
+Message-ID: <ff818815-8049-4595-9525-734245122443@redhat.com>
+Date: Thu, 25 Sep 2025 21:28:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9TWnaI4DxVO0LRhz"
-Content-Disposition: inline
-In-Reply-To: <20250925092923.2184187-6-heiko@sntech.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from direct
+ map
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "andrii@kernel.org" <andrii@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+ "bp@alien8.de" <bp@alien8.de>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "corbet@lwn.net" <corbet@lwn.net>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "haoluo@google.com" <haoluo@google.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "Thomson, Jack" <jackabt@amazon.co.uk>, "jannh@google.com"
+ <jannh@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+ "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "jolsa@kernel.org" <jolsa@kernel.org>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "maz@kernel.org" <maz@kernel.org>, "mhocko@suse.com" <mhocko@suse.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "pfalcato@suse.de" <pfalcato@suse.de>, "rppt@kernel.org" <rppt@kernel.org>,
+ "sdf@fomichev.me" <sdf@fomichev.me>, "seanjc@google.com"
+ <seanjc@google.com>, "shuah@kernel.org" <shuah@kernel.org>,
+ "song@kernel.org" <song@kernel.org>, "surenb@google.com"
+ <surenb@google.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "tabba@google.com" <tabba@google.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "vbabka@suse.cz"
+ <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>,
+ "willy@infradead.org" <willy@infradead.org>, "x86@kernel.org"
+ <x86@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>,
+ "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>
+References: <a02996f3-fdf4-4b5f-85b6-d79b948b3237@redhat.com>
+ <20250925155237.3928-1-roypat@amazon.co.uk>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250925155237.3928-1-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 25.09.25 17:52, Roy, Patrick wrote:
+> On Thu, 2025-09-25 at 12:00 +0100, David Hildenbrand wrote:
+>> On 24.09.25 17:22, Roy, Patrick wrote:
+>>> Add GUEST_MEMFD_FLAG_NO_DIRECT_MAP flag for KVM_CREATE_GUEST_MEMFD()
+>>> ioctl. When set, guest_memfd folios will be removed from the direct map
+>>> after preparation, with direct map entries only restored when the folios
+>>> are freed.
+>>>
+>>> To ensure these folios do not end up in places where the kernel cannot
+>>> deal with them, set AS_NO_DIRECT_MAP on the guest_memfd's struct
+>>> address_space if GUEST_MEMFD_FLAG_NO_DIRECT_MAP is requested.
+>>>
+>>> Add KVM_CAP_GUEST_MEMFD_NO_DIRECT_MAP to let userspace discover whether
+>>> guest_memfd supports GUEST_MEMFD_FLAG_NO_DIRECT_MAP. Support depends on
+>>> guest_memfd itself being supported, but also on whether linux supports
+>>> manipulatomg the direct map at page granularity at all (possible most of
+>>> the time, outliers being arm64 where its impossible if the direct map
+>>> has been setup using hugepages, as arm64 cannot break these apart due to
+>>> break-before-make semantics, and powerpc, which does not select
+>>> ARCH_HAS_SET_DIRECT_MAP, though also doesn't support guest_memfd
+>>> anyway).
+>>>
+>>> Note that this flag causes removal of direct map entries for all
+>>> guest_memfd folios independent of whether they are "shared" or "private"
+>>> (although current guest_memfd only supports either all folios in the
+>>> "shared" state, or all folios in the "private" state if
+>>> GUEST_MEMFD_FLAG_MMAP is not set). The usecase for removing direct map
+>>> entries of also the shared parts of guest_memfd are a special type of
+>>> non-CoCo VM where, host userspace is trusted to have access to all of
+>>> guest memory, but where Spectre-style transient execution attacks
+>>> through the host kernel's direct map should still be mitigated.  In this
+>>> setup, KVM retains access to guest memory via userspace mappings of
+>>> guest_memfd, which are reflected back into KVM's memslots via
+>>> userspace_addr. This is needed for things like MMIO emulation on x86_64
+>>> to work.
+>>>
+>>> Direct map entries are zapped right before guest or userspace mappings
+>>> of gmem folios are set up, e.g. in kvm_gmem_fault_user_mapping() or
+>>> kvm_gmem_get_pfn() [called from the KVM MMU code]. The only place where
+>>> a gmem folio can be allocated without being mapped anywhere is
+>>> kvm_gmem_populate(), where handling potential failures of direct map
+>>> removal is not possible (by the time direct map removal is attempted,
+>>> the folio is already marked as prepared, meaning attempting to re-try
+>>> kvm_gmem_populate() would just result in -EEXIST without fixing up the
+>>> direct map state). These folios are then removed form the direct map
+>>> upon kvm_gmem_get_pfn(), e.g. when they are mapped into the guest later.
+>>>
+>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>>> ---
+>>>    Documentation/virt/kvm/api.rst    |  5 +++
+>>>    arch/arm64/include/asm/kvm_host.h | 12 ++++++
+>>>    include/linux/kvm_host.h          |  6 +++
+>>>    include/uapi/linux/kvm.h          |  2 +
+>>>    virt/kvm/guest_memfd.c            | 61 ++++++++++++++++++++++++++++++-
+>>>    virt/kvm/kvm_main.c               |  5 +++
+>>>    6 files changed, 90 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>>> index c17a87a0a5ac..b52c14d58798 100644
+>>> --- a/Documentation/virt/kvm/api.rst
+>>> +++ b/Documentation/virt/kvm/api.rst
+>>> @@ -6418,6 +6418,11 @@ When the capability KVM_CAP_GUEST_MEMFD_MMAP is supported, the 'flags' field
+>>>    supports GUEST_MEMFD_FLAG_MMAP.  Setting this flag on guest_memfd creation
+>>>    enables mmap() and faulting of guest_memfd memory to host userspace.
+>>>
+>>> +When the capability KVM_CAP_GMEM_NO_DIRECT_MAP is supported, the 'flags' field
+>>> +supports GUEST_MEMFG_FLAG_NO_DIRECT_MAP. Setting this flag makes the guest_memfd
+>>> +instance behave similarly to memfd_secret, and unmaps the memory backing it from
+>>> +the kernel's address space after allocation.
+>>> +
+>>
+>> Do we want to document what the implication of that is? Meaning,
+>> limitations etc. I recall that we would need the user mapping for gmem
+>> slots to be properly set up.
+>>
+>> Is that still the case in this patch set?
+> 
+> The ->userspace_addr thing is the general requirement for non-CoCo VMs,
+> and not specific for direct map removal (e.g. I expect direct map
+> removal to just work out of the box for CoCo setups, where KVM already
+> cannot access guest memory, ignoring the question of whether direct map
+> removal is even useful for CoCo VMs). So I don't think it should be
+> documented as part of
+> KVM_CAP_GMEM_NO_DIRECT_MAP/GUEST_MEMFG_FLAG_NO_DIRECT_MAP (heh, there's
+> a typo I just noticed.
 
---9TWnaI4DxVO0LRhz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Okay I was rather wondering whether this will be the first patch set 
+where it is actually required to be set. In the basic mmap series, I am 
+not sure yet if we really depend on it (but IIRC we did document it, but 
+do no sanity checks etc).
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+"MEMFG". Also "GMEM" needs to be "GUEST_MEMFD".
+> Will fix that), but rather as part of GUEST_MEMFD_FLAG_MMAP. I can add a
+> patch it there (or maybe send it separately, since FLAG_MMAP is already
+> in -next?).
 
---9TWnaI4DxVO0LRhz
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, it's in kvm/next and will go upstream soon.
 
------BEGIN PGP SIGNATURE-----
+> 
+>>>    When the KVM MMU performs a PFN lookup to service a guest fault and the backing
+>>>    guest_memfd has the GUEST_MEMFD_FLAG_MMAP set, then the fault will always be
+>>>    consumed from guest_memfd, regardless of whether it is a shared or a private
+>>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>>> index 2f2394cce24e..0bfd8e5fd9de 100644
+>>> --- a/arch/arm64/include/asm/kvm_host.h
+>>> +++ b/arch/arm64/include/asm/kvm_host.h
+>>> @@ -19,6 +19,7 @@
+>>>    #include <linux/maple_tree.h>
+>>>    #include <linux/percpu.h>
+>>>    #include <linux/psci.h>
+>>> +#include <linux/set_memory.h>
+>>>    #include <asm/arch_gicv3.h>
+>>>    #include <asm/barrier.h>
+>>>    #include <asm/cpufeature.h>
+>>> @@ -1706,5 +1707,16 @@ void compute_fgu(struct kvm *kvm, enum fgt_group_id fgt);
+>>>    void get_reg_fixed_bits(struct kvm *kvm, enum vcpu_sysreg reg, u64 *res0, u64 *res1);
+>>>    void check_feature_map(void);
+>>>
+>>> +#ifdef CONFIG_KVM_GUEST_MEMFD
+>>> +static inline bool kvm_arch_gmem_supports_no_direct_map(void)
+>>> +{
+>>> +     /*
+>>> +      * Without FWB, direct map access is needed in kvm_pgtable_stage2_map(),
+>>> +      * as it calls dcache_clean_inval_poc().
+>>> +      */
+>>> +     return can_set_direct_map() && cpus_have_final_cap(ARM64_HAS_STAGE2_FWB);
+>>> +}
+>>> +#define kvm_arch_gmem_supports_no_direct_map kvm_arch_gmem_supports_no_direct_map
+>>> +#endif /* CONFIG_KVM_GUEST_MEMFD */
+>>>
+>>
+>> I strongly assume that the aarch64 support should be moved to a separate
+>> patch -- if possible, see below.
+>>
+>>>    #endif /* __ARM64_KVM_HOST_H__ */
+>>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>>> index 1d0585616aa3..73a15cade54a 100644
+>>> --- a/include/linux/kvm_host.h
+>>> +++ b/include/linux/kvm_host.h
+>>> @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
+>>>    bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
+>>>    #endif
+>>>
+>>> +#ifdef CONFIG_KVM_GUEST_MEMFD
+>>> +#ifndef kvm_arch_gmem_supports_no_direct_map
+>>> +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
+>>> +#endif
+>>
+>> Hm, wouldn't it be better to have an opt-in per arch, and really only
+>> unlock the ones we know work (tested etc), explicitly in separate patches.
+>>
+> 
+> Ack, can definitely do that. Something like
+> 
+> #ifndef kvm_arch_gmem_supports_no_direct_map
+> static inline bool kvm_arch_gmem_supports_no_direct_map()
+> {
+> 	return false;
+> }
+> #endif
+> 
+> and then actual definitions (in separate patches) in the arm64 and x86
+> headers?
+> 
+> On a related note, maybe PATCH 2 should only export
+> set_direct_map_valid_noflush() for the architectures on which we
+> actually need it? Which would only be x86, since arm64 doesnt allow
+> building KVM as a module, and nothing else supports guest_memfd right
+> now.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWXugAKCRB4tDGHoIJi
-0pbdAQCojilOiu15Cp5rOWVEo/mgDL7lkFMrQJOB+gnddLSxCgEAxbpFBqLtIMqY
-It1eK6buLLxrthe7e42mim6YLkdzcww=
-=wsJB
------END PGP SIGNATURE-----
+Yes, that's probably best. Could be done in the same arch patch then.
 
---9TWnaI4DxVO0LRhz--
+-- 
+Cheers
+
+David / dhildenb
+
 
