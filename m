@@ -1,538 +1,169 @@
-Return-Path: <linux-kernel+bounces-832186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48308B9E965
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EF2B9E959
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5BE7A1A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 129C04A1495
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4392EA729;
-	Thu, 25 Sep 2025 10:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E802DE1F0;
+	Thu, 25 Sep 2025 10:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlFkghCc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFfQXCjf"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A9928850B;
-	Thu, 25 Sep 2025 10:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02011502BE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758795214; cv=none; b=l4FnO0f9sdBFJpfwqbgcqpV3JoK3pVr1B/Z8y1rs5Dq7I7Z1Q2pw0M/ku9QpzPx7ABtVYP4adBr+JOI0apJ1xmIcOOHrp0V6EXbRgx896z3BPEEPhCxrqXFvMbLn2kgMrIxdGwwwPsiRu9M+vcpzxvJw5Dz8e5YTJ/fx/+U3cEk=
+	t=1758795195; cv=none; b=Ksjn7OMdsE9vYUISz/R/B6DNpE3PAP676AB/Oj9I/ZPs20jQ4Bkc9/inqJ5Y7DkSGXz548lJxmk9Y9afkvJkbG+1kEOWMlxN/WTC9OO0qcmKyWdla22XDhWvuymZUMCyLuxyAsDn6Ls1iUdsHuBz/CtcgsHtpItt6CJZDB5hQvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758795214; c=relaxed/simple;
-	bh=FmmuoEdPE7PUu8EUIKJubbTNL4XAhktWLkvzsHWpSvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdwmcvSGJMg8xtOdizJ8+gMSzz0bcSsNbnrboB1cW92R4tMp91J4K+OE8tAXODq0aUPO48WaYCLxRAqD89Wo4FRpefSWHHpaT0taLfeG9IVFx70HEHuxWspfS83ZaKSZfeEHPgyRIpGTuD7AZ++xc9Sog1sjqd8sYBmG1CfwdRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlFkghCc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CFE8C4CEF0;
-	Thu, 25 Sep 2025 10:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758795212;
-	bh=FmmuoEdPE7PUu8EUIKJubbTNL4XAhktWLkvzsHWpSvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OlFkghCc6+fVtW7KxixRsN/MLQmVsuJAzZicn5vI4qD0tURLypZjo2Wr8Cy3r0q5H
-	 U0Y1Nz6F5OH3mkb1baXv3H9SjkmwMVcuSHvSNUCEuWYKngygnjZVPwSX5ss2g2ZZNT
-	 p+8SpZYJSe8i9QRTfDowFmNsDHEyIZ77WnMfLeE+0WuIpExNxOG+yPmcn24GEI78/x
-	 uYMUTjPFSWhQR1c9dVu6SCHEw1x1BBgjweVJ6pOKRIWjtJ/60ooeLfgW06Gt4eMQyp
-	 fdaSrPjU8B/RJZOfOUdP3DWoITxotHmCIiYuRpRwkiZc/AOmybqe1QHqNxZ3cqL5c/
-	 c0EtNVghyFrbA==
-Date: Thu, 25 Sep 2025 12:13:25 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 1/8] man/man2/fsopen.2: document "new" mount API
-Message-ID: <5u62uts47ui54bcw6pmjyuop6tazpxjdrezw46t5ygcfzbnonb@yipwnslfinwh>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
+	s=arc-20240116; t=1758795195; c=relaxed/simple;
+	bh=HmljixeQc8xgr6LVqYOS1SBQvDhtnhXHQXUSYqpft9s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DfubHLYt7MbFCv54crk8sh8KZjfHZpzy3Kd23G8OkZCiK2TyaKF+JYxGtuMr7XgWyFOCP1CmwZKBi4tgjdJMxzoQzp3b2/opleHRsnbx1AymWNh+HeyquT8ZrmKpE/0MjCBlX8MJ8rLRDgIRIzbejQE54df3wX5bFenzecvlymM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFfQXCjf; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so3767555e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758795192; x=1759399992; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HmljixeQc8xgr6LVqYOS1SBQvDhtnhXHQXUSYqpft9s=;
+        b=NFfQXCjf6etA9/+U2b26pkIqP2Av9aJ+9uNI4guStBKsK6XO8y6mgBEd+YCNokqtj9
+         nhy4klZb8xQswIqn5O7hwGbR7bUCerniOBI1FspJ1dOhXEDeJ6GB7M8lc1AbSGHojr10
+         9o5sS0kUoErTWsnv4gLh/g9MvtVRsmYuRs4umwPhXYSxmhMhUzytR3Q3KNlztiBEwOpZ
+         p6PqA6h1WTipyig/I6ixlTcJmZg08eQS1yPw963ZspnHLuIUFHK1+p0aSUsaSJ6kp1As
+         0WHvaPyx2q8so6NhzUX56mLXYettjds50Lgj0QXjep3pvnBuzFKykxAH3TnvfWFbymYM
+         3njA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758795192; x=1759399992;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HmljixeQc8xgr6LVqYOS1SBQvDhtnhXHQXUSYqpft9s=;
+        b=XcCVD1WrxzaGdy/Jjo3N1s0V5wJRS+cbqiFDfgFiFE2oOzpSKLdA/JlWF2nv58IlD+
+         YifxSi5BapQQ7swcye5JMDVKO5OSbJgbxxilG54gNVtOzj8Z7nxaLhnPVjJjog3iRVi7
+         AjbgxNcTZEOFTl9Y4ro/Njihes5EHul/lI+W7JfzA39Hh1ItY3OkS/b14DgtWsWftx5+
+         AT5Kew+OinjMuWSt2QB29anZlL22+CIOsp1mZbvCqw3PzUvOqSeRS8WH+BMA3AYcjUQC
+         gw9Qg/VpPawunj1PZKSKAaZM4Bc0Pi1bHqv6Ozxg2z4SXNgsbi+SyeAsZ58wLl553pSb
+         MTZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMAgVeQL2Up13Gfu9EPpIIubLI8xuKNDNSNdp++fkD/K0nBj4vXJ6wwcJnfOtJ4GPxBG2JIIUP7oHty40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnnpCeMkwwMbISVRNsrQunTfE6Vu5BKX7mjtZjYjvQQC/xJZfU
+	ubNp7z5REoX/q1ExogauY+fOcrjxSQJDTHTAHS/Jn9c0wGJc8kSPLfSQ
+X-Gm-Gg: ASbGncuFqYfwoSgL/uukqNaRuPEdQTsTBsz3CUEVPAyL+3//tu7kacQHLi3hMKvC7n4
+	9Li5+4KLpIOhC32MsyJmU5WcaAD3JRkVdavNztZ8B/vKBIjPyG9VYPT8u+Axc/3X2osaV3Q4UHi
+	bT8KkNht01y7JQjf4dzKBC8r4GyZQjUMyhow5L3YdMSS2O5FnhZ+17pcNMQyg70OaEAwoYCgRUF
+	uGwRBMAuKckzoldq3W7eevunY59KTdxpWbpIjyrjunYVqGNg0y4X/HLfC4jYtF/P3wR4iODa9fa
+	4uJ6tJ89Z3fMGx9OYaEiuRSpD9yamr0QfNatXXxZQkIVBk8Pi+4iI7RkHEVimDRVcLTZTga7bac
+	P86O9lynUaY9TG9U7q6RPROQN97xqM5M=
+X-Google-Smtp-Source: AGHT+IEC57Rdx2+h+FGeZVFTjH1ezVMChuJ93kmZqX1ZaXIDR/t+6gNu7QdgglKgxzNMt7eo3aLEiA==
+X-Received: by 2002:a05:600c:5d1:b0:46d:83e7:45ec with SMTP id 5b1f17b1804b1-46e33ca94eamr14208235e9.11.1758795191990;
+        Thu, 25 Sep 2025 03:13:11 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9768bdesm2438865f8f.23.2025.09.25.03.13.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 03:13:11 -0700 (PDT)
+Message-ID: <ab4b09ba3a332305f5e1e9d456acbecdb492bd85.camel@gmail.com>
+Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>, Manikanta Guntupalli
+	 <manikanta.guntupalli@amd.com>, Jorge Marques <gastmaier@gmail.com>, Arnd
+ Bergmann <arnd@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jorge Marques	
+ <jorge.marques@analog.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Frank Li <Frank.Li@nxp.com>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>, 
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>, "git
+ (AMD-Xilinx)" <git@amd.com>, Michal Simek	 <michal.simek@amd.com>
+Date: Thu, 25 Sep 2025 11:13:39 +0100
+In-Reply-To: <91e73a29-96e3-4a52-addb-0cb954f46c04@app.fastmail.com>
+References: <20250924201837.3691486-1-arnd@kernel.org>
+	 <2wtpklapw5ogsevuvk2l4ngvw7hymer2y4cc454h47u2d7tq44@4mknmpk5yzil>
+	 <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+	 <37d47af4f4d5220764efc5870630fdfc1e9be2c9.camel@gmail.com>
+	 <DM4PR12MB61093CEE50990ECC403D3FB98C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+	 <e5a6789230840b31ef0f60ca0a770a4fb266da2a.camel@gmail.com>
+	 <91e73a29-96e3-4a52-addb-0cb954f46c04@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="um5fosvnozlmkdra"
-Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
 
-
---um5fosvnozlmkdra
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 1/8] man/man2/fsopen.2: document "new" mount API
-Message-ID: <5u62uts47ui54bcw6pmjyuop6tazpxjdrezw46t5ygcfzbnonb@yipwnslfinwh>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-1-028fb88023f2@cyphar.com>
-
-Hi Aleksa,
-
-On Thu, Sep 25, 2025 at 01:31:23AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
+On Thu, 2025-09-25 at 11:35 +0200, Arnd Bergmann wrote:
+> On Thu, Sep 25, 2025, at 10:58, Nuno S=C3=A1 wrote:
+> > On Thu, 2025-09-25 at 08:47 +0000, Guntupalli, Manikanta wrote:
+> > > > (AMD-Xilinx) <git@amd.com>; Simek, Michal <michal.simek@amd.com>
+> > > > Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+> > > > On Thu, 2025-09-25 at 07:37 +0000, Guntupalli, Manikanta wrote:
+> > > > > > i3c@lists.infradead.org; linux-kernel@vger.kernel.org
+> > > > > > Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+> > > > > > On Wed, Sep 24, 2025 at 10:18:33PM +0200, Arnd Bergmann wrote:
+> > > >=20
+> > > > I would argue that's something for callers of these functions to ca=
+re
+> > > > about.
+> > > If each I3C driver has to handle FIFO endianness individually, it
+> > > introduces
+> > > unnecessary duplication and overhead across drivers. Centralizing thi=
+s in
+> > > the
+> > > FIFO access helpers keeps the logic consistent, avoids repeated
+> > > boilerplate,
+> > > and reduces the chance of subtle bugs.
+> >=20
+> > I mean, that's what spi and i2c drivers do already.=C2=A0With enum
+> > i3c_fifo_endian
+> > you're already forcing users to care (or know) about endianism so they =
+might
+> > as
+> > well just pass the data in the proper order already (not sure if it's s=
+uch a
+> > big
+> > 'burden').
 >=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-
-Patch applied.  Thanks!
-
-
-Have a lovely day!
-Alex
-
-> ---
->  man/man2/fsopen.2 | 385 ++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 385 insertions(+)
->=20
-> diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..7fbc6c3d28e2e741cd9003c10=
-5621b4242abd487
-> --- /dev/null
-> +++ b/man/man2/fsopen.2
-> @@ -0,0 +1,385 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fsopen \- create a new filesystem context
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fsopen ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR fsopen ()
-> +creates a blank filesystem configuration context within the kernel
-> +for the filesystem named by
-> +.I fsname
-> +and places it into creation mode.
-> +A new file descriptor
-> +associated with the filesystem configuration context
-> +is then returned.
-> +The calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability in order to create a new filesystem configuration context.
-> +.P
-> +A filesystem configuration context is
-> +an in-kernel representation of a pending transaction,
-> +containing a set of configuration parameters that are to be applied
-> +when creating a new instance of a filesystem
-> +(or modifying the configuration of an existing filesystem instance,
-> +such as when using
-> +.BR fspick (2)).
-> +.P
-> +After obtaining a filesystem configuration context with
-> +.BR fsopen (),
-> +the general workflow for operating on the context looks like the followi=
-ng:
-> +.IP (1) 5
-> +Pass the filesystem context file descriptor to
-> +.BR fsconfig (2)
-> +to specify any desired filesystem parameters.
-> +This may be done as many times as necessary.
-> +.IP (2)
-> +Pass the same filesystem context file descriptor to
-> +.BR fsconfig (2)
-> +with
-> +.B \%FSCONFIG_CMD_CREATE
-> +to create an instance of the configured filesystem.
-> +.IP (3)
-> +Pass the same filesystem context file descriptor to
-> +.BR fsmount (2)
-> +to create a new detached mount object for
-> +the root of the filesystem instance,
-> +which is then attached to a new file descriptor.
-> +(This also places the filesystem context file descriptor into
-> +reconfiguration mode,
-> +similar to the mode produced by
-> +.BR fspick (2).)
-> +Once a mount object has been created with
-> +.BR fsmount (2),
-> +the filesystem context file descriptor can be safely closed.
-> +.IP (4)
-> +Now that a mount object has been created,
-> +you may
-> +.RS
-> +.IP \[bu] 3
-> +use the detached mount object file descriptor as a
-> +.I dirfd
-> +argument to "*at()" system calls;
-> +and/or
-> +.IP \[bu]
-> +attach the mount object to a mount point
-> +by passing the mount object file descriptor to
-> +.BR move_mount (2).
-> +This will also prevent the mount object from
-> +being unmounted and destroyed when
-> +the mount object file descriptor is closed.
-> +.RE
-> +.IP
-> +The mount object file descriptor will
-> +remain associated with the mount object
-> +even after doing the above operations,
-> +so you may repeatedly use the mount object file descriptor with
-> +.BR move_mount (2)
-> +and/or "*at()" system calls
-> +as many times as necessary.
-> +.P
-> +A filesystem context will move between different modes
-> +throughout its lifecycle
-> +(such as the creation phase
-> +when created with
-> +.BR fsopen (),
-> +the reconfiguration phase
-> +when an existing filesystem instance is selected with
-> +.BR fspick (2),
-> +and the intermediate "awaiting-mount" phase
-> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
-> +between
-> +.B \%FSCONFIG_CMD_CREATE
-> +and
-> +.BR fsmount (2)),
-> +which has an impact on
-> +what operations are permitted on the filesystem context.
-> +.P
-> +The file descriptor returned by
-> +.BR fsopen ()
-> +also acts as a channel for filesystem drivers to
-> +provide more comprehensive diagnostic information
-> +than is normally provided through the standard
-> +.BR errno (3)
-> +interface for system calls.
-> +If an error occurs at any time during the workflow mentioned above,
-> +calling
-> +.BR read (2)
-> +on the filesystem context file descriptor
-> +will retrieve any ancillary information about the encountered errors.
-> +(See the "Message retrieval interface" section
-> +for more details on the message format.)
-> +.P
-> +.I flags
-> +can be used to control aspects of
-> +the creation of the filesystem configuration context file descriptor.
-> +A value for
-> +.I flags
-> +is constructed by bitwise ORing
-> +zero or more of the following constants:
-> +.RS
-> +.TP
-> +.B FSOPEN_CLOEXEC
-> +Set the close-on-exec
-> +.RB ( FD_CLOEXEC )
-> +flag on the new file descriptor.
-> +See the description of the
-> +.B O_CLOEXEC
-> +flag in
-> +.BR open (2)
-> +for reasons why this may be useful.
-> +.RE
-> +.P
-> +A list of filesystems supported by the running kernel
-> +(and thus a list of valid values for
-> +.IR fsname )
-> +can be obtained from
-> +.IR /proc/filesystems .
-> +(See also
-> +.BR proc_filesystems (5).)
-> +.SS Message retrieval interface
-> +When doing operations on a filesystem configuration context,
-> +the filesystem driver may choose to provide
-> +ancillary information to userspace
-> +in the form of message strings.
-> +.P
-> +The filesystem context file descriptors returned by
-> +.BR fsopen ()
-> +and
-> +.BR fspick (2)
-> +may be queried for message strings at any time by calling
-> +.BR read (2)
-> +on the file descriptor.
-> +Each call to
-> +.BR read (2)
-> +will return a single message,
-> +prefixed to indicate its class:
-> +.RS
-> +.TP
-> +.BI e\~ message
-> +An error message was logged.
-> +This is usually associated with an error being returned
-> +from the corresponding system call which triggered this message.
-> +.TP
-> +.BI w\~ message
-> +A warning message was logged.
-> +.TP
-> +.BI i\~ message
-> +An informational message was logged.
-> +.RE
-> +.P
-> +Messages are removed from the queue as they are read.
-> +Note that the message queue has limited depth,
-> +so it is possible for messages to get lost.
-> +If there are no messages in the message queue,
-> +.B read(2)
-> +will return \-1 and
-> +.I errno
-> +will be set to
-> +.BR \%ENODATA .
-> +If the
-> +.I buf
-> +argument to
-> +.BR read (2)
-> +is not large enough to contain the entire message,
-> +.BR read (2)
-> +will return \-1 and
-> +.I errno
-> +will be set to
-> +.BR \%EMSGSIZE .
-> +(See BUGS.)
-> +.P
-> +If there are multiple filesystem contexts
-> +referencing the same filesystem instance
-> +(such as if you call
-> +.BR fspick (2)
-> +multiple times for the same mount),
-> +each one gets its own independent message queue.
-> +This does not apply to multiple file descriptors that are
-> +tied to the same underlying open file description
-> +(such as those created with
-> +.BR dup (2)).
-> +.P
-> +Message strings will usually be prefixed by
-> +the name of the filesystem or kernel subsystem
-> +that logged the message,
-> +though this may not always be the case.
-> +See the Linux kernel source code for details.
-> +.SH RETURN VALUE
-> +On success, a new file descriptor is returned.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EFAULT
-> +.I fsname
-> +is NULL
-> +or a pointer to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +.I flags
-> +had an invalid flag set.
-> +.TP
-> +.B EMFILE
-> +The calling process has too many open files to create more.
-> +.TP
-> +.B ENFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENODEV
-> +The filesystem named by
-> +.I fsname
-> +is not supported by the kernel.
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B EPERM
-> +The calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH BUGS
-> +.SS Message retrieval interface and \fB\%EMSGSIZE\fP
-> +As described in the "Message retrieval interface" subsection above,
-> +calling
-> +.BR read (2)
-> +with too small a buffer to contain
-> +the next pending message in the message queue
-> +for the filesystem configuration context
-> +will cause
-> +.BR read (2)
-> +to return \-1 and set
-> +.BR errno (3)
-> +to
-> +.BR \%EMSGSIZE .
-> +.P
-> +However,
-> +this failed operation still
-> +consumes the message from the message queue.
-> +This effectively discards the message silently,
-> +as no data is copied into the
-> +.BR read (2)
-> +buffer.
-> +.P
-> +Programs should take care to ensure that
-> +their buffers are sufficiently large
-> +to contain any reasonable message string,
-> +in order to avoid silently losing valuable diagnostic information.
-> +.\" Aleksa Sarai
-> +.\"   This unfortunate behaviour has existed since this feature was merg=
-ed, but
-> +.\"   I have sent a patchset which will finally fix it.
-> +.\"   <https://lore.kernel.org/r/20250807-fscontext-log-cleanups-v3-1-8d=
-91d6242dc3@cyphar.com/>
-> +.SH EXAMPLES
-> +To illustrate the workflow for creating a new mount,
-> +the following is an example of how to mount an
-> +.BR ext4 (5)
-> +filesystem stored on
-> +.I /dev/sdb1
-> +onto
-> +.IR /mnt .
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd;
-> +\&
-> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
-> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +First,
-> +an ext4 configuration context is created and attached to the file descri=
-ptor
-> +.IR fsfd .
-> +Then, a series of parameters
-> +(such as the source of the filesystem)
-> +are provided using
-> +.BR fsconfig (2),
-> +followed by the filesystem instance being created with
-> +.BR \%FSCONFIG_CMD_CREATE .
-> +.BR fsmount (2)
-> +is then used to create a new mount object attached to the file descriptor
-> +.IR mntfd ,
-> +which is then attached to the intended mount point using
-> +.BR move_mount (2).
-> +.P
-> +The above procedure is functionally equivalent to
-> +the following mount operation using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
-> +      "ro,noatime,acl,user_xattr,iversion");
-> +.EE
-> +.in
-> +.P
-> +And here's an example of creating a mount object
-> +of an NFS server share
-> +and setting a Smack security module label.
-> +However, instead of attaching it to a mount point,
-> +the program uses the mount object directly
-> +to open a file from the NFS share.
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd, fd;
-> +\&
-> +fsfd =3D fsopen("nfs", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
-> +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
-> +.EE
-> +.in
-> +.P
-> +Unlike the previous example,
-> +this operation has no trivial equivalent with
-> +.BR mount (2),
-> +as it was not previously possible to create a mount object
-> +that is not attached to any mount point.
-> +.SH SEE ALSO
-> +.BR fsconfig (2),
-> +.BR fsmount (2),
-> +.BR fspick (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
->=20
-> --=20
-> 2.51.0
->=20
+> Can you give an example of an spi or i2c driver handles a similar
+> situation to the new i3c driver? As far as I can tell, swapping
+> the bytes in a FIFO register is very unusual for a hardware design
+> and probably a mistake rather than an intentional decision.
 >=20
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+I meant that i2c and spi drivers (and I meant on the device side) already a=
+re
+the ones having to care about putting the data in the proper endianism so t=
+hat
+controllers don't have to care (AFAIK).
 
---um5fosvnozlmkdra
-Content-Type: application/pgp-signature; name="signature.asc"
+But I so see now that the above is kind of unrelated.
 
------BEGIN PGP SIGNATURE-----
+> On the other hand, I can find drivers that are obviously wrong
+> on big-endian kernels, such as Tegra's i2c_writesl_vi() function
+> being unintentionally swapped from i2c_writesl() on big-endian.
+>=20
+> For the i3c helper, I think Jorge's current version with my
+> fix should work for every normal driver, and I would not
+> want to make it more complicated for an obscure case. The
+> version for the AMD driver can just be in that driver, or
+> it could be a separate function name in the common header
+> if there is a chance we'll need it again.
+>=20
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjVFcUACgkQ64mZXMKQ
-wql6KBAAuha3I2afI78syc7a2g2hlFBtv8tpd+j+4dSzZyJLs0pcC0mGbU38Dy1q
-q+E6JBJu3nvS64bh0VfE/PBqb6zx1i2pak3Vlk5+FnffSM1GPTRGjNiWOOq/L7mL
-QbxRULDspCER2CLYqW4wZdLShwZnNt84178puIx797JqAKoHl2YbdHSbUj8hDwKw
-1tfkt2jwhxP78jhavnTBL54KRs56Z0k7OvQY6b8xKFeJYATT9R72Ghiu7uiI/7sn
-/3zzsjf8IRI6P90vW9/NHnYudJOdKhgx1EwRbBwFQq7UDQHQxHpuxTBGh6KQHQ9a
-nb4BWuSPugLQ185KLakpaQ72vUDNYHWFRcFKKsyvMf6rlCCJWwDJ49ZY6WsSKLLT
-h3GziIKFxddRnjErAAS1x+s1MXfI9I+TrSeWvo+h6hLNvY6QHxRP54/1TlRoBX0S
-s4ry732X4SMUYXQsxwEjXOVxGgvRGN7pCPz6bijWbfhi51Gq6Ny1IkX2RCtyTjGH
-EiFoTTz9Ytpui+/cQrBYg/+LWu9bSj99k44eIqtN9doDGLsIgRCVB7cZ6b2QFjvL
-uJPJRPNGY81mG0NAm8Mdbh/Bk12NyEQCT2bpoMlRSzZvXfHUi4mHfeFLAzfValRt
-wlFFXuC1bHVu4Um+w8HKWeldLKI2oPgrmpBFL7ehI5W4DvyjAKM=
-=H9w2
------END PGP SIGNATURE-----
+I do agree with the above.
 
---um5fosvnozlmkdra--
+- Nuno S=C3=A1
+
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Arnd
 
