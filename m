@@ -1,237 +1,242 @@
-Return-Path: <linux-kernel+bounces-832556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FF5B9FA9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D1BB9FA9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70FFE7A5780
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63FE3B95CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DA4284B3E;
-	Thu, 25 Sep 2025 13:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4D1285C81;
+	Thu, 25 Sep 2025 13:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="btuxB3Ef"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bAAaVkeg";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ZbzmUISU"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9C28489E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35323D287;
+	Thu, 25 Sep 2025 13:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808201; cv=none; b=lnoOQnxTlfgr/iqKo39RPzchIqjCbxUTmlskjUbL87MdU/uQQBsRfh5PuL6M/RNIMksLDB5oUrLIlyvhGJN0KkwfKn+WJdz88H06/5EHQ39G32mRX5fA59FRslc7C6c5AIMW/FfkpvFy1iXVn4c0Di1HI+kbttLmkX1LzJFcJi8=
+	t=1758808238; cv=none; b=rDzTfm/uNa/EU+2jIwfnExCDMceHhUsE0SP1mSmT8S6uIVe1fxGxmB/ndL/ztlvT9vksmOJzieb/jAfDqGzCAGWnEV/WjPu/0qnSeNEnWq03twQbplYgAFIPnJPghUYpQy95funTy0dlN7nBVzuH81YF78nmXN4gjzJPjgC6UeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808201; c=relaxed/simple;
-	bh=QTB0zf86mhxCyXgWv4pD+dzux2r8OG2Y9cUTDZFMKQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BotrhCbBcUp2bmmQINqvpB+cbTW1/LZGOScjo5XkxPqihdf1biFTv/hHpmKOgpAwfaNY4a2L3wgGdmSmWJx5uS+3Dlz/54rSI3cF0+dbECRToeJKpW7AKj/LP82buy67aZ9O5xGipIK8bJ2gMMEgzzOiiAf6zLz2GawWoh45cJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=btuxB3Ef; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d603b60cbso11079317b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758808199; x=1759412999; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kmyZXRi73uZYdBVcBjsptiB3fqiGtTcUPx0kUvNWDWU=;
-        b=btuxB3EfCXp8omLJRc8c9hQOo/tEZXp4eNM2GQEbCDxFP36/ZiUpDuHX3/tgiT3Ajk
-         nVuU2XZQSh3Xoz2jC5JN7b16OVSJauY1LNaR4uiJHPT/zCvuIpXn7nkeA+YA38hnvI7Z
-         HDhOdkoyK5I2mziENpki3c9vZjsmya2xlFvEFG/Bt3hkJwZbv7AuD9b1Ob8/beBy8Udc
-         qf5qfwoDgAIXCxtNh4GEFMfmurywkH+HEbDN0vE3pug4giu0GSjK5HPZN68v4a3sC+Oa
-         3TmaTpI2BOYQuAhAAUzvjlrVb2bbIjY55wMbMrkQTxvkdZEljQWqrodXOpLSekLCCvHf
-         Cgvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758808199; x=1759412999;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kmyZXRi73uZYdBVcBjsptiB3fqiGtTcUPx0kUvNWDWU=;
-        b=f3DV+xrhN8cXWnroQ+NrpYH/V94rvY52GLarf1py4JBlZVt8R021VhIZ22vV3ynSzR
-         4ABK6LMGrnlg7IRxm2X6viPM8piLwDLt428Xx6FhOs85alBGU3iOF9HWASwuDO8JYoxd
-         ZE4bs++MmaW8hIFox2ZU1pSBs8Q1aCfSPgv7JVMhr1I+AAI2pKEPLNv39VuaOuOcGYEU
-         V+HtOXYXVZ3Rx+vDP85aWV1FL7pA3DPIr2YSYM/F+JxG5Ta4aaVTDtREIOydLiWFgIN9
-         syty3Nzji1ZXRY2YDtWNKe2IkstYpTpw7evKdzhUNgsW06VE/h6XDO2EQRsA9h5xmNDM
-         UcZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz9D4u1p7tAM5jap1gJMUx/2xC9aANEo4CSYK2Gke4VgDscjtyGcMICPKXDv7t/dnHqdsulFYh6EJ1Ja8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzmpG+dJpkSoPvnTMPZZIgGJxZxNifOh+SVSEKETroKN1ifZ4j
-	0a72e/uDRe5aPah/P7Rqy6e2wBUfzOF7i4c7oDS4pePaWGBcXJa3f5myHRKCg5wK4LynRuotmaM
-	wIFrvSn37r6USu3Naqn1YDuydCnx1M4IMsv8/nwJ61g==
-X-Gm-Gg: ASbGnctsY/867DFWAaUviPKFgif56hZfNmNFLykwQq2IGiAsa0M4ESmZ1WXYQtXcYg2
-	k8NeZvCtmk8iU+qc+vxOQg8ZVUnHhwvwNB/qgVLiRd489ECK51lUCR6fL71keBqIUyltD8LQ2Un
-	vHgWn667tSLgiFyzYrYXkLjmajFOeKtxF5L/hJqnE2kj8b11221G/wjnZBn8Pq4C1K8TBlPVMAJ
-	pd4IfB/
-X-Google-Smtp-Source: AGHT+IGaha3hYgmKpJiOOTZ9mrQajm66T6EOvbyDKUqs9BGv9oHsslH1tx8/pHWIf2OpE+bvRrEoo4jl8LUISCN+73k=
-X-Received: by 2002:a05:690c:620d:b0:744:fe4e:b5ce with SMTP id
- 00721157ae682-76406cdda58mr31077837b3.45.1758808198715; Thu, 25 Sep 2025
- 06:49:58 -0700 (PDT)
+	s=arc-20240116; t=1758808238; c=relaxed/simple;
+	bh=5VZtnlz8SLZh1hJUOEN8X4K2QYuKaXR8uZPnfTSelpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kd2vg1mj29TKfSTy3tEdIHsxICtcEw3/O/nNzuR3NlKKiacDVLPRqPl+6I8VmSuQUbkOES0HaWGDIn4Rfw34oBiTadhJQbhMWLiGXpz8PmVRhqUxoLjBFoIgyU5wNVVkS/y4YQQcOwEnA+nF1IU+nG9KQlmLrC5C0Z9wgHoQ7rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bAAaVkeg; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ZbzmUISU; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cXZqG19Nyz9tSd;
+	Thu, 25 Sep 2025 15:50:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758808234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sa813ro74wVcAWbPynO8r+wVmbDbagBCRzrt3WOCBcE=;
+	b=bAAaVkeg3qkXwX4rxpXeQjO8w10KWFZmVYNUDH7FNzbMijDNrep6/AKissmRy9wjMpwrzz
+	T4THZTRE54LcehdU0EbyAT4X1bDXrrwydEHw9nAanK8WXC1lYRey98BjpLmEl5cWIrJurf
+	3BEFs/ZWNZv/LYiW2thKb8W3L+KYEWesRiFQB/1fRubC+KxbEHDy0Nm8Zb9qhAbhnbO2sd
+	Zg56IGGbo5DuIJ+8h6od+r/nP9Gf7Wqdy4RW8UVnk6hjGfaBdsZtqsWGCzGbFxe11B9XS3
+	jtNNRWLmqYtdNfVInSeVa0q3TzIrhiLaUk0QgXIflOn2WWDEVtu2wSB0lvR+WA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=ZbzmUISU;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758808232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sa813ro74wVcAWbPynO8r+wVmbDbagBCRzrt3WOCBcE=;
+	b=ZbzmUISU3AA94pt7HWxwPSTM7AvtX6UBi+I5ZnfPym7FYxSHMJGwr5gPIhNGsQG/k75DY/
+	tWQSgjxuNJXdNaaKAT/C0EOlQBmTdABiqjk6MFYq5WWANbVAT8f0CskqtKWwcHEv5/EV4h
+	kHoZJIvJ0tZ8jy3aCZPpOfEUaL+AaGl8TY3x0mXB0oBN6MEw3nC0DHHrlbBXqPqSGyaMH9
+	ui+gT7pT0g9oXKBfJRuUtOY590loBkng5cjtO+u/D89AKWHCfRWOUUDwIZKmRvzkpexuhb
+	TXKaiq/UVk9ii11Id9x1uSMJjbShuk23ZC5IcVO7rFYEsBdqhAqcxi4tRVwydA==
+To: linux-pci@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian Bruel <christian.bruel@foss.st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mayank Rana <mayank.rana@oss.qualcomm.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Shradha Todi <shradha.t@samsung.com>,
+	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] PCI: controller: Mark controllers which cannot do lockless config access with !PCI_LOCKLESS_CONFIG
+Date: Thu, 25 Sep 2025 15:49:45 +0200
+Message-ID: <20250925135014.66865-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com>
- <20250923-imx_rproc_c2-v2-1-d31c437507e5@nxp.com> <CAPDyKFpjP07826FXh8XveXiH7ta+N=upYaowf7r6gyNWPSFfqA@mail.gmail.com>
- <20250925142400.GA18572@nxa18884-linux.ap.freescale.net>
-In-Reply-To: <20250925142400.GA18572@nxa18884-linux.ap.freescale.net>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 25 Sep 2025 15:49:22 +0200
-X-Gm-Features: AS18NWBypGVgaTpOeUMZ5LpwCPamsE3X5aIdHt-BsxZusAy24_34jazFPo4GtO0
-Message-ID: <CAPDyKFqeWAqbM0td1gW0+Kz2g85xqCuSpQWdJEs8U7MmOPsY0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] remoteproc: imx_rproc: Fix runtime PM cleanup
- order and error handling
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 9387870ca75cff30f0d
+X-MBO-RS-META: askstgdrzeiry8fg1788yjagpq6u8187
+X-Rspamd-Queue-Id: 4cXZqG19Nyz9tSd
 
-On Thu, 25 Sept 2025 at 15:12, Peng Fan <peng.fan@oss.nxp.com> wrote:
->
-> Hi Ulf,
->
-> Thanks for reviewing this patch.
->
-> On Thu, Sep 25, 2025 at 12:18:39PM +0200, Ulf Hansson wrote:
-> >On Tue, 23 Sept 2025 at 07:17, Peng Fan <peng.fan@nxp.com> wrote:
-> >>
-> >> The order of runtime PM API calls in the remove path is wrong.
-> >> pm_runtime_put() should be called before pm_runtime_disable(), per the
-> >> runtime PM guidelines. Calling pm_runtime_disable() prematurely can
-> >> lead to incorrect reference counting and improper device suspend behavior.
-> >
-> >This isn't entirely correct as it depends a bit more on the runtime PM
-> >deployment.
-> >
-> >More importantly, even if you would call pm_runtime_put() before the
-> >call to pm_runtime_disable() doesn't necessarily mean that the device
-> >becomes runtime suspended, as it can be prevented by user-space for
-> >example, assuming that is the goal.
-> >
-> >To make sure the device is put back into a low power-state, this is
-> >the typical pattern that is deployed in a driver's ->remove()
-> >callback.
-> >
-> >*) Call pm_runtime_get_sync(), to make sure the device gets the runtime resumed.
-> >Not needed in this case, as the runtime PM usage count was increased
-> >during ->probe() and not dropped).
-> >
-> >*) Turn off resources that correspond to what the runtime PM callbacks
-> >in the driver are managing.
-> >Not needed, as there are no runtime PM callbacks for the driver.
-> >
-> >*) Call pm_runtime_disable() and then pm_runtime_put_noidle(). This
-> >makes sure that when ->remove() is completed, the device is in a low
-> >power-state and the runtime PM usage count has been restored.
-> >
-> >*) If there are PM domains, those are turned off by calling
-> >dev_pm_domain_detach_list(), or from the driver core (after the
-> >->remove() callback has been completed) for the single PM domain case.
-> >
-> >That said, one could consider converting the pm_runtime_put() here
-> >into a pm_runtime_put_noidle(), to make it clear that this is only
-> >about restoring the usage count, but I don't think it's a big deal.
-> >
-> >>
-> >> Additionally, proper cleanup should be done when rproc_add() fails by
-> >> invoking both pm_runtime_put() and pm_runtime_disable() to avoid leaving
-> >> the device in an inconsistent power state.
-> >
-> >Right, this deserved to be fixed.
-> >
-> >>
-> >> With using devm_pm_runtime_enable() for automatic resource management and
-> >> introducing a devres-managed cleanup action imx_rproc_pm_runtime_put() to
-> >> enforce correct PM API usage and simplify error paths, the upper two
-> >> issues could be fixed. Also print out error log in case of error.
-> >
-> >I really don't want to encourage people to use
-> >devm_pm_runtime_enable(), simply because it's not always a good fit
-> >when making sure things get turned off in the correct sequence. In
-> >particular, as it's just about saving one/two lines of code, this
-> >doesn't make sense to me.
-> >
-> >I suggest you follow the similar pattern as I explained above for
-> >->remove(), for the error path in ->probe() too. So, calling
-> >pm_runtime_disable() and pm_runtime_put_noidle() should do the trick
-> >for this too, I think.
->
-> I appreciate for your detailed explaination. I intended to drop the remove path
-> in this patchset :), but need to keep it now. No problem.
->
-> Follow your suggestion, I work out one patch, would you please give a look
-> whether this is good for you?
->
-> You could ignore the 'dcfg->method == IMX_RPROC_SCU_API', I will drop
-> this in the patchset to make the runtime PM apply for all, not just
-> IMX_RPROC_SCU_API.
->
-> Thanks in advance for you guidance and help.
->
-> --------------------------------------------------------------------
-> remoteproc: imx_rproc: Fix runtime PM cleanup and improve remove path
->
-> Proper cleanup should be done when rproc_add() fails by invoking both
-> pm_runtime_disable() and pm_runtime_put_noidle() to avoid leaving the
-> device in an inconsistent power state.
->
-> Fix it by adding pm_runtime_put_noidle() and pm_runtime_disable()
-> in the error path.
->
-> Also Update the remove() callback to use pm_runtime_put_noidle() instead of
-> pm_runtime_put(), to clearly indicate that only need to restore the usage
-> count.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index bb25221a4a89..8424e6ea5569 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -1136,11 +1136,16 @@ static int imx_rproc_probe(struct platform_device *pdev)
->         ret = rproc_add(rproc);
->         if (ret) {
->                 dev_err(dev, "rproc_add failed\n");
-> -               goto err_put_clk;
-> +               goto err_put_pm;
->         }
->
->         return 0;
->
-> +err_put_pm:
-> +       if (dcfg->method == IMX_RPROC_SCU_API) {
-> +               pm_runtime_disable(dev);
-> +               pm_runtime_put_noidle(dev);
-> +       }
->  err_put_clk:
->         clk_disable_unprepare(priv->clk);
->  err_put_scu:
-> @@ -1160,7 +1165,7 @@ static void imx_rproc_remove(struct platform_device *pdev)
->
->         if (priv->dcfg->method == IMX_RPROC_SCU_API) {
->                 pm_runtime_disable(priv->dev);
-> -               pm_runtime_put(priv->dev);
-> +               pm_runtime_put_noidle(priv->dev);
->         }
->         clk_disable_unprepare(priv->clk);
->         rproc_del(rproc);
->
->
-> Thanks,
-> Peng
+Add 'depends on !PCI_LOCKLESS_CONFIG' to controllers which cannot do config
+access without PCI subsystem level spinlock. If PCI_LOCKLESS_CONFIG is ever
+enabled, those controllers would have to be updated accordingly.
 
-Yes, this makes better sense to me!
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Christian Bruel <christian.bruel@foss.st.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Inochi Amaoto <inochiama@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Mayank Rana <mayank.rana@oss.qualcomm.com>
+Cc: Nam Cao <namcao@linutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Shradha Todi <shradha.t@samsung.com>
+Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+NOTE: I hope I got them all
+---
+ drivers/pci/controller/Kconfig      | 6 ++++++
+ drivers/pci/controller/dwc/Kconfig  | 5 +++++
+ drivers/pci/controller/plda/Kconfig | 1 +
+ 3 files changed, 12 insertions(+)
 
-Kind regards
-Uffe
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 41748d083b933..1a6e937cca929 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -12,6 +12,7 @@ config PCI_AARDVARK
+ 	depends on (ARCH_MVEBU && ARM64) || COMPILE_TEST
+ 	depends on OF
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCI_BRIDGE_EMUL
+ 	select IRQ_MSI_LIB
+ 	help
+@@ -205,6 +206,7 @@ config PCIE_MEDIATEK_GEN3
+ 	tristate "MediaTek Gen3 PCIe controller"
+ 	depends on ARCH_AIROHA || ARCH_MEDIATEK || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select IRQ_MSI_LIB
+ 	help
+ 	  Adds support for PCIe Gen3 MAC controller for MediaTek SoCs.
+@@ -244,6 +246,7 @@ config PCIE_RCAR_HOST
+ 	bool "Renesas R-Car PCIe controller (host mode)"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select IRQ_MSI_LIB
+ 	help
+ 	  Say Y here if you want PCIe controller support on R-Car SoCs in host
+@@ -332,6 +335,7 @@ config PCIE_XILINX_DMA_PL
+ 	bool "Xilinx DMA PL PCIe host bridge support"
+ 	depends on ARCH_ZYNQMP || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCI_HOST_COMMON
+ 	select IRQ_MSI_LIB
+ 	help
+@@ -344,6 +348,7 @@ config PCIE_XILINX_NWL
+ 	bool "Xilinx NWL PCIe controller"
+ 	depends on ARCH_ZYNQMP || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select IRQ_MSI_LIB
+ 	help
+ 	 Say 'Y' here if you want kernel support for Xilinx
+@@ -354,6 +359,7 @@ config PCIE_XILINX_NWL
+ config PCIE_XILINX_CPM
+ 	bool "Xilinx Versal CPM PCI controller"
+ 	depends on ARCH_ZYNQMP || COMPILE_TEST
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCI_HOST_COMMON
+ 	help
+ 	  Say 'Y' here if you want kernel support for the
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 34abc859c1071..8eab27775195f 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -2,6 +2,7 @@
+ 
+ menu "DesignWare-based PCIe controllers"
+ 	depends on PCI
++	depends on !PCI_LOCKLESS_CONFIG
+ 
+ config PCIE_DW
+ 	bool
+@@ -322,6 +323,7 @@ config PCIE_RCAR_GEN4_HOST
+ 	tristate "Renesas R-Car Gen4 PCIe controller (host mode)"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCIE_DW_HOST
+ 	select PCIE_RCAR_GEN4
+ 	help
+@@ -390,6 +392,7 @@ config PCIE_UNIPHIER
+ 	depends on ARCH_UNIPHIER || COMPILE_TEST
+ 	depends on OF && HAS_IOMEM
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want PCIe host controller support on UniPhier SoCs.
+@@ -410,6 +413,7 @@ config PCIE_SOPHGO_DW
+ 	depends on ARCH_SOPHGO || COMPILE_TEST
+ 	depends on PCI_MSI
+ 	depends on OF
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want PCIe host controller support on
+@@ -488,6 +492,7 @@ config PCI_KEYSTONE_HOST
+ 	bool "TI Keystone PCIe controller (host mode)"
+ 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
+ 	depends on PCI_MSI
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCIE_DW_HOST
+ 	select PCI_KEYSTONE
+ 	help
+diff --git a/drivers/pci/controller/plda/Kconfig b/drivers/pci/controller/plda/Kconfig
+index 62120101139cb..2a400678312eb 100644
+--- a/drivers/pci/controller/plda/Kconfig
++++ b/drivers/pci/controller/plda/Kconfig
+@@ -10,6 +10,7 @@ config PCIE_PLDA_HOST
+ config PCIE_MICROCHIP_HOST
+ 	tristate "Microchip AXI PCIe controller"
+ 	depends on PCI_MSI && OF
++	depends on !PCI_LOCKLESS_CONFIG
+ 	select PCI_HOST_COMMON
+ 	select PCIE_PLDA_HOST
+ 	help
+-- 
+2.51.0
+
 
