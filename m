@@ -1,138 +1,76 @@
-Return-Path: <linux-kernel+bounces-832550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD75B9FA5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:45:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFCAB9FA46
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101E418990D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:45:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6387A6713
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06212274FC2;
-	Thu, 25 Sep 2025 13:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C66274FC2;
+	Thu, 25 Sep 2025 13:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gwqrv2UA"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GzwyHzTU"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B23A288D6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12911272E4E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807899; cv=none; b=VhhaURH9EBhuznfrf4InkhfvvUEOk/P0beoYeMUTOZToRvKr/QHeVcxU9HF8ELlZed2MCtlqTB7QU6WqPOM/zunaQp378g3FG8JLRAZUHctSgZFcdNnKxPj9yTtcNaAH4dk3afh0nC83fDjBjBploNW4UJDhVqi+RWuQxBjaRxc=
+	t=1758807886; cv=none; b=QftBQWjl4yJMs26CoKCboumxxe9uMvcUy5sVBB7K8fAl9dBi4y31g+BQ+dCRzVwi4FyI3N9Vt0TmlPAAZzYo4ks4ZVNPSCppt19UNtLwEvjQrxUVhLrBE+9TXRVbP/J4pcRm/k0rnZb2cKyRve+Q1LqCBf+qNU1c9Y44BjzcJRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807899; c=relaxed/simple;
-	bh=Z0F6rvv+vHHHgqN2/7WrnWaBdoTfLfsx+4E1sr2dpYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tIwlnq1m1dA580Q8eRa5tmqJDpM79as+4i3CJMNxRkWS31zeA69WqA4BdMmZ52GRf6662p7SNGGYW5JU6Ahff6E1jvcQXnBqoDo4dC8Hx/qoERB9ufW6u6Ai7Y8Erq+jW2cnOTHKgjZ5rwYXiJZHep+Y8ZDHuY3eqiqRVg/zEgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gwqrv2UA; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4bb7209ec97so1147441cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758807896; x=1759412696; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
-        b=Gwqrv2UA8Ax9RMydlVr9JpasaE19jt+Hwkk1c1vdYAnZtfqiEPHsQxMynF99pQG/IS
-         S8OZxZo7rqlTttZ3/KiyDoN0eF9CvW3U1Icncy+Vggtt5ITg3cvEEsINE3Bdw+YLiJwU
-         ZojJSpH0r+jF79v9bGTUMSEHIqlAHs1SqWv4KwDamrYyOyvJ5/Y+CRDgO6R6/M02lhWf
-         yoJjCmNGR924SUhz6cp0Tw82lX9eW9B3yhFYRk1nxobrOLdS0qBVgDRUn84dFLu3YqcN
-         UIXJRlB4/unDwbCsUBg7V+Mm9yc+pUkWa6oPuU2w03cAMTxNxJ4MXZtvPj58sDGwGO7S
-         /v5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807896; x=1759412696;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N5TRZaIKsL5BDWNX1fB2oE8143OJVf1xWjoYHdxo8R0=;
-        b=v/N6cNTRrLr2UBzauae86JNSPrO1LwfmT3F6dsmvcbzTPk0y/d3rSm1smIb1AJjgUI
-         0b95Qd45gOctfvv2L5fa1dPlJlDK77WJD2jelN6wm59cXas6y5dYCQBb7g9rmk+irM6G
-         z+K8K8cNS3OH8QVj9sg+e74ox0Hadx1a7+gb/QosTMXVp+dQDVelDj4qWyPOt0M7Kv9x
-         RDOIykPr/R2RJfI9Ngx0gOpFmdfHtTz6cS6PKuRJUzCvV07jh17IUzanK+nHSGjsuTpR
-         4P/AUvNSfsiQRKgFndY5sZB952pdK/qv8yzPVaf8a3QSbNmQF2A5EUyac+tXfE7p4LWU
-         FAHw==
-X-Forwarded-Encrypted: i=1; AJvYcCURsSOobpIKMi+tPDL1SRhcaNw+TKDZmKFrLoT4FwC+ruR2jESYEW7MKBb1kC5kRUT1h8dfj1k57q2K3Io=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlSq6uHwaCIOz8yrJIi6Vtdg5MRDiESPXq+dM7zT2WiIl4kiO5
-	sAfn2PTrCXtWyEJo2F0mzyBwQIKiCBDMF4lvManjp5GXiqvoiRa6183ExiWU9pU82zweDjFrRXX
-	pzTO9o3Vep9g/YHaap1xCK/Wz5unN41QnE3wtx2XH
-X-Gm-Gg: ASbGncvwKXTtfEAw72kqKvxqaoFNQ8y9MPviJFvxYf1uBMO1rypqErUQ0yjyHhra83Y
-	zbNI6LOcQoqiS7GtL/amx8moOz4Eha+0gFPHCGkThDLsz6rxtUgjtlVbaj4xrlwFyKJLO/TYnYb
-	dww0HsZn1kc8kvONzwQOoyV40lS/09n29OcRj/rr+CvM+a21cbY5H8w2WbkNZsDXVFxPb7fcFgs
-	6XH7qGPNqQrDWjHw9oU2JPzWw==
-X-Google-Smtp-Source: AGHT+IHMjlzJoU4go98o9OLI3ONqf4XSyVwqhgPkrMYYKQ3q5Z+I56IySJAtT5Z6pWwXAgA4n71MeTiHJXaU1zjAWA0=
-X-Received: by 2002:ac8:5996:0:b0:4b6:2d44:13c4 with SMTP id
- d75a77b69052e-4da2f12a974mr6481551cf.10.1758807895145; Thu, 25 Sep 2025
- 06:44:55 -0700 (PDT)
+	s=arc-20240116; t=1758807886; c=relaxed/simple;
+	bh=gRLtCn/9YLyB0zWqN8PZsgBFqGS4K+6T6CbzUaBFmU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rz8yieEYyNIdK2YDe6eSyiqRzpowflYio2I8LHJ/kMOE3+f/E1v4t5A9CRVLy69UCiN5kpMyijLfpComjqOznCYFG9PHaGLBWG0ywpiGx0hkLsU0eMEFyBk7z9lH7r6uuGm6OF/s0/L6LUbeh1v97gT44r4Jqhra/OctiNuAX5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GzwyHzTU; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <977f1b63-1617-447a-8ef8-775662ad0827@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758807872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PzbRKSk93f9Ztt0ubkW/2QbayTmgWgmgzFIGYPs3WjU=;
+	b=GzwyHzTUM/8PxdEVH2O9dMuKgdnSm+lJ2RwLNb7nrKPh2uLFR17k3nizaOhBcYtWoQJb0v
+	WhUpfEF2kku+dEyhgYUdx1ap358cUvkIQBOXzedxKbc9ImbAwszumhhYyXUTorFUYrwU6k
+	ev5wyE/T8vn5kmN3PRJInKZTiPAL300=
+Date: Thu, 25 Sep 2025 14:44:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
- <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
- <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
- <aNVFrZDAkHmgNNci@google.com>
-In-Reply-To: <aNVFrZDAkHmgNNci@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Thu, 25 Sep 2025 14:44:18 +0100
-X-Gm-Features: AS18NWD8QPp_e9025CtzHt-1GmqDfc-4KC-skp25M5mSn0nTsRNLyfZiLblKLT4
-Message-ID: <CA+EHjTz=PnAOdjaPuHRnXE+CTUHCKVSnf-LA6bgwKpWbapy_0Q@mail.gmail.com>
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-To: Sean Christopherson <seanjc@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, 
-	Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
-	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
-	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
-	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
-	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, 
-	vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, 
-	michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com, 
-	jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 net-next] dpll: zl3073x: Fix double free in
+ zl3073x_devlink_flash_update()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Ivan Vecera <ivecera@redhat.com>
+Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aNVDbcIQq4RmU_fl@stanley.mountain>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <aNVDbcIQq4RmU_fl@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 25 Sept 2025 at 14:41, Sean Christopherson <seanjc@google.com> wrote:
->
-> On Thu, Sep 25, 2025, David Hildenbrand wrote:
-> > On 25.09.25 13:44, Garg, Shivank wrote:
-> > > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
-> > > I did functional testing and it works fine.
-> >
-> > I can queue this instead. I guess I can reuse the patch description and add
-> > Sean as author + add his SOB (if he agrees).
->
-> Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
-> this would have been handled in a new version.  If they are ok with the changes,
-> I would prefer they remain co-authors.
+On 25/09/2025 14:28, Dan Carpenter wrote:
+> The zl3073x_devlink_flash_prepare() function calls zl3073x_fw_free() and
+> the caller, zl3073x_devlink_flash_update(), also calls that same free
+> function so it leads to a double free.  Delete the extra free.
+> 
 
-These changes are ok by me.
-/fuad
-
-> Regarding timing, how much do people care about getting this into 6.18 in
-> particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
-> little nervous.
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
