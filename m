@@ -1,182 +1,206 @@
-Return-Path: <linux-kernel+bounces-832656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91BCBA0099
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:34:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205C5BA00A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DBD4E0EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C103E166B3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A602DC79E;
-	Thu, 25 Sep 2025 14:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D472D9EF6;
+	Thu, 25 Sep 2025 14:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdT56ePb"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oIgb/qKt"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAF22D9795
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2F72D9EF3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810747; cv=none; b=HhsPaMSBHQw6PW5kNXeaUdIZ4QIFKdwQAFi+StllMvmgUCNtyhdI9/CocQKchIR8oBAs37KxRpug1rsn3a3lQRRAYitXCDAgFRajmljSpcx4EAPwoqPPDeVKvO+2SLi5riKyb3HhhLrAcD63uXyAa8tu2lgzs1LoZzgt5rojufI=
+	t=1758810762; cv=none; b=fVU7Ft9oB3VQrxltyv7NVaPPJLSVODHt6rsRNZJDG66LwNJ5KOlc23yii0l4LEdFgA7HcS6p1HBAWR+/fFIa8u9sVge2G7XrLmE722y9OV2feTzhAgCqLlTybpnx9Q6jT+7Tefy0iOVgZ/aDHVCtXT/6OwEaQeD62KZWQledl4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810747; c=relaxed/simple;
-	bh=a3eHXMsuFNWlqugS1mVxJZ5TpyBqt+o2aBCaTiA/Ha0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBWD2JMkO9eX5QI0iC8vflnLI1mgP8ayZzgA2mQO37d2m7coQZTlnqhJ2C+Twy3iDwxQ1yEE+v9IDdXvCQdIK9jdPnhEch0BU23tP8Clt4SwFtt/9eboegAoOsbXZc0V+o6+cbzVSlWkJNYaXK7MFInp7HWXr/nWPvTmKPaUOJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdT56ePb; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2570bf6058aso15022475ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:32:25 -0700 (PDT)
+	s=arc-20240116; t=1758810762; c=relaxed/simple;
+	bh=t2XhKDcOt+laEXJKI0ZnYMcUTY3NrTdNzuZY0B9gwa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SqCIL5pWocvX/OpXQDEW5LB2UEgtvbWrYiTgE6VhvofN7ULtE8j6OU/7YVAEb6J5UdjD/YqkKwZGNcLd2yfDjnmYnUyL/IZJAAgp6Y5kYMAEm8JNMcIcfssyBKlZeTLUJ4gEEtWwDVdG5vOuMmEMVRWP3wZQ4iUhlUmgmvI0UUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oIgb/qKt; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-74435335177so27453837b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758810745; x=1759415545; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uNu4f91vx1JyBhQ6SCI1W3iAa/Ld0gsHPQbTIviSg64=;
-        b=IdT56ePbNj2qhvnyd9ruau3B8XuTK2Xi/DR5PRwPbRL0c/8tt9c2gK2MFjep7VAAD3
-         yn3TS4+CYUS3DCQktRAsV0vOm/Bthn8D2Cl61jmWtnVH7WSK2GfECxy0zyDD33MtEq79
-         jYAtQ/Ivt9qtfcV1BPqSNcXeVoh5nL+dtE5uhabKSucjMPQSaacNn3mwwc4iMJ4HoPdE
-         oFFTaANp/J7IuVvLy8v6X/y73VgxUFRCXPydlNBcnaRym3AvttqYFHoEw59s5NyHBFus
-         BA5mNE01RwP29uLoORIya1JJaZETdwNEu9G37aYO/V5TtOUb9rc3lDoQ2bAKrlu5ldGo
-         G/wQ==
+        d=google.com; s=20230601; t=1758810760; x=1759415560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q3t/i7G6sNLKCulldNQHYLFlpc4dAP8McL+RwiXOYYM=;
+        b=oIgb/qKtzNG20IudvQHkMdpg78J7mR5whHJN11kqRfTI7Rwxbdh4teDfCJIzTDthYV
+         LqFWXDHfq7mV7JGPezZkmiaiNBnFlrhi1XQJ0Vgh4cBepdTR5MLworBtXkWPtxiIpeLg
+         fCluQPVHGI8m+bj2omQif9xnbn3D5MWkcy3bKuqN2ZT0/Vwv6tSDsM5xElNVwlpJsfE2
+         oCwu+LwD7FaRaW3/sxTxvE+J9yLPuxMxArjHfJlFeys4AzuEKno1LMhOKHFvhkqegOQd
+         Fhr2fNUcDG/pHRd2vvKzGxK0piUCf34UKHBekgbc4zjNGwQx7JSHDugFim2ZDaizPG03
+         CO1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758810745; x=1759415545;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNu4f91vx1JyBhQ6SCI1W3iAa/Ld0gsHPQbTIviSg64=;
-        b=g1qzFfMe7KwEXTOOedGV1ipQUwO0zlB8y2PVEVhOhbXtfPsD5S9FK9gEfy9/c7rmEp
-         i647x6ylBelRf/3h11wq/Vyv9vsxW6A58/cR8Hxy+bUwU+E5+OlsbF58GmyJch3Y7lOE
-         G1P95cMd9vqexiq3Hre4sG1kJ/L2ZAESSJ4uBUJm1QGxt9we7CQ5n99xr0U9GAjd7ihu
-         ljFKhy/BRLmqbf+zgeX2gbEaS6DZcxArs1UVi417uadt9TsxinEeZke9DHYl1sNe8pt4
-         qLDRhw6E0e5YOmltpX1duXkd5PZu3sPx1W1tIb7CxJpQKaBItPzgq4Uu9gLVOmq7hf9D
-         3UDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVai7vs14EOYE1t18H3/SsmPAiC6zvufcFm5GFeiTS2FZlHpPo2TKFAzAogTrUVyew3PtyacFJ9VmI6tAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNWPtXFBpOj2c9AFIZSpq1x+N8NfzTXZfE3UV1HI+Zrk58plwa
-	AKQkFxFArPjkMiip8RX2RGsF3urZ3lJ/I13zzUPOwMrDFe4X2CIjDks2
-X-Gm-Gg: ASbGncsC8C9CdyHj0+uYPAB42QycB/V5wsFMLxaS01xbrY7YCbPiSFq++gZgURq6FIf
-	9esCNZzrnEK3EWL10C51/4uaOW7Q2MM1YLwXQ83RKRIKSZRQ6EFdW5RfgkD0p/t6CASCqMWLL/W
-	TuwXCKNknV40QiCIAlMraDD/nm0m1eBFx8hk3EfHCNftCUgsw9M3sfUYM1LiAtNYs/6sePeoQuB
-	MD0Dml4W9PjkfbhGVHq8DHPFtDzjF5prObcve7SgY69XQD5U3R0mGNGkTyRbDi+gKdKJcfPIBhQ
-	h06NIxxjTtT1e6shPag56sRmcSKkGJ7ukmIFlS1AZZYA9LvT/MAUNNsfyeJcj80Frj1zkbYhXL2
-	lTeyqj4Y86mM55FPzFdHXVSVkxH3VqaJ4iI9QaVPjkBByCA==
-X-Google-Smtp-Source: AGHT+IEouWS18u5hzid+/58eqeK/Wz5H9vCOiw+suHDHfXTmYMG9kSe9BGY1UoAcE/k6e5ccR+b07w==
-X-Received: by 2002:a17:902:e806:b0:267:e097:7a9c with SMTP id d9443c01a7336-27ed4a5ec6dmr34833405ad.53.1758810744759;
-        Thu, 25 Sep 2025 07:32:24 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68a0203sm26846475ad.100.2025.09.25.07.32.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 07:32:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 25 Sep 2025 07:32:22 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Marius.Cristea@microchip.com
-Cc: jic23@kernel.org, dlechner@baylibre.com, linux-hwmon@vger.kernel.org,
-	jdelvare@suse.com, nuno.sa@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org,
-	linux-kernel@vger.kernel.org, andy@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Subject: Re: [PATCH 0/2] Add support for Microchip EMC1812
-Message-ID: <36c4794d-2116-4d3e-8ad5-ac3ec764a7a1@roeck-us.net>
-References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
- <20250920123340.1b1d03be@jic23-huawei>
- <a97486df-9f15-4280-8cb3-d77f4cf223df@roeck-us.net>
- <e6ab5becf5908d83857fcfd57823ffd259e6db90.camel@microchip.com>
+        d=1e100.net; s=20230601; t=1758810760; x=1759415560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q3t/i7G6sNLKCulldNQHYLFlpc4dAP8McL+RwiXOYYM=;
+        b=avriPBovN+ysPw6yuoyPathrTeEjqqBc05QSYYCdTzBInxmKWRn1qocqyA7K+Cgtqc
+         Pvo6HrcOXXk9MdQ5xZHb+CPw4a9ita8sTgJHhZMJB/XyPK1YRNxIjyIQsaRGDuVYHK96
+         vrpMvrulOUg3pSuszZqwmGqJOoCb9vQjcoDrkBCQZF/a9CzSUwtpW5vHIV3jiC8aapDd
+         OKNS89kFjweaXa5PpJjFO4QYyCOBk0iv3L6fnn7TXJLA4lhrMIxmGHXaSUAdJUg/8IyY
+         BuPSoOCckMwHi7RvWVIpRdRwxmOXNufd8sFG2egXbzKA5t7QopH4mnY/gl/a+VhYQ8/G
+         0tww==
+X-Forwarded-Encrypted: i=1; AJvYcCXPPhw+en7aXE5VpO7cyb6hxlfSwsTVScGerLMkEYKmjQtcdSD8Ta2AVcyZsJj7VYO2704pT2kG7UW42vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZEUU1VHQ/cZMvw0o4PS3Zgyfi8EaIOa2H5a5EV6EAlqTn3y0V
+	UeSByIBHfb5Ypw1LgamAbrc6Esc0jj2CyfPrAMOBVh9Gshc8IAVzgpHx2eodiwqW+famwoFez2b
+	HokLLOeKH+d+2WQexAe9z9ZgJzcTi3NXaWqKSVQr9
+X-Gm-Gg: ASbGncuNy+gOzKJt2MfmCVamAevPjeFx6jvfamlwMNIvZM6WWflulB9gjPcQpmsWzZv
+	3+mzmtJajgHrzJ8OnfRJPbY9KSsTKHJ+ChZWZuojmgtkzGKPxgbTPHlazBREr1qFewaVhpi4RPl
+	cEO9Hz3RbO3TDlOwEsXQbp0cvHXtbDVVDHXm8wN0lpOTNq5nxM47HdJEMs6gMUYB2W3i1lmhgxS
+	Mo/4yKGwkLxlw==
+X-Google-Smtp-Source: AGHT+IGPVZb8260WIN2V5Is62i24gV4aTIwROuDhQPAORW+WvMp6xmIWUJzg3WDP3IAyIAjWSew/LKrgoflQZygG3no=
+X-Received: by 2002:a05:6902:1003:b0:ea5:b757:9641 with SMTP id
+ 3f1490d57ef6-eb3853fca26mr1716135276.1.1758810759200; Thu, 25 Sep 2025
+ 07:32:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e6ab5becf5908d83857fcfd57823ffd259e6db90.camel@microchip.com>
+References: <20250922121818.654011-1-wangliang74@huawei.com>
+In-Reply-To: <20250922121818.654011-1-wangliang74@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Sep 2025 07:32:27 -0700
+X-Gm-Features: AS18NWC0x8CFQRjOZVU80gw3PZ5hWaNCl3XvXGEiSPqo83w7a1Av7fuCtK5U9es
+Message-ID: <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
+Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
+To: Wang Liang <wangliang74@huawei.com>, Kuniyuki Iwashima <kuniyu@google.com>
+Cc: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com, 
+	sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com, 
+	tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, yuehaibing@huawei.com, 
+	zhangchangzhong@huawei.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 09:09:04AM +0000, Marius.Cristea@microchip.com wrote:
-> Hi Guenter,
-> 
-> Thank you for the feedback.
-> 
-> On Tue, 2025-09-23 at 19:11 -0700, Guenter Roeck wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you
-> > know the content is safe
-> > 
-> > On 9/20/25 04:33, Jonathan Cameron wrote:
-> > > On Wed, 17 Sep 2025 15:21:56 +0300
-> > > Marius Cristea <marius.cristea@microchip.com> wrote:
-> > > 
-> > > > This is the iio driver for EMC1812/13/14/15/33 multichannel Low-
-> > > > Voltage
-> > > > Remote Diode Sensor Family. The chips in the family have one
-> > > > internal
-> > > > and different numbers of external channels, ranging from 1
-> > > > (EMC1812) to
-> > > > 4 channels (EMC1815).
-> > > > Reading diodes in anti-parallel connection is supported by
-> > > > EMC1814, EMC1815
-> > > > and EMC1833.
-> > > > 
-> > > > Current version of driver does not support interrupts, events and
-> > > > data
-> > > > buffering.
-> > > Hi Marius,
-> > > 
-> > > For a temperature monitoring device like this, the opening question
-> > > is
-> > > always why not HWMON?
-> > > 
-> > > There are various reasons we have temp sensors in IIO but mostly
-> > > they are not
-> > > described as being monitors and this one is.
-> > > 
-> > > IIO may well be the right choice for this part, but good to lay out
-> > > your
-> > > reasoning and +CC the hwmon list and maintainers.  There is an
-> > > emc1403
-> > > driver already in hwmon, so perhaps compare and contrast with that.
-> > > 
-> > > I've +CC Jean, Guenter and list to save sending a v2 just to do
-> > > that.
-> > > 
-> > 
-> > At first glance it looks like the series is (mostly ?) register
-> > compatible
-> > to the chips supported by the emc1403 driver, so it should be
-> > straightforward
-> > to add support for the emc180x series to that driver.
-> > 
-> > Guenter
-> 
-> Most of the register address are compatible. The EMC181X is an update 
-> (a newer generation) then the EMC1403.
-> 
-> The biggest improvement is that the EMC18XX has a continuous block of
-> registers in order to improve the temperature reading (that means some
-> addresses are overlapping with the older register maps) and a new set
-> of registers to  handle the "Rate Of Change" functionality.
-> Also the older EMC14XX has some hardcoded configuration/features based
-> on the part number.
-> 
-> Considering all of the above I consider that the complexity of the
-> EMC1403 will increase quite a lot without any real benefit and it will
-> be harder to be maintained.
-> 
-Ok.
+On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@huawei.com>=
+ wrote:
+>
+> The syzbot report a crash:
+>
+>   Oops: general protection fault, probably for non-canonical address 0xfb=
+d5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+>   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead=
+0000001f]
+>   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREEMP=
+T(full)
+>   Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 08/18/2025
+>   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+>   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:8=
+9
+>   Call Trace:
+>    <TASK>
+>    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+>    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+>    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+>    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
+>    netlink_dump_start include/linux/netlink.h:341 [inline]
+>    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+>    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+>    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+>    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+>    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+>    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+>    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+>    sock_sendmsg_nosec net/socket.c:714 [inline]
+>    __sock_sendmsg net/socket.c:729 [inline]
+>    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+>    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+>    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+>    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>    </TASK>
+>
+> The process like this:
+>
+>                (CPU1)              |             (CPU2)
+>   ---------------------------------|-------------------------------
+>   inet_create()                    |
+>     // init clcsock to NULL        |
+>     sk =3D sk_alloc()                |
+>                                    |
+>     // unexpectedly change clcsock |
+>     inet_init_csk_locks()          |
+>                                    |
+>     // add sk to hash table        |
+>     smc_inet_init_sock()           |
+>       smc_sk_init()                |
+>         smc_hash_sk()              |
+>                                    | // traverse the hash table
+>                                    | smc_diag_dump_proto
+>                                    |   __smc_diag_dump()
+>                                    |     // visit wrong clcsock
+>                                    |     smc_diag_msg_common_fill()
+>     // alloc clcsock               |
+>     smc_create_clcsk               |
+>       sock_create_kern             |
+>
+> With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedly change=
+d
+> in inet_init_csk_locks(), because the struct smc_sock does not have struc=
+t
+> inet_connection_sock as the first member.
+>
+> Previous commit 60ada4fe644e ("smc: Fix various oops due to inet_sock typ=
+e
+> confusion.") add inet_sock as the first member of smc_sock. For protocol
+> with INET_PROTOSW_ICSK, use inet_connection_sock instead of inet_sock is
+> more appropriate.
+>
+> Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Df775be4458668f7d220e
+> Tested-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
+> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> ---
+>  net/smc/smc.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/smc/smc.h b/net/smc/smc.h
+> index 2c9084963739..1b20f0c927d3 100644
+> --- a/net/smc/smc.h
+> +++ b/net/smc/smc.h
+> @@ -285,7 +285,7 @@ struct smc_connection {
+>  struct smc_sock {                              /* smc sock container */
+>         union {
+>                 struct sock             sk;
+> -               struct inet_sock        icsk_inet;
+> +               struct inet_connection_sock     inet_conn;
+>         };
+>         struct socket           *clcsock;       /* internal tcp socket */
+>         void                    (*clcsk_state_change)(struct sock *sk);
+> --
+> 2.34.1
+>
 
-> I have submitted this as the fist iteration from a longer list of
-> feature that I want to add to the driver, including events and maybe
-> interrupts.
-> 
-> If nobody has anything against, I would like to add a separate driver
-> for EMC18XX into the IIO.
+Kuniyuki, can you please review, I think you had a related fix recently.
 
-IMO this should be a hwmon driver.
+Thanks.
 
-Guenter
+commit 60ada4fe644edaa6c2da97364184b0425e8aeaf5
+Author: Kuniyuki Iwashima <kuniyu@google.com>
+Date:   Fri Jul 11 06:07:52 2025 +0000
+
+    smc: Fix various oops due to inet_sock type confusion.
 
