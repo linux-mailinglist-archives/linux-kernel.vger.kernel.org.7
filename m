@@ -1,165 +1,315 @@
-Return-Path: <linux-kernel+bounces-831893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23C1B9DD36
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4884DB9DD3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF42423BED
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56ACC1B25701
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF5084039;
-	Thu, 25 Sep 2025 07:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC1454F81;
+	Thu, 25 Sep 2025 07:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQd3C2NU"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mHcsbBRI"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010050.outbound.protection.outlook.com [52.101.56.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F6B1FDD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758784600; cv=none; b=e/39zZjJAQhIYAfGss2Fd71NZuK8Uu6omtaohjTTIJ3fHRsTgX1Fh9lKee2F1E73Y5XE3FhpRTuTL06n74m3CwTRDbRhsvPuI4hUkZu1V3pO74t9udMMTqwBpAtxMXQSEMy9wYC4njn2HTDM1dh88g0J5AuWVtju6pp9J38yXvk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758784600; c=relaxed/simple;
-	bh=vILatFAFS8HlIjTQk1vMFe0nVe5DI0PDZLkSgEpZ+9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QkAzz3AmtE1BRdbyRY9Etz5npcl1ErhwlFsnEtwZpj276rMxANYiRREnIESsC8K9rm/sG8Q452w2YhqREKjeRstjO+CbmAItIxSWrR+zYVA7vbS3w+mvBbOpQoxqdEVlR1sRHyKcvhh7ALIGnXJ7ti4Md8M+ZXykPfaw7dN/V1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQd3C2NU; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4060b4b1200so700679f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758784595; x=1759389395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Up56yeXe5seXQKdJy3u5l5LSHA9K6cXydBHqXSkVjA=;
-        b=UQd3C2NUpd0yqd1/4vgQobF5LNFED9DdIGaJGbOeEazgssCCNjJsfPGhnnPIrNrvKS
-         Sf71iRlxqM0eEs916G/VsBZUq325My0EdEBAY2M5w225ZaP/4U/5ID/j3FRXKb1jMkQE
-         +um5nTk2U5nUsKC003LFSoSkJQeXYNxhJ+tU/7GLiaUCG7LroIMEAsWrsn/wkUpFclRp
-         xwogtbURpR+Uu0EfwCh6CzDKqo4d/srp/O/l+Y5WcaYIoN8fejZwdP3N1Xv/+jIWSSq9
-         6QsEWVt0Mf0ouUxlevnXn9feqZRClPubP8KXrzN2wtRNnEkgXGe5+xZHHzELLQOamzhG
-         q4Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758784595; x=1759389395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Up56yeXe5seXQKdJy3u5l5LSHA9K6cXydBHqXSkVjA=;
-        b=OTRukJRm32MNsGAR0Ea+NxyY5t/m1/jrroNZlinJaz7SKFPmbKUOYWMoan+Vv7y3Od
-         fDzOv1G9xhAXh5hipI0K6hLPmQHqY9eUt1DMhawzxYMKfnkaGh+6POnQaCzOyWCt2KC/
-         4G35U2qaLJ1IzJZ0EkFf8N4a9n8wOD7lHphEh2c98qbdqWDHgFFyad44f7zQUxftUEgT
-         F3PWwCNBSeyiRjsBUzPGWng9kJ2ySU6VohnyhUSPkvugFpl28XGtuOIDzCJ0DsSCl4xZ
-         d6dBSviQwOKlSZE7ebfikjIyw7z5gwDOOxi9uX0QM22IxKND3NqGUBxKPBd3+1jjd5iA
-         VhiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJlyeWBCtVxEJa+oGJRMDxV0AZh4Rhyxvbx6zj8+0t3j1s3fIlOVYWVF6JbaT4lPPoyhaK927+XncPxEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1n0kYH5PEP+x6DwvFPzT6MQdh6L+4yE2IPU8fu4NZwOI7fCQn
-	i6krEA38vNSYgEl6WFobWOxer2FwP0lGQgKtk0W46kVjGiO7OegT0Tfr
-X-Gm-Gg: ASbGncsbiLtplVeZIB3wRup3+SdQL9ouBNtrVWMjG459+ltW2JjVEG48rU+szpFNhu7
-	m0Fm0ygI1XBWdEl5+HM+KHKU/X/S17xFU26ktmY6cqGV2rfS9ezHbPDloH2b+/KNas+ryjVXqYc
-	KR1bJjkm96kicV4NaOJo6zeoguujlJ6EWu0uryUf5/VnBgN5/sHQOtVjp/txusYclTZq8ecSE/i
-	k56jWwXpUpVKqZtK49Gpq/5CDA0GjoqTYlaw3SXJaA0FUdalM6Q88hEaswqM6tPAZNlWS2/Qjvk
-	g390g970DiACTDjtkGQmWuji01BgyVJeijaF5qBHowT22d5/z5ysOF2Mm7ipy30FyfY2UYZ7nQQ
-	6hHHIged3j9k1DFXcnpWUG/3bRK3u2TgkxDHKvLuUCQY=
-X-Google-Smtp-Source: AGHT+IEHcboXnBOyHaAZASOT1VSfKPdv8Bjhgsa8EFn5kSV5CqA5cEeATY+PMl/LCbvVXM/l2xI09g==
-X-Received: by 2002:a05:6000:4382:b0:3d5:d5ea:38d5 with SMTP id ffacd0b85a97d-40e47925a6bmr2769248f8f.25.1758784594858;
-        Thu, 25 Sep 2025 00:16:34 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5602f15sm1667407f8f.39.2025.09.25.00.16.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 00:16:34 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:16:32 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jorge Marques <jorge.marques@analog.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Frank Li <Frank.Li@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
-Message-ID: <2wtpklapw5ogsevuvk2l4ngvw7hymer2y4cc454h47u2d7tq44@4mknmpk5yzil>
-References: <20250924201837.3691486-1-arnd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB90542A82;
+	Thu, 25 Sep 2025 07:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758784617; cv=fail; b=Y5Pakpk+39SawiYLlkAndauNp7g//Asl/5nFNoIs/sLKZRQd11A8GaAcHne4SddoezyOF5d2jIOlq/mrUazgtcJJ2ETspSiMyj3wJtUMeXuorFhyWceluPuu55unYI+H4p+hpuqWNsz/opSLedO6KJlAfB2zoWZZwaSn1LlKBlM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758784617; c=relaxed/simple;
+	bh=QwUoO4qIZso/YB6AoqvZ1fTC2rpin6++JAgZYddZDxw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eMg8e+W6k6muYkbSH1ZMXj/vzjwHhCjSGjfQDo9+Wh/vdlx1M4YwJTSV7NtExPXPnvfsfK6EO5TfMw+oNtBdiFby4x46Jg23C5zRpLO+Cur5L3T83pYJfYuHbMfDfInR4GiqQW8dv/UP5sCexzUKWQMo8mpZYZc+CozhJVlhSPE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mHcsbBRI; arc=fail smtp.client-ip=52.101.56.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f/xWKHAtSTXvR3RAXxGGUurdRoxBsqLHbenPIq+cYc4dkxFRjdxWXRzHM2C8TFxJTldJDYt6stfPSH2/oIlwvaEb0mEjkPxiXVJUWSPcxuLaufmUcie6RBmaqGciIcrITef1M2RYWYmqPeqMLWsP3lQ5gvIv+4eAF0FqO4+5ccF1SfWDfGpelFVvxP01zKEM263BfQJ81vDJWeT8XOHt/OOX2EY3Q/EY9Wm7etSrk0Hc0Ik4yH33QyAuANzVEEzDMaggyyV3uEMgPjifdbIaZ6Jz1voIK3pCoKf+Uw2WNOR+0F+flBNxEKUTLcloCLvxFoO1Y1jNs6Wy6aQajQDswg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aSaLSM41eP2s0RVJ6Ohkzv5VzKHvosjx/a3okk1pVBY=;
+ b=EpKFxSA//6F5HFDjzXsz5wJk9OUtlg2az9ybkt6GcR/c+x0A5N08tBA2SHMeHu+aolYJ70SE0NGIzzvQOrY7UkBqXi9s5GW/dQ9FhuW7x0tbZZwDOg7GSE8CHXQ6VfWnmyNBcWc6IFOcwl3U/0G2qvohTpME31AWhBFaEjG35MN+rvG4JB1PjUIF3RqxJ1YTxO0mGJhYiC//lBA43ve+oXTitoRt6lShcWRp74PGwYZkPDU0jAiffQbDWqZFRUScwdwEa5S/Qopqn35528kHqHpjiyHN3sxjyczSH245GO/fjskUCdC2wnrhXYr7MJmiMTUyFgWvQZcrh97dabInEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aSaLSM41eP2s0RVJ6Ohkzv5VzKHvosjx/a3okk1pVBY=;
+ b=mHcsbBRIxkA+Gz4cNbyj33N9yzPiw05rty3PrwGMoQGozVlARfp7EwpklQJCReaohDBtU1rittbn1gfggKIZR5UjWVbB2jJFx1tGexwJWFJSJ7MIOpyciLbeJ2223OXCyummk3mqHSVl4RCA8cOaQFLVqYh5B0CLaWwhx2yoqF55+T95CGK9k5nhT6idQRKWlRzGNJL5JgGNkcFiQjMoofxQlKa38TXW5r4KjFQ0fathhaYxOgHctphbqhOjPPeeUY0lgX+6N3fZyOV4HyDzAQ6W7BPYz8d+Oi+FOEviy7RZ88N0BM19xygF4r71UE3FmlnB6AMhH6u/4DR2hEGJEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
+ LV3PR12MB9186.namprd12.prod.outlook.com (2603:10b6:408:197::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.23; Thu, 25 Sep
+ 2025 07:16:52 +0000
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.9137.015; Thu, 25 Sep 2025
+ 07:16:52 +0000
+Message-ID: <1249c061-dde7-4966-9c8c-2fa958fad37b@nvidia.com>
+Date: Thu, 25 Sep 2025 00:16:48 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 17/29] arm_mpam: Extend reset logic to allow devices to
+ be reset any time
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-18-james.morse@arm.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20250910204309.20751-18-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PH8PR21CA0006.namprd21.prod.outlook.com
+ (2603:10b6:510:2ce::18) To DM6PR12MB2667.namprd12.prod.outlook.com
+ (2603:10b6:5:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924201837.3691486-1-arnd@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|LV3PR12MB9186:EE_
+X-MS-Office365-Filtering-Correlation-Id: abf98fbd-acd9-4e5a-4120-08ddfc037f8e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QXBSZWVSUjZwL2xuRkIxTzZ0U0ZhOElMbklpWWgyOGpYWTBkRkJPTFNuTHJh?=
+ =?utf-8?B?bWNkOW5aTDZscXVTb1cyWExld0ZxOC91NG1zSFFiZlFRRGNQNjZ4MFVoNlVi?=
+ =?utf-8?B?UWZjejJZc210Y1pqdDdBNFVwNFNkNGhhYzRxNkRzOGlsbVViYjdKRnVvWUxz?=
+ =?utf-8?B?eGtXYVEvSnFLd01EMUVzNCtJTDllZjk3ciswTzdzT2VzODBjMHpKNmo0eW14?=
+ =?utf-8?B?OXdNZ2dScThOSFExRUZvcmNJOTdXV2w3L3FnaFYzVXZQcW9Db2pDTVltOXBp?=
+ =?utf-8?B?L2JLQ2lGRDNIU1hXcDNJLzNFZEpSTG40RUl2MVlIWW1Bck1nd2xTbEI3MmJH?=
+ =?utf-8?B?ZVh5QWJvUUhaajZTeE40b3ViUDZkSVJTdTdZM2FKSjNYWndGL3lWS0xMbEJq?=
+ =?utf-8?B?czExRjIyL2JlOTdKcHRqV2VrTlA0UzN5OVhpYlE4WlVwb1hiMDErbWE4Z21v?=
+ =?utf-8?B?ekw1Y2dIMHp0VVlNRUZYMDhTOGhLa3RuejZ0ZGwwRnovZlRHVXlJb3JnNWRU?=
+ =?utf-8?B?N01LbUV4Y3lrY2RwYmtkV3NMSFlxb0pqTmRrdHo3WVBoRW1uSkpwNGgvVGhC?=
+ =?utf-8?B?dFdwTlZTVTlob3VXSWQzNDZKaFh6TlNIWGJKdVJISnFzZDNBMjlmSVhuNGQv?=
+ =?utf-8?B?dzdSUDBqUmxUL3ErdTVWUXFmNm04TUVWMm1EcHMva3JUMEs1VFdLYS9PQjJS?=
+ =?utf-8?B?UjF3NXZGdVM1YmxPMGxLR1hmNzM4cHBuSXB5WHRTY0VaOGR6TzBEWHRMd20z?=
+ =?utf-8?B?YTNnOGNWaG9NTDlIbm42THV4WEV0djZ3VisveWY2Y0h6MUcxZGg0QU95a1Bs?=
+ =?utf-8?B?Q1BBU3R5b0lyRU5XWkwrTGhhQy93a05uOFliVHM5OEVyWG4xVUhSOG1kV3d1?=
+ =?utf-8?B?OHA2cXU5ekFVakVjL0xCT2w4N1dXS3VQeWNqZUJuNzJQeHhxVXZMbWhOUUUx?=
+ =?utf-8?B?T010QU15NUxnWUc0SGVnVTdiL2poNytDRXBTSXdrOWI5YUcraW9pTDkxRWRj?=
+ =?utf-8?B?WFRoL3BpVkxQYzgxa2RZWUxqQkJBa05sMzJaY0F5dExEY1BXQ0NFc0U1TUJC?=
+ =?utf-8?B?NTFPMTltNjJyd2tSNmVwVEtjWWdhOFV2T2Y1ajZBNzAybzljZWNDSFlub1BJ?=
+ =?utf-8?B?NldBK3BVTjE5Y0xyRWdEdi82OEVGa3F5VmNZY2wxNlRGbTJObkIxc1gvK0xC?=
+ =?utf-8?B?Q2svajBsaDQwWDg1NnlTaWV6NjRmYy9QNXgzK2dPa2tmbTEzQjZ1ODVzWXRs?=
+ =?utf-8?B?THRjdWNHdkFxSy92WWxSRGJZNTEwbnJaRi94MzRxMjlna1lHN0lLM3Z5MUE4?=
+ =?utf-8?B?MW40RXBkUEUvZFhyYkExc1BqbUhtVG9mcDJKbERyVEdmVEV1Zmphc1JuTTRU?=
+ =?utf-8?B?UWlmQm1UdENNbHFxbWVJMlEzWDU0RFcxL2YwWGdBOFhkUmJ2Q1loUUc0S3c4?=
+ =?utf-8?B?MXkzK2JjTEtjempFMXAyRnBRWGVFUnhMVFRBRFo3bEEvZFI1N3ZsekpnMWRI?=
+ =?utf-8?B?d1lnVDdSNklHdFY4cG9aTFJVNmZDYUlpTDhheUNYR0VwMlZkaDNKblBoS2Zk?=
+ =?utf-8?B?aXNsVXpUOUUxV1lDNEs5OE5uclZsblNSbEdSckZsM2QzTHVTOWQ5Zk4zNzM3?=
+ =?utf-8?B?SHlCQkdQeGhuVkxMYjhMVGExL1dwVFJtY0VETDV1Q1R0VS9hWnlnVTFlb2Fj?=
+ =?utf-8?B?aWluOWVsR3JUcnRtV0REMlo2RzlWM3hORmIvdU41ZVkvUXlZZlF6YmY2RnpY?=
+ =?utf-8?B?cUZsZ0ZuUk43TjV3dGtrbTRvOFIrNjZwTk9kTUJWUmk0WkRSbUZScXlDcmxa?=
+ =?utf-8?B?RVNHalU3Y015YjdxcmxLUWpWVFNwTml2elFKS21sZlpLcVp5cjJmdjZ4QVVv?=
+ =?utf-8?B?SzE4dTBLMzVWWE1GbmJweEZOVlNSa05nUjlPanhvRDhaS3UzQnMyUmRmQXBZ?=
+ =?utf-8?Q?1Rsm2cGXr/g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VXdibkI1WEdkb3hzOThFbWZQSVZCZHhIcUltb2ZDN1JCK0xrNUNIckE3Ri9V?=
+ =?utf-8?B?K2k4MEhMTlNSZG5Xa0tXVkEzeGI4MlhPczZVRkN0ZnZVMVF5N3QzbnQvSXFv?=
+ =?utf-8?B?Q2UrSE1QTVdTWjlTUy8rNmhrbWsxYWUxcjRHNmNZdmVTREFsbk93V2R2d2VE?=
+ =?utf-8?B?eWh6TVlGTTNoYkVha2ZaVndlckdWKzNOMlBrWW42UE5zUTJhQ2hXcnhoelQ2?=
+ =?utf-8?B?aStQRi9jbjQ2c0dDc3ZiRWJ3VkpBOTBNMm44cGlrMWoyNWo4SG8zSVBNdjl4?=
+ =?utf-8?B?ZHc5cnRGZ1FoeU5STzlHOEYwaTNrTU1KOW52YlE5WGltL1FGcTVoSHk3M3Bs?=
+ =?utf-8?B?MjhNdUVERysvS1hOL1dxRGk1dU52dUNOV1hjZnFZTEVFRk1OTmNiVHhIaC9J?=
+ =?utf-8?B?Z3IrODVQeWJBU3pJa3ZwdWplS2lWc2NLNG9ITjJrc0IwTFl1WjlwSTZQZ25u?=
+ =?utf-8?B?TjNqYlU3QURyM3FIOVVJUWN3TjBCb3Z4YlBQNU9KWDFDeDdYL3I4cTk1V2Vj?=
+ =?utf-8?B?UzZWWUFLcUhFVjVWcytuTVRlVGFWcHJubERuajJ1ajk5T0hqbENqcC9nRncr?=
+ =?utf-8?B?Q2JScS8yVTl1THNBbFloMTV3ZUhxNWZuQVcySytzZkpLendlc2dEdHpCTFdV?=
+ =?utf-8?B?Nkp6Njdad0V1T25NaThEOWRKYmsySHI0UVZOdlE4aVNlb0VEN2ZRK2FpZEJK?=
+ =?utf-8?B?YnpVaGRnN1V3bWpKeUtPd3dIY2tMQUM3RDRVd3J0cWk5MG85WUpreTR4RTRj?=
+ =?utf-8?B?WkZWVHVQdVlUZW5EY0RFREsrRGY5OEFYMTNoUGluWEZmd1UwYi9ZZFA4UUVQ?=
+ =?utf-8?B?NXdTTGJIcmNMem9JZVJLbSsvdnBMUlpwNFo0VjgzR3BHelAvdnNVdGx5R2pt?=
+ =?utf-8?B?RUtzTHZldW1PeHdhODRaMmNkL2RqeFJGb2FTQmE1a0NldThlMGJqT3RrR0tV?=
+ =?utf-8?B?R0hKMlRsTjl3NVFzd3AxVldsTDRHVUcxQ082WjdJaGV6bEFxSmJCNUJOQUVo?=
+ =?utf-8?B?K25zbmdQaXZHSnYxOS90dFZ1YlNidGlocGlFdkpIeTVMQmRYRWl3WnlvL2dl?=
+ =?utf-8?B?a0phTWFhNGkvenZFWmpGdWJiV0NCSWROaUQyaEdqbHVlNGl0dlhaUUpHdGVH?=
+ =?utf-8?B?Uy9raGFLMjJDd29XSXpGTktlQTZrenJyVW5QY3p1TkZINDM1U2M0cGl5M2E5?=
+ =?utf-8?B?QnNwK3o1dU9qaGEwQ2VJWkVIRnJNdE5zaW9qb1VUYzNZaWF3N2czYmcwL25a?=
+ =?utf-8?B?ak1JYnR1MDllNTBsb3RsSjd0S2VBSnVleC83YzlNT0hZc3hMa0ovTkVSSHI3?=
+ =?utf-8?B?MzFMR0xSODd3bFUvamxObGQ3OS9yd0VCb0VybGE2bzJoOGttaEtiZ3YzRnZu?=
+ =?utf-8?B?SUo4R1FsMzBPRDZvWERSUnhTSk5wRTdnQzkyZ2MxNGhOQ2hSelRDbnJFZFIv?=
+ =?utf-8?B?cmZQK2I2aVJxRDJRdWZXVlVRV3dQVXZ2ck9ZWEREdk9ZOGtOK3Uxd0hEMEJo?=
+ =?utf-8?B?OEwzRDhrOFRTRnpJTVhVVHlVSG52OEpwWjh5bDhHRDExQ1RXaURnNytTSVFG?=
+ =?utf-8?B?d2FMSW5IQlIvenp4ZGpRb290c2ZlRkU0cElvT1ZUV1JzZnFaS0t0YnVqR1FF?=
+ =?utf-8?B?dUxqcHZ5ZmRybnJoa21Sc2ovMGhFRkFxNUFxTVBxTHAyZXVlb1hQM0JvY0ht?=
+ =?utf-8?B?K2xHdzllVCtVTUtRRE51bnloN0J0NUN2b0hYOU9UR1FVZnY3OHBVdlVHamVC?=
+ =?utf-8?B?M1VvN2tnekVZSzlKZmpvajdWT3FsU0NidlJSOFpLd1BrZWVEY0llYjQ5MnVB?=
+ =?utf-8?B?Rjd2bDJVbExyOXVaV1JWek41R1U0R2d0Tzh0eUxnQllJenZBdjRBTXZOcTMv?=
+ =?utf-8?B?QWxSU2wxRHY5VkI5ZGRQWnFUMnF6Zmpsb2tFeEtSblVFaVBsZEVLajRKRlFH?=
+ =?utf-8?B?UEgyWkVic1ZUblRWanljS3ZNMlRjb09ZVmtVZ3lKYndGSzNLeExlR1haVU01?=
+ =?utf-8?B?djVZaTlnYVg2SVNxUmQ5dzlqSmNTSmRwUFphSkF2QXBqRnpBQldRUjI0cmZt?=
+ =?utf-8?B?eTdHNTMzU1dicDdLbFJLUzBGcWpqOS9LS25QWEp5YUFGOVo1MGxhYy9OT0Jn?=
+ =?utf-8?Q?kW+vDBarYDhzZ3Rmq3jelnWO3?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: abf98fbd-acd9-4e5a-4120-08ddfc037f8e
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 07:16:52.1628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OQUXi6O1R5vYFIIT76e+3Tq+xHOvTTYQ5m/1A/uHcpG0vm1SkqFIi7HMyvy3+XnzfJfYTXI7s4qVyL5PRaMx2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9186
 
-On Wed, Sep 24, 2025 at 10:18:33PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Short MMIO transfers that are not a multiple of four bytes in size need
-> a special case for the final bytes, however the existing implementation
-> is not endian-safe and introduces an incorrect byteswap on big-endian
-> kernels.
-> 
-> This usually does not cause problems because most systems are
-> little-endian and most transfers are multiple of four bytes long, but
-> still needs to be fixed to avoid the extra byteswap.
-> 
-> Change the special case for both i3c_writel_fifo() and i3c_readl_fifo()
-> to use non-byteswapping writesl() and readsl() with a single element
-> instead of the byteswapping writel()/readl() that are meant for individual
-> MMIO registers. As data is copied between a FIFO and a memory buffer,
-> the writesl()/readsl() loops are typically based on __raw_readl()/
-> __raw_writel(), resulting in the order of bytes in the FIFO to match
-> the order in the buffer, regardless of the CPU endianess.
-> 
-> The earlier versions in the dw-i3c and i3c-master-cdns had a correct
-> implementation, but the generic version that was recently added broke it.
-> 
-> Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
-> Cc: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi, James,
+
+On 9/10/25 13:42, James Morse wrote:
+> cpuhp callbacks aren't the only time the MSC configuration may need to
+> be reset. Resctrl has an API call to reset a class.
+> If an MPAM error interrupt arrives it indicates the driver has
+> misprogrammed an MSC. The safest thing to do is reset all the MSCs
+> and disable MPAM.
+>
+> Add a helper to reset RIS via their class. Call this from mpam_disable(),
+> which can be scheduled from the error interrupt handler.
+>
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
-> This was a recent regression, the version in 6.16 still works,
-> but 6.17-rc is broken.
-> 
-> v2 changes:
->  - add code comments
->  - write correct data buffer
+> Changes since v1:
+>   * more complete use of _srcu helpers.
+>   * Use guard macro for srcu.
+>   * Dropped a might_sleep() - something else will bark.
 > ---
->  drivers/i3c/internals.h | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> index 0d857cc68cc5..79ceaa5f5afd 100644
-> --- a/drivers/i3c/internals.h
-> +++ b/drivers/i3c/internals.h
-> @@ -38,7 +38,11 @@ static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
->  		u32 tmp = 0;
->  
->  		memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
-> -		writel(tmp, addr);
-> +		/*
-> +		 * writesl() instead of writel() to keep FIFO
-> +		 * byteorder on big-endian targets
-> +		 */
-> +		writesl(addr, &tmp, 1);
->  	}
->  }
->  
-> @@ -55,7 +59,11 @@ static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
->  	if (nbytes & 3) {
->  		u32 tmp;
->  
-> -		tmp = readl(addr);
-> +		/*
-> +		 * readsl() instead of readl() to keep FIFO
-> +		 * byteorder on big-endian targets
-> +		 */
-> +		readsl(addr, &tmp, 1);
->  		memcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
->  	}
->  }
-Reviewed-by: Jorge Marques <jorge.marques@analog.com>
-> -- 
-> 2.39.5
-> 
+>   drivers/resctrl/mpam_devices.c | 56 ++++++++++++++++++++++++++++++++--
+>   1 file changed, 54 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index e7faf453b5d7..a9d3c4b09976 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -842,8 +842,6 @@ static int mpam_reset_ris(void *arg)
+>   	u16 partid, partid_max;
+>   	struct mpam_msc_ris *ris = arg;
+>   
+> -	mpam_assert_srcu_read_lock_held();
+> -
+>   	if (ris->in_reset_state)
+>   		return 0;
+>   
+> @@ -1340,8 +1338,56 @@ static void mpam_enable_once(void)
+>   	       mpam_partid_max + 1, mpam_pmg_max + 1);
+>   }
+>   
+> +static void mpam_reset_component_locked(struct mpam_component *comp)
+> +{
+> +	struct mpam_msc *msc;
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	
+
+Nested locks on mpam_srcu in this call chain:
+
+mpam_disable() -> mpam_reset_class() -> mpam_reset_class_locked() -> 
+mpam_component_locked()
+
+There are redundant locks on mpam_srcu in mpam_disabled(), 
+mpam_reset_class_locked(), and mpam_reset_component_locked().
+
+It's better to guard mpam_srcu only in the top function mpam_disable() 
+for simpler logic and lower overhead.
+
+> list_for_each_entry_srcu(vmsc, &comp->vmsc, comp_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		msc = vmsc->msc;
+> +
+> +		list_for_each_entry_srcu(ris, &vmsc->ris, vmsc_list,
+> +					 srcu_read_lock_held(&mpam_srcu)) {
+> +			if (!ris->in_reset_state)
+> +				mpam_touch_msc(msc, mpam_reset_ris, ris);
+> +			ris->in_reset_state = true;
+> +		}
+> +	}
+> +}
+> +
+> +static void mpam_reset_class_locked(struct mpam_class *class)
+> +{
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(comp, &class->components, class_list,
+> +				 srcu_read_lock_held(&mpam_srcu))
+> +		mpam_reset_component_locked(comp);
+> +}
+> +
+> +static void mpam_reset_class(struct mpam_class *class)
+> +{
+> +	cpus_read_lock();
+> +	mpam_reset_class_locked(class);
+> +	cpus_read_unlock();
+> +}
+> +
+> +/*
+> + * Called in response to an error IRQ.
+> + * All of MPAMs errors indicate a software bug, restore any modified
+> + * controls to their reset values.
+> + */
+>   void mpam_disable(struct work_struct *ignored)
+>   {
+> +	int idx;
+> +	struct mpam_class *class;
+>   	struct mpam_msc *msc, *tmp;
+>   
+>   	mutex_lock(&mpam_cpuhp_state_lock);
+> @@ -1351,6 +1397,12 @@ void mpam_disable(struct work_struct *ignored)
+>   	}
+>   	mutex_unlock(&mpam_cpuhp_state_lock);
+>   
+> +	idx = srcu_read_lock(&mpam_srcu);
+It's better to change to guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
+> +				 srcu_read_lock_held(&mpam_srcu))
+> +		mpam_reset_class(class);
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+>   	mutex_lock(&mpam_list_lock);
+>   	list_for_each_entry_safe(msc, tmp, &mpam_all_msc, all_msc_list)
+>   		mpam_msc_destroy(msc);
+
+Thanks.
+
+-Fenghua
+
 
