@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-832624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E9AB9FF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1443B9FF2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9E45E470B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE0038156F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DE12C1591;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723D2C15AA;
 	Thu, 25 Sep 2025 14:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGO09OcG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKHmwWPi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62BA2C11CF;
-	Thu, 25 Sep 2025 14:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172092C11ED;
+	Thu, 25 Sep 2025 14:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758809553; cv=none; b=p1A6WfnWG9XEpgzmvqGLQ+eCyWn7ZyPfVAAG31vlqnwo7eQ6yzsLjs+w7iV2i1xUiHCHfNQg+Z1AdkGQlEkHhAbMr+s1wLGuUgqQpJ3ys0K2v4K8g6v6SJ0SYOrI+h9wHRr1/v52VFa3riecRRo4+FniDoScabWocep9WkAqOHM=
+	t=1758809554; cv=none; b=VFKeV7BdY5aAcu/QE4QcNi+wQDkIiUMpgN1nGQuSrhsBrmFvmZnkNI9pDWmmbElrvLA7FQtJMHeTz2/Onm6uWekFxOH1vBQ5P9iSIqAQDFyAJDAEg4LS3jtqrYp3SuFoXT5ctq3OBxxVeDqhOzEfDTzpLjJeiAofAhw+Q3G8nfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758809553; c=relaxed/simple;
-	bh=45sNohOdgqpRrnKmZqLr3TowaEBvAp7Eccog+QljG2g=;
+	s=arc-20240116; t=1758809554; c=relaxed/simple;
+	bh=h7xLn3JbQ44tHSWjgTil1jBLnAigdCGXSZlWVSiK9lw=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=OR9f2ef+FgQGxlnIs1tJkMaflhLrMAJo6/20Z3XIBp2qmU9NJ+TI5ghasgQPUpqIF3E89tnMHRMhyus1jfpoGxvjWhz0kG7O89N8/YNdVjMqCp5MXf+4rInk1PLuOw9Xnc6b8TSbU9dwyEWT52iaiuUkVJTuJRu80eIb2AaHYPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGO09OcG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E59C4CEF5;
-	Thu, 25 Sep 2025 14:12:32 +0000 (UTC)
+	 Message-Id:Subject; b=mdkAKUkh4E6jL6IGtRnUhgUAibf7GNE9h2KDLSFXCcxw2WK3MeWZ1wlKmU495lisnvxtiDXuXe48RlTQ35E88MqkI3EuW3Cu1FSFXXfaJ012PfkZLp8MGHiLSuPe2cJjXNRyF3TNFzx/rHtRUn995QGcMQSXo1ffGvBqj17rgrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKHmwWPi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C787FC4CEF0;
+	Thu, 25 Sep 2025 14:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758809552;
-	bh=45sNohOdgqpRrnKmZqLr3TowaEBvAp7Eccog+QljG2g=;
+	s=k20201202; t=1758809553;
+	bh=h7xLn3JbQ44tHSWjgTil1jBLnAigdCGXSZlWVSiK9lw=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EGO09OcGbEjlYra5EMSMXzIs096VW7kFsgBPeCOnhz2ihb3ib6XGcAuOFY0j4Yygk
-	 JftCzDgv9T1XmBXqwc/aLyPdyA2ooIcfxVASoEcXVugIg9Qi0rZbWVChEwOk11e4Ek
-	 Tx+/9krd7ZUn6I3bpoHW8y89491qBGfgdbIDMdUQwVJKtDgA76ws7QxRYN+TQNU9hS
-	 1pTjqaryVBunjVYLiASedFpipSHAhZf1AXGszul3SM4u2mtySR3r6gC4pAYBNoEgCC
-	 Q+OKr9H84mIeb9nw6XsKZqzS4k30w8rudpf56dGVP1nYf211MNjTJtsNsgj7l0ccgi
-	 BmwjM2bS6yxvQ==
-Date: Thu, 25 Sep 2025 09:12:32 -0500
+	b=uKHmwWPiAF26pecH3W9083RZX+cel1OzbqbxPPt9XyJNIippOCmR4KZyLlcoNab8O
+	 7s3YmLQSeL4KJC4etojwVlSGD6mUVLbyKNfcLqdPU0KufuFFnQoelwStmvZQKH/EhY
+	 vSAsFD6/FATRyQ87RSNOGE/zWgRNyI88bPI1PBUMw5xn4TGIXz3Dtx4z2wb3UJQBZN
+	 /9o7gNeh+hVHspM8IRqskHmJhHqfxpe2a8D2uicY5ZDhoNEWf+oI9fyIp4D/z3SRDv
+	 pl0GSB9flrxXRqnaa3fAEOyNHcLZunI1a/MgBWQ++2yFFv+WE3OAUMcC4EzdnLtRH2
+	 +L359CtHBWxhQ==
+Date: Thu, 25 Sep 2025 09:12:33 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,37 +50,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: andersson@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org
-To: Jingzhou Zhu <newwheatzjz@zohomail.com>
-In-Reply-To: <20250925040246.8454-1-newwheatzjz@zohomail.com>
-References: <20250925040246.8454-1-newwheatzjz@zohomail.com>
-Message-Id: <175880948940.820227.6318085829775855857.robh@kernel.org>
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: Introduce Huawei MateBook E 2019
+Cc: kever.yang@rock-chips.com, krzk+dt@kernel.org, heiko@sntech.de, 
+ alchark@gmail.com, linux-rockchip@lists.infradead.org, 
+ didi.debian@cknow.org, pbrobinson@gmail.com, honyuenkwun@gmail.com, 
+ naoki@radxa.com, mani@kernel.org, neil.armstrong@linaro.org, 
+ linux-arm-kernel@lists.infradead.org, quentin.schulz@cherry.de, 
+ jbx6244@gmail.com, conor+dt@kernel.org, dsimic@manjaro.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, inindev@gmail.com, 
+ ivan8215145640@gmail.com
+To: Liangbin Lian <jjm2473@gmail.com>
+In-Reply-To: <20250925092037.13582-1-jjm2473@gmail.com>
+References: <20250925092037.13582-1-jjm2473@gmail.com>
+Message-Id: <175880949051.820269.9096832740960574577.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm64: dts: rockchip: introduce LinkEase EasePi
+ R1
 
 
-On Thu, 25 Sep 2025 12:02:44 +0800, Jingzhou Zhu wrote:
-> Huawei MateBook E 2019 is a 2-in-1 tablet shipped with Windows on ARM.
-> It is one of the early WoA devices powered by Qualcomm Snapdragon 850,
-> or the sdm850 platform. This series adds mainline Linux support for this
-> device using device tree.
+On Thu, 25 Sep 2025 17:20:34 +0800, Liangbin Lian wrote:
+> LinkEase EasePi R1 [1] is a high-performance mini router.
 > 
-> Signed-off-by: Jingzhou Zhu <newwheatzjz@zohomail.com>
+> Specification:
+> - Rockchip RK3568
+> - 2GB/4GB LPDDR4 RAM
+> - 16GB on-board eMMC
+> - 1x M.2 key for 2280 NVMe (PCIe 3.0)
+> - 1x USB 3.0 Type-A
+> - 1x USB 2.0 Type-C (for USB flashing)
+> - 2x 1000 Base-T (native, RTL8211F)
+> - 2x 2500 Base-T (PCIe, RTL8125B)
+> - 1x HDMI 2.0 Output
+> - 12v DC Jack
+> - 1x Power key connected to PMIC
+> - 2x LEDs (one static power supplied, one GPIO controlled)
+> 
+> [1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
+> 
+> Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
 > ---
-> Jingzhou Zhu (2):
->   dt-bindings: arm: qcom: Document Huawei MateBook E 2019
->   arm64: dts: qcom: Add support for Huawei MateBook E 2019
+> Changes in v2:
+> - Change deprecated "rockchip,system-power-controller" to "system-power-controller"
+> - Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473@gmail.com/
 > 
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../qcom/sdm850-huawei-matebook-e-2019.dts    | 967 ++++++++++++++++++
->  3 files changed, 969 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts
-> 
-> --
-> 2.47.3
-> 
+> ---
 > 
 > 
 
@@ -101,21 +112,21 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/next-20250924 (exact match)
+ Base: failed to guess base
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250925040246.8454-1-newwheatzjz@zohomail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250925092037.13582-1-jjm2473@gmail.com:
 
-arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dtb: pinctrl@3400000 (qcom,sdm845-pinctrl): i2c5-hid-active-state: 'oneOf' conditional failed, one must be fixed:
-	'bias-pull-up', 'drive-strength', 'function', 'input-enable', 'pins' do not match any of the regexes: '-pins$', '^pinctrl-[0-9]+$'
-	False schema does not allow True
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sdm845-pinctrl.yaml#
-arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dtb: rsc@179c0000 (qcom,sdm845-rpmh-apps-rsc): regulators-0:smps4: Unevaluated properties are not allowed ('enable-active-high' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dtb: regulators-0 (qcom,pm8998-rpmh-regulators): smps4: Unevaluated properties are not allowed ('enable-active-high' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,rpmh-regulator.yaml#
+arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dtb: mmc@fe000000 (rockchip,rk3568-dw-mshc): status: 'oneOf' conditional failed, one must be fixed:
+	['disable'] is not of type 'object'
+	'disable' is not one of ['okay', 'disabled', 'reserved', 'fail', 'fail-needs-probe']
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dtb: mmc@fe2b0000 (rockchip,rk3568-dw-mshc): status: 'oneOf' conditional failed, one must be fixed:
+	['disable'] is not of type 'object'
+	'disable' is not one of ['okay', 'disabled', 'reserved', 'fail', 'fail-needs-probe']
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
 
 
 
