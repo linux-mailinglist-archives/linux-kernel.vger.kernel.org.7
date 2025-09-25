@@ -1,116 +1,208 @@
-Return-Path: <linux-kernel+bounces-832514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82DCB9F8CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2F1B9F8E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91AA0324110
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:25:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7057B325397
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913CA265CA8;
-	Thu, 25 Sep 2025 13:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6910F23B638;
+	Thu, 25 Sep 2025 13:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4nLUWL2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qiGxjWcH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4023909C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC9C1DED52
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758806459; cv=none; b=hpnJTskbrvoylC0XieHmX6+608Z35hbNqdaQqs6cJvwsSjVghSo/v6hAfQHWbYmr5QFi+YWoZcLSTU4b2Ce9dzA70vpN6WAe61MxPkCRtYXpAQWBm8eH6r90fGx9smaWlxzJf6Fusz6h1NdnkeMQ5XK1172QkAhVkUthKkFdOdY=
+	t=1758806548; cv=none; b=HZKTjvb2gX/31IMuYtumbH/N2AXRlOeOt+J0TgBByuyyT0Jly8s6JrOPr7wX3aJ+OlSqoo2FnyzBy5VikxjuYOf3r7aN4WoYft/xeOpdfW1k2RpCMLpn8ASWxcUwVYrjCiS8d/hDM8CxZcMfRsFRmtDJqk5JLh3sGGvaExw4v44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758806459; c=relaxed/simple;
-	bh=YDDEpU1bcy05koezpIh2vlp6eVzNiz9AaW8llrtCap0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWRPSL+8IbyTx0IuSWsDm88z+ImlOAzHKtr6Ml7ArBcUysQcMi6N0z9ej8ZPlFZiAHn6ASk2OQ7SKkXYLMdbAhNorKQYHvh8Me25QKM06vmdps2JfblJgNIfs4irHrItcUuxLJSnkdBLFO49APs4f+Hevetd3SbSunSG6Mwk/Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4nLUWL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36CFAC4CEF0;
-	Thu, 25 Sep 2025 13:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758806458;
-	bh=YDDEpU1bcy05koezpIh2vlp6eVzNiz9AaW8llrtCap0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W4nLUWL2A+zzUCo6d9H59e2guNgttVusX1whLsHfzD0901R3uhhgUZVNCWE9J98jk
-	 nzCbIalJ5wuUQrgeE8HSwYwgCHasKLd9rbUugh6SSO2+5AktQnwQGOGodSSDfjfBud
-	 wgWhlJBNFlKPFJhk7QreZKRCFPX54oyvRBYLPDEtG02aa2piAQlfItygjqw2fKtZh7
-	 q17FiZ1Xq4m44sHyQCss2j6JelDA4KSnl10SjRk9xoGlkooJdLXf/nocOMGbtCKBzd
-	 n46TUrJsg3qVm8OK+rsORt5QrF/EbOo3GJPaKpAPjjJj3RrSA6oOqwUf8j/IO8x/GA
-	 m0zFjsj47Xvfg==
-Date: Thu, 25 Sep 2025 15:20:52 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Alejandro Colomar <alx@kernel.org>, Marco Elver <elver@google.com>, 
-	Kees Cook <kees@kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v1 3/3] kernel: Fix off-by-one benign bugs
-Message-ID: <f03b6e802662b437468d25b32bf9699875dc210f.1758806023.git.alx@kernel.org>
-X-Mailer: git-send-email 2.51.0
-References: <cover.1758806023.git.alx@kernel.org>
+	s=arc-20240116; t=1758806548; c=relaxed/simple;
+	bh=izz9t+UPzYWPFSDIC4MaTcptHRoS5jlUZAWb0gqP4CA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CX+43teOrqtbcy1nOgR5R9OWaSk2K0AaDjVr64D73h3kT1ZO5q3wd4UtB30lNYcU1bp+bikJ3l6MeTFcvrwIBFQqQrca9tIbficxTxopswqSlHz9J+c6Hu6OiDikvVgk3n2ODMcfEXmqvmeCdAeogltllzdBrql9oVaI5d9bzNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qiGxjWcH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P4O0A1021262;
+	Thu, 25 Sep 2025 13:22:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ia1/4R
+	PTVr5lEOH9EgydCuHgeKLgDIxOVSwAP9XSPBw=; b=qiGxjWcHB9EMO3wjfXOoNk
+	Mr9r8KQDe76QddxPs9VXdPfJQ9rO77jnLeVExDPYwKqOgYiMeUdPk5ZSsdGjxgyx
+	czyJDBxVBi4o7pYSS59eJvJJ7O/lCuZ1N/IaYa6CVkJRvHRKrHl2NsXm/Po+b9wv
+	WGT0SZTRVb1c1XMWbO4pzwKuTePt6SBVCVwlmGfqRrK+y2YK8oPwxd7UYWx49XME
+	Ahd8sNKw0oBgdfKUH5uR7veU3WNaO7SE1knduUZPS/RyaYLRYOsxVlLkeV8UPyGl
+	2pDnRhPuSt/7lkmyFfiQ9VwgKBS1r6iHywUlLpff4b4TgoGgCTDyMasppqKIECPg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqnbyv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 13:22:07 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58PDFLwJ022612;
+	Thu, 25 Sep 2025 13:22:06 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqnbyr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 13:22:06 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PCZZNN008826;
+	Thu, 25 Sep 2025 13:22:05 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yy66wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 13:22:05 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PDM4Nh7471794
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 13:22:04 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 31DAA58058;
+	Thu, 25 Sep 2025 13:22:04 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ADC445805D;
+	Thu, 25 Sep 2025 13:21:58 +0000 (GMT)
+Received: from [9.39.30.226] (unknown [9.39.30.226])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 25 Sep 2025 13:21:58 +0000 (GMT)
+Message-ID: <5fa436bd-2cea-4958-8a0a-ac636595a974@linux.ibm.com>
+Date: Thu, 25 Sep 2025 18:51:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1758806023.git.alx@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drivers/base/node: merge register_one_node() and
+ register_node() to a single function.
+To: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>, Dave Jiang <dave.jiang@intel.com>
+References: <cover.1758736423.git.donettom@linux.ibm.com>
+ <40257b5228dec05e5b252f02438608eb8d681a2d.1758736423.git.donettom@linux.ibm.com>
+ <0de65980-4333-434a-ae7d-2b7be46c2cca@redhat.com>
+ <aNUMnK23qKTjgEdO@kernel.org>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <aNUMnK23qKTjgEdO@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d541ff cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=4V8e3p56BTpXgw00i4MA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: JxDWaNRkxF6Qy8ZF0itz_n9KFqDcMh5m
+X-Proofpoint-GUID: eFhaTNISHQyCqaBy1Lml0RWiZV5isRK0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfX8HWeJU6DODxO
+ mVDGFoZYhbxVlQ42sMVXhcMo1em/K1n/asrIZtm22eEauoGI2b+tljf5OPYm7mCo89NR0AiNVeA
+ b5jCUQnfGSxBxmx3Ze5g9gKB5ZVRCq925XpPOgVE990hkJ1OGkeiUgBwSEw3MCJvsD4sJP/CgE7
+ KmipbmGqy8j0TU3bqN5yDenmgBOqwd2838nYCAV989pTuQHkTCOhtJ5iRFnVDJQck6vCeyoo04G
+ zluW2Ml2x6ZMSM+Su5PLZUsDK/tAU7bKf7VgB8uL13+TtySUavFIT7dfCcDAUsa/k+eZGEGZJmw
+ KmcTgbAn7PVX6TY6pcwjxM+JNqY/FsdvpIgoDh4vyqsniAcKnvzrrVbleLD+hixPXdjqFolNu8R
+ iSpNXE6i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
 
-We were wasting a byte due to an off-by-one bug.  s[c]nprintf()
-doesn't write more than $2 bytes including the null byte, so trying to
-pass 'size-1' there is wasting one byte.
 
-This is essentially the same as the previous commit, in a different
-file.
+On 9/25/25 3:04 PM, Mike Rapoport wrote:
+> On Thu, Sep 25, 2025 at 10:54:07AM +0200, David Hildenbrand wrote:
+>> On 24.09.25 20:40, Donet Tom wrote:
+>>> register_one_node() and register_node() are small functions.
+>>> This patch merges them into a single function named register_node()
+>>> to improve code readability.
+>>>
+>>> No functional changes are introduced.
+>>>
+>>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>>> ---
+>> [...]
+>>
+>>>    /**
+>>>     * unregister_node - unregister a node device
+>>>     * @node: node going away
+>>> @@ -869,7 +842,13 @@ void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
+>>>    }
+>>>    #endif /* CONFIG_MEMORY_HOTPLUG */
+>>> -int register_one_node(int nid)
+>>> +/*
+>> We can directly convert this to proper kernel doc by using /**
+>>
+>>> + * register_node - Setup a sysfs device for a node.
+>>> + * @nid - Node number to use when creating the device.
+>>> + *
+>>> + * Initialize and register the node device.
+>> and briefly describing what the return value means
+>>
+>> "Returns 0 on success, ..."
+> For kernel-doc it should be
+>
+> Return: 0 on success, ...
+>
 
-Cc: Marco Elver <elver@google.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Christopher Bazley <chris.bazley.wg14@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Marco Elver <elver@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
- kernel/kcsan/kcsan_test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sure I will change it.
 
-diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
-index c2871180edcc..621a60a86b39 100644
---- a/kernel/kcsan/kcsan_test.c
-+++ b/kernel/kcsan/kcsan_test.c
-@@ -176,7 +176,7 @@ static bool __report_matches(const struct expect_report *r)
- 
- 	/* Title */
- 	cur = expect[0];
--	end = &expect[0][sizeof(expect[0]) - 1];
-+	end = ENDOF(expect[0]);
- 	cur += scnprintf(cur, end - cur, "BUG: KCSAN: %s in ",
- 			 is_assert ? "assert: race" : "data-race");
- 	if (r->access[1].fn) {
-@@ -200,7 +200,7 @@ static bool __report_matches(const struct expect_report *r)
- 
- 	/* Access 1 */
- 	cur = expect[1];
--	end = &expect[1][sizeof(expect[1]) - 1];
-+	end = ENDOF(expect[1]);
- 	if (!r->access[1].fn)
- 		cur += scnprintf(cur, end - cur, "race at unknown origin, with ");
- 
--- 
-2.51.0
 
+>
+>>> + */
+>>> +int register_node(int nid)
+>>>    {
+>>>    	int error;
+>>>    	int cpu;
+>>> @@ -880,14 +859,23 @@ int register_one_node(int nid)
+>>>    		return -ENOMEM;
+>>>    	INIT_LIST_HEAD(&node->access_list);
+>>> -	node_devices[nid] = node;
+>>> -	error = register_node(node_devices[nid], nid);
+>>> +	node->dev.id = nid;
+>>> +	node->dev.bus = &node_subsys;
+>>> +	node->dev.release = node_device_release;
+>>> +	node->dev.groups = node_dev_groups;
+>>> +
+>>> +	error = device_register(&node->dev);
+>>>    	if (error) {
+>>> -		node_devices[nid] = NULL;
+>> Wondering why we did have this temporary setting of the node_devices[] in
+>> there. But I cannot immediately spot why it was required.
+> register_cpu_under_node() references node_devices, so that assignment can
+> be moved just before the loop that adds CPUs to node.
+
+
+Sure.
+
+Thank you
+
+
+>   
+>> -- 
+>> Cheers
+>>
+>> David / dhildenb
+>>
 
