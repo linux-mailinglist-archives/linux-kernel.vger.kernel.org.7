@@ -1,98 +1,165 @@
-Return-Path: <linux-kernel+bounces-832293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB26B9ED58
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CADB9EC56
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7025F7B5BFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11B957BB9B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDD82F5A18;
-	Thu, 25 Sep 2025 10:56:25 +0000 (UTC)
-Received: from out198-7.us.a.mail.aliyun.com (out198-7.us.a.mail.aliyun.com [47.90.198.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23532F7AA1;
+	Thu, 25 Sep 2025 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jBbXJq9A"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF4614658D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBC42EB871
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797784; cv=none; b=IiG9Uw82bJNz9CmjgDsJvMGZI6nzEuhBEWB96rXZufiqRQM1N6H2wo25s8ZA7OB/mJnswuGgvj8iojdUGiMHMOrdtxeOZfJhbQrQPIth+YjXe7kVbQsnmi13VFWm3N82M7AE+xn7lkUF0FLaRCxNoZWONMf1jKJ3nHmXVxzYQYg=
+	t=1758796828; cv=none; b=HCY2cu/hQytNsPx0rnXLJtkxlBFuA0whQmzy/4KUV+cN8GyLKzLYKmyaMoCy+qjTiFwCPQRYDkDoe7Ni1iLIZxCbTxMVpUPYPPbctHjokViGoWU/rImVACy5QJW5NrVOxj2G2wkyV9cK+GJAINO4R/l5ChoDjc5jVqki+Yz78Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797784; c=relaxed/simple;
-	bh=3G3Y+AWzit3fpqOTYiBWzRQkvvmf0vgVueTgeuaEk5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iAskW8tt5D5JwdI0awGAZNtg6bPq14/akc2ixnZfxNFbbdGTg+xnyVPSC7HFLl3qNDbylJJjvRJBeVnDE7ScHOJ8AG6tXYJ/+vBxeNTejeJYrX3lpuCzzRtaXt2G/iC8/1YAK7FKdyd8RMrYCRTbYVcFkUL1EUZMViYNMPYvvLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn; spf=pass smtp.mailfrom=bosc.ac.cn; arc=none smtp.client-ip=47.90.198.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bosc.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bosc.ac.cn
-Received: from guoyaxing.localdomain(mailfrom:guoyaxing@bosc.ac.cn fp:SMTPD_---.enEG1Zm_1758796830 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 25 Sep 2025 18:40:30 +0800
-From: Yaxing Guo <guoyaxing@bosc.ac.cn>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	wangran@bosc.ac.cn,
-	zhangjian@bosc.ac.cn,
-	anxu@bosc.ac.cn,
-	guoyaxing@bosc.ac.cn
-Subject: [PATCH v2 3/3] doc: Add ABI documentation for uio_pci_sva driver sysfs attributes
-Date: Thu, 25 Sep 2025 18:40:18 +0800
-Message-Id: <20250925104018.57053-3-guoyaxing@bosc.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250925104018.57053-1-guoyaxing@bosc.ac.cn>
-References: <20250925104018.57053-1-guoyaxing@bosc.ac.cn>
+	s=arc-20240116; t=1758796828; c=relaxed/simple;
+	bh=7K0kybRI4HZ4jK8C4ZbdHxQtenjrPucHPMRAKKj6/ls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XoRrhDECmeOYomq73e8wXGHX95wTlznE32w7d7upsqg4Mdwez4PyBMfdNI/ohymEaouMzntbZPKddt4oO5Gwcw87TOSXOAaoi6LfxoxwL8Pwy0DJ1o6YIhpnktq3VxVP5bnJ2yRJs7pHuUQF6UQfoFL7zHpRvw9XpmOhLPe2LPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jBbXJq9A; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PACcMx019949
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hkrub1vjfp8/J5x0I8lwP41qVsopVVAqErZdeoHT7KY=; b=jBbXJq9A8X3vT/px
+	p8Yol/YmZPOKUckMtoJP3NoRKnA0SzIlKkDdBGUkgXDwwvhNg5ZgkbFy+z9HL3ev
+	vahRVXNh+BSY8B31EZcZE8062mRi1JFj+x/fqEG1ETpw/SXlIYGxq89XGnVEXley
+	YeCKN3zQMl67ONHAjkXYHBeQgsmzPb3rwjTn4slMZ6nrwlpRJX5sN1dmx+vVl/T7
+	/9KO/qy2sDJ3fN1NoPvIx5MsJ5OJhl5Ia1vAOGrBNy8fgPHhcX1yd9Hg9kbnjkQO
+	j9yn5wEtN/Yi4SADHGVI6GEq17I6tcxuj0kXO774qQVt4goCQGZxQHs8b6hBCeQm
+	YHx0Hw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpe10kv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:25 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eae48beaaso867824a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:40:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758796825; x=1759401625;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkrub1vjfp8/J5x0I8lwP41qVsopVVAqErZdeoHT7KY=;
+        b=ODa++0ClHLo+9kbqrrtu+IPiwaT1a9yrz3KWd9Og7E951Uqu2YgKVL1OgxdnbkQes2
+         CLpZdTCQVAn1j/1WQV107nkhwmwkujIWGwYEStvJO7YbDlJmBKQOvAdoKIun1l1Hfyzh
+         2lQNug3EqnayN2i2A7mr9TchRlXw3GQeyNvn8hXaWMuujLoA4YUdo/op3fuXP69CmRMV
+         8ji90sjviOj/ABj4z29CUzuDdyzrTT4nCG1QhzirySWVZu2tofAWzUuV11FAXEaHURRo
+         DKz/qHIDzyrdKA4yCMbQwDPViFRjIElpbManYJyS5nxEZ33QIksE8SB6IBtj1M10h5Il
+         k2eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFwxEDKrxQIXsj1eyG5gTHiIDFvX43OXBoc7YSxan7l1VsH2AoyqAKoYOpAAr4APgihFg1n0SjWXAZMVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ48qjff981O1pWW1B7vtm6RQU5SiMOggl2I/6QtJpAKJG0gGI
+	tnEDLzz015yV1Ru0zwplqEV/fqJfpeCeagoW1FuCSh8BScfVteQmVMPrwNI2Xrq/WbI8+NFTk9R
+	GiXJKL4GsrXoCL2ykkGEaoI8Ibtra3nQFdhw8/wMiD40VwxqTZKkgI08hGi1V6Coc69I=
+X-Gm-Gg: ASbGnctvx1ODmtgaEGWqXk8dVH1ky4FJ5q8htBL6MKOzQ2hn92BvTS2vEcQ2Bsu9DGc
+	mTLCJB62Wij/mIoXChmtxLIz6eQdsfe3EO6KcfUyceDQ5/DAzqXVDpeZkcaQU7zBVgQiPnfX58H
+	CsYuX/vlY4ZMrB7bOuMIosQRN5mscApLFwxOOdweG1+NePwX/FNX/RkapElsfmF47DbKz0vbO25
+	w1E5WATedAlGbvoqDOE+IkPJq7ASKdEgp37PRp/WfIPs4ElyU5wJMkJKVTki2gIzR9Qmjp7Vzdm
+	5DKBzn08eyXyV/9tp0N+75TGdeirRlQRi40BlrqC3d4fdwzm2fWXByeCPHIW59neBvoS0uDEe8Q
+	=
+X-Received: by 2002:a17:90b:1d82:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-3342a2c66cemr3725559a91.33.1758796824610;
+        Thu, 25 Sep 2025 03:40:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGA+HMhVlFvkRg4P3UZGYiYtHq2iFZKBbWgE6XeeuHnOxopWausReC6LBLc/123h2UNoU/UQ==
+X-Received: by 2002:a17:90b:1d82:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-3342a2c66cemr3725523a91.33.1758796824131;
+        Thu, 25 Sep 2025 03:40:24 -0700 (PDT)
+Received: from [10.217.219.207] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be2073dsm5353299a91.19.2025.09.25.03.40.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 03:40:23 -0700 (PDT)
+Message-ID: <41adeb71-f68f-4f50-a85f-5c7dfb5d587a@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 16:10:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 RESEND 0/2] i2c: i2c-qcom-geni: Add Block event
+ interrupt support
+To: Andi Shyti <andi.shyti@kernel.org>,
+        Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+        Viken Dadhaniya
+ <quic_vdadhani@quicinc.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
+References: <20250923073752.1425802-1-quic_jseerapu@quicinc.com>
+ <eobfxgtssuiom2cuc2zlsvc2hhyi2jk7qb7zydgo4k5wwvxjlz@nksb3x6p5ums>
+Content-Language: en-US
+From: Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>
+In-Reply-To: <eobfxgtssuiom2cuc2zlsvc2hhyi2jk7qb7zydgo4k5wwvxjlz@nksb3x6p5ums>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Vy7cO3Q5VtvOX01Df1SdOuR9ifgbbWiA
+X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d51c19 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=GtlKhm42p6TeGv8Q4b4A:9
+ a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: Vy7cO3Q5VtvOX01Df1SdOuR9ifgbbWiA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX7E0yQgyYE/zQ
+ ZnQw0TJqu0Z94WbD78ikTyAF4oKn/cz6aZH68o/5/6f6r02eDKrJdAkpTvsGMk1nVD3CWVQ1FL1
+ TGhqC0hwWLRuSFO3SojbpsKy/jGt5iVtH1Y5mqxym2POJqj1XosNxzX/ImQbEF03Zjy7kxVJPvu
+ tsc/UaICjXExYJuBTPw1e30eOXvaL0R4M8ld5UB++m3Ft1PDNTXzHhUov/zN6yayA2JDRPsBsND
+ afSVChojSGl2XVn7SRbqHuaGbGsplZZPVqhMXZ0ti/HflDstErelGnYVlTFPa14b/HjXCU3e07J
+ Xjqj2OL9mccTg9NGfAuKh18bLdkJDv2JsisSdsxk7wLbH4I0QEyvmY00dA4mLmmP/L/nR7LPgOZ
+ EoL64iG1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230020
 
-Add ABI documentation for the sysfs interface provided by the
-uio_pci_sva driver, specifically the 'pasid' attribute.
 
-The 'pasid' attribute exposes the Process Address Space ID (PASID)
-assigned by the IOMMU to the device for use with Shared Virtual
-Addressing (SVA). User-space UIO applications read this attribute
-to obtain the PASID and program it into the device's configuration
-registers, enabling the device to perform DMA using user-space
-virtual addresses.
 
-This attribute appears under:
-/sys/bus/pci/drivers/uio_pci_sva/<pci_dev>/pasid
+On 9/25/2025 4:58 AM, Andi Shyti wrote:
+> Hi Jyothi,
+> 
+> I'm sorry, but this is not a resend, but this is a v8. Other
+> than:
+> 
+> 1. commit log in patch 1: removed duplicate sentence
+> 2. use proper types when calling geni_i2c_gpi_unmap() inside
+>     geni_i2c_gpi_multi_desc_unmap()
+> 
+> is there anything else?
+> 
+> Please, next increase the version even for tiny changes.
+> 
+>> Jyothi Kumar Seerapu (2):
+>>    dmaengine: qcom: gpi: Add GPI Block event interrupt support
+> 
+> We still need Vinod's comments here...
+> 
+>>    i2c: i2c-qcom-geni: Add Block event interrupt support
+> 
+> ... and Mukesh and Viken's ack here.
+> 
 
-Signed-off-by: Yaxing Guo <guoyaxing@bosc.ac.cn>
----
- .../ABI/testing/sysfs-driver-uio_pci_sva-pasid    | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-uio_pci_sva-pasid
+Sure, I shall Ack it once your comments are addressed.
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-uio_pci_sva-pasid b/Documentation/ABI/testing/sysfs-driver-uio_pci_sva-pasid
-new file mode 100644
-index 000000000000..a6afa8c2775c
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-driver-uio_pci_sva-pasid
-@@ -0,0 +1,15 @@
-+What:		/sys/bus/pci/drivers/uio_pci_sva/<pci_dev>/pasid
-+Date:		September 2025
-+Contact:	Yaxing Guo <guoyaxing@bosc.ac.cn>
-+Description:
-+		Process Address Space ID (PASID) assigned by IOMMU driver to
-+		the device for use witch Shared Virtual Addressing (SVA).
-+
-+		This read-only attribute exposes the PASID allocated by the
-+		IOMMU driver during sva device binding.
-+
-+		User-space UIO applications must read this attribute to
-+		obtain the PASID and program it into the device's configuration
-+		registers. This enables the device to perform DMA using
-+		user-space virtual address, with address translation handled
-+		by IOMMU.
--- 
-2.34.1
+> Thanks,
+> Andi
 
 
