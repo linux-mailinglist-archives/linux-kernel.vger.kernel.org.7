@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-831728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE733B9D6A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:02:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575B6B9D6AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618BF380C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05DD34A33AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7172A2E6CB6;
-	Thu, 25 Sep 2025 05:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02E92E6CB6;
+	Thu, 25 Sep 2025 05:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oOx8wv3z"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oC+v0ig0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C31A2BB13
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA5B248176
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758776520; cv=none; b=cYy45eLGDgahihKy26Vl1BSAWvSvL/926ww8u3uRDkh2blrOLOO3Gw/e3VTsv47RwRKY6SZ71dV6e2guH8M6OqGOMzxCDKCqDNDJo1bfXcEUvVnowJrqEjUEOlFw7bLwMH46/zz1aI1oH/7A6NaQtGKN/oHRg7LjuYxOYxpkUZg=
+	t=1758776641; cv=none; b=HZP4JZ5dXY5OpO51ysDgWm0vUMoZ3LYjAOWNy7HSt4S4KAcSric0qodxCIDWZJFl9MS84zwjgkAyKqTlwOgEMBoYv7WS73fDPCuiuHAFK6duoGgwfMPqQmtoEkLnPvmOKq+tBZngyk+LNzdR6xRWNtyPWopCeVmwb0GsHt/vaTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758776520; c=relaxed/simple;
-	bh=k1rZGTiD7CVpbTvoCPkyanLPbDaL3rN09yFWJWkkzYA=;
+	s=arc-20240116; t=1758776641; c=relaxed/simple;
+	bh=H08qxyYv7R/SjmEp/ZyMt5PuvSzwuut9EEUMpcg6kjA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJnkBcgAJi8fF12uwiAkIU9DpBf/GThOPbCICA4+UPYSG6wIIzh2qU02KLRoGHja6fNFWxMizRv7nESk7178jkZZSpksYmRm9BYNWvgRCINjCTw2nc4NtHVSFJXlRzEYlFBB24Parqs6gxNvZszEi82DO6zAxSWrvmq1aFI5lyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oOx8wv3z; arc=none smtp.client-ip=148.163.158.5
+	 In-Reply-To:Content-Type; b=jFZC+cPF35FbT9Be6xEuYxFKDk0upGufgNqQACwuSiiP+BcELKJVgB25YQkEqv1x1GifsJMgKrmePdBaMUzK2Au0VEXPc2a46sahTzBI7tvyg5/SOWWd4nnqRtT+ivjdYKYOAqN6q1bChxGzr36x+CwCa6t8mF36iN0POO0EIzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oC+v0ig0; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONb1Bu031091;
-	Thu, 25 Sep 2025 05:01:37 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OILbJ9002011;
+	Thu, 25 Sep 2025 05:03:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=MN2tnA
-	fnGlck7Rsei5B/P8+lpSp3GTi1Q+AmY1Zur1E=; b=oOx8wv3zKcKXmg69XMEaxA
-	yQhPWmgvd6JT8uZ2fPXKeeNEVKEOdqiArhmxWNOQTD6Dwr0WZBOK7CRMf8LYeMsH
-	gvM4LoLTBd0ZaBInmzgqu4H1RUYoSETQb0WBMwV8+HChRJx9Bw7LwOulNwStt7my
-	XPMy7djUy4rGCsJGfcH+NK0eo3E35L7/RQ3HYq4cbXqYaBiJwpaNMc07QG/udV7G
-	SFqyL65TOthCTJCssQ/pbj2CHn0sGobJ1pD2IKE2iK1qEoAd2iLQfmSV1IklEF+f
-	L2OXsLSKpjR8DgR2hVm74loyuh9Wk0G5EapmEaqnl2xu/F4F9wuMW4Kzia1/wE6w
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dsocIP
+	bLYE3LByXqgbRBeV6KVt1ja7Me2A6VAGSZcGM=; b=oC+v0ig0UiYj64tH8OaZ2U
+	2X9ZkJ/KBNgwQYSlcp9M6uO0cPajTbmDW786+F7Y9uhCcaQms4QJLJi9in0qenUm
+	rEPHb7W8iadOF1SipT/Cc0eMSKRLffxB7jKrKFWI0vyVsgeudYCmZePdR7uYu+oc
+	fNcZur7gbOfHnCvvy3q7UXCtSBGQ0gcR4xem0rt47QnehDEZ2hJp4nswScuGbwtf
+	Sy0T4Ejt7Dm7YKZtOiQdmD4+4uEXlt9O2KLiAUFH2/np+8AvIO2UXQjnAK3c3bZw
+	bvG6nIywdWbagaw8bZTXtpnmrdzqdZKn+yZSf1qNtR6XzCsiTUmJmhP2xISgBSKQ
 	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpkjuy3-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ksc3mff-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 05:01:36 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58P51Zvn015387;
-	Thu, 25 Sep 2025 05:01:35 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499jpkjuxu-1
+	Thu, 25 Sep 2025 05:03:33 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58P4wAI8028338;
+	Thu, 25 Sep 2025 05:03:33 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ksc3mfd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 05:01:35 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58P25AbO013638;
-	Thu, 25 Sep 2025 05:01:34 GMT
+	Thu, 25 Sep 2025 05:03:32 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58P11LqO031109;
+	Thu, 25 Sep 2025 05:03:31 GMT
 Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a8tjkvwr-1
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49b9vdd3ua-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 05:01:34 +0000
+	Thu, 25 Sep 2025 05:03:31 +0000
 Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58P51XBv30737112
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58P53UQA21627608
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 05:01:33 GMT
+	Thu, 25 Sep 2025 05:03:30 GMT
 Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1CBD058054;
-	Thu, 25 Sep 2025 05:01:33 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 1E7055805D;
+	Thu, 25 Sep 2025 05:03:30 +0000 (GMT)
 Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A57058062;
-	Thu, 25 Sep 2025 05:01:27 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 7798B5805A;
+	Thu, 25 Sep 2025 05:03:24 +0000 (GMT)
 Received: from [9.124.219.167] (unknown [9.124.219.167])
 	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Sep 2025 05:01:26 +0000 (GMT)
-Message-ID: <b68642ac-ca2a-4775-8a1f-02cf7681545e@linux.ibm.com>
-Date: Thu, 25 Sep 2025 10:31:25 +0530
+	Thu, 25 Sep 2025 05:03:24 +0000 (GMT)
+Message-ID: <ec2a78ce-2f2d-4453-b1dd-8c8ddc0e29d0@linux.ibm.com>
+Date: Thu, 25 Sep 2025 10:33:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,8 +83,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drivers/base/node: merge register_one_node() and
- register_node() to a single function.
+Subject: Re: [PATCH 2/2] drivers/base/node: merge unregister_one_node() and
+ unregister_node() to a single function.
 To: Christophe Leroy <christophe.leroy@csgroup.eu>,
         Andrew Morton <akpm@linux-foundation.org>,
         David Hildenbrand <david@redhat.com>,
@@ -99,52 +99,52 @@ Cc: Ritesh Harjani <ritesh.list@gmail.com>,
         Danilo Krummrich <dakr@kernel.org>, Mike Rapoport <rppt@kernel.org>,
         Dave Jiang <dave.jiang@intel.com>
 References: <cover.1758736423.git.donettom@linux.ibm.com>
- <40257b5228dec05e5b252f02438608eb8d681a2d.1758736423.git.donettom@linux.ibm.com>
- <d168030f-388c-4f58-987f-648bba5b32f9@csgroup.eu>
+ <c99d97e253378455f1b3b7bec5b0c830d4e73074.1758736423.git.donettom@linux.ibm.com>
+ <fa2272b9-13f2-464f-bb95-72fd31f1dcf9@csgroup.eu>
 Content-Language: en-US
 From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <d168030f-388c-4f58-987f-648bba5b32f9@csgroup.eu>
+In-Reply-To: <fa2272b9-13f2-464f-bb95-72fd31f1dcf9@csgroup.eu>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=L50dQ/T8 c=1 sm=1 tr=0 ts=68d4ccb0 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=SjcnzaKMAlRwm5DwMEMA:9
+X-Proofpoint-ORIG-GUID: zFQNQipvWXY2e91Gr6_KzHBSU-SaiQL1
+X-Proofpoint-GUID: 5JS2pehr0NJlUuVT0owfmnUYDvwklON5
+X-Authority-Analysis: v=2.4 cv=SdH3duRu c=1 sm=1 tr=0 ts=68d4cd25 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=u769cWuDflkTXPMc6NMA:9
  a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMCBTYWx0ZWRfX45B6zbHKyZRX
- RmaE9tMomAboEh11SIIQtwrc5aIE5LDKAA58dbFTElPBqHQKJ7NBfOGtlARUrHTlT26gb9Pw02F
- mlB2l9wylmVOfZJDugijAYYuRNhweOtKJ3K56tapJAiiS2IArxlJ9z0LS+7lkksQOrg5vRLjocF
- OGHxulma3QNMQoZq87RBMKAlDVb4kkZbLrelLQzB3PfPJa+6QVnbMaHjqajt32ZZv5zNfZbwp1V
- GoZbLSzxm7isGvzSK6umsibzLZg4p2OUaO9Wre4fd8kmn8J0X7HyEJPedmA3ptY3WuMhuBlgkUq
- sl7HrAnOq/9PB5OxWnSLfeV6EoQo5DNxRXahaEPJM13wQSPbCgpbEdEngiQtjqGSJ1PPiFfUMP/
- OxlrP/5s
-X-Proofpoint-ORIG-GUID: nDz6CfkzRf8RD5ZsudI_nJg10Yi4ws5Z
-X-Proofpoint-GUID: T2oKshh1afhTQ4fDnfTuV6XWrE2-IoOP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX3toRuaPFu7uu
+ 3AdFGEMKOto9+xmvqHc5QukHHmt+qeuRMTCrTELUFHRI4wxcSvLAEcpSjWzJy9752YUiSNjrIyl
+ VWggyP17oq0XUZ9RAoPP3zCPpjIaiypP92Fwb7yXFyhfFc7DAaxTB4w+F4WO2bmvN6/64YufxXy
+ y7plHlfj83MMH/rBxW69IPH8xdyY1f6KYmKaDsxjE9o7ClMDbIyGFblc+p6s5AlATABSpZqmVSx
+ fSorXYlqHseOSt5Jetx1tDEj+chrO8KuySOqCDNNuIqWsD8knvCmTsyLwHAC+6mwMO6vhNQWeW3
+ oaUcWA1XpiSMQ8/VsQYehd5vDIkcvmwazSvVFRcWvV9a6Gl97V5H9OUjYE0PA/QMnSvAj0gDio2
+ XDNTHDnv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 adultscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200010
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
 
 
-On 9/25/25 12:45 AM, Christophe Leroy wrote:
+On 9/25/25 12:49 AM, Christophe Leroy wrote:
 >
 >
 > Le 24/09/2025 à 20:40, Donet Tom a écrit :
->> register_one_node() and register_node() are small functions.
->> This patch merges them into a single function named register_node()
+>> unregister_one_node() and unregister_node() are small functions.
+>> This patch merges them into a single function named unregister_node()
 >> to improve code readability.
 >
-> This is unclear.
->
-> What it really does is it folds register_node() into its only caller 
-> which is register_one_node() and then it renames register_one_node() 
-> into register_node().
+> Same comment than patch 1. It is not only because they are small that 
+> you merge them, it is primarily because unregister_node() only has one 
+> caller.
 
-Yes, you are right. I will add proper explanations in the next version.
+
+Will update it in the next version.
+
 
 >
 >>
@@ -152,216 +152,134 @@ Yes, you are right. I will add proper explanations in the next version.
 >>
 >> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
 >> ---
->>   arch/powerpc/platforms/pseries/pci_dlpar.c |  2 +-
->>   arch/x86/mm/numa.c                         |  4 +-
->>   drivers/base/node.c                        | 52 +++++++++-------------
->>   include/linux/node.h                       |  4 +-
->>   mm/memory_hotplug.c                        |  4 +-
->>   mm/mm_init.c                               |  2 +-
->>   6 files changed, 28 insertions(+), 40 deletions(-)
+>>   drivers/base/node.c  | 37 +++++++++++++++++--------------------
+>>   include/linux/node.h |  6 ++----
+>>   mm/memory_hotplug.c  |  4 ++--
+>>   3 files changed, 21 insertions(+), 26 deletions(-)
 >>
->> diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c 
->> b/arch/powerpc/platforms/pseries/pci_dlpar.c
->> index aeb8633a3d00..8c77ec7980de 100644
->> --- a/arch/powerpc/platforms/pseries/pci_dlpar.c
->> +++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
->> @@ -29,7 +29,7 @@ struct pci_controller *init_phb_dynamic(struct 
->> device_node *dn)
->>       nid = of_node_to_nid(dn);
->>       if (likely((nid) >= 0)) {
->>           if (!node_online(nid)) {
->> -            if (register_one_node(nid)) {
->> +            if (register_node(nid)) {
->>                   pr_err("PCI: Failed to register node %d\n", nid);
->>               } else {
->>                   update_numa_distance(dn);
->> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
->> index c24890c40138..7a97327140df 100644
->> --- a/arch/x86/mm/numa.c
->> +++ b/arch/x86/mm/numa.c
->> @@ -262,7 +262,7 @@ void __init init_gi_nodes(void)
->>        * bringup_nonboot_cpus
->>        *  cpu_up
->>        *   __try_online_node
->> -     *    register_one_node
->> +     *    register_node
->>        * because node_subsys is not initialized yet.
->>        * TODO remove dependency on node_online
->>        */
->> @@ -303,7 +303,7 @@ void __init init_cpu_to_node(void)
->>            * bringup_nonboot_cpus
->>            *  cpu_up
->>            *   __try_online_node
->> -         *    register_one_node
->> +         *    register_node
->>            * because node_subsys is not initialized yet.
->>            * TODO remove dependency on node_online
->>            */
 >> diff --git a/drivers/base/node.c b/drivers/base/node.c
->> index 6b6e55a98b79..eab620e29c78 100644
+>> index eab620e29c78..d460c1675c77 100644
 >> --- a/drivers/base/node.c
 >> +++ b/drivers/base/node.c
->> @@ -638,33 +638,6 @@ static void node_device_release(struct device *dev)
+>> @@ -638,23 +638,6 @@ static void node_device_release(struct device *dev)
 >>       kfree(to_node(dev));
 >>   }
->>   -/*
->> - * register_node - Setup a sysfs device for a node.
->> - * @num - Node number to use when creating the device.
+>>   -/**
+>> - * unregister_node - unregister a node device
+>> - * @node: node going away
 >> - *
->> - * Initialize and register the node device.
+>> - * Unregisters a node device @node.  All the devices on the node 
+>> must be
+>> - * unregistered before calling this function.
 >> - */
->> -static int register_node(struct node *node, int num)
+>> -void unregister_node(struct node *node)
 >> -{
->> -    int error;
->> -
->> -    node->dev.id = num;
->> -    node->dev.bus = &node_subsys;
->> -    node->dev.release = node_device_release;
->> -    node->dev.groups = node_dev_groups;
->> -    error = device_register(&node->dev);
->> -
->> -    if (error) {
->> -        put_device(&node->dev);
->> -    } else {
->> -        hugetlb_register_node(node);
->> -        compaction_register_node(node);
->> -        reclaim_register_node(node);
->> -    }
->> -
->> -    return error;
+>> -    hugetlb_unregister_node(node);
+>> -    compaction_unregister_node(node);
+>> -    reclaim_unregister_node(node);
+>> -    node_remove_accesses(node);
+>> -    node_remove_caches(node);
+>> -    device_unregister(&node->dev);
 >> -}
 >> -
->>   /**
->>    * unregister_node - unregister a node device
->>    * @node: node going away
->> @@ -869,7 +842,13 @@ void 
->> register_memory_blocks_under_node_hotplug(int nid, unsigned long 
->> start_pfn,
+>>   struct node *node_devices[MAX_NUMNODES];
+>>     /*
+>> @@ -887,12 +870,26 @@ int register_node(int nid)
+>>       return error;
 >>   }
->>   #endif /* CONFIG_MEMORY_HOTPLUG */
->>   -int register_one_node(int nid)
->> +/*
->> + * register_node - Setup a sysfs device for a node.
->> + * @nid - Node number to use when creating the device.
+>>   -void unregister_one_node(int nid)
+>> +/**
+>> + * unregister_node - unregister a node device
+>> + * @nid: nid of the node going away
 >> + *
->> + * Initialize and register the node device.
+>> + * Unregisters the node device at node id  @nid.  All the devices on 
+>> the
+>> + * node must be unregistered before calling this function.
 >> + */
->> +int register_node(int nid)
+>> +void unregister_node(int nid)
 >>   {
->>       int error;
->>       int cpu;
->> @@ -880,14 +859,23 @@ int register_one_node(int nid)
->>           return -ENOMEM;
->>         INIT_LIST_HEAD(&node->access_list);
->> -    node_devices[nid] = node;
->>   -    error = register_node(node_devices[nid], nid);
->> +    node->dev.id = nid;
->> +    node->dev.bus = &node_subsys;
->> +    node->dev.release = node_device_release;
->> +    node->dev.groups = node_dev_groups;
+>> -    if (!node_devices[nid])
+>> +    struct node *node = node_devices[nid];
 >> +
->> +    error = device_register(&node->dev);
->>       if (error) {
->> -        node_devices[nid] = NULL;
->> +        put_device(&node->dev);
->>           return error;
->>       }
->>   +    node_devices[nid] = node;
->> +    hugetlb_register_node(node);
->> +    compaction_register_node(node);
->> +    reclaim_register_node(node);
->> +
->>       /* link cpu under this node */
->>       for_each_present_cpu(cpu) {
->>           if (cpu_to_node(cpu) == nid)
->> @@ -980,7 +968,7 @@ void __init node_dev_init(void)
->>        * to already created cpu devices.
->>        */
->>       for_each_online_node(i) {
->> -        ret =  register_one_node(i);
->> +        ret =  register_node(i);
->>           if (ret)
->>               panic("%s() failed to add node: %d\n", __func__, ret);
->>       }
->> diff --git a/include/linux/node.h b/include/linux/node.h
->> index 2c7529335b21..4dcf876cd0b4 100644
+>> +    if (!node)
+>>           return;
+>>   -    unregister_node(node_devices[nid]);
+>> +    hugetlb_unregister_node(node);
+>> +    compaction_unregister_node(node);
+>> +    reclaim_unregister_node(node);
+>> +    node_remove_accesses(node);
+>> +    node_remove_caches(node);
+>> +    device_unregister(&node->dev);
+>>       node_devices[nid] = NULL;
+>>   }
+>>   diff --git a/include/linux/node.h b/include/linux/node.h
+>> index 4dcf876cd0b4..d721127964b3 100644
 >> --- a/include/linux/node.h
 >> +++ b/include/linux/node.h
->> @@ -168,7 +168,7 @@ static inline int 
+>> @@ -124,8 +124,6 @@ static inline void 
+>> register_memory_blocks_under_nodes(void)
+>>   }
+>>   #endif
+>>   -extern void unregister_node(struct node *node);
+>> -
+>>   struct node_notify {
+>>       int nid;
+>>   };
+>> @@ -169,7 +167,7 @@ static inline int 
 >> hotplug_node_notifier(notifier_fn_t fn, int pri)
->>   #ifdef CONFIG_NUMA
 >>   extern void node_dev_init(void);
 >>   /* Core of the node registration - only memory hotplug should use 
 >> this */
->> -extern int register_one_node(int nid);
->> +extern int register_node(int nid);
+>>   extern int register_node(int nid);
+>> -extern void unregister_one_node(int nid);
+>> +extern void unregister_node(int nid);
 >
-> extern keyword is pointless on functions prototypes.
->
-> checkpatch.pl usually complains about that.
->
-> I know previous prototype was extern and all surrounding also are, but 
-> it is not because mistakes were done in the past that you have to 
-> continue doing the same mistakes.
->
+> No 'extern' on function prototypes.
 
-Thank you for the comment. I will address it in the next version.
+
+Sure.
+
+Thank you very much
 
 
 >
->
->>   extern void unregister_one_node(int nid);
 >>   extern int register_cpu_under_node(unsigned int cpu, unsigned int 
 >> nid);
 >>   extern int unregister_cpu_under_node(unsigned int cpu, unsigned int 
 >> nid);
->> @@ -181,7 +181,7 @@ extern int 
->> register_memory_node_under_compute_node(unsigned int mem_nid,
->>   static inline void node_dev_init(void)
+>>   extern void unregister_memory_block_under_nodes(struct memory_block 
+>> *mem_blk);
+>> @@ -185,7 +183,7 @@ static inline int register_node(int nid)
 >>   {
+>>       return 0;
 >>   }
->> -static inline int register_one_node(int nid)
->> +static inline int register_node(int nid)
+>> -static inline int unregister_one_node(int nid)
+>> +static inline int unregister_node(int nid)
 >>   {
 >>       return 0;
 >>   }
 >> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->> index 0be83039c3b5..6c050d867031 100644
+>> index 6c050d867031..94a8f6e8811a 100644
 >> --- a/mm/memory_hotplug.c
 >> +++ b/mm/memory_hotplug.c
->> @@ -1311,7 +1311,7 @@ static int __try_online_node(int nid, bool 
->> set_node_online)
->>         if (set_node_online) {
->>           node_set_online(nid);
->> -        ret = register_one_node(nid);
->> +        ret = register_node(nid);
->>           BUG_ON(ret);
->>       }
->>   out:
->> @@ -1542,7 +1542,7 @@ int add_memory_resource(int nid, struct 
+>> @@ -1596,7 +1596,7 @@ int add_memory_resource(int nid, struct 
 >> resource *res, mhp_t mhp_flags)
->>           goto error_memblock_remove;
->>       if (ret) {
->>           node_set_online(nid);
->> -        ret = register_one_node(nid);
->> +        ret = register_node(nid);
->>           if (WARN_ON(ret)) {
->>               node_set_offline(nid);
->>               goto error_memblock_remove;
->> diff --git a/mm/mm_init.c b/mm/mm_init.c
->> index df614556741a..e1a19a3dadd7 100644
->> --- a/mm/mm_init.c
->> +++ b/mm/mm_init.c
->> @@ -1909,7 +1909,7 @@ void __init free_area_init(unsigned long 
->> *max_zone_pfn)
->>           free_area_init_node(nid);
->>             /*
->> -         * No sysfs hierarchy will be created via register_one_node()
->> +         * No sysfs hierarchy will be created via register_node()
->>            *for memory-less node because here it's not marked as 
->> N_MEMORY
->>            *and won't be set online later. The benefit is userspace
->>            *program won't be confused by sysfs files/directories of
+>>   error:
+>>       if (new_node) {
+>>           node_set_offline(nid);
+>> -        unregister_one_node(nid);
+>> +        unregister_node(nid);
+>>       }
+>>   error_memblock_remove:
+>>       if (IS_ENABLED(CONFIG_ARCH_KEEP_MEMBLOCK))
+>> @@ -2201,7 +2201,7 @@ void try_offline_node(int nid)
+>>        * node now.
+>>        */
+>>       node_set_offline(nid);
+>> -    unregister_one_node(nid);
+>> +    unregister_node(nid);
+>>   }
+>>   EXPORT_SYMBOL(try_offline_node);
 >
 >
 
