@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-831714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C6DB9D615
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13B9B9D61E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34AF4231B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52C31BC1B05
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81081280037;
-	Thu, 25 Sep 2025 04:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF272E7194;
+	Thu, 25 Sep 2025 04:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Oh7kkAtM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gb3xX8bl"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51932157480
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636762E6CBE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758774377; cv=none; b=MS1ccZanp0q0PIztMP+Gy17BTBhNOMpEMvx2B43yiCld65pF/Anyi/V5SYzEjp+F2p18+cIpZb1RChobUOPDylfWE0uGoxA7DrOSXFZm9K2768AsZ23mBhJIb54vMlFWJveG/buC6INySaUXnrYUCkoKO2nhI93ULKMkUDhFIOk=
+	t=1758774389; cv=none; b=aMlaiAhMAfvmP4AtQ0qayRq1frqBWvXOzY+L7p5br6Z5BcFtOqdVBwVKGobpu5DoE4rdAlCA4VPI7FfUVfp+mdo2w2dZgdT4w4CtdF+APvocc77XH8OF2ydUcNTvhuXpi9ypklMGrx+mlczTVEhnk5DjniQU0uZXaKhFEtFbCvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758774377; c=relaxed/simple;
-	bh=KwDml+VKamZoZ/8NLyiv7Z5OQFPQYZ/pI7BVR0nIL1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9BIdBIym4ZffDhn7O3R6AsVcYtGBMakQksKKKw+Uioj4RWN9x65kxr5Q5nWcTVRJXr9YwoO49N1o61iacaznaRcF0CKgtbikSx/5MFWK8RXqHWvF9IT9yj49mDYVKIenodN0sHVqzAq9fZzrIcKxuh/x5CO9OX6R0klKXmPCCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Oh7kkAtM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P03Wjv002152
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:26:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=QzN0PbQqJiRihO18yohAMqtH7hCDuoHFkrT
-	iBWkA/eM=; b=Oh7kkAtMuA2p0mtB2ggp8lAeo0Ukgqe8k2OkRT2rgazr1YERwHS
-	rRtIIpbDDaxRFMjYBf703u37Mpu9FxFbKy1FjFHjhg2frNlrR4ByIIIV8BDxQe2w
-	kZV87qe9YhLs63w3Im4JJPAfSy311E0BD6E9J2LAvR99NhXIKXdXqPxI1E037PJs
-	56hZSgmlM754c7bbbhZN/MY5tCeIZhuru3LEYnkUcEy8c4FrToTIz5Q3Lijxx3RF
-	21HSDb+4FO/bw0z57/75Rl0veZdHyPmACbeEJhaSW0BAk02W01HYq4GLxBMJRwQM
-	JNPhx/hTpKshKurEdt6dZ34wnKC9BhPVPpA==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499k98pqmc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:26:15 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33428befd39so1033339a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:26:14 -0700 (PDT)
+	s=arc-20240116; t=1758774389; c=relaxed/simple;
+	bh=TnwL3wW6ND4oXS5Mi9CT/bAi7SSOk03vjEo2r585Y8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUoqLzaBW+2+Y9G+H3Ty/AbHPdfeC/R5wO2MYvYA/LbanOXCtXKvTMnssjQuEwaLz8SoMs6bQ1pGZXgCcGJ+TaSJTfg92gatuXWKatSsyuw1b1lUOU7/1n8Zd6rHw4vKRRhgriafAsejZnOrZDxNYFLq1QznrLPXn3rbhJj2Xag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gb3xX8bl; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-269639879c3so4917375ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:26:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758774387; x=1759379187; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dteHME797snk+vQ+oj+419/4Ny1lqVzO4IVh/XVnaDc=;
+        b=gb3xX8blc8W/YcpCQoFh6krYr53inmfIEiNDJUkZ8AO2rT8/I4UF7QG7Zc6bBmPjX+
+         p9DlzNbVmVGITVOnL2xGHsqKcQlesiGJNTVsmfjy6Yg6mFpM4KncJ2/72aOjd9nvz0ZK
+         crUMVL4dIoyzGF5kZM7ls5N3B2RzdPVB64mNiieah/JRcIp5Lm76Cd8Y8XnWqW/crCNN
+         IbzrZW4VFDnfLbf7nEqFk6ynjKxY3SG65iBCXYUP/+J/0j9bqWkr5o8Pxi8pTO9N4rMl
+         qJ9dgLDldzL6vWNk308B/IC3ceoa8jRgaLGEEB+36fNQRPi7vhyL/VY6Xu/qTx7uQjFP
+         O/EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758774374; x=1759379174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QzN0PbQqJiRihO18yohAMqtH7hCDuoHFkrTiBWkA/eM=;
-        b=IbBJB0yq23QMyMcj/+BYuPTlO/ftjDrU0OB5jcRHDCclzbSYM1S6wMVP/js+T2uqOD
-         3wcPiO3/fX/aKaFK1oCB8lWLIdJ+zgQXA4doKnl/hnWTIKhigTBJ/xMz0w09+iXKwK9d
-         Tt0cEi41WthaYfwuTOJCUiUBO3+nwBusT2I9n151/n1iEApSMu5j0PRVTmcXsQB+l6RC
-         AJuqVkSDCrTTdtMS8OSGgQOcmH2PzsgSPn3KrTbdNZ+b00bGcnwsQ7iTji1nNNbBUpD4
-         c9/mQQz8CpvHrpyP0PxMf4hQPUDiweVQePc4rluyJlyJFjqrooNmvNyU0gDaiBFe+odz
-         2/tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUiCmxGTidwM+cYkLEC1ryF63vapr96ClaXkGDmCh04TG9uIhd5RBQ8fQ9xXH26wlpKzv2IkBZ2LqP4oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF9Vxb5bsdkyNe1pT+IBeyi1Lz5eSx3eOAPDJgPf+ivwWnK1bf
-	HKYS9ZLUqBXvhFiSmnY1+hHw3pO8HEVF0EtYa0kCsofpmZpnFdyMpPjTawB56qBxtvbjvMVtQV8
-	yfpuG7xwJjthuhpNJNv186lR4SVXMkVBq8UaaEK2V+BYrCWf3C3F9Zd0JplfrdsQvj/I=
-X-Gm-Gg: ASbGncsCC38ZBQ2crIKQ8hE018yc5sr4Y0joMzBS7LUtV7RhFrANtiExUoJBhB2ZVDc
-	aJPb8ZhZ37JsbXdKGla+VFyHivaggAWPiBqczNdrq4ciXE7+Qjts01Dlh/WdLczBCUSxnNfqnaE
-	3QZbZuUMLRtGcc3hPLuoigoZ9Xk4YqahcTJDnTZnvw8uyn3CPJa8Fk1z12xuyDUejNyUvWdlx4v
-	byV9o5QEugMbhk1C8H3MPfpDoc9oqBna2pQzy1h7MzIGc5BeQoEqKZ4rGsuTQuEj26g+SbgS2Ad
-	St7Ty9PL1B4qK3ItT2qgozb7E5hMJL6oRmAPzbrv/M1dV/l+F7tc4rieNzV1fwT1qf2v7pEBFZg
-	F
-X-Received: by 2002:a17:90b:4a92:b0:32e:e18a:368c with SMTP id 98e67ed59e1d1-3342a257491mr2000804a91.7.1758774373693;
-        Wed, 24 Sep 2025 21:26:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUZUnSW5Khp9aZB4808Uo4zwgcJwfbzYwCHapgsYczaALl4fGiBeUPgfY1PG8zJwA2k8HfPQ==
-X-Received: by 2002:a17:90b:4a92:b0:32e:e18a:368c with SMTP id 98e67ed59e1d1-3342a257491mr2000784a91.7.1758774373311;
-        Wed, 24 Sep 2025 21:26:13 -0700 (PDT)
-Received: from hu-vdadhani-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33474b1f455sm738211a91.24.2025.09.24.21.26.09
+        d=1e100.net; s=20230601; t=1758774387; x=1759379187;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dteHME797snk+vQ+oj+419/4Ny1lqVzO4IVh/XVnaDc=;
+        b=Vfht2ZIeGBlvIm3tyFFpGeai6UAr+M6negClPT0UhuCe4TgftrPSkvsOtjgMAcb8qM
+         nTkYFs/Du+g+07KavDApo3/HY2gZkizLm2MmbWPjds755lFK1tmFoQjHmKgnJdaZrwkb
+         8oZGE8HzYjB0BdINOdVVQneTk5+gefkaExNdnQgwefDmz1fy58wCaKPKCz5bP7gX6zWy
+         W7P7p0Y63DEWgJDsUW8AUX66P644EPKjGQpvk1r4SbrMuZcGkMwq37DGBiuR8AOQSwoD
+         t3dKNi2T1x7KI7wbbxRYlgd+Ba93lWaAXUX/D9eCKRbamuwyn8AFLf0Fn+sXpxMwYZ8r
+         6Pgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDppkdGlZhqIZkJmAyh3s/9CIgis3m0Q0cEy6s94TnzEls0k+Trp6qY0lbDLeejy1YF3C//U+Kt3mTVKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+VRAi5p/nFmrRfNC11H/wZjCqBGtYAcAxow0FV8dyOpkchnZE
+	1XgvzVewKMUDItTWXvvdwFkUnZ1JnXd/kDAnPfz3805DZKMRTnDl9ZbV
+X-Gm-Gg: ASbGncsk7yayw4UxAn4Q8rgQ0rvr3HqZaP4Oj5BKL2HdHIkI0n7xX0uJCm2P3jrptJf
+	9Ys4iM7cRNRiJSnb24g3vv/S/y/AecYaT5XrNDhvIWNza/dy6uUSeYWxQ0INZqZJBn4RPwCnm5s
+	WPWw/QJnU7O9DDVQMCJmuC0+vu7KHLhlCPn+J2n5vxmvbmw+xcB2oiGq3AKKHTzFA/2xWCaSYeG
+	IgIYmsinc7uF7/l+4CPfq3D1BnHmrCrACuHvqi2lfERQnZbdLE0vjHcEV+tjk/eQk3EvFrZqfIv
+	z+YFk/tSxMiE4jWvgBiDFM+SV1eYgRwbz/RqDoRsra+obvVGjeyNSkAKl9/x7TWIMArWG7bDAQH
+	ps0u2LuRKGxIzzOoFheoTEg==
+X-Google-Smtp-Source: AGHT+IHd9AD0WUJe6lma/pk2ZJ7vMQmFnh30eaf4733oJA4ty+tQEiixSvr2w0wQzfGa4MLok2dpiQ==
+X-Received: by 2002:a17:903:298f:b0:269:91b2:e9d6 with SMTP id d9443c01a7336-27ed4a6f290mr21024385ad.46.1758774387456;
+        Wed, 24 Sep 2025 21:26:27 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:5a97:14cb:a5e:6c78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cdd76sm9734935ad.4.2025.09.24.21.26.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 21:26:12 -0700 (PDT)
-From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: [PATCH v1] arm64: dts: qcom: monaco-evk: Add firmware-name to QUPv3 nodes
-Date: Thu, 25 Sep 2025 09:56:05 +0530
-Message-Id: <20250925042605.1388951-1-viken.dadhaniya@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 24 Sep 2025 21:26:27 -0700 (PDT)
+Date: Wed, 24 Sep 2025 21:26:24 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>
+Cc: =?utf-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"jikos@kernel.org" <jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, 
+	=?utf-8?B?5p2O6bmP?= <lipeng43@xiaomi.com>, Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>, 
+	=?utf-8?B?5a6L5a+G5a+G?= <songmimi@xiaomi.com>
+Subject: Re: =?utf-8?B?562U5aSNOiBbRXh0ZXJuYWwgTWFpbF1SZTogVGhlIHplcm8g?=
+ =?utf-8?Q?power_level_of_the_HID_device_in_kerne?= =?utf-8?Q?l?= 6.12 is not
+ reported from the kernel to the upper layer.
+Message-ID: <vkm32giijggtzv7hudsvqg34utpqvw4nnccfi7d4txj5tlzstp@4bu2ox2lmtm5>
+References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
+ <aM0XBudxlXuzALbg@fedora>
+ <px5t2iedrrqhcrpdvmu5pznp53d3e5jp55dm72phlsti2rmt4j@rj2pajkavuir>
+ <91e0d952fd774e769e2d24ce2165df18@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 804Y8mK8Am-Rnaj-k5hl4se4ZPSl9-1A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxOCBTYWx0ZWRfX0HWiV75pegW2
- Rx27jLxPhLd/IZXll6yXx0t4g0c0LxY6nVewdFxHRSSYY/HcZnfaxL4tc3WoimmyrsQeMWUzZ2z
- Kri42OBKx9BdLfO0aWIPP2XL6Iwk2aFM8nwaQlrAzhM1sMUuQD4XNKk4fG9ciLG1cXRcGa+R9E/
- t/50EBreVQFMRWCJNc51qB60ud0lPZGrNyiXkdn8vgqLu+pUy/2tFVsoKtvo3laXRwREsUbExWS
- j3VS3/Y2B0NmCMhY1hQhbHcR/lprRqfVGT+FUPsC4RF0WdPZLPXQsZaqbho2Nabx5IBusO+KAEo
- ViHmpt4IhToeKOJqRJCj+3WnYcIdfSGzgbX09ve5dKCIPV7FpomPizHE2d66FFxErGIDrE+OyFf
- swtbW4g0
-X-Proofpoint-ORIG-GUID: 804Y8mK8Am-Rnaj-k5hl4se4ZPSl9-1A
-X-Authority-Analysis: v=2.4 cv=Dp1W+H/+ c=1 sm=1 tr=0 ts=68d4c467 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=8rlZebuS5uYMG-XfLoEA:9
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200018
+In-Reply-To: <91e0d952fd774e769e2d24ce2165df18@xiaomi.com>
 
-Traditionally, firmware loading for Serial Engines (SE) in the QUP hardware
-of Qualcomm SoCs has been managed by TrustZone (TZ). While this approach
-ensures secure SE assignment and access control, it limits flexibility for
-developers who need to enable various protocols on different SEs.
+On Mon, Sep 22, 2025 at 09:29:20AM +0000, 卢国宏 wrote:
+> 
+> What kind of action are we talking about? Section 31 of the HID
+> specification defines events for "Smart Battery" ("To comply with the
+> Smart Battery Specification, the Battery System must support the
+> functions defined in the Battery and Charger usage tables. For details,
+> see Section 4.2, “Battery System Page (x85).”) and is typically used for
+> "battery pack for cellular phones (principal source), the battery
+> pack(s) for notebook computers (auxiliary source), and the sealed
+> batteries in uninterruptible power supplies (auxiliary source)."
+> 
+> Is your use case main battery or battery in a stylus or some other
+> peripheral?
+> 
+> 
+> --->>>
+> What we are discussing is the code implementation of Section 31 of the
+> HID protocol: 31 Battery System Page (0x85). Our scenario is: an
+> Android phone is connected to a handle via USB. The handle is a HID
+> device with a battery. The power of the battery in the handle is sent
+> to the bottom layer (kernel) of the phone via USB. The bottom layer of
+> the phone then reports this power to the upper layer of Android
+> through the HID driver.
 
-Add the firmware-name property to QUPv3 nodes in the device tree to enable
-firmware loading from the Linux environment. Handle SE assignments and
-access control permissions directly within Linux, removing the dependency
-on TrustZone.
+I see. I guess we can try only filtering out 0 reports for the
+digitizers, leaving other devices with batteries alone. Something like
+this:
 
-Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/monaco-evk.dts | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-index e72cf6725a52..d566737ee012 100644
---- a/arch/arm64/boot/dts/qcom/monaco-evk.dts
-+++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-@@ -401,10 +401,12 @@ &iris {
- };
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index ff1784b5c2a4..ba3f6655af9e 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -595,14 +595,18 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
+ 	dev->battery = NULL;
+ }
  
- &qupv3_id_0 {
-+	firmware-name = "qcom/qcs8300/qupv3fw.elf";
- 	status = "okay";
- };
+-static void hidinput_update_battery(struct hid_device *dev, int value)
++static void hidinput_update_battery(struct hid_device *dev,
++				    unsigned int usage, int value)
+ {
+ 	int capacity;
  
- &qupv3_id_1 {
-+	firmware-name = "qcom/qcs8300/qupv3fw.elf";
- 	status = "okay";
- };
+ 	if (!dev->battery)
+ 		return;
  
+-	if (value == 0 || value < dev->battery_min || value > dev->battery_max)
++	if ((usage & HID_USAGE_PAGE) == HID_UP_DIGITIZER && value == 0)
++		return;
++
++	if (value < dev->battery_min || value > dev->battery_max)
+ 		return;
+ 
+ 	capacity = hidinput_scale_battery_capacity(dev, value);
+@@ -1518,7 +1522,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
+ 		bool handled = hidinput_set_battery_charge_status(hid, usage->hid, value);
+ 
+ 		if (!handled)
+-			hidinput_update_battery(hid, value);
++			hidinput_update_battery(hid, usage->hid, value);
+ 
+ 		return;
+ 	}
+
+
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
 
