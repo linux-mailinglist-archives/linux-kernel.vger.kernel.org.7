@@ -1,448 +1,196 @@
-Return-Path: <linux-kernel+bounces-831651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8049AB9D3DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D5EB9D3E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3780B7A7E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16841BC07F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBF72E6CA4;
-	Thu, 25 Sep 2025 02:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7EF2E6CBB;
+	Thu, 25 Sep 2025 02:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTL4+4/l"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oC6v6fJb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F002E62BE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F2C1C695
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758768634; cv=none; b=ZfbArMMluEr5DarswG7Pmzfguu327IHM5Ws2deyXCiylG3z9PdLtuq+wpFl1t+7zorS3i/fUfD0BBJ9M+r7vJUVXMXqzL6CunDR1aVtihLtSEUG7WBV0f3746qRTRrPvEWU2i5vLjZYRKvfL9HVUfOf/gIJ/VPuq4wooAUQTEGY=
+	t=1758768903; cv=none; b=b204m3u4LWc/urGiuXIDZJ9X9KSpb0/JsNLq0lRMunt6ToK/mENuw8SHXTmjTEdITxOny/8GZMRoxMsYzj680z+GJ/fx7LPGIMGlwTuqATGJZgBF6gcduszM5Pk37ya/bLIzquOdKu7fL5gjKdTEaSbbe7/tBnJ4hqSi83OVqi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758768634; c=relaxed/simple;
-	bh=E/2zkY+laEgtf0hi012ZsFGuFgF/uxt8cYftM4Aj9CI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Cho9bMRjLntaW8dX9RXYC8Ddq8dMHBgJxKJ5UKSQNZgpAH49SsDcsvHfAdXoUAAj+OSzzkaUH4O1gJcEE4ztQ3OeeFk80z23aom/KjoDLt/RuFBRPsULEjDiqrtr3OKd29Ek4NTDXqlEEFJsRwN33ZDmv9rPGT6GRkx9XKIf870=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTL4+4/l; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244582bc5e4so4762415ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758768631; x=1759373431; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtyEMQPJo4fqytrWkgTZ3RdyfRt093nOgUIpQGdycFA=;
-        b=DTL4+4/lMjhhsDylR6AIPVgrvDE/Ruo/1CUOZZ/VvVtgSeFMOXQEDfEIzbwL67oSZK
-         mVe08kSve1q3RIr7/0hyPXaiNUs8eBZsxX+2RFR3IYHJ2t21qWyoQznBs6Qkvs9JtoQB
-         Ihu8gzRar+Hx4/42DtEkCrdl3BAqAkGsBWG9uQuPJGgrI5VHn9pYg08aaB5Tmmqfw5Fm
-         fV0mc6r5TBcXTIjk4CESUew1abD0JZhJpCETVFUsYn+IgkzMc0BQi/YJe/bz+/7W6QXy
-         R5MIEzpEPmNdI7mjlA1lQ+HTrIjl6B76I1AUnHO3wXf1LJEvcS4681rKB3unWFkb+xwa
-         nADQ==
+	s=arc-20240116; t=1758768903; c=relaxed/simple;
+	bh=GRzW2UTFXjkMbCv8ZuBiMaxnc7z24scaXvk2FiPQdfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIKq1yhec2IUkLpT3ZX/+VqkAN+S45Enr/Itj3KuthN0oB/WXvITlnbiqmGBYa2EPiO0ddQqwFF0DdQkRrrBHIsxp/zd6kyKKOpqgfIHOUgj7tGfW7N22xlTTuLAuAglGMK0jYEmF43BZtFUQZOQYJ5TDB6hozUZecTjKXddBP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oC6v6fJb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P11N2M024516
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:55:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5qc2kjNdpU+Ilinxlsz6Brx3
+	M0lwHT1wZVUtKam6+GA=; b=oC6v6fJbG/C2Sv8NIRf1HC8NhJtgOv1kmlCBKK7V
+	W6gZjv97Nth+siQt+Dp7WQb7vfjPWg4+m6Z8ZtbATMtkYqFjUCDeuTn2e1183bZP
+	xfiv6fkvr8VrHLmzdfSl//F//rdC9/BlALYGlBZM78WMD4VYBatfJ3Tx0DBZxzci
+	f7WMwWx5/Pfsd/MZILKCGUUQ60kkisntAJ3gmytOWKQxRoMv80PZXJxtBuW9UVvt
+	SLYaJEccjYJHZbjM7CE5k6xzhfV+/iZyy7y4TzP40IQljR1Xqu1NQm9Y0uhAO57/
+	gWa+ArYwrITDdyyiF4NYyNMvVsJB7L4QETVfbQM4x6gXvw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp0dhdy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:55:00 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d77ae03937so13760481cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 19:55:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758768631; x=1759373431;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtyEMQPJo4fqytrWkgTZ3RdyfRt093nOgUIpQGdycFA=;
-        b=HBnOzKigBWLmXwe/rXJM2TP1jPfPjxHcOcQ62BGApQtfVS9/zK3o0EYtEgbR7TUNNm
-         qf2SW/Xdk5uvpL2M9JCJEHT3qrQi+ZHkZ75pv9HT7l+XNv5+D/i8afsE+OvN2A3rUIXT
-         i/060FpmhyHo02qzSaKRxWuWYY/FmxzBjHfrGvrsvdBWX3J9L935b2pN7yEtQiP8hznc
-         e7P1IlCy4wOWQ/aIlMumqrDjaXd3m2nrGAFBNX8MTxSCBKR4uOB7incb8nMTAj6kYP3n
-         08BA/bcIuU5eSBJQ0NUBgF3wYrAouy2BdHYs0p97B5FnlWm/6l+qBhKBVgUwFaLZK45j
-         ZEqA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1tPzCWJ1yCopE3w1DC94ChcjxpxyCi5FMViEo9m3aZncqHZ8Lo5t1G7yu6DM0GsAWBapCbULSdN0wvOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMDr0jEXWI9iYL90AU8hld5jMH6PyH41SGHN8AcsQskNNV2II7
-	/SDYxX5H7iU1SXAz85+pH/oSk8Mjcs8U/LOS5pGwcYE4gxFni0Nrh7/xr72mEWbopmAivB0Wh/a
-	bKHaPxQ==
-X-Google-Smtp-Source: AGHT+IFUzTzL+1uqRK/gqbR3SSwstvzUfWk/CsgKEnRDPuVsxH9OFn3e2zcGuFZY0INSLtUo/3MF8Uc68Iw=
-X-Received: from pjbnn3.prod.google.com ([2002:a17:90b:38c3:b0:32d:e264:a78e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b0b:b0:266:f01a:98d5
- with SMTP id d9443c01a7336-27ed4ab37a2mr23319415ad.57.1758768631155; Wed, 24
- Sep 2025 19:50:31 -0700 (PDT)
-Date: Wed, 24 Sep 2025 19:50:29 -0700
-In-Reply-To: <diqztt1sbd2v.fsf@google.com>
+        d=1e100.net; s=20230601; t=1758768899; x=1759373699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5qc2kjNdpU+Ilinxlsz6Brx3M0lwHT1wZVUtKam6+GA=;
+        b=aTsvTzPHjPBlHT86Bhw9X7H9L8wvzsaNF+AcFJqiXmsYgNeoE1QOwYrldWuLzmRrq+
+         JFXn4uLZDLeaeVOJ9sCLji/sbZlavOOKMVM0DRS05dJ/3QM6UjrofFYgY/1Y9LnRLTxQ
+         tCRY04EGBErEW04/TftMu+odCsiOeHzViyYjUKVIy0gX7KyyDQW7Vh58pn5L6gLbWptr
+         C1fQ3ByIJBAOF0uGF8fVDb+7gjs6FsWfqIsJzMLB3iLSJclE9/eH5D1nIPv0ES5xHCCQ
+         V4+ObfDIRti8CzFhqNT9h4ieyA7pzLagrN4R+hkJ2w5UUPN2+h2R49177j5CCoj403SL
+         oJhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnvJP5HrbWbLws6ib4wpF06xgd/LnYJndFG5HjQ/4J+TN2DB91pO6uHfumurOgFU02J94bysS2g6OiK1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6KsjXdFRwp4rLXO3khKWnE0NNHQYAwAAdhQp8gesprxevWBb5
+	6lcf8FeF2C+aQnJyhaVPNllS7uztMLpcASU/dlhTkmjZPxMaoAgO6UjdIjACT6YE+1bS9EiqVn7
+	agQh2+2+VO/bRiW9aB9Yx3niRg+Fn23m4Jf3nj3+k0LifKamW8nDjmIuit1Db3WKpOBvr1pqAhI
+	4=
+X-Gm-Gg: ASbGncsDfBz8DiO4EnXU4iZv+aSpAcxAsG1M/jdZgRfw+PrHeNOpgZgzkqHH/qUSzDM
+	nwol/w2VZjEjKBIGJJCqwXeWVw0xMQkip933Yo+Tlk03aWmIft+FSeAb4tV0NR30hQ5uAnQbaMW
+	QZ0feZvMiCd52wcjev0dLdZb8s0WF1CCdhkxFi9TafwWOsRP3FRySPBEZF2IgYlunt+/d5EeFPw
+	qQPiToZX4R+ASfYbOF1B0p/Wt0kUjx3sIrQ3UI9QgZjYnwK/1BQxw+Y6d0ufAmMRkilj2hOhrUu
+	VkbQQJwOtrNH9o2lUtLT0EodT+Y6NirBScVhzvo0dunB/8fUiVws0EFnH7bOBmJ8GjtqVvoQvPw
+	NYKFkrlO2Pw7/qRFQinxsGPiBeCstXnU2dnMPPfaisLFabkB/EkUf
+X-Received: by 2002:ac8:5f53:0:b0:4b7:9ddb:abbd with SMTP id d75a77b69052e-4da48c83c0fmr29976591cf.27.1758768899008;
+        Wed, 24 Sep 2025 19:54:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+wX0KgM5CRfCAhfR9yvHW5QMrj5JET9e3yAt5sYvlw+SROD2nT79PnMZGnXjEN0cJtYx4zA==
+X-Received: by 2002:ac8:5f53:0:b0:4b7:9ddb:abbd with SMTP id d75a77b69052e-4da48c83c0fmr29976331cf.27.1758768896998;
+        Wed, 24 Sep 2025 19:54:56 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316ff5f0fsm256240e87.135.2025.09.24.19.54.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 19:54:56 -0700 (PDT)
+Date: Thu, 25 Sep 2025 05:54:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/10] phy: qualcomm: qmp-combo: Update QMP PHY with
+ Glymur settings
+Message-ID: <oecyjwj7ouufjbiq2fpvlhhuaof5agm22fdsruf3ppayiu4kkm@wvi4no53x64y>
+References: <20250925022850.4133013-1-wesley.cheng@oss.qualcomm.com>
+ <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
- <diqztt1sbd2v.fsf@google.com>
-Message-ID: <aNSt9QT8dmpDK1eE@google.com>
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Shivank Garg <shivankg@amd.com>, willy@infradead.org, akpm@linux-foundation.org, 
-	david@redhat.com, pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
-	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
-	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
-	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d4af04 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=bgMNcTsuivlx1WpOe6cA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: d5-VfOR_IGmI6-LXC-lbDEnRyugx9GJ7
+X-Proofpoint-ORIG-GUID: d5-VfOR_IGmI6-LXC-lbDEnRyugx9GJ7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfX/sLNFyiI3yZG
+ Vx1zi007mIpulNo8Ade2//WK3rCWx/HhEi+Ynw7pzSbqa4eCAYjhaFesh2ltYdBtKO1kik/eKKw
+ LQTDxAGvtb2vNiVDfMmbBnhho5ZeLJ6qe3vNjniDI28AW38m909jFYGrnTg2OVzASSPu6J2I/5y
+ 3PnnKxmJkmxQgrA2AsgAgFj+sJWAHcvyQbQZ8wDdjl3hKhciKqlxIg57HZzXt1FngEsilgoUJ4P
+ 2Px0991MUEF1GW6TJtBrib30B7iyESqUY2l8lkce3bC8I+uNEbtTySA+760Fd0f1D/cuJYuLPt9
+ 6PG5qtjIW4oJRZqVwDcei/Rm7hy8P8q6dg6r5A8JAo6ABF3x6TJj6WsorgKHUtD5X7CjvGY7wJM
+ fy6Xsm5/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230138
 
-My apologies for the super late feedback.  None of this is critical (mechanical
-things that can be cleaned up after the fact), so if there's any urgency to
-getting this series into 6.18, just ignore it.
-
-On Wed, Aug 27, 2025, Ackerley Tng wrote:
-> Shivank Garg <shivankg@amd.com> writes:
-> @@ -463,11 +502,70 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
->  	return true;
->  }
+On Wed, Sep 24, 2025 at 07:28:47PM -0700, Wesley Cheng wrote:
+> For SuperSpeed USB to work properly, there is a set of HW settings that
+> need to be programmed into the USB blocks within the QMP PHY.  Ensure that
+> these settings follow the latest settings mentioned in the HW programming
+> guide.  The QMP USB PHY on Glymur is a USB43 based PHY that will have some
+> new ways to define certain registers, such as the replacement of TXA/RXA
+> and TXB/RXB register sets.  This was replaced with the LALB register set.
 > 
-> +static struct inode *kvm_gmem_inode_create(const char *name, loff_t size,
-> +					   u64 flags)
-> +{
-> +	struct inode *inode;
-> +
-> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
-> +	if (IS_ERR(inode))
-> +		return inode;
-> +
-> +	inode->i_private = (void *)(unsigned long)flags;
-> +	inode->i_op = &kvm_gmem_iops;
-> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> +	inode->i_mode |= S_IFREG;
-> +	inode->i_size = size;
-> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> +	mapping_set_inaccessible(inode->i_mapping);
-> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
-> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> +
-> +	return inode;
-> +}
-> +
-> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
-> +						  u64 flags)
-> +{
-> +	static const char *name = "[kvm-gmem]";
-> +	struct inode *inode;
-> +	struct file *file;
-> +	int err;
-> +
-> +	err = -ENOENT;
-> +	/* __fput() will take care of fops_put(). */
-> +	if (!fops_get(&kvm_gmem_fops))
-> +		goto err;
-> +
-> +	inode = kvm_gmem_inode_create(name, size, flags);
-> +	if (IS_ERR(inode)) {
-> +		err = PTR_ERR(inode);
-> +		goto err_fops_put;
-> +	}
-> +
-> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
-> +				 &kvm_gmem_fops);
-> +	if (IS_ERR(file)) {
-> +		err = PTR_ERR(file);
-> +		goto err_put_inode;
-> +	}
-> +
-> +	file->f_flags |= O_LARGEFILE;
-> +	file->private_data = priv;
-> +
-> +	return file;
-> +
-> +err_put_inode:
-> +	iput(inode);
-> +err_fops_put:
-> +	fops_put(&kvm_gmem_fops);
-> +err:
-> +	return ERR_PTR(err);
-> +}
-
-I don't see any reason to add two helpers.  It requires quite a bit more lines
-of code due to adding more error paths and local variables, and IMO doesn't make
-the code any easier to read.
-
-Passing in "gmem" as @priv is especially ridiculous, as it adds code and
-obfuscates what file->private_data is set to.
-
-I get the sense that the code was written to be a "replacement" for common APIs,
-but that is nonsensical (no pun intended).
-
->  static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  {
-> -	const char *anon_name = "[kvm-gmem]";
->  	struct kvm_gmem *gmem;
-> -	struct inode *inode;
->  	struct file *file;
->  	int fd, err;
+> There are also some PHY init updates to modify the PCS MISC register space.
+> Without these, the QMP PHY PLL locking fails.
 > 
-> @@ -481,32 +579,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  		goto err_fd;
->  	}
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 311 +++++++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-qmp.h       |   4 +
+>  2 files changed, 314 insertions(+), 1 deletion(-)
 > 
-> -	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
-> -					 O_RDWR, NULL);
-> +	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
->  	if (IS_ERR(file)) {
->  		err = PTR_ERR(file);
->  		goto err_gmem;
->  	}
-> 
-> -	file->f_flags |= O_LARGEFILE;
-> -
-> -	inode = file->f_inode;
-> -	WARN_ON(file->f_mapping != inode->i_mapping);
-> -
-> -	inode->i_private = (void *)(unsigned long)flags;
-> -	inode->i_op = &kvm_gmem_iops;
-> -	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> -	inode->i_mode |= S_IFREG;
-> -	inode->i_size = size;
-> -	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> -	mapping_set_inaccessible(inode->i_mapping);
-> -	/* Unmovable mappings are supposed to be marked unevictable as well. */
-> -	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> -
->  	kvm_get_kvm(kvm);
->  	gmem->kvm = kvm;
->  	xa_init(&gmem->bindings);
-> -	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
-> +	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
+> +
+> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_misc_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QPHY_V4_PCS_MISC_PCS_MISC_CONFIG1, 0x01),
 
-I don't understand this change?  Isn't file_inode(file) == inode?
+Why is this V4 all of sudden?
 
-Compile tested only, and again not critical, but it's -40 LoC...
+> +};
+> +
+> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG1, 0xc4),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG2, 0x89),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG3, 0x20),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG6, 0x13),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_REFGEN_REQ_CONFIG1, 0x21),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RX_SIGDET_LVL, 0x55),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_TSYNC_RSYNC_TIME, 0xa4),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RX_CONFIG, 0x0a),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_TSYNC_DLY_TIME, 0x04),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_ALIGN_DETECT_CONFIG1, 0xd4),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_ALIGN_DETECT_CONFIG2, 0x30),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_PCS_TX_RX_CONFIG, 0x0c),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_EQ_CONFIG1, 0x4b),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_EQ_CONFIG5, 0x10),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_usb_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QPHY_V8_PCS_USB_LFPS_DET_HIGH_COUNT_VAL, 0xf8),
+> +	QMP_PHY_INIT_CFG(QPHY_V8_PCS_USB_RXEQTRAINING_DFE_TIME_S2, 0x07),
+> +};
+> +
+> @@ -1667,6 +1899,12 @@ static struct qmp_regulator_data qmp_phy_vreg_l[] = {
+>  	{ .name = "vdda-pll", .enable_load = 36000 },
+>  };
+>  
+> +static struct qmp_regulator_data qmp_phy_vreg_refgen[] = {
+> +	{ .name = "vdda-phy", .enable_load = 21800 },
+> +	{ .name = "vdda-pll", .enable_load = 36000 },
+> +	{ .name = "refgen", .enable_load = 936 },
 
+Is this a meaningful value?
 
----
- include/uapi/linux/magic.h |  1 +
- virt/kvm/guest_memfd.c     | 75 ++++++++++++++++++++++++++++++++------
- virt/kvm/kvm_main.c        |  7 +++-
- virt/kvm/kvm_mm.h          |  9 +++--
- 4 files changed, 76 insertions(+), 16 deletions(-)
+> +};
+> +
+>  static const u8 qmp_dp_v3_pre_emphasis_hbr3_hbr2[4][4] = {
+>  	{ 0x00, 0x0c, 0x15, 0x1a },
+>  	{ 0x02, 0x0e, 0x16, 0xff },
 
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index bb575f3ab45e..638ca21b7a90 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -103,5 +103,6 @@
- #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
- #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
- #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-+#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
- 
- #endif /* __LINUX_MAGIC_H__ */
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 08a6bc7d25b6..73c9791879d5 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -1,12 +1,16 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/anon_inodes.h>
- #include <linux/backing-dev.h>
- #include <linux/falloc.h>
-+#include <linux/fs.h>
- #include <linux/kvm_host.h>
-+#include <linux/pseudo_fs.h>
- #include <linux/pagemap.h>
--#include <linux/anon_inodes.h>
- 
- #include "kvm_mm.h"
- 
-+static struct vfsmount *kvm_gmem_mnt;
-+
- struct kvm_gmem {
- 	struct kvm *kvm;
- 	struct xarray bindings;
-@@ -385,9 +389,45 @@ static struct file_operations kvm_gmem_fops = {
- 	.fallocate	= kvm_gmem_fallocate,
- };
- 
--void kvm_gmem_init(struct module *module)
-+static int kvm_gmem_init_fs_context(struct fs_context *fc)
-+{
-+	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
-+		return -ENOMEM;
-+
-+	fc->s_iflags |= SB_I_NOEXEC;
-+	fc->s_iflags |= SB_I_NODEV;
-+
-+	return 0;
-+}
-+
-+static struct file_system_type kvm_gmem_fs = {
-+	.name		 = "guest_memfd",
-+	.init_fs_context = kvm_gmem_init_fs_context,
-+	.kill_sb	 = kill_anon_super,
-+};
-+
-+static int kvm_gmem_init_mount(void)
-+{
-+	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
-+
-+	if (IS_ERR(kvm_gmem_mnt))
-+		return PTR_ERR(kvm_gmem_mnt);
-+
-+	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
-+	return 0;
-+}
-+
-+int kvm_gmem_init(struct module *module)
- {
- 	kvm_gmem_fops.owner = module;
-+
-+	return kvm_gmem_init_mount();
-+}
-+
-+void kvm_gmem_exit(void)
-+{
-+	kern_unmount(kvm_gmem_mnt);
-+	kvm_gmem_mnt = NULL;
- }
- 
- static int kvm_gmem_migrate_folio(struct address_space *mapping,
-@@ -465,7 +505,7 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
- 
- static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- {
--	const char *anon_name = "[kvm-gmem]";
-+	static const char *name = "[kvm-gmem]";
- 	struct kvm_gmem *gmem;
- 	struct inode *inode;
- 	struct file *file;
-@@ -481,17 +521,17 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 		goto err_fd;
- 	}
- 
--	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
--					 O_RDWR, NULL);
--	if (IS_ERR(file)) {
--		err = PTR_ERR(file);
-+	/* __fput() will take care of fops_put(). */
-+	if (!fops_get(&kvm_gmem_fops)) {
-+		err = -ENOENT;
- 		goto err_gmem;
- 	}
- 
--	file->f_flags |= O_LARGEFILE;
--
--	inode = file->f_inode;
--	WARN_ON(file->f_mapping != inode->i_mapping);
-+	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		goto err_fops;
-+	}
- 
- 	inode->i_private = (void *)(unsigned long)flags;
- 	inode->i_op = &kvm_gmem_iops;
-@@ -503,6 +543,15 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	/* Unmovable mappings are supposed to be marked unevictable as well. */
- 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
- 
-+	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, &kvm_gmem_fops);
-+	if (IS_ERR(file)) {
-+		err = PTR_ERR(file);
-+		goto err_inode;
-+	}
-+
-+	file->f_flags |= O_LARGEFILE;
-+	file->private_data = gmem;
-+
- 	kvm_get_kvm(kvm);
- 	gmem->kvm = kvm;
- 	xa_init(&gmem->bindings);
-@@ -511,6 +560,10 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	fd_install(fd, file);
- 	return fd;
- 
-+err_inode:
-+	iput(inode);
-+err_fops:
-+	fops_put(&kvm_gmem_fops);
- err_gmem:
- 	kfree(gmem);
- err_fd:
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 18f29ef93543..301d48d6e00d 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -6489,7 +6489,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
- 	if (WARN_ON_ONCE(r))
- 		goto err_vfio;
- 
--	kvm_gmem_init(module);
-+	r = kvm_gmem_init(module);
-+	if (r)
-+		goto err_gmem;
- 
- 	r = kvm_init_virtualization();
- 	if (r)
-@@ -6510,6 +6512,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
- err_register:
- 	kvm_uninit_virtualization();
- err_virt:
-+	kvm_gmem_exit();
-+err_gmem:
- 	kvm_vfio_ops_exit();
- err_vfio:
- 	kvm_async_pf_deinit();
-@@ -6541,6 +6545,7 @@ void kvm_exit(void)
- 	for_each_possible_cpu(cpu)
- 		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
- 	kmem_cache_destroy(kvm_vcpu_cache);
-+	kvm_gmem_exit();
- 	kvm_vfio_ops_exit();
- 	kvm_async_pf_deinit();
- 	kvm_irqfd_exit();
-diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-index 31defb08ccba..9fcc5d5b7f8d 100644
---- a/virt/kvm/kvm_mm.h
-+++ b/virt/kvm/kvm_mm.h
-@@ -68,17 +68,18 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
- #endif /* HAVE_KVM_PFNCACHE */
- 
- #ifdef CONFIG_KVM_GUEST_MEMFD
--void kvm_gmem_init(struct module *module);
-+int kvm_gmem_init(struct module *module);
-+void kvm_gmem_exit(void);
- int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
- int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 		  unsigned int fd, loff_t offset);
- void kvm_gmem_unbind(struct kvm_memory_slot *slot);
- #else
--static inline void kvm_gmem_init(struct module *module)
-+static inline int kvm_gmem_init(struct module *module)
- {
--
-+	return 0;
- }
--
-+static inline void kvm_gmem_exit(void) {};
- static inline int kvm_gmem_bind(struct kvm *kvm,
- 					 struct kvm_memory_slot *slot,
- 					 unsigned int fd, loff_t offset)
-
-base-commit: d133892dddd6607de651b7e32510359a6af97c4c
---
+-- 
+With best wishes
+Dmitry
 
