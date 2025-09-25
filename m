@@ -1,201 +1,383 @@
-Return-Path: <linux-kernel+bounces-832774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35C7BA047E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:25:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6AABA05E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520F17BB03A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D5D4E1105
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB222E229E;
-	Thu, 25 Sep 2025 15:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B806F2E339B;
+	Thu, 25 Sep 2025 15:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jh7rPgUO"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jzDTleBO"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013023.outbound.protection.outlook.com [40.107.162.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1442E0922
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813934; cv=none; b=gEqg+9K8GEKAuupRzSKS3dCQxmF2gJ4HLsPktoMB2qJ0HWjN8azdh0qElha/8XpzYXlUKEiO3F5aWaWlakXTOxcUABT8hJhb1NXC8MJF8atEwIpaM2ASnE6OuWKYNyystbM2x1YhdaCg1BjKFK1D/qJngIHSfnrQCN8geeoZHwE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813934; c=relaxed/simple;
-	bh=Sfnu02sWQqqJf145CrIFLmP+gKZbUM6UT9GMZg+gyLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJ9Dr8/5eUlgGuYQMiOnw07yrgOrx9Fd6eLTua0LpulwIPxEZsRm2uyU2zNcVpSMvHPTwvSNrRX7lgJ4id27Ck85J05M+JWLA9psxpZ+Q12Nu7kmeZUaUxp6vG/C1E/aPqE5/UM1oBWK/fExflJhj6xnFcwzuMlTQ3ud1hLqPSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jh7rPgUO; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27ee41e074dso4497985ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758813932; x=1759418732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfAVQsJMCa+08II6sZx8nLAvAG7+m2m1wBLI5CKcaxE=;
-        b=jh7rPgUOlXeCa8LZlCgifXnIrDWM7wHLotwLy81jP4GAN7rF0YCOvrvtjyp6gwYJzC
-         C8QxIyaI3/jitsbR1IkCKO1BxA06m6ylQb5EAYtM/kGnkTf/dKU/d35R+B939ugfn6mT
-         hyyXTVcpk3BRv0mkZqLh7aCqZko1Mf4LdEzHu+oQ09nVPkaSZqQeaXCwQ/lyOBAWfWFa
-         /4ppII+2vZjpJCu18DDMasG05CI7xbq0FYXYtTCSp/8EiQlvyYLRNQw/cZvwTpbAyZux
-         WScC49PNIgwSdz5Kem/Ouc6f++LaZTFHXwmN5HclD7lyxZx2STfdcRUgoanB6e1NJmpY
-         iUOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813932; x=1759418732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pfAVQsJMCa+08II6sZx8nLAvAG7+m2m1wBLI5CKcaxE=;
-        b=ccHLhOJJlvhVI08uGrvhgeDKBubcqmcVv6FqPbYFIMjFcl7e143AkBuRkK1TCzNrDR
-         /N1I2PnXnZ5sUN81wE7RiEE8i4+rXZ5RKJ2cxCc76wOz458CMxot/xz57JXsPEIpBTPd
-         9jfDTF0VDVJcFdwHWs7TteKtxd6zjQH8/jC7KfESaELdXeVyHanRoYvyWt5qMMS7+IWF
-         /NUPBTtNvyWVCdvIvT/yzZGBwMPTENSi6ZXedNU1qaVWsSKr+fQvPg2KRSHY7SWa9qvI
-         Q7iyJizVPQthiRN3Om6IiJAdCMXfHoyABTcONYXxkuxduyf8NRl//8weKshrML/ZspZ4
-         50xg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9qqbEwB+4CkU18Zbt1plC8PnUnzJn8rwXxX3t26fMi0SM6U+xZJa4vQlT4E221DUWh/PwMYtEb7xqKao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSp4S6UBRAcnL4dw4yoq3KXQ/K+M2ND1l4z4ayRABsfrPcVcCs
-	2rsrQVrW4LEUSyk344kqJccig9/03orJWeOEgTa3p/5/8LV0ANrXGRn9SOIm2iWj9NY=
-X-Gm-Gg: ASbGnct/O20vccmYj1WGOuGN5KGzFUpxRiLhdmJPv+yCOC4SZTo8QsQlUGfcEJlTaRL
-	xyKrHC2+WWlm8V9HN9n9UT3zXvhAZPHkQDWkqzBKeHsGZHwnEzQqr2e8/kiXgifk5528Hi/PWsn
-	dqoZTzPNinjR4ddsYs40t3m90uEvUwX3alRo3XAe3bV3rwZcTPa1yh6DsQP5Ev0W79BTdH9EmDV
-	8aN1hL+tF+GbpL+s8vcfSKTNriyyBt7pj4HgsZblkYah0gweNdSlhxmigCsIWM5TxhPMvsugHYP
-	DBuappV32LVlmUxY62tM3hmICd+vwM2xcbDrnpS9UvrGujrp57ZeR0L2LOdaTmwy+NeLJdLbQPe
-	cVy8eFsRv93SpUS6SnHWOBwVxQZUTqHpol6UbLALCs0fQkA5gxpj2/9d8l32ZW+elJMb1K3Z2QX
-	UQFMOHwM9BkxzaEwwZ8IyRqeg=
-X-Google-Smtp-Source: AGHT+IFaUWm0IMFuhwxwZ6ZVuoRzGDUplyarDIAkk4+v9ajtIq9wSLIjRgUT3UbBtMTnindWS3TDDQ==
-X-Received: by 2002:a17:903:19ef:b0:274:3db8:e755 with SMTP id d9443c01a7336-27ed4a7ec49mr43070925ad.30.1758813931703;
-        Thu, 25 Sep 2025 08:25:31 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:491a:5e5:2a2d:1b96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d37casm28336435ad.8.2025.09.25.08.25.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:25:31 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:25:28 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: Re: [PATCH v2 0/6] remoteproc: imx_rproc: Use device managed API to
- clean up the driver
-Message-ID: <aNVe6MG2HiWNJZQP@p14s>
-References: <20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com>
- <20250924164650.GA2711@nxa18884-linux.ap.freescale.net>
- <CANLsYkzWQEWKM-_iff7wY-sk_OERFiAMSrXP6Cyf8vJfXqunjg@mail.gmail.com>
- <20250924203115.GB2711@nxa18884-linux.ap.freescale.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC6D1D61A3;
+	Thu, 25 Sep 2025 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758813955; cv=fail; b=PS6x4TWlAgsooQ9xtqsKc2Ay6aonX71AXXipzU/U7xKyQbwW6CbK6Jy4NlqKRFjTi++ywEQZsyx3TKczktwlbPG5Z6VQ5Wrv3YlafhNAcMJYwLPnh2+3eTs+uEjidehtcmOr8yTSfKs+mVT5JywIBmi8vyy58DF3yox6Q9ubRB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758813955; c=relaxed/simple;
+	bh=iusC5g4x/SS8NC5qdaAYVzQWsutwrD67fAxws8tqcOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=n5kac2Z7423sXAImNrFN8s//pCDl1o+iONkO2i3y1rMH70r49U46SfHfisl6Lxy+X1ulGz2raiysYoZCVi92EaFirSyQ13aFiijvemndkA46kimQR5fg+ZgpvCc3w2o2vsEGmCJ33ztvDh2s0nbnoKbaX/uwdYceeI0fwxFTgJs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jzDTleBO; arc=fail smtp.client-ip=40.107.162.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=anLLCVczrFQnFkJglQhc464Y93uPdPpuuispiDQVxAUJ8YJshYezREUNfSMDoxVv8eXmPh9q8inoYDvTP+hPIgB6wrik/nHYN7a1eJD4KoM0Px0kQEzM5xpFC0qn++KsjwEHaqfz/s8SCxng0cjpwKVO8IGpixkdK7O5Z0MuUkSo/ojZVme1Bbij68mKOWy9gfp5ipEzSh9Mv2wGrLn5Y84XHychFHniGjwwiWMVQW1Q0xo1iG7TSpSBK/yXt15hS20zbUq8Pt+H/wCmv8iOuHG+tU5p2gKGuXRJDOgNvz44bA8u2pp+9XsALYCPkuSPvyk7BqF+nmRfZd7auK6h3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h24rX0YnOus0ByYLpQaN+Bnkd0T4+wsb9xIohhMLG7M=;
+ b=uPi3fG10CPgntaPJW3/e49fOos0nyxZtm8JmoScspqE4cWqgbl38hrJlniH5WvwjEzmErdmuf5wE5iRO8M8RV+8mR9DsKqrh6xQ6EUE+ViMcJCULaHwKNUr9+rUvNbxyv5eMFPEOUGOb8J6JljUF5eM9e4JrGl/u1oCU6Z5QxsQgPeb4sRbAGmd+xtbPRnBI9jtrh0ejXfBVBryg+uEh3zwQo5StBboShQCMpup9THYTiA16IxpLjfiOAh3t6z/SA+W01E4ub7z1MnZ0lTTq3kcbnrVwzCImtoa+PbJSRETQPhsC4qsHDhQtHED6tQs535wi/W96EnuCrF6drZE1Hg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h24rX0YnOus0ByYLpQaN+Bnkd0T4+wsb9xIohhMLG7M=;
+ b=jzDTleBO571Qk18caVDyvY9Bp7gAXSXMKnh+BwVmdBuPSbBVluHzc3EvHGEd+yoPpkXzzW16V7PU9S+Eo7tFKpkFpnRIbxGCbAwYMNnSn4kvnewNUWy3kvJzVVTxYt2CgFWVVoPqfRZLh6Hom9tqTgG9eirTJk0zYZ9Zhm/FU9kZZkZJXjsYG9ijGpbgQgIOWy9I5TrVrVkZEHipLYta3rfbwf2jcoqoX9TsjZIjWpLboVu/7Ks9NUN5iTwiHqPIVDTqa8KHir03xz9dPTM10KnHtqD5ydO5+RLP9pg4R0uruI1Hb3ErD238azSYbOgbLBdvo1i7L38G5PFFrcBLSw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS5PR04MB9770.eurprd04.prod.outlook.com (2603:10a6:20b:654::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
+ 2025 15:25:50 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 15:25:50 +0000
+Date: Thu, 25 Sep 2025 11:25:41 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ntb@lists.linux.dev, imx@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] PCI: endpoint: pci-epf-vntb: Add MSI doorbell
+ support
+Message-ID: <aNVe9UIbFE3/1Rql@lizhi-Precision-Tower-5810>
+References: <20250915-vntb_msi_doorbell-v2-0-ca71605e3444@nxp.com>
+ <20250915-vntb_msi_doorbell-v2-3-ca71605e3444@nxp.com>
+ <ejhs6fb2nmfhnjswhrvd7iwyddwvvr5nv6bu7dt4aypbiecyfb@wza667q2x4qp>
+ <aNRZxAU0n1hvYeEZ@lizhi-Precision-Tower-5810>
+ <qm7jvvvywqmegynkghxbfn6pwfdlkboowa45sqbvygpetkiyj4@ovve44f7qvpr>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qm7jvvvywqmegynkghxbfn6pwfdlkboowa45sqbvygpetkiyj4@ovve44f7qvpr>
+X-ClientProxiedBy: BY3PR05CA0029.namprd05.prod.outlook.com
+ (2603:10b6:a03:254::34) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924203115.GB2711@nxa18884-linux.ap.freescale.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS5PR04MB9770:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8b49836-d91b-4d20-580a-08ddfc47cee6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|7416014|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dzYwMHBrNmVteC85QkJYNzhoc0pzU0gvbzJIQzVaOEg0TThYTTRSSTRPejg3?=
+ =?utf-8?B?Q0c0YTdVczNoTDFzOWFwcVpTb3VjNG1EZmUrWnRicG1QazM3MEN0Z21La3lK?=
+ =?utf-8?B?MmFhbHlyS2xrMEdjMlpJUUY4WHZ2OWtTOWQ2SHEvV1U2UVlvT05zZVJnKzNk?=
+ =?utf-8?B?anlVN1dlOUo2SGl1WW1kMjZobGV4dXg0WVk2T0YvS3FNVGNaYnd0cVVidEI1?=
+ =?utf-8?B?aVh5YjJsdEZXT3lNem1VOURKSXVJNHJ0UzRYWHVpOTE5VEVwU2cyRkI3dm1h?=
+ =?utf-8?B?Tk85WkNRRUpFZUljTlh2Z3pvVzdjSE5ZZ0FhQ2Y0eVFFQU5aUGdVZDlYTXE2?=
+ =?utf-8?B?UXQyN0phRit2MnRNY1dFamhJeWVneVcyUHoyWk9CbDdjUVB6UGg0NHNiV3Uw?=
+ =?utf-8?B?Nm54ZUF0WEJUUEFJdU1RNGtDekl4dDJVZnFjU3E1eUFQNldDSmczbHA5ZUZz?=
+ =?utf-8?B?U3JIQ1lvZ01lWnd3QnVSZk9BT0NDSDc4T3dyUDhNSjdJeUpVNHZxTGZhMDJp?=
+ =?utf-8?B?dnlVMWd2Zi92dmlBMjlkWUxDUmJXNnkyM0YySGJESEUwNXZxenlKR3Qzai9R?=
+ =?utf-8?B?cTlqdW4vczFPY2pIT3lwc1dubzBaRllVRzNNRzZCcWVKV3lNYXk0Um9iRTZH?=
+ =?utf-8?B?QTdJUXdxYkJ0SGUvSGwyM0M1ZjVVWjBCQjFEMkVMVjIyZ1NOZjNrYkVoSHla?=
+ =?utf-8?B?VVdURi9DK1JwelJOZlZyaHNGT2FhL1YrSzJLU2YyQTc4L2RHbVppV2tZTW5F?=
+ =?utf-8?B?eHdxZ1ZzVWllZGlWalgvRDZRbGRqRUczajQzcnhpd25VQWp6LzllbnRlNklF?=
+ =?utf-8?B?OW55NGIzRWRYU2dqNWdKVVFza2NmbUh0Ym1VYi92SFJjVGk0eUQxZXNYdE52?=
+ =?utf-8?B?NlIyNFZUdW1LdjJvY0ViNWJDWkdoSkdnd2xFSGRRNWp4UzZQK3RQdTB3YmhU?=
+ =?utf-8?B?NG93SHU5VWhEWmVocmZ3WkEwcHZLNSt0citpOUFHNkYzWkphVWprQ0VWUm1G?=
+ =?utf-8?B?OGxvS0MrRzZQQUhFR3RJWkIzNHBQQlNXOTdTM3lZR0Z0aUFOeDR0ZnVua1dL?=
+ =?utf-8?B?NDZKUVFIRW9EeG9jNHptN1dQWGovRDhOaXNNUFI1dlVKYk5MQmJzRExyM3pa?=
+ =?utf-8?B?Z0pob1dwZXd6SnVlN2UvM0FiVzlLMEljVi90NCsxeGd5YlhsR29QL2pjUG42?=
+ =?utf-8?B?b3Z4UFpkWEFkNW9EK3p0aWNxUDNxaUlFeTJsVFN2eHRwYlB0Sk41cWdEZ1Zl?=
+ =?utf-8?B?RlRCS2oxUndkU1NEYVlKRXBaVnNxUHdzQ01BSDkzL0ZTUFowR0J4MjZmbkw5?=
+ =?utf-8?B?N0JKNnV1MDdQYzdDbDZVWnVVZDc2aUtjaWQ5bUY4VHZJVXpRaDlSN280MVFl?=
+ =?utf-8?B?c0NRQjBtNFZiVUx1YmxRcjNUc1ZLZ3JLQ2lKNlh3OHYvTXd0dVBsRlhiYytY?=
+ =?utf-8?B?cVczY2cvVW5vbW5YdnVDMkRqUWhSbk94dnZrNUdsQUZkYVB6cVRRZGJSN0FK?=
+ =?utf-8?B?MFdraHEyQXp6aEVjYWNzSjRZTHR5dGJiZzR4UUtmQTRFQTNqNVk2NkttNzFy?=
+ =?utf-8?B?OU9HWmZTeHN2QS80QjEyd3Q1RlBKWlFTTnlrcTFQQWZuQ1VGNlBQNmdOZzNm?=
+ =?utf-8?B?RlpiVmFkbGd0RkV6MXNwdlFoN2lZR1FxMUN1dE91dWxtQlg5ZmkxMm9rcm5j?=
+ =?utf-8?B?UDA5TWxmQ3g3OHZWTklMeUFwL2dTWGpSbzlLWlhSaFNsanEwL2FNSEFueHZk?=
+ =?utf-8?B?amVzL09ic0VTdTU4N3E0M08wemtPK0lvb2VBaEthMlhTZllSc0ZGS3ZYQUVX?=
+ =?utf-8?B?ZHlVbkNLa1paSmJCendYRnl2N09lT2pveFJSa0pLWDRZOEU3azNGOGVvbWNI?=
+ =?utf-8?B?c2hlTGdJUDBYUm41b0FQbzhtTW9tU2tTZmJxK1c2SkFINnR0NG9VZzd1YmFq?=
+ =?utf-8?B?a3paUSs2MzNFZi9Yd2FIMmVuZ09YV2ZDSTZOWmJ5bDJLQUl3NlhXemE3MGQ4?=
+ =?utf-8?B?SmZhUG45QUFnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDJjV2NGVDgrYTJkTHZTSG50Z0lWYUNwbDhEaXFrWnlqcWdHSmdqNkd3eCtT?=
+ =?utf-8?B?dWwxc0hHbGlub0FtcithUHB4YWR2SXlsQUtwdkJWWVdPZGFlTHlyZTdzUERP?=
+ =?utf-8?B?OWhJbmpRaWFySkJJb2lKU0dFakNZbUdjSXczeUY0MmxWWnVQVHRTd0psNTRW?=
+ =?utf-8?B?K0U3by9YVk5ZMjVxVzFwTldIVk1mQ1g2YXBpMjQ1TDlTczZyZ2NjWVFZTndp?=
+ =?utf-8?B?TURKRXB2aUtHT3FteVZ1OUY5ckc4NG9TVXY3QU1JckJueTdHamJMNHJXemk3?=
+ =?utf-8?B?a1JkZkc0RzlKY3JMQ21kK1RnOWNCek5UMVpwNHQzUS83MmFwNHprNGdrdUl4?=
+ =?utf-8?B?My9hZkg3VU5DejU3WWJETzdVYnBzWWNicFFnMnNMbDl2VWFlMENWbHNpSlB6?=
+ =?utf-8?B?QU1rMkpMUWFaM25qRkY2dnVyNkpiTmhQeDAyck5NOVA0aXJranRiUmJTeS9z?=
+ =?utf-8?B?ZmdtQnk2MFlucWFVMmJwajVDSEtTYng0bDhuZGxJR25HbmRzQVEzRGVzZm1a?=
+ =?utf-8?B?QWsycWRzbUlkdGk1V0pqd3M1MUlkN0FxNDVqNTMzRk1ya09sbnBqNnQrWlJz?=
+ =?utf-8?B?bWlPc2JWeG9mVE5VRUhWdGtadG90NnpsOXQ5N2tZeDhSMkpMU0NRbThadUtM?=
+ =?utf-8?B?aWJFV0hOT09YM3U3SEtEb0w4d0RzV0NhUHBXM0UxZzg0S1VvTnljSkQzUFhF?=
+ =?utf-8?B?bmlzQk92R21ENkppdTFFazg1dnRRZVQ1bllMaktGQkRRQjc1YXk4Z0c2NjZw?=
+ =?utf-8?B?Y2JwRTZERi8rc000ckVaaHBQTFE1bkxLK1IyMFdtOTlLV1lIWlliTVI0eHd4?=
+ =?utf-8?B?ZlkvY0VzbnZUK3hEV3hWZFc4V05jVmRBL0g4VFhqTWt4NmVMV25pYWVhWWJK?=
+ =?utf-8?B?QXlzUUY0K0xhc1ZxMUJRcFhmeHg0MnNKNHBOdUM1RFBJalY3RnQwc29aNlRG?=
+ =?utf-8?B?Q3BIUHRrRDlZalNQU2hYZ2Z1TWVtM2tDdnJmUTR4ZnBaT1BqTzJINEZ2djRS?=
+ =?utf-8?B?YnJiSGNzcy9wOTFRTnJtWnpNamJHTFc3MXdST2VZNlF2VFprL1BFWkRGLzRC?=
+ =?utf-8?B?TUc2YXppek5TcWdRZW1xY1I2RUcxQ0hpQ2lKaFRKL3dqSmZUMW4yekFQRUsw?=
+ =?utf-8?B?UitGUk1hQUtxWnVCdzRRK05ya0lHRTdNSnlTdHpwOTJYMjJYMjNhTE8xT2lF?=
+ =?utf-8?B?TnA3VCtkTExZQVd6TEVCRjNwN2YzQjA1RDVsdkI3WXQyWGlRUWY1MnhaOVZI?=
+ =?utf-8?B?bk8yRzJsUEw2QTNxZHNwenI5ZFJVWVZFNVAzL1dJYUpwaEl1WjZpenBaZGNM?=
+ =?utf-8?B?ajMrMUtkZ3phOHRLclFvZVF4Vit6dTY3bnBxNXZPTzU1WmMxbTBjaEJUTno3?=
+ =?utf-8?B?UkVSbWgyNS9GUTV1dUJCaFVFQUlNazlqTEZhYXh1WjZJeEhjUUhjL3dOd2hQ?=
+ =?utf-8?B?eW1rTFFRZTlFcEVFTDQ3Q2ppaXVjYW5Hb3FhS1I4YWRMNDM1TW9pdThWUE8z?=
+ =?utf-8?B?NnhZRzJDb2VKWlBoMVo5ZFpUY0dJSEx3NzdtZ3oxQnUybTE3RjVwcDhOcXBL?=
+ =?utf-8?B?MWlseTVHM3U5c1IwZVhRRjlSMlh6YVJZWDM0NEVtQ0twaTU3ZUZoc1ZleXhl?=
+ =?utf-8?B?WlVUMXpDQTJnZWZyS3hoRWJJZ2F5dkU5TlJXeGcwNE5URW5wanFpRHJoQW94?=
+ =?utf-8?B?SjQxWGVTTzZjVG9GVlZZUDI3eUhEUEdXUnNnYVI2MkxFOERrME9yWGRhdjNt?=
+ =?utf-8?B?TU4rY0FMUWt6S3JPeFZrWVdTU0c5UFc1aEFmKytiUFhWWXJtOHZLMDN6b3J0?=
+ =?utf-8?B?OFlRY0xOQngzbDNYRmN1OEsvdkpnSGZqUnNma05qMXkzTldpRk4xSjNHQ2Jl?=
+ =?utf-8?B?UWxHYWxORThIb2UzYmJNSnBMaVBJMUI4ejNsd2QrOWsxa3ozM1NhK3I1NVpD?=
+ =?utf-8?B?dzRnbnVkdnhMWi9SZ2U2MU52bmZnaFFLYTg4WmlHTFdxM2drM01manBUTllz?=
+ =?utf-8?B?V2x0SHp5QWNUTGROSHpHL3U3SWh0ZmhJUWp3N01NOUVPT2ZUakhxUEpsSFc0?=
+ =?utf-8?B?OFc4SmdBMjV0UXhLYkdnOE5RTG1lUUc3TGFTY21ROTdHUXI5dkR3dk8wRG5w?=
+ =?utf-8?Q?OVMvIAbdsyVQIMEENROgjBHA8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8b49836-d91b-4d20-580a-08ddfc47cee6
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 15:25:50.2075
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VqyMtjhrBAEP1iUv3Rp6x2ghcTpP1OFp1GhXhV1sDPq2nCF4uzDbjfIJGi3afMeCEIzJNP9Cjc7O4wphp6+egA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9770
 
-On Thu, Sep 25, 2025 at 04:31:15AM +0800, Peng Fan wrote:
-> On Wed, Sep 24, 2025 at 11:10:33AM -0600, Mathieu Poirier wrote:
-> >On Wed, 24 Sept 2025 at 09:35, Peng Fan <peng.fan@oss.nxp.com> wrote:
-> >>
-> ...
-> >> Sorry for early ping - I just wanted to check if there's any chance for this
-> >> patchset to be included in 6.18, along with the other cleanup patchset [1].
+On Thu, Sep 25, 2025 at 02:52:38PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Sep 24, 2025 at 04:51:16PM -0400, Frank Li wrote:
+> > On Wed, Sep 24, 2025 at 11:52:29PM +0530, Manivannan Sadhasivam wrote:
+> > > On Mon, Sep 15, 2025 at 06:22:46PM -0400, Frank Li wrote:
+> > > > Add MSI doorbell support to reduce latency between PCI host and EP.
+> > > >
+> > > > Before this change:
+> > > >   ping 169.254.172.137
+> > > >   64 bytes from 169.254.172.137: icmp_seq=1 ttl=64 time=0.575 ms
+> > > >   64 bytes from 169.254.172.137: icmp_seq=2 ttl=64 time=1.80 ms
+> > > >   64 bytes from 169.254.172.137: icmp_seq=3 ttl=64 time=8.19 ms
+> > > >   64 bytes from 169.254.172.137: icmp_seq=4 ttl=64 time=2.00 ms
+> > > >
+> > > > After this change:
+> > > >   ping 169.254.144.71
+> > > >   64 bytes from 169.254.144.71: icmp_seq=1 ttl=64 time=0.215 ms
+> > > >   64 bytes from 169.254.144.71: icmp_seq=2 ttl=64 time=0.456 ms
+> > > >   64 bytes from 169.254.144.71: icmp_seq=3 ttl=64 time=0.448 ms
+> > > >
+> > > > Change u64 db to atomic_64 because difference doorbell may happen at the
+> > > > same time.
+> > > >
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > > change in v2
+> > > > - update api pci_epf_set_inbound_space
+> > > > - atomic_64 should be enough, which just record doorbell events, which is
+> > > > similar with W1C irq status register.
+> > > > ---
+> > > >  drivers/pci/endpoint/functions/pci-epf-vntb.c | 153 +++++++++++++++++++++++---
+> > > >  1 file changed, 136 insertions(+), 17 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > > > index 83e9ab10f9c4fc2b485d5463faa2172500f12999..06c13f26db1c6e55d23769e98e2cfd80da693a20 100644
+> > > > --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > > > +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > > > @@ -36,11 +36,13 @@
+> > > >   * PCIe Root Port                        PCI EP
+> > > >   */
+> > > >
+> > > > +#include <linux/atomic.h>
+> > > >  #include <linux/delay.h>
+> > > >  #include <linux/io.h>
+> > > >  #include <linux/module.h>
+> > > >  #include <linux/slab.h>
+> > > >
+> > > > +#include <linux/pci-ep-msi.h>
+> > > >  #include <linux/pci-epc.h>
+> > > >  #include <linux/pci-epf.h>
+> > > >  #include <linux/ntb.h>
+> > > > @@ -126,12 +128,13 @@ struct epf_ntb {
+> > > >  	u32 db_count;
+> > > >  	u32 spad_count;
+> > > >  	u64 mws_size[MAX_MW];
+> > > > -	u64 db;
+> > > > +	atomic64_t db;
+> > > >  	u32 vbus_number;
+> > > >  	u16 vntb_pid;
+> > > >  	u16 vntb_vid;
+> > > >
+> > > >  	bool linkup;
+> > > > +	bool msi_doorbell;
+> > > >  	u32 spad_size;
+> > > >
+> > > >  	enum pci_barno epf_ntb_bar[VNTB_BAR_NUM];
+> > > > @@ -258,9 +261,9 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+> > > >
+> > > >  	ntb = container_of(work, struct epf_ntb, cmd_handler.work);
+> > > >
+> > > > -	for (i = 1; i < ntb->db_count; i++) {
+> > > > +	for (i = 1; i < ntb->db_count && !ntb->msi_doorbell; i++) {
+> > > >  		if (ntb->epf_db[i]) {
+> > > > -			ntb->db |= 1 << (i - 1);
+> > > > +			atomic64_or(1 << (i - 1), &ntb->db);
+> > > >  			ntb_db_event(&ntb->ntb, i);
+> > > >  			ntb->epf_db[i] = 0;
+> > > >  		}
+> > > > @@ -319,7 +322,24 @@ static void epf_ntb_cmd_handler(struct work_struct *work)
+> > > >
+> > > >  reset_handler:
+> > > >  	queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler,
+> > > > -			   msecs_to_jiffies(5));
+> > > > +			   ntb->msi_doorbell ? msecs_to_jiffies(500) : msecs_to_jiffies(5));
+> > > > +}
+> > > > +
+> > > > +static irqreturn_t epf_ntb_doorbell_handler(int irq, void *data)
+> > > > +{
+> > > > +	struct epf_ntb *ntb = data;
+> > > > +	int i = 0;
+> > > > +
+> > > > +	for (i = 1; i < ntb->db_count; i++)
+> > > > +		if (irq == ntb->epf->db_msg[i].virq) {
+> > > > +			atomic64_or(1 << (i - 1), &ntb->db);
+> > > > +			ntb_db_event(&ntb->ntb, i);
+> > > > +		}
+> > > > +
+> > > > +	if (irq == ntb->epf->db_msg[0].virq)
+> > >
+> > > So doorbell 0 is supposed to trigger the command handler? Is it documented
+> > > somewhere?
 > >
-> >It seems very unlikely.  I am currently looking into how the PM
-> >runtime framework behaves to address my own questions about this patch
-> >[1].  Furthermore, I am worried about the usage of the device
-> >management framework when it comes to freeing memory.  I will get back
-> >to you with comments on that front when I know we are doing the right
-> >thing with the PM runtime framework.
-> 
-> I see. Not sure Ulf could help clarify or review, then you might take less
-> time.
+> > I missed my very old patch in drivers/ntb/hw/epf/ntb_hw_epf.c to use
+> > doorbell 0 as trigger command handler, this path should never triggered.
+> >
+> > db 0 is not used in ntb_hw_epf.c
+> >
+> > >
+> > > > +		queue_delayed_work(kpcintb_workqueue, &ntb->cmd_handler, 0);
+> > > > +
+> > > > +	return IRQ_HANDLED;
+> > > >  }
+> > > >
+> > > >  /**
+> > > > @@ -500,6 +520,90 @@ static int epf_ntb_configure_interrupt(struct epf_ntb *ntb)
+> > > >  	return 0;
+> > > >  }
+> > > >
+> > > > +static int epf_ntb_db_bar_init_msi_doorbell(struct epf_ntb *ntb,
+> > > > +					    struct pci_epf_bar *db_bar,
+> > > > +					    const struct pci_epc_features *epc_features,
+> > > > +					    enum pci_barno barno)
+> > > > +{
+> > > > +	struct pci_epf *epf = ntb->epf;
+> > > > +	dma_addr_t low, high;
+> > > > +	struct msi_msg *msg;
+> > > > +	size_t sz;
+> > > > +	int ret;
+> > > > +	int i;
+> > > > +
+> > > > +	ret = pci_epf_alloc_doorbell(epf,  ntb->db_count);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	for (i = 0; i < ntb->db_count; i++) {
+> > > > +		ret = request_irq(epf->db_msg[i].virq, epf_ntb_doorbell_handler,
+> > > > +				  0, "vntb_db", ntb);
+> > > > +
+> > > > +		if (ret) {
+> > > > +			dev_err(&epf->dev,
+> > > > +				"Failed to request doorbell IRQ: %d\n",
+> > > > +				epf->db_msg[i].virq);
+> > > > +			goto err_request_irq;
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	msg = &epf->db_msg[0].msg;
+> > > > +
+> > > > +	high = 0;
+> > > > +	low = (u64)msg->address_hi << 32 | msg->address_lo;
+> > > > +
+> > > > +	for (i = 0; i < ntb->db_count; i++) {
+> > > > +		struct msi_msg *msg = &epf->db_msg[i].msg;
+> > > > +		dma_addr_t addr = (u64)msg->address_hi << 32 | msg->address_lo;
+> > > > +
+> > > > +		low = min(low, addr);
+> > > > +		high = max(high, addr);
+> > > > +	}
+> > > > +
+> > > > +	sz = high - low + sizeof(u32);
+> > > > +
+> > > > +	ret = pci_epf_set_inbound_space(epf, sz, barno,
+> > > > +					epc_features, 0, low);
+> > >
+> > > Should this new API be used in pci-epf-test also?
+> >
+> > Needn't, because pcie-epf-test default set system memory as bar's space.
+> > switch to MMIO when enable doorbell and switch back to system memory.
+> >
+> > size alignment already consider at bar initilization, and we can't change
+> > bar's size after bind now.
+> >
 >
+> The memory and size are allocated during pci_epf_test_bind(), I agree. But
+> that's for memory allocated through pci_epf_alloc_space(). So if the MSI region
+> has size restrictions (as taken care by this API), it should be handled in the
+> pci-epf-test driver as well.
 
-It is fortunate that time was taken to understand the problem and fix it
-correctly.  Otherwise we'd still have a problem and more patches, possibly
-wrong as well, would have been needed.
- 
-> >
-> >I dropped the 3rd cleanup patchset.  More than once I asked you to
-> >submit only one patchset at a time and you still refuse to take notice
-> >of my request.
-> 
-> I apologize - I now recall your earlier request to hold off on submitting
-> further patches until the table_sz clearing patch was clarified. I
-> misunderstood and appreciate your patience.
-> 
-> Could you please clarify whether there's a general rule in remoteproc that
-> developers should only have one patchset or patch under review at a time? If
-> so, would it be possible to document this guideline in the kernel documentation?
-> That would help avoid confusion for contributors.
+pci_epf_alloc_space() is not only allocate memory, but also set bar's size.
+
+But we can't change bar's size, for example allocated 64K at
+pci_epf_alloc_space()
+
+but MSI map only require 4K. Current framework can't change bar's size.
+still have to use 64K for doorbell even MSI just require 4k.
+
 >
+> Otherwise, we will end up with different implementations between EPF drivers.
 
-Most people tend to address one problem at a time, especially when subsequent
-patchsets have dependencies on the previous ones.  I'm not sure there is a need
-to document something like that.
- 
-> I ask because I have other patches queued that are independent of the current
-> series, such as:
->  - Reintroducing the table_sz clearing
->  - Misc cleanup in remoteproc core
+pci_epf_test is special use case for doorbell. No one switch a bar to MSI
+as doorbell dynamtically. Generally, allocated a dedicated bar for
+doorbell.
 
-I'm fine with those, as long as you address just one proble at any given time.
+pci_epf_set_inbound_space() and pci_epf_alloc_space() should be exclusived.
 
-> 
-> I understand you may be busy and have limited bandwidth. Would it be feasible
-> to offload part of the review work to Bjorn? I rarely see Bjorn reviewing i.MX
-> patches. Alternatively, could we consider bringing in a third maintainer to
-> help accelerate the review process?
+Frank
+
 >
-
-How fast do you want to go?  By and large, I reply to patchsets within a week,
-sometimes two when things are busy.  And when I can't meet those standards, I
-send out an email to the mailing list with the review order of the patches in
-my queue.  What else are you expecting?
-
-Bjorn is maintaining over a dozen subsystems - I stepped forward to maintain
-remoteproc/rpmsg to help with the volume.
-
- 
-> Thanks again for your time and guidance.
-> 
-> Thanks,
-> Peng
-> 
-> >
-> >Mathieu
-> >
-> >[1]. "remoteproc: imx_rproc: Fix runtime PM cleanup order and error handling"
-> >
-> >>
-> >> Both patchsets have received Reviewed-by tags, have been tested, and
-> >> successfully passed builds (arm64 gcc) with each patch applied incrementally.
-> >>
-> >> [1] https://lore.kernel.org/linux-remoteproc/20250920-imx_rproc_c2-v2-0-3351c4c96df5@nxp.com/T/#ma16bb8a38300f6eb333ee04f00d57805aee3c114
-> >>
-> >> Thanks
-> >> Peng
-> >>
-> >> >
-> >> > drivers/remoteproc/imx_rproc.c | 128 ++++++++++++++++++-----------------------
-> >> > 1 file changed, 57 insertions(+), 71 deletions(-)
-> >> >---
-> >> >base-commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> >> >change-id: 20250916-imx_rproc_c2-2b9ad7882f4d
-> >> >
-> >> >Best regards,
-> >> >--
-> >> >Peng Fan <peng.fan@nxp.com>
-> >> >
-> >
+> - Mani
+>
+> --
+> மணிவண்ணன் சதாசிவம்
 
