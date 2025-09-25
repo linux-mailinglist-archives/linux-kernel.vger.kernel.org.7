@@ -1,149 +1,139 @@
-Return-Path: <linux-kernel+bounces-831929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F879B9DEC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C85B9DED9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042212E5673
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:52:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F2B383A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5A258EC1;
-	Thu, 25 Sep 2025 07:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5111270ED9;
+	Thu, 25 Sep 2025 07:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lfJKPzOq"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dAMtEwG+"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246C219AD70
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2F710A1E;
+	Thu, 25 Sep 2025 07:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758786731; cv=none; b=A4hyRXJJHLZNoBMp0gtpYCVU96y/Mlv9G7PsMpNJLIcGpu5X3YJ61My5L/O1Z8DxzcUkDuvRSQXLfgjskbvL9qL2apRn8QVuypFcAdqpdsl3E6QfxX7ZqqFSWKY4X43BA0M3obpv2rPX2ske5oViaH9pIwbFl4x6UaGjDk4A4ZE=
+	t=1758786872; cv=none; b=VVBYnsepXn0hXhC1f2+M/td1I/B8cnSUFypDu6Vym5GYLwRAXeLifJZyIqTomiL8KS3QPNBNRWo5GMF2dTITXzBI91Thi1qBhd4eXr4lnIZf3QN3nzmJG+bTeQT2yKMItFlUdYUHaQcEPi4MvFXeV366pd1uac4KMrb+0+2BNRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758786731; c=relaxed/simple;
-	bh=Umxh39nHGfkgypJPyOPbacKoWCRJ+9b9PmAXkmDpko4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ODBe67xUmCwrca4qHNDWRi/6Nu5msApqYTN7+cIsGgtGpL17iI44rJrCX1N6gEN2zNHoYR7G9lo/iIXyZ1Me5nbWNjw/9YXx4eThH5THMpJyTvrG3OnTm5JKHj9HY3AzDtwDN+KqgC2BGKngNC13t4WiQSaMTa5l9nHQcbzbEss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lfJKPzOq; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57bf912cbf6so708311e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758786728; x=1759391528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/pmdbPSS1+PFGOQZXgEhCWxoqVsYqlqHhZMSV2rIROA=;
-        b=lfJKPzOqCUrq+Uat6EBSiSVoDSB+T7Nkll7waVBeAYahSvGf5OqRAGuZQcW+PDrQ5e
-         Jg3q0tF2rk4jDvEt09axr4jid7+IHz5fhZkvhDXHMRl85v8EvwuivylLfWOBlxnjZ2d9
-         ZT5npTLCbNIwgeW6h+W/yvJLX2JYqEz+60/XVNdAVHyZvak7YVQ4Coj281u4ZYMPb0JJ
-         1kJF8hWZvHWY9ZvbFQ4mUuHAXU0Mo/sc+flLiYSZOc93na95aq7VDGx8UoKXylmNAVE+
-         gzpxR7gxwYbjgXKq7z8DI4PeaKvrvqQO6mXfLyZNaHkcx1gLiWverqjcOmERMAYTVGov
-         kidg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758786728; x=1759391528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/pmdbPSS1+PFGOQZXgEhCWxoqVsYqlqHhZMSV2rIROA=;
-        b=QxPKdLu3ohfC6CIefpcw+tmSpuXk9olAVXW+yb72HcvHgqsrhaKdLoUbJEZZTUFLPq
-         +WSdMnL6TDi7tRxTCnDRZ1sNuU9qjrCmlDYVmvaJgbaCZKmAiy5NqFd0PCX1o+k0yY7q
-         oXh0LO/k3fy+GQ1WANHR4cNQurLyW4PYvyTCjpkohvyIRy5waAYTTXGZJynJCMmeKycB
-         cG+ulrsfBP5ZQJMc3LDCQvQ5dm4giLh6bOXvayAtci02iI8Pf08dzwhgvdaeTIyfu0bK
-         xK0udb+ArcN7aylOId34uEeit6ZJoLsMJlb/16F2+vhqj0q43kQ+r2NQK7fNaGVSdTiK
-         Pdig==
-X-Forwarded-Encrypted: i=1; AJvYcCU1gTe4ilUiv3Gde8TYtTk5wkaoGMl5sRrk07Zo9VGf28Ny5+Dr2frQEx0lysSTYNkCa6e+zZyPjBxyS54=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb1hTQF4NfTSNjDwUueu30anVasc+Cq9otSUYnuvB9138TIFa5
-	PwPIvCZ5ou+wpdI73n/Tm2MA+d9WLtDfvUouU95HWHC96vmDtNNB3u4V1D3ZiSAJVhaI3s5+OgD
-	D7AHGOInTTzRqsHKh1fRnLNZp7kpdSJJ9wGzNQ5buyg==
-X-Gm-Gg: ASbGnculcMfRMfEehQ3IbkU4kYK7xcP+MQmJTwRxZ+0r0CfoakIx2PtalrdsocqnHKa
-	/8ze3bgz8QGBRImUqyl8q56Csm0mxGgTC8PgSOKvQYFmK+2FKBY7SUc61IVniBuDNmFo11sClrW
-	5PKg5dFQTSAqqzLV/oeyQoIbUD4JcZknJfuqU8btCdes7tAU2V28mzsf/Z8e53Hp3DKC44ruEV1
-	ib+yrC6t8K+Oi4f+RhHVc1KZNKIZzlxwkz3Yw==
-X-Google-Smtp-Source: AGHT+IFjDFQMappKZZFROu+v6o3bME1MjtTxrIbJ3f6pWVz6MpCD55Lk6Fra5LzFmOtZoqCjtC5vbl0PRHtSU8AsH3Q=
-X-Received: by 2002:a05:6512:3a8f:b0:57e:4245:114e with SMTP id
- 2adb3069b0e04-582d14effcfmr700774e87.24.1758786728179; Thu, 25 Sep 2025
- 00:52:08 -0700 (PDT)
+	s=arc-20240116; t=1758786872; c=relaxed/simple;
+	bh=wNrIs/KMRNT0S70Q52NO7ztxcCDaM4WDIdSvpz8vEAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaqM4IinbUiL5Uvxnt6kUEevOeY/qVpLEhAOnR5txfOVjHcE9e/3vSszXRGF0SJq5tFDFHjkE5rE+61ZC1/MsAg0OUEd8s7iuiAlrFV41JacM/+v7redBWZRiZ7apvakqvT5Jm0gRe2ldlVHQGqzDf53DchnVIB5pW87hHTEjy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dAMtEwG+; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D4AE81FD45;
+	Thu, 25 Sep 2025 07:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758786860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0yQO/AB1frPLT9/UjMZgXQd7K0oFinoOZukSkiIkvU=;
+	b=dAMtEwG+F2+E9ANALyZUDw8Yv1pyBMIrps8I1f5UxSgSGoRXv4FjKfIuLD8+6tGz0cKv+g
+	cywSsi91XdS5qFAJ97pZFRv7PD48EHm6+EbN2IFcvkx1V0JV1xn8ug1GgNVUTnP+Y7ZO8N
+	eDP5t9ZVuA/2zlCjtAs3RLT7kQ7UlPj4EoqzlB3oWfCd84AmePLJNmcGMfT4P7fhhPf7lE
+	nxY9IZjgRHbLvWBGUuBIldIN2az5SN2DQeeJCPwfvewX/6U4I47jUnAX4Pw6yyAFFXe863
+	4jTXNZmmBHdp78CFPdCNsP2s+CiYO2Y08rxmMrjPspyRyI9LiFnEA+TwFpB6SA==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject:
+ Re: [PATCH 4/4] regulator: ltm8054: Support output current limit control
+Date: Thu, 25 Sep 2025 09:54:19 +0200
+Message-ID: <2800270.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <8772650.T7Z3S40VBb@fw-rgant>
+References:
+ <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <aMlj1OcfH8r9Zz6x@smile.fi.intel.com> <8772650.T7Z3S40VBb@fw-rgant>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
- <20250910-make-compound-literals-normal-again-v1-2-076ee7738a0b@linaro.org> <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 25 Sep 2025 09:51:56 +0200
-X-Gm-Features: AS18NWCh67p36-1DiEra54BRYeOZGMgpqlB-NSoS3MdBtkk6GMB-z9-7UGdMnvw
-Message-ID: <CAMRc=Mej9fQk-1zYKhPK6aWdptXKvjq28TywRyP+iZExRuX9og@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: use more common syntax for compound literals
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Avi Fishman <avifishman70@gmail.com>, 
-	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
-	Benjamin Fair <benjaminfair@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matt.redfearn@blaize.com>, 
-	Neil Jones <neil.jones@blaize.com>, 
-	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, Hoan Tran <hoan@os.amperecomputing.com>, 
-	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>, 
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev, 
-	linux-unisoc@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart12748939.O9o76ZdvQC";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiheelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhri
+ ihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegulhgvtghhnhgvrhessggrhihlihgsrhgvrdgtohhm
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Thu, Sep 25, 2025 at 9:48=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Bartosz,
->
-> On Thu, 11 Sept 2025 at 12:02, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The (typeof(foo)) construct is unusual in the kernel, use a more typica=
-l
-> > syntax by explicitly spelling out the type.
->
-> Thanks for your patch, which is now commit da3a88e9656c17a3 ("pinctrl:
-> use more common syntax for compound literals") in pinctrl/for-next
->
-> > Link: https://lore.kernel.org/all/20250909-gpio-mmio-gpio-conv-part4-v1=
--13-9f723dc3524a@linaro.org/
->
-> Looks like you (slightly) missed your target. The correct link is:
->
->     Link: https://lore.kernel.org/aMAP9hAWars0T83r@smile.fi.intel.com
->
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+--nextPart12748939.O9o76ZdvQC
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Date: Thu, 25 Sep 2025 09:54:19 +0200
+Message-ID: <2800270.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <8772650.T7Z3S40VBb@fw-rgant>
+MIME-Version: 1.0
 
-Hi Geert,
+On Tuesday, 16 September 2025 16:27:25 CEST Romain Gantois wrote:
+> On Tuesday, 16 September 2025 15:19:16 CEST Andy Shevchenko wrote:
+> > On Tue, Sep 16, 2025 at 12:24:09PM +0200, Romain Gantois wrote:
+...
+> > > CTL pin voltage */ +	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_V;
+> > > +	do_div(vdac_uV, priv->max_uA);
+> > > +
+> > > +	dev_dbg(&rdev->dev,
+> > > +		"Setting current limit to %duA, CTL pin to %duV\n", min_uA,
+> > > (int)vdac_uV);
+> > 
+> > Why casting?
+> 
+> This one is indeed unnecessary.
 
-This is a link to the discussion with Andy as per Linus Torvalds'
-recent request to use the Link: tag to point to actually useful
-information rather than just the patch's origin. Linus Walleij doesn't
-use b4 so the origin link you'd normally expect to be added
-automatically is not there at all. That's probably what caused the
-confusion.
+My mistake, this cast is required to avoid a compiler warning;
 
-Bartosz
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart12748939.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjU9SsACgkQKCYAIARz
+eA45Pg//e+RNIVNH123KKvWSDgP/4K9vIfxKQHteDzWnbdc/DAJYmcztCg0sSO2h
+KGsZZ71OoXBoGhArjD8Fo34eIXXAjz2jfstWmo1LdkggibiPFzphGUl8yFz00dVc
+Bxq432+1pyWZQf7ebJYthZItWYASHncO2hObvCXaQH+eATZaaXpBaYs12GeVO+Pc
+Uhy5as0lV4y2V0Zx6VXrER/N76f6TPkZieFoy8w0izbRLb1ECDgkK+mPK1B0heq6
+esjvYWVk97HKedVOSCq/ZHMGCaoNHFumLCjGuLH897hClVRBfvjNjxg+XkXr8QAo
+SuQmYmGZofuEeVAV5ORIaoXB72cPbxiMvgoKjEYqzT4NgNhFep1bHYRYbVLwTEjT
+/Mhl8ulFstcdLX9l/G2uoATXT+GLjlkxMS0AKL7GQ7hFLNDxTpOSc/LBQYQEHbVa
+az5Z+5DIM4PZs2O3RRun7WAyEBEpTGAVJ3a4JjvqjYXDAoI4CneXueamV8zyU4v5
+QPEPgAvST6JUv/mj8IKRfyFgW/gNNemg0krG/INhDBYZYhO+x00wbxUnSLsawxcR
+XIIVFj0APWQrXUzVrmiB2ceo7TsHzGaSIaV3pVt2pJUFglzTNBr1T7wWMk1JyKC5
+qecn9T8O+qBIm9LWvUNpe7WEk8pHxbq+4JSGnTh2Eg7fKL9MyI4=
+=ltTp
+-----END PGP SIGNATURE-----
+
+--nextPart12748939.O9o76ZdvQC--
+
+
+
 
