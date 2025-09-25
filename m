@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-832544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDD4B9FA25
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F228B9FA2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 870517BE7DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648E12E0DDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65906273D9A;
-	Thu, 25 Sep 2025 13:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1686727B342;
+	Thu, 25 Sep 2025 13:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvkTdqIb"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPqwqYGk"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86C3273D77
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E5327990D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807784; cv=none; b=GREvz9Ro6pjUKqvtpgVuOp9B7lQDdiQXAbmtR+tq4n8BWqCXx5t+x39B4hCWE2Z39rP3T6e5VXaKSE6LBcgp2B5+eBh7SJfzSpggfzZYJR8ZqQyQDMoBoRfVfGtMl2a9kKTbHydKUlVlIcHlJnVOZGlbe1SJqNDvJi+hGseWIWo=
+	t=1758807787; cv=none; b=uMmjN3MPPVAEY0ejlI0AoDrkxarlVOwPlYoDvPfqHSPSVbDJnfMkXODUSuP3tKq80/NpuvItnxPELqIWaMynLjPCx0Zi+I+Fk8YwiDTjxI76ISLvvIIA8+lMS5H0TzyMbIwccCGdLriBfNw26bEzXxUcTI8GrKruaJGHIVHFOKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807784; c=relaxed/simple;
-	bh=dR7SLmVNHIVh9rfgt0UBYbJhDHgMhtv5IQldU5Oo1x0=;
+	s=arc-20240116; t=1758807787; c=relaxed/simple;
+	bh=56qk4oXZToDCRjUenEK2FztuuA7wWME8i0VRUMgg2i0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YiCRgEUPo0WQ6duoVHo05EwCmCZIleVekxmLXVODuW2KYeyY15WgAOUfdYjZ5/V17i5bE3w8DGI4Yr1FSotIJtuhM+EAeEbPj0GuzMy0cM/b6u6HM90Nwgou866EGZRSRewyxWqm8Nmg8WbMmm8gr1AM48jjTqNBUc1PT1KwNiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvkTdqIb; arc=none smtp.client-ip=209.85.219.51
+	 In-Reply-To:To:Cc; b=s5ho5QeSLAtfIK+yrl6PPFD+3twsqEEufLUQa309+l+8bPhnhGVGpE5XmD+cn9sd+8bC37oCRFVaVd6zxzDp7jVvZkIvZz+KFKAcNYYFi146F9fr+P5fhYGt7rgoaSRnQWkuzuwrqhrA1WmzhYfVuCi8EYW+oNY6SF+uHtHAitQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPqwqYGk; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-791fd6bffbaso9132626d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:43:01 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-80b7a6b2b47so126765185a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:43:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758807781; x=1759412581; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758807784; x=1759412584; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MbaY8V0OL9vVXDMnnkhXlW/3PWrqVdowYDRD++oQeQ0=;
-        b=fvkTdqIboBDhLwpqclyE7on8TgSpv3iU+Y1Jus7HNn2Lml84xZqv+5zoehN3EYAacN
-         tqEBipXYx5Bp38I9TQHc/Pinhk2ij5DIixsKTaUc8SMLAdxeZXUzVMZAVNU4yfit2ilv
-         T0SBE4FIKoL9euv2df/pqKZKjb+HPp7nBa51lQO7bEcYvcCRpudxDeIcP4t7DrAbyJlD
-         mHLFP2t8DP4RvqEDUtHsr/EccyoRvWqttF6uiWDqQaPD0f8x6Opm/KClgxeI6ScGAt1q
-         d1dU645q4RGZJlGlQBSL95UI1jUJwYPr/xXQQsA1BJDH9QMUs7+vP2kOSTLNfxt1wUxp
-         XCgg==
+        bh=HiEqMd3xsyy/ksNexRFAfYvN9OsAs0xxvpBCNib+PpM=;
+        b=fPqwqYGkAPyS2GsHS3ZjEMWjFhNCbocZjRUMb1PJ8s0mnO3m5Q7ZLbZB6gXiS6MkpN
+         zJIuGHzg3Pg6g2mpfzxAqdAtWPluEqAejLGJq9eIf58ujpqDvS+YBWxiYdae4nOpJZI0
+         GCxYyLWEEJwGd5lIPpbTE2mD/2coZMfW08utmOksup6o4DX7AEE0DPxZY1uXd8idP0EG
+         +4VVzkIbLzT7qqLZbFl9wNfyPo4LlxXMRwKPTDuNljoG7bppKUNoCw8T+08iojPm49es
+         oBfK7W5j6Maxg4KPDLHfyKSplP3zBn3gzy9SdbGIHkoOneW/cVinJTaNjrpcSnuV1yAO
+         Y5bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807781; x=1759412581;
+        d=1e100.net; s=20230601; t=1758807784; x=1759412584;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MbaY8V0OL9vVXDMnnkhXlW/3PWrqVdowYDRD++oQeQ0=;
-        b=fPeodCvc65vVI6jRUEphaf2jXRLFQJymEs6Lgjms7KRpGPF7thHgQ7xnUpSpwRUait
-         FdN83h5R3yLC2Lz2BJC1e9RA1OQ/WAbAbL44Oy/h6nzTsejC8MS68kupbfUElWtNNibw
-         Ac4R9nY74INYEFi1+eC7XislEvRw9g1mxUsbEbPskp8qDA8du56kg0ydtE0pWQs2ZfrJ
-         UE0jHr4e3jYoaOtJpQOAqISMlzrVFPtd4hm6vaf2mdB6gwXVTWs/nLlujgQXxOD8NoWL
-         f877AKVdC+BArgeFVMaNic71Fm4+lk1NyRil7MHTbx7t2JuU6X804NvplPjDaCXhAVdC
-         gOag==
-X-Forwarded-Encrypted: i=1; AJvYcCVvcDP0NVHWVBz5HttRYOHDFaag+qDdW6eNSnpzCK7H1dGGG9gC/MxvYSVRyQ1lPRxTAkWWsre2JS+mVNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4eUW0gbLmkohU1M5oHzAd/JgZ8h91BDNtC26I7MSjM7utuBYb
-	g+u8hCEXsjb+4t55cIYhHJbdmm7Ecyk204E9EdhwM8NugJEKpAfzRb0X
-X-Gm-Gg: ASbGnctmglmVhR5XR7ZAv8v/DSLofsQ9JABrfocpruL0Dbopqox2C99TtW5Oa+I/KM1
-	ZrZGZRkFEKttDrstiRAZlfRPVTNFl5jPePxmLdPlYc4MbarGU41rkesz5v6HbOYKGPd+5LF3zRU
-	7ARwwW5sJfqbhIzoO+LCn+L7zYzNlYFG+C4awIk9yzJ2P2kmnKas8GPq3BHP5qyeeA/rJCk72Lx
-	qHRPP1OmMr0IIUcL8rUrjK99GFHoOKLKDmztIXjFzauOVF/OEIBjZ0taAjR9cFz94LlqmYCx2om
-	avHNitSYmgGfB/JhOgPglIqUGXLKTW6Fb3/ee9rReJmtyAuSKxJYB/q+UR65kh8VJI5UJ4/39Gz
-	uk1tA3L25h8DSVKM0GV/H39jKmV2yrXW7sB7+nRQa3eeuanTsCM/ogieVady2WEekvXe7ov5jIZ
-	oos63aq/M77A5cg6OUhUwrx3CyEqGRmrAgIIOCCpfpOLHIm7pg8aZSqevUW38jXOMaVKWM
-X-Google-Smtp-Source: AGHT+IHcXs/1zZiL4mRHRcJmMaysro1gRq3C6CI7WzBk8URswdICjX7WDasck2n3oTmE+fT66Qso5Q==
-X-Received: by 2002:a05:6214:3017:b0:720:e5a:fe3b with SMTP id 6a1803df08f44-7fc417af017mr49768136d6.58.1758807780523;
-        Thu, 25 Sep 2025 06:43:00 -0700 (PDT)
+        bh=HiEqMd3xsyy/ksNexRFAfYvN9OsAs0xxvpBCNib+PpM=;
+        b=UPahJbqob+AqZhaU3D04jIO5s/j0Mm4pRFgrADMdH2ZZk6AyzuIUMR9tVLA9iRXCXh
+         S0Px8JMhRFyc4JFI5p6ZKIBrkjqZtQyr3wJTz1cXuIVuaY4qMHGR6K6SfZ8nEqESxqIp
+         hnTnp+1wOYSj1XdOdWCrhctUIx9G8ghunJZ4jkzQ/N/eEJd1O1yJWdYw5yKyQ2GyKQlb
+         sCxSQFITMAOkmgGfh1ak4aizRWyr6nPyACwWfMJwkzYkiKldduc+TlrrHw1a9RC9JA2b
+         SLSB2FsXhnrM2S7k49ijDHMkeX8X2xwOw9nH1SXCRCnbqYSnyrB84MvD+RZ+kdy6pDyT
+         8+BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOgJz9TsWVQPMFkYpKKxwGxgr5DRPKh0merm8bdk2v6Z5hSgzaxLYfL5Te0vkaeXpjzfrCq8uUiQ9oFKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNIO9tLW/RDQlT3HHYYYPqCCvlSzZnGFP767zD/wVkLvDoFJTG
+	8dX+GHNjuTqgRZa7soh/UdSPA+O8VT4rBptk0ej8y88eSiu3wXFO8tS8
+X-Gm-Gg: ASbGnctYqjDOPwK/znR4yCTvlzSCqOs/HeL+VdLZ3sxCIY9yCcBzhgP8iywyz5oG+o0
+	Pn9rtzPa3/LcExCFcDMQmoxV+b7iiHYuwIrG0JcwNZ5YQQmpzRTv8ZUlKHwnTRgM1l2E+EhSVm3
+	F9dfHa0JAy8BVH5HeVvCybrdRM4ackiDF/k1sJUssqDVASruNqEALEuQgxQkG71XUT5K5UGnibO
+	7G+D3XoIbi2vd3LTmF0Z5oWjw3HLnRg7j2MrJHFANF9dsWgJYwhGzxajB4zbT8hUJdkMD7GGiFt
+	Zmym9Q3W4ABwTJVD7tDSk9Wx1P0H75p5T4jEaYsWMyCJGWq4LsJ9Yi4WnKUpxGvgwlpgbRk9GH/
+	Isei07xpNFsz+edG6o72BfOIbxSOmwJkoNPLj45LNINlaim9Xy/WdKYvBlmIX+ycPeONartfbOn
+	TJvAydiawpLmSLS6dmSa4f5wy+GKmFP3IiBQLdSjsOYCdZeEDufBO6xGLtQLapmkQoVIt1HKCIB
+	KCPcUU=
+X-Google-Smtp-Source: AGHT+IFnMmPLM7sJgOTWJTZmOBtjOjlrmMiPSYJvwGy2g77wsP/Q26ddaL5tF9eDcxx/v05Wr7nlDg==
+X-Received: by 2002:a05:6214:f0a:b0:720:e4bd:d3e6 with SMTP id 6a1803df08f44-7fc374b2447mr37447426d6.15.1758807783375;
+        Thu, 25 Sep 2025 06:43:03 -0700 (PDT)
 Received: from 137.1.168.192.in-addr.arpa ([2600:4808:6353:5c00:7c:b286:dba3:5ba8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-800fa5f6dd7sm11852546d6.0.2025.09.25.06.42.58
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-800fa5f6dd7sm11852546d6.0.2025.09.25.06.43.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 06:42:59 -0700 (PDT)
+        Thu, 25 Sep 2025 06:43:02 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 25 Sep 2025 09:42:52 -0400
-Subject: [PATCH v16 1/3] samples: rust: platform: remove trailing commas
+Date: Thu, 25 Sep 2025 09:42:53 -0400
+Subject: [PATCH v16 2/3] rust: support formatting of foreign types
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-cstr-core-v16-1-5cdcb3470ec2@gmail.com>
+Message-Id: <20250925-cstr-core-v16-2-5cdcb3470ec2@gmail.com>
 References: <20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com>
 In-Reply-To: <20250925-cstr-core-v16-0-5cdcb3470ec2@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -107,47 +108,315 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
  Tamir Duberstein <tamird@gmail.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openssh-sha256; t=1758807776; l=1557;
+X-Developer-Signature: v=1; a=openssh-sha256; t=1758807776; l=11126;
  i=tamird@gmail.com; h=from:subject:message-id;
- bh=dR7SLmVNHIVh9rfgt0UBYbJhDHgMhtv5IQldU5Oo1x0=;
+ bh=56qk4oXZToDCRjUenEK2FztuuA7wWME8i0VRUMgg2i0=;
  b=U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7hJgs
  MRt+XVZTrIzMVIAAAAGcGF0YXR0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5AAAA
- QMBRuV/ubGHi6AJrHtMWEogs+gWnxrbm2zAAbtuo9cLcfxR+ZO72SsA4+aDO80NYB5ZrsYfMwz8
- lhrWFoc//jAM=
+ QFS5FBG5hG6X0Xkek0CL7w9zjaW6ziGcSIXaI/fHnn4mWXQaWHA2ook+z/gflzaX3Y+2kzogSEE
+ fyz6dlk+WKw8=
 X-Developer-Key: i=tamird@gmail.com; a=openssh;
  fpr=SHA256:264rPmnnrb+ERkS7DDS3tuwqcJss/zevJRzoylqMsbc
 
-This prepares for the next commit in which we introduce a custom
-formatting macro; that macro doesn't handle these spurious commas, so
-just remove them.
+Introduce a `fmt!` macro which wraps all arguments in
+`kernel::fmt::Adapter` and a `kernel::fmt::Display` trait. This enables
+formatting of foreign types (like `core::ffi::CStr`) that do not
+implement `core::fmt::Display` due to concerns around lossy conversions
+which do not apply in the kernel.
 
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/Custom.20formatting/with/516476467
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- samples/rust/rust_driver_platform.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ rust/kernel/fmt.rs     | 87 +++++++++++++++++++++++++++++++++++++++++++++-
+ rust/kernel/prelude.rs |  3 +-
+ rust/macros/fmt.rs     | 94 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ rust/macros/lib.rs     | 19 ++++++++++
+ rust/macros/quote.rs   |  7 ++++
+ 5 files changed, 207 insertions(+), 3 deletions(-)
 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 69ed55b7b0fa..ad08df0d73f0 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -146,7 +146,7 @@ fn properties_parse(dev: &device::Device) -> Result {
+diff --git a/rust/kernel/fmt.rs b/rust/kernel/fmt.rs
+index 0306e8388968..84d634201d90 100644
+--- a/rust/kernel/fmt.rs
++++ b/rust/kernel/fmt.rs
+@@ -4,4 +4,89 @@
+ //!
+ //! This module is intended to be used in place of `core::fmt` in kernel code.
  
-         let name = c_str!("test,u32-optional-prop");
-         let prop = fwnode.property_read::<u32>(name).or(0x12);
--        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n",);
-+        dev_info!(dev, "'{name}'='{prop:#x}' (default = 0x12)\n");
+-pub use core::fmt::{Arguments, Debug, Display, Error, Formatter, Result, Write};
++pub use core::fmt::{Arguments, Debug, Error, Formatter, Result, Write};
++
++/// Internal adapter used to route allow implementations of formatting traits for foreign types.
++///
++/// It is inserted automatically by the [`fmt!`] macro and is not meant to be used directly.
++///
++/// [`fmt!`]: crate::prelude::fmt!
++#[doc(hidden)]
++pub struct Adapter<T>(pub T);
++
++macro_rules! impl_fmt_adapter_forward {
++    ($($trait:ident),* $(,)?) => {
++        $(
++            impl<T: $trait> $trait for Adapter<T> {
++                fn fmt(&self, f: &mut Formatter<'_>) -> Result {
++                    let Self(t) = self;
++                    $trait::fmt(t, f)
++                }
++            }
++        )*
++    };
++}
++
++use core::fmt::{Binary, LowerExp, LowerHex, Octal, Pointer, UpperExp, UpperHex};
++impl_fmt_adapter_forward!(Debug, LowerHex, UpperHex, Octal, Binary, Pointer, LowerExp, UpperExp);
++
++/// A copy of [`core::fmt::Display`] that allows us to implement it for foreign types.
++///
++/// Types should implement this trait rather than [`core::fmt::Display`]. Together with the
++/// [`Adapter`] type and [`fmt!`] macro, it allows for formatting foreign types (e.g. types from
++/// core) which do not implement [`core::fmt::Display`] directly.
++///
++/// [`fmt!`]: crate::prelude::fmt!
++pub trait Display {
++    /// Same as [`core::fmt::Display::fmt`].
++    fn fmt(&self, f: &mut Formatter<'_>) -> Result;
++}
++
++impl<T: ?Sized + Display> Display for &T {
++    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
++        Display::fmt(*self, f)
++    }
++}
++
++impl<T: ?Sized + Display> core::fmt::Display for Adapter<&T> {
++    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
++        let Self(t) = self;
++        Display::fmt(t, f)
++    }
++}
++
++macro_rules! impl_display_forward {
++    ($(
++        $( { $($generics:tt)* } )? $ty:ty $( { where $($where:tt)* } )?
++    ),* $(,)?) => {
++        $(
++            impl$($($generics)*)? Display for $ty $(where $($where)*)? {
++                fn fmt(&self, f: &mut Formatter<'_>) -> Result {
++                    core::fmt::Display::fmt(self, f)
++                }
++            }
++        )*
++    };
++}
++
++impl_display_forward!(
++    bool,
++    char,
++    core::panic::PanicInfo<'_>,
++    Arguments<'_>,
++    i128,
++    i16,
++    i32,
++    i64,
++    i8,
++    isize,
++    str,
++    u128,
++    u16,
++    u32,
++    u64,
++    u8,
++    usize,
++    {<T: ?Sized>} crate::sync::Arc<T> {where crate::sync::Arc<T>: core::fmt::Display},
++    {<T: ?Sized>} crate::sync::UniqueArc<T> {where crate::sync::UniqueArc<T>: core::fmt::Display},
++);
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index 198d09a31449..26424ad7e989 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -25,7 +25,7 @@
+ pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, VVec, Vec};
  
-         // A missing required property will print an error. Discard the error to
-         // prevent properties_parse from failing in that case.
-@@ -161,7 +161,7 @@ fn properties_parse(dev: &device::Device) -> Result {
-         let prop: [i16; 4] = fwnode.property_read(name).required_by(dev)?;
-         dev_info!(dev, "'{name}'='{prop:?}'\n");
-         let len = fwnode.property_count_elem::<u16>(name)?;
--        dev_info!(dev, "'{name}' length is {len}\n",);
-+        dev_info!(dev, "'{name}' length is {len}\n");
+ #[doc(no_inline)]
+-pub use macros::{export, kunit_tests, module, vtable};
++pub use macros::{export, fmt, kunit_tests, module, vtable};
  
-         let name = c_str!("test,i16-array");
-         let prop: KVec<i16> = fwnode.property_read_array_vec(name, 4)?.required_by(dev)?;
+ pub use pin_init::{init, pin_data, pin_init, pinned_drop, InPlaceWrite, Init, PinInit, Zeroable};
+ 
+@@ -36,7 +36,6 @@
+ pub use super::dbg;
+ pub use super::{dev_alert, dev_crit, dev_dbg, dev_emerg, dev_err, dev_info, dev_notice, dev_warn};
+ pub use super::{pr_alert, pr_crit, pr_debug, pr_emerg, pr_err, pr_info, pr_notice, pr_warn};
+-pub use core::format_args as fmt;
+ 
+ pub use super::{try_init, try_pin_init};
+ 
+diff --git a/rust/macros/fmt.rs b/rust/macros/fmt.rs
+new file mode 100644
+index 000000000000..2f4b9f6e2211
+--- /dev/null
++++ b/rust/macros/fmt.rs
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++
++use proc_macro::{Ident, TokenStream, TokenTree};
++use std::collections::BTreeSet;
++
++/// Please see [`crate::fmt`] for documentation.
++pub(crate) fn fmt(input: TokenStream) -> TokenStream {
++    let mut input = input.into_iter();
++
++    let first_opt = input.next();
++    let first_owned_str;
++    let mut names = BTreeSet::new();
++    let first_span = {
++        let Some((mut first_str, first_span)) = (match first_opt.as_ref() {
++            Some(TokenTree::Literal(first_lit)) => {
++                first_owned_str = first_lit.to_string();
++                Some(first_owned_str.as_str()).and_then(|first| {
++                    let first = first.strip_prefix('"')?;
++                    let first = first.strip_suffix('"')?;
++                    Some((first, first_lit.span()))
++                })
++            }
++            _ => None,
++        }) else {
++            return first_opt.into_iter().chain(input).collect();
++        };
++
++        // Parse `identifier`s from the format string.
++        //
++        // See https://doc.rust-lang.org/std/fmt/index.html#syntax.
++        while let Some((_, rest)) = first_str.split_once('{') {
++            first_str = rest;
++            if let Some(rest) = first_str.strip_prefix('{') {
++                first_str = rest;
++                continue;
++            }
++            if let Some((name, rest)) = first_str.split_once('}') {
++                first_str = rest;
++                let name = name.split_once(':').map_or(name, |(name, _)| name);
++                if !name.is_empty() && !name.chars().all(|c| c.is_ascii_digit()) {
++                    names.insert(name);
++                }
++            }
++        }
++        first_span
++    };
++
++    let adapter = quote_spanned!(first_span => ::kernel::fmt::Adapter);
++
++    let mut args = TokenStream::from_iter(first_opt);
++    {
++        let mut flush = |args: &mut TokenStream, current: &mut TokenStream| {
++            let current = std::mem::take(current);
++            if !current.is_empty() {
++                let (lhs, rhs) = (|| {
++                    let mut current = current.into_iter();
++                    let mut acc = TokenStream::new();
++                    while let Some(tt) = current.next() {
++                        // Split on `=` only once to handle cases like `a = b = c`.
++                        if matches!(&tt, TokenTree::Punct(p) if p.as_char() == '=') {
++                            names.remove(acc.to_string().as_str());
++                            // Include the `=` itself to keep the handling below uniform.
++                            acc.extend([tt]);
++                            return (Some(acc), current.collect::<TokenStream>());
++                        }
++                        acc.extend([tt]);
++                    }
++                    (None, acc)
++                })();
++                args.extend(quote_spanned!(first_span => #lhs #adapter(&#rhs)));
++            }
++        };
++
++        let mut current = TokenStream::new();
++        for tt in input {
++            match &tt {
++                TokenTree::Punct(p) if p.as_char() == ',' => {
++                    flush(&mut args, &mut current);
++                    &mut args
++                }
++                _ => &mut current,
++            }
++            .extend([tt]);
++        }
++        flush(&mut args, &mut current);
++    }
++
++    for name in names {
++        let name = Ident::new(name, first_span);
++        args.extend(quote_spanned!(first_span => , #name = #adapter(&#name)));
++    }
++
++    quote_spanned!(first_span => ::core::format_args!(#args))
++}
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index fa847cf3a9b5..793f712dbf7c 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -15,6 +15,7 @@
+ mod quote;
+ mod concat_idents;
+ mod export;
++mod fmt;
+ mod helpers;
+ mod kunit;
+ mod module;
+@@ -201,6 +202,24 @@ pub fn export(attr: TokenStream, ts: TokenStream) -> TokenStream {
+     export::export(attr, ts)
+ }
+ 
++/// Like [`core::format_args!`], but automatically wraps arguments in [`kernel::fmt::Adapter`].
++///
++/// This macro allows generating `fmt::Arguments` while ensuring that each argument is wrapped with
++/// `::kernel::fmt::Adapter`, which customizes formatting behavior for kernel logging.
++///
++/// Named arguments used in the format string (e.g. `{foo}`) are detected and resolved from local
++/// bindings. All positional and named arguments are automatically wrapped.
++///
++/// This macro is an implementation detail of other kernel logging macros like [`pr_info!`] and
++/// should not typically be used directly.
++///
++/// [`kernel::fmt::Adapter`]: ../kernel/fmt/struct.Adapter.html
++/// [`pr_info!`]: ../kernel/macro.pr_info.html
++#[proc_macro]
++pub fn fmt(input: TokenStream) -> TokenStream {
++    fmt::fmt(input)
++}
++
+ /// Concatenate two identifiers.
+ ///
+ /// This is useful in macros that need to declare or reference items with names
+diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
+index acc140c18653..ddfc21577539 100644
+--- a/rust/macros/quote.rs
++++ b/rust/macros/quote.rs
+@@ -48,6 +48,7 @@ macro_rules! quote_spanned {
+     ($span:expr => $($tt:tt)*) => {{
+         let mut tokens = ::proc_macro::TokenStream::new();
+         {
++            #[allow(unused_variables)]
+             let span = $span;
+             quote_spanned!(@proc tokens span $($tt)*);
+         }
+@@ -146,6 +147,12 @@ macro_rules! quote_spanned {
+         )]);
+         quote_spanned!(@proc $v $span $($tt)*);
+     };
++    (@proc $v:ident $span:ident & $($tt:tt)*) => {
++        $v.extend([::proc_macro::TokenTree::Punct(
++            ::proc_macro::Punct::new('&', ::proc_macro::Spacing::Alone),
++        )]);
++        quote_spanned!(@proc $v $span $($tt)*);
++    };
+     (@proc $v:ident $span:ident _ $($tt:tt)*) => {
+         $v.extend([::proc_macro::TokenTree::Ident(
+             ::proc_macro::Ident::new("_", $span),
 
 -- 
 2.51.0
