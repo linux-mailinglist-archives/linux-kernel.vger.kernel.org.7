@@ -1,57 +1,103 @@
-Return-Path: <linux-kernel+bounces-833338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EEDBA1B5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDFFBA1B77
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811E8626E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89DDD188A82D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A0B287267;
-	Thu, 25 Sep 2025 21:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6C2882A9;
+	Thu, 25 Sep 2025 21:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9jw1uPI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dmXVCM11"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC7F1F91D6;
-	Thu, 25 Sep 2025 21:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719010FD
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758837479; cv=none; b=PVJhMGF2VucX/38X5bUmVDfvmxVEmeXrB2t9mjSWVxt6CnMyQAptnhgbkGDTwRoUIxJW00gdXAzL/ntEz4S8EnaZZ6ZSttkASuA3ciQAAz7ETfJ5u1KKNstE7wXXViBNFfq13kA6zHSolHoaqizF0rt6m7v/IyGD8mkw9QmHrLU=
+	t=1758837591; cv=none; b=qb/c4GG3CebEVhDPikXae34qxPkxIjo+1UATpURKLwNXlENK4xkJtfOQlRbqV/dn4zsyl545iSvHk51r2DhSpK29pbVnDfUwQ2c7zRJnIylTZIEOzgNt0Wfq/5foJGz5iHqNVOvtwnqW0RRD0DDiM45wUnChdw/+Q0abMax21uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758837479; c=relaxed/simple;
-	bh=XSHViZo3Pi55CeXnpkwa+76DxWBGmZaI9vptrJBuf3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=h4b03vz3DckNkv9z4G+rMTTgvDSkhcJgXYtL1Ua2Tn84Dge3yIIO2w9ZAwmf9zFd7roeY01XZMrm+3xzGF3pt+mJ0vpd4B9pet9S56p3GJopV9ZjzxTQtiSCqN5s8bBF3qg9TZuP5/3dkgUEsDaR7mQiFcfu08PC2ld4Bxah82Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9jw1uPI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA3EC4CEF0;
-	Thu, 25 Sep 2025 21:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758837478;
-	bh=XSHViZo3Pi55CeXnpkwa+76DxWBGmZaI9vptrJBuf3Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=O9jw1uPIi82h87JIKbVTIqu+AZDAM6k59eR34EetiOXMbG80a0szGPh5gViG08yGl
-	 /QUNaZ27F2FodFn/W1wqFbHSTGFO+dbS9UK1VEVHUI+BOYgO2wr1LrUSvIiwx54EFj
-	 cC+Ynvw9g8wd/RcH0Lki2jVBgwo4GQrA+OPJWkK+gAokG3V9doBxAQ33aIz9teJGqx
-	 T6ow1SftLrX7eYgxfMNiRvsdTzW2miiSy0qxTChgG4uzufaUT1Ggrb3a/wVsa9kXg2
-	 MQEDzbZm4IlpLxs8hQ+Xm7FZhfoQ4HPZGXSHRve9tmG1jLdMjHGj8PfS5dXyYWU/sO
-	 saYoyggiS0edA==
-Date: Thu, 25 Sep 2025 16:57:57 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] PCI: imx6: Add a method to handle CLKREQ#
- override active low
-Message-ID: <20250925215757.GA2205491@bhelgaas>
+	s=arc-20240116; t=1758837591; c=relaxed/simple;
+	bh=zQb+dGtMb2u6KWUTABuTq2+gnHyg2j9x5k8jyapv30M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=da88iNEBEPbQ6/a9nacJEyi+DUAc3BbOopQkGPosA6msCtmUVIhJjpBVcH+pxfB8XUsWpw/E1CJCqxyCHEVYM5wgFW9sxDNn4pZAPQzWZ66pPEkzjS74IVyVLOrK7avjWPno0V46S0/PD5QpXDJG3rxhJPBuZaIHpEgYprcYy0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dmXVCM11; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPtf9024193
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:59:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BR5HUPeCfft1NCbbIet3qxND
+	5IfQR5IsgBoObFi2Je0=; b=dmXVCM11cDQ/e7iP/aeOEcPaRINrPzjAhfS2OeIL
+	Zv8rCZjqsL/dC2KHqPEY4C/OREtV7GtdvP5RKd3Wy3qDPVVf1Wl8+XxJlbvl0o0b
+	cd4e4PA1y05OrXAk6+NWW0R44IiPaluKPmNUuxNIXWNHxEwZR/XDNabMBsFhZNLO
+	ZDHDaDCkUmjjQDFz+7W1hlk4ahxeoVaW8KVGE27VbvKox82+mY9I1TZGPD3iP9Ij
+	6cJxPGdzy8FzkREB2oGpXimWlXwdQzdCk5A2lUQTPea38qi5wTpfFn6SchdLWE9f
+	iQWRal0RDRoP4msoWLPjpWeQA/f4KIBUK2D97k6EteWklg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0qrgpu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:59:49 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4cce66e91e3so48200931cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:59:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758837588; x=1759442388;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BR5HUPeCfft1NCbbIet3qxND5IfQR5IsgBoObFi2Je0=;
+        b=uiAB7V6qlbZsi46gwCpU8Mr6Qs7OXiRu9LrtVWlOmfkTHPf1LN5lQ11qNvcZyK88Kw
+         F60mp+vS9edXe1dp0cus2eovrZTv5rkJVpgS/wMYfC2hsuqsgN7c6KLtbuFeXEjni1nj
+         6BsCWEtIEO1vFryH5Ou91Od9gAXPZnyCNi5cgwbEZf7ZS+zoOkWTheXJElikmCg80+A4
+         u2jtfQnJwc5c7G+yH3Kzjo7M6YxY8gbaxQg2jhjFlOukhh4LtNgvjITpXOHlplnPngqZ
+         y+2paV9X5eERQ8JaqL7iY3AwdxG0DCnSdapUOlPCAPBAtDy5Iq96DDWndlE9zV+QKx4j
+         sJdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIfMrFObu/9/vQ7i3MvvVw9IqMxZVQI38wvmk4/3ZHPw3Z36QxHVzxYkEDqWw6CjFRo8tc/Lzsk7hDtfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeGjwuxVqmE1KRTylvwxYM0hIzdbo+G+Hx/BU9BGVMjNU9lSPf
+	W1A5VQp28xCFqtWyDOQAm3aXXToy+KVY2QrGLeiWxG6lILrflKqTPTn3wa+0RlFa66rGzkteUop
+	ae3wcA5oBaKBwk27GRWg6YdxvGPjfrTrdzK5/S56vXGsWiWUjzBfc4wLHa8zLkie2cIg18toajb
+	I=
+X-Gm-Gg: ASbGnctcOMbwoRClz8pk5K8kf59x5VR3ASVsyrESFmtzni6tN9jH7LuLyWozwLNUoND
+	qs2+MHMnLawfIHw26p26Iw+XDJnC1mFCBbwb8SBOyLsaSmrwp+uBGrDQwIyUPnq6PZk6IzFYzkr
+	Cv1s3EZJBBQiMJbaCF1gZJZ0CNDgnbYAtXl8rPbTTY+c/EWzW6eQ1UegKZdU15tNe7k6bLZQSkf
+	Lyeapz8sUOSHqTW9lHCmOcfQ3VNG0PYaE9mRjIwj2GM0+7d4WovBTAwO2WgXB0ZwJpZtBsgpkmg
+	YGb18coBbS0S0ob5f1VOdTR89Rh1BSIay7XiO2cHLM8fDL8pVsTSJFMPK9x8SKVei3SxdLmG9Mg
+	og8B5CGKfc2jveyxMzDND8a8F1cYwRpKzH/2iMYSCZVg60d1+21S/
+X-Received: by 2002:a05:622a:1cc9:b0:4b6:3451:a159 with SMTP id d75a77b69052e-4da4b80882cmr93562221cf.49.1758837587706;
+        Thu, 25 Sep 2025 14:59:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPiYBr7KbUyHOeG6VWHRGxMxNAqbYyBxg/ol3QRzwFxfVNAh47tngb7nHx6SI96PgsExBvVg==
+X-Received: by 2002:a05:622a:1cc9:b0:4b6:3451:a159 with SMTP id d75a77b69052e-4da4b80882cmr93561991cf.49.1758837587291;
+        Thu, 25 Sep 2025 14:59:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313431070sm1170275e87.12.2025.09.25.14.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 14:59:46 -0700 (PDT)
+Date: Fri, 26 Sep 2025 00:59:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ayushi Makhija <quic_amakhija@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com, sean@poorly.run,
+        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
+        conor+dt@kernel.org, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_rajeevny@quicinc.com,
+        quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
+Subject: Re: [PATCH 1/3] dt-bindings: display: msm: document DSI controller
+ and phy on QCS8300
+Message-ID: <zjjnizyz4gj5z242dhgwgvxk2pkxoyhchcicwbbzod2m6z6mx6@xjapoj6goo47>
+References: <20250925053602.4105329-1-quic_amakhija@quicinc.com>
+ <20250925053602.4105329-2-quic_amakhija@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,181 +106,189 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923073913.2722668-3-hongxing.zhu@nxp.com>
+In-Reply-To: <20250925053602.4105329-2-quic_amakhija@quicinc.com>
+X-Proofpoint-ORIG-GUID: nkt-cVr0WxREaCGgs1p6vz53B9vJ1HUp
+X-Authority-Analysis: v=2.4 cv=bJ0b4f+Z c=1 sm=1 tr=0 ts=68d5bb55 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=9Lg_u9sHXrgwa_hBAsgA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX3eoKfiLfCA2F
+ Ao6PDzyFGLvT9wo4dxZbG+kb9PtZ8smLD3DLryyHefUixbGDlQseIJX49/3Adb+OXfmp+aCa3cA
+ wMxUR3O0Gbh++Zh6oAzCcaQJXsIWjuahoMDphAn3M5KweltyaNXPMF3mVgJAtjghk93+0TO8H7Z
+ FmQDNa2jkKKG7Qm5C4Eky6OFvZG9gnUv3FNEkak9KCow4590PtjDEh5ozTzf01t/6RBVhoLxuRZ
+ tczzYUPpsYwu+q+USqP7eGDrm6qS8zEdi7tqy0mTkhVvWxnldpEkmGad8HzbVHjCT9hmLAClsv5
+ xlLtNZA0yaSm2DTofAw8Fa6+hEUVXBj5/EzvrpVTM/DXPWUAlS1k0kHENIvZK95b30amA0DGwPw
+ PJmESkESvOPvo5gCItWEVoQBUeNpkA==
+X-Proofpoint-GUID: nkt-cVr0WxREaCGgs1p6vz53B9vJ1HUp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On Tue, Sep 23, 2025 at 03:39:13PM +0800, Richard Zhu wrote:
-> The CLKREQ# is an open drain, active low signal that is driven low by
-> the card to request reference clock. It's an optional signal added in
-> PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
-> reserved.
+On Thu, Sep 25, 2025 at 11:06:00AM +0530, Ayushi Makhija wrote:
+> Document DSI controller and phy on QCS8300 platform.
 > 
-> Since the reference clock controlled by CLKREQ# may be required by i.MX
-> PCIe host too. To make sure this clock is ready even when the CLKREQ#
-> isn't driven low by the card(e.x the scenario described above), force
-> CLKREQ# override active low for i.MX PCIe host during initialization.
-> 
-> The CLKREQ# override can be cleared safely when supports-clkreq is
-> present and PCIe link is up later. Because the CLKREQ# would be driven
-> low by the card at this time.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
 > ---
->  drivers/pci/controller/dwc/pci-imx6.c | 43 ++++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
+>  .../display/msm/qcom,qcs8300-mdss.yaml        | 100 +++++++++++++++++-
+>  1 file changed, 99 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 80e48746bbaf..6b03b1111d06 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -52,6 +52,8 @@
->  #define IMX95_PCIE_REF_CLKEN			BIT(23)
->  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
->  #define IMX95_PCIE_SS_RW_REG_1			0xf4
-> +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
-> +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
->  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml
+> index e96baaae9ba9..f34823ed4433 100644
+> --- a/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml
+> @@ -53,13 +53,23 @@ patternProperties:
+>          contains:
+>            const: qcom,qcs8300-dp
 >  
->  #define IMX95_PE0_GEN_CTRL_1			0x1050
-> @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
->  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
->  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
->  	int (*wait_pll_lock)(struct imx_pcie *pcie);
-> +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
->  	const struct dw_pcie_host_ops *ops;
->  };
->  
-> @@ -149,6 +152,7 @@ struct imx_pcie {
->  	struct gpio_desc	*reset_gpiod;
->  	struct clk_bulk_data	*clks;
->  	int			num_clks;
-> +	bool			supports_clkreq;
->  	struct regmap		*iomuxc_gpr;
->  	u16			msi_ctrl;
->  	u32			controller_id;
-> @@ -239,6 +243,16 @@ static unsigned int imx_pcie_grp_offset(const struct imx_pcie *imx_pcie)
->  	return imx_pcie->controller_id == 1 ? IOMUXC_GPR16 : IOMUXC_GPR14;
->  }
->  
-> +static void  imx95_pcie_clkreq_override(struct imx_pcie *imx_pcie, bool enable)
-> +{
-> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN,
-> +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_EN : 0);
-> +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
-> +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
-> +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_VAL : 0);
-> +}
-> +
->  static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)
->  {
->  	/*
-> @@ -685,7 +699,7 @@ static int imx6q_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
->  	return 0;
->  }
->  
-> -static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
-> +static void imx8mm_pcie_clkreq_override(struct imx_pcie *imx_pcie, bool enable)
->  {
->  	int offset = imx_pcie_grp_offset(imx_pcie);
->  
-> @@ -695,6 +709,11 @@ static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
->  	regmap_update_bits(imx_pcie->iomuxc_gpr, offset,
->  			   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
->  			   enable ? IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN : 0);
-> +}
-> +
-> +static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool enable)
-> +{
-> +	imx8mm_pcie_clkreq_override(imx_pcie, enable);
->  	return 0;
->  }
->  
-> @@ -1298,6 +1317,16 @@ static void imx_pcie_host_exit(struct dw_pcie_rp *pp)
->  		regulator_disable(imx_pcie->vpcie);
->  }
->  
-> +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
-> +{
-> +	imx8mm_pcie_clkreq_override(imx_pcie, false);
-> +}
-> +
-> +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
-> +{
-> +	imx95_pcie_clkreq_override(imx_pcie, false);
-> +}
-> +
->  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -1322,6 +1351,12 @@ static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
->  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
->  		dw_pcie_dbi_ro_wr_dis(pci);
->  	}
-> +
-> +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
-> +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
-> +		if (imx_pcie->drvdata->clr_clkreq_override)
-> +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
-> +	}
->  }
->  
->  /*
-> @@ -1745,6 +1780,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	pci->max_link_speed = 1;
->  	of_property_read_u32(node, "fsl,max-link-speed", &pci->max_link_speed);
->  
-> +	imx_pcie->supports_clkreq =
-> +		of_property_read_bool(node, "supports-clkreq");
->  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
->  	if (IS_ERR(imx_pcie->vpcie)) {
->  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV)
-> @@ -1873,6 +1910,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
->  		.init_phy = imx8mq_pcie_init_phy,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
->  	},
->  	[IMX8MM] = {
->  		.variant = IMX8MM,
-> @@ -1883,6 +1921,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
->  	},
->  	[IMX8MP] = {
->  		.variant = IMX8MP,
-> @@ -1893,6 +1932,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.mode_off[0] = IOMUXC_GPR12,
->  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
+> +  "^dsi@[0-9a-f]+$":
+> +    type: object
+> +    additionalProperties: true
+> +    properties:
+> +      compatible:
+> +        contains:
+> +          const: qcom,sa8775p-dsi-ctrl
 
-imx8mm_pcie_enable_ref_clk() and imx8mm_pcie_clr_clkreq_override()
-both call imx8mm_pcie_clkreq_override().
+Why? It should be qcs8300-dsi-ctrl
 
-All these devices that use imx8mm_pcie_clr_clkreq_override() also
-enable the refclk in .init() by overriding clkreq, so .post_init()
-clears that override.
+> +
+>    "^phy@[0-9a-f]+$":
+>      type: object
+>      additionalProperties: true
+>      properties:
+>        compatible:
+>          contains:
+> -          const: qcom,qcs8300-edp-phy
+> +          enum:
+> +            - qcom,qcs8300-edp-phy
+> +            - qcom,sa8775p-dsi-phy-5nm
+>  
+>  required:
+>    - compatible
+> @@ -71,6 +81,7 @@ examples:
+>      #include <dt-bindings/interconnect/qcom,icc.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>      #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
+>      #include <dt-bindings/interconnect/qcom,qcs8300-rpmh.h>
+>      #include <dt-bindings/power/qcom,rpmhpd.h>
+> @@ -142,6 +153,14 @@ examples:
+>                           remote-endpoint = <&mdss_dp0_in>;
+>                      };
+>                  };
+> +
+> +                port@1 {
+> +                    reg = <1>;
+> +                    dpu_intf1_out: endpoint {
+> +                        remote-endpoint = <&mdss_dsi0_in>;
+> +                    };
+> +                };
+> +
 
->  	},
->  	[IMX8Q] = {
->  		.variant = IMX8Q,
-> @@ -1913,6 +1953,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.core_reset = imx95_pcie_core_reset,
->  		.init_phy = imx95_pcie_init_phy,
->  		.wait_pll_lock = imx95_pcie_wait_for_phy_pll_lock,
-> +		.clr_clkreq_override = imx95_pcie_clr_clkreq_override,
+Drop extra empty line
 
-But here there's no .enable_ref_clk() method, so I guess this device
-must override clkreq automatically and the driver doesn't have to
-enable that?
+>              };
+>  
+>              mdp_opp_table: opp-table {
+> @@ -169,6 +188,85 @@ examples:
+>              };
+>          };
+>  
+> +        dsi@ae94000 {
+> +            compatible = "qcom,sa8775p-dsi-ctrl", "qcom,mdss-dsi-ctrl";
+> +            reg = <0x0ae94000 0x400>;
+> +            reg-names = "dsi_ctrl";
+> +
+> +            interrupt-parent = <&mdss>;
+> +            interrupts = <4>;
+> +
+> +            clocks = <&dispcc MDSS_DISP_CC_MDSS_BYTE0_CLK>,
+> +                     <&dispcc MDSS_DISP_CC_MDSS_BYTE0_INTF_CLK>,
+> +                     <&dispcc MDSS_DISP_CC_MDSS_PCLK0_CLK>,
+> +                     <&dispcc MDSS_DISP_CC_MDSS_ESC0_CLK>,
+> +                     <&dispcc MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +                     <&gcc GCC_DISP_HF_AXI_CLK>;
+> +            clock-names = "byte",
+> +                          "byte_intf",
+> +                          "pixel",
+> +                          "core",
+> +                          "iface",
+> +                          "bus";
+> +            assigned-clocks = <&dispcc MDSS_DISP_CC_MDSS_BYTE0_CLK_SRC>,
+> +                              <&dispcc MDSS_DISP_CC_MDSS_PCLK0_CLK_SRC>;
+> +            assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
+> +            phys = <&mdss_dsi0_phy>;
+> +
+> +            operating-points-v2 = <&dsi0_opp_table>;
+> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +
+> +            vdda-supply = <&vreg_l5a>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +                    mdss0_dsi0_in: endpoint {
+> +                        remote-endpoint = <&dpu_intf1_out>;
+> +                    };
+> +                };
+> +
+> +                port@1 {
+> +                    reg = <1>;
+> +                    mdss0_dsi0_out: endpoint { };
+> +                };
+> +            };
+> +
+> +            dsi0_opp_table: opp-table {
+> +                compatible = "operating-points-v2";
+> +
+> +                opp-358000000 {
+> +                    opp-hz = /bits/ 64 <358000000>;
+> +                    required-opps = <&rpmhpd_opp_svs_l1>;
+> +                };
+> +            };
+> +        };
+> +
+> +        mdss_dsi0_phy: phy@ae94400 {
+> +            compatible = "qcom,sa8775p-dsi-phy-5nm";
+> +            reg = <0x0ae94400 0x200>,
+> +                  <0x0ae94600 0x280>,
+> +                  <0x0ae94900 0x27c>;
+> +            reg-names = "dsi_phy",
+> +                        "dsi_phy_lane",
+> +                        "dsi_pll";
+> +
+> +            #clock-cells = <1>;
+> +            #phy-cells = <0>;
+> +
+> +            clocks = <&dispcc MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +                     <&rpmhcc RPMH_CXO_CLK>;
+> +            clock-names = "iface", "ref";
+> +
+> +            vdds-supply = <&vreg_l4a>;
+> +          };
 
->  	},
->  	[IMX8MQ_EP] = {
->  		.variant = IMX8MQ_EP,
+Wrong indentation
+
+> +
+>          mdss_dp0_phy: phy@aec2a00 {
+>              compatible = "qcom,qcs8300-edp-phy", "qcom,sa8775p-edp-phy";
+>  
 > -- 
-> 2.37.1
+> 2.34.1
 > 
+
+-- 
+With best wishes
+Dmitry
 
