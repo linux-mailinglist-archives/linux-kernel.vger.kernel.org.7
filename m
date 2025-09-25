@@ -1,170 +1,193 @@
-Return-Path: <linux-kernel+bounces-832395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01919B9F3B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E75B9F3BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047B77A95FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F44F3A9EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E658A2FE072;
-	Thu, 25 Sep 2025 12:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4A42FDC44;
+	Thu, 25 Sep 2025 12:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arhJRmS+"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gfp1mM3B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75842F3C00
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966B72FD7D6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758803307; cv=none; b=GpI8iYHhEXE7v3oksun2hYZ7EuU9TcU6LrZaKtd28AzqngD2epTDnrBF3DyuM3Fb+XoaH7qx1VfVUoaj3O3rIaDkFXY3XskVQMZYDNwq3a92mPxnGnhjo6zKKIZQ7bDEIKddSdcB5Biyx2Im5OvKM4hc4+cmOFWyyAV0dCFZH64=
+	t=1758803319; cv=none; b=PNrQJbyub4w2A8PLhGysdwhT3l+cznfROfkQBZIvBPUbJPkOGXwKA+DUtXiIO4jBFoxpFJq6fGIzZTC76g4OKboUBgUS2O2nx0iq/X01i05SbaTzfin82oVAs6BD5wn0iLcQg81g2+dYyxzuFlZmxa2KB8CcQpJCcvV6JF6HfmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758803307; c=relaxed/simple;
-	bh=n+Npa7HxFe6GydJe9QQHI1j2Gl2iX/SizqTe5U1vWuk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TVSJYBM6Nu6psfFvG82MB9kxpSyYhyMJWA/mJ4RTBH24HfZqaTyCc4pTQKpaMLaQOVYjc4buk4dKOocRx+CdnEUIntWWevcowEj8jWsaupkbfq8lmjyFd14TRdvGi/PgH+wilV5YHGuTrKQyWRTCBVr/zarmI7Sf1XIwc3WVtKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arhJRmS+; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8cf4f90b6f0so72558839f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758803305; x=1759408105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPSfZsGw7TX5UGkY7/kJizo+KvLE8uMTFRrfjAd897s=;
-        b=arhJRmS+Km7y4VrrAbQ15m4egArvN3KpuQvpKpC0h+60vQjpYZo8desnOaesKK0smo
-         rfYungrGkUOmfb4g6e7qS3Oqj79kLh2kC6HiyVPjEOPLTpKZ/olLytDo18vJC1qdiWJt
-         bFPr+9Z+2gHBHTcM95w8fNmeYdTllXn5MkYuMsF4CIVeGowH8CNrOnnjCkRsWzGYVIYz
-         wYwSVqD9Wnujo5ZD+9n+LG+trwJs6qHuPECW4ehJEWrElOE0K2IUhmT/pGSD/7txR05c
-         KF42boluL6YHjHb9IO1+wAIVWvP1KpXRu3P1XOZrET70NpF1NKWZnwdFGDaNYhtMauB9
-         QBsw==
+	s=arc-20240116; t=1758803319; c=relaxed/simple;
+	bh=xoBcjEOsWzKlUY+RY517e5wLJ9Njlv/IQK7AyZKOOqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV/hI3fbzeckEsZIy52Kw1aneMu/2OD9c1vKnauAGXTk57nntbXM7vqBmB4KjyULAQygAFHZu64nXUaPj8F8bQkSPakq1BK4QX2dQpZGJo/6SYoJb0mlPzK8cZlJxxqx1IcVEJpyplVBaiSrh+FNeWuE8Xc9RyENGmq1QVVoWlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gfp1mM3B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9jkQj023773
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:28:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V0GZRRknW9o7EW1Yvnd92OLQ2hYDNAl+jne1+4CXJp0=; b=gfp1mM3BbTepL/lR
+	tqijfC4pqojPJ3Ke757LTAb0z4Kp120gmyEnXBMuqErMpOGjV9EbzTrmsjmKN0HX
+	6TEVzfGr4AjR1Hrj14N9vrK+MixEYFm3qQKVVHyjsYmjMrSd1I9cJYoCUTM5fIa7
+	64dmiOvx6ZRPMbpStv4mmlGmSB8LToMQe3lvmeezmVVb8DJMuB0MN2sc4dfEK6wg
+	JDhmQzX+kwyewJoJoIfye59Qnx+mzcf7/cUoTalpbcofIUI7zRR3slGpUk8iPgfk
+	/MWj3h+yy02hoBppVHnIKiOgeFqAegXTr/zvvuR+g+Cm9AuevZvyOcLGLQD2GqtN
+	uP4Y1w==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bwp0f351-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:28:36 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8572f379832so29679585a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:28:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758803305; x=1759408105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cPSfZsGw7TX5UGkY7/kJizo+KvLE8uMTFRrfjAd897s=;
-        b=r6QY2+SFIawjwMJKJvIkyBwPpwBi50gwdsjvIC7rAunAknOrC84EgDO0fLOqyT4Ies
-         5Bhw8N7w1YVcsN/9uWB7awAho38TmIie/LOA6xBrt/6ZggexbSNGWJRRZSEKoKmynbV3
-         PArvp+vpoflWIqGmSjfsgBwRQ6cB+lEqyHi281fsI7KI3cTB4SuDIsbqmk0wbwK3+AHM
-         6epbcizpuWPORBJ80PSl2gp1T8QHegZcVJlEhABy60tzued1CXwrc2++P/LSvz352UeH
-         zoX6NxifzbcJ1PhL4F7IN6EkSMxwMy9xqWYJM9q5JyIOb3JXYdGIB4HMKmquEonr7zwO
-         Wekw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDDpjtj4SXde+lBzO5p01LEZx7V6MdNjuH/X+mKgBfLB5EGpUMvOCl0cM1UlSXjmA59CXlLevEISqPcjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+Myx0gxcCNvsqO26h/udEglP9QvABZeDDk2Sk6Q6KQZHM5Pd
-	Y+DGPay8r3TN97Dnl55Qn7OgueM6wiFakvRobC07N9DHm5FgIwX4l/Qh76sRGx22
-X-Gm-Gg: ASbGncuPanYYF1j7PRIRdLBYhho+1FWX2ILzhnYPsI1K+dmKQEeFNYnzC7c40bnMv5M
-	IP6t5tlNiSbulD/wUk9w6LIAbuGgvzIW1i2Pi9HYfst0lv0afXWaUtR3xdTd9yxY0n4R1g8vxVL
-	E5lC6n/VT98AWq2WQIBmqNSQCwMQXGi8nPwIH8ZdIri/8fhgriPBvx4j6z94LnccD3X9G2+SL8s
-	DjsEev/jn6PfLrDDkL5HBnIOLJys6hYNjdqtdNTLDSHgiD2eVfHOxkMQvQ3AEzeXmwssmw0StD4
-	C9R24DxjRqp6tD/kbhOGUJG/mg1MJe/LEBiDF2qXd7/zmjNQxoRNIFsd6Zdnd5vOnueLJqY6aNg
-	S/bxMfxVN35DaEK44Y+ElGhRwJ5CLcMs3U5XG8c6TktqIoRaQUJgG/REs
-X-Google-Smtp-Source: AGHT+IEuMMUPS//JklNGnOQsAvqh7k2xGg93mFxoo3yy0fiAmwe3+/f1l+tIeLAmveKtS9CTO/DPqw==
-X-Received: by 2002:a05:6602:2b8b:b0:876:adf1:b263 with SMTP id ca18e2360f4ac-90155d6f121mr523173439f.6.1758803304705;
-        Thu, 25 Sep 2025 05:28:24 -0700 (PDT)
-Received: from IU-KL9VVWHMWT.uits.iu.edu ([2601:801:180:e310:a9a9:ec82:aa70:f956])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-904100c3cfcsm70867439f.23.2025.09.25.05.28.23
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 25 Sep 2025 05:28:24 -0700 (PDT)
-From: "Randall P. Embry" <rpembry@gmail.com>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	rpembry@gmail.com
-Subject: [PATCH] 9p: fix sysfs output overwrite and clean up typos
-Date: Thu, 25 Sep 2025 08:28:02 -0400
-Message-Id: <20250925122802.72580-1-rpembry@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1758803316; x=1759408116;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V0GZRRknW9o7EW1Yvnd92OLQ2hYDNAl+jne1+4CXJp0=;
+        b=U4hB0/z4IhdOTzhngORTq25MAKb/XCJXKfEy6VLannuPoedDY0Pc4FW3sVVMAXDwCI
+         Gpjfdn5N9qY59nMGGMdl/DfIQeRfsPFcMcShepEZd1Z8KkaM3mhgZA68CD6LCNMYtMml
+         g5fxfHLPzcsVxTaHsk8ZuFAqizpkX/OE5chtQUNie1KNkZBSAeo9O0uYYNFnKuSZq2ja
+         FkTIjASPd2V0OXuvOHxlCYhfHZbWDwRpy8PaK24wd7muElRnkfHax9YHInN3GKf/6bYu
+         chJcEMU4rp1kS8QIP16J0YVgZpDfPAYeiCK3/w4th7qBpkSOF0U+VWTWPyvpM8uV5jLY
+         AbhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtP66vSDVP0fwFci3Cv+p3zkqEHykLpyQfgqBbGhgj8bkfvLSdSdRzuJ0Po9u4Ih0YAyZnpK9g+yIl3p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4YaHGGfqkJCZUzowxnZmbvg9RGh3xM8ThnN0yxKWctOsy6iOF
+	+Rc2LrmevpYmwIfkxsj+ndNwrZ/BWx95ImAGusgOX9JzX3FzY1PEvXAp+sS4FBbg3zlMIpNWQ5m
+	TMpFex+N5chI8UJncOSM2Hq8M9AQ4fU5WHyDmLXg8oYTZDN7wPKQCdeCHoEx1BPPiYyU=
+X-Gm-Gg: ASbGncsMGF18ifbml0aBDj0DCjCJcFi0QOpV0lAcFe/oRsy6/RX+oOMBbHpIdKDlb5l
+	mWzhOoFxR8BLTqNyjrHNHHLioyY3sp5ZrMO1MCNWsrz9FMXsFIjRvcvXiq8mDDyxLk+iDKtUcFM
+	4ulNPqg3YyqilIgQrucwLtt9QDLQ9oeZsOzi3UKtGJqpzMvrCqipQz0mVrEEehQ8J2vA0ZQ0Nn2
+	0fgatlhmAsjxt/DJpHZpkA+ouwFSpEXSeO915z4k2lPS2p5hnpWXT5mF0I/jT40w8KQu+Fim1LT
+	RfCFbtnWwz/ClAdwf7IxXXvov3APxMK6Nj/hjHihPrto6d5uKvGQgmgGA4z1ZP+CCfMzXaFp1vQ
+	9+rxldkpEQlVSPL6+cbIXeQ==
+X-Received: by 2002:a05:620a:460d:b0:82a:21ce:47e1 with SMTP id af79cd13be357-85adf2f359dmr312957585a.3.1758803315276;
+        Thu, 25 Sep 2025 05:28:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGM6c2h1CrqV8ug5St6KIgjLq4LwvQ1d2xsdc29T9g57ZuIMtMPgBqdlsWzhMkQSR6YAu8poQ==
+X-Received: by 2002:a05:620a:460d:b0:82a:21ce:47e1 with SMTP id af79cd13be357-85adf2f359dmr312954385a.3.1758803314834;
+        Thu, 25 Sep 2025 05:28:34 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f79a7sm158384566b.62.2025.09.25.05.28.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 05:28:34 -0700 (PDT)
+Message-ID: <9685e29d-bff3-4188-b878-230d0f161ce3@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 14:28:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/20] arm64: dts: qcom: kaanapali: Add QUPv3
+ configuration for serial engines
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-13-3fdbc4b9e1b1@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-dts-v1-13-3fdbc4b9e1b1@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=KNxaDEFo c=1 sm=1 tr=0 ts=68d53574 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pIWn_-EevS54mbaqKt4A:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: NgM5XGM8gVz6hMiyNnwyD_QVyEUVCA9K
+X-Proofpoint-ORIG-GUID: NgM5XGM8gVz6hMiyNnwyD_QVyEUVCA9K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDEzOCBTYWx0ZWRfX/Tsxx/OuIaMx
+ xWXQ67d8N07H/7R/bWUAtFZj/FH96A9569qWgYJlWM2LAQ8XfkrBVwldoqFsH2wnJz7StF2Nk4o
+ MT0HhDx1ktuEV5vKoaMp+EehZZDTfh5LXSnjZjJr6dfG3eEp+evHv/D0eqES0F+EguNN31VDA/d
+ rDTXxUJk3Zw/Jrj0DX/JigDQq1Y/5nQ3rBuhYYVo178bxzt3IyYnFPSYY/HSC4UBiIVSU40twPZ
+ GTEEZXUFC/SHKQzpiK7xuvhVt0BRWtu/Jo1etUkMt95MNseAmc1F5Lg/dzakSDYbx/OTX4DW96x
+ qwmhvBehd9/wSKmJmElodrNRJ2p272aQ2R/vO+hsmoQAJ6H4ZvvWO0UWWhoJIJcFZx4PdcLBBPz
+ o0mC6vfy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230138
 
-While diagnosing a UID mismatch issue with 9p shared folders
-under UTM on macOS, I noticed a couple of small problems in the
-9p client code:
+On 9/25/25 2:17 AM, Jingyi Wang wrote:
+> From: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+> 
+> Add device tree support for QUPv3 serial engine protocols on Kaanapali.
+> Kaanapali has 24 QUP serial engines across 4 QUP wrappers, each with
+> support of GPI DMA engines, and it also includes 5 I2C hubs.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>
+> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
 
-  - caches_show() overwrote its buffer on each iteration,
-    so only the last cache tag was visible in sysfs output.
-    Fix this by appending with snprintf(buf + count, …).
-  - v9fs_sysfs_init() always returned -ENOMEM on failure;
-    return the actual sysfs_create_group() error instead.
-  - a few minor typos in comments (e.g. "trasnport" → "transport").
+[...]
 
-These changes improve debug output and readability without
-altering core behavior.
+> +		gpi_dma2: dma-controller@800000 {
+> +			compatible = "qcom,kaanapali-gpi-dma", "qcom,sm6350-gpi-dma";
+> +			reg = <0x0 0x00800000 0x0 0x60000>;
+> +
+> +			interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 849 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 850 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 851 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 852 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 853 IRQ_TYPE_LEVEL_HIGH>,
+> +					<GIC_SPI 854 IRQ_TYPE_LEVEL_HIGH>;
 
-Signed-off-by: Randall P. Embry <rpembry@gmail.com>
----
- fs/9p/v9fs.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+odd indentation (on almost all gpi_dma instances)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index 77e9c4387c1d..e3e6890718a0 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -438,8 +438,7 @@ struct p9_fid *v9fs_session_init(struct v9fs_session_info *v9ses,
- 		v9ses->flags &= ~V9FS_ACCESS_MASK;
- 		v9ses->flags |= V9FS_ACCESS_USER;
- 	}
--	/*FIXME !! */
--	/* for legacy mode, fall back to V9FS_ACCESS_ANY */
-+	/* FIXME: for legacy mode, fall back to V9FS_ACCESS_ANY */
- 	if (!(v9fs_proto_dotu(v9ses) || v9fs_proto_dotl(v9ses)) &&
- 		((v9ses->flags&V9FS_ACCESS_MASK) == V9FS_ACCESS_USER)) {
- 
-@@ -450,7 +449,7 @@ struct p9_fid *v9fs_session_init(struct v9fs_session_info *v9ses,
- 	if (!v9fs_proto_dotl(v9ses) ||
- 		!((v9ses->flags & V9FS_ACCESS_MASK) == V9FS_ACCESS_CLIENT)) {
- 		/*
--		 * We support ACL checks on clinet only if the protocol is
-+		 * We support ACL checks on client only if the protocol is
- 		 * 9P2000.L and access is V9FS_ACCESS_CLIENT.
- 		 */
- 		v9ses->flags &= ~V9FS_ACL_MASK;
-@@ -561,7 +560,7 @@ static ssize_t caches_show(struct kobject *kobj,
- 	spin_lock(&v9fs_sessionlist_lock);
- 	list_for_each_entry(v9ses, &v9fs_sessionlist, slist) {
- 		if (v9ses->cachetag) {
--			n = snprintf(buf, limit, "%s\n", v9ses->cachetag);
-+			n = snprintf(buf + count, limit, "%s\n", v9ses->cachetag);
- 			if (n < 0) {
- 				count = n;
- 				break;
-@@ -601,9 +600,10 @@ static int __init v9fs_sysfs_init(void)
- 	if (!v9fs_kobj)
- 		return -ENOMEM;
- 
--	if (sysfs_create_group(v9fs_kobj, &v9fs_attr_group)) {
-+	int ret = sysfs_create_group(v9fs_kobj, &v9fs_attr_group);
-+	if (ret) {
- 		kobject_put(v9fs_kobj);
--		return -ENOMEM;
-+		return ret;
- 	}
- 
- 	return 0;
-@@ -669,7 +669,7 @@ static int __init init_v9fs(void)
- 	int err;
- 
- 	pr_info("Installing v9fs 9p2000 file system support\n");
--	/* TODO: Setup list of registered trasnport modules */
-+	/* TODO: Setup list of registered transport modules */
- 
- 	err = v9fs_init_inode_cache();
- 	if (err < 0) {
--- 
-2.39.5 (Apple Git-154)
+[...]
 
+> -		remoteproc_soccp: remoteproc-soccp@d00000 {
+> -			compatible = "qcom,kaanapali-soccp-pas";
+> -			reg = <0x0 0x00d00000 0x0 0x200000>;
+> +			i2c22: i2c@1a8c000 {
+> +				compatible = "qcom,geni-i2c";
+> +				reg = <0x0 0x01a8c000 0x0 0x4000>;
+>  
+> -			interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>,
+> -					      <&soccp_smp2p_in 10 IRQ_TYPE_EDGE_RISING>;
+> -			interrupt-names = "wdog",
+> -					  "fatal",
+> -					  "ready",
+> -					  "handover",
+> -					  "stop-ack",
+> -					  "pong",
+> -					  "wake-ack";
+
+Please try to use git format-patch --patience
+
+Konrad
 
