@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-831977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF66FB9E0F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:30:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C155B9E0F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EE2A4E24CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:30:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07332384FDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C0C233707;
-	Thu, 25 Sep 2025 08:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+VmzwDH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98523E350;
-	Thu, 25 Sep 2025 08:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460812B9BA;
+	Thu, 25 Sep 2025 08:31:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D84A1E;
+	Thu, 25 Sep 2025 08:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758789006; cv=none; b=fO2oFGjdEab2JAIo1Cv1N1YjUSpMqwlBv/xbjlbUw0oXrgwYie5ZwhRDzx1xfhsQMrt9ni1f1w0Kx1fj58yrvPQ0WnTP6xPtj6PWPdXl9Az6xcNtXFp2VdyhCgQz4YdJ2qi/RkszFLHOmm3zdOxlbjZJC/OEzLqKcn9y0fHU2cA=
+	t=1758789064; cv=none; b=a+Hhi0/dXUjcgJ/wv1DX2qd+66Hi7uJw9gnXFVLC3flU0fU7o8aN28GeiyDTJBFEDk7m9w63oHi1bkrzTvfCK/5ZWWfCckvkY2uVmPOzXshRbfovqdUPmtAhFjzb0kcR7AmTCbvFE7hz/5hcSd+zUTb867GH1+LgWOSq1hBcr58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758789006; c=relaxed/simple;
-	bh=97eP1RrZK1CzM7LJ/PhdktA7pOXsynV5Pvzv79A+srE=;
+	s=arc-20240116; t=1758789064; c=relaxed/simple;
+	bh=+uJqoi3SYoxurYDCKXDjHIF1Tvq4+DywBDsjroC94+w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NgyJkRUrv+VBXMK0xJhzYIFNrEOIDBBbgNyKaBuOcWKoKwYJSnmIVmpIpmdypKfNpKafcDIC4/gFsbIfFdMy543tPQsUohDsjVHfaS/5A2Z9ggkc3/PW1MyhEWyBKMH02ackctUYaa3c/kysGUYkysVBXV7iAaSvP5nP800hIAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+VmzwDH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59717C4CEF0;
-	Thu, 25 Sep 2025 08:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758789004;
-	bh=97eP1RrZK1CzM7LJ/PhdktA7pOXsynV5Pvzv79A+srE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S+VmzwDHVzfldoxi7HY1QHRXIjxUHBqpvaSHHtiAvoATuXZpUo4wVDIoXmF5P/mRr
-	 2dIDoKuLD8cmq8wBVAmbf1lLzpZ3llVAM8GzgxjjB+KV7gyf1Bag9HupYchLUhrY4I
-	 zrIbv0AZjlKOompmLwjfOzXNL3w5q8OLHvj4pOwPgNbkF+BpzciAQtBRQpdU8TPmcV
-	 jakS27dQHZMDO8Y2dCXKfJFMYrp5w7tnkACv0VmzCFtCfUayN1pI3qbjdeMZolO3/R
-	 fTQr9Q8SdFFQKSbdWjafnyVoyWeQG44KWS1VK6UdIgo3Z84LttwqpajJYpyU4zQAa8
-	 h/ylSOSv0Sm3A==
-Message-ID: <a8ebec72-eee2-4a02-ac6b-57678aa7c50f@kernel.org>
-Date: Thu, 25 Sep 2025 09:29:55 +0100
+	 In-Reply-To:Content-Type; b=ZZPSSeHNz9uJfghT4fypWl+k4rXIczLzPpntEnBINDj0kclq10HB27w/Pnxa7h5inJZ0gLjrGJbZLJDyJLAtz5Gs/L0SqIlr1K0XOyrvOO1Q9GEPkmcARuGmleT4SMJYIUprwWrq+JrlxaVeHbmCGIQm20KKPklh1gWhOWFM6lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF5251692;
+	Thu, 25 Sep 2025 01:30:52 -0700 (PDT)
+Received: from [10.57.1.72] (unknown [10.57.1.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B97F53F694;
+	Thu, 25 Sep 2025 01:30:57 -0700 (PDT)
+Message-ID: <331bea5f-cfab-49fb-87e4-7ec31523c2c3@arm.com>
+Date: Thu, 25 Sep 2025 09:30:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +41,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] dt-bindings: clock: sm8450-camcc: Remove sc8280xp
- camcc to from sm8450 camcc
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/5] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
+Content-Language: en-GB
+To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
+ robin.murphy@arm.com, ilkka@os.amperecomputing.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, mark.rutland@arm.com, treding@nvidia.com,
+ jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
+ sdonthineni@nvidia.com
+References: <20250923001840.1586078-1-bwicaksono@nvidia.com>
+ <20250923001840.1586078-2-bwicaksono@nvidia.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250923001840.1586078-2-bwicaksono@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/09/2025 00:56, Jingyi Wang wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
+On 23/09/2025 01:18, Besar Wicaksono wrote:
+> Add interface to get ACPI device associated with the
+> PMU. This ACPI device may contain additional properties
+> not covered by the standard properties.
 > 
-> SC8280XP camcc only requires the MMCX power domain, unlike SM8450 camcc
-> which now supports both MMCX and MXC power domains. Hence move SC8280XP
-> camcc from SM8450.
-> 
-> Fixes: 842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp camcc to sa8775p camcc")
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+
+Ok, but who needs this ? I couldn't see any users in the series.
+Did I miss something ?
+
+> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 > ---
->   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 1 -
->   1 file changed, 1 deletion(-)
+>   drivers/perf/arm_cspmu/arm_cspmu.c | 22 ++++++++++++++++++++++
+>   drivers/perf/arm_cspmu/arm_cspmu.h |  9 +++++++++
+>   2 files changed, 31 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> index c1e06f39431e..dbfcc399f10b 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> @@ -63,7 +63,6 @@ allOf:
->           compatible:
->             contains:
->               enum:
-> -              - qcom,sc8280xp-camcc
->                 - qcom,sm8450-camcc
->                 - qcom,sm8550-camcc
->       then:
-> 
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index efa9b229e701..75b2d80f783e 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -1090,6 +1090,28 @@ static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
+>   
+>   	return 0;
+>   }
+> +
+> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu)
+> +{
+> +	char hid[16];
+> +	char uid[16];
+> +	struct acpi_device *adev;
+> +	const struct acpi_apmt_node *apmt_node;
+> +
+> +	apmt_node = arm_cspmu_apmt_node(cspmu->dev);
+> +	if (!apmt_node || apmt_node->type != ACPI_APMT_NODE_TYPE_ACPI)
+> +		return NULL;
+> +
+> +	memset(hid, 0, sizeof(hid));
+> +	memset(uid, 0, sizeof(uid));
+> +
+> +	memcpy(hid, &apmt_node->inst_primary, sizeof(apmt_node->inst_primary));
+> +	sprintf(uid, "%u", apmt_node->inst_secondary);
+> +
+> +	adev = acpi_dev_get_first_match_dev(hid, uid, -1);
+> +	return adev;
+> +}
+> +EXPORT_SYMBOL_GPL(arm_cspmu_acpi_dev_get);
+>   #else
+>   static int arm_cspmu_acpi_get_cpus(struct arm_cspmu *cspmu)
+>   {
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.h b/drivers/perf/arm_cspmu/arm_cspmu.h
+> index 19684b76bd96..9c5f11f98acd 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.h
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.h
+> @@ -8,6 +8,7 @@
+>   #ifndef __ARM_CSPMU_H__
+>   #define __ARM_CSPMU_H__
+>   
+> +#include <linux/acpi.h>
+>   #include <linux/bitfield.h>
+>   #include <linux/cpumask.h>
+>   #include <linux/device.h>
+> @@ -222,4 +223,12 @@ int arm_cspmu_impl_register(const struct arm_cspmu_impl_match *impl_match);
+>   /* Unregister vendor backend. */
+>   void arm_cspmu_impl_unregister(const struct arm_cspmu_impl_match *impl_match);
+>   
+> +#if defined(CONFIG_ACPI)
+> +/**
+> + * Get ACPI device associated with the PMU.
+> + * The caller is responsible for calling acpi_dev_put() on the returned device.
+> + */
+> +struct acpi_device *arm_cspmu_acpi_dev_get(const struct arm_cspmu *cspmu);
+> +#endif
+If we need this, why not add an empty stub for !CONFIG_ACPI case ? 
+Similar to what we do for other cases.
 
-This is not a revert.
+Suzuki
 
-Where does the compat string go ?
+> +
+>   #endif /* __ARM_CSPMU_H__ */
 
-You are missing the part where you move the compat string to where you 
-think it should be...
-
-Also why is this patch appearing in a series about _adding_ Kanaapali to 
-CAMCC ?
-
-NAK
-
----
-bod
 
