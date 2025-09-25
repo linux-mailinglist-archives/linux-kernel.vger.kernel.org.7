@@ -1,138 +1,194 @@
-Return-Path: <linux-kernel+bounces-832737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A740BA036B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E7BA0392
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5169381681
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EC55E54DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207173081A9;
-	Thu, 25 Sep 2025 15:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B802E973F;
+	Thu, 25 Sep 2025 15:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gol47kuJ"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eickpeGh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C7C2E3B19
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609982E1737;
+	Thu, 25 Sep 2025 15:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812809; cv=none; b=T3FMW7uCjW+xT7/1dvOiq+DkfW4sIOaKD+uKSNjLtK9gKNv8rwN2rmC7wgcFsFQ5MenJROe5mwbcxNJpjyT9rP0OayRJ9jN0xAOBeYA+NtQ/84FW/Z2JeAYo4FL0BGgjqPvr267VYdAYrBQwc5Yj+rBQXnkbmgkI8KUu/7acs+k=
+	t=1758812859; cv=none; b=Qt2KNSak5FCswzkNW1LATT/ahsI+GCHULKkIujvG/aGzWIbZowGb6wGlEkjmLYKGd8AqSMhRq8DKaoRrU2xr1r3CjzbjtTi1hhIiCTZFR5qI6jqZRmeq5eXOnD6ncxBVbDMbB6LehW8aTSHLZ2iyDm5vBgXog9qTmY62BHybQoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812809; c=relaxed/simple;
-	bh=0EpGH4MwDbcizlCggFCTnPr7IrP4J3CDCKfs8jvP9TY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ivsSwwP6fsCdMNRZcmkuOSV24OCOO9sJguAiAQQTc51iTGWvcYxa4TjKwr1poWeXGKPm3xuTT5iDuv8LBmgrmcs04QIN29zYtTmcPxLhxd6QsrFGBU2kdXElKIvfuJBFP+/mi6a9iDV/dSM/R7LF5blvY1pTaHRHJTmCPVw1e64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gol47kuJ; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77df7f0d7a3so1079987b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758812807; x=1759417607; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
-        b=gol47kuJ9acsLtfW2IwzLWuooJIDmQq9873ZhWoEj0JftEk9oLWpBQHhtr6z+kSE9S
-         0FEb//SunmT1U27blL0FfCErzAsfpWHhRBt72y8ofi6U3LYzhdRjOu4OZvDkXgwGvlRg
-         TIiMBVIlZwQKQpVM4W5NsB+uikjrtD0uprCYWZgH+uDrthU2nIw7XKcD13wiFZQvYEhf
-         jp6pdIANl8aTL/KS6flRmI0oWxkm4un0kP/vi4aWbqUcWpmkIuM/gN5EPJBTxMt91B9g
-         5xnee3VAsB5Wa8NoGCaei1vOP3W2RzwjY8lsSRJox9AVbyrVuuEfUONujYaouQAuDzKM
-         r05g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758812807; x=1759417607;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
-        b=h7sKGFlD8tn2nws5yDKwfXid7pxJKMb8KhH+RDh/V0YQ1S/Yx2iktI5ncro87Fs3dR
-         YQ3ebQyXWNnjvmN4obYdR9mAYLJ0z/nWd5bRrviNCSv2pJOp9GDssybKl6c8L/UzXEWh
-         Pobjot3mFePPBN9mCNkWl+DGBgpIiu+LMthefmy5Tc/d2F1SEV8cyABqnzDuRa4mQGVW
-         XEYzZXYwl7IOkzJJqno1NIbMt/L1b1/tLfVRnVsGC44fxyuZcv0rYrHQs/lIVgaFpQ1G
-         YlC472Rx8f1+1zqMuSTj6ofe3sIMYDn8zeQ4cOWs8LYPl2fCHdY5w6z2yIHkYGk625ww
-         yw6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWBjvcU2lnI/RMLiCtfkpo9EaG9mIWWEnuIgITBrip/1/xqM9aq7ZxSUvbQGJjD6JE0zf3SiAwNu2XYCVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQkE81YBBm+K6giGDx5TQ6xLIsn65CZNpSCmG/ADjcMyYSrfCP
-	C0hXjiDm0LCCT7f+4+7df2f1kP/76ga/31QiYwgJxqrLm5ZK5uqz2Q1YHwaAcjpX46dS9rElq92
-	pgPz0Bw==
-X-Google-Smtp-Source: AGHT+IEVcWsyGM1w0GH1nNrshkk20Pnc8ghwxFB8MAUOFgcR14npidYwrEDITe3+YHWa4Mb/5XspEYhl1Ac=
-X-Received: from pga11.prod.google.com ([2002:a05:6a02:4f8b:b0:b4c:213a:e7aa])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3282:b0:262:1611:6528
- with SMTP id adf61e73a8af0-2e7cdda0840mr4939471637.29.1758812806367; Thu, 25
- Sep 2025 08:06:46 -0700 (PDT)
-Date: Thu, 25 Sep 2025 08:06:44 -0700
-In-Reply-To: <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
+	s=arc-20240116; t=1758812859; c=relaxed/simple;
+	bh=Hn8Nz2QsEgEwXTThIZCX3K9EVu+2yqcnfyaoABTO+Eo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bea+Prc6a2hCPGSDSLDAxefv5F0jKQHmxFyjX8nwjByukJdFUS8V8zE/MMMviFzbQUuALASqmmiT9/alIz18XRw29L16S5Bf9BXkw7fFyoEPhQhDf7Nz/KmKLduZ0eIFax78Le8dTrdLej/CN0Wacr0s7fFWxYWYuaeK6Qg6KKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eickpeGh; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758812858; x=1790348858;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Hn8Nz2QsEgEwXTThIZCX3K9EVu+2yqcnfyaoABTO+Eo=;
+  b=eickpeGhdwq5Ge34R2uvouCMcvsoaXVAUvzXSVbumQQ3erWufhfmXNKu
+   wiwLZfYWrnRhDTgWy4Ycuaxd5kj2MqDx8cP0WfSkqipFeDq70wh64cCTd
+   32lC1dbwm1bQYE+a/1GXAZdOG+h6ELgMsTUv71X/nkq8+cosLquTW/6U7
+   3INaEv8MTp/yE4aPiJARZ9aF/v6aqYvef8plD/FKt1oYKBRZVjfg03EO0
+   12IQHfZwDl3G8mKZqFpSX+nLeaxqQ3RaNmsqsR+cBaKCrWB3xj7MZhfH5
+   xJ/9E8z7H9NR8oXey6V3c6sAuMSLYlf+5/lHLmRCxFa67r08x+PtyI1Up
+   Q==;
+X-CSE-ConnectionGUID: 8gRMB2xjTNKTIOiJFlyzkA==
+X-CSE-MsgGUID: wQ/0zR/IShamkyczBHqG8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61242848"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="61242848"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 08:07:09 -0700
+X-CSE-ConnectionGUID: ZYIn94jwSwWQTrWlb/vDEg==
+X-CSE-MsgGUID: ZYMQNOc/SP2Zuv573B424Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="176644501"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.252]) ([10.125.108.252])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 08:07:08 -0700
+Message-ID: <bc8a902f-549a-482f-bf24-04cf5f38a379@intel.com>
+Date: Thu, 25 Sep 2025 08:07:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
- <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
- <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
- <aNVFrZDAkHmgNNci@google.com> <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
-Message-ID: <aNVahJkpJVVTVEkK@google.com>
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, 
-	akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org, 
-	vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
-	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
-	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
-	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 03/17] x86/fpu/xstate: Add xsaves_nmi
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, broonie@kernel.org,
+ Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
+ <20250925061213.178796-4-dapeng1.mi@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250925061213.178796-4-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025, David Hildenbrand wrote:
-> On 25.09.25 15:41, Sean Christopherson wrote:
-> > Regarding timing, how much do people care about getting this into 6.18 in
-> > particular?
+On 9/24/25 23:11, Dapeng Mi wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> I think it will be beneficial if we start getting stuff upstream. But
-> waiting a bit longer probably doesn't hurt.
+> There is a hardware feature (Intel PEBS XMMs group), which can handle
+> XSAVE "snapshots" from random code running. This just provides another
+> XSAVE data source at a random time.
 > 
-> > AFAICT, this hasn't gotten any coverage in -next, which makes me a
-> > little nervous.
+> Add an interface to retrieve the actual register contents when the NMI
+> hit. The interface is different from the other interfaces of FPU. The
+> other mechanisms that deal with xstate try to get something coherent.
+> But this interface is *in*coherent. There's no telling what was in the
+> registers when a NMI hits. It writes whatever was in the registers when
+> the NMI hit. It's the invoker's responsibility to make sure the contents
+> are properly filtered before exposing them to the end user.
 > 
-> Right.
-> 
-> If we agree, then Shivank can just respin a new version after the merge
-> window.
+> The support of the supervisor state components is required. The
+> compacted storage format is preferred. So the XSAVES is used.
 
-Actually, if Shivank is ok with it, I'd be happy to post the next version(s).
-I'll be focusing on the in-place conversion support for the next 1-2 weeks, and
-have some (half-baked) refactoring changes to better leverage the inode support
-from this series.
+The changelog here is looking a bit munged from the last time I looked
+at it. It's getting a bit hard to read. I'd probably run it through your
+favorite LLM (and proofread it after of course) to make it more readable.
 
-I can also plop the first three patches (the non-KVM changes) in a topic branch
-straightaway, but not feed it into -next until the merge window closes.  The 0-day
-bots scrapes kvm-x86, so that'd get us some early build-bot exposure, and we can
-stop bugging the non-KVM folks.  Then when the dust settles on the KVM changes,
-I can throw them into the same topic branch.
+Ditto for the comments.
+
+Also, what supervisor components are involved here? Aren't we just
+talking about [XYZ]MM's?
+
+> +/**
+> + * xsaves_nmi - Save selected components to a kernel xstate buffer in NMI
+> + * @xstate:	Pointer to the buffer
+> + * @mask:	Feature mask to select the components to save
+> + *
+> + * The @xstate buffer must be 64 byte aligned.
+> + *
+> + * Caution: The interface is different from the other interfaces of FPU.
+> + * The other mechanisms that deal with xstate try to get something coherent.
+> + * But this interface is *in*coherent. There's no telling what was in the
+> + * registers when a NMI hits. It writes whatever was in the registers when
+> + * the NMI hit.
+> + * The only user for the interface is perf_event. There is already a
+> + * hardware feature (See Intel PEBS XMMs group), which can handle XSAVE
+> + * "snapshots" from random code running. This just provides another XSAVE
+> + * data source at a random time.
+> + * This function can only be invoked in an NMI. It returns the *ACTUAL*
+> + * register contents when the NMI hit.
+> + */
+
+First, please use actual paragraphs. This isn't a manpage.
+
+But this whole comment kinda rubs me the wrong way.
+
+For instance, I don't think we need to relitigate the XSAVE architecture
+with the "The @xstate buffer must be 64 byte aligned." comment. Even if
+we did, that's just silly when you could put a one-liner WARN_ON() in
+the function which would be a billion times better than a comment.
+
+I'm not sure what "interfaces of FPU" means. I know it came mostly out
+of some earlier mails I wrote. But could we trim this down, please?
+
+We basically want to scare anyone else away that might be tempted to use
+this.
 
