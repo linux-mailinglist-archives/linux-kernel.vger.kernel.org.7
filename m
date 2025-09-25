@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-833367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C445BA1CA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C01FBA1CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C44F5628E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268CF740BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713482E9EBE;
-	Thu, 25 Sep 2025 22:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5733128D7;
+	Thu, 25 Sep 2025 22:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GXdEBbxB"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PruQJXrX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219512749E3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C11235358;
+	Thu, 25 Sep 2025 22:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758839177; cv=none; b=cQcwzgMu5ZeiTKVPhsnevIAZS+ZjNSMcU4gOPN6ZF1hp7LLEr3+gOhzqMtBWz7vQ9SrNP5GxIpCoqYX+8gXmA2/tNxf1UJph8W8DBcGApUplcCr2fDddP3lQ8c8pxkQVle/xhDUh0DgGOP90dbp+s2bdLiae/fGjrBITaY5rXoc=
+	t=1758839211; cv=none; b=Ms9aewqOtpOu6wrE+hPFZRgRnuu0FEmOMxtNZPeipgQfGUrsG2S+lxsqzcDw5ePbIzo3mObV+RhQXdIppfqKQVGP2QuFGpCG3k8aaQd1lI6Qoz1T8flSY94RVj/SaM97+JMM0BlXY1RkQoPuPIaPRf3bTgkY+WKgSciDy/XAEhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758839177; c=relaxed/simple;
-	bh=lTCfAhOCCFujviUGkPpU3RVShb+sKb6mxlJP5kOiJCY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=NM7uash2EGgtKs1Gg2LNII1vKVdYVpLGqiGe3VUKD5xBIwV4tfVOlJ9olUuCFGATkDByn+btrsXrVka6F6Kg5sd/trAam4qpl0skcohEvSt9UIurIzKoCAXuebgUlchLgDmIsez7M9qS7ez8FIKMZBBqi780K3Fcsh4FwzgZnGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GXdEBbxB; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=YYqXCwQWRl1v5mvc0PqGxp32U7oTfoGl3dZTYyV2InM=; b=GXdEBbxBNwjLB0z/eTfkbQ92sO
-	uPDNPCJ+qJP8BT9qX5RTyBSWDT3M87lQlTUrRDh5G8SunIxNw1CBNq37Zb1kXuxwqS6A/raQtuzd6
-	3mCr7BOSgputcxoch3j27pFdAA7IRDGotL5aJrZ81L6qfZnwFwr0AXWU4qfIvhFPvAR2+3GstJzLE
-	bh8JbmLctN/rgjSbRNaz4Ja0GbUjN3LeUh17EeuufiNMM7eYHhcUGCvzBSXsH3UaaDutzLo/6oVmv
-	gJX3wV4XDBpMl/7bdIxaomtxuw68Yr2qCYktIpQO4urdq1+pmPWpwHvSB/uX+s18t4pI6Ttn6Vvs+
-	EZh7r+LQ==;
-Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtps 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1v1uPZ-000LnT-JT; Fri, 26 Sep 2025 00:26:01 +0200
-Received: from webmail.service.igalia.com ([192.168.21.45])
-	by mail.igalia.com with esmtp (Exim)
-	id 1v1uPX-00ENcu-H2; Fri, 26 Sep 2025 00:26:01 +0200
-Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
-	by webmail with esmtp (Exim 4.96)
-	(envelope-from <mfo@igalia.com>)
-	id 1v1uPW-00BoW8-32;
-	Fri, 26 Sep 2025 00:25:59 +0200
+	s=arc-20240116; t=1758839211; c=relaxed/simple;
+	bh=y8aCu9NESh0NVPciwZYe19Rxo6RA8Y4jx0b6M5NqwqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R2hbmEYI4DAReFzrzaMKLeJ/0RilCC5qn025VaQ3gTZ9o9fQ7nkkd8CesekkNW67WRHQpqsrtwqds4yuh8NtCC1DC/a1g/8R/+9aBV9w76hRaXzyjgOrRkXz0sKHMu6OVizm1XaOHZbFhVyiBrFD5CYnhI8Uh+M/VzXvd9GlAvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PruQJXrX; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758839209; x=1790375209;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=y8aCu9NESh0NVPciwZYe19Rxo6RA8Y4jx0b6M5NqwqM=;
+  b=PruQJXrXeAbnKOXtH/FsofMbXJilr/I9pB2dcsnSr/4CequipFNFyJBF
+   xGAkhW+0P5LSr25R03iq2K8sxFYTzHFruE9aGwkvyOt+lSAlcwKPPD46K
+   LMg/0pOVlQTsAgS/1NiD5q6VJpWTlbsU05zd9Z0mKVDbnsIUv3xSgbzGH
+   fOWPFCeEicPXY779//KgomiUP54iBT8xP75HyAYQHwixhhGGoRwz/kWD8
+   UBYPlUrYU+5kO5sJ+138461ERS0gMJTNWqHnIvlhK4lhs0YO9cW+AeBYv
+   crynj6KR/LGzAuGh1/smLQjqRmCNqSVaPpBh97pBabD93BIi68V2iFKUO
+   g==;
+X-CSE-ConnectionGUID: O3I3BHLKTlO2jtSZrIA/9Q==
+X-CSE-MsgGUID: fND8rEndQaePhH1uDyxa1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="83779841"
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="83779841"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 15:26:49 -0700
+X-CSE-ConnectionGUID: ssyuVzJlRVu8xc7eoRt0VA==
+X-CSE-MsgGUID: sk1hz81AS0KnvxoU+GvQNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="181447068"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.190])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 15:26:48 -0700
+Date: Thu, 25 Sep 2025 15:26:41 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: Re: [PATCH 2/2] x86/vmscape: Replace IBPB with branch history clear
+ on exit to userspace
+Message-ID: <20250925222641.6lgdjua6oavdmih5@desk>
+References: <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com>
+ <20250924-vmscape-bhb-v1-2-da51f0e1934d@linux.intel.com>
+ <LV3PR12MB9265478E85AA940EF6EA4D7D941FA@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250925220251.qfn3w6rukhqr4lcs@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 25 Sep 2025 19:25:59 -0300
-From: Mauricio Faria de Oliveira <mfo@igalia.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka
- <vbabka@suse.cz>, Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Brendan Jackman
- <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan
- <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-Subject: Re: [PATCH 1/3] mm/page_owner: add option 'print_handle' for
- 'show_stacks'
-In-Reply-To: <20250925202817.795114-1-joshua.hahnjy@gmail.com>
-References: <20250925202817.795114-1-joshua.hahnjy@gmail.com>
-Message-ID: <d05a76ffe2969b8542db961ef1f41a0e@igalia.com>
-X-Sender: mfo@igalia.com
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Report: NO, Score=-4.6, Tests=ALL_TRUSTED=-3,AWL=-2.376,BAYES_50=0.8,URIBL_DBL_BLOCKED_OPENDNS=0.001,URIBL_ZEN_BLOCKED_OPENDNS=0.001
-X-Spam-Score: -45
-X-Spam-Bar: ----
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925220251.qfn3w6rukhqr4lcs@desk>
 
-On 2025-09-25 17:28, Joshua Hahn wrote:
-> On Wed, 24 Sep 2025 14:40:21 -0300 Mauricio Faria de Oliveira <mfo@igalia.com> wrote:
+On Thu, Sep 25, 2025 at 03:02:57PM -0700, Pawan Gupta wrote:
+> On Thu, Sep 25, 2025 at 06:14:54PM +0000, Kaplan, David wrote:
+> > > -       if (vmscape_mitigation == VMSCAPE_MITIGATION_AUTO)
+> > > +       if (vmscape_mitigation == VMSCAPE_MITIGATION_IBPB_EXIT_TO_USER
+> > > &&
+> > > +           !boot_cpu_has(X86_FEATURE_IBPB)) {
+> > > +               pr_err("IBPB not supported, switching to AUTO select\n");
+> > > +               vmscape_mitigation = VMSCAPE_MITIGATION_AUTO;
+> > > +       }
+> > 
+> > I think there's a bug here in case you (theoretically) had a vulnerable
+> > CPU that did not have IBPB and did not have BHI_CTRL. In that case, we
+> > should select VMSCAPE_MITIGATION_NONE as we have no mitigation available.
+> > But the code below will still re-select IBPB I believe even though there
+> > is no IBPB.
 > 
->> For monitoring the memory usage per stack trace, it is more efficient to
->> use the handle number as unique identifier of a stack trace than to, for
->> example, read/hash all stack traces to uniquely identify them everytime.
->> 
->> The handle number is a unique identifier for stack traces in stackdepot.
->> 
->> This patch adds the option 'print_handle' to print the handle number of
->> stack traces in 'show_stacks'.
-> 
->> @@ -887,6 +887,7 @@ static void *stack_next(struct seq_file *m, void *v, loff_t *ppos)
->>  }
->>  
->>  static unsigned long page_owner_pages_threshold;
->> +static bool page_owner_print_handle;
-> 
-> Hi Mauricio,
-> 
-> Quick nit -- If I understand your cover letter correctly, you want
-> page_owner_print_handle to be false by default, should we initialize this
-> to false?
+> Yes, you are right. Let me see how to fix that.
 
-Hey Joshua,
+Below should fix it.
 
-In this case, it is not needed, as static variables don't need to be
-initialized to false/0. This is handled as an error in checkpatch.pl,
-so it should not be added even for completeness.
-
-Thanks for checking this.
-
--- 
-Mauricio
+---
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 2f1a86d75877..60a2e54155e2 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -3328,8 +3328,10 @@ static void __init vmscape_select_mitigation(void)
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_BHI_CTRL))
+ 		vmscape_mitigation = VMSCAPE_MITIGATION_BHB_CLEAR_EXIT_TO_USER;
+-	else
++	else if (boot_cpu_has(X86_FEATURE_IBPB))
+ 		vmscape_mitigation = VMSCAPE_MITIGATION_IBPB_EXIT_TO_USER;
++	else
++		vmscape_mitigation = VMSCAPE_MITIGATION_NONE;
+ }
+ 
+ static void __init vmscape_update_mitigation(void)
 
