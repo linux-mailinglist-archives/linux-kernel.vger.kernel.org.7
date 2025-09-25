@@ -1,214 +1,155 @@
-Return-Path: <linux-kernel+bounces-832951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5F6BA0D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:27:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B696BA0D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D501BC5837
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA3C384B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F2630CDBA;
-	Thu, 25 Sep 2025 17:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030430DEA4;
+	Thu, 25 Sep 2025 17:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iA9Tt66G"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hldYki0x"
+Received: from mail-yx1-f74.google.com (mail-yx1-f74.google.com [74.125.224.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD7C30CD92
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D0D35940
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758821214; cv=none; b=rtGhH01ZBNib1Qx5N1vGFCoG8nhlTbGXJaPvTNFCohlYyv3SwY6+JvHmAf49QHLYZmG8gz+wWhI44/L0Fj8dNx9nTGXoVScKsHDwMoZVBL5tPN4KrbpIDxBlplAb3CIg32WCukzxeZoaoXxWmU+4/Ma3mCfq5ckCWcDemSCn38c=
+	t=1758821264; cv=none; b=t3k4MvT/xy6f0Bx/d7XkVmm4+fYECZinRKvz7QZt+KT9IGSF19ag2BlVDRbsb9R8bhEmOCP0cL2yfKHOoxYljOdsmVQgtBpJJTKdeJjzbgO3Qlk592KxmIVegmXmu8k9NbE9m9+cqM/1YHGOcgvaLiMTGr06wlhDOafq10nZrdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758821214; c=relaxed/simple;
-	bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KG3e1ZbBcFyc9isbsNUprxequ5Mjg3S/UZJkEU5p7uy3HoWbINpd0vpihnBdgD2GiN3ywUwuLq7ov8CFXZ89v98S70miqCpuzsG2AEMYfVhAV6d6lHegK5zAVykNpVtJ5QJQyLo1+3vnL8ZrZ1YAfwQ9PY7zp7YYPtwRCwGtIuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iA9Tt66G; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63491fc16c3so2049917a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:26:52 -0700 (PDT)
+	s=arc-20240116; t=1758821264; c=relaxed/simple;
+	bh=1aMzbPXXTV6s8shnpFeoB2BqIpLtvMoCfxhUmtdjiSg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Q351G/tFcFnx6N7RptkrWn7nZK6qdRdMZDHgjgbfbtq9pPcSP5rfQ5dqfsyQ1hMkOQZ0d/Kh1rrdo2VGdIn1JeH0ZONlQAL86FsZS54eQpE2KdnIdmutUU1GB6tUgp13n6HfLL0q943z1GmtHy2CJ5mTUViPe2nqzn6zn5qCkZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hldYki0x; arc=none smtp.client-ip=74.125.224.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yx1-f74.google.com with SMTP id 956f58d0204a3-60f47bc771aso1233341d50.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758821211; x=1759426011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
-        b=iA9Tt66G8WsdE42LEW5btnS1UMh9t8i3RKclwq8MlseFDslWHMC1jTJEvmLZPu79Ns
-         Rb4szSeDrgSvQl4iaqMOxkWhXM9DIauwqQTB/IqrZzuJLp3UWZz/z3unxGxY2EoELRp8
-         4s2NtDET9lZ8Epg1Wtth8XC69YU+08r2zcFWAdDAu0VQbvTpv2KDAVXSC9S+t+P1pQRY
-         rpHRByatYs94Wwg2w751GWrLBh08g08/PWk3sRro9BS8z2ARL0uOpAPFwiPhZioXKWGx
-         slht6+wyyrP9dCMyIteoZoIKkPokF4CQOQsOM35rflnKdFWoqWBFKgAcYuWnnyV2AYMH
-         rhzw==
+        d=google.com; s=20230601; t=1758821262; x=1759426062; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=twFyA4eORy0F+hKQH+6fcNvXcelQ6Qor5Ir75U2uMhA=;
+        b=hldYki0xAh0kLV2buZRLd4DEzu/phrTs5+rJVtPFjk0nmFPWPjb8clAWQ7LCrj4E8R
+         F2tn92KC/4rcmavTzvLjNeMN7pjyE3ZFnArjUFN2kxhZ+YuqTWRpcWzbssghYhO6U3Wb
+         5Eq5mxFX7XN1Xe5X9Wdm0CpMIruVbWnsOLidhHs2Y+WgW8Jip8FatKFjCapFiYRx/key
+         txVHpCbxAcpbuOijQ+URMbQZLrkxzKOq86O/P9lgMQ8hpjYVACqvjil6YDXP9Uiau4i0
+         Sbh5PjWfxtI7AJ7VBRWczEgzJt3HTp3+/vpfGnKzPfRBDo85OXtf1VlLr62uqPqSY4i9
+         rdFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758821211; x=1759426011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
-        b=N2YXQnHo4G5It7252UZ7YQoX6/daYgTSq3bQ8waa0KIwen7FyESDmCNrmp4JU91ETG
-         a/35qv1h6sFLpXcToB6YJYGU7uxPGbwkCcXnYiIE/ECy+JGwqmuhbdFQRUasF/K/cI+x
-         jXbCnPw/1RIFnBAfxoKMxKV+EIdnJWx2w7AVMhBOT/eQNjzRAcDq5zpomuqdujutB11E
-         SaZLsI4HhVZ3FozQKG8RLowXnYX1ql2WDxt0kH+Bd9NSIZZOVr5fstYLmnjuHJiS4gP9
-         ovgIjpgPmzwm/UC668hX6RLBVIN67Vz7pMywHBFjz0P5Ju/GsA9kP9IHwamaFP2t8Ko/
-         n1EA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE9n7G2FD1hdip36KQqtu+V0Z3HueXfZpNOLGBIFCD3yTzfIvT/uvktOHSUxDCcQ7d+IwiUdIZPcmpsZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIwM6UATAR8TeWFwDrwz3At5uSlrvdkVlKlugEffE61gXol1wq
-	rC+QikKMzAasxB9tmAxXgLzihlfeSqUXUKr4agxeBSd6Dd1WTnocS/+bOx3NP/qr4UjFhVhhzlp
-	oQiqVYIuuyp0MKcvMn9zq3r4tcM0S3VqkeGmr
-X-Gm-Gg: ASbGncs8fZI+JlPLp+81p/KyELYg9DsHuZvxPxmAm7nb8FtGFxxVePpXoyJIu+8r5R0
-	A4fRNO9L0DlvMw3iAGpz2lMxZjuWGnCEzGJm7TTCV0X7s8nIMZz6tTZJQeZsL941HLiJ2E04HqB
-	rO8x8rOwm4SUfpotXH5K4GYRF8NBCVftOmy8K9GZpMHqsSpaKhRx4prGsKD/oOsQ5LpUA38+rAK
-	Ts=
-X-Google-Smtp-Source: AGHT+IEjzLFBbzflK4F+frlRfcbPaspWQC9oQPfqbZdjRXB0LrK0sUdF9qQBxVp9KRq1FroodJ/I2IDpzawl6coBJMs=
-X-Received: by 2002:a17:907:2da7:b0:b30:daf3:a5a0 with SMTP id
- a640c23a62f3a-b34bad2253cmr480436066b.42.1758821210852; Thu, 25 Sep 2025
- 10:26:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758821262; x=1759426062;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=twFyA4eORy0F+hKQH+6fcNvXcelQ6Qor5Ir75U2uMhA=;
+        b=eG3ebk0pOx+KsUsvgTcpbGmUP969gRv6LQsK6Fnr9yH6jbMIwpGH+ca1b30zJVQoN3
+         out+0sQS1jB5zkvoBFB0ZfxjNmAVPs3XNT2BVGxBNmJE1yNy4V6vFfGXcyxMskkVq7qp
+         u0pzZD1nnbCOSX+YeYZU6JEIvw3ye7eW1wWIvvlOOSDdjzuTj7kn/PiaTvTxH/O0VI0c
+         1JJzRdE7R/62V8udWRmZNwq2QoykLB9OVTdPJh/EbvsMnEBMV7Kp9L3DOgQDlKL6VJbR
+         eiEAgQtPy1rHFtstb6V9oERgJD7w8Z9BUj4KUGJuWroF+urHtbswT4MKhflcdp3jC3mT
+         BL+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUaVApp+JIEDpV/PnTI77F4AqosTxnFPBvT3uNkJcd8y7RLMyeDAbAXPgztIMyPGyRxHn8L0BwJc+/jBMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsuLM/OnHOzlG71nbJenEI99M1FdhIVHpTlrB5JgYzUMldiECT
+	F65X7hlPywa3jHtkL6/xzkDrc0VhbFygJMeVlhNDI9X56O7fZFfD2MU4cG6MmI3ifGTJEiFkN3P
+	npspjfu6Zgw==
+X-Google-Smtp-Source: AGHT+IEcnlGjcYu4VtKAKyC7RJYe5WejLIMJSsrrgsndDXTrAUuZ4rOx79HSoDfyUmL7gjjARwRaPPXheIUc
+X-Received: from ybcs3.prod.google.com ([2002:a05:6902:5083:b0:eb3:8782:dcea])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690e:1a0c:b0:633:bf80:8b2a
+ with SMTP id 956f58d0204a3-6361a7b96eamr2604704d50.29.1758821261600; Thu, 25
+ Sep 2025 10:27:41 -0700 (PDT)
+Date: Thu, 25 Sep 2025 10:27:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com> <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com> <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com> <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com> <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com> <CAHbLzkrstjnEVUzz2==A2Z+CJToOgU6YU2MasdK49o-0-jW2yw@mail.gmail.com>
- <ec108aa2-88ae-42bb-a64d-ef12867526c4@redhat.com>
-In-Reply-To: <ec108aa2-88ae-42bb-a64d-ef12867526c4@redhat.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 25 Sep 2025 10:26:39 -0700
-X-Gm-Features: AS18NWA7mmHpaW4unFP9jmKD9f1afbd8FCzR488IcF67iAHmHq3JAN9lKlZCtYo
-Message-ID: <CAHbLzkryOopTOJ1gXmQiveZtuDfqSyYTO5WsfvrFcNjiHJV3cw@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linmiaohe@huawei.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nao.horiguchi@gmail.com, syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+Message-ID: <20250925172736.960368-1-irogers@google.com>
+Subject: [PATCH v2 00/10] perf vendor events intel update
+From: Ian Rogers <irogers@google.com>
+To: Thomas Falcon <thomas.falcon@intel.com>, Perry Taylor <perry.taylor@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Caleb Biggers <caleb.biggers@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 9:48=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 25.09.25 18:23, Yang Shi wrote:
-> > On Thu, Sep 25, 2025 at 7:45=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
-> >>
-> >> On 25 Sep 2025, at 8:02, Pankaj Raghav (Samsung) wrote:
-> >>
-> >>>>>>
-> >>>>>> We might just need (a), since there is no caller of (b) in kernel,=
- except
-> >>>>>> split_folio_to_order() is used for testing. There might be future =
-uses
-> >>>>>> when kernel wants to convert from THP to mTHP, but it seems that w=
-e are
-> >>>>>> not there yet.
-> >>>>>>
-> >>>>>
-> >>>>> Even better, then maybe selected interfaces could just fail if the =
-min-order contradicts with the request to split to a non-larger (order-0) f=
-olio.
-> >>>>
-> >>>> Yep. Let=E2=80=99s hear what Luis and Pankaj will say about this.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> +Luis and Pankaj for their opinions on how LBS is going to use spl=
-it folio
-> >>>>>> to any order.
-> >>>>>>
-> >>>>>> Hi Luis and Pankaj,
-> >>>>>>
-> >>>>>> It seems that bumping split folio order from 0 to mapping_min_foli=
-o_order()
-> >>>>>> instead of simply failing the split folio call gives surprises to =
-some
-> >>>>>> callers and causes issues like the one reported by this email. I c=
-annot think
-> >>>>>> of any situation where failing a folio split does not work. If LBS=
- code
-> >>>>>> wants to split, it should supply mapping_min_folio_order(), right?=
- Does
-> >>>>>> such caller exist?
-> >>>>>>
-> >>>
-> >>> I am not aware of any place in the LBS path where we supply the
-> >>> min_order. truncate_inode_partial_folio() calls try_folio_split(), wh=
-ich
-> >>> takes care of splitting in min_order chunks. So we embedded the
-> >>> min_order in the MM functions that performs the split instead of the
-> >>> caller passing the min_order. Probably, that is why this problem is
-> >>> being exposed now where people are surprised by seeing a large folio
-> >>> even though they asked to split folios to order-0.
-> >>>
-> >>> As you concluded, we will not be breaking anything wrt LBS as we
-> >>> just refuse to split if it doesn't match the min_order. The only issu=
-e I
-> >>> see is we might be exacerbating ENOMEM errors as we are not splitting=
- as
-> >>> many folios with this change. But the solution for that is simple, ad=
-d
-> >>> more RAM to the system ;)
-> >>>
-> >>> Just for clarity, are we talking about changing the behaviour just th=
-e
-> >>> try_to_split_thp_page() function or all the split functions in huge_m=
-m.h?
-> >>
-> >> I want to change all the split functions in huge_mm.h and provide
-> >> mapping_min_folio_order() to try_folio_split() in truncate_inode_parti=
-al_folio().
-> >>
-> >> Something like below:
-> >>
-> >> 1. no split function will change the given order;
-> >> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_=
-order
-> >> is smaller than mapping_min_folio_order().
-> >>
-> >> In this way, for an LBS folio that cannot be split to order 0, split
-> >> functions will return -EINVAL to tell caller that the folio cannot
-> >> be split. The caller is supposed to handle the split failure.
-> >
-> > Other than making folio split more reliable, it seems like to me this
-> > bug report shows memory failure doesn't handle LBS folio properly. For
-> > example, if the block size <=3D order-0 page size (this should be alway=
-s
-> > true before LBS), memory failure should expect the large folio is
-> > split to order-0, then the poisoned order-0 page should be discarded
-> > if it is not dirty. The later access to the block will trigger a major
-> > fault.
->
-> Agreed that larger-folio support would be nice in memory-failure code,
-> but I recall some other areas we recently touched that are rather hairy.
-> (something around unmap_poisoned_folio()).
+Update events and some metrics to the latest perfmon versions:
+ - alderlake 1.34
+ - arrowlake 1.13
+ - emeraldrapids 1.20
+ - grandridge 1.10
+ - graniterapids 1.15
+ - lunarlake 1.18
+ - meteorlake 1.17
+ - sapphirerapids 1.35
+ - sierraforest 1.12
 
-I had been busy on some arm64 stuff, I didn't follow up the recent
-development too closely, you meant this one?
-https://lore.kernel.org/linux-mm/20250627125747.3094074-3-tujinjiang@huawei=
-.com/
+v2: EMR/SPR cpu_cstate metric fixes.
 
-It seems like we need more work to support large folio for memory failure.
+Ian Rogers (10):
+  perf vendor events intel: Update alderlake events to v1.34
+  perf vendor events intel: Update arrowlake events to v1.13
+  perf vendor events intel: Update emeraldrapids events to v1.20
+  perf vendor events intel: Update grandridge events to v1.10
+  perf vendor events intel: Update graniterapids events to v1.15
+  perf vendor events intel: Update lunarlake events to v1.18
+  perf vendor events intel: Update meteorlake events to v1.17
+  perf vendor events intel: Update pantherlake events to v1.00
+  perf vendor events intel: Update sapphirerapids events to v1.35
+  perf vendor events intel: Update sierraforest events to v1.12
 
-Thanks,
-Yang
+ .../pmu-events/arch/x86/alderlake/cache.json  |   36 +
+ .../pmu-events/arch/x86/arrowlake/cache.json  |   46 +-
+ .../pmu-events/arch/x86/arrowlake/memory.json |    6 +-
+ .../pmu-events/arch/x86/arrowlake/other.json  |    2 +-
+ .../arch/x86/emeraldrapids/cache.json         |   63 +
+ .../arch/x86/emeraldrapids/emr-metrics.json   |   12 +
+ .../arch/x86/emeraldrapids/uncore-cache.json  |   11 +
+ .../arch/x86/emeraldrapids/uncore-memory.json |   22 +
+ .../arch/x86/emeraldrapids/uncore-power.json  |    2 -
+ .../pmu-events/arch/x86/grandridge/cache.json |   20 +-
+ .../graniterapids/uncore-interconnect.json    |   10 +-
+ .../arch/x86/graniterapids/uncore-memory.json |  112 ++
+ .../pmu-events/arch/x86/lunarlake/cache.json  |   46 +-
+ .../pmu-events/arch/x86/lunarlake/memory.json |    6 +-
+ .../pmu-events/arch/x86/lunarlake/other.json  |    2 +-
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |   20 +-
+ .../pmu-events/arch/x86/meteorlake/cache.json |   36 +
+ .../arch/x86/pantherlake/cache.json           | 1207 ++++++++++-
+ .../arch/x86/pantherlake/counter.json         |    9 +-
+ .../arch/x86/pantherlake/floating-point.json  |  286 +++
+ .../arch/x86/pantherlake/frontend.json        |  535 +++++
+ .../arch/x86/pantherlake/memory.json          |  106 +-
+ .../arch/x86/pantherlake/other.json           |   44 +
+ .../arch/x86/pantherlake/pipeline.json        | 1776 ++++++++++++++++-
+ .../arch/x86/pantherlake/uncore-memory.json   |   26 +
+ .../arch/x86/pantherlake/virtual-memory.json  |  248 +++
+ .../arch/x86/sapphirerapids/cache.json        |   63 +
+ .../arch/x86/sapphirerapids/spr-metrics.json  |   12 +
+ .../arch/x86/sapphirerapids/uncore-cache.json |   11 +
+ .../x86/sapphirerapids/uncore-memory.json     |   22 +
+ .../arch/x86/sapphirerapids/uncore-power.json |    2 -
+ .../arch/x86/sierraforest/cache.json          |   61 +-
+ .../x86/sierraforest/uncore-interconnect.json |   10 +-
+ .../arch/x86/sierraforest/uncore-io.json      |    1 -
+ .../arch/x86/sierraforest/uncore-memory.json  |  103 +-
+ 35 files changed, 4712 insertions(+), 262 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/floating-point.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/other.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/pantherlake/uncore-memory.json
 
->
-> The BUG at hand is that we changed splitting semantics without taking
-> care of the actual users.
->
-> --
-> Cheers
->
-> David / dhildenb
->
+-- 
+2.51.0.536.g15c5d4f767-goog
+
 
