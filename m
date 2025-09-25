@@ -1,149 +1,250 @@
-Return-Path: <linux-kernel+bounces-833059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB59BBA11CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 355E5BA11A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C05062858E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3DF6C1BAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F155F31D37A;
-	Thu, 25 Sep 2025 19:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D062AA944;
+	Thu, 25 Sep 2025 18:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us2HiNCG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JxuP2M9R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D066318146;
-	Thu, 25 Sep 2025 19:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF6F31AF39
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758826847; cv=none; b=gNv2nTHVvX1szk8TPgnNOGqGrI56mY2q/SMD8mHQxjuMxJTkUoMAhJK6iaQCjT/bHTnScEg6w4P7quoeum6MX6dpaT6vW0VXQW71U6EREAPE/pbu/08gxp475f1Sg010me7/4jJJmmHdlKIc7ivHkyfLwwPYBYyAxeqCsDx7t6g=
+	t=1758826655; cv=none; b=bARhnjDBDxWH5ZtJUnD7QF6qMrrO3ck7aK57oBxHcBdjg6vT1nt198d/U8Vs8dU3WUooTkEqXilHx3UP/92Dpq2lj7BoKVIjt7Udv6ZLOvnDpmGDPOnpl73aTpgd7TGVayWrT7I8euO8IxgW71PLmUTZBDXBg4r4LpZWtvi3byM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758826847; c=relaxed/simple;
-	bh=x6vyQiQ8KY/ybTVjHPahCNlgiHb+wpGqrxCLrlkq7wM=;
+	s=arc-20240116; t=1758826655; c=relaxed/simple;
+	bh=j5gkSv/3UaxKbaNRZmLoYcyk0+yVwcOA5OeU8sjTjKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igVQ1peACjA1cWKF2F6kHNSBf+yHXhouqSWkm6tCdQkLT2OvPXWcZhtK4u04nNqwdef92KPfUhkPtEp8uP6bnz7utTCNhN4vC/o1TIeLUFOwXrSJ4PLH4OwnDqso+qSrUpPdQqcGV38GfTAVr7m43OExLCklONFzYKKUiqb2uas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us2HiNCG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDB6BC113CF;
-	Thu, 25 Sep 2025 19:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758826846;
-	bh=x6vyQiQ8KY/ybTVjHPahCNlgiHb+wpGqrxCLrlkq7wM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=us2HiNCG1WxPWhvMS1akL9Zvv2OSsFHlv4IZpumOdLKRUqDmMNkkyK/v0TDboD1RM
-	 p5G76RMnfUqjFC+Gi+DSuL972YvH0JoFpDG9Xb7tUf7AuRCoXlncOvKTHVXtxXse3s
-	 516q4DlyMhqABQFz9NpmKaqexGEJA7qCamRUF39KoTjZeP9BOAWcPbgFVdaPB7ToAL
-	 HsAzWjfthh2i/n8ys2mMSzywYcTxaIhobysaX9jT0lXFZhM4DGYP3Bfo9i6Vc6jBGE
-	 dMekOq4IaxB01eijEfj1Yqs99knmpGshegBwS4qNmrC/NRveZ665irDFgws5f7+mNd
-	 lPLMgXbSYIE6g==
-Date: Thu, 25 Sep 2025 20:00:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Christian Brauner <brauner@kernel.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	Carlos O'Donell <codonell@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Szabolcs Nagy <nsz@port70.net>,
-	Rich Felker <dalias@libc.org>, libc-alpha@sourceware.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] arm64/gcs: Support reuse of GCS for exited
- threads
-Message-ID: <41929a12-59f4-419e-9f15-eaa09f0df0f3@sirena.org.uk>
-References: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
- <20250921-arm64-gcs-exit-token-v1-1-45cf64e648d5@kernel.org>
- <aNVx9vlgi8t81V6Y@arm.com>
- <38d629f2-99bb-4b13-a6ed-a4126d130b1f@sirena.org.uk>
- <aNWLwkn1fJDvWUyu@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaOfaOFbVClYB7u7i+AwotxMQFfzUK7noo12K+3NL6FJZ09t7etnBYcMHkCrRHF3mKSF4rjvFwMuCktUdNdFJuo0AKtufJIWn3Ll58lBt8zRG0VXoaabdmtUtEl4PLVyWRGUezCLf5mUzSdZith278vLAKrbzxGhfAv6YDALHCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JxuP2M9R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758826652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xDIYoUk2aYSVEyb/ZokojK1Od3xlyMIfNybo+1mukeM=;
+	b=JxuP2M9RfnytWQRl7ZoxnfPoM0/t8RmZ84zThO5p0UxZywYpcyCTlFxDVIOGnG7wYRP4ZM
+	vJ4OVn3Ra7wYd/v1ZbZTbOJhRtfGCdN5hlPvLqR0ynzjnt5sYKPTpfiLp3eTfP3efuYk+x
+	A2m9Pw8C9Ef9kfF08oqaKzma25P+qLk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-563-Jl37rhTYO5y7Vs-CMSSc-A-1; Thu,
+ 25 Sep 2025 14:57:26 -0400
+X-MC-Unique: Jl37rhTYO5y7Vs-CMSSc-A-1
+X-Mimecast-MFC-AGG-ID: Jl37rhTYO5y7Vs-CMSSc-A_1758826645
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CA5C19560B5;
+	Thu, 25 Sep 2025 18:57:25 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.134])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 61553300021A;
+	Thu, 25 Sep 2025 18:57:23 +0000 (UTC)
+Date: Thu, 25 Sep 2025 15:01:33 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: alexjlzheng@gmail.com
+Cc: brauner@kernel.org, djwong@kernel.org, hch@infradead.org,
+	kernel@pankajraghav.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH v5 4/4] iomap: don't abandon the whole copy when we have
+ iomap_folio_state
+Message-ID: <aNWRjekDBHRelmbS@bfoster>
+References: <20250923042158.1196568-1-alexjlzheng@tencent.com>
+ <20250923042158.1196568-5-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CgoqWbNTUvZQnot8"
-Content-Disposition: inline
-In-Reply-To: <aNWLwkn1fJDvWUyu@arm.com>
-X-Cookie: Shipping not included.
-
-
---CgoqWbNTUvZQnot8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250923042158.1196568-5-alexjlzheng@tencent.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Sep 25, 2025 at 07:36:50PM +0100, Catalin Marinas wrote:
-> On Thu, Sep 25, 2025 at 06:01:07PM +0100, Mark Brown wrote:
-> > On Thu, Sep 25, 2025 at 05:46:46PM +0100, Catalin Marinas wrote:
-> > > On Sun, Sep 21, 2025 at 02:21:35PM +0100, Mark Brown wrote:
+On Tue, Sep 23, 2025 at 12:21:58PM +0800, alexjlzheng@gmail.com wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> 
+> Currently, if a partial write occurs in a buffer write, the entire write will
+> be discarded. While this is an uncommon case, it's still a bit wasteful and
+> we can do better.
+> 
+> With iomap_folio_state, we can identify uptodate states at the block
+> level, and a read_folio reading can correctly handle partially
+> uptodate folios.
+> 
+> Therefore, when a partial write occurs, accept the block-aligned
+> partial write instead of rejecting the entire write.
+> 
+> For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+> bytes are 2MB-3kB.
+> 
+> Without this patchset, we'd need to recopy from the beginning of the
+> folio in the next iteration, which means 2MB-3kB of bytes is copy
+> duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>  |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+>                          |<-------- 1MB -------->|  next next time we need copy.
+> 
+>  |<------ 2MB-3kB bytes duplicate copy ---->|
+> 
+> With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+> This means we only need to process the remaining 4kB in the next iteration,
+> which means there's only 1kB we need to copy duplicately.
+> 
+>  |<-------------------- 2MB -------------------->|
+>  +-------+-------+-------+-------+-------+-------+
+>  | block |  ...  | block | block |  ...  | block | folio
+>  +-------+-------+-------+-------+-------+-------+
+>  |<-4kB->|
+> 
+>  |<--------------- copied 2MB-3kB --------->|       first time copied
+>                                          |<-4kB->|  next time we need copy
+> 
+>                                          |<>|
+>                               only 1kB bytes duplicate copy
+> 
+> Although partial writes are inherently a relatively unusual situation and do
+> not account for a large proportion of performance testing, the optimization
+> here still makes sense in large-scale data centers.
+> 
 
-> > We can't have scheduled?  That's actually a pleasant surprise, that was
-> > the main hole I was thinking of in the cover letter.
+Thanks for the nice writeup and diagrams.
 
-> Well, double-check. AFAICT, gcs_free() is only called on the exit_mm()
-> path when a thread dies.
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> ---
+>  fs/iomap/buffered-io.c | 44 +++++++++++++++++++++++++++++++++---------
+>  1 file changed, 35 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 6e516c7d9f04..3304028ce64f 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
+>  	return status;
+>  }
+>  
+> +static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
+> +		size_t copied, struct folio *folio)
+> +{
+> +	struct iomap_folio_state *ifs = folio->private;
+> +	unsigned block_size, last_blk, last_blk_bytes;
+> +
+> +	if (!ifs || !copied)
+> +		return 0;
+> +
+> +	block_size = 1 << inode->i_blkbits;
 
-> I think gcs_free() may have been called in other contexts before the
-> cleanups you had in 6.16 (there were two more call sites for
-> gcs_free()). If that's the case, we could turn these checks into
-> WARN_ON_ONCE().
+I'd move this assignment to declaration time.
 
-Yeah, just I need to convince myself that we're always running the
-exit_mm() path in the context of the exiting thread.  Like you say it
-needs checking but hopefully you're right and the current code is more
-correct than I had thought.
+> +	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
+> +	last_blk_bytes = (pos + copied) & (block_size - 1);
+> +
+> +	if (!ifs_block_is_uptodate(ifs, last_blk))
+> +		copied -= min(copied, last_blk_bytes);
 
-> > > The only downside is that, if the thread did not unwind properly, we
-> > > don't write the token where it was initially. We could save the token
-> > > address from clone3() and restore it there instead.
+So I think I follow the idea here and it seems reasonable at first
+glance. IIUC, the high level issue is that for certain writes we don't
+read blocks up front if the write is expected to fully overwrite
+blocks/folios, as we can just mark things uptodate on write completion.
+If the write is short however, we now have a partial write to a
+!uptodate block, so have to toss the write.
 
-> > If we do that and the thread pivots away to another GCS and exits from
-> > there then we'll write the token onto a different stack.  Writing onto
-> > the location that userspace provided when creating the thread should be
-> > fine for glibc's needs but it feels like the wrong assumption to bake
-> > in, to me it feels less bad to have to map a new GCS in the case where
-> > we didn't unwind properly.  There will be overhead in doing that but the
-> > thread is already exiting uncleanly so imposing a cost doesn't seem
-> > disproportionate.
+A few initial thoughts..
 
-> You are right, that's the safest. glibc can always unmap the shadow
-> stack if the thread did not exit properly.
+1. I don't really love the function name here. Maybe something like
+iomap_write_end_short() or something would be more clear, but maybe
+there are other opinions.
 
-> That said, does glibc ensure the thread unwinds its stack (and shadow
-> stack) on pthread_exit()? IIUC, it does, at least for the normal stack,
-> but I'm not familiar with the codebase.
+2. It might be helpful to move some of the comment below up to around
+here where we actually trim the copied value.
 
-Florian indicated that it did in:
+3. I see that in __iomap_write_begin() we don't necessarily always
+attach ifs if a write is expected to fully overwrite the entire folio.
+It looks like that is handled with the !ifs check above, but it also
+makes me wonder how effective this change is.
 
-   https://marc.info/?l=glibc-alpha&m=175733266913483&w=2
+For example, the example in the commit log description appears to be a
+short write of an attempted overwrite of a 2MB folio, right? Would we
+expect to have ifs in that situation?
 
-I did look at the code to check, though I'm not at all familiar with the
-codebase either so I'm not sure how much that check was worth.  If the
-unwinder doesn't handle the shadow stack then userspace will be having a
-very bad time anyway whenever it tries to run on an unwound stack so
-doing so shouldn't be an additional cost there.
+I don't really object to having the logic even if it is a real corner
+case, but it would be good to have some test coverage to verify
+behavior. Do you have a test case or anything (even if contrived) along
+those lines? Perhaps we could play some games with badly formed
+syscalls. A quick test to call pwritev() with a bad iov_base pointer
+seems to produce a short write, but I haven't confirmed that's
+sufficient for testing here..
 
---CgoqWbNTUvZQnot8
-Content-Type: application/pgp-signature; name="signature.asc"
+Brian
 
------BEGIN PGP SIGNATURE-----
+> +
+> +	return copied;
+> +}
+> +
+>  static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  		size_t copied, struct folio *folio)
+>  {
+> @@ -881,17 +900,24 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+>  	/*
+>  	 * The blocks that were entirely written will now be uptodate, so we
+>  	 * don't have to worry about a read_folio reading them and overwriting a
+> -	 * partial write.  However, if we've encountered a short write and only
+> -	 * partially written into a block, it will not be marked uptodate, so a
+> -	 * read_folio might come in and destroy our partial write.
+> +	 * partial write.
+>  	 *
+> -	 * Do the simplest thing and just treat any short write to a
+> -	 * non-uptodate page as a zero-length write, and force the caller to
+> -	 * redo the whole thing.
+> +	 * However, if we've encountered a short write and only partially
+> +	 * written into a block, we must discard the short-written _tail_ block
+> +	 * and not mark it uptodate in the ifs, to ensure a read_folio reading
+> +	 * can handle it correctly via iomap_adjust_read_range(). It's safe to
+> +	 * keep the non-tail block writes because we know that for a non-tail
+> +	 * block:
+> +	 * - is either fully written, since copy_from_user() is sequential
+> +	 * - or is a partially written head block that has already been read in
+> +	 *   and marked uptodate in the ifs by iomap_write_begin().
+>  	 */
+> -	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+> -		return 0;
+> -	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+> +	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
+> +		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
+> +		if (!copied)
+> +			return 0;
+> +	}
+> +	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
+>  	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+>  	filemap_dirty_folio(inode->i_mapping, folio);
+>  	return copied;
+> -- 
+> 2.49.0
+> 
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVkVgACgkQJNaLcl1U
-h9ABjwf+MjEOpbiL1LV0wvqM6hA6ngml+WiJewggEO2yakCAFbskLF+lBun0fkAd
-Byyuasy8H+g3RTzb1Lm6Iowg8u5bJhGUAQTWHl8X5zYOzwwYAsN0GUHTF7++E0zW
-vTJh99nObpUu4Lp+ophez6MXVLdACxBGtKGe8TAcmyzP91lNQFFfI95yHI4+KZgT
-orvGqMfMfdDhO4RlnP2ACRPrn2PfUTv58dHswSnKatMkmdNc8IdfgHkhC5IULkjo
-x+xygqMjNZgHBjkm1JZt8LgHrk+PWirDtJAAob75J5EY++oVE++myxn3l+PAvIYT
-W/vpKk5RJHwrnEu5tz8He6oIp+Ubhg==
-=PJLP
------END PGP SIGNATURE-----
-
---CgoqWbNTUvZQnot8--
 
