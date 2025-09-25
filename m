@@ -1,168 +1,144 @@
-Return-Path: <linux-kernel+bounces-832659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185F0BA0093
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FCBBA00B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84750188F7C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2B63BE75C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22B22DCBF2;
-	Thu, 25 Sep 2025 14:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999202DE719;
+	Thu, 25 Sep 2025 14:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nxJd77l5"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiyB1Sw6"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9A12DBF5E;
-	Thu, 25 Sep 2025 14:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5622DBF5E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810831; cv=none; b=t6/k9pH2Y4vVhyV2gfU+JHeiPGxsPNIFYm+9faMjw1x+JKu7/MfT+DvOyfoYiffonPpCPKTBP+zV5bCalTTW1HNBYMHMtQ+qGq+y6rgrtpVOb7sX5yY1whH772sV08Hu0zlqwDqgO3ID7skqWSI/puRhjm5qsIzEInGFYAaBUvs=
+	t=1758810870; cv=none; b=R0FlJF2r2WWA+mWLGh+iYyc3NgxtIq7+ITnV6AsP97k/YcrjZJLFO6m1FYQKqk96aCMFtYYWaF8LVjSE+yABR1lYrT2lvrs6fpvmkaEMaGz6myJen1lZi5Wavz1XsX7MKk8bnpQ3lRvzHXpmgsb9FwOYAuCK8qbudHk8NKCipHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810831; c=relaxed/simple;
-	bh=/DR/u5etjpFCcgysgk01aZ/Bib5XibYpmOsNM+o0xLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hb+FJrJotArRPcXrRWt5H89IouM7QOZ7bY/LciC7MQvzzC6+5wJdrngU1C/cI/OqDtlsS0wtoQLCK+yNT3iSSQs8c2ARntzAaR2jGr0+Y6Ub8+iflO57OAFgckIo1g1KVKLAszffkrJulO/8ZaBDOoUpP1qYfhF76XPfvjCygV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nxJd77l5; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=HTdc+5XjoLirKBt3ethpIIBo+vHjglYjK+kcoXPxeLY=; b=nxJd77l5fQBCkfr0N5hryU63O3
-	jA9+TLurVpNTJ3v6Da6K8YjXd50UXpqhomuJFg4dyxqoQIZoGhXkzTPHW/d1sGNg//cwuzaF2QTVC
-	PkIuoYl3MNITuzoFUYCM7W/+9r9b573D4odm4+02hwxx76f0GCghN6gqM66WQx9T7K3U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v1n2S-009Tak-9J; Thu, 25 Sep 2025 16:33:40 +0200
-Date: Thu, 25 Sep 2025 16:33:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parvathi Pudi <parvathi@couthit.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, danishanwar@ti.com,
-	rogerq@kernel.org, pmohan@couthit.com, basharath@couthit.com,
-	afd@ti.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, pratheesh@ti.com,
-	prajith@ti.com, vigneshr@ti.com, praneeth@ti.com, srk@ti.com,
-	rogerq@ti.com, krishna@couthit.com, mohan@couthit.com
-Subject: Re: [PATCH net-next 1/3] net: ti: icssm-prueth: Adds helper
- functions to configure and maintain FDB
-Message-ID: <02f2c50f-31f6-4d4a-9cbe-5f77d1d60706@lunn.ch>
-References: <20250925141246.3433603-1-parvathi@couthit.com>
- <20250925141246.3433603-2-parvathi@couthit.com>
+	s=arc-20240116; t=1758810870; c=relaxed/simple;
+	bh=6XA+llkjZZVH29f0iycatx4vb1CIaytfaB6lMJvlB8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eliaRC1cc5kss9guqSzNBC+tkD5OHK/xLKNoVCbblr7RcG4FnBnymIaUsAIMmHpafNo0nGlqhd7rhl1vvusw6pmFWTHN99bDYLsn9mdgGleYdyf8s0w9tdg19alh/jFEUpC2wjFG3qskTFIe6fjyNGU+AhAA5ZHH/3qrLk7i/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiyB1Sw6; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so999774f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758810866; x=1759415666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jlmWZnzTQZk7hQJHDjRsw6Fn5BINueet3UHk9KQ1rXw=;
+        b=JiyB1Sw6yUHbhPNARjgB4h0+sV8ZsDI4K5+GauNR+yjB9Z+0sSh+OCV6cwu+Zmy58A
+         2K89axmqBy3UG31xs/Vn1wfEY6b+I1vuUw/mA3teMhdB/VKWNd3vDD2hqJ0pry5S6kuA
+         kKFZlxp4k8gKWRgjG40R9/E+nahiBh4By9DtI8wLbMC4o15IiqI59nyDw+4poxadzpQ6
+         TcwUfPORCj4cIukSELq+Ta3E+9vgvTyxpFcilxiTZxDrSFYQQ1+6tFAl581MaJiwmlns
+         CG33l1GwMqQdNX4ReQ5ccDlvPohTWUGTMhRE4gIPz1ysNXQVpUiPz5tgSccyKo8CeAnH
+         y4KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758810866; x=1759415666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jlmWZnzTQZk7hQJHDjRsw6Fn5BINueet3UHk9KQ1rXw=;
+        b=hoNzB6kDqbnEvQUCLiW7GulJQcravrXKtLmq7nU9ZbwKQWjg05Mx6uQf7BuNHztrN0
+         c9okzEos8tXfOI7FriivL6Z+UGLNh0O80LNtoBqx1Iclk7O8lJO2MGl7oVfztPwpdA07
+         nTiz8VN7QetzafDUPqp9moAvhcX/tGBXQEJYhPUVxGzk8A+RAHWK1hSeEpbfCtSBzpSJ
+         IYeVcSIlK2KmQlOxwbl3KsxcC7EESTzSOoL4kex5kcJeOKgx99Ez+fONDSnFANNa0TXw
+         KYUCsojpjHHUP2MXS4tJY/yk14gZLP3Z2X6CdbIXT8vMDvdaY0KH6odaf7CmuQQJi/Dg
+         sRxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlBTmWr9fRTrxOHC28J+9RST3dGeWtEckNYCr26bZzLaxp5o/2kloh6nxx8UMg9HG0gml+lHWQfPvoueE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhJV/cfW8RG5nDsUPxvWt6S4rRnHjlyad47JDY6SpLkilnxTHz
+	0q9dBDpRpYj520jq2r7O4v9fFjh7hgKXxIG+aleOsOp3RJPN2QvFMjJM/KCZBbQhiKWhfxbLwgg
+	KoChWypskxQgMyKnWhPghzBitCK82wCo=
+X-Gm-Gg: ASbGnct/DWynOviEhfO8+xee9pn6S6c589Fa6oT4+8v25JDGq45jeO3yM+qGB/Gk1Ut
+	hsPrQXShS9nrl8BSXYbV/wD77t+KCQsdE6CLceCUR1JjMMl0n9sWXwVkC1K5TrQ8XgOTS661JU7
+	vjrKF0qqPHav/NeRU9uS7+GAOJeVU/y7S2PDfs2bqNbI86Fbh/Vtq9DX1vwp3r9iAKJDxGMhHU8
+	DG2pw==
+X-Google-Smtp-Source: AGHT+IGY9M679gafputQhuXv58U54d1hWGLNXuPzatEJA13krdUY3caj/cCKqU06kl7/8uBnZ3uP82zoy5jzM0Zo1PQ=
+X-Received: by 2002:a05:6000:2486:b0:3d4:f5c2:d805 with SMTP id
+ ffacd0b85a97d-40e4458c89bmr3769232f8f.16.1758810866223; Thu, 25 Sep 2025
+ 07:34:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925141246.3433603-2-parvathi@couthit.com>
+References: <aNVMR5rjA2geHNLn@sirena.org.uk>
+In-Reply-To: <aNVMR5rjA2geHNLn@sirena.org.uk>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 25 Sep 2025 15:34:15 +0100
+X-Gm-Features: AS18NWD8ZUmLb0ORW8a0yDbsVq0TSmHChIah2vxBghBU5_0NKGLYU8EJzRAlptA
+Message-ID: <CAADnVQLcNWCsazy4XudB4EPaqvdtea+d8w5q4R5MsvRJ4fmOmA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +++ b/drivers/net/ethernet/ti/icssm/icssm_prueth_fdb_tbl.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (C) 2019-2021 Texas Instruments Incorporated - https://www.ti.com */
-> +#ifndef __NET_TI_PRUSS_FDB_TBL_H
-> +#define __NET_TI_PRUSS_FDB_TBL_H
+On Thu, Sep 25, 2025 at 3:06=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>
+>   kernel/events/uprobes.c
+>
+> between commit:
+>
+>   4363264111e12 ("uprobe: Do not emulate/sstep original instruction when =
+ip is changed")
+>
+> from the bpf-next tree and commit:
+>
+>   ba2bfc97b4629 ("uprobes/x86: Add support to optimize uprobes")
+>
+> from the tip tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc kernel/events/uprobes.c
+> index c2ff256dd6419,996a81080d563..0000000000000
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@@ -2741,13 -2765,9 +2765,16 @@@ static void handle_swbp(struct pt_regs
+>
+>         handler_chain(uprobe, regs);
+>
+>  +      /*
+>  +       * If user decided to take execution elsewhere, it makes little s=
+ense
+>  +       * to execute the original instruction, so let's skip it.
+>  +       */
+>  +      if (instruction_pointer(regs) !=3D bp_vaddr)
+>  +              goto out;
+>  +
+> +       /* Try to optimize after first hit. */
+> +       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/debugfs.h>
-> +#include "icssm_prueth.h"
-> +
-> +#define ETHER_ADDR_LEN 6
+>         if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+>                 goto out;
 
-Please use ETH_ALEN everywhere.
-
-> +static void icssm_prueth_sw_fdb_spin_lock(struct fdb_tbl *fdb_tbl)
-> +{
-> +	/* Take the host lock */
-> +	writeb(1, (u8 __iomem *)&fdb_tbl->locks->host_lock);
-> +
-> +	/* Wait for the PRUs to release their locks */
-> +	while (readb((u8 __iomem *)&fdb_tbl->locks->pru_locks))
-> +		;
-
-Don't use endless loops. What happens if the firmware crashed. Please
-use something from iopoll.h and handle -ETIMEDOUT.
-
-> +static void icssm_mac_copy(u8 *dst, const u8 *src)
-> +{
-> +	u8 i;
-> +
-> +	for (i = 0; i < ETHER_ADDR_LEN; i++) {
-> +		*(dst) = *(src);
-> +		dst++;
-> +		src++;
-> +	}
-> +}
-
-There is a kernel helper for this.
-
-> +
-> +static s8 icssm_mac_cmp(const u8 *mac_a, const u8 *mac_b)
-> +{
-> +	s8  ret = 0, i;
-> +
-> +	for (i = 0; i < ETHER_ADDR_LEN; i++) {
-> +		if (mac_a[i] == mac_b[i])
-> +			continue;
-> +
-> +		ret = mac_a[i] < mac_b[i] ? -1 : 1;
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-
-I suspect there is also a helper for this. Please don't reinvent what
-the kernel already has.
-
-> +static s16
-> +icssm_prueth_sw_fdb_find_bucket_insert_point(struct fdb_tbl *fdb,
-> +					     struct fdb_index_tbl_entry_t
-> +					     *bkt_info,
-> +					     const u8 *mac, const u8 port)
-> +{
-> +	struct fdb_mac_tbl_array_t *mac_tbl = fdb->mac_tbl_a;
-> +	struct fdb_mac_tbl_entry_t *e;
-> +	u8 mac_tbl_idx;
-> +	s8 cmp;
-> +	int i;
-> +
-> +	mac_tbl_idx = bkt_info->bucket_idx;
-> +
-> +	for (i = 0; i < bkt_info->bucket_entries; i++, mac_tbl_idx++) {
-> +		e = &mac_tbl->mac_tbl_entry[mac_tbl_idx];
-> +		cmp = icssm_mac_cmp(mac, e->mac);
-> +		if (cmp < 0) {
-> +			return mac_tbl_idx;
-> +		} else if (cmp == 0) {
-> +			if (e->port != port) {
-> +				/* MAC is already in FDB, only port is
-> +				 * different. So just update the port.
-> +				 * Note: total_entries and bucket_entries
-> +				 * remain the same.
-> +				 */
-> +				icssm_prueth_sw_fdb_spin_lock(fdb);
-> +				e->port = port;
-> +				icssm_prueth_sw_fdb_spin_unlock(fdb);
-> +			}
-> +
-> +			/* MAC and port are the same, touch the fdb */
-> +			e->age = 0;
-> +			return -1;
-
-Returning values like this can result in bugs. It is better to use a
-real error code, just in case this ever makes it way back to
-userspace.
-
-	Andrew
+Yep. That's exactly what we discussed.
+I'll mention it in the PR during the merge window.
 
