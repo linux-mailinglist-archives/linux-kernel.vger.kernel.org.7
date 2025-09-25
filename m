@@ -1,284 +1,129 @@
-Return-Path: <linux-kernel+bounces-832848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D024BBA090F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:18:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5DCBA091B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4183ABEE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912F91B242A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD1B3064A4;
-	Thu, 25 Sep 2025 16:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F21E305E20;
+	Thu, 25 Sep 2025 16:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5Y+Ovmr"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzkHAeNY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617A2E413
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC103596B;
+	Thu, 25 Sep 2025 16:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758817119; cv=none; b=UOm9P6CM1XDTUWmUmFGauIacu6j+snIGA4GKAbkn6v9FH9qo7fr1g68Gnr+/Di8pWfVxJOSTWxQwMFdA1nD1DMVwyR6CJqSpMk2R2pC/EzQceCmQZvPPksQrxKd0b+J0JwDU6kxN+4u7YECOYUymKYwyTZU0Sy6jUX8A2xPc0Ws=
+	t=1758817171; cv=none; b=qoE9EWZ/e/kyuOpBRFymy7Hg8wcaW7Ijy3iDvyxdXI+wZZo/1/LQNr229WfYjjQ8Vml/gv6FxzU6hDiNCZxgTIRP/r2VFakAkLX4o1YK6sgbQTx+VMGNPwcjY5yESCehu6RKMLzeNa+imJq91IZQ3ym5S7GvFg0Zm2R/bihn3xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758817119; c=relaxed/simple;
-	bh=B39erYFu+IADpwH47mN8zsMtIScBC4vuaTnziuWPKH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMHVYJ30GdrkQIGGNPOf2pKseO+/z01I2uujNj7KcKsNnJQRTbmB4Y5vATUhLpLoGwKC1fxpDK8qejlbNhliW/cmOA61YLf7f0swjAdOVpG5VXYq8ZDON8FIUzx0eS5EO1aJfxAAZSelwsJWtxQLC8oaycYbo/k+jo3vf4/2IMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5Y+Ovmr; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso2419258a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:18:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758817115; x=1759421915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s5xevkUUTmwlKwAyY0Wx9nWf1Int/iLI6fP1YJUNaVA=;
-        b=B5Y+Ovmrra4dXWKtLm3K9PZye+O1v3ro5Woqt6BD9MTX+kd1cohHm7vFQ2j9BQoqfq
-         p6ViAsWDFlSl9KWe0jcJwC5t2dt0mi4U6cggvfyKnn6Di1BAPd21rvjUtz+eS25X7cEO
-         sLERZjRHjXqlHGWWMjuC7QmJzm7U2V0wya74o+AvvUdTfhs1gx1eStrw5uPKz6LS+7/z
-         pwB4zKDNXyUacCYpo45re0vOyqfQGsFHZNKICjNQYln3yY87wEcW2UUWFwALkvK5v/xU
-         /Cd/mSJy9hGqMXGkUHE2rNf5Uu+YHrNpPRoMGeMXFnPf3csH2YT3rIAKXfCGXrOy1y5r
-         Dhew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758817115; x=1759421915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s5xevkUUTmwlKwAyY0Wx9nWf1Int/iLI6fP1YJUNaVA=;
-        b=i61VY30sKN9T5+M6OoTeRX/JPBda01v8Y9YQvoHAdH9LaeAMRbAccrp92hxHIuABxk
-         ToLGIJ2co0FO8oMTrl+0b2mBd0xIvyQtqEQPccSfXYXXpAbGEXlL7B57yNtLYYbIWKPF
-         rmPlAoCdqIqNZKsB5NASUgfU2XScfkPZv8iUpOsYm60IwoRx2AuD4qXHNITGC2jYhHc0
-         mosE5/96tnRJCQjjWRNdEEWP9jmOFppLB0xSC4ml8Jx5VE7XBbbYNHc+he19FvwFno3Z
-         wyWc/y1wk5cKRm7fFrdfQGeWXVKLksj7QlKI72ZlHjoXPGX4AnwFfRNIBqT1lrPBCYt0
-         6sHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKZWmYMV55EXSmURRIX4bQHfLQhuycwrcr6Rmp/V0SqHxHFZZZiAULo78YDy3kEVagdfFBZx7DsTDrTB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjMu1b5BnJwbtsnoRsESMQJVO5Winvib3VWlrygBi+ARa1ryYA
-	b0tsGQ8kvlpWfpnUVebx1TlxclyfDnHNScisUqeIlXtQe9P/1pBjb0bUs9doJCBoiTRFaKkq3PQ
-	++wYRM0vuaK4mquu0F/aF4ymAfGymw3U=
-X-Gm-Gg: ASbGncuiFR0Du9MBFhdw3eKIOPxiZNId1aYZLtbaNP+qGPwhrjuhxkCxuFVcsefVdVs
-	k8jaCVGdlFOq5x8rlLFltS6l3bAxQBZzVrJXOEPKOphAn01xK6UHejQk+mZF/UfChlK1IdJ7SzD
-	lq+XTbfQtzTdwXyw5vLEuhFpI41ZPLx3qDXHxK9+TECflayTj/+Awu5jylW4ddYMMuuKqxQziqG
-	oCs++XFZeIhy+I3XCX8cLX6uTKHgVsrT3ZQAB8XqFRjnTAqiig=
-X-Google-Smtp-Source: AGHT+IFwv2YwsWAIKIDmxsrJN0NY39IA3xgFkg9Xv9DM8KA1HxgqMZQFSM1VnRv5Sj5R14hL06ntb/V9/P6xF1NLvs4=
-X-Received: by 2002:a17:907:720b:b0:b2a:7f08:23da with SMTP id
- a640c23a62f3a-b34bbebe2f0mr416672066b.56.1758817114676; Thu, 25 Sep 2025
- 09:18:34 -0700 (PDT)
+	s=arc-20240116; t=1758817171; c=relaxed/simple;
+	bh=7AVIF0kZTDey6ZhzfUZ3+wr+sPFo2gu91AUy+CefXhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tkZuSzXgdwRzea6NJNHgueoeAWklUd0jdpn6dCKfxWz1hF8JwStJvGFr9eqyzFT/F2BwXNfX+W+hY5El/LBrrWEqynBTM0iEjvWnR+OzLtPAIpqc97YS4kJMg2wYBBtiKkXJbmtob8S6F0D8M1SVFx7ODg/CRStCap9ZSTanbIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzkHAeNY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630F7C4CEF0;
+	Thu, 25 Sep 2025 16:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758817171;
+	bh=7AVIF0kZTDey6ZhzfUZ3+wr+sPFo2gu91AUy+CefXhE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qzkHAeNYo5rE0NLdPInOl3hThl6qLGz2kZnyIJDc6EeGnmbJvruBBlPhY7BeAxkVT
+	 MEoDIdw1opJyCmSwj7oCaYEdBJeAnbj2sjy8FQvePRZWoWe+S4Wg42NHmrNkpxwN5s
+	 pS00wtIxFfgXaDwvKOLchauboc8dNg/LM8+y46xtFylfHCtRLqpO6jKNdbgUP9RN1K
+	 8J9lgZWVl9JOXq5rqwwDs1/nz40tWBCznax8SFnqRCAUfxUx6QV8+xrNdQhbM+8RvS
+	 ZX8rcuWoimFqMOMQw2Onlh544FODNe4ukX4d8goFyHIgoCTSaxxW7KUlUSg8H1bzvr
+	 AM+9voZqJoRFw==
+Date: Thu, 25 Sep 2025 21:49:16 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, chaitanya chundru <quic_krichai@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com, 
+	amitk@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v6 5/9] PCI: dwc: Implement .start_link(), .stop_link()
+ hooks
+Message-ID: <yofmk5uyykyv4jxzem622dtuyzknk7ipd5xlkzdrfl5v7tgojy@5aarg5wj6bar>
+References: <20250828-qps615_v4_1-v6-5-985f90a7dd03@oss.qualcomm.com>
+ <20250925145416.GA2164008@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
- <20250925103559.14876-4-mehdi.benhadjkhelifa@gmail.com> <5ad26663-a3cc-4bf4-9d6f-8213ac8e8ce6@iogearbox.net>
- <4b77c830-2a7d-444a-adeb-4d1370f8923f@gmail.com>
-In-Reply-To: <4b77c830-2a7d-444a-adeb-4d1370f8923f@gmail.com>
-From: vivek yadav <vivekyadav1207731111@gmail.com>
-Date: Thu, 25 Sep 2025 21:48:22 +0530
-X-Gm-Features: AS18NWDavCeJ5JOczMPLBfdxzac54ktOAMOZM_aUlp9EmmRHO_1O8MKFqbGzkPg
-Message-ID: <CABPSWR7_w3mxr74wCDEF=MYYuG2F_vMJeD-dqotc8MDmaS_FpQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] selftests/bpf: Prepare to add -Wsign-compare for
- bpf tests
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, martin.lau@linux.dev, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, 
-	matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org, 
-	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com, 
-	ameryhung@gmail.com, toke@redhat.com, houtao1@huawei.com, 
-	emil@etsalapatis.com, yatsenko@meta.com, isolodrai@meta.com, 
-	a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com, vmalik@redhat.com, 
-	bigeasy@linutronix.de, tj@kernel.org, gregkh@linuxfoundation.org, 
-	paul@paul-moore.com, bboscaccy@linux.microsoft.com, 
-	James.Bottomley@hansenpartnership.com, mrpre@163.com, jakub@cloudflare.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
-	mptcp@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250925145416.GA2164008@bhelgaas>
 
-Hi Mehdi,
-You are trying to do much with the patch series. I don't think it will
-help much as reviewers will give comments and you will revise the
-patches. This loop will continue forever.
+On Thu, Sep 25, 2025 at 09:54:16AM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 28, 2025 at 05:39:02PM +0530, Krishna Chaitanya Chundru wrote:
+> > Implement stop_link() and  start_link() function op for dwc drivers.
+> > 
+> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-designware-host.c | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..bcdc4a0e4b4747f2d62e1b67bc1aeda16e35acdd 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > @@ -722,10 +722,28 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
+> >  }
+> >  EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
+> >  
+> > +static int dw_pcie_op_start_link(struct pci_bus *bus)
+> > +{
+> > +	struct dw_pcie_rp *pp = bus->sysdata;
+> > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > +
+> > +	return dw_pcie_host_start_link(pci);
+> 
+> This takes a pci_bus *, which could be any PCI bus, but this only
+> works for root buses because it affects the link from a Root Port.
+> 
+> I know the TC9563 is directly below the Root Port in the current
+> topology, but it seems like the ability to configure a Switch with I2C
+> or similar is potentially of general interest, even if the switch is
+> deeper in the hierarchy.
+> 
+> Is there a generic way to inhibit link training, e.g., with the Link
+> Disable bit in the Link Control register?  If so, this could
+> potentially be done in a way that would work for any vendor and for
+> any Downstream Port, including Root Ports and Switch Downstream Ports.
+> 
 
-I totally agree with Daniel. Please write a proper commit message.
+FWIW, the link should not be stopped for a single device, since it could affect
+other devices in the bus. Imagine if this switch is connected to one of the
+downstream port of another switch. Then stopping and starting the link will
+affect other devices connected to the upstream switch as well.
 
-While writing a commit message or creating a patch.Please try to give
-the answers of the following questions.
-1) What is the issue which your patch resolves?
-2) Are you trying to do more than one thing at a time? Please don't.
-3) if a patch modifies more than one file then either these changes
-inter link with each other or they have similar kind of work.
+This driver is doing it right now just because, there is no other way to
+control the switch state machine. Ideally, we would want the PERST# to be in
+asserted stage to keep the device from starting the state machine, then program
+the registers over I2C and deassert PERST#. This will work across all of the
+host controller drivers (if they support pwrctrl framework).
 
-~~Vivek
+But since we don't have PERST# support for the pwrctrl framework, we can have
+this as an adhoc solution. I don't think we should try to generalize it.
 
-On Thu, Sep 25, 2025 at 9:04=E2=80=AFPM Mehdi Ben Hadj Khelifa
-<mehdi.benhadjkhelifa@gmail.com> wrote:
->
-> On 9/25/25 4:04 PM, Daniel Borkmann wrote:
-> > On 9/25/25 12:35 PM, Mehdi Ben Hadj Khelifa wrote:
-> >> -Change only variable types for correct sign comparisons
-> >>
-> >> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> >
-> > Pls write some better commit messages and not just copy/paste the same
-> > $subj/
-> > message every time; proper sentences w/o the weird " -" indent.
->
-> Understood, though the changes are very similar / are the same with the
-> same goal that's why it made sense to me to do that and I will remove
-> the - in future commits.> Also say
-> > why
-> > this is needed in the commit message, and add a reference to the commit
-> > which
-> > initially added this as a TODO, i.e. 495d2d8133fd ("selftests/bpf:
-> > Attempt to
-> > build BPF programs with -Wsign-compare").
-> I will do that in the upcoming version.
->
-> > If you group these, then maybe
-> > also
-> > include the parts of the compiler-emitted warnings during build which a=
-re
-> > relevant to the code changes you do here.
->
-> Okay. I will do that. Should i send a v4 with the recommended changes
-> but not including the rest of the files meaning the ones that I haven't
-> uploaded in this patch series which contain type casting or should i
-> just make changes for these files in this series?
-> Also will it be better if dropped these versions and made a new patch
-> with v1?
->
-> Thank you for your review and time Daniel.
-> Regards,
-> Mehdi
-> >> ---
-> >>   tools/testing/selftests/bpf/progs/test_xdp_dynptr.c          | 2 +-
-> >>   tools/testing/selftests/bpf/progs/test_xdp_loop.c            | 2 +-
-> >>   tools/testing/selftests/bpf/progs/test_xdp_noinline.c        | 4 ++-=
--
-> >>   tools/testing/selftests/bpf/progs/uprobe_multi.c             | 4 ++-=
--
-> >>   .../selftests/bpf/progs/uprobe_multi_session_recursive.c     | 5 +++=
---
-> >>   .../selftests/bpf/progs/verifier_iterating_callbacks.c       | 2 +-
-> >>   6 files changed, 10 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c b/
-> >> tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
-> >> index 67a77944ef29..12ad0ec91021 100644
-> >> --- a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
-> >> +++ b/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
-> >> @@ -89,7 +89,7 @@ static __always_inline int handle_ipv4(struct xdp_md
-> >> *xdp, struct bpf_dynptr *xd
-> >>       struct vip vip =3D {};
-> >>       int dport;
-> >>       __u32 csum =3D 0;
-> >> -    int i;
-> >> +    size_t i;
-> >>       __builtin_memset(eth_buffer, 0, sizeof(eth_buffer));
-> >>       __builtin_memset(iph_buffer_tcp, 0, sizeof(iph_buffer_tcp));
-> >> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_loop.c b/
-> >> tools/testing/selftests/bpf/progs/test_xdp_loop.c
-> >> index 93267a68825b..e9b7bbff5c23 100644
-> >> --- a/tools/testing/selftests/bpf/progs/test_xdp_loop.c
-> >> +++ b/tools/testing/selftests/bpf/progs/test_xdp_loop.c
-> >> @@ -85,7 +85,7 @@ static __always_inline int handle_ipv4(struct xdp_md
-> >> *xdp)
-> >>       struct vip vip =3D {};
-> >>       int dport;
-> >>       __u32 csum =3D 0;
-> >> -    int i;
-> >> +    size_t i;
-> >>       if (iph + 1 > data_end)
-> >>           return XDP_DROP;
-> >> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c b/
-> >> tools/testing/selftests/bpf/progs/test_xdp_noinline.c
-> >> index fad94e41cef9..85ef3c0a3e20 100644
-> >> --- a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
-> >> +++ b/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
-> >> @@ -372,7 +372,7 @@ bool encap_v4(struct xdp_md *xdp, struct ctl_value
-> >> *cval,
-> >>       next_iph_u16 =3D (__u16 *) iph;
-> >>       __pragma_loop_unroll_full
-> >> -    for (int i =3D 0; i < sizeof(struct iphdr) >> 1; i++)
-> >> +    for (size_t i =3D 0; i < sizeof(struct iphdr) >> 1; i++)
-> >>           csum +=3D *next_iph_u16++;
-> >>       iph->check =3D ~((csum & 0xffff) + (csum >> 16));
-> >>       if (bpf_xdp_adjust_head(xdp, (int)sizeof(struct iphdr)))
-> >> @@ -423,7 +423,7 @@ int send_icmp_reply(void *data, void *data_end)
-> >>       iph->check =3D 0;
-> >>       next_iph_u16 =3D (__u16 *) iph;
-> >>       __pragma_loop_unroll_full
-> >> -    for (int i =3D 0; i < sizeof(struct iphdr) >> 1; i++)
-> >> +    for (size_t i =3D 0; i < sizeof(struct iphdr) >> 1; i++)
-> >>           csum +=3D *next_iph_u16++;
-> >>       iph->check =3D ~((csum & 0xffff) + (csum >> 16));
-> >>       return swap_mac_and_send(data, data_end);
-> >> diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi.c b/tools/
-> >> testing/selftests/bpf/progs/uprobe_multi.c
-> >> index 44190efcdba2..f99957773c3a 100644
-> >> --- a/tools/testing/selftests/bpf/progs/uprobe_multi.c
-> >> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi.c
-> >> @@ -20,13 +20,13 @@ __u64 uretprobe_multi_func_3_result =3D 0;
-> >>   __u64 uprobe_multi_sleep_result =3D 0;
-> >> -int pid =3D 0;
-> >> +__u32 pid =3D 0;
-> >>   int child_pid =3D 0;
-> >>   int child_tid =3D 0;
-> >>   int child_pid_usdt =3D 0;
-> >>   int child_tid_usdt =3D 0;
-> >> -int expect_pid =3D 0;
-> >> +__u32 expect_pid =3D 0;
-> >>   bool bad_pid_seen =3D false;
-> >>   bool bad_pid_seen_usdt =3D false;
-> >> diff --git a/tools/testing/selftests/bpf/progs/
-> >> uprobe_multi_session_recursive.c b/tools/testing/selftests/bpf/progs/
-> >> uprobe_multi_session_recursive.c
-> >> index 8fbcd69fae22..017f1859ebe8 100644
-> >> --- a/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive=
-.c
-> >> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive=
-.c
-> >> @@ -3,6 +3,7 @@
-> >>   #include <bpf/bpf_helpers.h>
-> >>   #include <bpf/bpf_tracing.h>
-> >>   #include <stdbool.h>
-> >> +#include <stddef.h>
-> >>   #include "bpf_kfuncs.h"
-> >>   #include "bpf_misc.h"
-> >> @@ -10,8 +11,8 @@ char _license[] SEC("license") =3D "GPL";
-> >>   int pid =3D 0;
-> >> -int idx_entry =3D 0;
-> >> -int idx_return =3D 0;
-> >> +size_t idx_entry =3D 0;
-> >> +size_t idx_return =3D 0;
-> >>   __u64 test_uprobe_cookie_entry[6];
-> >>   __u64 test_uprobe_cookie_return[3];
-> >> diff --git a/tools/testing/selftests/bpf/progs/
-> >> verifier_iterating_callbacks.c b/tools/testing/selftests/bpf/progs/
-> >> verifier_iterating_callbacks.c
-> >> index 75dd922e4e9f..72f9f8c23c93 100644
-> >> --- a/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
-> >> +++ b/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
-> >> @@ -593,7 +593,7 @@ int loop_inside_iter_volatile_limit(const void *ct=
-x)
-> >>   {
-> >>       struct bpf_iter_num it;
-> >>       int *v, sum =3D 0;
-> >> -    __u64 i =3D 0;
-> >> +    __s32 i =3D 0;
-> >>       bpf_iter_num_new(&it, 0, ARR2_SZ);
-> >>       while ((v =3D bpf_iter_num_next(&it))) {
-> >
->
->
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
