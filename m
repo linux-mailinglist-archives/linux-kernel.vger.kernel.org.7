@@ -1,313 +1,214 @@
-Return-Path: <linux-kernel+bounces-832950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23C8BA0D4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5F6BA0D4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D88F94E39DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D501BC5837
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B5530DEAD;
-	Thu, 25 Sep 2025 17:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F2630CDBA;
+	Thu, 25 Sep 2025 17:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbz1+dic"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iA9Tt66G"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF6F217704;
-	Thu, 25 Sep 2025 17:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD7C30CD92
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758821178; cv=none; b=DVpYXtHUwtIXZKBYOEU1LK+uHEP5gUhlnErqI7GeJIy81/jPa1brlVuWtwYakeclzdwlUiwDTPDLZ6GPlf5Nf4GIvswFrip77m9vygNGI1jpSt4doP485iwyKsW//THEuanKLsMZLPPWtao643X3fGg4Tcyel1LHYZg/pSGAbCk=
+	t=1758821214; cv=none; b=rtGhH01ZBNib1Qx5N1vGFCoG8nhlTbGXJaPvTNFCohlYyv3SwY6+JvHmAf49QHLYZmG8gz+wWhI44/L0Fj8dNx9nTGXoVScKsHDwMoZVBL5tPN4KrbpIDxBlplAb3CIg32WCukzxeZoaoXxWmU+4/Ma3mCfq5ckCWcDemSCn38c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758821178; c=relaxed/simple;
-	bh=uEHoubd+jXiKp4UeQuZAR42eJq6TWQ5AdZiqcqwCMao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ek6r9SFj5+krNbq8DvtS5YoeZgI5RXVPB8gvWPBsvvbVMjB7P2MOHitOvotEgDmqSFox9qFykloqyYBMObHDeQ5soJXZB/LvmttXST1w0ApxySANKc9B9mlIWJCLo6oYki5LKEJTq0T0ovado0bVm22AFRuBMI8THIvmAxIMeSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbz1+dic; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCF3C4CEF0;
-	Thu, 25 Sep 2025 17:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758821178;
-	bh=uEHoubd+jXiKp4UeQuZAR42eJq6TWQ5AdZiqcqwCMao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cbz1+dic/byPh0for5v0oHpIsqVgXebtvThwY1WcBlST8GZ9MQ1seeo/f7dcNFETB
-	 7FJ8NhUnUrcB0Oioqu6/5zcMV/vDiPMlHVvSho5REijrBXM2ye9HftTNZXUa7sj4nh
-	 0OnhoXLGIaD5xN3+Dqx0jQ707RAkU+eU92ZUajuIIpqCAqHFpsyFwDpbXrYSQ38Blc
-	 wSapVnNqV5Qmk9z9iLy9Btf4SygI8aeQjrNxIWy4Yap3hhIDcGFVbVbPPJ6N3BZ/w7
-	 nogunUMUOROTuuS86lgDhjKpqosp2WyaV2iZonOUVLGiwxdluYDY6wZfY5XYC1j8N3
-	 703QnYTMGrSzg==
-Date: Thu, 25 Sep 2025 12:26:15 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Taniya Das <taniya.das@oss.qualcomm.com>, Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
-	Taniya Das <taniya.das@qualcomm.com>
-Subject: Re: [PATCH 07/24] arm64: dts: qcom: glymur: Enable cpu dvfs for CPU
- scaling
-Message-ID: <qyawy6hltqwa2a4vcx6mzlaitrzvd5vgndeizqtgl4iegaxahb@vungjrwh3am2>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-7-24b601bbecc0@oss.qualcomm.com>
+	s=arc-20240116; t=1758821214; c=relaxed/simple;
+	bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KG3e1ZbBcFyc9isbsNUprxequ5Mjg3S/UZJkEU5p7uy3HoWbINpd0vpihnBdgD2GiN3ywUwuLq7ov8CFXZ89v98S70miqCpuzsG2AEMYfVhAV6d6lHegK5zAVykNpVtJ5QJQyLo1+3vnL8ZrZ1YAfwQ9PY7zp7YYPtwRCwGtIuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iA9Tt66G; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63491fc16c3so2049917a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758821211; x=1759426011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
+        b=iA9Tt66G8WsdE42LEW5btnS1UMh9t8i3RKclwq8MlseFDslWHMC1jTJEvmLZPu79Ns
+         Rb4szSeDrgSvQl4iaqMOxkWhXM9DIauwqQTB/IqrZzuJLp3UWZz/z3unxGxY2EoELRp8
+         4s2NtDET9lZ8Epg1Wtth8XC69YU+08r2zcFWAdDAu0VQbvTpv2KDAVXSC9S+t+P1pQRY
+         rpHRByatYs94Wwg2w751GWrLBh08g08/PWk3sRro9BS8z2ARL0uOpAPFwiPhZioXKWGx
+         slht6+wyyrP9dCMyIteoZoIKkPokF4CQOQsOM35rflnKdFWoqWBFKgAcYuWnnyV2AYMH
+         rhzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758821211; x=1759426011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hxzv2cBWff/v6c1vesRxyiI+Yy9Izb2fQv+kxW/dGpA=;
+        b=N2YXQnHo4G5It7252UZ7YQoX6/daYgTSq3bQ8waa0KIwen7FyESDmCNrmp4JU91ETG
+         a/35qv1h6sFLpXcToB6YJYGU7uxPGbwkCcXnYiIE/ECy+JGwqmuhbdFQRUasF/K/cI+x
+         jXbCnPw/1RIFnBAfxoKMxKV+EIdnJWx2w7AVMhBOT/eQNjzRAcDq5zpomuqdujutB11E
+         SaZLsI4HhVZ3FozQKG8RLowXnYX1ql2WDxt0kH+Bd9NSIZZOVr5fstYLmnjuHJiS4gP9
+         ovgIjpgPmzwm/UC668hX6RLBVIN67Vz7pMywHBFjz0P5Ju/GsA9kP9IHwamaFP2t8Ko/
+         n1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE9n7G2FD1hdip36KQqtu+V0Z3HueXfZpNOLGBIFCD3yTzfIvT/uvktOHSUxDCcQ7d+IwiUdIZPcmpsZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIwM6UATAR8TeWFwDrwz3At5uSlrvdkVlKlugEffE61gXol1wq
+	rC+QikKMzAasxB9tmAxXgLzihlfeSqUXUKr4agxeBSd6Dd1WTnocS/+bOx3NP/qr4UjFhVhhzlp
+	oQiqVYIuuyp0MKcvMn9zq3r4tcM0S3VqkeGmr
+X-Gm-Gg: ASbGncs8fZI+JlPLp+81p/KyELYg9DsHuZvxPxmAm7nb8FtGFxxVePpXoyJIu+8r5R0
+	A4fRNO9L0DlvMw3iAGpz2lMxZjuWGnCEzGJm7TTCV0X7s8nIMZz6tTZJQeZsL941HLiJ2E04HqB
+	rO8x8rOwm4SUfpotXH5K4GYRF8NBCVftOmy8K9GZpMHqsSpaKhRx4prGsKD/oOsQ5LpUA38+rAK
+	Ts=
+X-Google-Smtp-Source: AGHT+IEjzLFBbzflK4F+frlRfcbPaspWQC9oQPfqbZdjRXB0LrK0sUdF9qQBxVp9KRq1FroodJ/I2IDpzawl6coBJMs=
+X-Received: by 2002:a17:907:2da7:b0:b30:daf3:a5a0 with SMTP id
+ a640c23a62f3a-b34bad2253cmr480436066b.42.1758821210852; Thu, 25 Sep 2025
+ 10:26:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-v3_glymur_introduction-v1-7-24b601bbecc0@oss.qualcomm.com>
+References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com> <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
+ <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com> <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
+ <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com> <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
+ <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com> <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
+ <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com> <CAHbLzkrstjnEVUzz2==A2Z+CJToOgU6YU2MasdK49o-0-jW2yw@mail.gmail.com>
+ <ec108aa2-88ae-42bb-a64d-ef12867526c4@redhat.com>
+In-Reply-To: <ec108aa2-88ae-42bb-a64d-ef12867526c4@redhat.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 25 Sep 2025 10:26:39 -0700
+X-Gm-Features: AS18NWA7mmHpaW4unFP9jmKD9f1afbd8FCzR488IcF67iAHmHq3JAN9lKlZCtYo
+Message-ID: <CAHbLzkryOopTOJ1gXmQiveZtuDfqSyYTO5WsfvrFcNjiHJV3cw@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING in memory_failure
+To: David Hildenbrand <david@redhat.com>
+Cc: Zi Yan <ziy@nvidia.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, 
+	syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, linmiaohe@huawei.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, nao.horiguchi@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 12:02:15PM +0530, Pankaj Patil wrote:
-> From: Taniya Das <taniya.das@oss.qualcomm.com>
-> 
-> Add sram and scmi nodes required to have a functional cpu dvfs
-> on Glymur SoCs.
-> 
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@qualcomm.com>
+On Thu, Sep 25, 2025 at 9:48=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 25.09.25 18:23, Yang Shi wrote:
+> > On Thu, Sep 25, 2025 at 7:45=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+> >>
+> >> On 25 Sep 2025, at 8:02, Pankaj Raghav (Samsung) wrote:
+> >>
+> >>>>>>
+> >>>>>> We might just need (a), since there is no caller of (b) in kernel,=
+ except
+> >>>>>> split_folio_to_order() is used for testing. There might be future =
+uses
+> >>>>>> when kernel wants to convert from THP to mTHP, but it seems that w=
+e are
+> >>>>>> not there yet.
+> >>>>>>
+> >>>>>
+> >>>>> Even better, then maybe selected interfaces could just fail if the =
+min-order contradicts with the request to split to a non-larger (order-0) f=
+olio.
+> >>>>
+> >>>> Yep. Let=E2=80=99s hear what Luis and Pankaj will say about this.
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> +Luis and Pankaj for their opinions on how LBS is going to use spl=
+it folio
+> >>>>>> to any order.
+> >>>>>>
+> >>>>>> Hi Luis and Pankaj,
+> >>>>>>
+> >>>>>> It seems that bumping split folio order from 0 to mapping_min_foli=
+o_order()
+> >>>>>> instead of simply failing the split folio call gives surprises to =
+some
+> >>>>>> callers and causes issues like the one reported by this email. I c=
+annot think
+> >>>>>> of any situation where failing a folio split does not work. If LBS=
+ code
+> >>>>>> wants to split, it should supply mapping_min_folio_order(), right?=
+ Does
+> >>>>>> such caller exist?
+> >>>>>>
+> >>>
+> >>> I am not aware of any place in the LBS path where we supply the
+> >>> min_order. truncate_inode_partial_folio() calls try_folio_split(), wh=
+ich
+> >>> takes care of splitting in min_order chunks. So we embedded the
+> >>> min_order in the MM functions that performs the split instead of the
+> >>> caller passing the min_order. Probably, that is why this problem is
+> >>> being exposed now where people are surprised by seeing a large folio
+> >>> even though they asked to split folios to order-0.
+> >>>
+> >>> As you concluded, we will not be breaking anything wrt LBS as we
+> >>> just refuse to split if it doesn't match the min_order. The only issu=
+e I
+> >>> see is we might be exacerbating ENOMEM errors as we are not splitting=
+ as
+> >>> many folios with this change. But the solution for that is simple, ad=
+d
+> >>> more RAM to the system ;)
+> >>>
+> >>> Just for clarity, are we talking about changing the behaviour just th=
+e
+> >>> try_to_split_thp_page() function or all the split functions in huge_m=
+m.h?
+> >>
+> >> I want to change all the split functions in huge_mm.h and provide
+> >> mapping_min_folio_order() to try_folio_split() in truncate_inode_parti=
+al_folio().
+> >>
+> >> Something like below:
+> >>
+> >> 1. no split function will change the given order;
+> >> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_=
+order
+> >> is smaller than mapping_min_folio_order().
+> >>
+> >> In this way, for an LBS folio that cannot be split to order 0, split
+> >> functions will return -EINVAL to tell caller that the folio cannot
+> >> be split. The caller is supposed to handle the split failure.
+> >
+> > Other than making folio split more reliable, it seems like to me this
+> > bug report shows memory failure doesn't handle LBS folio properly. For
+> > example, if the block size <=3D order-0 page size (this should be alway=
+s
+> > true before LBS), memory failure should expect the large folio is
+> > split to order-0, then the poisoned order-0 page should be discarded
+> > if it is not dirty. The later access to the block will trigger a major
+> > fault.
+>
+> Agreed that larger-folio support would be nice in memory-failure code,
+> but I recall some other areas we recently touched that are rather hairy.
+> (something around unmap_poisoned_folio()).
 
-Checkpatch doesn't approve
+I had been busy on some arm64 stuff, I didn't follow up the recent
+development too closely, you meant this one?
+https://lore.kernel.org/linux-mm/20250627125747.3094074-3-tujinjiang@huawei=
+.com/
 
-Regards,
-Bjorn
+It seems like we need more work to support large folio for memory failure.
 
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur.dtsi | 87 +++++++++++++++++++++---------------
->  1 file changed, 51 insertions(+), 36 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> index ae013c64e096b7c90c0aa4cfc50f078a85518acb..d924b4778fd37af8fe7b0bceca466dee73269481 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-> @@ -46,8 +46,8 @@ cpu0: cpu0@0 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD0>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD0>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  
-> @@ -63,8 +63,8 @@ cpu1: cpu1@100 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x100>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD1>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD1>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  		};
-> @@ -74,8 +74,8 @@ cpu2: cpu2@200 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x200>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD2>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD2>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  		};
-> @@ -85,8 +85,8 @@ cpu3: cpu3@300 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x300>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD3>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD3>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  		};
-> @@ -96,8 +96,8 @@ cpu4: cpu4@400 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x400>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD4>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD4>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  		};
-> @@ -107,8 +107,8 @@ cpu5: cpu5@500 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x500>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD5>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD5>, <&scmi_perf 0>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER0_C4>;
->  			next-level-cache = <&l2_0>;
->  		};
-> @@ -118,8 +118,8 @@ cpu6: cpu6@10000 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10000>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD6>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD6>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  
-> @@ -135,8 +135,8 @@ cpu7: cpu7@10100 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10100>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD7>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD7>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  		};
-> @@ -146,8 +146,8 @@ cpu8: cpu8@10200 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10200>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD8>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD8>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  		};
-> @@ -157,8 +157,8 @@ cpu9: cpu9@10300 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10300>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD9>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD9>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  		};
-> @@ -168,8 +168,8 @@ cpu10: cpu10@10400 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10400>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD10>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD10>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  		};
-> @@ -179,8 +179,8 @@ cpu11: cpu11@10500 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x10500>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD11>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD11>, <&scmi_perf 1>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER1_C4>;
->  			next-level-cache = <&l2_1>;
->  		};
-> @@ -190,8 +190,8 @@ cpu12: cpu12@20000 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20000>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD12>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD12>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  
-> @@ -207,8 +207,8 @@ cpu13: cpu13@20100 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20100>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD13>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD13>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  		};
-> @@ -218,8 +218,8 @@ cpu14: cpu14@20200 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20200>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD14>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD14>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  		};
-> @@ -229,8 +229,8 @@ cpu15: cpu15@20300 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20300>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD15>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD15>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  		};
-> @@ -240,8 +240,8 @@ cpu16: cpu16@20400 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20400>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD16>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD16>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  		};
-> @@ -251,8 +251,8 @@ cpu17: cpu17@20500 {
->  			compatible = "qcom,oryon";
->  			reg = <0x0 0x20500>;
->  			enable-method = "psci";
-> -			power-domains = <&CPU_PD17>;
-> -			power-domain-names = "psci";
-> +			power-domains = <&CPU_PD17>, <&scmi_perf 2>;
-> +			power-domain-names = "psci", "perf";
->  			cpu-idle-states = <&CLUSTER2_C4>;
->  			next-level-cache = <&l2_2>;
->  		};
-> @@ -397,6 +397,21 @@ scm: scm {
->  			interconnects = <&aggre2_noc MASTER_CRYPTO QCOM_ICC_TAG_ALWAYS
->  					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->  		};
-> +
-> +		scmi {
-> +			compatible = "arm,scmi";
-> +			mboxes = <&pdp0_mbox 0>, <&pdp0_mbox 1>;
-> +			mbox-names = "tx", "rx";
-> +			shmem = <&cpu_scp_lpri1>, <&cpu_scp_lpri0>;
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			scmi_perf: protocol@13 {
-> +				reg = <0x13>;
-> +				#power-domain-cells = <1>;
-> +			};
-> +		};
->  	};
->  
->  	reserved-memory {
-> 
-> -- 
-> 2.34.1
-> 
+Thanks,
+Yang
+
+>
+> The BUG at hand is that we changed splitting semantics without taking
+> care of the actual users.
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
