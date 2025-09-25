@@ -1,131 +1,188 @@
-Return-Path: <linux-kernel+bounces-831766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F40BB9D83C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:03:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE95B9D842
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002783264BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:03:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0CA57A3512
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01152E6CDB;
-	Thu, 25 Sep 2025 06:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA72E7BB3;
+	Thu, 25 Sep 2025 06:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="jwi24nN7"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNkSsCts"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB810287258
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2969A6FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758780174; cv=none; b=I0ekRJsaIB11/6pBfZeKfFQTAev0iSFb5XrzW/gx3QCGrkpwbymXLy0VHoVUqneTCqJ9/jJK/lReojRH3/93CqIvU7p0rdSsLpYSAJzcReLKqA0ORsjiZKMEjdCsVXNulVx5bfeRLL4azqZtg9wodIpOO/UdYTTu0LcXo4qlCK8=
+	t=1758780248; cv=none; b=Kb6QP2Qkd3l1nIREL4fLhMBDgGdl3qjUAMc9p19SXQcWbLDoTN9kR7gQ0MapXcV6Pqx4ga+5OUbhr8KrpjFvPfAYUhI1cer/qs43Qw38nsxw24pxhwY6wGFDU1mm7qexKaX9eClcfa72kWGP+2mZ2JsY3ZjCvjDoUAkHMFHcN2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758780174; c=relaxed/simple;
-	bh=DUla5PJziyCFNOF5ZSAr69aWrr1mHBZqCAxD1G43xqQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j5PMt4uZZqBL5TjglXnG2j+u4QyJ7zx+Ad+KeJQ5uP+wH+ptnX2CbKmaEEBR2TbHAAsmE2CqzvTw0mHfLnjB8WIgl++nnASbQ/Oa2ZZP6NhlmFBqgwX+x+dhc1J/rRdfhzQD2h0ggHIgef5vhPg0Uqli9RgRCKWQM7idz8HJfTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=jwi24nN7; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62fb48315ddso993915a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1758780170; x=1759384970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUla5PJziyCFNOF5ZSAr69aWrr1mHBZqCAxD1G43xqQ=;
-        b=jwi24nN7AQY6ScwC+IqSg/3sjatoQEhWaP4Lg/yXg/5RYSsqTu9Ln7/1INqB2e/qMk
-         slCB4ILbZPf66tAdhzF+pYzwCCaAZscUl2vjSUA+s1JXINOa2sCy+jvHJVIqjT1kMbgl
-         3tz6k1Buhr4o0UulVfkjKJm5/e4vmwup19ed/Yj/5JTkaHqedp7+e2tiVNJHDneJ18Qb
-         K+66CBUIxb7ArPYw4k2GkYrJQVjOcCJ8UEsVVFToRnRd4kEMl4OB6lalIhKSXQ0wr/Oq
-         qodzXIED1kpSK1n/VKDBGoBHJOFTpSz7UEpLbzXizSGGqXo7EaObhxDWxZ1O4jl+OuFL
-         e+gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758780170; x=1759384970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DUla5PJziyCFNOF5ZSAr69aWrr1mHBZqCAxD1G43xqQ=;
-        b=pM1AxXv/QOsxoo0WUXc/530tlN0J5MO+ipMn4HUOKsetNoFtZ0otSp7rX9EX/hdMHc
-         zAKr+9A8Z4dAEpvrUNe2hdZtJaLbIndTkbtbWOuiFUq379Y2Z9HHQiQunq+V8T6LamUQ
-         0Qk7xqeUN3VEenppKMuBc/HCrtVQhZ/7l9ZbYGA5G5CObPckR3bUvRxa2ngfqXObr7mW
-         3UEFnRxOwFWA56qBcBEPzGaNGWSP8g4kwbJBxXGSHt2QH1tlt1bG60y2ner7Tp3j6TYR
-         5wXyiKuQ500OrQ1kp/2oudhDGGlszH+1hcDT1RMvfqXyiKXcnOiDSq9oYRFJWNjtc3lT
-         nbZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJA33XTrkFWglETn8iSDPUoiuzR/6AVTpVjg4hzm6wbmpQ/oySmzGdqHirirD82o1Icn6fMEdtYuftO3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxB29A3QmdHINV5fbc9pdL8SJdf4xp+lbyEcCVTk+jbpoK0jeH
-	VUYa5IWED+rVL0chSrNpQJl81ThcMIqdm9ZWfUUKXmmuL1Sh9jxUPyTELYzg9tbT6QKr3c6NvL9
-	7gLRzyCy8xzrLjbd2CLbLvjurcCCIhsco9ootsx6ibQ==
-X-Gm-Gg: ASbGnct7rgrGCazSGPbAqwqIgRgTv1MWHUnP03RTx3uBSzKqGjHQ1VqiWWlrhqb8kdt
-	HPqqf7EauIrM+TQ6/rYM2x1ZIhylK/sDEwEgnhsgDhBzEE4uYYReeGz25JrJk3A3DSBHH7SFHQn
-	6kqT6yVgIANfchotaW6+kz9L2hXPDtcfRlvOt7ZcodIC+H4fc4/RnRCcIrI7CKUriWypehJUcjA
-	qha1w==
-X-Google-Smtp-Source: AGHT+IHuLUhpfZoeQ17XO1nU7j5y2qkgCPBRp5vKsEW0xkb9bgwyW8Z3xNh2ER4vvyV0SOz5/UW/SBD9YiHnzIXwPDM=
-X-Received: by 2002:a05:6402:180d:b0:62f:9cfb:7d34 with SMTP id
- 4fb4d7f45d1cf-6349fa97d25mr1323894a12.38.1758780170150; Wed, 24 Sep 2025
- 23:02:50 -0700 (PDT)
+	s=arc-20240116; t=1758780248; c=relaxed/simple;
+	bh=9AovDj4POpGD4NoA6Wyfmp+E+TOIY0KiPUs1Xo8Dwx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hgk4pTQGsnNjQOSWl68UrWjUbQvcrwx2KOhT9kLXOzndRb0MDdU5cUwKYa4V+2P8m9ZuVMlYVTxVWWl/H17PTnrJCnQ52eVrj/UPHxwKL708Oyx3yH29fe+oGa91lYlLTNqCUFOiq4aKYt4t/NQcyxdSgqjNCNNirDPKy194v80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNkSsCts; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758780247; x=1790316247;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9AovDj4POpGD4NoA6Wyfmp+E+TOIY0KiPUs1Xo8Dwx8=;
+  b=mNkSsCtsdILQ4TTxM+CeMkSuQNnUpsQPU904OvPWcrczpocAkfUaSz5F
+   ZBbY6HINfHQoe6IUxQCxhjD1NpJLTwhppQcLH9byodoIoOcynw9Mg8W8W
+   /aeDkCJBkOJ61YHsydqc/1OlOu7ktgX/JItdIkk0V4IY/Jh0l64P++6Fb
+   HzU+jYL68zjbC0blA/UGol2cwM4lZxC/5bnsykvMtvWysZ+0pcWX2hRkw
+   YERmnaSGv+bqrVBgK/ah+t5A0Vb3PD4p+PzESd9hj5ee25z6bVdKYur1s
+   be9hWfvqYc8r2CtcYSG1rCOpBHoJ3ST162nFRf91zHimiD4v7B7Q+Wyfp
+   A==;
+X-CSE-ConnectionGUID: bYNMjWetSDKDGSC+SbZGng==
+X-CSE-MsgGUID: RNIp2pdESVqUek6fgj3lXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="64727230"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="64727230"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 23:03:54 -0700
+X-CSE-ConnectionGUID: smpQletMR/SbonHQoq1TZA==
+X-CSE-MsgGUID: QeC6jsjxQXam48uCCLmjgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,291,1751266800"; 
+   d="scan'208";a="214371757"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 24 Sep 2025 23:03:52 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1f53-0004xV-1x;
+	Thu, 25 Sep 2025 06:03:49 +0000
+Date: Thu, 25 Sep 2025 14:03:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Heiko Stuebner <heiko@sntech.de>, lee@kernel.org, srini@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, heiko@sntech.de
+Subject: Re: [PATCH v2 1/2] nvmem: Add driver for the eeprom in qnap-mcu
+ controllers
+Message-ID: <202509251340.DSObePVn-lkp@intel.com>
+References: <20250923131815.1898332-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822081941.989520-1-philipp.reisner@linbit.com> <20250924132135.GA2653699@nvidia.com>
-In-Reply-To: <20250924132135.GA2653699@nvidia.com>
-From: Philipp Reisner <philipp.reisner@linbit.com>
-Date: Thu, 25 Sep 2025 08:02:38 +0200
-X-Gm-Features: AS18NWCDO0QwVnXdw28DFlwnSnP-ZYUNKnvXKO4kJg0nbIiw6z-QKTuUt9keuVY
-Message-ID: <CADGDV=XkfuNhATA4GkQm1VBVaG+JkFYmXojaVSnGo=rco7bUyQ@mail.gmail.com>
-Subject: Re: [PATCH V2] rdma_rxe: call comp_handler without holding cq->cq_lock
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923131815.1898332-2-heiko@sntech.de>
 
-Hi Jason,
+Hi Heiko,
 
-On Wed, Sep 24, 2025 at 3:21=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
-> On Fri, Aug 22, 2025 at 10:19:41AM +0200, Philipp Reisner wrote:
-> > Allow the comp_handler callback implementation to call ib_poll_cq().
-> > A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
-> > And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
-> >
-> > The Mellanox and Intel drivers allow a comp_handler callback
-> > implementation to call ib_poll_cq().
-> >
-> > Avoid the deadlock by calling the comp_handler callback without
-> > holding cq->cq_lock.
->
-> I spent some time looking at this, and I think the basic statement
-> above is right. The comp_handler should be able to call poll_cq/etc
->
-> rxe holding a lock it used to push a CQE is not correct.
->
-> However! The comp_handler is also supposed to be single threaded by
-> the driver, I don't think ULPs are prepared to handle concurrent calls
-> to comp_handler.
->
-> Other HW drivers run their comp_handlers from an EQ which is both
-> single threaded and does not exclude poll_cq/etc.
->
-> So while removing the cq lock here is correct from the perspective of
-> allowing poll_cq, I could not find any locking in rxe that made
-> do_complete() be single threaded.
->
-> Please send a v2, either explain how the do_complete is single
-> threaded in a comment above the comp_handler call, or make it be
-> single threaded.
->
+kernel test robot noticed the following build errors:
 
-Thanks for following up. Sure, I will send a new version of it, it will
-be v3, as this is already the discussion on v2.
+[auto build test ERROR on lee-leds/for-leds-next]
+[also build test ERROR on lee-mfd/for-mfd-next linus/master lee-mfd/for-mfd-fixes v6.17-rc7 next-20250924]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
- Philipp
+url:    https://github.com/intel-lab-lkp/linux/commits/Heiko-Stuebner/nvmem-Add-driver-for-the-eeprom-in-qnap-mcu-controllers/20250923-212052
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20250923131815.1898332-2-heiko%40sntech.de
+patch subject: [PATCH v2 1/2] nvmem: Add driver for the eeprom in qnap-mcu controllers
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20250925/202509251340.DSObePVn-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cafc064fc7a96b3979a023ddae1da2b499d6c954)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250925/202509251340.DSObePVn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509251340.DSObePVn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <built-in>:3:
+   In file included from include/linux/compiler_types.h:171:
+   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
+      28 | #define __SANITIZE_ADDRESS__
+         |         ^
+   <built-in>:352:9: note: previous definition is here
+     352 | #define __SANITIZE_ADDRESS__ 1
+         |         ^
+   In file included from drivers/nvmem/qnap-mcu-eeprom.c:12:
+   include/linux/mfd/qnap-mcu.h:13:2: error: unknown type name 'u32'
+      13 |         u32 baud_rate;
+         |         ^
+   include/linux/mfd/qnap-mcu.h:17:2: error: unknown type name 'bool'
+      17 |         bool usb_led;
+         |         ^
+   include/linux/mfd/qnap-mcu.h:21:11: error: unknown type name 'u8'
+      21 |                   const u8 *cmd_data, size_t cmd_data_size,
+         |                         ^
+   include/linux/mfd/qnap-mcu.h:21:25: error: unknown type name 'size_t'
+      21 |                   const u8 *cmd_data, size_t cmd_data_size,
+         |                                       ^
+   include/linux/mfd/qnap-mcu.h:22:5: error: unknown type name 'u8'
+      22 |                   u8 *reply_data, size_t reply_data_size);
+         |                   ^
+   include/linux/mfd/qnap-mcu.h:22:21: error: unknown type name 'size_t'
+      22 |                   u8 *reply_data, size_t reply_data_size);
+         |                                   ^
+   include/linux/mfd/qnap-mcu.h:24:13: error: unknown type name 'u8'
+      24 |                            const u8 *cmd_data, size_t cmd_data_size);
+         |                                  ^
+   include/linux/mfd/qnap-mcu.h:24:27: error: unknown type name 'size_t'
+      24 |                            const u8 *cmd_data, size_t cmd_data_size);
+         |                                                ^
+>> drivers/nvmem/qnap-mcu-eeprom.c:28:10: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      28 |         reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
+         |                 ^
+>> drivers/nvmem/qnap-mcu-eeprom.c:28:8: error: incompatible integer to pointer conversion assigning to 'u8 *' (aka 'unsigned char *') from 'int' [-Wint-conversion]
+      28 |         reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
+         |               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/nvmem/qnap-mcu-eeprom.c:45:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      45 |         kfree(reply);
+         |         ^
+   1 warning and 11 errors generated.
+
+
+vim +/kzalloc +28 drivers/nvmem/qnap-mcu-eeprom.c
+
+    20	
+    21	static int qnap_mcu_eeprom_read_block(struct qnap_mcu *mcu, unsigned int offset,
+    22					      void *val, size_t bytes)
+    23	{
+    24		const u8 cmd[] = { 0xf7, 0xa1, offset, bytes };
+    25		u8 *reply;
+    26		int ret = 0;
+    27	
+  > 28		reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
+    29		if (!reply)
+    30			return -ENOMEM;
+    31	
+    32		ret = qnap_mcu_exec(mcu, cmd, sizeof(cmd), reply, bytes + sizeof(cmd));
+    33		if (ret)
+    34			goto out;
+    35	
+    36		/* First bytes must mirror the sent command */
+    37		if (memcmp(cmd, reply, sizeof(cmd))) {
+    38			ret = -EIO;
+    39			goto out;
+    40		}
+    41	
+    42		memcpy(val, reply + sizeof(cmd), bytes);
+    43	
+    44	out:
+  > 45		kfree(reply);
+    46		return ret;
+    47	}
+    48	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
