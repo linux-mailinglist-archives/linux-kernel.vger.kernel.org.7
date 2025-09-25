@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-833365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AE8BA1C7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479E0BA1C9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFF71C27FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4DC740BB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718192E975A;
-	Thu, 25 Sep 2025 22:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C63321F32;
+	Thu, 25 Sep 2025 22:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPkSlNCh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Rzdesp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA492417E6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7822417E6;
+	Thu, 25 Sep 2025 22:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758839021; cv=none; b=RNqVPetxQllL2v3fBeohcETreWhLhh7LNozkllJ8N1wBfT08FnMSjA4qcxvYAxHbmIQSsHD1PbMuqdA0LdBfvuVMr5nO6Kbb3MKoTNpjgEVZohjfNI9Y0BdVKK/XTgrvkayt6cJlyva5eNT3dMYaBuxe8Whof4WAGiv66PXyP9U=
+	t=1758839133; cv=none; b=UtvPShxdTyrQy98HIfrqQAAgpi/YHCLT/Voiy0YmmF85i53l4HEIDRc1HWqJhnzVQLla9PtLAELVWRwO+HoTFrfyH1z/cujxXyJTjydqmYgFxnXfvNnNAEz8tMthVL+Q0PQ8C5SaSzWEmVknm7CbReALxiYnk0egM8DcKRv4ipQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758839021; c=relaxed/simple;
-	bh=jIe7vfmDi7K1zx02FuNXD3VGzvidWFcERk2Ws5eJ9N4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PhqPHEZM2kS1h4rDWURB56FR6xPh4O9DLhuslvrwLvJC0AfinAzPJPRkFMflfvbAFI3GaFJWeemjlR0WZW2XroAVX4BSo+Lm29Q0VLxEKupcdVazBOLBckWW3Ipm8G520Kuow6XyLet8VuBp1LJGbKdf+INgILJnGsicaKiqJSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPkSlNCh; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758839020; x=1790375020;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=jIe7vfmDi7K1zx02FuNXD3VGzvidWFcERk2Ws5eJ9N4=;
-  b=MPkSlNCh7XkI+Yzu3+7/+SZILAM66RRcQn+OiQO6awF+StvzX5P2YH+a
-   bcilTpux47jwwdym2gvLpToX9DzXOQjerrV3lHWlXn471p1E/xnte5Jh2
-   6zAnwfRjte8liIgKXyU4fhzzuVvdAoX8A8Rp6aCETW/gadtQ0yfBxYsPt
-   nDOQ+pn2k0SraTrz1EjzCEFw54qLOY/WOtdljWRAYqItJKqB8I9St5hNQ
-   xxnlAZNDWyAo48uHhaBHJrsWm8vVLkfppPuTj0+lXnotMCadA/PGQ0KaE
-   er2Eswce8zQJILQp/2K9InXg2t7vuphet2GXEIO1+1f8WSop+GB2oQOk5
-   Q==;
-X-CSE-ConnectionGUID: /TUmCqKPQJC7zHn/1NaidA==
-X-CSE-MsgGUID: Fv065apAQxOuAlHI5ItiNg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="65018475"
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="65018475"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 15:23:39 -0700
-X-CSE-ConnectionGUID: lrDsDJXhS8SPxjFdZriGyA==
-X-CSE-MsgGUID: KL67rij4RySSLrx/7wqTCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="177386539"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 25 Sep 2025 15:23:38 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v1uNE-0005g5-0U;
-	Thu, 25 Sep 2025 22:23:36 +0000
-Date: Fri, 26 Sep 2025 06:23:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Lucien.Jheng" <lucienzx159@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Subject: ERROR: modpost: "clk_save_context" [drivers/net/phy/air_en8811h.ko]
- undefined!
-Message-ID: <202509260628.qI8DFQp5-lkp@intel.com>
+	s=arc-20240116; t=1758839133; c=relaxed/simple;
+	bh=My89Bjn9x/oeIFIFuiMOx2L+DJYICs3nInHDnUf4iYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxGt/a0PODDDp87UdqYUpYCggSVcEse5yhynvcCaU/n5/785oTzCKyyLItbUx/5eD70olDwRN+HsYFE/Uw8WZeN7kUZJswc2XkQ9ZHWxkr56hOQuHid83qn2vPzGZjBMB5pOHDO/oKdRziUlB02VsYQyYKhVsGJRmVCZ57UcmLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Rzdesp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9C4C4CEF0;
+	Thu, 25 Sep 2025 22:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758839132;
+	bh=My89Bjn9x/oeIFIFuiMOx2L+DJYICs3nInHDnUf4iYE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O2RzdespN28+DOiemh/RlFMEIo5UpiImbn0v0A/Z2p/mkztJ9oh7VFzk57XXbaq5Z
+	 p+KgaOFZWH9Im/dM0CtFtEaD3fQF0ueB//MulJsF5rR5FNk2J2wABakYhdHkk1vCs4
+	 Ri73bZI2gG61wJvMn/E6zf33XeM9xUHiQ04nVazJozm9LFpFtoAFphbMnDldwrjj5S
+	 V4XT/xwH4XYcNkyENhRY9BDd0gpiZSesp/2LpwaqL07aCKbOayBF9zTTb3LBzUY0RV
+	 iEFMcvL90Lep+wkY+SV8TA6L+OwPqZ+taj11zbG8zPFADssBHvrMjyaL52qrEO6tg7
+	 g9Gq53DV/KYOQ==
+Message-ID: <8a9a6955-ccb7-4acc-b6ec-7f180126bba5@kernel.org>
+Date: Fri, 26 Sep 2025 00:25:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with
+ C-Strings
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Breno Leitao <leitao@debian.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ Jens Axboe <axboe@kernel.dk>, Alexandre Courbot <acourbot@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+ <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Lucien.Jheng,
+On 9/25/25 3:54 PM, Tamir Duberstein wrote:
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-FYI, the error/warning still remains.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
-commit: 6b9c9def95cb402374730d51a1f44927f467b774 net: phy: air_en8811h: Introduce resume/suspend and clk_restore_context to ensure correct CKO settings after network interface reinitialization.
-date:   3 months ago
-config: sh-randconfig-002-20250926 (https://download.01.org/0day-ci/archive/20250926/202509260628.qI8DFQp5-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509260628.qI8DFQp5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509260628.qI8DFQp5-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "clk_save_context" [drivers/net/phy/air_en8811h.ko] undefined!
-ERROR: modpost: "clk_restore_context" [drivers/net/phy/air_en8811h.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
