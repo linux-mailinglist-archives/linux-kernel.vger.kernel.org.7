@@ -1,162 +1,165 @@
-Return-Path: <linux-kernel+bounces-833107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CE3BA13BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7944BA13CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BBB188DA4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D973188B911
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CC231D721;
-	Thu, 25 Sep 2025 19:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D359231D722;
+	Thu, 25 Sep 2025 19:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MB6FHwY4"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOiLZG7q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4385E31BCAA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332E554F81;
+	Thu, 25 Sep 2025 19:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829143; cv=none; b=A48fi7fZnoWX/XSEujbbEb4oT2c+kHy8OjdITG5o/m+5p+49elkHQuBWiYyaF8r6zMLUq6gN/2gOtRr9tCX7Vf0bQ/j6AJpTQu0Ns9eXdGHi2rgE6q8cf4dxUi63fBRjLkHy3IXGtVzft7f9od136MdeX3wb0Vsiu7Jhu3IMR2s=
+	t=1758829260; cv=none; b=VN+12ZnGSlZfPb0FQvFGnpjj34to50CaWT+qQDHXs8uieNES+csPNp3B6w/ZheMAYOBqVfxLo+1ERpG/0fS6kKv6WA2ctkkd2KXgQVPEDWP0Y3Q9HhGessNpGa3p/or8x/j71fLV7UjX5Zwp+NdQ30+8llPn/6j29wVsFK4E8s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829143; c=relaxed/simple;
-	bh=2QdIpLT/qFFnsDRFxB6Vnf6qCcJvWKZEl43z/88zefU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=h3YGlEgZ+DCPPef/Om3sDi5dCpCQ6LatFU95+Wem4a1GpDFOJg7MjqiB9a0HPqVW9MPvrJ3L80Tzrj0eelUIRcrDciqNTdZ+dFx6mV6oBX8C+g3YvTRtGuxojf3Z+QyR5vb0Vx3uNFVd/lddiLKMFIPLEjvXkOLJQ9H5c0c3BdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MB6FHwY4; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=75E1Q5XfZ4Bfg2w2EoM2j48gcNpE/T3wRma7TEvZTJE=; b=MB6FHwY4LDBtbxBXqasNGKvKmb
-	S/OHSszJAWTRT0GHLUTxTYu0nt271jQEUCIbnfuVQPz2NHc08vzEq/kOfVsyZcmda6wFRS8CNXnMn
-	uyvWgj0flV3U7LjTvvWPHxidi8WOos0kKym6b2vG/lmEnwb2C5DNRC/drFq0cHwMeLGsHjQ9EtEpF
-	1LcntmscQGblOBfN/Feu2kxsbohB4QB0dUhUUZyFqscXDBo/5lJiSkjEUjdQVGLtxdCIMEPl8diu1
-	yn8s7IEaBmOvakBloYUqIFhdbdeaOVXNni/kdUYmkolP6O38wbl7UUyxpCDxXp7NgM9S0eszLMjkf
-	Y/0YuR3Q==;
-Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtps 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1v1rnk-000GyL-KV; Thu, 25 Sep 2025 21:38:48 +0200
-Received: from webmail.service.igalia.com ([192.168.21.45])
-	by mail.igalia.com with esmtp (Exim)
-	id 1v1rni-00EDOR-G8; Thu, 25 Sep 2025 21:38:48 +0200
-Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
-	by webmail with esmtp (Exim 4.96)
-	(envelope-from <mfo@igalia.com>)
-	id 1v1rnh-00BmjL-2w;
-	Thu, 25 Sep 2025 21:38:46 +0200
+	s=arc-20240116; t=1758829260; c=relaxed/simple;
+	bh=ViA5pc3Tho/YfhUjfRLL2YX34M7Tl+XYrQGrX1MRlWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oa0AjpeitelBLXhUD95vO+scXuOj7XR5ogvS2WUgAApQIySCYtNhv28OjY0vfx0gygIYdGMQ0NwL7Cj3VVnc1n6bUwgQu5dxOpsWHQVG7ebBpogXhGvvdDfLL4cRZmK/oWcAW79eSVimc+Z8GKx+SG1pUFRavat++7cDr82GULY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOiLZG7q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60FBBC4CEF0;
+	Thu, 25 Sep 2025 19:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758829260;
+	bh=ViA5pc3Tho/YfhUjfRLL2YX34M7Tl+XYrQGrX1MRlWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TOiLZG7qujcbYL14RHm0Jy1r66U2dBjwkUHV+/MnHyXa/YvI4dJWMgtWAYVfckoFY
+	 eMUJcEhRLKgE137/qMcmLwc3Ayj2sICdtJxR0xsLVzRNbHw/I9BlK4Orza1aRR8A5V
+	 cpfulSKEBcN6iFp8jejX6uhx2E5AGp+PPcMigZ5d2jWRQEzTg12t6fe9FqQ4CJlKCY
+	 YgC2Zk2w7uEwLS9xuEklTvS/RFiWhSgUQ0m2lQvZdTxAt3+SlznIeI4+HZLkkqaVaD
+	 3yVpxrwPP2hKtRZ06nhavgI0IF2031ZBnrFqaINDg1ekXCBKBa55E5x6a6BKM1ouF6
+	 UFDv2nio5MFWQ==
+Date: Thu, 25 Sep 2025 20:40:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Saenz Julienne <nsaenz@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 1/4] dt-bindings: Add Raspberry Pi's RP1 ADC
+Message-ID: <20250925-outlying-causal-015d8ba33c53@spud>
+References: <20250925000416.2408457-1-svarbanov@suse.de>
+ <20250925000416.2408457-2-svarbanov@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 25 Sep 2025 16:38:46 -0300
-From: Mauricio Faria de Oliveira <mfo@igalia.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka
- <vbabka@suse.cz>, Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan
- <surenb@google.com>, Brendan Jackman <jackmanb@google.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH 0/3] mm/page_owner: add options 'print_handle' and
- 'print_stack' for 'show_stacks'
-In-Reply-To: <aNVpFn9W0jYYr9vs@tiehlicka>
-References: <20250924174023.261125-1-mfo@igalia.com>
- <aNVpFn9W0jYYr9vs@tiehlicka>
-Message-ID: <4c2a467113efd085530eb055e4a4e1fe@igalia.com>
-X-Sender: mfo@igalia.com
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Report: NO, Score=-2.2, Tests=ALL_TRUSTED=-3,BAYES_50=0.8
-X-Spam-Score: -21
-X-Spam-Bar: --
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DEAMv2iXlbCNcm+O"
+Content-Disposition: inline
+In-Reply-To: <20250925000416.2408457-2-svarbanov@suse.de>
 
-On 2025-09-25 13:08, Michal Hocko wrote:
-> On Wed 24-09-25 14:40:20, Mauricio Faria de Oliveira wrote:
->> Problem:
->> 
->> The use case of monitoring the memory usage per stack trace (or tracking
->> a particular stack trace) requires uniquely identifying each stack trace.
->> 
->> This has to be done for every stack trace on every sample of monitoring,
->> even if tracking only one stack trace (to identify it among all others).
->> 
->> Therefore, an approach like, for example, hashing the stack traces from
->> 'show_stacks' for calculating unique identifiers can become expensive.
->> 
->> Solution:
->> 
->> Fortunately, the kernel can provide a unique identifier for stack traces
->> in page_owner, which is the handle number in stackdepot.
->> 
->> Additionally, with that information, the stack traces themselves are not
->> needed until the time when the memory usage should be associated with a
->> stack trace (say, to look at a few top consumers), using handle numbers.
->> 
->> This eliminates hashing and reduces filtering related to stack traces in
->> userspace, and reduces text emitted/copied by the kernel.
-> 
-> Let's see if I understand this correctly. You are suggesting trimming
-> down the output to effectivelly key, value pair and only resolve the key
-> once per debugging session because keys do not change and you do not
-> need the full stack traces that maps to the key. Correct?
 
-Yes, exactly.
+--DEAMv2iXlbCNcm+O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Could you elaborate some more on why the performance really matters here?
+On Thu, Sep 25, 2025 at 03:04:13AM +0300, Stanimir Varbanov wrote:
+> Document dt-bindings for Raspberry Pi's RP1 ADC.
+>=20
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+>  .../bindings/hwmon/raspberrypi,rp1-adc.yaml   | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/raspberrypi,r=
+p1-adc.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/hwmon/raspberrypi,rp1-adc.=
+yaml b/Documentation/devicetree/bindings/hwmon/raspberrypi,rp1-adc.yaml
+> new file mode 100644
+> index 000000000000..5266b253fd2b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/raspberrypi,rp1-adc.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/raspberrypi,rp1-adc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rasberry Pi RP1 ADC device
+> +
+> +maintainers:
+> +  - Stanimir Varbanov <svarbanov@suse.de>
+> +
+> +description: |
+> +  The RP1 ADC is a five input successive-approximation ADC with 12-bit
+> +  resolution (ENOB 9.5-bit) at 500kSPS. It has four external inputs
+> +  and one internal temperature sensor.
+> +
+> +properties:
+> +  compatible:
+> +    const: raspberrypi,rp1-adc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  vref-supply:
+> +    description:
+> +      Reference voltage regulator 3.3V.
 
-Sure.
+Looks like you're missing the io-channels-cells property that allows
+this device to be a provider of adc channels to other devices.
 
-One reason is optimizing data processing.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - vref-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    adc@400c8000 {
+> +      compatible =3D "raspberrypi,rp1-adc";
+> +      reg =3D <0x400c8000 0x4000>;
+> +      clocks =3D <&rp1_clocks 30>;
+> +      vref-supply =3D <&rp1_vdd_3v3>;
+> +    };
+> --=20
+> 2.47.0
+>=20
 
-Currently, the step to obtain the key of a strack trace (e.g., hashing)
-incurs
-a considerable work (done for all stack traces, on every sample) that
-actually
-is duplicated work (the same result for each stack trace, on every
-sample).
+--DEAMv2iXlbCNcm+O
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That calculation is a significant overhead compared to the operation
-it's done
-for, which is '(calculated) key = memory usage'.
+-----BEGIN PGP SIGNATURE-----
 
-Thus, optimizing that step to just reading the key from the kernel would
-save
-resources (processing) and time (e.g., waiting for results to be ready,
-on post
-processing; or reducing the time required per sample, on live
-monitoring).
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWaxgAKCRB4tDGHoIJi
+0pQHAQC21E9owOCVvJfNrBEbbj2dwuVJ4gWOmP4qMntXYj/OmAD/fhH7+LUL0aNT
+IDpUD7965J1+1DOEDBP3AVDFKgEPjgU=
+=5H4q
+-----END PGP SIGNATURE-----
 
-Another reason is optimizing data collection.
-
-There is some overhead in periodically waking-up, reading and storing
-data, and
-later in filtering it. (Admittedly, much less significant than the
-above.)
-
-However, despite being a minor improvement, it actually prevents the
-production
-of data that is discarded at consumption; that helps both producer and
-consumer.
-
-The cumulative improvement may be interesting over very long profiling
-sessions.
-
-Hope this addresses your question. Happy to provide more context or
-details.
-
-Thanks,
-
--- 
-Mauricio
+--DEAMv2iXlbCNcm+O--
 
