@@ -1,354 +1,131 @@
-Return-Path: <linux-kernel+bounces-832941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B902BA0CE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C9BBA0CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2E54A0E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9723BE9BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3385130BF79;
-	Thu, 25 Sep 2025 17:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0FC30CD9B;
+	Thu, 25 Sep 2025 17:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QA8pCY8/"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="VhtuGPKN";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="R4Pwbk/D"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEBB30C61E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25E830CB20
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820819; cv=none; b=XN+CI1RXvjWlNoG/Mzpkn8pMRlTYueX0vPQiYCDyT99yz3QEEqX2AVeaEit9En7ia0WSbi/ocwN+FeE2MCGt2Lh6U6qTJLqEu3oq+GXKSuu+1wLfMcLZObcVr3SjsvtEuP6BvHJ1l6DSzGsewRH5UZsH9gaSbgA2zRlgO6ZqatI=
+	t=1758820843; cv=none; b=Q/0LQGBGdQs1/Vjn/jP4psWo7/uGntm2iApKJYkjcg/zbQzczz2ZpLo+CuKAVHmzR00jdAs1iLupnaLeeAP/ymk6P85tl6ybtqSIkMTg73F97vDSfnx0RmetReGGadMcI9zwzLoHEnNnbULznmIzhU2/5DjGNnj6xHybPrALANI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820819; c=relaxed/simple;
-	bh=hNgK/Uzgk3tiejJ33kqYpwo+r70mcWbyh9veVNBb6RQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fop2vBDXJ2l2lJGgXhbH7TnVvrOACqV7nC+x8hhSHpIfSKkojGo559/qDK/L9ma2+h74eqFrXkXNmdvbFlgeCatdvu2RTBlxqQFrYE0n0vo1uIrcFW78rwtDr9IZREplmpMd52KW2g8GMhX9CFx4wRdmZ4XjWUJi7KIOuGbDxNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QA8pCY8/; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B756C1A0FB7;
-	Thu, 25 Sep 2025 17:20:14 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 87FD560665;
-	Thu, 25 Sep 2025 17:20:14 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BE065102F18A1;
-	Thu, 25 Sep 2025 19:20:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758820813; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0sMYzovaJDmQt5RrIh8C89vIF4dc6AtroV+cbqJJWgU=;
-	b=QA8pCY8/lmMejdNVj6KIydE8Qkk4gdDe8/XOJjLefAcgEAkBdflA+weSm/6Vu8r6wqpf49
-	o64OyAmPuNTMwzTli/wwq1g+CbhuHtMI4arIp3Hgv23mncEJx1H8MlkP7PCEMkd+2TbsA2
-	7HWkI0RcaEgMNiknk26vYc4ljZc5+Nudfn0QopkQEpf9WgG4GRMPS8O4WsW5R/90SW1JTT
-	+eqTHTi+zLt5iDkGEbrm1/oZDxmUlWfSE3Xgp1H4O9rJBMGs/x+MFL4gSDhbd8TaiNDWVK
-	R875WN1DDIuVoSbJ0ihc8txc5auR1k5L4yQp4/mCBTKDrhiiXE8os8olQ1tcRw==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 25 Sep 2025 19:19:50 +0200
-Subject: [PATCH 2/2] drm/display: bridge-connector: get/put the stored
- bridges
+	s=arc-20240116; t=1758820843; c=relaxed/simple;
+	bh=97iUBxcczrc8d4ZjA8iMJpyUnogsQG3SuufPU6f2ca0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=akvROwJaia5q1IEnCUZT6q2xjPe+RmZWoHgNtQKJZavXS4aQr+wkbKBYum7v9WYAyyYeAYPzh6sZ7tyiRbVVuhKChAoTbXAoF2tUly/35YxrAkeK+lxdbOe2XliJ7Dhcuoczxzs2kHnVFzdBO1APvG1KAijoBaKrLWT4ZAQwHco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=VhtuGPKN; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=R4Pwbk/D; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=VhtuGPKN+ofn4I8WGP0GkYmDMBmyLJdRXM8GhaHAkMsxRw8oMqH7q7350yJDTUbHyK1e+7b9vfft8bnL+YKirFTJD+l7eRwyNgxTqoOVpNfibMYy1i7OPrsmO0FikERsv1QzGycVfjTVLnK+38a7oofcABek8kvO1nH8m8Cue00F1BbCHr8OOsXjC8hO59i9VBmo/twYVWB4asO6+8QzpM/p0o5GVma+9okSV/0NHuGsnWVYBAxmEaK5elRhsVFm/arVDUC6qmzOJdCwlZViB3slKY2HQ3xUP3HdY5hkaJTj98lwuqhuCeoSJP0CwE7ZdVoOD4nJnF6HM/Xn0s3lQA==; s=purelymail2; d=elijahs.space; v=1; bh=97iUBxcczrc8d4ZjA8iMJpyUnogsQG3SuufPU6f2ca0=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=R4Pwbk/D+8Y/tpVxz1UD8WEKrmqbA1h2GH4KbnVGeeySbeDisfO8qO3fvelzJbOJ1GQM0IUB1lAcZqtoNhdWY9lsXo9bfhPHW31qumeUiphzJ1GQJXxxnsYwCtvZez47QBUsWLwtmtdU6pv/YmH7ioxgQPykEMFls79gAAuvo7LawcnDhTg9Zc0shEJbwCxlJjp+XwVfKqG1dGgmZu+gk0InSlSG2DACOjX4b6rkaVYaulLmCDOeOOxYA29hIeriQ6YgQA4cHtQCIYBt+Ebu+iRF0dPhPID5tumsI3rtrwN55+NOkja+EFaDwCb93TOgXu6BGvB9LMoq7et39OzB4Q==; s=purelymail2; d=purelymail.com; v=1; bh=97iUBxcczrc8d4ZjA8iMJpyUnogsQG3SuufPU6f2ca0=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 26912:4866:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1074361899;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Thu, 25 Sep 2025 17:20:15 +0000 (UTC)
+Message-ID: <73d7d53f-439b-44a9-98ca-0b1c8fbc1661@elijahs.space>
+Date: Thu, 25 Sep 2025 10:20:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: slab: add basic slab module
+To: Danilo Krummrich <dakr@kernel.org>, Elijah Wright <git@elijahs.space>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+Content-Language: en-US
+From: Elijah <me@elijahs.space>
+In-Reply-To: <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-2-f0736e1c73ee@bootlin.com>
-References: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-0-f0736e1c73ee@bootlin.com>
-In-Reply-To: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-0-f0736e1c73ee@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-drm_bridge_connector_init() takes eight pointers to various bridges, some
-of which can be identical, and stores them in pointers inside struct
-drm_bridge_connector. Get a reference to each of the taken bridges and put
-it on cleanup.
+I was thinking of maybe creating something like KBox for kmem_cache but 
+I didn't want to touch allocator code yet, I figured I would just create 
+the groundwork for that to exist. rbtree.rs uses KBox now but I'm not 
+sure it should, at least if it's going to scale to many nodes
 
-This is tricky because the pointers are currently stored directly in the
-drm_bridge_connector in the loop, but there is no nice and clean way to put
-those pointers on error return paths. To overcome this, store all pointers
-in temporary local variables with a cleanup action, and only on success
-copy them into struct drm_bridge_connector (getting another ref while
-copying).
-
-Additionally four of these pointers (edid, hpd, detect and modes) can be
-written in multiple loop iterations, in order to eventually store the last
-matching bridge. However when one of those pointers is overwritten once we
-need to put the reference that we got during the previous assignment. Add a
-drm_bridge_put() before writing them to handle this.
-
-Finally, there is also a function-local panel_bridge pointer taken inside
-the loop and used after the loop. Due to the various return points, use a
-__free() cleanup action to ensure it is put on return.
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/display/drm_bridge_connector.c | 112 +++++++++++++++++--------
- 1 file changed, 76 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index a5bdd6c1064399ece6b19560f145b877c9e0680e..4bcebbb8c9935fa55010a9d317f3d9e70b2ff7a3 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -268,11 +268,27 @@ static void drm_bridge_connector_reset(struct drm_connector *connector)
- 							 connector->state);
- }
- 
-+static void drm_bridge_connector_destroy(struct drm_connector *connector)
-+{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+
-+	drm_bridge_put(bridge_connector->bridge_edid);
-+	drm_bridge_put(bridge_connector->bridge_hpd);
-+	drm_bridge_put(bridge_connector->bridge_detect);
-+	drm_bridge_put(bridge_connector->bridge_modes);
-+	drm_bridge_put(bridge_connector->bridge_hdmi);
-+	drm_bridge_put(bridge_connector->bridge_hdmi_audio);
-+	drm_bridge_put(bridge_connector->bridge_dp_audio);
-+	drm_bridge_put(bridge_connector->bridge_hdmi_cec);
-+}
-+
- static const struct drm_connector_funcs drm_bridge_connector_funcs = {
- 	.reset = drm_bridge_connector_reset,
- 	.detect = drm_bridge_connector_detect,
- 	.force = drm_bridge_connector_force,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_bridge_connector_destroy,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
- 	.debugfs_init = drm_bridge_connector_debugfs_init,
-@@ -638,7 +654,15 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	struct drm_bridge_connector *bridge_connector;
- 	struct drm_connector *connector;
- 	struct i2c_adapter *ddc = NULL;
--	struct drm_bridge *panel_bridge = NULL;
-+	struct drm_bridge *panel_bridge      __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_edid       __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hpd        __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_detect     __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_modes      __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi       __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi_audio __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_dp_audio   __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi_cec   __free(drm_bridge_put) = NULL;
- 	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
- 	unsigned int max_bpc = 8;
- 	bool support_hdcp = false;
-@@ -672,22 +696,30 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		if (!bridge->ycbcr_420_allowed)
- 			connector->ycbcr_420_allowed = false;
- 
--		if (bridge->ops & DRM_BRIDGE_OP_EDID)
--			bridge_connector->bridge_edid = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_HPD)
--			bridge_connector->bridge_hpd = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
--			bridge_connector->bridge_detect = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_MODES)
--			bridge_connector->bridge_modes = bridge;
-+		if (bridge->ops & DRM_BRIDGE_OP_EDID) {
-+			drm_bridge_put(bridge_edid);
-+			bridge_edid = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_HPD) {
-+			drm_bridge_put(bridge_hpd);
-+			bridge_hpd = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_DETECT) {
-+			drm_bridge_put(bridge_detect);
-+			bridge_detect = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_MODES) {
-+			drm_bridge_put(bridge_modes);
-+			bridge_modes = drm_bridge_get(bridge);
-+		}
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
--			if (bridge_connector->bridge_hdmi)
-+			if (bridge_hdmi)
- 				return ERR_PTR(-EBUSY);
- 			if (!bridge->funcs->hdmi_write_infoframe ||
- 			    !bridge->funcs->hdmi_clear_infoframe)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_hdmi = bridge;
-+			bridge_hdmi = drm_bridge_get(bridge);
- 
- 			if (bridge->supported_formats)
- 				supported_formats = bridge->supported_formats;
-@@ -696,10 +728,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_AUDIO) {
--			if (bridge_connector->bridge_hdmi_audio)
-+			if (bridge_hdmi_audio)
- 				return ERR_PTR(-EBUSY);
- 
--			if (bridge_connector->bridge_dp_audio)
-+			if (bridge_dp_audio)
- 				return ERR_PTR(-EBUSY);
- 
- 			if (!bridge->hdmi_audio_max_i2s_playback_channels &&
-@@ -710,14 +742,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			    !bridge->funcs->hdmi_audio_shutdown)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_hdmi_audio = bridge;
-+			bridge_hdmi_audio = drm_bridge_get(bridge);
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_DP_AUDIO) {
--			if (bridge_connector->bridge_dp_audio)
-+			if (bridge_dp_audio)
- 				return ERR_PTR(-EBUSY);
- 
--			if (bridge_connector->bridge_hdmi_audio)
-+			if (bridge_hdmi_audio)
- 				return ERR_PTR(-EBUSY);
- 
- 			if (!bridge->hdmi_audio_max_i2s_playback_channels &&
-@@ -728,7 +760,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			    !bridge->funcs->dp_audio_shutdown)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_dp_audio = bridge;
-+			bridge_dp_audio = drm_bridge_get(bridge);
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
-@@ -739,10 +771,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
--			if (bridge_connector->bridge_hdmi_cec)
-+			if (bridge_hdmi_cec)
- 				return ERR_PTR(-EBUSY);
- 
--			bridge_connector->bridge_hdmi_cec = bridge;
-+			bridge_hdmi_cec = drm_bridge_get(bridge);
- 
- 			if (!bridge->funcs->hdmi_cec_enable ||
- 			    !bridge->funcs->hdmi_cec_log_addr ||
-@@ -762,7 +794,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			ddc = bridge->ddc;
- 
- 		if (drm_bridge_is_panel(bridge))
--			panel_bridge = bridge;
-+			panel_bridge = drm_bridge_get(bridge);
- 
- 		if (bridge->support_hdcp)
- 			support_hdcp = true;
-@@ -771,13 +803,13 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
- 		return ERR_PTR(-EINVAL);
- 
--	if (bridge_connector->bridge_hdmi) {
-+	if (bridge_hdmi) {
- 		if (!connector->ycbcr_420_allowed)
- 			supported_formats &= ~BIT(HDMI_COLORSPACE_YUV420);
- 
- 		ret = drmm_connector_hdmi_init(drm, connector,
--					       bridge_connector->bridge_hdmi->vendor,
--					       bridge_connector->bridge_hdmi->product,
-+					       bridge_hdmi->vendor,
-+					       bridge_hdmi->product,
- 					       &drm_bridge_connector_funcs,
- 					       &drm_bridge_connector_hdmi_funcs,
- 					       connector_type, ddc,
-@@ -793,15 +825,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_audio ||
--	    bridge_connector->bridge_dp_audio) {
-+	if (bridge_hdmi_audio || bridge_dp_audio) {
- 		struct device *dev;
- 		struct drm_bridge *bridge;
- 
--		if (bridge_connector->bridge_hdmi_audio)
--			bridge = bridge_connector->bridge_hdmi_audio;
-+		if (bridge_hdmi_audio)
-+			bridge = bridge_hdmi_audio;
- 		else
--			bridge = bridge_connector->bridge_dp_audio;
-+			bridge = bridge_dp_audio;
- 
- 		dev = bridge->hdmi_audio_dev;
- 
-@@ -815,9 +846,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_cec &&
--	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
--		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
-+	if (bridge_hdmi_cec &&
-+	    bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
-+		struct drm_bridge *bridge = bridge_hdmi_cec;
- 
- 		ret = drmm_connector_hdmi_cec_notifier_register(connector,
- 								NULL,
-@@ -826,9 +857,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_cec &&
--	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
--		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
-+	if (bridge_hdmi_cec &&
-+	    bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
-+		struct drm_bridge *bridge = bridge_hdmi_cec;
- 
- 		ret = drmm_connector_hdmi_cec_register(connector,
- 						       &drm_bridge_connector_hdmi_cec_funcs,
-@@ -841,9 +872,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 
- 	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
- 
--	if (bridge_connector->bridge_hpd)
-+	if (bridge_hpd)
- 		connector->polled = DRM_CONNECTOR_POLL_HPD;
--	else if (bridge_connector->bridge_detect)
-+	else if (bridge_detect)
- 		connector->polled = DRM_CONNECTOR_POLL_CONNECT
- 				  | DRM_CONNECTOR_POLL_DISCONNECT;
- 
-@@ -854,6 +885,15 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	    IS_ENABLED(CONFIG_DRM_DISPLAY_HDCP_HELPER))
- 		drm_connector_attach_content_protection_property(connector, true);
- 
-+	bridge_connector->bridge_edid       = drm_bridge_get(bridge_edid);
-+	bridge_connector->bridge_hpd        = drm_bridge_get(bridge_hpd);
-+	bridge_connector->bridge_detect     = drm_bridge_get(bridge_detect);
-+	bridge_connector->bridge_modes      = drm_bridge_get(bridge_modes);
-+	bridge_connector->bridge_hdmi       = drm_bridge_get(bridge_hdmi);
-+	bridge_connector->bridge_hdmi_audio = drm_bridge_get(bridge_hdmi_audio);
-+	bridge_connector->bridge_dp_audio   = drm_bridge_get(bridge_dp_audio);
-+	bridge_connector->bridge_hdmi_cec   = drm_bridge_get(bridge_hdmi_cec);
-+
- 	return connector;
- }
- EXPORT_SYMBOL_GPL(drm_bridge_connector_init);
-
--- 
-2.51.0
+On 9/25/2025 2:54 AM, Danilo Krummrich wrote:
+> What's the motivation?
+> 
+> I mean, we will need kmem_cache soon. But the users will all be drivers, e.g.
+> the GPU drivers that people work on currently.
+> 
+> Drivers shouldn't use "raw" allocators (such as Kmalloc [1] or Vmalloc [2]), but
+> the corresponding "managed" allocation primitives, such as KBox [3], VBox [4],
+> KVec, etc.
+> 
+> Therefore, the code below shouldn't be used by drivers directly, hence the
+> question for motivation.
+> 
+> In any case, kmem_cache is a special allocator (special as in it can have a
+> non-static lifetime in contrast to other kernel allocators) and should be
+> integrated with the existing infrastructure in rust/kernel/alloc/.
+> 
+> I think there are multiple options for that; (1) isn't really an option, but I
+> think it's good to mention anyways:
+> 
+>    (1) Allow for non-zero sized implementations of the Allocator trait [3], such
+>        that we can store a reference count to the KmemCache. This is necessary to
+>        ensure that a Box<T, KmemCache> can't out-live the KmemCache itself.
+> 
+>        The reason why I said it's not really an option is because it discards the
+>        option for dynamic dispatch of the generic Box type.
+> 
+>    (2) Same as (1), but with a custom Box type. This keeps dynamic dispatch for
+>        the generic Box type (i.e. KBox, VBox, KVBox), but duplicates quite some
+>        code and still doesn't allow for dynamic dispatch for the KmemCacheBox.
+> 
+>    (3) Implement a macro to generate a custom KmemCache Allocator trait
+>        implementation for every KmemCache instance with a static lifetime.
+> 
+>        This makes KmemCache technically equivalent to the other allocators, such
+>        as Kmalloc, etc. but obviously has the downside that the KmemCache might
+>        live much longer than required.
+> 
+>        Technically, most KmemCache instances live for the whole module lifetime,
+>        so it might be fine though.
+> 
+>        (This is what I think Alice proposed.)
+> 
+>    (4) Solve the problem on the C side and let kmem_cache_alloc() take care of
+>        acquiring a reference count to the backing kmem_cache. The main question
+>        here would be where to store the pointer for decreasing the reference
+>        count on kmem_cache_free().
+> 
+>        Theoretically, it could be stored within the allocation itself, but it's a
+>        bit of a yikes.
+> 
+>        However, it would resolve all the mentioned problems above.
+> 
+> I'd like to see (3) or (4), also depending on what the MM folks think.
 
 
