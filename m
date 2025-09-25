@@ -1,190 +1,138 @@
-Return-Path: <linux-kernel+bounces-832728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7797FBA02BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A740BA036B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC19C189F572
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:12:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5169381681
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB1B31A56B;
-	Thu, 25 Sep 2025 15:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207173081A9;
+	Thu, 25 Sep 2025 15:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JOALaPPf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gol47kuJ"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1CE31A06C;
-	Thu, 25 Sep 2025 15:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C7C2E3B19
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812739; cv=none; b=jqw9c2VI4or0KGZCujgIrahhtvfLpTM2oInifIcvbb7D1KxA9DTDnXSAamFU2A/eDDn2BvcxpYOP2kUqrEqYDh++7WdGMWJFSfHctRllGnaBDvnAv0GZXBrl4UoiIQZz47dewvrl2jvjm3XQ6t22n6tgB3EUPVTR2+mCe/7ma38=
+	t=1758812809; cv=none; b=T3FMW7uCjW+xT7/1dvOiq+DkfW4sIOaKD+uKSNjLtK9gKNv8rwN2rmC7wgcFsFQ5MenJROe5mwbcxNJpjyT9rP0OayRJ9jN0xAOBeYA+NtQ/84FW/Z2JeAYo4FL0BGgjqPvr267VYdAYrBQwc5Yj+rBQXnkbmgkI8KUu/7acs+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812739; c=relaxed/simple;
-	bh=JHCPquvZB7G0O7g5UTmpSZA2j5My+jkbbFdEeHPVnqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c2g+W8oq9dSC1k5O6OPazVk6tNL3kFUhHudK5xwAjj2G0voX8EBnnh45n1b96eoStWicvGTpxWxt0TuLurKybXt6p7YwjTGMzi7yiFVjJCj1NTxJCFFCig+77lng+mpiakSVzuS92WOb5UJqoaHAbyPO4fVmK778cqQqeQ5+/HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JOALaPPf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PCDuxx003612;
-	Thu, 25 Sep 2025 15:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=iO7kiS
-	/RDntZtZVimHq7uSbHYNpxB8Bx4nnYZchDz0k=; b=JOALaPPfkrX6sU0OjclHoZ
-	nbleYF8fEciVdCU1h+xII/D5Ex4CyOKuOE/BPy/r5pMGSRrQc95UZ/y7d464HIG0
-	KE2dsYnqrimtrt4CiptZZzQahsWdkc4bBKjdJK2362lvxgl6nt2q9PvkWeV2iZ58
-	/DJmH9lp19flze4R216N/sqWw5nK49PQwPkeL+3FUFWvAxxgl2PSEG8SpOihRtv9
-	xX+5GCS2IEunu8Rt5bKmmsA2e76mf9+MszM94v0ObxvJNk5SqbfwEKMEJ3g/SVHK
-	jf0wS76uJNju3z4SzDZESfgtN9n8G+buN68No1iwaA9efwEY3R8hmT/HoxE79oow
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky6eje9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 15:05:32 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58PEbqVL010021;
-	Thu, 25 Sep 2025 15:05:32 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky6eje2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 15:05:32 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PE6eJu030340;
-	Thu, 25 Sep 2025 15:05:30 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a9a1e90k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 15:05:30 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PF5RNZ49414446
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 15:05:27 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 005602004D;
-	Thu, 25 Sep 2025 15:05:27 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F2C0820063;
-	Thu, 25 Sep 2025 15:05:25 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.87.151.15])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 25 Sep 2025 15:05:25 +0000 (GMT)
-Date: Thu, 25 Sep 2025 17:05:24 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-        "D.
- Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang
- <wenjia@linux.ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>,
-        Tony Lu
- <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next v3 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-Message-ID: <20250925170524.7adc1aa3.pasic@linux.ibm.com>
-In-Reply-To: <cd1c6040-0a8f-45fb-91aa-2df2c5ae085a@redhat.com>
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
-	<20250921214440.325325-3-pasic@linux.ibm.com>
-	<cd1c6040-0a8f-45fb-91aa-2df2c5ae085a@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758812809; c=relaxed/simple;
+	bh=0EpGH4MwDbcizlCggFCTnPr7IrP4J3CDCKfs8jvP9TY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ivsSwwP6fsCdMNRZcmkuOSV24OCOO9sJguAiAQQTc51iTGWvcYxa4TjKwr1poWeXGKPm3xuTT5iDuv8LBmgrmcs04QIN29zYtTmcPxLhxd6QsrFGBU2kdXElKIvfuJBFP+/mi6a9iDV/dSM/R7LF5blvY1pTaHRHJTmCPVw1e64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gol47kuJ; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77df7f0d7a3so1079987b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758812807; x=1759417607; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
+        b=gol47kuJ9acsLtfW2IwzLWuooJIDmQq9873ZhWoEj0JftEk9oLWpBQHhtr6z+kSE9S
+         0FEb//SunmT1U27blL0FfCErzAsfpWHhRBt72y8ofi6U3LYzhdRjOu4OZvDkXgwGvlRg
+         TIiMBVIlZwQKQpVM4W5NsB+uikjrtD0uprCYWZgH+uDrthU2nIw7XKcD13wiFZQvYEhf
+         jp6pdIANl8aTL/KS6flRmI0oWxkm4un0kP/vi4aWbqUcWpmkIuM/gN5EPJBTxMt91B9g
+         5xnee3VAsB5Wa8NoGCaei1vOP3W2RzwjY8lsSRJox9AVbyrVuuEfUONujYaouQAuDzKM
+         r05g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758812807; x=1759417607;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh5MSqTLsjrp4fvoa9f2K3rue2zEjmwO4t9rR+bj9fI=;
+        b=h7sKGFlD8tn2nws5yDKwfXid7pxJKMb8KhH+RDh/V0YQ1S/Yx2iktI5ncro87Fs3dR
+         YQ3ebQyXWNnjvmN4obYdR9mAYLJ0z/nWd5bRrviNCSv2pJOp9GDssybKl6c8L/UzXEWh
+         Pobjot3mFePPBN9mCNkWl+DGBgpIiu+LMthefmy5Tc/d2F1SEV8cyABqnzDuRa4mQGVW
+         XEYzZXYwl7IOkzJJqno1NIbMt/L1b1/tLfVRnVsGC44fxyuZcv0rYrHQs/lIVgaFpQ1G
+         YlC472Rx8f1+1zqMuSTj6ofe3sIMYDn8zeQ4cOWs8LYPl2fCHdY5w6z2yIHkYGk625ww
+         yw6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBjvcU2lnI/RMLiCtfkpo9EaG9mIWWEnuIgITBrip/1/xqM9aq7ZxSUvbQGJjD6JE0zf3SiAwNu2XYCVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQkE81YBBm+K6giGDx5TQ6xLIsn65CZNpSCmG/ADjcMyYSrfCP
+	C0hXjiDm0LCCT7f+4+7df2f1kP/76ga/31QiYwgJxqrLm5ZK5uqz2Q1YHwaAcjpX46dS9rElq92
+	pgPz0Bw==
+X-Google-Smtp-Source: AGHT+IEVcWsyGM1w0GH1nNrshkk20Pnc8ghwxFB8MAUOFgcR14npidYwrEDITe3+YHWa4Mb/5XspEYhl1Ac=
+X-Received: from pga11.prod.google.com ([2002:a05:6a02:4f8b:b0:b4c:213a:e7aa])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3282:b0:262:1611:6528
+ with SMTP id adf61e73a8af0-2e7cdda0840mr4939471637.29.1758812806367; Thu, 25
+ Sep 2025 08:06:46 -0700 (PDT)
+Date: Thu, 25 Sep 2025 08:06:44 -0700
+In-Reply-To: <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: nBZevxKP4kxkAl4FsC2gxe5A7UScRFgJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfX8UZmBSfyYmpY
- JMmNTOj7URk6vJowSlWekipNbFO86vLcmCSe/dtKSBZMEg0LEQ38HQbvSy5/tQ7ASo7H5MscF65
- Qtia0B0HrD20+FQ8Ena2tNfLgKaE+hAPH4Mzu9Fl38hcR+H3S6xzXnk5ABxk8vH8yg6OjrZ+QVG
- PUeFPa2jrCQ+WXXN7Oc+Wt+aOXHgyOP5z/3+a6fFXnOfRSe2lW7wbwXJncPs/4k1XpIk/uz4k0w
- 6tydGrgtgRNBmpOuGwZVmIvqD+RiunSGu+LXU0YIyvSN/N2vNBTdztd2i/0Ge3T3G2Z7vkQ7Plw
- j85gPbnuaHxRgnqF/1C8AqJWMWTVSKDKdyalcn8cY8Ye8oyKxwirnDEXDNkBBctcIIMm9RfZw+1
- 2VtD1w2B
-X-Authority-Analysis: v=2.4 cv=XYGJzJ55 c=1 sm=1 tr=0 ts=68d55a3d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=gPG2f1ptgi-rRd_ibX0A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: IVesFF_vMbMokXRhspM-AJDwi0Z6rpRr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 clxscore=1015 adultscore=0 malwarescore=0
- suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
+ <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
+ <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
+ <aNVFrZDAkHmgNNci@google.com> <3a82a197-495f-40c3-ae1b-500453e3d1ec@redhat.com>
+Message-ID: <aNVahJkpJVVTVEkK@google.com>
+Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
+ instead of anonymous inodes
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, 
+	akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org, 
+	vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
+	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
+	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
+	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
+	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
+	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
+	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
+	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
+	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
+	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
+	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
+	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
+	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
+	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
+	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 25 Sep 2025 11:40:40 +0200
-Paolo Abeni <pabeni@redhat.com> wrote:
-
-> > +	do {
-> > +		rc = smc_ib_create_queue_pair(lnk);
-> > +		if (rc)
-> > +			goto dealloc_pd;
-> > +		rc = smc_wr_alloc_link_mem(lnk);
-> > +		if (!rc)
-> > +			break;
-> > +		else if (rc != -ENOMEM) /* give up */
-> > +			goto destroy_qp;
-> > +		/* retry with smaller ... */
-> > +		lnk->max_send_wr /= 2;
-> > +		lnk->max_recv_wr /= 2;
-> > +		/* ... unless droping below old SMC_WR_BUF_SIZE */
-> > +		if (lnk->max_send_wr < 16 || lnk->max_recv_wr < 48)
-> > +			goto destroy_qp;  
+On Thu, Sep 25, 2025, David Hildenbrand wrote:
+> On 25.09.25 15:41, Sean Christopherson wrote:
+> > Regarding timing, how much do people care about getting this into 6.18 in
+> > particular?
 > 
-> If i.e. smc.sysctl_smcr_max_recv_wr == 2048, and
-> smc.sysctl_smcr_max_send_wr == 16, the above loop can give-up a little
-> too early - after the first failure. What about changing the termination
-> condition to:
+> I think it will be beneficial if we start getting stuff upstream. But
+> waiting a bit longer probably doesn't hurt.
 > 
-> 	lnk->max_send_wr < 16 && lnk->max_recv_wr < 48
+> > AFAICT, this hasn't gotten any coverage in -next, which makes me a
+> > little nervous.
 > 
-> and use 2 as a lower bound for both lnk->max_send_wr and lnk->max_recv_wr?
+> Right.
+> 
+> If we agree, then Shivank can just respin a new version after the merge
+> window.
 
-My intention was to preserve the ratio (max_recv_wr/max_send_wr) because 
-I assume that the optimal ratio is workload dependent, and that scaling
-both down at the same rate is easy to understand. And also to never dip
-below the old values to avoid regressions due to even less WR buffers
-than before the change.
+Actually, if Shivank is ok with it, I'd be happy to post the next version(s).
+I'll be focusing on the in-place conversion support for the next 1-2 weeks, and
+have some (half-baked) refactoring changes to better leverage the inode support
+from this series.
 
-I get your point, but as long as the ratio is kept I think the problem,
-if considered a problem is there to stay. For example for 
-smc.sysctl_smcr_max_recv_wr == 2048 and smc.sysctl_smcr_max_send_wr == 2
-we would still give up after the first failure even with 2 as a lower
-bound.
-
-Let me also state that in my opinion giving up isn't that bad, because
-SMC-R is supposed to be an optimization, and we still have the TCP
-fallback. If we end up much worse than TCP because of back-off going
-overboard, that is probably worse than just giving up on SMC-R and
-going with TCP.
-
-On the other hand, making the ratio change would make things more
-complicated, less predictable, and also possibly take more iterations.
-For example smc.sysctl_smcr_max_recv_wr == 2048 and
-smc.sysctl_smcr_max_send_wr == 2000.
-
-So I would prefer sticking to the current logic.
-
-Regards,
-Halil
-
-
+I can also plop the first three patches (the non-KVM changes) in a topic branch
+straightaway, but not feed it into -next until the merge window closes.  The 0-day
+bots scrapes kvm-x86, so that'd get us some early build-bot exposure, and we can
+stop bugging the non-KVM folks.  Then when the dust settles on the KVM changes,
+I can throw them into the same topic branch.
 
