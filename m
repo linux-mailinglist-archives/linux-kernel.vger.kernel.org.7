@@ -1,326 +1,189 @@
-Return-Path: <linux-kernel+bounces-832680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4565CBA0174
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880AEBA0179
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A3C3A803E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:55:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3122D17D209
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A83E2E173B;
-	Thu, 25 Sep 2025 14:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527A22E1F01;
+	Thu, 25 Sep 2025 14:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SMkLq9We"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfiu3FKo"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53FA2E1746
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF902E1746
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812120; cv=none; b=Nzedb5ZYSg0S6stmTo4rm9Ynx++6B4hDsdeCrcEndUaJi/P8bpdQkj6RWMRSc76MYwMPM0lGUMz1sfim/Dogv0641z6m8mrBvvaPocwCnqMotfwlEWZKNdejmIxLfG8SGAvriL7OEmEqVOQ1fKELt9ChbUvsIotp8HPzwoHbHCQ=
+	t=1758812220; cv=none; b=iXltllKlBFI1xK89en+GbdIyCrk3vqFsIqqhP3Gqa5ntaWLlfy1MVN8WDs/eB1HBM+CFCjhlu2vzQwtxe2W+2bfDFJo+Ov5c8Aq+Fw8GZnLGZ/PLj9/lLWpkJ56oYPjPiz+hPfIP9pUq/Cpon/Mc/iw+sdKODBAEJtlQiVqmVjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812120; c=relaxed/simple;
-	bh=upAzqv3uCgSxTMzNdK3dpWM9y/QPKyASnB4z48/CkQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iiSC3d0j5PPI6Oq/FOz0rSolW2ZYlh1yBa/iWlNb5HojgtkNwxyjSKMCFs3Klrc7EyeXvbjON2CvC93S7b8566X5ZFR+hR7Cu1jDoGK6slltr4633X5BysWlECITDWL7dBLnCWY11TV/39Etmh02rQ7OCSAeWCCvYQruiWzIQo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SMkLq9We; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9ih7O017424
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:55:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UCKLHPclZ92VqQVzO2ihLAAMvehhf/ZUsH5t+sSqD3E=; b=SMkLq9Wewvn6bGnz
-	U6J7wYFE1wJkqpjahkh1SHMxuKKtZ/CX0Um8belckqxAZWqAiF3rrkmvbE3uzYYx
-	4ZFsp3seTfAf6Vhz2DeIXiAA5j7kehb06ztPgyixJyk3J61J2ZtBELgE3zrBIV1B
-	+BwHNiJscVYUc0aWDDmlVzdnT/I7WeNvcb9MbBxbG6+oWbk5z8gq1XPyGSsbiw5J
-	GjvheJ9P4XTtsk4TqAdu0uzJG/rBGjkfB+3qovsYXU/np0EidbIgU3IqRbpmaWrA
-	oc1g0MRUlchQSjOwmn8SsjQZk5WDZg50wlJhQaWDvwFpYhnLJFTJ9FjSXkD8BsZy
-	TZ0azQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bhvk1ttq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:55:12 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d413127749so22480741cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:55:12 -0700 (PDT)
+	s=arc-20240116; t=1758812220; c=relaxed/simple;
+	bh=iXjdYy/Oe5sVP96M1v1HO37ho1pc8PIfeIRa6Jk7gsk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HnKqm0f/wkIVfeZ74mlDJruLwyJ3JvHW9HG4MCxTGP3EBHgbwoSn6NaSRMfdOhJPxTejhWxsRwBBZShCuIBLd5zSdAToUmK0PW6MI4qm0sIWbauJwoeHW1RM0guS52u+S1ZTp+lBfd/ZwgQgg6MyV+cLzVHLW6qlXD12c6g14cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfiu3FKo; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso4633265e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758812217; x=1759417017; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vQLgyQTTgUDea9nF4s1X9HICWryIv9j0DFy7IvOKWt0=;
+        b=hfiu3FKoJ0+bIORChplDlPZzuM2+HuuaqZoAvJA1CH6hy48Ts8+VvMEUjcvVHAusxX
+         sBTqceF1dmm13bGbmx6jAB2ZJZO36bE7c1Po6DvSJa4dsoAQqPBaZ5IBHQLXOxTeHTGK
+         4l6GAcwpCTzFHJfV8NXjDAmtVZVQSj5eIDFW+74DRzPo/F8kUuxxSyTUGHG9sKscMehg
+         thw1CtLyj7/vShcVFIYbb+kR84kshDsFHefOgKyFntSf+7pKS/FM2N70BZuHI07d8IiS
+         00jS8yTBdPnbguET0tHlwX0wX5t3tMAaZFjxX7aonbabNGlxIIRNvnOk4j17fgTErD8b
+         Hdrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758812111; x=1759416911;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UCKLHPclZ92VqQVzO2ihLAAMvehhf/ZUsH5t+sSqD3E=;
-        b=OL8Zhmsl5Orsq962kIXL2oTlOL9nU4/9rrOecKmMdFg9COW1AJ9yLAjRE+45imSbAP
-         l0Qfwlod7CpUdkVLMtDDFs+JqRSCJHDBa84cda3N+ISEQe/dBhtyZr+gSKQQeS+FMlQd
-         SCEq49m6eNxl+IGmzo7FV8EyYUEOW1dyUkvNLl1PAZ4ubEYO337TiHu6Tc+UuZVtj85p
-         +6pCi8wZZUi7T1lPSi3la1nQSxyVqTFHYf5to92s+WdZBobdVmk/fvWFcgvNHxkBYz0E
-         TZi4OCn2HDgTaDx34NCV8zGet6lQwsIRdImEHkr2siCiXKJQ1wgaD6s7+0vdWKufWasg
-         wtNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUldQ1KnqVS8E0hi6KxaqMYkhfi5/NbYqnTh4dTFltmIlpo3RDqo7fPpQGRxQlWRfaQo2kU36QcB12MfKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWSkOrtK6s8WLNJKHxYE7vB9N+PeR7DPmZ8JjcuDgoIunOO756
-	n/xx4ANdGlXunQNL/UWyUt/pDL/i3uGRsH4nimaJM5iu9pTpo5DZMTVF6UmJLylDYdudwxKnPt6
-	0ro8fv6A9TfZXJMVkOvilR4UEflmNwGBAcdyvMdkc+4x7RfyZmjCk/WWJsJz5eIFq/tA=
-X-Gm-Gg: ASbGnctXSHhgq+YeXRen0SmtpCAJF0CmeEOwdGjToazBfkGALC4YDdP455YF2JGlHJK
-	Sj2WBOt0cqTiClWOfjmvBcHB5pTZNJpMWrAYlWM+J6JF1DTp5k10zT96lH8avgYxUpTlgCSnSxH
-	qJCElTQ0MH0Mk2U2POHAVZORU8gOw6GRSHXsCnPQe9f6rT42YICTMj6vb5HZdTgnVEvGRS4aM++
-	4sNdlnxnQkGWLJACQ5eHFL3WDOnwnxlEwXkdwyFbhhgXjn15Dj3q9vpc/arnDQtss/riycfDDEu
-	XAhXdYMooDeW6hnQFVVsBdW/6Hht41EhliA3ITuGrage1cAXYbpywpo++Y7bJ6+asuhF6GVk3ph
-	WsAyN6dit3BWIJLlguBW6fc7nJR48h+dZ1IHLUHAdxKEz5uSzFV3g
-X-Received: by 2002:a05:622a:2c4:b0:4ca:d221:7f47 with SMTP id d75a77b69052e-4da481d5671mr49733951cf.20.1758812110107;
-        Thu, 25 Sep 2025 07:55:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZICDfrSZTRJ2GaxTMZc5seKL08CVV0TR7RmaHg0ybBZh1gfpRHIOxkw8Z+UaKEDm6GC1Ahw==
-X-Received: by 2002:a05:622a:2c4:b0:4ca:d221:7f47 with SMTP id d75a77b69052e-4da481d5671mr49732751cf.20.1758812109007;
-        Thu, 25 Sep 2025 07:55:09 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313fc02c1sm853387e87.60.2025.09.25.07.55.07
+        d=1e100.net; s=20230601; t=1758812217; x=1759417017;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vQLgyQTTgUDea9nF4s1X9HICWryIv9j0DFy7IvOKWt0=;
+        b=uXsCFKt3sfngNnVh9teH02X+NnITkvxuzqaqlhmPI8b/OmfT/0YC4T3BH8TNB3AcTZ
+         sycd/y3Kl/jbXX/m28rYLlCaAnj9aAm/QAv3TJPhTXYQCcArvJ1PyJaXdZPlyN5rAKN3
+         VnW6mEAO0DrbzR7n69kLpKIr0DW4p2e3YDB2J6QRO1RWoEy2VwT1gJfXHfNn82dh3r1C
+         NSXMvIPMySH++DQaajgYUikThL/dSucyqZIPSLwV19JX2GTsNP5E7pzBsAgwvqi3MoM5
+         dAiLQBTAsYOwzZzJjmqhwTOF5BWbZUnmGV/c8KirMywU7Qk3e+q3vov513UhXa9AthQ9
+         f3JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuGNoM9EcfZkmaIwosVUfUXv+L2ZmenBWWp2fO6UwteEQ7gw0gY1rVinhC6EWw2Q894TmibbprJ0RQHPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9w1DwBiha8NLNQGv9Vl3pkaj1yI6N3VqeXGL3/8XT7R9pX8QI
+	l4JTGX/0ZPgudXvzEPM2m5FQ1IxU1iAooHKkrKhMi7l0xsW6wJ54T0fP
+X-Gm-Gg: ASbGncs5vz8PApUK923SXjS7pkM74BbCXjL0TO8CyAoaYPstnEwWuzD4/LzK3H/mk6m
+	rj+DGuTtoF+UWlmI+BPKZ4KTBZb3ObcWtg/EqTb7oXkQN0gpjIU1br1dT6x9XMUQKjZr5OLgc19
+	JTJC/nvm9SdXW5M8ATXJWY4FZoEB994/3nFEUYLisICCd/orxcqPu/oHcu7ZZDl3f/Wj3kMkkpp
+	GgMEHXq4GfJNLwcIz2gfoBRevownVSCkfaeBLty62cC2B7OuxpuWLvw1QHynvMes5rC9V9YZvde
+	h5YGslM19Hy44bLhI+U7uMLaVRTPVjR2J8jofkQ9r+t87EoOvOcm/K2FK01RiCw0nR4E2WN/hI9
+	qmiZ6B0qbGzROWcVvTli8CBtawnONaaeMc9NDLaGbwpptQddEX7PSLAD8IQ==
+X-Google-Smtp-Source: AGHT+IEzGD5aTIxkgOT3hW9heRIa+e6bI+J2eP+kb7/6OWm0dTSB2R32Wm5QMktzASbLVZB/YT64hQ==
+X-Received: by 2002:a05:600c:1553:b0:46e:39e4:1721 with SMTP id 5b1f17b1804b1-46e39e41ae1mr1183735e9.12.1758812216424;
+        Thu, 25 Sep 2025 07:56:56 -0700 (PDT)
+Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bede2csm36381395e9.17.2025.09.25.07.56.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 07:55:08 -0700 (PDT)
-Date: Thu, 25 Sep 2025 17:55:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Daniel Stone <daniels@collabora.com>
-Subject: Re: [PATCH v4 01/10] drm/connector: let drivers declare infoframes
- as unsupported
-Message-ID: <jfxtcvh4l5kzyv74llmzz3bbt6m4mhzhhwl6lh5kfeqgqhkrhi@jzfvtxpedmyf>
-References: <20250909-drm-limit-infoframes-v4-0-53fd0a65a4a2@oss.qualcomm.com>
- <20250909-drm-limit-infoframes-v4-1-53fd0a65a4a2@oss.qualcomm.com>
- <20250910-furry-singing-axolotl-9aceac@houat>
- <z333ysst5ifakomo35jtbpydj44epqwwn4da76rcnsq4are62m@32gsmgx2pcdi>
- <20250925-didactic-spiked-lobster-fefabe@penduick>
+        Thu, 25 Sep 2025 07:56:55 -0700 (PDT)
+Message-ID: <cd35aa283cf010188a3b0e318f2c16655224767c.camel@gmail.com>
+Subject: Re: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current
+ with security= on commandline
+From: Filip Hejsek <filip.hejsek@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>,
+  "Serge E. Hallyn"	 <serge@hallyn.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	regressions@lists.linux.dev
+Date: Thu, 25 Sep 2025 16:56:55 +0200
+In-Reply-To: <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
+References: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
+	 <CAHC9VhRu=-J5xdKgYOJ1eqQ6EiMoEJ3M+cjDU8AHrts-=DoTvg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250925-didactic-spiked-lobster-fefabe@penduick>
-X-Proofpoint-ORIG-GUID: IP6BPapNHp-pSE8Y8_eVKv5lchVsVlMv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAxMSBTYWx0ZWRfX19omHkK1TKHE
- iEmO4kMR2dj/GjRyRUbSIoz+vBuBfJ6BnWiLSSMFlj9vVuOzVbUhh3taHo2aS5dFl6qz4RRHrBI
- qy9wpF5a2tdeR0Nrt6/ZV/EGZ6+o952U60DYvQ8v829P34XqiYnEU9ebPmoCYJQXtxPm9Lqqgru
- 2rwW2y5kbIf2QKVCGg0qpsy+BdQiO9p8/c4Dk+jDdzmuthq3ys+JGIFBEvGKKF1NDOj2EHBfBLp
- IRDCPA3nskRi4H3CecJ4P+6LeAOwvc8i6qnm0M37E8eFb2d/+D6SQkXMPMDJ3WCtjLn45N/LWyd
- FO03+lVgm+/0sejI3avOqgXrMh+uZUuIQbHZAdX6QzFgNBiV/eqbF8HEY/7hAHOYB/cZbVUOn3r
- 6/SrrFKq
-X-Proofpoint-GUID: IP6BPapNHp-pSE8Y8_eVKv5lchVsVlMv
-X-Authority-Analysis: v=2.4 cv=Csq/cm4D c=1 sm=1 tr=0 ts=68d557d0 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=8AirrxEcAAAA:8 a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8
- a=jixIfWMKhexVEAdDGxYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22 a=ST-jHhOKWsTCqRlWije3:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 adultscore=0 impostorscore=0 phishscore=0
- clxscore=1015 spamscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230011
 
-On Thu, Sep 25, 2025 at 02:36:46PM +0200, Maxime Ripard wrote:
-> On Wed, Sep 10, 2025 at 06:16:25PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Sep 10, 2025 at 01:03:47PM +0200, Maxime Ripard wrote:
-> > > On Tue, Sep 09, 2025 at 05:51:59PM +0300, Dmitry Baryshkov wrote:
-> > > > Currently DRM framework expects that the HDMI connector driver supports
-> > > > all infoframe types: it generates the data as required and calls into
-> > > > the driver to program all of them, letting the driver to soft-fail if
-> > > > the infoframe is unsupported. This has a major drawback on userspace
-> > > > API: the framework also registers debugfs files for all Infoframe types,
-> > > > possibly surprising the users when infoframe is visible in the debugfs
-> > > > file, but it is not visible on the wire. Drivers are also expected to
-> > > > return success even for unsuppoted InfoFrame types.
-> > > > 
-> > > > Let drivers declare that they support only a subset of infoframes,
-> > > > creating a more consistent interface. Make the affected drivers return
-> > > > -EOPNOTSUPP if they are asked to program (or clear) InfoFrames which are
-> > > > not supported.
-> > > > 
-> > > > Acked-by: Liu Ying <victor.liu@nxp.com>
-> > > > Acked-by: Daniel Stone <daniels@collabora.com>
-> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > 
-> > > Again, I still believe that it's a bad idea, goes against what the spec
-> > > states, and the framework was meant to be.
-> > 
-> > Please correct me if I'm wrong. The specs (HDMI & CEA) define several
-> > infoframes and whether we should be sending them. If I'm reading it
-> > correctrly, CEA spec explicitly says 'If the Source supports the
-> > transmission of [foo] InfoFrame..." (6.4 - AVI, 6.6 - Audio, 6.7 MPEG,
-> > 6.9 - DRM). For other InfoFrames (6.5 SPD, 6.8 NTSC VBI) it just defines
-> > that sending those frames is optional.
-> 
-> SPD is indeed optional, but the HDMI spec, (HDMI 1.4b, Section 8.2.1 -
-> Auxiliary Video information (AVI) InfoFrame) states that:
-> 
->   A Source shall always transmit an AVI InfoFrame at least once per two
->   Video Fields if the Source:
-> 
->    * is ever capable of transmitting an AVI InfoFrame or,
->    * is ever capable of transmitting YCBCR pixel encoding or,
->    * is ever capable of transmitting any colorimetry other than the
->      transmitted video format’s default colorimetry or,
->    * is ever capable of transmitting any xvYCC or future enhanced
->      colorimetry or,
->    * is ever capable of transmitting any Gamut Metadata packet or,
->    * is ever capable of transmitting any video format with multiple
->      allowed pixel repetitions or,
->    * is ever capable of transmitting Content Type other than “no data” or,
->    * is ever capable of transmitting YCC Quantization Range.
-> 
->   The AVI InfoFrame shall be transmitted even while such a Source is
->   transmitting RGB and non-pixel-repeated video. When a Source is not
->   explicitly required to transmit AVI InfoFrames, it is recommended that
->   the Source transmit AVI InfoFrames.
-> 
-> So it's recommended in every case, and the list kind of makes it
-> mandatory for how Linux uses HDMI.
+On Wed, 2025-09-24 at 17:24 -0400, Paul Moore wrote:
+> On Sat, Sep 13, 2025 at 1:01=E2=80=AFPM Filip Hejsek <filip.hejsek@gmail.=
+com> wrote:
+> >=20
+> > Hello,
+> >=20
+> > TLDR: because of bpf lsm, putting security=3Dselinux on commandline
+> >       results in /proc/*/attr/current returning errors.
+> >=20
+> > When the legacy security=3D commandline option is used, the specified l=
+sm
+> > is added to the end of the lsm list. For example, security=3Dapparmor
+> > results in the following order of security modules:
+> >=20
+> >    capability,landlock,lockdown,yama,bpf,apparmor
+> >=20
+> > In particular, the bpf lsm will be ordered before the chosen major lsm.
+> >=20
+> > This causes reads and writes of /proc/*/attr/current to fail, because
+> > the bpf hook overrides the apparmor/selinux hook.
+>=20
+> What kernel are you using?
 
-Agreed.
+I'm using Arch Linux kernel, which is very close to mainline. I have
+also tested my own build from git sources (I used a stripped down
+config which I based on config from Arch). Example in QEMU:
 
-> 
-> Also, did we ever encounter some hardware that couldn't send AVI?
+$ qemu-system-x86_64 -nodefaults -accel kvm -cpu host -smp cpus=3D2 -m 1G -=
+display none -kernel ~/git/linux/arch/x86/boot/bzImage -initrd ./initramfs.=
+img -serial mon:stdio -append 'console=3DttyS0 security=3Dselinux'
+:: mounting '' on real root
+mount: /new_root: no valid filesystem type specified.
+ERROR: Failed to mount '' on real root
+You are now being dropped into an emergency shell.
+sh: can't access tty; job control turned off
+[rootfs ~]# uname -a
+Linux archlinux 6.17.0-rc7-00020-gcec1e6e5d1ab #3 SMP PREEMPT_DYNAMIC Thu S=
+ep 25 16:28:02 CEST 2025 x86_64 GNU/Linux
+[rootfs ~]# mount -t securityfs securityfs /sys/kernel/security
+[rootfs ~]# cat /proc/cmdline
+console=3DttyS0 security=3Dselinux
+[rootfs ~]# cat /sys/kernel/security/lsm; echo
+capability,landlock,lockdown,yama,bpf,selinux
+[rootfs ~]# cat /proc/self/attr/current
+cat: read error: Invalid argument
 
-No.
+(Note: In this example, uname reports archlinux, but that's only
+because I based the config on Arch config, it's not actually an Arch
+kernel.)
 
-> 
-> Audio is mandatory when streaming audio, DRM when using HDR, and we
-> don't support the others yet.
-> 
-> So the only we support but don't have to send is SPD.
-> 
-> > We can't even infer support for InfoFrames from the Source features.
-> > E.g. CEA 6.6.1 defines a case when digital audio is allowed to be sent,
-> > without sending Audio InfoFrame.
-> 
-> HDMI 1.4 section 8.2.2 - Audio Infoframe states that:
-> 
->   Whenever an active audio stream is being transmitted, an accurate
->   Audio InfoFrame shall be transmitted at least once per two Video
->   Fields.
-> 
-> I'd say it takes precedence over CTA-861.
+Maybe the different behavior is caused by a different config? You can
+find the Arch config at [1]. Based on Fedora package sources, I think
+their config has
 
-I see, I was referring to CTA indeed. HDMI takes precedence.
+   CONFIG_LSM=3D"lockdown,yama,integrity,selinux,bpf,landlock,ipe"
 
-> 
-> > As we will be getting more and more features, some of the InfoFrames
-> > or data packets will be 'good to have, but not required'.
-> 
-> And drivers would be free to ignore those.
-> 
-> > > So, no, sorry. That's still a no for me. Please stop sending that patch
-> > 
-> > Oops :-)
-> > 
-> > > unless we have a discussion about it and you convince me that it's
-> > > actually something that we'd need.
-> > 
-> > My main concern is that the drivers should not opt-out of the features.
-> > E.g. if we start supporting ISRC packets or MPEG or NTSC VBI InfoFrames
-> > (yes, stupid examples), it should not be required to go through all the
-> > drivers, making sure that they disable those. Instead the DRM framework
-> > should be able to make decisions like:
-> > 
-> > - The driver supports SPD and the VSDB defines SPD, enable this
-> >   InfoFrame (BTW, this needs to be done anyway, we should not be sending
-> >   SPD if it's not defined in VSDB, if I read it correctly).
-> > 
-> > - The driver hints that the pixel data has only 10 meaninful bits of
-> >   data per component (e.g. out of 12 for DeepColor 36), the Sink has
-> >   HF-VSDB, send HF-VSIF.
-> > 
-> > - The driver has enabled 3D stereo mode, but it doesn't declare support
-> >   for HF-VSIF. Send only H14b-VSIF.
-> > 
-> > Similarly (no, I don't have these on my TODO list, these are just
-> > examples):
-> > - The driver defines support for NTSC VBI, register a VBI device.
-> > 
-> > - The driver defines support for ISRC packets, register ISRC-related
-> >   properties.
-> > 
-> > - The driver defines support for MPEG Source InfoFrame, provide a way
-> >   for media players to report frame type and bit rate.
-> > 
-> > - The driver provides limited support for Extended HDR DM InfoFrames,
-> >   select the correct frame type according to driver capabilities.
-> > 
-> > Without the 'supported' information we should change atomic_check()
-> > functions to set infoframe->set to false for all unsupported InfoFrames
-> > _and_ go through all the drivers again each time we add support for a
-> > feature (e.g. after adding HF-VSIF support).
-> 
-> From what you described here, I think we share a similar goal and have
-> somewhat similar concerns (thanks, btw, it wasn't obvious to me before),
-> we just disagree on the trade-offs and ideal solution :)
-> 
-> I agree that we need to sanity check the drivers, and I don't want to go
-> back to the situation we had before where drivers could just ignore
-> infoframes and take the easy way out.
-> 
-> It should be hard, and easy to catch during review.
-> 
-> I don't think bitflag are a solution because, to me, it kind of fails
-> both.
-> 
-> What if, just like the debugfs discussion, we split write_infoframe into
-> write_avi_infoframe (mandatory), write_spd_infoframe (optional),
-> write_audio_infoframe (checked by drm_connector_hdmi_audio_init?) and
-> write_hdr_infoframe (checked in drmm_connector_hdmi_init if max_bpc > 8)
-> 
-> How does that sound?
+while the Arch config has
 
-I'd say, I really like the single function to be called for writing the
-infoframes. It makes it much harder for drivers to misbehave or to skip
-something.
+   CONFIG_LSM=3D"landlock,lockdown,yama,integrity,bpf"
 
-Following this discussion, let's take smaller steps: modify the drivers
-to disable unsupported infoframes in atomic_check() and return an error
-from write/clear_infoframe if the type is unuspported. Then I'd probably
-like to correct SPD handling, only sending it if it is supported by the
-Sink. I still think in the end we should have the bitmask for
-truly-optional packets and InfoFrames, but having only SPD doesn't
-provide enough pressure. I'd just leave the FIXME and let somebody
-working on those features to implement that. I am tempted to implement
-ISRC support just for the sake of it, but it probably doesn't make any
-sense.
+.
 
--- 
-With best wishes
-Dmitry
+[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/raw/=
+main/config?ref_type=3Dheads
+
+>   Things appear to work correctly on my
+> kernel that is tracking upstream (Fedora Rawhide + some unrelated
+> bits):
+>=20
+> % uname -a
+> Linux dev-rawhide-1.lan 6.17.0-0.rc7.250923gd1ab3.57.1.secnext.fc44.x86_6=
+4 #1 SM
+> P PREEMPT_DYNAMIC Tue Sep 23 10:07:14 EDT 2025 x86_64 GNU/Linux
+> % cat /proc/cmdline
+> BOOT_IMAGE=3D(hd0,gpt4)/boot/vmlinuz-6.17.0-0.rc7.250923gd1ab3.57.1.secne=
+xt.fc44.x
+> 86_64 root=3DUUID=3D285029fa-4431-45e9-af1b-298ab0caf16a ro console=3Dtty=
+S0 mitigation
+> s=3Doff security=3Dselinux
+> % cat /sys/kernel/security/lsm; echo ""
+> lockdown,capability,yama,selinux,bpf,landlock,ipe,ima,evm
+> % id -Z
+> unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> % cat /proc/self/attr/current; echo ""
+> unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+>=20
+> I even ran it against the LSM initialization rework that has been
+> proposed, but has not yet been accepted/merged, and that worked the
+> same as above.
+>=20
+> Is this a distro kernel with a lot of "special" patches which aren't
+> present upstream?
 
