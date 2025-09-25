@@ -1,222 +1,253 @@
-Return-Path: <linux-kernel+bounces-831682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0E3B9D4F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C361B9D501
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FF1D3B3D1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:24:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19A0327F81
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED2B34BA52;
-	Thu, 25 Sep 2025 03:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769862E7160;
+	Thu, 25 Sep 2025 03:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYTiIABD"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QWa/iM1E"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9D814F70
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0E634BA52;
+	Thu, 25 Sep 2025 03:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758770641; cv=none; b=ea5F62QPIIeHjLhvIIBaxzaBAWC2aQ6Y5Qh9Jq/1u8O1WVABkI+rr9Rs5e/vXmzc15sgBmcQwLxHBjLKT40Fu+QOOKnzzXUQNGbB0HCYvY1MAPwlvTzNPkrz0IdiWKpsLlabVXZy1cBLOD1stsbDPOMz9YVD/MNt1LEWH8d6qgw=
+	t=1758770861; cv=none; b=NmTxpAGPjRLD6zmvYvsFD6sGs6SheadaZhcg9I3WUxwnUSMhPcLl9S7ZE9RF6qq60BKGLxamit3ZJ+YhzQXkYkMlf0IN6yzoiKXz4e8NGYoYfcE6rztfgnuFqqSFkSIcGj/PH6ZKpEk3FcJZYwL/KEvAWU+Cce16wzckjlAzCK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758770641; c=relaxed/simple;
-	bh=X1tNOR4EnqLn3peT9DJH4NTpUhI6OCjta/1nUUQxGwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AkEZj1kJMmHBHEy3yBAQ7JPNUXa2HCX2p6RFoo0XdLhc9ROk+LWSnF0uvLmXex8QbKOWRadOVjQvt3jqMS1mSaTPaMyuQRCruobWE/F3QBjbBhSss9JMheegFnN7m2nC5cdscJe1JRE7jfAg+Af2YeI28SfIHz+fKGfqQdaDPXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYTiIABD; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eda3a38ceso245595ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758770639; x=1759375439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6ALtdxioioVUPdZ249fa6+reQMnKejsflkFYaDtWyvw=;
-        b=hYTiIABDckKcfkyFSuS5Qr0FhdCDJKkAY+aZOITXKrZjcomTbbNh7XFKf3NhH88jNM
-         2wx5JhM/r6VX74q+vk3MuGX99jcnxWiCOyHBjc56BXsrvRqTjrLkh9bL1zRCBEMfU9rL
-         eiAnJbDcnDR+5c4d5XNVuQCivNkJ04Vv7Jk0xnzZlMrvxBU0L4+6U6H+yaSvtXJJ8vk2
-         RKYWGB6f7KkOHGPPgQ8T7bZF1bYiMIBGE5qoC7jEj9cXPihRMpb3iHDfczzgNhy1c3dg
-         rizdQrTSGHxGPUbexyJ6VDEwsz4TZTtiAU4IYL+a8WrukbW8uwsyc/mv6PRWgdBHCtZO
-         SSCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758770639; x=1759375439;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6ALtdxioioVUPdZ249fa6+reQMnKejsflkFYaDtWyvw=;
-        b=SvMG+5+rzABXrF3hgMNmbU4fBoLZjn6LDTkPW7EfW+jqz+OkxckTcKKFxYksdNQwJT
-         Rxj9Mas1Kj77oKrSjSD7vrZ1x7xjRu/YZO/3yIerLdeqpEZt0CdGo/ZSS0snAOlT56uX
-         UTVMVd2TcUWPiZx/MxEMAsuOB0Xf3tU1BUyRUAPbEwVPnqAJ9T3zNpnchstyjPTi6kS4
-         Mj6pn9lryI5tPLop2WY/Dqvri+EjhyEviLjfxRfZ5PnS4PMM+ccHwllPTtxrjkXtwaGz
-         CaUBleZ6XVhqDl37qcTfaPmsb1eeaRIWavTHbJBZwnClF4sxfQ7PiQdbEzcLCHUAfOG9
-         +XLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4/tiDFL5U6+HqDrHSCT4wDkApsxLY6raAOv484NiRpYQDDAhRjZQC8gR4l1LSitjDtVCTBRCI3kv/Dy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlnbrtRyUw2f2JOXRfuQ9Dtm3tx+9Pt55zlH6wWn6spfM7WCsh
-	4dl/S2plij5Oh/JLfc2PIGpML+dvd3o9M0mOvbUrhz5SxNkgB/6Usqe8
-X-Gm-Gg: ASbGncuSl8Z5DriRCU0uoCWx79SsSRaHslmSU1kARFXjEPJN4QxtPd5HKsGp+VgFoft
-	kqlZMw79hQjMbOdDnc0Nmjr8WIGZ0oxCSVCMKG6UX2yNNg2soB5YDryfRtW5MkkfUSMUmS3Mqes
-	8LE3chjCLKciSysMonWOHG9PTGmdIXOTcbcPyAhWBUCH8/EhzDZW1tNBPLktwryGOB5JgOUW/KO
-	j75Z7DTE6YuQo3eCt+fe2AKMn0i5g44B9y1Wgb+EDDtxIJyb3DTURk4yte5/TOh2U95QlovSEA5
-	hrQZ5EcfAFA/R23Hn+0Wz5AC7KjiosGaFoK1/3WY2tR0ER2NOaJxbH+ZHLwCGTcXoFODshDAROt
-	2S7JaNb4Sj2lX64cW/1LvyOI=
-X-Google-Smtp-Source: AGHT+IExiuoke1BO1yKig9GT9/NXxGRxhsCiCsu8+WVeI+rNb6cIW7R9xXIvDy8Jo/2hG/yxkf2Ddw==
-X-Received: by 2002:a17:902:f551:b0:274:506d:7fe5 with SMTP id d9443c01a7336-27ed4a17347mr12353165ad.4.1758770639109;
-        Wed, 24 Sep 2025 20:23:59 -0700 (PDT)
-Received: from rock-5b.. ([45.32.55.39])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3342a3cab8fsm503548a91.1.2025.09.24.20.23.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 20:23:58 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: dmitry.baryshkov@oss.qualcomm.com
-Cc: airlied@gmail.com,
-	broonie@kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liujianfeng1994@gmail.com,
-	lumag@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	quic_abhinavk@quicinc.com,
-	simona@ffwll.ch,
-	sophon@radxa.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH] drm/display: add hw_params callback function to drm_connector_hdmi_audio_ops
-Date: Thu, 25 Sep 2025 11:23:38 +0800
-Message-ID: <20250925032338.20243-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <5au5p32oyouifgmqlnl7unm6n7tbxq45wpwpqx57xoepiucmxw@tjqlbh2a57yk>
-References: <5au5p32oyouifgmqlnl7unm6n7tbxq45wpwpqx57xoepiucmxw@tjqlbh2a57yk>
+	s=arc-20240116; t=1758770861; c=relaxed/simple;
+	bh=897izMHSnpSWEKwmhIyhDb9lc/ccJPpGssQcwPQT2GY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=dN6KUxhWH44zgv1U6TpWbeuEwGVgwOr+xvr3NbdBkshY5cq2pRp7PmqURqe2Gwdkj94hcjPoj6gfkrFbW43vJsGiI8e17XouELR3P4L1aRK7rJbOtjqMc5A4AB6HQRNv+q0EpaL5XeDhu7pZ3FRmQg9qsOGYe1PpHNrL5PohUCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QWa/iM1E; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OHKFPB020231;
+	Thu, 25 Sep 2025 03:27:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/gJIis
+	HjCMjK3tMDMtGhrUYoHtL0jRCeFDDBAA8WTyg=; b=QWa/iM1EIhyqe6NcvgJnSe
+	ItTulDhG4HV50xY6sPONhn0bT5lv4W/3uunQRkiLxJ1NtHNdyeNhVFGbs8Bs4O1Y
+	BO2Thj4Fj/zcrn2tbde/HlAoRmBGsllSQ3VLUSzJ6+v1/dV2hDMw8MfJ3mhCi+EE
+	zVht4sFEaVJgLq3B2d8ntzRBPWZttj0bD3RL6h/4m0tKd54RHRA7PLJeJzkyFiyq
+	FaDFPybvYWSbjRUpI2SbPJmGT5Bu3ulC/KaKbf9CGz1TR02hvNIITM+B9QEpaxRN
+	8utDYzx+0PbCROGz85o3PHB/UMOBGR9YuDqyZ3mRqUZ6hTiESSlbWdasPYBTBkaw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499n0ju3pw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 03:27:07 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58P3R6SO028269;
+	Thu, 25 Sep 2025 03:27:06 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499n0ju3pu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 03:27:06 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58P1moTc013342;
+	Thu, 25 Sep 2025 03:27:05 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49cj34ax1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Sep 2025 03:27:05 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58P3R4wD27198004
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 25 Sep 2025 03:27:04 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CDF195861E;
+	Thu, 25 Sep 2025 03:27:04 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 253A25861D;
+	Thu, 25 Sep 2025 03:27:04 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.91.131])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 25 Sep 2025 03:27:04 +0000 (GMT)
+Message-ID: <e74e81465e168a7f43583d5783850cc5fe7ca1c5.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a
+ file with IMA signature
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: linux-integrity@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore	
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	
+ <serge@hallyn.com>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        open list	
+ <linux-kernel@vger.kernel.org>
+In-Reply-To: <4l7l4duxfximhzixruim3lnij5mhnlqs5srzycc6j6c2bu5zda@ogoj3ade37fd>
+References: <20250909041954.1626914-1-coxu@redhat.com>
+	 <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
+	 <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
+	 <40e9c7bd15d4ab8b71ac335b5d896ed39c61980c.camel@linux.ibm.com>
+	 <4l7l4duxfximhzixruim3lnij5mhnlqs5srzycc6j6c2bu5zda@ogoj3ade37fd>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 24 Sep 2025 23:27:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfXy2maijrWT1RE
+ 1b8V4IXE12tOS0mApWq4tUfBMGsTjetVH1e1HGA7w73H+vLafXt6Mxhs9nhEkRhwyd7cr4DDKSq
+ cb2maw4LNLIHxC7zD+0jl8nvwnHkf3gpjfOEi7fLqVb/FQbbqolnuAqUccVmNrRaOR3S5UEJx5q
+ 4hZhUvVc8Vc5tPgV5LAA4T9VTxoZ7kaQDJyFuwQ81B2fWsbpKGsVW3lfTYVVsCU1ENfYtX6fpqA
+ IlR2oquqzgWw/rtEmD+hvhJ0pFzZPS9im4NTNJcc2sF9XT6gRWg10Lu0kC7y/TffQiS7QYkIjx1
+ 38DIFFGnKO3zYM7jQ9SxeoyCJTKy8I/nzIEplbSLwk6ltPV/RbEjE8ab3HqYCKFn2l/RIyeOfZ2
+ MwWLRjI+
+X-Authority-Analysis: v=2.4 cv=TOlFS0la c=1 sm=1 tr=0 ts=68d4b68b cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=vUXcQdf43LBxS_wO:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=dJQkUw5hVWgj95crPp0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: Klu5Db8Y922saA8Gedrbifvz0HBb71ro
+X-Proofpoint-GUID: 9iy7satFKtTFk83ID0QZQSscgLrldQIE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0 adultscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509200033
 
-Hi,
+On Wed, 2025-09-24 at 16:03 +0800, Coiby Xu wrote:
+> On Mon, Sep 15, 2025 at 05:05:42PM -0400, Mimi Zohar wrote:
+> > On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
+> > > On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
+> > > > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
+> > > > > When both IMA and EVM fix modes are enabled, accessing a file wit=
+h IMA
+> > > > > signature won't cause security.evm to be fixed. But this doesn't =
+happen
+> > > > > to a file with correct IMA hash already set because accessing it =
+will
+> > > > > cause setting security.ima again which triggers fixing security.e=
+vm
+> > > > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
+> > > > >=20
+> > > > > Let's use the same mechanism to fix security.evm for a file with =
+IMA
+> > > > > signature.
+> > > > >=20
+> [...]
+> > > > > ---
+> > > > >  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++=
+------
+> > > > >  1 file changed, 21 insertions(+), 6 deletions(-)
+> > > > >=20
+> > > > > diff --git a/security/integrity/ima/ima_appraise.c b/security/int=
+egrity/ima/ima_appraise.c
+> > > > > index f435eff4667f..18c3907c5e44 100644
+> > > > > --- a/security/integrity/ima/ima_appraise.c
+> > > > > +++ b/security/integrity/ima/ima_appraise.c
+> > > > > @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks=
+ func, struct ima_iint_cache *iint,
+> > > > >  		integrity_audit_msg(audit_msgno, inode, filename,
+> > > > >  				    op, cause, rc, 0);
+> > > > >  	} else if (status !=3D INTEGRITY_PASS) {
+> > > > > -		/* Fix mode, but don't replace file signatures. */
+> > > > > -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+> > > > > -		    (!xattr_value ||
+> > > > > -		     xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)) {
+> > > > > -			if (!ima_fix_xattr(dentry, iint))
+> > > > > -				status =3D INTEGRITY_PASS;
+> > > > > +		/*
+> > > > > +		 * Fix mode, but don't replace file signatures.
+> > > > > +		 *
+> > > > > +		 * When EVM fix mode is also enabled, security.evm will be
+> > > > > +		 * fixed automatically when security.ima is set because of
+> > > > > +		 * security_inode_post_setxattr->evm_update_evmxattr.
+> > > > > +		 */
+> > > > > +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+> > > > > +			if (!xattr_value ||
+> > > > > +			    xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) {
+> > > > > +				if (ima_fix_xattr(dentry, iint))
+> > > > > +					status =3D INTEGRITY_PASS;
+> > > > > +			} else if (xattr_value->type =3D=3D EVM_IMA_XATTR_DIGSIG &&
+> > > > > +				   evm_revalidate_status(XATTR_NAME_IMA)) {
+> > > > > +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
+> > > > > +							   dentry,
+> > > > > +							   XATTR_NAME_IMA,
+> > > > > +							   xattr_value,
+> > > > > +							   xattr_len, 0))
+> > > > > +					status =3D INTEGRITY_PASS;
+> > > > > +			}
+> > > > >  		}
+> >=20
+> > Instead of re-writing the IMA signature without a clear explanation, de=
+fine a
+> > new EVM function named evm_fix_hmac() and add a call here in IMA. Only =
+in EVM
+> > fix mode would evm_fix_hmac() update the EVM hmac.
+> >=20
+> >        } else if (status !=3D INTEGRITY_PASS) {
+> >                /*
+> >                 * IMA fix mode updates the IMA file hash, which trigger=
+s EVM
+> >                 * to update security.evm.  ....
+> >                 *
+> >                 * Similarly, trigger fixing EVM HMAC for IMA file signa=
+tures.
+> >                 */
+> >                if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
+> >                        if (!xattr_value ||
+> >                            xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)=
+ {
+> >                                if (ima_fix_xattr(dentry, iint))
+> >                                        status =3D INTEGRITY_PASS;
+> >                        } else if (status =3D=3D INTEGRITY_NOLABEL) {
+> >                                evm_fix_hmac(dentry, XATTR_NAME_IMA, ...=
+.);
+> >                        }
+> >                }
+>=20
+> Thanks for the advice! I wonder if we should use existing
+> evm_update_evmxattr instead of defining a new EVM function.=20
+>=20
+>      /*
+>       * Calculate the hmac and update security.evm xattr
+>       *
+>       * Expects to be called with i_mutex locked.
+>       */
+>      int evm_update_evmxattr(struct dentry *dentry, const char *xattr_nam=
+e,
+>      			const char *xattr_value, size_t xattr_value_len)
+>      {
+>      }
+>=20
+>=20
+> I already tried evm_update_evmxattr and can confirm it works.  But later
+> I switched to __vfs_setxattr_noperm because I thought it's consistent
+> with current logic of adding security.evm when there is already correct
+> security.ima and it's a slightly smaller change.
 
-On Thu, 25 Sep 2025 06:08:58 +0300, Dmitry Baryshkov wrote:
->> [   14.055198] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> [   14.067225] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> [   14.089925] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> [   14.105988] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
->> [   14.106027] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->> [   14.122707] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_prepare() started
->
->From this log I don't see, why the function would fail in the way you've
->described. Could you please post (for comparison) a trace log without
->your patch?
+Calling evm_inode_updatexattr() is limited to EVM.  Only after verifying th=
+e
+existing EVM value is evm_inode_updatexattr() called. For example, in
+evm_inode_setxattr() the existing EVM value is verified and then updated in
+evm_inode_post_setxattr(), by calling evm_inode_updatexattr().
 
-Here is the trace log without mu patch:
-
-[   14.093437] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   14.105285] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   14.127546] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   14.144819] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   14.144855] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   14.652233] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   14.659556] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   14.666326] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   14.677484] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   14.690897]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   14.699779] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a660_gmu.bin from new location
-[   14.702160] [drm] Loaded GMU firmware v3.1.10
-[   14.714573] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   14.721910] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   14.721923] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   15.231216] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   15.238577] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   15.245323] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   15.256528] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   15.269943]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   15.279988] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   15.279997] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   15.785610] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   15.792908] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   15.799687] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   15.811261] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   15.825865]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   15.843283] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   15.843300] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   15.991449] rfkill: input handler disabled
-[   16.349109] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   16.356529] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   16.363279] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   16.374539] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   16.388835]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   16.399355] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   16.399371] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   16.905665] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   16.913032] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   16.919837] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   16.931141] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   16.946106]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   16.958230] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   16.958242] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   17.464922] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   17.472219] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   17.478985] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   17.490126] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   17.503539]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   17.513599] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   17.513606] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   18.019162] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   18.026682] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   18.033427] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   18.044729] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   18.058144]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   18.068168] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   18.068176] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   18.574028] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   18.581321] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   18.588086] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   18.599667] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   18.613127]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   18.646419] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   18.646443] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   19.152583] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   19.160139] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   19.166909] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   19.178407] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   19.191821]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   19.222661] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   19.222678] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   19.730557] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   19.738156] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   19.744933] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   19.756633] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   19.770042]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   19.789888] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   19.799242] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   19.799252] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   20.308857] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   20.316540] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   20.323280] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   20.334923] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   20.348392]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   20.358449] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   20.358456] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   20.865298] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   20.873431] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   20.880197] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   20.891777] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   20.905293]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-[   20.924421] hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-[   20.924455] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-[   21.431143] qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-[   21.439239] qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-[   21.445985] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-[   21.457877] q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-[   21.471375]  MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-
-Best regards,
-Jianfeng
+In this case, the new function evm_fix_hmac() would call evm_update_evmxatt=
+r()
+only after verifying the EVM mode is set to fix.
 
