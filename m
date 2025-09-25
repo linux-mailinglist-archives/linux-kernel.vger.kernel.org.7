@@ -1,149 +1,236 @@
-Return-Path: <linux-kernel+bounces-833180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFE8BA15D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:33:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D79CBA15CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628B6383E26
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:33:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D48E37B56BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A929231D721;
-	Thu, 25 Sep 2025 20:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF962E62C6;
+	Thu, 25 Sep 2025 20:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="pJf8uTAx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lw2ETftN"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N6OkcMTs"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49C2750F3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039BC35940
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758832419; cv=none; b=Ge9F2UlxiPa4zzJCyntRH9ZaDXooaHnr2mcartcPNnapduXgkihKI5xgcF2FDjxbY3nu8sQAmovHp+Qf/tUU+0ubLFswxt1iLlsCdSvxCfImkRe900R6M6KXFrKuixGUGD0HnjFCwrLGRSYacuEFReKZThBGBK/6HjKw6fBswXg=
+	t=1758832410; cv=none; b=ATreK1mHZ2AQnUsOAuSedmulLC5Kcjhrl3Qmpy73d0gienpElFidXDBj/12UWPmD4tfqa4W0E675WsGcZ9mizonUH+AnXVBimQ75+bA1VOROOrXMtaKAcnZRgrM14tTcJju3zx/P6EKfSWdTDM/daiWI6RFZcso6aBZtcfscHss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758832419; c=relaxed/simple;
-	bh=+Jor10eg5LvHZCSW9hUAM8+MJz6BmLXiQAQ9uw52A+I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CL01vKaNTJiroQqrtt8YP58Rqya/KKoKJBNXixCahNX7UCULFIIOysJqmXySETx6KqAWW4w7fozKFKH2+g9oHFnvDsJB7ZlJFpQ2TbqRscu1fryHIiRilA6U8kgq5VAOutPzURkaUldovKhRe2YPtUjbjKIwfFwfwjNpNxB4ESg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=pJf8uTAx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lw2ETftN; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id CB4A37A006F;
-	Thu, 25 Sep 2025 16:33:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Thu, 25 Sep 2025 16:33:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1758832416; x=1758918816; bh=4M
-	sAfN8ggET6LQP8EBxlOi/6T17883/ulcELGobe1ps=; b=pJf8uTAxclEov111Gn
-	xQ33IEzEHo7vZmyugvLylE5X3t7pkcrOh7/XCidyZiYzR0a4NyS6HyGjCY2RivHL
-	kzjCsBYKPn9K1MMqnWmtZ+EUfptvUGwTXB3/GZ8RoGAFD14VLatTcN0i7x5VdcxL
-	VzKzL3SI9txI5qCLxEx4yXyHlncYrz9iuU7+9OZYhj/NBtQ8b0V3YQT953Sy4yZo
-	Poqajq2bZA6wWZeIzp3ZkJcmlT9Jk2ZhyUUk7CV3YRcYDk0nTHNtiocJBthAeOKb
-	mdf+WJOcxLqpClG3rFnpPh/b85F1wePpSMC9tA3ZEygExgKKTzXzHmGqjOhNBwNS
-	IGpw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1758832416; x=1758918816; bh=4MsAfN8ggET6LQP8EBxlOi/6T178
-	83/ulcELGobe1ps=; b=lw2ETftN5AzzStse6OyaSkJZuueuyPUur6H1J8UGRtAL
-	tAAxWijSEKFt0+5vbGbdh3XAnZ0qgCAOIiIrfGGq/UXiozMzSnH1YKDdLcp9/6BN
-	KhM3y0FEGYd2J7ZXf5fTGCZdsy68aVqpYXJHAF25iIz8+Do2qQt+Zpi19xJNXYpI
-	Mh4WgO2/X6IQvjxGw6fQgxjDjmvjifcF4MeHYx9kv+zv+8/UeqFmKIOzks5BE+LL
-	UE7ge7OkFFfvJm567uE/u+dwu9/8SwWCtMq+8Fol1c3T23qehOYs3iW2+4RsZsHL
-	V6Zrlv+zstB5oR5MuvqEMKEV3a1pZWJpe/v1oxRW/w==
-X-ME-Sender: <xms:IKfVaDcyJhuTh0EKMcbT7vfbUje0hkz8Pbd-IaixgespATpn-tBd7Q>
-    <xme:IKfVaDQrYi9YSJzbAyMUw9HGudsbSIg0PzuO7Dc1C7BlHXtf450WNSz-mWmtG7Ul9
-    gtJfkffpo43jiU3YeEvA-b0v6hzAcVH5dQoFvUpAgjFSqnwnPJhZA>
-X-ME-Received: <xmr:IKfVaMZ4Z7_YvfZp_Dav0LunN2VmZjwuKOp6WaDEsuZj9X8eArDK1OprQmGG3gTJW533JK5Z17qaxoYL770K6oOFF-9bzRlim92Rfg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpefgffeiff
-    etueffteeugfeghffghedthfekgfdtjeeuuedvveekteevvedvffekheenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnh
-    gvthdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
-    shhvvghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvg
-    hrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlvggv
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhnuh
-    igrdguvghvpdhrtghpthhtohepjhesjhgrnhhnrghurdhnvghtpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnh
-    gvrghlsehgohhmphgrrdguvghv
-X-ME-Proxy: <xmx:IKfVaGdLgQ47fw3_12hvrZhafUyESr_kIuiiZmel5oIMUKdEh5wa8A>
-    <xmx:IKfVaNJiTL8cjvTSDT__UcSJ8An68vNHUfVm4Igj0aPVuEA7GARr-g>
-    <xmx:IKfVaDLdz77NmFoKrf-EvnPHSUTNZT49cU58Nm4x5bJ6E_AfDQQmSg>
-    <xmx:IKfVaMWokm2V5rgT18v8iSgKqEmkosr2nwMaMhFre0Ew3s07gidJUQ>
-    <xmx:IKfVaL5wYVvDXcvtiryhIXB5g6spwD_SM6WbfZgl96NQUaRfSyCNdz9w>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 16:33:35 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Thu, 25 Sep 2025 22:33:18 +0200
-Subject: [PATCH] mfd: macsmc: Initialize mutex
+	s=arc-20240116; t=1758832410; c=relaxed/simple;
+	bh=P7qsP8loln8qJMKauzhZHNTaq5rBg6KgAlGOHlFpmFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOuEZ4A5V1oMsxCdIvkfdsc+OGABIBHUmArYl1YXUepBNklc1PMwHSWgHDiM1zJYh/KJwyAiOktG9oCQENTOljfOJbzdb9cEuNFHLHxrmF9y9Sp/AbBsJf0/7DgbEPnr1mQOVNU4Nl8MjVpXxCcHwQGIl0bugLLpPNJhpGx1A8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N6OkcMTs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPlaM014458
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:33:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LPf7nEUMaiJcR9LEdY1KxASE
+	IWgzMO7x5c68UwxFZjQ=; b=N6OkcMTsvKHif7LmU+reXU+a8reSNhVcIbWqYABh
+	7ZApoulk/9wiCnqeUmqwjQBPk6JNm+xdWoTus2w2fjQKJhdPAKqM8ZkHbwHCY/AV
+	t45a5sFsOBC1pf8x39oyCSojiva6nTvCgch2so8pcDxX5ppwgxu8yoHKiIsVU5U+
+	G3BRMg1QH53a5dH1yZh8mBwsvCHXG80VL7FSjqPxxV0wyAE9VPxR+0wMLsD79MTv
+	JPwrNyTOuy8Hn10LBccZUMEc1o9yitDq94KHdP+3OABlaGDvkfhvSHsajmSf2JuT
+	EG/B3uzkDrjPKiDg4kqtRiASrl0FkqXmwJ2XFlketmY8CA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0rg9y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:33:28 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b47b4d296eso31085721cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:33:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758832407; x=1759437207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LPf7nEUMaiJcR9LEdY1KxASEIWgzMO7x5c68UwxFZjQ=;
+        b=SQMco9Pcw5LHPZUXZZdQZXZM8xC+p02C81vZdD0vyTRVnACDvMdcRIeEitMSqmWbdd
+         L5+3lEvvb3ZbyG1q7XGtrD91UjknfiH5+WQAP6Zon1Nvzq3morb0xj1dmhJ1ytrJlICk
+         0bax48AQiPpjpxnJNZW3LpwzzQMbxWRjiioGQzbePvzSLliGfwYW/g5gj+o0AiGEceKg
+         W9ah4MeLkTr2xq2Ha1C5C0L1h09wVdDMFSHf+zYK3R40iZOX5A18sIrhOEp654f3UKGz
+         TmRSjkGIG96EZTUyK9oufhObEstChitF8DI1bLEhTYmhp/EOvtKzkCMGyVD/LJN/c0TD
+         s81A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvJVbI95WyjG8NlQvL0ocH73BJu2TA9eFnAD1o3vjjKiQdRENeHxFudbscCQXmi7OYIXl7UTutmoRVQgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRTAOxXYxAuTYbIApjCMGdyDyKm0p1UOAB1cVrUdCzTkPCTpQ3
+	Oor9b6V64Vg6MEdQBzpvMqhtq7RQC5C3NjT4+sKk2bxtx+IA8ZtcKfhu3w29DG616/3ZCBvKpmH
+	MCEHWbcrh6xT+vWveurysA+y0M75VHjNI9jDjc0WWJI/sQUQCIluYPPrJdMXeE3bVW6E=
+X-Gm-Gg: ASbGncveKZNyIJS9hkysKVTNBZHMd/Uw9BTXgpahxgFOPinObiohXdLQDgt/UNYnxNF
+	iO1ZwVpE/eJ+eAAi+iNnHbglztG7SCo06ozeYiHQKyRf1tKHJdEZ6pwj5tsg1zpdnA13t7SHj+r
+	f2YeIS2IQUlCVYa3z7aynBb6+QuehzVB3cNrUrKR8ATeJxPN3bDH8MiMJJxLA2bhnjG6mk9edpr
+	2Q60wPap+40GpDrzqBZrCokRLf0SIktfK6p8pSBn75tVVJTKH+2QHqfFu8uZydOest0IsL4A1LS
+	/UddSVrx9oh3Z1VuCBl7YoO+0Hq6Zmlzvk6vlUJY+M1GefAHv1nJ2TPGnQlWxTfrvk/UhnNwLz0
+	rDvlcErNaDVr5BQxDRG78gRKFzviuq5gpsJEAoYUpy8b6yhESe7Q0
+X-Received: by 2002:a05:622a:5c85:b0:4b7:9abe:e1e4 with SMTP id d75a77b69052e-4da4e56e355mr68594821cf.82.1758832406734;
+        Thu, 25 Sep 2025 13:33:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTeVcYqwp20QhZ38nNSfsgwuGNMn6xonp3gorjVIZcc+CKmvrdXfDh6RJvsUaFMzQxM86eGw==
+X-Received: by 2002:a05:622a:5c85:b0:4b7:9abe:e1e4 with SMTP id d75a77b69052e-4da4e56e355mr68594331cf.82.1758832406067;
+        Thu, 25 Sep 2025 13:33:26 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316a31be1sm1062049e87.112.2025.09.25.13.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 13:33:23 -0700 (PDT)
+Date: Thu, 25 Sep 2025 23:33:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vishnu Reddy <quic_bvisredd@quicinc.com>
+Subject: Re: [PATCH 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
+ kaanapali video codec binding
+Message-ID: <sf2ujxfthvpwfp5ksqfww6qh5zfygf5lubylfrvtc5lwxakkz3@7gqxhbdafwvi>
+References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
+ <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
+ <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
+ <522d7244-0003-a42e-9be0-1d353df8d5bd@oss.qualcomm.com>
+ <oimuo26ohcye74j6rl5hfbmd4ip5wzudhyiaibf74b5zmjb4vl@xh3dnp7gmvq7>
+ <6198a56a-dbca-5cce-fcd2-43978e87236d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-macsmc-mutex_init-v1-1-416e9e644735@jannau.net>
-X-B4-Tracking: v=1; b=H4sIAA6n1WgC/x3MTQqAIBBA4avErBNMiH6uEhHTONYstNCKILp70
- vJbvPdA4iicoC8eiHxJki1kVGUBtGJYWInNBqNNrTtTK4+UPCl/HnxPEuRQrbYNzQaRHELu9sh
- O7v85jO/7ASqO8vhjAAAA
-X-Change-ID: 20250925-macsmc-mutex_init-80d7cb2aacfa
-To: Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>, 
- Lee Jones <lee@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1050; i=j@jannau.net;
- s=yk2025; h=from:subject:message-id;
- bh=+Jor10eg5LvHZCSW9hUAM8+MJz6BmLXiQAQ9uw52A+I=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoyry+UO9Srerd2t5J3CXPixIzP8kk3K0o78Hg8pJqstE
- 61cZ6zsKGVhEONikBVTZEnSftnBsLpGMab2QRjMHFYmkCEMXJwCMJG9Cxj+u/Dy+rsvSXuXqf/+
- NJPM2Vvxa/88vl4V/Sj85vrdP/fqPWD4n5c9X/nTyo3iOrwT1Xo0xQxLWI2EVVz8QmOninz3X3G
- PBQA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6198a56a-dbca-5cce-fcd2-43978e87236d@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=dP+rWeZb c=1 sm=1 tr=0 ts=68d5a718 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gEfo2CItAAAA:8
+ a=QVIiKdR3HoERtcWfPvAA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-ORIG-GUID: d7wU1NqHAL0SeCOM3p1o6-A2EV0AAJ_H
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXyuOT70YwxdHh
+ EEbhMQs0t2hO2jA+IzhXb7K+P45/KpW6BACoeU3pxdwj7lZaukpe96Ic1TOPmeSNmQ8Pi0C7o2r
+ aNTKagS3a6+91grnU1iXXSeGNzIYOsDEhMsbK6yzbokslehWgCOzNtZHSBVI1Sjrmj28lndQTHC
+ p/ClYrdwkzheuXdSbxgjcTK7ultpNEkCYbuyZeAeL4LH+gwAxtii8RQ8vIh5pMiUa6umpWtqf7L
+ nksjkUJdjG2yZR3MTgPbURqCuIrEYAKtRkPah8IPQ2yoUel1X87hisKvP4uiJklmMxXKcgD4egY
+ 2Dw0EqXuyp3L1YKqEaze6ENzn7WdSuKUfLRITj18hU+7A6KkE5+fRDhnKKIbcrgiBAGPQCneFEe
+ LdiEGEf4U8jeRbbifRvMSS47Dl1Jwg==
+X-Proofpoint-GUID: d7wU1NqHAL0SeCOM3p1o6-A2EV0AAJ_H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-Struct apple_smc's mutex was not initialized before use. Surprisingly
-this only resulted in occasional NULL pointer dereferences in
-apple_smc_read() calls from the probe() functions of sub devices.
+On Fri, Sep 26, 2025 at 01:15:15AM +0530, Vikash Garodia wrote:
+> 
+> On 9/26/2025 1:08 AM, Dmitry Baryshkov wrote:
+> > On Fri, Sep 26, 2025 at 01:01:29AM +0530, Vikash Garodia wrote:
+> >>
+> >> On 9/26/2025 12:55 AM, Dmitry Baryshkov wrote:
+> >>> On Thu, Sep 25, 2025 at 04:44:39AM +0530, Vikash Garodia wrote:
+> >>>> Kaanapali SOC brings in the new generation of video IP i.e iris4. When
+> >>>> compared to previous generation, iris3x, it has,
+> >>>> - separate power domains for stream and pixel processing hardware blocks
+> >>>>   (bse and vpp).
+> >>>> - additional power domain for apv codec.
+> >>>> - power domains for individual pipes (VPPx).
+> >>>> - different clocks and reset lines.
+> >>>>
+> >>>> There are variants of this hardware, where only a single VPP pipe would
+> >>>> be functional (VPP0), and APV may not be present. In such case, the
+> >>>> hardware can be enabled without those 2 related power doamins, and
+> >>>> corresponding clocks. This explains the min entries for power domains
+> >>>> and clocks.
+> >>>> Iommus include all the different stream-ids which can be possibly
+> >>>> generated by vpu4 video hardware in both secure and non secure
+> >>>> execution mode.
+> >>>>
+> >>>> This patch depends on following patches
+> >>>> https://lore.kernel.org/all/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com/
+> >>>> https://lore.kernel.org/all/20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com/
+> >>>>
+> >>>> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> >>>> ---
+> >>>>  .../bindings/media/qcom,kaanapali-iris.yaml        | 236 +++++++++++++++++++++
+> >>>>  1 file changed, 236 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
+> >>>> new file mode 100644
+> >>>> index 0000000000000000000000000000000000000000..f3528d514fe29771227bee5f156962fedb1ea9cd
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
+> >>>> @@ -0,0 +1,236 @@
+> >>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>>> +%YAML 1.2
+> >>>> +---
+> >>>> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-iris.yaml#
+> >>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>>> +
+> >>>> +title: Qualcomm kaanapali iris video encode and decode accelerators
+> >>>> +
+> >>>> +maintainers:
+> >>>> +  - Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> >>>> +  - Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> >>>> +
+> >>>> +description:
+> >>>> +  The iris video processing unit is a video encode and decode accelerator
+> >>>> +  present on Qualcomm platforms.
+> >>>> +
+> >>>> +properties:
+> >>>> +  compatible:
+> >>>> +    const: qcom,kaanapali-iris
+> >>>> +
+> >>>> +  reg:
+> >>>> +    maxItems: 1
+> >>>> +
+> >>>> +  interrupts:
+> >>>> +    maxItems: 1
+> >>>> +
+> >>>> +  power-domains:
+> >>>> +    minItems: 5
+> >>>> +    maxItems: 7
+> >>>
+> >>> You are sending bindings for a single device on a single platform. How
+> >>> comes that it has min != max?
+> >>
+> >> I was planning to reuse this binding for the variant SOCs of kaanapali/vpu4. If
+> >> we do not have min interface, then for those variants, we have to either have
+> >> separate bindings or add if/else conditions(?). Introducing min now can make it
+> >> easily usable for upcoming vpu4 variants.
+> > 
+> > No, it makes it harder to follow the changes. This platform has
+> > this-and-that requirements. Then you add another platform and it's clear
+> > that the changes are for that platform. Now you have mixed two different
+> > patches into a single one.
+> 
+> you are suggesting to add new schema when the new variant comes in ?
 
-Fixes: e038d985c9823 ("mfd: Add Apple Silicon System Management Controller")
-Signed-off-by: Janne Grunau <j@jannau.net>
----
- drivers/mfd/macsmc.c | 1 +
- 1 file changed, 1 insertion(+)
+No, I'm suggesting extending the schema when the new variant comes in
+instead.
 
-diff --git a/drivers/mfd/macsmc.c b/drivers/mfd/macsmc.c
-index 870c8b2028a8fc0e905c8934c2636824cbe5d527..3a117cf19145e86b642f40dc165b542b8df69070 100644
---- a/drivers/mfd/macsmc.c
-+++ b/drivers/mfd/macsmc.c
-@@ -413,6 +413,7 @@ static int apple_smc_probe(struct platform_device *pdev)
- 	if (!smc)
- 		return -ENOMEM;
- 
-+	mutex_init(&smc->mutex);
- 	smc->dev = &pdev->dev;
- 	smc->sram_base = devm_platform_get_and_ioremap_resource(pdev, 1, &smc->sram);
- 	if (IS_ERR(smc->sram_base))
+> there is
+> also a possibility that this hardware(kaanapali) can be used without those
+> optional power domains as well. Let say, someone does not want apv codec, in
+> such case, that pd becomes optional.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250925-macsmc-mutex_init-80d7cb2aacfa
+That's totally a software construct - not enabling unused domains. Here
+you are describing, you know, the hardware. And in the hardware the IP
+core has a fixed number of connected clocks and power domains.
 
-Best regards,
+
 -- 
-Janne Grunau <j@jannau.net>
-
+With best wishes
+Dmitry
 
