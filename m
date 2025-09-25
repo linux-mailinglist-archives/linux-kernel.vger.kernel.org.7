@@ -1,277 +1,170 @@
-Return-Path: <linux-kernel+bounces-832588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C5CB9FD5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:09:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35096B9FD61
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE4B2A20DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:04:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21055188E2CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E2229BD95;
-	Thu, 25 Sep 2025 13:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C051A288538;
+	Thu, 25 Sep 2025 14:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="BBc2qDyF"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="q/TpsiuY"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE8328641E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59C13C914
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808707; cv=none; b=VNK0U5HMHj7PfIlTJHhaef4BPt6oBIDXFTo3bqMan0qxHIP7UpcSHnm7eDmkQT97kYRFKrBRsAMnL54QzpUWGVE7/ueHTNLEM8tBW53RDbr6c9z/LbQWCf5WEajy42TBJV5dAukaDraCDm1PePdpgcAUllu33+hceD3282e084w=
+	t=1758808803; cv=none; b=ADQQK7w8JdsfhSBgsM5nF60L0p2fpPWvZ92KyH1HRCiSaX1xw8KPMZWIgskNWjMh9fU1tYpKC1PPFI3h1pgdfeQkthQUwLyP4PPP9DLBOw0tbZGYjEh27AdtFmajGTGJBb5xLHXiX3pjCbzPI75ZkeEvCQ1Nq25G1owKs48/azc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808707; c=relaxed/simple;
-	bh=GAZZENDznB+GquG1q9LwWecqHTx3QpoDJbBYfosmceU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tck3XbFPTXloGxtTfLLv6H4ymokIDQ1ugHCor77GPaACxEUrxnVIdBfXmgwv56kT4WvjwCjqWqj3VVXeFdXf5OA+S+fcnNbZzEurMEp3zIHoWFC1cbSORl2E7mSvQNYf+yYfB5R0YKRAV5njH6mrULenQusUnVpt+AysklhuOaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=BBc2qDyF; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so892764f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1758808703; x=1759413503; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnVODjwy2deCiwdvb4Z2Vh0/TaoNB+VzQD5lG5PvCPU=;
-        b=BBc2qDyFUowSWkRzo3yJo6CBnsvyLN/RLBYFNtVMFzhXbLne/yS7DHDNeLpzlIW55C
-         SV2PP4P/QiC+JkMBT7XVL0VJnDBWWQ730Spa+iR30Tf3k6njgZ+bO+m6po9v6CHdAHMh
-         XDt+wWp9E85ws4pe7bzqfwrNYm/jYY2wXzu+r7lcKD27ekGlKTkZXHtPtbUsNtU2KSHv
-         TUccP0ajele3GfR3s1glB9VqtTngtgmswdXyFPZSkqqAAvnu1X5YVKt8v6I847iBfcW7
-         Ykot56Wvg6QylOEm7F5fw0W3/dYrjXC0gcajtbtRdyw8yFFFdalWVkph9d8jUYLXS5zw
-         GaaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758808703; x=1759413503;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mnVODjwy2deCiwdvb4Z2Vh0/TaoNB+VzQD5lG5PvCPU=;
-        b=rMCSqweuO0zHwBWs0Qa10o47qI7qk6jIKj0SddMBNxBSqL2CPMqVNUQpyfEqa6tsSE
-         n/G7G5BVVVjjqm7+Td91xhSrDR8Ot+f8rUk5l3fmeO6eSBJwSFpfGSwfacnCxmMlo55R
-         YRcCObu7B7pdyRYtTFRI4S2seDipLy7s1rfRycKXKUg6dm0lrDUwvMK5lSuvZdPkWpP8
-         cKyod5wq1fI/qA3JesKbWjO35S4VyBWLIuXysUN57B5TdTUE9DpHZP8D6erlsmdAvwgA
-         vOCw3Qp1cyoOTgekwXFQXQ5JnX9WLm4Gefb4xj47vgokBMfkjPrUyozwQi0p0Il/ZTO7
-         o1yw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8+C0kjljsL31tsMHZrCb+j0dWLPkxbtpFoX+u6ReY/RfZJKejVVIjdAXBZK85aLGiIJBRA+NASjawPYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhCuw3damx+SBzF+200KwOg9FH/SohyrNv0xYpxVdGsRwKFzvm
-	wlOy4V+6lkuSGyzJm9KnwNZEnIBfTALzXXL/UrxDhEsN9Cdb1f0/sXIFxHQINgRUKYA=
-X-Gm-Gg: ASbGnctAreOgnwjPgcvzn0Jk5bc1VH89417UxxXuqXh1G0Seoo92aYan/FBUFL81YIC
-	j94qesV6X4m7F1Jc2SZFpKEDFejVRP6sPJthuZFSy2ue3IO+VSapsiydAwckFDOw5jzqMmgWUXD
-	MBlIvkt7ExlxlXvNdpYZE04KWfW6AfX8yZp4U/NbLyPy2V01ZvCeCS06rOnG3ztxxt9TM3JBwEs
-	cH9Q/1SdwR4wdci5XD0qou3AGbC4zOlpzoeD3NhYljMiuFd0K89KG1MYkPhGmR5+FoMo6SztLIT
-	gccXYdbg9HfF2HwF7VNH6/KXwCZsLiz88F3lLcH2T4Ay7a6OHN5Qt+FKzPCa662rJPQqdi+OB5a
-	y4jr4fHwJnwrRP4Ai9N3xwg7sTuP7UAn1aGjB
-X-Google-Smtp-Source: AGHT+IEiZzJwcJ162vj4+aB6VkB7CNh+rB8ry4i+6DBqAlJmINd3CbS8/jzQreIiFEvTB6PQhCdeqA==
-X-Received: by 2002:a5d:5d02:0:b0:3ec:1edb:97af with SMTP id ffacd0b85a97d-40e4b9455e8mr3471455f8f.34.1758808703141;
-        Thu, 25 Sep 2025 06:58:23 -0700 (PDT)
-Received: from [127.0.1.1] ([2a02:c7c:8a3e:8c00:a851:5f0e:8210:7d5d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm2274749f8f.16.2025.09.25.06.58.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 06:58:22 -0700 (PDT)
-From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-Date: Thu, 25 Sep 2025 14:57:58 +0100
-Subject: [PATCH] dt-bindings: leds: arc,arc2c0608: Convert to DT Schema
+	s=arc-20240116; t=1758808803; c=relaxed/simple;
+	bh=cOeaK8VeP+NiUEh1fkd9LbsW3YqQGsvHSoaqPLpCDXc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UYmfWxPP9n9mWrP7aKZKH+/yzDzriMXM+b8CdwN2alNRnNJbUq/GXpJxcU6OUWlZItsgSPXU1aQXOaJDMLymOwjkxiOcct2yPhJvdsgCqWGe8C8XT+K7DHP9tNEqjXhaWSmKANqZdbEb16eStR5+NFxojiwzx6ChXPIQ1HKm6P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=q/TpsiuY; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-arctic-sand-v1-1-735b5ed8faed@thegoodpenguin.co.uk>
-X-B4-Tracking: v=1; b=H4sIAGVK1WgC/x3MQQqAIBBA0avIrBPUCqqrRItJp5qNhRMRiHdPW
- r7F/xmEEpPApDIkelj4jBW2UeAPjDtpDtXgjOvNaK3G5G/2WjAGHdAPtCK2oXNQiyvRxu9/m5d
- SPsydUfhdAAAA
-X-Change-ID: 20250911-arctic-sand-dac8ebaa3d42
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Brian Dodge <bdodge@arcticsand.com>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Harrison Carter <hcarter@thegoodpenguin.co.uk>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758808702; l=5417;
- i=hcarter@thegoodpenguin.co.uk; s=20250904; h=from:subject:message-id;
- bh=GAZZENDznB+GquG1q9LwWecqHTx3QpoDJbBYfosmceU=;
- b=oZCM47CC6gnSLN2v+Rabs689Vz6eGpmlSKE5B6fKMR+keJNY6FqbyCrledpStrF9MxyxbNQrw
- IMYRul3m8u2Cj+ws8BRCsGqLGsNnKQ1U23CHn2omO+jVMVwhcJdYE2C
-X-Developer-Key: i=hcarter@thegoodpenguin.co.uk; a=ed25519;
- pk=xn5ghTMMWQniDtZih4xwKCTAaBHDozflTmqNKtaKo6s=
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1758808798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H6zXbnirHPfwURjTSzjf0yuewcHo8JAYP7+VOWSU0F0=;
+	b=q/TpsiuYwjlQgxS8kmy2CYvW3WT+sO1+7Ax4CLGDFqC2d+RxkkegkWFQctwA7XxU7FItms
+	DkURbfekIuXl1omweLieacGb0/N1V6+Bc8VetgeZgBkSdE1mL5KPnatcJrbdQpCaCwOtCc
+	6w96VQwbYnxSsvpA7+8hWOyHqjCKpHUoLDdCmDAwZuHCQVzzwncHXC5D7vgQSJXIiHeMtu
+	Soo6MIMISB35FMbJ+A9ZwJTcxJFyEEq1Fnyh68oEkZaEwJDSmV5R3GKqI0IvuWAg86zc3U
+	OD7bJNjIHTOOr94Cxg9LPx8Qwhx27r9fRFv4OJWKklI2QJKN/EJnwWBQnzttDA==
+Content-Type: multipart/signed;
+ boundary=d1cbf490ecbd8c6ccce0deb6a66abc7d8a9e3325aeede4af7c494c5816b0;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 25 Sep 2025 15:59:44 +0200
+Message-Id: <DD1XOHE6P5OC.2JUQRAGAE1KTU@cknow.org>
+Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Nicolas Frattaroli"
+ <nicolas.frattaroli@collabora.com>, "Heiko Stuebner" <heiko@sntech.de>,
+ "Sebastian Reichel" <sebastian.reichel@collabora.com>, "Sebin Francis"
+ <sebin.francis@ti.com>, "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
+ "Jon Hunter" <jonathanh@nvidia.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] driver core: fw_devlink: Don't warn in
+ fw_devlink_dev_sync_state()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Ulf Hansson" <ulf.hansson@linaro.org>, "Saravana Kannan"
+ <saravanak@google.com>, "Rafael J . Wysocki" <rafael@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, <linux-pm@vger.kernel.org>
+References: <20250925115924.188257-1-ulf.hansson@linaro.org>
+In-Reply-To: <20250925115924.188257-1-ulf.hansson@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-Convert the ArcticSand arc2c0608 LED driver to the dt-schema.
+--d1cbf490ecbd8c6ccce0deb6a66abc7d8a9e3325aeede4af7c494c5816b0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Harrison Carter <hcarter@thegoodpenguin.co.uk>
----
-Maintainer set to the author of the arcxcnn_bl.c file
----
- .../bindings/leds/backlight/arc,arc2c0608.yaml     | 108 +++++++++++++++++++++
- .../bindings/leds/backlight/arcxcnn_bl.txt         |  33 -------
- 2 files changed, 108 insertions(+), 33 deletions(-)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/arc,arc2c0608.yaml b/Documentation/devicetree/bindings/leds/backlight/arc,arc2c0608.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..786beced5590bb38b9c864111f7b66302d4c63ec
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/backlight/arc,arc2c0608.yaml
-@@ -0,0 +1,108 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/backlight/arc,arc2c0608.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ArcticSand arc2c0608 LED driver
-+
-+description: |
-+  The ArcticSand arc2c0608 LED driver provides ultra
-+  efficient notebook backlighting. Optional properties not
-+  specified will default to values in IC EPROM.
-+
-+  Datasheet:
-+  https://www.murata.com/-/media/webrenewal/products/power/power-semiconductor/overview/lineup/led-boost/arc2/arc2c0608.ashx.
-+
-+maintainers:
-+  - Brian Dodge <bdodge@arcticsand.com>
-+
-+allOf:
-+  - $ref: /schemas/leds/common.yaml
-+
-+properties:
-+  compatible:
-+    const: arc,arc2c0608
-+
-+  reg:
-+    maxItems: 1
-+
-+  default-brightness:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 0
-+    maximum: 4095
-+
-+  led-sources:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description: List of enabled channels
-+    items:
-+      enum: [0, 1, 2, 3, 4, 5]
-+    minItems: 1
-+    uniqueItems: true
-+
-+  arc,led-config-0:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Fading speed (period between intensity
-+      steps)
-+
-+  arc,led-config-1:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: If set, sets ILED_CONFIG register. Used for
-+      fine tuning the maximum LED current.
-+
-+  arc,dim-freq:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: PWM mode frequency setting (bits [3:0] used)
-+
-+  arc,comp-config:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Setting for register CONFIG_COMP which
-+      controls internal resitances, feed forward freqs,
-+      and initial VOUT at startup. Consult the datasheet.
-+
-+  arc,filter-config:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: RC and PWM Filter settings.
-+      Bit Assignment
-+      7654 3    2    1    0
-+      xxxx RCF1 RCF0 PWM1 PWM0
-+      RCF statuses        PWM Filter Statues
-+      00 = OFF (default)  00 = OFF (default)
-+      01 = LOW            01 = 2 STEPS
-+      10 - MEDIUM         10 = 4 STEPS
-+      11 = HIGH           11 = 8 STEPS
-+
-+  arc,trim-config:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Sets percentage increase of Maximum LED
-+      Current.
-+      0x00 = 0% increase.
-+      0x20 = 20.2%.
-+      0x3F = 41.5%
-+
-+  label: true
-+
-+  linux,default-trigger: true
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led-controller@30 {
-+            compatible = "arc,arc2c0608";
-+            reg = <0x30>;
-+            default-brightness = <500>;
-+            label = "lcd-backlight";
-+            linux,default-trigger = "backlight";
-+            led-sources = <0 1 2 5>;
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt b/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-deleted file mode 100644
-index 230abdefd6e7be20b470c3790e74c4d26d084ee8..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/leds/backlight/arcxcnn_bl.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--Binding for ArcticSand arc2c0608 LED driver
--
--Required properties:
--- compatible:		should be "arc,arc2c0608"
--- reg:			slave address
--
--Optional properties:
--- default-brightness:	brightness value on boot, value from: 0-4095
--- label:		The name of the backlight device
--			See Documentation/devicetree/bindings/leds/common.txt
--- led-sources:		List of enabled channels from 0 to 5.
--			See Documentation/devicetree/bindings/leds/common.txt
--
--- arc,led-config-0:	setting for register ILED_CONFIG_0
--- arc,led-config-1:	setting for register ILED_CONFIG_1
--- arc,dim-freq:		PWM mode frequence setting (bits [3:0] used)
--- arc,comp-config:	setting for register CONFIG_COMP
--- arc,filter-config:	setting for register FILTER_CONFIG
--- arc,trim-config:	setting for register IMAXTUNE
--
--Note: Optional properties not specified will default to values in IC EPROM
--
--Example:
--
--arc2c0608@30 {
--	compatible = "arc,arc2c0608";
--	reg = <0x30>;
--	default-brightness = <500>;
--	label = "lcd-backlight";
--	linux,default-trigger = "backlight";
--	led-sources = <0 1 2 5>;
--};
--
+On Thu Sep 25, 2025 at 1:59 PM CEST, Ulf Hansson wrote:
+> Due to the wider deployment of the ->sync_state() support, for PM domains
+> for example, we are receiving reports about the messages that are being
+> logged in fw_devlink_dev_sync_state(). In particular as they are at the
+> warning level, which doesn't seem correct.
+>
+> Even if it certainly is useful to know that the ->sync_state() condition
+> could not be met, there may be nothing wrong with it. For example, a driv=
+er
+> may be built as module and are still waiting to be initialized/probed.
 
----
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250911-arctic-sand-dac8ebaa3d42
+"there may be nothing wrong with it" doesn't sound very convincing.
+So there *can* be something wrong with it, so warning sounds
+appropriate? If there is (certainly) something wrong with it, I expect
+an error.
+FWIW: most of my drivers/modules are built as modules.
+I do seem to run into 'problems' more then average because of that, but
+to me it just signals there is something wrong ... which should be
+fixed. Not silenced.
 
-Best regards,
--- 
-Harrison Carter <hcarter@thegoodpenguin.co.uk>
+You're the expert, but I'm not so sure this is an improvement.
+I do regularly check dmesg level 0, 1, 2, 3 and 4, hence it landed on my
+radar. I do not regularly check all the dmesg msgs, so this change would
+result it dropping off my (immediate) radar.
 
+On Fri Sep 12, 2025 at 8:32 PM CEST, Saravana Kannan wrote:
+> Please don't just disable fw_devlink using fw_devlink=3Doff. We want to
+> fix any issues you are hitting with it. I might even delete this "off"
+> option sometime. It was meant as an early debug option.
+
+That response made a lot of sense to me. I haven't gotten around to it
+yet, but I want to test all my (Rockchip) devices to see if they 'need'
+that parameter to 'silence' the warning. I have a (vague) recollection
+that some don't need it (for that).
+
+My 0.02
+
+Cheers,
+  Diederik
+
+> Ideally these messages should be at the debug level, but since the
+> ->sync_state() feature is under an ongoing deployment and the prints
+> provides valuable information, let's move to the info level for now.
+>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reported-by: Sebin Francis <sebin.francis@ti.com>
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/base/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..97eab79c2f3b 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -1784,7 +1784,7 @@ static int fw_devlink_dev_sync_state(struct device =
+*dev, void *data)
+>  		return 0;
+> =20
+>  	if (fw_devlink_sync_state =3D=3D FW_DEVLINK_SYNC_STATE_STRICT) {
+> -		dev_warn(sup, "sync_state() pending due to %s\n",
+> +		dev_info(sup, "sync_state() pending due to %s\n",
+>  			 dev_name(link->consumer));
+>  		return 0;
+>  	}
+> @@ -1792,7 +1792,7 @@ static int fw_devlink_dev_sync_state(struct device =
+*dev, void *data)
+>  	if (!list_empty(&sup->links.defer_sync))
+>  		return 0;
+> =20
+> -	dev_warn(sup, "Timed out. Forcing sync_state()\n");
+> +	dev_info(sup, "Timed out. Forcing sync_state()\n");
+>  	sup->state_synced =3D true;
+>  	get_device(sup);
+>  	list_add_tail(&sup->links.defer_sync, data);
+
+
+--d1cbf490ecbd8c6ccce0deb6a66abc7d8a9e3325aeede4af7c494c5816b0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaNVK1wAKCRDXblvOeH7b
+bu9cAQDgWb2pxgFG3UFhZ5AJ4XnkZoo6afbzYvPejyBq4VRNVQEA+D1rt5xMXzkr
+wKGuYk+Gprw82liU5r/9UMBzEgnLcwE=
+=qpi2
+-----END PGP SIGNATURE-----
+
+--d1cbf490ecbd8c6ccce0deb6a66abc7d8a9e3325aeede4af7c494c5816b0--
 
