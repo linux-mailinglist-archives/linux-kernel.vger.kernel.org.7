@@ -1,272 +1,180 @@
-Return-Path: <linux-kernel+bounces-832430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC30B9F4BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:39:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D811CB9F495
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB28C4C3DCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706CC1B234E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ED1283FD8;
-	Thu, 25 Sep 2025 12:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846F1B4247;
+	Thu, 25 Sep 2025 12:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="tajFAysD"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="wX2sVrxu"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC44B26E6FE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C515B135
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758803883; cv=none; b=GKgw1TNZmULgMF2zD5ACINWbwkNRtqBY+H4yyeXXDaVOwvSp8vYqfB0FQeZmyzWpLNGq2uLwF6Zf33ycTbWdaPpdwhfKdtfBa2cXvL3XkxglElOlYBGbirSOgtqIJq2GP6T1dOmn34jxZPNx4QPQoDm+/OZG7g6fhhMXSYIkchk=
+	t=1758803877; cv=none; b=tQx/9eoTX2kyGCRaNVwuYVJ0Lk7MZtg2Ezf8OAxillhQZvv1IvbUzqUrtMfHSx4YoJVvlGmh9ZcI2KXhaax6L3NdtZOPVEAbuErmZQTyC6RxGUofE/iF15wlryY/Nb4YVM2UFg1reWkq1lO8XpC9l7JueYjQexDfqQ1JwtQr6hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758803883; c=relaxed/simple;
-	bh=cE6dqP10Uu7Ap+7dTimu+BxM1SJYWWd/P7RXknWJ/Ao=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m6TACExJWfReQk+uaeVyZjK6jKRmDlpyg7ei0K3wOL3K6eAEhgYy1Db99EJdSZlASV7y8lhWbNOoCX+Fti7lQCRsohfW9BdURiFMvS9UeyENcyTp4FDlH+Ey7vqVFE3+R0itkZWWH9kMUYpDsPB0bf3LnN2GhC0i4pH9hvhKPOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=tajFAysD; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id F202DC011FA;
-	Thu, 25 Sep 2025 12:37:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 40B526062C;
-	Thu, 25 Sep 2025 12:38:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 46B97102F1895;
-	Thu, 25 Sep 2025 14:37:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758803879; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=DBmZYj9uOOiozLigWRqEkHlxIev9s38O1X01yQhnqPo=;
-	b=tajFAysDfCgDA/mszBL8ZF2V0D7e+a1m4dYYsSJ1FVpFIiZbTMRPD9+VyCUyXTho5VrMem
-	LumFryZdWz7lrpm2VFAG8tE55IjuHF8YyWtMEtyY8FAGmOOu9nzotDfu0bRTtQp59sVzTj
-	/7aPegnI9Xel32kRu6XXtDIPRaj8tOL+H/eVk8sV75xzY/pBCpnn0yUmFF2aD1IwMffyKV
-	7pVhjSOcTbrINdxYLgs8jsW45ghqUHqLYD1fg8rvFo0+m1FmREtFfua1YGW6QWOpukaObw
-	AEXBv0k5gUk76QV7cCh9t7aGBEZwo1ki6zj971hi4BzFVkjuDjiezK1qPTP2vQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Thu, 25 Sep 2025 14:37:37 +0200
-Subject: [PATCH v2 5/5] regulator: ltm8054: Support output current limit
- control
+	s=arc-20240116; t=1758803877; c=relaxed/simple;
+	bh=sKcOPTxnCJ5a4uUqyFcDkFbORkBcdmjDCZ5NAf7dLyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3YsiWGgy/eHb2hHUo9sOnU5ok5Xb6Dm+/6c5WpqADtWUqn3vQEM4qdpWByThf7Qyp/+mhCdO6AYjMa1yOVWAxhzNMHT9Qw12Hx2eSKLZ1rXdqUl3pEMshyqCfCW6HTYzDaUnDk/GTbSPjufRksqcVdPHNHv+w3gQo4mzjMX5xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=wX2sVrxu; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
+	by cmsmtp with ESMTPS
+	id 1jt1vjNnuKXDJ1lELvbSSj; Thu, 25 Sep 2025 12:37:49 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 1lEKvUj23HyqZ1lEKvyi4r; Thu, 25 Sep 2025 12:37:49 +0000
+X-Authority-Analysis: v=2.4 cv=G4EcE8k5 c=1 sm=1 tr=0 ts=68d5379d
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=TDP2S4RWD7HzL5QBIXWMeQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=n6cUM9N_SOF4ly-ecgYA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jHQEQP6ZDcTVOhUjzvTyaPCqzaUVdzFlGtFP2wFxfNw=; b=wX2sVrxudqIgwgpYFfECf9gNBn
+	b6lrLbgF43by0ZF23koUMsxB99bIXyy+VYpGG86IgUkI/4tdEkll8bJWtmbgMpEMYTUg8kMKklChU
+	6jdE7Fug5TwxiF2UZ0RMhbDUvU8LRqSEJLxehPiqHJ8519ItDFJRHbCx354gGYLfxaHjqKRrJu/L2
+	qI/4f5BdOb4j7G1wGT9Iw0k+RdUtha4PLgvhxTnVMWtG+J59LSFjqNGmXtplhEhrAivjkSPRek8bO
+	YAbiC4oqx6Ia7C0lgJx0Xu5Up1xKGkPo5Ut+sayd9aNc/aowxGIM05Dw/lDbMTQXkibwPt8GjPnfm
+	MSW6ktNw==;
+Received: from [83.214.222.209] (port=59262 helo=[192.168.1.104])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v1lEH-00000002lYu-2Gu8;
+	Thu, 25 Sep 2025 07:37:45 -0500
+Message-ID: <8497d3e4-fa7f-436c-9e94-b669c7be73f1@embeddedor.com>
+Date: Thu, 25 Sep 2025 14:37:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] Bluetooth: Avoid a couple dozen
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aMAZ7wIeT1sDZ4_V@kspp>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <aMAZ7wIeT1sDZ4_V@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-ltm8054-driver-v2-5-bb61a401a0dc@bootlin.com>
-References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
-In-Reply-To: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Hans de Goede <hansg@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-iio@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 83.214.222.209
+X-Source-L: No
+X-Exim-ID: 1v1lEH-00000002lYu-2Gu8
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.104]) [83.214.222.209]:59262
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCC4Ag8SvqFxbS8Y6vFtrkcB6PTaIetpQueqGLhVOGdhTRUtvw60tvumFRmxFlhgCEboM+uGNUo5VVgNNFmJFdHqyspNKtHujYj5nAykTitNUop6rhh6
+ ynLaFwAIkYtu03U9wteZUwTWjX7FmM4wCEk9ulFKbZsqZYXAGCtWOg7a1xWwu+sGvAzuDNunVFv8ffRwRODfLpLgjQ6TRy8iiv2tnpe1w9U6yg9PZBMhXvcv
 
-The LTM8054 supports setting a fixed output current limit using a sense
-resistor connected to a dedicated pin. This limit can then be lowered
-dynamically by varying the voltage level of the CTL pin.
+Hi all,
 
-Support controlling the LTM8054's output current limit.
+Friendly ping: who can take this, please? :)
 
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/regulator/Kconfig             |   1 +
- drivers/regulator/ltm8054-regulator.c | 113 +++++++++++++++++++++++++++++++++-
- 2 files changed, 112 insertions(+), 2 deletions(-)
+Thanks!
+-Gustavo
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index c48b2af350974b3715a1ecf05dec656a92268294..e9ee6ed9fe3587c542223a6d6be78412e96797ee 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -579,6 +579,7 @@ config REGULATOR_LTC3676
- 
- config REGULATOR_LTM8054
- 	tristate "LTM8054 Buck-Boost voltage regulator"
-+	depends on IIO
- 	help
- 	  This driver provides support for the Analog Devices LTM8054
- 	  Buck-Boost micromodule regulator. The LTM8054 has an adjustable
-diff --git a/drivers/regulator/ltm8054-regulator.c b/drivers/regulator/ltm8054-regulator.c
-index bc8cf98b5a3b5663481d148330de70a8165e5981..172ec32c5a9517c6fb38ded8095ffc8e1acf55f0 100644
---- a/drivers/regulator/ltm8054-regulator.c
-+++ b/drivers/regulator/ltm8054-regulator.c
-@@ -17,6 +17,8 @@
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/iio/consumer.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -26,10 +28,25 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/of_regulator.h>
- 
-+#include <linux/units.h>
-+
- /* The LTM8054 regulates its FB pin to 1.2V */
- #define LTM8054_FB_uV 1200000
- 
-+/* Threshold voltage between the Vout and Iout pins which triggers current
-+ * limiting.
-+ */
-+#define LTM8054_VOUT_IOUT_MAX_uV 58000
-+
-+#define LTM8054_MAX_CTL_uV 1200000
-+#define LTM8054_MIN_CTL_uV 50000
-+
- struct ltm8054_priv {
-+	struct iio_channel *ctl_dac;
-+
-+	int min_uA;
-+	int max_uA;
-+
- 	struct regulator_desc rdesc;
- };
- 
-@@ -43,18 +60,103 @@ static int ltm8054_scale(unsigned int uV, u32 r1, u32 r2)
- 	return uV + tmp;
- }
- 
--static const struct regulator_ops ltm8054_regulator_ops = { };
-+static int ltm8054_set_current_limit(struct regulator_dev *rdev, int min_uA, int max_uA)
-+{
-+	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-+	u64 vdac_uV;
-+
-+	min_uA = clamp_t(int, min_uA, priv->min_uA, priv->max_uA);
-+
-+	/* adjusted current limit = Rsense current limit * CTL pin voltage / max CTL pin voltage */
-+	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_uV;
-+	do_div(vdac_uV, priv->max_uA);
-+
-+	dev_dbg(&rdev->dev,
-+		"Setting current limit to %duA, CTL pin to %duV\n", min_uA, (int)vdac_uV);
-+
-+	/* Standard IIO voltage unit is mV, scale accordingly. */
-+	return iio_write_channel_processed_scale(priv->ctl_dac, vdac_uV, 1000);
-+}
-+
-+static int ltm8054_get_current_limit(struct regulator_dev *rdev)
-+{
-+	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
-+	int ret, vdac_uv;
-+	u64 uA;
-+
-+	ret = iio_read_channel_processed_scale(priv->ctl_dac, &vdac_uv, 1000);
-+	if (ret < 0) {
-+		dev_err(&rdev->dev, "failed to read CTL DAC voltage, err %d\n", ret);
-+		return ret;
-+	}
-+
-+	uA = (u64)vdac_uv * priv->max_uA;
-+	do_div(uA, LTM8054_MAX_CTL_uV);
-+
-+	return uA;
-+}
-+
-+static const struct regulator_ops ltm8054_regulator_ops = {
-+	.set_current_limit = ltm8054_set_current_limit,
-+	.get_current_limit = ltm8054_get_current_limit,
-+};
-+
-+static int ltm8054_init_ctl_dac(struct platform_device *pdev, struct ltm8054_priv *priv)
-+{
-+	struct iio_channel *ctl_dac;
-+	enum iio_chan_type type;
-+	int ret;
-+
-+	ctl_dac = devm_iio_channel_get(&pdev->dev, "ctl");
-+	if (IS_ERR(ctl_dac))
-+		return PTR_ERR(ctl_dac);
-+
-+	ret = iio_get_channel_type(ctl_dac, &type);
-+	if (ret)
-+		return ret;
-+
-+	if (type != IIO_VOLTAGE)
-+		return -EINVAL;
-+
-+	priv->ctl_dac = ctl_dac;
-+
-+	return 0;
-+}
- 
- static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
- 			    struct regulator_config *config)
- {
- 	struct device_node *np = dev->of_node;
-+	u32 rsense;
- 	u32 r[2];
-+	u64 tmp;
- 	int ret;
- 
- 	config->of_node = np;
- 
--	ret = device_property_read_u32_array(dev, "lltc,fb-voltage-divider", r, ARRAY_SIZE(r));
-+	ret = device_property_read_u32(dev, "adi,iout-rsense-micro-ohms", &rsense);
-+	if (ret)
-+		return ret;
-+
-+	if (rsense == 0)
-+		return -EINVAL;
-+
-+	/* The maximum output current limit is the one set by the Rsense resistor */
-+	tmp = (u64)LTM8054_VOUT_IOUT_MAX_uV * MICRO;
-+	do_div(tmp, rsense);
-+	priv->max_uA = tmp;
-+
-+	/*
-+	 * Applying a voltage below LTM8054_MAX_CTL_uV on the CTL pin reduces
-+	 * the output current limit. If this level drops below
-+	 * LTM8054_MIN_CTL_uV the regulator stops switching.
-+	 */
-+
-+	tmp = (u64)priv->max_uA * LTM8054_MIN_CTL_uV;
-+	do_div(tmp, LTM8054_MAX_CTL_uV);
-+	priv->min_uA = tmp;
-+
-+	ret = device_property_read_u32_array(dev, "lltc,fb-voltage-divider", r, 2);
- 	if (ret)
- 		return ret;
- 
-@@ -62,6 +164,9 @@ static int ltm8054_of_parse(struct device *dev, struct ltm8054_priv *priv,
- 	priv->rdesc.min_uV = priv->rdesc.fixed_uV;
- 	priv->rdesc.n_voltages = 1;
- 
-+	dev_dbg(dev, "max_uA: %d min_uA: %d fixed_uV: %d\n",
-+		priv->max_uA, priv->min_uA, priv->rdesc.fixed_uV);
-+
- 	config->init_data = of_get_regulator_init_data(dev,
- 						       np,
- 						       &priv->rdesc);
-@@ -99,6 +204,10 @@ static int ltm8054_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to parse device tree\n");
- 
-+	ret = ltm8054_init_ctl_dac(pdev, priv);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to initialize CTL DAC\n");
-+
- 	rdev = devm_regulator_register(dev, &priv->rdesc, &config);
- 	if (IS_ERR(rdev))
- 		return dev_err_probe(dev, PTR_ERR(rdev), "failed to register regulator\n");
-
--- 
-2.51.0
+On 9/9/25 14:13, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the __struct_group() helper to fix 31 instances of the following
+> type of warnings:
+> 
+> 30 net/bluetooth/mgmt_config.c:16:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 1 net/bluetooth/mgmt_config.c:22:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v2:
+>   - Use __struct_group() instead of TRAILING_OVERLAP().
+> 
+> v1:
+>   - Link: https://lore.kernel.org/linux-hardening/aLSCu8U62Hve7Dau@kspp/
+> 
+>   include/net/bluetooth/mgmt.h | 9 +++++++--
+>   net/bluetooth/mgmt_config.c  | 4 ++--
+>   2 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
+> index 3575cd16049a..74edea06985b 100644
+> --- a/include/net/bluetooth/mgmt.h
+> +++ b/include/net/bluetooth/mgmt.h
+> @@ -53,10 +53,15 @@ struct mgmt_hdr {
+>   } __packed;
+>   
+>   struct mgmt_tlv {
+> -	__le16 type;
+> -	__u8   length;
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(mgmt_tlv_hdr, __hdr, __packed,
+> +		__le16 type;
+> +		__u8   length;
+> +	);
+>   	__u8   value[];
+>   } __packed;
+> +static_assert(offsetof(struct mgmt_tlv, value) == sizeof(struct mgmt_tlv_hdr),
+> +	      "struct member likely outside of __struct_group()");
+>   
+>   struct mgmt_addr_info {
+>   	bdaddr_t	bdaddr;
+> diff --git a/net/bluetooth/mgmt_config.c b/net/bluetooth/mgmt_config.c
+> index 6ef701c27da4..c4063d200c0a 100644
+> --- a/net/bluetooth/mgmt_config.c
+> +++ b/net/bluetooth/mgmt_config.c
+> @@ -13,13 +13,13 @@
+>   
+>   #define HDEV_PARAM_U16(_param_name_) \
+>   	struct {\
+> -		struct mgmt_tlv entry; \
+> +		struct mgmt_tlv_hdr entry; \
+>   		__le16 value; \
+>   	} __packed _param_name_
+>   
+>   #define HDEV_PARAM_U8(_param_name_) \
+>   	struct {\
+> -		struct mgmt_tlv entry; \
+> +		struct mgmt_tlv_hdr entry; \
+>   		__u8 value; \
+>   	} __packed _param_name_
+>   
 
 
