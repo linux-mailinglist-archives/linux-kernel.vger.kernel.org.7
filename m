@@ -1,85 +1,112 @@
-Return-Path: <linux-kernel+bounces-832937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280BCBA0CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE77BA0CC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA663B9574
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3BA3B97DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18CD30B53B;
-	Thu, 25 Sep 2025 17:18:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D02530C371;
+	Thu, 25 Sep 2025 17:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R0Wn+1ob"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5A35950
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E72D35950;
+	Thu, 25 Sep 2025 17:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820684; cv=none; b=k4uLor/WH1N2ZPFsMYalBjJDVk5W9Dv2w0zoLl7fM9ufFn+m3Qp7OtEtxDDzQWp+CQqSBzVR/PNnnRTagTt87h6l88Mn5m1GaHJKMgQANpfa375CSTd4WH7OsY4TXvy8nJCIHnhvP4SAzgz4B2vgJLMbzeRAOalvxRSZXcoQ8Y4=
+	t=1758820719; cv=none; b=uUrU1LywIjsMY77fP2DxfMOEKc648SNULVvwby3nUfqcYEu483sN8UgzNiVbbgDhw/qRRWKVPiH4r5scanbqWOPBeMCw1PvN4aIiy1S8+cxklX0mKvR+Z896FuHRBXN6mde2nqAeBmVj0ZYEgeht4YM8+D0CA6P9VI+5WPOryTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820684; c=relaxed/simple;
-	bh=ixPSXTmwhZtRkACpF9LlTsgH7Qo2qNi66hork6y/MU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlooZpu5fU+bfn8gBJXgq+7sELowK2hbaoPVALVFRnYYIttdJoPMPJ/tCvvYCc6ny0cCcqDSh3kLuBWT9VNpmwJTg2nbbwVYka77xxfvziQ+EeRORUjxs7qDI5H0fRmWxQIdVK3l69i+MoMZ6sB/sIU8xjhRQf0ye+ku/NpNScw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v1pbF-0002bj-8T; Thu, 25 Sep 2025 19:17:45 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v1pbE-000SHH-2w;
-	Thu, 25 Sep 2025 19:17:44 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v1pbE-00CgJl-2T;
-	Thu, 25 Sep 2025 19:17:44 +0200
-Date: Thu, 25 Sep 2025 19:17:44 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: freescale: debix-som-a-bmb-08: Enable HDMI
- output
-Message-ID: <20250925171744.5eyhqjlqp7skesqi@pengutronix.de>
-References: <20250916144710.1285650-1-kieran.bingham@ideasonboard.com>
+	s=arc-20240116; t=1758820719; c=relaxed/simple;
+	bh=jYaGC2W307AcjKp10yv8xV/E7xq8yq9f5BboueFwMME=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pOdEx8PxKbHk4KYM//BfNcwxsV9bpdCf7d+G9D1yEmIWxo8JFgoowi8Mb/SZPtFe8QKXTGR4lw48faBe1Bo43Wa4d0umO1p7fFVmGCqcdZsvGHwfHY+Ebf6/p+4DyTDKka1i8tcuh6ZMv4ow+LphGQtuHsctBawTh2CRB/JS/I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R0Wn+1ob; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A312E406FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758820716; bh=s5E6NQtQfTfIKPQQ0U9jD4/CMTy4US3OKTTLePkEQTI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R0Wn+1obn8KJeQvchJRf2wnbf497DYVq2eKLFn6QktuoOjJ3ybxEAFLi03ACkYszP
+	 aV/OjxtFF+hU4Tsh169FcOQDax4qxVQ9VTRQ5PJJSjch78kboyCe+GLpFs9u3faXwK
+	 sLzdeUNWhiACyJ/ZAjFBZLz6tdfkBQ6C8B7WndqpWsfVcZvxEwMZH1A4qhyV9lZo3Q
+	 b2wTCYQQXw6BYIqMZBrOclNa/e8um3UEGq8N8lfZ1blNtXGR699/rVD18qJIcDrCWL
+	 7pPTqB2KjqyLNniqzC3PcY5nELWvyV6nwZIgjgws1HbGWRaL1WoJz8JVj6dHvLD/SZ
+	 AqCkRcme8WerA==
+Received: from localhost (mi-18-37-83.service.infuturo.it [151.18.37.83])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A312E406FA;
+	Thu, 25 Sep 2025 17:18:35 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, linux-doc@vger.kernel.org
+Cc: linux-snps-arc@lists.infradead.org, linux-parisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-um@lists.infradead.org,
+ linux-openrisc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] Documentation/features: Update feature lists for 6.17-rc7
+In-Reply-To: <20250925073634.112142-1-lukas.bulwahn@redhat.com>
+References: <20250925073634.112142-1-lukas.bulwahn@redhat.com>
+Date: Thu, 25 Sep 2025 11:18:31 -0600
+Message-ID: <87qzvu30yg.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916144710.1285650-1-kieran.bingham@ideasonboard.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-On 25-09-16, Kieran Bingham wrote:
-> Enable the HDMI output on the Debix SOM A board, using the HDMI encoder
-> present in the i.MX8MP SoC.
-> 
-> Enable and configure all nodes required for the HDMI port usage.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Lukas Bulwahn <lbulwahn@redhat.com> writes:
 
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> It seems that ./Documentation/features/scripts/features-refresh.sh was most
+> recently used in December 2022, with the latest kernel release v6.1-rc7 at
+> that time (see commit 7f2e60ff51ca ("Documentation/features: Update feature
+> lists for 6.1") to update the feature lists in this subdirectory. All
+> further changes to Documentation/features/ since then have probably been
+> done manually, without checking for changes in other architectures and
+> features, that missed to update this part of the documentation.
+>
+> Running ./Documentation/features/scripts/features-refresh.sh now showed
+> seven changes of supported features in various architectures (one in arc,
+> two in parisc, one in riscv, one in openrisc, and two in um), which were
+> not reflected yet in the current documentation.
+>
+> To confirm the sanity of this script's suggested changes, I checked if the
+> commit messages confirm that the features have in fact been added in the
+> following commits:
+>
+>   - commit f122668ddcce ("ARC: Add eBPF JIT support")
+>   - commit 4800a6215e33 ("parisc: Wire up eBPF JIT compiler")
+>   - commit a869b8c29f86 ("riscv: enable mseal sysmap for RV64")
+>   - commit 2f681ba4b352 ("um: move thread info into task")
+>   - commit 3f17fed21491 ("um: switch to regset API and depend on XSTATE")
+>   - commit 7ce8716e2769 ("openrisc: Add HAVE_REGS_AND_STACK_ACCESS_API support")
+>   - commit b5ff52be8913 ("parisc: Convert to generic clockevents")
+>
+> So, update all documents to the current state with features-refresh.sh.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  Documentation/features/core/eBPF-JIT/arch-support.txt         | 4 ++--
+>  .../features/core/mseal_sys_mappings/arch-support.txt         | 2 +-
+>  .../features/core/thread-info-in-task/arch-support.txt        | 2 +-
+>  Documentation/features/core/tracehook/arch-support.txt        | 2 +-
+>  Documentation/features/perf/kprobes-event/arch-support.txt    | 2 +-
+>  Documentation/features/time/clockevents/arch-support.txt      | 2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
+
+OK, I went ahead and applied this one, thanks.
+
+jon
 
