@@ -1,378 +1,227 @@
-Return-Path: <linux-kernel+bounces-832163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8536B9E872
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A4CB9E884
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832DE1651F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:01:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03CFD4A1FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEA42EA179;
-	Thu, 25 Sep 2025 10:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77222882A8;
+	Thu, 25 Sep 2025 10:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="OXxAlb89"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021118.outbound.protection.outlook.com [52.101.70.118])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKrXIzuv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16D02550AD;
-	Thu, 25 Sep 2025 10:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758794454; cv=fail; b=J4lxnJEpXTZe0sKpSb5Ent9OgQVf9FQt496xM1AoZDKyjtUlByjGTbqf5XErJOnKDqtEBV7RJ4Q67/6tEP/NGlW2DU0/cPMyhqacUqd7jWrvpUqMCjKSfqbX4hE42b6bZuRMUeMy5BvRf17FskAQ9jsCpO1tXlyDWOFTBOeR7sU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758794454; c=relaxed/simple;
-	bh=a0VWFHYHHd8VzQUEVQNCB+zbIK1bKRgAD+9UKfeRO/4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oe8UaFPZfLWGqci9sKVnGy8AeJjZADQ8ADH+HOkxETXV7ey6zprmH+a3El9dqf7QJ3txV2KD9QJOnT62/B+qSkdh6uR1oUFM+L4R8VvJB8jKag10Q4bsbhKkUOZdjqd++18yKD+uH3AIZc/Jb6z5ybc+eIYMIXrY8PwBraa5IqM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=OXxAlb89; arc=fail smtp.client-ip=52.101.70.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lbMQqTk2Kf+rlPHpMXuUzqiEEXZ/9at25JZDNouI6+U+As44cU/CcYNkg32ztQXWbaTrfsCJjaOkGLdyNNK7XAFlGsnH4ZuBbKjpC/Kbs2CB9f8WoBkxlqBoLnttiZ+gEunapMFOpyfx5rVC/0yMVHyb74DhC1tZllnKYezX1gP2nmPNSrJu9/sPMRVOcOXNP6bIK9ilMDY+vaI09lYdPGUaMghX97H2tokzhuCQPiNwhoI3MOfee7OmMI2s7QBJZI/FfBElvBuNgWKQNr/gOS+zCPG2xFsmtTJaPZoG8O5bt4jFzSbAJn0C81Zl6kcSz5dptYZbb9d0QUgBh14j5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DjfLd1KwWR3eJHSXHXjdsR07lo1IOFz8xElOeao3qbY=;
- b=AIbgWHy3IAB0XEr08b0giBRj0cjUE63ULoiJBNEOkbEtWxdjeQa+lLULpgIuVHkGYIRZFiFIiM0s2e/FbAcjFE5CWoz27zHestwuB7Sxs0R1nYtpavwu1uQTbeGs8rOVqsdMyCwFDFFzAeGGnb9g5yz/pT1N47GIvtcg8AITF5Fb1U71+HtU0ssssVN8pJPMVtzRSrMekpYYldOeg+xswTXmShy8kIPlDzf4KorJY6xXMQ9B0hQcto8C9YfEAMlnSJshcMUH4KHACjQXg8GaKxC+6B4gzwq6x68RLIxiB6SC2EbTL3KAcaBsafuYYu3VNwL4xppzyB24Kqt18l/arg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 91.26.50.189) smtp.rcpttodomain=ti.com smtp.mailfrom=phytec.de; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine header.from=phytec.de;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DjfLd1KwWR3eJHSXHXjdsR07lo1IOFz8xElOeao3qbY=;
- b=OXxAlb89AqIhtw5SUjF7+tl56JQbZEtk1sSUUG2Z36DpszniXUUsTiOkUxA16bT0U4MquK5C7SfacMCwq3+Js1lhL5ckMks276G7ol6sz0WVhOE+/v8hASRGd1TU5L5Kiy1GhwAxgp+fiS4ErzadhtcFsrvPvuENmSiy5L8iLP87bqNR/bQFejrBFlhQkOJnaNPWTRZV8v9N7rZqPbGuL0FCa8mfWEtTxqaTTZYYL4iagiI0pNjbN66+xYa8WeU3jgCfdihu3XNmXdvpBcb6aSJcWiRSHvQX4Qw1dXJuKM1/TKDgASPKZeZ5ac/1kEg0fGyzS6RKOqSRHC1idC401A==
-Received: from AM0PR01CA0145.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:aa::14) by DU7PPF2CD800A78.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:18:3::bcd) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Thu, 25 Sep
- 2025 10:00:47 +0000
-Received: from AMS0EPF000001B3.eurprd05.prod.outlook.com
- (2603:10a6:208:aa:cafe::8a) by AM0PR01CA0145.outlook.office365.com
- (2603:10a6:208:aa::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.22 via Frontend Transport; Thu,
- 25 Sep 2025 10:00:45 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
- smtp.mailfrom=phytec.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- phytec.de discourages use of 91.26.50.189 as permitted sender)
-Received: from Postix.phytec.de (91.26.50.189) by
- AMS0EPF000001B3.mail.protection.outlook.com (10.167.16.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Thu, 25 Sep 2025 10:00:47 +0000
-Received: from phytec.de (172.25.0.51) by Postix.phytec.de (172.25.0.11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 25 Sep
- 2025 12:00:45 +0200
-From: Wadim Egorov <w.egorov@phytec.de>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <aradhya.bhatia@linux.dev>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-Subject: [PATCH v2 3/3] arm64: dts: ti: am625-phyboard-lyra: Add Lincoln LCD185-101CT panel overlay
-Date: Thu, 25 Sep 2025 12:00:38 +0200
-Message-ID: <20250925100038.3008298-3-w.egorov@phytec.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250925100038.3008298-1-w.egorov@phytec.de>
-References: <20250925100038.3008298-1-w.egorov@phytec.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C08C285C89
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758794506; cv=none; b=e99TOuhgJm7lSXDNIu4ZVdeWe1g8Iom7vJYSmcWqBF9hwD970abcs8fbuhrvpMu9bNkq6M5H37vEkT7WOb58wC2FhwduPSjmWdROopw0ChU8cN05+9F11QHTT5/wYrug9/X8bV66kLIfZcIVZekjtDbVnan6koOE/VttV08Wou8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758794506; c=relaxed/simple;
+	bh=03uKVV2ofw/Ng3veUOPWeDpclUpU7zZMmkbPpmIHfoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ijwf1kBNZ+1xo9vDtAUL8TxWEfqsb+r6GdxZ4Pi+HGYYa9mkmc7dMSBGM7HvuENTmqzDxnm+R5Khpn/ybWPZ6c7azj4zvcRbxDgjJOWlMOqxQd+v8klE1YvJ0T79lu431EJwref4aHweEUU5FA74dm4alc0xZYSFw6d9nO9OyJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKrXIzuv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758794503;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8GYfmE+k0d5YWbdZiC8QhNj3hq9CWQkLFh7lpDQVQfE=;
+	b=GKrXIzuv/bLY9b1LfXfVPr5jKsZpPHgbboHiuCntH1Te/Evx3UalnCy/MdB/0ejx2EdrK6
+	+ycCMmxs9yGzPYbemRYkEHDsyIyvYfdm9JsdsYk3w5DPSW21JCGaqIcZcyn62wrnYIu+GX
+	obzluTB/52mY+lp7iUnXUKUWUqlJpFo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-29YcXcIqPjGn5zYnN_iF1A-1; Thu, 25 Sep 2025 06:01:41 -0400
+X-MC-Unique: 29YcXcIqPjGn5zYnN_iF1A-1
+X-Mimecast-MFC-AGG-ID: 29YcXcIqPjGn5zYnN_iF1A_1758794500
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e375dab7dso1420475e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:01:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758794500; x=1759399300;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8GYfmE+k0d5YWbdZiC8QhNj3hq9CWQkLFh7lpDQVQfE=;
+        b=jjq9UXkvTAOdJtcOZBLvZbDadGIfxsKvbJANDKva0RTdoejJWLo3SBi4PcrY5pN2zV
+         vegIUCQ1aS2GczsJBG7BNLIbjE4iOPn0vMCHGQpPwfAUiHFnxTRKd895SJcLiiuJD2wZ
+         5uiHVI8WIkgCQxf8emFZFQePRjNb/3d85kavcYggpcg34VlEw5w4yGl41aT85skATRsM
+         xGWzCdFXhHQuYEFOE8qae8xKjBqPS8+BGqr1kCDKsdUFOgaoIOXcZRUwraB1VBP2foyG
+         5xW99xyrcGvolvGigjWNFZZS8EeoADzcF26AlIRLWVcSiC68M2nAfd2ZyBd94wNgTit8
+         LsgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEL+MNy2V3RBqwtAFnaQRbZNHOWUt17Hoox80LwhbUCsOpAZNr2b6bLnRWWb4syySLnm83zkB5/lDKKMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHVL6UfdOsU9T4DEm35fmqwzkOE2yAKrEMtb3UpwEgzHyq7FuL
+	o35VYmVNb2WOhTXzdX2qbo5C6xLr6torvbsAFYJFkiZXE+xM8hGO37Ng1kp8ESilakl+G0JmoPu
+	8BuZm7WZAkorSoh3A13w1YzH8qslmNlUAMW2sxx2NvBRT7CQtN4h9V4wbDlhHT9QF7w==
+X-Gm-Gg: ASbGncvqiLnVJYFFtZ+3lh7wU/JOe/IGS4ufvltbiGk1+AWgggzSVHP9WmvaZM7a0gc
+	ekNEZdaWZrmdLcmJHKm/HibPV9jBcWCrjmArMNAtsYhyh2iHnq0STbIC0MQ6qaI+3UWGMNlxzoy
+	MckSE+G6hohYtmDuqj2ytvFnW1ojhadv/LBzoCCWVEEMUQMOa8TPqtGgSLpYDn0vT7/lLNxCuqj
+	qcwLTNXKphnXAJTj+cHSfvAQk5Ns3LkBTQ9xIVJUGoG5maEcyQ6qv6LJ4jp8zFfHLx5sLch/zBr
+	CgG6SUl53GthpY3bA51nCBqBjD5LosVZo6DxCkp38PLnhM6spv+qZ78YYVGg3NEzE3fYWU4Ncc8
+	htCz3PSq6Hgyi4K6ZqnOAYL7Y5oFay1qM+Uj0JZD2MrXvrFnCIV40Y0D5LZr/Km2tC5Ne
+X-Received: by 2002:a05:600c:1d07:b0:45f:2805:91df with SMTP id 5b1f17b1804b1-46e329eb016mr27720675e9.20.1758794500321;
+        Thu, 25 Sep 2025 03:01:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJBLgrscqxeUvK3zCTB81zQ03AZ8FMFwoE2WABAhafpLxL3o7HLyxi6RuvwKQYgGpl6h0/hw==
+X-Received: by 2002:a05:600c:1d07:b0:45f:2805:91df with SMTP id 5b1f17b1804b1-46e329eb016mr27719935e9.20.1758794499610;
+        Thu, 25 Sep 2025 03:01:39 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab48570sm68576145e9.16.2025.09.25.03.01.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 03:01:38 -0700 (PDT)
+Message-ID: <b0bd326a-0ef6-4c72-ae25-3faff1fd6eb7@redhat.com>
+Date: Thu, 25 Sep 2025 12:01:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 04/15] mm/huge_memory: implement device-private THP splitting
+To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-5-balbirs@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <20250916122128.2098535-5-balbirs@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Postix.phytec.de (172.25.0.11) To Postix.phytec.de
- (172.25.0.11)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF000001B3:EE_|DU7PPF2CD800A78:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f57bd38-7300-48d2-00f8-08ddfc1a66a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1woEwnL+Sw4D6jMEOqphiIX8AxwK2RkdoFWgYq2K06HrNInVFSJnjNXj9/z3?=
- =?us-ascii?Q?hE1ced+U8z+m6CxJ4s8GBGlUlbsoSBQNNvxoHs2qaGFXoLyYJuiGXF6fs3v8?=
- =?us-ascii?Q?VWvuaCpjtHVmwK+XdLx8FfZe/qGjErEbVlxaDztU9BCu6i7VMlMRs++e7WAb?=
- =?us-ascii?Q?jrtHCzNaRQIKkNFkt6fh0rkPUOHDkOmKUDQlp7N5ruBEKeE0xze7Jo/IFvR+?=
- =?us-ascii?Q?ZbAS8Ts3qDVpx7xem66JoMYmGUrK+2mU8Kr2YHSC6M6ks7UUdN2kE7F/8bG/?=
- =?us-ascii?Q?3UIJxehN7yyMzTm52z1uVMd2xwv2/97x/ZyQTLkJIrzfDtKos757ZlISyu7G?=
- =?us-ascii?Q?jWKkkstaBYAncEQdWek4jynvU/0neSziesYhecmqvYfAbPtgmCtC807e7P82?=
- =?us-ascii?Q?TbDGA7Iald2WOttqOg2HcY1RwZM+dr6laUJoO/2hVr9VopfpUkPyc9VUi2DK?=
- =?us-ascii?Q?6VIuDIFg4zYbsrhZY1Gl6SLRD173pXCa/b+gOIjbBmX8N1IOnVit0y5J8xym?=
- =?us-ascii?Q?mMih5m+ArIVovniRMelSzaLUmaH5aU1OyxAsqWzuxExK+PGmlLM/8gOCwF06?=
- =?us-ascii?Q?9WKeLQbNf+X1FD3VgSU7DkWVhqP9ZEv1rUqWKsUQfotbHoAVvOu0WVYg4MRk?=
- =?us-ascii?Q?jSWSYud//ksl7xMOQqN5ZlqET1IEInaI50ER/mVR60FbbhZTL89bZLeBZOZ3?=
- =?us-ascii?Q?dvjgXa2C2ATEg6DAOTSqHEJKkgWfS3oi/eaHOWF2ZdYrFWgpMQ7fsxKKhvP2?=
- =?us-ascii?Q?BjoV8j8YQoVWCJVh1yGUaPOhf40aag48viznBXLYwfDBuFUAacVViRRJIfZi?=
- =?us-ascii?Q?D9yJqHVUan2gKARaukaBd7DxF2Lg1Vc8g8HBT/0D54W7WCVF/uJ78ny89Zfd?=
- =?us-ascii?Q?YAWB2bb01O3odk9+NUL4x1XwaBr9KkLB60Ct49RcUPG/tQM82Gv1zOQnO0hC?=
- =?us-ascii?Q?YbMeg8beNPxJZBJjgZ/G6MCqFuWNmfn3yfWgpKMa4gFuoj1nd1DdO1MSTEyn?=
- =?us-ascii?Q?ziwef+Ooc5ph/Qw39W0sqQDmbUWqklFDtlnLkoIk4DzmkLUngQ2ARD1V0nEd?=
- =?us-ascii?Q?8B2XqEOfEvnYMc7tUyCXdzRYl3w2OVIUD2/eucmcCA6kTV7htHL8fXLctmuf?=
- =?us-ascii?Q?69LLd3IwbcSeBV3omt2RSZagXaMY7Q4+e+lFVK3K0tiIyHged2Wj9l3VXKTx?=
- =?us-ascii?Q?TkRLRj/M/OWFZl1sjaPDLfJtlHhKiIl8KUzbfgzhd2AhbdogfgntSvI4SNpa?=
- =?us-ascii?Q?iIV2zuiOOvImw57yLC/YNvinUsCMwvinbGj1H2e9nj+RcLxwVLd7gFZQssN4?=
- =?us-ascii?Q?bvY19ELQyjVCaKhT4M8AAYcYjqIdNEiK0kWtptnYruNambz0Mx2BJobtQDft?=
- =?us-ascii?Q?uhT5cI0B+1nlhG7zhqRJyfol+HOrI+n82DFLC2n69BvZZUl4pvRdZP4QkAOw?=
- =?us-ascii?Q?i685EDa0qvU6uQyzhGTVA9X0PS7ZXLY5/njeBNFnQN5F5bkaPIm/ng=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Postix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: phytec.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 10:00:47.7153
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f57bd38-7300-48d2-00f8-08ddfc1a66a0
-X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Postix.phytec.de]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001B3.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU7PPF2CD800A78
 
-The panel is a Lincoln Technology Solutions LCD185-101CT [0]. It is
-a dual-link LVDS panel and supports WUXGA resolution (1920x1200).
-Furthermore, it has an I2C based touch controller: Goodix-GT928.
+On 16.09.25 14:21, Balbir Singh wrote:
+> Add support for splitting device-private THP folios, enabling fallback
+> to smaller page sizes when large page allocation or migration fails.
+> 
+> Key changes:
+> - split_huge_pmd(): Handle device-private PMD entries during splitting
+> - Preserve RMAP_EXCLUSIVE semantics for anonymous exclusive folios
+> - Skip RMP_USE_SHARED_ZEROPAGE for device-private entries as they
+>    don't support shared zero page semantics
+> 
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttilä <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
+> ---
+>   mm/huge_memory.c | 138 +++++++++++++++++++++++++++++++++--------------
+>   1 file changed, 98 insertions(+), 40 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 78166db72f4d..5291ee155a02 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2872,16 +2872,18 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>   	struct page *page;
+>   	pgtable_t pgtable;
+>   	pmd_t old_pmd, _pmd;
+> -	bool young, write, soft_dirty, pmd_migration = false, uffd_wp = false;
+> -	bool anon_exclusive = false, dirty = false;
+> +	bool soft_dirty, uffd_wp = false, young = false, write = false;
+> +	bool anon_exclusive = false, dirty = false, present = false;
+>   	unsigned long addr;
+>   	pte_t *pte;
+>   	int i;
+> +	swp_entry_t swp_entry;
 
-Add an device tree overlay to support the Lincoln LCD185-101CT panel
-in combination with the phyBOARD-Lyra-AM62x.
+Not renaming this variable avoids a lot of churn below. So please keep 
+it called "entry" in this patch.
 
-[0] https://lincolntechsolutions.com/wp-content/uploads/2024/09/LCD185-101CTL1ARNTT_DS_R1.3.pdf
-
-Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
----
-v1: https://lists.infradead.org/pipermail/linux-arm-kernel/2025-September/1065767.html
-v2: Use port dummies defined in previous patch
----
- arch/arm64/boot/dts/ti/Makefile               |   3 +
- .../k3-am625-phyboard-lyra-oldi-lcd185.dtso   | 188 ++++++++++++++++++
- 2 files changed, 191 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-oldi-lcd185.dtso
-
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index aad9177930e6..aa34a0d77615 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am625-beagleplay.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-beagleplay-csi2-ov5640.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am625-beagleplay-csi2-tevi-ov5640.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am625-phyboard-lyra-rdk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am652-phyboard-lyra-oldi-lcd185.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am625-sk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dev.dtb
-@@ -165,6 +166,8 @@ k3-am625-phyboard-lyra-gpio-fan-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
- 	k3-am62x-phyboard-lyra-gpio-fan.dtbo
- k3-am625-phyboard-lyra-qspi-nor-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
- 	k3-am6xx-phycore-qspi-nor.dtbo
-+k3-am625-phyboard-lyra-oldi-lcd185-dtbs := k3-am625-phyboard-lyra-rdk.dtb \
-+	k3-am625-phyboard-lyra-oldi-lcd185.dtbo
- k3-am625-sk-csi2-imx219-dtbs := k3-am625-sk.dtb \
- 	k3-am62x-sk-csi2-imx219.dtbo
- k3-am625-sk-csi2-ov5640-dtbs := k3-am625-sk.dtb \
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-oldi-lcd185.dtso b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-oldi-lcd185.dtso
-new file mode 100644
-index 000000000000..b1feb665248b
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-oldi-lcd185.dtso
-@@ -0,0 +1,188 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ * Author: Wadim Egorov <w.egorov@phytec.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/pwm/pwm.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "k3-pinctrl.h"
-+
-+&{/} {
-+	display {
-+		compatible = "lincolntech,lcd185-101ct";
-+		backlight = <&backlight>;
-+		power-supply = <&vdd_usb_5v0>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+				lcd_in0: endpoint {
-+					remote-endpoint = <&oldi_0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+				lcd_in1: endpoint {
-+					remote-endpoint = <&oldi_1_out>;
-+				};
-+			};
-+		};
-+	};
-+
-+	backlight: backlight {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bl_pwm_pins_default>;
-+
-+		compatible = "pwm-backlight";
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+
-+		enable-gpios = <&gpio_exp 5 GPIO_ACTIVE_HIGH>;
-+		pwms = <&epwm0 1 50000 0>;
-+	};
-+
-+        vdd_usb_5v0: regulator-vdd-usb5v0 {
-+                compatible = "regulator-fixed";
-+                regulator-name = "vdd-usb5v0";
-+                regulator-min-microvolt = <5000000>;
-+                regulator-max-microvolt = <5000000>;
-+                regulator-always-on;
-+                regulator-boot-on;
-+        };
-+};
-+
-+&dss {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_oldi0_pins_default &main_dss0_pins_default>;
-+};
-+
-+&dss_ports {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	/* VP1: Output to OLDI */
-+	port@0 {
-+		reg = <0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		dpi0_out0: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&oldi_0_in>;
-+		};
-+
-+		dpi0_out1: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&oldi_1_in>;
-+		};
-+	};
-+};
-+
-+&epwm0 {
-+	status = "okay";
-+};
-+
-+&main_i2c1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	touchscreen@5d {
-+		compatible = "goodix,gt928";
-+		reg = <0x5d>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&touch_screen_pins_default>;
-+
-+		interrupt-parent = <&main_gpio0>;
-+		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-+
-+		reset-gpios = <&main_gpio0 18 GPIO_ACTIVE_HIGH>;
-+		irq-gpios = <&main_gpio0 19 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&main_pmx0 {
-+	bl_pwm_pins_default: bl-pwm-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01b8, PIN_INPUT, 2) /* (C13) SPI0_CS1.EHRPWM0_B */
-+		>;
-+	};
-+
-+	touch_screen_pins_default: touch-screen-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x048, PIN_OUTPUT, 7) /* (N25) GPMC0_AD3.GPIO0_18 - RST */
-+			AM62X_IOPAD(0x04c, PIN_INPUT, 7) /* (P24) GPMC0_AD4.GPIO0_19 - INT */
-+		>;
-+	};
-+
-+	main_oldi0_pins_default: main-oldi0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0260, PIN_OUTPUT, 0) /* (AA5) OLDI0_A0N */
-+			AM62X_IOPAD(0x025c, PIN_OUTPUT, 0) /* (Y6) OLDI0_A0P */
-+			AM62X_IOPAD(0x0268, PIN_OUTPUT, 0) /* (AD3) OLDI0_A1N */
-+			AM62X_IOPAD(0x0264, PIN_OUTPUT, 0) /* (AB4) OLDI0_A1P */
-+			AM62X_IOPAD(0x0270, PIN_OUTPUT, 0) /* (Y8) OLDI0_A2N */
-+			AM62X_IOPAD(0x026c, PIN_OUTPUT, 0) /* (AA8) OLDI0_A2P */
-+			AM62X_IOPAD(0x0278, PIN_OUTPUT, 0) /* (AB6) OLDI0_A3N */
-+			AM62X_IOPAD(0x0274, PIN_OUTPUT, 0) /* (AA7) OLDI0_A3P */
-+			AM62X_IOPAD(0x0280, PIN_OUTPUT, 0) /* (AC6) OLDI0_A4N */
-+			AM62X_IOPAD(0x027c, PIN_OUTPUT, 0) /* (AC5) OLDI0_A4P */
-+			AM62X_IOPAD(0x0288, PIN_OUTPUT, 0) /* (AE5) OLDI0_A5N */
-+			AM62X_IOPAD(0x0284, PIN_OUTPUT, 0) /* (AD6) OLDI0_A5P */
-+			AM62X_IOPAD(0x0290, PIN_OUTPUT, 0) /* (AE6) OLDI0_A6N */
-+			AM62X_IOPAD(0x028c, PIN_OUTPUT, 0) /* (AD7) OLDI0_A6P */
-+			AM62X_IOPAD(0x0298, PIN_OUTPUT, 0) /* (AD8) OLDI0_A7N */
-+			AM62X_IOPAD(0x0294, PIN_OUTPUT, 0) /* (AE7) OLDI0_A7P */
-+			AM62X_IOPAD(0x02a0, PIN_OUTPUT, 0) /* (AD4) OLDI0_CLK0N */
-+			AM62X_IOPAD(0x029c, PIN_OUTPUT, 0) /* (AE3) OLDI0_CLK0P */
-+			AM62X_IOPAD(0x02a8, PIN_OUTPUT, 0) /* (AE4) OLDI0_CLK1N */
-+			AM62X_IOPAD(0x02a4, PIN_OUTPUT, 0) /* (AD5) OLDI0_CLK1P */
-+		>;
-+	};
-+};
-+
-+&oldi0 {
-+	ti,companion-oldi = <&oldi1>;
-+	status = "okay";
-+};
-+
-+&oldi0_port0 {
-+	oldi_0_in: endpoint {
-+		remote-endpoint = <&dpi0_out0>;
-+	};
-+};
-+
-+&oldi0_port1 {
-+	oldi_0_out: endpoint {
-+		remote-endpoint = <&lcd_in0>;
-+	};
-+};
-+
-+&oldi1 {
-+	ti,secondary-oldi;
-+	status = "okay";
-+};
-+
-+&oldi1_port0 {
-+	oldi_1_in: endpoint {
-+		remote-endpoint = <&dpi0_out1>;
-+	};
-+};
-+
-+&oldi1_port1 {
-+	oldi_1_out: endpoint {
-+		remote-endpoint = <&lcd_in1>;
-+	};
-+};
 -- 
-2.48.1
+Cheers
+
+David / dhildenb
 
 
