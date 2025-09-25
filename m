@@ -1,173 +1,123 @@
-Return-Path: <linux-kernel+bounces-833160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DDBBA1506
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11636BA150C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B0D7A5297
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:07:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7537AC6CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1398E3294F7;
-	Thu, 25 Sep 2025 20:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F091D31FEFA;
+	Thu, 25 Sep 2025 20:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZCOasC2a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q0hnIkrV"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A332897A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5531B824
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758830670; cv=none; b=nKh167G5eBQfv9nXOQHCR3J2/4JksMyuZzLq/B/bc4zv5jkC9YinU3iJ5rluT/d7b9JOA8ymJrhBjFH+nKhbSLztoFPUA62bAELbFuvfkRlrsUOpp7SPlqbb/x1ZKmSijST1DTinUNOMQ0cEAKJUV94/OkdA34ppqP5Wf1gJ7Jk=
+	t=1758830779; cv=none; b=Ca3jyJUiRsF1ZsDdNdXNsNbzESpnGXMnyTyrk+K2hv6Klp0z8b5eV4jb6UWo5HXjE5FwV+QiheF0anLNSrtxA2lXMYFBL2rYG+VKlia7y/NuqLLd6tbfAoJEQaWnz9YimB787bSxOk7+QHWI5FlO/O0bK/asVqG9LSqWWdF4wlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758830670; c=relaxed/simple;
-	bh=KKZ76b6f1fVw3YfuVP6not30dWXnaMRHgFBHlr5XoWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XT4WQTcGTKcfZoEmyhs0l+8WEwYmVQ02b87Q1Tm5E5cvFWeaFhoaa3/oY36I7yAnhPmphJj9wFzYdbGjP97vU11lQDAjagJ5+Gjliv703n3iUcybLo5zdNXSrfWkQlFmuyF13FEVceql3JfHY7D9/ZR4pJAnlQv8tOjm+Uf60n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZCOasC2a; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758830669; x=1790366669;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=KKZ76b6f1fVw3YfuVP6not30dWXnaMRHgFBHlr5XoWI=;
-  b=ZCOasC2a8x53YLPd1wYO87N/DsPsdIJ898xc7Pg09cffcwxClemMSIIt
-   moWuwFEYTlGKl2WaZHyR04Vi1dNWQFc9BPoT/n75jJXMfoaNCeCFwqFw9
-   CrHwOUgJC+e5QFcZB5+zVI8dVrlpuIaZpHWaS9Vvs9hTCd1Tu8vvG58P3
-   EIjO2h/VnNsjEZ1W707Y0rzy3dD3bej6/vOczPWx5LTh1vK76xQMKM15I
-   w/YA8j8OyDPoJo2LMUhvyIrJD0uQLj8gtJpRpT8J/ilaDrNgPUjKSLYEg
-   J3jaMgTlplyAKYHaUSnQjKBYHyRId2YXAAZt1OEbL1gLPk6MmLQretnpv
-   Q==;
-X-CSE-ConnectionGUID: GAKD21lvSEeehCrPCczG5g==
-X-CSE-MsgGUID: Oniw8+rnTp+p6kw/JZcahg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61074412"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61074412"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:04:16 -0700
-X-CSE-ConnectionGUID: K0RKm+OUSNqvhPHncTdHuA==
-X-CSE-MsgGUID: 02TGTeRXQN2qyC4Yyn4/+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="177003714"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.220.206])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:04:16 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v11 31/31] fs/resctrl: Some kerneldoc updates
-Date: Thu, 25 Sep 2025 13:03:25 -0700
-Message-ID: <20250925200328.64155-32-tony.luck@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925200328.64155-1-tony.luck@intel.com>
-References: <20250925200328.64155-1-tony.luck@intel.com>
+	s=arc-20240116; t=1758830779; c=relaxed/simple;
+	bh=Xx1KeRMb8qASSXQQi6oPfzSHjtino2Erc6qXBCGf8kE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PsP1Rj5nbxI8fqD+T+UPZ9QH/Q5V0o+ZF501jcO5dHFMdbCRUTW67sfZx2r0pXh1GCTUispgBvoAylPlHZ58V7fg4pqi51hOfF125NlVRi4CmSQjhWu0YQI4I41LGRzkJS4FSdnoxJ78VdY8QZJOlsA2UdN4lzaGHqQLmTB1NcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q0hnIkrV; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8d593793af1so57692739f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1758830775; x=1759435575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NZ4J+q8Jl9uXHJWsnYE6h3kFUoOp3/nCTgLQNbxMPJA=;
+        b=Q0hnIkrV6h3MtwHvFdc6EgugqVJ0mjjALtcl+To9m9yTQZwpcsBmoI6j66jQY75sAB
+         w3VVp8KAAhQIIqIXhAZcpFmAO3dUJQJlzHMDOz4asW4BPBvfYLyGqS62b1VYT4WHuqaD
+         daEIAv1Fs84+IJL3zu/FcnzWglxJPMIGDXMeY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758830775; x=1759435575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZ4J+q8Jl9uXHJWsnYE6h3kFUoOp3/nCTgLQNbxMPJA=;
+        b=htnJLQkuK97zb8rxJ66dbZ5F5nL2RnxQCPMzaUrXvm0XpJ8Ia9zVeE9wfOMwXIBAfp
+         kPkC/jUmIWRg3GUjoOTW3ri9nm/7uoDbAmJAdwFRd6N8896D/MTQFjRDFW6i+SMp0zId
+         yE/2lxelRuYtPjWpFqptfQ98ODQAOwbaoR7NPJRTRJGCP/5tBVDSrbACBJOi89b+a0aQ
+         NqE0Pz3IuJ2H8in8CgmqrXOUzERwNNPswM0yY9dQJwwvGilwdCI/stLiX1xrnXZWG+JY
+         oOL5/YHvJjhQguCrMcGeWzQMJk4mz4OS+l37VkcYNU7Fv4FVTtkGTl7AE/rAKtq2UniE
+         hyEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOUpMKOWF/p9dKofSZ1xIPB4/FRZfcZv/FLwmo2MOhoCOG2PzWNyQqqE6iTsp5ghojMup7i8C4bQSJC7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG5lpgEmA3gbiLEc72xkimae1co9J/RN5lAkSvRpsuF5F21YlV
+	m11DSj7aXkWjgQVlUfuEZ8sezNiKvZVi4XKShrWEc+yah0hs7O057yjuo+lyX/seoTw=
+X-Gm-Gg: ASbGncsJ7H3Z2N02vFeX08s7R4UvXsRDEJHnO1Bnry2B9mKU2QrGmbtk9ly2aFZm28b
+	NjGiM9wS1dxHSAX+GMi8q2PZlxSICIfsToqHt9CqwZ+BqvILRAXjwPQDgRWqHhbSjyKuCwQh7Bf
+	ja/5csEOvlm9uuf3t09IWTc7dDvDhN0f4KvwKywS/7XDqgDIuAwtK+iUxNikTfWfYEUrglyDmTj
+	FOh1KGiocgDRUCWDO+wvq8XtmjbR1klW4ZYIlyVQSwK24jMDtgWk0J/6bpaV5zVIb6F2mQUhWLI
+	IEEeEDijjyTnLUdnS/pCSpW3SBnJkty+s2JBwCYmzDV+aWPoH1DGOEtqcN56orN2HUrWFMaDSxD
+	tBvRHMCIiZu5MKAtu/vmyC4FSdTnsO50wHwk=
+X-Google-Smtp-Source: AGHT+IGgoqo4FexGR81T+2V+UyC7F009+mx6SQ2pBJCOPIpWzVqCjsnAHekbeNq05hlbCiQ/ymxj7A==
+X-Received: by 2002:a05:6e02:441a:20b0:427:5aa:4570 with SMTP id e9e14a558f8ab-42705aa4687mr13249845ab.3.1758830775392;
+        Thu, 25 Sep 2025 13:06:15 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-56a648d1aeesm1082556173.8.2025.09.25.13.06.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 13:06:14 -0700 (PDT)
+Message-ID: <650a4711-1d33-4582-be84-19ab99ff7f82@linuxfoundation.org>
+Date: Thu, 25 Sep 2025 14:06:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: perf: cleanup fujitsu_uncore_pmu.rst and fix
+ htmldocs warnings/errors
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>, corbet@lwn.net,
+ fj2767dz@fujitsu.com, will@kernel.org, yangyicong@hisilicon.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250925195442.71997-1-krishnagopi487@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250925195442.71997-1-krishnagopi487@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-resctrl event monitoring on Sub-NUMA Cluster (SNC) systems sums the
-counts for events across all nodes sharing an L3 cache.
+On 9/25/25 13:54, Gopi Krishna Menon wrote:
+> - Adjust spacing around list and sections for better readability.
+> - Use definition lists for defining events.
+> - Replace block quotes with code blocks where appropriate.
 
-Update the kerneldoc for rmid_read::sum and the do_sum argument to
-mon_get_kn_priv() to say these are only used on the RDT_RESOURCE_L3
-resource.
+The bullet list type format used above isn't right format for
+change log. Refer to a few change logs and also check submitting
+patches documentation.
 
-Add Return: value description for l3_mon_domain_mbm_alloc(),
-resctrl_l3_mon_resource_init(), and domain_setup_l3_mon_state()
+Sounds like you are combining formatting changes and warning
+fixes. These are better done as separate patches.
+> 
+> Fixes the following htmldocs errors/warnings:
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:20: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:23: WARNING: Block quote ends without a blank line; unexpected unindent.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:28: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:29: WARNING: Block quote ends without a blank line; unexpected unindent.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:81: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:82: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+> ---
+>   .../admin-guide/perf/fujitsu_uncore_pmu.rst   | 130 ++++++++++++------
+>   1 file changed, 87 insertions(+), 43 deletions(-)
+> 
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- fs/resctrl/internal.h              | 4 ++--
- arch/x86/kernel/cpu/resctrl/core.c | 2 ++
- fs/resctrl/monitor.c               | 2 +-
- fs/resctrl/rdtgroup.c              | 5 +++--
- 4 files changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-index 223a6cc6a64a..0dd89d3fa31a 100644
---- a/fs/resctrl/internal.h
-+++ b/fs/resctrl/internal.h
-@@ -96,8 +96,8 @@ extern struct mon_evt mon_event_all[QOS_NUM_EVENTS];
-  * @list:            Member of the global @mon_data_kn_priv_list list.
-  * @rid:             Resource id associated with the event file.
-  * @evt:             Event structure associated with the event file.
-- * @sum:             Set when event must be summed across multiple
-- *                   domains.
-+ * @sum:             Set for RDT_RESOURCE_L3 when event must be summed
-+ *                   across multiple domains.
-  * @domid:           When @sum is zero this is the domain to which
-  *                   the event file belongs. When @sum is one this
-  *                   is the id of the L3 cache that all domains to be
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 48ed6242d136..78c176e15b93 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -418,6 +418,8 @@ static int domain_setup_ctrlval(struct rdt_resource *r, struct rdt_ctrl_domain *
-  * l3_mon_domain_mbm_alloc() - Allocate arch private storage for the MBM counters
-  * @num_rmid:	The size of the MBM counter array
-  * @hw_dom:	The domain that owns the allocated arrays
-+ *
-+ * Return:	%0 for success; Error code otherwise.
-  */
- static int l3_mon_domain_mbm_alloc(u32 num_rmid, struct rdt_hw_l3_mon_domain *hw_dom)
- {
-diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
-index c0e1b672afce..4cc310b9e78e 100644
---- a/fs/resctrl/monitor.c
-+++ b/fs/resctrl/monitor.c
-@@ -1811,7 +1811,7 @@ static void closid_num_dirty_rmid_free(void)
-  * Resctrl's cpuhp callbacks may be called before this point to bring a domain
-  * online.
-  *
-- * Returns 0 for success, or -ENOMEM.
-+ * Return: %0 for success; Error code otherwise.
-  */
- int resctrl_l3_mon_resource_init(void)
- {
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index 16b088c5f2be..04765dad3d31 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -3037,7 +3037,8 @@ static void rmdir_all_sub(void)
-  * @rid:    The resource id for the event file being created.
-  * @domid:  The domain id for the event file being created.
-  * @mevt:   The type of event file being created.
-- * @do_sum: Whether SNC summing monitors are being created.
-+ * @do_sum: Whether SNC summing monitors are being created. Only set
-+ *          when @rid == RDT_RESOURCE_L3.
-  */
- static struct mon_data *mon_get_kn_priv(enum resctrl_res_level rid, int domid,
- 					struct mon_evt *mevt,
-@@ -4281,7 +4282,7 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
-  * at mount time. This means the rdt_l3_mon_domain::mbm_states[] and
-  * rdt_l3_mon_domain::rmid_busy_llc allocations may be larger than needed.
-  *
-- * Returns 0 for success, or -ENOMEM.
-+ * Return: %0 for success; Error code otherwise.
-  */
- static int domain_setup_l3_mon_state(struct rdt_resource *r, struct rdt_l3_mon_domain *d)
- {
--- 
-2.51.0
-
+thanks,
+-- Shuah
 
