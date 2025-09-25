@@ -1,98 +1,82 @@
-Return-Path: <linux-kernel+bounces-831905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8DBB9DD91
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C969B9DD8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDF41B28109
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:27:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D121B28250
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1062E8E08;
-	Thu, 25 Sep 2025 07:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59402E8E08;
+	Thu, 25 Sep 2025 07:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D+FT4rt6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTeDEMsW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151FA2E1C7B;
-	Thu, 25 Sep 2025 07:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DDF2E1C7B;
+	Thu, 25 Sep 2025 07:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758785187; cv=none; b=NnfEKG2LiaWvkJhmPG89nJdBB6+xKIHTJjgJG1JLwL2WY8mmRmPZGp1k0bBPpfUaKilZUkzvd6YkZURaUsfRLPCFiuC6oV2UOUP72+3KxrL1gT24cy/miCyE3J8Uu8gPtMI5t7CXKaJxQSQfQ0J4QrJsaeuwFIN7xIgGZPf6qZE=
+	t=1758785178; cv=none; b=VcmqfPUp7hqyg4I6/LO999kIVBBZhKgoBUNSdrLHglipDS5/hiXffPD2YjXPDP8Ac5Yrwarxnv8EbQGLWqXWCr7aKydJvbRE7l4f4eCPH3l0KjrYYgyaYgZGZtxfNAsSUbpJ1jCaBbvuwCqIfXzmzOS5LRpeRJ+WNJCwwdsRJAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758785187; c=relaxed/simple;
-	bh=SVO+RJygcgJvp2Jegwed4omZG0pEp6kOknD7au5J3Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ch1i4MdAhzioB5W9pN+pbIJpKvw+PEYdtBTwa9PoeuAWXkkzeYQP4KJXxcSel/6wfMo/IuWx6GhBulqnpQFKq2yZWIUFnbJeFGLClUgD6dYzpELHYh+0B+53CmzjshH/x/QJwbFotXTZC2b52OAYYufBRaqhF56tfjFEVDhi76Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D+FT4rt6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ka9ph0LAuyJVkaL1ah3rnWDOfvHTmklrLGkQl8UFMNc=; b=D+FT4rt6zbKsX21lgKDfaTqeIW
-	Ka60A+egf06e/2rlo8wLBv/XGo+LGOhaApSQzAbjNL1GJIobCOwYgydzfLyvycZFBX1jj9HsOYwet
-	nnj6jNRT89mRER1onC2V21OZ6uF/uiCCgicQ5mRRKwQ/u0LmACGq1yGEnK/uwbT9AiLIbkaJBgaXZ
-	PXG4dfpeEgcZ9/JNmkxxpdGJ++2r5lBoswVZScW1kIlAaowyz94nVe1ohkikwZusdHQGLACOnus3e
-	PMinZazQ0EWj4OA4a7LqteQBQw9aogYydVADhs00VWc2CVttgicJ1kyAMMSBu+Pq8ziA9ccWCI7Jx
-	0Cje2XAA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1gMk-0000000Beum-3oqM;
-	Thu, 25 Sep 2025 07:26:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6D6F330043D; Thu, 25 Sep 2025 09:26:09 +0200 (CEST)
-Date: Thu, 25 Sep 2025 09:26:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Takaya Saeki <takayas@google.com>, Tom Zanussi <zanussi@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ian Rogers <irogers@google.com>,
-	Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [PATCH v2 3/8] tracing: Have syscall trace events read user
- space string
-Message-ID: <20250925072609.GU4067720@noisy.programming.kicks-ass.net>
-References: <20250923130457.901085554@kernel.org>
- <20250923130713.936188500@kernel.org>
+	s=arc-20240116; t=1758785178; c=relaxed/simple;
+	bh=+yd6rsd28BeAAqsc5pELVRISkApsjlmKRpoE7ReettI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LHbTzjsnoMyTmojgG40hAIRffCP9wkHdmWTi7UkUhl6y0jYysp3YIZSF3Ehg1Pw0NjBkRZ3VKpiolt1gMEXFIkhKcYXI8BMbbQNqdLb1GHxsAcCEOFQQMa4SJOgHHEW5EpNU6qUy55rqnEu6vm0FsWKhwa3c2qwrWuN9tf2aXgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTeDEMsW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6801CC4CEF0;
+	Thu, 25 Sep 2025 07:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758785177;
+	bh=+yd6rsd28BeAAqsc5pELVRISkApsjlmKRpoE7ReettI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gTeDEMsWNsp7af5nppLhY7sKS0HsE7m6hF5KSW+1N1gsggY61CQNy/FteB2Mgxqws
+	 Yr77w3xaJvNXYr32Dhv4Qysb/OfqJJ6dW75Vw6F+XpnyIJtwGpqnTrgrtqJriJGy0j
+	 PlqUN9ZdtlY1zE6OcOCo1OdRp9SwEXvs5TB633b/EH/9oleYWJOlSvCkjbPBIF88b4
+	 mymMWDf+GzgmO2Ltscf4peIUFrf45gVs8VaLhAO/Wqh9CUbPrtl98hwqm+FeaFBN12
+	 fonVz8HdId74VAD1YQUa8mGsrC3Gf1aEpDAnZ7J8Fo12iX7UxqgY5x/pIhPfdUYqkb
+	 vNBtOlwnB2s9w==
+Date: Thu, 25 Sep 2025 03:26:11 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Menglong Dong
+ <menglong8.dong@gmail.com>, jolsa@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, kees@kernel.org, samitolvanen@google.com,
+ rppt@kernel.org, luto@kernel.org, ast@kernel.org, andrii@kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tracing: fgraph: Protect return handler from
+ recursion loop
+Message-ID: <20250925032611.52475590@batman.local.home>
+In-Reply-To: <20250925003410.de2ef839f6ef3921ee08a955@kernel.org>
+References: <175852291163.307379.14414635977719513326.stgit@devnote2>
+	<175852292275.307379.9040117316112640553.stgit@devnote2>
+	<20250925003410.de2ef839f6ef3921ee08a955@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923130713.936188500@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 09:05:00AM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> As of commit 654ced4a1377 ("tracing: Introduce tracepoint_is_faultable()")
-> system call trace events allow faulting in user space memory. Have some of
-> the system call trace events take advantage of this.
-> 
-> Introduce a way to read strings that are nul terminated into the trace
-> event. The way this is accomplished is by creating a per CPU temporary
-> buffer that is used to read unsafe user memory.
-> 
-> When a syscall trace event needs to read user memory, it reads the per CPU
-> schedule switch counter. It then disables migration and enables
-> preemption, copies the user space memory into this buffer, then disables
-> preemption again. It reads the per CPU schedule switch counter again and
-> if it matches it considers the buffer is valid.  Otherwise it needs to try
-> again. This is similar to how seqcount works, but uses the per CPU context
-> switch counter as the sequence counter.
+On Thu, 25 Sep 2025 00:34:10 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-And you can't just allocate memory and not bother with the
-migrate_disable() and retry stuff because?
+> Hi Steve,
+> 
+> Can you pick this ? Or I will do?
+
+I'll take it. I'm currently pulling in patches now anyway. Although,
+while I'm traveling, I'm a bit slow at it.
+
+Thanks,
+
+-- Steve
 
