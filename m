@@ -1,277 +1,140 @@
-Return-Path: <linux-kernel+bounces-831923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F71EB9DE8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:48:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F7FB9DEC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D1B4281F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0772383959
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AE2248F59;
-	Thu, 25 Sep 2025 07:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Uqt15nMA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5D925C821;
+	Thu, 25 Sep 2025 07:53:40 +0000 (UTC)
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7820C1A4F12;
-	Thu, 25 Sep 2025 07:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EE81A4F12
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758786499; cv=none; b=IjEiY8LmiWrMJQ9zC26F5fiI1XlHwpKIUTIgPCxVWs8aNQ3mfym0dgcgz/W8k9WvC39GCk0HyUuYe0UEFVQ9Dfdhp6/mjok7ruyriIRhFQgovx0610OiaLyKD30Sn5Wko3lMLa0kq3oxQDgXwvVvyOobWWMlBMBKGoIV26SiU6s=
+	t=1758786820; cv=none; b=sgVDz5xI5rknmiL8OFX4gmr1xp2iqfiEX7ZQyfGxV0LJYpY2MLGyKrjwRs3BZuZCwm11AvunA3X7Wj9/cOZvSG4Renzd4mKHbb9qF6SyUB0BkJE5kMHcSzWmRE/dxa2p36lgvCdUUwscVWC/UT0RR/1wonZTB+K8fPWZNlB2azQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758786499; c=relaxed/simple;
-	bh=96zpyVLXb0/xXQ3jhEnIZnbG0HfQSRlcYlVpln0QGPE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BH5rxXVnn6U9yFev8t/p7ekw9ldE6IVNt0afBdKwVZfyw6d3zJnj2MnrOioy+T0mIX40+pAOOSWOfMO4qmpMj5ohEQ7zbZKag4avznqUlDf5nin2kyylBFgXHg3jvJyIFRhSNwS0TTfss7Kv//6N6Sat28kDYevDsID/4yku8T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Uqt15nMA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OL71nG003982;
-	Thu, 25 Sep 2025 07:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=evErLQ
-	dsuI+irJgrBXX0L6SyF4tqxBvXiIrNeagjD/Q=; b=Uqt15nMADd4LtT2h9nKLQK
-	qsogtZGjD3JyX209jBAZu9isHbwG1/v5uHyV69OhWcidvp7txAi0Ev9TdmevOoFJ
-	AwkliDrZPs2lXQPK19JGwBSu61Sa72VeFQszrBnyaMcm8dhwZrBsUfB3W0//meOc
-	Tu2forYY/GAOwlshvmRBgv2DgeIsDO4Hw6cXoJn+mCgMMfX9A8TU6nkAYTNaw1fg
-	/HiDHobT89XXqDk5lMCd5xpAcrlUFH6uhpDP6LPzwRzUpoNZ1n9SAhXlUw4rwZGP
-	uWbm6fJyqVR9UhQ1shc5b69lW06qDaXGH0ClNRY4YTMj47hGKCMI/qHP6+G7kivA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499kwyueea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 07:48:12 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58P6SQVH020211;
-	Thu, 25 Sep 2025 07:48:12 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a83kcm4e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 07:48:12 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58P7mAFT31064530
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 07:48:10 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9C87F58056;
-	Thu, 25 Sep 2025 07:48:10 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E20CE5804E;
-	Thu, 25 Sep 2025 07:48:07 +0000 (GMT)
-Received: from [9.111.71.247] (unknown [9.111.71.247])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Sep 2025 07:48:07 +0000 (GMT)
-Message-ID: <9fb43fc399ac5917605b7bc721c4b0affb8ca255.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/2] PCI/IOV: Add missing PCI rescan-remove locking when
- enabling/disabling SR-IOV
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Farhan Ali <alifm@linux.ibm.com>, Bjorn Helgaas <helgaas@kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Cc: Keith Busch <kbusch@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Benjamin Block
- <bblock@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Julian Ruess
- <julianr@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Thu, 25 Sep 2025 09:48:07 +0200
-In-Reply-To: <d346c265-6b0e-42ce-8275-7969c8e549da@linux.ibm.com>
-References: <20250826-pci_fix_sriov_disable-v1-0-2d0bc938f2a3@linux.ibm.com>
-	 <20250826-pci_fix_sriov_disable-v1-1-2d0bc938f2a3@linux.ibm.com>
-	 <d346c265-6b0e-42ce-8275-7969c8e549da@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758786820; c=relaxed/simple;
+	bh=8MOOlgpt3OudDO28qQr2MAUrM06asLJeVuzzvJ7Tovs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hSHMkIvzbUAXJxiAIKGeNnjf28sol7geucJv+el3N4Zp5BuqOLm7iKoA65+2bSiEOQW7rO3GoHR8UyLGZXhW77EpomyweSBvytLlpYK3vSD+WOSzqz0VMA1VUWXdYPkqGwu6tB+MYXuBQtL57nodb2XhUhNbt9cgALLuJi+AjPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-4248b34fc8eso6299365ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:53:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758786816; x=1759391616;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9fvGyyGJ8hFx3nYrMkZDfGE5Winq5taN5wWeFI0QZNc=;
+        b=QELfkYns3FOY60U+5sXfmPv4NN7SpWNAf/LidIG5zjxtbPHcNpxtypB+kOpIDOihPv
+         aq2ufFeDroTFGgzNu6d6aXZyq43hp6PSLKA/9V0iZAa67TMpV+Max2QK9VYXy+ncY7yt
+         aCKkipLiMyubp5o/pLSCg3gbbAnzzrKiVTG2a157CkvmitRn5LA1Y2oHyUsfSsHI2XM4
+         cNfxbkN1zPZDaBz7BN+RDmBgbLnTRUMKUyVNrUQ+Fm0QRK/SGMY2JEw7w7C8/cXFa5T+
+         W190kQBYk/8wO16wNS0u3MhLeeQiduIWrWwV6omvvFI5IjQq3cqxLnhpcvfvvxry1op3
+         tt3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUT/It2sbjMWCJasqTkUfunu3e4vJAyg2KS8RBo7/19iljl4i19PUa9YNhZs9u4T17Id/SrVXJskOXeYOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxAupQBH/zCxXPAgFHKaRJwCddk1UQm9pfMs1hlKguOierG+bk
+	hPGOfL7bMLKTXStMnhJNGfXom+L34O0Iu1hkLQh0+kuaoHuKY/oh2NafNiQkjdyz
+X-Gm-Gg: ASbGncuFOie9GBILVH0CW6S8TTgnKcPz/Y6DDJr4qiEcPhzovuFVNHk2zpVdjtDdMiR
+	PL2G/M8vbVexMjBq8omEtP0LVN8lLp5BhUmbOMwEWT2pyGADZeovZ7/wTHAR8TqbEIAtzhhtfCh
+	nrHqIKWedrxvCqqWMcMT5vj34Zg7Zggico6TmDE//C8UQd5s52tFlhmQO7z0kT8Gz4v4xDEyaeJ
+	cf57QTcsLn2uyLidQTNRt3+eT+3g/DV2AxDCre04W4e8ESw+EidKUIbQ+3f9ZlTr55EfzlCchOr
+	Gx+nN4okdimoBiSZsxDfUDKOnXbd5x7cEWlALF9Q/dPDHjFzDt6I9U1ae7Ppo0ArhoKislROP7n
+	jwkL/soCPWTd7hm0pHnSv8EZg0y1Bk2JedaSoEHtp7sii9xWdMddwmq/qHRGK
+X-Google-Smtp-Source: AGHT+IFXaNemRhjUlBI3AY5N3uGdFzmFNXkwcWH6z7UUMcNztg5i/+lo+g57u2TzONqyJBlnZLC9Tg==
+X-Received: by 2002:a05:6e02:471c:b0:425:7539:bc39 with SMTP id e9e14a558f8ab-425955ed6f4mr31914915ab.10.1758786816329;
+        Thu, 25 Sep 2025 00:53:36 -0700 (PDT)
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com. [209.85.166.48])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-56a65b2a946sm577685173.34.2025.09.25.00.53.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 00:53:36 -0700 (PDT)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8a936b682b3so61175639f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:53:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgZnHaUABxQxniWs1OCBgnHXGJFS49xk81iLQzgvkeOzqD3R9FRryUQrcae9iOgHasUX+whCq6GP7Sqls=@vger.kernel.org
+X-Received: by 2002:a05:6102:510d:b0:529:fc9e:84a0 with SMTP id
+ ada2fe7eead31-5acd36bc5d5mr955558137.32.1758786509499; Thu, 25 Sep 2025
+ 00:48:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=J5Cq7BnS c=1 sm=1 tr=0 ts=68d4f3bc cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=tmWI2QDjmt9rcYb-4t0A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: o89TCv57fsfiIcqbj50abCdBm-KM_9T3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNSBTYWx0ZWRfXzjxFyCHKbiNV
- fMCYfc4BsunVq3fHcFocs82BrutgGkkPd3r61vFpF0TCOU8Kr7LBdbatZFF7OVXJXyhDHJSZzgQ
- K2riwqDkpvt+CvVniwXs4xk1arSGy8aZk6VqsLg+4wQmf/2AAxeSNxZntWU7rV0mOk5WAi4+fiu
- Uwqs+WyiJjd+HZ13YRizl1IY3Geog3Iue8IEDRzMGbh7THU80Tfd7sBb6NrTptgBbzZ4FyBn2oI
- UEJmU3L/G8ylgTCoLZ1WFiXUaG9vkQLm8YMrkjTkn76kx2niXE6n9F8q9COyEgDfKbDUHgM6i23
- MxqVMuqwMtNLe55ETr9PYfYHbBNUd8MulskWorfhqOF69kRkIAM56k5bAu3rG9K+yluroHeW64i
- PLpeC8W6
-X-Proofpoint-ORIG-GUID: o89TCv57fsfiIcqbj50abCdBm-KM_9T3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 clxscore=1015 adultscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200015
+References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
+ <20250910-make-compound-literals-normal-again-v1-2-076ee7738a0b@linaro.org>
+In-Reply-To: <20250910-make-compound-literals-normal-again-v1-2-076ee7738a0b@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 25 Sep 2025 09:48:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com>
+X-Gm-Features: AS18NWAlEwAE5FC0AW6Wq0ip31mrrj6gmcRezsp6GMYcQa-YSc4N16xdaxhcVw8
+Message-ID: <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: use more common syntax for compound literals
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Avi Fishman <avifishman70@gmail.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+	Benjamin Fair <benjaminfair@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matt.redfearn@blaize.com>, 
+	Neil Jones <neil.jones@blaize.com>, 
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, Hoan Tran <hoan@os.amperecomputing.com>, 
+	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev, 
+	linux-unisoc@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2025-09-24 at 10:57 -0700, Farhan Ali wrote:
-> On 8/26/2025 1:52 AM, Niklas Schnelle wrote:
-> > Before disabling SR-IOV via config space accesses to the parent PF,
-> > sriov_disable() first removes the PCI devices representing the VFs.
-> >=20
-> > Since commit 9d16947b7583 ("PCI: Add global pci_lock_rescan_remove()")
-> > such removal operations are serialized against concurrent remove and
-> > rescan using the pci_rescan_remove_lock. No such locking was ever added
-> > in sriov_disable() however. In particular when commit 18f9e9d150fc
-> > ("PCI/IOV: Factor out sriov_add_vfs()") factored out the PCI device
-> > removal into sriov_del_vfs() there was still no locking around the
-> > pci_iov_remove_virtfn() calls.
-> >=20
-> > On s390 the lack of serialization in sriov_disable() may cause double
-> > remove and list corruption with the below (amended) trace being observe=
-d:
-> >=20
-> >   PSW:  0704c00180000000 0000000c914e4b38 (klist_put+56)
-> >   GPRS: 000003800313fb48 0000000000000000 0000000100000001 000000000000=
-0001
-> >         00000000f9b520a8 0000000000000000 0000000000002fbd 00000000f4cc=
-9480
-> >         0000000000000001 0000000000000000 0000000000000000 000000018069=
-2828
-> >         00000000818e8000 000003800313fe2c 000003800313fb20 000003800313=
-fad8
-> >   #0 [3800313fb20] device_del at c9158ad5c
-> >   #1 [3800313fb88] pci_remove_bus_device at c915105ba
-> >   #2 [3800313fbd0] pci_iov_remove_virtfn at c9152f198
-> >   #3 [3800313fc28] zpci_iov_remove_virtfn at c90fb67c0
-> >   #4 [3800313fc60] zpci_bus_remove_device at c90fb6104
-> >   #5 [3800313fca0] __zpci_event_availability at c90fb3dca
-> >   #6 [3800313fd08] chsc_process_sei_nt0 at c918fe4a2
-> >   #7 [3800313fd60] crw_collect_info at c91905822
-> >   #8 [3800313fe10] kthread at c90feb390
-> >   #9 [3800313fe68] __ret_from_fork at c90f6aa64
-> >   #10 [3800313fe98] ret_from_fork at c9194f3f2.
-> >=20
-> > This is because in addition to sriov_disable() removing the VFs, the
-> > platform also generates hot-unplug events for the VFs. This being
-> > the reverse operation to the hotplug events generated by sriov_enable()
-> > and handled via pdev->no_vf_scan. And while the event processing takes
-> > pci_rescan_remove_lock and checks whether the struct pci_dev still
-> > exists, the lack of synchronization makes this checking racy.
-> >=20
-> > Other races may also be possible of course though given that this lack
-> > of locking persisted so long obversable races seem very rare. Even on
-> > s390 the list corruption was only observed with certain devices since
-> > the platform events are only triggered by the config accesses that come
-> > after the removal, so as long as the removal finnished synchronously
-> > they would not race. Either way the locking is missing so fix this by
-> > adding it to the sriov_del_vfs() helper.
-> >=20
-> > Just lik PCI rescan-remove locking is also missing in sriov_add_vfs()
-> > including for the error case where pci_stop_ad_remove_bus_device() is
-> > called without the PCI rescan-remove lock being held. Even in the non
-> > error case adding new PCI devices and busses should be serialized via
-> > the PCI rescan-remove lock. Add the necessary locking.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: 18f9e9d150fc ("PCI/IOV: Factor out sriov_add_vfs()")
-> > Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > ---
-> >   drivers/pci/iov.c | 5 +++++
-> >   1 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-> > index ac4375954c9479b5f4a0e666b5215094fdaeefc2..77dee43b785838d215b58db=
-2d22088e9346e0583 100644
-> > --- a/drivers/pci/iov.c
-> > +++ b/drivers/pci/iov.c
-> > @@ -629,15 +629,18 @@ static int sriov_add_vfs(struct pci_dev *dev, u16=
- num_vfs)
-> >   	if (dev->no_vf_scan)
-> >   		return 0;
-> >  =20
-> > +	pci_lock_rescan_remove();
-> >   	for (i =3D 0; i < num_vfs; i++) {
-> >   		rc =3D pci_iov_add_virtfn(dev, i);
->=20
-> Should we move the lock/unlock to pci_iov_add_virtfn? As that's where=20
-> the device is added to the bus? Similarly move the locking/unlocking to=
-=20
-> pci_iov_remove_virtfn?
->=20
-> Thanks
-> Farhan
->=20
->=20
+Hi Bartosz,
 
-I contemplated this as well. Most of the existing uses of
-pci_lock/unlock_rescan_remove() are relatively coarse grained covering
-e.g. the scanning of a whole bus. So I tried to keep this in line with
-that such that all the VFs are added in a single critical section.
+On Thu, 11 Sept 2025 at 12:02, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> The (typeof(foo)) construct is unusual in the kernel, use a more typical
+> syntax by explicitly spelling out the type.
 
-Thanks,
-Niklas
+Thanks for your patch, which is now commit da3a88e9656c17a3 ("pinctrl:
+use more common syntax for compound literals") in pinctrl/for-next
+
+> Link: https://lore.kernel.org/all/20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org/
+
+Looks like you (slightly) missed your target. The correct link is:
+
+    Link: https://lore.kernel.org/aMAP9hAWars0T83r@smile.fi.intel.com
+
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
