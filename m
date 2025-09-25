@@ -1,81 +1,64 @@
-Return-Path: <linux-kernel+bounces-832518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2F1B9F8E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C75B9F8F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7057B325397
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76441892CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6910F23B638;
-	Thu, 25 Sep 2025 13:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0479327FB10;
+	Thu, 25 Sep 2025 13:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qiGxjWcH"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hoAelVsh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC9C1DED52
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7681D27FB2B;
+	Thu, 25 Sep 2025 13:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758806548; cv=none; b=HZKTjvb2gX/31IMuYtumbH/N2AXRlOeOt+J0TgBByuyyT0Jly8s6JrOPr7wX3aJ+OlSqoo2FnyzBy5VikxjuYOf3r7aN4WoYft/xeOpdfW1k2RpCMLpn8ASWxcUwVYrjCiS8d/hDM8CxZcMfRsFRmtDJqk5JLh3sGGvaExw4v44=
+	t=1758806597; cv=none; b=WGBN6EU7+r8NmooKyMcWrZ0YSbrQ5GDk3qnC3xBoNyjzv57SXQUIlJ1NhPKNIdzyw3QkZYAt8dRtqmuuPBq+2D3oVtkVh7n58i6wy8tx7ZgREdgB88tj4+ccgtxR612Ji+oAIb7izQd38Wd9mwUP2ZLaQuNSEN9LGMbAh0ZUPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758806548; c=relaxed/simple;
-	bh=izz9t+UPzYWPFSDIC4MaTcptHRoS5jlUZAWb0gqP4CA=;
+	s=arc-20240116; t=1758806597; c=relaxed/simple;
+	bh=4iWz/voiEz7siZfjIqLm43TubG/Oii1lMo/evkOfHWI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CX+43teOrqtbcy1nOgR5R9OWaSk2K0AaDjVr64D73h3kT1ZO5q3wd4UtB30lNYcU1bp+bikJ3l6MeTFcvrwIBFQqQrca9tIbficxTxopswqSlHz9J+c6Hu6OiDikvVgk3n2ODMcfEXmqvmeCdAeogltllzdBrql9oVaI5d9bzNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qiGxjWcH; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P4O0A1021262;
-	Thu, 25 Sep 2025 13:22:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ia1/4R
-	PTVr5lEOH9EgydCuHgeKLgDIxOVSwAP9XSPBw=; b=qiGxjWcHB9EMO3wjfXOoNk
-	Mr9r8KQDe76QddxPs9VXdPfJQ9rO77jnLeVExDPYwKqOgYiMeUdPk5ZSsdGjxgyx
-	czyJDBxVBi4o7pYSS59eJvJJ7O/lCuZ1N/IaYa6CVkJRvHRKrHl2NsXm/Po+b9wv
-	WGT0SZTRVb1c1XMWbO4pzwKuTePt6SBVCVwlmGfqRrK+y2YK8oPwxd7UYWx49XME
-	Ahd8sNKw0oBgdfKUH5uR7veU3WNaO7SE1knduUZPS/RyaYLRYOsxVlLkeV8UPyGl
-	2pDnRhPuSt/7lkmyFfiQ9VwgKBS1r6iHywUlLpff4b4TgoGgCTDyMasppqKIECPg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqnbyv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 13:22:07 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58PDFLwJ022612;
-	Thu, 25 Sep 2025 13:22:06 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpqnbyr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 13:22:06 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PCZZNN008826;
-	Thu, 25 Sep 2025 13:22:05 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yy66wt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 13:22:05 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PDM4Nh7471794
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 13:22:04 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 31DAA58058;
-	Thu, 25 Sep 2025 13:22:04 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ADC445805D;
-	Thu, 25 Sep 2025 13:21:58 +0000 (GMT)
-Received: from [9.39.30.226] (unknown [9.39.30.226])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Sep 2025 13:21:58 +0000 (GMT)
-Message-ID: <5fa436bd-2cea-4958-8a0a-ac636595a974@linux.ibm.com>
-Date: Thu, 25 Sep 2025 18:51:57 +0530
+	 In-Reply-To:Content-Type; b=umi+JaCnXpFaWcllHH4KYvj+Agn4Z8oY2vFUhM5PEiEFHAb9kGaCv3utnPfZGg1wj4DEIMt632nA6koTCix6kESjRjGk3oVWBQMRFTWIZETfZdyUicSnkBjJJwS8j49ryZ9RyrrahN5NvuzkOZQo3Bu5WocoKAlKoGWvVQukYis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hoAelVsh; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758806596; x=1790342596;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4iWz/voiEz7siZfjIqLm43TubG/Oii1lMo/evkOfHWI=;
+  b=hoAelVshcs6bND/KzxNRL0X7/iwOVtC4eE9R7rUpAzGrJ4R+CBwIG3h/
+   oMBgNGrkSfFf+0TFNzoQ9hUMq/VF36shrPGXwa3GN3FVnkBWX8cgHmRC0
+   30kGLc2O5AcXeLFpboP4V55ClLHZa7D50DPkp2qUTPDWKOv6V/qjb1Ka4
+   8i/9NHBb7ka8r3mdI6+lml0LhVIcmaCNCROUoOVwxNKYLgYyOthzPPIL9
+   vuUo/17X/2I+Je5/a42CtOekVOS82Jsyi4N4dHD6CpfMzeP5FldAbWG/Y
+   ICBrPQK3DIckHD4sSgHwyWjdLWSvPAKlJxah2J3Lyn4JVVWWLXbVcjXF2
+   w==;
+X-CSE-ConnectionGUID: x1TfWolVSAawgUdZFDMxog==
+X-CSE-MsgGUID: tcZFM1eVQeaex68+sPwvGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="60822892"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="60822892"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 06:23:15 -0700
+X-CSE-ConnectionGUID: 61lDqMiaSL6gENqN3DozbA==
+X-CSE-MsgGUID: k8SaqhLvQp6Ar1H+hx1rFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="177169144"
+Received: from mylly.fi.intel.com (HELO [10.237.72.50]) ([10.237.72.50])
+  by orviesa007.jf.intel.com with ESMTP; 25 Sep 2025 06:23:12 -0700
+Message-ID: <9708c09f-5cd7-4197-b245-04d92f6b1400@linux.intel.com>
+Date: Thu, 25 Sep 2025 16:23:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,126 +66,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drivers/base/node: merge register_one_node() and
- register_node() to a single function.
-To: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Christophe Leroy
- <christophe.leroy@csgroup.eu>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Danilo Krummrich <dakr@kernel.org>, Dave Jiang <dave.jiang@intel.com>
-References: <cover.1758736423.git.donettom@linux.ibm.com>
- <40257b5228dec05e5b252f02438608eb8d681a2d.1758736423.git.donettom@linux.ibm.com>
- <0de65980-4333-434a-ae7d-2b7be46c2cca@redhat.com>
- <aNUMnK23qKTjgEdO@kernel.org>
+Subject: Re: [PATCH 2/4] i3c: mipi-i3c-hci: add microchip sama7d65 SoC
+To: Frank Li <Frank.li@nxp.com>,
+ Durai Manickam KR <durai.manickamkr@microchip.com>
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ balamanikandan.gunasundar@microchip.com, nicolas.ferre@microchip.com
+References: <20250918095429.232710-1-durai.manickamkr@microchip.com>
+ <20250918095429.232710-3-durai.manickamkr@microchip.com>
+ <aMwy9MQOf3pG4Fvw@lizhi-Precision-Tower-5810>
 Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <aNUMnK23qKTjgEdO@kernel.org>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <aMwy9MQOf3pG4Fvw@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d541ff cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=4V8e3p56BTpXgw00i4MA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: JxDWaNRkxF6Qy8ZF0itz_n9KFqDcMh5m
-X-Proofpoint-GUID: eFhaTNISHQyCqaBy1Lml0RWiZV5isRK0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfX8HWeJU6DODxO
- mVDGFoZYhbxVlQ42sMVXhcMo1em/K1n/asrIZtm22eEauoGI2b+tljf5OPYm7mCo89NR0AiNVeA
- b5jCUQnfGSxBxmx3Ze5g9gKB5ZVRCq925XpPOgVE990hkJ1OGkeiUgBwSEw3MCJvsD4sJP/CgE7
- KmipbmGqy8j0TU3bqN5yDenmgBOqwd2838nYCAV989pTuQHkTCOhtJ5iRFnVDJQck6vCeyoo04G
- zluW2Ml2x6ZMSM+Su5PLZUsDK/tAU7bKf7VgB8uL13+TtySUavFIT7dfCcDAUsa/k+eZGEGZJmw
- KmcTgbAn7PVX6TY6pcwjxM+JNqY/FsdvpIgoDh4vyqsniAcKnvzrrVbleLD+hixPXdjqFolNu8R
- iSpNXE6i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
 
+Hi
 
-On 9/25/25 3:04 PM, Mike Rapoport wrote:
-> On Thu, Sep 25, 2025 at 10:54:07AM +0200, David Hildenbrand wrote:
->> On 24.09.25 20:40, Donet Tom wrote:
->>> register_one_node() and register_node() are small functions.
->>> This patch merges them into a single function named register_node()
->>> to improve code readability.
->>>
->>> No functional changes are introduced.
->>>
->>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->>> ---
->> [...]
+On 9/18/25 7:27 PM, Frank Li wrote:
+> On Thu, Sep 18, 2025 at 03:24:27PM +0530, Durai Manickam KR wrote:
+>> Add support for microchip sama7d65 SoC I3C HCI master only IP.
+>> Features tested and supported :
+>>             Standard CCC commands.
+>>             I3C SDR mode private transfers in PIO mode.
+>>             I2C transfers in PIO mode.
+>>             Pure bus mode and mixed bus mode.
 >>
->>>    /**
->>>     * unregister_node - unregister a node device
->>>     * @node: node going away
->>> @@ -869,7 +842,13 @@ void register_memory_blocks_under_node_hotplug(int nid, unsigned long start_pfn,
->>>    }
->>>    #endif /* CONFIG_MEMORY_HOTPLUG */
->>> -int register_one_node(int nid)
->>> +/*
->> We can directly convert this to proper kernel doc by using /**
+>> Signed-off-by: Durai Manickam KR <durai.manickamkr@microchip.com>
+>> ---
+>>   drivers/i3c/master/mipi-i3c-hci/Makefile      |  3 +-
+>>   drivers/i3c/master/mipi-i3c-hci/core.c        | 28 ++++++++++++
+>>   drivers/i3c/master/mipi-i3c-hci/hci.h         | 12 ++++++
+>>   .../i3c/master/mipi-i3c-hci/hci_quirks_mchp.c | 43 +++++++++++++++++++
+>>   4 files changed, 85 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/i3c/master/mipi-i3c-hci/hci_quirks_mchp.c
 >>
->>> + * register_node - Setup a sysfs device for a node.
->>> + * @nid - Node number to use when creating the device.
->>> + *
->>> + * Initialize and register the node device.
->> and briefly describing what the return value means
+>> diff --git a/drivers/i3c/master/mipi-i3c-hci/Makefile b/drivers/i3c/master/mipi-i3c-hci/Makefile
+>> index e3d3ef757035..f463afc4566a 100644
+>> --- a/drivers/i3c/master/mipi-i3c-hci/Makefile
+>> +++ b/drivers/i3c/master/mipi-i3c-hci/Makefile
+>> @@ -4,5 +4,6 @@ obj-$(CONFIG_MIPI_I3C_HCI)		+= mipi-i3c-hci.o
+>>   mipi-i3c-hci-y				:= core.o ext_caps.o pio.o dma.o \
+>>   					   cmd_v1.o cmd_v2.o \
+>>   					   dat_v1.o dct_v1.o \
+>> -					   hci_quirks.o
+>> +					   hci_quirks.o \
+>> +					   hci_quirks_mchp.o
+>>   obj-$(CONFIG_MIPI_I3C_HCI_PCI)		+= mipi-i3c-hci-pci.o
+>> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+>> index 60f1175f1f37..cb0673d62c03 100644
+>> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+>> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+>> @@ -8,6 +8,7 @@
+>>    */
 >>
->> "Returns 0 on success, ..."
-> For kernel-doc it should be
->
-> Return: 0 on success, ...
->
+>>   #include <linux/bitfield.h>
+>> +#include <linux/clk.h>
+>>   #include <linux/device.h>
+>>   #include <linux/errno.h>
+>>   #include <linux/i3c/master.h>
+>> @@ -651,6 +652,9 @@ static int i3c_hci_init(struct i3c_hci *hci)
+>>   	hci->DAT_regs = offset ? hci->base_regs + offset : NULL;
+>>   	hci->DAT_entries = FIELD_GET(DAT_TABLE_SIZE, regval);
+>>   	hci->DAT_entry_size = FIELD_GET(DAT_ENTRY_SIZE, regval) ? 0 : 8;
+>> +	/* Microchip SAMA7D65 SoC doesnot support DAT entry size bits in the DAT section offset register */
+>> +	if (hci->quirks & MCHP_HCI_QUIRK_SAMA7D65)
+>> +		hci->DAT_entry_size = 8;
+> 
+> #define MCHP_HCI_QUIRK_FIX_DATA_ENTRY_SIZE_8
+> 
+> 	if (hci->quirks & MCHP_HCI_QUIRK_FIX_DATA_ENTRY_SIZE_8)
+> 		hci->DAT_entry_size = 8;
+> 	else
+> 		hci->DAT_entry_size = FIELD_GET(DAT_ENTRY_SIZE, regval) ? 0 : 8;
+> 
+> in case other vendor have similar problem.
+> 
+Are DAT_entry_size and DCT_entry_size quirks even needed? Does your HW 
+read nonzero values and you need the quirk?
 
-Sure I will change it.
+>> +	/* Microchip SAMA7d65 SoC supports only PIO mode */
+>> +	if (hci->quirks & MCHP_HCI_QUIRK_PIO_MODE)
+>> +		hci->RHS_regs = NULL;
+>> +
 
-
->
->>> + */
->>> +int register_node(int nid)
->>>    {
->>>    	int error;
->>>    	int cpu;
->>> @@ -880,14 +859,23 @@ int register_one_node(int nid)
->>>    		return -ENOMEM;
->>>    	INIT_LIST_HEAD(&node->access_list);
->>> -	node_devices[nid] = node;
->>> -	error = register_node(node_devices[nid], nid);
->>> +	node->dev.id = nid;
->>> +	node->dev.bus = &node_subsys;
->>> +	node->dev.release = node_device_release;
->>> +	node->dev.groups = node_dev_groups;
->>> +
->>> +	error = device_register(&node->dev);
->>>    	if (error) {
->>> -		node_devices[nid] = NULL;
->> Wondering why we did have this temporary setting of the node_devices[] in
->> there. But I cannot immediately spot why it was required.
-> register_cpu_under_node() references node_devices, so that assignment can
-> be moved just before the loop that adds CPUs to node.
-
-
-Sure.
-
-Thank you
-
-
->   
->> -- 
->> Cheers
->>
->> David / dhildenb
->>
+Please use existing HCI_QUIRK_PIO_MODE quirk and then you don't need 
+this added code.
 
