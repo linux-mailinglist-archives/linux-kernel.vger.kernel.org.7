@@ -1,127 +1,122 @@
-Return-Path: <linux-kernel+bounces-831699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28BFB9D591
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD5AB9D597
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2389B1BC3463
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7201BC3574
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C212E6CDB;
-	Thu, 25 Sep 2025 03:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FN0YdjDj"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC112E6CD0;
+	Thu, 25 Sep 2025 03:59:39 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5432AE8D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C462AE8D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758772772; cv=none; b=G/k2cl9vfGaS53h3G4GQMlNgWdL2gnwhP/sZRgMvlDlTBJo/cFHN+13sVBqj6rohOYsuELjssLu52DX/ctlqd7Hmu1Ms3Wj+AYe0PzKjiw3OrZd2GeJe+HEeDny9dSrxhOJOLhZlQAz4Au1CsuXN2PRlHjYGhaKSvFEU4zk4FgU=
+	t=1758772779; cv=none; b=CIPCPoGQMsYFkIg0B8m4D+5KenIEeIrL8Z3Uf9tCCsua5xEngNCIikgoxOS5WS8sqcsruCLztxiphQLxP1+lwHW/BPnedWb4gSU1M6ZTKFaMvdTOdToZWI6HQC9lkgcfuP+JGDlDtEJKcz+de4O3QX6JoEd5M3miIhHAURIN0PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758772772; c=relaxed/simple;
-	bh=HPv4vSzoBu8JThytGjdGbKxgJmi4vPkfPjeTQDWF6j0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XoG+/eZo5QpeEfQjFDI55rlfdYw7G2JQ4J7/DsMJ/QCo09erLoZpivVdPK1paMvxLlZvEoUu0jG2RLCKgUNUqNTV3C3eI7en9wIatqMQMXA2CkD67KH1uNQVhuiOKrNaurBul6rg0nLIqOq19761TbrKTWQARchSHqAHpnWWuFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FN0YdjDj; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33274fcf5c1so498761a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758772770; x=1759377570; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qo3Gw2aldDy8S+SFdy/VgsjaY7xrxXzEhcJKjVaEe5g=;
-        b=FN0YdjDjNqJsVxyQ1SZFtaLffq+wDuxJGG0Uc02H0PPWmN6uxQIqIoDg8vpm4FX3yk
-         VYT0IoMnZH3tX9a+IbhI22tnHzYlCluN8tv0Cvm0CiHjczLvb4/iqYnckz7Ar7uu3PxK
-         XTUClRgXew8C2nhKKD047gPZbqvTdO8NOPyOMco3tAD4ymSAiSmrSqrc8xg/9zFKkBSy
-         XSqPrFeW611uYlckDQS6LXEC3CAroodh0RKQrOfOt1bm2AxoDmNs948s9iKdBV2ITXId
-         d8gURBh/GpH+IQqKi1lhs64ybe44I1jsQj87uUo3nqfU5YG5VxmkcLAzhQoIBPWgsAuG
-         n1xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758772770; x=1759377570;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qo3Gw2aldDy8S+SFdy/VgsjaY7xrxXzEhcJKjVaEe5g=;
-        b=Jo3HGZvy1SSO1st5zpREno4azMjjai6ONgYdCTiTTSN9s/CLGtp/CrvzXPsMHuZjI/
-         hTo1aJ8BCNQvMkVu58EQmxuydxxVW92Z6ZDjoVkQF3fiwbMT+QdVnRQgXOZjLST3OPu4
-         9qGg/ok23NHRQbEu43rryNo1KGz/ODsgzCGzx3wocnAS4PY1/HU+mcawPr0kbfw9vqWJ
-         +yCiFx3L5eJHiftWlASNw75bKrh4dri8RLEnCADy3CTGNRddawWjX18i9M+lAgIXutbZ
-         qqWOZhvVDjSc1ungUVjUwK2jdZq+llrW2+NkuI2jEa23Ol/BTXUElVxxXHZZGLnP5imH
-         ZXUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZZ58e/YIAwCOz6F2Odz2SBkCSRwCy/MsE8aSxqe1HLgwxqYXhLyj4vL6/DPpIWFF2+eGc5kdU773ytCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4qiynH3XPrY+hutPSqh621n/nuf7U4/tFc45dIOMgTwMr9new
-	ZcY+JGTeyh20k9kguoihw1ZJiuFsqtrvPrDCS20jMBRtyfTvP3TWTxGA
-X-Gm-Gg: ASbGncsdOCqVNwz//ecQzWyRXxObdkKJmDLnXVJwSzhm4+k+5caCloqH2qP41mvJ42K
-	6dMnoO43OF7rBlOCsAyUv1prZ1oiABDIcVnx5GSjaaSXwDi5fywYKpz2xtYHsfxKMD3S+obBMg+
-	NBWzEoNkHh5845gTAFPtPw8aOxivFzYrYgLPb8IWlcmHaI3rnfbbCYAOH5iPk6wXYbs46nMhU1B
-	vNVxFGizszGTP76jiA7qkuiUcjVNFp4ef80GKP2vf/3GbmFdANiRFpfhyYXu1uOmiT2OBvjmFZ7
-	bazq4KkW3v9gE0KfupG+8X+Ji+OZk41xkbfFPbrz4ZbjbdPZuXHezRnxGMlYYewKGzlx/VTEPnB
-	+ohertMtuhmSefVXYUNznBRpcen1jew3twN3P0QeMNoRRi16Vyw==
-X-Google-Smtp-Source: AGHT+IGA8RsHIjBG0k1aXxxaNhSe1BGhPJx2qvJCYAhDLSPQSQC6J583+cbdCvov1XBpJdYbBe81Tw==
-X-Received: by 2002:a17:90b:3849:b0:32d:d5f1:fe7f with SMTP id 98e67ed59e1d1-3342a257810mr2866527a91.15.1758772770187;
-        Wed, 24 Sep 2025 20:59:30 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3347224b2fdsm695859a91.10.2025.09.24.20.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 20:59:29 -0700 (PDT)
-Date: Thu, 25 Sep 2025 11:59:26 +0800
-From: Yu-Chun Lin <eleanor15x@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
-	"jserv@ccns.ncku.edu.tw" <jserv@ccns.ncku.edu.tw>,
-	"visitorckw@gmail.com" <visitorckw@gmail.com>
-Subject: Re: [PATCH rtw-next] wifi: rtw89: Replace hardcoded strings with
- helper functions
-Message-ID: <aNS+Hk5QTzGq+AUO@visitorckw-System-Product-Name>
-References: <20250921154410.1202074-1-eleanor15x@gmail.com>
- <715313b943d84cfeb3a337dc20be5f6a@realtek.com>
- <aNLDga29Wp1nwhem@visitorckw-System-Product-Name>
- <51518b935e7649e3b5413e3a119d549b@realtek.com>
+	s=arc-20240116; t=1758772779; c=relaxed/simple;
+	bh=ZvycIe7iQyudQPLew3ZrbuK7yGLjCoMYseSe6y2CgT8=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=k6JCrSVBSm9uYnXjIBfXWs9v5r8QdrwB/qMXhp47Wbgns2F9btt8tDXO+v2IDossWFiM/F1Ox1tEB0oqsBdME9WOYVwMPXNPnWTwOvNFKFDmoYKKrRi5EMW6wJrvQeKw29LPCZBLMTXT4jZGZAAEgbrENKUzcTubP8dfU/mSQqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cXKdh531Sz1R9MK;
+	Thu, 25 Sep 2025 11:56:24 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA4EC140135;
+	Thu, 25 Sep 2025 11:59:33 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 25 Sep 2025 11:59:33 +0800
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 25 Sep 2025 11:59:32 +0800
+CC: <yangyicong@hisilicon.com>, Yushan Wang <wangyushan12@huawei.com>,
+	<Jonathan.Cameron@huawei.com>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<robin.murphy@arm.com>, <liuyonglong@huawei.com>, <wanghuiqiang@huawei.com>,
+	<prime.zeng@hisilicon.com>, <hejunhao3@h-partners.com>,
+	<linuxarm@huawei.com>, <fanghao11@huawei.com>
+Subject: Re: [PATCH v3 5/9] drivers/perf: hisi: Extend the field of tt_core
+To: Will Deacon <will@kernel.org>
+References: <20250829101427.2557899-1-wangyushan12@huawei.com>
+ <20250829101427.2557899-6-wangyushan12@huawei.com>
+ <aNFMUdPJeJo9XU1e@willie-the-truck>
+ <3cc3fcdf-436a-9e73-a377-ed896d07a825@huawei.com>
+ <aNPTwxnlXGbazFLR@willie-the-truck>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <d1731acc-81a7-df59-b6ac-650f30e0e780@huawei.com>
+Date: Thu, 25 Sep 2025 11:59:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51518b935e7649e3b5413e3a119d549b@realtek.com>
+In-Reply-To: <aNPTwxnlXGbazFLR@willie-the-truck>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
-On Wed, Sep 24, 2025 at 12:43:56AM +0000, Ping-Ke Shih wrote:
-> Yu-Chun Lin <eleanor15x@gmail.com> wrote:
-> > On Mon, Sep 22, 2025 at 05:50:50AM +0000, Ping-Ke Shih wrote:
-> > > Yu-Chun Lin <eleanor15x@gmail.com> wrote:
-> > > > Replace hardcoded strings with 'str_on_off()', 'str_enable_disable()',
-> > > > and 'str_read_write()'.
-> > > >
-> > > > The change improves readability and enables potential string deduplication
-> > > > by the linker, which may slightly reduce binary size.
-> > >
-> > > Have you measured the change of binary size? Maybe you can share the result
-> > > here.
-> > >
-> > 
-> > I tested the patch and did not observe any measurable change in the binary size.
-> > The commit message was refers to the description in string-choice.h:
-> > 
-> > "3) Deduping by the linker, which results in a smaller binary file."
+On 2025/9/24 19:19, Will Deacon wrote:
+> On Tue, Sep 23, 2025 at 03:31:15PM +0800, Yicong Yang wrote:
+>> diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+>> index bbd81a43047d..a52d98f1ed34 100644
+>> --- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+>> +++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+>> @@ -57,6 +57,11 @@
+>>  #define L3C_V2_NR_EVENTS	0xFF
+>>
+>>  HISI_PMU_EVENT_ATTR_EXTRACTOR(ext, config, 17, 16);
+>> +/*
+>> + * Remain the config1:0-7 for backward compatibility if some existing users
+>> + * hardcode the config1:0-7 directly without parsing the sysfs attribute.
+>> + */
+>> +HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_core_deprecated, config1, 7, 0);
+>>  HISI_PMU_EVENT_ATTR_EXTRACTOR(tt_req, config1, 10, 8);
+>>  HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_cfg, config1, 15, 11);
+>>  HISI_PMU_EVENT_ATTR_EXTRACTOR(datasrc_skt, config1, 16, 16);
+>> @@ -95,6 +100,21 @@ static bool support_ext(struct hisi_l3c_pmu *pmu)
+>>  	return l3c_pmu_ext->support_ext;
+>>  }
+>>
+>> +/*
+>> + * tt_core was extended to cover all the CPUs sharing the L3 and was moved from
+>> + * config1:0-7 to config2:0-*. Try it first and fallback to tt_core_deprecated
+>> + * if user's still using the deprecated one.
+>> + */
+>> +static u32 hisi_l3c_pmu_get_tt_core(struct perf_event *event)
+>> +{
+>> +	u32 core = hisi_get_tt_core(event);
+>> +
+>> +	if (core)
+>> +		return core;
+>> +
+>> +	return hisi_get_tt_core_deprecated(event);
+>> +}
 > 
-> It might rely on LTO (link-time optimization). 
->
+> Perhaps we should be stricter about this and fail validation for events
+> that specify both a non-zero tt_core and a non-zero tt_core_deprecated?
+> 
 
-I re-tested with 'LTO_CLANG=y', and the code size remains unchanged before
-and after the patch. I will remove the statement
-("may slightly reduce binary size") from the v2 commit message.
+added in hisi_uncore_l3c_ops->check_filter() that hisi_uncore_pmu_event_init() will
+call check_filter() to ask uncore pmu to validate the filter configuration.
 
+https://lore.kernel.org/linux-arm-kernel/20250925033123.5836-1-yangyicong@huawei.com/
 
+thanks.
 
