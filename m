@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-832838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50624BA089F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:04:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08355BA08AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE253B84B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A411641A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824F53054D3;
-	Thu, 25 Sep 2025 16:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B72F2F2611;
+	Thu, 25 Sep 2025 16:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="LbagwA8e"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="arCqkrV8"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278AB3019C1
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF3E1CA84
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758816284; cv=none; b=Cvxt+HfwXf0FFqTYdQBHcX165wfk/f01izffW8zU1qPiXA+cmobM5LH1aCzzjtZe3c/4saw+VV4GsEY/yr8kk6NU/uOOM2thDAYAq8355ylZ1cGUBb6obkThqOtw5ztdHw1HPUbc9mIGK21pPdQSKnv/2MtXxOIJ72bcpobSpeY=
+	t=1758816394; cv=none; b=eM0jwcwGi/oO/N8t+LO25Qicz53Q5KbyyTB8PsXUwl9IwtfGEMpWh4CuGoroJbTGykeR1Z7bzqvtQxUNSuADc+N6Oi0zEsVb5uLptEt0qmhK0AyaatIZf410wV5+QaynDBtzrtFltGXAeDOGCcckN2C6Jkm7g+8QmY81geLOv0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758816284; c=relaxed/simple;
-	bh=+oXAL0tcgRlO8c1J/dU2scA4s8TwfctnQlh8fiSh9g4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I1eLWO5hlPjKmUiktFB+fxUhv8hmVS8/76HM0taKJp2oLoQBUa7lmWYhBOZURgq0dg+IRAhS9FdoKGiZLA3mFt/uGNfFsYk9/7PHzRQYs/Ewy1no62gggow5KiZUv0r/wVEBNvnYN3aqR+IPPLc88tISl4GRg2ccQPSiFY/xKDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=LbagwA8e reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id uscABGpxUb0YaIwe; Thu, 25 Sep 2025 12:04:41 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=vrdtGJZWfvcp+2ww2Ngcwu6CnGiELosz9EX38y+xxjs=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:Content-Language:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID; b=LbagwA8eV7zi6j8wgzzm
-	+N8oWURdI9DXENCNzzdWgddwyuvXmguZfjj+l5PvZiR1AshF4R4W0oXnynifJ7vmUBrG86jBpDi+Z
-	4Lr7BoollYw/1oXTIyE4xAUJ6ZqpqI/4XtNTUFMVSpZmCP9UGB0tkXXPi0IBmVKrMTMTuVcdEw=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14212895; Thu, 25 Sep 2025 12:04:41 -0400
-Message-ID: <46422ab9-9088-4d9c-b93d-31083f8b9398@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Thu, 25 Sep 2025 12:04:41 -0400
+	s=arc-20240116; t=1758816394; c=relaxed/simple;
+	bh=GqXNzIXv2Z3+qYu0yt6xuzG0cjInumz0ftyhQyGX+e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RfT2mDYvpS3zItEfQT/NDPZKHbFBD7I+v5WlV8G1P52PIAJQj3LaNI1nzQpLvjniM1CwZGPNJSCDK8DKVmU0gM3AZtI0eC2bKYBUjEdgG5do9w2f3VXJR4oQUIr1jjkWf6S/pOd0zHvkkhT09tTk8g2AkDSlYF8BNbyjjCFaMPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=arCqkrV8; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-89365bbc079so45256539f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1758816391; x=1759421191; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yb6vceRuaH7iX55SPXoLoljlTLWExr/Ac2Cewgac2Y=;
+        b=arCqkrV8ubhDHhniBNX9IvzIG4PVsSEXWlllh3kJmovK6vJqxW/zVGVL2jF2U63syY
+         xsV0mURG62OtFAKixBAb2U+PKPKLWMaPgK61NdEBUnO0Sqcpt7iItzOhEvyygfYYjUK2
+         ilGps60kg/91V6EVK/dX5q6C5Dc9QRVB5uQrV6ZHcBAG3hn56aQaMczkroR78zeSEMY7
+         kLqUXmKy0TMErdclJ5CtWnobXj+//qFlEgF4uRpdn7Lfjn7uwDGLN+L8+5V8nT9Kv3DH
+         2U5BKDhdCnLfd88B2rJ/Jayt3mLFp8EEM59WMnfQBjnIf247xRpdTtEJGie29LiLp5bp
+         LVUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758816391; x=1759421191;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+yb6vceRuaH7iX55SPXoLoljlTLWExr/Ac2Cewgac2Y=;
+        b=q8eAR71Xx4LVaQiVZIDUPJdsprL0ZSX9nL1ohT2vsZS14ENpLx+rC7MahU4WnHtIfY
+         MtirhLpdozLA8RTPBfZjxTwZv1AlN019bWN7AHULVCHKM/MezRIbOl+h4fKICHo3Mj0/
+         WWZXu9i9ZNhMNgvKen1rkRkRKyNAVOzHrTzeGDuv9JgX2gam2isXqBPDKzbEQKxNUi/g
+         ntCh1F5EehrrVg15Hj1nvNk/AuAQDIkQitAjNBNFt/d3znDEl5pEnEoZ7VVb22tqCyH6
+         HNQ2tWfcIRMK5yTRD0IMhaR5EdBSJRuSwrT7awqjcZlMox1o0vznbd19LK0GKKUw8Fli
+         /D9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWOoyR/J6PJEeYgDPPaKF7zwc+VTUiF9hoR2Y0wWDLTi/gq16S70HeFuegVWV4YozC3xFbENHUsPn4spbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylxf8AYdhnVEScmiWow8U9eRIMDXBcAGZJd3t1jSsCswxV/GyT
+	Qpici1yfJyaQPRj0EMWSLSrS4Tfq/Z2VeAVyRfUyj6sDZVRgu4MmiwLj4tFoRnZyY4o=
+X-Gm-Gg: ASbGncvvROfk4TqhKRXEHSGs9cz76DP4bF3FsVS6ZZ9exZL2llInUGCEymHVR0Ya8gS
+	1SCiwhSo8LvsYvGAi8A5iznUGr6NSj9VajyQ4h6fdLszqv0ooGnmGzIkx/4445Svj/CMFbB4cfH
+	uuKvdJlp37Oih1txeCirmwLmAv46Q3TzxB47g0rw/OdvpDJlHqQF6Ee1lveoqZiTVKgA2XVpjJc
+	GB3XfcgtN+cdMwWTNoOCtHg4k8HlEwD3fvt9bg2WNPOfkh77yuSpQ2zd5/uyTvz8ELc/L3/UNTf
+	H+Ywsv5rjY75yBLexfkPtSJwGiV3ec/5/7h9IMjL/mRrt6nWFSEE+z0LIRejOcbRJU2kjps8Vgk
+	TWIcJXcF7TU346d1zp0GctlrggYCqLPn2PS1hxN+nz1+7zhHRP3kHUbn1B6gA0DY5Q4CYXFzP2R
+	s=
+X-Google-Smtp-Source: AGHT+IHezaCibeMYUx2n4QIwepKBTAEGeWF/wdbRATNTTWqYlSWG7aBiY/OaNiXbiz5X0eqEvxW6Wg==
+X-Received: by 2002:a05:6602:14c2:b0:887:5cc8:fc1 with SMTP id ca18e2360f4ac-90168766a6bmr566009339f.13.1758816391165;
+        Thu, 25 Sep 2025 09:06:31 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (50-32-2-77.vng01.dlls.pa.frontiernet.net. [50.32.2.77])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-903dbb2b459sm88516339f.0.2025.09.25.09.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 09:06:30 -0700 (PDT)
+Date: Thu, 25 Sep 2025 12:06:28 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>,
+	Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, dave.hansen@intel.com, hannes@cmpxchg.org,
+	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
+	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
+	nifan.cxl@gmail.com, xuezhengchu@huawei.com,
+	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
+	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
+	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com,
+	Adam Manzanares <a.manzanares@samsung.com>
+Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
+ infrastructure
+Message-ID: <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
+References: <20250910144653.212066-1-bharata@amd.com>
+ <aMGbpDJhOx7wHqpo@casper.infradead.org>
+ <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
+ <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
+ <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
+ <20250917174941.000061d3@huawei.com>
+ <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
+ <20250925160058.00002645@huawei.com>
+ <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+ <20250925162426.00007474@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
-To: Xose Vazquez Perez <xose.vazquez@gmail.com>,
- Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-X-ASG-Orig-Subj: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net, KERNEL ML <linux-kernel@vger.kernel.org>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
- <2cc10189-6953-428e-b34e-b1c714fc0eae@cybernetics.com>
- <0669b097-0bf1-4895-9c2a-5e953aebbfab@gmail.com>
- <8056aa80-7e5a-4cb3-804c-d9c7f8bd6d55@gmail.com>
-Content-Language: en-US
-From: Tony Battersby <tonyb@cybernetics.com>
-In-Reply-To: <8056aa80-7e5a-4cb3-804c-d9c7f8bd6d55@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1758816281
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 1584
-X-Barracuda-BRTS-Status: 1
-Content-Transfer-Encoding: quoted-printable
-X-ASG-Debug-ID: 1758816281-1cf43947df3a52a0001-xx1T2L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925162426.00007474@huawei.com>
 
-On 9/25/25 11:30, Xose Vazquez Perez wrote:
-> On 9/25/25 2:49 PM, Xose Vazquez Perez wrote:
+On Thu, Sep 25, 2025 at 04:24:26PM +0100, Jonathan Cameron wrote:
+> The CoW thing only works because it's a permissions fault at point of
+> asking for permission to write (so way before it goes into the cache).
+> Then you can check margins to make sure you can still sink all outstanding
+> writes if they become uncompressible and only let the write through if safe
+> - if not promote some stuff before letting it proceed.
+> Or you just promote on write and rely on the demotion path performing those
+> careful checks later.
 >
->> If you want to review the firmware changelog, mainly: FCD-1183 (FCD-37=
-1, ER147301), FCD-259, ER146998
->> (from 9.00.00 to 9.15.05 [06/10/25]):
->> https://www.marvell.com/content/dam/marvell/en/drivers/2025-06-10-rele=
-ase/fw_release_notes/Fibre_Channel_Firmware_Release_Notes.pdf
->>
->> It's look like all 2{678}xx devices/chips are affected by this bug.
->> Perhaps the Marvel crew could provide more information on this.
-> 267x, or older, is still on 8.08, so apparently it's free of this bug:
-> https://www.marvell.com/content/dam/marvell/en/drivers/release-matrix/r=
-elease-matrix-qlogic-fc-sw-posting-by-release-matrix.pdf
->
-> 2870 / 2770 :        9.15.06 FW
-> 2740 / 2760 / 269x : 9.15.01 FW
-> 267x :               8.08.231 FW
 
-I am still trying to figure out what macros to use to test for the
-affected HBAs.=C2=A0 So far I have:
+Agreed.  The question is now whether you can actually enforce page table
+bits not changing.  I think you'd need your own fault handling
+infrastructure / driver for these pages.
 
-if (IS_QLA27XX(ha) || IS_QLA28XX(ha))
+This does smell a lot like a kernel-internal dax allocation interface.
+There was a bunch of talk about virtualizing zswap backends, so that
+might be a nice place to look to insert this kind of hook.
 
-But all the ISP numbers are pretty confusing.=C2=A0 I have a number of 8,=
- 16,
-32, and 64 Gbps HBAs lying around to test, but I am sure I don't have
-every possible model.
+Then the device driver (which it will definitely need) would have to
+field page faults accordingly.
 
-There are a number of items under "Changes and Fixes from v9.08.00 to
-v9.09.00" that might be related to the problem that I was experiencing.=C2=
-=A0
-For example=C2=A0FCD-1076 sounds similar except that the SRR problem was =
-with
-the CTIO queue rather than the ATIO queue.=C2=A0 I could expand the "bad
-firmware" versions to include v9.04.00 - v9.08.00, since=C2=A0v9.04.00
-introduced ER147301 and v9.09.00 fixed FCD-1183.
+It feels much more natural to put this as a zswap/zram backend.
 
-Thanks,
-Tony
-
+~Gregory
 
