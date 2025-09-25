@@ -1,163 +1,223 @@
-Return-Path: <linux-kernel+bounces-833028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C64BA1090
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:33:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E12BA1099
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C39C3AD099
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1DF21C2104C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CB3319873;
-	Thu, 25 Sep 2025 18:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DE931A7EB;
+	Thu, 25 Sep 2025 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mYzfNO0N"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR2I3TF/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE2F1DE3DC;
-	Thu, 25 Sep 2025 18:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3774E1DE3DC;
+	Thu, 25 Sep 2025 18:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758825191; cv=none; b=MGaL2C5GAD9CVSmmwlCr+Isi8X98gODhBvcSLW41oe9fX4mR+wpyUDfeYGLtxs9ZNK3uhNwig726QA4FikeEgYRbt+0jZx2zehL0oj4wV8AwtYx9CReU52ba3hmHwuakiJ313idC9AYNeSEQuy/zT46zO8n9dN3rcNCjHsT2vhY=
+	t=1758825197; cv=none; b=t2NZfD4mKKMAvLpMYIQBd46Pv+0C4r9EIpaqIpUHuRcsDfx9OVSgzjzmeDnBS5M772P1PZKJXFvz1qnXdIeG8Pn5tM1Z8M/hWjLgw/Eztm1+OiHwRHqhDrM6vx8VLyvnsmY9yPs9+NcphHuxf8R8Tx3r5pWsbtJD0uHsTfrn4hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758825191; c=relaxed/simple;
-	bh=LKG06+HbgIfwwZeYeC6t/w0EWDw3h0ZyjMODB/HrRXg=;
-	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
-	 References:In-Reply-To; b=nhqH2B7mnJObQuR8OnzZXuwMXt1YTVmG/EGWLRxTHTRFlGk6gxztxrQu6j+ak82MkN5sVF4jxruYq9qANOqOZRsEX8JNs8OkD1CkLEsRd2yzmjV5F194P2NHcTq8Umq2YkCtCfGouJCgBJ2yhlXhbkMwSSosOUCpGS+HJE13Odc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mYzfNO0N; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58PIWcmG1982853;
-	Thu, 25 Sep 2025 13:32:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758825158;
-	bh=YLhrPrJ/nxo/JR0QIrb3ulTfkmpHmQZXFDh+6QpJP+Y=;
-	h=Date:To:CC:Subject:From:References:In-Reply-To;
-	b=mYzfNO0NcLI02J71eFtQCotuLVhjtjaITQ1N4lrLwB6x2aQSYNwoqLLTCb8P5i4bg
-	 cZv9s/7o4VOR/0hcRC0Yn+BGQ/J+VPFQHzWAfeovWwWKLkKNIx6DPqNqCknC137cZt
-	 thznWX/1Eh2RDnpG3fwOY8W2rzLOK7/mxp9wVPrI=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58PIWbXk3402736
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 25 Sep 2025 13:32:37 -0500
-Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 25
- Sep 2025 13:32:37 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE205.ent.ti.com
- (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 25 Sep 2025 13:32:37 -0500
-Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58PIWb6h001964;
-	Thu, 25 Sep 2025 13:32:37 -0500
+	s=arc-20240116; t=1758825197; c=relaxed/simple;
+	bh=2dXXjcfz6yo54Czf0POycwQADijPXlf9dzGU92OlDes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ReZBggPD3sZHTm8pe1vdXfdMnmRMHXYU/xk5fHN9PoeTglAmuDo4MItNPgy2go++11yn3ODHx9EpDReNyAkrx81OD5VwcVF8Gy+kX/SxLIHKW2k2YQGCmDbEaT7S8uKXIKq5GtkqCCuEyR7HOQ/wUBRXRPDIJfCK+EKP6jsEn3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR2I3TF/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F44C4CEF0;
+	Thu, 25 Sep 2025 18:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758825196;
+	bh=2dXXjcfz6yo54Czf0POycwQADijPXlf9dzGU92OlDes=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SR2I3TF/Ds/kHUzB2cy5A0+kI0XPezSj4XITnqaz80Zr4nCr8KunVC6s0hGMHjTHq
+	 H9ZgYeBnUfY8h5c6JOu3tiZtnSWOWe5iXxewnmaj3sZBKesoQijO7C6w1DO+er+zcZ
+	 AhLOpE2eXn1UpetqAbjrm8GB4mGF7zXf+JUAKeq0pNKuLozzWLDJy/vb/pKosHRHa9
+	 +4z0njWLRykWfuvYKT5UgpsVFB50E/k3/ymX6pTxTcNRoHF2ML9djwSjys6Ma04hq9
+	 J4ezQR+NbUmJAAZfn/FEowIyb4MQRe3YtwUwdyNIZbn7BekhY90XvfMdKUSsvPdjHV
+	 4MknFy7pus1BQ==
+Message-ID: <3b982e8d-4ce7-4186-b5f0-f7495be3a3ed@kernel.org>
+Date: Thu, 25 Sep 2025 13:33:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 25 Sep 2025 13:32:37 -0500
-Message-ID: <DD23HER39PNM.O17TMFNNWD37@ti.com>
-To: Maxime Ripard <mripard@kernel.org>, Randolph Sapp <rs@ti.com>
-CC: Kevin Hilman <khilman@kernel.org>, Michael Walle <mwalle@kernel.org>,
-        Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster <matt.coster@imgtec.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, "Nishanth Menon"
-	<nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Andrew
- Davis <afd@ti.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: keystone: don't cache clock rate
-From: Randolph Sapp <rs@ti.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250915143440.2362812-1-mwalle@kernel.org>
- <20250915143440.2362812-3-mwalle@kernel.org> <7hv7lhp0e8.fsf@baylibre.com>
- <DD1IXJDTBQ72.2XIEIIN0YA713@ti.com>
- <20250925-elephant-of-absolute-prowess-a97fcd@penduick>
-In-Reply-To: <20250925-elephant-of-absolute-prowess-a97fcd@penduick>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] ACPI: CPPC: Do not use CPUFREQ_ETERNAL as an error
+ value
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
+ <3925838.kQq0lBPeGt@rafael.j.wysocki> <12773788.O9o76ZdvQC@rafael.j.wysocki>
+Content-Language: en-US
+From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
+In-Reply-To: <12773788.O9o76ZdvQC@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu Sep 25, 2025 at 6:43 AM CDT, Maxime Ripard wrote:
-> On Wed, Sep 24, 2025 at 09:26:17PM -0500, Randolph Sapp wrote:
->> On Wed Sep 17, 2025 at 10:24 AM CDT, Kevin Hilman wrote:
->> > Michael Walle <mwalle@kernel.org> writes:
->> >
->> >> The TISCI firmware will return 0 if the clock or consumer is not
->> >> enabled although there is a stored value in the firmware. IOW a call =
-to
->> >> set rate will work but at get rate will always return 0 if the clock =
-is
->> >> disabled.
->> >> The clk framework will try to cache the clock rate when it's requeste=
-d
->> >> by a consumer. If the clock or consumer is not enabled at that point,
->> >> the cached value is 0, which is wrong.
->> >
->> > Hmm, it also seems wrong to me that the clock framework would cache a
->> > clock rate when it's disabled.  On platforms with clocks that may have
->> > shared management (eg. TISCI or other platforms using SCMI) it's
->> > entirely possible that when Linux has disabled a clock, some other
->> > entity may have changed it.
->> >
->> > Could another solution here be to have the clk framework only cache wh=
-en
->> > clocks are enabled?
->>=20
->> So I looked into that. There are still about 34 clock operations that ar=
-e
->> functionally uncached, but it does seem more logical than treating every=
-thing as
->> uncached.
->>=20
->> Side note, why would someone even want to read the rate of an unprepared=
- clock?
->> I dumped some debug info for all the clocks tripping this new uncached p=
-ath.
->> Seems weird that it's even happening this often. Even weirder that it's
->> apparently happening 3 times to cpu0's core clock on the board I'm curre=
-ntly
->> testing.
->
-> The short, unsatisfying, answer is that the API explicitly allowed it so =
-far.
->
-> It's also somewhat natural when you have a functional rate to set it up
-> before enabling it and the logic driven by it so that you would avoid a
-> rate change, or something like a cycle where you would enable, shut
-> down, reparent, enable the clock again.
->
-> In such a case, we would either need the cache, or to read the rate, to
-> know if we have to change the clock rate in the first place.
->
-> Maxime
 
-Thanks Maxime. I'll take this as a hint to stop digging for the moment. Rig=
-ht
-now, treating unprepared clocks as untrusted / uncached makes sense and
-shouldn't be too much of a performance issue.
 
-- Randolph
+On 9/25/2025 12:23 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Instead of using CPUFREQ_ETERNAL for signaling an error condition
+> in cppc_get_transition_latency(), change the return value type of
+> that function to int and make it return a proper negative error
+> code on failures.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+
+> ---
+> 
+> v1 -> v2:
+>     * Change cppc_get_transition_latency() return value data type to int
+>     * Make it return -ENODATA on errors (Mario)
+>     * Update its callers accordingly
+>     * Adjust the subject and changelog
+>     * Add a missing empty code line to cppc_get_transition_latency()
+> 
+> The modifications of this patch don't affect any other patches in the series:
+> 
+> https://lore.kernel.org/linux-pm/8605612.T7Z3S40VBb@rafael.j.wysocki/
+> 
+> ---
+>   drivers/acpi/cppc_acpi.c       |   15 ++++++++-------
+>   drivers/cpufreq/amd-pstate.c   |    8 ++++----
+>   drivers/cpufreq/cppc_cpufreq.c |    4 ++--
+>   include/acpi/cppc_acpi.h       |    6 +++---
+>   4 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1876,7 +1876,7 @@ EXPORT_SYMBOL_GPL(cppc_set_perf);
+>    * If desired_reg is in the SystemMemory or SystemIo ACPI address space,
+>    * then assume there is no latency.
+>    */
+> -unsigned int cppc_get_transition_latency(int cpu_num)
+> +int cppc_get_transition_latency(int cpu_num)
+>   {
+>   	/*
+>   	 * Expected transition latency is based on the PCCT timing values
+> @@ -1889,31 +1889,32 @@ unsigned int cppc_get_transition_latency
+>   	 *              completion of a command before issuing the next command,
+>   	 *              in microseconds.
+>   	 */
+> -	unsigned int latency_ns = 0;
+>   	struct cpc_desc *cpc_desc;
+>   	struct cpc_register_resource *desired_reg;
+>   	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu_num);
+>   	struct cppc_pcc_data *pcc_ss_data;
+> +	int latency_ns = 0;
+>   
+>   	cpc_desc = per_cpu(cpc_desc_ptr, cpu_num);
+>   	if (!cpc_desc)
+> -		return CPUFREQ_ETERNAL;
+> +		return -ENODATA;
+>   
+>   	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
+>   	if (CPC_IN_SYSTEM_MEMORY(desired_reg) || CPC_IN_SYSTEM_IO(desired_reg))
+>   		return 0;
+> +
+>   	else if (!CPC_IN_PCC(desired_reg))
+> -		return CPUFREQ_ETERNAL;
+> +		return -ENODATA;
+>   
+>   	if (pcc_ss_id < 0)
+> -		return CPUFREQ_ETERNAL;
+> +		return -ENODATA;
+>   
+>   	pcc_ss_data = pcc_data[pcc_ss_id];
+>   	if (pcc_ss_data->pcc_mpar)
+>   		latency_ns = 60 * (1000 * 1000 * 1000 / pcc_ss_data->pcc_mpar);
+>   
+> -	latency_ns = max(latency_ns, pcc_ss_data->pcc_nominal * 1000);
+> -	latency_ns = max(latency_ns, pcc_ss_data->pcc_mrtt * 1000);
+> +	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_nominal * 1000);
+> +	latency_ns = max_t(int, latency_ns, pcc_ss_data->pcc_mrtt * 1000);
+>   
+>   	return latency_ns;
+>   }
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -872,10 +872,10 @@ static void amd_pstate_update_limits(str
+>    */
+>   static u32 amd_pstate_get_transition_delay_us(unsigned int cpu)
+>   {
+> -	u32 transition_delay_ns;
+> +	int transition_delay_ns;
+>   
+>   	transition_delay_ns = cppc_get_transition_latency(cpu);
+> -	if (transition_delay_ns == CPUFREQ_ETERNAL) {
+> +	if (transition_delay_ns < 0) {
+>   		if (cpu_feature_enabled(X86_FEATURE_AMD_FAST_CPPC))
+>   			return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
+>   		else
+> @@ -891,10 +891,10 @@ static u32 amd_pstate_get_transition_del
+>    */
+>   static u32 amd_pstate_get_transition_latency(unsigned int cpu)
+>   {
+> -	u32 transition_latency;
+> +	int transition_latency;
+>   
+>   	transition_latency = cppc_get_transition_latency(cpu);
+> -	if (transition_latency  == CPUFREQ_ETERNAL)
+> +	if (transition_latency < 0)
+>   		return AMD_PSTATE_TRANSITION_LATENCY;
+>   
+>   	return transition_latency;
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -310,9 +310,9 @@ static int cppc_verify_policy(struct cpu
+>   
+>   static unsigned int get_transition_latency_from_cppc(unsigned int cpu)
+>   {
+> -	unsigned int transition_latency_ns = cppc_get_transition_latency(cpu);
+> +	int transition_latency_ns = cppc_get_transition_latency(cpu);
+>   
+> -	if (transition_latency_ns == CPUFREQ_ETERNAL)
+> +	if (transition_latency_ns < 0)
+>   		return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_USEC;
+>   
+>   	return transition_latency_ns / NSEC_PER_USEC;
+> --- a/include/acpi/cppc_acpi.h
+> +++ b/include/acpi/cppc_acpi.h
+> @@ -160,7 +160,7 @@ extern unsigned int cppc_khz_to_perf(str
+>   extern bool acpi_cpc_valid(void);
+>   extern bool cppc_allow_fast_switch(void);
+>   extern int acpi_get_psd_map(unsigned int cpu, struct cppc_cpudata *cpu_data);
+> -extern unsigned int cppc_get_transition_latency(int cpu);
+> +extern int cppc_get_transition_latency(int cpu);
+>   extern bool cpc_ffh_supported(void);
+>   extern bool cpc_supported_by_cpu(void);
+>   extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
+> @@ -216,9 +216,9 @@ static inline bool cppc_allow_fast_switc
+>   {
+>   	return false;
+>   }
+> -static inline unsigned int cppc_get_transition_latency(int cpu)
+> +static inline int cppc_get_transition_latency(int cpu)
+>   {
+> -	return CPUFREQ_ETERNAL;
+> +	return -ENODATA;
+>   }
+>   static inline bool cpc_ffh_supported(void)
+>   {
+> 
+> 
+> 
+
 
