@@ -1,157 +1,193 @@
-Return-Path: <linux-kernel+bounces-832527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D615B9F961
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:33:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8ACB9F96A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F09A93242EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:33:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE27F4E2BB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF35D264628;
-	Thu, 25 Sep 2025 13:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E2E230D1E;
+	Thu, 25 Sep 2025 13:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgrO8NGZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="TX3iNa0C"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F43230D1E;
-	Thu, 25 Sep 2025 13:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2001264623
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807196; cv=none; b=RhcWXtr/OYeO2GlIoRqbiZgIaM7eu9xYVlbKfHDS9x/QbMFutIsvhqw8GTBXsiRWlQA8zR8h0l3Bs8kr4FRIaASWe4j/yo4NWjBlQY9tEgdTEeLs5dlSfQycI/64NX1AcUkwuPR6Eol4bRV94DOeSyLcsDU+GqMbfnwcFie8fVo=
+	t=1758807198; cv=none; b=F4ME/URvUL6pfwP5GX0aEvaE6/ivLIO51k++9B6PbEdI5ZXA3ev8od9Ku37IrPM0lrWHy8zljquRWBsrikKATTVRBtMnq3bBL8oENMMrp39xIY2yWHMHU0pANua1OByqW/DXDuBAlQ99RWK/u8H0TxCrBt3IFEUeOBYnv+Beopc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807196; c=relaxed/simple;
-	bh=wjriDi598cbHvL0FHK+c0DDXmoMdDEm35C7AQyt1pbA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=BEaGIy6JOIDwd9/3AoT/HgMmLhdC+m2wHnxdCjP5BfbUgBPYFNeqv28eFE+0TbGBQXIZ0CAVYN7a+8GDq1fiBVSXG++vwzXKB7MRr/BtJsdB4+5+4vPQBJ3ysU4RfZvpoMVo9mENfKqks1CXzIFGOmvjAWvSdunHd6f0/vMV5Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgrO8NGZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69B5CC4CEF0;
-	Thu, 25 Sep 2025 13:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758807196;
-	bh=wjriDi598cbHvL0FHK+c0DDXmoMdDEm35C7AQyt1pbA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YgrO8NGZCZcHji+EammpDndoXMerNwi7orZ7M8Mz151WGxr4ZGI+YIqAOYwhUk9Me
-	 /XI42gu6oR7hNTz6fL+Eu4z47fzQp2HOi/Stl7K8RzJB7AIduo0jci3FtOThbXMHX2
-	 i44IefRwT8XRmC5ur3wAMsfH7mZ4refLCqhevsKMIR1DpwDA5WUNw0vZdVxPucoEgL
-	 M9+zpJpSfK+bH0CWN0q7jveBM//Va6V8f/vfXbwepIDuwmeV/zYpyntA5qvXAGT3zB
-	 cOIMjqOAvCIgOGe1JOgbUfRv92CfJWH1zgPtWKoqhqbxzh8F6lemPR79l7HCKC0dza
-	 kZSQtc7RLrWFg==
-Date: Thu, 25 Sep 2025 22:33:10 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, lance.yang@linux.dev, mhiramat@kernel.org,
- yangyicong@hisilicon.com, will@kernel.org, dianders@chromium.org,
- mingo@kernel.org, lihuafei1@huawei.com, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, tj@kernel.org, peterz@infradead.org
-Subject: Re: [PATCH v2 1/2] hung_task: Introduce touch_hung_task_detector().
-Message-Id: <20250925223310.66e769299f7d07491578151d@kernel.org>
-In-Reply-To: <20250924034100.3701520-2-sunjunchao@bytedance.com>
-References: <20250924034100.3701520-1-sunjunchao@bytedance.com>
-	<20250924034100.3701520-2-sunjunchao@bytedance.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758807198; c=relaxed/simple;
+	bh=pbPVkYQ8kmks8NtRvetGTvntXfeiJxnGT7gjqdzx04Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VPIgO47k4Fjfpc2uAj6yYlc9lA8J0dj1wDTW8SH/5J2TzOY9smqfHv7UOYgnNgw5zNy4eykV0RyO5LRu4h2XGBHLIKtOMA9pZufS+as9W8L6mlBpXzxN4/f1OJEDYRIyFBqvNr7zNf9uNiJEsob5dq1JkgCsxCTXFcHdkQ3jShA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=TX3iNa0C; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e1bc8ffa1so10405255e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1758807194; x=1759411994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6p46HOBWWfro5hj7gcC0pHFM8QTS0713LJWgGrHP3oI=;
+        b=TX3iNa0C3JKcOCGMDGyYR0uLVP7ye/8I3uHUOFb3O4GLSXuppIxq5Sr4q64Bqb+i8I
+         6fosxqYBW221azP7+rXWe5+0Ze8LfjDznVCBMwxFMRjNNeNx9tFK9x5qQ05lSkNMIJqm
+         FdpGTCS/KtJd9H0kFG2uIzkN/+EstUUgt/gwek/zkFVrNKl7aNjEkjwtWREoLYc0DrjL
+         HFZP4ClLEwDGBUcq9acPibR9DCBF+J6P4/MQje59bhLUFFt8UD9wNIYGpK8RS7PIYVqe
+         VmdyCbszrWh4bcqUo1i6PiMN6adrcA3dGKZCpBULMQzM5ZwL0FVtMsY8q3unTxXpAV58
+         vZ/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758807194; x=1759411994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6p46HOBWWfro5hj7gcC0pHFM8QTS0713LJWgGrHP3oI=;
+        b=GWQYayDj2CRSkNk/fJ34oBnoQWSsFAlPOEUOlQmKpe71cneE3bcxwdsNOtdKo8xqTO
+         vhH9RziQH9CoXm/n452eT6a5QwbXInn0RDENBN+Da9Y9lIR825Yyg0/7R/1V9Vm6UupX
+         bnognaf7/bFWIJgMBz4yJzGhJml1ZiKqaqzgDn8vCDNoMlsiU7mFqUuZqloTxXpqvIVM
+         4bWiUcfJPBJlsxXYs/aeOb88FpvXKKmVqozvlVhCKCMhyIJk5WrVxd10zMV8PmD9LyAr
+         nIRgtnSSSTvVEn7viNHIbRPvu0M2O+T7hLYGNWw9cyT7gxTWQxxDUPAhCB8SJqgQp8YN
+         z+Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk7GHr/UkjGlO/iQ42LTRXHmMCtpbEoGf5vUy7vBpxO6MyG8Geob56AeKk0/nlMVKKRohhl5ZDvlTb+P0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoFg8gStD7XAQ/LPM4eBjz4vq+JKomdnGGtxP6qibAcoSsmcof
+	duOVvpkcv3sIYZA2piM5S4rMj0n8rQx7/5wOVvdEeetAq8au4wAxqFSXQqSwm551Taw=
+X-Gm-Gg: ASbGnctmr26iB4/QGF6aZHcGrTuG+vgItcofjxhmwxiPffppoUNtixx79Vyv8tU9ZlO
+	BUoXYtNmDVP/tt3CZk7PjVHVhr+fGZsER3SqM4n35+49JX12yhIC0vKWOf64NDoYuPoJi0tEznz
+	EMANp9CR5EjRAu0pSOm+QZ7E1KZNET8zsZcmktqCy2c1cPi2K7TOkIunplqeVXA4g9j+ZgUmQrB
+	7hos/qpMxsXL5bpGE56p0c9R6ntXhDdiOHn5arGMpzlfmn/L5D33m7f96T3QzsUkkHdSVUx3GRR
+	Eo3pIMA3LSdgskXPs4Bby+sPoZ0zK9KffKWRuO301O+dhv/orvg853ADWVKYULXx6J+R2vVhkn/
+	9rL3F4h/Vrm3Wom7f2PbH7t6+
+X-Google-Smtp-Source: AGHT+IHxdCA3FiTt5asuefF8cFaSyXMaVpmg/nyWOHiE4Nd1JK8crLR4Luw93rXuD8Y4STbkN+crjQ==
+X-Received: by 2002:a05:6000:40c8:b0:3ee:23a7:5df0 with SMTP id ffacd0b85a97d-40e4a42f416mr3556892f8f.54.1758807193926;
+        Thu, 25 Sep 2025 06:33:13 -0700 (PDT)
+Received: from matt-Precision-5490.. ([2a09:bac1:28e0:840::15:427])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf701dsm33591135e9.24.2025.09.25.06.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 06:33:13 -0700 (PDT)
+From: Matt Fleming <matt@readmodwrite.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com,
+	Matt Fleming <mfleming@cloudflare.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	John Stultz <jstultz@google.com>,
+	Chris Arges <carges@cloudflare.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] Revert "sched/core: Tweak wait_task_inactive() to force dequeue sched_delayed tasks"
+Date: Thu, 25 Sep 2025 14:33:10 +0100
+Message-Id: <20250925133310.1843863-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Sep 2025 11:40:59 +0800
-Julian Sun <sunjunchao@bytedance.com> wrote:
+From: Matt Fleming <mfleming@cloudflare.com>
 
-> In the kernel, long waits can trigger hung task warnings. However, some
-> warnings are undesirable and unnecessary - for example, a hung task
-> warning triggered when a background kworker waits for writeback
-> completion during resource cleanup(like the context of
-> mem_cgroup_css_free()). This kworker does not affect any user behavior
-> and there is no erroneous behavior at the kernel code level, yet it
-> triggers an annoying hung task warning.
-> 
-> To eliminate such warnings, this patch introduces
-> touch_hung_task_detector() to allow some tasks ignored by hung task
-> detector.
-> 
+This reverts commit b7ca5743a2604156d6083b88cefacef983f3a3a6.
 
-Looks good to me.
+If we dequeue a task (task B) that was sched delayed then that task is
+definitely no longer on the rq and not tracked in the rbtree.
+Unfortunately, task_on_rq_queued(B) will still return true because
+dequeue_task() doesn't update p->on_rq.
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+This inconsistency can lead to tasks (task A) spinning indefinitely in
+wait_task_inactive(), e.g. when delivering a fatal signal to a thread
+group, because it thinks the task B is still queued (it's not) and waits
+forever for it to unschedule.
 
-Thanks,
+          Task A                                    Task B
 
-> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Suggested-by: Lance Yang <lance.yang@linux.dev>
-> ---
->  include/linux/nmi.h |  2 ++
->  kernel/hung_task.c  | 13 +++++++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/include/linux/nmi.h b/include/linux/nmi.h
-> index cf3c6ab408aa..61fc2ad234de 100644
-> --- a/include/linux/nmi.h
-> +++ b/include/linux/nmi.h
-> @@ -59,8 +59,10 @@ static inline void touch_all_softlockup_watchdogs(void) { }
->  
->  #ifdef CONFIG_DETECT_HUNG_TASK
->  void reset_hung_task_detector(void);
-> +void touch_hung_task_detector(struct task_struct *t);
->  #else
->  static inline void reset_hung_task_detector(void) { }
-> +static inline void touch_hung_task_detector(struct task_struct *t) { }
->  #endif
->  
->  /*
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 8708a1205f82..6409d3d4bd36 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -184,6 +184,11 @@ static inline void debug_show_blocker(struct task_struct *task)
->  }
->  #endif
->  
-> +void touch_hung_task_detector(struct task_struct *t)
-> +{
-> +	t->last_switch_count = ULONG_MAX;
-> +}
-> +
->  static void check_hung_task(struct task_struct *t, unsigned long timeout)
->  {
->  	unsigned long switch_count = t->nvcsw + t->nivcsw;
-> @@ -203,6 +208,10 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
->  	if (unlikely(!switch_count))
->  		return;
->  
-> +	/* The task doesn't want to trigger the hung task warning. */
-> +	if (unlikely(t->last_switch_count == ULONG_MAX))
-> +		return;
-> +
->  	if (switch_count != t->last_switch_count) {
->  		t->last_switch_count = switch_count;
->  		t->last_switch_time = jiffies;
-> @@ -317,6 +326,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  		    !(state & TASK_WAKEKILL) &&
->  		    !(state & TASK_NOLOAD))
->  			check_hung_task(t, timeout);
-> +		else if (unlikely(t->last_switch_count == ULONG_MAX)) {
-> +			t->last_switch_count = t->nvcsw + t->nivcsw;
-> +			t->last_switch_time = jiffies;
-> +		}
->  	}
->   unlock:
->  	rcu_read_unlock();
-> -- 
-> 2.39.5
-> 
+  arch_do_signal_or_restart()
+    get_signal()
+      do_coredump()
+        coredump_wait()
+	  zap_threads()                     arch_do_signal_or_restart()
+          wait_task_inactive() <-- SPIN       get_signal()
+	                                        do_group_exit()
+						  do_exit()
+						    coredump_task_exit()
+						      schedule() <--- never comes back
 
+Not only will task A spin forever in wait_task_inactive(), but task B
+will also trigger RCU stalls:
 
+  INFO: rcu_tasks detected stalls on tasks:
+  00000000a973a4d8: .. nvcsw: 2/2 holdout: 1 idle_cpu: -1/79
+  task:ffmpeg          state:I stack:0     pid:665601 tgid:665155 ppid:668691 task_flags:0x400448 flags:0x00004006
+  Call Trace:
+   <TASK>
+   __schedule+0x4fb/0xbf0
+   ? srso_return_thunk+0x5/0x5f
+   schedule+0x27/0xf0
+   do_exit+0xdd/0xaa0
+   ? __pfx_futex_wake_mark+0x10/0x10
+   do_group_exit+0x30/0x80
+   get_signal+0x81e/0x860
+   ? srso_return_thunk+0x5/0x5f
+   ? futex_wake+0x177/0x1a0
+   arch_do_signal_or_restart+0x2e/0x1f0
+   ? srso_return_thunk+0x5/0x5f
+   ? srso_return_thunk+0x5/0x5f
+   ? __x64_sys_futex+0x10c/0x1d0
+   syscall_exit_to_user_mode+0xa5/0x130
+   do_syscall_64+0x57/0x110
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  RIP: 0033:0x7f22d05b0f16
+  RSP: 002b:00007f2265761cf0 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+  RAX: fffffffffffffe00 RBX: 0000000000000000 RCX: 00007f22d05b0f16
+  RDX: 0000000000000000 RSI: 0000000000000189 RDI: 00005629e320d97c
+  RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000ffffffff
+  R10: 0000000000000000 R11: 0000000000000246 R12: 00005629e320d928
+  R13: 0000000000000000 R14: 0000000000000001 R15: 00005629e320d97c
+   </TASK>
+
+Fixes: b7ca5743a260 ("sched/core: Tweak wait_task_inactive() to force dequeue sched_delayed tasks")
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: John Stultz <jstultz@google.com>
+Cc: Chris Arges <carges@cloudflare.com>
+Cc: stable@vger.kernel.org # v6.12
+Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+---
+ kernel/sched/core.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ccba6fc3c3fe..2dfc3977920d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2293,12 +2293,6 @@ unsigned long wait_task_inactive(struct task_struct *p, unsigned int match_state
+ 		 * just go back and repeat.
+ 		 */
+ 		rq = task_rq_lock(p, &rf);
+-		/*
+-		 * If task is sched_delayed, force dequeue it, to avoid always
+-		 * hitting the tick timeout in the queued case
+-		 */
+-		if (p->se.sched_delayed)
+-			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+ 		trace_sched_wait_task(p);
+ 		running = task_on_cpu(rq, p);
+ 		queued = task_on_rq_queued(p);
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
