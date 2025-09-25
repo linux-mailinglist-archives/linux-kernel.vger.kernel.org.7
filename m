@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-832336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BD3B9EFBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EA4B9EFD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A17A1BC60AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527E617F08C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E312FB975;
-	Thu, 25 Sep 2025 11:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF052FB96C;
+	Thu, 25 Sep 2025 11:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNGQvdGX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pydypxqi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EAF2E7BBA;
-	Thu, 25 Sep 2025 11:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A864B28B415;
+	Thu, 25 Sep 2025 11:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758800841; cv=none; b=juGVKkdqABUVOjq715NYUMehsgmGTUAXUTgCu5XkFmCu43ynyaJAg3niV6LPEvpJpN/xDy57nPbaAAUkgZ5Kaf94YPW+76L5GJZF/Gfs/4y2FbN1RAFiSem/NKHAgdK389wDvd3lj3oZWzz51ipBWlYEXciNqX5zyfaaxjl0RXQ=
+	t=1758800871; cv=none; b=uUy9bMRNbTWnNxpoWJlkdZa4jzFgcH+jbeUk7SHCTCg+bAOUuJgB1GunbKnOvE8Sn1UgUI55j71wfTB9EODfwyiyHRNLoawMMQs8lo9Y3X3YpT3Fe4zOkNIra4oEyDixEXHjgrLNysTHI2CNsqpVntXt3+ze0+HVt9jB+JTRkVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758800841; c=relaxed/simple;
-	bh=Q3mnrcj8p/uRIBTdnzGuB5Det4n2w9w+3xRaLJY2D3U=;
+	s=arc-20240116; t=1758800871; c=relaxed/simple;
+	bh=j8MpnwcfPX2dZDPE30kXEzCmdJkyFGmKh1J1fy9wcwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJQZyLSP3lPaFfM7w1glNQX4Whj97UFT90GvqdvzkCtyl1uIMZljOiGxtdJs7VwlsRSr5kh2ZrGvIFLccxPPy7giWuxWtSnhtYqz+9rodUwWqwe0SuZmhxJnjPKTab3Z2gVnmzSmpPQ+7F0HpmXhgiRR9NSSRUTvSgN60yFu5XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNGQvdGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C5E2C4CEF0;
-	Thu, 25 Sep 2025 11:47:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjMRtAu6iWWgxkDaGtyEh5N4fJ7yLt4uc8liGNkafGGRHF1o/toKMcn9I9F7lyAPJjorr7jJfcnrEEOQJHstNn8v9BMenty+SOnZKKDbxgIOHXOsxO8ZQA8oSsfzpv9d5GwwTG1oLk1+xY5iwqxb8kLyNzO1N1IgXPZ8M+2PutI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pydypxqi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D389C4CEF0;
+	Thu, 25 Sep 2025 11:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758800839;
-	bh=Q3mnrcj8p/uRIBTdnzGuB5Det4n2w9w+3xRaLJY2D3U=;
+	s=k20201202; t=1758800871;
+	bh=j8MpnwcfPX2dZDPE30kXEzCmdJkyFGmKh1J1fy9wcwE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNGQvdGXwm6ZVpTcPjbD5Jnno6KeDcj08N6lkPwzK/2RPHTvoebC3gvA5IiTqlsna
-	 PeJetyH52SLwwzfj8Da1MJti41CDQG0FOobCzw4XSVVdPAvzzTu4B5YFfR24kK4Br5
-	 xcM7Bgrbmijb6l0Kl60Euuvf8bVN7ezsly0SjvDBEr18dFICIVQT2HgMEU2tpVDbOB
-	 UveaMEe//PHt12z/zPyNYF6R3ZYst/WNva5koGGEg9tIXnE6FyldFNi02X6ECujBn1
-	 oax5mc70SipIvNnnNT1vGEbOV4QGjeqez15Zp9G8KSJn5b/0xZJM6bJzILFvZkkEn/
-	 Ax/SdTY94DcIA==
-Date: Thu, 25 Sep 2025 12:47:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH] tpm: loongson: Add bufsiz parameter to
- tpm_loongson_send()
-Message-ID: <20250925114714.GE8757@google.com>
-References: <20250917-tpm-loongson-add-bufsiz-v1-1-972a75c0aab2@kernel.org>
- <175880079495.625134.9934244689955652059.b4-ty@kernel.org>
+	b=pydypxqi9/3Yo/DRcgQRn4JW0wjju74NQJDgbTrF3HrJax7jzMp52QuWypBusKJ7R
+	 +Bb3m3wc4rZ3Jbt8nU/dcbTzkJJBPeGk0jlOyo4jmGiPEFinN40GCXlmRXymRz1PJw
+	 WDB6MW48CfTT4cxGmrYMZVFps8pcx9M8rKJeAc3dBaKF/UdTt19wtVsj+Z6NBThYmj
+	 hS1mUD9VgfYhHVyehs7nD5273NwbasYYhCRbdYyOIWWMbe1K2IifMdU/qBMytK3X2f
+	 NdFDQMjTdgxXDBXVZt2XXVT+Hlyl9L9kGZsYoK/xabdfsiOq7Kd+H+YWoLxZcvzMGE
+	 tT9dVvyT4HbSA==
+Date: Thu, 25 Sep 2025 12:47:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, andrealmeid@igalia.com,
+	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: Re: [tip: locking/futex] selftests: kselftest: Create
+ ksft_print_dbg_msg()
+Message-ID: <833f5ae5-190e-47ec-9ad9-127ad166c80c@sirena.org.uk>
+References: <20250917-tonyk-robust_test_cleanup-v3-1-306b373c244d@igalia.com>
+ <175838567551.709179.5619760179104074372.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="786AysrNRwx1ZrHy"
+Content-Disposition: inline
+In-Reply-To: <175838567551.709179.5619760179104074372.tip-bot2@tip-bot2>
+X-Cookie: Interchangeable parts won't.
+
+
+--786AysrNRwx1ZrHy
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175880079495.625134.9934244689955652059.b4-ty@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 25 Sep 2025, Lee Jones wrote:
+On Sat, Sep 20, 2025 at 04:27:55PM -0000, tip-bot2 for Andr=C3=A9 Almeida w=
+rote:
+> The following commit has been merged into the locking/futex branch of tip:
+>=20
+> Commit-ID:     f2662ec26b26adb71783fa5e5ee75aff6f18a940
+> Gitweb:        https://git.kernel.org/tip/f2662ec26b26adb71783fa5e5ee75af=
+f6f18a940
+> Author:        Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> AuthorDate:    Wed, 17 Sep 2025 18:21:40 -03:00
+> Committer:     Thomas Gleixner <tglx@linutronix.de>
+> CommitterDate: Sat, 20 Sep 2025 18:11:53 +02:00
+>=20
+> selftests: kselftest: Create ksft_print_dbg_msg()
+>=20
+> Create ksft_print_dbg_msg() so testers can enable extra debug messages
+> when running a test with the flag -d.
 
-> On Wed, 17 Sep 2025 10:09:00 -0700, Nathan Chancellor wrote:
-> > Commit 5c83b07df9c5 ("tpm: Add a driver for Loongson TPM device") has a
-> > semantic conflict with commit 07d8004d6fb9 ("tpm: add bufsiz parameter
-> > in the .send callback"), as the former change was developed against a
-> > tree without the latter change. This results in a build error:
-> > 
-> >   drivers/char/tpm/tpm_loongson.c:48:17: error: initialization of 'int (*)(struct tpm_chip *, u8 *, size_t,  size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int,  long unsigned int)'} from incompatible pointer type 'int (*)(struct tpm_chip *, u8 *, size_t)' {aka 'int (*)(struct tpm_chip *, unsigned char *, long unsigned int)'} [-Wincompatible-pointer-types]
-> >      48 |         .send = tpm_loongson_send,
-> >         |                 ^~~~~~~~~~~~~~~~~
-> >   drivers/char/tpm/tpm_loongson.c:48:17: note: (near initialization for 'tpm_loongson_ops.send')
-> >   drivers/char/tpm/tpm_loongson.c:31:12: note: 'tpm_loongson_send' declared here
-> >      31 | static int tpm_loongson_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >         |            ^~~~~~~~~~~~~~~~~
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] tpm: loongson: Add bufsiz parameter to tpm_loongson_send()
->       commit: 39377467669197b02479798f49e3f19344155dc9
+I'm seeing build failures on a wide range of the selftests in -next due
+to this patch.  The build fails with:
 
-Send for testing.
+aarch64-linux-gnu-gcc -fno-asynchronous-unwind-tables -fno-ident -s -Os -no=
+stdli
+b \
+        -include ../../../../include/nolibc/nolibc.h -I../..\
+        -static -ffreestanding -Wall za-fork.c /build/stage/build-work/ksel=
+ftest
+/arm64/fp/za-fork-asm.o -o /build/stage/build-work/kselftest/arm64/fp/za-fo=
+rk
+In file included from za-fork.c:12:
+=2E./../kselftest.h:108:8: error: unknown type name =E2=80=98bool=E2=80=99
+  108 | static bool ksft_debug_enabled;
+      |        ^~~~
+=2E./../kselftest.h:1:1: note: =E2=80=98bool=E2=80=99 is defined in header =
+=E2=80=98<stdbool.h>=E2=80=99; this is=20
+probably fixable by adding =E2=80=98#include <stdbool.h>=E2=80=99
+  +++ |+#include <stdbool.h>
+    1 | /* SPDX-License-Identifier: GPL-2.0 */
 
-Will follow-up on the PR once complete.
+I'm using gcc-14, full build log at:
 
--- 
-Lee Jones [李琼斯]
+   https://builds.sirena.org.uk/f2662ec26b26adb71783fa5e5ee75aff6f18a940/ar=
+m64/defconfig/build.log =20
+
+--786AysrNRwx1ZrHy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVK+IACgkQJNaLcl1U
+h9CJmAf/eTpyg7o0X+KrcvqxLv9W5szOk9ZqpjvIflFTDrfMjr+TbUmpu0IaN+Xa
+m0DdA3ImxotuYYvmp6jIqU2arJRpDxqT242Srd7h/ADPVIneoqTRUlZZLZzxwThd
+cgKA+rsoIuPPdr9Dlgt1a+NotjP1+hqD5eEy+22vSo1YgCQuWW6HzoJbbmzK/Zmo
+Gh7nZZzM/xYMzyzfZqWCo7EJgsew4PhtUvuxBy4AlO7FEX684K/DhL6Nw7lMmGdy
+7yJbjTenIRmI/5R+3AQnXCojPYi++3p0FNTRLTWAI1hASrERAtxoyS0ja1kXUPxr
+ZzHaDI70q0APBkmZv0bRnrPuoGfRzg==
+=m9Xn
+-----END PGP SIGNATURE-----
+
+--786AysrNRwx1ZrHy--
 
