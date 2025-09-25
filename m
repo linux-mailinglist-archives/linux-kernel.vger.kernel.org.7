@@ -1,180 +1,137 @@
-Return-Path: <linux-kernel+bounces-832424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D811CB9F495
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:38:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB3CB9F4B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706CC1B234E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD01B27523
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846F1B4247;
-	Thu, 25 Sep 2025 12:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC5228152D;
+	Thu, 25 Sep 2025 12:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="wX2sVrxu"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1UgG+40"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C515B135
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932E027FB35
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758803877; cv=none; b=tQx/9eoTX2kyGCRaNVwuYVJ0Lk7MZtg2Ezf8OAxillhQZvv1IvbUzqUrtMfHSx4YoJVvlGmh9ZcI2KXhaax6L3NdtZOPVEAbuErmZQTyC6RxGUofE/iF15wlryY/Nb4YVM2UFg1reWkq1lO8XpC9l7JueYjQexDfqQ1JwtQr6hY=
+	t=1758803882; cv=none; b=o3lkO0dKSXkkz/7jyhqw/dVnfq02lkfNgX74eWrh5xl3W2RbsFwKBvf7h+bL6GZv6FgKVaeORUiKYZTSNZKzhTLIcaryeH1diM+LNUUR3A6FLZVzK0UJ5shtzGDFxoVCDZAm0Ww5oFhcA2Z/RqKcDml1H9oK9jrNNCEpfH31wVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758803877; c=relaxed/simple;
-	bh=sKcOPTxnCJ5a4uUqyFcDkFbORkBcdmjDCZ5NAf7dLyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s3YsiWGgy/eHb2hHUo9sOnU5ok5Xb6Dm+/6c5WpqADtWUqn3vQEM4qdpWByThf7Qyp/+mhCdO6AYjMa1yOVWAxhzNMHT9Qw12Hx2eSKLZ1rXdqUl3pEMshyqCfCW6HTYzDaUnDk/GTbSPjufRksqcVdPHNHv+w3gQo4mzjMX5xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=wX2sVrxu; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id 1jt1vjNnuKXDJ1lELvbSSj; Thu, 25 Sep 2025 12:37:49 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 1lEKvUj23HyqZ1lEKvyi4r; Thu, 25 Sep 2025 12:37:49 +0000
-X-Authority-Analysis: v=2.4 cv=G4EcE8k5 c=1 sm=1 tr=0 ts=68d5379d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=TDP2S4RWD7HzL5QBIXWMeQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=n6cUM9N_SOF4ly-ecgYA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jHQEQP6ZDcTVOhUjzvTyaPCqzaUVdzFlGtFP2wFxfNw=; b=wX2sVrxudqIgwgpYFfECf9gNBn
-	b6lrLbgF43by0ZF23koUMsxB99bIXyy+VYpGG86IgUkI/4tdEkll8bJWtmbgMpEMYTUg8kMKklChU
-	6jdE7Fug5TwxiF2UZ0RMhbDUvU8LRqSEJLxehPiqHJ8519ItDFJRHbCx354gGYLfxaHjqKRrJu/L2
-	qI/4f5BdOb4j7G1wGT9Iw0k+RdUtha4PLgvhxTnVMWtG+J59LSFjqNGmXtplhEhrAivjkSPRek8bO
-	YAbiC4oqx6Ia7C0lgJx0Xu5Up1xKGkPo5Ut+sayd9aNc/aowxGIM05Dw/lDbMTQXkibwPt8GjPnfm
-	MSW6ktNw==;
-Received: from [83.214.222.209] (port=59262 helo=[192.168.1.104])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1v1lEH-00000002lYu-2Gu8;
-	Thu, 25 Sep 2025 07:37:45 -0500
-Message-ID: <8497d3e4-fa7f-436c-9e94-b669c7be73f1@embeddedor.com>
-Date: Thu, 25 Sep 2025 14:37:39 +0200
+	s=arc-20240116; t=1758803882; c=relaxed/simple;
+	bh=8WHSnL4BT2wiykQ4IYUSxuEooxYTRYdEQO5KCzBE84E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GcwN+EdPQlX5wAK8Dw/TKa9r7FB2jE1OHE3dPqL8tho2idtzqXz0WVM1Aq6X+LD5cNL7hAHtg2UyQ8xNYr0/UAQAVYMprOzq2JJXIjpLr0eQ3ypmt+eMygBWLLCusPL25fqZM/tcYu73q13AFK3YobDMmg32oO6G+6r84YQFX3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1UgG+40; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0488C4CEF7;
+	Thu, 25 Sep 2025 12:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758803882;
+	bh=8WHSnL4BT2wiykQ4IYUSxuEooxYTRYdEQO5KCzBE84E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=G1UgG+40AKXpcD6FRJ/1mcUVkTz5uDVnl8ONHDb1dYzKmEKhkBqukKwAgdq18jh7i
+	 snn7tcfn8bFIywn3ooYKfVTDEJ2fSQLZxqoZumf0/hs2BE34oR5zeQp+5M4PpIVaqP
+	 xrOmZIkEk04yhY7/9no8wUsQQyGUix0dEO/ynvoLAcQSQM7vP/ufo3rO4BhH74uxfQ
+	 DgkLkdXBGDx7kDY4v9+a46r97IlQ4WTRZcUckvpu72eMOtRLItVtOZq47W1kWqFBdO
+	 rPBdeJaH07koW1hxFVpzAECrS0DjyA20eN392WBd2m7yYVjXt+9HQz0Vn0/3jQ11qu
+	 tx6R1hMXpBgYg==
+From: SeongJae Park <sj@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	elver@google.com,
+	dvyukov@google.com,
+	kasan-dev@googlegroups.com,
+	Aleksandr Nogikh <nogikh@google.com>
+Subject: Re: [PATCH v2] mm/memblock: Correct totalram_pages accounting with KMSAN
+Date: Thu, 25 Sep 2025 05:37:59 -0700
+Message-Id: <20250925123759.59479-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250924100301.1558645-1-glider@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] Bluetooth: Avoid a couple dozen
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aMAZ7wIeT1sDZ4_V@kspp>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <aMAZ7wIeT1sDZ4_V@kspp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 83.214.222.209
-X-Source-L: No
-X-Exim-ID: 1v1lEH-00000002lYu-2Gu8
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.104]) [83.214.222.209]:59262
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCC4Ag8SvqFxbS8Y6vFtrkcB6PTaIetpQueqGLhVOGdhTRUtvw60tvumFRmxFlhgCEboM+uGNUo5VVgNNFmJFdHqyspNKtHujYj5nAykTitNUop6rhh6
- ynLaFwAIkYtu03U9wteZUwTWjX7FmM4wCEk9ulFKbZsqZYXAGCtWOg7a1xWwu+sGvAzuDNunVFv8ffRwRODfLpLgjQ6TRy8iiv2tnpe1w9U6yg9PZBMhXvcv
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+Hello,
 
-Friendly ping: who can take this, please? :)
+On Wed, 24 Sep 2025 12:03:01 +0200 Alexander Potapenko <glider@google.com> wrote:
 
-Thanks!
--Gustavo
+> When KMSAN is enabled, `kmsan_memblock_free_pages()` can hold back pages
+> for metadata instead of returning them to the early allocator. The callers,
+> however, would unconditionally increment `totalram_pages`, assuming the
+> pages were always freed. This resulted in an incorrect calculation of the
+> total available RAM, causing the kernel to believe it had more memory than
+> it actually did.
+> 
+> This patch refactors `memblock_free_pages()` to return the number of pages
+> it successfully frees. If KMSAN stashes the pages, the function now
+> returns 0; otherwise, it returns the number of pages in the block.
+> 
+> The callers in `memblock.c` have been updated to use this return value,
+> ensuring that `totalram_pages` is incremented only by the number of pages
+> actually returned to the allocator. This corrects the total RAM accounting
+> when KMSAN is active.
+> 
+> Cc: Aleksandr Nogikh <nogikh@google.com>
+> Fixes: 3c2065098260 ("init: kmsan: call KMSAN initialization routines")
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+[...]
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2548,24 +2548,25 @@ void *__init alloc_large_system_hash(const char *tablename,
+>  	return table;
+>  }
+>  
+> -void __init memblock_free_pages(struct page *page, unsigned long pfn,
+> -							unsigned int order)
+> +unsigned long __init memblock_free_pages(struct page *page, unsigned long pfn,
+> +					 unsigned int order)
+>  {
+>  	if (IS_ENABLED(CONFIG_DEFERRED_STRUCT_PAGE_INIT)) {
+>  		int nid = early_pfn_to_nid(pfn);
+>  
+>  		if (!early_page_initialised(pfn, nid))
+> -			return;
+> +			return 0;
+>  	}
 
-On 9/9/25 14:13, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the __struct_group() helper to fix 31 instances of the following
-> type of warnings:
-> 
-> 30 net/bluetooth/mgmt_config.c:16:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 1 net/bluetooth/mgmt_config.c:22:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v2:
->   - Use __struct_group() instead of TRAILING_OVERLAP().
-> 
-> v1:
->   - Link: https://lore.kernel.org/linux-hardening/aLSCu8U62Hve7Dau@kspp/
-> 
->   include/net/bluetooth/mgmt.h | 9 +++++++--
->   net/bluetooth/mgmt_config.c  | 4 ++--
->   2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/net/bluetooth/mgmt.h b/include/net/bluetooth/mgmt.h
-> index 3575cd16049a..74edea06985b 100644
-> --- a/include/net/bluetooth/mgmt.h
-> +++ b/include/net/bluetooth/mgmt.h
-> @@ -53,10 +53,15 @@ struct mgmt_hdr {
->   } __packed;
->   
->   struct mgmt_tlv {
-> -	__le16 type;
-> -	__u8   length;
-> +	/* New members MUST be added within the __struct_group() macro below. */
-> +	__struct_group(mgmt_tlv_hdr, __hdr, __packed,
-> +		__le16 type;
-> +		__u8   length;
-> +	);
->   	__u8   value[];
->   } __packed;
-> +static_assert(offsetof(struct mgmt_tlv, value) == sizeof(struct mgmt_tlv_hdr),
-> +	      "struct member likely outside of __struct_group()");
->   
->   struct mgmt_addr_info {
->   	bdaddr_t	bdaddr;
-> diff --git a/net/bluetooth/mgmt_config.c b/net/bluetooth/mgmt_config.c
-> index 6ef701c27da4..c4063d200c0a 100644
-> --- a/net/bluetooth/mgmt_config.c
-> +++ b/net/bluetooth/mgmt_config.c
-> @@ -13,13 +13,13 @@
->   
->   #define HDEV_PARAM_U16(_param_name_) \
->   	struct {\
-> -		struct mgmt_tlv entry; \
-> +		struct mgmt_tlv_hdr entry; \
->   		__le16 value; \
->   	} __packed _param_name_
->   
->   #define HDEV_PARAM_U8(_param_name_) \
->   	struct {\
-> -		struct mgmt_tlv entry; \
-> +		struct mgmt_tlv_hdr entry; \
->   		__u8 value; \
->   	} __packed _param_name_
->   
+I found this patch on mm-new tree is making my test machine (QEMU) reports much
+less MemTotal even though KMSAN is disabled.  And modifying the above part to
+be considered as free success (returning '1UL << order') fixed my issue.
+Because the commit message says the purpose of this change is only for
+KMSAN-stashed memory, maybe the above behavior change is not really intended?
 
+I'm not familiar with this code so I'm unsure if the workaround is the right
+fix.  But since I have no time to look this in deep for now, reporting first.
+
+>  
+>  	if (!kmsan_memblock_free_pages(page, order)) {
+>  		/* KMSAN will take care of these pages. */
+> -		return;
+> +		return 0;
+>  	}
+
+I understand this part is the intended change, of course.
+
+
+Thanks,
+SJ
+
+[...]
 
