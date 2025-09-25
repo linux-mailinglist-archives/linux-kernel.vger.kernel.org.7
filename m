@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-833079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B041BA129B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:25:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FF3BA12A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BBAE3A7895
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41964326D61
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB7031BC90;
-	Thu, 25 Sep 2025 19:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A2D31BCB4;
+	Thu, 25 Sep 2025 19:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVt2Kqu2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVUmysBX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8C51F4625;
-	Thu, 25 Sep 2025 19:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7619631B829;
+	Thu, 25 Sep 2025 19:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828302; cv=none; b=WuBfYPrkR6AfRt0hfv27oWJvqUS7qKX0p2qVFyDOCT0/FRTKBCBi2Z+JOWkUQMBlJttr2Q1cBNID6tJx8/XYfm3ecpVeDEjireLQYlFXubuqaV157h0XrW5WOgzCEZZkqTQMtCjcuYqFg0p6olzQUXFfXCTZeW3CIrDrMFHmElc=
+	t=1758828333; cv=none; b=ezWyWHyaV8ga9je91K/oRjTMdD4okftmfu7kIwhvEDvoKOk/6mmJh9zL6TscPsJtZXelt0L00ptpUptWOg36L0AYd384kLGHldFSSzaoSVy595s5vrk25w8e9YlT4fh+tSZAbonsVEcQsn/YeW0YNMvZszr4atqfI0a6vgn6B3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828302; c=relaxed/simple;
-	bh=b6y3E0Pu+opi8bzUWKgkUqsnKvWRIRG8kX5WciKJSW4=;
+	s=arc-20240116; t=1758828333; c=relaxed/simple;
+	bh=0WqDH+Ptb/z6NI8Zp6WcjeVisQWM4In7zspEI8GYWFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lps5H2xOON8QDN0PZSBuTX1rCrVbIfxa6tt4nCKX6JxF8/wMuvAS79zMQgZ9t7rBWkzAq7YV8axEg12Bgk4riEhcdshJno+CjUR1BlRcnNArUKEHw3HN/ESxEbeEyxl1O6wgKntxlQluPIWXm8yFAyrY1nhf8dXHpj+gAU6csWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVt2Kqu2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA09C4CEF0;
-	Thu, 25 Sep 2025 19:24:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJyl1b8o9QmAjYFHpHyzdwftMG3uhJ70T6LFm2nfJXCJsbQeZLNEFF9tghH3JQA/Ji6n+WclpF4IoEewuIWzZkLmt/CAbcpbzjhOtag1J2wwmE1jghSAqS8dC/nOjjqL4nDLokxjIY0yzV5C+1AlBZ83VcOVtblL5wKuFdGfjD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVUmysBX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83C3C4CEF7;
+	Thu, 25 Sep 2025 19:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758828300;
-	bh=b6y3E0Pu+opi8bzUWKgkUqsnKvWRIRG8kX5WciKJSW4=;
+	s=k20201202; t=1758828333;
+	bh=0WqDH+Ptb/z6NI8Zp6WcjeVisQWM4In7zspEI8GYWFY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VVt2Kqu2ERuWAgl+4m/877EKbd51UL66OPOPQThE8HD0FWaK0G6FEJ/KhVEa7qSGF
-	 kRGDHk+etLeOvrpqTeKXKopRLuIIkDonqmL148ZQ5Hxrt+lPon+vfBCB+hfy1DW3OP
-	 id/5LrWBKRzz5ej305OxqPg9AjUVEACnZ8SirvvNe1FsXVLeJ3GZjrWkkrjp8aTIgN
-	 GC7vL8NfQ2prIhOThp4Sl1g/95qV3Nm0JmBxL/e96UR3bAczNVxQEVfJyl1+tw8M7o
-	 dDQM0lC0ow1BlhncvVMYCXG/GQagnG4x1vgJqrnvpvWrJJgZi9CvNrTvs2iOt6lu5E
-	 3lmnXI6MCc2Xg==
-Date: Thu, 25 Sep 2025 20:24:56 +0100
+	b=IVUmysBX9lAUhUCQny0ELnZuJpYoLibvlbm5y8DP3ru/efDs7/ia3/yyM65Z2p05k
+	 8OGroFWhufzikOo0De3bTZ3EMNzyGtuOY0Mc3u3k3vUbFiadhkbCiaMNCV0sBNX3L9
+	 jv6LLoyPiMzm3nTAM/qobpMjD3/3aBx5TQwK/2DDiWlbnBa30i2oFi5/SRcpKu0AaE
+	 aed3twE7ldL+MfR1pEPoLHbvOih2jFwFEN0zKK5x7GdzlITrJ2wBpJjlA37Qc4WOv1
+	 6e7JDi0mXgPLtrArOMHpQ0a9iUFfQ/GGlITg+kOULb07Xp1MHOARBVRqwt9I9IvbH9
+	 ymrGcCiUkKctg==
+Date: Thu, 25 Sep 2025 20:25:27 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Brian Dodge <bdodge@arcticsand.com>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: leds: arc,arc2c0608: Convert to DT Schema
-Message-ID: <20250925-demotion-decree-22fe36d9757e@spud>
-References: <20250925-arctic-sand-v1-1-735b5ed8faed@thegoodpenguin.co.uk>
+To: Robert Marko <robert.marko@sartura.hr>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
+	lars.povlsen@microchip.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, luka.perkov@sartura.hr,
+	benjamin.ryzman@canonical.com
+Subject: Re: [PATCH net] dt-bindings: net: sparx5: correct LAN969x register
+ space windows
+Message-ID: <20250925-outscore-paternity-69ff215963e8@spud>
+References: <20250925132109.583984-1-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,27 +62,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Sv4rOuQC8mDbAU4F"
+	protocol="application/pgp-signature"; boundary="vLz2jGEcwewmv5kk"
 Content-Disposition: inline
-In-Reply-To: <20250925-arctic-sand-v1-1-735b5ed8faed@thegoodpenguin.co.uk>
+In-Reply-To: <20250925132109.583984-1-robert.marko@sartura.hr>
 
 
---Sv4rOuQC8mDbAU4F
+--vLz2jGEcwewmv5kk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---Sv4rOuQC8mDbAU4F
+--vLz2jGEcwewmv5kk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWXCAAKCRB4tDGHoIJi
-0ouaAP9rp7lf/wrbmh12i3bUlNaxg7uk+gWlydlfQrQA3rD3AwD/ddi57BTrxPYD
-u9N3vE39RVkhR8/MuNONSlqy/k0r5gE=
-=I25W
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWXJwAKCRB4tDGHoIJi
+0vnbAP91mV0T/4HeVsHGDqLadF3xVkxmrX7YYZ4na6tzg843qgEA/DjI3IHzSkCM
+qZg5Ndw8iJ7RzgnX0pegaHvRfXwYQAs=
+=vQNG
 -----END PGP SIGNATURE-----
 
---Sv4rOuQC8mDbAU4F--
+--vLz2jGEcwewmv5kk--
 
