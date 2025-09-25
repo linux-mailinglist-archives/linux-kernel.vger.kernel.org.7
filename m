@@ -1,228 +1,304 @@
-Return-Path: <linux-kernel+bounces-831772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6DBB9D8AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:12:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0032BB9D8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E732D19C7E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:12:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE19B3800AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94102E8DFA;
-	Thu, 25 Sep 2025 06:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C182E8B98;
+	Thu, 25 Sep 2025 06:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dck+FoKs"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KKmk5tv7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C2F849C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E13849C;
+	Thu, 25 Sep 2025 06:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758780725; cv=none; b=OlxdRKW2yif8/qm8SK4WPW84HR76+PREUS9cd5Zk4QJ/ocZXnemCZw7i1eqXhwpU6siMrb0eYoNX+odOzucN/Mc2L6uF8gPMHeCO/v8J4eGViQHhUxu0Vj1ovWPAXrSe59nZZX7S0Uq7d7tg+lr3HHw+/UmoDY/T8qlr+5RUF+s=
+	t=1758780854; cv=none; b=BMwICeh/pBlrT8kc0oB1Yse4w0B1a+mNQr11cQ545/U1H0eIRt9co40Anpl0YBuS3SYgL7w/fUPVD8Mizk90+2uHB6OcDXFAQs95wxMVhZ7g0Io8xLc2/CdedjDRzZasCdxWA/HPhHV7dzMVeXpvEnRDHTF0zw7UN3C75xjTWuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758780725; c=relaxed/simple;
-	bh=2WWBoKOmTJ1w9/H0no6PrlJT+kcDR4H8VfA9NzWmlqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=koeUV9De1Iq4rc+x3Ra7jHeV55xe1qKeYydX6yVHP6wIf8xLej5EZkJpO30ROY0vWMlL5ZNytkmMSb1bSk2PKfCiWceSJjKDLAgQEwMvfqsDKkdfi9vgKyq5zqgMXufQTWj8AjjXyfQcl9nKsQ/wJraoaC1dtQ/L2vCiNOpVl5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dck+FoKs; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b555ed30c1cso475598a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758780723; x=1759385523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qBnESjrn7YE3VD1R8wLTisr50tXYLyvlq0Q7unAi83o=;
-        b=dck+FoKsMNNEIL4YRAoZtFKmBwy6z3vF692FVwkvU4eONgKnl9R7HMlEjD3qJ5mNp1
-         ZR5G6pLMgYVNdBm0JyrUjIlwF+ZX5BEo2Q/qt+9hySlIScvaB4rH2ooB8oYmox8TvtlZ
-         hiD4o7ARLome2zDiTatBlEt6la//AbbXu7mR8qsKAvpHAGxBiDRscUtOC/MQKEe7S9id
-         EEcABs19DMN5/cO/T6qGcL2ttLkO/yzt8aCBhxkdlpL5ELPSkYMJ2QPB19aUAoIsO2cD
-         z4tdPI7wGVXwJJevTWdeSRisrC+ckOhxLIYjqyar7+kHy6Vq6POgI3OowQXf/g2+Dgjd
-         AAgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758780723; x=1759385523;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qBnESjrn7YE3VD1R8wLTisr50tXYLyvlq0Q7unAi83o=;
-        b=LdAfXxJX3InT8dFM+Wm0xGmcBeOPEE/WKyBrNII9BRxeVEpGDpU3v2UCDwh3LTI7Sn
-         Z/Cd0KqZb/NQmkAbc9EQtgdnB9SvELppc8zaSsYPcGCX7x47p/CPi18vwy5maNR+ICH2
-         ylXbsheTyb/aPAFRmOUB3lhF39tzLiHoXwFBRcqHjp8kq/wTUNTaJ8p7Ng6WakrwM0dN
-         YnhZkgy3du/uzkSMkfUA7VhHDKn5NFC2qfpAz4ZN4YIZ4dq6z2lKh2b5SKABAlaZUwUV
-         Uc9e/7XueYPmMWMWNVgWlrMsZo3hnLHuEJfG4hlZ1jK4lwqh1gtggjiZG43Fewnoh4Vu
-         597Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2aaCIviWnqufOsuSRsjmKySjeefg/hqZ3tTu1qwoWZg4SH4tb4Co4GdBPjOerma4CpyDdDnKzVSYIbHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkR82/mOIRsAb9/BXicsrEVrV6zCijujhrlEyq1iA0qXtIlwcf
-	lRLYhlemgxGrNVY53+GmnCvmE97/oeT0puxBzaSufOOCCfDC1ZFHaaD7ABTywsqLRa0TVzgjcNR
-	MIEx2
-X-Gm-Gg: ASbGnctDqbhduyRlRt4+J3F7OpLTymAGJTtAXneNqZnX0URi5WNUUpaT7NhSsQNC7er
-	aFu+C8QlU3bvMnyiovogekk/xU0H1sp9BTpWNuNeE2awnEmigikcjG8nk6lL3J0PxjECF8x0eDi
-	9nB3wlJOh5cV/oD0i/KBdJpIt9Gv5PlGG5VNzTE9KZZXW+5j4p+Gw3EI3LyVkuIqle7cx4taQcF
-	bW2OakdkiImRddYAsJpyMerk6a3YgAOaoypJ2q82rWpCALS/2WNEGwJdAc6Y/d73OwdjrSVbJTj
-	ljfBrf9RcUOi3kwakCC3aurZvokYojltCu4uRmLZRTOkY7jy3VktYsX9eP+6KwdsZKEfkrFlbvw
-	HH0wLPL65CZHunNlZP6qhZGPpD20EhfLfZ/qMIYSNFV1nRS11EWV2Vx10p88ie9/kppyy
-X-Google-Smtp-Source: AGHT+IFX3HNUWNSQugBFP4TDu56vU0SUrsp6NGoojXzrA0bsnO/JcgP+qt+1DH5//CMoXoVaCTunhQ==
-X-Received: by 2002:a17:902:f602:b0:275:b1cf:6dd9 with SMTP id d9443c01a7336-27ed4a608c8mr25539195ad.52.1758780722685;
-        Wed, 24 Sep 2025 23:12:02 -0700 (PDT)
-Received: from [100.82.90.25] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d2ffdsm12803605ad.18.2025.09.24.23.11.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Sep 2025 23:12:02 -0700 (PDT)
-Message-ID: <46da5d33-20d5-4b32-bca5-466474424178@bytedance.com>
-Date: Thu, 25 Sep 2025 14:11:49 +0800
+	s=arc-20240116; t=1758780854; c=relaxed/simple;
+	bh=TvXZQtjJFfQtGTb6aE5U5LBFLnI1T8Rj/jKxdlhf41Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ae1fc3WICPuIqttOR4kdBpF7kWdt0ymJOtncUJR5o2li8UNINILglzluopjsyGTYHu0Wv6kCXSd19JRXPMAZuwu0OKWGyEjSKy0T/Kdr2vNys9fF1eleGXZqTdIs2vSDaLyPk8OhNm7p1KICS8EVVgP1XsOL/cqOR9utXlZ+K6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KKmk5tv7; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758780853; x=1790316853;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TvXZQtjJFfQtGTb6aE5U5LBFLnI1T8Rj/jKxdlhf41Q=;
+  b=KKmk5tv7SfXDcX+uc12cWYOMMOZs6Fqc5AgMb/tm/zmTslD/aYMemgnf
+   irgWJMSIjVv5lY5EFl0RtNrobuK7A8qXqGTzVJ4ygRW/O0QaaPSQPWnH3
+   Fo7KvEa+t+bV6woasF2T9++M+9KgXnQYosOWM72iFRm+hmBiPG5C82ILu
+   2u3lya8dGL0OyEya7ubiQbWCxixfMcjI2KQIwTKxs2EvosCpt85CIKdZn
+   okfyhxZ45PvSDe2MEwY86GU6q8uUXIzYRZJHao1zpqMjBBTtVHo+dA8it
+   MvPP9tzhNWL64UwJhPm0U86Y9cwLW9DNoq8EmR8D97xCBux0tVV21l1jo
+   g==;
+X-CSE-ConnectionGUID: 9N96+Ed0SV+xFrDlJNHQsg==
+X-CSE-MsgGUID: evOnrlfGTdaDtDoJ+qPCwg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="61139472"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="61139472"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 23:14:12 -0700
+X-CSE-ConnectionGUID: saVxe+P4RrWToLAwuwnn0g==
+X-CSE-MsgGUID: 1Q9xLIUVSTqHbX2J/TLKUg==
+X-Ironport-Invalid-End-Of-Message: True
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="181528261"
+Received: from spr.sh.intel.com ([10.112.230.239])
+  by orviesa004.jf.intel.com with ESMTP; 24 Sep 2025 23:14:07 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	broonie@kernel.org,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v4 00/17] Support vector and more extended registers in perf 
+Date: Thu, 25 Sep 2025 14:11:56 +0800
+Message-Id: <20250925061213.178796-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
- offline
-To: David Hildenbrand <david@redhat.com>, hannes@cmpxchg.org,
- hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, lorenzo.stoakes@oracle.com,
- ziy@nvidia.com, harry.yoo@oracle.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
- <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
- <b041b58d-b0e4-4a01-a459-5449c232c437@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <b041b58d-b0e4-4a01-a459-5449c232c437@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi David,
+Changes since V3:
+- Drop the SIMD registers if an NMI hits kernel mode for REGS_USER.
+- Only dump the available regs, rather than zero and dump the
+  unavailable regs. It's possible that the dumped registers are a subset
+  of the requested registers.
+- Some minor updates to address Dapeng's comments in V3.
 
-On 9/24/25 8:38 PM, David Hildenbrand wrote:
-> On 23.09.25 11:16, Qi Zheng wrote:
->> In the future, we will reparent LRU folios during memcg offline to
->> eliminate dying memory cgroups, which requires reparenting the split 
->> queue
->> to its parent.
->>
->> Similar to list_lru, the split queue is relatively independent and does
->> not need to be reparented along with objcg and LRU folios (holding
->> objcg lock and lru lock). So let's apply the same mechanism as list_lru
->> to reparent the split queue separately when memcg is offine.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> ---
->>   include/linux/huge_mm.h |  2 ++
->>   include/linux/mmzone.h  |  1 +
->>   mm/huge_memory.c        | 39 +++++++++++++++++++++++++++++++++++++++
->>   mm/memcontrol.c         |  1 +
->>   mm/mm_init.c            |  1 +
->>   5 files changed, 44 insertions(+)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index f327d62fc9852..a0d4b751974d2 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -417,6 +417,7 @@ static inline int split_huge_page(struct page *page)
->>       return split_huge_page_to_list_to_order(page, NULL, ret);
->>   }
->>   void deferred_split_folio(struct folio *folio, bool partially_mapped);
->> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
->>   void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>           unsigned long address, bool freeze);
->> @@ -611,6 +612,7 @@ static inline int try_folio_split(struct folio 
->> *folio, struct page *page,
->>   }
->>   static inline void deferred_split_folio(struct folio *folio, bool 
->> partially_mapped) {}
->> +static inline void reparent_deferred_split_queue(struct mem_cgroup 
->> *memcg) {}
->>   #define split_huge_pmd(__vma, __pmd, __address)    \
->>       do { } while (0)
->> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
->> index 7fb7331c57250..f3eb81fee056a 100644
->> --- a/include/linux/mmzone.h
->> +++ b/include/linux/mmzone.h
->> @@ -1346,6 +1346,7 @@ struct deferred_split {
->>       spinlock_t split_queue_lock;
->>       struct list_head split_queue;
->>       unsigned long split_queue_len;
->> +    bool is_dying;
-> 
-> It's a bit weird to query whether the "struct deferred_split" is dying. 
-> Shouldn't this be a memcg property? (and in particular, not exist for 
+Changes since V2:
+- Use the FPU format for the x86_pmu.ext_regs_mask as well
+- Add a check before invoking xsaves_nmi()
+- Add perf_simd_reg_check() to retrieve the number of available
+  registers. If the kernel fails to get the requested registers, e.g.,
+  XSAVES fails, nothing dumps to the userspace (the V2 dumps all 0s).
+- Add POC perf tool patches
 
-There is indeed a CSS_DYING flag. But we must modify 'is_dying' under
-the protection of the split_queue_lock, otherwise the folio may be added
-back to the deferred_split of child memcg.
+Changes since V1:
+- Apply the new interfaces to configure and dump the SIMD registers
+- Utilize the existing FPU functions, e.g., xstate_calculate_size,
+  get_xsave_addr().
 
-> the pglist_data part where it might not make sense at all?).
+Starting from the Intel Ice Lake, the XMM registers can be collected in
+a PEBS record. More registers, e.g., YMM, ZMM, OPMASK, SPP and APX, will
+be added in the upcoming Architecture PEBS as well. But it requires the
+hardware support.
 
-Maybe:
+The patch set provides a software solution to mitigate the hardware
+requirement. It utilizes the XSAVES command to retrieve the requested
+registers in the overflow handler. The feature isn't limited to the PEBS
+event or specific platforms anymore.
+The hardware solution (if available) is still preferred, since it has
+low overhead (especially with the large PEBS) and is more accurate.
 
-#ifdef CONFIG_MEMCG
-     bool is_dying;
-#endif
+In theory, the solution should work for all X86 platforms. But I only
+have newer Inter platforms to test. The patch set only enable the
+feature for Intel Ice Lake and later platforms.
 
-> 
->>   };
->>   #endif
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 48b51e6230a67..de7806f759cba 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1094,9 +1094,15 @@ static struct deferred_split 
->> *folio_split_queue_lock(struct folio *folio)
->>       struct deferred_split *queue;
->>       memcg = folio_memcg(folio);
->> +retry:
->>       queue = memcg ? &memcg->deferred_split_queue :
->>               &NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>       spin_lock(&queue->split_queue_lock);
->> +    if (unlikely(queue->is_dying == true)) {
-> 
-> if (unlikely(queue->is_dying))
+The new registers include YMM, ZMM, OPMASK, SSP, and APX.
+The sample_regs_user/intr has run out. A new field in the
+struct perf_event_attr is required for the registers.
 
-Will do.
+After a long discussion in V1,
+https://lore.kernel.org/lkml/3f1c9a9e-cb63-47ff-a5e9-06555fa6cc9a@linux.intel.com/
 
-> 
->> +        spin_unlock(&queue->split_queue_lock);
->> +        memcg = parent_mem_cgroup(memcg);
->> +        goto retry;
->> +    }
->>       return queue;
->>   }
->> @@ -1108,9 +1114,15 @@ folio_split_queue_lock_irqsave(struct folio 
->> *folio, unsigned long *flags)
->>       struct deferred_split *queue;
->>       memcg = folio_memcg(folio);
->> +retry:
->>       queue = memcg ? &memcg->deferred_split_queue :
->>               &NODE_DATA(folio_nid(folio))->deferred_split_queue;
->>       spin_lock_irqsave(&queue->split_queue_lock, *flags);
->> +    if (unlikely(queue->is_dying == true)) {
-> 
-> if (unlikely(queue->is_dying))
+The new field looks like as below.
+@@ -543,6 +545,25 @@ struct perf_event_attr {
+        __u64   sig_data;
 
-Will do.
+        __u64   config3; /* extension of config2 */
++
++
++       /*
++        * Defines set of SIMD registers to dump on samples.
++        * The sample_simd_regs_enabled !=0 implies the
++        * set of SIMD registers is used to config all SIMD registers.
++        * If !sample_simd_regs_enabled, sample_regs_XXX may be used to
++        * config some SIMD registers on X86.
++        */
++       union {
++               __u16 sample_simd_regs_enabled;
++               __u16 sample_simd_pred_reg_qwords;
++       };
++       __u32 sample_simd_pred_reg_intr;
++       __u32 sample_simd_pred_reg_user;
++       __u16 sample_simd_vec_reg_qwords;
++       __u64 sample_simd_vec_reg_intr;
++       __u64 sample_simd_vec_reg_user;
++       __u32 __reserved_4;
+ };
+@@ -1016,7 +1037,15 @@ enum perf_event_type {
+         *      } && PERF_SAMPLE_BRANCH_STACK
+         *
+         *      { u64                   abi; # enum perf_sample_regs_abi
+-        *        u64                   regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
++        *        u64                   regs[weight(mask)];
++        *        struct {
++        *              u16 nr_vectors;
++        *              u16 vector_qwords;
++        *              u16 nr_pred;
++        *              u16 pred_qwords;
++        *              u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
++        *        } && (abi & PERF_SAMPLE_REGS_ABI_SIMD)
++        *      } && PERF_SAMPLE_REGS_USER
+         *
+         *      { u64                   size;
+         *        char                  data[size];
+@@ -1043,7 +1072,15 @@ enum perf_event_type {
+         *      { u64                   data_src; } && PERF_SAMPLE_DATA_SRC
+         *      { u64                   transaction; } && PERF_SAMPLE_TRANSACTION
+         *      { u64                   abi; # enum perf_sample_regs_abi
+-        *        u64                   regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
++        *        u64                   regs[weight(mask)];
++        *        struct {
++        *              u16 nr_vectors;
++        *              u16 vector_qwords;
++        *              u16 nr_pred;
++        *              u16 pred_qwords;
++        *              u64 data[nr_vectors * vector_qwords + nr_pred * pred_qwords];
++        *        } && (abi & PERF_SAMPLE_REGS_ABI_SIMD)
++        *      } && PERF_SAMPLE_REGS_INTR
+         *      { u64                   phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+         *      { u64                   cgroup;} && PERF_SAMPLE_CGROUP
+         *      { u64                   data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
 
-> 
->> +        spin_unlock_irqrestore(&queue->split_queue_lock, *flags);
->> +        memcg = parent_mem_cgroup(memcg);
->> +        goto retry;
->> +    }
->>       return queue;
->>   }
-> 
-> Nothing else jumped at me, but I am not a memcg expert :)
 
-Thanks,
-Qi
+Since there is only one vector qwords field, the qwords for the newest
+vector should be set by the tools. For example, if the end user wants
+XMM0 and YMM1, the vector qwords should be 4. The vector mask should be
+0x3. The YMM0 and YMM1 will be dumped to the userspace. It's the tool's
+responsibility to output the XMM0 and YMM1 to the end user.
 
-> 
+The POC perf tool patches for testing purposes is also attached.
+
+Examples:
+ $perf record -I?
+ available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9 R10
+ R11 R12 R13 R14 R15 SSP XMM0-31 YMM0-31 ZMM0-31 OPMASK0-7
+
+ $perf record --user-regs=?
+ available registers: AX BX CX DX SI DI BP SP IP FLAGS CS SS R8 R9 R10
+ R11 R12 R13 R14 R15 SSP XMM0-31 YMM0-31 ZMM0-31 OPMASK0-7
+
+ $perf record -e cycles:p -IXMM,YMM,OPMASK,SSP ./test
+ $perf report -D
+ ... ...
+ 237538985992962 0x454d0 [0x480]: PERF_RECORD_SAMPLE(IP, 0x1):
+ 179370/179370: 0xffffffff969627fc period: 124999 addr: 0
+ ... intr regs: mask 0x20000000000 ABI 64-bit
+ .... SSP   0x0000000000000000
+ ... SIMD ABI nr_vectors 32 vector_qwords 4 nr_pred 8 pred_qwords 1
+ .... YMM  [0] 0x0000000000004000
+ .... YMM  [0] 0x000055e828695270
+ .... YMM  [0] 0x0000000000000000
+ .... YMM  [0] 0x0000000000000000
+ .... YMM  [1] 0x000055e8286990e0
+ .... YMM  [1] 0x000055e828698dd0
+ .... YMM  [1] 0x0000000000000000
+ .... YMM  [1] 0x0000000000000000
+ ... ...
+ .... YMM  [31] 0x0000000000000000
+ .... YMM  [31] 0x0000000000000000
+ .... YMM  [31] 0x0000000000000000
+ .... YMM  [31] 0x0000000000000000
+ .... OPMASK[0] 0x0000000000100221
+ .... OPMASK[1] 0x0000000000000020
+ .... OPMASK[2] 0x000000007fffffff
+ .... OPMASK[3] 0x0000000000000000
+ .... OPMASK[4] 0x0000000000000000
+ .... OPMASK[5] 0x0000000000000000
+ .... OPMASK[6] 0x0000000000000000
+ .... OPMASK[7] 0x0000000000000000
+ ... ...
+
+
+History:
+  v3: https://lore.kernel.org/lkml/20250815213435.1702022-1-kan.liang@linux.intel.com/
+  v2: https://lore.kernel.org/lkml/20250626195610.405379-1-kan.liang@linux.intel.com/
+  v1: https://lore.kernel.org/lkml/20250613134943.3186517-1-kan.liang@linux.intel.com/
+
+Kan Liang (17):
+  perf/x86: Use x86_perf_regs in the x86 nmi handler
+  perf/x86: Setup the regs data
+  x86/fpu/xstate: Add xsaves_nmi
+  perf: Move has_extended_regs() to header file
+  perf/x86: Support XMM register for non-PEBS and REGS_USER
+  perf: Support SIMD registers
+  perf/x86: Move XMM to sample_simd_vec_regs
+  perf/x86: Add YMM into sample_simd_vec_regs
+  perf/x86: Add ZMM into sample_simd_vec_regs
+  perf/x86: Add OPMASK into sample_simd_pred_reg
+  perf/x86: Add eGPRs into sample_regs
+  perf/x86: Add SSP into sample_regs
+  perf/x86/intel: Enable PERF_PMU_CAP_SIMD_REGS
+  perf tools: Only support legacy regs for the PT and PERF_REGS_MASK
+  perf tools: headers: Sync with the kernel sources
+  perf tools: parse-regs: Support the new SIMD format
+  perf tools: regs: Support to dump regs for PERF_SAMPLE_REGS_ABI_SIMD
+
+ arch/x86/events/core.c                        | 315 ++++++++++++-
+ arch/x86/events/intel/core.c                  |  75 ++-
+ arch/x86/events/intel/ds.c                    |  12 +-
+ arch/x86/events/perf_event.h                  |  80 ++++
+ arch/x86/include/asm/fpu/xstate.h             |   3 +
+ arch/x86/include/asm/perf_event.h             |  30 +-
+ arch/x86/include/uapi/asm/perf_regs.h         |  65 ++-
+ arch/x86/kernel/fpu/xstate.c                  |  32 +-
+ arch/x86/kernel/perf_regs.c                   | 139 +++++-
+ include/linux/perf_event.h                    |  16 +
+ include/linux/perf_regs.h                     |  26 +
+ include/uapi/linux/perf_event.h               |  45 +-
+ kernel/events/core.c                          | 111 ++++-
+ tools/arch/x86/include/uapi/asm/perf_regs.h   |  65 ++-
+ tools/include/uapi/linux/perf_event.h         |  45 +-
+ tools/perf/arch/x86/include/perf_regs.h       |   2 +-
+ tools/perf/arch/x86/util/perf_regs.c          | 443 +++++++++++++++++-
+ tools/perf/util/evsel.c                       |  45 ++
+ tools/perf/util/intel-pt.c                    |   2 +-
+ tools/perf/util/parse-regs-options.c          | 133 +++++-
+ .../perf/util/perf-regs-arch/perf_regs_x86.c  |  43 ++
+ tools/perf/util/perf_event_attr_fprintf.c     |   6 +
+ tools/perf/util/perf_regs.c                   |  54 +++
+ tools/perf/util/perf_regs.h                   |  10 +
+ tools/perf/util/record.h                      |   6 +
+ tools/perf/util/sample.h                      |  10 +
+ tools/perf/util/session.c                     |  78 ++-
+ 27 files changed, 1814 insertions(+), 77 deletions(-)
+
+
+base-commit: 6d48436560e91be858158e227f21aab71698814e
+-- 
+2.34.1
 
 
