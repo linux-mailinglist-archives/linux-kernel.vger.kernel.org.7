@@ -1,498 +1,150 @@
-Return-Path: <linux-kernel+bounces-832536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899C3B9F9B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:38:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C338B9F9BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBA31C2238C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:39:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F411617A3A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E404E271469;
-	Thu, 25 Sep 2025 13:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139A026F44C;
+	Thu, 25 Sep 2025 13:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f2I0vBmO"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Yga0bisA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SLCZyK/W"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83EB26CE0F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F250026CE0F;
+	Thu, 25 Sep 2025 13:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807532; cv=none; b=hq3vQAUT4rbuqmx6gzatzrh+k48Qs3tCgT2xBqHYKCnVEtrk1DgkcdYaZ4UGZaPcYEKMEJeUie+vglTzFQJeGa4oPhrotQHz3wNjmq4QMDXwtFneVi0sKQ7SLz4uGXPoiyUhMOhbiL8DBH1H3B4Qs3ZvQEdlra4KcOsp4K1llF8=
+	t=1758807549; cv=none; b=FSAdajRn6I+agPDufYjJcGReinwzlBY2Mg27gvoWmU4lQZQGhistB2uhvObRY3IPbZeR4iR36o8eLxX/V0p9Q8SQVSG9Zts0tO/My44006chcLnfSzMIFKEtOIuiFcKUDtQZ1SoFI8fH+dl7+6gjMOAoh5rSoD/LaNiIaxsF/qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807532; c=relaxed/simple;
-	bh=csJRT5xunesRdwJxhIB4Di7/2fMyxj2pWonicuMRLgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bwhVLMaK2SKlm8PXn7g0tXaGnuG+M0pAajCvF0pMjvtc5fcQ2RmkzSg8qveRtCdcfAo1zdCDQz0wG9+DuRBz4UYyDzSSVqi8RGutUzbfSjI8YsEVht24uuG8JI2t8AuIQSy3w8NVc1+F2yjn6jXuwL9/6kogWHl9ZZszVACizl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f2I0vBmO; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b78657a35aso1194211cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758807530; x=1759412330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8zdfa0TYqPEtG9KFxyYyvCSe3whEmUvkm9OuNg2EF/Q=;
-        b=f2I0vBmODLm0kT91X81wzQ0rT7bAyyy90I0oEPF7YaZSl1f2b9SwusUKv38QYNWX9d
-         EgJ1gtL6Vnp8WK/moALp4XHMm8JESQztBX2khZsDb4YL/W+Vr5bKgOvzMVcjy1cntYsP
-         O1VX3d9ctYaaVSUvV/MAxP8qgcEkhsFSx7iQqN/NinRJjy+Upo0zECkNf+aQcTFk8QmH
-         ASBgF0S3cOy+D1JgQhd+fF2L9tIo+8+RK11fZvp6vzF3nyVOo/rjf1f+DSGgySip4uqk
-         KfdB8oDnNCIi9H9P1ju3ex3S0feVYyankskeqQTSS9M7WXiWPYSN/NDPxsaBAUslEbE5
-         7b8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807530; x=1759412330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8zdfa0TYqPEtG9KFxyYyvCSe3whEmUvkm9OuNg2EF/Q=;
-        b=uRdBHM5ltmQK6w+q+A4lLkwTumN/QGgN2E9eBKZXkcJZgg1CTqfeaR1cjlHpq1V1WT
-         1fyZRhPG/62tVHXOtN8OCwFKx4noR1H0SD8mSCH1IS1O69h1avS6Ax8yRobVdk9UPGBp
-         mi9y67vC9BnzMY727cq78Wy0AB690l9soTJqG0B37+G8Z7wNZje2niCq+hg94lXIefEq
-         prSopQq4y5qrD6RBnN8gDQOqJtOqkaRkBnm9JlDCiFuWJZ9JJ9Jren+6uMcFTWEmO7v5
-         Oh12LbhMGZxKklKjxp3GmMEjtkCy0vzJPo7QiVCeVGnkXrsyNZVfTBXxIOwEOyCM/iXx
-         K2Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkMumERwg+oUzCHvyY6xHG/B0pb/AoQrf42ezoIBOXrCyeWef5v2KXJu54xsyxuQPSHzZiioM8djfecsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN0XeuIQp+tCoQy2Fn8eIjOqAeZ4s9UrN/2J2w3H4JQA3BKQm5
-	As1plEa0wmBvGkKqPvuj4yOXKRhZjXKfdS9JQndbqhGC58DEgicQjzaHq0uiBd8fbfj3J+8qUig
-	JRxU2ayFPdKbPKsTTOabaLr/Etf+QJ73dfcvC8TuG
-X-Gm-Gg: ASbGnctZgwoKvNv0lVcAN9pFBgPEOdKi8s5QHzdG7rQ68rhaqSjrJ6rVHs9z+XoWBmJ
-	gw05vcX8DG7PHLPffrk8xN0zgmFVuBNP3T7HvoFPedcCA1FtPfI7kTCIGa0kErgE+q0TMmC+HDb
-	yfWj2W9KWxSoMPB40Rxtw5jg4hpiexCVGX4xrNeoj2wpfm/U5je1JSA7SVOtbd3mnv6GUf6xHbh
-	R7gnYsmjWMV
-X-Google-Smtp-Source: AGHT+IEgTKlFsxeZ6dECfIA8vaYS9lbWVQA8rwJ3bK+8a8wFRVfZ3eyxhkv/iJk2SxzK25JGLvnA23eNuxNHoASLYoE=
-X-Received: by 2002:ac8:5ac4:0:b0:4b3:19b2:d22 with SMTP id
- d75a77b69052e-4da2e581313mr7284511cf.13.1758807529088; Thu, 25 Sep 2025
- 06:38:49 -0700 (PDT)
+	s=arc-20240116; t=1758807549; c=relaxed/simple;
+	bh=l9noDZmS+h5Akb+RjBpEJrg20lrX30Rh2R6I7mjXR/8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=rPwDDMTTMaiyFy404gj70m6RHvEUuuFqnA3mTo4ZBQ+6wQ6MW/oELZK9zakUnX9XNFsN8j/UtmjP6W01AZ3mFxie8+Lsv0mFz6FXJeylqiRuA3er/NmcmT3c91B5FeqyeQZMLvePMU/0yTYV2T9Sf66ujycjQZNIpKSicOXL6XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Yga0bisA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SLCZyK/W; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id F1365EC01C9;
+	Thu, 25 Sep 2025 09:39:05 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 09:39:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758807545;
+	 x=1758893945; bh=ZP6i8t6VjyohhnaOw+R5p+q7sTs7Hkp2pGWlk4LB/z0=; b=
+	Yga0bisAcqKTV0DnIf+ALNVaHGED9hccLWEpVcu1AS2ugQrXux+JA34d+GEbwyXx
+	e1FF0+O80vgwnO1ne8rdph8It6i84gUkARzZip9XgVMLc71RtQMA4wXJtW7w4JSu
+	xfQfTt7AmtsdAOVuYNusA/41h2FeDK2+dOSS0qUiliUaAJUOB13CWyvxCH/wWWMQ
+	iAuYirlk7aD3gyuTEJeKhbPXgaSS08grLJPvb94j9DcstOCoRVhWSAXJl9VGVuP5
+	C0z8eTH5I4m6zXWUkNFI9lMlVUVIMkuV2nktR269Zk3NtdV6VQ+c7F7E3C0SKXKg
+	TuNZ6PgokfHTn3+f1bTJQA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758807545; x=
+	1758893945; bh=ZP6i8t6VjyohhnaOw+R5p+q7sTs7Hkp2pGWlk4LB/z0=; b=S
+	LCZyK/WT4E/AJqkEn4I4YpM3gmtkrGKSMOjemO5DGw0dS4DogzqSSjqto2aMHMpR
+	wxUYOoTA8WID/3kdzBpXjaQnfpnyY7XgqLMM0saOJUcdjGCQE3807d7McA9iLy9Z
+	okhcLBhPp7+ibK8m6kYp3xbfXzN9EGSc5MFyM43ORS+YUaSaJpVdV0Oq9TFNTKcP
+	cWwUTPMgxTMKp2GOJ+Xj71wxH4ud2RC1KPocZwQJogiZcAVPUmT7J+wO5wO3cYmn
+	d7WBwyG9R74WaI80m86f1ZYTfllRUQ7iu7kkfzcs1L9zzRlvxIA173SmD3dGOdjC
+	bEMa2uPMgyMDuPlgWi5ZQ==
+X-ME-Sender: <xms:-EXVaFl1peFBt9BoXygc2Q9r-wWTKxr5LzzwlJgArNIGdcACKp-2mQ>
+    <xme:-EXVaLrAe_LPjNZ12OohpAcXUeOrXAnHR-81spEbJf5SpKs011LLasvgsMa8VUxFx
+    j2lnOBq0do6AlL5CL7iJp380yyg7zO99ls4xSuWLkWl2Oc9LYdKS24>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiieeifecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtph
+    htthhopehgohhrughonhdrghgvsegsshhtrdgrihdprhgtphhtthhopegsshhtqdhuphhs
+    thhrvggrmhessghsthgrihdrthhophdprhgtphhtthhopegrughrihgrnhdrhhhunhhtvg
+    hrsehinhhtvghlrdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskhhisehlih
+    hnrghrohdrohhrgh
+X-ME-Proxy: <xmx:-EXVaKcqt-fv8lOleOx8L8kijJDVWj7-P23o48SsNRvckojD-eQdzw>
+    <xmx:-EXVaLwC1bOigfMDX-tFoRmlBM74SFARXzeAqG86RqlIDGh71P_hHA>
+    <xmx:-EXVaLIcIpoRWcV4NKcNP5fBP6qfFJmG9of8HUkN1I7UU9i2YVjKww>
+    <xmx:-EXVaEuDGcpXdm5BN4EAXo4c4CRynPUdv6uXY39MKc2saKqSfkRcNg>
+    <xmx:-UXVaJ-JhawVLmBEvgcMBDrywJHyP5BoJ5x4etVHw-smF0Ja35YcNudd>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8EB47700069; Thu, 25 Sep 2025 09:39:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aMpxnACqmsQl-lp0@hyeyoo> <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
- <aMqcXyKRlZggLxu_@hyeyoo> <6f92eca3-863e-4b77-b2df-dc2752c0ff4e@suse.cz>
- <aMqyn6nenR8V_p1y@hyeyoo> <bf8b4741-1025-4cc8-b9ed-5b566bdcb2d7@suse.cz>
- <aMq40h5iOjj8K7cc@hyeyoo> <a32bd837-2597-43d0-9da3-1ce5a53b15f4@suse.cz>
- <40461105-a344-444f-834b-9559b6644710@suse.cz> <CAJuCfpG6CSm2iZ3jrwLQA4vVbTMvC=B37q10OL+wLzm-DSRhFw@mail.gmail.com>
- <aNUCuvUh5Ugdnyxr@hyeyoo>
-In-Reply-To: <aNUCuvUh5Ugdnyxr@hyeyoo>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 25 Sep 2025 06:38:36 -0700
-X-Gm-Features: AS18NWA102fuUtgXI8FPHz-QxY1spX_4bosczi6wDVyCIxfHncVuKfAyhq5adzc
-Message-ID: <CAJuCfpFG0wzY24xyXBjdRsHK3zxbVskU3raoQXF9k-gfnZEntQ@mail.gmail.com>
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu() operations
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Uladzislau Rezki <urezki@gmail.com>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	maple-tree@lists.infradead.org, "Paul E . McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: AYQZGcjF-1nJ
+Date: Thu, 25 Sep 2025 15:38:44 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>
+Cc: "Adrian Hunter" <adrian.hunter@intel.com>,
+ bst-upstream <bst-upstream@bstai.top>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ "gordon.ge" <gordon.ge@bst.ai>, krzk+dt@kernel.org,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Will Deacon" <will@kernel.org>
+Message-Id: <f64b0e00-1c30-47a1-b6b0-1bc28cc7f8ac@app.fastmail.com>
+In-Reply-To: 
+ <CAPDyKFp3onTDGgygvOrK-G40w4mSx4S5=PbdZ+26hsQ+nPVRSA@mail.gmail.com>
+References: <20250925090412.2068216-1-yangzh0906@thundersoft.com>
+ <20250925121155.2401934-1-yangzh0906@thundersoft.com>
+ <CAPDyKFp3onTDGgygvOrK-G40w4mSx4S5=PbdZ+26hsQ+nPVRSA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] arm64: introduce Black Sesame Technologies C1200 SoC and
+ CDCU1.0 board
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025 at 1:52=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
+On Thu, Sep 25, 2025, at 15:34, Ulf Hansson wrote:
+> On Thu, 25 Sept 2025 at 14:12, Albert Yang <yangzh0906@thundersoft.com> wrote:
+>> On Thu, Sep 25, 2025 at 05:03:57PM +0800, Albert Yang wrote:
+>> Subject: Re: [PATCH] splitting SoC and MMC parts
+>>
+>> Hi Arnd,
+>>
+>> I may have missed an important detail in my previous note. If I split
+>> out the MMC-related patches and submit only the SoC parts first, I
+>> cannot validate the SoC on real hardware: both the kernel and the root
+>> filesystem live on the MMC device. Without the MMC stack (DT bindings
+>> and the controller driver), the board does not boot to userspace, so I
+>> cannot properly verify the SoC/DT changes in isolation.
 >
-> On Wed, Sep 24, 2025 at 09:35:05PM -0700, Suren Baghdasaryan wrote:
-> > On Thu, Sep 18, 2025 at 1:09=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
-> wrote:
-> > >
-> > > On 9/17/25 16:14, Vlastimil Babka wrote:
-> > > > On 9/17/25 15:34, Harry Yoo wrote:
-> > > >> On Wed, Sep 17, 2025 at 03:21:31PM +0200, Vlastimil Babka wrote:
-> > > >>> On 9/17/25 15:07, Harry Yoo wrote:
-> > > >>> > On Wed, Sep 17, 2025 at 02:05:49PM +0200, Vlastimil Babka wrote=
-:
-> > > >>> >> On 9/17/25 13:32, Harry Yoo wrote:
-> > > >>> >> > On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wr=
-ote:
-> > > >>> >> >> On 9/17/25 10:30, Harry Yoo wrote:
-> > > >>> >> >> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka=
- wrote:
-> > > >>> >> >> >> +                          sfw->skip =3D true;
-> > > >>> >> >> >> +                          continue;
-> > > >>> >> >> >> +                  }
-> > > >>> >> >> >>
-> > > >>> >> >> >> +                  INIT_WORK(&sfw->work, flush_rcu_sheaf=
-);
-> > > >>> >> >> >> +                  sfw->skip =3D false;
-> > > >>> >> >> >> +                  sfw->s =3D s;
-> > > >>> >> >> >> +                  queue_work_on(cpu, flushwq, &sfw->wor=
-k);
-> > > >>> >> >> >> +                  flushed =3D true;
-> > > >>> >> >> >> +          }
-> > > >>> >> >> >> +
-> > > >>> >> >> >> +          for_each_online_cpu(cpu) {
-> > > >>> >> >> >> +                  sfw =3D &per_cpu(slub_flush, cpu);
-> > > >>> >> >> >> +                  if (sfw->skip)
-> > > >>> >> >> >> +                          continue;
-> > > >>> >> >> >> +                  flush_work(&sfw->work);
-> > > >>> >> >> >> +          }
-> > > >>> >> >> >> +
-> > > >>> >> >> >> +          mutex_unlock(&flush_lock);
-> > > >>> >> >> >> +  }
-> > > >>> >> >> >> +
-> > > >>> >> >> >> +  mutex_unlock(&slab_mutex);
-> > > >>> >> >> >> +  cpus_read_unlock();
-> > > >>> >> >> >> +
-> > > >>> >> >> >> +  if (flushed)
-> > > >>> >> >> >> +          rcu_barrier();
-> > > >>> >> >> >
-> > > >>> >> >> > I think we need to call rcu_barrier() even if flushed =3D=
-=3D false?
-> > > >>> >> >> >
-> > > >>> >> >> > Maybe a kvfree_rcu()'d object was already waiting for the=
- rcu callback to
-> > > >>> >> >> > be processed before flush_all_rcu_sheaves() is called, an=
-d
-> > > >>> >> >> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pa=
-irs,
-> > > >>> >> >> > so flushed =3D=3D false but the rcu callback isn't proces=
-sed yet
-> > > >>> >> >> > by the end of the function?
-> > > >>> >> >> >
-> > > >>> >> >> > That sounds like a very unlikely to happen in a realistic=
- scenario,
-> > > >>> >> >> > but still possible...
-> > > >>> >> >>
-> > > >>> >> >> Yes also good point, will flush unconditionally.
-> > > >>> >> >>
-> > > >>> >> >> Maybe in __kfree_rcu_sheaf() I should also move the call_rc=
-u(...) before
-> > > >>> >> >> local_unlock().
-> > > >>> >> >>
-> > > >>> >> >> So we don't end up seeing a NULL pcs->rcu_free in
-> > > >>> >> >> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already=
- set it to NULL,
-> > > >>> >> >> but didn't yet do the call_rcu() as it got preempted after =
-local_unlock().
-> > > >>> >> >
-> > > >>> >> > Makes sense to me.
-> > > >>> >
-> > > >>> > Wait, I'm confused.
-> > > >>> >
-> > > >>> > I think the caller of kvfree_rcu_barrier() should make sure tha=
-t it's invoked
-> > > >>> > only after a kvfree_rcu(X, rhs) call has returned, if the calle=
-r expects
-> > > >>> > the object X to be freed before kvfree_rcu_barrier() returns?
-> > > >>>
-> > > >>> Hmm, the caller of kvfree_rcu(X, rhs) might have returned without=
- filling up
-> > > >>> the rcu_sheaf fully and thus without submitting it to call_rcu(),=
- then
-> > > >>> migrated to another cpu. Then it calls kvfree_rcu_barrier() while=
- another
-> > > >>> unrelated kvfree_rcu(X, rhs) call on the previous cpu is for the =
-same
-> > > >>> kmem_cache (kvfree_rcu_barrier() is not only for cache destructio=
-n), fills
-> > > >>> up the rcu_sheaf fully and is about to call_rcu() on it. And sinc=
-e that
-> > > >>> sheaf also contains the object X, we should make sure that is flu=
-shed.
-> > > >>
-> > > >> I was going to say "but we queue and wait for the flushing work to
-> > > >> complete, so the sheaf containing object X should be flushed?"
-> > > >>
-> > > >> But nah, that's true only if we see pcs->rcu_free !=3D NULL in
-> > > >> flush_all_rcu_sheaves().
-> > > >>
-> > > >> You are right...
-> > > >>
-> > > >> Hmm, maybe it's simpler to fix this by never skipping queueing the=
- work
-> > > >> even when pcs->rcu_sheaf =3D=3D NULL?
-> > > >
-> > > > I guess it's simpler, yeah.
-> > >
-> > > So what about this? The unconditional queueing should cover all races=
- with
-> > > __kfree_rcu_sheaf() so there's just unconditional rcu_barrier() in th=
-e end.
-> > >
-> > > From 0722b29fa1625b31c05d659d1d988ec882247b38 Mon Sep 17 00:00:00 200=
-1
-> > > From: Vlastimil Babka <vbabka@suse.cz>
-> > > Date: Wed, 3 Sep 2025 14:59:46 +0200
-> > > Subject: [PATCH] slab: add sheaf support for batching kfree_rcu() ope=
-rations
-> > >
-> > > Extend the sheaf infrastructure for more efficient kfree_rcu() handli=
-ng.
-> > > For caches with sheaves, on each cpu maintain a rcu_free sheaf in
-> > > addition to main and spare sheaves.
-> > >
-> > > kfree_rcu() operations will try to put objects on this sheaf. Once fu=
-ll,
-> > > the sheaf is detached and submitted to call_rcu() with a handler that
-> > > will try to put it in the barn, or flush to slab pages using bulk fre=
-e,
-> > > when the barn is full. Then a new empty sheaf must be obtained to put
-> > > more objects there.
-> > >
-> > > It's possible that no free sheaves are available to use for a new
-> > > rcu_free sheaf, and the allocation in kfree_rcu() context can only us=
-e
-> > > GFP_NOWAIT and thus may fail. In that case, fall back to the existing
-> > > kfree_rcu() implementation.
-> > >
-> > > Expected advantages:
-> > > - batching the kfree_rcu() operations, that could eventually replace =
-the
-> > >   existing batching
-> > > - sheaves can be reused for allocations via barn instead of being
-> > >   flushed to slabs, which is more efficient
-> > >   - this includes cases where only some cpus are allowed to process r=
-cu
-> > >     callbacks (Android)
-> >
-> > nit: I would say it's more CONFIG_RCU_NOCB_CPU related. Android is
-> > just an instance of that.
-> >
-> > >
-> > > Possible disadvantage:
-> > > - objects might be waiting for more than their grace period (it is
-> > >   determined by the last object freed into the sheaf), increasing mem=
-ory
-> > >   usage - but the existing batching does that too.
-> > >
-> > > Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
-> > > implementation favors smaller memory footprint over performance.
-> > >
-> > > Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
-> > > contexts where kfree_rcu() is called might not be compatible with tak=
-ing
-> > > a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
-> > > spinlock - the current kfree_rcu() implementation avoids doing that.
-> > >
-> > > Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all cac=
-hes
-> > > that have them. This is not a cheap operation, but the barrier usage =
-is
-> > > rare - currently kmem_cache_destroy() or on module unload.
-> > >
-> > > Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail=
- to
-> > > count how many kfree_rcu() used the rcu_free sheaf successfully and h=
-ow
-> > > many had to fall back to the existing implementation.
-> > >
-> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > > ---
-> > >  mm/slab.h        |   3 +
-> > >  mm/slab_common.c |  26 +++++
-> > >  mm/slub.c        | 267 +++++++++++++++++++++++++++++++++++++++++++++=
-+-
-> > >  3 files changed, 294 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/mm/slub.c b/mm/slub.c
-> > > index cba188b7e04d..171273f90efd 100644
-> > > --- a/mm/slub.c
-> > > +++ b/mm/slub.c
+> At least to me, I would not consider that a problem. As long as you
+> can test the pieces together "manually" that's fine, I think.
 >
-> [...snip...]
->
-> > > @@ -3840,6 +3895,77 @@ static void flush_all(struct kmem_cache *s)
-> > >         cpus_read_unlock();
-> > >  }
-> > >
-> > > +static void flush_rcu_sheaf(struct work_struct *w)
-> > > +{
-> > > +       struct slub_percpu_sheaves *pcs;
-> > > +       struct slab_sheaf *rcu_free;
-> > > +       struct slub_flush_work *sfw;
-> > > +       struct kmem_cache *s;
-> > > +
-> > > +       sfw =3D container_of(w, struct slub_flush_work, work);
-> > > +       s =3D sfw->s;
-> > > +
-> > > +       local_lock(&s->cpu_sheaves->lock);
-> > > +       pcs =3D this_cpu_ptr(s->cpu_sheaves);
-> > > +
-> > > +       rcu_free =3D pcs->rcu_free;
-> > > +       pcs->rcu_free =3D NULL;
-> > > +
-> > > +       local_unlock(&s->cpu_sheaves->lock);
-> > > +
-> > > +       if (rcu_free)
-> > > +               call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
-> > > +}
-> > > +
-> > > +
-> > > +/* needed for kvfree_rcu_barrier() */
-> > > +void flush_all_rcu_sheaves(void)
-> > > +{
-> > > +       struct slub_flush_work *sfw;
-> > > +       struct kmem_cache *s;
-> > > +       unsigned int cpu;
-> > > +
-> > > +       cpus_read_lock();
-> > > +       mutex_lock(&slab_mutex);
-> > > +
-> > > +       list_for_each_entry(s, &slab_caches, list) {
-> > > +               if (!s->cpu_sheaves)
-> > > +                       continue;
-> > > +
-> > > +               mutex_lock(&flush_lock);
-> > > +
-> > > +               for_each_online_cpu(cpu) {
-> > > +                       sfw =3D &per_cpu(slub_flush, cpu);
-> > > +
-> > > +                       /*
-> > > +                        * we don't check if rcu_free sheaf exists - =
-racing
-> > > +                        * __kfree_rcu_sheaf() might have just remove=
-d it.
-> > > +                        * by executing flush_rcu_sheaf() on the cpu =
-we make
-> > > +                        * sure the __kfree_rcu_sheaf() finished its =
-call_rcu()
-> > > +                        */
-> > > +
-> > > +                       INIT_WORK(&sfw->work, flush_rcu_sheaf);
-> > > +                       sfw->skip =3D false;
-> >
-> > I think you don't need this sfw->skip flag since you never skip anymore=
-, right?
->
-> Yes, at least in flush_all_rcu_sheaves().
-> I'm fine with or without sfw->skip in this function.
->
-> > > +                       sfw->s =3D s;
-> > > +                       queue_work_on(cpu, flushwq, &sfw->work);
-> > > +               }
-> > > +
-> > > +               for_each_online_cpu(cpu) {
-> > > +                       sfw =3D &per_cpu(slub_flush, cpu);
-> > > +                       if (sfw->skip)
-> > > +                               continue;
-> > > +                       flush_work(&sfw->work);
-> >
-> > I'm sure I'm missing something but why can't we execute call_rcu()
-> > from here instead of queuing the work which does call_rcu() and then
-> > flushing all the queued work? I'm sure you have a good reason which
-> > I'm missing.
->
-> Because a local lock cannot be held by other CPUs, you can't take off the
-> rcu_free sheaf remotely and call call_rcu(). That's why the work is
-> queued on each CPU, ensuring the rcu_free sheaf is flushed by its local C=
-PU.
+> I mean, the platform was not supported in the first place, so it's not
+> like we would be introducing a regression - or break something, right?
 
-Ah, yes, of course. I knew it was something obvious but my brain was
-too tired. Thanks for the explanation, Harry!
+Agreed, it's rare for newly added platforms to immediately have
+everything working, and we can still fix things if they don't.
 
->
-> > > +               }
-> > > +
-> > > +               mutex_unlock(&flush_lock);
-> > > +       }
-> > > +
-> > > +       mutex_unlock(&slab_mutex);
-> > > +       cpus_read_unlock();
-> > > +
-> > > +       rcu_barrier();
-> > > +}
-> > > +
-> > >  /*
-> > >   * Use the cpu notifier to insure that the cpu slabs are flushed whe=
-n
-> > >   * necessary.
-> > > +bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
-> > > +{
-> > > +       struct slub_percpu_sheaves *pcs;
-> > > +       struct slab_sheaf *rcu_sheaf;
-> > > +
-> > > +       if (!local_trylock(&s->cpu_sheaves->lock))
-> > > +               goto fail;
-> > > +
-> > > +       pcs =3D this_cpu_ptr(s->cpu_sheaves);
-> > > +
-> > > +       if (unlikely(!pcs->rcu_free)) {
-> > > +
-> > > +               struct slab_sheaf *empty;
-> > > +               struct node_barn *barn;
-> > > +
-> > > +               if (pcs->spare && pcs->spare->size =3D=3D 0) {
-> > > +                       pcs->rcu_free =3D pcs->spare;
-> > > +                       pcs->spare =3D NULL;
-> > > +                       goto do_free;
-> > > +               }
-> > > +
-> > > +               barn =3D get_barn(s);
-> > > +
-> > > +               empty =3D barn_get_empty_sheaf(barn);
-> > > +
-> > > +               if (empty) {
-> > > +                       pcs->rcu_free =3D empty;
-> > > +                       goto do_free;
-> > > +               }
-> > > +
-> > > +               local_unlock(&s->cpu_sheaves->lock);
-> > > +
-> > > +               empty =3D alloc_empty_sheaf(s, GFP_NOWAIT);
-> > > +
-> > > +               if (!empty)
-> > > +                       goto fail;
-> > > +
-> > > +               if (!local_trylock(&s->cpu_sheaves->lock)) {
-> > > +                       barn_put_empty_sheaf(barn, empty);
-> > > +                       goto fail;
-> > > +               }
-> > > +
-> > > +               pcs =3D this_cpu_ptr(s->cpu_sheaves);
-> > > +
-> > > +               if (unlikely(pcs->rcu_free))
-> > > +                       barn_put_empty_sheaf(barn, empty);
-> > > +               else
-> > > +                       pcs->rcu_free =3D empty;
-> > > +       }
-> > > +
-> > > +do_free:
-> > > +
-> > > +       rcu_sheaf =3D pcs->rcu_free;
-> > > +
-> > > +       rcu_sheaf->objects[rcu_sheaf->size++] =3D obj;
-> >
-> > nit: The above would result in OOB write if we ever reached here with
-> > a full rcu_sheaf (rcu_sheaf->size =3D=3D rcu_sheaf->sheaf_capacity) but=
- I
-> > think it's impossible. You always start with an empty rcu_sheaf and
-> > objects are added only here with a following check for a full
-> > rcu_sheaf. I think a short comment clarifying that would be nice.
->
-> Sounds good to me.
->
-> --
-> Cheers,
-> Harry / Hyeonggon
->
-> > > +
-> > > +       if (likely(rcu_sheaf->size < s->sheaf_capacity))
-> > > +               rcu_sheaf =3D NULL;
-> > > +       else
-> > > +               pcs->rcu_free =3D NULL;
-> > > +
-> > > +       /*
-> > > +        * we flush before local_unlock to make sure a racing
-> > > +        * flush_all_rcu_sheaves() doesn't miss this sheaf
-> > > +        */
-> > > +       if (rcu_sheaf)
-> > > +               call_rcu(&rcu_sheaf->rcu_head, rcu_free_sheaf);
-> > > +
-> > > +       local_unlock(&s->cpu_sheaves->lock);
-> > > +
-> > > +       stat(s, FREE_RCU_SHEAF);
-> > > +       return true;
-> > > +
-> > > +fail:
-> > > +       stat(s, FREE_RCU_SHEAF_FAIL);
-> > > +       return false;
-> > > +}
+It's also possible to test userspace by using a standalone
+initramfs with a login shell or an automated test suite, but
+I don't require that.
+
+     Arnd
 
