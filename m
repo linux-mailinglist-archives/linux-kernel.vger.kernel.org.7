@@ -1,126 +1,189 @@
-Return-Path: <linux-kernel+bounces-832541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CA4B9FA07
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6382B9FA16
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6F92E05A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1FC73B71BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9013B276058;
-	Thu, 25 Sep 2025 13:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C071274659;
+	Thu, 25 Sep 2025 13:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gk3EeibO"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dDH9MEgK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1E9271479
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D152727E6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807711; cv=none; b=BKxRXPG4Cgk5EPduc8kHNYO2F2Pu+W5Dwvgk26qhypezf9Ej6pQAU+EPANLw9MdfAavWjrpYTVUhX138bN4d+MdXic6DFkL0dIxYA4e7/D3sExf6hITlr2YmgDxaGmWazv7owms8Yf7m183ZiwORb41jyRKzXmqDhVrJvWZSsE0=
+	t=1758807741; cv=none; b=a12DUQE+54pB2bMxouyU8uCRXMHuXUxC9ekMXHWDkbKJ1xgasQlZGZ6Gb4RUVILNkgDh7v+xsYGoou+U/i70Iigwh658ntdP0aqObowPQEqr1pdJmiWP/HSZFB+5oLdTq+GoT9olHEnCtKeiGR3LORdH/pa3yva5aY3bWuXgUTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807711; c=relaxed/simple;
-	bh=AY4CdJYGfM13VOROhcQg+Kh48EgBR5zHwAOZ2HsNQ/U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=THYx/5zDb+OmO+1OqerqYxpSxV35k8nsGxzZncpnq+T1q/N8khQMZV7UgUyEAcb01KYx0gV94ORyf3XuZT8fZIQmCKsKvdCL6p5E/4TgTLu9y9jmu87AlgiqYjz41CIkXU5L154IpUX9gjEO9cfkQ8m1cqHCv2CczbUc3AN1IE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gk3EeibO; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so953867a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758807710; x=1759412510; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dU4j5xINCBqy1Rj7i7G1Vfx3gRcoZTHMrIeb9JUSMNk=;
-        b=Gk3EeibO1ZMcFGAcEWPL5hFYtzingz6gXXVe/ASHILBBp8JIkEIsVYwd1ZaF9MvWfj
-         N4gYNQXa/1zVXGox0ZoGigvTO8b4AbkAjAtyoJuWvjvBeCOu09EyecPoNYG7uwsomFaJ
-         LLEqJBGoM6XzQOnYxn51VkO2k5kYRXiwuWpY2PBEqflI25GKMN+VodBGlZwmHtl1IGDI
-         w3C2T9OdU/mUgoR6xBhp10hzxlGCo6OElsXX3YEFfZtJoXN5xi9jUK9okgImyP4nP0bG
-         Rr2qUKGQnXlqelhxSVQAoVTKvRmMNgEQzM6LpEFtfu2McjZ6TgHrAqCQMS4Kd7mB2BGs
-         XoMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807710; x=1759412510;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dU4j5xINCBqy1Rj7i7G1Vfx3gRcoZTHMrIeb9JUSMNk=;
-        b=sl4dj8U1hbmfEJWKlz2lL+S0mD2SLKC+r5Rtmv2o4AWS/QvFdyxrwitVf/EEZLmFX1
-         DgpH3KpDj6UaLP61946IIhDl+wpoWwUPCaDNBDdn7s4ytUtJ+21CNGKhU8plUv5DGrB1
-         vLIrRUCQW/AvJoxoFXdNIDE79V8OGNlkBuspZW8A1dnhVRxDgRm6s1P+gHXpPfdHiQMv
-         alF2ZaEHw2IHimD5xyolbAcQc09kzcC0iCcYTR4eLnQfD9uljVOSVolS5kHM8CTbycb+
-         xLD0yBoyzQbO7RSlzK+x9bAxv/gbhhuCKTjacnT9SbCcM9qtpjwB63+PXnDGZn9t8/oK
-         Ea8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKR0aSs1ngWjhWlCUGSYXqJZVKIohOdSxakWAVEAN1jK6OkIKgpW3bGrGGpYqL4UMMeZ/hDws4IG4SWNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr47Yb7OgsSJBkD7x5klLEQmYl+Kmu0D3AD9lBlPaOpFFrS8ey
-	9d5vjUKgNbZB2JfmwU8CGw8w/3J4flVJ+xJqgQ/rcMaKCcPY6vmhbLq5SZOAhhqc7bkhCV+BiFZ
-	kAr5DnQ==
-X-Google-Smtp-Source: AGHT+IGEjcBsUTlo4/vVd9aOmfS85HeXK7VXkMsc2AM9X82gWAt19f8n9mk94PI8ByiZcVy2ayMJHM96hBY=
-X-Received: from pjbjx4.prod.google.com ([2002:a17:90b:46c4:b0:330:88c4:627])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c4a:b0:334:e020:2f16
- with SMTP id 98e67ed59e1d1-334e0202f83mr1618309a91.11.1758807709301; Thu, 25
- Sep 2025 06:41:49 -0700 (PDT)
-Date: Thu, 25 Sep 2025 06:41:42 -0700
-In-Reply-To: <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
+	s=arc-20240116; t=1758807741; c=relaxed/simple;
+	bh=sPuyYm1C4sHaTPsabJ3pDG8Xk8pUeu54NQrBF163+mY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hz7uXQugATNP4zMVGf8habtM9iPOT9gfhOkcoWMLG9BNedkxZgl+4JNOsbcgX/5gmuKIK5nnZk32t7et51xhOaCzF/hYgJoC816BQNm6qMdUny1MRdE3g+tJxzo4z4kdquNDOXJHxHifJEYMl/i2P31Axw/W63DZq36/G4jOBc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dDH9MEgK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758807738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8vHsJwdUMBe/dp6r1dI75OkJ9Hs0OM9rJATtz7xS340=;
+	b=dDH9MEgKO0e3un26EeEDXHXgMtVA60X5AIfOYq79bSE4nn8+NAQIajEcfrxv/QnzMj/qGH
+	okZ+SB812xCbh6r0B76nHX24O0o49T/NGR0ccL4h4MZ1Eopbo6s6ShX4ibHZhVqxFVEloZ
+	dejYA5CGBoq9mXYV3STPPenP9wdCJPU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-551-PqtUKMjWMh-Xzk6R6qSUNQ-1; Thu,
+ 25 Sep 2025 09:42:12 -0400
+X-MC-Unique: PqtUKMjWMh-Xzk6R6qSUNQ-1
+X-Mimecast-MFC-AGG-ID: PqtUKMjWMh-Xzk6R6qSUNQ_1758807725
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 508D51800284;
+	Thu, 25 Sep 2025 13:42:04 +0000 (UTC)
+Received: from wsxc.redhat.com (unknown [10.96.134.29])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AA1F7300021A;
+	Thu, 25 Sep 2025 13:41:59 +0000 (UTC)
+From: Ricardo Robaina <rrobaina@redhat.com>
+To: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Cc: paul@paul-moore.com,
+	eparis@redhat.com,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	fw@strlen.de,
+	ej@inai.de,
+	Ricardo Robaina <rrobaina@redhat.com>
+Subject: [PATCH v2] audit: include source and destination ports to NETFILTER_PKT
+Date: Thu, 25 Sep 2025 10:41:56 -0300
+Message-ID: <20250925134156.1948142-1-rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-7-shivankg@amd.com>
- <diqztt1sbd2v.fsf@google.com> <aNSt9QT8dmpDK1eE@google.com>
- <dc6eb85f-87b6-43a1-b1f7-4727c0b834cc@amd.com> <b67dd7cd-2c1c-4566-badf-32082d8cd952@redhat.com>
-Message-ID: <aNVFrZDAkHmgNNci@google.com>
-Subject: Re: [PATCH kvm-next V11 4/7] KVM: guest_memfd: Use guest mem inodes
- instead of anonymous inodes
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Shivank Garg <shivankg@amd.com>, Ackerley Tng <ackerleytng@google.com>, willy@infradead.org, 
-	akpm@linux-foundation.org, pbonzini@redhat.com, shuah@kernel.org, 
-	vbabka@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com, 
-	xiang@kernel.org, chao@kernel.org, jaegeuk@kernel.org, clm@fb.com, 
-	josef@toxicpanda.com, kent.overstreet@linux.dev, zbestahu@gmail.com, 
-	jefflexu@linux.alibaba.com, dhavale@google.com, lihongbo22@huawei.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, ziy@nvidia.com, matthew.brost@intel.com, 
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com, 
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com, 
-	tabba@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, chao.gao@intel.com, 
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, shdhiman@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, jack@suse.cz, hch@infradead.org, cgzones@googlemail.com, 
-	ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com, 
-	dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com, 
-	jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Sep 25, 2025, David Hildenbrand wrote:
-> On 25.09.25 13:44, Garg, Shivank wrote:
-> > On 9/25/2025 8:20 AM, Sean Christopherson wrote:
-> > I did functional testing and it works fine.
-> 
-> I can queue this instead. I guess I can reuse the patch description and add
-> Sean as author + add his SOB (if he agrees).
+NETFILTER_PKT records show both source and destination
+addresses, in addition to the associated networking protocol.
+However, it lacks the ports information, which is often
+valuable for troubleshooting.
 
-Eh, Ackerley and Fuad did all the work.  If I had provided feedback earlier,
-this would have been handled in a new version.  If they are ok with the changes,
-I would prefer they remain co-authors.
+This patch adds both source and destination port numbers,
+'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
+SCTP-related NETFILTER_PKT records.
 
-Regarding timing, how much do people care about getting this into 6.18 in
-particular?  AFAICT, this hasn't gotten any coverage in -next, which makes me a
-little nervous.
+ type=NETFILTER_PKT ... saddr=127.0.0.1 daddr=127.0.0.1 proto=icmp
+ type=NETFILTER_PKT ... saddr=::1 daddr=::1 proto=ipv6-icmp
+ type=NETFILTER_PKT ... daddr=127.0.0.1 proto=udp sport=38173 dport=42424
+ type=NETFILTER_PKT ... daddr=::1 proto=udp sport=56852 dport=42424
+ type=NETFILTER_PKT ... daddr=127.0.0.1 proto=tcp sport=57022 dport=42424
+ type=NETFILTER_PKT ... daddr=::1 proto=tcp sport=50810 dport=42424
+ type=NETFILTER_PKT ... daddr=127.0.0.1 proto=sctp sport=54944 dport=42424
+ type=NETFILTER_PKT ... daddr=::1 proto=sctp sport=57963 dport=42424
+
+Link: https://github.com/linux-audit/audit-kernel/issues/162
+Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+---
+ net/netfilter/xt_AUDIT.c | 42 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+index b6a015aee0ce..9fc8a5429fa9 100644
+--- a/net/netfilter/xt_AUDIT.c
++++ b/net/netfilter/xt_AUDIT.c
+@@ -19,6 +19,7 @@
+ #include <linux/netfilter_bridge/ebtables.h>
+ #include <net/ipv6.h>
+ #include <net/ip.h>
++#include <linux/sctp.h>
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Thomas Graf <tgraf@redhat.com>");
+@@ -32,6 +33,7 @@ static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
+ {
+ 	struct iphdr _iph;
+ 	const struct iphdr *ih;
++	__be16 dport, sport;
+ 
+ 	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
+ 	if (!ih)
+@@ -40,6 +42,25 @@ static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
+ 	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
+ 			 &ih->saddr, &ih->daddr, ih->protocol);
+ 
++	switch (ih->protocol) {
++	case IPPROTO_TCP:
++		sport = tcp_hdr(skb)->source;
++		dport = tcp_hdr(skb)->dest;
++		break;
++	case IPPROTO_UDP:
++	case IPPROTO_UDPLITE:
++		sport = udp_hdr(skb)->source;
++		dport = udp_hdr(skb)->dest;
++		break;
++	case IPPROTO_SCTP:
++		sport = sctp_hdr(skb)->source;
++		dport = sctp_hdr(skb)->dest;
++	}
++
++	if (ih->protocol == IPPROTO_TCP || ih->protocol == IPPROTO_UDP ||
++	    ih->protocol == IPPROTO_UDPLITE || ih->protocol == IPPROTO_SCTP)
++		audit_log_format(ab, " sport=%hu dport=%hu", ntohs(sport), ntohs(dport));
++
+ 	return true;
+ }
+ 
+@@ -48,7 +69,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+ 	struct ipv6hdr _ip6h;
+ 	const struct ipv6hdr *ih;
+ 	u8 nexthdr;
+-	__be16 frag_off;
++	__be16 frag_off, dport, sport;
+ 
+ 	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_ip6h), &_ip6h);
+ 	if (!ih)
+@@ -60,6 +81,25 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+ 	audit_log_format(ab, " saddr=%pI6c daddr=%pI6c proto=%hhu",
+ 			 &ih->saddr, &ih->daddr, nexthdr);
+ 
++	switch (ih->nexthdr) {
++	case IPPROTO_TCP:
++		sport = tcp_hdr(skb)->source;
++		dport = tcp_hdr(skb)->dest;
++		break;
++	case IPPROTO_UDP:
++	case IPPROTO_UDPLITE:
++		sport = udp_hdr(skb)->source;
++		dport = udp_hdr(skb)->dest;
++		break;
++	case IPPROTO_SCTP:
++		sport = sctp_hdr(skb)->source;
++		dport = sctp_hdr(skb)->dest;
++	}
++
++	if (ih->nexthdr == IPPROTO_TCP || ih->nexthdr == IPPROTO_UDP ||
++	    ih->nexthdr == IPPROTO_UDPLITE || ih->nexthdr == IPPROTO_SCTP)
++		audit_log_format(ab, " sport=%hu dport=%hu", ntohs(sport), ntohs(dport));
++
+ 	return true;
+ }
+ 
+-- 
+2.51.0
+
 
