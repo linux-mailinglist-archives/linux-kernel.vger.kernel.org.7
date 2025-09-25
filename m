@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-832183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1801B9E93E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:11:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA48B9E956
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A664427B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F69B1BC4D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF362E9EC9;
-	Thu, 25 Sep 2025 10:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055EE2DE1F0;
+	Thu, 25 Sep 2025 10:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MtAXrr3u"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BjsoqQna"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7E026CE2A
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BA326CE2A
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758795057; cv=none; b=SocUx2JbUrHRq5aDlXRoNCnP1SacCNDOxrdV1UYo5YRQEm+/hJSsOwh9WoCQg66bb9HaiOZwFGU0oIqtuqDgPMW6m620VatMU2D7fXYbxn8UffxwIrGO7Gnxh9N9FnQy57DXtOtAi0dhQu4Uj7qBc83Z1rlljDZuylOO0GQIH20=
+	t=1758795125; cv=none; b=ZbDkOEaaKchoy7R1rxLR4boYUxPhx7WKHykZEkK+Jjs0eSzYVdW13WsBdjGF9EBjWftV69eyyd9WvzxHdXRFDJ3VixZekzXRBpF/yvDM/yIBezP9TYeoYiFkkCTMLQEuwPm+BrR/VBCzb724F4r+AeG4kmMSFzw1GjuXAXRw9K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758795057; c=relaxed/simple;
-	bh=Uu7qPHWAY70uCIDEzqVDmVr4PiMC2MZjl91UdvG6bIw=;
+	s=arc-20240116; t=1758795125; c=relaxed/simple;
+	bh=bqjRzRkAxHbPvHDukofehyRkFCGJOoB0EPf4l7P7/nU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J4QZNWuU83yaobxTO+tZVq2/uVu0C86Ij1ucdwBBqRgDhSYYbZetWe1Ssilwnsqa2hZgbwtczYAz3BKBcElMXlR+7sVxBGI9Jbjdzu+lUgZ1ldZH1ugiUQcI+QzlS+visdr6P8xbFAYXdzpgrUOKqqMlghMN2UJiw4DygTrCAW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MtAXrr3u; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e317bc647so5131685e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758795053; x=1759399853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rOe/V2dIqH8cF6CYVYqeg4xafgczBUe8P8lTChGAnIk=;
-        b=MtAXrr3ui4H3CFYh5Ex8N7ztOfPdeN34W2HxnnN4zBiLPtG/kEenegJwicfFuwdwgs
-         R7ZjpEzVB4JGCS7TLJMbg7gaauM0uV9V2szvJNt0t4RDqj8jO0OmADK0H2n5WtHvebZ0
-         4IImS8ToF271lG/7nIEXeESyUujeHJ17ipympmlEnAZ3mcJUc95loBNYoD3hb2xILe+O
-         nj+xJV0ibOPBImRJPB0CnpdOFpsXMag6fTb6DjWViWreTgceF2dy8xbX4d9tX+kD6KM8
-         vMmkKkkykzaOe/m5TRc67itNiib/fzBIG0v3zMUG152f4KdkQV5K8COZxf2JbAMzO7/9
-         /lqg==
+	 In-Reply-To:Content-Type; b=MhLiGSo8Rh5BDSMYibMDE3e+r97Q69EtWbcKl3AA+pVSd9sBDTanFmYxrj5y8xxbNbkW2e88EbFvd41XSNtvCplprzlrNCnwq+dgWMasGWtMz9v0G3MJ/jak3bRbqEjjUE9jHlIjPTsssEToJlm/K3VbRQKliw4duIpZhw0HP3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BjsoqQna; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758795122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lG8Q/FN8wXVOGFD2S5MD44NnHhqfaQZRP/OiKpWlrJQ=;
+	b=BjsoqQnaGQwWRGBCqIMJlbGvf3Yc5a1Md2kk1MFGZ7sEa2UdZOu69ncVG1kF7+VbAddf0r
+	lBMOuvp+fQj4qqng9ryHiUniwgVbpXVRQBsWrMFOzXXtllvK0rQ/gW7kjSQ4UZr2namQsW
+	MF+keq6KGL+59bRR7buktZq17vNWhuc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-RafQEq2COamgmUQPCzHkSA-1; Thu, 25 Sep 2025 06:12:00 -0400
+X-MC-Unique: RafQEq2COamgmUQPCzHkSA-1
+X-Mimecast-MFC-AGG-ID: RafQEq2COamgmUQPCzHkSA_1758795120
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45f2a1660fcso6693705e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:12:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758795053; x=1759399853;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOe/V2dIqH8cF6CYVYqeg4xafgczBUe8P8lTChGAnIk=;
-        b=a/42CPFN9rQtfvccmJzS6HxAmOLaAMBeG2f/yYu99yBQQaBuOveJzxa/YU6bs4kSoc
-         ZsQ2IuzZ/nls7sR19sveZJVtbBdmLLQGMHAEWVnSkqTqxnymf/U+LHLAzTHgStAanedl
-         1okN6kNgAa9wQKvHpNHsQb4jF7MdbRHzH8jaXmiAg8YrUGNa5yQ667in4IkxIaNN6Zic
-         aKvd6SIjtVn7hsM7SaLIUDzGNhRDj+NuGDpiP0ofmzurs67kxiIi0nKOf34Y/k8AlCRN
-         sAk7SCk2E68pVFCpkziZXp4PkvUVs1Qmx6RkHm4RA3wN5f5Is+TDj3BtLkDiO583p15z
-         93GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOg9r2GzaD+Le19TRgZbum/BB3yy+sged0/v0+UthWUys9FhRt2jtWaxg5pcJ1YGuMO0dkp5dOfQ//faI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPOglmfbMIHyVWA7wWLCa1QDJDxKRzV9cIzlfZ/mmsbZmQ/Q4y
-	YBt3FDfuPe2hSAJs48v/QcHN2eCDFRDULzZIJ5CAPAzJJn/O5kDDgs3bvzXc7/EFhm4=
-X-Gm-Gg: ASbGncuoJP0Gcd8075AUch7q5xpdnS1GtJyaqjZ1KsGtAl0wrad5wuPBFn3nk/UTFVb
-	etEavrGeky26MkdZ5hR8mKUWyDnZ0NxITPENiGYXVJvf9HLtbJ3LsSq2mrpGjSZ/iIGg9c2vpxe
-	2CMBpI0QAiRcUl7O9Fjeq0cwjtd75gD9RSzhczz4FaFQzqoKp9bxGa3BIrsI9sG38cpMMVKzbSN
-	M2tKRywRWPWzd2tTbyt6vUDZdk7lkRV0uwsZePplLZclXQSv1t/M77Mt3epb6tAruz84Meq5g5Q
-	J5P+03GjRFU7ZKOXcYKlbjoiUTjAWJhAxXk72MOpAwzIDomL4VMtvsGG49/WL/oyyZNn/k7jh8Z
-	zXMZ6fCf4syxgubrKhyitld1JIHd8
-X-Google-Smtp-Source: AGHT+IFKLqOqt62stWM0T5kpVyIEL9lneNcZ++3W9gEaCXSNMWcezei1Wkk6UZpKhu4oEPAHFgNNEA==
-X-Received: by 2002:a05:600c:6306:b0:46d:9d28:fb5e with SMTP id 5b1f17b1804b1-46e329ab29cmr30602985e9.5.1758795053180;
-        Thu, 25 Sep 2025 03:10:53 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab7d4e3sm69919775e9.23.2025.09.25.03.10.52
+        d=1e100.net; s=20230601; t=1758795120; x=1759399920;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lG8Q/FN8wXVOGFD2S5MD44NnHhqfaQZRP/OiKpWlrJQ=;
+        b=CvjgXCEOqUo4QQqDhMzV74STlgQRoPxT8tWL+6pQELownJbDPFk6Aus05H9xiAPaab
+         UjlJfPtkdIaSADjTlwGow+tsoizx2Ib6Q6MsrNHN2frU2FdazSxr18XaKUAtnf7HoSzD
+         s4YdOa7Rph9KEJOzIbZWM6HreREgsqg3GiZg+c1O9w25Pkm8oiHOo2zHlkrKFGhp/NFL
+         TV2s3IgqZFo9EaQOFsfApIA1jFxMyCzzxj1wG/gObpvBYxwqOz7AGIHH58seZX2T8VxT
+         QMCofZ1P6HIX4dtm4vMu1migy7K38TmYu2AcGtx+DfEs0T89k7H/ueMQ7IRGBLqH6Zc2
+         Zeyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNESjmNOd/LuBWwI8SNEL2Js7+0piZbz6AFCmkXcx7xsSboDvJJL3zcLr3bKEnOTC7eGQzz4sApLMWz1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygsQZ8ey+qiwt1+TLftM6ow0cjbgxB/Yuq/ZRsY2Cwy7I8VZGj
+	3ZP+BfDdSLQ2+bJoOXW2r5IPhNgso6GlbQd3wgZ6pADrGp3OJw38gzg0/NcaJXLbmtC2ZCkMH4s
+	B9Sb7hgK/HW+/ayQSP3g0kNbg7Chdjr8Pj8UBATciZfvSWgXmHQWJYWzPSmDf0Fzsbg==
+X-Gm-Gg: ASbGnctA+L5yyGzTnofx2YWSGGRtU0sdHncRJXtGkvD8Lkr1kPU60vsDDLWX9zm224R
+	PJoxyuB7y35yQ6VegrqvOKV/TsPwnVfHcD3oI3w9QWltM8ImmeZ4lEAPkWmZI9dF/lB5A5UIdIU
+	59WudL1X9PE9wZ114K4xkZ+PpGK3HazH5zt3ukg0kPmAeMMKiPeePNW3ZEzK2ZD3wchgedK1+yU
+	wFaGJIxX6mMW6fToEhWU8HEPdetaRJOUpgKuw6T6mjAIUqnQZHCUyZr0EPybBQ0vK1oYe38ZYKE
+	6itJekn99lmmGSq12oLVq0yjn1WoHFLNTVMXNf9HIPaQgFygqOptNuXOdWdJHqKIXnBqjPWZZjS
+	86cG6M/uj0uH+S6+KPIMbCkP+fwNjmFoRbsU/IbwDi0njIY/Ex/WG39q1p3BEcs4rBt3o
+X-Received: by 2002:a05:600c:1ca5:b0:46e:2637:d182 with SMTP id 5b1f17b1804b1-46e32a08feamr34778175e9.28.1758795119603;
+        Thu, 25 Sep 2025 03:11:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGlNMDizXc3Rq/dhiO8rd/15mVcqt0iIObArVPXmOTFpH25amynq0pBhSR/qoFGTRlMvFSsQw==
+X-Received: by 2002:a05:600c:1ca5:b0:46e:2637:d182 with SMTP id 5b1f17b1804b1-46e32a08feamr34777545e9.28.1758795119112;
+        Thu, 25 Sep 2025 03:11:59 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33b9eabbsm29826805e9.3.2025.09.25.03.11.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:10:52 -0700 (PDT)
-Message-ID: <635ba698-d7a9-40d0-9285-4ec108d4a536@linaro.org>
-Date: Thu, 25 Sep 2025 11:10:51 +0100
+        Thu, 25 Sep 2025 03:11:58 -0700 (PDT)
+Message-ID: <7fe72c55-fbf9-472e-8d10-5b6396994435@redhat.com>
+Date: Thu, 25 Sep 2025 12:11:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,233 +89,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] coresight: tmc: add the handle of the event to
- the path
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>,
- Leo Yan <leo.yan@arm.com>
-Cc: Carl Worth <carl@os.amperecomputing.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
- <20250922-fix_helper_data-v1-1-905e8115a24e@oss.qualcomm.com>
- <874isuo0m2.fsf@rasp.cworth.amperemail.amperecomputing.com>
- <f7be3833-9b33-4935-b821-a2e0000a2557@oss.qualcomm.com>
- <CAJ9a7VjaUE+iy=FFwPhCdfXgoGR3rP9WSx-ZkKYeCHhqJ2yzMg@mail.gmail.com>
- <3b16607f-8995-46b1-aecf-c6aa79f66f9d@arm.com>
+Subject: Re: [v6 07/15] mm/memory/fault: add THP fault handling for zone
+ device private pages
+To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Alistair Popple <apopple@nvidia.com>
+Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-8-balbirs@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <3b16607f-8995-46b1-aecf-c6aa79f66f9d@arm.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250916122128.2098535-8-balbirs@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 24/09/2025 5:42 pm, Suzuki K Poulose wrote:
-> On 24/09/2025 11:21, Mike Leach wrote:
->> Hi,
->>
->> On Tue, 23 Sept 2025 at 02:49, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
->>>
->>>
->>>
->>> On 9/23/2025 1:31 AM, Carl Worth wrote:
->>>> Jie Gan <jie.gan@oss.qualcomm.com> writes:
->>>>> From: Carl Worth <carl@os.amperecomputing.com>
->>>>>
->>>>> The handle is essential for retrieving the AUX_EVENT of each CPU 
->>>>> and is
->>>>> required in perf mode. It has been added to the coresight_path so that
->>>>> dependent devices can access it from the path when needed.
->>>>
->>>> I'd still like to have the original command I used to trigger the 
->>>> bug in
->>>> the commit message. I really like having reproduction steps captured in
->>>> commit messages when I look back at commits in the future. So, that 
->>>> was:
->>>>
->>>>         perf record -e cs_etm//k -C 0-9 dd if=/dev/zero of=/dev/null
->>>>
->>>
->>> Sure, I’ll include your commit message in the formal patch series, I
->>> think it's V3 since you have submitted two versions, if you're okay with
->>> me sending it out.
->>>
->>>>>    /**
->>>>>     * struct coresight_path - data needed by enable/disable path
->>>>> - * @path_list:              path from source to sink.
->>>>> - * @trace_id:          trace_id of the whole path.
->>>>> + * @path_list:                      path from source to sink.
->>>>> + * @trace_id:                       trace_id of the whole path.
->>>>> + * struct perf_output_handle:       handle of the aux_event.
->>>>>     */
->>>>
->>>> Fixing to "@handle" was mentioned in another comment already.
->>>>
->>>> Something about the above still feels a little off to me. It feels like
->>>> we're throwing new data into a structure just because it happens to be
->>>> conveniently at hand for the code paths we're needing, and not because
->>>> it really _belongs_ there.
->>>>
->>>
->> This data is perf specific - not path generic; so I agree that this
->> structure should go elsewhere.
->>
->> I would suggest in the csdev (coresight_device) structure itself. We
->> already have some sink specific data in here e.g. perf_sink_id_map.
->>
->> This could then be set/clear in the functions coresight-etm-perf.c
->> file, where there is a significant amount of code dealing with the
->> perf handle and ensuring it is valid and in scope.
->>
->> This can then be set only when appropriate - for source / sink devices
->> and only when in perf mode, and avoid the need to pass the handle
->> around as API call parameters.
+On 16.09.25 14:21, Balbir Singh wrote:
+> Implement CPU fault handling for zone device THP entries through
+> do_huge_pmd_device_private(), enabling transparent migration of
+> device-private large pages back to system memory on CPU access.
 > 
-> I think this data is specific to the session we are enabling the
-> device(s) in. e.g., we keep the trace-id in the path.
-> So, I don't mind having this in the path structure.
-> Instead of modifying csdev with additional locking from "etm-perf"
-> it is always cleaner to handle this in the path.
+> When the CPU accesses a zone device THP entry, the fault handler calls the
+> device driver's migrate_to_ram() callback to migrate the entire large page
+> back to system memory.
 > 
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttilä <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
+> ---
+>   include/linux/huge_mm.h |  7 +++++++
+>   mm/huge_memory.c        | 36 ++++++++++++++++++++++++++++++++++++
+>   mm/memory.c             |  5 +++--
+>   3 files changed, 46 insertions(+), 2 deletions(-)
 > 
-> Suzuki
-> 
-> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index f327d62fc985..2d669be7f1c8 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -496,6 +496,8 @@ static inline bool folio_test_pmd_mappable(struct folio *folio)
+>   
+>   vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
+>   
+> +vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf);
+> +
+>   extern struct folio *huge_zero_folio;
+>   extern unsigned long huge_zero_pfn;
+>   
+> @@ -671,6 +673,11 @@ static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+>   	return 0;
+>   }
+>   
+> +static inline vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
+> +{
+> +	return 0;
+> +}
+> +
+>   static inline bool is_huge_zero_folio(const struct folio *folio)
+>   {
+>   	return false;
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5291ee155a02..90a1939455dd 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1287,6 +1287,42 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+>   
+>   }
+>   
+> +vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	vm_fault_t ret = 0;
+> +	spinlock_t *ptl;
+> +	swp_entry_t swp_entry;
+> +	struct page *page;
+> +
+> +	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+> +		vma_end_read(vma);
+> +		return VM_FAULT_RETRY;
+> +	}
+> +
+> +	ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+> +	if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd))) {
+> +		spin_unlock(ptl);
+> +		return 0;
+> +	}
+> +
+> +	swp_entry = pmd_to_swp_entry(vmf->orig_pmd);
+> +	page = pfn_swap_entry_to_page(swp_entry);
+> +	vmf->page = page;
+> +	vmf->pte = NULL;
+> +	if (trylock_page(vmf->page)) {
 
-Yeah, and perf_sink_id_map only "needs" to be in the csdev because it 
-controls sharing IDs between multiple paths which can't be accomplished 
-by storing it in the path.
+We should be operating on a folio here. folio_trylock() + folio_get() + 
+folio_unlock() + folio_put().
 
-This one is just a pointer to the perf handle which really does belong 
-to the session rather than the device. This makes it more of a path 
-thing than a csdev thing. Maybe we can rename path to be more like 
-"session", which also happens to contain a path. But I think path is 
-fine for now.
+> +		get_page(page);
+> +		spin_unlock(ptl);
+> +		ret = page_pgmap(page)->ops->migrate_to_ram(vmf);
 
-However in this case handle is per-cpu data that is only accessed on the 
-same cpu in tmc_etr_get_buffer(). Assigning it in etm_event_start() just 
-copies the same per-cpu variable into a non per-cpu place that 
-eventually gets accessed on the same cpu anyway.
+BTW, I was wondering whether it is really the right design to pass the 
+vmf here. Likely the const vma+addr+folio could be sufficient. I did not 
+look into all callbaks, though.
 
-If we exported it then it can be used directly without worrying where to 
-store it:
+-- 
+Cheers
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c 
-b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 17afa0f4cdee..4c33f442c80b 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -42,12 +42,8 @@ static bool etm_perf_up;
-   * the ETM. Thus the event_data for the session must be part of the 
-ETM context
-   * to make sure we can disable the trace path.
-   */
--struct etm_ctxt {
--       struct perf_output_handle handle;
--       struct etm_event_data *event_data;
--};
--
--static DEFINE_PER_CPU(struct etm_ctxt, etm_ctxt);
-+DEFINE_PER_CPU(struct etm_ctxt, etm_ctxt);
-+EXPORT_SYMBOL_GPL(etm_ctxt);
-  static DEFINE_PER_CPU(struct coresight_device *, csdev_src);
-
-  /*
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h 
-b/drivers/hwtracing/coresight/coresight-priv.h
-index fd896ac07942..b834e8bef2a5 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -14,6 +14,7 @@
-
-  extern struct mutex coresight_mutex;
-  extern const struct device_type coresight_dev_type[];
-+DECLARE_PER_CPU(struct etm_ctxt, etm_ctxt);
-
-  /*
-   * Coresight management registers (0xf00-0xfcc)
-@@ -49,6 +50,11 @@ extern const struct device_type coresight_dev_type[];
-  #define ETM_MODE_EXCL_HOST     BIT(32)
-  #define ETM_MODE_EXCL_GUEST    BIT(33)
-
-+struct etm_ctxt {
-+       struct perf_output_handle handle;
-+       struct etm_event_data *event_data;
-+};
-+
-  struct cs_pair_attribute {
-         struct device_attribute attr;
-         u32 lo_off;
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c 
-b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index bf08f6117a7f..7026994b02b3 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1328,8 +1328,9 @@ struct etr_buf *tmc_etr_get_buffer(struct 
-coresight_device *csdev,
-                                    enum cs_mode mode,
-                                    struct coresight_path *path)
-  {
--       struct perf_output_handle *handle = path->handle;
-         struct etr_perf_buffer *etr_perf;
-+       struct etm_ctxt *ctxt = this_cpu_ptr(&etm_ctxt);
-+       struct perf_output_handle *handle = &ctxt->handle;
-
-         switch (mode) {
-         case CS_MODE_SYSFS:
-
-
->>
->> Regards
->>
->> Mike.
->>
->>
->>
->>
->>> The core idea behind coresight_path is that it can hold all the data
->>> potentially needed by any device along the path.
->>>
->>> For example with the path ETM->Link->ETR->CATU:
->>>
->>> All the mentioned devices operate by forming a path, for which the
->>> system constructs a coresight_path. This 'path' is then passed to each
->>> device along the route, allowing any device to directly access the
->>> required data from coresight_path instead of receiving it as a separate
->>> argument.
->>>
->>> Imagine a device that requires more than two or three arguments, and you
->>> want to pass them through coresight_enable_path or similar functions...
->>>
->>> For certain coresight_path instances, we may not need the handle or
->>> other parameters. Since these values are initialized, it's acceptable to
->>> leave them as NULL or 0.
->>>
->>>
->>>> Or, maybe it's the right place for it, and the cause of my concern is
->>>> that "path" is an overly-narrow name in struct coresight_path?
->>>>
->>>
->>> It defines the direction of data flow—serving as the path for trace 
->>> data.
->>>
->>> Thanks,
->>> Jie
->>>
->>>> But if a renaming of this structure would improve the code, I'd also be
->>>> fine with that happening in a subsequent commit, so I won't try to hold
->>>> up the current series based on that.
->>>>
->>>> -Carl
->>>
->>
->>
->> -- 
->> Mike Leach
->> Principal Engineer, ARM Ltd.
->> Manchester Design Centre. UK
-> 
+David / dhildenb
 
 
