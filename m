@@ -1,444 +1,662 @@
-Return-Path: <linux-kernel+bounces-831673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03105B9D4A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5472DB9D4B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7563AA408
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564FA1896A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E48178F3A;
-	Thu, 25 Sep 2025 03:11:33 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0012E718E;
+	Thu, 25 Sep 2025 03:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QX3/bvxM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697E2270EA3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B162E6CBE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758769892; cv=none; b=FSgNEwZq/8P3BNi1Zzbg6xVXzbOddB/YWUK+o3yvmDchLiwK+AoVTk4DbgKzfN9NH9otJKR4DLnQ0NMcwnURqzUwDDUh1t5MvLUQIeT2ohC9fqenSS1aYw9PFmDsXQ0dVWLTJfj3fkuWYsyLVOMSe4OYyY/7eIj8FSMrBXK3MuA=
+	t=1758769951; cv=none; b=Wdiu322weQr2S9PdBE749kTCqOSlOvFd/ImcSEppQ7JDg6avq3yTtiCiPl7Fm6oLHI2OE2KEAn1X+5KL+IRqkauNUaEP/bhZZMxtcQTpCZehP9WQtcSr5i8eHoCAaG8+69VkhYEmSU4YisTfIWcSsGjaDLlIVcwC6WoxRc8T3fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758769892; c=relaxed/simple;
-	bh=mujJZpYCVSYmotVR8+774RrqliuRI2OYFHrPqrz1NHM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tYXNK8RneJ/sIMofhGJ7gOFRP6SEDTjmLD4rGtKYOYEOqw8TPwaPO4qzrIeYZxDEjjeWomRWgjJkMAgE2gVwcoBNA/T/J1dHwkB509RP/9eVfxb8d6bQmO3c8j1f1eNRSLyP691c4HhXTcS8JGcB4EZ+TxdjE1TdVs7Gg9eitOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42570afa5d2so13393135ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:11:30 -0700 (PDT)
+	s=arc-20240116; t=1758769951; c=relaxed/simple;
+	bh=WbmFfTKbiM/cwdUypO1aH6ubcdAq8We7GZ3/XDnx0ZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SnKSVwekpIU/zMoD5RMu+0AnjZ2kcRrXVOmYkentR2FzfXu/+XJaj+iX0nUveyRwQZT+VEbUFHjzbXx5d+H/ZrTC2/EE9hQZqQl4+JgkKzZdbUVScUwhEu6HSa/Sc73OQwwFzY05txPPSNA3oUg66+e65VkGTp4klqr0S49iInE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QX3/bvxM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0rXao025092
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:12:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Amq0dTDX4tA85cdveazerftB
+	mRhuknHwIj5cEGLZUHM=; b=QX3/bvxMJpUNneqiGEbcUn5qIlagFcGf1E1FLQOF
+	rr/aBDxXnxSBFj1Yidj4mISkpPe+Fm+AgHhn5jn7T7hogyeNkkzUmVMeB7nrcSGm
+	lOp4BSlbQ7EqNaVODvWNQKNdE37KmHBdcF+bPbv4o2wi8kdJYXTZ2zrh/jG5/ox7
+	9pC+yTnmcc3e61zgi2MyroMgkTzK+swMuhVGvCBO3ZxlS+XQTG+4o781VyIn6bUj
+	kMKG6O0VIt+vVtmZqoORf0Y2iaKI7t7cFANkjfPUGG39P82fBuEXN5FY3pBX4nMw
+	e4MWksWQTXQFJWULkgVwMoNtSs5Ai+gv29VuV3oKpT1lPg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyexvad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:12:27 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5ecf597acso11345271cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:12:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758769889; x=1759374689;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q4yFUCJeldr4yYPWLOazb1XxGy7ks26f36uWNdaijnM=;
-        b=CAF/5q30QNZlL8da1aae5fIq0piF63UAs4Bx79k8FyQpqVv7oqAsn+sgMaWo86x9AE
-         DMvm6MProAgaj90emTCYSo80Uk/BE650u64F0q2vGLO9m/k8ccKyE/KzY9JzqnbxLRCP
-         NetBXp3qDyEOlPqHGTsD42Pzfoqu+RqrPh15hE291sk2Kd/+auZ3QbyTWDCvDhA9r5FT
-         BJGuyAKscqjbUkX++cV77/Ja4By9zPfs6lpsGOE/XZ6XLs3pa4Ujcp00N8L6KO8bdVeu
-         Sv+qPSdSUSasYOhmUZwO12ZEgFXLvJVBR3nN/lIdfVWNdqzZ7kwX3GkUvXC+XYhibtlE
-         QY6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWEwRRqZGjyqTtQdwI++sPOC3owOHXXWB5RkCpXEBtfumUFzpMlX/9k3D/NPB4kLj9haGQSYbpNxGqgkPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0gVVDr/tPrMg7S0bXYJ2lZI5Ho8lQNUsAhRyJlm5PduDLoJOT
-	5hh5Y7WLOydeeW6A2itfm1hVPzcGtBGjcgV9CopRP2J4Si9SCPdSYSUQ6/yb56p9K2C3qeSZ2KE
-	tcnUtIjZRA0lmZ9zo1eAMit1/KW9a2dI0ZleYPblfdqTu734CUFVjwA8QSlc=
-X-Google-Smtp-Source: AGHT+IH48u6ENaP0YKfKw8HhqsTAI0zVWq/sq/UNcVvHQQLN6iOp+WF6NomRFd6YNqwUVdsKECv4kOZQbQLtOnAhI/Iealf0jSzp
+        d=1e100.net; s=20230601; t=1758769946; x=1759374746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Amq0dTDX4tA85cdveazerftBmRhuknHwIj5cEGLZUHM=;
+        b=jKTG1oclxASzVM14TS06vndJXOYpfe8ub14aLXT+wY4wUPM2cgYf3r3w/Gwj1tRuyb
+         M2FvWd7NVZHu+VVKtQGpq8MGWOvnFIbEKi8XLgFLUOPCYt5DTU0HPu62g9du7snsVolF
+         nMjVXRBz1uWoFnnQR6c8k11qySGUQgIAvOF/y9UQ1uudWJ14u4g86IfpHj2glWIj5vAF
+         pk4lBob8ztLSMwpH6vFVr8HaCr/B0M75G2llLaX60D3Y5zLVQZftWwVifeT+ntTAKPDC
+         ZUTtn3+dd6WQ9bWdYeELjKK63iRk18ZYtnd2EouDlkab4CpI9J9M0jRssAaTcbCOUaZm
+         ynsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlt0akdR9Y8oHG9m3anqi9c48IBH1wdCUtrMQ8g+G2ymyFuT/lp4rsN1QsSJhaOKyb+m24d7pXpUWdR2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVxpv+bUhSUujWgmtXvJy70LbCD2qOHMZowmDWsrxoQ/FOAqeR
+	l4O8Xro4Za2b/ul2k7zJPdmnkSrog+yijiw/g0ccQOtqPzrdM4ffqYL1sXy9x+exZFFPNtz92na
+	FaQuEXoku/XuMh7dJpLnbzo0NJ9i33Mt4usOfW+DRyot3eF3Fq5QgtDslM1xvihxaY3k=
+X-Gm-Gg: ASbGncuEt8QqdUB+H+TIXWHwDK05AwsC8lTpZoefAWhDP9HI6i6693sXzZUbon/5BgR
+	Ylf4aqPMy7uF4qog74jjCH+pa5gOjIXQm5co9UcaY16Gj60n0jqHRDVxY9UIecUutRXb0m5HNqA
+	Ad8SIckl34ZRD1yh70fkYJe63M5akXu5U54x4R7NLuwIMDwOCSnz3OETWv0GjXyowrUU3qlcdTv
+	2jOA1vzLR+bWlJCGwwOq6q8S6wqBjuTlSOZKYtdwG+lIBwME2Dj80M1cLlaKTVfZHR28s5tRKJX
+	1CNxOnVfSlmYASiTfjpE9wHIOQ826dTQ+aAt5mITWCyjU9ovQQ/xDyuB8zaA+/ZKMewk4yvm3bJ
+	p/tFe/Td+BOzHZerSc+Kxl66v0pfQ6uK9pOiSKMizBkOt5gUs2Fer
+X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr13402281cf.28.1758769946125;
+        Wed, 24 Sep 2025 20:12:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGndvSuvzNUzS8kv81YGOyyzpwLuM8ZOteNmHmM2cVjtyrZj5/sHFUjxtIwXXT3+ld+Wv/Ysg==
+X-Received: by 2002:a05:622a:5e07:b0:4da:7d53:c01f with SMTP id d75a77b69052e-4da7d53c586mr13402031cf.28.1758769945522;
+        Wed, 24 Sep 2025 20:12:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58316656243sm279134e87.91.2025.09.24.20.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 20:12:24 -0700 (PDT)
+Date: Thu, 25 Sep 2025 06:12:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Bryan O'Donoghue <bod@kernel.org>,
+        Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH 2/6] dt-bindings: media: camss: Add qcom,kaanapali-camss
+ binding
+Message-ID: <cei2cl6mbjatq54bmersjdcql2kw2occrygk6hid23eaecr62m@ozrrpxh7l7ws>
+References: <20250924-knp-cam-v1-0-b72d6deea054@oss.qualcomm.com>
+ <20250924-knp-cam-v1-2-b72d6deea054@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26b:0:b0:425:39b:a7d3 with SMTP id
- e9e14a558f8ab-425955ca729mr26825395ab.1.1758769889573; Wed, 24 Sep 2025
- 20:11:29 -0700 (PDT)
-Date: Wed, 24 Sep 2025 20:11:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d4b2e1.050a0220.57ae1.0037.GAE@google.com>
-Subject: [syzbot] [bpf?] [net?] possible deadlock in xdp_umem_pin_pages
-From: syzbot <syzbot+1b607ee7794bdba65be7@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, andrii@kernel.org, ast@kernel.org, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, david@redhat.com, jgg@ziepe.ca, 
-	jhubbard@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	netdev@vger.kernel.org, peterx@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924-knp-cam-v1-2-b72d6deea054@oss.qualcomm.com>
+X-Proofpoint-GUID: pSFPoWlCSNHRlNFnSoUQUwtjuVPsMnHN
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d4b31b cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=HZEin34QoVA2C26_ZvUA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX6cmokw/KeBih
+ Y1O1y2xAAqQ/O2bpuMiFn1+4+ZlZvY5utUy4FTTMsxA78WnbnAGt9Aq8tSFDYytISaBdfYHLH84
+ 764FWT7xASTEHHRsJBx8uXdkKUwkNe0USHkyxuqUnQHGFzZ8P8rq8ah1G1d9bLW1lNqtdw/tKbD
+ tugtQP5qT0kv6I+vbjycRr5VoI1zt7jJVP1nuRgS7137a+woIjXiKii7Wsfei6XAuVcccJZA+BN
+ CT/hhP4cOS7Dt/DzkwNpDCgCumoINve++MZm+OjN/+mVYZ1OFvJ4t0bpl04k54ZAjgUyanxH0lW
+ 02LeMkcmmQorc+kNIMBM/n3HNmCR5mp1jxILZQs2iJoCS4mEfk3h2eFPABdOU6l5wR6tHVO/IYb
+ /4WtBWSb
+X-Proofpoint-ORIG-GUID: pSFPoWlCSNHRlNFnSoUQUwtjuVPsMnHN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-Hello,
+On Wed, Sep 24, 2025 at 05:02:49PM -0700, Jingyi Wang wrote:
+> From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+> 
+> Add bindings for qcom,kaanapali-camss in order to support the camera
+> subsystem for Kaanapali.
+> 
+> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  .../bindings/media/qcom,kaanapali-camss.yaml       | 494 +++++++++++++++++++++
+>  1 file changed, 494 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
+> new file mode 100644
+> index 000000000000..ed0fe6774700
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
+> @@ -0,0 +1,494 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
+> +
+> +maintainers:
+> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+> +
+> +description:
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,kaanapali-camss
+> +
+> +  reg:
+> +    maxItems: 16
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: csiphy5
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  clocks:
+> +    maxItems: 34
+> +
+> +  clock-names:
+> +    items:
+> +      - const: camnoc_nrt_axi
+> +      - const: camnoc_rt_axi
+> +      - const: camnoc_rt_vfe0
+> +      - const: camnoc_rt_vfe1
+> +      - const: camnoc_rt_vfe2
+> +      - const: camnoc_rt_vfe_lite
+> +      - const: cam_top_ahb
+> +      - const: cam_top_fast_ahb
+> +      - const: csid
+> +      - const: csid_csiphy_rx
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy3
+> +      - const: csiphy3_timer
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: csiphy5
+> +      - const: csiphy5_timer
+> +      - const: gcc_hf_axi
+> +      - const: qdss_debug_xo
+> +      - const: vfe0
+> +      - const: vfe0_fast_ahb
+> +      - const: vfe1
+> +      - const: vfe1_fast_ahb
+> +      - const: vfe2
+> +      - const: vfe2_fast_ahb
+> +      - const: vfe_lite
+> +      - const: vfe_lite_ahb
+> +      - const: vfe_lite_cphy_rx
+> +      - const: vfe_lite_csid
+> +
+> +  interrupts:
+> +    maxItems: 16
+> +  interrupt-names:
+> +    items:
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: csiphy5
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: ahb
+> +      - const: hf_0_mnoc
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    items:
+> +      - description:
+> +          TFE0 GDSC - Thin Front End, Global Distributed Switch Controller.
+> +      - description:
+> +          TFE1 GDSC - Thin Front End, Global Distributed Switch Controller.
+> +      - description:
+> +          TFE2 GDSC - Thin Front End, Global Distributed Switch Controller.
+> +      - description:
+> +          Titan GDSC - Titan ISP Block Global Distributed Switch Controller.
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: tfe0
+> +      - const: tfe1
+> +      - const: tfe2
+> +      - const: top
+> +
+> +  vdda-pll-supply:
+> +    description:
+> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
+> +
+> +  vdda-phy0-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  vdda-phy1-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  vdda-phy2-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  vdda-phy3-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  vdda-phy4-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  vdda-phy5-supply:
+> +    description:
+> +      Phandle to 0.8V regulator supply to PHY core block.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSI0.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +              bus-type:
+> +                enum:
+> +                  - 1  # MEDIA_BUS_TYPE_CSI2_CPHY
+> +                  - 4  # MEDIA_BUS_TYPE_CSI2_DPHY
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSI1.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +              bus-type:
+> +                enum:
+> +                  - 1  # MEDIA_BUS_TYPE_CSI2_CPHY
+> +                  - 4  # MEDIA_BUS_TYPE_CSI2_DPHY
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSI2.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +              bus-type:
+> +                enum:
+> +                  - 1  # MEDIA_BUS_TYPE_CSI2_CPHY
+> +                  - 4  # MEDIA_BUS_TYPE_CSI2_DPHY
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data on CSI3.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +              bus-type:
+> +                enum:
+> +                  - 1  # MEDIA_BUS_TYPE_CSI2_CPHY
+> +                  - 4  # MEDIA_BUS_TYPE_CSI2_DPHY
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - interconnects
+> +  - interconnect-names
+> +  - iommus
+> +  - power-domains
+> +  - power-domain-names
+> +  - vdda-pll-supply
+> +  - vdda-phy0-supply
+> +  - vdda-phy1-supply
+> +  - vdda-phy2-supply
+> +  - vdda-phy3-supply
+> +  - vdda-phy4-supply
+> +  - vdda-phy5-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/clock/qcom,kaanapali-camcc.h>
+> +    #include <dt-bindings/clock/qcom,kaanapali-gcc.h>
+> +    #include <dt-bindings/interconnect/qcom,icc.h>
+> +    #include <dt-bindings/interconnect/qcom,kaanapali-rpmh.h>
 
-syzbot found the following issue on:
+This will break if corresponding patches are not merged (and they were
+not even declared as dependencies). Please drop platform-specific
+includes and use ephemeral DT nodes instead (you don't need any of
+indices, just the nodes).
 
-HEAD commit:    b5a4da2c459f Add linux-next specific files for 20250924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d3cce2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=841973c5ab4f4157
-dashboard link: https://syzkaller.appspot.com/bug?extid=1b607ee7794bdba65be7
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      camss: isp@9253000 {
+> +        compatible = "qcom,kaanapali-camss";
+> +
+> +        reg = <0x0 0x09253000 0x0 0x5e80>,
+> +              <0x0 0x09263000 0x0 0x5e80>,
+> +              <0x0 0x09273000 0x0 0x5e80>,
+> +              <0x0 0x092d3000 0x0 0x3880>,
+> +              <0x0 0x092e7000 0x0 0x3880>,
+> +              <0x0 0x09523000 0x0 0x2000>,
+> +              <0x0 0x09525000 0x0 0x2000>,
+> +              <0x0 0x09527000 0x0 0x2000>,
+> +              <0x0 0x09529000 0x0 0x2000>,
+> +              <0x0 0x0952b000 0x0 0x2000>,
+> +              <0x0 0x0952d000 0x0 0x2000>,
+> +              <0x0 0x09151000 0x0 0x20000>,
+> +              <0x0 0x09171000 0x0 0x20000>,
+> +              <0x0 0x09191000 0x0 0x20000>,
+> +              <0x0 0x092dc000 0x0 0x1300>,
+> +              <0x0 0x092f0000 0x0 0x1300>;
+> +        reg-names = "csid0",
+> +                    "csid1",
+> +                    "csid2",
+> +                    "csid_lite0",
+> +                    "csid_lite1",
+> +                    "csiphy0",
+> +                    "csiphy1",
+> +                    "csiphy2",
+> +                    "csiphy3",
+> +                    "csiphy4",
+> +                    "csiphy5",
+> +                    "vfe0",
+> +                    "vfe1",
+> +                    "vfe2",
+> +                    "vfe_lite0",
+> +                    "vfe_lite1";
+> +
+> +        clocks = <&camcc CAM_CC_CAMNOC_NRT_AXI_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_RT_AXI_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_RT_TFE_0_MAIN_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_RT_TFE_1_MAIN_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_RT_TFE_2_MAIN_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_RT_IFE_LITE_CLK>,
+> +                 <&camcc CAM_CC_CAM_TOP_AHB_CLK>,
+> +                 <&camcc CAM_CC_CAM_TOP_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_CSID_CLK>,
+> +                 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY0_CLK>,
+> +                 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY1_CLK>,
+> +                 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY2_CLK>,
+> +                 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY3_CLK>,
+> +                 <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY4_CLK>,
+> +                 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY5_CLK>,
+> +                 <&camcc CAM_CC_CSI5PHYTIMER_CLK>,
+> +                 <&gcc GCC_CAMERA_HF_AXI_CLK>,
+> +                 <&camcc CAM_CC_QDSS_DEBUG_XO_CLK>,
+> +                 <&camcc CAM_CC_TFE_0_MAIN_CLK>,
+> +                 <&camcc CAM_CC_TFE_0_MAIN_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_TFE_1_MAIN_CLK>,
+> +                 <&camcc CAM_CC_TFE_1_MAIN_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_TFE_2_MAIN_CLK>,
+> +                 <&camcc CAM_CC_TFE_2_MAIN_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
+> +        clock-names = "camnoc_nrt_axi",
+> +                      "camnoc_rt_axi",
+> +                      "camnoc_rt_vfe0",
+> +                      "camnoc_rt_vfe1",
+> +                      "camnoc_rt_vfe2",
+> +                      "camnoc_rt_vfe_lite",
+> +                      "cam_top_ahb",
+> +                      "cam_top_fast_ahb",
+> +                      "csid",
+> +                      "csid_csiphy_rx",
+> +                      "csiphy0",
+> +                      "csiphy0_timer",
+> +                      "csiphy1",
+> +                      "csiphy1_timer",
+> +                      "csiphy2",
+> +                      "csiphy2_timer",
+> +                      "csiphy3",
+> +                      "csiphy3_timer",
+> +                      "csiphy4",
+> +                      "csiphy4_timer",
+> +                      "csiphy5",
+> +                      "csiphy5_timer",
+> +                      "gcc_hf_axi",
+> +                      "qdss_debug_xo",
+> +                      "vfe0",
+> +                      "vfe0_fast_ahb",
+> +                      "vfe1",
+> +                      "vfe1_fast_ahb",
+> +                      "vfe2",
+> +                      "vfe2_fast_ahb",
+> +                      "vfe_lite",
+> +                      "vfe_lite_ahb",
+> +                      "vfe_lite_cphy_rx",
+> +                      "vfe_lite_csid";
+> +
+> +        interrupts = <GIC_SPI 601 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 603 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 431 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 376 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 89 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 457 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 606 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 377 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "csid0",
+> +                          "csid1",
+> +                          "csid2",
+> +                          "csid_lite0",
+> +                          "csid_lite1",
+> +                          "csiphy0",
+> +                          "csiphy1",
+> +                          "csiphy2",
+> +                          "csiphy3",
+> +                          "csiphy4",
+> +                          "csiphy5",
+> +                          "vfe0",
+> +                          "vfe1",
+> +                          "vfe2",
+> +                          "vfe_lite0",
+> +                          "vfe_lite1";
+> +
+> +        interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                         &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
+> +                        <&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
+> +                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+> +        interconnect-names = "ahb",
+> +                 "hf_0_mnoc";
+> +
+> +        iommus = <&apps_smmu 0x1c00 0x00>;
+> +
+> +        power-domains = <&camcc CAM_CC_TFE_0_GDSC>,
+> +                        <&camcc CAM_CC_TFE_1_GDSC>,
+> +                        <&camcc CAM_CC_TFE_2_GDSC>,
+> +                        <&camcc CAM_CC_TITAN_TOP_GDSC>;
+> +        power-domain-names = "tfe0",
+> +                             "tfe1",
+> +                             "tfe2",
+> +                             "top";
+> +
+> +        vdda-pll-supply = <&vreg_l1d_1p2>;
+> +        vdda-phy0-supply = <&vreg_l3i_0p8>;
+> +        vdda-phy1-supply = <&vreg_l3i_0p8>;
+> +        vdda-phy2-supply = <&vreg_l3d_0p8>;
+> +        vdda-phy3-supply = <&vreg_l3i_0p8>;
+> +        vdda-phy4-supply = <&vreg_l3d_0p8>;
+> +        vdda-phy5-supply = <&vreg_l3i_0p8>;
+> +
+> +        ports {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          port@0 {
+> +            reg = <0>;
+> +
+> +            csiphy_ep0: endpoint {
+> +              clock-lanes = <7>;
+> +              data-lanes = <0 1>;
+> +              remote-endpoint = <&sensor_ep>;
+> +            };
+> +          };
+> +        };
+> +      };
+> +    };
+> 
+> -- 
+> 2.25.1
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2d0e39514585/disk-b5a4da2c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c7c8001fe2ea/vmlinux-b5a4da2c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/807bea872f12/bzImage-b5a4da2c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1b607ee7794bdba65be7@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.5.7937/23579 is trying to acquire lock:
-ffff88802981d0e8 (&resv_map->rw_sema){++++}-{4:4}, at: follow_page_mask mm/gup.c:1015 [inline]
-ffff88802981d0e8 (&resv_map->rw_sema){++++}-{4:4}, at: __get_user_pages+0x5da/0x2a00 mm/gup.c:1426
-
-but task is already holding lock:
-ffff888028e401e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:368 [inline]
-ffff888028e401e0 (&mm->mmap_lock){++++}-{4:4}, at: xdp_umem_pin_pages+0xcb/0x350 net/xdp/xdp_umem.c:104
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #8 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __might_fault+0xcc/0x130 mm/memory.c:7125
-       _copy_from_iter+0xf3/0x1790 lib/iov_iter.c:259
-       copy_from_iter include/linux/uio.h:228 [inline]
-       copy_from_iter_full include/linux/uio.h:245 [inline]
-       skb_do_copy_data_nocache include/net/sock.h:2269 [inline]
-       skb_copy_to_page_nocache include/net/sock.h:2295 [inline]
-       tcp_sendmsg_locked+0x2347/0x5540 net/ipv4/tcp.c:1272
-       tcp_sendmsg+0x2f/0x50 net/ipv4/tcp.c:1413
-       sock_sendmsg_nosec net/socket.c:714 [inline]
-       __sock_sendmsg+0x19c/0x270 net/socket.c:729
-       sock_write_iter+0x279/0x360 net/socket.c:1182
-       new_sync_write fs/read_write.c:593 [inline]
-       vfs_write+0x5c9/0xb30 fs/read_write.c:686
-       ksys_write+0x145/0x250 fs/read_write.c:738
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #7 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3720
-       lock_sock include/net/sock.h:1679 [inline]
-       inet_shutdown+0x6a/0x390 net/ipv4/af_inet.c:907
-       nbd_mark_nsock_dead+0x2e9/0x560 drivers/block/nbd.c:318
-       sock_shutdown+0x15e/0x260 drivers/block/nbd.c:411
-       nbd_clear_sock drivers/block/nbd.c:1424 [inline]
-       nbd_config_put+0x342/0x790 drivers/block/nbd.c:1448
-       nbd_release+0xfe/0x140 drivers/block/nbd.c:1753
-       bdev_release+0x536/0x650 block/bdev.c:-1
-       blkdev_release+0x15/0x20 block/fops.c:702
-       __fput+0x44c/0xa70 fs/file_table.c:468
-       task_work_run+0x1d4/0x260 kernel/task_work.c:227
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop+0xe9/0x130 kernel/entry/common.c:43
-       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
-       syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
-       syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
-       do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #6 (&nsock->tx_lock){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
-       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
-       nbd_handle_cmd drivers/block/nbd.c:1140 [inline]
-       nbd_queue_rq+0x257/0xf10 drivers/block/nbd.c:1204
-       blk_mq_dispatch_rq_list+0x4c0/0x1900 block/blk-mq.c:2129
-       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
-       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
-       __blk_mq_sched_dispatch_requests+0xda4/0x1570 block/blk-mq-sched.c:307
-       blk_mq_sched_dispatch_requests+0xd7/0x190 block/blk-mq-sched.c:329
-       blk_mq_run_hw_queue+0x348/0x4f0 block/blk-mq.c:2367
-       blk_mq_dispatch_list+0xd0c/0xe00 include/linux/spinlock.h:-1
-       blk_mq_flush_plug_list+0x469/0x550 block/blk-mq.c:2976
-       __blk_flush_plug+0x3d3/0x4b0 block/blk-core.c:1225
-       blk_finish_plug block/blk-core.c:1252 [inline]
-       __submit_bio+0x2d3/0x5a0 block/blk-core.c:651
-       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
-       submit_bio_noacct_nocheck+0x2fb/0xa50 block/blk-core.c:755
-       submit_bh fs/buffer.c:2829 [inline]
-       block_read_full_folio+0x599/0x830 fs/buffer.c:2447
-       filemap_read_folio+0x117/0x380 mm/filemap.c:2444
-       do_read_cache_folio+0x350/0x590 mm/filemap.c:4009
-       read_mapping_folio include/linux/pagemap.h:999 [inline]
-       read_part_sector+0xb6/0x2b0 block/partitions/core.c:722
-       adfspart_check_ICS+0xa4/0xa50 block/partitions/acorn.c:360
-       check_partition block/partitions/core.c:141 [inline]
-       blk_add_partitions block/partitions/core.c:589 [inline]
-       bdev_disk_changed+0x75f/0x14b0 block/partitions/core.c:693
-       blkdev_get_whole+0x380/0x510 block/bdev.c:748
-       bdev_open+0x31e/0xd30 block/bdev.c:957
-       blkdev_open+0x457/0x600 block/fops.c:694
-       do_dentry_open+0x953/0x13f0 fs/open.c:965
-       vfs_open+0x3b/0x340 fs/open.c:1097
-       do_open fs/namei.c:3975 [inline]
-       path_openat+0x2ee5/0x3830 fs/namei.c:4134
-       do_filp_open+0x1fa/0x410 fs/namei.c:4161
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_openat fs/open.c:1468 [inline]
-       __se_sys_openat fs/open.c:1463 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1463
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #5 (&cmd->lock){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
-       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
-       nbd_queue_rq+0xc8/0xf10 drivers/block/nbd.c:1196
-       blk_mq_dispatch_rq_list+0x4c0/0x1900 block/blk-mq.c:2129
-       __blk_mq_do_dispatch_sched block/blk-mq-sched.c:168 [inline]
-       blk_mq_do_dispatch_sched block/blk-mq-sched.c:182 [inline]
-       __blk_mq_sched_dispatch_requests+0xda4/0x1570 block/blk-mq-sched.c:307
-       blk_mq_sched_dispatch_requests+0xd7/0x190 block/blk-mq-sched.c:329
-       blk_mq_run_hw_queue+0x348/0x4f0 block/blk-mq.c:2367
-       blk_mq_dispatch_list+0xd0c/0xe00 include/linux/spinlock.h:-1
-       blk_mq_flush_plug_list+0x469/0x550 block/blk-mq.c:2976
-       __blk_flush_plug+0x3d3/0x4b0 block/blk-core.c:1225
-       blk_finish_plug block/blk-core.c:1252 [inline]
-       __submit_bio+0x2d3/0x5a0 block/blk-core.c:651
-       __submit_bio_noacct_mq block/blk-core.c:724 [inline]
-       submit_bio_noacct_nocheck+0x2fb/0xa50 block/blk-core.c:755
-       submit_bh fs/buffer.c:2829 [inline]
-       block_read_full_folio+0x599/0x830 fs/buffer.c:2447
-       filemap_read_folio+0x117/0x380 mm/filemap.c:2444
-       do_read_cache_folio+0x350/0x590 mm/filemap.c:4009
-       read_mapping_folio include/linux/pagemap.h:999 [inline]
-       read_part_sector+0xb6/0x2b0 block/partitions/core.c:722
-       adfspart_check_ICS+0xa4/0xa50 block/partitions/acorn.c:360
-       check_partition block/partitions/core.c:141 [inline]
-       blk_add_partitions block/partitions/core.c:589 [inline]
-       bdev_disk_changed+0x75f/0x14b0 block/partitions/core.c:693
-       blkdev_get_whole+0x380/0x510 block/bdev.c:748
-       bdev_open+0x31e/0xd30 block/bdev.c:957
-       blkdev_open+0x457/0x600 block/fops.c:694
-       do_dentry_open+0x953/0x13f0 fs/open.c:965
-       vfs_open+0x3b/0x340 fs/open.c:1097
-       do_open fs/namei.c:3975 [inline]
-       path_openat+0x2ee5/0x3830 fs/namei.c:4134
-       do_filp_open+0x1fa/0x410 fs/namei.c:4161
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-       do_sys_open fs/open.c:1452 [inline]
-       __do_sys_openat fs/open.c:1468 [inline]
-       __se_sys_openat fs/open.c:1463 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1463
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #4 (set->srcu){.+.+}-{0:0}:
-       lock_sync+0xba/0x160 kernel/locking/lockdep.c:5916
-       srcu_lock_sync include/linux/srcu.h:173 [inline]
-       __synchronize_srcu+0x96/0x3a0 kernel/rcu/srcutree.c:1429
-       elevator_switch+0x12b/0x640 block/elevator.c:588
-       elevator_change+0x315/0x4c0 block/elevator.c:691
-       elevator_set_default+0x186/0x260 block/elevator.c:767
-       blk_register_queue+0x34e/0x3f0 block/blk-sysfs.c:942
-       __add_disk+0x677/0xd50 block/genhd.c:528
-       add_disk_fwnode+0xfc/0x480 block/genhd.c:597
-       add_disk include/linux/blkdev.h:775 [inline]
-       nbd_dev_add+0x717/0xae0 drivers/block/nbd.c:1981
-       nbd_init+0x168/0x1f0 drivers/block/nbd.c:2688
-       do_one_initcall+0x236/0x820 init/main.c:1283
-       do_initcall_level+0x104/0x190 init/main.c:1345
-       do_initcalls+0x59/0xa0 init/main.c:1361
-       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
-       kernel_init+0x1d/0x1d0 init/main.c:1483
-       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #3 (&q->elevator_lock){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
-       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
-       elevator_change+0x1e5/0x4c0 block/elevator.c:689
-       elevator_set_none+0x42/0xb0 block/elevator.c:782
-       blk_mq_elv_switch_none block/blk-mq.c:5032 [inline]
-       __blk_mq_update_nr_hw_queues block/blk-mq.c:5075 [inline]
-       blk_mq_update_nr_hw_queues+0x598/0x1ab0 block/blk-mq.c:5133
-       nbd_start_device+0x17f/0xb10 drivers/block/nbd.c:1486
-       nbd_genl_connect+0x135b/0x18f0 drivers/block/nbd.c:2236
-       genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
-       genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
-       genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
-       netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
-       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
-       netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-       netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
-       netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
-       sock_sendmsg_nosec net/socket.c:714 [inline]
-       __sock_sendmsg+0x21c/0x270 net/socket.c:729
-       ____sys_sendmsg+0x505/0x830 net/socket.c:2617
-       ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2671
-       __sys_sendmsg net/socket.c:2703 [inline]
-       __do_sys_sendmsg net/socket.c:2708 [inline]
-       __se_sys_sendmsg net/socket.c:2706 [inline]
-       __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2706
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&q->q_usage_counter(io)#49){++++}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       blk_alloc_queue+0x538/0x620 block/blk-core.c:461
-       blk_mq_alloc_queue block/blk-mq.c:4399 [inline]
-       __blk_mq_alloc_disk+0x15c/0x340 block/blk-mq.c:4446
-       nbd_dev_add+0x46c/0xae0 drivers/block/nbd.c:1951
-       nbd_init+0x168/0x1f0 drivers/block/nbd.c:2688
-       do_one_initcall+0x236/0x820 init/main.c:1283
-       do_initcall_level+0x104/0x190 init/main.c:1345
-       do_initcalls+0x59/0xa0 init/main.c:1361
-       kernel_init_freeable+0x334/0x4b0 init/main.c:1593
-       kernel_init+0x1d/0x1d0 init/main.c:1483
-       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
-       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       prepare_alloc_pages+0x153/0x610 mm/page_alloc.c:4951
-       __alloc_frozen_pages_noprof+0x123/0x370 mm/page_alloc.c:5172
-       alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
-       alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
-       alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
-       pagetable_alloc_noprof include/linux/mm.h:2990 [inline]
-       __pud_alloc_one_noprof include/asm-generic/pgalloc.h:177 [inline]
-       pud_alloc_one_noprof include/asm-generic/pgalloc.h:198 [inline]
-       __pud_alloc+0x3f/0x450 mm/memory.c:6593
-       pud_alloc include/linux/mm.h:2941 [inline]
-       huge_pte_alloc+0x4dc/0x620 mm/hugetlb.c:7679
-       hugetlb_fault+0x508/0x2970 mm/hugetlb.c:6720
-       handle_mm_fault+0x740/0x8e0 mm/memory.c:6529
-       faultin_page mm/gup.c:1126 [inline]
-       __get_user_pages+0x165c/0x2a00 mm/gup.c:1428
-       populate_vma_page_range+0x29f/0x3a0 mm/gup.c:1860
-       __mm_populate+0x24c/0x380 mm/gup.c:1963
-       mm_populate include/linux/mm.h:3481 [inline]
-       vm_mmap_pgoff+0x387/0x4d0 mm/util.c:585
-       ksys_mmap_pgoff+0x587/0x760 mm/mmap.c:604
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&resv_map->rw_sema){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
-       follow_page_mask mm/gup.c:1015 [inline]
-       __get_user_pages+0x5da/0x2a00 mm/gup.c:1426
-       __get_user_pages_locked mm/gup.c:1692 [inline]
-       __gup_longterm_locked+0x3dc/0x1660 mm/gup.c:2481
-       pin_user_pages+0x9e/0xd0 mm/gup.c:3394
-       xdp_umem_pin_pages+0x11c/0x350 net/xdp/xdp_umem.c:105
-       xdp_umem_reg net/xdp/xdp_umem.c:230 [inline]
-       xdp_umem_create+0x677/0x8e0 net/xdp/xdp_umem.c:263
-       xsk_setsockopt+0x7b0/0x8d0 net/xdp/xsk.c:1484
-       do_sock_setsockopt+0x17c/0x1b0 net/socket.c:2347
-       __sys_setsockopt net/socket.c:2372 [inline]
-       __do_sys_setsockopt net/socket.c:2378 [inline]
-       __se_sys_setsockopt net/socket.c:2375 [inline]
-       __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2375
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &resv_map->rw_sema --> sk_lock-AF_INET --> &mm->mmap_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&mm->mmap_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&mm->mmap_lock);
-  rlock(&resv_map->rw_sema);
-
- *** DEADLOCK ***
-
-2 locks held by syz.5.7937/23579:
- #0: ffff888078c706b8 (&xs->mutex){+.+.}-{4:4}, at: xsk_setsockopt+0x63c/0x8d0 net/xdp/xsk.c:1478
- #1: ffff888028e401e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_lock include/linux/mmap_lock.h:368 [inline]
- #1: ffff888028e401e0 (&mm->mmap_lock){++++}-{4:4}, at: xdp_umem_pin_pages+0xcb/0x350 net/xdp/xdp_umem.c:104
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 23579 Comm: syz.5.7937 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
- follow_page_mask mm/gup.c:1015 [inline]
- __get_user_pages+0x5da/0x2a00 mm/gup.c:1426
- __get_user_pages_locked mm/gup.c:1692 [inline]
- __gup_longterm_locked+0x3dc/0x1660 mm/gup.c:2481
- pin_user_pages+0x9e/0xd0 mm/gup.c:3394
- xdp_umem_pin_pages+0x11c/0x350 net/xdp/xdp_umem.c:105
- xdp_umem_reg net/xdp/xdp_umem.c:230 [inline]
- xdp_umem_create+0x677/0x8e0 net/xdp/xdp_umem.c:263
- xsk_setsockopt+0x7b0/0x8d0 net/xdp/xsk.c:1484
- do_sock_setsockopt+0x17c/0x1b0 net/socket.c:2347
- __sys_setsockopt net/socket.c:2372 [inline]
- __do_sys_setsockopt net/socket.c:2378 [inline]
- __se_sys_setsockopt net/socket.c:2375 [inline]
- __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2375
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa2d038eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa2d11fd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007fa2d05e5fa0 RCX: 00007fa2d038eec9
-RDX: 0000000000000004 RSI: 000000000000011b RDI: 0000000000000003
-RBP: 00007fa2d0411f91 R08: 0000000000000020 R09: 0000000000000000
-R10: 00002000000000c0 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fa2d05e6038 R14: 00007fa2d05e5fa0 R15: 00007ffd6dae5908
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
