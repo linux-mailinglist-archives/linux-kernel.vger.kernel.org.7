@@ -1,229 +1,161 @@
-Return-Path: <linux-kernel+bounces-831985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D13B9E132
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C38B9E148
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB0A385125
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE11A1B2799C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9F0266582;
-	Thu, 25 Sep 2025 08:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYB0376T"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EE1275106;
+	Thu, 25 Sep 2025 08:38:43 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300E225EF97
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E40D21ADA7;
+	Thu, 25 Sep 2025 08:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758789349; cv=none; b=hhOVFIEWH9EVNJkzlik7JIMBSFNOaCw6gs54pZgq1ietQHQiVw8ntAcjWK2hth6eO4b/3sMyo5TmgAFKj2xBvPXTC5byks1bkxyXdDHfeWFoJ+AhFf148I8gY1GouP3hXctbEnyxGdfpmNe+bxaWCJWa8Ycjt63dsEhG0f/1/P0=
+	t=1758789523; cv=none; b=RnJhbOVYa9P6HdkZq/oyYrAaPAd9g9M2sJrFtjdkvsrB9UzSPsdjgqi+6vbukZDN60dv/D0YLKZZxJbWujwmDI/7nMqhGQwFqJI5TbAa+PCqnog/Xh92mdzQ0P+Q1vLkRtTJwjlcMv0t9pyRizZLW84B9sOZ45rnmT1i3/hW9S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758789349; c=relaxed/simple;
-	bh=eDfizLwqAX3ps1KqSy9owcGN8dHDTaaVHlBJT/0x+IU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8tJc3dDDcmRGGnuKMRPgiVAZLUfZ3XZUn2NbtBUTFKiC/pg1qCt1JtlHcAqNXqirGcRkR41zZh1CMV352bHqZr6r9ZvJbPAFjhdcmGrszFuxGOJTeg4CcG/a3KyTps47ceaFTD2yOIQ3e+j6cdTMfz1JIEYbaIaEIb2yOQh/qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYB0376T; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b5506b28c98so503209a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758789347; x=1759394147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MDyXKD1mpeXok68wul2g//tY5b9PgvJaaF56RchZKHQ=;
-        b=FYB0376TawJjOLYbp2TKehqZRGA0YuKM0v/mkYoPhaoC/QPbShSiNNBuV33FwIAOH9
-         29BGLddN/71Slg0pbcaKD5UaPfMNWnd6HkHUJwrnuY7En33QlekBA5ZypAxwaS/jBVF2
-         lIunlpciu+m6/8ZuYwXhPRLezbpNX7dzNEJ80U07X5pbWBqss4e7l3G0SCqyMPg8caMu
-         SJCLWS79x3OYLE7gjABXBgnGptNzPgZ8iPOi08OP8fJKIGjI2VNp6qhdcz9j5Uh9iVvQ
-         tKDtwgJZqGL9sEoCPnhu5SOC5FV2YLSHIGcSI9K8Kzu/ZiMl3uT3T4XJ6Bfhflm+RQ65
-         UpEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758789347; x=1759394147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MDyXKD1mpeXok68wul2g//tY5b9PgvJaaF56RchZKHQ=;
-        b=wa4/3rhLK+OAlaY0byGuFv30IAOwumMaw/5iH2yOlN9ICTrlUC5s8SZ2MejupwngXE
-         Dwr0zrY5jrVyjG/h01Quv5vIQJEv7m1nkQ5p7sDqQYdIBgCt38mJLGYFsZtZElsh0vhF
-         56CUs+aUXFLGfTFwnKj2IS4z+AnW6CUpUfHO+xh4ElAa/6HeyurXQqFc/9xR+kiw+43R
-         RYklEsrETV+8LADEReIVIAsG2yEPwPlZRnkPbtzB1IwntH/KY/uixt6wKoBrFpTzLBmA
-         zG/gnluOYh7Ul+mYmvLnHPR2iO6xlnjqn9Sg6gA/g6ZIXV8K5yWx6xdskbATV/rd1k4S
-         xLyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWULrYcYrveioiqe89oeqn0TehKqLsS4U7CYAfl2fx70lkrbQLzqrWA9PxtZ117kTjC+uZvAptIUq9gJSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9d++sfXqzuDPfCPB0ASG08k7gKWL6nHdNoOaEnVs/lSVsQCHR
-	jc6L+l097xWmnJDXhee435jZW8W6f2g83kr+FI00aDQo6C20Zvsgd0s/4VM5z9SJZdj1MpQFqiN
-	d8otvDeJ8i7GD4KWMEv3ej4l62+ypjIo=
-X-Gm-Gg: ASbGncsXmX9ymJarzn9Fk8YBTyA9G2KgP14UXQicJ1tN0AmR2tK01vGYR091Y6L2VrV
-	ZhmkZ7bwkAcDQUfV4F0Eqs14sSzWKmanzA7TNc7BYH+2E76cDml375kfQ77AEik6OnoJ1RH3L/H
-	pImXIQLSZQKQPV0APcxhFefI24yb66dteHUdwIfwEZzgmsna4vVdms/kHNanVYhmMNTOKZT7GfZ
-	15iDlBY9VVyVC75AHdaxa2sWWHcZxGTIwX+Og==
-X-Google-Smtp-Source: AGHT+IFiKBS4LhKCc+e3TZ8akuJUR4dSaETLbnVbbjovQRnE+6jXoJciIAqdsOUJ/nrSn5d9rrftqE7Kz3oPsvH4jUY=
-X-Received: by 2002:a17:903:3201:b0:26e:146e:769c with SMTP id
- d9443c01a7336-27ed4ad75c2mr30527635ad.52.1758789347230; Thu, 25 Sep 2025
- 01:35:47 -0700 (PDT)
+	s=arc-20240116; t=1758789523; c=relaxed/simple;
+	bh=W4JNNSojzyAIs40tutEjtd/AaCxG6rQ6Ubs/37VJsiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfPvWxP/c6LyZrBnT3APog7tgp7TnxLbECkfdMPjK3Lv5j72goyr5As9HHe24Dl9/NmwWS/p52QNJ3yIV6CberZsG46zDji15BaW7CW7XrYHaiyNA6As3c+IjticYGey+rHxucP0bzZrttVmFxGCUCk3ERPho8dMxxQp2nDExIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cXRv54jbLzYQtrY;
+	Thu, 25 Sep 2025 16:38:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9B6751A0C36;
+	Thu, 25 Sep 2025 16:38:34 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgD3CGGJ_9Ro2TkJAw--.52343S3;
+	Thu, 25 Sep 2025 16:38:34 +0800 (CST)
+Message-ID: <f54f4915-956b-895b-0e14-02c41b7b633e@huaweicloud.com>
+Date: Thu, 25 Sep 2025 16:38:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com> <3562eeeb276dc9cc5f3b238a3f597baebfa56bad.camel@sipsolutions.net>
-In-Reply-To: <3562eeeb276dc9cc5f3b238a3f597baebfa56bad.camel@sipsolutions.net>
-From: Ethan Graham <ethan.w.s.graham@gmail.com>
-Date: Thu, 25 Sep 2025 10:35:36 +0200
-X-Gm-Features: AS18NWBFmYuT702hOj_C5JBwnZByzVghQRTr5ikBT0AN32tqz1vkZcQ1S7Omg5I
-Message-ID: <CANgxf6xOJgP6254S8EgSdiivrfE-aJDEQbDdXzWi7K4BCTdrXg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/10] KFuzzTest: a new kernel fuzzing framework
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com, 
-	andy@kernel.org, brauner@kernel.org, brendan.higgins@linux.dev, 
-	davem@davemloft.net, davidgow@google.com, dhowells@redhat.com, 
-	dvyukov@google.com, elver@google.com, herbert@gondor.apana.org.au, 
-	ignat@cloudflare.com, jack@suse.cz, jannh@google.com, 
-	kasan-dev@googlegroups.com, kees@kernel.org, kunit-dev@googlegroups.com, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lukas@wunner.de, rmoar@google.com, shuah@kernel.org, 
-	sj@kernel.org, tarasmadan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v5 2/2] md: allow configuring logical block size
+To: Xiao Ni <xni@redhat.com>, Li Nan <linan666@huaweicloud.com>
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, hare@suse.de,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250918115759.334067-1-linan666@huaweicloud.com>
+ <20250918115759.334067-3-linan666@huaweicloud.com>
+ <CALTww2_4rEb9SojpVbwFy=ZEjUc0-4ECYZKYKgsay9XzDTs-cg@mail.gmail.com>
+ <b7fc02d2-7643-4bf1-1b15-c1ecdf883c87@huaweicloud.com>
+ <CALTww2_knuDVWLtVzrqcuLH5dmiyMqkAaZr2DB_ZpCYPQsYH0A@mail.gmail.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <CALTww2_knuDVWLtVzrqcuLH5dmiyMqkAaZr2DB_ZpCYPQsYH0A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3CGGJ_9Ro2TkJAw--.52343S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UurWxWF15Xw1DXry5urg_yoW8tryfpF
+	ZxW3W5KwnrJF1jya9FqF48KF15K3y8JFW8XryrJry7u3s8KFnF9rn7K3s8KFWjqrn3Cw17
+	Zw4jgFZxZryS9aUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
+	xhLUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Wed, Sep 24, 2025 at 2:52=E2=80=AFPM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
->
-> On Fri, 2025-09-19 at 14:57 +0000, Ethan Graham wrote:
-> >
-> > This patch series introduces KFuzzTest, a lightweight framework for
-> > creating in-kernel fuzz targets for internal kernel functions.
-> >
-> > The primary motivation for KFuzzTest is to simplify the fuzzing of
-> > low-level, relatively stateless functions (e.g., data parsers, format
-> > converters) that are difficult to exercise effectively from the syscall
-> > boundary. It is intended for in-situ fuzzing of kernel code without
-> > requiring that it be built as a separate userspace library or that its
-> > dependencies be stubbed out. Using a simple macro-based API, developers
-> > can add a new fuzz target with minimal boilerplate code.
->
-> So ... I guess I understand the motivation to make this easy for
-> developers, but I'm not sure I'm happy to have all of this effectively
-> depend on syzkaller.
 
-I would argue that it only depends on syzkaller because it is currently
-the only fuzzer that implements support for KFuzzTest. The communication
-interface itself is agnostic.
 
-> You spelled out the process to actually declare a fuzz test, but you
-> never spelled out the process to actually run fuzzing against it. For
+在 2025/9/23 22:06, Xiao Ni 写道:
+> On Tue, Sep 23, 2025 at 9:37 PM Li Nan <linan666@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> 在 2025/9/23 19:36, Xiao Ni 写道:
+>>> Hi Li Nan
+>>>
+>>> On Thu, Sep 18, 2025 at 8:08 PM <linan666@huaweicloud.com> wrote:
+>>>>
+>>>> From: Li Nan <linan122@huawei.com>
+>>>>
+>>>> Previously, raid array used the maximum logical block size (LBS)
+>>>> of all member disks. Adding a larger LBS disk at runtime could
+>>>> unexpectedly increase RAID's LBS, risking corruption of existing
+>>>> partitions. This can be reproduced by:
+>>>>
+>>>> ```
+>>>>     # LBS of sd[de] is 512 bytes, sdf is 4096 bytes.
+>>>>     mdadm -CRq /dev/md0 -l1 -n3 /dev/sd[de] missing --assume-clean
+>>>>
+>>>>     # LBS is 512
+>>>>     cat /sys/block/md0/queue/logical_block_size
+>>>>
+>>>>     # create partition md0p1
+>>>>     parted -s /dev/md0 mklabel gpt mkpart primary 1MiB 100%
+>>>>     lsblk | grep md0p1
+>>>>
+>>>>     # LBS becomes 4096 after adding sdf
+>>>>     mdadm --add -q /dev/md0 /dev/sdf
+>>>>     cat /sys/block/md0/queue/logical_block_size
+>>>>
+>>>>     # partition lost
+>>>>     partprobe /dev/md0
+>>>>     lsblk | grep md0p1
+>>>> ```
+>>>
+>>> Thanks for the reproducer. I can reproduce it myself.
+>>>
+>>>>
+>>>> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+>>>> only disks with 512 bytes LBS are available currently, but later, disks
+>>>> with 4KB LBS may be added to the array.
+>>>
+>>> If we add a disk with 4KB LBS and configure it to 4KB by the sysfs
+>>> interface, how can we make the partition table readable and avoid the
+>>> problem mentioned above?
+>>>
+>>
+> 
+> Hi
+> 
+>> Thanks for your review.
+>>
+>> The main cause of partition loss is LBS changes. Therefore, we should
+>> specify a 4K LBS at creation time, instead of modifying LBS after the RAID
+>> is already in use. For example:
+>>
+>> mdadm -C --logical-block-size=4096 ...
+>>
+>> In this way, even if all underlying disks are 512-byte, the RAID will be
+>> created with a 4096 LBS. Adding 4096-byte disks later will not cause any
+>> issues.
+> 
+> It can work. But it looks strange to me to set LBS to 4096 but all
+> devices' LBS is 512 bytes. I don't reject it anyway :)
+> 
+In this scenario, there doesn't seem to be a better way. Do you have any
+suggestions?
 
-Running the fuzzing is more of a tooling concern, and so instructions
-were left out here. For the interested, the syzkaller flow is described
-on GitHub: https://github.com/google/syzkaller/blob/master/docs/kfuzztest.m=
-d
+-- 
+Thanks,
+Nan
 
-> the record, and everyone else who might be reading, here's my
-> understanding:
->
->  - the FUZZ_TEST() macro declares some magic in the Linux binary,
->    including the name of the struct that describes the necessary input
->
->  - there's a parser in syzkaller (and not really usable standalone) that
->    can parse the vmlinux binary (and doesn't handle modules) and
->    generates descriptions for the input from it
->
->  - I _think_ that the bridge tool uses these descriptions, though the
->    example you have in the documentation just says "use this command for
->    this test" and makes no representation as to how the first argument
->    to the bridge tool is created, it just appears out of thin air
-
-syzkaller doesn't use the bridge tool at all. Since a KFuzzTest target is
-invoked when you write encoded data into its debugfs input file, any
-fuzzer that is able to do this is able to fuzz it - this is what syzkaller
-does. The bridge tool was added to provide an out-of-the-box tool
-for fuzzing KFuzzTest targets with arbitrary data that doesn't depend
-on syzkaller at all.
-
-In the provided examples, the kfuzztest-bridge descriptions were
-hand-written, but it's also feasible to generate them with the ELF
-metadata in vmlinux. It would be easy to implement support for
-this in syzkaller, but then we would depend on an external tool
-for autogenerating these descriptions which we wanted to avoid.
-
->
->  - the bridge tool will then parse the description and use some random
->    data to create the serialised data that's deserialized in the kernel
->    and then passed to the test
-
-This is exactly right. It's not used by syzkaller, but this is how it's
-intended to work when it's used as a standalone tool, or for bridging
-between KFuzzTest targets and an arbitrary fuzzer that doesn't
-implement the required encoding logic.
-
->    - side note: did that really have to be a custom serialization
->      format? I don't see any discussion on that, there are different
->      formats that exist already, I'd think?
->
->  - the test runs now, and may or may not crash, as you'd expect
-
->
-> I was really hoping to integrate this with ARCH=3Dum and other fuzzers[1]=
-,
-> but ... I don't really think it's entirely feasible. I can basically
-> only require hard-coding the input description like the bridge tool
-> does, but that doesn't scale, or attempt to extract a few thousand lines
-> of code from syzkaller to extract the data...
-
-I would argue that integrating with other fuzzers is feasible, but it does
-require some if not a lot of work depending on the level of support. syzkal=
-ler
-already did most of the heavy lifting with smart input generation and mutat=
-ion
-for kernel functions, so the changes needed for KFuzzTest were mainly:
-
-- Dynamically discovering targets, but you could just as easily write a
-  syzkaller description for them.
-- Encoding logic for the input format.
-
-Assuming a fuzzer is able to generate C-struct inputs for a kernel function=
-,
-the only further requirement is being able to encode the input and write
-it into the debugfs input file. The ELF data extraction is a nice-to-have
-for sure, but it's not a strict requirement.
-
->
-> [1] in particular honggfuzz as I wrote earlier, due to the coverage
->     feedback format issues with afl++, but if I were able to use clang
->     right now I could probably also make afl++ work in a similar way
->     by adding support for --fsanitize-coverage=3Dtrace-pc-guard first.
->
->
-> I'm not even saying that you had many choices here, but it's definitely
-> annoying, at least to me, that all this infrastructure is effectively
-> dependent on syzkaller due to all of this. At the same time, yes, I get
-> that parsing dwarf and getting a description out is not an easy feat,
-> and without the infrastructure already in syzkaller it'd take more than
-> the ~1.1kLOC (and even that is not small) it has now.
->
->
-> I guess the biggest question to me is ultimately why all that is
-> necessary? Right now, there's only the single example kfuzztest that
-> even uses this infrastructure beyond a single linear buffer [2]. Where
-> is all that complexity even worth it? It's expressly intended for
-> simpler pieces of code that parse something ("data parsers, format
-> converters").
-
-You're right that the provided examples don't leverage the feature of
-being able to pass more complex nested data into the kernel. Perhaps
-for a future iteration, it might be worth adding a target for a function
-that takes more complex input. What do you think?
-
-I'm not sure how much of the kernel complexity really could be reduced
-if we decided to support only simpler inputs (e.g., linear buffers).
-It would certainly simplify the fuzzer implementation, but the kernel
-code would likely be similar if not the same.
 
