@@ -1,437 +1,199 @@
-Return-Path: <linux-kernel+bounces-832919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C81BA0C31
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C53BA0C79
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B2D27B7853
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:08:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4204A7BBF9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC0D3081BB;
-	Thu, 25 Sep 2025 17:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF90430F937;
+	Thu, 25 Sep 2025 17:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uo2KfWBr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+NC2I33"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0730B527;
-	Thu, 25 Sep 2025 17:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C61D19F40B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758820168; cv=none; b=JY1hClZHCVRNFgKe2eEkxV0YY8xhwqfAQcQ6vi9TyKYM7HXeuyhlph8r0e5J31g1sROJ7I8qO1CRvFFpjs6uQLpM/lX7n7XnOqpqefktZSB83xXs0DYWjyS2zg83iN0BCujttJ+l50Jcnxted95yOSyByysfUX7zMR75ILTWONA=
+	t=1758820213; cv=none; b=XTwGx4uNxQT3Dxzj5wHO+1zHPIM+xrDrvHnRvMZ+CJbygGpOhUY/GwUFw5OkB4KCyKRo2YVAJ9cqcd9I0hvLOC5sEh09MRTobbFDHCVyKeHzkjMMOHkfY1EjDlBfKW2h+JX9Im71imx0PUrQB7QYr9cBy3Fib4B/ltR3CQEmEEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758820168; c=relaxed/simple;
-	bh=XDxPM6jflzJUIZwXDJYFUZz4XlIBk/qtwe3fVUXPTD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGbvIPdv8Ns44iTyQfdeVK+CeRBXPB6kcjSTUQ9/ziYDu1Itp7AphgB2+K8q7kihQQTizPNOL0vUdHcasW+ScpsuyOvBAoU0klH6yEcRZOBKT7OnzsCXzSj+WF3tuBn7fWnrGvZ+aGHcNZ2W95UYMF71ynU17sR6m97etEKqdug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uo2KfWBr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF0BC4CEF0;
-	Thu, 25 Sep 2025 17:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758820167;
-	bh=XDxPM6jflzJUIZwXDJYFUZz4XlIBk/qtwe3fVUXPTD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uo2KfWBr261HqEGuBWaHjFXtLnSXRrnavsybCrV5hzGIys/0qlL5nOaj6zex3vdQH
-	 TIhhdep/ojwk/8oX9Iat5B5/0dLFvNKQPHZpeMA0E0B2ggw0u2uqHPr0N6AUXaDIo5
-	 UuRHgxh99juiH+6mRos3y/6VVybtoYf63ZlAlkB40Xhhsa6hR3yfe2mQ8v2ptRTh/w
-	 2LLPVO04OIyA3piw0QY1mCUNNPte5TN1RlhRL5pT2DPPVn3EviQOPQRUbkuqdaux8I
-	 gHo6IItOoSf2rJGvFrKEkkD1rr7ulNyQe2l8KhviSFYSRk5PjP6ww4ySTUIhDLhern
-	 iRVqT0hOjtWgA==
-Date: Thu, 25 Sep 2025 12:09:25 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Subject: Re: [PATCH 09/24] arm64: dts: qcom: glymur-crd: Add RPMH regulator
- rails
-Message-ID: <pqulydlgdjrbgv2l2wgienn6bdzvmf7lafriwt6d3aqabkolkj@5jrjv4jnqyyz>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
+	s=arc-20240116; t=1758820213; c=relaxed/simple;
+	bh=GKALXPtDy5uzjkuLIDle0yngm7bxQvFH6fJc2L82AlA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=uvGDmqExcauvAiivhs04SfSP4UqwjKsQBqqqfI5fT9eNp0sHH7VxfX/sfHBcFn9P8F8JQF98d2SxEgtfQC/m2m8zFBqlB57O3yXVnp6KCOBOj0Sg7FBaGRrfuniX0ZuTFjOn8ZM0MbJ9r8kRsmsXaSj7IhZSJddWfNwIgxu+KWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+NC2I33; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758820211; x=1790356211;
+  h=date:from:to:cc:subject:message-id;
+  bh=GKALXPtDy5uzjkuLIDle0yngm7bxQvFH6fJc2L82AlA=;
+  b=T+NC2I33toN4fY+943XvOCuqKbhEPsA6DkPAPD7UUs0P87SHs+H5V+Nt
+   tfZ/tuJJodmYJcGRbbGrLic0qUu3E5mb003pMGIx76QbBwAG8WtSfTQzC
+   wMzP82qBNIpJ6bEj7U4MTa61tRCME/P3+wVb/OdjbZwMywjeZTT1OKOVj
+   34W5gaZYfauV5biXwG6986xFgTsnKzfWTratQx3HfflfN7rkoV0zwDq8q
+   QnrYoaqEw6iHFi/JG5syg2U1rd6i2xRxbOZLkeQmJ6A5GJ6wQ/bARAfZ/
+   zUFZOBQGz6MjViLMLxaF2kgj/UnNtpW6HHkx0D89WUzTwcZ88eYnTWuGV
+   A==;
+X-CSE-ConnectionGUID: k+bH7KhWQnedOHsIAhlm6A==
+X-CSE-MsgGUID: JCFN7jkaTn6if+losivVJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="63781440"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="63781440"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 10:10:05 -0700
+X-CSE-ConnectionGUID: VuBGfMPCQka8Tp+ShviFPw==
+X-CSE-MsgGUID: +1hvmzt/RdaBVSOwOetuKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="182653651"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 25 Sep 2025 10:10:04 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1pTm-0005RK-05;
+	Thu, 25 Sep 2025 17:10:02 +0000
+Date: Fri, 26 Sep 2025 01:09:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/apic] BUILD SUCCESS
+ 1f6113ae5ac4927fe80256154ebb0461e670fa85
+Message-ID: <202509260119.1CiQNHRB-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-v3_glymur_introduction-v1-9-24b601bbecc0@oss.qualcomm.com>
 
-On Thu, Sep 25, 2025 at 12:02:17PM +0530, Pankaj Patil wrote:
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> 
-> Add RPMH regulator rails for Glymur CRD.
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
+branch HEAD: 1f6113ae5ac4927fe80256154ebb0461e670fa85  x86/boot: Drop erroneous __init annotation from early_set_pages_state()
 
-Please don't sprinkle board-specific changes throughout the series.
+elapsed time: 1460m
 
-It's useful to introduce the dts early on, so that any dtsi changes gets
-compiled, but you can then group the board-specific changes at the end
-of the series; and squash them into one.
+configs tested: 107
+configs skipped: 5
 
-Regards,
-Bjorn
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/glymur-crd.dts | 332 ++++++++++++++++++++++++++++++++
->  1 file changed, 332 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> index 4561c0b87b017cba0a1db8814123a070b37fd434..e89b81dcb4f47b78307fa3ab6831657cf6491c89 100644
-> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> @@ -6,6 +6,7 @@
->  /dts-v1/;
->  
->  #include "glymur.dtsi"
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->  
->  / {
->  	model = "Qualcomm Technologies, Inc. Glymur CRD";
-> @@ -66,3 +67,334 @@ chosen {
->  &tlmm {
->  	gpio-reserved-ranges = <4 4>, <10 2>, <44 4>; /*Security SPI (TPM)*/
->  };
-> +
-> +&apps_rsc {
-> +
-> +	vph_pwr: vph-pwr-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vph_pwr";
-> +		regulator-min-microvolt = <3700000>;
-> +		regulator-max-microvolt = <3700000>;
-> +	};
-> +
-> +	regulators-0 {
-> +		compatible = "qcom,pmh0101-rpmh-regulators";
-> +		qcom,pmic-id = "B_E0";
-> +
-> +		vdd-bob1-supply = <&vph_pwr>;
-> +		vdd-bob2-supply = <&vph_pwr>;
-> +		vdd-l1-l10-l15-supply = <&vreg_s9f_e0_1p9>;
-> +		vdd-l2-l7-l8-l9-l16-supply = <&vreg_bob1_e0>;
-> +		vdd-l11-l12-l18-supply = <&vreg_s7f_e0_1p32>;
-> +		vdd-l17-supply = <&vreg_bob2_e0>;
-> +
-> +		vreg_bob1_e0: bob1 {
-> +			regulator-name = "vreg_bob1_e0";
-> +			regulator-min-microvolt = <2200000>;
-> +			regulator-max-microvolt = <4224000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-> +		};
-> +
-> +		vreg_bob2_e0: bob2 {
-> +			regulator-name = "vreg_bob2_e0";
-> +			regulator-min-microvolt = <2540000>;
-> +			regulator-max-microvolt = <3600000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-> +		};
-> +
-> +		vreg_l1b_e0_1p8: ldo1 {
-> +			regulator-name = "vreg_l1b_e0_1p8";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2b_e0_2p9: ldo2 {
-> +			regulator-name = "vreg_l2b_e0_2p9";
-> +			regulator-min-microvolt = <2900000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l7b_e0_2p79: ldo7 {
-> +			regulator-name = "vreg_l7b_e0_2p79";
-> +			regulator-min-microvolt = <2790000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l8b_e0_1p50: ldo8 {
-> +			regulator-name = "vreg_l8b_e0_1p50";
-> +			regulator-min-microvolt = <1504000>;
-> +			regulator-max-microvolt = <3544000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l9b_e0_2p7: ldo9 {
-> +			regulator-name = "vreg_l9b_e0_2p7";
-> +			regulator-min-microvolt = <2700000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l10b_e0_1p8: ldo10 {
-> +			regulator-name = "vreg_l10b_e0_1p8";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l11b_e0_1p2: ldo11 {
-> +			regulator-name = "vreg_l11b_e0_1p2";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l12b_e0_1p14: ldo12 {
-> +			regulator-name = "vreg_l12b_e0_1p14";
-> +			regulator-min-microvolt = <1140000>;
-> +			regulator-max-microvolt = <1260000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l15b_e0_1p8: ldo15 {
-> +			regulator-name = "vreg_l15b_e0_1p8";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l17b_e0_2p4: ldo17 {
-> +			regulator-name = "vreg_l17b_e0_2p4";
-> +			regulator-min-microvolt = <2400000>;
-> +			regulator-max-microvolt = <2700000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l18b_e0_1p2: ldo18 {
-> +			regulator-name = "vreg_l18b_e0_1p2";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-1 {
-> +		compatible = "qcom,pmcx0102-rpmh-regulators";
-> +		qcom,pmic-id = "C_E0";
-> +		vdd-s1-supply = <&vph_pwr>;
-> +		vdd-s8-supply = <&vph_pwr>;
-> +
-> +		vreg_s1c_e0_0p3: smps1 {
-> +			regulator-name = "vreg_s1c_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s8c_e0_0p3: smps8 {
-> +			regulator-name = "vreg_s8c_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-2 {
-> +		compatible = "qcom,pmcx0102-rpmh-regulators";
-> +		qcom,pmic-id = "C_E1";
-> +
-> +		vdd-l2-supply = <&vreg_s7f_e0_1p32>;
-> +		vdd-l1-l3-l4-supply = <&vreg_s8f_e0_0p95>;
-> +
-> +		vreg_l1c_e1_0p82: ldo1 {
-> +			regulator-name = "vreg_l1c_e1_0p82";
-> +			regulator-min-microvolt = <825000>;
-> +			regulator-max-microvolt = <958000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2c_e1_1p14: ldo2 {
-> +			regulator-name = "vreg_l2c_e1_1p14";
-> +			regulator-min-microvolt = <1140000>;
-> +			regulator-max-microvolt = <1300000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l3c_e1_0p89: ldo3 {
-> +			regulator-name = "vreg_l3c_e1_0p89";
-> +			regulator-min-microvolt = <890000>;
-> +			regulator-max-microvolt = <980000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4c_e1_0p72: ldo4 {
-> +			regulator-name = "vreg_l4c_e1_0p72";
-> +			regulator-min-microvolt = <720000>;
-> +			regulator-max-microvolt = <980000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-3 {
-> +		compatible = "qcom,pmh0110-rpmh-regulators";
-> +		qcom,pmic-id = "F_E0";
-> +		vdd-s7-supply = <&vph_pwr>;
-> +		vdd-s8-supply = <&vph_pwr>;
-> +		vdd-s9-supply = <&vph_pwr>;
-> +		vdd-s10-supply = <&vph_pwr>;
-> +		vdd-l2-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l3-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l4-supply = <&vreg_s8f_e0_0p95>;
-> +
-> +		vreg_s7f_e0_1p32: smps7 {
-> +			regulator-name = "vreg_s7f_e0_1p32";
-> +			regulator-min-microvolt = <1320000>;
-> +			regulator-max-microvolt = <1352000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s8f_e0_0p95: smps8 {
-> +			regulator-name = "vreg_s8f_e0_0p95";
-> +			regulator-min-microvolt = <952000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s9f_e0_1p9: smps9 {
-> +			regulator-name = "vreg_s9f_e0_1p9";
-> +			regulator-min-microvolt = <1900000>;
-> +			regulator-max-microvolt = <2000000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s10f_e0_0p3: smps10 {
-> +			regulator-name = "vreg_s10f_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2f_e0_0p82: ldo2 {
-> +			regulator-name = "vreg_l2f_e0_0p82";
-> +			regulator-min-microvolt = <825000>;
-> +			regulator-max-microvolt = <980000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l3f_e0_0p72: ldo3 {
-> +			regulator-name = "vreg_l3f_e0_0p72";
-> +			regulator-min-microvolt = <720000>;
-> +			regulator-max-microvolt = <980000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4f_e0_0p3: ldo4 {
-> +			regulator-name = "vreg_l4f_e0_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-4 {
-> +		compatible = "qcom,pmh0110-rpmh-regulators";
-> +		qcom,pmic-id = "F_E1";
-> +		vdd-s1-supply = <&vph_pwr>;
-> +		vdd-s3-supply = <&vph_pwr>;
-> +		vdd-s5-supply = <&vph_pwr>;
-> +		vdd-s6-supply = <&vph_pwr>;
-> +		vdd-s7-supply = <&vph_pwr>;
-> +		vdd-l1-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l2-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l4-supply = <&vreg_s8f_e0_0p95>;
-> +
-> +		vreg_s1f_e1_0p3: smps1 {
-> +			regulator-name = "vreg_s1f_e1_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s5f_e1_0p3: smps5 {
-> +			regulator-name = "vreg_s5f_e1_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s6f_e1_0p3: smps6 {
-> +			regulator-name = "vreg_s6f_e1_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_s7f_e1_0p3: smps7 {
-> +			regulator-name = "vreg_s7f_e1_0p3";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l1f_e1_0p82: ldo1 {
-> +			regulator-name = "vreg_l1f_e1_0p82";
-> +			regulator-min-microvolt = <825000>;
-> +			regulator-max-microvolt = <950000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2f_e1_0p83: ldo2 {
-> +			regulator-name = "vreg_l2f_e1_0p83";
-> +			regulator-min-microvolt = <830000>;
-> +			regulator-max-microvolt = <920000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4f_e1_1p08: ldo4 {
-> +			regulator-name = "vreg_l4f_e1_1p08";
-> +			regulator-min-microvolt = <1080000>;
-> +			regulator-max-microvolt = <1320000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-5 {
-> +		compatible = "qcom,pmh0110-rpmh-regulators";
-> +		qcom,pmic-id = "H_E0";
-> +
-> +		vdd-l1-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l2-supply = <&vreg_s8f_e0_0p95>;
-> +		vdd-l3-supply = <&vreg_s9f_e0_1p9>;
-> +		vdd-l4-supply = <&vreg_s7f_e0_1p32>;
-> +
-> +		vreg_l1h_e0_0p89: ldo1 {
-> +			regulator-name = "vreg_l1h_e0_0p89";
-> +			regulator-min-microvolt = <825000>;
-> +			regulator-max-microvolt = <950000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2h_e0_0p72: ldo2 {
-> +			regulator-name = "vreg_l2h_e0_0p72";
-> +			regulator-min-microvolt = <830000>;
-> +			regulator-max-microvolt = <920000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l3h_e0_0p32: ldo3 {
-> +			regulator-name = "vreg_l3h_e0_0p32";
-> +			regulator-min-microvolt = <320000>;
-> +			regulator-max-microvolt = <2000000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4h_e0_1p2: ldo4 {
-> +			regulator-name = "vreg_l4h_e0_1p2";
-> +			regulator-min-microvolt = <1080000>;
-> +			regulator-max-microvolt = <1320000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +};
-> 
-> -- 
-> 2.34.1
-> 
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250925    gcc-13.4.0
+arc                   randconfig-002-20250925    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                      footbridge_defconfig    clang-17
+arm                        multi_v7_defconfig    gcc-15.1.0
+arm                       netwinder_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250925    gcc-11.5.0
+arm                   randconfig-002-20250925    gcc-10.5.0
+arm                   randconfig-003-20250925    gcc-8.5.0
+arm                   randconfig-004-20250925    gcc-14.3.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250925    gcc-11.5.0
+arm64                 randconfig-002-20250925    gcc-15.1.0
+arm64                 randconfig-003-20250925    clang-19
+arm64                 randconfig-004-20250925    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250925    gcc-14.3.0
+csky                  randconfig-002-20250925    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250925    clang-22
+hexagon               randconfig-002-20250925    clang-22
+i386                             allmodconfig    gcc-14
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20250925    clang-20
+i386        buildonly-randconfig-002-20250925    clang-20
+i386        buildonly-randconfig-003-20250925    gcc-14
+i386        buildonly-randconfig-004-20250925    gcc-14
+i386        buildonly-randconfig-005-20250925    clang-20
+i386        buildonly-randconfig-006-20250925    clang-20
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250925    clang-18
+loongarch             randconfig-002-20250925    gcc-12.5.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+microblaze                      mmu_defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250925    gcc-8.5.0
+nios2                 randconfig-002-20250925    gcc-10.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+openrisc                  or1klitex_defconfig    gcc-15.1.0
+openrisc                       virt_defconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250925    gcc-8.5.0
+parisc                randconfig-002-20250925    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                   currituck_defconfig    clang-22
+powerpc               randconfig-001-20250925    clang-22
+powerpc               randconfig-002-20250925    gcc-8.5.0
+powerpc               randconfig-003-20250925    gcc-8.5.0
+powerpc                    socrates_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20250925    clang-22
+powerpc64             randconfig-002-20250925    gcc-14.3.0
+powerpc64             randconfig-003-20250925    gcc-8.5.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250925    clang-22
+riscv                 randconfig-002-20250925    clang-22
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250925    gcc-15.1.0
+s390                  randconfig-002-20250925    gcc-13.4.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20250925    gcc-15.1.0
+sh                    randconfig-002-20250925    gcc-13.4.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250925    gcc-15.1.0
+sparc                 randconfig-002-20250925    gcc-12.5.0
+sparc64               randconfig-001-20250925    gcc-10.5.0
+sparc64               randconfig-002-20250925    gcc-10.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                    randconfig-001-20250925    gcc-14
+um                    randconfig-002-20250925    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250925    clang-20
+x86_64      buildonly-randconfig-002-20250925    gcc-14
+x86_64      buildonly-randconfig-003-20250925    gcc-14
+x86_64      buildonly-randconfig-004-20250925    clang-20
+x86_64      buildonly-randconfig-005-20250925    clang-20
+x86_64      buildonly-randconfig-006-20250925    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250925    gcc-12.5.0
+xtensa                randconfig-002-20250925    gcc-11.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
