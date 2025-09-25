@@ -1,183 +1,516 @@
-Return-Path: <linux-kernel+bounces-831757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F62B9D7EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:55:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63745B9D7FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DBA425A81
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BF817B60AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799292E8B8E;
-	Thu, 25 Sep 2025 05:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C5F2E8B8E;
+	Thu, 25 Sep 2025 05:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VHrjDMlJ"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013009.outbound.protection.outlook.com [52.101.83.9])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZbtIHYkm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC012E7F07;
-	Thu, 25 Sep 2025 05:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758779698; cv=fail; b=uzTa4BgfIflWmeCapb2/gvybGNz6lLactCdWME3jLCBhNjCyZuwR8gGih7u/NmitHb2GFKaVHvup5A6bFVISQFkKEDXw5QAc2wo3BzxQ1s+q+ZyC2/t7MKI4gZyLUgY6g6fK3Vu/9d7B17YeN02DkkCRhy4K2l6Nvgxdoflb9PQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758779698; c=relaxed/simple;
-	bh=AQnTR2SkbbqaVcar4w9WE6dvcTJtiBUCx2N5/OxC9NI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tKxSZoGOvarun7MTfkFqMkM/3kdbP9LTz+gK+JlvRzpH2bcrGfdLd6p5UMtCtYzOR9t//b4CRfJLECjHLIJSLlKk6lTvzTwm1mT9tAlEgpymc83NyTIaDe4Fi9oJAvJHGNJ9L1K6wOsqok4wiXI0bg3tcRyzgFAWDrgAPube7cc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VHrjDMlJ; arc=fail smtp.client-ip=52.101.83.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aR8OY05IwBDulPLLIc5MnDWcKDbQs1jj8FwuEhOz4DPLO0r4MaDG59Oqz43ZLLlcb373Ie2wHer71nHqGCE5NJMz9anixa4PIlBoweft+HFgNo8IC53ACO2hIsdPAVW1Aq/dhlQwI2yVyrog/syFGS3b+/aVuWBBbP99oF2g3riLgVOk/6nIhC1jFJLh2HJoNA9nx/XT3Wl2ilN408AucJPhh5fR+qiIpODioGtUvFDwuSegpNXTekPQib7Hgzk4dEWNTj01Hwr3Bm3IvuZWj13Z4seFdjIxY0gWuiVvI+8jiY+JgAZ74Lhta8dGm8I+FeiUXpPm+F8V07dF3ztrWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nu4M/f6YQU0bFNV1YHr+ELn6Db4pmDBnaNuEIlYnJXE=;
- b=k0TFKNxsmC4PKcAW28KAgx0hJBa6SpihpwhRxE1Or57yYx0lzqaVqW17kVy8y63E7X1iczpFQwuOX/6FCKsZa3cWJOKjM2lOSIYHaCcjgqiY66y8cbtEt1g7WznNtbVJ2plpqlvGaKBwEr7m6NA6m5AQ9x3SIo3Vz4I4WkM78/Z3nzZjRi+804h7Xm2N64yTiA+opeGI8VvXFRVcdHVxAFqRa8yaksAFNpxPsD10B4dBRJhDrAxJW7BSy46GW/1yqpaoMsK8XMJa2/w7kIk3R9Uh9nODCpNtBL0zmdhG7zWBF4rUVv7Mdpb8KkhNvpAYFGNkErBSjsOB1ZfFRXj/WA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nu4M/f6YQU0bFNV1YHr+ELn6Db4pmDBnaNuEIlYnJXE=;
- b=VHrjDMlJnUhBzLSPK04sOR2lcPKyxGH9dPU9SIf68wPExs1D+KHrLBnjW8Ih9o7OR7sQ6iZeWSlSqj99EU+Mz+QFIndC+WaMZDE1Zg26J+klmV0tZ2U0GhkxhB/fbJCGFlrPLVLvn8AkqvmPkffWUjAN1Us6BOPjxIbENRUr1iQeg7JxStLWRmxlozjQMjH2sj3JVR/fsKF6l1FuKphLdvpsV4+rH0rjz0p5oyoAsHo8hdYMW87/mYTqPC5HXFfTwbna0rPZfphOyHCMXEzWqS02NVk9Yic1yDk4wajFrywXOKIdpuuDRiAWYY+XOG+0mjWKzhsSvqud8F6hOAbjUQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PA4PR04MB9296.eurprd04.prod.outlook.com (2603:10a6:102:2a7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
- 2025 05:54:53 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 05:54:52 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, Alexandru Marginean
-	<alexandru.marginean@nxp.com>
-Subject: RE: [v2 PATCH net 1/1] net: enetc: fix the deadlock of
- enetc_mdio_lock
-Thread-Topic: [v2 PATCH net 1/1] net: enetc: fix the deadlock of
- enetc_mdio_lock
-Thread-Index: AQHcLcHw4jtdzBkrmke9Q5d6GBD3MLSjY8lg
-Date: Thu, 25 Sep 2025 05:54:52 +0000
-Message-ID:
- <PAXPR04MB8510C7281930343839ABD93A881FA@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250924054704.2795474-1-jianpeng.chang.cn@windriver.com>
- <20250925021152.1674197-1-jianpeng.chang.cn@windriver.com>
-In-Reply-To: <20250925021152.1674197-1-jianpeng.chang.cn@windriver.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA4PR04MB9296:EE_
-x-ms-office365-filtering-correlation-id: 517252e6-b0b0-414c-7823-08ddfbf80bd3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?3w8TxmuNlTJQP8EX1taAnIk/FEszl6VolUaZW1kLbrB5DxNwq7+KuNOIRrPw?=
- =?us-ascii?Q?4lsX49IsvhZkZJSd7rPKwlePGwrVOfqs+JBe34mBNAxcdt9jnCxnrSc8mDSq?=
- =?us-ascii?Q?dfBr/GM2U1uUluW5qmMN2Eg07b9NnKFxOtkkZzd/ghB2GwnIbhcXQ2G/9NkP?=
- =?us-ascii?Q?atAOGYfkp3lT4w70pgTg53qx8GFxgDZk4PgXzf4ivR+GWS38U/1Dhu/UITNs?=
- =?us-ascii?Q?tXbDd8t56hOGxVvZFOXZ4Ol0Y60cIQ9pdXW6YdQoaDkUABEllwHBuCKKlXKx?=
- =?us-ascii?Q?AuBS0P1YOHbZMV0QvFl6Nds4veJ/2r2i+bzBraFpuySLPWf3m/IMClxq/ZBY?=
- =?us-ascii?Q?zO7Pn8Ddq2Z6htGt3almUCwYPLo/RtQ7JXjw4DWfvolKou1oHHGVTLmx3OXJ?=
- =?us-ascii?Q?SA+Tu7vSnQFnzodAMWJtaSde8rFOYzZ7lJIsUmJO5mlmIzhupo298n6L/r64?=
- =?us-ascii?Q?XFj+Cm/vo9b7vEo0tNq/xMwhcyFgrcxbJhK5+MwRPe22fDGL+BT++cPzr1zv?=
- =?us-ascii?Q?0sSe0BrW3NBT8y4tb4rOImL8sRaZEsvpCJVGyuKOnoHWTef4PDDu/qgYrCVj?=
- =?us-ascii?Q?dmU+fswWk2vEbVECertR71c72kx8irDHnhH9bAe8eBKWXRoo7MQjX5/3ctvs?=
- =?us-ascii?Q?BOg6pTkgxqH8bvrpmo6/iAFQRHduzpSF7ZHcTsU88vysIZ5J/akLlDIR6Opc?=
- =?us-ascii?Q?eKl6YwNUmS+KYYj+ITfNoQqtPKj1ZPNcQZrJCIFijs6gUlPYaBCXtCdrs05X?=
- =?us-ascii?Q?46EbUAhSwQn4FLf0eN++hBROP03+KmRMzzkij+htEDD3bCDYyxysB97Q9Qyn?=
- =?us-ascii?Q?6kbZgpqBIwQQFy4YVafLD1GR4L/wKSdrcHHCFKc5BNLtWYYdk3SP52ii+6D6?=
- =?us-ascii?Q?0ht/sQk7LJvQRpiY8aeQ8dBV2S57gMZrcBiBplI7ftdEg6dtxqmP5+haFVVO?=
- =?us-ascii?Q?zPgexjc+IZTcy1vTtDWR5fjdf8C84BbmXubH3nXr7d4jOnXwToTvxMGbW8uc?=
- =?us-ascii?Q?iisLMectCICX1JfvaocLDemUaepGS4i+ErBaYb//Irn7n/HUj3w2yu6t1Evl?=
- =?us-ascii?Q?cM3hy+q09FwOlMNKbwfiWZaABmdpm5EgeuIgyDbUp1g1PEjqHuWgiRaxGiP5?=
- =?us-ascii?Q?h6F3pHqOFDE8TFalM80nd2Hsdc4kRLYoJwk8j+lVb6p9/nYxYP6KvG+ULhIC?=
- =?us-ascii?Q?065z5UzXFm3fZuMtVdPGqPp7QjKp9lfVu9kfrqQbQSRCAn2rRCiSXKZehEHc?=
- =?us-ascii?Q?g08euLlgYXB4hSUSPrs/W9Jny4XqRraMr/CGkzsh7dz3DKOWatimypbV/8y6?=
- =?us-ascii?Q?8AK2PgoM3RFXIJivBpKeShzEmsb8K9Ul/X/Utfo+8comNRqsyserFdTGItCr?=
- =?us-ascii?Q?a1Px8nAY0UJE8cKdBn9FL/oPshDG4j/9FC9eiEcn/D/hmwivjO+F476k4T2D?=
- =?us-ascii?Q?VrjJh1t+sFY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?TBWdZNztvufcofgdrof+pp0NJY0Ax/cGftUW99MIa3HTgOLu0OD2LAu3F/kR?=
- =?us-ascii?Q?EonRCcl4eezRdaHDUvJ97aZ1FuvssAlXV8MOtOdmMfnyL3T0FpCCwyOQAP14?=
- =?us-ascii?Q?SjjZE7ncdQi5Q/WT2c0EruxixW89vfhQp3Jcc86W39dPCLRIRQ+PdgQXioPW?=
- =?us-ascii?Q?qRrBZbiayAo1k4t82Jlh6g8dsBufjjXboq8wx94b7HSpbFBX3MLhaqtqE4j8?=
- =?us-ascii?Q?GTT60p2yr8dhkZtglL0uoRhir7X9pK/VXCe2aSGs04RTzw8Vs+pwTZIb3dAg?=
- =?us-ascii?Q?aFsj2esDDLNCf55AuHivnHHtz82l0uvcFm/MFGWCNlVlkdEwVsvCaxyGXTke?=
- =?us-ascii?Q?U5MlEHQ++9wkuk2xhW+HPb0I9ykGtcF+eX9P3wyE7P7Kuqq4CCVUXJwcRHS4?=
- =?us-ascii?Q?NaY7StsatHIxr4zGkZ3I2hnM6C3Qhs/jjQRg5olG2dcTS91GUwaUd0cQewj0?=
- =?us-ascii?Q?iVmbKpaECK03N4arehaZlKnx3Ojx/ObCZxr+MKe7RiSQtjlK0mTfkICEUa+f?=
- =?us-ascii?Q?5yuvtC7rIcQjj4ZX2joqNn+OKMUBfO7YHeIuCbrW2da0ZtSTK7sAU5xyStjr?=
- =?us-ascii?Q?71Lz3CKti1r4c/bzhW67DTHCKfTcLu8TKMTWpRbyURYBA3R3wncDDtzVITHP?=
- =?us-ascii?Q?Ck5ErTI6NuE0EBkiR+U4yuDy6Ul7ow2iXQ522p3sIt4pT8cpA+zwHJiBzFw7?=
- =?us-ascii?Q?Khwd1crL9+VcBJ+cVcniK2Ki6qKYHngcvtB9yzJNo+ePcgMF5frmiZoTDD1B?=
- =?us-ascii?Q?ER3lX//skmbEm+C7QzH8ECz7cenCxfYfmayiwtEofn1Mnz54eI+c5+dZNFCB?=
- =?us-ascii?Q?mwwd9xPSXBP1ZH0Psbfyubf4vyI8tK0iJ31A8YPtCHhzV/LU38tyc+nUVSp4?=
- =?us-ascii?Q?o+S6Jw25G+2nfz0M5fo/GsCaAB0Ns8VFgdCpTKnObWxXY9e0javyl8xY8tfu?=
- =?us-ascii?Q?8z+W7rTD8Likr3hCgjJJxMzAQLOYfDbiTvusaR9/X6xfBLZao/vBeC6lOcxe?=
- =?us-ascii?Q?wUTv9hZa2mtuzpLCS/ITYd5IKLR10zDrcNyyEo5F16JNI6K4Bq2tZ/krtX4e?=
- =?us-ascii?Q?T3nc3NAbmtLhon76CrYLbA5BjWqRZoxFZb9WEpAnO8P2NywpOlcoV9QKcmAL?=
- =?us-ascii?Q?BHXWmoH4BcXfjMB3lf/vFDukdR5s9B93V6XWnYboQZUrShvKrKa+YaXEZHyC?=
- =?us-ascii?Q?Dw94qjIC2AgEBIvS33uwM04Mqx7ADl4TifBDlZ4VFc5X2xzjXxb/W7L7C6kz?=
- =?us-ascii?Q?/fZEqT3gZ9hBAwNyO3hnAr3CgTWnzh7ycKirmcxG3RWSE5E0uwkZsEQ+5fZT?=
- =?us-ascii?Q?RnYBhAvsOXEpAKTYifDhIrszbknAlgTc88TpaVQpm51ROePQ4DD/zQ7Dpdb6?=
- =?us-ascii?Q?OCR4SrIENHCmofEc2OqDpgzPVw/dQ63i1lrBSCUDlrvbVw5oZRmNLs3neg2d?=
- =?us-ascii?Q?00b1Hy6vri6QLLBQXBVCZtQH2wXBRCn4Wobe/+mVpIXfH6PBI3zC5OMjcdya?=
- =?us-ascii?Q?0R6iefWeFcMVQ+AlUAP6qHcrxQCOENrhpeF5bEcdzNJHQNTSJ1On0+gMC8mq?=
- =?us-ascii?Q?dZsMVwkWe978dyRv+yk=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBE01A254E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758779808; cv=none; b=jKjGarWrsMHkLJysAVgNaHjDLJ7cbHHCDnKS2ULZiakNWjKTKAyMBDwCpj+U/M7aK9RO4yR4Tgc4BhCn4vUgThRtz4ulN2Sc/BnQrIptt1xmXOAcn2Lc2yNT/7SIWMfRJBSR/KDTf6lfMrDhHF9E7jiUmQEeQFbSi3eO+InJug0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758779808; c=relaxed/simple;
+	bh=SDyGK/zONbZHE1klghQ9srusdODMkI8FgQ1QiVvVr9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tETH47JEfB129lw9puG9LR0g4Tj4JZywUvMUDR5flm14A7PpXJJXa8sHWwmlHKKI2VRDeRo2jsUTVubJio1sbOIJYeB1XYAVT/WXfnjYIVMnCjBQV2x0M6V39T43ZO/VMDPSLd3PE+glklJcQdfCiU4QOX2Ruy2SWHkV1fqypr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZbtIHYkm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P1Gp44018069
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:56:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GE1EZkq2YRXjc6AatzFrFeijjuu7UoeR54GZDgW63/c=; b=ZbtIHYkm8OMSY/jh
+	4JDKT7Om42nStIDfG/IuUwbv9irfTMt2BCu9UAGPVm/kRRctTG/gH+M+B2/+pC9E
+	BnBtzwLQregS3B6Z03nBpvIJczCVbsyhP9+9OWKu0VLLWlR0y2X6smNXIQV21OOg
+	ho7gGdhuSNUwzbJInmMX591KDQzPLfwGId6k/XfeEh7YhY9y6fSw4YbPMd4JTh6u
+	QHHP8swR86e9nT3kJ7aChzmIm5VY98sGy20luf6v6EKrea9bm5DXgLRtyuD7r1dp
+	SDdaqBxeUCILKeu/KjQuE85J/rR2zj9ZbSWzA9hsLrSzcZksmqO/89jJIwHYF3A+
+	3leyOg==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kkaw18-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:56:44 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33428befc08so1211076a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 22:56:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758779804; x=1759384604;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GE1EZkq2YRXjc6AatzFrFeijjuu7UoeR54GZDgW63/c=;
+        b=ZxzmtuJpMSi/FzcsAmMZgs4Kp3lCNOSAzAC4kq2RDyhE5EdPn+uFZGCyhxIkbd8/sx
+         JsBxTij9sxm9Rag13l7pT0Gjrb+zGZqfxqndn5FnVSk54Dqmi19HEvZagYo+jqcl55LT
+         z8jPGD/+36OTXpUign35PVPC8HgSJ6XDCm2eRnGDSCsybv10aH6h3mP1S3V+Silj7vi6
+         uz05ibjpJlOSJo0q5iX+V14ssVleRQSSf1sKPrLVt0C0KQ6GjPyYTZCNQMhJEo4Sl4h+
+         OdAWr3emW29uT1GKHzobHAyFa99i4l9/JEMb7KXr14Tz4C8ZblmbGFr7C6nUs6PnOo16
+         24cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5AavDsAuEnhEujRIZmSywJa9tcsH3OBMdStCySORwh8FAE29V4UHmyPhUijYm7+87StPatFOJZ96U8fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygF8Ken+zNcV1xliqdlY3fwxs/KdLRkkFk7VNMsZVV/D8vXdRk
+	+pP6UtI1XzoypWiPLzYb8AVpktAlytWyqkOmTi9NNZGqX2eBoq2XmoheJfETmaQD8s6cKGJlwCk
+	0BG6AK/QnTrxQqGK0RCoC3N/+QauhdAuxmpLxFa8vJSeeX85nyzNlIgpEeeD66+QjCAc=
+X-Gm-Gg: ASbGncsvx6hNnty9rbm94qDTGiElTM6Ir9BCh7Q9+MCq8r27yO/dFLrGe4UU6ZHZduT
+	5IQ6L0dr8SqJ/ZzNdut0n5utPUJ7EeM/g8t59BpYmktKVEMcSsckRolYds+pbypjkGSihe6BfVI
+	QE995OXMtHtQQO9UV0GcfGWLdy5zgHsuuje52dfJKLTww8WhYWyfl1m1Jjzl6vdQ9x0bK9N1/rx
+	mK2Sq8Pzwt0MWe94umcjuWilXtVy83N2OKWDD+lK1BTWGGDUEM1UAj3avoxBmJ9hWf+Brkllep9
+	jkN4P1AilcqNq80IGBokgVLVoZYOyzu9X7uoAf4yQ4QfEpFKacei7ujwJFK/R850YOWbohfGi1f
+	WqbAXXHPx9sxAQr2Ea4AjxH7/K1Go1bw=
+X-Received: by 2002:a17:90b:3e85:b0:32e:9281:7c7b with SMTP id 98e67ed59e1d1-3342a20bdebmr2514489a91.3.1758779803540;
+        Wed, 24 Sep 2025 22:56:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDKoVGCWXv7307Vps/HMKU1q9IfWSCcb5CXHZEdsBpsnecJdANXwETNggqLuXGAcOiEn9xyw==
+X-Received: by 2002:a17:90b:3e85:b0:32e:9281:7c7b with SMTP id 98e67ed59e1d1-3342a20bdebmr2514447a91.3.1758779802933;
+        Wed, 24 Sep 2025 22:56:42 -0700 (PDT)
+Received: from [10.133.33.147] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53ccb9fsm1123138a12.19.2025.09.24.22.56.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Sep 2025 22:56:42 -0700 (PDT)
+Message-ID: <f5808617-9e55-4e0c-98b0-daf2bb49facc@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 13:56:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 517252e6-b0b0-414c-7823-08ddfbf80bd3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 05:54:52.4974
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d+DcX21fudLIEeOZHyne+5nx0F8fo+lMF0vsMozhayWE2ifi067nYhN1uejjeIfrBBr77FxNc43KwP0sOHPuPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9296
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] remoteproc: qcom: pas: Add late attach support for
+ subsystems
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>,
+        zhongqiu.han@oss.qualcomm.com
+References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
+ <20250924-knp-remoteproc-v1-5-611bf7be8329@oss.qualcomm.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-remoteproc-v1-5-611bf7be8329@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: b2y86NNb32NwxvRTkmh30dChOks2qAvB
+X-Proofpoint-ORIG-GUID: b2y86NNb32NwxvRTkmh30dChOks2qAvB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfX0ywPPmocm9VX
+ JNt12GDCEm5OTjM1J4nxicKnhTnhG44gafYOhHIMEwwAie9+gOMwWtDzxQrES/uUbqmF3NjGF4k
+ GTyQAifVv8JtAo78hc/yC5E8T9qVbOwzh69WhizYv1vFsVcxOqv9kO8J4zOpHfWdDz7wwZ9uO8t
+ IP2zDEBf9ijYyLHSms7b2XuR07XNyVLm0WwB7SgZ/jGfmxH6yif1d3QgvEylrx3LUe6MvtvHeLG
+ MFgDTzJgg/m2A8yOEB+3LjdpCm1XVphRssGRp4K5Ix9Yv//KYMKtLrlxbBTb3wXBfeovVw6u8KM
+ Irn9zbqsRvNh/BBKM/M79CMVdNjXumS0m+0lZT+TZqQ1nM1bggByci42G39m785ZKoMyGk9DYaz
+ nBBRc/oz
+X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d4d99c cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=2XXKGjXc65pO6n3FkvAA:9
+ a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
 
-> @@ -2068,7 +2081,6 @@ static int enetc_poll(struct napi_struct *napi, int
-> budget)
->                 v->rx_napi_work =3D true;
->=20
->         if (!complete) {
-> -               enetc_unlock_mdio();
->                 return budget;
->         }
+On 9/25/2025 7:37 AM, Jingyi Wang wrote:
+> From: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+> 
+> Subsystems can be brought out of reset by entities such as
+> bootloaders. Before attaching such subsystems, it is important to
+> check the state of the subsystem. This patch adds support to attach
+> to a subsystem by ensuring that the subsystem is in a sane state by
+> reading SMP2P bits and pinging the subsystem.
+> 
+> Signed-off-by: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5.c      | 89 ++++++++++++++++++++++++++++++++++++-
+>   drivers/remoteproc/qcom_q6v5.h      | 14 +++++-
+>   drivers/remoteproc/qcom_q6v5_adsp.c |  2 +-
+>   drivers/remoteproc/qcom_q6v5_mss.c  |  2 +-
+>   drivers/remoteproc/qcom_q6v5_pas.c  | 61 ++++++++++++++++++++++++-
+>   5 files changed, 163 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 4ee5e67a9f03..cba05e1d6d52 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -94,6 +94,9 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+>   	size_t len;
+>   	char *msg;
+>   
+> +	if (q6v5->early_boot)
+> +		complete(&q6v5->subsys_booted);
+> +
+>   	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
+>   	if (!q6v5->running) {
+>   		complete(&q6v5->stop_done);
+> @@ -118,6 +121,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>   	size_t len;
+>   	char *msg;
+>   
+> +	if (q6v5->early_boot)
+> +		complete(&q6v5->subsys_booted);
+> +
+>   	if (!q6v5->running)
+>   		return IRQ_HANDLED;
+>   
+> @@ -139,6 +145,9 @@ static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>   
+>   	complete(&q6v5->start_done);
+>   
+> +	if (q6v5->early_boot)
+> +		complete(&q6v5->subsys_booted);
+> +
+>   	return IRQ_HANDLED;
+>   }
+>   
+> @@ -170,6 +179,9 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+>   	if (q6v5->handover)
+>   		q6v5->handover(q6v5);
+>   
+> +	if (q6v5->early_boot)
+> +		complete(&q6v5->subsys_booted);
+> +
+>   	icc_set_bw(q6v5->path, 0, 0);
+>   
+>   	q6v5->handover_issued = true;
+> @@ -232,6 +244,77 @@ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>   
+> +static irqreturn_t q6v5_pong_interrupt(int irq, void *data)
+> +{
+> +	struct qcom_q6v5 *q6v5 = data;
+> +
+> +	complete(&q6v5->ping_done);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5)
+> +{
+> +	int ret;
+> +	int ping_failed = 0;
+> +
+> +	reinit_completion(&q6v5->ping_done);
+> +
+> +	/* Set master kernel Ping bit */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state,
+> +					  BIT(q6v5->ping_bit), BIT(q6v5->ping_bit));
+> +	if (ret) {
+> +		dev_err(q6v5->dev, "Failed to update ping bits\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = wait_for_completion_timeout(&q6v5->ping_done, msecs_to_jiffies(PING_TIMEOUT));
+> +	if (!ret) {
+> +		ping_failed = -ETIMEDOUT;
+> +		dev_err(q6v5->dev, "Failed to get back pong\n");
+> +	}
+> +
+> +	/* Clear ping bit master kernel */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state, BIT(q6v5->ping_bit), 0);
+> +	if (ret) {
+> +		pr_err("Failed to clear master kernel bits\n");
+> +		return ret;
+> +	}
+> +
+> +	if (ping_failed)
+> +		return ping_failed;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem);
+> +
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev)
+> +{
+> +	int ret = -ENODEV;
+> +
+> +	q6v5->ping_state = devm_qcom_smem_state_get(&pdev->dev, "ping", &q6v5->ping_bit);
+> +	if (IS_ERR(q6v5->ping_state)) {
+> +		dev_err(&pdev->dev, "failed to acquire smem state %ld\n",
+> +			PTR_ERR(q6v5->ping_state));
+> +		return ret;
+> +	}
+> +
+> +	q6v5->pong_irq = platform_get_irq_byname(pdev, "pong");
+> +	if (q6v5->pong_irq < 0)
+> +		return q6v5->pong_irq;
+> +
+> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->pong_irq, NULL,
+> +					q6v5_pong_interrupt, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> +					"q6v5 pong", q6v5);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "failed to acquire pong IRQ\n");
+> +
+> +	init_completion(&q6v5->ping_done);
 
-Nit: It's just one line, so please remove the curly braces.
+Hello Jingyi,
 
-And please note that do not repost your patches within one 24h period.
-See https://elixir.bootlin.com/linux/v6.17-rc7/source/Documentation/process=
-/maintainer-netdev.rst#L15
+Since no IRQF_NO_AUTOEN flag is passed to devm_request_threaded_irq(),
+the IRQ may be enabled immediately after registration.
+If the thread_fn q6v5_pong_interrupt runs before
+init_completion(&q6v5->ping_done) is called, it may lead to accessing an
+uninitialized completion structure ?
 
+
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem_init);
+> +
+>   /**
+>    * qcom_q6v5_init() - initializer of the q6v5 common struct
+>    * @q6v5:	handle to be initialized
+> @@ -245,7 +328,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>    */
+>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>   		   struct rproc *rproc, int crash_reason, const char *load_state,
+> -		   void (*handover)(struct qcom_q6v5 *q6v5))
+> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5))
+>   {
+>   	int ret;
+>   
+> @@ -253,10 +336,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>   	q6v5->dev = &pdev->dev;
+>   	q6v5->crash_reason = crash_reason;
+>   	q6v5->handover = handover;
+> +	q6v5->early_boot = early_boot;
+>   
+>   	init_completion(&q6v5->start_done);
+>   	init_completion(&q6v5->stop_done);
+>   
+> +	if (early_boot)
+> +		init_completion(&q6v5->subsys_booted);
+> +
+>   	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
+>   	if (q6v5->wdog_irq < 0)
+>   		return q6v5->wdog_irq;
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c41896e..8a227bf70d7e 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -12,27 +12,35 @@ struct rproc;
+>   struct qcom_smem_state;
+>   struct qcom_sysmon;
+>   
+> +#define PING_TIMEOUT 500 /* in milliseconds */
+> +#define PING_TEST_WAIT 500 /* in milliseconds */
+> +
+>   struct qcom_q6v5 {
+>   	struct device *dev;
+>   	struct rproc *rproc;
+>   
+>   	struct qcom_smem_state *state;
+> +	struct qcom_smem_state *ping_state;
+>   	struct qmp *qmp;
+>   
+>   	struct icc_path *path;
+>   
+>   	unsigned stop_bit;
+> +	unsigned int ping_bit;
+>   
+>   	int wdog_irq;
+>   	int fatal_irq;
+>   	int ready_irq;
+>   	int handover_irq;
+>   	int stop_irq;
+> +	int pong_irq;
+>   
+>   	bool handover_issued;
+>   
+>   	struct completion start_done;
+>   	struct completion stop_done;
+> +	struct completion subsys_booted;
+> +	struct completion ping_done;
+>   
+>   	int crash_reason;
+>   
+> @@ -40,11 +48,13 @@ struct qcom_q6v5 {
+>   
+>   	const char *load_state;
+>   	void (*handover)(struct qcom_q6v5 *q6v5);
+> +
+> +	bool early_boot;
+>   };
+>   
+>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>   		   struct rproc *rproc, int crash_reason, const char *load_state,
+> -		   void (*handover)(struct qcom_q6v5 *q6v5));
+> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5));
+>   void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
+>   
+>   int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+> @@ -52,5 +62,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>   int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
+>   int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>   unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev);
+>   
+>   #endif
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index e98b7e03162c..1576b435b921 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -717,7 +717,7 @@ static int adsp_probe(struct platform_device *pdev)
+>   		goto disable_pm;
+>   
+>   	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
+> -			     desc->load_state, qcom_adsp_pil_handover);
+> +			     desc->load_state, false, qcom_adsp_pil_handover);
+>   	if (ret)
+>   		goto disable_pm;
+>   
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 0c0199fb0e68..04e577541c8f 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -2156,7 +2156,7 @@ static int q6v5_probe(struct platform_device *pdev)
+>   	qproc->has_mba_logs = desc->has_mba_logs;
+>   
+>   	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
+> -			     qcom_msa_handover);
+> +			     false, qcom_msa_handover);
+>   	if (ret)
+>   		goto detach_proxy_pds;
+>   
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 55a7da801183..99163e48a76a 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -35,6 +35,8 @@
+>   
+>   #define MAX_ASSIGN_COUNT 3
+>   
+> +#define EARLY_BOOT_RETRY_INTERVAL_MS 5000
+> +
+>   struct qcom_pas_data {
+>   	int crash_reason_smem;
+>   	const char *firmware_name;
+> @@ -58,6 +60,7 @@ struct qcom_pas_data {
+>   	int region_assign_count;
+>   	bool region_assign_shared;
+>   	int region_assign_vmid;
+> +	bool early_boot;
+>   };
+>   
+>   struct qcom_pas {
+> @@ -430,6 +433,51 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+>   	return qcom_q6v5_panic(&pas->q6v5);
+>   }
+>   
+> +static int qcom_pas_attach(struct rproc *rproc)
+> +{
+> +	int ret;
+> +	struct qcom_pas *adsp = rproc->priv;
+> +	bool ready_state;
+> +	bool crash_state;
+> +
+> +	if (!adsp->q6v5.early_boot)
+> +		return -EINVAL;
+> +
+> +	ret = irq_get_irqchip_state(adsp->q6v5.fatal_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> +
+> +	if (crash_state) {
+> +		dev_err(adsp->dev, "Sub system has crashed before driver probe\n");
+> +		adsp->rproc->state = RPROC_CRASHED;
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = irq_get_irqchip_state(adsp->q6v5.ready_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
+> +
+> +	if (ready_state) {
+> +		dev_info(adsp->dev, "Sub system has boot-up before driver probe\n");
+> +		adsp->rproc->state = RPROC_DETACHED;
+> +	} else {
+> +		ret = wait_for_completion_timeout(&adsp->q6v5.subsys_booted,
+> +						  msecs_to_jiffies(EARLY_BOOT_RETRY_INTERVAL_MS));
+> +		if (!ret) {
+> +			dev_err(adsp->dev, "Timeout on waiting for subsystem interrupt\n");
+> +			return -ETIMEDOUT;
+> +		}
+> +	}
+> +
+> +	ret = qcom_q6v5_ping_subsystem(&adsp->q6v5);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "Failed to ping subsystem, assuming device crashed\n");
+> +		rproc->state = RPROC_CRASHED;
+> +		return ret;
+> +	}
+> +
+> +	adsp->q6v5.running = true;
+> +	return ret;
+> +}
+> +
+>   static const struct rproc_ops qcom_pas_ops = {
+>   	.unprepare = qcom_pas_unprepare,
+>   	.start = qcom_pas_start,
+> @@ -438,6 +486,7 @@ static const struct rproc_ops qcom_pas_ops = {
+>   	.parse_fw = qcom_register_dump_segments,
+>   	.load = qcom_pas_load,
+>   	.panic = qcom_pas_panic,
+> +	.attach = qcom_pas_attach,
+>   };
+>   
+>   static const struct rproc_ops qcom_pas_minidump_ops = {
+> @@ -760,7 +809,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>   	pas->proxy_pd_count = ret;
+>   
+>   	ret = qcom_q6v5_init(&pas->q6v5, pdev, rproc, desc->crash_reason_smem,
+> -			     desc->load_state, qcom_pas_handover);
+> +			     desc->load_state, desc->early_boot, qcom_pas_handover);
+>   	if (ret)
+>   		goto detach_proxy_pds;
+>   
+> @@ -774,6 +823,16 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
+> +
+> +	if (pas->q6v5.early_boot) {
+> +		ret = qcom_q6v5_ping_subsystem_init(&pas->q6v5, pdev);
+> +		if (ret)
+> +			dev_err(&pdev->dev,
+> +				"Unable to find ping/pong bits, falling back to firmware load\n");
+> +		else
+> +			pas->rproc->state = RPROC_DETACHED;
+> +	}
+> +
+>   	ret = rproc_add(rproc);
+>   	if (ret)
+>   		goto remove_ssr_sysmon;
+> 
+
+
+-- 
+Thx and BRs,
+Zhongqiu Han
 
