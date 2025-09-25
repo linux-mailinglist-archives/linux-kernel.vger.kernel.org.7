@@ -1,131 +1,81 @@
-Return-Path: <linux-kernel+bounces-831908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4944CB9DDA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:29:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B002B9DDB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25E5174519
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467901B286E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89462E92A2;
-	Thu, 25 Sep 2025 07:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678942E8E11;
+	Thu, 25 Sep 2025 07:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpR4FUbu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aD+eHFcG"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242AD15DBC1;
-	Thu, 25 Sep 2025 07:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7029A2E7BAE;
+	Thu, 25 Sep 2025 07:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758785338; cv=none; b=i+kHHWLJaCFAuCw04A7KGgxrIwMQbvkdlboj5zOPDpJxPUt0gWvKO98hnCtUbhvJVa7YOwhuoCYSpxu03WtnuYvgQTH+v7N+d+mpTNw/QF4C2vvz4Qw6Mu+Rr3mPsrTPclTwRSuO6MczIT038R7m7v3UTq7Xz5vrHec6yGOuOu4=
+	t=1758785382; cv=none; b=IJLNQ+Ywc2xUsLGws+wVOqjiFWANBmkSF1WBWSiaD9Mrl74dh6TKcEXkCj1lILdi3shhmRmJlgfSO0WQrsG3C6J8Qi0eyXei5ed2VcdV0ks5tMW11KVMFUQqWAD8+MVSlKxFxMVWUHlufp+n1J2EyonpVJXsn9FhFmyDr307VZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758785338; c=relaxed/simple;
-	bh=E5H22ljejFV7OF7GmWz23BkhezFyc+iVSQv0Pyu/jqI=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=ANyVEOW2Z4j3vtEphK96suh6VT5ita4eNhOiAP+Hk2/AuZx3ry1N4zN4yFxw5CelIbQOhSQDl1rV1hCJF7U+ZPSf7934APYOe//XyhaPOKwiG2M3MBao1eS2ew728nGqC6ArXhotU8eq2cxsqhG9OdJDCnMVjD7a+LE3Q9eIxAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpR4FUbu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 375AEC4CEF0;
-	Thu, 25 Sep 2025 07:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758785337;
-	bh=E5H22ljejFV7OF7GmWz23BkhezFyc+iVSQv0Pyu/jqI=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=qpR4FUbuRe+vO4qghhExmZIfSTpFhRiJnGnNyZsW967PX6XSYQkAoLyuYENEpquWI
-	 HN7e+8SFMSoArAk9VV5oRKuLSNMMpgdlRvwCNt7S+kQ8ZTGEAtZgoFGmt0BSVopW8A
-	 gfn+i7uCp4wZxpP5u519ZPHZdkwont1gxBSSAA1DVIlK6salhnGcXj2bwmWHVKcf9B
-	 A6xPQmzDsDEVkYWbAiLOpJl8XpETbWlCnq0iI+dom6ZgWljwwCS8mK37QVLWB9JbHZ
-	 4qauHkQ0AYwguWYn0aerkZSGTjlt8AkTutFazB32t0uTpPBfXW40vugdLKAki5ggqH
-	 aZgucfXSNl0IQ==
-Content-Type: multipart/signed;
- boundary=0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 25 Sep 2025 09:28:53 +0200
-Message-Id: <DD1PD807DBY9.2FY81JFZ6EDAE@kernel.org>
-Subject: Re: [PATCH v2 0/7] Initial Kontron SMARC-sAM67 support
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
- <linux-watchdog@vger.kernel.org>, "Andrew Davis" <afd@ti.com>, "Nishanth
- Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
- <kristo@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jean Delvare"
- <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>, "Michael Walle"
- <mwalle@kernel.org>, "Srinivas Kandagatla" <srini@kernel.org>, "Wim Van
- Sebroeck" <wim@linux-watchdog.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Lee Jones" <lee@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.16.0
-References: <20250912120745.2295115-1-mwalle@kernel.org>
-In-Reply-To: <20250912120745.2295115-1-mwalle@kernel.org>
+	s=arc-20240116; t=1758785382; c=relaxed/simple;
+	bh=7NLOVI28JwOsTEmS8wXWlHMjYNnFy7QTN9tD3mKyRu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXH0U6sPWtWuXhkhQDXZxRbUmBv4pNe8qOwo5rSKgVe9/iEIlhFFckunaRP81rLkC4ma3iyaMmww4vF1IVtUdWvO9Wk0CA/8HKeRBd7WIFeJtsHTkXzhXGLJnouIuckd8Hwo96xip8VJux/fagBQhgY2btE6s+u3mlNapArU6/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aD+eHFcG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jvhf3J+H3AMtqjjQxZ6iJAkHwORDWBYzJvjGTYfbPAc=; b=aD+eHFcGcZskqPVnBWbmSCq0XD
+	ztzJGLVORE1D8WRP62d2IlGPBxtYTcQnKX+y3Ez/ZkCPqPaDwLT2MSosWNWmYpR1VVeqVhLdATbvo
+	gbo7MXxby3vXstixZgTz+kT4uLf5Bdzpmnplecw48pglSMeVjRDCYSjBCS21ik+6gOSVUQ5JBwx9+
+	1pG6tPcJIIdz2/M7vYkz4HSmBbghY43i5cBU1l07vm8vak/jMIDcVFwlynjHDstadd5fCqcce/jnY
+	su0Ionxl5ndy4YMaPSVENlXtEf5oM+UWAUXgb8SWMLTyCZDmI5pZHG/SQ0ude4o8V5yae6Fmg6GAc
+	omNHe3PA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v1gQ3-0000000BhnJ-440o;
+	Thu, 25 Sep 2025 07:29:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8A2E730023C; Thu, 25 Sep 2025 09:29:35 +0200 (CEST)
+Date: Thu, 25 Sep 2025 09:29:35 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Fernand Sieber <sieberf@amazon.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
+	aubrey.li@linux.intel.com, yu.c.chen@intel.com
+Subject: Re: [tip:sched/urgent] [sched/fair]  78f8764d34:
+ Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN_PTI
+Message-ID: <20250925072935.GV4067720@noisy.programming.kicks-ass.net>
+References: <202509251504.1f53d5d1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509251504.1f53d5d1-lkp@intel.com>
 
---0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Thu, Sep 25, 2025 at 03:26:41PM +0800, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN_PTI" on:
+> 
+> commit: 78f8764d34c0a1912ce209bb2a428a94d062707f ("sched/fair: Forfeit vruntime on yield()")
+> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git sched/urgent
 
-Hi Lee,
-
-On Fri Sep 12, 2025 at 2:07 PM CEST, Michael Walle wrote:
-> Now that the PMIC support is there, we can finally, upstream the
-> support for this board. Besides the usual device tree, this
-> patchset contains the support for the on-board house keeping MCU. It
-> make extensive reuse of the drivers for the former SMARC-sAL28
-> board. Besides different hwmon sensors, all the dt binding patches
-> will just add a board specific compatible (in addition to the old
-> sl28 compatible) to make any future board specific quirks possible.
->
-> I'm aware that there is a patch [1] which moves the sl28cpld MFD
-> schema to a different directory. Once that patch is merged, I'll
-> repost this series. But I already want to get some early feedback.
->
-> v2:
->  - dropped patches which were already picked up
->  - new patch "dt-bindings: mfd: tps6594: allow gpio-line-names"
->  - separate driver for the hwmon, add missing hwmon documentation,
->    thanks Guenter
->  - split the DT as suggested by the SoC maintainers
->  - add missing copyright and license to the overlays, thanks Andrew
->
-> Michael Walle (7):
->   dt-bindings: arm: ti: Add Kontron SMARC-sAM67 module
->   dt-bindings: mfd: tps6594: allow gpio-line-names
->   arm64: dts: ti: Add support for Kontron SMARC-sAM67
->   dt-bindings: hwmon: sl28cpld: add sa67mcu compatible
->   dt-bindings: watchdog: add SMARC-sAM67 support
->   hwmon: add SMARC-sAM67 support
->   arm64: dts: ti: sa67: add on-board management controller node
-
-Would you take these two patches
-    dt-bindings: mfd: tps6594: allow gpio-line-names
-    dt-bindings: watchdog: add SMARC-sAM67 support
-
-through the MFD tree this cycle? If they make it in, there wouldn't
-be any more dependencies for the next cycle for the actual device
-tree.
-
-Thanks,
--michael
-
---0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaNTvNRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/iMSgF/U/Hnym3/BbU5iWgqn4kuJE5mIgjGrqH+
-xebvDaMtckOeHjdqxGIg7wAV1v5PZLsUAYCYJPNo/zXnrrWdXLOY+md/sOocOPZr
-/NGu1VF2dlgbKARDg+JXcIGreW3wYK3JzV0=
-=kccx
------END PGP SIGNATURE-----
-
---0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c--
+I suppose I'll just zap this patch -- there is a new version of it
+anyway.
 
