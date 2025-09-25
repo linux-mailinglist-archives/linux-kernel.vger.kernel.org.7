@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-833177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95509BA15AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2DEBA15BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550B03B811B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B9E1C200BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8007245028;
-	Thu, 25 Sep 2025 20:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E2B31A56B;
+	Thu, 25 Sep 2025 20:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6nVajbX"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG2Nik8g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B949DEAE7
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BD84204E;
+	Thu, 25 Sep 2025 20:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758832250; cv=none; b=RjHXGmCPvk/f4JW23imFTTT1MByywcx8RPV5OdrcxanS+8ChJ/Ur5luzLjhDFwc04a1B4KjH7kjtLy5N7uymNmF+MOal19VJyka+my48zd7vD9fAKNZ5FDCl7OnwPKLVZrel009ziVrLKb01beSUk5ZNV4nYcM722tobh2l422g=
+	t=1758832258; cv=none; b=VIIa8TU9Gyz2SMkWvJ3RUmMdI2PvOgE93/fGzJiQSdsunNGxtlAO7AoWef2qxYjSB+5Q54UAvwtzNLiTBq6RO+EKc4JzAMUviKfggiOpiuZRwQHIIi3bZ6CzLjloN2+xAVGNdbn2BT5KpZnJpL7H1wdPcY6ADGtW5r3vDR/D1No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758832250; c=relaxed/simple;
-	bh=zdQFlyFtcJGHLR3n1F7B85z1BwCtD76Pv4Q5/J3RMhA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q3abQM5/RMOCgv9OKsI36v5e8VcOfa3g8b8NQVSKSwTw4KkplKFcOf1XCRB5ripJKBL5nM0bEmSSSSgU9+Fbi7JARgbXEuQ85H4m2TuxKTFIRHinblmqQiNzEzE1Mqgcy1RLQrNEfXk+WhkaHNLNNqwc4pX3HAwfeGFF+lZZjZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6nVajbX; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-41174604d88so541752f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758832247; x=1759437047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RCkZb6qonleX8R/f+hgTPmeir/ympFYBeTfUCEgU1Tk=;
-        b=a6nVajbXsGmlDzKE5k1renbrqYKX68uyYe8nL27kFsS1ei/OSGJUv2sc8RDVNjaBd1
-         b+z2wNpRDc04m1yVQvKl2Exv8H1SH9AA4RIR6E8mkXevB8K/S2kWD6v1JA8zZLoRz8Uh
-         kYziym6ulH3s2HY1f6ywrVbTuz32e7aPmEplwGEpbCS0Y8+mkexQiDMw1Lzf08DpeMO/
-         d9Hw/uu908GB1s9u2AwfZ25LGWN87edMrzAwOpE60zCckBZkMs7jLObc8R35OnAMthMS
-         Pl2JXub/7FM3qZ0y7MhPeFG7vTGL4xNzQdMWQW5lqRXpVAXoni6xTEdUjjnlB2yMu/3C
-         Gpuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758832247; x=1759437047;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RCkZb6qonleX8R/f+hgTPmeir/ympFYBeTfUCEgU1Tk=;
-        b=VjNX3L1MpvhIZr5eYYQo8flIoEPyRePErw+2FK8P70GFMeiiP9UCeeaVurw5tkSzue
-         9N0uMFRSBAmnqjzlfkzje96ZbNcviuBrjDobTwFKpM3j7BzCgp178PNJmzEa5JoSJACI
-         DN3pabgKa5/H3FFQhG45lvgZtorQ6q/OR8t1QC17aVpgxSIeX1vSFiSPVyyPRJf0DtRm
-         dzVW++dkW5QSvF+3//jKgVItILWl1zuENacFyTG/3taWq4o/UPm9WlKChKuOf6AtvjyR
-         HEALLQ9pEdEVVxVhuwBt2EFV/fOIAw7rJzQ9ku0/2dIwemEIecde8UkGYcdCQL2FsMBz
-         WRYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAoRffI6LBGL8KQwLBTzsnWMws7KoPsMkwCo2wFjxEoUUweckYdKHrOSNJJToRzXGNiVJJbOrONMC0mwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcWpLFi6QoelKFIopvwFg3VyCIMqRPVQwNe1aueepITAlJBEtt
-	NH+v84o3ddvWdi5D6U86nE7fB05a7FyeZto0TEIJKe9AGUkM3JMo4gJa
-X-Gm-Gg: ASbGncu4hq3Z8k7TwADlAuOYvNlMkrWy/VTdGIyzraiFwb7bUzov/tAYUZiJwujD+dq
-	HrlZH/EJJet6CdBomqSRLlKjaAeLpUZYgo7SA4qzeCv9jm3n062PMZXFcsePYbcfJj4VXZ377zL
-	lejPVxVnLcMFH0kAuaJL0XK1U2x8x7beM/egzq6obywt0F/pMumpEhAP/gJ0kXMaKptQzh3toPx
-	wDIcgrk+pJLhmxmFSZfVQtbPIwoaieeqJyUyPxRzdCOvOGir0QHJUKGZL3+zan3pjBqksSa2kCE
-	JE9s66C0HlJ7b8i5JPDdC8NLQW71UE/eZWuB0UXyH/ovTCAdxeK+7lNmiemwn4Y9h+elsoakHQT
-	9rnX0DMi2k8gmUHK4sDXXaQ23/CLHhxLn4QT8JBcE
-X-Google-Smtp-Source: AGHT+IF7tg4RCzm9amlg/Gw/9ESY2ELu0mfn9+u3GRg5rzK8YPUdHN3cvSLydE0mJdxjQiAumcfhYA==
-X-Received: by 2002:a05:6000:25c3:b0:3ec:6259:5096 with SMTP id ffacd0b85a97d-40e45b8770fmr4070695f8f.21.1758832246817;
-        Thu, 25 Sep 2025 13:30:46 -0700 (PDT)
-Received: from radijator.localnet ([93.140.105.183])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc82f2ff6sm4137336f8f.56.2025.09.25.13.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 13:30:46 -0700 (PDT)
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <dujemihanovic32@gmail.com>
-To: soc@lists.linux.dev, Arnd Bergmann <arnd@arndb.de>
-Cc: Karel Balej <balejk@matfyz.cz>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] PXA1908 DT changes for 6.18
-Date: Thu, 25 Sep 2025 22:30:44 +0200
-Message-ID: <2398680.ElGaqSPkdT@radijator>
-In-Reply-To: <c0516d21-16c4-4101-9d9f-a679f7459ef5@app.fastmail.com>
-References:
- <4685744.LvFx2qVVIh@radijator>
- <c0516d21-16c4-4101-9d9f-a679f7459ef5@app.fastmail.com>
+	s=arc-20240116; t=1758832258; c=relaxed/simple;
+	bh=SB7VFFS497fVqOtw/xEspRqIe+JuY6wZmouhpT9nChM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XmJjEZYNvhRRn2lfjVyCcd4VDxDuGuTAYY8+uoNE6K86ysEnWzBEza/XWJvTpdug0dWNviViaFzp0nzVxvWgYYcXdnWQYKlsgVCC51NqqT3N41jogl3rOvuQcCLID/Md8LEUAt0t69j74KywjBXXxo6bKdbA3cLUT2mUObSEbK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG2Nik8g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C23C4CEF7;
+	Thu, 25 Sep 2025 20:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758832258;
+	bh=SB7VFFS497fVqOtw/xEspRqIe+JuY6wZmouhpT9nChM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oG2Nik8gzsWZh4y8F/lhqAYk70kCj3etLu0UGMrA3eCDJxAuVemwc+TzmdzEQBjHj
+	 szCeNajFGVSbmWl0E5fE2bfTT4cojKEiGrB8uXKYhC6jrcfOcLnHEPr08n3HJoRIeb
+	 xs6y50qus7EtCoTO2axKKvR2V+7hnnT4Jpye1ubwF5dQQkEthyW4VS9MQQsxADG1Z8
+	 SLNn1xX5M0kJB1UMOxRdinekft352a5qQwDP3kGNJz0OLXKFWnxNmAbi5mGBhK2w6U
+	 Fs5gUTiXssFLJ3H5ccv/xjrxK6P0VRVFykGtqwstFdgh6Le+MDfMDlQMsczF8w2IG3
+	 MoLr8DuugM0Dw==
+Date: Thu, 25 Sep 2025 16:30:46 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Patrisious Haddad <phaddad@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	Netdev <netdev@vger.kernel.org>, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Justin Stitt <justinstitt@google.com>, linux-s390@vger.kernel.org,
+	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+	Bill Wendling <morbo@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+	Yisen Zhuang <yisen.zhuang@huawei.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Guralnik <michaelgur@mellanox.com>, patches@lists.linux.dev,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Jijie Shao <shaojijie@huawei.com>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next V5] net/mlx5: Improve write-combining test
+ reliability for ARM64 Grace CPUs
+Message-ID: <20250925203046.GA491548@ax162>
+References: <1758800913-830383-1-git-send-email-tariqt@nvidia.com>
+ <20250925115433.GU2617119@nvidia.com>
+ <d548b14e-ae28-4807-9b29-9961543ea549@nvidia.com>
+ <20250925122139.GW2617119@nvidia.com>
+ <13c5072c-dc93-477c-b72e-02156a0ecc2e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13c5072c-dc93-477c-b72e-02156a0ecc2e@app.fastmail.com>
 
-Hi Arnd,
+On Thu, Sep 25, 2025 at 03:05:52PM +0200, Arnd Bergmann wrote:
+> On the other hand, I would in general strongly prefer
+> 
+>      if (IS_ENABLED(CONFIG_FOO)) {
+>             ...
+>      }
+> 
+> over any of the preprocessor conditionals, both for readability
+> and for improving compile-time coverage of the conditional code.
+> 
+> Unfortunately that does not work here because kernel_neon_begin()
+> etc are only defined on Arm.
 
-On Wednesday, 24 September 2025 23:41:17 Central European Summer Time Arnd 
-Bergmann wrote:
-> If you can send an updated pull request based on -rc1, I'll
-> try to do find the time to merge that, otherwise please
-> rebase on 6.18-rc1 once that is out.
-
-I don't want to rush anything, I'd rather wait until after the v6.18 merge 
-window then unless the merge itself is very trivial.
-
-My only question then would be whether I could still target v6.18 or would 
-that postpone the series for v6.19? I don't really mind the latter, I'd just 
-like to know.
-
-Regards,
---
-Duje
-
-
+Even if the neon macros/functions were to be dummy defined, I suspect
+clang may complain about the vector register clobbers on architectures
+other than arm64, since it will validate some inline assembly even in
+dead code.
 
