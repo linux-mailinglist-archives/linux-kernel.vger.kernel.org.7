@@ -1,107 +1,155 @@
-Return-Path: <linux-kernel+bounces-832241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04604B9EBAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0E5B9EBD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB47F7BA1BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D966E1C20974
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22572F7AD3;
-	Thu, 25 Sep 2025 10:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E9A2EA159;
+	Thu, 25 Sep 2025 10:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WwruKCUe"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RxmbRY7Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870DF2F7ABA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BF52EFD8C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758796557; cv=none; b=i9oxLvgl5q4e6vGpRGaqAs5vpmHQLhl63A1siYyON/fIIOrfjP49TYP4YMUxmp0TUdNX6nfJ1LzcX3+0mjk96XZmJ7x9Y+1S3r/M5tvfTlnTs/S75IFHBnDuQfT2k6wwKrV4A6DOL1bPaYn4vRoSfhxo4Hfhc758/2QlYlLK3Gs=
+	t=1758796644; cv=none; b=VukPG2w1mYOKnTCx1hjOOq7pDJVrkgqmF6IPjg7n8uhJn3zqaWG55piWhp4cnDo5xee0k+mD3a7N/14wFPhWY/bDDkieh0lurSwHcw7xO2uj3RtwHeB6IbOpx16wqy5Lb+Tia8WQnuRw/ylH63oDE6h+2gSB2duu6wlOUZ5Luls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758796557; c=relaxed/simple;
-	bh=xUDZBEawqOGe+H9LJVtGe34jEeAiE+59fdHMls2e9t0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=quwvO5z/avxqvWBc2K2X4nkxO45Ui1tOXh/8UpN8cue3OzX0xm2Nth2aGj/5nyQnb8T51Mr7uxH9tTrs0UzcOGfOCspioXGjbUR/BQxFuFn4YX/Nb97ZYF3gPfKm03xmmz8ZSvn0ebtnwGcedqyHAsi31YLsEPpiCSoHg6vCK0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WwruKCUe; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=xUDZ
-	BEawqOGe+H9LJVtGe34jEeAiE+59fdHMls2e9t0=; b=WwruKCUeGlpOYyRR8mOb
-	7KNT2ioUQzBlmaycNHKtNFlyin2I2ARkzKm88KXDNBZQDiEtn3kcP1ATfXWcsMR8
-	CbOnd5K3DEmVmHNOqRKmOOcMrZRsIuJ7tSW4i5AS8wFp1impZGIZnOck5uFcIRNr
-	y14UeLh8AzpzuEyNF6ZpKFZpsY0EW4NZtbZ04mW390OHxdFE0zAfY2ArFLLPyv+8
-	Fx7h8hbcsVAym8aopawZS05eiqp/cc4omN6+RAqACNlJBY9hCfXMyVgfi15RQWkd
-	7SCR6olfmu3S4b62cmrlWUNBW3kRjVEeLsMGjicYFDh3mb6PyqJfr10H6t1eKan7
-	Bw==
-Received: (qmail 1830445 invoked from network); 25 Sep 2025 12:35:53 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 12:35:53 +0200
-X-UD-Smtp-Session: l3s3148p1@hzfLu50/xq8gAwDPXwQHAL/S9V79e5yL
-Date: Thu, 25 Sep 2025 12:35:53 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s=arc-20240116; t=1758796644; c=relaxed/simple;
+	bh=4+zKr2yoqvxat5W1m7gLDcddQ5j6BzIrsDrF/lKuBPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YxOv+ZDBvPcHKAWnYn/izp++FA3XZNRfL4L6FQskuk9oA6O7Y3gtaJ1SH3KT5Q25DAq1Ox2bU60tZ5bvN4PgMwdZZB8xKiglcW6ZMZnMQuwrxBrGIu2sPH4wkY9UwWVq+7fBt6VsipfAazHDVpqIAne8AyPICIDOUnVDkX7RCpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RxmbRY7Z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758796641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pXTK8H73rTFtCvf5wagp3rWhk7oI2YrssL3FPDtIawI=;
+	b=RxmbRY7Z+Npn2D45V2PFwanRkPPo8prqQmuT1O6Y/3IciLKCby8FBw8QqeB5s6SBxqtG8h
+	uYqmAOagfa0L+s6u/ghzm0NLJ/o3sIN9XvtJmvNf8kFxPY3NB21r6d2ckOjTufv2uUscSR
+	QF3GthR7KI+71O+vgDTLIpMr5H0JXPs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-ojmW6dMuNeyxk2PVDldh3A-1; Thu,
+ 25 Sep 2025 06:37:19 -0400
+X-MC-Unique: ojmW6dMuNeyxk2PVDldh3A-1
+X-Mimecast-MFC-AGG-ID: ojmW6dMuNeyxk2PVDldh3A_1758796638
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 878D1180057F;
+	Thu, 25 Sep 2025 10:37:18 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.10])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0449119560A2;
+	Thu, 25 Sep 2025 10:37:14 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] i2c: pcf8584: Fix space(s) required before or
- after different operators
-Message-ID: <aNUbCccy3wXadCox@shikoro>
-References: <20250907114557.15453-1-chiru.cezar.89@gmail.com>
- <20250917133524.85063-1-chiru.cezar.89@gmail.com>
- <20250917133524.85063-4-chiru.cezar.89@gmail.com>
+Subject: [PATCH V7 00/19] virtio_ring in order support
+Date: Thu, 25 Sep 2025 18:36:49 +0800
+Message-ID: <20250925103708.44589-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="S0mv/d5gbHeoFj+4"
-Content-Disposition: inline
-In-Reply-To: <20250917133524.85063-4-chiru.cezar.89@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Hello all:
 
---S0mv/d5gbHeoFj+4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This sereis tries to implement the VIRTIO_F_IN_ORDER to
+virtio_ring. This is done by introducing virtqueue ops so we can
+implement separate helpers for different virtqueue layout/features
+then the in-order were implemented on top.
 
-On Wed, Sep 17, 2025 at 04:35:24PM +0300, Cezar Chiru wrote:
-> Require spaces around or before or after '=3D', ';', '<' and ','.
-> Add space(s) around or before or after binary and ternary operators and
-> punctuation marks. Enforce errors fixing based on checkpatch.pl output on
-> file.
->=20
-> Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+Tests shows 2%-19% imporvment with packed virtqueue PPS with KVM guest
+vhost-net/testpmd on the host.
 
-This patch is basically OK, but will become smaller if you remove the
-DEB2 macro.
+Changes since V6:
 
+- Rebase on vhost.git linux-next branch
+- Fix poking packed virtqueue in more_used_split_in_order()
+- Fix calling detach_buf_packed_in_order() unconditonally in
+  virtqueue_detach_unused_buf_packed()
+- Typo and indentation fixes
+- Fix wrong changelog of patch 7
 
---S0mv/d5gbHeoFj+4
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since V5:
 
------BEGIN PGP SIGNATURE-----
+- rebase on vhost.git linux-next branch
+- reorder the total_len to reduce memory comsuming
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVGwkACgkQFA3kzBSg
-KbZ8MA//b1Kh50KOrTKIuJ87EIt2ykiysa5+/hIaRMRJbzOKsl4pH9c7OE/6vS0F
-St2iHtDoY340co8/cZv2Eq73RigVYBRBTkn/7FLZXMAWbcaFThUpSl4v0A/uFhSe
-XtnR/7B8upq3Fljf5n+yUr6m2uSQmqQFyGwTBNFG0Id2K/aJDjU0yo+TpAvIW70c
-xgrRS0+2VupsddLbB9/p80G38lPzX+fkH0cYZ5N6R8b4AGUMKhmbjVUh3r9K2978
-E8NiGIZiSIZKAovbXdNaGiE/2V7ecKaMkOCZiAnYvBaUNppYcw5Wd7cBxD1vNS7w
-kCVT+IzsZrQdIWANDdlW49KLX7wu8nIRbetLQFqINO98u6JDR8IMUnrsTdhVyldB
-4vo7T+x0kSttX5zfjVXvlk+7+1596TP/7heKgiHGXISQuBP6PJVGbwbg4unS2kmS
-CiynUC+xkp/jpX/ZTeQ6zOdyY8Gdg3qLkuvv51D71+Z9FS4R/SeCAHVoDpJ/9DbT
-ttIJGO2Y5GPu4epsvNM7l7A09s/c6tkvOqlWJmRdmaNYBAl/9+zmtlPHJ8GfvF0q
-znPtslcv62CwJ5hfL0lTwsluwMXEW6peEkRzSmd/R6JRkGsm1ZS9j5RPsfze6i1N
-MHfmVtxwqJCeYADKhmClqJLc1v29A8WWPxS2zXFI6ETJJlMy2FU=
-=cAsK
------END PGP SIGNATURE-----
+Changes since V4:
 
---S0mv/d5gbHeoFj+4--
+- Fix build error when DEBUG is enabled
+- Fix function duplications
+- Remove unnecessary new lines
+
+Changes since V3:
+
+- Re-benchmark with the recent vhost-net in order support
+- Rename the batched used id and length
+- Other minor tweaks
+
+Changes since V2:
+
+- Fix build warning when DEBUG is enabled
+
+Changes since V1:
+
+- use const global array of function pointers to avoid indirect
+  branches to eliminate retpoline when mitigation is enabled
+- fix used length calculation when processing used ids in a batch
+- fix sparse warnings
+
+Jason Wang (19):
+  virtio_ring: rename virtqueue_reinit_xxx to virtqueue_reset_xxx()
+  virtio_ring: switch to use vring_virtqueue in virtqueue_poll variants
+  virtio_ring: unify logic of virtqueue_poll() and more_used()
+  virtio_ring: switch to use vring_virtqueue for virtqueue resize
+    variants
+  virtio_ring: switch to use vring_virtqueue for virtqueue_kick_prepare
+    variants
+  virtio_ring: switch to use vring_virtqueue for virtqueue_add variants
+  virtio: switch to use vring_virtqueue for virtqueue_get variants
+  virtio_ring: switch to use vring_virtqueue for enable_cb_prepare
+    variants
+  virtio_ring: use vring_virtqueue for enable_cb_delayed variants
+  virtio_ring: switch to use vring_virtqueue for disable_cb variants
+  virtio_ring: switch to use vring_virtqueue for detach_unused_buf
+    variants
+  virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
+  virtio_ring: introduce virtqueue ops
+  virtio_ring: determine descriptor flags at one time
+  virtio_ring: factor out core logic of buffer detaching
+  virtio_ring: factor out core logic for updating last_used_idx
+  virtio_ring: factor out split indirect detaching logic
+  virtio_ring: factor out split detaching logic
+  virtio_ring: add in order support
+
+ drivers/virtio/virtio_ring.c | 892 ++++++++++++++++++++++++++---------
+ 1 file changed, 681 insertions(+), 211 deletions(-)
+
+-- 
+2.31.1
+
 
