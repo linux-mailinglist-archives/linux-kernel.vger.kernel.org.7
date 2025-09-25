@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-832354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244D0B9F0E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6F9B9F120
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF61B386C93
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F2B2A2989
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5E2FCBEB;
-	Thu, 25 Sep 2025 12:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852A12EBB99;
+	Thu, 25 Sep 2025 12:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXSTIoOF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8xPglZd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA4F1114;
-	Thu, 25 Sep 2025 12:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13682E92B7;
+	Thu, 25 Sep 2025 12:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758801646; cv=none; b=YGwdgbNqxLVWPrW5+9RQbjq0tjNUM9Zunw3gGSADvMjBn7xpQf9enfbBcY80D1RwCZ4kgxhx48TlNtaN2wXgNFc5b9leYDxLN2Ie13DlR4DNFicwQGSTWibZ4g+IvIT1vauuzZ6HhFgtAMzLD/BXa2oZZiCgWT2qP0Zu6faIPLI=
+	t=1758801705; cv=none; b=HlrS6jHJudlcxwIfrYGPxewioWsm2cSpZaCq5ns2QAWz8eReRpZvbLAAIiLXWzYztCc6d4E5TTctCiL2EGquKOsT51A7xhzz56W4SfHCUSOusH6D+V92TP13FZOIbmFWvObS2I2PyJVodTdySzAVh8WXb/eFVDaJLJ4Bs38Ta8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758801646; c=relaxed/simple;
-	bh=+YAB5I/onFJFzUFrF0bfZccZfgP5koeJO9saION6R6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYSXLDpx/8MfSEbrmSXRDFVPJn86lk1fSLRcvP2yGK5sTfayhRJmnTxpN8GjCyH7zOMKHQNQ2ZkZmcVuUrF0bgsk7+56Bx1ELdi94cXYE65Q3gyUHPqfSj8McdZ7rBJTYXgj8Bg4YFP9EQBBjOhyZQRcTRvHHHArGcj+ep+TVJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXSTIoOF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE25C4CEF0;
-	Thu, 25 Sep 2025 12:00:43 +0000 (UTC)
+	s=arc-20240116; t=1758801705; c=relaxed/simple;
+	bh=KVBSsx3zG+9oHXw8ykeoYx25CILJlG9dLnmDbP/MwC8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=r+c83J3c1wcyH8cNQIQViFTx12C3jEG4O9Iz+l8tegYkqciXEEnqUfxaoRL/SbthVW7px+rNg4mJsW0LOx/faSKBjOOTXBcDVYlMk+8uH/fg+c83ZjOt2A27fAiSkuMamCaFTq9oilbpyqGVAh+L0SDEgqsbRPBbWN6CM8z7X3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8xPglZd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66982C4CEF0;
+	Thu, 25 Sep 2025 12:01:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758801645;
-	bh=+YAB5I/onFJFzUFrF0bfZccZfgP5koeJO9saION6R6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iXSTIoOFGhJWqlDKp/2cXjv/b6GXJ07IYgwYeHWSyhZZgI1Y2TwzisczlhvtRvPB2
-	 Fj2s4lN1QuUpvaCh62L/hCXrr265mGZsiYa6m9yhWKbKbyqAIWVlriUQVdcXAr8Qr9
-	 ErI2oie40wlw564bhE/U83HpteZSmxV/qeFtSeJfyitzJkEpQ62Ir8HYAS3og/KxGp
-	 eo5RLRwkn+hH8ZxbY93r2uhBcZfmgGcshezWy4hRCU5Hui/Fhc4nxU9QG23bdhjwzx
-	 weqdST9J6KvxkBLd+lHIZowLygEy+yESOTKGyjaRvRa5ehFakrjkhPPkDWVgAJ3O1z
-	 zTX+gos6CUPBQ==
-Date: Thu, 25 Sep 2025 13:00:41 +0100
+	s=k20201202; t=1758801705;
+	bh=KVBSsx3zG+9oHXw8ykeoYx25CILJlG9dLnmDbP/MwC8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=K8xPglZd2isfoAM7Z0hTemICYkyuwHX02jU7VmGNxzJMSsf3I94k814v/KhcwXlA4
+	 WI2fAv2zHpKLrTS00lbGK+yzWXhUsQMj9tjqKjhTeBYcJhuP5H9EGg3o1JK1HqTIEO
+	 z/L8MPqF00A1l3W/T97BznRISIvI8FRQIYNRo8xCr5xRLPBFgA9h2LRhyXQ0clQHad
+	 eOrsypzWre+iG92gsN4358fZWw3okJvTJd5uQTHGknvAylFLKxLv+aEau+Gm9dwx4T
+	 9iCiXQS7WJIfbR4PHQELOpCcofGqULc3Eesz/tBacBxINkJL8uipbZYORTM/9En8Bs
+	 ht16KaokhvjOw==
 From: Lee Jones <lee@kernel.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>, linux-crypto@vger.kernel.org,
-	loongarch@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in LOONGSON SECURITY
- ENGINE DRIVERS
-Message-ID: <20250925120041.GJ8757@google.com>
-References: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Harrison Carter <hcarter@thegoodpenguin.co.uk>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250916-ams-txt-to-dt-schema-v2-1-6a9db6fb7ea3@thegoodpenguin.co.uk>
+References: <20250916-ams-txt-to-dt-schema-v2-1-6a9db6fb7ea3@thegoodpenguin.co.uk>
+Subject: Re: (subset) [PATCH v2] dt-bindings: leds: as3645: Convert to DT
+ schema
+Message-Id: <175880170312.635867.8330256260241303611.b4-ty@kernel.org>
+Date: Thu, 25 Sep 2025 13:01:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250912074638.109070-1-lukas.bulwahn@redhat.com>
+X-Mailer: b4 0.15-dev-459a0
 
-On Fri, 12 Sep 2025, Lukas Bulwahn wrote:
-
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, 16 Sep 2025 16:11:01 +0100, Harrison Carter wrote:
+> Convert the ams,as3645a.txt to DT Schema format.
 > 
-> Commit 5c83b07df9c5 ("tpm: Add a driver for Loongson TPM device") adds a
-> driver at drivers/char/tpm/tpm_loongson.c, and commit 74fddd5fbab8
-> ("MAINTAINERS: Add entry for Loongson Security Engine drivers") adds a new
-> section LOONGSON SECURITY ENGINE DRIVERS intending to refer to that driver.
-> It however adds the entry drivers/char/tpm_loongson.c; note that it misses
-> the tpm subdirectory.
 > 
-> Adjust the entry to refer to the intended file.
-> 
-> Fixes: 74fddd5fbab8 ("MAINTAINERS: Add entry for Loongson Security Engine drivers")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks
+Applied, thanks!
 
--- 
+[1/1] dt-bindings: leds: as3645: Convert to DT schema
+      commit: 64826db1e2e177b58dcbc7cf1e1379527be2185a
+
+--
 Lee Jones [李琼斯]
+
 
