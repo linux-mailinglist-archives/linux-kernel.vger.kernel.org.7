@@ -1,95 +1,193 @@
-Return-Path: <linux-kernel+bounces-833210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1135BA16BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:48:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96E7BA16CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD7B166129
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:48:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A45C16B74B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED67320CC1;
-	Thu, 25 Sep 2025 20:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CC5321284;
+	Thu, 25 Sep 2025 20:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DDp190Im"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="M0LCMS3A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yj2sMtu8"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E642F83A0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50526C3AE;
+	Thu, 25 Sep 2025 20:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758833298; cv=none; b=UCQXYV9cPMzVKMQaxvHApgnvW1hYb256pjubarGDLOdf+vzcQMWw7CZmx+15TeKWkyIYmLdJSnSYF7GiFCH3nlgXKQ27XLJHBNhCrXMtek9WjS9+DVkFgsG2Qri0Vm4rnlk+AEC4QzdQW9rlS0qNIh0dKSrk6NdyllQyNIhejCc=
+	t=1758833372; cv=none; b=iJKvekp/yPh88I5XaCGOyK8A3EVHv4YNv2+WM+S1+8CH5Qvy/+NPsIbvqAPKJ/BnUUgTMY8yihQ5jgAfomwalTGSK0DyotwiQq/iIkj6l4n0HAsizmcguuTTYBTnbv4LvuMk0rpu/6qB/DRd0Mvhh+ewOfhewKPulfGt7DwUOYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758833298; c=relaxed/simple;
-	bh=H+anUvL00vqftzOh+0MKGhlUAO+NOJ6HDTxVMiKheQA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=P0LfRHRLKVM30lJGv0qmwZ4nafIjb/qqi4LoQp80u4Uexuw4DA92xTVrvhGbY+N/WdUBzkLz29HAKx+/Wc2EPh5fZU7AoCAYSIbwXd0X8dbqJ2bZQBStvtYP+y8s2bJFUbEjCaczcumf4PB5+/4DaF39XX2TzQC217ULXHo1BBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DDp190Im; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CD1C4CEF0;
-	Thu, 25 Sep 2025 20:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758833295;
-	bh=H+anUvL00vqftzOh+0MKGhlUAO+NOJ6HDTxVMiKheQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DDp190Im5/d1EOHZZEgvMRtSaBHrezIOaLf+RZfX/bPEGe7xksgfxxGZwe2OJ5GJb
-	 97OB85nWWjOO673rWqAD0kpNh8Xncn2VzN/zGTdBQiylZU4nOQcDQstZB2BBYArkgY
-	 EqA2YUM1Tr3np+7TpsGHG6Lqewq+lXCIQR0ip/fg=
-Date: Thu, 25 Sep 2025 13:48:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>, Christopher
- Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko
- <mhocko@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, Dmitry
- Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
-Message-Id: <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
-In-Reply-To: <cover.1758806023.git.alx@kernel.org>
-References: <cover.1758806023.git.alx@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758833372; c=relaxed/simple;
+	bh=DsC1KNobCsjMiOuQxS1ywlHomeqokFzE74vO6jIRnJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=unVsnbauKKtJSWNVzIugmHWcrbuvGL8KPUDARTAqrKssbLQWODLzV2kMcL4kvNj0e2i40N2e3zPqPYztvQlRS0dlhEeOFOsoX3HxKdh/78SvnaArYd+BHzybUw2F8StreiIqoFVXbWpEkHLg4AmO+iYMc1uAprCSNzOHl5c6xDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=M0LCMS3A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yj2sMtu8; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id C606A1D00114;
+	Thu, 25 Sep 2025 16:49:27 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 25 Sep 2025 16:49:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1758833367; x=1758919767; bh=pRiRz65gfx
+	P/K+El944Fw9vGdwL/oexgMM0ZUDURBSA=; b=M0LCMS3AMM5et0J+Os6Vqxb9uV
+	xtGeNgr7XsvnZ34/4CrFJcs0SkmFgqqMCflWm1o9NECRJNFrz+yx1ce7cCbBgdZf
+	TxYe+vt/4bUyuKTmh9WrVxmHCegGlZupXQK7PVvpbkY89pyn4nltIOcX9IilLhwM
+	EGcGWEnsXBtXTfLtQWP8R+bCBtC10b/P0hNcttCDuf3rgAzTi1aVp2iIQSZEnNa3
+	y9Lk5/ZsO+rpL/XaQve1aricuNCnXYCQ6G9Aj+KQcViuK4Sg0aygazmETZCDlfjT
+	zgewFs3gQiMi6u4d+Cztn3ij38UeM+ZtrlVkoCbsM2/w1sK5qAnoDTBfhHcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758833367; x=1758919767; bh=pRiRz65gfxP/K+El944Fw9vGdwL/oexgMM0
+	ZUDURBSA=; b=Yj2sMtu8O3F+Kx5i7Z8uf9scVDTtK5+EyXh/XZHb92EPEHNf2Tg
+	yxOuQECbUF+8fwRvG+ojcO8N3LnMCMCqHRD72k9DY4Z9T6xxt7WXbCM4n4LryxGj
+	GMQz2CGgKvu/3bzMVK56t4LKKGE3CF7s4zKQjE64lHZ9PqOiOEJnl3I0FJZdPrhc
+	SIDSv/vWwFCeCSKMXSYEW2Z/MfKuoFnU/n4wQxf1/6TQIjQ+lo7UCBFkgXka+I82
+	4M6EUjIx6XYVVAMyiXe/BegcXfvMoBbkASDq4Yv7fNZeyL9dg2wNifDUrP+PuImg
+	PEDPQVGCYhyP3qXf8uyn9d/biRKwuX+B3GA==
+X-ME-Sender: <xms:1qrVaC8vHx0FpK7wVQfSLwIvvTSaKAhaMFti864vkkGFU45BmkKNhw>
+    <xme:1qrVaOmfAog4fGntob1mM3p8kBr5b0pPjQfBUu3X74nT0NB0v7U2UrLuBdO-2d50_
+    1eIFuz8szwZ2-Mq0poW1q-I7CC4SQMDwloAiP3at71RRPPtFCilfjY>
+X-ME-Received: <xmr:1qrVaDhTqcaLfeHQyar0Irs-daUc5U30lYTPM0bYaimB2niY_edu8Zq0lNM8tq5XoCP0F_DTr3JvC1ZkrxCdGPGMPAQz175J0qw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfdvff
+    evleegudejfeefheehkeehleehfefgjefffeetudegtefhuedufeehfeetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
+    hnvghtpdhnsggprhgtphhtthhopeduledpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjtggrlhhlihhgvghroh
+    hsleelsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhvvghnsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphhtth
+    hopehnvggrlhesghhomhhprgdruggvvhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghn
+    ughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomh
+X-ME-Proxy: <xmx:1qrVaOao71GXLxPMCXF8ifhw7iuU7G3UHMrNsnwc2o-jchzXIdFaIg>
+    <xmx:1qrVaPFGPdiKIQc4Xwf_Bsk9IwdYAzAmz_PqGC1BWOvA2KE5cLotsA>
+    <xmx:1qrVaDZRW0RLE7tZskpIiJIJEuKlspTdiDgj-WJi3FGjSN-EhrLSdQ>
+    <xmx:1qrVaI05auGkBWHysFMA1b2pqfzRAK4YHkx-EyN_n6VuJSVyrIJZ4w>
+    <xmx:16rVaJelfvLVoBNkaYohj4h6QucSt7TTsZJRro5KPpfrnJIBUDHJH2Wv>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Sep 2025 16:49:26 -0400 (EDT)
+Date: Thu, 25 Sep 2025 22:49:25 +0200
+From: Janne Grunau <j@jannau.net>
+To: Rob Herring <robh@kernel.org>
+Cc: James Calligeros <jcalligeros99@gmail.com>,
+	Sven Peter <sven@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 02/11] dt-bindings: hwmon: Add Apple System Management
+ Controller hwmon schema
+Message-ID: <20250925204925.GA637503@robin.jannau.net>
+References: <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com>
+ <20250827-macsmc-subdevs-v2-2-ce5e99d54c28@gmail.com>
+ <20250829164057.GA976361-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250829164057.GA976361-robh@kernel.org>
 
-On Thu, 25 Sep 2025 15:20:28 +0200 Alejandro Colomar <alx@kernel.org> wrote:
-
-> I've split some of the patches from the string patch set, as these are
-> obvious bug fixes that are trivial to accept.
+On Fri, Aug 29, 2025 at 11:40:57AM -0500, Rob Herring wrote:
+> On Wed, Aug 27, 2025 at 09:22:36PM +1000, James Calligeros wrote:
+> > Apple Silicon devices integrate a vast array of sensors, monitoring
+> > current, power, temperature, and voltage across almost every part of
+> > the system. The sensors themselves are all connected to the System
+> > Management Controller (SMC). The SMC firmware exposes the data
+> > reported by these sensors via its standard FourCC-based key-value
+> > API. The SMC is also responsible for monitoring and controlling any
+> > fans connected to the system, exposing them in the same way.
+> > 
+> > For reasons known only to Apple, each device exposes its sensors with
+> > an almost totally unique set of keys. This is true even for devices
+> > which share an SoC. An M1 Mac mini, for example, will report its core
+> > temperatures on different keys to an M1 MacBook Pro. Worse still, the
+> > SMC does not provide a way to enumerate the available keys at runtime,
+> > nor do the keys follow any sort of reasonable or consistent naming
+> > rules that could be used to deduce their purpose. We must therefore
+> > know which keys are present on any given device, and which function
+> > they serve, ahead of time.
+> > 
+> > Add a schema so that we can describe the available sensors for a given
+> > Apple Silicon device in the Devicetree.
+> > 
+> > Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> > ---
+> >  .../bindings/hwmon/apple,smc-hwmon.yaml  | 132 +++++++++++++++++++++++++
+> >  .../bindings/mfd/apple,smc.yaml          |  36 +++++++
+> >  MAINTAINERS                              |   1 +
+> >  3 files changed, 169 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..08cc4f55f3a41ca8b3b428088f96240266fa42e8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml
+> > @@ -0,0 +1,132 @@
 > 
-> I've reset the version number of the patch set to 1, to not conflict
-> with the version numbering of the string series.
+> This should be something like this:
+> 
+> "^current-[A-Za-z0-9]{4}$":
+>   $ref: "#/$defs/sensor"
+>   unevaluatedProperties: false
+> 
+> With the $defs/sensor being:
+> 
+> $defs:
+>   sensor:
+>     type: object
+>     
+>     properties:
+>       apple,key-id:
+>         $ref: /schemas/types.yaml#/definitions/string
+>         pattern: "^[A-Za-z0-9]{4}$"
+>         description: 
+>           The SMC FourCC key of the desired sensor. Must match the 
+>           node's suffix.
+> 
+>       label:
+>         description: Human-readable name for the sensor
+> 
+>     required:
+>       - apple,key-id
+>       - label
+> 
+> Though in general, 'label' should never be required being just for human 
+> convenience.
 
-fyi, there's nothing here which is usable in an introductory [0/N]
-cover letter.
+That does not sound as it would be compatible with skipping nodes in the
+driver if the node misses label. The driver could of course fall back
+to create a hwmon sensors without labels. I looks to me it would be a
+stretch to call the presence of the labels human convenience.
 
-Documentation/process/submitting-patches.rst should explain the
-conventions here, but it is presently silent.
-
-The [0/N] is an overview of the whole patchset - why it was created,
-what value it provides to our users and perhaps to kernel developers
-themselves.  It discusses alternative approaches, possible drawbacks,
-prior work, all that stuff.  And it provides a high-level description
-of the proposed implementation,
-
-Potentially lots of words, and it's quite important.  In the case of
-your patchset, it's one short sentence (sorry).
-
-The words you did include are short-term development things, unsuitable
-for inclusion in the permanent kernel record.  Such material *is*
-important and useful, but should be added after the "^---$" separator,
-to tell everyone that this material isn't for permanent inclusion.
-
-Patchset seems reasonable, I guess.  But I'm not loving "ENDOF".  End
-of what - is that like __etext?  "ARRAY_END" matches "ARRAY_SIZE" quite
-nicely, no?  And it much better describes what the thing does.
-
+Janne
 
