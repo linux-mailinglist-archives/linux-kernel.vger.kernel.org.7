@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-832661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FCBBA00B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F135BA00AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2B63BE75C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D7A3B5DC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999202DE719;
-	Thu, 25 Sep 2025 14:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F472DCBF1;
+	Thu, 25 Sep 2025 14:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiyB1Sw6"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSPse5+T"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5622DBF5E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144D32DCBF2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810870; cv=none; b=R0FlJF2r2WWA+mWLGh+iYyc3NgxtIq7+ITnV6AsP97k/YcrjZJLFO6m1FYQKqk96aCMFtYYWaF8LVjSE+yABR1lYrT2lvrs6fpvmkaEMaGz6myJen1lZi5Wavz1XsX7MKk8bnpQ3lRvzHXpmgsb9FwOYAuCK8qbudHk8NKCipHc=
+	t=1758810860; cv=none; b=AZ+xlZW9Fe9YfC3zSUxyeBJ3gjB6VGsSvHHY4yOqKlG2UT7P/UIzU0zquWIhMosaemTnmf371PQaGP6hCwVR45mKF56ZeM5J+I/h2FLkm4XO+3LHjytJTvEB47iaklM52OKpXiPdAypbpX/KXYpKZMGZ8UoAfo7CUTQwa+MiOjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810870; c=relaxed/simple;
-	bh=6XA+llkjZZVH29f0iycatx4vb1CIaytfaB6lMJvlB8c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eliaRC1cc5kss9guqSzNBC+tkD5OHK/xLKNoVCbblr7RcG4FnBnymIaUsAIMmHpafNo0nGlqhd7rhl1vvusw6pmFWTHN99bDYLsn9mdgGleYdyf8s0w9tdg19alh/jFEUpC2wjFG3qskTFIe6fjyNGU+AhAA5ZHH/3qrLk7i/P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiyB1Sw6; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1758810860; c=relaxed/simple;
+	bh=Bafperz37KGVRRgmYq3qAN2sQBrGyfvc4L8Phv7qEY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GP3uBoo0RCKJuasRNvS+6kN5JRE89En5Rot8xJiF2yB+NIG6G+owKVennRAttF6kB2plQz191O32SNBWFXq6/m6Ri5IuFbBWQB+mJj3Zy6R5KcaIb59TUEJoqxsj64/75f2RQodWCNxQyog/eSGOr3uu/hMh30Q+VF0qiXeB8QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSPse5+T; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so999774f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:34:27 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77db1bcf4d3so810614b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758810866; x=1759415666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jlmWZnzTQZk7hQJHDjRsw6Fn5BINueet3UHk9KQ1rXw=;
-        b=JiyB1Sw6yUHbhPNARjgB4h0+sV8ZsDI4K5+GauNR+yjB9Z+0sSh+OCV6cwu+Zmy58A
-         2K89axmqBy3UG31xs/Vn1wfEY6b+I1vuUw/mA3teMhdB/VKWNd3vDD2hqJ0pry5S6kuA
-         kKFZlxp4k8gKWRgjG40R9/E+nahiBh4By9DtI8wLbMC4o15IiqI59nyDw+4poxadzpQ6
-         TcwUfPORCj4cIukSELq+Ta3E+9vgvTyxpFcilxiTZxDrSFYQQ1+6tFAl581MaJiwmlns
-         CG33l1GwMqQdNX4ReQ5ccDlvPohTWUGTMhRE4gIPz1ysNXQVpUiPz5tgSccyKo8CeAnH
-         y4KA==
+        d=gmail.com; s=20230601; t=1758810858; x=1759415658; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QQHQjEm6KdWL1vc6/aoJqmYvJIjnRA6W3fpAuarwDrE=;
+        b=lSPse5+Tdllu8IB6RKd8mwCho7Jzr2BNMiQtn3ePa2U4wNaexa6er1AmeAek5g939W
+         gyvB7vgWFzf7ZkHBT3x2DX9tveHGALynhCnRPPbi+xUh1kWySYwcbeeYhr5aEUNliHXq
+         NAWc56rFraP/a6aV8yK2igbBU+ZI6q1fQPPyKg3iMdSxRpL0eRmq2Iu/xiERaSRmvDK+
+         UBrvWpOWrUpYAIuCLjRIEfYDq/XQIFKwvUx5tugZqwvnvQdSG+ZM8ayCtIpkmD501oWZ
+         rA+zUD7zyp/BKdxR0JsY+SJkYC3emI5S2BqeuXSDMAxLA2UM2MPHbU6A8nkQZjpzbxIC
+         TMPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758810866; x=1759415666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758810858; x=1759415658;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jlmWZnzTQZk7hQJHDjRsw6Fn5BINueet3UHk9KQ1rXw=;
-        b=hoNzB6kDqbnEvQUCLiW7GulJQcravrXKtLmq7nU9ZbwKQWjg05Mx6uQf7BuNHztrN0
-         c9okzEos8tXfOI7FriivL6Z+UGLNh0O80LNtoBqx1Iclk7O8lJO2MGl7oVfztPwpdA07
-         nTiz8VN7QetzafDUPqp9moAvhcX/tGBXQEJYhPUVxGzk8A+RAHWK1hSeEpbfCtSBzpSJ
-         IYeVcSIlK2KmQlOxwbl3KsxcC7EESTzSOoL4kex5kcJeOKgx99Ez+fONDSnFANNa0TXw
-         KYUCsojpjHHUP2MXS4tJY/yk14gZLP3Z2X6CdbIXT8vMDvdaY0KH6odaf7CmuQQJi/Dg
-         sRxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlBTmWr9fRTrxOHC28J+9RST3dGeWtEckNYCr26bZzLaxp5o/2kloh6nxx8UMg9HG0gml+lHWQfPvoueE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJV/cfW8RG5nDsUPxvWt6S4rRnHjlyad47JDY6SpLkilnxTHz
-	0q9dBDpRpYj520jq2r7O4v9fFjh7hgKXxIG+aleOsOp3RJPN2QvFMjJM/KCZBbQhiKWhfxbLwgg
-	KoChWypskxQgMyKnWhPghzBitCK82wCo=
-X-Gm-Gg: ASbGnct/DWynOviEhfO8+xee9pn6S6c589Fa6oT4+8v25JDGq45jeO3yM+qGB/Gk1Ut
-	hsPrQXShS9nrl8BSXYbV/wD77t+KCQsdE6CLceCUR1JjMMl0n9sWXwVkC1K5TrQ8XgOTS661JU7
-	vjrKF0qqPHav/NeRU9uS7+GAOJeVU/y7S2PDfs2bqNbI86Fbh/Vtq9DX1vwp3r9iAKJDxGMhHU8
-	DG2pw==
-X-Google-Smtp-Source: AGHT+IGY9M679gafputQhuXv58U54d1hWGLNXuPzatEJA13krdUY3caj/cCKqU06kl7/8uBnZ3uP82zoy5jzM0Zo1PQ=
-X-Received: by 2002:a05:6000:2486:b0:3d4:f5c2:d805 with SMTP id
- ffacd0b85a97d-40e4458c89bmr3769232f8f.16.1758810866223; Thu, 25 Sep 2025
- 07:34:26 -0700 (PDT)
+        bh=QQHQjEm6KdWL1vc6/aoJqmYvJIjnRA6W3fpAuarwDrE=;
+        b=qOJOuDTDJPjK9QuYHaUur6NtTjTkdpuZwveRGOHS9Om/NJHrasY4cbv4zWt10sVK82
+         G75ofDk7rl0VQ9uqxWp94/D5EnVhCY6KufitsnSq1tiX6/eQrns6evSfXyxH1LdW8fyF
+         HfjEr2fuSXgtojzunAjPnvwQos9FK1ZzWDBVRiJ/JVfyXBFjJeAa5XgChJGIL4P481jo
+         orlApXPDo7b2rFU3iESiFdFF1ovxWy8fFCKhDztyGrYFPlP54YacRVsuabJuCXgUhJ8+
+         vfi4azJIkpydTBwphWdziGypSHZJoFhKHuVz79E4I1ecpFtDAbI+VewhY5w5NJcLvUc5
+         nPig==
+X-Forwarded-Encrypted: i=1; AJvYcCVSZb7lO2+UwNjb0DaN/ZnpjtiiXzIVZehxrx1MPrtMZIHZc7J4KgMku702ODxlqWuh07hzfvNS3UZnqKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2vuruUQqSwDscRGvaUAAs1ulgVA7cuHR5AaZN/yxzKhGbpcsD
+	PNNMpdwjN6MZRoGsGSGJVbbYGUh4sSFPrIXLs1uqsy7JFUYg4sHhjDIu
+X-Gm-Gg: ASbGncsTuTFw/NzR2uHf9OSnWf1GwlsNgRduBdycatkRrXLaJ3fxWkXGj1yNrQGn9tf
+	9cDSKNIcBQx6QtA5OckRMyACOkIWOc2Usb1B4o+VoHhfW35+BCGvMYNqFAmHHl9vDKFPHyHOKeG
+	zvScn3IinRVSiOndOItjFLw2Jz1XCoh3UWcCAsHTtqCt7aL9KsuRz7o05pyFXxX3Eh3Bnrfzmay
+	MFypqPsAesAs8TWG0Mqz7lZw2blPPRpFvmZtBqdRjlJrP9tmmef4T9HWV7Egj5r8Rd7FrknZmt/
+	YF1hgbjSo1rzuy3SSpS3HFWV97+A9kud39rpcQhkecB0/6F+SwJoyW928t+DNP3E3TUkS0rBoW6
+	2l0wHDbactrpqzdJggofNuvUpApfymab2Qw0=
+X-Google-Smtp-Source: AGHT+IHtHAEv8pJFUOuDFi9x9lY6fvRX5HRt2NaxDvCZUSfir5HznJYK8VHavo8T5HJ5S5KcaigutQ==
+X-Received: by 2002:a05:6a00:14ce:b0:776:14f1:493d with SMTP id d2e1a72fcca58-780fcdf4cd9mr4319096b3a.2.1758810858249;
+        Thu, 25 Sep 2025 07:34:18 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238e9a9sm2193140b3a.15.2025.09.25.07.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 07:34:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 25 Sep 2025 07:34:16 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Saenz Julienne <nsaenz@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 2/4] hwmon: adc: rp1: Add Raspberry Pi's RP1 ADC driver
+Message-ID: <3f1295b0-b637-4fe0-b141-67f086960072@roeck-us.net>
+References: <20250925000416.2408457-1-svarbanov@suse.de>
+ <20250925000416.2408457-3-svarbanov@suse.de>
+ <d07158fc-678e-4ae4-8943-168146a58fe0@roeck-us.net>
+ <e53865df-7566-4790-9214-0af875950742@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aNVMR5rjA2geHNLn@sirena.org.uk>
-In-Reply-To: <aNVMR5rjA2geHNLn@sirena.org.uk>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 25 Sep 2025 15:34:15 +0100
-X-Gm-Features: AS18NWD8ZUmLb0ORW8a0yDbsVq0TSmHChIah2vxBghBU5_0NKGLYU8EJzRAlptA
-Message-ID: <CAADnVQLcNWCsazy4XudB4EPaqvdtea+d8w5q4R5MsvRJ4fmOmA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e53865df-7566-4790-9214-0af875950742@gmx.net>
 
-On Thu, Sep 25, 2025 at 3:06=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Hi all,
->
-> Today's linux-next merge of the tip tree got a conflict in:
->
->   kernel/events/uprobes.c
->
-> between commit:
->
->   4363264111e12 ("uprobe: Do not emulate/sstep original instruction when =
-ip is changed")
->
-> from the bpf-next tree and commit:
->
->   ba2bfc97b4629 ("uprobes/x86: Add support to optimize uprobes")
->
-> from the tip tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> diff --cc kernel/events/uprobes.c
-> index c2ff256dd6419,996a81080d563..0000000000000
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@@ -2741,13 -2765,9 +2765,16 @@@ static void handle_swbp(struct pt_regs
->
->         handler_chain(uprobe, regs);
->
->  +      /*
->  +       * If user decided to take execution elsewhere, it makes little s=
-ense
->  +       * to execute the original instruction, so let's skip it.
->  +       */
->  +      if (instruction_pointer(regs) !=3D bp_vaddr)
->  +              goto out;
->  +
-> +       /* Try to optimize after first hit. */
-> +       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-> +
->         if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
->                 goto out;
+On Thu, Sep 25, 2025 at 07:26:10AM +0200, Stefan Wahren wrote:
+> Hi Guenter,
+> 
+> Am 25.09.25 um 04:42 schrieb Guenter Roeck:
+> > On Thu, Sep 25, 2025 at 03:04:14AM +0300, Stanimir Varbanov wrote:
+> > > A five-input successive-approximation analogue-to-digital converter
+> > > with 12-bit (effective number of 9.5 bits) resolution at 500kSPS.
+> > > The ADC has four external inputs and one internal temperature sensor.
+> > > 
+> > > Signed-off-by: Phil Elwell <phil@raspberrypi.com>
+> > > Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
+> > > Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> > I just realized that there is already a hwmon driver for
+> > Rasperri Pi - drivers/hwmon/raspberrypi-hwmon.c.
+> > 
+> > Please add this code to that driver.
+> could you please explain the reason for this?
+> 
+> Yes, both drivers are for Raspberry Pi boards, but they don't share any code
+> base. The raspberrypi-hwmon uses a mailbox interfaces to get the sensor data
+> and works for the board generation 1 - 4. This driver works completely
+> differently ( MMIO ), doesn't depend on the mailbox interface and applies
+> only for board generation 5. Actually I don't see a benefit of merging them.
+> 
+Ok. Please make sure to add this explanation to the patch description.
 
-Yep. That's exactly what we discussed.
-I'll mention it in the PR during the merge window.
+Guenter
 
