@@ -1,252 +1,135 @@
-Return-Path: <linux-kernel+bounces-831935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4A5B9DEF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2874B9DF00
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4020383A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:56:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2238F17BC33
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126352E92D6;
-	Thu, 25 Sep 2025 07:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA3D2750F3;
+	Thu, 25 Sep 2025 07:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3TI/AzfZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bj7Up+b/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjPBJr07"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0CC266EEA;
-	Thu, 25 Sep 2025 07:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A5A270ED9
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758786967; cv=none; b=fX29IlrK6D1fhLy4KzRUZw9siWEdDDsSEwLAbzZk6MtlS1oA/zJX+CsQX6PaLvM64lgTS30LcKdIipOw5Rqzhn61DwpSsozTUcJAnD9OMzqKmETVZYd3lVINVB71egaM1BDQ7kX8BqljimCFOxyjHUnUj3uLRCwa+qmOzQ1vc1w=
+	t=1758787022; cv=none; b=WTZX9WNPT0LNUMamdESFPbuaWmnhrZAZru1J3WpoxSSTeTM06oVV1W2SjhXUxvHsUgnLUKPDscsEuc+1Yp0ArUugtOGfrtuLxGgcRstk7vJTJrqI3uc8ui4xg6jDwAWjF83NZqBNaYu9YXiEuq2pWrUtLiaIw4zyB9f6EqOpyvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758786967; c=relaxed/simple;
-	bh=Ov6DvxOsJoe4/RJ7w4msvOfh7gfqUeo+hCvDMojZQUg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=eeBfwy6RKXgYk9DyLMgUsVFjVMDW4BO4VhTu/SpaXMc/9GXsWzTP/+2WAir8XlZNmlUqaqrszF5pNf7QmxDVGEGjWzjc6p0boMCZOqHgb1a3yhW2p+ULkD5ifvfZoQci6uwfPK60kU+eQYqopMiHZkqP4ClMFtINHgci2a/SSDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3TI/AzfZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bj7Up+b/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 25 Sep 2025 07:55:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758786957;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uETLdYlTIraY1h7EWLh54tbKIGIhQMQCMzOGInKdvKw=;
-	b=3TI/AzfZeXy0bDbfVOo00rHsEGEaP7ebhJsFNn1Yb70ovCZhr/a3s1BPzjpJMZHuq6QKnx
-	cGRmfAV2hbwLlhctuyg68NN0/cEODiGTdrEMUccJqpaQGVm6U3+q6/wNzCtjda5w6sQzfP
-	+/Hcp6E+1iLbGZeeuW6ut69gi/1JOTIkqxvXTzJ0yKfmQSZAqvErzLSQRRwrZyvhmxJpqU
-	XLnBcczzm5yZD0si50QZS1SAOYRNngwNTNU5m3DJ5gepYE0aa/K+bS8QhWBGcc1W5sh2T4
-	ItTsHnvBI3u6/UG+5pGKVJNkjw8gZTjaPkgvsP79Kw7qGgRT3vRyT95K2Zj5bQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758786957;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uETLdYlTIraY1h7EWLh54tbKIGIhQMQCMzOGInKdvKw=;
-	b=bj7Up+b/gktoQUlvKXe2xXqaq3Hd8gaEmS60VlFLtaQ6OkYtUiAwCMlUrC+0Bn/VWQ61eN
-	Jbyt/j5fz5Rf8uCw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
-Cc: John Stultz <jstultz@google.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
-References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758787022; c=relaxed/simple;
+	bh=G3X0HulBzhqLQGcKTKzDjrZkNM1oOZyyGOHbwlQdB3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t/RduxWKAN2ZP7tE7ACD4oLmTbq/CJMoF940MeSE4X0vOdQlDB+DEj3CHpgkdEFFpzEZmeBlCOeCGuVJ5i0JU6K0jFo3fIHRPGvkAZ0xFvG4fP00m3zwzIdhetBW+rEFUw4oqApTq8lafLKEtUiP9ruxoduMIvddExBX8p20cHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjPBJr07; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3515a0bca13so20274901fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758787019; x=1759391819; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/LvC+F24rOHUo0H6x23FHMGYpNv9JEWx6/Wh3pzddxk=;
+        b=WjPBJr07U738o2LPgmOsSeMxBhhUyCH7VOUPfIG+MnO/4czlpFW8oD3qqOv6S6vEkg
+         i15mP1HiaieUtfp67i++xk3hHD47Z7axmvkGRJEAokPg4bf/+iy8OQ2I10zJmrlICe87
+         aZJE31AM7jjo6vT/49HlZ/nMt+4U4CFmbML63fLVMhUNARrgKvjmu8B3SgSO4CoLNUJW
+         FmaXrahc5j0HAHqsexNbN/VohBRgdMvPewNUwylfQWxdtaOJYA+83nDVNxgKqI5mTgtA
+         GghUx7D0ze/xL4Ge6XVlx9bVjkF7ChnA20TdcPxaqFgndBxHX83X2/7mkGvRyWJGyaJ8
+         bhNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758787019; x=1759391819;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/LvC+F24rOHUo0H6x23FHMGYpNv9JEWx6/Wh3pzddxk=;
+        b=SND04M9irppETCb/Xl6mIxG8r2iqBh/1yMVFnupl0DO43meRvHaBVdXTw9k30LF0nS
+         EiTC6NtvCdlHq7qqUE4dkPP659YNJDpeB2hrQq+arQi24VzWCfZ1PWkov+/TwgWwN0a6
+         0iHVogqgyNFBPh4gNHfEP7chspl5eEMWf6Cnq2iOEr+VRc2HKrPUKdSvtUJcLj7CXCFX
+         A3z96/2ENxQzGCE8oVuGOBSAP/NwPV17SkuXAqgljock3qvRHWQduIv3H/6Jhkrj1UjF
+         B3DajX1f68tvVJtPBwiyc0xfd+G7unOVNDIMCWaNTtXuT2tT0Ve7z51xjPBaEg9C4r8G
+         sVnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVX1XyPr6duwXopA0ZYh+M2s7hj3ephgiHqRtp7SwRjl+kGoVI3JN+0b9xy08IaeXHjPTi4ER8cMXOLfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUa8tCtYOAFXf1OV9dNRy+/rEo4GLuqUN+LwN4u/TeVWjoClpF
+	ewlczjTlb/Hsz4mfonYFQ6VFlrBYDboQQH1XjZJz1CjxQjEmWRzzjGwZ
+X-Gm-Gg: ASbGncvTAUdouwdDP69ZkX241JC1ffzs+r4vZgpi827VVe9GJmjBBulfvGc63uLoYxO
+	/7PVZQjImbgm36W5+5v749pPzOVs5iraf6AW6BysuQLUnBJt9xQEU2nasWi8TEkQLUg0Zf9KLcG
+	XVcFbVJ1YudzFdYctWID4eRSbmy1ZPwzzKuBWg4euqRIAp+mtUyTfHOBFOUvvjbgd+XRfR5ripn
+	FfGxKYG07kOgSha/lBHLmR62rRnqJ1R31ndOYPzyAlWF3/EjZofOYZieAs2AVMQ5y4IoDi8yYJl
+	fkA69PDkQKMhmohLx178Ju2/aRr7M0uf1KaQOdWoeqDXjdhsDFzqr16vNqRPNUsCtnciMlU1ZlR
+	AcMjoo0dtah2qlRgnUZ+nxHrXH9nN7hbWN2i1AvxUCoWI6w4/P80OwFxx8u20R0Sm3t/ayc9Dp6
+	ea2ChtId8pP7FKF7xP
+X-Google-Smtp-Source: AGHT+IEy5RHEB8Y3WCb1UHovAH+ye8tCG6UXPpK5piKqgeIHHYdFqZmWGJZvP6OP/JMTKg1WVGuJeg==
+X-Received: by 2002:a2e:bc19:0:b0:36b:2fab:fa6f with SMTP id 38308e7fff4ca-36fb03a3834mr5397971fa.3.1758787018322;
+        Thu, 25 Sep 2025 00:56:58 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb4772ca2sm3867031fa.12.2025.09.25.00.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 00:56:58 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] nfsd: fix arithmetic expression overflow in decode_saddr()
+Date: Thu, 25 Sep 2025 10:56:52 +0300
+Message-ID: <20250925075653.11-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175878695639.709179.6667557610013292048.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/urgent branch of tip:
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-Commit-ID:     4ae8d9aa9f9dc7137ea5e564d79c5aa5af1bc45c
-Gitweb:        https://git.kernel.org/tip/4ae8d9aa9f9dc7137ea5e564d79c5aa5af1=
-bc45c
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 16 Sep 2025 23:02:41 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 25 Sep 2025 09:51:50 +02:00
+The value of an arithmetic expression 'tmp1 * NSEC_PER_USEC' 
+is a subject to overflow because its operands are not cast 
+to a larger data type before performing arithmetic
 
-sched/deadline: Fix dl_server getting stuck
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-John found it was easy to hit lockup warnings when running locktorture
-on a 2 CPU VM, which he bisected down to: commit cccb45d7c429
-("sched/deadline: Less agressive dl_server handling").
-
-While debugging it seems there is a chance where we end up with the
-dl_server dequeued, with dl_se->dl_server_active. This causes
-dl_server_start() to return without enqueueing the dl_server, thus it
-fails to run when RT tasks starve the cpu.
-
-When this happens, dl_server_timer() catches the
-'!dl_se->server_has_tasks(dl_se)' case, which then calls
-replenish_dl_entity() and dl_server_stopped() and finally return
-HRTIMER_NO_RESTART.
-
-This ends in no new timer and also no enqueue, leaving the dl_server
-'dead', allowing starvation.
-
-What should have happened is for the bandwidth timer to start the
-zero-laxity timer, which in turn would enqueue the dl_server and cause
-dl_se->server_pick_task() to be called -- which will stop the
-dl_server if no fair tasks are observed for a whole period.
-
-IOW, it is totally irrelevant if there are fair tasks at the moment of
-bandwidth refresh.
-
-This removes all dl_se->server_has_tasks() users, so remove the whole
-thing.
-
-Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
-Reported-by: John Stultz <jstultz@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: John Stultz <jstultz@google.com>
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
 ---
- include/linux/sched.h   |  1 -
- kernel/sched/deadline.c | 12 +-----------
- kernel/sched/fair.c     |  7 +------
- kernel/sched/sched.h    |  4 ----
- 4 files changed, 2 insertions(+), 22 deletions(-)
+ fs/nfsd/nfsxdr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f8188b8..f89313b 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -733,7 +733,6 @@ struct sched_dl_entity {
- 	 * runnable task.
- 	 */
- 	struct rq			*rq;
--	dl_server_has_tasks_f		server_has_tasks;
- 	dl_server_pick_f		server_pick_task;
-=20
- #ifdef CONFIG_RT_MUTEXES
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index f253012..5a5080b 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -875,7 +875,7 @@ static void replenish_dl_entity(struct sched_dl_entity *d=
-l_se)
- 	 */
- 	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
- 	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
--		if (!is_dl_boosted(dl_se) && dl_se->server_has_tasks(dl_se)) {
-+		if (!is_dl_boosted(dl_se)) {
-=20
- 			/*
- 			 * Set dl_se->dl_defer_armed and dl_throttled variables to
-@@ -1152,8 +1152,6 @@ static void __push_dl_task(struct rq *rq, struct rq_fla=
-gs *rf)
- /* a defer timer will not be reset if the runtime consumed was < dl_server_m=
-in_res */
- static const u64 dl_server_min_res =3D 1 * NSEC_PER_MSEC;
-=20
--static bool dl_server_stopped(struct sched_dl_entity *dl_se);
--
- static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sc=
-hed_dl_entity *dl_se)
- {
- 	struct rq *rq =3D rq_of_dl_se(dl_se);
-@@ -1171,12 +1169,6 @@ static enum hrtimer_restart dl_server_timer(struct hrt=
-imer *timer, struct sched_
- 		if (!dl_se->dl_runtime)
- 			return HRTIMER_NORESTART;
-=20
--		if (!dl_se->server_has_tasks(dl_se)) {
--			replenish_dl_entity(dl_se);
--			dl_server_stopped(dl_se);
--			return HRTIMER_NORESTART;
--		}
--
- 		if (dl_se->dl_defer_armed) {
- 			/*
- 			 * First check if the server could consume runtime in background.
-@@ -1625,11 +1617,9 @@ static bool dl_server_stopped(struct sched_dl_entity *=
-dl_se)
- }
-=20
- void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
--		    dl_server_has_tasks_f has_tasks,
- 		    dl_server_pick_f pick_task)
- {
- 	dl_se->rq =3D rq;
--	dl_se->server_has_tasks =3D has_tasks;
- 	dl_se->server_pick_task =3D pick_task;
- }
-=20
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a05..8ce56a8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8859,11 +8859,6 @@ static struct task_struct *__pick_next_task_fair(struc=
-t rq *rq, struct task_stru
- 	return pick_next_task_fair(rq, prev, NULL);
- }
-=20
--static bool fair_server_has_tasks(struct sched_dl_entity *dl_se)
--{
--	return !!dl_se->rq->cfs.nr_queued;
--}
--
- static struct task_struct *fair_server_pick_task(struct sched_dl_entity *dl_=
-se)
- {
- 	return pick_task_fair(dl_se->rq);
-@@ -8875,7 +8870,7 @@ void fair_server_init(struct rq *rq)
-=20
- 	init_dl_entity(dl_se);
-=20
--	dl_server_init(dl_se, rq, fair_server_has_tasks, fair_server_pick_task);
-+	dl_server_init(dl_se, rq, fair_server_pick_task);
- }
-=20
- /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d..f10d627 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -365,9 +365,6 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sch=
-ed_dl_entity *dl_se, s6
-  *
-  *   dl_se::rq -- runqueue we belong to.
-  *
-- *   dl_se::server_has_tasks() -- used on bandwidth enforcement; we 'stop' t=
-he
-- *                                server when it runs out of tasks to run.
-- *
-  *   dl_se::server_pick() -- nested pick_next_task(); we yield the period if=
- this
-  *                           returns NULL.
-  *
-@@ -383,7 +380,6 @@ extern void dl_server_update(struct sched_dl_entity *dl_s=
-e, s64 delta_exec);
- extern void dl_server_start(struct sched_dl_entity *dl_se);
- extern void dl_server_stop(struct sched_dl_entity *dl_se);
- extern void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
--		    dl_server_has_tasks_f has_tasks,
- 		    dl_server_pick_f pick_task);
- extern void sched_init_dl_servers(void);
-=20
+diff --git a/fs/nfsd/nfsxdr.c b/fs/nfsd/nfsxdr.c
+index 5777f40c7353..df62ed5099de 100644
+--- a/fs/nfsd/nfsxdr.c
++++ b/fs/nfsd/nfsxdr.c
+@@ -172,6 +172,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 	tmp1 = be32_to_cpup(p++);
+ 	tmp2 = be32_to_cpup(p++);
+ 	if (tmp1 != (u32)-1 && tmp2 != (u32)-1) {
++		if (tmp2 > 1000000)
++			tmp2 = 1000000;
+ 		iap->ia_valid |= ATTR_ATIME | ATTR_ATIME_SET;
+ 		iap->ia_atime.tv_sec = tmp1;
+ 		iap->ia_atime.tv_nsec = tmp2 * NSEC_PER_USEC;
+@@ -180,6 +182,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 	tmp1 = be32_to_cpup(p++);
+ 	tmp2 = be32_to_cpup(p++);
+ 	if (tmp1 != (u32)-1 && tmp2 != (u32)-1) {
++		if (tmp2 > 1000000)
++			tmp2 = 999999;
+ 		iap->ia_valid |= ATTR_MTIME | ATTR_MTIME_SET;
+ 		iap->ia_mtime.tv_sec = tmp1;
+ 		iap->ia_mtime.tv_nsec = tmp2 * NSEC_PER_USEC;
+-- 
+2.43.0
+
 
