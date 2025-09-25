@@ -1,131 +1,184 @@
-Return-Path: <linux-kernel+bounces-833349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFCDBA1BDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:10:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF4ABA1BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFD9620302
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:10:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C7C1C27182
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCCC2EA491;
-	Thu, 25 Sep 2025 22:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDBF319870;
+	Thu, 25 Sep 2025 22:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YSTdph7r"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="LDlINN8O"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E353722A7F1
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDB5235358
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758838202; cv=none; b=sH0uHsY84wKMy2HQF1B6kwXtpS6DNSnEcbS39TXYMVlMS6GgLm4h5I/134cvydJOns0f9BzLPf9S8lDl8725E/LJ/RoiO/0E8pfqLa/l2xHMUPeRKR3t7mMrt7v0ldbBYMwVfrbKl4nbjeusx/xdX4EiJw18CN3ANhPYucviEIY=
+	t=1758838311; cv=none; b=avks25I6sWzP/A6NwouH+8MMG7DOe09syG4WkBU/c6SGI393qn2qRJSKjze9VpcLb1uV79hriI5AivPy9kaoFyoSDOaYf4b0BiqA5shYU8WI4x2vG392JOukICkbC+7fMfnlkJVK2GJyCXCBf2+vtj/SBcrtxhK3Ia2xnVL82sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758838202; c=relaxed/simple;
-	bh=0yiMOyNmQe9XLRJre198NoibIv0CW/7k2GZaTA4V0b0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CNQSl66QfgnLLAhcJNFCKJELWeZA167EfTfcZoLLX6y1TMnqVxPJoKCYqUwIjvKs/kfemwVZHgGcav0mJYjpzXrDg9Xix2iLY8AYmW2qhRIzDed5Dh1V5x6nZIdz0U1U6Iu6yGEh+EJifbaaPsFzfCrvEtsRFBtU8rc+YVp1Fco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YSTdph7r; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8cc0cb783ffso131066539f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758838199; x=1759442999; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5F931YZwkJbINas/BIVVF3jlbLDJKn6Y36UYXUc7+uA=;
-        b=YSTdph7rRAfjv2gI3Zdpl7f7y9yZy7e4fmQCXKksGOw99vRS9Js4iikyVq3HLaPNO1
-         7a3Py0kd7EiKdzfBoU/xHnhR6TyDhoxmWWrBGJwFwAAT6GcQjlTfmN2ULgDeJK22k5yz
-         dTPl9LCQlOiplV5rC/9R2Evni/ZPLRuFMm+3o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758838199; x=1759442999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5F931YZwkJbINas/BIVVF3jlbLDJKn6Y36UYXUc7+uA=;
-        b=Rr/TTO7cu00xcW+ojgEkByxmSgm3BGmNv5oXUUUcHO6Z5kewFLE2qiq3nBbkNICYl7
-         PGQsfFdvY5bXhcbY1yBPg65qku2ZL/rv56QtmT7zB3n0HKVzBDJqOvNyIifBxq+UgUnB
-         CPwDHU5ECcrOEzrgB81G2nA0CB/yvKF514oXrk5I8iuhbREU+U8llScjAst3ayFw9LJg
-         0hCGCy7E/cedCnfaqUuY7bBCUIWHWPnz9t+PQd5iF9J2MRPEX1hW89bno7JOCckslLXA
-         ooyuKKciW1ybsNdM31hrG0FzT5dJfhXGmEe9kkx5/FMVd5FAhS4kySOjBq7Pj11cUIh+
-         sO4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNj3vPPAFpC3DvatKPW2Q06+Nc6HnDlCpuVV2jQC2Dg81Snw00+pSSD/kPJzcedzzebyvzsWYUn45Yveg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyokPxjH/1UfhEMig4/ys7OucSxnGJjyZ/ObEeApGq4hbraAias
-	yKP7op0WWx8BXiGNVr7vyMmtJIgDY+fumqt7Y1F87cTwxuRtDZC1qhvcO7y7lbK4vHg=
-X-Gm-Gg: ASbGncvg6len1o6QWfsw0cd43CqDbNEzggZ3rXe0EA6GqyxhbLjr+7wCdco47Xozetn
-	Bn9F0S5H8nq1KrpQw0LeMVpVUmDDPIA+XMuwXRjPgG1hl16uaZiVnCX3eXErgt1EYGmxdbf1lDJ
-	7aTcJ9H3B/qDoGuhus73PqLuKoz+ZU5h0rnXvrIaKOBEi2XW0BeJiB1E5rVkKjjptg3yjHrBFAi
-	c1ARFjQAElM4hPck+k8iSXy5pg+7AYu+nlz0c9DNUu4oYjJKNzEucYagtVVmVXTLOl6GdBpXsVi
-	OGfAkDhZR4zQeEG+YLkVtr3az0nGzh6p5oXhDfBAASei26uPgYripgZ/QNw/9oTuMyUnpVZK1jB
-	AzuXnscj3w6zWiLjYDy8+VBl8hXuK+G/TtbM=
-X-Google-Smtp-Source: AGHT+IElTH+idLEkMLWpYPJrsfBBebq4PFg6ym32/EYuVSfzQpng/Clqk1K1iCi/3y1Ps9TK7idaEg==
-X-Received: by 2002:a05:6e02:18ca:b0:425:8d9b:c430 with SMTP id e9e14a558f8ab-425955bcfc6mr84049935ab.6.1758838198820;
-        Thu, 25 Sep 2025 15:09:58 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425bcb5f6e9sm14456345ab.19.2025.09.25.15.09.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 15:09:58 -0700 (PDT)
-Message-ID: <5900de48-e4a4-45cc-be7d-c906a59ba04a@linuxfoundation.org>
-Date: Thu, 25 Sep 2025 16:09:57 -0600
+	s=arc-20240116; t=1758838311; c=relaxed/simple;
+	bh=Gp/6ffGOP7iZI9CGEDj3yzg0tEsKP4qoYYv3v6jO/1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ujP+alMuahRhuJKPzcdvTHgkn7VVaQHrJGAKR2fC/k1DWOw4bGjmivpBab7s7aLibndM4b/2Vtw0hAxSKWVknLvMMyslm/h4ultvYmZGWRcLixeopSDOmLQc8Zzyqf94NMK8uzXcN9M7eMqS0QFpUiviWwmGiXPWbKKd50hQ+sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=LDlINN8O; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=cV19K2kHwbzsptwnWHvhPs0HRaJ8ZbKRyVa4qDbsSX8=; b=LDlINN8O1LAKs2p5yHxLeWpBOw
+	1/sCr+l5elgqI6Gv4YhA2Q05sQWwyTH3hXXFtaocpJjuPd99GX9HZdwZ6zi634uAZ/7Db0xPDpIdW
+	jdKHhbcSuKjMOAf1HnSDqANuFp3MpZsVtsPiEdit3k7viRy/62ZmD2YYsr9cr6eqJBzFXewZA4ysr
+	0d3kYU3u7rwwzI6NoZH4cqRRkRRwwbjcoftoaLuHWiioh51XJ5CAs47S/4/ru8oqX1ks6fGDWzCjS
+	8Fb2TakL10qWB/IpR7rJFhW4eOMbe8sTNLL2jgxWZtqhNlo/CS2/S/L2yQXr5JdQvLF5fwc7SWO0v
+	605RQA7w==;
+Received: from [2601:18c:8180:83cc:5a47:caff:fe78:8708] (helo=fangorn)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1v1uBA-000000008PK-1RQG;
+	Thu, 25 Sep 2025 18:11:08 -0400
+Date: Thu, 25 Sep 2025 18:11:06 -0400
+From: Rik van Riel <riel@surriel.com>
+To: Frank van der Linden <fvdl@google.com>
+Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, hannes@cmpxchg.org, david@redhat.com,
+ roman.gushchin@linux.dev, kernel-team@meta.com
+Subject: [RFC PATCH 13/12] mm,cma: add compaction cma balance helper for
+ direct reclaim
+Message-ID: <20250925181106.3924a90c@fangorn>
+In-Reply-To: <20250915195153.462039-1-fvdl@google.com>
+References: <20250915195153.462039-1-fvdl@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add myself and Barry to dma_map_benchmark
- maintainers
-To: Qinxin Xia <xiaqinxin@huawei.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Barry Song <21cnbao@gmail.com>,
- shuah@kernel.org
-Cc: robin.murphy@arm.com, jonathan.cameron@huawei.com, prime.zeng@huawei.com,
- fanghao11@huawei.com, linux-kernel@vger.kernel.org, linuxarm@huawei.com,
- yangyicong@huawei.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <CGME20250917011807eucas1p2dc0c24ef4ad8effcc1a2174d54cf4161@eucas1p2.samsung.com>
- <20250917011759.2228019-1-xiaqinxin@huawei.com>
- <11183850-d6d6-46c9-8079-330bf4c541e3@samsung.com>
- <CAGsJ_4yno_a2vD9OHhruXbNOXuVKg97NcOdFHpe283FJ9hXL7Q@mail.gmail.com>
- <0c59d099-4844-4fb2-80e0-6d3fc0077985@samsung.com>
- <ae8a2c37-74db-4e53-99c1-fc7f86e80253@huawei.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ae8a2c37-74db-4e53-99c1-fc7f86e80253@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 9/25/25 07:11, Qinxin Xia wrote:
-> 
-> 
-> On 2025/9/22 20:20:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> On 22.09.2025 01:50, Barry Song wrote:
->>> On Fri, Sep 19, 2025 at 2:17 AM Marek Szyprowski
->>> <m.szyprowski@samsung.com> wrote:
->>>> On 17.09.2025 03:17, Qinxin Xia wrote:
->>>>> Since Chenxiang has left HiSilicon, Barry and I will jointly
->>>>> maintain this module.
->>>>>
->>>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>>> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Thanks!
->>> Marek, would you rather merge this into the dma-mapping tree
->>> instead of ACKing it, or would you prefer it to go through
->>> a different tree?
->>
->> I expected it to be taken by Shuah, as she is responsible for the
->> tools/testing/selftests/ directory, where the dma tests are still placed.
->>
->>
->> Best regards
->>
-> I'll send V2 in the next version to fix some of the review comments of V1, and maybe there's some discussion about V2, I think shuah can deal with the patches of MAINTAINERS first :）
+On Mon, 15 Sep 2025 19:51:41 +0000
+Frank van der Linden <fvdl@google.com> wrote:
 
-I can take this patch through my tree. Are you sending v2?
+> This is an RFC on a solution to the long standing problem of OOMs
+> occuring when the kernel runs out of space for unmovable allocations
+> in the face of large amounts of CMA.
 
-thanks,
--- Shuah
+In order to make the CMA balancing code useful without hugetlb involvement,
+eg. when simply allocating a !__GFP_MOVABLE allocation, I added two
+patches to invoke CMA balancing from the page reclaim code when needed.
+
+With these changes, we might no longer need to call the CMA balancing
+code from the hugetlb free path any more, and could potentially
+simplify some things in that area.
+
+---8<---
+=46rom 99991606760fdf8399255d7fc1f21b58069a4afe Mon Sep 17 00:00:00 2001
+From: Rik van Riel <riel@meta.com>
+Date: Tue, 23 Sep 2025 10:01:42 -0700
+Subject: [PATCH 2/3] mm,cma: add compaction cma balance helper for direct r=
+eclaim
+
+Add a cma balance helper for the direct reclaim code, which does not
+balance CMA free memory all the way, but only a limited number of
+pages.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+---
+ mm/compaction.c | 20 ++++++++++++++++++--
+ mm/internal.h   |  7 +++++++
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 3200119b8baf..90478c29db60 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2541,7 +2541,7 @@ isolate_free_cma_pages(struct compact_control *cc)
+ 	cc->free_pfn =3D next_pfn;
+ }
+=20
+-static void balance_zone_cma(struct zone *zone, struct cma *cma)
++static void balance_zone_cma(struct zone *zone, struct cma *cma, int targe=
+t)
+ {
+ 	struct compact_control cc =3D {
+ 		.zone =3D zone,
+@@ -2613,6 +2613,13 @@ static void balance_zone_cma(struct zone *zone, stru=
+ct cma *cma)
+ 		nr_pages =3D min(nr_pages, cma_get_available(cma));
+ 	nr_pages =3D min(allocated_noncma, nr_pages);
+=20
++	/*
++	 * When invoked from page reclaim, use the provided target rather
++	 * than the calculated one.
++	 */
++	if (target)
++		nr_pages =3D target;
++
+ 	for (order =3D 0; order < NR_PAGE_ORDERS; order++)
+ 		INIT_LIST_HEAD(&cc.freepages[order]);
+ 	INIT_LIST_HEAD(&cc.migratepages);
+@@ -2674,10 +2681,19 @@ void balance_node_cma(int nid, struct cma *cma)
+ 		if (!populated_zone(zone))
+ 			continue;
+=20
+-		balance_zone_cma(zone, cma);
++		balance_zone_cma(zone, cma, 0);
+ 	}
+ }
+=20
++void balance_cma_zonelist(struct zonelist *zonelist, int nr_pages)
++{
++	struct zoneref *z;
++	struct zone *zone;
++
++	for_each_zone_zonelist(zone, z, zonelist, MAX_NR_ZONES - 1)
++		balance_zone_cma(zone, NULL, nr_pages);
++}
++
+ #endif /* CONFIG_CMA */
+=20
+ static enum compact_result
+diff --git a/mm/internal.h b/mm/internal.h
+index 7dcaf7214683..5340b94683bf 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -942,6 +942,7 @@ struct cma;
+ void *cma_reserve_early(struct cma *cma, unsigned long size);
+ void init_cma_pageblock(struct page *page);
+ void balance_node_cma(int nid, struct cma *cma);
++void balance_cma_zonelist(struct zonelist *zonelist, int nr_pages);
+ #else
+ static inline void *cma_reserve_early(struct cma *cma, unsigned long size)
+ {
+@@ -950,6 +951,12 @@ static inline void *cma_reserve_early(struct cma *cma,=
+ unsigned long size)
+ static inline void init_cma_pageblock(struct page *page)
+ {
+ }
++static inline void balance_node_cma(int nid, struct cma *cma)
++{
++}
++static inline void balance_cma_zonelist(struct zonelist *zonelist, int nr_=
+pages)
++{
++}
+ #endif
+=20
+=20
+--=20
+2.47.3
+
 
