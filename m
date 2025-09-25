@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-832107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC7FB9E5BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E30B9E5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146D2386A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5313B7082
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3652EA490;
-	Thu, 25 Sep 2025 09:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5419F2EAB72;
+	Thu, 25 Sep 2025 09:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ahLQOEsu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RXKzxbAC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DBE2E9ED2
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA802EA753
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758792466; cv=none; b=Fnj/ysluZpCyROlbuzyNaB7dslThkpx1qKyx1yr9waCfYvCVUAI/0FavkAyY5uQi/pv4hiHqIhXdwLcjM5+n5InW36Wr8zDOcc8wRDeZOS1uUPN0pIpZDE9hfr9AaZMAIAHzL3xM6kTG5on2MkTO4uCXtuw2+qi4JY2KPBlX8bI=
+	t=1758792477; cv=none; b=FPXaT49RDFVFx9+2e600bhSzwA+Sn5AN3dbZGJ+zg36OlKNjEVPV4f3kL8tdp1nEDfmFbVOdea/KyOEVQ+d7moJ4POFlzI0lym/O6BiaYC5UX874Wf7zBQ9I9eLc+cGuPoPnASS2EZ0FfJ0xpv0Wx4ppPOVNZa8sbTV91jrnyk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758792466; c=relaxed/simple;
-	bh=4Yv3Q5cOmyZVTHyUxtyXh72sHLtXQN/FSgzj4obRUDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=G0mto8G9p69zsg71rD7gQ0nbDBO/HAR8tKijRNTumKJw/RiAivdc0NrnF1D+5vbpTXaU8E95Hy8XUlWaqd+X8+aspo20Z0YPYY2OrY75VMVrWSfavdkHB/AkjjcxM0++3jwzZYI+lO5Kp17km4RvgFdMDdyJLrr95lFpW778lCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ahLQOEsu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758792463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UWFAvZzxsmjhh9q6bJ5VMROTWJuLviIpjPx87FL9KGM=;
-	b=ahLQOEsuJAlRSGpN3nTznj1ZHQrtDjFUWHtgM2wtYfMtM5wFFspBNzCM9INFVmy6xJ+fEx
-	Aj+l1m2baFTS88wMNjSmMaYxQkGHkrodxyhROiTQfTywA+PKT3iqzmIUBitVQx/kdy1knp
-	BVRBU/PtHf/mJVR6fIYpcMPCf9Oz24o=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-ewPT_4cEOom3CWvSX56-4A-1; Thu, 25 Sep 2025 05:27:41 -0400
-X-MC-Unique: ewPT_4cEOom3CWvSX56-4A-1
-X-Mimecast-MFC-AGG-ID: ewPT_4cEOom3CWvSX56-4A_1758792460
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f42b54d159so552044f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:27:41 -0700 (PDT)
+	s=arc-20240116; t=1758792477; c=relaxed/simple;
+	bh=kybbvXhHxELtxPAzzOcOTx6gRpgiCCcD9x5PrtveDbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmObxTURerl9UMNylQSfHS5okCaSwZ48bGlHoXkhN2FEHDHnV0oogslur18nV1AE4ineHUperPF8U7lB7Vw5SjGmP2wnZHAqX0Re9YRFMmosP+sQlYLjZC8NQuOLbPgP6p0nSoMgrTscqb8ap6Szs6AEYOaq754kcg1x1zikr+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RXKzxbAC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P0t1Bw019945
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WUqki5AzViBdF4eWTm2k5POhswMbNALIQr455o+v3LE=; b=RXKzxbACfU6aYseM
+	WS/frB2kdxl9qtA/ZbXY6GHtrmGzwQ8xlO4nhwcH+IsJZL1MRxwlXv0Mj1SozAeC
+	I0Tz5tKQ5EtLrofZi1ph7Y95gJ2Jm/7Er8Ngny/QDvIGAcxHwfwvMuq27BMP3mZx
+	PfkFRWNSjxxQd/jVQLu4a/4M0wNZqt7/6n8n62bC5t2Ds4E7K3q8mrUoqgOxOVS3
+	4YI+Psb27Icecc6jEQSytulRebFtycuo4rvkBuTgTtYWvkh3MydV3/WH+1FDGHIC
+	+xwUd0LnCRNzA6/F0/shoWQz7T6HQtuoxDH+Xb/q3eVjXHbCLTT8sck5WYMrkyPQ
+	qWNYug==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpe0sw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:55 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-795ac54d6f8so1643906d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:27:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758792460; x=1759397260;
+        d=1e100.net; s=20230601; t=1758792474; x=1759397274;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UWFAvZzxsmjhh9q6bJ5VMROTWJuLviIpjPx87FL9KGM=;
-        b=Rmfad4iYI2WF8U/OkgJt4LrO5dZvvXgqP4z3ja4WB/s/ZX6n7GcQFAV2TqLfyxNv2O
-         aDPfqJkXWFcNTVs/TrivkrIKfgaGZKdMM77UK7rndfuTf+mXcH4DgM1JEtMWHnSN6GiD
-         ZwVOFg9QMyfgLQye4yehCLmM7SxXnDFBnPvotGVDnxImZbselQDonhQ5WyC5oyNQHRfL
-         NaMvYXJeXxLRR6DldmR0FQ9ZenO2pvuzLDyT+EloyHGU+NE43Bq305A0ONIA0GYC7I6A
-         Z9Abqxdf5cjAsxqIehpDGzT83kmMznsOse2SJ3wbwUe3BHOMeOF5GS9yq6tsGpk243yb
-         VQPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4GTbtqOqz3Irk9xcVkMfmn57ZEweeGxflAOmvzthqNwSRRd6Jvwb8XCIh/htHiwTKJUNA54OH5LaS340=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFLrnI2b+PEJjz2STf7nAF9AnryywITK5FMb5vJEHPWUkQf7jJ
-	GhjQWN3SwJnjmls0vAH/i7+G6AAVSIMfHhsVXEvUklnS3vZH8v0UDNXAK9oX65vZKygq9sAPUi8
-	Y8zBIf4YV9QuzU43oSz4VyZ/2Px55uwr8VKsVpcmnRKwqTRWWEH9I2B2UkbHdWWgzdw==
-X-Gm-Gg: ASbGncsENuwXKcEYXNFLu5dkCvVwfk5g1Rc/jQcLAwSE75lbfGSi6HII3yrCRFG1zwE
-	+1pfi9Ff3j5wCK06GRLXMuJRLOfle+7h/ywL3HPSSR08Xh/e2SC9Zl6TcDNXhaEhQUGvez5xMgh
-	I+meJpGe/RsDSaMJR8I38iw0j9pbc097Ogyjs63/2RbqlWyCRM0FMOSN4uWjUe/jAn2W4SQeiLQ
-	p6Hhv8ExDy3fm2VZmg76yFAkGeMLH1wkmvuxPGdKIhM2YqbkdbH6N5JvH8xNLcBDOyHk3ZkQq/t
-	/0VKJ9/Hi69guljCBWKVJnGj5bpDQ6MJ1g08se0PqMWtOwNeVXxJZ70RZOl6wWAFa6D80aWO9cg
-	MH//POPKoiQQF
-X-Received: by 2002:a05:6000:2306:b0:3ec:dd19:5ab with SMTP id ffacd0b85a97d-40e4dabf4bcmr2260615f8f.61.1758792460426;
-        Thu, 25 Sep 2025 02:27:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4KO3m6UVzFQeKSl0okBGg5bJ0PBmfh3JJWmV5i+8yo09g9ZgqQZzl0ahuXJF36hdJNUY9+g==
-X-Received: by 2002:a05:6000:2306:b0:3ec:dd19:5ab with SMTP id ffacd0b85a97d-40e4dabf4bcmr2260602f8f.61.1758792459988;
-        Thu, 25 Sep 2025 02:27:39 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm69224455e9.20.2025.09.25.02.27.38
+        bh=WUqki5AzViBdF4eWTm2k5POhswMbNALIQr455o+v3LE=;
+        b=DpStSY4Ge0wUPEZSPU2UqDwWE+HXDKZIvv6pinSHx8VssyAeq7kKrhSSefV8RGxvFc
+         uKZtfvnqwCvpIUqnGwon5RJ7zfJknE0StgcLJA4JTcZaipqGqklsfPg/PaHgJxG4zg1n
+         gyBMr3FzGePV4z+0a1wjmjplh6Ui1NM7KfRGKhbcAWqC4x/A4ivivqjPHIjv1XyCkbQs
+         Jfn1aGBGQ9ZncKyoEh+lq/azBqXMZEj5tFgC02uwnLbKx3rV+5QKPAeOYLRvgGZ5qPR3
+         VsfMABZUcWjJqgCVbqKAVo50y7A39TUVoHGfjSNewjfRcFhgrZVW4M+qAezc+uHOF5ja
+         h7XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXs5PHu+dB4Pj5p+z1M24Wj/MX7F76ANIao7Uu3faAmtHOXQSWLbSGIDpPYCp4xu9U5CghJQOy/J7r/6GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6oqwV8i2kRlLRcawfq9wuU6tiqN2Sx9NzG6z3q2gDkDo/EG8E
+	lvBSNjrkhFzfpzmj7w+FULfITZ3yfpQ3aBUEtFQIzXeOssFJzr4/+KSghd1T5nfitbtWUiltvuZ
+	wpAGps+++ZR4eCF5ILm8xBB0Aa9Wl0kVwVFnq3sARZhm+CEb7Dfy42CUq1hKBarbTcxY=
+X-Gm-Gg: ASbGncuFJcKPrbPdGC1jcO7GP6qjdP2t2Vc5E+rZJNuFtf0DOeTYoNP1jDQs3SB/Z1T
+	qlR022KZCfxZaeIH4DCz2CHRXv6tgM2XXuhJV3TXRkGcRkSBPl8KHaN65POdkWMVFYOQiyIFu5y
+	4wwfFutT2D9OQSG7QXdxXflUqB2uABR6fnh/uV3VH7R0rVHufzI5vjegm1geF0aZmEHJAoBaPlr
+	JMiGlKNmnXXKBuaG2QZdtEynssuMdUWpdr1BsZvvxr7g1vQITgAIGVUlYWez+0mTnpS+WM0m7EV
+	tifEt7eWbTLuc4FQG/ACP2GJBroXYd+wowoJGszWl4tZ+x+ntZzD/QQJovBeDwAVeofAUioUSg0
+	xZYeKKvLk35H716hNBi4eIQ==
+X-Received: by 2002:a05:6214:ac2:b0:798:f061:66bb with SMTP id 6a1803df08f44-7fc27ca1971mr29184256d6.1.1758792473990;
+        Thu, 25 Sep 2025 02:27:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNXr6Gkp6aLTf5IZJgLqxFdi09mSj1x0yLj1wpVf5n029+3a2r9XtLvmqiNW/o5lBQYVn2jA==
+X-Received: by 2002:a05:6214:ac2:b0:798:f061:66bb with SMTP id 6a1803df08f44-7fc27ca1971mr29184116d6.1.1758792473575;
+        Thu, 25 Sep 2025 02:27:53 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a366116esm914520a12.21.2025.09.25.02.27.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:27:39 -0700 (PDT)
-Message-ID: <7cc2df09-0230-40cb-ad4f-656b0d1d785b@redhat.com>
-Date: Thu, 25 Sep 2025 11:27:38 +0200
+        Thu, 25 Sep 2025 02:27:53 -0700 (PDT)
+Message-ID: <6626df48-bfaa-48a5-ab50-91422d252e86@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 11:27:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,109 +89,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
- configurable
-To: Halil Pasic <pasic@linux.ibm.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Dust Li <dust.li@linux.alibaba.com>, Sidraya Jayagond
- <sidraya@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>,
- Mahanta Jambigi <mjambigi@linux.ibm.com>, Tony Lu
- <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-s390@vger.kernel.org
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
- <20250921214440.325325-2-pasic@linux.ibm.com>
+Subject: Re: [PATCH v3 09/10] phy: qualcomm: m31-eusb2: Make clkref an
+ optional resource
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+        conor+dt@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+        kishon@kernel.org, vkoul@kernel.org, gregkh@linuxfoundation.org,
+        robh@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250925022850.4133013-1-wesley.cheng@oss.qualcomm.com>
+ <20250925022850.4133013-10-wesley.cheng@oss.qualcomm.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250921214440.325325-2-pasic@linux.ibm.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250925022850.4133013-10-wesley.cheng@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: PG3naSgMQ3VTTtj2PAVVVxvGsfN8yCVE
+X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d50b1b cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=rA21lKwlbNzYapJBHGwA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: PG3naSgMQ3VTTtj2PAVVVxvGsfN8yCVE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX3Ot77hDk1/Do
+ j6zZjN3E1u4x53sZuFtLkU2yuUG24zQhFdPxZvlDVrkg5EMLwe4vM1/VVQWbBpsNml4JQtK58zS
+ N+tZEMJupNHAin+pVJT47HPAtY4YSOkXK5gK/75SevyMYoKx7Uf/mNSo9DUiGvxJJOpPh/fIwua
+ ckI6Zq9cHcXHok3qZEYf64mddu7uXIRtzPSFlhr0mGQk0LhA03mrldUstthFEW/1vCxEdnTTzKq
+ BZsBt5uuVXLbZ4ck5SCFZvwtp0wCknfBdvn3yuZN1lLqM/AuoxCMr0TLn32fXKUq0TSOLk1f8r+
+ Xw7HAH1ia8TJJo6WbJ67ENr6MQlleirjw2MZopvC0SvKD/wRDIQ1Zx611oqkSxe6BjSAWAMrQhN
+ 7ujsIiGP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509230020
 
-On 9/21/25 11:44 PM, Halil Pasic wrote:
-> diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
-> index a874d007f2db..c94d750c7c84 100644
-> --- a/Documentation/networking/smc-sysctl.rst
-> +++ b/Documentation/networking/smc-sysctl.rst
-> @@ -71,3 +71,39 @@ smcr_max_conns_per_lgr - INTEGER
->  	acceptable value ranges from 16 to 255. Only for SMC-R v2.1 and later.
+On 9/25/25 4:28 AM, Wesley Cheng wrote:
+> Some USB subsystems that utlize the M31 eUSB2 PHY doesn't require a clkref.
+
+This is more likely "doesn't include a software-controllable" ref clock
+
+but that's "fine"
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
+
+> One example is the Glymur platform, which contains 4 USB controllers that
+> all utilize the M31 eUSB2 PHY.  However, PHYs associated to the primary
+> and secondary controllers do not require a clkref resource.  Due to this,
+> mark this as an optional clock.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-m31-eusb2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> index 95cd3175926d..f8a00962f937 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
+> @@ -267,7 +267,7 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
+>  	if (IS_ERR(phy->reset))
+>  		return PTR_ERR(phy->reset);
 >  
->  	Default: 255
-> +
-> +smcr_max_send_wr - INTEGER
-> +	So called work request buffers are SMCR link (and RDMA queue pair) level
-> +	resources necessary for performing RDMA operations. Since up to 255
-> +	connections can share a link group and thus also a link and the number
-> +	of the work request buffers is decided when the link is allocated,
-> +	depending on the workload it can a bottleneck in a sense that threads
-
-missing 'be' or 'become'           here^^
-
-> +	have to wait for work request buffers to become available. Before the
-> +	introduction of this control the maximal number of work request buffers
-> +	available on the send path used to be hard coded to 16. With this control
-> +	it becomes configurable. The acceptable range is between 2 and 2048.
-> +
-> +	Please be aware that all the buffers need to be allocated as a physically
-> +	continuous array in which each element is a single buffer and has the size
-> +	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
-> +	like before having this control.
-> +
-> +	Default: 16
-> +
-> +smcr_max_recv_wr - INTEGER
-> +	So called work request buffers are SMCR link (and RDMA queue pair) level
-> +	resources necessary for performing RDMA operations. Since up to 255
-> +	connections can share a link group and thus also a link and the number
-> +	of the work request buffers is decided when the link is allocated,
-> +	depending on the workload it can a bottleneck in a sense that threads
-
-same                               here^^
-
-[...]
-> @@ -683,6 +678,8 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
->  	};
->  	int rc;
->  
-> +	qp_attr.cap.max_send_wr = 3 * lnk->lgr->max_send_wr;
-> +	qp_attr.cap.max_recv_wr = lnk->lgr->max_recv_wr;
-
-Possibly:
-
-	cap = max(3 * lnk->lgr->max_send_wr, lnk->lgr->max_recv_wr);
-	qp_attr.cap.max_send_wr = cap;
-	qp_attr.cap.max_recv_wr = cap
-
-to avoid assumption on `max_send_wr`, `max_recv_wr` relative values.
-
-[...]
-> diff --git a/net/smc/smc_sysctl.h b/net/smc/smc_sysctl.h
-> index eb2465ae1e15..8538915af7af 100644
-> --- a/net/smc/smc_sysctl.h
-> +++ b/net/smc/smc_sysctl.h
-> @@ -25,6 +25,8 @@ static inline int smc_sysctl_net_init(struct net *net)
->  	net->smc.sysctl_autocorking_size = SMC_AUTOCORKING_DEFAULT_SIZE;
->  	net->smc.sysctl_max_links_per_lgr = SMC_LINKS_PER_LGR_MAX_PREFER;
->  	net->smc.sysctl_max_conns_per_lgr = SMC_CONN_PER_LGR_PREFER;
-> +	net->smc.sysctl_smcr_max_send_wr = SMCR_MAX_SEND_WR_DEF;
-> +	net->smc.sysctl_smcr_max_recv_wr = SMCR_MAX_RECV_WR_DEF;
->  	return 0;
->  }
->  
-> diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
-> index b04a21b8c511..f5b2772414fd 100644
-> --- a/net/smc/smc_wr.c
-> +++ b/net/smc/smc_wr.c
-> @@ -34,6 +34,7 @@
->  #define SMC_WR_MAX_POLL_CQE 10	/* max. # of compl. queue elements in 1 poll */
->  
->  #define SMC_WR_RX_HASH_BITS 4
-> +
-
-Please avoid unrelated whitespace only changes.
-
-Thanks,
-
-Paolo
-
+> -	phy->clk = devm_clk_get(dev, NULL);
+> +	phy->clk = devm_clk_get_optional(dev, NULL);
+>  	if (IS_ERR(phy->clk))
+>  		return dev_err_probe(dev, PTR_ERR(phy->clk),
+>  				     "failed to get clk\n");
+> 
 
