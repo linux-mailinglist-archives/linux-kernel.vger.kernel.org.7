@@ -1,368 +1,182 @@
-Return-Path: <linux-kernel+bounces-832655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81780BA0061
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:32:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91BCBA0099
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AE9189D91B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DBD4E0EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61232DF3CC;
-	Thu, 25 Sep 2025 14:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A602DC79E;
+	Thu, 25 Sep 2025 14:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NobN07bN"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdT56ePb"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD832DC77B;
-	Thu, 25 Sep 2025 14:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAF22D9795
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758810696; cv=none; b=lHdvYckmyocCqFjLtNSP5EttJBMAIeW+sY3ix7D3koQ1+A9fPBTgwGVkCyXaYVsh1j2O2SlaPQ8scDMj1YPuwncZ0wZH09cv/N9e4W1fEH4MAyRu489xbG/uOTWYLZirSezVmh5B2wk3H7VxIQ3ZRnirddDSjEx0JXSrAab7Kb4=
+	t=1758810747; cv=none; b=HhsPaMSBHQw6PW5kNXeaUdIZ4QIFKdwQAFi+StllMvmgUCNtyhdI9/CocQKchIR8oBAs37KxRpug1rsn3a3lQRRAYitXCDAgFRajmljSpcx4EAPwoqPPDeVKvO+2SLi5riKyb3HhhLrAcD63uXyAa8tu2lgzs1LoZzgt5rojufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758810696; c=relaxed/simple;
-	bh=Z2etouC0e/MupXGZRqvPNjZ+eDUkxJ7q4FAYyzxRnbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P5FmtUzUPqOOksT2Mu690JNLF/crFF+PILGsvxaC5qKBHFhrNZ5sU8py/7WNrVKVNWiSvjzgTakTuGmoPiG54HUyk4+WDkMvpv0v/jGKh907yF+YLnnDGU1y1c6axYAuHp8dnTvEaQU1xE5X2WvBqeKCH+zOLSvdYhmwq54MsOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NobN07bN; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758810693;
-	bh=Z2etouC0e/MupXGZRqvPNjZ+eDUkxJ7q4FAYyzxRnbk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NobN07bNPhtZDfAE2nl12FeQcoOPv+RSZ15qU+YcnirjSx8jEIkW013s/v8el7PCk
-	 hEtjtjwxbLhFR/Hjxp8kAVtoiCbjOySaOzpv4Oh7iJhty53Ca4rIwtg3x0Eq8iI2JQ
-	 L1AvRjOzQBaq3IYb1W1vCQy1NbgXvnqcEy793HZXI56lo2kMl3hqHs+XJxGEshJS2L
-	 HWopjBGYeS5Hj29zFsmJYQHidUrSlzH0WH8gZHnUtk33fiIJ3RvxQ980CONTQ/Ve3N
-	 6GD4cQhdQv1+0Dk+eDp1efbZq/rTzDuZtHhODG+Za5GgTDnohuuyGd7x9CttLTGaMP
-	 /N/eLkzpOyvGg==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9CE7F17E14FB;
-	Thu, 25 Sep 2025 16:31:32 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: ulf.hansson@linaro.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	nfraprado@collabora.com,
-	fshao@chromium.org,
-	y.oudjana@protonmail.com,
-	wenst@chromium.org,
-	mandyjh.liu@mediatek.com,
-	mbrugger@suse.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH v2 5/5] pmdomain: mediatek: Add support for MT8196 HFRPSYS power domains
-Date: Thu, 25 Sep 2025 16:31:16 +0200
-Message-ID: <20250925143122.39796-6-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250925143122.39796-1-angelogioacchino.delregno@collabora.com>
-References: <20250925143122.39796-1-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1758810747; c=relaxed/simple;
+	bh=a3eHXMsuFNWlqugS1mVxJZ5TpyBqt+o2aBCaTiA/Ha0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBWD2JMkO9eX5QI0iC8vflnLI1mgP8ayZzgA2mQO37d2m7coQZTlnqhJ2C+Twy3iDwxQ1yEE+v9IDdXvCQdIK9jdPnhEch0BU23tP8Clt4SwFtt/9eboegAoOsbXZc0V+o6+cbzVSlWkJNYaXK7MFInp7HWXr/nWPvTmKPaUOJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdT56ePb; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2570bf6058aso15022475ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758810745; x=1759415545; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uNu4f91vx1JyBhQ6SCI1W3iAa/Ld0gsHPQbTIviSg64=;
+        b=IdT56ePbNj2qhvnyd9ruau3B8XuTK2Xi/DR5PRwPbRL0c/8tt9c2gK2MFjep7VAAD3
+         yn3TS4+CYUS3DCQktRAsV0vOm/Bthn8D2Cl61jmWtnVH7WSK2GfECxy0zyDD33MtEq79
+         jYAtQ/Ivt9qtfcV1BPqSNcXeVoh5nL+dtE5uhabKSucjMPQSaacNn3mwwc4iMJ4HoPdE
+         oFFTaANp/J7IuVvLy8v6X/y73VgxUFRCXPydlNBcnaRym3AvttqYFHoEw59s5NyHBFus
+         BA5mNE01RwP29uLoORIya1JJaZETdwNEu9G37aYO/V5TtOUb9rc3lDoQ2bAKrlu5ldGo
+         G/wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758810745; x=1759415545;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNu4f91vx1JyBhQ6SCI1W3iAa/Ld0gsHPQbTIviSg64=;
+        b=g1qzFfMe7KwEXTOOedGV1ipQUwO0zlB8y2PVEVhOhbXtfPsD5S9FK9gEfy9/c7rmEp
+         i647x6ylBelRf/3h11wq/Vyv9vsxW6A58/cR8Hxy+bUwU+E5+OlsbF58GmyJch3Y7lOE
+         G1P95cMd9vqexiq3Hre4sG1kJ/L2ZAESSJ4uBUJm1QGxt9we7CQ5n99xr0U9GAjd7ihu
+         ljFKhy/BRLmqbf+zgeX2gbEaS6DZcxArs1UVi417uadt9TsxinEeZke9DHYl1sNe8pt4
+         qLDRhw6E0e5YOmltpX1duXkd5PZu3sPx1W1tIb7CxJpQKaBItPzgq4Uu9gLVOmq7hf9D
+         3UDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVai7vs14EOYE1t18H3/SsmPAiC6zvufcFm5GFeiTS2FZlHpPo2TKFAzAogTrUVyew3PtyacFJ9VmI6tAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNWPtXFBpOj2c9AFIZSpq1x+N8NfzTXZfE3UV1HI+Zrk58plwa
+	AKQkFxFArPjkMiip8RX2RGsF3urZ3lJ/I13zzUPOwMrDFe4X2CIjDks2
+X-Gm-Gg: ASbGncsC8C9CdyHj0+uYPAB42QycB/V5wsFMLxaS01xbrY7YCbPiSFq++gZgURq6FIf
+	9esCNZzrnEK3EWL10C51/4uaOW7Q2MM1YLwXQ83RKRIKSZRQ6EFdW5RfgkD0p/t6CASCqMWLL/W
+	TuwXCKNknV40QiCIAlMraDD/nm0m1eBFx8hk3EfHCNftCUgsw9M3sfUYM1LiAtNYs/6sePeoQuB
+	MD0Dml4W9PjkfbhGVHq8DHPFtDzjF5prObcve7SgY69XQD5U3R0mGNGkTyRbDi+gKdKJcfPIBhQ
+	h06NIxxjTtT1e6shPag56sRmcSKkGJ7ukmIFlS1AZZYA9LvT/MAUNNsfyeJcj80Frj1zkbYhXL2
+	lTeyqj4Y86mM55FPzFdHXVSVkxH3VqaJ4iI9QaVPjkBByCA==
+X-Google-Smtp-Source: AGHT+IEouWS18u5hzid+/58eqeK/Wz5H9vCOiw+suHDHfXTmYMG9kSe9BGY1UoAcE/k6e5ccR+b07w==
+X-Received: by 2002:a17:902:e806:b0:267:e097:7a9c with SMTP id d9443c01a7336-27ed4a5ec6dmr34833405ad.53.1758810744759;
+        Thu, 25 Sep 2025 07:32:24 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68a0203sm26846475ad.100.2025.09.25.07.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 07:32:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 25 Sep 2025 07:32:22 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Marius.Cristea@microchip.com
+Cc: jic23@kernel.org, dlechner@baylibre.com, linux-hwmon@vger.kernel.org,
+	jdelvare@suse.com, nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org,
+	linux-kernel@vger.kernel.org, andy@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH 0/2] Add support for Microchip EMC1812
+Message-ID: <36c4794d-2116-4d3e-8ad5-ac3ec764a7a1@roeck-us.net>
+References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
+ <20250920123340.1b1d03be@jic23-huawei>
+ <a97486df-9f15-4280-8cb3-d77f4cf223df@roeck-us.net>
+ <e6ab5becf5908d83857fcfd57823ffd259e6db90.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e6ab5becf5908d83857fcfd57823ffd259e6db90.camel@microchip.com>
 
-Add support for the HFRPSYS Multimedia power domains found in the
-MediaTek MT8196 Chromebook SoC.
-Those power domains are all managed by the Hardware Voter MCU.
+On Thu, Sep 25, 2025 at 09:09:04AM +0000, Marius.Cristea@microchip.com wrote:
+> Hi Guenter,
+> 
+> Thank you for the feedback.
+> 
+> On Tue, 2025-09-23 at 19:11 -0700, Guenter Roeck wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > know the content is safe
+> > 
+> > On 9/20/25 04:33, Jonathan Cameron wrote:
+> > > On Wed, 17 Sep 2025 15:21:56 +0300
+> > > Marius Cristea <marius.cristea@microchip.com> wrote:
+> > > 
+> > > > This is the iio driver for EMC1812/13/14/15/33 multichannel Low-
+> > > > Voltage
+> > > > Remote Diode Sensor Family. The chips in the family have one
+> > > > internal
+> > > > and different numbers of external channels, ranging from 1
+> > > > (EMC1812) to
+> > > > 4 channels (EMC1815).
+> > > > Reading diodes in anti-parallel connection is supported by
+> > > > EMC1814, EMC1815
+> > > > and EMC1833.
+> > > > 
+> > > > Current version of driver does not support interrupts, events and
+> > > > data
+> > > > buffering.
+> > > Hi Marius,
+> > > 
+> > > For a temperature monitoring device like this, the opening question
+> > > is
+> > > always why not HWMON?
+> > > 
+> > > There are various reasons we have temp sensors in IIO but mostly
+> > > they are not
+> > > described as being monitors and this one is.
+> > > 
+> > > IIO may well be the right choice for this part, but good to lay out
+> > > your
+> > > reasoning and +CC the hwmon list and maintainers.  There is an
+> > > emc1403
+> > > driver already in hwmon, so perhaps compare and contrast with that.
+> > > 
+> > > I've +CC Jean, Guenter and list to save sending a v2 just to do
+> > > that.
+> > > 
+> > 
+> > At first glance it looks like the series is (mostly ?) register
+> > compatible
+> > to the chips supported by the emc1403 driver, so it should be
+> > straightforward
+> > to add support for the emc180x series to that driver.
+> > 
+> > Guenter
+> 
+> Most of the register address are compatible. The EMC181X is an update 
+> (a newer generation) then the EMC1403.
+> 
+> The biggest improvement is that the EMC18XX has a continuous block of
+> registers in order to improve the temperature reading (that means some
+> addresses are overlapping with the older register maps) and a new set
+> of registers to  handle the "Rate Of Change" functionality.
+> Also the older EMC14XX has some hardcoded configuration/features based
+> on the part number.
+> 
+> Considering all of the above I consider that the complexity of the
+> EMC1403 will increase quite a lot without any real benefit and it will
+> be harder to be maintained.
+> 
+Ok.
 
-Reviewed-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pmdomain/mediatek/mt8196-pm-domains.h | 239 ++++++++++++++++++
- drivers/pmdomain/mediatek/mtk-pm-domains.c    |   4 +
- 2 files changed, 243 insertions(+)
+> I have submitted this as the fist iteration from a longer list of
+> feature that I want to add to the driver, including events and maybe
+> interrupts.
+> 
+> If nobody has anything against, I would like to add a separate driver
+> for EMC18XX into the IIO.
 
-diff --git a/drivers/pmdomain/mediatek/mt8196-pm-domains.h b/drivers/pmdomain/mediatek/mt8196-pm-domains.h
-index ce8d594c46f8..2e4b28720659 100644
---- a/drivers/pmdomain/mediatek/mt8196-pm-domains.h
-+++ b/drivers/pmdomain/mediatek/mt8196-pm-domains.h
-@@ -369,6 +369,239 @@ static const struct scpsys_hwv_domain_data scpsys_hwv_domain_data_mt8196[] = {
- 	},
- };
- 
-+static const struct scpsys_hwv_domain_data hfrpsys_hwv_domain_data_mt8196[] = {
-+	[MT8196_POWER_DOMAIN_VDE0] = {
-+		.name = "vde0",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 7,
-+	},
-+	[MT8196_POWER_DOMAIN_VDE1] = {
-+		.name = "vde1",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 8,
-+	},
-+	[MT8196_POWER_DOMAIN_VDE_VCORE0] = {
-+		.name = "vde-vcore0",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 9,
-+	},
-+	[MT8196_POWER_DOMAIN_VEN0] = {
-+		.name = "ven0",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 10,
-+	},
-+	[MT8196_POWER_DOMAIN_VEN1] = {
-+		.name = "ven1",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 11,
-+	},
-+	[MT8196_POWER_DOMAIN_VEN2] = {
-+		.name = "ven2",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 12,
-+	},
-+	[MT8196_POWER_DOMAIN_DISP_VCORE] = {
-+		.name = "disp-vcore",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 24,
-+	},
-+	[MT8196_POWER_DOMAIN_DIS0_DORMANT] = {
-+		.name = "dis0-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 25,
-+	},
-+	[MT8196_POWER_DOMAIN_DIS1_DORMANT] = {
-+		.name = "dis1-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 26,
-+	},
-+	[MT8196_POWER_DOMAIN_OVL0_DORMANT] = {
-+		.name = "ovl0-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 27,
-+	},
-+	[MT8196_POWER_DOMAIN_OVL1_DORMANT] = {
-+		.name = "ovl1-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 28,
-+	},
-+	[MT8196_POWER_DOMAIN_DISP_EDPTX_DORMANT] = {
-+		.name = "disp-edptx-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 29,
-+	},
-+	[MT8196_POWER_DOMAIN_DISP_DPTX_DORMANT] = {
-+		.name = "disp-dptx-dormant",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 30,
-+	},
-+	[MT8196_POWER_DOMAIN_MML0_SHUTDOWN] = {
-+		.name = "mml0-shutdown",
-+		.set = 0x0218,
-+		.clr = 0x021C,
-+		.done = 0x141C,
-+		.en = 0x1410,
-+		.set_sta = 0x146C,
-+		.clr_sta = 0x1470,
-+		.setclr_bit = 31,
-+	},
-+	[MT8196_POWER_DOMAIN_MML1_SHUTDOWN] = {
-+		.name = "mml1-shutdown",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 0,
-+	},
-+	[MT8196_POWER_DOMAIN_MM_INFRA0] = {
-+		.name = "mm-infra0",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 1,
-+	},
-+	[MT8196_POWER_DOMAIN_MM_INFRA1] = {
-+		.name = "mm-infra1",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 2,
-+	},
-+	[MT8196_POWER_DOMAIN_MM_INFRA_AO] = {
-+		.name = "mm-infra-ao",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 3,
-+	},
-+	[MT8196_POWER_DOMAIN_CSI_BS_RX] = {
-+		.name = "csi-bs-rx",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 5,
-+	},
-+	[MT8196_POWER_DOMAIN_CSI_LS_RX] = {
-+		.name = "csi-ls-rx",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 6,
-+	},
-+	[MT8196_POWER_DOMAIN_DSI_PHY0] = {
-+		.name = "dsi-phy0",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 7,
-+	},
-+	[MT8196_POWER_DOMAIN_DSI_PHY1] = {
-+		.name = "dsi-phy1",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 8,
-+	},
-+	[MT8196_POWER_DOMAIN_DSI_PHY2] = {
-+		.name = "dsi-phy2",
-+		.set = 0x0220,
-+		.clr = 0x0224,
-+		.done = 0x142C,
-+		.en = 0x1420,
-+		.set_sta = 0x1474,
-+		.clr_sta = 0x1478,
-+		.setclr_bit = 9,
-+	},
-+};
-+
- static const struct scpsys_soc_data mt8196_scpsys_data = {
- 	.domains_data = scpsys_domain_data_mt8196,
- 	.num_domains = ARRAY_SIZE(scpsys_domain_data_mt8196),
-@@ -383,4 +616,10 @@ static const struct scpsys_soc_data mt8196_scpsys_hwv_data = {
- 	.type = SCPSYS_MTCMOS_TYPE_HW_VOTER,
- };
- 
-+static const struct scpsys_soc_data mt8196_hfrpsys_hwv_data = {
-+	.hwv_domains_data = hfrpsys_hwv_domain_data_mt8196,
-+	.num_hwv_domains = ARRAY_SIZE(hfrpsys_hwv_domain_data_mt8196),
-+	.type = SCPSYS_MTCMOS_TYPE_HW_VOTER,
-+};
-+
- #endif /* __SOC_MEDIATEK_MT8196_PM_DOMAINS_H */
-diff --git a/drivers/pmdomain/mediatek/mtk-pm-domains.c b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-index 18f0b9b960d9..ac144ab8fce0 100644
---- a/drivers/pmdomain/mediatek/mtk-pm-domains.c
-+++ b/drivers/pmdomain/mediatek/mtk-pm-domains.c
-@@ -1158,6 +1158,10 @@ static const struct of_device_id scpsys_of_match[] = {
- 		.compatible = "mediatek,mt8196-power-controller",
- 		.data = &mt8196_scpsys_data,
- 	},
-+	{
-+		.compatible = "mediatek,mt8196-hwv-hfrp-power-controller",
-+		.data = &mt8196_hfrpsys_hwv_data,
-+	},
- 	{
- 		.compatible = "mediatek,mt8196-hwv-scp-power-controller",
- 		.data = &mt8196_scpsys_hwv_data,
--- 
-2.51.0
+IMO this should be a hwmon driver.
 
+Guenter
 
