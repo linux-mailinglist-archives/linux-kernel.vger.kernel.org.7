@@ -1,153 +1,195 @@
-Return-Path: <linux-kernel+bounces-832446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFE2B9F56A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB93B9F58E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38161BC3D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7231E1892564
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68871DB958;
-	Thu, 25 Sep 2025 12:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6338C1DF248;
+	Thu, 25 Sep 2025 12:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCkjCgww"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8CmWYcb"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387571A314D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AFD18FDAF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804490; cv=none; b=EpWbbYJIEf4tx4aniL8R8HTn6OKcl69wQyq3A/AytA7rjltiC1k+RxDV0drHKMUYpiGS+Q4so8ILB6vBgP2Y0ek2dM/hE4vCBQ6h3z+OIrsrQ3npvvTweRM4StpuHYV54tc/LBgE5Tvf1PGl4JXz3ITLBvhGFidrAH2Vk1T4HHE=
+	t=1758804597; cv=none; b=IQinHJyd51lc2qWXf9Cm4XBrAJa2RWvWmGejINdMWsxjay7TxrWdE/bnsKk+LXr+oPjE2ljZYD+irNN21Ixo7hIPc4MbnoAzfVCCf7JCCL0VP5TpuejY8YTLp2OuHqr8ph+dcwz5pNsQFbapW4ZkNY/H7pwnPPoWjRSZQN2Jsas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804490; c=relaxed/simple;
-	bh=1ipVFYFMiuR5F7EukbEmgjPCYH8EmaeiYw+uLkYVTrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJBTYmLEtCmdqYjjyVJ2kjY1Sara4VszfH30JBevcOvR2k/7NJADKdfDJJlOzvUmvNkuS8xQQ1Vf1vuy0E7X8YEyHxvzhcS6QRu7ofX0sTm8RK20bsFWgkHeGB1uEr9EbCHI3TYXT2P++zZJrEiw/kH71bTYnRvWzglwocS5uYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCkjCgww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96FCBC4CEF0;
-	Thu, 25 Sep 2025 12:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758804489;
-	bh=1ipVFYFMiuR5F7EukbEmgjPCYH8EmaeiYw+uLkYVTrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qCkjCgwwygXnCnJyGWTLqwljG2Tw3EvDltbC2CckpYzg4V93tH3QiwNm+U59O4Zqc
-	 fWyKN3frfGYIIr4N2yKjjHdj96z4SieyGAcGTc9CLrtUYQd43i6rPB66tacb10qd+I
-	 HQTsy4fGhENe+SogGUfCT78kjDuIs9DUjNJBf5apMFNYukufFI5nJnJy3qlCqJZJ7D
-	 DyIGDxFH8f1pzNP0pcx+G/70bCPk4erH8Az7QhxntDX65gJTmyDtcdXIzNm2Nten/f
-	 YdFoCGPk/3kXJxYx8IKnUnBgDNBrNITsqKa+9wx8AQEJPAQD73IIgpEpJJzeISEpsg
-	 RtjUyFTGYMkVA==
-Received: by venus (Postfix, from userid 1000)
-	id 7C85A1805A0; Thu, 25 Sep 2025 14:48:07 +0200 (CEST)
-Date: Thu, 25 Sep 2025 14:48:07 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Michael Riesch <michael.riesch@collabora.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel@collabora.com, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH] drm/panel: sitronix-st7789v: fix sync flags for
- t28cp45tn89
-Message-ID: <hktw42pbb4rk3azapasigphhlbndkh5pmcm6fucdvk3ukoiull@dpoh7amjyymh>
-References: <20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com>
- <6e50e9fb-10f5-48e6-bc04-ec66ca90a626@mailbox.org>
+	s=arc-20240116; t=1758804597; c=relaxed/simple;
+	bh=MF54MGCuDfi8gReEhm6Ls7UVrLmOKS7TeRw9elzcLcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGlPQGGb6ZYl5IVtDZsqeVCueyjonzF+bHa3v6+H6LYmbaK3+7DB7q3TJpAbfdVVCAWZd5FDUqHHDotbLTIAXYoTIa7etOpBEmCcPIS2xHYNkNhPdD00vvCrSreCij+MpLZGkofpp5oRFm32X1orGx4yWUpvwyHjIf3hKcflGhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8CmWYcb; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e33b12589so2046655e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758804594; x=1759409394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uDHkDpnwsvXEtA5926rNuw5z8tqEQhjcHTKI7hITw3g=;
+        b=A8CmWYcbs7J+eaUMRhy/EpGN/Zxtp0fG2sJ5usJeQBUhcph4/piPijJT+AgMs1pjV9
+         iDGJTwRiIEAnIhrJJEXWLfFMuwRG+YQsMHnp5DR4LptAmDyubFZsiuJdcMQueP9FWzKg
+         b9puH6pI4G+R2VP/i+afwnGPTRETsgihqiSzJkS2El5IaNJuxLaixaMN7sXiWKNgyO1f
+         eeJcNs2YdDvghSLUnUrm++t3VLK2Egies46b22P0Ff+EfxzsL/6VptO2sqL3VmECTaDd
+         GCKfZ+LGrnC2fbqdaPqltYch+G5MBg9qXqjqjhJ1Dlk7fk1JUNghnpSuizHZZl6CZ7ip
+         mwEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758804594; x=1759409394;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uDHkDpnwsvXEtA5926rNuw5z8tqEQhjcHTKI7hITw3g=;
+        b=VtDWWGyON0tPZRqxE9pdmJ8WZhTsaF63jIZey6GqsqD2+eyhQ9raKBd93+JhuIJxFR
+         3Jb8Vyrct13VyS9zTrBMBbQPlbztxhP25S01qdDHqmt9b9hdSo8z238twTLsYUCkaaqi
+         Vwa6E9ZXmIYsHc16IuNKSKLB/L5TBseo9e8NwRn/WyJpKuVxe2SpICHsWfpZthMd5hQh
+         wXZwrun7khqtQYjnjH4fuucFBOjwff0QCiUawLvZmorweFzN3Hs5HT60tOMXxuAxI6Vr
+         RLuDw+DXoY+0AXLyOTjEFkGrWF1Oqj0jxB9MfW4WLsXr2m6cAigZBEgvJfTmy3RiznaM
+         tW7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHOgWAIAGYoe10ns6w8RU+FMdN5vHIcj0TNxzPgZD2Boq3L3FD+A+m0ohamTrkZZsGiZeLtWa+B9I4Txs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5VvhBxmhX7nzQwEXasPBWk/NopXz4xgnbcfxhZR1n3e24+Hc0
+	u7Grm8QJk/bZnWQUtvz6hl+kSKirfY3QZtrTLvgYw6EkuAYGu1XaQ4E=
+X-Gm-Gg: ASbGnctlPo3NspuenEw1ioVr6WhGHAP7ZX91XIDDBBqY+f2e29AnHho+KJWBwdrB/0J
+	qo3cxqLCIm5GuZZZ99Kpd4zlLSGt6ky3nwYn394QYax1q4dJO4rwdZFHVLOshi63eEqEKMiO0/l
+	o4MT17nLllhUH7wACkGZRIgiuERfZhn0lYJ9oTiHHKuqhUrSLs4+ggYRhOwEDAscE7nt4PTY/0c
+	wkJg17xofpW0gPjnMwPHlIMAFKpAM4dJ6K5+CXFKwKRUf2sCQlU+QlJivj85vmIrn6cu5MYP/+Z
+	qen2ZfcEXfEuyOV7cwl5vSBsPNYP12HmLVbXwrrt8laA2p8UsRICyIENOx5eaYzbZPrILdsTWcO
+	hkgYVYEzTI8ohPmSo6DMDRa3nOjMUXi55NroOmUi/SWun4kWlG1vHTMFKFo8V
+X-Google-Smtp-Source: AGHT+IGRbKrVkaHhQiDxnGP95SsqRWK4KznirLakvgFxIIq9h6bEbsYldjuEYHWl6BnbYeAb+ou3WQ==
+X-Received: by 2002:a05:6000:2a89:b0:3ec:db87:e8a9 with SMTP id ffacd0b85a97d-40e3ab888bfmr1523246f8f.0.1758804593967;
+        Thu, 25 Sep 2025 05:49:53 -0700 (PDT)
+Received: from localhost (20.red-80-39-32.staticip.rima-tde.net. [80.39.32.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32bf61b1sm18914565e9.2.2025.09.25.05.49.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 05:49:53 -0700 (PDT)
+Message-ID: <0669b097-0bf1-4895-9c2a-5e953aebbfab@gmail.com>
+Date: Thu, 25 Sep 2025 14:49:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w64dwrdjv5cr2ceg"
-Content-Disposition: inline
-In-Reply-To: <6e50e9fb-10f5-48e6-bc04-ec66ca90a626@mailbox.org>
+Subject: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
+To: Tony Battersby <tonyb@cybernetics.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	adadasdasdasasd@adasdasasdasdasdas.smtp.subspace.kernel.org
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net, KERNEL ML <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <2cc10189-6953-428e-b34e-b1c714fc0eae@cybernetics.com>
+Content-Language: en-US, en-GB, es-ES
+From: Xose Vazquez Perez <xose.vazquez@gmail.com>
+In-Reply-To: <2cc10189-6953-428e-b34e-b1c714fc0eae@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/8/25 9:10 PM, Tony Battersby wrote:
 
---w64dwrdjv5cr2ceg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/panel: sitronix-st7789v: fix sync flags for
- t28cp45tn89
-MIME-Version: 1.0
+> (target mode)
 
-Hello Marek,
+> [...]
 
-On Thu, Sep 25, 2025 at 02:15:41AM +0200, Marek Vasut wrote:
-> On 9/24/25 11:46 PM, Sebastian Reichel wrote:
-> > From: Sebastian Reichel <sebastian.reichel@collabora.com>
-> >=20
-> > I planned to set the polarity of horizontal and vertical sync, but
-> > accidentally described vertical sync twice with different polarity
-> > instead.
-> >=20
-> > Note, that there is no functional change, because the driver only
-> > makes use of DRM_MODE_FLAG_P[HV]SYNC to divert from the default
-> > active-low polarity.
-> >=20
-> > Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
-m>
-> > Closes: https://lore.kernel.org/all/20250923132616.GH20765@pendragon.id=
-easonboard.com/
-> > Fixes: a411558cc143 ("drm/panel: sitronix-st7789v: add Inanbo T28CP45TN=
-89 support")
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >   drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/g=
-pu/drm/panel/panel-sitronix-st7789v.c
-> > index 04d91929eedda092b966b8cffdef5b267748f190..dedf0a390a88dd45a8179e2=
-d22e872128c87cfda 100644
-> > --- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> > +++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-> > @@ -261,7 +261,7 @@ static const struct drm_display_mode t28cp45tn89_mo=
-de =3D {
-> >   	.vtotal =3D 320 + 8 + 4 + 4,
-> >   	.width_mm =3D 43,
-> >   	.height_mm =3D 57,
-> > -	.flags =3D DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC,
-> > +	.flags =3D DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_PVSYNC,
-> Is this panel somehow special with its NHSYNC / PVSYNC , compared to the
-> other supported panels, which all use PHSYNC / PVSYNC ? I would expect all
-> of these DSI TCON to use the same polarity, how come this one needs NHSYN=
-C ?
+> I ran into some HBA firmware bugs with QLE2694L firmware 9.06.02 -
+> 9.08.02 where a SRR would cause the HBA to misbehave badly.  Since SRRs
+> are rare and therefore difficult to test, I figured it would be worth
+> checking for the buggy firmware and disabling SLER with a warning
+> instead of letting others run into the same problem on the rare
+> occasion that they get a SRR.  This turned out to be difficult because
+> the firmware version isn't known in the normal NVRAM config routine, so
+> I added a second NVRAM config routine that is called after the firmware
+> version is known.  It may be necessary to add checks for additional
+> buggy firmware versions or additional chips that I was not able to
+> test.
+> 
+> Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+> ---
+>   drivers/scsi/qla2xxx/qla_dbg.c     |    1 +
+>   drivers/scsi/qla2xxx/qla_init.c    |    1 +
+>   drivers/scsi/qla2xxx/qla_target.c  | 1030 ++++++++++++++++++++++++++++
+>   drivers/scsi/qla2xxx/qla_target.h  |   81 +++
+>   drivers/scsi/qla2xxx/tcm_qla2xxx.c |   15 +
+>   5 files changed, 1128 insertions(+)
 
-I wrote this based on reverse engineering incl. quite a bit try-and-error a=
-nd
-don't have very good data about the panel. Using DRM_MODE_FLAG_PHSYNC like =
-all
-the other panels results in garbage data on the display.
+> [...]
 
-Greetings,
+> + * Return true if the HBA firmware version is known to have bugs that
+> + * prevent Sequence Level Error Recovery (SLER) / Sequence Retransmission
+> + * Request (SRR) from working.
+> + */
+> +static bool qlt_has_sler_fw_bug(struct qla_hw_data *ha)
+> +{
+> +	bool has_sler_fw_bug = false;
+> +
+> +	if (IS_QLA2071(ha)) {
+> +		/*
+> +		 * QLE2694L known bad firmware:
+> +		 *   9.06.02
+> +		 *   9.07.00
+> +		 *   9.08.02
+> +		 *   SRRs trigger hundreds of bogus entries in the response
+> +		 *   queue and various other problems.
+> +		 *
+> +		 * QLE2694L known good firmware:
+> +		 *   8.08.05
+> +		 *   9.09.00
+> +		 *
+> +		 * QLE2694L unknown firmware:
+> +		 *   9.00.00 - 9.05.xx
+> +		 */
+> +		if (ha->fw_major_version == 9 &&
+> +		    ha->fw_minor_version >= 6 &&
+> +		    ha->fw_minor_version <= 8)
+> +			has_sler_fw_bug = true;
+> +	}
+> +
+> +	return has_sler_fw_bug;
+> +}
 
--- Sebastian
+> [...]
 
---w64dwrdjv5cr2ceg
-Content-Type: application/pgp-signature; name="signature.asc"
+ > +/* Update any settings that depend on ha->fw_*_version. */> +void
+> +qlt_config_nvram_with_fw_version(struct scsi_qla_host *vha)
+> +{
+> +	struct qla_hw_data *ha = vha->hw;
+> +
+> +	if (!QLA_TGT_MODE_ENABLED())
+> +		return;
+> +
+> +	if (ql2xtgt_tape_enable && qlt_has_sler_fw_bug(ha)) {
+> +		ql_log(ql_log_warn, vha, 0x11036,
+> +		    "WARNING: ignoring ql2xtgt_tape_enable due to buggy HBA firmware; please upgrade FW\n");
+> +
+> +		/* Disable FC Tape support */
+> +		if (ha->isp_ops->nvram_config == qla81xx_nvram_config) {
+> +			struct init_cb_81xx *icb =
+> +				(struct init_cb_81xx *)ha->init_cb;
+> +			icb->firmware_options_2 &= cpu_to_le32(~BIT_12);
+> +		} else {
+> +			struct init_cb_24xx *icb =
+> +				(struct init_cb_24xx *)ha->init_cb;
+> +			icb->firmware_options_2 &= cpu_to_le32(~BIT_12);
+> +		}
+> +	}
+> +}
 
------BEGIN PGP SIGNATURE-----
+If you want to review the firmware changelog, mainly: FCD-1183 (FCD-371, ER147301), FCD-259, ER146998
+(from 9.00.00 to 9.15.05 [06/10/25]):
+https://www.marvell.com/content/dam/marvell/en/drivers/2025-06-10-release/fw_release_notes/Fibre_Channel_Firmware_Release_Notes.pdf
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjVOgIACgkQ2O7X88g7
-+poTjRAAp2ByyBdVykfjLW0AzuSIfUBeMB5GOwwYrD7GLn4AZJB6HeGmVYFCkxXU
-OYjLoIVbE6ufUqpPRvPswFioeoU0lkA41I4qZbMzwbid688B56pvxLb+CBy9nC6f
-OKCiYEPooFGaZGpd/KyOraEfi5xpxSFPGlSMNxujq8XZ4Crttd7CIZA3CJUZbRTo
-qa0MGkYGmg/px5vrcv0G4d9KkbB4S9hUzVvJLQzatrfXtpYko/14QN1BnCtuHyO/
-eH1V02P2Q04faSBpkBcehN0GlW8t2sMnW4RVk9ouJG0Ggu0dfgLCk258scB4Hg1m
-QGx2u5YvOVvCzz//PVZZ7jYGiFplwh+X4AZLDZLyJnruwEB9fyKWbGTAm0gYlQZ5
-AGeeWBE2FyLzCu3Ywhke1PBfOy1AAAUuM9vNrtmOIQoqSIkKVcYwQ1qU6k5yRcjN
-fp6QQLzEP9YH15BF6SM6CJ9KHbTVjZMHY9itFt6mb74HVLKV5x0XhPw5L8hOJHNT
-mJQDAHdhspg19+lBVGhxHRcfypRIBh9nF2bpm7Vzv5SGLs85mBHHkL2wmkB4n21M
-OckYVdXkL5ALGa0K25CN3Dw3w38oLfaEV+BfjlM6+GJi2ZOlniIBtE+deseEp9hE
-v3dQXvYk0FNjtJ/Z7nY9P85xkNOeXjO/r2Ysmm0mG9GovZyx7NI=
-=sv8+
------END PGP SIGNATURE-----
-
---w64dwrdjv5cr2ceg--
+It's look like all 2{678}xx devices/chips are affected by this bug.
+Perhaps the Marvel crew could provide more information on this.
 
