@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-832691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D38BA01C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D925BA01BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070D5381B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBC5B384243
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB0B2F3C00;
-	Thu, 25 Sep 2025 15:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6CB2EBBAA;
+	Thu, 25 Sep 2025 15:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAEhzFjJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="POnwGlkz"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204FF2ECD36;
-	Thu, 25 Sep 2025 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8582E5B08;
+	Thu, 25 Sep 2025 15:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812577; cv=none; b=SMeWqMPYE1gUoKCdyKfRU2TJHJDpa1O7eEgCfVV/ZnkjTliB6drCpOFDSyADp94AgBbGS5yrphUNXrC1A0xzcCNgpsVzA/3D6XzkmS5qk7VKHSzZiGRzU99l4OXm9MMYSOL2WFbz1aDleQm2VByj5cn3JLXCYHq/R5+rLjU1c6w=
+	t=1758812576; cv=none; b=pr2uzm49KGzRdAFuthfG3Zkneg8Ve/xiXWlDJAfYm5vZ9h2Q+8X3gWVOKjmeVZO6CVIN9SEbPrvN/sFlyMGs7Tvo7v1XIuFZWnvqxIZzuS4/Mf4iYZPjU43AUeh+7RseMIAOuFxcpQ4ick5rcadSUustXeal+rKXaUp/1qT5+y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812577; c=relaxed/simple;
-	bh=f96Akqi91wDUkb2jbBfRZORuWKfC1sS/5pzaMZxecxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XDPh6nyP5dEfjhk20m5JmDZyEGyjxJYuc+p27WKDH4kWK1fMEXvZ+kFgV2FoWE6J28TE1jJ5uGQOQwzxyZI5xrrn+nuXDjLlxhyNP1EZRB3qI2LddLkjMxa46CFelWKoOksVFX3KXMYOLJ3Mya2mk31oJQum3csM3hbnWrZTyMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAEhzFjJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FDC9C113D0;
-	Thu, 25 Sep 2025 15:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758812576;
-	bh=f96Akqi91wDUkb2jbBfRZORuWKfC1sS/5pzaMZxecxw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jAEhzFjJoMqIFHLF21veHHWE4VMd7nyVqJdDMQd47s/NYfV0joRS2ifMuhCYSkypn
-	 RI6HgN9oxFjGSH+8AE92X4m9fTCzcUOd1UOFE0fw1Fbr7T+EYJU1y6rAhilPPpBsw7
-	 PS+fsNsT6gp3q9hIIpLx4YBm23Qq8TRF68rOcmaQEkDcrGnpnauN6vDLJRrc+X9SDq
-	 0K2Ed5ivzZ9bTn5+HhqnGRFVJdkMfMxwgRnZIaLHQmeW14YAsK4j4Ea6fFi8Ov3y8i
-	 ds78tncbbnJxGVEhkDXzLM+RA3Hw10ofrRG6kINqebrR3hEJAjhIx8t8SNPhNt/wGd
-	 I81y/5hmv4uAA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v1nUf-000000006Lc-0Tb4;
-	Thu, 25 Sep 2025 17:02:49 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] mfd: altera-sysmgr: fix device leak on sysmgr regmap lookup
-Date: Thu, 25 Sep 2025 17:02:19 +0200
-Message-ID: <20250925150219.24361-1-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
+	s=arc-20240116; t=1758812576; c=relaxed/simple;
+	bh=hdrv1AmFvqjTD8G//IqirsAhjDI+6iVgBVskbkdogLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z5TaLDNZp9f2aWZucWEf9wz+Lk9dKl/EOMtgxtMKPys6KY1k8YAf2xvvKNcFhLzQ0oYaVn9OBykoA8YVUmpc8f9w1WlCdyxaZxi/YO8NpueTO1GHaIk+mEkKTTN9+EnPzhs+M5WzL2KioXPDgkJ1mFWjP2xXPpDbz9N5/Ec21tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=POnwGlkz; arc=none smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1758812574; x=1790348574;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hdrv1AmFvqjTD8G//IqirsAhjDI+6iVgBVskbkdogLE=;
+  b=POnwGlkzDxFO9Ta+/mKr7kLmwR0BJwmmYNT1al0rl8xc168jzgYBy1DY
+   YHajYogcBJ90oJGJbENwzbnjWEgXalETuAvO6lAC44Z8P1dPQ4Vpp2lwb
+   5sXWJ7Z6WujbpZmzP6O7VYqNdRA1mKwitnLYVb7aCSHqsAzwL8mj8GNtS
+   1/QRO5TyVV+bNvA6J6NJ/IEbzG4ARywdMYhCtsvqJxZMCP1w2zfsm7i+3
+   dbA0Jq5fgIiXA4xpF0ZG2t9PYH014ho06L/LUZIWbW1MZpcFPpYDUWmyW
+   IVNbTDbjEe4orpPBK2pPhmtzBBzRnE3i1/UsCCWociKrONjZe4Ib8LYoA
+   A==;
+X-CSE-ConnectionGUID: AgFuHQODTJmPHnAmHHCSQw==
+X-CSE-MsgGUID: YobEOcMbQaqk/vYOJmH2bQ==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751212800"; 
+   d="scan'208";a="130347638"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Sep 2025 23:02:54 +0800
+IronPort-SDR: 68d5599e_rljV9ofVt6wOlgMDiIhalKv6L1AoLuyEZj7rXU3iwymyjbB
+ PMk4yHu4F5z7RzZnJpAVZsoASMiwNDlmvuBSvtA==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2025 08:02:54 -0700
+WDCIronportException: Internal
+Received: from c02g55f6ml85.ad.shared (HELO C02G55F6ML85.wdc.com) ([10.224.183.46])
+  by uls-op-cesaip02.wdc.com with ESMTP; 25 Sep 2025 08:02:51 -0700
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-btrace@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v2 04/15] blktrace: untangle if/else sequence in __blk_add_trace
+Date: Thu, 25 Sep 2025 17:02:20 +0200
+Message-ID: <20250925150231.67342-5-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,33 +88,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure to drop the reference taken to the sysmgr platform device when
-retrieving its driver data.
+Untangle the if/else sequence setting the trace action in
+__blk_add_trace() and turn it into a switch statement for better
+extensibility.
 
-Note that holding a reference to a device does not prevent its driver
-data from going away.
-
-Fixes: f36e789a1f8d ("mfd: altera-sysmgr: Add SOCFPGA System Manager")
-Cc: stable@vger.kernel.org	# 5.2
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- drivers/mfd/altera-sysmgr.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/trace/blktrace.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/altera-sysmgr.c b/drivers/mfd/altera-sysmgr.c
-index fb5f988e61f3..90c6902d537d 100644
---- a/drivers/mfd/altera-sysmgr.c
-+++ b/drivers/mfd/altera-sysmgr.c
-@@ -117,6 +117,8 @@ struct regmap *altr_sysmgr_regmap_lookup_by_phandle(struct device_node *np,
- 
- 	sysmgr = dev_get_drvdata(dev);
- 
-+	put_device(dev);
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index 51745832c713..11e264f67851 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -278,10 +278,19 @@ static void __blk_add_trace(struct blk_trace *bt, sector_t sector, int bytes,
+ 	what |= MASK_TC_BIT(opf, META);
+ 	what |= MASK_TC_BIT(opf, PREFLUSH);
+ 	what |= MASK_TC_BIT(opf, FUA);
+-	if (op == REQ_OP_DISCARD || op == REQ_OP_SECURE_ERASE)
 +
- 	return sysmgr->regmap;
- }
- EXPORT_SYMBOL_GPL(altr_sysmgr_regmap_lookup_by_phandle);
++	switch (op) {
++	case REQ_OP_DISCARD:
++	case REQ_OP_SECURE_ERASE:
+ 		what |= BLK_TC_ACT(BLK_TC_DISCARD);
+-	if (op == REQ_OP_FLUSH)
++		break;
++	case REQ_OP_FLUSH:
+ 		what |= BLK_TC_ACT(BLK_TC_FLUSH);
++		break;
++	default:
++		break;
++	}
++
+ 	if (cgid)
+ 		what |= __BLK_TA_CGROUP;
+ 
 -- 
-2.49.1
+2.51.0
 
 
