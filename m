@@ -1,493 +1,225 @@
-Return-Path: <linux-kernel+bounces-832276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E443B9ECC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B755FB9ECCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D5C177035
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC1394E0781
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F502F0C7F;
-	Thu, 25 Sep 2025 10:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001132F619A;
+	Thu, 25 Sep 2025 10:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PerBj9k2"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F3dNbmOj"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013042.outbound.protection.outlook.com [40.93.196.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5210C2ED15C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797132; cv=none; b=eMo2qOVbJ5PbffGLlT+HZNJ8SvLNSK/4jRnreBTavIfYsmjamyPVUyfv5DDD0cI6ItmpaA89K2B8wh5tsMWvZgFR+yVdS2Fs0ZWI4VJIyiD7ple88ANf3nQFyYOWSViTVLGs3bCHhc506U2sWFQ6GZpOkBVQQ0EpIj0WMuQr3+A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797132; c=relaxed/simple;
-	bh=2Y/Etx7wsAJuNVlBBeFuTxyOUrSl8OleFgQbVZG+ERY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=pu86auMfIxHbCl0bQTHd3Ky7RcPZx5kbyEryXU4dKUfrihcLJDRDXJ+hokx5cFf5h4UeN1ltKl44WRk+uSIoYKWBEOUEDFyaES+rKsQacOb0DAj4x7Dob850GP+eUQyex2k3+fhuryzqLhkvXKe0i5xU9DBomrH7FgDBFpL9YrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PerBj9k2; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so723472f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758797127; x=1759401927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
-        b=PerBj9k2eLBk54O4yxN4q+etTdHjV8pImoynQo5XJutfbJFWirX5lKz0qRskLZHxvd
-         Ufv2LDMc5QHmy6CONNM3t9WadmEZoU20bwZdUwL5MKXc7JzDlRBZKISU8zac1yZj+7wi
-         zC1QfZlTcougW4R0KoueDUqLkNB/X3w5GuaqSxdaJ0NjJoeErKQcEnXERF9YKuV15yPD
-         WN7kcD6mKIRRnBnOQyQVG1Ci4zToDzign5lgW7W9Zngkb8M+eYexBvVU6YF6bOyL3Ho2
-         2Wvk4OIO8KDvxkmrFkRkgDdIM/8riJhf9jGoexYxEYx+CBBRDG7rWkUIK07rnu5I44xG
-         D5Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758797127; x=1759401927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
-        b=dJ61IyeYduYC/CHbwDiEJ7VhPGnPL5VUSvJiilBBlnWtCCpCA2MUICtXRPalMj3BY8
-         dC4o0h2ntqgp4vvg3iZaNsixCyffCT8iSA8SK1nDRU+M9h2GawzZ1tX4/T35/C4tnYPe
-         rf2glzLurjODI5Z6wC9iZIcTlvbkWQbyooDWKU0nT6YCO67UoruL0oynp3wvqKT+TAQ2
-         iIR4Z49qgC+A0eSTneRyHa/qDaZ84z72Sn7nTEoe0dFbrr1wNLK3Bg+VH0fBUesh5HFH
-         NW32d+sFsCqZkj1MvBFK8pWm5sutYdn/NG+pZ4CXXNPG9OJzipMVe0Ypw+MMEYAI45zE
-         IwPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeoZppaaw8TpjvDrX0b+WWEeVpt7uHka+6EpGk4Hw2qa15HOqwuhqP8l2Ji0a8k2MXSia5+M4JeQFjHt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHGC7rUJxLDQnd9zCp9x6gkU/r5BSc8UbNlkS6uQv2Wr9uMI2z
-	/khegO4yRwSkHDROYjZ3UB+2tCn2+k6Aba+d5Zfo0cEHr2ARLrZd461ouxkIDjLnzv4=
-X-Gm-Gg: ASbGncu0zTgpj3fjm/bCPSCIqahq93KfmBI1Qd0OGCT9Lo4nqjDYcrO3x0ydmWQDaKw
-	sRBpJjDB0SYFR3yQa5hhbmLXs3LHbL4FUCyE2JmHfbKnDrU6EQWuyXGRyR8K/U0rJgp7lRunlFQ
-	DWlFs93xkmX+x+JYBqnfNuMYXUxmxn+va+Br4zoMQWBT477GlzSQdapiGkatsHr377ESdtmcVYC
-	mgcdiKCDxuMh63MvLfGYsQzm61w8hUc/Jic24p5S3/HcgcR450Y4XZLDxD4duaZIlahSgafo/DI
-	H9agAsezWePArU/B/Je/tE8bgsqskKfo5GCX654/ZYO9mkCKd97iCCKixx71DdmTrIrMTFS72Pd
-	x+GeQctGS8I9KmgrRpNuuckEkdbvBRY/4GkXIWBQLXi/bq2r4Sss47x7CIcCnCBy4k4HBTfSmAK
-	2b2X2hfx8JQFQSvbuOWZubGg==
-X-Google-Smtp-Source: AGHT+IHT1KVxlBNxyFDCaHu545shG2L21DrIcoORWPTFR8KKA/HztsEYb06C5+5BWMpDJhnIrFGDBA==
-X-Received: by 2002:a05:6000:2891:b0:3ea:80ec:8552 with SMTP id ffacd0b85a97d-40e4ce4bc13mr2854165f8f.57.1758797126522;
-        Thu, 25 Sep 2025 03:45:26 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f090200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f09:200:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32b4f336sm16058985e9.0.2025.09.25.03.45.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 03:45:25 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	linux-kernel@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] ceph: add trace points to the MDS client
-Date: Thu, 25 Sep 2025 12:45:12 +0200
-Message-ID: <20250925104522.3501812-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B922EDD4C;
+	Thu, 25 Sep 2025 10:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758797185; cv=fail; b=WgYH1Z65tMaRVeWA1B8Jlnq6Wy8hisDbKSohoJYubC0YPTLBRh+9R99X/ebChr+j5EhHIuQ17DLYTUCOOK3FYeZEB4p5Gz3yLU0BgIYf/5zjedQ2fCX8lQqVbmw2+9IETwp2MIujJZEdfiHRAaBTRlziWdkAfsPyIYY20hLWvao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758797185; c=relaxed/simple;
+	bh=RKNpbtWgisuaIbhKaRosIe5M1vWKNd0RW99AMJYaLG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZOyr6e26u5AsdmD48wcMdFb2XNfzF7/mkKiBvXLy+MPaAko/0kVXAcomLywJNLGWeSsaZYqcyZaaPRlPsInrnft5XMkRzgt+L4CBrWxJvzMFG/fOMAgIicIU84Z41+o+73yEAgBV5nvjd8vMh89+mfX6R940WVbHf2NwYhWz3bM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F3dNbmOj; arc=fail smtp.client-ip=40.93.196.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i2FXi01F9lhvqkC91NL8m/2r5ls8wuGllkd/kVKTSzA1OSp9qCkfSX+KaoARoLaVbkrZeeqehotdgbdLpPRUVRwhSVQSvXZhN/COcTPQmiJjcKQe/ZiprKt00q5nmIDr1SjRAr1ebRpQ1DxpWLZVqjHF7WIng2F0mIkMKOd7iQru5apHdUTFqjdJ2BjC/kfRIuyO/3vUavz3H9Nb7K64CGp3sj+WnOVA3igT+1jIm2T4yGoICJ8fUSFaM3d8gK84AH8WbYFN1CLEZhi7g57FutHlj3Z52O4Ftp96Ky+L9eL6QurY2LCjQqQfhzj5vElwSlYC3JX5MOIxNtc19J02Uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3nQDlgiDAytdd+lSxsQjQzcQyOev/zMJtjKwYo6JUUs=;
+ b=wJdmsYUxh2WvdGzvwfdg8+C7Uh1soSc/li5nPTLh18FD76gc0xfLTJ5ENRR2KDc8jjZjjBEDrsBTsVw18QpTcROoFby3jQTCuJHM+bxonLj1BUu6CM6usIJbs6W/DaOvHT413U8hVuV+2Ty4V6f5a45M3Kd+rpXUCvlEncuEhDaRCDWnOTTuRbxEtvR49sapnDlq3mpqcGSOZH0/sxMSQagRYPEi3y5w3tbSh5547PBpKNyKLgDFUl6X8cUBJz8jwwr2fORoM7kvUbPHbpr3K7BNuMXL69Wz3/cwh/3N5+anjZJwSvmE2pv8rHoul9XahaBCqe63FwGPKDBoX/gtzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3nQDlgiDAytdd+lSxsQjQzcQyOev/zMJtjKwYo6JUUs=;
+ b=F3dNbmOj2LRWDT5PeBK6BmZ0XVEOSx3QnBnXRAMt6Ni+uSpVTB1RdcnqoDV7h0MqKMBIyiEEm0UoRqcQAbFGijHPjA24+ZA8Yr3bIEMPuIQunN6Gfhfz9+dQBdWNEfFqG2IKaGyHItgqZkqJExxyNjAVU8npkW65k+UWdSBHXdZEKmFdkfptdT+zWQj4h6HaFXSQUUEF0mncdCms1JkpMjNZaAFG33utCjTzKvnWZVaGUq2yq43aeY45EJ7OgIvjpkT7WcMqFyQ5AGMhONUsSlWE90HndAN2FOpF3vRRKKM9yDYINQiMDfbbWgscYnfs3wGCw2PykvyQePLw/kfepA==
+Received: from CY5PR15CA0231.namprd15.prod.outlook.com (2603:10b6:930:88::16)
+ by PH7PR12MB8778.namprd12.prod.outlook.com (2603:10b6:510:26b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
+ 2025 10:46:20 +0000
+Received: from CY4PEPF0000EDD3.namprd03.prod.outlook.com
+ (2603:10b6:930:88:cafe::e9) by CY5PR15CA0231.outlook.office365.com
+ (2603:10b6:930:88::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.22 via Frontend Transport; Thu,
+ 25 Sep 2025 10:46:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CY4PEPF0000EDD3.mail.protection.outlook.com (10.167.241.199) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Thu, 25 Sep 2025 10:46:19 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 25 Sep
+ 2025 03:46:04 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 25 Sep
+ 2025 03:46:03 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Thu, 25
+ Sep 2025 03:45:58 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Jiri Pirko <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>, "Saeed
+ Mahameed" <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq
+ Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>, Gal Pressman
+	<gal@nvidia.com>, Maor Gottlieb <maorg@nvidia.com>, Moshe Shemesh
+	<moshe@nvidia.com>, Akiva Goldberger <agoldberger@nvidia.com>
+Subject: [PATCH net-next] net/mlx5: Expose uar access and odp page fault counters
+Date: Thu, 25 Sep 2025 13:45:30 +0300
+Message-ID: <1758797130-829564-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD3:EE_|PH7PR12MB8778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c244a9f-9767-4e9e-c0d1-08ddfc20c329
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Eeo8KwECGrym9oJffGi3i1lMqbrkQIHhnYGsYG7UpYf2zUSq44/u++90yuF/?=
+ =?us-ascii?Q?cIvbCvzHmsBG5n4ic8RBTuBDN6GMAQSfzPbUHPxS2RcSBNYo6tro0+d0y4ON?=
+ =?us-ascii?Q?WeQHfWWO6pAQ/dWj6kC8X2Dtc/TuVT89bqvazy/DG0CdcZPC9lMRDaUmVcvo?=
+ =?us-ascii?Q?TVoXq0w1KskfYEfGUYZbZMKAfQwR//sIQ51D+hP2FwpWlL+OAKAtpuvh8d6L?=
+ =?us-ascii?Q?69vusZ6PdeFKbLbBMe8431Wah63FuYbV56Jm+QHB62IPOXdjnGBYSAf8/w6R?=
+ =?us-ascii?Q?v+B/4FYT8KKY98s4i4KxF6Y1DjgiaYvVi3AnSnXeGyU0JVI6nqP+SPZvQLgE?=
+ =?us-ascii?Q?dHNpE3D4U9ElvBeWAZVomSkU46nlUTuSIOqHiM+Vc803Ptskckxyc63yGOqH?=
+ =?us-ascii?Q?FKPRSjvtqVAO5WabPRzukYrpAIxsEGAeu7138iybgwF/G0mGdXYqRWe7gaRG?=
+ =?us-ascii?Q?QbEy9NzgrdqDw3V2tRbAuy2wSzAiZzEm7mKrFbklqXxsDrJKktxaD51yQ7xc?=
+ =?us-ascii?Q?KgtUDLsbx6SwWNJd9LxjBb8sEFf0u7ErjkRMi6dIeK6a8fb3WhPi+Nrjp+Ce?=
+ =?us-ascii?Q?U4VSwCqniQ4z9FLhziGX2mib3p8DihTfNQk52iyAgcZyeaV/NkBcDBj4yw5q?=
+ =?us-ascii?Q?xpA8tWebmV44IIvTPDnTTSwHccDIVBbnrpgVxvBrNDAAdI4wYzaf8xoxDJqt?=
+ =?us-ascii?Q?NeBhcOkpzyG7w0CtSHXiQsl4zrocqO8AlbV/cprlotNNFkITyKeLWHrnnCYp?=
+ =?us-ascii?Q?k+pT7/9qVcCDG2YTXnddK8K+ubz3eVoVDTNC2eNbZ6FarXZYQU8p5/pnc4bo?=
+ =?us-ascii?Q?wYuxKc/bmw92gEytJh9jaO4wYkfdSCvgIoGxbwRdd56dvNWPFTzABRbKfVrQ?=
+ =?us-ascii?Q?KpoRx93VYl9D/4mDxbclUqc+eEaHX8x7Ro+NYLuqFyJ7N0TiTJZpW+IwEvaS?=
+ =?us-ascii?Q?lhXDB18oxbG/Lvb/J6cTCx8igWaQ4Fgs0JJaOMgLR+St9Swoeg1wp4xTNygy?=
+ =?us-ascii?Q?5WzZ8qrKutR3/2Ma4fRpKBlGSM+gisEbu1MQ1oXEelc2o/Kk3hR1S1Ii/t1U?=
+ =?us-ascii?Q?3onnXabZTj1SIjejwfQD37ZS0SLEQ9ZS3GjXN28vFh0NlAUpTm76eDxdViws?=
+ =?us-ascii?Q?sNspsm3xSRJvXV8IoSY5hHemEVWTAdYEEXSzWiVvuugUHrL6jKPMwDpXd946?=
+ =?us-ascii?Q?4dqQnTxGxK8S+iCUv23NpeTOnejHrTeP/PViw0ZBiPNTqcEN7DD/dWpQGYD8?=
+ =?us-ascii?Q?HH+PXJq6gxuyfsA5UKfQO+oSN9LqMySuQrUCh1pLkDmAYKiGbO4Ex4Xxjybu?=
+ =?us-ascii?Q?D+0N6IapggEUhbM7n65OO3oN+kt5uH6tEjgrJ/J6f4qNjd5uWnVwnXr3Vje+?=
+ =?us-ascii?Q?TBNUFne1OcKNVLfyqpdvj+R0vxsOw3svyizGzcC8MtzaQ3yqfMIuoNfjqfMP?=
+ =?us-ascii?Q?Hbx48Dmv9jfXhHwqMnw1m4BicRkv2kfUg5uSZ00CVRTWLIDnI/Ih95NtMEvI?=
+ =?us-ascii?Q?/WQP1x3O7kTOHpmjhY4iKcrK9KVgin864nud?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 10:46:19.8639
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c244a9f-9767-4e9e-c0d1-08ddfc20c329
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8778
 
-This patch adds trace points to the Ceph filesystem MDS client:
+From: Akiva Goldberger <agoldberger@nvidia.com>
 
-- request submission (CEPH_MSG_CLIENT_REQUEST) and completion
-  (CEPH_MSG_CLIENT_REPLY)
-- capabilities (CEPH_MSG_CLIENT_CAPS)
+Add three counters to vnic health reporter:
+bar_uar_access, odp_local_triggered_page_fault, and
+odp_remote_triggered_page_fault.
 
-These are the central pieces that are useful for analyzing MDS
-latency/performance problems from the client's perspective.
+- bar_uar_access
+    number of WRITE or READ access operations to the UAR on the PCIe
+    BAR.
+- odp_local_triggered_page_fault
+    number of locally-triggered page-faults due to ODP.
+- odp_remote_triggered_page_fault
+    number of remotly-triggered page-faults due to ODP.
 
-In the long run, all doutc() calls should be replaced with
-tracepoints.  This way, the Ceph filesystem can be traced at any time
-(without spamming the kernel log).  Additionally, trace points can be
-used in BPF programs (which can even deference the pointer parameters
-and extract more values).
+Example access:
+    $ devlink health diagnose pci/0000:08:00.0 reporter vnic
+	vNIC env counters:
+	total_error_queues: 0 send_queue_priority_update_flow: 0
+	comp_eq_overrun: 0 async_eq_overrun: 0 cq_overrun: 0
+	invalid_command: 0 quota_exceeded_command: 0
+	nic_receive_steering_discard: 0 icm_consumption: 1032
+	bar_uar_access: 1279 odp_local_triggered_page_fault: 20
+	odp_remote_triggered_page_fault: 34
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: Akiva Goldberger <agoldberger@nvidia.com>
+Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 ---
- fs/ceph/caps.c              |   4 +
- fs/ceph/mds_client.c        |  20 ++-
- fs/ceph/super.c             |   3 +
- include/trace/events/ceph.h | 234 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 259 insertions(+), 2 deletions(-)
- create mode 100644 include/trace/events/ceph.h
+ Documentation/networking/devlink/mlx5.rst                | 6 ++++++
+ .../net/ethernet/mellanox/mlx5/core/diag/reporter_vnic.c | 9 +++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b1a8ff612c41..2f663972da99 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -18,6 +18,7 @@
- #include "crypto.h"
- #include <linux/ceph/decode.h>
- #include <linux/ceph/messenger.h>
-+#include <trace/events/ceph.h>
+diff --git a/Documentation/networking/devlink/mlx5.rst b/Documentation/networking/devlink/mlx5.rst
+index 41c9b716699e..0e5f9c76e514 100644
+--- a/Documentation/networking/devlink/mlx5.rst
++++ b/Documentation/networking/devlink/mlx5.rst
+@@ -385,6 +385,12 @@ Description of the vnic counters:
+         amount of Interconnect Host Memory (ICM) consumed by the vnic in
+         granularity of 4KB. ICM is host memory allocated by SW upon HCA request
+         and is used for storing data structures that control HCA operation.
++- bar_uar_access
++        number of WRITE or READ access operations to the UAR on the PCIe BAR.
++- odp_local_triggered_page_fault
++        number of locally-triggered page-faults due to ODP.
++- odp_remote_triggered_page_fault
++        number of remotly-triggered page-faults due to ODP.
  
- /*
-  * Capability management
-@@ -4452,6 +4453,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	      session->s_mds, ceph_cap_op_name(op), vino.ino, vino.snap, inode,
- 	      seq, issue_seq, mseq);
+ User commands examples:
  
-+	trace_ceph_handle_caps(mdsc, session, op, &vino, ceph_inode(inode),
-+			       seq, issue_seq, mseq);
-+
- 	mutex_lock(&session->s_mutex);
- 
- 	if (!inode) {
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 3bc72b47fe4d..90e4268b24f9 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -24,6 +24,7 @@
- #include <linux/ceph/pagelist.h>
- #include <linux/ceph/auth.h>
- #include <linux/ceph/debugfs.h>
-+#include <trace/events/ceph.h>
- 
- #define RECONNECT_MAX_SIZE (INT_MAX - PAGE_SIZE)
- 
-@@ -3282,6 +3283,8 @@ static void complete_request(struct ceph_mds_client *mdsc,
- {
- 	req->r_end_latency = ktime_get();
- 
-+	trace_ceph_mdsc_complete_request(mdsc, req);
-+
- 	if (req->r_callback)
- 		req->r_callback(mdsc, req);
- 	complete_all(&req->r_completion);
-@@ -3413,6 +3416,8 @@ static int __send_request(struct ceph_mds_session *session,
- {
- 	int err;
- 
-+	trace_ceph_mdsc_send_request(session, req);
-+
- 	err = __prepare_send_request(session, req, drop_cap_releases);
- 	if (!err) {
- 		ceph_msg_get(req->r_request);
-@@ -3464,6 +3469,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		}
- 		if (mdsc->mdsmap->m_epoch == 0) {
- 			doutc(cl, "no mdsmap, waiting for map\n");
-+			trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+							ceph_mdsc_suspend_reason_no_mdsmap);
- 			list_add(&req->r_wait, &mdsc->waiting_for_map);
- 			return;
- 		}
-@@ -3485,6 +3492,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			goto finish;
- 		}
- 		doutc(cl, "no mds or not active, waiting for map\n");
-+		trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+						ceph_mdsc_suspend_reason_no_active_mds);
- 		list_add(&req->r_wait, &mdsc->waiting_for_map);
- 		return;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/diag/reporter_vnic.c b/drivers/net/ethernet/mellanox/mlx5/core/diag/reporter_vnic.c
+index 73f5b62b8c7f..172344734b8c 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/diag/reporter_vnic.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/diag/reporter_vnic.c
+@@ -107,6 +107,15 @@ void mlx5_reporter_vnic_diagnose_counters(struct mlx5_core_dev *dev,
  	}
-@@ -3530,9 +3539,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		 * it to the mdsc queue.
- 		 */
- 		if (session->s_state == CEPH_MDS_SESSION_REJECTED) {
--			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER))
-+			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
-+				trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+								ceph_mdsc_suspend_reason_rejected);
- 				list_add(&req->r_wait, &mdsc->waiting_for_map);
--			else
-+			} else
- 				err = -EACCES;
- 			goto out_session;
- 		}
-@@ -3546,6 +3557,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			if (random)
- 				req->r_resend_mds = mds;
- 		}
-+		trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+						ceph_mdsc_suspend_reason_session);
- 		list_add(&req->r_wait, &session->s_waiting);
- 		goto out_session;
- 	}
-@@ -3646,6 +3659,7 @@ static void __wake_requests(struct ceph_mds_client *mdsc,
- 		list_del_init(&req->r_wait);
- 		doutc(cl, " wake request %p tid %llu\n", req,
- 		      req->r_tid);
-+		trace_ceph_mdsc_resume_request(mdsc, req);
- 		__do_request(mdsc, req);
- 	}
- }
-@@ -3672,6 +3686,7 @@ static void kick_requests(struct ceph_mds_client *mdsc, int mds)
- 		    req->r_session->s_mds == mds) {
- 			doutc(cl, " kicking tid %llu\n", req->r_tid);
- 			list_del_init(&req->r_wait);
-+			trace_ceph_mdsc_resume_request(mdsc, req);
- 			__do_request(mdsc, req);
- 		}
- 	}
-@@ -3718,6 +3733,7 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 	doutc(cl, "submit_request on %p for inode %p\n", req, dir);
- 	mutex_lock(&mdsc->mutex);
- 	__register_request(mdsc, req, dir);
-+	trace_ceph_mdsc_submit_request(mdsc, req);
- 	__do_request(mdsc, req);
- 	err = req->r_err;
- 	mutex_unlock(&mdsc->mutex);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index c3eb651862c5..f119d7260496 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -30,6 +30,9 @@
+ 	if (MLX5_CAP_GEN(dev, nic_cap_reg))
+ 		mlx5_reporter_vnic_diagnose_counter_icm(dev, fmsg, vport_num, other_vport);
++	if (MLX5_CAP_GEN(dev, vnic_env_cnt_bar_uar_access))
++		devlink_fmsg_u32_pair_put(fmsg, "bar_uar_access",
++					  VNIC_ENV_GET(&vnic, bar_uar_access));
++	if (MLX5_CAP_GEN(dev, vnic_env_cnt_odp_page_fault)) {
++		devlink_fmsg_u32_pair_put(fmsg, "odp_local_triggered_page_fault",
++					  VNIC_ENV_GET(&vnic, odp_local_triggered_page_fault));
++		devlink_fmsg_u32_pair_put(fmsg, "odp_remote_triggered_page_fault",
++					  VNIC_ENV_GET(&vnic, odp_remote_triggered_page_fault));
++	}
  
- #include <uapi/linux/magic.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/ceph.h>
-+
- static DEFINE_SPINLOCK(ceph_fsc_lock);
- static LIST_HEAD(ceph_fsc_list);
- 
-diff --git a/include/trace/events/ceph.h b/include/trace/events/ceph.h
-new file mode 100644
-index 000000000000..08cb0659fbfc
---- /dev/null
-+++ b/include/trace/events/ceph.h
-@@ -0,0 +1,234 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Ceph filesystem support module tracepoints
-+ *
-+ * Copyright (C) 2025 IONOS SE. All Rights Reserved.
-+ * Written by Max Kellermann (max.kellermann@ionos.com)
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM ceph
-+
-+#if !defined(_TRACE_CEPH_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_CEPH_H
-+
-+#include <linux/tracepoint.h>
-+
-+#define ceph_mdsc_suspend_reasons						\
-+	EM(ceph_mdsc_suspend_reason_no_mdsmap,		"no-mdsmap")		\
-+	EM(ceph_mdsc_suspend_reason_no_active_mds,	"no-active-mds")	\
-+	EM(ceph_mdsc_suspend_reason_rejected,		"rejected")		\
-+	E_(ceph_mdsc_suspend_reason_session,		"session")
-+
-+#ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+#define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+
-+#undef EM
-+#undef E_
-+#define EM(a, b) a,
-+#define E_(a, b) a
-+
-+enum ceph_mdsc_suspend_reason { ceph_mdsc_suspend_reasons } __mode(byte);
-+
-+#endif
-+
-+/*
-+ * Export enum symbols via userspace.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b) TRACE_DEFINE_ENUM(a);
-+#define E_(a, b) TRACE_DEFINE_ENUM(a);
-+
-+ceph_mdsc_suspend_reasons;
-+
-+/*
-+ * Now redefine the EM() and E_() macros to map the enums to the strings that
-+ * will be printed in the output.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b)	{ a, b },
-+#define E_(a, b)	{ a, b }
-+
-+TRACE_EVENT(ceph_mdsc_submit_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,	tid)
-+		__field(int,	op)
-+		__field(u64,	ino)
-+		__field(u64,	snap)
-+	),
-+
-+	TP_fast_assign(
-+		struct inode *inode;
-+
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+
-+		inode = req->r_inode;
-+		if (inode == NULL && req->r_dentry)
-+			inode = d_inode(req->r_dentry);
-+
-+		if (inode) {
-+			__entry->ino = ceph_ino(inode);
-+			__entry->snap = ceph_snap(inode);
-+		} else {
-+			__entry->ino = __entry->snap = 0;
-+		}
-+	),
-+
-+	TP_printk("R=%llu op=%s ino=%llx,%llx",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->ino, __entry->snap)
-+);
-+
-+TRACE_EVENT(ceph_mdsc_suspend_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		     struct ceph_mds_session *session,
-+		     struct ceph_mds_request *req,
-+		     enum ceph_mdsc_suspend_reason reason),
-+
-+	TP_ARGS(mdsc, session, req, reason),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,				tid)
-+		__field(int,				op)
-+		__field(int,				mds)
-+		__field(enum ceph_mdsc_suspend_reason,	reason)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->mds = session ? session->s_mds : -1;
-+		__entry->reason = reason;
-+	),
-+
-+	TP_printk("R=%llu op=%s reason=%s",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __print_symbolic(__entry->reason, ceph_mdsc_suspend_reasons))
-+);
-+
-+TRACE_EVENT(ceph_mdsc_resume_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,				tid)
-+		__field(int,				op)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+	),
-+
-+	TP_printk("R=%llu op=%s",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op))
-+);
-+
-+TRACE_EVENT(ceph_mdsc_send_request,
-+	TP_PROTO(struct ceph_mds_session *session,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(session, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,		tid)
-+		__field(int,		op)
-+		__field(int,		mds)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->mds = session->s_mds;
-+	),
-+
-+	TP_printk("R=%llu op=%s mds=%d",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->mds)
-+);
-+
-+TRACE_EVENT(ceph_mdsc_complete_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		     struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,			tid)
-+		__field(int,			op)
-+		__field(int,			err)
-+		__field(unsigned long,		latency_ns)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->err = req->r_err;
-+		__entry->latency_ns = req->r_end_latency - req->r_start_latency;
-+	),
-+
-+	TP_printk("R=%llu op=%s err=%d latency_ns=%lu",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->err,
-+		  __entry->latency_ns)
-+);
-+
-+TRACE_EVENT(ceph_handle_caps,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_session *session,
-+		 int op,
-+		 const struct ceph_vino *vino,
-+		 struct ceph_inode_info *inode,
-+		 u32 seq, u32 mseq, u32 issue_seq),
-+
-+	TP_ARGS(mdsc, session, op, vino, inode, seq, mseq, issue_seq),
-+
-+	TP_STRUCT__entry(
-+		__field(int,	mds)
-+		__field(int,	op)
-+		__field(u64,	ino)
-+		__field(u64,	snap)
-+		__field(u32,	seq)
-+		__field(u32,	mseq)
-+		__field(u32,	issue_seq)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->mds = session->s_mds;
-+		__entry->op = op;
-+		__entry->ino = vino->ino;
-+		__entry->snap = vino->snap;
-+		__entry->seq = seq;
-+		__entry->mseq = mseq;
-+		__entry->issue_seq = issue_seq;
-+	),
-+
-+	TP_printk("mds=%d op=%s vino=%llx.%llx seq=%u iseq=%u mseq=%u",
-+		  __entry->mds,
-+		  ceph_cap_op_name(__entry->op),
-+		  __entry->ino,
-+		  __entry->snap,
-+		  __entry->seq,
-+		  __entry->issue_seq,
-+		  __entry->mseq)
-+);
-+
-+#undef EM
-+#undef E_
-+#endif /* _TRACE_CEPH_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+ 	devlink_fmsg_obj_nest_end(fmsg);
+ 	devlink_fmsg_pair_nest_end(fmsg);
+
+base-commit: a1f1f2422e098485b09e55a492de05cf97f9954d
 -- 
-2.47.3
+2.31.1
 
 
