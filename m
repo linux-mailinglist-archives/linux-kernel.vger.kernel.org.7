@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-832840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08355BA08AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:06:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB992BA08B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A411641A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCC51896D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B72F2F2611;
-	Thu, 25 Sep 2025 16:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB60305042;
+	Thu, 25 Sep 2025 16:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="arCqkrV8"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIBV1NA/"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF3E1CA84
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AE52F617E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758816394; cv=none; b=eM0jwcwGi/oO/N8t+LO25Qicz53Q5KbyyTB8PsXUwl9IwtfGEMpWh4CuGoroJbTGykeR1Z7bzqvtQxUNSuADc+N6Oi0zEsVb5uLptEt0qmhK0AyaatIZf410wV5+QaynDBtzrtFltGXAeDOGCcckN2C6Jkm7g+8QmY81geLOv0E=
+	t=1758816421; cv=none; b=j396Fp+bMfKYjf8J2kdZln9W+5bLqqTwEO3PTCxNX0IBaPtbch1yzPyrp2weY5Srz5DfzP3MmN79k4CLT3gps9R4/n940Jv2gQOzgC68MQWd5ISv8saX1sCrQ0einq6oKk9MjSE4dTb+fA+anVnfSPH8S2FBWkG2Yxs/2v0083o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758816394; c=relaxed/simple;
-	bh=GqXNzIXv2Z3+qYu0yt6xuzG0cjInumz0ftyhQyGX+e4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfT2mDYvpS3zItEfQT/NDPZKHbFBD7I+v5WlV8G1P52PIAJQj3LaNI1nzQpLvjniM1CwZGPNJSCDK8DKVmU0gM3AZtI0eC2bKYBUjEdgG5do9w2f3VXJR4oQUIr1jjkWf6S/pOd0zHvkkhT09tTk8g2AkDSlYF8BNbyjjCFaMPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=arCqkrV8; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-89365bbc079so45256539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:06:32 -0700 (PDT)
+	s=arc-20240116; t=1758816421; c=relaxed/simple;
+	bh=BpXsWsbIWOdqk7uF/WtIMG7A8mOG0ib8Ejk2jxL4vcY=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhRi58wVk+bXf4cncWocia1x+i8c8WDqR66Qe5I5wjou8s6MWeH4oJRzmsYexDPe9TSKnFkvNvgniCTti8Tm1SIpTW3+ixycIxmQJ7iAHvJ4zojIpIwZE5F6ru4j69m0S6jqlemDLGtvTbOhZ5SzDdp8nsuRkhodb+DoRrlZdmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIBV1NA/; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so1077784f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1758816391; x=1759421191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yb6vceRuaH7iX55SPXoLoljlTLWExr/Ac2Cewgac2Y=;
-        b=arCqkrV8ubhDHhniBNX9IvzIG4PVsSEXWlllh3kJmovK6vJqxW/zVGVL2jF2U63syY
-         xsV0mURG62OtFAKixBAb2U+PKPKLWMaPgK61NdEBUnO0Sqcpt7iItzOhEvyygfYYjUK2
-         ilGps60kg/91V6EVK/dX5q6C5Dc9QRVB5uQrV6ZHcBAG3hn56aQaMczkroR78zeSEMY7
-         kLqUXmKy0TMErdclJ5CtWnobXj+//qFlEgF4uRpdn7Lfjn7uwDGLN+L8+5V8nT9Kv3DH
-         2U5BKDhdCnLfd88B2rJ/Jayt3mLFp8EEM59WMnfQBjnIf247xRpdTtEJGie29LiLp5bp
-         LVUg==
+        d=gmail.com; s=20230601; t=1758816418; x=1759421218; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+lassDmCrGUqK1j75W06mPpLprXWJRC5SDVpvwTaVY=;
+        b=BIBV1NA/0JnyvO/lqOUBARKBtEQFtciN9/cKnCyRy+nfEteg8ShWM1CM0xBpmQPjVS
+         TX9JXzb3EH1MiuFbdcAU/a9RUEhOh3idfouUNu3l3dmKMTL+uU8s25cPK8JS3A/+8BZC
+         sEPoxzGcb7Q8Ogc8J5N7c7V2+T9+E5agCkrtt8heHUJcaaaMNwbpmDD0KkGTu7nBjdi/
+         kfcZ7KSDnT1GmohZbRgb1BLkLK91j784ooFeBT9B8lEvOfN9ezpBCGCEDWdxwIAHnti3
+         goVzJIiYEhEdExoRhKk+9xCbeEqA++P1nZKRygnH+vWBgixId0Hz3GSlEEEYtaC1T3va
+         HIjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758816391; x=1759421191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1758816418; x=1759421218;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+yb6vceRuaH7iX55SPXoLoljlTLWExr/Ac2Cewgac2Y=;
-        b=q8eAR71Xx4LVaQiVZIDUPJdsprL0ZSX9nL1ohT2vsZS14ENpLx+rC7MahU4WnHtIfY
-         MtirhLpdozLA8RTPBfZjxTwZv1AlN019bWN7AHULVCHKM/MezRIbOl+h4fKICHo3Mj0/
-         WWZXu9i9ZNhMNgvKen1rkRkRKyNAVOzHrTzeGDuv9JgX2gam2isXqBPDKzbEQKxNUi/g
-         ntCh1F5EehrrVg15Hj1nvNk/AuAQDIkQitAjNBNFt/d3znDEl5pEnEoZ7VVb22tqCyH6
-         HNQ2tWfcIRMK5yTRD0IMhaR5EdBSJRuSwrT7awqjcZlMox1o0vznbd19LK0GKKUw8Fli
-         /D9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOoyR/J6PJEeYgDPPaKF7zwc+VTUiF9hoR2Y0wWDLTi/gq16S70HeFuegVWV4YozC3xFbENHUsPn4spbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylxf8AYdhnVEScmiWow8U9eRIMDXBcAGZJd3t1jSsCswxV/GyT
-	Qpici1yfJyaQPRj0EMWSLSrS4Tfq/Z2VeAVyRfUyj6sDZVRgu4MmiwLj4tFoRnZyY4o=
-X-Gm-Gg: ASbGncvvROfk4TqhKRXEHSGs9cz76DP4bF3FsVS6ZZ9exZL2llInUGCEymHVR0Ya8gS
-	1SCiwhSo8LvsYvGAi8A5iznUGr6NSj9VajyQ4h6fdLszqv0ooGnmGzIkx/4445Svj/CMFbB4cfH
-	uuKvdJlp37Oih1txeCirmwLmAv46Q3TzxB47g0rw/OdvpDJlHqQF6Ee1lveoqZiTVKgA2XVpjJc
-	GB3XfcgtN+cdMwWTNoOCtHg4k8HlEwD3fvt9bg2WNPOfkh77yuSpQ2zd5/uyTvz8ELc/L3/UNTf
-	H+Ywsv5rjY75yBLexfkPtSJwGiV3ec/5/7h9IMjL/mRrt6nWFSEE+z0LIRejOcbRJU2kjps8Vgk
-	TWIcJXcF7TU346d1zp0GctlrggYCqLPn2PS1hxN+nz1+7zhHRP3kHUbn1B6gA0DY5Q4CYXFzP2R
-	s=
-X-Google-Smtp-Source: AGHT+IHezaCibeMYUx2n4QIwepKBTAEGeWF/wdbRATNTTWqYlSWG7aBiY/OaNiXbiz5X0eqEvxW6Wg==
-X-Received: by 2002:a05:6602:14c2:b0:887:5cc8:fc1 with SMTP id ca18e2360f4ac-90168766a6bmr566009339f.13.1758816391165;
-        Thu, 25 Sep 2025 09:06:31 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (50-32-2-77.vng01.dlls.pa.frontiernet.net. [50.32.2.77])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-903dbb2b459sm88516339f.0.2025.09.25.09.06.29
+        bh=v+lassDmCrGUqK1j75W06mPpLprXWJRC5SDVpvwTaVY=;
+        b=E9aVIw5MeT/s+vxT51P0zgwlKb6Mu6WNfd/+GCirxrKKzjRLWsaJwZHXrPj1P7lWX2
+         QVIBqyAumoWgkalBQRKh2oOVj7jaRzPmp3nMeQdkNHXKu4r0ZdG05/aZx5gR5unjjjLV
+         AccNEbpHdsk1YvSF9b01JLFA8MulcR4D8dpo/qrbprHQVQq4h61b71zcnMNlPf81JJ2X
+         i3nq6qTMRkn5/HEjcM1B98vbvXhJYrdx/WLZ2c3nv2MnDEYfG/7j7NqgIy+CmNKEga1A
+         xWeymcPbID0VzSTsCrk28ZTOqhBYuARx7DjZwc1+kHQ9XRj0BOQqralWMbbKMT64qqhE
+         Hq5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXjN15uGXR2DkJupKikzi1X52v7Ngbtv0tmIHsNHIDkQJ41Igm9oodzrNyyRlluPy+GeHtQ4AcVqOgIWXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqzbywqgy+gXR5D4pTd6vCxzQElCWPNS3sv1DMrVX5iiXXonNO
+	hC20VwhCINIowW3DgMhgvakqwu1HkmKkwi/OHJLr3B9E0niEzCJma/Io
+X-Gm-Gg: ASbGnctCJd+MTEzTaIsU/x/MqEI7JGPawPfIujSqvnOkuFwFCm3GXo7s79URi707PIV
+	BINtEc9P0K816UERFBx7I4KlKm4ZWTkqH5Gbs6zGVFD1Fayv5NqBHPgSzED9fdbHSm0VY8DlTMG
+	VsqtccLC+hiwK4K1wRsezycCKZObZdvg966gpAmimEGvsj9BwHkl/qoBRD8lgiT8lIHvRRIrkNF
+	D9lCb7HNNIBAaBy/yWMIb5hIbXRv73BMrxK8lCpzpc2dsyIXqv0R8o5Lyx66Xbop4spFl9pAEQC
+	hbj7wFMYTfD5UhpOtpW1IVGL9T1XiGHZg3ds4McXMozHr85rjKd9OnxgCXofoKKik+tuPWqA1+n
+	MJ+uctZO95HkVbtbLGrOl+I59PWr9yTTdfkmUuG4AjFZpv5OJinyBpvDjgqweT3/U7j1MhLm8lh
+	3qdfUA
+X-Google-Smtp-Source: AGHT+IEHMIJU9u8ueZDndaal17u8mfKe0TgyHQU77XQdzJ/EbxOIGOMX4Q6Ld8eqXuhgbWlq5qhIfQ==
+X-Received: by 2002:a05:6000:2486:b0:3d4:f5c2:d805 with SMTP id ffacd0b85a97d-40e4458c89bmr4101481f8f.16.1758816417869;
+        Thu, 25 Sep 2025 09:06:57 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32c49541sm20807025e9.5.2025.09.25.09.06.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 09:06:30 -0700 (PDT)
-Date: Thu, 25 Sep 2025 12:06:28 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>,
-	Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, dave.hansen@intel.com, hannes@cmpxchg.org,
-	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
-	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
-	nifan.cxl@gmail.com, xuezhengchu@huawei.com,
-	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
-	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
-	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com,
-	Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
- infrastructure
-Message-ID: <aNVohF0sPNZSuTgI@gourry-fedora-PF4VCD3F>
-References: <20250910144653.212066-1-bharata@amd.com>
- <aMGbpDJhOx7wHqpo@casper.infradead.org>
- <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
- <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
- <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
- <20250917174941.000061d3@huawei.com>
- <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
- <20250925160058.00002645@huawei.com>
- <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
- <20250925162426.00007474@huawei.com>
+        Thu, 25 Sep 2025 09:06:56 -0700 (PDT)
+Message-ID: <68d568a0.050a0220.19f5c.8cb6@mx.google.com>
+X-Google-Original-Message-ID: <aNVonSpnm70dLOUL@Ansuel-XPS.>
+Date: Thu, 25 Sep 2025 18:06:53 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: mediatek: Fix wrong
+ compatible list for hifsys YAML
+References: <20250923201244.952-1-ansuelsmth@gmail.com>
+ <20250923201244.952-2-ansuelsmth@gmail.com>
+ <20250924140347.GA1556090-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,30 +106,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925162426.00007474@huawei.com>
+In-Reply-To: <20250924140347.GA1556090-robh@kernel.org>
 
-On Thu, Sep 25, 2025 at 04:24:26PM +0100, Jonathan Cameron wrote:
-> The CoW thing only works because it's a permissions fault at point of
-> asking for permission to write (so way before it goes into the cache).
-> Then you can check margins to make sure you can still sink all outstanding
-> writes if they become uncompressible and only let the write through if safe
-> - if not promote some stuff before letting it proceed.
-> Or you just promote on write and rely on the demotion path performing those
-> careful checks later.
+On Wed, Sep 24, 2025 at 09:03:47AM -0500, Rob Herring wrote:
+> On Tue, Sep 23, 2025 at 10:12:29PM +0200, Christian Marangi wrote:
+> > While converting the hifsys to YAML schema, the "syscon" compatible was
+> > dropped for the mt7623 and the mt2701 compatible.
+> 
+> Is "syscon" really needed? AFAICT, the clock and reset drivers don't 
+> need it.
 >
 
-Agreed.  The question is now whether you can actually enforce page table
-bits not changing.  I think you'd need your own fault handling
-infrastructure / driver for these pages.
+Ok I also searched downstream and can't find any patch that would make
+use of syscon. Guess I will replace this patch with a patch that drop
+the syscon from the dts.
 
-This does smell a lot like a kernel-internal dax allocation interface.
-There was a bunch of talk about virtualizing zswap backends, so that
-might be a nice place to look to insert this kind of hook.
+> > 
+> > Add back the compatible to mute DTBs warning on "make dtbs_check" and
+> > reflect real state of the .dtsi.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> > index 9e7c725093aa..aa3345ea8283 100644
+> > --- a/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mt2701-hifsys.yaml
+> > @@ -16,13 +16,15 @@ maintainers:
+> >  properties:
+> >    compatible:
+> >      oneOf:
+> > -      - enum:
+> > -          - mediatek,mt2701-hifsys
+> > -          - mediatek,mt7622-hifsys
+> > +      - items:
+> > +          - const: mediatek,mt2701-hifsys
+> > +          - const: syscon
+> > +      - const: mediatek,mt7622-hifsys
+> >        - items:
+> >            - enum:
+> >                - mediatek,mt7623-hifsys
+> >            - const: mediatek,mt2701-hifsys
+> > +          - const: syscon
+> >  
+> >    reg:
+> >      maxItems: 1
+> > -- 
+> > 2.51.0
+> > 
 
-Then the device driver (which it will definitely need) would have to
-field page faults accordingly.
-
-It feels much more natural to put this as a zswap/zram backend.
-
-~Gregory
+-- 
+	Ansuel
 
