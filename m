@@ -1,175 +1,444 @@
-Return-Path: <linux-kernel+bounces-833448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2096DBA1FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B930BA1FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18EC21C01F7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19F517737D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0A62EF67A;
-	Thu, 25 Sep 2025 23:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F612ED846;
+	Thu, 25 Sep 2025 23:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyG+GsIt"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klg4NMV5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6DD279DCD
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554351F8AC8;
+	Thu, 25 Sep 2025 23:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758843148; cv=none; b=utLGGW5IyH+OJOtXHKh7os+YiO8yJz9tTCceQ4HTn+qeLwMmbfsKTrozM6TkUAkVXt6K72ZJQuM+0yFEACmN+NBn5VJc44MAgGLxcLPMJe3uvPLl6SA3R1M+7UkF7ji659+w9/T50Er0OfU3y14bfThaXE1VOZLccmQ19h4GJXU=
+	t=1758843381; cv=none; b=BX8SwmvQCH2gaCX864nWiNb5NyUFLlEgkjEIKIAwgtiKm7FDB7ydbBt4hXpmr56eNU+zuTm2kL/eN3w4WW/4VZFhu4+CjOkaOYqZx/EEQdtOtWJZGPg52FBV4QvAiZxBWkztirfDsGOdT4s9bIWNgoZrLWxMxmvouxLNHLskMBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758843148; c=relaxed/simple;
-	bh=l5LRunuTe/LqJ3h4k3fN0y4sQ6ZlASLvxnuyjT0c2dg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWChtFdEiRs0XJW6iVZmzH3l1SVBWzikLIjAzlUrdYs2eCIbGVqiQnvjh+0fpxr4mHk1vBOQMkWAHJ3V3kIGgTBOiK1AVjbr+/CSIn2BqQ6bD9W1FUiUMOoIOdZDBeuSPK6Z/sPKfhS3nB3yU+Loh3tMrNy7/NbkSHDTVU7Ywew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyG+GsIt; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so1237271a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758843146; x=1759447946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l8PWUy95/xwAeHXQlv9LwNQfamqkfSoV3CUxibqo+As=;
-        b=ZyG+GsItC6RmhbuH8JACJ/a7IoR6OJP0dOMRWNK37GIE72YeGq9bOU80VUidOy/+xV
-         FFPZTC4p1WnUL400zxmjuf9xoxSSJRxBDLYVCDdApqIKZ2RPKZgG9Oimd5pFa0Ir/R89
-         4Ga+AlP3e1Nvt7YwARkyptXIbmv1LyB9RYHLyBtPOXhXrbhsUy3Hf7UzjgqQJXZ02TdE
-         aN5EJrmlWroRyS49MVjjouZ7Pj+84Sa5GgAa8bhcL5aEebMIDjjV4RdVSdRuG7WMJhrF
-         Pp42dCcm+Yx0ydsh37whjpTgX19/MjrKtxRvjedmLVVDHX6lShLSnpAkeoavCzKDfE88
-         PNDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758843146; x=1759447946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l8PWUy95/xwAeHXQlv9LwNQfamqkfSoV3CUxibqo+As=;
-        b=cQGoQZjyj6m4G3/F9Jn8oVKMb1HgaMZLpLwKaUnCSaLcqRlm8HiS2TFvoVxUoNlymd
-         EpFs+0/jowrHe6HwSYuLcmq5hjmDsjWQlT2Tucn8tSSVxkOe0CYVGIB0vX29kOP+vVNF
-         2nbHbKoo6D/W1JfYaz30AnROHJHLIaElz6QX0YW6A0yItweVD+iFAKtmSLIFbE7CvLF+
-         h5Ylu3vL275tgQ5WKQSxT1QRZ6XoJlooKI2ctyBif90H/FnYPHt3R4pGjJ5+L/rxzM6b
-         mxQxf1b150loWGOhfEVV+qSEsEHx4YczUWMeZZmiFfEPpZvPfyRmpdSR2/ZH0gBUUjJo
-         6l7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ulCiUJm8N7pzVSdBEWOFGMvA/OCuzsYC806S83hFL02ihlJBbd8S3/PJLMgQQobKQsvRGzpwFHp/Z2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtTxMVRF2amHP4SpbGi4KhSQJ7GPOY2848OlhR4XPq1ZpFXy9p
-	OvCW0FEFRqSoqKwqW+mwrmosZ/Z1ogAqXDFS0ZzUh8UNd8uGvkzNsXk1jaD6Jg4BCbc9K7DoWnW
-	BT9QuLYe+3El7gzg8HE9KHbzrjGi2saA=
-X-Gm-Gg: ASbGncsx1JBosp7C1OaKr+IupuJxLZ5PiDci4M0gEj/TkjtNXhp3hhS8HIYk4X4do36
-	1UkNsvJ2LpjrsvBRSrA5pEiZWA+p66qsiuCJdNrz+LxVJPlVADqIUN9hdakK0HB16n0dXwqbNve
-	I4VwkglYVr8pXxfmj+M/sX57gFr7rX+c2ryTgfHGbztqSTy/xp9UsSQHKeeseMm8TzNWYVBniD3
-	3Zu0n1453c3gSl96gFGvdaLp/AE4FEJrA==
-X-Google-Smtp-Source: AGHT+IFyG6lAkXqNECGf0CPqvA5WLNFwkWpmgIcJv7d6UG7Fy+qA0wGWEdL6nyUo+sCagqxDXc40BM4LYLvFPLy3JiY=
-X-Received: by 2002:a17:90b:3ecc:b0:32e:7c34:70cf with SMTP id
- 98e67ed59e1d1-3342a300aafmr5225649a91.36.1758843145829; Thu, 25 Sep 2025
- 16:32:25 -0700 (PDT)
+	s=arc-20240116; t=1758843381; c=relaxed/simple;
+	bh=L7xtPuj+G6Io/SmsjeP0L+RJNZsdC/1ktlEGvHxEo/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJ9Z4KKzhrCnmdFecahydSRExVdCmlE+2w/nol6/XnVtODRw6q2ccVzsiZahsL9tELuNUmPmwy3kDPg6TNmN9X8f077OMyFBGDyqXHv2TNDHQ24tqef2WhNnqz1yhCm/UBzT7cHI/HEf/5PRRVCxDwiWTM4FaI7Mh1tx18cFjfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klg4NMV5; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758843380; x=1790379380;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L7xtPuj+G6Io/SmsjeP0L+RJNZsdC/1ktlEGvHxEo/A=;
+  b=klg4NMV5RWkkYmpz5fPenbX2WwrTuVHQsZHIsOJ/YwZLWqBJwsAMHHB0
+   vC9zVlIUR8dijJResgYN9rYKsPFvr47XufJeqiCxOuIfQMyP2NO8lJYTJ
+   zYZpXx8cfXZeNJ0JTNtZDs3AvtPZTJ7CoC5ED3zIMZ5GsBVakQllYtRc3
+   uIFKNaK6LlNS7eAwBs7S4R270BmULCo+TlXqLNPwWPlML4aFhx+O4aytj
+   EFcMH6RrG9NOCldSDD7k3LpUHcagfvCk01ZiIoRMd8j6u6nhaW8exD1jl
+   7lG6kGMFKPli37WtSWEnkpoMkoiRD76hjxIZYXmhMziRO0GwVjRBOoLRM
+   A==;
+X-CSE-ConnectionGUID: eVDg2uJUTUGNik/hLIrZSg==
+X-CSE-MsgGUID: 1X1B1po8SyGzdtNU+wcO/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="83783337"
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="83783337"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 16:36:17 -0700
+X-CSE-ConnectionGUID: MeZMQOTdRpqd2XSQN7p/4A==
+X-CSE-MsgGUID: UrX1bYc8SCyphaXgPsYZeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
+   d="scan'208";a="182627602"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.4]) ([10.125.109.4])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 16:36:15 -0700
+Message-ID: <6ef7d09e-dd8b-4e0c-b8d8-0b52262a1a50@intel.com>
+Date: Thu, 25 Sep 2025 16:36:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 25 Sep 2025 16:32:11 -0700
-X-Gm-Features: AS18NWAPxbw3Q7HkczSi0SkphLUmd3YAUtjm9M5fUjRW3Bv2KTPZjdUhgqDqjkE
-Message-ID: <CAEf4Bzaf81OYLTzpN6E4ths_mN2gP29rMYBmbp7P2GqSMj8FbA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] selftests/bpf: Prepare to add -Wsign-compare for
- bpf selftests
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, matttbe@kernel.org, 
-	martineau@kernel.org, geliang@kernel.org, davem@davemloft.net, 
-	kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com, ameryhung@gmail.com, 
-	toke@redhat.com, houtao1@huawei.com, emil@etsalapatis.com, yatsenko@meta.com, 
-	isolodrai@meta.com, a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com, 
-	vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org, 
-	gregkh@linuxfoundation.org, paul@paul-moore.com, 
-	bboscaccy@linux.microsoft.com, James.Bottomley@hansenpartnership.com, 
-	mrpre@163.com, jakub@cloudflare.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	netdev@vger.kernel.org, mptcp@lists.linux.dev, 
-	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 25, 2025 at 2:36=E2=80=AFAM Mehdi Ben Hadj Khelifa
-<mehdi.benhadjkhelifa@gmail.com> wrote:
->
-> This series is preparing to add the -Wsign-compare C compilation flag to
-> the Makefile for bpf selftests as requested by a TODO to help avoid
-> implicit type conversions and have predictable behavior.
->
-> Changelog:
->
-> Changes from v2:
->
-> -Split up the patch into a patch series as suggested by vivek
->
-> -Include only changes to variable types with no casting by my mentor
-> david
->
-> -Removed the -Wsign-compare in Makefile to avoid compilation errors
-> until adding casting for rest of comparisons.
->
-> Link:https://lore.kernel.org/bpf/20250924195731.6374-1-mehdi.benhadjkheli=
-fa@gmail.com/T/#u
->
-> Changes from v1:
->
-> - Fix CI failed builds where it failed due to do missing .c and
-> .h files in my patch for working in mainline.
->
-> Link:https://lore.kernel.org/bpf/20250924162408.815137-1-mehdi.benhadjkhe=
-lifa@gmail.com/T/#u
->
-> Mehdi Ben Hadj Khelifa (3):
->   selftests/bpf: Prepare to add -Wsign-compare for bpf tests
->   selftests/bpf: Prepare to add -Wsign-compare for bpf tests
->   selftests/bpf: Prepare to add -Wsign-compare for bpf tests
->
-
-I see little value in these transformations. Did we catch any real
-issue here? All this type casting and replacement is just churn.
-
-I certainly don't want such churn in libbpf, and I'd leave BPF
-selftests as is as well. int vs u64 can have subtle and non-obvious
-implications for BPF code generation (for no-alu32 variants
-especially), and I think BPF CI already exposed some of those already.
-
-I think we can live without -Wsign-compare just fine.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 06/25] CXL/AER: Introduce aer_cxl_rch.c into AER
+ driver for handling CXL RCH errors
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+ <20250925223440.3539069-7-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250925223440.3539069-7-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
->  tools/testing/selftests/bpf/progs/test_global_func11.c       | 2 +-
->  tools/testing/selftests/bpf/progs/test_global_func12.c       | 2 +-
->  tools/testing/selftests/bpf/progs/test_global_func13.c       | 2 +-
->  tools/testing/selftests/bpf/progs/test_global_func9.c        | 2 +-
->  tools/testing/selftests/bpf/progs/test_map_init.c            | 2 +-
->  tools/testing/selftests/bpf/progs/test_parse_tcp_hdr_opt.c   | 2 +-
->  .../selftests/bpf/progs/test_parse_tcp_hdr_opt_dynptr.c      | 2 +-
->  tools/testing/selftests/bpf/progs/test_skb_ctx.c             | 2 +-
->  tools/testing/selftests/bpf/progs/test_snprintf.c            | 2 +-
->  tools/testing/selftests/bpf/progs/test_sockmap_strp.c        | 2 +-
->  tools/testing/selftests/bpf/progs/test_tc_tunnel.c           | 2 +-
->  tools/testing/selftests/bpf/progs/test_xdp.c                 | 2 +-
->  tools/testing/selftests/bpf/progs/test_xdp_dynptr.c          | 2 +-
->  tools/testing/selftests/bpf/progs/test_xdp_loop.c            | 2 +-
->  tools/testing/selftests/bpf/progs/test_xdp_noinline.c        | 4 ++--
->  tools/testing/selftests/bpf/progs/uprobe_multi.c             | 4 ++--
->  .../selftests/bpf/progs/uprobe_multi_session_recursive.c     | 5 +++--
->  .../selftests/bpf/progs/verifier_iterating_callbacks.c       | 2 +-
->  18 files changed, 22 insertions(+), 21 deletions(-)
->
-> --
-> 2.51.0
->
+
+On 9/25/25 3:34 PM, Terry Bowman wrote:
+> The restricted CXL Host (RCH) AER error handling logic currently resides
+> in the AER driver file, drivers/pci/pcie/aer.c. CXL specific changes are
+> conditionally compiled using #ifdefs.
+> 
+> Improve the AER driver maintainability by separating the RCH specific logic
+> from the AER driver's core functionality and removing the ifdefs. Introduce
+> drivers/pci/pcie/aer_cxl_rch.c for moving the RCH AER logic into.
+> Conditionally compile the file using the CONFIG_CXL_RCH_RAS Kconfig.
+> 
+> Move the CXL logic into the new file but leave helper functions in aer.c
+> for now as they will be moved in future patch for CXL virtual hierarchy
+> handling. Export the handler functions as needed. Export
+> pci_aer_unmask_internal_errors() allowing for all subsystems to use.
+> Avoid multiple declaration moves and export cxl_error_is_native() now to
+> allow for cxl_core access.
+> 
+> Inorder to maintain compilation after the move other changes are required.
+> Change cxl_rch_handle_error() & cxl_rch_enable_rcec() to be non-static
+> inorder for accessing from the AER driver in aer.c.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+
+Seems straight forward enough
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> 
+> ---
+> 
+> Changes in v11->v12:
+> - Rename drivers/pci/pcie/cxl_rch.c to drivers/pci/pcie/aer_cxl_rch.c (Lukas)
+> - Removed forward declararation of 'struct aer_err_info' in pci/pci.h (Terry)
+> 
+> Changes in v10->v11:
+> - Remove changes in code-split and move to earlier, new patch
+> - Add #include <linux/bitfield.h> to cxl_ras.c
+> - Move cxl_rch_handle_error() & cxl_rch_enable_rcec() declarations from pci.h
+> to aer.h, more localized.
+> - Introduce CONFIG_CXL_RCH_RAS, includes Makefile changes, ras.c
+> ifdef changes
+> ---
+>  drivers/pci/pci.h              |  14 +++++
+>  drivers/pci/pcie/Makefile      |   1 +
+>  drivers/pci/pcie/aer.c         | 108 +++------------------------------
+>  drivers/pci/pcie/aer_cxl_rch.c |  99 ++++++++++++++++++++++++++++++
+>  include/linux/aer.h            |   8 +++
+>  5 files changed, 129 insertions(+), 101 deletions(-)
+>  create mode 100644 drivers/pci/pcie/aer_cxl_rch.c
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 34f65d69662e..0c7178d0ef9d 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -1201,4 +1201,18 @@ static inline int pci_msix_write_tph_tag(struct pci_dev *pdev, unsigned int inde
+>  	(PCI_CONF1_ADDRESS(bus, dev, func, reg) | \
+>  	 PCI_CONF1_EXT_REG(reg))
+>  
+> +#ifdef CONFIG_CXL_RCH_RAS
+> +void cxl_rch_handle_error(struct pci_dev *dev, struct aer_err_info *info);
+> +void cxl_rch_enable_rcec(struct pci_dev *rcec);
+> +#else
+> +static inline void cxl_rch_handle_error(struct pci_dev *dev, struct aer_err_info *info) { }
+> +static inline void cxl_rch_enable_rcec(struct pci_dev *rcec) { }
+> +#endif
+> +
+> +#ifdef CONFIG_CXL_RAS
+> +bool is_internal_error(struct aer_err_info *info);
+> +#else
+> +static inline bool is_internal_error(struct aer_err_info *info) { return false; }
+> +#endif
+> +
+>  #endif /* DRIVERS_PCI_H */
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index 173829aa02e6..970e7cbc5b34 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -8,6 +8,7 @@ obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o bwctrl.o
+>  
+>  obj-y				+= aspm.o
+>  obj-$(CONFIG_PCIEAER)		+= aer.o err.o tlp.o
+> +obj-$(CONFIG_CXL_RCH_RAS)	+= aer_cxl_rch.o
+>  obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
+>  obj-$(CONFIG_PCIE_PME)		+= pme.o
+>  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 7a1dc2a3460b..6e5c9efe2920 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1099,7 +1099,7 @@ static bool find_source_device(struct pci_dev *parent,
+>   * Note: AER must be enabled and supported by the device which must be
+>   * checked in advance, e.g. with pcie_aer_is_native().
+>   */
+> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  {
+>  	int aer = dev->aer_cap;
+>  	u32 mask;
+> @@ -1112,119 +1112,25 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  	mask &= ~PCI_ERR_COR_INTERNAL;
+>  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
+>  }
+> +EXPORT_SYMBOL_GPL(pci_aer_unmask_internal_errors);
+>  
+> -static bool is_cxl_mem_dev(struct pci_dev *dev)
+> -{
+> -	/*
+> -	 * The capability, status, and control fields in Device 0,
+> -	 * Function 0 DVSEC control the CXL functionality of the
+> -	 * entire device (CXL 3.0, 8.1.3).
+> -	 */
+> -	if (dev->devfn != PCI_DEVFN(0, 0))
+> -		return false;
+> -
+> -	/*
+> -	 * CXL Memory Devices must have the 502h class code set (CXL
+> -	 * 3.0, 8.1.12.1).
+> -	 */
+> -	if ((dev->class >> 8) != PCI_CLASS_MEMORY_CXL)
+> -		return false;
+> -
+> -	return true;
+> -}
+> -
+> -static bool cxl_error_is_native(struct pci_dev *dev)
+> +bool cxl_error_is_native(struct pci_dev *dev)
+>  {
+>  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>  
+>  	return (pcie_ports_native || host->native_aer);
+>  }
+> +EXPORT_SYMBOL_NS_GPL(cxl_error_is_native, "CXL");
+>  
+> -static bool is_internal_error(struct aer_err_info *info)
+> +bool is_internal_error(struct aer_err_info *info)
+>  {
+>  	if (info->severity == AER_CORRECTABLE)
+>  		return info->status & PCI_ERR_COR_INTERNAL;
+>  
+>  	return info->status & PCI_ERR_UNC_INTN;
+>  }
+> -
+> -static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+> -{
+> -	struct aer_err_info *info = (struct aer_err_info *)data;
+> -	const struct pci_error_handlers *err_handler;
+> -
+> -	if (!is_cxl_mem_dev(dev) || !cxl_error_is_native(dev))
+> -		return 0;
+> -
+> -	/* Protect dev->driver */
+> -	device_lock(&dev->dev);
+> -
+> -	err_handler = dev->driver ? dev->driver->err_handler : NULL;
+> -	if (!err_handler)
+> -		goto out;
+> -
+> -	if (info->severity == AER_CORRECTABLE) {
+> -		if (err_handler->cor_error_detected)
+> -			err_handler->cor_error_detected(dev);
+> -	} else if (err_handler->error_detected) {
+> -		if (info->severity == AER_NONFATAL)
+> -			err_handler->error_detected(dev, pci_channel_io_normal);
+> -		else if (info->severity == AER_FATAL)
+> -			err_handler->error_detected(dev, pci_channel_io_frozen);
+> -	}
+> -out:
+> -	device_unlock(&dev->dev);
+> -	return 0;
+> -}
+> -
+> -static void cxl_rch_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+> -{
+> -	/*
+> -	 * Internal errors of an RCEC indicate an AER error in an
+> -	 * RCH's downstream port. Check and handle them in the CXL.mem
+> -	 * device driver.
+> -	 */
+> -	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
+> -	    is_internal_error(info))
+> -		pcie_walk_rcec(dev, cxl_rch_handle_error_iter, info);
+> -}
+> -
+> -static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
+> -{
+> -	bool *handles_cxl = data;
+> -
+> -	if (!*handles_cxl)
+> -		*handles_cxl = is_cxl_mem_dev(dev) && cxl_error_is_native(dev);
+> -
+> -	/* Non-zero terminates iteration */
+> -	return *handles_cxl;
+> -}
+> -
+> -static bool handles_cxl_errors(struct pci_dev *rcec)
+> -{
+> -	bool handles_cxl = false;
+> -
+> -	if (pci_pcie_type(rcec) == PCI_EXP_TYPE_RC_EC &&
+> -	    pcie_aer_is_native(rcec))
+> -		pcie_walk_rcec(rcec, handles_cxl_error_iter, &handles_cxl);
+> -
+> -	return handles_cxl;
+> -}
+> -
+> -static void cxl_rch_enable_rcec(struct pci_dev *rcec)
+> -{
+> -	if (!handles_cxl_errors(rcec))
+> -		return;
+> -
+> -	pci_aer_unmask_internal_errors(rcec);
+> -	pci_info(rcec, "CXL: Internal errors unmasked");
+> -}
+> -
+> -#else
+> -static inline void cxl_rch_enable_rcec(struct pci_dev *dev) { }
+> -static inline void cxl_rch_handle_error(struct pci_dev *dev,
+> -					struct aer_err_info *info) { }
+> -#endif
+> +EXPORT_SYMBOL_NS_GPL(is_internal_error, "CXL");
+> +#endif /* CONFIG_CXL_RAS */
+>  
+>  /**
+>   * pci_aer_handle_error - handle logging error into an event log
+> diff --git a/drivers/pci/pcie/aer_cxl_rch.c b/drivers/pci/pcie/aer_cxl_rch.c
+> new file mode 100644
+> index 000000000000..bfe071eebf67
+> --- /dev/null
+> +++ b/drivers/pci/pcie/aer_cxl_rch.c
+> @@ -0,0 +1,99 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright(c) 2025 AMD Corporation. All rights reserved. */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/aer.h>
+> +#include <linux/bitfield.h>
+> +#include "../pci.h"
+> +
+> +static bool is_cxl_mem_dev(struct pci_dev *dev)
+> +{
+> +	/*
+> +	 * The capability, status, and control fields in Device 0,
+> +	 * Function 0 DVSEC control the CXL functionality of the
+> +	 * entire device (CXL 3.0, 8.1.3).
+> +	 */
+> +	if (dev->devfn != PCI_DEVFN(0, 0))
+> +		return false;
+> +
+> +	/*
+> +	 * CXL Memory Devices must have the 502h class code set (CXL
+> +	 * 3.0, 8.1.12.1).
+> +	 */
+> +	if ((dev->class >> 8) != PCI_CLASS_MEMORY_CXL)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+> +{
+> +	struct aer_err_info *info = (struct aer_err_info *)data;
+> +	const struct pci_error_handlers *err_handler;
+> +
+> +	if (!is_cxl_mem_dev(dev) || !cxl_error_is_native(dev))
+> +		return 0;
+> +
+> +	/* Protect dev->driver */
+> +	device_lock(&dev->dev);
+> +
+> +	err_handler = dev->driver ? dev->driver->err_handler : NULL;
+> +	if (!err_handler)
+> +		goto out;
+> +
+> +	if (info->severity == AER_CORRECTABLE) {
+> +		if (err_handler->cor_error_detected)
+> +			err_handler->cor_error_detected(dev);
+> +	} else if (err_handler->error_detected) {
+> +		if (info->severity == AER_NONFATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_normal);
+> +		else if (info->severity == AER_FATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_frozen);
+> +	}
+> +out:
+> +	device_unlock(&dev->dev);
+> +	return 0;
+> +}
+> +
+> +void cxl_rch_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+> +{
+> +	/*
+> +	 * Internal errors of an RCEC indicate an AER error in an
+> +	 * RCH's downstream port. Check and handle them in the CXL.mem
+> +	 * device driver.
+> +	 */
+> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
+> +	    is_internal_error(info))
+> +		pcie_walk_rcec(dev, cxl_rch_handle_error_iter, info);
+> +}
+> +
+> +static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
+> +{
+> +	bool *handles_cxl = data;
+> +
+> +	if (!*handles_cxl)
+> +		*handles_cxl = is_cxl_mem_dev(dev) && cxl_error_is_native(dev);
+> +
+> +	/* Non-zero terminates iteration */
+> +	return *handles_cxl;
+> +}
+> +
+> +static bool handles_cxl_errors(struct pci_dev *rcec)
+> +{
+> +	bool handles_cxl = false;
+> +
+> +	if (pci_pcie_type(rcec) == PCI_EXP_TYPE_RC_EC &&
+> +	    pcie_aer_is_native(rcec))
+> +		pcie_walk_rcec(rcec, handles_cxl_error_iter, &handles_cxl);
+> +
+> +	return handles_cxl;
+> +}
+> +
+> +void cxl_rch_enable_rcec(struct pci_dev *rcec)
+> +{
+> +	if (!handles_cxl_errors(rcec))
+> +		return;
+> +
+> +	pci_aer_unmask_internal_errors(rcec);
+> +	pci_info(rcec, "CXL: Internal errors unmasked");
+> +}
+> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> index 02940be66324..2ef820563996 100644
+> --- a/include/linux/aer.h
+> +++ b/include/linux/aer.h
+> @@ -56,12 +56,20 @@ struct aer_capability_regs {
+>  #if defined(CONFIG_PCIEAER)
+>  int pci_aer_clear_nonfatal_status(struct pci_dev *dev);
+>  int pcie_aer_is_native(struct pci_dev *dev);
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>  #else
+>  static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
+>  {
+>  	return -EINVAL;
+>  }
+>  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+> +#endif
+> +
+> +#ifdef CONFIG_CXL_RAS
+> +bool cxl_error_is_native(struct pci_dev *dev);
+> +#else
+> +static inline bool cxl_error_is_native(struct pci_dev *dev) { return false; }
+>  #endif
+>  
+>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
+
 
