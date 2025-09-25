@@ -1,217 +1,149 @@
-Return-Path: <linux-kernel+bounces-832352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73541B9F0D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0520B9F0DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF6D3B0E76
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2FE7188DCBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EC92FCC0F;
-	Thu, 25 Sep 2025 11:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B772FB977;
+	Thu, 25 Sep 2025 11:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="lO9k8AfL"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WIty5TSR"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD7C25B67D;
-	Thu, 25 Sep 2025 11:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3052FC01B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758801543; cv=none; b=mIF55fjHFjCY2yFyXtEzJPO8CE6TX/8iHaSr81VHp/GCSsYMJOr2Xa95gs6Sna+kCa3xZ4gjhR8LqUhTou9rWdh3rIZWDXY2TB7dsw+0KyqObX3VdFt8kImWVdk7f0NxLARvOAOYqBuRWD4C/wjIzN/hWY1RiPECn/aCmqZFRKM=
+	t=1758801598; cv=none; b=RT5y2gHNcbGsqpA3vaahVQAZaJee7wlpBfiG37NwseXM04K/oHle9iiv0Qw7prmyOLpB6HvdSkz7wC6KxMIUt/mKkEq7r6gnKbw4JKrUOGPrRHsFCtaJHoyVa1mMGgywP3vjSE0gLkadKr0Ut+gGimfERJuXQHrknVv/kGiCBiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758801543; c=relaxed/simple;
-	bh=+IY2OXXnsRKbkGAIpo4vaVP6VC/er3FaJDr3rMxY6QM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMvg+XHNM8FcklpuSJ8oOmCns8nGjjuDh7EKcifzJDwLiqsl39Eo37JX8cfgjzFRFiGvf+jkgHwqicHjCLOHg4SmxTPECPoKHpGPS6wj2CftmDUAV0amHCw2c5FNUgR8wwIDTgyMYYuMRYJmcTOYSJcsDVRHbAfPARbcvFcg67w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=lO9k8AfL; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=/1G5FUDQpvZvuASdzQAKejgHTSFRJSHzx2wHymQgnpA=; b=lO9k8AfLGlZrBE2HyV1pQtekmf
-	s/tGoCLfQi2HkmQX5fwM/N2UaaXYnIVqwzWi4Co9VA2pU6G/q81Qkp9SUV835YkljwvcLOGsng4+G
-	OVCLDKRLG5W2OtDRKnXOD+Tld9KPwKXXjCLZkcQpPTJSnp+8IdK8yS0GscZcH2ARxglAuZthsenff
-	TZ6HOW61qfz20F89bGipaW6+XZ2QIm5d/xl5JkSslv/CWbsPy1pvDj62FTM6gVCD2lv1idNmsXJx5
-	ty+NThmAgXFIY7GQLR3EYuKdmn436FLRhZDYO+nsb3Qgo3RdUy8ofmoZikdpStqY2P50WtotTwe+W
-	G8LHcp9w==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1v1kcW-000MhS-1u;
-	Thu, 25 Sep 2025 13:58:44 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1v1kcU-000ICJ-1m;
-	Thu, 25 Sep 2025 13:58:42 +0200
-Message-ID: <b05e5979-2c62-4de5-ba29-e3b9e9167da8@iogearbox.net>
-Date: Thu, 25 Sep 2025 13:58:41 +0200
+	s=arc-20240116; t=1758801598; c=relaxed/simple;
+	bh=yRoUXc7iM5E0Q4HeKXKIYrccPXhjgW1c57VO6navqQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XECSGW1Zwo+nn6lODy5LCPHoBEoiajnglAu//udTVWNwXlIemggyX/hZuf64ikkz6l0chvSrMjHYZHtY8VOIX9FXb52gUOGUJd+NFwDkaFh6nlBOK7V/gZBNpIA5uHCW8XHx2cAw4nyxKi14KrePmXZSK+55VGBnLmA2QYWRx9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WIty5TSR; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57a292a3a4bso991443e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:59:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758801593; x=1759406393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JrqoW50S86GQruERN9yWcjsCpx5n9qTugCw8eRLUCCw=;
+        b=WIty5TSRAghnp92PNmf/cfYbhC+hqsmgBhxeDJuAR/pm+72Rl+fRAQtSbOG7izUPSl
+         +7N9pchgYwVzCFobdgrx5cluwW3sUemZ54KwTyYS35BIyRb2OlGtY/xG+pcstJP92gGb
+         gw7++jTZUqCkWLlN/IJJ93HwR+Smlhtneh4FLkfbXDpE9YisSC9WCwJ+93xn64whF233
+         9xsz+E4lHY+SahUM95YWtQLxor/PL0zGGLMN6LwRI8z5gi22kRk7R2OTh3wHIBU0jwpm
+         80/lFEhU4NjwcNWqEKdxCSQtHqvKqkTcaoFtzOP5hKNY2ePxhDvcbguHZacwDl1nBdGE
+         vpQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758801593; x=1759406393;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JrqoW50S86GQruERN9yWcjsCpx5n9qTugCw8eRLUCCw=;
+        b=WuxIeJcntyJuN5PiY1iXPNcJmNAe7Fp1s5asGhH6trMeu6AjAFI1DXh/uJfKYfv5Ps
+         4u654KynqI4MTEPhKxw3lVCf+Quuva/FQlDrjKhp5XQ3yjpUybArAW/yjeTx6Ea6PCGK
+         pqCdHqIV/KOEq87tBGBMbuPXUxZLylzN9xyhCnxqBNOfuPTj1EopZ7aimxQVXkAnQhNW
+         mQroRELG7UF+5imThrjSt5fAho1WdTBjlKHFbazazF8qxpH7JO3ZFhedQvd5Ez5hQpfE
+         nnJBI9cI2SX+RPoCUIMjAbU0m0MG8QCSzAs0hQqtQhKDA7IRql+Fi9c1yTwzGfvx6Sw3
+         lLmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU46tpYtGwNGqhWotqPEPYMm2TGBRD/sDR5RwBkjkClGu9qkIAuhD7gB/yOcx/qffizcbe4DD3sk6J6CcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4i3/QnaD3A6A6jB5a483ssuqaIuLhdsGvuxB3QWIUXXu5mgGT
+	zZo5xhJeblP6QcIoC97RqVpaxGudR5BqvYWIaed4oMfxi3LyfZ4dDnfE0Sh5A8nQ0pU=
+X-Gm-Gg: ASbGncvktRn9l2TZ/tdbIQiFANOC26nXdTYqGgUxq5hO9emg64t8Ow6yU6K/23RLDtJ
+	SaaZJyOdZCBuC1ouC0Y/LjVxu/cf866X796OqyyvzCYcYpFsr1JBZI0QIBGDydI2fpSyRRiMM3u
+	jUezZBx4KRxrsaoGrEKOqDAWqsU31i3RmkkVDdQjYdnIpyGwMwxyy7dPteyJwrnErsUgaHoRwDq
+	veaG+LiRn2hyGE6NZCJIjWW2u9pOjDX3/9SN9TMqDc71nFJnECVErOWcMp7SSSlqSLiYdQ2LKEB
+	AG6keVYAqF6fv5l7TnocweeW9LJpooJ7WrXqxDoo1LE2chQ04kIdYYHwoLoK7gEEI7GuTSc8hIx
+	ZYYE9OVcKMezLSTy3BRzKvfLDMLQjnZ3IsZTtdpRpbVAmMwn7PDVt8Q+aJmlmb+s6uf3BjR7q
+X-Google-Smtp-Source: AGHT+IFPtHO+U+hfSDkSoOkmowZhRO7citbEHLMZx0tIaudapfQghvW6tgSpLLBuhT/gfWZEbOcBFA==
+X-Received: by 2002:a05:6512:238d:b0:579:ec3a:ada2 with SMTP id 2adb3069b0e04-582d092e4b4mr1134751e87.4.1758801593122;
+        Thu, 25 Sep 2025 04:59:53 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665697esm675382e87.78.2025.09.25.04.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 04:59:52 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Saravana Kannan <saravanak@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Sebin Francis <sebin.francis@ti.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] driver core: fw_devlink: Don't warn in fw_devlink_dev_sync_state()
+Date: Thu, 25 Sep 2025 13:59:24 +0200
+Message-ID: <20250925115924.188257-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: Add -Wsign-compare C
- compilation flag
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>,
- andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, martin.lau@linux.dev,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- shuah@kernel.org, matttbe@kernel.org, martineau@kernel.org,
- geliang@kernel.org, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- linux@jordanrome.com, ameryhung@gmail.com, toke@redhat.com,
- houtao1@huawei.com, emil@etsalapatis.com, yatsenko@meta.com,
- isolodrai@meta.com, a.s.protopopov@gmail.com, dxu@dxuuu.xyz,
- memxor@gmail.com, vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
- gregkh@linuxfoundation.org, paul@paul-moore.com,
- bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
- mrpre@163.com, jakub@cloudflare.com
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
- mptcp@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20250924195731.6374-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <20250924195731.6374-1-mehdi.benhadjkhelifa@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27773/Thu Sep 25 10:27:35 2025)
+Content-Transfer-Encoding: 8bit
 
-On 9/24/25 9:57 PM, Mehdi Ben Hadj Khelifa wrote:
-> -Change all the source files and the corresponding headers
-> to having matching sign comparisons.
-> 
-> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> ---
-> Changelog:
-> 
-> Changes since v1:
-> - Fix CI failed builds where it failed due to do missing .c and
-> .h files in my patch for working in mainline.
-> https://lore.kernel.org/bpf/20250924162408.815137-1-mehdi.benhadjkhelifa@gmail.com/T/#u
-> ---
->   tools/lib/bpf/usdt.bpf.h                         |  4 ++--
->   tools/testing/selftests/bpf/Makefile             |  4 ++--
->   tools/testing/selftests/bpf/bpf_arena_htab.h     |  2 +-
->   tools/testing/selftests/bpf/progs/arena_list.c   |  2 +-
->   .../bpf/progs/bench_local_storage_create.c       |  2 +-
->   tools/testing/selftests/bpf/progs/bind_perm.c    |  2 +-
->   tools/testing/selftests/bpf/progs/bpf_cc_cubic.c |  2 +-
->   tools/testing/selftests/bpf/progs/bpf_cubic.c    |  8 ++++----
->   .../bpf/progs/bpf_iter_bpf_percpu_array_map.c    |  2 +-
->   .../selftests/bpf/progs/bpf_iter_task_stack.c    |  2 +-
->   .../testing/selftests/bpf/progs/bpf_iter_tasks.c |  3 ++-
->   .../selftests/bpf/progs/bpf_iter_vma_offset.c    |  4 ++--
->   .../testing/selftests/bpf/progs/bpf_qdisc_fifo.c |  2 +-
->   tools/testing/selftests/bpf/progs/bpf_qdisc_fq.c |  4 ++--
->   .../bpf/progs/cgroup_getset_retval_getsockopt.c  |  6 +++---
->   .../selftests/bpf/progs/connect4_dropper.c       |  2 +-
->   .../selftests/bpf/progs/cpumask_success.c        |  4 ++--
->   .../testing/selftests/bpf/progs/dynptr_success.c |  8 ++++----
->   tools/testing/selftests/bpf/progs/iters.c        | 16 ++++++++--------
->   .../selftests/bpf/progs/kfunc_call_test.c        |  2 +-
->   tools/testing/selftests/bpf/progs/linked_list.c  | 10 +++++-----
->   tools/testing/selftests/bpf/progs/lsm.c          |  2 +-
->   .../testing/selftests/bpf/progs/map_in_map_btf.c |  2 +-
->   tools/testing/selftests/bpf/progs/map_ptr_kern.c |  2 +-
->   .../selftests/bpf/progs/mmap_inner_array.c       |  2 +-
->   .../testing/selftests/bpf/progs/mptcp_subflow.c  |  2 +-
->   .../selftests/bpf/progs/netif_receive_skb.c      |  4 ++--
->   tools/testing/selftests/bpf/progs/profiler.inc.h |  6 +++---
->   .../testing/selftests/bpf/progs/rcu_read_lock.c  |  4 ++--
->   .../bpf/progs/sk_storage_omem_uncharge.c         |  6 +++---
->   .../selftests/bpf/progs/sockopt_inherit.c        |  4 ++--
->   tools/testing/selftests/bpf/progs/sockopt_sk.c   |  4 ++--
->   tools/testing/selftests/bpf/progs/strobemeta.h   |  2 +-
->   .../selftests/bpf/progs/task_local_data.bpf.h    |  6 +++---
->   .../selftests/bpf/progs/test_bpf_cookie.c        |  2 +-
->   .../testing/selftests/bpf/progs/test_check_mtu.c |  4 ++--
->   .../selftests/bpf/progs/test_core_extern.c       |  2 +-
->   .../testing/selftests/bpf/progs/test_get_xattr.c |  4 ++--
->   .../selftests/bpf/progs/test_global_func11.c     |  2 +-
->   .../selftests/bpf/progs/test_global_func12.c     |  2 +-
->   .../selftests/bpf/progs/test_global_func13.c     |  2 +-
->   .../selftests/bpf/progs/test_global_func14.c     |  2 +-
->   .../selftests/bpf/progs/test_global_func9.c      |  2 +-
->   .../selftests/bpf/progs/test_lwt_seg6local.c     |  4 ++--
->   .../testing/selftests/bpf/progs/test_map_init.c  |  2 +-
->   .../selftests/bpf/progs/test_parse_tcp_hdr_opt.c |  2 +-
->   .../bpf/progs/test_parse_tcp_hdr_opt_dynptr.c    |  2 +-
->   .../selftests/bpf/progs/test_pkt_access.c        |  6 +++---
->   .../testing/selftests/bpf/progs/test_seg6_loop.c |  4 ++--
->   tools/testing/selftests/bpf/progs/test_skb_ctx.c |  2 +-
->   .../testing/selftests/bpf/progs/test_snprintf.c  |  2 +-
->   .../selftests/bpf/progs/test_sockmap_kern.h      |  2 +-
->   .../selftests/bpf/progs/test_sockmap_strp.c      |  2 +-
->   .../testing/selftests/bpf/progs/test_tc_tunnel.c |  2 +-
->   tools/testing/selftests/bpf/progs/test_xdp.c     |  2 +-
->   .../selftests/bpf/progs/test_xdp_dynptr.c        |  2 +-
->   .../testing/selftests/bpf/progs/test_xdp_loop.c  |  2 +-
->   .../selftests/bpf/progs/test_xdp_noinline.c      |  4 ++--
->   tools/testing/selftests/bpf/progs/udp_limit.c    |  2 +-
->   tools/testing/selftests/bpf/progs/uprobe_multi.c |  4 ++--
->   .../bpf/progs/uprobe_multi_session_recursive.c   |  5 +++--
->   .../selftests/bpf/progs/verifier_arena_large.c   |  4 ++--
->   .../bpf/progs/verifier_iterating_callbacks.c     |  2 +-
->   63 files changed, 109 insertions(+), 107 deletions(-)
+Due to the wider deployment of the ->sync_state() support, for PM domains
+for example, we are receiving reports about the messages that are being
+logged in fw_devlink_dev_sync_state(). In particular as they are at the
+warning level, which doesn't seem correct.
 
-Big churn all over the place :/ Either way, it looks like you haven't run
-the tests locally before submitting, some are failing:
+Even if it certainly is useful to know that the ->sync_state() condition
+could not be met, there may be nothing wrong with it. For example, a driver
+may be built as module and are still waiting to be initialized/probed.
 
-https://github.com/kernel-patches/bpf/actions/runs/17993782331
+Ideally these messages should be at the debug level, but since the
+->sync_state() feature is under an ongoing deployment and the prints
+provides valuable information, let's move to the info level for now.
+
+Cc: Saravana Kannan <saravanak@google.com>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: Sebin Francis <sebin.francis@ti.com>
+Reported-by: Diederik de Haas <didi.debian@cknow.org>
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/base/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index d22d6b23e758..97eab79c2f3b 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1784,7 +1784,7 @@ static int fw_devlink_dev_sync_state(struct device *dev, void *data)
+ 		return 0;
+ 
+ 	if (fw_devlink_sync_state == FW_DEVLINK_SYNC_STATE_STRICT) {
+-		dev_warn(sup, "sync_state() pending due to %s\n",
++		dev_info(sup, "sync_state() pending due to %s\n",
+ 			 dev_name(link->consumer));
+ 		return 0;
+ 	}
+@@ -1792,7 +1792,7 @@ static int fw_devlink_dev_sync_state(struct device *dev, void *data)
+ 	if (!list_empty(&sup->links.defer_sync))
+ 		return 0;
+ 
+-	dev_warn(sup, "Timed out. Forcing sync_state()\n");
++	dev_info(sup, "Timed out. Forcing sync_state()\n");
+ 	sup->state_synced = true;
+ 	get_device(sup);
+ 	list_add_tail(&sup->links.defer_sync, data);
+-- 
+2.43.0
+
 
