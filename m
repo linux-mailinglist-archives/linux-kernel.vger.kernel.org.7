@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-832540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BFBB9F9F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24201B9FA8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778614C0D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D312E3A5A72
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B332741A6;
-	Thu, 25 Sep 2025 13:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B35284B3C;
+	Thu, 25 Sep 2025 13:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eucOK8fH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="mqR4TSd7"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7072727F9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DBF1D6DDD;
+	Thu, 25 Sep 2025 13:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758807675; cv=none; b=G+8pIXSb6YZr9sWB8tHx4dcgOTiaUpyMIPf1GEKsSGkE3joG48TxzoztdSVxxXRnYH9Dr0HTUWhRiqH19hymYZqGNbvAfMXEA4Xnflcusv6/Oa9LlVmSC0V1iEk8hV8cR6YAJG4MoqwTgdVu1WdLXyr1huqeBPzEqCBX887Ma4M=
+	t=1758808190; cv=none; b=kIPOffvGQzn96HgzizjhxWuC06BMktIdIQ2Xe9dcCnXfYiJ5MKeApP78WPVz/iamFnxpRhs/2w+p3T0zpm7/vPF20b6a3uKBEbj7ir9uHI1MbwDCwmLwe0BoEKeQ8qRXY7+6Gg57pevuOqx1v0kPubDX0WHeuGgqmL3cEe1Gu/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758807675; c=relaxed/simple;
-	bh=k24TsHdSWeGcrDakZ5ZxZ4u26blxOVBlucfWSid3ZFA=;
+	s=arc-20240116; t=1758808190; c=relaxed/simple;
+	bh=fQlu4S1Xpfp+OjsU8aoZiqJX/wsJnC+sYNgxE5Ve1Z0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YGHhsDLDSB7EOpj/+1+UZvz+OkO/RBs+Id4sdS7f1OhlYXuEgRJbU+TbGUBiVSi9YDK0zXTjJUsOK9Z2OcLIRHxa4HGcSjOAA+5q+cUng9MOepsG6hQ2BWXqyxYFadE0qODrP8w83rAXM9PdCiUyohSypr8HZYh6T3/QaWXkd24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eucOK8fH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9YqPX021655
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:41:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZxuB5kT9QhvZV6VcXA7vRyRC6QPVlvbL5ixfpltHdps=; b=eucOK8fHI7HhgVa8
-	3u5MMOZiHNnfVdURqAECjRHKZ7ExeVIJWHEeuEgxep4LuXhlBlpEnBR/EzmvXHos
-	G+toHPzHRkAvSTEjqOR6LPGI7lyX9jRU+xkyzGAWPpjft6e/IrBrSAm0ITnqYaKq
-	LPatB8rXP17OlhaP2ZtlEMZOn8bOnNE5ge5Z5LAz489BTMA60jD55IayqazRGlYQ
-	pExZvl6BgHnu6QWVPnuvmj2S79PuMxVKuEWAm+xAKn/ROSbKzXsqLU7f0hFpCrJL
-	myLZ+lrmcge1zbiBij+sJh8YKadcHFkKoMs5HsIrCuNkSTK93Zv9dF4YJXwWUY3j
-	lpV/dQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49budafuan-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:41:12 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-272ed8c106eso6910755ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:41:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758807671; x=1759412471;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxuB5kT9QhvZV6VcXA7vRyRC6QPVlvbL5ixfpltHdps=;
-        b=VdHCVCnEw5JZbtHOWCoX8/hKlBR/VaHl5FMKrdqdqxrZ0uCfwVFQF4dxM4xGpJc9zw
-         gtWTIqNN0EO0S02HJNRVBbh0C/wbrnjIy9PWf/PQq04c4ms2JyEoccsE6vxGClipYfpo
-         uFGQsv+GI62VDcfUTe6figL1r6aZMuq1qhgBJ+OWgzTkCkd+J5ra0YRjB9DVk6wPXhmi
-         DUitTt7E8MZT1LwsBLW6GBErijhNrqeLKGbSKl8Ioa5347Ke2K3IE7WNCu0j5rmPdvga
-         fOeDw/GkHprN819gIBElE6n32H1aEGZQcyzUGlNJDAnGu62nHVgOGVUc8t+eUilpl9eg
-         Wu7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVO5g4f5lvzSNTj+SzXZ/wv/9mlPM7agYFAeZ6SpSG+u+PpyXDK3kG3JmDJRtuJQ3h9HpE/yGylLST0NMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPVjlkZetexpy8z/klIFblR5ec29tmUao+4s9pj6HhgKWBMvcg
-	eycDn7MJNn0+c2XKQh9DHpsVLPXMy9GZM/Cmtyaz5nmxpzYroG3NmzA0QDgM9C+es4DzagrbgZt
-	0/gYcOYHGKD4Nhd66jAB2ne/5YiuKLiir9d25XaWcjqDY39Cx5utFVKAk+QgP6jHBJXyzLR7X1o
-	U=
-X-Gm-Gg: ASbGncsm4pSO1EI427TC/l09QjnGvAeesrPYVDF+Q6cf5TDvRwFnwH4XOBPpEjZ2Yv5
-	Gb1ihQ8Xmvquf0QXvPXeygNRYn8MY2G3KyzCxCKkUfzaGjZbrWUqXLSaEgCv3VEIKPnodZJzrJ5
-	fO4rtN8TOU5acMQslquXyi0kcHCzMqBko2Hq8U00keqQ6sW351DVN68f8u8quRSJXYsWW4EhA15
-	l3R6hxSCDYjfTbY8KEdpToBaLhjrgjA6dVzCzaS1NiRyTfswK5PVmALnwB/GlnJ9XHjaw5R4JJw
-	l4ugJN4jDZ8DOfPDldgjNnXcf0PdlMaLvJQ4Ikr4haIzCZ/QwFRMALBNJB+57LQ+nOOe
-X-Received: by 2002:a17:903:8c8:b0:269:9446:8e45 with SMTP id d9443c01a7336-27ed4a7ebaemr37331055ad.34.1758807670476;
-        Thu, 25 Sep 2025 06:41:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGc0Iz3ZnWQ7KLTGI1sXvRmOPwr9wL6X2M5C7upUNaBrMM/aDz21PI8yG4UpXaXxAe3VMbrYg==
-X-Received: by 2002:a17:903:8c8:b0:269:9446:8e45 with SMTP id d9443c01a7336-27ed4a7ebaemr37330445ad.34.1758807669493;
-        Thu, 25 Sep 2025 06:41:09 -0700 (PDT)
-Received: from [192.168.29.198] ([49.37.133.0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d3df7sm26066295ad.1.2025.09.25.06.41.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 06:41:09 -0700 (PDT)
-Message-ID: <9066c8b1-bf25-4ce1-a0ee-16e9ab44dcad@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 19:10:47 +0530
+	 In-Reply-To:Content-Type; b=rroMfLSuOUYdF4/hUZmYPJawH8YWyLl4ISxfNqfpPySpET90M3gzCw+D1zOBuPx2ymmKZ0fWGyWPFVenCyT/lMRe8wtCo89kEhMyAQo9yiSIACYkEOjeNj2HUQL/s3MujfjAKk+Ox313YxCa9js4HYjk1AB5F24v4l+0HnB5Mjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=mqR4TSd7; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 6A2D2534011B;
+	Thu, 25 Sep 2025 15:41:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1758807694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uy252oP/86BgCE/4KMshl0UWHD/Fva5QoCb2a0Z/n04=;
+	b=mqR4TSd7t1ah2KuuyTGFMvdZc0EWgCvD1q4g7xBMnRwMCtK/jyQtPkVwwOJlJLzZKmimBF
+	2C6IHvJtbOTagHghIy3LanewyZBuT+qUpjLmdFPaYWcnrz9APaPjHpB9XA5YCPJ1gKCACE
+	pCXBMGMubJ9NZUCnT1vJ5ibYqd0yYZo=
+Message-ID: <7282a888-e550-4d75-838c-0fb242fefdf6@ixit.cz>
+Date: Thu, 25 Sep 2025 15:41:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,73 +55,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: gcc-glymur: Update the halt check flags for
- pipe clocks
-To: Taniya Das <taniya.das@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250925-glymur_gcc_usb_fixes-v2-1-ee4619571efe@oss.qualcomm.com>
+Subject: Re: [PATCH 0/8] Add OnePlus 6T display (Samsung S6E3FC2X01 DDIC with
+ AMS641RW panel)
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20250925-s6e3fc2x01-v1-0-9293016768f7@ixit.cz>
+ <a078c6a0-5a54-4ad5-8e3a-c676783e68a3@oss.qualcomm.com>
 Content-Language: en-US
-From: Imran Shaik <imran.shaik@oss.qualcomm.com>
-In-Reply-To: <20250925-glymur_gcc_usb_fixes-v2-1-ee4619571efe@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <a078c6a0-5a54-4ad5-8e3a-c676783e68a3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: wIq8DVdw_X3XYYPSemhQhYFeBZARyson
-X-Proofpoint-ORIG-GUID: wIq8DVdw_X3XYYPSemhQhYFeBZARyson
-X-Authority-Analysis: v=2.4 cv=Yaq95xRf c=1 sm=1 tr=0 ts=68d54678 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=5wqTxrHxgjUWVXd7k2kF3w==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=encx6hSPGTGxlSLovxUA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDExMyBTYWx0ZWRfXy2oUsNd7XVhi
- ALD8tsGClvnDLHdJOUpzVVZTWVQ+I4YMpVonrAk1VSoy83bAKk2Gru+HgE8/DHmPs4/FJp9nDHp
- IsZCuvTEurS/Y0QSgXRSIpA7oqI7YidVEoCtJArYERdFbsYXUzOGnGB3kI9p871ULGBtSwcyc/P
- Iej5GHkRowgloMJ1I73Dix/jPP1KGm141ctQcE8KCS+iH0uQHkrLfQfukjupd7VqwsB6jdUHOgh
- 5/hy49BiKUikm2O2nZtnatJTLa8uj9IihYiJx5fdaZX/svNTYHQ9dm0fYg5nfIBIHgxDP6xlpfV
- wqHRb3n1AuTE2zJkhOSK5DTAxhQPajRFJsJpLkeIlgNF2yY+6ULBhwriG5t/MjY4Ham7zdrA82m
- eVUywgNu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
- adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509230113
 
-
-
-On 9/25/2025 3:49 PM, Taniya Das wrote:
-> The pipe clocks for PCIE and USB are externally sourced and they should
-> not be polled by the clock driver. Update the halt_check flags to 'SKIP'
-> to disable polling for these clocks.
+On 25/09/2025 11:37, Konrad Dybcio wrote:
+> On 9/25/25 11:12 AM, David Heidelberg via B4 Relay wrote:
+>> This patchset enables display on the OnePlus 6T smartphone.
+>>
+>> Minor adjust to the device-tree of OnePlus 6 had to be done
+>> to properly document reset GPIO used. Also same adjustments
+>> had been done to the sofef00 panel driver (used by OnePlus 6).
+>>
+>> In the last step new DDIC driver is introduced together with AMS641RW
+>> panel sequences.
 > 
-> This helps avoid the clock status stuck at 'off' warnings, which are
-> benign, since all consumers of the PHYs must initialize a given instance
-> before performing any operations.
-> 
-> Fixes: efe504300a17 ("clk: qcom: gcc: Add support for Global Clock Controller")
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
-> Changes in v2:
-> - Update the commit text to add the SoC name "glymur" [Konrad]
-> - Update the commit subject to add more details [Konrad]
-> - Add RB [Konrad]
-> - Fix a typo [Markus Elfring]
-> - Link to v1: https://lore.kernel.org/r/20250924-glymur_gcc_usb_fixes-v1-1-a90568723e64@oss.qualcomm.com
-> ---
->  drivers/clk/qcom/gcc-glymur.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> Reviewed-by: Imran Shaik <imran.shaik@oss.qualcomm.com>
+> I think you skipped the elephant in the room - some of these patches
+> break panel for the phone intermittently..
 
-Thanks,
-Imran
+Thank you for the review Konrad. I plan to incorporate all your 
+suggested changes in the next revision.
+
+To clarify, while sofef00 has been introduced as supporting OnePlus 6T 
+too, but it never did (and the compatible was removed later).
+
+All the changes CAN'T BREAK anything for OnePlus 6T display as it's not 
+supported yet by mainline.
+
+All the changes SHOULDN'T CHANGE anything for the OnePlus 6, as both 
+sides (device-tree and the driver) is changed at once to correct reset 
+polarity.
+
+David
+
+> 
+> Konrad
+
+-- 
+David Heidelberg
+
 
