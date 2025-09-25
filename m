@@ -1,152 +1,159 @@
-Return-Path: <linux-kernel+bounces-831733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CDFB9D6ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21985B9D6F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E42177419
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D224A16EDC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A598D2E7F03;
-	Thu, 25 Sep 2025 05:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED10C2E7F06;
+	Thu, 25 Sep 2025 05:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="on11+F5v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z/O717V1"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y6+lRP1t"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B3F2749C9;
-	Thu, 25 Sep 2025 05:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27E02BB13;
+	Thu, 25 Sep 2025 05:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758777146; cv=none; b=mhRBTE0amyvYMnP0Ti5QExJ5CGjBOXiQg0ne+m2zQnH0wV7AXJ3KldW2sNOiB98tCZ1cROyPAbbp+Le4psfWV7l/DVB1Rh0+X3mVZSxGnBuyzMdrMFr0/Z5UiCvqWwBEdLG621d37clPctBCDC1DjSSaSoB7ml9l4x5C06UXotw=
+	t=1758777251; cv=none; b=aVmSSpjoCwAVQ+e2VXcIa0ej/hEyMzidQ6A/pNqoP3M9E9yzQYWpRhZvzuSfOSFNpLNYcDPcArSgRuCqjrftvfa8ajx9WvwoYmPkaRAI/uo2FPZpq1O1ZZZ4U5bbMQZHkPXVIDaX+Gd3+qek9+JpdjmGYAo4balDj/Yphi2JPMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758777146; c=relaxed/simple;
-	bh=AmKGP0SFQudpzE0wY/paaMqioPBUYag+fDjfFcMzHvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSSi2qt+RUXrPRfcNvV4QEEOkfVQZFgfh9Hb4ONPz+5N3Hc9/WAGt1S7UwteoXNCdsYilAEBEFBzyJGhJKiitqzRpD7TIqb4FqTA0CQxS8uiBU2lRdAKB9Ksy62Cwbt08B82xzBooc+1uPv3/3m4ijCGKft9FDzJ1LZn3h4Uopo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=on11+F5v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z/O717V1; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 604C77A00AC;
-	Thu, 25 Sep 2025 01:12:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 01:12:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1758777142;
-	 x=1758863542; bh=F18HV6w3Twni1U/Lm2MdRg8IOu1XRnlYZ8Z35cH+x6g=; b=
-	on11+F5vJR91oEA+e5tPJLQ+wd21/+BIYhMJ2S+AXHuA4GqSn8jLQKLl5nRyrKO5
-	sQqh1d4mjKTLBkthknIbA7kGlkEiQTkHSD7m0ehzrITYa2RvfeTkInIrVveQ4rXj
-	cSCGA98yxT76+TIcQ4BesEUsWkA/tN8nR/ReC1LOvpzOhARf6R/JTO2d5XaPH5y1
-	jR2YkjhLK9T0xJ6k2VfkVoZb4Fsfr98uD0+gkTypEPv6Rn/D8rHbMQK6lepQMc6m
-	6ifF42VCkOaRC9p/KQ+b/t9PerWKrPjKkGdLOak9lbZqvXCviKsSVy8/wqq6Hcnr
-	7XRaXXNlAZa25XSoXEnVBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758777142; x=
-	1758863542; bh=F18HV6w3Twni1U/Lm2MdRg8IOu1XRnlYZ8Z35cH+x6g=; b=Z
-	/O717V1SprFLCUlsJKnr6VrQl3zK7J/L7Or7YC0tfGmF53ywo+r369ZnCDSGXFBT
-	36EDemZrWv2shokw4lhWUW1TMnj+ETZ8lrh40zw3i4qmWYguLm7/ozdj4tQDvtji
-	lFHlGi+y+l0XiSXLzdEDs/4qnDY5dD835rNYciR5NAir9gg6QQ/BDBgTQtj/YzAN
-	pld+IRddyTGA8I0klZ22DWbqN0ceLK4Fqjrj7Oc9IONoQ/MOtf4Hf2yb1KvZbgCw
-	tRKtvkjFxhRu8xwqPGOLenbwjKlxXoSBlofR2tOPubKOkJY5u3BfDAO45RnAONjD
-	GBKVopJ4P74pJgbyREVAw==
-X-ME-Sender: <xms:Nc_UaOuCyHdSWexMWmpFInypdv5YnFQAQaT1qaVDmLlgMGbv5qo2SA>
-    <xme:Nc_UaE8KRCaPLY2rNJvEbZtnT9NH59nkYFC64iOyEX8-sH9t7nOx83R-h1d22R8Wt
-    2zaDsrQ4M5igtiTHdRCN5iXaoyI9GS-60YcbSjEthzMHFwAwbBShgY>
-X-ME-Received: <xmr:Nc_UaJ0aJaQUUySfsL4IasQeguN-rYHcLEeNs7HZpIZQzSNaNixOmuyqdH6Z_hmvETEwAoYFCTmQYqI9ABLZVn4wVkb38K4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiheeivdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhlrghs
-    ucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrg
-    hssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepfefhleelhfffjefg
-    fedugfegjeelhfevheeikefhueelgfdtfeeuhefftddvleeinecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhu
-    nhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohephe
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmhei
-    kehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghroh
-    drohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:Nc_UaJC8bewA29F6QaT79fT0cYO6jLhRwoIgVEZgN_SG_sTwZm15FA>
-    <xmx:Nc_UaFfxG02h4ge_8TiD_nC-LRhyTXnBYs-FmTzjnKtYqcqzSPh-ww>
-    <xmx:Nc_UaG4tX9Wll-JohR5tsg7j6Q7bZp_bYrySDdJvpvahAtBviPBqGQ>
-    <xmx:Nc_UaIWGgurNL6C6QsVXwnLIDvfi-Vh-4BitkLuVDCFI8Bp54Lpfwg>
-    <xmx:Ns_UaDUvli4gCAVyEJJp-yMj4GDEee6ii_B3f1A_iaJ5pHQbvnLpltOJ>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 01:12:21 -0400 (EDT)
-Date: Thu, 25 Sep 2025 07:12:19 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/sh_cmt: Do not power down
- channels used for events
-Message-ID: <20250925051219.GB1062104@ragnatech.se>
-References: <20250910142657.1148696-1-niklas.soderlund+renesas@ragnatech.se>
- <20250910142657.1148696-3-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVKZn-YfBxvwA1wgjksvzZK=NPzaoTCPRur_Z=AneLA6w@mail.gmail.com>
- <8672a8c1-26b2-4b65-a30e-a4c3e0f1f32e@linaro.org>
- <20250924093132.GA1062104@ragnatech.se>
- <69f09f55-fd2f-47a9-887a-e9c2cf7c21df@linaro.org>
- <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
+	s=arc-20240116; t=1758777251; c=relaxed/simple;
+	bh=MI1wPF47cj51v5gvx1moxrS8OunCrtPVd0XamHKKp6g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pq4FJf12fk8tH5W/DwrtN1W5S8amwZ+FEuRQNrv1rNLZcsDqZoy2Q30ysfkUlDKi5gxuPWX+YgubR/D4MSHGoRT0IAdIH1rWDZ3F31zNYR2Y2WpcS9ftxSt8t76vQD9GL+Vxy4oscNzYqeR7X0HwQS8TLjwzPl2mK7l4dho3mMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y6+lRP1t; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58P5DiCX1383667;
+	Thu, 25 Sep 2025 00:13:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758777224;
+	bh=EluPOJeo58opOTN0eM8mPRt7xvguHqP3916XoJ6Zljw=;
+	h=From:To:CC:Subject:Date;
+	b=y6+lRP1tCNmDgymVYyJyyPg1W1iO0sv0nSKAMNGn6K/MTXJ/JP6puDrx0LR0L6mDt
+	 5vn2GTHIGkTaTtJJJ5Zqytgn9+ROiR98jIaUapjPn8a/55B+C3ggvLM5Ei8zVveBs2
+	 WhwxMYuTZiVtQsE1+ufm5rGEhQ4yfdcJddR8h5QY=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58P5DiVb3304012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 25 Sep 2025 00:13:44 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 25
+ Sep 2025 00:13:43 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 25 Sep 2025 00:13:43 -0500
+Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58P5DVio2924111;
+	Thu, 25 Sep 2025 00:13:33 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <broonie@kernel.org>
+CC: <tiwai@suse.de>, <andriy.shevchenko@linux.intel.com>,
+        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
+        <shenghao-ding@ti.com>, <baojun.xu@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lgirdwood@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <k-yi@ti.com>,
+        <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
+        <will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
+        <chinkaiting@google.com>
+Subject: [PATCH v1 1/2] ASoC: tas2781: Add tas5828 support
+Date: Thu, 25 Sep 2025 13:13:01 +0800
+Message-ID: <20250925051302.6805-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWt07VP=i_5S2bm6yaRwOovzc4hgZzYaYvpqj4nronxgA@mail.gmail.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 2025-09-24 15:46:45 +0200, Geert Uytterhoeven wrote:
-> Hi Daniel,
-> 
-> On Wed, 24 Sept 2025 at 15:43, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> > On 24/09/2025 11:31, Niklas Söderlund wrote:
-> > > If it's not too late I think we should drop it. The issue this work
-> > > tries to solve is a lockdep blurb which highlights a design issue in the
-> > > driver. But the driver have function properly in the past. So I think
-> > > it's better I work on solving the blurb without any regressions.
-> >
-> > Ok, dropping 2/2 but keeping 1/2 is fine, right ?
-> 
-> 1/2 is a refactoring without any functional impact.
-> Thanks!
+TAS5828 have on-chip DSP but have no calibration required stereo
+smart amplifier.
 
-Thanks to the both of you! Geert for testing and finding the regression 
-and Daniel for his quick action removing it from the pull request. I 
-will work on a v3 which tries to solve the original issue without the 
-regression.
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2781.h        | 1 +
+ sound/soc/codecs/tas2781-i2c.c | 7 ++++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index ddd997ac3216..a37b4d67c137 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -122,6 +122,7 @@ enum audio_device {
+ 	TAS2781,
+ 	TAS5825,
+ 	TAS5827,
++	TAS5828,
+ 	TAS_OTHERS,
+ };
+ 
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index 1539b70881d1..f62a71dca36c 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -110,6 +110,7 @@ static const struct i2c_device_id tasdevice_id[] = {
+ 	{ "tas2781", TAS2781 },
+ 	{ "tas5825", TAS5825 },
+ 	{ "tas5827", TAS5827 },
++	{ "tas5828", TAS5828 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, tasdevice_id);
+@@ -126,6 +127,7 @@ static const struct of_device_id tasdevice_of_match[] = {
+ 	{ .compatible = "ti,tas2781" },
+ 	{ .compatible = "ti,tas5825" },
+ 	{ .compatible = "ti,tas5827" },
++	{ .compatible = "ti,tas5828" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, tasdevice_of_match);
+@@ -1665,7 +1667,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	}
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ 
+-	/* There is no calibration required for TAS5825/TAS5827. */
++	/* There is no calibration required for TAS5825/TAS5827/TAS5828. */
+ 	if (tas_priv->chip_id < TAS5825) {
+ 		ret = tasdevice_create_cali_ctrls(tas_priv);
+ 		if (ret) {
+@@ -1722,6 +1724,7 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 		case TAS2781:
+ 		case TAS5825:
+ 		case TAS5827:
++		case TAS5828:
+ 			/* If DSP FW fail, DSP kcontrol won't be created. */
+ 			tasdevice_dsp_remove(tas_priv);
+ 		}
+@@ -1884,6 +1887,7 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
+ 		break;
+ 	case TAS5825:
+ 	case TAS5827:
++	case TAS5828:
+ 		p = (struct snd_kcontrol_new *)tas5825_snd_controls;
+ 		size = ARRAY_SIZE(tas5825_snd_controls);
+ 		break;
+@@ -2056,6 +2060,7 @@ static const struct acpi_device_id tasdevice_acpi_match[] = {
+ 	{ "TXNW2781", TAS2781 },
+ 	{ "TXNW5825", TAS5825 },
+ 	{ "TXNW5827", TAS5827 },
++	{ "TXNW5828", TAS5828 },
+ 	{},
+ };
+ 
 -- 
-Kind Regards,
-Niklas Söderlund
+2.43.0
+
 
