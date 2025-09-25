@@ -1,226 +1,159 @@
-Return-Path: <linux-kernel+bounces-831940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D34CB9DF2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26257B9DF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E814219C1640
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC6C16D855
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C6D25F7A9;
-	Thu, 25 Sep 2025 08:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDA725DD0B;
+	Thu, 25 Sep 2025 08:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="jLVMPnVZ"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022105.outbound.protection.outlook.com [40.107.75.105])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ui/3XRX9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yldHySCl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5BD2367BF;
-	Thu, 25 Sep 2025 08:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758787221; cv=fail; b=n5o2MbXPfy4d1RoAojzEIc5Enmjlekt2uCpCgOslBTiBoiKvWJjqrcUO7IZaTqu585CubsKEjomSY+J7xmkKiTvFvaS0MQijodfVYsOX3iLamPhfo4vdg9cmTk8lzh081RewvuwLlmQE8+DzRS93CCpgRrjmwBwK3FxTc5Gzcno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758787221; c=relaxed/simple;
-	bh=bK7avFGNl6iCukjZP/41fETAuY3/7tNkqNQV+jQQuls=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fQN/fFsQwRUUcX7BTMjkMaC/LGbthI3QLlnbtiMGC/J9ctf+ths5pAg8lFZOX77tb7bn4XwcDVj0ScBKZ/0+3aHr1d2GGLPrQmV+Y2OoLj0Oz9w97ffEB3klD07wq0OPKHGj8oPCX6dkUtIal6jGe2PisL0yEIvRcwfowoRIHJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=jLVMPnVZ; arc=fail smtp.client-ip=40.107.75.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HXQtM8lJXgoTDtBXTFX4w4kLGsBN36+mBAhsQnzrljH145hyRFyDKjOwdW2Fu7T7i7WYqXrm5IPmEsigJsShigTS8Y8cjz5PzeB4MH9VPHVFF8eu9eP3kiCPqvib6aLzTwGL66d7UWGiU1bxs9lT4lLPRJDe20ligZrNUIrC8HQjsrn4frrIeVHrQr/FUON73f1yQn/QcYrjMj1K0O4vniiH+k30caPb+17TjJXBhoC5LXhX/Xd0MccbE4Uqx9fOg74MbY6eK8rHwtYpWBYSRbo/Oz2DKKk+4NY81mLNrIhWDA5LZ+ymErH3iBD0Mbvv6/DTYkA4JoMY7ImfOvOXVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cGqjohm0bV3HXj3emhVMFmYPkiuL7/aGmVr3kyYBmX8=;
- b=UYBHQc3/icmic/V2cl7N/IPaE0yLqeKUmDtEmg5bfBSvFe8FQlnFe/o6qlPN2Y47Qj4XoTonf1PWGSL86MfoMKVO+4+NtWfsLopVAlfadopazxRWbJQ45eok70uTZVhTWjZ4g5eNMHS5f0nXvoEp7UsJpDyDDq3ov1jJ4i57pP6oce3AbeOeCPJcW2AcDOgGIe2CjnfCSrYAGojewJ2JIkuIuOfK8zsK3HJR4I5BBYzfnGFuuXNhBL4IImeiC48aJAE27PEivGMnMoKJg3Ftkck4eW84UOwYHRwOneygj6XaGj8k0N4nFwV/mfrQE9ZMIvwA5ZuHFboTiAlXxgPgNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cGqjohm0bV3HXj3emhVMFmYPkiuL7/aGmVr3kyYBmX8=;
- b=jLVMPnVZTftPPJURQoN7m3DeUP+93h4NfK9aV6O4G/3/5Ry3Tc+0cwgR2oExlKLEK19kG82S8kkBJAbzoTOqE1q+Zaz+xk6pjd4fbCwqOm9r+U01kjB4Xfpbe9grmoqAgviuK16F1hdrpP7YO/ZPPWVmqFn5tKVddOWlrPdqq+BhOoGY23ZEOz4IaRp03a4/pujFag6ZYLal81elJzCwL8lbbsWTIIemPcXaRTyvJ9npPIJRQwWiJxWn980Ba18ZB5JJXFoLlaEd9nQDa9U6T9kQaKwwobLp4ioS9tSxGBanUsx33dJPiSlRkWqpiAPrr+7UI/jYncqAOGQa0D7f8w==
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
- by JH0PR06MB7149.apcprd06.prod.outlook.com (2603:1096:990:8f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Thu, 25 Sep
- 2025 08:00:15 +0000
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 08:00:15 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel
- Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
-	Taniya Das <quic_tdas@quicinc.com>, "Lad, Prabhakar"
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@google.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "soc@lists.linux.dev" <soc@lists.linux.dev>,
-	Mo Elbadry <elbadrym@google.com>, Rom Lemarchand <romlem@google.com>, William
- Kennington <wak@google.com>, Yuxiao Zhang <yuxiaozhang@google.com>,
-	"wthai@nvidia.com" <wthai@nvidia.com>, "leohu@nvidia.com" <leohu@nvidia.com>,
-	"dkodihalli@nvidia.com" <dkodihalli@nvidia.com>, "spuranik@nvidia.com"
-	<spuranik@nvidia.com>
-Subject: RE: [PATCH v5 0/5] Introduce ASPEED AST2700 BMC SoC
-Thread-Topic: [PATCH v5 0/5] Introduce ASPEED AST2700 BMC SoC
-Thread-Index: AQHcGu5cAuQ4pOHn0Emk78rKDKJ76LSjrCwAgAACnMA=
-Date: Thu, 25 Sep 2025 08:00:14 +0000
-Message-ID:
- <OS8PR06MB7541AEC5560E3445C33009BEF21FA@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20250901031311.1247805-1-ryan_chen@aspeedtech.com>
- <41705e13-c61d-4249-9492-b83f1371d3f9@app.fastmail.com>
-In-Reply-To: <41705e13-c61d-4249-9492-b83f1371d3f9@app.fastmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|JH0PR06MB7149:EE_
-x-ms-office365-filtering-correlation-id: 1b16072a-80f9-4887-a51c-08ddfc098f90
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?J/OCNQqZV6Bc9zEsSxIcpcTa1F1qmkMLln3/lWBPTVLnNQy1Uca3AQBRBe?=
- =?iso-8859-1?Q?MXe/1YHV/ezgYWoV6kDAMYiwIlciQGQjJAzvZEC9WmzDJgZZUcpSNlUwqz?=
- =?iso-8859-1?Q?CxL9tJe7qx+AFrZxLzXFhmflP0SB13FtPDTQExjZ/Ek/HDIaDn25NQn5sv?=
- =?iso-8859-1?Q?Y4XfzYGxHAzC+m6oHRvKnlfFd4hq10VVIYhkFFHngrDlWDKfS2GjyqP9cQ?=
- =?iso-8859-1?Q?nTLFh+8A4+VJxFTpQFVUpZuB7/YR5IeUM2AQbJ2W99P3AReqrSWEFdhSAC?=
- =?iso-8859-1?Q?Wioq6L5Xl5cnLlAmkbQIQCA8q4XXd0QhpWOlr46ronpVt0bWf2C/gqxy0L?=
- =?iso-8859-1?Q?T/YME3QHZKIue5KgFMSfkTImPFSV+YqzRBAfWuoIJp6ZUYqsO+938ZvoQd?=
- =?iso-8859-1?Q?NAwU/0WePyrjJ0DsNsVxERyi9zP4bwIDWBwkArAPKgcqKNzXBWb7a/pBXc?=
- =?iso-8859-1?Q?ZfxybvbucHtT+IUMwCFZ8lzB6GuIKsfUV66u+R+bYuSnqecYsejzHJxL8K?=
- =?iso-8859-1?Q?jVO7QR9c8+fK7debwiJgU7AXUcVe5dw06tvjlhrU2Zb/nUY3PBJItHGbTK?=
- =?iso-8859-1?Q?UyXNKFTJfcoQOxNN3S3dYvFMBZN+6f2K/pOaathuUKyb2e7MJdWDFeyUm7?=
- =?iso-8859-1?Q?4wt69cIu1g1UZ8l7Mf4W6sbXE41oRcCGyykBxFijFdxNsGb2gbNvG++oXs?=
- =?iso-8859-1?Q?KeEKdWs1CaYvVGuxwldQggg6z7YfKZjDyU6UO1Ykib0WeL+iUhnXjwBa/U?=
- =?iso-8859-1?Q?WPNtblNyQVvLcWcl9GeLdORH3uI4DadWh5PVvTxEeKWGhB6YQjVBcgMztl?=
- =?iso-8859-1?Q?qsOJfNnGYs9DEIIhnSKzs0QOMDva/6YnD+OggaHjMWHuVHNp+XX6DG7mTI?=
- =?iso-8859-1?Q?Hv6EsR6u7Ch+spZFq4aqhn4dxHiWiPyee6x+nkO3Wx0B0iFXLjBbdCvGBn?=
- =?iso-8859-1?Q?b2sQHMlG2FpWTyHt1L0u57a+61oVQa8MwtKmyuJ5MGmEuL+lzDVKgMGyvu?=
- =?iso-8859-1?Q?uZwYB2RENEd9yEVfNs5A28ncL5kVdF+SXsQ7YgE3g1GQHctksYFICVc3Uy?=
- =?iso-8859-1?Q?AIIdiqKddcqwMHZbze8CnxM06RznejxEOOmAANYgkN3Rlf2Bhub4OJ9IM2?=
- =?iso-8859-1?Q?r0772vRjAgMWD3d0OFmGh2dJTp/wbr1KWai52GHBmofKNqhmF4kE9/DRR5?=
- =?iso-8859-1?Q?GIv/PLPtsZb1HHJVeNsLJENJi65qhjjYOyQbQumVGjfsrnpy5iFUQ6rPx5?=
- =?iso-8859-1?Q?F65vnDRwDbzk3qVsXHpSuoAc/2NWMNtm02VwDT1p5EeVKR1BQxowYXiZnP?=
- =?iso-8859-1?Q?3EKJiL+EtS0q/FCqL9VT2rW7n5i+OqrYy7DR04KFvuANtMURdL6NA3VGem?=
- =?iso-8859-1?Q?cK6pPCDmKnQ3raj4ofCYV60lDDRaVieBOfUeRxC03EWg5DA8352t5WD9KW?=
- =?iso-8859-1?Q?TfKnWbHyP6zYxuCpa/k+JiZxg6UrAPv9HH0j1qv0Pr+SQBhtlFheGSRGo6?=
- =?iso-8859-1?Q?h+TuPDSjtqfMxPoj6oF+F2?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007)(38070700021)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?HCs9GTS5PrnDkuphhrOmEqoVfSB9iMLP8Xg7yVnA5QvHsng2ipWhgLvZbe?=
- =?iso-8859-1?Q?Yf425w84Lp3TIDVuGyRcSzXD8gWOVIFucVoUmuKAGGCJY5ZWoZrpuA6/wd?=
- =?iso-8859-1?Q?2oZv7iNZNlyzCrfKcy4z70iKwPD4kxeScvUGKtacyfJl58jyfEgr9HZanZ?=
- =?iso-8859-1?Q?umre0sbvGGWW35F048CnpVqpwmW/zRqVS5uBGqPNHC4UoWZVcXzHl9LlWe?=
- =?iso-8859-1?Q?dVUuVWhhwoX7PRuNVf6V7IwsrT4ayaWRPmpODplIMZlcgZJuSICc2Wfe/4?=
- =?iso-8859-1?Q?FxCScrI4iD8qYv4W2rcvafeR0N/AuRLZXdjpNQbtQgotGdw8m1emstoOd5?=
- =?iso-8859-1?Q?amG7AMWcvf1oWQq1r6MXMnE6qXgoJsy30FnAnBpJI+Xk/XOO0Rv4PTysHn?=
- =?iso-8859-1?Q?mgU3hP+VKgTQ5tt93U/SAbKF/KgaFU66Z+HPB3Yc6+20/2CxhCj7ru8Zxj?=
- =?iso-8859-1?Q?O9SjFkkAM79O0k24x88u0kyn/RR8JblUPlWixySITc834+fWwWC5j5Ical?=
- =?iso-8859-1?Q?baO4iZZoSYixuSrb+rjQE7/Z7sMtoBZYniVQO28kTZdODhL30zO6whl0ck?=
- =?iso-8859-1?Q?Fve4y9EdhN19Rzbs+SvAsqk0bkx9l4/miJ1DBdPSNUx1mAtXkCsz6u2y7/?=
- =?iso-8859-1?Q?W4x5Mlwy1UyAm94MuUNp0wzd4DSskRhYuncQ5fJqx2X/IBGEuQ33yykxWo?=
- =?iso-8859-1?Q?ZoSFPcRLkahItZAJOKCrXrsbxORovdyx4aC8cgpDzetaBtdIHlVcJEDfa8?=
- =?iso-8859-1?Q?I7quxE9Omh0ykVKrjbgSJq2fV8MhCB95pj6Uz2yS7IL4cwR033YmP9yPnH?=
- =?iso-8859-1?Q?gWSKGdcDYmYdPTt5kkoNQ58RVyBb7Y1gpGJtkbSaoCGg5zzvUGwHMxVchh?=
- =?iso-8859-1?Q?Uq9ebr+FhP3cFpUlbHGv/cYhFnsHSkC4PcC04T+MwLjHKPkER6UdCLTrYy?=
- =?iso-8859-1?Q?/WsiRPEzJ3vX2w/M9MGG4Rweshv4yb1bY/FbAbdcvtiD2B895WJDkZYh1O?=
- =?iso-8859-1?Q?o/+VU9u4z+9rd6e4rVpjiQICAk3x3IphqaQjp9OWTiDNSFz+7I7hu6bhnr?=
- =?iso-8859-1?Q?5KTSHX7zA45mmc1T/3/sYbKVY3bJmJIiJWFEOG1Vp/eP8AY7kkR1xdTYwT?=
- =?iso-8859-1?Q?4gyAnjf6QRPndE/wV/71nNs/jKQNP40yelKZnoKESp2DBVb0IYI1z1q0hG?=
- =?iso-8859-1?Q?09ZmUIoGISFrpF0raYQiaflCQ62ksWVUAhAV4ZQ6YpkshBI1ngufimNIdI?=
- =?iso-8859-1?Q?uLgHErshf22tbjpWxguDDY2pGo0UkD7Wcai0E7a7Wz6E2jsC4UW/dGjKo4?=
- =?iso-8859-1?Q?cyWCZi1Xmja2Z7mNhN4r3pbX6AsUpo/0Ougkmvz4X72r7M9EknP/CgFifw?=
- =?iso-8859-1?Q?EGdwaF0TGaUKySf4dAdq7NJdf9HkQacTXBsN29LST2kcWA2Xz37lbWI+Bp?=
- =?iso-8859-1?Q?vICWFALc5tm1ds2Fg1b16S61Xm4vN5j+DuD2nIgLc4u2LgS8SgGmap9vax?=
- =?iso-8859-1?Q?FKQDt8MHC5Bsz35azOnwA6KNeun0BcBPKJVGgIkjXyPLyF0R6M3l4lCHda?=
- =?iso-8859-1?Q?QjP2p8b9koas1dlN19GRC3TEVsgR54X1tOEACOEpW6oeiX9F9As+spYri4?=
- =?iso-8859-1?Q?IrnvcNd8jgYpr7wC7U4PWACOLwayRzH+ci?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A51A4C98;
+	Thu, 25 Sep 2025 08:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758787307; cv=none; b=ZfBokk1CyieHWVrJHWTa6tJy549jjETLuVyp6lRDO0zq2xwgSd0ujnThTvTLHnAUBBhdt1imzedBVku3hchL4l0MhFqMEKnxBxIFzg1I9aK1BbUP4Jexv/gav9uahD7f0CCe1he0PF7Fu/I8t2qLaCUpZjyKPXqcPEg6s/E63Gw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758787307; c=relaxed/simple;
+	bh=376YXCaPhkGvdD1XXx1m5VpXrncKE0GzoRf3JOvPUOc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ed5xX8o6jBb+LafWpmcn8zRlrFrUluPIJ5V8gHnc5nQfNYKwRl6apEsheYr5EKH7Grv8mhOAZtUySBztdAM+f3UjL80tSINEONgZkUBhlX5Notl6p6v4gCd2qIjTxP3wV4S1hBD3kTljPlZ+rjZy5ksZgPIoNa46mDunIDndvko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ui/3XRX9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yldHySCl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 25 Sep 2025 08:01:41 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758787303;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BawZpDm9IlpBQpMe2tAtLR7Vgfb3JP8gjvbpA/KFhOc=;
+	b=ui/3XRX96jhJF9d4ZL0TMXeqWadJX+EgLkdEQexyxri08ELttG1vsq3g59v2EGjsdG1hXl
+	0vyaf9YKBZ55f0bMhMvFlr3HNcLIIY7dX2Lbn+w/rZ1U+7tXWmLw2cO2Zih4jT/RqV1RQX
+	TB8C6veW5sykH5pXm3nsa2MLnr0XpLoV28hIpv976TcZW0Kp3naxTNZxG/j4Y4FJNB7/3P
+	YwfNmz2Nm/8wAqIX/5fP6xjZBDSsSiuURkfdlmVdgOGd3PcVtSk+9fIrNXrzrxwlEEz7la
+	6PMSYKzhC/JA42w03rWxi2P1SS+/hUfZAMWh03Ezbi9KG4uGeQTMgGK7DOJDlg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758787303;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BawZpDm9IlpBQpMe2tAtLR7Vgfb3JP8gjvbpA/KFhOc=;
+	b=yldHySCl6Bylb9i/TRYWJAjeNbfaT4wQdVMxyDikBEr4USH2xkqcf29F35jId/yojvYMcP
+	Sa7RpeupQBvsitAw==
+From: "tip-bot2 for Menglong Dong" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Fix some typos in include/linux/preempt.h
+Cc: Menglong Dong <dongml2@chinatelecom.cn>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250917060916.462278-5-dongml2@chinatelecom.cn>
+References: <20250917060916.462278-5-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b16072a-80f9-4887-a51c-08ddfc098f90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 08:00:14.9394
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kiJ4pq2UqnwKQ5tMAHFvelEs+IuV4CXNgNDqXaSmkuF/dpXcRWQL4yVDRUonMe7uYEq5yoBIMkbrKf2k+9ezmMqgGeGQmjg+gEzLlht+aV4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7149
+Message-ID: <175878730155.709179.4136465336489093001.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Subject: Re: [PATCH v5 0/5] Introduce ASPEED AST2700 BMC SoC
->=20
-> On Mon, Sep 1, 2025, at 05:13, Ryan Chen wrote:
-> > This introduces initial support for the Aspeed AST2700 SoC and the
-> > AST2700 Evaluation Board (EVB) to the Linux kernel. The AST27XX is the
-> > 8th generation Baseboard Management Controller (BMC) SoC from Aspeed,
-> > featuring improved performance, enhanced security, and expanded I/O
-> > capabilities compared to previous generations.
-> >
-> > AST27XX SOC Family
-> >  - https://www.aspeedtech.com/server_ast2700/
-> >  - https://www.aspeedtech.com/server_ast2720/
-> >  - https://www.aspeedtech.com/server_ast2750/
->=20
-> Hi Ryan,
->=20
-> Thanks for you submission earlier. I see that you had sent the series to =
-several
-> lists including soc@lists.linux.dev, which is what I use to keep track of=
- patches
-> that have been successfully reviewed and that are ready to be merged thro=
-ugh
-> the soc tree.
->=20
-> Unless you have been told to send it here by Joel and Andrew, I assume th=
-at
-> they will pick up the series through the "bmc"
-> tree once they are happy with it like they do with the 32-bit Aspeed SoC
-> (ast24xx/25xx/26xx) patches, and I have dropped the series from
-> https://patchwork.kernel.org/project/linux-soc
-> now.
->=20
-> For future submission, please send the patches only "to"
-> them, with the other people in the "cc" field to avoid this confusion, an=
-d leave
-> out the "soc@lists.linux.dev"
-> recipient. You can add me as arnd@arndb.de to the Cc list for reviews tho=
-ugh.
->=20
-> Please also add a patch that changes the MAINTAINERS entry to reflect the
-> added arch/arm64 contents.
->=20
->      Arnd
+The following commit has been merged into the sched/core branch of tip:
 
-Hello Arnd,
-	Thanks your notify. I will remove soc@lists.linux.dev, in next patch.
-Ryan
+Commit-ID:     45b7f780739a3145aeef24d2dfa02517a6c82ed6
+Gitweb:        https://git.kernel.org/tip/45b7f780739a3145aeef24d2dfa02517a6c=
+82ed6
+Author:        Menglong Dong <menglong8.dong@gmail.com>
+AuthorDate:    Wed, 17 Sep 2025 14:09:16 +08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 25 Sep 2025 09:57:16 +02:00
+
+sched: Fix some typos in include/linux/preempt.h
+
+There are some typos in the comments of migrate in
+include/linux/preempt.h:
+
+  elegible -> eligible
+  it's -> its
+  migirate_disable -> migrate_disable
+  abritrary -> arbitrary
+
+Just fix them.
+
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/preempt.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index 92237c3..1022021 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -372,7 +372,7 @@ static inline void preempt_notifier_init(struct preempt_n=
+otifier *notifier,
+ /*
+  * Migrate-Disable and why it is undesired.
+  *
+- * When a preempted task becomes elegible to run under the ideal model (IOW =
+it
++ * When a preempted task becomes eligible to run under the ideal model (IOW =
+it
+  * becomes one of the M highest priority tasks), it might still have to wait
+  * for the preemptee's migrate_disable() section to complete. Thereby suffer=
+ing
+  * a reduction in bandwidth in the exact duration of the migrate_disable()
+@@ -387,7 +387,7 @@ static inline void preempt_notifier_init(struct preempt_n=
+otifier *notifier,
+  * - a lower priority tasks; which under preempt_disable() could've instantly
+  *   migrated away when another CPU becomes available, is now constrained
+  *   by the ability to push the higher priority task away, which might itsel=
+f be
+- *   in a migrate_disable() section, reducing it's available bandwidth.
++ *   in a migrate_disable() section, reducing its available bandwidth.
+  *
+  * IOW it trades latency / moves the interference term, but it stays in the
+  * system, and as long as it remains unbounded, the system is not fully
+@@ -399,7 +399,7 @@ static inline void preempt_notifier_init(struct preempt_n=
+otifier *notifier,
+  * PREEMPT_RT breaks a number of assumptions traditionally held. By forcing a
+  * number of primitives into becoming preemptible, they would also allow
+  * migration. This turns out to break a bunch of per-cpu usage. To this end,
+- * all these primitives employ migirate_disable() to restore this implicit
++ * all these primitives employ migrate_disable() to restore this implicit
+  * assumption.
+  *
+  * This is a 'temporary' work-around at best. The correct solution is getting
+@@ -407,7 +407,7 @@ static inline void preempt_notifier_init(struct preempt_n=
+otifier *notifier,
+  * per-cpu locking or short preempt-disable regions.
+  *
+  * The end goal must be to get rid of migrate_disable(), alternatively we ne=
+ed
+- * a schedulability theory that does not depend on abritrary migration.
++ * a schedulability theory that does not depend on arbitrary migration.
+  *
+  *
+  * Notes on the implementation.
 
