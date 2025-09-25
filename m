@@ -1,159 +1,124 @@
-Return-Path: <linux-kernel+bounces-833252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5D0BA18AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F2BBA18B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5DB16AA03
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E0189BF12
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32814321296;
-	Thu, 25 Sep 2025 21:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE302EB5DE;
+	Thu, 25 Sep 2025 21:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmmMuQl1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sPFoi9qw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uiqJfIrM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B39CA6F;
-	Thu, 25 Sep 2025 21:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DF8CA6F;
+	Thu, 25 Sep 2025 21:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758835912; cv=none; b=ZLPd7JMEzwtpwkt0oQy/YUUZbV0XD2hHTLg+RgjI93sIETrbyS2C5sdIsR8CItcTEfn+c8Bdk30oJV8cm/elN595IdD8OIdcKLYbb4Cwo+DxUh9DywxTriM5DdMOHugg/j/ywdfnXZfDHzchFS26P+D9pU+l5ecfstEYEum0D2o=
+	t=1758835972; cv=none; b=ZvRzhYWBuTOGqlGqNix/bpjazuECx5ns/0MgyxvBRWFsuUtZPPmXECqhVe/VQLeoCUIkB2EJyFupyVE4muAqXbuL2eOjTffmEcbSe+IreVYMoT1c2bPna9Xj6MlICIMhvi968ECROINbXWU1vciP156w0qKnDfVqRDawx6bJ5II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758835912; c=relaxed/simple;
-	bh=2rdE884ixAkfLh4eDjI+jatwgporJLTY5lqZ7Hh2KGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYznGUFAgQsJZiHcJqSdfXBVJBDdBk8FhFA/Y4JCw5tpRC8id1wQJsn8vZOQyXhGl+v4pNiqT9aD8IHveitP3e4ArZgwGjS1OF1/wkinj51ue8oUJBu0OlLM917PEXtMjc7OhMXydjVGmbdEPbGkYcjyImFZn2dlebI5TcctGKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmmMuQl1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E092EC4CEF0;
-	Thu, 25 Sep 2025 21:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758835912;
-	bh=2rdE884ixAkfLh4eDjI+jatwgporJLTY5lqZ7Hh2KGM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fmmMuQl1nSZpZUZE2/hqygssvGmLUSYK1XgihiOlfrR+TGt6BIZ+9GtdeJ+Q+YgtH
-	 7+Hfq12TSUL3cg+6LK644mP5ANAp58L3qxCq/3DY6PaGsm4budf5beDbv2OmtbdgbW
-	 RaS6+Eu6z2JuwN0M+oHsTQrgcqm6nsB6C3TmEmkRjh1bO3qNoRsL+oWkCkCOHOlw3p
-	 UCmQVxXKwFhHBAFqaXCjs6H+esr/8kp5g22HeADv463ZZ0v7947G4rKZnhBE7ZyXF7
-	 ena2q25wzk40UNjY/L09f5e62klBzKJ5ZiMVtYuvDKSqoZE/UVparFNcAx8GhBarje
-	 JhyxIszQ6nQ3w==
-Date: Thu, 25 Sep 2025 16:31:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-	Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
- Kaanapali SoC
-Message-ID: <20250925213151.GA2455023-robh@kernel.org>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com>
- <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
- <3up4xqgd2ay3tex4ckzgews3ukyrdikcmgk7tbddggj3s5gt4d@foqcpnfptjk7>
+	s=arc-20240116; t=1758835972; c=relaxed/simple;
+	bh=qGAMtQI/6eiOIpRCFVxUbNjawPZeeYjJacfTyW+AZrA=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=bQorfcOb8ct/44d4fwOMmDndjbEFIBV1jFR9GJX8WVihrshpCEoitA1wrW6UuXNZaVlvtJgXJL//TC4BBKvhFWx2gI3Cn7MU+qV1PqGvOrbr2LrX9fs6gq+6YkhFa3Fsp+nkOj3D2TSP9JuLANXWv0lZESxfFOUHdMhNieVNPoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sPFoi9qw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uiqJfIrM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 25 Sep 2025 21:32:45 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758835968;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=BDQ6UqQKeJDe0qy5OF5nUe4LeujLahu+Z64vtPiq2Cw=;
+	b=sPFoi9qwWGIIdqhAcwJkNR6OGoPwm6iCGSg79gD9c5kWgbqhrpLRSDNOPz6W6Urn1oRp1r
+	OprKL10oS/NYTHcTBOBraDOV+UUXxwMRYIEKYPUT0QWHr+m5aCDjYEvVTsSfiVNAZ5m7QE
+	+qKuOWHs6ypeagrowuuAXLELTKh0J4jRKnnXe32zbeKWqfHgAjzY2Lh0g7MUz0h8KRaxRe
+	w9JXpUjs+MV4325jrk74Yd8HczlsAfKOldZxBuDZKqZnZibsdLU28iFUesn5Ft40ZrCeX9
+	QVp4dkESOcVScWqBPlXTD5Bf6g/eYpXF2EnV70Dj6CX9DBAyYA9GWIM+Axx+6Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758835968;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=BDQ6UqQKeJDe0qy5OF5nUe4LeujLahu+Z64vtPiq2Cw=;
+	b=uiqJfIrM/ZFWAVxLtz6YP73Ust7Cb5WDJs3OYyW8++H+020Z4nQNXpMDKCVF/vYh3/r/Qs
+	2UOr6qbmdA9asuCQ==
+From: "tip-bot2 for SungMin Park" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/clocksource] dt-bindings: timer: exynos4210-mct: Add
+ compatible for ARTPEC-9 SoC
+Cc: SungMin Park <smn1196@coasia.com>, Ravi Patel <ravi.patel@samsung.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Conor Dooley <conor.dooley@microchip.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3up4xqgd2ay3tex4ckzgews3ukyrdikcmgk7tbddggj3s5gt4d@foqcpnfptjk7>
+Message-ID: <175883596528.709179.13968239970984180775.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 08:57:56AM -0500, Bjorn Andersson wrote:
-> On Thu, Sep 25, 2025 at 10:50:10AM +0900, Krzysztof Kozłowski wrote:
-> > On Thu, 25 Sept 2025 at 09:17, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
-> > >
-> > > From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-> > >
-> > > Add the base USB devicetree definitions for Kaanapali platform. The overall
-> > > chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
-> > > (rev. v8) and M31 eUSB2 PHY.
-> > >
-> > > Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
-> > >  1 file changed, 155 insertions(+)
-> > >
-> > 
-> > 
-> > Second try, without HTML:
-> > 
-> > I really don't understand why you created such huge patchset.
-> 
-> Because I looked at the logical changes that went into the big squash
-> that was initially planned, and requested that some of those was kept
-> intact - because they where independent logical changes.
-> 
-> > Year
-> > ago, two years ago, we were discussing it already and explained that's
-> > just inflating the patchset without reason.
-> > 
-> 
-> We used to add things node by node and that was indeed not
-> comprehensible. Overall this adds features in large logical chunks, but
-> there are a few of the patches that could have been squashed.
-> 
-> > New Soc is one logical change. Maybe two. Not 18!
-> 
-> I can see your argument for one patch to introduce the soc. But two
-> doesn't make sense, because that incremental patch is going to be the
-> kitchen sink.
-> 
-> > 
-> > Not one patch per node or feature.
-> > 
-> 
-> Definitely agree that we don't want one patch for every tiny block!
-> 
-> > This hides big picture, makes difficult to review everything,
-> > difficult to test.
-> 
-> The big picture is already obscured due to the size of the content
-> added.
-> 
-> Comparing to previous targets, I see the baseline content in 2-3
-> patches, and the remainder of the series being things that usually has
-> been scattered in many more small changes in the following weeks or
-> months.
-> 
-> There's plenty of features in this series that are yet to be concluded
-> for SM8750.
-> 
-> > Your patch count for LWN stats doesn't matter to
-> > us.
-> 
-> I agree with this. That's why the QRD is 1 patch, and MTP is 4 (this I
-> think should be squashed to 2) - compared to 13 patches for across the
-> pair for SM8750 with less scope.
-> 
-> > 
-> > NAK and I'm really disappointed I have to repeat the same review .
-> 
-> I'm not sure what you're disappointed in, this initial series is larger
-> than any we've seen before. I really like the work Jingyi has done here,
-> aggregating the otherwise scattered patches into one series.
+The following commit has been merged into the timers/clocksource branch of ti=
+p:
 
-The QCom folks can review all this first because I don't care to review 
-the 50+ binding (just bindings!) patches sent all at once right before 
-the merge window.
+Commit-ID:     45d78cd0bf2c40e74c31f70340484e20aae45b07
+Gitweb:        https://git.kernel.org/tip/45d78cd0bf2c40e74c31f70340484e20aae=
+45b07
+Author:        SungMin Park <smn1196@coasia.com>
+AuthorDate:    Wed, 17 Sep 2025 12:43:11 +05:30
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Wed, 24 Sep 2025 15:46:27 +02:00
 
-One comment on commit messages though. Please explain how the h/w block 
-is or isn't compatible with some existing platforms. Many just state the 
-obvious "add a compatible" or such. I've yet to find what kaanapali is 
-in relation to any other QCom chip. It may be the next SoC for the smart 
-toaster market for all I know.
+dt-bindings: timer: exynos4210-mct: Add compatible for ARTPEC-9 SoC
 
-Rob
+Add Axis ARTPEC-9 mct compatible to the bindings documentation.
+The design for the timer is reused from previous Samsung SoCs
+like exynos4210 and ARTPEC-8.
+
+Signed-off-by: SungMin Park <smn1196@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://lore.kernel.org/r/20250917071311.1404-1-ravi.patel@samsung.com
+---
+ Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.y=
+aml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+index 10578f5..a4b229e 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -26,6 +26,7 @@ properties:
+       - items:
+           - enum:
+               - axis,artpec8-mct
++              - axis,artpec9-mct
+               - google,gs101-mct
+               - samsung,exynos2200-mct-peris
+               - samsung,exynos3250-mct
+@@ -131,6 +132,7 @@ allOf:
+           contains:
+             enum:
+               - axis,artpec8-mct
++              - axis,artpec9-mct
+               - google,gs101-mct
+               - samsung,exynos2200-mct-peris
+               - samsung,exynos5260-mct
 
