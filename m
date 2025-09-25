@@ -1,285 +1,153 @@
-Return-Path: <linux-kernel+bounces-832156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFBBB9E82B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:53:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FCEB9E83F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DD91BC1198
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:53:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 221757AD1FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E272E8E13;
-	Thu, 25 Sep 2025 09:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FDC2E973F;
+	Thu, 25 Sep 2025 09:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ikBzFBPY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhLOPzA9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D3B38FA6
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4A138FA6;
+	Thu, 25 Sep 2025 09:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758793999; cv=none; b=BPKXqu0KVQbR8s84And3gOQS3uicK2UbilposioDENndJlFtG5dIMx9rHRf04dDumcYbg4A8sciSuW1NJhXIXnZM/6/4u67WWFZsQsZ4lvAjWu+3im6P6jnhH4amt91ePLqDgpJO/XANrMds+BEVKTTxLiC+cNfBHNXDCbQ3wB8=
+	t=1758794067; cv=none; b=YpJoT2xgqzoO35gI3myOLW0fgI9Vtdnvdn3+tIsIXI/XNBgD1ZFvZZl01vNBQI49+rO5l9+LP18xI5gBYLwv+zPXNox5WfE9hUuiD1BcgBXPgLMbGaCkX7bHcYtpLwAX2nETzTL+9eGKCIMj8AqfQz+MU4zUP96dYsoL7KNxrxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758793999; c=relaxed/simple;
-	bh=2UZNMKHGpeYxjhLNIO9PhtmEAC2fZU89xTZT5YErSLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smrf5elOfC8ysgZMJu1XcqVrz8oSsYhM43bWPxx7MuJIyga0FpF04lbL1hjesl20NWhoZWxGk45l9K+J4BQsi5wdMo3ZY7T6RQtuNhK3lokq3lG2Nr/tVJKLXmHk6g3FwM/gd6aXHKQjd4d+wUqEd/qu7v+Cx7+Gz6ZoPfyk2U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ikBzFBPY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758793994;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5IZ5ZyHPjVPn/a1sUZGku96Q30DI6b1ntIDJki2HPWc=;
-	b=ikBzFBPYlTlvZos5314dyIqwZp2RTw07UCtM7IrxOeQK0OhUI+frUcMKXkpB8gVkUaWuCY
-	p3G6HKZnPld+Uv/KyD8xp6PXL3GblyrbrRjCILiVAJXKbSU85turZzl//XAK7sC7bCu642
-	vEK546Lmv61i8dROPxAh9wlKTh8N/rw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-E0eBVKAcMZmFZipOAMgxhA-1; Thu, 25 Sep 2025 05:53:12 -0400
-X-MC-Unique: E0eBVKAcMZmFZipOAMgxhA-1
-X-Mimecast-MFC-AGG-ID: E0eBVKAcMZmFZipOAMgxhA_1758793992
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e375dab7dso1380995e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:53:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758793992; x=1759398792;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5IZ5ZyHPjVPn/a1sUZGku96Q30DI6b1ntIDJki2HPWc=;
-        b=PQdSkOP6K1LlGhs5akMf/nDOvJmps6SA+WOZ5/KUSDxV+BkfSXlbqLt6VNaocVBbRW
-         qf4Ht4bu72wrIee6EPuuEVkpmMffQRKPSfoAxBIykesTJZuzO3vNZN25Xe/89I3pfn+t
-         9vQkXqGnHc73W9t3oHlQrXkJFSzsy6Zf+49MWYhph+utmrWUEW7a4u/gLLNJQTpv+2qA
-         fW8r4zlzR6XGLcaRHZX6Ni5GHmuLat7CseoN141O3J7SCT0OP1Ouq72abhM/urWPkIK/
-         vUaTIj4inLaeYQOjR8HshYNcVpGvCWWKG2aUGbSeWXPiOuDqx6+9toUywW9Oh9Txpzu9
-         du5A==
-X-Gm-Message-State: AOJu0Yzhg3EVPMw472sb4r42BIo/DeqYZBYBpMpXbTrwo8Gn1V0k0ij+
-	DuV7RHqxBLFk6CCuwdtZ3rwRrsg72i4LpywEl5YfYbTtuFZL8OyHxJ4NAq/1WcTyrf4xMctcagp
-	9ODn9y30e/6dhppjc8ej85W5HwHBbL7KEGSn+j0PKsRvr0icye+aZObrS1d7n9QWP1Q==
-X-Gm-Gg: ASbGncuzqffmaku8v+JL9WH9sm6Ug37DZp31uStkbUyFtiNuw1xTe95Lm3e06aJODIS
-	1dmSBSzV5CwxVJ+2UFJGlhXOS+w7gjFLSiIfYFVJOu76ojGtOO5j/pEI+iTrEqF/BY4kQI1XKre
-	cUFIi/NTcXdJSkOObdZuLvbOW9y1WCER6H/ua/bsVisVSlGGCNJVKHoIVnAIEbXLMcXiJlFvZ4e
-	PWdR8D2gsrWqb53b7YtjSGJzIpoOZQB5Wyl9k61gYu2jUFh3Simp0YV4RfIXu7/JvW2YddntEDm
-	EFsqG8IwRjHbx5k/GD+IXXo2yoLV7prN5g6LHkbASgeay13o/oLGsh0h0PmriizcvnW8KnehzKK
-	OYPj8qkRazlb2cOV8DZ+kfNzcS9awQW/BbZzXL5hLPIRBV1HxsGt4O9DGUUwLY+zqLRY2
-X-Received: by 2002:a05:600c:8b71:b0:46e:2d0d:804c with SMTP id 5b1f17b1804b1-46e329ae509mr28236105e9.11.1758793991635;
-        Thu, 25 Sep 2025 02:53:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQdx4XV7EntPUilqRyAJNwUvFZd26RTmvdykMXr/gjLo1hfbQKEF9ym8IJ49CBAyUk65IGGg==
-X-Received: by 2002:a05:600c:8b71:b0:46e:2d0d:804c with SMTP id 5b1f17b1804b1-46e329ae509mr28235655e9.11.1758793991123;
-        Thu, 25 Sep 2025 02:53:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996d7dsm72815125e9.4.2025.09.25.02.53.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:53:10 -0700 (PDT)
-Message-ID: <df1e62e6-57ac-4a5f-bf62-71fea47481af@redhat.com>
-Date: Thu, 25 Sep 2025 11:53:08 +0200
+	s=arc-20240116; t=1758794067; c=relaxed/simple;
+	bh=xfXQiQFl7Tui7XJKKsNvDs46qyN1OX4PNUAUOBUQd2g=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=GoRtLJQxVi/DUn6ZxGaT03AdOtNw8WNA4zpCaQJW7rKYEuwywsXq8N4cSDDtcz02/ioL0MFY5EwJo/LbXcK1CR73XGHdZYmYfk6eoNsKF76Fzq+mLQ+0kDbzvyuL4ZWJXe55E7tvOiDjXxhCAf6B1cooylrtRjqu7CSya3krOAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhLOPzA9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED149C4CEF4;
+	Thu, 25 Sep 2025 09:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758794067;
+	bh=xfXQiQFl7Tui7XJKKsNvDs46qyN1OX4PNUAUOBUQd2g=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=GhLOPzA967PCCw7XlP2pnKVSM5E+BTjPS6wrBIWagHaG22BtnNAJ47vSD6MdEN+Le
+	 sPUGTUs/mQ63cxS7ROkrSbvKIRPxTMmOF1G/DqVcDWqCSkFchLyXlwk9YpeZqJdJ+j
+	 Iw1iT63w/VyKZIZKY+ux1OyQPI4BhRsEkgoipDw8AULKU2PbMRruJ719exxqHv8I++
+	 Hq3vbsMq4GoKJ4F3/c9RphxH9HKhg1PnLaqmQjMhm+v6CK5AewuXriViXLLFzmoCpd
+	 J4w3utXUms1jrsVhkuU3jNSutwtGPVnN7KAIwOaPNlPcLIBvqxL4ueoiORRqfSghzk
+	 qiNmNBTMhP45g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 02/15] mm/huge_memory: add device-private THP support to PMD
- operations
-To: Alistair Popple <apopple@nvidia.com>, Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
- dri-devel@lists.freedesktop.org, Matthew Brost <matthew.brost@intel.com>,
- Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-3-balbirs@nvidia.com>
- <azcaqmqwdslvoei7ma4obtpxcdv7jdqfdc3ny4sylgwelwhfvo@okwd6y2oq5q4>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <azcaqmqwdslvoei7ma4obtpxcdv7jdqfdc3ny4sylgwelwhfvo@okwd6y2oq5q4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 25 Sep 2025 11:54:22 +0200
+Message-Id: <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>,
+ <linux-mm@kvack.org>
+To: "Elijah Wright" <git@elijahs.space>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250924193643.4001-1-git@elijahs.space>
+In-Reply-To: <20250924193643.4001-1-git@elijahs.space>
 
-On 25.09.25 02:25, Alistair Popple wrote:
-> On 2025-09-16 at 22:21 +1000, Balbir Singh <balbirs@nvidia.com> wrote...
->> Extend core huge page management functions to handle device-private THP
->> entries.  This enables proper handling of large device-private folios in
->> fundamental MM operations.
->>
->> The following functions have been updated:
->>
->> - copy_huge_pmd(): Handle device-private entries during fork/clone
->> - zap_huge_pmd(): Properly free device-private THP during munmap
->> - change_huge_pmd(): Support protection changes on device-private THP
->> - __pte_offset_map(): Add device-private entry awareness
->>
->> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
->> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->> Cc: Rakie Kim <rakie.kim@sk.com>
->> Cc: Byungchul Park <byungchul@sk.com>
->> Cc: Gregory Price <gourry@gourry.net>
->> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Lyude Paul <lyude@redhat.com>
->> Cc: Danilo Krummrich <dakr@kernel.org>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: Mika Penttilä <mpenttil@redhat.com>
->> Cc: Matthew Brost <matthew.brost@intel.com>
->> Cc: Francois Dugast <francois.dugast@intel.com>
->> ---
->>   include/linux/swapops.h | 32 +++++++++++++++++++++++
->>   mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
->>   mm/pgtable-generic.c    |  2 +-
->>   3 files changed, 80 insertions(+), 10 deletions(-)
->>
->> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
->> index 64ea151a7ae3..2687928a8146 100644
->> --- a/include/linux/swapops.h
->> +++ b/include/linux/swapops.h
->> @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
->>   }
->>   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
->>   
->> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
->> +
->> +/**
->> + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
->> + * @pmd: The PMD to check
->> + *
->> + * Returns true if the PMD contains a swap entry that represents a device private
->> + * page mapping. This is used for zone device private pages that have been
->> + * swapped out but still need special handling during various memory management
->> + * operations.
->> + *
->> + * Return: 1 if PMD contains device private entry, 0 otherwise
->> + */
->> +static inline int is_pmd_device_private_entry(pmd_t pmd)
->> +{
->> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
->> +}
->> +
->> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
->> +
->> +static inline int is_pmd_device_private_entry(pmd_t pmd)
->> +{
->> +	return 0;
->> +}
->> +
->> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
->> +
->>   static inline int non_swap_entry(swp_entry_t entry)
->>   {
->>   	return swp_type(entry) >= MAX_SWAPFILES;
->>   }
->>   
->> +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
-> 
-> I can't think of a better name either although I am curious why open-coding it
-> was so nasty given we don't have the equivalent for pte entries. Will go read
-> the previous discussion.
+(+Cc: Lorenzo, Vlastimil, Liam, Uladzislau, MM)
 
-I think for PTEs we just handle all cases (markers, hwpoison etc) 
-properly, manye not being supported yet on the PMD level. See 
-copy_nonpresent_pte() as an example.
+On Wed Sep 24, 2025 at 9:36 PM CEST, Elijah Wright wrote:
+> this patch adds a basic slab module for kmem_cache, primarily wrapping
+> kmem_cache_create, kmem_cache_alloc, kmem_cache_free, and kmem_cache_dest=
+roy.
 
-We don't even have helpers like is_pte_migration_entry().
+What's the motivation?
 
->> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->> index 567e2d084071..0c847cdf4fd3 100644
->> --- a/mm/pgtable-generic.c
->> +++ b/mm/pgtable-generic.c
->> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
->>   
->>   	if (pmdvalp)
->>   		*pmdvalp = pmdval;
->> -	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
->> +	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
-> 
-> Why isn't is_pmd_non_present_folio_entry() used here?
+I mean, we will need kmem_cache soon. But the users will all be drivers, e.=
+g.
+the GPU drivers that people work on currently.
 
+Drivers shouldn't use "raw" allocators (such as Kmalloc [1] or Vmalloc [2])=
+, but
+the corresponding "managed" allocation primitives, such as KBox [3], VBox [=
+4],
+KVec, etc.
 
-I thought I argued that
+Therefore, the code below shouldn't be used by drivers directly, hence the
+question for motivation.
 
-	if (!pmd_present(pmdval)))
+In any case, kmem_cache is a special allocator (special as in it can have a
+non-static lifetime in contrast to other kernel allocators) and should be
+integrated with the existing infrastructure in rust/kernel/alloc/.
 
-Should be sufficient here in my last review?
+I think there are multiple options for that; (1) isn't really an option, bu=
+t I
+think it's good to mention anyways:
 
-We want to detect page tables we can map after all.
--- 
-Cheers
+  (1) Allow for non-zero sized implementations of the Allocator trait [3], =
+such
+      that we can store a reference count to the KmemCache. This is necessa=
+ry to
+      ensure that a Box<T, KmemCache> can't out-live the KmemCache itself.
 
-David / dhildenb
+      The reason why I said it's not really an option is because it discard=
+s the
+      option for dynamic dispatch of the generic Box type.
 
+  (2) Same as (1), but with a custom Box type. This keeps dynamic dispatch =
+for
+      the generic Box type (i.e. KBox, VBox, KVBox), but duplicates quite s=
+ome
+      code and still doesn't allow for dynamic dispatch for the KmemCacheBo=
+x.
+
+  (3) Implement a macro to generate a custom KmemCache Allocator trait
+      implementation for every KmemCache instance with a static lifetime.
+
+      This makes KmemCache technically equivalent to the other allocators, =
+such
+      as Kmalloc, etc. but obviously has the downside that the KmemCache mi=
+ght
+      live much longer than required.
+
+      Technically, most KmemCache instances live for the whole module lifet=
+ime,
+      so it might be fine though.
+
+      (This is what I think Alice proposed.)
+
+  (4) Solve the problem on the C side and let kmem_cache_alloc() take care =
+of
+      acquiring a reference count to the backing kmem_cache. The main quest=
+ion
+      here would be where to store the pointer for decreasing the reference
+      count on kmem_cache_free().
+
+      Theoretically, it could be stored within the allocation itself, but i=
+t's a
+      bit of a yikes.
+
+      However, it would resolve all the mentioned problems above.
+
+I'd like to see (3) or (4), also depending on what the MM folks think.
+
+- Danilo
+
+[1] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Kmalloc.html
+[2] https://rust.docs.kernel.org/kernel/alloc/allocator/struct.Vmalloc.html
+[3] https://rust.docs.kernel.org/kernel/alloc/kbox/type.KBox.html
+[4] https://rust.docs.kernel.org/kernel/alloc/kbox/type.VBox.html
+[5] https://rust.docs.kernel.org/kernel/alloc/trait.Allocator.html
 
