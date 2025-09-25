@@ -1,269 +1,196 @@
-Return-Path: <linux-kernel+bounces-832091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6656EB9E501
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:26:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC7FB9E5BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D553B93E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146D2386A14
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D792EA165;
-	Thu, 25 Sep 2025 09:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3652EA490;
+	Thu, 25 Sep 2025 09:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bJoduSRa"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010051.outbound.protection.outlook.com [52.101.46.51])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ahLQOEsu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF3528031C;
-	Thu, 25 Sep 2025 09:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758792401; cv=fail; b=eoyozwcb22B/k0EOG22WxLeUflT8jEG0O35pJ1dDHbAC0pU2zMyzC4+X0hMvwTyFw+ERe9wRbB8fY3iq/bqSV6iaMIJM9RIG/RMDAl0vHsFOS/nROHXeiPY14cWXE+AU9P1PH+M2lfirE3KUSxa9hJ1P0t8w/aWqXglv3lSZKAo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758792401; c=relaxed/simple;
-	bh=36KKQmgAjR1nKGI1kMx/mVBLHT9fX2tXB4DuQ/4oC1s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jEdaIVudlRhllA+cIt20oo6t/Esy/WHqHgVe+6j6uc5dkuiU3VGUujijLQPDyQHYYulxZl92A6A1YNtdrCb83b0u9meo9q3Zs7ZYW6TtB4oYiQA3XomRKuTU/+PtME+kKbNgF/1920WlPP9ibkXDNGM9x6DiWAGtOtyUNfn6tsw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bJoduSRa; arc=fail smtp.client-ip=52.101.46.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cV+G6QAnyo4Tlj5k8QUoACeTcy4O8ybyBRCkY7CfYJCusYQkEmlCdSgvg6O4mYSHF7O9A+60kdUvSi9RCfwSE+1C0zYCb8FXxKWGR8mqdglmrvuxEmSIeQbfASskz/RKeXtc9iZSPvAQxZIjoZAJ8+CBNic1GlLiSqt7lEUBHxuaxbxqeVKVo04FdUGsZ3FKpwPmsp/8TUf/V5y+vBOyenlXw1S19ttUMinjDZ3q2K+MdGSKvqxDGoWtcxUpOQiz827SkYu3yGWA9hJTxRpVEQEVfslU+N+0BW52BxKlHTgAtNtpXZM/C82p9oUCKCV2Ers050XBowj+poCsFi+ZPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=36KKQmgAjR1nKGI1kMx/mVBLHT9fX2tXB4DuQ/4oC1s=;
- b=jx0o/FaLrreQPBUAKJ7/QuqTz7YYuou0F/59yZZaajVc8HgtiC0rpGWGJFC4f5U9HyYYS41nHqVbRpqab6YQlEAdx+K+VBGO4Qi/G6HPj32V5ek8YrngxEZwH6fUbunf4YgqZMP3EbSZG7CHtlBPhDl6vlNdRvKiWIOJtwxmieZTJFDPXwi2OkNxFi1ewNRucUApPJcrReVzth3vjcpLw/318JDd1QEpHIM0BU2SRxrZ7hBHHVQlIGt4Aabf6nAhJEVVQ+wGmvhuNGeRGWCLEKoXJoraptDFzZP9u3de1kXoPOGW0J+363dywFE+G0rNBxzKy4lmvlcEbhaITJVD6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=36KKQmgAjR1nKGI1kMx/mVBLHT9fX2tXB4DuQ/4oC1s=;
- b=bJoduSRabc5wjS6d1HJvOF6a/ADw0XIjjACb4vNIn2gEb+29SswZuRuoeVxlcD6DOGaUA9/y8Wy9CtLCRrZI8USMFnE2w63NbS5DuvmoUy2Wg8fChfWHdBFoedyXba/WXRU/MBX8N1KgzPYbATZJD0MgXPCSG7/w44CulyflDtQ=
-Received: from DM4PR12MB6109.namprd12.prod.outlook.com (2603:10b6:8:ae::11) by
- MN2PR12MB4224.namprd12.prod.outlook.com (2603:10b6:208:1dd::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.10; Thu, 25 Sep 2025 09:26:35 +0000
-Received: from DM4PR12MB6109.namprd12.prod.outlook.com
- ([fe80::680c:3105:babe:b7e1]) by DM4PR12MB6109.namprd12.prod.outlook.com
- ([fe80::680c:3105:babe:b7e1%4]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 09:26:34 +0000
-From: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>
-To: Arnd Bergmann <arnd@arndb.de>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
- Michal" <michal.simek@amd.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Rob Herring
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, =?iso-8859-2?Q?Przemys=B3aw_Gaj?= <pgaj@cadence.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"tommaso.merciai.xr@bp.renesas.com" <tommaso.merciai.xr@bp.renesas.com>,
-	"quic_msavaliy@quicinc.com" <quic_msavaliy@quicinc.com>, "S-k, Shyam-sundar"
-	<Shyam-sundar.S-k@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>, Kees Cook
-	<kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jarkko
- Nikula <jarkko.nikula@linux.intel.com>, Jorge Marques
-	<jorge.marques@analog.com>, "linux-i3c@lists.infradead.org"
-	<linux-i3c@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-CC: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "Goud, Srinivas"
-	<srinivas.goud@amd.com>, "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>,
-	"manion05gk@gmail.com" <manion05gk@gmail.com>
-Subject: RE: [PATCH V7 3/4] i3c: master: Add endianness support for
- i3c_readl_fifo() and i3c_writel_fifo()
-Thread-Topic: [PATCH V7 3/4] i3c: master: Add endianness support for
- i3c_readl_fifo() and i3c_writel_fifo()
-Thread-Index:
- AQHcLKFhrxQvMAo9OkSHor4BRo6l1bShHNCAgADPJECAAC7KAIAAJThQgAAfVACAABEjwIAACgMAgAEkxmA=
-Date: Thu, 25 Sep 2025 09:26:34 +0000
-Message-ID:
- <DM4PR12MB61090F307DBA2B99AFC93B168C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
-References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
- <20250923154551.2112388-4-manikanta.guntupalli@amd.com>
- <13bbd85e-48d2-4163-b9f1-2a2a870d4322@app.fastmail.com>
- <DM4PR12MB61098EA538FCB7CED2E5C47B8C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
- <4199b1ca-c1c7-41ef-b053-415f0cd80468@app.fastmail.com>
- <DM4PR12MB6109E009DAC953525093FE808C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
- <134c3a96-4023-47ab-8aa9-fd6ab75e5654@app.fastmail.com>
- <DM4PR12MB610989A03A7560F2A03792838C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
- <295ee05e-3366-4846-9c8b-85ac09d79d48@app.fastmail.com>
-In-Reply-To: <295ee05e-3366-4846-9c8b-85ac09d79d48@app.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-09-25T09:17:07.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
- Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB6109:EE_|MN2PR12MB4224:EE_
-x-ms-office365-filtering-correlation-id: c47491c2-d132-4224-50f8-08ddfc159ee6
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?sh4KDjTgYD05AH2uUlYog4PlescxtCVb7VNEMc5xw778qnHcFnY78ZqkWK?=
- =?iso-8859-2?Q?imHyo3lYkJFgRx3mkE0gfadSq4UHzpTnc4ODhT8kB9PHrYh/PABTK0l8EV?=
- =?iso-8859-2?Q?yztifdGerl1ehlgX3lhCLQCo0pW1+ccs2cZ8fF81zp7r+lPerK++Yqq2ce?=
- =?iso-8859-2?Q?fKew8A6xC+GzIHZvKWn4KZE7srrh2TTprz46xJvEfwxKUZkpKB0zqTboBC?=
- =?iso-8859-2?Q?E76IUdfuljxPHw99xdDOC22fL9ub6SmdGR2e0Fd5+xZSmhfVKpVu4bAPc0?=
- =?iso-8859-2?Q?XaG5G53MOcHVsCoAHasHSFdmnei206XLaBzUlXwA8EtgVN2guOb/0nuei/?=
- =?iso-8859-2?Q?7ShqL5V81kJXJrOxvkCe5ATlEbqvuwxe1VFpoNyJFoa/5O3vObX69Cd6qW?=
- =?iso-8859-2?Q?n2Ze+HE6OpT2WZEa5YYixbtX6uG0cPF6sd6KLqW1QpJxiNQrsYEqkAZTtE?=
- =?iso-8859-2?Q?UjbYQ23keS8kK8V2YSlj4xgcsbzqjauETc1NqnglQs8bHzg983JXV4sj83?=
- =?iso-8859-2?Q?4GqB98hx/jVxek5e5RyYaR7X709PhQ/r9msGJsFi/CR20U/Bflkw0Dzff/?=
- =?iso-8859-2?Q?4ELZml/VZi7VSNjo3nHrFVEuqwgPC4wflc89qEgOZEZnhXU4Os+8yUMavo?=
- =?iso-8859-2?Q?9myUQTH9WbPQ4CN2bjhiAsLzUp6mBHgqeHh26OM6ltAjszV8oAjfSSKki9?=
- =?iso-8859-2?Q?Ey+frUhTCZmyqQCgeZQ3VcJcEeexzolLKjHe0s3XDbXT+EXV9sbhFyaTix?=
- =?iso-8859-2?Q?jeVYOjkVp07ouOoWD1AJncXGPjvyziKNdMuOYea+QC//YQTLrXBhGlfYlG?=
- =?iso-8859-2?Q?D4md5MmzPWdbNSRDePFw1HDwmC9wSU+/ncAEtc2WQ3eHx4evDUwiwq5Czk?=
- =?iso-8859-2?Q?aJZ65R5o4z8+F6gwtLfAIiwAuCB76jw0ZLFQXdphZh6tVmJqhlvY4RY7bx?=
- =?iso-8859-2?Q?r8SxAtP0FQezq9ok763SIgZJBmU8U7xO8WuBFTxwiScsvTqOY63XV2Lp5p?=
- =?iso-8859-2?Q?8NBzloBdQJ3OPezx07eToB9cQ4NYMIApUnx3G/DgdcBNqfvWniD3oyMgDO?=
- =?iso-8859-2?Q?FzE3eikTMALnvJfkhmqiroPuGlq3l6mZkL4MrvNWRvZQHAoz4sQaRul5sa?=
- =?iso-8859-2?Q?08rmO+MVdq2zEnvldnKsyGs/dip+1IUGrPDPBZ0rvb+A1bffr2DQjcYkDK?=
- =?iso-8859-2?Q?/k56npMECHt8nZpJKvMWt3bXaJ6SnhujqJ7oroiMhgCDFQu607xwiaOB+I?=
- =?iso-8859-2?Q?+PN+EAx9boGYXjIg21rCP3rD+SSXP2fupd1vX1nGlM+CXF7KP4Rt+eiE9T?=
- =?iso-8859-2?Q?Hon86kzw2YRFFH5ec52ZnS0Ff3SGLsGHa9XxfGIcQPSskSEr6AMt5wsH4P?=
- =?iso-8859-2?Q?GuhWWuZ1e33gzufpdfiyqm+bAW/vbo43pLbX7gVsUhAbPnpnx1mofs0Alk?=
- =?iso-8859-2?Q?JII4UhkdXCfP20AD09+blBqkLjf6Wpu04Sr68stRMpF6jzAh0cZsTuFlNw?=
- =?iso-8859-2?Q?0wN+LHlS4YPT6zapJKZnb6LHDZ8/KotdxrflTLfK1EBTtbyqmNQwYiKPI0?=
- =?iso-8859-2?Q?dRgV7om3H194XVt6Nf58I8q6Y7Pv?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?uee+wDIvSHP4M/QMfMkKrDBDKaaODgH0CAm6faHp5qYfzAuQh+OtlBYe2/?=
- =?iso-8859-2?Q?zO6I1NDQQ+YED3opBWtE+yR9vI/qsqNXeFjBuhwOl8T2MgxczfZF6z6D8O?=
- =?iso-8859-2?Q?n77oCtXfbAAP9avBPSYMI1xTYqedJbCS893gVT52PPOP3I6LFAe4TBIjTm?=
- =?iso-8859-2?Q?zcH2XnULWBTaz1Y1oQEZqNrAFrBXyAYIV7pQk/M0BWTOcxuLRUoFtNNbKm?=
- =?iso-8859-2?Q?DONUJaB8uMEHD2rfLk7TCmpEncQ/pwG4lulVS7+lA1RDqbHyhqeIUrGGtL?=
- =?iso-8859-2?Q?Y1FNDypGFff0nMFOFPAAkGe6gwYEKDh/U5zP68Du5W5VgMlu37FLnY9odl?=
- =?iso-8859-2?Q?m24LhLLRdY/PUl0F8ZlpOZLejpOkj5MTkYUcS+4AQqE13aOYS2hTBW91eE?=
- =?iso-8859-2?Q?nuuz+jsTv097ZiiLNLFi9qvd6eSulDnJCfxCQUcj42oQ7/ENTj9z/voxsk?=
- =?iso-8859-2?Q?itsvX/z4vgbg0pRw+w4m9oHdd7BVDY40/IBWOgBu8pp5vIgQJ8aa3uMD8w?=
- =?iso-8859-2?Q?Bu9hFqjHIje+rJQHbDBzx98sGcwuvhCKsXnFLqqGVH9DKZHxV6sld+gIlS?=
- =?iso-8859-2?Q?K1hM06HGtqChJ/2kzAa9BoRJ4SCEVFMAZvT2vgIPbrPNGBDdIpNT+8PYRo?=
- =?iso-8859-2?Q?pRk/yhYzjS9Is6qkJl0sHjUBEnEQeLDFmdH8uag2wAyzboy2gHWo0/VCG1?=
- =?iso-8859-2?Q?6WIOHmOy6HXqllOE0NdeD/PBEtZBYgwKDXcltKI79CdYJz3a72vOgXXQZb?=
- =?iso-8859-2?Q?mlM3YqEPn8YsSq8y53UkaZLJE3rVjyLV7g0NtJoiSEWLknYxgbl+NtQJ1s?=
- =?iso-8859-2?Q?S2NpmUWXj2jiwoyPgkcWUtcov1U9hN7f4BkiJixUXYL01x8gUBBBWmmTt7?=
- =?iso-8859-2?Q?gMU6wjXJfbjCiY0ZJ7k5Ogr+yOhyyQ6HeJqAu9eTadQN69Mgj4I1fOVvLX?=
- =?iso-8859-2?Q?wvuM9+HO0GWyvf4XUqo3BHTBLsssHjE6IR+rGPulXCVjFCfnhxbU2eM3Hw?=
- =?iso-8859-2?Q?3B2wxNHf6HIgL7bkaNCpxpgPp+/jO7OtVS3r/UDu05ttiWVTbejuRLafgC?=
- =?iso-8859-2?Q?LyMoKVf/w/Qu7Rxn1aiYWAMfw6lMr73r9sRXqrACOpSoSPpSFmHO2OT8ON?=
- =?iso-8859-2?Q?NlRmCfmDKWOp1+H5mv+r8KntPXAH+ksFYTOXgVbhA5SVGh6acN8TrrhfBw?=
- =?iso-8859-2?Q?w1zlUbc6KRC57M7ExMAJN2xJZ4K3r+R1M7zq9srRUJLvFldM8LI1i/qy/Z?=
- =?iso-8859-2?Q?9/5Vz25ChRqJakA67jM23sPmDbZIvxYS1oJLGgqnXPzxjn67nYBonV+TJH?=
- =?iso-8859-2?Q?9INVGTTlHdhN+H8iAq2hCiVs0fB60ZYFREHhQ8M6cXxDmq631k1y7gb13r?=
- =?iso-8859-2?Q?sj51b6lv0UV1AqEgf04Y2meYXOd8MZJzOw2HgstMBW1KwLCcc3UXZoH0+/?=
- =?iso-8859-2?Q?yc1E/RwinqCi6tolGRfeYdComNVYGu1gnvj4K5JM9UH32zJ2Qk9ulmqaPQ?=
- =?iso-8859-2?Q?cFcEITUJ6elc8vhE5fcGLcB6+jROOKWUKL7roIP3C3yvoDBlnVwzIvWmZl?=
- =?iso-8859-2?Q?Q7RLLV9lKr3YuWHXDkuKYtjyjepOyYU0K2W8TR6BIvFCXdd+PQiqTrl8OY?=
- =?iso-8859-2?Q?mDDANEcD+5vQw=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DBE2E9ED2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758792466; cv=none; b=Fnj/ysluZpCyROlbuzyNaB7dslThkpx1qKyx1yr9waCfYvCVUAI/0FavkAyY5uQi/pv4hiHqIhXdwLcjM5+n5InW36Wr8zDOcc8wRDeZOS1uUPN0pIpZDE9hfr9AaZMAIAHzL3xM6kTG5on2MkTO4uCXtuw2+qi4JY2KPBlX8bI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758792466; c=relaxed/simple;
+	bh=4Yv3Q5cOmyZVTHyUxtyXh72sHLtXQN/FSgzj4obRUDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G0mto8G9p69zsg71rD7gQ0nbDBO/HAR8tKijRNTumKJw/RiAivdc0NrnF1D+5vbpTXaU8E95Hy8XUlWaqd+X8+aspo20Z0YPYY2OrY75VMVrWSfavdkHB/AkjjcxM0++3jwzZYI+lO5Kp17km4RvgFdMDdyJLrr95lFpW778lCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ahLQOEsu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758792463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UWFAvZzxsmjhh9q6bJ5VMROTWJuLviIpjPx87FL9KGM=;
+	b=ahLQOEsuJAlRSGpN3nTznj1ZHQrtDjFUWHtgM2wtYfMtM5wFFspBNzCM9INFVmy6xJ+fEx
+	Aj+l1m2baFTS88wMNjSmMaYxQkGHkrodxyhROiTQfTywA+PKT3iqzmIUBitVQx/kdy1knp
+	BVRBU/PtHf/mJVR6fIYpcMPCf9Oz24o=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-ewPT_4cEOom3CWvSX56-4A-1; Thu, 25 Sep 2025 05:27:41 -0400
+X-MC-Unique: ewPT_4cEOom3CWvSX56-4A-1
+X-Mimecast-MFC-AGG-ID: ewPT_4cEOom3CWvSX56-4A_1758792460
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f42b54d159so552044f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:27:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758792460; x=1759397260;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UWFAvZzxsmjhh9q6bJ5VMROTWJuLviIpjPx87FL9KGM=;
+        b=Rmfad4iYI2WF8U/OkgJt4LrO5dZvvXgqP4z3ja4WB/s/ZX6n7GcQFAV2TqLfyxNv2O
+         aDPfqJkXWFcNTVs/TrivkrIKfgaGZKdMM77UK7rndfuTf+mXcH4DgM1JEtMWHnSN6GiD
+         ZwVOFg9QMyfgLQye4yehCLmM7SxXnDFBnPvotGVDnxImZbselQDonhQ5WyC5oyNQHRfL
+         NaMvYXJeXxLRR6DldmR0FQ9ZenO2pvuzLDyT+EloyHGU+NE43Bq305A0ONIA0GYC7I6A
+         Z9Abqxdf5cjAsxqIehpDGzT83kmMznsOse2SJ3wbwUe3BHOMeOF5GS9yq6tsGpk243yb
+         VQPg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4GTbtqOqz3Irk9xcVkMfmn57ZEweeGxflAOmvzthqNwSRRd6Jvwb8XCIh/htHiwTKJUNA54OH5LaS340=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFLrnI2b+PEJjz2STf7nAF9AnryywITK5FMb5vJEHPWUkQf7jJ
+	GhjQWN3SwJnjmls0vAH/i7+G6AAVSIMfHhsVXEvUklnS3vZH8v0UDNXAK9oX65vZKygq9sAPUi8
+	Y8zBIf4YV9QuzU43oSz4VyZ/2Px55uwr8VKsVpcmnRKwqTRWWEH9I2B2UkbHdWWgzdw==
+X-Gm-Gg: ASbGncsENuwXKcEYXNFLu5dkCvVwfk5g1Rc/jQcLAwSE75lbfGSi6HII3yrCRFG1zwE
+	+1pfi9Ff3j5wCK06GRLXMuJRLOfle+7h/ywL3HPSSR08Xh/e2SC9Zl6TcDNXhaEhQUGvez5xMgh
+	I+meJpGe/RsDSaMJR8I38iw0j9pbc097Ogyjs63/2RbqlWyCRM0FMOSN4uWjUe/jAn2W4SQeiLQ
+	p6Hhv8ExDy3fm2VZmg76yFAkGeMLH1wkmvuxPGdKIhM2YqbkdbH6N5JvH8xNLcBDOyHk3ZkQq/t
+	/0VKJ9/Hi69guljCBWKVJnGj5bpDQ6MJ1g08se0PqMWtOwNeVXxJZ70RZOl6wWAFa6D80aWO9cg
+	MH//POPKoiQQF
+X-Received: by 2002:a05:6000:2306:b0:3ec:dd19:5ab with SMTP id ffacd0b85a97d-40e4dabf4bcmr2260615f8f.61.1758792460426;
+        Thu, 25 Sep 2025 02:27:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4KO3m6UVzFQeKSl0okBGg5bJ0PBmfh3JJWmV5i+8yo09g9ZgqQZzl0ahuXJF36hdJNUY9+g==
+X-Received: by 2002:a05:6000:2306:b0:3ec:dd19:5ab with SMTP id ffacd0b85a97d-40e4dabf4bcmr2260602f8f.61.1758792459988;
+        Thu, 25 Sep 2025 02:27:39 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm69224455e9.20.2025.09.25.02.27.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 02:27:39 -0700 (PDT)
+Message-ID: <7cc2df09-0230-40cb-ad4f-656b0d1d785b@redhat.com>
+Date: Thu, 25 Sep 2025 11:27:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c47491c2-d132-4224-50f8-08ddfc159ee6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 09:26:34.6350
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2/ferPF+OMm1vxltkHLpzDjAGQbXZThXBXgLgvgQhbnX0bs+B176jgBA+DYvyT6cQpCVKBAnvXtyS73PCm+AGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4224
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 1/2] net/smc: make wr buffer count
+ configurable
+To: Halil Pasic <pasic@linux.ibm.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, "D. Wythe" <alibuda@linux.alibaba.com>,
+ Dust Li <dust.li@linux.alibaba.com>, Sidraya Jayagond
+ <sidraya@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>,
+ Mahanta Jambigi <mjambigi@linux.ibm.com>, Tony Lu
+ <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-s390@vger.kernel.org
+References: <20250921214440.325325-1-pasic@linux.ibm.com>
+ <20250921214440.325325-2-pasic@linux.ibm.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250921214440.325325-2-pasic@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[Public]
+On 9/21/25 11:44 PM, Halil Pasic wrote:
+> diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
+> index a874d007f2db..c94d750c7c84 100644
+> --- a/Documentation/networking/smc-sysctl.rst
+> +++ b/Documentation/networking/smc-sysctl.rst
+> @@ -71,3 +71,39 @@ smcr_max_conns_per_lgr - INTEGER
+>  	acceptable value ranges from 16 to 255. Only for SMC-R v2.1 and later.
+>  
+>  	Default: 255
+> +
+> +smcr_max_send_wr - INTEGER
+> +	So called work request buffers are SMCR link (and RDMA queue pair) level
+> +	resources necessary for performing RDMA operations. Since up to 255
+> +	connections can share a link group and thus also a link and the number
+> +	of the work request buffers is decided when the link is allocated,
+> +	depending on the workload it can a bottleneck in a sense that threads
 
-Hi,
+missing 'be' or 'become'           here^^
 
-> -----Original Message-----
-> From: Arnd Bergmann <arnd@arndb.de>
-> Sent: Wednesday, September 24, 2025 9:13 PM
-> To: Guntupalli, Manikanta <manikanta.guntupalli@amd.com>; git (AMD-Xilinx=
-)
-> <git@amd.com>; Simek, Michal <michal.simek@amd.com>; Alexandre Belloni
-> <alexandre.belloni@bootlin.com>; Frank Li <Frank.Li@nxp.com>; Rob Herring
-> <robh@kernel.org>; krzk+dt@kernel.org; Conor Dooley <conor+dt@kernel.org>=
-;
-> Przemys=B3aw Gaj <pgaj@cadence.com>; Wolfram Sang <wsa+renesas@sang-
-> engineering.com>; tommaso.merciai.xr@bp.renesas.com;
-> quic_msavaliy@quicinc.com; S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>;
-> Sakari Ailus <sakari.ailus@linux.intel.com>; 'billy_tsai@aspeedtech.com'
-> <billy_tsai@aspeedtech.com>; Kees Cook <kees@kernel.org>; Gustavo A. R. S=
-ilva
-> <gustavoars@kernel.org>; Jarkko Nikula <jarkko.nikula@linux.intel.com>; J=
-orge
-> Marques <jorge.marques@analog.com>; linux-i3c@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Linux-Arch <lin=
-ux-
-> arch@vger.kernel.org>; linux-hardening@vger.kernel.org
-> Cc: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; Goud, Srinivas
-> <srinivas.goud@amd.com>; Datta, Shubhrajyoti <shubhrajyoti.datta@amd.com>=
-;
-> manion05gk@gmail.com
-> Subject: Re: [PATCH V7 3/4] i3c: master: Add endianness support for i3c_r=
-eadl_fifo()
-> and i3c_writel_fifo()
->
-> On Wed, Sep 24, 2025, at 17:23, Guntupalli, Manikanta wrote:
-> >> Subject: Re: [PATCH V7 3/4] i3c: master: Add endianness support for
-> >> i3c_readl_fifo() and i3c_writel_fifo()
-> >> > }
-> >> >
-> >> > With this approach, both little-endian and big-endian cases works as=
- expected.
-> >>
-> >> This version should fix the cases where you have a big-endian kernel
-> >> with either I3C_FIFO_BIG_ENDIAN or I3C_FIFO_LITTLE_ENDIAN, as neither
-> >> combination does any byte swaps.
-> >>
-> >> However I'm fairly sure it's still broken for little-endian kernels
-> >> when a driver asks for a I3C_FIFO_BIG_ENDIAN conversion, same as v7.
-> > We tested using the I3C_FIFO_BIG_ENDIAN flag from the driver on
-> > little-endian kernels, and it works as expected.
->
-> Can you explain how that works? What I see is that your
-> readsl_be()/writesl_be() functions do a byteswap on every four bytes, so =
-the
-> bytestream that gets copied to/from the FIFO gets garbled, in particular =
-the final
-> (unaligned) bytes of the kernel buffer end up in the higher bytes of the =
-FIFO register
-> rather than the first bytes as they do on a big-endian kernel.
->
-> Are both the big-endian and little-endian kernels in your tests on microb=
-laze, using
-> the upstream version of asm/io.h? Is there a hardware byteswap between th=
-e CPU
-> local bus and the i3c controller? If there is one, is it set the same way=
- for both
-> kernels?
->
-To clarify, my testing was performed on the latest upstream kernel on a ZCU=
-102 (Zynq UltraScale+ MPSoC, Cortex-A53, little-endian) with big-endian FIF=
-Os and no bus-level byteswap. For more details, please refer to my reply in=
- Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers.
+> +	have to wait for work request buffers to become available. Before the
+> +	introduction of this control the maximal number of work request buffers
+> +	available on the send path used to be hard coded to 16. With this control
+> +	it becomes configurable. The acceptable range is between 2 and 2048.
+> +
+> +	Please be aware that all the buffers need to be allocated as a physically
+> +	continuous array in which each element is a single buffer and has the size
+> +	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
+> +	like before having this control.
+> +
+> +	Default: 16
+> +
+> +smcr_max_recv_wr - INTEGER
+> +	So called work request buffers are SMCR link (and RDMA queue pair) level
+> +	resources necessary for performing RDMA operations. Since up to 255
+> +	connections can share a link group and thus also a link and the number
+> +	of the work request buffers is decided when the link is allocated,
+> +	depending on the workload it can a bottleneck in a sense that threads
 
-Please don't take this as negative or aggressive-my intention is purely to =
-learn and ensure it works correctly in all cases.
+same                               here^^
+
+[...]
+> @@ -683,6 +678,8 @@ int smc_ib_create_queue_pair(struct smc_link *lnk)
+>  	};
+>  	int rc;
+>  
+> +	qp_attr.cap.max_send_wr = 3 * lnk->lgr->max_send_wr;
+> +	qp_attr.cap.max_recv_wr = lnk->lgr->max_recv_wr;
+
+Possibly:
+
+	cap = max(3 * lnk->lgr->max_send_wr, lnk->lgr->max_recv_wr);
+	qp_attr.cap.max_send_wr = cap;
+	qp_attr.cap.max_recv_wr = cap
+
+to avoid assumption on `max_send_wr`, `max_recv_wr` relative values.
+
+[...]
+> diff --git a/net/smc/smc_sysctl.h b/net/smc/smc_sysctl.h
+> index eb2465ae1e15..8538915af7af 100644
+> --- a/net/smc/smc_sysctl.h
+> +++ b/net/smc/smc_sysctl.h
+> @@ -25,6 +25,8 @@ static inline int smc_sysctl_net_init(struct net *net)
+>  	net->smc.sysctl_autocorking_size = SMC_AUTOCORKING_DEFAULT_SIZE;
+>  	net->smc.sysctl_max_links_per_lgr = SMC_LINKS_PER_LGR_MAX_PREFER;
+>  	net->smc.sysctl_max_conns_per_lgr = SMC_CONN_PER_LGR_PREFER;
+> +	net->smc.sysctl_smcr_max_send_wr = SMCR_MAX_SEND_WR_DEF;
+> +	net->smc.sysctl_smcr_max_recv_wr = SMCR_MAX_RECV_WR_DEF;
+>  	return 0;
+>  }
+>  
+> diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
+> index b04a21b8c511..f5b2772414fd 100644
+> --- a/net/smc/smc_wr.c
+> +++ b/net/smc/smc_wr.c
+> @@ -34,6 +34,7 @@
+>  #define SMC_WR_MAX_POLL_CQE 10	/* max. # of compl. queue elements in 1 poll */
+>  
+>  #define SMC_WR_RX_HASH_BITS 4
+> +
+
+Please avoid unrelated whitespace only changes.
 
 Thanks,
-Manikanta.
+
+Paolo
+
 
