@@ -1,108 +1,76 @@
-Return-Path: <linux-kernel+bounces-832905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90052BA0B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:59:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E27BA0B89
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C8417422E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:59:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F207ACD16
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242E2274659;
-	Thu, 25 Sep 2025 16:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBgh7Wk6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099530AD14;
+	Thu, 25 Sep 2025 16:59:55 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27684C81;
-	Thu, 25 Sep 2025 16:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29C130AAC6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758819590; cv=none; b=DntYwFL96XZ4QgmVB4gxOZg0ZqkxPD78eW7yaEDBb3W3oc5nJLlqb9wnfywsCQRjQFYAyZXzh+GjT+i2geyXb5WQgHk4AzKZqmXZPW4PkvaNh6C3qtWcFgnjMXyKst61lG6Y8wSB8erDQvRJW3f4A9zIAWIdvYgeFnJfxyd/ePg=
+	t=1758819595; cv=none; b=Gt3OTaLMoCPLpAMk9TWhzd7NIpR+tJ+FkKX4QwYfVO9AFNLkSP8Pgi0nemCnp2Ar2psClE1Q5HvaFz5aWGGfK/NGWcP8kQiyfnD6gDn8JjC3wtooROd2TuCxQduBriNDnrDgUPjVRLb1OzWMJS2uPDPwuIL/JCwYCBe5VTuD51Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758819590; c=relaxed/simple;
-	bh=T34q/YCWAMjtjT0b7JdVWjjSYrsyFrB8gZmSx7F00go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iALQ1xIO5d15zY0qNM2B804PKv55sccj5zoZJCotSI/ZXZd4dkLTwfkyPRnnyLG2ewdWeKr+ayr7z+iyVn8gFipCXneeBZQaicMtNMJdV7WdOy941xysfMnewiroRpa2s6G2f0LKPT5wiq8LN4Gv0wODYxwn+L3a0CxnHjEs12M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBgh7Wk6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=CkgKxmTUIYYSwA9ZmKdNxNH3R3Dc9WL225p2faFuTl0=; b=EBgh7Wk6w3LwZ/Vi/Sts0Q4vFW
-	yVT6gVNQw7et59Tlypz+SSpddkO16lEMi4riIN+3gPwwcxbt3evwk0wqlvzMCaEzT1wOAUPF3qxrp
-	Ys//pv+zSl4f5JUBWhkPpBgCXjZFklls/w0YG7X9sdwfq5XxatfhL/hHI0gVSkJ9DIsn03G1crebp
-	UbYhfLahXiXB2MFYOXYyfRNEqFA8LS467GiEGGkJTc0BQKtFAy4LLiWYRU/Wepq91xgui+J/klDh3
-	ELxxd4AhsZV+2zJXk8Dsu2FX7eBBj7I5p7tVb/l9uJWnFU5OOt4doVfdYF1ier1/+feRV9plEq2Wx
-	yQxsgN2g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1pJq-0000000BL0Q-1T66;
-	Thu, 25 Sep 2025 16:59:46 +0000
-Message-ID: <fbfb1bf8-c4b9-4c9b-9d58-84c2dda22649@infradead.org>
-Date: Thu, 25 Sep 2025 09:59:45 -0700
+	s=arc-20240116; t=1758819595; c=relaxed/simple;
+	bh=9e2q4rBHt8H+em8IpSFWOwpYgNRzTUHsSszPxRSjbBY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Jm8Oedj4FHc8qrKKKE2s4NxTYCIcNt4i9Aj0cSABNOZcrSkx5qONkqI+T4DNLHWF7FULFgHH5H3r83VytQEM8ZHsFwh5gPp6dkrXDWiILI/AA7qRTPju+sCNBZHBXXA24Xi3TscJf+3oE/Q477kOuTCT5sWaVnvHwnUELSxePDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42594b7f2ddso17479895ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:59:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758819593; x=1759424393;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9e2q4rBHt8H+em8IpSFWOwpYgNRzTUHsSszPxRSjbBY=;
+        b=TOPnX+BNRefinK2Fn5dciILBc87vbauHEgLUHRuNZkJwARyO0P+QIe4eR+0bJOkZxX
+         bRYjDdjX5Ngy0tIg4Ge3nPV1eIPEtq9XvoC9BIwgcZizrDrFvi4ubFHty41cZ1DJE7Bn
+         aORyrk1NftYWiJDEI1bkXhU1dqciFqMtjPkEaHcMUaaC95RtKefu1MJwr7Nw9ZuZKp7s
+         n+F3USHpT01mERjf04EPdJp2hHE7DovR4mXBTbBOll39Xdxcky7SNuwcG8iKmG2jqHjt
+         NMFt5mt1mIRv6yZXcor/WtAZ544aGwFXm9Er24Gh8AAHPxM8SYNHJ5yapyz3MCcZIyNs
+         WtMA==
+X-Gm-Message-State: AOJu0Yz43ihL1xPMpiuA8sbTz8sQoWmbLYjxkX8j8UK9gmHbefAxd/85
+	nq1SZqD6tBZCbokqdEv28Mdx5f0JPcU3pJLng35EeFyhPva52FR62pXxO+rcT9aDzBgRA4DPoif
+	HcObQgIFj4YxA47lvAXAXcDgDSijjq+KDBA5MDlCSUF9njG4HKhjUm4A5n+4=
+X-Google-Smtp-Source: AGHT+IHuIV4l7WO98Ss+deladC0cpSSZjn5PtZzLGDLda2zAq5nY8GVD3VzJTe2tlJxWYXTvn+vFWefin2earVa6P5iZXlB2xmSF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Sep 24 (htmldocs / pdfdocs)
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: broonie@kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mchehab@kernel.org
-References: <e7c29532-71de-496b-a89f-743cef28736e@infradead.org>
- <3666a4ec-ef29-4342-b3aa-8c602c258bea@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <3666a4ec-ef29-4342-b3aa-8c602c258bea@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:d94a:0:b0:3f3:4562:ca92 with SMTP id
+ e9e14a558f8ab-425955f38a5mr55682365ab.10.1758819592771; Thu, 25 Sep 2025
+ 09:59:52 -0700 (PDT)
+Date: Thu, 25 Sep 2025 09:59:52 -0700
+In-Reply-To: <000000000000b3424a062114aaa3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d57508.050a0220.25d7ab.004a.GAE@google.com>
+Subject: Forwarded: potential fix
+From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Akira,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On 9/25/25 7:15 AM, Akira Yokosawa wrote:
-> Hi Randy,
-> 
-> On Wed, 24 Sep 2025 10:54:18 -0700, Randy Dunlap wrote:
->> On 9/24/25 7:41 AM, Mark Brown wrote:
->>> Hi all,
->>>
->>> There will be no -next releases Tuesday and Wednesday next week, and
->>> it's possible I might run out of time on Monday.
->>>
->>
->> When I run 'make O=DOCS htmldocs', I see these warning messages:
->>
->> ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
->> ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
->>
->>
->> Is this a known issue?
-> 
-> I could reproduce these warnings under containers who have minimal
-> packages needed for htmldocs *only*.
-> 
-> Current "docs-mw" branch doesn't show them.  "build-scripts" is the
-> one who carries this harmless regression.
-> 
-> By "harmless", I mean "pdfdocs" needs texlive packages anyway.
+***
 
+Subject: potential fix
+Author: rpthibeault@gmail.com
 
-Right, I don't have any texlive (or latex or tetex) packages installed.
-I shouldn't need to since I am not building any pdfdocs, so I
-shouldn't get these warning messages. But if they go away in the near
-future, that's great.
-
-Thanks.
-
--- 
-~Randy
-
+#syz test
 
