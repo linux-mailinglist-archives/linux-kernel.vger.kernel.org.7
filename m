@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-833127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C14BA1487
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90FDBA148B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BBA388525
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF01B6C0DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D2D31E885;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CA031E895;
 	Thu, 25 Sep 2025 19:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X10rL/5m"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oQ91uZYG"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A3931DDB8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D2531E0F0
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758830390; cv=none; b=Q80SWh2em36jE1gRxgy6QOjtAvX+ZFPr6xY6ZB5+XMZDjhGmprY+8Tg2AlhrbgYn4wUJOcksz2th5A60pFeefe+S+Ri0lVLb+TTCVLwxOrxIEljdTs+/QLy3QwXMVapw/Ey5SI1KyM1rlqvhTrsycT043OEIMruG6hS1FtUJrL0=
+	t=1758830391; cv=none; b=DHAse4B+Ogbkkf2L09yJceMfxuEuVA6+D6mH2rHbguL2fDWVXXUHrLmsIKblcZBsTKbBd42d+qQ4fVd20YA00lMHXK4ic6aZAME0KAdmOwHDa0oALqkApsJyC5+BkNkZIsE7GZ3TnfIlb7QvdGRK35TYHoEJE0Ij8nJb91QWGN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758830390; c=relaxed/simple;
-	bh=vMyMrttkJU70UcU5kNCp5ltRt/PfbQM9ak0dhNmn2aU=;
+	s=arc-20240116; t=1758830391; c=relaxed/simple;
+	bh=iVx06PTeCxzGYx2jF50RHht/e08nwcSbQkNnRSnRuvY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=doOKTDOlQkce9AiNi5o8h4cFpxiBciMRmHdT6J8pH5QYXzcNYPIv/VwBBHs4LECSZFkeHLWxqqKXFY2kjoAo4rMtXHlfR/nc1LY2MbkkuDEpKFpNSzMBb7CkqguOJ/RZl1XdjxHHXrS+rD0skI12C50VtOHYQGfpWbbvftWOTsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X10rL/5m; arc=none smtp.client-ip=209.85.210.172
+	 To:Cc:Content-Type; b=SJ1QHdmnwAmLeCkORfF0HxjuZuaXN0FYtzmTKr/iEgOnd/j48pLpUD5ht/S95eJqOppq0cxfpzfHYvtS5uNoTW6fOyVZziLDYo9y6aL9vHYkRtRIuShKAs0QM7Z3yupCmvsZTQR852LXGvy/CtNWFRunCWHHKpa3TSqALKFPNo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oQ91uZYG; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77f68fae1a8so1957544b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:59:48 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b551b040930so939104a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:59:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758830384; x=1759435184; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1758830389; x=1759435189; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xOzyRe+3fMSMSulDoCd/U8Ee2YvY46RKA0vukyO785o=;
-        b=X10rL/5m7qX1Zwd8iYZmu6S6PsHN5PsUe7Go1imuTj/GrSoFySgG3n6ZrXaumCyOaa
-         JZrZDwK02wooL71RDITRhGRPV/Ex4KOA2Qvc9oJ7DXtYxOHUWUZbC1vuTSdI8wg5Tr9V
-         9UIV4cXdJTDoWjf3pFf/VJXUghC6B+JUCBCqc=
+        bh=HAdEQBdz9dDV+qB/r+6Q6b9tiykVbAuQh1lcreO6d6U=;
+        b=oQ91uZYGzKT4wsjTBrpBn7m28uoPGv4kTw9cxeaPsx4S4LpGIlrBJB49r7KiyUUJ/d
+         roEBIlEbm4GROYo8lLS7PSAs5OKzS3rk9xLFZjzx7ryBkYmgMG5V3Y6DBomRWFS9O6iJ
+         0J0+OEss55eDvIzt1Cxu5/zAB2skNwQpg9C0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758830384; x=1759435184;
+        d=1e100.net; s=20230601; t=1758830389; x=1759435189;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xOzyRe+3fMSMSulDoCd/U8Ee2YvY46RKA0vukyO785o=;
-        b=cpHHMFPOWao/bVIxJwyTs6n1rVw1D/OVtbXqk+IUEgGxxbMRpqZbaLTvbzHj1O8h0X
-         vIDke9f6MKy2LaDo0O6y7ESJEplbpTI11uv+9iWW2XKUvCfRg/uVrZC0ZCQEE/cXPTW4
-         qFQydTAG4Vs21KRylpuer4+Ry0PpMisA64VDbaMsGL/cZbEGcL4nAN4ttaqfuUQ4DAW2
-         ToV1xkom8d83XoOsmYjnCjekosWSr4g9HMllrqaNa6n2gqV+4v1Hkr6rQfx/NOOTDSVJ
-         owCmCj5ZIOnp2DrSBxifXbYlXCdMc6/t+l4hbr3spskMRsySoiZxmoLuMQJ/tXD8kcgL
-         FePg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaQS7YxUmWOdznSRxG+nhrs67x36anAbSOel9hj5BC2mI0jSd7LTykJ66prJ1J9e+lifNotWwYAALheCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLp5voBdRdJCgkCcxdw1adMYwcex2DrlYj3q9by2enQxI2/aIs
-	D+aYQBeO3OO8vjIobADQ1W+Xmh4HMgKVULWzELWOzk6kLdlesgxLiZNAHpBB13bFUuZJnPYBbGF
-	xCaE=
-X-Gm-Gg: ASbGncukP1XopOCQSJTxjiVY2dCzSf06wtCWrV5vJuSjqrmP8rDo99MUQphStqj92rP
-	RaC/+wEwLzkSxqltIlzhvSK1BYqklvyCdTMWC9cN8ANygVQ6yHBtqhGQ5D0pzbmR44Q9a8K1jUS
-	6qg3k87dy7kXqbIWerAN484zAI6Vx8nHLK6WXiO+Ow12tpEVXLr0NA9rJ+WM6fbiiykpN+33wVw
-	jwFAB1YkM5iq2FAF30Qnv7VMQ7X+C/2Mu7w5kOwsCsNWe9WdBvV/BcH6RatyrWE61wYkZAVzG1V
-	3YLur4c+GIJ7jFja8CPs7J6fTxVtBAFwFORLaka4ZyFA6itMkowFnJeH3+islwVr9CjTjig4f2s
-	EaxTi4Sumfpb9x3k+itAzEaEg0TlfYXEV6DwNvJPaQ5V7XWYS1jhvIgiGXZ7XXA==
-X-Google-Smtp-Source: AGHT+IELVvANjEhqqcjkLNs9WsmUy/QSqVrWLH8zVK0l5Ev/B9XwevmzGtfFScDhkJdeamgFlE4M0w==
-X-Received: by 2002:a05:6a00:189a:b0:776:20c2:d58b with SMTP id d2e1a72fcca58-780fced5d67mr5963954b3a.24.1758830384245;
-        Thu, 25 Sep 2025 12:59:44 -0700 (PDT)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com. [209.85.216.49])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b22f5fsm2689368b3a.53.2025.09.25.12.59.40
+        bh=HAdEQBdz9dDV+qB/r+6Q6b9tiykVbAuQh1lcreO6d6U=;
+        b=AHOST15gPzxMukBBEEJq2dxyAvNigwev6mflqI9r4fdfRMTvDgCYSICsP2VR+ey1oA
+         fXYnhi5fYkzS2m7cTcOOCS9S0rVTmwVEv0KXcnbzL0p4Z3vehIliE5hplcbQwPrwrrHC
+         MmX7opPZOGsx+wOIpsq0IRc7TYE0KiVBivfnOfA+lgpOPzH+n0c9/cm0+bAVLMu0SHZr
+         dUJ7/R73wsaH74WPxuw37WeVEY9hD5T0QvWbOED6hYmQ+03djbvRslXfXW/PRGFknhiu
+         bIVCMcsWOjOqdidYeNc4UbTVNuKpXr6K/GwRmsXEzF9/iXhSiGkFCRlzYvIzbFNRhWTz
+         jhmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrfb3od1Rf+M2ofbjT3rY9rVuhHEkyEE67x4oevfqsIoLwPpaMjSV0rGrzANES/XKNffiEAl0a+4xzkdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBJcfop3cONUG6967KKNgIx8bjzvuQSv31uvvFEgXhtFAGCSZ5
+	ORrsM+M5CSAf9Xz3b90x4sI+FBRbE5YgnF+9t6yAQzjlxy6R2yQoe03e5hPXiSJJFD/uypWzOJI
+	75/4=
+X-Gm-Gg: ASbGncuzuxGF+jx/KAWcv6n8M97iVggkVz28tlcUWzpSK1wtJgZefFqZsJWvbe2dpMy
+	PEPSckKqAAZc0Likeo2/UIKz31/rPepYC1y9vjtO8bazbHmAD43c0elPbrPV2V1JJ6p8eyyD3CQ
+	+KUfbXWg8QCHRrdwCoBecPbEgQfSxFI6K7kWlE0vkXy9FInPAOz+KkXlSi1e4UrIJLfk84dWPRu
+	d/nup1hC5GGFm2cfYLqctYz7iaafX9ythtgjgnULGYgQsKYjeb1arD2p3/b7btsO0lVSSqjQO4/
+	n7Tk8VJzMjDrXY62ZBBG9TId9qzGR2gH1HiOckxVp0LqXnCeU4wmmDpFfoCKSXhUOdriTS7rCpO
+	aASWBukAb1di9WfpHnKGoAfzK53c7fCxAuoiL213lMHmisZ3pKApbJ4lKcKLMk0lo5Q==
+X-Google-Smtp-Source: AGHT+IHmnH7Y7rbIBh59WmR0QMg6klOmfv55DhWx8heFlknbZAhmJgoRLiyqExeFdz+mRSBNrrNweQ==
+X-Received: by 2002:a17:903:32c3:b0:267:e3af:ae67 with SMTP id d9443c01a7336-27ed49d2f64mr49236625ad.14.1758830388924;
+        Thu, 25 Sep 2025 12:59:48 -0700 (PDT)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com. [209.85.215.175])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed688238esm32999935ad.94.2025.09.25.12.59.48
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 12:59:41 -0700 (PDT)
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so1613682a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:59:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVev1h+O360rg/+dett4rJDAXvTg07NhcAubroQ+OKXs43jAlD0X6rLBNq2zfjvNY1PO0bmFZnmQVEh8kU=@vger.kernel.org
-X-Received: by 2002:a17:90b:538e:b0:32e:18b2:5a45 with SMTP id
- 98e67ed59e1d1-3342a20b94dmr4932192a91.5.1758830380238; Thu, 25 Sep 2025
- 12:59:40 -0700 (PDT)
+        Thu, 25 Sep 2025 12:59:48 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b555ed30c1cso1049508a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:59:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6JhT+1tsC4f4IdMbVPp5EDztx93vrDPmqJmid4wZh5FWt4VlwOzkhuZ8vYAEp4UgORBOGvM51EAUMZPQ=@vger.kernel.org
+X-Received: by 2002:a17:902:ec8b:b0:26a:f6e6:ef4f with SMTP id
+ d9443c01a7336-27ed4a78d67mr40499335ad.60.1758830387808; Thu, 25 Sep 2025
+ 12:59:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925084806.89715-1-cuiyunhui@bytedance.com> <20250925084806.89715-2-cuiyunhui@bytedance.com>
-In-Reply-To: <20250925084806.89715-2-cuiyunhui@bytedance.com>
+References: <20250925084806.89715-1-cuiyunhui@bytedance.com> <20250925084806.89715-3-cuiyunhui@bytedance.com>
+In-Reply-To: <20250925084806.89715-3-cuiyunhui@bytedance.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 25 Sep 2025 12:59:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VZLYqPQCOEhbH4QtndeG5e1-0wey24fgYNTeFiqd8qJg@mail.gmail.com>
-X-Gm-Features: AS18NWBiujTv-FGvPpgY3gBOBVEPrJ77epiIZ9CDp8xRQDwQ7FOMR9gCNXwR3xI
-Message-ID: <CAD=FV=VZLYqPQCOEhbH4QtndeG5e1-0wey24fgYNTeFiqd8qJg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] watchdog: move arm64 watchdog_hld into common code
+Date: Thu, 25 Sep 2025 12:59:35 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VpCZzw24VH4DAvt5UhZHJD1TMO-t5HB8Kfw3pw+jO7sA@mail.gmail.com>
+X-Gm-Features: AS18NWCOLLpqvX90nBBWu9Muo_va5K9CeZWn93TLpPGzigEq33VTJanz9wj8IRk
+Message-ID: <CAD=FV=VpCZzw24VH4DAvt5UhZHJD1TMO-t5HB8Kfw3pw+jO7sA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] riscv: add HARDLOCKUP_DETECTOR_PERF support
 To: Yunhui Cui <cuiyunhui@bytedance.com>
 Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org, 
 	aou@eecs.berkeley.edu, atish.patra@linux.dev, catalin.marinas@arm.com, 
@@ -109,45 +109,27 @@ Hi,
 On Thu, Sep 25, 2025 at 1:48=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.com=
 > wrote:
 >
-> @@ -17,6 +17,7 @@
->  #include <linux/cpu_pm.h>
->  #include <linux/export.h>
->  #include <linux/kernel.h>
-> +#include <linux/nmi.h>
->  #include <linux/perf/arm_pmu.h>
->  #include <linux/slab.h>
->  #include <linux/sched/clock.h>
-> @@ -696,10 +697,12 @@ static int armpmu_get_cpu_irq(struct arm_pmu *pmu, =
-int cpu)
->         return per_cpu(hw_events->irq, cpu);
->  }
+> Enable the HARDLOCKUP_DETECTOR_PERF function based on RISC-V SSE.
 >
-> -bool arm_pmu_irq_is_nmi(void)
-> +#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
-> +bool arch_perf_nmi_is_available(void)
->  {
->         return has_nmi;
->  }
-> +#endif
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  arch/riscv/Kconfig           |  3 +++
+>  drivers/perf/riscv_pmu_sbi.c | 10 ++++++++++
+>  2 files changed, 13 insertions(+)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index badbb2b366946..bb4e8c5a18717 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -186,6 +186,9 @@ config RISCV
+>         select HAVE_PAGE_SIZE_4KB
+>         select HAVE_PCI
+>         select HAVE_PERF_EVENTS
+> +       select PERF_EVENTS
 
-Should the previous comment move here, AKA:
+I don't think you want to select this, do you? Just depend on it?
 
-/*
- * hardlockup_detector_perf_init() will success even if Pseudo-NMI turns of=
-f,
- * however, the pmu interrupts will act like a normal interrupt instead of
- * NMI and the hardlockup detector would be broken.
-*/
-
-
-> +static int __init init_watchdog_freq_notifier(void)
-> +{
-> +       return cpufreq_register_notifier(&watchdog_freq_notifier,
-> +                                        CPUFREQ_POLICY_NOTIFIER);
-
-I think you need to do something to prevent this from happening on any
-platforms that override hw_nmi_get_sample_period(), right? These
-cpufreq notifiers will be useless in that case...
+Other than that, this looks good to me.
 
 
 -Doug
