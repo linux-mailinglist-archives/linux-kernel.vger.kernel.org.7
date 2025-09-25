@@ -1,131 +1,98 @@
-Return-Path: <linux-kernel+bounces-832028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99A3B9E2C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:01:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3187B9E2D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 054CD7B34CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C977A17F52B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B162773E4;
-	Thu, 25 Sep 2025 09:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcBMAzOp"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5A3279DC3;
+	Thu, 25 Sep 2025 09:02:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2476221540
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366BD219A7D;
+	Thu, 25 Sep 2025 09:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790903; cv=none; b=PxqFWYhVMZBJKYGtDKOsn3YOVh3SE8TOwELbL5uFBhSSswNRAm0EcCwpDvf7xJypOFv8WjwH8NLPxe762A2oDWMbLufyK+7XhNDuNHGFjEeVYzrSXe6K7nj11n/1DyKxee7/7QXqYTdFuik1GlqXUVEUxb7+r9bjMB2q5aGhB1c=
+	t=1758790923; cv=none; b=O3tB1/Oayt8ZVX9pFqZGwZmDzJOjKsXZIaHCoT+QmRPp7YWTFiK+ACDNHV8fCZo4T/Qk59/hV63F89YXTZgplnRTsvbwOBbvyP/i4UTGHhsZWoUmC88GNkrI5Xs02TJAhKZ19wD6nOKC8VtEpjbOhnjAVPDqCqT9EFwyvcXM8A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790903; c=relaxed/simple;
-	bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dg92Yp05903gC1KtLGISdc60Cm3ys7PWnW9gZQuMR7XbNtKJKQbqt+vRam0A/ltKYYavVoLuVKxsa3GFJtFcvUJBjjkIah5DBW3iGxbcFrh6fSy/nxg0MEZ9PsJ5SJpiWnyoIFx7xAFLggCW2DkpVHi/+jqq+zlFxSWRGHbAP7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KcBMAzOp; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so1923515e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758790900; x=1759395700; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
-        b=KcBMAzOpgBkmgOocch8p8cFOUenehfx6DudKUPvCrNWWDmnJsQL7zcRP0O4lKi1irG
-         nkyiXaIwogYr91qhYclzydOPex9sLbNcQOAbB0cEtkxJpRvNeNb+4LtDObOnFyzV6N1F
-         GmILdP6DWfMDYHUr+JL/CMmZpCh7/aaXNE2tPaK+qkK5vlQQN72g8TB6nbT8Be9DgqyV
-         jVYRVBTFfRjjF3NL+7yAlnZ7bVgS54yZBEZb/0fku7IZyyFuKMT/pwMQGk340yOxPMXU
-         pyAOdZAWaAO6GXtHjXMTE4i9f9Cz2Kv/VmAET5PkDMVDRL8GmnxJAMAEG5uVCIcIGS3G
-         lFEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758790900; x=1759395700;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yqstp8v0w5ZqvhHqs9nCFyjLloZ4iTt0o1sbH2L91Q0=;
-        b=JzZIgTTOQ/Ft2uyw8Lx+L8CIL+Ix55VGtSLCcvz82Xr3TPtXffHxHDGTCQvft89uDd
-         IHSqYfEFCrqmbdfE3lnn3b3+excaCKsiCJmx4eDBeFVn2fQX564MiX3pTN4ir+b+ZuzN
-         r0oPbWxkK+WxcgdQzZuQOISnX0I9X9VgUKiyKUf9/eHwXlNrOAvzW/fx+3BtGdqYZKOd
-         NmXVxwPfAVgyMH61wTs6HwH140HRWPM8JASasUowgDbxwduKEZw0/uDynjSSu3tcEkul
-         GaulSpik5rV44ZWoAsUTVSWYuXGjFF3ztx2zQ6pj4Vpo9/2/qQKWeKG7x6JGE3tWZEJt
-         Rt+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX960kNrXXJGbT0u8CrVj6/6zg7EDB7a3ZnfDMK5SYHg6FAUCjyLsqDD1I5/8R5OBTo2g7+bawzMdjjubI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygHFrY3IJ0yqfqMQICwUcJkn85rs3L+MYyQH/uj04aGRkDhtet
-	qUTcRzkU5dpzpdzsFo2BpCduuOfse0IM9eUaRPLj1KweK0LR/5dpp0NDZYn7Eh3LGbo=
-X-Gm-Gg: ASbGncsE265CnNG+fPYolHKjQaMb+NVqdbZMt0glCn4i6kLHj7ox1jT/6BggsM0Zrx2
-	S2+O3PlYmbTLCFZNICTn6C5eum/RrNWYT2kUoPEMBwi+GUEJ8S+iouiUlIE8Y06nJnnXtHGoXT3
-	RqJG527M0riVPpj8he1NiF9TMhRVL6EZ3CcWjmQmtsogNajbUJWiarF/HY5z248WdZ0NuAwsuzN
-	2IPyTkzo7RT/WgXNYEt/TI1+3CRxTJb44e9gYMNGUCZHtoQYrpU4lVlnKzRVNM8UATzf3aPjtWD
-	x9nyXywP8TP05sZj5LVhXYxGpSMc8YGsJYe/WeyoXCrvM3J3+g0+G7QlN3/JzlgzPjwxKM9/pKH
-	Cm/yT7pzytdxLrAGf5gomTItsmG2u70vBSvNgtJb7e3SDTDnITG0gcNW4reevBVclpyjFZkq7wn
-	Ib9EoGd7BxnYYZ0rivWEvdqZMy62DWQ5w=
-X-Google-Smtp-Source: AGHT+IFPH5bNTpMjVvNRN26DifPNLAFoSeAoicHRC1HEEH9oRvExzs+S4YeuHSGoOiaUNTFghFYSSQ==
-X-Received: by 2002:a05:600c:358e:b0:468:9798:1b4d with SMTP id 5b1f17b1804b1-46e329d1b47mr30509265e9.7.1758790900027;
-        Thu, 25 Sep 2025 02:01:40 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb7203b8asm2128929f8f.9.2025.09.25.02.01.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 02:01:39 -0700 (PDT)
-Message-ID: <14df3870-6cb1-4e5d-9c4d-bb8acef8c594@linaro.org>
-Date: Thu, 25 Sep 2025 10:01:37 +0100
+	s=arc-20240116; t=1758790923; c=relaxed/simple;
+	bh=maIJ4TR91gEWbjfND2qRjo0K5H/zlUG2zC0c1SuCbrQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J1zJVdaqfJY6+mcg5EhwU40XUV/WIzdEKuDS7JZZQfPcin3Zy0SExoylFcI9e3IClyGMA66qfQALlVRJQK90qHBhsUTKfSEmsxA0FX+j/ZQdh1mG9VDes0+MP6O2ok0VaOsRMgP/vNF4YA7+45J6VUj1h/sItwfpsxFmdhnSR6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cXSQ62wYBzKHMvJ;
+	Thu, 25 Sep 2025 17:01:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4D2791A084B;
+	Thu, 25 Sep 2025 17:01:58 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCXW2MEBdVoThULAw--.12884S3;
+	Thu, 25 Sep 2025 17:01:58 +0800 (CST)
+Subject: Re: [PATCH 5/7] md/raid10: fix any_working flag handling in
+ raid10_sync_request
+To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
+ namhyung@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250917093508.456790-1-linan666@huaweicloud.com>
+ <20250917093508.456790-6-linan666@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2d94765c-219b-75f5-30fa-79a7324ba525@huaweicloud.com>
+Date: Thu, 25 Sep 2025 17:01:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] dt-bindings: clock: qcom: Add support for CAMCC for
- Kaanapali
-To: Taniya Das <quic_tdas@quicinc.com>,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Taniya Das <taniya.das@oss.qualcomm.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
- <20250924-knp-mmclk-v1-3-d7ea96b4784a@oss.qualcomm.com>
- <4315205b-5320-4a8f-a707-45f5eb35ae51@linaro.org>
- <8c558ac3-541b-47c4-be4b-c9101997de7c@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <8c558ac3-541b-47c4-be4b-c9101997de7c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250917093508.456790-6-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXW2MEBdVoThULAw--.12884S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrXFWDWF15Kr1xKF45ury8Krg_yoWxGrXEka
+	y5tFZ5Xr4Iyr1Iyw15GryIqr4Sgay5Wws5ua4DtryrZa4ava48Kas0g3Z5ZF43XFZ0gasx
+	C3W0qr9IvrsF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUpwZcUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 25/09/2025 09:46, Taniya Das wrote:
->> BIST == Built In Self Test ?
->>
->> Can this not just be put into one camcc header ?
-> These are two different clock controllers CAMCC and CAM_BIST_MCLK they
-> should not be in the same header.
+ÔÚ 2025/09/17 17:35, linan666@huaweicloud.com Ð´µÀ:
+> From: Li Nan<linan122@huawei.com>
+> 
+> In raid10_sync_request(), 'any_working' indicates if any IO will
+> be submitted. When there's only one In_sync disk with badblocks,
+> 'any_working' might be set to 1 but no IO is submitted. Fix it by
+> setting 'any_working' after badblock checks.
+> 
+> Fixes: e875ecea266a ("md/raid10 record bad blocks as needed during recovery.")
+> Signed-off-by: Li Nan<linan122@huawei.com>
+> ---
+>   drivers/md/raid10.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-BIST means Built In Self Test ?
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-Is this really something to be upstreamed ?
-
----
-bod
 
