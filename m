@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-832586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A36B9FD4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:08:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E510B9FD46
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C7A56346E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E7C5E2F8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A8B287514;
-	Thu, 25 Sep 2025 13:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D40229ACF6;
+	Thu, 25 Sep 2025 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MtaN07ET"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8GIzLqd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8506628642E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD7286429;
+	Thu, 25 Sep 2025 13:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808626; cv=none; b=lSRtr42Asqxl/OEXj4CM6b467Esaz8yWyrPiL6G+nWShAD2icExOYOW0rc2viLrcWzn+cNCYZVy+qYzVmy10qGf1cXTJPxDCwr7wWVa4fyOcw7WkPRMgVEBB2D9ja49pOPX6WjojO0bUBFXkA3lZd4BqdZLo0QML5lns9bOcO7o=
+	t=1758808679; cv=none; b=hSRZ0fmecX8bZDi0dHBrUSWbbY9U6l285UTbFoL15Kj5X9WVS743UQmYsHIYRIFo+X96NAvTpy2UGauj/viIwK/L5cXnqro9B6tML5hTGSThe+yxMvOFtCcZbbKTY9gEcRXCn3MGjmNAPZ/+s8AHbSydJedeMX4QFOMys0cEwlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808626; c=relaxed/simple;
-	bh=eVtI5KuXcf+iFYpz0dJERf2R3K4zLl1HHo6brVgQCa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAWZ1hqyAOJ7H4BeD3yuqR7EhSQd8UynXepyiTARwIYV3zdZSzZcACiHryL5zo068zzGNBzKzEoyONKHUyqlUXiUhn3iakLSt2KxGCDBYp43wJCFIqqC2/DEF7n+AzoUb1JQWrkaOO5GfZAb1nVv5jJDVhw+25TMi+iEJJnUoyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MtaN07ET; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758808622;
-	bh=eVtI5KuXcf+iFYpz0dJERf2R3K4zLl1HHo6brVgQCa0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MtaN07ET/VwbJQu4G8dyeqXYDtfqBddMTc8oEZHCls7uBSIYJbgHnx2Fzgnxe+rt7
-	 LSVNgv7S2WaVJQ2lBwoYVsDHyI1MR37vch0hdlS3akdvRPJ4CkKYQSnlQQVpTZCvZm
-	 FFQVDXEG0bBIjZQdGl49Qy3k9vWX8xjP4hok44wu3DBYYDxFaagtXtsf+yf+uC7QSO
-	 pGUWf8niVexakTQ9cWYwvRoefqeg3fIDf/nMccECXFBpwHSbdx/4V++OxpkSFzjKgW
-	 IWEUK9s/AdF1A7WYo6Ds2HHayNod/xtVSvuv/QSAe7/a0GGmJg57rG3YyMQvzdmH9R
-	 l7QPqppdNPacg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 059A417E0FBA;
-	Thu, 25 Sep 2025 15:57:01 +0200 (CEST)
-Message-ID: <719dcef6-a360-41cc-a5c5-fdbe53ec99d3@collabora.com>
-Date: Thu, 25 Sep 2025 15:57:01 +0200
+	s=arc-20240116; t=1758808679; c=relaxed/simple;
+	bh=ul5hTKXU0p0dHakS2dh4PrhYg1610/K+8jal1vsHoHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CzzB0wUXyVbuOO8b0yEXQ5RbVWklPeB0qL7ZaSvVsdVZ/H4mKB1HhkEOVsA0ebQDvoEZC4Cut6gbgbGI3+x4W5wt/DXPzcDm4aPv3W7zNSa1h/AWekYj2as/YdSryox4xA+Lw2P6RMbRIjxBScvJKewM+Rthe+xd44lEelMpyfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8GIzLqd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F4EC4CEF0;
+	Thu, 25 Sep 2025 13:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758808679;
+	bh=ul5hTKXU0p0dHakS2dh4PrhYg1610/K+8jal1vsHoHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O8GIzLqd5+u5IYxNOzM58b8/lJETDBPoK9EvxGzr0vwVZJS7BhGf77i3LtjGIuG/h
+	 mZE6H9d0Kw0GpcdmArxMbUxZpBI9ku9xJGX+g51khr62j+v9Ri/QznsT6+ixfbIhX3
+	 QRSCxvgm4vVO+dbVc9rPB/+g1Qp3LjZBeAWp/wIUGpN6qeXLd2KeWbwwIrHqpmtbTe
+	 rkcfCm4GJGR0/EeE6ig+LFU34c2s0gnmrsn1vzo9rHSMxU275yqNGfmrB9IsZe/r9+
+	 aQdjtjQS/3FV1CDDnTXFWeGh3KbtzbEwlZCKrGaS/U1lT+RXPcsyCH4UE8arQ9xTth
+	 p1bQcKJO+weiA==
+Date: Thu, 25 Sep 2025 08:57:56 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
+ Kaanapali SoC
+Message-ID: <3up4xqgd2ay3tex4ckzgews3ukyrdikcmgk7tbddggj3s5gt4d@foqcpnfptjk7>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com>
+ <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/mediatek: mtk_dp: Fix hdmi codec and phy driver
- unregistration
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
- simona@ffwll.ch, matthias.bgg@gmail.com, dmitry.osipenko@collabora.com,
- granquet@baylibre.com, rex-bc.chen@mediatek.com, ck.hu@mediatek.com,
- amergnat@baylibre.com, djkurtz@chromium.org, littlecvr@chromium.org,
- bibby.hsieh@mediatek.com, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20250924103708.19071-1-angelogioacchino.delregno@collabora.com>
- <20250924103708.19071-2-angelogioacchino.delregno@collabora.com>
- <72pgsr4birfy5wtf5umsfkahr7tplnih5wxoj4x33igapaspmg@7iafkarq4hzg>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <72pgsr4birfy5wtf5umsfkahr7tplnih5wxoj4x33igapaspmg@7iafkarq4hzg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
 
-Il 25/09/25 03:09, Dmitry Baryshkov ha scritto:
-> On Wed, Sep 24, 2025 at 12:37:06PM +0200, AngeloGioacchino Del Regno wrote:
->> During probe, this driver is registering two platform devices: one
->> for the HDMI Codec driver and one for the DisplayPort PHY driver.
->>
->> In the probe function, none of the error cases are unregistering
->> any of the two platform devices and this may cause registration
->> of multiple instances of those in case this driver returns one or
->> more probe deferral(s) in the "wrong" spots.
->>
->> In order to fix this, add devm actions to unregister those and
->> remove the manual calls to platform_device_unregister in the
->> mtk_dp_remove() function, as those would otherwise be redundant.
->>
->> Fixes: e71a8ebbe086 ("drm/mediatek: dp: Audio support for MT8195")
->> Fixes: caf2ae486742 ("drm/mediatek: dp: Add support for embedded DisplayPort aux-bus")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/gpu/drm/mediatek/mtk_dp.c | 30 ++++++++++++++++++++++++++----
->>   1 file changed, 26 insertions(+), 4 deletions(-)
->>
+On Thu, Sep 25, 2025 at 10:50:10AM +0900, Krzysztof Kozłowski wrote:
+> On Thu, 25 Sept 2025 at 09:17, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+> >
+> > From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> >
+> > Add the base USB devicetree definitions for Kaanapali platform. The overall
+> > chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> > (rev. v8) and M31 eUSB2 PHY.
+> >
+> > Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 155 insertions(+)
+> >
 > 
-> You can save yourself from all these troubles if you store the
-> registered device at  connector->hdmi_audio.codec_pdev (see
-> drm_connector_cleanup()).
 > 
-> And of course, you might use DRM_BRIDGE_OP_DP_AUDIO in order to reduce
-> code duplication.
+> Second try, without HTML:
+> 
+> I really don't understand why you created such huge patchset.
+
+Because I looked at the logical changes that went into the big squash
+that was initially planned, and requested that some of those was kept
+intact - because they where independent logical changes.
+
+> Year
+> ago, two years ago, we were discussing it already and explained that's
+> just inflating the patchset without reason.
 > 
 
-Fair point. Noted! Thanks! :-D
+We used to add things node by node and that was indeed not
+comprehensible. Overall this adds features in large logical chunks, but
+there are a few of the patches that could have been squashed.
+
+> New Soc is one logical change. Maybe two. Not 18!
+
+I can see your argument for one patch to introduce the soc. But two
+doesn't make sense, because that incremental patch is going to be the
+kitchen sink.
+
+> 
+> Not one patch per node or feature.
+> 
+
+Definitely agree that we don't want one patch for every tiny block!
+
+> This hides big picture, makes difficult to review everything,
+> difficult to test.
+
+The big picture is already obscured due to the size of the content
+added.
+
+Comparing to previous targets, I see the baseline content in 2-3
+patches, and the remainder of the series being things that usually has
+been scattered in many more small changes in the following weeks or
+months.
+
+There's plenty of features in this series that are yet to be concluded
+for SM8750.
+
+> Your patch count for LWN stats doesn't matter to
+> us.
+
+I agree with this. That's why the QRD is 1 patch, and MTP is 4 (this I
+think should be squashed to 2) - compared to 13 patches for across the
+pair for SM8750 with less scope.
+
+> 
+> NAK and I'm really disappointed I have to repeat the same review .
+
+I'm not sure what you're disappointed in, this initial series is larger
+than any we've seen before. I really like the work Jingyi has done here,
+aggregating the otherwise scattered patches into one series.
+
+Regards,
+Bjorn
 
