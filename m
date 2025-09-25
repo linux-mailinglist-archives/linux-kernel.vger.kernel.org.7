@@ -1,200 +1,162 @@
-Return-Path: <linux-kernel+bounces-833000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EE2BA0F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:51:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42429BA0F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DB91C25391
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDCD1C2532E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BF53126BC;
-	Thu, 25 Sep 2025 17:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A1UiF3We"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7473126B6;
+	Thu, 25 Sep 2025 17:50:34 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF5030F55D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DEA30F937
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758822674; cv=none; b=lp2J2fOWrWrjaqhok3G4wIQQYmKr9WxoVK3NAibLoMM3lM2JcIZ0/4p0ZMHZVILes0tN7VgxlDuuzCIXBF0hha4lcnUv1JRJ+bdW61T6/5qBJXuxRmaJBeV5XTGqo7LZTW65iFBes9F+gYFnkxFeb2zUKX+0acdWGUePo6kvxvw=
+	t=1758822634; cv=none; b=K5jR3dGRl9PZp5vXkG+OJPkGnvZSejj2CkAx5oxpgrW5ettVD6qW9+5TxLhhgDz2q+rMTFFrOrdh43jUhG2PH7CZOuXpntwO9TJKwWco1VjM+ztOk2TSq1q/ReYCIWl3oLXXHWZpUF3D3/4TnRzcQJK8tKgEvGiuJd7oLlfdPGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758822674; c=relaxed/simple;
-	bh=weR3jvYnwxRW5YU5Ji3DbJwlQ9k4y/ABjvv8+oO2aYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qWaz7iub0MeCZFQYXy5JjIQqV6hH8DUjwM4lHou2M641E2hhHfpVD8J/mPdsolxjMPAnmIFk8Am8+OB27u1h9d+Jr2idczLfQEpWyjB6yqH+F29hXHqLNuB11jJgWa5xbmAptkXUTE97/OS1ZIDjrR4bKDN1tTn6hqkUFeQNsaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A1UiF3We; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758822670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnna/wEcMMwUopHMkFKwrmkUV474k6uWBW0KzqxD1og=;
-	b=A1UiF3We4TD1ZDek1ext4+wGdfKxznYKHUD9dohDyN5kzoRqicgdGF2CSktS1I4RkUEbd5
-	IvdslvvqUpNlwLkYidttFAX3BNFs21KvKU/sNzPY60JGYG6SQLOVOfHU0yC6gDYze9+B9f
-	wlZj7sLoy6X8jc7ofM7cpMoP9RmlYaU=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v6 2/3] selftests/bpf: Refactor stacktrace_map case with skeleton
-Date: Fri, 26 Sep 2025 01:50:29 +0800
-Message-ID: <20250925175030.1615837-2-chen.dylane@linux.dev>
-In-Reply-To: <20250925175030.1615837-1-chen.dylane@linux.dev>
-References: <20250925175030.1615837-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1758822634; c=relaxed/simple;
+	bh=hOX9VPtfC91Mg3d1GTnIUDFrJ8wLg3sJL12KTynCPNc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ij2S6wSCfnyj5k8qVDLzXTsVW/oGHqA5gFu1oCa9F7D2UynwtnzToyO2Jd+SStOulMAD/aF+toOz/jIqOEjKsGDrXJ88iQEZQx0r64r+EmuWSCmQkvSrctj6MOfy9794zktj0y52phA718hZvVDuYyMZwHErI5Bso5IfHfvoQ9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-426cea3f07eso8495495ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:50:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758822629; x=1759427429;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9+Hg3CA0qqYhxfghG2it4mVMoZpeVHhlGfIerLYLkrY=;
+        b=KorOvQjn4qE73fJh/HtzG6OHroqJb42aQEU+C74NFlRAauC9BZQFXcC0FBuOuWondl
+         Vx61OJD2fpMQle7iDdhNPaxzxilGKNS+IH7HqmNHVsa1l2gpFuV0tjv8UR1ONrI9fB8H
+         VSyzFMN5l0Ve8jKAz7K4MMw9JeeAJz9VVFflNalLdmGf8lK5vsOW4/Pnw2sjsJEBzEXb
+         M39nbioNfYlCU8v3AOqW1753zboQmso3oUPFPF7PpLETVPaXuLmOhBYt/eIyxNGP4yiG
+         raAx4zTHPoj1v5p/n7zLV3E0WGaG5bSbIAKHfDlMLGcHZjQKCmLTZPSEvW8UhZhsKkUc
+         MQew==
+X-Forwarded-Encrypted: i=1; AJvYcCWqu93So9HGjnIjr4vn8YeJUNFdA0vy4AnoXlFAPBnIFpn9LQh72vW57p09sH3QFm5UXeLnnI1l+ONcrvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5+Zu/t5ODDUIn6sS0NZNVXWOyNn6ooHsW0g2pb74kSEdpBcvC
+	xA5t/EoLti+dLq6lF6a6W6BNB8XvOTgDtJLaoNzu/Wn5zZnRqER+DBvqNJ9fiHu5waAPiI17xte
+	TkmnIE17jLueNdQ9S/yjZXRHopel/7oqoj2fZPfhsgJQU4PiuGAA+mhwmpeM=
+X-Google-Smtp-Source: AGHT+IHXpLfshWYCdLUpi+vWygHE0MWp2ID0gLUf+wNbex6bK1BhmZijbcVJMe2Tecd+fIL4yrsD1+edyWXtE4Jp0mW3uGPz0xu/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1a6c:b0:424:8151:dcd6 with SMTP id
+ e9e14a558f8ab-425955d4654mr63027115ab.9.1758822629562; Thu, 25 Sep 2025
+ 10:50:29 -0700 (PDT)
+Date: Thu, 25 Sep 2025 10:50:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d580e5.a00a0220.303701.0019.GAE@google.com>
+Subject: [syzbot] [overlayfs?] WARNING in ovl_copy_up_file (2)
+From: syzbot <syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The loading method of the stacktrace_map test case looks too outdated,
-refactor it with skeleton, and we can use global avariable feature in
-the next patch.
+Hello,
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+syzbot found the following issue on:
+
+HEAD commit:    bf40f4b87761 Merge tag 'probes-fixes-v6.17-rc7' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1636e142580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f754e01116421e9754b9
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13eb34e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ca2f12580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-bf40f4b8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2fe4635de41e/vmlinux-bf40f4b8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/acfb085eaa3e/bzImage-bf40f4b8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1280fcf9f9a9/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f754e01116421e9754b9@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 8
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5501 at fs/overlayfs/copy_up.c:276 ovl_copy_up_file+0x640/0x6a0 fs/overlayfs/copy_up.c:276
+Modules linked in:
+CPU: 0 UID: 0 PID: 5501 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ovl_copy_up_file+0x640/0x6a0 fs/overlayfs/copy_up.c:276
+Code: e9 2d ff ff ff e8 60 ac 8b fe 49 bc 00 00 00 00 00 fc ff df e9 14 ff ff ff e8 4c ac 8b fe 90 0f 0b 90 eb 09 e8 41 ac 8b fe 90 <0f> 0b 90 41 bd fb ff ff ff 48 8b 5c 24 10 e9 8d fb ff ff e8 d8 35
+RSP: 0018:ffffc90002b0f040 EFLAGS: 00010293
+RAX: ffffffff833410ff RBX: ffffc90002b0f0c0 RCX: ffff88801f022440
+RDX: 0000000000000000 RSI: fc0000000000000a RDI: 0000000000000000
+RBP: ffffc90002b0f170 R08: ffffc90002b0f0cf R09: 0000000000000000
+R10: ffffc90002b0f0c0 R11: fffff52000561e1a R12: dffffc0000000000
+R13: fc0000000000000a R14: ffff888033b7d380 R15: ffff888042c0f028
+FS:  0000555584fee500(0000) GS:ffff88808d007000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2eacb909c0 CR3: 0000000059e0d000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ ovl_copy_up_tmpfile fs/overlayfs/copy_up.c:885 [inline]
+ ovl_do_copy_up fs/overlayfs/copy_up.c:999 [inline]
+ ovl_copy_up_one fs/overlayfs/copy_up.c:1202 [inline]
+ ovl_copy_up_flags+0x1502/0x2fe0 fs/overlayfs/copy_up.c:1257
+ ovl_open+0x138/0x2f0 fs/overlayfs/file.c:211
+ do_dentry_open+0x953/0x13f0 fs/open.c:965
+ vfs_open+0x3b/0x340 fs/open.c:1095
+ do_open fs/namei.c:3887 [inline]
+ path_openat+0x2ee5/0x3830 fs/namei.c:4046
+ do_filp_open+0x1fa/0x410 fs/namei.c:4073
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1461
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1be718eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff614ed578 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f1be73e5fa0 RCX: 00007f1be718eec9
+RDX: 0000000000000042 RSI: 0000200000000040 RDI: ffffffffffffff9c
+RBP: 00007f1be7211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f1be73e5fa0 R14: 00007f1be73e5fa0 R15: 0000000000000004
+ </TASK>
+
+
 ---
- .../selftests/bpf/prog_tests/stacktrace_map.c | 52 ++++++++-----------
- .../bpf/prog_tests/stacktrace_map_raw_tp.c    |  2 +-
- ...test_stacktrace_map.c => stacktrace_map.c} |  0
- 3 files changed, 22 insertions(+), 32 deletions(-)
- rename tools/testing/selftests/bpf/progs/{test_stacktrace_map.c => stacktrace_map.c} (100%)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-index 84a7e405e91..0a79bf1d354 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-@@ -1,46 +1,38 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <test_progs.h>
-+#include "stacktrace_map.skel.h"
- 
- void test_stacktrace_map(void)
- {
-+	struct stacktrace_map *skel;
- 	int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
--	const char *prog_name = "oncpu";
--	int err, prog_fd, stack_trace_len;
--	const char *file = "./test_stacktrace_map.bpf.o";
-+	int err, stack_trace_len;
- 	__u32 key, val, duration = 0;
--	struct bpf_program *prog;
--	struct bpf_object *obj;
--	struct bpf_link *link;
- 
--	err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, &prog_fd);
--	if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
-+	skel = stacktrace_map__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
- 		return;
- 
--	prog = bpf_object__find_program_by_name(obj, prog_name);
--	if (CHECK(!prog, "find_prog", "prog '%s' not found\n", prog_name))
--		goto close_prog;
--
--	link = bpf_program__attach_tracepoint(prog, "sched", "sched_switch");
--	if (!ASSERT_OK_PTR(link, "attach_tp"))
--		goto close_prog;
--
- 	/* find map fds */
--	control_map_fd = bpf_find_map(__func__, obj, "control_map");
-+	control_map_fd = bpf_map__fd(skel->maps.control_map);
- 	if (CHECK_FAIL(control_map_fd < 0))
--		goto disable_pmu;
-+		goto out;
- 
--	stackid_hmap_fd = bpf_find_map(__func__, obj, "stackid_hmap");
-+	stackid_hmap_fd = bpf_map__fd(skel->maps.stackid_hmap);
- 	if (CHECK_FAIL(stackid_hmap_fd < 0))
--		goto disable_pmu;
-+		goto out;
- 
--	stackmap_fd = bpf_find_map(__func__, obj, "stackmap");
-+	stackmap_fd = bpf_map__fd(skel->maps.stackmap);
- 	if (CHECK_FAIL(stackmap_fd < 0))
--		goto disable_pmu;
-+		goto out;
- 
--	stack_amap_fd = bpf_find_map(__func__, obj, "stack_amap");
-+	stack_amap_fd = bpf_map__fd(skel->maps.stack_amap);
- 	if (CHECK_FAIL(stack_amap_fd < 0))
--		goto disable_pmu;
-+		goto out;
- 
-+	err = stacktrace_map__attach(skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
- 	/* give some time for bpf program run */
- 	sleep(1);
- 
-@@ -55,21 +47,19 @@ void test_stacktrace_map(void)
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (CHECK(err, "compare_map_keys stackid_hmap vs. stackmap",
- 		  "err %d errno %d\n", err, errno))
--		goto disable_pmu;
-+		goto out;
- 
- 	err = compare_map_keys(stackmap_fd, stackid_hmap_fd);
- 	if (CHECK(err, "compare_map_keys stackmap vs. stackid_hmap",
- 		  "err %d errno %d\n", err, errno))
--		goto disable_pmu;
-+		goto out;
- 
- 	stack_trace_len = PERF_MAX_STACK_DEPTH * sizeof(__u64);
- 	err = compare_stack_ips(stackmap_fd, stack_amap_fd, stack_trace_len);
- 	if (CHECK(err, "compare_stack_ips stackmap vs. stack_amap",
- 		  "err %d errno %d\n", err, errno))
--		goto disable_pmu;
-+		goto out;
- 
--disable_pmu:
--	bpf_link__destroy(link);
--close_prog:
--	bpf_object__close(obj);
-+out:
-+	stacktrace_map__destroy(skel);
- }
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-index e0cb4697b4b..e985d51d3d4 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-@@ -5,7 +5,7 @@ void test_stacktrace_map_raw_tp(void)
- {
- 	const char *prog_name = "oncpu";
- 	int control_map_fd, stackid_hmap_fd, stackmap_fd;
--	const char *file = "./test_stacktrace_map.bpf.o";
-+	const char *file = "./stacktrace_map.bpf.o";
- 	__u32 key, val, duration = 0;
- 	int err, prog_fd;
- 	struct bpf_program *prog;
-diff --git a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c b/tools/testing/selftests/bpf/progs/stacktrace_map.c
-similarity index 100%
-rename from tools/testing/selftests/bpf/progs/test_stacktrace_map.c
-rename to tools/testing/selftests/bpf/progs/stacktrace_map.c
--- 
-2.48.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
