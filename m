@@ -1,113 +1,150 @@
-Return-Path: <linux-kernel+bounces-832663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58320BA00BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:38:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B794DBA00CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117E94C6422
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 769BC4E1645
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E1B2DEA67;
-	Thu, 25 Sep 2025 14:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D242DF13D;
+	Thu, 25 Sep 2025 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="OaF5ZXCv"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZGthc295";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CpGVnkjC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF9D2DE70D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611C32DE702;
+	Thu, 25 Sep 2025 14:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758811075; cv=none; b=PoEXmAbWL4eZrUzArErqaZhs87QhqEL87VFdQPQDca3V8OXyjSX4ec8BWZ/ZEyjgU/zdkXv4uw3BNlKxzy27waYPp9SdSRHCzm2eezXapOKFCRdu5dxQb3b7iqNOP9MY5JMjvTYnk514yrQTwyC0a0unWgulQLybj8GFzT0tWtQ=
+	t=1758811167; cv=none; b=F63EnkuSM1MxlN9jzIFK1lMYner/Md/MUtWv+Togl77hq/Y9mCH+3P2zhCwNwcMuT8G9S4wjQ2VLTbU486TZxsegcdSEukt2+EcCEuctDD+RwCGZRJ/qKy8fm207/5o6JR+0cSiCbIN7nZOcMrOr12kp5pUrjWzDzOaBm56CTA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758811075; c=relaxed/simple;
-	bh=qsMfxYBrK1xcPBJMO2obsA9w7fsBTD8YdKoTkcv2jEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ox3oFdUGIBUg9ZnYGCNJenLOUl5OvB+ujyPyKd13xTD+IXS462l9+v8HLlFtxK+yGCbfGbEnslVutQQjOJpSisvv8sHUD8KqVzVf2u26/u0SIZ2r17wP7s2Kj/oLd5r/xfwETpnWclNhidbdbgBIlynwhXtcDC2RsSC8PXOkcf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=OaF5ZXCv; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=m9Mr88ryg4l74a1fZPu2FPL1YOAK5V9355/JgF5JWYo=; b=OaF5ZXCvh9qXhDmBDfq0kHxqqa
-	tott9KPRk5iIdnqm0J614htC02h/40dQV55a11t6U0ZOXNJRRC8cZst0u3HIrySp2MDl57IauPS99
-	snMmrCgi3/zIgtMPJbLYN2drmcC3D9ZoxSq9TSO1xFfkPPzCwIC0/Anc3M33RAWYo5f1QZZyH/0QB
-	z7GdbD7eCjnqx4J9bhDSUL3P0s8wcILfgqczF35TMN3EVwxuOfOS3VZmlkn/XMZy6cudJZAJWPLDO
-	pYH7Fl0Z85+kwlgjsv79sTE0O1/eh2b+PmFKrpGJp2aTkcmNvjH0vmckV+aLUS8KhiV44cKW18EBk
-	lJkO/CqA==;
-Received: from 201-69-111-249.dial-up.telesp.net.br ([201.69.111.249] helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1v1n6N-00HRCM-23; Thu, 25 Sep 2025 16:37:43 +0200
-Message-ID: <440c9205-187e-45c1-8cc9-8083b64dadfc@igalia.com>
-Date: Thu, 25 Sep 2025 11:37:39 -0300
+	s=arc-20240116; t=1758811167; c=relaxed/simple;
+	bh=KnjfQLJD3s3IWHONb8K9H+RKdyMPO0YV1Hhif4rJMAA=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=DEX27IG+iI+fUp2dtpWqM9g1itFpuQgdF00r2BCyg1NUfeW/dkceamqX3/b0Ge5QSrh9EAX8IAlugPbSG+yEiY05v19vMWtytqZtCo3G3yvetJq5b6/mMH3ZQ8dM2LS0zoUI31fM8X+V55dehj47gXWKnODUSoAR9c1HHoOuezo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZGthc295; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CpGVnkjC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 25 Sep 2025 16:39:18 +0200 (GMT+02:00)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758811164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KnjfQLJD3s3IWHONb8K9H+RKdyMPO0YV1Hhif4rJMAA=;
+	b=ZGthc295HZ47YWeuNoepvmlgQDhdTUmNXO4LmkvLCTWZ03sK/oA0ogBAA1NBz8Ho0lO7n4
+	mcuo+3LHR0aPX3VLs9ezhRN10faEA8aSiTYQQwugKRwDku0zSohinysdBD6v3PchN/qJqA
+	oDX4Zk0Oo0XmVXCNQUlIiIs25jZMIaWYG3jYz36kP/0ZZ7Kz9vLKv+iK2JLjqhrhOwDSlQ
+	kUZvU4HRsamNH7FXSCuIxU16c0DBnh7W6PdxEW6AVsVUfQ64F0riyXmrR32oLa6S15uZ8j
+	pq2ijyJEsFzjxJ2wsAS2pjBkJGnUYPKuVOnBBNTX5egstaFcXm373JRh/vqUgQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758811164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KnjfQLJD3s3IWHONb8K9H+RKdyMPO0YV1Hhif4rJMAA=;
+	b=CpGVnkjC6Tm3kwhb52A8t15B07L3QpV+CVUsHSzQPZsFBkk5EM/Fu4dWJwmfp/eOgTaPgO
+	8HMCgW+7FLao8/Ag==
+From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Message-ID: <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
+In-Reply-To: <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de> <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com> <20250922162900.eNwI7CS0@linutronix.de> <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
+Subject: Re: [PATCH] rv: Add signal reactor
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/nolibc: Add stdbool.h to nolibc includes
-To: Mark Brown <broonie@kernel.org>, =?UTF-8?Q?=27Thomas_Wei=C3=9Fschuh=27?=
- <linux@weissschuh.net>, Willy Tarreau <w@1wt.eu>
-Cc: linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- kernel-dev@igalia.com, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <833f5ae5-190e-47ec-9ad9-127ad166c80c@sirena.org.uk>
- <20250925141423.504427-1-andrealmeid@igalia.com>
- <64c56cf3-90ad-428a-9a14-64928771f9fc@sirena.org.uk>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <64c56cf3-90ad-428a-9a14-64928771f9fc@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
 
-Hi Mark,
+Hi Gabriele and Nam,
 
-Em 25/09/2025 11:24, Mark Brown escreveu:
-> On Thu, Sep 25, 2025 at 11:14:23AM -0300, André Almeida wrote:
->> Add stdbool.h to the list of nolibc.h includes, otherwise tests compiled
->> with -nostdlib will fail with "error: unknown type name 'bool'", even if
->> a nolibc stdbool implementation is available at tools/include/nolibc/.
+Sep 23, 2025 09:43:05 Gabriele Monaco <gmonaco@redhat.com>:
+
+> On Mon, 2025-09-22 at 18:29 +0200, Nam Cao wrote:
+>> On Fri, Sep 19, 2025 at 02:26:12PM +0200, Gabriele Monaco wrote:
+>>> On Fri, 2025-09-19 at 12:49 +0200, Thomas Wei=C3=9Fschuh wrote:
+>>>> +static void rv_reaction_signal(int signal, const char *fmt, va_list a=
+rgs)
+>>>> +{
+>>>> +=C2=A0=C2=A0 struct rv_signal_work *work;
+>>>> +=C2=A0=C2=A0 char message[256];
+>>>> +
+>>>> +=C2=A0=C2=A0 work =3D mempool_alloc_preallocated(rv_signal_task_work_=
+pool);
+>>>> +=C2=A0=C2=A0 if (!work) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn_ratelimited("Unable to s=
+ignal through task_work,
+>>>> sending directly\n");
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vsnprintf(message, sizeof(messag=
+e), fmt, args);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rv_signal_force_sig(signal, mess=
+age);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>>> +=C2=A0=C2=A0 }
+>>>
+>>> Why do you use the task_work at all instead of signalling directly?
+>>> If that's something not safe from a (any) tracepoint because it can sle=
+ep
 >>
->> Reported-by: Mark Brown <broonie@kernel.org>
->> Closes: https://lore.kernel.org/lkml/833f5ae5-190e-47ec-9ad9-127ad166c80c@sirena.org.uk/
->> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> 
-> Fixes: f2662ec26b26 ("selftests: kselftest: Create ksft_print_dbg_msg()")
-> 
->> ---
->>   tools/include/nolibc/nolibc.h | 1 +
->>   1 file changed, 1 insertion(+)
-> 
->> --- a/tools/include/nolibc/nolibc.h
->> +++ b/tools/include/nolibc/nolibc.h
->> @@ -116,6 +116,7 @@
->>   #include "sched.h"
->>   #include "signal.h"
->>   #include "unistd.h"
->> +#include "stdbool.h"
->>   #include "stdio.h"
->>   #include "stdlib.h"
->>   #include "string.h"
-> 
-> It's not 100% clear to me that we should add this to the nolibc
-> includes given that nolibc itself does not rely on or offer stdbool -
-> I was going to send something out adjusting kselftest.h to unguard the
-> include there.
+>> If I remember correctly, sending signals requires a spinlock and therefo=
+re
+>> may sleep on PREEMPT_RT.
+>
+> Yeah that's what I quickly glanced at. Which seems to be the case also fo=
+r
+> mempool_alloc_preallocated by the way, so I'm not sure that's safer than
+> signalling directly on PREEMPT_RT.
+>
+> Thomas, did you test your reactor on PREEMPT_RT? I'd expect a few fat war=
+nings
+> when this is called from sched tracepoints. Unless you're lucky and never=
+ get
+> contention. Lockdep (CONFIG_PROVE_LOCKING) may help here.
 
-If we don't include stdbool.h here, it looks like 
-tools/include/nolibc/stdbool.h cannot be used by any test, and 
-unguarding <stdbool.h> would defeat the purpose of using -nolibc?
+I trusted the documentation, which promised not to sleep.
+I'll rework it for v2.
 
-I'm also not 100% sure as well, lets see if Thomas or Willy can shine a 
-light here.
+> Thanks,
+> Gabriele
+>
+>>
+>>> you should definitely not call it if allocation fails.
+>>
+>> Yep.
+
+Ack.
+
+>>
+>> We probably can get away with not reacting at all if allocation fails, b=
+y
+>> crafting our tests such that only one reaction happens at a time, and
+>> allocation won't fail.
+
+Ack.
+
+
+I am wondering if it would make sense to add a new tracepoint that fires in=
+ addition of the reactors.
+That would allow multiple simultaneous consumers and also bespoke handlers =
+in userspace.
+
+
+Thomas
 
