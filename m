@@ -1,160 +1,395 @@
-Return-Path: <linux-kernel+bounces-831520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A76B9CE24
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D3AB9CE30
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592441BC521D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689FE381A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 00:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C84F1A5B9E;
-	Thu, 25 Sep 2025 00:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A8F146593;
+	Thu, 25 Sep 2025 00:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ScMDx0NO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="prkBMmWK"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011032.outbound.protection.outlook.com [52.101.52.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2222119F40B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758759644; cv=none; b=SLWThL8el0Y2IOhcdx59Ce2qEgcuPvmmFuO+RCiYKKR+H4D9QEtrBjrO0zXqwduviL49AGxJ33MCNm1P0Gyy4FTRTlF6NVEs//uW6s0yhiMS4Rdpv409S+o9/yT53XgNsi6KhrMEsHfCIuOuNMhcBIX530oJE20kMcRw1VtR4JQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758759644; c=relaxed/simple;
-	bh=Vzfs1LFFHiEdWORr77vIh2SKYYdoMh/m5AROS8rGlOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H1LQqgSj0M+771b97bWDNh41vMKuseJbBLiPZhvu8xl9ep0sW5a3w8bsBY7oaQGnu1B8UvnJKex0866IiAT9AmQZOcDzoBXCTZIi5Tk59J9t0uKSoRD5WsGjhP8N776FaEwYOKLaYPzPRrWDA7d1MdmYHX0o2jaySYkrkTdhBEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ScMDx0NO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ONHgN3027912
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=SRwI25fTueoRl7qygb8baE/cMAE47EtTbSA
-	vuT0E+/g=; b=ScMDx0NOAQFKWHw2nHLMv3URVQ/y8V03PU1enZD+vdz1oIAdot9
-	Qf41y+YQWug4hnJgyF4NuyRlNCl5JwQvRiZMvqVRHAfRzaLWCSauMamVXMayd/do
-	1n3vfKDU6SaYOdBGOeKudzQ6Ubcc6NKhXQnqFCGE/lH79YEnmFguAYPlz9DVjQAD
-	cdNYYiBu4+/G3kxX6fW3whgFiJxWZsgxQ5N2b2kF2mesQwbi8k7oc9Bu2D+VfH25
-	2azjRWQO8koO85WJBmTHLXrl4myTrdg6K/3QsZkr4n2hhqAQibq+S/4PK7Wy2Mlr
-	QDm230Rgfny3tBDV1hWajJsFlV8Zp8iPgdg==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmnxgja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:20:42 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b55118e2d01so245721a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 17:20:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758759641; x=1759364441;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SRwI25fTueoRl7qygb8baE/cMAE47EtTbSAvuT0E+/g=;
-        b=rv52YeGGmhD7WhtJDP+gIYaegL+kv4WT35kuENNPGwjvOxJ7HkxkoDTATC4qe5leqc
-         CS5kdT0YQyAPXCFLqOVR8ayXkBHAk9R8lgMc2uUQUPLNLV3CUGjg8rfh3vkjwz0N9DSl
-         h+B/TKsy7/qX4YbN3sGz07yQAMiuOmp/eZ8ml4flm4S3eWXINgH1ZZm5BplrtFFzfeEy
-         oWA/4TG2TgmwaG94O7o7fdG1PC63jmdlIEknDzKtJdcFmksAAcI6+9VN55JUA10RsIIG
-         cDxnYPVgrVV5E1PFXjflROr7DKA+BLQBSQYL4jiUOAyL/zMcGLrWetjQsUKK3IpyNItI
-         GRGg==
-X-Gm-Message-State: AOJu0YyiO/y9HWK2RjXFxAbiDeYInOMXw5gQAHu3xny2/LO2n4JTFkcw
-	2EP/x0SnLfZ9L38FbHW5s/JD7/BrV/97PfYLgBjqiiBMJgnMwgeFLQbF/ar6lqOKw6BZ+adfXA5
-	w501I2/vkru22nDM1T5vZ78lSkJ2RWJiFG17LeqabSG6zCp4eTKQrwi2+sC5HdL4W0PI=
-X-Gm-Gg: ASbGnctMrq6i1DoDmPffub0mxDvjagbGiGKTM20RpygLFFTbywKWo5qWzUoFGvwK/tH
-	/PfPn4rmAmGdC4ORNWqVQPNZU07GJSFOBbhkW3vn49fmksBuMWNU6XLEHeqEYYXyil4WVrLSMuG
-	SCFiY8OpsOJlrTDf/ZN1CQeWS/l1SDi8COS4JuOm2D8krSP5PvPnmAzJA9N5iorQacuRJWt37Y+
-	BnxUO1nSclVp29DWj2i0hp1CjxrWsNuG5uoL2O+9UrXtkxbZDhyAkEWQsg9GtqJkQSuhQo66vxo
-	7Pc7uaFsyCpCOo18A99VtekUocvcQRE1B49Slykx09OVrljIyArCkdJVT4v4S2n0Mtz16oX19Aj
-	jJtb/PEfH9DtQR4EorMe9XXPSvGve842MPDn2Qc3HOLNeo4W+A9FlZL4=
-X-Received: by 2002:a17:902:da89:b0:267:f7bc:673c with SMTP id d9443c01a7336-27ed4ab0972mr14591555ad.44.1758759640789;
-        Wed, 24 Sep 2025 17:20:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEogoEQohZMX5Lzntajc5fLs0ei/8RmKQ+VYDghSleW2B2SrVgQJCo7h3MdCRBt+jNzWkvEIQ==
-X-Received: by 2002:a17:902:da89:b0:267:f7bc:673c with SMTP id d9443c01a7336-27ed4ab0972mr14591355ad.44.1758759640309;
-        Wed, 24 Sep 2025 17:20:40 -0700 (PDT)
-Received: from hu-sibis-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69a9668sm4740155ad.112.2025.09.24.17.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 17:20:39 -0700 (PDT)
-From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        jingyi.wang@oss.qualcomm.com, andersson@kernel.org,
-        mathieu.poirier@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: remoteproc: qcom,pas: Document SoCCP PAS for Glymur
-Date: Thu, 25 Sep 2025 05:50:34 +0530
-Message-Id: <20250925002034.856692-1-sibi.sankar@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A944A21
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758759933; cv=fail; b=qTtFmO6tCai0qX2FbaoLcCJeaP6QviXS5jksted2F6dGVM7mwLDBgi5onE9u0T5r1RN8QcPKvjAIOlTJxFZ1zRlBIYI7K7EvEykwo7zBZVRqO05yl9a4GX3u4+aWMg4dAaIEkCuYbgVcyGWlPtc05fgrwxRHxUjF/QA+KKYV93M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758759933; c=relaxed/simple;
+	bh=U8C2MWQRX728ZEeAkzMg+BT22O5XqXID0B3toloXT6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=c0qbaZHSAZ0ZErED4tudp99fVaWsGYGLtNwa9T8ls9Ty/nGy90yTuVGEnwpiGflblDRAfrh1osvIhXDcWR/OZWLSpR+jQ9eSIr+o4TzzWHgyJriiAt9sVspXO6S/tDRrPe/Ci1c4FTFJFO6NdD2PmaPanW8gW2wl4pVEVUucsO4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=prkBMmWK reason="signature verification failed"; arc=fail smtp.client-ip=52.101.52.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qqUmEe486EBMi8Q5O2H4ms1Qc+ydjQa4lSxs02yL41u++FbmuinT81Y2F5Lwy3p484Qdu+zxyhR4oRHfN8v8nQlyVfvhDjjEB5QsDKtfJOjAkW5fZndvvmEK/FR1t89LHrusl11CdGZaqRUEji+qvQR+ZQJd7+Gc5m9q1VNo2EOXdijyHWwJIeHdef16y0UaqXbcZiKSsyQVkMY7gmfgYAk3JL3ZXU+p00NcuJF2L9aaSlFZkS4lJJTSfZOPNsVvWqRhQtKa+/fCiP6pKJjz4k8h/58rPLLrz4OTIXcUpLLTmpbkUYXbHoVKOkHJ73PaqR+jWL0kOOe2EQza5PEyuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a9StTZSJK4oDlNOV3wTE5SiAh1d0ricONdQondAtVD8=;
+ b=YvGHgSqVHTQqR0B/9M0t0nfHjKe3y48aCXk8r/gAPx3vIsnj4yBVM3cLGcB8GzqdGqZM9H1xFE4sMBd5qAusXqpe44FAX+Rwxl4vuRDqcEH/9kTmdtBUCHDzUJqK+DlUcSc4UvfW3Dl5NyXij3pZVumREZSHE1BhksEHKVg92UdWdB9BKh7/devn+lSn/tPFRpbM6z15mhE4mFOhGUO1bis0uyU9qzsy1N5MSFJbv3L0fseWvgYN9cS7swmYy2oc3P17qvCn8omR4aZkNM/rayHFvKFixCWLCcTCJhSQKrLX7mR/IwHEiaPSW5Ce8LXJOsNRDl4nPhMswBQfAEvmcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=a9StTZSJK4oDlNOV3wTE5SiAh1d0ricONdQondAtVD8=;
+ b=prkBMmWKoVkNqDmhVZmmS6DoegjHCwP3scu+lkNawXQUpyFmEQFA4oACcuoai4Xkbre+m1Gj6gWv0ySdk29bSSg7Z8/MCYBBUC3OtRU8MHIQeXL/1H/8sorDJhHC5/PUiMdSrRjWf96Pvx564U1mOd/eGE/BH3b1Zk76iDegwuLmrlJDueqSVkmLl67t4GZddkkHeTOQciIdyVtHdNeFbEvAvJZ+RZ9TFwT7EeygqfeV7UhWGdfpCqWuUEq+iHK9hrAqIY1ea0A8ISsgqxGIavkOFHBo5DfZvDGUuMmdQMhQZnV8vjjAaoxuEZwwzpQJJw9VQ9ec1MuuHRyPSwMMaw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
+ 2025 00:25:27 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 00:25:26 +0000
+Date: Thu, 25 Sep 2025 10:25:18 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	damon@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+	Matthew Brost <matthew.brost@intel.com>, David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>, 
+	Mika =?utf-8?B?UGVudHRpbMOk?= <mpenttil@redhat.com>, Francois Dugast <francois.dugast@intel.com>
+Subject: Re: [v6 02/15] mm/huge_memory: add device-private THP support to PMD
+ operations
+Message-ID: <azcaqmqwdslvoei7ma4obtpxcdv7jdqfdc3ny4sylgwelwhfvo@okwd6y2oq5q4>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-3-balbirs@nvidia.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250916122128.2098535-3-balbirs@nvidia.com>
+X-ClientProxiedBy: SY5P300CA0042.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1fd::13) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d48ada cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=y6Zk4y2S2ODVn_eFbNIA:9
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: g22WxbTq3C9XaHR9aeJEowMJjdrC0KrR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX3dH0+W3ReR7c
- PXnbBv1cNgkxFVt8fCyKIhPMYibl3WzbWNvUVLfifGoKTqpR7XXy6/PB19UVwepg0+yEOP86GYl
- D06ot/lKKTosIcsZE6RSxYDjvLMa7Mzk3xmlGwKY5Pw6ODBRCFiTu6jIUJfcIvOUwBiYj7FV15A
- N2+SWbeFKD1DTb6fwESAxdripizzRqfI57jjEjOnPO6RTXCmMdkKb2Hn8DyTuUBeJOLcLMK31hx
- 3WFhyLOrPuD+sG2Qy62PoLgZkmcFktXAzyJ7bLfQRXBsp5JkiLFX0jsun/bRAsBhYFDH5cFWW3S
- sz2NER1E7mCgNVjcfPwDeTaHjqUtnKEisiCnGdzWWkKd0Slj4bgxx6mfmf/KscuZobykUzfKTpi
- 5FvvP/cN
-X-Proofpoint-GUID: g22WxbTq3C9XaHR9aeJEowMJjdrC0KrR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ2PR12MB8953:EE_
+X-MS-Office365-Filtering-Correlation-Id: e393b294-cddc-4515-0016-08ddfbca0620
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?bg8ZKhEwOUjlg6bvQpqru93BuMtOx5DH1QpscwuCP251l66fZWWOVscV4K?=
+ =?iso-8859-1?Q?l3Matha3UXYREixr2PugCWcPI3gf8ZUOOoJ/D48TDkCN4YWFvRA56S9q2p?=
+ =?iso-8859-1?Q?Q2YzuPCGz4E1KPs8He2hn3sAI0dKnR5EeISF3J+NDkeu0l7EL9I054CmcP?=
+ =?iso-8859-1?Q?lx6vx8gELs4QjaVT1O8mwa7O7IdMv8KiEK7mhz//8o5CtCEFCz7ctZnyUC?=
+ =?iso-8859-1?Q?CGTjau4GHM31Cpqfd6MYshN2bHDp2HWKz/z2vHUPLBMYDTQzaxIebjYGdQ?=
+ =?iso-8859-1?Q?fw/bmc6WTzBCChbMXPunolGGL0Zlv9R6dxChC/Zvi86AGXwdDyTcwkvAIH?=
+ =?iso-8859-1?Q?N+6EldD0NPeIvHL22wgVdvOUfc+nmSt+XE1lSIWqb9cA1s4VxdkaKeoObR?=
+ =?iso-8859-1?Q?t9RgklDSa9kxC1phrHSzKEivx84bSIFEMaVfy63wDYG+65rRO7RtJFVGzP?=
+ =?iso-8859-1?Q?e0wM0FCE/kDIwIs9WqoyR0UmuOJ8gZrWsu/N2Wm5QlUlwuCVSphNMOJU1M?=
+ =?iso-8859-1?Q?xM1BDBriPXSxHE2k4fexr8fBxfFzMy6HI0azDwk+J/mmu7bSxVgDnHmFjp?=
+ =?iso-8859-1?Q?WkTnpOKCQV0DaLgSiPngWVTJNU5rfN5Z6f0F7Ai0MVFP3kSTZwbu40HFHU?=
+ =?iso-8859-1?Q?rebTQeXZW4JkV0kNzIx/1dOKQwaMaXDYbz07eG6FeupD5x90zDh9ITCwLf?=
+ =?iso-8859-1?Q?HObvPx9MVxkLS829tUXXomjC5xXM+gphrrYtNh9cmEijGMX7c7mkTeHdFc?=
+ =?iso-8859-1?Q?naPt5gor1XvCccneUuByMKuf2h5NUx3O3n6jCq7rvBRheluZX1nvJ1r2V8?=
+ =?iso-8859-1?Q?ofYzwuYMHlcPHU2fadF0Q/MmV7nn/a2w0KDPk9MnxGcspFFAI+4PGflrGr?=
+ =?iso-8859-1?Q?JRjEZLlWvf7F6BGb24NSwbL2uSH9rAUIWVz3tDAJh4PTlmvoSf6NthCqQL?=
+ =?iso-8859-1?Q?VkxRD94A9HdQ9puzAUbJs01L/9TOWJjbt22ow4xgLvhDiSHF82xhTpPj0T?=
+ =?iso-8859-1?Q?a69660i7SYORllIHRECcGQG5iv2HsP/OrhBUK5g8s0K/gWlzKr146TT2wA?=
+ =?iso-8859-1?Q?gTFlcgLhS05Hxes4HSmBj3o4MIWyuIIS2MD9x8R9iugD8hUGE5fPa0rART?=
+ =?iso-8859-1?Q?9T/Fvnb/o88i5wkGlk1LChEZgznHMH5RSxdgmKhhWWTe2RmgDxcQpD28vP?=
+ =?iso-8859-1?Q?0BOakW2L7MnlemPCv9yoDuBjLYeKHoc6GXAkMUg7j0rIm+LkT+W/gObBib?=
+ =?iso-8859-1?Q?Z5fIJTmjDrx1wmthU5JeXjRFsxG8vVc6Dmu9CcDqBjCVyOKpa/D3T+rgMD?=
+ =?iso-8859-1?Q?oHPODnyiAnt+RQNIqsEFMchO9rbR503S3qELO7b+qbByb3N+/UyVOAyZuH?=
+ =?iso-8859-1?Q?PJPBDMx8gBqbli/b7UU2pFMRc/CkZ18ggHjbHeeVB5ZXmShOxp7aiw/W5A?=
+ =?iso-8859-1?Q?HbyOXeiqV+m61PlCXkAtYG23AgRhBFAEbdXs9JUkR1vwPiXHuKYXXmNzmQ?=
+ =?iso-8859-1?Q?I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?uyz4WhkLKwvIaeOt57TM+pCAWsVsRMKAaytReh1B65bgyHtgXYOLang5f6?=
+ =?iso-8859-1?Q?gsJd3LWoPCo+TYcZFXcUtfmC0i3S1y4iVkB8vMxj+sE4HJtvldEHvhmCnI?=
+ =?iso-8859-1?Q?4nbGkyL/Q5sRl7dXH8aIvhmF2oUEK1OB7TmvE+EeP4KLMT5+mbQVY6V2pv?=
+ =?iso-8859-1?Q?5cgXLxE3rSmI787VfVnL0BBdisHI5akVh0T+oXkwnK8sW/aDcm1n0eVpD5?=
+ =?iso-8859-1?Q?QEq+495xc5aROJO5Obw2uxL0RE1rqbOu8Exa/mGHGWQUBgyq7Uvz1JoWyl?=
+ =?iso-8859-1?Q?PK/+RtYP4UFYZw72j0jmdZZ7FMDAQq0YlLYISSOjj0TxeChra/WnLpeUTk?=
+ =?iso-8859-1?Q?Lv5z76AO80MKWW7FyNAUfoMtF87qwKJIf7gJwnB6snsEmQDmOhznPfIjBd?=
+ =?iso-8859-1?Q?STZjMVZABXQis+hOgGhREFejxp0Cvzq3Qa6qpalZhtDXdzoxb30dRMxfbr?=
+ =?iso-8859-1?Q?q7Y9rCBasG3h6s6brJQbDcY0d/JwmckaWUqLtal21V5GUCUXaFT+tCJU+N?=
+ =?iso-8859-1?Q?Q6GT7qBv6jiCrZcBeRrO40I2nNyCBG81mMA7pQyt/4iAMHFyUkWcGrx+MT?=
+ =?iso-8859-1?Q?74l6bTkI0XXrw2KImLpFNpBWl5ZdhPKk/guGnQ64kXYxFyVFg0h87eqD8r?=
+ =?iso-8859-1?Q?pM5WGg0sum+GXf+G0JrIc4kDEMj7tCCotkdEg1lkD19w+W/m54KfPuIpBh?=
+ =?iso-8859-1?Q?hr2EYOqek4cKgPbktpBg1O8Thf5hXmPniJQiXaYRLpTtRMrH2roCdJxSxF?=
+ =?iso-8859-1?Q?+i3XhQMnE1OtUBSxWMZEAAbjZI4sHkKi13FVAFYMqNP6iHt2vTN47gcoq8?=
+ =?iso-8859-1?Q?Y0YsXXfK5ZdkEwbg1Wm2VsNJQps1TScUljufp68473ndJjR7BwH+m9B655?=
+ =?iso-8859-1?Q?0NTsPdRgbCZiKl6GKxKk9IUB8rftq+Dm0NawYoAtXVGJvxoB0kka7wMH/z?=
+ =?iso-8859-1?Q?bR3U/q4TF/OS3GFS5oxZQyBizwE0G861ug+FLr5BGA1X/YIiRMJscsHgKq?=
+ =?iso-8859-1?Q?v8UrvZodEIfYPKeZe3VCvKle0a7mOO672ACkxFfr3kJvgh86pStOgINnrt?=
+ =?iso-8859-1?Q?w1w+Wl1gzyjoSySzT9f8h52xOecu9adPpFwEtv1RpSNK3LM5PI6Dov3Ljd?=
+ =?iso-8859-1?Q?riB/0tY5YlYBUwROK2pVI5hsySoIl22dJTBNPVRGPI6a4jEQ0m5FKlbelA?=
+ =?iso-8859-1?Q?WO6X9GT0WHHptDhKFObSFildp4lD+sG9jZmv8l6AjuIlP+ujKahF4tRXjr?=
+ =?iso-8859-1?Q?hE902xA9L9PtchdZWXBfEcTbRuAx2XolzVLgxdqgaXl6xM7HWmPQOnjiN2?=
+ =?iso-8859-1?Q?Iq6hWyX34tMArk1BcKUh1uPEnLevy7VqLJw5TinbdBHvfX1xOB1tbGPNu6?=
+ =?iso-8859-1?Q?1d/QLE23oAn2n/7mme9NSRUOGHFPs2t5wpUzNsflYcVy6eLg4/XDWKrZoq?=
+ =?iso-8859-1?Q?Ud5j4SrDnDm74ezX6xkDLKL9Jr0WazoJUN6DYbKJA1M4TBnBv1yJyaeQ3i?=
+ =?iso-8859-1?Q?5MFRDjhilBh0oMcS0swCl9UU8WDvNp8HiVsQtzOzg/kX93Z1ahJdCVLvhW?=
+ =?iso-8859-1?Q?lmnTB2PkzJRbgjWO9O5I+NrvAm1H08smVFnjUKwippEOpzQIYLWZZ9CIKV?=
+ =?iso-8859-1?Q?8i731xtO1od8eX2wEwGLAGPe3xaxj0a8rG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e393b294-cddc-4515-0016-08ddfbca0620
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 00:25:26.5335
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 386mVVWNTp7TEn5iEiDQW9ilXNFjjlNHRGHS+nz3yjPxvfwI4lNX7Y97KhGCXHp5LuYkYl+5YYJUPUud469HKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
 
-Document compatible for Qualcomm Glymur SoC SoCCP (SoC Control Processor)
-PAS which is fully compatible with Kaanapali.
+On 2025-09-16 at 22:21 +1000, Balbir Singh <balbirs@nvidia.com> wrote...
+> Extend core huge page management functions to handle device-private THP
+> entries.  This enables proper handling of large device-private folios in
+> fundamental MM operations.
+> 
+> The following functions have been updated:
+> 
+> - copy_huge_pmd(): Handle device-private entries during fork/clone
+> - zap_huge_pmd(): Properly free device-private THP during munmap
+> - change_huge_pmd(): Support protection changes on device-private THP
+> - __pte_offset_map(): Add device-private entry awareness
+> 
+> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Cc: Rakie Kim <rakie.kim@sk.com>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: Gregory Price <gourry@gourry.net>
+> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mika Penttilä <mpenttil@redhat.com>
+> Cc: Matthew Brost <matthew.brost@intel.com>
+> Cc: Francois Dugast <francois.dugast@intel.com>
+> ---
+>  include/linux/swapops.h | 32 +++++++++++++++++++++++
+>  mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
+>  mm/pgtable-generic.c    |  2 +-
+>  3 files changed, 80 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index 64ea151a7ae3..2687928a8146 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>  }
+>  #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>  
+> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> +
+> +/**
+> + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
+> + * @pmd: The PMD to check
+> + *
+> + * Returns true if the PMD contains a swap entry that represents a device private
+> + * page mapping. This is used for zone device private pages that have been
+> + * swapped out but still need special handling during various memory management
+> + * operations.
+> + *
+> + * Return: 1 if PMD contains device private entry, 0 otherwise
+> + */
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
+> +}
+> +
+> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +
+>  static inline int non_swap_entry(swp_entry_t entry)
+>  {
+>  	return swp_type(entry) >= MAX_SWAPFILES;
+>  }
+>  
+> +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
 
-Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
----
+I can't think of a better name either although I am curious why open-coding it
+was so nasty given we don't have the equivalent for pte entries. Will go read
+the previous discussion.
 
-Dependencies:
-[1] Add initial remoteproc support for Kaanapali SoC
-https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
+> +{
+> +	return is_pmd_migration_entry(pmd) || is_pmd_device_private_entry(pmd);
+> +}
+> +
+>  #endif /* CONFIG_MMU */
+>  #endif /* _LINUX_SWAPOPS_H */
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5acca24bbabb..a5e4c2aef191 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1703,17 +1703,45 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>  	if (unlikely(is_swap_pmd(pmd))) {
+>  		swp_entry_t entry = pmd_to_swp_entry(pmd);
+>  
+> -		VM_BUG_ON(!is_pmd_migration_entry(pmd));
+> -		if (!is_readable_migration_entry(entry)) {
+> -			entry = make_readable_migration_entry(
+> -							swp_offset(entry));
+> +		VM_WARN_ON(!is_pmd_non_present_folio_entry(pmd));
+> +
+> +		if (is_writable_migration_entry(entry) ||
+> +		    is_readable_exclusive_migration_entry(entry)) {
+> +			entry = make_readable_migration_entry(swp_offset(entry));
+>  			pmd = swp_entry_to_pmd(entry);
+>  			if (pmd_swp_soft_dirty(*src_pmd))
+>  				pmd = pmd_swp_mksoft_dirty(pmd);
+>  			if (pmd_swp_uffd_wp(*src_pmd))
+>  				pmd = pmd_swp_mkuffd_wp(pmd);
+>  			set_pmd_at(src_mm, addr, src_pmd, pmd);
+> +		} else if (is_device_private_entry(entry)) {
+> +			/*
+> +			 * For device private entries, since there are no
+> +			 * read exclusive entries, writable = !readable
+> +			 */
+> +			if (is_writable_device_private_entry(entry)) {
+> +				entry = make_readable_device_private_entry(swp_offset(entry));
+> +				pmd = swp_entry_to_pmd(entry);
+> +
+> +				if (pmd_swp_soft_dirty(*src_pmd))
+> +					pmd = pmd_swp_mksoft_dirty(pmd);
+> +				if (pmd_swp_uffd_wp(*src_pmd))
+> +					pmd = pmd_swp_mkuffd_wp(pmd);
+> +				set_pmd_at(src_mm, addr, src_pmd, pmd);
+> +			}
+> +
+> +			src_folio = pfn_swap_entry_folio(entry);
+> +			VM_WARN_ON(!folio_test_large(src_folio));
+> +
+> +			folio_get(src_folio);
+> +			/*
+> +			 * folio_try_dup_anon_rmap_pmd does not fail for
+> +			 * device private entries.
 
-This patch depends on patch 4/5 of ^^ series
+Not today. But maybe wrapping this in WARN_ON_ONCE() might be nice in case that
+ever changes.
 
-[2] Add support for remoteproc early attach
-https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
+> +			 */
+> +			folio_try_dup_anon_rmap_pmd(src_folio, &src_folio->page,
+> +							dst_vma, src_vma);
+>  		}
+> +
+>  		add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>  		mm_inc_nr_ptes(dst_mm);
+>  		pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
+> @@ -2211,15 +2239,16 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  			folio_remove_rmap_pmd(folio, page, vma);
+>  			WARN_ON_ONCE(folio_mapcount(folio) < 0);
+>  			VM_BUG_ON_PAGE(!PageHead(page), page);
+> -		} else if (thp_migration_supported()) {
+> +		} else if (is_pmd_non_present_folio_entry(orig_pmd)) {
+>  			swp_entry_t entry;
+>  
+> -			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
+>  			entry = pmd_to_swp_entry(orig_pmd);
+>  			folio = pfn_swap_entry_folio(entry);
+>  			flush_needed = 0;
+> -		} else
+> -			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+> +
+> +			if (!thp_migration_supported())
+> +				WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+> +		}
+>  
+>  		if (folio_test_anon(folio)) {
+>  			zap_deposited_table(tlb->mm, pmd);
+> @@ -2239,6 +2268,12 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  				folio_mark_accessed(folio);
+>  		}
+>  
+> +		if (folio_is_device_private(folio)) {
+> +			folio_remove_rmap_pmd(folio, &folio->page, vma);
+> +			WARN_ON_ONCE(folio_mapcount(folio) < 0);
+> +			folio_put(folio);
+> +		}
+> +
+>  		spin_unlock(ptl);
+>  		if (flush_needed)
+>  			tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD_SIZE);
+> @@ -2367,7 +2402,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  		struct folio *folio = pfn_swap_entry_folio(entry);
+>  		pmd_t newpmd;
+>  
+> -		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
+> +		VM_WARN_ON(!is_pmd_non_present_folio_entry(*pmd));
+>  		if (is_writable_migration_entry(entry)) {
+>  			/*
+>  			 * A protection check is difficult so
+> @@ -2380,6 +2415,9 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  			newpmd = swp_entry_to_pmd(entry);
+>  			if (pmd_swp_soft_dirty(*pmd))
+>  				newpmd = pmd_swp_mksoft_dirty(newpmd);
+> +		} else if (is_writable_device_private_entry(entry)) {
+> +			entry = make_readable_device_private_entry(swp_offset(entry));
+> +			newpmd = swp_entry_to_pmd(entry);
+>  		} else {
+>  			newpmd = *pmd;
+>  		}
+> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> index 567e2d084071..0c847cdf4fd3 100644
+> --- a/mm/pgtable-generic.c
+> +++ b/mm/pgtable-generic.c
+> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+>  
+>  	if (pmdvalp)
+>  		*pmdvalp = pmdval;
+> -	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
+> +	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
 
- .../bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml    | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Why isn't is_pmd_non_present_folio_entry() used here?
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-index 79f678f5f7d9..8089e0869ed2 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-@@ -17,8 +17,13 @@ description:
- 
- properties:
-   compatible:
--    enum:
--      - qcom,kaanapali-soccp-pas
-+    oneOf:
-+      - items:
-+          - enum:
-+              - qcom,glymur-soccp-pas
-+          - const: qcom,kaanapali-soccp-pas
-+      - enum:
-+          - qcom,kaanapali-soccp-pas
- 
-   reg:
-     maxItems: 1
--- 
-2.34.1
-
+>  		goto nomap;
+>  	if (unlikely(pmd_trans_huge(pmdval)))
+>  		goto nomap;
+> -- 
+> 2.50.1
+> 
 
