@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-831990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A73B9E189
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:40:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937FCB9E192
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29CC32806A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0428E4A50F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C94727586C;
-	Thu, 25 Sep 2025 08:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BoWxT3/o"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C2D274FF5;
+	Thu, 25 Sep 2025 08:41:30 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB602749C5
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A9721ADA7
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758789599; cv=none; b=CMaz+K9IUD7FMQ7DeiE//JVTZAu9hBxXYkERZhiHhjS9DttlHFx+GrKpJGzww0YhCh3UPr7QWT3GpS/SMuYoGW4RZ+9hF3OEJYjtaC4vLXeiPFSnGnXtVyGYU9MjeVrEqT/PSG5HAxdGTDx/O+/Lf0L+HDnJwGgF0LG84Ubc4gY=
+	t=1758789689; cv=none; b=ZT2af3AdA1ilFUuzx/mi7zFUlF6demU2rIUHEUbrMVDkv92G7WtW2L4ec+/H/3dIdVf9zwc0mR8fYaKtO+pVK04/YpeM3kJpm2zJcn+8eJclDfyCh3dsvxZW+aG3zBMsn7rn4fEXIRSICiPNa6JBZ0L6MuxNldX6qIgRsaXyVMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758789599; c=relaxed/simple;
-	bh=AjT96+20GcsVWhgMNMhihCW2r6PfyLiHYLGy6V+/pog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lD8KO/F3/eSJXKAxTRyt1PWJwZ6fFMMjP1a8LSAlDcqJ8JuvEclXoT3Y/htabU9SUhYg3Xgrrk74IDq0mdkw6789196ZkunMC3miElhf/jddI+Meauefptd7esXE8SdbWTdBFK8zJ/1AuPWCafvKRKeSUdhBh3/kpPOvk4GCthA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BoWxT3/o; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33c9f2bcdceso6304051fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758789596; x=1759394396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AjT96+20GcsVWhgMNMhihCW2r6PfyLiHYLGy6V+/pog=;
-        b=BoWxT3/oFwCUH/Q7knf+WDyQFyQ/QVQ+1IVjXh6YqVZTFSCWkFi7lS22bEaivbz3Bn
-         aMt6GzDDE68VEOIay2MB84pp4/Jq3+z8lhhZMBzgjeiiAEpZ5yj07Faul4wPHaB2bStc
-         Uf0WQymzMCgPvRBfbxAPk7wjBbhRobdCKVcqd2UZKDP/YJgYvy8XENJW/cRfyGBtqbL+
-         G0Sl6LiX8cBqcxByZu7Pi39diBHqNkc3mcU6BFakEiQDdZt6iYeLXQtFyuDWTQpIISMq
-         98cC7aQZ2HY8kDS+AbGiNeET9WwGgpXY05wEKTLO5vay3fk9juDRS+E+v73NuVk+fkLx
-         K/Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758789596; x=1759394396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AjT96+20GcsVWhgMNMhihCW2r6PfyLiHYLGy6V+/pog=;
-        b=O6MjgAh2FD/E5y3esDAmS+cMfWaBxNVtqyyhZjbkNt+mIC1+zk00KeR8oH9i1k96xu
-         3tuMsq8eYYtN70E1TZHrMO8x/ZyR2Vp6sP6QWbSqu/k6P34Ck6wwLEmEAmh1OHWr6mg3
-         qB6bm44f3+Q4oPHf77PrzY0nfAzrk+I+e7xb+d6iZroeVNY0tucCR1+//9CxdvlS7klN
-         UMJIsll6PFKnnbnPaxWBQuKxBuQCYlkBhrWZ3GKvDj4mDJ0E6eXCeIZRSw4/RjSZM5iI
-         6JrAwrwW3Ivz4XRVddUHOUceBCm0LlqyE8h9eZtCxbBy1ez4Sd+nl8+nDWQBQ9uJfiFh
-         sy2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqBoXew1NYLTw6Fj4hOhSBp54EbKsbiw+CGybSsz5b4rnzx0QNlq/XQHoyHtfabFKtc5ep7VclFMWRTFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR4ckzto7NX29XfXnNWld6P0+rCAsnamOG80VoU7ax67fyU/oc
-	I7yKUOkdZ99WZoZnPjdeqUxaa+batyTnVgXcxBcZuZjPU1GGlv0v2YNqX+A3o5tMgtsOukF5i98
-	5z0G7SVr3rBBAZowxsLZQAvJEA1FRpfYRL6msT4pMSQ==
-X-Gm-Gg: ASbGnctY8on4ZQvWS377pVIeH+Y//Nd052M39BcUN8pNL3LC0Jvm/PZX5y9y7K40WUw
-	t4QRwmE8reZ9GXiResnfR9FnNy6X+SKO2k9wSoGeiv2J4UV7iZX26ivGDUWgfnypAJFK2b8CikZ
-	tRftgwtKkFcoMxeKg3RafLy5N62vo3yYstYohMKfm4mC20+jriknYgmdxn2epmr7hpfqIDT5mxB
-	M/XHbQ=
-X-Google-Smtp-Source: AGHT+IG7SA7kgFu9YK7tZIfH8QWdRLzls5jm/uRCsfbrsbUOkigQRnLDF2PK/zyKGqmGwfzQFwz/hu5kVD7L9V0+lg0=
-X-Received: by 2002:a05:651c:35c5:b0:351:10a7:c6ca with SMTP id
- 38308e7fff4ca-36f7c8f016cmr7545081fa.7.1758789595775; Thu, 25 Sep 2025
- 01:39:55 -0700 (PDT)
+	s=arc-20240116; t=1758789689; c=relaxed/simple;
+	bh=hYUQm9jphUs9dGCv7A1Zt2WAkULwRarDCblLsjDnM6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dcB2zxSa+KjmqKEH1MlXs7SHEWIz7MOE1+sghYStztDWg4/h7zFqE0SfWtUGlUaVxPNM4ojKu6z1stZAT1DZ9LtzA2/ZVdu+lYO9ZTD6u8v4JRIoIn/KQwxqn8qMUW62MDKd/ehEUJKXnOSUEYBtMbwPIkw2fYV+T+PwF4/m5x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 64d9500499eb11f08b9f7d2eb6caa7cf-20250925
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:3e91bacf-4d2c-4ab8-8956-ed17e1a27003,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6493067,CLOUDID:f388fb7637e4f8dbef5fcb8e91a0dcd6,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:5,
+	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 64d9500499eb11f08b9f7d2eb6caa7cf-20250925
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1820374656; Thu, 25 Sep 2025 16:41:13 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] KMSAN: uninit-value in n_tty_receive_buf_closing
+Date: Thu, 25 Sep 2025 16:41:09 +0800
+Message-Id: <905bb5a8bc3e969ef332dd604864ba67b93e1a85.1758789532.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <68d4e8ea.050a0220.25d7ab.0002.GAE@google.com>
+References: <68d4e8ea.050a0220.25d7ab.0002.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924064905.276174-1-wei.liu@oss.qualcomm.com>
- <CACRpkdZ49_mo0AN78ri4WTt+V2gNdFOTgxzgfXw+3vd2rNNiJw@mail.gmail.com> <kdpj4yddikjg2cvd7pyzf55udaqrttlyhuwmupmhvrn4jxdjw4@q6pajmr5f3i4>
-In-Reply-To: <kdpj4yddikjg2cvd7pyzf55udaqrttlyhuwmupmhvrn4jxdjw4@q6pajmr5f3i4>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 25 Sep 2025 10:39:44 +0200
-X-Gm-Features: AS18NWDiOOQNnkPc4afuLtbiStKw0PQnZtHavv8A6AJOThzvhSizooVuso5NT4o
-Message-ID: <CACRpkdaPuZzibAkFpPLGBeW5UtRK+edebTQ2Ebdv5nKjws9zbA@mail.gmail.com>
-Subject: Re: [PATCH] Input: gpio-keys - fix misleading GPIO number
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Wei <wei.liu@oss.qualcomm.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, gatien.chevallier@foss.st.com, 
-	namcao@linutronix.de, zhiqiang.tu@oss.qualcomm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 2:07=E2=80=AFAM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+#syz test
+---
+ drivers/tty/tty_buffer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> I see vsprintf() has %pC for printing clocks and %pg for block devices,
-> maybe we could have %pGD or similar for GPIO descriptors?
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index 67271fc0b223..62d32556a24b 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -108,6 +108,7 @@ static void tty_buffer_reset(struct tty_buffer *p, size_t size)
+ 	p->lookahead = 0;
+ 	p->read = 0;
+ 	p->flags = true;
++	memset(p->data, 0, size);
+ }
+ 
+ /**
+@@ -177,7 +178,7 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
+ 	 */
+ 	if (atomic_read(&port->buf.mem_used) > port->buf.mem_limit)
+ 		return NULL;
+-	p = kmalloc(struct_size(p, data, 2 * size), GFP_ATOMIC | __GFP_NOWARN);
++	p = kzalloc(struct_size(p, data, 2 * size), GFP_ATOMIC | __GFP_NOWARN);
+ 	if (p == NULL)
+ 		return NULL;
+ 
+-- 
+2.25.1
 
-I have no idea how that actually works, but I like this general idea!
-
-Yours,
-Linus Walleij
 
