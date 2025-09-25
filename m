@@ -1,457 +1,151 @@
-Return-Path: <linux-kernel+bounces-832177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08267B9E8FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:07:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CB3B9E90F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 162441BC2523
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:08:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 377EE4E31B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3345C2882B6;
-	Thu, 25 Sep 2025 10:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEE22EAB9D;
+	Thu, 25 Sep 2025 10:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="co/lHs+q"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="jWpOKZ/v"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6B414EC73
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B9D28850B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758794851; cv=none; b=lakd9OeLQWrTbc/gGv1tXncXitH7sYvcNHqGJYpvOOTnK/JSInqVmKuRbjfpcNmpLwf7X/6CRgaGQ7t+SdZgCRZpRETrpWN80uMf04RlUg2eD6gtPU/8guRn649KTdcZLdaOkEJHCE8Zw3c3o0waJRHsv+yiLFxvXxs9kotgivg=
+	t=1758794870; cv=none; b=B9d7Ral55ObKw4nr6rGs6w8nVfBg44ODNGFKtoYXqcfjKYagDBtU2/F1GYz/JISU+diObcQXHufNi0+vhyuGfOPKZivxxGORqXakifg2TUAt+bhfjEo2CLKsqGdP79uKrk+FClFkgpamnhd5AZ/YsJFFsTzoQ4WTbyo8x4bLXhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758794851; c=relaxed/simple;
-	bh=rFy/sAVpE33mTE9Ro6oXr14+P+7ZyrAS5jnU7fHzki4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWGZWNIjqGJQrIHtgRoS9wXtwKH7qjjJycJfXv36GtDKOF2MEtzxtXQvRIphmrS77uov33urVspmow7dZp2huU0k9e6TUeicTcF5YgtV14vuUZjAzVnAfsDWmjBNk/vrvR/SPMdxO8uZlDJxmmnVKLTgtcQgVA4yP7Kp5xeXLkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=co/lHs+q; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b00a9989633so152883866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:07:28 -0700 (PDT)
+	s=arc-20240116; t=1758794870; c=relaxed/simple;
+	bh=2wAPPbqLo2LqU/nTBFwRHUuMpcX/WMRKMRc0AgRIv18=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=anrPEGq9AIkzbxj1UiPLfM8/5QQYJ1c/gP/5SJKN2B1MmtifaWU+/LUQ+T1SD2SZW/g6bYONws8D4dZ+MzNIZS/JlaTbzmb0yUH8G5a8dz6RqoGKbD/YMCnUIt10l7PEFFn+ruvfWfGpOKGOzQhlqB2yMPFG6f/4ErlP4/Rk49c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=jWpOKZ/v; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b33d785db6fso147858766b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:07:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758794847; x=1759399647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
-        b=co/lHs+q9tCk6n63T7oEqDY5tUvNB/rzjvdylC087NLiKPwT1Zxgh6gEciLY1Shz43
-         AJDJ8e1D/iZGh4DUX0+YpqWrXJvBxs1iEGAksjdLwPwIDm9Q+Tzz63GMHG03c52OnQSF
-         gYmNOGv8OaJdnMg4U9ADZLxGBV+usv/qIPeCSMfyJcKbMZk0A+fo4zPToTmPQLaGv4ii
-         SSMvWUKHf9DZo/F0rRsByFoLyZR9FEhRbAG5+w8CAR1qmyo+1R2xtWrTMi1Haq8T+oWR
-         M8t5ORjCixyofiAj3UrdtIWdz9pU3bxqpzojxcnru9wYR7TxE4DvyINcLo6ZEbljJ/Tb
-         1ArA==
+        d=fairphone.com; s=fair; t=1758794866; x=1759399666; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQA2xq7mI4lOuuo7UB6QFY4SFCKqLwIJHu6LK04sK3w=;
+        b=jWpOKZ/vV5bo8kKY/+8WnshsBI5H2/ZX4tO2y1i4Uker22Xzy8Q9xX46ydvqlNG3lz
+         mTt495ck8CjWQfaPrqal7UJUnsNJ93NOJDGYaTCEC3J8wirC6UCJYuzfjUT/4Pz8QdIB
+         ohnS4mn0OZCvRNXMCN67LiplQkY01RVxwquMi9td9dfoVmMsraiLDfqmwXYR1UKhceXt
+         XUg4CZOLsGBwSnLEEo22CX7jARb5XV2DTmtAAc2X0O9B/0q2fvjx5EeywOX3+v21mJ1W
+         vcP0mTvpsR60kGEC4c4WK+K1+aGvatO5NGHQeleSEkK3qpCsMQ+BPErcrQlHb9vxc8b1
+         uzfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758794847; x=1759399647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PUW/6o2CHQs8nlFUZsHr+ogKyFCjqfHWD4lpshBRaKQ=;
-        b=bLkAMkgc9CPHdg9/AxIatk+7nRZtFsJQx4r6yID9iaiR9+qNFtSFq9YpIQA/o5zo2b
-         vsf652yuMjKQEo7F7eKjzO95yPqLPD6zRfY3MBoNMdRn8GbWHubc4ZIizSc2HX6cWOn+
-         41lRABzCfomF3Njcfr4t59cF3IoZQ+CW46ejvINYJZVrh6pJ5rLl3Rgwk8qkImEgGcM8
-         Kjv5HmfnEIhz86tOamybqJW3g8Kzmy8Hul/Tdv4762lUasMrv2IHzANUCp9oUJqdmFOr
-         0HjdL5FnZEQ6XZX98JCXd7pd9pjRjWJCmKrTrFYQidnLKpDoHML0PFJxw34RVzq+bWH6
-         FC4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ/BzO8E+mZWBHF05yQZXjddZ6zxUklkKkR4PIQ0iokSqQN99p9/L60WC9Ri1Bdi9JuqOu1fRCHfzJEiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylP3El+iTGjyY0EZYiayhCWHsrradKgsp5jvO4rY7MrlGwZPJQ
-	109ZA2FHdo9oo1TAk3klDLUtgaZFVaFiwVYOEJtqZXrlu1cTAcFhp1srw7Oa4QcqD6yeSZzDYxJ
-	nWUjiCzTFIT10dbTj4Y8p3MCpdZW9NIk=
-X-Gm-Gg: ASbGnctweAJcuCVgM0Tv5SyUAdWIZwzBFlWbppHmwd/RyM3/Y0rntPJAk2gkrhInCtD
-	A4CsrYCAts3s7o2T8kFZtCpfxwV9vKwK9cYP5T6NXTbzZD9fAptoPCbdGBp3nAgTYXu2r+54Y+8
-	qmKRuP9btE32fpYC+G7Z9ND3gxyVq9kDRLgTPaZX8ipdcGRg6+PWS2GWzmeqe/kRXK7RL6fJOvH
-	BQA6iEoXLRevxKaT7xfm7aMPvZPw/fd2RskKw==
-X-Google-Smtp-Source: AGHT+IHnjX1pG8TAryPQlkrDhzXnesEsM78CxhQPCj7SV7L5RRG+rd032XQ0sOmqzmFns8RoyZIP2E4vF4R8O9SgsVc=
-X-Received: by 2002:a17:907:720b:b0:b2d:38eb:d12f with SMTP id
- a640c23a62f3a-b354cc2c49fmr191751466b.19.1758794846407; Thu, 25 Sep 2025
- 03:07:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758794866; x=1759399666;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RQA2xq7mI4lOuuo7UB6QFY4SFCKqLwIJHu6LK04sK3w=;
+        b=NM6huRCqxzA88q8r7Zi4UX6rpxK35RnxlbtC2myyZv8m2y4cRl4gykhHhIP3w7TJEd
+         OV3jG7ighRhFCxQcL26/U2Jus3v/gXrSe2L7qVhEv/R6N+sQiYtgj/aLGdzulHjwz7/r
+         +C5/itAbzSWtSGksLGrGeIMfFI7DKW+vFVkQueQx9SfknRVmsDhEUbsVdUzY/EjNxMMM
+         5zDdK8o2jdmOR6v8DntrWM1MS8xOzaNwIPkkiSYs+I9xQgOEZQ6t2h71z2/ENoOjcK/T
+         qOg6ciHG84HgVtlSDUKuiuTz9CCiofGOm08tbUSq7a2mMKRJl5gSoEC+OPRQZwutSwqM
+         NehQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2jrhti4DNJ/tPcX1Ed9dJzJOtzgTz7LNNDFJdrY/cFZLQXr6d2q1EkLEUv+qJbkwVzaleteExEGa3qfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzL5gbM7lTpF6Mpbvl6r1Sxf17vL640RifRlS8Kl9erlvCs6mg
+	c7PrOEHkEyCnsLkzQPIVFO7PR/c2GY5Za6G7PaHSnPcaHcYnaJqX84RpCv8lcuTGaRuYib+5RdT
+	PUSDor7vR2g==
+X-Gm-Gg: ASbGncsl397XHcGrque0z2YPUPudaRllV0xjLkV08/JomIk9dsmE2QmGho0XD/0xOiF
+	eBv97JOiEQaOc8xcDdVgI2Upjyaxur/XYt671sA1JulxwJAOteWP54h7/vKBQQ1tIBwj3QCYQ7k
+	bKMhW3ZKDxkOoaCPXe6qsDb4SuuP7dRRpnhDXic5adzr114Qv5k1dWvsfNQK8mT32MOlbyqp0r8
+	Z0+sVBOqkC3aZAA95zQ3lh5V3XI8U4j9KiWiPQUVyuYBc9Zt/icX2e2xnsuAOL30XY5KLvsMBnS
+	ToTcwYFt7/EyLTZeHHamU/xAvru5gK8ucRyOFcfELKnuwQbQVXboERzFabP944+Q7VfWndSbi4w
+	ZbTaCma+4kzj6udAp0AgcfygWLu8R+ZhQR9BmDktULnjtMqm0EzMXCNfnv/hVufWP0c1sA3Vr8r
+	qVpzbr
+X-Google-Smtp-Source: AGHT+IE8TAQ0ieTHgs4m7gim+fRDgMGDmFFmvRIfockvNvymGGa0I6tPXCyGsiDJM+I3Aju2cVvIZg==
+X-Received: by 2002:a17:907:94c7:b0:b2d:804c:f5c with SMTP id a640c23a62f3a-b34b684a76bmr362320866b.4.1758794866008;
+        Thu, 25 Sep 2025 03:07:46 -0700 (PDT)
+Received: from [172.16.220.225] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f7746sm134270766b.59.2025.09.25.03.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 03:07:45 -0700 (PDT)
+From: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+Subject: [PATCH RESEND v3 0/3] Add support for Awinic AW86927 haptic driver
+Date: Thu, 25 Sep 2025 12:07:27 +0200
+Message-Id: <20250925-aw86927-v3-0-1fc6265b42de@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923104710.2973493-1-mjguzik@gmail.com> <20250923104710.2973493-4-mjguzik@gmail.com>
-In-Reply-To: <20250923104710.2973493-4-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 25 Sep 2025 12:07:13 +0200
-X-Gm-Features: AS18NWBbppLQvOh16nxVRueCI4eRmKFPlkIfNmlj21eycccVTLBfnR3npYDOJvk
-Message-ID: <CAGudoHGuFSfSCZcoky+5wX1QfVpg-tj42c2SJijfT7ke_6tR7Q@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] Manual conversion of ->i_state uses
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, 
-	amir73il@gmail.com, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Griffin Kroah-Hartman <griffin.kroah@fairphone.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758794865; l=1819;
+ i=griffin.kroah@fairphone.com; s=20250804; h=from:subject:message-id;
+ bh=2wAPPbqLo2LqU/nTBFwRHUuMpcX/WMRKMRc0AgRIv18=;
+ b=K6q9xHDFqVzGDg0/K3TIC4M42C44EAjwZ3LnaQSldYEZrPR+LSp9uqb03ogPaOSd/mx0AmbMf
+ 4OybTK6Nk29BQYXsj4zEvBALFeNtIKQfZxmoX+kXzUcHlaZ331S+tPO
+X-Developer-Key: i=griffin.kroah@fairphone.com; a=ed25519;
+ pk=drSBvqKFiR+xucmLWONHSq/wGrW+YvcVtBXFYnYzn8U=
 
-allmodconfig build was done on this patchset but somehow one failure was mi=
-ssed:
+Add devicetree bindings and a driver for the AW86927 haptic driver, and
+add it to the devicetree for the Fairphone 5 smartphone.
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index e9538e91f848..71ec043f7569 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -427,7 +427,7 @@ static void afs_fetch_status_success(struct
-afs_operation *op)
-        struct afs_vnode *vnode =3D vp->vnode;
-        int ret;
+This driver does not enable all capabilities of the AW86927, features
+such as f0 detection, rtp mode, and cont mode are not included.
 
--       if (vnode->netfs.inode.i_state & I_NEW) {
-+       if (inode_state_read(&vnode->netfs.inode) & I_NEW) {
-                ret =3D afs_inode_init_from_status(op, vp, vnode);
-                afs_op_set_error(op, ret);
-                if (ret =3D=3D 0)
+Note: This is my first driver I have ever worked on so if there is
+anything I can do to improve it please let me know!
 
+Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+---
+Changes in v3:
+- Removed obsolete FIXME comments
+- Adjusted Error handling to fit best practice
+- Changed formatting due to feedback
+- Removed obsolete terminology from patch subjects.
+- Properly credited reviewers
+- Link to v2: https://lore.kernel.org/r/20250811-aw86927-v2-0-64be8f3da560@fairphone.com
 
-I reran the thing with this bit and now it's all clean. I think this
-can be folded into the manual fixup patch (the one i'm responding to)
-instead of resending the patchset
+Changes in v2:
+- Changed title and fixed license of devicetree binding
+- Fixed typo where the 'm' in 'ms' was excluded
+- Changed error handling return values in driver probe function
+- Link to v1: https://lore.kernel.org/r/20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com
 
-On Tue, Sep 23, 2025 at 12:47=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
->
-> Takes care of spots not converted by coccinelle.
->
-> Nothing to look at with one exception: smp_store_release and
-> smp_load_acquire pair replaced with a manual store/load +
-> smb_wmb()/smp_rmb(), see I_WB_SWITCH.
->
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  Documentation/filesystems/porting.rst | 2 +-
->  fs/bcachefs/fs.c                      | 8 ++++----
->  fs/btrfs/inode.c                      | 8 ++++----
->  fs/dcache.c                           | 2 +-
->  fs/fs-writeback.c                     | 6 +++---
->  fs/inode.c                            | 8 ++++----
->  fs/ocfs2/inode.c                      | 2 +-
->  fs/xfs/xfs_reflink.h                  | 2 +-
->  include/linux/backing-dev.h           | 7 ++++---
->  include/linux/fs.h                    | 2 +-
->  include/linux/writeback.h             | 4 ++--
->  include/trace/events/writeback.h      | 8 ++++----
->  12 files changed, 30 insertions(+), 29 deletions(-)
->
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesy=
-stems/porting.rst
-> index 85f590254f07..0629611600f1 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -211,7 +211,7 @@ test and set for you.
->  e.g.::
->
->         inode =3D iget_locked(sb, ino);
-> -       if (inode->i_state & I_NEW) {
-> +       if (inode_state_read(inode) & I_NEW) {
->                 err =3D read_inode_from_disk(inode);
->                 if (err < 0) {
->                         iget_failed(inode);
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index 687af0eea0c2..8c7efc194ad0 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -347,7 +347,7 @@ static struct bch_inode_info *bch2_inode_hash_find(st=
-ruct bch_fs *c, struct btre
->                         spin_unlock(&inode->v.i_lock);
->                         return NULL;
->                 }
-> -               if ((inode->v.i_state & (I_FREEING|I_WILL_FREE))) {
-> +               if ((inode_state_read(&inode->v) & (I_FREEING|I_WILL_FREE=
-))) {
->                         if (!trans) {
->                                 __wait_on_freeing_inode(c, inode, inum);
->                         } else {
-> @@ -411,7 +411,7 @@ static struct bch_inode_info *bch2_inode_hash_insert(=
-struct bch_fs *c,
->                  * only insert fully created inodes in the inode hash tab=
-le. But
->                  * discard_new_inode() expects it to be set...
->                  */
-> -               inode->v.i_state |=3D I_NEW;
-> +               inode_state_set(&inode->v, I_NEW);
->                 /*
->                  * We don't want bch2_evict_inode() to delete the inode o=
-n disk,
->                  * we just raced and had another inode in cache. Normally=
- new
-> @@ -2224,8 +2224,8 @@ void bch2_evict_subvolume_inodes(struct bch_fs *c, =
-snapshot_id_list *s)
->                 if (!snapshot_list_has_id(s, inode->ei_inum.subvol))
->                         continue;
->
-> -               if (!(inode->v.i_state & I_DONTCACHE) &&
-> -                   !(inode->v.i_state & I_FREEING) &&
-> +               if (!(inode_state_read(&inode->v) & I_DONTCACHE) &&
-> +                   !(inode_state_read(&inode->v) & I_FREEING) &&
->                     igrab(&inode->v)) {
->                         this_pass_clean =3D false;
->
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 8e2ab3fb9070..d2f7e7c57a36 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -3856,7 +3856,7 @@ static int btrfs_add_inode_to_root(struct btrfs_ino=
-de *inode, bool prealloc)
->                 ASSERT(ret !=3D -ENOMEM);
->                 return ret;
->         } else if (existing) {
-> -               WARN_ON(!(existing->vfs_inode.i_state & (I_WILL_FREE | I_=
-FREEING)));
-> +               WARN_ON(!(inode_state_read(&existing->vfs_inode) & (I_WIL=
-L_FREE | I_FREEING)));
->         }
->
->         return 0;
-> @@ -5745,7 +5745,7 @@ struct btrfs_inode *btrfs_iget_path(u64 ino, struct=
- btrfs_root *root,
->         if (!inode)
->                 return ERR_PTR(-ENOMEM);
->
-> -       if (!(inode->vfs_inode.i_state & I_NEW))
-> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
->                 return inode;
->
->         ret =3D btrfs_read_locked_inode(inode, path);
-> @@ -5769,7 +5769,7 @@ struct btrfs_inode *btrfs_iget(u64 ino, struct btrf=
-s_root *root)
->         if (!inode)
->                 return ERR_PTR(-ENOMEM);
->
-> -       if (!(inode->vfs_inode.i_state & I_NEW))
-> +       if (!(inode_state_read(&inode->vfs_inode) & I_NEW))
->                 return inode;
->
->         path =3D btrfs_alloc_path();
-> @@ -7435,7 +7435,7 @@ static void btrfs_invalidate_folio(struct folio *fo=
-lio, size_t offset,
->         u64 page_start =3D folio_pos(folio);
->         u64 page_end =3D page_start + folio_size(folio) - 1;
->         u64 cur;
-> -       int inode_evicting =3D inode->vfs_inode.i_state & I_FREEING;
-> +       int inode_evicting =3D inode_state_read(&inode->vfs_inode) & I_FR=
-EEING;
->
->         /*
->          * We have folio locked so no new ordered extent can be created o=
-n this
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 2cb340c52191..bc275f7364db 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1981,7 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct=
- inode *inode)
->         spin_lock(&inode->i_lock);
->         __d_instantiate(entry, inode);
->         WARN_ON(!(inode_state_read(inode) & I_NEW));
-> -       inode->i_state &=3D ~I_NEW & ~I_CREATING;
-> +       inode_state_clear(inode, I_NEW | I_CREATING);
->         /*
->          * Pairs with the barrier in prepare_to_wait_event() to make sure
->          * ___wait_var_event() either sees the bit cleared or
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index f521ef30d9a4..72424d3314aa 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -475,11 +475,11 @@ static bool inode_do_switch_wbs(struct inode *inode=
-,
->         switched =3D true;
->  skip_switch:
->         /*
-> -        * Paired with load_acquire in unlocked_inode_to_wb_begin() and
-> +        * Paired with smp_rmb in unlocked_inode_to_wb_begin() and
->          * ensures that the new wb is visible if they see !I_WB_SWITCH.
->          */
-> -       smp_store_release(&inode->i_state,
-> -                         inode_state_read(inode) & ~I_WB_SWITCH);
-> +       smp_wmb();
-> +       inode_state_clear(inode, I_WB_SWITCH);
->
->         xa_unlock_irq(&mapping->i_pages);
->         spin_unlock(&inode->i_lock);
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 4b54aba2e939..f9f3476c773b 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -829,7 +829,7 @@ static void evict(struct inode *inode)
->          * This also means we don't need any fences for the call below.
->          */
->         inode_wake_up_bit(inode, __I_NEW);
-> -       BUG_ON(inode->i_state !=3D (I_FREEING | I_CLEAR));
-> +       BUG_ON(inode_state_read(inode) !=3D (I_FREEING | I_CLEAR));
->
->         destroy_inode(inode);
->  }
-> @@ -1895,7 +1895,7 @@ static void iput_final(struct inode *inode)
->
->         state =3D inode_state_read(inode);
->         if (!drop) {
-> -               WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> +               inode_state_set(inode, I_WILL_FREE);
->                 spin_unlock(&inode->i_lock);
->
->                 write_inode_now(inode, 1);
-> @@ -1906,7 +1906,7 @@ static void iput_final(struct inode *inode)
->                 state &=3D ~I_WILL_FREE;
->         }
->
-> -       WRITE_ONCE(inode->i_state, state | I_FREEING);
-> +       inode_state_assign(inode, state | I_FREEING);
->         if (!list_empty(&inode->i_lru))
->                 inode_lru_list_del(inode);
->         spin_unlock(&inode->i_lock);
-> @@ -2964,7 +2964,7 @@ void dump_inode(struct inode *inode, const char *re=
-ason)
->         pr_warn("%s encountered for inode %px\n"
->                 "fs %s mode %ho opflags 0x%hx flags 0x%x state 0x%x count=
- %d\n",
->                 reason, inode, sb->s_type->name, inode->i_mode, inode->i_=
-opflags,
-> -               inode->i_flags, inode->i_state, atomic_read(&inode->i_cou=
-nt));
-> +               inode->i_flags, inode_state_read(inode), atomic_read(&ino=
-de->i_count));
->  }
->
->  EXPORT_SYMBOL(dump_inode);
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 549f9c145dcc..50218209d04d 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -152,7 +152,7 @@ struct inode *ocfs2_iget(struct ocfs2_super *osb, u64=
- blkno, unsigned flags,
->                 mlog_errno(PTR_ERR(inode));
->                 goto bail;
->         }
-> -       trace_ocfs2_iget5_locked(inode->i_state);
-> +       trace_ocfs2_iget5_locked(inode_state_read(inode));
->         if (inode_state_read(inode) & I_NEW) {
->                 rc =3D ocfs2_read_locked_inode(inode, &args);
->                 unlock_new_inode(inode);
-> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
-> index 36cda724da89..86e87e5936b5 100644
-> --- a/fs/xfs/xfs_reflink.h
-> +++ b/fs/xfs/xfs_reflink.h
-> @@ -17,7 +17,7 @@ xfs_can_free_cowblocks(struct xfs_inode *ip)
->  {
->         struct inode *inode =3D VFS_I(ip);
->
-> -       if ((inode->i_state & I_DIRTY_PAGES) ||
-> +       if ((inode_state_read(inode) & I_DIRTY_PAGES) ||
->             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_DIRTY) ||
->             mapping_tagged(inode->i_mapping, PAGECACHE_TAG_WRITEBACK) ||
->             atomic_read(&inode->i_dio_count))
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index e721148c95d0..07a60bbbf668 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -289,10 +289,11 @@ unlocked_inode_to_wb_begin(struct inode *inode, str=
-uct wb_lock_cookie *cookie)
->         rcu_read_lock();
->
->         /*
-> -        * Paired with store_release in inode_switch_wbs_work_fn() and
-> -        * ensures that we see the new wb if we see cleared I_WB_SWITCH.
-> +        * Paired with smp_wmb in inode_do_switch_wbs() and ensures that =
-we see
-> +        * the new wb if we see cleared I_WB_SWITCH.
->          */
-> -       cookie->locked =3D smp_load_acquire(&inode->i_state) & I_WB_SWITC=
-H;
-> +       cookie->locked =3D inode_state_read(inode) & I_WB_SWITCH;
-> +       smp_rmb();
->
->         if (unlikely(cookie->locked))
->                 xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags=
-);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 06bece8d1f18..73f3ce5add6b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2656,7 +2656,7 @@ static inline int icount_read(const struct inode *i=
-node)
->   */
->  static inline bool inode_is_dirtytime_only(struct inode *inode)
->  {
-> -       return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-> +       return (inode_state_read(inode) & (I_DIRTY_TIME | I_NEW |
->                                   I_FREEING | I_WILL_FREE)) =3D=3D I_DIRT=
-Y_TIME;
->  }
->
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index a2848d731a46..5fcb5ab4fa47 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -193,7 +193,7 @@ void inode_io_list_del(struct inode *inode);
->  static inline void wait_on_inode(struct inode *inode)
->  {
->         wait_var_event(inode_state_wait_address(inode, __I_NEW),
-> -                      !(READ_ONCE(inode->i_state) & I_NEW));
-> +                      !(inode_state_read(inode) & I_NEW));
->  }
->
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> @@ -234,7 +234,7 @@ static inline void inode_attach_wb(struct inode *inod=
-e, struct folio *folio)
->  static inline void inode_detach_wb(struct inode *inode)
->  {
->         if (inode->i_wb) {
-> -               WARN_ON_ONCE(!(inode->i_state & I_CLEAR));
-> +               WARN_ON_ONCE(!(inode_state_read(inode) & I_CLEAR));
->                 wb_put(inode->i_wb);
->                 inode->i_wb =3D NULL;
->         }
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writ=
-eback.h
-> index 1e23919c0da9..70c496954473 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -120,7 +120,7 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
->                 /* may be called for files on pseudo FSes w/ unregistered=
- bdi */
->                 strscpy_pad(__entry->name, bdi_dev_name(bdi), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->flags          =3D flags;
->         ),
->
-> @@ -719,7 +719,7 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
->                 strscpy_pad(__entry->name,
->                             bdi_dev_name(inode_to_bdi(inode)), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->dirtied_when   =3D inode->dirtied_when;
->                 __entry->cgroup_ino     =3D __trace_wb_assign_cgroup(inod=
-e_to_wb(inode));
->         ),
-> @@ -758,7 +758,7 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
->                 strscpy_pad(__entry->name,
->                             bdi_dev_name(inode_to_bdi(inode)), 32);
->                 __entry->ino            =3D inode->i_ino;
-> -               __entry->state          =3D inode->i_state;
-> +               __entry->state          =3D inode_state_read(inode);
->                 __entry->dirtied_when   =3D inode->dirtied_when;
->                 __entry->writeback_index =3D inode->i_mapping->writeback_=
-index;
->                 __entry->nr_to_write    =3D nr_to_write;
-> @@ -810,7 +810,7 @@ DECLARE_EVENT_CLASS(writeback_inode_template,
->         TP_fast_assign(
->                 __entry->dev    =3D inode->i_sb->s_dev;
->                 __entry->ino    =3D inode->i_ino;
-> -               __entry->state  =3D inode->i_state;
-> +               __entry->state  =3D inode_state_read(inode);
->                 __entry->mode   =3D inode->i_mode;
->                 __entry->dirtied_when =3D inode->dirtied_when;
->         ),
-> --
-> 2.43.0
->
+---
+Griffin Kroah-Hartman (3):
+      dt-bindings: input: Add Awinic AW86927
+      Input: aw86927 - add driver for Awinic AW86927
+      arm64: dts: qcom: qcm6490-fairphone-fp5: Add vibrator support
+
+ .../devicetree/bindings/input/awinic,aw86927.yaml  |  48 ++
+ arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts |  18 +-
+ drivers/input/misc/Kconfig                         |  11 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/aw86927.c                       | 854 +++++++++++++++++++++
+ 5 files changed, 931 insertions(+), 1 deletion(-)
+---
+base-commit: 3624e9a34b36d64a7037946eda28ae9599363a3b
+change-id: 20250804-aw86927-9dddc32fcaec
+
+Best regards,
+-- 
+Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+
 
