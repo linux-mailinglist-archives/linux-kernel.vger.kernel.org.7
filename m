@@ -1,124 +1,179 @@
-Return-Path: <linux-kernel+bounces-832592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B62B9FD72
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:10:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237D0B9FF48
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD6E18902BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:06:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42223385675
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A282C11EF;
-	Thu, 25 Sep 2025 14:01:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF64A28751A;
+	Thu, 25 Sep 2025 14:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="FBqAIEjf"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C7B2882CC;
-	Thu, 25 Sep 2025 14:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E124C98;
+	Thu, 25 Sep 2025 14:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758808887; cv=none; b=lf6b9rrYnogiH03mgVkCv63gqwZx7z85ljMch2LA429sPju8jLNAxsJ5UaDRKWEykXzK72hYztsev2kdcCxm1v/9hWeENjreWWbsvpr7763k3xvKsrj+GVUOj29rAWGydqVUIZ7/F33s8z3nob77hx31OEC3WICzcGQIEvMth78=
+	t=1758809627; cv=none; b=o/lqE4eYwxejBx+OZjj0khZvu3uVd1LKq/e5LCwmyrI1x9L5URlacVTSMMNzEHoEqGpTynf8GpKlc7akbkP0VY+R8o9hbM3yz45UfUva84mWdCxgKuI/Nh9dxPjto1GqqjvyWSPAFkPWDyIGdc136FIx5yALBcsVE++eOBTG9S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758808887; c=relaxed/simple;
-	bh=UEga0Cn1cNdtXR+ZlCqCnDhbrofbpXwOxocUKJa8dws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VV2uhD7jyKcjUuG0b4KiIWzT0WmaRwU5g4ER+mOjLbdY545wbtjNQifH2yqDHVBO413irT16Gt4CwyI0rNJgzlfNriUe7i51plKOx9Tx3nY2qPvPm8RpDBQbH2Jl881fUYcssfQQxIqWaS9iStSLA2YFICPmq3cFTF7cN/Z5Ygo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED797C4CEF0;
-	Thu, 25 Sep 2025 14:01:13 +0000 (UTC)
-Date: Thu, 25 Sep 2025 15:01:11 +0100
-From: Mark Brown <broonie@debian.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
-Message-ID: <111409f1-33cd-4cd1-b3fd-e38402a82c9f@sirena.org.uk>
-References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
+	s=arc-20240116; t=1758809627; c=relaxed/simple;
+	bh=oQeUG9XGk5RTE/O8XVegSIwupJtyQgWbuQrCJEyfMNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TYKADN1t2SeK/NDq/A0yb60ofRTZ4D3J5Yn7YXQtveO0gv58M7pYk+5EB7xY90mto8PWMj6RWO5Ar4UMYbKtcgGsRcql0PXx05B+gLLzxO1FWWX9q+cks1uvL0Nlnb+bgjIDaiG4cZvQlgj3S4d9mLUi3htn1fQdjqmIDTG1wFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=FBqAIEjf; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=I0t7ozr8R0y7L7Ia/qOG5GKnLAJmLy1UlDO9kkxmSJw=; b=FBqAIEjfEYjB7gCRJfZ/zgmY87
+	mDOE39iI2LRBclqTdgQT8ldj1khf6g/FtegjZwMwBmxWPg3NWSBPyQcLNdqfLHPLXfePo1xaAHkY9
+	KfmAG1sJ/aY5STKe7z/qdgv+mkX4jlHWJqmjOnvzV6poZBfgZ8E61G6plgkdEUcruFyq0izcToLpA
+	s2q6bw8X1ZiL0bt16WdLnmnB8BbX/cyg6vjVaULT/Hc6blqANh6c9GxC6n8P9l5foJ1z7KZPj6gRc
+	HrUteKtA3XlO17gu+R0q7g0yT3w51lN8TqEiTuXdcv5F85OEPR6YWXCG9y5xr6xH6IqFx1MbnKfyT
+	LQz9WM8A==;
+Received: from [122.175.9.182] (port=9537 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v1mj2-00000005fRb-1Afp;
+	Thu, 25 Sep 2025 10:13:36 -0400
+From: Parvathi Pudi <parvathi@couthit.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	danishanwar@ti.com,
+	parvathi@couthit.com,
+	rogerq@kernel.org,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	afd@ti.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	pratheesh@ti.com,
+	prajith@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com
+Subject: [PATCH net-next 0/3] RSTP SWITCH support for PRU-ICSSM Ethernet driver
+Date: Thu, 25 Sep 2025 19:32:09 +0530
+Message-ID: <20250925141246.3433603-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JGFFBrCHdqJdDJfa"
-Content-Disposition: inline
-In-Reply-To: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com>
-X-Cookie: Shipping not included.
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Hi,
 
---JGFFBrCHdqJdDJfa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
+(ICSSM), which provides the foundational support for Ethernet functionality
+over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
+net-next recently [1].
 
-On Thu, Sep 25, 2025 at 09:53:48AM -0400, Tamir Duberstein wrote:
-> This series depends on step 3[0].
->=20
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the previous series must go).
+This patch series enhances the PRU-ICSSM Ethernet driver to support
+RSTP SWITCH mode, which has been implemented based on "switchdev" and
+interacts with "mstp daemon" to support Rapid Spanning Tree Protocol
+(RSTP) as well.
 
-Given that we're almost at the merge window isn't it likely that these
-will get applied once the current rust tree is in mainline?
+Once the RSTP SWITCH mode is enabled, forwarding of Ethernet packets using
+either the traditional store-and-forward mechanism or via cut-through is
+offloaded to the two PRU based Ethernet interfaces available within the
+ICSSM. The firmware running on the PRU inspects the STP port states and
+performs multiple checks before forwarding a packet. This improves the
+overall system performance and significantly reduces the packet forwarding
+latency.
 
---JGFFBrCHdqJdDJfa
-Content-Type: application/pgp-signature; name="signature.asc"
+Protocol switching from dual EMAC to RSTP SWITCH mode can be done as follows.
 
------BEGIN PGP SIGNATURE-----
+Assuming eth2 and eth3 are the two physical ports of the ICSS2 instance:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjVSyYACgkQJNaLcl1U
-h9C17Qf/YgEwpltWEUIGgUaSbpdA0l3EOpF8ChVfeUiB5k9dCOndChZptDoIsg85
-PB++cSfnFQkgzNH3wYTfwtUmYyk2V+NSPaWGooIfOVBrnzE60Vp/buyAVu2FMFa+
-eCzJ5UP9/CxqrpD00TxXBCEuTh1ejksRqsawy2e47xND1j1+WdeUp6QSVg4O+gyv
-f/AsLvo8yACTbYWgqONdC3AWxUlaCHmuZLXaNbtmaKsZaOeeE2nPDfNGK0XA8dFm
-OW+b38cPKCdFYtkOoP/uQGu9lyKqrwDfJNRuO1ca8Rv4Ey8eHwQ2EmMCBs76yorL
-+4uyntn5a+EHzOE3s+95LwAANHWJXA==
-=8lId
------END PGP SIGNATURE-----
+>> brctl addbr br0
+>> ip maddr add 01:80:c2:00:00:00 dev br0
+>> ip link set dev br0 address $(cat /sys/class/net/eth2/address)
+>> brctl addif br0 eth2
+>> brctl addif br0 eth3
+>> mstpd
+>> brctl stp br0 on
+>> mstpctl setforcevers br0 rstp
+>> ip link set dev br0 up
 
---JGFFBrCHdqJdDJfa--
+To revert back to the default dual EMAC mode, the steps are as follows:
+
+>> ip link set dev br0 down
+>> brctl delif br0 eth2
+>> brctl delif br0 eth3
+>> brctl delbr br0
+
+The patches presented in this series have gone through the patch verification
+tools and no warnings or errors are reported.
+
+Sample test logs obtained from AM33x, AM43x and AM57x verifying the
+functionality on Linux next kernel are available here:
+
+[Interface up Testing](https://gist.github.com/ParvathiPudi/ee90d6f7778f01660eec714d128ee224)
+
+[Ping Testing](https://gist.github.com/ParvathiPudi/ea7fc58da454b9c1d15517f84a502ae2)
+
+[Iperf Testing](https://gist.github.com/ParvathiPudi/505d8c6e9de231098215c59b66dee20b)
+
+[1] https://lore.kernel.org/all/20250912104741.528721-1-parvathi@couthit.com/
+
+Thanks and Regards,
+Parvathi.
+
+Roger Quadros (3):
+  net: ti: icssm-prueth: Adds helper functions to configure and maintain
+    FDB
+  net: ti: icssm-prueth: Adds switchdev support for icssm_prueth driver
+  net: ti: icssm-prueth: Adds support for ICSSM RSTP switch
+
+ drivers/net/ethernet/ti/Makefile              |   2 +-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c  | 554 +++++++++-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.h  |  27 +-
+ .../ethernet/ti/icssm/icssm_prueth_fdb_tbl.h  |  66 ++
+ .../ethernet/ti/icssm/icssm_prueth_switch.c   | 999 ++++++++++++++++++
+ .../ethernet/ti/icssm/icssm_prueth_switch.h   |  37 +
+ drivers/net/ethernet/ti/icssm/icssm_switch.h  |  82 ++
+ .../net/ethernet/ti/icssm/icssm_switchdev.c   | 332 ++++++
+ .../net/ethernet/ti/icssm/icssm_switchdev.h   |  13 +
+ .../ti/icssm/icssm_vlan_mcast_filter_mmap.h   | 120 +++
+ 10 files changed, 2209 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_fdb_tbl.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_switch.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_switchdev.h
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
+
+-- 
+2.43.0
+
 
