@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-832874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47475BA0A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32470BA0A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06E341C233F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D0B1C23311
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7F4288C26;
-	Thu, 25 Sep 2025 16:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34317288C26;
+	Thu, 25 Sep 2025 16:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1n3Ck62"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TNNGcmYA"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C382DE710;
-	Thu, 25 Sep 2025 16:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F4A2DE710;
+	Thu, 25 Sep 2025 16:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758818183; cv=none; b=TNAT9nRgUvKqj7z9/B1D7oxYfZEckxvhMAYlF3mNh3fqUSsQpDfF5xqpJU58v5uu2UAsZerkpvGxQbQ3rSKpLMV7MTVVINKb0jXIVKUQZiafmEsMumaO1SiB4dI2mGGPqvR4Pjd6uNUy3ET1Xkr6G3roTqkfpP+Mf9jgzTzFeWo=
+	t=1758818202; cv=none; b=CRyAZQbNMRZXvkECdAy5KhxoAEFBNkNxs2QAqrliWECjGlwQeW3FlS0bgvwAmWrbeDAV88fWz3hr6Odt2xCV21GmH8HzSpFV7qQ7cpuQ6OSgaXZ2uHlSsAQ+PjSekgz8waLoupl/37yi6okGwBEJtdJ+Wr+7O56+6TqR174H5io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758818183; c=relaxed/simple;
-	bh=AV8X/rCVJ3KDbq2mpxzIlUzaF6Ly7gRtyvBAZCpEKK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VfYkf9uqsllfgqh8enpR5um8AghNE2PGQnCqJZdklpX7qucPBTmGI5NGDSLfu3vn89oTkQkMB/YRm8DuQp2x4GOelLynTkiuYrebRdGEvfnb74QNWO20j5BWb83PDUdlUwbC7kxktjrc/t4KNhrcX80Zs7BvRgqLpgMNkxVLbJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1n3Ck62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A15C4CEF0;
-	Thu, 25 Sep 2025 16:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758818182;
-	bh=AV8X/rCVJ3KDbq2mpxzIlUzaF6Ly7gRtyvBAZCpEKK0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o1n3Ck62FMJsfoNqVSJ3TGjE4r/Wg4cBxZtcPO1FNLOMLvy1cnK38rg5tKjBfns7B
-	 v7PJsiBhvzR2EmzNIyWtll/lq2cG65csHYuatRCql9gW54m5/K5d0Kz08xnP09M9if
-	 yATRz4hi9Gq936AKxHK6Pl+Hg0cNhWTOIx52VV+Ecc6KNn+EGrcW6zBvRXn4nVwt6A
-	 QgKb3MBI7j+N3eoch9tvtI1c2spoHzv6tSHpEgwJQZNtnNpBF138HirCj6P6jwAK+E
-	 zeE/KpOtRl4Ji0qxicWnRwMBDyDd2K2lg7gSp8ZK4ykD7TTOC+XrKPB2j6hAMRYdsr
-	 5wHTWP4W4qDmA==
-Message-ID: <4067f542-d0d1-4055-b5ee-a468dd7eb559@kernel.org>
-Date: Thu, 25 Sep 2025 11:36:20 -0500
+	s=arc-20240116; t=1758818202; c=relaxed/simple;
+	bh=X4SLgLUDA6ZIyS057+iCcCJ7hLdHj/NTyAmnioiy+M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttcM+ZK2RyOjk8rtME21kSkZXZgNk3o13ffu0P+ml0R4ep9XC1skOSdIPOJiXKpJ1YA8JgQvTiYiZ+5HGtiPBtOyx0xgEqH28CWjiF7OEgaUm4IBuxjKKXTvHtZ0ZwoX77e2BxN9WIc6CCkCeffcE3TA/Q+6N7Ecvg1xHSikyAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TNNGcmYA; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1758818198;
+	bh=X4SLgLUDA6ZIyS057+iCcCJ7hLdHj/NTyAmnioiy+M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TNNGcmYApRO0f5DE3mdIWcAap4G5OZH5QAW1crAKc/89M+09k74DP/7CDM6RSBwTv
+	 PE/Ry6Qty4WYk9+QabThhZldMiPwLrO8BNt56Fd5NDMhidm+tYiPQofMvQezTTKErT
+	 ZN9hvBfiqOMZOS6/zGuvB2bFeAuR1sxNKULAQpyI=
+Date: Thu, 25 Sep 2025 18:36:36 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
+	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-kernel@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH v3 08/12] um: add infrastructure to build files using
+ nolibc
+Message-ID: <43a71f2c-2d3d-4b66-b755-d182eefc90d2@t-8ch.de>
+References: <20250924142059.527768-1-benjamin@sipsolutions.net>
+ <20250924142059.527768-9-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] cpufreq: Drop unused symbol CPUFREQ_ETERNAL
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>,
- LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Prashanth Prakash <pprakash@codeaurora.org>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
- <9533136.CDJkKcVGEf@rafael.j.wysocki>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <9533136.CDJkKcVGEf@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924142059.527768-9-benjamin@sipsolutions.net>
 
+On 2025-09-24 16:20:55+0200, Benjamin Berg wrote:
+> From: Benjamin Berg <benjamin.berg@intel.com>
+> 
+> Add NOLIBC_CFLAGS and NOLIBC_OBJS to build files against nolibc rather
+> than libc. With this it is possible to move to nolibc in smaller steps.
+> 
+> Set NOLIBC_IGNORE_ERRNO, as the nolibc errno implementation is overly
+> simple and cannot handle threading. nolibc provides sys_* functions that
+> do not emulate the libc errno behaviour and can be used instead.
+> 
+> Leave the syscall definition for kernel code for now, but guard it as it
+> is a macro in nolibc.
+> 
+> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+> 
+> ---
+> v3:
+> - Change the syscall guard to use __KERNEL__
+> 
+> v2:
+> - Do not include nolibc.h via CFLAGS
+> - Make syscall guard more explicit
+> - Remove __UM_NOLIBC__ define, it is not needed
+> - Fix out-of-tree building
+> ---
+>  arch/um/Makefile               | 20 +++++++++++++++++++-
+>  arch/um/include/shared/os.h    |  2 ++
+>  arch/um/include/shared/user.h  |  1 -
+>  arch/um/scripts/Makefile.rules |  8 +++++++-
+>  4 files changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/um/Makefile b/arch/um/Makefile
+> index f7c509262568..c3a81df50911 100644
+> --- a/arch/um/Makefile
+> +++ b/arch/um/Makefile
+> @@ -78,6 +78,24 @@ USER_CFLAGS = $(patsubst $(KERNEL_DEFINES),,$(patsubst -I%,,$(KBUILD_CFLAGS))) \
+>  		-include $(srctree)/include/linux/kern_levels.h \
+>  		-include $(srctree)/$(ARCH_DIR)/include/shared/user.h
+>  
+> +NOLIBC_CFLAGS = $(patsubst $(KERNEL_DEFINES),,$(patsubst -I%,,$(KBUILD_CFLAGS))) \
+> +		$(ARCH_INCLUDE) $(MODE_INCLUDE) $(filter -I%,$(CFLAGS)) \
+> +		-I $(srctree)/tools/include \
+> +		-D__EXPORTED_HEADERS__ \
+> +		-D__UM_HOST__ \
+> +		-DNOLIBC_NO_RUNTIME \
+> +		-DNOLIBC_IGNORE_ERRNO \
+> +		-nostdlib -nostdinc -static \
+> +		-I$(srctree)/include/uapi \
+> +		-I$(srctree)/$(HOST_DIR)/include/uapi \
+> +		-I$(objtree)/$(HOST_DIR)/include/generated/uapi \
+> +		-I $(srctree)/tools/include/nolibc \
+> +		-I $(srctree)/usr/include \
 
+This looks incorrect. The UAPI headers would be installed to $(objtree).
+But UML does not even use CONFIG_HEADERS_INSTALL.
+Also the whitespace is inconsistent between different lines.
 
-On 9/25/2025 10:47 AM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Drop CPUFREQ_ETERNAL that has no users any more along with all
-> references to it in the documentation.
-> 
-> No functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>> ---
->   Documentation/admin-guide/pm/cpufreq.rst                  |    4 ----
->   Documentation/cpu-freq/cpu-drivers.rst                    |    3 +--
->   Documentation/translations/zh_CN/cpu-freq/cpu-drivers.rst |    3 +--
->   Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst |    3 +--
->   include/linux/cpufreq.h                                   |    5 -----
->   5 files changed, 3 insertions(+), 15 deletions(-)
-> 
-> --- a/Documentation/admin-guide/pm/cpufreq.rst
-> +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> @@ -274,10 +274,6 @@ are the following:
->   	The time it takes to switch the CPUs belonging to this policy from one
->   	P-state to another, in nanoseconds.
->   
-> -	If unknown or if known to be so high that the scaling driver does not
-> -	work with the `ondemand`_ governor, -1 (:c:macro:`CPUFREQ_ETERNAL`)
-> -	will be returned by reads from this attribute.
-> -
->   ``related_cpus``
->   	List of all (online and offline) CPUs belonging to this policy.
->   
-> --- a/Documentation/cpu-freq/cpu-drivers.rst
-> +++ b/Documentation/cpu-freq/cpu-drivers.rst
-> @@ -109,8 +109,7 @@ Then, the driver must fill in the follow
->   +-----------------------------------+--------------------------------------+
->   |policy->cpuinfo.transition_latency | the time it takes on this CPU to	   |
->   |				    | switch between two frequencies in	   |
-> -|				    | nanoseconds (if appropriate, else	   |
-> -|				    | specify CPUFREQ_ETERNAL)		   |
-> +|				    | nanoseconds                          |
->   +-----------------------------------+--------------------------------------+
->   |policy->cur			    | The current operating frequency of   |
->   |				    | this CPU (if appropriate)		   |
-> --- a/Documentation/translations/zh_CN/cpu-freq/cpu-drivers.rst
-> +++ b/Documentation/translations/zh_CN/cpu-freq/cpu-drivers.rst
-> @@ -112,8 +112,7 @@ CPUfreq核心层注册一个cpufreq_driv
->   |                                   |                                      |
->   +-----------------------------------+--------------------------------------+
->   |policy->cpuinfo.transition_latency | CPU在两个频率之间切换所需的时间，以  |
-> -|                                   | 纳秒为单位（如不适用，设定为         |
-> -|                                   | CPUFREQ_ETERNAL）                    |
-> +|                                   | 纳秒为单位                    |
->   |                                   |                                      |
->   +-----------------------------------+--------------------------------------+
->   |policy->cur                        | 该CPU当前的工作频率(如适用)          |
-> --- a/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst
-> +++ b/Documentation/translations/zh_TW/cpu-freq/cpu-drivers.rst
-> @@ -112,8 +112,7 @@ CPUfreq核心層註冊一個cpufreq_driv
->   |                                   |                                      |
->   +-----------------------------------+--------------------------------------+
->   |policy->cpuinfo.transition_latency | CPU在兩個頻率之間切換所需的時間，以  |
-> -|                                   | 納秒爲單位（如不適用，設定爲         |
-> -|                                   | CPUFREQ_ETERNAL）                    |
-> +|                                   | 納秒爲單位                    |
->   |                                   |                                      |
->   +-----------------------------------+--------------------------------------+
->   |policy->cur                        | 該CPU當前的工作頻率(如適用)          |
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -26,13 +26,8 @@
->    *********************************************************************/
->   /*
->    * Frequency values here are CPU kHz
-> - *
-> - * Maximum transition latency is in nanoseconds - if it's unknown,
-> - * CPUFREQ_ETERNAL shall be used.
->    */
->   
-> -#define CPUFREQ_ETERNAL			(-1)
-> -
->   #define CPUFREQ_DEFAULT_TANSITION_LATENCY_NS	NSEC_PER_MSEC
->   
->   #define CPUFREQ_NAME_LEN		16
-> 
-> 
-> 
+> +		-include $(objtree)/include/generated/autoconf.h \
+> +		-include $(srctree)/tools/include/linux/kconfig.h \
+> +		-include $(srctree)/include/linux/kern_levels.h \
+> +		-include $(srctree)/$(ARCH_DIR)/include/shared/user.h
+> +
+>  #This will adjust *FLAGS accordingly to the platform.
+>  include $(srctree)/$(ARCH_DIR)/Makefile-os-Linux
+>  
+> @@ -160,4 +178,4 @@ archclean:
+>  		-o -name '*.gcov' \) -type f -print | xargs rm -f
+>  	$(Q)$(MAKE) -f $(srctree)/Makefile ARCH=$(HEADER_ARCH) clean
+>  
+> -export HEADER_ARCH SUBARCH USER_CFLAGS CFLAGS_NO_HARDENING DEV_NULL_PATH
+> +export HEADER_ARCH SUBARCH USER_CFLAGS NOLIBC_CFLAGS CFLAGS_NO_HARDENING DEV_NULL_PATH
 
+(...)
 
