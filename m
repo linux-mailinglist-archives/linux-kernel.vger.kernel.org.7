@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-832797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9247BA0622
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:38:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398F3BA060D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED381C251F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6F92A221F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F062FBDE0;
-	Thu, 25 Sep 2025 15:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B2A2ECEA8;
+	Thu, 25 Sep 2025 15:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="doWKcJd1"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hO4dqEHd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281FE2EBDD3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907E422F01;
+	Thu, 25 Sep 2025 15:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758814416; cv=none; b=FL5Ls1QZ5lDdUCoLrIUSdBFyKGFobmlIU5QrNOy0DARv484WXRduEdUrNoashcmUzr1a7oqwutIe3UQoMfvMG0p7e0hVzYh1jJIP3UE7pHDxwTa7z+3z7yHL98V5UxiKYwHqnqmVa8+/YNzLmN3NASfkUN0QVMSFR/XgF63JcQ0=
+	t=1758814647; cv=none; b=H9g2zqW3dkbRnJN0ptocdc1PkNJQUQVPi7E5JDByXPL7+rYSj3eeRshHFlx9suo1C9szlJvs9wd4juLqArdr8K1dHIY990FRANG3TiiiDdGrLGNt2LlEQNzJ2FunggYgiwk3kfBe72q5WvavD+Uzb2T7DB23wy8+o7tpHOM1XIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758814416; c=relaxed/simple;
-	bh=y2f0xu7wv3XLv8dKgE4HDyUHFQ5s5JkkjhxH7P7EpY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gF3v8o6qx/t4wZ1N//e4HE8aduWo432DeypdQQpekXS1rQ40V7m5g2KN23Dy/qYAYOD5hvHtVS6YmgUiUON0ZdYsUhZ0DaVFk9SH/5NxbmKr9TJMDxp952h5rWK+k3CzVd3ql+o8MlOVjvNdFY7ei5wIbmEA+P1dkej98LUbd68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=doWKcJd1; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77f68fae1a8so1588504b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758814414; x=1759419214; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xf9bl4gXuz6FgQKlCMIiNMUUiPGI8bVvlKEA/vte7D8=;
-        b=doWKcJd1ylcX08xi5HlT4/6sXr+K4/e4N+hSbGQJThcS+IF45Ozpfq0dOUf3joXnC5
-         kMBRSmtJPNglWy5LE902oE0XMsLxYM8Tjagw0zv7mvaJYQMziDy6Y9Jx6kMXejTgp0ex
-         pmsKVMLhZVRqeciZg+alQmKdpstVWBuU9uS+UL+bzaXFVIRVvfZ2C5simUy2l9+U9lWd
-         CzViNLeT6bMpvyNq5FJxQTosU7MbukY3bfJvluMe53eJQasoVd0GwrEO9szwOUiK/QDC
-         qagrP0LcxKkzRaosDBP1VF/aXiObtyI1TFoIbkrXdBjGE5SCRkQg8AQd9VODSRJG+hyo
-         cF6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758814414; x=1759419214;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xf9bl4gXuz6FgQKlCMIiNMUUiPGI8bVvlKEA/vte7D8=;
-        b=TLoYvu1tfA+K3ZSGGTI2U+Zu+6yxMsMI+zQccJmM3owpRnx4GdIwVjeqOhmHGO6yuN
-         iv2Sq/ghpcJv2qMcc7W1b8B+Wx5DUMDOObFOIXQc/HNxs5vK7BL93CrVOT1HxrtIbRO5
-         LbCDw3eIM78wfre0rsvO76kgDmqhDB7QfDknLHDYlo2K7/VJ91e8TM7D8INTQxQUNlcX
-         dwT96/wdKXUELpmifq6O4n77rGLB4lb9iDBVQBGNRmSyDI43olSLUoQE0nTKCiG+U9ls
-         BmzOp8Lz+AZahocjLTI9oV2SXHL5BBDDImzNHRu40Gb7mqxUiI35W2wgviM2F4my8d8x
-         qC5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAYqG/LvJnRthI7kuoKbNSsnkljIUOUzTsqsao6aXDaI7gjL7H+wXsrUKU0guPpV0tx1BU11dv5e8SHv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygXF7g1YgaDZMvnj4eM4/ogdY7tcSe457HX/FL9a/qJbZDdHwi
-	hWuDZ9vhcDruVDcVTp2SJGHtt8+zdbitiHUzMy0AI89uq7DyAUNaHWh6oVU0+4PT
-X-Gm-Gg: ASbGnctacsmXunE3aupci2svec9GXs5twGhPdrr700MIjKiNHzemv8CBJtMW2MP9q6E
-	Og7hqZ38Jj5EZtQlfRy0rvHj8oVmgq1FvFV7xmGtRaymHp3KupfGwyxjqwn57w9wNr1SKJXl5lP
-	HGfPKJJLrMs2X3gUIrtf7/kwUFYVhn1XY/YNr0lbvDyUDyHZwQRhQqIiKbexybfxg65p6VxxtU1
-	/2sQQ7zeCwLGZthOiGnReBnEanfwuhOZHlmHSnVhTPXAHOTsrc6iy+20Kl43lx0hhnYvCp/6a2G
-	/XUddzRBmiTux0zgwhOjJBF+Rgj0c60/SNTok5l5S5za5yhvUBLh3Iz+iAdLo96lCHRbs7IMCIN
-	yojO99cPN4cKSXwnMNf9MfO4u3q0j5FX/R1k=
-X-Google-Smtp-Source: AGHT+IHueQ5EwcgB7ykT7do2ipeVpALEK/2VdRb/5C0SGUSwtjUhr3wKi5API/uav1K3AF6ZVnpvuw==
-X-Received: by 2002:a05:6a00:3d0f:b0:77f:29e0:c807 with SMTP id d2e1a72fcca58-780fcea2e20mr3963061b3a.16.1758814414297;
-        Thu, 25 Sep 2025 08:33:34 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c06e67sm2212018b3a.91.2025.09.25.08.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:33:33 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 25 Sep 2025 08:33:32 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	daniel.machon@microchip.com, luka.perkov@sartura.hr,
-	benjamin.ryzman@canonical.com
-Subject: Re: [PATCH] hwmon: sparx5: make it selectable for ARCH_MICROCHIP
-Message-ID: <357f9a92-df60-4e6c-9019-40a4adbf0702@roeck-us.net>
-References: <20250924213027.1887516-1-robert.marko@sartura.hr>
- <f019dcef-afdd-4d18-b28c-b214fa14f1c8@roeck-us.net>
- <CA+HBbNFe+7XT3bSUEagsXiug-bmh=fBfLAW0d7WR73Di8-ozTA@mail.gmail.com>
+	s=arc-20240116; t=1758814647; c=relaxed/simple;
+	bh=ZxpYwFpNo8zGZmH4Fi3IOtZ0fWc+JFmKsepIIWVX6oE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxPwI86nYRtHZxEaK41VY6ihWcWpbrN/YV6Q7QwxAV6u7JgYswndDp26IkTu1oE19GZdwn/e5/3X2dl5Jo7ZXitzfq8183nhcBZ2LPhKhSS6+AqtUtkI8Oo+oyulzl80RnPuqO9xrdyzYZ3PogTmDBptCKEV6i3LKiUoOzgp/xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hO4dqEHd; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758814646; x=1790350646;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZxpYwFpNo8zGZmH4Fi3IOtZ0fWc+JFmKsepIIWVX6oE=;
+  b=hO4dqEHd/Hjr3UL8e/FZOvASrv/hejIwwQjfhBP+V6YxUtRhjLWYFcyZ
+   oHTFcMkaIAXvIicw+yUtzSf+k2oc1v+nFrnAwYi0fZdPG6J5QTtqZVX0H
+   YfL6i0t+ZvBQTf7Z+c/WVTslyllAzrzh3iMOqij/cnyyidvKuY1rAdljp
+   KapP+0i4mnVMSuWBx1d6VoM1+GRT4Ygj1sXpOwl2rIuMrCJMwXdjPCbXv
+   A1M8nOuW0/504BGFycOGCFKrFA2UCsIOCx6jNkR3xPr4o3+4Oiy7MZULp
+   mGIFDpZ1YHfrLSA/7IJXaWknDjJkjMacIcoYGdyHQm2lwTDZBw8O6CCWY
+   A==;
+X-CSE-ConnectionGUID: WxDdapnORkuy32kdlR+Q9w==
+X-CSE-MsgGUID: IYKZ2qWKSO+TWvZEintzNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61191799"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61191799"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 08:37:25 -0700
+X-CSE-ConnectionGUID: jnq9N+PhS3q4bYs0RdTchg==
+X-CSE-MsgGUID: g6x/annKTaGWjuCQEzqM3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="177759351"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.108.252]) ([10.125.108.252])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 08:37:23 -0700
+Message-ID: <ee907cef-684b-49a3-84c3-ba2efead9caa@intel.com>
+Date: Thu, 25 Sep 2025 08:37:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+HBbNFe+7XT3bSUEagsXiug-bmh=fBfLAW0d7WR73Di8-ozTA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/sgx: Replace kmalloc() + copy_from_user() with
+ memdup_user()
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-sgx@vger.kernel.org,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+References: <202509211747.1edb60f-lkp@intel.com>
+ <9A7F15AA-836C-457B-BFD9-B37497B16A27@linux.dev>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <9A7F15AA-836C-457B-BFD9-B37497B16A27@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025 at 11:15:52AM +0200, Robert Marko wrote:
-> On Thu, Sep 25, 2025 at 12:07 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > On 9/24/25 14:30, Robert Marko wrote:
-> > > LAN969x uses the same sensor and driver, so make it selectable for
-> > > ARCH_MICROCHIP.
-> > >
-> > LAN969x _is_ the Ethernet switch driver for Sparx5, so this description does
-> > not really make sense. Same as what ? Itself ?
-> >
-> > > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> > > ---
-> > >   drivers/hwmon/Kconfig | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> > > index 840d998f850a..ba2b7b2f6c44 100644
-> > > --- a/drivers/hwmon/Kconfig
-> > > +++ b/drivers/hwmon/Kconfig
-> > > @@ -632,7 +632,7 @@ config SENSORS_I5K_AMB
-> > >
-> > >   config SENSORS_SPARX5
-> > >       tristate "Sparx5 SoC temperature sensor"
-> > > -     depends on ARCH_SPARX5 || COMPILE_TEST
-> > > +     depends on ARCH_MICROCHIP || COMPILE_TEST
-> >
-> > ... and silently disable it for ARCH_SPARX5 at the same time ? That is not what
-> > the description says, and is completely unacceptable unless explained.
-> >
-> > >       help
-> > >         If you say yes here you get support for temperature monitoring
-> > >         with the Microchip Sparx5 SoC.
-> >
-> > ... and, on top of all that, still claim to support Sparx5 even that is
-> > no longer the case.
-> >
-> > Ah, I see, this patch depends on patches in linux-next. You might want to say that.
-> > Also, there is context missing: If the sensor is _only_ supported on Sparx5
-> > (which everything but the dependency suggests), it does not make sense to extend
-> > the dependencies. Why make the sensor configurable for _all_ microchip architectures
-> > if it is only supported on Sparx5 ? Maybe there is some other series explaining
-> > this, but this patch is all I got and it does not explain anything. It is only
-> > confusing and does not make sense on its own.
+On 9/22/25 06:18, Thorsten Blum wrote:
+>> The kernel config and materials to reproduce are available at:
+>> https://download.01.org/0day-ci/archive/20250921/202509211747.1edb60f-
+>> lkp@intel.com
+> Can someone explain why this test is failing?
 > 
-> Hi Guenter,
-> I should have extended the description a bit.
+> After some digging into SGX, I think it's the different allocators
+> kmalloc() vs. kmem_buckets_alloc_track_caller(), but I'm not exactly
+> sure why it fails.
 > 
-> LAN969x uses the same sensor as SparX-5, and they both select ARCH_MICROCHIP so
-> SparX-5 only configs can still select this driver.
+> Perhaps we should add a comment for anyone else trying to replace this?
 
-You mean ARCH_LAN969X (in contrast to ARCH_SPARX5 and LAN969X_SWITCH) ?
-That makes sense, but it really needs to be explained in the patch
-description. Also, since ARCH_MICROCHIP does not exist for arm64 in the
-upstream kernel, a note that this depends on other patches in linux-next
-would have been helpful. You may know that, and others may know that, but
-I don't, and digging through that cost me at least an hour of time which
-I don't have.
+I can't fathom that this is an SGX problem. The SGX code is as dirt
+simple as it gets:
 
-Guenter
+	secs = kmalloc(PAGE_SIZE, GFP_KERNEL);
+
+There are literally thousands of those in the kernel.
+
+memdup_user() look suspicious to me, though:
+
+        p = kmem_buckets_alloc_track_caller(...GFP_USER | __GFP_NOWARN);
+
+That GFP_USER looks wrong. It shouldn't matter _much_ in practice, but
+it's allocating kernel memory with GFP_USER.
 
