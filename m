@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-833003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F8BBA0F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29776BA0F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3D3621B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5563A1C254F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD2E30F55D;
-	Thu, 25 Sep 2025 17:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD5830F937;
+	Thu, 25 Sep 2025 17:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="EMq1VUNs"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T0AWV+MI"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A67427510B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFF61DE3DC
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758822753; cv=none; b=tFYh5hEQq6Ns1LiVSQb/5NxF2wClzKz++iSTnybKRxwhZgwo+un8RG570GNaToJMXvdQZ2FefmTdmgH3uR5c3uZC9q85ZX2etZah16MjnxztvWtQLepJ0lxmzCBRkT0bKMkSLIKb5pOJnBd3DBkkdZQEWFBUAMgK7GxbqqRE+gY=
+	t=1758822884; cv=none; b=dfjcP8BuXDnLf1xq3TGWC7bQYNvD0rGqun7i5m/RRAE9sQagKBC4tI1M383yj4kEiPbQ9q0qpWhjBHuxeV/DEMI9lTVbquIBj3gJ+bTlRFCNU9/Sr+cYQpHPCcDk3tE23/HcxfRFVqQBtc3jD70yyZqEzsmzVInDIPGrxlhfy28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758822753; c=relaxed/simple;
-	bh=149LhYTDHLpLp8554BrUviuksAp+figbNKDZxF/5+IM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=p206KQNVk1kk19VuEJKYmCueYjiinqS0vzmdkIgDUgsZMSghTfu9JyDfY1JIh1uzjXtPdVkJX1rUIhHvF4xj51Vng65GkMdSjjzlMpLpWFSowqWbgvOkaqsEJBIpDg2ONrBh09XLWj5fiIhWnR6rzjaWfTB4u9NxxIpuxbKA/Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=EMq1VUNs; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1758822884; c=relaxed/simple;
+	bh=lIUtbjbIbsfK1r4Xju185bI0WV+9cWBrGEyQD1jmbPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T1Z1t2E3rKNVma0SVj9SxDEOx+tAQk1JEcDo3V9AJvIYpRGhC+C7Zj88lhjYDyV1Ajl1tFk16PijtXhqFPZyb71SDFbWRqpLFco35TOCFFj3euFKJewwRvcdY1vz12IIkSgyIDqRelg+q+I423UxwVtUprrB5KcctY2qgiJFej4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T0AWV+MI; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so1203606f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758822881; x=1759427681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jz/FU9gMOI1RQz/pPYAELxAXstJ4fI13ftJQ5KfyUQI=;
+        b=T0AWV+MIzGZycvSFPOBnEkGhRISCcZGDIE1M2v7rVwqC+P0bAY1lqFh2DSluBRUr0e
+         EtALEq6DcqhOraMrH4uJiPUWd7cMZOagYSfnQaUI/kZM5Nbxd/YPx37mI4TbIIR3gxfe
+         Wj5EjNupkGKf7VglGpgRjhpqVHLGGE6JACkbQh/2fFYD3AaiLZ1ZWG0KVL1F61eX6BQt
+         YhUUSWXs2ssrMRKKCeenwPsVKB1iYM1WzZxaMghI/yQRfzrOcmI9GABvMHtf4LgzX/Dc
+         Q/hZshE2WmPcHPwtvH9ypRRyEIoXnQ0jjQhQaxFkX5JIHsIUFLrWkald4m2L2H8duHFM
+         q7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758822881; x=1759427681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jz/FU9gMOI1RQz/pPYAELxAXstJ4fI13ftJQ5KfyUQI=;
+        b=op7umjs0p0ftAyJKUy+CW0L6OK6Snxknp4C5/oALdhJsLEGQTMCwecTDKkRQGcfLEk
+         vyyzzIrT3riJN/YHpBGsSfucDOsEtDIS0z0ACVgD4MGLVNUKkkofVLOjmNlY8ksmwM+a
+         aemz6FYQNAiMobv3+iI1JIbqdSXB3o3Io1RDtnreXSBQQzGb8Ails8H1QuaLUhT9rb8V
+         DkeGuujeJ3US7aqOiwcASYgFsjYEOjMHRtvtxtPojPt92E3OJv9wvOs5pif3HMywDG5Y
+         qxwHRqPsATA7vxTzGzI9sjbREX2cH94SBk+J490u5ku3mu+t3kvDci/6bwHjXhbW4rVq
+         BWvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMKZZQTUjOafFMOf95Mgetyo4IxRJAEtUf3XgfjHoEyDXnF5C5Cn378X8yuoBykNW72VNSn1jOgktP+eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQoa3s/YVZTYuZer4UeLpYGU4wVeB0uOHbMzjF9Fw0Tb5qKKim
+	VQSPXmkNVLUIz6tzzmOYdgJFv9agct7FtQQKvmPifOoWe1NjF9eGkyjvuHxa1pKkgjruza1xRgb
+	Nt8RxuUG56fIbZlYQubfynMX9hy+CzEJjn7mBdPGk
+X-Gm-Gg: ASbGnctQODZLt9MeK8Ww2JGnCf3gGyntJjc4pO6ioo758GTYJbdARLBSK+H1QPxPxFN
+	TY58+4f6UnjbTwW9XXRhogc9X4tlOUtXnaU4XYcoMhDM8sM9/N2LKDCtJx4o1n7+QBK5FsSKQNF
+	hNeGx6E27M7OzPP3NWS86mTpcgdsLJIM7GPy/QmAemLD0Ragd1VPCcu6TMYdfKSGkdoHRmjw4qX
+	0Rs0Y7SErpr58qqsaEfbYBFqw==
+X-Google-Smtp-Source: AGHT+IFzhjepmcnkySqZnqtGL/digFIArYndMvrBK8eZnF0PUW11M75uUihTaOx6kNBLQ87MKzuyVbx9HY7bWhwTHhk=
+X-Received: by 2002:a05:6000:22c7:b0:3fd:bf1d:15ac with SMTP id
+ ffacd0b85a97d-40e43b08da3mr4411702f8f.20.1758822880702; Thu, 25 Sep 2025
+ 10:54:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1758822747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IB9yQNRgVuz8m2m/oI2qa6ls/IWIUCOFdQtE6J/rfIA=;
-	b=EMq1VUNsJcP9snVahb7nKoWpXIaDE41gqDWsbAG4yWY8Rnu1rMo2FDoiKi/9dfZarIh/+m
-	LL+7sHuW/hw2dFQgEiTMq8vIfTKXyby5P9trym8R8wVkzGXGV+/2ggIAG+J8T2nqPOeWCx
-	I9ulU++zscOBm+xM54yiJckom9/K9rvw6go4Wjs40pw0Q66AUVt3DsUEhXU5UnpNatT2sH
-	qew11Tjar4NMmOBj2Ro8RcgCmPRTE9RYc+st28XVeUMh4kruDtkgh0Xjzs/qFt1sWHCd8Z
-	zDJY9AO0tox9pwPXH+P2KTHVOaFxbGFCWZyv0V/fjzMbVfcJrR+53XJ2McAOEg==
-Content-Type: multipart/signed;
- boundary=a357dd026792ca33492dc6fb0c6b8bf0ccfe6b9c80285818675682e9f5be;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 25 Sep 2025 19:52:11 +0200
-Message-Id: <DD22MGF3HNLM.Q7S70RX4NZXS@cknow.org>
-Cc: "Saravana Kannan" <saravanak@google.com>, "Rafael J . Wysocki"
- <rafael@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <linux-pm@vger.kernel.org>, "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Nicolas Frattaroli" <nicolas.frattaroli@collabora.com>, "Heiko Stuebner"
- <heiko@sntech.de>, "Sebastian Reichel" <sebastian.reichel@collabora.com>,
- "Sebin Francis" <sebin.francis@ti.com>, "Tomi Valkeinen"
- <tomi.valkeinen@ideasonboard.com>, "Jon Hunter" <jonathanh@nvidia.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] driver core: fw_devlink: Don't warn in
- fw_devlink_dev_sync_state()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Ulf Hansson" <ulf.hansson@linaro.org>
-References: <20250925115924.188257-1-ulf.hansson@linaro.org>
- <DD1XOHE6P5OC.2JUQRAGAE1KTU@cknow.org>
- <CAPDyKFrKP2bdpKTHzqDdhEpRAjYu+PFd2Bst=-WPddByxcAX_w@mail.gmail.com>
-In-Reply-To: <CAPDyKFrKP2bdpKTHzqDdhEpRAjYu+PFd2Bst=-WPddByxcAX_w@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
---a357dd026792ca33492dc6fb0c6b8bf0ccfe6b9c80285818675682e9f5be
+MIME-Version: 1.0
+References: <20250924193643.4001-1-git@elijahs.space> <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+In-Reply-To: <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 25 Sep 2025 19:54:27 +0200
+X-Gm-Features: AS18NWBiws6t4fAdWzQ-PgXG_fzqdadithN1M-LZqvce_KX7s1jnm83BsVbdFZg
+Message-ID: <CAH5fLgiRFMyXkcx-CngRQOdYuJMkoTdXTOjGsdTYizvApArrmw@mail.gmail.com>
+Subject: Re: [PATCH] rust: slab: add basic slab module
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Elijah Wright <git@elijahs.space>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Thu Sep 25, 2025 at 4:26 PM CEST, Ulf Hansson wrote:
-> On Thu, 25 Sept 2025 at 15:59, Diederik de Haas <didi.debian@cknow.org> w=
-rote:
->> On Thu Sep 25, 2025 at 1:59 PM CEST, Ulf Hansson wrote:
->> > Due to the wider deployment of the ->sync_state() support, for PM doma=
-ins
->> > for example, we are receiving reports about the messages that are bein=
-g
->> > logged in fw_devlink_dev_sync_state(). In particular as they are at th=
-e
->> > warning level, which doesn't seem correct.
->> >
->> > Even if it certainly is useful to know that the ->sync_state() conditi=
-on
->> > could not be met, there may be nothing wrong with it. For example, a d=
-river
->> > may be built as module and are still waiting to be initialized/probed.
->>
->> "there may be nothing wrong with it" doesn't sound very convincing.
->> So there *can* be something wrong with it, so warning sounds
->> appropriate? If there is (certainly) something wrong with it, I expect
->> an error.
+On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>   (3) Implement a macro to generate a custom KmemCache Allocator trait
+>       implementation for every KmemCache instance with a static lifetime.
 >
-> Sorry if I was too vague. See more below.
+>       This makes KmemCache technically equivalent to the other allocators=
+, such
+>       as Kmalloc, etc. but obviously has the downside that the KmemCache =
+might
+>       live much longer than required.
 >
->> FWIW: most of my drivers/modules are built as modules.
->> I do seem to run into 'problems' more then average because of that, but
->> to me it just signals there is something wrong ... which should be
->> fixed. Not silenced.
+>       Technically, most KmemCache instances live for the whole module lif=
+etime,
+>       so it might be fine though.
 >
-> Well, why is it wrong to have drivers being built as modules? They
+>       (This is what I think Alice proposed.)
 
-Nothing wrong with it at all. It just means I notice issues (like [1])
-that others may not who have modules built-in.
+Yes, this is what I proposed. Most kmemcaches live for the duration of
+the module, so it's no issue if they are global.
 
-[1] a52dffaa46c2 ("drm/rockchip: vop2: make vp registers nonvolatile")
-
-> just happen to be probed at some point later, then why should we have
-> warnings printed in the log due to this?
-
-I thought the failure of the check was more important then it apparently
-is. Then warning about it does seem excessive.
-
-Cheers,
-  Diederik
-
---a357dd026792ca33492dc6fb0c6b8bf0ccfe6b9c80285818675682e9f5be
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaNWBUwAKCRDXblvOeH7b
-bhxxAQCeedjuz7MzbGyk41Q/ap7bH+8LHheMRHyOxpn9SezY7AD+KZApBH0xFnE/
-3+O2yoRG+dre2ZIK4DMmnaaZXvwd8QM=
-=3Rfs
------END PGP SIGNATURE-----
-
---a357dd026792ca33492dc6fb0c6b8bf0ccfe6b9c80285818675682e9f5be--
+Alice
 
