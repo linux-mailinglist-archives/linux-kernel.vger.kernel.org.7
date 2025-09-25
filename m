@@ -1,188 +1,237 @@
-Return-Path: <linux-kernel+bounces-833098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044D8BA1364
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0ABBA1382
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE7A4A00B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065A116BC62
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE69931D36F;
-	Thu, 25 Sep 2025 19:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9B731D725;
+	Thu, 25 Sep 2025 19:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aQmuu59d"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011064.outbound.protection.outlook.com [52.101.65.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WBE5GJGa"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627D021B192;
-	Thu, 25 Sep 2025 19:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828966; cv=fail; b=az64VhZ2ndozeZSaFK422QyUrLZwFKyffjughVFMVsrYNoEsAVwZdsLrNmRDwj+96KKhiookItrXiIWU1DybN40Jp/mJTz+B62G3eJ2m+vDICABAA4mEcYoHoK7rF0mbnxyw2WjjGFSCT3glJiknv3iEQQJ8vdUqgS/+fpHYYRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828966; c=relaxed/simple;
-	bh=U8H5ATuty0YVXo42z6C3EnOxeAZOBRAJW3nzoOQ3M/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=epVHxXLv1yN5PVM1VJFkriuJlf7um1UFCHxMJ8VBGhSBJWeiI8iEtq+rtk2z//ZK0dSkQPS4QAf1kYyjU5JNGEQ8Pctg6C5R1sDEkR2Ed8f8zoA2IuQ8Tt6AjcGcqTLBkcgWOjm/iTfaoIyu37SsH4x3F+jgeoYRttieTY9j0j4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aQmuu59d; arc=fail smtp.client-ip=52.101.65.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IVaQEh5BJlTNvlRFi/ND7XqZN6Rdmu2nstdaj3E9WJH8xjbvmdTwN3TibKM3KzrzbsEQkYmFK9qUfDHOyQdviDMOpLX2bZ9NdcY9Slbzr+cFofIayych9llFLbB0S1zNjoEkT/SVcEVkiT32tcMFTWRjNnvoAyl3b7F95ixxtn2tXasZNSrpuy1TCbldnWjURgyRBPboE+xaqmE86Xh9FOTJaGpGShooZG+CY5IypYaErzANeCylExOFBhr5zsc5I8LG7DLrDVG3w7KjLVg4cquFVCjFv39WmPJUX/gsjNFx57apszmC/VuLRpB1qiUedkWaCLMSCYdnMiJbrUiYyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H1AM7iXhlMhICbybEV+PAHhBucDsS5d/NcmgWJFqa/E=;
- b=RiFTM6oOs1sDkYPymDsx4DRtQtsLqISbFtZO/rnKwDX5TciHJXPBpRSkukbCcyLh7aW4d2BIsWttupPIysU+xfUKt9htIOyu9mkQG8SW5c9lU5r5NCccIow/FUL0whJ3gWfNPfOLpQ8pxVBak8NDgQ04wsyjhx1ckabFSK2eSwByZqadfKFe+BM46uecvuLZBK8Iqb0fM0prv5IZj8eyW6m21mck1Hgjzu6Q2a65utxplx7KEm/a0I6wiFhIlzVzB68Izbd5xaIUUKuVetmNOLoFRzrfqGv3mkvwn2AiOOyCzsriTkUNP/+iDhAPgUZfMY5plhLOBi5edMqbUAPgYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H1AM7iXhlMhICbybEV+PAHhBucDsS5d/NcmgWJFqa/E=;
- b=aQmuu59dFsVpAGryrcbO0RaelR1/ja+09WXRbTdMRg2r8eP4WAXOoPq/OCcmwdp7AivMAyG1gKusaLaoUFPK7wtaYS4TAW+r87f+u6A/ctMkL5ORXfQtNR4YS1Taf3mfRM/1sTXZxrjrqw5cu7STbyKKc8vTV4KKAf45rvDFPxvLTKhGjc0GM/oln+jVzJ4FpvblS9z1fhI30sgLlPjovRkGuJckufqZCfq03EUx2Lp7miQqxElSG1iS59udhiOfCBfSw/5hqEa0H6W6qrm+eUUEi34LpfhC1xBXdlsMriIBbIkQfqhau5C/cCn/w1jgpJANVz7cn1xpotKyPcL+LQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by PAXPR04MB8735.eurprd04.prod.outlook.com (2603:10a6:102:21f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Thu, 25 Sep
- 2025 19:36:00 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 19:36:00 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: media: fsl,imx6q-vdoa: remove redundant ""
-Date: Thu, 25 Sep 2025 15:35:46 -0400
-Message-Id: <20250925193546.305036-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR03CA0001.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::6) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E466131B816
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758829074; cv=none; b=gZV2qKN1WTlSrVqCe9VPcc4Cvd5iaqradJh34/3dWTWNf8Mj7tI/K1B6tHDczUEtfrALfo8FG3IZ1lFqDU7382gfzLndzsKF1BZvutD0o95SjKJAM5kVp34S0YISVIzVFKANHcmJQKQAq7XMnMMs+fzeHNfGIbi3xtYtHiutipI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758829074; c=relaxed/simple;
+	bh=70ZBbyiWkxW1T3x7VR16vWSCd+9K6UpnTlnQYJI5UQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fHkDsLQEk12/zNMWFS3LfSOXQNH2wuXJq6H117Mv6n1LzG/VLFuATHWJd5kzWgLPXTJO7D2T67BvLKg+E0aYKK/mpN9TL+0amx+QUagseJ12v+8ZVLDdm7lhKyaWYMUwtjLzRKRSkbHVkx7IzKepFXg3q0RQRKtmME/d5O9YaD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WBE5GJGa; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4dc4afb9e1cso5445321cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758829072; x=1759433872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q2Q1cBc7LUQcu2cuJvD0/M3cFaWYJRZZW0Vz5p9Kpw4=;
+        b=WBE5GJGabaGdSmJTtatnyD1dkpodYYc5bB4En6SBvgvbuMThHiMI5cFbDPevjR1jRe
+         EZl8D8ABDN1ooeL1I5kAG+dSuxUOj2w4MTzZjoyRHrx/blw14Rs4l058LAbqnekIfxxI
+         1Z+7T5iHy07XGGDodbru/RekFPuvIp0fxZ3pJfcEIpRnTq+JBnBd84aFv7WMNs/wuE0r
+         cJnPcrjoRlCOvCdGWtcmeXIC2m76Wzxm3X0KNHcPegyiS1QAoFDRIIarwEvR4WdrKAK1
+         QHYZMjwcI4G8WXe5A5SkUPw8YMhhPrWP/1uVWSpMRT5ZQ+d11GqfUrlX/ww8OOzEcHKP
+         7hbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758829072; x=1759433872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q2Q1cBc7LUQcu2cuJvD0/M3cFaWYJRZZW0Vz5p9Kpw4=;
+        b=lKfk9iRDdcc5PoAxcG9jviFbBsuiEEMWAiSPB3yUU0U/psLMSzJsax/Rk7WIRC0EHw
+         EhbXi0JxDI0uuAST30vPoKG3YqxBC+XSSQzpZYJYb5ObQg/kOEZ6GNQgYlYxmPoXL6UY
+         FrGXddm7DOoUkTlmRu15ORyik4UvoSpegrMt6CKvLjj61ZaP8Ed/tdSylcsYiy671/81
+         bsLUKdnC3eHOJ7vUQfrMyj9TmgHoxMXM0/gnYztKFxkakoJg+b3btOqtTgo985P+OLhz
+         YG2pQH2n+zE5s9Bk3nZBkzEVR43Rj9ymATMgyKYYtLjwsTkGykJAf0rPNX6CFmTZaAgp
+         yL6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUubEldulXMR0JhXbmVzHAM71o6QjPB4arf8+bxXiulobw9DlCbakb6/siPwooomXQC8JgsnoDwTZXjN2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaZbTD+xzM++ZCCy30LcFScxjEQ4ubQERzoIqpZW9M7X+Fo5zr
+	/tix3BADUjCQB03FBRs4l1ya6oBls/Zrs7Itzj6CbZDPzQjqq8eM559c+37keRIMJMk1bcm7KSk
+	8sI12UXxLh0DdupldPIcYucR1nNonTNz2lM2A5m8q
+X-Gm-Gg: ASbGnctQcxC9gJyizCUSQ63CfmnZ5D3QeAtqlWZmGJr5YUYL/eAa6ti6gaVYKSiDW6B
+	fr3YVc/l6gLmDgqq4bibOoPdM8DweybDYagR9GlHkRZjLpdOZ54upAZTRx/ZwYYw8IM9ZrpvYFP
+	4jOPG+h1qY4qzuBy2V4ZLpGHLz7OcapN1WnQkTBy6J4Elo6KzXRPt1CM3iKZRCqt9Qc/rZh+4a+
+	YKGkxTzQGUxYyJ5ARfS4U2v
+X-Google-Smtp-Source: AGHT+IHCvRuGt6NFVvOMpJCv91jV7RoFz9Wa0ZhVESXQsSNw9YJ/r7CF3agmA+c897IDwvF/1apFe92TOHo1/cNcVes=
+X-Received: by 2002:a05:622a:4b:b0:4b0:6a6c:c8cf with SMTP id
+ d75a77b69052e-4daca1f78f0mr45166161cf.15.1758829071156; Thu, 25 Sep 2025
+ 12:37:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PAXPR04MB8735:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2eb416d-dc41-4624-50d3-08ddfc6ac1a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|1800799024|376014|7416014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6D5fRwdb5TRqcCxEvg9xp/TNIShfi4b72MjkLQErYdznlJC159J3PFqm+kd4?=
- =?us-ascii?Q?WiLwVRJDKuVIT4jAxQyGl1Uk1kuz0k4Nnq3WZXYtenqvMxL89IEfaMjV6Kab?=
- =?us-ascii?Q?Uz000yCREgCDbO7DYhA6f+iTbjEms1mP9wo+cZQcJ35ye9KbuM8cC4yKdpmO?=
- =?us-ascii?Q?7m0lx2O1cg9U5eNkU/4xmssegOq4hKNzu2h1noT/mBAz748yBvmQSkAIUuJH?=
- =?us-ascii?Q?PKcn9uhyE8LURudD2jzmksZ01JrW1Bqx0G50rZnOetWn7WCQeujahFUB52l+?=
- =?us-ascii?Q?VkiJMIRo3bhXkkKE/lPUojP8tLUPXlJI2Bz6XHx8PLbNSydIgK0Lss5SDW2f?=
- =?us-ascii?Q?CVIaDfIPPbTD01oR1QaZ8YGwbKYm5JgJPMggLtCKSnh0a9EWTDrj+tpNiVJK?=
- =?us-ascii?Q?j0+drm2ZTs1S4YGFiR799PRFRm/+yedBHqXw/jbqYRFsVGf1K3d6owyMmjbG?=
- =?us-ascii?Q?burg0UU8qWdNoiAjQM3RbIy+6CzwQVqBzMUeTmOyxxNPwBid7MUF1jX4pEX6?=
- =?us-ascii?Q?DpSfewVqpGo8w/bDjIXv4ujeEpKPV292m7BbVArQ6DcC0Va1oDKK40h9wzCV?=
- =?us-ascii?Q?+TVNBzb20qguBTuo8SxUGof3xzm3vzpUzTl1bKzNfN8EGsPaufy0ybQzST6I?=
- =?us-ascii?Q?PzbNar4ohn8z7Rans8w3qOePgMb1UqrdLlKXnZ/vDNeYDEBF+ABgkVrjsCwa?=
- =?us-ascii?Q?fBUq5/32tCcaXSiBKLGd+6FFOZ9gCotf5iyFr1lSYyMIC+pEW0QDG4RCd/F8?=
- =?us-ascii?Q?7NuYxKhVwNlFQU/v7cnmtDLE9JHmCi0BzJxO6OQWAlielhL3rPN3sNub7yV2?=
- =?us-ascii?Q?zSsi10rwZL344qSTcJA10XhEcv/KtnGn2WJWL+XAK3PvjJ7D4McuapvUN+yz?=
- =?us-ascii?Q?hsX65hmpD76BwUXpwoAVGmH15aO/cLdgFhlCRWP7A5ONAokSx3neWbXbwfUj?=
- =?us-ascii?Q?J39zG36E4K/dve2bg8Nt87ofjeMZ4ExTqFP/nfkd1pCvvGZ8MAusEsngHuaI?=
- =?us-ascii?Q?YWrz0XS6lqdqgKybpPJbawEwFamb4og1sufMpSvNrhqD3jFF+ztWLLNy243X?=
- =?us-ascii?Q?4zT6grVMk/lEu15B2iplx23AfAyO9FaHz9Sdkl8vchqOqCeFas8n1JiWMTa0?=
- =?us-ascii?Q?CaJIBf5e/H9AsJqeFBS1/ogfEoOF6xxDKOTxgcE+pbAlyaTUOqJoM9jr88SI?=
- =?us-ascii?Q?XXeH/Jz5Uo1Pu+F4qdQ8ZApNUt9+TtXb4s51cIDpQwuhhu0+yDEBoljjEFQH?=
- =?us-ascii?Q?VluK/JYZHtLQZwM6BPH0+6Ul4WcfsHbyib7LymCEzcoomRp4+N4hWLAMYp9X?=
- =?us-ascii?Q?GsFBQ4vHcbAjVCuVA4GDeXh6aiQaMJzghpMoJ7gDtpS7swkttO2late3aixH?=
- =?us-ascii?Q?x5kwbsgpIHv9FUQBES/7D/KVrhHN1m3ShLgawzk2mVy/OzjPaDNIDWaHdS04?=
- =?us-ascii?Q?5Pi07EBqt8Xghm5FSBTV/ktG/JtAAwohqPkyAUYdGNhi1EJ20qq4ljIkiF3x?=
- =?us-ascii?Q?rleEfjCt5cbywKi071nTdbkrE1bc9E7GmZB/EpjvXZgrHXLp1slvUglKdw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5b7zIATa2XREeI3O24rd+pbpeAcgfOvLXLnc1P7j30PzDc7WI/5S5L2x35SA?=
- =?us-ascii?Q?5YBO0+wGgCssaCXLyrPtskxMJyLPAW2SZzXigl9MAX6/+oNuhdbWUU13mLRq?=
- =?us-ascii?Q?zburLR4V93K17OJI5UU41mMtFHzGEhHbS4S4pYUusLNMed2ysTw5kj2a0tsd?=
- =?us-ascii?Q?UdoTSk3XfL5ZekEDUWtjJReozVyAYCYBXJJyK8rXrZdpG9A+wUEczMxT542t?=
- =?us-ascii?Q?mlKd3vr+NCy9xi6NPI35tFl/LgBpoTzmkmaklz5JZn2E46xLJzZEJ/Y3OQiI?=
- =?us-ascii?Q?4cUE81aXCBJkUy79m98f9J6aFqRrFChNNXnj17LCcqcMYTmQsX0RvFWuW2Un?=
- =?us-ascii?Q?q0KMJ8j882Sv/GFWkm7MsQsDhdUeHVnYw619c9DPnAVbE94Vl4zKY380cuUo?=
- =?us-ascii?Q?fk5z7ej6j+2DvNwcp+DItxIOA3k4P9368cZs8twpf7ligwBBj1/E9Wa+UNUK?=
- =?us-ascii?Q?a+lZIneAJnPbHB7cFNzE5Q8Mtm8r6q1VSAcSK0vTta18tRe/TBaZjJ1yIUnn?=
- =?us-ascii?Q?NvUJE8wj4DK5pDG6O19iIxCvMNtSuljhFPrmd//0X+kdAiQuSMOlwpluJbVk?=
- =?us-ascii?Q?2L9SJW9dSemSGn1GmpykZuhmNe2N/Ro15eBMJ2aQFtxNJxCFrrO5lYNetBu6?=
- =?us-ascii?Q?TPv+i0zvrgk+KA/uWrVZFdBxYYZ4cSc+TQE7ZtuJCs75sV6AIPaateZHbXe9?=
- =?us-ascii?Q?1OoD1RL4OQz6DI3QWcQS5f/swEeTYFx4LkiMUsiRQaHFCv3EBOprKZVZItGM?=
- =?us-ascii?Q?rMCic84glWWBHh5zHpNB/MbF62DEknYVg5z7EErIQj1QHELvxkqhhiriAqeb?=
- =?us-ascii?Q?nji6+hUMKcKPnddLne2FQcWs/sj8Ll1R3NqemerH2aM9ddSRtr5/CIfWvI6V?=
- =?us-ascii?Q?DHm3yGc/1LG6FmT4S4GpkCx3q5UbIbhiKEQ6Pjy6/Aeb0xg4sqZw7Z1nsSU1?=
- =?us-ascii?Q?yreWoqNtVhVI/JlUZa2KPxqzJazB2zjIfclS6EJCjYA8ab2DF6Jm+5FT9GnW?=
- =?us-ascii?Q?4hWeAyI0aYhcCHTso0Zv3G4WFawvxQK+nKB2wp/g3Wu6LoApmszHOeivOPU9?=
- =?us-ascii?Q?cs7IL7It9ciXV3UHvEBST4Dq2QgUG0QQMeMak0xH8j97Yt3JkmI0eq5jGj+S?=
- =?us-ascii?Q?JzOCHymP1LEq3YC7AMWSZIG+ZkcSjpcUF3uMBn0xBuw7UQr3Hh6XSXOEdyNA?=
- =?us-ascii?Q?vKKKQvo/RgaJDlsxx+q/oIJl23uJ2wDXN2MP2Q8m/xV3N3HK42hDncTgG6Sv?=
- =?us-ascii?Q?iE/xCykIe4gQUWw3FoPVwq/a9gRxcbE3KQKIReEUCG/6zp8H3eLEoPHofPm0?=
- =?us-ascii?Q?lx1Q5afRxpbNO2tii/QR8qpz0cVDAd/OfLCua/EKVfB9NTqTwEqjN2h/07No?=
- =?us-ascii?Q?HtK2mm6pbqJng+9fm8WkU6RMbiUzpEkrswmwVlK06x8chzfqSStwbZhBzIhN?=
- =?us-ascii?Q?aNQvy7SbREpMa9wGJD7XAekUbrPyl1CYhgzUHXmXna8WM+Sd75YFrHH+frpb?=
- =?us-ascii?Q?p+pgIbk4bmPQ2LrOlfBviTuhkvQ3trGugOa/WEyvyuYXYhh/ZCVJIUtN6Hrw?=
- =?us-ascii?Q?p378ezPfaQIs5jo5s26xBapGqJR2sqzRoj161WW3?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2eb416d-dc41-4624-50d3-08ddfc6ac1a7
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 19:36:00.5132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k271bUZltmv3OVkXMMh3/O6RHXISKE9Rp69D8XWAWik6FhahsYw5RHKZxXJCxxNJbG++ePM5hl+M1ATXiBA2qQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8735
+References: <20250922121818.654011-1-wangliang74@huawei.com>
+ <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
+ <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com>
+ <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com> <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com>
+In-Reply-To: <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Sep 2025 12:37:39 -0700
+X-Gm-Features: AS18NWBfb_5R9ookN-KFp8lqhGE_84Rt920qCX1G3bgXwF8E_8TZGmU8sJIuKgo
+Message-ID: <CANn89i+Ntwzm2A=NSHbKdFuGVR6kar00AjrJE91Lu0e5BUsVow@mail.gmail.com>
+Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Wang Liang <wangliang74@huawei.com>, alibuda@linux.alibaba.com, 
+	dust.li@linux.alibaba.com, sidraya@linux.ibm.com, wenjia@linux.ibm.com, 
+	mjambigi@linux.ibm.com, tonylu@linux.alibaba.com, guwen@linux.alibaba.com, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove redundant "" for compatible string.
+On Thu, Sep 25, 2025 at 12:25=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google.c=
+om> wrote:
+>
+> On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Eric Dumazet <edumazet@google.co=
+m> wrote:
+> >
+> > On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@goog=
+le.com> wrote:
+> > >
+> > > Thanks Eric for CCing me.
+> > >
+> > > On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@google=
+.com> wrote:
+> > > >
+> > > > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@hua=
+wei.com> wrote:
+> > > > >
+> > > > > The syzbot report a crash:
+> > > > >
+> > > > >   Oops: general protection fault, probably for non-canonical addr=
+ess 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+> > > > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0x=
+dead4ead0000001f]
+> > > > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #=
+0 PREEMPT(full)
+> > > > >   Hardware name: Google Google Compute Engine/Google Compute Engi=
+ne, BIOS Google 08/18/2025
+> > > > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inlin=
+e]
+> > > > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_=
+diag.c:89
+> > > > >   Call Trace:
+> > > > >    <TASK>
+> > > > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+> > > > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+> > > > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+> > > > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
+> > > > >    netlink_dump_start include/linux/netlink.h:341 [inline]
+> > > > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+> > > > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+> > > > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+> > > > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+> > > > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+> > > > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+> > > > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+> > > > >    sock_sendmsg_nosec net/socket.c:714 [inline]
+> > > > >    __sock_sendmsg net/socket.c:729 [inline]
+> > > > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+> > > > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+> > > > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+> > > > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> > > > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+> > > > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > >    </TASK>
+> > > > >
+> > > > > The process like this:
+> > > > >
+> > > > >                (CPU1)              |             (CPU2)
+> > > > >   ---------------------------------|-----------------------------=
+--
+> > > > >   inet_create()                    |
+> > > > >     // init clcsock to NULL        |
+> > > > >     sk =3D sk_alloc()                |
+> > > > >                                    |
+> > > > >     // unexpectedly change clcsock |
+> > > > >     inet_init_csk_locks()          |
+> > > > >                                    |
+> > > > >     // add sk to hash table        |
+> > > > >     smc_inet_init_sock()           |
+> > > > >       smc_sk_init()                |
+> > > > >         smc_hash_sk()              |
+> > > > >                                    | // traverse the hash table
+> > > > >                                    | smc_diag_dump_proto
+> > > > >                                    |   __smc_diag_dump()
+> > > > >                                    |     // visit wrong clcsock
+> > > > >                                    |     smc_diag_msg_common_fill=
+()
+> > > > >     // alloc clcsock               |
+> > > > >     smc_create_clcsk               |
+> > > > >       sock_create_kern             |
+> > > > >
+> > > > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedl=
+y changed
+> > > > > in inet_init_csk_locks(), because the struct smc_sock does not ha=
+ve struct
+> > > > > inet_connection_sock as the first member.
+> > > > >
+> > > > > Previous commit 60ada4fe644e ("smc: Fix various oops due to inet_=
+sock type
+> > > > > confusion.") add inet_sock as the first member of smc_sock. For p=
+rotocol
+> > > > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of inet_=
+sock is
+> > > > > more appropriate.
+> > >
+> > > Why is INET_PROTOSW_ICSK necessary in the first place ?
+> > >
+> > > I don't see a clear reason because smc_clcsock_accept() allocates
+> > > a new sock by smc_sock_alloc() and does not use inet_accept().
+> > >
+> > > Or is there any other path where smc_sock is cast to
+> > > inet_connection_sock ?
+> >
+> > What I saw in this code was a missing protection.
+> >
+> > smc_diag_msg_common_fill() runs without socket lock being held.
+> >
+> > I was thinking of this fix, but apparently syzbot still got crashes.
+>
+> Looking at the test result,
+>
+> https://syzkaller.appspot.com/x/report.txt?x=3D15944c7c580000
+> KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead00=
+00001f]
+>
+> the top half of the address is SPINLOCK_MAGIC (0xdead4ead),
+> so the type confusion mentioned in the commit message makes
+> sense to me.
+>
+> $ pahole -C inet_connection_sock vmlinux
+> struct inet_connection_sock {
+> ...
+>     struct request_sock_queue  icsk_accept_queue;    /*   992    80 */
+>
+> $ pahole -C smc_sock vmlinux
+> struct smc_sock {
+> ...
+>     struct socket *            clcsock;              /*   992     8 */
+>
+> The option is 1) let inet_init_csk_locks() init inet_connection_sock
+> or 2) avoid inet_init_csk_locks(), and I guess 2) could be better to
+> avoid potential issues in IS_ICSK branches.
+>
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I definitely vote to remove INET_PROTOSW_ICSK from smc.
 
-diff --git a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
-index 511ac0d67a7f2..988a5b3a62bde 100644
---- a/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
-+++ b/Documentation/devicetree/bindings/media/fsl,imx6q-vdoa.yaml
-@@ -16,7 +16,7 @@ maintainers:
- 
- properties:
-   compatible:
--    const: "fsl,imx6q-vdoa"
-+    const: fsl,imx6q-vdoa
- 
-   reg:
-     maxItems: 1
--- 
-2.34.1
-
+We want to reserve inet_connection_sock to TCP only, so that we can
+move fields to better
+cache friendly locations in tcp_sock hopefully for linux-6.19
 
