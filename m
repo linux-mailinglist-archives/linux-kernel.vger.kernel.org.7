@@ -1,416 +1,325 @@
-Return-Path: <linux-kernel+bounces-832020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983FCB9E27C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9ABB9E270
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49ABD3828D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DDA1B284C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890882798FD;
-	Thu, 25 Sep 2025 08:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DEB278772;
+	Thu, 25 Sep 2025 08:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VtgeGXkH"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDfV18p6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F194F279795
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F141B279DCE
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790668; cv=none; b=jE6C6plvcDCx0mZsbqPEYGnTd3kTWjDC25rfExdGX/IrFJ+xBda6oWdvJkwlkSK6HwuvhjPOJ19YCKGRz/Fdp5ixKqNHkOBMPb/TLKfeYJgz1JGdKz44yrenVX4i855W7pxhkhCnp7PPJPd0xyf09kpU7KXJqweZ8AEtNv0Q5UU=
+	t=1758790660; cv=none; b=RECfKYSLj5qsk5fL9n1iuevSz0z9/NxCblLxyb32TiC+qbWMUvibaylfIP6H6Z6i3c1ykYW3t4ost0Hs+Y7OgWXyDNr/mJmNpCaI+euibyBVFwPiWFzVR+Zvo4ifRmmY21pfM2xW+4FTizvnGQCqoU8mCy1WMXihLBoQOgMd28M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790668; c=relaxed/simple;
-	bh=s1IvWBoDghRdTxNI9ntahbtNb3ceyjypNF92BFpPstg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RnJaUufPqYTwBSgiz82Lhn9RoiIt1F/6yYOrKQWmIab2qh4xBO4s1MnVti7opw/sHQlbwwbooJml1hAnTV4f6u0rveZfpdmuGW/Z33X3TWvA82reW2GdtyGK/TL19w/hnzAUDX5RYCdIHEdwnAyooeaPlJZDHPNfGn+LIenQn1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VtgeGXkH; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b2e66a300cbso135738766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:57:44 -0700 (PDT)
+	s=arc-20240116; t=1758790660; c=relaxed/simple;
+	bh=JDV6lQyFHzUzwoPhPLVE57nzZPLAlDFfGvCbbrW4Ng0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B90aiZVGjdbbBrLo8/Xexo4V8u7Abf9c9oxiHLBSpAE9o2Yj6lL1yYCtBQWiuZDPknj5Ou7CA5L3TftohLpfIwJZOtFIHZhpt0bFz/HaDWqteGvyNXKF+rmUKN6GtBdzFwHaRkZmFafrYB8Tu2RMhGNeji4WpcFYOqvtZh4HlKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDfV18p6; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46b7bf21fceso4557205e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758790663; x=1759395463; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0gyeemM5bv0/cwHb/gRYJJo/u8gfbvqaOjqlOCWg4JE=;
-        b=VtgeGXkHItiSlP0KD3DKgSpuIYMSMcbjRUlyNQ/C8xStSBJF/HLkmsdAoMYdZhEb6q
-         hn6UJH9x76C3uGBGbGEVCDVD9FkhdAW95q5eF1PJE7Wtfx0n3gNCVRc/+11Mr4Wxtu/d
-         gaDUQ30i6e8bqHiuVgKR3jzpR4T5qf897jNk6Zjt4qjguB/NZk5fVNbZGrxaU6PQd7v8
-         vjOrK3WUW81wmJVAPnqRE/qWDGvxGAhxMywHRkQ+6H/pqtGNAKoOMuAoRXMwOpa5+mfz
-         ygcwQk7mT6yg1yPUXHlCpb6DqIk7m8Ftsen16eew6E1N+Lt7/9jnfZhL+XJ61fgpcL7p
-         vY4g==
+        d=gmail.com; s=20230601; t=1758790657; x=1759395457; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JDV6lQyFHzUzwoPhPLVE57nzZPLAlDFfGvCbbrW4Ng0=;
+        b=SDfV18p6F8HCq8oyQ0R8cry16vZJI9vvxt76J4HYF4BsNUHKSQI9oE9ldgN7fWKlZs
+         S9HLOibZdL/YAet1G+3kMdCupyk33zF0eELRP7oZckaldmKDLRvgwIQjF6wxDHp18T/H
+         DgpiPMqi+mIAFih164NEGs5+oD7v/jLWL1tNotHLek35QDKipP4fOK+ni85ZKt3ABsa7
+         SRRLdWdwyzDfFluPVDBQAzxnvSgPgK7K2GZ5Jgat7vUlT1qq4N/IjrFnVWRYTcNz2VkY
+         7x+Hf5xt3mdbd4GSGNw89lTlWn3WF32CJVRG39vYEOvt/S3XJ5pZI6NNed0BKy2n028k
+         JJmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758790663; x=1759395463;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gyeemM5bv0/cwHb/gRYJJo/u8gfbvqaOjqlOCWg4JE=;
-        b=saLTka39L1rp+wG3Flw4jdSVjInKHQc/9rMEwabty8FCe8nFuNCCke4Cu6bOwWRPtR
-         i0Mr2t34PGEq6y4CE8VaYEYeMATeLapkkm96vmEPqCfc61QN3qoPppjCQTfysvSQ24FX
-         I3aRK8My7lwQ0NlKXGSBD1Rs+MQg2HWOxlVOn6Tovt8nwkf03WW4kO7LBG0N09j0XcyK
-         wYMl5B8uJ75Xi+4Yq8IIbvDn278bEd/oRdGr6cwLgS3DbvS3Zr9kCypTxTr/ajJXc7+A
-         RjJupT/14p+LB6+aCdfYCwzHx5gSf7RyWIgDCrIjtx7VaNHL+ng2PA98YYuHY9zJmpBG
-         gJww==
-X-Forwarded-Encrypted: i=1; AJvYcCUvDYPEzHyVYymo17iPRKd6QbhlNIlgOGq3cGl4Q+wv9+0OxIYA+UX+Y6x4yfO99BQLek5I300JGIWwIr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwnfVPUDPevCI35dQYDXMncDUggecZi5oB/Ay4fHaE6CqZlQUu
-	SgAZNvoDQET8UMuEgYjj553KJvmOrPEAssi82UZu/aZ7jIVT2QFeer9XH6XRhGggcdw=
-X-Gm-Gg: ASbGncskyA4Ck5gm9RpzkFjR8Y75F9TJLKsESpGYg7zED7uvMi6K5Q5kh01/0mJ8Llk
-	AZxnRMEeI1lxGkogMGr+IBoveqLVkAwZD6FjYz8mlnljTcPeWiQgFUFuv9HXIKvXRsAtNIuEeb+
-	Huwcpr4OmjsJCeDAKhw4x58Hd+IG+MyrYiVE1UJ8kzo9e6uZvLZEyYekKKdmbHYUQdukh1NPkjv
-	qdITDVQiTaF42eA1rvfvUUxNmljZPvn4KtXj9GD8Da13Sv2i4li/18Wxk3IdW/VICW1k8QPO8vU
-	CN2mtgqRLpcsvgzjHN/BOAH96VzslMt4p00sk7PuBbDRdNfvm7fwu+tjmjdzQfaqxxOOvGM9fxF
-	nOSCfpyEPTrIE4tMR5Q6Vsn1kmenaLw==
-X-Google-Smtp-Source: AGHT+IHAqvFuArcYlmLsH6QWv4YuNWEk6UM56Ovz265N4A8KauZbqfvtw43LomwCRUeB+PPlGp6V8w==
-X-Received: by 2002:a17:907:7e84:b0:b29:e717:f0af with SMTP id a640c23a62f3a-b34b9f4fc52mr328324766b.18.1758790663253;
-        Thu, 25 Sep 2025 01:57:43 -0700 (PDT)
-Received: from [192.168.0.24] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f7472sm122712666b.57.2025.09.25.01.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 01:57:42 -0700 (PDT)
-Message-ID: <ea291acc-bfdc-4a04-ba60-fc59a55ada28@linaro.org>
-Date: Thu, 25 Sep 2025 11:57:41 +0300
+        d=1e100.net; s=20230601; t=1758790657; x=1759395457;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JDV6lQyFHzUzwoPhPLVE57nzZPLAlDFfGvCbbrW4Ng0=;
+        b=XFbe+8JjHlJ1QP6IQQhLNsmUTHPcZCZUJuemY/llESNkGFESMotrChw6SiebLJ8jZx
+         ZrSf8SoY0BHqy1DFqmlqXfh6OLCWGLWz4OEQItSWNvWBij17tqxVDEolxA65tCUFshEW
+         3dvk67Y14s1aG02+L3tvZNcIhbAZ10uv+gr4+fgQCev6+OS5gXGfu17O17mOkWJLF9Ri
+         Oj/Drw4aVCIxDWtINYmFsld50KNmYfB8j1wwrYWo0fxBkdd3GUJoN/6iSrasSxXySA4F
+         lpy3JE1+L1aN1A3imgI57k2Nl7NfSxUpaPvsXQgdy8//2Qe9s8xPt/FHcybF7yBwDcL+
+         dbbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDUpojmkurRmARCuaSNY5d0580ro32llSs8uvi1dvD5HDjkcUPHDQXxQnTNHrGeIiRgI4kOluvCCxxZH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC3Z9hX1Hl/a4fPI2B3vNN/0AG+MMdsV1eFj93b78DCGkGbGTa
+	eNpyNhVFXb8iH9RW80oeIpyj3vpao5Zvhc2uCszEZ5/EtGOx/+JI75veX/rnHngB0Oo=
+X-Gm-Gg: ASbGncvsyzDoMU/93wdaLOMGL54y596ngN80hDs67eveh1xumuup7+7Loq8N0sPa+RL
+	WAIeyOL4tgmEMmWHdHfNAVpSo5pv+zOX+AUxr4sR69XUR0YRKOyxbPvWPDkmCmGH35cfE8c6lLl
+	lqFT5Thm8MDIxrxH1wI/n+PIONnnNL1F8VlPt3NKPFTXyLAu/vhHDMMQm+LU2Nh+BezVcxExDdD
+	sodfjHzdCOeEiCEP/9i1nRcewGxsnrkW68EpC1he9iOHFOZhyvMsohgFIc15tzYskGmLlfJblLd
+	CVwpghk92cMMTirhJBljZLH/p5Np3KdJ+VFQpBjUhqwHQWtlp18p3oOKVAs6fPQK1uSj33tsBvd
+	rnz6VIgkMdZpQY5kp1FPW6hjF/xkHPL0=
+X-Google-Smtp-Source: AGHT+IFwc/ogQyexaRhKy29O42WYdUKH6a2Y0I5hHzY/tZTegkQSMJsUIpoh57przGHqAXOZ2bO9Og==
+X-Received: by 2002:a05:600c:310c:b0:46e:21c8:ad37 with SMTP id 5b1f17b1804b1-46e35d550acmr11127985e9.25.1758790657222;
+        Thu, 25 Sep 2025 01:57:37 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb2eesm2188803f8f.12.2025.09.25.01.57.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 01:57:36 -0700 (PDT)
+Message-ID: <e5a6789230840b31ef0f60ca0a770a4fb266da2a.camel@gmail.com>
+Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>, Jorge Marques
+	 <gastmaier@gmail.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jorge Marques	
+ <jorge.marques@analog.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  Frank Li <Frank.Li@nxp.com>, Arnd
+ Bergmann <arnd@arndb.de>, "linux-i3c@lists.infradead.org"	
+ <linux-i3c@lists.infradead.org>, "linux-kernel@vger.kernel.org"	
+ <linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Simek,
+ Michal" <michal.simek@amd.com>
+Date: Thu, 25 Sep 2025 09:58:04 +0100
+In-Reply-To: <DM4PR12MB61093CEE50990ECC403D3FB98C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250924201837.3691486-1-arnd@kernel.org>
+		 <2wtpklapw5ogsevuvk2l4ngvw7hymer2y4cc454h47u2d7tq44@4mknmpk5yzil>
+		 <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+	 <37d47af4f4d5220764efc5870630fdfc1e9be2c9.camel@gmail.com>
+	 <DM4PR12MB61093CEE50990ECC403D3FB98C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: document the RPMh
- Network-On-Chip interconnect in Kaanapali SoC
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-References: <20250924-knp-interconnect-v1-0-4c822a72141c@oss.qualcomm.com>
- <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Thu, 2025-09-25 at 08:47 +0000, Guntupalli, Manikanta wrote:
+> [Public]
+>=20
+> Hi,
+>=20
+> > -----Original Message-----
+> > From: Nuno S=C3=A1 <noname.nuno@gmail.com>
+> > Sent: Thursday, September 25, 2025 1:22 PM
+> > To: Guntupalli, Manikanta <manikanta.guntupalli@amd.com>; Jorge Marques
+> > <gastmaier@gmail.com>; Arnd Bergmann <arnd@kernel.org>
+> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>; Jorge Marques
+> > <jorge.marques@analog.com>; Wolfram Sang <wsa+renesas@sang-
+> > engineering.com>; Frank Li <Frank.Li@nxp.com>; Arnd Bergmann
+> > <arnd@arndb.de>; linux-i3c@lists.infradead.org;
+> > linux-kernel@vger.kernel.org; git
+> > (AMD-Xilinx) <git@amd.com>; Simek, Michal <michal.simek@amd.com>
+> > Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+> >=20
+> > On Thu, 2025-09-25 at 07:37 +0000, Guntupalli, Manikanta wrote:
+> > > [Public]
+> > >=20
+> > > Hi,
+> > >=20
+> > > > -----Original Message-----
+> > > > From: Jorge Marques <gastmaier@gmail.com>
+> > > > Sent: Thursday, September 25, 2025 12:47 PM
+> > > > To: Arnd Bergmann <arnd@kernel.org>
+> > > > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>; Jorge Marque=
+s
+> > > > <jorge.marques@analog.com>; Wolfram Sang <wsa+renesas@sang-
+> > > > engineering.com>; Frank Li <Frank.Li@nxp.com>; Arnd Bergmann
+> > > > <arnd@arndb.de>; Guntupalli, Manikanta
+> > > > <manikanta.guntupalli@amd.com>;
+> > > > linux-
+> > > > i3c@lists.infradead.org; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+> > > >=20
+> > > > On Wed, Sep 24, 2025 at 10:18:33PM +0200, Arnd Bergmann wrote:
+> > > > > From: Arnd Bergmann <arnd@arndb.de>
+> > > > >=20
+> > > > > Short MMIO transfers that are not a multiple of four bytes in siz=
+e
+> > > > > need a special case for the final bytes, however the existing
+> > > > > implementation is not endian-safe and introduces an incorrect
+> > > > > byteswap on big-endian kernels.
+> > > > >=20
+> > > > > This usually does not cause problems because most systems are
+> > > > > little-endian and most transfers are multiple of four bytes long,
+> > > > > but still needs to be fixed to avoid the extra byteswap.
+> > > > >=20
+> > > > > Change the special case for both i3c_writel_fifo() and
+> > > > > i3c_readl_fifo() to use non-byteswapping writesl() and readsl()
+> > > > > with a single element instead of the byteswapping writel()/readl(=
+)
+> > > > > that are meant for individual MMIO registers. As data is copied
+> > > > > between a FIFO and a memory buffer, the writesl()/readsl() loops
+> > > > > are typically based on __raw_readl()/ __raw_writel(), resulting i=
+n
+> > > > > the order of bytes in the FIFO to match the order in the buffer,
+> > > > > regardless of the CPU endianess.
+> > > > >=20
+> > > > > The earlier versions in the dw-i3c and i3c-master-cdns had a
+> > > > > correct implementation, but the generic version that was recently
+> > > > > added broke
+> > it.
+> > > > >=20
+> > > > > Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() an=
+d
+> > > > > i3c_writel_fifo()")
+> > > > > Cc: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+> > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > > ---
+> > > > > This was a recent regression, the version in 6.16 still works, bu=
+t
+> > > > > 6.17-rc is broken.
+> > > > >=20
+> > > > > v2 changes:
+> > > > > =C2=A0- add code comments
+> > > > > =C2=A0- write correct data buffer
+> > > > > ---
+> > > > > =C2=A0drivers/i3c/internals.h | 12 ++++++++++--
+> > > > > =C2=A01 file changed, 10 insertions(+), 2 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+> > > > > index 0d857cc68cc5..79ceaa5f5afd 100644
+> > > > > --- a/drivers/i3c/internals.h
+> > > > > +++ b/drivers/i3c/internals.h
+> > > > > @@ -38,7 +38,11 @@ static inline void i3c_writel_fifo(void __iome=
+m
+> > > > > *addr, const
+> > > > void *buf,
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 u32 tmp =3D 0;
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wri=
+tel(tmp, addr);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 * writesl() instead of writel() to keep FIFO
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 * byteorder on big-endian targets
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 */
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wri=
+tesl(addr, &tmp, 1);
+> > > > > =C2=A0=C2=A0=C2=A0 }
+> > > > > =C2=A0}
+> > > > >=20
+> > > > > @@ -55,7 +59,11 @@ static inline void i3c_readl_fifo(const void
+> > > > > __iomem *addr,
+> > > > void *buf,
+> > > > > =C2=A0=C2=A0=C2=A0 if (nbytes & 3) {
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 u32 tmp;
+> > > > >=20
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp=
+ =3D readl(addr);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 * readsl() instead of readl() to keep FIFO
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 * byteorder on big-endian targets
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 */
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rea=
+dsl(addr, &tmp, 1);
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 memcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
+> > > > > =C2=A0=C2=A0=C2=A0 }
+> > > > > =C2=A0}
+> > > > Reviewed-by: Jorge Marques <jorge.marques@analog.com>
+> > > > > --
+> > > > > 2.39.5
+> > > > >=20
+> > >=20
+> > > This patch fixes the sub-word transfer case on big-endian kernels, bu=
+t
+> > > it still does not address the scenario of little-endian kernels
+> > > accessing big- endian FIFOs.
+> > >=20
+> >=20
+> > I would argue that's something for callers of these functions to care a=
+bout.
+> If each I3C driver has to handle FIFO endianness individually, it introdu=
+ces
+> unnecessary duplication and overhead across drivers. Centralizing this in=
+ the
+> FIFO access helpers keeps the logic consistent, avoids repeated boilerpla=
+te,
+> and reduces the chance of subtle bugs.
 
+I mean, that's what spi and i2c drivers do already.=C2=A0With enum i3c_fifo=
+_endian
+you're already forcing users to care (or know) about endianism so they migh=
+t as
+well just pass the data in the proper order already (not sure if it's such =
+a big
+'burden').
 
-On 9/25/25 02:02, Jingyi Wang wrote:
-> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-> 
-> Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
-> 
-> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  .../bindings/interconnect/qcom,kaanapali-rpmh.yaml | 126 +++++++++++++++++
->  .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h | 149 +++++++++++++++++++++
->  2 files changed, 275 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
-> new file mode 100644
-> index 000000000000..574150cc4930
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
-> @@ -0,0 +1,126 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interconnect/qcom,kaanapali-rpmh.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm RPMh Network-On-Chip Interconnect on KAANAPALI
-> +
-> +maintainers:
-> +  - Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-> +
-> +description: |
-> +  RPMh interconnect providers support system bandwidth requirements through
-> +  RPMh hardware accelerators known as Bus Clock Manager (BCM). The provider is
-> +  able to communicate with the BCM through the Resource State Coordinator (RSC)
-> +  associated with each execution environment. Provider nodes must point to at
-> +  least one RPMh device child node pertaining to their RSC and each provider
-> +  can map to multiple RPMh resources.
-> +
-> +  See also: include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,kaanapali-aggre-noc
+That said, I'm not really in the loop for i3c so not sure what the expectat=
+ions
+are. IOW, have no strong feeling about this at all :)
 
-Hi,
+- Nuno S=C3=A1
 
-Does Kaanapali have a single aggre node, or there are several ?
-On previous SoC, I see there are two (aggre1 and aggre2).
-Also in your driver (second patch), I notice aggre1_noc and aggre2_noc .
-It would make sense to accurately describe here the hardware.
-
-Eugen
-
-> +      - qcom,kaanapali-clk-virt
-> +      - qcom,kaanapali-cnoc-main
-> +      - qcom,kaanapali-cnoc-cfg
-> +      - qcom,kaanapali-gem-noc
-> +      - qcom,kaanapali-lpass-ag-noc
-> +      - qcom,kaanapali-lpass-lpiaon-noc
-> +      - qcom,kaanapali-lpass-lpicx-noc
-> +      - qcom,kaanapali-mc-virt
-> +      - qcom,kaanapali-mmss-noc
-> +      - qcom,kaanapali-nsp-noc
-> +      - qcom,kaanapali-pcie-anoc
-> +      - qcom,kaanapali-system-noc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +required:
-> +  - compatible
-> +
-> +allOf:
-> +  - $ref: qcom,rpmh-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,kaanapali-clk-virt
-> +              - qcom,kaanapali-mc-virt
-> +    then:
-> +      properties:
-> +        reg: false
-> +    else:
-> +      required:
-> +        - reg
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,kaanapali-pcie-anoc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: aggre-NOC PCIe AXI clock
-> +            - description: cfg-NOC PCIe a-NOC AHB clock
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,kaanapali-aggre-noc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: aggre UFS PHY AXI clock
-> +            - description: aggre USB3 PRIM AXI clock
-> +            - description: RPMH CC IPA clock
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,kaanapali-aggre-noc
-> +              - qcom,kaanapali-pcie-anoc
-> +    then:
-> +      required:
-> +        - clocks
-> +    else:
-> +      properties:
-> +        clocks: false
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,kaanapali-gcc.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clk_virt: interconnect-0 {
-> +      compatible = "qcom,kaanapali-clk-virt";
-> +      #interconnect-cells = <2>;
-> +      qcom,bcm-voters = <&apps_bcm_voter>;
-> +    };
-> +
-> +    aggre_noc: interconnect@16e0000 {
-> +      compatible = "qcom,kaanapali-aggre-noc";
-> +      reg = <0x016e0000 0x42400>;
-> +      #interconnect-cells = <2>;
-> +      clocks = <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> +               <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-> +               <&rpmhcc RPMH_IPA_CLK>;
-> +      qcom,bcm-voters = <&apps_bcm_voter>;
-> +    };
-> diff --git a/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h b/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
-> new file mode 100644
-> index 000000000000..dde3f9abd677
-> --- /dev/null
-> +++ b/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
-> @@ -0,0 +1,149 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_KAANAPALI_H
-> +#define __DT_BINDINGS_INTERCONNECT_QCOM_KAANAPALI_H
-> +
-> +#define MASTER_QSPI_0				0
-> +#define MASTER_CRYPTO				1
-> +#define MASTER_QUP_1				2
-> +#define MASTER_SDCC_4				3
-> +#define MASTER_UFS_MEM				4
-> +#define MASTER_USB3				5
-> +#define MASTER_QUP_2				6
-> +#define MASTER_QUP_3				7
-> +#define MASTER_QUP_4				8
-> +#define MASTER_IPA				9
-> +#define MASTER_SOCCP_PROC			10
-> +#define MASTER_SP				11
-> +#define MASTER_QDSS_ETR				12
-> +#define MASTER_QDSS_ETR_1			13
-> +#define MASTER_SDCC_2				14
-> +#define SLAVE_A1NOC_SNOC			15
-> +#define SLAVE_A2NOC_SNOC			16
-> +
-> +#define MASTER_QUP_CORE_0			0
-> +#define MASTER_QUP_CORE_1			1
-> +#define MASTER_QUP_CORE_2			2
-> +#define MASTER_QUP_CORE_3			3
-> +#define MASTER_QUP_CORE_4			4
-> +#define SLAVE_QUP_CORE_0			5
-> +#define SLAVE_QUP_CORE_1			6
-> +#define SLAVE_QUP_CORE_2			7
-> +#define SLAVE_QUP_CORE_3			8
-> +#define SLAVE_QUP_CORE_4			9
-> +
-> +#define MASTER_CNOC_CFG				0
-> +#define SLAVE_AHB2PHY_SOUTH			1
-> +#define SLAVE_AHB2PHY_NORTH			2
-> +#define SLAVE_CAMERA_CFG			3
-> +#define SLAVE_CLK_CTL				4
-> +#define SLAVE_CRYPTO_0_CFG			5
-> +#define SLAVE_DISPLAY_CFG			6
-> +#define SLAVE_EVA_CFG				7
-> +#define SLAVE_GFX3D_CFG				8
-> +#define SLAVE_I2C				9
-> +#define SLAVE_I3C_IBI0_CFG			10
-> +#define SLAVE_I3C_IBI1_CFG			11
-> +#define SLAVE_IMEM_CFG				12
-> +#define SLAVE_IPC_ROUTER_CFG			13
-> +#define SLAVE_CNOC_MSS				14
-> +#define SLAVE_PCIE_CFG				15
-> +#define SLAVE_PRNG				16
-> +#define SLAVE_QDSS_CFG				17
-> +#define SLAVE_QSPI_0				18
-> +#define SLAVE_QUP_1				19
-> +#define SLAVE_QUP_2				20
-> +#define SLAVE_QUP_3				21
-> +#define SLAVE_QUP_4				22
-> +#define SLAVE_SDCC_2				23
-> +#define SLAVE_SDCC_4				24
-> +#define SLAVE_SPSS_CFG				25
-> +#define SLAVE_TCSR				26
-> +#define SLAVE_TLMM				27
-> +#define SLAVE_UFS_MEM_CFG			28
-> +#define SLAVE_USB3				29
-> +#define SLAVE_VENUS_CFG				30
-> +#define SLAVE_VSENSE_CTRL_CFG			31
-> +#define SLAVE_CNOC_MNOC_CFG			32
-> +#define SLAVE_PCIE_ANOC_CFG			33
-> +#define SLAVE_QDSS_STM				34
-> +#define SLAVE_TCU				35
-> +
-> +#define MASTER_GEM_NOC_CNOC			0
-> +#define MASTER_GEM_NOC_PCIE_SNOC		1
-> +#define SLAVE_AOSS				2
-> +#define SLAVE_IPA_CFG				3
-> +#define SLAVE_IPC_ROUTER_FENCE			4
-> +#define SLAVE_SOCCP				5
-> +#define SLAVE_TME_CFG				6
-> +#define SLAVE_APPSS				7
-> +#define SLAVE_CNOC_CFG				8
-> +#define SLAVE_DDRSS_CFG				9
-> +#define SLAVE_BOOT_IMEM				10
-> +#define SLAVE_IMEM				11
-> +#define SLAVE_PCIE_0				12
-> +
-> +#define MASTER_GPU_TCU				0
-> +#define MASTER_SYS_TCU				1
-> +#define MASTER_APPSS_PROC			2
-> +#define MASTER_GFX3D				3
-> +#define MASTER_LPASS_GEM_NOC			4
-> +#define MASTER_MSS_PROC				5
-> +#define MASTER_MNOC_HF_MEM_NOC			6
-> +#define MASTER_MNOC_SF_MEM_NOC			7
-> +#define MASTER_COMPUTE_NOC			8
-> +#define MASTER_ANOC_PCIE_GEM_NOC		9
-> +#define MASTER_QPACE				10
-> +#define MASTER_SNOC_SF_MEM_NOC			11
-> +#define MASTER_WLAN_Q6				12
-> +#define MASTER_GIC				13
-> +#define SLAVE_GEM_NOC_CNOC			14
-> +#define SLAVE_LLCC				15
-> +#define SLAVE_MEM_NOC_PCIE_SNOC			16
-> +
-> +#define MASTER_LPIAON_NOC			0
-> +#define SLAVE_LPASS_GEM_NOC			1
-> +
-> +#define MASTER_LPASS_LPINOC			0
-> +#define SLAVE_LPIAON_NOC_LPASS_AG_NOC		1
-> +
-> +#define MASTER_LPASS_PROC			0
-> +#define SLAVE_LPICX_NOC_LPIAON_NOC		1
-> +
-> +#define MASTER_LLCC				0
-> +#define SLAVE_EBI1				1
-> +
-> +#define MASTER_CAMNOC_HF			0
-> +#define MASTER_CAMNOC_NRT_ICP_SF		1
-> +#define MASTER_CAMNOC_RT_CDM_SF			2
-> +#define MASTER_CAMNOC_SF			3
-> +#define MASTER_MDP				4
-> +#define MASTER_MDSS_DCP				5
-> +#define MASTER_CDSP_HCP				6
-> +#define MASTER_VIDEO_CV_PROC			7
-> +#define MASTER_VIDEO_EVA			8
-> +#define MASTER_VIDEO_MVP			9
-> +#define MASTER_VIDEO_V_PROC			10
-> +#define MASTER_CNOC_MNOC_CFG			11
-> +#define SLAVE_MNOC_HF_MEM_NOC			12
-> +#define SLAVE_MNOC_SF_MEM_NOC			13
-> +#define SLAVE_SERVICE_MNOC			14
-> +
-> +#define MASTER_CDSP_PROC			0
-> +#define SLAVE_CDSP_MEM_NOC			1
-> +
-> +#define MASTER_PCIE_ANOC_CFG			0
-> +#define MASTER_PCIE_0				1
-> +#define SLAVE_ANOC_PCIE_GEM_NOC			2
-> +#define SLAVE_SERVICE_PCIE_ANOC			3
-> +
-> +#define MASTER_A1NOC_SNOC			0
-> +#define MASTER_A2NOC_SNOC			1
-> +#define MASTER_APSS_NOC				2
-> +#define MASTER_CNOC_SNOC			3
-> +#define SLAVE_SNOC_GEM_NOC_SF			4
-> +
-> +#endif
-> 
-
+> >=20
+> > > With the current version, i3c_writel_fifo() and i3c_readl_fifo() only
+> > > work when the FIFO has the same endianness as the CPU. On platforms
+> > > such as the
+> > > ZCU102 (Zynq UltraScale+ MPSoC, Cortex-A53, little-endian), the I3C
+> > > FIFOs are big-endian, and this patch alone is not sufficient -
+> > > transfers fail in that configuration.
+> > >=20
+> > > We have validated this on ZCU102, and the mismatch between LE kernel
+> > > and BE FIFO is still an issue.
+> > >=20
+> > > On top of this fix, explicit FIFO endianness support is required, as
+> > > proposed in [PATCH v7 3/4] "i3c: master: Add endianness support for
+> > > i3c_readl_fifo() and i3c_writel_fifo()". That approach adds an endian
+> > > argument and uses
+> > > writesl_be()/readsl_be() where necessary, e.g.:
+> > >=20
+> > > static inline void i3c_writel_fifo(void __iomem *addr, const void
+> > > *buf,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int nbytes, en=
+um i3c_fifo_endian
+> > > endian) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (endian)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 writesl_be(addr, buf, nbytes / 4);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 writesl(addr, buf, nbytes / 4);
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (nbytes & 3) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 u32 tmp =3D 0;
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 memcpy(&tmp, buf + (nbytes & ~3), nbytes & 3);
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 if (endian)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 write=
+sl_be(addr, &tmp, 1);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 else
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 write=
+sl(addr, &tmp, 1);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > }
+> > >=20
+> > >=20
+> Thanks,
+> Manikanta.
 
