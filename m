@@ -1,87 +1,47 @@
-Return-Path: <linux-kernel+bounces-832437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6832B9F507
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2D5B9F510
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D32384DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE0EB7AA549
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FB325FA13;
-	Thu, 25 Sep 2025 12:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB8F261573;
+	Thu, 25 Sep 2025 12:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZTiAQQir"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="O89KvNSq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2B215B135
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87181A5B9E;
+	Thu, 25 Sep 2025 12:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758804247; cv=none; b=Yv8JgpYGi1tsRKtgOL2YX/uadvddySsY+xE2JsCfwauJtXq1IffeB9HhT0SaKcA6FgqomC+AE/eetKNi5xkr6j56uwzZpNF1PoYBqmWeEi7Wk9YCMnw/+DCSpZAsrIl6tftTCMo5wMgQLcBuBlyNBLaR/ft8xoLwznRPrFEn6Kk=
+	t=1758804260; cv=none; b=j4Uu0iwOhko0iPKz0DnAx7YOZUUzZam1csfX5fpoq5EQ8NfeBYCYW2kzpeh7p6HtI4ejVL1SREivqGtODd4rAOxQDjAryf3CKmHLxDGPh8if/FmSlw4l7KZ/cb/t0tdUWZSbfRTzwA202u1YgYMWk2GRtyewemnbw36JCxe59zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758804247; c=relaxed/simple;
-	bh=FDZQOCz16djFlBDx5G+q/SJZvR1Nd4tnacSZ3RZpF6E=;
+	s=arc-20240116; t=1758804260; c=relaxed/simple;
+	bh=QmGmn3+dtNbLHQC1nbIC/IJWmcaevKdkI0kLT4TRyV8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HWzvGGtwG2g/cKYX9URizs+L4sJkFeGAwDCheHWb0Qbp2Yg7RRSRvTFEXfP6w+zjyNeeHWIAtIQqNWogqO2lPF124zlADjhOvwysat4aqohY4c1zPlU6l+rLSRAvxlTLf/YCBoxOI52xYF3tp2V8errIFybNCL/UmFnubTtcZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZTiAQQir; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9jmfi002152
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:44:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J1dwgELFlCnM0xIxl3rJVZougZALziWUncte4Klhh90=; b=ZTiAQQirl4hUHOrO
-	ABNQSD+zst6QwW3Mx5Htc8nHBSCq2PE+UFQiVFgJQ6MvE19n1shtl3QsK6CwWlDz
-	DGY0dNYq1GxRKV1Soz4p53iJGsRt0kmJmdeWvIGWmwmrCJuDjzEirwDpgjQNwsf7
-	RZFLR8OUodHYoRJO5sIyHeoIjS6ZNUPhehjQaI6gCdBPldzsxu2BuUGlWyTqClOD
-	zDjJgOWupElvQwst68F4g87Vk/Ycksl6CeEx4d6HuqAINQ4aVZeL9dw5NdbfqnQ+
-	sJshWOPmtEi4YWGFfgCVWXz3fYNGqaV4V3X9iTQLhY6fLOWAQ6rCNYHMnauoMfEf
-	hrTSxQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499k98r2qn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:44:04 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-819d2492a75so43935385a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 05:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758804243; x=1759409043;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J1dwgELFlCnM0xIxl3rJVZougZALziWUncte4Klhh90=;
-        b=f9/hX92lSgXp6Fl0ZOhSgSNcg9kQdFRxndG7j7Jfy2L3C93vOxDGv/AWNqEywwKmEu
-         vaj1SQOTL6wYL+hq46xZaKN9St2LloaAboLG11+UPsCz92WyLVUCPQ6M58bi+tRXRlwr
-         jUvtiURhG4Hir7eTduwlNRD4U6FfL1VQIc8P3UWKzMCEHNtGhnSwHYmHuXT8dWmtDSlJ
-         TnA76Desk3Yrbo7p6c/D49DhKLspQCUg5tvTyTVGXIjj1lv/UmLPAPayLMiUcuI7dRMy
-         yWj7fWbn8jhtbrl+zEPF8oUeAeXmvx/hoT7ZY/UUYyZBAbEnBhkPcuW3VEDNA5MjPnsA
-         eXUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3vdU1goWvWZOFV/bKPwK9EEC8c71iYH6SCl9yxcR4f7XaeMU2pU9JbzWqWsuIvcPqTYmv5ZJdI3/yUa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3n4eoeTrK7m2iQPyierP7D8i9J7GbiiEj7XF3pfKKe2+PbZEP
-	FjJVx23vh+IDcEfk5yAdRW//LpOtk3AqxcPV2Jm10V6rB+FaW+KvAKZRskRLQhFtMhdh6oM5jNw
-	ENjB9PMa172fMlqq5IyuZzA0QVvGdwzKhkhZEVlThWCt7iNlwErqIIfChMtwKOIwYebE=
-X-Gm-Gg: ASbGncvanQiNFX1MgN+SSUpK+s418j8qDhoqEWjL7neGsyQ0GKujg6ZKgz66HuvGWGE
-	k1/MrfFQzdsz5g4RJiY2YVLK1CWK8tLVLfpAwE5EmwwctA2TyXdTrdQvB7gNrd6x6AQXR2zErXX
-	fdv0U+qwMAqXmJGor+aoouno+PxOgpGKdpAaFEvytDh5cjZgG9q+9Ho1xeHV7HV+O09HbNoCRT9
-	sobPaOCL7Po69TG/eeuqnq1LP8bzmwasA2fyO4/YgGSKO49ueEVkPDMQ/Zs0ZK8dhWmmTTztmUa
-	Muv22/vJ+TuH7EktL8I884+U3l8ptHAuGCMsaiO/Xs3VdYNfSH7Wr2fB3/ArRhQQH6c8I99/wnk
-	mxLF7ASWbNy6Srcym2X6I0g==
-X-Received: by 2002:a05:620a:4888:b0:85a:dcb:a0fc with SMTP id af79cd13be357-85aea416316mr275179585a.13.1758804243443;
-        Thu, 25 Sep 2025 05:44:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTirFLDo0M0Czkw5tWy8aR4EZDdLw5DUbB9F6HAhp2U1yQ+4dTFZ34JK/WVzP/W4uKPnDE5g==
-X-Received: by 2002:a05:620a:4888:b0:85a:dcb:a0fc with SMTP id af79cd13be357-85aea416316mr275176485a.13.1758804242839;
-        Thu, 25 Sep 2025 05:44:02 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3545a9978bsm163475566b.95.2025.09.25.05.44.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 05:44:02 -0700 (PDT)
-Message-ID: <eea3ad4e-d656-4ee4-b4fd-2414ea78669f@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 14:43:59 +0200
+	 In-Reply-To:Content-Type; b=Qn1Iy9wKb0QJyus6lyXTJRKVB3/v+1r1juN+Ue0ZaG+IVypGkF3wpfahWlhqhwhbWkQX6V69cSIACjwcHQRH2HM5tXfLoB+xCF4qOkXJ6fHijVPl5F6+R8vvVYOgHI3vmqpihDiQcdeQzFtpK6SwXmTH/v8nE83pukPCkRo2pwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=O89KvNSq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EFBAD1AC5;
+	Thu, 25 Sep 2025 14:42:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758804172;
+	bh=QmGmn3+dtNbLHQC1nbIC/IJWmcaevKdkI0kLT4TRyV8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O89KvNSq+0Yw7Yuvl9ChFeh1WUbCT07bkSYIH20SKFYAeUOOVWr5P7mjqg32jLmNh
+	 JxCWGws5v89IDD9toYuWxxQmsc6GKCjNfw+4q5BPpiXGsntklFveYvabFnk2Fccsuh
+	 wIXQBW+/Psq+d6OZPbTX5GgXrv+tCzf27ejc3iRU=
+Message-ID: <364c3b35-81a0-4e93-ad3b-a0fff3a29365@ideasonboard.com>
+Date: Thu, 25 Sep 2025 15:44:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,55 +49,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] pinctrl: qcom: add the tlmm driver for Kaanapali
- platforms
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-References: <20250924-knp-tlmm-v1-0-acabb59ae48c@oss.qualcomm.com>
- <20250924-knp-tlmm-v1-2-acabb59ae48c@oss.qualcomm.com>
+Subject: Re: [PATCH v7 10/16] media: cadence: csi2rx: add multistream support
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev,
+ laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Cc: y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com,
+ vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ p.zabel@pengutronix.de, conor+dt@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, jai.luthra@ideasonboard.com,
+ changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com,
+ sjoerd@collabora.com, hverkuil+cisco@kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250911102832.1583440-1-r-donadkar@ti.com>
+ <20250911102832.1583440-11-r-donadkar@ti.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-tlmm-v1-2-acabb59ae48c@oss.qualcomm.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
+ wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
+ Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
+ eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
+ LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
+ G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
+ DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
+ 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
+ rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
+ Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
+ aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
+ ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
+ PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
+ VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
+ 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
+ uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
+ R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
+ sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
+ Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
+ PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
+ dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
+ qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
+ hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
+ DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
+ KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
+ 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
+ xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
+ UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
+ /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
+ 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
+ 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
+ mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
+ 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
+ suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
+ xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
+ m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
+ CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
+ CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
+ 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
+ ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
+ yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
+ 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
+In-Reply-To: <20250911102832.1583440-11-r-donadkar@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: PR51GKEOtrLPYhmtlSB-JXjKu9P4Nw6v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxOCBTYWx0ZWRfXz2BzI6s8+dvd
- cjQp3qbcgEMjShvdCCcq5n3aLKvlD+YLc3Ko+I9J1vS4HoYXhSE24enM3sIubOb9cbAZlihJsrf
- ItyWutv+TrXy3muudv7Qpa3DljGRiICRbz1Cz2E2iWwfGEVQ1WJUmsyYen33JO8MAVhIIvyBrLQ
- NeZGQSQmA9HMqVdOcmqrdpFkkFXBTffVLY4Iw0Pri4NXzC97yj73D3YJYO27tisMM5fT69mG7kO
- m3y0zeODM/31aZS7eHyPpl2EemEV2nKqdeZ5WRfyF2FQR+CjxnXche46qB9nInAScy8hdazneku
- FY/uY6Vshl842L7hiZ4kAx3sKAJXPgZcNLU4GjV1kS9eBikNTA/BP+z2X89i3hWqdG/86VVy3lS
- Mn7BmRig
-X-Proofpoint-ORIG-GUID: PR51GKEOtrLPYhmtlSB-JXjKu9P4Nw6v
-X-Authority-Analysis: v=2.4 cv=Dp1W+H/+ c=1 sm=1 tr=0 ts=68d53914 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=3KcoXW5xE102B6w2v2sA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200018
 
-On 9/25/25 1:16 AM, Jingyi Wang wrote:
-> Add support for Kaanapali TLMM configuration and control via the pinctrl
-> framework.
+Hi,
+
+On 11/09/2025 13:28, Rishikesh Donadkar wrote:
+> From: Jai Luthra <j-luthra@ti.com>
 > 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
+> Cadence CSI-2 bridge IP supports capturing multiple virtual "streams"
+> of data over the same physical interface using MIPI Virtual Channels.
+> 
+> While the hardware IP supports usecases where streams coming in the sink
+> pad can be broadcasted to multiple source pads, the driver will need
+> significant re-architecture to make that possible. The two users of this
+> IP in mainline linux are TI Shim and StarFive JH7110 CAMSS, and both
+> have only integrated the first source pad i.e stream0 of this IP. So for
+> now keep it simple and only allow 1-to-1 mapping of streams from sink to
+> source, without any broadcasting.
+> 
+> The enable_streams() API in v4l2 supports passing a bitmask to enable
+> each pad/stream combination individually on any media subdev. Use this
+> API instead of  s_stream() API.
+> 
+> Implement the enable_stream and disable_stream hooks in place of the
+> stream-unaware s_stream hook.
+> 
+> Implement a fallback s_stream hook that internally calls enable_stream
+> on each source pad, for consumer drivers that don't use multi-stream
+> APIs to still work. The helper function v4l2_subdev_s_stream_helper()
+> form the v4l2 framework is not used here as it is meant only for the
+> subedvs that have a single source pad and this hardware IP supports
+> having multiple source pads.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+<snip>
 
-Konrad
+> +static int csi2rx_enable_streams(struct v4l2_subdev *subdev,
+> +				 struct v4l2_subdev_state *state, u32 pad,
+> +				 u64 streams_mask)
+> +{
+> +	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+> +	u64 sink_streams;
+> +	int ret;
+> +
+> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
+> +						       CSI2RX_PAD_SINK,
+> +						       &streams_mask);
+> +
+> +	guard(mutex)(&csi2rx->lock);
+
+This looks a bit odd too. With enable/disable_streams, the state is
+already locked. What is the mutex protecting?
+
+j721e-csi2rx also has mutexes, and it's very unclear what they protect.
+This should be described in the code.
+
+I think in csi2rx the whole mutex can be just dropped.
+
+j721e-csi2rx is a bit more complex, but there also I would consider if
+and when the state lock protects the relevant parts already, and when
+another lock is needed, what is the sequence to lock/unlock (e.g. always
+csi->mutex first, then csi->subdev state lock), and make sure the code
+follows that.
+
+ Tomi
+
 
