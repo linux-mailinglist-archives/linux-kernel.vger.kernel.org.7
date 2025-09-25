@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-832522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04FAB9F8FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:27:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA7BB9F91F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D09E1C22828
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A66C3B50D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EB12264AA;
-	Thu, 25 Sep 2025 13:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCFF2397AA;
+	Thu, 25 Sep 2025 13:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdHcgEAk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfMZnx4P"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A91A83F9
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55DB1946DA
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758806786; cv=none; b=mKb0os4SACOMt80P7PpgV0C3p2+pn9AjrjLvU0PPxwk8K0oCVbuAywvQA+2tN+MYhlYOdIHCJxcde/AF9JlS/7X2PioTI3ObUvuVwr+rhQgftazX42cwykGz75uDZFtTvob1vdoaH0juaZSuxicaSN65gZtFyFreJIJsk0CG7+E=
+	t=1758806901; cv=none; b=dvHSg5ME2gr08GxNclE0Q16HM+R6+udsARRrfyEC6log2FEmDcIpaMvNqsHGA6jyf6hNKNOFXjGnv/lBsylnF9r/wfEoB2iJDiTA0poAF1KHjqnsq6QK3XJYFwCoUN+nR1MpYg7yGy5JfdgorPeD1QRumPw5yL0tdRPXcNf4Lis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758806786; c=relaxed/simple;
-	bh=88NOcHfKKYsahqEmL02itR928NeSctZtHmwIpVJ3FDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuRD420HJLXzGK0TobmvG07vVFtAvpAq9rnGRJSzEhU708FOW6XSpFNEDszYQLOamB3tpO5hxOHJ142PfcRdBJO201pCHVJDsIgzDEt59nb4JLZoN1Oe06mkiAOBtl9ZoAnPemkC5fAbMy/jnW9mur3l1Zs85UcHmD23jrgrgHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdHcgEAk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A85C4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758806786;
-	bh=88NOcHfKKYsahqEmL02itR928NeSctZtHmwIpVJ3FDk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bdHcgEAkEJmAs8eXzAlIYBsUMYr2nTi2cPGvx5tGG+kuNQDcVuc5Vz9PDvGKcqTgl
-	 Gqm7iVCTjUuBN/66+fdLoCOmTNW7EFIF8HGcmLB4qm+Lk2sh7r9kHbNz7I0aQ+ZFTd
-	 TeMOzsLF70DJvYhEHUl04xwt9l1sGuBxIJQp/toiCF4i9C3oTceUWyjRL9NbNZiGR7
-	 9m7SbxoKAYBBfpsVvNBBXr7TSHDImrT2gYZo1S6DOPvVFoTKBsQMVDpI1FTx+IYFHC
-	 U7TwW51+R2iJ0n0xCSxrx+Lh06whkrcL/EZOF5OpHPn2+4CmXGz1sjhEEHq2A3litn
-	 +mFVYG69AYuXQ==
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso612504a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:26:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWF5+UKJVDvUdRPqEKwHy4uFwS5sCsl22qp1FvrsGknNZZ7hOHKzqi+fQRlBes2lRgPnDxJDW8g2uKwQGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrDoO5lONZ7D7X2kUniOuvqBwHiTfP8B+3PP3DrmFm/xZy15DM
-	LTL0YvF3vTmAaMg8lW7C9u0LrC1701w3h/HVWQ7pN/Kxa2nknx2iP3ddvDMa0bo1kHxOEjRXWJt
-	sWKCjLwmVFzFs+pocTGd32+xgmnGM5es=
-X-Google-Smtp-Source: AGHT+IGsOMxlyxZ7mhUSjQt6C0Lc1FSkqDaXyZq/j5oElV/4P1h/YQwBHEjH7ZyXECfZVJr/eB5uTZx0o877OHXZ14o=
-X-Received: by 2002:a17:902:e890:b0:24c:a269:b6d5 with SMTP id
- d9443c01a7336-27ed493e891mr36124545ad.0.1758806786057; Thu, 25 Sep 2025
- 06:26:26 -0700 (PDT)
+	s=arc-20240116; t=1758806901; c=relaxed/simple;
+	bh=flAw5KKjXu42FlukgIcjdTtfBFEAB68+Z4z5lvAgfpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eYAKipqwRlAzT+1cvikNefAQ/o0Oaj/Mv3cEycSSZqEQVjUfOEipo34SFeZ0PgR4zz+X2Hl/fCoVbB4C332vc7ZzhSEGsWgMtHtp3uJqgOr7GhLf3QsXUPXO9f8j8oWEAjc6YFBQXvmjgZcxU4STTNN+7Xs4gt7SRxWQEhMUGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kfMZnx4P; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so1178334f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758806897; x=1759411697; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LhZs0QbdJYRw6FSQz/b2p4quCXTn98S2BMBiWzLFh48=;
+        b=kfMZnx4P99A4TvCSgt8C9naZK1lYcSYm8N3ZkFkGs9Nfi7o+r4PYy8N8/syHwh7h+z
+         Qi8xFpGiqi0YcSRnUUmKFFBqxaNKdwxN6/fSTqXgaMyq3OxmQXlYb21BvHVD/hcc62al
+         VZJwglDUcBq5LsgXRTt8U/4BY6dj7Mo5CYc9reOHSoPZDIvXeISQHW5rgwssPdM0l4ys
+         U6N6hGPSxY1S/KaPDJCmq+88MvT8oVsjOUpMf4BRKAXau6dnI/qI9alfL7nNJD3+Kifw
+         I5/Tb0NOfa0SOI2BEKkG3ttfD2tAKXAXbZfL2dKLmwH24hiwLIexeLWtQoD1QAPMkFVF
+         Hfug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758806897; x=1759411697;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LhZs0QbdJYRw6FSQz/b2p4quCXTn98S2BMBiWzLFh48=;
+        b=pYh6OmTd6c6l/vxMR2/20L28pDPB+14rNtzgJcD3MDhKmd6Tw9iMo/S8AMs4tf/Q17
+         bLWO/ZtwftcttK/qV4iE5aiN2Z5jyZdctg9pS0uhaJjoEYNYIVyvzo2H7ye3IAU5kTio
+         b3+4Wtlb1iQSxb/oP6DGGqRXxHcwvpKxIbbH+3EKs6RLwcDLIdebyx9Tl2g7GTJzb5x9
+         6VW1rjvl8jmXuAGMCJkjw7a1X0NQPllkvkSsjoymMwivJNvSSQl1c9MLrpPMEdRIaKkZ
+         CVF7V8cEVJb/VOgDa7hvw532LrflaKFBiSp7/PL6b05Qu7738k0MWYFtHBupTYj4Oo7M
+         VevQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzz0whkTAJUZRAo7u/JWha5smJ/0f6auGczj7U/eL5koj1aozA7A040aQ34WnPUmZ65Uw09yb4kzQej8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDzJmkVNBLA6zXejvvY7ECk5Md1mxY7Fuev40Un5Niowr6+Pxm
+	CkaFf6HLtgNWQxtwejFhJYHJ8FTjoXFCqYmfHNH/IHzsOQiei/csTECvD7fqBeVRX1g=
+X-Gm-Gg: ASbGncvo63+YTZRLV2X2kF3dg4kvJGGHKsStCCRmE1UM9HD4fV21/7wm2d2vroMUJEs
+	a9qx29VzG9QFKE/c86KtHGRxlYgulJADh+rYhSlx1UP+xcTSNJcpjqtk7mMdvjkXY29CWWL4MuP
+	QQJ514jICfKh0VIL2RtOSCxlkQ09c86vncpzJkjXhiKRDu3wYImuBioeMpoGVvDs0cQrhLygamF
+	LY8fczb7jFIhohRyi2lXzXnUojZEeZIf/VkeWWRZaYGVrxCE7oXkjh/3P1IKWIGWZlzRi1/IhN0
+	1vNbMlYcOcMHpt6HUvk9tNKbn0RZMtY22IUFx6H/YMcWygcVdr5NOOgtJIo5UoimLTeCrqPB3G1
+	bUgVOF58HdXJWs2fKHKxqJg9N0TiF
+X-Google-Smtp-Source: AGHT+IE8huo9gSXYF3zbdT3uLvSy0gSrDiXlprLcEpyFX1ppWGNriITL3c4SgFMXRwSFCbcgfglmbg==
+X-Received: by 2002:a5d:64e8:0:b0:3ff:17ac:a34b with SMTP id ffacd0b85a97d-40e499acbf7mr3135758f8f.42.1758806897199;
+        Thu, 25 Sep 2025 06:28:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc7e2c6b3sm3257259f8f.54.2025.09.25.06.28.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 06:28:16 -0700 (PDT)
+Date: Thu, 25 Sep 2025 16:28:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 net-next] dpll: zl3073x: Fix double free in
+ zl3073x_devlink_flash_update()
+Message-ID: <aNVDbcIQq4RmU_fl@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com> <20250924-knp-dts-v1-18-3fdbc4b9e1b1@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-dts-v1-18-3fdbc4b9e1b1@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 25 Sep 2025 22:26:13 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPfY-CpE_aKd910PQ2+u9ux2EvuVEt9ArzhdVCJcTQJUQQ@mail.gmail.com>
-X-Gm-Features: AS18NWDBrwXfUaWFEPV9rWtwVaLLmke2vezdq5SVvr5UMJmIr9OvdeTS1SZ8EMc
-Message-ID: <CAJKOXPfY-CpE_aKd910PQ2+u9ux2EvuVEt9ArzhdVCJcTQJUQQ@mail.gmail.com>
-Subject: Re: [PATCH 18/20] arm64: dts: qcom: kaanapali-mtp: Add audio support
- (WSA8845, WCD9395, DMIC)
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com, 
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com, 
-	Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 25 Sept 2025 at 09:18, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
->
-> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->
-> Add support for audio on the Kaanapali MTP platform by introducing device
-> tree nodes for WSA8845 smart speaker amplifier for playback, DMIC
-> microphone for capture, and sound card routing. The WCD9395 codec is add
-> to supply MIC-BIAS, for enabling onboard microphone capture.
->
-> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 226 +++++++++++++++++++++++++++++
->  1 file changed, 226 insertions(+)
->
+The zl3073x_devlink_flash_prepare() function calls zl3073x_fw_free() and
+the caller, zl3073x_devlink_flash_update(), also calls that same free
+function so it leads to a double free.  Delete the extra free.
 
-Audio is not a separate feature from USB. It's simply incomplete
-picture which is wrong for case of submitting everything at once.
-Either you release early, release often (which I asked you many
-times), or you submit complete work.
+Fixes: a1e891fe4ae8 ("dpll: zl3073x: Implement devlink flash callback")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+---
+v2: Fix the commit message.  Words in wrong order == nonsense.
 
-You don't understand how your own SoC is organized and create fake
-split and inflated patch count just, as someone admitted, to have LWN
-stats.
+ drivers/dpll/zl3073x/devlink.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-This work is incomplete, so please start organizing patches per
-logical features, not per your patch count and company KPI
-.
-NAK, incomplete patch and previously communicated as non working
+diff --git a/drivers/dpll/zl3073x/devlink.c b/drivers/dpll/zl3073x/devlink.c
+index f55d5309d4f9..ccc22332b346 100644
+--- a/drivers/dpll/zl3073x/devlink.c
++++ b/drivers/dpll/zl3073x/devlink.c
+@@ -167,7 +167,6 @@ zl3073x_devlink_flash_prepare(struct zl3073x_dev *zldev,
+ 		zl3073x_devlink_flash_notify(zldev,
+ 					     "Utility is missing in firmware",
+ 					     NULL, 0, 0);
+-		zl3073x_fw_free(zlfw);
+ 		return -ENOEXEC;
+ 	}
+ 
+-- 
+2.51.0
 
