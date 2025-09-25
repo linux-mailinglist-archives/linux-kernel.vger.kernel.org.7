@@ -1,291 +1,418 @@
-Return-Path: <linux-kernel+bounces-832136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468EEB9E6E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C99FB9E6D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1267B324A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119F919C4097
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6B02EAB68;
-	Thu, 25 Sep 2025 09:38:23 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B452EA16C;
-	Thu, 25 Sep 2025 09:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF3F2EAD15;
+	Thu, 25 Sep 2025 09:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c2d8X3yC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A44D2EAB70
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758793102; cv=none; b=oniB0RoDEGVnzq2Ec9O0k6xPj7yCNWEh+TlVbBgJBtNSTqeJVgFkkVqVipyvETaC54Ndo1+QAynHVxKOESvMAYVa/Vxn/yYTpk6mNIkcgBzZB8VeWWPn2b9pg9VS4inhHJWBaitLTgAHYpxF1MhVsEVtOg8JuDpiwIqQuVJNGmM=
+	t=1758793110; cv=none; b=XkD16ssdRWsZa4mAk/+t/+ReAhSnODhLxDFAejw2p9xdi68PkeBKMVOSjeSEM3SRSD9sZatxe9dgHsagamylsPyxOGfJypkaur0PRqawEcKt7Zn2n8HxqteQf66FcUXLqkE+XlgaA7WfKP/CdonnLvqwfGgg91z7H9E/Y9XfoLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758793102; c=relaxed/simple;
-	bh=0Y7S9OuZygMivDm1/Bj+DaHoFptTchPt5fCqdE/SHaY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=k6/iM+ZVhj6kC1tGvEmPOsg6tw5JzJJl5NDPEFOTuiZcAGYopqTv616332fqZHXAyEyoEGX6swXgae8S+BY7aWxxgSmAor7Vb0HaOPPTLNdAjQc95MoEBlmVX5gIgfME2fK7rx3nvRO7snEewPNXd6ixD63/Oz65yugOpnhxj48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from hehuan1$eswincomputing.com ( [10.12.96.103] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 25 Sep 2025 17:37:59 +0800 (GMT+08:00)
-Date: Thu, 25 Sep 2025 17:37:59 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5L2V5qyi?= <hehuan1@eswincomputing.com>
-To: "Conor Dooley" <conor@kernel.org>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,
-	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com,
-	luyulin@eswincomputing.com, dongxuyang@eswincomputing.com,
-	zhangsenchuan@eswincomputing.com, weishangjuan@eswincomputing.com,
-	lizhi2@eswincomputing.com, caohang@eswincomputing.com
-Subject: Re: Re: Re: [PATCH v2 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add
- Eswin EIC7700
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250924-visiting-sasquatch-c58f782ff686@spud>
-References: <20250912093451.125-1-hehuan1@eswincomputing.com>
- <20250912093713.142-1-hehuan1@eswincomputing.com>
- <20250912-pork-oaf-3480d3d0ef67@spud>
- <674372d7.16fd.199751b489c.Coremail.hehuan1@eswincomputing.com>
- <20250924-visiting-sasquatch-c58f782ff686@spud>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1758793110; c=relaxed/simple;
+	bh=aeqNECXbMkwPVyvcyM0SdqfKQxXeIIL+ppxOzvkyHUo=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=MCnBwvuWmzSZXXfEg+Ph8bV5VEVIgSiFq8v81TZf74eOV6698A2B0MiDVURQE0USEqQTPW000nK5YUvXBT9gev5T13Kt5CShMPlK2DqvMszMDz88qCkDJ2QiZ6n2yUNsbhs4PCkAZYcUaV++uCXp0Mck5SEdQKmqfS7FPgQLyIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c2d8X3yC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758793106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/7R8e7HnHKY9+GsXlu+LBh++ixa6XmYiE/qXIHPylZI=;
+	b=c2d8X3yC1Ewew+JnafcczqcrPjQwLBIE6rDE5G1wnHFxxk/30yVBQ9PW+Tw/FZrWtl9ry9
+	dC6HVhhpYdMszlfCDhNzUKmJK10wsKq2ZxhszJ7Ubak6DaXRP6YDRG3SBghu66kueecrkp
+	0jaq7iFU+tkJdDS+rAu7rjSSQ4Nfrmo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-110-XRArDAXENDKth_LibLJw8g-1; Thu,
+ 25 Sep 2025 05:38:22 -0400
+X-MC-Unique: XRArDAXENDKth_LibLJw8g-1
+X-Mimecast-MFC-AGG-ID: XRArDAXENDKth_LibLJw8g_1758793101
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D8EF1800297;
+	Thu, 25 Sep 2025 09:38:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 32F451800451;
+	Thu, 25 Sep 2025 09:38:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Paulo Alcantara <pc@manguebit.org>, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: [PATCH v3] netfs: fix reference leak
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7e07388c.187f.199803c99cf.Coremail.hehuan1@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA31pR3DdVofKLeAA--.25964W
-X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/1tbiAgEQCmjUHVQYGgAA
-	su
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <928356.1758793097.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 25 Sep 2025 10:38:17 +0100
+Message-ID: <928357.1758793097@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-RGVhciBDb25vciwKVGhhbmsgeW91IGZvciB5b3VyIHZhbHVhYmxlIGFuZCBwcm9mZXNzaW9uYWwg
-c3VnZ2VzdGlvbnMuClBsZWFzZSBmaW5kIG91ciBleHBsYW5hdGlvbnMgZW1iZWRkZWQgYmVsb3cg
-eW91ciBjb21tZW50cyBpbiB0aGUKb3JpZ2luYWwgZW1haWwuCgpCZXN0IHJlZ2FyZHMsCgpIZSBI
-dWFuCkVzd2luIENvbXB1dGluZwoKCj4gLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQo+IOWPkeS7tuS6
-ujogIkNvbm9yIERvb2xleSIgPGNvbm9yQGtlcm5lbC5vcmc+Cj4g5Y+R6YCB5pe26Ze0OjIwMjUt
-MDktMjUgMDM6NDM6MTUgKOaYn+acn+WbmykKPiDmlLbku7bkuro6IOS9leasoiA8aGVodWFuMUBl
-c3dpbmNvbXB1dGluZy5jb20+Cj4g5oqE6YCBOiB1bGYuaGFuc3NvbkBsaW5hcm8ub3JnLCByb2Jo
-QGtlcm5lbC5vcmcsIGtyemsrZHRAa2VybmVsLm9yZywgY29ub3IrZHRAa2VybmVsLm9yZywganN6
-aGFuZ0BrZXJuZWwub3JnLCBhZHJpYW4uaHVudGVyQGludGVsLmNvbSwgcC56YWJlbEBwZW5ndXRy
-b25peC5kZSwgbGludXgtbW1jQHZnZXIua2VybmVsLm9yZywgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
-bC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcsIG5pbmd5dUBlc3dpbmNvbXB1dGlu
-Zy5jb20sIGxpbm1pbkBlc3dpbmNvbXB1dGluZy5jb20sIHBpbmtlc2gudmFnaGVsYUBlaW5mb2No
-aXBzLmNvbSwgeHV4aWFuZ0Blc3dpbmNvbXB1dGluZy5jb20sIGx1eXVsaW5AZXN3aW5jb21wdXRp
-bmcuY29tLCBkb25neHV5YW5nQGVzd2luY29tcHV0aW5nLmNvbSwgemhhbmdzZW5jaHVhbkBlc3dp
-bmNvbXB1dGluZy5jb20sIHdlaXNoYW5nanVhbkBlc3dpbmNvbXB1dGluZy5jb20sIGxpemhpMkBl
-c3dpbmNvbXB1dGluZy5jb20sIGNhb2hhbmdAZXN3aW5jb21wdXRpbmcuY29tCj4g5Li76aKYOiBS
-ZTogUmU6IFtQQVRDSCB2MiAxLzJdIGR0LWJpbmRpbmdzOiBtbWM6IHNkaGNpLW9mLWR3Y21zaGM6
-IEFkZCBFc3dpbiBFSUM3NzAwCj4gCj4gT24gVHVlLCBTZXAgMjMsIDIwMjUgYXQgMDE6NDU6NDZQ
-TSArMDgwMCwg5L2V5qyiIHdyb3RlOgo+ID4gRGVhciBDb25vciwKPiA+IFRoYW5rIHlvdSBmb3Ig
-eW91ciB2YWx1YWJsZSBhbmQgcHJvZmVzc2lvbmFsIHN1Z2dlc3Rpb25zLgo+ID4gUGxlYXNlIGZp
-bmQgb3VyIGV4cGxhbmF0aW9ucyBlbWJlZGRlZCBiZWxvdyB5b3VyIGNvbW1lbnRzIGluIHRoZQo+
-ID4gb3JpZ2luYWwgZW1haWwuCj4gPiAKPiA+IEJlc3QgcmVnYXJkcywKPiA+IAo+ID4gSGUgSHVh
-bgo+ID4gRXN3aW4gQ29tcHV0aW5nCj4gPiAKPiA+ID4gLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQo+
-ID4gPiDlj5Hku7bkuro6ICJDb25vciBEb29sZXkiIDxjb25vckBrZXJuZWwub3JnPgo+ID4gPiDl
-j5HpgIHml7bpl7Q6MjAyNS0wOS0xMyAwMzoxMDowNCAo5pif5pyf5YWtKQo+ID4gPiDmlLbku7bk
-uro6IGhlaHVhbjFAZXN3aW5jb21wdXRpbmcuY29tCj4gPiA+IOaKhOmAgTogdWxmLmhhbnNzb25A
-bGluYXJvLm9yZywgcm9iaEBrZXJuZWwub3JnLCBrcnprK2R0QGtlcm5lbC5vcmcsIGNvbm9yK2R0
-QGtlcm5lbC5vcmcsIGpzemhhbmdAa2VybmVsLm9yZywgYWRyaWFuLmh1bnRlckBpbnRlbC5jb20s
-IHAuemFiZWxAcGVuZ3V0cm9uaXguZGUsIGxpbnV4LW1tY0B2Z2VyLmtlcm5lbC5vcmcsIGRldmlj
-ZXRyZWVAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLCBuaW5n
-eXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRpbmcuY29tLCBwaW5rZXNo
-LnZhZ2hlbGFAZWluZm9jaGlwcy5jb20sIHh1eGlhbmdAZXN3aW5jb21wdXRpbmcuY29tLCBsdXl1
-bGluQGVzd2luY29tcHV0aW5nLmNvbSwgZG9uZ3h1eWFuZ0Blc3dpbmNvbXB1dGluZy5jb20sIHpo
-YW5nc2VuY2h1YW5AZXN3aW5jb21wdXRpbmcuY29tLCB3ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRp
-bmcuY29tLCBsaXpoaTJAZXN3aW5jb21wdXRpbmcuY29tLCBjYW9oYW5nQGVzd2luY29tcHV0aW5n
-LmNvbQo+ID4gPiDkuLvpopg6IFJlOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczogbW1jOiBz
-ZGhjaS1vZi1kd2Ntc2hjOiBBZGQgRXN3aW4gRUlDNzcwMAo+ID4gPiAKPiA+ID4gT24gRnJpLCBT
-ZXAgMTIsIDIwMjUgYXQgMDU6Mzc6MTNQTSArMDgwMCwgaGVodWFuMUBlc3dpbmNvbXB1dGluZy5j
-b20gd3JvdGU6Cj4gPiA+ID4gRnJvbTogSHVhbiBIZSA8aGVodWFuMUBlc3dpbmNvbXB1dGluZy5j
-b20+Cj4gPiA+ID4gCj4gPiA+ID4gRUlDNzcwMCB1c2UgU3lub3BzeXMgZHdjbXNoYyBJUCBmb3Ig
-U0QvZU1NQyBjb250cm9sbGVycy4KPiA+ID4gPiBBZGQgRXN3aW4gRUlDNzcwMCBzdXBwb3J0IGlu
-IHNkaGNpLW9mLWR3Y21zaGMueWFtbC4KPiA+ID4gPiAKPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBI
-dWFuIEhlIDxoZWh1YW4xQGVzd2luY29tcHV0aW5nLmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAg
-Li4uL2JpbmRpbmdzL21tYy9zbnBzLGR3Y21zaGMtc2RoY2kueWFtbCAgICAgIHwgODEgKysrKysr
-KysrKysrKysrKystLQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgNzUgaW5zZXJ0aW9ucygrKSwg
-NiBkZWxldGlvbnMoLSkKPiA+ID4gPiAKPiA+ID4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL21tYy9zbnBzLGR3Y21zaGMtc2RoY2kueWFtbCBiL0RvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tbWMvc25wcyxkd2Ntc2hjLXNkaGNpLnlhbWwK
-PiA+ID4gPiBpbmRleCBmODgyMjE5YTBhMjYuLmUwZjM0YmMyOGUwYyAxMDA2NDQKPiA+ID4gPiAt
-LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbW1jL3NucHMsZHdjbXNoYy1z
-ZGhjaS55YW1sCj4gPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L21tYy9zbnBzLGR3Y21zaGMtc2RoY2kueWFtbAo+ID4gPiA+IEBAIC0zMCw2ICszMCw3IEBAIHBy
-b3BlcnRpZXM6Cj4gPiA+ID4gICAgICAgICAgICAtIHNvcGhnbyxzZzIwMDItZHdjbXNoYwo+ID4g
-PiA+ICAgICAgICAgICAgLSBzb3BoZ28sc2cyMDQyLWR3Y21zaGMKPiA+ID4gPiAgICAgICAgICAg
-IC0gdGhlYWQsdGgxNTIwLWR3Y21zaGMKPiA+ID4gPiArICAgICAgICAgIC0gZXN3aW4sZWljNzcw
-MC1kd2Ntc2hjCj4gPiA+ID4gIAo+ID4gPiA+ICAgIHJlZzoKPiA+ID4gPiAgICAgIG1heEl0ZW1z
-OiAxCj4gPiA+ID4gQEAgLTUyLDE3ICs1Myw1MSBAQCBwcm9wZXJ0aWVzOgo+ID4gPiA+ICAgICAg
-bWF4SXRlbXM6IDUKPiA+ID4gPiAgCj4gPiA+ID4gICAgcmVzZXQtbmFtZXM6Cj4gPiA+ID4gLSAg
-ICBpdGVtczoKPiA+ID4gPiAtICAgICAgLSBjb25zdDogY29yZQo+ID4gPiA+IC0gICAgICAtIGNv
-bnN0OiBidXMKPiA+ID4gPiAtICAgICAgLSBjb25zdDogYXhpCj4gPiA+ID4gLSAgICAgIC0gY29u
-c3Q6IGJsb2NrCj4gPiA+ID4gLSAgICAgIC0gY29uc3Q6IHRpbWVyCj4gPiA+ID4gKyAgICBtYXhJ
-dGVtczogNQo+ID4gPiA+ICAKPiA+ID4gPiAgICByb2NrY2hpcCx0eGNsay10YXBudW06Cj4gPiA+
-ID4gICAgICBkZXNjcmlwdGlvbjogU3BlY2lmeSB0aGUgbnVtYmVyIG9mIGRlbGF5IGZvciB0eCBz
-YW1wbGluZy4KPiA+ID4gPiAgICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRp
-b25zL3VpbnQ4Cj4gPiA+ID4gIAo+ID4gPiA+ICsgIGNsb2NrLW91dHB1dC1uYW1lczoKPiA+ID4g
-PiArICAgIG1heEl0ZW1zOiAxCj4gPiA+ID4gKyAgICBkZXNjcmlwdGlvbjoKPiA+ID4gPiArICAg
-ICAgVGhlIG5hbWUgb2YgdGhlIGNsb2NrIG91dHB1dCByZXByZXNlbnRpbmcgdGhlIGNhcmQgY2xv
-Y2ssCj4gPiA+ID4gKyAgICAgIGNvbnN1bWVkIGJ5IHRoZSBQSFkuCj4gPiA+IAo+ID4gPiBZb3Ug
-aGF2ZSBvbmUgY2xvY2ssIHdoeSBkbyB5b3UgbmVlZCB0aGlzPwo+ID4gCj4gPiBUaGFuayB5b3Ug
-Zm9yIHRoZSBmZWVkYmFjay7CoEkgd2lsbCByZW1vdmUgaXQgaW4gdGhlIG5leHQgdmVyc2lvbi4K
-PiA+IAo+ID4gPiAKPiA+ID4gPiArCj4gPiA+ID4gKyAgJyNjbG9jay1jZWxscyc6Cj4gPiA+ID4g
-KyAgICBlbnVtOiBbMF0KPiA+ID4gCj4gPiA+IGNvbnN0OiAwCj4gPiA+IAo+ID4gPiA+ICsgICAg
-ZGVzY3JpcHRpb246Cj4gPiA+ID4gKyAgICAgIFNwZWNpZmllcyBob3cgbWFueSBjZWxscyBhcmUg
-dXNlZCB3aGVuIHJlZmVyZW5jaW5nIHRoZQo+ID4gPiA+ICsgICAgICBleHBvcnRlZCBjbG9jayBm
-cm9tIGFub3RoZXIgbm9kZS4gVGhpcyBwcm9wZXJ0eSBpbmRpY2F0ZXMKPiA+ID4gPiArICAgICAg
-dGhhdCB0aGUgY2xvY2sgb3V0cHV0IGhhcyBubyBleHRyYSBwYXJhbWV0ZXJzIGFuZCByZXByZXNl
-bnRzCj4gPiA+ID4gKyAgICAgIHRoZSBjYXJkIGNsb2NrLgo+ID4gPiAKPiA+ID4gVGhpcyBkZXNj
-cmlwdGlvbiBpcyBub3QgbmVlZGVkLgo+ID4gPiAKPiA+ID4gPiArCj4gPiA+ID4gKyAgZXN3aW4s
-aHNwLXNwLWNzcjoKPiA+ID4gPiArICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmlu
-aXRpb25zL3BoYW5kbGUtYXJyYXkKPiA+ID4gPiArICAgIGl0ZW1zOgo+ID4gPiA+ICsgICAgICAt
-IGRlc2NyaXB0aW9uOiBQaGFuZGxlIHRvIEhTUChIaWdoLVNwZWVkIFBlcmlwaGVyYWwpIGRldmlj
-ZQo+ID4gPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBPZmZzZXQgb2YgdGhlIHN0YWJpbGl0eSBz
-dGF0dXMgcmVnaXN0ZXIgZm9yCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIGludGVybmFs
-IGNsb2NrCj4gPiA+ID4gKyAgICAgIC0gZGVzY3JpcHRpb246IE9mZnNldCBvZiB0aGUgc3RhYmls
-aXR5IHJlZ2lzdGVyIGZvciBob3N0Cj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJlZ3Vs
-YXRvciB2b2x0YWdlLgo+ID4gPiA+ICsgICAgZGVzY3JpcHRpb246IHwKPiA+ID4gPiArICAgICAg
-SGlnaC1TcGVlZCBQZXJpcGhlcmFsIGRldmljZSBuZWVkZWQgdG8gY29uZmlndXJlIGludGVybmFs
-Cj4gPiA+ID4gKyAgICAgIGNsb2NrcywgYW5kIHRoZSBwb3dlci4KPiA+ID4gPiArCj4gPiA+ID4g
-KyAgZXN3aW4sc3lzY3JnLWNzcjoKPiA+ID4gPiArICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlh
-bWwjL2RlZmluaXRpb25zL3BoYW5kbGUtYXJyYXkKPiA+ID4gPiArICAgIGl0ZW1zOgo+ID4gPiA+
-ICsgICAgICAtIGRlc2NyaXB0aW9uOiBQaGFuZGxlIHRvIHN5c3RlbSBDUkcoU3lzdGVtIENsb2Nr
-IGFuZCBSZXNldAo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICBHZW5lcmF0b3IpIGRldmlj
-ZQo+ID4gPiA+ICsgICAgICAtIGRlc2NyaXB0aW9uOiBPZmZzZXQgb2YgY29yZSBjbG9jayBjb250
-cm9sIHJlZ2lzdGVyCj4gPiA+ID4gKyAgICBkZXNjcmlwdGlvbjogfAo+ID4gPiA+ICsgICAgICBT
-eXN0ZW0gQ2xvY2sgYW5kIFJlc2V0IEdlbmVyYXRvciBkZXZpY2UgbmVlZGVkIHRvIGNvbmZpZ3Vy
-ZQo+ID4gPiA+ICsgICAgICBjb3JlIGNsb2NrLgo+ID4gPiAKPiA+ID4gVGhpcyByZWVrcyBvZiBp
-bXByb3BlciBjbG9jayB0cmVlIGRlc2NyaXB0aW9uLiBXaHkgY2FuIHlvdSBub3QganVzdAo+ID4g
-PiByZXF1ZXN0IHRoZSByYXRlIHRoYXQgeW91IG5lZWQgdmlhIHRoZSBjb21tb24gY2xrIGZyYW1l
-d29yaz8gTGlrZXdpc2UKPiA+ID4gZm9yIHJlc2V0LiBZb3UgYWxyZWFkeSBoYXZlIGEgY2xvY2tz
-IHByb3BlcnR5IHRoYXQgaGFzIHRvIGluY2x1ZGUgdGhlCj4gPiA+IGNvcmUgY2xvY2ssIHNvIEkg
-ZG9uJ3Qgc2VlIHdoeSB5b3UgbmVlZCBhbm90aGVyIHByb3BlcnR5IHRvIGdldCBhcm91bmQKPiA+
-ID4gaXQuCj4gPiAKPiA+IFRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrLiBZb3UgYXJlIGFic29s
-dXRlbHkgcmlnaHQ7IFdlJ3ZlIHRha2VuIHlvdXIKPiA+IGFkdmljZS4gSW4gdjMgb2YgdGhlIHBh
-dGNoc2V0LCB3ZSBoYXZlIGNvbXBsZXRlbHkgcmVtb3ZlZCB0aGXCoAo+ID4gZXN3aW4sc3lzY3Jn
-LWNzcsKgcHJvcGVydHkuIFRoZSBkZXZpY2UgdHJlZSBiaW5kaW5nIG5vdyByZWxpZXMgc29sZWx5
-Cj4gPiBvbiB0aGUgc3RhbmRhcmTCoGNsb2Nrc8KgYW5kIGNsb2NrLW5hbWVzwqBwcm9wZXJ0aWVz
-IHRvIGFjcXVpcmUgdGhlCj4gPiBuZWNlc3NhcnkgY2xvY2suCj4gCj4gT2theSBjb29sLgo+IAo+
-ID4gPiBBcyBhIHJlc3VsdCwgSSdtIGFsc28gc3VzcGljaW91cyBvZiB5b3VyIGhzcC1zcC1jc3Is
-IGJ1dCB0aGVzZSBhdCBsZWFzdAo+ID4gPiBhcHBlYXIgdG8gYmUgaW50ZXJuYWwgY2xvY2tzIGlm
-IHlvdXIgZGVzY3JpcHRpb24gaXMgdG8gYmUgYmVsaWV2ZWQuCj4gPiA+IEknZCBsaWtlIHlvdSB0
-byBleHBsYWluIGV4YWN0bHkgd2hhdCB0aG9zZSBjbG9ja3MgZG8gYW5kIHdoYXQgdGhlICJIU1Ai
-Cj4gPiA+IGFjdHVhbGx5IGlzLiBXaGF0IG90aGVyIHBlcmlwaGVyYWxzIHVzZSBpdD8KPiA+IAo+
-ID4gVGhhbmsgeW91IGZvciByYWlzaW5nIHRoaXMuIFlvdXIgY29uY2VybnMgcmVnYXJkaW5nIHRo
-ZSBoc3Atc3AtY3NyCj4gPiBjbG9ja3MgYXJlIHZhbGlkLgo+ID4gVGhlIGZ1bmN0aW9uYWxpdHkg
-YW5kIHB1cnBvc2Ugb2YgdGhlIEhTUCAoaHNwLXNwLWNzcikgd2VyZSBleHBsYWluZWQKPiA+IGlu
-IG91ciBwcmV2aW91cyBwYXRjaCBzZXJpZXMgZm9yIHRoZSBVU0IgbW9kdWxlLiBUaGUgcmVsZXZh
-bnQKPiA+IGRpc2N1c3Npb24gY2FuIGJlIGZvdW5kIGhlcmU6Cj4gPiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9saW51eC11c2IvMTc3MzFhMTMuMWNjZS4xOTk3NGRmYzY0ZC5Db3JlbWFpbC5jYW9o
-YW5nQGVzd2luY29tcHV0aW5nLmNvbS8KPiA+IFBsZWFzZSBsZXQgdXMga25vdyB0aGlzIGV4cGxh
-bmF0aW9uIGhhcyBhZGRyZXNzZWQgeW91ciBkb3VidHMuIFdlJ3JlCj4gPiBoYXBweSB0byBwcm92
-aWRlIGZ1cnRoZXIgZGV0YWlscyBpZiBuZWVkZWQuCj4gCj4gSSdsbCBhZGRyZXNzIHRoaXMgb24g
-dGhlIHVzYiB0aHJlYWQsIHRoYW5rcyBmb3IgdGhlIGV4cGxhbmF0aW9uIHRoZXJlLgo+IAo+ID4g
-PiBBbHNvLCB5b3VyIGRyaXZlciB0dXJucyBvbiB0aGlzIGhzcCBjbG9jayBidXQgbmV2ZXIgdHVy
-bnMgaXQgb2ZmLiBTYW1lCj4gPiA+IGZvciB0aGUgcG93ZXIuCj4gPiAKPiA+IFRoZSB3cml0ZXMg
-dG8gaHNwX2ludF9zdGF0dXMgYW5kIGhzcF9wd3JfY3RybCBhcmUgbm90IGVuYWJsaW5nIGNsb2Nr
-cwo+ID4gb3IgcG93ZXIgcmFpbHMuVGhleSBhcmUgc3RhYmlsaXR5IGFzc2VydGlvbnMuCj4gCj4g
-RG8geW91IHN0aWxsIG5lZWQgdG8gInJlbW92ZSIgdGhlIGFzc2VydGlvbnMgaWYgdGhlIGRyaXZl
-ciBpcyByZW1vdmVkLAo+IGFuZCB0aGUgY2xvY2tzIGdldCBkaXNhYmxlZD8gT3IgaXMgdGhhdCBu
-b3QgYSBjb25jZXJuLCBiZWNhdXNlIHRoZQo+IGhhcmR3YXJlIGNhbid0IGRvIGFueXRoaW5nIHJl
-bGV2YW50IHdpdGhvdXQgdGhlIGRyaXZlciBsb2FkZWQ/IElmIGl0O3MKPiBub3QgYSBjb25jZXJu
-LCB0aGVuIHRoYXQgc2VlbXMgb2theSB0byBtZS4KClRoZSB3cml0ZXMgdG8gaHNwX2ludF9zdGF0
-dXMgYW5kIGhzcF9wd3JfY3RybCBhcmUganVzdCBzdGF0dXMgaW5kaWNhdG9ycy4KVGhleSBhc3Nl
-cnQgdGhhdCBjbG9ja3MgYW5kIHZvbHRhZ2VzIGFyZSBzdGFibGUuIFRoZXJlIGlzIG5vIG5lZWQg
-dG8gY2xlYXIKdGhlc2UgYXNzZXJ0aW9ucyB3aGVuIHRoZSBkcml2ZXIgaXMgcmVtb3ZlZCBvciBj
-bG9ja3MgYXJlIGRpc2FibGVkLiBUaGlzCmlzIGJlY2F1c2UgdGhlIGhhcmR3YXJlIGNhbm5vdCBw
-ZXJmb3JtIGFueSByZWxldmFudCBvcGVyYXRpb25zIHdpdGhvdXQgdGhlCmRyaXZlciBsb2FkZWQu
-IFdoZXRoZXIgdGhlc2UgcmVnaXN0ZXJzIGFyZSB3cml0dGVuIG9yIG5vdCBoYXMgbm8gaW1wYWN0
-IG9uCmhhcmR3YXJlIGJlaGF2aW9yIHdoZW4gdGhlIGNsb2NrcyBhcmUgb2ZmLgoKPiA+IEFzc2Vy
-dCBjbG9jayBzdGFiaWxpdHk6IFdyaXRlIGEgdmFsdWUgdG8gdGhlIGhzcF9pbnRfc3RhdHVzIHJl
-Z2lzdGVyLgo+ID4gVGhpcyBzaWduYWxzIHRvIHRoZSBlTU1DIGNvbnRyb2xsZXIgdGhhdCBwbGF0
-Zm9ybSBjbG9ja3MgKGF4aSBtYXN0ZXIKPiA+IGJ1cyBjbG9jaywgaW50ZXJuYWwgY29yZSBiYXNl
-IGNsb2NrLCB0aW1lciBjbG9jaykgYXJlIGVuYWJsZWQgYW5kCj4gPiBzdGFibGUuCj4gPiBBc3Nl
-cnQgdm9sdGFnZSBzdGFiaWxpdHk6IFdyaXRlIGEgdmFsdWUgdG8gaHNwX3B3cl9jdHJsLiBUaGlz
-IHNpZ25hbHMKPiA+IHRoYXQgVkREIGlzIHN0YWJsZSBhbmQgcGVybWl0cyB0cmFuc2l0aW9uIHRv
-IGhpZ2gtc3BlZWQgbW9kZXMgKGUuZy4sCj4gPiBVSFMtSSkuCj4gPiAKPiA+ID4gCj4gPiA+IEkg
-d2FudCB0byBzZWUgdGhlIGZ1bGwgZHRzIGZvciB3aGF0IHlvdSdyZSBkb2luZyBoZXJlIGJlZm9y
-ZSBJIGFwcHJvdmUKPiA+ID4gdGhpcywgdGhlcmUncyB0b28gbXVjaCBoZXJlIHRoYXQgbG9va3Mg
-d3JvbmcuCj4gCj4gT2theSwgdGhhdCBkb2Vzbid0IGxvb2sgdG9vIGJhZCwgd2l0aCB0aGUgdXBk
-YXRlcyB5b3UndmUgbWFkZSB0byByZW1vdmUKPiB0aGUgc3lzcmctY3NyIHByb3BlcnR5Lgo+IAo+
-ID4gCj4gPiBUaGUgZnVsbCBkdHMgaXMgYXMgZm9sbG93czrCoAo+ID4gc2RoY2lfZW1tYzogbW1j
-QDUwNDUwMDAwIHsKPiA+IMKgIMKgIGNvbXBhdGlibGUgPSAiZXN3aW4sZWljNzcwMC1kd2Ntc2hj
-IjsKPiA+IMKgIMKgIHJlZyA9IDwweDAgMHg1MDQ1MDAwMCAweDAgMHgxMDAwMD47Cj4gPiDCoCDC
-oCBjbG9ja3MgPSA8JmNsb2NrIDI2ND4sIDwmY2xvY2sgNTQ2PjsKPiA+IMKgIMKgIGNsb2NrLW5h
-bWVzID0gImNvcmUiLCAiYnVzIjsKPiA+IMKgIMKgIGFzc2lnbmVkLWNsb2NrcyA9IDwmY2xvY2sg
-MjY0PjsKPiA+IMKgIMKgIGFzc2lnbmVkLWNsb2NrLXJhdGVzID0gPDIwMDAwMDAwMD47Cj4gPiDC
-oCDCoCByZXNldHMgPSA8JnJlc2V0IDc1PiwgPCZyZXNldCA3Mj4sIDwmcmVzZXQgODg+LCA8JnJl
-c2V0IDkyPjsKPiA+IMKgIMKgIHJlc2V0LW5hbWVzID0gInR4cngiLCAicGh5IiwgImJ1cyIsICJh
-eGkiOwo+ID4gwqAgwqAgaW50ZXJydXB0LXBhcmVudCA9IDwmcGxpYz47Cj4gPiDCoCDCoCBpbnRl
-cnJ1cHRzID0gPDc5PjsKPiA+IMKgIMKgIGJ1cy13aWR0aCA9IDw4PjsKPiA+IMKgIMKgIG5vbi1y
-ZW1vdmFibGU7Cj4gPiDCoCDCoCBtbWMtaHM0MDAtMV84djsKPiA+IMKgIMKgIG1heC1mcmVxdWVu
-Y3kgPSA8MjAwMDAwMDAwPjsKPiA+IMKgIMKgICNzaXplLWNlbGxzID0gPDI+Owo+ID4gwqAgwqAg
-bm8tc2RpbzsKPiA+IMKgIMKgIG5vLXNkOwo+ID4gwqAgwqAgZXN3aW4saHNwLXNwLWNzciA9IDwm
-aHNwX3NwX2NzciAweDUwOCAweDUwYz47Cj4gPiDCoCDCoCBlc3dpbixkcml2ZS1pbXBlZGFuY2Ut
-b2htcyA9IDw1MD47Cj4gPiB9Owo+ID4gCj4gPiBzZGlvOiBtbWNAMHg1MDQ2MDAwMHsKPiA+IMKg
-IMKgIGNvbXBhdGlibGUgPSAiZXN3aW4sZWljNzcwMC1kd2Ntc2hjIjsKPiA+IMKgIMKgIHJlZyA9
-IDwweDAgMHg1MDQ2MDAwMCAweDAgMHgxMDAwMD47Cj4gPiDCoCDCoCBjbG9ja3MgPSA8JmNsb2Nr
-IDI2NT4sIDwmY2xvY2sgNTQ2PjsKPiA+IMKgIMKgIGNsb2NrLW5hbWVzID0iY29yZSIsImJ1cyI7
-Cj4gPiDCoCDCoCByZXNldHMgPSA8JnJlc2V0IDc2PiwgPCZyZXNldCA3Mz4sIDwmcmVzZXQgODc+
-LCA8JnJlc2V0IDkxPjsKPiA+IMKgIMKgIHJlc2V0LW5hbWVzID0gInR4cngiLCJwaHkiLCAiYnVz
-IiwgImF4aSI7Cj4gPiDCoCDCoCBpbnRlcnJ1cHQtcGFyZW50ID0gPCZwbGljPjsKPiA+IMKgIMKg
-IGludGVycnVwdHMgPSA8ODE+Owo+ID4gwqAgwqAgY2xvY2stZnJlcXVlbmN5ID0gPDIwODAwMDAw
-MD47Cj4gPiDCoCDCoCBtYXgtZnJlcXVlbmN5ID0gPDIwODAwMDAwMD47Cj4gPiDCoCDCoCAjYWRk
-cmVzcy1jZWxscyA9IDwxPjsKPiA+IMKgIMKgICNzaXplLWNlbGxzID0gPDA+Owo+ID4gwqAgwqAg
-YnVzLXdpZHRoID0gPDQ+Owo+ID4gwqAgwqAgbm8tc2RpbzsKPiA+IMKgIMKgIG5vLW1tYzsKPiA+
-IMKgIMKgIGVzd2luLGhzcC1zcC1jc3IgPSA8JmhzcF9zcF9jc3IgMHg2MDggMHg2MGM+Owo+ID4g
-wqAgwqAgZXN3aW4sZHJpdmUtaW1wZWRhbmNlLW9obXMgPSA8MzM+Owo+ID4gfTsKPiA+IAo+ID4g
-PiAKPiA+ID4gPiArCj4gPiA+ID4gKyAgZHJpdmUtaW1wZWRhbmNlLW9obToKPiA+ID4gCj4gPiA+
-IEhvdyBjb21lIHRoaXMgb25lIGhhcyBubyBlc3dpbiBwcmVmaXg/IEFsc28sIHRoZSB1bml0IGlz
-ICJPaG1zIiwgbm90Cj4gPiA+ICJPaG0iLgo+ID4gCj4gPiBJbiB2ZXJzaW9uIDMsIHdlIHJlbmFt
-ZWQgdGhlIHByb3BlcnR5IGZyb20gZHJpdmUtaW1wZWRhbmNlLW9obSB0bwo+ID4gZXN3aW4sZHJp
-dmUtaW1wZWRhbmNlLW9obXMuCj4gPiAKPiA+ID4gCj4gPiA+IEFkZGl0aW9uYWxseSwgYW55IGVz
-d2luIHByb3BlcnRpZXMgc2hvdWxkIGJlIHJlc3RyaWN0ZWQgdG8gZXN3aW4gZGV2aWNlcwo+ID4g
-PiBvbmx5Lgo+ID4gPiAKPiA+ID4gPiArICAgIGRlc2NyaXB0aW9uOiBTcGVjaWZpZXMgdGhlIGRy
-aXZlIGltcGVkYW5jZSBpbiBPaG0uCj4gPiA+ID4gKyAgICBlbnVtOiBbMzMsIDQwLCA1MCwgNjYs
-IDEwMF0KPiA+ID4gPiArCj4gPiA+ID4gIHJlcXVpcmVkOgo+ID4gPiA+ICAgIC0gY29tcGF0aWJs
-ZQo+ID4gPiA+ICAgIC0gcmVnc2RoY2lfZWljNzcwMF9kdF9wYXJzZV9jbGtfcGhhc2VzCj4gPiA+
-ID4gQEAgLTExMCw2ICsxNDUsNDAgQEAgYWxsT2Y6Cj4gPiA+ID4gICAgICAgICAgICAgIC0gY29u
-c3Q6IGJsb2NrCj4gPiA+ID4gICAgICAgICAgICAgIC0gY29uc3Q6IHRpbWVyCj4gPiA+ID4gIAo+
-ID4gPiA+ICsgIC0gaWY6Cj4gPiA+ID4gKyAgICAgIHByb3BlcnRpZXM6Cj4gPiA+ID4gKyAgICAg
-ICAgY29tcGF0aWJsZToKPiA+ID4gPiArICAgICAgICAgIGNvbnRhaW5zOgo+ID4gPiA+ICsgICAg
-ICAgICAgICBjb25zdDogZXN3aW4sZWljNzcwMC1kd2Ntc2hjCj4gPiA+ID4gKyAgICB0aGVuOgo+
-ID4gPiA+ICsgICAgICBwcm9wZXJ0aWVzOgo+ID4gPiA+ICsgICAgICAgIHJlc2V0czoKPiA+ID4g
-PiArICAgICAgICAgIG1pbkl0ZW1zOiA0Cj4gPiA+ID4gKyAgICAgICAgICBtYXhJdGVtczogNAo+
-ID4gPiA+ICsgICAgICAgIHJlc2V0LW5hbWVzOgo+ID4gPiA+ICsgICAgICAgICAgaXRlbXM6Cj4g
-PiA+ID4gKyAgICAgICAgICAgIC0gY29uc3Q6IGFyc3RuCj4gPiA+ID4gKyAgICAgICAgICAgIC0g
-Y29uc3Q6IHBoeV9yc3QKPiA+ID4gPiArICAgICAgICAgICAgLSBjb25zdDogcHJzdG4KPiA+ID4g
-PiArICAgICAgICAgICAgLSBjb25zdDogdHhyeF9yc3QKPiA+ID4gCj4gPiA+IEhvdyBjb21lIHlv
-dSdyZSBzbyBkcmFzdGljYWxseSBkaWZmZXJlbnQgdG8gdGhlIG90aGVyIGRldmljZXM/Cj4gPiA+
-IEFsc28sIHB1dHRpbmcgIl9yc3QiIGluIGEgcmVzZXQgbmFtZSBpcyBwb2ludGxlc3MuIFRoZXNl
-IGFyZSBhbGwgcmVzZXRzCj4gPiA+IGFmdGVyIGFsbCBieSBuYXR1cmUuc2RoY2lfZWljNzcwMF9k
-dF9wYXJzZV9jbGtfcGhhc2VzCj4gPiAKPiA+IFdlIGhhdmUgc2ltcGxpZmllZCB0aGUgbmFtZXMg
-YXMgZm9sbG93czoKPiA+IHJlc2V0LW5hbWVzOgo+ID4gwqAgaXRlbXM6Cj4gPiDCoCDCoCAtIGNv
-bnN0OiBheGkKPiA+IMKgIMKgIC0gY29uc3Q6IHBoeQo+ID4gwqAgwqAgLSBjb25zdDogYnVzCj4g
-PiDCoCDCoCAtIGNvbnN0OiB0eHJ4Cj4gPiBSZWdhcmRpbmcgdGhlIGZ1bmN0aW9uYWxpdHkgb2Yg
-dGhlc2UgcmVzZXRzOgo+ID4gcHJzdCBhbmQgYXJzdDogY29ycmVzcG9uZCB0byB0aGUgcmVzZXRz
-IGZvciB0aGUgYnVzIGFuZCBBWEkgZG9tYWlucy4KPiA+IHR4cng6IGlzIHVzZWQgZm9yIHRoZSBy
-ZXNldCBvZiB0aGUgaW50ZXJuYWwgdHJhbnNtaXQgYW5kIHJlY2VpdmUgY2xvY2sKPiA+IGRvbWFp
-bnMuCj4gPiBwaHk6IGlzIHVzZWQgZm9yIHRoZSByZXNldCBvZiB0aGUgaW50ZXJuYWwgUEhZLgo+
-ID4gVGhpcyB3aWxsIGJlIGNvcnJlY3RlZCBpbiB0aGUgbmV4dCBwYXRjaC4gSXMgdGhpcyBjb3Jy
-ZWN0Pwo+IAo+IEkgZG9uJ3Qga25vdyBpZiBpdCBpcyBjb3JyZWN0IG9yIG5vdCwgYnV0IGl0IGxv
-b2tzIGJldHRlciB0aGFuIGJlZm9yZS4KPiBDYW4geW91IGV4cGxhaW4gd2h5IHlvdSBhcmVuJ3Qg
-dXNpbmcgdGhlICJub3JtYWwiIDUgcmVzZXRzIHRoYXQgb3RoZXIKPiBkZXZpY2VzIGRvPwoKT3Vy
-IHJlc2V0IG5hbWluZyBpcyBiYXNlZCBvbiBvdXIgaGFyZHdhcmUncyByZXNldCBkZXNpZ24uIEFs
-dGhvdWdoIHdlIGRvCm5vdCBmb2xsb3cgdGhlIHR5cGljYWwgNS1yZXNldCBuYW1pbmcgdXNlZCBi
-eSBvdGhlciB2ZW5kb3JzLCB0aGUKZnVuY3Rpb25hbGl0eSBpcyBlcXVpdmFsZW50LiBFYWNoIG9m
-IG91ciByZXNldHMgY292ZXJzIHRoZSBjb3JyZXNwb25kaW5nCmhhcmR3YXJlIGRvbWFpbnMuIFRo
-ZXJlIGlzIG5vIG9uZS10by1vbmUgY29ycmVzcG9uZGVuY2UsIGJ1dCBvdXIKaW1wbGVtZW50YXRp
-b24gaW5jbHVkZXMgYWxsIG5lY2Vzc2FyeSByZXNldCBmdW5jdGlvbmFsaXR5Lgo=
+From: Max Kellermann <max.kellermann@ionos.com>
+
+Commit 20d72b00ca81 ("netfs: Fix the request's work item to not
+require a ref") modified netfs_alloc_request() to initialize the
+reference counter to 2 instead of 1.  The rationale was that the
+requet's "work" would release the second reference after completion
+(via netfs_{read,write}_collection_worker()).  That works most of the
+time if all goes well.
+
+However, it leaks this additional reference if the request is released
+before the I/O operation has been submitted: the error code path only
+decrements the reference counter once and the work item will never be
+queued because there will never be a completion.
+
+This has caused outages of our whole server cluster today because
+tasks were blocked in netfs_wait_for_outstanding_io(), leading to
+deadlocks in Ceph (another bug that I will address soon in another
+patch).  This was caused by a netfs_pgpriv2_begin_copy_to_cache() call
+which failed in fscache_begin_write_operation().  The leaked
+netfs_io_request was never completed, leaving `netfs_inode.io_count`
+with a positive value forever.
+
+All of this is super-fragile code.  Finding out which code paths will
+lead to an eventual completion and which do not is hard to see:
+
+- Some functions like netfs_create_write_req() allocate a request, but
+  will never submit any I/O.
+
+- netfs_unbuffered_read_iter_locked() calls netfs_unbuffered_read()
+  and then netfs_put_request(); however, netfs_unbuffered_read() can
+  also fail early before submitting the I/O request, therefore another
+  netfs_put_request() call must be added there.
+
+A rule of thumb is that functions that return a `netfs_io_request` do
+not submit I/O, and all of their callers must be checked.
+
+For my taste, the whole netfs code needs an overhaul to make reference
+counting easier to understand and less fragile & obscure.  But to fix
+this bug here and now and produce a patch that is adequate for a
+stable backport, I tried a minimal approach that quickly frees the
+request object upon early failure.
+
+I decided against adding a second netfs_put_request() each time
+because that would cause code duplication which obscures the code
+further.  Instead, I added the function netfs_put_failed_request()
+which frees such a failed request synchronously under the assumption
+that the reference count is exactly 2 (as initially set by
+netfs_alloc_request() and never touched), verified by a
+WARN_ON_ONCE().  It then deinitializes the request object (without
+going through the "cleanup_work" indirection) and frees the allocation
+(with RCU protection to protect against concurrent access by
+netfs_requests_seq_start()).
+
+All code paths that fail early have been changed to call
+netfs_put_failed_request() instead of netfs_put_request().
+Additionally, I have added a netfs_put_request() call to
+netfs_unbuffered_read() as explained above because the
+netfs_put_failed_request() approach does not work there.
+
+Fixes: 20d72b00ca81 ("netfs: Fix the request's work item to not require a =
+ref")
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: netfs@lists.linux.dev,
+cc: linux-fsdevel@vger.kernel.org,
+cc: stable@vger.kernel.org
+---
+ Changes
+ =3D=3D=3D=3D=3D=3D=3D
+ ver #3)
+  - Log the refcount in the tracepoint in netfs_put_failed_request().
+ =
+
+ ver #2)
+  - Fix missing RCU handling in netfs_put_failed_request().
+
+ fs/netfs/buffered_read.c |   10 +++++-----
+ fs/netfs/direct_read.c   |    7 ++++++-
+ fs/netfs/direct_write.c  |    6 +++++-
+ fs/netfs/internal.h      |    1 +
+ fs/netfs/objects.c       |   28 +++++++++++++++++++++++++---
+ fs/netfs/read_pgpriv2.c  |    2 +-
+ fs/netfs/read_single.c   |    2 +-
+ fs/netfs/write_issue.c   |    3 +--
+ 8 files changed, 45 insertions(+), 14 deletions(-)
+
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 18b3dc74c70e..37ab6f28b5ad 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -369,7 +369,7 @@ void netfs_readahead(struct readahead_control *ractl)
+ 	return netfs_put_request(rreq, netfs_rreq_trace_put_return);
+ =
+
+ cleanup_free:
+-	return netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	return netfs_put_failed_request(rreq);
+ }
+ EXPORT_SYMBOL(netfs_readahead);
+ =
+
+@@ -472,7 +472,7 @@ static int netfs_read_gaps(struct file *file, struct f=
+olio *folio)
+ 	return ret < 0 ? ret : 0;
+ =
+
+ discard:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ alloc_error:
+ 	folio_unlock(folio);
+ 	return ret;
+@@ -532,7 +532,7 @@ int netfs_read_folio(struct file *file, struct folio *=
+folio)
+ 	return ret < 0 ? ret : 0;
+ =
+
+ discard:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ alloc_error:
+ 	folio_unlock(folio);
+ 	return ret;
+@@ -699,7 +699,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	return 0;
+ =
+
+ error_put:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(rreq);
+ error:
+ 	if (folio) {
+ 		folio_unlock(folio);
+@@ -754,7 +754,7 @@ int netfs_prefetch_for_write(struct file *file, struct=
+ folio *folio,
+ 	return ret < 0 ? ret : 0;
+ =
+
+ error_put:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_discard);
++	netfs_put_failed_request(rreq);
+ error:
+ 	_leave(" =3D %d", ret);
+ 	return ret;
+diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
+index a05e13472baf..a498ee8d6674 100644
+--- a/fs/netfs/direct_read.c
++++ b/fs/netfs/direct_read.c
+@@ -131,6 +131,7 @@ static ssize_t netfs_unbuffered_read(struct netfs_io_r=
+equest *rreq, bool sync)
+ =
+
+ 	if (rreq->len =3D=3D 0) {
+ 		pr_err("Zero-sized read [R=3D%x]\n", rreq->debug_id);
++		netfs_put_request(rreq, netfs_rreq_trace_put_discard);
+ 		return -EIO;
+ 	}
+ =
+
+@@ -205,7 +206,7 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kiocb=
+ *iocb, struct iov_iter *i
+ 	if (user_backed_iter(iter)) {
+ 		ret =3D netfs_extract_user_iter(iter, rreq->len, &rreq->buffer.iter, 0)=
+;
+ 		if (ret < 0)
+-			goto out;
++			goto error_put;
+ 		rreq->direct_bv =3D (struct bio_vec *)rreq->buffer.iter.bvec;
+ 		rreq->direct_bv_count =3D ret;
+ 		rreq->direct_bv_unpin =3D iov_iter_extract_will_pin(iter);
+@@ -238,6 +239,10 @@ ssize_t netfs_unbuffered_read_iter_locked(struct kioc=
+b *iocb, struct iov_iter *i
+ 	if (ret > 0)
+ 		orig_count -=3D ret;
+ 	return ret;
++
++error_put:
++	netfs_put_failed_request(rreq);
++	return ret;
+ }
+ EXPORT_SYMBOL(netfs_unbuffered_read_iter_locked);
+ =
+
+diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+index a16660ab7f83..a9d1c3b2c084 100644
+--- a/fs/netfs/direct_write.c
++++ b/fs/netfs/direct_write.c
+@@ -57,7 +57,7 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb =
+*iocb, struct iov_iter *
+ 			n =3D netfs_extract_user_iter(iter, len, &wreq->buffer.iter, 0);
+ 			if (n < 0) {
+ 				ret =3D n;
+-				goto out;
++				goto error_put;
+ 			}
+ 			wreq->direct_bv =3D (struct bio_vec *)wreq->buffer.iter.bvec;
+ 			wreq->direct_bv_count =3D n;
+@@ -101,6 +101,10 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kio=
+cb *iocb, struct iov_iter *
+ out:
+ 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
+ 	return ret;
++
++error_put:
++	netfs_put_failed_request(wreq);
++	return ret;
+ }
+ EXPORT_SYMBOL(netfs_unbuffered_write_iter_locked);
+ =
+
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index d4f16fefd965..4319611f5354 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -87,6 +87,7 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
+ess_space *mapping,
+ void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref=
+_trace what);
+ void netfs_clear_subrequests(struct netfs_io_request *rreq);
+ void netfs_put_request(struct netfs_io_request *rreq, enum netfs_rreq_ref=
+_trace what);
++void netfs_put_failed_request(struct netfs_io_request *rreq);
+ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_reques=
+t *rreq);
+ =
+
+ static inline void netfs_see_request(struct netfs_io_request *rreq,
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index e8c99738b5bb..39d5e13f7248 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -116,10 +116,8 @@ static void netfs_free_request_rcu(struct rcu_head *r=
+cu)
+ 	netfs_stat_d(&netfs_n_rh_rreq);
+ }
+ =
+
+-static void netfs_free_request(struct work_struct *work)
++static void netfs_deinit_request(struct netfs_io_request *rreq)
+ {
+-	struct netfs_io_request *rreq =3D
+-		container_of(work, struct netfs_io_request, cleanup_work);
+ 	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
+ 	unsigned int i;
+ =
+
+@@ -149,6 +147,14 @@ static void netfs_free_request(struct work_struct *wo=
+rk)
+ =
+
+ 	if (atomic_dec_and_test(&ictx->io_count))
+ 		wake_up_var(&ictx->io_count);
++}
++
++static void netfs_free_request(struct work_struct *work)
++{
++	struct netfs_io_request *rreq =3D
++		container_of(work, struct netfs_io_request, cleanup_work);
++
++	netfs_deinit_request(rreq);
+ 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
+ }
+ =
+
+@@ -167,6 +173,22 @@ void netfs_put_request(struct netfs_io_request *rreq,=
+ enum netfs_rreq_ref_trace
+ 	}
+ }
+ =
+
++/*
++ * Free a request (synchronously) that was just allocated but has
++ * failed before it could be submitted.
++ */
++void netfs_put_failed_request(struct netfs_io_request *rreq)
++{
++	/* new requests have two references (see
++	 * netfs_alloc_request(), and this function is only allowed on
++	 * new request objects
++	 */
++	WARN_ON_ONCE(refcount_read(&rreq->ref) !=3D 2);
++
++	trace_netfs_rreq_ref(rreq->debug_id, 0, netfs_rreq_trace_put_failed);
++	netfs_free_request(&rreq->cleanup_work);
++}
++
+ /*
+  * Allocate and partially initialise an I/O request structure.
+  */
+diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
+index 8097bc069c1d..a1489aa29f78 100644
+--- a/fs/netfs/read_pgpriv2.c
++++ b/fs/netfs/read_pgpriv2.c
+@@ -118,7 +118,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
+py_to_cache(
+ 	return creq;
+ =
+
+ cancel_put:
+-	netfs_put_request(creq, netfs_rreq_trace_put_return);
++	netfs_put_failed_request(creq);
+ cancel:
+ 	rreq->copy_to_cache =3D ERR_PTR(-ENOBUFS);
+ 	clear_bit(NETFS_RREQ_FOLIO_COPY_TO_CACHE, &rreq->flags);
+diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
+index fa622a6cd56d..5c0dc4efc792 100644
+--- a/fs/netfs/read_single.c
++++ b/fs/netfs/read_single.c
+@@ -189,7 +189,7 @@ ssize_t netfs_read_single(struct inode *inode, struct =
+file *file, struct iov_ite
+ 	return ret;
+ =
+
+ cleanup_free:
+-	netfs_put_request(rreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(rreq);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(netfs_read_single);
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 0584cba1a043..dd8743bc8d7f 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -133,8 +133,7 @@ struct netfs_io_request *netfs_create_write_req(struct=
+ address_space *mapping,
+ =
+
+ 	return wreq;
+ nomem:
+-	wreq->error =3D -ENOMEM;
+-	netfs_put_request(wreq, netfs_rreq_trace_put_failed);
++	netfs_put_failed_request(wreq);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ =
+
 
