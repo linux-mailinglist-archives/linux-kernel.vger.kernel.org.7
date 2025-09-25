@@ -1,244 +1,152 @@
-Return-Path: <linux-kernel+bounces-832710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B84ABA0241
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03D5BA0247
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA943827AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:08:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A49A1884BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04362F6180;
-	Thu, 25 Sep 2025 15:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F26F2E2F1A;
+	Thu, 25 Sep 2025 15:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JyqpvJj0"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="np/NfFDi"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCABD2E2665
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0D2E2EEF;
+	Thu, 25 Sep 2025 15:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812651; cv=none; b=uW6KnwQE1TcjWuyn0yAlHbxC9sIPZMyoQjS1vSBIVktgWmQimmmF7itdPjDvBnHNrGURUDoN5pbf+NigGnBprKZbD/LHecJ0S8vhVamw+pDJLQoE//HQXuYdSusSmnhoebJtFsrngVAcyy4j6+ypr8tB6QbRMovJv5H0kXzUPZs=
+	t=1758812676; cv=none; b=qQC3FWQV7b37L5/QhJ/09rWAP6L2b0mK50ijwP+nxPMyCJMHU5BPIcjpsf46J6FczSk848ug0jOLJJHW7urxHoHXTfIoh+JedbWNeMQOu1LBAqzGIAOius9qcHALVCGKSm7QhcBcOR3E3XWijE+1Hmon2SYy/h62+6LFld0yXF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812651; c=relaxed/simple;
-	bh=3UPzGr2VB/rAfD5+8oPaVoN9X2KDA2+tATtdTBIfH+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SUeKHjtwduaNNxmKjpSy04Co9irWiLDoCHpUqmeR5xUdhJRqr+hz1X8LuDcbBMu9XV8wfu16V4bc9gQSCRuArJXCjZWT/BOI9WsrA7FguLIAoA6qvibUzl/JG2lFtLi/8rxJOnINTWCejnQrdVS/dWK6y4SL6ZqcdwPEyLVkcGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JyqpvJj0; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758812644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rFsFtt/dYubWASJgvWs3g9b5WimRx2r0jDM0W9mimZ4=;
-	b=JyqpvJj0isPclEJyeW7fLiPwKRipWqHOvgNoVwokn7yAbKMSE5TCY5PmT1etG8xI8ZCGSk
-	RYaGfcnVN2eZsW4f7LlSsVQj5QpQSYhO0TAfEPPkUinvgfiB4SJskHiSCx4GhNjQ/IioWf
-	PkNRCPYpEyuLxt1TcIj6/N83QfV+LfE=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Leo Yan <leo.yan@arm.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Mike Leach <mike.leach@linaro.org>,
+	s=arc-20240116; t=1758812676; c=relaxed/simple;
+	bh=J5c05JPLFQaQf493MRt52YrZ3USWRzmeRc0rCzn6SFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MRvPQkjGbl3/rMU9dQJSHBtbxvTTI4JikirMOc3DT3/lX1e/jRWD+i8by2rn9zmZUIQ9ihv0TAA/hbZeiWYdU6cejXxL/q2T84IvhYPa8OYFQxmh01srWPOcBOg321ZXr0tZXNln+XPME2k/xxrx6ml3c20D4Fi0C9K8CSZVwOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=np/NfFDi; arc=none smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1758812674; x=1790348674;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=J5c05JPLFQaQf493MRt52YrZ3USWRzmeRc0rCzn6SFs=;
+  b=np/NfFDi81pbkrlXpQSHSDYMMyvXX2Jm1QsxFbFhUyM2XQlRPNNGhzn2
+   8WbgeiODQPwdH7Ej30dpthXrEZ09uxX/fuPopFww+bJvM0390LxDgsZGv
+   M+zxyjJAarDqD4rY/wI/i9YzZqTxDiQ5GjnnnFcX2D1jWfaluvsJFJPsV
+   GaHmizI0SphYpnPVVvTUAA3FV5niefaOrIJqSQPXrmvl+G1dlteO0upPw
+   Uq7wXxDTCpEYmINlJGKfZvlP6FhCt72i2lIPuc2N70KOoHWMTSnaSkvYe
+   mK8PBOoGIR1smquClIalAOWgb63x+iNZEeLcjY70flDHwIYvYMs2X2BYV
+   A==;
+X-CSE-ConnectionGUID: b/OwKdZGTBmaO3GUQ8K91g==
+X-CSE-MsgGUID: ffHeo2hARgioC1jL1Ok+xg==
+X-IronPort-AV: E=Sophos;i="6.18,292,1751212800"; 
+   d="scan'208";a="130348629"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Sep 2025 23:04:34 +0800
+IronPort-SDR: 68d55a02_2pnq452OsCIEgVQSFys7UBv+lAU1PLVOErDaBOJZLTbdroj
+ NRQ0ZTC5hv+hvYrQZwUiDKzVtY7sDc/3ZAd3s1w==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Sep 2025 08:04:34 -0700
+WDCIronportException: Internal
+Received: from c02g55f6ml85.ad.shared (HELO C02G55F6ML85.wdc.com) ([10.224.183.46])
+  by uls-op-cesaip02.wdc.com with ESMTP; 25 Sep 2025 08:04:31 -0700
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v5 3/3] coresight: Fix possible deadlock in coresight_panic_cb
-Date: Thu, 25 Sep 2025 11:03:42 -0400
-Message-Id: <20250925150342.1845615-4-sean.anderson@linux.dev>
-In-Reply-To: <20250925150342.1845615-1-sean.anderson@linux.dev>
-References: <20250925150342.1845615-1-sean.anderson@linux.dev>
+	linux-trace-kernel@vger.kernel.org,
+	linux-btrace@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH blktrace v2 00/22] blktrace: Add user-space support for zoned command tracing
+Date: Thu, 25 Sep 2025 17:04:05 +0200
+Message-ID: <20250925150427.67394-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Panics can occur at any time, so taking locks may cause a deadlock (such
-as if the panicking CPU held the lock).  coresight_panic_cb uses
-bus_for_each_dev, but that calls bus_to_subsys which takes
-bus_kset->list_lock.
+This patch series extends the user-space blktrace tools to support the new
+trace events for zoned block device commands introduced in the corresponding
+kernel patch series.
 
-Instead of registering a single panic notifier and iterating over
-coresight devices, register a panic notifier for each coresight device
-that requires it (letting the atomic notifier list handle iteration).
-atomic_notifier_chain_unregister will just return -ENOENT if a notifier
-block isn't on the list, so it's safe to call when we haven't registered
-a notifier.
+The updates include:
 
-Fixes: 46006ceb5d02 ("coresight: core: Add provision for panic callbacks")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+- Introduction of a new ioctl requesting the v2 version of the trace
+- Definitions for new zoned operation trace events.
+- Parsing support in blkparse for these events.
+- Display of the new events with clear labeling (e.g., ZO, ZA, ZR).
+- Backward-compatible changes that do not affect existing functionality.
 
-Changes in v5:
-- Check csdev mode before calling sync()
+These changes complement the kernel patches and allow full visibility into
+zone management commands in blktrace output, enabling better analysis and
+debugging of zoned storage workloads.
 
-Changes in v4:
-- Move the panic notifier into csdev and restore the panic sync API
+The updated blktrace utility will first issue the BLKTRACESETUP2 ioctl and if
+it fails transpartently fall back to BLKTRACESETUP allowing backwards
+compatibility.
 
-Changes in v3:
-- Rewrite patch to remove the panic sync API entirely
+Feedback and testing on additional device types are appreciated.
 
-Changes in v2:
-- Add a comment describing csdev_lock/list
-- Consolidate list removal in coresight_device_release
+Changes to v1:
+- Incorporated feedback from Chaitanya
+- Add patch fixing a compiler warning at the beginning
 
- drivers/hwtracing/coresight/coresight-core.c | 67 ++++++++------------
- include/linux/coresight.h                    |  2 +
- 2 files changed, 28 insertions(+), 41 deletions(-)
+Johannes Thumshirn (22):
+  blktrace: fix comment for struct blk_trace_setup:
+  blkparse: fix compiler warning
+  blktrace: add definitions for BLKTRACESETUP2
+  blktrace: change size of action to 64 bits
+  blktrace: add definitions for blk_io_trace2
+  blktrace: support protocol version 8
+  blkparse: pass magic to get_magic
+  blkparse: read 'magic' first
+  blkparse: factor out reading of a singe blk_io_trace event
+  blkparse: skip unsupported protocol versions
+  blkparse: make get_pdulen() take the pdu_len
+  blkiomon: read 'magic' first
+  blktrace: pass magic to CHECK_MAGIC macro
+  blktrace: pass magic to verify_trace
+  blktrace: rename trace_to_cpu to bit_trace_to_cpu
+  blkparse: use blk_io_trace2 internally
+  blkparse: natively parse blk_io_trace2
+  blkparse: parse zone (un)plug actions
+  blkparse: add zoned commands to fill_rwbs()
+  blkparse: parse zone management commands
+  blkparse: parse zone append completions
+  blktrace: call BLKTRACESETUP2 ioctl per default to setup a trace
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index 305b1773cfbe..01303348fc0e 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -1046,6 +1046,9 @@ static void coresight_device_release(struct device *dev)
- {
- 	struct coresight_device *csdev = to_coresight_device(dev);
- 
-+	if (panic_ops(csdev))
-+		atomic_notifier_chain_unregister(&panic_notifier_list,
-+						 &csdev->panic_notifier);
- 	free_percpu(csdev->perf_sink_id_map.cpu_map);
- 	fwnode_handle_put(csdev->dev.fwnode);
- 	kfree(csdev);
-@@ -1315,6 +1318,18 @@ void coresight_release_platform_data(struct coresight_device *csdev,
- 		coresight_remove_conns_sysfs_group(csdev);
- }
- 
-+static int coresight_panic_notifier(struct notifier_block *nb,
-+				    unsigned long action, void *data)
-+{
-+	struct coresight_device *csdev =
-+		container_of(nb, struct coresight_device, panic_notifier);
-+	int mode = coresight_get_mode(csdev);
-+
-+	if (mode == CS_MODE_SYSFS || mode == CS_MODE_PERF)
-+		panic_ops(csdev)->sync(csdev);
-+	return NOTIFY_DONE;
-+}
-+
- struct coresight_device *coresight_register(struct coresight_desc *desc)
- {
- 	int ret;
-@@ -1357,6 +1372,17 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 			goto err_out;
- 		}
- 	}
-+
-+	if (panic_ops(csdev)) {
-+		csdev->panic_notifier.notifier_call = coresight_panic_notifier;
-+		ret = atomic_notifier_chain_register(&panic_notifier_list,
-+						     &csdev->panic_notifier);
-+		if (ret) {
-+			coresight_device_release(&csdev->dev);
-+			goto err_out;
-+		}
-+	}
-+
- 	/*
- 	 * Make sure the device registration and the connection fixup
- 	 * are synchronised, so that we don't see uninitialised devices
-@@ -1563,36 +1589,6 @@ const struct bus_type coresight_bustype = {
- 	.name	= "coresight",
- };
- 
--static int coresight_panic_sync(struct device *dev, void *data)
--{
--	int mode;
--	struct coresight_device *csdev;
--
--	/* Run through panic sync handlers for all enabled devices */
--	csdev = container_of(dev, struct coresight_device, dev);
--	mode = coresight_get_mode(csdev);
--
--	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
--		if (panic_ops(csdev))
--			panic_ops(csdev)->sync(csdev);
--	}
--
--	return 0;
--}
--
--static int coresight_panic_cb(struct notifier_block *self,
--			       unsigned long v, void *p)
--{
--	bus_for_each_dev(&coresight_bustype, NULL, NULL,
--				 coresight_panic_sync);
--
--	return 0;
--}
--
--static struct notifier_block coresight_notifier = {
--	.notifier_call = coresight_panic_cb,
--};
--
- static int __init coresight_init(void)
- {
- 	int ret;
-@@ -1605,20 +1601,11 @@ static int __init coresight_init(void)
- 	if (ret)
- 		goto exit_bus_unregister;
- 
--	/* Register function to be called for panic */
--	ret = atomic_notifier_chain_register(&panic_notifier_list,
--					     &coresight_notifier);
--	if (ret)
--		goto exit_perf;
--
- 	/* initialise the coresight syscfg API */
- 	ret = cscfg_init();
- 	if (!ret)
- 		return 0;
- 
--	atomic_notifier_chain_unregister(&panic_notifier_list,
--					     &coresight_notifier);
--exit_perf:
- 	etm_perf_exit();
- exit_bus_unregister:
- 	bus_unregister(&coresight_bustype);
-@@ -1628,8 +1615,6 @@ static int __init coresight_init(void)
- static void __exit coresight_exit(void)
- {
- 	cscfg_exit();
--	atomic_notifier_chain_unregister(&panic_notifier_list,
--					     &coresight_notifier);
- 	etm_perf_exit();
- 	bus_unregister(&coresight_bustype);
- }
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 4ac65c68bbf4..a7aaf9d3d01d 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -280,6 +280,7 @@ struct coresight_trace_id_map {
-  * @config_csdev_list:  List of system configurations added to the device.
-  * @cscfg_csdev_lock:	Protect the lists of configurations and features.
-  * @active_cscfg_ctxt:  Context information for current active system configuration.
-+ * @panic_notifier: Notifier block used to clean up during a panic
-  */
- struct coresight_device {
- 	struct coresight_platform_data *pdata;
-@@ -304,6 +305,7 @@ struct coresight_device {
- 	struct list_head config_csdev_list;
- 	raw_spinlock_t cscfg_csdev_lock;
- 	void *active_cscfg_ctxt;
-+	struct notifier_block panic_notifier;
- };
- 
- /*
+ act_mask.c     |   4 +-
+ blkiomon.c     |  15 +-
+ blkparse.c     | 452 ++++++++++++++++++++++++++++++++++---------------
+ blkparse_fmt.c | 105 +++++++++---
+ blkrawverify.c |  14 +-
+ blktrace.c     |  40 ++++-
+ blktrace.h     |  64 +++++--
+ blktrace_api.h |  54 +++++-
+ 8 files changed, 561 insertions(+), 187 deletions(-)
+
 -- 
-2.35.1.1320.gc452695387.dirty
+2.51.0
 
 
