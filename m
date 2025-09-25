@@ -1,84 +1,96 @@
-Return-Path: <linux-kernel+bounces-832705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAFABA0235
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:09:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2FD7BA023B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A83E4E7F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F79218995A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AD430C61A;
-	Thu, 25 Sep 2025 15:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26B22EBDFD;
+	Thu, 25 Sep 2025 15:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VO8f/5TT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qc+APSbf"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0AD30C344;
-	Thu, 25 Sep 2025 15:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8DE2E2665
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812619; cv=none; b=MgQkf2ut5/z83VVA8YJ+qVP28d9SiZJXsmbDdNMEOzCRv5kjwbAcUp3mRPGmLyhKQJg7+Op2rFZ9nLZSBXgiALrQP1AUYnjROLhKPbrkMmoraFp3EjlbswMqKtd5aLxmHoLgrO83blKdElwQtyN+BACyiBXru8Nsxf7tw1HAstE=
+	t=1758812645; cv=none; b=oIiHxvF7Z5uaQXyJMthb2KpxYxenRrah1qEoVv+J2dJIkaSbP09X3BM4xs3fbXpjtuctTIRutV0jg1z04CPrYx6md3f/IHayfPRdff29ULvdNL6f5+Z65tJZT5XmfBIsU+SArmxlO0aOE4QgMfyMWC3bCTyvwQcWwdP0wzJ5yUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812619; c=relaxed/simple;
-	bh=YLj9LQbtQI+tc2nPwoeJdg1nyNdISQl513AIqL0rMZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M9+VGUiq+SYMCw0dEitQin85Y05fkZRW75lL9sCGzC3k0cOCtDmzdVV6fIiSJwOPRxYxnH26Xw4Z1ocItM8gzgtkMfnhvG+EGa094j/KnQ5HFrAnFH8gmXw0idPOsD9crRiWQfu6yOzztql4VxvoFeLRj5+vXOmczn/bsgm29LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VO8f/5TT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29311C4CEF0;
-	Thu, 25 Sep 2025 15:03:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758812617;
-	bh=YLj9LQbtQI+tc2nPwoeJdg1nyNdISQl513AIqL0rMZc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VO8f/5TT81srH94PJ4wDIphighkw3ad4wj6eTRqH6OwrA7c08bnQV3Hn6gaO1oDC1
-	 jDfN8MhhfrgUoDXuDFwZPq2inY6SB2YQm10F1aEmn0uPViKhvkRb5Jw7bdKPFov4t3
-	 U7gGMvjnyorGnsbpY6BbPa78ST0KC2NFiXxpl4Zj6wlmG5wkktGc26lgX0IYOvJzE1
-	 0KgpeD47xOr4665RzzPUZB0sJCrCrI9V8De8lCe7qfn+ePmIWAOYwBStkyjNgGI72N
-	 b35nuzBJPfbBPWSj5S2IDvpsLjzFr27UY4bdNBj2hA+RLI/O4K7AdF4GZe5LKYqjA5
-	 fn0pKgMa072Yw==
-Date: Thu, 25 Sep 2025 08:03:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Saeed Mahameed
- <saeedm@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Gal Pressman
- <gal@nvidia.com>
-Subject: Re: [PATCH net-next 2/2] net/mlx5e: Clamp page_pool size to max
-Message-ID: <20250925080336.7c78a9e1@kernel.org>
-In-Reply-To: <wjdkpgpgsoe2igbf7w5padgrbjbog6srktov37unmfouuwn6ox@its3txxslpe6>
-References: <1758532715-820422-1-git-send-email-tariqt@nvidia.com>
-	<1758532715-820422-3-git-send-email-tariqt@nvidia.com>
-	<20250923072356.7e6c234f@kernel.org>
-	<a5m5pobrmlrilms7q6latcmakhuectxma7j3u6jjnamcvwsrdb@3jxnbm2lo55s>
-	<20250923082310.2316e34d@kernel.org>
-	<20250923172305.0b0a235c@kernel.org>
-	<wjdkpgpgsoe2igbf7w5padgrbjbog6srktov37unmfouuwn6ox@its3txxslpe6>
+	s=arc-20240116; t=1758812645; c=relaxed/simple;
+	bh=IjHguO1SSzuIEEiOHsL79hvKeZ6PxEppQiWleFoLMcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MsiI5uEqJi5W/NXhkjjzNBIRBwUQyjNNhRPkgx1W7YZaOKCoNWx2k8rSHbwnMl90X+NywUYDATNZZTwtdiKXBbUvmb3DDxrmwGtseTyrP0a9i2AIZTr4BrlhJXV3JsP8CBsBM4cFPs0Gqx1qdWpUSmECUJgxSYOXJP73Xv7sb3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qc+APSbf; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758812638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EvtiP8cp8BhABUlmDna8Y0Y1St2GWHNIfZ0PtAqOnds=;
+	b=qc+APSbfWfm1HkxNcTUxP7A7opt9wXkSXngWpYL2pyaw4uSvSeu6Qe+/07OQwHr20jSsbp
+	0wDu6H/3V2x79Fjv607xpQZtCHzXNCdQe+UEqVidFbzQeWUzeLIXXX1S1FbL4faWTgE2j5
+	zuHkCL88AGRahruz20aL/3tXpF7fbn0=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Leo Yan <leo.yan@arm.com>,
+	Yeoreum Yun <yeoreum.yun@arm.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH v5 0/3] coresight: Fix possible deadlock in coresight_panic_cb
+Date: Thu, 25 Sep 2025 11:03:39 -0400
+Message-Id: <20250925150342.1845615-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 25 Sep 2025 10:25:40 +0000 Dragos Tatulea wrote:
-> Should the page_pool should print a warning when it clamps?
+This time with the notifier in csdev.
 
-I don't think so, goal is to avoid having all drivers copy the clamp on
-their side. So if we still warn drivers will still have to worry.
+Changes in v5:
+- Split reordering of coresight_device_release into a separate patch
+- Check csdev mode before calling sync()
 
-> Also, checking for size > 32K and clamping to 16K looks a bit weird...
-> Should the limit be lowered to 16K alltogether?
+Changes in v4:
+- Fix fwnode leak in coresight_register error path
+- Move the panic notifier into csdev and restore the panic sync API
 
-That's what I mean, replace the if (>32k) return E2BIG; with
-size = min(size, 16k).
+Changes in v3:
+- Rewrite patch to remove the panic sync API entirely
+
+Changes in v2:
+- Add a comment describing csdev_lock/list
+- Consolidate list removal in coresight_device_release
+
+Sean Anderson (3):
+  coresight: Fix fwnode leak in coresight_register error path
+  coresight: Reorder coresight_device_release to match
+    coresight_register
+  coresight: Fix possible deadlock in coresight_panic_cb
+
+ drivers/hwtracing/coresight/coresight-core.c | 71 ++++++++------------
+ include/linux/coresight.h                    |  2 +
+ 2 files changed, 30 insertions(+), 43 deletions(-)
+
+-- 
+2.35.1.1320.gc452695387.dirty
+
 
