@@ -1,163 +1,176 @@
-Return-Path: <linux-kernel+bounces-831979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08986B9E0FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC59B9E105
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B24FC4E24BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:31:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AABB4E24FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F3F23E350;
-	Thu, 25 Sep 2025 08:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC11E17A2EB;
+	Thu, 25 Sep 2025 08:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="T+IJyVVN"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8puL2Eu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A422E4A1E;
-	Thu, 25 Sep 2025 08:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489941D8E10
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758789101; cv=none; b=oNHphkNisc662ajEeMLzHTNUz9mroIIcJvLJv+Aiq2mVYgm2m7fW0Z/lJRoD1vNd93J+nnfV/6W5zaHsG9mGWz5ylLQsyIngihMGKNVIVS/enx6ufdU1e7pTo74cVfFmUVkt2sDD4Hnc3Y/d/J6KK41JjL+cqe6HXsYJEUbARAY=
+	t=1758789165; cv=none; b=P7PnWoPfG1i1QXcnWcqWQKKfeyQuTiegMRISiFkhRn1cU/43CJYb0N6ma96tQrUYirNX1u1EY43er8XixnDBaCvuaV2fBrAQLX2bh27RWAB7LZAoCY7+0lcgvyfllsk9BngS4MFiLZED6CaEpXpjBo1/PNQaAUyBTlxvKRiVUiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758789101; c=relaxed/simple;
-	bh=yFYhkPuT/6A+p396/AaW7nUVSxNun1mpGc9c2AuPclQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UNmFUD/SvZc/CTlAAJ87H4CF6kgqfDD+O+DxdQRlVNZTKkjf7LDG+9FY27+IUNR2yLL2Q8u9AehrnJcuu1xjUZHxzLIuQmGSlBFVSOz5fKvRHsITOvtl7sYEQDXzhs1i1JYvWWH2G4bgGwyBd11Hy4GiQTZqf98rNm/a+BL3qt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=T+IJyVVN; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1758789091; x=1759048291;
-	bh=HpijlZHR5DUt6PmUIjo0upRoVIpNNUVq0oY9+LHi5f4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=T+IJyVVNaWWoXP4nthGqcQO5fwDpdXCD8l3nXgAWY6N7pVBlh5shN/8oaS/llryh6
-	 tK/BqU0hN3bjgNk/i5QivujHIWqKUJJAJYYCkBuW8INeB9duy5xnkbmF6E+fXVFBu1
-	 JOVAI1NyvnV29d6FmFDaKgMIAroUEdgCrj0fh699rGDUNnW4azEC8OtzKt1lvk4az9
-	 K07jeMkKbh3PdbNNmlQP4pVgztgoaqYJgUaIiEbjUtnbTp5VwvxRaMBEYkOZKkwXrF
-	 b66SLa0hP7l0NFObLLSesxnVTiuLhYeujnpA31e0QUAbcJFwHCfFKg6C1jdT2xJb/b
-	 i3GFQEY4CQQyg==
-Date: Thu, 25 Sep 2025 08:31:28 +0000
-To: Benno Lossin <lossin@kernel.org>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina+kernel@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 1/4] rust: types: Add Ownable/Owned types
-Message-ID: <aNT92mzGsXfOsg2j@mango>
-In-Reply-To: <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me> <20250618-unique-ref-v11-1-49eadcdc0aa6@pm.me> <DB1IPFNLFDWV.2V5O73DOB2RV6@kernel.org>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 870cca1f6b9d5e243eceb95fbee6f6457768dce3
+	s=arc-20240116; t=1758789165; c=relaxed/simple;
+	bh=1U+8ZCeOt54StVgsf4liIhu0wX+Pc0FpxnKK3mlY/jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LxxeU4vm98QsTk3p6wWQ9VI5Jya+FVMCt6OX1pkgQZ7kzxUqziHj0PoulivsltskmJVZVdAK9r/kJxy7MqUzZduUnVahS04GBZsb0NuVyLyvuw4Y2CSQusSf8FEUEWEbFuTLdRKyRphnd3qbIyL/hfs/wPiLrsWLaQhueQPAYhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8puL2Eu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC188C113CF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758789165;
+	bh=1U+8ZCeOt54StVgsf4liIhu0wX+Pc0FpxnKK3mlY/jg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G8puL2EuVs5X/0awxToGp6mHfAj8BW6LjFWch6z/hiuJBN8M/LLK6WMR91ImthH84
+	 far1xdTkTLWyAo7wv98oT9mYkGmgfulEd+Bw2ehe5VmUPGhwSIy+NkHiydQBLiFh1z
+	 t9tff5WwMdYdH76OiJM9s5Xf6vOU5bKfB1SFi0Y5BZwxpusMHWCHSb7/MKsBIrOQ8w
+	 P6NvyYRCosouTcRq4qDBq4H28JPoX16ioqdaL4uh7S5zJQOTMNN1bI1dDZ5+zTJeQq
+	 rTWyZCzTyxj2bQfG2Jz9gb9sHaGWdvG9kaT9RiNIXPi7AtWo5WpwEHWaKJAfwTwf+y
+	 XRcjg/vrhQhEQ==
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2570bf605b1so7892135ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:32:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrYTGUKBOOtNu/LxXaNyi1UCZCjbHgp5H9ZAGgGrnGLpED0DJpMae9o+rh9qO3Kj8X2r8VXoyPy9JiPl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYgEbAKpdaMOXclr4AcKGPHl93UAv3hhOO5ayHDcrnOWH3b2Cy
+	9hru95Erq5kakqB2S2/PeJ0bSAD8SAUle4pVkzFYBDGfRgfrcqfuosa0qw0vachpsQpbAmgd5ZW
+	9UjPdlTINbhZ/gRT09Nm/WN0CIxTC9bM=
+X-Google-Smtp-Source: AGHT+IHrvc9iLpq88k/Zf2/yoLib+v2N+khBqKsA2oA+V+eLxVmijCZXO8s6yPfX0FiHRvQikyL7AZmaklD7LlHAvYs=
+X-Received: by 2002:a17:903:196b:b0:273:495d:53ab with SMTP id
+ d9443c01a7336-27ed4a4bb29mr29165935ad.46.1758789164533; Thu, 25 Sep 2025
+ 01:32:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com> <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
+ <53d63dd6-a022-4e80-a317-3218976a7474@oss.qualcomm.com>
+In-Reply-To: <53d63dd6-a022-4e80-a317-3218976a7474@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 25 Sep 2025 17:32:31 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPfGC=FK7AKOtmmSV7=3NNXAHe8A_PGjjhTKgRs4Jk25xA@mail.gmail.com>
+X-Gm-Features: AS18NWA0tiWyortDfCg8UAI-zrEfvMwzuEt9g3SfxjzbYCGEe5OINQIMsodub3k
+Message-ID: <CAJKOXPfGC=FK7AKOtmmSV7=3NNXAHe8A_PGjjhTKgRs4Jk25xA@mail.gmail.com>
+Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
+ Kaanapali SoC
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+	yijie.yang@oss.qualcomm.com, Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, 25 Sept 2025 at 16:39, Aiqun(Maria) Yu
+<aiqun.yu@oss.qualcomm.com> wrote:
+>
+> On 9/25/2025 9:50 AM, Krzysztof Koz=C5=82owski wrote:
+> > On Thu, 25 Sept 2025 at 09:17, Jingyi Wang <jingyi.wang@oss.qualcomm.co=
+m> wrote:
+> >>
+> >> From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> >>
+> >> Add the base USB devicetree definitions for Kaanapali platform. The ov=
+erall
+> >> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> >> (rev. v8) and M31 eUSB2 PHY.
+> >>
+> >> Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >> ---
+> >>  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 +++++++++++++++++++++++=
++++++++++
+> >>  1 file changed, 155 insertions(+)
+> >>
+> >
+> >
+> > Second try, without HTML:
+> >
+> > I really don't understand why you created such huge patchset. Year
+> > ago, two years ago, we were discussing it already and explained that's
+> > just inflating the patchset without reason.
+> >
+> > New Soc is one logical change. Maybe two. Not 18!
+>
+> It was previously squashed into the base soc dtsi patch and mark like:
+> Written with help from Jyothi Kumar Seerapu(added bus), Ronak Raheja
+> (added USB), Manish Pandey(added SDHCI), Gaurav Kashyap(added crypto),
+> Manaf Meethalavalappu Pallikunhi(added tsens), Qiang Yu(added PCIE) and
+> Jinlong Mao(added coresight).
+>
+> While it is over 4000+ lines when we squash it together.
 
-I finally found time to seriously work on completing this.
+That's why you send one node per patch? Multiple huge patch bombs land
+the same time from Qualcomm, with patches adding one node. It's like
+the "no more patch bombs" discussion and rule never existed (yeah, I
+know it was removed but the spirit of keeping maintainers mailboxes
+sane remains).
 
-There a few questions that turned up for me, though.
 
-On 250702 1303, Benno Lossin wrote:
->=20
-> We shouldn't call this a reference. Also we should start the first
-> paragraph with how this trait enables the usage of `Owned<Self>`.
+> Also as offline reviewed with Bjorn, he suggested us to split out the
+> USB and other parts.
+>
+> >
+> > Not one patch per node or feature.
+> >
+> > This hides big picture, makes difficult to review everything,
+> > difficult to test. Your patch count for LWN stats doesn't matter to
+> > us.
+>
+> With the current splitting, the different author as each co-developer
+> can get the meaningful LWN stats.>
 
-Did you come up with any  suggesting what to call it? `Owned<T>` holds a
-pointer to `T`. C++ would call it a smart pointer, but I guess that's also
-not a good name in Rust.
+We don't care about your LWN stats.
 
->=20
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Implementers must ensure that:
-> > +/// - The [`release()`](Ownable::release) method leaves the underlying=
- object in a state which the
-> > +///   kernel expects after ownership has been relinquished (i.e. no da=
-ngling references in the
-> > +///   kernel is case it frees the object, etc.).
->=20
-> This invariant sounds weird to me. It's vague "a state which the kernel
-> expects" and difficult to use (what needs this invariant?).
+Sending stuff like this for your stats, means that community and
+reviewers pay with their time.
 
-The whole matter of what exactly are the safety conditions here is a bit
-confusing, I find:
+This is really just selfish. No care how maintainers need to scroll
+through their mailboxes.
 
-- That the passed `T` is (and stays) valid is a requirement on
-  `Owned::from_raw`.
-- That `Ownable::release()` is called with a live and unused `T` is a
-  requirement for that function call.
+> > NAK and I'm really disappointed I have to repeat the same review .
+> Currently, there are 10 SoC DTSI patches sent, structured as follows:
 
-I understand things like this then, that implementing `Ownable` is unsafe
-because `Owned<T>::drop()` calls the unsafe `T::release()`.
+Why did you ignore all the feedback from 2024 and 2023? Every year it
+has to be repeated?
 
-So the requirement is basically:
+>
+> SoC initial
+> Base MTP board
+> SoC PCIe0
+> SoC SDC2
+> SoC USB
+> SoC remoteproc
+> SoC SPMI bus, TSENS, RNG, QCrypto, and Coresight
+> SoC additional features
+> SoC audio
+> SoC CAMSS
+> SoC video
+>
+> Which parts would you prefer to squash into pls?
 
-- it is safe to call `T::release()` _once_ on a `T` stored on an `Owned<T>`
-  if the `Owned<T>` isn't used anymore afterwards.
+I made very clear statements year and two years ago. We also discussed
+it on IRC multiple times. Can you join discussions instead of ignoring
+them?
 
-Not sure how to phrase that in a non-confusing way.
-
-I went with this now:
-
-"Implementers must ensure that the [`release()`](Self::release) function
-frees the underlying object in the correct way for a valid, owned object
-of this type."
-
-> Maybe we should give `Ownable` the task to document the exact ownership
-> semantics of `T`?
-
-> > +pub struct Owned<T: Ownable> {
-> > +    ptr: NonNull<T>,
-> > +    _p: PhantomData<T>,
-> > +}
-> > +
-> > +// SAFETY: It is safe to send `Owned<T>` to another thread when the un=
-derlying `T` is `Send` because
-> > +// it effectively means sending a `&mut T` (which is safe because `T` =
-is `Send`).
->=20
-> How does this amount to sending a `&mut T`?
-
-Right, good point. I have to guess, but likely the reasoning was, that
-Owned<T> is a wrapper around `*T` and has exclusive access, so somehow
-equivalent to `&mut T`.
-
-> I guess this also needs to be guaranteed by `Owned::from_raw`... ah the
-> list grows...
->=20
-> I'll try to come up with something to simplify this design a bit wrt the
-> safety docs.
-
-I added "`ptr` points to a valid instance of `T`" to the safety
-requirements of `Owned::from_raw`. I think this should imply such things,
-because a valid instance of `T` clearly has to be Send/Sync, if it is
-implemented for the type `T`, no?
-
-> > +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
-> > +
-> > +// SAFETY: It is safe to send `&Owned<T>` to another thread when the u=
-nderlying `T` is `Sync`
-> > +// because it effectively means sharing `&T` (which is safe because `T=
-` is `Sync`).
->=20
-> Same here.
-
-Isn't it okay here? All you can do with an `&Owned<T>` is to obtain a `&T`
-from it.
-
-Best regards,
-
-Oliver
-
+>
+> --
+> Thx and BRs,
+> Aiqun(Maria) Yu
 
