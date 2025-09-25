@@ -1,250 +1,93 @@
-Return-Path: <linux-kernel+bounces-833065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBACBA11F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5825BA1219
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6981885E1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550132A82C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF8E31B138;
-	Thu, 25 Sep 2025 19:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C58F31B81E;
+	Thu, 25 Sep 2025 19:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/WzRnZU"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcD8AaqX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5B523A9B3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B757C1DA23;
+	Thu, 25 Sep 2025 19:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758827403; cv=none; b=mGYBHndrZWjnt3oh2JWl/2UCrap+Z95a4d086zQqMzUED8P/QH/0QyKRKhkrqI0HlJSv9izmCTKchUECw0cQ9wC1phETbn9L9JVeKt+bnLE8sd5AKaIHQc+9UUaK4M4OUEILQAkL2Z2lCXmQ9nxf8Rqj1pTDiKN9xZRHyQi/53A=
+	t=1758827722; cv=none; b=C1xBomLiZFkmayiIM6auYofh5PW2jbgs90BCop+ZP0/9/9wUep1obZOjucJRtlpvPHtqrPZhXfJ30zJ3NIEPKiylQEw7e1GcrGRzo/+drg2ZAxnxU6qYy09tniNimw9rlEFyooy6fJtTkmAg/0dM0/okdQmwWCqerr3iU6mlA9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758827403; c=relaxed/simple;
-	bh=RxSCbZsSl6xhKEKTkRIwgi6x4A3W93x4IQZ53BMJA6c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YuOBq6v7Fk0CwmTZ/DpB9w2MAoL9XkV7oj5cPC9lvuZrC6HHUJM/t+I1bt4imDwHs1h3F4H1wzcbUHyjBsPPmX1QgM4uEV5J1kbHpcBPBHad/+gjy6KjJ/6nQTJ8GcmHURvyxok1rXwPXG6atjPQMerQSwUK/kS6UjYxrnpud64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/WzRnZU; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63491fc16c3so2226985a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758827400; x=1759432200; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXhMj6BrB8QKqvvK3wReW+Mmt5XbNJTRqjdCqe1E4g8=;
-        b=Z/WzRnZUW55PkLI4LJ3dK5bGcZ2m06SLYbO8yFheQHE9FuNs7b71Qc68Y5f1ErnBOY
-         P6Le14ANvodpcgV1A43ET08WvjgqEIgZFX4hKziTTx0WPxHdxv2r9KyqfMM19IFArhVv
-         NhNX8zzJB7LKKzWix+BpBZILsWZ8YNN5m0Q7C8KV/MP4pvGLmeGDUrWaOsod+pfLaY8j
-         mg6PeNWM/eh/6abUU4wXfKWrz/Doh8meQvMozZXdnLwWTdrmQZGEDbU1tbsb/QNGT3wY
-         kAx/Rv0IYqildVx6/Qxq8tDXZM9S+59ZVvxwHR9sg0Z2Xh9O6eo/It18TwhzbEjn2vVB
-         A8GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758827400; x=1759432200;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hXhMj6BrB8QKqvvK3wReW+Mmt5XbNJTRqjdCqe1E4g8=;
-        b=LuH9K+5FcJ+YbOwXr5cZ2sCFFC651Qk3dsIgs/R5ONr19svfRIzNNmItpMbigHcv2d
-         6DSMJTh+w5h3n5/+RwFCo8Pk70fwNEoagQcKe4uYheG//texkMxiIX1Cb4qlfphFE7I0
-         wD7hnbZRrjhsrlEs5p95iTEOsfIoWQkfQLPFv0diV3+2F6NStxvolQa2fjJACCPtByi4
-         ra3Bd7js73cQsgp42Hb6NxQohQCqPcFn1vcJlhIGgzrCDcYVlBMqwlUBrMx0TgnHd5s9
-         UQz8Hy4nEP0ROSHZeSkwMk8gb5eayEThZgZERlLcez+hOqO2iTp00YzmOU/4KCC1F2rY
-         jGjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWsq6lIufhAYF/GaTat50P2U7JQG8ZFgDfuULmC78R9yTVx/2UFj+WglyFmpjFNv9MlFq7UKWX6cpL6AA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw80YDb2/BapOOCxWF9e1/dM4nrjdaKKh5BhUXrPbkf0c51LjDY
-	M9G3B/4eoFkb/tdZkWtIqcYZ9U+zkFIXbaD3rjF/YNzZYZmmPie2hQ2WwVXlsg==
-X-Gm-Gg: ASbGncvnH3mwwSDJtr9wlvuREy5ncOp3E1JZx4zGJwDd5x69wVR0+m1cxyPWZr/lxQv
-	dbM3cAgZNgFdrOZAFFV0Cy0d5nZj+tMhTJQHYkpJ5qz0jqrp+khSGEbs3gFp3QMkqY0L5j1G3/Z
-	oGwa6LAMpdfy0Tk8XlmN0JpfesygFbob9v0hyHGYp1KoPwBFUFaTI64zEHi8qTPpyootTR11Vye
-	xF7bjhf9JnQm287jfTd4BU/SVvDaQeppQFTJinCOsWU5h681P6iQ5ZeHkkrtObe0vuf4x6ntDXx
-	Ck0Q+/fohJ5PKMtXBw1K+skS6+rcUpi6YZZRjhdj0grIsk31nbsPv2cwTUXog97d1bJdpAkWce5
-	r6VJryAD5YPOFuXtfJ+kZ
-X-Google-Smtp-Source: AGHT+IF3BH7z6/M3diWlDJlUyEYvCxqBYRtFlr3TgPRDHhq1UQzDcB+vNbs1Upae3pmayNI9yibOAA==
-X-Received: by 2002:aa7:dd5a:0:b0:62a:a4f0:7e4f with SMTP id 4fb4d7f45d1cf-6349fa95f85mr2971922a12.29.1758827399655;
-        Thu, 25 Sep 2025 12:09:59 -0700 (PDT)
-Received: from [127.0.1.1] ([46.53.240.27])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-634a3b0595fsm1643501a12.52.2025.09.25.12.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 12:09:59 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 25 Sep 2025 22:09:56 +0300
-Subject: [PATCH v6] power: supply: max77705_charger: implement aicl feature
+	s=arc-20240116; t=1758827722; c=relaxed/simple;
+	bh=7MCu9WAn1XhTifdzDhG1kliHkb7fivInIPRnmRZyBcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EB4GYqqkwTz2tPNzfkI4EnTYIngfQL8EujMGbvknIz28aCwEJoicwLyC/zZACxMORcATbN6aG6i2stxPJx3bMlcQ1OcQZWhMlhuMJKZzHJllKTpDsEM/RbAEbAM0uJhVp+DSfInmIn4OHmAuP2Avrk9/rSK/CPR5vRDl8FKf3Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcD8AaqX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C103DC4CEF0;
+	Thu, 25 Sep 2025 19:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758827722;
+	bh=7MCu9WAn1XhTifdzDhG1kliHkb7fivInIPRnmRZyBcI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LcD8AaqXB/BQZIvkaRLcXzSCaP3SbfWtQadWYo5Amvi8SAxPZKOlNHJYI2RX/kRTl
+	 YH8388EkQAd1KOQFD3vaVuso5ricLSBDYfBApSyfBg0doQNULBFHA0fjCrpJEIVx66
+	 9xVzPhP0//4EETfvnP7/Pyy/wK7LGEQT4jrJZ/UBI+81zCV/7hlT0s8dfQnH8O2wh9
+	 QS6JDsQXkw4fMJVjy1jnqK2ltXMSMEElAxzFidZhzaK1J4qm+7U3LKPyq0qBAsqlmc
+	 /BbcSA/ESWpoKcrBnD3zlyktSnBV52expi0auAW4Gxbcrpu9ICd0drRFNqejZHOvOr
+	 Ahna0RK7Sf37Q==
+Date: Thu, 25 Sep 2025 14:15:20 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, chester62515@gmail.com,
+	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
+	bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com,
+	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com,
+	bogdan.hamciuc@nxp.com, Frank.li@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, cassel@kernel.org
+Subject: Re: [PATCH 2/3 v2] PCI: s32g: Add initial PCIe support (RC)
+Message-ID: <20250925191520.GA2175949@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250925-max77705_77976_charger_improvement-v6-1-972c716c17d1@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIOT1WgC/5XQy07DMBAF0F+pvMbUz9hhxX8gFI2dcWOpeWCHU
- FT133FYQEQ3YXk946OruZKMKWImT4crSbjEHMehhOrhQHwHwwlpbEsmggnNrGS0h4sxhunGmNp
- UTVlKJ0xN7Kc0LtjjMFOUQXHjAoCuSIEcZKQuweC7lXLqmGdIb+cZfTccf8D37HwzjR9Fa/EcF
- 0yf6+8pYYiX74ovryV3Mc9jGa2NF76+/qvcwimjWKatk6FVUjyfeojnRz/2ZOUX8UvWrN5FikK
- CbUVwoAzX9V9SbkjOd5GykFILJitbBRB3pNqSdhepCsk5+rJvg7J3pN6QYt8tNeUUwDHAYIX3a
- kvebrcvuCWyBV4CAAA=
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758827398; l=4784;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=RxSCbZsSl6xhKEKTkRIwgi6x4A3W93x4IQZ53BMJA6c=;
- b=BQuD9pc2jlapGmPlnZ2q4DA0pqyKLXvihdmyDATv21l73HD9GjJBwEjR/TBwCkIm8oVjMrEcn
- 8/ABUl4nT2hBipjjmprugfBuoX5XQ+l35wZeWi21mfG9TolnVB7pF3j
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJMibSgsEFeUvHswVy6zsHMn7ZXkpbhch06oQxPY9NocQ@mail.gmail.com>
 
-Adaptive input current allows charger to reduce it's current
-consumption, when source is not able to provide enough power.
+On Mon, Sep 22, 2025 at 09:52:21AM -0500, Rob Herring wrote:
+> On Fri, Sep 19, 2025 at 10:58 AM Vincent Guittot
+> > Add initial support of the PCIe controller for S32G Soc family. Only
+> > host mode is supported.
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-This series consists of:
-- max77705: interrupt handling fix
-- max77705: make input current limit and charge current limit properties
-  writable
-- max77705: add adaptive input current limit feature
-- max77705: switch to regfields
-- max77705: refactoring
-- max77976: change property for current charge limit value
----
-Changes in v6:
-- simplify aicl feature - remove aicl work
-- rebase on latest linux-next
-- Link to v5: https://lore.kernel.org/r/20250920-max77705_77976_charger_improvement-v5-1-aab0aef82cc4@gmail.com
+> > +++ b/drivers/pci/controller/dwc/Kconfig
+> > @@ -255,6 +255,17 @@ config PCIE_TEGRA194_EP
+> >           in order to enable device-specific features PCIE_TEGRA194_EP must be
+> >           selected. This uses the DesignWare core.
+> >
+> > +config PCIE_S32G
+> > +       bool "NXP S32G PCIe controller (host mode)"
+> > +       depends on ARCH_S32 || (OF && COMPILE_TEST)
+> 
+> Why the OF dependency? All the DT API should be available with !CONFIG_OF.
 
-Changes in v5:
-- rebase on latest linux-next, dropping already applied patches
-- optimize code to drop is_aicl_irq_disabled variable
-- Link to v4: https://lore.kernel.org/r/20250918-max77705_77976_charger_improvement-v4-0-11ec9188f489@gmail.com
+We have lots of similar OF dependencies.  Do we really want it to be
+possible to build a non-working driver in the !COMPILE_TEST case?
 
-Changes in v4:
-- fix commit message
-- use IRQF_TRIGGER_NONE, because non physical irqs
-- minor rename refactoring
-- rebase on latest linux-next
-- patch reorder: put fixes patch first
-- aicl feature cleanup
-- Link to v3: https://lore.kernel.org/r/20250911-max77705_77976_charger_improvement-v3-0-35203686fa29@gmail.com
+Maybe we should retain the OF dependency but only for !COMPILE_TEST,
+like this:
 
-Changes in v3:
-- move interrupt request before interrupt handler work initialization
-- Link to v2: https://lore.kernel.org/r/20250909-max77705_77976_charger_improvement-v2-0-a8d2fba47159@gmail.com
-
-Changes in v2:
-- fix charger register protection unlock
-- Link to v1: https://lore.kernel.org/r/20250830-max77705_77976_charger_improvement-v1-0-e976db3fd432@gmail.com
----
-Changes in v6:
-- drop aicl work
-- handle current decrease sequence in a loop
-
-Changes in v5:
-- add _MS suffix to AICL_WORK_DELAY
-- optimize code to drop is_aicl_irq_disabled variable
-
-Changes in v4:
-- fix intendation
-- use IRQF_TRIGGER_NONE, because this is not physical irq
-- use dev_err_probe instead of pr_err
-- remove excessive chgin irq request
-- remove pr_infos
----
- drivers/power/supply/max77705_charger.c | 42 +++++++++++++++++++++++++++++++++
- include/linux/power/max77705_charger.h  |  2 ++
- 2 files changed, 44 insertions(+)
-
-diff --git a/drivers/power/supply/max77705_charger.c b/drivers/power/supply/max77705_charger.c
-index b1a227bf72e2..35cdb10a0e89 100644
---- a/drivers/power/supply/max77705_charger.c
-+++ b/drivers/power/supply/max77705_charger.c
-@@ -40,6 +40,39 @@ static enum power_supply_property max77705_charger_props[] = {
- 	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
- };
- 
-+static irqreturn_t max77705_aicl_irq(int irq, void *irq_drv_data)
-+{
-+	struct max77705_charger_data *chg = irq_drv_data;
-+	unsigned int regval, irq_status;
-+	int err;
-+
-+	err = regmap_read(chg->regmap, MAX77705_CHG_REG_INT_OK, &irq_status);
-+	if (err < 0)
-+		return IRQ_HANDLED;
-+
-+	// irq is fiered at the end of current decrease sequence too
-+	// early check AICL_I bit to guard against that excess irq call
-+	while (!(irq_status & BIT(MAX77705_AICL_I))) {
-+		err = regmap_field_read(chg->rfield[MAX77705_CHG_CHGIN_LIM], &regval);
-+		if (err < 0)
-+			return IRQ_HANDLED;
-+
-+		regval--;
-+
-+		err = regmap_field_write(chg->rfield[MAX77705_CHG_CHGIN_LIM], regval);
-+		if (err < 0)
-+			return IRQ_HANDLED;
-+
-+		msleep(AICL_WORK_DELAY_MS);
-+
-+		err = regmap_read(chg->regmap, MAX77705_CHG_REG_INT_OK, &irq_status);
-+		if (err < 0)
-+			return IRQ_HANDLED;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- static irqreturn_t max77705_chgin_irq(int irq, void *irq_drv_data)
- {
- 	struct max77705_charger_data *chg = irq_drv_data;
-@@ -632,6 +665,15 @@ static int max77705_charger_probe(struct i2c_client *i2c)
- 		goto destroy_wq;
- 	}
- 
-+	ret = devm_request_threaded_irq(dev, regmap_irq_get_virq(irq_data, MAX77705_AICL_I),
-+					NULL, max77705_aicl_irq,
-+					IRQF_TRIGGER_NONE,
-+					"aicl-irq", chg);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "Failed to Request aicl IRQ\n");
-+		goto destroy_wq;
-+	}
-+
- 	ret = max77705_charger_enable(chg);
- 	if (ret) {
- 		dev_err_probe(dev, ret, "failed to enable charge\n");
-diff --git a/include/linux/power/max77705_charger.h b/include/linux/power/max77705_charger.h
-index 6653abfdf747..b3950ce0625e 100644
---- a/include/linux/power/max77705_charger.h
-+++ b/include/linux/power/max77705_charger.h
-@@ -123,6 +123,8 @@
- #define MAX77705_DISABLE_SKIP		1
- #define MAX77705_AUTO_SKIP		0
- 
-+#define AICL_WORK_DELAY_MS		100
-+
- /* uA */
- #define MAX77705_CURRENT_CHGIN_STEP	25000
- #define MAX77705_CURRENT_CHG_STEP	50000
-
----
-base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56
-
-Best regards,
--- 
-Dzmitry Sankouski <dsankouski@gmail.com>
-
+  config PCIE_S32G
+         depends on (ARCH_S32 && OF) || COMPILE_TEST
 
