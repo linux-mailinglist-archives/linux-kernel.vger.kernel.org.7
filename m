@@ -1,151 +1,129 @@
-Return-Path: <linux-kernel+bounces-832740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C30BA037A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C343FBA03C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F027B560349
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A85A05E72C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A92C2F617C;
-	Thu, 25 Sep 2025 15:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D622C2FC02B;
+	Thu, 25 Sep 2025 15:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOS89OB8"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="kDBjylKB"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FD72E2DF3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813AA2E2EEF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812879; cv=none; b=EUpKP1t4KLQFnxArZ74yKYJqDqnkE2HYfmUx+JGpnXcAdhtRpKtMvkTKahrKbCHsk2AUtusLrV0GrFvh1D5N82HT8id5Dj3agypEIt4ddcMRv4cYT3g+bd+DpCf9VkUz61FwgWf7F2I8DFOoD3VPJFdPygNo2nrUFIJ7tgal8Ys=
+	t=1758812946; cv=none; b=H0BghSay1Ov+j9MbUn2hFRolrTZvizd2GfanYfeZsav/hb0iuRhlPA9GuXLYxdXct2p8JSkszwlW+hZA/frj2tiAPKi3jriVE8mm/FCXwjXsbdKWIZ4P3+/oK8Le4C+mlFzJippTeLIXZ38eNX3QFhwdcAIX7SOhosE+BDVWdO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812879; c=relaxed/simple;
-	bh=PwfgS4qfIfkc+imXtu/sSZXrBqwExZR+rgZwO0IBYGI=;
+	s=arc-20240116; t=1758812946; c=relaxed/simple;
+	bh=tBuMl0JL0XljNmjIHt9b311mx+KtGMbg3qOUZStmOuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfayII6m+az2yIKUCTB26196ia9qnlglr0OJqWIk+z6vben3LEpVQiNPe1vUEbOw8lrjptraemGzIYOjVRMGVAb7eXUO7ylsla7/gL+xqcOjHufizfc1ZpYCAUMBJrX8drPUtngzikzA6/Wl/hJggHzLHU5Em/aIfXvzOFnashk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOS89OB8; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7761b83fd01so1165858b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:07:57 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQCwjxHcH6raYgGtx1076cfovfH0giQsT6xq1HHnmu7KQ53vG6hjnm0mEFukPJ/HjMvJ5ks21I5LTS0Co1T6RTj0pVRoYOacMSBm5wxfE8mtjLgsKk92Vp7tw3csDjeSB7wKm9Zu6V+ECXYy196mY5oguNxYv21ick2ZMYQoU/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=kDBjylKB; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-424b20f8b7eso5885735ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:09:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758812877; x=1759417677; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jE5cIH8mYsDicp+BwKdnhTTJHAMEhvsJen2js1pJiH8=;
-        b=NOS89OB8QhgwX7LkwleAPOmUqR7YMHjWOMKiWPH4Xrg2/5PNpKvgPqvK8fbjkBK2+R
-         3ty/DNv/6qItYt0g5KH2hC7swFJa2orXFscTjT+11NqJfp4tiORGHloMCrhQOpK2TX+g
-         vpTlsfvylAWX8BNr3EbMxCDma37slkMJr6APSAA/N2ud5/g8rvJdauOEe7prdR0H9it2
-         NseZ89Ia3w3M/ElW9RwCAZYToE+6p6pqIUjxDkPjZiJKdzQAU8+QA5Lm+xTlPhSvp7We
-         GG3+tI2YAQ8ZpL8yEFE6cJIY5RriJpIQaUD+oZH3t7wC3MfqtLbLhi6KhXyUoVOmXHqV
-         SR6A==
+        d=gourry.net; s=google; t=1758812942; x=1759417742; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mYDLI5mwI4uh21VH+pwIKDtJ5bbVvmfXzJZa+QgeupM=;
+        b=kDBjylKB95mENxVrLvDvwXPv+CpFH6Qm4NWrKWiGNvA3r9PxmiYJnW/MLNPvRBQ6ZK
+         BMslkO/j9NK3dPfkwNaJ5lUEaTutfJS5KxbfPnFwI8i1EgYWyMqDp3OmRXr6EXQTeiQ3
+         0E+xPDSy7DzK/2CgTSoypjY8bi7S7t1Q4Uie0kWOJgGL+SPpXt9A9pGB4/kyYideXh9/
+         E1ieE1AYkNb8PqZdEmK68GQRHI781VL8iALRw9OWUCqnyMv8vCLjDGiw9uuADoefr24G
+         9yYaY0mwX8nROSrlG0c9uo0NyXRdmLW6/bDs3Yf8Dd4aMtDMZvEUHTGUBpGqUrNFEhDq
+         KZIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758812877; x=1759417677;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jE5cIH8mYsDicp+BwKdnhTTJHAMEhvsJen2js1pJiH8=;
-        b=Sb9P8bmqIMZ5khWuAL5UgpT4nTcV05N/R/9gaYJg+67LR8kcG3LbviX25liDmP7xWx
-         ukVJUDQeKmMOJGhSQIju0aIgLiR5q72LdBjR9LbExgA4XCPAfuQg+bzIZ9B8fU6pLOWT
-         xHw17DxAQyRAGiLhBogXKt5BlQIylDoPWZuE86WzTiBSSQUsrQpFE7kHdemRDZ7iitRd
-         f61UWyKIoBohHcIPYS/Gk77W6txJek9FWzLKQTVW4AiuamesutkWzR5/8GJ8ZwEuwq+0
-         hgayzjn/G+KCalI3W9YlD6i7WKXN1jwuBRKol30RE0Bjz2ewFvcTeVPDdURmBfTKWjHd
-         azow==
-X-Forwarded-Encrypted: i=1; AJvYcCU8mgNw/YiyHa0XmM+iEtWEmileP2NLb27ykFZ6mRelcGK5xFkqYmDyxf2WzY/6iSfmF6VAhRla7jyZbJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw10ehaSNFouljUF8hdEB9MMzHh8C4r6vX6UHmYDSPtVDxMYJss
-	7lLzIThO0qWmU73rWXFyyVbDUQCuBTB6v+t3yuy1OM8CEht6TSjqtOfo
-X-Gm-Gg: ASbGncsWJPjd5oo66afR7HgrnpQ20z8xL63Euf7YMyhhkDbzR6IqQug+M23wVQXTY6r
-	8lvaJgpGoG6hNKMCz4rVMqCP1WzWcz5TDUYXE60w8mhfMS1aPuJTGLiGASm/aK8jwCB2BHlmy0d
-	xEI/wSYNFRjBNDrOttB3Oj4HrdRUbMcRzOaNs0/nHdKWVs5FpCH3/VZ94rmXU0TxYSc0rnL9Fbq
-	ZtTbNRAZ1EK9Ml1awSM+hM+DbFMn0sg4gw6PVG8WofWcfgccdstZ9ZlV+KVC8iK2ZbLIaJR4bCb
-	0KzClSfPd6nSSwKsnbrCkU8PAMDzR+BtB2Q1+iBhdMbYB0yMetZ0Wl0HjDrupifAmkNYkMudv4C
-	zQ4agYzNXArt8d6v46U+/GMJ+LzDPHtnCmM4=
-X-Google-Smtp-Source: AGHT+IHxwbqMwtSUpRB97Nr0rknalbSvu7cUrpdQGoGrEFmAeq73TNUTzNKC1zhtc24Ag7rMTXMpnw==
-X-Received: by 2002:a05:6a20:9188:b0:2e0:9b1a:6417 with SMTP id adf61e73a8af0-2e7d37fba87mr4692452637.53.1758812876869;
-        Thu, 25 Sep 2025 08:07:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53cb975sm2506233a12.18.2025.09.25.08.07.55
+        d=1e100.net; s=20230601; t=1758812942; x=1759417742;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mYDLI5mwI4uh21VH+pwIKDtJ5bbVvmfXzJZa+QgeupM=;
+        b=FcRLeJvWFnj9f/8FFgQK45PjjvvO5pJ1LWJYQCcCsByPTXr5cPp3U/u4ehTboDCny7
+         KIERkR0jy+kDoYCRtM24u9tDty6fuc2z0PD2mXYZPHQe+dTFBZim8tTLuT+Tp3O011XM
+         WCKMnihsYQuC67jnGU881FI68ilC+8aTGxxZLzU3pC0papRikXCEiNWuWlMEXERjt6TB
+         zYjZ4VW6N2HiMWKF2t6BTrFUDjSeDEgYSbU5YvpqRDKa5Kij6Z7vwA19rmYngWgyy1ln
+         nEyRXFXOUSEU9MyaLxHfs9YUFnttaptUTJ3TqF/ZJIz61UXNrK8xqPV1T2FuodIwyhYN
+         IJSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrXr2aSy8VdBBu4PZs1hG2JqofRIT8awE9ykQS+YzKp2qc+aR4jHEnz0CBFzxSp4wlmDw53H5IkSK3A0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOhNXEaEpKmiziIZiTQvm304ReQ+oDtdyTCa28UuCQcfzLhgyz
+	QjLZzFNAUY3kCfuyoEvR9sAS/m8BoWk9bncwMjEcKuERoL4nEK+iEPiOlpr3OYnjbxw=
+X-Gm-Gg: ASbGncvGDcyoEVLTKz4U89UBLqRA9xwvST5Iqb4Tg1btMkjTF8qQnbkGrAnxfkGm+Z4
+	nJRQd1G9pq275JW3VToxHyl6d5nNBWo5W0UBmr+dKIxshgLry7wfEXyVjOQS3bPAL6GQSC0ydJF
+	jg7d8gUO1v33KqM6T+ZWC8aQDOc91dJ8z2kOrSj4a4MpjzUwRBr+B/z7lvMW0tXJdubFO2aZEto
+	PpeiFsM/iHOWRnIe555jJws9CGSDnaOyBFIvA0DV86CruJwUHo/Ox4NVzHF2vLt4vcjTmxLtHyw
+	fqKJrUJGbKeHWZztH+AoW7USS3/IcQAkcvRL8yyS1HeFnTn5Si/9dTMLaPo6nz69G/3TYwjS8ZN
+	8g26TvddEe9YZF/gahtL5uGucjoBviTc5TxCR5f6npSBYCiFsirbadhgvj1g4Tnm4KRM953ZjEP
+	4=
+X-Google-Smtp-Source: AGHT+IFJCD646Ie93Dsteh+N9Tg3N9mTKfy3p3JlRRzccID89obtfshwZ2kYW8ICweprqMFS2clcTA==
+X-Received: by 2002:a92:cd8c:0:b0:425:720f:deec with SMTP id e9e14a558f8ab-4259566e447mr49602485ab.31.1758812942274;
+        Thu, 25 Sep 2025 08:09:02 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (50-32-2-77.vng01.dlls.pa.frontiernet.net. [50.32.2.77])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-56a6546198fsm878831173.21.2025.09.25.08.09.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:07:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 25 Sep 2025 08:07:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: wenswang@yeah.net
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jdelvare@suse.com, corbet@lwn.net, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] hwmon: add MP2925 and MP2929 driver
-Message-ID: <ae5ad599-e857-4124-b6a0-61196a763109@roeck-us.net>
-References: <20250918080349.1154140-1-wenswang@yeah.net>
- <20250918080603.1154497-1-wenswang@yeah.net>
- <20250918080603.1154497-2-wenswang@yeah.net>
+        Thu, 25 Sep 2025 08:09:01 -0700 (PDT)
+Date: Thu, 25 Sep 2025 11:08:59 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>,
+	Wei Xu <weixugc@google.com>, David Rientjes <rientjes@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, dave.hansen@intel.com, hannes@cmpxchg.org,
+	mgorman@techsingularity.net, mingo@redhat.com, peterz@infradead.org,
+	raghavendra.kt@amd.com, riel@surriel.com, sj@kernel.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
+	nifan.cxl@gmail.com, xuezhengchu@huawei.com,
+	akpm@linux-foundation.org, david@redhat.com, byungchul@sk.com,
+	kinseyho@google.com, joshua.hahnjy@gmail.com, yuanchu@google.com,
+	balbirs@nvidia.com, alok.rathore@samsung.com, yiannis@zptcorp.com,
+	Adam Manzanares <a.manzanares@samsung.com>
+Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
+ infrastructure
+Message-ID: <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+References: <20250910144653.212066-1-bharata@amd.com>
+ <aMGbpDJhOx7wHqpo@casper.infradead.org>
+ <aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
+ <7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
+ <CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
+ <20250917174941.000061d3@huawei.com>
+ <5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
+ <20250925160058.00002645@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250918080603.1154497-2-wenswang@yeah.net>
+In-Reply-To: <20250925160058.00002645@huawei.com>
 
-On Thu, Sep 18, 2025 at 04:06:03PM +0800, wenswang@yeah.net wrote:
-> From: Wensheng Wang <wenswang@yeah.net>
+On Thu, Sep 25, 2025 at 04:00:58PM +0100, Jonathan Cameron wrote:
+> Now, if we can put this into a special pool where it is acceptable to drop the writes
+> and return poison (so the application crashes) then that may be fine.
 > 
-> Add support for MPS VR mp2925 and mp2929 controller. This driver exposes
-> telemetry and limit value readings and writtings.
-> 
-> Signed-off-by: Wensheng Wang <wenswang@yeah.net>
+> Or block writes.   Running compressed memory as read only CoW is one way to
+> avoid this problem.
+>
 
-I'll have to drop this series. Reason:
+This is an interesting thought.  If you drop a write and return poison,
+can you instead handle the poison message as a fault and promote on
+fault?  Then you might just be able to turn this whole thing into a
+zswap backend that promotes on write.
 
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/mp2925.c
-...
-> +
-> +static int mp2925_write_word_data(struct i2c_client *client, int page, int reg,
-> +				  u16 word)
-> +{
-> +	int ret;
-> +
-> +	switch (reg) {
-> +	case PMBUS_VIN_OV_FAULT_LIMIT:
-> +	case PMBUS_VIN_OV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_WARN_LIMIT:
-> +	case PMBUS_VIN_UV_FAULT_LIMIT:
-> +		/*
-> +		 * The PMBUS_VIN_OV_FAULT_LIMIT, PMBUS_VIN_OV_WARN_LIMIT,
-> +		 * PMBUS_VIN_UV_WARN_LIMIT and PMBUS_VIN_UV_FAULT_LIMIT
-> +		 * of MP2925 is linear11 format, and the exponent is a
-> +		 * constant value(5'b11100)， so the exponent of word
-> +		 * parameter should be converted to 5'b11100(0x1C).
-> +		 */
-> +		ret = pmbus_write_word_data(client, page, reg,
-> +					    mp2925_linear_exp_transfer(word, 0x1C));
-> +		if (ret < 0)
-> +			return ret;
-> +		break;
-> +	case PMBUS_VOUT_OV_FAULT_LIMIT:
-> +	case PMBUS_VOUT_UV_FAULT_LIMIT:
-> +		ret = pmbus_write_word_data(client, page, reg,
-> +					    (ret & ~GENMASK(11, 0)) |
-                                             ^^^
+Then you don't particular care about stronger isolation controls
+(except maybe keeping kernel memory out of those regions).
 
-As 0-day rightfully reports, ret is not initialized here. Datasheets for both chips
-are not published (actually the chips don't officially exist), so I can not figure out
-the expected behavior myself. FWIW, available datasheets suggest that the bits are unused,
-so if that is not correct please provide evidence that writing anything but 0 into those
-bits is needed.
-
-While at it, please also provide evidence that the chips exist in the first place
-and that this is not a "let's see what he accepts" submission.
-
-Guenter
+~Gregory
 
