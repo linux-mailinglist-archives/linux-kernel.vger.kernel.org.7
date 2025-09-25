@@ -1,138 +1,293 @@
-Return-Path: <linux-kernel+bounces-831768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123AFB9D84B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C06BB9D857
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D2D7A2DD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 165E44A31DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113A82DE6E6;
-	Thu, 25 Sep 2025 06:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F249B2E8E19;
+	Thu, 25 Sep 2025 06:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KUn+rXDW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="skO4P0lv"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013071.outbound.protection.outlook.com [40.93.201.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A356FC3
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758780257; cv=none; b=KDEPCVdLG2xk8ca7/qL9rxQ7PJ9paMCHRqa3uQg5NgRAzqcqeNcuAhSqKI+xSLMD/i0cl75IG0LYrQ3monE/0xz4kfJM/cEck33LLE87lGXSMt9bHxzmXxnJ2XqVIO+7LbZJC1o/A4dvv70QWU+h43AtzW3dyQ8SP8EbVtSNrIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758780257; c=relaxed/simple;
-	bh=o0VNqoePQ9Fxc7vePL+KVWDFK3PNoSh+8m9moiHOP0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sqzDEpqQTZUSZMqnBbInsuspxo49yTd6cC5jpEUvuuq5kZS+moyIjs3dI084wf2gRNQONFksvvXJRkEBdmWePaejPiba6Zkg1uaSkbNs2dQHgWb9M923tgNyG4fAj85o8Rl/NgPy2Xv144/ScqrnTPuvlXJz+8jPw52U17Z4msE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KUn+rXDW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758780254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=aFGTlM/AfVM6UoD7+6D0K+JKl8i8C5klHuPNmVycESE=;
-	b=KUn+rXDWI146AW21Mmas//VI6a9PcOGmNaTNVNhwH7crKupGYiPKiXw1j3Mkq2mEP1/D62
-	B/zE9voWAzLLAJT5eamxMFjzFtjUuymUbLzuJqo+yn6f7zncxlaRQUS5CU0dtizl/YiWFU
-	qhYDm53DgHcQWIIXdnkbf8DmodYqLZg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-ACOUhj6EOauTFnkUZB6hUA-1; Thu, 25 Sep 2025 02:04:12 -0400
-X-MC-Unique: ACOUhj6EOauTFnkUZB6hUA-1
-X-Mimecast-MFC-AGG-ID: ACOUhj6EOauTFnkUZB6hUA_1758780251
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f6b44ab789so300227f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:04:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758780251; x=1759385051;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aFGTlM/AfVM6UoD7+6D0K+JKl8i8C5klHuPNmVycESE=;
-        b=lr7QowBmOPK8bIkLra3gJ4sj3arm/3Yp5ZBswz92TvIpRweUDeQ3kBjsXr8QFM724C
-         PZiy9xODeULF5aV/4cMxtkmN5NlVEHW62Su1vgVuvwyrhMtGK1cPsarsBxt9YjJmSjvv
-         3AQK0jVrNDiY6B2Knko8UA3lLBLxPJ2SnC6pxObH5mF1V1C6GWePw3fPYq5A/rCMM81o
-         TE79McKN4kdLXAwBDL5oawmqTRhTPfnA05g6A7SLIT532y1NYSv12OpviPg/RETxatSL
-         GJRSZoVpL75DLbhv7F/ErGP6gBCUroRhcQqE/bEgNcnz17Fzm4PEmsgl01Zq6uZEbImG
-         jGwQ==
-X-Gm-Message-State: AOJu0YyLSvPaFygo+g7T61Il5VQnll3GCgmOL2ou2x9z6GsQsuXu3/cK
-	GTqN8tgotNwy4VEQkztrrxvt9BRQOjCzLj3tLNlQuTi5rCot6xxEhE6ES2HtXswG71dWISDjPCi
-	DbgxRixgPbs8T9Ui2Lqsd2S9eeZFYiUqib3FYQGqCELgyda/7mQaZF0pG0XzN20MlVN+Zyem/d6
-	el7PhnVyK0H2HgMekmsObvu+mzELeR8JHb4SU0izXOKy4=
-X-Gm-Gg: ASbGnctHjPnGS3hz1PofVlKpSYGqR5GKDaaRI5xiCDZhkJz4GCDUyXAnm8i0BvF2KO1
-	XfgZYU0QskNYJWw/PC3HZLwNSCI5pskoRbY6phT9yn2ctaQJE31NvlFLedfyUlC7cEhIp+ag+Mn
-	talbB0dmLm8KlAnpD/qX4Pvs8CyouWHNaRyEmukB05HLrJbaJmsHZfB2LL3GBX7X6ID/xqEC0vQ
-	nifIiDhvf79ov7VdsbD9ERnzq3BzWhefAAWsvEKtjORMzFdfJzh7fMyFwAfaZSsyCcJiOz6/yRb
-	VodF+v//sraj/6BDeSr/M2LBx2HaxMe1Fw==
-X-Received: by 2002:a05:6000:2912:b0:3eb:f3de:1a87 with SMTP id ffacd0b85a97d-40e49e725f0mr2176058f8f.56.1758780250962;
-        Wed, 24 Sep 2025 23:04:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEzXROWH0HheOoR3C9U+J8DhuDXRcMrs5JaiB8XcConfDaf/URbl6oeL/NMdqI1Vf+S1XrqWA==
-X-Received: by 2002:a05:6000:2912:b0:3eb:f3de:1a87 with SMTP id ffacd0b85a97d-40e49e725f0mr2176012f8f.56.1758780250483;
-        Wed, 24 Sep 2025 23:04:10 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1538:2200:56d4:5975:4ce3:246f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603365sm1463946f8f.37.2025.09.24.23.04.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Sep 2025 23:04:09 -0700 (PDT)
-Date: Thu, 25 Sep 2025 02:04:08 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	kvm@vger.kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: [PATCH net] vhost: vringh: Fix copy_to_iter return value check
-Message-ID: <cd637504a6e3967954a9e80fc1b75e8c0978087b.1758723310.git.mst@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72F2E8B8C;
+	Thu, 25 Sep 2025 06:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758780266; cv=fail; b=WHX/1WFLqbor3OI8FyoO65Kr/8UBXbneHmgoXyxYi9MQpuWjVDnzozzhnZN6gmhbbyRQUJBF4idpz00UTpzDDq8qgf6zLz3RSPNT6uv0FErKvfMSlkXqZf+1MY23z7KQUq/FPe70TI57vIWpcLTs8gdYEI5sWtvyaE9f4xuWt8U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758780266; c=relaxed/simple;
+	bh=KXemB6oOdIB+xzluWAtmggAIZhmcGEqegOvmPSUUrUQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pGFheiobh9cOystl1y7eb5SJbmu8FNotUA9jc0VbLqgl4gFrDPnEtK84fuaJcfXKWIFOkfP8jsrYOr+4crwfSdVzq6cUKPimB57J3sEdZ1UNdHQadF44NJmQXl8vmiq0br1lyHjnBbaIJhT8am/RvfkAsKraOjf1KNFcxqILEAE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=skO4P0lv; arc=fail smtp.client-ip=40.93.201.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zk2IZ5RcjL5WpAtA6Y8HNE2qCUgpvaOLt/hNuENuRT/hNKoRYohBqN6vAqvBaQ1uYKyvKBet5AMAElwH10/mfoSJTv7zVUqe+6fDx7ny/IEpKymratX/KSZZg+kDonGEZXO8irZs33DNuzyCOgY2NBS0DN506PPIaVzACn+MCYsZiJtLym68veAMYVzE5f6QRRYqcap6q6la6TfCextSjcfrMvzjnaY0RvA869AHOMLhyGmm6hmzJm62uiP18u/y1CUBy2rFHDfggQ1xRzIxw1HaZjblU6XSstNXyj/4xzZ24qKbH4MA+lj3l7a0llwXiDU4Z32Z67hpicepWzccJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BE48LGd8Du5MiKKvglrn1AproCC4GlipHq5F9zopUYA=;
+ b=anX7IVOpQ2WZs5CbWOAJS5jmHgcEKQWOulnQYnwdnd0X7GCjJrnWdhM147Eg8QmI9is64WVhLgK2viChDN+XboF6yelHj+1UDkXI1ihXP6CwPBT4YdECWo8DH57B2ZS/x1XqkSZmDKSDZlvKnb40OtKbY0Naqo89uU9XgcY3i+y33DPX8UY4hlQ0UJti4letmU7/19RHP9X87hE4zbP8HLcwlwdN+aTsgRoge7VKbogHG28oBcJ0j4OPCRJoOHZx//Wabn0CdBIlz9Pgq9RHUdxhjo8Pvn8XknEFiodWYHYK6O02ZEdLIAq1pSL5ZipTGMJEJl33PdepzqRYijNKQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BE48LGd8Du5MiKKvglrn1AproCC4GlipHq5F9zopUYA=;
+ b=skO4P0lvLQrumj/uVC0DlLyQ0xPMv2opfo7AqzFq3+SqtwsnchYTfZQODJmydajCWbgMmrW5iQNgFYR0kIfehfVvPcYkr/B99HEzUv9RFNcag6QdG4kLTB7Wz7aWh2eshJDh7v7oLsgFVdIBRAyXSA6FQv4GKGQEFWImR4E/iGc=
+Received: from SJ1PR12MB6076.namprd12.prod.outlook.com (2603:10b6:a03:45d::10)
+ by DS2PR12MB9565.namprd12.prod.outlook.com (2603:10b6:8:279::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Thu, 25 Sep
+ 2025 06:04:18 +0000
+Received: from SJ1PR12MB6076.namprd12.prod.outlook.com
+ ([fe80::415b:4f92:5791:b46]) by SJ1PR12MB6076.namprd12.prod.outlook.com
+ ([fe80::415b:4f92:5791:b46%4]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 06:04:18 +0000
+From: "T, Harini" <Harini.T@amd.com>
+To: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>, "Simek,
+ Michal" <michal.simek@amd.com>
+CC: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>
+Subject: RE: [PATCH V2] rtc: zynqmp: Restore alarm functionality after kexec
+ transition
+Thread-Topic: [PATCH V2] rtc: zynqmp: Restore alarm functionality after kexec
+ transition
+Thread-Index: AQHcAV1AXhRPyjcD+0u9TsGzWke7IrSByXbQgCH3+XA=
+Date: Thu, 25 Sep 2025 06:04:18 +0000
+Message-ID:
+ <SJ1PR12MB6076CAEB3B0429159B4151AA921FA@SJ1PR12MB6076.namprd12.prod.outlook.com>
+References: <20250730142110.2354507-1-harini.t@amd.com>
+ <DS7PR12MB606995B08A344C01711C7BCC9201A@DS7PR12MB6069.namprd12.prod.outlook.com>
+In-Reply-To:
+ <DS7PR12MB606995B08A344C01711C7BCC9201A@DS7PR12MB6069.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-09-03T15:22:17.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR12MB6076:EE_|DS2PR12MB9565:EE_
+x-ms-office365-filtering-correlation-id: e0d7776d-56f9-4ae0-c5d2-08ddfbf95d00
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|38070700021|7053199007;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?MyU0gBMeeADmwh7XmKfuarqVyTSh4eIv8Ove3WW54EzRo5D0ARGeD7Mt1RAm?=
+ =?us-ascii?Q?6p7+cjmxhlnXBagfuxtwEWjJquaa5q7oyWGypm3yTrrfPdZcO6yzITJP1hwZ?=
+ =?us-ascii?Q?fnmsN+AVpxrvL4LDGRJpEfoX/Z+GucXg6SdvVn5qfjHXykJSbTb4pF4tsCJU?=
+ =?us-ascii?Q?ZgSOoYaa9pMFn/xeXRrshEYsQmidrnsqXLZ1l7g5kkQr1cg20bNBHHD9/82l?=
+ =?us-ascii?Q?Nf3dNClbWA0lfD7JVUXbzCKC3dFiBub9fLWjwfROaGgC+Wy/MF8WitLy6xLZ?=
+ =?us-ascii?Q?dsyM4WcXJUSFzLwtaOZ5uQrAGmR6zCwD3PiVsr7P4FPijhviGakepsonjdOC?=
+ =?us-ascii?Q?ccm+cZgFOMXrPBu0xXGX92oUIfrdggC4QLpjf9Q9NnBee8kgxJkw2aBPDXY9?=
+ =?us-ascii?Q?OnD74MPkNagHUKI/o4fZzPSPWi/ug0vXd3XufQExuSrtdQIdh92anKTzxPW4?=
+ =?us-ascii?Q?m8/P0KjKgyMX+NT9BvppR4GjHIOCLcGPkr1sC4hUBhMeQ8/+pXeo9fSAvZ4a?=
+ =?us-ascii?Q?5aPtEVIessO3putmj0O77zwQKqFOsLgI62XDfOLhG+cYBTO5WvFShggiFQ/I?=
+ =?us-ascii?Q?48zbGmT+Q7HOkrOyFR0qADs44hDl2mcjR+4ffvp/etUdEvRGG9Ew85aY/zFT?=
+ =?us-ascii?Q?VCp9PAZV5gpKC6BqecG2EbgfZYlgchvlZyMiGX68+IicGErd92uJVK07tG47?=
+ =?us-ascii?Q?sl4UXStv6wadUT9ALJgwG9l2A/mVDBLCdDErlLIOH9NTMU+NgLqCWhN55XvQ?=
+ =?us-ascii?Q?JBISqYDUIm7PAdRYfK36/cJm5Xeitv6YdDd6fVgsK5sTUQZb8evNEzkL8Hqj?=
+ =?us-ascii?Q?MX7Vi/l2T47APtoOrJZtB5VnU7N7lWX0xGj4UtVPluzklsmMZ2c2wYMnUUeP?=
+ =?us-ascii?Q?0SmjyPP30u4qquMGw5+QzldHwmQxmyEzwt4hqw440IbSsTHXTzuJ3n5mIzOT?=
+ =?us-ascii?Q?TL1Ami5WpOhoCf6aw5cU7FwKXIUmOXTZyLSRE1+LMFgqMBlmCsF0BLvVa7Zv?=
+ =?us-ascii?Q?ZejWxvmSBemIoNcN3ulkZJcfaqlqc69yXP4/FIm3di7WEmv7IwjDA3mYaAuB?=
+ =?us-ascii?Q?kanscZ4+E08j+CLu0Y5eGGKgwUPXduStGa7qPuWi//pQ2NP9GETZUwP52W1E?=
+ =?us-ascii?Q?Zdbbq2HCNC/pJeCblOpyaBUhvsiPVLovnE5XAcAMM19XKVE0kxDa25BdQuQt?=
+ =?us-ascii?Q?85I9tccpgDpKQGn0wdZJ51uy++y8xwznZvLBafC12c/NMkefAhs8oGQA/jvY?=
+ =?us-ascii?Q?uUvJqkvScAgMJwaLefHv5tvWf7tUmSmmKK827Hlro/5T6dZc7LS6KWa8tbHR?=
+ =?us-ascii?Q?ROQjamVFGzJKBEaR96pgVzp5ZqeO6xPWnFLMqHZJeMMuNTYuQ+ADHjkg4Dg2?=
+ =?us-ascii?Q?msSebFibRVXwU0jfFXqM5z2pylbiCdFPK0BI33Itw7lHKruM0J26TJsO55PS?=
+ =?us-ascii?Q?N+liBR42mYpkKVRuhzZXG2whKdKfibB9?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6076.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ruUxucvxSpYtXSjhvq9ds9k1X4pe9aJ/EqqRO9s4zsbnkUT3P3/R90oWld1a?=
+ =?us-ascii?Q?J0DOidUcw/zaAK6HKpYtPYa99zXMdE6+wJHRR1SDcY2cUN9AA5V/MSf4KVCx?=
+ =?us-ascii?Q?oy3AXkuu53MACT4iE4RgNqUqYbao/vmQRXxTKbR8hlZxq8wfpLPXOWKh0XJo?=
+ =?us-ascii?Q?fBLRGGh9iQl1OYqff9cTrqRnB4JtVRUNav0DJIULwABhItWpeaZqvRaFf3cv?=
+ =?us-ascii?Q?TfqX92aVMcQ9TjETTJNew5cLZkhrRgpzoNetMf5u6sz9hox1zvcdJhC5Qucc?=
+ =?us-ascii?Q?+WG682CratKU6rXkIwGNOvwLaD3w0U6tXZwytbYCRkzPCoi5NyPvHQM+UEjC?=
+ =?us-ascii?Q?zJfY/7ZhBbKDCx0QYDUJ3pZB/cMTw/H04S6YNT2j1gIOJpfcFEjo5LPp37nu?=
+ =?us-ascii?Q?ocmvG0BDGtcgYul0oNqOXNkTacX5OXCyzwXqqZeDLz55sOy3nYEA+oKhtCRZ?=
+ =?us-ascii?Q?WmewTlv/H78K57TalAzKoCaa2yGM4sEM2qmQhD/eZzHqJr72t5/39nzfRoTt?=
+ =?us-ascii?Q?7DqByTyvtnQsWkPAmhOmsmzQt/3jiXnI2mpXPQriz+3LNHCjc0B7QVuFPd+V?=
+ =?us-ascii?Q?+cw9GuGY8QoaJyhoH9EsNyLHARNQ8ylIjvMZ1m9EDEKSvciX3PkdGBaOW+9L?=
+ =?us-ascii?Q?XfKW3z5Nof5MCDQ+Ae7HcwFAuKxuhqqZcCHQKJyPjBSKq3Uhv1mCEozKALti?=
+ =?us-ascii?Q?lTKI2DqXrL2WJwGD/tTWAABT4Z9vfcggg+HsiDjLJ1xgTK4q3K9X1JI5OTLn?=
+ =?us-ascii?Q?3cvOsIyvHKKS9C/vpQ6W9oUhfwunksfyUW/yPWbUSvfBgOH9JHofONPLLZfU?=
+ =?us-ascii?Q?s8iJZJozZ9A2ApE+TCRZvzvSC5PkZuNBI8gG9WrzdzC31b1ItfqhAWEC9Ejw?=
+ =?us-ascii?Q?nXcrIwQfa+NaMs31mYwIw2pC+zVg11dUoIi5U8bZ7LVDc/wQaObzDKuyQQHm?=
+ =?us-ascii?Q?Wiz5Hi58PAPITHdC6RkYqc6Q1d7rgfmVwrU8Bsc9BaUveisirm1aFSeCBm/l?=
+ =?us-ascii?Q?w80sRARHLMQK+zl6WR5KQqALycMbhrwoppjVSDV3UWk1N6RVrI0SNJTe98cY?=
+ =?us-ascii?Q?9/Eqru4sCe/nIPEIbq875hpcCE+k1Xw4wT0ZWyn0waG6YVL3qsmFF5hJ/0Ue?=
+ =?us-ascii?Q?4lICxVuMJnSoaRW5IwsalC94ccLS4FvfgCZv/yZV8wQG/x+XTxLDPojcOCJK?=
+ =?us-ascii?Q?1bdcQZ6yvMfST3C34J0Sfx/FEqufA2RTtH9BPgHwv2YTRggx/x3KrX7twz9R?=
+ =?us-ascii?Q?gLQEmsAv+dnF9ThOsBsRAkYdSeZiPpmkWQvbS4xNENa3hnLluHu1JId10DeD?=
+ =?us-ascii?Q?xUjJJkSnNK2Jr0gKhp0gjaL8XDTvC5Eta7ScbPio7H1tew0DDZvnnObOWV0o?=
+ =?us-ascii?Q?GF2f/Wix/6VJ36HYfAgJ7KANPiP/Nrf+Ncrcmy3OJ0T6RDc5DoTAe1pJ8VMf?=
+ =?us-ascii?Q?PcSc4LWUIK1ta5zAnyehEY0sC5y58h5NAt1qkNaPRU1s4nKK/MSSBikTZw9H?=
+ =?us-ascii?Q?aVzeNFwhxAtfqxqsRuTHTh0eBX2StRx6hRHh4ldD7nzBmB/61K9Wyn4HBCfO?=
+ =?us-ascii?Q?EOEu7B/Yr62td78FVGg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6076.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0d7776d-56f9-4ae0-c5d2-08ddfbf95d00
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 06:04:18.2078
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: s6ShdufpUTUc1uqr7vBjdZMfvn5X6IWVmbwPRfbWkc8R7AEkIFzzhumCeTNwJg06
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9565
 
-The return value of copy_to_iter can't be negative, check whether the
-copied length is equal to the requested length instead of checking for
-negative values.
+[Public]
 
-Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Link: https://lore.kernel.org/all/20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/vhost/vringh.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Ping!
 
-diff --git a/drivers/vhost/vringh.c b/drivers/vhost/vringh.c
-index 0c8a17cbb22e..925858cc6096 100644
---- a/drivers/vhost/vringh.c
-+++ b/drivers/vhost/vringh.c
-@@ -1162,6 +1162,7 @@ static inline int copy_to_iotlb(const struct vringh *vrh, void *dst,
- 		struct iov_iter iter;
- 		u64 translated;
- 		int ret;
-+		size_t size;
- 
- 		ret = iotlb_translate(vrh, (u64)(uintptr_t)dst,
- 				      len - total_translated, &translated,
-@@ -1179,9 +1180,9 @@ static inline int copy_to_iotlb(const struct vringh *vrh, void *dst,
- 				      translated);
- 		}
- 
--		ret = copy_to_iter(src, translated, &iter);
--		if (ret < 0)
--			return ret;
-+		size = copy_to_iter(src, translated, &iter);
-+		if (size != translated)
-+			return -EFAULT;
- 
- 		src += translated;
- 		dst += translated;
--- 
-MST
-
+> -----Original Message-----
+> From: T, Harini
+> Sent: Wednesday, September 3, 2025 8:53 PM
+> To: Harini T <harini.t@amd.com>; alexandre.belloni@bootlin.com; Simek,
+> Michal <michal.simek@amd.com>
+> Cc: linux-rtc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
+x-
+> kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>
+> Subject: RE: [PATCH V2] rtc: zynqmp: Restore alarm functionality after ke=
+xec
+> transition
+>
+> Hi Alexandre,
+>
+> > -----Original Message-----
+> > From: Harini T <harini.t@amd.com>
+> > Sent: Wednesday, July 30, 2025 7:51 PM
+> > To: alexandre.belloni@bootlin.com; Simek, Michal
+> > <michal.simek@amd.com>
+> > Cc: linux-rtc@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linux- kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>; T,
+> > Harini <Harini.T@amd.com>
+> > Subject: [PATCH V2] rtc: zynqmp: Restore alarm functionality after
+> > kexec transition
+> >
+> > Caution: This message originated from an External Source. Use proper
+> > caution when opening attachments, clicking links, or responding.
+> >
+> >
+> > During kexec reboots, RTC alarms that are fired during the kernel
+> > transition experience delayed execution. The new kernel would
+> > eventually honor these alarms, but the interrupt handlers would only
+> > execute after the driver probe is completed rather than at the intended=
+ alarm
+> time.
+> >
+> > This is because pending alarm interrupt status from the previous
+> > kernel is not properly cleared during driver initialization, causing
+> > timing discrepancies in alarm delivery.
+> >
+> > To ensure precise alarm timing across kexec transitions, enhance the
+> > probe function to:
+> > 1. Clear any pending alarm interrupt status from previous boot.
+> > 2. Detect existing valid alarms and preserve their state.
+> > 3. Re-enable alarm interrupts for future alarms.
+> >
+> > Signed-off-by: Harini T <harini.t@amd.com>
+> > ---
+> > Changes in V2:
+> > - Remove shutdown handler to prevent alarm interrupts from being
+> >   disabled during kexec transitions.
+> > - Add alarm state detection and restoration in probe.
+> >
+> > V1 link: https://lore.kernel.org/linux-rtc/20250724170517.974356-1-
+> > harini.t@amd.com/T/#u
+> > ---
+> >  drivers/rtc/rtc-zynqmp.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c index
+> > f39102b66eac..3baa2b481d9f 100644
+> > --- a/drivers/rtc/rtc-zynqmp.c
+> > +++ b/drivers/rtc/rtc-zynqmp.c
+> > @@ -277,6 +277,10 @@ static irqreturn_t xlnx_rtc_interrupt(int irq,
+> > void *id) static int xlnx_rtc_probe(struct platform_device *pdev)  {
+> >         struct xlnx_rtc_dev *xrtcdev;
+> > +       bool is_alarm_set =3D false;
+> > +       u32 pending_alrm_irq;
+> > +       u32 current_time;
+> > +       u32 alarm_time;
+> >         int ret;
+> >
+> >         xrtcdev =3D devm_kzalloc(&pdev->dev, sizeof(*xrtcdev),
+> > GFP_KERNEL); @@
+> > -296,6 +300,17 @@ static int xlnx_rtc_probe(struct platform_device *pde=
+v)
+> >         if (IS_ERR(xrtcdev->reg_base))
+> >                 return PTR_ERR(xrtcdev->reg_base);
+> >
+> > +       /* Clear any pending alarm interrupts from previous kernel/boot=
+ */
+> > +       pending_alrm_irq =3D readl(xrtcdev->reg_base + RTC_INT_STS) &
+> > RTC_INT_ALRM;
+> > +       if (pending_alrm_irq)
+> > +               writel(pending_alrm_irq, xrtcdev->reg_base +
+> > + RTC_INT_STS);
+> > +
+> > +       /* Check if a valid alarm is already set from previous kernel/b=
+oot */
+> > +       alarm_time =3D readl(xrtcdev->reg_base + RTC_ALRM);
+> > +       current_time =3D readl(xrtcdev->reg_base + RTC_CUR_TM);
+> > +       if (alarm_time > current_time && alarm_time !=3D 0)
+> > +               is_alarm_set =3D true;
+> > +
+> >         xrtcdev->alarm_irq =3D platform_get_irq_byname(pdev, "alarm");
+> >         if (xrtcdev->alarm_irq < 0)
+> >                 return xrtcdev->alarm_irq; @@ -337,6 +352,10 @@ static
+> > int xlnx_rtc_probe(struct platform_device *pdev)
+> >
+> >         xlnx_init_rtc(xrtcdev);
+> >
+> > +       /* Re-enable alarm interrupt if a valid alarm was found */
+> > +       if (is_alarm_set)
+> > +               writel(RTC_INT_ALRM, xrtcdev->reg_base + RTC_INT_EN);
+> > +
+> >         device_init_wakeup(&pdev->dev, true);
+> >
+> >         return devm_rtc_register_device(xrtcdev->rtc);
+> > --
+> > 2.43.0
+> >
+>
+> Kindly following up on this patch. I would appreciate it if you could rev=
+iew it
+> when convenient and let me know if any updates are needed.
+>
+> Thank you for your time.
+>
+> Best regards,
+> Harini T
 
