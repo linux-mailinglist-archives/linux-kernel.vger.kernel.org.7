@@ -1,96 +1,159 @@
-Return-Path: <linux-kernel+bounces-832486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CF7B9F723
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C7BB9F734
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5ED188D702
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9549386F6A
 	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43C421CC49;
-	Thu, 25 Sep 2025 13:11:46 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3B2221FD0;
+	Thu, 25 Sep 2025 13:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAnizgjI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB92101AE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1198721CA13;
+	Thu, 25 Sep 2025 13:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758805906; cv=none; b=XoYot4n9Vc2wD3rESNzRLH5MPzAVgPj6Yt/koGkVcacfG4E0HcMxDhl0dG0UcS6v8HTOlqh7wxedU9B/0DJwhgCpbVLSzNuIX/nFXg0xqlBYhZ1ZEtuLgyh34b7JCiRtv/wUZItHFuxMX4xXoq1AFgaoUBKd314HgFy9Smsj28c=
+	t=1758805928; cv=none; b=h9DtGU6lAhewr1HMd0e4CDJQnR6PvQBJSaWAMcJXremkzpt975A+9Pd53ZwQsk5QbrYyOBuUr71HKQvamsCH4RmLHc5EBSVzsUwNpXBBJ92lXrfWVjOTzOv3ipsoQIkrmTwmmva/RHMnU0LRXTrQmfCM8bf56ftswlj+a5WiFFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758805906; c=relaxed/simple;
-	bh=ItmF8SphJxPlpGzcfXwVjhblANOdhVIYRxO1r7lH6Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MNBzv6zhxIV1nY27ZhODCs3Ltq7yYAtngkkdhJIzXDIA7FVs2ChyB8+K7uTS+PpMRlh36ufAl3K5qa9OlxLH4mRT+54l1xJkIQj4vgHQDLHZim8/DmGG9zSN9GGcW65LXUNNxAgRvYGQZGeYc4NcIEzjhODuSfhFdd13W3bUf2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cXYxN5gFRztTch;
-	Thu, 25 Sep 2025 21:10:48 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4937A1800B1;
-	Thu, 25 Sep 2025 21:11:41 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 25 Sep 2025 21:11:40 +0800
-Message-ID: <ae8a2c37-74db-4e53-99c1-fc7f86e80253@huawei.com>
-Date: Thu, 25 Sep 2025 21:11:40 +0800
+	s=arc-20240116; t=1758805928; c=relaxed/simple;
+	bh=hCbg+xH0PAFSHq/z2bdjQ4pq3+Cnx9PLmBUG/OA2ris=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/EwxcNcO0Swac8FSlS2rAQpgkewADLNnLxDgb9V3trdvDSEhE2Z1410cse685TdtVgsIKt5vTDp8WpcpQbtff6KEmuU73OnG8FuX9KkHOqP04y/7gPYFrCIsWZ9Fc6Bvjoh6HvdK+HoKZYdWMkYnNcUson8XNbTDKB8CIC8u1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAnizgjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07E6C4CEF0;
+	Thu, 25 Sep 2025 13:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758805927;
+	bh=hCbg+xH0PAFSHq/z2bdjQ4pq3+Cnx9PLmBUG/OA2ris=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oAnizgjI5yWSwS247xUL1Al1T++xVE+5Ckc0md+K/OeloABVWqUpTznDhQP7Ha4FM
+	 z6iyGrVpaWU+VYgcG/8rsA1gQWAmWIyq4dgY7brtt1Vl5h16cutxxXRt+VAH90oVHq
+	 Hjt/xHdyJxnU770UqWU+ioF2kPwvCUU27LEDHkhTTaLf5x67Mzg80k4F30/nvaC5yy
+	 OWMFV0jXJYaKYDbfzzLesYN9ITDeHa7prYLFuwb587YSwMc40+UCxnx2w2t8scpj7t
+	 Ql0bdQc+wIHIAjbDCva1q0rEMfDeM1zWPquSqLTpDRARLjAUVUr3+sZrcQJPy0WTJO
+	 Mnwluuq3UnhrA==
+Date: Thu, 25 Sep 2025 08:12:04 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bryan O'Donoghue <bod@kernel.org>, 
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH 2/9] dt-bindings: clock: sm8450-camcc: Remove sc8280xp
+ camcc to from sm8450 camcc
+Message-ID: <g2e5ejykf6nteipzsybbjjjcdvko4yg664uxh57bi3ty3cljh4@5mv5ki2cqyg3>
+References: <20250924-knp-mmclk-v1-0-d7ea96b4784a@oss.qualcomm.com>
+ <20250924-knp-mmclk-v1-2-d7ea96b4784a@oss.qualcomm.com>
+ <a8ebec72-eee2-4a02-ac6b-57678aa7c50f@kernel.org>
+ <1c90a127-4b39-4cad-9805-d4449990baa7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add myself and Barry to dma_map_benchmark
- maintainers
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Barry Song
-	<21cnbao@gmail.com>, <shuah@kernel.org>
-CC: <robin.murphy@arm.com>, <jonathan.cameron@huawei.com>,
-	<prime.zeng@huawei.com>, <fanghao11@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<yangyicong@huawei.com>
-References: <CGME20250917011807eucas1p2dc0c24ef4ad8effcc1a2174d54cf4161@eucas1p2.samsung.com>
- <20250917011759.2228019-1-xiaqinxin@huawei.com>
- <11183850-d6d6-46c9-8079-330bf4c541e3@samsung.com>
- <CAGsJ_4yno_a2vD9OHhruXbNOXuVKg97NcOdFHpe283FJ9hXL7Q@mail.gmail.com>
- <0c59d099-4844-4fb2-80e0-6d3fc0077985@samsung.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <0c59d099-4844-4fb2-80e0-6d3fc0077985@samsung.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+In-Reply-To: <1c90a127-4b39-4cad-9805-d4449990baa7@oss.qualcomm.com>
 
+On Thu, Sep 25, 2025 at 02:14:01PM +0530, Taniya Das wrote:
+> 
+> 
+> On 9/25/2025 1:59 PM, Bryan O'Donoghue wrote:
+> > On 25/09/2025 00:56, Jingyi Wang wrote:
+> >> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> >>
+> >> SC8280XP camcc only requires the MMCX power domain, unlike SM8450 camcc
+> >> which now supports both MMCX and MXC power domains. Hence move SC8280XP
+> >> camcc from SM8450.
+> >>
+> >> Fixes: 842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move
+> >> sc8280xp camcc to sa8775p camcc")
+> >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >> ---
+> >>   Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml | 1 -
+> >>   1 file changed, 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-
+> >> camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-
+> >> camcc.yaml
+> >> index c1e06f39431e..dbfcc399f10b 100644
+> >> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> >> @@ -63,7 +63,6 @@ allOf:
+> >>           compatible:
+> >>             contains:
+> >>               enum:
+> >> -              - qcom,sc8280xp-camcc
+> >>                 - qcom,sm8450-camcc
+> >>                 - qcom,sm8550-camcc
+> >>       then:
+> >>
+> > 
+> > This is not a revert.
+> > 
+> > Where does the compat string go ?
+> > 
+> 
+> The compat is now part of
+> Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml as part
+> of this commit "842fa7482915".
+> 
+> > You are missing the part where you move the compat string to where you
+> > think it should be...
+> > 
+> 
+> It was already moved as mentioned above.
+> 
 
+I'm sorry, but I don't see where you say this. 
 
-On 2025/9/22 20:20:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> On 22.09.2025 01:50, Barry Song wrote:
->> On Fri, Sep 19, 2025 at 2:17â€¯AM Marek Szyprowski
->> <m.szyprowski@samsung.com> wrote:
->>> On 17.09.2025 03:17, Qinxin Xia wrote:
->>>> Since Chenxiang has left HiSilicon, Barry and I will jointly
->>>> maintain this module.
->>>>
->>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Thanks!
->> Marek, would you rather merge this into the dma-mapping tree
->> instead of ACKing it, or would you prefer it to go through
->> a different tree?
+The commit message is a verbatim copy of the first paragraph of commit
+'842fa7482915 ("dt-bindings: clock: qcom,sm8450-camcc: Move sc8280xp
+camcc to sa8775p camcc")', where that comment makes sense. But here's
+you're no longer moving something.
+
+Please help me understand what I'm missing.
+
+> > Also why is this patch appearing in a series about _adding_ Kanaapali to
+> > CAMCC ?
+> > 
 > 
-> I expected it to be taken by Shuah, as she is responsible for the
-> tools/testing/selftests/ directory, where the dma tests are still placed.
+> This was to reduce less dependency on the series.
 > 
+
+Had you sent this patch last week, I would have merged it into v6.18 and
+there wouldn't have been any dependency.
+
+Regards,
+Bjorn
+
+> > NAK
+> > 
+> > ---
+> > bod
+> > 
 > 
-> Best regards
+> -- 
+> Thanks,
+> Taniya Das
 > 
-I'll send V2 in the next version to fix some of the review comments of 
-V1, and maybe there's some discussion about V2, I think shuah can deal 
-with the patches of MAINTAINERS first :ï¼‰
 
