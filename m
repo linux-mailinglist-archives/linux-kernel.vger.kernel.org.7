@@ -1,154 +1,194 @@
-Return-Path: <linux-kernel+bounces-832375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7153B9F2DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0939B9F2DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1731C21622
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D883E1C2135F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DEB31327A;
-	Thu, 25 Sep 2025 12:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7322E25A34F;
+	Thu, 25 Sep 2025 12:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPWPM/x4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="k7ZYVILd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="boAEafgq"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A03E2FD1CF;
-	Thu, 25 Sep 2025 12:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DB43009E8;
+	Thu, 25 Sep 2025 12:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758802460; cv=none; b=rhC85yyffovJjskU+ViWq/qRHto3Vrb1Ew/TsjanRV2du5TzdPYCN3xpWpbCJkcTOZZd9HoQC0HC7I7mP2v2S95jF0gk+90n7xN700gRQ71VoABqf+eRKbiA9Tn3dkdcUm2uD3CDqcZy5uDyPaWAfGeUYcZXJlosMrk3MRwUeGI=
+	t=1758802518; cv=none; b=DhPC2XnmzbBAdDHb2WNbW5kicoqrM7fxB/LyGsmHUMBqr1Idb9QrYdUZAfrU/tpxaK+i//ppgHoJaqXdOIiAkBUWfeDSche/lp+BCVEu4sLwNyPd08th9QnLELYqKzb8usIGwN2Rx/BJmYon6QtbPZLdLsSgmyJ+EBxy1n3GnR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758802460; c=relaxed/simple;
-	bh=QDf0rT/5rkTYt+81E1gFF4g1LilRq7xkqlp201SJkeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQJyNNdckrWMrzrSZvN/rXUSK6vYEcsriB25Qt6qP4Dmh0z+KyKvEDbmr46GRQGHDcUJiECqOSORUzNqsaIEjgu+Wd+EmUIuZ/CkVggqoHjEzFibxLsF1Zpf40BBNWfzisX24ESAQe4nvMEOyftNJuB8b8Y/1ay1VPDxT/k9aoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NPWPM/x4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2EACC4CEF5;
-	Thu, 25 Sep 2025 12:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758802459;
-	bh=QDf0rT/5rkTYt+81E1gFF4g1LilRq7xkqlp201SJkeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NPWPM/x4qGxQwosiba1yJD36yXG5QgFaiemGwEXVJ4UCVroWESRi7Q40vMEErOnzs
-	 OvBTUYxUj9hJRXWCAtE+nb82RZufL6G0VI8GdMoEnigmdyT9t3aR0cAxfQAAR4kTL+
-	 /NCQm02pWiAv00XDMKMj3krNM8SCLda7PFNlazGw026U4PcNeWj/De/eqwPHhDArvK
-	 w+D0hX5clUds8GfZqKJHaqxGjsCwa2vI9amsp4AsWAtIRpAFqnFfdazBwNMhhRI9cZ
-	 npO7rrKYtoiLfTyl/H3uJ2kxGRHn7W+u8ts+9M5WkKkyCr32xY8Frn+OsQ0hrv2LLZ
-	 Ofx7rRI/RzJXA==
-Date: Thu, 25 Sep 2025 14:14:14 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
- negotiation and kunit tests
-Message-ID: <20250925-eager-delectable-frog-fcbb5d@penduick>
-References: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+	s=arc-20240116; t=1758802518; c=relaxed/simple;
+	bh=kXI2PAmGPAfmnMskribuV8ncqsscXU/4oEdNK46b2f8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=jGNfWizigPsW6y6Fgp/6e/Pc78/EMkcN7zsV6bA/J0bGGaMCbZnUcXNpleSdRajTyA+EIuJvm8BtpUPir5m9s4BsMHa29Ek8sKoApOmu4ziSaHDMj9TU9zok3AXWxz3pmFbBoWSXwY5XGktxldhJFCi5xzzJDXoRHHcyN34BmXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=k7ZYVILd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=boAEafgq; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 0D771140015D;
+	Thu, 25 Sep 2025 08:15:13 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 08:15:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758802513;
+	 x=1758888913; bh=Ai0hYxP2PHoEjzhHhI6JRyRV6fkyqh8ZPvnm+y+DYqY=; b=
+	k7ZYVILdsJod+OM49xS7E+s3gGgZ1GA77sHlgC+10UnNRrToF8VAvHnGBIf0aTF1
+	hGOJXu07+4t0IPxXE2yTk6e8ZrqSfFC2P0gTJDARJ6B/gVat7bVhnNmE62JgaOIb
+	iEGZo6hSwrOrIG5VEDoBAemZsAvn0LypwmSTf7hmQaVaFUBekk12dXtZ0i9Dq63q
+	pyTN1FqFzBcGNzvI1dlFzYuoA0kuu+xrnBtTVbRD/FXY2248HTVvnayAiEcgmjOw
+	b9HIpAk0vXexXEX+K2R4j0RsPZltnOqaDgnVXeqy5XxPDhsgYXmam3iCm0wGZ76d
+	2GYPepUFxAQhP9egZh/yMA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758802513; x=
+	1758888913; bh=Ai0hYxP2PHoEjzhHhI6JRyRV6fkyqh8ZPvnm+y+DYqY=; b=b
+	oAEafgqKRMFLdIFQ7JWyjyZUq/hf0TVQ+50kU+GC8hO1eAvc6Tb8BE9J1lFwj78F
+	xKYzW8uGrt0gj5G1SphzE1otiiiGTlAQk57cQlpdWm+RXaHR+WZ5hWCA3y16qXLk
+	kfoky9B23tF0UG4KKyg67ra57AJybiiG4Db+5uQ8R2k1nsklU5Xapv+MToOLqa+A
+	VY+ai4KNQ9R+AGUqcN8lVBGgLo+rw0aUR2teHjm92s37kJFoCQQzQ2HcyDeCXxzF
+	S+XUJe9MJ2nK74B1+wdgXNllzAX58PlvGSN7U6Y1QZK0CdqlQLcVcEbqhW0nSX0x
+	/6OQcUQX26UwErgiIYQAA==
+X-ME-Sender: <xms:TjLVaDAqfPQJKSeB82080_w8myikU6CFtjJ87KgI6TS3kguuEjONJQ>
+    <xme:TjLVaEXqkwbM-rTpVcf-PlfO-AxL5aAS6K07hQx8Q_N26yCiEHu_mA-qlA_--PLXS
+    kVaUQQfpKTjyj9thvO967ZOVRArdXYqOwa86YgmE1GtuuVbag2tghc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiieegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhrtg
+    hpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnthgrrdhg
+    uhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdrshhimh
+    gvkhesrghmugdrtghomhdprhgtphhtthhopehrrgguhhgvhidrshhhhigrmhdrphgrnhgu
+    vgihsegrmhgurdgtohhmpdhrtghpthhtohepshhhuhgshhhrrghjhihothhirdgurghtth
+    grsegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhgohhuugesrghmugdr
+    tghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomh
+    dprhgtphhtthhopegsihhllhihpghtshgrihesrghsphgvvgguthgvtghhrdgtohhm
+X-ME-Proxy: <xmx:TjLVaMDX1NFaLybwHy91IpY30WTDOhrIX_osSHckubrvs--4eXazTA>
+    <xmx:TjLVaBKca4pXGXUILZAhxdDpLLHl1zQz1ZIh0OvEE1mp4q1_0X-UAQ>
+    <xmx:TjLVaPFNu3S6CyXqTrXDTyKe43Cd8UWZQFmQDIFJZ9Q4jDW7YgzSKA>
+    <xmx:TjLVaEGpeIO1n9n-3qlOOT4Bme4vdCdsNJZWG9Yj-ydvgXL4cqZHOw>
+    <xmx:UTLVaIvWpFoULt3HQvQOAm8etplCK4CTnVARH_LQbyAqz4iaznu49IfD>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9CE98700069; Thu, 25 Sep 2025 08:15:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="3jd57vz4q2z2wvel"
-Content-Disposition: inline
-In-Reply-To: <20250923-clk-tests-docs-v4-0-9205cb3d3cba@redhat.com>
+X-ThreadId: A0nVfrWCY5as
+Date: Thu, 25 Sep 2025 14:14:39 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>,
+ "git (AMD-Xilinx)" <git@amd.com>, "Michal Simek" <michal.simek@amd.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Frank Li" <Frank.Li@nxp.com>, "Rob Herring" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "tommaso.merciai.xr@bp.renesas.com" <tommaso.merciai.xr@bp.renesas.com>,
+ "quic_msavaliy@quicinc.com" <quic_msavaliy@quicinc.com>, "S-k,
+ Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
+ "Kees Cook" <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "Jarkko Nikula" <jarkko.nikula@linux.intel.com>,
+ "Jorge Marques" <jorge.marques@analog.com>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Cc: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+ "Goud, Srinivas" <srinivas.goud@amd.com>,
+ "Datta, Shubhrajyoti" <shubhrajyoti.datta@amd.com>,
+ "manion05gk@gmail.com" <manion05gk@gmail.com>
+Message-Id: <b2ce3e0b-a639-4e70-a5e7-ffbdc855153e@app.fastmail.com>
+In-Reply-To: 
+ <DM4PR12MB61090F307DBA2B99AFC93B168C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250923154551.2112388-1-manikanta.guntupalli@amd.com>
+ <20250923154551.2112388-4-manikanta.guntupalli@amd.com>
+ <13bbd85e-48d2-4163-b9f1-2a2a870d4322@app.fastmail.com>
+ <DM4PR12MB61098EA538FCB7CED2E5C47B8C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+ <4199b1ca-c1c7-41ef-b053-415f0cd80468@app.fastmail.com>
+ <DM4PR12MB6109E009DAC953525093FE808C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+ <134c3a96-4023-47ab-8aa9-fd6ab75e5654@app.fastmail.com>
+ <DM4PR12MB610989A03A7560F2A03792838C1CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+ <295ee05e-3366-4846-9c8b-85ac09d79d48@app.fastmail.com>
+ <DM4PR12MB61090F307DBA2B99AFC93B168C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Subject: Re: [PATCH V7 3/4] i3c: master: Add endianness support for i3c_readl_fifo()
+ and i3c_writel_fifo()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Thu, Sep 25, 2025, at 11:26, Guntupalli, Manikanta wrote:
 
---3jd57vz4q2z2wvel
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC v4 00/12] clk: add support for v1 / v2 clock rate
- negotiation and kunit tests
-MIME-Version: 1.0
+>> Can you explain how that works? What I see is that your
+>> readsl_be()/writesl_be() functions do a byteswap on every four bytes, so the
+>> bytestream that gets copied to/from the FIFO gets garbled, in particular the final
+>> (unaligned) bytes of the kernel buffer end up in the higher bytes of the FIFO register
+>> rather than the first bytes as they do on a big-endian kernel.
+>>
+>> Are both the big-endian and little-endian kernels in your tests on microblaze, using
+>> the upstream version of asm/io.h? Is there a hardware byteswap between the CPU
+>> local bus and the i3c controller? If there is one, is it set the same way for both
+>> kernels?
+>>
+> To clarify, my testing was performed on the latest upstream kernel on a 
+> ZCU102 (Zynq UltraScale+ MPSoC, Cortex-A53, little-endian) with 
+> big-endian FIFOs and no bus-level byteswap. For more details, please 
+> refer to my reply in Re: [PATCH] [v2] i3c: fix big-endian FIFO 
+> transfers.
 
-Hi Brian,
+Ok, thanks fro the clarification. I got confused by your description
+mentioning big-endian in [PATCH V7 3/4] and assumed this would be on
+a big-endian microblaze CPU, after I saw that the original i3c_readl_fifo()
+had a bug in that configuration that your patch addressed and this
+being a driver for a xilinx design. That fix just turned out unrelated
+to what you were actually trying to do ;-)
 
-On Tue, Sep 23, 2025 at 10:39:19AM -0400, Brian Masney wrote:
-> The Common Clock Framework is expected to keep a clock=E2=80=99s rate sta=
-ble
-> after setting a new rate with:
->=20
->     clk_set_rate(clk, NEW_RATE);
->=20
-> Clock consumers do not know about the clock hierarchy, sibling clocks,
-> or the type of clocks involved. However, several longstanding issues
-> affect how rate changes propagate through the clock tree when
-> CLK_SET_RATE_PARENT is involved, and the parent's clock rate is changed:
->=20
-> - A clock in some cases can unknowingly change a sibling clock's rate.
->   More details about this particular case are documented at:
->   https://lore.kernel.org/linux-clk/20250528-clk-wip-v2-v2-2-0d2c2f220442=
-@redhat.com/
->=20
-> - No negotiation is done with the sibling clocks, so an inappropriate
->   or less than ideal parent rate can be selected.
->=20
-> A selection of some real world examples of where this shows up is at
-> [1]. DRM needs to run at precise clock rates, and this issue shows up
-> there, however will also show up in other subsystems that require
-> precise clock rates, such as sound.
->=20
-> An unknown subset of existing boards are unknowingly dependent on the
-> existing behavior, so it's risky to change the way the rate negotiation
-> logic is done in the clk core.
->=20
-> This series adds support for v1 and v2 rate negotiation logic to the clk
-> core. When a child determines that a parent rate change needs to occur
-> when the v2 logic is used, the parent negotiates with all nodes in that
-> part of the clk subtree and picks the first rate that's acceptable to
-> all nodes.
->=20
-> Kunit tests are introduced to illustrate the problem, and are updated
-> later in the series to illustrate that the v2 negotiation logic works
-> as expected, while keeping compatibility with v1.
->=20
-> I marked this as a RFC since Stephen asked me in a video call to not
-> add a new member to struct clk_core, however I don't see how to do this
-> any other way.
->=20
-> - The clk core doesn=E2=80=99t, and shouldn=E2=80=99t, know about the int=
-ernal state the
->   various clk providers.
-> - Child clks shouldn=E2=80=99t have to know the internal state of the par=
-ent clks.
-> - Currently this information is not exposed in any way to the clk core.
+> Please don't take this as negative or aggressive-my intention is purely 
+> to learn and ensure it works correctly in all cases.
 
-I recall from that video call that Stephen asked:
+No worries, I should not have jumped to conclusions myself based
+on what I saw in your implementation and assumed that fixing the
+one bug would address your problem as well.
 
-- to indeed not introduce a new op
-- to evaluate the change from top to bottom, but to set it bottom to top
-- to evaluate the rate by letting child clocks expose an array of the
-  parent rates they would like, and to intersect all of them to figure
-  out the best parent rate.
+I do understand that your driver clearly needs a special case,
+we just need to come to a conclusion what exactly the hardware
+does and how to best deal with it. This is partly about whether
+you may be able to use an external DMA engine such as
+xlnx,zynqmp-dma-1.0 or xlnx,zynqmp-dpdma, and whether that would
+need the same byteswap.
 
-It looks like you followed none of these suggestions, so explaining why
-you couldn't implement them would be a great first step.
+If you already plan to add that support, you likely need to
+allocate a bounce buffer and byteswap the data in place
+to have it copied in and out of the FIFO, and when you have
+that, you can use the regular i3c_readl_fifo() unchanged.
+If you are sure that the i3c controller is not going to be
+used with DMA, or if the FIFO register as seen by the DMA
+master does not require a byteswap, having a local helper
+for the transfer is likely easier.
 
-Also, you sent an RFC, on what would you like a comment exactly?
-
-Maxime
-
---3jd57vz4q2z2wvel
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaNUyFQAKCRAnX84Zoj2+
-dkcaAX4/Q3zt7IIjGTfZyOazQ/ZGQq+cJ489oNxyuw4Tcc5rurZAvjdur7WpulpK
-CpKjbnQBgL08dy9V333Ea8vBKToRnPW6XPAqHcjFUTBYdqOa2N9tyRkPyLaOypYi
-rl9HLzkzwA==
-=dSuQ
------END PGP SIGNATURE-----
-
---3jd57vz4q2z2wvel--
+     Arnd
 
