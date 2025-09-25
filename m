@@ -1,154 +1,493 @@
-Return-Path: <linux-kernel+bounces-832275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C01B9EC9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E443B9ECC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD5277B24E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D5C177035
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7482FF141;
-	Thu, 25 Sep 2025 10:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F502F0C7F;
+	Thu, 25 Sep 2025 10:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f1OAnUTZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PerBj9k2"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A82EAB6E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5210C2ED15C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797006; cv=none; b=B20tb64YKCl20TH6N6Id6dkCsARclEslYjOpM+0zwd/vW/Baiskb4faYalqSfK97c9l9+0ljOd6v4MHL7CRpe92TrQbNgsQGPZ1ckj6JcWQbGNe3O67pxvyR3rY+5JZdzkY5lqyhYxfcJjPrtXb1xVbRubM+U6xP5eV9M0YJf3U=
+	t=1758797132; cv=none; b=eMo2qOVbJ5PbffGLlT+HZNJ8SvLNSK/4jRnreBTavIfYsmjamyPVUyfv5DDD0cI6ItmpaA89K2B8wh5tsMWvZgFR+yVdS2Fs0ZWI4VJIyiD7ple88ANf3nQFyYOWSViTVLGs3bCHhc506U2sWFQ6GZpOkBVQQ0EpIj0WMuQr3+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797006; c=relaxed/simple;
-	bh=3cn448J5AE0qbdAmfGCuMMOHudJWRnefXkxO54l3c3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kproH6KpCst5uSgeXC1oqM4opypU9KRVS+YvYykMTenIWh/88YfN9nt/AYUnHJ0zfx4jxciLjeBRZdtGg+Itk8kQtyi7QIVfLjQD7P/3g4z1welLF7qdwZ6BCAv1kN2VDtD2ik/LC0zWOdBQaULWe4iaylZEuyT4hnumlIW1pjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f1OAnUTZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9SNN0018026
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:43:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LyNgLzLMWc1Mnqx+dRpZQ1k73x+Ofm4U0A3bsduzpwc=; b=f1OAnUTZA5xmOQeD
-	4I9UfW6m5EmZd1fnOykAdpPsmr/Vy/G8wk+ChzR6yz8Xknu4zpaawsnJL+e9GkX+
-	7lK8ggPsRfflffJvU4OM5U+KIyJmtdFmYsM2/rqoCE6zRDblUKPQAZ7YqW79jeYu
-	FR7psXdcy3PEtrPH58841naMaSLKVkYjj8GZjwy4lzHnjNV2BdkxTwcX+uChkswL
-	4bjOWKMwgbqKlgJFPuNapscqf0yjPpUvW13o33uqPzpze40aCUQQzbWj6/CUZUo+
-	/iACCAkZDg6azDvoLri0cMdhI0MOcPOAMxHo883uaFLkNtp87n3W/sUZY7R649NT
-	sXmIGg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3kkbrfh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:43:23 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b3ca5e94d3so1046441cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:43:23 -0700 (PDT)
+	s=arc-20240116; t=1758797132; c=relaxed/simple;
+	bh=2Y/Etx7wsAJuNVlBBeFuTxyOUrSl8OleFgQbVZG+ERY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=pu86auMfIxHbCl0bQTHd3Ky7RcPZx5kbyEryXU4dKUfrihcLJDRDXJ+hokx5cFf5h4UeN1ltKl44WRk+uSIoYKWBEOUEDFyaES+rKsQacOb0DAj4x7Dob850GP+eUQyex2k3+fhuryzqLhkvXKe0i5xU9DBomrH7FgDBFpL9YrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PerBj9k2; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so723472f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1758797127; x=1759401927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
+        b=PerBj9k2eLBk54O4yxN4q+etTdHjV8pImoynQo5XJutfbJFWirX5lKz0qRskLZHxvd
+         Ufv2LDMc5QHmy6CONNM3t9WadmEZoU20bwZdUwL5MKXc7JzDlRBZKISU8zac1yZj+7wi
+         zC1QfZlTcougW4R0KoueDUqLkNB/X3w5GuaqSxdaJ0NjJoeErKQcEnXERF9YKuV15yPD
+         WN7kcD6mKIRRnBnOQyQVG1Ci4zToDzign5lgW7W9Zngkb8M+eYexBvVU6YF6bOyL3Ho2
+         2Wvk4OIO8KDvxkmrFkRkgDdIM/8riJhf9jGoexYxEYx+CBBRDG7rWkUIK07rnu5I44xG
+         D5Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758797003; x=1759401803;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LyNgLzLMWc1Mnqx+dRpZQ1k73x+Ofm4U0A3bsduzpwc=;
-        b=t9NLX/JSRJgCJRLEOTpuqIDQvIlM/TkieysBAEl/Q+J6a/LjWRple6jrJcWBsRbmI8
-         4MdQjMpTUjYRY+6rej1D6mqVJA4e3W6J/HKipOSk7q/Wn5X0nHmNeJVk0+QXSBMNuHVS
-         07h31jAs6/j0OgAAywV4SfiJjIJWPBubVqhMU50hQREqMNegBiaXXCdCp9DZV3Nmntba
-         CF2r/2grKxW5nEzPxIMH7qR7iUZD8ZZK3J+OJzWAigkzzRtnI7u6Sa6bgNo7kcmfBCpC
-         U0DGlFd0lTJ9adeVYNv5K1WcAnQeQ/uYlM70KQEK+964BdQuLdg78Hd4RDJW0cU1O8jR
-         6jTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9k0+CyWuaS689MpTXSGDmdViAlcacpCFx2/eh7KguCWt7cQvQJRRCvyq+w5LclspJj2/1ONNovUCjSTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9WtnZ44s5ZSvMTZNSGOYrezQZ3TcyNHd8MJ54tPofcmV3ceUk
-	IOQqczzxBId7+F9u5Swf0dEIOdQvG+fb/nvPPfNWA7xjJPqZtVJymttvmWKQpL6YZjzsoxluc8Y
-	GP/9qwbNZa1Wqdlnxzv+1X4flN6LxJYr6cLrDoF1erGOnG+g+oGfm2v87VA5YH6Qgb64=
-X-Gm-Gg: ASbGncssgvUtsAsiHBZhobKftoY6nzVNbwOyCDuwHFR+Nq1pAnJtG99E7czBjALjRyq
-	kJyyEgCTxXefgiD2f6tJVwUZ2bqFc9/5naqu+vQDq3ZbBYjeqTjIQ85QMrf1wPDVPvtsljLtRC1
-	qRf2Jge+5I4M4GJGMfU6esbQrckgHFKjpDOGIwU1Tbkc3I0o+Jvbw2TVl/JEB1K8Ha2N9ipATMX
-	69L85AkoFNT3OGD8ndpV9fXurmid2LkKALN+4rOsKEf2lEkavGm4bgKYIVGGjkTLU6OqQBMqYBk
-	FbbjiN92EhCURYktc4WXJwq9aXq9E8NTa8L0/ua1w+cmGkLqVdogjWkhrsrTVx8CQX/zovpwhj5
-	Pts9DRqoK7/J6Chq6c+1/CA==
-X-Received: by 2002:ac8:5d08:0:b0:4d7:9039:2e87 with SMTP id d75a77b69052e-4da47c063ffmr26594271cf.1.1758797002849;
-        Thu, 25 Sep 2025 03:43:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRYUaRRp+tX2H+EUDkPQlbMlY0IAUeEcDN/SEG0LxWyKM6rOpzeC8AZaqcyLUwx8dK85q7Pw==
-X-Received: by 2002:ac8:5d08:0:b0:4d7:9039:2e87 with SMTP id d75a77b69052e-4da47c063ffmr26594041cf.1.1758797002219;
-        Thu, 25 Sep 2025 03:43:22 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a364ffa4sm1010479a12.17.2025.09.25.03.43.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:43:21 -0700 (PDT)
-Message-ID: <bc866f21-9b41-43dc-b450-59a25d547b88@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 12:43:19 +0200
+        d=1e100.net; s=20230601; t=1758797127; x=1759401927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
+        b=dJ61IyeYduYC/CHbwDiEJ7VhPGnPL5VUSvJiilBBlnWtCCpCA2MUICtXRPalMj3BY8
+         dC4o0h2ntqgp4vvg3iZaNsixCyffCT8iSA8SK1nDRU+M9h2GawzZ1tX4/T35/C4tnYPe
+         rf2glzLurjODI5Z6wC9iZIcTlvbkWQbyooDWKU0nT6YCO67UoruL0oynp3wvqKT+TAQ2
+         iIR4Z49qgC+A0eSTneRyHa/qDaZ84z72Sn7nTEoe0dFbrr1wNLK3Bg+VH0fBUesh5HFH
+         NW32d+sFsCqZkj1MvBFK8pWm5sutYdn/NG+pZ4CXXNPG9OJzipMVe0Ypw+MMEYAI45zE
+         IwPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeoZppaaw8TpjvDrX0b+WWEeVpt7uHka+6EpGk4Hw2qa15HOqwuhqP8l2Ji0a8k2MXSia5+M4JeQFjHt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHGC7rUJxLDQnd9zCp9x6gkU/r5BSc8UbNlkS6uQv2Wr9uMI2z
+	/khegO4yRwSkHDROYjZ3UB+2tCn2+k6Aba+d5Zfo0cEHr2ARLrZd461ouxkIDjLnzv4=
+X-Gm-Gg: ASbGncu0zTgpj3fjm/bCPSCIqahq93KfmBI1Qd0OGCT9Lo4nqjDYcrO3x0ydmWQDaKw
+	sRBpJjDB0SYFR3yQa5hhbmLXs3LHbL4FUCyE2JmHfbKnDrU6EQWuyXGRyR8K/U0rJgp7lRunlFQ
+	DWlFs93xkmX+x+JYBqnfNuMYXUxmxn+va+Br4zoMQWBT477GlzSQdapiGkatsHr377ESdtmcVYC
+	mgcdiKCDxuMh63MvLfGYsQzm61w8hUc/Jic24p5S3/HcgcR450Y4XZLDxD4duaZIlahSgafo/DI
+	H9agAsezWePArU/B/Je/tE8bgsqskKfo5GCX654/ZYO9mkCKd97iCCKixx71DdmTrIrMTFS72Pd
+	x+GeQctGS8I9KmgrRpNuuckEkdbvBRY/4GkXIWBQLXi/bq2r4Sss47x7CIcCnCBy4k4HBTfSmAK
+	2b2X2hfx8JQFQSvbuOWZubGg==
+X-Google-Smtp-Source: AGHT+IHT1KVxlBNxyFDCaHu545shG2L21DrIcoORWPTFR8KKA/HztsEYb06C5+5BWMpDJhnIrFGDBA==
+X-Received: by 2002:a05:6000:2891:b0:3ea:80ec:8552 with SMTP id ffacd0b85a97d-40e4ce4bc13mr2854165f8f.57.1758797126522;
+        Thu, 25 Sep 2025 03:45:26 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f090200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f09:200:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32b4f336sm16058985e9.0.2025.09.25.03.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 03:45:25 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	linux-kernel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] ceph: add trace points to the MDS client
+Date: Thu, 25 Sep 2025 12:45:12 +0200
+Message-ID: <20250925104522.3501812-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/10] phy: qualcomm: qmp-combo: Update QMP PHY with
- Glymur settings
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
-        conor+dt@kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-        kishon@kernel.org, vkoul@kernel.org, gregkh@linuxfoundation.org,
-        robh@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250925022850.4133013-1-wesley.cheng@oss.qualcomm.com>
- <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: GX0tL7LOeLyc_pexXMyDNkRk_EYUfIxP
-X-Proofpoint-ORIG-GUID: GX0tL7LOeLyc_pexXMyDNkRk_EYUfIxP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA4OSBTYWx0ZWRfX9sFkqOFLvYk6
- CSmLINe7Y/8ikoqUeyNLdN5AZz+rgWjdr4E1qBw5rr3GdjpCEixqSsP7HJy0EmouWWVdgpOOifx
- F6LEtJ1QJ3GJwY2rEyK7QuyTNKxntC+lABkRpzIzVLFHdGNLcKOEPLqOB2MuOO1IWfL2iTINi6d
- JmkFsh7Rx9VePt7Mn46IOwzxlW+M+cpYUHIb1oiIu5vs6VgaM/5wRm3TRLHR4n6Q03vzbce7IdG
- /GHeVcrZhn28/OCx1jsZ7ir8J16oA9ghvqeNp8zWbPLr4BzwVveE7buRbP+U5T6BXQbjNn2oGfw
- bUvMBhi2EtK3LixV4nv3vn2Cpp0ZRbyO+R4ocWXQM/aW8sMWp8OdblPLf1H3pol13ZbbLNtAfM+
- 71Xbnx/e
-X-Authority-Analysis: v=2.4 cv=BabY0qt2 c=1 sm=1 tr=0 ts=68d51ccb cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=O8mQQSza-jboQJHTzfMA:9
- a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220089
+Content-Transfer-Encoding: 8bit
 
-On 9/25/25 4:28 AM, Wesley Cheng wrote:
-> For SuperSpeed USB to work properly, there is a set of HW settings that
-> need to be programmed into the USB blocks within the QMP PHY.  Ensure that
-> these settings follow the latest settings mentioned in the HW programming
-> guide.  The QMP USB PHY on Glymur is a USB43 based PHY that will have some
-> new ways to define certain registers, such as the replacement of TXA/RXA
-> and TXB/RXB register sets.  This was replaced with the LALB register set.
+This patch adds trace points to the Ceph filesystem MDS client:
 
-[...]
+- request submission (CEPH_MSG_CLIENT_REQUEST) and completion
+  (CEPH_MSG_CLIENT_REPLY)
+- capabilities (CEPH_MSG_CLIENT_CAPS)
 
-> +	/* override hardware control for reset of qmp phy */
-> +	if (pcs_aon && cfg->regs[QPHY_AON_TOGGLE_ENABLE])
-> +		qphy_clrbits(pcs_aon, cfg->regs[QPHY_AON_TOGGLE_ENABLE], 0x1);
+These are the central pieces that are useful for analyzing MDS
+latency/performance problems from the client's perspective.
 
-Clearing this field is going to prevent the PHY from ever going offline
+In the long run, all doutc() calls should be replaced with
+tracepoints.  This way, the Ceph filesystem can be traced at any time
+(without spamming the kernel log).  Additionally, trace points can be
+used in BPF programs (which can even deference the pointer parameters
+and extract more values).
 
-The HPG says this should only be necessary for keeping the phy active
-during MX retention (and the listed usecases are USB4 wakeup clock
-generation via a respective _USB4 register and/or USB3 autonomous mode
-operation), both of which are currently unsupported.
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/caps.c              |   4 +
+ fs/ceph/mds_client.c        |  20 ++-
+ fs/ceph/super.c             |   3 +
+ include/trace/events/ceph.h | 234 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 259 insertions(+), 2 deletions(-)
+ create mode 100644 include/trace/events/ceph.h
 
-Are you sure it's necessary / desired?
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index b1a8ff612c41..2f663972da99 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -18,6 +18,7 @@
+ #include "crypto.h"
+ #include <linux/ceph/decode.h>
+ #include <linux/ceph/messenger.h>
++#include <trace/events/ceph.h>
+ 
+ /*
+  * Capability management
+@@ -4452,6 +4453,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	      session->s_mds, ceph_cap_op_name(op), vino.ino, vino.snap, inode,
+ 	      seq, issue_seq, mseq);
+ 
++	trace_ceph_handle_caps(mdsc, session, op, &vino, ceph_inode(inode),
++			       seq, issue_seq, mseq);
++
+ 	mutex_lock(&session->s_mutex);
+ 
+ 	if (!inode) {
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 3bc72b47fe4d..90e4268b24f9 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -24,6 +24,7 @@
+ #include <linux/ceph/pagelist.h>
+ #include <linux/ceph/auth.h>
+ #include <linux/ceph/debugfs.h>
++#include <trace/events/ceph.h>
+ 
+ #define RECONNECT_MAX_SIZE (INT_MAX - PAGE_SIZE)
+ 
+@@ -3282,6 +3283,8 @@ static void complete_request(struct ceph_mds_client *mdsc,
+ {
+ 	req->r_end_latency = ktime_get();
+ 
++	trace_ceph_mdsc_complete_request(mdsc, req);
++
+ 	if (req->r_callback)
+ 		req->r_callback(mdsc, req);
+ 	complete_all(&req->r_completion);
+@@ -3413,6 +3416,8 @@ static int __send_request(struct ceph_mds_session *session,
+ {
+ 	int err;
+ 
++	trace_ceph_mdsc_send_request(session, req);
++
+ 	err = __prepare_send_request(session, req, drop_cap_releases);
+ 	if (!err) {
+ 		ceph_msg_get(req->r_request);
+@@ -3464,6 +3469,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 		}
+ 		if (mdsc->mdsmap->m_epoch == 0) {
+ 			doutc(cl, "no mdsmap, waiting for map\n");
++			trace_ceph_mdsc_suspend_request(mdsc, session, req,
++							ceph_mdsc_suspend_reason_no_mdsmap);
+ 			list_add(&req->r_wait, &mdsc->waiting_for_map);
+ 			return;
+ 		}
+@@ -3485,6 +3492,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 			goto finish;
+ 		}
+ 		doutc(cl, "no mds or not active, waiting for map\n");
++		trace_ceph_mdsc_suspend_request(mdsc, session, req,
++						ceph_mdsc_suspend_reason_no_active_mds);
+ 		list_add(&req->r_wait, &mdsc->waiting_for_map);
+ 		return;
+ 	}
+@@ -3530,9 +3539,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 		 * it to the mdsc queue.
+ 		 */
+ 		if (session->s_state == CEPH_MDS_SESSION_REJECTED) {
+-			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER))
++			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
++				trace_ceph_mdsc_suspend_request(mdsc, session, req,
++								ceph_mdsc_suspend_reason_rejected);
+ 				list_add(&req->r_wait, &mdsc->waiting_for_map);
+-			else
++			} else
+ 				err = -EACCES;
+ 			goto out_session;
+ 		}
+@@ -3546,6 +3557,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 			if (random)
+ 				req->r_resend_mds = mds;
+ 		}
++		trace_ceph_mdsc_suspend_request(mdsc, session, req,
++						ceph_mdsc_suspend_reason_session);
+ 		list_add(&req->r_wait, &session->s_waiting);
+ 		goto out_session;
+ 	}
+@@ -3646,6 +3659,7 @@ static void __wake_requests(struct ceph_mds_client *mdsc,
+ 		list_del_init(&req->r_wait);
+ 		doutc(cl, " wake request %p tid %llu\n", req,
+ 		      req->r_tid);
++		trace_ceph_mdsc_resume_request(mdsc, req);
+ 		__do_request(mdsc, req);
+ 	}
+ }
+@@ -3672,6 +3686,7 @@ static void kick_requests(struct ceph_mds_client *mdsc, int mds)
+ 		    req->r_session->s_mds == mds) {
+ 			doutc(cl, " kicking tid %llu\n", req->r_tid);
+ 			list_del_init(&req->r_wait);
++			trace_ceph_mdsc_resume_request(mdsc, req);
+ 			__do_request(mdsc, req);
+ 		}
+ 	}
+@@ -3718,6 +3733,7 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
+ 	doutc(cl, "submit_request on %p for inode %p\n", req, dir);
+ 	mutex_lock(&mdsc->mutex);
+ 	__register_request(mdsc, req, dir);
++	trace_ceph_mdsc_submit_request(mdsc, req);
+ 	__do_request(mdsc, req);
+ 	err = req->r_err;
+ 	mutex_unlock(&mdsc->mutex);
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index c3eb651862c5..f119d7260496 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -30,6 +30,9 @@
+ 
+ #include <uapi/linux/magic.h>
+ 
++#define CREATE_TRACE_POINTS
++#include <trace/events/ceph.h>
++
+ static DEFINE_SPINLOCK(ceph_fsc_lock);
+ static LIST_HEAD(ceph_fsc_list);
+ 
+diff --git a/include/trace/events/ceph.h b/include/trace/events/ceph.h
+new file mode 100644
+index 000000000000..08cb0659fbfc
+--- /dev/null
++++ b/include/trace/events/ceph.h
+@@ -0,0 +1,234 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Ceph filesystem support module tracepoints
++ *
++ * Copyright (C) 2025 IONOS SE. All Rights Reserved.
++ * Written by Max Kellermann (max.kellermann@ionos.com)
++ */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM ceph
++
++#if !defined(_TRACE_CEPH_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_CEPH_H
++
++#include <linux/tracepoint.h>
++
++#define ceph_mdsc_suspend_reasons						\
++	EM(ceph_mdsc_suspend_reason_no_mdsmap,		"no-mdsmap")		\
++	EM(ceph_mdsc_suspend_reason_no_active_mds,	"no-active-mds")	\
++	EM(ceph_mdsc_suspend_reason_rejected,		"rejected")		\
++	E_(ceph_mdsc_suspend_reason_session,		"session")
++
++#ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
++#define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
++
++#undef EM
++#undef E_
++#define EM(a, b) a,
++#define E_(a, b) a
++
++enum ceph_mdsc_suspend_reason { ceph_mdsc_suspend_reasons } __mode(byte);
++
++#endif
++
++/*
++ * Export enum symbols via userspace.
++ */
++#undef EM
++#undef E_
++#define EM(a, b) TRACE_DEFINE_ENUM(a);
++#define E_(a, b) TRACE_DEFINE_ENUM(a);
++
++ceph_mdsc_suspend_reasons;
++
++/*
++ * Now redefine the EM() and E_() macros to map the enums to the strings that
++ * will be printed in the output.
++ */
++#undef EM
++#undef E_
++#define EM(a, b)	{ a, b },
++#define E_(a, b)	{ a, b }
++
++TRACE_EVENT(ceph_mdsc_submit_request,
++	TP_PROTO(struct ceph_mds_client *mdsc,
++		 struct ceph_mds_request *req),
++
++	TP_ARGS(mdsc, req),
++
++	TP_STRUCT__entry(
++		__field(u64,	tid)
++		__field(int,	op)
++		__field(u64,	ino)
++		__field(u64,	snap)
++	),
++
++	TP_fast_assign(
++		struct inode *inode;
++
++		__entry->tid = req->r_tid;
++		__entry->op = req->r_op;
++
++		inode = req->r_inode;
++		if (inode == NULL && req->r_dentry)
++			inode = d_inode(req->r_dentry);
++
++		if (inode) {
++			__entry->ino = ceph_ino(inode);
++			__entry->snap = ceph_snap(inode);
++		} else {
++			__entry->ino = __entry->snap = 0;
++		}
++	),
++
++	TP_printk("R=%llu op=%s ino=%llx,%llx",
++		  __entry->tid,
++		  ceph_mds_op_name(__entry->op),
++		  __entry->ino, __entry->snap)
++);
++
++TRACE_EVENT(ceph_mdsc_suspend_request,
++	TP_PROTO(struct ceph_mds_client *mdsc,
++		     struct ceph_mds_session *session,
++		     struct ceph_mds_request *req,
++		     enum ceph_mdsc_suspend_reason reason),
++
++	TP_ARGS(mdsc, session, req, reason),
++
++	TP_STRUCT__entry(
++		__field(u64,				tid)
++		__field(int,				op)
++		__field(int,				mds)
++		__field(enum ceph_mdsc_suspend_reason,	reason)
++	),
++
++	TP_fast_assign(
++		__entry->tid = req->r_tid;
++		__entry->op = req->r_op;
++		__entry->mds = session ? session->s_mds : -1;
++		__entry->reason = reason;
++	),
++
++	TP_printk("R=%llu op=%s reason=%s",
++		  __entry->tid,
++		  ceph_mds_op_name(__entry->op),
++		  __print_symbolic(__entry->reason, ceph_mdsc_suspend_reasons))
++);
++
++TRACE_EVENT(ceph_mdsc_resume_request,
++	TP_PROTO(struct ceph_mds_client *mdsc,
++		 struct ceph_mds_request *req),
++
++	TP_ARGS(mdsc, req),
++
++	TP_STRUCT__entry(
++		__field(u64,				tid)
++		__field(int,				op)
++	),
++
++	TP_fast_assign(
++		__entry->tid = req->r_tid;
++		__entry->op = req->r_op;
++	),
++
++	TP_printk("R=%llu op=%s",
++		  __entry->tid,
++		  ceph_mds_op_name(__entry->op))
++);
++
++TRACE_EVENT(ceph_mdsc_send_request,
++	TP_PROTO(struct ceph_mds_session *session,
++		 struct ceph_mds_request *req),
++
++	TP_ARGS(session, req),
++
++	TP_STRUCT__entry(
++		__field(u64,		tid)
++		__field(int,		op)
++		__field(int,		mds)
++	),
++
++	TP_fast_assign(
++		__entry->tid = req->r_tid;
++		__entry->op = req->r_op;
++		__entry->mds = session->s_mds;
++	),
++
++	TP_printk("R=%llu op=%s mds=%d",
++		  __entry->tid,
++		  ceph_mds_op_name(__entry->op),
++		  __entry->mds)
++);
++
++TRACE_EVENT(ceph_mdsc_complete_request,
++	TP_PROTO(struct ceph_mds_client *mdsc,
++		     struct ceph_mds_request *req),
++
++	TP_ARGS(mdsc, req),
++
++	TP_STRUCT__entry(
++		__field(u64,			tid)
++		__field(int,			op)
++		__field(int,			err)
++		__field(unsigned long,		latency_ns)
++	),
++
++	TP_fast_assign(
++		__entry->tid = req->r_tid;
++		__entry->op = req->r_op;
++		__entry->err = req->r_err;
++		__entry->latency_ns = req->r_end_latency - req->r_start_latency;
++	),
++
++	TP_printk("R=%llu op=%s err=%d latency_ns=%lu",
++		  __entry->tid,
++		  ceph_mds_op_name(__entry->op),
++		  __entry->err,
++		  __entry->latency_ns)
++);
++
++TRACE_EVENT(ceph_handle_caps,
++	TP_PROTO(struct ceph_mds_client *mdsc,
++		 struct ceph_mds_session *session,
++		 int op,
++		 const struct ceph_vino *vino,
++		 struct ceph_inode_info *inode,
++		 u32 seq, u32 mseq, u32 issue_seq),
++
++	TP_ARGS(mdsc, session, op, vino, inode, seq, mseq, issue_seq),
++
++	TP_STRUCT__entry(
++		__field(int,	mds)
++		__field(int,	op)
++		__field(u64,	ino)
++		__field(u64,	snap)
++		__field(u32,	seq)
++		__field(u32,	mseq)
++		__field(u32,	issue_seq)
++	),
++
++	TP_fast_assign(
++		__entry->mds = session->s_mds;
++		__entry->op = op;
++		__entry->ino = vino->ino;
++		__entry->snap = vino->snap;
++		__entry->seq = seq;
++		__entry->mseq = mseq;
++		__entry->issue_seq = issue_seq;
++	),
++
++	TP_printk("mds=%d op=%s vino=%llx.%llx seq=%u iseq=%u mseq=%u",
++		  __entry->mds,
++		  ceph_cap_op_name(__entry->op),
++		  __entry->ino,
++		  __entry->snap,
++		  __entry->seq,
++		  __entry->issue_seq,
++		  __entry->mseq)
++);
++
++#undef EM
++#undef E_
++#endif /* _TRACE_CEPH_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+-- 
+2.47.3
 
-Konrad
 
