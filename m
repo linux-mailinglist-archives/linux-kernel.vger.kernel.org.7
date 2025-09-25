@@ -1,148 +1,178 @@
-Return-Path: <linux-kernel+bounces-831689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE49B9D531
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:39:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4442B9D52B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901161BC0CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5850F3830C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5232E6CB6;
-	Thu, 25 Sep 2025 03:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3A82E62B1;
+	Thu, 25 Sep 2025 03:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="dxZjIb72"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avZiLHJm"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39A6233134;
-	Thu, 25 Sep 2025 03:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F943233134
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758771577; cv=none; b=Ngh/ljjI+UIMblyIGCeQyu6Sx7ZkerDgff3UE71oD7gdtY71ykRk90J6M9ercLSJNiW8Vf8NOZxkQTNvqzhjK97eXjzj9T33Ip8y5PDvMomc1LUaRAOANCpes/P5gmHzkaIjrj5FmkRrJkEHtnqSt/vm5sNUH1ppq26pWag690A=
+	t=1758771559; cv=none; b=ihvpz/fZGX7WmHuyerfnaWC0KRXnmEanjxkCNJp9NTZpqxOF8r6mOTPNcaPqa9O1KQhdlY1IoeKh8RAPGyzckQ9CLecVw1MSeDTjjEGhFLArTZC/penR/ShO0sDfbQC4LJ07p9dUawLpsh44M6bWq31hnaWHs8LIUhnFoohYRP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758771577; c=relaxed/simple;
-	bh=XPuiJTetrA6TzrhKGeU6oChWLgdR6/7myg5dufXg3MY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rN/NbHh5tyOhHBg8bU9DjUfErKwtrAQxaMu5UbQdq0X7WuyEypvrz/22JjZ4soCA9r4MirFJlY3iamPwF7kXN5C7qrQDhVnslhaDa4y7Sq2k6MCgCnXOpxQAsvXsKityV+aSf2MxwmL3L+7Xv8R8XK9J001/jq/hcD1AhCH+5C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=dxZjIb72; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58P3dEgeD589309, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1758771554; bh=UBK/F3gJ4sbQkkaxgyTqVjw8gDtHVjsoI3s75BRHtoY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=dxZjIb72q2Yt/ZUzQ2OLkwbjmMQdOEQfZd7Om1WS7xyAbndzVsTIbc8mE3i2ctVbp
-	 GPt2JAk9LAIgw734JvvhMvhITwlvVbp+4/ROs1rw0xRYIlUn+nb3hSjcrpACdAg47V
-	 K6Pd1JvUW1dJCbVEmZF8MfRfSp2hu+0nwGr+U2OHxuTdQzIdQsCICrgaN4UNCcEV3r
-	 4ugIRSPFwPBV4GiBkh+iCBUNbVAOKZ59UAw12klcd/BrCkJ98nlE66ukAuCFg/k5/c
-	 zxQcwlchdC1HynxnQUbVf3gQlbRx1oujQafiYSABdxQpVnJPn5iJC+TtKqJ5HszMND
-	 ne4kO2rJ+XeWQ==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58P3dEgeD589309
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 11:39:14 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 25 Sep 2025 11:39:15 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Thu, 25 Sep 2025 11:39:14 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Thu, 25 Sep 2025 11:39:14 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next 5/6] wifi: rtw89: process TX wait skbs for USB via C2H handler
-Thread-Topic: [PATCH rtw-next 5/6] wifi: rtw89: process TX wait skbs for USB
- via C2H handler
-Thread-Index: AQHcKjJdzKHdGQymJEGBjGH1ND0qlLSjQH4w
-Date: Thu, 25 Sep 2025 03:39:14 +0000
-Message-ID: <c2c40bed311c4f05948cf2541c64ea30@realtek.com>
-References: <20250920132614.277719-1-pchelkin@ispras.ru>
- <20250920132614.277719-6-pchelkin@ispras.ru>
-In-Reply-To: <20250920132614.277719-6-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758771559; c=relaxed/simple;
+	bh=gBPWkNFjdMQE8rx2St2Cxhve3tgGKE50NAP2JhU7zkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kc/kLPvgIEt+p3jo8x+I4z4vSsBWCyDNx6BPpXIYAXIi9eKT4Un2LNC3Dhowjk4X9tHhMx+jO8pIN38fHPQd9JlVv7ubwjI2Ie7MQd4ruRIKNVgL4ifJDoI4znAYoepc0Q6rUlRC/f/6gI9OrHDfjvQVfVIUrN2YX4oKz8EZOU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avZiLHJm; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f169d8153so599996b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 20:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758771557; x=1759376357; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQlHV/LeA8zP8BB0iU6hiP/ahF2MMcZ9HvPXMFvYOqo=;
+        b=avZiLHJm79MbudNol9kHinWx3c+L/msP1MrGBZGtf2WjWwvrXgUEuvabYFAbZjPSj4
+         MVlAIMzYdPJH3om999VmM74brZy7LTmDmx/Ma5J6dclCs11ByNmxqGvxRTSyzdeFqfek
+         ejk8oJHbyJkWCWmEKHqEVK7k/qnOC4gy8f2Scct3PkRuBcmOrC9ZPoa5ygEs6VeeQpfs
+         JF2NiK7sLzhRk6KR25JruGgOfDQtAVYGerjO9+de7KD4plfL7dfTvPNaftzPMv5+hRVH
+         91HgxBBMEnw/mU0L3v/G3pt7nDlAjz2bUu449UJ5Bk1jKdY4hiKDDdMwzcq5XJPZR5Ad
+         5Tqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758771557; x=1759376357;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQlHV/LeA8zP8BB0iU6hiP/ahF2MMcZ9HvPXMFvYOqo=;
+        b=Rd0QPzttEOxkZRGLw98ZQbvybTMGm8u6Cj0L3ceQidigo4MWLU0yDVGFxeumM5IFYV
+         hY3Tv2yUl0aqZEUOpaaBWRCSWk3kH0n1ZxifmtnlkIufjhJuhhECR3aZcSveQ3YYrgWx
+         EtiFQQPpCcyO8iFzkYF46CTaXwup0mSzHPph2lm4kDcrfyzMpNfY9/h+gppaMVjKD8U8
+         d9xtX7uLWSCmE+cXULwTA/A8ePZ5XdHQkzXOfI9M/0g2+94frzqY3EXn1uHY6zHPhOO7
+         JkK9UFWugxEoD2HdfL64g4hGBx2YGk4oZiKs/tMk2hCwk9CcwgYprptWKJILw6j9V72M
+         bLFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbRGx75wujZqW3i8qmWMY1ZJ+IPFg7poPvWueoWT4g6lEXRbF688GCy5Vd2f4Ltmg4fLPbYjOCBVTjCJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwILrMsj2ZO2MiC9aK5CRFvsV5lior4vxT5Ar3qJ1zxo/7M0utN
+	G0vQUv2pOrwPIzg+vxyxxet0jW8miOUF0qxeMq+SR4hsrJaZ/Fyr/KXV
+X-Gm-Gg: ASbGncutWVUrxb73B2cfVBrhP6do8nM8LKHgdSTWGulnbC5h/4Lv7P8bhm+xezhMOS2
+	zmNLiF6I4Ym/GwW/mBLX331zRNLiw/CDg/dY9p0CBe0GNsENTxrjBztnzCD0P2WuszYTjTG7r7H
+	cduhzFNtKWHry/mGGkaH033dXoLVhDa1znW6yQ78hObKvZi2JcV+d0k0cMC/wtBSYXQTr+rdSeI
+	UZsO8PYFSvugavLVWnBw3HycALREuEGtQkFSh8Ui4hxyliDFGfeZr4wijPDiOxwlVVzWH85+4aF
+	KmeJcANLXsjygKbCtR77mKfrkuZzVY8ax5lg47abLVal7pGAh9YHpY4Sld6jW7BZD2FonLnIbdL
+	bnECy1GTsP0joMiyUMTbiR4pnSLJFFS3+98OFPRcLnA==
+X-Google-Smtp-Source: AGHT+IEdkFvVbxoA7GFliYOsJ4pCAsy6bdrcfcexouLuoLDLtxCPYRQvWRRpt1KbJ7IscFaYe+dvwg==
+X-Received: by 2002:a05:6a21:99aa:b0:2b7:949d:63e9 with SMTP id adf61e73a8af0-2e7be809954mr2350343637.7.1758771557487;
+        Wed, 24 Sep 2025 20:39:17 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3341bda12eesm3952578a91.7.2025.09.24.20.39.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 20:39:16 -0700 (PDT)
+Date: Thu, 25 Sep 2025 00:40:04 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux@roeck-us.net, rodrigo.gobbi.7@gmail.com,
+	naresh.solanki@9elements.com, michal.simek@amd.com,
+	grantpeltier93@gmail.com, farouk.bouabid@cherry.de
+Subject: Re: [PATCH 1/3] dt-bindings: iio: pressure: add binding for mpl3115
+Message-ID: <aNS5lGpv6ezZ8HpZ@debian-BULLSEYE-live-builder-AMD64>
+References: <20250921133327.123726-1-apokusinski01@gmail.com>
+ <20250921133327.123726-2-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921133327.123726-2-apokusinski01@gmail.com>
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> TX wait skbs need to be completed when they are done.  PCIe part does thi=
-s
-> inside rtw89_pci_tx_status() during RPP processing.  Other HCIs use a
-> mechanism based on C2H firmware messages.
->=20
-> Store a sequence number in a TX wait object so that it'll be possible to
-> identify completed items inside C2H handler.  No need to add the
-> corresponding skb to the &txcb->tx_ack_queue on USB part.
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Hi Antoni,
 
-[...]
+Some inline suggestions for making this binding better comply with the
+'attempt to make bindings complete' guideline.
 
-> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
-ess/realtek/rtw89/mac.c
-> index 831e53aedccc..79409eb4d028 100644
-> --- a/drivers/net/wireless/realtek/rtw89/mac.c
-> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
-> @@ -5477,6 +5477,7 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, stru=
-ct sk_buff *c2h, u32 len)
->  {
->         u8 sw_define =3D RTW89_GET_MAC_C2H_TX_RPT_SW_DEFINE(c2h->data);
->         u8 tx_status =3D RTW89_GET_MAC_C2H_TX_RPT_TX_STATE(c2h->data);
-> +       struct rtw89_tx_wait_info *wait;
->         struct sk_buff *cur, *tmp;
->         unsigned long flags;
->         u8 *n;
-> @@ -5485,6 +5486,16 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, str=
-uct sk_buff *c2h, u32 len)
->                     "C2H TX RPT: sn %d, tx_status %d\n",
->                     sw_define, tx_status);
->=20
-> +       rcu_read_lock();
-> +       list_for_each_entry_rcu(wait, &rtwdev->tx_waits, list) {
-> +               if (wait->sn =3D=3D sw_define) {
-> +                       wait->tx_done =3D tx_status =3D=3D RTW89_TX_DONE;
-> +                       complete_all(&wait->completion);
-> +                       break;
-> +               }
-> +       }
-> +       rcu_read_unlock();
+On 09/21, Antoni Pokusinski wrote:
+> MPL3115 is an I2C pressure and temperature sensor. It features 2
+> interrupt lines which can be configured to indicate events such as data
+> ready or pressure/temperature threshold reached.
+> 
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> ---
+...
+> +description: |
+> +  MPL3115 is a pressure/altitude and temperature sensor with I2C interface.
+> +  It features two programmable interrupt lines which indicate events such as
+> +  data ready or pressure/temperature threshold reached.
+> +  https://www.nxp.com/docs/en/data-sheet/MPL3115A2.pdf
 > +
+> +properties:
+> +  compatible:
+> +    const: fsl,mpl3115
+> +
+> +  reg:
+> +    maxItems: 1
 
-Since we can get 'wait' from RTW89_TX_SKB_CB(), can we just use
-rtwdev->tx_rpt_queue?
+For completeness, could also add the power supplies.
 
-Also, call rtw89_core_tx_wait_complete() to complete wait?
+  vdd-supply: true
 
->         spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
->         skb_queue_walk_safe(&rtwdev->tx_rpt_queue, cur, tmp) {
->                 n =3D (u8 *)RTW89_TX_SKB_CB(cur)->hci_priv;
+  vddio-supply: true
 
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      enum:
+> +        - INT1
+> +        - INT2
+> +
+> +  drive-open-drain:
+> +    type: boolean
+> +    description:
+> +      set if the specified interrupt pins should be configured as
+> +      open drain. If not set, defaults to push-pull.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+  - vdd-supply
+  - vddio-supply
 
+and also add the supplies to the example below.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pressure@60 {
+> +            compatible = "fsl,mpl3115";
+> +            reg = <0x60>;
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
+> +            interrupt-names = "INT2";
+> +        };
+> +    };
+
+Best regards,
+Marcelo
 
