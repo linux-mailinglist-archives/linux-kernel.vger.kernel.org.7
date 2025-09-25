@@ -1,160 +1,87 @@
-Return-Path: <linux-kernel+bounces-833411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07A8BA1E14
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:43:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECA5BA1E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDA33B1435
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2320562905
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1040322A18;
-	Thu, 25 Sep 2025 22:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ObUaTjnV"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B77322C73;
+	Thu, 25 Sep 2025 22:43:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B8D32254B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E16322775
 	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758840184; cv=none; b=EbBeKU+vlGQQwLvNShrt/VXkEPCEss/d2sh7GjKPHmki283cb8DMiIOssSP5Ou9liGMo8bRIV1ld2rWxFENkyfGnSKf0/URK5UnI+38pf9/iKw0p0j4cnmiFrmIosX2t0Syq1Ed3mvcaqXPsUXCYzPPSGMmuRPqdHDLFlSljNEQ=
+	t=1758840185; cv=none; b=fOW74qnwo5vu+Z2gyVXzUQ26SbIcZFrt94F7zyRMEcD8ibHLhcxZcYSwIgnWdWNL09GtsIA/i29vNTUevAZEMgW4mhT+CYZcGL8KHHME2G1u3P+KqWbNUXN60vcsOKgY1N5u0PEi+3z52czBZEGn3yKSqJ780eWdOC+XrhHa/4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758840184; c=relaxed/simple;
-	bh=S9S6Rj8o/qHmyeC6VJhHvIekryYQ9I5GZYIvHdxg3Xo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s/WdaOrX2gbDS7kYqkbXdDfmXhtdWBLhDNt4LV0MUmQFMoy+16hjJZ2Xh7017iFYgxYcgMT2OW3BHzYyzdsC0nzM6BuBURKKkexBHDuH8WPqLlQHFUPCPNduFPOvZhMQqET8RAWOHYvrWbAysqzWKiSUxaYLU04acY8xBWn6SWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ObUaTjnV; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIlku0029476;
-	Thu, 25 Sep 2025 22:42:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=nitDcQ
-	yKm4NkSdrvGfnoFJK+u+59qy52l/in9/PENFA=; b=ObUaTjnVdITMiJdUsAaBva
-	XLZ1KtMdmBp5Zgj5HF5l736Dw8UHyUhD3TisJilpRw75rsai+utMNLZI/A40Gk0J
-	AIsS/G7spYLQbIO0kZU4MaW2iV/aPWyZoCKgkQVlo8X5W+I2HjCSV311JDj74M+7
-	AE+XvFGRJ786VL4MUt+qd0wuYjp+Dm18KSH3XLhU+kGNoHZtITJdR1Vb2tgbx8f/
-	XDfyMpdu8TFYY/5/2k68gzz9upb0rFrkfJbB08Avlo1kuaLpzUrF3wP4zuZtecc7
-	wmN72T9Dnd4s9T4WOJSMaXD6jTl/524rYuOHseRoTIls1+pmarwlMs/vXc4BxfzA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbb3s2av-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 22:42:44 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PLea2s006442;
-	Thu, 25 Sep 2025 22:42:43 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawph4a4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 22:42:43 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PMggep33227348
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 22:42:42 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB06958059;
-	Thu, 25 Sep 2025 22:42:42 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A5E7158043;
-	Thu, 25 Sep 2025 22:42:37 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.36.14.161])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Sep 2025 22:42:37 +0000 (GMT)
-Message-ID: <336c0402c59363956d0c4eefc1b8a059e1fcc8e4.camel@linux.ibm.com>
-Subject: Re: [PATCH v17 00/12] Support page table check on PowerPC
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, x86@kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pasha.tatashin@soleen.com, sweettea-kernel@dorminy.me,
-        nicholas@linux.ibm.com, christophe.leroy@csgroup.eu,
-        alexghiti@rivosinc.com
-Date: Fri, 26 Sep 2025 08:42:35 +1000
-In-Reply-To: <20250909091335.183439-1-ajd@linux.ibm.com>
-References: <20250909091335.183439-1-ajd@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758840185; c=relaxed/simple;
+	bh=nrIZgYocibwMALWDpOMCWFLNb0pKnTH1vS9VBqGnp98=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HMSyJ7WeBHzksx0k8M0tYHFujs7sAjwaprMesmND0XOjlRCSwnIbbuXbuRH9BLa2FERKx44eZH1/TdTrOx340rkezewVZwyod6jAjv/G5wZa3CAgyM0CV4fuUZr8RELRsPeb+4ltQOJV5IO0DwC88sdhdVJ3VZGUxrW5vxIZoSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-889b8d8b6b7so303070939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:43:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758840182; x=1759444982;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/qEEA9sHgIdrxu4sbNWPa4Zk10/8nq/0vLv1NTf9LU=;
+        b=U2Xu66/UEGx+EGpTixkUkQHw88jp2RrYakO4nljIhibZfTu0tMlG/8VErEurNVJHVm
+         dIPsLzQp5Kl1MU2dEbb7QnDCDwAmzPJbW9ndznHgyWAF6FIuS/0KzxqQ6nfF3/Q8c3+M
+         19u75JHCmSkJMS1QLnW9C84HZsafi4+UNOjhbDyik/2HOG4+jHBwTlGI7IDfz+oHxtJo
+         NXV9MRA4iXEZ84zrcynxoyQ3wBiMN5K0V+CqFw+6oPwkKyeldTseJ+7+6vQD7lbZSita
+         DWJSvRQ+uhGRWxaKOhi6e38rE3C6YDDsr6lUmeFcxg44Iu3AixoANdyHWTNkQkugKGts
+         GHxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVetgMFzGa4UuOKZbPQMaGOL0IGuWyth43CPYAi6L0E+kalXHbS53RkLv3ApjmyOMEM2xT8xij1yOQIq/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1WcD8bu+kCip5gj3HJJp2Cs0+DYU5CVuhVG7C+OvALNROACzl
+	HMj1LoeSx64j/xcu1rHokx6Dyuk8iXho/P0S/zk2jUJjfHH6D/dHEEHSiluqih2huJHG0fv9/ou
+	2z3HiEcstGAgu0htFe+LvOXihhjcOIWEf8x8R3iM8ad0SxrNBYsZQBwhgmWM=
+X-Google-Smtp-Source: AGHT+IGjf+UW2xBaTp2Dn3HNf77BD0CpaaPObctBxmGg31b3EIcZS0FF5EMPuNeRRV1LmOC3qOz/967Qy+ercukcM5kFuwfv9A1a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX5ysG32sTPFXd
- uf1R0BRsI0BKicwSpsBxEsSI2a3nnZJqMzF1o90w6Fz3y2zUhPJ2779DnKRJOVaK9VhKCmsSlHP
- /2MXq9DBNTVGPSPGGD9cbqJyAOkD0q7UeemycTSAdzGpVHSooWMOLLYPjP3KyU20YaYxH+bkEin
- MGJn3OOl4+vJti0slRv6mCHzTZ0n7nQaw9gF4Vg4N0KsY1Vd6Dwr0iLkqNCzKSRcTrk+q8Dol9Q
- qU4YSwx4Ahh4WWCTr1UhV4TK9Af+6BnwFIHzvgf7l8TqmRVWGOLGhqpqa+uiQSq8ueI4HKd5JZh
- VqBopl4TR4l8azCp1YGG5ilHhX/5mUQSAG+mGp/8c7m70OyuL/TydKQdeAYOkVykSxlq+rjcDlP
- DcEqcvCGhSw8iFb5/oSEczTL3v5p3Q==
-X-Proofpoint-GUID: dpRrG9bUj2ZLNf81WWW-h6dqNNtNb9Wo
-X-Authority-Analysis: v=2.4 cv=T/qBjvKQ c=1 sm=1 tr=0 ts=68d5c564 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=owR7qqmZskU0YpnQVroA:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: dpRrG9bUj2ZLNf81WWW-h6dqNNtNb9Wo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+X-Received: by 2002:a05:6e02:18cf:b0:424:86d:7bb9 with SMTP id
+ e9e14a558f8ab-425bdaf0355mr62273895ab.0.1758840181941; Thu, 25 Sep 2025
+ 15:43:01 -0700 (PDT)
+Date: Thu, 25 Sep 2025 15:43:01 -0700
+In-Reply-To: <CAHxJ8O8es=zttb498nGje+T0AsxJXcEvUKWBTE1CVUrgV5pgXQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d5c575.050a0220.25d7ab.00a9.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] WARNING in ieee80211_tdls_oper (2)
+From: syzbot <syzbot+665dd2d6eb222ac6a6ab@syzkaller.appspotmail.com>
+To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+Hello,
 
-On Tue, 2025-09-09 at 19:13 +1000, Andrew Donnellan wrote:
-> Support page table check on all PowerPC platforms. This works by serialis=
-ing
-> assignments, reassignments and clears of page table entries at each level=
- in
-> order to ensure that anonymous mappings have at most one writable consume=
-r,
-> and likewise that file-backed mappings are not simultaneously also anonym=
-ous
-> mappings.
->=20
-> In order to support this infrastructure, a number of helpers or stubs mus=
-t be
-> defined or updated for all powerpc platforms. Additionally, we separate
-> set_pte_at() and set_pte_at_unchecked(), to allow for internal, uninstrum=
-ented
-> mappings.
->=20
-> On some PowerPC platforms, implementing {pte,pmd,pud}_user_accessible_pag=
-e()
-> requires the address. We revert previous changes that removed the address
-> parameter from various interfaces, and add it to some other interfaces,
-> in order to allow this.
->=20
-> Note that on 32 bit systems with CONFIG_KFENCE=3Dy, you need [0] to avoid
-> possible failures in init code (this is a code patching/static keys issue=
-,
-> which was discovered by a user testing this series but isn't a bug in pag=
-e
-> table check).
->=20
-> (This series was initially written by Rohan McLure, who has left IBM and
-> is no longer working on powerpc.)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Is this likely to make it in in time for 6.18, or should I respin it post m=
-erge
-window?
+Reported-by: syzbot+665dd2d6eb222ac6a6ab@syzkaller.appspotmail.com
+Tested-by: syzbot+665dd2d6eb222ac6a6ab@syzkaller.appspotmail.com
 
-Thanks,
-Andrew
+Tested on:
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+commit:         4ff71af0 Merge tag 'net-6.17-rc8' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=101874e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=665dd2d6eb222ac6a6ab
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=163cdce2580000
+
+Note: testing is done by a robot and is best-effort only.
 
