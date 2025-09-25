@@ -1,92 +1,110 @@
-Return-Path: <linux-kernel+bounces-832913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197C5BA0BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFADBA0BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D01F7AB9C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F38716C15D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1751309DB0;
-	Thu, 25 Sep 2025 17:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF9C30AAC2;
+	Thu, 25 Sep 2025 17:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0whetM5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLEgG49U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AE219F40B;
-	Thu, 25 Sep 2025 17:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F7519F40B;
+	Thu, 25 Sep 2025 17:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758819911; cv=none; b=mlL4y0VYtKW6RNGui/1M9nH4LEqnTymuTIwQVZ29z7Y5iDp1P7jFL34Bl0MYGXeNM3STHaHIUR0V3l3by7lwfhjmYmFgMsvzQF3k0U0eqDapAf3mYrDusF0CLfhroFQvhZhVmb7LB0Zqo0TBzip4LhFJArWGAT9gWHnm4aLJ+74=
+	t=1758820003; cv=none; b=M2ITgFB5guHEFX9WoAV560Lf7LU8eUXBYhDd6AobbQ+UigWbtK73OwCTr960kJuDGVrjnbf4q1+WlmlIjG4HycAxRfWfvV0iMl5LPlqfOKjHb+kZiEL1oKUadqazoJJdvpaT6kzJsJNPedXn3vd52v5vAGgXuvNUUqnOJWR5w+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758819911; c=relaxed/simple;
-	bh=LiqXXsioRh4a6BaPKJmLKa3mWFCksTvXxuDRwrP9b84=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Foc4lQ4uF3JCgj2isbUQHN4tGk9cvxdCkanyVM/amW+pOwbEejxsW0oVnFvJwGeKrBLFMfdqasybh5JPgBqXfbEpuCv772K3zB+SDMyu5PxjXpi5oxndgRqW8Aq2lOwe48oFdVRYgq8+PEA+UHL3OBayUfqf8yZkR4iu0TbIGAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0whetM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1758C4CEF0;
-	Thu, 25 Sep 2025 17:05:04 +0000 (UTC)
+	s=arc-20240116; t=1758820003; c=relaxed/simple;
+	bh=FQnMJ4nzbSCJNz2iuEs2EI/NSyonioY+gldaU1Xzzho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5DjoDqxGuAFFSUNjWb+8Jv/F4rpj/GMPJx1lRqpiHvQZqQM3+F2j+mdU+YyI/HAc85Tnnc4Bvl2FlCyg7tieEdEfduJQGy/99/KCSMQUy4MTOncSefef2SpUAK7dbCpPFLv1W2uqT7EJobLFfQHf/bPbBWE/7p0y2Pxxz7lvms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLEgG49U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A18C4CEF5;
+	Thu, 25 Sep 2025 17:06:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758819910;
-	bh=LiqXXsioRh4a6BaPKJmLKa3mWFCksTvXxuDRwrP9b84=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=i0whetM5glZXecBehF4IA10tgLqJ3l80Bs0zH+sw0sCCjJyBA8uzJevBKBEHvua+w
-	 dVNKpkBGITnUp44lN9rtOT1TncqjPQ/IqRUT2MgpxUsmTBmuX1j1nr5Cek7mGSDeuj
-	 a175Ms4RJR4An80EjBmH7dG/RtleO7UAmLr2wcbZYnFGSlQXWJv2KLL6xf/VrCfSwe
-	 0RmrNhW6K/M6z8v+EnkY/YORlbIT8c7xKLnKYIsqMSzXJBLx8n1SCUI9Pn8dQb0vEV
-	 4dw0Fiw0BCTHV01jxhhHoHQ8SGoqKq+wix0sgj7FNJ83echucxEM1rpd8g7+122lNG
-	 wt2qw8vHvmI8Q==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de, 
- lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
- bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
- kernel@pengutronix.de, festevam@gmail.com, 
- Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20250923073913.2722668-1-hongxing.zhu@nxp.com>
-References: <20250923073913.2722668-1-hongxing.zhu@nxp.com>
-Subject: Re: [PATCH v5 0/2] PCI: imx6: Add a method to handle CLKREQ#
- override
-Message-Id: <175881990427.392988.6937520327985325506.b4-ty@kernel.org>
-Date: Thu, 25 Sep 2025 22:35:04 +0530
+	s=k20201202; t=1758820003;
+	bh=FQnMJ4nzbSCJNz2iuEs2EI/NSyonioY+gldaU1Xzzho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rLEgG49UFRdBGutH8VK+dJVxK/A35OeQF1z2hCe64FKkzzkGXMphnQDehqXCOz+Cz
+	 BhIFmYQnoNh27AdNzF8epRVr3UO0NwfSF1RDfck9PeJGgulI5sEX6K+veyf03lbql8
+	 GQpAW5LhukYoHB0rp/Frog5hZ+6WXNVzI7tC8HG7se2BoHdOHnfV8Ap8cYLauhGL2q
+	 6qrJRRUP1y30e3EqiKmgdcnn9pGGxLWbDJgOLQgOS4LSCyxEtbmMaV5cpD1WuEwHQg
+	 PHD8Sn+3flmlttsZb1Dq8EcliQ0KC1ABTm6H3HfCPqrz/rjRsknmeQx4nNaM2KtpRh
+	 sTMvyKXQ/+RNA==
+Date: Thu, 25 Sep 2025 12:06:40 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Subject: Re: [PATCH 06/24] arm64: dts: qcom: glymur: Enable pdp0 mailbox
+Message-ID: <bugtpjwk77lcpa4jjox62ulmy56nf6yykzpr2ryifqqpeig6gp@45lzpngcpo2z>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-6-24b601bbecc0@oss.qualcomm.com>
+ <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
 
-
-On Tue, 23 Sep 2025 15:39:11 +0800, Richard Zhu wrote:
-> The CLKREQ# is an open drain, active low signal that is driven low by
-> the card to request reference clock. It's an optional signal added in
-> PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
-> reserved.
+On Thu, Sep 25, 2025 at 05:23:07PM +0900, Krzysztof Kozlowski wrote:
+> On Thu, 25 Sept 2025 at 15:33, Pankaj Patil
+> <pankaj.patil@oss.qualcomm.com> wrote:
+> >
+> > From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> >
+> > Enable pdp0 mailbox node on Glymur SoCs.
+> >
+> > Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> > Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/glymur.dtsi | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > index 66a548400c720474cde8a8b82ee686be507a795f..ae013c64e096b7c90c0aa4cfc50f078a85518acb 100644
+> > --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> > @@ -4065,6 +4065,14 @@ watchdog@17600000 {
+> >                         interrupts = <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>;
+> >                 };
+> >
+> > +               pdp0_mbox: mailbox@17610000 {
+> > +                       compatible = "qcom,glymur-cpucp-mbox", "qcom,x1e80100-cpucp-mbox";
+> > +                       reg = <0 0x17610000 0 0x8000>, <0 0x19980000 0 0x8000>;
+> > +                       interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       #mbox-cells = <1>;
+> > +                       qcom,rx-chans = <0x7>;
+> > +               };
 > 
-> Since the reference clock controlled by CLKREQ# may be required by i.MX
-> PCIe host too. To make sure this clock is ready even when the CLKREQ#
-> isn't driven low by the card(e.x the scenario described above), force
-> CLKREQ# override active low for i.MX PCIe host during initialization.
+> Again one node per patch. this is really pointless, please read
+> submitting patches before posting.
 > 
-> [...]
 
-Applied, thanks!
+In this series I certainly agree with you.
 
-[1/2] PCI: dwc: Invoke post_init in dw_pcie_resume_noirq()
-      commit: 27afd094ea4be542594058d685c7af4654ab8de7
-[2/2] PCI: imx6: Add a method to handle CLKREQ# override active low
-      commit: dc853fb85d6b90e0805660c1dbb38ef7641af839
+This is most definitely part of the next patch, which is core support
+that should have been part of the introduction of the CPU nodes in the
+initial patch.
 
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+Regards,
+Bjorn
 
+> New Soc is one logical change. One.
 
