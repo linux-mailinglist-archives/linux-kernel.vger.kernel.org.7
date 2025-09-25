@@ -1,123 +1,263 @@
-Return-Path: <linux-kernel+bounces-833045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56575BA1153
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:53:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF94CBA115C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301041C25132
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DD44A2F41
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B190C31AF33;
-	Thu, 25 Sep 2025 18:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9886A319877;
+	Thu, 25 Sep 2025 18:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpK+qqNj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eczDmY82"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02465305E2F;
-	Thu, 25 Sep 2025 18:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188D83191D3
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758826409; cv=none; b=ZibWypKjBGw0TXp6pPXsY6xPBgCxHIumLdPMxfp6LH46EETKbs66f0NzBYF8bjl630m9+pBSwZCm/kd1t1WX8plOGLjhB9kP41ITKQIGcxUGvWETqdvbfrO8aFWLV8chYFJqbibxFU0Gd1qbwQPhPMGsLHAFmDBk+sDHwWZaVoY=
+	t=1758826451; cv=none; b=OZ1GCKNhT6ifm1IalgwGOjhIpiFwTfGR0Tx9nkSqa8UPfhUvxE4iGVsoI0gYGKaCYzKKsWgGp/XRo1HtypymstUqF7aEPPBYUdx1wBWZPGmNZeUkChTR8QgpRKXV/y15x2D5pu7EhQUxMafiPrp/lo26t5toFSS/R4voPbaWlko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758826409; c=relaxed/simple;
-	bh=7zKuiaB9nUg1M/dbjATvmM6fNMwW/Ucy+qdkn9KlYN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECFBzUlPuGwKhkqNpuDlrkf8Tw9Ghqg6zgI4Q+WdQh6fztbT5MGNDiER9OMWkcbFQPZA1MtHHsjxxxkuULmD9ps6oGkbBE40HWJAJdjxLlmzBzzUTMF9+swAXs1sYKDdyzf8XyXcOsAO5lKEfcOkPYo0GbZToDJ5EbgHzagTIf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpK+qqNj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E76CC4CEF0;
-	Thu, 25 Sep 2025 18:53:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758826407;
-	bh=7zKuiaB9nUg1M/dbjATvmM6fNMwW/Ucy+qdkn9KlYN8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=LpK+qqNjwpXKYoTbpE3NkYKtPSoOrUj88xGppoSeDZZS0DgvP7jmDumTnxA6krmDU
-	 RpsiAchH+SpyYiDhUjcnNbfVByOvb87vqd7ttSCwS0Ncy6GPiIviR8g9NKOW6DdDlB
-	 6Hb79DxRRYONdBl2Y2s9JrA4P9+r+Y4evHDZ47Di9smMKOojGzbLjF7nESqK1XGbLM
-	 HWjJ+440zB8PqxnFn879TH1bJ6Z2bGISx5pxoGjgG1s6oLisnoCAHa9QMmLWvVdOmK
-	 9BkWDK+npK8W2bc8g+pAJzsPs0n5FLufA5xqc3W5V2XVxV1jnDR8xW/aL2KBsTP3RO
-	 CuLpJcqSM6t1g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A9F9DCE1591; Thu, 25 Sep 2025 11:53:24 -0700 (PDT)
-Date: Thu, 25 Sep 2025 11:53:24 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, bpf@vger.kernel.org
-Subject: Re: [PATCH 19/34] rcu: Update Requirements.rst for RCU Tasks Trace
-Message-ID: <e65d2553-88fc-47ee-b0fa-ddfb5515a7e0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop>
- <20250923142036.112290-19-paulmck@kernel.org>
- <CAEf4BzazpB6XHL+HRO0HaegiwCUpXaTi+QSnPAxsW9BHBL=50Q@mail.gmail.com>
+	s=arc-20240116; t=1758826451; c=relaxed/simple;
+	bh=Yp1u8iALz7sgABTMbwglWX907cvWMrc8RZudxNFkNQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WpLxn/b13yoTuizISeChQGEsgOn3lmUIz6aKDuhcadI8LK2wL8UTXF1/Kgi6Kk0JHLpcGXu2UaXxn5kqTSO7HrwDEoLeI1U4e5qn5zRj8dq1WxgCC9rkpPxQwYCCHxCenaJvBj6DSTGWZY/zesSltIgqQdeDn1daGGWd2YrtMlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eczDmY82; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-85d02580a07so64606785a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 11:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758826449; x=1759431249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C79BnGNdqfA1WFmZDdOgQ1u/4DfiWGTxrbsuXwmR4Dw=;
+        b=eczDmY82r6aPM8ryIxz2/2b7Mt6Q3mBH3xaE5TUuOHYv9r6WCbVF6Iq0ESaPZrk+N0
+         tencNw1VNrgBoQCGScdhw4i/+XczYBcetleUoY0AtBL8c0geNPxNaaBlgs7yz+LfLjCa
+         6E/F4eQ57ygJfqJ4Rro/QS86ouqYJ5MrcEejEZozZf+2zksjBC7bSqfVboiG0UTevZfj
+         KJ518fT1c5R0PaqakVl2oTmdq3MC9d+/Czl77fdUGKnHwFQ5BiQ2TtHUHoyJeUKHa7Zf
+         GR99I9vWSH7kx2ihL1aaChylgUJHLEhoZ+9AzgkhlGsV/opbvD37IZZkiK1eKNaPSPsf
+         spxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758826449; x=1759431249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C79BnGNdqfA1WFmZDdOgQ1u/4DfiWGTxrbsuXwmR4Dw=;
+        b=dOChELVRJJn0QoCiFtZgS0wBwfM1M0EFlorldi8Zu9uBWwfX0ED9HX+xtO6nI80dLX
+         n4OA06c+skHkNcS0eBLejUYH20/I+g4fEm+JP+SAclNp6xGiS8XIkSCuzvpizCoJFfAZ
+         zJuEZfWSzY7vDSZ/8vUc0dTCp1OYcsV8Mw4NWnFMqAQ6JtEWJzinjfb2tbDLTgUQx3ch
+         3d/17T39Bc9ByK5GOlR8a4wzCL7L7iAUiTmSM/4PxFgWdV/8URr9jwIA0OZnBv6J97l2
+         pWna9NZd9pao1VqT4LkQLaTWs44PYKL3OVeEmDXD36lBWXSFrnTR6pe0XMmzHfusfVsx
+         6t4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmT2paV5XZZpsP4qECD7k8WTWtn0MWN3C/+FpnGQyuutWCRdU4q+nOmFrOWPousHHIFKeFImiBNEVi82o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxedpUAzMHLs0CgGSIqE9C9XUcD/93BzkWP5sC6KjV8Rw/9SOlC
+	nJ5ZWMj+DqnFkFTPr7A2ryvg28pqYTa0Vtow+ZI9+M4ORzBLnsGG02cfKQnMch4H4T9A0zfw2yp
+	/FtgUnUH6WEL9DqgW52jSl8XE5UHCt5/fJP4/jLBi
+X-Gm-Gg: ASbGncuN7EyHS2g9wzTnObpAhiyFt6tS/8RX35QjGUEJmCAbJukDaam5HUxRSx5hrXf
+	Fz2vPX1lE4gsEHYHQUOil0al+RXG0ekqRqMkTnELkH+oMp3DPo5H8xSpCQsyMPSwz3w2jdNCwMx
+	zJfDhKyjjtZg/LWMqrRRoFFFYMIqGeu778nYG2GpWn2by7lPhiVWLbc6E3zFaU+DGd6VCdaV0QX
+	/qsoz9Kv+Y9p1KTOpInZikz
+X-Google-Smtp-Source: AGHT+IH1X6h5C3xlWpGoKkj10vK3Dwz9ecUbJIlaxhcqy2DB4Z5TSfe9YirXsmbh2jkAFRB2d2osgAI0nwWKORuft7I=
+X-Received: by 2002:a05:620a:711b:b0:852:b230:220e with SMTP id
+ af79cd13be357-85bc193e658mr434859985a.2.1758826448329; Thu, 25 Sep 2025
+ 11:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzazpB6XHL+HRO0HaegiwCUpXaTi+QSnPAxsW9BHBL=50Q@mail.gmail.com>
+References: <20250922121818.654011-1-wangliang74@huawei.com>
+ <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com> <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com>
+In-Reply-To: <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Sep 2025 11:53:56 -0700
+X-Gm-Features: AS18NWBwxub5p7eNitiTZnu8uGg9aM-Gp-udVPszRrM6yAsoUpaHXcy8NJ6T7JI
+Message-ID: <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
+Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Wang Liang <wangliang74@huawei.com>, alibuda@linux.alibaba.com, 
+	dust.li@linux.alibaba.com, sidraya@linux.ibm.com, wenjia@linux.ibm.com, 
+	mjambigi@linux.ibm.com, tonylu@linux.alibaba.com, guwen@linux.alibaba.com, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 11:40:54AM -0700, Andrii Nakryiko wrote:
-> On Tue, Sep 23, 2025 at 7:21 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google.c=
+om> wrote:
+>
+> Thanks Eric for CCing me.
+>
+> On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@google.com=
+> wrote:
 > >
-> > This commit updates the documentation to declare that RCU Tasks Trace
-> > is implemented as a thin wrapper around SRCU-fast.
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: <bpf@vger.kernel.org>
-> > ---
-> >  .../RCU/Design/Requirements/Requirements.rst         | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-> > index f24b3c0b9b0dc6..4a116d7a564edc 100644
-> > --- a/Documentation/RCU/Design/Requirements/Requirements.rst
-> > +++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-> > @@ -2779,12 +2779,12 @@ Tasks Trace RCU
-> >  ~~~~~~~~~~~~~~~
-> >
-> >  Some forms of tracing need to sleep in readers, but cannot tolerate
-> > -SRCU's read-side overhead, which includes a full memory barrier in both
-> > -srcu_read_lock() and srcu_read_unlock().  This need is handled by a
-> > -Tasks Trace RCU that uses scheduler locking and IPIs to synchronize with
-> > -readers.  Real-time systems that cannot tolerate IPIs may build their
-> > -kernels with ``CONFIG_TASKS_TRACE_RCU_READ_MB=y``, which avoids the IPIs at
-> > -the expense of adding full memory barriers to the read-side primitives.
-> > +SRCU's read-side overhead, which includes a full memory barrier in
-> > +both srcu_read_lock() and srcu_read_unlock().  This need is handled by
-> > +a Tasks Trace RCU API implemented as thin wrappers around SRCU-fast,
-> > +which avoids the read-side memory barriers, at least for architectures
-> > +that apply noinstr to kernel entry/exit code (or that build with
-> > +``CONFIG_TASKS_TRACE_RCU_NO_MB=y``.
-> 
-> For my own education (and due to laziness to try to figure this out on
-> my own), what's the situation where you'd want to stick to the
-> old-school "heavy-weight" SRCU vs SRCU-fast variant?
+> > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@huawei.=
+com> wrote:
+> > >
+> > > The syzbot report a crash:
+> > >
+> > >   Oops: general protection fault, probably for non-canonical address =
+0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+> > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead=
+4ead0000001f]
+> > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PR=
+EEMPT(full)
+> > >   Hardware name: Google Google Compute Engine/Google Compute Engine, =
+BIOS Google 08/18/2025
+> > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+> > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag=
+.c:89
+> > >   Call Trace:
+> > >    <TASK>
+> > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+> > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+> > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+> > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
+> > >    netlink_dump_start include/linux/netlink.h:341 [inline]
+> > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+> > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+> > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+> > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+> > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+> > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+> > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+> > >    sock_sendmsg_nosec net/socket.c:714 [inline]
+> > >    __sock_sendmsg net/socket.c:729 [inline]
+> > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+> > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+> > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+> > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+> > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >    </TASK>
+> > >
+> > > The process like this:
+> > >
+> > >                (CPU1)              |             (CPU2)
+> > >   ---------------------------------|-------------------------------
+> > >   inet_create()                    |
+> > >     // init clcsock to NULL        |
+> > >     sk =3D sk_alloc()                |
+> > >                                    |
+> > >     // unexpectedly change clcsock |
+> > >     inet_init_csk_locks()          |
+> > >                                    |
+> > >     // add sk to hash table        |
+> > >     smc_inet_init_sock()           |
+> > >       smc_sk_init()                |
+> > >         smc_hash_sk()              |
+> > >                                    | // traverse the hash table
+> > >                                    | smc_diag_dump_proto
+> > >                                    |   __smc_diag_dump()
+> > >                                    |     // visit wrong clcsock
+> > >                                    |     smc_diag_msg_common_fill()
+> > >     // alloc clcsock               |
+> > >     smc_create_clcsk               |
+> > >       sock_create_kern             |
+> > >
+> > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedly ch=
+anged
+> > > in inet_init_csk_locks(), because the struct smc_sock does not have s=
+truct
+> > > inet_connection_sock as the first member.
+> > >
+> > > Previous commit 60ada4fe644e ("smc: Fix various oops due to inet_sock=
+ type
+> > > confusion.") add inet_sock as the first member of smc_sock. For proto=
+col
+> > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of inet_sock=
+ is
+> > > more appropriate.
+>
+> Why is INET_PROTOSW_ICSK necessary in the first place ?
+>
+> I don't see a clear reason because smc_clcsock_accept() allocates
+> a new sock by smc_sock_alloc() and does not use inet_accept().
+>
+> Or is there any other path where smc_sock is cast to
+> inet_connection_sock ?
 
-There are a couple of use cases for old-school non-fast SRCU: (1) You need
-to use srcu_read_lock() where RCU is not watching, and/or (2) you cannot
-tolerate the latency of a pair of synchronize_rcu() calls and the IPIs
-from the synchronize_rcu_expedited() calls in SRCU-fast grace periods.
+What I saw in this code was a missing protection.
 
-But who knows?  Perhaps in time everyone will switch to SRCU-fast.
+smc_diag_msg_common_fill() runs without socket lock being held.
 
-							Thanx, Paul
+I was thinking of this fix, but apparently syzbot still got crashes.
 
-> >  The tasks-trace-RCU API is also reasonably compact,
-> >  consisting of rcu_read_lock_trace(), rcu_read_unlock_trace(),
-> > --
-> > 2.40.1
-> >
+diff --git a/net/smc/smc_close.c b/net/smc/smc_close.c
+index 10219f55aad14d795dabe4331458bd1b73c22789..b6abd0efea22c0c9726090b5de6=
+0e648b86e09a0
+100644
+--- a/net/smc/smc_close.c
++++ b/net/smc/smc_close.c
+@@ -30,7 +30,8 @@ void smc_clcsock_release(struct smc_sock *smc)
+        mutex_lock(&smc->clcsock_release_lock);
+        if (smc->clcsock) {
+                tcp =3D smc->clcsock;
+-               smc->clcsock =3D NULL;
++               WRITE_ONCE(smc->clcsock, NULL);
++               synchronize_rcu();
+                sock_release(tcp);
+        }
+        mutex_unlock(&smc->clcsock_release_lock);
+diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+index bf0beaa23bdb63edfe0c37515aa17a04bb648c08..069607c1db9aff76d1d4f23b47d=
+feb5177c433d8
+100644
+--- a/net/smc/smc_diag.c
++++ b/net/smc/smc_diag.c
+@@ -35,26 +35,32 @@ static struct smc_diag_dump_ctx
+*smc_dump_context(struct netlink_callback *cb)
+ static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock *=
+sk)
+ {
+        struct smc_sock *smc =3D smc_sk(sk);
++       struct socket *clcsock;
+
+        memset(r, 0, sizeof(*r));
+        r->diag_family =3D sk->sk_family;
+        sock_diag_save_cookie(sk, r->id.idiag_cookie);
+-       if (!smc->clcsock)
+-               return;
+-       r->id.idiag_sport =3D htons(smc->clcsock->sk->sk_num);
+-       r->id.idiag_dport =3D smc->clcsock->sk->sk_dport;
+-       r->id.idiag_if =3D smc->clcsock->sk->sk_bound_dev_if;
++
++       rcu_read_lock();
++       clcsock =3D READ_ONCE(smc->clcsock);
++       if (!clcsock)
++               goto unlock;
++       r->id.idiag_sport =3D htons(clcsock->sk->sk_num);
++       r->id.idiag_dport =3D clcsock->sk->sk_dport;
++       r->id.idiag_if =3D clcsock->sk->sk_bound_dev_if;
+        if (sk->sk_protocol =3D=3D SMCPROTO_SMC) {
+-               r->id.idiag_src[0] =3D smc->clcsock->sk->sk_rcv_saddr;
+-               r->id.idiag_dst[0] =3D smc->clcsock->sk->sk_daddr;
++               r->id.idiag_src[0] =3D clcsock->sk->sk_rcv_saddr;
++               r->id.idiag_dst[0] =3D clcsock->sk->sk_daddr;
+ #if IS_ENABLED(CONFIG_IPV6)
+        } else if (sk->sk_protocol =3D=3D SMCPROTO_SMC6) {
+-               memcpy(&r->id.idiag_src, &smc->clcsock->sk->sk_v6_rcv_saddr=
+,
+-                      sizeof(smc->clcsock->sk->sk_v6_rcv_saddr));
+-               memcpy(&r->id.idiag_dst, &smc->clcsock->sk->sk_v6_daddr,
+-                      sizeof(smc->clcsock->sk->sk_v6_daddr));
++               memcpy(&r->id.idiag_src, &clcsock->sk->sk_v6_rcv_saddr,
++                      sizeof(clcsock->sk->sk_v6_rcv_saddr));
++               memcpy(&r->id.idiag_dst, &clcsock->sk->sk_v6_daddr,
++                      sizeof(clcsock->sk->sk_v6_daddr));
+ #endif
+        }
++unlock:
++       rcu_read_unlock();
+ }
 
