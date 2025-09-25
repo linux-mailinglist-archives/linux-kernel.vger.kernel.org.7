@@ -1,127 +1,159 @@
-Return-Path: <linux-kernel+bounces-833251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76C4BA18A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:31:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5D0BA18AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F534C82B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:31:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5DB16AA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4597532129C;
-	Thu, 25 Sep 2025 21:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32814321296;
+	Thu, 25 Sep 2025 21:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OWZc22Ex"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmmMuQl1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB452F88
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B39CA6F;
+	Thu, 25 Sep 2025 21:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758835866; cv=none; b=Bsbodux3hv4wSZQ+dSHlrEtACy/rYtFpqNMtSnTGuPQHICBxTjF950UAEcqgwN3D5Ord8+kvtyOpraf5COhLKjLuL+Ke9gzs2arGdY95vV5A6bBqpTW2Foa5Aa5bLh50InOR1Ip0ieDKJ31CUY+8k+qfnA707t1LlPmW22eBHVo=
+	t=1758835912; cv=none; b=ZLPd7JMEzwtpwkt0oQy/YUUZbV0XD2hHTLg+RgjI93sIETrbyS2C5sdIsR8CItcTEfn+c8Bdk30oJV8cm/elN595IdD8OIdcKLYbb4Cwo+DxUh9DywxTriM5DdMOHugg/j/ywdfnXZfDHzchFS26P+D9pU+l5ecfstEYEum0D2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758835866; c=relaxed/simple;
-	bh=WVdsQxbe9UaWBdOhX36alN9UVBCyGgEWHyRT2Dfx5Rc=;
+	s=arc-20240116; t=1758835912; c=relaxed/simple;
+	bh=2rdE884ixAkfLh4eDjI+jatwgporJLTY5lqZ7Hh2KGM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLjv0S2mrImP0NI5c2v7y3R2z6VjN5rNXuL9z+wMWJrfly9cPkxe7IsfIVCkT+7qmGUqzUQ38PEU1tTiH13JkctBt/nt2r9EQHU1sZvqEOYHUaztGvFoYZNm8fD/KbBONcLqsKgMqoYpM0oWL9sYXmAQAWmRa3Tuai7tUts+I4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OWZc22Ex; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WVds
-	Qxbe9UaWBdOhX36alN9UVBCyGgEWHyRT2Dfx5Rc=; b=OWZc22Ex68AItBuuCtfp
-	B7LRxLrwBQ0lXFnw7ln64p7t+p84Mdzvskt7PYGL18tQ9CQ7VByocuKQL1sPjyol
-	nJxK0z6FebAuYy8Vi1QL9lT306JaopSt3/YAUa1TVcfg7YyZC8DRlQRfoG+ld76v
-	tY2mIebDY0gmmTVfpoU4ViI1AQaW8CMrClrG4ou92w1hTZeLIxlWq6zmeLS+PcQK
-	equEgh1Y+gHBkqnYMBXJUPJWdD0wXRyuZ+2d+i7OL78llzeE1yLPtBKTaozazK+w
-	W4Fl1mcJZCjpEs4ewBIxooOcNa3Y1pfx+qzal+dT6Q4npHlTggXu1J50noiVnkBe
-	JA==
-Received: (qmail 2020059 invoked from network); 25 Sep 2025 23:30:59 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 23:30:59 +0200
-X-UD-Smtp-Session: l3s3148p1@+Kdg4qY/yIwujntx
-Date: Thu, 25 Sep 2025 23:30:54 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-i2c@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Markus Stockhausen <markus.stockhausen@gmx.de>,
-	Sven Eckelmann <sven@narfation.org>,
-	Harshal Gohel <hg@simonwunderlich.de>
-Subject: Re: [PATCH v7 04/12] i2c: rtl9300: use regmap fields and API for
- registers
-Message-ID: <aNW0jiJQHcS-FKwr@shikoro>
-References: <20250831100457.3114-1-jelonek.jonas@gmail.com>
- <20250831100457.3114-5-jelonek.jonas@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYznGUFAgQsJZiHcJqSdfXBVJBDdBk8FhFA/Y4JCw5tpRC8id1wQJsn8vZOQyXhGl+v4pNiqT9aD8IHveitP3e4ArZgwGjS1OF1/wkinj51ue8oUJBu0OlLM917PEXtMjc7OhMXydjVGmbdEPbGkYcjyImFZn2dlebI5TcctGKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmmMuQl1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E092EC4CEF0;
+	Thu, 25 Sep 2025 21:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758835912;
+	bh=2rdE884ixAkfLh4eDjI+jatwgporJLTY5lqZ7Hh2KGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fmmMuQl1nSZpZUZE2/hqygssvGmLUSYK1XgihiOlfrR+TGt6BIZ+9GtdeJ+Q+YgtH
+	 7+Hfq12TSUL3cg+6LK644mP5ANAp58L3qxCq/3DY6PaGsm4budf5beDbv2OmtbdgbW
+	 RaS6+Eu6z2JuwN0M+oHsTQrgcqm6nsB6C3TmEmkRjh1bO3qNoRsL+oWkCkCOHOlw3p
+	 UCmQVxXKwFhHBAFqaXCjs6H+esr/8kp5g22HeADv463ZZ0v7947G4rKZnhBE7ZyXF7
+	 ena2q25wzk40UNjY/L09f5e62klBzKJ5ZiMVtYuvDKSqoZE/UVparFNcAx8GhBarje
+	 JhyxIszQ6nQ3w==
+Date: Thu, 25 Sep 2025 16:31:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>,
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+	Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
+ Kaanapali SoC
+Message-ID: <20250925213151.GA2455023-robh@kernel.org>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com>
+ <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
+ <3up4xqgd2ay3tex4ckzgews3ukyrdikcmgk7tbddggj3s5gt4d@foqcpnfptjk7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dO3d+mpa6id457GE"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250831100457.3114-5-jelonek.jonas@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3up4xqgd2ay3tex4ckzgews3ukyrdikcmgk7tbddggj3s5gt4d@foqcpnfptjk7>
 
+On Thu, Sep 25, 2025 at 08:57:56AM -0500, Bjorn Andersson wrote:
+> On Thu, Sep 25, 2025 at 10:50:10AM +0900, Krzysztof Kozłowski wrote:
+> > On Thu, 25 Sept 2025 at 09:17, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
+> > >
+> > > From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> > >
+> > > Add the base USB devicetree definitions for Kaanapali platform. The overall
+> > > chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> > > (rev. v8) and M31 eUSB2 PHY.
+> > >
+> > > Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
+> > >  1 file changed, 155 insertions(+)
+> > >
+> > 
+> > 
+> > Second try, without HTML:
+> > 
+> > I really don't understand why you created such huge patchset.
+> 
+> Because I looked at the logical changes that went into the big squash
+> that was initially planned, and requested that some of those was kept
+> intact - because they where independent logical changes.
+> 
+> > Year
+> > ago, two years ago, we were discussing it already and explained that's
+> > just inflating the patchset without reason.
+> > 
+> 
+> We used to add things node by node and that was indeed not
+> comprehensible. Overall this adds features in large logical chunks, but
+> there are a few of the patches that could have been squashed.
+> 
+> > New Soc is one logical change. Maybe two. Not 18!
+> 
+> I can see your argument for one patch to introduce the soc. But two
+> doesn't make sense, because that incremental patch is going to be the
+> kitchen sink.
+> 
+> > 
+> > Not one patch per node or feature.
+> > 
+> 
+> Definitely agree that we don't want one patch for every tiny block!
+> 
+> > This hides big picture, makes difficult to review everything,
+> > difficult to test.
+> 
+> The big picture is already obscured due to the size of the content
+> added.
+> 
+> Comparing to previous targets, I see the baseline content in 2-3
+> patches, and the remainder of the series being things that usually has
+> been scattered in many more small changes in the following weeks or
+> months.
+> 
+> There's plenty of features in this series that are yet to be concluded
+> for SM8750.
+> 
+> > Your patch count for LWN stats doesn't matter to
+> > us.
+> 
+> I agree with this. That's why the QRD is 1 patch, and MTP is 4 (this I
+> think should be squashed to 2) - compared to 13 patches for across the
+> pair for SM8750 with less scope.
+> 
+> > 
+> > NAK and I'm really disappointed I have to repeat the same review .
+> 
+> I'm not sure what you're disappointed in, this initial series is larger
+> than any we've seen before. I really like the work Jingyi has done here,
+> aggregating the otherwise scattered patches into one series.
 
---dO3d+mpa6id457GE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The QCom folks can review all this first because I don't care to review 
+the 50+ binding (just bindings!) patches sent all at once right before 
+the merge window.
 
-On Sun, Aug 31, 2025 at 10:04:49AM +0000, Jonas Jelonek wrote:
-> Adapt the RTL9300 I2C controller driver to use more of the regmap
-> API, especially make use of reg_field and regmap_field instead of macros
-> to represent registers. Most register operations are performed through
-> regmap_field_* API then.
->=20
-> Handle SCL selection using separate chip-specific functions since this
-> is already known to differ between the Realtek SoC families in such a
-> way that this cannot be properly handled using just a different
-> reg_field.
->=20
-> This makes it easier to add support for newer generations or to handle
-> differences between specific revisions within a series. Just by
-> defining a separate driver data structure with the corresponding
-> register field definitions and linking it to a new compatible.
->=20
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> Tested-by: Sven Eckelmann <sven@narfation.org>
-> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz> # On RTL9302=
-C based board
-> Tested-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+One comment on commit messages though. Please explain how the h/w block 
+is or isn't compatible with some existing platforms. Many just state the 
+obvious "add a compatible" or such. I've yet to find what kaanapali is 
+in relation to any other QCom chip. It may be the next SoC for the smart 
+toaster market for all I know.
 
-I wanted to apply the rest of this series but applying fails. Can you
-kindly rebase it to 6.17-rc5 or later?
-
-
---dO3d+mpa6id457GE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVtIsACgkQFA3kzBSg
-KbZvPBAAjZht/3VKrr4/tynzLvBBiMBfM8zK9TbUBhgrXy1CdKyo57dpemzgqizW
-7peUZ+jzGWa6UwbL0DsPMunGFeurssFQ8ZmJ4PTrkw8ZheizlsMBSRO8Wgl9QTkr
-xcDjRiJn81SAO4A07ZIZVcgwslR61wM9KUvgAJL31PMIdIZyMZK0LBqB5EU/34XG
-ZMkUsFSinNyz9fTQEcO50Afpbj5YfxWp1ARR2KuE8Hj3Wa8R6PSwnUojYdjEIUiA
-xP0sAUC1LMIE1M4CO5HKry4zevMStVEzfnrpSm/wuemoOZvuFkWoHS70DV1hfeo+
-eJ7ZsDO7bbrbdSFmTEX4bNcaya1rHM6ESd2rbnPhYhBaERbJi6/Wy4VbVAAf9SUF
-unA3xsSO72p1mzKvG9Sx2M3BCWLOk388upRHIgPCL2Cm5NEX365sUk3srmGrWmBc
-JKX2odxg42Dz4IrfStryigaK6n3jMw/iPeAJxTDfdUFA6Wjj2r4aZhqNicpBPjby
-3BdWKhk37jHebwpfOVbSAMuqzsqHSSWbeIUxVVXfryNioOPN9LAN2CF6cUzsi1ir
-TakGsrUE5lw1YHxCsbKAk/5j/+1Upay3vrIULKXX6BPXDqjDz+JUmIgPax2rxdxi
-brEw4ziIzzSQjTrj+krz202jWYOdGdxOeHD2fW+uwZ4e8ZPCkHc=
-=lj8t
------END PGP SIGNATURE-----
-
---dO3d+mpa6id457GE--
+Rob
 
