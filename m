@@ -1,87 +1,127 @@
-Return-Path: <linux-kernel+bounces-832772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495C7BA045A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC79BA059E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BC47BC201
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A945E8387
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740C12E2F03;
-	Thu, 25 Sep 2025 15:24:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9E62E2296;
+	Thu, 25 Sep 2025 15:24:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BC3288C26
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557921B4224
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813845; cv=none; b=CZiPgUGRAJoDdSI9Cnvaw7ODTETAth8XJrftDB5bdJia0EHPqPZTWBvhtOhO2XZ3i0eahSPcPT71RIjs84kSKHTCxilPewlLzr39It6L/7O2C0PWZTj6kkFXmPrgWPhA9dxlynDkTWsqQVwze5aPn70ZDhXkaDlX/CfE69JBZX0=
+	t=1758813877; cv=none; b=IzmofeWSZsKZ8wyA2XbE6SJwJmYBQX0PjrJTsJm2JxQTjia/ItsD2W7A82RK4x1zJWUUa35nAmfII2P7u+Aot3JScCyBdDD96YOiK+djkwLvxjIEetIe4oNPZYJmN9nspVrcVAsJQ9rtm6H1Cqh50wzh1qHy0A7iW76vayFYx7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813845; c=relaxed/simple;
-	bh=kGr3nrzeR8/F2Mjzj8t/M7DWIxj0WymFdipHIDIzGqE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A7AlG+8hNie751nUwZ2R7GjKGmXzXcyOauC8ycqP/nyul19SH6xNNQZZsXhNRNBIW/ekJ4mjgfDodFP5rkUdqJHo0pT6onCFufVsUf0sWN55QVyZAN6D/fRs1B2zo+a2Ggt8kDOVnJhRM2j38/gAWT0TbPgv1KxQcSAgnGR2OXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42571c700d2so24890145ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:24:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813842; x=1759418642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vxh5s96LCNd9ikId/sxv/BmGLoqIAtvtuwT/WLO93cM=;
-        b=oLuCwULms1Br2U9Zfy8CcMEcUSm5mJfBTkzkDvKcakNcP0IdQR4qsxLxbXamRfnXzG
-         X9el3HWQ2mu7TP+mQY7Gb7MDIn/5ccbfr7sx02iVGffvHbmmnyfdxVgt8k3aL3KFeT0a
-         Gy4cCvgar6VWbIGHHhd1ZLst+EzIEcA6oFVZJui1xEPc/pyjVxLktx2a8GZdHen0Ujtv
-         xHbl6QCpnwp3BYh/4lgleo9Whd9zAkRT/GSNz2KYdT2FJSB7CTlE51WyZ5wXNgiyiIne
-         9rpJrn5UwUEIsQgz3MQ277d4zzh04ebYU5rzkW7GPuC0HhFCmSTc892KIOCLjtck+SQd
-         LUBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUanhb8AsqwEfAYPo0SMxC2IfV8JhKqCXIQ9snHP/StM/VjifjEvVV9gsuNjV2+JoJsOYYRnWB23dh5VH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrK7orSMG5NfN8+gxyBnlS0+93Xnsg721bhBUZzJ8yWg1iUNZV
-	Zr+p0/cAi8ibPk4Kma1oDrdIyjAAVN+M37jIrqhle8Aa7d0/rGS0P98uG+Z1RCLajsfvVvmZQt9
-	TtH6TWR5ojR/B9xmyTsnKvYaTtqvHh5ZHrNX7OpS38zPErPyotXwq2ss1j2Q=
-X-Google-Smtp-Source: AGHT+IHeE3pd9te6t3rx1sayjW29x+4/HsjqFsS5bYtjXrk6mv0Jbez/zM/ZCAKOSXV4JDb1JUdhR6fNZ8VhlC7vsWvt6lDr5DzD
+	s=arc-20240116; t=1758813877; c=relaxed/simple;
+	bh=hIt0vwu3Nu8YyO8YCFblJQVsN8dOVGMFr5fV1ki1sNo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uYTNg+FF4soe5vp9oauR5ePwP+La9XFZymHAk8YiV0pvrZ/x8VCk2RAkldJmjn3LbvjIitTQEQPWRyKlgglGqUZ0XadSuKSdFvMxu8H0OXQf8m5JxDzZEr82URG1STEx0JTY3nMr1AiFiFB8S9R07lZd+RQU5Ym9LWvRTX3jZZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cXcnx1bPbz6L5pY;
+	Thu, 25 Sep 2025 23:19:33 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D1D71400CB;
+	Thu, 25 Sep 2025 23:24:31 +0800 (CST)
+Received: from localhost (10.47.28.112) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 25 Sep
+ 2025 16:24:29 +0100
+Date: Thu, 25 Sep 2025 16:24:26 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: Yiannis Nikolakopoulos <yiannis.nikolakop@gmail.com>, Wei Xu
+	<weixugc@google.com>, David Rientjes <rientjes@google.com>, Matthew Wilcox
+	<willy@infradead.org>, Bharata B Rao <bharata@amd.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<dave.hansen@intel.com>, <hannes@cmpxchg.org>, <mgorman@techsingularity.net>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <raghavendra.kt@amd.com>,
+	<riel@surriel.com>, <sj@kernel.org>, <ying.huang@linux.alibaba.com>,
+	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
+	<xuezhengchu@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<byungchul@sk.com>, <kinseyho@google.com>, <joshua.hahnjy@gmail.com>,
+	<yuanchu@google.com>, <balbirs@nvidia.com>, <alok.rathore@samsung.com>,
+	<yiannis@zptcorp.com>, "Adam Manzanares" <a.manzanares@samsung.com>
+Subject: Re: [RFC PATCH v2 0/8] mm: Hot page tracking and promotion
+ infrastructure
+Message-ID: <20250925162426.00007474@huawei.com>
+In-Reply-To: <aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+References: <20250910144653.212066-1-bharata@amd.com>
+	<aMGbpDJhOx7wHqpo@casper.infradead.org>
+	<aMGg9AOaCWfxDfqX@gourry-fedora-PF4VCD3F>
+	<7e3e7327-9402-bb04-982e-0fb9419d1146@google.com>
+	<CAAPL-u-d6taxKZuhTe=T-0i2gdoDYSSqOeSVi3JmFt_dDbU4cQ@mail.gmail.com>
+	<20250917174941.000061d3@huawei.com>
+	<5A7E0646-0324-4463-8D93-A1105C715EB3@gmail.com>
+	<20250925160058.00002645@huawei.com>
+	<aNVbC2o8WlYKjEfL@gourry-fedora-PF4VCD3F>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16cb:b0:426:a72f:1c7a with SMTP id
- e9e14a558f8ab-426a72f1cfbmr17061615ab.28.1758813842702; Thu, 25 Sep 2025
- 08:24:02 -0700 (PDT)
-Date: Thu, 25 Sep 2025 08:24:02 -0700
-In-Reply-To: <CABFDxMH6UKpBs8GEhvuA=E2=QDRJehK4Gzg0WbbZfYmta7Swxg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d55e92.a00a0220.303701.0015.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_nls
-From: syzbot <syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com>
-To: ekffu200098@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Thu, 25 Sep 2025 11:08:59 -0400
+Gregory Price <gourry@gourry.net> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> On Thu, Sep 25, 2025 at 04:00:58PM +0100, Jonathan Cameron wrote:
+> > Now, if we can put this into a special pool where it is acceptable to drop the writes
+> > and return poison (so the application crashes) then that may be fine.
+> > 
+> > Or block writes.   Running compressed memory as read only CoW is one way to
+> > avoid this problem.
+> >  
+> 
+> This is an interesting thought.  If you drop a write and return poison,
+> can you instead handle the poison message as a fault and promote on
+> fault?  Then you might just be able to turn this whole thing into a
+> zswap backend that promotes on write.
 
-Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
-Tested-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+Poison only comes on subsequent read so you don't see anything
+at write (which are inherently asynchronous due to cache write back).
+There are only few ways to do writes that are allowed to fail (the 64 byte
+atomic deferrable write stuff) and I think on all architectures where
+they can even be pointed at main memory, they only defer if on uncacheable
+memory.
 
-Tested on:
+Seeing poison on subsequent read is far too late to promote the page,
+you've lost the data.  The poison only works as ultimate safety gate. Also
+once you've tripped it the device probably needs to drop all write
+and return poison on all reads, not just the problem one (otherwise
+things might fail much later).
 
-commit:         b5a4da2c Add linux-next specific files for 20250924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ea1d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc64d939cce41d2
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e9cb93e3c5f90d28e19
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1105e142580000
+The CoW thing only works because it's a permissions fault at point of
+asking for permission to write (so way before it goes into the cache).
+Then you can check margins to make sure you can still sink all outstanding
+writes if they become uncompressible and only let the write through if safe
+- if not promote some stuff before letting it proceed.
+Or you just promote on write and rely on the demotion path performing those
+careful checks later.
 
-Note: testing is done by a robot and is best-effort only.
+Jonathan
+
+
+> 
+> Then you don't particular care about stronger isolation controls
+> (except maybe keeping kernel memory out of those regions).
+> 
+> ~Gregory
+
 
