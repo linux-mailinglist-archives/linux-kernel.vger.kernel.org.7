@@ -1,233 +1,293 @@
-Return-Path: <linux-kernel+bounces-833081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D7DBA12AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6F7BA12BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACE2327948
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914673BEE29
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED2131C576;
-	Thu, 25 Sep 2025 19:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCB431BC8F;
+	Thu, 25 Sep 2025 19:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JmTLo1jG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWmbrlOf"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CA131BC8F
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3506231B82C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828343; cv=none; b=iuc+uaziHywQbKfC7dPzHJmlqQsDrmppU60TTa6PnlijDXl10f/Li1d/Yb7habVsO+c/Y9FACmOh4sPqXWwu9/HXm/tAhTOCy8IqI58Z3VHbP+HCTeUobuhTGgN/fCB1CXRRTNo8vXdGz4m22/qIUOcvQ9VOWO70zuyqlB7rXXI=
+	t=1758828360; cv=none; b=biSH0vdIQT/f2Ozcj8tY9ytuUmbrfS1GefLrsiBxsSBpZuLTkDUG1xbLrSKFtCaeGRyYnmoOBvfXva8x4lE8TbSbpCVPVwPlydnzZZfIFyUFM3nDylYIagUkUj6/Z/oU2/1scV3Sc5jVE9FpKPqLEwhN9fWL882gr18tJn7Vjxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828343; c=relaxed/simple;
-	bh=XIG3eu2+rNsasnB8FNq+DrxQGKPAF7sUS4vH09SySNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfAHI/bsiS0YVpoS2bRX20fdyAQddPocx/34HTRVDVesFsqEFlhomu0nnNsguma8qSmjHGBFO8OYmwvI1JC/ofjaVv9tEBZOmacBKF4KimyPhLX1SnwQIKoXttnALZfCx/gAeXDNaUOmrSMoCSTC4O3e6twx0gyPfAX0qnmOTVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JmTLo1jG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPeuG023371
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:25:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=4/iLgC7UNveAdS/BcadCv9NN
-	LD1orJ51Na0pAU9YTYg=; b=JmTLo1jGcJaqho+kI5fHIZYSehjWSHtVILxX4tu+
-	2UFO7Egj0kaT0sl6oXot0b9IS+jsuwBtHwnqMxD08JyK9yWU396mJDUw/Mg411TU
-	zmjeetN3OOedfc1K4No9aGlFTAQyO5HhfHVzliSlLJVfKrLXkQYEyXXMey4Cp/Au
-	sDefmsCYbB9W6EFIGC/02P/7iUqR7UczxoJjNsw2BXSw1q6eaxOrX/bT0+3rayZI
-	5Rs2zdxCMmPMtLpFKqFYmARaf5X0It2PFnsrXmZ4ZNb1l6M3fFxcYbE7vwIMCkWk
-	I3koYMoOESI9UjmcCN72pkfzCnSJGCHFtpDD3dMwScQJDA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0qr4jw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:25:41 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d59a4c23a3so34719071cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:25:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758828340; x=1759433140;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1758828360; c=relaxed/simple;
+	bh=+LGzKQfkIxBfEL7uanfWaTQi2NIBi71cSv2KDGt8AIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=acfaxPyjoimdgE/7XHgDfC2YKxnhymAercoJUwx3lBE9XzFz2hTeqCq25zR1UPrRbHmenmPHluvw4Hx78oNJ+ucGil+HPnfy8gCOLiU2QXM+yMYE8YsNm1RnkpYn2L+pJcZdraHJt9Ln1H/2KZqa95+0t9TEv/BbV0eDslzUdJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWmbrlOf; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-279e2554b6fso11423835ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758828357; x=1759433157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4/iLgC7UNveAdS/BcadCv9NNLD1orJ51Na0pAU9YTYg=;
-        b=wrqyEAVMgpWdU9BAHTISd5++edNyldQxelexYL7iUqKBwHe18A+CZkcZJoPuN/kGYY
-         xregKZ8p0q57ynVnXKDQ41bqVlZOX/2ADCoeR55HtDKFiki3RLvNHVJKvK3mZsflpCBw
-         RO8mGA9FYDyREVxxonrRH58cXqOs1LRZotoiivgNdq2pzWgh/qG0GhmbZM0DtXXIug/1
-         D05rTSWafnQfRxdNG4ZZxtoZEw1ZaIfzxtsg96iHeX21R5T0lNmrHICk++0QHPOmNFmg
-         Up+8QhKel3Vyy+mb6jWoZzuYEUYsvV3qE7zbPWjLMvfg29FIzbhpod0kgICoVHtQ9iUl
-         iz+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAWMIUDfbMzYG1985hpGO5PJzfChKvzcueGOaCJoByhQR3sZWc/T8AY52acS/3f+/v6kSGjBigIhOpmwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+c8iWE+qbPb1uBWyFJRF5Gr/9G1HvcVT7Wv5Eu0vFRxpCTnQh
-	MYcKmMoCy3lzWFCdKQHGQ+VYhV+BCasDsy3qo3s7+gsi3rbDOnFz6ONQVeg5DOfzlnmJ8svq+3Q
-	EC07y48t5MQatx4EYFfRV7jU2Z3+mdY68ZKfZlr2IHP+TFz3gIctFSa2IiOOA/W8/S1o=
-X-Gm-Gg: ASbGncszceSh5f4vMzaC0BP6yr84lboaqTwpANtN6gk5gbuLu0K4NX+7NQRFb/mfIqA
-	Se4Egm6FiGDFT8E7kkGUGSfBwDv5PrAbz/o/Kev9lVRa30w4UuUeUN39a2GXcEcSrCPNsaTTvRc
-	fLsDLlCci5F00X7VeahhUM+f7lMZlxqTSrSd/GwulovZwEr/IMsCs1I3YZ9Bk5WxKxArV4hW+Yj
-	/fw0mTLE8fcG4Pn/sh/QC94Yu9O3erJkf8klmJKmXI3ofKK4SBcgUBd0DNCLCasa222sA7uJh2T
-	yl8F1Z+HUf7pMQRWwE02EDO3tcVM7qo9duv0XYqBtqcXdy1qztU1CyO12hdpNN0Iq2tg09GGhsE
-	xSfOL0t2roBhYpCbMgxvPCfdOejTaH3TktIvJcRE636/157wdsPKJ
-X-Received: by 2002:a05:622a:446:b0:4d8:466a:3dd9 with SMTP id d75a77b69052e-4da4782a225mr57420871cf.6.1758828339744;
-        Thu, 25 Sep 2025 12:25:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETMBfLsb47LeBEoG596JqNJaC6E5+MTXtq2C/BqG/sF4RGipK1HtONFv5qSJkUlX2Srw+9GQ==
-X-Received: by 2002:a05:622a:446:b0:4d8:466a:3dd9 with SMTP id d75a77b69052e-4da4782a225mr57420501cf.6.1758828339170;
-        Thu, 25 Sep 2025 12:25:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665641asm1020042e87.72.2025.09.25.12.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 12:25:38 -0700 (PDT)
-Date: Thu, 25 Sep 2025 22:25:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vishnu Reddy <quic_bvisredd@quicinc.com>
-Subject: Re: [PATCH 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
-Message-ID: <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
-References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
- <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
+        bh=Uxxej+A54UMxIPTRKqDdkxTeyPEcpC6j3CvIRkzYnRY=;
+        b=UWmbrlOf8AJ3oZ57H4WtpjsxQfI97awRzHw4rFJvujcOQijcyP7Kw0+BGhtyrlauPd
+         NwXgtpoP/1iG9zc62tWa7APAHubwIH/FE67aMJCxfZN/Ge4c7+bOrMB9xE6kn6GORHoQ
+         KoHvMvZ0WKG4FKQ+C0hgOQ4IAHjPxJLkpQByyyFZudQT6hMo+5LQlKTnGx8976PrEtLT
+         JASIsep/mjqqzDHsxlVq0X6aP20D7Lj3Gi2RMc7HMycbdPjmkwr38vvFqlJzrrmFZrWc
+         OW69y9QwvlRLb4eJZorgcBRQcBADJQshKpntxNtUwO/JgIhozu63+pQhPUpRPgINbpRp
+         olvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758828357; x=1759433157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uxxej+A54UMxIPTRKqDdkxTeyPEcpC6j3CvIRkzYnRY=;
+        b=X5GwEW3uUyIPPOxq3BOpCmPUKaPZkMq9oF66Dv9HUC9DuI9jhqrs4WgPakQe98OXb6
+         rC1aN1k0Zw77CEXYYNGIEig3QzodLMOnZ+WkWLt0JqByomBiy6k2FrTvgbXD9nAc7dPC
+         FojpDHgNMCrfIc+VnUeIO5QCfXdr9VrvwUf52e8oJRuSr+wiIu0SM4S9uA4F+DYEjrAe
+         5yIBuHBIkO0LDtOUhcNfoMciTbIX7sWDk9F7K6Gkzn0W5tbjiKk4ri6eiYC5bJkc8K5R
+         irc//y6qbhleSr1iO4esSIhhQxJ1SWJ7q/Lj+uGyAFPXOWzz1jlShpAnFaHKDcGV1SGc
+         7WnA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Fvz2I2C4S3r5KC8jnvvLtcOvAzzf5LQEpTCueIwwxhL9biQJ0B2ECBFUL/BXy9zndBSNT3rYQeU732g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFuY3NS2k8hSUvrjuVO4QkQGYkUOnrwLuQ/bKilh2K0zfNqX5V
+	vLN6nXsuYMcs7lqtM0dH7WcDsllIfbqA1F8dEfPrQhsbrZwyMlXak4F1xi85h5HrSy5NyDy0D0q
+	DiJsMmEqNhvvA7SnFAuBo9ZEg3nZoe3VfCeO4SZpb5ccLgZY+QETVMmdoYoY=
+X-Gm-Gg: ASbGncuNDFBtN8p5VSPM4oBy5cgy5TqMSXMbxd2FQGezou91QZVWRNTB+Ikd0L0lC4O
+	G3XYz6U1jASSvA2afikibrj0K/FNxB6yNS/AyaeEiCD5IvvF+DuxjSFDiUsjx9jfyQO/9WgbtaB
+	MWxApYr8403NdKkN5aFygb8ZHMyBvJWi9GYTp4OULnq0sEVVv43d9+crgAoeH631J3UbQcUS8ts
+	MHHw92ATPdQV4AwuBQY2OYYsC9LqF7GSdSW97SMMZzczRM=
+X-Google-Smtp-Source: AGHT+IFqxRshKGBvHaiDtYARmbc57qR195V71ZCUISbd+cEP9B0APoeNbfdgU15orpP/Wf293P73psfog6W4tFlVzHY=
+X-Received: by 2002:a17:903:a8b:b0:27d:339c:4b0 with SMTP id
+ d9443c01a7336-27ed4aa57f1mr1907665ad.35.1758828357289; Thu, 25 Sep 2025
+ 12:25:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: uoY6xKSyUJn-dMAWXvLdemlVQK9SBFjc
-X-Authority-Analysis: v=2.4 cv=bJ0b4f+Z c=1 sm=1 tr=0 ts=68d59735 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gEfo2CItAAAA:8
- a=wXtiP2_cyDRN-whGmjUA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzf/bPJcS6Bqi
- LnhWzIBJUPCgCZKYwlwKWpaW2/ARK+ePnfCyOKKXKF9f+fdZKL4cMfHGnm7N0/GAq06hcRypvXe
- YiCu/7UN6Bos/ORVk+oDPMm5IKmONJJSYywOYvP0d8WiYgpFOPERT34CyomK+UQGK1yQMBWRWmQ
- 4F39CKv5CaDe8cbvS0XAPvGDh4USUDuVRA62TKp9rPFjTkFYCuLbOzfdu/2pOgtNSJ0zwIsPzcx
- xCLAB2Xakb2+70viyoyOHACffNMz7sWlsaaHOELpzm6a/+aREkyg6bNiR1yn01Q35jFH9NkUmRY
- Dg1QE0rsI7+M86yApsIiGmxw04D9ctq/2oOYcpmTQcSceFw54Ber0Tlxb5jHi7EHLn5zRCo55ce
- lQJgwGhEIORA+SvQDd1l8Bbo9nprKQ==
-X-Proofpoint-GUID: uoY6xKSyUJn-dMAWXvLdemlVQK9SBFjc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+References: <20250922121818.654011-1-wangliang74@huawei.com>
+ <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
+ <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com> <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
+In-Reply-To: <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 25 Sep 2025 12:25:46 -0700
+X-Gm-Features: AS18NWBzBs30Kpj0VoFjpDJLTRb2ZjM8uVopnfW0zH1RkFfGm4UpJjsXE_5WI18
+Message-ID: <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com>
+Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
+To: Eric Dumazet <edumazet@google.com>
+Cc: Wang Liang <wangliang74@huawei.com>, alibuda@linux.alibaba.com, 
+	dust.li@linux.alibaba.com, sidraya@linux.ibm.com, wenjia@linux.ibm.com, 
+	mjambigi@linux.ibm.com, tonylu@linux.alibaba.com, guwen@linux.alibaba.com, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 04:44:39AM +0530, Vikash Garodia wrote:
-> Kaanapali SOC brings in the new generation of video IP i.e iris4. When
-> compared to previous generation, iris3x, it has,
-> - separate power domains for stream and pixel processing hardware blocks
->   (bse and vpp).
-> - additional power domain for apv codec.
-> - power domains for individual pipes (VPPx).
-> - different clocks and reset lines.
-> 
-> There are variants of this hardware, where only a single VPP pipe would
-> be functional (VPP0), and APV may not be present. In such case, the
-> hardware can be enabled without those 2 related power doamins, and
-> corresponding clocks. This explains the min entries for power domains
-> and clocks.
-> Iommus include all the different stream-ids which can be possibly
-> generated by vpu4 video hardware in both secure and non secure
-> execution mode.
-> 
-> This patch depends on following patches
-> https://lore.kernel.org/all/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com/
-> https://lore.kernel.org/all/20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com/
-> 
-> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> ---
->  .../bindings/media/qcom,kaanapali-iris.yaml        | 236 +++++++++++++++++++++
->  1 file changed, 236 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f3528d514fe29771227bee5f156962fedb1ea9cd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
-> @@ -0,0 +1,236 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-iris.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm kaanapali iris video encode and decode accelerators
-> +
-> +maintainers:
-> +  - Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> +  - Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> +
-> +description:
-> +  The iris video processing unit is a video encode and decode accelerator
-> +  present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,kaanapali-iris
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    minItems: 5
-> +    maxItems: 7
+On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Eric Dumazet <edumazet@google.com>=
+ wrote:
+>
+> On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google=
+.com> wrote:
+> >
+> > Thanks Eric for CCing me.
+> >
+> > On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@google.c=
+om> wrote:
+> > >
+> > > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@huawe=
+i.com> wrote:
+> > > >
+> > > > The syzbot report a crash:
+> > > >
+> > > >   Oops: general protection fault, probably for non-canonical addres=
+s 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+> > > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xde=
+ad4ead0000001f]
+> > > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 =
+PREEMPT(full)
+> > > >   Hardware name: Google Google Compute Engine/Google Compute Engine=
+, BIOS Google 08/18/2025
+> > > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
+> > > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_di=
+ag.c:89
+> > > >   Call Trace:
+> > > >    <TASK>
+> > > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+> > > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+> > > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+> > > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
+> > > >    netlink_dump_start include/linux/netlink.h:341 [inline]
+> > > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+> > > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+> > > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+> > > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+> > > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+> > > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+> > > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+> > > >    sock_sendmsg_nosec net/socket.c:714 [inline]
+> > > >    __sock_sendmsg net/socket.c:729 [inline]
+> > > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+> > > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+> > > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+> > > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> > > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+> > > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > >    </TASK>
+> > > >
+> > > > The process like this:
+> > > >
+> > > >                (CPU1)              |             (CPU2)
+> > > >   ---------------------------------|-------------------------------
+> > > >   inet_create()                    |
+> > > >     // init clcsock to NULL        |
+> > > >     sk =3D sk_alloc()                |
+> > > >                                    |
+> > > >     // unexpectedly change clcsock |
+> > > >     inet_init_csk_locks()          |
+> > > >                                    |
+> > > >     // add sk to hash table        |
+> > > >     smc_inet_init_sock()           |
+> > > >       smc_sk_init()                |
+> > > >         smc_hash_sk()              |
+> > > >                                    | // traverse the hash table
+> > > >                                    | smc_diag_dump_proto
+> > > >                                    |   __smc_diag_dump()
+> > > >                                    |     // visit wrong clcsock
+> > > >                                    |     smc_diag_msg_common_fill()
+> > > >     // alloc clcsock               |
+> > > >     smc_create_clcsk               |
+> > > >       sock_create_kern             |
+> > > >
+> > > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedly =
+changed
+> > > > in inet_init_csk_locks(), because the struct smc_sock does not have=
+ struct
+> > > > inet_connection_sock as the first member.
+> > > >
+> > > > Previous commit 60ada4fe644e ("smc: Fix various oops due to inet_so=
+ck type
+> > > > confusion.") add inet_sock as the first member of smc_sock. For pro=
+tocol
+> > > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of inet_so=
+ck is
+> > > > more appropriate.
+> >
+> > Why is INET_PROTOSW_ICSK necessary in the first place ?
+> >
+> > I don't see a clear reason because smc_clcsock_accept() allocates
+> > a new sock by smc_sock_alloc() and does not use inet_accept().
+> >
+> > Or is there any other path where smc_sock is cast to
+> > inet_connection_sock ?
+>
+> What I saw in this code was a missing protection.
+>
+> smc_diag_msg_common_fill() runs without socket lock being held.
+>
+> I was thinking of this fix, but apparently syzbot still got crashes.
 
-You are sending bindings for a single device on a single platform. How
-comes that it has min != max?
+Looking at the test result,
 
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: venus
-> +      - const: vcodec0
-> +      - const: vpp0
-> +      - const: vpp1
-> +      - const: apv
-> +      - const: mxc
-> +      - const: mmcx
-> +
-> +  clocks:
-> +    minItems: 8
-> +    maxItems: 10
+https://syzkaller.appspot.com/x/report.txt?x=3D15944c7c580000
+KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000=
+001f]
 
-And here.
+the top half of the address is SPINLOCK_MAGIC (0xdead4ead),
+so the type confusion mentioned in the commit message makes
+sense to me.
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: core
-> +      - const: vcodec0_core
-> +      - const: iface1
-> +      - const: core_freerun
-> +      - const: vcodec0_core_freerun
-> +      - const: vcodec_bse
-> +      - const: vcodec_vpp0
-> +      - const: vcodec_vpp1
-> +      - const: vcodec_apv
-> +
+$ pahole -C inet_connection_sock vmlinux
+struct inet_connection_sock {
+...
+    struct request_sock_queue  icsk_accept_queue;    /*   992    80 */
 
--- 
-With best wishes
-Dmitry
+$ pahole -C smc_sock vmlinux
+struct smc_sock {
+...
+    struct socket *            clcsock;              /*   992     8 */
+
+The option is 1) let inet_init_csk_locks() init inet_connection_sock
+or 2) avoid inet_init_csk_locks(), and I guess 2) could be better to
+avoid potential issues in IS_ICSK branches.
+
+
+>
+> diff --git a/net/smc/smc_close.c b/net/smc/smc_close.c
+> index 10219f55aad14d795dabe4331458bd1b73c22789..b6abd0efea22c0c9726090b5d=
+e60e648b86e09a0
+> 100644
+> --- a/net/smc/smc_close.c
+> +++ b/net/smc/smc_close.c
+> @@ -30,7 +30,8 @@ void smc_clcsock_release(struct smc_sock *smc)
+>         mutex_lock(&smc->clcsock_release_lock);
+>         if (smc->clcsock) {
+>                 tcp =3D smc->clcsock;
+> -               smc->clcsock =3D NULL;
+> +               WRITE_ONCE(smc->clcsock, NULL);
+> +               synchronize_rcu();
+>                 sock_release(tcp);
+>         }
+>         mutex_unlock(&smc->clcsock_release_lock);
+> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+> index bf0beaa23bdb63edfe0c37515aa17a04bb648c08..069607c1db9aff76d1d4f23b4=
+7dfeb5177c433d8
+> 100644
+> --- a/net/smc/smc_diag.c
+> +++ b/net/smc/smc_diag.c
+> @@ -35,26 +35,32 @@ static struct smc_diag_dump_ctx
+> *smc_dump_context(struct netlink_callback *cb)
+>  static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock=
+ *sk)
+>  {
+>         struct smc_sock *smc =3D smc_sk(sk);
+> +       struct socket *clcsock;
+>
+>         memset(r, 0, sizeof(*r));
+>         r->diag_family =3D sk->sk_family;
+>         sock_diag_save_cookie(sk, r->id.idiag_cookie);
+> -       if (!smc->clcsock)
+> -               return;
+> -       r->id.idiag_sport =3D htons(smc->clcsock->sk->sk_num);
+> -       r->id.idiag_dport =3D smc->clcsock->sk->sk_dport;
+> -       r->id.idiag_if =3D smc->clcsock->sk->sk_bound_dev_if;
+> +
+> +       rcu_read_lock();
+> +       clcsock =3D READ_ONCE(smc->clcsock);
+> +       if (!clcsock)
+> +               goto unlock;
+> +       r->id.idiag_sport =3D htons(clcsock->sk->sk_num);
+> +       r->id.idiag_dport =3D clcsock->sk->sk_dport;
+> +       r->id.idiag_if =3D clcsock->sk->sk_bound_dev_if;
+>         if (sk->sk_protocol =3D=3D SMCPROTO_SMC) {
+> -               r->id.idiag_src[0] =3D smc->clcsock->sk->sk_rcv_saddr;
+> -               r->id.idiag_dst[0] =3D smc->clcsock->sk->sk_daddr;
+> +               r->id.idiag_src[0] =3D clcsock->sk->sk_rcv_saddr;
+> +               r->id.idiag_dst[0] =3D clcsock->sk->sk_daddr;
+>  #if IS_ENABLED(CONFIG_IPV6)
+>         } else if (sk->sk_protocol =3D=3D SMCPROTO_SMC6) {
+> -               memcpy(&r->id.idiag_src, &smc->clcsock->sk->sk_v6_rcv_sad=
+dr,
+> -                      sizeof(smc->clcsock->sk->sk_v6_rcv_saddr));
+> -               memcpy(&r->id.idiag_dst, &smc->clcsock->sk->sk_v6_daddr,
+> -                      sizeof(smc->clcsock->sk->sk_v6_daddr));
+> +               memcpy(&r->id.idiag_src, &clcsock->sk->sk_v6_rcv_saddr,
+> +                      sizeof(clcsock->sk->sk_v6_rcv_saddr));
+> +               memcpy(&r->id.idiag_dst, &clcsock->sk->sk_v6_daddr,
+> +                      sizeof(clcsock->sk->sk_v6_daddr));
+>  #endif
+>         }
+> +unlock:
+> +       rcu_read_unlock();
+>  }
 
