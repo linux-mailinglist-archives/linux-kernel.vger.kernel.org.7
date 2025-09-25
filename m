@@ -1,208 +1,131 @@
-Return-Path: <linux-kernel+bounces-831909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A498B9DDAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4944CB9DDA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8E21B28723
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25E5174519
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5F32E8B8C;
-	Thu, 25 Sep 2025 07:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89462E92A2;
+	Thu, 25 Sep 2025 07:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YrW/A+e9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpR4FUbu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711912E9726;
-	Thu, 25 Sep 2025 07:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242AD15DBC1;
+	Thu, 25 Sep 2025 07:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758785343; cv=none; b=s9+zlyO1/drCca0auaTVaqmYwX4HogvXsN5pITu7WZjN3AU9AZYjKrXyBqo/5J5hXhLE/VpqYP1juCwaUJyrIXWuiM6R5/fODpaP24PlxXwPEO1n+n9zoYQWR+/Pkfj7HTX5rvxMvNsxOdQF4xVVkjrL4bEmVt2fT5FmmSY/diw=
+	t=1758785338; cv=none; b=i+kHHWLJaCFAuCw04A7KGgxrIwMQbvkdlboj5zOPDpJxPUt0gWvKO98hnCtUbhvJVa7YOwhuoCYSpxu03WtnuYvgQTH+v7N+d+mpTNw/QF4C2vvz4Qw6Mu+Rr3mPsrTPclTwRSuO6MczIT038R7m7v3UTq7Xz5vrHec6yGOuOu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758785343; c=relaxed/simple;
-	bh=z21Xp4TuXHyCW4xtMz/OOCsZSb7Kaf5SWHB7K7mD714=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbvujRxWActDEpBmhZ/1Hj1zXzgu+SjKHftYVJZjPCkQyH9IbZ5/hwsNPJ80fSrvL6inOgK2bmIoVZi6JoN+ysogp5W0Dh7vrjswoOGhHLlTOrBXwCNFOOuWCTo3ckegSsrvFHOctzIaKpMfIKXTlcT5ImLfF2cN8ZIIoTc0wQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YrW/A+e9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2001:b07:6462:5de2:520d:d7a3:63ca:99e8])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B35FBE91;
-	Thu, 25 Sep 2025 09:27:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758785251;
-	bh=z21Xp4TuXHyCW4xtMz/OOCsZSb7Kaf5SWHB7K7mD714=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YrW/A+e9Va5WN1aYaEF5voDen7kynHSJvb+tW2ovoWaqiLOi+xSAs0R+GwOweyOig
-	 MB4oMsacYfWEsVxFZo3m6wEEi0odSNTqlAQS9kiDMXJXpKOosA//i9sVj60gOtB5CH
-	 CTsWJgx/wFZrvnZK4ydTqXG4mF8RItwEVkzGCipM=
-Date: Thu, 25 Sep 2025 09:28:52 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Dafna Hirschfeld <dafna@fastmail.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] media: rkisp1: Improve frame sequence correctness on
- stats and params buffers
-Message-ID: <xxj3awe4ezdf242bpiktov4tb2xb3r6l6c5rtmrywubniwlbik@bubb5l6psz6i>
-References: <20250922182003.3712101-2-stefan.klug@ideasonboard.com>
+	s=arc-20240116; t=1758785338; c=relaxed/simple;
+	bh=E5H22ljejFV7OF7GmWz23BkhezFyc+iVSQv0Pyu/jqI=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=ANyVEOW2Z4j3vtEphK96suh6VT5ita4eNhOiAP+Hk2/AuZx3ry1N4zN4yFxw5CelIbQOhSQDl1rV1hCJF7U+ZPSf7934APYOe//XyhaPOKwiG2M3MBao1eS2ew728nGqC6ArXhotU8eq2cxsqhG9OdJDCnMVjD7a+LE3Q9eIxAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpR4FUbu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 375AEC4CEF0;
+	Thu, 25 Sep 2025 07:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758785337;
+	bh=E5H22ljejFV7OF7GmWz23BkhezFyc+iVSQv0Pyu/jqI=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=qpR4FUbuRe+vO4qghhExmZIfSTpFhRiJnGnNyZsW967PX6XSYQkAoLyuYENEpquWI
+	 HN7e+8SFMSoArAk9VV5oRKuLSNMMpgdlRvwCNt7S+kQ8ZTGEAtZgoFGmt0BSVopW8A
+	 gfn+i7uCp4wZxpP5u519ZPHZdkwont1gxBSSAA1DVIlK6salhnGcXj2bwmWHVKcf9B
+	 A6xPQmzDsDEVkYWbAiLOpJl8XpETbWlCnq0iI+dom6ZgWljwwCS8mK37QVLWB9JbHZ
+	 4qauHkQ0AYwguWYn0aerkZSGTjlt8AkTutFazB32t0uTpPBfXW40vugdLKAki5ggqH
+	 aZgucfXSNl0IQ==
+Content-Type: multipart/signed;
+ boundary=0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 25 Sep 2025 09:28:53 +0200
+Message-Id: <DD1PD807DBY9.2FY81JFZ6EDAE@kernel.org>
+Subject: Re: [PATCH v2 0/7] Initial Kontron SMARC-sAM67 support
+Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
+ <linux-watchdog@vger.kernel.org>, "Andrew Davis" <afd@ti.com>, "Nishanth
+ Menon" <nm@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
+ <kristo@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jean Delvare"
+ <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>, "Michael Walle"
+ <mwalle@kernel.org>, "Srinivas Kandagatla" <srini@kernel.org>, "Wim Van
+ Sebroeck" <wim@linux-watchdog.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Lee Jones" <lee@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.16.0
+References: <20250912120745.2295115-1-mwalle@kernel.org>
+In-Reply-To: <20250912120745.2295115-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250922182003.3712101-2-stefan.klug@ideasonboard.com>
 
-Hi Stefan
+--0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Mon, Sep 22, 2025 at 08:19:57PM +0200, Stefan Klug wrote:
-> On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
-> handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
-> and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
-> commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
-> debugfs var for irq delay") a warning was added for that. There are two
-> cases where this condition can occur:
->
-> 1. The v-sync and the frame-end belong to the same frame. This means,
->    the irq was heavily delayed and the warning is likely appropriate.
->
-> 2. The v-sync belongs to the next frame. This can happen if the vertical
->    blanking between two frames is very short.
->
-> The current code always handles case 1 although case 2 is in my
-> experience the more common case and happens in regular usage. This leads
-> to incorrect sequence numbers on stats and params buffers which in turn
-> breaks the regulation in user space. Fix that by adding a frame_active
-> flag to distinguish between these cases and handle the start of frame
-> either at the beginning or at the end of the rkisp1_isp_isr().
->
-> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> ---
->
-> Hi all,
->
-> Here is an updated version of the patch with a fix for a typo that was
-> spotted in the last review.
->
-> Changes in v3:
-> - Fixed typo in comment
-> - Collected r-by tag
->
-> Changes in v2:
-> - Removed test for !frame_active in second v_start handler
-> - Improved comments
+Hi Lee,
 
-Thanks for addressing these
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+On Fri Sep 12, 2025 at 2:07 PM CEST, Michael Walle wrote:
+> Now that the PMIC support is there, we can finally, upstream the
+> support for this board. Besides the usual device tree, this
+> patchset contains the support for the on-board house keeping MCU. It
+> make extensive reuse of the drivers for the former SMARC-sAL28
+> board. Besides different hwmon sensors, all the dt binding patches
+> will just add a board specific compatible (in addition to the old
+> sl28 compatible) to make any future board specific quirks possible.
+>
+> I'm aware that there is a patch [1] which moves the sl28cpld MFD
+> schema to a different directory. Once that patch is merged, I'll
+> repost this series. But I already want to get some early feedback.
+>
+> v2:
+>  - dropped patches which were already picked up
+>  - new patch "dt-bindings: mfd: tps6594: allow gpio-line-names"
+>  - separate driver for the hwmon, add missing hwmon documentation,
+>    thanks Guenter
+>  - split the DT as suggested by the SoC maintainers
+>  - add missing copyright and license to the overlays, thanks Andrew
+>
+> Michael Walle (7):
+>   dt-bindings: arm: ti: Add Kontron SMARC-sAM67 module
+>   dt-bindings: mfd: tps6594: allow gpio-line-names
+>   arm64: dts: ti: Add support for Kontron SMARC-sAM67
+>   dt-bindings: hwmon: sl28cpld: add sa67mcu compatible
+>   dt-bindings: watchdog: add SMARC-sAM67 support
+>   hwmon: add SMARC-sAM67 support
+>   arm64: dts: ti: sa67: add on-board management controller node
 
->
-> Best regards,
-> Stefan
->
-> ---
->  .../platform/rockchip/rkisp1/rkisp1-common.h  |  1 +
->  .../platform/rockchip/rkisp1/rkisp1-isp.c     | 27 +++++++++++++++----
->  2 files changed, 23 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> index ca952fd0829b..adf23416de9a 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> @@ -222,6 +222,7 @@ struct rkisp1_isp {
->  	struct media_pad pads[RKISP1_ISP_PAD_MAX];
->  	const struct rkisp1_mbus_info *sink_fmt;
->  	__u32 frame_sequence;
-> +	bool frame_active;
->  };
->
->  /*
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> index 8c29a1c9309a..660c1fd7efcc 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
->  	}
->
->  	isp->frame_sequence = -1;
-> +	isp->frame_active = false;
->
->  	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
->
-> @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
->   * Interrupt handlers
->   */
->
-> -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
-> +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
->  {
->  	struct v4l2_event event = {
->  		.type = V4L2_EVENT_FRAME_SYNC,
->  	};
->
-> +	isp->frame_sequence++;
-> +	isp->frame_active = true;
-> +
->  	event.u.frame_sync.frame_sequence = isp->frame_sequence;
->  	v4l2_event_queue(isp->sd.devnode, &event);
->  }
-> @@ -1111,15 +1115,20 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->
->  	rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
->
-> -	/* Vertical sync signal, starting generating new frame */
-> -	if (status & RKISP1_CIF_ISP_V_START) {
-> -		rkisp1->isp.frame_sequence++;
-> -		rkisp1_isp_queue_event_sof(&rkisp1->isp);
-> +	/*
-> +	 * Vertical sync signal, starting new frame. Defer handling of vsync
-> +	 * after RKISP1_CIF_ISP_FRAME if the previous frame was not completed
-> +	 * yet.
-> +	 */
-> +	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
-> +		status &= ~RKISP1_CIF_ISP_V_START;
-> +		rkisp1_isp_sof(&rkisp1->isp);
->  		if (status & RKISP1_CIF_ISP_FRAME) {
->  			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
->  			rkisp1->debug.irq_delay++;
->  		}
->  	}
-> +
->  	if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
->  		/* Clear pic_size_error */
->  		isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
-> @@ -1138,6 +1147,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->  	if (status & RKISP1_CIF_ISP_FRAME) {
->  		u32 isp_ris;
->
-> +		rkisp1->isp.frame_active = false;
->  		rkisp1->debug.complete_frames++;
->
->  		/* New frame from the sensor received */
-> @@ -1152,5 +1162,12 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->  		rkisp1_params_isr(rkisp1);
->  	}
->
-> +	/*
-> +	 * Deferred handling of vsync if RKISP1_CIF_ISP_V_START and
-> +	 * RKISP1_CIF_ISP_FRAME occurred in the same irq.
-> +	 */
-> +	if (status & RKISP1_CIF_ISP_V_START)
-> +		rkisp1_isp_sof(&rkisp1->isp);
-> +
->  	return IRQ_HANDLED;
->  }
-> --
-> 2.48.1
->
+Would you take these two patches
+    dt-bindings: mfd: tps6594: allow gpio-line-names
+    dt-bindings: watchdog: add SMARC-sAM67 support
+
+through the MFD tree this cycle? If they make it in, there wouldn't
+be any more dependencies for the next cycle for the actual device
+tree.
+
+Thanks,
+-michael
+
+--0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaNTvNRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/iMSgF/U/Hnym3/BbU5iWgqn4kuJE5mIgjGrqH+
+xebvDaMtckOeHjdqxGIg7wAV1v5PZLsUAYCYJPNo/zXnrrWdXLOY+md/sOocOPZr
+/NGu1VF2dlgbKARDg+JXcIGreW3wYK3JzV0=
+=kccx
+-----END PGP SIGNATURE-----
+
+--0afea6db4dd96f53b68f9fad7bcae6c16f16bfb407d755022db670fb382c--
 
