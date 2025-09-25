@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-832671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EC9BA0102
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:47:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30221BA00EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2621E1623DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785AB4A1E31
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E103A2E093E;
-	Thu, 25 Sep 2025 14:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E142E091D;
+	Thu, 25 Sep 2025 14:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pg+eEulf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxfQqoFm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE222E091D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7782745C;
+	Thu, 25 Sep 2025 14:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758811589; cv=none; b=l1brigbet2Zt2RGwhe8WcmUlWnhiQ3j4VeQudONrDBg+wspFR9Gu78ZcNJEzKLRa6gGi0tpz63dd9PmM5Fbf1HYgETzl6ifoqsqLqwY4J6zcHUydZx8mqnODbZ2Ser+F+6cbXgdeAuENN1XJ5KJiuH43qgUKxWB47o6cXF0dXQw=
+	t=1758811577; cv=none; b=o1FY3gbqsPpNQZ5CoFEcB+6JGE4QTDUlGz/2dq9zPafbXUudBs+ef2sWSYzkdaSdDlVlQFAQ18WDw3tQDwIX6nWLqq0w4CSVtzxZ/KPKIyejHoX86JPfcojKoEdyCxx5aWlnKglIAEFhRm/D3G1XeUyR/AkBxuhopOcDgXv2zZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758811589; c=relaxed/simple;
-	bh=wktM1dTWTrCxGle6ruvKhZB2oi5edgmFflZWH1WP+fA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=AmB9rocHWWvl7awhuqoltjchk5If8lSvAeMW4gDGteQIzrqsVrHFZR7xEmrSnZf2iRuN64GknoS0XmsOPQRbZmZmeLdrDbZLivwz+Kj9nuRqoZBsvmfw0WQ2RENNIXS9jAEVHZHqddGS1zzwvkFMP15vWbNaOR9noIrGkGOoQ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pg+eEulf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1758811577;
-	bh=wktM1dTWTrCxGle6ruvKhZB2oi5edgmFflZWH1WP+fA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=pg+eEulfU9uj+kAaSV1P2Je33EFQ8ig4r56MLDMxtRs9RBpTvT0yx78n2myI8bPHU
-	 +NzmkFZQo66agzfWy/EqaQixLb+nlcMpbJagL1JVU/h78C5/inlgpc1ijKUnrM1OYV
-	 dSceTFE25efiWXntjyz1PRk4GW8GtPdLRmJIvFuo=
-Date: Thu, 25 Sep 2025 16:46:11 +0200 (GMT+02:00)
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Mark Brown <broonie@kernel.org>, Willy Tarreau <w@1wt.eu>,
-	linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-	kernel-dev@igalia.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Message-ID: <871aa6e4-21ef-493c-9eac-df9b8069afab@weissschuh.net>
-In-Reply-To: <440c9205-187e-45c1-8cc9-8083b64dadfc@igalia.com>
-References: <833f5ae5-190e-47ec-9ad9-127ad166c80c@sirena.org.uk> <20250925141423.504427-1-andrealmeid@igalia.com> <64c56cf3-90ad-428a-9a14-64928771f9fc@sirena.org.uk> <440c9205-187e-45c1-8cc9-8083b64dadfc@igalia.com>
-Subject: Re: [PATCH] tools/nolibc: Add stdbool.h to nolibc includes
+	s=arc-20240116; t=1758811577; c=relaxed/simple;
+	bh=u1I7JyHDzj9nlh2ovCkhEeA/71ug/8ULKEugP+a07Jk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Bk2IN6d7q/hLZSbRb3ScnnYdNjO2xydCQ61mJupLwGSc5WRjVpXnU99GY10WwWPjzklzjP2Ia/Bh0ij7dUui0gdYcHKe5j3VW2z2KmvgF5ix4ndycViCRYNDHI/AjD85olc6RAIM//V6yS4bv0m3J5F7Jqh7sBTN+aFSEw99Sxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxfQqoFm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829CFC4CEF0;
+	Thu, 25 Sep 2025 14:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758811576;
+	bh=u1I7JyHDzj9nlh2ovCkhEeA/71ug/8ULKEugP+a07Jk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=SxfQqoFmEp8R9sezFEsIKgoaAojx+rF2++Qxw65QWkqs7uZuNcO9124nOdy4Z9OkC
+	 7HU8sQDNVbP5kkUauZXXzwAsmfsqnTYtS0mVKhevEOcnUKLVln1LF8GZjSJTibLL/C
+	 xl8Arbi5np8eKK5DsCd8QwiFtocDfC7pOTFHOWHZ3m+2R8DMhZgTTUgSokpZPtxUpw
+	 r7Yw0f1Z8YFzNI5U6CTvLYM0kJbHWAbfvwlFNKyPEG/vokTMd8lQPUZnIf7IA4rOJF
+	 3I2J/VH8vjFXKy9ZPjRDWvUn1ikp1/ySq+s7ohurEOkNbakokuPaUHcfAe2rBtK02u
+	 jtDk3Ynav1CNA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E0539D0C9F;
+	Thu, 25 Sep 2025 14:46:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <871aa6e4-21ef-493c-9eac-df9b8069afab@weissschuh.net>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] Bluetooth: btusb: Add new VID/PID 13d3/3627 for MT7925
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <175881157225.3004481.8227650174530640013.git-patchwork-notify@kernel.org>
+Date: Thu, 25 Sep 2025 14:46:12 +0000
+References: <20250908084912.1853827-1-chris.lu@mediatek.com>
+In-Reply-To: <20250908084912.1853827-1-chris.lu@mediatek.com>
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ sean.wang@mediatek.com, will-cy.Lee@mediatek.com, ss.wu@mediatek.com,
+ steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
 
-Sep 25, 2025 16:37:45 Andr=C3=A9 Almeida <andrealmeid@igalia.com>:
+Hello:
 
-> Hi Mark,
->
-> Em 25/09/2025 11:24, Mark Brown escreveu:
->> On Thu, Sep 25, 2025 at 11:14:23AM -0300, Andr=C3=A9 Almeida wrote:
->>> Add stdbool.h to the list of nolibc.h includes, otherwise tests compile=
-d
->>> with -nostdlib will fail with "error: unknown type name 'bool'", even i=
-f
->>> a nolibc stdbool implementation is available at tools/include/nolibc/.
->>>
->>> Reported-by: Mark Brown <broonie@kernel.org>
->>> Closes: https://lore.kernel.org/lkml/833f5ae5-190e-47ec-9ad9-127ad166c8=
-0c@sirena.org.uk/
->>> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
->> Fixes: f2662ec26b26 ("selftests: kselftest: Create ksft_print_dbg_msg()"=
-)
->> ---
->>> =C2=A0 tools/include/nolibc/nolibc.h | 1 +
->>> =C2=A0 1 file changed, 1 insertion(+)
->> --- a/tools/include/nolibc/nolibc.h
->>> +++ b/tools/include/nolibc/nolibc.h
->>> @@ -116,6 +116,7 @@
->>> =C2=A0 #include "sched.h"
->>> =C2=A0 #include "signal.h"
->>> =C2=A0 #include "unistd.h"
->>> +#include "stdbool.h"
->>> =C2=A0 #include "stdio.h"
->>> =C2=A0 #include "stdlib.h"
->>> =C2=A0 #include "string.h"
->> It's not 100% clear to me that we should add this to the nolibc
->> includes given that nolibc itself does not rely on or offer stdbool -
->> I was going to send something out adjusting kselftest.h to unguard the
->> include there.
->
-> If we don't include stdbool.h here, it looks like tools/include/nolibc/st=
-dbool.h cannot be used by any test, and unguarding <stdbool.h> would defeat=
- the purpose of using -nolibc?
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-It can still be used through '#include <stdbool.h>'.
-But we support both ways of using nolibc, so this is a valid bugfix and I w=
-ill apply it.
+On Mon, 8 Sep 2025 16:49:11 +0800 you wrote:
+> Add VID 13d3 & PID 3627 for MediaTek MT7925 USB Bluetooth chip.
+> 
+> The information in /sys/kernel/debug/usb/devices about the Bluetooth
+> device is listed as the below.
+> 
+> T:  Bus=07 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=13d3 ProdID=3627 Rev= 1.00
+> S:  Manufacturer=MediaTek Inc.
+> S:  Product=Wireless_Device
+> S:  SerialNumber=000000000
+> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+> I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+> 
+> [...]
 
-On the other hand removing the guard in kselftest.h would be nice too,
-the code will look idiomatic.
-It could trigger issues for programs that do not have tools/include/nolibc/=
- in their include path.
-But Mark should be able to fund those.
-I removed the guards in kselftest_harness.h before and that didn't lead to =
-issues.
+Here is the summary with links:
+  - [v2] Bluetooth: btusb: Add new VID/PID 13d3/3627 for MT7925
+    https://git.kernel.org/bluetooth/bluetooth-next/c/11ccdf96e612
 
-> I'm also not 100% sure as well, lets see if Thomas or Willy can shine a l=
-ight here.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
