@@ -1,253 +1,148 @@
-Return-Path: <linux-kernel+bounces-833101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9833EBA1391
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62756BA139D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337043BBC9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CFD1753EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E045831D72B;
-	Thu, 25 Sep 2025 19:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC13631D759;
+	Thu, 25 Sep 2025 19:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hvuE8/OA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJT7hoJ7"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8418031CA46
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E0454F81
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829117; cv=none; b=MSNiZy9cToROV0iUE05bk9sopzSLy4kt2x+x5QO3kXTy3KV20HAaD7zp5yj2OX809eVoIiEpowS2X2E5QQJVdNU7laYV0F84nW6+oBou7iU09UTfPqaPdF43g051YvZM+mOrZEZFzIaldGWE2q2QF1tVVmNWcTNReWZknYRg0A8=
+	t=1758829127; cv=none; b=eYd1oou5jeCt2ncO938zBhErwjn+neN2ojM3gJcoNAp3aQM+/ICNk9heZS2RYu3hEcoT2+7FMlRU/etfLA3N7Fp1iblgwdy4K33NV7jRtRAdhEpA+U6jpiZtj8PPK3wtA7VkL+jvnwIj+efxJz5pmXxwiNfO70Vv9wGCfff2tJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829117; c=relaxed/simple;
-	bh=Gw6Lv3ZZKaXOQeZbLrbNQm+hOUdCDO6KkbPO+UpMV5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjLv+OkemtUe83CiTXIHtB2q2n55Cf/KoQBmBVYphf5jVMtJu9bXKuCIF8wq7W/qushQ+71vikjCb3LImw9d1JkfeZ0SXIk9brHcA3mVFjv0fF2iHbW8o/um0JmARQ1L6wnhl/toEurBQJknnq3ZlagrIKlPh64yhP2gaqoWTB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hvuE8/OA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIUqfo025176
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:38:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=bZUq7CDDhSmRig6Cx1+uuI0h
-	ZxZQyPvmkPpUPwn89LI=; b=hvuE8/OA9JOtidnSZORgmM4jRfOo0ad879Xb3RcY
-	zZNSPMCMe6rakDVd5GejDyqQkMpgLCXGuXyvY0unf3jIYXzJ1EmcaHlSRTzbnu0C
-	vzs8RNBfko8oABinO0BO4XDA66kR5mSBAMamPgUzSSM1OhkIPdX0SWcHe53CLyHB
-	+iM5t13u0UxlAJ+Bija4wtiusCNwyJu0kSFx1E1PZqppWA/vb0ClbcBuQ+tLYJkd
-	x3KE1cBxnr+LTknelBmR8eNLu1omZftXldv6vWcYxHBC4dsgmlbW9Yv6f64egU6Y
-	F06oUNvaKZ5mX0UChewg6OTUxZsq1UC4uyGyaTDaz6+0HQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db34g53b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:38:34 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b5f6eeb20eso48137361cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:38:34 -0700 (PDT)
+	s=arc-20240116; t=1758829127; c=relaxed/simple;
+	bh=3jtritTomIIJOGP5bQqL6bgfQshpJwLoGR/rXMYMm5c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eXMOCRuFheiiB8jJfO691DwT8sj1sHFHpRnK5qgw/e6Vsecb24DhcljMiEDlio7GCwahP7coc2t67vy0Z8gWuAtl5uB/L6mtLcSXjXzg8olXjwidylbbb8wPqyji4j91mUIbXJFnbLjhrkQ396HmnfnkGtFQMxC8TjpiV57l9TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJT7hoJ7; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07e3a77b72so414140866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758829123; x=1759433923; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9Wvpl7tsF8zVqpRGGfjh2Xv56vwrOQHtzvQulfV0B4=;
+        b=aJT7hoJ7n2XFQiKBhIgO5WGs78w978ZeweB6CJmXHcZgSuF/7atw6bFaKkFi8DtSI3
+         psp6kIKvBYVmcDWdUcM9b1sRXG3fRyfmMPrr+EFxYdLyM8ix2OqpkFKFSMRKkIkrzPme
+         9NAG2oL1C69wGdMHl146iJ4hnlCFxiREJnC/Xn43ONIs+5K89K12eXBRzCigzRj6xoaN
+         TMcUGqacjaVMLBDoUjX0nAP8QXTP7j91g8zftbWisZ4JXBjT3TlmS5rY1V6mmTC/+VLT
+         2TPveR/lNPodLFmHx911G+8Y9WuKCK9U9gIwc55ZPFJTmUi8Ezewej89+UGlzBwkG3Lb
+         qPeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758829113; x=1759433913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZUq7CDDhSmRig6Cx1+uuI0hZxZQyPvmkPpUPwn89LI=;
-        b=iLR4V9NcnIkOFhOstp+/P2Z6p0vKGirF7INHy0VPuZUBF462q2OmoSQpPpL5M+aPWU
-         2lWSm0rfU2BhzgrdMRyohp1oo4V2eTOhjoLJsw12ODMGPll8DHNxM6HJy6lexTn8VNj+
-         oaPhFwAOTW90/rGlhAcnngOC+jPA/Ra0cfP4jU6dec9EFMIv+LfGUfGrTUNhlgAvOtjn
-         bf0qahuSbrgo2w5zAM6rHF0giD6Sh+Oj+czZMG5MbKlaP0SGA3L6ceQbQqv0yeQWdlNC
-         ua3gYwqsyRb/f86XsYmNA+qozNtg/rg54Dxg+dYLHAKqp820UHcTXavJgHX8OFmyaaJe
-         MChA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6F8xb+7vCJktEHiLdAP2bYCkUwip+K47IR8WNQG6KRFLcge3yId8GXeP+Ag5SODKidG8H4Ntz7Wp8y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDRYxWrVASLcLAPncnR2fHPpAv+cZyIzmmXWh3a0hV5HhBJE9g
-	nkp0FT0Z4l2Tt9iFH1DT3qmAoW0TeUde9lMDc61SUMz20M8J9jM1Rh/0bQ5BTv/3KdMvadIIDSK
-	NbrrKfuq3lqSMFZiLvOX28mo8MwaNyFoREugHB2R8lseAV7kZDS3Too1kIVT/P7qTUro=
-X-Gm-Gg: ASbGnctRuWnQRxQmfcvrnMwH+XAVpSUx590cfRIBPQilo5UEh7L7g9soccgjsqwskgh
-	HHkPexeXsNx8HwWNSfdu18X0ILJjzp8akCmPPGAfK0IJqsGfrdoydV8tlbndbp4d6eQHnYeqKvr
-	QWD6LUP3k/3UtDQuFLBbSoIAZ/6ReN1t347wP25ebu9eiq88LPXQbJ8VXB3FOPhltbjhc8jRPrc
-	m2mI78lbXDAubjNflO5yX58lrkm+g1oyAVP1TjFUuYSzNg3WcoIP8ENGqon+bwfE4/OIEut1xOK
-	NVs16XfDrQDYgk9zMj/J0uFdI8pfIFpZiGyepwsZUvJsih+k0U+UPfCHJrOLasPKGhQgVK9AdE7
-	mwIg8jI/gBOHErPiIHEMUJ49s0jQQ61oTs6mprWIl9ar8cVPr3YyB
-X-Received: by 2002:a05:622a:1a86:b0:4b5:ee26:5371 with SMTP id d75a77b69052e-4da48a98618mr59982701cf.26.1758829113270;
-        Thu, 25 Sep 2025 12:38:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEScP8g2QLcbwROLLnoam3rSDhjtQbKS1uSD/NVSg/54p4XWIFVNkB6GUFvdkeQo6tU0VNN0A==
-X-Received: by 2002:a05:622a:1a86:b0:4b5:ee26:5371 with SMTP id d75a77b69052e-4da48a98618mr59982101cf.26.1758829112481;
-        Thu, 25 Sep 2025 12:38:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-583139f99d5sm1059076e87.40.2025.09.25.12.38.31
+        d=1e100.net; s=20230601; t=1758829123; x=1759433923;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/9Wvpl7tsF8zVqpRGGfjh2Xv56vwrOQHtzvQulfV0B4=;
+        b=RUaHUgFfomyKLQPO6CwkRvChq70Mt22W7EFRn8Cv9BM2lAhi4FZC/i2aHNi9i+3zAc
+         HlDAyVJhl7zDJLe+kOxae3yK6B7ob/YU2sAKeFuInaqU/G0wk/ruuh+o3LYBAZrrEsb/
+         5+LnZHwjz7VTpqfAJ9GrnRfawKts56FS/Iy9Uz2PLIX/5bAn3SlY2XeoOH42WMhNPJME
+         RMojBdhDRNnUbPXxGlnj/zZ6K/OQt291nwbiPnxvX+PoYOPXwy+odZXTV5M7S7eQmE8p
+         W3p0rE8IlDgBE0LOUqTWWIgjFdgnFEExfDF9mhUoPP+1LQ42wGTZsLONHEF7QTOVWgrN
+         zYaw==
+X-Gm-Message-State: AOJu0YwNHqFHX69R1FqNS7JE7drC5EvtXPMO64bF/f/84vJIdiMV6FJG
+	oNp0/ZFuzO5nFxmJes/iMZcFSvLyD6/iZPknXayVyEOy346H3kJZJH+B
+X-Gm-Gg: ASbGncvxdI52fizFa9b8YVZp6KCFpu4RxfUvhz0t8Xn5BGKvhycCi//c8xnLNyoZnp7
+	1ABR/qLGpMWhtkWMp74SPCYyKAMT7ofK2VA5sX/YP+V0+PUJMuo++BcnMNufEs1ZgqQ6ldyi4Oa
+	DHNMeV1VufEy71DIkQfPNArKitNKOqE8Z1V2kmkJ251v4ADBKRlul1wWnyqaNJnRKrU/KAnaD/b
+	59C5/1WkgqmEAx4TnfBuNoBFAZDdrJbzH4pdqVgQdrL7A5cygvXUFHfOMjiDjpkoblggSpv6V67
+	eIvfJz6vBZTfHjUL4F9BuqFvETzz/UOLXjwCGNNDaTfWF21QoeyJHTnxba6+kxPQOiHAqYj39Ys
+	JDnfQOO8TiRrn3/e5QmcY
+X-Google-Smtp-Source: AGHT+IHVfiZc5UUcQsfZ8VprnirPFyoO5q03AQaUP0MdlBl9vBg3XfFQctzKjLM1COCQempCX+djBQ==
+X-Received: by 2002:a17:907:86a1:b0:b31:5c00:4fcf with SMTP id a640c23a62f3a-b354a8a6b48mr461767066b.11.1758829122436;
+        Thu, 25 Sep 2025 12:38:42 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b353efa4c35sm222820766b.26.2025.09.25.12.38.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 12:38:31 -0700 (PDT)
-Date: Thu, 25 Sep 2025 22:38:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vishnu Reddy <quic_bvisredd@quicinc.com>
-Subject: Re: [PATCH 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
-Message-ID: <oimuo26ohcye74j6rl5hfbmd4ip5wzudhyiaibf74b5zmjb4vl@xh3dnp7gmvq7>
-References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
- <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
- <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
- <522d7244-0003-a42e-9be0-1d353df8d5bd@oss.qualcomm.com>
+        Thu, 25 Sep 2025 12:38:42 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v4 0/3] starqltechn: fix max77705 device irqs
+Date: Thu, 25 Sep 2025 22:38:36 +0300
+Message-Id: <20250925-starqltechn-correct_max77705_nodes-v4-0-93b706bdda58@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <522d7244-0003-a42e-9be0-1d353df8d5bd@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MiBTYWx0ZWRfX9hu0yDjjjFvb
- 6kU+0ZQIKkf9ihHyPYzeEl6qabdCRrnd1/fLjy4NDrsPGatINPqI5ohZTD2M28BhGPipJLnflMO
- tvkyackjcx1Nt480EDhaoLvwPdAGrk3bqzfM8IOdOSpi4dAk0Nynd1AAcfHHxsjsQRJyZCjQQSC
- n/9HjpB18JwcB4rUzcICz7lBTVRj//sk2bfQ2XDFJfo/GV4o3f01SfbMIagyh3lokN+2J/e6ytf
- HsZ+JS5jbBiSnMv0I6BYMgxwsj7aFynqGi3nDAcbwB2/KTZZEmannMyW/IynEHm8qaz3p/jzFnc
- PldUh2EPVd2tAMJ2Bs2ZGkwADvJdXjFB4ltl6wC3tQaB1bjYjWH+JvQ/BPJ7X2D3g735X1rts4S
- h3x+kfZF8okpsiUSS1z9VHZ0UbrF5Q==
-X-Authority-Analysis: v=2.4 cv=Hb0ZjyE8 c=1 sm=1 tr=0 ts=68d59a3a cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gEfo2CItAAAA:8
- a=wIq4btY2Nqnwc6W55twA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
- a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-ORIG-GUID: M8RgJqnvRanKABPBI2PRIzUW1tcipOXH
-X-Proofpoint-GUID: M8RgJqnvRanKABPBI2PRIzUW1tcipOXH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 adultscore=0 bulkscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250172
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADya1WgC/43OTQ7CIBCG4asY1mL4q4gr72GMIcxgSWxRwEZje
+ ndRYzSuuvxm8bxzJxlTwEzWsztJOIQcYl+Hms+Ia21/QBqgbiKYaNhKMpqLTedjQdf21MWU0JV
+ 9Z69aa9bs+wiYKedLAU6A8ahJhU4Jfbi+Itvdeyc8X2qrfI9tyCWm2+uRgT+vnyaf0hw4ZbTxw
+ noDXIKFzaGz4bhwsSNPfhBf0jAziRSVRMW1AqkV0+qflD8kF5NIWUnl0PilUejA/JLjOD4AQaM
+ Wuo8BAAA=
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758829121; l=1505;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=3jtritTomIIJOGP5bQqL6bgfQshpJwLoGR/rXMYMm5c=;
+ b=0mONWX92miQ1ca78JbDbjDBDbVspDUbXjhToEXoIvvgAzItRLrTQm6f1orWnhVflC+F64NwU+
+ lNH16APN+jbCf1C/3cIOZd66BTbgs5bJzmmMKAFI8Kq9Y2QP9i3G5gG
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On Fri, Sep 26, 2025 at 01:01:29AM +0530, Vikash Garodia wrote:
-> 
-> On 9/26/2025 12:55 AM, Dmitry Baryshkov wrote:
-> > On Thu, Sep 25, 2025 at 04:44:39AM +0530, Vikash Garodia wrote:
-> >> Kaanapali SOC brings in the new generation of video IP i.e iris4. When
-> >> compared to previous generation, iris3x, it has,
-> >> - separate power domains for stream and pixel processing hardware blocks
-> >>   (bse and vpp).
-> >> - additional power domain for apv codec.
-> >> - power domains for individual pipes (VPPx).
-> >> - different clocks and reset lines.
-> >>
-> >> There are variants of this hardware, where only a single VPP pipe would
-> >> be functional (VPP0), and APV may not be present. In such case, the
-> >> hardware can be enabled without those 2 related power doamins, and
-> >> corresponding clocks. This explains the min entries for power domains
-> >> and clocks.
-> >> Iommus include all the different stream-ids which can be possibly
-> >> generated by vpu4 video hardware in both secure and non secure
-> >> execution mode.
-> >>
-> >> This patch depends on following patches
-> >> https://lore.kernel.org/all/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com/
-> >> https://lore.kernel.org/all/20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com/
-> >>
-> >> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> >> ---
-> >>  .../bindings/media/qcom,kaanapali-iris.yaml        | 236 +++++++++++++++++++++
-> >>  1 file changed, 236 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
-> >> new file mode 100644
-> >> index 0000000000000000000000000000000000000000..f3528d514fe29771227bee5f156962fedb1ea9cd
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
-> >> @@ -0,0 +1,236 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-iris.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Qualcomm kaanapali iris video encode and decode accelerators
-> >> +
-> >> +maintainers:
-> >> +  - Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> >> +  - Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> >> +
-> >> +description:
-> >> +  The iris video processing unit is a video encode and decode accelerator
-> >> +  present on Qualcomm platforms.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: qcom,kaanapali-iris
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  interrupts:
-> >> +    maxItems: 1
-> >> +
-> >> +  power-domains:
-> >> +    minItems: 5
-> >> +    maxItems: 7
-> > 
-> > You are sending bindings for a single device on a single platform. How
-> > comes that it has min != max?
-> 
-> I was planning to reuse this binding for the variant SOCs of kaanapali/vpu4. If
-> we do not have min interface, then for those variants, we have to either have
-> separate bindings or add if/else conditions(?). Introducing min now can make it
-> easily usable for upcoming vpu4 variants.
+For max77705 charger and fuelgauge subdevice, use max77705 interrupt
+controller.
 
-No, it makes it harder to follow the changes. This platform has
-this-and-that requirements. Then you add another platform and it's clear
-that the changes are for that platform. Now you have mixed two different
-patches into a single one.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v4:
+- update trailers
+- fix commit message
+- reorder patches - Fixes should go first
+- rebase on latest linux-next
+- Link to v3: https://lore.kernel.org/r/20250912-starqltechn-correct_max77705_nodes-v3-0-4ce9f694ecd9@gmail.com
 
-> 
-> > 
-> >> +
-> >> +  power-domain-names:
-> >> +    items:
-> >> +      - const: venus
-> >> +      - const: vcodec0
-> >> +      - const: vpp0
-> >> +      - const: vpp1
-> >> +      - const: apv
-> >> +      - const: mxc
-> >> +      - const: mmcx
-> >> +
-> >> +  clocks:
-> >> +    minItems: 8
-> >> +    maxItems: 10
-> > 
-> > And here.
-> 
-> Same case here.
-> > 
-> >> +
-> >> +  clock-names:
-> >> +    items:
-> >> +      - const: iface
-> >> +      - const: core
-> >> +      - const: vcodec0_core
-> >> +      - const: iface1
-> >> +      - const: core_freerun
-> >> +      - const: vcodec0_core_freerun
-> >> +      - const: vcodec_bse
-> >> +      - const: vcodec_vpp0
-> >> +      - const: vcodec_vpp1
-> >> +      - const: vcodec_apv
-> >> +
-> > 
+Changes in v3:
+- fix commit messages to be more clear
+- Link to v2: https://lore.kernel.org/r/20250909-starqltechn-correct_max77705_nodes-v2-0-e4174d374074@gmail.com
 
+Changes in v2:
+- run dt_binding_check, dtbs_check
+- make interrupt-cells 1
+- add patch to delete unused address-cells and size-cells
+- add binding patch for interrupt-cells
+- Link to v1: https://lore.kernel.org/r/20250831-starqltechn-correct_max77705_nodes-v1-0-5f2af9d13dad@gmail.com
+
+---
+Dzmitry Sankouski (3):
+      arm64: dts: qcom: sdm845-starqltechn: remove (address|size)-cells
+      arch: arm64: dts: qcom: sdm845-starqltechn: fix max77705 interrupts
+      dt-bindings: max77705: add interrupt-controller property
+
+ Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 14 ++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 14 +++++++-------
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+---
+base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
+change-id: 20250830-starqltechn-correct_max77705_nodes-1162dc2d9fe7
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Dzmitry Sankouski <dsankouski@gmail.com>
+
 
