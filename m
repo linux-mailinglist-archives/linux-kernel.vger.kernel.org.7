@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-831721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576EDB9D65D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:39:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3E4B9D669
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121963AC965
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:39:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 670267A8DB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007BE2E7BA7;
-	Thu, 25 Sep 2025 04:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FE72E7622;
+	Thu, 25 Sep 2025 04:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiJ4X85v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HB+30opw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4016E34BA52;
-	Thu, 25 Sep 2025 04:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C248E34BA52;
+	Thu, 25 Sep 2025 04:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758775154; cv=none; b=nFR8MdBsgw/AC+jWLI/2/B+V+XFbqGHE1a1SKdGhEv4mXwgsPcQQZgMPKfQfSH7Cst/ct6iK/e3yIBdbm8EvMhpv6FGPnuoMExL/TVNy8lN/NgImqQcHzJppYAOjvKx9N/1XR070ax55rDEAUB7y0XTJHhEkjyCrS4kQp+P0m+M=
+	t=1758775160; cv=none; b=Bh4jAMbQLJDa8jSrKIlQ8N6+9ZXL3iUHsHeEHhK0Qc2moTv1AvfTGgykUkEIltXu8ELmNNSMjrzQph26zSF0RLojz736QQvFtx5nPIziYfJ1gCu9u7YvvCNba8t9DW9mTen4CkUCSXWdWZLfvyIKps5Uzq6Cp9QtcC44bjjpz+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758775154; c=relaxed/simple;
-	bh=MskErj/iV6NFqzIAYLsjAGPJeQZV2e3AJUYOlJVD+N0=;
+	s=arc-20240116; t=1758775160; c=relaxed/simple;
+	bh=LVKNFbNjJAdEFH7SfjuMMBFH6Rh39a92F5OS01+GCNQ=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fNn0pzaYiKCq2y+h/n3lcMiunc6rnF+Oe1gCgBArQ7r+QXYGgeOZBteSLbeqmGXv5RTzQER7Ve6nsYvAlr+1QvWI4/X2yV4YtiHxBkJvgyXhjEtMtGZj9WjYKtSMvqAppt2cspzxaDFQrULp4Q2jPA0O6HDqvnV725HCJoMRVE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiJ4X85v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB2AC4CEF0;
-	Thu, 25 Sep 2025 04:39:12 +0000 (UTC)
+	 Message-Id:Subject; b=Zpz2XZePhoJOtdfQH6tQt1dF9M7OSeri3ufsx5464Yf8BCplCsFCwmaAkt9SGTBkOexKHb5kYSgjelJsyTnDBdXJJsZ9tSw43LesdGo7du0O4Xh2RBoGft3vcObahL/d+A2rgtoC6Neff9x3yID5F3B1ORT+8QPBXsNjEVi8a3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HB+30opw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05A70C4CEF0;
+	Thu, 25 Sep 2025 04:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758775153;
-	bh=MskErj/iV6NFqzIAYLsjAGPJeQZV2e3AJUYOlJVD+N0=;
+	s=k20201202; t=1758775160;
+	bh=LVKNFbNjJAdEFH7SfjuMMBFH6Rh39a92F5OS01+GCNQ=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=NiJ4X85v3DCyQ0fYwmdSwIS38NeAQGNX5z2rlzosOZ+368oFTjmOlhWlYnEgyDZul
-	 lhnSIj4vxX0n3K5cZHraJdmmh6hBClfyuJHskgjnCZNWfpNh71Yss6k31sVuFxewRa
-	 wCmRAWlhtTcYb6lCWw+QuMXabJl4VWU1RqjNDWEmKUcDgzKkioqHZ4OWPuU3qyFS3r
-	 ordbxuqYl7+HdIV4/AOG3uwuepQpvdxuXkAGQCIefXk0//S6DETcDzWHZ9RiH0RJyj
-	 D2fpRvbiu87Hkk39DMMfuwdTF3kY2ZgC2SyQ+N4yTytFWzduwEeCGuesjUu8ny/Hsy
-	 oCLhx5HzNJTvg==
-Date: Wed, 24 Sep 2025 23:39:09 -0500
+	b=HB+30opwvg+DRolsxHT3hmGHEBZeQZNzh6L2dtOr7EQNsPXlQkCzr3LefOhzBBOM+
+	 UfF1dMwJOq7TPrCGMlShT50Bnuo3ShctXv3kkvnM0nNYKy7YKIlnIbiyKveBpatGnY
+	 SotELwPpG0+OXB1zGqnPsNUcop4gTW+G3DpyZ6w1+PmvHh9vc9chHJrDVSMv3Maz4G
+	 H7DPvao3hGaeEEDVHlbCz76Y5iDn6D9vBj63Gm5MLxCfic+XuSRVpAEUAYpCdBrnlV
+	 N6sMpG0LHwiIRIDi7Harh3wBNJHTUn2sC5n+sRpSBYlNd+JmR+jH1O7Z9pR20PUaD6
+	 yyIYiDpPRC7UQ==
+Date: Wed, 24 Sep 2025 23:39:13 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,37 +50,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
- netdev@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>, 
- linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, Stephen Boyd <sboyd@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-In-Reply-To: <20250924223528.2956771-1-robh@kernel.org>
-References: <20250924223528.2956771-1-robh@kernel.org>
-Message-Id: <175877514894.3628735.640919946657107925.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Convert
- marvell,armada-3710-(sb|nb)-pinctrl to DT schema
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>, 
+ tingwei.zhang@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com, 
+ Georgi Djakov <djakov@kernel.org>, trilok.soni@oss.qualcomm.com, 
+ yijie.yang@oss.qualcomm.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
+References: <20250924-knp-interconnect-v1-0-4c822a72141c@oss.qualcomm.com>
+ <20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com>
+Message-Id: <175877514978.3628981.3210021527664885748.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
 
 
-On Wed, 24 Sep 2025 17:35:24 -0500, Rob Herring (Arm) wrote:
-> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
-> format. The binding includes the "marvell,armada-3700-xtal-clock"
-> subnode which is simple enough to include here.
+On Wed, 24 Sep 2025 16:02:44 -0700, Jingyi Wang wrote:
+> From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
+> 
+> Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
->  .../bindings/clock/armada3700-xtal-clock.txt  |  29 ---
->  .../marvell,armada-3710-xb-pinctrl.yaml       | 122 +++++++++++
->  .../pinctrl/marvell,armada-37xx-pinctrl.txt   | 195 ------------------
->  3 files changed, 122 insertions(+), 224 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+>  .../bindings/interconnect/qcom,kaanapali-rpmh.yaml | 126 +++++++++++++++++
+>  .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h | 149 +++++++++++++++++++++
+>  2 files changed, 275 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -88,16 +84,18 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): gpio: '#interrupt-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctrl.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): gpio: 'interrupt-controller' is a required property
-	from schema $id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctrl.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): reg: [[100352, 256], [101376, 32]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.example.dts:18:18: fatal error: dt-bindings/clock/qcom,kaanapali-gcc.h: No such file or directory
+   18 |         #include <dt-bindings/clock/qcom,kaanapali-gcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250924223528.2956771-1-robh@kernel.org
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
