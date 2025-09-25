@@ -1,293 +1,179 @@
-Return-Path: <linux-kernel+bounces-833082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6F7BA12BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871D1BA12C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914673BEE29
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338E3179D4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCB431BC8F;
-	Thu, 25 Sep 2025 19:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0CE31BC8F;
+	Thu, 25 Sep 2025 19:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWmbrlOf"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oamREFjB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3506231B82C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CEB31B83D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828360; cv=none; b=biSH0vdIQT/f2Ozcj8tY9ytuUmbrfS1GefLrsiBxsSBpZuLTkDUG1xbLrSKFtCaeGRyYnmoOBvfXva8x4lE8TbSbpCVPVwPlydnzZZfIFyUFM3nDylYIagUkUj6/Z/oU2/1scV3Sc5jVE9FpKPqLEwhN9fWL882gr18tJn7Vjxs=
+	t=1758828429; cv=none; b=Wf7uKnpn5w3wg42oclrr4LfvwP026lTKV6B8e23L+0Cw56V26q4Pmcd45X9evlTBCxCzzb+O6ogBC5EFdwWo2pGxZx1fKlp/vJ9+M1aZGJ0TqVFD+bpc/QHnTkYu2BDb7gYMfgiuvuPYOVj9/Qf5ErBvWq0rup/eIbSuSIIeVQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828360; c=relaxed/simple;
-	bh=+LGzKQfkIxBfEL7uanfWaTQi2NIBi71cSv2KDGt8AIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=acfaxPyjoimdgE/7XHgDfC2YKxnhymAercoJUwx3lBE9XzFz2hTeqCq25zR1UPrRbHmenmPHluvw4Hx78oNJ+ucGil+HPnfy8gCOLiU2QXM+yMYE8YsNm1RnkpYn2L+pJcZdraHJt9Ln1H/2KZqa95+0t9TEv/BbV0eDslzUdJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWmbrlOf; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-279e2554b6fso11423835ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758828357; x=1759433157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uxxej+A54UMxIPTRKqDdkxTeyPEcpC6j3CvIRkzYnRY=;
-        b=UWmbrlOf8AJ3oZ57H4WtpjsxQfI97awRzHw4rFJvujcOQijcyP7Kw0+BGhtyrlauPd
-         NwXgtpoP/1iG9zc62tWa7APAHubwIH/FE67aMJCxfZN/Ge4c7+bOrMB9xE6kn6GORHoQ
-         KoHvMvZ0WKG4FKQ+C0hgOQ4IAHjPxJLkpQByyyFZudQT6hMo+5LQlKTnGx8976PrEtLT
-         JASIsep/mjqqzDHsxlVq0X6aP20D7Lj3Gi2RMc7HMycbdPjmkwr38vvFqlJzrrmFZrWc
-         OW69y9QwvlRLb4eJZorgcBRQcBADJQshKpntxNtUwO/JgIhozu63+pQhPUpRPgINbpRp
-         olvQ==
+	s=arc-20240116; t=1758828429; c=relaxed/simple;
+	bh=Mqlcs0XkCOfvSQoESxCxYhyIHsmY6fFwTw3IEUOGwhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ntAIM3qxLC/Q2sg49zftq2cCr5ei4XLg37xae+Q1PTjBN5DaKkxH7NGI3YNPu4QhMoO6vSqQOwQ04QciszjbjnWptzFsFMINGpf4fysMkHhZo71bkbOQn0IWjYcx00n7I9UYKi+U/1JRMNkmv9myNJwPkrgd1FPHaKC6P+/0N4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oamREFjB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPhWf014377
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:27:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gSKcPFjG9aPsKgb4wf4U5eNuAXJv6M7J93dBweMw8L0=; b=oamREFjBK3cJ5tVV
+	FPktCA1M5mED3N/nioTAeQ39/G+G7zLiD6XBw5iPkRrF8lBZQTFeDjBsXNUEcbvi
+	Z9Yr1U9NNx/GGH4+xyh0zPdbGLrfs3j0AYts8TkJta+BjWgCelUY4zCRANgFkb/S
+	efTRcYXlgZ2ykmdowUWjgIjXoRiww/ePyTzgkH5j9a6CIQLxUO2K3Y2ZVzNdWYBq
+	fJsaV006a+oLvzDl6Tc9sRFnyajxQv0lkMzMYMQTz0B9t7qnLuRy0sDoUDtY1/9U
+	rBTYcJ8dFpX2DewfC080B69GI1pB6h/JH4nTcQg4JzVbjH7S40XyHuvXRZ1+UCMG
+	0K3L1A==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0rg4nj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:27:07 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f5e6a324fso2471673b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:27:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758828357; x=1759433157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uxxej+A54UMxIPTRKqDdkxTeyPEcpC6j3CvIRkzYnRY=;
-        b=X5GwEW3uUyIPPOxq3BOpCmPUKaPZkMq9oF66Dv9HUC9DuI9jhqrs4WgPakQe98OXb6
-         rC1aN1k0Zw77CEXYYNGIEig3QzodLMOnZ+WkWLt0JqByomBiy6k2FrTvgbXD9nAc7dPC
-         FojpDHgNMCrfIc+VnUeIO5QCfXdr9VrvwUf52e8oJRuSr+wiIu0SM4S9uA4F+DYEjrAe
-         5yIBuHBIkO0LDtOUhcNfoMciTbIX7sWDk9F7K6Gkzn0W5tbjiKk4ri6eiYC5bJkc8K5R
-         irc//y6qbhleSr1iO4esSIhhQxJ1SWJ7q/Lj+uGyAFPXOWzz1jlShpAnFaHKDcGV1SGc
-         7WnA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Fvz2I2C4S3r5KC8jnvvLtcOvAzzf5LQEpTCueIwwxhL9biQJ0B2ECBFUL/BXy9zndBSNT3rYQeU732g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFuY3NS2k8hSUvrjuVO4QkQGYkUOnrwLuQ/bKilh2K0zfNqX5V
-	vLN6nXsuYMcs7lqtM0dH7WcDsllIfbqA1F8dEfPrQhsbrZwyMlXak4F1xi85h5HrSy5NyDy0D0q
-	DiJsMmEqNhvvA7SnFAuBo9ZEg3nZoe3VfCeO4SZpb5ccLgZY+QETVMmdoYoY=
-X-Gm-Gg: ASbGncuNDFBtN8p5VSPM4oBy5cgy5TqMSXMbxd2FQGezou91QZVWRNTB+Ikd0L0lC4O
-	G3XYz6U1jASSvA2afikibrj0K/FNxB6yNS/AyaeEiCD5IvvF+DuxjSFDiUsjx9jfyQO/9WgbtaB
-	MWxApYr8403NdKkN5aFygb8ZHMyBvJWi9GYTp4OULnq0sEVVv43d9+crgAoeH631J3UbQcUS8ts
-	MHHw92ATPdQV4AwuBQY2OYYsC9LqF7GSdSW97SMMZzczRM=
-X-Google-Smtp-Source: AGHT+IFqxRshKGBvHaiDtYARmbc57qR195V71ZCUISbd+cEP9B0APoeNbfdgU15orpP/Wf293P73psfog6W4tFlVzHY=
-X-Received: by 2002:a17:903:a8b:b0:27d:339c:4b0 with SMTP id
- d9443c01a7336-27ed4aa57f1mr1907665ad.35.1758828357289; Thu, 25 Sep 2025
- 12:25:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758828427; x=1759433227;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gSKcPFjG9aPsKgb4wf4U5eNuAXJv6M7J93dBweMw8L0=;
+        b=bFY/om1q+eRioLwmBMnPI0/4J75mysh0E5VSvk2k7FtZGP351hlqH7z24js8hdc7H1
+         GPatT2JHKHkFQ0ky8Kh6BLoat8GkUybC2kXFKtjSbpiFAqATzFHLE8HfrL9ZMNf+62ou
+         81P+FAeEB7cPmObab7FSD9ieahOUlhggG/5ufXkRTA7f44m9ThBC9aak6WIfSAVVOM3v
+         GyKK2ck//2cJGjJ8y3vb+ImJTVV+zMYNBFtunV6wyQ476O9ut6rKIpyv/08EW5q8PVUC
+         6nHYIH3hotL2SLYMHrJyMteCNYhiC5DZ4MMcYP873wOYanxK94uwQZgw6u/5e/cnr6ox
+         iCow==
+X-Forwarded-Encrypted: i=1; AJvYcCUvVkNO2gHtVQ0tB6AJAOJLvikR8miBZXIQb0tmk2hxq60Dg2jDGRuvma0mQ3w4PVYtYnH2ZhMLRDx1wJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOV0p22XK+GKbpdYf8abg1+IMaIOzoDyq/YWmXlGoRRRkw3loa
+	CGlXvkQnpzatL3zwxjIWLpiCohfU4jNrNG6wBnBg1iUX4ve5fTNIN9DzQkh1feDfNE3acVfG5pD
+	PlVwGEj4fsBPSM1+FY28Zmz4E30ErZ66ZkGW+JILzOgXTjZpbEEXWZ1HSDxMz5snfmJI=
+X-Gm-Gg: ASbGncsJ7wtmvXHGg45x05X/eHfNm9JwSnryIFD5uK8yoP7rRd5GWlbNmLDD3sJriB3
+	TZmHhlrn+t5/LG4l33YCarJVQkPhckzHlKOiTrGeL4eOGGLwhENQjn8xYQRh9JAv3Bqj1JCFX20
+	Tl+ar4+l8AR4XMrX0ZTjoQ4SWfM3flWufHEJrKRLKposnr3WqA3MO8cLawTMkbQ8ql31YH7S/rI
+	slGUrEqHBtwzgStbP8mblgpgVs3sqAXfcPTe3D1jyYwNiZKnXBMwN3OqBB7/eP8zS2LfFEMyIZ4
+	d28AYLeSw/JeZ8owjL0WNnu2d4M3OgbIdH33oUV7PySpytONXqL+3wFlJj4NrnQHen9+GOp7x6A
+	=
+X-Received: by 2002:a05:6a00:1acf:b0:77e:81fb:709d with SMTP id d2e1a72fcca58-780fce9ed1emr4640144b3a.16.1758828426884;
+        Thu, 25 Sep 2025 12:27:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMy6eOxzY8ypIS9vHQ/FKu9NN99OQ7DEYuKzsYPJuPA6rk37cVeqMdF6/e7OryjKzhbyy9Zg==
+X-Received: by 2002:a05:6a00:1acf:b0:77e:81fb:709d with SMTP id d2e1a72fcca58-780fce9ed1emr4640112b3a.16.1758828426419;
+        Thu, 25 Sep 2025 12:27:06 -0700 (PDT)
+Received: from [192.168.0.166] ([49.205.248.165])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c06ff4sm2500386b3a.86.2025.09.25.12.27.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 12:27:05 -0700 (PDT)
+Message-ID: <94f6754f-cc56-09c5-3730-3f36c22e4786@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 00:57:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922121818.654011-1-wangliang74@huawei.com>
- <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
- <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com> <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
-In-Reply-To: <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Thu, 25 Sep 2025 12:25:46 -0700
-X-Gm-Features: AS18NWBzBs30Kpj0VoFjpDJLTRb2ZjM8uVopnfW0zH1RkFfGm4UpJjsXE_5WI18
-Message-ID: <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com>
-Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
-To: Eric Dumazet <edumazet@google.com>
-Cc: Wang Liang <wangliang74@huawei.com>, alibuda@linux.alibaba.com, 
-	dust.li@linux.alibaba.com, sidraya@linux.ibm.com, wenjia@linux.ibm.com, 
-	mjambigi@linux.ibm.com, tonylu@linux.alibaba.com, guwen@linux.alibaba.com, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Eric Dumazet <edumazet@google.com>=
- wrote:
->
-> On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google=
-.com> wrote:
-> >
-> > Thanks Eric for CCing me.
-> >
-> > On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@google.c=
-om> wrote:
-> > >
-> > > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@huawe=
-i.com> wrote:
-> > > >
-> > > > The syzbot report a crash:
-> > > >
-> > > >   Oops: general protection fault, probably for non-canonical addres=
-s 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
-> > > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xde=
-ad4ead0000001f]
-> > > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 =
-PREEMPT(full)
-> > > >   Hardware name: Google Google Compute Engine/Google Compute Engine=
-, BIOS Google 08/18/2025
-> > > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-> > > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_di=
-ag.c:89
-> > > >   Call Trace:
-> > > >    <TASK>
-> > > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
-> > > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
-> > > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
-> > > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
-> > > >    netlink_dump_start include/linux/netlink.h:341 [inline]
-> > > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
-> > > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
-> > > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
-> > > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
-> > > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-> > > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
-> > > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
-> > > >    sock_sendmsg_nosec net/socket.c:714 [inline]
-> > > >    __sock_sendmsg net/socket.c:729 [inline]
-> > > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
-> > > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
-> > > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
-> > > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-> > > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > >    </TASK>
-> > > >
-> > > > The process like this:
-> > > >
-> > > >                (CPU1)              |             (CPU2)
-> > > >   ---------------------------------|-------------------------------
-> > > >   inet_create()                    |
-> > > >     // init clcsock to NULL        |
-> > > >     sk =3D sk_alloc()                |
-> > > >                                    |
-> > > >     // unexpectedly change clcsock |
-> > > >     inet_init_csk_locks()          |
-> > > >                                    |
-> > > >     // add sk to hash table        |
-> > > >     smc_inet_init_sock()           |
-> > > >       smc_sk_init()                |
-> > > >         smc_hash_sk()              |
-> > > >                                    | // traverse the hash table
-> > > >                                    | smc_diag_dump_proto
-> > > >                                    |   __smc_diag_dump()
-> > > >                                    |     // visit wrong clcsock
-> > > >                                    |     smc_diag_msg_common_fill()
-> > > >     // alloc clcsock               |
-> > > >     smc_create_clcsk               |
-> > > >       sock_create_kern             |
-> > > >
-> > > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpectedly =
-changed
-> > > > in inet_init_csk_locks(), because the struct smc_sock does not have=
- struct
-> > > > inet_connection_sock as the first member.
-> > > >
-> > > > Previous commit 60ada4fe644e ("smc: Fix various oops due to inet_so=
-ck type
-> > > > confusion.") add inet_sock as the first member of smc_sock. For pro=
-tocol
-> > > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of inet_so=
-ck is
-> > > > more appropriate.
-> >
-> > Why is INET_PROTOSW_ICSK necessary in the first place ?
-> >
-> > I don't see a clear reason because smc_clcsock_accept() allocates
-> > a new sock by smc_sock_alloc() and does not use inet_accept().
-> >
-> > Or is there any other path where smc_sock is cast to
-> > inet_connection_sock ?
->
-> What I saw in this code was a missing protection.
->
-> smc_diag_msg_common_fill() runs without socket lock being held.
->
-> I was thinking of this fix, but apparently syzbot still got crashes.
-
-Looking at the test result,
-
-https://syzkaller.appspot.com/x/report.txt?x=3D15944c7c580000
-KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000=
-001f]
-
-the top half of the address is SPINLOCK_MAGIC (0xdead4ead),
-so the type confusion mentioned in the commit message makes
-sense to me.
-
-$ pahole -C inet_connection_sock vmlinux
-struct inet_connection_sock {
-...
-    struct request_sock_queue  icsk_accept_queue;    /*   992    80 */
-
-$ pahole -C smc_sock vmlinux
-struct smc_sock {
-...
-    struct socket *            clcsock;              /*   992     8 */
-
-The option is 1) let inet_init_csk_locks() init inet_connection_sock
-or 2) avoid inet_init_csk_locks(), and I guess 2) could be better to
-avoid potential issues in IS_ICSK branches.
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 3/8] media: iris: Add support for multiple TZ CP configs
+Content-Language: en-US
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
+ <20250925-knp_video-v1-3-e323c0b3c0cd@oss.qualcomm.com>
+ <050b2cc8-ddbd-4a79-879e-4a2c9e7d95f0@oss.qualcomm.com>
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <050b2cc8-ddbd-4a79-879e-4a2c9e7d95f0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dP+rWeZb c=1 sm=1 tr=0 ts=68d5978b cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=AkZwv1uTgJSVxlfcUQlFCg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=i9OEk1DdV-OKGsAmNacA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: AAa-j2tiCkSoE0FHz3IpnnumpI3HpEvS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXwfe0wg8sheQJ
+ VgpoGwRP0eUxGYksbpOouy65qpUUnhzNtjSh6p10iSjA6YAmJStblcxj+JGFdIYqp3+dhav9uMP
+ GRNwCuH1Gh3/R9tkEE+9NovZ6AEjSl1CslN8Vq5J6/z3NmqbPqOnVt0mF3198yyNu14uFx48vXf
+ sOveOEO2yGd212ipNpF17T1vEtNW8dG87bIpv7QaJYeE5XaTGhUvAfm79wusPULZ45b9q8Idx79
+ Sfvy8v/EEWZ3aowvuJDvD1wdciWQLi4w8VrCoXwdG+fDAWeSQQm1C6h5j2qAIfteFmXX4T3mvUZ
+ /TFFP2X3xwpMSgM3PbE0n3hk1MyMip/TCa72tcAlNqAHdzf0dQzo1juuiweKAGbUbOSB0zxv2Xe
+ A/NEwMhsUaJiM9aS66AhiCVJJDNCpQ==
+X-Proofpoint-GUID: AAa-j2tiCkSoE0FHz3IpnnumpI3HpEvS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
 
->
-> diff --git a/net/smc/smc_close.c b/net/smc/smc_close.c
-> index 10219f55aad14d795dabe4331458bd1b73c22789..b6abd0efea22c0c9726090b5d=
-e60e648b86e09a0
-> 100644
-> --- a/net/smc/smc_close.c
-> +++ b/net/smc/smc_close.c
-> @@ -30,7 +30,8 @@ void smc_clcsock_release(struct smc_sock *smc)
->         mutex_lock(&smc->clcsock_release_lock);
->         if (smc->clcsock) {
->                 tcp =3D smc->clcsock;
-> -               smc->clcsock =3D NULL;
-> +               WRITE_ONCE(smc->clcsock, NULL);
-> +               synchronize_rcu();
->                 sock_release(tcp);
->         }
->         mutex_unlock(&smc->clcsock_release_lock);
-> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
-> index bf0beaa23bdb63edfe0c37515aa17a04bb648c08..069607c1db9aff76d1d4f23b4=
-7dfeb5177c433d8
-> 100644
-> --- a/net/smc/smc_diag.c
-> +++ b/net/smc/smc_diag.c
-> @@ -35,26 +35,32 @@ static struct smc_diag_dump_ctx
-> *smc_dump_context(struct netlink_callback *cb)
->  static void smc_diag_msg_common_fill(struct smc_diag_msg *r, struct sock=
- *sk)
->  {
->         struct smc_sock *smc =3D smc_sk(sk);
-> +       struct socket *clcsock;
->
->         memset(r, 0, sizeof(*r));
->         r->diag_family =3D sk->sk_family;
->         sock_diag_save_cookie(sk, r->id.idiag_cookie);
-> -       if (!smc->clcsock)
-> -               return;
-> -       r->id.idiag_sport =3D htons(smc->clcsock->sk->sk_num);
-> -       r->id.idiag_dport =3D smc->clcsock->sk->sk_dport;
-> -       r->id.idiag_if =3D smc->clcsock->sk->sk_bound_dev_if;
-> +
-> +       rcu_read_lock();
-> +       clcsock =3D READ_ONCE(smc->clcsock);
-> +       if (!clcsock)
-> +               goto unlock;
-> +       r->id.idiag_sport =3D htons(clcsock->sk->sk_num);
-> +       r->id.idiag_dport =3D clcsock->sk->sk_dport;
-> +       r->id.idiag_if =3D clcsock->sk->sk_bound_dev_if;
->         if (sk->sk_protocol =3D=3D SMCPROTO_SMC) {
-> -               r->id.idiag_src[0] =3D smc->clcsock->sk->sk_rcv_saddr;
-> -               r->id.idiag_dst[0] =3D smc->clcsock->sk->sk_daddr;
-> +               r->id.idiag_src[0] =3D clcsock->sk->sk_rcv_saddr;
-> +               r->id.idiag_dst[0] =3D clcsock->sk->sk_daddr;
->  #if IS_ENABLED(CONFIG_IPV6)
->         } else if (sk->sk_protocol =3D=3D SMCPROTO_SMC6) {
-> -               memcpy(&r->id.idiag_src, &smc->clcsock->sk->sk_v6_rcv_sad=
-dr,
-> -                      sizeof(smc->clcsock->sk->sk_v6_rcv_saddr));
-> -               memcpy(&r->id.idiag_dst, &smc->clcsock->sk->sk_v6_daddr,
-> -                      sizeof(smc->clcsock->sk->sk_v6_daddr));
-> +               memcpy(&r->id.idiag_src, &clcsock->sk->sk_v6_rcv_saddr,
-> +                      sizeof(clcsock->sk->sk_v6_rcv_saddr));
-> +               memcpy(&r->id.idiag_dst, &clcsock->sk->sk_v6_daddr,
-> +                      sizeof(clcsock->sk->sk_v6_daddr));
->  #endif
->         }
-> +unlock:
-> +       rcu_read_unlock();
->  }
+On 9/25/2025 2:31 PM, Konrad Dybcio wrote:
+> On 9/25/25 1:14 AM, Vikash Garodia wrote:
+>> vpu4 needs an additional configuration w.r.t CP regions. Make the CP
+>> configuration as array such that the multiple configuration can be
+>> managed per platform.
+>>
+>> Co-developed-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+>> Signed-off-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+>> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+>> ---
+> 
+> [...]
+> 
+>> -	ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
+>> -					     cp_config->cp_size,
+>> -					     cp_config->cp_nonpixel_start,
+>> -					     cp_config->cp_nonpixel_size);
+>> -	if (ret) {
+>> -		dev_err(core->dev, "protect memory failed\n");
+>> -		qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
+>> -		return ret;
+>> +	for (i = 0; i < core->iris_platform_data->tz_cp_config_data_size; i++) {
+>> +		cp_config = &core->iris_platform_data->tz_cp_config_data[i];
+>> +		ret = qcom_scm_mem_protect_video_var(cp_config->cp_start,
+>> +						     cp_config->cp_size,
+>> +						     cp_config->cp_nonpixel_start,
+>> +						     cp_config->cp_nonpixel_size);
+>> +		if (ret) {
+>> +			dev_err(core->dev, "protect memory failed\n");
+>> +			qcom_scm_pas_shutdown(core->iris_platform_data->pas_id);
+>> +			return ret;
+>> +		}
+>>  	}
+> 
+> Do we need to do any "un-protecting" when unrolling from an error?
+
+Not needed for unwinding part.
+
+Regards,
+Vikash
 
