@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-833113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28B5BA13FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:44:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783BFBA13F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F7C380C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8771B7BB9BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2233431DDA0;
-	Thu, 25 Sep 2025 19:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mq6jXjhe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F2631D396;
+	Thu, 25 Sep 2025 19:44:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E0531D74F;
-	Thu, 25 Sep 2025 19:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515ED319875
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829448; cv=none; b=GJgxwf9bAWeqVy5hrh43tx45w8cWXOLmheZFqHaCaua01Jm43rR6YeQWafYe4ukDbm7ZVTL56gU/07yM7vkkTQYcAMi3YsNjZy8MeKT+ubLdy5n7KaEiQb/5+hsAg/Xf86addNhTgPBdQmzs1A2Mm4c3sedCLumb4NVvNAJ5cqM=
+	t=1758829445; cv=none; b=EeJn4G+cboKPlbegTwIwIkdIChOaFnFCslomd/agsSmFZO51UiK3FJ6RYfIt2dxowAoE0oWWYf+cH3HVqqdT5uvE/zjRwOfTmsNocsG3FpH88cr/jt0UOei6lRvPBghJo5RB1X7HyIFRrfpmBKBXz7glBz0yg/o+8P532xTPPCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829448; c=relaxed/simple;
-	bh=UrNoezNBFaJZztyAmAxpBLPcnlcQ5iJ5bSlvrmLLqEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIqCKEwGZrl1DIHshvMyWtO9h0uO58n13TA7y4PzM7891aWVN1iYfh3chbG1EQO84kwrftukFhoD8zEdF7rqbYFhJcdKZhAzQApAkw9meIEC5Px7hS3gtEqLARlqXgdcNlPGpYRjl4Pt1rLLsyazQRuRDuSTkW0atJkGkaAjAx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mq6jXjhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499BDC4CEF7;
-	Thu, 25 Sep 2025 19:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758829447;
-	bh=UrNoezNBFaJZztyAmAxpBLPcnlcQ5iJ5bSlvrmLLqEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mq6jXjhe9sHXnCl/y6aXDAqKIhy8d4IVJPkwB6URy+qmuH1qcy1FpRHGl4RtNCOBC
-	 oqfffN9iyIdqUAAGapTRrpPStowk5uPZ688KT/4qCC05fl4/JUhjZvYQmqra881WkD
-	 JfZR74v1djWJV1mWgIasFLNc0CZHPsHTsYhz5Bi6rB17RHMTWrSDK/DZKVOTDY5sTL
-	 Cel8hTNbzk5+7yI9VPKEpz4YdWJYG3pYYKeC4UsG+Ukx8EzeZYS5fQP9QneT8pJpS3
-	 EYWLGDUBcsr2u00XTzCzXxIv9fu0PqRXzKXb/Yw08aagnZ8lL7pzmfXweJfy/lzooq
-	 C2kfBfkKs+vsw==
-Date: Thu, 25 Sep 2025 20:44:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" <linux-media@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: media: fsl,imx6q-vdoa: remove redundant
- ""
-Message-ID: <20250925-wing-accustom-250326a9698e@spud>
-References: <20250925193546.305036-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1758829445; c=relaxed/simple;
+	bh=EA61ik5Y30OAM7i1KnxnJQs7gbO7/nd1TZE8yqIwVfc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oX57A70rdHLupHOFzNkiuYTAONaVs5MjOJsJg3XA99jHAuHBs5WRg6zTwA0TxS3zhFTu1STUIJxwkQ64vmk75IUYPDnXPBhEB8+nRbByMqFq2rjWNw2YaHrqGMaTp+2l3yjAYoqNJ69VbKVsx6eXcQzN204imJlYj6unlx8Jfss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-893dd6dfe1fso163641039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:44:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758829443; x=1759434243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=344nvzD8AyYYWLikT07PUQKC+fnV26AQ5tIe0txvRKg=;
+        b=Tvw8W0lrlbuIwTCmscKl8MI0VIJ12cDe+BEatkeY1HFRJOsC6Tb1UZp4vkrnQZPU9s
+         NXir09pJyc21bnuWgQ3JRAl0SNFpbv1a9WMyZ5Q8DqOwGXS6xJpW/+fBXRwjcwTSatfV
+         SV9eIiSSGaL2GSFIIxOM51qMAbRDyW1NMQK7B1gAWNUboCCXUuTYzRM+sNOVzIqWufsH
+         mH9W1SwxbrGH8Pwe7hgTk8Cpk7voWZLsn/iQaB5CH9cS+vskjWgLL+EsGUKWt940QOgj
+         SG+ZbsCG8wPGeCIZFtTX2Pmsi6JU5AyJMOVYAfEKd2dNJxXXn8tmWS5Wd2fdK+Q8CNkk
+         KsmA==
+X-Gm-Message-State: AOJu0Yw+J33F/m80XGBTeYGpN1evl5z/V4CqP7EGCLxjxl8dv6wlxdO5
+	u67bCkqk1B1RxVWlGI/DlJmEsSCVwT0Y3rIq5ORfhcFmGagmJeYs1P32uj/Sw1Wf0mijj5YBr/q
+	DLTYEgC2sx1Xg9h8ZMKsT9vuYCzx/4fqN6vcB2qERu9821N8rpdZaxNDVqYI=
+X-Google-Smtp-Source: AGHT+IG4l9QKv+iNn5khYLLO9gghvhUBRklY9wlJUMBBXq3+iKMZ79cCmyb0agqRR3JlWu1B7SMUu71Fa9BnoJsVq6gW9gKcYVA9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nlhU1AayOf/rp+SO"
-Content-Disposition: inline
-In-Reply-To: <20250925193546.305036-1-Frank.Li@nxp.com>
+X-Received: by 2002:a05:6e02:b4a:b0:40b:db4:839b with SMTP id
+ e9e14a558f8ab-425955fce62mr57692135ab.5.1758829443470; Thu, 25 Sep 2025
+ 12:44:03 -0700 (PDT)
+Date: Thu, 25 Sep 2025 12:44:03 -0700
+In-Reply-To: <aNV1BSMAPsx_oKiH@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d59b83.050a0220.25d7ab.0063.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_bh
+From: syzbot <syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---nlhU1AayOf/rp+SO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reported-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
+Tested-by: syzbot+7a2ba6b7b66340cff225@syzkaller.appspotmail.com
 
---nlhU1AayOf/rp+SO
-Content-Type: application/pgp-signature; name="signature.asc"
+Tested on:
 
------BEGIN PGP SIGNATURE-----
+commit:         4ff71af0 Merge tag 'net-6.17-rc8' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a71d34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cf2d8760d8941fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=146ab4e2580000
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWbggAKCRB4tDGHoIJi
-0huUAQDSSuao0QlibS1EgDwm7Y79REVUJZg5kI27IzzjbhZx5gD/UIC2V6vcjOCV
-S0nAL4sJHGS5dFFBWZa7UTQ1Fpgb5gc=
-=d6TN
------END PGP SIGNATURE-----
-
---nlhU1AayOf/rp+SO--
+Note: testing is done by a robot and is best-effort only.
 
