@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-832397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21ADEB9F3D7
+	by mail.lfdr.de (Postfix) with ESMTPS id D5427B9F3DA
 	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31D419C742D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CAB19C6AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E13303CAA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D01303CA1;
 	Thu, 25 Sep 2025 12:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="riASQpJG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D342v1P5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451052FE587;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FEE2FE572;
 	Thu, 25 Sep 2025 12:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758803350; cv=none; b=VTcH4bUvkoWwu6IdiJYInWnz07bEwxc5N1qEueEY5iFMkjU6ej8jpqWE6diGDQTpsxWnkTn0mLcEIfMO6ap1doN/3BtbkbJVq+cXu6qnFvg4c6wbQ4tnvwaEb+S/aUXPJOg5BCjdBiF9Z6s/yzBNazZhJ1NuansFk0F1Z10J+GU=
+	t=1758803350; cv=none; b=qVwtAMVSATWxS6PyiwB1Wrj8zIE5cGTEDuVIhaK9A5NBcxCPurNnlnVJxQJjMuHymSTXcAibVa6qHxfxxOQxS88Qtcy0JCxw+9openzQqDFGTeHq/9nsXW5mSh6o7S5nTA2DBx6dSqsmMBz/kCPxIoPxgwO3MohFEC9dJJMrVkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758803350; c=relaxed/simple;
-	bh=+qVIO7AwdM51KcSgUJ5C+8PxZLq5jlAFoQ6FLS+O9nI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j2tIzMfS5pwNn4NSD5WSTOk4gZ094dBfKIfXff5VZQTr5UuawdiHb81jSkuewjvXx+/0yP+hMgX0aTHk2KBQ4lpUFyrf0N9Ur65tMvngwFeYInMt1iyT9IWiSIyuVEppdXyvgQKdY8DWk3a7nz0hmS969ffG0nVMupd+GCneJKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=riASQpJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE3AC4CEF0;
+	bh=Bg4I8IWbebGYccvxfcM2gwSUppOl4t3rWxBdtp5EX2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O9ooK8d6tgJbSinaXC4bm6bg3tpU7Yj5IbwhroDOY0Ue4xujlDNziyKCQAKVneGO2JchO1AoQYFZQwo4mTqzSkM6VY2WhspQBUjDLVRIt6fTLaX72KEZMWOS3dy7g9YZc0YBok3Q4kPySKm32x2DUyfWhCCekhKbGZW5ji6p/ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D342v1P5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36F5C4CEF5;
 	Thu, 25 Sep 2025 12:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758803349;
-	bh=+qVIO7AwdM51KcSgUJ5C+8PxZLq5jlAFoQ6FLS+O9nI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=riASQpJGiXd0jaMLViE6ocM+hNS5tTizapR7rCdZAF487Chz/Lo/5h1sPsfylcDr9
-	 bNA4wZ2MIPhcghREQeyC2XUlDxmN0d0ve7PxAtqbjW1IIrafUX3l+uNjGyUSGwaXed
-	 UdmnHV3jGxkc5VnSOfUZwB96WobRE6fGbeJoQCuJ4/WcXj5hLUkyKu/odr33UXiPQt
-	 h62gymMGvHcejQ9kJEYN2IaiKfu2CP29B0o3DZWZHN8IvBVvSTd5dxY/6sGhT2KdCd
-	 EfMHEPboNV4d6wBX+zr1StkGAcXVQ6dl37NnmYqLGn3LefLacMVznurQ+6rZLxgTAT
-	 bi+N4Ck4wBNTA==
+	bh=Bg4I8IWbebGYccvxfcM2gwSUppOl4t3rWxBdtp5EX2Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D342v1P5WEDp7o+QbJv112IaBx4ucrl/SzkxPhJN8FgrMeJxwsj9R5koHOleYHa3G
+	 67qJZvZB0qZPStMXFvMGzek8xmu6MOD/FE57TF9XRGe92y8Dcr3GThvrBhxpN4klsC
+	 7Eo+Swa+DsVz1EGvWpBGCDsFgQUfoObDZvSILzm6JDJT7bZlEcrmUdIbArIVOCmFgH
+	 DWBkOt1S1NuorQT/6LkIVU4O5tSUtWI5Udux6k81A4KVMQ5jQtSo7ujJXnUHrAPygp
+	 vKrFyHdv2i6P+pIBhRgW3MRX77nzFW2ArPgTBvHBvLYG+bw26g/fIOP/vHIOyv0unU
+	 sDPe2liF+Jn5A==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v1l5p-000000002rQ-21jE;
+	id 1v1l5q-000000002rS-1Atb;
 	Thu, 25 Sep 2025 14:29:02 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -59,11 +60,14 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Krishna Reddy <vdumpa@nvidia.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 00/14] iommu: fix device leaks
-Date: Thu, 25 Sep 2025 14:27:42 +0200
-Message-ID: <20250925122756.10910-1-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 01/14] iommu/apple-dart: fix device leak on of_xlate()
+Date: Thu, 25 Sep 2025 14:27:43 +0200
+Message-ID: <20250925122756.10910-2-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
+In-Reply-To: <20250925122756.10910-1-johan@kernel.org>
+References: <20250925122756.10910-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,42 +76,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series fixes device leaks in the iommu drivers, which pretty
-consistently failed to drop the reference taken by
-of_find_device_by_node() when looking up iommu platform devices.
+Make sure to drop the reference taken to the iommu platform device when
+looking up its driver data during of_xlate().
 
-Included are also a couple of related cleanups.
+Fixes: 46d1fb072e76 ("iommu/dart: Add DART iommu driver")
+Cc: stable@vger.kernel.org	# 5.15
+Cc: Sven Peter <sven@kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/iommu/apple-dart.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Johan
-
-
-Johan Hovold (14):
-  iommu/apple-dart: fix device leak on of_xlate()
-  iommu/qcom: fix device leak on of_xlate()
-  iommu/exynos: fix device leak on of_xlate()
-  iommu/ipmmu-vmsa: fix device leak on of_xlate()
-  iommu/mediatek: fix device leak on of_xlate()
-  iommu/mediatek: fix device leaks on probe()
-  iommu/mediatek: simplify dt parsing error handling
-  iommu/mediatek-v1: fix device leak on probe_device()
-  iommu/mediatek-v1: fix device leaks on probe()
-  iommu/mediatek-v1: add missing larb count sanity check
-  iommu/omap: fix device leaks on probe_device()
-  iommu/omap: simplify probe_device() error handling
-  iommu/sun50i: fix device leak on of_xlate()
-  iommu/tegra: fix device leak on probe_device()
-
- drivers/iommu/apple-dart.c              |  2 ++
- drivers/iommu/arm/arm-smmu/qcom_iommu.c | 10 +++-----
- drivers/iommu/exynos-iommu.c            |  9 +++----
- drivers/iommu/ipmmu-vmsa.c              |  2 ++
- drivers/iommu/mtk_iommu.c               | 33 +++++++++++++++++--------
- drivers/iommu/mtk_iommu_v1.c            | 28 +++++++++++++++++----
- drivers/iommu/omap-iommu.c              | 32 +++++++++++++++---------
- drivers/iommu/sun50i-iommu.c            |  2 ++
- drivers/iommu/tegra-smmu.c              |  5 ++--
- 9 files changed, 81 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+index 190f28d76615..1aa7c10262a8 100644
+--- a/drivers/iommu/apple-dart.c
++++ b/drivers/iommu/apple-dart.c
+@@ -790,6 +790,8 @@ static int apple_dart_of_xlate(struct device *dev,
+ 	struct apple_dart *cfg_dart;
+ 	int i, sid;
+ 
++	put_device(&iommu_pdev->dev);
++
+ 	if (args->args_count != 1)
+ 		return -EINVAL;
+ 	sid = args->args[0];
 -- 
 2.49.1
 
