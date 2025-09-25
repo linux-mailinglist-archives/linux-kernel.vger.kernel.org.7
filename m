@@ -1,238 +1,119 @@
-Return-Path: <linux-kernel+bounces-831934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFC4B9DEE7
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4238B9DEF1
 	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3436A383AB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 914F37ABED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 07:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EADE2E8B94;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F2F2D73B6;
 	Thu, 25 Sep 2025 07:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T60BQXtW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mNRwgtZM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuwG7TZt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BC7265CBB;
-	Thu, 25 Sep 2025 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BA52652AF
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758786966; cv=none; b=bsBU7yTLf8TmY85T6EvQc9g0ppENvOMfMxkoMI9MKXrWzL2ZJgmDT54pFGCL/zJpnYNh4A4oBNuX2kjPVvrZTg7XcG0Ju9kNMjfbj0kUhO9rkGL9V63YpZnLDrrcYJEPu/KTtEuL0anBiIxea+oCSv/2dhrU5Vl4S6zSm14X9ic=
+	t=1758786966; cv=none; b=lpCFtQRd3XoxJOXvwWCHonSzzXN2EcIqnd4cwfpA1BT4G/GHcFVMJWRuc4hT2amDPkrRW/iLX4EOi7C1Rztp4obv/ODFJYBqBqG30xH9lsCxFClWmV+T/v6vQGXhyY1D/4VJVS1tYPNMSncfqFsMqjDFx7FAFJ8o9M13SyhVGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758786966; c=relaxed/simple;
-	bh=D4J9s7QIL3AsZCZrapl8ew7Ezn82rbAYZ2a3SuR9DuI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DBf/12PiTt2H28MZe9zLPOy2upp+C9OzvgRANWK6RDyGVHWQJHnNb3yvJVKUYM0s75SUBKZLk88+1iP584PMFTB4h6IQJnxIsVyleS5lWRR/+EsJS7sHe6diCMMVZl5Vxasb9TkTAQTWcrjjF4iL3ZCw5GMkNH6/ZunbSwHvFOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T60BQXtW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mNRwgtZM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 25 Sep 2025 07:55:51 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758786956;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3geGu4Wj097Gx6j6IJpzDEdbIfvxlcKAtNwJPRJ0pLI=;
-	b=T60BQXtWK8lnADmhr3HJ2yEyXXZcqRhc1YKLUrOrk0CC6REvvObObD1fJyGvyqUxGm7RMc
-	Zapp/x93NMtU5O1nyAcwdFEJN2oMz/s6pMwNmOAUNptXNyNy1czrQK+7D3DNEXfmhBBALX
-	bYSaLY340tVsQYRGbLOkE/og8uxC7ouNgXIuZk7SlUHb8jmrzCsUDi5V9MMqRWKF/DZKtt
-	Dvf/nlPhhFtPpMbnDrQeFAPjvC2hT1IeeD4MyLeNLh/5erwyaCXLX3YQsygV9qwRm+r4Xf
-	pVwkOL4sQ68IT60UNLflOEgDoq31Oi6r6SgWaj1d+XLdGGjB/3kKUMX9IjbUXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758786956;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3geGu4Wj097Gx6j6IJpzDEdbIfvxlcKAtNwJPRJ0pLI=;
-	b=mNRwgtZMrENw3A6+opT8PylZ8BFDzd7iq4fb5qPgqfF/zMxuF6GqmPYaXzp9agEEnThwnv
-	tQvUiv+GudPPugBw==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/deadline: Fix dl_server behaviour
-Cc: John Stultz <jstultz@google.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
-References: <20250917122616.GG1386988@noisy.programming.kicks-ass.net>
+	bh=iNOrlSv+UnH9YXYGgLh4d5QBAGujb/M/E8kWZNFFdKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZ1bBrp88Oxvq3tVTa/OSmdw6bcwWOJ8XbUG+gbOSmmSv+atIRxd9hUeGM0l4fUxXftI/0IIcxVPV4hOaSQVdEIp33OmQC4H35eWRpblhiYGnIDUR8eQqfeIEdUIlfZq0nEgHU/cIYxEB6mGMfrd8Scq4nA5ltqG0HKwCyN8G+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuwG7TZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08348C19421
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758786966;
+	bh=iNOrlSv+UnH9YXYGgLh4d5QBAGujb/M/E8kWZNFFdKw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TuwG7TZtZyhUdJWz7gyJ+1ze0T9iGppwI7ERgAxVpl6yLlnuQ7tiMNfXQLiOXdTq8
+	 e+RTNIgyC5wC7xnhIIGbZcFFyHDT1qEOFtnFNVXV9OBimONwiRJfVUYxr0mfS+0egS
+	 qPr/LwJw1ykVN0Lq8Tasr2rg30jxbjgQnE9+aRud7C2VZFxeBsOlBuW2PrnDFecm3J
+	 mHd+3vcG3qtKHqSFs6N7efrBWKp6htN4nD8kVp7GUCj5g6WwFFYA+moa/3KfI1tmyV
+	 TjoCNDLmFHyIX4wM9N7d4Y2fXC9jpaz/OPCsfq+vOJ6hcOXmqF9QJP2XuniChXRbEb
+	 Mkvtqh5TzBjiA==
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-244580523a0so7837985ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 00:56:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXcxVNzHN5DMZFSGZ7Tp2pU21bAjvNoEp0vKY/nufgNk3s4qTKc3GUUjSVODKZ6JVe9LtowsnnVIFPEJhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVFiTvKmjZn/re3WkParFYM5aVQ055jPPRzcBd1G8iwIzpG/2V
+	a6+hS6JF9afdZ3jF5SS9+w8mGvfSjRoN0+tMJ4Xn7i/7GGdSIGWg1WLk6XwTYJFwFCcTMZ0cJ0G
+	7gxcQ+Yh3BW+vF9mGt56zr6QtdQ6nUuI=
+X-Google-Smtp-Source: AGHT+IGwiFpqHmhXAhBBFAso/lUytZrxuoUy4+24dMkBcof4Rt456e4kjJjM/KaUSq35uvSNF6sG9ZpMzxNTEoW2FNA=
+X-Received: by 2002:a17:903:32c3:b0:267:e3af:ae67 with SMTP id
+ d9443c01a7336-27ed49d2f64mr28324145ad.14.1758786965578; Thu, 25 Sep 2025
+ 00:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175878695126.709179.2478529191908747938.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v2-13-8e1533a58d2d@oss.qualcomm.com>
+In-Reply-To: <20250925-v3_glymur_introduction-v2-13-8e1533a58d2d@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 25 Sep 2025 16:55:53 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPfCFS4UDbN_SejG=zJt1Dt_mtz_p_+MGAaEr5SpK3ydRw@mail.gmail.com>
+X-Gm-Features: AS18NWDm7SJn3zsL3AKVzt-6BJJFQvrAi-FrGgXNCkiSPvbpCGZr-N3-JKzjofA
+Message-ID: <CAJKOXPfCFS4UDbN_SejG=zJt1Dt_mtz_p_+MGAaEr5SpK3ydRw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/24] arm64: dts: qcom: Update pmh0104 dtsi for Glymur CRD
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the sched/urgent branch of tip:
+On Thu, 25 Sept 2025 at 15:29, Pankaj Patil
+<pankaj.patil@oss.qualcomm.com> wrote:
+>
+> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>
+> Update the pmh0104.dtsi to include multiple instances of PMH0104
+> DT nodes, one for each SID assigned to this PMIC on the spmi_bus0
+> and spmi_bus1 in Glymur CRD board.
+>
+> Take care to avoid compilation issue with the existing nodes by
+> gaurding each PMH0104 nodes with `#ifdef` for its corresponding
+> SID macro. So that only the nodes which have the their SID macro
+> defined are the only ones picked for compilation.
+>
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/pmh0104.dtsi | 84 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/pmh0104.dtsi b/arch/arm64/boot/dts/qcom/pmh0104.dtsi
+> index f5393fdebe957ea0caf4bbc16117374b4759bda3..d3ea7486d842ec813a79268fc1466e1513426d78 100644
+> --- a/arch/arm64/boot/dts/qcom/pmh0104.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pmh0104.dtsi
+> @@ -6,7 +6,63 @@
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/spmi/spmi.h>
+>
+> +&spmi_bus0 {
+> +#ifdef PMH0104_I_E0_SID
 
-Commit-ID:     a3a70caf7906708bf9bbc80018752a6b36543808
-Gitweb:        https://git.kernel.org/tip/a3a70caf7906708bf9bbc80018752a6b365=
-43808
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 17 Sep 2025 12:03:20 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 25 Sep 2025 09:51:50 +02:00
 
-sched/deadline: Fix dl_server behaviour
+NAK
 
-John reported undesirable behaviour with the dl_server since commit:
-cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling").
+I'm surprised you decided to ignore all existing discussions and my
+clear point in this.
 
-When starving fair tasks on purpose (starting spinning FIFO tasks),
-his fair workload, which often goes (briefly) idle, would delay fair
-invocations for a second, running one invocation per second was both
-unexpected and terribly slow.
+This is neither readable, nor maintainable.
 
-The reason this happens is that when dl_se->server_pick_task() returns
-NULL, indicating no runnable tasks, it would yield, pushing any later
-jobs out a whole period (1 second).
+Please join community in discussing this, instead of coming with
+another invention which I already said is poor.
 
-Instead simply stop the server. This should restore behaviour in that
-a later wakeup (which restarts the server) will be able to continue
-running (subject to the CBS wakeup rules).
-
-Notably, this does not re-introduce the behaviour cccb45d7c4295 set
-out to solve, any start/stop cycle is naturally throttled by the timer
-period (no active cancel).
-
-Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
-Reported-by: John Stultz <jstultz@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: John Stultz <jstultz@google.com>
----
- include/linux/sched.h   |  1 -
- kernel/sched/deadline.c | 23 ++---------------------
- kernel/sched/sched.h    | 33 +++++++++++++++++++++++++++++++--
- 3 files changed, 33 insertions(+), 24 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f89313b..e4ce0a7 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -706,7 +706,6 @@ struct sched_dl_entity {
- 	unsigned int			dl_defer	  : 1;
- 	unsigned int			dl_defer_armed	  : 1;
- 	unsigned int			dl_defer_running  : 1;
--	unsigned int			dl_server_idle    : 1;
-=20
- 	/*
- 	 * Bandwidth enforcement timer. Each -deadline task has its
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 5a5080b..72c1f72 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1571,10 +1571,8 @@ void dl_server_update_idle_time(struct rq *rq, struct =
-task_struct *p)
- void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
- {
- 	/* 0 runtime =3D fair server disabled */
--	if (dl_se->dl_runtime) {
--		dl_se->dl_server_idle =3D 0;
-+	if (dl_se->dl_runtime)
- 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
--	}
- }
-=20
- void dl_server_start(struct sched_dl_entity *dl_se)
-@@ -1602,20 +1600,6 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
- 	dl_se->dl_server_active =3D 0;
- }
-=20
--static bool dl_server_stopped(struct sched_dl_entity *dl_se)
--{
--	if (!dl_se->dl_server_active)
--		return true;
--
--	if (dl_se->dl_server_idle) {
--		dl_server_stop(dl_se);
--		return true;
--	}
--
--	dl_se->dl_server_idle =3D 1;
--	return false;
--}
--
- void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
- 		    dl_server_pick_f pick_task)
- {
-@@ -2384,10 +2368,7 @@ again:
- 	if (dl_server(dl_se)) {
- 		p =3D dl_se->server_pick_task(dl_se);
- 		if (!p) {
--			if (!dl_server_stopped(dl_se)) {
--				dl_se->dl_yielded =3D 1;
--				update_curr_dl_se(rq, dl_se, 0);
--			}
-+			dl_server_stop(dl_se);
- 			goto again;
- 		}
- 		rq->dl_server =3D dl_se;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index f10d627..cf2109b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -371,10 +371,39 @@ extern s64 dl_scaled_delta_exec(struct rq *rq, struct s=
-ched_dl_entity *dl_se, s6
-  *   dl_server_update() -- called from update_curr_common(), propagates runt=
-ime
-  *                         to the server.
-  *
-- *   dl_server_start()
-- *   dl_server_stop()  -- start/stop the server when it has (no) tasks.
-+ *   dl_server_start() -- start the server when it has tasks; it will stop
-+ *			  automatically when there are no more tasks, per
-+ *			  dl_se::server_pick() returning NULL.
-+ *
-+ *   dl_server_stop() -- (force) stop the server; use when updating
-+ *                       parameters.
-  *
-  *   dl_server_init() -- initializes the server.
-+ *
-+ * When started the dl_server will (per dl_defer) schedule a timer for its
-+ * zero-laxity point -- that is, unlike regular EDF tasks which run ASAP, a
-+ * server will run at the very end of its period.
-+ *
-+ * This is done such that any runtime from the target class can be accounted
-+ * against the server -- through dl_server_update() above -- such that when =
-it
-+ * becomes time to run, it might already be out of runtime and get deferred
-+ * until the next period. In this case dl_server_timer() will alternate
-+ * between defer and replenish but never actually enqueue the server.
-+ *
-+ * Only when the target class does not manage to exhaust the server's runtime
-+ * (there's actualy starvation in the given period), will the dl_server get =
-on
-+ * the runqueue. Once queued it will pick tasks from the target class and run
-+ * them until either its runtime is exhaused, at which point its back to
-+ * dl_server_timer, or until there are no more tasks to run, at which point
-+ * the dl_server stops itself.
-+ *
-+ * By stopping at this point the dl_server retains bandwidth, which, if a new
-+ * task wakes up imminently (starting the server again), can be used --
-+ * subject to CBS wakeup rules -- without having to wait for the next period.
-+ *
-+ * Additionally, because of the dl_defer behaviour the start/stop behaviour =
-is
-+ * naturally thottled to once per period, avoiding high context switch
-+ * workloads from spamming the hrtimer program/cancel paths.
-  */
- extern void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec);
- extern void dl_server_start(struct sched_dl_entity *dl_se);
+Best regards,
+Krzysztof
 
