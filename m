@@ -1,140 +1,60 @@
-Return-Path: <linux-kernel+bounces-832489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C484B9F75F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:12:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D609FB9F714
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45B21C20F44
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D02F38696A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9DB221558;
-	Thu, 25 Sep 2025 13:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BC22135AD;
+	Thu, 25 Sep 2025 13:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="CRz+5vlS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FQR7fv2h"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EA7224893
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B403E20B81B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758805954; cv=none; b=chX/JgnUR2gOrT3mtmJPTWWB021HQOACmw/5R1d117k/2fvAsPn7ihE1enRpxjpOQpwYhelj6m5629FN7g47lUBrr7XQOCU0pi0NL+PVU7zN88TPGVafKIu9SHrpnfQF2GeMepEo78gjCXMKguDKzR039eTYFN3m/DnKM6rHVZI=
+	t=1758805876; cv=none; b=sr8gWuOwYg5Zn+Ojk2vZx/l603wbTsiqpli4gVc9s2+haKyh6f/Ye3UFJ6DfV5VPg7AoG0JYZ+hBggUaLOxXKbIiXS4BwAAL7xYd3fivfQLWmSyMOYR+vWMYqy/jpv+z+l1bzEubnQkdJKfwmn5wd7TLi99s1UU37hP+qcaBphw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758805954; c=relaxed/simple;
-	bh=9AXpZB1bwcU/tOfhENucqnGAndFUojEuOkjiz/Zv4RQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gEdzbcP6MaKxwR36aMg2vh5L9O3NrrfvUqeEEOyaSUO2fGEaRSe6cEFrqPMboXhl3PRvSgSfwqwSVqeEk+t66En4zO5hU3W5uq1sORsnj8y0U3sEA3YsFimH+hdFp6JCxUVHj8swT/DmoHXBYIr0CCoGcDfUPwiFQl0tmnzMdw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=CRz+5vlS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1232680f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1758805948; x=1759410748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NfJVwYFcsQ06QJkEnurciWiF3KgCM9rgqn4VVbABEtQ=;
-        b=CRz+5vlS551m+/ibrrRNCR05aMB/XHm006u7vorJTWL8KnZICEOAUANVKfnYA17O6n
-         CNSPshs989BTySJxhVJjDQVgMGaKDdMiH3CECJdyi/M1fe2VRT3raSjIKb/Hlvwh7G6v
-         JeK6qKCSPjuD07vK1RwG2F5a4t5BpVDGoO8/gxEqKiTZfKvqJWXcWT9pTCarqVnQsLHE
-         5ucPrcXT5w4T3QmqA0pfGPahpuB/tMMPUBNHICg7bBcyx9MvrPir/Z3ASpVDEUZRuat+
-         Emr0AO0ruL/nGstrHje868zLQxrrGECkqEwR4Q0rk20LDfrLBaIEK7TCh5xcMBb3bFRm
-         o72A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758805948; x=1759410748;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NfJVwYFcsQ06QJkEnurciWiF3KgCM9rgqn4VVbABEtQ=;
-        b=SUzySInDM+bkvOjnF+oRJKPxkmRqtk0xnXQFYixBCGjGF23vDBPDZvVyJa9cXooEvc
-         t0/IWxHiHjKcztstq6pCopBXhaBbA4Mn+3DIFC08ySor5JgJx2QAM9FRpXTiG5JmZbMU
-         /tr22WJVBDjvoJB9JavF5ti7jYcyRruC+XhOoxGyhMhm0wjqIAt5V4yRGtSjTkcUXlyr
-         wqT1N1L0bAt+KU2d9biiKUY8Us1dhOi0inxr8lyg7po/Z2VnkdUqT9JcoGw+GSebcptN
-         eO0QsT0KOKMIeSSKhM33kWOAnFwijO4zHH2QM57LrGsHLr8xnT1jUnOTyauknBQM7NZu
-         6kPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEx4GvjRgISr3GLrtJ4/tHmdIFK1bF1XlStXhtU36sH+tJGLLLQ7YQyG820uu8QMOV7DZDUtZe3coL4VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOhSCWdZ7zaZYM6zDbS6N1XOOXNZO8n7O7oRXvpI7cqT/H0fI0
-	EYxTOm1DAeUX/YSd9LSBvxPL0LczQF2jb4y1ntkuk3NBTvZvmQxfdfkBIVP8nUbypBM=
-X-Gm-Gg: ASbGnct+cvqrqM6vgCEouJeYJFCTCg5Qybnv/7wxvTZOT/roIzmaQZVjRS9MRDdLrCb
-	KXxvGIz5gaEb/aIG7psufbZAJl1JD570cZhqH6QvFICnFzk0+pe/nrps3CQd1k3O1rknliC9ibO
-	4Ee4SJighSlHD/XKjXXSuHDYhkm//fgj5iWfzM088Ab8nls39cDdrKuFlrAnJkVNiBQEzd0yZe2
-	JNOMxzMI/GywKD94qv1ZpF8BZElx18CbhY8ymxlibuPGVixBqHvwjBXWMvNI+HqabhIDKVLpzSa
-	jXd6eqR9oNaQ4qPoVbn5FWIlXkxTW0ct3kZLOikmY6jy2IN4WF6v+aFhc8nOaHEz1OeZe3QOiiF
-	VORdJg//bUYc5Iv7aQxsC5N0zue5BNhli5bdG0jA9FK4+MaSrGw==
-X-Google-Smtp-Source: AGHT+IGfEDsgYy1Y3V7mn/9vw12xwbotyOf9S0qvgxiLF/dTs1GE6jSNXI03j1w/2hgZi5tVGzAx+Q==
-X-Received: by 2002:a05:6000:290e:b0:3fc:cbfc:fbee with SMTP id ffacd0b85a97d-40f65bbb807mr2115268f8f.19.1758805948078;
-        Thu, 25 Sep 2025 06:12:28 -0700 (PDT)
-Received: from daria.iliad.local (freebox.vlq16.iliad.fr. [213.36.7.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bef4b4sm32929635e9.20.2025.09.25.06.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 06:12:27 -0700 (PDT)
-From: nschichan@freebox.fr
-To: nschichan@freebox.fr
-Cc: akpm@linux-foundation.org,
-	andy.shevchenko@gmail.com,
-	axboe@kernel.dk,
-	brauner@kernel.org,
-	cyphar@cyphar.com,
-	devicetree@vger.kernel.org,
-	ecurtin@redhat.com,
-	email2tema@gmail.com,
-	graf@amazon.com,
-	gregkh@linuxfoundation.org,
-	hca@linux.ibm.com,
-	hch@lst.de,
-	hsiangkao@linux.alibaba.com,
-	initramfs@vger.kernel.org,
-	jack@suse.cz,
-	julian.stecklina@cyberus-technology.de,
-	kees@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org,
-	linux-csky@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	mcgrof@kernel.org,
-	mingo@redhat.com,
-	monstr@monstr.eu,
-	mzxreary@0pointer.de,
-	patches@lists.linux.dev,
-	rob@landley.net,
-	safinaskar@gmail.com,
-	sparclinux@vger.kernel.org,
-	thomas.weissschuh@linutronix.de,
-	thorsten.blum@linux.dev,
-	torvalds@linux-foundation.org,
-	tytso@mit.edu,
-	viro@zeniv.linux.org.uk,
-	x86@kernel.org
-Subject: [PATCH-RFC] init: simplify initrd code (was Re: [PATCH RESEND 00/62] initrd: remove classic initrd support).
-Date: Thu, 25 Sep 2025 15:10:56 +0200
-Message-Id: <20250925131055.3933381-1-nschichan@freebox.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
-References: <CAHNNwZC7gC7zaZGiSBhobSAb4m2O1BuoZ4r=SQBF-tCQyuAPvw@mail.gmail.com>
+	s=arc-20240116; t=1758805876; c=relaxed/simple;
+	bh=WJv5Eq0qCMWoipcJUgsMu7XSZzVR3ArKXOoPCDu7V80=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PdtMxZuj1csPLxQhgADQSoMTIfxyf4eHmemgjj3ROxHKGVHOliIM6RVRMz9z2mQflBIisVAtkJKcy/awb8htnSZL1uiO+1sIsWkb5NMoiN45+CBbnMuSrVAUhpzBc7PqDEmds2w7RHUsBLIxQy6I+QiXeefb5l4imHJfbRUwn4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FQR7fv2h; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758805871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ue6d9AWosO538ctf573qTQxzGRvZd0EoaQR7srTD63g=;
+	b=FQR7fv2h4f/vZyJoJDJy2hsyKkMzo6fh3ummxVaj07VMKKpr8Kc/z9L/j5zhTw+EU+Vflu
+	s87Hb4Ep9Ju6vFbCekKhXhqP4lTEiggauWpAMe8SeUnnGzzCDFqts9bEmKUDzX1T6U7VHp
+	5YwBO9HbRiMDSA1Sj2vmtm41Xyv/rf8=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: netdev@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v1] tcp: fix spurious RST during three-way handshake
+Date: Thu, 25 Sep 2025 21:11:00 +0800
+Message-ID: <20250925131102.386488-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -142,355 +62,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Nicolas Schichan <nschichan@freebox.fr>
+When the server receives the final ACK of the three-way handshake,
+tcp_v4_syn_recv_sock::inet_ehash_nolisten::inet_ehash_insert() first
+removes the request_sock from the ehash bucket and then inserts the
+newly created child sock. This creates a race window where the first
+incoming data packet from the client can fail to find either an
+ESTABLISHED or SYN_RECV socket, causing the server to send a spurious RST.
 
-- drop prompt_ramdisk and ramdisk_start kernel parameters
-- drop compression support
-- drop image autodetection, the whole /initrd.image content is now
-  copied into /dev/ram0
-- remove rd_load_disk() which doesn't seem to be used anywhere.
+The root cause is the lockless lookup in __inet_lookup_established(). A
+concurrent lookup operation may not find any valid socket during the brief
+period between the removal of the request_sock and the insertion of the
+child sock.
 
-There is now no more limitation on the type of initrd filesystem that
-can be loaded since the code trying to guess the initrd filesystem
-size is gone (the whole /initrd.image file is used).
+To fix this and keep lockless lookup, we need:
+1. Insert the child sock into the ehash bucket first.
+2. Then remove the request_sock.
 
-A few global variables in do_mounts_rd.c are now put as local
-variables in rd_load_image() since they do not need to be visible
-outside this function.
+This ensures the bucket is never left empty during the transition.
+
+The original inet_ehash_insert() logic first attempted to remove osk,
+inserting sk only upon successful removal. We changed this to:
+check for osk's existence first. If present, insert sk before removing osk
+(ensuring the bucket isn't empty). If osk is absent, take no action. This
+maintains the original function's intent while eliminating the window where
+the hashtable bucket is empty.
+
+Both sockets briefly coexist in the bucket. During this short window, new
+lookups correctly find the child socket. For a packet that has already
+started its lookup and finds the lingering request_sock, this is also safe
+because inet_csk_complete_hashdance() contains the necessary checks to
+prevent the creation of multiple child sockets for the same connection.
+
+Fixes: 079096f103fac ("tcp/dccp: install syn_recv requests into ehash table")
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
 ---
+ include/net/inet_hashtables.h   |  5 +++--
+ net/ipv4/inet_connection_sock.c |  4 ++--
+ net/ipv4/inet_hashtables.c      | 31 ++++++++++++++++++++++++++-----
+ net/ipv4/tcp_ipv4.c             |  2 +-
+ net/ipv6/tcp_ipv6.c             |  2 +-
+ 5 files changed, 33 insertions(+), 11 deletions(-)
 
-Hello,
-
-Hopefully my email config is now better and reaches gmail users
-correctly.
-
-The patch below could probably split in a few patches, but I think
-this simplify the code greatly without removing the functionality we
-depend on (and this allows now to use EROFS initrd images).
-
-Coupled with keeping the function populate_initrd_image() in
-init/initramfs.c, this will keep what we need from the initrd code.
-
-This removes support of loading bzip/gz/xz/... compressed images as
-well, not sure if many user depend on this feature anymore.
-
-No signoff because I'm only seeking comments about those changes right
-now.
-
- init/do_mounts.h    |   2 -
- init/do_mounts_rd.c | 243 +-------------------------------------------
- 2 files changed, 4 insertions(+), 241 deletions(-)
-
-diff --git a/init/do_mounts.h b/init/do_mounts.h
-index 6069ea3eb80d..c0028ee3cff6 100644
---- a/init/do_mounts.h
-+++ b/init/do_mounts.h
-@@ -24,12 +24,10 @@ static inline __init int create_dev(char *name, dev_t dev)
+diff --git a/include/net/inet_hashtables.h b/include/net/inet_hashtables.h
+index ac05a52d9e13..e70415a74ebc 100644
+--- a/include/net/inet_hashtables.h
++++ b/include/net/inet_hashtables.h
+@@ -288,9 +288,10 @@ void inet_hashinfo2_init(struct inet_hashinfo *h, const char *name,
+ 			 unsigned long high_limit);
+ int inet_hashinfo2_init_mod(struct inet_hashinfo *h);
  
- #ifdef CONFIG_BLK_DEV_RAM
+-bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk);
++bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk,
++		       bool add_first);
+ bool inet_ehash_nolisten(struct sock *sk, struct sock *osk,
+-			 bool *found_dup_sk);
++			 bool *found_dup_sk, bool add_first);
+ int inet_hash(struct sock *sk);
+ void inet_unhash(struct sock *sk);
  
--int __init rd_load_disk(int n);
- int __init rd_load_image(char *from);
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+index cdd1e12aac8c..b52797ab5cea 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -1135,7 +1135,7 @@ static void reqsk_timer_handler(struct timer_list *t)
+ 		if (!nreq)
+ 			return;
  
- #else
- 
--static inline int rd_load_disk(int n) { return 0; }
- static inline int rd_load_image(char *from) { return 0; }
- 
- #endif
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa..5a69ff43f5ee 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -14,173 +14,9 @@
- 
- #include <linux/decompress/generic.h>
- 
--static struct file *in_file, *out_file;
--static loff_t in_pos, out_pos;
--
--static int __init prompt_ramdisk(char *str)
--{
--	pr_warn("ignoring the deprecated prompt_ramdisk= option\n");
--	return 1;
--}
--__setup("prompt_ramdisk=", prompt_ramdisk);
--
--int __initdata rd_image_start;		/* starting block # of image */
--
--static int __init ramdisk_start_setup(char *str)
--{
--	rd_image_start = simple_strtol(str,NULL,0);
--	return 1;
--}
--__setup("ramdisk_start=", ramdisk_start_setup);
--
--static int __init crd_load(decompress_fn deco);
--
--/*
-- * This routine tries to find a RAM disk image to load, and returns the
-- * number of blocks to read for a non-compressed image, 0 if the image
-- * is a compressed image, and -1 if an image with the right magic
-- * numbers could not be found.
-- *
-- * We currently check for the following magic numbers:
-- *	minix
-- *	ext2
-- *	romfs
-- *	cramfs
-- *	squashfs
-- *	gzip
-- *	bzip2
-- *	lzma
-- *	xz
-- *	lzo
-- *	lz4
-- */
--static int __init
--identify_ramdisk_image(struct file *file, loff_t pos,
--		decompress_fn *decompressor)
--{
--	const int size = 512;
--	struct minix_super_block *minixsb;
--	struct romfs_super_block *romfsb;
--	struct cramfs_super *cramfsb;
--	struct squashfs_super_block *squashfsb;
--	int nblocks = -1;
--	unsigned char *buf;
--	const char *compress_name;
--	unsigned long n;
--	int start_block = rd_image_start;
--
--	buf = kmalloc(size, GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
--
--	minixsb = (struct minix_super_block *) buf;
--	romfsb = (struct romfs_super_block *) buf;
--	cramfsb = (struct cramfs_super *) buf;
--	squashfsb = (struct squashfs_super_block *) buf;
--	memset(buf, 0xe5, size);
--
--	/*
--	 * Read block 0 to test for compressed kernel
--	 */
--	pos = start_block * BLOCK_SIZE;
--	kernel_read(file, buf, size, &pos);
--
--	*decompressor = decompress_method(buf, size, &compress_name);
--	if (compress_name) {
--		printk(KERN_NOTICE "RAMDISK: %s image found at block %d\n",
--		       compress_name, start_block);
--		if (!*decompressor)
--			printk(KERN_EMERG
--			       "RAMDISK: %s decompressor not configured!\n",
--			       compress_name);
--		nblocks = 0;
--		goto done;
--	}
--
--	/* romfs is at block zero too */
--	if (romfsb->word0 == ROMSB_WORD0 &&
--	    romfsb->word1 == ROMSB_WORD1) {
--		printk(KERN_NOTICE
--		       "RAMDISK: romfs filesystem found at block %d\n",
--		       start_block);
--		nblocks = (ntohl(romfsb->size)+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
--		goto done;
--	}
--
--	if (cramfsb->magic == CRAMFS_MAGIC) {
--		printk(KERN_NOTICE
--		       "RAMDISK: cramfs filesystem found at block %d\n",
--		       start_block);
--		nblocks = (cramfsb->size + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
--		goto done;
--	}
--
--	/* squashfs is at block zero too */
--	if (le32_to_cpu(squashfsb->s_magic) == SQUASHFS_MAGIC) {
--		printk(KERN_NOTICE
--		       "RAMDISK: squashfs filesystem found at block %d\n",
--		       start_block);
--		nblocks = (le64_to_cpu(squashfsb->bytes_used) + BLOCK_SIZE - 1)
--			 >> BLOCK_SIZE_BITS;
--		goto done;
--	}
--
--	/*
--	 * Read 512 bytes further to check if cramfs is padded
--	 */
--	pos = start_block * BLOCK_SIZE + 0x200;
--	kernel_read(file, buf, size, &pos);
--
--	if (cramfsb->magic == CRAMFS_MAGIC) {
--		printk(KERN_NOTICE
--		       "RAMDISK: cramfs filesystem found at block %d\n",
--		       start_block);
--		nblocks = (cramfsb->size + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
--		goto done;
--	}
--
--	/*
--	 * Read block 1 to test for minix and ext2 superblock
--	 */
--	pos = (start_block + 1) * BLOCK_SIZE;
--	kernel_read(file, buf, size, &pos);
--
--	/* Try minix */
--	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
--	    minixsb->s_magic == MINIX_SUPER_MAGIC2) {
--		printk(KERN_NOTICE
--		       "RAMDISK: Minix filesystem found at block %d\n",
--		       start_block);
--		nblocks = minixsb->s_nzones << minixsb->s_log_zone_size;
--		goto done;
--	}
--
--	/* Try ext2 */
--	n = ext2_image_size(buf);
--	if (n) {
--		printk(KERN_NOTICE
--		       "RAMDISK: ext2 filesystem found at block %d\n",
--		       start_block);
--		nblocks = n;
--		goto done;
--	}
--
--	printk(KERN_NOTICE
--	       "RAMDISK: Couldn't find valid RAM disk image starting at %d.\n",
--	       start_block);
--
--done:
--	kfree(buf);
--	return nblocks;
--}
--
- static unsigned long nr_blocks(struct file *file)
+-		if (!inet_ehash_insert(req_to_sk(nreq), req_to_sk(oreq), NULL)) {
++		if (!inet_ehash_insert(req_to_sk(nreq), req_to_sk(oreq), NULL, false)) {
+ 			/* delete timer */
+ 			__inet_csk_reqsk_queue_drop(sk_listener, nreq, true);
+ 			goto no_ownership;
+@@ -1172,7 +1172,7 @@ static bool reqsk_queue_hash_req(struct request_sock *req,
  {
--	struct inode *inode = file->f_mapping->host;
--
--	if (!S_ISBLK(inode->i_mode))
--		return 0;
--	return i_size_read(inode) >> 10;
-+	return i_size_read(file->f_mapping->host) >> 10;
+ 	bool found_dup_sk = false;
+ 
+-	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk))
++	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk, false))
+ 		return false;
+ 
+ 	/* The timer needs to be setup after a successful insertion. */
+diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+index b7024e3d9ac3..2c3baba5c9f4 100644
+--- a/net/ipv4/inet_hashtables.c
++++ b/net/ipv4/inet_hashtables.c
+@@ -702,7 +702,7 @@ static bool inet_ehash_lookup_by_sk(struct sock *sk,
+  * If an existing socket already exists, socket sk is not inserted,
+  * and sets found_dup_sk parameter to true.
+  */
+-bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
++bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk, bool add_first)
+ {
+ 	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
+ 	struct inet_ehash_bucket *head;
+@@ -720,6 +720,26 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
+ 	spin_lock(lock);
+ 	if (osk) {
+ 		WARN_ON_ONCE(sk->sk_hash != osk->sk_hash);
++
++		if (add_first) {
++			ret = false;
++			if (sk_hashed(osk)) {
++				/* Add the sk to the hashtable before removing
++				 * osk to prevent a transient empty state in
++				 * the hash table during the TCP state
++				 * transition from SYN_RECV to ESTABLISHED.
++				 */
++				__sk_nulls_add_node_rcu(sk, list);
++				ret = sk_nulls_del_node_init_rcu(osk);
++				WARN_ON_ONCE(!ret);
++			}
++			/* If osk is unhashed, it means two requests are
++			 * holding the same osk and another thread has
++			 * successfully inserted its sk into ehash. We do
++			 * nothing and the caller will free the sk.
++			 */
++			goto unlock;
++		}
+ 		ret = sk_nulls_del_node_init_rcu(osk);
+ 	} else if (found_dup_sk) {
+ 		*found_dup_sk = inet_ehash_lookup_by_sk(sk, list);
+@@ -730,14 +750,15 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
+ 	if (ret)
+ 		__sk_nulls_add_node_rcu(sk, list);
+ 
++unlock:
+ 	spin_unlock(lock);
+ 
+ 	return ret;
  }
  
- int __init rd_load_image(char *from)
-@@ -190,10 +26,11 @@ int __init rd_load_image(char *from)
- 	int nblocks, i;
- 	char *buf = NULL;
- 	unsigned short rotate = 0;
--	decompress_fn decompressor = NULL;
- #if !defined(CONFIG_S390)
- 	char rotator[4] = { '|' , '/' , '-' , '\\' };
- #endif
-+	struct file *in_file, *out_file;
-+	loff_t in_pos = 0, out_pos = 0;
+-bool inet_ehash_nolisten(struct sock *sk, struct sock *osk, bool *found_dup_sk)
++bool inet_ehash_nolisten(struct sock *sk, struct sock *osk, bool *found_dup_sk, bool add_first)
+ {
+-	bool ok = inet_ehash_insert(sk, osk, found_dup_sk);
++	bool ok = inet_ehash_insert(sk, osk, found_dup_sk, add_first);
  
- 	out_file = filp_open("/dev/ram", O_RDWR, 0);
- 	if (IS_ERR(out_file))
-@@ -203,17 +40,6 @@ int __init rd_load_image(char *from)
- 	if (IS_ERR(in_file))
- 		goto noclose_input;
+ 	if (ok) {
+ 		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
+@@ -785,7 +806,7 @@ int inet_hash(struct sock *sk)
  
--	in_pos = rd_image_start * BLOCK_SIZE;
--	nblocks = identify_ramdisk_image(in_file, in_pos, &decompressor);
--	if (nblocks < 0)
--		goto done;
--
--	if (nblocks == 0) {
--		if (crd_load(decompressor) == 0)
--			goto successful_load;
--		goto done;
--	}
--
- 	/*
- 	 * NOTE NOTE: nblocks is not actually blocks but
- 	 * the number of kibibytes of data to load into a ramdisk.
-@@ -228,10 +54,7 @@ int __init rd_load_image(char *from)
- 	/*
- 	 * OK, time to copy in the data
- 	 */
--	if (strcmp(from, "/initrd.image") == 0)
--		devblocks = nblocks;
--	else
--		devblocks = nr_blocks(in_file);
-+	nblocks = devblocks = nr_blocks(in_file);
- 
- 	if (devblocks == 0) {
- 		printk(KERN_ERR "RAMDISK: could not determine device size\n");
-@@ -264,7 +87,6 @@ int __init rd_load_image(char *from)
+ 	if (sk->sk_state != TCP_LISTEN) {
+ 		local_bh_disable();
+-		inet_ehash_nolisten(sk, NULL, NULL);
++		inet_ehash_nolisten(sk, NULL, NULL, false);
+ 		local_bh_enable();
+ 		return 0;
  	}
- 	pr_cont("done.\n");
+@@ -1177,7 +1198,7 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
  
--successful_load:
- 	res = 1;
- done:
- 	fput(in_file);
-@@ -275,60 +97,3 @@ int __init rd_load_image(char *from)
- 	init_unlink("/dev/ram");
- 	return res;
- }
--
--int __init rd_load_disk(int n)
--{
--	create_dev("/dev/root", ROOT_DEV);
--	create_dev("/dev/ram", MKDEV(RAMDISK_MAJOR, n));
--	return rd_load_image("/dev/root");
--}
--
--static int exit_code;
--static int decompress_error;
--
--static long __init compr_fill(void *buf, unsigned long len)
--{
--	long r = kernel_read(in_file, buf, len, &in_pos);
--	if (r < 0)
--		printk(KERN_ERR "RAMDISK: error while reading compressed data");
--	else if (r == 0)
--		printk(KERN_ERR "RAMDISK: EOF while reading compressed data");
--	return r;
--}
--
--static long __init compr_flush(void *window, unsigned long outcnt)
--{
--	long written = kernel_write(out_file, window, outcnt, &out_pos);
--	if (written != outcnt) {
--		if (decompress_error == 0)
--			printk(KERN_ERR
--			       "RAMDISK: incomplete write (%ld != %ld)\n",
--			       written, outcnt);
--		decompress_error = 1;
--		return -1;
--	}
--	return outcnt;
--}
--
--static void __init error(char *x)
--{
--	printk(KERN_ERR "%s\n", x);
--	exit_code = 1;
--	decompress_error = 1;
--}
--
--static int __init crd_load(decompress_fn deco)
--{
--	int result;
--
--	if (!deco) {
--		pr_emerg("Invalid ramdisk decompression routine.  "
--			 "Select appropriate config option.\n");
--		panic("Could not decompress initial ramdisk image.");
--	}
--
--	result = deco(NULL, 0, compr_fill, compr_flush, NULL, NULL, error);
--	if (decompress_error)
--		result = 1;
--	return result;
--}
+ 	if (sk_unhashed(sk)) {
+ 		inet_sk(sk)->inet_sport = htons(port);
+-		inet_ehash_nolisten(sk, (struct sock *)tw, NULL);
++		inet_ehash_nolisten(sk, (struct sock *)tw, NULL, false);
+ 	}
+ 	if (tw)
+ 		inet_twsk_bind_unhash(tw, hinfo);
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index b1fcf3e4e1ce..b8448d8e50a6 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -1834,7 +1834,7 @@ struct sock *tcp_v4_syn_recv_sock(const struct sock *sk, struct sk_buff *skb,
+ 	if (__inet_inherit_port(sk, newsk) < 0)
+ 		goto put_and_exit;
+ 	*own_req = inet_ehash_nolisten(newsk, req_to_sk(req_unhash),
+-				       &found_dup_sk);
++				       &found_dup_sk, true);
+ 	if (likely(*own_req)) {
+ 		tcp_move_syn(newtp, req);
+ 		ireq->ireq_opt = NULL;
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 9622c2776ade..a5bec9dd5844 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1540,7 +1540,7 @@ static struct sock *tcp_v6_syn_recv_sock(const struct sock *sk, struct sk_buff *
+ 	if (__inet_inherit_port(sk, newsk) < 0)
+ 		goto put_and_exit;
+ 	*own_req = inet_ehash_nolisten(newsk, req_to_sk(req_unhash),
+-				       &found_dup_sk);
++				       &found_dup_sk, true);
+ 	if (*own_req) {
+ 		tcp_move_syn(newtp, req);
+ 
 -- 
-2.34.1
+2.43.0
 
 
