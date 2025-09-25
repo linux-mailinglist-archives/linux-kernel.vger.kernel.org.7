@@ -1,227 +1,260 @@
-Return-Path: <linux-kernel+bounces-832165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A4CB9E884
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DDDB9E8A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03CFD4A1FB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13DDD4A2652
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77222882A8;
-	Thu, 25 Sep 2025 10:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1DC2EA479;
+	Thu, 25 Sep 2025 10:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKrXIzuv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="DXAWDq2k"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C08C285C89
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E35D27FD7D
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758794506; cv=none; b=e99TOuhgJm7lSXDNIu4ZVdeWe1g8Iom7vJYSmcWqBF9hwD970abcs8fbuhrvpMu9bNkq6M5H37vEkT7WOb58wC2FhwduPSjmWdROopw0ChU8cN05+9F11QHTT5/wYrug9/X8bV66kLIfZcIVZekjtDbVnan6koOE/VttV08Wou8=
+	t=1758794644; cv=none; b=Vt0tsJf0L+vJIhw7Ql1nw0oY+GVNlagP6wtISsxCi1+RDNqi8s7FILDeyuqSAHkooPA+TFkjcHn8/bKOQO8CfpIalTTcuNoFLx2Ogl0IReXDuoXGTbF65iUFG6Sk1k2sgxNcdAOL5uAhbMaCbcU0Grkc9n8UKh7vguxqOP9KD5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758794506; c=relaxed/simple;
-	bh=03uKVV2ofw/Ng3veUOPWeDpclUpU7zZMmkbPpmIHfoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ijwf1kBNZ+1xo9vDtAUL8TxWEfqsb+r6GdxZ4Pi+HGYYa9mkmc7dMSBGM7HvuENTmqzDxnm+R5Khpn/ybWPZ6c7azj4zvcRbxDgjJOWlMOqxQd+v8klE1YvJ0T79lu431EJwref4aHweEUU5FA74dm4alc0xZYSFw6d9nO9OyJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKrXIzuv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758794503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8GYfmE+k0d5YWbdZiC8QhNj3hq9CWQkLFh7lpDQVQfE=;
-	b=GKrXIzuv/bLY9b1LfXfVPr5jKsZpPHgbboHiuCntH1Te/Evx3UalnCy/MdB/0ejx2EdrK6
-	+ycCMmxs9yGzPYbemRYkEHDsyIyvYfdm9JsdsYk3w5DPSW21JCGaqIcZcyn62wrnYIu+GX
-	obzluTB/52mY+lp7iUnXUKUWUqlJpFo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-271-29YcXcIqPjGn5zYnN_iF1A-1; Thu, 25 Sep 2025 06:01:41 -0400
-X-MC-Unique: 29YcXcIqPjGn5zYnN_iF1A-1
-X-Mimecast-MFC-AGG-ID: 29YcXcIqPjGn5zYnN_iF1A_1758794500
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e375dab7dso1420475e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:01:41 -0700 (PDT)
+	s=arc-20240116; t=1758794644; c=relaxed/simple;
+	bh=Jq21aUyDB1KeUOWA4nv5EaL/9wMTiP1FaOFnrfBbp6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dz5EP9QaUNdGs6ZI145JbI4xB4HjOiIYDG4XJUk8d8pNPrb46392kRWAWCxAaHNt3Iia3g538EnKWTqELmXgbPvQngnoAZRLUchkkJztd59ROexHbOe1j1G2eH0uo7Q0YV29rwjEQ2ESeIHb55SURtKcRKZxh8IuQbT37Cy7CxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=DXAWDq2k; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so529306f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1758794639; x=1759399439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aeSijnMYMJyQmtrAgN0xRaDVnA5uArueH+8Nv8ZC19Y=;
+        b=DXAWDq2kPlWLh8th57yDVyiayGTJz6d7ZH1suiN5gNNJU6datZg5PFkj2Ngn86higl
+         +ySAB4LbJ/bTaj+GTHw+91MckUXzCuGnnZj8keTNm+csamnpMZOlrZr9Gtc619kaEsdf
+         LO4trQuE5g/vnNj/KLmWj4Q+imBXvBmZhPgk/nvx5hb7OKgwAAkrlgOG5A9HYW3amIwW
+         eboIVKnx6+JpCZb5rAHKa3ozZ0c8qts3gaPh5tJxM96Tlz/fbzQdHem+HJWIn8YwxYje
+         JVkt8KCGRGQN00TWlUBfen5CZkIH7HIudOVRE0GGCSLkZvxtMz4x44dRC+X/oCiC2PhQ
+         AYmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758794500; x=1759399300;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758794639; x=1759399439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8GYfmE+k0d5YWbdZiC8QhNj3hq9CWQkLFh7lpDQVQfE=;
-        b=jjq9UXkvTAOdJtcOZBLvZbDadGIfxsKvbJANDKva0RTdoejJWLo3SBi4PcrY5pN2zV
-         vegIUCQ1aS2GczsJBG7BNLIbjE4iOPn0vMCHGQpPwfAUiHFnxTRKd895SJcLiiuJD2wZ
-         5uiHVI8WIkgCQxf8emFZFQePRjNb/3d85kavcYggpcg34VlEw5w4yGl41aT85skATRsM
-         xGWzCdFXhHQuYEFOE8qae8xKjBqPS8+BGqr1kCDKsdUFOgaoIOXcZRUwraB1VBP2foyG
-         5xW99xyrcGvolvGigjWNFZZS8EeoADzcF26AlIRLWVcSiC68M2nAfd2ZyBd94wNgTit8
-         LsgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEL+MNy2V3RBqwtAFnaQRbZNHOWUt17Hoox80LwhbUCsOpAZNr2b6bLnRWWb4syySLnm83zkB5/lDKKMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVL6UfdOsU9T4DEm35fmqwzkOE2yAKrEMtb3UpwEgzHyq7FuL
-	o35VYmVNb2WOhTXzdX2qbo5C6xLr6torvbsAFYJFkiZXE+xM8hGO37Ng1kp8ESilakl+G0JmoPu
-	8BuZm7WZAkorSoh3A13w1YzH8qslmNlUAMW2sxx2NvBRT7CQtN4h9V4wbDlhHT9QF7w==
-X-Gm-Gg: ASbGncvqiLnVJYFFtZ+3lh7wU/JOe/IGS4ufvltbiGk1+AWgggzSVHP9WmvaZM7a0gc
-	ekNEZdaWZrmdLcmJHKm/HibPV9jBcWCrjmArMNAtsYhyh2iHnq0STbIC0MQ6qaI+3UWGMNlxzoy
-	MckSE+G6hohYtmDuqj2ytvFnW1ojhadv/LBzoCCWVEEMUQMOa8TPqtGgSLpYDn0vT7/lLNxCuqj
-	qcwLTNXKphnXAJTj+cHSfvAQk5Ns3LkBTQ9xIVJUGoG5maEcyQ6qv6LJ4jp8zFfHLx5sLch/zBr
-	CgG6SUl53GthpY3bA51nCBqBjD5LosVZo6DxCkp38PLnhM6spv+qZ78YYVGg3NEzE3fYWU4Ncc8
-	htCz3PSq6Hgyi4K6ZqnOAYL7Y5oFay1qM+Uj0JZD2MrXvrFnCIV40Y0D5LZr/Km2tC5Ne
-X-Received: by 2002:a05:600c:1d07:b0:45f:2805:91df with SMTP id 5b1f17b1804b1-46e329eb016mr27720675e9.20.1758794500321;
-        Thu, 25 Sep 2025 03:01:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJBLgrscqxeUvK3zCTB81zQ03AZ8FMFwoE2WABAhafpLxL3o7HLyxi6RuvwKQYgGpl6h0/hw==
-X-Received: by 2002:a05:600c:1d07:b0:45f:2805:91df with SMTP id 5b1f17b1804b1-46e329eb016mr27719935e9.20.1758794499610;
-        Thu, 25 Sep 2025 03:01:39 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab48570sm68576145e9.16.2025.09.25.03.01.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:01:38 -0700 (PDT)
-Message-ID: <b0bd326a-0ef6-4c72-ae25-3faff1fd6eb7@redhat.com>
-Date: Thu, 25 Sep 2025 12:01:36 +0200
+        bh=aeSijnMYMJyQmtrAgN0xRaDVnA5uArueH+8Nv8ZC19Y=;
+        b=nkmPnsB7WV9qVbtINP3vw5f6TY7jgzGyhsYjTCRD4U5GwMlrdC3Ag8cTse7uodIRFR
+         nX1kfS6ohZ1e4tOcYUr8R7cV1IkyLFk74Pb/3MstRia9/9lyRJbDZbAF2wMYZymeC4Sg
+         3fxdfPXd9Y2hOwf72feJVR0w8SLOYctKO49mDWW2GVg4M0Bc43cnh8MrGFcgz9r1k6m/
+         rtalDP+xijW60/dmruN/Fwhry4OI6RjP9wF2+3nvOWzk2QBXL8dblbJxzHK79r1OY5oa
+         TyLtSXDRn415qRm6F0y41gVPA95EJSiCN7hkBiCIJsrk6NEQZtXcA3I2JAHYeHeyKpDn
+         JBkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEYlJJB4Yl+n2QaWv3fTTU9Qhw9dI2/r+H2zfkwWH+RIytVYpuSEGvO806EGG7qpolKcArY3ZlHOH7VIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnTs1JBS1OJHbT2AtBnRJp9xBUdJA2rst4/H8ADHsAP+5jKAnZ
+	AP4NE1TaYN2lsVfy68ER0lfdtB6zQvlUMNveA6vzWwKGix3+YmYAe88ApIjDFCTqte8=
+X-Gm-Gg: ASbGncvCKQGxZVEgq4daXTj0RZ6yredxJXgg/r8Lz5Q53AbhmMSx+5xaobWXCAxggPk
+	k4O/oOwD/B5T0yZHKe8E2cafps3ENczJYmXC/7niryQR9KdRMrToi+MsexCvxk1lJ9bCO+Si5wk
+	AioyCfFb+08WC4HbJoD7brzasIqYj7SzYQ9O4ciDSHqwB0A/d1qX/39QAsdYN8YKWnlEj5+Mx80
+	TJzSqTmjXZUYPJRId77V+QfIuzY1FGUu2O72MfwSswfPIFBAt20fEZ+gcydms7//L7QR2awUCeY
+	axpkUrL0nIQ8YBGdW0nmFxW0khJVoWhmMsP9YsnkiRESTMU/3glRtdq3ow8zNWdNWO1buaENZZn
+	x44jsscaER57Q6Sn6N+V1uVz5KOCyfcNMlXYAzNzCDecskKhysJdQ
+X-Google-Smtp-Source: AGHT+IEQ22AsatcCHQ0rPjRAYNnebXQt7WfgjAQzQKbDC2xmnEmcRCJ+zS4tItiuIIh2CyfyLHNHVA==
+X-Received: by 2002:a05:6000:230b:b0:3d1:6d7a:ab24 with SMTP id ffacd0b85a97d-40e4745e84fmr2580039f8f.17.1758794639180;
+        Thu, 25 Sep 2025 03:03:59 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb6b7sm2501122f8f.2.2025.09.25.03.03.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 03:03:58 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	yoshihiro.shimoda.uh@renesas.com,
+	biju.das.jz@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v7 0/7] Add initial USB support for the Renesas RZ/G3S SoC
+Date: Thu, 25 Sep 2025 13:02:55 +0300
+Message-ID: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 04/15] mm/huge_memory: implement device-private THP splitting
-To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-5-balbirs@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250916122128.2098535-5-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 16.09.25 14:21, Balbir Singh wrote:
-> Add support for splitting device-private THP folios, enabling fallback
-> to smaller page sizes when large page allocation or migration fails.
-> 
-> Key changes:
-> - split_huge_pmd(): Handle device-private PMD entries during splitting
-> - Preserve RMAP_EXCLUSIVE semantics for anonymous exclusive folios
-> - Skip RMP_USE_SHARED_ZEROPAGE for device-private entries as they
->    don't support shared zero page semantics
-> 
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
-> ---
->   mm/huge_memory.c | 138 +++++++++++++++++++++++++++++++++--------------
->   1 file changed, 98 insertions(+), 40 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 78166db72f4d..5291ee155a02 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2872,16 +2872,18 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->   	struct page *page;
->   	pgtable_t pgtable;
->   	pmd_t old_pmd, _pmd;
-> -	bool young, write, soft_dirty, pmd_migration = false, uffd_wp = false;
-> -	bool anon_exclusive = false, dirty = false;
-> +	bool soft_dirty, uffd_wp = false, young = false, write = false;
-> +	bool anon_exclusive = false, dirty = false, present = false;
->   	unsigned long addr;
->   	pte_t *pte;
->   	int i;
-> +	swp_entry_t swp_entry;
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Not renaming this variable avoids a lot of churn below. So please keep 
-it called "entry" in this patch.
+Hi,
+
+Series adds initial USB support for the Renesas RZ/G3S SoC.
+
+Series is split as follows:
+- patches 1-2/7		- fixes on bindings and driver for USB PHY
+- patches 3-5/7		- updates the rzg2l-usbphy-ctrl driver and documentation
+			  with support for setting PWRRDY though SYSC
+- patches 6-7/7		- add device tree support
+
+Merge strategy, if any:
+- patches 1-2/7 can go through the PHY tree
+- patches 3-5/7 can go through the reset tree
+- patches 6-7/7 can go through Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Changes in v7:
+- used proper regmap update value for PWRRDY
+- collected tags
+- dropped Tb tags from dt-bindings
+
+Changes in v6:
+- in patch 2/7 dropped the struct rcar_gen3_chan::rstc as it is not
+  used anymore
+- in patch 4/7 used syscon_regmap_lookup_by_phandle_args()
+- collected tags
+
+Changes in v5:
+- dropped patch "soc: renesas: rz-sysc: Add syscon/regmap support" as it
+  already modified and pubished also at [2] with the latest review comments
+  addressed
+- fixed the documentation
+
+Changes in v4:
+- replaced "renesas,sysc-signals" DT property with "renesas,sysc-pwrrdy"
+- dropped the "renesas,sysc-signals" property from USB PHY (as proposed
+  in v3) and let only the USB PHY CTRL driver to handle it as on RZ/G3S
+  the USB PHY CTRL driver needs to be probed before any other USB driver
+- dropped the signal abstraction from SYSC driver as there is no need
+  for reference counting it now
+- adjusted the "soc: renesas: rz-sysc: Add syscon/regmap support" to
+  comply with the latest review comments
+
+Changes in v3:
+- as the basics of the SYSC driver was integrated, only the signal support
+  was preserved in this series, in a separate patch; patch 01/12 was
+  adjusted (by addressing the review comments received at [1]) as it is
+  necessary to build the signal support on top of it
+- after long discussions with the internal HW team it has been confirmed
+  that the relation b/w individual USB specific HW blocks and signals
+  is like:
+
+                                   ┌──────────────────────────────┐
+                                   │                              │◄── CPG_CLKON_USB.CLK0_ON
+                                   │     USB CH0                  │
+    ┌──────────────────────────┐   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK2_ON
+    │                 ┌────────┐   ││host controller registers  │ │
+    │                 │        │   ││function controller registers│
+    │                 │ PHY0   │◄──┤└───────────────────────────┘ │
+    │     USB PHY     │        │   └────────────▲─────────────────┘
+    │                 └────────┘                │
+    │                          │    CPG_BUS_PERI_COM_MSTOP.MSTOP{6, 5}_ON
+    │┌──────────────┐ ┌────────┐
+    ││USBPHY control│ │        │
+    ││  registers   │ │ PHY1   │   ┌──────────────────────────────┐
+    │└──────────────┘ │        │◄──┤     USB CH1                  │
+    │                 └────────┘   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK1_ON
+    └─▲───────▲─────────▲──────┘   ││ host controller registers │ │
+      │       │         │          │└───────────────────────────┘ │
+      │       │         │          └────────────▲─────────────────┘
+      │       │         │                       │
+      │       │         │           CPG_BUS_PERI_COM_MSTOP.MSTOP7_ON
+      │PWRRDY │         │
+      │       │   CPG_CLK_ON_USB.CLK3_ON
+      │       │
+      │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+      │
+    ┌────┐
+    │SYSC│
+    └────┘
+
+  where:
+  - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
+      of different USB blocks, X in {0, 1, 2, 3}
+  - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
+    MSTOP of different USB blocks, X in {4, 5, 6, 7}
+  - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
+    by the USB CH0, USB CH1
+  - SYSC is the system controller block controlling the PWRRDY signal
+  - USB CHx are individual USB block with host and function capabilities
+    (USB CH0 have both host and function capabilities, USB CH1 has only
+    host capabilities)
+
+  Due to this, the PWRRDY signal was also passed to the reset-rzg2l-usbphy-ctrl
+  reset driver (as it controls the USBPHY control registers) and these
+  are in the USB PHY block controlled by PWRRDY signal.
+
+  The PWRRDY signal need to be de-asserted on probe before enabling the module
+  clocks and the module MSTOP. To avoid any violation of this configuration
+  sequence, the PWRRDY signal is now controlled by USB PHY driver and the
+  reset-rzg2l-usbphy-ctrl driver.
+
+  As the PHYs gets reset signals from the USB reset controller driver, the
+  reset-rzg2l-usbphy-ctrl is probed before the USB PHY driver and thus,
+  in theory, we can drop the signal support (reference counting of the
+  USB PWRRDY) and configure the USB PWRRDY just in the reset-rzg2l-usbphy-ctrl.
+
+  However, to have a proper description of the diagram described above in 
+  device tree and ensure the configuration sequence b/w PRWRDY, CLK and MSTOP
+  is preserved, the PWRRDY signal is controlled in this series in all the
+  drivers that work with registers from the USB PHY block.
+
+  Please provide your feedback on this solution.
+
+Thank you,
+Claudiu
+
+[1] https://lore.kernel.org/all/20250330214945.185725-2-john.madieu.xa@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250818162859.9661-2-john.madieu.xa@bp.renesas.com/
+
+Changes in v2:
+- dropped v1 patches already applied
+- added fixes patches (07/14 and 09/14)
+- dropped the approach of handling the USB PWRRDY though a reset controller
+  driver and introduced the signal concept for the SYSC driver; because
+  of this, most of the work done in v1 was dropped
+- per patch changes are listed in individual patches, if any
+
+Christophe JAILLET (1):
+  phy: renesas: rcar-gen3-usb2: Fix an error handling path in
+    rcar_gen3_phy_usb2_probe()
+
+Claudiu Beznea (6):
+  dt-bindings: phy: renesas,usb2-phy: Mark resets as required for RZ/G3S
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S support
+  reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY
+  reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045: Add USB support
+  arm64: dts: renesas: rzg3s-smarc: Enable USB support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   1 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 +++++-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 118 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  57 +++++++++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++-
+ drivers/reset/Kconfig                         |   1 +
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |  66 ++++++++++
+ 7 files changed, 292 insertions(+), 12 deletions(-)
 
 -- 
-Cheers
-
-David / dhildenb
+2.43.0
 
 
