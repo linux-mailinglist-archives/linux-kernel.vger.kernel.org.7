@@ -1,154 +1,166 @@
-Return-Path: <linux-kernel+bounces-832682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65C5BA0186
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFD6BA0144
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BA53A8E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:57:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1341639E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE50E2E1EE0;
-	Thu, 25 Sep 2025 14:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="Mm34qHhN"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3536E2E0937;
+	Thu, 25 Sep 2025 14:53:05 +0000 (UTC)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6601D63CD;
-	Thu, 25 Sep 2025 14:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758812258; cv=pass; b=PhAcH+OvZfKMk+g3RAIpKoTDigWxHm97tbxOogd4ckNFQ6Pc5jQkleJ0EhywCx79ofvn60unXAduip/NzOQ5eWdgntJmPcODjFTUQUzmrCMhRcybdDWTWTVkiT0GvgGcsvjqeHr1LPhi8fd6sBsWKocWhrLgMRpJvzRckSM2F4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758812258; c=relaxed/simple;
-	bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XcH7+PKTtGa0R1aKb1UPnbtwQk2EPqrZ+JjHySyDezoUHCHjgUfJs6aTXV+ojQCc+FBkVnEK7qkv2pchx9cJwU77uIVPQZTi8npS/b+kxBUVGJgUrXMn1Z2bV6SGXFSXgxfDe5Y6NGCH4I0MlcgUn7s2ZOj1RsoZ/qJdf1CkZqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=Mm34qHhN; arc=pass smtp.client-ip=81.169.146.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
-ARC-Seal: i=1; a=rsa-sha256; t=1758811893; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Wks9rFjMhMdlauncy0O2xHQ8iLMFrFV/ZaN9v+Z5DUUE0lXiF7YwKtEy6IptAaOxF8
-    o4k6q1bZ+9lT+elaZg53SVOzsuCOxZ4J1/lbD5Nckr4fVonNhpz3q0byHPLnSpl+Dkam
-    F4J0Z/A3ax0nXLcT5AF6FCZp/QIGgEGRF1aCH2ybYwQ4p91Frhi2je/g7VZYNMn4RPxI
-    vOgxZQT/7+r8r9YFx3lyTZZkYv4IoUGZb3cvt3lLAHpng4Z7+JuT2xI2L0vyXkaCKWZp
-    pQRfFTi4ZFOAECaTyMiEMR+De+P5ngcsfiZP7cOxCxKkjhPGPuB5Zzi7jMAvT4/TsmD0
-    8jSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758811893;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
-    b=LIFtXBwTszLh9HoiFQc1yS4sgyk0LoiS5113ewqEEIG+DVA0gG6R9RiBqjRYD8iH4C
-    J41Kk3dIEYZEy36OagCWfzsF3vyzzA7mMFGBduLbxr1CMnKE8zsF9UYOCp482ai/JEUr
-    68hO7DzHlT5XFhEkDTCSR7FzHpTbcGhVlT8egTHRy8S6QgdEa8L3cpedQlY146h9ZzR+
-    ocht5bABnC3QQEF7s0BpQ/ptkAyq4MTV/txuHNcCjsmxgajSGj/ypzUMorrChQmLvTSo
-    VlWbBrJqP3LhdrvY2y46L0yrSuGfsyXq6GYV0g1H1UZ+LCcWSKu78aLrBnzW5ZP7XcwL
-    s7CQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758811893;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=3ldgBpz1sge+KvxB+jBoeRxMENW6zW1QtNR63O3m9eE=;
-    b=Mm34qHhNTsea0MirIPe5semBUhMVOTn1fO7cupkZP0mqxMSExyWh7D/jetMOQwuLmD
-    R0SZUtu3Iry1eP29hilXDHO53dlNXGFE3psDKXx6fodOZRa6kJV2CaNWpfpObV3bQkJT
-    fXPLF0QyV4nQpQ4lcVKAzhd7AoI+DgfXu2tYMb3h/2gdI89eIY1ZE/dWJbjNWmELSoe3
-    yxvclB5iw6m7jwBF6YA2Nvge84Uh2+y+qcjGWzD17J9tBxPEt84nY5V8NJoHMNCRs901
-    ExX/4gIyKtDIzk2bJDk2jDmYaq7YSJDqKJ3S5WX044qUc/HwjQIY7tVqrds7vBTCWALj
-    c0Gg==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0DBslXBtZUxPOub3IZqk"
-Received: from [10.176.235.211]
-    by smtp.strato.de (RZmta 53.3.2 AUTH)
-    with ESMTPSA id z9ebc618PEpWESA
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 25 Sep 2025 16:51:32 +0200 (CEST)
-Message-ID: <af99ce08cf20977d92f3b993f3b989b91d172c79.camel@iokpp.de>
-Subject: Re: [PATCH v1 1/3] rpmb: move rpmb_frame struct and constants to
- common header
-From: Bean Huo <beanhuo@iokpp.de>
-To: Avri Altman <Avri.Altman@sandisk.com>, "avri.altman@wdc.com"
- <avri.altman@wdc.com>, "bvanassche@acm.org" <bvanassche@acm.org>, 
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "jejb@linux.ibm.com"
- <jejb@linux.ibm.com>,  "martin.petersen@oracle.com"
- <martin.petersen@oracle.com>, "can.guo@oss.qualcomm.com"
- <can.guo@oss.qualcomm.com>, "ulf.hansson@linaro.org"
- <ulf.hansson@linaro.org>,  "beanhuo@micron.com" <beanhuo@micron.com>,
- "jens.wiklander@linaro.org" <jens.wiklander@linaro.org>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Thu, 25 Sep 2025 16:51:32 +0200
-In-Reply-To: <PH7PR16MB6196C3B7F5186F3E63C05A3FE51CA@PH7PR16MB6196.namprd16.prod.outlook.com>
-References: <20250923153906.1751813-1-beanhuo@iokpp.de>
-	 <20250923153906.1751813-2-beanhuo@iokpp.de>
-	 <PH7PR16MB6196C3B7F5186F3E63C05A3FE51CA@PH7PR16MB6196.namprd16.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0742DCF77
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758811984; cv=none; b=lKfPF/U8At0abm8DPIX7bKFwTe/MveBbhn3p8nL8yN5cxl0erQQjj0juTdgEZ9sifC+xZ5tIL+SmOuU2aWJhA/ERmixFgyA9I4RtUaxpzqXajYj1qj2mYY/G4ZvYKjRCLyFrUtmsvFvEYgNGSpVLU3NifeJxoYvUDUNupERFERk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758811984; c=relaxed/simple;
+	bh=ZXJMMFCZDGimdSoFUJxE3pUZd+JGKjmvs7+jQKpoKQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NGFpXXZjWx93ts/zbDmmfqRB45nWKtKGehcpNGplfYIlsR+ryW+1jEb04MBHJpQkarG7QF1+qrAitKi4U9fJNA8arjGC+VnKIcluzKN7GUFzcWCF/HnQbBMtHWvP/1yWYT8bLO5aiGUQvM+mvUaM+wy2D7rEQbYyPlz/K4rlfrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57ea78e0618so1002228e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:53:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758811979; x=1759416779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DlO5HN86Kc6YrRTCW9kNidWKyaECOConDbUQtE/vSBs=;
+        b=LFabxrM1P6IH7VcU57cXkfDuQcabtmhgXtLFAX6FEm8TyXuarswQVzCnBWKY/rtr3G
+         TWkM/tEEXIAQF2ueo8ad+mWSPj68AAAxuMujx2QfkhnXKhilisD6H+JmRlBTKryb0FeJ
+         UICUh3nrtW77k1cVmDqoV+sVcVauu9btf6PH1a8dabTruEE12ZtiwK/VKesNC8coF625
+         gB5NEfDp26iNg08n57OFPtU6O2zED4FACNNs0Z4ODBJBugR4nMYcCL/q91s79k3XL8vs
+         wuCTRzub8PkYAlU0i0GYWGTxg55Ngn/qN5u9kzogXfb3wJnMcvjqdFAeoDm+CrxyDzHZ
+         OP2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4qG1Z8gxVssoS4kdU2MjBtX99mdB4hD8jDdgZjpxtivd3pNettrlZNcbdPH6ibKeuO7IU4meDh9UFdFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhEdDMQ+IxLDsu+k/sT9Fh3spmlZ2RIEkZWWIg6896cSXhfCZN
+	TyiEFNzyY5WtbNNYournyc5Fe4ogmjqYjXVTyV5x8xwgcyT20+SdA4rO5ecaTN8X
+X-Gm-Gg: ASbGncsvBco1oNtDLEfnVpYP5iIv/BpZUKLOic0RWNotRWBINX2bkLNyYkkcqDAUNju
+	d3WDn0vApYtCgkUziodH0ATaVhHoTWOMFqir+NIcHbDLbutzXajPiACf2NcggHwlPF+RNscetjB
+	Gf2STAa+40egJ7pi7hU6YerLdxr4gi4WKiBkH3YDA1zmYIG1elFmjjtCaaep9Rb5drrDvHQohyH
+	Upn3eurAL3WjPViKDHTPMxSN+kgikXm35kO2vao4b0OvGeo9HcM1nWF0AaJjcWe2kfowvT4ZIda
+	qT97ZmVHPKwHE/xmDQIuqV5v3HGcWujZJwkNVdhVU52qIqL0B6ctgQ2MvulaABBg1dPiZx/fSdF
+	YVe0Zb5UQNpErG4Qb6S/8tTVtsBfBw+ZHhya+HMncOf1L01kVUHDxfxY=
+X-Google-Smtp-Source: AGHT+IFe5pG0dfSLce3w18AatLggdwELlUpJgNjo52SZse9km6M5nLr/dInp9FkvmnK4AiUqLHteFg==
+X-Received: by 2002:a05:6512:130b:b0:55f:5125:2d7b with SMTP id 2adb3069b0e04-582d330032emr1130444e87.51.1758811978807;
+        Thu, 25 Sep 2025 07:52:58 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665624esm844623e87.69.2025.09.25.07.52.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 07:52:57 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-367444a3e2aso12077441fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 07:52:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWijn694k+qJuyR9j1SuBsL44FEDjKvL46tTs3Y06JaJ4RscU5iH5ztHB1irFfysQ/JPJB94G9qTKfK5eY=@vger.kernel.org
+X-Received: by 2002:a05:651c:150b:b0:333:b6b1:a151 with SMTP id
+ 38308e7fff4ca-36f7cecce7emr13436431fa.7.1758811976957; Thu, 25 Sep 2025
+ 07:52:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250919000020.16969-1-andre.przywara@arm.com>
+ <20250919000020.16969-2-andre.przywara@arm.com> <20250922181611.GA567602-robh@kernel.org>
+In-Reply-To: <20250922181611.GA567602-robh@kernel.org>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 25 Sep 2025 22:52:45 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64KvnvSy0-MYd7FBLVKeJQk=-=VWxRLsHXMP1+MFOPPfg@mail.gmail.com>
+X-Gm-Features: AS18NWC5SLylzS53NFTh78yeOtaf2DKHmvxRwMULDvXeTqI87y6sQlGtbhqXD2w
+Message-ID: <CAGb2v64KvnvSy0-MYd7FBLVKeJQk=-=VWxRLsHXMP1+MFOPPfg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] dt-bindings: mfd: x-powers,axp152: Add polyphased property
+To: Rob Herring <robh@kernel.org>
+Cc: Andre Przywara <andre.przywara@arm.com>, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Mikhail Kalashnikov <iuncuim@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-09-24 at 06:12 +0000, Avri Altman wrote:
-> > From: Bean Huo <beanhuo@micron.com>
-> >=20
-> > Move struct rpmb_frame and RPMB operation constants from MMC block
-> > driver to include/linux/rpmb.h for reuse across different RPMB
-> > implementations (UFS, NVMe, etc.).
-> UFS RPMB differs from mmc RPMB in several levels:
-> =C2=A0- 9 vs. 5 operations
-> =C2=A0- frame structure: extended 4k
-> =C2=A0- rpmb unit descriptor
-> etc.
-> And as time goes on, this gap is likely to become larger,
-> As mmc is not very likely to introduce major changes.
->=20
-> Thus, you might want to consider having an internal ufs header - will sim=
-plify
-> things in the future.
->=20
-> Thanks,
-> Avri
+On Tue, Sep 23, 2025 at 2:16=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, Sep 19, 2025 at 01:00:16AM +0100, Andre Przywara wrote:
+> > Some X-Powers AXP PMICs can combine some of their DC/DC buck converter
+> > outputs in a multi-phase fashion, to achieve higher currents and
+> > decrease the output ripple. The datasheets call this poly-phase. This i=
+s
+> > programmable in the PMIC, although often set up as the PMIC's reset
+> > default.
+> >
+> > Add the "x-powers,polyphased" property to the binding, to describe thos=
+e
+> > pairs or tuples of regulators that should work together. In the lead
+> > regulator node, the property lists the phandles of the connected
+> > regulators. Just an empty property means no poly-phasing.
+>
+> Don't we have a coupled regulator binding already?
+
+That was my first thought as well.
+
+Though on the driver side, I guess we would need to add a coupler to the
+axp regulator driver to handle the polyphase case directly, or somehow
+tell the regulator core to ignore this property.
+
+Unlike separate regulators that are ganged together, in the AXP PMICs it
+seems that when buck outputs are ganged, only the controls for the first
+output have any actual effect. In such cases I don't know if we should
+just ignore / leave out the secondary outputs from both the description
+and the runtime state.
 
 
-Avri,
-
-thanks, I got your points.
-
-In normal mode, UFS RPMB uses the same 512-byte frame format as eMMC RPMB,
-with the same fields (MAC, nonce, counter, address, etc.). That=E2=80=99s w=
-hy it makes
-sense to keep a single definition of the frame struct in include/linux/rpmb=
-.h,
-so both eMMC and UFS RPMB drivers can reuse it without duplication.
-
-The major differences only exist in UFS RPMB advanced mode, correct?
-
-For advanced mode, our plan is to introduce a UFS-specific header for the
-additional features (extended 4K frame, new opcodes, descriptors), so that
-UFS can evolve independently without breaking the shared interface.
-
-let's firstly enable UFS RPMB in normal mode, since its OP-TEE application =
-is
-avaiable in OP-TEE OS, the custoemr can use it simply. As discussed with Je=
-ns,
-we can move next step for advanced RPMB for UFS, is this ok for you?
+ChenYu
 
 
-Kind regards,
-Bean
-
-
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  .../devicetree/bindings/mfd/x-powers,axp152.yaml   | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml=
+ b/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+> > index 45f015d63df16..260c4c0afc475 100644
+> > --- a/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/x-powers,axp152.yaml
+> > @@ -304,6 +304,15 @@ properties:
+> >                noise. This probably makes sense for HiFi audio related
+> >                applications that aren't battery constrained.
+> >
+> > +          x-powers,polyphased:
+> > +            $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +            description:
+> > +              A list of phandles pointing to other regulators that sho=
+uld be
+> > +              polyphased with this regulator. The linked regulators wi=
+ll be
+> > +              synchronised with this regulator, within the PMIC, but o=
+nly if
+> > +              supported by the PMIC. An empty list means this regulato=
+r
+> > +              should be configured in a single-phase setup.
+>
+> phandle-array is poorly named and is really a matrix because you can
+> have arg cells. So you need:
+>
+> items:
+>   maxItems: 1
+>
+> And is there an outer max for linked regulators?
+>
+> Rob
+>
 
