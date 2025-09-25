@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-832373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6784CB9F253
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:15:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681DAB9F19E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 14:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315284E4F17
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450223A49B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB92305058;
-	Thu, 25 Sep 2025 12:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A0A2FD1A7;
+	Thu, 25 Sep 2025 12:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="knIl4HKq"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSHIvLNU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C764F2FF669;
-	Thu, 25 Sep 2025 12:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E21927FB3C;
+	Thu, 25 Sep 2025 12:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758802449; cv=none; b=bYeWsWEKmiDv5Gm6MCPX1UUf/pennl32JcW1YVeuaN9VOe9a2QQOPwos5+oDSGTZoYtjW3DrAcmOjfWm1dkU2cPF76GzwD568Y1Iynt5aXPbbb2zAApP1ncSjXEdlNp6Z9alz4oy25pOM3p97wOie3g0fXY2iBFnvHMQNp+I26c=
+	t=1758802422; cv=none; b=eI71X7j5jzfjFJ9SdhVWkY6zVQkW2e/7Ps5+xjMAfOU9X7xBB479EPQuwFvCcvTZdENM3KdZSDim8E8KU85Wgm3FE+0/ikupPbmKqfoksKzPb+E8DcPYSH3rXqIMujj68noW+LXYQ5p5k17I2ayXriwb3qIkqyaPZBotqdkGuFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758802449; c=relaxed/simple;
-	bh=h6H6ZhBZe1gKHmrNubWc5sUylhRVOXzZrHkkLa0lGmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oTl1frbLHWkf1JdWoJKfqdrVdy6CHIDCjqf4mEQNO6d04VmKT+a2XKlRhOTln8D/P6AvrfbPlVCYmBZ1tn4Ze3G+aGaXVb/9n6THIwRy4Z/ffvBNGLkZy0BbthGBEyfKhw477SunRZXAnE/QL7gmKKY7hatHg9K281x5px0DqAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=knIl4HKq; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [178.69.159.70])
-	by mail.ispras.ru (Postfix) with ESMTPSA id B7AC840A327F;
-	Thu, 25 Sep 2025 12:13:57 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru B7AC840A327F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1758802438;
-	bh=2EVHtjacVStoLork7wasnNmEVZ79Lr/9XpsbjrB7eNs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=knIl4HKqaY0s6G0NSAM2HxjkVhzFpA/5HTSdLKOvFZsClpI2sxMITnXQHsTQbWzcx
-	 ztXQB99p2WXyKSHHSa6P8m0QpPiknIGoXo0r2NbH6jjiTO5rqNMH41mxikeN0XTGds
-	 X2O21CPWLMR07Tj4cfXfbxh0cg8Oj7bsHNcli4PA=
-From: Matvey Kovalev <matvey.kovalev@ispras.ru>
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Matvey Kovalev <matvey.kovalev@ispras.ru>,
-	Steve French <smfrench@gmail.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tom Talpey <tom@talpey.com>,
-	linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] fix error code overwriting in smb2_get_info_filesystem()
-Date: Thu, 25 Sep 2025 15:12:34 +0300
-Message-ID: <20250925121255.1407-1-matvey.kovalev@ispras.ru>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1758802422; c=relaxed/simple;
+	bh=x4hykr+7b0LZx0aQ1vPKkYsF+/Q7Wa44o4IqH+7AIko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E05goKz4wg6w5Oyq4lBKbsKojBQJfDga3iKblnSY13jSz038nnqH3DNPod7lku4C1hhisfJohB+sEqi8jUXrqenPIdoZ42I+l7iTEr4pVsDDgNpVYQWhLR+doYNhViyWjrUPjRwW2VWyH9alB8YgdEJRu+/IK/8vV1YVQP2JNOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSHIvLNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537CBC4CEF0;
+	Thu, 25 Sep 2025 12:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758802421;
+	bh=x4hykr+7b0LZx0aQ1vPKkYsF+/Q7Wa44o4IqH+7AIko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SSHIvLNU5BEbi1YK63MIvdthg17Lv1lCQgB1HpkcYToLCA3dUiU8JY91WaMIFFWJ4
+	 Sw+G3rC2vY7CZrGhIyYq/Jle0/fnMJEArEXCOEmL13TBACLrzDB7Zr/RThhn569/OS
+	 ewn7Gp88FFs1+NMdnErz7XapfoAnZt4I+shu2LFm0NVgkDIklrm+s82iKyFRBXYyGW
+	 gqazHPGNUSO2vI8GNtQqRcqUHIRQhTtVIByNrn4SCARgwNJ8x87TbRaLM9Q3b5K60O
+	 JGt9y/CZZFDhix0Zc+OLnHKIdK/Ta5PwoGSyd7wQfG0ttZAiI5KcUPe37+2ziIlD+g
+	 a0eXuIzybUIBQ==
+Date: Thu, 25 Sep 2025 13:13:36 +0100
+From: Lee Jones <lee@kernel.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v5 04/12] mfd: simple-mfd-i2c: keep compatible strings in
+ alphabetical order
+Message-ID: <20250925121336.GK8757@google.com>
+References: <20250922142427.3310221-1-ioana.ciornei@nxp.com>
+ <20250922142427.3310221-5-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250922142427.3310221-5-ioana.ciornei@nxp.com>
 
-If client doesn't negotiate with SMB3.1.1 POSIX Extensions, 
-then proper error code won't be returned due to overwriting.
+On Mon, 22 Sep 2025, Ioana Ciornei wrote:
 
-Return error immediately.
+> Reorder the of_device_id structures so that they are in alphabetical
+> order.
+> 
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+> Changes in v4:
+> - new patch
+> Changes in v5:
+> - none
+> 
+>  drivers/mfd/simple-mfd-i2c.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Applied, thanks
 
-Fixes: e2f34481b24db ("cifsd: add server-side procedures for SMB3")
-Cc: stable@vger.kernel.org
-Signed-off-by: Matvey Kovalev <matvey.kovalev@ispras.ru>
----
- fs/smb/server/smb2pdu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index a565fc36cee6d..a1db006ab6e92 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -5628,7 +5628,8 @@ static int smb2_get_info_filesystem(struct ksmbd_work *work,
- 
- 		if (!work->tcon->posix_extensions) {
- 			pr_err("client doesn't negotiate with SMB3.1.1 POSIX Extensions\n");
--			rc = -EOPNOTSUPP;
-+			path_put(&path);
-+			return -EOPNOTSUPP;
- 		} else {
- 			info = (struct filesystem_posix_info *)(rsp->Buffer);
- 			info->OptimalTransferSize = cpu_to_le32(stfs.f_bsize);
 -- 
-2.43.0.windows.1
-
+Lee Jones [李琼斯]
 
