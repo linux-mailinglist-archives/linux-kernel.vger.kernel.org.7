@@ -1,250 +1,249 @@
-Return-Path: <linux-kernel+bounces-833120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E54BA143C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4E6BA144B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD363A69EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB36B1B26C88
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B82331E896;
-	Thu, 25 Sep 2025 19:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C0731D742;
+	Thu, 25 Sep 2025 19:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PQe70E/a"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010019.outbound.protection.outlook.com [52.101.193.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bu5IOrYA"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6418931E115;
-	Thu, 25 Sep 2025 19:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829802; cv=fail; b=FRh79PeETUgJD4R79G7fiTnLt0ZAxGUecPScfHRv00V8IqjHganDnz+V4Kx8Mo6qQmcXl9MQMOqmm1/zaasVWuIFdQfsHHWkSOMLbmKIVS5JXXnOuKKOzbhnlczoXZeZOIDS6Nv97ILNw9s8MIVt/9MmDGCzz32zn9wlCFnlpjU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829802; c=relaxed/simple;
-	bh=SdqK+OLaDedAstMYj0nrH5unxZeMysDJr5UcXQlTsq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oaYPxrxP4U0RkF1KCSswOAjJtLw5jQfHEH0tPu/DARg7ot1Q1ub+kNdquWQJwtGQwPyd/rz2I6dcmn8Is6ANlGaxTa97NfYeDO3M2iahR5/m0+iHXWEcBzXzbvY4ZUAKJ/dGMVI44rX1x1g8i3/AEqG+OYaInu0TbYAkji/clJ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PQe70E/a; arc=fail smtp.client-ip=52.101.193.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aVqnbP3oIwAeN29JivNKuNQTUoiAzDnNWt5TBzkY0aqdFC2uoQZ/bU1rJy1+gP4pSOrmoH5CHu+OjLWNjAYvntdjEhRJZP5gNYNRor5/+XbmKXMRNcQr73shYFV3MUVSGSx0JuGkCGOHlS6VGK90bqMtTUHeMi79V3CuNrxBSlvTo3gzcu79YPb3t+N0/RGY0qiRIHXco3FCJNJM0Z1k9Bk1rbzn792MsnN2cYQpoSmgNP8SUkjnZ6YeIZGi42KwcvA7erHBGPDszFMZjZa1OjI7dshGM1zALgTYo3rZxg3tIjncP1MGH76hSGpVjEZFN858V1ZktHOlev6RocJe/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bLTgUnF1rWLdehCDF1/phtnQJofvB7emxKJnrtSpjeA=;
- b=nqvvW9v7XgX1hJT2jEd5UG4xDJRnIm55ro7ousPYPv6bZeEuFAkJBIsSI4Q2vBdSszK+UANcFdPtGttlMF/3FhIA75ZlkGHAzObj21V1Uvb8XenP5mF5r4dHPNkn3zUk1QldKkz1N4DnBK/t9QPqcwIpuZi5civvIhTl9DRGiErw9BhB6ybKP5ijkU0gLxb9VaZJBCrn/nBdDOeFlMCj6kSnw/OsFQRlbFAl1uqvUP0TPGEfeDjY72mbw2wPcoRSrPFErfse0eF1J4p/bMAqfgl/BV61Qv+Fm/MJGHXmi+6u1hfWX6k22ZxhAcu90QvZOtqu8egaSbA+M4mROoxUoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bLTgUnF1rWLdehCDF1/phtnQJofvB7emxKJnrtSpjeA=;
- b=PQe70E/a3spNy9oRRkhDbRY1jmnxoP13eblHi++We9UTfi/1Li6oEXmtaYQW6qF9mOkJd9QF9r+hFM93x/ZbFVyVQ5MR0ONp3EsAAPQwWeFmY8ext1zHQFu3orun1vqAKz4ZndM2gBIf9n9QDJmbASgrHjpOHhfu0YnuIu2B6kFUnlnxiPuI2xpMf9964LapM40VK+Lk7/pvvwMA/1UFAbG7nn7k5Oc9vdtVLATAi3dIN5TJezbqvJAfjPpr3lIh50yNTANkgrOaeylNw339+MTe4hwL/5nFC+ZjoyGibV9b+1sdyk9VvRG5w+9xZULGAUph3NDQ5UAeIDB+CKI9XA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH7PR12MB7307.namprd12.prod.outlook.com (2603:10b6:510:20b::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9; Thu, 25 Sep 2025 19:49:56 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9160.010; Thu, 25 Sep 2025
- 19:49:56 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Qi Zheng <zhengqi.arch@bytedance.com>, hannes@cmpxchg.org,
- hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, lorenzo.stoakes@oracle.com,
- harry.yoo@oracle.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- lance.yang@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
- offline
-Date: Thu, 25 Sep 2025 15:49:52 -0400
-X-Mailer: MailMate (2.0r6283)
-Message-ID: <BF7CAAA2-E42B-4D90-8E35-C5936596D4EB@nvidia.com>
-In-Reply-To: <39f22c1a-705e-4e76-919a-2ca99d1ed7d6@redhat.com>
-References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
- <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
- <b041b58d-b0e4-4a01-a459-5449c232c437@redhat.com>
- <46da5d33-20d5-4b32-bca5-466474424178@bytedance.com>
- <39f22c1a-705e-4e76-919a-2ca99d1ed7d6@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN0PR07CA0010.namprd07.prod.outlook.com
- (2603:10b6:408:141::10) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301EE31D73E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758829910; cv=none; b=JHCgtx0Wic7u/T50R4lDG9JP+mpeUfsXU6/AHRzjNQhZyCo6doDAoMPpbngI5Ie+At5gR7hs6DrrnW5ks2nFVXzXywz/smglU+Ssj3jVc5MInl4pLH8gYCtCD3nXs3kNYGJgxO1tx3DlG36NukLGkxgTjAm6rQrQbseudo23hR0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758829910; c=relaxed/simple;
+	bh=pDmPi+nDsdkh16sS4XOo0WoQjsIHhChrThGhNMoNGts=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s0hDuDPw/vjpIr/hTqz102o1+9oRI5I11i2vh7kCCVDY2BgKPl43cUiQTYR/JkNiYruuNRaxJ8VwZGOCZOaQsrdaCr/O40+g6u7R17YTpGTzdMV6ghWQqkmWB1CF5Mzm6D+AurK5N4vGmA6YpOQMwVWxuKgi7Aaj7dAxOS/hdfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bu5IOrYA; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244580523a0so15330135ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758829908; x=1759434708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rv55ZBu/vAaRJGHC+Hl6bbjlGFEjsrTGV6fFQSN2diA=;
+        b=bu5IOrYAfwwd0gBoEQuyrx6KpejnDrdlGyJJU4POKe9xTdOXiJo6QSqSnAQF+15WA5
+         0cFnwVO5cf+/svgZjt7f1Iz9WIURZ+eoZOmqOQO5k+cGS2OvGvCnmqVdpQ7hdeTqKnvo
+         uihS8GkDh6bZIg5AxHgBpqPKThopmENjNc0x414jMD+mI/0jy+DT53xKdw3BLKlEP3d0
+         iV2hf60X0k8yR2KtNDXXOYR+npWGsr81VKEW+rgAAN/SsE6jYo9ZEoTZ2nkLNqEP582H
+         /P/bjG3MHGguN4Q2s0JCLg70azje9+G2eV2yw0Dr2JnIx/Bsf3Ws86ZaXOyxLCT+ovU+
+         0Pdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758829908; x=1759434708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rv55ZBu/vAaRJGHC+Hl6bbjlGFEjsrTGV6fFQSN2diA=;
+        b=Sk+qHuMTYP11XSCSpdF4PStCCRd2adsLgM2Dn0ypxvsnPqtU8dc0Qe8mHRnDMLFTP1
+         hAjqRzIvZlcVp8nmucuOjB5be29UUOLnXacKolICiRzAf1ZGBpk1shKlLUnj/+qOe5Om
+         xzShE2/YJiEj++mX6wd1M8vtkW509hrUg7R4X7G6OimWWxCbmoUz9dnTsoSQSG2m/csP
+         3rgHdu1Ew3mmaEJANCRGTx4tIPYPnaz+WAZY5QKs/KjkxijawHZPpxR0zqkcQismpn2E
+         WYxgi6gLZhfgRlZREHjqQAEMrQ8sAjKvpywUX3A5Qxwf6OL/RitgWFtFQYY+cV4pUnK5
+         TgYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDHssJPFAX4zNTVGEIxN5BH5Ub5qyGo7pfvKp8gILCBivqan8mr6iCffq0nQP8O6UEdAh+YlSkunbMalQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYc1bjxSkC3zOBeLEwGha3CIV9uW8Emijv1WMApWrxeS3B8t4o
+	ONe4i0nS/90sJDT+7L66qcCif/Irr8++obEqHruVl0BYCS6R148XX+beSGpyu7voOc3NvnjbDh4
+	I+LsUK8WnA3AORLBsfWFBv5vEFjJ5/miFQ4ZWQwIA
+X-Gm-Gg: ASbGncvOcZOmGkYeEbvnwG7JGvFw24USfTogtBWDmlDoLuVh9kNtqdoybE/sn2q5e36
+	zt5eENQuF7cceSkMytT3PAGU4izDB0R5ItVTKmeGwQNz3w6rTByCkLUX8vPtchIBcMFWKtZHuUC
+	aZehE5ah8AqOnaFIPKq7RM9+KebFMmVrRdku4rDrkISiyoKEnt1ZU7V/dEjJFDg0j/bn5MHDflN
+	+B2AVYqQEOH5q11h6xp74HCmotgKfvYoJzOPwDfU+BphJg=
+X-Google-Smtp-Source: AGHT+IEMxPfUQjoBcfANKqp9Vkg+WQJ3eu9qIHeIMZROEVNo7FCgnZHJoaajMVV6jRvi1vvmnFYYvC7eSgqUM5vPToY=
+X-Received: by 2002:a17:903:3d0e:b0:271:5bde:697e with SMTP id
+ d9443c01a7336-27ed49b9e58mr48033525ad.3.1758829908255; Thu, 25 Sep 2025
+ 12:51:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH7PR12MB7307:EE_
-X-MS-Office365-Filtering-Correlation-Id: 640252b7-4ab4-46c0-585d-08ddfc6cb3d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d3V3bTJ5VUp1WjRRMHVhb2VadzBuNWdNdEV5RGRQcjVjZHI5blVXYnorQy9Q?=
- =?utf-8?B?dEF3ZUVkWFI3czhvREYvNmhxSGJKc2ZXRmUvZHplZkdLOHc4NEFLRno1N3NR?=
- =?utf-8?B?Rk14akhjR1BEa1crQVRpdTAxN3c1SGJyTGs0OVZlTVFzMDQxQzF5cnB4b2c4?=
- =?utf-8?B?aWlZRG5rV2NpTVlud2tHUm83MFJ6RlZOUXBYUEdiRzZQZklFK0JGYnJhcnRM?=
- =?utf-8?B?MHN6ZFJjM3Q5aUI0UGtMZXU0RFdobGRVQUlFRi9zTk1BMTFINzlGSGxCdHFK?=
- =?utf-8?B?VXQvWTE4QkhaTnN2ZWJVRkV5WlduazZWcHljM3VuUGFzS3drb09uQWJyeDZy?=
- =?utf-8?B?cTJ2WjlLMWc2bW15cVpGbXR1MHRZczhxS041WEJ0TzhqZEtHU0xmYkFOWGZn?=
- =?utf-8?B?VElTSDZtN1gzNjdNeWs4ZzJGSS9FSTlDZ1J4eks2V090OFg2ZWhuVWFFQ1VZ?=
- =?utf-8?B?Q3hudTZsVmowYUU5RW13TndoRmdmUWNtZmJBWEJEb09yV05DdWwzRmVBZGc2?=
- =?utf-8?B?R1BDWTZQZDBzM2VRY3dCVGpMdDBPZFhNZGU0YVBqM28rSnhHNzhyV0luV09u?=
- =?utf-8?B?ZVU4TUpJVHRZaXlHNk0rZlp4UVUrWnpRMFdjZ25nSDVqQXhOU2wrMG0va29T?=
- =?utf-8?B?NEhqckgxcjFvTXc3ZVBWSWVxMG01eHFYdm1FcGJUN3dXdVhMYy9LMisyQzdU?=
- =?utf-8?B?VURvazAxU3NUQ3lHZHAvcXdoZlU5aU8xeUpYTHFsUFYvZGtEZEpseThzWG5H?=
- =?utf-8?B?U2MyRGkwV2NEZlFIRWVwSkowQ05mdnNVOE9lNG5jS2FNN0N5S2QwbGVXOWJu?=
- =?utf-8?B?VGlrTnA5UktxNjZCODQ1b0JLMWQ3aFo0dzRNUnNaenRZWTJQSHdWcXRFSGQv?=
- =?utf-8?B?Q2M2NVZENTVXNCtZSDlkWkp1L0pSZ09wVlBCZGN4M0ZBN0I4Y20rSjVESWpJ?=
- =?utf-8?B?N1hDbFB3Y2JDRU80cU5Fd25RSjhRRVRkU2VpYkgyZEJPT3R3M3lUc0pzdTlP?=
- =?utf-8?B?dW5XbVA3eXNKRU56dnJOWUcxNkRpMk9BK1FTQXk3NGd5R2RWU2pKWjBYRDZX?=
- =?utf-8?B?Yzg0dUlyRSsybVVOQUtWTW9yRnRWbnBSNTlrb001dk5QODhUMHd2U2MyOGRx?=
- =?utf-8?B?NU95MmRNd01jekJCaGc0NmM3dG1OdUdpUEc3NzBtSFJzVHlBczd3Sko0cDg4?=
- =?utf-8?B?U1BNSzdGVnk3c2ZENnJTaHdqcEZDZG92YkFGNml5NUJ4WHVQR0VTMXVsMis2?=
- =?utf-8?B?ZUN6Z0F0MkhzNkFjb2FxcmRrcEtFemhjcW92YjYxREY2V3JOVG4xa1NVdVU0?=
- =?utf-8?B?bjcvcnBYUWFTenZWV2JBMVZLRnoxaEd4ZzNOQlZkQVlObUM0aGdlRzVPd1Ix?=
- =?utf-8?B?RkNjRGsydXBvVld1N1FzOFFHZ1AzTE95aHljdlhoMy9nMzdsUE1ubEFzY0NQ?=
- =?utf-8?B?OElUcUtHTkY2aWRRbGxDL3JHdUU1VGw0RUpyMHRIZXZnUDhOWnVqaVROUzBJ?=
- =?utf-8?B?RW0rS3A1TUFEb0NVSXVkTkQ0Wmc1T1dSNThNTjVkaXE4b29xckhlVDJoOXpT?=
- =?utf-8?B?cVNxdlhYWEZYandVMXdkNXRNWVJ3OC9vdHZQYTlVS25SdVgvTU56MWdJM3hF?=
- =?utf-8?B?R1lTVFQrUGhWeGRCT2xkb3NsUkpLc1BxS0xsWGlJanUxUU5PbHAxWThOaktY?=
- =?utf-8?B?V3VFTWFQM3dDUncxUWkxR1krdyt0bnBqNHplS0EwcVBlalRIenJ6M09QK0kr?=
- =?utf-8?B?UlFrZ1lzWnFuY2lSejYyRHJETEVWalVmLzZwUHlVNjExWWtGbktwalU4aEVT?=
- =?utf-8?B?b3RFbTRVOHQzdVlqSlJGZ3JWMlcvMUNCNmh0WUlua1Y1WEVEaGVzU2NnSERr?=
- =?utf-8?B?cHZGRmQ3R1psajBVcWFJUENVc3I0Q1h6NU4zWVRNSEpKeXo4VGx6VzJ0R0hz?=
- =?utf-8?Q?PXMpsMj6x4OEP2Uluynf0Yj/wbJL/Lq5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?K291cGFBc3lES3NUQkgxcFV5SFpMdmhiUmxPbHJtSnYxOVYrdWFkZ21raVpE?=
- =?utf-8?B?TlpnbHpHeldQeHhoZ29URVdtbm9GTlQxQVJlc0hia2JBOElBajJpcWtyWW9j?=
- =?utf-8?B?YUw3c0RMWmFkNytoU0hkeU1pUDNjTGxHNUJpQUtPTFlFUVJlY2lUMXcvQkIv?=
- =?utf-8?B?QUlTQnVVUkw4Z0k0MnlhaURDQWJOdk1TTE0vS2FhMzAvZTdRMElxOUlPY2Fh?=
- =?utf-8?B?L2ZkekltYU1Za25JNldqZzFiakJndU1WbWFwSWg2cU1hNVY4WDJZTEo3ZGQr?=
- =?utf-8?B?TUE2SU9LNTJxVFk5RE45dDk4RTVtdW8wSnBUKzhsNFJ1NHhmMTVxc2o0b0Fu?=
- =?utf-8?B?T1QrallxNkN2K1FvVm5ZNVhqdENLaE11Q0tIZjFmMDhIazB6RWZWR1VCUE9H?=
- =?utf-8?B?MGJhenhlY2tJOXRFTjhqdWRuVVJrZDFybWo3MWxvcUJiYUNzWnpCSUZIRWoy?=
- =?utf-8?B?Zmg3SE5mUmI3K1lsSDkyTzRVeGZlYm1ORXVuQnFRd2M3ZWszTFl5OGpENURa?=
- =?utf-8?B?UGNwRElMelpVNDhFRXpoMjFZVUNNNTJqbkxvU1ZwYSt0RzhRMUsxSWlNTE5k?=
- =?utf-8?B?Zk5Bd3Nrc3Rvb2dMbWNwZ1dmK0Nha3ZJK2k0ZnE3bWtMMXRTQStsVGVTZVE3?=
- =?utf-8?B?bTB3cWd1V1ZjMHVlemNHeDRFM0pSWk1YdXl5R3N1U3RZVzJjenFDem10dVdN?=
- =?utf-8?B?SjNFQnYyM2liMXliV09xSEhyeFF5bDl3dkQ3bEc0MGNocU1NM1huZmJkYit5?=
- =?utf-8?B?akhVTC94a3lZdnoxSG9BZEVGRGVpbHhTL2QwOXZ0dG94bHJEQ0t5MmU1bk1K?=
- =?utf-8?B?ZTB1eTMyUEtZZkdCRlQxdDdXVU5SWHJIbmxDZCs0KytaKzFwQzg0emFlb0Rr?=
- =?utf-8?B?K29QQzZ3b0h0am9kR2oxa0JjcWNjRmhBV1hSODAvUU1BT0ZPeFFGQm95cUhu?=
- =?utf-8?B?UDZkaGNRY0NOY0dKQXhXeC8yZjhvMGM5aWhhR3c2akV3Vm1SaE1IVjUrVld2?=
- =?utf-8?B?MU5rOE0ySFJnaStYSTgxVDUzY09qdjRBNThKWElrbnhIc3Nha1BxTjFGMmg2?=
- =?utf-8?B?YnR0VXBLZXFaSmFadDRIdUoyamNRQjdpZDFONUxScGtsYVB4Q3J3eTlPZHdR?=
- =?utf-8?B?N3Z1RzZmUXIwNjhLNXR1V3h5a210R1BYbkluUWNwNXZoZGZsZHVkandvSVZn?=
- =?utf-8?B?OVQ4Q1pWMFI4Wk5adDNMRG9ybVp5YkwrRmR4RHM4K3lmenIwSHB4cU9pV2Rr?=
- =?utf-8?B?MDF2SktOK01CRHRoRnpteUNpeVNKanNHU1ZuUnovbGRSRG1jWWE4Vi9PcFd0?=
- =?utf-8?B?YmdpSTNGbGJBTWhVY1BzRVlRVWM3K2tYRWdPalBVNGwzZW5LOFg0MVZuUG9t?=
- =?utf-8?B?dm8vRkZqTGVuanhQN3hzREtzcEVUNXUybXMwYWlzankxZUVONGd4WE9nZlRO?=
- =?utf-8?B?akdNeDdndThqTjVUMDI4WGhEWUsvQnpxbzg4TGRDbmE0YzRjcjRXVmcrVTdW?=
- =?utf-8?B?ZzV1RWh6Qlc2S21aaDVKaHVFLzFJb3BidmkwQURYaXFYaDJ0V0xyMmZBNnlT?=
- =?utf-8?B?TXBQS2RKNXpmRjNtOGRnaXhNOU5HaHNuMGZ1M0NKTmlpRHBtMkU5VUJieDF3?=
- =?utf-8?B?RTdvVU9ka2ZUbXRlaGNRbFo0VU9iTnUyUjMxcWc1eWJtZUprVmh5Uzlab2g3?=
- =?utf-8?B?d0s1elgvWjNGc0hhUEJ1Tnc3MHlESm85UUFIc01IQndrMEw1YjVXSGlDRTd0?=
- =?utf-8?B?c3ljbVdwWEx2SnBSek9OVkpDdWI2a0pMc3RFRS9mM3ptR25BWTNYUnptY3cz?=
- =?utf-8?B?d3RqYk9IOGZhcVBRL2lGeFp6QWpveGtoMGFPZFdhaDZYWHBqMGFLbzV3bjFW?=
- =?utf-8?B?NzhjbGZZc2xJZUdkd3Vwd29uR3NqeWdjL1pGSlZsSnBYN2k5QlB3VEpIK3Jl?=
- =?utf-8?B?cEVQbzdvR2RoWnA0MnJ2MzVQMHZGK09RWGlqVXgrMlAveUhTbDQrSFcwQzNN?=
- =?utf-8?B?Rk5LcUpCcGZqTndUdEZKZkczZVNCZHRRNHQybk9NMVVlbk96U1NUTW5HZ09i?=
- =?utf-8?B?YWVFeFMzbUlNdnJ6N1l2aFhBU1BOZ0R4Y1oxVGJMWUlhNHR6Z0lLLzY4WTZh?=
- =?utf-8?Q?dPvWsmi9Uk23BcQ1Dmrd1YGKf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 640252b7-4ab4-46c0-585d-08ddfc6cb3d1
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 19:49:56.1401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Xs5kfJFBGMZZxiWZqiu0G90EALDpi2IEt8Y28YmyE1j9qXSkknhI75NRS5SWzm/S
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7307
+References: <20250922121818.654011-1-wangliang74@huawei.com>
+ <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
+ <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com>
+ <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
+ <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com> <CANn89i+Ntwzm2A=NSHbKdFuGVR6kar00AjrJE91Lu0e5BUsVow@mail.gmail.com>
+In-Reply-To: <CANn89i+Ntwzm2A=NSHbKdFuGVR6kar00AjrJE91Lu0e5BUsVow@mail.gmail.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 25 Sep 2025 12:51:37 -0700
+X-Gm-Features: AS18NWAA2SBIe4o1ksv9NLao6qJzvr8CVNGLCgq5DU2m2sX7IFSITs6B-eWQNdo
+Message-ID: <CAAVpQUAd1oba6cy-hSub-iS0cnh7WH=HXgVnUwj8MXZLyU=a+w@mail.gmail.com>
+Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
+To: Eric Dumazet <edumazet@google.com>, Wang Liang <wangliang74@huawei.com>
+Cc: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com, 
+	sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com, 
+	tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, yuehaibing@huawei.com, 
+	zhangchangzhong@huawei.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25 Sep 2025, at 15:35, David Hildenbrand wrote:
+On Thu, Sep 25, 2025 at 12:37=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
+ wrote:
+>
+> On Thu, Sep 25, 2025 at 12:25=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google=
+.com> wrote:
+> >
+> > On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Eric Dumazet <edumazet@google.=
+com> wrote:
+> > >
+> > > On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@go=
+ogle.com> wrote:
+> > > >
+> > > > Thanks Eric for CCing me.
+> > > >
+> > > > On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@goog=
+le.com> wrote:
+> > > > >
+> > > > > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@h=
+uawei.com> wrote:
+> > > > > >
+> > > > > > The syzbot report a crash:
+> > > > > >
+> > > > > >   Oops: general protection fault, probably for non-canonical ad=
+dress 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
+> > > > > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-=
+0xdead4ead0000001f]
+> > > > > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller=
+ #0 PREEMPT(full)
+> > > > > >   Hardware name: Google Google Compute Engine/Google Compute En=
+gine, BIOS Google 08/18/2025
+> > > > > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inl=
+ine]
+> > > > > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/sm=
+c_diag.c:89
+> > > > > >   Call Trace:
+> > > > > >    <TASK>
+> > > > > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
+> > > > > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
+> > > > > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
+> > > > > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:24=
+42
+> > > > > >    netlink_dump_start include/linux/netlink.h:341 [inline]
+> > > > > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
+> > > > > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
+> > > > > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
+> > > > > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
+> > > > > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline=
+]
+> > > > > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
+> > > > > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
+> > > > > >    sock_sendmsg_nosec net/socket.c:714 [inline]
+> > > > > >    __sock_sendmsg net/socket.c:729 [inline]
+> > > > > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
+> > > > > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
+> > > > > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
+> > > > > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> > > > > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+> > > > > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > >    </TASK>
+> > > > > >
+> > > > > > The process like this:
+> > > > > >
+> > > > > >                (CPU1)              |             (CPU2)
+> > > > > >   ---------------------------------|---------------------------=
+----
+> > > > > >   inet_create()                    |
+> > > > > >     // init clcsock to NULL        |
+> > > > > >     sk =3D sk_alloc()                |
+> > > > > >                                    |
+> > > > > >     // unexpectedly change clcsock |
+> > > > > >     inet_init_csk_locks()          |
+> > > > > >                                    |
+> > > > > >     // add sk to hash table        |
+> > > > > >     smc_inet_init_sock()           |
+> > > > > >       smc_sk_init()                |
+> > > > > >         smc_hash_sk()              |
+> > > > > >                                    | // traverse the hash table
+> > > > > >                                    | smc_diag_dump_proto
+> > > > > >                                    |   __smc_diag_dump()
+> > > > > >                                    |     // visit wrong clcsock
+> > > > > >                                    |     smc_diag_msg_common_fi=
+ll()
+> > > > > >     // alloc clcsock               |
+> > > > > >     smc_create_clcsk               |
+> > > > > >       sock_create_kern             |
+> > > > > >
+> > > > > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpecte=
+dly changed
+> > > > > > in inet_init_csk_locks(), because the struct smc_sock does not =
+have struct
+> > > > > > inet_connection_sock as the first member.
+> > > > > >
+> > > > > > Previous commit 60ada4fe644e ("smc: Fix various oops due to ine=
+t_sock type
+> > > > > > confusion.") add inet_sock as the first member of smc_sock. For=
+ protocol
+> > > > > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of ine=
+t_sock is
+> > > > > > more appropriate.
+> > > >
+> > > > Why is INET_PROTOSW_ICSK necessary in the first place ?
+> > > >
+> > > > I don't see a clear reason because smc_clcsock_accept() allocates
+> > > > a new sock by smc_sock_alloc() and does not use inet_accept().
+> > > >
+> > > > Or is there any other path where smc_sock is cast to
+> > > > inet_connection_sock ?
+> > >
+> > > What I saw in this code was a missing protection.
+> > >
+> > > smc_diag_msg_common_fill() runs without socket lock being held.
+> > >
+> > > I was thinking of this fix, but apparently syzbot still got crashes.
+> >
+> > Looking at the test result,
+> >
+> > https://syzkaller.appspot.com/x/report.txt?x=3D15944c7c580000
+> > KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead=
+0000001f]
+> >
+> > the top half of the address is SPINLOCK_MAGIC (0xdead4ead),
+> > so the type confusion mentioned in the commit message makes
+> > sense to me.
+> >
+> > $ pahole -C inet_connection_sock vmlinux
+> > struct inet_connection_sock {
+> > ...
+> >     struct request_sock_queue  icsk_accept_queue;    /*   992    80 */
+> >
+> > $ pahole -C smc_sock vmlinux
+> > struct smc_sock {
+> > ...
+> >     struct socket *            clcsock;              /*   992     8 */
+> >
+> > The option is 1) let inet_init_csk_locks() init inet_connection_sock
+> > or 2) avoid inet_init_csk_locks(), and I guess 2) could be better to
+> > avoid potential issues in IS_ICSK branches.
+> >
+>
+> I definitely vote to remove INET_PROTOSW_ICSK from smc.
+>
+> We want to reserve inet_connection_sock to TCP only, so that we can
+> move fields to better
+> cache friendly locations in tcp_sock hopefully for linux-6.19
 
-> On 25.09.25 08:11, Qi Zheng wrote:
->> Hi David,
->
-> Hi :)
->
-> [...]
->
->>>> +++ b/include/linux/mmzone.h
->>>> @@ -1346,6 +1346,7 @@ struct deferred_split {
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spinlock_t split_queue_lock;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct list_head split_queue;
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long split_queue_len;
->>>> +=C2=A0=C2=A0=C2=A0 bool is_dying;
->>>
->>> It's a bit weird to query whether the "struct deferred_split" is dying.
->>> Shouldn't this be a memcg property? (and in particular, not exist for
->>
->> There is indeed a CSS_DYING flag. But we must modify 'is_dying' under
->> the protection of the split_queue_lock, otherwise the folio may be added
->> back to the deferred_split of child memcg.
->
-> Is there no way to reuse the existing mechanisms, and find a way to have =
-the shrinker / queue locking sync against that?
->
-> There is also the offline_css() function where we clear CSS_ONLINE. But i=
-t happens after calling ss->css_offline(css);
+Fully agreed.
 
-I see CSS_DYING will be set by kill_css() before offline_css() is called.
-Probably the code can check CSS_DYING instead.
-
->
-> Being able to query "is the memcg going offline" and having a way to sync=
- against that would be probably cleanest.
-
-So basically, something like:
-1. at folio_split_queue_lock*() time, get folio=E2=80=99s memcg or
-   its parent memcg until there is no CSS_DYING set or CSS_ONLINE is set.
-2. return the associated deferred_split_queue.
-
->
-> I'll let all the memcg people comment on how that could be done best.
->
->>
->>> the pglist_data part where it might not make sense at all?).
->>
->> Maybe:
->>
->> #ifdef CONFIG_MEMCG
->>       bool is_dying;
->> #endif
->>
->
-> Still doesn't quite look like it would belong here :(
->
-> Also, is "dying" really the right terminology? It's more like "going offl=
-ine"?
->
-> But then, the queue is not going offline, the memcg is ...
->
-> --=20
-> Cheers
->
-> David / dhildenb
-
-
-Best Regards,
-Yan, Zi
+Wang: please squash the revert of 6fd27ea183c2 for
+INET_PROTOSW_ICSK removal.  This is for one of
+IS_ICSK branches.
 
