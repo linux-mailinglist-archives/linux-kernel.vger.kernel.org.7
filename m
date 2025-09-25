@@ -1,198 +1,169 @@
-Return-Path: <linux-kernel+bounces-833198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A900BA162D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:41:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4781DBA167E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6B5623FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14511C026E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0358231E8A4;
-	Thu, 25 Sep 2025 20:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652C0321421;
+	Thu, 25 Sep 2025 20:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UFXQ/kqP"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1XZ+xQH"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7B831C57B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E946321264
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758832883; cv=none; b=JqnQ2WoDiqjLyeLVxUtKTG/5HYYO/prtJuQsVoLpIN5oJOBf8oyZbPWTqngWylrhdKAAhTJxU5nhl20/heQd2hnmAhoLhu2TrBZDcbx4WuHe3D7ZFjTH38LI1k5WD+jT2jb3feJH1DnF0PogBLDImirTsSmASrGxAT5Ld19zASc=
+	t=1758833120; cv=none; b=MQhpANmWHoMuD2nWf8fW5weI80v3qDCweg4tyK2b5e/yRF/xpQZjJmq/X/oRyR2um5i9ai2ImSiD91Adn2QJ5b0aQR7bslQOKBcMCsVzmUzaEcPLvtWjmYuVk2KODWydTYq5Xo5s9NE2dhS9U2F6tI0cq3224enm9zQajFG8FBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758832883; c=relaxed/simple;
-	bh=5xpUyJ2gl48fAf8hgqBQ81QjAJ8R3hpi0dRccTCXKNw=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=kKKYJoAZ2Yw/tKiVizqRvlBY5cQDJJWLUAco0kUZlOLOa9oXhGUg3TOBV1p+vX8s98NR+/QY0I/vpLY9SNMeNNFwHjsxclHTh86Ls1IIaRFDRiTpVlWSvOGe2Hy63V6VNdXahgQS8pIMenbADnRXKqs90TxY2KfwvxzKLzUerBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UFXQ/kqP; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-84d8e2587d6so99519285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:41:21 -0700 (PDT)
+	s=arc-20240116; t=1758833120; c=relaxed/simple;
+	bh=Ru0U+UR4TDnU4YEoC4bgh7/N8KX36OuOCEfHwKRdWLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEE4PpL98eGOFc+w24KDkQ0q5KYTUgT/MlmLPF5tJNig6qNa/dhm/hjzlpiwUfrt9mZ+BzfmXjGDBrC9yH0LJ/LvHRzehU1SkxbeWTD538mS8yFWXapwYBmDgoCjqNIiB0sw7C0H2RNPal4nGi70XnizkPYieBvuIiMQy/YUyQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1XZ+xQH; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f2e621ef8so1924084b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:45:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1758832880; x=1759437680; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wz8tMv7poCK+K+LZKXpitPO/IERpOcWNitjaxECk3cc=;
-        b=UFXQ/kqPYvB2bJMrV4s63VaJ1plSKOk2E6ULSzAvJ2AruoYGwiKcOEmIT55i/wDEtV
-         L/4pYbtv+v4m3sE4HdWnUtZBxBeKDpjEhrGl6FZfT8CNrmLavC2KkEtmKoTKv19grrXQ
-         BuWwZ7MZ68oj/da++p+5zMQ8NiYULENHH82iv0u3Jr6kdkcbIu8qnNmBnM9JXiqAupxg
-         lBnOQYKrsqJMcurddQfsg/ce5wMk/u90vjU5EE+QUVdAU1Vnoqo7HrTq6w68uFrkAsWo
-         TtHaXu2P+/UOvfDleJAcVqnPH/JL5P5Gp2EtyEuoETEtMSX4ajRY9vb5yhBWIPRrtgS/
-         R7Yw==
+        d=gmail.com; s=20230601; t=1758833118; x=1759437918; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3eDhSQL/LKEOp5/PaHTtO2MouZaE3+HdZOo9nr4tRw8=;
+        b=A1XZ+xQHdxJBef1PoAnWGxFrbUQn0d7bpnBx8nQ9EoGcG4AvVPZBheFTHlV/BG8Yal
+         bU15BYAQKUqkM2ww2GWfXF3QrXMh1l47yImEzghZBB7qoBfEW8O13LrAgoHKEdb3Ict3
+         Gj8PqM2ATXntQPp1nzARIjo6iHO2vX+hnXvIhDw39gVYPJbZg76gUgJdnQW40Zi7Kd7S
+         MxWfT2OO6ki//xxicMX4e9zT3TXH8VTtrziUkJsAIiJ4VsNIaB1OeMT+vx9do8moxFij
+         6cWUygD/zNqEho5rj9xcfruudU0PtQmeDzPhhu14UJgwoHHsln+CME2bhPTLBgexwoxh
+         12sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758832880; x=1759437680;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Wz8tMv7poCK+K+LZKXpitPO/IERpOcWNitjaxECk3cc=;
-        b=krauERbaY1u0b3LCPynxmg0DA1J3Z/tOFgS0IB+A8wTst6/5vqukyiMhIbfGHClPuw
-         ZHIK7SpMca9UCm7a+OiCepsPhlm0QZUmEimth+/yhbmisH2EcKzK1lzNVM0glVhAGb7f
-         eVlx3cKq8NnU1So8zO8ALK6a+mQzB0RMLdAFLQENCgtpiBFvHfU95uvIl1t93BF8lzjs
-         YVE+Xjlq4onbdEyyKuxJTUAE0SmPcopWIORfc+kpmfEQxykeEzMgXFLPRlcJqG6JgD4V
-         HDmNUvlyljff5kb4ijwqOp8vkNsbLRNBR3chfw8QeTfaJBD/m+SA3bprTZ+fzPdDNkIU
-         HIQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXasBNl3/L75VPCJbLgkXQtfxCEnqrr3jHXbSnVgkXdI+FCvoqgkCiQNtQEyXUh9cFiZusiIijSbsIfA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztm7SJk5MYt8WKMdGZS3sSq5UG9YrazPkqoinCkunoxB1h6H22
-	4N4NioqjmknVMN03M3qvu93Y95QcX5bT7Q2DnHXl3QaY2OLMYl9wSz7WgEfE8qaBJQ==
-X-Gm-Gg: ASbGncs26AQRRIFc6c4wm7ylN0vOSBZCPlP7ZaMRybBSRUq/xeMhV5lehTP286bSeWO
-	aiYE5eLY2RWoTQXUkCVylKgJZNLtotUoidU2sfTlXQXWpNMHtdQOA7Z/9bYuZPRmZ4Mms3qxkGf
-	g91TrtKHzzaZcpM6HeXj3L45gpFKWMgBx6CKlU3iS9uTyr7oFzSNdKhQGkzwFWjAw5/qY3tdV5g
-	Av8L0mi7hGSmeQw5Qz5QsJtpI9QsUezl4sZQm+k7s4gbQpwsjazlNf4eW30mL6HsBXC/EOYLJP5
-	SgMz4RG2ZBW7GaQPP6lGeulhWA8LPYwkSxpbC9iWC4FUBO13W9uo1k4gBdFfHODIndqcF6fCgpG
-	t2cr502/58Cd8W64l4G3u/+rirbcLeeA1R1k+RLachLuESvwRTXTkN9ROFAQ+mL32E6M/
-X-Google-Smtp-Source: AGHT+IFGQLFjIsyHXKrkMLf2hg2boloL2B947/OU1clxJUe5AMyIuuBuNbS2SxXWQLv1+YIsuUnJbg==
-X-Received: by 2002:a05:620a:1aa9:b0:7e9:f81f:cead with SMTP id af79cd13be357-85ae95bb3afmr779265385a.71.1758832880002;
-        Thu, 25 Sep 2025 13:41:20 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-85c2718e92fsm173048985a.9.2025.09.25.13.41.18
+        d=1e100.net; s=20230601; t=1758833118; x=1759437918;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3eDhSQL/LKEOp5/PaHTtO2MouZaE3+HdZOo9nr4tRw8=;
+        b=gA2PGK0B1NAL5B4m3k6D6l97Ilx2LQKdQCDOteLaG1UxWjCWNw7JuuYBGuA6F7m1c+
+         UK8GGup6/JThMoDqAKl+ks4+ibUEKR9nox8K0RlmP/7ulGr3CMglRCBa2d3gfuDqnpfV
+         MfjxRzdvlHRFNgaYqid+X9RZSQUeFNu8Xbdme+SsEPMA2hkDQET7wnxbVQYnUPPafdID
+         o2Owg7ZOi1w3zIe8PUl+QzzPb8F8NtRQ7SQxt9HT/Qn+lzK0IYE2E+zhKI3p822OYg3A
+         xFFANAMjSEHl/IC+ZNK0t1pcLtVgHerwA/xJ8TGqrCW8rBXmqUxW3BPRJGYIcQt78d3K
+         KaLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRlImQA2enYPbTv+1DWEz4I70O2Pu9Okc1WMw8VWcxqMMk9ibzh7fhIi4rVwyx16wyitYIayeJ7GQ1ALs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoa0QObVntwj2m3TmlM06SZdgGMBUA2n0CuFHzPMx0vC0YofwP
+	mPMWbCdw29k3qJFXTKviE/ag1cnA8rR6SqUwg/y4h5Z8VELUSekEuVBj
+X-Gm-Gg: ASbGncvNXkuBbS+le4r6NyWkRpFp6Bf7GnixQW2tzpNpzccy+8zQYPAG+tE1GPTGjzG
+	WMZOVIheU6r36jPEPXTEh4oEeH+ylEOagQu2kyDaBZYXXfbKWFyH+qVk7+acRXcCW3pDH/c+GSr
+	ja9zhjCAG660WwDfBlfMRuei+Bis4qN7eTZKl7l1/N2HyErwjBW4eYal0LyZiwXMDeBajmZpEPJ
+	ymKJ/jJoIclZ5NJkwpkqH0SRdkidh3gZz54P+5UFQk7gBoRZN82peHGamY7by92/MM2TiTFZDNR
+	rhcJOD0Kettn5Zmkjr+8h2t8u8K4b1bBh7jM2KITpyse2UMv9zcHIUUHmyOVY/XtG/U6NlZb3LN
+	L3MKpe4fuMhZylKtjVFB+keXB4c2V8ESWWKmNhtQ=
+X-Google-Smtp-Source: AGHT+IHAMz5CMMWeR4tII30EjfIdX2VnbTPNJkIYi+47i3rAuGHIXnYdncaPKHzzQmFkMUxBtAQtoQ==
+X-Received: by 2002:a05:6a20:7348:b0:262:52de:c576 with SMTP id adf61e73a8af0-2e7d3db5fcdmr6163922637.29.1758833118401;
+        Thu, 25 Sep 2025 13:45:18 -0700 (PDT)
+Received: from cortexauth ([2401:4900:889b:7045:558:5033:2b7a:fd84])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810239d99dsm2675456b3a.21.2025.09.25.13.44.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 13:41:18 -0700 (PDT)
-Date: Thu, 25 Sep 2025 16:41:18 -0400
-Message-ID: <c7a8d5f64e19f529a7595f26e150826f@paul-moore.com>
+        Thu, 25 Sep 2025 13:45:17 -0700 (PDT)
+From: Deepak Sharma <deepak.sharma.472935@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	pwn9uin@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com,
+	Deepak Sharma <deepak.sharma.472935@gmail.com>,
+	syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+Subject: [PATCH net v2] atm: Fix the cleanup on alloc_mpc failure in atm_mpoa_mpoad_attach
+Date: Fri, 26 Sep 2025 02:12:51 +0530
+Message-ID: <20250925204251.232473-1-deepak.sharma.472935@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250925_1622/pstg-lib:20250924_1646/pstg-pwork:20250925_1622
-From: Paul Moore <paul@paul-moore.com>
-To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Cc: eparis@redhat.com, pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, ej@inai.de, Ricardo Robaina <rrobaina@redhat.com>
-Subject: Re: [PATCH v2] audit: include source and destination ports to  NETFILTER_PKT
-References: <20250925134156.1948142-1-rrobaina@redhat.com>
-In-Reply-To: <20250925134156.1948142-1-rrobaina@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sep 25, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
-> 
-> NETFILTER_PKT records show both source and destination
-> addresses, in addition to the associated networking protocol.
-> However, it lacks the ports information, which is often
-> valuable for troubleshooting.
-> 
-> This patch adds both source and destination port numbers,
-> 'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
-> SCTP-related NETFILTER_PKT records.
-> 
->  type=NETFILTER_PKT ... saddr=127.0.0.1 daddr=127.0.0.1 proto=icmp
->  type=NETFILTER_PKT ... saddr=::1 daddr=::1 proto=ipv6-icmp
->  type=NETFILTER_PKT ... daddr=127.0.0.1 proto=udp sport=38173 dport=42424
->  type=NETFILTER_PKT ... daddr=::1 proto=udp sport=56852 dport=42424
->  type=NETFILTER_PKT ... daddr=127.0.0.1 proto=tcp sport=57022 dport=42424
->  type=NETFILTER_PKT ... daddr=::1 proto=tcp sport=50810 dport=42424
->  type=NETFILTER_PKT ... daddr=127.0.0.1 proto=sctp sport=54944 dport=42424
->  type=NETFILTER_PKT ... daddr=::1 proto=sctp sport=57963 dport=42424
-> 
-> Link: https://github.com/linux-audit/audit-kernel/issues/162
-> Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
-> ---
->  net/netfilter/xt_AUDIT.c | 42 +++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 41 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-> index b6a015aee0ce..9fc8a5429fa9 100644
-> --- a/net/netfilter/xt_AUDIT.c
-> +++ b/net/netfilter/xt_AUDIT.c
-> @@ -19,6 +19,7 @@
->  #include <linux/netfilter_bridge/ebtables.h>
->  #include <net/ipv6.h>
->  #include <net/ip.h>
-> +#include <linux/sctp.h>
->  
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Thomas Graf <tgraf@redhat.com>");
-> @@ -32,6 +33,7 @@ static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
->  {
->  	struct iphdr _iph;
->  	const struct iphdr *ih;
-> +	__be16 dport, sport;
->  
->  	ih = skb_header_pointer(skb, skb_network_offset(skb), sizeof(_iph), &_iph);
->  	if (!ih)
-> @@ -40,6 +42,25 @@ static bool audit_ip4(struct audit_buffer *ab, struct sk_buff *skb)
->  	audit_log_format(ab, " saddr=%pI4 daddr=%pI4 proto=%hhu",
->  			 &ih->saddr, &ih->daddr, ih->protocol);
->  
-> +	switch (ih->protocol) {
-> +	case IPPROTO_TCP:
-> +		sport = tcp_hdr(skb)->source;
-> +		dport = tcp_hdr(skb)->dest;
-> +		break;
-> +	case IPPROTO_UDP:
-> +	case IPPROTO_UDPLITE:
-> +		sport = udp_hdr(skb)->source;
-> +		dport = udp_hdr(skb)->dest;
-> +		break;
-> +	case IPPROTO_SCTP:
-> +		sport = sctp_hdr(skb)->source;
-> +		dport = sctp_hdr(skb)->dest;
-> +	}
-> +
-> +	if (ih->protocol == IPPROTO_TCP || ih->protocol == IPPROTO_UDP ||
-> +	    ih->protocol == IPPROTO_UDPLITE || ih->protocol == IPPROTO_SCTP)
-> +		audit_log_format(ab, " sport=%hu dport=%hu", ntohs(sport), ntohs(dport));
->  	return true;
->  }
+Syzbot reported a warning at `add_timer`, which is called from the
+`atm_mpoa_mpoad_attach` function
 
-Instead of having the switch statement and then doing an additional if
-statement, why not fold it all into the switch statement?  Yes, you
-would have multiple audit_log_format() calls, but they are trivial to
-cut-n-paste, and it saves the extra per-packet checking at runtime.
+The reason for warning is that in the first call to the ioctl, if
+there is no MPOA client created yet (mpcs is the linked list for
+these MPOA clients) we do a `mpc_timer_refresh` to arm the timer.
+Later on, if the `alloc_mpc` fails (which on success will also
+initialize mpcs if it's first MPOA client created) and we didn't
+have any MPOA client yet, we return without the timer de-armed
 
-  switch (ih->protocol) {
-  case IPPROTO_TCP:
-    audit_log_format(ab, " sport=...",
-                     tcp_hdr(skb)->source,
-                     tcp_hdr(skb)->dest);
-    break;
-    ...
-  }
+If the same ioctl is called again, since we don't have any MPOA
+clients yet we again arm the timer, which might already be left
+armed by the previous call to this ioctl in which `alloc_mpc` failed
 
-... considering how expensive multiple audit_log_format() calls can be,
-it might even be worth considering consolidating the two calls into one:
+Hence, de-arm the timer in the event that `alloc_mpc` fails and we
+don't have any other MPOA client (that is, `mpcs` is NULL)
 
-  switch (ih->protocol) {
-  case IPPROTO_TCP:
-    audit_log_format(ab, " saddr=...",
-                     ih->saddr,
-                     ...
-                     tcp_hdr(skb)->source,
-                     tcp_hdr(skb)->dest);
-    break;
-    ...
-  default:
-    audit_log_format(ab, " saddr=...",
-                     ih->saddr,
-                     ...);
-  }
+Do a `timer_delete_sync` instead of `timer_delete`, since the timer
+callback can arm it back again
 
---
-paul-moore.com
+This does not need to be done at the early return in case of
+`mpc->mpoad_vcc`, or a control channel to MPOAD already exists.
+The timer should remain there to periodically process caches
+
+Reported-by: syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=07b635b9c111c566af8b
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+---
+v2:
+ - Improved commit message
+ - Fix the faulty condition check to disarm the timer
+ - Use `timer_delete_sync` instead to avoid re-arming of timer
+
+v1:
+ - Disarm the timer using `timer_delete` in case `alloc_mpc`
+   fails`
+
+ net/atm/mpc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/net/atm/mpc.c b/net/atm/mpc.c
+index f6b447bba329..4f67ad1d6bef 100644
+--- a/net/atm/mpc.c
++++ b/net/atm/mpc.c
+@@ -804,7 +804,7 @@ static int atm_mpoa_mpoad_attach(struct atm_vcc *vcc, int arg)
+ 		/* This lets us now how our LECs are doing */
+ 		err = register_netdevice_notifier(&mpoa_notifier);
+ 		if (err < 0) {
+-			timer_delete(&mpc_timer);
++			timer_delete_sync(&mpc_timer);
+ 			return err;
+ 		}
+ 	}
+@@ -813,8 +813,10 @@ static int atm_mpoa_mpoad_attach(struct atm_vcc *vcc, int arg)
+ 	if (mpc == NULL) {
+ 		dprintk("allocating new mpc for itf %d\n", arg);
+ 		mpc = alloc_mpc();
+-		if (mpc == NULL)
++		if (!mpcs) {
++			timer_delete_sync(&mpc_timer);
+ 			return -ENOMEM;
++		}
+ 		mpc->dev_num = arg;
+ 		mpc->dev = find_lec_by_itfnum(arg);
+ 					/* NULL if there was no lec */
+-- 
+2.51.0
+
 
