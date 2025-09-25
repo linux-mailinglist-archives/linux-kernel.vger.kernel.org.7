@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-831720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045C0B9D642
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:36:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576EDB9D65D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A786E422E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121963AC965
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640822E0927;
-	Thu, 25 Sep 2025 04:36:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007BE2E7BA7;
+	Thu, 25 Sep 2025 04:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiJ4X85v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B7C26D4E8
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 04:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4016E34BA52;
+	Thu, 25 Sep 2025 04:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758774966; cv=none; b=qoyQa6DnUtv5GoQzK24a7bESsIVlDW2cBxdDcbGKW+tYabE26YV8oaM8NFDNUV9wewPik6dch+QSeGqLuFlHIZTMb5BI+afcPCEpZKypvb9xRZOusnnAdy88Qu+1120mqCQmgvq2KEE8G60hAheHvYf6aESG7MNplGkmDbrioWU=
+	t=1758775154; cv=none; b=nFR8MdBsgw/AC+jWLI/2/B+V+XFbqGHE1a1SKdGhEv4mXwgsPcQQZgMPKfQfSH7Cst/ct6iK/e3yIBdbm8EvMhpv6FGPnuoMExL/TVNy8lN/NgImqQcHzJppYAOjvKx9N/1XR070ax55rDEAUB7y0XTJHhEkjyCrS4kQp+P0m+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758774966; c=relaxed/simple;
-	bh=2IW5nx6xyunIj0beEntFwZygNIIedYjXeMzP7HEFE9M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QIEFwNpY8X8sxWr0wyc1p6e7gxIigap0ykGXh6gIAVrQHYP8gSCvoA3jX2VUgfnVlftkoB5adkpQpkRkKBKRqjthL1hEYHevTz4P9wz5a379xhch7Xi0bcSff9MY21tVsua7U6jt8OZWWGfXBpCnKSc6/xUJXjT/tMUF0IDFvU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-893620de179so118055039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 21:36:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758774963; x=1759379763;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTz9nWqgx0LOjbVYlwkTEWAPm2qCLxIQaZX0OyZe+Ys=;
-        b=pUVTC8Tm1CdhXQSwJO75yi8mEohcOAawC9tX/may9aQw1Bqiw+Qzl08uL5ytPBHLDi
-         UK0b5ZBjIGJivT8VAj1JKXZXbrOJnqyH0NqnXakozP7XNtI+6LaBbq2niZ0iYkDZWYSX
-         86VK48B7YMzhyz+a2uPa/mkEyG6WKdOsz5HxqOUe+CkvGI31/L+qX9jaLTocPdM6+49T
-         sG0By1Yx55iinDHOvP2JcSeb9GfKU7vYmuNB1wORK3c9HnuP/Pf/ldGYxxRTxOJ3s/Uv
-         +GLWHOxuDZayPrxO7hPkquKaYo9/cL+F+Ke1l7yx7JCeQadE6BV5bv3AuZANY0L/cBZa
-         sK6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW47TGigdn6K5wa+egR4KmMKaF+uhU2hLCxKnJ+byPThq1mvjqAOW9GDCQBZq+9ixMQL8v4zeb1Jx21ano=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9lovCB1hJtSP00Bfz79rCOaY6arrdD2WwmmkcHTArJ6lvVsb4
-	h4nKnNCY+3QGaIMuCbqaIeO8ZqcvWH0xczLhT2qii7BMsiElYmizoOmhzf5Rl9dljqzhQeNalEp
-	HrFB9SNiM/Uk84UNmjQ332dMaDRQWr9QwhtdDV11nwSrrYlX0a6FYOVTZKRw=
-X-Google-Smtp-Source: AGHT+IFy+0eZYAgtXq5YqQ41E+tPjGDVcLb2vYO7goGrdHTVXkIR7vERHLXAJ8r2Okr7BhCjIdyIQ3R0utgJBJNFajf6JUspZSrh
+	s=arc-20240116; t=1758775154; c=relaxed/simple;
+	bh=MskErj/iV6NFqzIAYLsjAGPJeQZV2e3AJUYOlJVD+N0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=fNn0pzaYiKCq2y+h/n3lcMiunc6rnF+Oe1gCgBArQ7r+QXYGgeOZBteSLbeqmGXv5RTzQER7Ve6nsYvAlr+1QvWI4/X2yV4YtiHxBkJvgyXhjEtMtGZj9WjYKtSMvqAppt2cspzxaDFQrULp4Q2jPA0O6HDqvnV725HCJoMRVE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NiJ4X85v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB2AC4CEF0;
+	Thu, 25 Sep 2025 04:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758775153;
+	bh=MskErj/iV6NFqzIAYLsjAGPJeQZV2e3AJUYOlJVD+N0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=NiJ4X85v3DCyQ0fYwmdSwIS38NeAQGNX5z2rlzosOZ+368oFTjmOlhWlYnEgyDZul
+	 lhnSIj4vxX0n3K5cZHraJdmmh6hBClfyuJHskgjnCZNWfpNh71Yss6k31sVuFxewRa
+	 wCmRAWlhtTcYb6lCWw+QuMXabJl4VWU1RqjNDWEmKUcDgzKkioqHZ4OWPuU3qyFS3r
+	 ordbxuqYl7+HdIV4/AOG3uwuepQpvdxuXkAGQCIefXk0//S6DETcDzWHZ9RiH0RJyj
+	 D2fpRvbiu87Hkk39DMMfuwdTF3kY2ZgC2SyQ+N4yTytFWzduwEeCGuesjUu8ny/Hsy
+	 oCLhx5HzNJTvg==
+Date: Wed, 24 Sep 2025 23:39:09 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218f:b0:424:805a:be8c with SMTP id
- e9e14a558f8ab-425955ed522mr32500715ab.8.1758774962809; Wed, 24 Sep 2025
- 21:36:02 -0700 (PDT)
-Date: Wed, 24 Sep 2025 21:36:02 -0700
-In-Reply-To: <CABFDxMEvAdSyAPhyNo0YWWwA7C4=KFm2qKS9DS7ExPwFvDLjDA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d4c6b2.a00a0220.303701.0000.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_nls
-From: syzbot <syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com>
-To: ekffu200098@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file fs/exfat/super.c
-patch: **** unexpected end of file in patch
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ netdev@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ linux-gpio@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+In-Reply-To: <20250924223528.2956771-1-robh@kernel.org>
+References: <20250924223528.2956771-1-robh@kernel.org>
+Message-Id: <175877514894.3628735.640919946657107925.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Convert
+ marvell,armada-3710-(sb|nb)-pinctrl to DT schema
 
 
+On Wed, 24 Sep 2025 17:35:24 -0500, Rob Herring (Arm) wrote:
+> Convert the marvell,armada3710-(sb|nb)-pinctrl binding to DT schema
+> format. The binding includes the "marvell,armada-3700-xtal-clock"
+> subnode which is simple enough to include here.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/clock/armada3700-xtal-clock.txt  |  29 ---
+>  .../marvell,armada-3710-xb-pinctrl.yaml       | 122 +++++++++++
+>  .../pinctrl/marvell,armada-37xx-pinctrl.txt   | 195 ------------------
+>  3 files changed, 122 insertions(+), 224 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+> 
 
-Tested on:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-commit:         b5a4da2c Add linux-next specific files for 20250924
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc64d939cce41d2
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e9cb93e3c5f90d28e19
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=106bd4e2580000
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): gpio: '#interrupt-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctrl.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): gpio: 'interrupt-controller' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/marvell,armada-3710-xb-pinctrl.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/marvell,armada-3710-xb-pinctrl.example.dtb: pinctrl@18800 (marvell,armada3710-sb-pinctrl): reg: [[100352, 256], [101376, 32]] is too long
+	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250924223528.2956771-1-robh@kernel.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
