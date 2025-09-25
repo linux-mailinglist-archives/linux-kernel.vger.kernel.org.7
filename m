@@ -1,249 +1,313 @@
-Return-Path: <linux-kernel+bounces-833121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4E6BA144B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:52:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD87BA144E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB36B1B26C88
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FD1327CC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C0731D742;
-	Thu, 25 Sep 2025 19:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7D431DDB8;
+	Thu, 25 Sep 2025 19:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bu5IOrYA"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMt3aSnp"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301EE31D73E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55B4246787
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829910; cv=none; b=JHCgtx0Wic7u/T50R4lDG9JP+mpeUfsXU6/AHRzjNQhZyCo6doDAoMPpbngI5Ie+At5gR7hs6DrrnW5ks2nFVXzXywz/smglU+Ssj3jVc5MInl4pLH8gYCtCD3nXs3kNYGJgxO1tx3DlG36NukLGkxgTjAm6rQrQbseudo23hR0=
+	t=1758830095; cv=none; b=aLgXw3x8QuQgLZd4f402cA84dyK/sLENKZM9tAu6n/ufVJXElQjOdMlb4JpTas2GWIizCSnwrGqgePLt7Dam+QW9pmxT7FOC8QxmC/djwOg4W5dGyO7zZvaEKHbd1wyh0nBF5ggSkCJ+CtZ5xQlteGN3QO7zcj6OowOQC1JyMKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829910; c=relaxed/simple;
-	bh=pDmPi+nDsdkh16sS4XOo0WoQjsIHhChrThGhNMoNGts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s0hDuDPw/vjpIr/hTqz102o1+9oRI5I11i2vh7kCCVDY2BgKPl43cUiQTYR/JkNiYruuNRaxJ8VwZGOCZOaQsrdaCr/O40+g6u7R17YTpGTzdMV6ghWQqkmWB1CF5Mzm6D+AurK5N4vGmA6YpOQMwVWxuKgi7Aaj7dAxOS/hdfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bu5IOrYA; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244580523a0so15330135ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:51:48 -0700 (PDT)
+	s=arc-20240116; t=1758830095; c=relaxed/simple;
+	bh=pm5XYw0aXaktnBJIF5cJcO159P8QCT4QOXDxOjBU1n4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PzkvB+xkz4vxC8OO0ILEdfocPj3Zcrn9Qc1/Ys5291gEEJbuDhPaDikSQalP03QSKtb74II5B/Eusg7mqJbr9JWBeha2+d0aTncsGWfkAXyA8XrvplXtGsSDHRdpv3QmMjm4a8VSVExXGaN8mCo6z0ltI1+JEZrZlj4Wwp3L1Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMt3aSnp; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-26d0fbe238bso11000555ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:54:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758829908; x=1759434708; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rv55ZBu/vAaRJGHC+Hl6bbjlGFEjsrTGV6fFQSN2diA=;
-        b=bu5IOrYAfwwd0gBoEQuyrx6KpejnDrdlGyJJU4POKe9xTdOXiJo6QSqSnAQF+15WA5
-         0cFnwVO5cf+/svgZjt7f1Iz9WIURZ+eoZOmqOQO5k+cGS2OvGvCnmqVdpQ7hdeTqKnvo
-         uihS8GkDh6bZIg5AxHgBpqPKThopmENjNc0x414jMD+mI/0jy+DT53xKdw3BLKlEP3d0
-         iV2hf60X0k8yR2KtNDXXOYR+npWGsr81VKEW+rgAAN/SsE6jYo9ZEoTZ2nkLNqEP582H
-         /P/bjG3MHGguN4Q2s0JCLg70azje9+G2eV2yw0Dr2JnIx/Bsf3Ws86ZaXOyxLCT+ovU+
-         0Pdw==
+        d=gmail.com; s=20230601; t=1758830093; x=1759434893; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cUCRyPPxJwDgqGohVPvUhNuL/vkJ5zITczPe/mg3LcA=;
+        b=hMt3aSnp85fXbHo+9nTAl8oloDRlewGAVikqGaAPvLCZW/xM2L1Ls2N+WmWrA4wWPl
+         9OcUkLxsEUYJnrJDr3LqesMuk+AH8vhD2RQ7Fie87Q6B7RPNgEOrHobECI4AR2jOsWMI
+         /uMY56k3BDu5eca/4fnHncetFNBz2ixr69RkQ6Bz7X+oT+02kyZXVwNeg4DJ3P9TVjeh
+         bFea564oNSJFuZhBcWcHV+zsKO7ARpV2aqK2hec/Cpw9FkxgDxfgGKP0wa+eJ6x66rsC
+         LszZ5OH3FklZDM50RYlaEG9h0JeX2RFgXVD3nP5Gggd7T2MHD5boT4716Sjbz0jQKr+y
+         imlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758829908; x=1759434708;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rv55ZBu/vAaRJGHC+Hl6bbjlGFEjsrTGV6fFQSN2diA=;
-        b=Sk+qHuMTYP11XSCSpdF4PStCCRd2adsLgM2Dn0ypxvsnPqtU8dc0Qe8mHRnDMLFTP1
-         hAjqRzIvZlcVp8nmucuOjB5be29UUOLnXacKolICiRzAf1ZGBpk1shKlLUnj/+qOe5Om
-         xzShE2/YJiEj++mX6wd1M8vtkW509hrUg7R4X7G6OimWWxCbmoUz9dnTsoSQSG2m/csP
-         3rgHdu1Ew3mmaEJANCRGTx4tIPYPnaz+WAZY5QKs/KjkxijawHZPpxR0zqkcQismpn2E
-         WYxgi6gLZhfgRlZREHjqQAEMrQ8sAjKvpywUX3A5Qxwf6OL/RitgWFtFQYY+cV4pUnK5
-         TgYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDHssJPFAX4zNTVGEIxN5BH5Ub5qyGo7pfvKp8gILCBivqan8mr6iCffq0nQP8O6UEdAh+YlSkunbMalQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYc1bjxSkC3zOBeLEwGha3CIV9uW8Emijv1WMApWrxeS3B8t4o
-	ONe4i0nS/90sJDT+7L66qcCif/Irr8++obEqHruVl0BYCS6R148XX+beSGpyu7voOc3NvnjbDh4
-	I+LsUK8WnA3AORLBsfWFBv5vEFjJ5/miFQ4ZWQwIA
-X-Gm-Gg: ASbGncvOcZOmGkYeEbvnwG7JGvFw24USfTogtBWDmlDoLuVh9kNtqdoybE/sn2q5e36
-	zt5eENQuF7cceSkMytT3PAGU4izDB0R5ItVTKmeGwQNz3w6rTByCkLUX8vPtchIBcMFWKtZHuUC
-	aZehE5ah8AqOnaFIPKq7RM9+KebFMmVrRdku4rDrkISiyoKEnt1ZU7V/dEjJFDg0j/bn5MHDflN
-	+B2AVYqQEOH5q11h6xp74HCmotgKfvYoJzOPwDfU+BphJg=
-X-Google-Smtp-Source: AGHT+IEMxPfUQjoBcfANKqp9Vkg+WQJ3eu9qIHeIMZROEVNo7FCgnZHJoaajMVV6jRvi1vvmnFYYvC7eSgqUM5vPToY=
-X-Received: by 2002:a17:903:3d0e:b0:271:5bde:697e with SMTP id
- d9443c01a7336-27ed49b9e58mr48033525ad.3.1758829908255; Thu, 25 Sep 2025
- 12:51:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758830093; x=1759434893;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cUCRyPPxJwDgqGohVPvUhNuL/vkJ5zITczPe/mg3LcA=;
+        b=PxmXwjE0h1w9aHCF+DWIpNcs1jK59K4S9q9/DelRlJQHavAod0tzVTi09PDv0TM/iF
+         lulLr0tHLp99HAqO6ft8QnzIbz8p+SfqDth5LrYYmhN0yp8ARINToBECjRYYlOTO+jAu
+         w05P4T+5EWv97U/pjdCkxpuRp+vqvKHpl/gPJ9UZOhJR9W9gEXAVy5njpd9wvZM/YIF9
+         H1apeyYeBoluVezPaFziMM61V8gRPcMY5s6K3cGtAQe6Ob+wO27BJqcC+svIPkHIEEge
+         g2EqnAWEymhK1QK+WhudNczDzKYWEguSdRxSpXx4ppjsbFsFW500HU5BC8Kw54zK1ryb
+         R/Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLlE1BeHoLfpW2koFQ1HhCvugH34noqMEC5i75b/jQulNSzl0S/JcpWqQWd9OJnxcj3UDpzC7orPDUF4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt7fLP2QaHXXUM8HbNb1BKDx3if1GjgbvRCRMQplnJB9G3b9Z6
+	nNmSMyAX/eZU5kXuT3NfIXmhoK7zYzF57N6tnJvRMhFX21UPgkfW3Z6+
+X-Gm-Gg: ASbGncsy9h6VAP35El6hZ/LTsopYyljaBCE8T1Dh5p27dy3XXvZrZtANiAXMbSX6J74
+	HgsH11VrwBnZAeMReiTKkkZSYSTV4Pq/EUxH9WkcFiTzUM0ZHvKEAvHVoIL261PYvuN/Y9qdHqT
+	ao8307ysflZSqZgpvWDsib2ZrGzHwO0gT9QtwDzpmbDbE+JQ9Uoss83JuczH4SCBf+zeRRIXgMH
+	MNREk//G8k7UVOzzj6iPuVIBVav3pVmk+nJdowoHAx6QGmAdnK2MijJqkdbqV5lrbLZtwNTwpsE
+	iVCY1PtDDLQB+2Tg+S3cF37HDE7atdBzpLduD2ju8p3dTXpqm23HCtlDLGeEopoqFf2rLXao8EU
+	Zv6UlAGvgJk/iPE0ZihU0GJWunDZ0AfbkP8iVKtChbQ==
+X-Google-Smtp-Source: AGHT+IHY9FrxRWml+wxJ38dtv6SdmwreMU9YpDdbSEbRQSOjOlzJqzA14wRIb8zcdNBWdW0cQAgMcA==
+X-Received: by 2002:a17:902:ced2:b0:24a:8e36:420a with SMTP id d9443c01a7336-27ed4aae440mr55087525ad.40.1758830093015;
+        Thu, 25 Sep 2025 12:54:53 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ae5313sm33098765ad.149.2025.09.25.12.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 12:54:52 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: corbet@lwn.net,
+	fj2767dz@fujitsu.com,
+	will@kernel.org,
+	yangyicong@hisilicon.com
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] docs: perf: cleanup fujitsu_uncore_pmu.rst and fix htmldocs warnings/errors
+Date: Fri, 26 Sep 2025 01:24:40 +0530
+Message-ID: <20250925195442.71997-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922121818.654011-1-wangliang74@huawei.com>
- <CANn89iLOyFnwD+monMHCmTgfZEAPWmhrZu-=8mvtMGyM9FG49g@mail.gmail.com>
- <CAAVpQUBxoWW_4U2an4CZNoSi95OduUhArezHnzKgpV3oOYs5Jg@mail.gmail.com>
- <CANn89i+V847kRTTFW43ouZXXuaBs177fKv5_bqfbvRutpg+s6g@mail.gmail.com>
- <CAAVpQUBriJFUhq2MpfwFTBLkF0rJfaVp1gaJ3wdhZuD7NWOaXw@mail.gmail.com> <CANn89i+Ntwzm2A=NSHbKdFuGVR6kar00AjrJE91Lu0e5BUsVow@mail.gmail.com>
-In-Reply-To: <CANn89i+Ntwzm2A=NSHbKdFuGVR6kar00AjrJE91Lu0e5BUsVow@mail.gmail.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Thu, 25 Sep 2025 12:51:37 -0700
-X-Gm-Features: AS18NWAA2SBIe4o1ksv9NLao6qJzvr8CVNGLCgq5DU2m2sX7IFSITs6B-eWQNdo
-Message-ID: <CAAVpQUAd1oba6cy-hSub-iS0cnh7WH=HXgVnUwj8MXZLyU=a+w@mail.gmail.com>
-Subject: Re: [PATCH net] net/smc: fix general protection fault in __smc_diag_dump
-To: Eric Dumazet <edumazet@google.com>, Wang Liang <wangliang74@huawei.com>
-Cc: alibuda@linux.alibaba.com, dust.li@linux.alibaba.com, 
-	sidraya@linux.ibm.com, wenjia@linux.ibm.com, mjambigi@linux.ibm.com, 
-	tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, yuehaibing@huawei.com, 
-	zhangchangzhong@huawei.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 12:37=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
->
-> On Thu, Sep 25, 2025 at 12:25=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google=
-.com> wrote:
-> >
-> > On Thu, Sep 25, 2025 at 11:54=E2=80=AFAM Eric Dumazet <edumazet@google.=
-com> wrote:
-> > >
-> > > On Thu, Sep 25, 2025 at 11:46=E2=80=AFAM Kuniyuki Iwashima <kuniyu@go=
-ogle.com> wrote:
-> > > >
-> > > > Thanks Eric for CCing me.
-> > > >
-> > > > On Thu, Sep 25, 2025 at 7:32=E2=80=AFAM Eric Dumazet <edumazet@goog=
-le.com> wrote:
-> > > > >
-> > > > > On Mon, Sep 22, 2025 at 4:57=E2=80=AFAM Wang Liang <wangliang74@h=
-uawei.com> wrote:
-> > > > > >
-> > > > > > The syzbot report a crash:
-> > > > > >
-> > > > > >   Oops: general protection fault, probably for non-canonical ad=
-dress 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
-> > > > > >   KASAN: maybe wild-memory-access in range [0xdead4ead00000018-=
-0xdead4ead0000001f]
-> > > > > >   CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller=
- #0 PREEMPT(full)
-> > > > > >   Hardware name: Google Google Compute Engine/Google Compute En=
-gine, BIOS Google 08/18/2025
-> > > > > >   RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inl=
-ine]
-> > > > > >   RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/sm=
-c_diag.c:89
-> > > > > >   Call Trace:
-> > > > > >    <TASK>
-> > > > > >    smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
-> > > > > >    smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
-> > > > > >    netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
-> > > > > >    __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:24=
-42
-> > > > > >    netlink_dump_start include/linux/netlink.h:341 [inline]
-> > > > > >    smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
-> > > > > >    __sock_diag_cmd net/core/sock_diag.c:249 [inline]
-> > > > > >    sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
-> > > > > >    netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
-> > > > > >    netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline=
-]
-> > > > > >    netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
-> > > > > >    netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
-> > > > > >    sock_sendmsg_nosec net/socket.c:714 [inline]
-> > > > > >    __sock_sendmsg net/socket.c:729 [inline]
-> > > > > >    ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
-> > > > > >    ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
-> > > > > >    __sys_sendmsg+0x16d/0x220 net/socket.c:2700
-> > > > > >    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > > > > >    do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-> > > > > >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > > > >    </TASK>
-> > > > > >
-> > > > > > The process like this:
-> > > > > >
-> > > > > >                (CPU1)              |             (CPU2)
-> > > > > >   ---------------------------------|---------------------------=
-----
-> > > > > >   inet_create()                    |
-> > > > > >     // init clcsock to NULL        |
-> > > > > >     sk =3D sk_alloc()                |
-> > > > > >                                    |
-> > > > > >     // unexpectedly change clcsock |
-> > > > > >     inet_init_csk_locks()          |
-> > > > > >                                    |
-> > > > > >     // add sk to hash table        |
-> > > > > >     smc_inet_init_sock()           |
-> > > > > >       smc_sk_init()                |
-> > > > > >         smc_hash_sk()              |
-> > > > > >                                    | // traverse the hash table
-> > > > > >                                    | smc_diag_dump_proto
-> > > > > >                                    |   __smc_diag_dump()
-> > > > > >                                    |     // visit wrong clcsock
-> > > > > >                                    |     smc_diag_msg_common_fi=
-ll()
-> > > > > >     // alloc clcsock               |
-> > > > > >     smc_create_clcsk               |
-> > > > > >       sock_create_kern             |
-> > > > > >
-> > > > > > With CONFIG_DEBUG_LOCK_ALLOC=3Dy, the smc->clcsock is unexpecte=
-dly changed
-> > > > > > in inet_init_csk_locks(), because the struct smc_sock does not =
-have struct
-> > > > > > inet_connection_sock as the first member.
-> > > > > >
-> > > > > > Previous commit 60ada4fe644e ("smc: Fix various oops due to ine=
-t_sock type
-> > > > > > confusion.") add inet_sock as the first member of smc_sock. For=
- protocol
-> > > > > > with INET_PROTOSW_ICSK, use inet_connection_sock instead of ine=
-t_sock is
-> > > > > > more appropriate.
-> > > >
-> > > > Why is INET_PROTOSW_ICSK necessary in the first place ?
-> > > >
-> > > > I don't see a clear reason because smc_clcsock_accept() allocates
-> > > > a new sock by smc_sock_alloc() and does not use inet_accept().
-> > > >
-> > > > Or is there any other path where smc_sock is cast to
-> > > > inet_connection_sock ?
-> > >
-> > > What I saw in this code was a missing protection.
-> > >
-> > > smc_diag_msg_common_fill() runs without socket lock being held.
-> > >
-> > > I was thinking of this fix, but apparently syzbot still got crashes.
-> >
-> > Looking at the test result,
-> >
-> > https://syzkaller.appspot.com/x/report.txt?x=3D15944c7c580000
-> > KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead=
-0000001f]
-> >
-> > the top half of the address is SPINLOCK_MAGIC (0xdead4ead),
-> > so the type confusion mentioned in the commit message makes
-> > sense to me.
-> >
-> > $ pahole -C inet_connection_sock vmlinux
-> > struct inet_connection_sock {
-> > ...
-> >     struct request_sock_queue  icsk_accept_queue;    /*   992    80 */
-> >
-> > $ pahole -C smc_sock vmlinux
-> > struct smc_sock {
-> > ...
-> >     struct socket *            clcsock;              /*   992     8 */
-> >
-> > The option is 1) let inet_init_csk_locks() init inet_connection_sock
-> > or 2) avoid inet_init_csk_locks(), and I guess 2) could be better to
-> > avoid potential issues in IS_ICSK branches.
-> >
->
-> I definitely vote to remove INET_PROTOSW_ICSK from smc.
->
-> We want to reserve inet_connection_sock to TCP only, so that we can
-> move fields to better
-> cache friendly locations in tcp_sock hopefully for linux-6.19
+- Adjust spacing around list and sections for better readability.
+- Use definition lists for defining events.
+- Replace block quotes with code blocks where appropriate.
 
-Fully agreed.
+Fixes the following htmldocs errors/warnings:
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:20: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:23: WARNING: Block quote ends without a blank line; unexpected unindent.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:28: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:29: WARNING: Block quote ends without a blank line; unexpected unindent.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:81: ERROR: Unexpected indentation.
+Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:82: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Wang: please squash the revert of 6fd27ea183c2 for
-INET_PROTOSW_ICSK removal.  This is for one of
-IS_ICSK branches.
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+ .../admin-guide/perf/fujitsu_uncore_pmu.rst   | 130 ++++++++++++------
+ 1 file changed, 87 insertions(+), 43 deletions(-)
+
+diff --git a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+index 46595b788d3a..577bad243876 100644
+--- a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
++++ b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+@@ -6,105 +6,149 @@ Fujitsu Uncore Performance Monitoring Unit (PMU)
+ 
+ This driver supports the Uncore MAC PMUs and the Uncore PCI PMUs found
+ in Fujitsu chips.
++
+ Each MAC PMU on these chips is exposed as a uncore perf PMU with device name
+-mac_iod<iod>_mac<mac>_ch<ch>.
++``mac_iod<iod>_mac<mac>_ch<ch>``.
++
+ And each PCI PMU on these chips is exposed as a uncore perf PMU with device name
+-pci_iod<iod>_pci<pci>.
++``pci_iod<iod>_pci<pci>``.
+ 
+ The driver provides a description of its available events and configuration
+-options in sysfs, see /sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/
+-and /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
++options in sysfs, see ``/sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/``
++and ``/sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/``.
++
+ This driver exports:
+-- formats, used by perf user space and other tools to configure events
++====================
++
++- formats, used by perf user space and other tools to configure events.
+ - events, used by perf user space and other tools to create events
+-  symbolically, e.g.:
+-    perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
+-    perf stat -a -e pci_iod0_pci0/event=0x24/ ls
++  symbolically, e.g:
++
++  .. code-block:: bash
++
++      perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
++      perf stat -a -e pci_iod0_pci0/event=0x24/ ls
++
+ - cpumask, used by perf user space and other tools to know on which CPUs
+   to open the events
+ 
+ This driver supports the following events for MAC:
+-- cycles
++--------------------------------------------------
++
++cycles:
+   This event counts MAC cycles at MAC frequency.
+-- read-count
++
++read-count:
+   This event counts the number of read requests to MAC.
+-- read-count-request
++
++read-count-request:
+   This event counts the number of read requests including retry to MAC.
+-- read-count-return
++
++read-count-return:
+   This event counts the number of responses to read requests to MAC.
+-- read-count-request-pftgt
++
++read-count-request-pftgt:
+   This event counts the number of read requests including retry with PFTGT
+   flag.
+-- read-count-request-normal
++
++read-count-request-normal:
+   This event counts the number of read requests including retry without PFTGT
+   flag.
+-- read-count-return-pftgt-hit
++
++read-count-return-pftgt-hit:
+   This event counts the number of responses to read requests which hit the
+   PFTGT buffer.
+-- read-count-return-pftgt-miss
++
++read-count-return-pftgt-miss:
+   This event counts the number of responses to read requests which miss the
+   PFTGT buffer.
+-- read-wait
++
++read-wait:
+   This event counts outstanding read requests issued by DDR memory controller
+   per cycle.
+-- write-count
++
++write-count:
+   This event counts the number of write requests to MAC (including zero write,
+   full write, partial write, write cancel).
+-- write-count-write
++
++write-count-write:
+   This event counts the number of full write requests to MAC (not including
+   zero write).
+-- write-count-pwrite
++
++write-count-pwrite:
+   This event counts the number of partial write requests to MAC.
+-- memory-read-count
++
++memory-read-count:
+   This event counts the number of read requests from MAC to memory.
+-- memory-write-count
++
++memory-write-count:
+   This event counts the number of full write requests from MAC to memory.
+-- memory-pwrite-count
++
++memory-pwrite-count:
+   This event counts the number of partial write requests from MAC to memory.
+-- ea-mac
++
++ea-mac:
+   This event counts energy consumption of MAC.
+-- ea-memory
++
++ea-memory:
+   This event counts energy consumption of memory.
+-- ea-memory-mac-write
++
++ea-memory-mac-write:
+   This event counts the number of write requests from MAC to memory.
+-- ea-ha
++
++ea-ha:
+   This event counts energy consumption of HA.
+ 
+   'ea' is the abbreviation for 'Energy Analyzer'.
+ 
+-Examples for use with perf::
++Examples for use with perf
++
++  .. code-block:: bash
+ 
+-  perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
++      perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+ 
+ And, this driver supports the following events for PCI:
+-- pci-port0-cycles
++
++pci-port0-cycles:
+   This event counts PCI cycles at PCI frequency in port0.
+-- pci-port0-read-count
++
++pci-port0-read-count:
+   This event counts read transactions for data transfer in port0.
+-- pci-port0-read-count-bus
++
++pci-port0-read-count-bus:
+   This event counts read transactions for bus usage in port0.
+-- pci-port0-write-count
++
++pci-port0-write-count:
+   This event counts write transactions for data transfer in port0.
+-- pci-port0-write-count-bus
++
++pci-port0-write-count-bus:
+   This event counts write transactions for bus usage in port0.
+-- pci-port1-cycles
++
++pci-port1-cycles:
+   This event counts PCI cycles at PCI frequency in port1.
+-- pci-port1-read-count
++
++pci-port1-read-count:
+   This event counts read transactions for data transfer in port1.
+-- pci-port1-read-count-bus
++
++pci-port1-read-count-bus:
+   This event counts read transactions for bus usage in port1.
+-- pci-port1-write-count
++
++pci-port1-write-count:
+   This event counts write transactions for data transfer in port1.
+-- pci-port1-write-count-bus
++
++pci-port1-write-count-bus:
+   This event counts write transactions for bus usage in port1.
+-- ea-pci
++
++ea-pci:
+   This event counts energy consumption of PCI.
+ 
+-  'ea' is the abbreviation for 'Energy Analyzer'.
++      'ea' is the abbreviation for 'Energy Analyzer'.
++
++Examples for use with perf:
+ 
+-Examples for use with perf::
++  .. code-block:: bash
+ 
+-  perf stat -e pci_iod0_pci0/ea-pci/ ls
++      perf stat -e pci_iod0_pci0/ea-pci/ ls
+ 
+ Given that these are uncore PMUs the driver does not support sampling, therefore
+ "perf record" will not work. Per-task perf sessions are not supported.
+-- 
+2.43.0
+
 
