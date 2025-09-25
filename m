@@ -1,132 +1,509 @@
-Return-Path: <linux-kernel+bounces-832032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842B0B9E300
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32825B9E309
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70AB3B0282
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:05:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7409F7AB476
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708626FA5B;
-	Thu, 25 Sep 2025 09:05:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F5A27602F;
+	Thu, 25 Sep 2025 09:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Qve2yCAG";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Qve2yCAG"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013022.outbound.protection.outlook.com [40.107.159.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB768488
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758791104; cv=none; b=Hbkzv7U+0u+BHaGIakq3jX89lJNvqIWV/ewBRtx+5VSvBDEzt6aT8HGsrQYRfDUgUlAqaw8IVGu/VSVYhsw/f2bzma91eza4/lxnn68FIwdwo0UzDVlBjfODsN3DC9XGHu4mRETcs61k5oLeMm5BjiEfwdOdxW115n/CLtEobgM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758791104; c=relaxed/simple;
-	bh=ENoRoXPrhyLv5DEJI3cEjHwsC6+A5zmiK7ACdvJnyTQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YELi6UBqa4oiSrqnnpzOqQ7SQvZmlXrSNMetpJcOs9w9bxrxorXE+RHgIc/Uk+V56ALPNFXLItpnkm9zenzoJjTZELRfo34Cq8UUVMFA82AwALgGDfu8g3ttSzCNSV/3Ayry77r6Exk8IIM5XBgO+pjU5XJRG8+Br9DfY7PWhWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42594b7f2ddso9904605ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 02:05:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758791102; x=1759395902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bLHA2C9953oAHyPn2w2N6kgA/umlQX7Hn7svRva9lHU=;
-        b=mXR0ZSb5zxhp2PaS+jpFcU/GKp7/4wQGNKb2jLXlXkV9ho/aBOzEECLvi1MtyArWER
-         aWWYTZFiXfrq8Rre5g97WH09Z1CgLg4o3b54G46xe4aNxGrs+toABxwNLLQx0p92jjtp
-         LrrKHYzhCo8TEfAJpsAqYrDeLTm37+xtKGbt7T4LP/lMqHWOVM6h2dA+rjK7T/MH5I01
-         Ivdz8d4sDU0Eevmlqs/jJ20rpAEIPu7IBwyVBikOTmcSoZ/nO6DzrvNEUXHsUbVx+ne2
-         00sEVMEgqAAAryrXfUvjeBmyc1GUt2+aWdrpnghNT3nPAXa9uHdyaU6OdFCfTZGLQY2h
-         WolA==
-X-Gm-Message-State: AOJu0Yy1FxtUCOXZKisV217T+iVQghVd9RFJIQw8Ngef3/NPraD8Giz/
-	alrCXwQAZcBX1Whco7ylu98zSZlE+/+zXzbl7dLimiCmx62nVG05nSEM0sbQ1uWf79osqqXSUf0
-	EUwXtmKv9Lr3/svywS2c/h7OSYZ/JHrjKmdOUMV2zJ1iocw0TdZtfVB7lRPI=
-X-Google-Smtp-Source: AGHT+IFj4dXPJDfHVk8U8AT3JmZ7qzAdyw4NbiMSnjjWIkkPZUO/7EMKioWEXgJPFg5dOSjcjY361BXoFftzQb5ZtCpZ9JCHmu8Q
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836292550BA
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.22
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758791189; cv=fail; b=TROlubv83Z65hrR9ZlAp3v3f9nFDaddKu9Lm1qoLojbIIdESmL8xNjVWKo7stLqAYGJgzMmS81h+AasPKJwKmNFGueh+7rHAbFsAZt1vgWP1t/2LljN1HkuaeajUGIQYJrDQThPxJL3NdH/JC7GGfPfo1MMtv0+mGKGbLYK2DL4=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758791189; c=relaxed/simple;
+	bh=yI/8N9ADp67ewWXHDe9q8MQQTsPAEDjYHjT+ncWTf2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VF4rKYTzUNa8sQRDzA3m2kwGgzX0y1N94rrlQ5YqWWVbFtkCOgpuLh3PwBVo5K6uA1SN58vuGicRdRX37lqzHS04aR4QgooiroFiU56thK9mEZficYh+3lTdCDmR7Y+HsketbVQC7XCGEwyhoLc0eO0uObeS8OBGfVz2lh9FeC0=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Qve2yCAG; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Qve2yCAG; arc=fail smtp.client-ip=40.107.159.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=c0FmnV2yPcVV2MDpYI7cHOc9S+ZztBu8jrLapmShbpZlw4pF9Jil1UOs+8PG5MO9lH0XnC5JTVCp6ApTJXzKL507cIWr34QIpPwRjSaBovWAkWLJClGL34VhmGdAZMNl2WzpI+Wd7aEcd3vm7/+ZKLWDu1FOVDiXbZAgnsr1hkWF3wAq/+/jR4W7yfIkY5B0Axoa05Jj+hh9NxuSYPglDSnDw4OhBX55Ol9TeNnwjxYxKe7RFtaMKoh8GXZY5dRtKnk2ZCmwfoyKPbv8F5GIrsQSmT96m7mLg5PbuuVGUV4+fDuGYrJUYkBWSNl0524ugUClPG/6K8WhkxMCxroXaA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=frESDF5nhra81dJ2FrZBVDufHuwM6Bq+2si31VRIaPc=;
+ b=bkruhqX6gfAMt24qKce1sg0aa2NshBjnpyvM9Di8UA2p3g9b96mM0ZeSNFjOJMRMcCCHtsrHuNUyYkIC87sXI04EQl8hx6wcmFmvIgUKADZAafDK2dRh0XV4cuxLvWsHhfjnMJM81cJ+uOgf7oEnbvH+ew3b+uvr2xJJFTgrXiqnMTLaVULhZleczjmVjvRFVVU/SKTM5JU6p4ZbAI3NSy6EPBKH1xmb7wodG8q3eA2IclNNve2kJqHMHKo0MCZvdHUILcoLI9ZFiJNm11QVXx6iZo0DJ95prQdouIOBdhFIF0mtTtYbDzupVl8M7kNUgm8XJ0J8SgF1/EunKYrJig==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=gmail.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=frESDF5nhra81dJ2FrZBVDufHuwM6Bq+2si31VRIaPc=;
+ b=Qve2yCAGizxdaEkHDThRHJWd2ifesMi40EdiPlCDQztZJRZauqiTOCSfMytSCvsCUjGk7bjhm3wTRjgoINJeUFiP/3u8Q6b5Z50AJoqOflPODkhz6msHTmw85EODyDchFUS5jmc0CFU+kxnQqKPmBLJoyIcTDes8AmBteYY9RsQ=
+Received: from AS4P190CA0020.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5d0::8)
+ by AS8PR08MB6008.eurprd08.prod.outlook.com (2603:10a6:20b:29d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Thu, 25 Sep
+ 2025 09:06:23 +0000
+Received: from AM1PEPF000252DB.eurprd07.prod.outlook.com
+ (2603:10a6:20b:5d0:cafe::8d) by AS4P190CA0020.outlook.office365.com
+ (2603:10a6:20b:5d0::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.10 via Frontend Transport; Thu,
+ 25 Sep 2025 09:06:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM1PEPF000252DB.mail.protection.outlook.com (10.167.16.53) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.9
+ via Frontend Transport; Thu, 25 Sep 2025 09:06:22 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iYqEX4IUUg8iqE2H8G9V0IMxUce19K5stlOTzvEHM+x5qlMsnj/3InA8KZZngntyD3JvFOiDOa6y7RkrJDrSeNyUeT8xu8ixi/WraExdS6UosRXAqCelQe/G4hhL7qESi0LxhMd3HcxGBHmBp3Dl5WzIGGck32aQ/+SDFJbs20l+uAwkR9oy4r6+6mwQDDAg9YER1wKObW73c/PvG7WGJ7hsZZmz1NFJxbJrDN7H6ZO7HE4cJATXe65sBzaAXJcZT9mCafT8AXPQbjgK/0lqqcFrRdrFgVXoPhUQ2IFykUJTHhT8vWgHm5oRqHGu7LTDhK0plLjhFqE4A6m6CGzC0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=frESDF5nhra81dJ2FrZBVDufHuwM6Bq+2si31VRIaPc=;
+ b=Lt3edr5A3k+zZtUNCKPntbGYaqYCdHpoz5RJ6hYevbHBNLjKGZ1iqg3nJ2+LpVH35tAB8PepuCyAPvW3e79dueyvAVKkqTUDKCNo9Y+79Qnr/4txDHn2tro02eQFMqC6Loq4Pqx5MDnruH2HZTKTEfO5tM5V2hV/ZiTC+HxiL90gp8GFGd4ntQe2G4v2eXJ5X/YMm8K0QI9PPXtUjm4zKp+j0/eCwjhae6wLS13nJ8oAeeNBwEQmPNxKjJhTE287PbkCu58SwyID7HF1IkwyhWgKzHzaupep44Xq5/8MnyiXY+8zKPMT6672103ZcA1CheoGGbPK0Wa8/mLnofqODw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=frESDF5nhra81dJ2FrZBVDufHuwM6Bq+2si31VRIaPc=;
+ b=Qve2yCAGizxdaEkHDThRHJWd2ifesMi40EdiPlCDQztZJRZauqiTOCSfMytSCvsCUjGk7bjhm3wTRjgoINJeUFiP/3u8Q6b5Z50AJoqOflPODkhz6msHTmw85EODyDchFUS5jmc0CFU+kxnQqKPmBLJoyIcTDes8AmBteYY9RsQ=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from DU0PR08MB10359.eurprd08.prod.outlook.com (2603:10a6:10:416::17)
+ by GV4PR08MB11603.eurprd08.prod.outlook.com (2603:10a6:150:2d9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
+ 2025 09:05:49 +0000
+Received: from DU0PR08MB10359.eurprd08.prod.outlook.com
+ ([fe80::d10b:a33:84b5:cbd1]) by DU0PR08MB10359.eurprd08.prod.outlook.com
+ ([fe80::d10b:a33:84b5:cbd1%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
+ 09:05:49 +0000
+Date: Thu, 25 Sep 2025 11:05:44 +0200
+From: Marcin =?utf-8?Q?=C5=9Alusarz?= <marcin.slusarz@arm.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Grant Likely <grant.likely@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, nd@arm.com,
+	Lukas Zapolskas <lukas.zapolskas@arm.com>
+Subject: Re: [PATCH] drm/panthor: add query for calibrated timstamp info
+Message-ID: <aNUF6IDneKxjTP5t@e129842.arm.com>
+References: <20250916200751.3999354-1-olvaffe@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916200751.3999354-1-olvaffe@gmail.com>
+X-ClientProxiedBy: LO4P265CA0327.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:390::10) To DU0PR08MB10359.eurprd08.prod.outlook.com
+ (2603:10a6:10:416::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c00c:0:b0:424:8c15:888a with SMTP id
- e9e14a558f8ab-42595685dedmr32193935ab.32.1758791102453; Thu, 25 Sep 2025
- 02:05:02 -0700 (PDT)
-Date: Thu, 25 Sep 2025 02:05:02 -0700
-In-Reply-To: <905bb5a8bc3e969ef332dd604864ba67b93e1a85.1758789532.git.xiaopei01@kylinos.cn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d505be.a00a0220.303701.0005.GAE@google.com>
-Subject: Re: [syzbot] [fs?] [mm?] WARNING: bad unlock balance in hugetlb_vmdelete_list
-From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	xiaopei01@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+X-MS-TrafficTypeDiagnostic:
+	DU0PR08MB10359:EE_|GV4PR08MB11603:EE_|AM1PEPF000252DB:EE_|AS8PR08MB6008:EE_
+X-MS-Office365-Filtering-Correlation-Id: 467723a6-ebf0-4b0e-a358-08ddfc12cc59
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?ZbPiSOZex3ckgxF05jk6r9ajFDHVvjA9IjedP+JbwLRh2Q6Uu23SLYxgTC3r?=
+ =?us-ascii?Q?hIvArwNXU0lr3CGp2okzql5jIttKZhxTSNPbF5EIeNRAAeoYIw7Bp0rJTlOL?=
+ =?us-ascii?Q?pbIZnjelDSIMqJUz9mGg/NiYD0cPZlt+S4elolO+BrRArBrsh35EMUH+eCto?=
+ =?us-ascii?Q?drcaigY+LsL7wgLGxc0cK2unzKnaYIM9+2fAMgUJWYZ6WQCrhC++/TQpMsQC?=
+ =?us-ascii?Q?yc178getyOz3zG251QhhJmy6t0mionwbs5dzofuI37y0w1XKmMOCxLggEOx0?=
+ =?us-ascii?Q?tZaz6S29mxw3rBROijZgWLMK6Nn6hS5I2lT1MI7Jm/V866oteQtpP0y27TtX?=
+ =?us-ascii?Q?DSj7J5IxIhg3mPuAsAXG2sS4bges7YpfNq53FSC6yg8u/KIqiTCg53l96Jsa?=
+ =?us-ascii?Q?Dc+xJSqNZvIZ6N66m+YJSZ6Sg68yIKvN24L6zfSYn7Krb7aoUWdAJvJWCgf5?=
+ =?us-ascii?Q?rMdobp2x/0Eo8yjnF+OLWD0yFL7vF51ne2GOAEzK+wXWU9xz15mJ7bCxo6Gh?=
+ =?us-ascii?Q?XyE7wm0wrWZYlkxEphZNGPI1a0w7EBc2FDVrutpxjzt8YaqXJu9CRvu5ph7x?=
+ =?us-ascii?Q?JdnsMFrFN+UypUQhM9YkoYlw1XYGEW0pAasW4XIeBqgs9A1kvACTjnzmBPYz?=
+ =?us-ascii?Q?hCJXPh2+k8ikwzbGeFwU7qDRW931sRNCaUPmo48JC1Y3GcxXyr98q+wGXB/R?=
+ =?us-ascii?Q?rc+XzhJdSwUWBgIz8rSvI8fl5BAbSMB3KtmOi0HzhJO63YFiLjLzSI9HzRTD?=
+ =?us-ascii?Q?tkaa9lVJTeeYDbmt6343TLgyh/XVznVSm1X+KAW+Rbv3ugy70/CSxNR29eKh?=
+ =?us-ascii?Q?AHl2HPAC2EfgaGo3CRcfAUGYxHMjOGeotlLeeyLWShm6EvLU2faJDfHHpGT+?=
+ =?us-ascii?Q?c7ujN8czKFRH3JeAfTqdIhmxhw+WVfsmUJf0H8VrsY8+Xdsn+HXTj5zbEfn7?=
+ =?us-ascii?Q?XF91f5pTW1ElyvvvTWsvmbq8IywC6CCgZsEq1QycnLf/K9P6KK4BhpeoF7aC?=
+ =?us-ascii?Q?Dpp7CvwhBMt7QXUdZ/5rY40KD8cxTf7WB76/x70QL3/bqM0TU/N++vFtBzo+?=
+ =?us-ascii?Q?I2BX1mQHZSRiYeTZP/bxuenR1hgPRqESAjqidn/PEV2xeZ8x7DMr5Bjv9u8v?=
+ =?us-ascii?Q?LCJXLoMbYf+vAJwXccnGPUyqHk7Kfc0VGjtB8JzJKXK5B8xEEyJKiO6XtB4Z?=
+ =?us-ascii?Q?0BYk7IyzgrBJMkvkotXhBzftbfCh18fc4Vm6lNlUJ8AOld2xjPHzWSpPLSdZ?=
+ =?us-ascii?Q?7/sYwLNMxYxo21yCOGYjZ/3akIaY9G1hq1/hwCPDcseRBCxm7sSI0q4YCkbF?=
+ =?us-ascii?Q?PmXLQj2Lfn25d7Gg8b0eY5kckOjEp5WqGRO72nATAriraNe9Os37kDVyL5Ql?=
+ =?us-ascii?Q?lM2aoiM=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB10359.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR08MB11603
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM1PEPF000252DB.eurprd07.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	540ff914-c52d-42f3-93a9-08ddfc12b881
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|35042699022|1800799024|36860700013|7416014|14060799003|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rpIbcF+Dy71nLfZzIS8tHlYGRCFeduRBpfiESTAHinrI1j0S7f8m12U5CmNJ?=
+ =?us-ascii?Q?JWfP+6ZdEXztAx8U8N5VbCEpppYsXF0Hw/TovKH8EqfLIWyRBlq5I0sGtzuF?=
+ =?us-ascii?Q?DHm5C0oJAmeNn0r7N5Qivx+ntQ8r+Ya8oO5RkSzfpYavRA45ICOU/bvZDc7n?=
+ =?us-ascii?Q?IfPlQLhmJ1ssfD/ebMKKFFXgvM0yUhCg61Nx5RWDUhcRpNnBb7p0/T9vJIEu?=
+ =?us-ascii?Q?FEej4uckfCIY/A7FPS5GCxtfbXZs9AjxfCchT6nwVTFph0+92nAs0CYoK5Dp?=
+ =?us-ascii?Q?IvnhxUue7xmmeXWty5+jWnFyuWCb7yaD1ud83eF8oEcMeJX1s2yVWVMGWkyI?=
+ =?us-ascii?Q?ldeIDK3218bUibLCkRL+OjOSs/eay7/1Equh6rcLcfb17BVhcbSHL4eo7ZaS?=
+ =?us-ascii?Q?E3f5tLdGi4e9eLKlMkjoSqRTQghUJdMDCgHXUkPq9y46bbS3Cp2sviFL885c?=
+ =?us-ascii?Q?Hac7ThTM2S0S1+OMG1CqczbT5x8l77EmQ16symLPULJ+DSMAbJek/eFiOFuF?=
+ =?us-ascii?Q?m9xOnJqjHCTGWx3+W7hg1lknVGn3G+r//Y7aNqhxyv2MjMY/4GrLiNZJgVBg?=
+ =?us-ascii?Q?fwUBwQnAKrfVkg+POhFqHWSmUReCH/YIVUlDWwyQWp1i4xqiSWzcnnsrMduC?=
+ =?us-ascii?Q?Yqr9v0xlDtbA5vQCo3XGKWlzgvu9OeyEOL1ytWfeSKfI1+xMmG8xfCdgBIG9?=
+ =?us-ascii?Q?GwWwFtiCp/u4ROzh40698KF5H2L2iqCZC88wlyjG97gy4kKK91RDgHFEd4g0?=
+ =?us-ascii?Q?JhUgp1TnRi8WXoPEBKG8Plktas2rarztXUYaSdGaBK9jywKZiclgebAytsMB?=
+ =?us-ascii?Q?p8MHh2jgVL+XXtKmM4zWexMrYySl3mzV03HYMaN119cTkNcgTNDrjMVW4f0C?=
+ =?us-ascii?Q?4TO5nNw/FQbqVZy4nD5eyKDCjMsLekDR3XRK194pBhzbMvnMqouiPu3n0Poa?=
+ =?us-ascii?Q?VWzXRugFgKDvmPvyTA1h0sRrslp3m1MsusKB8VoFOeROmLfNz/br78wj7up1?=
+ =?us-ascii?Q?Q5sXwsRzKiC2ioGhZjEfloIl2PQIfGxvpfjcTjJzbBQS5a6seRNg9rteTgFm?=
+ =?us-ascii?Q?TAjQJmXjRzgqK2Z+gQY9kr/L6J7GZmiF/VfSw9ZlRLyJ4cgRZmwM+EgaaONw?=
+ =?us-ascii?Q?vb6p0EGGiy4PFtbRXFoOZRZ7BkEL4OwIFsPMoqDoFBItIg3htJbSsWJCMzqM?=
+ =?us-ascii?Q?35qOVuYJCBqdu0A+wn04VorXhy5dTzuAywVVJ+eu1p+Mk1IZbV8ZpglwKsSf?=
+ =?us-ascii?Q?X/mwYel2ZfE5HZc6nBHZunToux/016Kvy0set+kt/ipOJU0bPEezlsc59DVz?=
+ =?us-ascii?Q?6RrYCiwSlg7dc+wGAIQiUj0+i3uDHugM/139KNayt9fD4mZQ3vVsqUZ0eiNX?=
+ =?us-ascii?Q?p5bhTinTuBK/PANLLN/yYwZ/blSCc+BRErIyrNMF01iLulHq40hRCL+iVnnL?=
+ =?us-ascii?Q?8nvR/LLIyZqFDF8Yx4u5EWpO2U4lqgXrQBTC8+0Lb5gAUJvNyODfKw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(35042699022)(1800799024)(36860700013)(7416014)(14060799003)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 09:06:22.3604
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 467723a6-ebf0-4b0e-a358-08ddfc12cc59
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM1PEPF000252DB.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6008
 
-Hello,
+Hi Chia-I,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in hugetlb_vma_assert_locked
+On Tue, Sep 16, 2025 at 01:07:51PM -0700, Chia-I Wu wrote:
+> DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO provides a way to query
+> and calibrate CPU and GPU timestamps.
 
-------------[ cut here ]------------
-WARNING: mm/hugetlb.c:368 at hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368, CPU#0: syz.0.41/6582
-Modules linked in:
-CPU: 0 UID: 0 PID: 6582 Comm: syz.0.41 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:hugetlb_vma_assert_locked+0x1dd/0x250 mm/hugetlb.c:368
-Code: 2e e8 e7 42 a1 ff eb 0c e8 e0 42 a1 ff eb 05 e8 d9 42 a1 ff 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9a a0 6a 09 cc e8 c4 42 a1 ff 90 <0f> 0b 90 eb e5 e8 b9 42 a1 ff 90 0f 0b 90 eb da 48 c7 c1 70 b5 e4
-RSP: 0018:ffffc9000217f388 EFLAGS: 00010293
-RAX: ffffffff821f540c RBX: 0000000000000000 RCX: ffff88807af68000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffff5200042fe74 R12: ffff88805df6aa00
-R13: 1ffff110064fdfc4 R14: dffffc0000000000 R15: 0000000000000080
-FS:  00007fc7b46136c0(0000) GS:ffff8881257be000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc7b45f2d58 CR3: 0000000077790000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- huge_pmd_unshare+0x2c8/0x540 mm/hugetlb.c:7622
- __unmap_hugepage_range+0x6e3/0x1aa0 mm/hugetlb.c:5901
- unmap_hugepage_range+0x32e/0x410 mm/hugetlb.c:6089
- hugetlb_vmdelete_list+0x171/0x1c0 fs/hugetlbfs/inode.c:494
- hugetlb_vmtruncate fs/hugetlbfs/inode.c:641 [inline]
- hugetlbfs_setattr+0x4d1/0x6d0 fs/hugetlbfs/inode.c:879
- notify_change+0xc1a/0xf40 fs/attr.c:546
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3596 [inline]
- do_open fs/namei.c:3979 [inline]
- path_openat+0x306c/0x3830 fs/namei.c:4134
- do_filp_open+0x1fa/0x410 fs/namei.c:4161
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_open fs/open.c:1460 [inline]
- __se_sys_open fs/open.c:1456 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1456
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc7b378eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc7b4613038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fc7b39e5fa0 RCX: 00007fc7b378eec9
-RDX: 0000000000000100 RSI: 000000000014927e RDI: 0000200000000340
-RBP: 00007fc7b3811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fc7b39e6038 R14: 00007fc7b39e5fa0 R15: 00007ffc872255b8
- </TASK>
+I worked on a similar patch for Panthor, with a plan of submitting
+it upstream soon, but with slightly different requirements, so maybe
+we could merge both efforts in a single patch?
 
+The first requirement was that it should be possible to get both CPU
+and GPU timestamps, with the expectation that they should be taken as
+close as possible (within 50us).
 
-Tested on:
+The second requirement was that it should be possible to also get
+the value of GPU_CYCLE_COUNT register.
 
-commit:         b5a4da2c Add linux-next specific files for 20250924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f02f12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=841973c5ab4f4157
-dashboard link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1581ed34580000
+What I did is extend the existing DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO
+query in backward compatible manner with those new fields and obtaining
+gpu and cpu timestamps with preemption and local irqs disabled (more on
+that later).
 
+Backward compatibility was achieved by adding new fields at the end of
+struct drm_panthor_timestamp_info, and relying on the fact that if user
+space passes smaller object it will be silently truncated.
+
+Obtaining all kind of timing information with a single syscall might
+be a bit too much, when user space might be interested only in some
+data and not the complete view, so I'd propose this as a solution:
+
+1) Extend existing query in backward compatible manner, by adding new
+fields at the end.
+2) Add flags, cpu timestamp, cycle count, and duration.
+3) Flags would be:
+DRM_PANTHOR_TIMESTAMP_GPU (1<<0)
+DRM_PANTHOR_TIMESTAMP_CPU (1<<1)
+DRM_PANTHOR_TIMESTAMP_OFFSET (1<<2)
+DRM_PANTHOR_TIMESTAMP_FREQ (1<<3)
+DRM_PANTHOR_TIMESTAMP_DURATION (1<<4)
+DRM_PANTHOR_TIMESTAMP_SAME_TIME (1<<5)
+
+DRM_PANTHOR_TIMESTAMP_CPU_MONOTONIC (0<<8)
+DRM_PANTHOR_TIMESTAMP_CPU_MONOTONIC_RAW (1<<8)
+DRM_PANTHOR_TIMESTAMP_CPU_REALTIME (2<<8)
+DRM_PANTHOR_TIMESTAMP_CPU_BOOTTIME (3<<8)
+DRM_PANTHOR_TIMESTAMP_CPU_TAI (4<<8)
+
+and DRM_PANTHOR_TIMESTAMP_CPU_TYPE_MASK would be (7<<8).
+
+If flags is 0 it would become
+(DRM_PANTHOR_TIMESTAMP_GPU |
+ DRM_PANTHOR_TIMESTAMP_OFFSET |
+ DRM_PANTHOR_TIMESTAMP_FREQ)
+
+For VK_KHR_calibrated_timestamps flags would be set as
+(DRM_PANTHOR_TIMESTAMP_GPU |
+ DRM_PANTHOR_TIMESTAMP_CPU |
+ DRM_PANTHOR_TIMESTAMP_DURATION |
+ DRM_PANTHOR_TIMESTAMP_SAME_TIME |
+ (raw ? DRM_PANTHOR_TIMESTAMP_CPU_MONOTONIC_RAW : DRM_PANTHOR_TIMESTAMP_CPU_MONOTONIC))
+
+4) The core of the functionality would query all required timing
+information with preemption and irqs disabled iif SAME_TIME flag is set.
+Probably we should exclude OFFSET and FREQ from that.
+
+Why also interrupts disabled?
+Recently we discovered that unrelated devices can raise interrupts for
+so long that the assumption of timestamps being taken at the same time
+completely breaks down (they are hundreds of microseconds apart).
+
+What do you think?
+
+Cheers,
+Marcin
+
+> This is needed because CPU and GPU timestamps are captured separately.
+> The implementation makes an effort to minimize the capture duration,
+> which is crucial for calibration and not exactly feasible from
+> userspace.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
+> 
+> ---
+> The query is inspired by xe's DRM_XE_DEVICE_QUERY_ENGINE_CYCLES and the
+> naming is inspired by VK_KHR_calibrated_timestamps. The userspace change
+> is https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/37424.
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 88 ++++++++++++++++++++++++++-
+>  include/uapi/drm/panthor_drm.h        | 31 ++++++++++
+>  2 files changed, 118 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index fdbe89ef7f43c..06da6dcf016ef 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/pagemap.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/sched/clock.h>
+>  #include <linux/time64.h>
+>  
+>  #include <drm/drm_auth.h>
+> @@ -172,6 +173,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_group_priorities_info, pad), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_calibrated_timestamp_info, gpu_timestamp), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> @@ -779,6 +781,74 @@ static int panthor_query_timestamp_info(struct panthor_device *ptdev,
+>  	return 0;
+>  }
+>  
+> +static int panthor_query_calibrated_timestamp_info(
+> +	struct panthor_device *ptdev, const struct drm_panthor_calibrated_timestamp_info __user *in,
+> +	u32 in_size, struct drm_panthor_calibrated_timestamp_info *out)
+> +{
+> +	/* cpu_clockid and pad take up the first 8 bytes */
+> +	const u32 min_size = 8;
+> +	u64 (*cpu_timestamp)(void);
+> +	int ret;
+> +
+> +	if (in_size < min_size)
+> +		return -EINVAL;
+> +	if (!access_ok(in, min_size))
+> +		return -EFAULT;
+> +	ret = __get_user(out->cpu_clockid, &in->cpu_clockid);
+> +	if (ret)
+> +		return ret;
+> +	ret = __get_user(out->pad, &in->pad);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (out->cpu_clockid) {
+> +	case CLOCK_MONOTONIC:
+> +		cpu_timestamp = ktime_get_ns;
+> +		break;
+> +	case CLOCK_MONOTONIC_RAW:
+> +		cpu_timestamp = ktime_get_raw_ns;
+> +		break;
+> +	case CLOCK_REALTIME:
+> +		cpu_timestamp = ktime_get_real_ns;
+> +		break;
+> +	case CLOCK_BOOTTIME:
+> +		cpu_timestamp = ktime_get_boottime_ns;
+> +		break;
+> +	case CLOCK_TAI:
+> +		cpu_timestamp = ktime_get_clocktai_ns;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (out->pad)
+> +		return -EINVAL;
+> +
+> +	ret = panthor_device_resume_and_get(ptdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	do {
+> +		const u32 hi = gpu_read(ptdev, GPU_TIMESTAMP + 4);
+> +
+> +		/* keep duration minimal */
+> +		preempt_disable();
+> +		out->duration = local_clock();
+> +		out->cpu_timestamp = cpu_timestamp();
+> +		out->gpu_timestamp = gpu_read(ptdev, GPU_TIMESTAMP);
+> +		out->duration = local_clock() - out->duration;
+> +		preempt_enable();
+> +
+> +		if (likely(hi == gpu_read(ptdev, GPU_TIMESTAMP + 4))) {
+> +			out->gpu_timestamp |= (u64)hi << 32;
+> +			break;
+> +		}
+
+We don't need to loop on everything to read GPU_TIMESTAMP - using
+gpu_read64_counter(ptdev, GPU_TIMESTAMP) is enough to guarantee correctness
+(IOW why would we need to reread cpu timestamp if gpu timestamp wrapped
+around?)
+
+> +	} while (true);
+> +
+> +	pm_runtime_put(ptdev->base.dev);
+> +	return 0;
+> +}
+> +
+>  static int group_priority_permit(struct drm_file *file,
+>  				 u8 priority)
+>  {
+> @@ -815,6 +885,7 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  	struct drm_panthor_dev_query *args = data;
+>  	struct drm_panthor_timestamp_info timestamp_info;
+>  	struct drm_panthor_group_priorities_info priorities_info;
+> +	struct drm_panthor_calibrated_timestamp_info calibrated_timestamp_info;
+>  	int ret;
+>  
+>  	if (!args->pointer) {
+> @@ -835,6 +906,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  			args->size = sizeof(priorities_info);
+>  			return 0;
+>  
+> +		case DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO:
+> +			args->size = sizeof(calibrated_timestamp_info);
+> +			return 0;
+> +
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -859,6 +934,16 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  		panthor_query_group_priorities_info(file, &priorities_info);
+>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
+>  
+> +	case DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO: {
+> +		ret = panthor_query_calibrated_timestamp_info(ptdev, u64_to_user_ptr(args->pointer),
+> +							      args->size,
+> +							      &calibrated_timestamp_info);
+> +		if (ret)
+> +			return ret;
+> +
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, calibrated_timestamp_info);
+> +	}
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -1601,6 +1686,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+>   * - 1.3 - adds DRM_PANTHOR_GROUP_STATE_INNOCENT flag
+>   * - 1.4 - adds DRM_IOCTL_PANTHOR_BO_SET_LABEL ioctl
+>   * - 1.5 - adds DRM_PANTHOR_SET_USER_MMIO_OFFSET ioctl
+> + * - 1.6 - adds DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO query
+>   */
+>  static const struct drm_driver panthor_drm_driver = {
+>  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1614,7 +1700,7 @@ static const struct drm_driver panthor_drm_driver = {
+>  	.name = "panthor",
+>  	.desc = "Panthor DRM driver",
+>  	.major = 1,
+> -	.minor = 5,
+> +	.minor = 6,
+>  
+>  	.gem_create_object = panthor_gem_create_object,
+>  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index 467d365ed7ba7..7f3ff43f17952 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -243,6 +243,11 @@ enum drm_panthor_dev_query_type {
+>  	 * @DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO: Query allowed group priorities information.
+>  	 */
+>  	DRM_PANTHOR_DEV_QUERY_GROUP_PRIORITIES_INFO,
+> +
+> +	/** @DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO: Query calibrated
+> +	 * timestamp information.
+> +	 */
+> +	DRM_PANTHOR_DEV_QUERY_CALIBRATED_TIMESTAMP_INFO,
+>  };
+>  
+>  /**
+> @@ -402,6 +407,32 @@ struct drm_panthor_group_priorities_info {
+>  	__u8 pad[3];
+>  };
+>  
+> +/**
+> + * struct drm_panthor_calibrated_timestamp_info - Calibrated timestamp information
+> + *
+> + * Structure grouping all queryable information relating to the calibrated timestamp.
+> + */
+> +struct drm_panthor_calibrated_timestamp_info {
+> +	/** @clockid: The CPU clock id.
+> +	 *
+> +	 * Must be one of CLOCK_MONOTONIC, CLOCK_MONOTONIC_RAW,
+> +	 * CLOCK_REALTIME, CLOCK_BOOTTIME, or CLOCK_TAI.
+> +	 */
+> +	__s32 cpu_clockid;
+> +
+> +	/** @pad: MBZ. */
+> +	__u32 pad;
+> +
+> +	/** @duration: Duration for querying all timestamps in nanoseconds. */
+> +	__u64 duration;
+> +
+> +	/** @cpu_timestamp: The current CPU timestamp in nanoseconds. */
+> +	__u64 cpu_timestamp;
+> +
+> +	/** @gpu_timestamp: The current GPU timestamp in cycles. */
+> +	__u64 gpu_timestamp;
+> +};
+> +
+>  /**
+>   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+>   */
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
+> 
 
