@@ -1,312 +1,136 @@
-Return-Path: <linux-kernel+bounces-832854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D23BA093A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:23:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34801BA0943
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533351C21326
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8B9387B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984E13054D8;
-	Thu, 25 Sep 2025 16:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FD33054CE;
+	Thu, 25 Sep 2025 16:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OW3lhJWX"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRgbaoiE"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEA13054CE
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CE93054CB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758817400; cv=none; b=Jk5YxxnHTFedKgGVpbGU55jypPyJmnafc4ZVh80UPvrw/OGzeGEDmlaHHPNU2zstO0MuYm8RLt6o60VjMExEakJHEynUDSWdfWsTriz/9fozYyHAB2LbAW6pLKWfwHouNdER0q8Dr8Xk3TouHsoQU9W42kBKlTBgDtFhf94kIzE=
+	t=1758817428; cv=none; b=PFQbxgZIiD8d/atBMzp6cNWpVuINEHJ8aI85A6URjf55PgdclZuIwpYUtyJJFVAg6lXC5A4ODGetge0beOi1J4Qh8+i4zyu5N+27XO/t6OM11SWLncuqiDL4JltciOLvTnc4Yz023DZ4HDNUOXqu9pS5DMyqgp3s2aFBGS2RGhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758817400; c=relaxed/simple;
-	bh=ogDMvxEB0l/8LolmHlflKoM4VzHXpO3FbRQWfgyFd/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjBBO7gDDjZMWtDspVtcuRIVnL+cEjh8QWcFQ8y9mnAJ8mj6QLnV0BTb4qnMJJBNUdJYNmIkxbWMw1CpCCrJzOBVWVzyiKihR8EBJ7ilVlahkN+OvXzcT6YwQ9IlO6QL0jXr7z7SIdrtEK3PVtSk37mA/45b9ZIr9O/ksmdo6E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OW3lhJWX; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1758817428; c=relaxed/simple;
+	bh=gOo1rVsZR6VdqU5z395vlT+SO32oa08uQ/tUj6wgFd4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=TDi1O7/DWy7ExtzZF2075kPs7VYdJ+YyMHn0Eq+s3uaJvA5+NkMYU6LYSGrgznsoiY1/QqMMoilVWqchGxGLKT/KGD3U/OIS+m8M4HfA7SFoROCsWDNGLni+KEP16Tr1SHQS95Uy05UJgap+2NLsyEIFZlmSNKOiWd9quZM3Kps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRgbaoiE; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62fc89cd68bso2444314a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:23:18 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so1041870f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758817397; x=1759422197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sVLfD6QI3aBalttz5ofGckCWcaUeaFqR+l9M9pjcrz8=;
-        b=OW3lhJWXo6voXJt8MRV8n9F7KFslPnd9Pq71YVAjr+GJ8kk2K3WJgzbYP3aKy1KTMO
-         mIqWLDO0NDturIQuMZVTi4PhPs1CYoSXtllXIzov1ku8g+FFYPQTYNFK5s5cGs2bFMwo
-         Cd2T7qO9XvluLeg/Tf7SFb/1tN3DN+88Ba1xgD6eq4IlQUpyubQKYf/S0YrBE5BTozNp
-         D/eqNP6FOH4aocib2Blw2yaAdg5NVDzzVywdcEOWvRO5JE65Epe0P+7Ojb0NTHVw2EEy
-         RRuxEwQB0CljvzZCZdZFdVYwu+UJYVG8TwyzCNyRXcUOT2sm2mj0jf38eBBgfWGK8xyY
-         qRkg==
+        d=gmail.com; s=20230601; t=1758817425; x=1759422225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTyvmotOb0/PgMOHsXh4gvDuOiENNfX5B0XL/LoNWUk=;
+        b=QRgbaoiEXx7xp7ZNWhKTDtac8hbujoKZUQ2SfmHyvK19p/gId2x095Eyjh9baRHkWR
+         44Xli413yV5yhmVER/RqnMGDb4RQ8EwxqUGrVq1sIWQ0WMFYAVDonhrCKenFS97Wq5k8
+         lwH2Ss46HmdcdxmTooGgvJVZYMH8XO2nFmFRr8V6DozhaD2po4XhWGPvFGpK0gFYaHNN
+         BrMhdXO88rRbnbEXOfKLzB5snUpUER38cQr4Q0zeyA81+uAsCBr35wIL0MUAoBserXlA
+         c/TutBxD3gNAMvj1Uq7FeZEwc6eJ2N1i51DNY5nIcy7POL2uxAhOekqGf11V6yBeaSPv
+         g3aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758817397; x=1759422197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sVLfD6QI3aBalttz5ofGckCWcaUeaFqR+l9M9pjcrz8=;
-        b=hjvEcvk7BX37WK0Upco9fbpffDOt0tKWzbv17V8XMSyvoDflW0rjN6c+5hl3lA3f9R
-         kU15Yg2g19hbsFvUVbhLt3ew8+j2MqcHy4J66gXdg5vlMSeJlcDb53NJSW7Xeq/SCK1U
-         MhsuOjjQf3cRnbxgMJh0KjVTjs5ZDKM0a8vutoylaTcGh+OoncOMNzMYUMzej34Zy2wC
-         Jke8/2w9hFFNJPbRttRUPLoJFJpKQ5I5kkdscZHZjVJXADO2QC97Erawe1Vd/du0V6Gf
-         0aeMos9e+WomZyNyjRq1JxVTFH/dUlDQWeDPVvx6LqJAzjrD0klDy0G9KZGzweth9qDf
-         chTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPStE/J9kJLDWFMvHw0T8Hek3323yf+H2ySQB7K/eWaYmLVHOXEYBkktpOkbjV/6iGtrrQ2sDbok474ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzotQVTBs4FmDEWanyIZesKy8sKIWTj9tiy0ttagjHS3Ddu2/8U
-	/lGmLJgy4Gf9IVEk23DwmYxdr2zC+5UWzflVIb2KzuNyZRYW2JuJbdknZbNCQlKKXbatiuxdRjz
-	ZTgaOok6T97RIamjBY8Xzn50T3KCeStE=
-X-Gm-Gg: ASbGnctKojzsoMDTIDaPyvSOpPVeMn4sPAnrJT6vg/xjbWEx3l+llz7HeY/06fV/cp6
-	j9UYT7mfM/Ul1NA6+zxUV2BMxaK2mpu41uByY6UXWduHCopagRyFcKq2ZeH7MglwUt3Pjc9GsVa
-	aOBgAWBPUjDgoXE0QclGth5xHKgB8U69vqixPCI9qdn8LRnk6yPYvRH9rj1aTZWYPNr9Mswp+Do
-	7XQIq+ZVwK1cA==
-X-Google-Smtp-Source: AGHT+IHrLfqKU+fL92X7D5u431cMJZPJyrtVkhiVpqdBaM41xpe5f3nevQqNwe3zgdGq42HMPJgytQhdodbZUNRWfwg=
-X-Received: by 2002:a17:907:961f:b0:b04:c7c5:499d with SMTP id
- a640c23a62f3a-b34be7cef09mr433129366b.47.1758817396702; Thu, 25 Sep 2025
- 09:23:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758817425; x=1759422225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MTyvmotOb0/PgMOHsXh4gvDuOiENNfX5B0XL/LoNWUk=;
+        b=gEd3e/5RoCvakwkzwD0w8wBPovid6YYRtc6KMChr69rT5+3qmb9SmompJ3AeptVigT
+         sbo3e571ZL9xXon+wl+yGiCyddY5get/WQ/2BZkrxsTlyxm9g/HzH+AcgC0V7TQJm99z
+         oWzwd+tM1Vo7EILmWCUHhivMpTGkQRlyPyPld5N0Kc8YqhtzDpcjsSY0s3PBPV1GP7xe
+         wUXn1DlwAqkrFm1eSdLaDxRBS9JcKIBSH5BPOfyhFj3og2+JDNj+nQGJ+ctjGyyLrZ15
+         yv+meIhd6YCmvDx1HIbINb7vnFLKd0QPDdAK3dmrmRzJFgun43FhmlYY635x4Pm3nkYL
+         MOKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvcPsoIPMZEXd27UtkLkW3Vwe+sxQ5wigSX51mjuq1sd0+ifpBT3zGXTmJJ9PFFejK3kiV5sDUcsdqq4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwfMCmPZs6PkKpdr0uXu0Cqx2yIPsFDrIM4rWOh4NHEWnQj7nV
+	Mj0HK8+8HmQE7tLvlfQ1FnItzW6TOrHagS1hZmEq9lIAa15ixLisj1Q1qykZ/Q==
+X-Gm-Gg: ASbGncv+ejatYJPfPqWKKsF+LA8npJAKKXCDe0ARcBJCp1ir8hdWgwopUMZB5Fi6f5h
+	bfD5xPhyjNWGtNA3DJvL2dKapK6rHEQ/W2MWI0AlFfZh+qBT4S8X179ryruBmWu0lob9zhaMZpl
+	larXecOsbVntrnI3AW7GUSfctt1WgBpMOXvKNGDAfIJDGAD4JuSIu/XhMqsFldjsWCtZpEHBlx0
+	KpmeqDrH/wl5n+jwuuIwuuB3v+9z07QrRYhjFM9Ds/ib4EQinTjbjtCspQ5LZxa2K2wDXhfS12P
+	j0eQkrhxm8swYUV069WJxAiY8Wk5rHdkMr+wN1vjiZTkSunsx8cX2DorRraU1/wfxg5UHdaRyFN
+	sa707ssd+hoXIYC5pWq/K0ZGnXpipuA2XO5LsZZ6GICW8ZX3fyxP0D3Ow+hu7OAxuKr/mo9U=
+X-Google-Smtp-Source: AGHT+IG8wt7D2RVybhrtsXF08OvAI7r2C+qCPryu+R0Ya0aCRRAJKGzbWS2JdRSo8S3uobYjXYxcdw==
+X-Received: by 2002:a05:6000:655:b0:40f:288e:996f with SMTP id ffacd0b85a97d-40f288e9f05mr2728379f8f.63.1758817425041;
+        Thu, 25 Sep 2025 09:23:45 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm3534819f8f.24.2025.09.25.09.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 09:23:44 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	upstream@airoha.com
+Subject: [PATCH v3 0/4] PCI: mediatek: add support AN7583 + YAML rework
+Date: Thu, 25 Sep 2025 18:23:14 +0200
+Message-ID: <20250925162332.9794-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com> <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com> <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com> <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com> <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
-In-Reply-To: <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 25 Sep 2025 09:23:05 -0700
-X-Gm-Features: AS18NWDY4BleLREPHkOm-WtFq5BXfe1lid1VqVLM4gXE_Ot-5sNbySege7rDVV0
-Message-ID: <CAHbLzkrstjnEVUzz2==A2Z+CJToOgU6YU2MasdK49o-0-jW2yw@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: Zi Yan <ziy@nvidia.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, David Hildenbrand <david@redhat.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linmiaohe@huawei.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nao.horiguchi@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 7:45=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 25 Sep 2025, at 8:02, Pankaj Raghav (Samsung) wrote:
->
-> >>>>
-> >>>> We might just need (a), since there is no caller of (b) in kernel, e=
-xcept
-> >>>> split_folio_to_order() is used for testing. There might be future us=
-es
-> >>>> when kernel wants to convert from THP to mTHP, but it seems that we =
-are
-> >>>> not there yet.
-> >>>>
-> >>>
-> >>> Even better, then maybe selected interfaces could just fail if the mi=
-n-order contradicts with the request to split to a non-larger (order-0) fol=
-io.
-> >>
-> >> Yep. Let=E2=80=99s hear what Luis and Pankaj will say about this.
-> >>
-> >>>
-> >>>>
-> >>>>
-> >>>> +Luis and Pankaj for their opinions on how LBS is going to use split=
- folio
-> >>>> to any order.
-> >>>>
-> >>>> Hi Luis and Pankaj,
-> >>>>
-> >>>> It seems that bumping split folio order from 0 to mapping_min_folio_=
-order()
-> >>>> instead of simply failing the split folio call gives surprises to so=
-me
-> >>>> callers and causes issues like the one reported by this email. I can=
-not think
-> >>>> of any situation where failing a folio split does not work. If LBS c=
-ode
-> >>>> wants to split, it should supply mapping_min_folio_order(), right? D=
-oes
-> >>>> such caller exist?
-> >>>>
-> >
-> > I am not aware of any place in the LBS path where we supply the
-> > min_order. truncate_inode_partial_folio() calls try_folio_split(), whic=
-h
-> > takes care of splitting in min_order chunks. So we embedded the
-> > min_order in the MM functions that performs the split instead of the
-> > caller passing the min_order. Probably, that is why this problem is
-> > being exposed now where people are surprised by seeing a large folio
-> > even though they asked to split folios to order-0.
-> >
-> > As you concluded, we will not be breaking anything wrt LBS as we
-> > just refuse to split if it doesn't match the min_order. The only issue =
-I
-> > see is we might be exacerbating ENOMEM errors as we are not splitting a=
-s
-> > many folios with this change. But the solution for that is simple, add
-> > more RAM to the system ;)
-> >
-> > Just for clarity, are we talking about changing the behaviour just the
-> > try_to_split_thp_page() function or all the split functions in huge_mm.=
-h?
->
-> I want to change all the split functions in huge_mm.h and provide
-> mapping_min_folio_order() to try_folio_split() in truncate_inode_partial_=
-folio().
->
-> Something like below:
->
-> 1. no split function will change the given order;
-> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_ord=
-er
-> is smaller than mapping_min_folio_order().
->
-> In this way, for an LBS folio that cannot be split to order 0, split
-> functions will return -EINVAL to tell caller that the folio cannot
-> be split. The caller is supposed to handle the split failure.
+This little series convert the PCIe GEN2 Documentation to YAML schema
+and adds support for Airoha AN7583 GEN2 PCIe Controller.
 
-Other than making folio split more reliable, it seems like to me this
-bug report shows memory failure doesn't handle LBS folio properly. For
-example, if the block size <=3D order-0 page size (this should be always
-true before LBS), memory failure should expect the large folio is
-split to order-0, then the poisoned order-0 page should be discarded
-if it is not dirty. The later access to the block will trigger a major
-fault.
-But with LBS, the block size may be greater than order-0 page size, so
-the large folio is actually backed by one single block, so memory
-failure should discard the whole large folio instead of one order-0
-page in the large folio. IOW, memory failure should expect to see
-large folio.
+Changes v3:
+- Rework patch 1 to drop syscon compatible
+Changes v2:
+- Add cover letter
+- Describe skip_pcie_rstb variable
+- Fix hifsys schema (missing syscon)
+- Address comments on the YAML schema for PCIe GEN2
+- Keep alphabetical order for AN7583
 
-Thanks,
-Yang
+Christian Marangi (4):
+  ARM: dts: mediatek: drop wrong syscon hifsys compatible for
+    MT2701/7623
+  dt-bindings: PCI: mediatek: Convert to YAML schema
+  dt-bindings: PCI: mediatek: Add support for Airoha AN7583
+  PCI: mediatek: add support for Airoha AN7583 SoC
 
->
-> WDYT?
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index f327d62fc985..e15c3ca07e33 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -387,34 +387,16 @@ int folio_split(struct folio *folio, unsigned int n=
-ew_order, struct page *page,
->   * Return: 0: split is successful, otherwise split failed.
->   */
->  static inline int try_folio_split(struct folio *folio, struct page *page=
-,
-> -               struct list_head *list)
-> +               struct list_head *list, unsigned int order)
->  {
-> -       int ret =3D min_order_for_split(folio);
-> -
-> -       if (ret < 0)
-> -               return ret;
-> -
-> -       if (!non_uniform_split_supported(folio, 0, false))
-> +       if (!non_uniform_split_supported(folio, order, false))
->                 return split_huge_page_to_list_to_order(&folio->page, lis=
-t,
-> -                               ret);
-> -       return folio_split(folio, ret, page, list);
-> +                               order);
-> +       return folio_split(folio, order, page, list);
->  }
->  static inline int split_huge_page(struct page *page)
->  {
-> -       struct folio *folio =3D page_folio(page);
-> -       int ret =3D min_order_for_split(folio);
-> -
-> -       if (ret < 0)
-> -               return ret;
-> -
-> -       /*
-> -        * split_huge_page() locks the page before splitting and
-> -        * expects the same page that has been split to be locked when
-> -        * returned. split_folio(page_folio(page)) cannot be used here
-> -        * because it converts the page to folio and passes the head
-> -        * page to be split.
-> -        */
-> -       return split_huge_page_to_list_to_order(page, NULL, ret);
-> +       return split_huge_page_to_list_to_order(page, NULL, 0);
->  }
->  void deferred_split_folio(struct folio *folio, bool partially_mapped);
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 5acca24bbabb..faf5da459a4c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3653,8 +3653,6 @@ static int __folio_split(struct folio *folio, unsig=
-ned int new_order,
->
->                 min_order =3D mapping_min_folio_order(folio->mapping);
->                 if (new_order < min_order) {
-> -                       VM_WARN_ONCE(1, "Cannot split mapped folio below =
-min-order: %u",
-> -                                    min_order);
->                         ret =3D -EINVAL;
->                         goto out;
->                 }
-> @@ -3986,11 +3984,6 @@ int min_order_for_split(struct folio *folio)
->
->  int split_folio_to_list(struct folio *folio, struct list_head *list)
->  {
-> -       int ret =3D min_order_for_split(folio);
-> -
-> -       if (ret < 0)
-> -               return ret;
-> -
->         return split_huge_page_to_list_to_order(&folio->page, list, ret);
->  }
->
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 91eb92a5ce4f..1c15149ae8e9 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -194,6 +194,7 @@ bool truncate_inode_partial_folio(struct folio *folio=
-, loff_t start, loff_t end)
->         size_t size =3D folio_size(folio);
->         unsigned int offset, length;
->         struct page *split_at, *split_at2;
-> +       unsigned int min_order;
->
->         if (pos < start)
->                 offset =3D start - pos;
-> @@ -223,8 +224,9 @@ bool truncate_inode_partial_folio(struct folio *folio=
-, loff_t start, loff_t end)
->         if (!folio_test_large(folio))
->                 return true;
->
-> +       min_order =3D mapping_min_folio_order(folio->mapping);
->         split_at =3D folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZ=
-E);
-> -       if (!try_folio_split(folio, split_at, NULL)) {
-> +       if (!try_folio_split(folio, split_at, NULL, min_order)) {
->                 /*
->                  * try to split at offset + length to make sure folios wi=
-thin
->                  * the range can be dropped, especially to avoid memory w=
-aste
-> @@ -254,7 +256,7 @@ bool truncate_inode_partial_folio(struct folio *folio=
-, loff_t start, loff_t end)
->                  */
->                 if (folio_test_large(folio2) &&
->                     folio2->mapping =3D=3D folio->mapping)
-> -                       try_folio_split(folio2, split_at2, NULL);
-> +                       try_folio_split(folio2, split_at2, NULL, min_orde=
-r);
->
->                 folio_unlock(folio2);
->  out:
->
->
-> Best Regards,
-> Yan, Zi
->
+ .../bindings/pci/mediatek-pcie-mt7623.yaml    | 173 ++++++
+ .../devicetree/bindings/pci/mediatek-pcie.txt | 289 ----------
+ .../bindings/pci/mediatek-pcie.yaml           | 514 ++++++++++++++++++
+ arch/arm/boot/dts/mediatek/mt2701.dtsi        |   2 +-
+ arch/arm/boot/dts/mediatek/mt7623.dtsi        |   3 +-
+ drivers/pci/controller/pcie-mediatek.c        |  85 ++-
+ 6 files changed, 752 insertions(+), 314 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+
+-- 
+2.51.0
+
 
