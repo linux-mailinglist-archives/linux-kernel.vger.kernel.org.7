@@ -1,164 +1,250 @@
-Return-Path: <linux-kernel+bounces-832790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A761EBA0586
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D36BA05AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E2DA7BCFD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F6C2A5CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604632E7F06;
-	Thu, 25 Sep 2025 15:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211342EBDFD;
+	Thu, 25 Sep 2025 15:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="EZwPqDhk"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y7dbd/IP"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C522FB974
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAE82EAD15
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758814315; cv=none; b=KZpTSjZrYrL/Dr8LUFZ+2hZ0njziVxJ+kFd/vLv4DUnHD2Zg58+Cm/m+I4FsD3tAMfKE/to0Tm89ku6ok8QioP//7yDHQS091KmH/sV/f85sV+nBkbADekZuMmK+is/rHvflG/wc2Xlcf6ZJgTBgJugYfZ4Cusq7AZExfVHrzm0=
+	t=1758814330; cv=none; b=hAkLTUjXTbg54Qf91393f7yVnCP4juOHosoZ4Eu6rb4pK8zW6lON6xzKSrvhSLmTYtMRMI6fo0VMxWJk8Bcg0P0KhDTKhbE5BZHEs8jfIMuRowVRqlyBxa07mCXKNpuIlK5YpBuS5/7ihmkEKWiyB4jELG3j7x/CohtAcnP8GHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758814315; c=relaxed/simple;
-	bh=q5aG2S5mYUlLQBqwqhP3YXxDUhZ1opyJOZ1oXoGgGA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UUMFuIry6iaVrGX2Xl3Ffdg8vtPQ6nEih43Dq8gl61LOqu72BHQaKzFVsffG3wI2tWlu/FJu83jC90mhTq7njZv3cEsEX0+QSjfQiMr5zb8jBSf7aBOOmp1jMOEMejbmnCx2+ImTyDEB0tFB5bWBQ1RptydRvk2A3qHGjtBTKd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=EZwPqDhk; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3727611c1bso46672466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:31:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1758814312; x=1759419112; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2j6NXz/L1rjCXicECUckXAuwnbrEJeLUM7GD37RWm6Y=;
-        b=EZwPqDhkxKEgMdXteaQFYfQ39dcFnn9f10C0sbwID+CyI1D1xza5k+ooeaMQ8+aJjd
-         f1RXYXD/R61lhHVKErdXdJlBdQZKS0mb6fH/KobxM5nbOYwIz7oDL16bgkXiEs2P//V1
-         cZ3HZ17jx6NK9Sm/kDsbIFrbh8g9CbX+v5GAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758814312; x=1759419112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2j6NXz/L1rjCXicECUckXAuwnbrEJeLUM7GD37RWm6Y=;
-        b=STTS+AR0fsG7Hgfks86qWxOSEuZ5JSlb9wnlVDkavC7CDNi3mXkwi5Q9dJH22nljI7
-         nn9+CnqMt4+e/Mxx0Zv3ZNX197++roO7A+12Mmf8tJ0hq2wP9CNLe93e4BVThtB64lbR
-         QbS/rpDxNIZNv/Ihv9iu7lXJKnKtLCGiVQGop75DouSad0IDIntKbjR4EPpVv4dY5/Gb
-         i4u/zSUEwchwVdjuvnx5XSfV6/7Vcq+p2Kg991B4hiXdcOMZ0noRwa8Ng1R0jqz/atgT
-         ERq9LULxp42dy312k0K9QBPa4UAJmHbm7I1Eblngr2XBvsVpMAt5W+5v7dO/K0P0gIZc
-         S6MA==
-X-Gm-Message-State: AOJu0Yxi6nmTeEcPK38xrjEQIBDmeMwcWZUr3HIRXSjl23bdQUpnQmfH
-	KPNCpFdXeyrCvNaqcdi5hIfJfHXKmJHPyMqL70i0F4+g2UGl7XSMjs2q51wRj5FQ+8gIePqbuCh
-	GexMWdHQ=
-X-Gm-Gg: ASbGncv5GBdxGQGXuq7W+Y9CSnUMuibaBlQENG+zllDgtC7iYHXyK8414/DOOMIs7Rq
-	rC3Bp0VtmgMDB22ts5v/6WS80ZK4MugkaS5PBL22TRSGuxy3EDRWiZgsiRa/ZwFhlZ7V4DGbXDc
-	1Zb98bavRv6gKU4Wu4y8brd8tSJXcg6EvIWhSt6p3IJEVg9UWa1wBxcuCMfbG+5J4juDdUpl0Ub
-	KqjZwFhu5CVFoBZcqNCm+tfsLsIuW1SEoBA9o27oMNKLWoMDMhFXoWorVCJFlloX96EgynI+F1F
-	devDh2v39CIt3zWBCvWQWiNWeTBy55BMWjd5ecfT/TZsDWIeMgg9QsHOL55zk9kKJ5R/EdQm6RG
-	Z/gERzvbMLBoNgajXCseZN9y0yGfkbyrufHZWLMj7OnhGiNybsTaEu0TB345bfWhu2XUv1uj+5s
-	qgY5FNERzIeL1j9Ngd1Wmc0ebXiChaPHI8PX1iohdWBkyfc43LEIdKk03oitnrNZYb
-X-Google-Smtp-Source: AGHT+IE6hFumdlcUjZ/00Iv3aIuLUT9mICMj6k5jLi1LoqQpjx/Mu7By43eLrCshvtCsZpoRqZOBQQ==
-X-Received: by 2002:a17:906:6a07:b0:b04:20c0:b1f9 with SMTP id a640c23a62f3a-b34bb50f700mr453534566b.52.1758814312116;
-        Thu, 25 Sep 2025 08:31:52 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-56-38-125.retail.telecomitalia.it. [82.56.38.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b36f410e129sm43924766b.89.2025.09.25.08.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:31:51 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: sebastian.reichel@collabora.com,
-	linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: [linux-next PATCH v8 3/3] dt-bindings: touchscreen: remove touchscreen.txt
-Date: Thu, 25 Sep 2025 17:31:35 +0200
-Message-ID: <20250925153144.4082786-3-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250925153144.4082786-1-dario.binacchi@amarulasolutions.com>
-References: <20250925153144.4082786-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758814330; c=relaxed/simple;
+	bh=NgT10FpEpSYYmbnmgt3MhuxO1JnJEvfawqPO+Byo8xI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EgZ2o2xCaerUPtTiVl3l85YV+NSCg54Gp98UNCRYG9BzDNHFgu0l96NPO5UrrZtQ187hPolEQBQFUOXPejUApaWjXDAbN4uKG0wSxxe78h6Oydk3P4vtf8ID9qjnIPqbiID8t+8teTfmoEMRZdaQkx9V+toJvuJcSKr05rc44dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y7dbd/IP; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758814325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IVM3/TjrAx73b+FFU6cSE3KCrtsxDRhadpXezuUiniY=;
+	b=Y7dbd/IP+lKkGHLIMsxvGvDQN+1VTUeP2StrY8X6sHD1Kd0cnjplNEVjwvAMXKMLL5+suv
+	rERCckBKYVHnK0EZJCLgPViCOQ8VfQg+2bERKw2mIuiowcFBYJSl5GqF/wcHJ5Q31aYCgr
+	RWDAWjp1VXVduDScsJh34vVJ6g/6gds=
+Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in
+ print_reg_state()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Brahmajit Das <listout@listout.xyz>, Alexei Starovoitov
+	 <alexei.starovoitov@gmail.com>
+Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, Andrii Nakryiko
+ <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Eduard
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh
+ <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Song Liu
+ <song@kernel.org>, syzkaller-bugs <syzkaller-bugs@googlegroups.com>, 
+ Yonghong Song <yonghong.song@linux.dev>
+Date: Thu, 25 Sep 2025 23:31:41 +0800
+In-Reply-To: <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+	 <20250923174738.1713751-1-listout@listout.xyz>
+	 <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+	 <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
+	 <9051652cf548271da9c349758cbd70aaa3cee444.camel@linux.dev>
+	 <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-With commit 1d6204e2f51f ("dt-bindings: touchscreen: Add touchscreen
-schema") touchscreen.txt is no longer needed, and since no other file
-refers to it, it can be safely removed.
+On Wed, 2025-09-24 at 23:58 +0530, Brahmajit Das wrote:
+> On 25.09.2025 01:38, KaFai Wan wrote:
+> > On Wed, 2025-09-24 at 21:10 +0530, Brahmajit Das wrote:
+> > > On 24.09.2025 09:32, Alexei Starovoitov wrote:
+> > > > On Wed, Sep 24, 2025 at 1:43=E2=80=AFAM Brahmajit Das
+> > > > <listout@listout.xyz>
+> > > > wrote:
+> > > > >=20
+> > > > > Syzkaller reported a general protection fault due to a NULL
+> > > > > pointer
+> > > > > dereference in print_reg_state() when accessing reg->map_ptr
+> > > > > without
+> > > > > checking if it is NULL.
+> > > > >=20
+> > > ...snip...
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (type_is_map_ptr(t)) {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (type_is_map_ptr(t) && r=
+eg->map_ptr) {
+> > > >=20
+> > > > You ignored earlier feedback.
+> > > > Fix the root cause, not the symptom.
+> > > >=20
+> > > > pw-bot: cr
+> > >=20
+> > > I'm not sure if I'm headed the write direction but it seems like
+> > > in
+> > > check_alu_op, we are calling adjust_scalar_min_max_vals when we
+> > > get
+> > > an
+> > > BPF_NEG as opcode. Which has a call to __mark_reg_known when
+> > > opcode
+> > > is
+> > > BPF_NEG. And __mark_reg_known clears map_ptr with
+> > >=20
+> > > 	/* Clear off and union(map_ptr, range) */
+> > > 	memset(((u8 *)reg) + sizeof(reg->type), 0,
+> > > 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 offsetof(struct bpf_reg_state, =
+var_off) -
+> > > sizeof(reg-
+> > > > type));
+> > >=20
+> >=20
+> > I think you are right. The following code can reproduce the error.
+> >=20
+> > 	asm volatile ("					\
+> > 	r0 =3D %[map_hash_48b] ll;			\
+> > 	r0 =3D -r0;					\
+> > 	exit;						\
+> > "	:
+> > 	: __imm_addr(map_hash_48b)
+> > 	: __clobber_all);
+> >=20
+> >=20
+> > BPF_NEG calls __mark_reg_known(dst_reg, 0) which clears the 'off'
+> > and
+> > 'union(map_ptr, range)' of dst_reg, but keeps the 'type', which is
+> > CONST_PTR_TO_MAP.
+> >=20
+> > Perhaps we can only allow the SCALAR_VALUE type to run BPF_NEG as
+> > an
+> > opcode, while for other types same as the before BPF_NEG.
+> >=20
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index e892df386eed..dbf9f1efc6e7 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -15346,13 +15346,15 @@ static bool
+> > is_safe_to_compute_dst_reg_range(struct bpf_insn *insn,
+> > =C2=A0	switch (BPF_OP(insn->code)) {
+> > =C2=A0	case BPF_ADD:
+> > =C2=A0	case BPF_SUB:
+> > -	case BPF_NEG:
+> > =C2=A0	case BPF_AND:
+> > =C2=A0	case BPF_XOR:
+> > =C2=A0	case BPF_OR:
+> > =C2=A0	case BPF_MUL:
+> > =C2=A0		return true;
+> > =C2=A0
+> > +	case BPF_NEG:
+> > +		return base_type(src_reg->type) =3D=3D SCALAR_VALUE;
+> > +
+> >=20
+> >=20
+> > --=20
+> > Thanks,
+> > KaFai
+>=20
+> Before even going into adjust_scalar_min_max_vals we have a check in
+> check_alu_op, which I think is not being respected. Going to expand
+> on
+> this below as response to Alexei.
+>=20
+> On 24.09.2025 18:28, Alexei Starovoitov wrote:
+> > On Wed, Sep 24, 2025 at 4:41=E2=80=AFPM Brahmajit Das <listout@listout.=
+xyz>
+> > wrote:
+> > >=20
+> > > On 24.09.2025 09:32, Alexei Starovoitov wrote:
+> > > > On Wed, Sep 24, 2025 at 1:43=E2=80=AFAM Brahmajit Das
+> > > > <listout@listout.xyz> wrote:
+> > > > >=20
+> > > > > Syzkaller reported a general protection fault due to a NULL
+> > > > > pointer
+> > > > > dereference in print_reg_state() when accessing reg->map_ptr
+> > > > > without
+> > > > > checking if it is NULL.
+> > > > >=20
+> > > ...snip...
+> > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (type_is_map_ptr(t)) {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (type_is_map_ptr(t) && r=
+eg->map_ptr) {
+> > > >=20
+> > > > You ignored earlier feedback.
+> > > > Fix the root cause, not the symptom.
+> > > >=20
+> > > > pw-bot: cr
+> > >=20
+> > > I'm not sure if I'm headed the write direction but it seems like
+> > > in
+> > > check_alu_op, we are calling adjust_scalar_min_max_vals when we
+> > > get an
+> > > BPF_NEG as opcode. Which has a call to __mark_reg_known when
+> > > opcode is
+> > > BPF_NEG. And __mark_reg_known clears map_ptr with
+> >=20
+> > Looks like we're getting somewhere.
+> > It seems the verifier is not clearing reg->type.
+> > adjust_scalar_min_max_vals() should be called on scalar types only.
+>=20
+> Right, there is a check in check_alu_op
+>=20
+> 		if (is_pointer_value(env, insn->dst_reg)) {
+> 			verbose(env, "R%d pointer arithmetic
+> prohibited\n",
+> 				insn->dst_reg);
+> 			return -EACCES;
+> 		}
+>=20
+> is_pointer_value calls __is_pointer_value which takes bool
+> allow_ptr_leaks as the first argument. Now for some reason in this
+> case
+> allow_ptr_leaks is being passed as true, as a result
+> __is_pointer_value
+> (and in turn is_pointer_value) returns false when even when register
+> type is CONST_PTR_TO_MAP.
+>=20
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+IIUC, `env->allow_ptr_leaks` set true means privileged mode (
+CAP_PERFMON or CAP_SYS_ADMIN ), false for unprivileged mode.=20
 
----
 
-Changes in v8:
-- fix conflicts on eeti,exc3000.yaml after rebasing the first patch of
-  the series on linux-next where the patch "dt-bindings: input: exc3000:
-  move eeti,egalax_ts from egalax-ts.txt to eeti,exc3000.yaml" has been
-  merged.
+We can use __is_pointer_value to check if the register type is a
+pointer. For pointers, we check as before (before checking BPF_NEG
+separately), and for scalars, it remains unchanged.=C2=A0Perhaps this way w=
+e
+can fix the error.
 
-Changes in v7:
-- Add Reviewed-by tag of Rob Herring for eeti,exc3000.yaml
-- Add $ref: /schemas/input/touchscreen/touchscreen.yaml# to
-  raspberrypi,bcm2835-firmware.yaml.
+if (opcode =3D=3D BPF_NEG) {
+	if (__is_pointer_value(false, &regs[insn->dst_reg])) {
+		err =3D check_reg_arg(env, insn->dst_reg, DST_OP);
+	} else {
+		err =3D check_reg_arg(env, insn->dst_reg,
+DST_OP_NO_MARK);
+		err =3D err ?: adjust_scalar_min_max_vals(env, insn,
+						&regs[insn->dst_reg],
+						regs[insn->dst_reg]);
+	}
+} else {
 
-Changes in v6:
-- Put deprecated the properties added for the eeti,exc3000-i2c.
-- Drop the example for the eeti,exc3000-i2c.
 
-Changes in v5:
-- Drop patches:
-  - v4 1/5 dt-bindings: touchscreen: convert bu21013 bindings to json schema
-  - v4 4/5 dt-bindings: touchscreen: convert zet6223 bindings to json schema
-  because accepted
-
-Changes in v4:
-- For rohm,bu21013 bindings:
-  - Drop description from reset-gpios
-  - Simplify description of avdd-supply
-  - Rename bu21013.yaml to rohm,bu21013.yaml
-  - Add Reviewed-by tag of Krzysztof Kozlowski
-- For zeitec,zet6223
-  - Drop "Phandle to the" from vio-supply and vcc-supply dscription
-  - Rename zet6223.yaml to zeitec,zet6223.yaml
-
-Changes in v2:
-- Update the commit message
-- Add Acked-by tag of Rob Herring
-- Add patches:
-  - 1/5 dt-bindings: touchscreen: convert bu21013 bindings to json schema
-  - 2/5 dt-bindings: touchscreen: convert eeti bindings to json schema
-  - 3/5 dt-bindings: touchscreen: convert raspberrypi,firmware-ts bindings
-    to json schema
-  - 4/5 dt-bindings: touchscreen: convert zet6223 bindings to json schema
-
- .../devicetree/bindings/input/touchscreen/touchscreen.txt        | 1 -
- 1 file changed, 1 deletion(-)
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-deleted file mode 100644
-index e1adb902d503..000000000000
---- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-+++ /dev/null
-@@ -1 +0,0 @@
--See touchscreen.yaml
--- 
-2.43.0
-
-base-commit: b5a4da2c459f79a2c87c867398f1c0c315779781
-branch: drop-touchscreen
+--=20
+Thanks,
+KaFai
 
