@@ -1,151 +1,205 @@
-Return-Path: <linux-kernel+bounces-833323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F8FBA1AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:47:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8DABA1AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1DC17933A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3911643E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CF5279358;
-	Thu, 25 Sep 2025 21:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C84E19C546;
+	Thu, 25 Sep 2025 21:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gIFat5Te"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j7j9+LAO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64833FC2;
-	Thu, 25 Sep 2025 21:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24370DDAB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758836814; cv=none; b=Ie++Wtf/qI76eS/cKKbZg1DeCfcsPy35KmeXXCIA7RmJewN91uwt0zJ2vaYDVzLdByfuPQ+mUHEPRKZT3aNTQpsFwh09XCU7iXlnr08Hy8GJ7dvTz064juV+tVL6DoY//v0rwQ2CdERYI5zF1pfjNNAfa1vJLVR4FmuAclSbN24=
+	t=1758836888; cv=none; b=mVwHV5/AkhSD5jYDqwrYl2pg96gC/at6Bo3/yoQQ8Va2WwT76IJB3Q7Wd7lr9A/MvXBOODruer+zT2IZcDNFWxmg1kkqduSOanwkkmEsYOdT1qRPXcY4RJ44f5bI/5oCnEreFUbfxHUQ6ktTaWBhCkMhIQm3rK7IChElVTVOYQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758836814; c=relaxed/simple;
-	bh=WKpoc9+9K5GGgKrOubiqmZ+Fm1Kf3gzxbsj2jNle1hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cLB7vIW/XX8p5qXcY5+GA5Pw7+KaInx/QPG2qW895yi0pwJR/VBaA96PVChWKntGU5czilngurvLb6XnNEAebMlVYZDI+TfezlEoIntL1+eawZGaaCivE9ulnuDbnjAWkBKfe/iIPrhs05Fz9lGiUvrwBnIF5MyoeULEjJPrOgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gIFat5Te; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PImZPZ018041;
-	Thu, 25 Sep 2025 21:46:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Hm9hP/
-	63NIlAC2AM2rcR859l86G4CCxgjB4jsqGxKe0=; b=gIFat5TeP6kCBAolsemnoC
-	RLgO309c6OhZN0RrnehSUq9Nu32vZCuhE80nGR7YO2WWDZJGMHXq0tr0rrQ320g1
-	jakFWiEUMKXm/dHNZs2XjH3tnrWpNeHRPG+Ic8voAUm5fcowBhYYbPOJo++Qh6Q2
-	OtUaWyX1WNXApiqWqqq7WhJQ2aUwAsOjqBGL64R3NxgDaOcgejnUcJG/dkvkXwiR
-	/VDATYdmKYOPtyA+BUaBvGScHILNFPg5K003X4cFNV+t+8dIVOpeReeJwkoCNiqp
-	pTgtgRWGo7cqEV4RbbHnu0drIQaqJExug+E/rmHdlWyLiC3R8bk3AwqpH9vnIqYw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbd8u3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 21:46:42 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58PLkfVV028392;
-	Thu, 25 Sep 2025 21:46:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbd8u39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 21:46:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58PLdq9F006428;
-	Thu, 25 Sep 2025 21:46:40 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpgvyq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Sep 2025 21:46:40 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58PLkaGK43778482
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Sep 2025 21:46:36 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7391620043;
-	Thu, 25 Sep 2025 21:46:36 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8966720040;
-	Thu, 25 Sep 2025 21:46:35 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.87.151.15])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 25 Sep 2025 21:46:35 +0000 (GMT)
-Date: Thu, 25 Sep 2025 23:46:33 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-        "D.
- Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang
- <wenjia@linux.ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>,
-        Tony Lu
- <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next v3 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-Message-ID: <20250925234633.3f0db19c.pasic@linux.ibm.com>
-In-Reply-To: <30a1dc4e-e1ef-43bd-8a63-7a8ff48297d2@redhat.com>
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
-	<20250921214440.325325-3-pasic@linux.ibm.com>
-	<cd1c6040-0a8f-45fb-91aa-2df2c5ae085a@redhat.com>
-	<20250925170524.7adc1aa3.pasic@linux.ibm.com>
-	<30a1dc4e-e1ef-43bd-8a63-7a8ff48297d2@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758836888; c=relaxed/simple;
+	bh=c4pxs3NYo28ei3d77uspVU5mL2Ak3RMeFnGgYp86uCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqw0R2WmrQuATRsmFUlk1a+R7ciI1P37VBHyJQUKm45IDwT2iaiDg9srgQ53mAOCYAwTc29VlSrEE2FSaBA4SLdaT9ZZvJyu5DTIlgW+3U2Uw8wShIEsr7W0qpRXOj1aCM6QTilT942fJvZytnaW73zQvdmhmYauTL3wbrETTcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j7j9+LAO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPbK6011346
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:48:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1J7NyDGcAjM0l0VsjLAzDq+jwGxhWn4dU8Lohd7guWU=; b=j7j9+LAOKoPHC691
+	/fhNAoqOTVhvN+4wSF8mp6HhqTWjn5M32+QCEotoPCqWrBG2FsV2nPhAV+PZoab1
+	B2BrV1H4r7KEAn5ESsbY6+Dj0v90Ks8v52mRCot5RQHnu61HLG3Zs72V47V61j4y
+	EzqxyZxnwBFptDTwEE5PfmU5zBjoK42KgfzZ8b9gw7Hi72glQH3/49oVmHZWdHnM
+	q2SvORYu/qaOyO1X9xazd0oO+rL3q/oPPzG6qDD5WkTRCvdOmk8XU9/5VMsXOyJ+
+	nngVltcx1yeINnDS72loDOqQHkFNb2va9GwqSnGoqqkRjdbOSM71Hp1C7YL2VnR9
+	YoFKhw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0q0fxc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:48:06 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d3632cf912so33231821cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:48:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758836884; x=1759441684;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1J7NyDGcAjM0l0VsjLAzDq+jwGxhWn4dU8Lohd7guWU=;
+        b=S8EUCr+RCBBrIIdC+2j2jpf8ZEH3j6DPs9/tpPn2UL4zq4B8KpzVoyxY1h7n2ORx/g
+         VZ+gXNFt+DJK8SEhaAf69JfWMJfbAGFCwNpePqYwJqr3QK0tuyPCt+c1OfB2FIEBjmXH
+         mGflwmSJ65fS7kxM+eOR+4ew+9OZlEcuYguX2iJwuAfuGfHowziwRf/StE6vt+34fHMU
+         1IFqPMbgN4vZtwifElwaRBvC2VuxUsfVFfwQxQifsIPsL5onyAwS93oKT2rK+Cigwqi9
+         HmEOcHKmVavIEmxTma3BEnXOGBlupdMjbUR/yMQOszd42Zj3G5tGJCzths+q4ntDK/+J
+         V25g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsOMvN1K9rc4oZwYQcEEVAEAdkYAaIzJndPJ5ZWoSqiwD3fgcmi789n1Ji3gmPVMjpwP1B66EkX6/9osI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdaeDvakkRE43Ni1+Mk41m44f6a0zGxCUqnse+zDqzDXaXG4Ia
+	9JS9g+hzBx52gQZY/PN1hoJdOlPRbQ0RxtU4kn8OAn+jC3fAQAKQrCbDJQq+hUmXncL0m7am0Rs
+	/giLw2FzDyXTn0xbZ2A93+30X0aN28qg07ZkOtnQyN/DLGPjnXasCTEBR6u4in0rssgEVP+F25a
+	s=
+X-Gm-Gg: ASbGnctJNzPZ7hgco6LtzYs4Ne8zowLGjLKfMGLnXkrjAuVX3bXDTByu1pCtt1Xc74M
+	p7JcwyqJfF8mrRJ+/L8DZ48J4BN970Gs0jzlkXzv74QbwjrJZc2ryDqN0qYQqtGQkhDQQbuw4nK
+	1DTPVQgn25hhCUMT8xzPBN24A49y70fc1uUeItlKH9eFHLWJ0/taOlTuY1rKyNxli56sJ6O0Hx0
+	q++FYuBccTcDHpcUfytUjzE2pmQOXO3AfQ4QQ1Obo9yIASbib7AtmmbiS8RDYFxTKi5EumZ3wKr
+	kUkppE6NrPBqUVCUhYM8Kck8o2QGa+LHAh3EiCaDxr1MyEZmN+FEOhRqKq9LDXIKQ7c1GXrun2M
+	5ESpj8QcVv+v3eDm2awifvXoqJpIalyvFzXIRDaQD+hOcju6x2FpM
+X-Received: by 2002:ac8:7d8e:0:b0:4b5:e7e4:ba74 with SMTP id d75a77b69052e-4da4c39d3a7mr81769721cf.56.1758836884391;
+        Thu, 25 Sep 2025 14:48:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+Z40dedXoEWvgR9gkshTrihOWhuvgfiSSS+xVcgz3Ka7O0hjWhnzpsUYogC0k7NypbIYSSw==
+X-Received: by 2002:ac8:7d8e:0:b0:4b5:e7e4:ba74 with SMTP id d75a77b69052e-4da4c39d3a7mr81769291cf.56.1758836883750;
+        Thu, 25 Sep 2025 14:48:03 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58313dd679csm1147631e87.56.2025.09.25.14.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 14:48:01 -0700 (PDT)
+Date: Fri, 26 Sep 2025 00:47:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Subject: Re: [PATCH v3 1/3] drm/msm/dsi: support DSC configurations with
+ slice_per_pkt > 1
+Message-ID: <wttg6aizzolsm7qqntspmmwje7kqfaayoqvwp76tvudlkx5phl@7twddmdajfwp>
+References: <20250924-dsi-dual-panel-upstream-v3-0-6927284f1098@linaro.org>
+ <20250924-dsi-dual-panel-upstream-v3-1-6927284f1098@linaro.org>
+ <5b75dckankcx55gbm734a23rvqxdbprlus3nkvqfry7lz5ksjf@jjmfsbiwqny6>
+ <CABymUCNZmxzRaVVLU=U9QPupK0KpW_C1eqa8t_ijL6B5EdgnAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=F/Jat6hN c=1 sm=1 tr=0 ts=68d5b842 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=gcIiauuOHNroVWZtbkkA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX1UaTgoUMjRDy
- AAalRIIPJZ0fRvRVZp8FA/ouqDsLpQ+3HLpf/XofMIOO2zjm/gylEWzrZClbujy9TjBY1yYVtxv
- hP/KDkMCasCWhd+GtNUcyzbTkvtpmeFKZHs1DM+ZJtXUVs3C5EySoyY4v7GtoA3VZJu3HwnEkXz
- CZI/ZTwkEGK93uErxDgIsIWa7dM946fVlwTmyIAx5fWMkzOhm/EWPFjKNKIrIcDjYsGm3ccxl47
- AJm0ikpzFAdCCx5SRLgdNOT4q4K2FAZtZEDWwaX9OWgOAilE7VDcShm/T3Y0aRj9CkZMvJKPw9p
- L9NmT//8oDaWbZEVfIYDMrjwlXowNtdUYSKPr/TeLbMYlSuroQOTrowPiYhrOqZji443fjarjRW
- WMOqd0mEvrmOir39DFfDjfDCVyqypg==
-X-Proofpoint-GUID: 6ZFowF36Cau9lYzkJEqovgmnubqUtIbW
-X-Proofpoint-ORIG-GUID: JSD8DgPPMK9RnzsH7PPWtR66_XcfgGw2
+In-Reply-To: <CABymUCNZmxzRaVVLU=U9QPupK0KpW_C1eqa8t_ijL6B5EdgnAw@mail.gmail.com>
+X-Proofpoint-ORIG-GUID: 1MwAul_deDok45J8NkXz02rb8Y1wQONy
+X-Proofpoint-GUID: 1MwAul_deDok45J8NkXz02rb8Y1wQONy
+X-Authority-Analysis: v=2.4 cv=aZhsXBot c=1 sm=1 tr=0 ts=68d5b896 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=RAbU-raeAAAA:8 a=KKAkSRfTAAAA:8
+ a=F1wq8hpAVWgPklvmxcQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=JiizpSU_mAIq9zsZDqn2:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX6qw2mlmRw/GO
+ tvm1fnHY6SHMzQziydEOEWtCEckSXuwnU85HzLkkYco0Gds/jY3kHMerTOs6dLHEjckyCaGWark
+ o8ukZlDlndw4Z/kgLsS7+6jRbNSqJ7fHK4U9IDlqalLBkJOuADhNOtce8MUjb6aW21SVhGT9UN9
+ vnWg8rccXQgHFnhznapTEcIkT788phxQcTz1hVfzYTdDNEihakv3o6UYz2HLRddAZPVZJ4wUJGD
+ AHNVC/3znshlnLhs4Dmi+cuzcuUq6oGXoX/DmRUHFA3ByObZsyBlB7bPHIlSvEruxwZQx89Oj33
+ qgtm+A+lRluBG3ZT31DP34JOBqiVwOT4Q7mB/svfO95vbLOuy9bPEcnjLfNGiQAjNbqgyhPPTBQ
+ nPb2adwq0slpE70Hkgo9uWfsNamWhg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 adultscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On Thu, 25 Sep 2025 17:41:29 +0200
-Paolo Abeni <pabeni@redhat.com> wrote:
-
-> > So I would prefer sticking to the current logic.  
+On Thu, Sep 25, 2025 at 03:07:28PM +0800, Jun Nie wrote:
+> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> 于2025年9月25日周四 03:10写道：
+> >
+> > On Wed, Sep 24, 2025 at 11:08:10PM +0800, Jun Nie wrote:
+> > > Some panels support multiple slice to be sent in a single DSC packet. And
+> >
+> > s/support/require/
+> >
+> > If the panel supports something, then we can omit that and send 1 slice
+> > as we currently do. If the panel requires multiple slices, it's
+> > mandatory.
+> >
+> > > this feature is a must for specific panels, such as JDI LPM026M648C. Add a
+> >
+> > A panel driver which executes this API is appreciated. Otherwise in a
+> > few months / years somebody will submit a patch 'field foo is not used
+> > by the kernel drivers, drop it'.
 > 
-> Ok, makes sense to me. Please capture some of the above either in the
-> commit message or in a code comment.
+> OK, will add a panel driver in next version.
+> >
+> > > dsc_slice_per_pkt member into struct mipi_dsi_device and support the
+> > > feature in msm mdss driver.
+> > >
+> > > Co-developed-by: Jonathan Marek <jonathan@marek.ca>
+> > > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
+> > >  include/drm/drm_mipi_dsi.h         |  2 ++
+> > >  2 files changed, 12 insertions(+), 15 deletions(-)
+> > >
+> > > @@ -196,6 +197,7 @@ struct mipi_dsi_device {
+> > >       unsigned long hs_rate;
+> > >       unsigned long lp_rate;
+> > >       struct drm_dsc_config *dsc;
+> > > +     unsigned int dsc_slice_per_pkt;
+> >
+> > Why is it a part of the DSI device config? What if a device specifies
+> > dsc_slice_per_pkt, but not DSC config? What are the legit boundaries for
+> > this field?
+> 
+> You are right. drm_dsc_config is better place to add the info. Thus only
+> panels that support DSC can convey the info to host.
 
-I will make sure to add to the commit message that the ratio is preserved
-when backing off and spell out the old values the 'we give up condition'.
-Maybe add some more words on possible implications for v4.
+You will have to explain that it is not a part of the standard and what
+kind of effect should it cause for DP and HDMI.
 
-Thank you very much for your review!
+> >
+> > >  };
+> > >
+> > >  /**
+> > >
+> > > --
+> > > 2.34.1
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
-Regards,
-Halil
+-- 
+With best wishes
+Dmitry
 
