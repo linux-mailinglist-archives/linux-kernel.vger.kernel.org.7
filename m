@@ -1,86 +1,124 @@
-Return-Path: <linux-kernel+bounces-831956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33390B9E005
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:13:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF93B9E0B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2D64A0398
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4927B16192E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD072E54A0;
-	Thu, 25 Sep 2025 08:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp2oTldF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7144C2EAB81;
+	Thu, 25 Sep 2025 08:25:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2075224A066
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452CB2E9ECF;
+	Thu, 25 Sep 2025 08:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758788027; cv=none; b=e9RKEiyc7ir3aukErp4yrExbFAqcJrQ/12BAaH0+kfKuYwmgZjoMVbzwVVK9DJsEDztXC2a1weaUkbpo5l2Jv/XuqCB8J+bu1Wxa5NqyWvVdUhjXRm8qrUjDuWzchQPrCdOg8DxoEXGhwHPff2dyGMkXgS4GurJnx6DomN601WM=
+	t=1758788757; cv=none; b=bjCOjYwryKpqhBYrQvZLGUTiJDz7vb+uD87HRDrsYlM7z0MiFtyEusJtHb7N3qVMKjn+tZcuJEuYZOsLCO2Co6SRfKg9+gYuy5ET6WbhNlr+0yisHAaPrBqQURs7RoM6K9RSapQ03F04RawbyWzoEvzwG/ssnF3RXGysre88l/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758788027; c=relaxed/simple;
-	bh=6xgy1DV8hqDQp2+4paukanNMqpv3nebP7gwfsphXnFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NsmZAZPVrSuu/6lGxBwal261RObLqRrjrmKjk8Cwz0tWZz3rxHmdPmcnImWcMjZvv+DKfcDzClUlbsyxNTq8iBqLoqeIQwi61EkYAYcmHSKKO9BLYxwtuyiAqtkQ7QArWge085uJ+ntnhq9kmbCbMf2s/hYmh125HN8X7KcnaoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp2oTldF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011FEC4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758788027;
-	bh=6xgy1DV8hqDQp2+4paukanNMqpv3nebP7gwfsphXnFU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Cp2oTldFqmMioL66dq+cIdA2fwv+76nFe+nvnhvtMx4bhLYvE/pRgBshuVIQIk0y+
-	 c7vUoT03pKhyHb+h5VbpXDht3Us/TTAMJEwmihhFQVc51ZVWBRtn00dX/awbOCiLJg
-	 ZKRUsdEFy1d7seyI5aMnZSxIspkZir2z2ugHzAK0ObYO+w1EZoYScOQJb0dFPdpjVn
-	 a81ejpR2oX2b4wbAFVsDb4Jh2aV+tWrERgKoUtWmnHtvGoN0sAa/NJXz+6Ih4dptLO
-	 gsWq0yE0J+RUDirqvySmWz+g19i5K2//Nf5NcKZ3s5rNp6vfKqte7Aq5+qT9WNjli+
-	 QA3VG6C9eno6w==
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-279e2554b5fso5961015ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:13:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3WnCq0ynRoEGsMJd5H7YugTI3aSRxzkOwjj5EL+K1e5GzudZNSrgSQjSIvKB8/Guwt0Jjv3Lxh5YMgNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2TZi/NwpxUd5NYWtGm/fUr6qXpEmFCgzhh79C0X0iRnqjhHbb
-	YeXmOG6UBcec1CQaWIbWuhx759hcjOzz+mv8mrt/rKZ+xGVvLDrmxcG6lWQRg3bRiMdSw6O8UkQ
-	wMy5ZQXL03Vdron7ynZQcChUqnOLiVCY=
-X-Google-Smtp-Source: AGHT+IF236jaAp4/rzwPts8ocm70Wj0QKGsGeIC5djJA3YS+DawATMEDddVRK+GjCtafW4q45y03wn5Swx20u9oEeyI=
-X-Received: by 2002:a17:903:1205:b0:269:95a1:94c2 with SMTP id
- d9443c01a7336-27ed6ad069cmr22371485ad.3.1758788026613; Thu, 25 Sep 2025
- 01:13:46 -0700 (PDT)
+	s=arc-20240116; t=1758788757; c=relaxed/simple;
+	bh=6hKjv7hJAGzo5d3GJA8MetP/AmZUT7an+Knm0jSkuCU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a7wYXoDJ26PgwsywEXq68MY8Sgthbaud7s2zqZ3UcsIUKCjKOx52b5HaPXVsIE4QaqpgHDo0a7R0hz3QPaEFRTdmiF9sqTbK55FYLDZPJa+MDOJiD2QRRZCd+jH4GB6r0k4Wb8r5Z/J2RLRD26A/Dmhlm/gKw63mQOkgSxdlMgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cXRcK2H40zYQvXc;
+	Thu, 25 Sep 2025 16:25:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 46CD91A1796;
+	Thu, 25 Sep 2025 16:25:46 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCna2OH_NRodTcIAw--.12615S4;
+	Thu, 25 Sep 2025 16:25:45 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: tj@kernel.org,
+	ming.lei@redhat.com,
+	nilay@linux.ibm.com,
+	hch@lst.de,
+	josef@toxicpanda.com,
+	axboe@kernel.dk,
+	akpm@linux-foundation.org,
+	vgoyal@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH 00/10] blk-cgroup: don't use queue_lock for protection and fix deadlock
+Date: Thu, 25 Sep 2025 16:15:15 +0800
+Message-Id: <20250925081525.700639-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-18-24b601bbecc0@oss.qualcomm.com>
-In-Reply-To: <20250925-v3_glymur_introduction-v1-18-24b601bbecc0@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 25 Sep 2025 17:13:34 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPd_TgLBy50evLVO2LXS7N2S=yHKO+=AwpQv1On==nDWTQ@mail.gmail.com>
-X-Gm-Features: AS18NWCkq1NL0OZpoilVWTB3c_ZC8sqWHMtnKD12Y3W3MiBMvTJMZuW_VvZuNTg
-Message-ID: <CAJKOXPd_TgLBy50evLVO2LXS7N2S=yHKO+=AwpQv1On==nDWTQ@mail.gmail.com>
-Subject: Re: [PATCH 18/24] arm64: dts: qcom: glymur: Add PMIC glink node
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCna2OH_NRodTcIAw--.12615S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww45GF4UXr4UCw47Gr4kZwb_yoW8Gr1kpF
+	9Iqr1agw12vFn7Zr1ag3W2gF1rG3yxGrWDJwnIqr4rCF17Zry8ZF18Zw4kuFWSqF92yan8
+	tr18AryIkF1j9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
-<pankaj.patil@oss.qualcomm.com> wrote:
->
-> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->
-> Add the pmic glink node with connectors.
+From: Yu Kuai <yukuai3@huawei.com>
 
+patch 1-6 is prep patches to make sure queue_lock is not nested under
+rcu and other spinlocks in blk-cgroup;
+patch 7 convert blk-cgroup to use blkcg_mutex to protect blkgs;
+patch 8-9 are follow cleanups;
+patch 10 fix deadlock in blk-throttle;
 
-Please stop this. This is not a separate commit!
+BTW, with this set, we can unify blkg_conf_prep() and other related
+helpers.
 
-Same review as year ago, two years ago and three (probably) years ago.
+Yu Kuai (10):
+  blk-cgroup: use cgroup lock and rcu to protect iterating blkcg blkgs
+  blk-cgroup: don't nest queue_lock under rcu in blkg_lookup_create()
+  blk-cgroup: don't nest queu_lock under rcu in bio_associate_blkg()
+  blk-cgroup: don't nest queue_lock under blkcg->lock in
+    blkcg_destroy_blkgs()
+  mm/page_io: don't nest queue_lock under rcu in
+    bio_associate_blkg_from_page()
+  block, bfq: don't grab queue_lock to initialize bfq
+  blk-cgroup: convert to protect blkgs with blkcg_mutex
+  blk-cgroup: remove radix_tree_preload()
+  blk-cgroup: remove preallocate blkg for blkg_create()
+  blk-throttle: fix possible deadlock due to queue_lock in timer
+
+ block/bfq-cgroup.c        |   6 +-
+ block/bfq-iosched.c       |  13 +-
+ block/blk-cgroup-rwstat.c |   2 -
+ block/blk-cgroup.c        | 329 ++++++++++++++++----------------------
+ block/blk-cgroup.h        |   6 +-
+ block/blk-throttle.c      |  31 ++--
+ mm/page_io.c              |   7 +-
+ 7 files changed, 163 insertions(+), 231 deletions(-)
+
+-- 
+2.39.2
+
 
