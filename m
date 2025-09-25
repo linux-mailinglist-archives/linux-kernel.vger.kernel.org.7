@@ -1,167 +1,121 @@
-Return-Path: <linux-kernel+bounces-831695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AEEB9D570
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:54:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FB4B9D552
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 05:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538701BC3432
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994A34264EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 03:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98D12E718E;
-	Thu, 25 Sep 2025 03:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB6C2E5B2A;
+	Thu, 25 Sep 2025 03:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sOV4m1lm"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YI2vyybW"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C7DF49;
-	Thu, 25 Sep 2025 03:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484801BC9E2;
+	Thu, 25 Sep 2025 03:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758772464; cv=none; b=t2ZAIHwORIayvdxJepiqtxjr3WBgaJe6TduxkkMXk1Fr7PbLEf8DxVCs8+rGLaHD2Ugy2T6SOqm4NkPbObGF9Y2OJjVl44l6P7dAkPR4nzk+kCRsh4x0aE9Qbw1O8oJ2Ag3juRhkeZ5k7DCV8sTntiJMg78Hzn2lqtQI8SdCuuk=
+	t=1758772175; cv=none; b=Ys/P7mhMr4py7IWxLIVVN5XwjcZFa1VHONU77kFMrcj831oSe6M34xWIEelXCU1V7kZXy8I81AHYxl9th8/PNZd6bhod5RbYkUwp1E3GUouqGmDZMkqGliDk6L7EnEMUTeS8WYsDSOKxqO/B8vci0SlE2NaEu0y4aHwYbkU4wlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758772464; c=relaxed/simple;
-	bh=nGIho2dwWkohzWHCgUzJMDybe+bcnDzqaHkwa/e4A9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWESuRnUOCSMWdH7FqKggE9j3i1Y0AZn5UXmAqg7lW2V9AgwhlJNaa7y3etjGzZIA2qZPHM1HXtUcrVyJDg0nhlkXB8An506/EmuXoNnVEe2Is8Vf9Bhwirb5RKY26MG6QWbz78Xv4frUgeS/uAH7Vb4Qx24VS/oPrkUUk6r4jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sOV4m1lm; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758772452; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=wsAuT+Pm1Q6WqoYdsP5p4PwG0In8tq3ybZz3jyVwdSY=;
-	b=sOV4m1lmNcVYY39ybrDgVqE1HUTpFS/XIZFBra2nuz+VWmqI/fMQwWKR4PXBZXrwaVSSp0r2kU/sCd22ZAHE5pcWZERf4DTrzQNr8NUQ1C7vKFvNzfWpo1ZOIS2X9Roi56SFbCNOzu97aety7vsI0oRcDtnFeYxzxKVDNBdN6wA=
-Received: from 30.221.116.42(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0Wom3gRQ_1758772127 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 25 Sep 2025 11:48:47 +0800
-Message-ID: <2aced457-5f1e-4c1a-b5ea-035240f73aaf@linux.alibaba.com>
-Date: Thu, 25 Sep 2025 11:48:46 +0800
+	s=arc-20240116; t=1758772175; c=relaxed/simple;
+	bh=ImaeZUMm41NDC9fTay6TMD1ZpgawaZnuHyS80Apz+vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVdyFMC+suDCvQdvhXhwK1Sgjz2d2cIsFJxYLSqSYfW1f79Wnk84Fm4mGxmclvR/hXw7hZmepLZhub17VI3N+/+7YVncuzxTgCGi4mDgJhHo3fVg4uXNTHqzgjjC1lEsPeKpD1x+mlLjPB89QRZMj0jqk0HCBZeiX61gWgGBFmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YI2vyybW; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 25 Sep 2025 11:49:12 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758772161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jBiu5fon2usO9/brRov2NJKkMhUctrYhM9cA/eD6UYU=;
+	b=YI2vyybWXXnWShRtOGUMhbQc06uRwjbaXBGYbocLvsJKOUc+Tx/kTr8lF92hISbAzAnNlW
+	JbJ16hU/82Rs8z396bh8Q1AZHlBgbrmKO/D9Npbg87ISGN6ttp/0zIzIUjGL4EIA87IDsq
+	BOHWHDhOwHwr1J1CcUyLVr1+b4Tn8UI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Troy Mitchell <troy.mitchell@linux.dev>
+To: "fushan.zeng" <fushan.zeng@anlogic.com>, junhui.liu@pigmoral.tech
+Cc: alex@ghiti.fr, anup@brainfault.org, aou@eecs.berkeley.edu,
+	conor+dt@kernel.org, conor@kernel.org, daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, krzk+dt@kernel.org,
+	krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
+	palmer@dabbelt.com, palmer@sifive.com, paul.walmsley@sifive.com,
+	robh@kernel.org, samuel.holland@sifive.com, tglx@linutronix.de,
+	Troy Mitchell <troy.mitchell@linux.dev>
+Subject: Re: [PATCH v2 00/11] riscv: Add initial support for Anlogic DR1V90
+Message-ID: <aNS7uMHC4iTDHel4@LT-Guozexi>
+References: <20250922-dr1v90-basic-dt-v2-0-64d28500cb37@pigmoral.tech>
+ <20250925030650.35694-1-fushan.zeng@anlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/2] net/smc: make wr buffer count
- configurable
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Dust Li <dust.li@linux.alibaba.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- "D. Wythe" <alibuda@linux.alibaba.com>,
- Sidraya Jayagond <sidraya@linux.ibm.com>, Wenjia Zhang
- <wenjia@linux.ibm.com>, Mahanta Jambigi <mjambigi@linux.ibm.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-s390@vger.kernel.org
-References: <20250908220150.3329433-1-pasic@linux.ibm.com>
- <20250908220150.3329433-2-pasic@linux.ibm.com>
- <aL-YYoYRsFiajiPW@linux.alibaba.com>
- <20250909121850.2635894a.pasic@linux.ibm.com>
- <20250919165549.7bebfbc3.pasic@linux.ibm.com>
- <06a87a92-6cce-4a63-99d0-463a1d035478@linux.alibaba.com>
- <20250924115010.38d2f3cb.pasic@linux.ibm.com>
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <20250924115010.38d2f3cb.pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250925030650.35694-1-fushan.zeng@anlogic.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Thu, Sep 25, 2025 at 11:06:50AM +0800, fushan.zeng wrote:
+> On Mon, 22 Sep 2025 20:46:30 +0800, Junhui Liu wrote:
+> > This patch series introduces initial support for the Anlogic DR1V90 SoC
+> > [1] and the Milianke MLKPAI-FS01 [2] board.
+> > 
+> > The DR1V90 is a RISC-V based FPSoC from Anlogic, featuring a Nuclei
+> > UX900 [3] core as its processing system (PS) and 94,464 LUTs in the
+> > programmable logic (PL) part. The Milianke MLKPAI-FS01 board is one of
+> > the first platforms based on this SoC, with UART1 routed to a Type-C
+> > interface for console access.
+> > 
+> > Tested on the Milianke MLKPAI-FS01 board with both the vendor's OpenSBI
+> > and the not-yet-upstreamed mainline OpenSBI [4], as well as the vendor’s
+> > U-Boot. Because the vendor’s OpenSBI is loaded at 0x1f300000, we have
+> > to additionally reserve the DRAM region 0x1fe00000–0x1fffffff to prevent
+> > overlap if using vendor's OpenSBI.
+> > 
+> > Notice: A "no4lvl" bootarg or dependency patch [5] is currently required
+> > for successful boot on the DR1V90 platform, since the SoC hangs if the
+> > kernel attempts to use unsupported 4-level or 5-level paging modes.
+> 
+> Thanks first.
+> Anloigc already has the open source SDK at https://gitee.com/anlogic/sdk,
+I think very few people actually use Gitee around here.
 
+> and will submit it to mainline at suitable time.
+> It is better that anlogic SOCs are long term maintained and supported
+> by Anlogic officially in mainline and for customers.
+> The code should be a full feature version after lots of tests, not the
+> modified and simplified version from Anlogic open source.
+I understand how you feel:
+You want to be responsible for both the code and the customers.
 
-在 2025/9/24 17:50, Halil Pasic 写道:
-> On Wed, 24 Sep 2025 11:13:05 +0800
-> Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
-> 
->> 在 2025/9/19 22:55, Halil Pasic 写道:
->>> On Tue, 9 Sep 2025 12:18:50 +0200
->>> Halil Pasic <pasic@linux.ibm.com> wrote:
->>>
->>>
->>> Can maybe Wen Gu and  Guangguan Wang chime in. From what I read
->>> link->wr_rx_buflen can be either SMC_WR_BUF_SIZE that is 48 in which
->>> case it does not matter, or SMC_WR_BUF_V2_SIZE that is 8192, if
->>> !smc_link_shared_v2_rxbuf(lnk) i.e. max_recv_sge == 1. So we talk
->>> about roughly a factor of 170 here. For a large pref_recv_wr the
->>> back of logic is still there to save us but I really would not say that
->>> this is how this is intended to work.
->>>   
->>
->> Hi Halil,
->>
->> I think the root cause of the problem this patchset try to solve is a mismatch
->> between SMC_WR_BUF_CNT and the max_conns per lgr(which value is 255). Furthermore,
->> I believe that value 255 of the max_conns per lgr is not an optimal value, as too
->> few connections lead to a waste of memory and too many connections lead to I/O queuing
->> within a single QP(every WR post_send to a single QP will initiate and complete in sequence).
->>
->> We actually identified this problem long ago. In Alibaba Cloud Linux distribution, we have
->> changed SMC_WR_BUF_CNT to 64 and reduced max_conns per lgr to 32(for SMC-R V2.1). This
->> configuration has worked well under various workflow for a long time.
->>
->> SMC-R V2.1 already support negotiation of the max_conns per lgr. Simply change the value of
->> the macro SMC_CONN_PER_LGR_PREFER can influence the negotiation result. But SMC-R V1.0 and SMC-R
->> v2.0 do not support the negotiation of the max_conns per lgr.
->> I think it is better to reduce SMC_CONN_PER_LGR_PREFER for SMC-R V2.1. But for SMC-R V1.0 and
->> SMC-R V2.0, I do not have any good idea.
->>
-> 
-> I agree, the number of WR buffers and the max number of connections per
-> lgr can an should be tuned in concert.
-> 
->>> Maybe not supporting V2 on devices with max_recv_sge is a better choice,
->>> assuming that a maximal V2 LLC msg needs to fit each and every receive
->>> WR buffer. Which seems to be the case based on 27ef6a9981fe ("net/smc:
->>> support SMC-R V2 for rdma devices with max_recv_sge equals to 1").
->>>  
->>
->> For rdma dev whose max_recv_sge is 1, as metioned in the commit log in the related patch,
->> it is better to support than SMC_CLC_DECL_INTERR fallback, as SMC_CLC_DECL_INTERR fallback
->> is not a fast fallback, and may heavily influence the efficiency of the connecting process
->> in both the server and client side.
-> 
-> I mean another possible mitigation of the problem can be the following,
-> if there is a device in the mix with max_recv_sge < 2 the don't propose/
-> accept SMCR-V2. 
-> 
-> Do you know how prevalent and relevant are max_recv_sge < 2 RDMA
-> devices, and how likely is it that somebody would like to use SMC-R with
-> such devices?
-> 
+> And we hope that there won't be two different versions code of anlogic SOCs,
+> it may confuse customers.
+This is almost impossible.
+Mainline means simple, clear, compliant, fully open source.
+Some features, like GPU, are nearly impossible to fully upstream.
+Vendor versions are complex and implement full hardware features.
+It also seems you expect only official folks to handle this,
+which would take significant effort to maintain,
+perhaps even requiring dedicated personnel.
 
-eRDMA in Alibaba Cloud is max_recv_sge < 2, and it is the RDMA device we are primarily focusing on.
-eRDMA prefer works on SMC-R V2.1, is it possible that supported in SMC-R V2.1 but not in V2.0? 
-
->>
->>  
->>> For me the best course of action seems to be to send a V3 using
->>> link->wr_rx_buflen. I'm really not that knowledgeable about RDMA or
->>> the SMC-R protocol, but I'm happy to be part of the discussion on this
->>> matter.
->>>
->>> Regards,
->>> Halil  
->>
->> And a tiny suggestion for the risk you mentioned in commit log
->> ("Addressing this by simply bumping SMC_WR_BUF_CNT to 256 was deemed
->> risky, because the large-ish physically continuous allocation could fail
->> and lead to TCP fall-backs."). Non-physically continuous allocation (vmalloc/vzalloc .etc.) is
->> also supported for wr buffers. SMC-R snd_buf and rmb have already supported for non-physically
->> continuous memory, when sysctl_smcr_buf_type is set to SMCR_VIRT_CONT_BUFS or SMCR_MIXED_BUFS.
->> It can be an example of using non-physically continuous memory.
->>
+                - Troy
 > 
-> I think we can put this on the list of possible enhancements. I would
-> perfer to not add this to the scope of this series. But I would be happy to
-> see this happen. Don't know know if somebody form Alibaba, or maybe
-> Mahanta or Sid would like to pick this up as an enhancement on top.
-> > Thank you very much for for your comments!
-> 
-> Regards,
-> Halil 
-
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
