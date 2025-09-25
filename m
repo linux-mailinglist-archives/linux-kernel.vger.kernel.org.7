@@ -1,242 +1,234 @@
-Return-Path: <linux-kernel+bounces-832895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1530BA0B11
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:49:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566E6BA0B1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4C511C24FB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:49:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6C1F7B8E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36195296BAB;
-	Thu, 25 Sep 2025 16:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82DA2C21E7;
+	Thu, 25 Sep 2025 16:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f82ENUAB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EXkE2YJn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE5A15B971
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FDA2C032C
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758818940; cv=none; b=isJI1Q/+UsI/y1djwzo9FNIkMzty2ksoGx+/89U/aE3PsISWZ8cuTiM1OKzbnAyfag07MnR/KgXVTA8/Dm+hV/t7ppwJHMkIuKWREhm3rWNRW35eRqswhn+TljrgFcxy+bCbierVN8PiGEkHTxtm7GlVv+fZzdPM6MCb9GjO/6E=
+	t=1758818960; cv=none; b=YaJR5SwrbJL6CKa1miEzlQJokMPciWMEB45/4pLPStykQiB84fj+48ZRRdDfZivs5vMXT8v1UTpdynaG22zI228ngqq0WP18sNbhdPupJrGXJtEOiO0KXa+8WNFfDdP2QUpHnbNiTy4TyCfMHymORN/kKJEevHS78fNIPJcN+Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758818940; c=relaxed/simple;
-	bh=7AvOMpZGEPY459IpfqKAhUmTSBixPU2Xq53t7ly/Hqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ui6ZIq8kqx53h4M14W5BjP1HDbplwl7cZx1+PyIW3f47iAVhXqajUvF1Qf5roPomOzNIXpxTzsLKHpvmaA/3hgmJ2KGnQE0eDMKsF3dm55+qWSRQ3IbFauLj9IG2AabqT72XEdolOzUGjiUHKMNqx9evwcdgHc9Kf9d4FOJbx8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f82ENUAB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758818937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MjSvoYHIH2UpZoiBo+l7+GcLMTbURxxIhZVNZignwuw=;
-	b=f82ENUAB4pYSD6VRqWvvWQ9Kq5IL4ApGodcpuw5r3runpudV7n1KMPr5/iT/cHxNE/l0Dw
-	Cxhm3r4n8KeiymayY0VoC5K6TtHrtzF4/RRQFGJV44LmI4Ei8cW4w8ohZc9f0gXVwnCvVs
-	6DV3D1I2OscyxUSgpcEFwUB3PYp7fug=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-543-c3_UDpGUPsm8G0ASOve_Ig-1; Thu, 25 Sep 2025 12:48:55 -0400
-X-MC-Unique: c3_UDpGUPsm8G0ASOve_Ig-1
-X-Mimecast-MFC-AGG-ID: c3_UDpGUPsm8G0ASOve_Ig_1758818934
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45f28552927so8944725e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:48:55 -0700 (PDT)
+	s=arc-20240116; t=1758818960; c=relaxed/simple;
+	bh=8FCH12DyEzMNnnk+0LH+hPIRigAxZoYH9xFK5aw71Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZTJISZ9KmtekQKQoZasiyfEOdGCoK5o0nbgI3xYgTJKtrPaifvjuUevr9HeFBv09exHVFUNnsC+ubvtKvYsyiCQ4+hDVpp0IYUl1jzSsgcSsYI99VIED/6bMmNsTxD2qeygxBIJUYxprlTtgpczKXcqTaRPOEVcWNm0H4A6T4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EXkE2YJn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P9N0Ca025092
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:49:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=O8E/Q0Q2T0miV/vIY3HkyaSY
+	ay9pRIb7qiM4HhHNagM=; b=EXkE2YJnBmXZLqeSLfzc0Bplvze0C2nnFdgMn3Yb
+	ujSz5PlCpp6BC1b9jQ6D838Iotob/+it7FXcDh6+LVmmhlGpRZscqAhCLUr4DlIu
+	0pVOApH6o603MAePpATQydnNJp5wM10bDFlcGLmforaBmjTvy4ohrN9dUvnfGCR0
+	regPt1Gl337qSqoJydHx+1snwE/RDRb+hh4a3JZ6npMme9Zx2+Z+VL5zLOs+Pibs
+	dLqxNrQelOpS2vf1SeTBVQ812ORqz/xc+yGTWvm20vwzfLfj+ZjiKwrC/5rU5H0S
+	T+td0Tcs1HshuKbG7mhPhhF8sfqpXyRmc+XWwGbvOFzHbw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyf17sk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:49:17 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d9ec6e592bso24188681cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 09:49:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758818934; x=1759423734;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MjSvoYHIH2UpZoiBo+l7+GcLMTbURxxIhZVNZignwuw=;
-        b=ogZzq5Kq0LIs2vTT/agO+iwdKbsOPi7EMmVUcCyo8/3JNZ9FbA2y5UxwEu0jw8vmvh
-         jf2cDmaJrazzdsATRonxv405XTJQ6VV9M8z5LJKNsuYxSWu023nk/jZPKUCbpJf7xxEU
-         eghnrCh3p1MD1oWOeZB/wx+gCiLmJwjoCt2ORwE+kppwrrX8ndpuNWkfQ8v12tgmZa4p
-         QXTW2ImX0KjATB2mtnmWchprQDvYenP0Ag6Q464LycH6B2Ix/zn4DhDssYceD0NRW/bY
-         xlvl3TiBfpXhSM9Aqi1JZgILvnN+bxXxHX9+1iCICn+nE3ONCKRJhwFIVMQAfW0cvLPO
-         Mqdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmC7AIQ/FDdy5b+h1ZTuWGNciHhRqlgV5ZrrR3jn6+zk4BujAtrs3G8IvS0kaBQsGQL5HOVGua+nUAtKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi74CGnRPTMTalP55foG7xIxMZm1mPRAkmbfNlNu6v55A4LVLx
-	IBZ1+b+0k8ShGSeOWcUNvZIneRpxX5z6TkpTFU7sckk9SMRH7RKQe7i2IRW0FvtBf+FytlpQcLe
-	Gj4tj3wLqyoztWfV+eO27FnuH4+gdTmwGFZqCqxqGsi4B5Ra20mQxEkyPNWbCTyJPng==
-X-Gm-Gg: ASbGncvDssud4ryUFuSHYQdwwZ3wbnuchuDMT4F+VLIWwEKS15mzXlhFsjTlvl0aROE
-	UUD/poTZTbo+w8+yRswG5/BWQcRlOHmGoSnu76xWIV81YUckkPAqYsbcvE+foxv1YrbwuVfPuZj
-	+lf+lo6sVYpSlJZSuphcaoFuuyFT1RKFssSQi4fhSc7iB9zWjiHgR3upn+84LE8AHB+fCOT0kkE
-	wzx4aIDAkPcZTxYAZkunPLC6IZzwcvMQowD8BKFPLBswpCCruw0z9jAD3bAeH3UtKd2ADPOBis1
-	/ML+F3vxBPwe5g0DNJQiL87C7FlZrim6mrRVgFn9nmxlz1dYDZUNdcnqqvmgnFfxV38SoxQ+lCj
-	SHUqgAF6WVZuNkW9eirTUUBIvYAuZfkMRUGl4+7P9axjMhvw0eR4tkOJtZT7mvj7k4Xtf
-X-Received: by 2002:a05:600c:3b9e:b0:45f:2f0f:6649 with SMTP id 5b1f17b1804b1-46e329d474fmr59697455e9.8.1758818934311;
-        Thu, 25 Sep 2025 09:48:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGn7Q4TLnsyQFemXW3TSRUkmiBvcmsqkTzlgD8VuFDl1YltrZigpOKq6nqZMBI5FA7WyVb9NQ==
-X-Received: by 2002:a05:600c:3b9e:b0:45f:2f0f:6649 with SMTP id 5b1f17b1804b1-46e329d474fmr59697125e9.8.1758818933864;
-        Thu, 25 Sep 2025 09:48:53 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab62233sm84331395e9.21.2025.09.25.09.48.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 09:48:53 -0700 (PDT)
-Message-ID: <ec108aa2-88ae-42bb-a64d-ef12867526c4@redhat.com>
-Date: Thu, 25 Sep 2025 18:48:52 +0200
+        d=1e100.net; s=20230601; t=1758818956; x=1759423756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O8E/Q0Q2T0miV/vIY3HkyaSYay9pRIb7qiM4HhHNagM=;
+        b=kK9HNIZPlFCerILrjw8do1YG3QCH9OZ8JNrDIqnakuB4f8vpAn92CfI2I9I2Ycfair
+         mIa32kgdVZ+hprg0R96Hfsq6KB6bz9FLjLmBwiQ7cW+llZN4vchv5OCqUmzzQ+6Gj/Zv
+         c0AX61sanUgYy8zXPzdl302gRNMmYryADi8nk9vTfxZDJ2Q7uNC9pO6Ix/sCmdjHlxIn
+         MRTXW0+xZe2mfiWRnKYvr2lcdfo/PqbePz20igV+tJbh4p8ITHZMGVbGGHGbVTJTQscY
+         07xBVo8KRXmbytgHZ2ZjXbHAWS5qrNenZwav4XFaWWvjlTusA6GkLeW0AeIiwWYKbWCo
+         88MA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5PrKzAuHG4hL/uHE09FK7Teds2qWfSmvfqTEr+BlgvEV7OZ53HHECvAN20f60ngSYcetCNqr0x7Mhuws=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdro4jF6ei+Kgdw0+7hIFNOEHFhtBr4LoT0R/dx2Amc3ow2snl
+	TZrar5fBH2TpTmW/0/IFjyaX+DIXDTchOJh5UPlpMWfi7bIHcNAuGTFBPxmlxkyueZrHK+C4/5X
+	Yl1H85tERsIcjTJlXaeY7zVbMo0Qq21VLwXlVmNh2QKNQueTZziAY2LCSYpeuIvlWayU=
+X-Gm-Gg: ASbGncss6lolYO0OXXtZp1GxYeaLh2tI5WgWQJIxNY1TuvU5J86TOBNqTbiq2uRGlEN
+	YETPa5tGAH4H0W1AR2CGD0nI4jnr5G0saocY/MQpkvnYsoyXa9Fd3OrKaFXrnniwqD9ZuqPgvBM
+	7q+ydr7aP2UNPRbL8O80fDQGrzVwTJ8kcx8Ht3kEnY/FTaFPo5TNDqxkLSl6Z0pJbKYb6PStlW+
+	iUxVrApbOl6TGRF3HKdRpzyahH+sIaDnFUGoQtX4iZURx5ycm0Bbxq5YrnvqcGVwroxr8suZ7+E
+	179LA9c2hM6wRzRuJIUHvlywHibW+OobddqFRjHDGkEUq8mrGw62tj6WeC3Fs5JkMZ48xgms0Th
+	eIAkyQDnLQth3X+cLPB1vp8NBZFPxXWmFoYMOxoMDyV8rLUUcCktg
+X-Received: by 2002:a05:622a:2d10:b0:4db:7bc2:92b with SMTP id d75a77b69052e-4db7bc21423mr18058781cf.42.1758818955726;
+        Thu, 25 Sep 2025 09:49:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHl5VAez8V9byRkomAR6n8Uz+yVV5p6cTSYYseuZ2q/3tAbwHDTFxFiaDtB4a8EkykXmnhBWw==
+X-Received: by 2002:a05:622a:2d10:b0:4db:7bc2:92b with SMTP id d75a77b69052e-4db7bc21423mr18058561cf.42.1758818955211;
+        Thu, 25 Sep 2025 09:49:15 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831343158fsm924184e87.4.2025.09.25.09.49.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 09:49:14 -0700 (PDT)
+Date: Thu, 25 Sep 2025 19:49:12 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+Subject: Re: [PATCH 06/20] arm64: dts: qcom: kaanapali: Add USB support for
+ Kaanapali SoC
+Message-ID: <bgzzkcf4d74rhdzr3vbjxs55gssojzrizinfvedt6zrz5zgs5f@phggrhdhz4el>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-6-3fdbc4b9e1b1@oss.qualcomm.com>
+ <CAJKOXPcbJY4JEjfZLvOAXEWCTYFpe7En+Riis2t3K5fWJgNU5A@mail.gmail.com>
+ <53d63dd6-a022-4e80-a317-3218976a7474@oss.qualcomm.com>
+ <CAJKOXPfGC=FK7AKOtmmSV7=3NNXAHe8A_PGjjhTKgRs4Jk25xA@mail.gmail.com>
+ <CAJKOXPe6Gdc8qb7fwwNsMLiv0SxXm=aOtrR0HsU0S9wiu6erKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: Yang Shi <shy828301@gmail.com>, Zi Yan <ziy@nvidia.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, linmiaohe@huawei.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, nao.horiguchi@gmail.com,
- syzkaller-bugs@googlegroups.com
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
- <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com>
- <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com>
- <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com>
- <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
- <CAHbLzkrstjnEVUzz2==A2Z+CJToOgU6YU2MasdK49o-0-jW2yw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAHbLzkrstjnEVUzz2==A2Z+CJToOgU6YU2MasdK49o-0-jW2yw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPe6Gdc8qb7fwwNsMLiv0SxXm=aOtrR0HsU0S9wiu6erKw@mail.gmail.com>
+X-Proofpoint-GUID: zCOJxI2wwkF4gPctyGRVenCsBoM7ztjA
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d5728d cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=yAlcOy_z4u1BhRCK-xcA:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX0PJ3flqogyvZ
+ r7HREW1W8UnfOTEwHDbiuA0kQHbXBag64XVlYRj2gI9T2H/uQ8RLnBs92Cg35vuNCVe270pXbfC
+ ls+flBPbb81LlQbfSvEmfK/VZMl+BS2K1wW5uXCeoGuIXb7GqMY7qO7NvsVl24frxH6DASzO1Ed
+ 7OLVBdkbm1ioRxJxckFIFl/mjHhhTvYEdQWGxCS54TEEKGTheXbxnhrSD/plG7+CPNFG+AvGavz
+ Xi4yyjWbTgSuRYPU28PytNfod9orUU+3rMKhLglUq8wL/y8zzuS06LgWvezcnFDOKDABXZurLtD
+ 4d/6oOuWqV+o5gMDxMmU8JF5YyfS/ItIZ5/0Y+XyhsxTDR4jJesb0+XjWJcQ4kInYYlQ+UqbQys
+ AQXUsDBq
+X-Proofpoint-ORIG-GUID: zCOJxI2wwkF4gPctyGRVenCsBoM7ztjA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-On 25.09.25 18:23, Yang Shi wrote:
-> On Thu, Sep 25, 2025 at 7:45 AM Zi Yan <ziy@nvidia.com> wrote:
->>
->> On 25 Sep 2025, at 8:02, Pankaj Raghav (Samsung) wrote:
->>
->>>>>>
->>>>>> We might just need (a), since there is no caller of (b) in kernel, except
->>>>>> split_folio_to_order() is used for testing. There might be future uses
->>>>>> when kernel wants to convert from THP to mTHP, but it seems that we are
->>>>>> not there yet.
->>>>>>
->>>>>
->>>>> Even better, then maybe selected interfaces could just fail if the min-order contradicts with the request to split to a non-larger (order-0) folio.
->>>>
->>>> Yep. Let’s hear what Luis and Pankaj will say about this.
->>>>
->>>>>
->>>>>>
->>>>>>
->>>>>> +Luis and Pankaj for their opinions on how LBS is going to use split folio
->>>>>> to any order.
->>>>>>
->>>>>> Hi Luis and Pankaj,
->>>>>>
->>>>>> It seems that bumping split folio order from 0 to mapping_min_folio_order()
->>>>>> instead of simply failing the split folio call gives surprises to some
->>>>>> callers and causes issues like the one reported by this email. I cannot think
->>>>>> of any situation where failing a folio split does not work. If LBS code
->>>>>> wants to split, it should supply mapping_min_folio_order(), right? Does
->>>>>> such caller exist?
->>>>>>
->>>
->>> I am not aware of any place in the LBS path where we supply the
->>> min_order. truncate_inode_partial_folio() calls try_folio_split(), which
->>> takes care of splitting in min_order chunks. So we embedded the
->>> min_order in the MM functions that performs the split instead of the
->>> caller passing the min_order. Probably, that is why this problem is
->>> being exposed now where people are surprised by seeing a large folio
->>> even though they asked to split folios to order-0.
->>>
->>> As you concluded, we will not be breaking anything wrt LBS as we
->>> just refuse to split if it doesn't match the min_order. The only issue I
->>> see is we might be exacerbating ENOMEM errors as we are not splitting as
->>> many folios with this change. But the solution for that is simple, add
->>> more RAM to the system ;)
->>>
->>> Just for clarity, are we talking about changing the behaviour just the
->>> try_to_split_thp_page() function or all the split functions in huge_mm.h?
->>
->> I want to change all the split functions in huge_mm.h and provide
->> mapping_min_folio_order() to try_folio_split() in truncate_inode_partial_folio().
->>
->> Something like below:
->>
->> 1. no split function will change the given order;
->> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_order
->> is smaller than mapping_min_folio_order().
->>
->> In this way, for an LBS folio that cannot be split to order 0, split
->> functions will return -EINVAL to tell caller that the folio cannot
->> be split. The caller is supposed to handle the split failure.
+On Thu, Sep 25, 2025 at 06:01:15PM +0900, Krzysztof Kozlowski wrote:
+> > > >> From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> > > >>
+> > > >> Add the base USB devicetree definitions for Kaanapali platform. The overall
+> > > >> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> > > >> (rev. v8) and M31 eUSB2 PHY.
+> > > >>
+> > > >> Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+> > > >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > > >> ---
+> > > >>  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 155 ++++++++++++++++++++++++++++++++
+> > > >>  1 file changed, 155 insertions(+)
+> > > >>
+> > > >
+> > > >
+> > > > Second try, without HTML:
+> > > >
+> > > > I really don't understand why you created such huge patchset. Year
+> > > > ago, two years ago, we were discussing it already and explained that's
+> > > > just inflating the patchset without reason.
+> > > >
+> > > > New Soc is one logical change. Maybe two. Not 18!
+> > >
+> > > It was previously squashed into the base soc dtsi patch and mark like:
+> > > Written with help from Jyothi Kumar Seerapu(added bus), Ronak Raheja
+> > > (added USB), Manish Pandey(added SDHCI), Gaurav Kashyap(added crypto),
+> > > Manaf Meethalavalappu Pallikunhi(added tsens), Qiang Yu(added PCIE) and
+> > > Jinlong Mao(added coresight).
+> > >
+> > > While it is over 4000+ lines when we squash it together.
+
+As a reviewer I'd totally prefer a single 4k line DT, because then I can
+navigate through it while reviewing.
+
+> >
+> > That's why you send one node per patch? Multiple huge patch bombs land
+> > the same time from Qualcomm, with patches adding one node. It's like
+> > the "no more patch bombs" discussion and rule never existed (yeah, I
+> > know it was removed but the spirit of keeping maintainers mailboxes
+> > sane remains).
+> >
+> >
+> > > Also as offline reviewed with Bjorn, he suggested us to split out the
+> > > USB and other parts.
+> > >
+> > > >
+> > > > Not one patch per node or feature.
+> > > >
+> > > > This hides big picture, makes difficult to review everything,
+> > > > difficult to test. Your patch count for LWN stats doesn't matter to
+> > > > us.
+> > >
+> > > With the current splitting, the different author as each co-developer
+> > > can get the meaningful LWN stats.>
+> >
+> > We don't care about your LWN stats.
+> >
+> > Sending stuff like this for your stats, means that community and
+> > reviewers pay with their time.
+> >
+> > This is really just selfish. No care how maintainers need to scroll
+> > through their mailboxes.
+> >
+> > > > NAK and I'm really disappointed I have to repeat the same review .
+> > > Currently, there are 10 SoC DTSI patches sent, structured as follows:
+> >
+> > Why did you ignore all the feedback from 2024 and 2023? Every year it
+> > has to be repeated?
+> >
+> > >
+> > > SoC initial
+> > > Base MTP board
+> > > SoC PCIe0
+> > > SoC SDC2
+> > > SoC USB
+> > > SoC remoteproc
+> > > SoC SPMI bus, TSENS, RNG, QCrypto, and Coresight
+> > > SoC additional features
+> > > SoC audio
+> > > SoC CAMSS
+> > > SoC video
+> > >
+> > > Which parts would you prefer to squash into pls?
+> >
+> > I made very clear statements year and two years ago. We also discussed
+> > it on IRC multiple times. Can you join discussions instead of ignoring
+> > them?
 > 
-> Other than making folio split more reliable, it seems like to me this
-> bug report shows memory failure doesn't handle LBS folio properly. For
-> example, if the block size <= order-0 page size (this should be always
-> true before LBS), memory failure should expect the large folio is
-> split to order-0, then the poisoned order-0 page should be discarded
-> if it is not dirty. The later access to the block will trigger a major
-> fault.
+> (Apologies for lack of trimming, typos, HTML - using phone)
+> 
+> ...and you sent both inflated, LWN-stats-gaming huge patchbombs
+> (Kaanapali and Glymur) three days before the merge window starts.
+> Community works for free, doesn't it?
 
-Agreed that larger-folio support would be nice in memory-failure code, 
-but I recall some other areas we recently touched that are rather hairy. 
-(something around unmap_poisoned_folio()).
-
-The BUG at hand is that we changed splitting semantics without taking 
-care of the actual users.
+Most of the maintainers have closed their trees, so it doesn't matter.
 
 -- 
-Cheers
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
