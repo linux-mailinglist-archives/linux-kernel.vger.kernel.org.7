@@ -1,120 +1,247 @@
-Return-Path: <linux-kernel+bounces-833309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7D8BA1A5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:45:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78900BA1A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 23:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 233F97B6AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE231C82771
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA692321F3B;
-	Thu, 25 Sep 2025 21:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532C8323F66;
+	Thu, 25 Sep 2025 21:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UPaig0Z4"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="onw8lRvi"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1FE32142D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA3B322778
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758836118; cv=none; b=Kd009hJ2NFj/oHooY5msG/S5zBdcu5jlm3xeHYJg5hqoDJEAnTqVBUvkYpaA2tXYUbZuTBQidGAVBTXRxSNvk9xj52G7isEAXCJev/zUQsgoqYL6gqkjnR6mEJ/6ZkRZsHQj8jIiZagJlMpDrZKu0u/Bx++s+S1Hq9szictSRlY=
+	t=1758836124; cv=none; b=UZLNbJryy63zyZ8qVXSZStOEH8p9kIsXh16igES+OPTIL1nbC/2+Or/ET5+We01IIXpUjDmCvmMENOHur9kjbvPsxODXr+DJxWFTWTLqpziqVq6/a7kG95oHCQhigUJtGLW1ibMQWlmh9r3IHbs85VoT+yQbpxnj0SlQXHCOoa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758836118; c=relaxed/simple;
-	bh=XFFZkzvAD8QYdCwQk9vx+tzdFd+s5u7iPwhCFbisNgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i20c/AoDV0u456TPkkyQqQooPF57pASJembBSLv4huQh5UHx7aQA19rN27sor2/NHZjExaCYSwI2/No4XFGCYgkT261NXe3sB7xKVadRUGhRS8LoWp81IpZoOc5N4cMF5TaYsbUqAb/4DaM4Af/2q5fcLPvYwTHU1JJAwccRdxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UPaig0Z4; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=7yL/
-	bOzH5mMb9e7gtd/JTSCmRguD3ASp510ZjiuAn2c=; b=UPaig0Z4uXv3Kgyjd0NQ
-	uz9xo8YJJnYFdBCeQdH2DJBO10ayTgZYaEv0+8TNLqMJrFOmaciYlraFlh2gvJtQ
-	SjQYgaiGHUZzk06s5BFn/AFciwSM1sHmK/IvnHWMQK8RxJPJaLqXvovBW75j/XAW
-	jJuWv4IZnCCmu4LfAP21aS8P3IVxNGVZrwnQ+IyNBieiHm0LHOtSlvdIwj3DTBLy
-	o0MBMnRGY3+O9lx1/lfqDxXDEXK0hkPqUxm7v9YLnX5bqzMfG6ntW1vxKjp7EpnZ
-	x7nYZJ1g/veMcT2Xp0BWPNuGnCAu1Ck2DWEUfWsRrkihg2n/otqnz2Qu29dCTPEP
-	kA==
-Received: (qmail 2021161 invoked from network); 25 Sep 2025 23:35:12 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 23:35:12 +0200
-X-UD-Smtp-Session: l3s3148p1@nXqv8aY/Suoujntx
-Date: Thu, 25 Sep 2025 23:35:12 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] i2c: designware: convert to dev_err_probe() on
- request IRQ error
-Message-ID: <aNW1kP-jJquffypg@shikoro>
-References: <20250904-i2c-dw-dev-err-probe-v2-0-e59da34815fa@bootlin.com>
- <20250904-i2c-dw-dev-err-probe-v2-1-e59da34815fa@bootlin.com>
+	s=arc-20240116; t=1758836124; c=relaxed/simple;
+	bh=Lh1tfSZ0NF/AFO/V/8hHUF+qpGzjYGIIGuaXa4zfnL4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pXR/ZSRNufZzGCWMDDWW0IZDQTGkFkxYNquZV3XA7x32Q/d/8iEfpQO1CizEZArpVLpsk5CUKU6mlxGtGEj2C/QfkAUcj66eaiOfML9iaoXaozrZNxsNm/X6I2Sh9x8e6yybNPhIXuWq7cLAzlQeGikHKjyEItFhzhES1UrdFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=onw8lRvi; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33428befc49so1458625a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 14:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758836121; x=1759440921; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyD0NvHQvKcjtkMWqtARFSwsGpym7n4r8JiRe/0tuUQ=;
+        b=onw8lRvivIaqXqhZ94k9VIfBy202X1wcl6kC5wMxM4fMRMqJCFtExOOO4OSzFrs0RS
+         qHFjEeoEtQfyZAZJP6YQmMYMFNJIzjcra6ZBnCxaERFeYR408n/9Ve3aVpTYm5nPBAgJ
+         qMsrAXWPQ+p75NcDftx9/Rr0IZF8PIOZA9ltXOiwvQ3g1F5fyBcv9jTQYfnHqjrZpAF3
+         2/qagGANvpvdP7va2hYkf8cOa2EP1yIlnKne6xfHvbNp5CAlkPKUDXZTgovUwRHGL259
+         zQiCfU9XIGcVYd7ArvCRqcPxJUFH5956E3BUVCgylnJjJk5rRwHzTewMQqRNjVs5Xxff
+         mXNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758836121; x=1759440921;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyD0NvHQvKcjtkMWqtARFSwsGpym7n4r8JiRe/0tuUQ=;
+        b=mHH58xQXdq0f6HPNryCkGikU0J9sanKPncrxWih1MSL09ieSA355pAGIbGzjfP5WGU
+         uZnqD32k1eI0JnaijqnTPxCTFpMU5omeSaaI1OJPrqQU7pRzWxhPmdpTOeO6cbGwlH59
+         gj7uMnNvZDyBy86iq8IRzbr3tCxi5SIbKQFedn9X7HdtXaLaydjVgSgaJ3uCTw1fw0sZ
+         HkTgq6phJ8mTtoboxkCqDCVSIT2B2iBgr7w5SkgZ1pa3yrZnnuG4QBJ1pcjFVX//I5Bc
+         cjLRMlyjQQDp7/ayi0FVsgADDbgQjMG8xhUK/p4jKylTuhz9MelMS+wiJ+dElYcFhD16
+         Ps9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4k6AdiWlYYnWO9+r0jd/MNOUJXYS04TTpUgNVlkkjmQA28mixE+DWZABEu2gLJIIYVocl4xCNOQecVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvD14HkmTMMYdJeOB7RVHlBj0wFdgkPYbZitpWcKoD8TcDZA6g
+	VKE2weqHbapH2pMr8SS5U+Gr/6Qc73rw1uWUGgL8xe9Ur3++pxi+ythdvavjc+nNk5OdMRncUVa
+	dkHG+aA==
+X-Google-Smtp-Source: AGHT+IEF46Ap3+CoFy4DNwHeeqPSdM0QIu1/iWB0NVseFrH0JqhT9O+vdtR7XjCf1sCWIaN5eWCQMso96V4=
+X-Received: from pjj5.prod.google.com ([2002:a17:90b:5545:b0:330:6cf5:5f38])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c07:b0:32e:ca60:6bd7
+ with SMTP id 98e67ed59e1d1-334568960d8mr4094341a91.11.1758836121051; Thu, 25
+ Sep 2025 14:35:21 -0700 (PDT)
+Date: Thu, 25 Sep 2025 14:35:19 -0700
+In-Reply-To: <20250827175247.83322-10-shivankg@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RvBl/JEy3PTd/KX1"
-Content-Disposition: inline
-In-Reply-To: <20250904-i2c-dw-dev-err-probe-v2-1-e59da34815fa@bootlin.com>
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-10-shivankg@amd.com>
+Message-ID: <aNW1l-Wdk6wrigM8@google.com>
+Subject: Re: [PATCH kvm-next V11 7/7] KVM: guest_memfd: selftests: Add tests
+ for mmap and NUMA policy support
+From: Sean Christopherson <seanjc@google.com>
+To: Shivank Garg <shivankg@amd.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
+	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
+	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
+	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, tabba@google.com, 
+	ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org, 
+	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com, 
+	roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org, 
+	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com, 
+	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, 
+	yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Aug 27, 2025, Shivank Garg wrote:
+> Add tests for NUMA memory policy binding and NUMA aware allocation in
+> guest_memfd. This extends the existing selftests by adding proper
+> validation for:
+> - KVM GMEM set_policy and get_policy() vm_ops functionality using
+>   mbind() and get_mempolicy()
+> - NUMA policy application before and after memory allocation
+> 
+> These tests help ensure NUMA support for guest_memfd works correctly.
+> 
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>  tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+>  .../testing/selftests/kvm/guest_memfd_test.c  | 121 ++++++++++++++++++
+>  2 files changed, 122 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> index 90f03f00cb04..c46cef2a7cd7 100644
+> --- a/tools/testing/selftests/kvm/Makefile.kvm
+> +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> @@ -275,6 +275,7 @@ pgste-option = $(call try-run, echo 'int main(void) { return 0; }' | \
+>  	$(CC) -Werror -Wl$(comma)--s390-pgste -x c - -o "$$TMP",-Wl$(comma)--s390-pgste)
+>  
+>  LDLIBS += -ldl
+> +LDLIBS += -lnuma
 
---RvBl/JEy3PTd/KX1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hrm, this is going to be very annoying.  I don't have libnuma-dev installed on
+any of my <too many> systems, and I doubt I'm alone.  Installing the package is
+trivial, but I'm a little wary of foisting that requirement on all KVM developers
+and build bots.
 
-On Thu, Sep 04, 2025 at 04:31:06PM +0200, Beno=C3=AEt Monin wrote:
-> Simplify the error handling of devm_request_irq() in
-> i2c_dw_probe_master() and i2c_dw_probe_slave() by converting to:
->=20
->     return dev_err_probe();
->=20
-> instead of calling:
->=20
->     dev_err();
->     return ret;
->=20
-> This also handle deferred probe error without spamming the log.
->=20
-> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+I'd be especially curious what ARM and RISC-V think, as NUMA is likely a bit less
+prevelant there.
 
-Applied to for-next, thanks!
+>  LDFLAGS += -pthread $(no-pie-option) $(pgste-option)
+>  
+>  LIBKVM_C := $(filter %.c,$(LIBKVM))
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index b3ca6737f304..9640d04ec293 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -7,6 +7,8 @@
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <unistd.h>
+> +#include <numa.h>
+> +#include <numaif.h>
+>  #include <errno.h>
+>  #include <stdio.h>
+>  #include <fcntl.h>
+> @@ -19,6 +21,7 @@
+>  #include <sys/mman.h>
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+> +#include <sys/syscall.h>
+>  
+>  #include "kvm_util.h"
+>  #include "test_util.h"
+> @@ -72,6 +75,122 @@ static void test_mmap_supported(int fd, size_t page_size, size_t total_size)
+>  	TEST_ASSERT(!ret, "munmap() should succeed.");
+>  }
+>  
+> +#define TEST_REQUIRE_NUMA_MULTIPLE_NODES()	\
+> +	TEST_REQUIRE(numa_available() != -1 && numa_max_node() >= 1)
 
+Using TEST_REQUIRE() here will result in skipping the _entire_ test.  Ideally
+this test would use fixtures so that each testcase can run in a child process
+and thus can use TEST_REQUIRE(), but that's a conversion for another day.
 
---RvBl/JEy3PTd/KX1
-Content-Type: application/pgp-signature; name="signature.asc"
+Easiest thing would probably be to turn this into a common helper and then bail
+early.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVtZAACgkQFA3kzBSg
-Kbaglw//S9siA9TQMPD4lumWc5KDVsnqJDU3n6zBjzINdXUZ221bkn/SHuNJqxz2
-ur3KEUu55X59M9c7uMnxdiNP6jR/cU9Ox2Bom2K6Qaq7fUuCHeaAInOGF0YZ6SVJ
-Ehk0PI2qEvrDYK+nz9Hc4XtVCZ15VYS16hLSJ6LZXgk1gpSfPbhiauO6b+OXn3w0
-/7YYeTChM4NwVjheU12NLf7A2E3+6+kZiU0dZkA6+znxLdpN1tx0pFlbrGeVQUe4
-SSDGbXepcRSNTrfbpxEQys8d5Es3Imjq0EUVAzJMZ9EzsJ0xnUo5Sf0U3ahOxW4i
-j26eXsRjdJJwo+hrRSpJj0zJoP/ot8Hb58MjiCralYDal7x5o+BM31UkooVKdJwN
-oyyJigUy2hpvQSY+V1RUW8CW22BwGvAXThD0m6/uUS+rmJ/XgSc7PwM5Hc9gvIsy
-ZdSGqT8kIbk6a7Ius0s1Rov+OFNIP9f6C2GdWjW24FKPwzevJ4ksaH599mSK5XLl
-wptTrwaT8B7PvDJVfTTs4+8RaYyn2zSxSeIUlLT/R7sVRJoXYAXLRyGu0EK9wKc/
-duTWvUv3EvenV4u+QxU4TMgvG2pIHSBQ9CrIg4t3+BALqbPGDNSBatwXCRbqu0mg
-6dQAvDZwXrrlNTHMGX36iwkXH+049fS00cNbAIe9jfoS0Ak+P/k=
-=F8Ct
------END PGP SIGNATURE-----
-
---RvBl/JEy3PTd/KX1--
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+index 9640d04ec293..6acb186e5300 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -7,7 +7,6 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+-#include <numa.h>
+ #include <numaif.h>
+ #include <errno.h>
+ #include <stdio.h>
+@@ -75,9 +74,6 @@ static void test_mmap_supported(int fd, size_t page_size, size_t total_size)
+        TEST_ASSERT(!ret, "munmap() should succeed.");
+ }
+ 
+-#define TEST_REQUIRE_NUMA_MULTIPLE_NODES()     \
+-       TEST_REQUIRE(numa_available() != -1 && numa_max_node() >= 1)
+-
+ static void test_mbind(int fd, size_t page_size, size_t total_size)
+ {
+        unsigned long nodemask = 1; /* nid: 0 */
+@@ -87,7 +83,8 @@ static void test_mbind(int fd, size_t page_size, size_t total_size)
+        char *mem;
+        int ret;
+ 
+-       TEST_REQUIRE_NUMA_MULTIPLE_NODES();
++       if (!is_multi_numa_node_system())
++               return;
+ 
+        mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        TEST_ASSERT(mem != MAP_FAILED, "mmap for mbind test should succeed");
+@@ -136,7 +133,8 @@ static void test_numa_allocation(int fd, size_t page_size, size_t total_size)
+        char *mem;
+        int ret, i;
+ 
+-       TEST_REQUIRE_NUMA_MULTIPLE_NODES();
++       if (!is_multi_numa_node_system())
++               return;
+ 
+        /* Clean slate: deallocate all file space, if any */
+        ret = fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, total_size);
+diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+index 23a506d7eca3..d7051607e6bf 100644
+--- a/tools/testing/selftests/kvm/include/kvm_util.h
++++ b/tools/testing/selftests/kvm/include/kvm_util.h
+@@ -21,6 +21,7 @@
+ #include <sys/eventfd.h>
+ #include <sys/ioctl.h>
+ 
++#include <numa.h>
+ #include <pthread.h>
+ 
+ #include "kvm_util_arch.h"
+@@ -633,6 +634,11 @@ static inline bool is_smt_on(void)
+        return false;
+ }
+ 
++static inline bool is_multi_numa_node_system(void)
++{
++       return numa_available() != -1 && numa_max_node() >= 1;
++}
++
+ void vm_create_irqchip(struct kvm_vm *vm);
+ 
+ static inline int __vm_create_guest_memfd(struct kvm_vm *vm, uint64_t size,
 
