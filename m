@@ -1,120 +1,228 @@
-Return-Path: <linux-kernel+bounces-833116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB7EBA1412
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949C0BA141E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55CF4C85ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270A83860A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA3531CA46;
-	Thu, 25 Sep 2025 19:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AB31E0F0;
+	Thu, 25 Sep 2025 19:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GYH8pmio"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pl+z1jyX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239E931D74E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2968752F88
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758829482; cv=none; b=Fs82Ne6JyZFSu2cjKaRL/BNRYQEiHOpuZFquAe/bCK92EHwhq+edE7QFe/qV3mQn8wtq9souS0WzkyKsGU8wQ44lLAfYg34q4wsoBVR78CdqZ+4ek6p15U7ux3iKyxXkkSsFoD2nikPUvVU8XMhI5MS38xp3oFfwidJxA7Rsp/I=
+	t=1758829526; cv=none; b=VE57TLpDzlX5Pcb2Uxmq5ntcdZwo1b8j+TPkCXNgwmfyxQ7Z+/gfDAB1D960j/H+kg/6Kn9VfwKq+akn9rHLNLyEwUeOIDy7oJYdddNzjH+0f2YXZrCjHysePxrLYp0f++v0VIg2M6GvpltKVbKVVu5e6Bl5M+EhQqKdKayyNNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758829482; c=relaxed/simple;
-	bh=hlXPqA9leDXyKU+a+StNvMRXfLd7Oiz0q/nTjQYZxBg=;
+	s=arc-20240116; t=1758829526; c=relaxed/simple;
+	bh=1zEu2OmlwcXZazsas1KTl1VcfwBjOaoT3EP8isjLdzI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AZjNISNWWqH18qyNnUSjG28HvFvsId3P+eGpgoa5KOomNO2Mi24Jhd0Q9P8Wz9frA5hnGkUDvUZHVv/J3D39dOZ8YBenppal0vtqomZCaeZtfsIrxv/2vp+wrlbuApWuEr97rYFdyLlc8Ah9mQhbCVI1rnVZJeysR4h2lFrzCiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GYH8pmio; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-42576a07eeeso12083785ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1758829480; x=1759434280; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=or54vQrDlSCc4oUoPw4bOHl4mIflQax8gxz1ImqODMU=;
-        b=GYH8pmiom14ZpZtigjGxS20dZbUrgA0wHsSkqgPWK69dQGxtZrQdYc1HTSts3cI/B8
-         9QPV62PzEGKjGvKKfwSsi57ZVtnRgWY2XQnPkj0FXyCFRPAjOILwu8X4rCMwP+lSybHb
-         1CiuHILRKzG+OH0yWwbsQ8gbJyNMeIhY7qDqE=
+	 In-Reply-To:Content-Type; b=VEIH72bQrNvFWQ3TVv9nTSj/HkvZczocQbTBOCF6oPLdgsHvpPgEBDACSBM7rr2soPQbYZLI0b7dAbhRH3yM6XDSdYvnKXl2XHYVkREyMY3jhG4AXSxMjHhRbESr/9AgjfMSliEDLOfCGNcNjoj0lylkg3SsurKwG9L6EOtoIX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pl+z1jyX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPvpg000896
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:45:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	T61Tn9AWSXYN6GxmJGVXPjVrhV39tAQxcO9u49rK4W4=; b=Pl+z1jyXkRzTHuXw
+	BvJuH7Bn56HtJk7FslnjGr+5hGCjRyzfiOv+holL5N7f/Tl8VyCDgsK2TjzjfRXd
+	wt+VQ0JhgcMTTv71CwiEDkI0wiuTPFxoG1PEkM//z9IqKtufssvcM2hMDsaA3xtH
+	QqVoSftdb4xmvTP2VIxEGOcF2mG1gmCameXkz4B0lCtOzoFULG1PVZyy/i2++erX
+	I1z6VSiTbBkd3qplqn0Ofn7JeSk5697cyyqtwK048ff/BTAkiFLzlMsl+6n28x7F
+	GRg98XuTyqJlkk6BkWAUiuzTxGLWZTNEdunWpSI7I5zZkFVVMOgMcuHrjO4c9vwy
+	JRF53Q==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0tr60y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:45:22 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3307af9b595so1308501a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:45:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758829480; x=1759434280;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758829522; x=1759434322;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=or54vQrDlSCc4oUoPw4bOHl4mIflQax8gxz1ImqODMU=;
-        b=FI3kocaoOHBsZ7gxgv0kUfti9Z1XlEBAdK/T0BdipLh3SQDL9qAeM12BJbQVn5C8RX
-         wAdfihnCzNO4zcCfvA09seOJDgP6U5BFRxPXp0EaOvxlN+NRarhmZMegFJvEmW5MSJ0+
-         yWt+WReh+r2lJwooxUYuyMlXUNyLnExwhKpMs1CHKk9sc01ZDxDTkyDD1Fdm9/6X+ECo
-         Lt5jU3ybKKkEpWW+09cdhuv7Scp8jbh5JgwLrC8YbdfTNJfPGHnTDVBdYVcrxKcXpvaN
-         h+2GnOhqdEEN7Vk2Wf4AXcIAejn9GyVHnIXWQIf6gK3h5jjHbcnQ9hH4IcvthoFerGy7
-         XLtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSeQWg/f9Pkgtjt5MqoJALCz6cXPRNiAbyrnG0nm7sg/WZ6yqZ26I3j/BL4kmTNHo3dDyBxOKijr8dljc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCKo0gsUpWt7NnbZxaxT4VdNMFqYnVzNpo9/lJaPpUZUxdpnsm
-	PaTO8T6Wc5QSODYWi+HT9h/IwSXp8dDVkXIAJgILsI8hfQ1tnb6umFAxbYWD9pWVQUY=
-X-Gm-Gg: ASbGnctpu/w4xEZ1o9btXbwxjhino3fM/+EwLIv0Z1YU/fG0rVoXYi+mz2hUbkKeFU/
-	VlD96XbWwBVl/0AjMkrFhdIfPanDFfuooRKZX4GR7x7t1G1oJzpHM9laV7Ch7KvSbBMrUwctTev
-	OrXOGTxsei07KemxozzwR9M+UgoZptiImwUPULgLQ0uESFOEaI15zMwUG1r+mj+3vUHYTRrbJQm
-	Y/JfFgxFiksrhBVd9EwXPeT79ges+LMoG9Dw4PdNNXewAGO90aKG+venHhlxmQ+qBnYHk7IYIMM
-	RwAagAXCa5o+hQ6ood8N7n1UOuyfheyITJ0aU4rg11lA6zoAG1Wvge6ACoJyVwZ3CZHlmdQBGP7
-	ez1E2G5GojQIRSNgwTS0RVUwPqV3cAeqywgbsIPltmuQWvg==
-X-Google-Smtp-Source: AGHT+IEPVyp7JzGHapxNvv4LYOPSv8tJ+j6O50sbKDaIYjBItoXAtC7pX4vo8bCfw1S4ZxWm8QkoJA==
-X-Received: by 2002:a05:6e02:1fe8:b0:424:64c7:ffae with SMTP id e9e14a558f8ab-425955ed735mr80558725ab.12.1758829480118;
-        Thu, 25 Sep 2025 12:44:40 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-56a6ae6ec6esm1116952173.76.2025.09.25.12.44.38
+        bh=T61Tn9AWSXYN6GxmJGVXPjVrhV39tAQxcO9u49rK4W4=;
+        b=LBqwX7Q9k/YVo09DtWsnzXlXvM1JQTFQJbKO69pakAPO3HgbxNp65MejRIuGYm4AZg
+         /4BVcaXwnZ4U7wYSlyxrhpoGpOc56rP/7oyzBxr3jA0lHd1KSl5UxxCDPyQuNJxsVp1p
+         ZG8QON6uQ0VMW/s8Ewx5cfkIyozNKNMfZp6cSRbwC4ncD8mpUVJhpRtng4G4Mdyk3qa8
+         sY2PiRdoQudIYfc0SmQfgWGqS200SthlekU47g3Hl6cpE5yEx6sufnPDJMIzEtU76BgH
+         KuxoztB9ZXiJCWF6+dbTRuV+jerXo2A9cPa+LbYMdaNlpe2NH8rNkriqTeSiy7Ay/aaj
+         UAbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpsD5LHAg33kfILlDIm+ZuZPrtFa9Jo7WCWfyvh35PRncTTSga+VCC/ipETFyJgdei33UAPj2VGKqJc1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM+w38A/RWbiOkJbBjFmskAWsgetgHAIW3q1k9DVU0l27c1yNq
+	jXkoicFX7WhmXYfyrC3qsd7U17oispQsb8+O3/t/8w+N1icaKSsRiKU875x+8e17xeoo/zY+F3Q
+	4IfN2Wvl3o6EUPjBzppBwwufAXcADeVNoFsg7zWt/FzhNrquso8rZIFqGvNn9/YS6HZs=
+X-Gm-Gg: ASbGncsNtsJpfVisINEu3F9F3hbQpLOogM93cTOo51GDb2dWysprbv3+WQXiJYPIgmK
+	lgjkQBl/YZkZA/v4+FsD+tVp23Vocm0EH8Y6Fuonuve/ZfqQlGOHhyyfhQaFlSDSDTcdkIALu+k
+	Nu6ihGthhLPEZLatlPWGpaEkwf+T8CWlBvdFxHqgRiLAK57pFQ+J5Nkkqa/vxNDmreko5iOln9E
+	Uy8EhrkvSl9tpaMRU2/301NB/onhBLey0pidJb/naPna98TLCBD6Dobv+9MMWL09wA/1AtdylH2
+	gtI3ophGQ5AvWoXbvDvujR/hVZ3sKoOepouJK8D+UOJ2WwYX+pCPTyZiBqRrJQYku72xOZQ81Xk
+	=
+X-Received: by 2002:a17:90b:1d0d:b0:32d:d8de:191e with SMTP id 98e67ed59e1d1-3342a25964emr5540663a91.10.1758829521632;
+        Thu, 25 Sep 2025 12:45:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRfwJXovOnl+lHkuSFlnxOPjTPUGECyVPSFyJNabv+KOUv3Mo6exOm1jceL+NldToCC5Md/A==
+X-Received: by 2002:a17:90b:1d0d:b0:32d:d8de:191e with SMTP id 98e67ed59e1d1-3342a25964emr5540630a91.10.1758829521132;
+        Thu, 25 Sep 2025 12:45:21 -0700 (PDT)
+Received: from [192.168.0.166] ([49.205.248.165])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33471d71199sm3135991a91.5.2025.09.25.12.45.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 12:44:39 -0700 (PDT)
-Message-ID: <3fe5d44f-cf33-42b2-bb91-6a4238f83470@linuxfoundation.org>
-Date: Thu, 25 Sep 2025 13:44:38 -0600
+        Thu, 25 Sep 2025 12:45:20 -0700 (PDT)
+Message-ID: <6198a56a-dbca-5cce-fcd2-43978e87236d@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 01:15:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/kexec: Ignore selftest binary
-To: Sohil Mehta <sohil.mehta@intel.com>, Shuah Khan <shuah@kernel.org>,
- David Woodhouse <dwmw@amazon.co.uk>
-Cc: Simon Horman <horms@kernel.org>, Dylan Yudaken <dyudaken@gmail.com>,
- Moon Hee Lee <moonhee.lee.ca@gmail.com>,
- Ricardo Canuelo <ricardo.canuelo@collabora.com>,
- Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kexec@lists.infradead.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250919170139.3452889-1-sohil.mehta@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
+ kaanapali video codec binding
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250919170139.3452889-1-sohil.mehta@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
+ <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
+ <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
+ <522d7244-0003-a42e-9be0-1d353df8d5bd@oss.qualcomm.com>
+ <oimuo26ohcye74j6rl5hfbmd4ip5wzudhyiaibf74b5zmjb4vl@xh3dnp7gmvq7>
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <oimuo26ohcye74j6rl5hfbmd4ip5wzudhyiaibf74b5zmjb4vl@xh3dnp7gmvq7>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=I9Vohdgg c=1 sm=1 tr=0 ts=68d59bd3 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=AkZwv1uTgJSVxlfcUQlFCg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=gEfo2CItAAAA:8 a=puI59K64icZz00i_70MA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: 9lefmAh-pA5xILZJgOLlObf5wd3Q47uY
+X-Proofpoint-ORIG-GUID: 9lefmAh-pA5xILZJgOLlObf5wd3Q47uY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXy+athY/n0VHg
+ I4I5xX2OfmDXkl6XOk3DOTYkQCyvTsOubV2g0GIo+rC9zhempO2ZUszeyy0C7hwiDZ7jVHVrP/A
+ er0J+PE0IO6recizqC1Yxbwo19VZz661aQMUmvX41U/I7UWLhZJzInOU3p5P45vDbToi2/foQt/
+ HE02oa1xFuZH72Z8mvtN+4CjCLCU7D9o4RcyJcQhV1sqNrDYtdtk6yVhE0yi6/BcSzuG6cY4q/g
+ 0MBjVot8nAvLyHoWOpAcN1HZ8fYgwYRIxGezK8hCwit6KKnGbhMH2B7e49d3pb1KhNQGKv5mE4e
+ tf4bdw/CGVnE8ep8TQy4vY0jwSd9KgU2HSYSGg25S7zhbXFXiDsRTKYxMgZaDZuJ6+6QNzdoLbp
+ poZ1qZgwp8PXCeCppPk17dUVQMUN7g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On 9/19/25 11:01, Sohil Mehta wrote:
-> From: Dylan Yudaken <dyudaken@gmail.com>
-> 
-> Add a .gitignore for the test case build object.
-> 
-> Signed-off-by: Dylan Yudaken <dyudaken@gmail.com>
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> ---
-> The binary creates some noise. The patch to fix that seems to have
-> fallen through the cracks. Sending another revision with an expanded Cc
-> list.
-> 
-> v2:
->   - Pick up the review tag
-> 
-> v1: https://lore.kernel.org/all/20250623232549.3263273-1-dyudaken@gmail.com/
-> ---
 
-Applied to linux-kselftest next for Linux 6.18-rc1.
+On 9/26/2025 1:08 AM, Dmitry Baryshkov wrote:
+> On Fri, Sep 26, 2025 at 01:01:29AM +0530, Vikash Garodia wrote:
+>>
+>> On 9/26/2025 12:55 AM, Dmitry Baryshkov wrote:
+>>> On Thu, Sep 25, 2025 at 04:44:39AM +0530, Vikash Garodia wrote:
+>>>> Kaanapali SOC brings in the new generation of video IP i.e iris4. When
+>>>> compared to previous generation, iris3x, it has,
+>>>> - separate power domains for stream and pixel processing hardware blocks
+>>>>   (bse and vpp).
+>>>> - additional power domain for apv codec.
+>>>> - power domains for individual pipes (VPPx).
+>>>> - different clocks and reset lines.
+>>>>
+>>>> There are variants of this hardware, where only a single VPP pipe would
+>>>> be functional (VPP0), and APV may not be present. In such case, the
+>>>> hardware can be enabled without those 2 related power doamins, and
+>>>> corresponding clocks. This explains the min entries for power domains
+>>>> and clocks.
+>>>> Iommus include all the different stream-ids which can be possibly
+>>>> generated by vpu4 video hardware in both secure and non secure
+>>>> execution mode.
+>>>>
+>>>> This patch depends on following patches
+>>>> https://lore.kernel.org/all/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com/
+>>>> https://lore.kernel.org/all/20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com/
+>>>>
+>>>> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+>>>> ---
+>>>>  .../bindings/media/qcom,kaanapali-iris.yaml        | 236 +++++++++++++++++++++
+>>>>  1 file changed, 236 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
+>>>> new file mode 100644
+>>>> index 0000000000000000000000000000000000000000..f3528d514fe29771227bee5f156962fedb1ea9cd
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
+>>>> @@ -0,0 +1,236 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-iris.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Qualcomm kaanapali iris video encode and decode accelerators
+>>>> +
+>>>> +maintainers:
+>>>> +  - Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+>>>> +  - Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+>>>> +
+>>>> +description:
+>>>> +  The iris video processing unit is a video encode and decode accelerator
+>>>> +  present on Qualcomm platforms.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: qcom,kaanapali-iris
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  power-domains:
+>>>> +    minItems: 5
+>>>> +    maxItems: 7
+>>>
+>>> You are sending bindings for a single device on a single platform. How
+>>> comes that it has min != max?
+>>
+>> I was planning to reuse this binding for the variant SOCs of kaanapali/vpu4. If
+>> we do not have min interface, then for those variants, we have to either have
+>> separate bindings or add if/else conditions(?). Introducing min now can make it
+>> easily usable for upcoming vpu4 variants.
+> 
+> No, it makes it harder to follow the changes. This platform has
+> this-and-that requirements. Then you add another platform and it's clear
+> that the changes are for that platform. Now you have mixed two different
+> patches into a single one.
 
-thanks,
--- Shuah
+you are suggesting to add new schema when the new variant comes in ? there is
+also a possibility that this hardware(kaanapali) can be used without those
+optional power domains as well. Let say, someone does not want apv codec, in
+such case, that pd becomes optional.
+
+Regards,
+Vikash
 
