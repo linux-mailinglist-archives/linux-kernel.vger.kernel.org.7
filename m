@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-831963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CADB9E063
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 361ABB9E06C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF161BC037A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575171BC08EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C86326F2BB;
-	Thu, 25 Sep 2025 08:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1E0271475;
+	Thu, 25 Sep 2025 08:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nvKkIdlw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bS89TZM/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D861FE45D
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021D4270EBB
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758788476; cv=none; b=Vwdtiye8BccLr0SmPTwJz0GocfdSpw3dqurgtuGMJZWbWoBCa6zDE1jkGYqIgxCGjhHwlqhObE+Qku7IWQuzLsMnRJmTHCD0KuXNHhBslSp2Zb1yl4cgkRdgXUd/ryCtVCK38ui+q01j68zZGE/00PqoraWeKv9fnhvnOX/SJx0=
+	t=1758788601; cv=none; b=O0URNczqhzoEl+LS+aTs80PcbCrmiaDBjV2iMuijd2evrEp/DRYhIHND0XOqU6/r7e0qSLhYKXTbbQOGruKeZc6sXAvZ3/Qgxe6zwrMv8xAqkfGMz9K2s53Wx1saNZUeAGneWs5eEvXc5mn0Y0iBGJJqENQaCdhkZR/RGJwk7vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758788476; c=relaxed/simple;
-	bh=ZI06X6co9rcInVxoUsju55LiPRORhdWHLVzHpVh7hAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XHWHQW2e8BTCaQLEDtGoKz4w8mrdbLVP+dq2/om/MzompjBfaIKk4OQ+c4N9q/KDZ/72P88y3vkW3T7vSWy7CvtFllYikcbivgSOLoiVgN5TCZRFzeuojdn9GC1wb9CybTxpsBxRYGDNpKRERZh/MYoGpjn+m1o9gyhrGv/VImo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nvKkIdlw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758788472;
-	bh=ZI06X6co9rcInVxoUsju55LiPRORhdWHLVzHpVh7hAo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nvKkIdlwNsHL/Yx3LP8a8zQ9Otk0Ecz3fJcHBqPn57xvLg5loyha+5fKebOT4d8sG
-	 WbFkkgvI8SbCcVhzItvxbtyIzlIDTZKl1OTKcPp1jaCwS5UDjmrPOdGwagUp3BaIvO
-	 NneDRa5upSAImG2t5g2KrRB1C1iCiUJgQ4lotd0c9tsoU7iwKKTRZCJP1k2QsO+/H2
-	 UGyLx1+mSXwvDfv23q0pjw8glVTZFBC2ssoegWUEXEWcRpNqcbgnHaOjgy/VsU8R+2
-	 f1D0gc70AJiYAlxEWAWhE3YS/P857wIdoQMTRbHy/ktodAiSc+jasvIn4C38J6OBJM
-	 D5+6gNPpF2q4w==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D1C6117E046C;
-	Thu, 25 Sep 2025 10:21:11 +0200 (CEST)
-Date: Thu, 25 Sep 2025 10:20:55 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
- Price <steven.price@arm.com>, kernel@collabora.com, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] drm/panthor: Defer scheduler entitiy destruction to
- queue release
-Message-ID: <20250925102055.3e6c5703@fedora>
-In-Reply-To: <20250919164436.531930-1-adrian.larumbe@collabora.com>
-References: <20250919164436.531930-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758788601; c=relaxed/simple;
+	bh=+i+v8nBQDmYxiOI9yfBbFobo4pYvLGhUh6yGl4OVrWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SjvBQ3CX0GK3BNXxS7h3/Tqf2C8p3wKFAoEej65EWs14IZ1dhZlGY3KpIOqNeH1cgY0+kbC+NByvaIJS09oAOwge4NpJB1lRuC/6fF56qwBb6vziCPzXooi2ED/C9J/Um7RmWuh0brwvQEBaFB6MZsLdvmT0xeCfbrNE4m+P/QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bS89TZM/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BA2C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758788600;
+	bh=+i+v8nBQDmYxiOI9yfBbFobo4pYvLGhUh6yGl4OVrWY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bS89TZM/rYSbBJsihrOABaC7Ws4Dymxusk/RzKQtPsLbWYPFsFJbkkJI3jiH7t3MK
+	 Bo/UM4sqcFayuDivgoTPN/QwOf5CCVLU23Hpvpsm1GR5eKb4gFAcNmciRfwKlRKqKh
+	 Kz3gWT8Mg8fhm1b0Hs0K4acyGg1PKuQG+q72utXuxj62CylhfFdXUhYbuwv5zQrPyI
+	 zPD7uHv7DWiYX10BjjJlluVfb4wddalIe3SBFLioAFf7sywQE+1OeY1vyPJBTIVLJF
+	 iMANQGs1qECMgD/nxwJ+t6dPAn8Yh7jVbgNUqPb41+8k4tTfiqc1TYfivoZXChHeaX
+	 kInqNdAjFGQEQ==
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b57bf560703so546807a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:23:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7N7O/d8gkK5Lgb+porGUlJj5IZHva6Wy9luDKcLCsydHtu3DtFvZJqsnlvER5KEFZ36xavEWgq4fAfbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB2qWneVzoDZ2wbxc9WwPRGyOoPF8+X8HtCbkZOAC6ZrOAf5oA
+	RBUGL+U2J9cFUMQJ/9HmBk3l7RkzA492L8PlDk++dhNAc+LYh070RtuenAK5SsNizKhOnFJRKoM
+	7p/J1oMTZHh5+mT2kDuEN30RVmxf9XQo=
+X-Google-Smtp-Source: AGHT+IHqRi9cxDcwv+8J0r++fES1iGaPLBL7PoV33Z33j0uZ50sYjFgBKelHRg+TSQvlkBiAkVzvHoNNWXSHTJKAekc=
+X-Received: by 2002:a17:902:c94c:b0:269:8d1b:40c3 with SMTP id
+ d9443c01a7336-27ed4a29ceamr31919655ad.12.1758788600013; Thu, 25 Sep 2025
+ 01:23:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-6-24b601bbecc0@oss.qualcomm.com>
+In-Reply-To: <20250925-v3_glymur_introduction-v1-6-24b601bbecc0@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 25 Sep 2025 17:23:07 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
+X-Gm-Features: AS18NWDOUgrqzLHcPEb42eVV56-kTL6L0tFBxQFD6o5ZtdLGSHVdoF-yjnHTMgc
+Message-ID: <CAJKOXPc8NYrwSLbaFZ_tRVpgkYPUYhaMde77p1VBhqm9PLsGjA@mail.gmail.com>
+Subject: Re: [PATCH 06/24] arm64: dts: qcom: glymur: Enable pdp0 mailbox
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 19 Sep 2025 17:43:48 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-
-> Commit de8548813824 ("drm/panthor: Add the scheduler logical block")
-> handled destruction of a group's queues' drm scheduler entities early
-> into the group destruction procedure.
->=20
-> However, that races with the group submit ioctl, because by the time
-> entities are destroyed (through the group destroy ioctl), the submission
-> procedure might've already obtained a group handle, and therefore the
-> ability to push jobs into entities. This is met with a DRM error message
-> within the drm scheduler core as a situation that should never occur.
->=20
-> Fix by deferring drm scheduler entity destruction to queue release time.
->=20
-> Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-
-Discussed with you before you posted it, so here's the official
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
-Thanks for fixing that.
-
-Boris
-
-
+On Thu, 25 Sept 2025 at 15:33, Pankaj Patil
+<pankaj.patil@oss.qualcomm.com> wrote:
+>
+> From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+>
+> Enable pdp0 mailbox node on Glymur SoCs.
+>
+> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 > ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/pa=
-nthor/panthor_sched.c
-> index 0cc9055f4ee5..f5e01cb16cfc 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -898,8 +898,7 @@ static void group_free_queue(struct panthor_group *gr=
-oup, struct panthor_queue *
->  	if (IS_ERR_OR_NULL(queue))
->  		return;
-> =20
-> -	if (queue->entity.fence_context)
-> -		drm_sched_entity_destroy(&queue->entity);
-> +	drm_sched_entity_destroy(&queue->entity);
-> =20
->  	if (queue->scheduler.ops)
->  		drm_sched_fini(&queue->scheduler);
-> @@ -3609,11 +3608,6 @@ int panthor_group_destroy(struct panthor_file *pfi=
-le, u32 group_handle)
->  	if (!group)
->  		return -EINVAL;
-> =20
-> -	for (u32 i =3D 0; i < group->queue_count; i++) {
-> -		if (group->queues[i])
-> -			drm_sched_entity_destroy(&group->queues[i]->entity);
-> -	}
-> -
->  	mutex_lock(&sched->reset.lock);
->  	mutex_lock(&sched->lock);
->  	group->destroyed =3D true;
+>  arch/arm64/boot/dts/qcom/glymur.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> index 66a548400c720474cde8a8b82ee686be507a795f..ae013c64e096b7c90c0aa4cfc50f078a85518acb 100644
+> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> @@ -4065,6 +4065,14 @@ watchdog@17600000 {
+>                         interrupts = <GIC_SPI 0 IRQ_TYPE_EDGE_RISING>;
+>                 };
+>
+> +               pdp0_mbox: mailbox@17610000 {
+> +                       compatible = "qcom,glymur-cpucp-mbox", "qcom,x1e80100-cpucp-mbox";
+> +                       reg = <0 0x17610000 0 0x8000>, <0 0x19980000 0 0x8000>;
+> +                       interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+> +                       #mbox-cells = <1>;
+> +                       qcom,rx-chans = <0x7>;
+> +               };
 
+Again one node per patch. this is really pointless, please read
+submitting patches before posting.
+
+New Soc is one logical change. One.
 
