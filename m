@@ -1,252 +1,167 @@
-Return-Path: <linux-kernel+bounces-832484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D609FB9F714
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B9CB9F720
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D02F38696A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD88177D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 13:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BC22135AD;
-	Thu, 25 Sep 2025 13:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE9821CA0C;
+	Thu, 25 Sep 2025 13:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FQR7fv2h"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FC/e12P1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B403E20B81B
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F369216E1B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758805876; cv=none; b=sr8gWuOwYg5Zn+Ojk2vZx/l603wbTsiqpli4gVc9s2+haKyh6f/Ye3UFJ6DfV5VPg7AoG0JYZ+hBggUaLOxXKbIiXS4BwAAL7xYd3fivfQLWmSyMOYR+vWMYqy/jpv+z+l1bzEubnQkdJKfwmn5wd7TLi99s1UU37hP+qcaBphw=
+	t=1758805905; cv=none; b=qrsqZf8Ks6xDMU1aumDt0TocfykJCxvYFXYcD/kHbLdB291V/4ZSTOVAhPwYk1nWFTrr51091dQLlvNzjT7Wx6Uj4QeMa8HFn+y3kXDjHSIjmhpBu6RnKWE6H2kDmsj2bmfG59gS2Ar9rmqqeDTDawxLlOLhfIc9Ki+4VuFpY1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758805876; c=relaxed/simple;
-	bh=WJv5Eq0qCMWoipcJUgsMu7XSZzVR3ArKXOoPCDu7V80=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PdtMxZuj1csPLxQhgADQSoMTIfxyf4eHmemgjj3ROxHKGVHOliIM6RVRMz9z2mQflBIisVAtkJKcy/awb8htnSZL1uiO+1sIsWkb5NMoiN45+CBbnMuSrVAUhpzBc7PqDEmds2w7RHUsBLIxQy6I+QiXeefb5l4imHJfbRUwn4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FQR7fv2h; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758805871;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ue6d9AWosO538ctf573qTQxzGRvZd0EoaQR7srTD63g=;
-	b=FQR7fv2h4f/vZyJoJDJy2hsyKkMzo6fh3ummxVaj07VMKKpr8Kc/z9L/j5zhTw+EU+Vflu
-	s87Hb4Ep9Ju6vFbCekKhXhqP4lTEiggauWpAMe8SeUnnGzzCDFqts9bEmKUDzX1T6U7VHp
-	5YwBO9HbRiMDSA1Sj2vmtm41Xyv/rf8=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: netdev@vger.kernel.org
-Cc: mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v1] tcp: fix spurious RST during three-way handshake
-Date: Thu, 25 Sep 2025 21:11:00 +0800
-Message-ID: <20250925131102.386488-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1758805905; c=relaxed/simple;
+	bh=lINE7NkSUvaMRUN5kdpq2iupYa9Jn//uSqQB9Wso/oA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pafNRlrGyXCiRZCunYxr9uWV/jY0yOwxjettTJzn33AuAbFpvZVz8o5sifI+SfdMVaZprYQsPhtayiVgc/zsHHmXzr+oHd/WYhTW1t+Y1yNE/MBxvw8m9bBucc+MX/2UJVfUM4GI9yumZNO9HP/2JL3k7uf7y65NCsrjjt1Z1ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FC/e12P1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P8Wbpq027912
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l822Z63KISA17qDDKSQgq4rvN0cBPgBN2THLZWvJPpw=; b=FC/e12P13NLUWpHV
+	yn9nF77c84gm6r25egvyDqWqGVf7XzyO5R6ZzZnyqQdj6jifb6f7T2OZKCF+EQB/
+	gRHQzPV9c0tNarU4/ldKcb8UNb1xz08z+d1gfOcr8NEqUZNLays2hE7QsZ8DKx8X
+	3g4rsWZawnCYP74amBZmYjW+gKxUjXAqiEdL9+GkGLLlmY1JcaH/hM8rElZvRk56
+	pRjlDDNEBHVMFCU6fX9V6n72ADgp45+EFIwEuAHezOGWCU0TlNtvnQN1yIYX5Iqc
+	bs7nExANPp8Oj6hojAJCAn87yPIWO645FZt6dBG9CRHXCafVgOTEh8z+WSjoLrVO
+	h0AmfQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hmp0j1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:11:43 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-721b84d7bb4so1395536d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:11:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758805902; x=1759410702;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l822Z63KISA17qDDKSQgq4rvN0cBPgBN2THLZWvJPpw=;
+        b=rgGtcDrRAf6CAtsogaNsvefrIXF6oNS76XhOcVuNTeVBUt0SteQkQsFXXRl/sSp+5+
+         zhQ31cMtJ2djS5cm0DIwD6DTJcHzwaQCjVoRPN3Axs7TbJqOP6ITjFAOKsHUNWXvE4pS
+         jmdXMfOeDjMpRqS887MIQ+pWkp3RlLt2+zCJasUxD3fW905/eFXZd1ii12NwcCDNfS3j
+         BccMvhYhwBnnT//6sFFJCIw0+7tN+UPcRK7AMt0VzhB5+I1wOKSyhLyr53f8+TtB69vu
+         2ESJzQRqeuYnrEf1tjIP79scnB7QiN7Sul0RvW8W9ehN/l+Y1zqzikVHzZYHiF6xT+0M
+         pNwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtFTwVLOwcxViofy5ctguip6kOTlmUOlD3WVUbiRhcSQ8qbWu37dBY4+BMmKofUwpLoDzj1FTqGhu8jvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx+i8fvUhvtXQ5VHJlkSVems5ksumu7IxVIOfUIrRb/O7NWOcp
+	vARB5pyskaFOwRaNVw15Q/iwgaPs+XCzW6aFVYZYTD1pdDsR8q1wEmPVcfVJEF7ZnH0UlVXfrFv
+	wc2VzufTh9yn4khltxpTKhq1CPsKj7gkjNNLCpqznlI3HT9BsnUX+BZQQ3bpEH6P2sA8=
+X-Gm-Gg: ASbGncuTGYgtICwSoa2qqhly86alJcvx8ISrgsfAqSOfh+adsiIRB5uUEDmZ6G+6o2D
+	GIFEMlKnr539JOCxZFJLADZbQeCsIdiipkLZ065W1aDIbYqorpgOFk6i5d0HOAykAMmf8AKv166
+	/XZc0WuHgHYvtt/xA2Gox5blvD9CuJiNYw3ocxCgSIcAfSeaFHwcqsFCW/c6C4A1qYblnh7ReIZ
+	X4a1oLWDzJ6/vVATFa53hOEXyBVRF2UQDL3GGfEbwdquqeNpRNfcJi/lZbk9SWTwTITmESymna1
+	9w/Z5ypUWgwKSQBou5PYD9XR8EEfuiFI0vLj1Rm7gj8fQP/+RxWJjQvUNMjHejZZAw9l1IAuAvn
+	b3dPyXuh4K0RSIczwfhGSMA==
+X-Received: by 2002:a05:622a:1488:b0:4c8:39e0:95a9 with SMTP id d75a77b69052e-4da489a1c99mr25435481cf.6.1758805902320;
+        Thu, 25 Sep 2025 06:11:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVLJC5KlSybFStb+ck2Af033JMceOo9M492BbMXbBa0IliIzYWZPhJGlQ0ZMIsN2rkol5KUg==
+X-Received: by 2002:a05:622a:1488:b0:4c8:39e0:95a9 with SMTP id d75a77b69052e-4da489a1c99mr25435301cf.6.1758805901862;
+        Thu, 25 Sep 2025 06:11:41 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353e5cf32asm167836166b.1.2025.09.25.06.11.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 06:11:40 -0700 (PDT)
+Message-ID: <60d2cfed-5018-4afb-9db2-6bf423defc7d@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 15:11:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: max77705: add interrupt-controller
+ node
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250912-starqltechn-correct_max77705_nodes-v3-0-4ce9f694ecd9@gmail.com>
+ <20250912-starqltechn-correct_max77705_nodes-v3-1-4ce9f694ecd9@gmail.com>
+ <a3ce0aa6-41d3-4ce8-adff-14c767d7f871@oss.qualcomm.com>
+ <CABTCjFAO=iLauq37M7LOXOmrgAnPxh210bcoujUsL4zEC3634A@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <CABTCjFAO=iLauq37M7LOXOmrgAnPxh210bcoujUsL4zEC3634A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Authority-Analysis: v=2.4 cv=YPqfyQGx c=1 sm=1 tr=0 ts=68d53f8f cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=D19gQVrFAAAA:8 a=EUspDBNiAAAA:8
+ a=qdIrdHMtB0OfU3cIBJoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22 a=W4TVW4IDbPiebHqcZpNg:22
+X-Proofpoint-ORIG-GUID: pXwartNUSXYR4WwOZMOuvDX7zTY-8ZuX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwMCBTYWx0ZWRfX0w2FHF8oUtu4
+ DgvTsps1n0Ku88JjYKVJF9khoqhwqxlFzwBlfHCCLCIcZ1uvkSSbG6Tn/UyU9VLGQwL6yPIWCs2
+ r/kKdEYIbRN1ecsC52Q57FqSJe7xwwdR3ffIrSflD9OBU8Vv4EOz2GVKmDWI5jjy9LUxx8JAJ5D
+ srcju2sS1CKe5jfDd9r4yKD2vTpSXwakicnvkOLU4xmSNBRQurmmrd27z1E7FPhV71QRqMzJ7OR
+ /7lxAGT/lFASwBdjmAixN0ylMHNxXQNyhFeIPOjqHknZS9060Ss2G4MrhVzbAfcrAThq6tEsLci
+ yRJmZ1SSpFv32Z5BpyMs6a03kcuSRBAffG6aS065Sl6Xf5R4BpAP8JODFj9360RmdqBqI+7x4Gb
+ oUlrsy8U
+X-Proofpoint-GUID: pXwartNUSXYR4WwOZMOuvDX7zTY-8ZuX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200000
 
-When the server receives the final ACK of the three-way handshake,
-tcp_v4_syn_recv_sock::inet_ehash_nolisten::inet_ehash_insert() first
-removes the request_sock from the ehash bucket and then inserts the
-newly created child sock. This creates a race window where the first
-incoming data packet from the client can fail to find either an
-ESTABLISHED or SYN_RECV socket, causing the server to send a spurious RST.
+On 9/15/25 5:46 PM, Dzmitry Sankouski wrote:
+> пн, 15 сент. 2025 г. в 10:49, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>:
+>>
+>>> +      The driver implements an interrupt controller for the sub devices.
+>>> +      The interrupt number mapping is as follows
+>>> +      0 - charger
+>>> +      1 - topsys
+>>> +      2 - fuelgauge
+>>> +      3 - usb type-c management block.
+>>
+>> The MFD driver registers one more interrupt, and these don't seem
+>> to be what you say here:
+>>
+>> static const struct regmap_irq max77705_topsys_irqs[] = {
+>>         { .mask = MAX77705_SYSTEM_IRQ_BSTEN_INT, },
+>>         { .mask = MAX77705_SYSTEM_IRQ_SYSUVLO_INT, },
+>>         { .mask = MAX77705_SYSTEM_IRQ_SYSOVLO_INT, },
+>>         { .mask = MAX77705_SYSTEM_IRQ_TSHDN_INT, },
+>>         { .mask = MAX77705_SYSTEM_IRQ_TM_INT, },
+>> };
+> 
+> MAX77705_SYSTEM_IRQ_TM_INT(and others you mentioned) is a part of 'topsys' irqs,
+> which is kinda MFD own irqs. They are unused at the moment.
+> 
+> See also [max77705 rework interrupt patches](https://lkml.org/lkml/2025/8/31/27)
 
-The root cause is the lockless lookup in __inet_lookup_established(). A
-concurrent lookup operation may not find any valid socket during the brief
-period between the removal of the request_sock and the insertion of the
-child sock.
+This would be useful to mention as a dependency..
 
-To fix this and keep lockless lookup, we need:
-1. Insert the child sock into the ehash bucket first.
-2. Then remove the request_sock.
+Perhaps >this< patch should be part of that series you referenced, too
+(or they could come together with this DT change even)
 
-This ensures the bucket is never left empty during the transition.
-
-The original inet_ehash_insert() logic first attempted to remove osk,
-inserting sk only upon successful removal. We changed this to:
-check for osk's existence first. If present, insert sk before removing osk
-(ensuring the bucket isn't empty). If osk is absent, take no action. This
-maintains the original function's intent while eliminating the window where
-the hashtable bucket is empty.
-
-Both sockets briefly coexist in the bucket. During this short window, new
-lookups correctly find the child socket. For a packet that has already
-started its lookup and finds the lingering request_sock, this is also safe
-because inet_csk_complete_hashdance() contains the necessary checks to
-prevent the creation of multiple child sockets for the same connection.
-
-Fixes: 079096f103fac ("tcp/dccp: install syn_recv requests into ehash table")
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- include/net/inet_hashtables.h   |  5 +++--
- net/ipv4/inet_connection_sock.c |  4 ++--
- net/ipv4/inet_hashtables.c      | 31 ++++++++++++++++++++++++++-----
- net/ipv4/tcp_ipv4.c             |  2 +-
- net/ipv6/tcp_ipv6.c             |  2 +-
- 5 files changed, 33 insertions(+), 11 deletions(-)
-
-diff --git a/include/net/inet_hashtables.h b/include/net/inet_hashtables.h
-index ac05a52d9e13..e70415a74ebc 100644
---- a/include/net/inet_hashtables.h
-+++ b/include/net/inet_hashtables.h
-@@ -288,9 +288,10 @@ void inet_hashinfo2_init(struct inet_hashinfo *h, const char *name,
- 			 unsigned long high_limit);
- int inet_hashinfo2_init_mod(struct inet_hashinfo *h);
- 
--bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk);
-+bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk,
-+		       bool add_first);
- bool inet_ehash_nolisten(struct sock *sk, struct sock *osk,
--			 bool *found_dup_sk);
-+			 bool *found_dup_sk, bool add_first);
- int inet_hash(struct sock *sk);
- void inet_unhash(struct sock *sk);
- 
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-index cdd1e12aac8c..b52797ab5cea 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -1135,7 +1135,7 @@ static void reqsk_timer_handler(struct timer_list *t)
- 		if (!nreq)
- 			return;
- 
--		if (!inet_ehash_insert(req_to_sk(nreq), req_to_sk(oreq), NULL)) {
-+		if (!inet_ehash_insert(req_to_sk(nreq), req_to_sk(oreq), NULL, false)) {
- 			/* delete timer */
- 			__inet_csk_reqsk_queue_drop(sk_listener, nreq, true);
- 			goto no_ownership;
-@@ -1172,7 +1172,7 @@ static bool reqsk_queue_hash_req(struct request_sock *req,
- {
- 	bool found_dup_sk = false;
- 
--	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk))
-+	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk, false))
- 		return false;
- 
- 	/* The timer needs to be setup after a successful insertion. */
-diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-index b7024e3d9ac3..2c3baba5c9f4 100644
---- a/net/ipv4/inet_hashtables.c
-+++ b/net/ipv4/inet_hashtables.c
-@@ -702,7 +702,7 @@ static bool inet_ehash_lookup_by_sk(struct sock *sk,
-  * If an existing socket already exists, socket sk is not inserted,
-  * and sets found_dup_sk parameter to true.
-  */
--bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
-+bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk, bool add_first)
- {
- 	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
- 	struct inet_ehash_bucket *head;
-@@ -720,6 +720,26 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
- 	spin_lock(lock);
- 	if (osk) {
- 		WARN_ON_ONCE(sk->sk_hash != osk->sk_hash);
-+
-+		if (add_first) {
-+			ret = false;
-+			if (sk_hashed(osk)) {
-+				/* Add the sk to the hashtable before removing
-+				 * osk to prevent a transient empty state in
-+				 * the hash table during the TCP state
-+				 * transition from SYN_RECV to ESTABLISHED.
-+				 */
-+				__sk_nulls_add_node_rcu(sk, list);
-+				ret = sk_nulls_del_node_init_rcu(osk);
-+				WARN_ON_ONCE(!ret);
-+			}
-+			/* If osk is unhashed, it means two requests are
-+			 * holding the same osk and another thread has
-+			 * successfully inserted its sk into ehash. We do
-+			 * nothing and the caller will free the sk.
-+			 */
-+			goto unlock;
-+		}
- 		ret = sk_nulls_del_node_init_rcu(osk);
- 	} else if (found_dup_sk) {
- 		*found_dup_sk = inet_ehash_lookup_by_sk(sk, list);
-@@ -730,14 +750,15 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
- 	if (ret)
- 		__sk_nulls_add_node_rcu(sk, list);
- 
-+unlock:
- 	spin_unlock(lock);
- 
- 	return ret;
- }
- 
--bool inet_ehash_nolisten(struct sock *sk, struct sock *osk, bool *found_dup_sk)
-+bool inet_ehash_nolisten(struct sock *sk, struct sock *osk, bool *found_dup_sk, bool add_first)
- {
--	bool ok = inet_ehash_insert(sk, osk, found_dup_sk);
-+	bool ok = inet_ehash_insert(sk, osk, found_dup_sk, add_first);
- 
- 	if (ok) {
- 		sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
-@@ -785,7 +806,7 @@ int inet_hash(struct sock *sk)
- 
- 	if (sk->sk_state != TCP_LISTEN) {
- 		local_bh_disable();
--		inet_ehash_nolisten(sk, NULL, NULL);
-+		inet_ehash_nolisten(sk, NULL, NULL, false);
- 		local_bh_enable();
- 		return 0;
- 	}
-@@ -1177,7 +1198,7 @@ int __inet_hash_connect(struct inet_timewait_death_row *death_row,
- 
- 	if (sk_unhashed(sk)) {
- 		inet_sk(sk)->inet_sport = htons(port);
--		inet_ehash_nolisten(sk, (struct sock *)tw, NULL);
-+		inet_ehash_nolisten(sk, (struct sock *)tw, NULL, false);
- 	}
- 	if (tw)
- 		inet_twsk_bind_unhash(tw, hinfo);
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index b1fcf3e4e1ce..b8448d8e50a6 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1834,7 +1834,7 @@ struct sock *tcp_v4_syn_recv_sock(const struct sock *sk, struct sk_buff *skb,
- 	if (__inet_inherit_port(sk, newsk) < 0)
- 		goto put_and_exit;
- 	*own_req = inet_ehash_nolisten(newsk, req_to_sk(req_unhash),
--				       &found_dup_sk);
-+				       &found_dup_sk, true);
- 	if (likely(*own_req)) {
- 		tcp_move_syn(newtp, req);
- 		ireq->ireq_opt = NULL;
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 9622c2776ade..a5bec9dd5844 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1540,7 +1540,7 @@ static struct sock *tcp_v6_syn_recv_sock(const struct sock *sk, struct sk_buff *
- 	if (__inet_inherit_port(sk, newsk) < 0)
- 		goto put_and_exit;
- 	*own_req = inet_ehash_nolisten(newsk, req_to_sk(req_unhash),
--				       &found_dup_sk);
-+				       &found_dup_sk, true);
- 	if (*own_req) {
- 		tcp_move_syn(newtp, req);
- 
--- 
-2.43.0
+Konrad
 
 
