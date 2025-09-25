@@ -1,261 +1,174 @@
-Return-Path: <linux-kernel+bounces-831793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF653B9D903
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6C4B9D909
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95064C1B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A301BC26A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 06:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6F22E0920;
-	Thu, 25 Sep 2025 06:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YOnxnDTU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D5C2D8798;
+	Thu, 25 Sep 2025 06:18:56 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78998219E8;
-	Thu, 25 Sep 2025 06:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC73219E8
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 06:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758781034; cv=none; b=P9bYcUUkpvDaFri1I7IQ+9AvYYDwjbx9ZbataewHDrAWlLbqq43hkWQcbnvHkq0fvVL8U6z/aOZHcIkM2slb2FhZEaM448hCZ9OrAmIo6cD4BLGLOoRrlfwICeM4NMRsP9WIEPFqRCGp3YE3WsKf/b0qg8huNVDj8fBxtZIEymc=
+	t=1758781135; cv=none; b=VlBwo082o4WoVnJeA1eo4D3ckFNK2ca/89jA4UJu8i/6zfpOG+tGYEbEclMmAtcizoAKSYFiC1sJVJUW0HWSuPM2BK2riLEYjI5cDyyVewHiJZ71geg2kyUTtiV+72EXc5taM+21tRAB+X17xZ1ihor0Ri7GReJSPi6EFU4Wr1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758781034; c=relaxed/simple;
-	bh=no9McvNQ9dwrmydNxDE878rNinVgQfTkTR2eEwoS+Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yda4t+19NrpOQGHTwAKiRqYrdpyeDD0b4Tr/7VmrOCjg5Duy3K3/6vZ3BX7jkvEvxbsp2KIdbWsqA0MoVdTRGnZPBjmVamKiKdgFO53rkoCRyj+EVCy3llm/C4y4eAiYrgMQFPhgNWT/yG0PEWpB+MiDj7q/aZQ8sHTra6LukmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YOnxnDTU; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758781032; x=1790317032;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=no9McvNQ9dwrmydNxDE878rNinVgQfTkTR2eEwoS+Cg=;
-  b=YOnxnDTUdqhJ+4MA6Yv1ixar9bjvLrG+z5qPLWYBBAOVmFM+yVM2kk8c
-   Onxe/HyKkYLDmK4q2Bie6oieoTxFPU/jdp9wkZ8SV76ugpFZfkfG00U9k
-   clC0MiwjNv0i3zwfqqNtHrTfjAiuXacp2DBs/RXBeSFAWsdNSPgDZes48
-   FIYwGyYLgHF8OaBbkozdDEVixw3/VbuqcrrcDiL6mxtRy8P8/h4zmLQha
-   3d/WcZS3iu2Y6dDNSnHL2xbk7Vcp9+oakfczHCZ3ADbYA+raUZFZBJJOA
-   H11vW/4BH6cgC93Bc4YQle/ZDeRby+T/WRnkX0XUiYiRDgO9eBTSYb/Yz
-   Q==;
-X-CSE-ConnectionGUID: VOrRnZ4xTl6BQESLbByYBA==
-X-CSE-MsgGUID: 8FpVRObNTCKgTC/jvJ5nqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="63716830"
-X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
-   d="scan'208";a="63716830"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2025 23:17:11 -0700
-X-CSE-ConnectionGUID: CKdBgEU7Tl2c1kZ2BI7ZZw==
-X-CSE-MsgGUID: QIB0xzXNSEabIqFmc+88Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
-   d="scan'208";a="177083021"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2025 23:17:04 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v1fHk-0004yD-0p;
-	Thu, 25 Sep 2025 06:16:57 +0000
-Date: Thu, 25 Sep 2025 14:15:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>, git@amd.com,
-	michal.simek@amd.com, alexandre.belloni@bootlin.com,
-	Frank.Li@nxp.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, pgaj@cadence.com,
-	wsa+renesas@sang-engineering.com, tommaso.merciai.xr@bp.renesas.com,
-	arnd@arndb.de, quic_msavaliy@quicinc.com, Shyam-sundar.S-k@amd.com,
-	sakari.ailus@linux.intel.com, billy_tsai@aspeedtech.com,
-	kees@kernel.org, gustavoars@kernel.org,
-	jarkko.nikula@linux.intel.com, jorge.marques@analog.com,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, radhey.shyam.pandey@amd.com,
-	srinivas.goud@amd.com, shubhrajyoti.datta@amd.com,
-	manion05gk@gmail.com,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Subject: Re: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accessors
-Message-ID: <202509251347.sb9SGhab-lkp@intel.com>
-References: <20250923154551.2112388-3-manikanta.guntupalli@amd.com>
+	s=arc-20240116; t=1758781135; c=relaxed/simple;
+	bh=PUPbjxQv8kMU69FrsEVh72mG8Sp8zwJ1brLH46mnIjE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=V1KWKfrVeveurW4khBhxq4gLjuxTjkQlIz/Vr/YxishgIcBtDlfoCQIeeTZK56g+WcvJi2xKLG1TNMh83+uMeUererTsRIomggvUFV9ovImjOE6FZdVT8IIVctfJKi2GVmWprMBJ1SLunL2eIeI3rXT8BYwYZPHl3+0r2MwI2D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-424c8578d40so7046925ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Sep 2025 23:18:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758781133; x=1759385933;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AORdxVdEw+FMUTpSZ+Op5PNnQoAu5H48nvLWrpjQM2k=;
+        b=CabYfMgQvbOJTnfB289c6+zSYSsQuk+bn/SkUP4eP32uFsAelFNxg1/Q4gvWjonk0l
+         QVWTaHmbqqBERt4Q/fNH+rtsvhj2yjwWfedI381sYyG81QNDD8FUyeE/xiChAk8rP7Ml
+         QyaMERGTF1zQpulbx+eVQyRZpO9vHyuxYqYOk69fXgid0hHBbMHg4QomZgj4NrJDcQBD
+         P/g9BnGemIA+zb8bRrHkNKeyI8yTAcuWdnlG2w8pdFhMxtZopBelP71DqosFr6iRxDEq
+         qLP9lMzYIYOBIFrrt9RgDRdoLiTWj3ESTN9N8c7ZIYAP0IrBOQbxojY/Pj2J+0rgpBR2
+         yr8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWHWOY/qgC+USc89PMeDJzfSxKBBJVAtqf6bcreXQwGU4KaDQduIorK4ReDY5IqUumjiquDsiwKqvmOO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSMmvvwhbNa7yLz4pepizpLGCoaZxaIKto87y1qPA7rRRuNMgz
+	PDh+kCn3B3kPO0mdFZSNxsXYVcwzZxsTxoR9FL2oWFpqTzlICfv04kSnmzfUJXsX2iZw9wgtz+/
+	gMC2SNsiqh9QgjVAODVLk1yIlM3LRj+ZhuZECDPHPubCnYTxFgevF7kfdpwo=
+X-Google-Smtp-Source: AGHT+IF1+xv/GxMsm20k5xsH4ilYNJY3FiSjgvBgJRQC68pXg5SAZFSedY0NmMBXrvI5dubZo8E+h+ZAa9PykvxQRRI0d/wBM89j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923154551.2112388-3-manikanta.guntupalli@amd.com>
+X-Received: by 2002:a92:2802:0:b0:3f2:b471:e617 with SMTP id
+ e9e14a558f8ab-4259563e04fmr27826695ab.25.1758781133128; Wed, 24 Sep 2025
+ 23:18:53 -0700 (PDT)
+Date: Wed, 24 Sep 2025 23:18:53 -0700
+In-Reply-To: <20250925061845.1276501-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d4decd.050a0220.25d7ab.0000.GAE@google.com>
+Subject: Re: [PATCH] hugetlbfs: fix lock imbalance in hugetlb_vmdelete_list
+From: syzbot <syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com
+Cc: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Manikanta,
+> #syz test: git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
 
-kernel test robot noticed the following build errors:
+"git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git" does not look like a valid git repo address.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master arnd-asm-generic/master v6.17-rc7 next-20250924]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Guntupalli/dt-bindings-i3c-Add-AMD-I3C-master-controller-support/20250923-234944
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250923154551.2112388-3-manikanta.guntupalli%40amd.com
-patch subject: [PATCH V7 2/4] asm-generic/io.h: Add big-endian MMIO accessors
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20250925/202509251347.sb9SGhab-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250925/202509251347.sb9SGhab-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509251347.sb9SGhab-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/powerpc/include/asm/io.h:962,
-                    from include/linux/io.h:12,
-                    from include/linux/irq.h:20,
-                    from arch/powerpc/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:11,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:8,
-                    from include/linux/cgroup.h:27,
-                    from include/linux/memcontrol.h:13,
-                    from include/linux/swap.h:9,
-                    from include/linux/suspend.h:5,
-                    from arch/powerpc/kernel/asm-offsets.c:21:
->> include/asm-generic/io.h:304:18: error: redefinition of 'readw_be'
-     304 | #define readw_be readw_be
-         |                  ^~~~~~~~
-   include/asm-generic/io.h:305:19: note: in expansion of macro 'readw_be'
-     305 | static inline u16 readw_be(const volatile void __iomem *addr)
-         |                   ^~~~~~~~
-   arch/powerpc/include/asm/io.h:517:19: note: previous definition of 'readw_be' with type 'u16(const volatile void *)' {aka 'short unsigned int(const volatile void *)'}
-     517 | static inline u16 readw_be(const volatile void __iomem *addr)
-         |                   ^~~~~~~~
->> include/asm-generic/io.h:319:18: error: redefinition of 'readl_be'
-     319 | #define readl_be readl_be
-         |                  ^~~~~~~~
-   include/asm-generic/io.h:320:19: note: in expansion of macro 'readl_be'
-     320 | static inline u32 readl_be(const volatile void __iomem *addr)
-         |                   ^~~~~~~~
-   arch/powerpc/include/asm/io.h:522:19: note: previous definition of 'readl_be' with type 'u32(const volatile void *)' {aka 'unsigned int(const volatile void *)'}
-     522 | static inline u32 readl_be(const volatile void __iomem *addr)
-         |                   ^~~~~~~~
->> include/asm-generic/io.h:351:19: error: redefinition of 'writew_be'
-     351 | #define writew_be writew_be
-         |                   ^~~~~~~~~
-   include/asm-generic/io.h:352:20: note: in expansion of macro 'writew_be'
-     352 | static inline void writew_be(u16 value, volatile void __iomem *addr)
-         |                    ^~~~~~~~~
-   arch/powerpc/include/asm/io.h:545:20: note: previous definition of 'writew_be' with type 'void(u16,  volatile void *)' {aka 'void(short unsigned int,  volatile void *)'}
-     545 | static inline void writew_be(u16 val, volatile void __iomem *addr)
-         |                    ^~~~~~~~~
->> include/asm-generic/io.h:363:19: error: redefinition of 'writel_be'
-     363 | #define writel_be writel_be
-         |                   ^~~~~~~~~
-   include/asm-generic/io.h:364:20: note: in expansion of macro 'writel_be'
-     364 | static inline void writel_be(u32 value, volatile void __iomem *addr)
-         |                    ^~~~~~~~~
-   arch/powerpc/include/asm/io.h:550:20: note: previous definition of 'writel_be' with type 'void(u32,  volatile void *)' {aka 'void(unsigned int,  volatile void *)'}
-     550 | static inline void writel_be(u32 val, volatile void __iomem *addr)
-         |                    ^~~~~~~~~
-   make[3]: *** [scripts/Makefile.build:182: arch/powerpc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1282: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +/readw_be +304 include/asm-generic/io.h
-
-   297	
-   298	/*
-   299	 * {read,write}{w,l,q}_be() access big endian memory and return result
-   300	 * in native endianness.
-   301	 */
-   302	
-   303	#ifndef readw_be
- > 304	#define readw_be readw_be
-   305	static inline u16 readw_be(const volatile void __iomem *addr)
-   306	{
-   307		u16 val;
-   308	
-   309		log_read_mmio(16, addr, _THIS_IP_, _RET_IP_);
-   310		__io_br();
-   311		val = __be16_to_cpu((__be16 __force)__raw_readw(addr));
-   312		__io_ar(val);
-   313		log_post_read_mmio(val, 16, addr, _THIS_IP_, _RET_IP_);
-   314		return val;
-   315	}
-   316	#endif
-   317	
-   318	#ifndef readl_be
- > 319	#define readl_be readl_be
-   320	static inline u32 readl_be(const volatile void __iomem *addr)
-   321	{
-   322		u32 val;
-   323	
-   324		log_read_mmio(32, addr, _THIS_IP_, _RET_IP_);
-   325		__io_br();
-   326		val = __be32_to_cpu((__be32 __force)__raw_readl(addr));
-   327		__io_ar(val);
-   328		log_post_read_mmio(val, 32, addr, _THIS_IP_, _RET_IP_);
-   329		return val;
-   330	}
-   331	#endif
-   332	
-   333	#ifdef CONFIG_64BIT
-   334	#ifndef readq_be
-   335	#define readq_be readq_be
-   336	static inline u64 readq_be(const volatile void __iomem *addr)
-   337	{
-   338		u64 val;
-   339	
-   340		log_read_mmio(64, addr, _THIS_IP_, _RET_IP_);
-   341		__io_br();
-   342		val = __be64_to_cpu((__be64 __force)__raw_readq(addr));
-   343		__io_ar(val);
-   344		log_post_read_mmio(val, 64, addr, _THIS_IP_, _RET_IP_);
-   345		return val;
-   346	}
-   347	#endif
-   348	#endif /* CONFIG_64BIT */
-   349	
-   350	#ifndef writew_be
- > 351	#define writew_be writew_be
-   352	static inline void writew_be(u16 value, volatile void __iomem *addr)
-   353	{
-   354		log_write_mmio(value, 16, addr, _THIS_IP_, _RET_IP_);
-   355		__io_bw();
-   356		__raw_writew((u16 __force)__cpu_to_be16(value), addr);
-   357		__io_aw();
-   358		log_post_write_mmio(value, 16, addr, _THIS_IP_, _RET_IP_);
-   359	}
-   360	#endif
-   361	
-   362	#ifndef writel_be
- > 363	#define writel_be writel_be
-   364	static inline void writel_be(u32 value, volatile void __iomem *addr)
-   365	{
-   366		log_write_mmio(value, 32, addr, _THIS_IP_, _RET_IP_);
-   367		__io_bw();
-   368		__raw_writel((u32 __force)__cpu_to_be32(value), addr);
-   369		__io_aw();
-   370		log_post_write_mmio(value, 32, addr, _THIS_IP_, _RET_IP_);
-   371	}
-   372	#endif
-   373	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> hugetlb_vmdelete_list() has a lock imbalance bug where lock acquisition
+> and release evaluate VMA conditions at different times, potentially
+> causing unlock to be called on the wrong lock or skipped entirely.
+>
+> The current code evaluates __vma_shareable_lock() and __vma_private_lock()
+> twice - once during hugetlb_vma_trylock_write() and again during
+> hugetlb_vma_unlock_write(). If VMA state changes between these calls
+> (due to unmap operations or concurrent access), the lock and unlock
+> paths may diverge, leading to:
+>
+> 1. Unlocking a lock that was never acquired
+> 2. Unlocking the wrong lock type
+> 3. Leaving a lock held
+>
+> This manifests as "bad unlock balance detected" warnings:
+>
+>   WARNING: bad unlock balance detected!
+>   trying to release lock (&vma_lock->rw_sema) at:
+>   hugetlb_vmdelete_list+0x179/0x1c0 fs/hugetlbfs/inode.c:501
+>   but there are no more locks to release!
+>
+> Fix this by saving the lock type and pointer when acquiring the lock,
+> then using the saved information for unlock, ensuring symmetric lock
+> operations regardless of any VMA state changes.
+>
+> Reported-by: syzbot+62edf7e27b2e8f754525@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=62edf7e27b2e8f754525
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> ---
+>  fs/hugetlbfs/inode.c | 32 +++++++++++++++++++++++++++++---
+>  1 file changed, 29 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 9e0625167517..2721ba2ee3f3 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -42,6 +42,10 @@
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/hugetlbfs.h>
+>  
+> +#define HPAGE_RESV_OWNER    (1UL << 0)
+> +#define HPAGE_RESV_UNMAPPED (1UL << 1)
+> +#define HPAGE_RESV_MASK (HPAGE_RESV_OWNER | HPAGE_RESV_UNMAPPED)
+> +
+>  static const struct address_space_operations hugetlbfs_aops;
+>  static const struct file_operations hugetlbfs_file_operations;
+>  static const struct inode_operations hugetlbfs_dir_inode_operations;
+> @@ -475,6 +479,9 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+>  		      zap_flags_t zap_flags)
+>  {
+>  	struct vm_area_struct *vma;
+> +	struct hugetlb_vma_lock *vma_lock;
+> +	struct resv_map *resv_map;
+> +	bool locked;
+>  
+>  	/*
+>  	 * end == 0 indicates that the entire range after start should be
+> @@ -484,8 +491,24 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+>  	vma_interval_tree_foreach(vma, root, start, end ? end - 1 : ULONG_MAX) {
+>  		unsigned long v_start;
+>  		unsigned long v_end;
+> -
+> -		if (!hugetlb_vma_trylock_write(vma))
+> +		vma_lock = NULL;
+> +		resv_map = NULL;
+> +		locked = false;
+> +
+> +		if (__vma_shareable_lock(vma)) {
+> +			vma_lock = vma->vm_private_data;
+> +			if (vma_lock && down_write_trylock(&vma_lock->rw_sema))
+> +				locked = true;
+> +		} else if (__vma_private_lock(vma)) {
+> +			resv_map = (struct resv_map *)((unsigned long)vma->vm_private_data & ~HPAGE_RESV_MASK);
+> +			if (resv_map && down_write_trylock(&resv_map->rw_sema))
+> +				locked = true;
+> +		} else {
+> +			/* No lock needed for this VMA */
+> +			locked = true;
+> +		}
+> +
+> +		if (!locked)
+>  			continue;
+>  
+>  		v_start = vma_offset_start(vma, start);
+> @@ -498,7 +521,10 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+>  		 * vmas.  Therefore, lock is not held when calling
+>  		 * unmap_hugepage_range for private vmas.
+>  		 */
+> -		hugetlb_vma_unlock_write(vma);
+> +		if (vma_lock)
+> +			up_write(&vma_lock->rw_sema);
+> +		else if (resv_map)
+> +			up_write(&resv_map->rw_sema);
+>  	}
+>  }
+>  
+> -- 
+> 2.43.0
+>
 
