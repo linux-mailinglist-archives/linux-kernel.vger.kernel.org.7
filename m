@@ -1,176 +1,204 @@
-Return-Path: <linux-kernel+bounces-832014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875D8B9E24F
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:55:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D101B9E252
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 198454E25E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F834A5DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 08:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58425278157;
-	Thu, 25 Sep 2025 08:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FBA277CA4;
+	Thu, 25 Sep 2025 08:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I0HDD/DB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jzxm3Rgj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T7Fq3lCl"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1CB2727F0
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F8325DD0B
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790524; cv=none; b=tzS47yEXHOWGYCPwGVK1S84pnJ9mtES6B+l06S6T7M4M5sRtBtQX22PMTTg/sgIYK+FHJnrycJueCiDUB5kA89yLMXkqBnPHUEBACxkUbkLnYPGqbCTdx5L3bF05Ik2JJl2JRfe3e5lviicZRt7j8NNcY7Hl7MdPlyKB3yiwIPs=
+	t=1758790562; cv=none; b=AzpYMcdYiMq8u7aJi7MlOzYTvEP5+VL93XQtTE04d4BjL5yXcyYh5tdqemaWF9R/ec/0CSuvQ3ucxPewdxh85HTW2z9BI7RpksnpQwnwr4+cWJrfFUfs/1OH/zoGnN262d+IzMUouKpVfWLPyoO+ors4pkS+DyFdTIXDZRAEOTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790524; c=relaxed/simple;
-	bh=M2AYEHrw8ON1weorljHYel0WVHsdSWKZ5IMMbfzQoZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qv4bcW8tdOfVt9eCTfi0dTFGthMfqHSAal/4FIRkoBES9xu/npPEMdwROn/ZhxmCNQvC8BD2uJ1lhfh9kp7CATOJ+Fgr+PcnBtPFFBIg1pbnoAM6MPwoNTFmNo7Lhym/yAmtnsiVIvC4StXUymhskrVnkvSms3IXVK98C4J1TJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I0HDD/DB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758790522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vIdozAElu728Q2YAT29hpoWcoxXkb/so7CcmQuDvfV0=;
-	b=I0HDD/DBxhkpzL6EDuWfH0B/XIlsg9VfS12ZvmoJbRzu3/oMuShSTk/iTmVRT2cgLzC3jl
-	Z0m+sz3Twt+QuVXBo+M6YTsxbh4cfMfwemm6bF00RT4GMXaXceXAehF4eN80umWXU6V2EO
-	kyKsPC/jI4rD3xdqs+Xvi3nzdK8Dv74=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-2uA5s7wdOriUVVukbKxxRg-1; Thu, 25 Sep 2025 04:55:19 -0400
-X-MC-Unique: 2uA5s7wdOriUVVukbKxxRg-1
-X-Mimecast-MFC-AGG-ID: 2uA5s7wdOriUVVukbKxxRg_1758790518
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso5563195e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 01:55:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758790518; x=1759395318;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vIdozAElu728Q2YAT29hpoWcoxXkb/so7CcmQuDvfV0=;
-        b=Mk3tOs4wjrX6HCM8ZiF0Mk1twsX03L4VSr3uvtbBw7w5fQ76H/46WUzRUmY98vzRAL
-         G4c7u5uZazsRGrfyyly2Mfi0vEkwRR5vgdjPaCHsWrWbFvsNy8+PMkYAhPHpBZGe+n0C
-         Er+vAMIVmZ9MBELXm/YpLYPxeywYOIj0bOPtV9NuO8DEFWPpx9+tNazl/sPnzzpy809W
-         A7rAuRy/+G2MhglwoIH75ck8UBjlFHJp+5sEQ6lOo1cgAtGkAPqy5zoLynT/a+bsaKlt
-         ZEqbqNpbRoPbtPwhSSKd+Z110YaTnfcyLYL5EUxsQzk+x6kw/+1PSkf5XnPaqCK5VLk0
-         8d7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXEc37MAUngks/4DXVNc+qtWOOSRPNxnqDM+hmvaZ91YNMYZciZqSTSkV8wOq+UpQnt/TUJZnsJHRN+lsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvOtdizB5dWGYjQHXRhyVby2QWn0D/XlH6M00KBnZICwf7zSpf
-	DC4ztNafuIiwfsjH3kYmIKPVw7iFHBnDGiV1LevNiFaiG7y8ipoaoKiRSvU0XSq2Pxutio7/RXp
-	d+pzns7rj2C2FabMpgbPGKrHKl8McbPKYEiGKs6hxO9l7IF3Ci/s8j24w0z+4bRnZ3Q==
-X-Gm-Gg: ASbGncv8+Q/RC217LjZNqlV210SaEPPqXzhlf6pzyIfxgM47uucEJ8KXBpkpc43gvji
-	Tk6q017M+0FMAZbPCkklK3cq3Hwnh1ZuPonKwAqAtxwW7NKjuXJa7uSTcfQV2LXYOYbFoTrBo5F
-	aKU/AbpLSLg12/HCmUq2GwEeTqfpyey21I5hfiuvXLRRePjiHThR9z0PvcvSZOCXx4MoPkFVTnE
-	de6a+T1mr1ZFzeWh3+/oQ5bhXTHEbK5PO7p1pLn5Ct+anY3rPo/UCDhEDWzSm52gxmNw27wUAEZ
-	eeXwzufnS/zj8VhfDIBcrPSnqY9vLEx476sr5UUO3ZgK3zEA+l8gMq2Oll+dGYqYKXczjl/3tF2
-	ra4/ixOqD1uGWOP2Qpt97kbYeyL5wBdgWeOb2cqKWXaJw+EFsx8KKKO/tKl99Pl9+LgT2
-X-Received: by 2002:a05:600c:1ca5:b0:46e:2637:d182 with SMTP id 5b1f17b1804b1-46e32a08feamr31537635e9.28.1758790518235;
-        Thu, 25 Sep 2025 01:55:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEum28AGUsf/Leenhf3W6Y9umKKEHuPguoH/ZgJbvMiqBUf3p8uOrHXnJzc2Xma2XLm2+kAOQ==
-X-Received: by 2002:a05:600c:1ca5:b0:46e:2637:d182 with SMTP id 5b1f17b1804b1-46e32a08feamr31537295e9.28.1758790517769;
-        Thu, 25 Sep 2025 01:55:17 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31ea3sm66391125e9.12.2025.09.25.01.55.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 01:55:17 -0700 (PDT)
-Message-ID: <f93d4271-b601-4fb5-8d95-2e1caa7efe5f@redhat.com>
-Date: Thu, 25 Sep 2025 10:55:15 +0200
+	s=arc-20240116; t=1758790562; c=relaxed/simple;
+	bh=Cy0kYBZqHdGHxpE0apISaiV+HJQVzFre48GA2QNlK48=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=r/l4CE5HDDPAJAVlZ8AhwKUZaraAPafBbkj7URPcr0ofQOOCNj2qaA0RFwjuY74WSxIJ7XZl+Xi6pqPn0/9PjVdn5bw9d+Cp6zhlywaw/3WkB9m42DVy5x3TL34nqeCNKzEw2ZW2+QENcQlWt1BBHZMf59oclxnJQBNsLQTRDrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jzxm3Rgj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T7Fq3lCl; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id BC2FE1D001A0;
+	Thu, 25 Sep 2025 04:55:58 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 04:55:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1758790558;
+	 x=1758876958; bh=arJvu+z/2kX0g5MUfgkzJqfIjLRwEItHD4NVpoLyF24=; b=
+	Jzxm3Rgj9hiVTs0SxBBymRmYk1qyueD/fd9xwJiuNVmj1EAcSCZxIbQwhTCUYCSS
+	3Z0SrBEcovNlYScke2YJF6dEeL+Lo8/AKpVPumhextRIXAqxydKlJdNGKB2qE/hg
+	1pNOEF7BZPar3H/RwTW4AYdmpgh8ZL2c8PopVykX0DRroK8DVoPI8LHaxOLSH9Wp
+	BhPvWvGgV1wn3qeovCuxN/bnq6z42OeHKUfJ0Ci883poOKHn4egIVwogadYH8Cco
+	dlL5hnpDf9Wd/qhWv1fqDDvsgUVVnbNBSloT4jKqvlruqRhiq2rMIRMbbQN+Rmdi
+	v1PuQxAXZGBEI/q4X8epmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758790558; x=
+	1758876958; bh=arJvu+z/2kX0g5MUfgkzJqfIjLRwEItHD4NVpoLyF24=; b=T
+	7Fq3lClrpXrp84PwgUQBu6H3bXaY78toWKbGRIJX622U6cFjVSap5tNsP4LYQ4cZ
+	0ovOTk7Cya0Nd6pqkggcru5ZnqKZECNIzohAlYdUPgad36DSNcVSnJtV5alFy9yp
+	IbL5wteq/O2GIwuPdU2DWkRSPvxTS2ml4Ftj5g6a81qCV2JCphCN6q6o4b985zt2
+	XDCpadf5oKEZ7c5pNrwzQTHk3Na3uJmHEbNCTVf7DzPBi4RIZ9q4mF9vByAWBFn3
+	hfIzPv87sXWoBO7dqPGSZlL+qnL2NUUjRuLshX5Jvh2RohxLRahY1sbUw+dKMdYt
+	175tXd+oWmwMl7SpfcSxg==
+X-ME-Sender: <xms:nQPVaOwH1-jHIh8ChhbbGAM3HLEJWLtr8BKkhHMwkn84POiB5DR7dg>
+    <xme:nQPVaFE7yyWqpQIhvMHwOMH4oeaJ47bkwx5ypvkdtzfFYwIQ2Dz2nAMfWCrgfjDg1
+    jiNI5f7CEGsNFb3pawnWrIgJ_AHtGrRb-7GG8Z0Qmt8wlWJ_piFNgU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeiiedtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepghhithesrghmugdrtghomhdprhgtphhtthhopehmrghnihhkrghnth
+    grrdhguhhnthhuphgrlhhlihesrghmugdrtghomhdprhgtphhtthhopehmihgthhgrlhdr
+    shhimhgvkhesrghmugdrtghomhdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghsse
+    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhi
+    segsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgrshhtmhgrihgvrhesghhmrghilh
+    drtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtth
+    hopehfrhgrnhhkrdhlihesnhigphdrtghomh
+X-ME-Proxy: <xmx:nQPVaEWi6rAMfps2t2_tX4U6WpDbbLxyOJ5Gomp_gIb4csnBwGAPUg>
+    <xmx:ngPVaEfoMYYselD9_6jbdApxbYjmONEoBGHPmUdhgm_bqLXtKPXObQ>
+    <xmx:ngPVaFbLLn3XAgW5nZv04-eUp81pjABb5vzjGZi6Ve58MHXppNZrZQ>
+    <xmx:ngPVaINCFRz6QpcdmmeCDOJ8y9uL8qjLFcVpgV8C0IN3oLIxa4in3A>
+    <xmx:ngPVaI8i-wydrm3tFx7W3qQdTaKhRqvl5XmXssapJckfJ6RdD1oQ_FrI>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DB2F4700065; Thu, 25 Sep 2025 04:55:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drivers/base/node: merge unregister_one_node() and
- unregister_node() to a single function.
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Oscar Salvador <osalvador@suse.de>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Mike Rapoport <rppt@kernel.org>,
- Dave Jiang <dave.jiang@intel.com>
-References: <cover.1758736423.git.donettom@linux.ibm.com>
- <c99d97e253378455f1b3b7bec5b0c830d4e73074.1758736423.git.donettom@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <c99d97e253378455f1b3b7bec5b0c830d4e73074.1758736423.git.donettom@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: AnQDLTKpvobg
+Date: Thu, 25 Sep 2025 10:55:27 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Manikanta Guntupalli" <manikanta.guntupalli@amd.com>,
+ "Jorge Marques" <gastmaier@gmail.com>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Jorge Marques" <jorge.marques@analog.com>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Frank Li" <Frank.Li@nxp.com>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "git (AMD-Xilinx)" <git@amd.com>, "Michal Simek" <michal.simek@amd.com>
+Message-Id: <f2171867-f0d4-49d3-b5b1-8467d9721c67@app.fastmail.com>
+In-Reply-To: 
+ <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+References: <20250924201837.3691486-1-arnd@kernel.org>
+ <2wtpklapw5ogsevuvk2l4ngvw7hymer2y4cc454h47u2d7tq44@4mknmpk5yzil>
+ <DM4PR12MB6109367F36487B582ED8EA968C1FA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Subject: Re: [PATCH] [v2] i3c: fix big-endian FIFO transfers
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 24.09.25 20:40, Donet Tom wrote:
-> unregister_one_node() and unregister_node() are small functions.
-> This patch merges them into a single function named unregister_node()
-> to improve code readability.
-> 
-> No functional changes are introduced.
-> 
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> ---
+On Thu, Sep 25, 2025, at 09:37, Guntupalli, Manikanta wrote:
+>
+> This patch fixes the sub-word transfer case on big-endian kernels, but 
+> it still does not address the scenario of little-endian kernels 
+> accessing big-endian FIFOs.
+>
+> With the current version, i3c_writel_fifo() and i3c_readl_fifo() only 
+> work when the FIFO has the same endianness as the CPU. On platforms 
+> such as the ZCU102 (Zynq UltraScale+ MPSoC, Cortex-A53, little-endian), 
+> the I3C FIFOs are big-endian, and this patch alone is not sufficient - 
+> transfers fail in that configuration.
+>
+> We have validated this on ZCU102, and the mismatch between LE kernel 
+> and BE FIFO is still an issue.
 
-LGTM with the description adjusted and "extern" dropped
+Hi Manikanta,
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Thanks a lot for testing my patch and the description of
+how you tested it. I think there is still a communication
+problem because the term "big-endian FIFO" makes no sense
+to me.
 
--- 
-Cheers
+If you need an extra byteswap on a little-endian arm64 kernel,
+what you have is what I would describe as a "byte-reversed FIFO",
+presumably as the result of a peripheral that was initially
+designed for big-endian MMIO access, but then adapted for use with
+little-endian readl() helpers by adding a data swizzle in front
+of each MMIO access including both the MMIO registers and the FIFO.
 
-David / dhildenb
+The result of that is that FIFO data comes out reversed in readsl(),
+but does so on both little-endian and big-endian arm64 kernels,
+because the hardware byte-reverse remains in place regardless of
+the CPUs internal state.
 
+If I'm interpreting this correctly, the function you'd
+actually need to make the driver work on both big-endian
+and little-endian (arm64) kernels would look roughly
+like
+
+static inline void i3c_writel_fifo_bytereversed(void __iomem *addr,
+                         const void *buf, int nbytes)
+{
+        /*
+         * byteswap each 32-bit word to work around FIFO quirk.
+         * Note: this is different from iowrite32be(), which
+         * would only swap on little-endian kernels.
+         */
+        while (nbytes >= 4) {
+                __raw_writel(swab32p(buf), addr);
+                buf += 4;
+                nbytes -= 4;
+        }
+
+        if (nbytes > 0) {
+                u32 tmp = 0;
+
+                memcpy(&tmp, buf, nbytes);
+                swab32s(&tmp);
+                __raw_writel(addr, &tmp, 1);
+        }
+}
+
+The idea here is to have a function that works the same
+way as i3c_writel_fifo() but instead of never swapping the
+FIFO data, it would always swap it regardless of the CPU
+state, making it portable to (most of) the architectures we
+support in Linux. In your version of writesl_be(), the
+swap would happen on little-endian kernels but not happen
+on big-endian kernels, which is inconsistent with the
+documented writesl() behavior, and still makes no sense to
+me conceptually. 
+
+I think the i3c_writel_fifo_bytereversed() function would
+be obscure enough that we don't need it (or the
+underlying writesl_bytereversed() helper) and could
+be part of your own driver as you had in the original
+versions, but that is something for the i3c maintainers
+to decide.
+
+Are you able to test big-endian arm64 kernels to verify this?
+Linux-next now has a patch to disallow that configuration,
+but you should be able to still use v6.17 and earlier if you
+have access to big-endian userspace.
+
+     Arnd
 
