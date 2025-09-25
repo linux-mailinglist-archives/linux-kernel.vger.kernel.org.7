@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-833172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA4ABA1594
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84300BA159D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 22:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC677405DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C079B3B69B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 20:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BE5303A14;
-	Thu, 25 Sep 2025 20:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAF63128C0;
+	Thu, 25 Sep 2025 20:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Da12jCvK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wj5nX/GA"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04A623B63E
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB582741A6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758831855; cv=none; b=PGPZh8W0clIPderI00KSQDDNxnYryvZt7srLuvd21lSAbzryWcl/vX7K/XgqT/IHpcH76da9uDO7GhnDg2LqHao84fAk0L6ssOApInuaKOsFa3rO9BSUWz2aphy+hYON++zV6bQuDrk9Fagf/qAue5hQmfUHPj7XBEBHin2QvJA=
+	t=1758832003; cv=none; b=Tg8AXQXOfIguRPEn1nEYbSEY3gHuyRTZqnuUQWC/ht9GdyLTlDLK3ALNd8JWlTVBQNfD+kyN9p9Wjr5FqE7xFW3IOPk5W08tQSVRkyxqIKnTVC5B7nIFRL4AeEWlpiUV04892iRjhH6fnu/4a4ET78ZdGvcSq+WZ3PbhNVvaUsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758831855; c=relaxed/simple;
-	bh=slC/4P0RsWxy7aIL8063QZr9t5aaGLRX+ts628BnJrU=;
+	s=arc-20240116; t=1758832003; c=relaxed/simple;
+	bh=NIugp2fbJWeDznKGvAEJerKZJQxZbeRNgyq7Txs6LEY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkEauIN63HmOmSQXEQf6V8JfWI36rIqSeD5UmGkGDMf7G0t1GIeWyuGd1sKK6uA48YrtuNJZoGLz1wgj8ov5pIaLYdxbj8eBTFBFUchLg2OZcdHMgSmCAGdT+wfjHNwqX22plGZUUyMlTcaiV4TsYUUtwt24r1MYntX3I1WvBKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Da12jCvK; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758831854; x=1790367854;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=slC/4P0RsWxy7aIL8063QZr9t5aaGLRX+ts628BnJrU=;
-  b=Da12jCvKxLXDQDu5nBnyRl7g3a/TqGaGDzPIBKXBVtt3WFH3FE4KKixF
-   v1vHMHehsusalX+lbJ95JB+Zk89EQVRG0MKCnjPQW2yEKBR72Iyjt4euE
-   Wg2+jS2x14SJUy2xcb7H6KWN0xJdLrr9YNb8qDgff4XzAQCBTpbglHBpI
-   ZSRaEZx9rRzVKXQiEkxUZ9YaKuFcsLdHbUmOI09TI2vXXOm/TpFB2qmFf
-   zW9ChVyMzXk+rTpJWBXfayo3ztHsOohHnbY06VHNCreP44lzuFDuBO6ie
-   CTkg6WliKimieQ9rLIgVPtfkoMJJ/HcmrxQnhPgnjGbUYKM44HV/tPd0F
-   g==;
-X-CSE-ConnectionGUID: VHmpSr16RUaq4hBwIgby/w==
-X-CSE-MsgGUID: 07QvEic8SuqGwqNwipyCBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61085307"
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="61085307"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:24:13 -0700
-X-CSE-ConnectionGUID: 6gr1JL/yQKiAf+2CVcC66A==
-X-CSE-MsgGUID: 4LgWa1IfS9mUPDKobq41Jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="176557599"
-Received: from ray2.jf.intel.com (HELO [10.24.81.144]) ([10.24.81.144])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 13:24:12 -0700
-Message-ID: <c04d4c9d-e868-4883-af92-26f142bc84be@intel.com>
-Date: Thu, 25 Sep 2025 13:24:12 -0700
+	 In-Reply-To:Content-Type; b=bQYwszcZrprDGDQmMgDCzh9aO9cD8UMVwXumWJ4ahyzr1cc6zZR+UrkpAngiOn4ALknFfoehHCbsp3xMHYE/tAzPV16SZsIxHeOe8gXMg5IiBojCGfFZaDNGFgqTOL8QDteXFHY9dw8TV01NDi0CKvuTmnHuJX+FfNJ39M4piNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wj5nX/GA; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7939ac99c29so1321698a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 13:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758832000; x=1759436800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mxfegnmNEJxxDs3mqI/l4EZdUjsV9AajOSMpQHLr4h4=;
+        b=wj5nX/GAe1db5/2yCHZHlQtS98ijNq+MXB8sdoth43a1XzgVzKLCtiw+NvmlqgJJYc
+         qqyj0ofiV6nxUFOHVvWbMAr4rtKTvOHhouHaJwJ5RreeCZEX4a5d3SmANjBUBKkDTfzk
+         JTvLLSu/4IPP4cGO8MI9CT9ct4BK1SknMPYOXCXiUEyof8hWEjesyn3hH1TloCtLeO78
+         LQ1PgptMhv4UjtCe/VUSJUvTQoa81RGcAGg5DKRQpJet8ZD3XZLyQ9w+DGy5NMokWO2e
+         GTzkC0F4PbPiS4LKaX/6V6PgMKuylj1oWfl7Pk0Y1Bvx+XI6X004FHpeQLj0bkbT4+9e
+         CzQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758832000; x=1759436800;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mxfegnmNEJxxDs3mqI/l4EZdUjsV9AajOSMpQHLr4h4=;
+        b=mas4AU5gDfY7LDpEyHVXB4S6X/BdFinEgakITyk6YfJerMIM13mY/35jSKcCm8KgLz
+         3xZM2OqGkHNUiOkFto4yNS0w1AdC9utVH7jfik3r696YTVPYo9P+bWxUHndH02UoCKgt
+         rRHrE6hCZkXXTpYQpmnau2kFCY4fxg3Dzx3q7OkThw4HfBQvreF1og1O/3xWgIGk7yhE
+         cLdRS8Poorea2NSrskhhm3Shreflnc22UFOhIelxe0k/vD0MdjhcY5RgSAaNzYRnaH9L
+         wLwjU7YfT2SKUPLM1Qa/8K5cMDw0h1aSRtpi5lFSXFYwFp+fw8BuPfksdoAP347polkJ
+         2ybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSHNDqqiJMWeW8RBMVaU0w8YZ01vAafiF/4X0yZp8otm1EZe2GVkxx2sjImJaLjSS0OTXLskKQacF3Ne0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLwYBffdrwuJh9r0568g39pSZChX/iPw/GNZ9inmognzaVcS3L
+	wlnhCjsS7eK7kbpmOMOiIeLEx0DMx+3t15Oq6zQ8cyUkrdlS/xY+Fw6PpPGvEsFK2f8=
+X-Gm-Gg: ASbGncvmHKWOOQuCkbHF3kMygvpi+quozH0EKwLlTlNV5uCIu2kJ1luztHlwY2VptNe
+	8GYEJvqs0PbcLbGyfdRXSzzOdUWsj6EoR87E1WoHig28WPQhI+pAxv2rqoEmVzjKSkPT9DRnMA7
+	uVHRgT9IDS2Stsz0XAioVJD/tOtHQw6gQmkMngeQkZ6v3+Rscxmxm28J/SQ4MawsJ4qWPezMO3w
+	giFvmt1qaOULIxGURIj0aoSjzavgYGK8jJCWJcJAWeXQaHkWp0RQ0Dfdwj8YB4cIWUuT4qJA31i
+	ae84Wht4mPVpEEadCQyERnYxzli17NhWqH/Wfr4nU8OE9Q/ZfaxxFVg2n/TYUA+Lr/8kS4Wc67L
+	G+7Fe6Hxpch/8lAlIA+JLQ/NPIQBTDsPT8t3srEHI6daAFeYno5qfYfOWHaJVwoBZzkS9cTje
+X-Google-Smtp-Source: AGHT+IGR2wlvFPurlbBB+p/mOH+8U3zcrAxgD5zjtS2zL1ZgQH1ws/3KfE6l31vd4RAjlNXmRm6aWQ==
+X-Received: by 2002:a05:6830:2b0b:b0:758:6251:2e5c with SMTP id 46e09a7af769-7a04ee87769mr253143a34.31.1758831999994;
+        Thu, 25 Sep 2025 13:26:39 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:68ee:c62f:fd8:aec9? ([2600:8803:e7e4:1d00:68ee:c62f:fd8:aec9])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7a6dc805845sm230444a34.6.2025.09.25.13.26.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 13:26:39 -0700 (PDT)
+Message-ID: <49b24a0d-a2ac-4620-9a1e-a94e5a2db075@baylibre.com>
+Date: Thu, 25 Sep 2025 15:26:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,76 +81,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] Fix stale IOTLB entries for kernel address space
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v2 3/5] Add kunit tests for iio_divide_by_value()
+To: Romain Gantois <romain.gantois@bootlin.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <20250925-ltm8054-driver-v2-3-bb61a401a0dc@bootlin.com>
 Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250925-ltm8054-driver-v2-3-bb61a401a0dc@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/18/25 22:39, Lu Baolu wrote:
-> This solution introduces a deferred freeing mechanism for kernel page
-> table pages, which provides a safe window to notify the IOMMU to
-> invalidate its caches before the page is reused.
+On 9/25/25 7:37 AM, Romain Gantois wrote:
 
-I think all the activity has died down and I everyone seems happy enough
-with how this looks. Right?
+...
 
-So is this something we should prod Andrew to take through the mm tree,
-or is it x86-specific enough it should go through tip?
+> +static void __iio_test_iio_divide_by_integer(struct kunit *test, s64 numerator)
+> +{
+> +	int ret, result, val;
+> +
+> +	val = 42;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT, val, 0);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator, val));
+> +
+> +	val = -23;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT, val, 0);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator, val));
+> +
+> +	val = 0;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT, val, 0);
+> +	KUNIT_EXPECT_EQ(test, ret, -ERANGE);
+
+I would expect EDOM for divide by 0 rather than ERANGE. The function is
+undefined at that point.
+
+> +}
+> +
+> +static void iio_test_iio_divide_by_integer(struct kunit *test)
+> +{
+> +	__iio_test_iio_divide_by_integer(test, 2000);
+> +	__iio_test_iio_divide_by_integer(test, -2000);
+> +}
+> +
+> +static void __iio_test_iio_divide_by_fixedpoint(struct kunit *test, s64 numerator)
+> +{
+> +	int ret, result, val, val2;
+> +
+> +	/* positive >= 1 (1.5) */
+> +	val = 1;
+> +	val2 = 500000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_MICRO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * 10, 15));
+> +
+> +	val = 1;
+> +	val2 = 500000000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_NANO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * 10, 15));
+> +
+> +	/* positive < 1 (0.5) */
+> +	val = 0;
+> +	val2 = 500000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_MICRO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * 10, 5));
+> +
+> +	val = 0;
+> +	val2 = 500000000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_NANO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * 10, 5));
+> +
+> +	/* negative <= -1 (-1.5) */
+> +	val = -1;
+> +	val2 = 500000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_MICRO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * -10, 15));
+> +
+> +	val = -1;
+> +	val2 = 500000000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_NANO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * -10, 15));
+> +
+> +	/* negative > -1 (-0.5) */
+> +	val = 0;
+> +	val2 = -500000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_MICRO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * -10, 5));
+> +
+> +	val = 0;
+> +	val2 = -500000000;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_INT_PLUS_NANO, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64(numerator * -10, 5));
+> +
+> +	/* Zero */
+> +	val = 0;
+
+Odd to break the pattern an not have `val2 = 0;` here.
+
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_FRACTIONAL_LOG2, val, 0);
+> +	KUNIT_EXPECT_EQ(test, ret, -ERANGE);
+> +}
+
+...
+
+> +static void __iio_test_iio_divide_by_fractional_log2(struct kunit *test, s64 numerator)
+> +{
+> +	int ret, result, val, val2;
+> +
+> +	/* positive < 1 (123/1024) */
+> +	val = 123;
+> +	val2 = 10;
+> +	ret = iio_divide_by_value(&result, numerator, IIO_VAL_FRACTIONAL_LOG2, val, val2);
+> +	KUNIT_EXPECT_EQ(test, ret, IIO_VAL_INT);
+> +	KUNIT_EXPECT_EQ(test, result, div_s64((numerator << val2), val));
+
+My instinct would be to write it like this:
+
+	div_s64((numerator * 1024), 123)
+
+This follows how it was done in __iio_test_iio_divide_by_fixedpoint() and
+makes it easier to see that it matchs exactly the value in the comment.
+
 
