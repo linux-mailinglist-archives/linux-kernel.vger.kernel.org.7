@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-832265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CADB9EC56
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD8EB9EC7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11B957BB9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:43:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729022E60C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23532F7AA1;
-	Thu, 25 Sep 2025 10:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jBbXJq9A"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0702F998B;
+	Thu, 25 Sep 2025 10:40:52 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBC42EB871
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A352F83D6
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758796828; cv=none; b=HCY2cu/hQytNsPx0rnXLJtkxlBFuA0whQmzy/4KUV+cN8GyLKzLYKmyaMoCy+qjTiFwCPQRYDkDoe7Ni1iLIZxCbTxMVpUPYPPbctHjokViGoWU/rImVACy5QJW5NrVOxj2G2wkyV9cK+GJAINO4R/l5ChoDjc5jVqki+Yz78Qk=
+	t=1758796851; cv=none; b=RVdCnwHa3jqRfXlBkc5z8v75k2Vj6/wvpKjjCboeFisMxyQqt1J62l+PlaobMjlNDKi55n3bpApWonaDjztwlHzny3DwCNEK1sQa1NmizDxqCyAsNqRG3euUnjKDa9ZVaLviOiSpZBclr6//9gwa1w960Gsdoj+j4wpwdWmA4uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758796828; c=relaxed/simple;
-	bh=7K0kybRI4HZ4jK8C4ZbdHxQtenjrPucHPMRAKKj6/ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XoRrhDECmeOYomq73e8wXGHX95wTlznE32w7d7upsqg4Mdwez4PyBMfdNI/ohymEaouMzntbZPKddt4oO5Gwcw87TOSXOAaoi6LfxoxwL8Pwy0DJ1o6YIhpnktq3VxVP5bnJ2yRJs7pHuUQF6UQfoFL7zHpRvw9XpmOhLPe2LPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jBbXJq9A; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PACcMx019949
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hkrub1vjfp8/J5x0I8lwP41qVsopVVAqErZdeoHT7KY=; b=jBbXJq9A8X3vT/px
-	p8Yol/YmZPOKUckMtoJP3NoRKnA0SzIlKkDdBGUkgXDwwvhNg5ZgkbFy+z9HL3ev
-	vahRVXNh+BSY8B31EZcZE8062mRi1JFj+x/fqEG1ETpw/SXlIYGxq89XGnVEXley
-	YeCKN3zQMl67ONHAjkXYHBeQgsmzPb3rwjTn4slMZ6nrwlpRJX5sN1dmx+vVl/T7
-	/9KO/qy2sDJ3fN1NoPvIx5MsJ5OJhl5Ia1vAOGrBNy8fgPHhcX1yd9Hg9kbnjkQO
-	j9yn5wEtN/Yi4SADHGVI6GEq17I6tcxuj0kXO774qQVt4goCQGZxQHs8b6hBCeQm
-	YHx0Hw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49bjpe10kv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:40:25 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eae48beaaso867824a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:40:25 -0700 (PDT)
+	s=arc-20240116; t=1758796851; c=relaxed/simple;
+	bh=oiwtV+C9gdCEl24Qyk3NmomI6tNcuAu2jUlrUx8kxuA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EvyY4qw2hYyxOXT8XDzyQ+iiXQWwHjiJKgDfYNPRIG+XFLGdtghvhj7sGPGvtSnT4NskF1looN5OHUH0xkuLK6S//zdsIAI+4BrL8SmiSQ8mLs8HZqZo+ZLMi63X2h7hhivimW4hb7ssBT3x8tkr9uiuMIrQ7kKrndeXJY6RBcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-425703f5d96so8982435ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:40:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758796825; x=1759401625;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758796849; x=1759401649;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkrub1vjfp8/J5x0I8lwP41qVsopVVAqErZdeoHT7KY=;
-        b=ODa++0ClHLo+9kbqrrtu+IPiwaT1a9yrz3KWd9Og7E951Uqu2YgKVL1OgxdnbkQes2
-         CLpZdTCQVAn1j/1WQV107nkhwmwkujIWGwYEStvJO7YbDlJmBKQOvAdoKIun1l1Hfyzh
-         2lQNug3EqnayN2i2A7mr9TchRlXw3GQeyNvn8hXaWMuujLoA4YUdo/op3fuXP69CmRMV
-         8ji90sjviOj/ABj4z29CUzuDdyzrTT4nCG1QhzirySWVZu2tofAWzUuV11FAXEaHURRo
-         DKz/qHIDzyrdKA4yCMbQwDPViFRjIElpbManYJyS5nxEZ33QIksE8SB6IBtj1M10h5Il
-         k2eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFwxEDKrxQIXsj1eyG5gTHiIDFvX43OXBoc7YSxan7l1VsH2AoyqAKoYOpAAr4APgihFg1n0SjWXAZMVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ48qjff981O1pWW1B7vtm6RQU5SiMOggl2I/6QtJpAKJG0gGI
-	tnEDLzz015yV1Ru0zwplqEV/fqJfpeCeagoW1FuCSh8BScfVteQmVMPrwNI2Xrq/WbI8+NFTk9R
-	GiXJKL4GsrXoCL2ykkGEaoI8Ibtra3nQFdhw8/wMiD40VwxqTZKkgI08hGi1V6Coc69I=
-X-Gm-Gg: ASbGnctvx1ODmtgaEGWqXk8dVH1ky4FJ5q8htBL6MKOzQ2hn92BvTS2vEcQ2Bsu9DGc
-	mTLCJB62Wij/mIoXChmtxLIz6eQdsfe3EO6KcfUyceDQ5/DAzqXVDpeZkcaQU7zBVgQiPnfX58H
-	CsYuX/vlY4ZMrB7bOuMIosQRN5mscApLFwxOOdweG1+NePwX/FNX/RkapElsfmF47DbKz0vbO25
-	w1E5WATedAlGbvoqDOE+IkPJq7ASKdEgp37PRp/WfIPs4ElyU5wJMkJKVTki2gIzR9Qmjp7Vzdm
-	5DKBzn08eyXyV/9tp0N+75TGdeirRlQRi40BlrqC3d4fdwzm2fWXByeCPHIW59neBvoS0uDEe8Q
-	=
-X-Received: by 2002:a17:90b:1d82:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-3342a2c66cemr3725559a91.33.1758796824610;
-        Thu, 25 Sep 2025 03:40:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGA+HMhVlFvkRg4P3UZGYiYtHq2iFZKBbWgE6XeeuHnOxopWausReC6LBLc/123h2UNoU/UQ==
-X-Received: by 2002:a17:90b:1d82:b0:32b:9774:d340 with SMTP id 98e67ed59e1d1-3342a2c66cemr3725523a91.33.1758796824131;
-        Thu, 25 Sep 2025 03:40:24 -0700 (PDT)
-Received: from [10.217.219.207] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be2073dsm5353299a91.19.2025.09.25.03.40.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 03:40:23 -0700 (PDT)
-Message-ID: <41adeb71-f68f-4f50-a85f-5c7dfb5d587a@oss.qualcomm.com>
-Date: Thu, 25 Sep 2025 16:10:19 +0530
+        bh=AQ0jm3WguWLZA9RB1hvr02yC7fPUvdfzf1ZblUDKg7M=;
+        b=HnHOnKTBj9+yjWPCIt7JUqb2thtf5FiX7KNAmviVVy+LMJv2vrry0Uy2F0MJD4eG48
+         qWMWiD/CCgq5DkBirTI5booku9NAmFgTATYNVHFK8hhalE/3k3jFW9XOcetrzCknZFw+
+         pgjcRHv3YoH8CgQbOW4C1e58ojVirNKGzUVAPaRlHAWu7uMRCR/vzKeg9B9HQc6JaqT3
+         V3yG3e37QMuaCs20xuPstuqQunJj0Fqpcqk2z3JdbZWwxJoANS3lJhE9s97VbCvg9zWX
+         tSKQ+bfvslPYMylW7fZT1q9OlgkIgyNkQxrguhNbZVIX0vdserZ328PiFmtPkjM+3465
+         +P9A==
+X-Gm-Message-State: AOJu0YyUv8KIJLJ4wz/DX6VM/Vs/6a+tUe7uRUZq4boMkbucojIeUcHe
+	cy0tM7Bc7Q3ya44PfsUNvfdLmkeHBpbGwWKuo10UJUERnjGSCjlvjF8JvmhJn58c/uRDOXpswn+
+	fS1HI0ziIpPJ07ShwGPizMiN9yfcSNo/eG1PYdrhN9CkpTIkvDvRCrCKzuqE=
+X-Google-Smtp-Source: AGHT+IG/J2isZLtehVD7jgDzS4Mx5HiUeVLuEH2p0qmdoHdXPcUC7xGRss3zOTLf3JrFmutXAmL18MV5cMsrXpt2HrJYpDqPkTRr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 RESEND 0/2] i2c: i2c-qcom-geni: Add Block event
- interrupt support
-To: Andi Shyti <andi.shyti@kernel.org>,
-        Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-        Viken Dadhaniya
- <quic_vdadhani@quicinc.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
-References: <20250923073752.1425802-1-quic_jseerapu@quicinc.com>
- <eobfxgtssuiom2cuc2zlsvc2hhyi2jk7qb7zydgo4k5wwvxjlz@nksb3x6p5ums>
-Content-Language: en-US
-From: Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>
-In-Reply-To: <eobfxgtssuiom2cuc2zlsvc2hhyi2jk7qb7zydgo4k5wwvxjlz@nksb3x6p5ums>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: Vy7cO3Q5VtvOX01Df1SdOuR9ifgbbWiA
-X-Authority-Analysis: v=2.4 cv=Pc//hjhd c=1 sm=1 tr=0 ts=68d51c19 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=GtlKhm42p6TeGv8Q4b4A:9
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: Vy7cO3Q5VtvOX01Df1SdOuR9ifgbbWiA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDAyMCBTYWx0ZWRfX7E0yQgyYE/zQ
- ZnQw0TJqu0Z94WbD78ikTyAF4oKn/cz6aZH68o/5/6f6r02eDKrJdAkpTvsGMk1nVD3CWVQ1FL1
- TGhqC0hwWLRuSFO3SojbpsKy/jGt5iVtH1Y5mqxym2POJqj1XosNxzX/ImQbEF03Zjy7kxVJPvu
- tsc/UaICjXExYJuBTPw1e30eOXvaL0R4M8ld5UB++m3Ft1PDNTXzHhUov/zN6yayA2JDRPsBsND
- afSVChojSGl2XVn7SRbqHuaGbGsplZZPVqhMXZ0ti/HflDstErelGnYVlTFPa14b/HjXCU3e07J
- Xjqj2OL9mccTg9NGfAuKh18bLdkJDv2JsisSdsxk7wLbH4I0QEyvmY00dA4mLmmP/L/nR7LPgOZ
- EoL64iG1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 malwarescore=0 impostorscore=0
- spamscore=0 suspectscore=0 clxscore=1015 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509230020
+X-Received: by 2002:a05:6e02:1a23:b0:424:89fd:73d6 with SMTP id
+ e9e14a558f8ab-4259560a64cmr47164355ab.14.1758796849244; Thu, 25 Sep 2025
+ 03:40:49 -0700 (PDT)
+Date: Thu, 25 Sep 2025 03:40:49 -0700
+In-Reply-To: <68d26261.a70a0220.4f78.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d51c31.050a0220.3a612a.000b.GAE@google.com>
+Subject: Forwarded: [PATCH] hugetlbfs: skip VMAs without locks in hugetlb_vmdelete_list
+From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
-On 9/25/2025 4:58 AM, Andi Shyti wrote:
-> Hi Jyothi,
-> 
-> I'm sorry, but this is not a resend, but this is a v8. Other
-> than:
-> 
-> 1. commit log in patch 1: removed duplicate sentence
-> 2. use proper types when calling geni_i2c_gpi_unmap() inside
->     geni_i2c_gpi_multi_desc_unmap()
-> 
-> is there anything else?
-> 
-> Please, next increase the version even for tiny changes.
-> 
->> Jyothi Kumar Seerapu (2):
->>    dmaengine: qcom: gpi: Add GPI Block event interrupt support
-> 
-> We still need Vinod's comments here...
-> 
->>    i2c: i2c-qcom-geni: Add Block event interrupt support
-> 
-> ... and Mukesh and Viken's ack here.
-> 
+Subject: [PATCH] hugetlbfs: skip VMAs without locks in hugetlb_vmdelete_list
+Author: kartikey406@gmail.com
 
-Sure, I shall Ack it once your comments are addressed.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
 
-> Thanks,
-> Andi
+hugetlb_vmdelete_list() can call unmap_hugepage_range() on VMAs that
+have no associated lock, causing assertion failures in huge_pmd_unshare().
+
+The function hugetlb_vma_trylock_write() returns 1 (success) even when
+a VMA has neither a shareable lock nor a private lock. This allows
+processing to continue, but when unmap_hugepage_range() is called, it
+eventually reaches huge_pmd_unshare() which calls hugetlb_vma_assert_locked()
+to verify a lock is held. The assertion fails because no lock was actually
+acquired.
+
+This results in a kernel panic:
+
+  WARNING: CPU: 1 PID: 6594 Comm: syz.0.28 Not tainted
+  Call Trace:
+   hugetlb_vma_assert_locked+0x1dd/0x250
+   huge_pmd_unshare+0x2c8/0x540
+   __unmap_hugepage_range+0x6e3/0x1aa0
+   unmap_hugepage_range+0x32e/0x410
+   hugetlb_vmdelete_list+0x189/0x1f0
+
+Fix by skipping VMAs that have no lock before calling unmap_hugepage_range(),
+as the unmap operation requires lock protection.
+
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/hugetlbfs/inode.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9e0625167517..d2ecd83848e5 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -487,7 +487,8 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+ 
+ 		if (!hugetlb_vma_trylock_write(vma))
+ 			continue;
+-
++		if (!__vma_shareable_lock(vma) && !__vma_private_lock(vma))
++			continue;
+ 		v_start = vma_offset_start(vma, start);
+ 		v_end = vma_offset_end(vma, end);
+ 
+-- 
+2.43.0
 
 
