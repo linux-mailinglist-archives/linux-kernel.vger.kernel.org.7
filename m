@@ -1,223 +1,145 @@
-Return-Path: <linux-kernel+bounces-831606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-831609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFC1B9D1BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:13:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BA9B9D1E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 04:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E549174410
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE9838117C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 02:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E44A2E1EE4;
-	Thu, 25 Sep 2025 02:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1851E7660;
+	Thu, 25 Sep 2025 02:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="nNlNbc5X"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="iVKD7f62"
+Received: from mail-m21470.qiye.163.com (mail-m21470.qiye.163.com [117.135.214.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3942C3C01;
-	Thu, 25 Sep 2025 02:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E37BC2E0;
+	Thu, 25 Sep 2025 02:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.214.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758766397; cv=none; b=FvpQBSOC44wsq8yA1/s+bQpX1XTG08CpWOWijw80m/HR0lyTd8oF33r58f3jWv+ZTuT6t1mdzNWOKVLPj0p68KPZ1Ec7OZuTcKEXFhXipu1T956+N0WHUcFh2sph6C9mFqVSMUdsL0g33QJBrmHPM4DMvHNcBL4OTnU/abQ4t3Y=
+	t=1758766637; cv=none; b=OlV8VLrGSOQCxsrNezTB6vPsxMROhJT8qo4exFuZfqOj9gBXUR603VgaMNpFNTnc3hqZPzD2j2NLq8T23U3vFD+k1n8akWDtBz3xzFnnRgniPXaTc+RsXTc/Z/wGRKXhiDz+vnP6bb7NInF3ITLk5vFxHX6Qsls0L7zFJxAjTWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758766397; c=relaxed/simple;
-	bh=OhAre2Z9rOO8XeBh0JOrhxO9kGWuf5UAczuAjaqp1zs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZ7SRkifrEWe9Yan+ZsUBOv5A15XoAQsDui4Hf/JqVImkCWjNxRFydXDANbp1vClg8Ce9wqYbVSRbaW6K50N7MQOmqcT8TBgKT81mrquE7ZwYGMmyeTuP3zWsI0LbHTrhiaP5tn0aByTbbivqoER30tMmOYm5PJBB+6p6ATPiEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=nNlNbc5X; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58P0qGuj2287054;
-	Thu, 25 Sep 2025 02:12:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=z1lbB2kItJCHpHfzvikgmeAyfiFD5hbCeKvfrKvamV4=; b=
-	nNlNbc5Xt4cAA4DPGxmNvua0bUxBXyyCB6qCUXpSmmFE7T7orDgWwIYLpiAB3PPO
-	rOJpyXwx+xaQhpAMZmTlmOECsOi+MEOAnGhL44KW/ldgwhFc4wqfbmtl+2tAs++x
-	dR72NRzMAEANnIJ4kPWNzXnFurZwDHl53OTiCliLb5IciflQx2ajdHJckB+6/Qs8
-	GWWMoOgtOEc9ZP0eXgYsi4Ssr7JQOMAWTiBzGiwSsFR6/yPw3pQYmMpgNIT339a3
-	ubOUYaGX+twY9Rfdc2RMK+4/87xs0i6L7p+naNjsLq4dPG75yESdnis3/EsB1a71
-	2pSLy+6yrOzppa9pvD+KEA==
-Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 499hg1nspw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 25 Sep 2025 02:12:37 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Wed, 24 Sep 2025 19:11:56 -0700
-Received: from pek-lpggp9.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Wed, 24 Sep 2025 19:11:53 -0700
-From: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
-To: <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>, <wei.fang@nxp.com>,
-        <xiaoning.wang@nxp.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <alexandru.marginean@nxp.com>
-CC: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jianpeng Chang
-	<jianpeng.chang.cn@windriver.com>
-Subject: [v2 PATCH net 1/1] net: enetc: fix the deadlock of enetc_mdio_lock
-Date: Thu, 25 Sep 2025 10:11:52 +0800
-Message-ID: <20250925021152.1674197-1-jianpeng.chang.cn@windriver.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250924054704.2795474-1-jianpeng.chang.cn@windriver.com>
-References: <20250924054704.2795474-1-jianpeng.chang.cn@windriver.com>
+	s=arc-20240116; t=1758766637; c=relaxed/simple;
+	bh=2vZWpSzNYela03bxYQwOWzTgdlsvks2tQABzUql3sQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RcdFrcm21CP7J0Y1I5jG5faDCNfnhH80YQbnBReLh9cXLS+cUphrgM6XAtG+cpcpgimp/aMINgNMC8ZZnmL6kdPJbJiwkR6nB1H0TUO64lSvsFcpK7RRWg5ss2oSLncyGSRjeqFWnK47SPg/xdyfnGZwh1SG/zGeEJr521V9PsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=iVKD7f62; arc=none smtp.client-ip=117.135.214.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 23f942a34;
+	Thu, 25 Sep 2025 10:11:53 +0800 (GMT+08:00)
+Message-ID: <7cf14078-5d4f-4ced-bdcf-182371d0fd35@rock-chips.com>
+Date: Thu, 25 Sep 2025 10:11:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: mN4iCT_WMoREAoTWNYOI6nfXt4GHFHTM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDAxOCBTYWx0ZWRfX4aR8CMZR5npE
- Vt4GxXgGtE6fchY/RgoGBOajhhVVSuWdkKHTZL9+rpew0DVP9xcimttYpBM6ndGwssBzUbH9WDy
- PsanGfz3frnhu/widq80VEnPoaVaFCnOLBSL4uWGSE93Fb27vvvNaS1PRvIWAGvfHeJu1CU+fB/
- 5e0ni/9I2onvogQuABryb5wBQPHQZniaB6UN76UIuiEV/180fuonnAsCK4eYYWDWG1wjDB2R9wl
- 6XW9aFkGCYkTx/TdaBZORfRGYOCGHmv+wf7on+7VXCGXap5WFwaWXVXxTs9atzH3BnhioYsVkd/
- kesHsxI9HyDimmaG2HseP8T2l1mWiF1iCkg6/wLvtYqftubmvvaJuHixrmwGsE=
-X-Authority-Analysis: v=2.4 cv=Yfi95xRf c=1 sm=1 tr=0 ts=68d4a515 cx=c_pps
- a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
- a=yJojWOMRYYMA:10 a=t7CeM3EgAAAA:8 a=SUrsp2iW_RU2dMxpoQgA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-ORIG-GUID: mN4iCT_WMoREAoTWNYOI6nfXt4GHFHTM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-24_07,2025-09-24_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 phishscore=0 clxscore=1015 impostorscore=0
- spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 13/17] drm/rockchip: analogix_dp: Apply
+ &analogix_dp_plat_data.attach() to attach next bridge
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ dianders@chromium.org, m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20250912085846.7349-1-damon.ding@rock-chips.com>
+ <20250912085846.7349-14-damon.ding@rock-chips.com>
+ <2cu3ge6kjeibfznvt6c52xn2rp5zb3wk3pkb7gly34qrjlueem@7wqyowascpn5>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <2cu3ge6kjeibfznvt6c52xn2rp5zb3wk3pkb7gly34qrjlueem@7wqyowascpn5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a997ea4309303a3kunm542c945b85b02
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5LT1ZIGh1PTEMdGUpDSx5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=iVKD7f62uqeDZeWknCM50t4q+F59fTE4NNT58Y0093B07tMOfWOMy8AZVe6YOCr802f8Pf+EvfpvFbJEg2wVUjJcIBAH3suMh+XfmN4d3KXJXFGIQ0VcjzG3rZuDDk/5Md8wIwVl5DruEmeVZoWpbNKEhRNxy82ULkMok5Cfsmg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Ljhn8bif18aFps1rRdBClCGFFynJpfAeepmIW2TXY3A=;
+	h=date:mime-version:subject:message-id:from;
 
-After applying the workaround for err050089, the LS1028A platform
-experiences RCU stalls on RT kernel. This issue is caused by the
-recursive acquisition of the read lock enetc_mdio_lock. Here list some
-of the call stacks identified under the enetc_poll path that may lead to
-a deadlock:
+Hi Dmitry,
 
-enetc_poll
-  -> enetc_lock_mdio
-  -> enetc_clean_rx_ring OR napi_complete_done
-     -> napi_gro_receive
-        -> enetc_start_xmit
-           -> enetc_lock_mdio
-           -> enetc_map_tx_buffs
-           -> enetc_unlock_mdio
-  -> enetc_unlock_mdio
+On 9/12/2025 7:05 PM, Dmitry Baryshkov wrote:
+> On Fri, Sep 12, 2025 at 04:58:42PM +0800, Damon Ding wrote:
+>> There may be the panel or bridge after &analogix_dp_device.bridge.
+>> Add rockchip_dp_attach() to support the next bridge attachment for
+>> the Rockchip side.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> index 0784f19a2ed9..39f1ed293c75 100644
+>> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+>> @@ -164,6 +164,24 @@ static int rockchip_dp_powerdown(struct analogix_dp_plat_data *plat_data)
+>>   	return 0;
+>>   }
+>>   
+>> +static int rockchip_dp_attach(struct analogix_dp_plat_data *plat_data,
+>> +				     struct drm_bridge *bridge)
+>> +{
+>> +	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
+>> +	int ret;
+>> +
+>> +	if (plat_data->next_bridge) {
+>> +		ret = drm_bridge_attach(&dp->encoder.encoder, plat_data->next_bridge, bridge,
+>> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> 
+> Can this be handled inside analogix_dp_bridge's attach callback?
 
-After enetc_poll acquires the read lock, a higher-priority writer attempts
-to acquire the lock, causing preemption. The writer detects that a
-read lock is already held and is scheduled out. However, readers under
-enetc_poll cannot acquire the read lock again because a writer is already
-waiting, leading to a thread hang.
+I found that the &analogix_dp_plat_data.attach() callbacks of Rockchip 
+and Exynos sides are the same. It should be nice to handle the next 
+bridge attachment in analogix_dp_bridge_attach(), which would allow us 
+to remove the &analogix_dp_bridge_attach().
 
-Currently, the deadlock is avoided by adjusting enetc_lock_mdio to prevent
-recursive lock acquisition.
+> 
+>> +		if (ret) {
+>> +			dev_err(dp->dev, "failed to attach following panel or bridge (%d)\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static bool
+>>   rockchip_dp_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+>>   				   const struct drm_display_mode *mode,
+>> @@ -452,6 +470,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+>>   	dp->plat_data.dev_type = dp->data->chip_type;
+>>   	dp->plat_data.power_on = rockchip_dp_poweron;
+>>   	dp->plat_data.power_off = rockchip_dp_powerdown;
+>> +	dp->plat_data.attach = rockchip_dp_attach;
+>>   	dp->plat_data.ops = &rockchip_dp_component_ops;
+>>   
+>>   	ret = rockchip_dp_of_probe(dp);
+>> -- 
+>> 2.34.1
+>>
+> 
 
-Fixes: 6d36ecdbc441 ("net: enetc: take the MDIO lock only once per NAPI poll cycle")
-Signed-off-by: Jianpeng Chang <jianpeng.chang.cn@windriver.com>
----
-Changes in v2:
-change the fix line and subject.
-add blank line before return.
-
- drivers/net/ethernet/freescale/enetc/enetc.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-index e4287725832e..3ef0f2a35611 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-@@ -1558,6 +1558,8 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
- 	/* next descriptor to process */
- 	i = rx_ring->next_to_clean;
- 
-+	enetc_lock_mdio();
-+
- 	while (likely(rx_frm_cnt < work_limit)) {
- 		union enetc_rx_bd *rxbd;
- 		struct sk_buff *skb;
-@@ -1593,7 +1595,9 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
- 		rx_byte_cnt += skb->len + ETH_HLEN;
- 		rx_frm_cnt++;
- 
-+		enetc_unlock_mdio();
- 		napi_gro_receive(napi, skb);
-+		enetc_lock_mdio();
- 	}
- 
- 	rx_ring->next_to_clean = i;
-@@ -1601,6 +1605,8 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
- 	rx_ring->stats.packets += rx_frm_cnt;
- 	rx_ring->stats.bytes += rx_byte_cnt;
- 
-+	enetc_unlock_mdio();
-+
- 	return rx_frm_cnt;
- }
- 
-@@ -1910,6 +1916,8 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
- 	/* next descriptor to process */
- 	i = rx_ring->next_to_clean;
- 
-+	enetc_lock_mdio();
-+
- 	while (likely(rx_frm_cnt < work_limit)) {
- 		union enetc_rx_bd *rxbd, *orig_rxbd;
- 		struct xdp_buff xdp_buff;
-@@ -1973,7 +1981,9 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
- 			 */
- 			enetc_bulk_flip_buff(rx_ring, orig_i, i);
- 
-+			enetc_unlock_mdio();
- 			napi_gro_receive(napi, skb);
-+			enetc_lock_mdio();
- 			break;
- 		case XDP_TX:
- 			tx_ring = priv->xdp_tx_ring[rx_ring->index];
-@@ -2038,6 +2048,8 @@ static int enetc_clean_rx_ring_xdp(struct enetc_bdr *rx_ring,
- 		enetc_refill_rx_ring(rx_ring, enetc_bd_unused(rx_ring) -
- 				     rx_ring->xdp.xdp_tx_in_flight);
- 
-+	enetc_unlock_mdio();
-+
- 	return rx_frm_cnt;
- }
- 
-@@ -2056,6 +2068,7 @@ static int enetc_poll(struct napi_struct *napi, int budget)
- 	for (i = 0; i < v->count_tx_rings; i++)
- 		if (!enetc_clean_tx_ring(&v->tx_ring[i], budget))
- 			complete = false;
-+	enetc_unlock_mdio();
- 
- 	prog = rx_ring->xdp.prog;
- 	if (prog)
-@@ -2068,7 +2081,6 @@ static int enetc_poll(struct napi_struct *napi, int budget)
- 		v->rx_napi_work = true;
- 
- 	if (!complete) {
--		enetc_unlock_mdio();
- 		return budget;
- 	}
- 
-@@ -2079,6 +2091,7 @@ static int enetc_poll(struct napi_struct *napi, int budget)
- 
- 	v->rx_napi_work = false;
- 
-+	enetc_lock_mdio();
- 	/* enable interrupts */
- 	enetc_wr_reg_hot(v->rbier, ENETC_RBIER_RXTIE);
- 
--- 
-2.51.0
+Best regards,
+Damon
 
 
