@@ -1,90 +1,122 @@
-Return-Path: <linux-kernel+bounces-832839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E67BA08A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50624BA089F
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588E13BBD3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE253B84B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA12306B14;
-	Thu, 25 Sep 2025 16:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824F53054D3;
+	Thu, 25 Sep 2025 16:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2VsaC8b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="LbagwA8e"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B1D30597E;
-	Thu, 25 Sep 2025 16:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278AB3019C1
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758816285; cv=none; b=R0TWjRBAyhy2raQ0uyob4MUTp3wT0ZKaixWxur/kZntfq7miuF40IaazzryBGpMUTeECqIB8Wfa0e+cVuuubvVBEbkMG+uvCBETso2FJkkAeGaeBDLeUoMzJ3UnxfpvHUe4sIG+hSpG0DjvnjaDVSz6CWdBT12taS0sn8miDxZQ=
+	t=1758816284; cv=none; b=Cvxt+HfwXf0FFqTYdQBHcX165wfk/f01izffW8zU1qPiXA+cmobM5LH1aCzzjtZe3c/4saw+VV4GsEY/yr8kk6NU/uOOM2thDAYAq8355ylZ1cGUBb6obkThqOtw5ztdHw1HPUbc9mIGK21pPdQSKnv/2MtXxOIJ72bcpobSpeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758816285; c=relaxed/simple;
-	bh=J4lfDJvJgocwerP41ChdYCyqljRyihOByw2tDqIsf/0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=VrQxG1ju9A6/syvS2j2BouqHonWx1ddXLEFx7BnEpuFc4RY/F8j/bLgEw10sdwqOnwf++PYQNKj7+9VShZp/PpVeHXoVgyc3Hc3wVQXX8AjKiSfQd9MQqwAL51HOs2H9U5gnAe/6zvRVAazek3g0efWcTAvHbnysJ4XIIXMw/2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2VsaC8b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DBD4C4CEF5;
-	Thu, 25 Sep 2025 16:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758816284;
-	bh=J4lfDJvJgocwerP41ChdYCyqljRyihOByw2tDqIsf/0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=I2VsaC8bw4xCfIrNIpD1bNAl+0M2V2X1yr6BfxIQWRuKkpujsnlGPvTTgbhN+H46K
-	 CS8iZ7KQwSNoYBxUa3fV9xrwrtBUaa3zShjwn9+GsIFEPScHG06lFcG7CER/G14reF
-	 jKZ97z1grrkrJOoidPf9wm8jCb8n/Qa+8LBmooC8JP1PCoWLc6jr4CmYl9wb5L1X6J
-	 OJOVZKuzSsyQgT5NYRseInCHnm+nAFwG8GZmAZkkmbwgA2MKcG84clKVOkKxGJRgzu
-	 /T2h9fTtNvfUJQNDfqyGbOuSN1vsCNxYVM0206IExEQl+GxbDPurjctd+pqLfjDhqi
-	 sUlcOBOgn96Dw==
+	s=arc-20240116; t=1758816284; c=relaxed/simple;
+	bh=+oXAL0tcgRlO8c1J/dU2scA4s8TwfctnQlh8fiSh9g4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I1eLWO5hlPjKmUiktFB+fxUhv8hmVS8/76HM0taKJp2oLoQBUa7lmWYhBOZURgq0dg+IRAhS9FdoKGiZLA3mFt/uGNfFsYk9/7PHzRQYs/Ewy1no62gggow5KiZUv0r/wVEBNvnYN3aqR+IPPLc88tISl4GRg2ccQPSiFY/xKDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=LbagwA8e reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id uscABGpxUb0YaIwe; Thu, 25 Sep 2025 12:04:41 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=vrdtGJZWfvcp+2ww2Ngcwu6CnGiELosz9EX38y+xxjs=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:Content-Language:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID; b=LbagwA8eV7zi6j8wgzzm
+	+N8oWURdI9DXENCNzzdWgddwyuvXmguZfjj+l5PvZiR1AshF4R4W0oXnynifJ7vmUBrG86jBpDi+Z
+	4Lr7BoollYw/1oXTIyE4xAUJ6ZqpqI/4XtNTUFMVSpZmCP9UGB0tkXXPi0IBmVKrMTMTuVcdEw=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14212895; Thu, 25 Sep 2025 12:04:41 -0400
+Message-ID: <46422ab9-9088-4d9c-b93d-31083f8b9398@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Thu, 25 Sep 2025 12:04:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
+To: Xose Vazquez Perez <xose.vazquez@gmail.com>,
+ Nilesh Javali <njavali@marvell.com>, GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+X-ASG-Orig-Subj: Re: [PATCH 14/15] scsi: qla2xxx: add back SRR support
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net, KERNEL ML <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <2cc10189-6953-428e-b34e-b1c714fc0eae@cybernetics.com>
+ <0669b097-0bf1-4895-9c2a-5e953aebbfab@gmail.com>
+ <8056aa80-7e5a-4cb3-804c-d9c7f8bd6d55@gmail.com>
+Content-Language: en-US
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <8056aa80-7e5a-4cb3-804c-d9c7f8bd6d55@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 25 Sep 2025 18:04:38 +0200
-Message-Id: <DD20C3S0YCK0.25BIXD409WED2@kernel.org>
-Subject: Re: [PATCH 0/2] rust: pci: display symbolic PCI vendor and class
- names
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "John Hubbard" <jhubbard@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250925013359.414526-1-jhubbard@nvidia.com>
-In-Reply-To: <20250925013359.414526-1-jhubbard@nvidia.com>
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1758816281
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1584
+X-Barracuda-BRTS-Status: 1
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1758816281-1cf43947df3a52a0001-xx1T2L
 
-On Thu Sep 25, 2025 at 3:33 AM CEST, John Hubbard wrote:
-> This applies to:
+On 9/25/25 11:30, Xose Vazquez Perez wrote:
+> On 9/25/25 2:49 PM, Xose Vazquez Perez wrote:
 >
->   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+>> If you want to review the firmware changelog, mainly: FCD-1183 (FCD-37=
+1, ER147301), FCD-259, ER146998
+>> (from 9.00.00 to 9.15.05 [06/10/25]):
+>> https://www.marvell.com/content/dam/marvell/en/drivers/2025-06-10-rele=
+ase/fw_release_notes/Fibre_Channel_Firmware_Release_Notes.pdf
+>>
+>> It's look like all 2{678}xx devices/chips are affected by this bug.
+>> Perhaps the Marvel crew could provide more information on this.
+> 267x, or older, is still on 8.08, so apparently it's free of this bug:
+> https://www.marvell.com/content/dam/marvell/en/drivers/release-matrix/r=
+elease-matrix-qlogic-fc-sw-posting-by-release-matrix.pdf
+>
+> 2870 / 2770 :        9.15.06 FW
+> 2740 / 2760 / 269x : 9.15.01 FW
+> 267x :               8.08.231 FW
 
-This is an old tree, the new one is:
+I am still trying to figure out what macros to use to test for the
+affected HBAs.=C2=A0 So far I have:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git=
-/
+if (IS_QLA27XX(ha) || IS_QLA28XX(ha))
 
-> John Hubbard (2):
+But all the ISP numbers are pretty confusing.=C2=A0 I have a number of 8,=
+ 16,
+32, and 64 Gbps HBAs lying around to test, but I am sure I don't have
+every possible model.
 
-Applied to driver-core-testing, thanks!
+There are a number of items under "Changes and Fixes from v9.08.00 to
+v9.09.00" that might be related to the problem that I was experiencing.=C2=
+=A0
+For example=C2=A0FCD-1076 sounds similar except that the SRR problem was =
+with
+the CTIO queue rather than the ATIO queue.=C2=A0 I could expand the "bad
+firmware" versions to include v9.04.00 - v9.08.00, since=C2=A0v9.04.00
+introduced ER147301 and v9.09.00 fixed FCD-1183.
 
->   rust: pci: display symbolic PCI class names
->   rust: pci: display symbolic PCI vendor names
+Thanks,
+Tony
 
-    [ Remove #[inline] for Vendor::fmt(). - Danilo ]
 
