@@ -1,122 +1,224 @@
-Return-Path: <linux-kernel+bounces-832024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF093B9E2A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CA2B9E2A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 11:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69EC83AB3F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0A2420E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 09:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424892676DE;
-	Thu, 25 Sep 2025 09:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tUim3ZmY"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76B027A45C;
+	Thu, 25 Sep 2025 09:00:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319F7279DC0;
-	Thu, 25 Sep 2025 09:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BFF21A92F;
+	Thu, 25 Sep 2025 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758790815; cv=none; b=up88+t3i/44/WFVfbFKr2J5V7MHS2s3wgUTxNTlLMoID7FI1bdpU/kk7O8qf/WEWzJUw526qcAADjKXjjkWPXXnJGiKvlm53V4ms6pBVesZx8PMQvj0hB9kiXPMDQwaiqz1avom2le9ceXd0lgaL1obH10CRfB5wk/bJoF0I3XI=
+	t=1758790828; cv=none; b=c2+4ZMPILTc2v4htiFQV8pB2YTwQSIp8yzFn9Q0rwdzf+ht6kRYHh4IzeBP0vD0rxRXbNu8BPL+F7eWNM4VihR88sE1LGALywlr4rCReOTIvEKCIwxsvRLogHSe7NP7567FgqHF0m3j6GhxvJePy7szdky9vOTP72SkeAwW9Omg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758790815; c=relaxed/simple;
-	bh=ZPvO9PTAg+99xp/hHtY7UyWzYlncvEtxZ2NHXB69vJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNHxsXKd9Yjzl1FP1MFlXFuXusmyjjm93qmuD0HXdbCZGRk0RixXPlsMCy0rlOFuDo55OUeY6i7hl+NndWB0NaiLZE8/QVZ7kOOjp5D/QzEoESVJEbfrLYSTgMOifmN/TmLEO8vkB6cx+LqYiptiVIUvcx4YcisXiRfIMb3CK90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tUim3ZmY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=W5OXsf0oAxdXlt6+7tQCXLnSUInV5Ahdeu+tyrRyD3E=; b=tUim3ZmYG8MqpiekfPvi7zlgsu
-	iC9Am7zsIf2nZVW/U5ea4oG6BV8MEjmJ6dycjoFKueuULEgdH7ZVISaEP63rlpxGFYqmcw/hNzGK0
-	Aym5m2zFAuSP4i5nnSkwG+6GuBhj6XiSca/1rLdGAkrVrLwfSH8hhfpv4iApEmTv3c9h1dXCWFDTY
-	HQYVxIFzkmnBmqptk4npPTNaxsl7EoVmBnEMDheTSK1OXc9pR4j/5N1jp65L15lta6XI+8S29Edm0
-	wJ2D7RkOBvnD6XHf7//thAxSuU/aEokBtXAcxVApE7d0XlcwRsml485xSzL2X6BYTKapU1wg3tHmj
-	4HEc9oNQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v1hpZ-00000000WwQ-07dJ;
-	Thu, 25 Sep 2025 09:00:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3EB783002BF; Thu, 25 Sep 2025 11:00:01 +0200 (CEST)
-Date: Thu, 25 Sep 2025 11:00:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
-	arighi@nvidia.com, changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 00/14] sched: Support shared runqueue locking
-Message-ID: <20250925090001.GX4067720@noisy.programming.kicks-ass.net>
-References: <20250910154409.446470175@infradead.org>
- <02811bd7-b401-4e16-bb7d-4edeb0b89ffd@arm.com>
+	s=arc-20240116; t=1758790828; c=relaxed/simple;
+	bh=GQIcnCJRXYyZpeq1c7/xce9gOWsW+8esicltjkC8yzg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=I3OvdEWOdftdEn7/+NeEQJORpvmli+qQrPie6mXN5n6/2rCgN/Fs6ZzCAurhz5cvEt9j+iIjBbX3ClahwQ5OnKstgJI6ni4rkd0U7C7eWymZidLVQNldpQA7sXIXfid0zpmiiMVDXK0/pUHAmWk2kRnM/szba2Mq9TpDObcZYq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cXSNF2k4szYQvGG;
+	Thu, 25 Sep 2025 17:00:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5D4FA1A1FEF;
+	Thu, 25 Sep 2025 17:00:22 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAn6mGlBNVoDfUKAw--.13036S3;
+	Thu, 25 Sep 2025 17:00:22 +0800 (CST)
+Subject: Re: [PATCH 4/7] md: factor out sync completion update into helper
+To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
+ namhyung@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250917093508.456790-1-linan666@huaweicloud.com>
+ <20250917093508.456790-5-linan666@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d04b87a6-ff90-d45c-76a4-7dbbbe4e621b@huaweicloud.com>
+Date: Thu, 25 Sep 2025 17:00:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02811bd7-b401-4e16-bb7d-4edeb0b89ffd@arm.com>
+In-Reply-To: <20250917093508.456790-5-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAn6mGlBNVoDfUKAw--.13036S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF4UAryfKFWUAF45tr4UXFb_yoWrKr1rp3
+	yxtFnxGryUJFW3XFW7X3WDuFWrur1UtrWDtFyag34fJr1fKrnrGFy5uw17XryDA34kAr4F
+	q3yrWrs8uF10gaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Sep 18, 2025 at 04:15:45PM +0100, Christian Loehle wrote:
+Hi,
 
-> Hi Peter, A couple of issues popped up when testing this [1] (that don't trigger on [2]):
+ÔÚ 2025/09/17 17:35, linan666@huaweicloud.com Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
 > 
-> When booting (arm64 orion o6) I get:
+> Repeatedly reading 'mddev->recovery' flags in md_do_sync() may introduce
+> potential risk if this flag is modified during sync, leading to incorrect
+> offset updates. Therefore, replace direct 'mddev->recovery' checks with
+> 'action'.
 > 
-> [    1.298020] sched: DL replenish lagged too much
-> [    1.298364] ------------[ cut here ]------------
-> [    1.298377] WARNING: CPU: 4 PID: 0 at kernel/sched/deadline.c:239 inactive_task_timer+0x3d0/0x474
-
-Ah, right. Robot reported this one too. I'll look into it. Could be one
-of the patches in sched/urgent cures it, but who knows. I'll have a
-poke.
-
-> and when running actual tests (e.g. iterating through all scx schedulers under load):
+> Move sync completion update logic into helper md_finish_sync(), which
+> improves readability and maintainability.
 > 
-> [  146.532691] ================================                                                                     
-> [  146.536947] WARNING: inconsistent lock state                                                                     
-> [  146.541204] 6.17.0-rc4-cix-build+ #58 Tainted: G S      W                                                        
-> [  146.547457] --------------------------------                                                                     
-> [  146.551713] inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.                                                 
-> [  146.557705] rcu_tasks_trace/79 [HC0[0]:SC0[0]:HE0:SE1] takes:                                                    
-> [  146.563438] ffff000089c90e58 (&dsq->lock){?.-.}-{2:2}, at: __task_rq_lock+0x88/0x194                             
-
-> [  146.840178]                                                                                                      
-> [  146.813242]  #0: ffff800082e6e650 (rcu_tasks_trace.tasks_gp_mutex){+.+.}-{4:4}, at: rcu_tasks_one_gp+0x328/0x570 
-> [  146.823403]  #1: ffff800082adc1f0 (cpu_hotplug_lock){++++}-{0:0}, at: cpus_read_lock+0x10/0x1c                   
-> [  146.832014]  #2: ffff000089c90e58 (&dsq->lock){?.-.}-{2:2}, at: __task_rq_lock+0x88/0x194                        
+> The reshape completion update remains safe as it only updated after
+> successful reshape when MD_RECOVERY_INTR is not set and 'curr_resync'
+> equals 'max_sectors'.
 > 
-> [  146.840178] stack backtrace:
-> [  146.844521] CPU: 10 UID: 0 PID: 79 Comm: rcu_tasks_trace Tainted: G S      W           6.17.0-rc4-cix-build+ #58 PREEMPT 
-> [  146.855463] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
-> [  146.860240] Hardware name: Radxa Computer (Shenzhen) Co., Ltd. Radxa Orion O6/Radxa Orion O6, BIOS 0.3.0-1 2025-04-28T03:35:34+00:00
-> [  146.872136] Sched_ext: simple (enabled+all), task: runnable_at=-4ms
-> [  146.872138] Call trace:
-> [  146.880822]  show_stack+0x18/0x24 (C)
-> [  146.884471]  dump_stack_lvl+0x90/0xd0
-> [  146.888131]  dump_stack+0x18/0x24
-> [  146.891432]  print_usage_bug.part.0+0x29c/0x364
-> [  146.895950]  mark_lock+0x778/0x978
-> [  146.899338]  mark_held_locks+0x58/0x90
-> [  146.903074]  lockdep_hardirqs_on_prepare+0x100/0x210
-> [  146.908025]  trace_hardirqs_on+0x5c/0x1cc
-> [  146.912025]  _raw_spin_unlock_irqrestore+0x6c/0x70
-> [  146.916803]  task_call_func+0x110/0x164
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>   drivers/md/md.c | 82 ++++++++++++++++++++++++++++---------------------
+>   1 file changed, 47 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index c4d765d57af7..f4f80d32db98 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9301,6 +9301,51 @@ static bool sync_io_within_limit(struct mddev *mddev)
+>   	       (raid_is_456(mddev) ? 8 : 128) * sync_io_depth(mddev);
+>   }
+>   
+> +/*
+> + * Update sync offset and mddev status when sync completes
+> + */
+> +static void md_finish_sync(struct mddev *mddev, enum sync_action action)
+> +{
+> +	struct md_rdev *rdev;
+> +
+> +	switch (action) {
+> +	case ACTION_RESYNC:
+> +	case ACTION_REPAIR:
+> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+> +			mddev->curr_resync = MaxSector;
+> +		mddev->resync_offset = mddev->curr_resync;
+> +		break;
+> +	case ACTION_RECOVER:
+> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+> +			mddev->curr_resync = MaxSector;
+> +		rcu_read_lock();
+> +		rdev_for_each_rcu(rdev, mddev)
+> +			if (mddev->delta_disks >= 0 &&
+> +			    rdev_needs_recovery(rdev, mddev->curr_resync))
+> +				rdev->recovery_offset = mddev->curr_resync;
+> +		rcu_read_unlock();
+> +		break;
+> +	case ACTION_RESHAPE:
+> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+> +		    mddev->delta_disks > 0 &&
+> +		    mddev->pers->finish_reshape &&
+> +		    mddev->pers->size &&
+> +		    !mddev_is_dm(mddev)) {
+> +			mddev_lock_nointr(mddev);
+> +			md_set_array_sectors(mddev, mddev->pers->size(mddev, 0, 0));
+> +			mddev_unlock(mddev);
+> +			if (!mddev_is_clustered(mddev))
+> +				set_capacity_and_notify(mddev->gendisk,
+> +							mddev->array_sectors);
+> +		}
+> +		break;
 
-Ooh, yeah, that's buggered. Let me go fix!
+I think pers->finish_reshape() can moved from md_reap_sync_thread() to
+here as well. Otherwise LGTM.
 
-Thanks for testing!
+Thanks,
+Kuai
+
+> +	/* */
+> +	case ACTION_CHECK:
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+>   #define SYNC_MARKS	10
+>   #define	SYNC_MARK_STEP	(3*HZ)
+>   #define UPDATE_FREQUENCY (5*60*HZ)
+> @@ -9316,7 +9361,6 @@ void md_do_sync(struct md_thread *thread)
+>   	int last_mark,m;
+>   	sector_t last_check;
+>   	int skipped = 0;
+> -	struct md_rdev *rdev;
+>   	enum sync_action action;
+>   	const char *desc;
+>   	struct blk_plug plug;
+> @@ -9603,46 +9647,14 @@ void md_do_sync(struct md_thread *thread)
+>   	}
+>   	mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
+>   
+> -	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
+> -	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
+> -		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+> -			mddev->curr_resync = MaxSector;
+> -
+> -		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
+> -			mddev->resync_offset = mddev->curr_resync;
+> -		} else {
+> -			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+> -			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
+> -				rcu_read_lock();
+> -				rdev_for_each_rcu(rdev, mddev)
+> -					if (mddev->delta_disks >= 0 &&
+> -					    rdev_needs_recovery(rdev, mddev->curr_resync))
+> -						rdev->recovery_offset = mddev->curr_resync;
+> -				rcu_read_unlock();
+> -			}
+> -		}
+> -	}
+> +	if (mddev->curr_resync > MD_RESYNC_ACTIVE)
+> +		md_finish_sync(mddev, action);
+>    skip:
+>   	/* set CHANGE_PENDING here since maybe another update is needed,
+>   	 * so other nodes are informed. It should be harmless for normal
+>   	 * raid */
+>   	set_mask_bits(&mddev->sb_flags, 0,
+>   		      BIT(MD_SB_CHANGE_PENDING) | BIT(MD_SB_CHANGE_DEVS));
+> -
+> -	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+> -			!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+> -			mddev->delta_disks > 0 &&
+> -			mddev->pers->finish_reshape &&
+> -			mddev->pers->size &&
+> -			!mddev_is_dm(mddev)) {
+> -		mddev_lock_nointr(mddev);
+> -		md_set_array_sectors(mddev, mddev->pers->size(mddev, 0, 0));
+> -		mddev_unlock(mddev);
+> -		if (!mddev_is_clustered(mddev))
+> -			set_capacity_and_notify(mddev->gendisk,
+> -						mddev->array_sectors);
+> -	}
+> -
+>   	spin_lock(&mddev->lock);
+>   	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+>   		/* We completed so min/max setting can be forgotten if used. */
+> 
+
 
