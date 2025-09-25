@@ -1,246 +1,292 @@
-Return-Path: <linux-kernel+bounces-833090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A81BA1313
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:31:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16752BA1322
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43014A7769
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:31:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48F61791F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291031C56F;
-	Thu, 25 Sep 2025 19:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA29954F81;
+	Thu, 25 Sep 2025 19:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iSZjTMmu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XdI3kf1n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3A654F81
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396872E0926
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828699; cv=none; b=WcOcp3vIcS8MVqQGwKXybc1MmIiactXy6xeq/e74F12lZl7hhcCV69Y1fNJPhwmd/8sGgd90gOiR0UHGvSjS+jZgfpit7G3GwkWHnYyojLC34qJQ1rw/ileRVvZa0ld5PbBiWcsk8qISSROa9FjiDK0KbfOnUs2rENC6vpp35mg=
+	t=1758828753; cv=none; b=AKtVFtQ01WjKAVVSM3Nx/l7UFxgd1DEHmMVLNCexTXV0GC1raewZfq/qYsyXWhQ+eih2uTdvX/xlpDWYBXEm8qo3jUzdRZ/hw20dMzNLng2IxjkadO8M2rC3ocpo34uf+QnuGFBfG40dak1WE26FFAaBnvUC0CQxwtq18TNXd0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828699; c=relaxed/simple;
-	bh=ixD4JAeSZTT+cKIC7yfTKECAN5O4rsWfV2NLw5qppKk=;
+	s=arc-20240116; t=1758828753; c=relaxed/simple;
+	bh=jpqmsgmAQIqXP57KiX7lxY1y974aUYb01QrMbrU8Ahg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LLeGkwuw+iZSqVhl2l3HQXWksokfeZ+DipZKy39ymWyiFMv6vl09wr5qk+mRgvKpPxFcpJ1bZz5yr+YC+vUQJA4FNpcsG1aGRDsNHYphnQCga4OllW/FUH84fO2SjGT1m999KZkvlgdKXKNwXLwaImW8Yn7QiLCiF8EAeXErl+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iSZjTMmu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPoPi000861
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:31:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xN2zeve8MKIwluD+p5R+V0hgYRPi/KXOcVTKAzLg/4s=; b=iSZjTMmumnhjkPd5
-	idAoiZHRPTjI2FP0FOQ52Z+3uS6MgotKPSeJyOGdAP2yM6uNAs2rTOKEi1Bv4v7K
-	JCRnkRuegx1kKEul6YCLMgIOyaWcZS12eIAyVpBTnzaQGx/OwuVK72JRvwLXeLME
-	k66Nd3Iv+m596//tSsmMEFgSdmnjvpojgoTd3EW+usDAkmk6hsaylR0L8KpoeP8O
-	JC91/Hx+ZtVZMjZBxQJOHHV4hi6HrwmgTSD/GoxrQp09WIUqsa3WQWHjLf9d7Fus
-	QQ2vYY7bQN9vVb2SHPbkOcSgRsv/yTL+BpO6VOFrOvnnuN1fjhP8Y8hTBJxtB+Z2
-	qos38w==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0tr4y5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 19:31:36 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32e09eaf85dso1785663a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:31:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=lVfcVtSkAci8Yw5PadAfVsKFwuXDvGSuFiIQgHRuL1Ow2xv8eYAzP9h0t6qZFMC6kQkPDoOfhokv1AjjtPZMM/kN3VnWXsDiy7rRedLSrHQ3HK4tYMyolgYDCb2scaaof7Y5QNOt3izOsYqxvxKPb6QLuMytQjbC/g22nDoutnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XdI3kf1n; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758828751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=D5jCgvyWVjXaOxE5qhMkjeDubZJSnlT/2ztleqWrFCE=;
+	b=XdI3kf1nmgzBpc2PsBctE5G8C32GoQxEeDl2ZggHDg/T3wusKYW5Ka6pBilPwOz/6kjLpO
+	IGow1nwevBvpuGSmS3tB3WaLlwtWIrzY9zVNtQIOqikIOpOIHCbOpzmimwYm3lwo21MtZI
+	wgtzEfucsLVBtPu3DDAZ5O3Zq87meRs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-373-Ec4Jvz1NNs-lj_OQpHLBfg-1; Thu, 25 Sep 2025 15:32:28 -0400
+X-MC-Unique: Ec4Jvz1NNs-lj_OQpHLBfg-1
+X-Mimecast-MFC-AGG-ID: Ec4Jvz1NNs-lj_OQpHLBfg_1758828747
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e997eb7232so595260f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 12:32:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758828695; x=1759433495;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xN2zeve8MKIwluD+p5R+V0hgYRPi/KXOcVTKAzLg/4s=;
-        b=Cr/GfwGl/LFcrbqrjoslOb5Kh2YeKtNWpLbpv7B6fD6W7mlVT9zCp9Lw/7ymTTb0kb
-         mbHFg2++G3RRTvHHSscvT+1PhPC8Q+eZDi/SApd89OhARI/YTYhHqncJ+BNkoBWxTdj6
-         62lFh1SwsyNxFZcwFWuOgKuCHA9aPjODCWbDCcxxXDvFbr4QCoQxn08jOcF5VxcpjCqh
-         qe6il30QrCAK0cDrYY28JPdhY3lbv+bjVSywdOlVdtwA0sGTUkHC6PjAYDL1NU57y4Q7
-         xoLwUZtFDpseCpcft6XVpEDdmiUeAMwZeU1TuxO8+npewo8JwIx3oAMyZ3yCKJS/7GII
-         m5kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Nrn2C9jAxfU5BbFFpta2Aw7RDZO1reXl/KYdc3cvbpX/gz6bywO1ufTMFldcGrkQ38X6gzCpyq75ebQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZIramt8HbV4WiCZuM+3gM3e/cFF7qsMooHvOrOmNvwLOd0XjX
-	gnI+WtdRE42kWd3Y0Ns8xlTgYVGnwcMziWrilb2uCgWMZ0DjrCp5kOfGeXXMDdBdUrrZKC14ilq
-	rR1c68m9zlkjjz4vcBk6L2gMYYe+wrkKUhktp2xXiLKWPt6sg3XmOwnyMsQGca89nrFg=
-X-Gm-Gg: ASbGncv4nj0+/7sZaFt5p1yzIxCbTwZLFhycUGEqR/DqhcatMuI63X3e1SaDuqYvB6/
-	Mg/kjE3MFznvKH5EiUbEknMqwrus6/U/B22Y63DZiQO7rPinUtjzWlU2Nc9jL21HYHj/3dutdH/
-	VauRFWOTCKDh+hqkYJlpXoJkI9o27lzMk1nXpjWXBaEkXOiVL5Xvaghnn5o+XX+TlHcW+FKroRG
-	6INWZpx3rGGOhoveRgHHMkBRO5c4nY01ASfewXu0QN7SgsmnTgRj748LyS3JifrBf8sH7W2n1U2
-	AVDmoMUkoCtk8id9Xsegu/w3niYV3EzVPiutz1MZqL0Ndmf2COCSkZ/ZlsqGrG2/FwQrnmTkYRE
-	=
-X-Received: by 2002:a17:90b:5109:b0:32b:baaa:21b0 with SMTP id 98e67ed59e1d1-3342a2498b0mr5055280a91.6.1758828695553;
-        Thu, 25 Sep 2025 12:31:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcihAr9QeDqmHNipkjhQZA1yhGxUL+6BzxOO9aN0JoSkA8hWKZHTY3tt89U22izY99lHd9JQ==
-X-Received: by 2002:a17:90b:5109:b0:32b:baaa:21b0 with SMTP id 98e67ed59e1d1-3342a2498b0mr5055254a91.6.1758828695141;
-        Thu, 25 Sep 2025 12:31:35 -0700 (PDT)
-Received: from [192.168.0.166] ([49.205.248.165])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341be3a010sm6552860a91.28.2025.09.25.12.31.31
+        d=1e100.net; s=20230601; t=1758828747; x=1759433547;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D5jCgvyWVjXaOxE5qhMkjeDubZJSnlT/2ztleqWrFCE=;
+        b=X6hW2i2ogq3fIER3gjeJdWLRZah9m8qt76HVycNfm10r3iREcG+XzM5q05c5Eun9u+
+         X3hMH/S++4GO0iOe1Y+amCDOIOK0DatMiRk/kwsMElnuLQYNEfCfGELQKoR/Uj7sMEMU
+         l7jS5Fcg4tar/twphlF3c7tAGCmBLlCnl6lCHm1mD/6pBx+leJjVayHiftGtoIr3KBLp
+         69X9+U8FULQy0js4fkReueDPvS9MybDfHgXKft51V8RXoZ4Qqy2gN8xiXDpT/mftlWpb
+         AGfKDy+Fpk4YppUnzbm5PKi9ggXeXJbZ/vx9oD0BVPaCEkIMkRwqb9FxJy40CNRBUoGw
+         DFBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0g8SbnuMwYJd3T5F0jOmm8MQxyfZPbUG6m6XtDQ2kyFPydAWvEq2Y69ts4G6lRIqJ6vhDnqoZrs8P21A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUH4Q8a4D68PbBW5iqG0gvW+cf4ABFeuSpTSWtrMyLHvQSom3q
+	8LwDkxvTzpNdPgPDhiovkaGYEnaK+cysRHHSA7Q3oKeb5OGZ7ygptHXZAG21Ri9Ev9e2Pbor8S6
+	wLUn3yjdPppfh3TaGiggo8XQxVjjSsCMqMxaGyt3NL4DuuCDTL49gHn48TCfzPtZsRQ==
+X-Gm-Gg: ASbGncv3wGw1fMZk7usQ29WsayQkD+s7KPzB4UAHFzVA9YnnzjyosRa51dr44OagSkv
+	izmVPAlMnauhPYAiDHGBQ9EkDpPAhakOlAjj0q9ZGjv0QXLae8Av0dmhsvyX2mfEKNh33Jkchgc
+	S1urgepAc0IZwG0Uia59van2GPqAVVWH1FJcz1uzHSmpuOUnM80lBjnmeUZE6fvhqzFmaBwm6qc
+	UdI35t+XZGVAFJre59x52Wd5dAz+/KkDQUgTyswYD3DcS8RhBuQWbfGBdc3LwuHGWLU7q4gV/Iw
+	ScT/tZV+PZTWs275nFSwKc2oejByHw1w2qwbklJ6/Bzu6hXV8t/UBjv/ixVU+4ayc0bjNLRoFdQ
+	WJzlLZvwe8Lj5TMUmnPIjMul/ycq0lFbV6LadcDrUZcqG/7wAY+cezimk3dvJ/qnQKD86
+X-Received: by 2002:a05:6000:3102:b0:3f9:1571:fe04 with SMTP id ffacd0b85a97d-40e4b1a06b4mr4993200f8f.48.1758828747356;
+        Thu, 25 Sep 2025 12:32:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFUL795NU1gcu1A2U+hWPDoMkyU660Ad1UyOUZxyr2NlakU+3syyUj7XJkeC88am/EkGOIvw==
+X-Received: by 2002:a05:6000:3102:b0:3f9:1571:fe04 with SMTP id ffacd0b85a97d-40e4b1a06b4mr4993145f8f.48.1758828746777;
+        Thu, 25 Sep 2025 12:32:26 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08? (p200300d82f3ff800c1015c9f3bc93d08.dip0.t-ipconnect.de. [2003:d8:2f3f:f800:c101:5c9f:3bc9:3d08])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm3193903f8f.16.2025.09.25.12.32.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 12:31:34 -0700 (PDT)
-Message-ID: <522d7244-0003-a42e-9be0-1d353df8d5bd@oss.qualcomm.com>
-Date: Fri, 26 Sep 2025 01:01:29 +0530
+        Thu, 25 Sep 2025 12:32:26 -0700 (PDT)
+Message-ID: <1b34dd89-cbbb-474e-be75-808e174c8ed9@redhat.com>
+Date: Thu, 25 Sep 2025 21:32:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/8] media: dt-bindings: qcom-kaanapali-iris: Add
- kaanapali video codec binding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "andrii@kernel.org" <andrii@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
+ "bp@alien8.de" <bp@alien8.de>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "corbet@lwn.net" <corbet@lwn.net>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "haoluo@google.com" <haoluo@google.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "Thomson, Jack" <jackabt@amazon.co.uk>, "jannh@google.com"
+ <jannh@google.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+ "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
+ "joey.gouly@arm.com" <joey.gouly@arm.com>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "jolsa@kernel.org" <jolsa@kernel.org>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "luto@kernel.org" <luto@kernel.org>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "maz@kernel.org" <maz@kernel.org>, "mhocko@suse.com" <mhocko@suse.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "peterx@redhat.com" <peterx@redhat.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "pfalcato@suse.de" <pfalcato@suse.de>, "rppt@kernel.org" <rppt@kernel.org>,
+ "sdf@fomichev.me" <sdf@fomichev.me>, "seanjc@google.com"
+ <seanjc@google.com>, "shuah@kernel.org" <shuah@kernel.org>,
+ "song@kernel.org" <song@kernel.org>, "surenb@google.com"
+ <surenb@google.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+ "tabba@google.com" <tabba@google.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "vbabka@suse.cz"
+ <vbabka@suse.cz>, "will@kernel.org" <will@kernel.org>,
+ "willy@infradead.org" <willy@infradead.org>, "x86@kernel.org"
+ <x86@kernel.org>, "Cali, Marco" <xmarcalx@amazon.co.uk>,
+ "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+ "yuzenghui@huawei.com" <yuzenghui@huawei.com>
+References: <cf57bdec-6a2d-4d6a-b27c-991a7e2833ab@redhat.com>
+ <20250925155051.2959-1-roypat@amazon.co.uk>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vishnu Reddy <quic_bvisredd@quicinc.com>
-References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
- <20250925-knp_video-v1-1-e323c0b3c0cd@oss.qualcomm.com>
- <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <nuunkv3xwfes6wed5xf4re2efakndvvrfl4lhmenilkic4sjiy@5cb2f5ygegvm>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250925155051.2959-1-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=I9Vohdgg c=1 sm=1 tr=0 ts=68d59898 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=AkZwv1uTgJSVxlfcUQlFCg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=gEfo2CItAAAA:8 a=eVofJsru2PQPkhUZkREA:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: o6bQZGel6BslzzbN7WamwMrycbJm07s8
-X-Proofpoint-ORIG-GUID: o6bQZGel6BslzzbN7WamwMrycbJm07s8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX3DCWaaiaOCXv
- Cejtoje+fqCSVzMzWnyARGx+qcoE1Ukg3CuVtftrQ+yeqaCFgfEGcBRW4bBjmTAqZlmnyuGL2TQ
- Ck9zCPbdAP4fh9LW9JkROlzR6TWxaa1qT5rxvCGgsqaa5leYE69x6EmuKqML9vB5BovtwZZ7TNG
- BBut70YmFNSR3qtq3PGVk/JiQDoU0Hwf2C0+umTLWAb6g70R30vEneLW8PqN0tBFjy7+/jwQEjb
- vnKzin8QJ1MCsfFxRcqWTelA1dt2WrHirFjWO01lDD797xn1KTSrISiESGrl3dUcUbvg2tmSDZ/
- 8JdjW8uRioG4EGLPPw2CdmCESvoQbapx9MTTqzK3YbiWRV3Fogganenbo3eDiYj+fbwAZVlKezy
- /mtgsX8+N1Z/6QlKJr0ydX+geuvSiA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-
-On 9/26/2025 12:55 AM, Dmitry Baryshkov wrote:
-> On Thu, Sep 25, 2025 at 04:44:39AM +0530, Vikash Garodia wrote:
->> Kaanapali SOC brings in the new generation of video IP i.e iris4. When
->> compared to previous generation, iris3x, it has,
->> - separate power domains for stream and pixel processing hardware blocks
->>   (bse and vpp).
->> - additional power domain for apv codec.
->> - power domains for individual pipes (VPPx).
->> - different clocks and reset lines.
+On 25.09.25 17:50, Roy, Patrick wrote:
+> On Thu, 2025-09-25 at 12:02 +0100, David Hildenbrand wrote:
+>> On 24.09.25 17:22, Roy, Patrick wrote:
+>>> Add an option to not perform TLB flushes after direct map manipulations.
+>>> TLB flushes result in a up to 40x elongation of page faults in
+>>> guest_memfd (scaling with the number of CPU cores), or a 5x elongation
+>>> of memory population, which is inacceptable when wanting to use direct
+>>> map removed guest_memfd as a drop-in replacement for existing workloads.
+>>>
+>>> TLB flushes are not needed for functional correctness (the virt->phys
+>>> mapping technically stays "correct", the kernel should simply not use it
+>>> for a while), so we can skip them to keep performance in-line with
+>>> "traditional" VMs.
+>>>
+>>> Enabling this option means that the desired protection from
+>>> Spectre-style attacks is not perfect, as an attacker could try to
+>>> prevent a stale TLB entry from getting evicted, keeping it alive until
+>>> the page it refers to is used by the guest for some sensitive data, and
+>>> then targeting it using a spectre-gadget.
+>>>
+>>> Cc: Will Deacon <will@kernel.org>
+>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>>> ---
+>>>    include/linux/kvm_host.h | 1 +
+>>>    virt/kvm/guest_memfd.c   | 3 ++-
+>>>    virt/kvm/kvm_main.c      | 3 +++
+>>>    3 files changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>>> index 73a15cade54a..4d2bc18860fc 100644
+>>> --- a/include/linux/kvm_host.h
+>>> +++ b/include/linux/kvm_host.h
+>>> @@ -2298,6 +2298,7 @@ extern unsigned int halt_poll_ns;
+>>>    extern unsigned int halt_poll_ns_grow;
+>>>    extern unsigned int halt_poll_ns_grow_start;
+>>>    extern unsigned int halt_poll_ns_shrink;
+>>> +extern bool guest_memfd_tlb_flush;
+>>>
+>>>    struct kvm_device {
+>>>        const struct kvm_device_ops *ops;
+>>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>>> index b7129c4868c5..d8dd24459f0d 100644
+>>> --- a/virt/kvm/guest_memfd.c
+>>> +++ b/virt/kvm/guest_memfd.c
+>>> @@ -63,7 +63,8 @@ static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
+>>>        if (!r) {
+>>>                unsigned long addr = (unsigned long) folio_address(folio);
+>>>                folio->private = (void *) ((u64) folio->private & KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+>>> -             flush_tlb_kernel_range(addr, addr + folio_size(folio));
+>>> +             if (guest_memfd_tlb_flush)
+>>> +                     flush_tlb_kernel_range(addr, addr + folio_size(folio));
+>>>        }
+>>>
+>>>        return r;
+>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>>> index b5e702d95230..753c06ebba7f 100644
+>>> --- a/virt/kvm/kvm_main.c
+>>> +++ b/virt/kvm/kvm_main.c
+>>> @@ -95,6 +95,9 @@ unsigned int halt_poll_ns_shrink = 2;
+>>>    module_param(halt_poll_ns_shrink, uint, 0644);
+>>>    EXPORT_SYMBOL_GPL(halt_poll_ns_shrink);
+>>>
+>>> +bool guest_memfd_tlb_flush = true;
+>>> +module_param(guest_memfd_tlb_flush, bool, 0444);
 >>
->> There are variants of this hardware, where only a single VPP pipe would
->> be functional (VPP0), and APV may not be present. In such case, the
->> hardware can be enabled without those 2 related power doamins, and
->> corresponding clocks. This explains the min entries for power domains
->> and clocks.
->> Iommus include all the different stream-ids which can be possibly
->> generated by vpu4 video hardware in both secure and non secure
->> execution mode.
->>
->> This patch depends on following patches
->> https://lore.kernel.org/all/20250924-knp-interconnect-v1-1-4c822a72141c@oss.qualcomm.com/
->> https://lore.kernel.org/all/20250924-knp-clk-v1-3-29b02b818782@oss.qualcomm.com/
->>
->> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
->> ---
->>  .../bindings/media/qcom,kaanapali-iris.yaml        | 236 +++++++++++++++++++++
->>  1 file changed, 236 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..f3528d514fe29771227bee5f156962fedb1ea9cd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-iris.yaml
->> @@ -0,0 +1,236 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-iris.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm kaanapali iris video encode and decode accelerators
->> +
->> +maintainers:
->> +  - Vikash Garodia <vikash.garodia@oss.qualcomm.com>
->> +  - Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
->> +
->> +description:
->> +  The iris video processing unit is a video encode and decode accelerator
->> +  present on Qualcomm platforms.
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,kaanapali-iris
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    minItems: 5
->> +    maxItems: 7
+>> The parameter name is a bit too generic. I think you somehow have to
+>> incorporate the "direct_map" aspects.
 > 
-> You are sending bindings for a single device on a single platform. How
-> comes that it has min != max?
+> Fair :)
+> 
+>> Also, I wonder if this could be a capability per vm/guest_memfd?
+> 
+> I don't really have any opinions on how to expose this knob, but I
+> thought capabilities should be additive? (e.g. we only have
+> KVM_ENABLE_EXTENSION(), and then having a capability with a negative
+> polarity "enable to _not_ do TLB flushes" is a bit weird in my head).
 
-I was planning to reuse this binding for the variant SOCs of kaanapali/vpu4. If
-we do not have min interface, then for those variants, we have to either have
-separate bindings or add if/else conditions(?). Introducing min now can make it
-easily usable for upcoming vpu4 variants.
+Well, you are enabling the "skip-tlbflush" feature :) So a kernel that 
+knows that extension could skip tlb flushes.
 
-> 
->> +
->> +  power-domain-names:
->> +    items:
->> +      - const: venus
->> +      - const: vcodec0
->> +      - const: vpp0
->> +      - const: vpp1
->> +      - const: apv
->> +      - const: mxc
->> +      - const: mmcx
->> +
->> +  clocks:
->> +    minItems: 8
->> +    maxItems: 10
-> 
-> And here.
+So I wouldn't see this as "perform-tlbflush" but "skip-tlbflush" / 
+"no-tlbflush"
 
-Same case here.
-> 
->> +
->> +  clock-names:
->> +    items:
->> +      - const: iface
->> +      - const: core
->> +      - const: vcodec0_core
->> +      - const: iface1
->> +      - const: core_freerun
->> +      - const: vcodec0_core_freerun
->> +      - const: vcodec_bse
->> +      - const: vcodec_vpp0
->> +      - const: vcodec_vpp1
->> +      - const: vcodec_apv
->> +
-> 
+> Then again, if people are fine having TLB flushes be opt-in instead of
+> opt-out (Will's comment on v6 makes me believe that the opt-out itself
+> might already be controversial for arm64), a capability would work.
+
+Yeah, I think this definitely should be opt-in: opt-in to slightly less 
+security in a given timeframe by performing less tlb flushes.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
