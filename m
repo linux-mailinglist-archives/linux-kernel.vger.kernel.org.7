@@ -1,101 +1,145 @@
-Return-Path: <linux-kernel+bounces-832277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71450B9ECD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:48:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2624B9ECEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 12:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E737A3200E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FE4189F9DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 10:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBF62F5338;
-	Thu, 25 Sep 2025 10:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDA52F7AB7;
+	Thu, 25 Sep 2025 10:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IqI4n15g"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="TjmvLZoD"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8FD2F3C19
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7A82EAD18
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 10:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797178; cv=none; b=CIu2rdKiCkbeURQ7Bz99BcsuBpuyT5JQY/989fXnCRMIFLDgcbFvEd3rFoemplQ0uTM2GrKxdKkh2e+EWCcm+0apB0csdZ4BRZlCBvDjo7LquyOGGhxRTNHeBDYKe7YSHT1sGPJW4q5Oq9gcMo1Yw8N4TuuFs5OKsiBgSNtP1uY=
+	t=1758797229; cv=none; b=jTD954E8MPpGuT1omcDRcWQUgENlbpfV62jZn9Nz3/uCEQGw0B+QzBWYVpVn1qK3NEINK4cBkgQZej5ObMe1Aip6ze4oBhkYHnRsQDj1vQUtd3V8YyFZRCja1XPeug9VTcbUBs2l5eaIfCah+YlrPnJllwLcVBYxVkSxMN84MU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797178; c=relaxed/simple;
-	bh=OcO81qqmYjA1WLarD8d+EQMm0KOl8MWQ/CQJDx5drG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QuQX+dDyVru1pt30tdZuG2ZuhXz97sJZUk9ofo6iUoilYzxu59NWlzxrh1GG7Ua4BWrWP4fqSoVBSOD4SAjshLs8sgtoJEOj+UPIrYnvzVy2QidWsz7Tf0VRR/R2A6/3Wj7UO/VKrwN5IcXVkGIxWBOe7xaQWhZ63fmCmhZLyxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IqI4n15g; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=pTcM
-	0qCU0LW4PVNqSWEbnt0FPhKaWo+vHg2kavTTEVQ=; b=IqI4n15gZes7gjIaRBPM
-	ho/JglYq8yI7fTyeD6DnEQ1tC+3Cw76XbiSFRjO+qoV+Negg791U2V92qaxIrThM
-	V918RIGq1wMd5i5fj38g9popLxbwLDRW7ERhJyYrFRpIorzeUZeUkrJQK4vSWjn6
-	H9eE1A78UMVSeoQ5DtDO+SMH7tE3wLr8CHliz8OL0ET3KU0rihRChewx3sX51Q+5
-	QMu79MID7IvHfrRI/+L/MB29wU7Om8jekVvAhUo8q1xMfR4slRSwLnsoq3tX5KDe
-	CFu+UgTdCCs6pvuWnMShsS1sq4GxN+GQXPmV6aECFQ+5prI2Xn5KuDpDoJtq/6qa
-	wA==
-Received: (qmail 1833459 invoked from network); 25 Sep 2025 12:46:13 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Sep 2025 12:46:13 +0200
-X-UD-Smtp-Session: l3s3148p1@ZRrD4J0/CKMgAwDPXwQHAL/S9V79e5yL
-Date: Thu, 25 Sep 2025 12:46:13 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: i2c-dev: Fixed warnings generated by checkpatch
-Message-ID: <aNUddYwCj1Oi5uDp@shikoro>
-References: <20250906143119.21803-1-chiru.cezar.89@gmail.com>
- <20250906155926.32699-1-chiru.cezar.89@gmail.com>
+	s=arc-20240116; t=1758797229; c=relaxed/simple;
+	bh=8nvJ8A7foyLcKS29tCoL0fPQRMxEjUQMAs2niNyf/vM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MTUstErvouSBk9rXmGttnfxCZYy9lgv0ICEVBJfBKWigY0rvjKSUL2CXDar1MlS4uXx6SwjeSCObgzP2C6VoS/6gPVkPlgNc4Y582EFlSlDSjjWWdhlpkN7y+Df6wDP/8/uFSXnHnfuS0msOdWmspUfLI9WLT9tAn67wSqiUBcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=TjmvLZoD; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fca01f0d9so1546207a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 03:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1758797226; x=1759402026; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtezjMk6/bO0x/tPzo5ofmo/kKFHp0RyWiXSJ7o70so=;
+        b=TjmvLZoDR1ZuQaL4P8J1XHY/ORwiC/F+3lKzWOBkh0OsDPetD3+z7WqOUWUj9kKHKf
+         34O9dAdfPY0qRv1YCTw17V5aIIj6iSY5xYZcMf6NvGEbxg8IFdKzpmmDmoVBIun1ymFX
+         CUK5HCGn7uD1nvayqvdvp2m6D4GLhbZZnpOE4fyKsfzGqzYZS1BA+1xTLsRSl7PunAoV
+         /lO2gqIBOj7LxARwe7lkepO59nAX4ecpO4QYuCUaTY1JcUIBL5+R4D31xqwIjIVZE2ui
+         6QrmXBwDby1kq2E9wWym0EfKaHSaurEIhSYJQa2RjxD6pKzBdT5o5PJHgSAK2DAMOvj8
+         W+hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758797226; x=1759402026;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtezjMk6/bO0x/tPzo5ofmo/kKFHp0RyWiXSJ7o70so=;
+        b=DFP1fUoLa9l2EPQMWfWiJVg5mXGHY/k487j6AcVUAmp7eXgdq7av8bxzwbhfi589Ua
+         Z9w4l/iFbZ4m6nx1DegvKzqvHZLXphddGIf/8TH1VLc50KqYcQ7SdEeu51LOTJMHseVl
+         GvazhbgDPp1FebUXWk3IkXSDlUg7ZBJdJP9bn9IhNaWT59eirYLMay0IRwhQbly21Ryp
+         /nm7ES4KlxpmHbNs5fPEC+u/VyeO6cQ6tHoEnwYbTHsRSxj2rtmh1AmLuxTGpYAl/o7h
+         +8ZSqzpbNxK0Zs8GPOMfpIW1+t+JZ39oIhelRIiuvruHa6a04elCEe4Ajyj/a34eeQFi
+         MjKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEirtewu30GSz/NtwoUX+dWV7J/DOFBNZAizdmyF7mqxVX1jNTcAgfSc3tQDhbOP2r84QJGh/2BiE4d2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ2UkqItU535mC3aLjj2CGiEIrMMP7gbPkRbyNZDHajfyP1ma1
+	hecxYIjhZIV6O6NTqchNKUHH3fnwOyoAYKiW3petMc4d6Bn2NNaHer6dJfT9cQiYOZo=
+X-Gm-Gg: ASbGncshrYLY1mL1KmCSI1cGiqfzA52yGRNBgRRfRHifl6cBWbdSRmGZwGA2ykPoEy4
+	0c+1IH/cOAnn3BZ4fpGu4UGER/LjOL5HEVC62S2Wa6h2nx5F6WYMG17uhUG+Kg3vB80vO0qEfMf
+	P54y4jzZVyeEujl88eWGJqSVZIFc9uRhAnX9U7ZlrhCoDktHZcycZnpqXj3O/lBnqm7O0KsezOt
+	KTM6GZq38dTxWJsSIuO5XxufdnxumHbfQDpQJ0wqPB6FLqriyrmOR3bkdYy89Fut9CR38ZBF9QH
+	Q0ofN602Db0SolZl8vbFkni+sSgRHmaaH2Q2J6l3UPk37wQyLJFS6j1cRiRZy04P9mfdOFr5vth
+	L37Q5KOJfTsAfICQ=
+X-Google-Smtp-Source: AGHT+IEEcfDn2RrVsshiYTVRq+15zLodFJyHTF6YE6Rd2TNw1hBwfGLx4qw9HosoUAVdPzH9DGkLsA==
+X-Received: by 2002:a17:906:6a14:b0:b29:8743:8203 with SMTP id a640c23a62f3a-b34b14ad9e0mr345065266b.0.1758797225581;
+        Thu, 25 Sep 2025 03:47:05 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac6:d677:295f::41f:5e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3545a983ffsm140688266b.94.2025.09.25.03.47.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 03:47:04 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: davem@davemloft.net,  edumazet@google.com,  kuba@kernel.org,
+  pabeni@redhat.com,  donald.hunter@gmail.com,  andrew+netdev@lunn.ch,
+  ast@kernel.org,  daniel@iogearbox.net,  hawk@kernel.org,
+  john.fastabend@gmail.com,  matttbe@kernel.org,  chuck.lever@oracle.com,
+  jdamato@fastly.com,  skhawaja@google.com,  dw@davidwei.uk,
+  mkarsten@uwaterloo.ca,  yoong.siang.song@intel.com,
+  david.hunter.linux@gmail.com,  skhan@linuxfoundation.org,
+  horms@kernel.org,  sdf@fomichev.me,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
+  linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH RFC 0/4] Add XDP RX queue index metadata via kfuncs
+In-Reply-To: <e85e7bb2-6229-4b04-9c2a-7a7b79497c6c@gmail.com> (Mehdi Ben Hadj
+	Khelifa's message of "Thu, 25 Sep 2025 12:28:07 +0100")
+References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
+	<87h5wq50l0.fsf@cloudflare.com>
+	<0cddb596-a70b-48d4-9d8e-c6cb76abd9d2@gmail.com>
+	<87348a4yyd.fsf@cloudflare.com>
+	<e85e7bb2-6229-4b04-9c2a-7a7b79497c6c@gmail.com>
+Date: Thu, 25 Sep 2025 12:47:03 +0200
+Message-ID: <87y0q23j2w.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8wKHOx729hwXmUy6"
-Content-Disposition: inline
-In-Reply-To: <20250906155926.32699-1-chiru.cezar.89@gmail.com>
+Content-Type: text/plain
 
+On Thu, Sep 25, 2025 at 12:28 PM +01, Mehdi Ben Hadj Khelifa wrote:
+> On 9/25/25 11:18 AM, Jakub Sitnicki wrote:
+>> On Thu, Sep 25, 2025 at 11:54 AM +01, Mehdi Ben Hadj Khelifa wrote:
+>>> On 9/25/25 10:43 AM, Jakub Sitnicki wrote:
+>>>> On Tue, Sep 23, 2025 at 10:00 PM +01, Mehdi Ben Hadj Khelifa wrote:
+>>>>>    This patch series is intended to make a base for setting
+>>>>>    queue_index in the xdp_rxq_info struct in bpf/cpumap.c to
+>>>>>    the right index. Although that part I still didn't figure
+>>>>>    out yet,I m searching for my guidance to do that as well
+>>>>>    as for the correctness of the patches in this series.
+>>>> What is the use case/movtivation behind this work?
+>>>
+>>> The goal of the work is to have xdp programs have the correct packet RX queue
+>>> index after being redirected through cpumap because currently the queue_index
+>>> gets unset or more accurately set to 0 as a default in xdp_rxq_info. This is my
+>>> current understanding.I still have to know how I can propogate that HW hint from
+>>> the NICs to the function where I need it.
+>> This explains what this series does, the desired end state of
+>> information passing, but not why is does it - how that information is
+>> going to be consumed? To what end?
+>
+> In my vision,The queue index propagated correctly through cpumap can help xdp
+> programs use it for things such as per queue load balancing,Adaptive RSS tuning
+> and even maybe for DDoS mitigation where they can drop traffic per queue.I mean
+> if these aren't correct intents or if they don't justify the added code, I can
+> abort working on it. Even if they weren't I need more guidance on how I can have
+> that metadata from HW hints...
 
---8wKHOx729hwXmUy6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Both filtering or load balancing you'd want to do early on - in the XDP
+program invoked on receive from NIC, which as Stanislav pointed out
+already has access to the RX queue index in its context. Not on the
+remote CPU after spending cycles on a redirect.
 
-> +/*
-> + * Note that this is a complete rewrite of Simon Vogl's i2c-dev module.
-> + *  But I have used so much of his original code and ideas that it seems
+And even if you wanted to pass that information to the remote XDP
+program, to do something with it, you can already store it in custom XDP
+metadata [1].
 
-No need for additional indentation.
+So while perhaps there is something that you can't do today but would be
+useful, I don't know what it is. Hence my question about the use case.
 
-Also, I don't see an actual code change, so binary objects should be
-identical. Can you check?
+[1] https://docs.ebpf.io/linux/helper-function/bpf_xdp_adjust_meta/
 
-
---8wKHOx729hwXmUy6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjVHXUACgkQFA3kzBSg
-Kba2hg/+MZDXq31KUN8BmE8y01EEIa/VLTVOOF72ixkBIQujQZAjwJJ3/zb0eQZF
-te+0tEfBqeq8f30sUFOMv2AQ0npoYpwdpF31Bkvr/IU7wn5j1ji/XfA++j1GRZqQ
-FpqnMiEduIuaYbR7go5tGtAXaQhdJMGS2RYAXfe3rED9UrbRXkyLPSL1sSpL7h4U
-PdpzdbfXsJg2ei+ooYQceHKHsQ32yi9ErJYj0KyLTKUKZRgg8f/Iauoj/itss6PP
-tGFXMOIYwftLXmqC7txc+wYbIBMKPD09Hgl0TuOyxU97kLXZxrV3SxyRWFuO9ARe
-GrAUPVpDWajY+qOIH2r6HxURIh0dVRt4haEr+BsHE76OoU0UCifPpVuMQYli7Atp
-MdGjIWiMIexrJgqRG7Y+HxQNe9GfLCmyDD4Pe7PxsSZYVg5penvBpDzLOwWBjbsL
-okhC7VO6geIEe2WMR1LqM8HXFRD28ei2oagXpQ741WCrVTvyc9elsqFOJHMqo1i/
-f7iN/4a6WRKXZD6cCwDzOw6tiTCWaiQwfobtj98yUhxLLEerj4TBMPMRq9EYHHtX
-ag2N+vDzqmNI8SuuOZ/EHl5VzzCkXb57ryFDZLzIRXGP1YeViXWID8W9hB2yw41S
-oqUvqPsuxOslBT/avHNgAn/XKqwC0vto9kbZD39p9ghWPe6uL8g=
-=dDFD
------END PGP SIGNATURE-----
-
---8wKHOx729hwXmUy6--
 
