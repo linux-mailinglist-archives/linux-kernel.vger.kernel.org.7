@@ -1,89 +1,113 @@
-Return-Path: <linux-kernel+bounces-833095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EBBBA1346
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B877BA1373
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 21:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC43C17F18B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A237BA7CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 19:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE351DF27D;
-	Thu, 25 Sep 2025 19:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4870331CA7F;
+	Thu, 25 Sep 2025 19:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5CP6iNP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="S4n5h9fc";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="vZiG+hlB"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E902E8B8A;
-	Thu, 25 Sep 2025 19:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAB52E8B8A;
+	Thu, 25 Sep 2025 19:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758828828; cv=none; b=PuMJCAGC3ll+dRCoFKuwFGGOq1SVN9YF+Y/vW2IJojvyA7IKouvltPESGOc/1Sb8PrKAMmmvjf4zPwaI1VcORZpZBz2QasJWRCyLV/5bA3erS+f71QgrVe7w+EJCD6oLZTRCQ2jommme3UQzG1JJbpv+BxIZm3fxqVWuODtipwM=
+	t=1758828997; cv=none; b=WeybF3s1H+cCiiR6SYE5eMyJUzWi0KekTw7HMZqJhDLShghJXWwiYIllcGEqz38EoNFyZ6lkiG6RbToVe6d40x2znaXIGEZuW5x+zM7bPw18FO2xQKLgUU3C+6NsA1SB03S5qP8H56SDjMKNnAEaSu1PJFgG7EfoThnt5dLYcOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758828828; c=relaxed/simple;
-	bh=EigWim/UCRyio9RFX5hRbRTRCkh1l+saIBXI4z48n2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maE9DwdMupcccwUGqC80DwihxVK9eGLuCrv6wlIKNUFkSEbYMZayRRe8RsLrnmiuN4fNjqcwkNUwvAIvNmy+FNDwSPwD31sYcuEkfMVAIliS2zkYkvzM2kWH4r6mw98HHw3uTQrxE2F6qxWzWw3jP07AHx0Z2gbY2DseIKb1zKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5CP6iNP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24BBEC4CEF0;
-	Thu, 25 Sep 2025 19:33:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758828828;
-	bh=EigWim/UCRyio9RFX5hRbRTRCkh1l+saIBXI4z48n2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D5CP6iNPFDvReVrRJGzQGei305a35Ubk4kZ768shgeIOh6d/vQwmadmI5CfaanV4a
-	 QNf9f9s2UAWX/scBvu3qbpzxzpBzQg+oPGWQE8XsKjI8VzQrzHKyaByw99JlWRdMtI
-	 o9HNEX3lkNUw1MP5wAhlcGKSCehSRp4izvnBwXrEFZoCEfNT5weZAJgxkIWXGTRhW2
-	 gh6sEcAEocM6FS+o191bVd9RwD62qYB2m8JhEd/zqkNotU605FD3qjFMwtWsg3CrXt
-	 JXNwNjEDKAJkfdZkC/ekjuKH0O+8aaZiyLukPOdsEeu+B9gZOg1usAOA396EBMO5CE
-	 EM473XJ6iAg1A==
-Date: Thu, 25 Sep 2025 20:33:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Liangbin Lian <jjm2473@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, quentin.schulz@cherry.de,
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
-	inindev@gmail.com, ivan8215145640@gmail.com,
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
-	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
-	jbx6244@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: arm: rockchip: Add LinkEase EasePi R1
-Message-ID: <20250925-renovate-willing-1913bce7d347@spud>
-References: <20250925055906.83375-1-jjm2473@gmail.com>
- <20250925055906.83375-2-jjm2473@gmail.com>
+	s=arc-20240116; t=1758828997; c=relaxed/simple;
+	bh=wUCV5gZxAYMRE5R8Fyb0RkkstbddJPktPAhrNem9sMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SsYeFdN3ElxrsZocQpQvdWbJ+qAHYZGZ6J3jJHS2zgT+qRpleXz5R8IVxECGGUV+Tdh5sPFhfiK6kqEAb3X5fnBt8KiR7NREsicqz2ImcOPoe+dWfchUZLKd7k8eTpoSsnt+nmujrUvnt9jyyk3NgdE09w1kHDuVER6ONaWCfN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=S4n5h9fc; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=vZiG+hlB; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1758828885; bh=qajMjw3QsMJTz3D164BqXP1
+	pakOaeLD61QWvXvNAFNU=; b=S4n5h9fcKQ0Y21h8RuONku8Hocsd+4OTv9Xfp/hFb9A/6vsk3h
+	O+WXPt6klKux5I7ya2oSnGOOIHue/pH17CheCrkrphrxc0crsi3pXJ8gIHfVmokCGgg+6RUWFJu
+	n1YL6DWXNLhQ+nNSiZ610tAe/OkZuPrI3pl2UQ/6Nqx8Pf/OB8R5OpcmifF8EvQufiYLLEy9Ano
+	keW4SYqS4OSFJbW36G0usaZp5BpNj7/Gpo+RLoovpore3BFByg4GbOwg94LchskyOxt0h9POIF1
+	tPQAJ/hoc/S5P7FGJWqW3LanOM50f/SYJxJh6RhQ9O0FaCfrZP9TikZXA90sSJhqqlg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1758828885; bh=qajMjw3QsMJTz3D164BqXP1
+	pakOaeLD61QWvXvNAFNU=; b=vZiG+hlBLFjNzb7KoNNG/kytOS7piGnGwYp9/mFOPP0t7PXiWl
+	4gm0IRw5gHJJFsdrMy+WpcgJIVs0XxmOzRDg==;
+Message-ID: <44229f2c-7004-480f-973b-a36e3288959b@mainlining.org>
+Date: Thu, 25 Sep 2025 21:34:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6q46uqyUhMhBcI7Y"
-Content-Disposition: inline
-In-Reply-To: <20250925055906.83375-2-jjm2473@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] arm64: dts: qcom: sdm845-oneplus: Correct panel reset
+ gpio polarity
+To: david@ixit.cz, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ phone-devel@vger.kernel.org
+References: <20250925-s6e3fc2x01-v1-0-9293016768f7@ixit.cz>
+ <20250925-s6e3fc2x01-v1-5-9293016768f7@ixit.cz>
+Content-Language: en-US
+From: Jens Reidel <adrian@mainlining.org>
+In-Reply-To: <20250925-s6e3fc2x01-v1-5-9293016768f7@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/25/25 11:12, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+> 
+> Reset GPIO should be active in high state as usually the board doesn't
+> invert the polarity.
+> 
+> Fixes: 288ef8a42612 ("arm64: dts: sdm845: add oneplus6/6t devices")
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> index aff5e80c1eba43e830991c2afd53b6322893cd27..7f968f90a83b869395bedd5de510ba96de3c4e94 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+> @@ -456,7 +456,7 @@ display_panel: panel@0 {
+>   		vci-supply = <&panel_vci_3v3>;
+>   		poc-supply = <&panel_vddi_poc_1p8>;
+>   
+> -		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_HIGH>;
+>   
+>   		pinctrl-names = "default";
+>   		pinctrl-0 = <&panel_reset_pins &panel_te_pin &panel_esd_pin>;
+> 
 
---6q46uqyUhMhBcI7Y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi David,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+according to the schematics available to me, this GPIO is active low (as 
+on most other Qualcomm phones). I'd suggest dropping this and the driver 
+change.
 
---6q46uqyUhMhBcI7Y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNWZFQAKCRB4tDGHoIJi
-0tPbAQDluKdmaxZQBuZPp5RSMdINmjfLQvVz3r2Pj5NC9W1UuQEA2gaDbkOjgB94
-m4r3xrc2DT2pFCg3SgfT6s7+3UdRtAM=
-=ZY2/
------END PGP SIGNATURE-----
-
---6q46uqyUhMhBcI7Y--
+Best regards,
+Jens
 
