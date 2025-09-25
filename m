@@ -1,92 +1,262 @@
-Return-Path: <linux-kernel+bounces-832837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-832777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D6FBA0896
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 18:04:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73087BA04B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 17:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6964D3BAB9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 16:04:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8966F7BC7DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Sep 2025 15:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1654303CBB;
-	Thu, 25 Sep 2025 16:04:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07D92EC08C
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 16:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279202E54DE;
+	Thu, 25 Sep 2025 15:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="meBnsbbr"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6139B2E229E
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 15:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758816284; cv=none; b=jAj3khOMjvofIiaUIJhdDBmuZC332YoMy92NBAMmQI5N3XoQpI/xwR2ic17BswUIORiEPA3TR9WwHR6SJATVOGMW4C8KzJzGjJUHfrQrI2N6sUx++SYHWhuId3BPkjfNm3PVl201i/LAOzHx9s+4N+hoN4wwdOWfCJfA4Oum154=
+	t=1758814017; cv=none; b=PWkDyH8MgbgLQN9pjgGk6Xqk8Q/DdkUhzT+PnHT/ke8D4XpnD7mGJlgR1LYWaFrzwNXXLdav8PEaHc/75e6KOiO/jBBU1siy8s/6GB/7rXGEFvc/DLZPR8iEwBkdExi6yJy3MfaO3A9yzkQESsVEDvKuKFR8FDuPXgMLrWyk3UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758816284; c=relaxed/simple;
-	bh=7KIMIrwdi4UhSiEDt+IdaPb2j2bnoGnX++P/yjvjKFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8VgyRkCK2oRFHvFmCHln9zGhbl0hrhri8yOH2OxG1EGdn8zdI6mu77qLFDk1ysoZZnzgefAOYOc06sdbGhn6/j2jAJAWa+exDIm49yoZYQknk50Gr5LpSE5LaW0vvHCGgoZywX3Q6Rry8ClDA7JLFrTUN1oECyIIVC4sBBwL6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19AA31692;
-	Thu, 25 Sep 2025 09:04:34 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C45EE3F694;
-	Thu, 25 Sep 2025 09:04:41 -0700 (PDT)
-Date: Thu, 25 Sep 2025 17:04:40 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Jie Gan <jie.gan@oss.qualcomm.com>,
-	Carl Worth <carl@os.amperecomputing.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] coresight: tmc: add the handle of the event to
- the path
-Message-ID: <20250925160440.GD7985@e132581.arm.com>
-References: <20250922-fix_helper_data-v1-0-905e8115a24e@oss.qualcomm.com>
- <20250922-fix_helper_data-v1-1-905e8115a24e@oss.qualcomm.com>
- <874isuo0m2.fsf@rasp.cworth.amperemail.amperecomputing.com>
- <f7be3833-9b33-4935-b821-a2e0000a2557@oss.qualcomm.com>
- <CAJ9a7VjaUE+iy=FFwPhCdfXgoGR3rP9WSx-ZkKYeCHhqJ2yzMg@mail.gmail.com>
- <3b16607f-8995-46b1-aecf-c6aa79f66f9d@arm.com>
- <635ba698-d7a9-40d0-9285-4ec108d4a536@linaro.org>
+	s=arc-20240116; t=1758814017; c=relaxed/simple;
+	bh=M0BwKYTKOwG+97x6OWWGb8iaLDGyWUbHd+kuVNpzX7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rdSw4Li/ch0FsJuUsxd6P7AcoNlCUWhiAK0YhoAzWWnImyPGRaRz2wdAWgkl2/4/d4KTRlPikJLLrwdVCryDnW+Vfb6Xc0TC/p0OV8y20B5ad93/m4irNTffqJkEgKZNu5WZ6ZyZrufaRrtetitb0Da4pkniOVSaGx28Wufl/w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=meBnsbbr; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b2b7d5ff690so24206866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 08:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758814014; x=1759418814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E4GUf5N/3YbcyD+8Oivhe9ak/JJo3vnWEVVy0baHt1Y=;
+        b=meBnsbbrQ1+cXIu2KeE0B3YgAaOSWBbJrVnA99keKkpM5KoVSMU5A5Vq5EE9up5xe2
+         kHkKdybgqxtc/+y9ax8DvQXWnxd8ZX6Af3leR2HrF/K5Vy1/IUOwDiTqB6e1L10p0hgp
+         UGDEM6nsIGly5RVa78NWZSmwSXLDlrK0UdzSo0ctLeznsML0LI68/PEQZiVcv1n7i+MK
+         LxwsQx4790bk1j2YKtEwoVnllMqVUUFQOztT2SdSVI9AQbmm7h+URIyS2npl43j4XVGU
+         6A1jQIFi8vxczMzd1UjcRRWRGZvZ2E0ZMxgoGexsjKoi5/OY2xXHC7ptBVPd/oFxPK2Q
+         9tYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758814014; x=1759418814;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E4GUf5N/3YbcyD+8Oivhe9ak/JJo3vnWEVVy0baHt1Y=;
+        b=VDMTYcaPztEuV/9KrXxgWdHtHFPmt17NjWI7ouBGWNaIw0zDg4I1kUBPgntJVtcOlp
+         wcKFuFA19I8qW2FE20GOUVz6gsICugLVkYFxmPTJPY+R28WJYlDDB7TjK27ngsxE9czF
+         6lW9ChuFUxvoJqQAsKPNA/e0A5OI99z3h4EB5LATaHEHFLz0zAyx166wIMiKGYLsLfWZ
+         ozPWvD2JLTjOalMAPffUq7LOjtpb+62QE2KK6gKxFXhdG2dYfR/420VRg71gA45sdit0
+         JZObWF7RhhlwrXWSxd+M88jTvGmmWHydLdZyoA5wcXCOKTQ6f/uRAH9/yGJzR9tVY5Ex
+         LQOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7rjOTJ0XNCBKXjJhjWFtSV0R+I6jb7c/GC+qA/GESdK1AItzsUcOXrk7dTol84G3ZwttdB/HTEqLxZik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyis04xCW5B9TAGBytzsTdEZ5lX14Pu1c0a1/E8zbnmsHudMr2L
+	XaQ+5m1jP5v+6t5FnQEPdvSstkUsb6P1vyEB0pb2mu+5HwmtLqjFL+iu
+X-Gm-Gg: ASbGncvptlxuzM1nvVGgCdaW+09ozi9puyQ+5oLd6ML6vPbK3/KwFRYpiwOgNx8VfPl
+	rO6lk4pRD/PkKsIjEk5SGMHKKzzp0T+aQJglX20+Tb5eiK8zZ0kXPY/CjPMdUjK8xipBR8tPsJg
+	FpXkBzAvDMkBnvuOYlrbSkQm9E4EkkJBRET4b8XDmIZ0wwiJG0wQCaSusgSO2AB8CvaCbYMYFt5
+	JXj8uHWqx4+zi2BMt45Iu4byOHzRY8yiPOS01/UAl2+eI6lyXRMqzayx4r2ack7736Y8qAvIUYS
+	d+xxY+ki9TN9S15UTnduFiDqwXs25KTlGCJKBuc2/bsg8SDQqD1dfEhAv1FC8o/W6GWEIgUr6P3
+	RQvq9m+39nBa3M1WQf5NZniF+3343Hbz/tAsSMGdEhw==
+X-Google-Smtp-Source: AGHT+IGDiS7N74oVbf2PUhKEBndwAEuvYhlHAhqWKLDD7n6ktQyQUWHg2Hw3sa9zB3n6Bnm5oDSerA==
+X-Received: by 2002:a17:907:1c15:b0:b04:2d89:5d3a with SMTP id a640c23a62f3a-b34bde1e594mr225468166b.7.1758814013323;
+        Thu, 25 Sep 2025 08:26:53 -0700 (PDT)
+Received: from [192.168.1.105] ([165.50.26.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353f87511dsm192990966b.43.2025.09.25.08.26.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 08:26:53 -0700 (PDT)
+Message-ID: <4b77c830-2a7d-444a-adeb-4d1370f8923f@gmail.com>
+Date: Thu, 25 Sep 2025 17:26:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <635ba698-d7a9-40d0-9285-4ec108d4a536@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] selftests/bpf: Prepare to add -Wsign-compare for
+ bpf tests
+To: Daniel Borkmann <daniel@iogearbox.net>, andrii@kernel.org,
+ eddyz87@gmail.com, ast@kernel.org, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com,
+ ameryhung@gmail.com, toke@redhat.com, houtao1@huawei.com,
+ emil@etsalapatis.com, yatsenko@meta.com, isolodrai@meta.com,
+ a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com,
+ vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
+ gregkh@linuxfoundation.org, paul@paul-moore.com,
+ bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
+ mrpre@163.com, jakub@cloudflare.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+References: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
+ <20250925103559.14876-4-mehdi.benhadjkhelifa@gmail.com>
+ <5ad26663-a3cc-4bf4-9d6f-8213ac8e8ce6@iogearbox.net>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <5ad26663-a3cc-4bf4-9d6f-8213ac8e8ce6@iogearbox.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 11:10:51AM +0100, James Clark wrote:
-
-> > > I would suggest in the csdev (coresight_device) structure itself. We
-> > > already have some sink specific data in here e.g. perf_sink_id_map.
-
-[...]
-
-> > I think this data is specific to the session we are enabling the
-> > device(s) in. e.g., we keep the trace-id in the path.
-> > So, I don't mind having this in the path structure.
-> > Instead of modifying csdev with additional locking from "etm-perf"
-> > it is always cleaner to handle this in the path.
+On 9/25/25 4:04 PM, Daniel Borkmann wrote:
+> On 9/25/25 12:35 PM, Mehdi Ben Hadj Khelifa wrote:
+>> -Change only variable types for correct sign comparisons
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
 > 
-> Yeah, and perf_sink_id_map only "needs" to be in the csdev because it
-> controls sharing IDs between multiple paths which can't be accomplished by
-> storing it in the path.
+> Pls write some better commit messages and not just copy/paste the same 
+> $subj/
+> message every time; proper sentences w/o the weird " -" indent.
 
-This is a bit off-topic: do we really need to maintain an id_map in
-every sink device, or could we simply use a global id_map?
+Understood, though the changes are very similar / are the same with the 
+same goal that's why it made sense to me to do that and I will remove 
+the - in future commits.> Also say
+> why
+> this is needed in the commit message, and add a reference to the commit 
+> which
+> initially added this as a TODO, i.e. 495d2d8133fd ("selftests/bpf: 
+> Attempt to
+> build BPF programs with -Wsign-compare"). 
+I will do that in the upcoming version.
 
-I might miss some info; anyway, consolidating trace IDs is a low
-priority for me and not critical to this thread. But this might be
-benefit for later refactoring.
+> If you group these, then maybe 
+> also
+> include the parts of the compiler-emitted warnings during build which are
+> relevant to the code changes you do here.
 
-Thanks,
-Leo
+Okay. I will do that. Should i send a v4 with the recommended changes 
+but not including the rest of the files meaning the ones that I haven't 
+uploaded in this patch series which contain type casting or should i 
+just make changes for these files in this series?
+Also will it be better if dropped these versions and made a new patch 
+with v1?
+
+Thank you for your review and time Daniel.
+Regards,
+Mehdi
+>> ---
+>>   tools/testing/selftests/bpf/progs/test_xdp_dynptr.c          | 2 +-
+>>   tools/testing/selftests/bpf/progs/test_xdp_loop.c            | 2 +-
+>>   tools/testing/selftests/bpf/progs/test_xdp_noinline.c        | 4 ++--
+>>   tools/testing/selftests/bpf/progs/uprobe_multi.c             | 4 ++--
+>>   .../selftests/bpf/progs/uprobe_multi_session_recursive.c     | 5 +++--
+>>   .../selftests/bpf/progs/verifier_iterating_callbacks.c       | 2 +-
+>>   6 files changed, 10 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c b/ 
+>> tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
+>> index 67a77944ef29..12ad0ec91021 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_xdp_dynptr.c
+>> @@ -89,7 +89,7 @@ static __always_inline int handle_ipv4(struct xdp_md 
+>> *xdp, struct bpf_dynptr *xd
+>>       struct vip vip = {};
+>>       int dport;
+>>       __u32 csum = 0;
+>> -    int i;
+>> +    size_t i;
+>>       __builtin_memset(eth_buffer, 0, sizeof(eth_buffer));
+>>       __builtin_memset(iph_buffer_tcp, 0, sizeof(iph_buffer_tcp));
+>> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_loop.c b/ 
+>> tools/testing/selftests/bpf/progs/test_xdp_loop.c
+>> index 93267a68825b..e9b7bbff5c23 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_xdp_loop.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_xdp_loop.c
+>> @@ -85,7 +85,7 @@ static __always_inline int handle_ipv4(struct xdp_md 
+>> *xdp)
+>>       struct vip vip = {};
+>>       int dport;
+>>       __u32 csum = 0;
+>> -    int i;
+>> +    size_t i;
+>>       if (iph + 1 > data_end)
+>>           return XDP_DROP;
+>> diff --git a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c b/ 
+>> tools/testing/selftests/bpf/progs/test_xdp_noinline.c
+>> index fad94e41cef9..85ef3c0a3e20 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_xdp_noinline.c
+>> @@ -372,7 +372,7 @@ bool encap_v4(struct xdp_md *xdp, struct ctl_value 
+>> *cval,
+>>       next_iph_u16 = (__u16 *) iph;
+>>       __pragma_loop_unroll_full
+>> -    for (int i = 0; i < sizeof(struct iphdr) >> 1; i++)
+>> +    for (size_t i = 0; i < sizeof(struct iphdr) >> 1; i++)
+>>           csum += *next_iph_u16++;
+>>       iph->check = ~((csum & 0xffff) + (csum >> 16));
+>>       if (bpf_xdp_adjust_head(xdp, (int)sizeof(struct iphdr)))
+>> @@ -423,7 +423,7 @@ int send_icmp_reply(void *data, void *data_end)
+>>       iph->check = 0;
+>>       next_iph_u16 = (__u16 *) iph;
+>>       __pragma_loop_unroll_full
+>> -    for (int i = 0; i < sizeof(struct iphdr) >> 1; i++)
+>> +    for (size_t i = 0; i < sizeof(struct iphdr) >> 1; i++)
+>>           csum += *next_iph_u16++;
+>>       iph->check = ~((csum & 0xffff) + (csum >> 16));
+>>       return swap_mac_and_send(data, data_end);
+>> diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi.c b/tools/ 
+>> testing/selftests/bpf/progs/uprobe_multi.c
+>> index 44190efcdba2..f99957773c3a 100644
+>> --- a/tools/testing/selftests/bpf/progs/uprobe_multi.c
+>> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi.c
+>> @@ -20,13 +20,13 @@ __u64 uretprobe_multi_func_3_result = 0;
+>>   __u64 uprobe_multi_sleep_result = 0;
+>> -int pid = 0;
+>> +__u32 pid = 0;
+>>   int child_pid = 0;
+>>   int child_tid = 0;
+>>   int child_pid_usdt = 0;
+>>   int child_tid_usdt = 0;
+>> -int expect_pid = 0;
+>> +__u32 expect_pid = 0;
+>>   bool bad_pid_seen = false;
+>>   bool bad_pid_seen_usdt = false;
+>> diff --git a/tools/testing/selftests/bpf/progs/ 
+>> uprobe_multi_session_recursive.c b/tools/testing/selftests/bpf/progs/ 
+>> uprobe_multi_session_recursive.c
+>> index 8fbcd69fae22..017f1859ebe8 100644
+>> --- a/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+>> +++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+>> @@ -3,6 +3,7 @@
+>>   #include <bpf/bpf_helpers.h>
+>>   #include <bpf/bpf_tracing.h>
+>>   #include <stdbool.h>
+>> +#include <stddef.h>
+>>   #include "bpf_kfuncs.h"
+>>   #include "bpf_misc.h"
+>> @@ -10,8 +11,8 @@ char _license[] SEC("license") = "GPL";
+>>   int pid = 0;
+>> -int idx_entry = 0;
+>> -int idx_return = 0;
+>> +size_t idx_entry = 0;
+>> +size_t idx_return = 0;
+>>   __u64 test_uprobe_cookie_entry[6];
+>>   __u64 test_uprobe_cookie_return[3];
+>> diff --git a/tools/testing/selftests/bpf/progs/ 
+>> verifier_iterating_callbacks.c b/tools/testing/selftests/bpf/progs/ 
+>> verifier_iterating_callbacks.c
+>> index 75dd922e4e9f..72f9f8c23c93 100644
+>> --- a/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
+>> +++ b/tools/testing/selftests/bpf/progs/verifier_iterating_callbacks.c
+>> @@ -593,7 +593,7 @@ int loop_inside_iter_volatile_limit(const void *ctx)
+>>   {
+>>       struct bpf_iter_num it;
+>>       int *v, sum = 0;
+>> -    __u64 i = 0;
+>> +    __s32 i = 0;
+>>       bpf_iter_num_new(&it, 0, ARR2_SZ);
+>>       while ((v = bpf_iter_num_next(&it))) {
+> 
+
 
