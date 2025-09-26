@@ -1,340 +1,119 @@
-Return-Path: <linux-kernel+bounces-833497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942B1BA2284
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:46:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7654EBA22A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDF9627388
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE1316BBD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62721B0F23;
-	Fri, 26 Sep 2025 01:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35DA1B87F0;
+	Fri, 26 Sep 2025 01:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2XtaMyQ"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="xfEP0tWP"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4122920322
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD859C8FE;
+	Fri, 26 Sep 2025 01:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758851170; cv=none; b=GO9Ma0j5LAaelc2sMdrBY5ryj2Gppbk3nLEE9ARGL5Dr0QNqcwJeiRAriZawOsFNcJsNSPRn8bDQIKLapbWKrXNcu2DPorZ+U4bmKhb/XSdUMybZUoGKH05GBjHSy+2SXUWcjCnQoypagGDR1rFq9BFvtd8/5SHu4ikKn4eSb5M=
+	t=1758851407; cv=none; b=e93M2+3RMlhTn2T35PVlrtB5xwUnWgmMctTTHcvJ0qlTvB5pnXnpNf0I0wu69tTXQwJwtQB4QMuIIk6iaoDfXxzPv0g3VAROwFpacxLmcLh/HZXKoOdhqHenqQKQ77iiHxxTFR4PyZ2yw4sLm6fUBx32qIYB4+W9Y1NK/CcHhf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758851170; c=relaxed/simple;
-	bh=oNAeB4e5WwyfnDVDE3IxWFF4/RiUNvg4pvky6/QqFVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qfld8pqqygwKrrNM+rr7/xyRwpCENFuBTXG1MYygdFl4joJYAyfgS4arx2LdBAxmJrSvsuqi4JS36SOAzGbQM6DrL7NPyNb9EA3YrtQ0kddV5iVCtVriXalVQMjPmntWa1llSR/YFenOIKw30i6Nb2JmAjZAh58EDczJvcvhT7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2XtaMyQ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32b8919e7c7so2066377a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 18:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758851168; x=1759455968; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQXgkcYjTebNS08BAcrTSh92Mf+gdkZJbP9GIonE5ao=;
-        b=D2XtaMyQlsgpQKMI47i5zr2sX4Djhl+7XpPEOP6ZHreXH7dfF0y3KHYehd+mrghYee
-         e6apwOQnLnEP6CyRy18H0s73D92EcpnulU8ghpb1+kr0wAjrPXB63rEHgySFlXbMxk7H
-         1e0Xt1QWfWHOQZbWVXVsk6MtFt0BtsATz5K6IvoUCFAsf3Tk9v/3W2YgO33FWxqP+P7d
-         b1KsLffwrAX7pV0bZe0N7QjfTk/BlZZzP5HxPHsf0zkA3BFj2Bgj67JwpAkRLhJ2XgjV
-         t9pe0gD0hat6d2+qC0nzOBMsTSnkxrD4hc/p1m2BNJqknN4ICi/D55mmoqzjVWGLkfSI
-         5TGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758851168; x=1759455968;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gQXgkcYjTebNS08BAcrTSh92Mf+gdkZJbP9GIonE5ao=;
-        b=Ke4ZupZnStPbNHH1hUkNG02X9aoLXNowunFPcImlQkcEhgEWhvff9uYKpaa8IJb8gd
-         MPZvo+mURB6EdZGRH826P7FBQ3TnrNETQSkoLblBoj/s2QpNEqRR3IZQobIax1G2lpdL
-         8/rTlsNNTc1DW55Fxv1Rds+f2SokhgNGO2DK7KeTyLyByw0GDVqBIZ1Ext4M6/3Feqm4
-         CVFURGsknlZ8nAgjkVv3e+8PAVqGwBIZUmqVH7e0tgASqgF5gh56V+6UjkPYedcrTmFz
-         A9mzhalXAOYLmsbRz4dStRSAcpj0AR4K8rraYdmk0ZvHILlDMMzxwqJtDOZzBkgd0n/o
-         mPbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuvaxgr4qftEaiKHsQ6ViDSbGC9wkG6l5J0Ap9U1GueKadNyPK32PjN5AF6O7AZ12BDRrnKMc3RxCbljU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiZ7uJpKkBeLHags7epTPO/A6i1HID7oOsTrct74DiWD0nwJiH
-	+k0d/e9Xq/wZzLL4ILR3NHe4d5Awp67rqltx+5cGr36PRy9d4AVZFQfO
-X-Gm-Gg: ASbGnctydfM/EuVN/DKxGtEhvI+tCJTVktoWtY/F2+TwYwnRmD6pkPBUDXdtWWfRTUS
-	78yVCGJHFbNTEZ3jVF4dyZ1wUAuiAio7E2KEuWbgLNKA3+iHJbiaTVs8h/jG9xQdl3nTq+G2YUg
-	WWp7hCFQhzwmoGjdQqFYsn+HtVztt3hmYDlbzCyMIaB1FG3SEXn1+/6ujCeInoKdhTI3g90UXjr
-	LFmeJ1BcH0gqJrDUZDCDoaMDuiU0TduCvT58mmjNOZ2/uBksWvhO+oYCMhvLoNZ5YoFVho5/uuS
-	8sWbGfIaAFmGrcmlYLD3wz1JjEVDMDt5i/yaSGzdSYRrkFG6cj8dnuLfBA8P0a8g5W0chdBzOJs
-	jpnNNFq7uP+FdZM2bf0akT3CxbBd10QklGyPgmDqzYI4AZWxiVmkbY4gHelWxU6iiZ8fu
-X-Google-Smtp-Source: AGHT+IGVUpxNwK7HMjTCb3KDiJvXwoRUb4l/EP8cEdjREpO8sRfEQNZyXbKGT3vf4rSU0e8P+gLEZQ==
-X-Received: by 2002:a17:90b:4aca:b0:32e:36f4:6fdc with SMTP id 98e67ed59e1d1-3342a22bf5amr5802516a91.4.1758851168371;
-        Thu, 25 Sep 2025 18:46:08 -0700 (PDT)
-Received: from JF.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-335277eb10bsm1116423a91.2.2025.09.25.18.46.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 18:46:07 -0700 (PDT)
-From: Jeff Lin <jefflin994697@gmail.com>
-To: jdelvare@suse.com,
-	linux@roeck-us.net
-Cc: cedricjustine.encarnacion@analog.com,
-	ninad@linux.ibm.com,
-	andriy.shevchenko@linux.intel.com,
-	johnerasmusmari.geronimo@analog.com,
-	Mariel.Tinaco@analog.com,
-	jbrunet@baylibre.com,
-	kimseer.paller@analog.com,
-	leo.yang.sy0@gmail.com,
-	nuno.sa@analog.com,
-	chiang.brian@inventec.com,
-	gregkh@linuxfoundation.org,
-	grantpeltier93@gmail.com,
-	peterz@infradead.org,
-	william@wkennington.com,
-	krzysztof.kozlowski@linaro.org,
-	tzungbi@kernel.org,
-	thorsten.blum@linux.dev,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeff Lin <jefflin994697@gmail.com>
-Subject: [PATCH] drivers/hwmon/pmbus: Add support for raa229141 in isl68137
-Date: Fri, 26 Sep 2025 09:45:52 +0800
-Message-Id: <20250926014552.1625950-1-jefflin994697@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758851407; c=relaxed/simple;
+	bh=6EIDKLJ0T64U8JaYB87sh/AYgFFzAStLXb+PhWgo6XU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/jjpc6wCBLBhewD+YiDZsdIJKYlOsztMwxVKwd+KYvybTtnl1Ymil3PmGsUnM+5oxDg2kbvBWHwnb5h+jh2keb9aFZlmdextPfuo8Wuz1u8I3DnpajAwNaIML2XT0ry1tpxgUJTqwpRRopBX80J5YswxdGOwVNGrXFJrTVoYbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=xfEP0tWP; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1758851246;
+	bh=f9pOdE67HES7VaiKOaqJeSWoyMdjon32UaYW5I7wfMk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=xfEP0tWPqxSsv+wZERQL+pimB1qwKBdtDvv+TcDGaASGMPZMluqmTSHM8A1WIhzWe
+	 heRtll9kIgtKbi4STFKylQtAaEEyg7VzPKa7eAYXfx7XYsWEmifnN2/aSnlKplVWDF
+	 oC4H1VwRbUjgvxcE3upD28bdWjRes68BMZ80BJBQ=
+X-QQ-mid: esmtpsz19t1758851244t6712949d
+X-QQ-Originating-IP: WYNt+5eiH0pKnAuyyFLmJQkwXQ0+Zpro86iKA3t0UVc=
+Received: from = ( [14.123.253.220])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 26 Sep 2025 09:47:23 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 817829598830566685
+EX-QQ-RecipientCnt: 11
+Date: Fri, 26 Sep 2025 09:47:22 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	Aurelien Jarno <aurelien@aurel32.net>
+Subject: Re: [PATCH v2 0/6] i2c: spacemit: fix and introduce pio
+Message-ID: <48B175EBF0F1A347+aNXwqlO1mD-7BGtE@kernel.org>
+References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
+ <aNW5KfIg-_4-Et1S@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNW5KfIg-_4-Et1S@shikoro>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OUC5DGN0mB58BnpMipajIoeGxqThYQSyy4jSZq+zXnU7ySETUPRJ7rRr
+	RN6Izm2Nt7Cnp14wllbMbZ4PVdToTVoPysUyzWK2QpWNcXlmYLB6xSO1sEJG2fkeECptSAK
+	fJqsexHwABot6bJU657ddIMblpp3aJa07r6T8OzttncbXsR1dvILGLe+7s+44wuCXVo5Wu8
+	tn2GHViK/1Rl4kIDely8TG6VZUDnWrD++I3q5vusRs1gMbxtet544Z/y/rfeUV9zyLsuVsF
+	+mQkIjOhhLmjl9IWs3NqBOP55AFoHmbURMUgNniT9beaJrN3xNaC6AXyOZisgqbnp0XTEiy
+	9dugW1iUpbwynfgBztxXTsgejay0MRLSgagg6JGsmJA9M4sFFVnDWX9mP7C2Uftv2NW29u7
+	gL0cenrQ3NK9ksSdinn3zH7PtOt0Hrrhr1xX/w699cEcuXFd29Bqppa8gTGwKvU0GNUIiaZ
+	Sy73UmrUJu5kDyzF9QBo2XksNeBGRvDZWfnC4qnxBIKUt9h9+6vc/8kwqwXX/BhQZnuc9RN
+	h7VAJc8zuBVtdd3I2yhKi8iYwItLTCurG1bCT98rgJIp4ktqc/0+zeYfdtT090B+fmVJYBg
+	FIzM6B/17dB0DSE1x2npGCQyKy3FxI/IDUveZMJmu5V8McVQrgRep6Gy0wnSB9wTeccIsls
+	E4tw4meDRnZweh476O+5r85M0Ug6kd5JFr1HmcAk5x4Ai+ztz7M5Q1SAukQIHcGrIOYEzRC
+	xTsQnAIcb7QVQByUgY3llkss6chRI+QXcGPJG845LZ/oEHarScC/91AxMwhmY7h/aMB0lMV
+	n4pFK4hHn+7jEm1Cq0y36QTAkER+is/b07U/yuOSTDX+9rZDzsywzOMIRT9oc72V3RLQ9PC
+	9iPxDmDNBaD0szR48nAcrb/qpMPgKbYyIWLde9pMV1WRwbXPa9qur0ckFGj2DG3w2zlQi0l
+	r+Pq4HcAVzXaNffBdsKFX2cqyIpWwH/OtpHzluPyEGMvuDcZ3dvhLs117LBVjvmD8Fd29JJ
+	SxwJIk4/q8to42Uh9f
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-In chip RAA229141 there exist ISYS pin which can report the current data
-for the device connected to this chip through this pin by routed by Direct
-Memory Access(DMA) command. To read the data in ISYS pin, we have to set
-the DMA address to 0xC5 and then read the DMA data from 0xC7. And then use
-the Direct read format with 10mA per LSB to transfer the data in 0xC7.
-And for ISYS input pin, the DMA address is 0xE0D3 and for ISYS output pin,
-the DMA address is 0xEE42.
+Hi Wolfram,
 
-Signed-off-by: Jeff Lin <jefflin994697@gmail.com>
----
- drivers/hwmon/pmbus/Kconfig      | 10 +++++
- drivers/hwmon/pmbus/isl68137.c   | 65 ++++++++++++++++++++++++++++++++
- drivers/hwmon/pmbus/pmbus.h      | 11 ++++++
- drivers/hwmon/pmbus/pmbus_core.c | 20 ++++++++++
- 4 files changed, 106 insertions(+)
+On Thu, Sep 25, 2025 at 11:50:33PM +0200, Wolfram Sang wrote:
+> On Thu, Sep 25, 2025 at 10:02:24AM +0800, Troy Mitchell wrote:
+> > Previously, there were a few latent issues in the I2C driver.
+> > 
+> > These did not manifest under interrupt mode, but they were
+> > still present and could be triggered when running in PIO mode.
+> > 
+> > This series addresses those issues and adds support for PIO
+> > mode transfers.
+> > 
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> 
+> Applied patches 1-5 to for-mergewindow, thanks!
+Thanks.
+> 
+> Waiting for a possible review for patch 6.
+> 
+> Troy, maybe you want to add yourself as a maintainer for this driver?
+Yeah, I'd be happy to.
+I'll add myself to the MAINTAINERS file ASAP.
 
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 55e492452ce8..a14393d41412 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -211,6 +211,16 @@ config SENSORS_ISL68137
- 	  This driver can also be built as a module. If so, the module will
- 	  be called isl68137.
- 
-+config SENSORS_RAA229141
-+	bool "Renesas RAA229141 Supply"
-+	default n
-+	help
-+	  If you say yes here you get the support for Renesas RAA229140 and
-+	  RAA229141.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called raa229141.
-+
- config SENSORS_LM25066
- 	tristate "National Semiconductor LM25066 and compatibles"
- 	help
-diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-index c52c55d2e7f4..04a582ba9416 100644
---- a/drivers/hwmon/pmbus/isl68137.c
-+++ b/drivers/hwmon/pmbus/isl68137.c
-@@ -63,6 +63,9 @@ enum chips {
- 	raa228228,
- 	raa229001,
- 	raa229004,
-++#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-++	raa229141,
-++#endif /* CONFIG_SENSORS_RAA229141 */
- 	raa229621,
- };
- 
-@@ -71,6 +74,9 @@ enum variants {
- 	raa_dmpvr2_1rail,
- 	raa_dmpvr2_2rail,
- 	raa_dmpvr2_2rail_nontc,
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	raa_dmpvr2_2rail_isys,
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	raa_dmpvr2_3rail,
- 	raa_dmpvr2_hv,
- };
-@@ -174,6 +180,34 @@ static const struct attribute_group *isl68137_attribute_groups[] = {
- 	NULL,
- };
- 
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+#define RAA_READ_DMA_DATA	0xc5
-+#define RAA_WRITE_DMA_ADDRESS 0xc7
-+
-+/* DMA address for input and output */
-+static const unsigned char dma_address_in[] = { 0xD3, 0xE0 };
-+static const unsigned char dma_address_out[] = { 0x42, 0xEE };
-+int read_isys_route_dma(struct i2c_client *client, const char *addr)
-+{
-+	int ret;
-+
-+	ret = i2c_smbus_write_i2c_block_data(client, RAA_WRITE_DMA_ADDRESS, 2, addr);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Set DMA address failed for address 0x%02x 0x%02x\n",
-+			addr[0], addr[1]);
-+		return ret;
-+	}
-+	// DIRECT ISYS format 10mA/LSB
-+	u8 buf[2];
-+
-+	ret = i2c_smbus_read_i2c_block_data(client, RAA_READ_DMA_DATA, 2, buf);
-+	if (ret < 0)
-+		return ret;
-+	u16 value = ((u16)buf[1]<<8) | buf[0];
-+	return value;
-+};
-+#endif /* CONFIG_SENSORS_RAA229141 */
-+
- static int raa_dmpvr2_read_word_data(struct i2c_client *client, int page,
- 				     int phase, int reg)
- {
-@@ -183,6 +217,14 @@ static int raa_dmpvr2_read_word_data(struct i2c_client *client, int page,
- 	u64 temp;
- 
- 	switch (reg) {
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	case PMBUS_VIRT_READ_ISYSIN:
-+		ret = read_isys_route_dma(client, dma_address_in);
-+		break;
-+	case PMBUS_VIRT_READ_ISYSOUT:
-+		ret = read_isys_route_dma(client, dma_address_out);
-+		break;
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	case PMBUS_VIRT_READ_VMON:
- 		ret = pmbus_read_word_data(client, page, phase,
- 					   RAA_DMPVR2_READ_VMON);
-@@ -253,6 +295,12 @@ static struct pmbus_driver_info raa_dmpvr_info = {
- 	.format[PSC_CURRENT_OUT] = direct,
- 	.format[PSC_POWER] = direct,
- 	.format[PSC_TEMPERATURE] = direct,
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	.format[PSC_ISYS] = direct,
-+	.m[PSC_ISYS] = 1,
-+	.b[PSC_ISYS] = 0,
-+	.R[PSC_ISYS] = 2,
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	.m[PSC_VOLTAGE_IN] = 1,
- 	.b[PSC_VOLTAGE_IN] = 0,
- 	.R[PSC_VOLTAGE_IN] = 2,
-@@ -398,6 +446,20 @@ static int isl68137_probe(struct i2c_client *client)
- 		info->read_word_data = raa_dmpvr2_read_word_data;
- 		info->write_word_data = raa_dmpvr2_write_word_data;
- 		break;
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	case raa_dmpvr2_2rail_isys:
-+		info->format[PSC_VOLTAGE_IN] = linear,
-+		info->format[PSC_VOLTAGE_OUT] = linear,
-+		info->format[PSC_CURRENT_IN] = linear;
-+		info->format[PSC_CURRENT_OUT] = linear;
-+		info->format[PSC_POWER] = linear;
-+		info->format[PSC_TEMPERATURE] = linear;
-+		info->func[0] |= PMBUS_HAVE_ISYSIN;
-+		info->func[0] |= PMBUS_HAVE_ISYSOUT;
-+		info->pages = 2;
-+		info->read_word_data = raa_dmpvr2_read_word_data;
-+		break;
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	case raa_dmpvr2_3rail:
- 		info->read_word_data = raa_dmpvr2_read_word_data;
- 		info->write_word_data = raa_dmpvr2_write_word_data;
-@@ -466,6 +528,9 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
- 	{"raa228228", raa_dmpvr2_2rail_nontc},
- 	{"raa229001", raa_dmpvr2_2rail},
- 	{"raa229004", raa_dmpvr2_2rail},
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	{"raa229141", raa_dmpvr2_2rail_isys},
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	{"raa229621", raa_dmpvr2_2rail},
- 	{}
- };
-diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
-index d2e9bfb5320f..ec5a4b9286cc 100644
---- a/drivers/hwmon/pmbus/pmbus.h
-+++ b/drivers/hwmon/pmbus/pmbus.h
-@@ -236,6 +236,10 @@ enum pmbus_regs {
- 	PMBUS_VIRT_CURR_SAMPLES,
- 	PMBUS_VIRT_POWER_SAMPLES,
- 	PMBUS_VIRT_TEMP_SAMPLES,
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	PMBUS_VIRT_READ_ISYSIN,
-+	PMBUS_VIRT_READ_ISYSOUT,
-+#endif /* CONFIG_SENSORS_RAA229141 */
- };
- 
- /*
-@@ -381,6 +385,9 @@ enum pmbus_sensor_classes {
- 	PSC_TEMPERATURE,
- 	PSC_FAN,
- 	PSC_PWM,
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	PSC_ISYS,
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	PSC_NUM_CLASSES		/* Number of power sensor classes */
- };
- 
-@@ -411,6 +418,10 @@ enum pmbus_sensor_classes {
- #define PMBUS_HAVE_PWM12	BIT(20)
- #define PMBUS_HAVE_PWM34	BIT(21)
- #define PMBUS_HAVE_SAMPLES	BIT(22)
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+#define PMBUS_HAVE_ISYSIN	BIT(23)
-+#define PMBUS_HAVE_ISYSOUT	BIT(24)
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 
- #define PMBUS_PHASE_VIRTUAL	BIT(30)	/* Phases on this page are virtual */
- #define PMBUS_PAGE_VIRTUAL	BIT(31)	/* Page is virtual */
-diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-index be6d05def115..88344c088f6d 100644
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -1929,6 +1929,20 @@ static const struct pmbus_sensor_attr current_attributes[] = {
- 		.gbit = PB_STATUS_IOUT_OC,
- 		.limit = iout_limit_attrs,
- 		.nlimit = ARRAY_SIZE(iout_limit_attrs),
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	}, {
-+		.reg = PMBUS_VIRT_READ_ISYSIN,
-+		.class = PSC_ISYS,
-+		.label = "isysin",
-+		.paged = true,
-+		.func = PMBUS_HAVE_ISYSIN,
-+	}, {
-+		.reg = PMBUS_VIRT_READ_ISYSOUT,
-+		.class = PSC_ISYS,
-+		.label = "isysout",
-+		.paged = true,
-+		.func = PMBUS_HAVE_ISYSOUT,
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	}
- };
- 
-@@ -2501,6 +2515,12 @@ static const struct pmbus_class_attr_map class_attr_map[] = {
- 		.class = PSC_TEMPERATURE,
- 		.attr = temp_attributes,
- 		.nattr = ARRAY_SIZE(temp_attributes),
-+#if IS_ENABLED(CONFIG_SENSORS_RAA229141)
-+	}, {
-+		.class = PSC_ISYS,
-+		.attr = current_attributes,
-+		.nattr = ARRAY_SIZE(current_attributes),
-+#endif /* CONFIG_SENSORS_RAA229141 */
- 	}
- };
- 
--- 
-2.34.1
-
+                - Troy
+> 
+> 
 
