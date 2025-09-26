@@ -1,282 +1,177 @@
-Return-Path: <linux-kernel+bounces-833666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43779BA297D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:57:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EF5BA2989
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84041B27FFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:57:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA7614E1809
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C3427FB2B;
-	Fri, 26 Sep 2025 06:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E822027FB2F;
+	Fri, 26 Sep 2025 06:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="WDwJuxmo"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UDIG2jBL"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892F227E054
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AEA27EFE3
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758869840; cv=none; b=Fkmk7Zib2OGfDtaCInpUD1x7ANwbWpIkoB/EUZRkg8TTIq5rJO2BhGlarSGqIEPqFm8tzVORKMkJLEmxe89L6NPIYcxbZKXYHw8gewGo1UHXhf3rIpxtVv3Fq5GButm1YwsFT7q/RVFv3am30DVK+vpp3QcjiGf4JjSqyQu66Tw=
+	t=1758869876; cv=none; b=fnH2yNRJ7RP1KctDoodUUVNi037x9HXwLqg07bW69zfnK398VT6ZQ8rGqUJZO4Xpj2vMi+mX0odX/MUBoUQPx4SKdIPkhbh4nBbWzd+Xb2r67mkx18NJXK8bW+UaHTdYVBFDGAs+5e1x0XKkf5ZhJD7ix8UPIe9gl1XIk5D8jJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758869840; c=relaxed/simple;
-	bh=CAGiyfQcjLEBYWF2D4ZxF9et3ubh52B6JUIxa3MQPOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MTTVwr0hPBjfMxRWoRrGsD1ZKBrOB2HZr9eFvrGtSjNicWzfo2b+vgs2xM5LfZL1w+0c9Iuiz8aBRDDdYhmGRKY8o6FxADs9ukFnE2vConY01ifJEHNCnX/3bN5V+fkVu8rS35IqlBWNGoEzNxwecHdJjieJaj7mMjKj0Kpy4tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=WDwJuxmo; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-25669596921so19293805ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:57:18 -0700 (PDT)
+	s=arc-20240116; t=1758869876; c=relaxed/simple;
+	bh=YgymePRKA7a+5Gycw6dzc3Ehm1gp8bc3lnVl3WW1LzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ObddP1bP2bOazWg4fvEIfN1o8U+/aNBtNpwwIfOMYQzil0MdpBlPnmI7SXNjx92+uO5BKgv8BidWXTlyqEZuMbln+9WAROvvmIm7I+jR14cmDIPT1fd0EzGKgMOkcYCgjpujmtop4vzBOI+V+HnP8K8dpqK73oYO1KZvc9UhAx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UDIG2jBL; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b54a74f9150so1647168a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1758869838; x=1759474638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1758869873; x=1759474673; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=igTUGl2eyyaTZ+rlOxfJOLC6Xg0h3npTvJ/qhTpvyus=;
-        b=WDwJuxmo7sZV6UeYvTdAuoixPueN8JpadMvfPxPBNvCOZnRtc41bdbocBNU+eQIOkL
-         FnNZVExPj3qdXhh7oCw3jyk0QUYeqJpCQgDyqWLwnomGBeTHT9cBvcO+jisXORiviAs0
-         FrFAA3GXWxi/cIDQPZb5w2R4XXjnJCrlu3JJXSrZXDk4nb8XZ34Ek3ebybJuX7/XZxm1
-         GmVMeRqHj1SqhghJjZnj7IA+RUe5bqNbnM4Zmk4+57JqfSXoVSKOtixxelPAEBLlVai4
-         a3zg3yUtwjr6nBeFbrnqGSRhaISdHwnEsbl+WJdLMKn4vEPi89vdLo+IrMcJ8gKz0vWJ
-         7aWw==
+        bh=/vx1itF2fTgxMCrrImdJeroS3R9ZKO1BJn3DX+Hel84=;
+        b=UDIG2jBLNC5IWX7ZlFEoTTyFqrtkm0iblohSdKFYLR2xXCigN3VFO4YG5WP+Yvz0Ld
+         ArnxrpjPICdOtVf569UJpIrdC/n6Y7jX51iedDOYZ5tueypZRxeZtXWFT5go8poZX63U
+         vciUNg38FvKOKVpVqc2IIDcKD+REJnMJkJZHCIDcIXBeyU3LZW2XlVkukwdilPfJly6+
+         S238xtVRDoKjhGtEFKUJngwhwoUW2dKZ4rfyErigQ9qwEWRigT4kXic/PA/psHa/Tgc3
+         OOj4bwKIao4xbFENoaIXpvqC97GqLPH9MX8+unZNLC2qwnvX+hZntM+8pEww6JxKfN+E
+         6USw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758869838; x=1759474638;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=igTUGl2eyyaTZ+rlOxfJOLC6Xg0h3npTvJ/qhTpvyus=;
-        b=Ba0VQQ1z5PUsQn9dcfa8M0Cw6Q6R/4mfkDgsHXsnl7fbcOBKOL1MzINSOIOTnCyzRp
-         Uv5PEijhcCXm/yrQ0O6M1AIu94OwOb0VZkwl1RaQ3Cr0H3aZm/NKKP5P20in3+PpqQEd
-         3p5PGa9LtOOn/VXPHjjnrd2S7q62g4dQjjyH0/QcNeyXhJGveCNDlPlVJ4xOl4JZ+iPk
-         /Hj84LgFBy+HcKonZ+a3iM2JM2TH3zQTbaezmFHqatDRqeI1jqndedrGsuEl/RmgZrOC
-         NbR2XmquG0+9BFPr9Z5+lfR3zwvNnADwM69p5UFFgvAOu4CgOOAJMpsp12IzjAC2QofP
-         3Fhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA3FfdrYkPtMoaH3DjloBHA2HRveKSnoqylIcB+qjthY+KW+SBc98Iag8MjR5mbwV18YuAvndJBE5FiBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqNWjBTU1slopQVGudhmeuu0rMnTeZYvaFpfKxisOsZZ31Z9XR
-	N8vv7czYSnG7RelelLpduSdq1QR0MD7t9xr+nFCqSXzdLVR+FMFWvplGcL2agWwBz2k=
-X-Gm-Gg: ASbGncs+aRBlQ22oBDC4Ov0hcn6nkkSr8qpKjW2+8NA5MIuiBOosGBDrDb/dNwEPhfB
-	4vXX9xl2V4/+aFrb2S6bti/cUsFdrsVoxdvK8YdVaDi/Byw4PJYFi0oStuAkbd3S0xSzl6NcdAS
-	8IJCY8XS0ebfLb/m/RfSuq/G/bl1kFDNm2+4Wf8AwoYnpufFQeqB6+9AYjEiPsgJEA4zqA5Ku2y
-	Wdo62wDEaIDU7Sc1ZtJcsJcurS0Bvi7wZmPN0fk6V75uKA05bvmqNflgccM6Hx7N3VE6WVcWETG
-	QZ1FS2z5ejPrndRDgIn6/Nb8XdLWGBBcfe441wDQcPCGcJHjIkRGT7UgCZ47c4bqX/8CrEgcCxv
-	Hba8iVpR4WAYxbqsDlTddVHLcSZx1pMHX8CSN/LapnUFq2HI=
-X-Google-Smtp-Source: AGHT+IGsJ29z77Si0Jc2Vb5pCBLTmliotaWTgWM2zePJsxVuTaOzYIGurW3Xrr0Nqo5g1PeamIKvSw==
-X-Received: by 2002:a17:902:d54e:b0:24a:a6c8:d6c4 with SMTP id d9443c01a7336-27ed4a0e8d9mr69217065ad.26.1758869838002;
-        Thu, 25 Sep 2025 23:57:18 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:94ad:363a:4161:464c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed688238esm44612135ad.94.2025.09.25.23.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 23:57:17 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: 409411716@gms.tku.edu.tw
-Cc: akpm@linux-foundation.org,
-	axboe@kernel.dk,
-	ceph-devel@vger.kernel.org,
-	ebiggers@kernel.org,
-	hch@lst.de,
-	home7438072@gmail.com,
-	idryomov@gmail.com,
-	jaegeuk@kernel.org,
-	kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	sagi@grimberg.me,
-	tytso@mit.edu,
-	visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: [PATCH v3 6/6] ceph: replace local base64 helpers with lib/base64
-Date: Fri, 26 Sep 2025 14:57:11 +0800
-Message-Id: <20250926065711.14620-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
-References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+        d=1e100.net; s=20230601; t=1758869873; x=1759474673;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/vx1itF2fTgxMCrrImdJeroS3R9ZKO1BJn3DX+Hel84=;
+        b=nAI/seC57TosGAEM9lIWyIJMMYvZE/zOvNFpTHshaqxL41HxMNWK81JgzEfokRvKs8
+         s9oVICJLT+yBamg9JeNwtwchCCtXUzBqTxPo/sdcfMXawwyhRp3eFrr2fZMYzfXaIkEM
+         kffZzX8vItJ0f2IJspVfmqNfGo3IuYSzzH7VhHcHrfbL4HwSXANwYj2kUoaHtdwOR9nO
+         T9+0wTiopgMBgbHqlLWdo5quVbdNT3RxS62y/tAbJyxq6KAqk3SzzgprzmxaeYwO31Eh
+         /Uabrxwtk5f14tsn9ygyPc1zJ4lkR9AVbUg2jF6S0x8mZEy5lXWGzWs/Leh5UUmk3nTn
+         9BFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjexJgepoZ1GSxIvTT0ch9uRUsCU/EOzUajfTzbBJ9LmCUHXMYM20hKHX2FPVq6G7tu3Yzymdqjd87hzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxGwL6oUIVcsISWSWZp8WbBV0dOZuFGDH3Xf9VQ9NaHtD/vWBc
+	HC5jjYjU4mzsKTqWGyaERo2ZYwdtTlIj6ihsazKMxWme51xPzFw5WktMTsgeaRzAyaY=
+X-Gm-Gg: ASbGnctRQxPrO8C58OXBtQAqXcBdbJOfuhHTIF3FxkvUQUOfB1xnfC+GH9nl5gskGgR
+	Vjw57BDEK0xA7K38vf8LLiPN34vgHgFQ+w9pU3k+cGa0uAnylEcS1EJcGOGzO3BOHnU82ZH9Sn1
+	EzSbZmB0o31pMI96Uqv8TXN2J6sQIjWqayml2alL9/e1ckPDZAbVNFf+LEz3odHMqcRVr6w3Jly
+	MOezzfkAmdpu4YD2T+2JxUsiXbHQDgfISk8DnXekGZSIQdxGPTW6CS4lwSHb7qNV2XWEWDWzF/R
+	WVmlsoMAOIus8/nGS2Bpe9DjJX8k8ziN8VbwRKpkCR0s9JuGMzJPcNN4b82DsuROGsvC0cGv41M
+	fCRzF78jIS9q/FfyyxlI0hP0pOgP9Qs33KhlMO+OA9BOQl9Duxb6vsYXQmfnPvREA6qz0
+X-Google-Smtp-Source: AGHT+IF5bDf0FkWtdSNimjWM369R4KoAz2kYx41Je3d4j3cldNB8OPUueqbjTUh0a0uZVlv2hvbHNQ==
+X-Received: by 2002:a17:902:db02:b0:26c:3e5d:43b6 with SMTP id d9443c01a7336-27ed4a91a32mr59676945ad.32.1758869872599;
+        Thu, 25 Sep 2025 23:57:52 -0700 (PDT)
+Received: from [100.82.90.25] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27f1c1af2d5sm7102075ad.58.2025.09.25.23.57.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 23:57:52 -0700 (PDT)
+Message-ID: <fc91a0ab-e343-4f7c-8fc3-508ab0644e42@bytedance.com>
+Date: Fri, 26 Sep 2025 14:57:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
+ offline
+To: Shakeel Butt <shakeel.butt@linux.dev>, Zi Yan <ziy@nvidia.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, muchun.song@linux.dev, lorenzo.stoakes@oracle.com,
+ harry.yoo@oracle.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
+ <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
+ <b041b58d-b0e4-4a01-a459-5449c232c437@redhat.com>
+ <46da5d33-20d5-4b32-bca5-466474424178@bytedance.com>
+ <39f22c1a-705e-4e76-919a-2ca99d1ed7d6@redhat.com>
+ <BF7CAAA2-E42B-4D90-8E35-C5936596D4EB@nvidia.com>
+ <tyl5nag4exta7mmxejhzd5xduulfy5pjzde4mpklscqoygkaso@zdyadmle3wjj>
+ <wlbplybaecktirfzygddbvrerzrozzfudlqavkbmhnmoyt6xmf@64ikayr3fdlo>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <wlbplybaecktirfzygddbvrerzrozzfudlqavkbmhnmoyt6xmf@64ikayr3fdlo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Remove the ceph_base64_encode() and ceph_base64_decode() functions and
-replace their usage with the generic base64_encode() and base64_decode()
-helpers from lib/base64.
 
-This eliminates the custom implementation in Ceph, reduces code
-duplication, and relies on the shared Base64 code in lib.
-The helpers preserve RFC 3501-compliant Base64 encoding without padding,
-so there are no functional changes.
 
-This change also improves performance: encoding is about 2.7x faster and
-decoding achieves 23-28x speedups compared to the previous local
-implementation.
+On 9/26/25 6:35 AM, Shakeel Butt wrote:
+> On Thu, Sep 25, 2025 at 03:15:26PM -0700, Shakeel Butt wrote:
+>> On Thu, Sep 25, 2025 at 03:49:52PM -0400, Zi Yan wrote:
+>>> On 25 Sep 2025, at 15:35, David Hildenbrand wrote:
+>>>
+>>>> On 25.09.25 08:11, Qi Zheng wrote:
+>>>>> Hi David,
+>>>>
+>>>> Hi :)
+>>>>
+>>>> [...]
+>>>>
+>>>>>>> +++ b/include/linux/mmzone.h
+>>>>>>> @@ -1346,6 +1346,7 @@ struct deferred_split {
+>>>>>>>         spinlock_t split_queue_lock;
+>>>>>>>         struct list_head split_queue;
+>>>>>>>         unsigned long split_queue_len;
+>>>>>>> +    bool is_dying;
+>>>>>>
+>>>>>> It's a bit weird to query whether the "struct deferred_split" is dying.
+>>>>>> Shouldn't this be a memcg property? (and in particular, not exist for
+>>>>>
+>>>>> There is indeed a CSS_DYING flag. But we must modify 'is_dying' under
+>>>>> the protection of the split_queue_lock, otherwise the folio may be added
+>>>>> back to the deferred_split of child memcg.
+>>>>
+>>>> Is there no way to reuse the existing mechanisms, and find a way to have the shrinker / queue locking sync against that?
+>>>>
+>>>> There is also the offline_css() function where we clear CSS_ONLINE. But it happens after calling ss->css_offline(css);
+>>>
+>>> I see CSS_DYING will be set by kill_css() before offline_css() is called.
+>>> Probably the code can check CSS_DYING instead.
+>>>
+>>>>
+>>>> Being able to query "is the memcg going offline" and having a way to sync against that would be probably cleanest.
+>>>
+>>> So basically, something like:
+>>> 1. at folio_split_queue_lock*() time, get folio’s memcg or
+>>>     its parent memcg until there is no CSS_DYING set or CSS_ONLINE is set.
+>>> 2. return the associated deferred_split_queue.
+>>>
+>>
+>> Yes, css_is_dying() can be used but please note that there is a rcu
+>> grace period between setting CSS_DYING and clearing CSS_ONLINE (i.e.
+>> reparenting deferred split queue) and during that period the deferred
+>> split THPs of the dying memcg will be hidden from shrinkers (which
+>> might be fine).
 
-Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
- fs/ceph/crypto.c | 60 ++++--------------------------------------------
- fs/ceph/crypto.h |  6 +----
- fs/ceph/dir.c    |  5 ++--
- fs/ceph/inode.c  |  2 +-
- 4 files changed, 9 insertions(+), 64 deletions(-)
+My mistake, now I think using css_is_dying() is safe.
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index cab722619..9bb0f320b 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -15,59 +15,6 @@
- #include "mds_client.h"
- #include "crypto.h"
- 
--/*
-- * The base64url encoding used by fscrypt includes the '_' character, which may
-- * cause problems in snapshot names (which can not start with '_').  Thus, we
-- * used the base64 encoding defined for IMAP mailbox names (RFC 3501) instead,
-- * which replaces '-' and '_' by '+' and ','.
-- */
--static const char base64_table[65] =
--	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
--
--int ceph_base64_encode(const u8 *src, int srclen, char *dst)
--{
--	u32 ac = 0;
--	int bits = 0;
--	int i;
--	char *cp = dst;
--
--	for (i = 0; i < srclen; i++) {
--		ac = (ac << 8) | src[i];
--		bits += 8;
--		do {
--			bits -= 6;
--			*cp++ = base64_table[(ac >> bits) & 0x3f];
--		} while (bits >= 6);
--	}
--	if (bits)
--		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
--	return cp - dst;
--}
--
--int ceph_base64_decode(const char *src, int srclen, u8 *dst)
--{
--	u32 ac = 0;
--	int bits = 0;
--	int i;
--	u8 *bp = dst;
--
--	for (i = 0; i < srclen; i++) {
--		const char *p = strchr(base64_table, src[i]);
--
--		if (p == NULL || src[i] == 0)
--			return -1;
--		ac = (ac << 6) | (p - base64_table);
--		bits += 6;
--		if (bits >= 8) {
--			bits -= 8;
--			*bp++ = (u8)(ac >> bits);
--		}
--	}
--	if (ac & ((1 << bits) - 1))
--		return -1;
--	return bp - dst;
--}
--
- static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-@@ -316,7 +263,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
- 	}
- 
- 	/* base64 encode the encrypted name */
--	elen = ceph_base64_encode(cryptbuf, len, p);
-+	elen = base64_encode(cryptbuf, len, p, false, BASE64_IMAP);
- 	doutc(cl, "base64-encoded ciphertext name = %.*s\n", elen, p);
- 
- 	/* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments */
-@@ -410,7 +357,8 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 			tname = &_tname;
- 		}
- 
--		declen = ceph_base64_decode(name, name_len, tname->name);
-+		declen = base64_decode(name, name_len,
-+				       tname->name, false, BASE64_IMAP);
- 		if (declen <= 0) {
- 			ret = -EIO;
- 			goto out;
-@@ -424,7 +372,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 
- 	ret = fscrypt_fname_disk_to_usr(dir, 0, 0, &iname, oname);
- 	if (!ret && (dir != fname->dir)) {
--		char tmp_buf[CEPH_BASE64_CHARS(NAME_MAX)];
-+		char tmp_buf[BASE64_CHARS(NAME_MAX)];
- 
- 		name_len = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
- 				    oname->len, oname->name, dir->i_ino);
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index 23612b2e9..b748e2060 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -8,6 +8,7 @@
- 
- #include <crypto/sha2.h>
- #include <linux/fscrypt.h>
-+#include <linux/base64.h>
- 
- #define CEPH_FSCRYPT_BLOCK_SHIFT   12
- #define CEPH_FSCRYPT_BLOCK_SIZE    (_AC(1, UL) << CEPH_FSCRYPT_BLOCK_SHIFT)
-@@ -89,11 +90,6 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
-  */
- #define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
- 
--#define CEPH_BASE64_CHARS(nbytes) DIV_ROUND_UP((nbytes) * 4, 3)
--
--int ceph_base64_encode(const u8 *src, int srclen, char *dst);
--int ceph_base64_decode(const char *src, int srclen, u8 *dst);
--
- void ceph_fscrypt_set_ops(struct super_block *sb);
- 
- void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 8478e7e75..25045d817 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -998,13 +998,14 @@ static int prep_encrypted_symlink_target(struct ceph_mds_request *req,
- 	if (err)
- 		goto out;
- 
--	req->r_path2 = kmalloc(CEPH_BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
-+	req->r_path2 = kmalloc(BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
- 	if (!req->r_path2) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
- 
--	len = ceph_base64_encode(osd_link.name, osd_link.len, req->r_path2);
-+	len = base64_encode(osd_link.name, osd_link.len,
-+			    req->r_path2, false, BASE64_IMAP);
- 	req->r_path2[len] = '\0';
- out:
- 	fscrypt_fname_free_buffer(&osd_link);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index fc543075b..d06fb76fc 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -911,7 +911,7 @@ static int decode_encrypted_symlink(struct ceph_mds_client *mdsc,
- 	if (!sym)
- 		return -ENOMEM;
- 
--	declen = ceph_base64_decode(encsym, enclen, sym);
-+	declen = base64_decode(encsym, enclen, sym, false, BASE64_IMAP);
- 	if (declen < 0) {
- 		pr_err_client(cl,
- 			"can't decode symlink (%d). Content: %.*s\n",
--- 
-2.34.1
+> 
+> BTW if this period is not acceptable and we don't want to add is_dying
+> to struct deferred_split, we can use something similar to what list_lru
+> does in the similar situation i.e. set a special value (LONG_MIN) in its
+> nr_items variable. That is make split_queue_len a long and set it to
+> LONG_MIN during memcg offlining/reparenting.
+
+I've considered this option, but I am concerned about the risk of
+overflow.
+
+So I will try to use css_is_dying() in the next version.
+
+Thanks,
+Qi
+
+
 
 
