@@ -1,251 +1,126 @@
-Return-Path: <linux-kernel+bounces-834315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B33FBA46BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC51FBA46C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11726167B2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274051C031AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5310221C179;
-	Fri, 26 Sep 2025 15:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E1F21CA13;
+	Fri, 26 Sep 2025 15:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KqdaO+Jb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kbWcV4I6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KqdaO+Jb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kbWcV4I6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GS8cWXgw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F152C205AA1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E6921C166;
+	Fri, 26 Sep 2025 15:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900760; cv=none; b=XF6xVhGtzpWvmMAjAzusrSzEzcnG3BcFwqeCzY1y8t1nMu84MZXiUbpgrrGq17VN8RYR4qlMIrXyrQ6tCEKf3rWQ4Jxi2QfcF3SH5Yi3T5Fu3BDWdhtwpmZjI/5YlZzlUfoHK37ov/o3T1vVB0rsn4TLWEYwIpzfWGU9tvT5H7g=
+	t=1758900761; cv=none; b=FSdIu9QyKToSmgPgjJJO4WqkEEl0pE4ETwmeXaGWgEV7wSFhHY+yn6Z4Y3e/0/aWYS2Ha2kAvUIUX6JPiijpyZONI43Dte01a8dp8Iwi8qgRpoIZkzJ9sX62oD6KBC3/NBebEdmr0KDgztnc7qdRO4Ib7njXEbeOehJ5wPWKfTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900760; c=relaxed/simple;
-	bh=jpAzr9L67NXaYwyquOWGUMRh0kWe82NJ65tLtwa3pQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQBxd2gb1/93W6l3HOPYrtTs0M/TAJfeuq9YJH+Nv4tUSk1Qx4wSmsVjisNObZ53DrcopcJ1K7BHw/XmfPVGWlbQ4qVSEvKyN4rc7lvaYL3JSj7q4CglFLbiw4Z4N0HA1nLpgSwfBkW3L5nLv6S3pHiDFyf/urH5xWTbBqLE3OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KqdaO+Jb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kbWcV4I6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KqdaO+Jb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kbWcV4I6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BB998688B0;
-	Fri, 26 Sep 2025 15:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7I3nL9emy60PUNUbVVivj0+woihAPXFG+S4JuRgPgU=;
-	b=KqdaO+Jbh8F6L3t3n/XhLk8W8CHMZHpSTheAGLcPq8SC8FpxO79T7M5LG6Zl/jLX+xgfCp
-	HiU/pd9WS67KiPF1/RC2YnnbNCW9Qbk/VFgtTZHUuFApwwgYixnmEpv4UaineBro9eWiQc
-	15y0b285UmuchgiYgz3tPFRB/qqjoao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7I3nL9emy60PUNUbVVivj0+woihAPXFG+S4JuRgPgU=;
-	b=kbWcV4I65EwureUfJ2NXsPELhs3naIMiRj+nFtgChg/jqBP5KN3K1aAkrbtP3J2YBMxhQr
-	t5DgMdPpMJMd0UDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758900755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7I3nL9emy60PUNUbVVivj0+woihAPXFG+S4JuRgPgU=;
-	b=KqdaO+Jbh8F6L3t3n/XhLk8W8CHMZHpSTheAGLcPq8SC8FpxO79T7M5LG6Zl/jLX+xgfCp
-	HiU/pd9WS67KiPF1/RC2YnnbNCW9Qbk/VFgtTZHUuFApwwgYixnmEpv4UaineBro9eWiQc
-	15y0b285UmuchgiYgz3tPFRB/qqjoao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758900755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7I3nL9emy60PUNUbVVivj0+woihAPXFG+S4JuRgPgU=;
-	b=kbWcV4I65EwureUfJ2NXsPELhs3naIMiRj+nFtgChg/jqBP5KN3K1aAkrbtP3J2YBMxhQr
-	t5DgMdPpMJMd0UDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A68C51386E;
-	Fri, 26 Sep 2025 15:32:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8oKhKBOy1mjLAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Sep 2025 15:32:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 63800A0AA0; Fri, 26 Sep 2025 17:32:27 +0200 (CEST)
-Date: Fri, 26 Sep 2025 17:32:27 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Steve French <sfrench@samba.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paulo Alcantara <pc@manguebit.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Rick Macklem <rick.macklem@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
-	netfs@lists.linux.dev, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/38] vfs: break parent dir delegations in open(...,
- O_CREAT) codepath
-Message-ID: <5cst6i2y5rjxsag3oihanh6nusjvaklw24t6ihdd6kyqsdxy7f@ld2vqj5yoexf>
-References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
- <20250924-dir-deleg-v3-6-9f3af8bc5c40@kernel.org>
+	s=arc-20240116; t=1758900761; c=relaxed/simple;
+	bh=yq2+nCeERZCb1Sgbe4eci6P9Xi+94wosE7TbKuPXbWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RRF8ZB+9K6LMGgMuygSlbqsAfKN/VH4c4s+1ctLeOc6v/VwdBBjvvmPTP+5/bCP1CugsQWuy6gScfl/yY0rsyyrWu6fkUTMWcVBhoh8e2Q8i/jJ+zbKxxaBLfYCxovuu5DznshtgSMIB8fKzS7QRRnvTIjLgleuJGotKpMN1Hkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GS8cWXgw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2794DC116C6;
+	Fri, 26 Sep 2025 15:32:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758900760;
+	bh=yq2+nCeERZCb1Sgbe4eci6P9Xi+94wosE7TbKuPXbWA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GS8cWXgwdu0il8h8yOtnS+m7KNezPYJddcPEiTIORVKIsrqiXzwn10JJJb4HWFF/Y
+	 ++hrU/QMhPIEBhlBYH18xT+ZkXBschDOA0VSoGIk/A5PYAAT2sWhq94z+gWgqyFEhj
+	 4RP6534LTV9CLQhVGRMzTgetY9FcwAA3S40tDWzoZWKkqRSeukvYQJO7gRLb1OB53T
+	 PXFI9DnlMrdawhTJhL96xiZh5mOG9rw2yTnFv2qLxdLsOpqV1c+oBjqXb3UiXQckWY
+	 ugR1CflmQYKutP0D2gqg/7IZTYUUHmui9dDGxLOjcfmMVrKdGZa39ND+87j1H6Ciq0
+	 piRbUHf/PbWQw==
+Date: Fri, 26 Sep 2025 16:32:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Sep 26
+Message-ID: <aNayFYxBh0uIYU6C@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="D37Ez3ddLNdPxim2"
+Content-Disposition: inline
+
+
+--D37Ez3ddLNdPxim2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250924-dir-deleg-v3-6-9f3af8bc5c40@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,microsoft.com,talpey.com,brown.name,redhat.com,lwn.net,szeredi.hu,manguebit.org,linuxfoundation.org,tyhicks.com,chromium.org,goodmis.org,efficios.com,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
 
-On Wed 24-09-25 14:05:52, Jeff Layton wrote:
-> In order to add directory delegation support, we need to break
-> delegations on the parent whenever there is going to be a change in the
-> directory.
-> 
-> Add a delegated_inode parameter to lookup_open and have it break the
-> delegation. Then, open_last_lookups can wait for the delegation break
-> and retry the call to lookup_open once it's done.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hi all,
 
-Looks good. Feel free to add:
+There will be no releases Tuesday and Wednesday next week and Monday is
+at risk, normal operation will resume on Thursday.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Changes since 20250925:
 
-								Honza
+The btrfs-fixes tree gained a conflict with Linus' tree.
 
-> ---
->  fs/namei.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4e058b00208c1663ba828c6f8ed1f82c26a4f136..903b70a82530938a0fdf10508529a1b7cc38136d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3609,7 +3609,7 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
->   */
->  static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  				  const struct open_flags *op,
-> -				  bool got_write)
-> +				  bool got_write, struct inode **delegated_inode)
->  {
->  	struct mnt_idmap *idmap;
->  	struct dentry *dir = nd->path.dentry;
-> @@ -3698,6 +3698,11 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  
->  	/* Negative dentry, just create the file */
->  	if (!dentry->d_inode && (open_flag & O_CREAT)) {
-> +		/* but break the directory lease first! */
-> +		error = try_break_deleg(dir_inode, delegated_inode);
-> +		if (error)
-> +			goto out_dput;
-> +
->  		file->f_mode |= FMODE_CREATED;
->  		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
->  		if (!dir_inode->i_op->create) {
-> @@ -3761,6 +3766,7 @@ static const char *open_last_lookups(struct nameidata *nd,
->  		   struct file *file, const struct open_flags *op)
->  {
->  	struct dentry *dir = nd->path.dentry;
-> +	struct inode *delegated_inode = NULL;
->  	int open_flag = op->open_flag;
->  	bool got_write = false;
->  	struct dentry *dentry;
-> @@ -3791,7 +3797,7 @@ static const char *open_last_lookups(struct nameidata *nd,
->  				return ERR_PTR(-ECHILD);
->  		}
->  	}
-> -
-> +retry:
->  	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
->  		got_write = !mnt_want_write(nd->path.mnt);
->  		/*
-> @@ -3804,7 +3810,7 @@ static const char *open_last_lookups(struct nameidata *nd,
->  		inode_lock(dir->d_inode);
->  	else
->  		inode_lock_shared(dir->d_inode);
-> -	dentry = lookup_open(nd, file, op, got_write);
-> +	dentry = lookup_open(nd, file, op, got_write, &delegated_inode);
->  	if (!IS_ERR(dentry)) {
->  		if (file->f_mode & FMODE_CREATED)
->  			fsnotify_create(dir->d_inode, dentry);
-> @@ -3819,8 +3825,16 @@ static const char *open_last_lookups(struct nameidata *nd,
->  	if (got_write)
->  		mnt_drop_write(nd->path.mnt);
->  
-> -	if (IS_ERR(dentry))
-> +	if (IS_ERR(dentry)) {
-> +		if (delegated_inode) {
-> +			int error = break_deleg_wait(&delegated_inode);
-> +
-> +			if (!error)
-> +				goto retry;
-> +			return ERR_PTR(error);
-> +		}
->  		return ERR_CAST(dentry);
-> +	}
->  
->  	if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
->  		dput(nd->path.dentry);
-> 
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The drm tree gained a conflict with Linus' tree.
+
+Non-merge commits (relative to Linus' tree): 11355
+ 11323 files changed, 545087 insertions(+), 209367 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with an arm64
+defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
+a native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
+pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
+and htmldocs. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+
+Below is a summary of the state of the merge.
+
+I am currently merging 407 trees (counting Linus' and 406 trees of bug
+fix patches pending for the current release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--D37Ez3ddLNdPxim2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjWshQACgkQJNaLcl1U
+h9Cc7Qf/XGm8MH4Sv5jfRUeimCryAA/mbgXPDFce2v0m8uMPjXYd1/VZL0OT1UJk
+59tza9UdTR2exvIZaxoJqXp1G4THmBzQek84xRowxXCwPbkj/izTktB30s1dvRdo
+McODgnawZ9eW36ghL2HFxMkucirvv0W2cAHX9lGk+VIC9FGjeo5sdm2N2trMkVJe
+o0WUz2HX/n31QP/OZjFXCljA7mPpBQ4cwCc5Ref6UxF6kUqhBU9seljmrsz2XZMH
+UCtL9BAqHTl1lcChbZiyhgzemZ77UgBVU/KXSTI5VfloaTMvKC/w95ak2RNqQjh2
+iCLKYqxcAj6nm6W6SfR7f22tMi3QqQ==
+=8v0c
+-----END PGP SIGNATURE-----
+
+--D37Ez3ddLNdPxim2--
 
