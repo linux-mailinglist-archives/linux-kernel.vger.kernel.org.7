@@ -1,104 +1,218 @@
-Return-Path: <linux-kernel+bounces-834374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E0DBA4907
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 520B7BA4904
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFB4188D438
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:11:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8224E188DC72
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AC723D283;
-	Fri, 26 Sep 2025 16:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14CC23C51D;
+	Fri, 26 Sep 2025 16:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="PgoiqZPO"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WSURiEWC"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4154C1F4168;
-	Fri, 26 Sep 2025 16:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE382367A0
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903084; cv=none; b=NCap3KmHkiTHH7gOwJvtkLJwtKx+tcUF6jcdCLCuDsRszlEMk7It1QgcoK9uOmtsns20DvIG21vJLh4fEp2XuU45ADrzYgDqynxFZTLZerJ0oFqSgkkVxsX9xWeCgAzhqxq53BKas5D63yd0axuacU995Lb7ch/hfc/Se9DbbbU=
+	t=1758903083; cv=none; b=tcXRytbmUirWdJ6/kNgHKKSnFeLXGZU52v4/j23YdZcdZc+QMngUCiPE3K+BZUejD3dMNFC6wsVNpGuofHjpmjcf4qbsKRq2Bhx1OfDUDWgrhZ/eLw0/AIqDAvF6Bm3mipJEe3ALcnLjcCpoI+DTA558WpO8Vcrokn9FKcCiTlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903084; c=relaxed/simple;
-	bh=9NYZD3x9GFtKPgbclMfdlp6RMOI9t52rGodws8FLemA=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=DEaQGNyWVBSa8juHsl/SxeiqoMAORhtPaLi9IVZA7DYm4ARovdm39a/eFzLQRa89gtzuJprqyVzHP/BEM5uwqgokSRgGIvfdLb6z86WoE9WfnXE5Bx56cx6vaVchEpVYWnBHvdvRx15EK1TNEjRhJJpWn8BVBYsVNMC75vzr1SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=PgoiqZPO; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=81JsLoFxnWm1L8S1ud896ycOO1gyTeFPVlGazgA2IV0=; b=PgoiqZPOOtTXStLKs38J3b0akQ
-	/kw0wZv6f3EOR1shUnQSwB1AzD5OEX6Kmiz204lpQy58PF00MTz55RMfnly7VC94cNtVo/merPjMd
-	nfuREo43I8p63w71rQTVRPo8GNpQb+rzbPc//aSsjk3wwXSLYZTR/qzb2gCm/jJXlkwg=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:45198 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1v2B2K-000685-Rq; Fri, 26 Sep 2025 12:11:11 -0400
-Date: Fri, 26 Sep 2025 12:11:08 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Maarten Brock <Maarten.Brock@sttls.nl>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "jirislaby@kernel.org" <jirislaby@kernel.org>, "fvallee@eukrea.fr"
- <fvallee@eukrea.fr>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
- <linux-serial@vger.kernel.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Message-Id: <20250926121108.2e1c26b9acd140f5ede5b2a1@hugovil.com>
-In-Reply-To: <DB6PR05MB4551CE3468BE5BC059981F49831EA@DB6PR05MB4551.eurprd05.prod.outlook.com>
-References: <20250924153740.806444-1-hugo@hugovil.com>
-	<20250924153740.806444-14-hugo@hugovil.com>
-	<DB6PR05MB4551CE3468BE5BC059981F49831EA@DB6PR05MB4551.eurprd05.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758903083; c=relaxed/simple;
+	bh=97hcWjTcvBFQYDBOqWYzz1/27EeK9RIc1yRkc9gWydE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eowoFL8//r0KLsDOJN+pdPq5lQXi3bgbOGOowYesAu/tzv3Up+ty96t67LFv3vkyQWP0bUie6EwNSVldUrfU9JZxqhaLBkw0dFJEdpiV9ABnT/WXIegxRNnMwHGs99vuKCeHPhBtyQ2VVLGLCpm5HkADqXRbdQZBQu4UtzZJ/gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WSURiEWC; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f207b88c-da98-4fe2-b91f-ed07354ff019@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758903075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ksNWZUZ1JXt7mgfOOzB2IRthXQFU+7HlxAblhclQBI=;
+	b=WSURiEWC4kJwYutU3Y/h/G5r+VAjMJin75vBxNwCEkg2fIMwQK0kxhCKd/tm9QCT9PO96u
+	8wYnt6+X3O9Yxj5sJbylYHT3vMVZzNXNU639+YRpk6iNHJcN6nZoLdq9xDZAqPLjTpV0Wh
+	Sy3kizkSIHLmwGoxANp7agAOtYePeUo=
+Date: Fri, 26 Sep 2025 09:11:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.5 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 13/15] serial: sc16is7xx: change incorrect indentation
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Subject: =?UTF-8?B?UmU6IMOlw6XCpDogUmU6IFtQQVRDSCB2MiByZG1hLXJjXSBSRE1BL2Ju?=
+ =?UTF-8?Q?xt=5Fre=3A_Fix_a_potential_memory_leak_in_destroy=5Fgsi=5Fsqp?=
+To: =?UTF-8?B?5Luj5b2m6b6Z?= <daiyanlong@kylinos.cn>,
+ Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Cc: jgg <jgg@ziepe.ca>, leon <leon@kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-rdma <linux-rdma@vger.kernel.org>,
+ "selvin.xavier" <selvin.xavier@broadcom.com>, dyl_wlc <dyl_wlc@163.com>
+References: <vuezvoi8y7j-vuko1z952k0@nsmail8.2--kylin--1>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <vuezvoi8y7j-vuko1z952k0@nsmail8.2--kylin--1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Maarten,
-
-On Fri, 26 Sep 2025 09:18:38 +0000
-Maarten Brock <Maarten.Brock@sttls.nl> wrote:
-
-> Hi Hugo,
+On 9/25/25 7:39 PM, ä»£å½¦é¾ wrote:
+> Hello Kalesh, Selvin, List,
 > 
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > 
-> > Change incorrect indentation level introduced in commit 9eb90d57b55a
-> > ("sc16is7xx: Add flag to activate IrDA mode").
+> Gentle ping on this patch.
+> I just wanted to follow up and make sure the v2 version was received 
+> correctly.
 > 
-> > --- a/drivers/tty/serial/sc16is7xx.c
-> > +++ b/drivers/tty/serial/sc16is7xx.c
-> > @@ -1181,7 +1181,7 @@ static int sc16is7xx_startup(struct uart_port *port)
-> >  	sc16is7xx_port_update(port, SC16IS7XX_MCR_REG,
-> >  			      SC16IS7XX_MCR_IRDA_BIT,
-> >  			      one->irda_mode ?
-> > -				SC16IS7XX_MCR_IRDA_BIT : 0);
-> > +			      SC16IS7XX_MCR_IRDA_BIT : 0);
+> For easy reference, the patch is available on lore.kernel.org here:
+> https://lore.kernel.org/all/20250924061444.11288-1-daiyanlong <https:// 
+> lore.kernel.org/all/20250924061444.11288-1-daiyanlong>@kylinos.cn/
 > 
-> Are you sure you want to unindent this?
-> To me it now looks as if both "one->irda_mode" and "SC16IS7XX_MCR_IRDA_BIT : 0" are parameters.
-> And why not fix this by placing both on one line? Is 76 characters already over the line length limit?
+> Please let me know if there's anything else needed from my side, or if 
+> you've had a chance to review the technical changes.
+> Thank you for your time and consideration.
+> 
+> Best regards,
+> YanLong Dai
+> 
 
-Excellent suggestion, will look much better. Will do it in V2.
+Hi, YanLong
 
--- 
-Hugo Villeneuve
+In regions where Chinese is not supported, the email may appear garbled. 
+We recommend replacing any Chinese content in the email with the 
+corresponding English to ensure clarity.
+
+Thanks a lot.
+Yanjun.Zhu
+
+> 
+> 
+> 
+> *主   题：*Re: [PATCH v2 rdma-rc] RDMA/bnxt_re: Fix a potential memory 
+> leak in destroy_gsi_sqp
+> *日   期：*2025年09月24日14:33
+> *发件人：*代彦龙
+> *收件人：*Kalesh Anakkur Purayil,代彦龙
+> *抄送人：*jgg,leon,linux-kernel,linux-rdma,selvin.xavier,dyl_wlc
+> 
+> Hello Selvin, Kalesh, List,
+> 
+> Thank you so much for your patience and guidance throughout this 
+> process. I truly appreciate you taking the time to review my patches and 
+> provide detailed feedback - it has been a great learning experience.
+> 
+> I have incorporated all of your suggestions in this v2 version:
+> - Added the "rdma-rc" target tree prefix in the subject line
+> - Used proper version numbering (v2)
+> - Included the changelog below the '---' line as recommended
+> 
+> The updated patch is attached. I believe it now follows all the required 
+> guidelines. Please let me know if there are any further issues or 
+> adjustments needed.
+> 
+> The patch is also available on lore.kernel.org here:
+> https://lore.kernel.org/all/20250924061444.11288-1-daiyanlong <https:// 
+> lore.kernel.org/all/20250924061444.11288-1-daiyanlong>@kylinos.cn/
+> 
+> Best regards,
+> YanLong Dai
+> 
+> ---
+> 
+> 
+> 
+> 
+> *主   题：*Re: [PATCH] RDMA/bnxt_re: Fix a potential memory leak in 
+> destroy_gsi_sqp
+> *日   期：*2025年09月24日13:01
+> *发件人：*Kalesh Anakkur Purayil
+> *收件人：*Kalesh Anakkur Purayil
+> *抄送人：*jgg,leon,linux-kernel,linux-rdma,selvin.xavier,dyl_wlc
+> 
+> Hi YanLong,
+> Few generic guidelines.
+> 1. You should select a target tree in the subject prefix and specify a 
+> revision number. Since this is a bug fix, the target tree should be 
+> "rdma-rc".
+> 2. When you send an updated version of the patch, please mention version 
+> number. Also, mention the changes made in each version. i.e. under --- 
+> you can add extra info that will not be included in the actual commit, 
+> e.g. changes between each version of patches.
+> One comment in line.
+> 
+> On Mon, Sep 22, 2025 at 7:53 AM YanLong Dai <daiyanlong@kylinos.cn 
+> <mailto:daiyanlong@kylinos.cn>> wrote:
+> 
+>     From: daiyanlong <daiyanlong@kylinos.cn <mailto:daiyanlong@kylinos.cn>>
+> 
+>     The current error handling path in bnxt_re_destroy_gsi_sqp() could lead
+>     to a resource leak. When bnxt_qplib_destroy_qp() fails, the function
+>     jumps to the 'fail' label and returns immediately, skipping the call
+>     to bnxt_qplib_free_qp_res().
+> 
+>     Continue the resource teardown even if bnxt_qplib_destroy_qp() fails,
+>     which aligns with the driver's general error handling strategy and
+>     prevents the potential leak.
+> 
+>     Fixes: 8dae419f9ec73 ("RDMA/bnxt_re: Refactor queue pair creation code")
+>     [Kalesh] Blank line is not needed between Fixes tag and SOB tag
+>     Signed-off-by: daiyanlong <daiyanlong@kylinos.cn
+>     <mailto:daiyanlong@kylinos.cn>>
+>     ---
+>       drivers/infiniband/hw/bnxt_re/ib_verbs.c | 7 ++-----
+>       1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+>     diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/
+>     infiniband/hw/bnxt_re/ib_verbs.c
+>     index 260dc67b8b87..15d3f5d5c0ee 100644
+>     --- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+>     +++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+>     @@ -931,10 +931,9 @@ static int bnxt_re_destroy_gsi_sqp(struct
+>     bnxt_re_qp *qp)
+> 
+>              ibdev_dbg(&rdev->ibdev, "Destroy the shadow QP\n");
+>              rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &gsi_sqp-
+>      >qplib_qp);
+>     -       if (rc) {
+>     +       if (rc)
+>                      ibdev_err(&rdev->ibdev, "Destroy Shadow QP failed");
+>     -               goto fail;
+>     -       }
+>     +
+>              bnxt_qplib_free_qp_res(&rdev->qplib_res, &gsi_sqp->qplib_qp);
+> 
+>              /* remove from active qp list */
+>     @@ -951,8 +950,6 @@ static int bnxt_re_destroy_gsi_sqp(struct
+>     bnxt_re_qp *qp)
+>              rdev->gsi_ctx.sqp_tbl = NULL;
+> 
+>              return 0;
+>     -fail:
+>     -       return rc;
+>       }
+> 
+>       /* Queue Pairs */
+>     -- 
+>     2.43.0
+> 
+> 
+> -- 
+> Regards,
+> Kalesh AP
+> 
+> 
+> ---
+> 
+> 
+> ---
+> 
+
 
