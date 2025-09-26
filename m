@@ -1,214 +1,235 @@
-Return-Path: <linux-kernel+bounces-834346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C558BBA4804
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:50:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0D2BA4810
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170A21899566
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125913A931C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720AF235358;
-	Fri, 26 Sep 2025 15:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7A72367D2;
+	Fri, 26 Sep 2025 15:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTp4w8qd"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaWDUKyu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97BE2580F2
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758901719; cv=none; b=mwmkZQxmdUk9J2YM5ULRWwNcyfTNIiPw1U1t6Vw4GRp/0+BHVqSW/4T+0vYkHdE8CHjMR+LXdW4M7oAn9UZTyf5ZCblZ7YTZ0HF/92U/G08Y6fuxrtEBWvv2WEPaKtYAHfe/7+rHVkVwrF67D5R/DKUvKQVrSJg3pZmgfEfFwr4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758901719; c=relaxed/simple;
-	bh=zljWxy5CwvIsp4HQ/vcIgKs94qa7Cp48lrj6Etcpz5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DQkl5U0PKlmh0wBT7jzQJKIV3rQ/9zDeIQd3wIxWRN6yuxy/T2DN9QoKfPj2v5ElB9eyTKLHzxMoT858hdNwB+J7YseyRyOdt5wEZJgKW3Oztlh8JrtNRduzmw1uxeeJcw8jEqYJEWJtEO6j9/h2/Dv9obStcZzPhk9Q48wwyO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WTp4w8qd; arc=none smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6352a77add0so1335808d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:48:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758901716; x=1759506516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ESIjBxRBQaFXab+YuRgwHn4pBu5p/ZSufLb4LCbBcAs=;
-        b=WTp4w8qdckyEEI9n4mtGLSW/3/kp4QVBonCn79I69SuzDMCInL0zrJqICe1kcJ6r4W
-         c3nu0HhevJb957+wCvjk3xTph3wE4FUXwgm5GVtSA6ZNl8rOE0/R+Xj3UeDyJXn+8/9k
-         MXAbMI+rXckNEviIQ7JDCq+7lCKHSb+xljwsWXWgCDuIyN6GRY+Z6h2ET1CvBBF7xVgs
-         6FHZfnwIIygdxldQSDFvl6A5OWL2l6TN9Y+wCa/o+uqJ1Z6Go7yBC2ai9oBtJVFc4Y+q
-         +T5aZn9Q33xKX5jb1iXzwFCDloQJHjN0Jfb3DLLe+KBIQf9rJ0Pum/50EOVi/909yoLZ
-         a0xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758901716; x=1759506516;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ESIjBxRBQaFXab+YuRgwHn4pBu5p/ZSufLb4LCbBcAs=;
-        b=l7l1U/IhadTiMzbTl/bjuRUL4N44CkffnqLiwGk1vqOT5ZBz8TfEzbXBPpNBWxfJAu
-         W1Sr5ghhEdv5VHF+ni4RE4qH5HzgSqsbznj6ZqbH0T7FG7/kmlCNcLTMsZseY+c7A1+H
-         ODF/yDik8BdQAlw45cNDCiwXsAp3dl3I47PgTNF+JxIOtuIR2AW7bGJw8cGjidMDb5In
-         5HvQY9AkVelKxA75mJvU+/3WE0nH8FlLp+b1wnLH+++zNyt/3l/V+78X/ymbgNgyWaZy
-         6i7B0ZAKykBj7PNCr91SuchXpsH7Pdbr1SrePyrWuxppp+hYa5V723ZMWMJy5B0Ta7Fc
-         Z4uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZt+kzHK7dcmc7tiUJa6XEczwYZi4Ym6nIS6HKT6rE67ivKdN/bnEMifsQko86DapPbEC2QG380IcdNI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD81n+T3lqc3cq09A1lE9aqoWNfzS5UNfB1GG42HVQmm5GkbZ5
-	kXvJyOVb2vF6DzgQRYBPJ3HbU1UtzqKPOH+2ICsc5zzhjyorwy6Z/Bae
-X-Gm-Gg: ASbGnct1eVjWyGl/6LB/7UegyGSVIlhE538UtRtTcwVt/YeI1PjUIKs0LhjXfbCAiIF
-	uMva1Vkpaj1LZd9MG5AjrOPmDd6RBsAGQqNNVyxmS8xf4OqB4s/T3EPmjm+mbsfopCJrDcgWzLe
-	7Y5wFWNpxti9F2NSdGJ6eAJLVVV6cwr8kVd9ySiYXlInAgpjoFj1PzUf/kQMg8BVHwm0+0tjvO+
-	9mqlJMBgrkMWuhnZrBlgs/D07LJHvWxcMT8s64B3TJ8di9pOcHGpy+OD07tFjxOqul4Ujx2OFmX
-	cJP4Q4geRA03LLa74CMU9DnXnxd9NgdEezwUDkVfCbXlw1VqjMerFysHsqyYyvF/SYAiAMkzTNd
-	0YsCPF6USFMbTJB5m5UkFDDCfQC3upgJ7jcxc6AUPNOkM07ErBBZEDX1YpZlOC6eL
-X-Google-Smtp-Source: AGHT+IH5v5oEleHS+hhobpT1fPu/dGJzQLGt0YwAygbvnJZKb6RzhqZPSdR0+T1YCZa1xLc53b6QBw==
-X-Received: by 2002:a05:690e:1590:10b0:636:1fef:e725 with SMTP id 956f58d0204a3-6361fefea7cmr5781546d50.2.1758901716427;
-        Fri, 26 Sep 2025 08:48:36 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:11::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-eb383929a6asm1447970276.16.2025.09.26.08.48.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 08:48:35 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Chris Mason <clm@fb.com>,
-	Kiryl Shutsemau <kirill@shutemov.name>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in drain_pages_zone
-Date: Fri, 26 Sep 2025 08:48:33 -0700
-Message-ID: <20250926154834.2327823-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <DD2SCJF0CLN5.1824PA58HFFZF@google.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF73122424C;
+	Fri, 26 Sep 2025 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758901781; cv=fail; b=okx0wKKeLwGpyA+OEfsUC/gFuGJFsNLflUnPGOmIeeHsGqgdKXljuVLhu8zxYWubYuiziO8I/p6Z4VosQhc9a3SMjZzieCDJ1tPdPkJ8R6oRczyxChXBT9/Yk9VtNs1lHLsvoAyUzM9fMLM5krjGU77tANYDdLwilrV7WZi3N90=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758901781; c=relaxed/simple;
+	bh=4vkFHzCojAzqDF8VnlBWmmRT6Ug8J7WJXf6J5GNdYRY=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UXYz/nYB5XmF1h/yotxnviGa6/O0jmCPu9gezsCJHbyjCVEHlPzcLHKbUCCazbfW/t0IXzkDJlZJV+tdAj10JmwhiBoMnLUDG8Kyb4zC/A4PfnmzEe/i9rxJ+acMKHZTTEhP6jVPoiwjqEdmAsCxgTl49dDwKsUyCsHn4dE/wBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaWDUKyu; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758901780; x=1790437780;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version;
+  bh=4vkFHzCojAzqDF8VnlBWmmRT6Ug8J7WJXf6J5GNdYRY=;
+  b=UaWDUKyuvSJDScnD9ktmVGkK6oK8i+jO4F737puJ8I1JfMtiRHiBjOxe
+   KQdyqKQ0j6OX3FNJuqJw2+ScIfcnxQNheQjqCf5q4271v/a7aeTeALjMj
+   DZYKRTml8N1Si0apysDw+8ohBE5WS0Qiy3YJS/CNBBYpbPVrL5CSfR5E+
+   2U6uXs3zuVkSY4VcJ7BUor2kDsqIl5cERs34ik/2oxmMMRYtCRYmM/eR6
+   8Rlfi1ccZDs2MheCwILh0qsTnKrBSEOCOD7Z/dETGKXiNTuWEMt8tUyGA
+   +A8vYNhCfNid3evMtoU9Cw+DsZ0Xt5vfzeDEY5mRt1C0z8GV6V7ZzxS9K
+   A==;
+X-CSE-ConnectionGUID: ykKMFYwQRJ2gSQ0UFu6sQg==
+X-CSE-MsgGUID: qmk4U+RaRHKoGHxKQS2HzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="60937544"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="60937544"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:49:39 -0700
+X-CSE-ConnectionGUID: 9VbnHTpPSbGKcfd6QOn5Pw==
+X-CSE-MsgGUID: 1dVXZTlvTkOLJ65KSyY+JA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="178029755"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:49:39 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 08:49:38 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 08:49:38 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.24) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 08:49:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UYg5excFH97ZazQeKhL8k8F+BvsyDpqT4AcTgugtcF95jMwowRDJYra5VvbMimNQP9oraMPLtzhlQ48fjwSW4iEA3BIEvmvIMNBvXuA8S/2KXZPJei75jl8JRLy/sDyHKfU9kT+ZkmslvnOFnGtTUb6u4OkD+t6nudghUoYWtySY8CE79+ujqRe8ijGEnVoGQHOGSsf+qDpfJevfFSaVjmj4YMXcNyECcsuKtWCJeDG72oh9COavzF9mQnq8nraZWYbj/6yI3xv8wtnsAHdrSW4Yvi7E8jvYi7nI46Q1Al1CQWWMIC40mYKd3JDPIHlXe2yFcw1v+trDGkWhb/+alg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4vkFHzCojAzqDF8VnlBWmmRT6Ug8J7WJXf6J5GNdYRY=;
+ b=L/dycJDPAO6RssDUZooCwrU/2BA3oUfhib7gnwJ++TFY/lrxV4Qw3S3yR8iughXEN1p0voZMbRGwNvhziknQ9PSF/2FhxGuncbG28uP1H7FECF1WE0Z8WIj4w8zv5SOJuD6yyXxmPuExsNdZrMf0F7gNgwugWoPV7EiXZzdp5JBfualpoTIA6QeEWcXuxjpZWuMTjBXtzD2Jq3OmpyQoYeMvwJCQdJh60Z10oTB3M1cb/xfY+jUuVvAo0h6D7xqjDirpWoClUM5tpm0JfcjrVrGY6lUixiO7mv4PnSg5NppdCa5QchsapJ0M0xMGBcKBuzghQl2bBhlHMhu83NTXBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by PH7PR11MB6697.namprd11.prod.outlook.com (2603:10b6:510:1ab::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Fri, 26 Sep
+ 2025 15:49:34 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 15:49:34 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
+	<linux-coco@lists.linux.dev>, "Huang, Kai" <kai.huang@intel.com>, "Hansen,
+ Dave" <dave.hansen@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "kas@kernel.org"
+	<kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "Annapurve, Vishal" <vannapurve@google.com>, "Gao,
+ Chao" <chao.gao@intel.com>, "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org"
+	<x86@kernel.org>
+Subject: Re: [PATCH v3 12/16] x86/virt/tdx: Add helpers to allow for
+ pre-allocating pages
+Thread-Topic: [PATCH v3 12/16] x86/virt/tdx: Add helpers to allow for
+ pre-allocating pages
+Thread-Index: AQHcKPM47wNFJAdMMkCLNWN+W5B0ObSloAqAgAAISoA=
+Date: Fri, 26 Sep 2025 15:49:34 +0000
+Message-ID: <e7edbc74046335294a69aae75e46ea925fa0d1b2.camel@intel.com>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+	 <20250918232224.2202592-13-rick.p.edgecombe@intel.com>
+	 <112cc926-30aa-4f8d-a3a6-aa2262b96916@intel.com>
+In-Reply-To: <112cc926-30aa-4f8d-a3a6-aa2262b96916@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|PH7PR11MB6697:EE_
+x-ms-office365-filtering-correlation-id: 3dcfb840-5bcf-4ac9-0f90-08ddfd144a54
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?bEF3T1pZZExSUVlGOVNML21HRDg3UlAvTld3TzdBRmtPMEZBTjMvNDd5cXk2?=
+ =?utf-8?B?WXpoQmEzMUNqTEEzZXB3RE9mNUpvUCtEMUg0akxPVFJ2NEMrRzFBNjRvVjFy?=
+ =?utf-8?B?VDk2TGx4V0pBdDdiWFZ3VW5TS3R6cEh0eU84S0lhaXV3elZVZnQwT1NPY0Mv?=
+ =?utf-8?B?RW1SR0FQZkozMWlPbmljR0dBNngwSUFlZ2haVjQ2SjdoZ1hXY0YyZzZUUUJk?=
+ =?utf-8?B?STErNWJkSDIrMmZ2SExhckRZR09TSXM1Q0x1SCtuTlk1MmlWbDkzS2hJR1dS?=
+ =?utf-8?B?Q1ltWmZ6aXdKMmFFbzV2elVxQ0R1WTN2bUIySTd2aUhzQ1hMbjVpVVdGQ3J5?=
+ =?utf-8?B?dFh2cXlVY0pvVW90ZHVMZ1BOQmtySWY1MHRYRmJaOEJNUHFJMU90aTVscHNV?=
+ =?utf-8?B?UVI3dWE5aEdTWDcwcEVNN3owaHlYS1RmSGhmNk9EVVFyU0xNekxUcm40cUJs?=
+ =?utf-8?B?cVJvc0JYRXBPZmhtT3FBdGtmRHNyWTRwM2dOMFRsSUc4Q2huUE5PdFplb0cr?=
+ =?utf-8?B?TXN2NWJsNjJWSDJ6eVAza2VFRDUvZncveGpUeXcxZjFNa3N5ckpRUU83WHdL?=
+ =?utf-8?B?a2VRS1dFaFZ4Z2JpZVRlSGZiK21JZFZqbXdQR2NnODd6c2Z3MnB4S1BrR3ds?=
+ =?utf-8?B?cWlaMklhZ1F5WHZEa1dVTi9CbXFuSGhPeGcxL2daeUh2ODJqbDlUZ2tyNWhh?=
+ =?utf-8?B?N2V2bVlmSllTWUJmZUNEWENEUzNaaE1RTm1xM3RtZS84RlZVVldvaS8vRDdx?=
+ =?utf-8?B?eG50RXhFNlA4VzdyREI0QXNKU0J6aHhYVmtJSnY4UThoTDhiYmxNQ0swbHU4?=
+ =?utf-8?B?S3RnQU4vYXFzcmlrbmZsNWxGd1lXei9kT3cyTXlOd1BtWVErZy96aUxzN1RY?=
+ =?utf-8?B?SHhFdXczdnhlUGF1N05MWVNHMFdkWWlmdFdXOVkrc01SU3N3dmoyTnJYZE9V?=
+ =?utf-8?B?Q25hd2RwaW4vek1kNGVxYnltdWJtcHltN0o5MWJiWWx6NTFLYXBNT3FvSTVr?=
+ =?utf-8?B?NDlYb0JMN0E0L2NlRi9xUndOakRCNkRlTmxzQzd0RHV4Y2hrYUJZOHdCWUJs?=
+ =?utf-8?B?SzN6STBWQnY0WUplWWtnUVh3RWt6ZXdCVFhrOXhjKzRaSDVyakRnNE5jakdD?=
+ =?utf-8?B?aEwrMnI0aGpUUUZqN0paVmxQbTBTQjRESzhDbFVyZkJuMUlpRmQ0M21IazM0?=
+ =?utf-8?B?SnlUN0R6Q2t5b01CenZpQndyL080VXdGTWNoSktQc09CRDJUZzR1L0NoS1JN?=
+ =?utf-8?B?cDBpcEJURDd4Nm0yU1ZVdkRLdGZVa2tUdzVIN0Flc3hkdENNK1d0MmdsOWd1?=
+ =?utf-8?B?Y1B4b085VktYeEZlaVRUWnNKMUhzdUQwVUFaSUNOVm1iN0xYTUZudTljOVpJ?=
+ =?utf-8?B?Yml3VGhxZ3o2K3ZWaDJSUGlQc1lTRithY2hlaFNaNC9SemFrNDRjZldES0xn?=
+ =?utf-8?B?bmQ4OWdhV3VpdlpqRCtEYzY2OE5HTW1xK25WYlhZZzdaZHFvbk9ORFdNNWVx?=
+ =?utf-8?B?NjN2dFBBamlqUkZqVUpyY1MyQWx4K25pUHhVYVBkRW1xYW44Q21PSkI0Q1pB?=
+ =?utf-8?B?ak95VjA3aDlIaWFLeVN1dThCZDlxQ3VTMzJjQ0x2dWYzRzdGQ0pXa0R2OGt3?=
+ =?utf-8?B?ekJiUE1Ra0hJK3p2K0N5b0xqNFR5bGg0bEU2dCthQ1p4b0JIL3VSMG9nMEN1?=
+ =?utf-8?B?WGVnZzNKL01GM2hQT0w4R1lhYmNtcHZsNmd2SzNHU214N0srbjQydTcwbmlw?=
+ =?utf-8?B?cmdsYVFmS3BlbnNYblpMajN6Z0tjODhJNVlIc3hrRjU5Z29TbE9oVG5jUWNX?=
+ =?utf-8?B?K3cxL29pcFF0K0U3cU1wVEZ1RUpDRWxoQnlLd2hjdUFrc1JuaHI1L2V1WmRE?=
+ =?utf-8?B?K2NQd1dsMmhlSmhER0RxakkrYmVCT2hjN28xdEZoV0p6dVJoeXlLSjlpOVNI?=
+ =?utf-8?B?SXJFR0x1cFYwMmRHNDU2VHVOZ09pSXF4V2lrN3N3MHQ5ZnVRUlM4N3dFcHhY?=
+ =?utf-8?B?Z1g3ZzN3c3hKdUhMeDEzanptRmZIbk95NThaazhRK3RFdEhGNnVKSHFpcGZo?=
+ =?utf-8?B?SGFOcTU5YTBUN2pkb01mMEtPNXdxd0pJOXBFQT09?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cGtITWhxd3F0UEVJKzRMZ3oyelZ6SjRuOVRoYnBjcUZDYS96MzVWSTFJWWJx?=
+ =?utf-8?B?UnlZNmUyYkplb2NpQS91bno0YXN0WGFkR0l3ai9tVXN3TXFiZmdCRnBrWkYv?=
+ =?utf-8?B?bzdkVE1QSWJnUkdyNmVielExelhTVFFqb2htdzRNdk9vekk4NCtBRUtRajVi?=
+ =?utf-8?B?RGkxaWdhYlZJdnJONjFYOUxkMHZ3SHUzaW1LMGJ0b0pzdC8ydVY2T3p0a0pu?=
+ =?utf-8?B?TXNIL3N6RUJOeXZZelJVZDV0bUVYbjg0Nld6TkJoeG1FbTZzSEZPY3JQYUFI?=
+ =?utf-8?B?Ny9BN0NBa1F3eFRWVmtocVREaUkvb3c4eUpPcE1XM1JrZnJvU2h1VVBsRzZx?=
+ =?utf-8?B?ZkxaRnlWNXpvSFp1MXZwSmV1YVc0SldwSXhJVENSamQrY0x3b2tJWFQvZGt4?=
+ =?utf-8?B?aHFMQXVJMDBZR0lubnd2cU9DbE5zQTdrRm8rU2sxZnAvTGNEeUozZDhTY0to?=
+ =?utf-8?B?SlB5Nk1zdWljVWhNb1BTRlk5c1IvQW1RUndyd2JtMW9pdldZdGN4TXo2dVBF?=
+ =?utf-8?B?Mnd6YTVlbytGSExVa3Rtb0pJNW42M1lWdVhBTjhmUENmRUJ4WFBwM1Y0OG1p?=
+ =?utf-8?B?Mm0zUUc0MCtRektSSnZmNWJYcDAwQWNGbzd5NEVkVEpTT0M2SEo4Z094VDBL?=
+ =?utf-8?B?M0xDcmt4R1JQVTF4OVFVbm5GM1JBUE82akhyakpQRHhER0xrY0k3Z1JScjhy?=
+ =?utf-8?B?aTRkdjMzaEV3K2tzeG1pRC85eU12K1hEY21zVGVZY3hZWVUyZFpNaWI4SWdk?=
+ =?utf-8?B?dTdQT3FJODBGYks0RlMzTVEwVjhza0lVbVhyYWIybWNqeVZ2OEdXcG04Z3Az?=
+ =?utf-8?B?dVdXVjRYU2FjRWkyZ0FQRG5MQk9GbXNWUjFqNUNUNU1pWGZpRmI2dVdQMUFn?=
+ =?utf-8?B?NytqZjNZR0xlV0hnNTY2WVJRZ1B2c3VUR3RKVit1Vm9NMm45dm5WR0NuN1lW?=
+ =?utf-8?B?aVR6eFMyNkc0NDl2bVh1Qm5qdmlpTXpBTmhaSkJIZE02V3N4d0dZZW5acnNs?=
+ =?utf-8?B?d1hpUlo3QXBaYkVnVTZGSXlNdnRoYnBRSzJsMFJZMmVqTWVoTzJ2cnhFRG8v?=
+ =?utf-8?B?MmE1RXZxQlR1V1RFSDZ1R0FGR3FuVlpwcTB6TkxxU2IwczNlL0p3cGhMZFhw?=
+ =?utf-8?B?cTZETThVN1hPdFliaHRieWhhU3dYbzFacC94TGdvejFjdVdHTmd4K1loVGRy?=
+ =?utf-8?B?alQzMnQwcFVWRTFXVVdNT1hRa2hCV3g1L2I1K1NrQXNuYXpqMDRscHFWVFN4?=
+ =?utf-8?B?ZGYwMkp2aVBpRHU5OE81NVpyMm83MlpxMzB2a2d5OVE3RHE3RkRyL3dVcFl3?=
+ =?utf-8?B?UGlwOWdHdjRIa1NIRDg1VmF4T2RJOEs3ajAzSFJLb1RoWDFFZU1OVjJGSzND?=
+ =?utf-8?B?VkMrRVEvdmd3dUxJZEgwWk1ZalF4ZXRhTGtUZE94TTZWRTJiZjQ1RVd4MTMx?=
+ =?utf-8?B?Z0xxZ0hjQkZtbjE4K2dnTURiZ0ozNVF2SW9JWW1YWWxSVEg5S01iWWJKYlQ1?=
+ =?utf-8?B?UURXTVJ4TVk0N09OYWU2RGhCOXlpakVqaitGOHoyTStiQkpPVjVsNE5jcE9K?=
+ =?utf-8?B?L3BuMmhuTEo1OGxMQVRpdUNkbEttZ0dIZmY5YkY2NjBYZXAxQXVyY1ZFMUhL?=
+ =?utf-8?B?bWNFUis4clVLMk1STmxBQVNheUE5RStMM1pjWE1yb0IvcmhVWXU5SUJwbnla?=
+ =?utf-8?B?bitxVW54ejBDZGd5SC9BN1hIZXV5YWZOOEtuUk50cWEzU01HYzFSYysrdkY1?=
+ =?utf-8?B?NnJENUZCY2ZMQUQ1ZjBJekdJOHFXYWpjVlRrUGVtVmpSblNiK293dUVNQXIy?=
+ =?utf-8?B?Z2x6Nnh5OTNBRW9rSVlUSDNacnJjUjZadXJTdFoyMkFNMlg5RVIxZFNta1F1?=
+ =?utf-8?B?RjVTalVFWmxIUjd5am5YWkZxYUE0c2czZ1RwOGdWRDl1RlRyYmdYcGJ5WXdF?=
+ =?utf-8?B?bXFTQm5EZFNMZnN1S1JYQ1Y3cHBQMFMrKzY0RUpOWlpDbUE2YjBWbFlPSHhi?=
+ =?utf-8?B?S2NmdmxORi9KYUpIZ29lZWJZZlIyRHU4bTFRek5pYlJrcDQ4dE4vZ0dOd01W?=
+ =?utf-8?B?TE9FcDdqc3hGTkVoKzNaeDRkeUdOL2h1emQ1WFE3cTlaWEY3elgvS0pYS0Nu?=
+ =?utf-8?B?NU1SWXozbmt3cUxNaHdGeTJkMlNEeXM1bHdXZHAremV4R054eGF0cHE5Q3lP?=
+ =?utf-8?Q?pgrINu8QAS5yEPoWW/oGWeU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <356DB550F889164986A7DD02F8765BD8@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcfb840-5bcf-4ac9-0f90-08ddfd144a54
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2025 15:49:34.4214
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZQNvrmBmTU0gJbEtCHl66FEj3hO52+z4doFia2Si4mb4A6mf9qBskdGu2tjvO1O5+lrW6v6nSuT3pgbIQAcuhPtExm1FWfeXtiDxh4XKnL0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6697
+X-OriginatorOrg: intel.com
 
-On Fri, 26 Sep 2025 14:01:43 +0000 Brendan Jackman <jackmanb@google.com> wrote:
-
-> On Wed Sep 24, 2025 at 8:44 PM UTC, Joshua Hahn wrote:
-> > drain_pages_zone completely drains a zone of its pcp free pages by
-> > repeatedly calling free_pcppages_bulk until pcp->count reaches 0.
-> > In this loop, it already performs batched calls to ensure that
-> > free_pcppages_bulk isn't called to free too many pages at once, and
-> > relinquishes & reacquires the lock between each call to prevent
-> > lock starvation from other processes.
-> >
-> > However, the current batching does not prevent lock starvation. The
-> > current implementation creates batches of
-> > pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX, which has been seen in
-> > Meta workloads to be up to 64 << 5 == 2048 pages.
-> >
-> > While it is true that CONFIG_PCP_BATCH_SCALE_MAX is a config and
-> > indeed can be adjusted by the system admin to be any number from
-> > 0 to 6, it's default value of 5 is still too high to be reasonable for
-> > any system.
-> >
-> > Instead, let's create batches of pcp->batch pages, which gives a more
-> > reasonable 64 pages per call to free_pcppages_bulk. This gives other
-> > processes a chance to grab the lock and prevents starvation. Each
-> > individual call to drain_pages_zone may take longer, but we avoid the
-> > worst case scenario of completely starving out other system-critical
-> > threads from acquiring the pcp lock while 2048 pages are freed
-> > one-by-one.
-
-Hello Brendan, thank you for your review!
-
-> Hey Joshua, do you know why pcp->batch is a factor here at all? Until
-> now I never really noticed it. I thought that this field was a kinda
-> dynamic auto-tuning where we try to make the pcplists a more aggressive
-> cache when they're being used a lot and then shrink them down when the
-> allocator is under less load. But I don't have a good intuition for why
-> that's relevant to drain_pages_zone(). Something to do with the amount
-> of lock contention we expect?
-
-From my understanding, pcp->batch is a value that can be used to batch
-both allocation and freeing operations. For instance, drain_zone_pages
-uses pcp->batch to ensure that we don't free too many pages at once,
-which would lead to things like lock contention (I will address the
-similarity between drain_zone_pages and drain_pages_zone at the end).
-
-As for the purpose of batch and how its value is determined, I got my
-understanding from this comment in zone_batchsize:
-
-	 * ... The batch
-	 * size is striking a balance between allocation latency
-	 * and zone lock contention.
-
-And based on this comment, I think a symmetric argument can be made for
-freeing by just s/allocation latency/freeing latency above. My understanding
-was that if we are allocating at a higher factor, we should also be freeing
-at a higher factor to clean up those allocations faster as well, and it seems
-like this is reflected in decay_pcp_high, where a higher batch means we
-lower pcp->high to try and free up more pages.
-
-Please let me know if my understanding of this area is incorrect here!
- 
-> Unless I'm just being stupid here, maybe a chance to add commentary.
-
-I can definitely add some more context in the next version for this patch.
-Actually, you are right -- reading back in my patch description, I've
-motivated why we want batching, but not why pcp->batch is a good candidate
-for this value. I'll definitely go back and clean it up!
-
-> >
-> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> > ---
-> >  mm/page_alloc.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 77e7d9a5f149..b861b647f184 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -2623,8 +2623,7 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
-> >  		spin_lock(&pcp->lock);
-> >  		count = pcp->count;
-> >  		if (count) {
-> > -			int to_drain = min(count,
-> > -				pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
-> > +			int to_drain = min(count, pcp->batch);
-> 
-> We actually don't need the min() here as free_pcppages_bulk() does that
-> anyway. Not really related to the commit but maybe worth tidying that
-> up.
-
-Please correct me if I am missing something, but I think we still need the
-min() here, since it takes the min of count and pcp->batch, while the
-min in free_pcppages_bulk takes the min of the above result and pcp->count.
-From what I can understand, the goal of the min() in free_pcppages_bulk
-is to ensure that we don't try to free more pages than exist in the pcp
-(hence the min with count), while the goal of my min() is to not free
-too many pages at once.
-
-> Also, it seems if we drop the BATCH_SCALE_MAX logic the inside of the
-> loop is now very similar to drain_zone_pages(), maybe time to have them
-> share some code and avoid the confusing name overlap? drain_zone_pages()
-> reads pcp->count without the lock or READ_ONCE() though, I assume that's
-> coming from an assumption that pcp is owned by the current CPU and
-> that's the only one that modifies it? Even if that's accurate it seems
-> like an unnecessary optimisation to me.
-
-This makes a lot of sense to me. To be honest, I had a lot of confusion
-as to why these functions were different as well, so combining these
-two functions into one definitely sonds like a great change.
-
-I'll make these revisions in the next version. Thank you for your valuable
-feedback, this was very helpful! I hope you have a great day : -)
-Joshua
+T24gRnJpLCAyMDI1LTA5LTI2IGF0IDA4OjE5IC0wNzAwLCBEYXZlIEhhbnNlbiB3cm90ZToNCj4g
+T24gOS8xOC8yNSAxNjoyMiwgUmljayBFZGdlY29tYmUgd3JvdGU6DQo+ID4gKy8qDQo+ID4gKyAq
+IFNpbXBsZSBzdHJ1Y3R1cmUgZm9yIHByZS1hbGxvY2F0aW5nIER5bmFtaWMNCj4gPiArICogUEFN
+VCBwYWdlcyBvdXRzaWRlIG9mIGxvY2tzLg0KPiA+ICsgKi8NCj4gPiArc3RydWN0IHRkeF9wcmVh
+bGxvYyB7DQo+ID4gKwlzdHJ1Y3QgbGlzdF9oZWFkIHBhZ2VfbGlzdDsNCj4gPiArCWludCBjbnQ7
+DQo+ID4gK307DQo+IA0KPiBUaGlzIGlzIGNvbXBhY3QgYW5kIGFsbC4gQnV0IGl0J3MgcmVhbGx5
+IGp1c3QgYW4gb3Blbi1jb2RlZCwNCj4gc2ltcGxpZmllZCB2ZXJzaW9uIG9mIHdoYXQgbWVtcG9v
+bF90IHBsdXMgbWVtcG9vbF9pbml0X3BhZ2VfcG9vbCgpDQo+IHdvdWxkIGRvLg0KPiANCj4gQ291
+bGQgeW91IHRha2UgYSBsb29rIGF0IHRoYXQgYW5kIGRvdWJsZSBjaGVjayB0aGF0IGl0J3Mgbm90
+IGEgZ29vZA0KPiBmaXQgaGVyZSwgcGxlYXNlPw0KDQpZZXMhIEkgc2VhcmNoZWQgYW5kIHdhcyBz
+dXJwcmlzZWQgdGhlcmUgd2Fzbid0IHNvbWV0aGluZyBsaWtlIHRoaXMuIEkNCndpbGwgZ2l2ZSB0
+aGlzIG9uZSBhIHRyeS4NCg==
 
