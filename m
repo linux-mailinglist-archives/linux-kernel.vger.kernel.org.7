@@ -1,181 +1,150 @@
-Return-Path: <linux-kernel+bounces-834611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC651BA5166
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:40:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523F4BA514B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6025627A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D5D2A6717
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529CF2877F0;
-	Fri, 26 Sep 2025 20:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92A42857EF;
+	Fri, 26 Sep 2025 20:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="QuA99k9i"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siIOIe/J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0988713BC3F;
-	Fri, 26 Sep 2025 20:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E953B13BC3F;
+	Fri, 26 Sep 2025 20:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758919224; cv=none; b=PUpKgzcMQsikenpOapQhao+9HwV6pMGMkcYCaR/nsKr2O0vSizK6xB1vcgQmsJ9aEeILHpbrYFA1/h7YefYRHBKtDlLPsFtle8g/9MZLai9AGPuQ/UPsKf0a2PswhTsF16LqRqgv+6abbmAMbDJVwqAwHsNp0pwEIRgwIIHBwaU=
+	t=1758919159; cv=none; b=aZuaAH8MpheAM2ClY37CC++JAZjeUomXmtRIPib+nJTriem63lD8LRcdUOI5K6VieX0jBcJA8/SohQNcyevGOXR1EjE6sWPInI0yPuuSdL0eWBK0rpr6vEY7gMj72m2GbamhmT3HECFCjSmc7kYXvuasmMZbalCWMz1KrHHyFIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758919224; c=relaxed/simple;
-	bh=XKxPsTg2RR+9I1GGlbcn1W3ewfTNxpwz3LgfupW+5co=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GoeoEAlypuAe+YfyVnhCawDp7f6yfIXFA26qlojK/4v5BH5FfzoZxCYN3VfLp4uBB9nhVHvpNB8JSi+ElSLFwKeEpnsA4VibFmAKtKaaYlh9ZTskHov40NV/xOrTmW3owdNLSXe+whW8kY+05lLkP0xOEMwXt4OL998JkpULZiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=QuA99k9i; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QFR7hq017130;
-	Fri, 26 Sep 2025 16:40:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=VBynO
-	QOjyatvt+H/ulk8m1luVl/Tg0XtX77wJOyHJ1w=; b=QuA99k9iYgV71j0G3PgeM
-	p73Y6xJoE9unL+YZOcwKqL7rSxwxHnpJbUuIbRqeHbNwnNNhujJfXDNNTtusmlfa
-	91RIp7ssICxs0iYNjdRyP2xbdtX3Zue6nnwitVRLqPcNi73jwYb2Hpmg4h6h2F1f
-	XJw5F+nhMjXxMdNX1X4pn0rXYPjU0trgelttYIpChDnROw7k18iBRGBiX5TZFS0r
-	V5hppWbvgGCc9lb7fHOslOCTLysBPCi9RdZAor6xODACRDamdfIsmTajrGCZhqne
-	ehDn0udg9DE/T82yH+k+cxoCWYrtjjuS2Qtgu4rYxzW0Sme4IxH0U0m3/DAaCzuY
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 49db1hq5bu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 16:40:15 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 58QKeEHu027078
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 26 Sep 2025 16:40:14 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 26 Sep 2025 16:40:14 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Fri, 26 Sep 2025 16:40:14 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 26 Sep 2025 16:40:14 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 58QKcvvx010307;
-	Fri, 26 Sep 2025 16:39:00 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
-        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v3 2/8] Docs: iio: ad4030: Add double PWM SPI offload doc
-Date: Fri, 26 Sep 2025 17:38:57 -0300
-Message-ID: <4bdb0b8932ba16a20234969749b70f3b6f3c4214.1758916484.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1758916484.git.marcelo.schmitt@analog.com>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1758919159; c=relaxed/simple;
+	bh=DN6Qwr15i5uFVBUupd5QlMIvaTum5HUKi8sCfH8FrpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hPhcyx7UNI5gsq63kqMCqq64VLP4b2BNRNjFJzpkWrkRlZ0W1g0v9t2slpnglLO3ZD+oJOKqLKF+I0tTwe4drfLBGchD52tERmjQcwAchtKZO5/SebsGle9Kc4CnR9nMZK1IYZ/RLITnhUQ3XsPUjii0DNvN0Ou7DGQSWR666H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siIOIe/J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42628C4CEF4;
+	Fri, 26 Sep 2025 20:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758919158;
+	bh=DN6Qwr15i5uFVBUupd5QlMIvaTum5HUKi8sCfH8FrpI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=siIOIe/Jddewm5lK6in8+WPYGB83DvHTHmJw3qcHCKgl88DH9uAFCnU/alvTGc771
+	 HZ12gzaoeJTS2ZkiYCJxQzvubH66i1yvLvWqsXZThEA2S4AUp8IBYfDtF3wmLthmwl
+	 Zv8lVXGvZWxl0wCFVwRTCzbA3kl76iI3kx4k3oF027IRHXN1J6qdwSPh/+LecMZDVL
+	 IJ4rK4CW9SH0NU08vEURQ0FbvY3v57TZWJfd05qWly7IM3b6wd/kCvJcAt/i1j4SHI
+	 qQlk5c1Tb+Pp3R8+mV3n7mdHgce6ljgKFjzO3hdzrCwrBoTxvDZwZxk12Nzlxs7NlL
+	 5yD7MXLqyUDtw==
+Date: Fri, 26 Sep 2025 15:39:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	chaitanya chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com,
+	amitk@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v6 5/9] PCI: dwc: Implement .start_link(), .stop_link()
+ hooks
+Message-ID: <20250926203916.GA2266029@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Authority-Analysis: v=2.4 cv=fd2gCkQF c=1 sm=1 tr=0 ts=68d6fa2f cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=yJojWOMRYYMA:10 a=wI1k2SEZAAAA:8 a=IpJZQVW2AAAA:8 a=gAnH3GRIAAAA:8
- a=Z7BqY8bEq__jAXHbdh4A:9 a=6HWbV-4b7c7AdzY24d_u:22 a=IawgGOuG5U0WyFbmm1f5:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=poXaRoVlC6wW9_mwW8W4:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX/G+JQTy+yJhv
- k5Tf3S/8drY1pTzOxWoIovU1BId6Htzn+A7POTmblg3ZLGEPtjG0k2NMr5KaqA4/NJh19vhtfrg
- iYtsDsUI8TmcqH7nBj0csUj3s7Y3oYj/aVf5+rXyYnID8cz/zwyKFWd+FlGeLDJCBxgdf59pXzv
- nLOJk4c2uBPKGzMc38Og44iQwFZuODMd/g458sRa9UPKa8Z4IfSlonxdHF5U6VmM2Mj7Hlk6afJ
- JBa0lNfxRbO7g57z0xzX/c5Q4kibY6zpe3D8OWpbyPhhQrssDdxiSZdOcLwWqVAgOUivV5ZHUp4
- ojMysMTl3IF3lNooPxy6fL/DWeEc4NJmps3l6/ucH5PaRRDedIj4YEhtWjfVM7mR/1ZgfChgy4L
- moNbA1REO0D0l5i3he2CTxI95xW8pg==
-X-Proofpoint-ORIG-GUID: DL7lFJbOblqhL2Pg7jaai9M-6mIvsTWg
-X-Proofpoint-GUID: DL7lFJbOblqhL2Pg7jaai9M-6mIvsTWg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_07,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a3f9494-27a2-47d6-bdef-0b1bcbd99903@oss.qualcomm.com>
 
-Document double PWM setup SPI offload wiring schema.
+On Fri, Sep 26, 2025 at 07:09:17PM +0530, Krishna Chaitanya Chundru wrote:
+> On 9/25/2025 10:55 PM, Bjorn Helgaas wrote:
+> > On Thu, Sep 25, 2025 at 09:49:16PM +0530, Manivannan Sadhasivam wrote:
+> > > On Thu, Sep 25, 2025 at 09:54:16AM -0500, Bjorn Helgaas wrote:
+> > > > On Thu, Aug 28, 2025 at 05:39:02PM +0530, Krishna Chaitanya Chundru wrote:
+> > > > > Implement stop_link() and  start_link() function op for dwc drivers.
+> > > > > 
+> > > > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > > > ---
+> > > > >   drivers/pci/controller/dwc/pcie-designware-host.c | 18 ++++++++++++++++++
+> > > > >   1 file changed, 18 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > > > index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..bcdc4a0e4b4747f2d62e1b67bc1aeda16e35acdd 100644
+> > > > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > > > @@ -722,10 +722,28 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
+> > > > >   }
+> > > > >   EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
+> > > > > +static int dw_pcie_op_start_link(struct pci_bus *bus)
+> > > > > +{
+> > > > > +	struct dw_pcie_rp *pp = bus->sysdata;
+> > > > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > > > > +
+> > > > > +	return dw_pcie_host_start_link(pci);
+> > > > 
+> > > > This takes a pci_bus *, which could be any PCI bus, but this only
+> > > > works for root buses because it affects the link from a Root Port.
+> > > > 
+> > > > I know the TC9563 is directly below the Root Port in the current
+> > > > topology, but it seems like the ability to configure a Switch with
+> > > > I2C or similar is potentially of general interest, even if the
+> > > > switch is deeper in the hierarchy.
+> > > > 
+> > > > Is there a generic way to inhibit link training, e.g., with the
+> > > > Link Disable bit in the Link Control register?  If so, this could
+> > > > potentially be done in a way that would work for any vendor and
+> > > > for any Downstream Port, including Root Ports and Switch
+> > > > Downstream Ports.
+> > > 
+> > > FWIW, the link should not be stopped for a single device, since it
+> > > could affect other devices in the bus. Imagine if this switch is
+> > > connected to one of the downstream port of another switch. Then
+> > > stopping and starting the link will affect other devices connected
+> > > to the upstream switch as well.
+> > 
+> > Link Disable would affect all devices downstream of the bridge where
+> > it is set, same as dw_pcie_op_stop_link().
+> > 
+> > > This driver is doing it right now just because, there is no other
+> > > way to control the switch state machine. Ideally, we would want the
+> > > PERST# to be in asserted stage to keep the device from starting the
+> > > state machine, then program the registers over I2C and deassert
+> > > PERST#. This will work across all of the host controller drivers (if
+> > > they support pwrctrl framework).
+> > 
+> > I don't think there's a way to implement .start_link() and
+> > .stop_link() for ACPI unless it's by using Link Disable, which is why
+> > I asked about this.  If Link Disable *does* work, it would be a very
+> > generic way to do this because it's part of the PCIe base spec.
+> 
+> We did test as you suggested but unfortunately the setting are not
+> getting reflected we need to explicitly assert perst to make sure
+> pcie is in reset state while applying these settings.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-Change log v2 -> v3
-- Picked up reviewed-by tags
-- Updated AD4030 documentation with link to a working project that supports
-  double PWM setup.
+Maybe ".stop_link()" is the wrong name if what's actually required is
+PERST#?
 
- Documentation/iio/ad4030.rst | 39 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/Documentation/iio/ad4030.rst b/Documentation/iio/ad4030.rst
-index b57424b650a8..9caafa4148b0 100644
---- a/Documentation/iio/ad4030.rst
-+++ b/Documentation/iio/ad4030.rst
-@@ -92,6 +92,45 @@ Interleaved mode
- In this mode, both channels conversion results are bit interleaved one SDO line.
- As such the wiring is the same as `One lane mode`_.
- 
-+SPI offload wiring
-+^^^^^^^^^^^^^^^^^^
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |         CNV |<-----+--| GPIO        |
-+    |             |      +--| PWM0        |
-+    |             |         |             |
-+    |             |      +--| PWM1        |
-+    |             |      |  +-------------+
-+    |             |      +->| TRIGGER     |
-+    |          CS |<--------| CS          |
-+    |             |         |             |
-+    |     ADC     |         |     SPI     |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    +-------------+         +-------------+
-+
-+In this mode, both the ``cnv-gpios`` and a ``pwms`` properties are required.
-+The ``pwms`` property specifies the PWM that is connected to the ADC CNV pin.
-+The SPI offload will have a ``trigger-sources`` property to indicate the SPI
-+offload (PWM) trigger source. For AD4030 and similar ADCs, there are two
-+possible data transfer zones for sample N. One of them (zone 1) starts after the
-+data conversion for sample N is complete while the other one (zone 2) starts 9.8
-+nanoseconds after the rising edge of CNV for sample N + 1.
-+
-+The configuration depicted in the above diagram is intended to perform data
-+transfer in zone 2. To achieve high sample rates while meeting ADC timing
-+requirements, an offset is added between the rising edges of PWM0 and PWM1 to
-+delay the SPI transfer until 9.8 nanoseconds after CNV rising edge. This
-+requires a specialized PWM controller that can provide such an offset.
-+The `AD4630-FMC HDL project`_, for example, can be configured to sample AD4030
-+data during zone 2 data read window.
-+
-+.. _AD4630-FMC HDL project: https://analogdevicesinc.github.io/hdl/projects/ad4630_fmc/index.html
-+
- SPI Clock mode
- --------------
- 
--- 
-2.39.2
-
+This feels like the kind of problem we are likely to see again in
+different topologies, e.g., a switch in an external enclosure that
+needs configuration.
 
