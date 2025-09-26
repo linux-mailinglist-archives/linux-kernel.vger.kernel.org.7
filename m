@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-833722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BB3BA2D78
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 224ABBA2D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A4962444E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:41:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5FCF624C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26AC287269;
-	Fri, 26 Sep 2025 07:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E091287271;
+	Fri, 26 Sep 2025 07:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ooBcemBw"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NFam2oEX"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ECD289376
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC4727D77D
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758872438; cv=none; b=e6QiR/OAOImxuLgWADDZSBKkLribz8pl8/a6WXC+JfdKAe76WerCnIe67qreiCU1CVnjAYog27D4R7usE2ZJ7Ur8CCdiIdgN8hRWAcZ8kANgqTaqElFRc4LxwjMnUTKzRMuIClYukRO8C0RxtqH98B/S/H5iRIO9U6HUPobWk/c=
+	t=1758872382; cv=none; b=SOLnZVcp5LAx9r47pOmKRSWK0fbwP2QbowlDf0ftRKWfEDz77ObAYQBsj1q4oV9UxRCWIS2xoDELfLJS2ubW/KCGoMfXB4yzSBStWZ16M99chkc+tYE8X5KXjqBQioWOhjP3EeJpqm7MZLtVYRs5JSJB7ID58tdxIA2E/OJxz4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758872438; c=relaxed/simple;
-	bh=RMTdSl1EReIsDbu7gTRVqEIhBEgJjesg9JQOWQIRlcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=X5Aj/tVgDvfe3eSZH0Zx9Tej/yzzZMSmjhieBScmXDg3NU9mOri1beGKVYZTkaYHqewrzI33058gKik4NXrkSslOPVRi1AoL71LKVrnrfcgPY2f3E1vXI94xGBCXJpmk83HQCJNBHffYId+9GsKPIU4KTiLKq4Tx1/MO/2Bvdko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ooBcemBw; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250926074035epoutp03ddf0e04aed08b8cae477792138d93053~oxSkzIFHN1458414584epoutp03M
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:40:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250926074035epoutp03ddf0e04aed08b8cae477792138d93053~oxSkzIFHN1458414584epoutp03M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758872435;
-	bh=Ed+5kxoNWx3Jwxxg6b5MJ/fr9ca6CEUeMaFTMyUKs7E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ooBcemBwJFZTI1CGR//6gGzFHvHxARnloqJ618aRTs036fyD+m3cJDd/qUy3pU8f8
-	 4sUDV8YHBp7HiHXl8HkOYlKMF/G19QNMALGyOWh9pEQf6NDbXmGHgaDoMXgSXgSUqI
-	 0aVhLKBHX84JL5wDVY7HLgogx1It5osgyVHQicKw=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250926074034epcas2p43be6732f342e5bec135b40966271129b~oxSkPl-K33226632266epcas2p4e;
-	Fri, 26 Sep 2025 07:40:34 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cY2Yt0VLsz6B9mF; Fri, 26 Sep
-	2025 07:40:34 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250926074033epcas2p371d57850f46c9ecb307f3ea8c6d4a57f~oxSi8tEpt1589115891epcas2p3A;
-	Fri, 26 Sep 2025 07:40:33 +0000 (GMT)
-Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250926074033epsmtip29387fe8aacfb676855f5efede978805c~oxSi3pQiI1189511895epsmtip22;
-	Fri, 26 Sep 2025 07:40:33 +0000 (GMT)
-From: Sanghoon Bae <sh86.bae@samsung.com>
-To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	alim.akhtar@samsung.com, kishon@kernel.org, m.szyprowski@samsung.com,
-	jh80.chung@samsung.com, shradha.t@samsung.com
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	sh86.bae@samsung.com
-Subject: [PATCH 0/4] Add support for ExynosAutov920 PCIe PHY
-Date: Fri, 26 Sep 2025 16:39:20 +0900
-Message-ID: <20250926073921.1000866-6-sh86.bae@samsung.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250926073921.1000866-1-sh86.bae@samsung.com>
+	s=arc-20240116; t=1758872382; c=relaxed/simple;
+	bh=/ycPTMPiG8r8JNsmN0asT9sma/FZlZdzoRoUwnqhBjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2Hqpcw6rH2QtLrTeH3O4H0SkUmoP9zDpxPldbDewno4iyFit394Z4DB0gI2jXvkChGLtCdItknWThpQ9kg5t35MslzXEi1JNBZgWX1VyfCJwUc1LcFkT764myxfHKlpK9w7aYokEVNVU2tFzfiBOIa+5P8VtXHymU+M4QaUDaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NFam2oEX; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/ycP
+	TMPiG8r8JNsmN0asT9sma/FZlZdzoRoUwnqhBjE=; b=NFam2oEXRBYMFjTMDBMR
+	Ozlq+IPqOpauKVMlpfv+u7VN8SzDA79t+6OF4Yc2nkdaWJFU7F3fCADvuGbLaSv/
+	F88MKxD5XAHJZdDJDL9C19MG0dURtu4eF9RKk4aOS2x1fvmxp6iPxxFzshAUHv+v
+	bIjXbjgeCXLXK2Ojn4JsQiSO2AsriBrn7SnIkI2A6v/f8yiVf4Jlg92UjD227BOJ
+	OPg3KtwbECWZ5QbYkZxpCn/TV/Si0gemYXueXDEw1HaFB2GuIlhUdtw/3rLEPdGQ
+	wVFian26enzSw6RPuTr48Gel+ynRRdz6ITj1L0ODo1njTfgKh4jucik+p+mMISIe
+	gQ==
+Received: (qmail 2167901 invoked from network); 26 Sep 2025 09:39:37 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Sep 2025 09:39:37 +0200
+X-UD-Smtp-Session: l3s3148p1@4xZDY68/ZtggAwDPXwQHAL/S9V79e5yL
+Date: Fri, 26 Sep 2025 09:39:37 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Kohei Ito <ito.kohei@socionext.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: designware: Add disabling clocks when probe
+ fails
+Message-ID: <aNZDObBu638wrpFk@shikoro>
+References: <20250724042211.2160339-1-hayashi.kunihiko@socionext.com>
+ <20250724042211.2160339-3-hayashi.kunihiko@socionext.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250926074033epcas2p371d57850f46c9ecb307f3ea8c6d4a57f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250926074033epcas2p371d57850f46c9ecb307f3ea8c6d4a57f
-References: <20250926073921.1000866-1-sh86.bae@samsung.com>
-	<CGME20250926074033epcas2p371d57850f46c9ecb307f3ea8c6d4a57f@epcas2p3.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Kbpt5MURJTKZ2O3f"
+Content-Disposition: inline
+In-Reply-To: <20250724042211.2160339-3-hayashi.kunihiko@socionext.com>
 
-The ExynosAutov920 SoC has two instances of DesignWare-based PCIe PHY IP.
-Each PHY has a different lane specification: one is a 4-lane PHY and
-the other is a 2-lane PHY.
 
-Each PHY can be used by separate controllers through the bifurcation
-option. Therefore, from 2 up to 4 PCIe controllers can be supported
-and connected with this PHY driver.
+--Kbpt5MURJTKZ2O3f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Most of the PHY structure and registers are identical, but some aspects
-need to be distinguished. For this, PCIe lane number added for each PHY
-properties only in ExynosAutov920.
+On Thu, Jul 24, 2025 at 01:22:11PM +0900, Kunihiko Hayashi wrote:
+> After an error occurs during probing state, dw_i2c_plat_pm_cleanup() is
+> called. However, this function doesn't disable clocks and the clock-enable
+> count keeps increasing. Should disable these clocks explicitly.
+>=20
+> Co-developed-by: Kohei Ito <ito.kohei@socionext.com>
+> Signed-off-by: Kohei Ito <ito.kohei@socionext.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-This patchset includes:
-- DT bindings for ExynosAutov920 FSYS0 sysreg
-- DT bindings for ExynosAutov920 PCIe PHY
-- PCIe PHY properties for ExynosAutov920 in the device tree
-- PHY driver for ExynosAutov920 PCIe
+Applied to for-next with the Fixes tag added, thanks!
 
-Note that this patchset does not enable PCIe0 and PCIe2.
-Enabling them requires additional patches for the ExynosAutov920 PCIe
-RC driver, which will be applied later.
 
-Please note that these patch set depends on the Shradha Todi's patchset
-https://lore.kernel.org/lkml/20250811154638.95732-1-shradha.t@samsung.com/
-so need to apply on top of that series, because that adds
-the patches to make Exynos PHY common for all.
+--Kbpt5MURJTKZ2O3f
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sanghoon Bae (4):
-  dt-bindings: soc: samsung: exynos-sysreg: add hsi0 for ExynosAutov920
-  dt-bindings: phy: Add PCIe PHY support for ExynosAutov920 SoC
-  arm64: dts: ExynosAutov920: add PCIe PHY DT nodes
-  phy: exynos: Add PCIe PHY support for ExynosAutov920 SoC
+-----BEGIN PGP SIGNATURE-----
 
- .../bindings/phy/samsung,exynos-pcie-phy.yaml |  14 ++
- .../soc/samsung/samsung,exynos-sysreg.yaml    |   1 +
- .../arm64/boot/dts/exynos/exynosautov920.dtsi |  28 +++
- drivers/phy/samsung/phy-exynos-pcie.c         | 231 ++++++++++++++++++
- 4 files changed, 274 insertions(+)
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjWQzkACgkQFA3kzBSg
+KbZs6g/9GZD3yQ2Bp1SC9cDj2lW6rqcjLt2gdgsWWCNBpnzjGY6KuaIERFK+GbLp
+1Wx+2Hq4pPDKm3xwxsigJa3cAAQxUxJE4Hv+r1UCx9ViNGh1wU9hJZ2PZ7+MQqse
+z7bgtfei/qVcC3XUjuunE5jREgF3RM9TkjflZhFF60Lai/7BVDX7u0VFZSPM49bM
+BKdPaV3Oo2E6K7FG3Xka43JLZUHyWGjG79IMiKigCmj/SYxC52neGWt4ghBapSzt
+R1T7ftGq1hizCpAkpfLrrqh8ZdWKLphTFvOcEiNAxPNKsd0jXUNwtCTxAx35GUvH
+GlgN+WIdZ0pqWivJnRLNBLBOTj/7hUEypyp796nZnL211/J9oW0IXwJNU01fLznc
+JtmC5RI99eRv1T6tuYXZHjLYzmyjeMBfH6tjIBqe95AzDILld6Ub+81NUEECm9Ek
+TvfORJzX3Q2Tq4+lLHfnmR9MxUALQ6rGiMAYyeyj1sjf+D5ezrc2W8MJSQls34uV
+lP0GgLDCZSiNBGYjOb4kXq8aEx6G5uSPNbYS/17Uq3Feawz2ouS+gj1bULNlNVT8
+GLgnQpeK44dB4EqIUDrgBx8SFFnb3wEKT7ObmYm+sLfw1shI601txnCKV8XODSkv
+1g5oKJknCBzslitznRmcJLint8vyVNTLzF26Re65xf0LmlLshpM=
+=94Th
+-----END PGP SIGNATURE-----
 
--- 
-2.45.2
-
+--Kbpt5MURJTKZ2O3f--
 
