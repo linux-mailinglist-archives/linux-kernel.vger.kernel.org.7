@@ -1,164 +1,173 @@
-Return-Path: <linux-kernel+bounces-833831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D30BA32BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D52BA32FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D0E3B8F21
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643E06275AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D3B2C0274;
-	Fri, 26 Sep 2025 09:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B68129B764;
+	Fri, 26 Sep 2025 09:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kJ/ik+qk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oJC8G4Ls"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC47E2BD5AD
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9B2343BE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879284; cv=none; b=HZu2RVCRmVVuBSYO8+dK65EW1/kHdPR5Nx+VO2Zi6XpC4k44KPu4RPM3fRByCpSqmq8IV78GuE1eb4LGn8iUFNED0kbeaw3qSxG5Gp8Hiueys3uhjxFYkam7iIKHaaKS7Y8yz0qs+dVDpv8K9H0QXxSSRzEIYnWSmML7Q3MF9PY=
+	t=1758879393; cv=none; b=kWAXXk3xjgz/sgw6umjSxAYOuKcD4WQy/9JwOgndRDMPMWYY+flZAyc6DjO8bL5/amu0jY35AxUri+q+dPKCS5dz0kJg5CZoIsXJjSS34PrPixA8oQMaRcYL6uiCmqIFprAr+vLo3jHOGsIyx1APZufhNI2ULq1Hq3zPDvQwGgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879284; c=relaxed/simple;
-	bh=HslDZeshtL35gYUXXtwNip7JcioLUfxqJhAk+ngAsoM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OUQCW1VnS0sjD40qAFkNOV/088Rt1cNOmm8wxHNBa+T2aepo5Ob/MReeW6U5SxUy07V9fvOwucHERjoj1dqL5TBuOBToxw7m9cNEfsBL+Y472rnn5XLR+J2Yel78KDpjnRZMxFefiY2qJFyQaJ3Gi1YlZviY9L75bGcp9X+qvFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kJ/ik+qk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vbQK030585
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=z6re8pVm+kTFFLtJaj2rtIpe8h69JBxtTA4
-	MepScxRs=; b=kJ/ik+qkWCo7+RHgR5Lev1nMKvlvvbZ+OyKUGP8pnYOg3nA8b8t
-	BTp+2W2eVKqzK+fJNrBxu4Yj0oFUcEqskt3f4CJ71r9TSjR7ksWn4BXMNi5pAY3n
-	szWjk42FLdrPh+SH/Ol2eCLLDBFeqUWXMcRN53DovafPOnhpanZev8CRueeM3m2Z
-	IgIzlwu9nbbutHO+hU+g8SUB/xCjdZOugSrR+03GlbgMvluUty0RlYFFJGVbtBBa
-	mGISSXQaVVPN+nYT7pAg1+7mhnqsFwV/OZP/7P4KnOPsBhzO/FpDxlkjzlKks5B/
-	AI3d2kImtpZRhJUhh3pK0lGEIDZda4zBVxA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0u2agw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:41 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-268141f759aso20271845ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:34:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758879280; x=1759484080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z6re8pVm+kTFFLtJaj2rtIpe8h69JBxtTA4MepScxRs=;
-        b=mwzCcZMqiugHQgqI0CTv8Zb8CXgA6KlxwooaRYP9w9UkbNEJgNmYVcV8srnD6DCo7O
-         3B5sw45Qt6wM00bDkdddj8kEiymw19JApN0kmw9y9b8hEE/7XB8fYVbTm47mIqhLmvc0
-         CQTglK2hXLSQxtuxcpesJqrjJ73/7Rzv6W9Szw5jjOC8IqdZX4bTMWsv8A0MGh7ywDkE
-         9DQ+4A0fP4GihPX8zMudbR0t2q4ndsfI1/MuJ78xkdyCFSWp/37oNVc8LBbHrHr4Uwkf
-         80KYVD6KYKLzZ8u8juNSXtY16Ej6wJdCl6vYmM1cVZD1TTa+ScU5MtS7waGh/H3bYchx
-         e1sA==
-X-Gm-Message-State: AOJu0Yw6D3JqagfshXIDyZADHUenaAPQkIURwmpGwENQnK7i5MoFMRtD
-	KcgKdyntR2G+DBlizLJE3LuwdJ39eIBeYOXwHVeKr14HCf0zGdH+DoqXAUeW1kTvVZwxrCpuuPA
-	PFEiEQKynHB3n79LXA+N9TZigYWF/S/zm4e5MVJ5FmwIvEYTKvsdMCpXH26ds6fjGkDo=
-X-Gm-Gg: ASbGncsaEMCBteQlo3TPDS30sYYqHW6D0Nko+YEFX1keucV+jurenNYZGHQOk8FnbNZ
-	Qh9hNbrBGBpbyLpXysS41iMs68HTrgQh1KG1YtToVB2AUo7Ff/qeRImGAmqgNMcSbMXzJWJNoWw
-	jlzvs6jHJvjLa4cWtSmawHcEPpwTOS1eq49yr7/nGEA2o5Ws2jbb9+eIxUFuFhgcSill+9ep1dI
-	vAgCARgr9hsnFFRTBXlxQmOBlkF4C4cusDwsoIfk79gMI4kel9t74JmnlQsB50aqPbcMYoapa7P
-	i89E3e5Mp+fP6zWLuXCsyZaAEvRT4S3zUXHQP+Xf8/9kqvpMJqr4GieBPnkwE61PRPEJ8Y/Ig0v
-	GrdHHFt8E7gcsq87xjiflACmQUzpvblFxsW9ODi9Z2T5Q4BCclUTBrC0=
-X-Received: by 2002:a17:903:32c3:b0:267:e3af:ae67 with SMTP id d9443c01a7336-27ed49d2f64mr71196355ad.14.1758879280269;
-        Fri, 26 Sep 2025 02:34:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9+Sln3F5sgdTCpDsBM7EOJortBxqIREiFvU3XpZk26rNxe4tTXYDNf05HVd03KmfIC3RuHQ==
-X-Received: by 2002:a17:903:32c3:b0:267:e3af:ae67 with SMTP id d9443c01a7336-27ed49d2f64mr71196005ad.14.1758879279819;
-        Fri, 26 Sep 2025 02:34:39 -0700 (PDT)
-Received: from hu-sibis-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cdab3sm49463455ad.19.2025.09.26.02.34.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 02:34:39 -0700 (PDT)
-From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-To: krzk+dt@kernel.org, andersson@kernel.org, jarkko@kernel.org,
-        lumag@kernel.org, carlos.bilbao@kernel.org, hverkuil@kernel.org,
-        akpm@linux-foundation.org, sln@onemain.com
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Update Sibi Sankar's email address
-Date: Fri, 26 Sep 2025 15:04:26 +0530
-Message-Id: <20250926093426.1735334-1-sibi.sankar@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758879393; c=relaxed/simple;
+	bh=bbDy86KYY3ZYBkBmITYxy6ZCZosNtuwR4dwZHtdPzVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L//EnnQ0ojgCYUS70UCEeLaOTqE3GipTd2YCE9RYCKoD1fruoWDgoqi/kSt4JTggyZw3ZouLOrgob6Pa4FvTAFqfgYnRUeKjCUcm/XSEflikI2jWTPvQm9S2yGIpCJYYDa+QaMtzTAPpalRylIAGbbjS1K1qrtwtjB7/AYBA4No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oJC8G4Ls; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Forwarded-Encrypted: i=1; AJvYcCW72uU/5GW7Ti0YBGI5qxBMM7v79bgMmeZzRdDM98s08Y652ENB7ojPSbbWBjzkWNpGCIGOugOkypF+f4k=@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758879387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1sF3mMFlEeo6+29CxldPU4wUsiArQVg+D2rLhiy93Ds=;
+	b=oJC8G4LsmcpmbIhTFcy61QJ53LJPcfBtV8jcnETGA/Fs0aofTPXkowo07u6AU9j9gmYC/H
+	ASRkdeNF4F49LarBVsCZwIRfp2EjjNzY8Cx+us/aoGRJBQ7w6rCpHMgoim3m2QVimc6ge8
+	H2B0DiEUFeYavPMYEyDWdBC1QKGvieo=
+X-Gm-Message-State: AOJu0YwvqxPGdOycaEh+KVnqD6eW6zFtzKUxxCtf5qolx8W/wYUCFBsX
+	x4MVLHdFawkZoBlzp2skr5pHC460ZOumTKrHLIz5pWeaBWWcmdZGl8lz807MKEHfIt8G74reYfn
+	s+ARQhHXitdCenxZUh7yujlRnjmATn8c=
+X-Google-Smtp-Source: AGHT+IE0VoZpyXKMjv4jutuRolFREokOBBoRz0y1gxD6T4hKQcttqKKtNLh4/LwyPCc1DwqCjc/jIZgZwHPfVl/mBX8=
+X-Received: by 2002:ac8:7d15:0:b0:4b5:e63f:d5d8 with SMTP id
+ d75a77b69052e-4da4c77c756mr81466571cf.59.1758879385173; Fri, 26 Sep 2025
+ 02:36:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: fPy5_BiEhyNNE8fIRIAOnWG6CPpkM_wQ
-X-Proofpoint-GUID: fPy5_BiEhyNNE8fIRIAOnWG6CPpkM_wQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzcoMZvJrWaiS
- vz1FPFhytAYrfOV6FtZd5Ar6KHF1hK1el/LDIV/otVQsh3pR5wzqFsIAOyVwXQFLMn4P2B4fO0F
- h9uoXvgqGwpULVA24sQDUTjhbW/G1E89Yzy7fQ9iQR5qeGiH0zn6mGFNKjI+v/9VADc34hYY+Gg
- 1CxhCaWVrUUl+h+NMX3SZACVAzb2rCR/pLBoaipaG1nxtFx0U9HjqJBOKeorJaRhR5lcs9u2w/x
- PwezGHgq+KxqQD0agU1Ou38zZyD2rEZXsX5OVYmX3c+IGU2LZS1CbGfa/CIlGONmvKbJnq6Pt7q
- 71X9pAjQm/6b0YCBGypAkuuhKUoj8usvkz9WHoVCXPfq1i7DsCq4fvaVG9K3pIPehRHtxQ57xLD
- O5ktpWdgHpoqHNwvLeJM6nRNNjJjQQ==
-X-Authority-Analysis: v=2.4 cv=ZsHg6t7G c=1 sm=1 tr=0 ts=68d65e31 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=cH6R9-kdAAAA:8 a=hD80L64hAAAA:8 a=COk6AnOGAAAA:8 a=LpQP-O61AAAA:8
- a=4jJoCd_fAAAA:8 a=iSFaNr4-AAAA:8 a=GsRvEKKJAJljR7cJZk8A:9
- a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22 a=pioyyrs4ZptJ924tMmac:22
- a=Zp0EBJ6X80L27f4Lx8pD:22 a=hXATVNy4aS8gdm-T1RL7:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+References: <68d6364e.050a0220.3390a8.000d.GAE@google.com> <CANpmjNMA4sOXAUdCpDDYz-4D9F_BaTFF8DL3Vkhx=q7vPfYG+A@mail.gmail.com>
+In-Reply-To: <CANpmjNMA4sOXAUdCpDDYz-4D9F_BaTFF8DL3Vkhx=q7vPfYG+A@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Fri, 26 Sep 2025 17:35:48 +0800
+X-Gmail-Original-Message-ID: <CABzRoyZuU6WT_eN_gimpFNrA9cVpmTsKCG1f6Mi_KCmYy03C0A@mail.gmail.com>
+X-Gm-Features: AS18NWBk7yoZQ6JxZ96p9n__yfVmWuL-V3XgGu7UllO4xRF8xd7eIwb3A-ueoC8
+Message-ID: <CABzRoyZuU6WT_eN_gimpFNrA9cVpmTsKCG1f6Mi_KCmYy03C0A@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] KCSAN: data-race in try_to_migrate_one / zap_page_range_single_batched
+To: Marco Elver <elver@google.com>
+Cc: syzbot <syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com>, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
+	harry.yoo@oracle.com, jannh@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, riel@surriel.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Switch to using oss.qualcomm.com email ID in the MAINTAINERS file.
-Also update mailmap to ensure proper attribution across historical
-commits.
+On Fri, Sep 26, 2025 at 2:55=E2=80=AFPM Marco Elver <elver@google.com> wrot=
+e:
+>
+> On Fri, 26 Sept 2025 at 08:44, syzbot
+> <syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    cec1e6e5d1ab Merge tag 'sched_ext-for-6.17-rc7-fixes' o=
+f g..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D145d4f12580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6e0c213d073=
+5f5dd
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D60192c8877d0b=
+c92a92b
+> > compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7=
+976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/10b7c8fdfdec/d=
+isk-cec1e6e5.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/cbecc36962db/vmli=
+nux-cec1e6e5.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/214f107d0a3e=
+/bzImage-cec1e6e5.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+60192c8877d0bc92a92b@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KCSAN: data-race in try_to_migrate_one / zap_page_range_single_bat=
+ched
+> >
+> > write to 0xffff88810adfd798 of 8 bytes by task 13594 on cpu 1:
+> >  update_hiwater_rss include/linux/mm.h:2657 [inline]
+> >  try_to_migrate_one+0x918/0x16e0 mm/rmap.c:2455
+> >  __rmap_walk_file+0x1ec/0x2b0 mm/rmap.c:2905
+> >  try_to_migrate+0x1db/0x210 mm/rmap.c:-1
+> >  migrate_folio_unmap mm/migrate.c:1324 [inline]
+> >  migrate_pages_batch+0x6e1/0x1ae0 mm/migrate.c:1873
+> >  migrate_pages_sync mm/migrate.c:1996 [inline]
+> >  migrate_pages+0xf5f/0x1770 mm/migrate.c:2105
+> >  do_mbind mm/mempolicy.c:1539 [inline]
+> >  kernel_mbind mm/mempolicy.c:1682 [inline]
+> >  __do_sys_mbind mm/mempolicy.c:1756 [inline]
+> >  __se_sys_mbind+0x975/0xac0 mm/mempolicy.c:1752
+> >  __x64_sys_mbind+0x78/0x90 mm/mempolicy.c:1752
+> >  x64_sys_call+0x2932/0x2ff0 arch/x86/include/generated/asm/syscalls_64.=
+h:238
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > write to 0xffff88810adfd798 of 8 bytes by task 13595 on cpu 0:
+> >  update_hiwater_rss include/linux/mm.h:2657 [inline]
+> >  zap_page_range_single_batched+0x182/0x450 mm/memory.c:2007
+> >  zap_page_range_single mm/memory.c:2041 [inline]
+> >  unmap_mapping_range_vma mm/memory.c:4020 [inline]
+> >  unmap_mapping_range_tree+0xfd/0x160 mm/memory.c:4037
+> >  unmap_mapping_pages mm/memory.c:4103 [inline]
+> >  unmap_mapping_range+0xe4/0xf0 mm/memory.c:4140
+> >  shmem_fallocate+0x262/0x840 mm/shmem.c:3746
+> >  vfs_fallocate+0x3b6/0x400 fs/open.c:342
+> >  madvise_remove mm/madvise.c:1049 [inline]
+> >  madvise_vma_behavior+0x192d/0x1cf0 mm/madvise.c:1346
+> >  madvise_walk_vmas mm/madvise.c:1669 [inline]
+> >  madvise_do_behavior+0x5b7/0x970 mm/madvise.c:1885
+> >  do_madvise+0x10e/0x190 mm/madvise.c:1978
+> >  __do_sys_madvise mm/madvise.c:1987 [inline]
+> >  __se_sys_madvise mm/madvise.c:1985 [inline]
+> >  __x64_sys_madvise+0x64/0x80 mm/madvise.c:1985
+> >  x64_sys_call+0x1f1a/0x2ff0 arch/x86/include/generated/asm/syscalls_64.=
+h:29
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > value changed: 0x0000000000001645 -> 0x0000000000002165
+>
+> One of these writes is getting lost. Which means highwater_rss is
+> lossy/approximate - does it matter?
 
-Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
----
+Yes. IMO, hiwater_rss being lossy is an acceptable trade-off for a
+non-critical accounting value. The patch[1] simply silences the KCSAN warni=
+ng.
 
-base-tree: next-20250925
-
- .mailmap    | 3 ++-
- MAINTAINERS | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 34c3252f05b4..2a215e434754 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -722,7 +722,8 @@ Shuah Khan <shuah@kernel.org> <shuahkhan@gmail.com>
- Shuah Khan <shuah@kernel.org> <shuah.khan@hp.com>
- Shuah Khan <shuah@kernel.org> <shuahkh@osg.samsung.com>
- Shuah Khan <shuah@kernel.org> <shuah.kh@samsung.com>
--Sibi Sankar <quic_sibis@quicinc.com> <sibis@codeaurora.org>
-+Sibi Sankar <sibi.sankar@oss.qualcomm.com> <sibis@codeaurora.org>
-+Sibi Sankar <sibi.sankar@oss.qualcomm.com> <quic_sibis@quicinc.com>
- Sid Manning <quic_sidneym@quicinc.com> <sidneym@codeaurora.org>
- Simon Arlott <simon@octiron.net> <simon@fire.lp0.eu>
- Simona Vetter <simona.vetter@ffwll.ch> <daniel.vetter@ffwll.ch>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8fcf4e34eaa5..ea35dfe0eb92 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21047,7 +21047,7 @@ F:	Documentation/devicetree/bindings/power/avs/qcom,cpr.yaml
- F:	drivers/pmdomain/qcom/cpr.c
- 
- QUALCOMM CPUCP MAILBOX DRIVER
--M:	Sibi Sankar <quic_sibis@quicinc.com>
-+M:	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
- L:	linux-arm-msm@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
--- 
-2.34.1
-
+[1] https://lore.kernel.org/linux-mm/20250926092426.43312-1-lance.yang@linu=
+x.dev/
 
