@@ -1,167 +1,143 @@
-Return-Path: <linux-kernel+bounces-834454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2A8BA4BA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E81BA4BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E823BE9A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D26A1C2285A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C38B3081A9;
-	Fri, 26 Sep 2025 16:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8AA308F16;
+	Fri, 26 Sep 2025 16:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2QTd9Kv9"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPZBN41d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD3B1C32FF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51D8308F14;
+	Fri, 26 Sep 2025 16:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905842; cv=none; b=TLrE+rVEKj2g/x/CZFDzyP98k77TluxkD3/h1A27tIjUnNnFloH7iXP2qv/2e3v1aLH4wTF+GjxHo7WvpT4+zavfaHReBLL5zKXhwqxnpXipdNNznpMBBEgfyGFiJg7XvHhI9UAS1o/Kb6WIcwP0ZTJPyD0OKdxyEHFyr5oldlc=
+	t=1758905891; cv=none; b=TJonlDGPH7JdAkMrMjA/pcYeqpJTpj1NlJe+uVptNad9R1Gbir3x+DsWJu45/JPeKV4MLCocJUNle0d+11BcLXQWWqqjPXxp0A0PXkL0zzrnXy8DJL9mtQMUOA7qPoepI16fL5w92jCSGaIVG00idp9ay8rWAZFih5ydh/ZgB3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905842; c=relaxed/simple;
-	bh=ozFAnMSj2kgHC6gcHPW5nvG7r9I5NW1sV3pIP5G0wVU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uNc53ZZOnnlfTgo021OJIk6wrxM/83/hMjyBmn1aPd4MB8eRUm6SjqU7FTPT+8jMZPQROzuF07S1pO0qWIcZAcBBpQHYIL4+HQJaFPWPYR5FOgGDXkUcdQWGqoGMjKh8HU96rI/qeAgjdRTHHWs7jOZ6ghJROax7XmyTUuYJsVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2QTd9Kv9; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-afcb78d5c35so256605866b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758905837; x=1759510637; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ju6gxyxgWTxjvMZdx3ZtN+Zpu8mTYwaY+/0NZYuLlA=;
-        b=2QTd9Kv90bGp+NSV0fkm0euYaoAvRiuVeS/7EkM6lcl6gwujTGw3uhddVHAZycl/ap
-         0+sINkMkftM5aWLw7WDuILPRZl7WRwAku0+R4yHy4+g1v9pYtqhG7Cfq2Z7aLy5kTYt6
-         kCRbJZ6Xk752m8nyDHV/I+9gUHwOVBsH3zMyHmA83UEy13V5j4xBC8sCngaOmICYAAGz
-         MhCeMHXeChnW+EZEQfL5mmbiO90t7cWJ/6xspYVOAzw/BmYs8tWQ1JnVou4+gbSVU9xw
-         zBVMFVMRR5Ag3ZnlW8vJilOkisavV3uORBUejFgvjIdIWBuMgoH9Z1p6QIBp25iRU+mB
-         JPhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758905837; x=1759510637;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ju6gxyxgWTxjvMZdx3ZtN+Zpu8mTYwaY+/0NZYuLlA=;
-        b=EJfS1QYJ0BcncCSRz2bfZw28toDap9P0Ui/yoHd1MZXWvCY8j6N8bCGJgtd+XC/KPo
-         IWnfnGSkSfLPispql7oiDPPCtIDsSF7mYf8hrMFGMIXyoCWqihP3utYH0zV6dMOsHpWz
-         21MlyxQljG+dblfXokKEyFhZRARjsXQsk33ImtDGna5jUSLkyUeYws1wEvT858P38u9k
-         x52G8MmS0RGXUIlAIobTvUDRqWwUeEY0sXx/ASE6EJj6MC9xrYipIYXCBQ+Di4ze6rzg
-         n4QLfaP8gPLWjVu88vEwVkY6Hdd0/hgr/7GnmtyZ2Z1jnKm9U7NwiU2lJhsIkHYha4Hh
-         eIew==
-X-Forwarded-Encrypted: i=1; AJvYcCVOBbKg6Cu0rbibcbXeX+2XXRPGs1mlu275PsLnbBa8WxQF2mx/a5QtzkLCLdPBgcTGMaM81qwQLtrUI5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD9MLN8DO45KJtkdNNm7BiXHQ4VufkgKTpDxAPssxDzs4T+4nR
-	XzvagX2wAm76RfDgbupKuK40aMrO+ND8wlrmu84K+xbMFMAusEulKAu4b+HAelQHPEOixPVYceQ
-	ry9P3emCiLxpaRg==
-X-Google-Smtp-Source: AGHT+IHEEKUcEgkinB8RkGOvRf0Mn+ZhFXgTH/LXZ/sF89QqfcyjXF3T4sban7Iur9CoxJ2skTB0kgdlTLmCjg==
-X-Received: from edqk11.prod.google.com ([2002:aa7:c38b:0:b0:629:211a:d085])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:7b9e:b0:b0c:b51b:81f6 with SMTP id a640c23a62f3a-b34bb50f1dcmr907955266b.43.1758905837402;
- Fri, 26 Sep 2025 09:57:17 -0700 (PDT)
-Date: Fri, 26 Sep 2025 16:57:16 +0000
-In-Reply-To: <20250926154834.2327823-1-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1758905891; c=relaxed/simple;
+	bh=jVJK8LGegwhqO+0VtnrfQPb/RxRKwtl+yfaKeB1SOzw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=fiji/sLEvI3PD3/TrULn+9qLJ8r0SASLcmtO38TI9KrX70aluGavtjzHKdQj4xWd7VOF+COFKMaxDqpdRvVWZI2X/rf7e43/kXf6ceo9pKlpUyR9h9Qi6arz+0BYL+Ftj94WDfABlF1vBk/eKnGEw3mtReH5yUlPorF3nDDpotA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPZBN41d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 702C0C4CEF4;
+	Fri, 26 Sep 2025 16:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758905891;
+	bh=jVJK8LGegwhqO+0VtnrfQPb/RxRKwtl+yfaKeB1SOzw=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=jPZBN41d8N96n+QGhajTpesnYkcN2IRpa1XMCib2BywYLEKk1Spw3TAKs3LwC1b2M
+	 qY0Z+dgyIpC8LGOS6ZL/Cn/+lAulX1IZ09FjtYhdqQuqusr+SGmUM+3Ddpc9L9e51r
+	 UZ1o2GEs1kuCWhKKkDqsYfsa0aJjDdWyQJLYPcIsPCnfxtBgw3oZM8SjC5ropmpM8o
+	 7Eof93GrxvT2tMPOAffuYTLrEIofYzBFq0WwvQRJ7bgsn1UM3BEekBngPtpCau5goe
+	 sZr+Ex9RQ+W6LsAJibJ0AtFLre7el6+KhvUr5S/3+ljfXBv4uoLJV2bkNaR+WXCbws
+	 QO4mGuPklEuGg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <DD2SCJF0CLN5.1824PA58HFFZF@google.com> <20250926154834.2327823-1-joshua.hahnjy@gmail.com>
-X-Mailer: aerc 0.20.1
-Message-ID: <DD2W2YFEPC3L.250WBJ4E5EM4K@google.com>
-Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in drain_pages_zone
-From: Brendan Jackman <jackmanb@google.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chris Mason <clm@fb.com>, Kiryl Shutsemau <kirill@shutemov.name>, Michal Hocko <mhocko@suse.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 26 Sep 2025 18:58:06 +0200
+Message-Id: <DD2W3LCC7FWA.2X90YAPLI1FGC@kernel.org>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Cc: "Elijah Wright" <git@elijahs.space>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Uladzislau Rezki" <urezki@gmail.com>, <linux-mm@kvack.org>
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+ <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
+ <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
+ <DD2URCNO2P88.168J48GHSJRRL@kernel.org>
+ <1f5ae3bd-db21-4042-b177-55464644ce2e@suse.cz>
+In-Reply-To: <1f5ae3bd-db21-4042-b177-55464644ce2e@suse.cz>
 
-On Fri Sep 26, 2025 at 3:48 PM UTC, Joshua Hahn wrote:
-> On Fri, 26 Sep 2025 14:01:43 +0000 Brendan Jackman <jackmanb@google.com> wrote:
->> Hey Joshua, do you know why pcp->batch is a factor here at all? Until
->> now I never really noticed it. I thought that this field was a kinda
->> dynamic auto-tuning where we try to make the pcplists a more aggressive
->> cache when they're being used a lot and then shrink them down when the
->> allocator is under less load. But I don't have a good intuition for why
->> that's relevant to drain_pages_zone(). Something to do with the amount
->> of lock contention we expect?
+On Fri Sep 26, 2025 at 6:32 PM CEST, Vlastimil Babka wrote:
+> On 9/26/25 17:55, Danilo Krummrich wrote:
+>> On Fri Sep 26, 2025 at 5:33 PM CEST, Danilo Krummrich wrote:
+>>> The only thing we need on the Rust side is that existing allocations re=
+main
+>>> valid even if the cache is destroyed. Or the other way around the cache=
+ is
+>>> silently kept alive internally.
+>>=20
+>> Or to express it in C code:
+>>=20
+>> 	struct kmem_cache *cache =3D kmem_cache_create();
+>> 	struct Foo *foo =3D kmem_cache_alloc();
+>>=20
+>> 	// After this call cache will never be accessed; leaves a zombie cache,
+>> 	// since foo is still alive.
+>> 	kmem_cache_destroy(cache);
 >
-> From my understanding, pcp->batch is a value that can be used to batch
-> both allocation and freeing operations. For instance, drain_zone_pages
-> uses pcp->batch to ensure that we don't free too many pages at once,
-> which would lead to things like lock contention (I will address the
-> similarity between drain_zone_pages and drain_pages_zone at the end).
+> This will cause a WARN.
 >
-> As for the purpose of batch and how its value is determined, I got my
-> understanding from this comment in zone_batchsize:
+>> 	// This must still be valid.
+>> 	foo->bar =3D 42;
 >
-> 	 * ... The batch
-> 	 * size is striking a balance between allocation latency
-> 	 * and zone lock contention.
->
-> And based on this comment, I think a symmetric argument can be made for
-> freeing by just s/allocation latency/freeing latency above. My understanding
-> was that if we are allocating at a higher factor, we should also be freeing
-> at a higher factor to clean up those allocations faster as well, and it seems
-> like this is reflected in decay_pcp_high, where a higher batch means we
-> lower pcp->high to try and free up more pages.
+> Yes this will be safe.
 
-Hmm thanks, now I'm reading it again I think I was not clear in my head
-on how ->batch is used. It's more like a kinda static "batchiness"
-parameter that informs the dynamic scaling stuff rather than being an
-output of it, in that context it's less surprising that the drain code
-cares about it.
+That's great!
 
-> Please let me know if my understanding of this area is incorrect here!
->  
->> Unless I'm just being stupid here, maybe a chance to add commentary.
+>> 	// Frees foo and causes the "zombie" cache to actually be destroyed.
+>> 	kmem_cache_free(foo);
 >
-> I can definitely add some more context in the next version for this patch.
-> Actually, you are right -- reading back in my patch description, I've
-> motivated why we want batching, but not why pcp->batch is a good candidate
-> for this value. I'll definitely go back and clean it up!
->
->> >
->> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->> > ---
->> >  mm/page_alloc.c | 3 +--
->> >  1 file changed, 1 insertion(+), 2 deletions(-)
->> >
->> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> > index 77e7d9a5f149..b861b647f184 100644
->> > --- a/mm/page_alloc.c
->> > +++ b/mm/page_alloc.c
->> > @@ -2623,8 +2623,7 @@ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
->> >  		spin_lock(&pcp->lock);
->> >  		count = pcp->count;
->> >  		if (count) {
->> > -			int to_drain = min(count,
->> > -				pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
->> > +			int to_drain = min(count, pcp->batch);
->> 
->> We actually don't need the min() here as free_pcppages_bulk() does that
->> anyway. Not really related to the commit but maybe worth tidying that
->> up.
->
-> Please correct me if I am missing something, but I think we still need the
-> min() here, since it takes the min of count and pcp->batch, while the
-> min in free_pcppages_bulk takes the min of the above result and pcp->count.
+> The free will be fine. But not cause the cache destruction, as that would
+> require checks on each free. But should be fine wrt safety if we only lea=
+k
+> some memory due to a wrong usage, no?
 
-Hold on, what's the difference between count and pcp->count here?
+Yes, technically that's safe, but we wouldn't prevent the leak, which still
+is not desirable (and not our ambition for a Rust API).
 
-> From what I can understand, the goal of the min() in free_pcppages_bulk
-> is to ensure that we don't try to free more pages than exist in the pcp
-> (hence the min with count), while the goal of my min() is to not free
-> too many pages at once.
+From a C standpoint, both the warning and the cache leak could be solved by
+making kmem_cache_destroy() fallible as you mentioned previously.
 
-Yeah, I think we're in agreement about the intent, it's just that one of
-us is misreading the code (and I think it might be me, I will probably
-be more certain on Monday!).
+On the Rust side the cache would be represented with a struct KmemCache<T>
+(where T is the type that should be allocated by the cache).
+
+kmem_cache_destroy() would be called from KmemCache<T>::drop(), which is no=
+t
+fallible. But even if it were, we can't enforce that users keep the KmemCac=
+he
+instance alive as long as there are allocations.
+
+So, either we always keep the KmemCache<T> alive for the whole module lifet=
+ime
+(which depending on whether its built-in or not could be considered a memor=
+y
+leak as well). Or we ensure that the last kmem_cache_free() also frees the =
+cache
+if kmem_cache_destroy() was called previously.
+
+OOC, does the cache pointer remain valid if kmem_cache_destroy() is called =
+while
+allocations still exist? I.e. is this, except for the WARN(), valid code?
+
+	kmem_cache_destroy(cache);
+	kmem_cache_free(foo);
+	kmem_cache_destroy(cache);
+
+At a quick glance it appears to me that things would go south in
+kmem_cache_release(). Anyways, I don't think it would help, if it would be =
+the
+case.
 
