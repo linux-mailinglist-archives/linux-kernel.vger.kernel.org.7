@@ -1,203 +1,188 @@
-Return-Path: <linux-kernel+bounces-834459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DCBBA4BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:00:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1B4BA4BC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387FB17F781
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67BF51C23D2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470FF3090EC;
-	Fri, 26 Sep 2025 16:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C92130C624;
+	Fri, 26 Sep 2025 17:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lcA3OTht"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010018.outbound.protection.outlook.com [52.101.201.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMiEpzTZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80CF1D86DC;
-	Fri, 26 Sep 2025 16:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905993; cv=fail; b=SZ8jXw+1weRb8f60NyzpWURHUipi8Ch/HyZyrfm4CIApEKR9c9UMJ8MEYEkqYaE9YqNA3UxZcejU8bs/8NcdZ8Q0ADh/M53uawPRW9je3w9eICFoouiOyZDbYZa1RuejhCq1z2SaP1Nn3eOHYi1T6+6+SFMBdqfi8FJAGr0FprM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905993; c=relaxed/simple;
-	bh=Hd175/ac5blihQ+MO5acV1VeYuzgbx+OArZhow9bLMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=i4CLBXr+t2a4Bv+QgAAFWxo7y/H9at3mwph63O+eSeWHq/EvPI9DlAkVZFgRVqMMxY5/MwBej4soXf4vlHwG0j2Q61DbkT1oYO+8z9cMQVyaAwvHPlAidVyRp3+xqBCBCkO9hmaIZsEB8qHJQYSUerkXnshXqefktQ7cW41qnqM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lcA3OTht; arc=fail smtp.client-ip=52.101.201.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B2tomXxMM4K+YL9rCTu+lvyoo6fj+54oJClRkvE0Z36fOYPu36Nz6F3peOMjwL5Yg1M7Ttz4IELjUcsqy8FERY8DvNYfHNtA6OD0Wd9reCl0VYk+GHffN0t4hMTGLrGAyQB3YsgVGDfv+/x/eRd0bB/HQJR1sizlX/P6uPm/ODW2rJ6ICEGB8meGtZWhYISxBN4Di/+MIdK/+Pb0vd0dOc5LgdVELw1K30XakpyTAh+ZAXYZZ9Xb5LFgKn9L/DJoN+VWe7H4AeNBy0IIt5FX8zp3y6k1uDpL3u1HpJKG3clBAk4KA+4zQUSxgc/v6kmdrrU6XVqtBtCSUc/zo/NY3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qFd7YQv4PCY771zGXgz1Md3BkVU+y5IxHShsdoKbOo8=;
- b=QhZP6jRNPPebHvf2bBdfg6QPu+S+OK0P2TC7/VG8OM+Ve3sNHopHlYBYV4ZaXcO6xUpJYAvpVZK6kDWHrC7sulLeXECGS9B2Kkwaraz8Ig/mMjqN2CaZCM/+K/i5yRbIoUq1YiiC9KtoGjHer103+UOGRb+20//tQbuAA/ANxLcdKtNuAFTNDVI4wEb2DhQSpuPE71SL/ZpehrOCZHYSv71m7hsaPgiX3Blyd4OkS/7RMU9AMTVR5Lh2Eh0XZDnCHZQv7lSPhK1ZB8Mu/Tkmqj+4O5Qwonm1IIbUQtuI4hL0a1iNzuhMaqxxfVAh55wPTV+vX+8HrYGiTCAntBl/wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qFd7YQv4PCY771zGXgz1Md3BkVU+y5IxHShsdoKbOo8=;
- b=lcA3OThtUTLNIEdg0aN9533H9Jri66vdCsKyB13xKlXCCm0R5bj80TkDAJFRzDKVaK21YsiPQJ00dgtvIl/MsNx9x0Uwh7rDDVVqHrXoDxrXmT5c1Tk+1rJ1QsuyZnhRugW/q3gDz9UiTtL119WXtATtmk7F9RFz2DBYW59XNyw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by SN7PR12MB7956.namprd12.prod.outlook.com (2603:10b6:806:328::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
- 2025 16:59:46 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9137.018; Fri, 26 Sep 2025
- 16:59:45 +0000
-Date: Fri, 26 Sep 2025 18:59:40 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 11/11] cxl: Enable AMD Zen5 address translation using
- ACPI PRMT
-Message-ID: <aNbGfOxB4LXaFL0Z@rric.localdomain>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-12-rrichter@amd.com>
- <aNQl2ogOPKid7yyp@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNQl2ogOPKid7yyp@gourry-fedora-PF4VCD3F>
-X-ClientProxiedBy: FR4P281CA0395.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::19) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9098626D4EF
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758906510; cv=none; b=Mw/YixitsobXntrfdjvHmLtgETYBQsZwVvnkYj7MijA6y8QsU94ftdJ5ZB+887wW9qQbRwA0QBT6iCMCLVC2+Fic8ZYFTbVoogDPYTkcdFU1+SPX6e1epoO4imMMMWgzZZVOiGo9lP1MhVfB7U1lJEv+A3Lne6jrsPU8jcry73U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758906510; c=relaxed/simple;
+	bh=2k2hTdvMUMCBLwcaMUYR14NEFrjKaCrWCdwr1BF81Cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzMiXm1BGL9TK1q6u/Jvg5S17Rs1wuZ8prNJcrqvfSlFq6Pdwp2LHr53L8IoY0lwclWfF1ldxuSliSX4+VbiiHz1/wv/DbcKjJJyai3+6m9PB3mF8cvjWvGuHCURGtKuCslHJAECemMFb3JwG78GF95iGnMKpOFhwsdX2FgUSQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMiEpzTZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BCC0C116B1
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758906509;
+	bh=2k2hTdvMUMCBLwcaMUYR14NEFrjKaCrWCdwr1BF81Cg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CMiEpzTZJcual83j5hUldPV7+sHvWuKekiGZpRbf8yW4eWpZHbUvLCpeOt9NV/nMh
+	 uJm8f2PXJmUdV4iu+E3DBbVyZpz9pPQqHgtys75AFnCO0IxcaLjqe7xfqcGNjEiFjV
+	 YuFElmU8ijUO12SEIBM6QEJbwj35Sx0W0Fgh/HiOvxTCULZMcH6D7qa2LnJLvu5Cd+
+	 2OUW3yVplKehk2pkpNswf4pNDZWD5Mj7RG2VujP4oj4R+1mz0VVyQqDmkSa5o0zl7O
+	 bo0GN3l/Ptt4bCS4mZm8C9BVeh/Qrs1TLSHmQjeWnqB5J38yPud+FBazAD8qBsInWE
+	 yv6YTFw+LbHqw==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-30cceb3be82so2352176fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:08:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVXncWMc7pAoROv6Aph298JJEIycU/RVsoRKl0Cj5qvivTpQc2LZ4GoxiDjERDbsOZQFZZ1OF/0T6bH7zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyXs9E0HrfXWwtsPZCEWiFJA4Qysxj5ciDwdjORc2E56arH4u8
+	usNzUnIAi2fTsmXTrrW5CYCqvODHVNRz2NZNaVCgOK6AteQ76/8bficLlt8fZvt+P/E8FkwxOUE
+	TXwRn5vhkyIjGlPdu+n/j2xQSWC+Fsu4=
+X-Google-Smtp-Source: AGHT+IH2mRpZIU8ZaEbNdZwTO1VJh8Q624WlaeOlz908V4Q1o4tThzIUzp9Web59JAo2CF5s+jg+70n4pfAm8Y+ST1k=
+X-Received: by 2002:a05:6870:f609:b0:35d:45c7:4a83 with SMTP id
+ 586e51a60fabf-35ee837d602mr4724817fac.23.1758906508329; Fri, 26 Sep 2025
+ 10:08:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|SN7PR12MB7956:EE_
-X-MS-Office365-Filtering-Correlation-Id: fec44215-6b71-4742-5e94-08ddfd1e1846
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yeAYYgTQEmv9SIuLU2uomb6p36YmhMFTzMrq042qLl/mGlyxkRopZOTpQdZi?=
- =?us-ascii?Q?PJfqxNVaRCdWpb8Ra0svJPt6UoITAiBnTlRvHgSKHoxc/y6m2EjMvWAGScux?=
- =?us-ascii?Q?AICEJ+YacA7bZt9y5/ctlmS5cKKbGfSC6hClmPCXkI0Mm7szKEt5I0s2y4PM?=
- =?us-ascii?Q?/gQlH6bXAl+Ql2cDmEZEQNIzXQ3IO0/g6vxA7ybuZFxN0d0mlbIDY5OP6YlN?=
- =?us-ascii?Q?zfugM1cZAYID1dZu0W2i+7mEbj+cYfvvbtsO/wmxn/U+sj/sPrRw4lkXzXoM?=
- =?us-ascii?Q?WTIzWIzxyBOhocx5ojHtiK80L2AUq6K1kJwOX9paw1WHOVWSwoM9wGd9JFWq?=
- =?us-ascii?Q?gFfvrgITi7fPaygHg6kcwLVsba3O5v5JAKVzQv3klVev0m+buI0ZfUMbnYhI?=
- =?us-ascii?Q?aFwhBnXyGsIkcFbGHsDeXmG5ipNsgofpC6NTWgBLJPbEymgkcGWlfqXCcmoA?=
- =?us-ascii?Q?6pTd9Wn10XiKF/H7yYASl5b3CtUdFBr9x4+12AmQHlg8PoKHfa++HLvz4Gok?=
- =?us-ascii?Q?R3Za6e+uWPXON1yJq7jYx7O+Q38+WGxMl23HuaroD8Iivyt+KYv4rvl+bGtI?=
- =?us-ascii?Q?nQAxWW489lMqcIdA2LpMOATgMEHkKUhjVCfGTy0F6N1FJkVeKIwE1l6WLSGB?=
- =?us-ascii?Q?EX8UXBxVfh3mpMLmb5u0S6aDFojG3C0EdouCAENbuUcIlZq5nKzGhpgpKDJK?=
- =?us-ascii?Q?WFAvakwqMG+QatndPjVyMhtGE6r6WmaonI7gixBxlakd5FEA6E4dEMRhJXIM?=
- =?us-ascii?Q?y626NbSo+qdvZi9he5TBZ5AmtyHbq8L+vweR0hfLhqSVhWtr1h851+CC87Pd?=
- =?us-ascii?Q?ab6j9pYLLUuDfnszhmc/msFbZZA5Y/04hzSYnHFfkcYLk/CLmt3MeNeL5o5n?=
- =?us-ascii?Q?053cM+ruBlcvi34kkh3ACK6E2FktX0ALkUMqOCBAnLi/9P8DozRmQSi5TkHh?=
- =?us-ascii?Q?swftAYmMP5Z5yVGUMxgpzKKpzdf7suUt0WO6Ib86glEUigLNX9ctAC83QheG?=
- =?us-ascii?Q?vLd11h2PwDEOi+7z3fSSD3iMbsrSN+jF+kGPRly10U1uOUWAYuLVsI1ZJsW1?=
- =?us-ascii?Q?66t+tC4zqr3UdyfnW6Gg1SMAVy0felBRABUonusSUgEBnwQP/mkBbP4L7EvF?=
- =?us-ascii?Q?2Ko4gLhSgxWfa/AnxRcYMBGGC3U9YJfeV2HIIT+VmktYDSKys/Krkt6aGAAv?=
- =?us-ascii?Q?PxgdW5Cz/+6PrBkjXUkLhPHR4ddVEUxKA0NibdTD1fCwdCIkInktW0f8eR1W?=
- =?us-ascii?Q?U10jT3398k0D0fCvYDKOZO3eVrfUmz5UQCXztwrkTHciUTVkZMxQT2isO9GW?=
- =?us-ascii?Q?lQhgu3cxZpwNNz1fIRbKLUwjMji9KCiBS4t4+ppC02kBqhDGSyj6APhVmB1l?=
- =?us-ascii?Q?tfZ6Rqnlzug7usm15dYSn68KLQMG9/KRLzgeKY/GJkNEq/b+3j5VH/bmLGBv?=
- =?us-ascii?Q?qQ/0NGjC5JWh5UpmgiMbx9G5sN+JHjhK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CFrxzOqYRP5aRFL1C+P+cnBg67TlFQ2cNTR4vjtd+te5XuqMocBTHXAjllFU?=
- =?us-ascii?Q?FuXfvyucG8uhcHNGNe9ko+asxUSKZuYVues0nHjYHNKS3bSCOaBDuPk/yPpC?=
- =?us-ascii?Q?tFbjcptWEeDufeYLiuASMtNsHRiZUoJJHgI4EY2iotdz9+5QA4Y1WXlrQzhb?=
- =?us-ascii?Q?FgpL4BXIvdAVJsL76iDHQCnlftFl3++6mWUp3NLCp0cWCPF1MllQzgGda4KE?=
- =?us-ascii?Q?5uyuu5I9CsHbJm8uLv87mtiF7El0p6pBZIzmlhD6wqrjGTxb2LrMPZfPPBha?=
- =?us-ascii?Q?Jbi0wtv94n0vF2KM+IJAKHOtNjwEDnN/l6/bBE30wCS7asCbW6Do197y5yWr?=
- =?us-ascii?Q?HmE/+L/GhiFJ5tqaTXJe3+C+zs2aTNW4PyerWWibDfRQ+jmQ+qmGil+yt1xE?=
- =?us-ascii?Q?1X3iA1WMVXNSRkU0MsWk60Vu6rbExnRSZK453Sk98x61A4hDq++NWv0alQnK?=
- =?us-ascii?Q?f3wg9eyj0g5+H4snRYTqSk98g14IeG16ocHAmBMQLU2LJp2rEScU/8POz4q7?=
- =?us-ascii?Q?ShsDCsILIgrCGhVKUi0Z0qMuEMR3//FeVbQ+nja4RJqpYRtHSwJtHds0I6ly?=
- =?us-ascii?Q?zA0qrqRRwGRk6LBOWKNVPsoqanFsUI0PykWbEj+DkCkv3Pgv9ROum8rijS+G?=
- =?us-ascii?Q?jiFE1cwJlkwM7Q7l34Fsx3K1SjhoAYM3k0Qcw30OU75Fy3HCVTNpu7ivKJSG?=
- =?us-ascii?Q?7AWfRmlU46RGumDc9HF2QZ8iJdxelRHjWMKeGYtKGrV+pxROZLJK+hXlXxDa?=
- =?us-ascii?Q?EHMgabPw/EqHsCEGcAWHFGmoIvMRmjkQiwkCv3lvttL8HMnF/wkD3/WM+W9D?=
- =?us-ascii?Q?tYu0VDSXOJ8X9tC2+Vf2FWTlxFdaAdEweCbdAoLG6/R/LIJQHv4jA29YHfpn?=
- =?us-ascii?Q?vgGpUHgoUzhLaKvisb5pRYtn3wiHOLFGYULMc0HgEzQE5uInLhAJyGnYpO4z?=
- =?us-ascii?Q?JakSYqUXgtz4HuBX+zq9g7kzOPwnKLyPkMu69HkwlaozliX70FQJvd63tKi5?=
- =?us-ascii?Q?yVNg7B9X2auxNYGNeIlpGDAoQA+9+MZ/7riMmDLiA/mFI7JsXIVaiH6Sg3pK?=
- =?us-ascii?Q?EWlX6R3KgAweejCCEaK2Vm/NVoPL0R7uzuf1qjC28DPH3OnC3WlQfKhg2Nih?=
- =?us-ascii?Q?+D9Wa7Zg1gk0WP85Z3BtSOYTj04cll+mm6GeWIcRWg4UlhByB8+1jtMCCGqP?=
- =?us-ascii?Q?Gvz3PvPuPfFmpbP7+kw3gz5PMyKJopfTyR5CMe5nDedxCo+RCm1Fwh1p/QKM?=
- =?us-ascii?Q?MZr9ikid4qUhaODw2v+dzbannH9tKIOU0g3gvvzxMscMLlRoj0hoy+VKHczf?=
- =?us-ascii?Q?FY19OPUL4yqVdpl0WaJcUb94EtGMGMUw4DaNYTimP7nPGw9vthn/K32ya48Q?=
- =?us-ascii?Q?PTfFtQs+qwk64TMw98GXKpq18KwsYNiumMvrM3/52oVr9qvoxARUUxY7KqHz?=
- =?us-ascii?Q?5/aqyb0pK34CT06eGD+2M4MNLng5nSBsxwU8z/H5keUXzDeDXJjvVNeIHT/1?=
- =?us-ascii?Q?DoydnHk2JRvqqkfl34OZ/cwOurnBWRxv4DsaBIPs1/D5lfEUi4Jr+mkzA0jS?=
- =?us-ascii?Q?vXMW5LGEFuzkcRfPxlx4S/P83qG2ut8XSLQHT7iN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fec44215-6b71-4742-5e94-08ddfd1e1846
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 16:59:45.7096
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cbJhhb8c7u9YjTMrYyBsEy1KZGiddKEi/Y1Iy5vkbKv5ezHwvyiOrmuZFdZM/erldgLpDLqJtGzEhmWm633CJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7956
+References: <20250925115924.188257-1-ulf.hansson@linaro.org>
+ <DD1XOHE6P5OC.2JUQRAGAE1KTU@cknow.org> <CAPDyKFrKP2bdpKTHzqDdhEpRAjYu+PFd2Bst=-WPddByxcAX_w@mail.gmail.com>
+ <DD22MGF3HNLM.Q7S70RX4NZXS@cknow.org> <CAGETcx-WY1x_ud8Ef1jbpYQVtFv7MZHMpHfSVKA9R9tya0Lxjw@mail.gmail.com>
+ <CAPDyKFp0uV2WaQGjwsO8JG1zF_1oXj7-GVnaejih+dN9RAdykg@mail.gmail.com>
+In-Reply-To: <CAPDyKFp0uV2WaQGjwsO8JG1zF_1oXj7-GVnaejih+dN9RAdykg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 26 Sep 2025 19:08:16 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g_QHQzYTN4Sra_gGQXmRDxUPEjDMyOMB4+PxHcD6vfsQ@mail.gmail.com>
+X-Gm-Features: AS18NWAipPCw_sbfz1uZIP7ywHKnNEbuCNxO6eGIBb1HO8SG50NvmitiB8SDjLc
+Message-ID: <CAJZ5v0g_QHQzYTN4Sra_gGQXmRDxUPEjDMyOMB4+PxHcD6vfsQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: fw_devlink: Don't warn in fw_devlink_dev_sync_state()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Saravana Kannan <saravanak@google.com>, Diederik de Haas <didi.debian@cknow.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Jon Hunter <jonathanh@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24.09.25 13:09:46, Gregory Price wrote:
-> On Fri, Sep 12, 2025 at 04:45:13PM +0200, Robert Richter wrote:
-> > +static void cxl_prm_init(struct cxl_port *port)
-> > +{
-> > +	u64 spa;
-> > +	struct prm_cxl_dpa_spa_data data = { .out = &spa, };
-> > +	int rc;
-> > +
-> > +	if (!check_prm_address_translation(port))
-> > +		return;
-> > +
-> > +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
-> > +	rc = acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
-> > +	if (rc == -EOPNOTSUPP || rc == -ENODEV)
-> > +		return;
-> > +
-> > +	port->to_hpa = cxl_prm_to_hpa;
-> > +
-> > +	dev_dbg(port->host_bridge, "PRM address translation enabled for %s.\n",
-> > +		dev_name(&port->dev));
-> > +}
-> 
-> Is it possible that the PRMT function is present but uninitialize?
-> For example if expanders are not in a normalized address mode.
-> 
-> This code would likely still add the to_hpa() function reference even
-> if the underlying PRMT function hasn't been set up for translation.
+On Fri, Sep 26, 2025 at 2:05=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Thu, 25 Sept 2025 at 23:49, Saravana Kannan <saravanak@google.com> wro=
+te:
+> >
+> > On Thu, Sep 25, 2025 at 10:52=E2=80=AFAM Diederik de Haas <didi.debian@=
+cknow.org> wrote:
+> > >
+> > > On Thu Sep 25, 2025 at 4:26 PM CEST, Ulf Hansson wrote:
+> > > > On Thu, 25 Sept 2025 at 15:59, Diederik de Haas <didi.debian@cknow.=
+org> wrote:
+> > > >> On Thu Sep 25, 2025 at 1:59 PM CEST, Ulf Hansson wrote:
+> > > >> > Due to the wider deployment of the ->sync_state() support, for P=
+M domains
+> > > >> > for example, we are receiving reports about the messages that ar=
+e being
+> > > >> > logged in fw_devlink_dev_sync_state(). In particular as they are=
+ at the
+> > > >> > warning level, which doesn't seem correct.
+> > > >> >
+> > > >> > Even if it certainly is useful to know that the ->sync_state() c=
+ondition
+> > > >> > could not be met, there may be nothing wrong with it. For exampl=
+e, a driver
+> > > >> > may be built as module and are still waiting to be initialized/p=
+robed.
+> > > >>
+> > > >> "there may be nothing wrong with it" doesn't sound very convincing=
+.
+> > > >> So there *can* be something wrong with it, so warning sounds
+> > > >> appropriate? If there is (certainly) something wrong with it, I ex=
+pect
+> > > >> an error.
+> > > >
+> > > > Sorry if I was too vague. See more below.
+> > > >
+> > > >> FWIW: most of my drivers/modules are built as modules.
+> > > >> I do seem to run into 'problems' more then average because of that=
+, but
+> > > >> to me it just signals there is something wrong ... which should be
+> > > >> fixed. Not silenced.
+> > > >
+> > > > Well, why is it wrong to have drivers being built as modules? They
+> >
+> > IIUC/Remember Kconfig correctly, FW_DEVLINK_SYNC_STATE_TIMEOUT should
+> > be off by default? (if I don't give any default, what ends up
+> > happening?)
+>
+> As "FW_DEVLINK_SYNC_STATE_STRICT" is default, the "sync_state()
+> pending due..." print gets printed for a lot of consumer devices that
+> have not been probed yet.
+>
+> >
+> > If we can assume, timeout won't happen by default, then the only
+> > people seeing this warning are people setting the flag or setting the
+> > command line param. So I'm okay with making it an info.
+>
+> I think you got this wrong. It's the default behaviour that triggers
+> lots of prints.
+>
+> >
+> > But the "sync_state() pending due to" is for the default behavior. I'm
+> > assuming without the sync_state() supported added to power domains,
+> > the ones getting this warning would have been powered off? But after
+> > the sync_state() support, it's not powered off anymore. That can cause
+> > increased power usage. Seems like something worth warning about.
+>
+> Yes, I certainly agree, but...
+>
+> To me, it kind of sounds like we should change to use
+> FW_DEVLINK_SYNC_STATE_TIMEOUT as the default behaviour. In that case,
+> I don't think there is a need to change the log-level for
+> "sync_state() pending due to..".
+>
+> >
+> > Also, another thing I want to understand is, for all the reports you
+> > are getting for "sync_state() pending due to", is it actually correct
+> > to have them pending? Or can fw_devlink do better in those cases and
+> > turn them off? It could be a driver fix/fw_devlink fix depending on
+> > the issue.
+>
+> There are some cases that we potentially could fix, in particular for
+> when a genpd-provider, provides multiple power-domains per device-node
+> (#power-domain-cells =3D <1>;). But let's discuss that separately.
+>
+> >
+> > TL;DR:
+> > 1. For timeout messages, since timeout isn't default behavior, I'm
+> > okay making it an info. But
+> > 2. For pending sync state messages, I think it should remain as a warni=
+ng.
+>
+> See above.
+>
+> This means drivers being built as modules will trigger a lot of
+> warnings, in the default behavior. Is this really what we want?
 
-At this point during init, it is not yet possible to determine
-normalized address mode. Endpoint and hdm decoders are still unknown.
-Thus, PRM is enabled for the port. Later, during region setup, there is
-a check for that while determining the region's HPA range. Addresses
-are translated and ranges adjusted only if needed. Once the ranges are
-set up, no further PRM handler calls are executed.
+No, at least I don't.
 
-Thanks for review and testing.
+Printing a warn level message about anything that is not a clear
+functional issue is seriously problematic IMV.
 
--Robert
+As for whether or not the messages should be info level or debug
+level, it also depends on the amount of noise generated by them.  IMV,
+generating a lot of noise at the info level is not really useful and
+may cause some actually useful information to be missed.
 
