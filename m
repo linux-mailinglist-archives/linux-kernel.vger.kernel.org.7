@@ -1,343 +1,81 @@
-Return-Path: <linux-kernel+bounces-834209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D085BA4353
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:32:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908EBBA431A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8EDD7BC906
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338CB56281E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F297B22A4EA;
-	Fri, 26 Sep 2025 14:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044A7374EA;
+	Fri, 26 Sep 2025 14:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFXFusmE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPL49Amf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606622689C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DF21C5D77
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896536; cv=none; b=FhILkB2XbF4Mhf+L3zgsMkMddmF2p6SyYuZWI5SyfstTpXm5T+e+TizulkSmqJAN0jbwTqCDTIFOJ/hPVHyqpmEOXcqlnGveFP8rOUeUypJxB5+Rba0e+92k3ddPu1i66L9MRKWSvVof7z9qpSJqsqI3w559ITccGq9e3cmlF9o=
+	t=1758896709; cv=none; b=e1u30ypR3fW68kjt7ByuoyGy/CLTzyN/VpO08nn9a8/XbzrjOz1zX6b9V2EKC/Qb3NJ56BFD4Gt3HKEp2K02mvfYcYMMczvu4MtWw+T4kmHN+D0+MMoLcypuURffvDYCNtgVIKw+Bz59KBE8mobTRjcP+BC/8z3qrIyle5J334o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896536; c=relaxed/simple;
-	bh=ovIE3hqtpnYdXG7Hm5wgIyj2/UqA0QGLyzIFS7ovQWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KSWzGf06pWvyH3o5sNSqtd9LCvJgQyEHB0SnNiQyzwKFSDJpYcplOdltB845KbXsJFFeZMKA4O2bBXhhZ1K7VgfMwsXRiTaLHsr2C88ljXl9TqxwnSotEXH8d9Mt9ROhmspm0LSBHKCbU3shs7fla/7zrJ+TZUmvgnfPoP9KJK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFXFusmE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758896533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y2PBA5qJ7+Q3tcGwDv2wukrpYCveef1dTx7LNShLrrc=;
-	b=MFXFusmEfhA/TyHdE4szamMPWg8L5R3k4j2a9dABv78Pbfy+7fpaLTBms8ncHrqnRPzDC9
-	ItrWYyFDMsfBdjK2XopihLM5ledt016zHYk0Uq1bzLXEMs8MYrF3S0pWVdjM8yZvG6b/Gw
-	gWjfqVT1cs54pfENiceUwgaFHcUmFWg=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-9rbAyJd8NWGPS_3x6WzmSw-1; Fri,
- 26 Sep 2025 10:22:09 -0400
-X-MC-Unique: 9rbAyJd8NWGPS_3x6WzmSw-1
-X-Mimecast-MFC-AGG-ID: 9rbAyJd8NWGPS_3x6WzmSw_1758896526
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 469841956053;
-	Fri, 26 Sep 2025 14:22:06 +0000 (UTC)
-Received: from p16v.redhat.com (unknown [10.45.225.247])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C312230001B7;
-	Fri, 26 Sep 2025 14:22:00 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1758896709; c=relaxed/simple;
+	bh=+8QEVlKLacGF6oQWMvQ8+O1ZZ5z5veVkKt6Pa234fzA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rUfLRhRUUkxSwGLvzqxdMmmesbk6DK89ePZoldx+rE13SOUF+y/FiJ3u/15A/7U4VjEJ134L94GRNKXQbWvwl4m//pU8pLeWl8ouBL9RkMQeo115iwP9ZcmtaBfADOtqG1GgzkmGn1XaKhkzm/EY2FVoKOfSvx4LkBv9Yn5kBCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPL49Amf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE44C4CEF7;
+	Fri, 26 Sep 2025 14:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758896708;
+	bh=+8QEVlKLacGF6oQWMvQ8+O1ZZ5z5veVkKt6Pa234fzA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mPL49AmfZMwEDDyD1POZVGKu1cioeOc7ZfVGpVZXdZ0s6aPqAJsnW530JVLYEvrrf
+	 wGUsJwzuER0YvDxVg5jvDJjgrsI0s8qOGm0uI+mUBfDjk3UE5vcaUr4+WTEkCXaZ7c
+	 x6o0a6sXoK6CgsamwZabpBzhEhOXSuioACvEuYXrj4KEtqldmC7g7ILiGPS1PY0/Hl
+	 cwZuM3kwEOA95P00qzOPdEuU+u0gcMu7iJ/Ynmc4zZ06sUCViVMI5t5iqeNfPtTDcF
+	 6E9koTltmMTPGSz/eFUXO/PzogXwjOC/QGSbcFcOWZGUXqsg8TbWf+mX+0G/gK0Bz0
+	 /MTvJmMXiSpkw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1v29Nd-000000001Y2-2rmy;
+	Fri, 26 Sep 2025 16:25:02 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Michal Schmidt <mschmidt@redhat.com>,
-	Petr Oros <poros@redhat.com>
-Subject: [PATCH net-next 3/3] dpll: zl3073x: allow to configure phase offset averaging factor
-Date: Fri, 26 Sep 2025 16:21:40 +0200
-Message-ID: <20250926142140.691592-4-ivecera@redhat.com>
-In-Reply-To: <20250926142140.691592-1-ivecera@redhat.com>
-References: <20250926142140.691592-1-ivecera@redhat.com>
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/2] soc: amlogic: canvas: fix device leak on lookup
+Date: Fri, 26 Sep 2025 16:24:52 +0200
+Message-ID: <20250926142454.5929-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The DPLL phase measurement block uses an exponential moving average with
-a configurable averaging factor. Measurements are taken at approximately
-40 Hz or at the reference frequency, whichever is lower.
+This series fixes a device leak in the canvas lookup helper and
+simplifies the lookup error handling somewhat.
 
-Currently, factor = 2 is used to prioritize fast response for dynamic
-phase changes. For applications needing a stable, precise average phase
-offset where rapid changes are unlikely, a higher factor is recommended.
+Johan
 
-Implement the .phase_offset_avg_factor_get/set callbacks to allow a user
-to adjust this factor.
 
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
- drivers/dpll/zl3073x/core.c | 38 +++++++++++++++++++++---
- drivers/dpll/zl3073x/core.h | 15 ++++++++--
- drivers/dpll/zl3073x/dpll.c | 59 +++++++++++++++++++++++++++++++++++++
- drivers/dpll/zl3073x/dpll.h |  2 ++
- 4 files changed, 108 insertions(+), 6 deletions(-)
+Johan Hovold (2):
+  soc: amlogic: canvas: fix device leak on lookup
+  soc: amlogic: canvas: simplify lookup error handling
 
-diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
-index e96095baac657..092e7027948a4 100644
---- a/drivers/dpll/zl3073x/core.c
-+++ b/drivers/dpll/zl3073x/core.c
-@@ -956,6 +956,32 @@ zl3073x_dev_periodic_work(struct kthread_work *work)
- 				   msecs_to_jiffies(500));
- }
- 
-+int zl3073x_dev_phase_avg_factor_set(struct zl3073x_dev *zldev, u8 factor)
-+{
-+	u8 dpll_meas_ctrl, value;
-+	int rc;
-+
-+	/* Read DPLL phase measurement control register */
-+	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Convert requested factor to register value */
-+	value = (factor + 1) & 0x0f;
-+
-+	/* Update phase measurement control register */
-+	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
-+	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, value);
-+	rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Save the new factor */
-+	zldev->phase_avg_factor = factor;
-+
-+	return 0;
-+}
-+
- /**
-  * zl3073x_dev_phase_meas_setup - setup phase offset measurement
-  * @zldev: pointer to zl3073x_dev structure
-@@ -972,15 +998,16 @@ zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev)
- 	u8 dpll_meas_ctrl, mask = 0;
- 	int rc;
- 
-+	/* Setup phase measurement averaging factor */
-+	rc = zl3073x_dev_phase_avg_factor_set(zldev, zldev->phase_avg_factor);
-+	if (rc)
-+		return rc;
-+
- 	/* Read DPLL phase measurement control register */
- 	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
- 	if (rc)
- 		return rc;
- 
--	/* Setup phase measurement averaging factor */
--	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
--	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
--
- 	/* Enable DPLL measurement block */
- 	dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
- 
-@@ -1208,6 +1235,9 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
- 	 */
- 	zldev->clock_id = get_random_u64();
- 
-+	/* Default phase offset averaging factor */
-+	zldev->phase_avg_factor = 2;
-+
- 	/* Initialize mutex for operations where multiple reads, writes
- 	 * and/or polls are required to be done atomically.
- 	 */
-diff --git a/drivers/dpll/zl3073x/core.h b/drivers/dpll/zl3073x/core.h
-index 128fb899cafc3..1dca4ddcf2350 100644
---- a/drivers/dpll/zl3073x/core.h
-+++ b/drivers/dpll/zl3073x/core.h
-@@ -68,19 +68,19 @@ struct zl3073x_synth {
-  * @dev: pointer to device
-  * @regmap: regmap to access device registers
-  * @multiop_lock: to serialize multiple register operations
-- * @clock_id: clock id of the device
-  * @ref: array of input references' invariants
-  * @out: array of outs' invariants
-  * @synth: array of synths' invariants
-  * @dplls: list of DPLLs
-  * @kworker: thread for periodic work
-  * @work: periodic work
-+ * @clock_id: clock id of the device
-+ * @phase_avg_factor: phase offset measurement averaging factor
-  */
- struct zl3073x_dev {
- 	struct device		*dev;
- 	struct regmap		*regmap;
- 	struct mutex		multiop_lock;
--	u64			clock_id;
- 
- 	/* Invariants */
- 	struct zl3073x_ref	ref[ZL3073X_NUM_REFS];
-@@ -93,6 +93,10 @@ struct zl3073x_dev {
- 	/* Monitor */
- 	struct kthread_worker		*kworker;
- 	struct kthread_delayed_work	work;
-+
-+	/* Devlink parameters */
-+	u64			clock_id;
-+	u8			phase_avg_factor;
- };
- 
- struct zl3073x_chip_info {
-@@ -115,6 +119,13 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
- int zl3073x_dev_start(struct zl3073x_dev *zldev, bool full);
- void zl3073x_dev_stop(struct zl3073x_dev *zldev);
- 
-+static inline u8 zl3073x_dev_phase_avg_factor_get(struct zl3073x_dev *zldev)
-+{
-+	return zldev->phase_avg_factor;
-+}
-+
-+int zl3073x_dev_phase_avg_factor_set(struct zl3073x_dev *zldev, u8 factor);
-+
- /**********************
-  * Registers operations
-  **********************/
-diff --git a/drivers/dpll/zl3073x/dpll.c b/drivers/dpll/zl3073x/dpll.c
-index 3e42e9e7fd272..b7c859641fcbb 100644
---- a/drivers/dpll/zl3073x/dpll.c
-+++ b/drivers/dpll/zl3073x/dpll.c
-@@ -1576,6 +1576,59 @@ zl3073x_dpll_mode_get(const struct dpll_device *dpll, void *dpll_priv,
- 	return 0;
- }
- 
-+static int
-+zl3073x_dpll_phase_offset_avg_factor_get(const struct dpll_device *dpll,
-+					 void *dpll_priv, u32 *factor,
-+					 struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+
-+	*factor = zl3073x_dev_phase_avg_factor_get(zldpll->dev);
-+
-+	return 0;
-+}
-+
-+static void
-+zl3073x_dpll_change_work(struct work_struct *work)
-+{
-+	struct zl3073x_dpll *zldpll;
-+
-+	zldpll = container_of(work, struct zl3073x_dpll, change_work);
-+	dpll_device_change_ntf(zldpll->dpll_dev);
-+}
-+
-+static int
-+zl3073x_dpll_phase_offset_avg_factor_set(const struct dpll_device *dpll,
-+					 void *dpll_priv, u32 factor,
-+					 struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *item, *zldpll = dpll_priv;
-+	int rc;
-+
-+	if (factor > 15) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "Phase offset average factor has to be from range <0,15>");
-+		return -EINVAL;
-+	}
-+
-+	rc = zl3073x_dev_phase_avg_factor_set(zldpll->dev, factor);
-+	if (rc) {
-+		NL_SET_ERR_MSG_FMT(extack,
-+				   "Failed to set phase offset averaging factor");
-+		return rc;
-+	}
-+
-+	/* The averaging factor is common for all DPLL channels so after change
-+	 * we have to send a notification for other DPLL devices.
-+	 */
-+	list_for_each_entry(item, &zldpll->dev->dplls, list) {
-+		if (item != zldpll)
-+			schedule_work(&item->change_work);
-+	}
-+
-+	return 0;
-+}
-+
- static int
- zl3073x_dpll_phase_offset_monitor_get(const struct dpll_device *dpll,
- 				      void *dpll_priv,
-@@ -1635,6 +1688,8 @@ static const struct dpll_pin_ops zl3073x_dpll_output_pin_ops = {
- static const struct dpll_device_ops zl3073x_dpll_device_ops = {
- 	.lock_status_get = zl3073x_dpll_lock_status_get,
- 	.mode_get = zl3073x_dpll_mode_get,
-+	.phase_offset_avg_factor_get = zl3073x_dpll_phase_offset_avg_factor_get,
-+	.phase_offset_avg_factor_set = zl3073x_dpll_phase_offset_avg_factor_set,
- 	.phase_offset_monitor_get = zl3073x_dpll_phase_offset_monitor_get,
- 	.phase_offset_monitor_set = zl3073x_dpll_phase_offset_monitor_set,
- };
-@@ -1960,6 +2015,8 @@ zl3073x_dpll_device_register(struct zl3073x_dpll *zldpll)
- 		return rc;
- 	}
- 
-+	INIT_WORK(&zldpll->change_work, zl3073x_dpll_change_work);
-+
- 	rc = dpll_device_register(zldpll->dpll_dev,
- 				  zl3073x_prop_dpll_type_get(zldev, zldpll->id),
- 				  &zl3073x_dpll_device_ops, zldpll);
-@@ -1983,6 +2040,8 @@ zl3073x_dpll_device_unregister(struct zl3073x_dpll *zldpll)
- {
- 	WARN(!zldpll->dpll_dev, "DPLL device is not registered\n");
- 
-+	cancel_work_sync(&zldpll->change_work);
-+
- 	dpll_device_unregister(zldpll->dpll_dev, &zl3073x_dpll_device_ops,
- 			       zldpll);
- 	dpll_device_put(zldpll->dpll_dev);
-diff --git a/drivers/dpll/zl3073x/dpll.h b/drivers/dpll/zl3073x/dpll.h
-index 304910ffc9c07..e8c39b44b356c 100644
---- a/drivers/dpll/zl3073x/dpll.h
-+++ b/drivers/dpll/zl3073x/dpll.h
-@@ -20,6 +20,7 @@
-  * @dpll_dev: pointer to registered DPLL device
-  * @lock_status: last saved DPLL lock status
-  * @pins: list of pins
-+ * @change_work: device change notification work
-  */
- struct zl3073x_dpll {
- 	struct list_head		list;
-@@ -32,6 +33,7 @@ struct zl3073x_dpll {
- 	struct dpll_device		*dpll_dev;
- 	enum dpll_lock_status		lock_status;
- 	struct list_head		pins;
-+	struct work_struct		change_work;
- };
- 
- struct zl3073x_dpll *zl3073x_dpll_alloc(struct zl3073x_dev *zldev, u8 ch);
+ drivers/soc/amlogic/meson-canvas.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
 -- 
 2.49.1
 
