@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-834369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCA5BA48D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:09:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC80BA48E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD6E62428C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8517C018
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379CF2376F8;
-	Fri, 26 Sep 2025 16:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B49C23D7C7;
+	Fri, 26 Sep 2025 16:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GS6E0EXm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="geRX30Pu"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89931823DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADC6233D9C;
 	Fri, 26 Sep 2025 16:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758902957; cv=none; b=lcOm7S65p9VJLcc/CAl/7dxbVNx/6tKOoahSjM86UzxS/Z/3/4dlFVQ2KeTcc0C7VnH22T9t6ZUK+cnXyKiuxhh2ztWdi4sLVnitEesn4Ou/kW4yq3H2/D7AE5Ua7ppTAOBumvmQqz/s3XkvMar+e5P0sq86wimYirYChcdzJn0=
+	t=1758902959; cv=none; b=cGH/JrVui5kSWGrm8amvMU/PxK7fJOn36dvnTWjr7eHFtpc7mKac2iHurcR1/9W1tTWaGjPXP5VjHFOXtJ3PYY22C2hlLEFUVChSHBSOrxLCAbnEtpX9YaA8aGmV1qbu2IaDwNWFKTubJYRqiAn3RErb9zyGEq5rnCEQGpXt+GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758902957; c=relaxed/simple;
-	bh=vIjK8L0zmx3vzH4+wepEoghbzlgv5uJqUNT8+cEOMRw=;
+	s=arc-20240116; t=1758902959; c=relaxed/simple;
+	bh=GNym4/5w+81H7l6wRN3iH8e8+hjR/lakXba+4WL1j3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sl5eIGKP3pxZPf/lhNgoBKN1IDCRfDtED69UjS7ftwC7GZNpz2SeaBxMI7LjUhM9/7vFA2TBa58YCNi02Fs5dcyZYMq6adr/u3+o3YzwqWvmL6pdwuEoXj/QEl1NCH3hRbIzC5hswtukFzsg+BPwLWLj++o2DKQTxn2W1wqqCAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GS6E0EXm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD350C4CEF4;
-	Fri, 26 Sep 2025 16:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758902957;
-	bh=vIjK8L0zmx3vzH4+wepEoghbzlgv5uJqUNT8+cEOMRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GS6E0EXmr6Vld7SgTsA6FsDXzrFcXM4Yi1Aq10B9ivoONfTJAD+oQn55Ab6o7OTdk
-	 4MF14UppV3queoLGGMs0YlliihhIJFCM7yLwRQAvUivnBPazOLDz3XhXsDw0EoyBu8
-	 LfjN2t0HyCSMSO8I7uXdEjyPIDGLu/8IVAEReVyi+McMCXO2lJ64JmkhcvaMr0aHxe
-	 0kKRLwgcqk6k6prx621TO8IsOjicUaSx6WvhusVX66hrawa8z2UTBZoXGlArt6mKEH
-	 d98+Gg5z1RTlFQPwQu6YNyYUKrj6gNRM+1pJr33Qd/oVE2ARxEvXfUxEUODVPiTS17
-	 Dxj7TrI8u8MhA==
-Date: Fri, 26 Sep 2025 17:09:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "adhemerval.zanella@linaro.org" <adhemerval.zanella@linaro.org>,
-	"nsz@port70.net" <nsz@port70.net>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"dalias@libc.org" <dalias@libc.org>,
-	"jeffxu@google.com" <jeffxu@google.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"yury.khrustalev@arm.com" <yury.khrustalev@arm.com>,
-	"wilco.dijkstra@arm.com" <wilco.dijkstra@arm.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"codonell@redhat.com" <codonell@redhat.com>,
-	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH RFC 0/3] arm64/gcs: Allow reuse of user managed shadow
- stacks
-Message-ID: <5397025d-7528-4b9c-b38d-b843ab004f47@sirena.org.uk>
-References: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
- <760447dc3e5805bf5668e80a94bf32356e2eb2d3.camel@intel.com>
- <8aab0f36-52ad-4fd6-98c3-bcdba45dbe16@sirena.org.uk>
- <ac0ceb09ffaeb1f0925b61ed1b82ee6475df2368.camel@intel.com>
- <604190c7-5931-4e74-a1c9-467e52d3001b@sirena.org.uk>
- <eab692794cbc82080b708c581efd5973b6004be0.camel@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=erOPCCjZCFiNPCUboEff1X0RfH98FkQYIHGNZogGhCggue13q2fLavLOtbLK+aewxWUP70WPzVyaC0qqKVaazosdJasPYpvOClIFcWqL7gyeyjTdTCj/Oe+9p/KPo0pL2GvOQfTHQ6pcM0CJPyJiIguguYr4Vf4dKGyOXv/mKrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=geRX30Pu; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=jYzdU0Ao4LJNRuMnMVgJnZDVBVG1X8PzBdmolRPIrdA=; b=geRX30PuNnPqBhjjaXTVjV02Nv
+	CAv5DRfay6NpaBZYfgHU6tpwV/2S5l94CxE7wG/aoOnacr6YyMtCar5KRbXYbVBOw/h2AcPQkUgA1
+	dByhEVWrax6msf54q7QuZmwtXKzUZM3Q6mDq/6OyDtAp6LpTccj0Ni5DDQ5EL+TuNGns=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v2B0Q-009a7Y-6j; Fri, 26 Sep 2025 18:09:10 +0200
+Date: Fri, 26 Sep 2025 18:09:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yangfl <mmyangfl@gmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce
+ PHY_INTERFACE_MODE_REVSGMII
+Message-ID: <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
+References: <20250922131148.1917856-1-mmyangfl@gmail.com>
+ <20250922131148.1917856-3-mmyangfl@gmail.com>
+ <aNQvW54sk3EzmoJp@shell.armlinux.org.uk>
+ <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
+ <aNREByX9-8VtbH0n@shell.armlinux.org.uk>
+ <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ptvvVk1i1ZxvsU15"
-Content-Disposition: inline
-In-Reply-To: <eab692794cbc82080b708c581efd5973b6004be0.camel@intel.com>
-X-Cookie: Your canceled check is your receipt.
-
-
---ptvvVk1i1ZxvsU15
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
 
-On Fri, Sep 26, 2025 at 03:46:26PM +0000, Edgecombe, Rick P wrote:
-> On Fri, 2025-09-26 at 01:44 +0100, Mark Brown wrote:
+> > > How does the databook describe reverse SGMII? How does it differ from
+> > > SGMII?
+> >
+> > It doesn't describe "reverse SGMII". Instead, it describes:
+> >
+> > 1. The TC bit in the MAC configuration register, which makes the block
+> >    transmit the speed and duplex from the MAC configuration register
+> >    over RGMII, SGMII or SMII links (only, not 1000base-X.)
+> >
+> > 2. The SGMIIRAL bit in the PCS control register, which switches where
+> >    the SGMII rate adapter layer takes its speed configuration from -
+> >    either the incoming in-band tx_config_reg[15:0] word, or from the
+> >    MAC configuration register. It is explicitly stated for this bit
+> >    that it is for back-to-back MAC links, and as it's specific to
+> >    SGMII, that means a back-to-back SGMII MAC link.
+> >
+> > Set both these bits while the MAC is configured for SGMII mode, and
+> > you have a stmmac MAC which immitates a SGMII PHY as far as the
+> > in-band tx_config_reg[15:0] word is concerned.
+> 
+> So any conclusion? Should I go on with REV*MII, or wait for (or write
+> it myself) reverse-mode flag?
 
-> > I agree it seems clearly better from a security point of view to have
-> > writable shadow stacks than none at all, I don't think there's much
-> > argument there other than the concerns about the memory consumption
-> > and performance tradeoffs.
+Sorry, i'm missing some context here.
 
-> IIRC the WRSS equivalent works the same for ARM where you need to use a
-> special instruction, right? So we are not talking about full writable
+Why do you actually need REVSGMII, or at least the concept?
 
-Yes, it's GCSSTR for arm64.
+REVMII is used when you connect one MAC to another. You need to
+indicate one ends needs to play the PHY role. This is generally when
+you connect a host MAC to an Ethernet switch, and you want the switch
+to play the PHY role.
 
-> shadow stacks that could get attacked from any overflow, rather,
-> limited spots that have the WRSS (or similar) instruction. In the
-> presence of forward edge CFI, we might be able to worry less about
-> attackers being able to actually reach it? Still not quite as locked
-> down as having it disabled, but maybe not such a huge gap compared to
-> the mmap/munmap() stuff that is the alternative we are weighing.
+Now consider SGMII, when connecting a host MAC to a switch. Why would
+you even use SGMII, 1000BaseX is the more logical choice. You don't
+want the link to run at 100Mbps, or 10Mbps. The link between the host
+and the switch should run as fast as possible. And 1000BaseX is
+symmetrical, you don't need a REV concept.
 
-Agreed, as I said it's a definite win still - just not quite as strong.
+Also, in these cases, stmmmac is on the host, not the switch, so it
+will have the host role, leaving the switch to play 'PHY'. I'm not
+sure you could even embedded stmmac in a switch, where it might want
+to play 'PHY', because stmmac is software driven, where as a switch is
+all hardware.
 
---ptvvVk1i1ZxvsU15
-Content-Type: application/pgp-signature; name="signature.asc"
+So the hardware supports reverse SGMII, but it is not clear to me why
+you would want to use it.
 
------BEGIN PGP SIGNATURE-----
+	Andrew
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjWuqQACgkQJNaLcl1U
-h9C0tQf/bJT4tz0mWt/tJVu1pg6AwGbm5/vbqNjvsiVUkegN4TV1NVKgmCA9mnG8
-YhPNEYEZ0H8rdL3+zsXN7nFrlzwdh8L/+Kds+ktFeh+86DSA9tAb9v8paIU8Z2Mo
-rqW11WJ5+znEADjTcS/dr3Dos9jru2S9z9VOdtNvX7/aaXn5XZEsjPto3ecwL+tl
-vFkliUWV/ZgRYV5r5FUBiVldrfHZoUpbe1sL/qPxan+hNnXCteaOhqP4hmO71BHt
-18HbfNDN+tswNVbbWCzdi1sUo2/2YJ+ueL0A/rKqL+ns8v9YWThVOJgkSh22Yy6i
-Qq1dnnSRhfstXWIi/s4XBmlh6QEwCA==
-=sqXy
------END PGP SIGNATURE-----
-
---ptvvVk1i1ZxvsU15--
 
