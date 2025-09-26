@@ -1,243 +1,134 @@
-Return-Path: <linux-kernel+bounces-834596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C2DBA509D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 705A9BA52CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F713BEE20
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:04:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8FB3B2A49
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC3F28469B;
-	Fri, 26 Sep 2025 20:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176E6288510;
+	Fri, 26 Sep 2025 21:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqXBLH7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="OkKf3T0q"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12FD283FF0
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D557E34BA4D;
+	Fri, 26 Sep 2025 21:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758917056; cv=none; b=m5f92f82Eu5Ar+OgYvh6bUsSpL+DWbn0ngXFNYmDOeUbZDK4LbDSLy5DrFPIplh/J8JHdJ9/+EBQawIGvmqfPNb95zN6jFoNA3FAeTOUoGZUlXmVYpxfDHhPYFSrWeQJLiUdcsw5OZIvTyzUPS9zFhj4IB3fpqa1DD6mrpePncQ=
+	t=1758921155; cv=none; b=qjNESPQ4BNjodFlk0ibj4WWM/pRB84iM3OCkc02X9NySIYezDw6bLJ3vt1Z+dJZ7fAQOc8M6B0sc7bvfXOQ6oZmlM11G8NI2+m7I0fldco1nOqTCTG8VQnP4n3ikSrnZGaHQ0H0GGA8AIOPY0Ws30HyRTl2QIbDi1/m7/+XK3ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758917056; c=relaxed/simple;
-	bh=u0wXap9HzcbHDc2esJUejmkKTx1774Prm1f8i4eCYL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=taoiwyONsy+7/YBpxyNooCILx5LB5WBWcLaws7OYyT894wDAHlUzv7aguiuT3pU8hMulLUFvOKDH0XDYeofw12qgRsdyvD+MFelzALlb1XLnrUBC8dKekZ5qtG/4vogagLCpsszCtqKiFJr1AH5HiJYRRMcsWMbmQZ5JBD2hWaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqXBLH7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FAEC19422
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:04:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758917056;
-	bh=u0wXap9HzcbHDc2esJUejmkKTx1774Prm1f8i4eCYL0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XqXBLH7MpPs8v5Nfi99rx8dFVs1C4UzddYm4c9w5E2PsvgD7TyjU8lBxOqxL5CjKL
-	 TPDWBi0l+mqaLNPBozRlDrkYgBPm5cvW6B/Qtin+63GMc+gDOr9MImAdcR+NUlfWjP
-	 gHq6DqF8+bBfdI28XVWocVBnJ0FUNRQ4OAGKtTURhgxL2m5HpKWb3AWSqEKZ4SpEl0
-	 XZwkSHu/E1NXflRVVtyJ4rVCKQRuE1uGKmcZXchDhtG1AWdlkeeiXmKiNDN6EKdWgb
-	 1tS4bYJdjz8SUsJphQXVFeQbXPDbzcr8z24/YF1bS35uR6/yQZTZaV3WP4hJhGPDHy
-	 8T3Hmu15Fj6pg==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-36ce5686d75so1125243fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:04:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmgbtFNx+fOIzRSz+COEGzQ009In1XRiw/sd9A3e0rOgurkE20EKhTZPb3AbiPT6HoMM+dZCa5utR22iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuhQqMvFcJ7g3EaPTqQNc0EUZQ8SxCiLBBeRUNpfdhhBvWfkpZ
-	nYyuFRaJxOuolO/8P7u2DlxCx5asXwCEKgt5rgr/LevaMAa2whpQ4nmkwQV6d6QXhGQFo9nhIFz
-	CQg2ShuOQneU5UzoTR2bCyvu+xdg4puI=
-X-Google-Smtp-Source: AGHT+IGZF07mr5SO1ZYjdyfGE2jef54MqntMoSpOrobDLjTEYT992teYZDTkICaFnIoXSiM4mqPp/BgEiZIECRbBXWM=
-X-Received: by 2002:a05:6870:fb86:b0:31d:7467:e394 with SMTP id
- 586e51a60fabf-35ebd6e68e3mr3641805fac.4.1758917055569; Fri, 26 Sep 2025
- 13:04:15 -0700 (PDT)
+	s=arc-20240116; t=1758921155; c=relaxed/simple;
+	bh=CPaFK2Vc9610oLrAE4VTHtYvICfhkshdxskyhGEMgGs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lhx8uJ6OP5tp846OSUtDVwD1hmuIivuUiYP+ySFTXH0zHhrDhKlXYraUzYNtiQLO/Upne4x6I03x/iSg/BYzDZ1y8pKHC9eALPuGEjWvIE9waw8J1I232sDq41B1O8Q9j0tvNUvc7OrxELmUJiv5g6RyDx+cteBGOpbRnLc5fs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=OkKf3T0q; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QHOS1u017131;
+	Fri, 26 Sep 2025 15:00:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=JvMSdbdP9VCwaI82pg3rY7gl/Qy
+	LwThdAhGQOGeQS8g=; b=OkKf3T0qp20JcdrD9s/I2J/hPSWXsyvo9eGMb2Fki93
+	sqZZqAUtvgkzAllf0u0glqjCrrnv2bd7w+5Wj0If2sZOa0U1V6KRgHAhSjk6hwlU
+	bHHG+GeUiFeRPeXXb1Y2iN9NPp15rX+j5RB1O74M13Nf+8u+xj/S1Q7+ouJYbjAN
+	MLMyKBsb67c98nfngsR5ay7wOME3Pr6+x+eNaumoqvaUSfDQ9UnF4kC2Lf9S4TDT
+	N4bYE5ar2WsnSrYFm4DtIODm0H9ewIhPJ3AD7OAoJ6qAsm/4QgdPEf+J63nmRywL
+	8PUOTSf8LDRScjmpSeU539qb1OH7+eVacVo0Zd+vJDA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 49db1hpp6h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 15:00:58 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 58QJ0u6Q001065
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 26 Sep 2025 15:00:56 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 26 Sep
+ 2025 15:00:56 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 26 Sep 2025 15:00:56 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 58QJ0h1o006117;
+	Fri, 26 Sep 2025 15:00:45 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-spi@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <broonie@kernel.org>, <jic23@kernel.org>, <nuno.sa@analog.com>,
+        <dlechner@baylibre.com>, <ahaslam@baylibre.com>, <andy@kernel.org>,
+        <marcelo.schmitt1@gmail.com>
+Subject: [PATCH v3 0/1] Add SPI offload trigger offset
+Date: Fri, 26 Sep 2025 16:00:40 -0300
+Message-ID: <cover.1758913065.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4868ed10-af6d-455d-b5cb-f301c1e81de1@linaro.org>
-In-Reply-To: <4868ed10-af6d-455d-b5cb-f301c1e81de1@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 26 Sep 2025 22:04:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j-DYV4XPcJMq+MTq6Ywwb=hzMgkYg_p1GzfxLYsavWUg@mail.gmail.com>
-X-Gm-Features: AS18NWBHLNcSxnJAJoAaxvcg40CwfaqAQeIY0VO-z1TRAMHRepI3dAtoI35v-Yk
-Message-ID: <CAJZ5v0j-DYV4XPcJMq+MTq6Ywwb=hzMgkYg_p1GzfxLYsavWUg@mail.gmail.com>
-Subject: Re: [GIT PULL] thermal driver for v6.18-rc1
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM mailing list <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gaurav Kohli <quic_gkohli@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, Sumeet Pawnikar <sumeet4linux@gmail.com>, 
-	Svyatoslav Ryhel <clamor95@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Michael Walle <mwalle@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	John Madieu <john.madieu.xa@bp.renesas.com>, 
-	Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=fd2gCkQF c=1 sm=1 tr=0 ts=68d6e2ea cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=n5SytP7nWlXxJYHU_ogA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX9Dg01Y8XmBSa
+ HKQ2xQrqb7VMwopsvS7oAhQ4iwit8KRBGDjr2xU6QmbZ6GHjhKM2aqk0Vw4j/C+z0IoDPOzhOWt
+ 41QUHJfm9DLOfGZUZfZ8zehJ/ueDUffUODG4zirzB19Psst9bqR7GiiLV6tyo3q1TK6xpcdPhDK
+ ToVaeYfNkO2TU2tbvPtxr/GNLbyIOvZLzjG/SeBZP8tx4cYXPvGtR1z5JndF4UkNB34azee0juH
+ Ta/mywYyBLbapUcjDFc/y6GCyb4DQINB9Gw1NTf5KPfkSEPHd6h6vpuBb7aTMEawzuuIuoEXdNx
+ uhwQ0gNZ0013Wed2TlFsKiOeQMOviuRd+OcLzbJOFfpCyH1lmU3jXQcUXzrN76uRxqcsMEpqCTU
+ xDio6MvWDnpYp9QINk3Rp4oAsrYseA==
+X-Proofpoint-ORIG-GUID: RSGGw-7FCbqBmFA-alLCGEfSSAo8ErP1
+X-Proofpoint-GUID: RSGGw-7FCbqBmFA-alLCGEfSSAo8ErP1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_06,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 bulkscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-Hi Daniel,
+Add SPI offload offset parameter needed to achieve high sample rates with ADCs
+that require some synchronization between a conversion start signal and the issue
+of data transfers.
 
-On Fri, Sep 26, 2025 at 4:29=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> Hi Rafael,
->
-> please consider the following changes since commit
-> 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
->
->    Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->
-> are available in the Git repository at:
->
->
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
-> tags/thermal-v6.18-rc1
->
-> for you to fetch changes up to 79428e60897916401c9ed326f6ada4d7c7c997a3:
->
->    dt-bindings: thermal: qcom-tsens: Document the Glymur temperature
-> Sensor (2025-09-26 13:27:44 +0200)
->
-> ----------------------------------------------------------------
-> - Add the QCS615 compatible DT bindings for QCom platforms (Gaurav
->    Kohli)
->
-> - Support fallback trimming values when the fuse is empty in the R-Car
->    driver (Marek Vasut)
->
-> - Remove unneeded semicolon in the Mediatek LVTS driver (Jiapeng
->    Chong)
->
-> - Fix the LMH Kconfig option by selecting QCOM_SCM and take the
->    opportunity to add the COMPILE_TEST option for the QCom's LMH
->    feature (Dmitry Baryshkov)
->
-> - Fix the missing includes and incorrect error message in the Qcom's
->    LMH driver (Dmitry Baryshkov)
->
-> - Fix comment typo and add the documentation in the Kconfig for the
->    R-Car Gen3 and Gen4 (Marek Vasut)
->
-> - Add Tegra114 SOCTHERM support (Svyatoslav Ryhel)
->
-> - Rename the functions name in the driver to be consistent and generic
->    with the different R-Car platform variants (Wolfram Sang)
->
-> - Register the TI K3 J72xx bandgap sensor as a hwmon sensor too
->    (Michael Walle)
->
-> - Add and document the thermal sensor unit reporting the junction
->    temperature of the RZ/G3S SoC (Claudiu Beznea)
->
-> - Support the GRF in the Rockchip driver (Sebastian Reichel)
->
-> - Add a temperature IIO sensor channel in the generic thermal ADC
->    driver (Svyatoslav Ryhel)
->
-> - Document the temperature sensor on the QCOM's Glymur platform (Manaf
->    Meethalavalappu)
->
-> - Add and document the thermal sensor unit reporting the junction
->    temperature of the RZ/G3E SoC (John Madieu)
->
-> ----------------------------------------------------------------
-> Claudiu Beznea (2):
->        dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
->        thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas
-> RZ/G3S SoC
->
-> Dmitry Baryshkov (2):
->        thermal/drivers/qcom: Make LMH select QCOM_SCM
->        thermal/drivers/qcom/lmh: Add missing IRQ includes
->
-> Gaurav Kohli (1):
->        dt-bindings: thermal: tsens: Add QCS615 compatible
->
-> Jiapeng Chong (1):
->        thermal/drivers/mediatek/lvts_thermal: Remove unneeded semicolon
->
-> John Madieu (2):
->        dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
->        thermal/drivers/renesas/rzg3e: Add thermal driver for the Renesas
-> RZ/G3E SoC
->
-> Manaf Meethalavalappu Pallikunhi (1):
->        dt-bindings: thermal: qcom-tsens: Document the Glymur temperature
-> Sensor
->
-> Marek Vasut (4):
->        thermal/drivers/rcar_gen3: Add support for per-SoC default trim
-> values
->        thermal/drivers/rcar_gen3: Add support for R-Car V4H default trim
-> values
->        thermal/drivers/rcar_gen3: Fix comment typo
->        thermal/drivers/rcar_gen3: Document Gen4 support in Kconfig entry
->
-> Michael Walle (1):
->        thermal/drivers/k3_j72xx_bandgap: Register sensors with hwmon
->
-> Sebastian Reichel (3):
->        thermal/drivers/rockchip: Unify struct rockchip_tsadc_chip format
->        thermal/drivers/rockchip: Shut up GRF warning
->        dt-bindings: thermal: rockchip: Tighten grf requirements
->
-> Sumeet Pawnikar (1):
->        drivers/thermal/qcom/lmh: Fix incorrect error message
->
-> Svyatoslav Ryhel (5):
->        dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal
-> Management System
->        thermal/drivers/tegra/soctherm-fuse: Prepare calibration for
-> Tegra114 support
->        dt-bindings: thermal: add Tegra114 soctherm header
->        thermal/drivers/tegra: Add Tegra114 specific SOCTHERM driver
->        thermal/drivers/thermal-generic-adc: Add temperature sensor channe=
-l
->
-> Wolfram Sang (1):
->        thermal/drivers/rcar_gen3: Fix mapping SoCs to generic Gen4 entry
->
->   .../bindings/thermal/nvidia,tegra124-soctherm.yaml |   2 +
->   .../devicetree/bindings/thermal/qcom-tsens.yaml    |   2 +
->   .../bindings/thermal/renesas,r9a08g045-tsu.yaml    |  93 +++++++
->   .../bindings/thermal/renesas,r9a09g047-tsu.yaml    |  87 +++++++
->   .../bindings/thermal/rockchip-thermal.yaml         |  15 ++
->   MAINTAINERS                                        |  14 ++
->   drivers/thermal/k3_j72xx_bandgap.c                 |   4 +
->   drivers/thermal/mediatek/lvts_thermal.c            |   2 +-
->   drivers/thermal/qcom/Kconfig                       |   3 +-
->   drivers/thermal/qcom/lmh.c                         |   4 +-
->   drivers/thermal/renesas/Kconfig                    |  21 +-
->   drivers/thermal/renesas/Makefile                   |   3 +
->   drivers/thermal/renesas/rcar_gen3_thermal.c        |  63 +++--
->   drivers/thermal/renesas/rzg3s_thermal.c            | 272
-> +++++++++++++++++++++
->   drivers/thermal/rockchip_thermal.c                 |  50 ++--
->   drivers/thermal/tegra/Makefile                     |   1 +
->   drivers/thermal/tegra/soctherm-fuse.c              |  18 +-
->   drivers/thermal/tegra/soctherm.c                   |  13 +
->   drivers/thermal/tegra/soctherm.h                   |  11 +-
->   drivers/thermal/tegra/tegra114-soctherm.c          | 209 ++++++++++++++=
-++
->   drivers/thermal/tegra/tegra124-soctherm.c          |   4 +
->   drivers/thermal/tegra/tegra132-soctherm.c          |   4 +
->   drivers/thermal/tegra/tegra210-soctherm.c          |   4 +
->   drivers/thermal/thermal-generic-adc.c              |  55 ++++-
->   include/dt-bindings/thermal/tegra114-soctherm.h    |  19 ++
->   25 files changed, 911 insertions(+), 62 deletions(-)
->   create mode 100644
-> Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
->   create mode 100644
-> Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
->   create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
->   create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
->   create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
->
->
-> --
+Change log v1 -> v2
+- Using upper case: adc -> ADC.
+- Codestyle/readability improvements according to suggestions.
 
-Pulled and added to linux-pm.git/linux-next, thanks!
+Change log v2 -> v3
+- Squashed SPI offload trigger commits.
+- Added documentation to offload trigger periodic parameters.
+- Picked up reviewed-by tags.
+
+The updates to the ADC driver that use these changes proposed to the SPI
+subsystem will go in a patch set titled 'Add SPI offload support to AD4030'.
+
+Link to v1: https://lore.kernel.org/linux-iio/cover.1756511030.git.marcelo.schmitt@analog.com/
+Link to v2: https://lore.kernel.org/linux-spi/cover.1758206554.git.marcelo.schmitt@analog.com/
+
+Axel Haslam (1):
+  spi: offload: Add offset parameter
+
+ drivers/spi/spi-offload-trigger-pwm.c |  3 +++
+ include/linux/spi/offload/types.h     | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
+
+
+base-commit: 7e2212429ec9a7b11644a7971d5d606d44ee4d78
+-- 
+2.39.2
+
 
