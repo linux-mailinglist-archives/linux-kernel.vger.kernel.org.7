@@ -1,80 +1,100 @@
-Return-Path: <linux-kernel+bounces-834064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A62BA3BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 741E3BA3BD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D116C1B28108
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411FC1C0087B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286DE2F5335;
-	Fri, 26 Sep 2025 12:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599672F60A1;
+	Fri, 26 Sep 2025 13:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWVOWVGy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quBLb5EK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DD51EEE6;
-	Fri, 26 Sep 2025 12:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E0B2F5A0F;
+	Fri, 26 Sep 2025 13:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891524; cv=none; b=elG1MqJYjBXHbtNrO4bJCZj0l4eYN3bZfHutte/ht+yaz3YnX9MdQZmS7JzJLG7LimFtkuL5tWAJPejF6kKqo/hUMIqFaUl4Qn/Ezv9IwBaD68Ul2ndanqwibBCAsM9IGbIiF8qb6htAHl7zNvNNrx3cZzOnDpRjSAyRkEhqFIM=
+	t=1758891613; cv=none; b=kCKww+GU5GwUxzORZOR6gmz5hfs84kX64bZF8grK/StHevgmODjgX3H9aZGnKy73iys30mlnFdEPvpqXZ3H4IMBg/LAtO1X+dRaj1DqHLDWDyxUXLrbKHk13KRk3lNCathV10Ioi2DC5Di6Ix9ZfSxyTVBYJPeCOmtrc14eI2FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891524; c=relaxed/simple;
-	bh=Ri6ZmMwR7TCJunHo84034C8BgXqTNyOKZdVGuU1M9ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIqymJsQLSR3yFxQfwO9G5Hy6BGPUWNNZl/5mfYT3bginzn8UojHgLYRmMIgIjHug+BVUWtZlDl2Zr3SMqfoFSuWGMBHTMHBMbg5/R7AB+CFZdfKV3+nbiDI+AKx3UsUnRLa4IgL1mggOISR7uYCWgK80r6iCEytILgKywQt/oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWVOWVGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD420C4CEF7;
-	Fri, 26 Sep 2025 12:58:41 +0000 (UTC)
+	s=arc-20240116; t=1758891613; c=relaxed/simple;
+	bh=Seffs2fDaZeiosxkytaTQWPfDVplzS5YGTCllHoiPwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SQT6VI1WTwCpJmFn4n888n/bT7E6AVpaxOkDK/RIiBNPhbia8GvH2kl7eF8YqNUtIgxvH5VLzH6wQaZ35W7LisCLWRomnEWczWJYVRhjYfk0PT86UD/ksFN/JF0RxPBRE1H/KJF0rLpVxCOMJd0EpqDhVhGCxOYgYmEJ51tkTrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quBLb5EK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1619C4CEF4;
+	Fri, 26 Sep 2025 13:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891524;
-	bh=Ri6ZmMwR7TCJunHo84034C8BgXqTNyOKZdVGuU1M9ig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DWVOWVGyi+twdkcoge3kAEj+dQaCpVTiRtw840KCtDs3c/rz0RCLk3dO8TkpscjZn
-	 ic8DhBbeS1DcjpiQzB1Cqys1Onev5TxrLBH9ygPN8WzCQa8SgroTER/GWv9e1x9q+0
-	 v0Kak4paEaFEws4HwHRwJaxPKB4H80F5LGxBmYcRsPkpjTmAhUz1HMa5Yq4Qq92W8J
-	 LvdoKFDbuhu08y2MSDckudYdoBKzpD8er1VXKjaiGdf4U/Eud1KN6H/TU4Id+CJd+K
-	 SaahclxiMeE4tU0pWHHHzNPtxpQx/a7hdwDF1ovhbHZ7w+P1TEqYc0ep8a+SAFrzaM
-	 EViIE+jLlRgUQ==
-Date: Fri, 26 Sep 2025 13:58:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sathesh B Edara <sedara@marvell.com>
-Cc: linux-kernel@vger.kernel.org, sburla@marvell.com, vburru@marvell.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org, hgani@marvell.com,
-	andrew@lunn.ch, srasheed@marvell.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Subject: Re: [net-next PATCH v2 2/2] octeon_ep_vf: Add support to retrieve
- hardware channel information
-Message-ID: <aNaN_4LfjdJWApKy@horms.kernel.org>
-References: <20250925125134.22421-1-sedara@marvell.com>
- <20250925125134.22421-3-sedara@marvell.com>
+	s=k20201202; t=1758891612;
+	bh=Seffs2fDaZeiosxkytaTQWPfDVplzS5YGTCllHoiPwc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=quBLb5EKc3qijWVvbQW6C0IkcaW+7g8ctwyogr5OCK40IHZAmhqNNVFwqc/iH9Ts8
+	 wnM8BNECBHD+d04PIgeFj2IpF3rTg8FJqZnsJBnRjFbBJPSKndXC2OqUAPH4+UXCq4
+	 eDGE46OdNkTL5XQhM+Fymjdlb6TMXKhp/jWzb1ZHnAdp1+KnPlAydXRfPxokg9lCcu
+	 FoNTLu+ASXM2YJTEWT2/nM/am5Qa5Pn4J1Q+0YKtdqqqp8KMtppCc6BOoAWnws2s0G
+	 nKkUM6FWgSSsBpI0uiQhRiC7S2lJOgNlRp+6F6Kzpp4Kc0zXoMe4h5gVKusEoKziHi
+	 r8NNgHL2+RiSw==
+Message-ID: <bee1da42-1108-4d71-a854-e3f76c5a6e96@kernel.org>
+Date: Fri, 26 Sep 2025 14:00:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925125134.22421-3-sedara@marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] media: iris: Introduce buffer size calculations for
+ vpu4
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
+ <NFzYqaeq5sb1dHtVN0YuNSMRZSaP8tEluFULzxY35Ir2qNpfsn1yP5Ptd9zxuuLzyD7oMcyeZR_NK1DgsO0sKQ==@protonmail.internalid>
+ <20250925-knp_video-v1-4-e323c0b3c0cd@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250925-knp_video-v1-4-e323c0b3c0cd@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 25, 2025 at 05:51:34AM -0700, Sathesh B Edara wrote:
-> This patch introduces support for retrieving hardware channel
-> configuration through the ethtool interface.
-> 
-> Signed-off-by: Sathesh B Edara <sedara@marvell.com>
-> ---
-> Find V1 here:
-> https://lore.kernel.org/netdev/20250923094120.13133-3-sedara@marvell.com/
-> 
-> V2:
-> - Corrected channel counts to combined.
+On 25/09/2025 00:14, Vikash Garodia wrote:
+> +{
+> +	u32 dma_opb_wr_tlb_y_size = ((frame_width_coded + 15) >> 4) << 7;
+> +	u32 dma_opb_wr_tlb_uv_size = ((frame_width_coded + 15) >> 4) << 7;
+> +	u32 dma_opb_wr2_tlb_y_size = ALIGN((2 * 6 * 64 * frame_height_coded / 8), DMA_ALIGNMENT) *
+> +					   num_vpp_pipes_enc;
+> +	u32 dma_opb_wr2_tlb_uv_size = ALIGN((2 * 6 * 64 * frame_height_coded / 8), DMA_ALIGNMENT) *
+> +					    num_vpp_pipes_enc;
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I find these calculations pretty nebulous and not very obvious to look at.
 
+A define of some sort with a comment would definitely help other 
+programmers reviewing and supporting this code in the future.
+
+(+ 15 >> 4) << 7 - I'm sure it makes sense when you are looking at a 
+register spec in front of your eyes but if you don't have that detail 
+its pretty hard to say the values are correct.
+
+/*
+  * SET_Y_SIZE(x)
+  *     - Add 15 because
+  *     - Shift 4 to lower nibble because
+  *     - Shift the result up 7 because
+  */
+#define SET_Y_SIZE(x)
+
+---
+bod
 
