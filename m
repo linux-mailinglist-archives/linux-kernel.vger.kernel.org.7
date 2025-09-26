@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-833616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA0BA26C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC62BA26C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39214C85BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9C41897B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9E7267714;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4880725F975;
 	Fri, 26 Sep 2025 05:14:34 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D9926E6FF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595C426E16A
 	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758863674; cv=none; b=j6wJcHAWw/dDDeHhDt9+2hot05D/KLgYbSoexz18F2L2bznmbQbhmcNwfDv0vGtLH5Nt8IFq8z/8zh3P4A+koSgebzV1OabypgeSXdYLY5C3fJgu5sGi25CXNdyR+ueKZp93Zg6idHQ62k6NmRpQ7Jw7sOSeRJ+F8lDVEkNHTXY=
+	t=1758863673; cv=none; b=jQK/q9OQzX66rDSRdCLt1zmDaKr2tjY7Ybq4USTvTAMjBuk+UALACreG7d5QigwysQEWdNFRh+yj2AhqDlLgHlKlFAxc9DV3M22b51yOmMAvVM8UCNIwJRGGTRNLvmygdRlZtEjZd5zjOKljrn1HNl+uWVPkvrlo24Ie/l8iXxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758863674; c=relaxed/simple;
-	bh=HSJtfGMM+e3EPXGEEqO/EYuIjZZOdU8m7yB3yQ59liM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oEhlU/lp+hOL2C3VKJrIGg/LyC+Ysbyoo/YYPdGdlh7oKPEmPhbuWhRwondJbrEzjO17+ZNAeRU4I2SfvSYP68gfVo3ULpN3PCDyenLp2j//u2O3On8kliSMaEbhMqDmpE3eBLJ0GO9qJIKk5lC+jkdl/57uCmmE0xtmDvjBF2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1758863673; c=relaxed/simple;
+	bh=Gshtz2z/i2bw1Yn3ONgiWOGEKP1MNvMtgcrJyMd4ASg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d6RURasTxheS37LXkgJkLTsy0bKDl5LvTzlXr02kUOumpKZkw2oEbDnwlMaqPUQPgXBipbxmmmR87H3EtBhr0LRltajmd8IHWzdijzIAXM1LK350pI8I00JJ35HM58YthhJVkThnbcbj7bSc0pzNNCCDY67wp1TFxMdYvrJ266c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-426188f9ebcso17795345ab.2
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42571803464so42752455ab.3
         for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:14:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1758863671; x=1759468471;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wHZMBxinlsxS+AKs3lrLYDpCFnfFQW76Oxq6oEegMGc=;
-        b=d7vpYWaYd1q6qFK1KhYksLtGvvrPYAjYQhiMUYb8uWfK+fD6z80R6Vg0MBreqaiWLu
-         Ep7o2wAUYxaf+KyC6eAtqii0RJERi1E2cij0YZI9TImc1UGi8p37yiwRfmoNovWAia0o
-         +N4WhYUGehQ/+wpDLfeNphZhNLASJcAs0e2wu/wRIeyMchFMjtpnLOxnP3iySt3wp8g2
-         XAYJb+/zFZwadjqNS+oGXTBwT/3S5rDuWa/MwU0YwLj8CjLdzZLkaBCnwcApLVAys8C6
-         VtnxkhFSRdSc6Emxrizl6ZQm7bc8s924fn4VNtKjLMYqgovZzmJtZWn/m2kKqcxUGIp5
-         QYew==
-X-Forwarded-Encrypted: i=1; AJvYcCX1fw0a0s1QBQo/1YO22v6bRIA17j5LPlN2H0IKkaFUl7ywu57gnbhSxHqL++Qjrizxae31wrjHQ8sdInk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYkYaYt5dGtAjwL8+lJgFDcJGtNoddpu3g/qct50MmN8ua0Ju+
-	ULEK+oa9Iebf4rTQikoTv5ppcJX2cN3meub3INdvwrJs37QnH+B5FW/YuJG76WHSBFPoXWDK3fo
-	OS0RMpZY4tffl0TD5x3dyaaysV1kO7Uy3KjFI6C937rutIWoHMwRMo7I892w=
-X-Google-Smtp-Source: AGHT+IF8SkQF1fJI/UhUezrn6BNK51O7jh6XTi8kzkYAO45SlOIqJw3vXGUvLZ2puFYiEpBiG+LXVyggjBpPUry+oh1TUvMF/CEa
+        bh=NSoLIgg7SAsrrlCvI57+luems2jbp4nBxEIh+V8FP+I=;
+        b=loeruPGEF4fbii9VslhFHImpQlSLpPYreV5330yr+pVLnIiX3bEWiIc+NeRvPvvzVj
+         0uXM485e6i5P82rvIggx5RBDFFc3ZdIJbuqRzYHR6elaFfSzdBVGKgE6BZM21Xs4lik4
+         +L1nZfOSTqMbNLtbl37/gDFHBO2nWPBfQMft62BFWw5+LyUrCjTLTcemf4sJHKaaRTRG
+         3MnVIEqeMzJDFyuDjmgRHYgymhnYOWpUh8hpAnvY3WZNC6ktKR+sLUY+j0ej664hHV3Z
+         0cdQTEfI+t6XPu2BjUaC1Zxls8DGstFGt4XYuUOgX1KW1NZ4ZowoXUgRFOVpb9C6u+pu
+         DcZw==
+X-Gm-Message-State: AOJu0YySKXw4nbs9DZhK6cbM4SqwarAKItFSBWJxeItEM39xaoZDbF/g
+	vQvDJImeqyMdhcyuYOOEISt74fwrxvlZTqSIpCCB5P17Xx7FnxEHUY4Q5zS6LpOVwTp35xEl1lQ
+	xNPqi4LYylggzndRfU8h5StkvaX91MsTtbFV9HS7pVMwOhcRUaX28s0JSVQQ=
+X-Google-Smtp-Source: AGHT+IE+Mo0FloODfxgHOeGuVY0QdOCNBOiik8UZK5PmujDAiVVLnq9gwm0hwzhAUwWCyR0j6wNvmwMS2LeGOSw63zdQ1rCxmQvm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c82:b0:425:715a:e6c8 with SMTP id
- e9e14a558f8ab-4259560a9eamr86275175ab.13.1758863671606; Thu, 25 Sep 2025
+X-Received: by 2002:a05:6e02:480b:b0:40d:e50a:35b0 with SMTP id
+ e9e14a558f8ab-42595657a25mr96375145ab.32.1758863671354; Thu, 25 Sep 2025
  22:14:31 -0700 (PDT)
 Date: Thu, 25 Sep 2025 22:14:31 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d62137.050a0220.3390a8.0009.GAE@google.com>
-Subject: [syzbot] Monthly udf report (Sep 2025)
-From: syzbot <syzbot+list86729d0f0fc02f3b9fe0@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-kernel@vger.kernel.org, 
+Message-ID: <68d62137.050a0220.3390a8.0008.GAE@google.com>
+Subject: [syzbot] Monthly media report (Sep 2025)
+From: syzbot <syzbot+listc48ef16dfbc6e2df724e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello udf maintainers/developers,
+Hello media maintainers/developers,
 
-This is a 31-day syzbot report for the udf subsystem.
+This is a 31-day syzbot report for the media subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/udf
+https://syzkaller.appspot.com/upstream/s/media
 
 During the period, 1 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 38 have already been fixed.
+In total, 22 issues are still open and 96 have already been fixed.
 
 Some of the still happening issues:
 
 Ref Crashes Repro Title
-<1> 13762   Yes   WARNING in udf_truncate_extents
-                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
-<2> 1334    Yes   WARNING in __udf_add_aext (3)
-                  https://syzkaller.appspot.com/bug?extid=799a0e744ac47f928024
-<3> 580     Yes   possible deadlock in udf_free_blocks
-                  https://syzkaller.appspot.com/bug?extid=d472c32c5dd4cd2fb5c5
-<4> 147     Yes   WARNING in __getblk_slow
-                  https://syzkaller.appspot.com/bug?extid=89fa933c2012e808890e
-<5> 105     Yes   WARNING in udf_setsize (2)
-                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
-<6> 40      Yes   WARNING in bdev_getblk (2)
-                  https://syzkaller.appspot.com/bug?extid=7f94fe3ce0f6613e12b8
-<7> 9       No    KASAN: slab-out-of-bounds Write in udf_write_aext (2)
-                  https://syzkaller.appspot.com/bug?extid=4e1da0d327b65949fe1b
-<8> 1       Yes   WARNING in udf_fiiter_add_entry
-                  https://syzkaller.appspot.com/bug?extid=969e250fc7983fc7417c
+<1> 381     No    KASAN: slab-use-after-free Read in em28xx_release_resources
+                  https://syzkaller.appspot.com/bug?extid=16062f26c6480975e5ed
+<2> 349     Yes   KASAN: slab-use-after-free Read in dvb_device_open
+                  https://syzkaller.appspot.com/bug?extid=1eb177ecc3943b883f0a
+<3> 59      Yes   general protection fault in su3000_i2c_transfer
+                  https://syzkaller.appspot.com/bug?extid=d99f3a288cc7d8ef60fb
+<4> 48      No    KASAN: slab-use-after-free Write in as102_release (2)
+                  https://syzkaller.appspot.com/bug?extid=47321e8fd5a4c84088db
+<5> 34      No    KASAN: vmalloc-out-of-bounds Write in tpg_fill_plane_buffer (4)
+                  https://syzkaller.appspot.com/bug?extid=dac8f5eaa46837e97b89
+<6> 11      Yes   WARNING in media_create_pad_link (2)
+                  https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
+<7> 9       Yes   KASAN: use-after-free Read in em28xx_close_extension (2)
+                  https://syzkaller.appspot.com/bug?extid=a11c46f37ee083a73deb
+<8> 5       No    WARNING in az6007_i2c_xfer
+                  https://syzkaller.appspot.com/bug?extid=a43c95e5c2c9ed88e966
+<9> 1       No    KASAN: slab-use-after-free Write in dvb_device_put
+                  https://syzkaller.appspot.com/bug?extid=d445a71e1c011b592c16
 
 ---
 This report is generated by a bot. It may contain errors.
