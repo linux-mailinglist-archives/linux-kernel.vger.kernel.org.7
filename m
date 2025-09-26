@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-834020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6275BA39E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8BCBA39F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 055617B275C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:30:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2401C03B4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608E62DFA27;
-	Fri, 26 Sep 2025 12:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1rVe1Ox"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A8224FA;
-	Fri, 26 Sep 2025 12:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48F62EBBB7;
+	Fri, 26 Sep 2025 12:32:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16352DC765
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758889908; cv=none; b=oT7Yezr1E2eVToczpdS5P4dsFW6tAy/GKtOInwGqukZPOsHh1eemrV5XfZZ8KxhxWbdsuL6QAFqDizZTOlkQZCGatY0ClbB5xm5QsVq78SjXUc9CB8kMPNntdNLT1rE3sLSe+Hd7xeoSSEp+ZIaPS0t62EJ56A1AZuYWu+nTHBU=
+	t=1758889942; cv=none; b=QcfivacejTzELakscZNnkw8vFCl1OMGW+511Oh+e7zJtJ+9O2BUP0dzVSIHTCUM0KioxNYCSSRBRKpZOTNa9g95IZz1XHQnjwmLszAMBGppvUJB6wvdrki/O91ZTNlJMhZmifT4sFk2ev1DtInUvFRdBHtJUl35kNEZ6f0Omj+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758889908; c=relaxed/simple;
-	bh=kw9e9hX+qHyTZwjTMHqpMeFf4Ats1Mc0FvLjDKIewG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxF10B0E8wBkobP9tzo0BtA+ZT3T0QqBV+tuCKAWgYotAiGW1hCvDfLp1h/J+CKpMP7uWMblBKxT+JKLtSnsjIKeUirFFO3ldr2jM5YsQg/hv5umCJNPon7Vk76w74ZIk/3xHbx//S3FGcEGaUK291wwqKTYRMvs/JXwwqy7aHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1rVe1Ox; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD29C4CEF4;
-	Fri, 26 Sep 2025 12:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758889908;
-	bh=kw9e9hX+qHyTZwjTMHqpMeFf4Ats1Mc0FvLjDKIewG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h1rVe1Ox+rHKkQtDUowYr86UwQCVziXJmcOkTGLQXzKmiGgl6SY3f7onXq6i1Kfrc
-	 1GQzRjlD9wiMz9mrq3DDHte9+7qbDuudRhHys2KtU0/ifdsWOwoeipoIEdPD7GkQji
-	 HeKKXVwMsP8EYj9k1IKJ5I31bvWRDH04JqeUa2IXXRIfcaANlZ/NFcoA52WWMy8FBx
-	 w8QgN7OVtfsTK6UakxOWshzyhxlUb4Ec9sNasDtVpA3AK5wDXp5zxbIR1tvlMYyXSV
-	 c50AVEu3InYORNYDJrpWxb2R3dsPsfsPilXHfXpAVqFOjJITDon65Z1HbDGAOE300s
-	 tvs4emt0r61nA==
-Date: Fri, 26 Sep 2025 14:31:42 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ntb@lists.linux.dev, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] PCI: endpoint: Add helper function
- pci_epf_get_bar_required_size()
-Message-ID: <aNaHrj0rwLTtSRS3@ryzen>
-References: <20250925-vntb_msi_doorbell-v3-0-ae0b0c93caae@nxp.com>
- <20250925-vntb_msi_doorbell-v3-1-ae0b0c93caae@nxp.com>
+	s=arc-20240116; t=1758889942; c=relaxed/simple;
+	bh=tRDPzWnl8Y5b4vevP83CSJEcH/w/cjQDgATDQVHHiuU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bKq+loEMTxb088bUaLvFn5WM2ppCWcpWW7GWE2NFKzYcDYInvwA5N6WXVozH+56s5tiZoRpF097xUtCk3FT29qVldfNpLTgptu08lpHos+C3iQkdnUeFmjsstPXDeR3k1A8QT3Crey1f23jEuRB55gpc3Hdy67xquWKp37OXUuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14E58168F;
+	Fri, 26 Sep 2025 05:32:11 -0700 (PDT)
+Received: from oss-apollo7005.oss.cambridge.arm.com (oss-apollo7005.oss.lab.cambridge.arm.com [10.7.15.171])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 497733F5A1;
+	Fri, 26 Sep 2025 05:32:17 -0700 (PDT)
+From: Salman Nabi <salman.nabi@arm.com>
+To: mark.rutland@arm.com,
+	lpieralisi@kernel.org,
+	sudeep.holla@arm.com,
+	andre.przywara@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	vsethi@nvidia.com,
+	sdonthineni@nvidia.com,
+	vwadekar@nvidia.com,
+	chao.gao@intel.com,
+	ardb@kernel.org
+Subject: [RFC PATCH v2 0/1] firmware: smccc: Add support for Live Firmware Activation (LFA)
+Date: Fri, 26 Sep 2025 12:31:44 +0000
+Message-Id: <20250926123145.268728-1-salman.nabi@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-vntb_msi_doorbell-v3-1-ae0b0c93caae@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 01:01:47PM -0400, Frank Li wrote:
-> Introduce pci_epf_get_bar_required_size() to retrieve the required BAR
-> size and memory size. Prepare for adding support to set an MMIO address to
-> a specific BAR.
-> 
-> Use two variables 'aligned_bar_size' and 'aligned_mem_size' to avoid
-> confuse.
+Hi,
 
-s/confuse/confusion/
+This patch addresses some feedback from the previous RFC, and fixes and
+improves some shortcomings discovered during internal review:
+There is now a new sysfs file to waive the kernel's CPU rendezvous
+requirement, if administrators are sure that the firmware's brief downtime
+has no effect on the kernel's drivers. Also the firmware images are now
+handled in a linked list, as this provides more flexibility for upcoming
+changes. For more details, see the original cover letter, the changelog
+below and the patch's commit message. We are still looking for feedback,
+also from other architectures, on the best userland interface.
 
+=====================================================================
 
-> 
-> No functional changes.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v3
-> - change return value to int.
-> - use two pointers return bar size aligned and memory start address aligned
-> - update comments about why need memory align size. Actually iATU require
-> start address match aligned requirement. Since kernel return align to
-> size's address.
-> - use two varible aligned_bar_size and aligned_mem_size to avoid confuse
-> use 'size'.
-> 
-> change in v2
-> - new patch
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 84 +++++++++++++++++++++++--------------
->  1 file changed, 53 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index d54e18872aefc07c655c94c104a347328ff7a432..2cd0257831f9885a4381c087ed8f3326f5960966 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -208,6 +208,49 @@ void pci_epf_remove_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf)
->  }
->  EXPORT_SYMBOL_GPL(pci_epf_remove_vepf);
->  
-> +static int
-> +pci_epf_get_bar_required_size(struct pci_epf *epf, size_t size,
-> +			      size_t *aligned_bar_size,
-> +			      size_t *aligned_mem_size,
-> +			      enum pci_barno bar,
-> +			      const struct pci_epc_features *epc_features,
-> +			      enum pci_epc_interface_type type)
-> +{
-> +	u64 bar_fixed_size = epc_features->bar[bar].fixed_size;
-> +	size_t align = epc_features->align;
-> +
-> +	if (size < 128)
-> +		size = 128;
-> +
-> +	/* According to PCIe base spec, min size for a resizable BAR is 1 MB. */
-> +	if (epc_features->bar[bar].type == BAR_RESIZABLE && size < SZ_1M)
-> +		size = SZ_1M;
-> +
-> +	if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size) {
-> +		if (size > bar_fixed_size) {
-> +			dev_err(&epf->dev,
-> +				"requested BAR size is larger than fixed size\n");
-> +			return -ENOMEM;
-> +		}
-> +		size = bar_fixed_size;
-> +	} else {
-> +		/* BAR size must be power of two */
-> +		size = roundup_pow_of_two(size);
-> +	}
-> +
-> +	*aligned_bar_size = size;
+this is a proposal for a driver for the Arm Live Firmware Activation (LFA)
+specification[1]. LFA provides an interface to allow "activating" firmware
+updates without a reboot.
+In contrast to Intel's TDX [2] approach (which seems only concerned about
+some confidential computing related firmware blob), and even OCP's
+"impactless" updates[3], the Arm approach just lists a number of
+"activatable" firmware images, and does not limit their scope. In
+particular those updates can (and will) be for firmware bits used by the
+application processors (which OCP seems to rule out), including runtime
+secure firmware (TF-A/BL31), confidential compute firmware, and
+potentially even UEFI runtime firmware.
+Initially we have the whole chain demoing the Arm Confidential Computing
+firmware (RMM) update, which is conceptually the same as Intel's TDX
+proposal.
 
-I think this name is wrong.
-The BAR size has not been aligned to anything.
-The BAR size has to be a power of two, but that is a requirement of the PCI
-specification, so that in an inherent property of a BAR.
+So our design approach is to create a directory under /sys/firmware, and
+just list all images there, as directories named by their GUID.
+Then the properties of each image can be queried and the activation
+triggered by the sysfs files inside each directory. For details see the
+commit message of the patch.
+This is admittedly a somewhat raw interface, though even in that form
+it's good enough for testing. Eventually I would expect some fwupd
+plugin to wrap this nicely for any admins or end users.
 
-Perhaps just name it size or bar_size?
+The purpose of this RFC is to get some feedback on the feasibility of
+this interface, and to understand how this would relate to the other two
+approaches (TDX + OCP "impactless" updates).
+
+- Are GUID named directories under /sys/firmware/lfa a good idea?
+- Shall all three approaches be unified under a common kernel/userland
+  sysfs interface? Or can we live with separate interfaces, given the
+  different scopes, and unify this in userland, for instance via fwupd
+  plugins?
+
+=====================================================================
+
+v1...v2:
+ - added forcce_cpu_rendezvous hook for skipping cpu rendezvous for
+   firmware components that supports it.
+ - changed the static firmware images array with a dynamic linked list.
+ - the activation pending flag is retrieved directly from the lfa agent
+   for an up-to-date information.
+ - added a mapping of LFA error codes to human-readable strings.
+ - kernel error codes changed to more appropriate ones
+ - comment fix in call_lfa_activate()
+ - the "bitfields" name in variables has been refactored to an
+   appropriate "image_flags".
+ - change image_flags variable datatype to u32 from an int
 
 
-Kind regards,
-Niklas
+Many thanks
+Salman Nabi
+
+Salman Nabi (1):
+  firmware: smccc: Add support for Live Firmware Activation (LFA)
+
+ drivers/firmware/smccc/Kconfig  |   7 +
+ drivers/firmware/smccc/Makefile |   1 +
+ drivers/firmware/smccc/lfa_fw.c | 455 ++++++++++++++++++++++++++++++++
+ 3 files changed, 463 insertions(+)
+ create mode 100644 drivers/firmware/smccc/lfa_fw.c
+
+-- 
+2.25.1
+
 
