@@ -1,112 +1,148 @@
-Return-Path: <linux-kernel+bounces-833614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02760BA26B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18895BA26CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7822A4916
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:14:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE8E1C02B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB95277C96;
-	Fri, 26 Sep 2025 05:14:34 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8C9275AE1;
+	Fri, 26 Sep 2025 05:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m4d0JtgO"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C82266EE7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756422749CE;
+	Fri, 26 Sep 2025 05:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758863673; cv=none; b=k9L0EZyMQOGCEuJihJwgS+9yW2EAZLBY84vTQ9WMB+YPQ0B9CMfPeaIaNoivfEiqwxqHWP94RFUirnp+yBBSD6Nm138W9+aeAISMF/yumq+LkZXXPbZTfc8ZfSC1V7jXRpiJ3fwhmeMLJxg41FoRGmG9WybsDySAT/PhwCZFaps=
+	t=1758863688; cv=none; b=dQQzbW+++413XPJsPKLErFOV5/7KwhoO4NKruX5CZdE/aKMmRHF92echg+ilL71veHN5y6gwMmp3u6hDHnoOGYi4wgwPyfSU7H1QY3py39f6L1gdjK7rSCZbNv1G4vj8+TVZjKPdwYOu4TKcTM8dCFNKXoqoZd56+Ih9xRwxODI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758863673; c=relaxed/simple;
-	bh=lC761gkFpOQdcOGlWNPdTnK0sldm5KiE8/0aVMwxt04=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bqkDpNmEsUjmHb+/z4xVDPKEVkXw/AQ9205Ro7HFchcO4r7EQxgXrtD6uBCZbXW/SIYnaaJ34J/GRiom5rOhEsu31cPJeoLHENnlpxm0NdOy2tpQHyawV3trZYn9voRODgSqkBztxZIECKn55UbIghHTHZkHAP0fOK+PkF7InRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42570afa5d2so48157365ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:14:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758863671; x=1759468471;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DG8Duv53QLwynlPB4debmWfpydCbn0S0pF1aGiZ5NhQ=;
-        b=lCGFd3ysG4/vmKa2UPbyj8uB828bCMCzRvZBOKWolAHXCdV4fXeyEouB/6wZERUtfm
-         XThBQEhBjQzVAg8ZqqaYaXK8GQhr5j71Gr5DSX8ytdOjVFsPjV++t3aooW1Q48TlO8S5
-         tXcZbClrvGakRZ1+ufkfUEpm6LcpmurMMAYQ2Kbr8qdnvzdn7C8L7LCXvcOjoww9eiE8
-         rPstNFjUILpLQmRPtBz6qi+4nuPQ238LH9AchuHsx4d9G3byXQFp9dhzWJpa0u3wBiUe
-         BipRw51y09KuVY6SbOUy9MlLiFf+4fRxcGPV2MfZk9TNv01dvc1IStdxYw3NCUwpwhUD
-         GcfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXugGYBl10NGxfBBlv8bJ8qCLWGghYFLkSd1LxhEw/REWzvVMGUkjo4DWpKvaKy+ailknzqKbnmnvtUkuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZqg2Dy8zY9VwyJZsm76ShHDdA8sdJNrnO688L33eQNOJ6TXip
-	SO40V63AUM8R/fcoqbRIkvlh7iSmjR6a0jsWs4lMbhhFoRvqjD5B3LJkFnCz2UZtNXI68zcJthB
-	vULjEvWj9gycnwiaoNYHpHHrciH30wpNwJqEvGsS49joURGP901c03KyLwxI=
-X-Google-Smtp-Source: AGHT+IELGfhN0y0KKDaSMd9rjqVPYY0bokUyRgxktBIKZ0Q8NPzeQeOSQfb4BnmJZFw6DCMeYez/tARdzr75t5UHET0GkAIjTV5A
+	s=arc-20240116; t=1758863688; c=relaxed/simple;
+	bh=ByeMJo60bvbtMMmpAcMXNN6aRyyLg9N8lH6sgDTI8mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lB/KaswSNtYZsLlW5VkXF7L8JUfvZzi5gvqey8hfNXqMhS+WRcUe7x9i0fV/+pGpKPi2LYWvCg9f/fmKCATnM8YsZnXcywxSgGohuH4iPmTSwQtqwNe4KTqrB1LCByRzluMr1gdQpxiN/q1VBapJ5xM5Ji6B/yWRRoZrgXD7yhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m4d0JtgO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=bXsMiGgu0Tu21kIHHLsClOAsZPBY8FqiGU15Oi59YtE=; b=m4d0JtgObqIMfP9tbu6BnGX/yT
+	PHyrRR7NkTxplpm6BB1LrInkl3Xr5QVFoE8Kad7e2QfNmu4kgQcJ+86siP492m3vMMEanve5zgdbk
+	fJU96X+KmtZNCgc3IzgxX7CCrTzbW9pr2oHEk+DOrl436TPAqA7o7JFM6FAjokCKJRXbHd7/swR1e
+	jikvNegZdxEtXYmbMDem8u6UmHSrcdj/DE22B16aB/yCBGvdeAQHzCiACtYWB9uCmMgz7yMorCbLU
+	cG7iKttFR5oto364TQZ81Xqf+BNKf+vUUPsMUh1JyYMChKLZ2E97AZr9lrpexMy3NVfUgVs9k9otF
+	MSTEFarg==;
+Received: from [50.53.25.54] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v20n3-0000000FyOw-3sUJ;
+	Fri, 26 Sep 2025 05:14:41 +0000
+Message-ID: <32e30b90-c089-4b96-9573-3c57a4e66a8e@infradead.org>
+Date: Thu, 25 Sep 2025 22:14:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1609:b0:424:7f5a:9423 with SMTP id
- e9e14a558f8ab-4259562f38amr85226455ab.19.1758863671182; Thu, 25 Sep 2025
- 22:14:31 -0700 (PDT)
-Date: Thu, 25 Sep 2025 22:14:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d62137.050a0220.3390a8.0007.GAE@google.com>
-Subject: [syzbot] Monthly hfs report (Sep 2025)
-From: syzbot <syzbot+listc1009fe7bea3a4e7174c@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs: perf: Fujitsu: Fix htmldocs build warnings and
+ errors
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>, corbet@lwn.net,
+ will@kernel.org, yangyicong@hisilicon.com, fj2767dz@fujitsu.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-kernel-mentees@lists.linux.dev
+References: <61aace07-890a-4b55-8e84-935ebc4a3be1@infradead.org>
+ <20250926043748.3785-1-krishnagopi487@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250926043748.3785-1-krishnagopi487@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello hfs maintainers/developers,
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 41 issues are still open and 25 have already been fixed.
+On 9/25/25 9:36 PM, Gopi Krishna Menon wrote:
+> Running "make htmldocs" generates the following build errors and
+> warnings for fujitsu_uncore_pmu.rst:
+> 
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:20: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:23: WARNING: Block quote ends without a blank line; unexpected unindent.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:28: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:29: WARNING: Block quote ends without a blank line; unexpected unindent.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:81: ERROR: Unexpected indentation.
+> Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst:82: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 
+> Add blank line before bullet lists, block quotes to fix build
+> errors, resolve warnings and properly render perf commands as
+> code blocks.
+> 
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
 
-Some of the still happening issues:
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-Ref  Crashes Repro Title
-<1>  13773   Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<2>  10556   Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
-<3>  5157    Yes   possible deadlock in hfs_find_init (2)
-                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
-<4>  4862    Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<5>  4680    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
-<6>  4208    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
-                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
-<7>  3496    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<8>  3491    Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
-<9>  3140    Yes   KMSAN: uninit-value in hfsplus_lookup
-                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
-<10> 2635    Yes   possible deadlock in hfs_extend_file (3)
-                   https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+> ---
+> Changelog:
+> 
+> Changes in v3:
+>    - Properly render perf commands as code blocks (use "e.g.::").
+> 
+> Changes in v2:
+>    - Remove formatting changes unrelated to the fix.
+> 
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
+> 
+>   Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+> index 46595b788d3a..2ec0249e37b6 100644
+> --- a/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+> +++ b/Documentation/admin-guide/perf/fujitsu_uncore_pmu.rst
+> @@ -15,15 +15,19 @@ The driver provides a description of its available events and configuration
+>   options in sysfs, see /sys/bus/event_sources/devices/mac_iod<iod>_mac<mac>_ch<ch>/
+>   and /sys/bus/event_sources/devices/pci_iod<iod>_pci<pci>/.
+>   This driver exports:
+> +
+>   - formats, used by perf user space and other tools to configure events
+>   - events, used by perf user space and other tools to create events
+> -  symbolically, e.g.:
+> +  symbolically, e.g.::
+> +
+>       perf stat -a -e mac_iod0_mac0_ch0/event=0x21/ ls
+>       perf stat -a -e pci_iod0_pci0/event=0x24/ ls
+> +
+>   - cpumask, used by perf user space and other tools to know on which CPUs
+>     to open the events
+>   
+>   This driver supports the following events for MAC:
+> +
+>   - cycles
+>     This event counts MAC cycles at MAC frequency.
+>   - read-count
+> @@ -77,6 +81,7 @@ Examples for use with perf::
+>     perf stat -e mac_iod0_mac0_ch0/ea-mac/ ls
+>   
+>   And, this driver supports the following events for PCI:
+> +
+>   - pci-port0-cycles
+>     This event counts PCI cycles at PCI frequency in port0.
+>   - pci-port0-read-count
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-- 
+~Randy
 
-You may send multiple commands in a single email message.
 
