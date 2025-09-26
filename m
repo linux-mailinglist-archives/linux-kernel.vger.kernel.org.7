@@ -1,214 +1,185 @@
-Return-Path: <linux-kernel+bounces-834042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BEEBA3A9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 266E5BA3AA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668291893E74
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7071BC0639
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED84B2ECD26;
-	Fri, 26 Sep 2025 12:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8C2273D75;
+	Fri, 26 Sep 2025 12:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpLbGLiB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uZPcCP7s"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94846283CB5;
-	Fri, 26 Sep 2025 12:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA581397
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758890669; cv=none; b=gptkAgggd+cGizmahCwhtY8rCLwCK79kFnzP6ZLkqkAURrpOnvDfSrbeqMjNOGmtt5mBWFbxJAm2XU4ufayQ2Z6FIRzu72JfXC37n9qwWn6pdkz5giIOx2bx8XSOJ0aLZGeJFgpuWXFe+yhvKL7P5UIA9uf0+jluBO9tGsuh9BA=
+	t=1758890887; cv=none; b=Kw1hN7zFjyeVs2x/M8uV1IBP+G82Fh5XqzbRpY1a65/iiuS8fRZSJdRA575szuksH6jxcuib8zwoiGF2truwtQ3+PzD7JFN0WCJ0MLLQzE1nX3AhURbpO0rBJ6GRjog3J7R6QDnWDj8Tylclih+Y0coLwUR+D72ro7Q6GZ8cTMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758890669; c=relaxed/simple;
-	bh=YOV8kARbSyHERIV3BOJ0NkrVjbQ35l4jpMmPcR4lpwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrJiBqI7IjXCzR4ilr3RcpTAipLydcdiMBKO5u2BXoKq4xttNY+s0iLnaPf0A4RoQAKe95lrUikqu7oEMwl9NSan66NEYOFgx7z5um77GVOUnmPdbbc582Ohz+sLNAOziHwOkRNYIvSZYWiEXL+d5+bAEPDU7Tj6SGdvlCeANEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpLbGLiB; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758890668; x=1790426668;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YOV8kARbSyHERIV3BOJ0NkrVjbQ35l4jpMmPcR4lpwI=;
-  b=kpLbGLiBOvuTNJTHJCclm9PtfrwHJUhLcN7JJ+EcDkwF416JHLFGMFoi
-   x7MStDgi3mNYw95X+JB23DhzHiiEmpfuPc5ASMrUMXkIWucfgMI3EpRaz
-   ZSfQMD7IgbFEfajrlhSIP5hw5bkrg+7cW33uB4AKXB6Mkm+oOetZk36lS
-   gN09Y2vim6zRlF/KAOeLWYHtmkcsehe7QtDKn5NjzWesdE/VELhO5mFpS
-   hidO8lS3UAMefFlN/Nl0DKTDyEgxvfcSSwxebOX7qWE+ECy91p5MgKMzC
-   Ov9eS1v4JDJ7dd/WLuZXdC2JDIpAqflgZDVDnuWeYP9A71/+GhE8gQgkU
-   A==;
-X-CSE-ConnectionGUID: 9etnI7StTSmW7zVNaHEglw==
-X-CSE-MsgGUID: xiTYTtjVTDKbmf0F8fKDIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61331494"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="61331494"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 05:44:27 -0700
-X-CSE-ConnectionGUID: Okz+aTvERQW9YtuQA0189g==
-X-CSE-MsgGUID: ElUcopUYT82x8T5Me6b3lQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="181910463"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 26 Sep 2025 05:44:22 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v27oB-0006Dp-0l;
-	Fri, 26 Sep 2025 12:44:19 +0000
-Date: Fri, 26 Sep 2025 20:43:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antoni Pokusinski <apokusinski01@gmail.com>, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux@roeck-us.net,
-	rodrigo.gobbi.7@gmail.com, naresh.solanki@9elements.com,
-	michal.simek@amd.com, grantpeltier93@gmail.com,
-	farouk.bouabid@cherry.de, marcelo.schmitt1@gmail.com,
-	Antoni Pokusinski <apokusinski01@gmail.com>
-Subject: Re: [PATCH v2 4/4] iio: mpl3115: add support for sampling frequency
-Message-ID: <202509262005.y59poUS9-lkp@intel.com>
-References: <20250925204538.63723-5-apokusinski01@gmail.com>
+	s=arc-20240116; t=1758890887; c=relaxed/simple;
+	bh=wDKshemlL5U5B/GJnrGRfPCkhHwd7rDu7k4l0PfUsvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cH2UNtYdoGIoD89aV2h0o/8zzWyi/RKLb1IJvxEc5n3oklCCWIJ4oZsBjVgrzB9HOl2IXfJbDiE9rhPu5COw7POK1TRJwribncgYq95J6NA19s3k/zSrP66/W9/NJdqA9BLR74bBYoT4R/l71ISlDyD5ujytQ5D/HTTZ7LSTmJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uZPcCP7s; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2681645b7b6so145025ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758890885; x=1759495685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZrwEv25cQ0grK7iOcD9QubzL1/i/aReMfkEmaJfNzXw=;
+        b=uZPcCP7sNcVURFj6UuoFkv05HS5DzHbY9jLcovAUjxe+EHRZBM8LFm60a4Q2WNdJuz
+         Swu7Y4e+X8tUGtIFR1fBGV3y/RxqdB1ttW9j+VlV9rBbZN2FTm0ikO3FoCR/RShhu7IM
+         drLWZowlf2m2wbVrnUy1VHtEj2iWkCtDDZ3JQSj3o55HearBmm+FHFZNCGTKGsuTZb8J
+         9UEx8Dh9jqnsdBhqzYVtZ8T2wYautj66OTwAObisTklHYiV0hxnIrrkg3BlVHdjyMHPl
+         HWBDcNHPaqmRGrSHG8ZMJCk+5cw36r+KMKsAoodNQe9sSwcA2nrYXA01q4bfMe2IQTry
+         ySTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758890885; x=1759495685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZrwEv25cQ0grK7iOcD9QubzL1/i/aReMfkEmaJfNzXw=;
+        b=CkGqgw/biKrfm8KxSNOINkJ3Wq1ZA+Jo1pgO2zj77OXW5N+AjBaM2cXry/ZAGJ+fKz
+         Z1XGGSRnzDyzBdniP7Z5kChffYXSdcDMUOZn2HFXkvp1OG6j8NfeLXrghpe+mjuVpd3J
+         eqniY7QZfKzKl70PmnfwTYRfDaAqBecuBzo9/gS49DaqYTFGgWmiBIqDpVcvXqp/4GcN
+         Ys/METTB9l+oHO4vRUTzIdtGJLajzIjEzYUGvpkYdUtRm7kEdBkCVstNLMFZmTNMvta3
+         vg92dKfejYQv4Nc5NykEd7qzE9jr2vzXRLmq/iYtkXwFUFI1kve6oiHD5AA/gj3XSggy
+         XCHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5zEjlN8ASD43rXMaLL8f0IRb2OU03nRz+mgBr//vzbGLYT2lnIa+Rjlz5Q1uNOmA+jv3urWTbT2Xr95Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa0wjzHbF9ulzHO5q7WxKoSOGzm5DoXjnu4ecmF8AVdxeHeaxN
+	lyxihgXPs3A2UQK/RBRy1TGXW1+GkFN2YR97ebODbUfCFMzXgrx4R74JmIDit9u10kEJ0mnL1WU
+	oxfCsR3pR2VV4ZJEnEm3f2ymE47gg88UbHnYHldL2
+X-Gm-Gg: ASbGncsmVWfEooGIbMWoZDMqiIbxBSzYiTLxhWQS4B8yekh51L3tMBQX3iHTr3l1HzC
+	2ts2SVwDZK4fG2kWE3HOJahly8fQaWadmSokXy55axAZ994O9rcwV/qT+C84goXzIVd8aBmpzkK
+	VThPKSd366Fjv5UlAADLLBTyM5vqk428S12jMGLY8mWWfZkKkBtMamRhlI3Y1NirwkNgXW+irwq
+	OPj9EWkMo4J
+X-Google-Smtp-Source: AGHT+IGwdqghIxlci7X2WO2dLE4ZaLoskjkwhRbj3i6/utTopC4KXFsjsT/EA7gdhJ9OERSjrTYwVtzSNXEeF2WoZhY=
+X-Received: by 2002:a17:903:2407:b0:264:1805:df20 with SMTP id
+ d9443c01a7336-27eec9d08c2mr4705495ad.4.1758890884978; Fri, 26 Sep 2025
+ 05:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925204538.63723-5-apokusinski01@gmail.com>
+References: <20250826080430.1952982-1-rppt@kernel.org> <20250826080430.1952982-2-rppt@kernel.org>
+ <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch> <aLFdVX4eXrDnDD25@kernel.org>
+ <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com> <68d3465541f82_105201005@dwillia2-mobl4.notmuch>
+In-Reply-To: <68d3465541f82_105201005@dwillia2-mobl4.notmuch>
+From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
+Date: Fri, 26 Sep 2025 14:47:50 +0200
+X-Gm-Features: AS18NWCOMXVU2qFdCBMr9rLwHy_t9UgMSPpREpOCTYO-4GCDPj1tC7maU-IIh-M
+Message-ID: <CAAi7L5esz-vxbbP-4ay-cCfc1osXLkvGDx5thijuBXFBQNwiug@mail.gmail.com>
+Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM devices
+To: dan.j.williams@intel.com
+Cc: Mike Rapoport <rppt@kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Tyler Hicks <code@tyhicks.com>, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Antoni,
+On Wed, Sep 24, 2025 at 3:16=E2=80=AFAM <dan.j.williams@intel.com> wrote:
+>
+> Micha=C5=82 C=C5=82api=C5=84ski wrote:
+> > On Fri, Aug 29, 2025 at 9:57=E2=80=AFAM Mike Rapoport <rppt@kernel.org>=
+ wrote:
+> > >
+> > > Hi Ira,
+> > >
+> > > On Thu, Aug 28, 2025 at 07:47:31PM -0500, Ira Weiny wrote:
+> > > > + Michal
+> > > >
+> > > > Mike Rapoport wrote:
+> > > > > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > > > >
+> > > > > There are use cases, for example virtual machine hosts, that crea=
+te
+> > > > > "persistent" memory regions using memmap=3D option on x86 or dumm=
+y
+> > > > > pmem-region device tree nodes on DT based systems.
+> > > > >
+> > > > > Both these options are inflexible because they create static regi=
+ons and
+> > > > > the layout of the "persistent" memory cannot be adjusted without =
+reboot
+> > > > > and sometimes they even require firmware update.
+> > > > >
+> > > > > Add a ramdax driver that allows creation of DIMM devices on top o=
+f
+> > > > > E820_TYPE_PRAM regions and devicetree pmem-region nodes.
+> > > >
+> > > > While I recognize this driver and the e820 driver are mutually
+> > > > exclusive[1][2].  I do wonder if the use cases are the same?
+> > >
+> > > They are mutually exclusive in the sense that they cannot be loaded
+> > > together so I had this in Kconfig in RFC posting
+> > >
+> > > config RAMDAX
+> > >         tristate "Support persistent memory interfaces on RAM carveou=
+ts"
+> > >         depends on OF || (X86 && X86_PMEM_LEGACY=3Dn)
+> > >
+> > > (somehow my rebase lost Makefile and Kconfig changes :( )
+> > >
+> > > As Pasha said in the other thread [1] the use-cases are different. My=
+ goal
+> > > is to achieve flexibility in managing carved out "PMEM" regions and
+> > > Michal's patches aim to optimize boot time by autoconfiguring multipl=
+e PMEM
+> > > regions in the kernel without upcalls to ndctl.
+> > >
+> > > > From a high level I don't like the idea of adding kernel parameters=
+.  So
+> > > > if this could solve Michal's problem I'm inclined to go this direct=
+ion.
+> > >
+> > > I think it could help with optimizing the reboot times. On the first =
+boot
+> > > the PMEM is partitioned using ndctl and then the partitioning remains=
+ there
+> > > so that on subsequent reboots kernel recreates dax devices without up=
+calls
+> > > to userspace.
+> >
+> > Using this patch, if I want to divide 500GB of memory into 1GB chunks,
+> > the last 128kB of every chunk would be taken by the label, right?
+> >
+> > My patch disables labels, so we can divide the memory into 1GB chunks
+> > without any losses and they all remain aligned to the 1GB boundary. I
+> > think this is necessary for vmemmap dax optimization.
+>
+> As Mike says you would lose 128K at the end, but that indeed becomes
+> losing that 1GB given alignment constraints.
+>
+> However, I think that could be solved by just separately vmalloc'ing the
+> label space for this. Then instead of kernel parameters to sub-divide a
+> region, you just have an initramfs script to do the same.
+>
+> Does that meet your needs?
 
-kernel test robot noticed the following build errors:
+Sorry, I'm having trouble imagining this.
+If I wanted 500 1GB chunks, I would request a region of 500GB+space
+for the label? Or is that a label and info-blocks?
+Then on each boot the kernel would check if there is an actual
+label/info-blocks in that space and if yes, it would recreate my
+devices (including the fsdax/devdax type)?
 
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on robh/for-next linus/master v6.17-rc7 next-20250925]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Antoni-Pokusinski/dt-bindings-iio-pressure-add-binding-for-mpl3115/20250926-044905
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20250925204538.63723-5-apokusinski01%40gmail.com
-patch subject: [PATCH v2 4/4] iio: mpl3115: add support for sampling frequency
-config: i386-buildonly-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262005.y59poUS9-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262005.y59poUS9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509262005.y59poUS9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/iio/pressure/mpl3115.c:204:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     204 |                 ret = FIELD_GET(MPL3115_CTRL2_ST, ret);
-         |                       ^
->> drivers/iio/pressure/mpl3115.c:249:6: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     249 |                                         FIELD_PREP(MPL3115_CTRL2_ST, i));
-         |                                         ^
-   2 errors generated.
-
-
-vim +/FIELD_GET +204 drivers/iio/pressure/mpl3115.c
-
-   169	
-   170	static int mpl3115_read_raw(struct iio_dev *indio_dev,
-   171				    struct iio_chan_spec const *chan,
-   172				    int *val, int *val2, long mask)
-   173	{
-   174		struct mpl3115_data *data = iio_priv(indio_dev);
-   175		int ret;
-   176	
-   177		switch (mask) {
-   178		case IIO_CHAN_INFO_RAW:
-   179			if (!iio_device_claim_direct(indio_dev))
-   180				return -EBUSY;
-   181	
-   182			ret = mpl3115_read_info_raw(data, chan, val);
-   183			iio_device_release_direct(indio_dev);
-   184			return ret;
-   185	
-   186		case IIO_CHAN_INFO_SCALE:
-   187			switch (chan->type) {
-   188			case IIO_PRESSURE:
-   189				*val = 0;
-   190				*val2 = 250; /* want kilopascal */
-   191				return IIO_VAL_INT_PLUS_MICRO;
-   192			case IIO_TEMP:
-   193				*val = 0;
-   194				*val2 = 62500;
-   195				return IIO_VAL_INT_PLUS_MICRO;
-   196			default:
-   197				return -EINVAL;
-   198			}
-   199		case IIO_CHAN_INFO_SAMP_FREQ:
-   200			ret = i2c_smbus_read_byte_data(data->client, MPL3115_CTRL_REG2);
-   201			if (ret < 0)
-   202				return ret;
-   203	
- > 204			ret = FIELD_GET(MPL3115_CTRL2_ST, ret);
-   205	
-   206			*val = mpl3115_samp_freq_table[ret][0];
-   207			*val2 = mpl3115_samp_freq_table[ret][1];
-   208			return IIO_VAL_INT_PLUS_MICRO;
-   209		}
-   210		return -EINVAL;
-   211	}
-   212	
-   213	static int mpl3115_read_avail(struct iio_dev *indio_dev,
-   214				      struct iio_chan_spec const *chan,
-   215				      const int **vals, int *type, int *length,
-   216				      long mask)
-   217	{
-   218		if (mask != IIO_CHAN_INFO_SAMP_FREQ)
-   219			return -EINVAL;
-   220	
-   221		*type = IIO_VAL_INT_PLUS_MICRO;
-   222		*length = ARRAY_SIZE(mpl3115_samp_freq_table) * 2;
-   223		*vals = (int *)mpl3115_samp_freq_table;
-   224		return IIO_AVAIL_LIST;
-   225	}
-   226	
-   227	static int mpl3115_write_raw(struct iio_dev *indio_dev,
-   228				     const struct iio_chan_spec *chan,
-   229				     int val, int val2, long mask)
-   230	{
-   231		struct mpl3115_data *data = iio_priv(indio_dev);
-   232		int i, ret;
-   233	
-   234		if (mask != IIO_CHAN_INFO_SAMP_FREQ)
-   235			return -EINVAL;
-   236	
-   237		for (i = 0; i < ARRAY_SIZE(mpl3115_samp_freq_table); i++)
-   238			if (val == mpl3115_samp_freq_table[i][0] &&
-   239			    val2 == mpl3115_samp_freq_table[i][1])
-   240				break;
-   241	
-   242		if (i == ARRAY_SIZE(mpl3115_samp_freq_table))
-   243			return -EINVAL;
-   244	
-   245		if (!iio_device_claim_direct(indio_dev))
-   246			return -EBUSY;
-   247	
-   248		ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG2,
- > 249						FIELD_PREP(MPL3115_CTRL2_ST, i));
-   250		iio_device_release_direct(indio_dev);
-   251		return ret;
-   252	}
-   253	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+One of the requirements for live update is that the kexec reboot has
+to be fast. My solution introduced a delay of tens of milliseconds
+since the actual device creation is asynchronous. Manually dividing a
+region into thousands of devices from userspace would be very slow but
+I would have to do that only on the first boot, right?
 
