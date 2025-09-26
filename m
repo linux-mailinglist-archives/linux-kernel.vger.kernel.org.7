@@ -1,240 +1,165 @@
-Return-Path: <linux-kernel+bounces-833557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ABA9BA24DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054AFBA24E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31331189FDF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FA93AF189
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4112749CE;
-	Fri, 26 Sep 2025 03:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D064E1B87EB;
+	Fri, 26 Sep 2025 03:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Adzs9ryT"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCeWWvkW"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146DB26FA50
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 03:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD91C8834
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 03:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758857387; cv=none; b=ZGxeYdmkvkhmQ9H0GQJ6uakQB1ks0Rqnug35NwfWOZbQpOcppxNJz0sxi/B6PNXeiomT6IESQvoGrrcsg4niOO59OrvHFHudJyTvP42RCVUN0+6b3up6nRKTgBkUiOKfsa/upyL5LBrU4HBQ5Zn1ox1c3taeGMvgTWUJF/4A5VU=
+	t=1758857592; cv=none; b=KYkUV74JjtMCPXo49CoqpdU4/EaaYPb2T41vFQIf+p+un3w/j7w/4TmuaRV7PiJZ8PX/jwdXF7SWRQ3KTWgsJwApmxE1RQdAqdZkdPJbGqjXgm/MyTGRukCYZVbTclYgl7Q2emFToMfgUtRRxp0gplA+UWvnyquuxlxaKL3nwkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758857387; c=relaxed/simple;
-	bh=oxJYxf0D9wV8jG868hZUqa1ZKRfoGHriX6agd45f2Vs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TJmDQs6MMZBY7T5qYT0VAA9lrXCKl5pv45QuU0adFl901rSXm0mL5L2dFf9737hnn28j/iP7H0hVnqUH60AVgmNCrSztr/logAOtllp+M+Y8QomOUsXXIb+IhpEA46+CkLlxfG/42N8YE4SRTdtqPisuHGwWQhblAb4ddl3vi8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Adzs9ryT; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-780fb254938so1585503b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:29:45 -0700 (PDT)
+	s=arc-20240116; t=1758857592; c=relaxed/simple;
+	bh=MdfW5MoLF8+6nv3dxrSOEJ6G2KoCGUfCuXIBXeIBjZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SdX8iJH8ifl6cDVo36P/jPK2QUgfiLd9yVNm3jU9q2A74snKnn7g9ZyvL6LDPRjH5CsnUstLtue+CoAr89kxZ94KWWAL1erIgeyq9w2iuxu9hPlzpkD8jV9y18CKiQt1UMfXjv/NLwB3edKDb6AY30O+BU2Yh9mbyl318BgR2Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DCeWWvkW; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27d3540a43fso18696525ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 20:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758857385; x=1759462185; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cqb2NoUTnDZS2ow9iX9NrbUXLUr3u3oGiPzjXhRf4WI=;
-        b=Adzs9ryTRVjutdUfOZo8MZ+Nv/pDd6RO82hM8TsUXKmNQlBF5u8DVlFCl9cLs0q1Vf
-         bfAalpyJ5FZuLC5weLScqv60ydwyrzGY1AMZjMsJJ0sz0NRAxZa7jN78XwCfqAMn/lzi
-         HgxkoE9oWY0yd0r0SzmO3sgdtW0MFN5j97w5DPxcHFidR9bOgIwet+AxQkabrnzFfkXJ
-         yTjDUkamlkCPEtL74YMPvq9F4+sOEJLT9W6tw/cXVUz+Aaund27QZzmnr6kn6GCMDRqU
-         6oRnAYovxp59kr8pkekIaDehX5v1TH+IVpeI55dqCMOPMhNXd3+dTu/y2PMySGX64uEW
-         62vA==
+        d=gmail.com; s=20230601; t=1758857590; x=1759462390; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=swasiKAy9erpXahrURLh1edzUqPTKg8IFE0nB6K/KGE=;
+        b=DCeWWvkWcHwgwxqx/Io4CA3Q4woImtxV30d/bxPeGDJupmD+dxsr8izc+3NR8/yORT
+         kFMLCKZq5+5rM5Rjj6RZs+HK65CQLaE4vlpeY1R6++aYOX1p52ZSRBMs+a9FyzhGicR+
+         vcixc7Gm2XXg9dGIFRAw8TRMUTwuZQOOifMG6FtJHL6sqy+2fRU0uQBZTPlYmLFcdIXq
+         6Evz62KId4tdzlLfdfzqfL/fZXHHBn2BzU10SindG8LYc66m7Suy1qyNsGvo3SYKYhmf
+         L9ZJDg2CKf/8iqirWsPvUcr6+BPTmV29g0hjFObwpmfzJ8ihbzH6rSFT8J3LkbYMJRs3
+         Wuag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758857385; x=1759462185;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cqb2NoUTnDZS2ow9iX9NrbUXLUr3u3oGiPzjXhRf4WI=;
-        b=n1lTQQOJUs/xHJhAcloVFZBBVdcbMFkSXUjrJgFPiAEzAAZN5zJM2P9xSdV9H0AGBZ
-         pzAXEtfJYhmX7Rt2TWLQ4g/cnkkueSdj7iCP+ZGt5Cw/rH7n+MJGhI3ULzNEmUyPFz99
-         sYAbLRU5OvS82D0FDUqT7O3xlIpCPynd4+5RBmsneyXQuGauNiu7MKAKCHSgYtwpDR7L
-         2ut/7K90VguEogK2b1FEr/CRwJaKzVDMfBJcrEfd1975hOpngf7rDzIwo01qgQ9sCpGz
-         9C34zFTLj9pVRWOWXyMZPcIfsFjbiByPVsJcIGTt9Vfc25StQk5MgLCEcoRY78zmCbay
-         sC9Q==
-X-Gm-Message-State: AOJu0YyEFYgXbpQlMIge5bnAlX7tUYlCnCkHBi2E6hoVfwU/e9aXdKcH
-	Gwqm/2UUPqOs9YFfZ5dkr3WiIb1G+3yu93pEWAT28ktv/LJQ6dcL7cLtdpBJv7YFEGz/0y6hkDc
-	tPHB3hCMCRxgv38agaFF+XjKiUYrsVLL+OUg3cgVWGzMtrVAXlW5EFcNN1C6IHrRNSVELFoTjEN
-	qeA451AHj3YaFYwTxELsJlp9mAmMZXqzehyRjFpJta7eM6M7RI
-X-Google-Smtp-Source: AGHT+IHfz31e/L7FazMfu8I2SfXMQ/HoIay4ORSfOQCBxSSNn+ogqXoP8JKxROYWd7iNLznlW4g3OHJ1n0sP
-X-Received: from pgbfm2.prod.google.com ([2002:a05:6a02:4982:b0:b55:381:5559])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:258c:b0:252:2bfe:b65a
- with SMTP id adf61e73a8af0-2e7c4ea12b0mr6986315637.7.1758857385110; Thu, 25
- Sep 2025 20:29:45 -0700 (PDT)
-Date: Fri, 26 Sep 2025 03:29:14 +0000
-In-Reply-To: <20250926032931.27663-1-jstultz@google.com>
+        d=1e100.net; s=20230601; t=1758857590; x=1759462390;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=swasiKAy9erpXahrURLh1edzUqPTKg8IFE0nB6K/KGE=;
+        b=hoWLBnTrdypSq62hjZ6InneuQygYMyzpYr4EqrZ3b9gTKOaesd/swLxZcxJMDV3Pp1
+         uhJeycPLOwyBxCWAlIN2XyIdIxVbvwEbQCI09GVlaq/0hRIv0kG/fC3ngMx5PczvlNPm
+         YJYNqezYQwFsuKiKFyr7yWw0vpaKGS69IvghkrkBflSKd9VFgyv0ZZOA6AAaLkKYZ3Is
+         YSDZvsb6tGdQIfYeg66WWAh639IEJ5+Ri6yFpi797UHdw8BrcYIKVdo09lWVoen+R6Xf
+         HLRLe0G9YVRBUw6WA1fboG+WpF2l9jNVx26JX8MJl2tVT5qRGHxu+pauOx05HqQtptUO
+         pNWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEsl03femwGAP/XZnghPgZNJNPGUFxnRr+OoREd9YJoOtS6nGzjRyg9BdWj0QMweH7Jqs3fvf6V96kueg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTBJ7+nkAsW5LVEyheJ/B6KHBt41zQXh+UiQw7JOIoZCt4FuSn
+	EAaeYgI2yC6zJsZ0N9/o6/8KzixIh1rOPWsAWKnRAiCoX/DNPkKB/tsb
+X-Gm-Gg: ASbGncus6kItMPVAB+DuhGVPNlZemB5ZbTqZyLG1Pr41RkfdUt71aqvJSxOMphEf25E
+	2ytZi1N43QimVl4z7ChoDT3zK4An8sPwVBlv7KcIory8RSfsG86v/KB67OfYBfmsaS0R+3PWlxg
+	1h/xWmlAj9T02CK1JXJ0Bp6jcn2h8/SEwv5lRFHKwRmoIb1gV+/Z8HCN7DGbYm7KJ1hhFs3IsDB
+	E0+1QifYnd+P0N31/9wuuLAtUwvjhxSrqBo3nkqiEUud7mxUoOsthCy+IYP7ngB2fInTM+MQYiE
+	j/QapL3OFV1SM0g7LBorCScuXUqzY5K1t+hdkfqLn8Ko27/t8Z+XaskaUzHiL3e+Ii0GV2lT2Gq
+	/H9QZPW7nUMBpSxcV4iEilXJEkXD8x25WY27z56SmqXRBvJRbFwNpBf8Z6TOaiONdPLckq6AasZ
+	UgNo0=
+X-Google-Smtp-Source: AGHT+IGVib1Wn8HeC0syL4GXw8dpS7EKsj57MJdQZoUqPJPbWnjFKnxPMpLvgZM17uyJ+TvLTPKElg==
+X-Received: by 2002:a17:903:244b:b0:27e:ef35:2dbf with SMTP id d9443c01a7336-27eef3530ecmr12593585ad.30.1758857589845;
+        Thu, 25 Sep 2025 20:33:09 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:3094:a5a4:3d95:4e23:c62c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882227sm39830265ad.82.2025.09.25.20.33.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Sep 2025 20:33:09 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: muchun.song@linux.dev,
+	osalvador@suse.de,
+	david@redhat.com,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Subject: [PATCH v2] hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list
+Date: Fri, 26 Sep 2025 09:02:54 +0530
+Message-ID: <20250926033255.10930-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926032931.27663-1-jstultz@google.com>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
-Message-ID: <20250926032931.27663-7-jstultz@google.com>
-Subject: [PATCH v22 6/6] sched: Migrate whole chain in proxy_migrate_task()
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Suleiman Souhlal <suleiman@google.com>, kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Instead of migrating one task each time through find_proxy_task(),
-we can walk up the blocked_donor ptrs and migrate the entire
-current chain in one go.
+hugetlb_vmdelete_list() uses trylock to acquire VMA locks during truncate
+operations. As per the original design in commit 40549ba8f8e0 ("hugetlb:
+use new vma_lock for pmd sharing synchronization"), if the trylock fails
+or the VMA has no lock, it should skip that VMA. Any remaining mapped
+pages are handled by remove_inode_hugepages() which is called after
+hugetlb_vmdelete_list() and uses proper lock ordering to guarantee
+unmapping success.
 
-This was broken out of earlier patches and held back while the
-series was being stabilized, but I wanted to re-introduce it.
+Currently, when hugetlb_vma_trylock_write() returns success (1) for VMAs
+without shareable locks, the code proceeds to call unmap_hugepage_range().
+This causes assertion failures in huge_pmd_unshare() → hugetlb_vma_assert_locked()
+because no lock is actually held:
 
-Signed-off-by: John Stultz <jstultz@google.com>
+  WARNING: CPU: 1 PID: 6594 Comm: syz.0.28 Not tainted
+  Call Trace:
+   hugetlb_vma_assert_locked+0x1dd/0x250
+   huge_pmd_unshare+0x2c8/0x540
+   __unmap_hugepage_range+0x6e3/0x1aa0
+   unmap_hugepage_range+0x32e/0x410
+   hugetlb_vmdelete_list+0x189/0x1f0
+
+Fix by using goto to ensure locks acquired by trylock are always released, even
+when skipping VMAs without shareable locks.
+
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
+Fixes: 40549ba8f8e0 ("hugetlb: use new vma_lock for pmd sharing synchronization")
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+
 ---
-v12:
-* Earlier this was re-using blocked_node, but I hit
-  a race with activating blocked entities, and to
-  avoid it introduced a new migration_node listhead
-v18:
-* Add init_task initialization of migration_node as suggested
-  by Suleiman
-v22:
-* Move migration_node under CONFIG_SCHED_PROXY_EXEC as suggested
-  by K Prateek
-Cc: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Qais Yousef <qyousef@layalina.io>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Zimuzo Ezeozue <zezeozue@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Metin Kaya <Metin.Kaya@arm.com>
-Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Suleiman Souhlal <suleiman@google.com>
-Cc: kuyo chang <kuyo.chang@mediatek.com>
-Cc: hupu <hupu.gm@gmail.com>
-Cc: kernel-team@android.com
+Changes in v2:
+- Use goto to unlock after trylock, avoiding lock leaks (Andrew Morton)
+- Add comment explaining why non-shareable VMAs are skipped (Andrew Morton)
 ---
- include/linux/sched.h |  1 +
- init/init_task.c      |  3 ++-
- kernel/fork.c         |  1 +
- kernel/sched/core.c   | 25 +++++++++++++++++--------
- 4 files changed, 21 insertions(+), 9 deletions(-)
+ fs/hugetlbfs/inode.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 5ca495d5d0a2d..4a3c836d0bab3 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1243,6 +1243,7 @@ struct task_struct {
- 	raw_spinlock_t			blocked_lock;
- #ifdef CONFIG_SCHED_PROXY_EXEC
- 	enum blocked_on_state		blocked_on_state;
-+	struct list_head		migration_node;
- #endif
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9e0625167517..9fa7c72ac1a6 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -488,6 +488,14 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+ 		if (!hugetlb_vma_trylock_write(vma))
+ 			continue;
  
- #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-diff --git a/init/init_task.c b/init/init_task.c
-index 4fb95ab1810a3..26dc30e2827cd 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -174,10 +174,11 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- 	.mems_allowed_seq = SEQCNT_SPINLOCK_ZERO(init_task.mems_allowed_seq,
- 						 &init_task.alloc_lock),
- #endif
-+	.blocked_donor = NULL,
- #ifdef CONFIG_SCHED_PROXY_EXEC
- 	.blocked_on_state = BO_RUNNABLE,
-+	.migration_node = LIST_HEAD_INIT(init_task.migration_node),
- #endif
--	.blocked_donor = NULL,
- #ifdef CONFIG_RT_MUTEXES
- 	.pi_waiters	= RB_ROOT_CACHED,
- 	.pi_top_task	= NULL,
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 651ebe85e1521..f195aff7470ce 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2133,6 +2133,7 @@ __latent_entropy struct task_struct *copy_process(
- 	p->blocked_donor = NULL; /* nobody is boosting p yet */
- #ifdef CONFIG_SCHED_PROXY_EXEC
- 	p->blocked_on_state = BO_RUNNABLE;
-+	INIT_LIST_HEAD(&p->migration_node);
- #endif
- #ifdef CONFIG_BCACHE
- 	p->sequential_io	= 0;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bccaa4bf41b7d..9dfc4d705e295 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6750,6 +6750,7 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
- 			       struct task_struct *p, int target_cpu)
- {
- 	struct rq *target_rq = cpu_rq(target_cpu);
-+	LIST_HEAD(migrate_list);
- 
- 	lockdep_assert_rq_held(rq);
- 
-@@ -6766,11 +6767,16 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
- 	 */
- 	proxy_resched_idle(rq);
- 
--	WARN_ON(p == rq->curr);
--
--	deactivate_task(rq, p, 0);
--	proxy_set_task_cpu(p, target_cpu);
--
-+	for (; p; p = p->blocked_donor) {
-+		WARN_ON(p == rq->curr);
-+		deactivate_task(rq, p, 0);
-+		proxy_set_task_cpu(p, target_cpu);
 +		/*
-+		 * We can abuse blocked_node to migrate the thing,
-+		 * because @p was still on the rq.
++		 * Skip VMAs without shareable locks. Per the design in commit
++		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
++		 * called after this function with proper locking.
 +		 */
-+		list_add(&p->migration_node, &migrate_list);
-+	}
- 	/*
- 	 * We have to zap callbacks before unlocking the rq
- 	 * as another CPU may jump in and call sched_balance_rq
-@@ -6781,10 +6787,13 @@ static void proxy_migrate_task(struct rq *rq, struct rq_flags *rf,
- 	rq_unpin_lock(rq, rf);
- 	raw_spin_rq_unlock(rq);
- 	raw_spin_rq_lock(target_rq);
-+	while (!list_empty(&migrate_list)) {
-+		p = list_first_entry(&migrate_list, struct task_struct, migration_node);
-+		list_del_init(&p->migration_node);
++		if (!__vma_shareable_lock(vma))
++			goto skip;
++
+ 		v_start = vma_offset_start(vma, start);
+ 		v_end = vma_offset_end(vma, end);
  
--	activate_task(target_rq, p, 0);
--	wakeup_preempt(target_rq, p, 0);
--
-+		activate_task(target_rq, p, 0);
-+		wakeup_preempt(target_rq, p, 0);
-+	}
- 	raw_spin_rq_unlock(target_rq);
- 	raw_spin_rq_lock(rq);
- 	rq_repin_lock(rq, rf);
+@@ -498,7 +506,8 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+ 		 * vmas.  Therefore, lock is not held when calling
+ 		 * unmap_hugepage_range for private vmas.
+ 		 */
+-		hugetlb_vma_unlock_write(vma);
++skip:
++		hugetlb_vma_unlock_write(vma);
+ 	}
+ }
+ 
 -- 
-2.51.0.536.g15c5d4f767-goog
-
+2.43.0
 
