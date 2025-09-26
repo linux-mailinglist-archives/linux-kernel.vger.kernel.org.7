@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-833911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021F1BA3542
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0804BA35C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53BF71C020FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807AE3B6279
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAA72EF651;
-	Fri, 26 Sep 2025 10:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4E12F3634;
+	Fri, 26 Sep 2025 10:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YISELRqU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVn17gb2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0C138DEC;
-	Fri, 26 Sep 2025 10:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C2E2F360E;
+	Fri, 26 Sep 2025 10:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758881951; cv=none; b=C4/jEdm/ITGcBx2t8SRlBff8zpKEiSsDY4W2SBCSWj1BaExtmHiPDg/gOS9jH9JgFUimLTIbIuYJKJo8MaSoa+fWUMNVY+uGLQbgdIDhv6YSSBaK2V9KRZxJ/wiF51ULH2ZjKx9VeGNeNkshkJn+hOMblRCucmxqhV6e4qDfrXo=
+	t=1758882741; cv=none; b=dpgdtmBcgCEMdVh2/ylm0ASyZl9QtuyCaWQ9f9ITcEBR62LlIYvzzv7vHjFCka4jyV2RXU38pqGpFcobo2DNbRT6SZCfhbwgbSf93rm2+lqvA+k1azVxf7jm21hp+er8EvbSLjibmqYc2IQlbEqwjiu5jJS/vWW2u+lRM3K+nUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758881951; c=relaxed/simple;
-	bh=JFDZxhbAOWY6uLKoeoQWYCsOzYG6G0mCmDq0bzhHoIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qpZok1OhCmgrpMUuGiGdQyPzUtrT0DcyMFAIdxNI19SkSvBK20X0sjpjS3xh0wl+oJ5qmtzUid0Yq8ydKp4BGpGo1dSd4DgX41cXz3CwZ1aCdBdKjQFtM2MRbeJwlrMp2K3IwWVaBeJdOOzrmlVns3jeUuhpxJdqo5CRgW6ZYcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YISELRqU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF026C4CEF4;
-	Fri, 26 Sep 2025 10:19:08 +0000 (UTC)
+	s=arc-20240116; t=1758882741; c=relaxed/simple;
+	bh=bYOt0EaE2kZMgpOBN8Es91AY0CjNsHiL7YOz/ra0dqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uEIDVw8q0QnJXvB5caAmB/9yB62NQDkAGuA4m95bccusLvkLTVB38Q5dq+PBvNj91sGUiYBtY/21xyhvKaImDLov9rLMKHHDHmggM5MqyIisTM+BtQ3rdzofy+5cingi7Wczi0K5XzLPsPRCss5KyDxpv0KBPm8KWAS3tp8LAPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVn17gb2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E666C4CEF4;
+	Fri, 26 Sep 2025 10:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758881950;
-	bh=JFDZxhbAOWY6uLKoeoQWYCsOzYG6G0mCmDq0bzhHoIU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YISELRqU8JjUyCu0p7Yr3c4QF9KtW8c6wZLw86zXIvaPqeg+pO5usY2CcVXgTlwoT
-	 uwvLtp2NTUWu+7UKkkAIV+xY+3iFrhAQiIL75ONB2PUVsbsgAhzfmRXbupYmpQH1Yg
-	 gHpVhcYjilpblF0ZzAsT3hoDni0asVkowerZdZK+f1ToXhu9F/SsHj2uC2oPvzVYSb
-	 gfa9UqQMez+spLESq/jJ7Q8jMtpLZ3RrONrbhXDY1oRswMQzY5piutWo0ebPQAZ9j1
-	 yzm8F7nIugdb8++8TIorcZgu85WSlcVWHTSPwdi61azQkBISex0po77uEzjWsQLRD+
-	 yv3sR3Q4k7VOA==
-Date: Fri, 26 Sep 2025 12:19:05 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Akira Yokosawa <akiyks@gmail.com>, broonie@kernel.org, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-next@vger.kernel.org, mchehab@kernel.org
-Subject: Re: linux-next: Tree for Sep 24 (htmldocs / pdfdocs)
-Message-ID: <20250926121905.385a084d@foz.lan>
-In-Reply-To: <fbfb1bf8-c4b9-4c9b-9d58-84c2dda22649@infradead.org>
-References: <e7c29532-71de-496b-a89f-743cef28736e@infradead.org>
-	<3666a4ec-ef29-4342-b3aa-8c602c258bea@gmail.com>
-	<fbfb1bf8-c4b9-4c9b-9d58-84c2dda22649@infradead.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1758882740;
+	bh=bYOt0EaE2kZMgpOBN8Es91AY0CjNsHiL7YOz/ra0dqM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JVn17gb27ClkBFh9M4w1KMvj2eouQu3AsJGiD8SJVY2GdfHJ6hj/lWXUi9CJRnBu6
+	 ZwcBSK60cqaYVmrKzDWieLNT+i7re/ZJ/6QJTgNRFUe3ZQmpXOUpf9A7qmWAw6zgaE
+	 bWMYATF3l4WiipzwhWpiJZwRpuFSJv3FmTrG150Vif4AiCsm2Dl9U9BACv+tvavr4d
+	 rRDCROTv0Y4BsJGW2+EAHh35Ar6Y4HFsKVmPPQ1iyaosLCpfNYIVZGO4VpIG6Txhl1
+	 MJZwlManWBWBIyclwtk5dkQTgFB6EoB/3v1YR+I6l1JbCa3KtxfS0z/L9XcvZQzYrn
+	 0oIhGAuCUiNow==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>,
+ LKML <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>, Jie Zhan <zhanjie9@hisilicon.com>
+Subject:
+ [PATCH v3 2/4] cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as transition delay
+Date: Fri, 26 Sep 2025 12:19:41 +0200
+Message-ID: <3406003.44csPzL39Z@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5069803.31r3eYUQgx@rafael.j.wysocki>
+References: <5069803.31r3eYUQgx@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-Em Thu, 25 Sep 2025 09:59:45 -0700
-Randy Dunlap <rdunlap@infradead.org> escreveu:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Hi Akira,
-> 
-> On 9/25/25 7:15 AM, Akira Yokosawa wrote:
-> > Hi Randy,
-> > 
-> > On Wed, 24 Sep 2025 10:54:18 -0700, Randy Dunlap wrote:  
-> >> On 9/24/25 7:41 AM, Mark Brown wrote:  
-> >>> Hi all,
-> >>>
-> >>> There will be no -next releases Tuesday and Wednesday next week, and
-> >>> it's possible I might run out of time on Monday.
-> >>>  
-> >>
-> >> When I run 'make O=DOCS htmldocs', I see these warning messages:
-> >>
-> >> ../Documentation/Makefile:70: warning: overriding recipe for target 'pdfdocs'
-> >> ../Documentation/Makefile:61: warning: ignoring old recipe for target 'pdfdocs'
-> >>
-> >>
-> >> Is this a known issue?  
-> > 
-> > I could reproduce these warnings under containers who have minimal
-> > packages needed for htmldocs *only*.
-> > 
-> > Current "docs-mw" branch doesn't show them.  "build-scripts" is the
-> > one who carries this harmless regression.
-> > 
-> > By "harmless", I mean "pdfdocs" needs texlive packages anyway.  
-> 
-> 
-> Right, I don't have any texlive (or latex or tetex) packages installed.
-> I shouldn't need to since I am not building any pdfdocs, so I
-> shouldn't get these warning messages. But if they go away in the near
-> future, that's great.
+If cppc_get_transition_latency() returns CPUFREQ_ETERNAL to indicate a
+failure to retrieve the transition latency value from the platform
+firmware, the CPPC cpufreq driver will use that value (converted to
+microseconds) as the policy transition delay, but it is way too large
+for any practical use.
 
-Just sent the fixes. They are because I forgot to do another cleanup
-at docs Makefile and didn't test on an environment without latex.
+Address this by making the driver use the cpufreq's default
+transition latency value (in microseconds) as the transition delay
+if CPUFREQ_ETERNAL is returned by cppc_get_transition_latency().
 
-Fix is trivial: just drop the second (unneeded) pdfdocs target.
+Fixes: d4f3388afd48 ("cpufreq / CPPC: Set platform specific transition_delay_us")
+Cc: 5.19+ <stable@vger.kernel.org> # 5.19
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+---
+
+v1 -> v3:
+   * Change the name of the new function (Jie Zhan)
+   * Add a tag from Mario Limonciello
+
+---
+ drivers/cpufreq/cppc_cpufreq.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -308,6 +308,16 @@ static int cppc_verify_policy(struct cpu
+ 	return 0;
+ }
+ 
++static unsigned int __cppc_cpufreq_get_transition_delay_us(unsigned int cpu)
++{
++	unsigned int transition_latency_ns = cppc_get_transition_latency(cpu);
++
++	if (transition_latency_ns == CPUFREQ_ETERNAL)
++		return CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS / NSEC_PER_USEC;
++
++	return transition_latency_ns / NSEC_PER_USEC;
++}
++
+ /*
+  * The PCC subspace describes the rate at which platform can accept commands
+  * on the shared PCC channel (including READs which do not count towards freq
+@@ -330,12 +340,12 @@ static unsigned int cppc_cpufreq_get_tra
+ 			return 10000;
+ 		}
+ 	}
+-	return cppc_get_transition_latency(cpu) / NSEC_PER_USEC;
++	return __cppc_cpufreq_get_transition_delay_us(cpu);
+ }
+ #else
+ static unsigned int cppc_cpufreq_get_transition_delay_us(unsigned int cpu)
+ {
+-	return cppc_get_transition_latency(cpu) / NSEC_PER_USEC;
++	return __cppc_cpufreq_get_transition_delay_us(cpu);
+ }
+ #endif
+ 
 
 
-Thanks,
-Mauro
+
 
