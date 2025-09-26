@@ -1,126 +1,104 @@
-Return-Path: <linux-kernel+bounces-834656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E026BA531F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB29BA5340
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23F7F3A2055
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FED83B111C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBA22882D7;
-	Fri, 26 Sep 2025 21:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED12A28D8D1;
+	Fri, 26 Sep 2025 21:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raschen.org header.i=@raschen.org header.b="fxsxgWS+"
-Received: from www642.your-server.de (www642.your-server.de [188.40.219.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ak/qavcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A2F25B1D2;
-	Fri, 26 Sep 2025 21:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.219.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539E128D8F4;
+	Fri, 26 Sep 2025 21:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758921911; cv=none; b=cFrkok3PfgmVoCSZfiJK9lINa6TX0IKbdhN8TD3xKABjUJRd9LoiYqkV602jP0kMhMLmyOPHWQVMhi9pHY1Kf4axxZiDxd68jozXDVapNGKXVzePbKalWJjZWhDcMMQF6s+2bZe022s6N4YY72BpjtsDwIBQjdRI8f/uBhftYyA=
+	t=1758921994; cv=none; b=CnpugY3PjNzetwxheAbaMI5xYsXjnWf8EvaSc+dLqErPOmSGWW2ztiRhmh7QhQZixTIw4natAvWBAAm3AbHte+W5KZgKzKlRsDNy1FiaQ/WAnBgsY4fwzJ33YPKf7ee14DTFnR8VvRMsuXBI0i6cbepONLDq9ElrYAlxdeEWAWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758921911; c=relaxed/simple;
-	bh=NaC5X2sjyaQPvL0sqQiYAeiwSLLySje4ucMrNBhjjAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iLxUCDpnMcySdXL4iImyzXEryEqBfRXEc9qzQo8XqNaQcd1kRd5QUPmCUX0JikmKMG8pfy8vaYdJZJHltJq5CUdSxMdPakgd4Xl2rVnPh7PY5LeerVUtgU+/ROoC9qLRjjPU7foVjn/jkU3F/0Fl1khiu9VWMhUHXKXwBDmES20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=raschen.org; spf=pass smtp.mailfrom=raschen.org; dkim=pass (2048-bit key) header.d=raschen.org header.i=@raschen.org header.b=fxsxgWS+; arc=none smtp.client-ip=188.40.219.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=raschen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raschen.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=raschen.org
-	; s=default2505; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=aSqYwTLw1PpD56Mn6MF5VwYFO4u7LDcD1H8dhtrmyBU=; b=fxsxgWS+EZ1P3Y+FJ6pgurO7O/
-	7dEplyh6+mvlOjUUkkPd1HxiY+tQL0WlUh3/heVMf1jnGI5PQlOz+W0W7MyPzZnigg4AZRhI2f2y7
-	7m1OGO3QgdNPi3+I2/4b93Ydfd8/EcnCzyw2QUBnugfnWeoYtqGMymZ1IgZZhOqUrlUlveCE57NYP
-	GVrK4cGAiYSf91NfGefw/3KCkV68Bc7YFPUxR7OMs6P1tCZ0BAZODeiZKcoiaQWXF9FA82NoelTom
-	WR6VzHTOtQYJnqzUsQnT7wrSgtqHOu3vz9PFSriIet6sQbxt4cN1IefydpeIVvEXe+OcnOw5/fFlK
-	7aeFu1yQ==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www642.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <josef@raschen.org>)
-	id 1v2Fw1-0000df-24;
-	Fri, 26 Sep 2025 23:24:57 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <josef@raschen.org>)
-	id 1v2Fw1-000MT6-2L;
-	Fri, 26 Sep 2025 23:24:57 +0200
-Message-ID: <6ac94be0-5017-49cd-baa3-cea959fa1e0d@raschen.org>
-Date: Fri, 26 Sep 2025 23:24:56 +0200
+	s=arc-20240116; t=1758921994; c=relaxed/simple;
+	bh=IoZKsPrcS7krE4hjJ+t9Lyy0kyIowgRVUJ+7yyEDQ34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHh2aGlNBwDZTM8uJnt1f+D2lcNikZrUvmzahDlJNOehm+y1h7OS+CpCtluzrQCQssxShfeENkYMn5tvzAUnYaEFIAL0EhZjJ0YT3QXp9++8UAiqHFb2+ZqmifTjyXxZRHw8Pv8lr3UT2KN7SDwPFz/1J0WLo21pCCeeklBkYQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ak/qavcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C8FC4CEF8;
+	Fri, 26 Sep 2025 21:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758921993;
+	bh=IoZKsPrcS7krE4hjJ+t9Lyy0kyIowgRVUJ+7yyEDQ34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ak/qavcgVqOI1gOpq0ZPpnm6Hc8AQ9nswgpvYE+gayELkYTvfr8BQAO876OoRnsnL
+	 M+R1YM5WkN8/fbV14000pmbN67Yo8hZDalgKMjaTHuAmMi+1BAkc81b9uxO7zLGoQQ
+	 NQ+sbYsS2Eou2/Fat1p0C/YDEMJmSVA7+dq6WRWjiUY2y4JYZmbhhJ5a2h6SWeDCCL
+	 Qk+lneolh9Un2oz1qNXD2qdHI5dZbOFd6RMeqc/pznobKZoVMrTvtRd4yeMm+m/bHX
+	 3pXs7f07tl/eY31n/Pl+N+1egPAbJSvTdGTLfAXtON0NYTekBhTbl8KTQ6OS2I3Ex1
+	 CGePosTC04UqQ==
+Date: Fri, 26 Sep 2025 14:25:14 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/8] crypto/sha3: Use lib/crypto/sha3
+Message-ID: <20250926212514.GD2163@sol>
+References: <20250926141959.1272455-1-dhowells@redhat.com>
+ <20250926141959.1272455-7-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: phy: microchip_t1: LAN887X: Fix device init issues.
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Arun Ramadoss <arun.ramadoss@microchip.com>,
- UNGLinuxDriver@microchip.com, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Josef Raschen <josef@raschen.org>
-References: <20250925205231.67764-1-josef@raschen.org>
- <3e2ea3a1-6c5e-4427-9b23-2c07da09088d@lunn.ch>
-Content-Language: en-US
-From: Josef Raschen <josef@raschen.org>
-In-Reply-To: <3e2ea3a1-6c5e-4427-9b23-2c07da09088d@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: Clear (ClamAV 1.0.9/27774/Fri Sep 26 10:27:36 2025)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926141959.1272455-7-dhowells@redhat.com>
 
-Hello Andrew,
-
-Thanks for your feedback.
-
-On 9/26/25 00:00, Andrew Lunn wrote:
-> On Thu, Sep 25, 2025 at 10:52:22PM +0200, Josef Raschen wrote:
->> Currently, for a LAN8870 phy, before link up, a call to ethtool to set
->> master-slave fails with 'operation not supported'. Reason: speed, duplex
->> and master/slave are not properly initialized.
->>
->> This change sets proper initial states for speed and duplex and publishes
->> master-slave states. A default link up for speed 1000, full duplex and
->> slave mode then works without having to call ethtool.
+On Fri, Sep 26, 2025 at 03:19:49PM +0100, David Howells wrote:
+> Switch crypto/sha3_generic.c to use lib/crypto/sha3.  Note that this makes
+> use of the internal general API rather implementing a separate set of
+> init/update/finup handlers for each algorithm.
 > 
-> Hi Josef
-> 
-> What you are missing from the commit message is an explanation why the
-> LAN8870 is special, it needs to do something no other PHY does. Is
-> there something broken with this PHY? Some register not following
-> 802.3?
-> 
->      Andrew
-> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Eric Biggers <ebiggers@kernel.org>
+> cc: Jason A. Donenfeld <Jason@zx2c4.com>
+> cc: Ard Biesheuvel <ardb@kernel.org>
+> cc: Herbert Xu <herbert@gondor.apana.org.au>
+> cc: Stephan Mueller <smueller@chronox.de>
+> cc: linux-crypto@vger.kernel.org
 > ---
-> pw-bot: cr
-> 
+>  Documentation/crypto/sha3.rst    |   8 +-
+>  arch/arm64/crypto/sha3-ce-glue.c |  25 ++--
+>  crypto/sha3_generic.c            | 201 +++----------------------------
+>  include/crypto/sha3.h            |   6 +-
+>  lib/crypto/sha3.c                |  35 +++---
+>  5 files changed, 52 insertions(+), 223 deletions(-)
 
-Special about the LAN8870 might be that it is a dual speed T1 phy.
-As most other T1 pyhs have only one possible configuration the unknown
-speed configuration was not a problem so far. But here, when
-calling link up without manually setting the speed before, it seems to
-pick speed 100 in phy_sanitize_settings(). I assume that this is not the
-desired behavior?
+What's worked well for the other algorithms is to do things in this
+order:
 
-The second problem is that ethtool initially does not allow to set
-master-slave at all. You first have to call ethtool without the
-master-slave argument, then again with it. This is fixed by reading
-the master slave configuration from the device which seems to be missing
-in the .config_init and .config_aneg functions. I took this solution 
-from net/phy/dp83tg720.c.
+    1. Move the arch-specific implementations into lib/crypto/,
+       making them available via the library API and temporarily
+       removing them from the crypto_shash API.  One patch per arch.
 
-Regards,
-Josef
+    2. Replace crypto/${alg}_generic.c with crypto/${alg}.c that is
+       built directly on the library API.  The algorithms are called
+       "*-lib" instead of "*-generic", and they don't use the
+       crypto_shash generic partial block handling.
+
+Again, if you don't want to do all that, I'd be glad to do it.  I'd be a
+bit hesitant to take this patch instead, as it sort of starts out going
+in a different direction.  So it would create a temporary situation, and
+we'd need to make sure that temporary situation works.  (FWIW, this
+patch breaks the build of sha3-ce-glue.c, so that's not a great start.)
+
+- Eric
 
