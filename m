@@ -1,123 +1,232 @@
-Return-Path: <linux-kernel+bounces-834074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE945BA3C44
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9411BA3C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC7A2A1D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6217188AA5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E42F60A1;
-	Fri, 26 Sep 2025 13:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D119F2F5A3D;
+	Fri, 26 Sep 2025 13:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXcK1nDI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dDBnNVCv"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19512512D7;
-	Fri, 26 Sep 2025 13:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136E2512D7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892190; cv=none; b=W2lVuqa2qd4ua1z3+Ty0D3gIaZxJRYUmnFP037SWIRa2aqLQt4l3BB556c3V5XWp28Of6AAnUt8maLt+YlCV7zRPckOPxZ34JjwWn98n+NlTQw5uMOGHrh5S2hTnDwieUbxl4phePhs2bA0h7LftkkcMnGG9BoEy2rihv2KX03w=
+	t=1758892238; cv=none; b=aAtxSXpA4iay2ZuGpx6pLzy+KYNCEj3AWSYJN/TQOjmhK0UtEe8AXydayPlwwp8V2hwStTnp7LQSjeoGTr60VDybVlUGrzlC8ix45SzkqREcKbowdb/RiWoTs7bE7zbfTuvwVt/l//SThW2XyJJ7D+Lstp9DXAUvYNu6ZSUIamI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892190; c=relaxed/simple;
-	bh=mwabqBGG6iWvuFZvZoI0mQPGdSAIVB5imUltnMh99k8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=NhQqm+X9/z3AE+AAtlowoklkxjnR7cFeeZp9KOgDWTuExnUxi2/AbsEKJJEKi1vKnt7ecAg8NW4aDl9OaH1SYMeessDoa+GadEA+iCXojb/O3RWN0NaLIEHTrmiIF1lZIbRnOtJ35qhdJg/iKWxZuILcDloOOiJj8w9ZggUKLOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXcK1nDI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4EAC4CEF4;
-	Fri, 26 Sep 2025 13:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758892189;
-	bh=mwabqBGG6iWvuFZvZoI0mQPGdSAIVB5imUltnMh99k8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=KXcK1nDI5gb72U8fmIArJ4u6fgmjbXHQgW4d7jdB21V2HOosIgdJca9dXxb5ovUqB
-	 vSB/f5oMqM2MkMgBH4u4f6J+MfTPiQ01bSIoWumjDXwIie7zKfxpiA6h7CCoLRoVXm
-	 By1bPcC1Wvby+9xkjppyFL/zZsBffbGM/ev4PclVMzgv6FsmXodeP1xBdvNhWSzjOQ
-	 w0Ino0XlmFt/ddQtpdXNLw+T+W7v01dIp6RnGjcPbAx40r/E1QKC1m6uAdNHoDs2ZG
-	 ZxnvC2s1KzcEXWmkbMatm0AC0HrRxUACYK4Co6XIQ8HTvQL4Yaf9FQHv2rg8eL6RKh
-	 i/wOqKQ+nHyFw==
-Date: Fri, 26 Sep 2025 08:09:47 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758892238; c=relaxed/simple;
+	bh=jgH4dTS+vRh3FfWibIxLSPRJHe6hE8/f0y1+VSoVbvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lMD8C/fvIbDUkMaql481MeEvMYw+eOFwU6VvIVryiX12kwHgdrDR2b/1KJ/xbm8We7DepRP2xOelB66/zUL6iNqU6OIMVqXNCVW7tEe9wCgwk20wBlsk/dNkEtykQf2bAUmuVa1sNI+AFx2gY08whuU2NZXDuFkDJtbSNDOz/RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dDBnNVCv; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6089a139396so1466698d50.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:10:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758892235; x=1759497035; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XGNz+4Fqnv88lNTVrhwM/5oRrCCXevKa00uId3Ku9w=;
+        b=dDBnNVCvmLu+xQjX0T5/vW408AErLhg3maQMC8XyQV7ZnCA54GpcAgq4KBr2H9wT5B
+         jLbepO4pbQyYLwpiwWkcr3q+vjUr5PtIl0pqCMwmn6Vgljg5wYLea7cOCrmIeLnWhC/d
+         t5xjDvbNILh8twlRAcBpyQnYqw0BJkCRBX/QgrIyS0wuubw2fGlshWApGi59GzAY5+VJ
+         fmx7Fu90sM8zGfU9UjBcRcVvhJ/lCLZCtk7jdtB0Y6FPfD1qS0aaOBrPoH08yX3tEkKG
+         XpYGJ91XeIycWvIvTn2LnIP/yoGv694dLEtLG+aG7a9XOrEBx4qPGw//QBdSeYCeN1i2
+         zc7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758892235; x=1759497035;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0XGNz+4Fqnv88lNTVrhwM/5oRrCCXevKa00uId3Ku9w=;
+        b=tBHZBLO63fVpmLGFskY4sGTtxZ0vtiyyOwnE26jYQjPNN4div7TCNgrUwexTAQfE/I
+         89QNrOWNoTC+iies91wxbjYUZDwGgw1nUXREaGYBim9v+z2Igdq3vcBVvA+H7loE3EkL
+         VSwNFVAofs+Inl8jbCg+SBebTwV2iowEIlXQozKIcqju7jclPZhktm14KZ+tJWIAVbjJ
+         95cqwP0omYgA7Uv6bVuWAlXtyx3KibCpDhsaCuGNYsvWbUc2sqMXBqFbEdrMJhBnWu8E
+         Nd7FaFZ0l2m+4Bvt9PMNlIMN/icXBM6e059UOsy2a3HfeuKrw1jUnP92WFIXBx0mPBNl
+         9Arg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjs3bDnUMi+TOxEImfc7kor8ih++FzcV2bQVJojHTNODcWDfW3PZzbDN/xd/1cw6TCTypDDzD5kvqjEDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4OUVNfdiTKNGgJ83FOPwyi+aZjBSWnuyDOqsgAZb7j6h71V0L
+	ZeR3ARsfZa6VTy+xaYD6UGNmJRXhCrqccYWnB9/B7yPrNreCA8nJ5WORzfPOeIKLfuPEZ5Iiexx
+	9FqqAgV2kH3ewzCkNsFJAbzo3DTdZug9KOK8VcqKB0w==
+X-Gm-Gg: ASbGncsCn33AMmh1a8bFl66W9EtxM3i24UZ5y8gLnIt9FsroU21PVSMB9G2TtlniNnW
+	lVRSq5b/YslrdOyOC4xKYz3B/a8qVhRLYkXETfbhD7OizWPSQe78ptqhiR4rU4obiMersrZ/kEg
+	YeGRkI11/2ovfA16kBau9g5slAISfxq/SLCW/dRDI3qJVmr/EQFCbrGt9/xw9nOEpyVk14PvV68
+	JFEBMME
+X-Google-Smtp-Source: AGHT+IGkqYXp9xR/yu8qAOW0Ibc73J9HH3IrW9JdTv/K6ifqOoFYIjqgN5XEKcNLk7Um94uIi+Xl8oWs/TUkJrI/aIw=
+X-Received: by 2002:a05:690e:2501:10b0:636:20c2:8eaf with SMTP id
+ 956f58d0204a3-63620c2900bmr4822233d50.20.1758892235087; Fri, 26 Sep 2025
+ 06:10:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Ryder Lee <ryder.lee@mediatek.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pci@vger.kernel.org, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- upstream@airoha.com, Jianjun Wang <jianjun.wang@mediatek.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20250925162332.9794-3-ansuelsmth@gmail.com>
-References: <20250925162332.9794-1-ansuelsmth@gmail.com>
- <20250925162332.9794-3-ansuelsmth@gmail.com>
-Message-Id: <175889218783.498491.9868084189301535953.robh@kernel.org>
-Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: mediatek: Convert to YAML
- schema
+References: <20250926024847.45814-1-michael@allwinnertech.com>
+In-Reply-To: <20250926024847.45814-1-michael@allwinnertech.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 26 Sep 2025 15:09:59 +0200
+X-Gm-Features: AS18NWBkn1WQu-sLTFC661ef84KqnjlKinVpbCKO_kBrhPqD4rS5YFEx5E8rC9g
+Message-ID: <CAPDyKFpdYhp5Go7_gSh=A0q3kxHs_gcBsUi6wc8sMs5bZW2JFA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
+To: Michael Wu <michael@allwinnertech.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, adrian.hunter@intel.com, 
+	avri.altman@wdc.com, wsa+renesas@sang-engineering.com, 
+	andy-ld.lu@mediatek.com, victor.shih@genesyslogic.com.tw, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 26 Sept 2025 at 04:49, Michael Wu <michael@allwinnertech.com> wrote:
+>
+> During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
+> uses cancel_delayed_work_sync(). This can block indefinitely if the work
+> queue is stuck, causing the system to hang during shutdown.
 
-On Thu, 25 Sep 2025 18:23:16 +0200, Christian Marangi wrote:
-> Convert the PCI mediatek Documentation to YAML schema to enable
-> validation of the supported GEN1/2 Mediatek PCIe controller.
-> 
-> While converting, lots of cleanup were done from the .txt with better
-> specifying what is supported by the various PCIe controller variant and
-> drop of redundant info that are part of the standard PCIe Host Bridge
-> schema.
-> 
-> To reduce schema complexity the .txt is split in 2 YAML, one for
-> mt7623/mt2701 and the other for every other compatible.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Why, more exactly, is it stuck?
+
+I looked at the trace below, it looks like we are failing to remove an
+SDIO card, why?
+
+>
+> This patch introduces a new function __mmc_stop_host_no_sync() that skips
+> the synchronous work cancellation, preventing potential shutdown hangs.
+> The function is used in mmc_bus_shutdown() where blocking is not
+> acceptable during system shutdown.
+
+This isn't the only thing that can block in mmc_bus_shutdown().
+
+With this change, I am worried that we may execute the
+power-off-notifications to an eMMC/SD card, when it's not safe to do
+so. But perhaps there is no other way?
+
+Kind regards
+Uffe
+
+>
+> Changes:
+> - Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_sync()
+> - Update mmc_bus_shutdown() to use the new non-blocking function
+> - Keep the original __mmc_stop_host() unchanged for normal operation
+>
+> This ensures graceful system shutdown while maintaining existing
+> functionality for regular MMC host operations.
+>
+> stack information when an error occurs:
+> INFO: task init:1 blocked for more than 720 seconds.
+>       Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:init            state:D stack:    0 pid:    1 ppid:     0 flags:0x04000008
+> Call trace:
+>  __switch_to+0x234/0x470
+>  __schedule+0x694/0xb8c
+>  schedule+0x150/0x254
+>  schedule_timeout+0x48/0x138
+>  wait_for_common+0x144/0x308
+>  __flush_work+0x3d8/0x508
+>  __cancel_work_timer+0x120/0x2e8
+>  mmc_bus_shutdown+0x90/0x158
+>  device_shutdown+0x204/0x434
+>  kernel_restart+0x54/0x220
+>  kernel_restart+0x0/0x220
+>  invoke_syscall+0x60/0x150
+>  el0_svc_common+0xb8/0xf8
+>  do_el0_svc+0x28/0x98
+>  el0_svc+0x24/0x84
+>  el0t_64_sync_handler+0x88/0xec
+>  el0t_64_sync+0x1b8/0x1bc
+> INFO: task kworker/1:1:73 blocked for more than 721 seconds.
+>       Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/1:1     state:D stack:    0 pid:   73 ppid:     2 flags:0x00000008
+> Workqueue: events_freezable mmc_rescan.cfi_jt
+> Call trace:
+>  __switch_to+0x234/0x470
+>  __schedule+0x694/0xb8c
+>  schedule+0x150/0x254
+>  schedule_preempt_disabled+0x2c/0x4c
+>  __mutex_lock+0x360/0xb00
+>  __mutex_lock_slowpath+0x18/0x28
+>  mutex_lock+0x48/0x12c
+>  device_del+0x48/0x8d0
+>  mmc_remove_card+0x128/0x158
+>  mmc_sdio_remove+0x190/0x1ac
+>  mmc_sdio_detect+0x7c/0x118
+>  mmc_rescan+0xe8/0x42c
+>  process_one_work+0x248/0x55c
+>  worker_thread+0x3b0/0x740
+>  kthread+0x168/0x1dc
+>  ret_from_fork+0x10/0x20
+>
+> Signed-off-by: Michael Wu <michael@allwinnertech.com>
 > ---
->  .../bindings/pci/mediatek-pcie-mt7623.yaml    | 173 ++++++++
->  .../devicetree/bindings/pci/mediatek-pcie.txt | 289 -------------
->  .../bindings/pci/mediatek-pcie.yaml           | 404 ++++++++++++++++++
->  3 files changed, 577 insertions(+), 289 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.example.dtb: syscon@1a000000 (mediatek,mt7623-hifsys): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt7623-hifsys', 'mediatek,mt2701-hifsys', 'syscon'] is too long
-	'mediatek,mt7623-hifsys' is not one of ['mediatek,mt2701-hifsys', 'mediatek,mt7622-hifsys']
-	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt2701-hifsys.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250925162332.9794-3-ansuelsmth@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>  drivers/mmc/core/bus.c  |  2 +-
+>  drivers/mmc/core/core.c | 14 ++++++++++++++
+>  drivers/mmc/core/core.h |  1 +
+>  3 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
+> index 1cf64e0952fbe..6ff6fcb4c6f27 100644
+> --- a/drivers/mmc/core/bus.c
+> +++ b/drivers/mmc/core/bus.c
+> @@ -149,7 +149,7 @@ static void mmc_bus_shutdown(struct device *dev)
+>         if (dev->driver && drv->shutdown)
+>                 drv->shutdown(card);
+>
+> -       __mmc_stop_host(host);
+> +       __mmc_stop_host_no_sync(host);
+>
+>         if (host->bus_ops->shutdown) {
+>                 ret = host->bus_ops->shutdown(host);
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index a0e2dce704343..2d75ad26f84a9 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -2336,6 +2336,20 @@ void __mmc_stop_host(struct mmc_host *host)
+>         cancel_delayed_work_sync(&host->detect);
+>  }
+>
+> +void __mmc_stop_host_no_sync(struct mmc_host *host)
+> +{
+> +       if (host->rescan_disable)
+> +               return;
+> +
+> +       if (host->slot.cd_irq >= 0) {
+> +               mmc_gpio_set_cd_wake(host, false);
+> +               disable_irq(host->slot.cd_irq);
+> +       }
+> +
+> +       host->rescan_disable = 1;
+> +       /* Skip cancel_delayed_work_sync to avoid potential blocking */
+> +}
+> +
+>  void mmc_stop_host(struct mmc_host *host)
+>  {
+>         __mmc_stop_host(host);
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 622085cd766f9..eb59a61717357 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -71,6 +71,7 @@ static inline void mmc_delay(unsigned int ms)
+>  void mmc_rescan(struct work_struct *work);
+>  void mmc_start_host(struct mmc_host *host);
+>  void __mmc_stop_host(struct mmc_host *host);
+> +void __mmc_stop_host_no_sync(struct mmc_host *host);
+>  void mmc_stop_host(struct mmc_host *host);
+>
+>  void _mmc_detect_change(struct mmc_host *host, unsigned long delay,
+> --
+> 2.29.0
+>
 
