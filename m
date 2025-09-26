@@ -1,221 +1,175 @@
-Return-Path: <linux-kernel+bounces-834532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0794EBA4E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:22:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89E5BA4E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56B467AFB45
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF88561E80
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363843090EC;
-	Fri, 26 Sep 2025 18:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1D630C63C;
+	Fri, 26 Sep 2025 18:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r0h8RjIt"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010052.outbound.protection.outlook.com [52.101.46.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQFPgJpx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7D62750F3;
-	Fri, 26 Sep 2025 18:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758910958; cv=fail; b=oV8BWO/hw/2CpLNbb9IfBn+4X9LN4JTCCCQbO9q1YTlOBl9/BHwuudvOTEJXlhGzFvtdektKURhi0u42+XtbdYaPfs/ReK7Hpkj3QoBNB22qzE2aI1tEXZ/Go0to09MImdDcWvIFPaHDLRlUTVZasv+jXCwUCWhQltDP/o1L84g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758910958; c=relaxed/simple;
-	bh=CBLKjGQt1MLi7znstafxLwZeNwDDgNSzLtWWnO9nzds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=g4sNqRrE3TuVSkXSOzs/3/rPBrYVeRjPUxFAapEmlr+rLhpG22nRuqVfooVlMAZgtRS9dE8+F4BNOwvGBabTV2JSr7/U2oYcnnv1GHSId3PawRl67J7cIR6vHqt0LwHIy84zBk0FpR3bnn3cm7sASs02VyktgwyERf8CowHC1fo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r0h8RjIt; arc=fail smtp.client-ip=52.101.46.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JLsAGhAyyJOO0zEGYq7ExHpWseYg6M50Ni+i4+002Hmlx1mU3bX8urr6IlIbL+sbAiBHTvx6OdweyQvJ3MrJrAb6QM9zAyM9OAM3+5zH3wGrIZRAOxOg2UvvcLn3Yr1ohSF+doj1un7AyWesCcBgqm0OnOiTXY2McCd949Rlh9cJFSxSOq7iODdhx+LKKfB0gGMSc+q9I2XhlM8xgtkg0mhzmiAUx5WV3ZNCRz4VP7XIYWCtZuQJ3MqFRrrm3721XcAEY+B2Xnwez8NRV+qeqdScPBoS6mJXKXwabuu6UAAAOon5e1vCzGREyQBO+7PJYCkUVJkCJk/usHH46DNcqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qDyA51NNno3Svvf6zA24UoDA9c7ReSHO5u6Gcqv5chg=;
- b=JrxW5e+m+XzL95yOnMFSYwz6Zfivr0fdMK6/b2UEb+rynSvdZa36OyMAjEtRAWPcOj9/ed16OOC4Jm83CNCu/Sen6NKZ2XN7b0HGsMvUX+ruUwYDL04byJ1PmMmog/cE026cqhSlu0e7I9lqrWVYnRDfszbvWFTR0oeHRPVK0FkxDELMvpboxJD227KjRJlgnea6/Roey9cZTsslxLfkayoeW6IZ4to/si27dKGQxOSDF/Bz0oSPFehvo4Vw1IHUnvkPZxNiYDyIKcId9RfCJc2dI/Sh7YUMPd19G1DdCGumitaRVJUfGJsWigxaM+jGn+HTHSQwObKflq6XNgHvHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qDyA51NNno3Svvf6zA24UoDA9c7ReSHO5u6Gcqv5chg=;
- b=r0h8RjItOizYiPjdBCtcb0w3DXYQRfbjIehPQVOHIyVGG98CZJFVwgADPqNFs3QdLJY9cS1kp5T1MMPuBC2Zakt+hexCDR0ewB/OHZB3nQRBY6mgwkaFSTddeESsgY2WzJUj3KF4TBgiDqdVplugFL+v6jpUq7yEPLAqNKsVRj8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9; Fri, 26 Sep 2025 18:22:34 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9137.018; Fri, 26 Sep 2025
- 18:22:34 +0000
-Date: Fri, 26 Sep 2025 20:22:29 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 05/11] cxl/region: Add @range argument to function
- cxl_calc_interleave_pos()
-Message-ID: <aNbZ5SgeOAJUhTR0@rric.localdomain>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-6-rrichter@amd.com>
- <aNMWhG5Ftu8ETYwk@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNMWhG5Ftu8ETYwk@aschofie-mobl2.lan>
-X-ClientProxiedBy: FR4P281CA0225.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e4::17) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A15B2FFDDC
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758911045; cv=none; b=LkkKRNAA4J/HfGnxAnlA8Fcb/ggKNfBAyZlk4lu6I1HuaTQLb5hDyRc3LFk1TmxwvBYUK/CldJrf3pBHH1o3bTdnwI+rl2aDWuelDH24wCPo43G//78J7YgE/wNUrSyBO8Wcls1kpJU4T1Qy9POIuxgXztIx+VXD3aBaEDhxpnY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758911045; c=relaxed/simple;
+	bh=9j6mK8FZFeUuRCm5ZOvz1DgkZxPq6hvgFrBjNRNB14E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nSxhZok6COI7jf8WEFejawK5wwYPpZ86dvwpVYO+AkP1xJ3o/NM3hCVojR8uFRf+3QBWLTkR/p9MO0FadsU5l0sHD7o5B7sGwJCfo3SoXwAEHALHS/OtPr4HXCcOlTuboF93VreJSLK97SRB2MX3swG5yt6TPSsEPDbe4yUeeVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQFPgJpx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 979F4C4CEF5
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758911044;
+	bh=9j6mK8FZFeUuRCm5ZOvz1DgkZxPq6hvgFrBjNRNB14E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BQFPgJpxPOJODv3Xee+xT7Rs3u0PfBsqnWbEumb5zZ3xdwANczkd4FExzh75C/1dG
+	 zoTTclimXzkL2MNb+3q1QbkhaAOk2kQiRP7es/Diodek60uBnM43aoNqNyAxT9T3gr
+	 smRqUJmZb4ciokuTXmvGfKB7BwNVZYMs2ryXikTOA3EqHllnlF9TbmNssrgNavzAUf
+	 d1bC385YSV8k73OF8TeYsPwiReGyVdmM6+3viYceuAZOry3GSdnqs532xhvziO6VLK
+	 xDtE+MOc9aNcfGrhJ5ZfV8kTLIZ9F3Z8IkgRlWK6jzPFcJ4S+sl2fEA8/nHa6drq5b
+	 OmyPZQNKVof4g==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30ccea8a199so2055967fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:24:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXduvKsjLJEG47E8HsdcJgOzH3RK61jZAc5HUfDcopYiOl7bbwPz7HmWzUvMVkRt0zCAmRv1EpLWKHbbM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz0Cib9CQoPZW9akA7VhF4GPAzwPtGAfHzHwVXyj0SIgLcBXnJ
+	Dn9psbr3bTeesG1ff9ls8VbXYOI/KoQCAm/vaZsY2izllol2DvgJeUp2xDHhq2iufxuguQo2H/I
+	xR4p7/KULDwt8LjZHgonGMCDu6a8fCJE=
+X-Google-Smtp-Source: AGHT+IFHmZiOIDgSSMHpIB312kAThjnMD4yPG9dBopbbEpQcDVj+Z5hduxWMlKK1Krru7E7A5can3wvIOP+MsO+XVq0=
+X-Received: by 2002:a05:6870:819c:b0:36e:f8c2:7454 with SMTP id
+ 586e51a60fabf-36ef90ecd76mr1757096fac.37.1758911043746; Fri, 26 Sep 2025
+ 11:24:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DS7PR12MB8252:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4f02ae4-b78f-4d2c-0077-08ddfd29a9d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CFznXPjbgk8hESACVbj8tPqU/MLHf9d8mzczRPtHAYkqyn3hzZDPVWYko+0A?=
- =?us-ascii?Q?K8RZLwW8DvsD22qUsH2BuEkE45C+uV0BClPptyCKgIpaj/kQqGVVHBr44/A5?=
- =?us-ascii?Q?uLdUgWVohs33waiGW8s4ZlUXmPg66Wx+zvuACFcSB6owDG7QkWQVhaS0eUO1?=
- =?us-ascii?Q?NpRCUB+jXEFZKB1QznpMjUJ57avTwx+8AFJ3CT44RlUk0tsODggtxS3Tvle6?=
- =?us-ascii?Q?z3D1/HkvtTBKXvKxZ4aePBBnhRCLNljcYTXgHwhUixpEJPd3lQk+aOv9X8v2?=
- =?us-ascii?Q?oyGIKAmOBbwpGaFXVQafiO4jkNCe9DS4y87eWuM36d0ejRyq1h+SqrcEkR3h?=
- =?us-ascii?Q?xAgWyqTdiPess+XurXHqLPMEH0PL/qwvLnP/IycuOan0Cn5Jq+CRWe8q4M3r?=
- =?us-ascii?Q?Yj6OgK2EJv54mrlhCHYk/I6xtkgA13PJNNXN28Kz0h37VHceQQAVqiMzFtU/?=
- =?us-ascii?Q?qoJR/lEamgHEpzKyKHfw+YWDH7eY66a9mpVQmqjKDSzu3dZmLK1K120T7vFr?=
- =?us-ascii?Q?Lut0OigcRBxNmnhygYkVJ588vC/DJkDB+RG6OPPtLU5Qhf7AOxXwUxrZhT5f?=
- =?us-ascii?Q?HJ0vVZmPAbTfCDXRJeZE2ISjW9QaD8FtuX157q7dC10hW7mPTTarKu4Rhv1k?=
- =?us-ascii?Q?kBCr05kCCRdn6UmQscpt1eHcZJ7O+dUlaeXzo+0ch936k/FVyA4BjEYrQ1dX?=
- =?us-ascii?Q?PIc+8ieUIFzOzK90Qj+U35l/AsuTzNv4ppCXo5GCqFznK5s4wZk8/wLWVocY?=
- =?us-ascii?Q?lOFgNp3Lsjkb9q84konyL3lDz/9dGQmjcP6xNFxJEg/bI6jXmYBs3czCg11u?=
- =?us-ascii?Q?0ES0eLYJZujdQZz2A7JEgiz9QCDfAKzO3JO3NmmoFHuJqqU1FFqh8563RViD?=
- =?us-ascii?Q?4eqE7wbgCTb7IwFvNd2YqWbbVqqlX51C93FhXbjS5EmW36iKkvH+jEG89Ob6?=
- =?us-ascii?Q?tmj2Y55jqcu7i9pBYXxvzJpYFDnsmFGFsT6HzFW/jb/iRJP+UDadHQ9eYX77?=
- =?us-ascii?Q?JOlbhZu3PIwE3bK+ep6YGecg1ddFmZ/UJUdGK7bWQA2pQ9uBoiXNf5JVjE9l?=
- =?us-ascii?Q?3kxhCT2N4L90497K4eWZtles8pSk3ZSToLWN1Wi+JawaqFIfY/AIbnv57koj?=
- =?us-ascii?Q?SnOlvjWU0KtYFQRNl+AcKcAXTKCZpggepRTGB94osP9YlvZhJCX42cngQ0Oc?=
- =?us-ascii?Q?MUFI9I97NbHS5QoXrMlWlLR031rWv1j22BPOAXRvMp0rTq4DLZk6gDjmaCuk?=
- =?us-ascii?Q?VLzC//qGo7Dhmc6tlotKogRFUEVuJ4MQYPmXYbL9CkpMRWiT4z/ED5aSK8Vh?=
- =?us-ascii?Q?EKfliF+j4KgN3QoTUcDVa7GNll34K7bU1glZQfTU9eWw/pr1vySai+Thngzj?=
- =?us-ascii?Q?yUCuP3i3Y4L9BS5vE1YpjIp2CGeiEm4BjWoKyfZIihOnDvu2jnZX9h1dfmj+?=
- =?us-ascii?Q?/OZ+hS19/MhW9nW/c9RIamoYEMbd9XtF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8iZFSlAAgJDBwcHN8uanxy4fpWHPfXsHPYZ2cYMLu14LB5YC5527zj92ycBJ?=
- =?us-ascii?Q?TmBYHL2aa8xef0dIZBCuCyt+Y/oUbXpGt3K5oVKlMZdRotR7uTqH4g3ejGJ8?=
- =?us-ascii?Q?13Fve0CaD9AbyCxHpe+kqp9qxIFrlBqAVlLPmR5Q5PrGqHt5HJql5dSL/Icq?=
- =?us-ascii?Q?94Hv6dns3C471ai/ULsf/xdy3EecOIt0BUn7USBRUUmkBUKDAKnrtekhAsgC?=
- =?us-ascii?Q?/SoVCKOWfo9VeK7V3qQvzsPOA4blJw1F/OUWjGk2HFuvZL2yl6gmltezjgO2?=
- =?us-ascii?Q?lEUyXwhURvg2nafnJV5d53CpPiaptunDlAGUUcbf0m0OEMtNGES5LaIYg+4o?=
- =?us-ascii?Q?ZdJk1F1LaRCuwr1kM6t6D2qbwHA3WVI7a6BA0IGGndRp7QCMek42tZgrsjJ3?=
- =?us-ascii?Q?fNJH0/8QnLazQ3ayRx35GLWtyHnSJeOT/+66yw514jaubSt49BfaMnWjfGBx?=
- =?us-ascii?Q?2jmWPO2zeW7PO1nZ5F5StEdiHZDtl8bgh92KMRubilGoWcuMrvf95IJ93YyV?=
- =?us-ascii?Q?15ikOYqf2+8rnD2ceOHO2AFPM/R8ehu4CBCgXz//n9EnH82YEou//dgAor/m?=
- =?us-ascii?Q?oMTlaRV6yt8AiEBgR8rgWMq4QotkwvXkmipDN3l2+6FEnZJba+XUzaoGERk+?=
- =?us-ascii?Q?VHfg93h+7pPV97jzRFi9ra8boF8Vp/NQKM5WXQW93EiBD8ZqQhKPt+SAR4No?=
- =?us-ascii?Q?ug5B67OoA8GxKPtbLmPcbSJ+tRg7Lu2jYzRotCy6OAGFMhhgvqhJLM4l0TuC?=
- =?us-ascii?Q?MntvIxQ/6Tb5HGcCPdimsYbJLAfhl/koEFwaIXHjOWPXWeZl8bfTxYwDQehC?=
- =?us-ascii?Q?Dj8bEo7dfOlhd145YjPWVUzgqiCBGvxNBJrI5M8mF8vmVE/E7qD/iAHoh78J?=
- =?us-ascii?Q?c1LT8Ci0goPS9IhGJnBcewUWtsRfEi1iX12Ya1hvM8pXHYDlaRuE1D3PnmHQ?=
- =?us-ascii?Q?Yja9zmTggIv2mkVcoicGcHoVhen61a6mNr62J1p9cHO0eb6p2CgFKdvhBbWa?=
- =?us-ascii?Q?BhF9MkMq/sE1wv6dY5DZbH4M3zhi1gk6lLR/mRouvu8Et3z+W5XZC1LnLSNz?=
- =?us-ascii?Q?2ncqAzWwwrhzB1l69dyvfkhPhQp79MiSdfsdmkbSqsvtWVJBKvRiiYOs9fsv?=
- =?us-ascii?Q?OnupvehW8e5tCZwR09HpmW5qVEbY0q4Atk51uBJ1E21z4R/yQG4svUKhs3Ao?=
- =?us-ascii?Q?13KSmjjmqT4+I0KMQ3/mbKP+BbzS2t2nERZrBJlO+n15SS+uySqDHqYT6Gnc?=
- =?us-ascii?Q?EnZli5G2z4UJwdjlc/47UKpbeA4Qx0MSrJZJGqQ7cL4H8gAgIE1oOwoI9z1/?=
- =?us-ascii?Q?TmS7vovnNYa8odhfT1+zUbzuWUBqNFfQ3AYEzO7EbfpPCxqdJxcMED8q0ClV?=
- =?us-ascii?Q?rfUaGy4xAT7UTI2S6ozGhaTFSz+prNON5EvbVTDip41c81KF7pF5SZJ5KpFe?=
- =?us-ascii?Q?+/nBdm53nF83nwoRL44NVlM2e4Lnh+sexj/8zWfekMHJVXrPFJNDuNJYpLqy?=
- =?us-ascii?Q?+/AIQfXLcQiVjpJlrW7XYwxY9BrTBs8YAqOcBo3El0ETo8cltLK83jYv1+Az?=
- =?us-ascii?Q?48NQFz+3Trv6XLjmYAHbbDHeoeSo9A+Qeojw/l94?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4f02ae4-b78f-4d2c-0077-08ddfd29a9d6
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 18:22:34.3199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9eFxfZaNGXObHysb74zPBJfF6mgofB6c6RZ+q13FZbOjXZPcyISV0T9sTvfX6HaUPqXTJzEGnDH//LZXuEnwtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8252
+References: <5049058.31r3eYUQgx@rafael.j.wysocki> <2245131.irdbgypaU6@rafael.j.wysocki>
+ <20250926144947.00002f75@huawei.com> <CAJZ5v0gnqoJ8bALZT61ZvTA=chp8y5QBiA7ZpNQ6fFJuQzZUnA@mail.gmail.com>
+ <68d6d7dbd18b4_10520100c8@dwillia2-mobl4.notmuch>
+In-Reply-To: <68d6d7dbd18b4_10520100c8@dwillia2-mobl4.notmuch>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 26 Sep 2025 20:23:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gcr1z_J=b7z-Z22aSOUfubgHpTcYtag778CUQUO8H6OQ@mail.gmail.com>
+X-Gm-Features: AS18NWCQg1vTq06aFYsgxKOY8Nlswy9iDNeDFTht59FbvEtD8udM9-TMj4SOtz4
+Message-ID: <CAJZ5v0gcr1z_J=b7z-Z22aSOUfubgHpTcYtag778CUQUO8H6OQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] PCI/sysfs: Use PM runtime class macro for auto
+ cleanup in reset_method_store()
+To: dan.j.williams@intel.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PCI <linux-pci@vger.kernel.org>, Alex Williamson <alex.williamson@redhat.com>, 
+	Bjorn Helgaas <helgaas@kernel.org>, Takashi Iwai <tiwai@suse.de>, 
+	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23.09.25 14:52:04, Alison Schofield wrote:
-> On Fri, Sep 12, 2025 at 04:45:07PM +0200, Robert Richter wrote:
-> > cxl_calc_interleave_pos() uses the endpoint decoder's HPA range to
-> > determine its interleaving position. This requires the endpoint
-> > decoders to be an SPA, which is not the case for systems that need
-> > address translation.
-> > 
-> > Add a separate @range argument to function cxl_calc_interleave_pos()
-> > to specify the address range. Now it is possible to pass the SPA
-> > translated address range of an endpoint decoder to function
-> > cxl_calc_interleave_pos().
-> > 
-> > Patch is a prerequisite to implement address translation.
-> > 
-> > Signed-off-by: Robert Richter <rrichter@amd.com>
-> > ---
-> >  drivers/cxl/core/region.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> > index 8ccc171ac724..106692f1e310 100644
-> > --- a/drivers/cxl/core/region.c
-> > +++ b/drivers/cxl/core/region.c
-> > @@ -1844,11 +1844,11 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
-> >   * Return: position >= 0 on success
-> >   *	   -ENXIO on failure
-> >   */
-> > -static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
-> > +static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled,
-> > +				   struct range *range)
-> >  {
-> >  	struct cxl_port *iter, *port = cxled_to_port(cxled);
-> >  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> > -	struct range *range = &cxled->cxld.hpa_range;
-> >  	int parent_ways = 0, parent_pos = 0, pos = 0;
-> >  	int rc;
-> 
-> Will this work? Change the assignment rather than adding a parameter:
-> 
-> -       struct range *range = &cxled->cxld.hpa_range;
-> +       struct range *range = &cxled->cxld.region->hpa_range;
+On Fri, Sep 26, 2025 at 8:13=E2=80=AFPM <dan.j.williams@intel.com> wrote:
+>
+> Rafael J. Wysocki wrote:
+> > On Fri, Sep 26, 2025 at 3:49=E2=80=AFPM Jonathan Cameron
+> > <jonathan.cameron@huawei.com> wrote:
+> > >
+> > > On Fri, 19 Sep 2025 18:38:42 +0200
+> > > "Rafael J. Wysocki" <rafael@kernel.org> wrote:
+> > >
+> > > > From: Takashi Iwai <tiwai@suse.de>
+> > > >
+> > > > The newly introduced class macro can simplify the code.
+> > > >
+> > > > Also, add the proper error handling for the PM runtime get.
+> > > >
+> > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > > [ rjw: Adjust subject and error handling ]
+> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > ---
+> > > >  drivers/pci/pci-sysfs.c |    5 +++--
+> > > >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > > >
+> > > > --- a/drivers/pci/pci-sysfs.c
+> > > > +++ b/drivers/pci/pci-sysfs.c
+> > > > @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct
+> > > >               return count;
+> > > >       }
+> > > >
+> > > > -     pm_runtime_get_sync(dev);
+> > > > -     struct device *pmdev __free(pm_runtime_put) =3D dev;
+> > > > +     CLASS(pm_runtime_resume_and_get, pmdev)(dev);
+> > > > +     if (IS_ERR(pmdev))
+> > > > +             return -ENXIO;
+> > > Hi Rafael,
+> > >
+> > > Why this approach rather than treating runtime pm state like a condit=
+ional
+> > > lock (we use it much like one) and using ACQUIRE() / ACQUIRE_ERR()?
+> >
+> > Mostly because devices are not locks.
+> >
+> > > Ultimately that's a wrapper around the same infrastructure but
+> > > perhaps neater as it removes need to have that explicit magic pmdev.
+> >
+> > You'll need to have a magic pmdev or similar regardless IIUC.
+> >
+> > Say there is
+> >
+> > DEFINE_GUARD(pm_runtime_active, struct device *,
+> > pm_runtime_get_sync(_T), pm_runtime_put(_T))
+> > DEFINE_GUARD_COND(pm_runtime_active, _try, pm_runtime_resume_and_get(_T=
+))
+> >
+> > so the user of this will do
+> >
+> > ACQUIRE(pm_runtime_active_try, pm)(dev);
+> > if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
+> >         return -ENXIO;
+>
+> FWIW this looks better to me than the open-coded CLASS(). The pattern,
+> admittedly coding-style bending, we are using in drivers/cxl/ for
+> compactness and error code fidelity is:
+>
+>    ACQUIRE(pm_runtime_active_try, pm)(dev);
+>    if ((ret =3D ACQUIRE_ERR(pm_runtime_active_try, &pm)))
+>            return ret;
 
-For cxl_region_sort_targets() it doesn't as the region is not yet
-attached. This is the calling order:
+I prefer somewhat more traditional
 
-	cxl_region_sort_targets
-	  cxl_calc_interleave_pos
-	    # needs cxlr->hpa_range
-	cxl_region_attach_position
-	  ...
-	    cxld->region = cxlr;
+ret =3D ACQUIRE_ERR(pm_runtime_active_try, &pm);
+if (ret < 0)
+        return ret;
 
-It would be nice if we can make this work and drop the argument. Will
-take a look.
+It would be nice to be able to hide the pm variable somehow, but this
+is not too bad the way it looks now.
 
-Thanks,
+> > and there's a "magic" pm though pm is not a struct device pointer.
+> >
+> > Maybe it's nicer.  I guess people may be more used to dealing with int
+> > error variables.
+> >
+> > Let me try this and see how far I can get with this.
+> >
+> > > +CC Dan as he can probably remember the discussions around ACQUIRE()
+> > > vs the way you have here better than I can.
+>
+> Yes, effectively a new open-coded CLASS() prompted the ACQUIRE()
+> proposal [1]. This pm-active-state reference management indeed looks
+> more like a guard() of the active state than an object constructor
+> auto-unwind-on-error case.
+>
+> [1]: http://lore.kernel.org/20250507072145.3614298-1-dan.j.williams@intel=
+.com
 
--Robert
+OK, so please see
+https://lore.kernel.org/linux-pm/6196611.lOV4Wx5bFT@rafael.j.wysocki/
 
