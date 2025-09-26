@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-833673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DE7BA2A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D63DFBA2A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87C11BC2C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18771BC2EA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914282857E9;
-	Fri, 26 Sep 2025 07:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E0970823;
+	Fri, 26 Sep 2025 07:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P8+gxCT7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="NsBnupEK"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F1F27467F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F0727467F;
+	Fri, 26 Sep 2025 07:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758870447; cv=none; b=iinUC8nsiG4KbuyZusW6sGIA8HoE4B5Ml1XnL12+ISG1ECknQ8roe/TdfeHGhZTSUq32DKrVk42UdqpjL9bTX6QUpdtBA7G/J1SfVXPnA8EyUK3BSz3kNX1aqANv0a8yyxdKpxGn25tljcozqe5JVoLxsT3Ga6UB6APRC2ZlOh0=
+	t=1758870558; cv=none; b=e4kUpXXoBGA0o29QL9EDl5Ar0Zt5kJ56nXyiybpHPfC/k0TvPPJIuEHTTundzt0gG2qXP6swmTzPNByFZ7zrYyXvqbnTMK5hnFM0L266axJTiuDLeAJEyQC7lkoK+DSyD8yQIxsq1jejMdDpP67Tk7m9TjaO3LzkG2OHbXjz4+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758870447; c=relaxed/simple;
-	bh=AxaZdK8R1No79fE6Qy5I9BNl3aGBjCXFKR8l7peMY8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6NjiMbF+XCtznLL/jyfA2fAtQmHO8yZsmGRJ/O0H0YjVzZmc20+Poo0hrjGsMiDlj7a36HLCPLMxmG38x2hK5w3icFtcWG4R2WOJpF6PQWNprWJdrrDRJ3h3/jJvpWPQn3PQxnThNN7d16CuJVR1JXmd8S+NQUKRftR8Fzsofc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P8+gxCT7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q71df9025387
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:07:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nazwzXapRFhXWyirBrA7SaFITLf8VA7VA3yOttfzeV8=; b=P8+gxCT7BT+NRCvi
-	v+0eEBmZ7jN4+TVgBAJQ19YHKI0Sa1ENMhlSOh9GXoEjyYXf0jyVjBRztSmhj3Os
-	ogYYGX3GouNkIp2IAdiiGKYmzYBd4Svtodg5HG0wnjjJXmTTsHlGw8vQx0wVX3Fb
-	mgcv1fCUkB67hvvNHzgzixsXUCueX8tExY4/5xht7FYNGnA/Yv6vmtylt2zuf2CJ
-	2hKoPO2piPi1xhNGnUa3IxSutm9vcJ7QVDh53ZwKLoUPJQc2z+qG1oW2rc9gpnRy
-	uYDukiFMzoJNiQG1+VgsbBSbBlX+2k6/99VLwCRb6rxeDtjqbeAIxVn1OsevSaPr
-	VBsJfw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0u1sgx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:07:25 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77f68c697d3so1458213b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:07:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758870444; x=1759475244;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nazwzXapRFhXWyirBrA7SaFITLf8VA7VA3yOttfzeV8=;
-        b=HmAqUmRsEUNAeO66TsYnX0oZsjTyNM358Fh2x8jS7WD/2/Aq0rWQuUGe7LZqBhUhKm
-         7XIX6jdpYdAOMCSRRfcxBoIlavsbiPdYZzRDbfS/Oh9bEArH+yblzMUmqlDoivTPIgEe
-         8WZPO1rkX4gjPJuVNv6jKFPhepjqAsAfv+GytZstgzGqt8wJtFIBNatwTAyjY4hkzHB4
-         ga8SHhkHhQPflgWG8JcwOvsd8Tt0muN8qRVmdIUaKqi4GeZWmuKFUQ26KnzvyjC71b6W
-         MfwL2+AZPR5pp0AJaYdQDO3uk+P3aasje29EXShL+XNgnWk8HIHdCOPsSJw8qDOMkTVj
-         Nctw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRegYrp+mA3SPUYKbpfD/mTfib4cGnTxuRQNoRguhLhTlMhXUn0uTkR9uzBs+fyc/4tYCWRIJSTWeHUZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXq0SoMH1EanQxAFy6V3dPpaiFE006PgsQYhAJelNhGFohDqKJ
-	smUHK/vOdTlS+75SC3UL2270Qd30X6hUt/7byGjI6CpoJtCNxz/eIsDAmBHRSH3myEnl9UyYN6R
-	OyAMtJuoYCQzU+T3Bc8R8m2Q9WEFhqyaWgwjt2hOQKatfheHDu3j76aKIAbvLLMiHML0=
-X-Gm-Gg: ASbGnctNW+e7ACvSxWQD6dkwp8hmBMa4vjbXjUut6VrUCblNdGM0G1YENjtJ4wnYHs1
-	ph7rt1M6trl/ZzdJn1I9Z+Gg145nzuUsZgf3/yeO6g4VbpSuaW2DZH8Uwoax+CYMVp6D+Pvtm1W
-	CyKwAVRf9NLEvxn9GKGaagiOphs3VtZzWYKa8wNkEtjSGMfUlY7b6+oyauA0g0qzNoXvA16lSX5
-	H6Fgaa9wGQCVDJwYGeoTWBfZW4HEub93CjzfbyCQvsHw2Yu9RqKrHeABJbD+hYu5ipoqU82ZR23
-	o6+71GTKnDUkMx8qmNJIHNrjTgX3lzCF/kxwXQ9+BkGKQUlHR1jols7K9Ls7MdqEsoT6fhkbkAa
-	PDCWSMeMk3EYobRVvkAighIhQfTZrQvIdtvCfExAgF3P4Q/WKb8FvWow0Vw==
-X-Received: by 2002:a05:6a00:2b1:b0:781:eaa:9801 with SMTP id d2e1a72fcca58-7810eaa998emr2582710b3a.24.1758870443803;
-        Fri, 26 Sep 2025 00:07:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHyg10xK9jYOsHHo0lMszH8thVw+Soa7Y719quhlAlIVZ3yhfSr4Ayhi+M2wkiXmukMqkITHQ==
-X-Received: by 2002:a05:6a00:2b1:b0:781:eaa:9801 with SMTP id d2e1a72fcca58-7810eaa998emr2582690b3a.24.1758870443307;
-        Fri, 26 Sep 2025 00:07:23 -0700 (PDT)
-Received: from [10.79.195.132] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c8ec7sm3730797b3a.30.2025.09.26.00.07.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 00:07:22 -0700 (PDT)
-Message-ID: <7eb0af93-7cc6-4b1f-beea-d5663c1bbd59@oss.qualcomm.com>
-Date: Fri, 26 Sep 2025 12:37:19 +0530
+	s=arc-20240116; t=1758870558; c=relaxed/simple;
+	bh=yuayi+GYwtiUGD3ixz8cnMvDjSSen14Um+t30mReDwo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kjmPJccyTpfLwFB/a091YjF77W9c0hoW9GyxhoiXqzc8O6m0QMbEdWj2nkOTlqNebi5QFpApa9jFTDE3pdfVuodHja/5s8PE/OBFrae/Cd79wti7FdZr/MQyXfrfZP/0UwbZpNXcTS1ukb8Bbjn7V9rdEHhaAfo5MmhU0y9Gcxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=NsBnupEK; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
+	s=protonmail; t=1758870545; x=1759129745;
+	bh=/MEu/Bit52RHwMkv7G2/glV1N/DgMnV+5F1+CsnFKKA=;
+	h=From:Subject:Date:Message-Id:To:Cc:From:To:Cc:Date:Subject:
+	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=NsBnupEK5KiSkiEwi7nddx9GHv+UAGEVqAaOcshftlIFRWbiZI938cNTVilvXRECC
+	 ZKyLegkkNdWJUdHMWe8pTbsDZyd/+Jw7Jz8SoDu00H6AGXiKGGu/wqX7t3gRiTHJYx
+	 tXiiZ41EYFngFwo+Vp6znyzIS8MmKotbFWFhZAAMp6yaof29ezFZVoP1/h92246eTk
+	 HDMLV0Cr6L43v7LEEA4Z+kCbmGTDtnQcAuRo9Iz5/qywoiZy0wal8toeBigTp85J90
+	 FKIOCBMD24SaCK/aFFrntCC6C7WIwyUEPBMYIXBTAjcqA0Wv7fO+lgk3Y05ws2YFjU
+	 oSywpCTasjTVQ==
+X-Pm-Submission-Id: 4cY1sV6kpfz1DDKn
+From: Aleksandrs Vinarskis <alex@vinarskis.com>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1-asus-zenbook-a14: LCD, WiFi
+ for X1E support
+Date: Fri, 26 Sep 2025 09:08:51 +0200
+Message-Id: <20250926-zenbook-improvements-v2-0-c0b512ab6b57@vinarskis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/24] arm64: dts: qcom: Update pmh0104 dtsi for Glymur
- CRD
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-References: <20250925-v3_glymur_introduction-v2-0-8e1533a58d2d@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v2-13-8e1533a58d2d@oss.qualcomm.com>
- <CAJKOXPfCFS4UDbN_SejG=zJt1Dt_mtz_p_+MGAaEr5SpK3ydRw@mail.gmail.com>
-Content-Language: en-US
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-In-Reply-To: <CAJKOXPfCFS4UDbN_SejG=zJt1Dt_mtz_p_+MGAaEr5SpK3ydRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 10Vej2mBCoNePtqVqo9UTCCjFpHy7hM1
-X-Proofpoint-GUID: 10Vej2mBCoNePtqVqo9UTCCjFpHy7hM1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX1VWs/WNP/iID
- DOs6LIcodGJXekpRVgKEpZPlmwqaTvw7FE+I3bqqPhV06yaZ/U7Mp3jvTnoovwB0lPXY/xBVtnL
- xLS9VZwShK1dP/lytYn+BUq9dpLnZqo865f5NpFf6ACrlU6hPuaDrVHiKcP2Ew6KT6BYi0iz/x0
- /VwnoYVARpVoSTyAT6xB9gvFUIH+S2x61TtOEHY4EuwTRt4ZZ+bhGQVHGta3wiVLrDP5E/dm0TG
- 2l20Pz+6+77UMDqf75inHcF8Y4AEkpu1hTdCLue6hcQe3AwVVj4HoPj+boTVNppKZg+sl+AMTtU
- YrUzejRmaAfUHQHTn1NEg2cdFeyTUY/ofDeAwcZPufImeLbNIqq2CzerdnFsPua/OngYHSmB3pE
- 20EdguKIb0P5H6aU9vNStaBNgmDvMw==
-X-Authority-Analysis: v=2.4 cv=ZsHg6t7G c=1 sm=1 tr=0 ts=68d63bad cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=JSSV1tAL0pHps8jy9LMA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+X-B4-Tracking: v=1; b=H4sIAAM81mgC/4WNTQ6CMBBGr0JmbU1/UIsr72FY0DrIhNCSDmlUw
+ t2tXMDle8n3vhUYEyHDtVohYSamGAroQwV+6MITBT0Kg5b6JBtpxQeDi3EUNM0pZpwwLCyUVfX
+ FGauNdVCmc8KeXnv23hYeiJeY3vtLVj/7J5iVkKI26J3rTePP8pYpdIlH4qOPE7Tbtn0BNnuYP
+ bwAAAA=
+X-Change-ID: 20250908-zenbook-improvements-18147b38238b
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Aleksandrs Vinarskis <alex@vinarskis.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2192; i=alex@vinarskis.com;
+ h=from:subject:message-id; bh=yuayi+GYwtiUGD3ixz8cnMvDjSSen14Um+t30mReDwo=;
+ b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBnXbDjyZLYa+5a03ta8U7lgQi/Trx0b9ytHzD0cMnO7x
+ tyUTN6ajlIWBjEuBlkxRZbuP1/TuhbNXctwXeMbzBxWJpAhDFycAjARbzGGf8q6p7q/5kd2LY2b
+ wNG/aOPJUq0nR8InbjuhG9Vw+lnhn8WMDFO/7NOfqF/wrmjPx9L1mt++vNh8yKk6RPLYbONnfL5
+ C25kA
+X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
+ fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
 
-On 9/25/2025 1:25 PM, Krzysztof Kozlowski wrote:
-> On Thu, 25 Sept 2025 at 15:29, Pankaj Patil
-> <pankaj.patil@oss.qualcomm.com> wrote:
->> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>
->> Update the pmh0104.dtsi to include multiple instances of PMH0104
->> DT nodes, one for each SID assigned to this PMIC on the spmi_bus0
->> and spmi_bus1 in Glymur CRD board.
->>
->> Take care to avoid compilation issue with the existing nodes by
->> gaurding each PMH0104 nodes with `#ifdef` for its corresponding
->> SID macro. So that only the nodes which have the their SID macro
->> defined are the only ones picked for compilation.
->>
->> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/pmh0104.dtsi | 84 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 84 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/pmh0104.dtsi b/arch/arm64/boot/dts/qcom/pmh0104.dtsi
->> index f5393fdebe957ea0caf4bbc16117374b4759bda3..d3ea7486d842ec813a79268fc1466e1513426d78 100644
->> --- a/arch/arm64/boot/dts/qcom/pmh0104.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/pmh0104.dtsi
->> @@ -6,7 +6,63 @@
->>  #include <dt-bindings/interrupt-controller/irq.h>
->>  #include <dt-bindings/spmi/spmi.h>
->>
->> +&spmi_bus0 {
->> +#ifdef PMH0104_I_E0_SID
->
-> NAK
->
-> I'm surprised you decided to ignore all existing discussions and my
-> clear point in this.
->
-> This is neither readable, nor maintainable.
->
-> Please join community in discussing this, instead of coming with
-> another invention which I already said is poor.
->
-> Best regards,
-> Krzysztof
-Please ignore this series, it was sent by mistake as v2 prior to v1.
-I've replied to the cover letter mentioning the same.
+Round of improvements for Asus Zenbook A14, two changes:
+1. Support LCD option on X1 (UX3407QA) variant. Until now, 'edp-panel'
+   was used for both X1/X1E models, for both OLED panels. The lower end
+   model also comes with IPS, which unfortunately needs PWM brightness
+   controls. Follow example of Lenovo t14s - create a dedicated DT with
+   dedicated 'compatible'. To maintain backward compatibility, do not
+   rename current devicetree nor the 'model'.
 
-I'll update the v1 and re-post with all the comments taken care off.
+   As this results in 3 DTs for 3 variants of the laptop, change
+   OLED variants from 'edp-panel' to respective drivers (it appears both
+   panels happily work both in old and new setup). Compatible for the
+   panels were added to linux-next some weeks ago.
 
-Thanks,
-Pankaj
+2. Add WiFi nodes for X1E (UX3407RA) variant. Almost identical to
+   UX3407QA but uses ath12k instead of ath11k. Was not addded during
+   initial bring-up due to lack of hardware to verify WiFi's operation.
+
+Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
+---
+Changes in v2:
+- Rebased on latest linux-next
+- Dropped 'model', 'compatible' from both .dtsi
+- Link to v1: https://lore.kernel.org/r/20250908-zenbook-improvements-v1-0-43ecbbf39c60@vinarskis.com
+
+---
+Aleksandrs Vinarskis (3):
+      dt-bindings: arm: qcom: Add Asus Zenbook A14 UX3407QA LCD/OLED variants
+      arm64: dts: qcom: Rework X1-based Asus Zenbook A14's displays
+      arm64: dts: qcom: x1e80100-asus-zenbook-a14: Enable WiFi, Bluetooth
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   8 +-
+ arch/arm64/boot/dts/qcom/Makefile                  |   2 +
+ arch/arm64/boot/dts/qcom/x1-asus-zenbook-a14.dtsi  |   7 +-
+ .../boot/dts/qcom/x1e80100-asus-zenbook-a14.dts    | 102 +++++++++++++++
+ .../dts/qcom/x1p42100-asus-zenbook-a14-lcd.dts     |  62 +++++++++
+ .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dts    | 133 ++------------------
+ .../boot/dts/qcom/x1p42100-asus-zenbook-a14.dtsi   | 138 +++++++++++++++++++++
+ 7 files changed, 319 insertions(+), 133 deletions(-)
+---
+base-commit: b5a4da2c459f79a2c87c867398f1c0c315779781
+change-id: 20250908-zenbook-improvements-18147b38238b
+
+Best regards,
+-- 
+Aleksandrs Vinarskis <alex@vinarskis.com>
+
 
