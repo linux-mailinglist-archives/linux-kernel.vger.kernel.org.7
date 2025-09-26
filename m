@@ -1,284 +1,161 @@
-Return-Path: <linux-kernel+bounces-834553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4814DBA4EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32EB8BA4EF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDC3B4A73A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:53:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4ADA386E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE97730DD20;
-	Fri, 26 Sep 2025 18:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A00E30DEA4;
+	Fri, 26 Sep 2025 18:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI3rnHmD"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hYv9sEvs"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954304C81
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD434C81;
+	Fri, 26 Sep 2025 18:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758912791; cv=none; b=FrCskd3aw2LAPC5sCsRJQwd31BmTNQB1EWQkHUACzZFFph2Dnx7edoPJJOETGUimYQMXtKoKvPQuQmU9ojKAdJoiRym8KWMTLopj9ziAO483gxhloILM0tKi/qjE5hqCGytx3HQg223ITGdkHgJ3fj4g3qyy1NFhSv+7DqfcF9E=
+	t=1758912934; cv=none; b=lU0h2+s7HRpB5hVNWXXVLzogNH9ru2r2sjT8QBrLqRMucqIVk4qXa0+uYKIS3hpPE5zyomqnT33rwsy93oukQSk3RM8iMwj6Du1Y+cq6AjEW97JafFradk4dducSqT4u8R4/+WCkt/6yIz8CKgeEFshet/qGI0lJ1nbJII2pWbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758912791; c=relaxed/simple;
-	bh=8V6SVK5v8GrZKB2Bwx2cQD4Rr0kPivMwYIv0ut00IJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d54Mvq0N1wgGUFezzE8D+pjWKSQTGTCHNOmBF3jWw6GwREWhxUB6aPmRP38bj6BErfj5sEKHxMqArutb3nZyptunIzc51Kkm02wMfEdopgLMBwS4x1ZmT5Wr4jYAqXIcs5qtgIviwsVOclC+GHraNN5rCNVwcs0/MJHu5lrGUAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WI3rnHmD; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32eb45ab7a0so2888101a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758912789; x=1759517589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BRoD+/xn+duqjmOLn3fdaJ5dNuVR6aVk7d9Y+El2Xao=;
-        b=WI3rnHmDPsaydcJoww3cNAm3lYSZBpQRWVS6N4wtdTVVfF1Oe7BED45cZRphEnjVOU
-         bLXMsR/Q8QNegAucWMvgveCjZLDc3MWN2Uujtdjk1is6jz6xDtYuHvoJPH4jE2PNQXSB
-         irrHO6IEf4ubfioWSwllKAv5CDc0fZE4+3KRY+A5QvFfzTSB4Fl4PjV4Fv1OoK8EgsEK
-         WZdcYHcmkJPw0LEE/uVcVOwKhSrNW5u0ZuR5np//c54ViFI0QykhvlY5+8083GSIWbLx
-         pSrqfnmS4Do9nJ565FwYKLI/neb+ZMVwa4R3liaBXwgzsDNaJNMQ0/4zaNRIm0o60Rvu
-         57fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758912789; x=1759517589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BRoD+/xn+duqjmOLn3fdaJ5dNuVR6aVk7d9Y+El2Xao=;
-        b=jHnZ7TH43rtPSzLx8F7FjU/pwkl/rPlJgdCLp6N+JPt85A7yFMjkval27Qg30UL3Nq
-         LLGdfCRSLxDiUlnPtKTKwuj5bAkwdmuLtMFDI+/dvHPq+I4VDh6Zx8inUGfQwRxdoQj0
-         4qX1llLB3hvcx4G+rW6cGqfAzBSnhD255wypYT26IyChOd1LdDUUX4bu9f6U/AQBHwWQ
-         h281uychOxj5RZGtz/QR65HkQhdUilg7ssFkE6vxu1Qt+goNhZ7DkPxtcuU4Sm9iixX6
-         wcew7+7Ico5NRomllirMVJWk4g2Z/nXXdFNezGINq6PvHrhBzpFNLSBof785R+arexsT
-         SepA==
-X-Forwarded-Encrypted: i=1; AJvYcCWf1BCSQzAOkcOCc4+J+QbtxsMrevzp2ah4A/hBh4k2kve35tc1TWZvBWBw+3idTYn5tenjZGJnot1lRdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC0w4JPugUmr7CnnXrXdNqyqKHqX9DonDvt5+tNcQWDBBX9r91
-	EOu43rlooTnI5nw4VDnSI2Vl3Wocnwjq/Xd/BTZRLFH7IFGsBKs9me32xDkXpc/0f52X+0D0rj0
-	UUmrhqTgGvZW2Oj6e/4/de4yyHrctrpk=
-X-Gm-Gg: ASbGncskXag4y2uFHM7UYe2BnAyf+0qQnpMjBmYAem0mh3ZgWZI6DE37Qy+khkUJY2C
-	2H9N7BVX3h4CpX6WcfI8ea1lMbxiB0LwVF5Brzuih3X9Qjad9+jhm2P1Cnc0I2cNMpz5eJ8rZoE
-	qzePEjNWy5uVmCYfW7Cp70ERnj9rX5xk5fmghdoMzt2HPR3eQg02iVcuOU+wrHGFV1SxuLo3+Vd
-	ZUclOQf+s+KyTpCS/P6EPyKiy7ev85d
-X-Google-Smtp-Source: AGHT+IH3i4UbOMhI3oI6UkDKVAwsIItFN+jiqtJHvdL2O4YFAAc2h64wmgmvF5o3lpGcsCsYn+hno/QpLXXkreWvY/A=
-X-Received: by 2002:a17:90b:4aca:b0:336:b563:993a with SMTP id
- 98e67ed59e1d1-336b5639a5bmr28132a91.23.1758912788906; Fri, 26 Sep 2025
- 11:53:08 -0700 (PDT)
+	s=arc-20240116; t=1758912934; c=relaxed/simple;
+	bh=XwSnQpi2ylPWKXCjiSnMWXDwprpL3+irBEMLfWkHX18=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=O3Dhljp8s2Hxa+kUpa7Ek9wDOjA2embesCLB2xf+alDNE6uIy+yMAgVlHu+vCcottfSZgWXYFABRenX3Dq9xPIEF13dsVdG5PWHtrgN7NEkHuHhd0IwOtrRWiROk+MHNAywsDMbyLs/fl3d/3bE4F2l9RWLiMJJWu/6Ynf2HjMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hYv9sEvs; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758912930; x=1759517730; i=markus.elfring@web.de;
+	bh=XwSnQpi2ylPWKXCjiSnMWXDwprpL3+irBEMLfWkHX18=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hYv9sEvsMLw6Gkt2hSv1QzLgANFO3CKzAOKKfJCUe39IHXq33FTusZL8mKFDhd+f
+	 N5FH+OosBhJH6wCRBzeaQFZJNrtMVR0zBRAF9coSISB6fK0SpsNS5zUOc+2g2mgGo
+	 /nrHaOjFKXREBhnfA3Cwa+90LtOhfMgxhss/OUWNLWvr+8Q+E8pYmPlM1MTtbq7rQ
+	 CuST7vYPnUQQA/c8h8G2vpVPAwGwzuQZSkYYUxk/8roderAccmNBppXMAx0yElCYU
+	 ilnpET/clRnX2Ea5rtbXiIlpxMhHfT+iWWEJ4cnCjKzqNqOi/fXnryGtWDwGRerVf
+	 rBdjUtVxK9T0z8Y8CA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M604f-1uzlpi4C0B-00CB4M; Fri, 26
+ Sep 2025 20:55:30 +0200
+Message-ID: <7a601c2e-7627-42ea-8d28-eeaf7c527404@web.de>
+Date: Fri, 26 Sep 2025 20:55:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926153952.1661146-1-chen.dylane@linux.dev>
-In-Reply-To: <20250926153952.1661146-1-chen.dylane@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 26 Sep 2025 11:52:53 -0700
-X-Gm-Features: AS18NWC2aPk-ebAr1m1OOXPnIkQ7LeGUvIa8h19IykjetTzeBTTrIVDn2maXywY
-Message-ID: <CAEf4BzbLJtMGaZoFAaAgnNXe8GCStsw+kZ_3hWoGfySWZ6B5mg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2] bpf: Add preempt_disable to protect get_perf_callchain
-To: Tao Chen <chen.dylane@linux.dev>
-Cc: song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org,
+ Anjelique Melendez <quic_amelende@quicinc.com>
+References: <20250926143511.6715-3-johan@kernel.org>
+Subject: Re: [PATCH 2/2] soc: qcom: pbs: fix device leak on lookup
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250926143511.6715-3-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gN8HqBFDsZ1s8f/LbMmsrU53uTeFQI+7Oiv6IOsNnC9Zolw1oqa
+ ujN8RS1hask4GCHRcPKZsWgaSAsSrFOuysqp7TiJAKOauaBxSb8J+D6KJcz2otRgjfySSU6
+ oI28b6DAARFw5TDA4DGexs2qTx2RGp/1rosgOW3xxTTGdUdMZsFW8OcRQ7ofkGdGQoJY4c+
+ 4HnaoHkOvixSiMGY1ls6w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mK8RJvQPlR4=;pRH1VrxNAsH2dEv7IMAwH2Wr0AP
+ 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
 
-On Fri, Sep 26, 2025 at 8:40=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
-ote:
->
-> As Alexei noted, get_perf_callchain() return values may be reused
-> if a task is preempted after the BPF program enters migrate disable
-> mode. We therefore use bpf_perf_callchain_entries percpu entries
-> similarly to bpf_try_get_buffers to preserve the current task's
-> callchain and prevent overwriting by preempting tasks. And we also
-> add preempt_disable to protect get_perf_callchain.
->
-> Reported-by: Alexei Starovoitov <ast@kernel.org>
-> Closes: https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRs=
-zmZV7pQDyV=3DVDQ@mail.gmail.com
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  kernel/bpf/stackmap.c | 76 ++++++++++++++++++++++++++++++++++---------
->  1 file changed, 61 insertions(+), 15 deletions(-)
->
-> Change list:
->  v1 -> v2:
->   From Alexei
->   - create percpu entris to preserve current task's callchain
->     similarly to bpf_try_get_buffers.
->   v1: https://lore.kernel.org/bpf/20250922075333.1452803-1-chen.dylane@li=
-nux.dev
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 2e182a3ac4c..8788c219926 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -31,6 +31,55 @@ struct bpf_stack_map {
->         struct stack_map_bucket *buckets[] __counted_by(n_buckets);
->  };
->
-> +struct bpf_perf_callchain_entry {
-> +       u64 nr;
-> +       u64 ip[PERF_MAX_STACK_DEPTH];
-> +};
-> +
-> +#define MAX_PERF_CALLCHAIN_PREEMPT 3
-> +static DEFINE_PER_CPU(struct bpf_perf_callchain_entry[MAX_PERF_CALLCHAIN=
-_PREEMPT],
-> +                     bpf_perf_callchain_entries);
-> +static DEFINE_PER_CPU(int, bpf_perf_callchain_preempt_cnt);
-> +
-> +static int bpf_get_perf_callchain(struct bpf_perf_callchain_entry **entr=
-y,
-> +                                 struct pt_regs *regs, u32 init_nr, bool=
- kernel,
-> +                                 bool user, u32 max_stack, bool crosstac=
-k,
-> +                                 bool add_mark)
-> +{
-> +       struct bpf_perf_callchain_entry *bpf_entry;
-> +       struct perf_callchain_entry *perf_entry;
-> +       int preempt_cnt;
-> +
-> +       preempt_cnt =3D this_cpu_inc_return(bpf_perf_callchain_preempt_cn=
-t);
-> +       if (WARN_ON_ONCE(preempt_cnt > MAX_PERF_CALLCHAIN_PREEMPT)) {
-> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-> +               return -EBUSY;
-> +       }
-> +
-> +       bpf_entry =3D this_cpu_ptr(&bpf_perf_callchain_entries[preempt_cn=
-t - 1]);
-> +
-> +       preempt_disable();
-> +       perf_entry =3D get_perf_callchain(regs, init_nr, kernel, user, ma=
-x_stack,
-> +                                       crosstack, add_mark);
-> +       if (unlikely(!perf_entry)) {
-> +               preempt_enable();
-> +               this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-> +               return -EFAULT;
-> +       }
-> +       memcpy(bpf_entry, perf_entry, sizeof(u64) * (perf_entry->nr + 1))=
-;
+> Make sure to drop the reference taken to the pbs platform device when
+> looking up its driver data.
+=E2=80=A6
 
-N copies of a stack trace is not good enough, let's have N + 1 now :)
+How do you think about to increase the application of scope-based resource=
+ management?
 
-If we are going with our own buffers, we need to teach
-get_perf_callchain to let us pass that buffer directly to avoid that
-unnecessary copy.
+Is there a need to improve the API description for platform_device_put()?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/drivers/base/platform.c#=
+L543-L547
 
-Also, I know it's about 1KB, but it would be so simple and efficient
-to just have this bpf_perf_callchain_entry on the stack. Kernel has a
-16KB stack, right? It feels like for something like this using 1KB of
-the stack to simplify and speed up stack trace capture is a good
-enough reason.
-
-> +       *entry =3D bpf_entry;
-> +       preempt_enable();
-> +
-> +       return 0;
-> +}
-> +
-> +static void bpf_put_perf_callchain(void)
-> +{
-> +       if (WARN_ON_ONCE(this_cpu_read(bpf_perf_callchain_preempt_cnt) =
-=3D=3D 0))
-> +               return;
-> +       this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-> +}
-> +
->  static inline bool stack_map_use_build_id(struct bpf_map *map)
->  {
->         return (map->map_flags & BPF_F_STACK_BUILD_ID);
-> @@ -303,8 +352,9 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, s=
-truct bpf_map *, map,
->         u32 max_depth =3D map->value_size / stack_map_data_size(map);
->         u32 skip =3D flags & BPF_F_SKIP_FIELD_MASK;
->         bool user =3D flags & BPF_F_USER_STACK;
-> -       struct perf_callchain_entry *trace;
-> +       struct bpf_perf_callchain_entry *trace;
->         bool kernel =3D !user;
-> +       int err;
->
->         if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
->                                BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID=
-)))
-> @@ -314,14 +364,15 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs,=
- struct bpf_map *, map,
->         if (max_depth > sysctl_perf_event_max_stack)
->                 max_depth =3D sysctl_perf_event_max_stack;
->
-> -       trace =3D get_perf_callchain(regs, 0, kernel, user, max_depth,
-> -                                  false, false);
-> +       err =3D bpf_get_perf_callchain(&trace, regs, 0, kernel, user, max=
-_depth,
-> +                                    false, false);
-> +       if (err)
-> +               return err;
->
-> -       if (unlikely(!trace))
-> -               /* couldn't fetch the stack trace */
-> -               return -EFAULT;
-> +       err =3D __bpf_get_stackid(map, (struct perf_callchain_entry *)tra=
-ce, flags);
-> +       bpf_put_perf_callchain();
->
-> -       return __bpf_get_stackid(map, trace, flags);
-> +       return err;
->  }
->
->  const struct bpf_func_proto bpf_get_stackid_proto =3D {
-> @@ -443,8 +494,7 @@ static long __bpf_get_stack(struct pt_regs *regs, str=
-uct task_struct *task,
->         if (sysctl_perf_event_max_stack < max_depth)
->                 max_depth =3D sysctl_perf_event_max_stack;
->
-> -       if (may_fault)
-> -               rcu_read_lock(); /* need RCU for perf's callchain below *=
-/
-> +       preempt_disable();
->
->         if (trace_in)
->                 trace =3D trace_in;
-> @@ -455,8 +505,7 @@ static long __bpf_get_stack(struct pt_regs *regs, str=
-uct task_struct *task,
->                                            crosstask, false);
->
->         if (unlikely(!trace) || trace->nr < skip) {
-> -               if (may_fault)
-> -                       rcu_read_unlock();
-> +               preempt_enable();
->                 goto err_fault;
->         }
->
-> @@ -474,10 +523,7 @@ static long __bpf_get_stack(struct pt_regs *regs, st=
-ruct task_struct *task,
->         } else {
->                 memcpy(buf, ips, copy_len);
->         }
-> -
-> -       /* trace/ips should not be dereferenced after this point */
-> -       if (may_fault)
-> -               rcu_read_unlock();
-> +       preempt_enable();
->
->         if (user_build_id)
->                 stack_map_get_build_id_offset(buf, trace_nr, user, may_fa=
-ult);
-
-really it's just build_id resolution that can take a while, which is
-why we are trying to avoid preemption around it. But for non-build_id
-case, can we avoid extra copying?
-
-> --
-> 2.48.1
->
+Regards,
+Markus
 
