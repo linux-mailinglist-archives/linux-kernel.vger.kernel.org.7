@@ -1,121 +1,201 @@
-Return-Path: <linux-kernel+bounces-834323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85560BA470E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:35:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFE1BA4720
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3F51C04872
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:35:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3FD87AD103
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B6520CCCA;
-	Fri, 26 Sep 2025 15:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20FD212B2F;
+	Fri, 26 Sep 2025 15:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="f0a7ciUz"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ayE2oDV"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DCE2046BA
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA27F19FA93
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900883; cv=none; b=FV3RtKbOJeYouMUqyM+IK/bSs2UpppKojqJlE52VvAEO2NzBfzdInD6F6huJF/r1mNZ4B9SlqxfhE7a3MVe03JLT4rW+/7e7gFYNuzG6l2vI0+EXRvPjEyLnKw9/HhLJL5535DpoIRXN21JtN52fCt0KwllN0NIL7lBOF1itvpw=
+	t=1758900986; cv=none; b=bXRa4R0VM2WJrxwIb0V0Klgtp4OLtOwpK1KGeheYdzVxSTHn0A36IIBJpW9XrsxjvPftDTJhfLTz9ME3kUc9aYtV/qr3H2PUgsC6JXdA8Cjzt6SkPSKH/U0/kRdP6DQFU0wgiO2fmXMItAmWoo49naTpaSbpSNdF1br+6Mgghjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900883; c=relaxed/simple;
-	bh=R5l5O0ELEICcmvU1tgTwCQBnh1hmOYozkzq4CTQ6Yfs=;
+	s=arc-20240116; t=1758900986; c=relaxed/simple;
+	bh=qAlQBCHkVNdri2wsgGqTnCtud5aoTRwzthHd5ubpOBg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kvOu0dwcXkPOEni1GaY6DKy+oJIQRIc+6Bk7aY5rtn4joskQSQJ06w30/Sb1mRJgRr87oW7JqP5sH12wJb41oARhSdgLTqPDNZM/n0Nb+T0rSX0aAzg4DG8NOHqYv8XSmhFaAKVpE2yhL/asn+uC7dHtsIe9fVXHo2mbhv/WcLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=f0a7ciUz; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eed7bdfeeso13975255ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:34:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=WpOVj8WPX2Ayed2v4SDvMr7KsLBASW/kHr/lvvftAxmVk53ZzNUBvo6UCXJj/SUca7HdtT/xWUmoRl/GpJv7lFnPjdAYcq+F3mls5Fx/XYBOwgmVwExuex/WAOfqMGgdz35pUj5f8r9BQE0CsV6Vq0IdBIBZTMIorjIYDvffKUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ayE2oDV; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4de60f19a57so253751cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1758900881; x=1759505681; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758900983; x=1759505783; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5l5O0ELEICcmvU1tgTwCQBnh1hmOYozkzq4CTQ6Yfs=;
-        b=f0a7ciUzj8NEs8weKq8RdQY+Mc0kYnala68cRTgxxg2pnhg+I7UmwpdhXbKs3D5an3
-         6YjY7QOo2I4tEb0DZjdEmIkF3DjiNyFk0hElQY0p0+7Q1TXAbPj2yFZYBGeXcVWenb/6
-         AwqbYNvzuqkSlmBpfnkyfpdhmJmv69oSk5ClwrpQisW19rQUsMdcvBQhShyAtLFXzmu5
-         fGNvkjsYyO2LeTr4LIeFQxohDBtofva22E1FDtx0yIPlq6bed/wF61GgMfLA9jpnUylS
-         51DONm5eMaejlWJtKEsZNg/py/ZMM9DiCc/AJxmwQmRMkXbXBmq/i7WgNIldiSpOs4OG
-         ToOw==
+        bh=OZSv7jCMIO3/8aLO/JxtF9r3uIns87B1XPQ7ZuJUAZ8=;
+        b=1ayE2oDVoAz1WbmY91hoCMFJzIZ2MGVhpvx37HX45fht3XjgdMqugqXW8n5Znw/M6t
+         LGzDAhmJgDKQitbvvpAL5hID7/MJRvZSEkE4kXmYwO5wUL81Uc8bRVMrtCcgJmKRpO1A
+         Rn7a81RszR3Dwp2IGG1Azl+yb7wDQSBVMst28XqGOfa2qxl/750OZWmHlfu9McvYd1ir
+         wyasBOpTIevuQV+0uqqDM3re7dwYBiqLxtpXdgy1N26FQ8kBCrZTyVvFV0Tj5NDoqeY2
+         1DK4CvQ6JjULtzCNDkb5TESzNnexg/wOO/yzdlGYN6hwnAunjNQS4wsY1LAezxhoBaON
+         bYsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758900881; x=1759505681;
+        d=1e100.net; s=20230601; t=1758900983; x=1759505783;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R5l5O0ELEICcmvU1tgTwCQBnh1hmOYozkzq4CTQ6Yfs=;
-        b=IIdx8Jk3opmTuAQlxYROFeEwYlRk8FSOybJ6kmcHKXo14dPfxrSN4nZr/eJakwijX0
-         VkdE3qI6tTBr6BmXavZ2h8ThEccFSdDHEi4JIdpnmr/IXEHo10GV9ty9TY1TG2SEjEz+
-         CXv9mdF39HDxdidEmHKo3QIZdAVvgG6dBS9yLyuzAk0AJnJ/AckDPxvHuSx7sno/swZq
-         3W3uGtmxFVUKU5eaPFsgLxjePRZaVvyebUURIgiI1KitEBM5TiZoSAvHp/JJTirln80F
-         4nzNw6AbAHvvFsmRHUbBBu+zjOozO5fdS+/n08fYL01/dwekWEhYrOao63Xjs+gGZHjm
-         UNUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1+eLLQCFcDkDRQrplL5qkEB1vb7LFnX9L0jsTFIzfV7y8/rLbvrpmro7CeAGDtNvpLgGuHP9iwihOAT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFORwBGat82MfRX3XdCHUeiqYtUrbjWOTg0MXvFqfza89zYp/i
-	nZKHrz5idtiFrqug6XiExoVenT0nKzJC4e8WyTkhsuqAqLmhdEWuLvNWR7NXz55s+X2oM+Qg0iU
-	mphouX7YRDinXPgUmqug8UXIscn328gmi5ZyjR6LbHQ==
-X-Gm-Gg: ASbGnctIdMAW+QxwyjmeTjg6rz5XY4TZMzSjfbAcEHu0wSm8jFCMlsf0yRymCfiqguM
-	fLd3yvXqpNziIhucRjuD7RfPlew2y984VTL5gWoiomzDB96Udj1oLR1V9EIw/WSGCZHg4MezFpw
-	5I/r9ZeX6LSrj5O76jML1igmdmcPiY6ttfgEUD3BELxWXcEipiSITbQuYbRA8b3YLsV80VZUp9K
-	dhVd4+bcqWnhhQJL4P1IIU=
-X-Google-Smtp-Source: AGHT+IHDNvUuimJZXDq/t/yZdMNFh3ZPFKwDL6MOoLCVHco0ixuvDz5wBxD6/QCHMerYfoxERXUrD51hG45kRE6GhmI=
-X-Received: by 2002:a17:903:ac7:b0:269:4752:e21f with SMTP id
- d9443c01a7336-27ed724f5dbmr67904095ad.22.1758900881024; Fri, 26 Sep 2025
- 08:34:41 -0700 (PDT)
+        bh=OZSv7jCMIO3/8aLO/JxtF9r3uIns87B1XPQ7ZuJUAZ8=;
+        b=jaFm6cW4EFOj0bL8BYlmO/6oj1no/Q/aHy5EjrxsgwJxle9NxDN8d9zki/Z8Nc2nis
+         jUwjlq3VWGE3/SW9o4BBRvIyXeZH3o6IAOzXU/BSTLDIb6yuP1KSyqqgohA4B04FuxJn
+         XTQ5rwAioEVpcg3xyDmTIN2FETh1H5Us534bkCJc7NAk3UUjCs8cCQUAoQm95rvlsIcH
+         26MoOA4N3+zE7stxxpEIPWQtdeKXYFAUQrQQR/qezrceH36MkY91Z2Wz3eznvKQqnZxT
+         JlXVAW7HGl+u3lDqMat+Bk3dTIxLX6X8opPqwWBfIqItJLqmd94jo2vSyyzauWwbWn+O
+         7v9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUAXqzktqqc7v02T51QIQ4CBlONEuuRzOzlWoTmJPg+p62rc0W5X2mvxY7UbvELMdyPMuvt73A0/SXem8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm3fZ3gqhJqMb++cEm0OhabYN9SXKmuPViVlpQ6FiGf7Zr8ole
+	ZZWJxpjeOxOxXnZDMUUMz6IwaEON8B9O6Tn1O+BCz8p0eu49faEo5+Bu2gj5XAuzGDNmzyWM6sf
+	8YhQDi2q3DYqfIX4UfcRE16SHkqkrI02VUva+rO37
+X-Gm-Gg: ASbGncviQCCX2PqfT1CP343ABZKh774cDP7Owlv88bQg9Y2G4Fk0Ud5DNfccUpa651+
+	VaeawNRvK20XHVcV5krgkmh6ccZC9IcvU21e1x5RHlFPP26EKsVRxa3K8edmgmRyHl23zCA5WY9
+	0/bCJM8aUg5jmMdggEcwm7p12D4dhQ/1DM5SlmowKpgQJm+RxeB/aS8BNw3U+Ono/OKlpLFqQQX
+	OXMFLCUVMsk3E8L8R9sahE=
+X-Google-Smtp-Source: AGHT+IEI/jk3UcCkf9eM5O2gzijjqrX9cyj5UxKnCeRHeu/NPv0BxP2Itgt6Aa8b5z+x4oXG2jQMDdeupRKQ2GBDutE=
+X-Received: by 2002:a05:622a:14c:b0:4b7:9b06:ca9f with SMTP id
+ d75a77b69052e-4dd1675a20amr6239261cf.2.1758900982412; Fri, 26 Sep 2025
+ 08:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925133310.1843863-1-matt@readmodwrite.com>
- <CANDhNCr+Q=mitFLQ0Xr8ZkZrJPVtgtu8BFaUSAVTZcAFf+VgsA@mail.gmail.com> <105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com>
-In-Reply-To: <105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com>
-From: Matt Fleming <matt@readmodwrite.com>
-Date: Fri, 26 Sep 2025 16:34:28 +0100
-X-Gm-Features: AS18NWCdv8WeFO6G9_Vl5YRKVZjX0sSmVcq-ADr201Rz5R9EbRLn4XWKT-GPLSc
-Message-ID: <CAENh_SRj9pMyMLZAM0WVr3tuD5ogMQySzkPoiHu4SRoGFkmnZw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "sched/core: Tweak wait_task_inactive() to force
- dequeue sched_delayed tasks"
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com, Matt Fleming <mfleming@cloudflare.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Chris Arges <carges@cloudflare.com>, stable@vger.kernel.org
+References: <20250926080659.741991-1-ranxiaokai627@163.com> <96d00a94-1a4b-4378-8d89-0554f89778e1@suse.cz>
+In-Reply-To: <96d00a94-1a4b-4378-8d89-0554f89778e1@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 26 Sep 2025 08:36:11 -0700
+X-Gm-Features: AS18NWDFkKvKtLcxfc1dJhlxjz81QX6DLo5WA6zWZ5CPFfbG2tUlSc1PeLBvbDE
+Message-ID: <CAJuCfpHhOohLKDkVKiY11tHnuKLr1C=ffVqUY3BpV+30kDZjgQ@mail.gmail.com>
+Subject: Re: [PATCH linux-next] alloc_tag: Fix boot failure due to NULL
+ pointer dereference
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: ranxiaokai627@163.com, akpm@linux-foundation.org, cl@gentwo.org, 
+	rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com, 
+	usamaarif642@gmail.com, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ran.xiaokai@zte.com.cn
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 3:43=E2=80=AFAM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
+On Fri, Sep 26, 2025 at 5:48=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> Hello John, Matt,
->
-> On 9/26/2025 5:35 AM, John Stultz wrote:
+> On 9/26/25 10:06, ranxiaokai627@163.com wrote:
+> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > >
-> > However, there are two spots where we might exit dequeue_entities()
-> > early when cfs_rq_throttled(rq), so maybe that's what's catching us
-> > here?
+> > There is a boot failure when both CONFIG_DEBUG_KMEMLEAK and
+> > CONFIG_MEM_ALLOC_PROFILING are enabled.
+> >
+> > BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > RIP: 0010:__alloc_tagging_slab_alloc_hook+0x181/0x2f0
+> > Call Trace:
+> >  kmem_cache_alloc_noprof+0x1c8/0x5c0
+> >  __alloc_object+0x2f/0x290
+> >  __create_object+0x22/0x80
+> >  kmemleak_init+0x122/0x190
+> >  mm_core_init+0xb6/0x160
+> >  start_kernel+0x39f/0x920
+> >  x86_64_start_reservations+0x18/0x30
+> >  x86_64_start_kernel+0x104/0x120
+> >  common_startup_64+0x12c/0x138
+> >
+> > In kmemleak, mem_pool_alloc() directly calls kmem_cache_alloc_noprof(),
+> > as a result, the alloc_tag structure associated with object_cache is no=
+t
+> > defined neither initialized. So current->alloc_tag is NULL,
+> > leading to a null pointer dereference.
 >
-> That could very likely be it.
+> Agree with Harry. This should be enough:
+>
+> "as a result, current->alloc_tag is NULL, leading to a null pointer
+> dereference."
 
-That tracks -- we're heavy users of cgroups and this particular issue
-only appeared on our kubernetes nodes.
+Yes, that's much more clear.
 
-> Matt, if possible can you try the patch attached below to check if the
-> bailout for throttled hierarchy is indeed the root cause. Thanks in
-> advance.
+>
+> > Move the checks for SLAB_NO_OBJ_EXT, SLAB_NOLEAKTRACE, and
+> > __GFP_NO_OBJ_EXT to the parent function __alloc_tagging_slab_alloc_hook=
+()
+> > to fix this.
+> >
+> > Also this distinguishes the SLAB_NOLEAKTRACE case between the actual me=
+mory
+> > allocation failures case, make CODETAG_FLAG_INACCURATE more accurate.
 
-I've been running our reproducer with this patch for the last few
-hours without any issues, so the fix looks good to me.
+Awsome!
 
-Tested-by: Matt Fleming <mfleming@cloudflare.com>
+>
+> Good point.
+>
+> > Fixes: b9e2f58ffb84 ("alloc_tag: mark inaccurate allocation counters in=
+ /proc/allocinfo output")
+>
+> That's in mm-stable so the fix should go there (probably too late to fold
+> now) if it's to be in the merge window PR.
+>
+> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+
+Thanks for the fix!
+
+>
+> > ---
+> >  mm/slub.c | 18 +++++++++---------
+> >  1 file changed, 9 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 867a07260acf..09cbe580842c 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -2197,15 +2197,6 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s,=
+ gfp_t flags, void *p)
+> >  {
+> >       struct slab *slab;
+> >
+> > -     if (!p)
+> > -             return NULL;
+> > -
+> > -     if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
+> > -             return NULL;
+> > -
+> > -     if (flags & __GFP_NO_OBJ_EXT)
+> > -             return NULL;
+> > -
+> >       slab =3D virt_to_slab(p);
+> >       if (!slab_obj_exts(slab) &&
+> >           alloc_slab_obj_exts(slab, s, flags, false)) {
+> > @@ -2223,6 +2214,15 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cach=
+e *s, void *object, gfp_t flags)
+> >  {
+> >       struct slabobj_ext *obj_exts;
+> >
+> > +     if (!object)
+> > +             return;
+> > +
+> > +     if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
+> > +             return;
+> > +
+> > +     if (flags & __GFP_NO_OBJ_EXT)
+> > +             return;
+> > +
+> >       obj_exts =3D prepare_slab_obj_exts_hook(s, flags, object);
+> >       /*
+> >        * Currently obj_exts is used only for allocation profiling.
+>
 
