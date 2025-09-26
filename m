@@ -1,414 +1,281 @@
-Return-Path: <linux-kernel+bounces-833735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45ED7BA2E60
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B786BA2E6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290371BC22F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E681BC21B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34A118C02E;
-	Fri, 26 Sep 2025 08:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2028CF66;
+	Fri, 26 Sep 2025 08:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WaZctm5x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKJH8JNW"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73121255F24
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F0726F292
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758874569; cv=none; b=GkgG8nmWPWNgeKhZE8dH/CY90v+fNS9B6HT3Nk9gP08zkccnVK/3l5nZWiVEN2puNLGNQWDj/mODPPdRZJLS6J/BZOHQCrP3xp3JKhTKCwBiVMfhBWYH+Aqn7okdKRIQczQsjEkHRzQfV4lKHS63gwBw0ay1dlkiJPJvI3PQH9c=
+	t=1758874586; cv=none; b=Dw75PRS4/HItqWGl0oF1serkORgW6GvSLFNeCZobWsNh1eYEJ1JhqGfoa6fcKyhgPHuBKOOTRgFmNeBfBpxWFzFs8b4CotkZR0didailkhu3PPzllW6wwy1KFVslIcSlNL8qGoiDSMP636ToDS5/uEgIzwjfvWhHVHh2Hx2B9j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758874569; c=relaxed/simple;
-	bh=PAWqAMgCX8zKBiBa2Vocv2kUpAhOIGrJa2cAM8McDj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkmfzYWI4n0fqY90D76bCSVUOCMDIK9CbMyZ0Fs921gtLjUehzo+wdgAPEJTffqwlltGRFELmJhNxeKqEwxreKkA7fQHU/9QctdCalyCX4T99VX2b5rYDa/W6pWbTHjx7U8ie6l6NpbNzWW4RLyJwn0huVuOsv+mR5DzudaJQNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WaZctm5x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758874563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iApw1NqrgZL1fh1MtbJLVbGmqzgFuHm0wJ8kzPM515E=;
-	b=WaZctm5xC+KTwrLOy6zBa7gV7wXSKn4k7lZRCLoX8UOiAmunV1KgDM8QFJhEGMBLj264eD
-	8btemsDn0bwHpBA8DqlXWiMAFgPHjHI33T0isGE4jgrxvpuhQrG0F1Vq70bOQcXlKKVFsh
-	Ky7OVsgK84+lnp33hsvYRGTXHYrfQX8=
-Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
- [74.125.224.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-ni9VOWLvNja00ngvoV8C4A-1; Fri, 26 Sep 2025 04:16:01 -0400
-X-MC-Unique: ni9VOWLvNja00ngvoV8C4A-1
-X-Mimecast-MFC-AGG-ID: ni9VOWLvNja00ngvoV8C4A_1758874561
-Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-633b0b69560so2110312d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:16:01 -0700 (PDT)
+	s=arc-20240116; t=1758874586; c=relaxed/simple;
+	bh=k6lf45fFqLQua2wfHuxw2UcHb/XUb77nMh4nSd3qjQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dk8WZtclmU7DkDwFOqfYlvRmXta5tkOs3hqHmobDMD2QOsQnmVflBctrogpmS6bh4tQKyBFniXEHhlI6r6OyvY7lLQjjuhuqObj5jhcahkCbeF/J5eyfAp4fTwaXAZFS1+PgTpnCJpVTF023zJdnqoMfNXYj30BSCf0nLwoMwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKJH8JNW; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso11297685e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758874583; x=1759479383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=owSo/UAHk7ZjwnGe8RLbn344mSuiCqhtA8gWsbUgwFQ=;
+        b=CKJH8JNWud2w93fWkTtIqdwof0YVCNiTcKTb/cy8JRtuQHhU7kf9HwgeplKLJQ8KGt
+         Sw7EqT/elbz1WPhhhfnfNfEmw+ogetDP8g+kBLtHl8WDew7rrDHSs/+eHBVauMOefgJI
+         qoPAvIgbLLp1QVjweibuRWxilaOX5SpxmHglEPisiSRX1+1LUGcMo+fCvtp2sf3olixG
+         qdAQfivbc/PdrE7dpusSa5wKl4O8NcxUKfwjmFtcKCOXq7QfO01cl/JueHd1uHn+JOix
+         AD7oDnjrd39c/Hi6+/FVfWxngWeLT5FCY+yVfY1Wv+F3ddaEPbXdZInjkjIh2HkmaK0B
+         PWrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758874558; x=1759479358;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iApw1NqrgZL1fh1MtbJLVbGmqzgFuHm0wJ8kzPM515E=;
-        b=bkZSQJc20T6TQHO+WMfue/TaFmzo6br5WHa6cct+nWuufSkftH7gOGIsVSxQqlgTlm
-         I24OtYVaoLsmptEoZ7T+k/OZ5KtBVGgUAbKH60Az51RIBEsxXFobS3TaoNu0IkIBMHnm
-         HwvLKTq7FnyFHtaZp5q84WpSHO9+MnEmUc2VmPtKszO3RemWmOzvOO6tdXMke4uAkWm0
-         h7vrrGB73Hl23VwgNFnCc72+mvlhpgHN7JAYBS7WPTEigDhv8peT8xFIAzwd5dkcgfOR
-         JSSvaFW68dS1d2tUEhrWynUS5myrGPGDO8r0g86cwG0YrvssDrEdl5sGJwtheCZTCWzO
-         rinQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWExY2a25Gpp2gnsdBCsKvy3zd4HFFMYXSBfy3ChlEzpRBWAWNlmLa6UN3rCJware/TvdVvDYVa/5KQ9fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi6K+23AsIxY7TAsy0hyxrLMQbfccOQtN6e7ozXwqrhikKe7/I
-	sLvsM/lnq5lOpSHXJur0lh5FmcO/H/OYpacs9KU6fhN6Gkug/nYnX3mkql3wiITxmDxENFJJaXn
-	Ldypyx0CkTLaANGp9qKdFGIbAaqNd2/d+hoRFe+x0K3ePBKo/b4w7+TA0MRQn7uLjUp9G4FzScc
-	TSW2RCcVm8sLs/Vbsi9+uJerHUMmkG/TjRidMH5OWK
-X-Gm-Gg: ASbGncts34wPmOt8TeyZoRha/mVsFy/AzM75qRUbmi3fQsQB6WWDwy9lRZNSv0WH346
-	FtC2OHvfEjqTkoUOsBb7gSp/qNYi4d8kJdJrgnPKJAdBjLi00NcIeQPdlG+BWdXPHSxeJu4p/BG
-	VIVAQDqf2vf+Qtnt2Y3VSWiTqT9Z51urUBdnVk5NRBsLOGC+anzug7TISg3Q8IEbU/Tm1nyrfUf
-	cOzrWqL
-X-Received: by 2002:a53:d00a:0:b0:5f4:55cb:80d4 with SMTP id 956f58d0204a3-6361a750311mr5561848d50.17.1758874557977;
-        Fri, 26 Sep 2025 01:15:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4SbSK9j79FVPhMlNlBU7vMW5idfjSWimDCArExOIwfFywiP0sYJvUsgWC46gr4tHACGVIsgCwCmpGOh74cJA=
-X-Received: by 2002:a53:d00a:0:b0:5f4:55cb:80d4 with SMTP id
- 956f58d0204a3-6361a750311mr5561808d50.17.1758874557500; Fri, 26 Sep 2025
- 01:15:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758874583; x=1759479383;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=owSo/UAHk7ZjwnGe8RLbn344mSuiCqhtA8gWsbUgwFQ=;
+        b=Xk/i179Zn0EPqsb+GTih4mb3Lu5YjNOmvk6Jbeh7BOMYp/4lwwc5uY9yO12jplu6UO
+         5W2BlPvCvFUqAWDOG20DjwbPEbQU9kqIu05ETUfOjv0lThF/K5wj9AzLDb0AEG5OP/my
+         ePIrceIVygp/VWEWA1vH2pPMMD1umVDSl5r3oQZIQK/72THoMAFWvmrYq82RyWL8nxiH
+         Io2PZzCv4Z41slWnFJ33TY34gEEmAgZ+RVxuLSUs6sSd2txvhel0S6YfGU75pCbBWNLO
+         74FDMlksMlQPPQABd2v1+Hd3AzFQ/uzPR6zDaGGDudEJyvGz/cnDBWgqTs+WyagSP4SC
+         yYrg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7sx9/OnZA9jGsR3FMdTJhYV06i0tCTYB45OkO2cwxdkGDNqD7LJEoJgw2T0lb8O26qEKF+ctgkATX+i4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdPw5UHlradf1A4GTvskzZUIQfu1/mc55zZGoRXufZ5R56NZY9
+	WrqmFEKCciOnviqyBoD5KoUhqnkicJaXFM1oMVrv/EvYTZ06SBEn3gp1
+X-Gm-Gg: ASbGncuEWsgd4n/r4Tvh6O0OX0973naCbD+Jj7LwqzFLH+rVlwSYiBMUioHN9j9G3iD
+	FwpjylYsYt4zpGxFo+BKk6DHVSGWZ2XM/LMXyaoAZ2Z0JUKjGbZ1+wYsZHkuLjL3IPxyuiR2QKs
+	d+POJv0TWSXCMV55Dv5FJfUtiwWPR/S/2I93cniXDGgXuC9Rg7CzsM96mTMZ+GJ2nrCdtNGI4tg
+	08ucje3XSS4o+HcINSzOlvy+JBcxax/k/itG80syf1wzuZbvew7iBfOyYG25pNj1Oo+Imn2G/Xl
+	jJnfZYqr23am/wecxiu35OiXPnlPTszLnOIhH0ak6ga2iJ3ACyiUtRREzyH2N3XkA5JiVOtnYa0
+	PpBl92IuCTn+1zuoV3CgdP9IwCn5o7/ZQPaQk0wdf4TFB6YpbEwrnsNA/E1JGk01YNqXXxLPL99
+	blg3pkcj88f3CP6ogOGpCi+fP7FdNfcOpW
+X-Google-Smtp-Source: AGHT+IFx0yw9ADcEN1q8d7rLaWFb+GGXaMOKhEpC6nbYNTwr88rLC4NIVlPty8gFF0O0AfrdRyH49A==
+X-Received: by 2002:a05:600c:37ce:b0:46e:38f7:625f with SMTP id 5b1f17b1804b1-46e38f762f6mr36055225e9.10.1758874582556;
+        Fri, 26 Sep 2025 01:16:22 -0700 (PDT)
+Received: from ?IPV6:2001:9e8:f114:1d01:3846:761a:dc0b:dbb9? ([2001:9e8:f114:1d01:3846:761a:dc0b:dbb9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e354e07f2sm28214135e9.9.2025.09.26.01.16.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 01:16:22 -0700 (PDT)
+Message-ID: <f62668cb-ad01-495e-86c3-82f92fa5ad90@gmail.com>
+Date: Fri, 26 Sep 2025 10:16:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925091335.1964283-1-eperezma@redhat.com> <20250925091335.1964283-4-eperezma@redhat.com>
- <CACGkMEtXOOLuf01qx_MbptjvyZe0jLTgnPU5JDQ0SOUXx54KYg@mail.gmail.com>
-In-Reply-To: <CACGkMEtXOOLuf01qx_MbptjvyZe0jLTgnPU5JDQ0SOUXx54KYg@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Fri, 26 Sep 2025 10:15:20 +0200
-X-Gm-Features: AS18NWCopejN_FK7ENozNsFySeBw-nz8CXI6PUBCArm2jbv5RYVBc6ZzT_gwC0E
-Message-ID: <CAJaqyWfx8L6rt+sEeVjdPQ3y0=c_8gSi5_d1TLUopq5PmqAY9w@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] vduse: add vq group support
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
-	linux-kernel@vger.kernel.org, Maxime Coquelin <mcoqueli@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>, 
-	virtualization@lists.linux.dev, Stefano Garzarella <sgarzare@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH i2c-host v6] i2c: rtl9300: Implement I2C block read and
+ write
+Content-Language: en-US
+To: Sven Eckelmann <sven@narfation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Harshal Gohel <hg@simonwunderlich.de>,
+ Simon Wunderlich <sw@simonwunderlich.de>, Andi Shyti
+ <andi.shyti@kernel.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 26, 2025 at 9:42=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Thu, Sep 25, 2025 at 5:14=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > This allows sepparate the different virtqueues in groups that shares th=
-e
-> > same address space.  Asking the VDUSE device for the groups of the vq a=
-t
-> > the beginning as they're needed for the DMA API.
-> >
-> > Allocating 3 vq groups as net is the device that need the most groups:
-> > * Dataplane (guest passthrough)
-> > * CVQ
-> > * Shadowed vrings.
-> >
-> > Future versions of the series can include dynamic allocation of the
-> > groups array so VDUSE can declare more groups.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> > v4:
-> > * Revert the "invalid vq group" concept and assume 0 if not set (Jason)=
-.
-> > * Make config->ngroups =3D=3D 0 invalid (Jason).
-> >
-> > v3:
-> > * Make the default group an invalid group as long as VDUSE device does
-> >   not set it to some valid u32 value.  Modify the vdpa core to take tha=
-t
-> >   into account (Jason).
-> > * Create the VDUSE_DEV_MAX_GROUPS instead of using a magic number
-> >
-> > v2:
-> > * Now the vq group is in vduse_vq_config struct instead of issuing one
-> >   VDUSE message per vq.
-> >
-> > v1:
-> > * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
-> >
-> > RFC v3:
-> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason).  It was set to a lowe=
-r
-> >   value to reduce memory consumption, but vqs are already limited to
-> >   that value and userspace VDUSE is able to allocate that many vqs.
-> > * Remove the descs vq group capability as it will not be used and we ca=
-n
-> >   add it on top.
-> > * Do not ask for vq groups in number of vq groups < 2.
-> > * Move the valid vq groups range check to vduse_validate_config.
-> >
-> > RFC v2:
-> > * Cache group information in kernel, as we need to provide the vq map
-> >   tokens properly.
-> > * Add descs vq group to optimize SVQ forwarding and support indirect
-> >   descriptors out of the box.
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 46 ++++++++++++++++++++++++++----
-> >  drivers/vhost/vdpa.c               | 11 +++++--
-> >  include/uapi/linux/vduse.h         | 12 ++++++--
-> >  3 files changed, 58 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 2b6a8958ffe0..3415217cb3a9 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -40,6 +40,7 @@
-> >  #define DRV_LICENSE  "GPL v2"
-> >
-> >  #define VDUSE_DEV_MAX (1U << MINORBITS)
-> > +#define VDUSE_DEV_MAX_GROUPS 0xffff
-> >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
-> >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
-> >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
-> > @@ -59,6 +60,7 @@ struct vduse_virtqueue {
-> >         struct vdpa_vq_state state;
-> >         bool ready;
-> >         bool kicked;
-> > +       u32 vq_group;
-> >         spinlock_t kick_lock;
-> >         spinlock_t irq_lock;
-> >         struct eventfd_ctx *kickfd;
-> > @@ -115,6 +117,7 @@ struct vduse_dev {
-> >         u8 status;
-> >         u32 vq_num;
-> >         u32 vq_align;
-> > +       u32 ngroups;
-> >         struct vduse_umem *umem;
-> >         struct mutex mem_lock;
-> >         unsigned int bounce_size;
-> > @@ -456,6 +459,7 @@ static void vduse_dev_reset(struct vduse_dev *dev)
-> >                 vq->driver_addr =3D 0;
-> >                 vq->device_addr =3D 0;
-> >                 vq->num =3D 0;
-> > +               vq->vq_group =3D 0;
-> >                 memset(&vq->state, 0, sizeof(vq->state));
-> >
-> >                 spin_lock(&vq->kick_lock);
-> > @@ -593,6 +597,16 @@ static int vduse_vdpa_set_vq_state(struct vdpa_dev=
-ice *vdpa, u16 idx,
-> >         return 0;
-> >  }
-> >
-> > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
-> > +{
-> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > +
-> > +       if (dev->api_version < VDUSE_API_VERSION_1)
-> > +               return 0;
-> > +
-> > +       return dev->vqs[idx]->vq_group;
-> > +}
-> > +
-> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
-> >                                 struct vdpa_vq_state *state)
-> >  {
-> > @@ -790,6 +804,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
-ig_ops =3D {
-> >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
-> >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
-> >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
-> > +       .get_vq_group           =3D vduse_get_vq_group,
-> >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
-> >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
-> >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
-> > @@ -1253,12 +1268,24 @@ static long vduse_dev_ioctl(struct file *file, =
-unsigned int cmd,
-> >                 if (config.index >=3D dev->vq_num)
-> >                         break;
-> >
-> > -               if (!is_mem_zero((const char *)config.reserved,
-> > -                                sizeof(config.reserved)))
-> > +               if (dev->api_version < VDUSE_API_VERSION_1 && config.gr=
-oup)
-> > +                       break;
-> > +
-> > +               if (dev->api_version >=3D VDUSE_API_VERSION_1) {
-> > +                       if (config.group > dev->ngroups)
-> > +                               break;
->
-> This should be ">=3D".
->
+Hi Sven,
 
-Right, good catch!
-
-> > +                       if (dev->status & VIRTIO_CONFIG_S_DRIVER_OK)
-> > +                               break;
-> > +               }
-> > +
-> > +               if (config.reserved1 ||
-> > +                   !is_mem_zero((const char *)config.reserved2,
-> > +                                sizeof(config.reserved2)))
-> >                         break;
-> >
-> >                 index =3D array_index_nospec(config.index, dev->vq_num)=
-;
-> >                 dev->vqs[index]->num_max =3D config.max_size;
-> > +               dev->vqs[index]->vq_group =3D config.group;
-> >                 ret =3D 0;
-> >                 break;
-> >         }
-> > @@ -1738,12 +1765,20 @@ static bool features_is_valid(struct vduse_dev_=
-config *config)
-> >         return true;
-> >  }
-> >
-> > -static bool vduse_validate_config(struct vduse_dev_config *config)
-> > +static bool vduse_validate_config(struct vduse_dev_config *config,
-> > +                                 u64 api_version)
-> >  {
-> >         if (!is_mem_zero((const char *)config->reserved,
-> >                          sizeof(config->reserved)))
-> >                 return false;
-> >
-> > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
-> > +               return false;
-> > +
-> > +       if (api_version >=3D VDUSE_API_VERSION_1 &&
-> > +           (!config->ngroups || config->ngroups > VDUSE_DEV_MAX_GROUPS=
-))
-> > +               return false;
-> > +
-> >         if (config->vq_align > PAGE_SIZE)
-> >                 return false;
-> >
-> > @@ -1859,6 +1894,7 @@ static int vduse_create_dev(struct vduse_dev_conf=
-ig *config,
-> >         dev->device_features =3D config->features;
-> >         dev->device_id =3D config->device_id;
-> >         dev->vendor_id =3D config->vendor_id;
-> > +       dev->ngroups =3D (dev->api_version < 1) ? 1 : config->ngroups;
-> >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
-> >         if (!dev->name)
-> >                 goto err_str;
-> > @@ -1937,7 +1973,7 @@ static long vduse_ioctl(struct file *file, unsign=
-ed int cmd,
-> >                         break;
-> >
-> >                 ret =3D -EINVAL;
-> > -               if (vduse_validate_config(&config) =3D=3D false)
-> > +               if (!vduse_validate_config(&config, control->api_versio=
-n))
-> >                         break;
-> >
-> >                 buf =3D vmemdup_user(argp + size, config.config_size);
-> > @@ -2018,7 +2054,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *=
-dev, const char *name)
-> >
-> >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
-> >                                  &vduse_vdpa_config_ops, &vduse_map_ops=
-,
-> > -                                1, 1, name, true);
-> > +                                dev->ngroups, 1, name, true);
-> >         if (IS_ERR(vdev))
-> >                 return PTR_ERR(vdev);
-> >
-> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> > index 05a481e4c385..6305382eacbb 100644
-> > --- a/drivers/vhost/vdpa.c
-> > +++ b/drivers/vhost/vdpa.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/vdpa.h>
-> >  #include <linux/nospec.h>
-> >  #include <linux/vhost.h>
-> > +#include <linux/types.h>
-> >
-> >  #include "vhost.h"
-> >
-> > @@ -657,16 +658,20 @@ static long vhost_vdpa_vring_ioctl(struct vhost_v=
-dpa *v, unsigned int cmd,
-> >                         return -EFAULT;
-> >                 ops->set_vq_ready(vdpa, idx, s.num);
-> >                 return 0;
-> > -       case VHOST_VDPA_GET_VRING_GROUP:
-> > +       case VHOST_VDPA_GET_VRING_GROUP: {
-> > +               u64 group;
-> > +
-> >                 if (!ops->get_vq_group)
-> >                         return -EOPNOTSUPP;
-> >                 s.index =3D idx;
-> > -               s.num =3D ops->get_vq_group(vdpa, idx);
-> > -               if (s.num >=3D vdpa->ngroups)
-> > +               group =3D ops->get_vq_group(vdpa, idx);
-> > +               if (group >=3D vdpa->ngroups || group > U32_MAX || grou=
-p < 0)
-> >                         return -EIO;
-> >                 else if (copy_to_user(argp, &s, sizeof(s)))
-> >                         return -EFAULT;
-> > +               s.num =3D group;
+On 26.09.25 09:52, Sven Eckelmann wrote:
+> From: Harshal Gohel <hg@simonwunderlich.de>
 >
-> I guess this won't work.
+> It was noticed that the original implementation of SMBus Block Write in the
+> driver was actually an I2C Block Write. Both differ only in the Count byte
+> before the actual data:
 >
-
-Right, and it has a lot of dead code from the s64 conversion. Fixing it.
-
-Should I send the whole series again or a patch on top?
-
-> >                 return 0;
-> > +       }
-> >         case VHOST_VDPA_GET_VRING_DESC_GROUP:
-> >                 if (!vhost_vdpa_has_desc_group(v))
-> >                         return -EOPNOTSUPP;
-> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> > index ccb92a1efce0..a3d51cf6df3a 100644
-> > --- a/include/uapi/linux/vduse.h
-> > +++ b/include/uapi/linux/vduse.h
-> > @@ -31,6 +31,7 @@
-> >   * @features: virtio features
-> >   * @vq_num: the number of virtqueues
-> >   * @vq_align: the allocation alignment of virtqueue's metadata
-> > + * @ngroups: number of vq groups that VDUSE device declares
-> >   * @reserved: for future use, needs to be initialized to zero
-> >   * @config_size: the size of the configuration space
-> >   * @config: the buffer of the configuration space
-> > @@ -45,7 +46,8 @@ struct vduse_dev_config {
-> >         __u64 features;
-> >         __u32 vq_num;
-> >         __u32 vq_align;
-> > -       __u32 reserved[13];
-> > +       __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
-> > +       __u32 reserved[12];
-> >         __u32 config_size;
-> >         __u8 config[];
-> >  };
-> > @@ -122,14 +124,18 @@ struct vduse_config_data {
-> >   * struct vduse_vq_config - basic configuration of a virtqueue
-> >   * @index: virtqueue index
-> >   * @max_size: the max size of virtqueue
-> > - * @reserved: for future use, needs to be initialized to zero
-> > + * @reserved1: for future use, needs to be initialized to zero
-> > + * @group: virtqueue group
-> > + * @reserved2: for future use, needs to be initialized to zero
-> >   *
-> >   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
-> >   */
-> >  struct vduse_vq_config {
-> >         __u32 index;
-> >         __u16 max_size;
-> > -       __u16 reserved[13];
-> > +       __u16 reserved1;
-> > +       __u32 group;
-> > +       __u16 reserved2[10];
-> >  };
-> >
-> >  /*
-> > --
-> > 2.51.0
-> >
+>   S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
 >
-> Thanks
+> The I2C Block Write is just skipping this Count byte and starts directly
+> with the data:
 >
+>   S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
+>
+> The I2C controller of RTL93xx doesn't handle this Count byte special and it
+> is simply another one of (16 possible) data bytes. Adding support for the
+> I2C Block Write therefore only requires skipping the count byte (0) in
+> data->block.
+>
+> It is similar for reads. The SMBUS Block read is having a Count byte before
+> the data:
+>
+>   S Addr Wr [A] Comm [A]
+>             Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
+>
+> And the I2C Block Read is directly starting with the actual data:
+>
+>   S Addr Wr [A] Comm [A]
+>             Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
+>
+> The I2C controller is also not handling this byte in a special way. It
+> simply provides every byte after the Rd marker + Ack as part of the 16 byte
+> receive buffer (registers). The content of this buffer just has to be
+> copied to the right position in the receive data->block.
+>
+> Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
+> Co-developed-by: Sven Eckelmann <sven@narfation.org>
+> Signed-off-by: Sven Eckelmann <sven@narfation.org>
+> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+> Tested-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+> ---
+> This patch was already applied [1] but then removed. Instead, only the
+> chunk
+>
+>   @@ -314,7 +343,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
+>    {
+>           return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
+>                  I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
+>   -              I2C_FUNC_SMBUS_BLOCK_DATA;
+>   +              I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_I2C_BLOCK;
+>    }
+>
+> was added as part of a patch which has nothing to do with
+> I2C_FUNC_SMBUS_I2C_BLOCK [2] and was never submitted like this [3].
+>
+> I am therefore resubmitting this patch again without the rtl9300_i2c_func
+> change.
+>
+> [1] https://lore.kernel.org/r/a422shurtl3xrvnh2ieynqq2kw5awqnmall2wjdpozx336m26i@54ekftmkwvrv
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git/commit/?h=i2c/i2c-host&id=ede965fd555ac2536cf651893a998dbfd8e57b86
+> [3] https://lore.kernel.org/r/20250831100457.3114-4-jelonek.jonas@gmail.com
+> ---
+> Changes in v6:
+> - drop all fixes patches (which were already applied)
+> - drop rtl9300_i2c_func chunk which was incorrectly added by another commit
+>   [2] (but was not intended to be in there by the original patch [3]
+> - Link to v5: https://lore.kernel.org/r/20250810-i2c-rtl9300-multi-byte-v5-0-cd9dca0db722@narfation.org
+>
+> Changes in v5:
+> - Simplify function/capability registration by using
+>   I2C_FUNC_SMBUS_I2C_BLOCK, thanks Jonas Jelonek
+> - Link to v4: https://lore.kernel.org/r/20250809-i2c-rtl9300-multi-byte-v4-0-d71dd5eb6121@narfation.org
+>
+> Changes in v4:
+> - Provide only "write" examples for "i2c: rtl9300: Fix multi-byte I2C write"
+> - drop the second initialization of vals in rtl9300_i2c_write() directly in
+>   the "Fix multi-byte I2C write" fix
+> - indicate in target branch for each patch in PATCH prefix
+> - minor commit message cleanups
+> - Link to v3: https://lore.kernel.org/r/20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org
+>
+> Changes in v3:
+> - integrated patch
+>   https://lore.kernel.org/r/20250615235248.529019-1-alexguo1023@gmail.com
+>   to avoid conflicts in the I2C_SMBUS_BLOCK_DATA code
+> - added Fixes and stable@vger.kernel.org to Alex Guo's patch
+> - added Chris Packham's Reviewed-by/Acked-by
+> - Link to v2: https://lore.kernel.org/r/20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org
+>
+> Changes in v2:
+> - add the missing transfer width and read length increase for the SMBus
+>   Write/Read
+> - Link to v1: https://lore.kernel.org/r/20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org
+> ---
+>  drivers/i2c/busses/i2c-rtl9300.c | 35 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
+> index 9e1f71fed0feac41e1534709de2406c7a63fa9cd..9e623207513718970dc1af82aa8756144a771819 100644
+> --- a/drivers/i2c/busses/i2c-rtl9300.c
+> +++ b/drivers/i2c/busses/i2c-rtl9300.c
+> @@ -186,22 +186,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
+>  		return -EIO;
+>  
+>  	if (read_write == I2C_SMBUS_READ) {
+> -		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
+> +		switch (size) {
+> +		case I2C_SMBUS_BYTE:
+> +		case I2C_SMBUS_BYTE_DATA:
+>  			ret = regmap_read(i2c->regmap,
+>  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
+>  			if (ret)
+>  				return ret;
+>  			data->byte = val & 0xff;
+> -		} else if (size == I2C_SMBUS_WORD_DATA) {
+> +			break;
+> +		case I2C_SMBUS_WORD_DATA:
+>  			ret = regmap_read(i2c->regmap,
+>  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
+>  			if (ret)
+>  				return ret;
+>  			data->word = val & 0xffff;
+> -		} else {
+> +			break;
+> +		case I2C_SMBUS_I2C_BLOCK_DATA:
+> +			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
+> +			if (ret)
+> +				return ret;
+> +			break;
+> +		default:
+>  			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
+>  			if (ret)
+>  				return ret;
+> +			break;
+>  		}
+>  	}
+>  
+> @@ -290,6 +300,25 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
+>  		len = data->block[0] + 1;
+>  		break;
+>  
+> +	case I2C_SMBUS_I2C_BLOCK_DATA:
+> +		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
+> +		if (ret)
+> +			goto out_unlock;
+> +		if (data->block[0] < 1 || data->block[0] > I2C_SMBUS_BLOCK_MAX) {
+> +			ret = -EINVAL;
+> +			goto out_unlock;
+> +		}
+> +		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
+> +		if (ret)
+> +			goto out_unlock;
+> +		if (read_write == I2C_SMBUS_WRITE) {
+> +			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
+> +			if (ret)
+> +				goto out_unlock;
+> +		}
+> +		len = data->block[0];
+> +		break;
+> +
+>  	default:
+>  		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
+>  		ret = -EOPNOTSUPP;
+>
+> ---
+> base-commit: 217f92d91c9faeb6b78bd6205b3585944cbcb433
+> change-id: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
+>
+> Best regards,
 
+Thanks for taking care of this quickly.
+Maybe we should include another patch here which fixes the committed version
+of my patch, i.e. removing I2C_FUNC_SMBUS_I2C_BLOCK, with CC to stable. Since
+the patch was also merged to stable, it is somewhat broken there now.
+
+Best,
+Jonas Jelonek
 
