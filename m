@@ -1,123 +1,151 @@
-Return-Path: <linux-kernel+bounces-833783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4957BBA310B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06FEBA3117
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 309F57A7DAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 900A962596E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF832773F4;
-	Fri, 26 Sep 2025 09:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B776296BB3;
+	Fri, 26 Sep 2025 09:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxkKV6ae"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="D9FV5DaB"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572191F8AC5
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42DC22127E;
+	Fri, 26 Sep 2025 09:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877492; cv=none; b=C8xrsPxh6q+Lmv78mQO2sVdVChgUpF9YsBNmNhM9NxqnJGCoxpjUnY/DJHkrTRg9qdMRpOKSW/pP1X2wGxhZjFmDWM8635KdkC69ccDVaUQpncFBmyYQlLHTEghIcjmLK/UC/NdRPl1Iq/V5twGsUeU2u5xvvqe/AAujv6FBhDk=
+	t=1758877523; cv=none; b=d36LUcjBSu0MevYuRBE1UeR186GxYnEkrBKxl5ljllh/S8mjys+8/Vo1t/3/zvX9w/saFmPpInO6bSfr5K5f3Z4IwpoYsR/CnoNJUQ1nHMJ+raYjA+8fRtlYqljr/PRCtp5gNlpH1gUgTUcksbeK04VIExks94Oh18eS8Chtn/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877492; c=relaxed/simple;
-	bh=y9uxlhWtFvfzIMPlNyO7wjBUm8CzNesN83NyBesFjFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zob+5p0ZXRx8qrum4MqVP7rX905SwmvAb2BRFRjihw6vshT+fjpNKCwejUWgheJGW3roeTr/FRD/T62xp09jGc4FgXMGW79rsJXifkSiaOrb45zWhguif7KbWVPLuXahv4KmLpeITOH0eMomBKl9/X4xu5iKwk0Hrz8LzM8ZgPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxkKV6ae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00633C4CEF4
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758877492;
-	bh=y9uxlhWtFvfzIMPlNyO7wjBUm8CzNesN83NyBesFjFE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fxkKV6ae1YIWfWH0vCtIKUEbbvf4gml/qJ0mum8+5Bc4aaz/ZHF4R8Ilms1zuLhzG
-	 sYprueZLjofain1+EkH6ccJSqmoE1wK5pOPDuvQebEreF5e+XFhzN88QOXKkApLW8h
-	 Z1Qd8omjnwNOEN0eN7sDTl6dgQwSpxyhoq0qijeDDmDn7rtqC1KKRlhZF4vCR0x9pI
-	 YXtdLN3snljlgeTF7ppXeDZIP7tloAvZ4N/lfLQXB9Q4sG/it3MwMjv7lFWGtrdmY3
-	 wXSbWjIRLxrhDyeOy1F0C64auqfan0XEZi/j/HzaVrYBVJEfgN/NsvVTfEXTdEM1LX
-	 t/ULMhv/RemSA==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b2d92b52149so376382166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:04:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXTWlLPbrngO9rEhS6n2hxpO+iSsjpt+YhL182sQ2wa4OHzHl5iy1KODlzNAJmm2RwdgsOfwanbZ1Q1wOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA44qDv+l7ohKw9EI4rdcy49emF2YVHS+8StzY13JsApX0ZAuW
-	ccUMTps4aaxNIV5ktlgwBWPh6hxe9iPDQbY6yIUm5dCHU9SpW2pTMyulLNcAPF+rF+ZGIBGvnJz
-	mDlPl+dPX5s0Zgx/eUuszFK66WwM2sjo=
-X-Google-Smtp-Source: AGHT+IHSiIWew1th6bTnJPsTsYOBIF5IDgsikuwgdP+Do7WPSqHWTaMNJpX+57wvklEoLrLG6qdZvaqjpbptGOvJYoo=
-X-Received: by 2002:a17:907:7f26:b0:b04:75fe:e88 with SMTP id
- a640c23a62f3a-b34bb9e7465mr603728766b.49.1758877490580; Fri, 26 Sep 2025
- 02:04:50 -0700 (PDT)
+	s=arc-20240116; t=1758877523; c=relaxed/simple;
+	bh=TRdHmdPTLQqSTehLhaV94ckxcJcqtDCpI21G/ZDspug=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dnXesSoO+bW+mK0nQwuOR/PcBwG+i2cyb07e5TKFVtjtnzICDXW/86SfRu+TE9xU/pY59YSUfAzFc3Zb0RtPESp0Ll6IM+z3wmjTgaEZgNJmVbq7cvgo9znyZHlObRBSFqzrKAeyyXyqlwNq7ZJUFAEQRnKht5nxz9peZBUABwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=D9FV5DaB; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: e71882ac9ab711f08d9e1119e76e3a28-20250926
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fUJfv7mrUNSJLxysVEndj63sK2LC+Qrq359CtGzel5M=;
+	b=D9FV5DaBKfG1dNbmV8HVl+UoOxRugTGzC76qkuqFE2lrYOpMKnfCgPEV5KVyjK7LsSl5khYwk4V7j3joeBtZmlxczJjauuc7CzTENkvOpMj5/rofLm0V3pDn4K/ywz0b7IdvtBAskHt9gM5q+k29krq71MKvryYaIftK58vKL+0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:8333ec9b-8e73-4f5a-a5c4-913185ed5945,IP:0,UR
+	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:100
+X-CID-META: VersionHash:a9d874c,CLOUDID:e421b8f8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:3|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI
+	:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: e71882ac9ab711f08d9e1119e76e3a28-20250926
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <jjian.zhou@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1813086452; Fri, 26 Sep 2025 17:05:09 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 26 Sep 2025 17:05:06 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Fri, 26 Sep 2025 17:05:06 +0800
+From: Jjian Zhou <jjian.zhou@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Jjian Zhou
+	<Jjian.Zhou@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jjian Zhou
+	<jjian.zhou@mediatek.corp-partner.google.com>
+Subject: [PATCH v6 0/2] add VCP mailbox driver
+Date: Fri, 26 Sep 2025 17:04:58 +0800
+Message-ID: <20250926090505.26267-1-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925184139.403156-1-mssola@mssola.com>
-In-Reply-To: <20250925184139.403156-1-mssola@mssola.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 26 Sep 2025 10:04:13 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H53nu8sGuDCbWzsVFHf5g1ybsRVrdyN6WaET61mk-g3mA@mail.gmail.com>
-X-Gm-Features: AS18NWDBXpVG0hT1J_0jXI-7V7EuXUjwuvNYUW8Pw4zHRsgGl1DLD8e3nNy0xpY
-Message-ID: <CAL3q7H53nu8sGuDCbWzsVFHf5g1ybsRVrdyN6WaET61mk-g3mA@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: ioctl: Fix memory leak on duplicated memory
-To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>
-Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, wqu@suse.com, 
-	linux-kernel@vger.kernel.org, Boris Burkov <boris@bur.io>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, Sep 25, 2025 at 11:42=E2=80=AFPM Miquel Sabat=C3=A9 Sol=C3=A0 <msso=
-la@mssola.com> wrote:
->
-> On 'btrfs_ioctl_qgroup_assign' we first duplicate the argument as
-> provided by the user, which is kfree'd in the end. But this was not the
-> case when allocating memory for 'prealloc'. In this case, if it somehow
-> failed, then the previous code would go directly into calling
-> 'mnt_drop_write_file', without freeing the string duplicated from the
-> user space.
->
-> Fixes: 4addc1ffd67a ("btrfs: qgroup: preallocate memory before adding a r=
-elation")
-> Reviewed-by: Boris Burkov <boris@bur.io>
-> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
+From: Jjian Zhou <jjian.zhou@mediatek.corp-partner.google.com>
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Hi everyone,
 
-I pushed it  into the for-next branch [1] with a changed subject to:
+This is v6 of my VCP mailbox driver.
 
-btrfs: fix memory leak on duplicated memory in the qgroup assign ioctl
+Changes since v6:
+- mtk-vcp-mailbox.c:
+  - Replace mtk_vcp_mbox_priv with mtk_vcp_mbox.
+  - Move mbox_controller to the first member.
+  - Define "struct mbox_chan chan"; Remove allocate one during the probe.
+  - Remove API get_mtk_vcp_mbox_priv.
+  - Pass the private data since there's only one mailbox.
+  - Modify mtk_vcp_mbox_xlate "return &mbox->chans[0]".
 
-Note that we don't capitalize the first word after the prefix in the subjec=
-t.
-I also made it more specific by mentioning which ioctl, since we have many.
+Changes since v5:
+- binding:
+  - Patch 1 fix 'make dt_binding_check' errors.
+  - Link to v5
+    https://patchwork.kernel.org/project/linux-mediatek/patch/20250822021217.1598-2-jjian.zhou@mediatek.com/
 
-Thanks.
+Changes since v4:
+- binding:
+  - Match the binding file name and compatible.
+- mtk-vcp-mailbox.c:
+  - Drop 'dev_dbg(dev, "MTK VCP mailbox initialized\n")'.
+- Since the reviewer hopes to combine the VCP IPC driver and
+  the VCP driver for a unified review, the original three patches
+  have been split into two parts: the VCP mailbox driver and
+  the binding remain together, while the VCP IPC driver is merged
+  with the VCP driver and submitted as one.
+- Link to v4
+  https://lore.kernel.org/all/20250820094545.23821-1-jjian.zhou@mediatek.com/
 
-[1] https://github.com/btrfs/linux/commits/for-next/
+Changes since v3:
+- binding:
+  - Remove unused lable '|' and 'vcp_mailbox0'.
+- Link to v3
+  https://lore.kernel.org/all/20250317110331.2776-1-jjian.zhou@mediatek.com/
 
-> ---
->  fs/btrfs/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 185bef0df1c2..8cb7d5a462ef 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -3740,7 +3740,7 @@ static long btrfs_ioctl_qgroup_assign(struct file *=
-file, void __user *arg)
->                 prealloc =3D kzalloc(sizeof(*prealloc), GFP_KERNEL);
->                 if (!prealloc) {
->                         ret =3D -ENOMEM;
-> -                       goto drop_write;
-> +                       goto out;
->                 }
->         }
->
-> --
-> 2.51.0
->
+Changes since v1:
+- Link to v1
+  https://lore.kernel.org/all/20250305082047.15746-1-jjian.zhou@mediatek.com/
+
+In the v2 version, there is ongoing discussion about whether the VCP's
+IPC should use mailbox or rpmsg. To prevent the discussion records
+from being lost, the previous discussion link is attached.
+https://lore.kernel.org/all/CAGXv+5FXqZb_v2dQNgCKbFpJrLhbVk3f0sWrrMCVk3jaWwoBqA@mail.gmail.com/
+
+Jjian Zhou (2):
+  dt-bindings: mailbox: mediatek,mt8196-vcp-mbox: add mtk vcp-mbox
+    document
+  mailbox: mediatek: Add mtk-vcp-mailbox driver
+
+ .../mailbox/mediatek,mt8196-vcp-mbox.yaml     |  49 +++++
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mtk-vcp-mailbox.c             | 168 ++++++++++++++++++
+ include/linux/mailbox/mtk-vcp-mailbox.h       |  32 ++++
+ 5 files changed, 260 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,mt8196-vcp-mbox.yaml
+ create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
+ create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
+
+--
+2.45.2
+
 
