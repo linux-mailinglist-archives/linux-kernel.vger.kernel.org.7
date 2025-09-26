@@ -1,311 +1,250 @@
-Return-Path: <linux-kernel+bounces-834371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90673BA48E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250C4BA48FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856DD188CFC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:10:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2A43860F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C30238D49;
-	Fri, 26 Sep 2025 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F8823B628;
+	Fri, 26 Sep 2025 16:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ej/Mvb3r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpT6sfMG"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DA421D3CA
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706F22036E9
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903014; cv=none; b=c7zWFxtWKaieMJoPxUkb5HCdd+V2VCvQ4yhpAwPOiUh43DMoOfJPtShpFYWWvHVpzgqcfrNS9jxoNjsqxtYwoIHL5NmZzhjZBsNmo8PkCjrlbtKnp0v+SI8pFUGUf1jmuTulRsyS22nVjQNbKzlb7E07gYjQg2g2k5XVmk2drvw=
+	t=1758903050; cv=none; b=ogA3hFtvQxBncfmneWh/O2Q+svXliX8luWnCPO5upaf1QmA+xbD0f4jApm9glJLI8sdU5NoGmW7R06w/ctCVUF1CrhGH+SKOZscIWO7cc2WuUq/BoMw0/B9Y9W8YNUgRL8W1MvlYU6E4I3u+TaCNqovdxF7d2YmlDfvCiRc4Rgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903014; c=relaxed/simple;
-	bh=IbqNZnQ6qBOiYNkLFSV9f/t+U4wjpwCDpH/C2sL850Q=;
+	s=arc-20240116; t=1758903050; c=relaxed/simple;
+	bh=V7kexhXSChwKrummz/CzaqELcFXuUj4bgGCNqOOCO1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i717R8XElqkdgZXuVANakZmxaqsnhJOs4ETY7Wy5Cd0ckfu5007arjfV+7g6D5fuC+15OKTMinxf6LEYKa3T8nu9+wTx8UCAPlpAt7dX3Z652t9CKDJQI6TPLVY+gYVUTXHaQGanNgVJ9Q4eZXl3xJ8JbJCjC8jE2H8HlHLgiow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ej/Mvb3r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758903011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Sc05YyUFs8eev4smgakT4g9mLlt8ucAW7NryFeJuHk=;
-	b=ej/Mvb3rgivPezqkD8Ga5koSPgj2HXRtzo42B+IQCaC9Kj/Xkl/gxucIqKI+wRcrIhNi2F
-	k0j+vjAPbNzGsO4CgYUOG45rJoVzFlkqhJGSX+SfYmO+q04iFA5x2ioR7rFZAmSmNVw5V2
-	HyFFUyIe+Uyf4VQWZD+wBJv5fPzzzeE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-qDCDWm0nPQyu03zgbhTLNQ-1; Fri, 26 Sep 2025 12:10:10 -0400
-X-MC-Unique: qDCDWm0nPQyu03zgbhTLNQ-1
-X-Mimecast-MFC-AGG-ID: qDCDWm0nPQyu03zgbhTLNQ_1758903008
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso1385804f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:10:08 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaJkk0v5NDgpxjxYYw/EeCk++MUXLQFlHT5dWm3O+a/x05rTLoX0HKU3I/zv6psR/XY9HPzlzMgXw5sLV2zAQTtdXWrU4kPF+FfnOsIcAtNFyrcxDAaYsZyv6XwfuG0ySC/v5c/bVMFtt+T2DnX576S0xLyx2+iEi/WznFIRNIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpT6sfMG; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7f7835f4478so15014246d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758903047; x=1759507847; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iS2jH8joxnDE0/hOPwBCvRREi5onrG6qq8QmOEtOYZk=;
+        b=LpT6sfMGymqEEZDXmKxEyTzdCAWAAdGOHrNyRjf22CNV6pfCaAB/BfV1IAQ9c9y9Lq
+         CgoOikgUWYYnfnh7WO6DzQhrwtE3grKQvinxG4t0Z/bN7tRl/FTLcUYFrXM8xprf9Xe7
+         iYuoqG9OoqHPp/mVUKCZpqzst596DZt8oTJLoDD9qN9qjuzj246h4NEgzi92iGco46s8
+         xdksy+gFbeo1sLt0UcnZ+PCunKR2Fo5cdVBBH8z6CCbtu8N21fXCDcIu8j/e1stoLeB8
+         9sdRcyfyTiWa5rLPZ/GeSAtF2kxYatnuOtTcWBIg6kwMW3IRfJv0miZlrnSN5tgRceYu
+         kF2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758903007; x=1759507807;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Sc05YyUFs8eev4smgakT4g9mLlt8ucAW7NryFeJuHk=;
-        b=F7GNg+Y2RyJ3ClXwTJuQ88orfF3VwUDULslJ7+gfSMlJS/+JaZqwwaAhpIPmioq9iN
-         pkFnqANKnNnce5ceVnsJ0zSIHbGFNYLN6p0iQ+zHrBNAhen8Z9AHYlx4N4+kwEesdIbu
-         Ffu8yEDUMi7A+wUrx8o69Jjhd3lSnJJKum15H97mDVKi3/dW353ll13Evaa2qWU81KZ2
-         s3VDE5kkJSQwzLv+pjGMavIUQDuItHDq9ptlbUouKdb9xvfk/20nC8RQuNUXap1psPGa
-         aHsFtvehiGdjlXRpVVXtafMzYcsFV6UAeRPFDYidiHGcEIMApyqOVP1mPExzwpSfnxLe
-         JLow==
-X-Forwarded-Encrypted: i=1; AJvYcCVSxF49SJOah8eGgceJpNdnyFz4cK4d708IhL8VXkxdjugxXw5ax4HcLEpmESc2vvDXyORIuUS9rCyipZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4cn/1WfHN2cVzHzb9yndixmqTAgKmIBcC64wV5b4af3yePNEP
-	VFs8zQ/16b+0pPFxTY2JMc72DxDwz4g+/qM1xO2ULJQWMjSNnAQIPsY+wwg6Wcna1ZgbwY82xMC
-	iPQkzkMs790ryFqSqmgPxnXJJ10yv0Q5dDGMVY/CfO8Tg61ethAvQRsj+9pU0sXTQjA==
-X-Gm-Gg: ASbGncu+NJg4FK+vlEMkXcbnPFNycsv2+xeZD3zitW1sOofr3vIu88usf6A8k+8/kQ8
-	Vzm40faF6EJAJolORigu6WFzgnfR0XAhxgKCJiW7ibaP91lEQQcN+SOmp9Odj7UZQ7N+yjbf/ea
-	pG9t1787z4TRHpeOf3SlLx/Xy40CmwFrUgo171vjgeU/SYZocJBq3BP2v6qUpo0uZ7LwBuiYu07
-	1wh12GIR2CrNWnOIvJKmb3oEwO6jfSD0C6TzvO8PcZc/ZhJNFsOAOQEv2CCcqGFnk5LuSrQl8Du
-	zGztwBzFcE7f5X2TfyL6xlNATNTA2Ayh6kHvK6f9
-X-Received: by 2002:a05:6000:2c05:b0:3fb:6f9d:2704 with SMTP id ffacd0b85a97d-40e46ad02e6mr7131275f8f.28.1758903007486;
-        Fri, 26 Sep 2025 09:10:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFViVdCy79A3oTvkyW7XNCB5TCgJypl+aC6OQKJjOod/Xo/GpsRVtayfxUD8jMTLP47LqpK2g==
-X-Received: by 2002:a05:6000:2c05:b0:3fb:6f9d:2704 with SMTP id ffacd0b85a97d-40e46ad02e6mr7131237f8f.28.1758903006949;
-        Fri, 26 Sep 2025 09:10:06 -0700 (PDT)
-Received: from sgarzare-redhat ([5.77.94.69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb6b7sm8192690f8f.2.2025.09.26.09.10.04
+        d=1e100.net; s=20230601; t=1758903047; x=1759507847;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iS2jH8joxnDE0/hOPwBCvRREi5onrG6qq8QmOEtOYZk=;
+        b=mJWC8RkcUiX1mGuL47wmZ9fAO77CfYfHoovc5vwy1+ZCegqNyFLSMC8+T3ZsmdLtIJ
+         kvH3xfxvU0KrVmVVpRLimqotg4cd8bus7+KeeosNiUJ1+PL7V8oUcDLR6EF2pvw10gFO
+         fbhANH8r1sMBN/hZXpndJI9ALFbDYGmOZke/S/v0GPfsu9Ujg5xomJUbh0ToosffzdEi
+         //Mn13KsRF9gGBW8Dk31YKv8cE6m1I+L6mS2vHc35MP8T/3A9wJo2AFT6d1G/sYCoJXh
+         KkfN/gNaV1slldE6tO630vU1z3DH+DpA186OQsTrgHl/JVOvwoomfo570M2FE/cTlOye
+         C5ew==
+X-Forwarded-Encrypted: i=1; AJvYcCX8s+FAI7XetFU8ZrJiiBgamaghL7m/JNsHUhPjIj15myQYW0kcXSkIeXI4au+dY0t5GlYaIeKn07wBg0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl+X17u/nfVlcEqxMjWNIjczOrzQgQvQ1jr6IfXqL2yBX+uH33
+	7SYmtZcgTBeVQsA8uZ2fDLfJzuQi94XcVmojanpk5LcRqpp/0iGynI9N
+X-Gm-Gg: ASbGncu74a+/wNtop7PKXL0wJCmFmwx6FoCwOqYucu2lZRNzOjKO97egcSv0A7lvkLw
+	jyilwpXPttVuIjWwwR7YWeNU8ComBehXKDkD+i2pamqD1nszptIBzeEvrQSG1IBeDFZVP4mXEyU
+	tKXsdq6VCesOEsBqD7XHlEC5q97qQ1qij0E3+krnQT66bilniqjg9KIwagAnQRNb7ou07pogLTQ
+	pAoNcFy2xz3dlfLoAgZuvWJB2O5qgFR4V5D6OSaUKZapf3AL92iB8viVwJm3gOEBsxpK1/f6Tgj
+	YJDNi3lQa59K8k/XovXPPRF2iStFuBQsr3Qks/+4nirtRztGwqoSZDDK0I2wbilks/Ay+Vigkx7
+	9dSToE1ytDHgtYmI9PrOvTfcTFzekGt3bu8RrDejMVM0hYasVvKBzeQhzNYO9KGEM4HmeaEHojy
+	GD2xV+xzXADyIsxlPM5jN6rSM=
+X-Google-Smtp-Source: AGHT+IEJzR6PCrUgJkNWH9fQSw/nY/s4Zu4U9QY66TsXFNh3e/NVRbzSY9nlbLgfJ09gjwgG9YTkEw==
+X-Received: by 2002:ad4:5fc7:0:b0:78e:7a30:4d62 with SMTP id 6a1803df08f44-7fc28075665mr116691516d6.4.1758903047160;
+        Fri, 26 Sep 2025 09:10:47 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013cdf424asm28671636d6.26.2025.09.26.09.10.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 09:10:06 -0700 (PDT)
-Date: Fri, 26 Sep 2025 18:09:51 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v6 1/9] vsock: a per-net vsock NS mode state
-Message-ID: <iqkgyjncszycflptyrmnwfn7bvrkjt5poig5pnlwbjf3rvdka4@ermxt6v6nvqs>
-References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
- <20250916-vsock-vmtest-v6-1-064d2eb0c89d@meta.com>
+        Fri, 26 Sep 2025 09:10:46 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id CABA3F4006A;
+	Fri, 26 Sep 2025 12:10:45 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Fri, 26 Sep 2025 12:10:45 -0400
+X-ME-Sender: <xms:BbvWaHVuXDP3iMjjPX1m7M90D-RNquoCqG1-esnmJoBZQAkpEpd3Tw>
+    <xme:BbvWaPxByfBQ4KDba0u_gP05hEOPa2GwGVSFrFwj1ZDKwheQ9tzEHMjiMvO3m94Vo
+    pw-fILu9wwFJpcKDTvrzb3_leAhSUzCccxhFghI2B1PHu1ckeOI>
+X-ME-Received: <xmr:BbvWaGDlLAeh4zRnhHena0ITcMn-iqQroSYWAFMBj-lzXqd2AuLRdGK5ZpFtYnRPSMHgfmsK5w20xWICBdHyLygKoVFrB1a0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeileekudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpedtgeehleevffdujeffgedvlefghffhleekieeifeegveetjedvgeevueffieeh
+    hfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
+    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
+    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
+    gvrdhnrghmvgdpnhgspghrtghpthhtohepfeehpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehphhgrshhtrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtth
+    hopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopehl
+    ohhsshhinheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprgdrhhhinhgusghorhhgse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdr
+    tghomhdprhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:BbvWaN7gMW_uJOXoaGTJ9xSlmxs7n2SOoVL41AmneFiFZsrDOjL-tA>
+    <xmx:BbvWaFknzs2z_PNwzZBGvsA40uAsb8YUJYaM6UCaDKjxqxRM7WbG3g>
+    <xmx:BbvWaIc59-2Me0P7VNO45_KkiB0ShlA5xzw4G9hvwC7kfQ5kEfECMQ>
+    <xmx:BbvWaG0UA8e0wvyM67dznKC7x3DNyCxCfifsnDms3P5cfKMviV4BKA>
+    <xmx:BbvWaP4FRn_SWivUuOoKR9rfZR6a0P0Y3ZFVUjm5c2oZS7M15ACO598b>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 26 Sep 2025 12:10:44 -0400 (EDT)
+Date: Fri, 26 Sep 2025 09:10:44 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,	Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,	Waiman Long <longman@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,	Justin Stitt <justinstitt@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Asahi Lina <lina+kernel@asahilina.net>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Krishna Ketan Rai <prafulrai522@gmail.com>,
+	Lyude Paul <lyude@redhat.com>,	Mitchell Levy <levymitchell0@gmail.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	llvm@lists.linux.dev, dri-devel@lists.freedesktop.org
+Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
+Message-ID: <aNa7BDpKS2KA__4M@tardis.local>
+References: <20250918123100.124738-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250916-vsock-vmtest-v6-1-064d2eb0c89d@meta.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918123100.124738-2-phasta@kernel.org>
 
-On Tue, Sep 16, 2025 at 04:43:45PM -0700, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Add the per-net vsock NS mode state. This only adds the structure for
->holding the mode and some of the functions for setting/getting and
->checking the mode, but does not integrate the functionality yet.
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->
->---
->Changes in v6:
->- add orig_net_mode to store mode at creation time which will be used to
->  avoid breakage when namespace changes mode during socket/VM lifespan
->
->Changes in v5:
->- use /proc/sys/net/vsock/ns_mode instead of /proc/net/vsock_ns_mode
->- change from net->vsock.ns_mode to net->vsock.mode
->- change vsock_net_set_mode() to vsock_net_write_mode()
->- vsock_net_write_mode() returns bool for write success to avoid
->  need to use vsock_net_mode_can_set()
->- remove vsock_net_mode_can_set()
->---
-> MAINTAINERS                 |  1 +
-> include/net/af_vsock.h      | 55 +++++++++++++++++++++++++++++++++++++++++++++
-> include/net/net_namespace.h |  4 ++++
-> include/net/netns/vsock.h   | 20 +++++++++++++++++
-> 4 files changed, 80 insertions(+)
->
->diff --git a/MAINTAINERS b/MAINTAINERS
->index 47bc35743f22..bc53c67e0926 100644
->--- a/MAINTAINERS
->+++ b/MAINTAINERS
->@@ -26634,6 +26634,7 @@ L:	netdev@vger.kernel.org
-> S:	Maintained
-> F:	drivers/vhost/vsock.c
-> F:	include/linux/virtio_vsock.h
->+F:	include/net/netns/vsock.h
-> F:	include/uapi/linux/virtio_vsock.h
-> F:	net/vmw_vsock/virtio_transport.c
-> F:	net/vmw_vsock/virtio_transport_common.c
->diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
->index d40e978126e3..2857e97699de 100644
->--- a/include/net/af_vsock.h
->+++ b/include/net/af_vsock.h
->@@ -10,6 +10,7 @@
->
-> #include <linux/kernel.h>
-> #include <linux/workqueue.h>
->+#include <net/netns/vsock.h>
-> #include <net/sock.h>
-> #include <uapi/linux/vm_sockets.h>
->
->@@ -65,6 +66,7 @@ struct vsock_sock {
-> 	u32 peer_shutdown;
-> 	bool sent_request;
-> 	bool ignore_connecting_rst;
->+	enum vsock_net_mode orig_net_mode;
+On Thu, Sep 18, 2025 at 02:30:59PM +0200, Philipp Stanner wrote:
+> dma_fence is a synchronization mechanism which is needed by virtually
+> all GPU drivers.
+> 
+> A dma_fence offers many features, among which the most important ones
+> are registering callbacks (for example to kick off a work item) which
+> get executed once a fence gets signalled.
+> 
+> dma_fence has a number of callbacks. Only the two most basic ones
+> (get_driver_name(), get_timeline_name() are abstracted since they are
+> enough to enable the basic functionality.
+> 
+> Callbacks in Rust are registered by passing driver data which implements
+> the Rust callback trait, whose function will be called by the C backend.
+> 
+> dma_fence's are always refcounted, so implement AlwaysRefcounted for
+> them. Once a reference drops to zero, the C backend calls a release
+> function, where we implement drop_in_place() to conveniently marry that
+> C-cleanup mechanism with Rust's ownership concepts.
+> 
+> This patch provides basic functionality, but is still missing:
+>   - An implementation of PinInit<T, Error> for all driver data.
+>   - A clever implementation for working dma_fence_begin_signalling()
+>     guards. See the corresponding TODO in the code.
+>   - Additional useful helper functions such as dma_fence_is_signaled().
+>     These _should_ be relatively trivial to implement, though.
+> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+> So. ¡Hola!
+> 
+> This is a highly WIP RFC. It's obviously at many places not yet
+> conforming very well to Rust's standards.
+> 
+> Nevertheless, it has progressed enough that I want to request comments
+> from the community.
+> 
+> There are a number of TODOs in the code to which I need input.
+> 
+> Notably, it seems (half-)illegal to use a shared static reference to an
+> Atomic, which I currently use for the dma_fence unit test / docstring
+> test. I'm willing to rework that if someone suggests how.
+> (Still, shouldn't changing a global Atomic always be legal? It can race,
+> of course. But that's kind of the point of an atomic)
+> 
+> What I want comments on the most is the design of the callbacks. I think
+> it's a great opportunity to provide Rust drivers with rust-only
+> callbacks, so that they don't have to bother about the C functions.
+> 
+> dma_fence wise, only the most basic callbacks currently get implemented.
+> For Nova, AFAICS, we don't need much more than signalling fences and
+> registering callbacks.
+> 
+> 
+> Another, solvable, issue I'm having is designing the
+> dma_fence_begin_signallin() abstractions. There are TODOs about that in
+> the code. That should ideally be robust and not racy. So we might want
+> some sort of synchronized (locked?) way for using that abstraction.
+> 
+> 
+> Regarding the manually created spinlock of mine: I so far never need
+> that spinlock anywhere in Rust and wasn't sure what's then the best way
+> to pass a "raw" spinlock to C.
+> 
+> 
+> So much from my side. Hope to hear from you.
+> 
+> (I've compiled and tested this with the unit test on the current -rc3)
+> 
+> Philipp
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/helpers/dma_fence.c        |  23 ++
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/spinlock.c         |   5 +
+>  rust/kernel/sync.rs             |   2 +
+>  rust/kernel/sync/dma_fence.rs   | 388 ++++++++++++++++++++++++++++++++
 
-Why `orig_` prefix?
+I missed this part, and I don't think kernel::sync is where dma_fence
+should be, as kernel::sync is mostly for the basic synchronization
+between threads/irqs. dma_fence is probably better to be grouped with
+dma-buf and other dma related primitives. Maybe in kernel::dma? Like:
 
-Maybe I need to review all the series, but it's a bit confusing for now.
-I guess it's related to the new behaviour to not change the mode of 
-already created sockets (which I like), but IMHO this variable prefix is 
-confusing.It seems we will have another field with the "actual_" mode, 
-but if it's immutable, I'd avoid that prefix.
+rust/kernel/dma.rs
+rust/kernel/dma/dma_buf.rs
+rust/kernel/dma/dma_fence.rs
 
->
-> 	/* Protected by lock_sock(sk) */
-> 	u64 buffer_size;
->@@ -256,4 +258,57 @@ static inline bool vsock_msgzerocopy_allow(const struct vsock_transport *t)
-> {
-> 	return t->msgzerocopy_allow && t->msgzerocopy_allow();
-> }
->+
->+static inline enum vsock_net_mode vsock_net_mode(struct net *net)
->+{
->+	enum vsock_net_mode ret;
->+
->+	spin_lock_bh(&net->vsock.lock);
->+	ret = net->vsock.mode;
->+	spin_unlock_bh(&net->vsock.lock);
->+	return ret;
->+}
->+
->+static inline bool vsock_net_write_mode(struct net *net, u8 mode)
->+{
->+	bool ret;
->+
->+	spin_lock_bh(&net->vsock.lock);
->+
->+	if (net->vsock.written) {
->+		ret = false;
->+		goto skip;
->+	}
->+
->+	net->vsock.mode = mode;
->+	net->vsock.written = true;
->+	ret = true;
->+
->+skip:
->+	spin_unlock_bh(&net->vsock.lock);
->+	return ret;
->+}
->+
->+/* Return true if vsock_sock passes the mode rules for a given net and
->+ * orig_net_mode. Otherwise, return false.
->+ *
->+ * net is the current net namespace of the object being checked. orig_net_mode
->+ * is the mode of net when the object was created.
+Thoughts? Miguel, Greg, Danilo and Lyude, any idea or suggestion?
 
-`orig_net_mode` is also explained in the next paragraph, should we 
-remove from here?
+Regards,
+Boqun
 
->+ *
->+ * orig_net_mode is the mode of arg 'net' at the time of creation for the
->+ * object being checked. For example, if searching for a vsock_sock then
->+ * orig_net_mode is arg net's mode at the time the vsock_sock was created.
->+ *
->+ * Read more about modes in the comment header of net/vmw_vsock/af_vsock.c.
->+ */
->+static inline bool vsock_net_check_mode(struct vsock_sock *vsk, struct net *net,
->+					enum vsock_net_mode orig_net_mode)
->+{
->+	struct net *vsk_net = sock_net(sk_vsock(vsk));
->+
->+	if (net_eq(vsk_net, net))
->+		return true;
->+
->+	return orig_net_mode == VSOCK_NET_MODE_GLOBAL && vsk->orig_net_mode == VSOCK_NET_MODE_GLOBAL;
-
-nit: I'd rewrite in this way, just because it seems easy to read to me, 
-but again not strong opinion, this is fine:
-
-	return orig_net_mode == VSOCK_NET_MODE_GLOBAL &&
-	       orig_net_mode == vsk->orig_net_mode;
-
->+}
-> #endif /* __AF_VSOCK_H__ */
->diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
->index 025a7574b275..005c0da4fb62 100644
->--- a/include/net/net_namespace.h
->+++ b/include/net/net_namespace.h
->@@ -37,6 +37,7 @@
-> #include <net/netns/smc.h>
-> #include <net/netns/bpf.h>
-> #include <net/netns/mctp.h>
->+#include <net/netns/vsock.h>
-> #include <net/net_trackers.h>
-> #include <linux/ns_common.h>
-> #include <linux/idr.h>
->@@ -196,6 +197,9 @@ struct net {
-> 	/* Move to a better place when the config guard is removed. */
-> 	struct mutex		rtnl_mutex;
-> #endif
->+#if IS_ENABLED(CONFIG_VSOCKETS)
->+	struct netns_vsock	vsock;
->+#endif
-> } __randomize_layout;
->
-> #include <linux/seq_file_net.h>
->diff --git a/include/net/netns/vsock.h b/include/net/netns/vsock.h
->new file mode 100644
->index 000000000000..d4593c0b8dc4
->--- /dev/null
->+++ b/include/net/netns/vsock.h
->@@ -0,0 +1,20 @@
->+/* SPDX-License-Identifier: GPL-2.0 */
->+#ifndef __NET_NET_NAMESPACE_VSOCK_H
->+#define __NET_NET_NAMESPACE_VSOCK_H
->+
->+#include <linux/types.h>
->+
->+enum vsock_net_mode {
->+	VSOCK_NET_MODE_GLOBAL,
->+	VSOCK_NET_MODE_LOCAL,
->+};
->+
->+struct netns_vsock {
->+	struct ctl_table_header *vsock_hdr;
-
-sysctl_header, or sysctl_hdr, or sysctl_ctl ?
-I'd remove `vsock_` prefix and make more clear its used for sysctl.
-
->+	spinlock_t lock;
->+
->+	/* protected by lock */
->+	enum vsock_net_mode mode;
->+	bool written;
-
-I would call this `mode_set` or `mode_locked`, I mean with `mode_` 
-prefix to make sure we don't need to rename it when we will add new 
-fields in the future.
-
-Thanks
-Stefano
-
->+};
->+#endif /* __NET_NET_NAMESPACE_VSOCK_H */
->
->-- 
->2.47.3
->
-
+>  6 files changed, 420 insertions(+)
+>  create mode 100644 rust/helpers/dma_fence.c
+>  create mode 100644 rust/kernel/sync/dma_fence.rs
+> 
+[...]
 
