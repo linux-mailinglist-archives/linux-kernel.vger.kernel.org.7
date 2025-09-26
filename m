@@ -1,96 +1,153 @@
-Return-Path: <linux-kernel+bounces-833733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D401CBA2E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:15:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40234BA2E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B32D57A9077
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876E5189B640
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CCD2900A8;
-	Fri, 26 Sep 2025 08:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pe3WAmH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723D72877EE;
-	Fri, 26 Sep 2025 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1F528D8D0;
+	Fri, 26 Sep 2025 08:15:27 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DA91E503D;
+	Fri, 26 Sep 2025 08:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758874504; cv=none; b=L3z94pGHwDo4Y7iRL4mpCA2fz9JZfgf40Gqzg7xWDTZiVBxBH9BTfx+gKjkvrN7UBTR63NVghu9Qni32vHWt2Yc6M3e5ROvNjsyNqfQAyrFQYxdV/w2eJGg/J/xtDHsLlJ5+7EXzf6w0r54hHKyVbUAWRgOse/CfTRN7itaLM88=
+	t=1758874526; cv=none; b=OU+W4fhDAAYrw6M0Juifh2HBp2OReuli1TEvlaw/r2LkoD/wUOBhWnn5LLy6onEkZvkdBuBS0uY18smdSogm0S/c7FKbjns/QHvpPFdQTfJl2N1rRv/KdlZ5zkjJwQ01xK+3p8n5070GsbKejTOidr2gASGX8Uu5Qz957yVRnyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758874504; c=relaxed/simple;
-	bh=r8bB9D9hbaoidmN9A4Dy4fetHxoLmO6jJeY+jY/hGaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TWhkOw9xkVf5A/mvmmVyhPn21Rz1WEl1NRNe+ZhqyybulNdEqW7DqJBQQ0DT5RtrFhRpEDFLch6kvUwNbNsIQhAzFKTUw4KJXPnVk0Ry5cMui4JQpwvVc2lXjQDcsaL7NnzSwpU7gfTPassdlHVwYmSZuIw5Txp+vAsYkkGJHrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pe3WAmH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D131FC4CEF5;
-	Fri, 26 Sep 2025 08:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758874504;
-	bh=r8bB9D9hbaoidmN9A4Dy4fetHxoLmO6jJeY+jY/hGaw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pe3WAmH0cQjCfBXCvM5x9K3aMvtrA6l3saJ/U0y172VAdBp0Uv8VMQSIOebQiSR9L
-	 nTS72YWivRmltPpRzmnaL2VNdQt3G+xAD4NSvBvtUCOTyRKTiBoNVSPYLCM3TTC+fv
-	 bfL6XYBalaSSVHPltbmgUNxz0iKMyS4Ln6FoYD4JVYaiErVsAlBJDpzTYMVmSeZJpZ
-	 2ZDe5w15x6MV0OQVL5Pm6l3Bhv0DjNiiV1oaL9b0PmKXy07hlYfjkuFJcoM4mFF58/
-	 f8w71QkpjNv8Xn7d4oCFybN/cAHzURKE04C7DNrpjmSSImCSMGDFBuBRCWSmVbA0Pr
-	 BPB+w4YKrso8A==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 REPOST] netfs: fix reference leak
-Date: Fri, 26 Sep 2025 10:14:56 +0200
-Message-ID: <20250926-buche-fragment-4839b9d8930c@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <936424.1758805700@warthog.procyon.org.uk>
-References: <936424.1758805700@warthog.procyon.org.uk>
+	s=arc-20240116; t=1758874526; c=relaxed/simple;
+	bh=01qg0zQGxHg/uzySYOyUQDpGHKB8R+Urato8yjG+11A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=aj2IuKrstLxG+qRNRbnChf9+qcfpvlm78+LODeVi0ZOTTgPzDO76ROwzxZMrrYnw46BKs4IEsY0fBYyDtC7CMVe6DqBe2O6J6yZV+NVUSsWOoQb0jsI/nlnor/OdBvuRE4B9dkWmVCN+dSKfnDVEhgqCxKD2X1UBTO57hv1MC0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from caohang$eswincomputing.com ( [10.127.112.153] ) by
+ ajax-webmail-app1 (Coremail) ; Fri, 26 Sep 2025 16:15:03 +0800 (GMT+08:00)
+Date: Fri, 26 Sep 2025 16:15:03 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: "Hang Cao" <caohang@eswincomputing.com>
+To: "Conor Dooley" <conor@kernel.org>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Thinh.Nguyen@synopsys.com,
+	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	"Senchuan Zhang" <zhangsenchuan@eswincomputing.com>
+Subject: Re: Re: Re: [PATCH v3 1/2] dt-bindings: usb: Add ESWIN EIC7700 USB
+ controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <20250924-shimmer-sphinx-1a12caeab401@spud>
+References: <20250915085329.2058-1-caohang@eswincomputing.com>
+ <20250915091024.2128-1-caohang@eswincomputing.com>
+ <20250915-affair-halves-4f881f6c7cdb@spud>
+ <17731a13.1cce.19974dfc64d.Coremail.caohang@eswincomputing.com>
+ <20250924-shimmer-sphinx-1a12caeab401@spud>
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_28961_865295059.1758874503643"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=brauner@kernel.org; h=from:subject:message-id; bh=r8bB9D9hbaoidmN9A4Dy4fetHxoLmO6jJeY+jY/hGaw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRc825avXffzNMfNbN46hw1zp+xlEz99zh6tfLatNDav gtZAutLO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYi48bI8MyS6c2KdzdOz/y3 sHU91+dXq59qmlZ4HXiZF/UicR1H20OG/3XCz+suMilqfJeWSzxy9fec8qqivx6yJ7W3Jxa3xk/ 4zw0A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Message-ID: <5d546ce3.1ff1.199851709e0.Coremail.caohang@eswincomputing.com>
+X-Coremail-Locale: en_US
+X-CM-TRANSID:TAJkCgCXuxGHS9ZoPSDhAA--.18376W
+X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/1tbiAQEREGjVbnoYWAAA
+	so
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWDJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Thu, 25 Sep 2025 14:08:20 +0100, David Howells wrote:
-> Commit 20d72b00ca81 ("netfs: Fix the request's work item to not
-> require a ref") modified netfs_alloc_request() to initialize the
-> reference counter to 2 instead of 1.  The rationale was that the
-> requet's "work" would release the second reference after completion
-> (via netfs_{read,write}_collection_worker()).  That works most of the
-> time if all goes well.
-> 
-> [...]
+------=_Part_28961_865295059.1758874503643
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+SGksIENvbm9yIERvb2xleQogICAgV2UgZ290IHlvdXIgcG9pbnQsIGFuZCB5b3VyIHN1Z2dlc3Rp
+b25zIHNvdW5kIHZlcnkgcmVhc29uYWJsZS4gSSdsbCBjb29yZGluYXRlIHdpdGggY29sbGVhZ3Vl
+cyAKcmVzcG9uc2libGUgZm9yIGNsb2NrIGFuZCByZXNldCBmdW5jdGlvbnMgdG8gdHJ5IGFuZCBp
+bXBsZW1lbnQgZGVkaWNhdGVkIGRyaXZlcnMgYXMgc29vbiBhcyBwb3NzaWJsZSwgCnNlcGFyYXRp
+bmcgdGhpcyBwYXJ0IGZyb20gaHNwLWNzci4KCkJlc3QgcmVnYXJkcywKSGFuZyBDYW8KCj4gT24g
+VHVlLCBTZXAgMjMsIDIwMjUgYXQgMTI6NDA6NDZQTSArMDgwMCwgSGFuZyBDYW8gd3JvdGU6Cj4g
+PiA+ID4gRnJvbTogSGFuZyBDYW8gPGNhb2hhbmdAZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gPiA+
+ICsgIGVzd2luLGhzcC1zcC1jc3I6Cj4gPiA+ID4gKyAgICBkZXNjcmlwdGlvbjoKPiA+ID4gPiAr
+ICAgICAgSFNQIENTUiBpcyB0byBjb250cm9sIGFuZCBnZXQgc3RhdHVzIG9mIGRpZmZlcmVudCBo
+aWdoLXNwZWVkIHBlcmlwaGVyYWxzCj4gPiA+ID4gKyAgICAgIChzdWNoIGFzIEV0aGVybmV0LCBV
+U0IsIFNBVEEsIGV0Yy4pIHZpYSByZWdpc3Rlciwgd2hpY2ggY2FuIGNsb3NlCj4gPiA+ID4gKyAg
+ICAgIG1vZHVsZSdzIGNsb2NrLHJlc2V0IG1vZHVsZSBpbmRlcGVuZGVudGx5IGFuZCB0dW5lIGJv
+YXJkLWxldmVsJ3MKPiA+ID4gPiArICAgICAgcGFyYW1ldGVycyBvZiBQSFksIGV0Yy4KPiA+ID4g
+PiArICAgICRyZWY6IC9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRpb25zL3BoYW5kbGUtYXJy
+YXkKPiA+ID4gPiArICAgIGl0ZW1zOgo+ID4gPiA+ICsgICAgICAtIGl0ZW1zOgo+ID4gPiA+ICsg
+ICAgICAgICAgLSBkZXNjcmlwdGlvbjogcGhhbmRsZSB0byBIU1AgUmVnaXN0ZXIgQ29udHJvbGxl
+ciBoc3Bfc3BfY3NyIG5vZGUuCj4gPiA+ID4gKyAgICAgICAgICAtIGRlc2NyaXB0aW9uOiB1c2Ig
+YnVzIHJlZ2lzdGVyIG9mZnNldC4KPiA+ID4gPiArICAgICAgICAgIC0gZGVzY3JpcHRpb246IGF4
+aSBsb3cgcG93ZXIgcmVnaXN0ZXIgb2Zmc2V0Lgo+ID4gPiA+ICsgICAgICAgICAgLSBkZXNjcmlw
+dGlvbjogdmJ1cyBmcmVxdWVuY3kgcmVnaXN0ZXIgb2Zmc2V0Lgo+ID4gPiA+ICsgICAgICAgICAg
+LSBkZXNjcmlwdGlvbjogbXBsbCByZWdpc3RlciBvZmZzZXQuCj4gPiA+IAo+ID4gPiBBcyBJIG1l
+bnRpb25lZCBvbiB0aGUgc2hkY2kgYmluZGluZyBwYXRjaCwgSSdtIG5vdCBoYXBweSB3aXRoIHRo
+ZQo+ID4gPiBqdXN0aWZpY2F0aW9uIGZvciB0aGlzIHBoYW5kbGUuIFdoYXQgZXhhY3RseSBpcyB0
+aGUgY2xvY2sgdGhhdCB0aGlzCj4gPiA+IGNvbnRyb2xzIGFuZCB3aHkgZG9lcyBpdCBub3QgaGF2
+ZSBhIGRlZGljYXRlZCBjbG9jay1jb250cm9sbGVyIGRyaXZlcgo+ID4gPiBhbmQgcmVzZXQtY29u
+dHJvbGxlciBkcml2ZXI/Cj4gPiA+IAo+ID4gSW4gdGhlIGN1cnJlbnQgZGVzaWduIGZyYW1ld29y
+aywgdGhlIGNsb2NrIGNhbiBiZSBkaXZpZGVkIGludG8gdHdvIHBhcnRzOsKgCj4gPiAxLiBUaGUg
+dG9wLWNsb2NrLCB3aGljaCBpcyB1c2VkIHRvIG1hbmFnZSBhbmQgY29udHJvbCB0aGUgY2xvY2tz
+IG9mIHZhcmlvdXMgc3Vic3lzdGVtcyAoc3VjaCBhcyBIU1AsIEdQVSwgTlBVLCBldGMuKTvCoAo+
+ID4gMi4gVGhlIHN1YnN5c3RlbSBjbG9ja3MgbWFuYWdlZCBpbmRlcGVuZGVudGx5IGJ5IGVhY2gg
+c3Vic3lzdGVtLgo+ID4gVGhlIHRvcC1jbG9jayBpcyBhIHN0YW5kYXJkIGNsb2NrIGRlc2lnbihm
+ZWF0dXJpbmcgZ2F0ZSwgZGl2aWRlciwgYW5kIG11eCBmdW5jdGlvbnMpIHRoYXQgaGFzIGJlZW4g
+cmVnaXN0ZXJlZCBpbiB0aGXCoAo+ID4gY29tbW9uIGNsb2NrIGZyYW1ld29yayx3aXRoIGEgZGVk
+aWNhdGVkIGNsb2NrIGNvbnRyb2xsZXIgZHJpdmVyLgo+ID4gCj4gPiBUaGUgc3Vic3lzdGVtIGNs
+b2NrcyBtYW5hZ2VkIGJ5IHN1YnN5c3RlbXMgYXJlIGNvbnRyb2xsZWQgYW5kIGNvbmZpZ3VyZWQg
+dGhyb3VnaCB0aGUgQ1NSIChDb250cm9sIGFuZCBTdGF0dXMgUmVnaXN0ZXIpwqAKPiA+IG9mIGVh
+Y2ggcmVzcGVjdGl2ZSBzdWJzeXN0ZW0uIEZvciBleGFtcGxlLCB0aGUgSFNQIHN1YnN5c3RlbSB1
+c2VzIHRoZSBlc3dpbixoc3Atc3AtY3NyLiBBZGRpdGlvbmFsbHksIHRoaXMgQ1NSIGlzCj4gPiDC
+oHJlc3BvbnNpYmxlIGZvciBtYW5hZ2luZyBzdGFydHVwIGZ1bmN0aW9ucywgcGVyZm9ybWluZyBp
+bmRlcGVuZGVudCByZXNldCBvZiBzcGVjaWZpYyBtb2R1bGVzLCBhbmQgYWRqdXN0aW5nwqAKPiA+
+IFBIWSBwYXJhbWV0ZXJzIHRvIGFjaGlldmUgYm9hcmQtbGV2ZWwgdHVuaW5nIChmb3IgVVNCL1NB
+VEEgaW50ZXJmYWNlcywgZXRjLikuCj4gCj4gVW5saWtlIHRoZSB1c2Ugb2YgdGhlIEhTUCBpbiB0
+aGUgc2RoY2kgZHJpdmVyLCB3aGVyZSBpdCBhcHBlYXJzIHRvIGJlCj4gc2V0dGluZyBiaXRzIHRo
+YXQgaW5kaWNhdGUgc3RhYmlsaXR5IChhY2NvcmRpbmcgdG8geW91ciBjb2xsZWFndWUpIHdoYXQK
+PiB5b3Ugc2F5IGhlcmUgKGFuZCB3aGF0IGlzIGRvbmUgaW4gdGhlIGRyaXZlciBvbiB0aGUgcmVz
+ZXQgc2lkZSBpbgo+IHBhcnRpY3VsYXIpIHNlZW1zIGxpa2Ugc29tZXRoaW5nIHRoYXQgc2hvdWxk
+IGJlIGhhbmRsZWQgYnkgYSBkZWRpY2F0ZWQKPiBkcml2ZXIuICJpbmRlcGVuZGVudCByZXNldCBv
+ZiBzcGVjaWZpYyBtb2R1bGVzIiBpcyB0aGUgZG9tYWluIG9mCj4gcmVzZXQtY29udHJvbGxlciBk
+cml2ZXJzLiBXaGF0IGFyZSB0aGUgb3RoZXIgbW9kdWxlcyBmb3Igd2hpY2ggdGhlIEhTUAo+IGhh
+cyByZXNldHM/IERvZXMgaXQgaGF2ZSBjbG9ja3MgZm9yIG90aGVyIG1vZHVsZXMgdG9vPwo+IAo+
+ID4gVGhlIHRvcC1jbG9jayBtYW5hZ2VzIHRoZSBnbG9iYWwgY2xvY2tzIG9mIHN1YnN5c3RlbXMu
+IFRha2luZyB0aGUgSFNQIHN1YnN5c3RlbSBhcyBhbiBleGFtcGxlLCB0aGUgdG9wLWNsb2NrCj4g
+PiDCoGNvbmZpZ3VyZXMgdGhlIGhzcF9hY2xrX2N0cmwgYW5kIGhzcF9jZmdfY3RybCBvZiBIU1Ag
+c3Vic3lzdGVtIG9ubHkuCj4gCj4gPiBJbiBjb250cmFzdCwgdGhlIHN1YnN5c3RlbSBjbG9ja3Mg
+YXJlIG1hbmFnZWQgdmlhIHRoZWlyIG93biBDU1JzLiBGb3IgaW5zdGFuY2UsIHRoZSBVU0IgcmVm
+IGNsb2NrIHVzZWQgaW4gdGhlIFVTQiBtb2R1bGUgb2bCoAo+ID4gdGhlIEhTUCBzdWJzeXN0ZW0g
+Y2FuIG9ubHkgYmUgY29uZmlndXJlZCB0aHJvdWdoIHRoZSBoc3AtY3NyLCBhbmQgY2Fubm90IGJl
+IHNldCB2aWEgdGhlIHRvcC1jbG9jayBjb250cm9sbGVyIGRyaXZlci4KPiA+IEFzIGZvciB0aGUg
+cmVzZXQgZnVuY3Rpb24sIGl0IGlzIG5vdCBpbnRlZ3JhdGVkIGludG8gYSBkZWRpY2F0ZWQgY29u
+dHJvbGxlciBkcml2ZXIgZWl0aGVyLCBmb3IgcmVhc29ucyBzaW1pbGFyIHRvIHRob3NlIG9mIHRo
+ZcKgCj4gPiBjbG9jayBtYW5hZ2VtZW50IG1lbnRpb25lZCBhYm92ZS4KPiAKPiBUaGF0IGp1c3Qg
+c291bmRzIHRvIG1lIGxpa2UgdGhlIGhzcC1jc3IgbmVlZHMgdG8gYmVjb21lIGJvdGggYQo+IHJl
+c2V0LWNvbnRyb2xsZXIgYW5kIGEgY2xvY2stY29udHJvbGxlciEgSXQncyBub3QgdW51c3VhbCB0
+byBoYXZlIG1vcmUKPiB0aGFuIG9uZSBjbG9jay1jb250cm9sbGVyIGluIGFuIGRldmljZSwgdGhl
+IHRvcC1jbG9jayBiZWluZyBhCj4gY2xvY2stY29udHJvbGxlciBkb2VzIG5vdCBtZWFuIHRoYXQg
+dGhlIEhTUCBhbHNvIGNhbm5vdCBiZSBvbmUuCj4gCg==
+------=_Part_28961_865295059.1758874503643
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="signature.asc"
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NCg0KaUhVRUFCWUtBQjBXSVFSaDI0NkVHcS84
+UkxoRGpPMTR0REdIb0lKaTBnVUNhTlJNcVFBS0NSQjR0REdIb0lKaQ0KMHRXakFQOXJuajZMQkJ0
+MlJ2a1pacHlXZGpqdHJMNTdQTmxlYktPMkh6UlFpQ2NpTVFFQW9iWldENlFoWTlVcw0KdCtCWEQx
+UUFJNzlNcmYyWEEzUVpPRlIyQWpKMENnaz0NCj1jTzUyDQotLS0tLUVORCBQR1AgU0lHTkFUVVJF
+LS0tLS0NCg==
+------=_Part_28961_865295059.1758874503643--
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: fix reference leak
-      https://git.kernel.org/vfs/vfs/c/4d428dca252c
 
