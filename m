@@ -1,805 +1,262 @@
-Return-Path: <linux-kernel+bounces-834060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD8FBA3B82
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:57:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0299BA3B92
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66B48177F51
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B78E07AB763
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551162F5466;
-	Fri, 26 Sep 2025 12:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93252EF65E;
+	Fri, 26 Sep 2025 12:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bf13dN7x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dC4Gw1ni"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72F1EEE6;
-	Fri, 26 Sep 2025 12:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891414; cv=none; b=PS6ELjCF9hEYMWQqcyONfLRhADFtMFSv+ruPOzBns+msGqR9qKYMJ/CTHYRQIAyiwSUkNR2S6hAwih/4wXLXCDenfdMxtud4Pjyow1CUAsHhhdnI+BK1Y9vSmrVx+tbP2P6QpeNv8pN1STovp5AZc+l8iMe/rDT4kvNjd8y394Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891414; c=relaxed/simple;
-	bh=KVEkfKEqyJWR7C8PnNDPX9sWYgFWJeWgn44ONH+/BhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdEYAk8f1Nyuhrf0QWibUGUrglmVOtkcFNrDQ3LFCnn/8csz1CyxkU43M9MjNj2jUWU1gUOki2guUD9qaObZpPB7G5v6g83g0hCIN4WT7keqiCfYgj1AAWRq1TTy78LLGbSs6Wzw/9wNWkSHcRlqhhDgAwVELt2TOgf+QP55FLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bf13dN7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55F9C4CEF4;
-	Fri, 26 Sep 2025 12:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891413;
-	bh=KVEkfKEqyJWR7C8PnNDPX9sWYgFWJeWgn44ONH+/BhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bf13dN7xbEM6/+shWxra64pVahDN+bRu1Y0TlZSNpChy7SA8P5j557LHyEPfapZWC
-	 RzTjAmSLd2IJqEksbuK9g9tLbb1IeRAuQQJ+rzZkT5CZjQ/iBstmJAkMg3s+j4CAW6
-	 SE9qBoXfdRwPtXn1GNWLstDuK633hmedpsVveW+NM4glh2Q9O0P3tyJl3g+vUI21Jw
-	 zGJvTUoiCVclLVAHPUBgr3xQtBELjQHDFn0doGU9kT2yX/L78rCcJ0A+yzgMFSzjoc
-	 kSGu4XrXQi8WHD4mmnYSipiXNOf1+sZpMdbLMGk+UPBgYfDlpGsJjEIUBQ1ivrL1sX
-	 SG5D9gML9eBDg==
-Date: Fri, 26 Sep 2025 14:56:39 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 5/8] man/man2/move_mount.2: document "new" mount API
-Message-ID: <pvcrxgmtpfhx3lfdk5ydwuxffmv3avlsy4tagww2bxdb2ywx6s@iqe4y4mudjq6>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCBE1EEE6;
+	Fri, 26 Sep 2025 12:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758891460; cv=fail; b=L75MsYWrsxlNTaBPDkHtFzQOsYfswGEc2wg0F7LI2Zenas8BhsIoUb9+q1aySsTWQItdZOPbAUnZaiKN2bPuv0BzOwt1Cf4L82v0qXOg+gg+vW1DhUNzlzqHWArlC5M6ho9n9KJkt+eYFaj3Bouc2S2gl84Vj6N+AmCOQ/kEc+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758891460; c=relaxed/simple;
+	bh=1dTwOgGS6ADFs47cJemFMBrbOQiGeMR2xxaYdbAs3sg=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iEOWRMOnNw+zP8gCq3gfbEDcQz/nemCV1Fo9J8jNxq8L4OvxJghvQ+6YfPjujlyXqNGNg/WOKK/iD703mGjwdYL/RrdB6eZzcJULl0DziRxBTJb44HBfKJBR49r1J/1ol2k9gfqmZuJAYR8GflCMBaRHuMtw1WNQrPXHSvlQ/uo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dC4Gw1ni; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758891459; x=1790427459;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   mime-version;
+  bh=1dTwOgGS6ADFs47cJemFMBrbOQiGeMR2xxaYdbAs3sg=;
+  b=dC4Gw1niPLjFmXpn1VHipwWryaTwNEDPuAR+zmVLDuLzaXe4PShzJWc2
+   0DubT2RgRAPvCPWurFwwtZmWTjRPwi68En2D0VlU3b9vTrYdkNl8BQ+zz
+   X4lnKSjWtXmPeqq/+27+Jns/LwWpnDvF2k1OZlPUunOp+r38d7Nd/OrTB
+   pCvSGpk3hDsW9pE8J64K5Y4zxn5/vwHwq0ZN/88+SVzoo2eRBS3zYlLHN
+   E033gIlCMnMsUDVz3ZEK8IuwZ4l5k8kAMlAkuk9rING9D5ESKyUqUhHt6
+   12vqbLUAPuedjJzH/DjbVcLMoMWLxJp2SCbHgNoSyTmfWjdw4O71KqO6k
+   Q==;
+X-CSE-ConnectionGUID: IfUoaAEdTu6bsbjMqGV4OA==
+X-CSE-MsgGUID: P4VK3xsjTp2AJ17TESiI4Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="72655196"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="72655196"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 05:57:38 -0700
+X-CSE-ConnectionGUID: cMchXkRwSJmUxM3JmfL1yA==
+X-CSE-MsgGUID: nlu0KymKR2mVG1WfTUOhSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="201302395"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 05:57:37 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 05:57:36 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 05:57:36 -0700
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.55) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 05:57:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xMf1Mu3yuDwV9tDzdqwnirZP/9ryplHPqaaNg+nQ5vsGqXg/ZrSN+Z6/or+O/QaZV1ulFH9BOtqSIfiXY4Jmxpz2Bz9IAo2fYZscISh+u3ZBSpnEZpyT29cJCP8w+Y5AiVOhtcsimZWPez7LmZLGLFWuDrj08Bfq8rzeoxAO5LVbp8suvUKsvrCWmHWeRGduoxRbz4ySkEUJllJvSTQbI+QdHzdoRaYZgdbjRJg+rtBn2fuoQEcLG9BwjOXHEaRz68DLBrykVacFl+Nt3lqpCMN8nwsVyKb5sj92s9wBEiwIOuGSXQzOdKMLebsZ5dcF6bZvZJD1XEm/kDKuNBo7Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FkJye+874cysHMSugdUbKi7DSy++pWYq6eT22Rfjfrw=;
+ b=sZ2xnE5UYCeKkTvM0YFKTLz1/Wb6LTKNhMc6Ot8fFJYBj0IOhZimJl8SBPU9cHoZsro3oEInDjW9FDz6O5G03eNeWnik1fQZAITyusYwea5V/6l9AjxgGJ12TDUX86mmTd8+4NgHnrAUb0TwkLEy84kDBfl/QI6I6aPxHZbQUqiYYBoOaeaPiLfrSG8V/ky28K1X79zmYGFmKIS4P96Irke6RtwMQ7p22FsVKw5SJz9go6bykzXdHKZejrkSIdREKbgAcMIfA8bdiDZQoWnFFO4+IVqPUl/YpjPJpHUfugqfLa9Q7TaMoWZmzYKgeq8Zc2NpkQS3sNcGagdgtxmYhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
+ by DM3PPF96964A2A1.namprd11.prod.outlook.com (2603:10b6:f:fc00::f3b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Fri, 26 Sep
+ 2025 12:57:34 +0000
+Received: from PH0PR11MB5674.namprd11.prod.outlook.com
+ ([fe80::77d3:dfb2:3bd:e02a]) by PH0PR11MB5674.namprd11.prod.outlook.com
+ ([fe80::77d3:dfb2:3bd:e02a%4]) with mapi id 15.20.9137.018; Fri, 26 Sep 2025
+ 12:57:34 +0000
+Date: Fri, 26 Sep 2025 20:57:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Benjamin Berg <benjamin@sipsolutions.net>, <linux-um@lists.infradead.org>,
+	Willy Tarreau <w@1wt.eu>, Thomas =?iso-8859-1?Q?Wei=DFschuh?=
+	<linux@weissschuh.net>, <linux-kselftest@vger.kernel.org>, "Arnaldo Carvalho
+ de Melo" <acme@redhat.com>
+CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Benjamin
+ Berg" <benjamin.berg@intel.com>
+Subject: Re: [PATCH v3 09/12] um: use nolibc for the --showconfig
+ implementation
+Message-ID: <aNaNtI+mbyc4zgFy@rli9-mobl>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250924142059.527768-10-benjamin@sipsolutions.net>
+X-ClientProxiedBy: SG2PR04CA0165.apcprd04.prod.outlook.com (2603:1096:4::27)
+ To PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="goolxarnnegz6rjd"
-Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5674:EE_|DM3PPF96964A2A1:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4e8f0c5-81c8-4ec5-06b8-08ddfcfc42c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3RCM9z00EBkaijyYh3p2mZDhOocMkU4mQcswZBY78lxAWqkrYxtKdQk4PseN?=
+ =?us-ascii?Q?qMkRzeXin5/Wa5Cxt8IvjSiHX9iZIBGVdewIBAW+zLXs0YnQMtjP6k5VKWlx?=
+ =?us-ascii?Q?I2CHyy2EuJwyCvxIOwO/9q+Mi6I/8yyR8NxgGl/uU/yNmr5IAPvZK1kU1uU3?=
+ =?us-ascii?Q?z0DMhHGWVoKEvciEW7e3c9AfvlwvsMO8MyJfucQjEpIuFFEh2MuztlykL9Nc?=
+ =?us-ascii?Q?6cZ1rEGE1ogDs2QFMw2e3pUra7gNVWXhaqu3sTxl5sTLxAT0sumfOdyqvsUD?=
+ =?us-ascii?Q?IL1PFOI/Qz5peGGEU5MmTFz7qzSYpmQlgqf5OFTO5nFORH7DYE5D4pUckdIQ?=
+ =?us-ascii?Q?t33yfX7Zf77lHCzZ21WEa7imatWK3DcQzAzmZwB5OYmmaf2gPAnTr61rjUGl?=
+ =?us-ascii?Q?Jsdcv3DuIbQJPiqyF2pGVYGQbI092O+yBkZXg7l7aMqzVgsvJfTgzzEu1gkc?=
+ =?us-ascii?Q?Qj043JH127sMNsFDSNqdqf/GkdrZbchxkgM0Xg0l88JElg7qwT6rmfEruos0?=
+ =?us-ascii?Q?qocy234FyuQ0e37bysZtgOpUbZJG4Qr9TQ54PJ81xMQ+8mDqvbVge2bTyHH7?=
+ =?us-ascii?Q?TDMaPxP15ETbZRHsyetTn6M6uZA5oY54n0bYkT6kJ+F2TlbkHaq1+GmrK/pR?=
+ =?us-ascii?Q?2BUdP9YBgaBfd7Zn1yPw/uO5nzH/6Dz57T8pgOQjdYiV0oRceF++gfMSCLK9?=
+ =?us-ascii?Q?cjeCdi5G6Dmhv7QoSv3g3ljjH3aitn/c4lCGrSH82KbcegOCxdXEFxIdNNVa?=
+ =?us-ascii?Q?yAHQTqsEm61+jDVkjOZJGCBsmvK5Ev47cUAFmFV+lvJZM52ACaA/9xnhA0Ud?=
+ =?us-ascii?Q?+CuQG42aQoSUS6AF0fIMHi4USS3JH8uH+QoqbxkV6/yUCFL6oQJRtqKkhQoO?=
+ =?us-ascii?Q?z6410nzuikJm2YXjmjYX1RSKprnPuARRfg7/sna+2SM7j2kugONtcU7K1Mtr?=
+ =?us-ascii?Q?FDf0QDX+op3QQIHU0I8td3HwVJV9+ej2/7HkdjRy60fV8mxqR9//gYoh0Rcb?=
+ =?us-ascii?Q?yO5w30AHw2Gzt3MUewtHMKTQ54Hhs0QiVjaFFGv8chRTnWmr7uf5v1QPsz/f?=
+ =?us-ascii?Q?CRuHV+T/KQha2Y0Y0HoIO0wz8+sHbYKLtGhTVnwgQ4OwHbbE+BBRKu1BScT2?=
+ =?us-ascii?Q?E/sySJQXx0mTb1qO9AUGRN2DNQ5X1nmEW1mAVzggPC1Zmt91Uc7vV/MvcXZe?=
+ =?us-ascii?Q?PJGG7nBgu5Y6KZWvyhGnOUL0Q9qUUYJb8e37D1XyhOwEeLR7x3c8SNaFwks3?=
+ =?us-ascii?Q?ayi65WuBMZ+sZ4ew+D5KYEcMWmG7VuU4xpU87+BIIJWoJ89LHVRh4pIGHfOA?=
+ =?us-ascii?Q?IK2pgKy/zVCea7X9dT7BP9VBrsWSk1oLe4eGjWN+U6VFU/558Bt/E776n2+R?=
+ =?us-ascii?Q?E8yfkmkZEvg0Noa2Sar4gyUoMEQkS4LfIVWx0Y5QdFADiH7TdFJ3KbNx38ci?=
+ =?us-ascii?Q?2D/ci/psl9w=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5674.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jFgsPbRx112nh9lWzyUMCcwUbdPIgPfqyq5vGUAmTGN4pv35Yc3xzq7uy5tJ?=
+ =?us-ascii?Q?nv5v29ndeKT43Wt3se9hIqoJR0tRghBf8z+OFF3G/UZxnpDVoskDHuEWDbiu?=
+ =?us-ascii?Q?TN1kL4fKP2JazbxrtxmmNUL7SoIxspsJUgNLYl2AihdWcGM2mqXFTMnYVs/M?=
+ =?us-ascii?Q?SfFuKL0KX9nOYwQgk9qH/0hXnnO2lrh6EGvQ75YjWzynd/oy4ZQPcpYc9ozE?=
+ =?us-ascii?Q?/g4Nz4/A2aTGfkYtp3JxNe8xirF4jjt6IA53YdgSw23ImAzZObesEfdSwWFb?=
+ =?us-ascii?Q?KRSIq9U4TKKDyX5GCnbGYG2tEVdNfMQ0sEU/UJeWNhiIxz3SRb+z+S50/9eN?=
+ =?us-ascii?Q?y5TRlz/FGrFBS4Uhihhq3fExGBPAVs9FbaZh1KrA/4Txy4QF4uRrZ1x0/tPt?=
+ =?us-ascii?Q?OlWoDlQmibYHSoDEV4Y+qaWL4MrV/EvvAmpRkUOn9GKFtKi4bM/o/VNGo7va?=
+ =?us-ascii?Q?4MInKpVlWUYyhnYPI2sHarPTD9Y/qnjHUegk/xz3meUB1YGVxzi9fJlOyttP?=
+ =?us-ascii?Q?6z1YW/hS2Hb15ZZw5NqX+p8jNVZhZda844BQMrQN7ox2kz8/0Xlb63Hd8VFw?=
+ =?us-ascii?Q?ZzvSWK3O7fJ0L+VBgxPGCzyYb7Y37DqV24MWbiSOFLtq2NenozfTEQF76pEQ?=
+ =?us-ascii?Q?QDq0wmVH3tcFJ1U1OQEsSrtHGryA848myVf2gqHVnN8JniiTwVeyY/KpXpYn?=
+ =?us-ascii?Q?Rqq6ZXSYNwzMvl2qBuHSUT8XgtP0Kvs5LhFBdEgalTeDlVKdtlmcF7LPsD0I?=
+ =?us-ascii?Q?/EtPL5or2+l5RrJJPdplFj4/d7W5E3PNe+JxEYO9bFw4veYclxxFdXYtHs9K?=
+ =?us-ascii?Q?+Aj5pwu2G+b+UnpGcwIo3SvXrXf0GGvlRvMf3F6SnTsfSzni6XZIfpBDt2oK?=
+ =?us-ascii?Q?k7gp66qLd5lzDYdPGXbhOhc2FOd62IlWwhnutpzkYExVebUqKaL9b3jGK/5s?=
+ =?us-ascii?Q?Hm5guan5420bCpPFti/6os9qEsgTdKLlC2oH9h3ekEGx2uwfou749YIZEGkr?=
+ =?us-ascii?Q?1qJ/3kcrZJnfpxQm6/Ea2bFXY300lqg2IDYgnW2f0cj5SLVltY1T4YirkEop?=
+ =?us-ascii?Q?v2WGQPhJ+utDCg4XAPkBtMQSquFqvadAEIZqcVD45YuS7NaXUYu5kH5Bl+Za?=
+ =?us-ascii?Q?XN91yeIjZAZ9hSTC+z1t7tW/Y5OtNpynDllBphljoWhfxm9duRdRLExThY0o?=
+ =?us-ascii?Q?Q5wptkhTX4QFiychfv7N7xyjHS8hAWz3KAMyMo6ZfmTMSEXrUMUSowvmInTK?=
+ =?us-ascii?Q?QaCG1V3fnxMmhJq/kEsW9HpB6/1Bx5tPM4huqQeE7dJ1IHlhuCP871vZi60J?=
+ =?us-ascii?Q?3DCVlcT18ZV0mPNtkOgA5KStAAwE09jy+PNJ/Vmi9NWCDUlCdC/8Kz8Tjdvk?=
+ =?us-ascii?Q?OW1ffKYCdihKzk8+RdIWMtdAunfWTx7ozbS5h6R/3x6ROyOccSRFjg2DJXyr?=
+ =?us-ascii?Q?7exJ6whVSOnKjPHHiN+B3g9YKNRK31clE4yqeFTDgXp5Q058BSznzBvfa8oQ?=
+ =?us-ascii?Q?Gy47tKimOkuAZIWINNxenyZqwnro9ICAzDm0Z/T22Co4unmiI8W1VX9UmbSg?=
+ =?us-ascii?Q?yvO1JC8vqrVEz8cLY/iA/LAJgJqxAV0D5l0hG2q3?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4e8f0c5-81c8-4ec5-06b8-08ddfcfc42c8
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5674.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 12:57:34.2278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: INnYJzOCSNz2etjhVwzVEr0CwQVuheeJwuXGLLbWHzY7CSvirdE0bDIIWH8aBJnrqzvDXLiCqQGV50cwsBSqjQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF96964A2A1
+X-OriginatorOrg: intel.com
 
+Hi Benjamin,
 
---goolxarnnegz6rjd
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 5/8] man/man2/move_mount.2: document "new" mount API
-Message-ID: <pvcrxgmtpfhx3lfdk5ydwuxffmv3avlsy4tagww2bxdb2ywx6s@iqe4y4mudjq6>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
+kernel test robot noticed the following build warnings:
 
-Hi Aleksa,
+[auto build test WARNING on uml/next]
+[also build test WARNING on uml/fixes shuah-kselftest/next shuah-kselftest/fixes linus/master v6.17-rc7 next-20250925]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Thu, Sep 25, 2025 at 01:31:27AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
->=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Berg/tools-compiler-h-fix-__used-definition/20250924-222547
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux next
+patch link:    https://lore.kernel.org/r/20250924142059.527768-10-benjamin%40sipsolutions.net
+patch subject: [PATCH v3 09/12] um: use nolibc for the --showconfig implementation
+:::::: branch date: 2 days ago
+:::::: commit date: 2 days ago
+config: um-randconfig-r111-20250926 (https://download.01.org/0day-ci/archive/20250926/202509261452.g5peaXCc-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509261452.g5peaXCc-lkp@intel.com/reproduce)
 
-Thanks!  I've applied this patch, with some minor amendments (see below).
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3Deb37a3066ccce4f44ab69fae559016a524e4eac>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/r/202509261452.g5peaXCc-lkp@intel.com/
 
-> ---
->  man/man2/move_mount.2 | 646 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 646 insertions(+)
->=20
-> diff --git a/man/man2/move_mount.2 b/man/man2/move_mount.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f954f36c43c444afb167088cc=
-665607dfeb10676
-> --- /dev/null
-> +++ b/man/man2/move_mount.2
-> @@ -0,0 +1,646 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH move_mount 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +move_mount \- move or attach mount object to filesystem
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <fcntl.h>" "          /* Definition of " AT_* " constants =
-*/"
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int move_mount(int " from_dirfd ", const char *" from_path ,
-> +.BI "               int " to_dirfd ", const char *" to_path ,
-> +.BI "               unsigned int " flags );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR move_mount ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR move_mount ()
-> +moves the mount object indicated by
-> +.I from_dirfd
-> +and
-> +.I from_path
-> +to the path indicated by
-> +.I to_dirfd
-> +and
-> +.IR to_path .
-> +The mount object being moved
-> +can be an existing mount point in the current mount namespace,
-> +or a detached mount object created by
-> +.BR fsmount (2)
-> +or
-> +.BR open_tree (2)
-> +with
-> +.BR \%OPEN_TREE_CLONE .
-> +.P
-> +To access the source mount object
-> +or the destination mount point,
-> +no permissions are required on the object itself,
-> +but if either pathname is supplied,
-> +execute (search) permission is required
-> +on all of the directories specified in
-> +.I from_path
-> +or
-> +.IR to_path .
-> +.P
-> +The calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability in order to move or attach a mount object.
-> +.P
-> +As with "*at()" system calls,
-> +.BR move_mount ()
-> +uses the
-> +.I from_dirfd
-> +and
-> +.I to_dirfd
-> +arguments
-> +in conjunction with the
-> +.I from_path
-> +and
-> +.I to_path
-> +arguments to determine the source and destination objects to operate on
-> +(respectively), as follows:
-> +.IP \[bu] 3
-> +If the pathname given in
-> +.I *_path
+sparse warnings: (new ones prefixed by >>)
+   command-line: note: in included file (through tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h, arch/um/include/shared/user.h, builtin):
+>> tools/include/nolibc/sys.h:109:29: sparse: sparse: Using plain integer as NULL pointer
+   command-line: note: in included file (through tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h, arch/um/include/shared/user.h, builtin):
+>> tools/include/nolibc/sys/reboot.h:31:16: sparse: sparse: Using plain integer as NULL pointer
+>> tools/include/nolibc/sys/reboot.h:31:16: sparse: sparse: Using plain integer as NULL pointer
+   command-line: note: in included file (through tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h, arch/um/include/shared/user.h, builtin):
+>> tools/include/nolibc/unistd.h:57:27: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:57:30: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:57:33: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:70:27: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:70:30: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:70:33: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:81:30: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:81:33: sparse: sparse: Using plain integer as NULL pointer
+   tools/include/nolibc/unistd.h:81:36: sparse: sparse: Using plain integer as NULL pointer
+   command-line: note: in included file (through tools/include/nolibc/stdio.h, tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h, ...):
+   tools/include/nolibc/stdlib.h:56:6: sparse: sparse: symbol 'abort' redeclared with different type (different modifiers):
+   tools/include/nolibc/stdlib.h:56:6: sparse:    void extern [addressable] [noreturn] [toplevel] [unused] abort( ... )
+   tools/include/nolibc/stdlib.h:54:6: sparse: note: previously declared as:
+   tools/include/nolibc/stdlib.h:54:6: sparse:    void extern [addressable] [toplevel] abort( ... )
+   command-line: note: in included file (through tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h, arch/um/include/shared/user.h, builtin):
+   tools/include/nolibc/getopt.h:19:6: sparse: sparse: symbol 'optarg' was not declared. Should it be static?
+   tools/include/nolibc/getopt.h:22:5: sparse: sparse: symbol 'optind' was not declared. Should it be static?
+   tools/include/nolibc/getopt.h:22:17: sparse: sparse: symbol 'opterr' was not declared. Should it be static?
+   tools/include/nolibc/getopt.h:22:29: sparse: sparse: symbol 'optopt' was not declared. Should it be static?
+>> tools/include/nolibc/getopt.h:81:26: sparse: sparse: Using plain integer as NULL pointer
 
-In this case, where the non-variable part is already in italics, the
-variable part is written in roman, for distinguishing it.  (See
-groff_man(7).)
+vim +109 tools/include/nolibc/sys.h
 
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  104  
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  105  static __attribute__((unused))
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  106  void *sbrk(intptr_t inc)
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  107  {
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  108  	/* first call to find current end */
+4201cfce15fe35 Zhangjin Wu   2023-07-07 @109  	void *ret = sys_brk(0);
+4201cfce15fe35 Zhangjin Wu   2023-07-07  110  
+4201cfce15fe35 Zhangjin Wu   2023-07-07  111  	if (ret && sys_brk(ret + inc) == ret + inc)
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  112  		return ret + inc;
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  113  
+fb01ff635efd0a Willy Tarreau 2023-08-15  114  	SET_ERRNO(ENOMEM);
+fb01ff635efd0a Willy Tarreau 2023-08-15  115  	return (void *)-1;
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  116  }
+bd8c8fbb866fe5 Willy Tarreau 2022-02-07  117  
 
-Have a lovely day!
-Alex
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-> +is absolute, then
-> +the corresponding
-> +.I *_dirfd
-> +is ignored.
-> +.IP \[bu]
-> +If the pathname given in
-> +.I *_path
-> +is relative and
-> +the corresponding
-> +.I *_dirfd
-> +is the special value
-> +.BR \%AT_FDCWD ,
-> +then
-> +.I *_path
-> +is interpreted relative to
-> +the current working directory
-> +of the calling process (like
-> +.BR open (2)).
-> +.IP \[bu]
-> +If the pathname given in
-> +.I *_path
-> +is relative,
-> +then it is interpreted relative to
-> +the directory referred to by
-> +the corresponding file descriptor
-> +.I *_dirfd
-> +(rather than relative to
-> +the current working directory
-> +of the calling process,
-> +as is done by
-> +.BR open (2)
-> +for a relative pathname).
-> +In this case,
-> +the corresponding
-> +.I *_dirfd
-> +must be a directory
-> +that was opened for reading
-> +.RB ( O_RDONLY )
-> +or using the
-> +.B O_PATH
-> +flag.
-> +.IP \[bu]
-> +If
-> +.I *_path
-> +is an empty string,
-> +and
-> +.I flags
-> +contains the appropriate
-> +.BI \%MOVE_MOUNT_ * _EMPTY_PATH
-> +flag,
-> +then the corresponding file descriptor
-> +.I *_dirfd
-> +is operated on directly.
-> +In this case,
-> +the corresponding
-> +.I *_dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +.P
-> +See
-> +.BR openat (2)
-> +for an explanation of why the
-> +.I *_dirfd
-> +arguments are useful.
-> +.P
-> +.I flags
-> +can be used to control aspects of the path lookup
-> +for both the source and destination objects,
-> +as well as other properties of the mount operation.
-> +A value for
-> +.I flags
-> +is constructed by bitwise ORing
-> +zero or more of the following constants:
-> +.RS
-> +.TP
-> +.B MOVE_MOUNT_F_EMPTY_PATH
-> +If
-> +.I from_path
-> +is an empty string, operate on the file referred to by
-> +.I from_dirfd
-> +(which may have been obtained from
-> +.BR open (2),
-> +.BR fsmount (2),
-> +or
-> +.BR open_tree (2)).
-> +In this case,
-> +.I from_dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +If
-> +.I from_dirfd
-> +is
-> +.BR \%AT_FDCWD ,
-> +.BR move_mount ()
-> +will operate on the current working directory
-> +of the calling process.
-> +.IP
-> +This is the most common mechanism
-> +used to attach detached mount objects
-> +produced by
-> +.BR fsmount (2)
-> +and
-> +.BR open_tree (2)
-> +to a mount point.
-> +.TP
-> +.B MOVE_MOUNT_T_EMPTY_PATH
-> +As with
-> +.BR \%MOVE_MOUNT_F_EMPTY_PATH ,
-> +except operating on
-> +.I to_dirfd
-> +and
-> +.IR to_path .
-> +.TP
-> +.B MOVE_MOUNT_F_SYMLINKS
-> +If
-> +.I from_path
-> +references a symbolic link,
-> +then dereference it.
-> +The default behaviour for
-> +.BR move_mount ()
-> +is to
-> +.I not follow
-> +symbolic links.
-> +.TP
-> +.B MOVE_MOUNT_T_SYMLINKS
-> +As with
-> +.BR \%MOVE_MOUNT_F_SYMLINKS ,
-> +except operating on
-> +.I to_dirfd
-> +and
-> +.IR to_path .
-> +.TP
-> +.B MOVE_MOUNT_F_NO_AUTOMOUNT
-> +Do not automount the terminal ("basename") component of
-> +.I \%from_path
-> +if it is a directory that is an automount point.
-> +This allows a mount object
-> +that has an automount point at its root
-> +to be moved
-> +and prevents unintended triggering of an automount point.
-> +This flag has no effect
-> +if the automount point has already been mounted over.
-> +.TP
-> +.B MOVE_MOUNT_T_NO_AUTOMOUNT
-> +As with
-> +.BR \%MOVE_MOUNT_F_NO_AUTOMOUNT ,
-> +except operating on
-> +.I to_dirfd
-> +and
-> +.IR to_path .
-> +This allows an automount point to be manually mounted over.
-> +.TP
-> +.BR MOVE_MOUNT_SET_GROUP " (since Linux 5.15)"
-> +Add the attached private-propagation mount object indicated by
-> +.I to_dirfd
-> +and
-> +.I to_path
-> +into the mount propagation "peer group"
-> +of the attached non-private-propagation mount object indicated by
-> +.I from_dirfd
-> +and
-> +.IR from_path .
-> +.IP
-> +Unlike other
-> +.BR move_mount ()
-> +operations,
-> +this operation does not move or attach any mount objects.
-> +Instead, it only updates the metadata
-> +of attached mount objects.
-> +(Also, take careful note of
-> +the argument order\[em]\c
-> +the mount object being modified
-> +by this operation is the one specified by
-> +.I to_dirfd
-> +and
-> +.IR to_path .)
-> +.IP
-> +This makes it possible to first create a mount tree
-> +consisting only of private mounts
-> +and then configure the desired propagation layout afterwards.
-> +(See the "SHARED SUBTREES" section of
-> +.BR mount_namespaces (7)
-> +for more information about mount propagation and peer groups.)
-> +.TP
-> +.BR MOVE_MOUNT_BENEATH " (since Linux 6.5)"
-> +If the path indicated by
-> +.I to_dirfd
-> +and
-> +.I to_path
-> +is an existing mount object,
-> +rather than attaching or moving the mount object
-> +indicated by
-> +.I from_dirfd
-> +and
-> +.I from_path
-> +on top of the mount stack,
-> +attach or move it beneath the current top mount
-> +on the mount stack.
-> +.IP
-> +After using
-> +.BR \%MOVE_MOUNT_BENEATH ,
-> +it is possible to
-> +.BR umount (2)
-> +the top mount
-> +in order to reveal the mount object
-> +which was attached beneath it earlier.
-> +This allows for the seamless (and atomic) replacement
-> +of intricate mount trees,
-> +which can further be used
-> +to "upgrade" a mount tree with a newer version.
-> +.IP
-> +This operation has several restrictions:
-> +.RS
-> +.IP \[bu] 3
-> +Mount objects cannot be attached beneath the filesystem root,
-> +including cases where
-> +the filesystem root was configured by
-> +.BR chroot (2)
-> +or
-> +.BR pivot_root (2).
-> +To mount beneath the filesystem root,
-> +.BR pivot_root (2)
-> +must be used.
-> +.IP \[bu]
-> +The target path indicated by
-> +.I to_dirfd
-> +and
-> +.I to_path
-> +must not be a detached mount object,
-> +such as those produced by
-> +.BR open_tree (2)
-> +with
-> +.B \%OPEN_TREE_CLONE
-> +or
-> +.BR fsmount (2).
-> +.IP \[bu]
-> +The current top mount
-> +of the target path's mount stack
-> +and its parent mount
-> +must be in the calling process's mount namespace.
-> +.IP \[bu]
-> +The caller must have sufficient privileges
-> +to unmount the top mount
-> +of the target path's mount stack,
-> +to prove they have privileges
-> +to reveal the underlying mount.
-> +.IP \[bu]
-> +Mount propagation events triggered by this
-> +.BR move_mount ()
-> +operation
-> +(as described in
-> +.BR mount_namespaces (7))
-> +are calculated based on the parent mount
-> +of the current top mount
-> +of the target path's mount stack.
-> +.IP \[bu]
-> +The target path's mount
-> +cannot be an ancestor in the mount tree of
-> +the source mount object.
-> +.IP \[bu]
-> +The source mount object
-> +must not have any overmounts,
-> +otherwise it would be possible to create "shadow mounts"
-> +(i.e., two mounts mounted on the same parent mount at the same mount poi=
-nt).
-> +.IP \[bu]
-> +It is not possible to move a mount
-> +beneath a top mount
-> +if the parent mount
-> +of the current top mount
-> +propagates to the top mount itself.
-> +Otherwise,
-> +.B \%MOVE_MOUNT_BENEATH
-> +would cause the mount object
-> +to be propagated
-> +to the top mount
-> +from the parent mount,
-> +defeating the purpose of using
-> +.BR \%MOVE_MOUNT_BENEATH .
-> +.IP \[bu]
-> +It is not possible to move a mount
-> +beneath a top mount
-> +if the parent mount
-> +of the current top mount
-> +propagates to the mount object
-> +being mounted beneath.
-> +Otherwise, this would cause a similar propagation issue
-> +to the previous point,
-> +also defeating the purpose of using
-> +.BR \%MOVE_MOUNT_BENEATH .
-> +.RE
-> +.RE
-> +.P
-> +If
-> +.I from_dirfd
-> +is a mount object file descriptor and
-> +.BR move_mount ()
-> +is operating on it directly,
-> +.I from_dirfd
-> +will remain associated with the mount object after
-> +.BR move_mount ()
-> +succeeds,
-> +so you may repeatedly use
-> +.I from_dirfd
-> +with
-> +.BR move_mount (2)
-> +and/or "*at()" system calls
-> +as many times as necessary.
-> +.SH RETURN VALUE
-> +On success,
-> +.BR move_mount ()
-> +returns 0.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EACCES
-> +Search permission is denied
-> +for one of the directories
-> +in the path prefix of one of
-> +.I from_path
-> +or
-> +.IR to_path .
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EBADF
-> +One of
-> +.I from_dirfd
-> +or
-> +.I to_dirfd
-> +is not a valid file descriptor.
-> +.TP
-> +.B EFAULT
-> +One of
-> +.I from_path
-> +or
-> +.I to_path
-> +is NULL
-> +or a pointer to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +Invalid flag specified in
-> +.IR flags .
-> +.TP
-> +.B EINVAL
-> +The path indicated by
-> +.I from_dirfd
-> +and
-> +.I from_path
-> +is not a mount object.
-> +.TP
-> +.B EINVAL
-> +The mount object type
-> +of the source mount object and target inode
-> +are not compatible
-> +(i.e., the source is a file but the target is a directory, or vice-versa=
-).
-> +.TP
-> +.B EINVAL
-> +The source mount object or target path
-> +are not in the calling process's mount namespace
-> +(or an anonymous mount namespace of the calling process).
-> +.TP
-> +.B EINVAL
-> +The source mount object's parent mount
-> +has shared mount propagation,
-> +and thus cannot be moved
-> +(as described in
-> +.BR mount_namespaces (7)).
-> +.TP
-> +.B EINVAL
-> +The source mount has
-> +.B MS_UNBINDABLE
-> +child mounts
-> +but the target path
-> +resides on a mount tree with shared mount propagation,
-> +which would otherwise cause the unbindable mounts to be propagated
-> +(as described in
-> +.BR mount_namespaces (7)).
-> +.TP
-> +.B EINVAL
-> +.B \%MOVE_MOUNT_BENEATH
-> +was attempted,
-> +but one of the listed restrictions was violated.
-> +.TP
-> +.B ELOOP
-> +Too many symbolic links encountered
-> +when resolving one of
-> +.I from_path
-> +or
-> +.IR to_path .
-> +.TP
-> +.B ENAMETOOLONG
-> +One of
-> +.I from_path
-> +or
-> +.I to_path
-> +is longer than
-> +.BR PATH_MAX .
-> +.TP
-> +.B ENOENT
-> +A component of one of
-> +.I from_path
-> +or
-> +.I to_path
-> +does not exist.
-> +.TP
-> +.B ENOENT
-> +One of
-> +.I from_path
-> +or
-> +.I to_path
-> +is an empty string,
-> +but the corresponding
-> +.BI MOVE_MOUNT_ * _EMPTY_PATH
-> +flag is not specified in
-> +.IR flags .
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix of one of
-> +.I from_path
-> +or
-> +.I to_path
-> +is not a directory,
-> +or one of
-> +.I from_path
-> +or
-> +.I to_path
-> +is relative
-> +and the corresponding
-> +.I from_dirfd
-> +or
-> +.I to_dirfd
-> +is a file descriptor referring to a file other than a directory.
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B EPERM
-> +The calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit 2db154b3ea8e14b04fee23e3fdfd5e9d17fbc6ae
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH EXAMPLES
-> +.BR move_mount ()
-> +can be used to move attached mounts like the following:
-> +.P
-> +.in +4n
-> +.EX
-> +move_mount(AT_FDCWD, "/a", AT_FDCWD, "/b", 0);
-> +.EE
-> +.in
-> +.P
-> +This would move the mount object mounted on
-> +.I /a
-> +to
-> +.IR /b .
-> +The above procedure is functionally equivalent to
-> +the following mount operation
-> +using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount("/a", "/b", NULL, MS_MOVE, NULL);
-> +.EE
-> +.in
-> +.P
-> +.BR move_mount ()
-> +can also be used in conjunction with file descriptors returned from
-> +.BR open_tree (2)
-> +or
-> +.BR open (2):
-> +.P
-> +.in +4n
-> +.EX
-> +int fd =3D open_tree(AT_FDCWD, "/mnt", 0); /* open("/mnt", O_PATH); */
-> +move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
-> +move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
-> +move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +This would move the mount object mounted at
-> +.I /mnt
-> +to
-> +.IR /mnt2 ,
-> +then
-> +.IR /mnt3 ,
-> +and then
-> +.IR /mnt4 .
-> +.P
-> +If the source mount object
-> +indicated by
-> +.I from_dirfd
-> +and
-> +.I from_path
-> +is a detached mount object,
-> +.BR move_mount ()
-> +can be used to attach it to a mount point:
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd;
-> +\&
-> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "/dev/sda1", 0);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NODEV);
-> +move_mount(mntfd, "", AT_FDCWD, "/home", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +This would create a new filesystem configuration context for ext4,
-> +configure it,
-> +create a detached mount object,
-> +and then attach it to
-> +.IR /home .
-> +The above procedure is functionally equivalent to
-> +the following mount operation
-> +using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount("/dev/sda1", "/home", "ext4", MS_NODEV, "user_xattr");
-> +.EE
-> +.in
-> +.P
-> +The same operation also works with detached bind-mounts created with
-> +.BR open_tree (2)
-> +with
-> +.BR OPEN_TREE_CLONE :
-> +.P
-> +.in +4n
-> +.EX
-> +int mntfd =3D open_tree(AT_FDCWD, "/home/cyphar", OPEN_TREE_CLONE);
-> +move_mount(mntfd, "", AT_FDCWD, "/root", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.P
-> +This would create a new bind-mount of
-> +.I /home/cyphar
-> +as a detached mount object,
-> +and then attach it to
-> +.IR /root .
-> +The above procedure is functionally equivalent to
-> +the following mount operation
-> +using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount("/home/cyphar", "/root", NULL, MS_BIND, NULL);
-> +.EE
-> +.in
-> +.SH SEE ALSO
-> +.BR fsconfig (2),
-> +.BR fsmount (2),
-> +.BR fsopen (2),
-> +.BR fspick (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
->=20
-> --=20
-> 2.51.0
->=20
->=20
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---goolxarnnegz6rjd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWjYYACgkQ64mZXMKQ
-wqkAjA/+LCm8H/SrKSDG5eFousYe/3cKemG4P+/ptbpg+QuSsrahvqQrYiXJabBe
-bZRwP82Y76NKVPKMoVg0/r75ZAM7lgxJ8dQARwyWgD0XgJZ+fyadPWXbHtGNCK++
-m5nL+ueYtxTRaVOYTLs6FYBqW/HJOooakmEydLh/Z8A+8/LurHHnWQyODTm/aiym
-cdTUX+RDQ2S5Q3X0im7YpZz1uivS9jO28Gh1rnUXFPJxl8RFvhK/YuD/7L4+ivx0
-y5YBsjOopm/wwDVK9IougxFnlOR413RQ7TLhZNiTjSj7eTcN1qyP4tO0mBAHSans
-RhQMtJku3T85jmzaXM8Cj4rqR4jpKB18QIRvpKeGrxYE8Wz7uFewrCtrVfTNZoeE
-od9htZyYisVeTgVqH981ob8SqjwVulVUlIa5Z3VHPR0JBXFt+NcHnL9dB8pA9KoM
-c+kMWaqusBY2dsh21WwHhr9a2Revk8QwhQ4274d0aCxeQFtOfVmsGEgMkDvCHGX4
-wMb3mf6Tt97MJQ2qRxGWgM25mvUd68ZrugiXw2UB0P6aIowHgw1HIio6heza8Cg/
-2mVgAyU2UbGz3mlsJNNA2A+6TeIZYU0w5FE3R+YEfM2IW7PG4TiuxCxm/Z17HejZ
-LN6ggSm556vniRPs8uzPnI+ZwCz7JRoY/V45g8bjZHWuspH6f6c=
-=Ux1G
------END PGP SIGNATURE-----
-
---goolxarnnegz6rjd--
 
