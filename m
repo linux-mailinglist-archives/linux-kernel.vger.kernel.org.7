@@ -1,296 +1,149 @@
-Return-Path: <linux-kernel+bounces-834404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38198BA4A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:29:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918BEBA4CF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6281383F90
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AA662728C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EFE2F6574;
-	Fri, 26 Sep 2025 16:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B56E2F5A0F;
+	Fri, 26 Sep 2025 18:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W41rJvup"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U17rVZVO"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D36261B7F;
-	Fri, 26 Sep 2025 16:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884A52798ED;
+	Fri, 26 Sep 2025 18:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904075; cv=none; b=EMBfP55rRU4UM4U7P3oQhHcPJ5/yDv7hcb06Ze0ORMUBy6QpeqzTEIduCGd32EvoE0M7tWj13KE/k5cI/k4/7pKZuBQyWbXe3QIjfLXLEzTxK71q2KIGCEEex2wTJFyBJ80FtQx3y1OsxH14pYAhkPEwGLvkSkYZ5r5WZJxG5l8=
+	t=1758909739; cv=none; b=KfGy9t2kWmh82b5yHWd2M3kdCXV2jvAmmh/kUzjdqlvBrvpls3IICCpzLkt1cWliV7rS2l+s5TS1sQ8BWfTKw5KPglm2TpLwQUY0VZc6A3evQCRM/s6tOQRoACxq3sA560sjWEcvi+ia0XpHZM07eXZ1v0+WF3wj/7hm0bC6SBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904075; c=relaxed/simple;
-	bh=teMC0tMk1mLM4Of0idpMUE3tdsOJWZSq9BD6q7gznoA=;
+	s=arc-20240116; t=1758909739; c=relaxed/simple;
+	bh=zfGNKVpK3YCHVTtG0N5d6/84sLpoT92C6WcROFmqZus=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GU3mm6hnmG6z0p/8bkJPzT10qawM6cO1xRNQVmsFNId0gh7MzPkGzD014/HEXChhgcAC/KNtvBGr80qq0Sr2NoZXeeenkXr79BkOQv7Tk9gHYSikhgLIY5XOapuaJikq3+eWRLiS+Ig2GWYSv+Rns4fKkjzXw+dUTC6eDvmBFdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W41rJvup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D07C4CEF4;
-	Fri, 26 Sep 2025 16:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758904075;
-	bh=teMC0tMk1mLM4Of0idpMUE3tdsOJWZSq9BD6q7gznoA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W41rJvupOXbqPvxGyRp7j5AeAfrhejdE0HwU9ZmzdSh5mEVveCxWRFFFbR0lr2gSJ
-	 Y1tkKKU27yX4JyhxZIkzyRwwm2OQfVAkMDcMUodgr46zeaPfy7sKsErwtLmMcO79tk
-	 JT8edlZZKWEFHp9lzBRqrj0WpLr6UIf6m9jWmgmIZVx0s48nEGRhvPT+jQUEayPVpW
-	 wfwDoqESldskL+bf5KPBTxmr1XE1OV40kmu02x7TyDr1qddgSIaR7eRJjos6ZE4oti
-	 wIohqrHZDRdpjedNgZbiOeaGSiDqIs0/Krkd0R2ufn8evPhSoeIXGAZn4ZIadAS2uS
-	 xXllXCIsMJ/lA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Takashi Iwai <tiwai@suse.de>, LKML <linux-kernel@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Dhruva Gole <d-gole@ti.com>
+	 MIME-Version:Content-Type; b=WU2Y8oZjqiyQx/j2vxAKcZJmDcbpoH4eOd7arnVQ5t0CTa0FsUO/pb/y8Xhr24tzxlt5idP8L+drg2YaHczQzTvOUBNiLFT1MoLH+P8LjZ38nWFxj77hPZiAP1XxAn1q/Ir3z8T19bADeft2kjffdgtAGGbQOjaVyB1plvfgSHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U17rVZVO; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CF8E7442EF;
+	Fri, 26 Sep 2025 18:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758909732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f1iClMCSUbu1VdiuAP48MXWihn5/YOy3xJHSlLVRB3Q=;
+	b=U17rVZVOmPOMZsVuwIuivMoJRJLAgYJQnZxPmwKqLnMig3i7WiAGu23IxaLP61EMaX7ra9
+	iGTpdzFGTGpWYwT/ElI5hAsVBNuCHcACq6WepZPxA3l+Jo9LtmbRQBNHEHWgcY8q26bzAb
+	nhbi6Ud2PtN0wmo4HgKM3+ebhDLazL51kjT8WQZJw3Uaqkbgx3KHxOZoZNxhS6K9Gga+2v
+	bzN1ThaW/v3jpO1bFJrSCr2O+KHiQOO6xlMUa1DasgoRoEIcldCGFnl33OwSEzJehQ8ZRg
+	eJNCxSBc/9UNQD5DzVnSrrvuPPNhvQ0UdoBnG5smoKHMDvO4TSmiIk37wwTlPQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
 Subject:
- [PATCH v4 1/3] PM: runtime: Add auto-cleanup macros for "resume and get"
- operations
-Date: Fri, 26 Sep 2025 17:47:14 +0200
-Message-ID: <2238241.irdbgypaU6@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <6196611.lOV4Wx5bFT@rafael.j.wysocki>
-References: <6196611.lOV4Wx5bFT@rafael.j.wysocki>
+ Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology LTM8054
+ regulator
+Date: Fri, 26 Sep 2025 17:59:48 +0200
+Message-ID: <5331035.LvFx2qVVIh@fw-rgant>
+In-Reply-To: <20250925-pushchair-charity-9ccee20d8a6e@spud>
+References:
+ <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <20250925-ltm8054-driver-v2-1-bb61a401a0dc@bootlin.com>
+ <20250925-pushchair-charity-9ccee20d8a6e@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart3033215.ElGaqSPkdT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejtddtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeefjedrieeirddvudekrdefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefjedrieeirddvudekrdefledphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduhedprhgtphhtthhopegtohhnohhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlghhirhgufihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdro
+ hhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughlvggthhhnvghrsegsrgihlhhisghrvgdrtghomh
+X-GND-Sasl: romain.gantois@bootlin.com
+
+--nextPart3033215.ElGaqSPkdT
 Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Date: Fri, 26 Sep 2025 17:59:48 +0200
+Message-ID: <5331035.LvFx2qVVIh@fw-rgant>
+In-Reply-To: <20250925-pushchair-charity-9ccee20d8a6e@spud>
+MIME-Version: 1.0
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hello Conor,
 
-It is generally useful to be able to automatically drop a device's
-runtime PM usage counter incremented by runtime PM operations that
-resume a device and bump up its usage counter [1].
+On Thursday, 25 September 2025 21:27:06 CEST Conor Dooley wrote:
+> On Thu, Sep 25, 2025 at 02:37:33PM +0200, Romain Gantois wrote:
+...
+> > +properties:
+> > +  compatible:
+> > +    const: adi,ltm8054
+> > +
+> > +  enable-gpios:
+> > +    description: GPIO connected to the RUN pin.
+> > +    maxItems: 1
+> > +
+> 
+> > +  lltc,fb-voltage-divider:
+> Why does this property have a ?linear? vendor prefix?
+> Shouldn't it be adi to match the other property and compatible?
 
-To that end, add guard definition macros allowing pm_runtime_put()
-and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
-those cases.
+This component was originally from Linear Technology, before it was acquired 
+by Analog Devices. The new properties and compatibles have the Analog Devices 
+prefix, but the "fb-voltage-divider" property is already used by the LTC3676 
+and LTC3589 regulators, so I left the Linear Technology prefix for this one to 
+avoid introducing a new property just to specify a vendor prefix change.
 
-Simply put, a piece of code like below:
+I don't have a strong opinion about this though.
 
-	pm_runtime_get_sync(dev);
-	.....
-	pm_runtime_put(dev);
-	return 0;
+Thanks,
 
-can be transformed with guard() like:
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-	guard(pm_runtime_active)(dev);
-	.....
-	return 0;
+--nextPart3033215.ElGaqSPkdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-(see the pm_runtime_put() call is gone).
+-----BEGIN PGP SIGNATURE-----
 
-However, it is better to do proper error handling in the majority of
-cases, so doing something like this instead of the above is recommended:
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjWuHQACgkQKCYAIARz
+eA7OwA/9G4mPIwIfP7ydE9Jl22NjgLTptl9DeV9HdoZFinDU6e+W0GZs6XtQlK45
+8uU2I+hywAEzy/Ii49eI9ly2nhjWEgS59kldlThzNAEJeCZ/8zJPDj2DQuetYI+b
+LZdAnl3Gv+LNPCPpfR1YMUfZgzIkAIrWbd6KtrT+K/Vgc+2YgzqDttPZtqyvmrT8
+4OU5Nd6ZYpJPkUbl7TfOkGXbHcQHpD2I+O51JiBLtzHuV08Hod9jn2B1UaY1rZaD
+g5j5Mfo4lbRhX1FIl0jpbb91Fnl0tbA+N4r8GIpgST90kePgkRC3dTI6oTTQQs1p
+XPJsk8QYmMB5Qmk2VGnIauoOidEmVe2E43jVLDbBG/2KXuMK2OI3aq4TfAgV4KQa
+F7seEP0XsV3zJYNnJmFKvT7cEhDGS8Fy4gVrHllzx1lEItf9d0h0Jw9GhUcf7xhQ
+pOPZKJe5Pp0gy556akG7jNjVcOll+p+5Aiv1tGDW7oOVT7iog1AuywjgOPfaYh5N
+HJ07jrRQ2XIon9HqsPRWp9WNOaWbsQ+uNLHArmWeNr4ESa0PiFHoWNPh3rIjxGN2
+SB74FhA8QVRSvDneiW5ChAfQa5LreeKVf50EhfhBO/nzDO6oUKHG4CYCJ75QX6i5
+pofx68yTCsyrw25wN5Qn3fK0alI64AiLeV3TRfJtrVv2+IHMnLk=
+=yiZG
+-----END PGP SIGNATURE-----
 
-	ACQUIRE(pm_runtime_active_try, pm)(dev);
-	if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-		return -ENXIO;
-	.....
-	return 0;
-
-In all of the cases in which runtime PM is known to be enabled for the
-given device or the device can be regarded as operational (and so it can
-be accessed) with runtime PM disabled, a piece of code like:
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret < 0)
-		return ret;
-	.....
-	pm_runtime_put(dev);
-	return 0;
-
-can be changed as follows:
-
-	ACQUIRE(pm_runtime_active_try, pm)(dev);
-	ret = ACQUIRE_ERR(pm_runtime_active_try, &pm);
-	if (ret < 0)
-		return ret;
-	.....
-	return 0;
-
-(again, see the pm_runtime_put() call is gone).
-
-Still, if the device cannot be accessed unless runtime PM has been
-enabled for it, the CLASS(pm_runtime_get_active_enabled) variant
-needs to be used, that is (in the context of the example above):
-
-	ACQUIRE(pm_runtime_active_try_enabled, pm)(dev);
-	ret = ACQUIRE_ERR(pm_runtime_active_try_enabled, &pm);
-	if (ret < 0)
-		return ret;
-	.....
-	return 0;
-
-When the original code calls pm_runtime_put_autosuspend(), use one
-of the "auto" guard variants, pm_runtime_active_auto/_try/_enabled,
-so for example, a piece of code like:
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret < 0)
-		return ret;
-	.....
-	pm_runtime_put_autosuspend(dev);
-	return 0;
-
-will become:
-
-	ACQUIRE(pm_runtime_active_auto_try_enabled, pm)(dev);
-	ret = ACQUIRE_ERR(pm_runtime_active_auto_try_enabled, &pm);
-	if (ret < 0)
-		return ret;
-	.....
-	return 0;
-
-Note that the cases in which the return value of pm_runtime_get_sync()
-is checked can also be handled with the help of the new class macros.
-For example, a piece of code like:
-
-	ret = pm_runtime_get_sync(dev);
-	if (ret < 0) {
-		pm_runtime_put(dev);
-		return ret;
-	}
-	.....
-	pm_runtime_put(dev);
-	return 0;
-
-can be rewritten as:
-
-	ACQUIRE(pm_runtime_active_auto_try_enabled, pm)(dev);
-	ret = ACQUIRE_ERR(pm_runtime_active_auto_try_enabled, &pm);
-	if (ret < 0)
-		return ret;
-	.....
-	return 0;
-
-or pm_runtime_get_active_try can be used if transparent handling of
-disabled runtime PM is desirable.
-
-Link: https://lore.kernel.org/linux-pm/878qimv24u.wl-tiwai@suse.de/ [1]
-Link: https://lore.kernel.org/linux-pm/20250926150613.000073a4@huawei.com/
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v3 -> v4:
-   * Use guard definition macros instead of raw DEFINE_CLASS() (Jonathan)
-   * Change pm_runtime_get_active() helper definition to return an int instead
-     of a pointer
-   * Update changelog to match the new code
-
-v2 -> v3:
-   * Two more class definitions for the case in which resume errors can be
-     neglected.
-   * Update of new code comments (for more clarity).
-   * Changelog update.
-
-v1 -> v2:
-   * Rename the new classes and the new static inline helper.
-   * Add two classes for handling disabled runtime PM.
-   * Expand the changelog.
-   * Adjust the subject.
-
----
- drivers/base/power/runtime.c |    2 +
- include/linux/pm_runtime.h   |   44 ++++++++++++++++++++++++++++++++++---------
- 2 files changed, 37 insertions(+), 9 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -796,6 +796,8 @@ static int rpm_resume(struct device *dev
- 		if (dev->power.runtime_status == RPM_ACTIVE &&
- 		    dev->power.last_status == RPM_ACTIVE)
- 			retval = 1;
-+		else if (rpmflags & RPM_TRANSPARENT)
-+			goto out;
- 		else
- 			retval = -EACCES;
- 	}
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -21,6 +21,7 @@
- #define RPM_GET_PUT		0x04	/* Increment/decrement the
- 					    usage_count */
- #define RPM_AUTO		0x08	/* Use autosuspend_delay */
-+#define RPM_TRANSPARENT	0x10	/* Succeed if runtime PM is disabled */
- 
- /*
-  * Use this for defining a set of PM operations to be used in all situations
-@@ -511,6 +512,19 @@ static inline int pm_runtime_get_sync(st
- 	return __pm_runtime_resume(dev, RPM_GET_PUT);
- }
- 
-+static inline int pm_runtime_get_active(struct device *dev, int rpmflags)
-+{
-+	int ret;
-+
-+	ret = __pm_runtime_resume(dev, RPM_GET_PUT | rpmflags);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(dev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * pm_runtime_resume_and_get - Bump up usage counter of a device and resume it.
-  * @dev: Target device.
-@@ -521,15 +535,7 @@ static inline int pm_runtime_get_sync(st
-  */
- static inline int pm_runtime_resume_and_get(struct device *dev)
- {
--	int ret;
--
--	ret = __pm_runtime_resume(dev, RPM_GET_PUT);
--	if (ret < 0) {
--		pm_runtime_put_noidle(dev);
--		return ret;
--	}
--
--	return 0;
-+	return pm_runtime_get_active(dev, 0);
- }
- 
- /**
-@@ -606,6 +612,26 @@ static inline int pm_runtime_put_autosus
- 	return __pm_runtime_put_autosuspend(dev);
- }
- 
-+DEFINE_GUARD(pm_runtime_active, struct device *,
-+	     pm_runtime_get_sync(_T), pm_runtime_put(_T));
-+DEFINE_GUARD(pm_runtime_active_auto, struct device *,
-+	     pm_runtime_get_sync(_T), pm_runtime_put_autosuspend(_T));
-+/*
-+ * Use the following guards with ACQUIRE()/ACQUIRE_ERR().
-+ *
-+ * The difference between the "_try" and "_try_enabled" variants is that the
-+ * former do not produce an error when runtime PM is disabled for the given
-+ * device.
-+ */
-+DEFINE_GUARD_COND(pm_runtime_active, _try,
-+		  pm_runtime_get_active(_T, RPM_TRANSPARENT))
-+DEFINE_GUARD_COND(pm_runtime_active, _try_enabled,
-+		  pm_runtime_resume_and_get(_T))
-+DEFINE_GUARD_COND(pm_runtime_active_auto, _try,
-+		  pm_runtime_get_active(_T, RPM_TRANSPARENT))
-+DEFINE_GUARD_COND(pm_runtime_active_auto, _try_enabled,
-+		  pm_runtime_resume_and_get(_T))
-+
- /**
-  * pm_runtime_put_sync - Drop device usage counter and run "idle check" if 0.
-  * @dev: Target device.
+--nextPart3033215.ElGaqSPkdT--
 
 
 
