@@ -1,98 +1,101 @@
-Return-Path: <linux-kernel+bounces-833615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC62BA26C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:15:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02760BA26B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9C41897B76
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7822A4916
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 05:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4880725F975;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB95277C96;
 	Fri, 26 Sep 2025 05:14:34 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595C426E16A
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C82266EE7
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758863673; cv=none; b=jQK/q9OQzX66rDSRdCLt1zmDaKr2tjY7Ybq4USTvTAMjBuk+UALACreG7d5QigwysQEWdNFRh+yj2AhqDlLgHlKlFAxc9DV3M22b51yOmMAvVM8UCNIwJRGGTRNLvmygdRlZtEjZd5zjOKljrn1HNl+uWVPkvrlo24Ie/l8iXxY=
+	t=1758863673; cv=none; b=k9L0EZyMQOGCEuJihJwgS+9yW2EAZLBY84vTQ9WMB+YPQ0B9CMfPeaIaNoivfEiqwxqHWP94RFUirnp+yBBSD6Nm138W9+aeAISMF/yumq+LkZXXPbZTfc8ZfSC1V7jXRpiJ3fwhmeMLJxg41FoRGmG9WybsDySAT/PhwCZFaps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758863673; c=relaxed/simple;
-	bh=Gshtz2z/i2bw1Yn3ONgiWOGEKP1MNvMtgcrJyMd4ASg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=d6RURasTxheS37LXkgJkLTsy0bKDl5LvTzlXr02kUOumpKZkw2oEbDnwlMaqPUQPgXBipbxmmmR87H3EtBhr0LRltajmd8IHWzdijzIAXM1LK350pI8I00JJ35HM58YthhJVkThnbcbj7bSc0pzNNCCDY67wp1TFxMdYvrJ266c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	bh=lC761gkFpOQdcOGlWNPdTnK0sldm5KiE8/0aVMwxt04=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bqkDpNmEsUjmHb+/z4xVDPKEVkXw/AQ9205Ro7HFchcO4r7EQxgXrtD6uBCZbXW/SIYnaaJ34J/GRiom5rOhEsu31cPJeoLHENnlpxm0NdOy2tpQHyawV3trZYn9voRODgSqkBztxZIECKn55UbIghHTHZkHAP0fOK+PkF7InRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42571803464so42752455ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:14:32 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42570afa5d2so48157365ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 22:14:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1758863671; x=1759468471;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NSoLIgg7SAsrrlCvI57+luems2jbp4nBxEIh+V8FP+I=;
-        b=loeruPGEF4fbii9VslhFHImpQlSLpPYreV5330yr+pVLnIiX3bEWiIc+NeRvPvvzVj
-         0uXM485e6i5P82rvIggx5RBDFFc3ZdIJbuqRzYHR6elaFfSzdBVGKgE6BZM21Xs4lik4
-         +L1nZfOSTqMbNLtbl37/gDFHBO2nWPBfQMft62BFWw5+LyUrCjTLTcemf4sJHKaaRTRG
-         3MnVIEqeMzJDFyuDjmgRHYgymhnYOWpUh8hpAnvY3WZNC6ktKR+sLUY+j0ej664hHV3Z
-         0cdQTEfI+t6XPu2BjUaC1Zxls8DGstFGt4XYuUOgX1KW1NZ4ZowoXUgRFOVpb9C6u+pu
-         DcZw==
-X-Gm-Message-State: AOJu0YySKXw4nbs9DZhK6cbM4SqwarAKItFSBWJxeItEM39xaoZDbF/g
-	vQvDJImeqyMdhcyuYOOEISt74fwrxvlZTqSIpCCB5P17Xx7FnxEHUY4Q5zS6LpOVwTp35xEl1lQ
-	xNPqi4LYylggzndRfU8h5StkvaX91MsTtbFV9HS7pVMwOhcRUaX28s0JSVQQ=
-X-Google-Smtp-Source: AGHT+IE+Mo0FloODfxgHOeGuVY0QdOCNBOiik8UZK5PmujDAiVVLnq9gwm0hwzhAUwWCyR0j6wNvmwMS2LeGOSw63zdQ1rCxmQvm
+        bh=DG8Duv53QLwynlPB4debmWfpydCbn0S0pF1aGiZ5NhQ=;
+        b=lCGFd3ysG4/vmKa2UPbyj8uB828bCMCzRvZBOKWolAHXCdV4fXeyEouB/6wZERUtfm
+         XThBQEhBjQzVAg8ZqqaYaXK8GQhr5j71Gr5DSX8ytdOjVFsPjV++t3aooW1Q48TlO8S5
+         tXcZbClrvGakRZ1+ufkfUEpm6LcpmurMMAYQ2Kbr8qdnvzdn7C8L7LCXvcOjoww9eiE8
+         rPstNFjUILpLQmRPtBz6qi+4nuPQ238LH9AchuHsx4d9G3byXQFp9dhzWJpa0u3wBiUe
+         BipRw51y09KuVY6SbOUy9MlLiFf+4fRxcGPV2MfZk9TNv01dvc1IStdxYw3NCUwpwhUD
+         GcfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXugGYBl10NGxfBBlv8bJ8qCLWGghYFLkSd1LxhEw/REWzvVMGUkjo4DWpKvaKy+ailknzqKbnmnvtUkuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZqg2Dy8zY9VwyJZsm76ShHDdA8sdJNrnO688L33eQNOJ6TXip
+	SO40V63AUM8R/fcoqbRIkvlh7iSmjR6a0jsWs4lMbhhFoRvqjD5B3LJkFnCz2UZtNXI68zcJthB
+	vULjEvWj9gycnwiaoNYHpHHrciH30wpNwJqEvGsS49joURGP901c03KyLwxI=
+X-Google-Smtp-Source: AGHT+IELGfhN0y0KKDaSMd9rjqVPYY0bokUyRgxktBIKZ0Q8NPzeQeOSQfb4BnmJZFw6DCMeYez/tARdzr75t5UHET0GkAIjTV5A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:480b:b0:40d:e50a:35b0 with SMTP id
- e9e14a558f8ab-42595657a25mr96375145ab.32.1758863671354; Thu, 25 Sep 2025
+X-Received: by 2002:a05:6e02:1609:b0:424:7f5a:9423 with SMTP id
+ e9e14a558f8ab-4259562f38amr85226455ab.19.1758863671182; Thu, 25 Sep 2025
  22:14:31 -0700 (PDT)
 Date: Thu, 25 Sep 2025 22:14:31 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d62137.050a0220.3390a8.0008.GAE@google.com>
-Subject: [syzbot] Monthly media report (Sep 2025)
-From: syzbot <syzbot+listc48ef16dfbc6e2df724e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+Message-ID: <68d62137.050a0220.3390a8.0007.GAE@google.com>
+Subject: [syzbot] Monthly hfs report (Sep 2025)
+From: syzbot <syzbot+listc1009fe7bea3a4e7174c@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello media maintainers/developers,
+Hello hfs maintainers/developers,
 
-This is a 31-day syzbot report for the media subsystem.
+This is a 31-day syzbot report for the hfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/media
+https://syzkaller.appspot.com/upstream/s/hfs
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 22 issues are still open and 96 have already been fixed.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 41 issues are still open and 25 have already been fixed.
 
 Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 381     No    KASAN: slab-use-after-free Read in em28xx_release_resources
-                  https://syzkaller.appspot.com/bug?extid=16062f26c6480975e5ed
-<2> 349     Yes   KASAN: slab-use-after-free Read in dvb_device_open
-                  https://syzkaller.appspot.com/bug?extid=1eb177ecc3943b883f0a
-<3> 59      Yes   general protection fault in su3000_i2c_transfer
-                  https://syzkaller.appspot.com/bug?extid=d99f3a288cc7d8ef60fb
-<4> 48      No    KASAN: slab-use-after-free Write in as102_release (2)
-                  https://syzkaller.appspot.com/bug?extid=47321e8fd5a4c84088db
-<5> 34      No    KASAN: vmalloc-out-of-bounds Write in tpg_fill_plane_buffer (4)
-                  https://syzkaller.appspot.com/bug?extid=dac8f5eaa46837e97b89
-<6> 11      Yes   WARNING in media_create_pad_link (2)
-                  https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
-<7> 9       Yes   KASAN: use-after-free Read in em28xx_close_extension (2)
-                  https://syzkaller.appspot.com/bug?extid=a11c46f37ee083a73deb
-<8> 5       No    WARNING in az6007_i2c_xfer
-                  https://syzkaller.appspot.com/bug?extid=a43c95e5c2c9ed88e966
-<9> 1       No    KASAN: slab-use-after-free Write in dvb_device_put
-                  https://syzkaller.appspot.com/bug?extid=d445a71e1c011b592c16
+Ref  Crashes Repro Title
+<1>  13773   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<2>  10556   Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
+<3>  5157    Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<4>  4862    Yes   KMSAN: uninit-value in hfsplus_delete_cat
+                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+<5>  4680    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+<6>  4208    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
+                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
+<7>  3496    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<8>  3491    Yes   WARNING in hfs_bnode_create
+                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+<9>  3140    Yes   KMSAN: uninit-value in hfsplus_lookup
+                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
+<10> 2635    Yes   possible deadlock in hfs_extend_file (3)
+                   https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
 
 ---
 This report is generated by a bot. It may contain errors.
