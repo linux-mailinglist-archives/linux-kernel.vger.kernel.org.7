@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-834360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A47DBA4880
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:01:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3640CBA487D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8161A563272
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:01:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FE37AB364
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5AC23184A;
-	Fri, 26 Sep 2025 16:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C642356C9;
+	Fri, 26 Sep 2025 16:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YPFU0VV8"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XbtvrSPf"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB6B235BE8
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C881923C8AE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758902458; cv=none; b=KKLqO4dJ/+/E+kcrWjGoE9D/3McL3uhS+Dszs5ZkwOceOaO/iw7WuFOa8wTdLc7VgG+eglIh7D9WLaXxwN27uKqRAju1isJTciu1ad7eR6G2VLVt2V4Ds5W/J58rNfbhNkSR1nfnRXwDVIbjKXSXFtlZJVaUGVbBeqhj2wDPe3Q=
+	t=1758902454; cv=none; b=YgGr5o9Gv60jyNHpITgZxsZoAQlulnpNxjeUosa9bxQEOhcwo8E5SOFdHnL0FqnBhwHDkga0vwzqFmx7MfGwg3RUmKHXlmDzR5PJhqhBJYU1DWuiNA3ejIPu4Xf//rEvIzD5rBfBZUMPiICw3x61JBiXluALFrtE7fpcIpo2Wjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758902458; c=relaxed/simple;
-	bh=tc05hBsrp+6+igOBupAwrof6JjuQ7aPtrI0SQBCnEKA=;
+	s=arc-20240116; t=1758902454; c=relaxed/simple;
+	bh=mRg4bVedUx+mXpwLwUzJ0+WNh3ExNZll4YLVmSD+zBY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gAZYjHsYq5TJUPHz+e3QbQEbmyDJl/fgOpfdlxOTRJol0aBwrvmlEyghvUcr7s17SzDKXuElpi9WOuxji9cy+RhzT1x6voisaAuOI1mOVdbdZvJp/fHpAqd9EXMSfSzKzzsvpnc7En1VwYLICjQLkKbmXjilBzSv0bBJNGXxaqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YPFU0VV8; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=drqhZ2OvqbOOUBWL8xzdjwKwDewevQRRCLAg6A/xf+PCxgfkTBOkdRhfxztm6mxdK0HxElUjTwDxmp/pSimzkimq+HmINrkzqRkUBAIr+mHN3uqd5xPQLKXFR+uj9Ue6LuvkFI2T+L08xaz0rCDPeQMa+orxaZFh8ydTnWnI4y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XbtvrSPf; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 555A31A0FFB;
-	Fri, 26 Sep 2025 16:00:49 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id EC016C00D96;
+	Fri, 26 Sep 2025 16:00:33 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2A51E606B5;
-	Fri, 26 Sep 2025 16:00:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0758102F197D;
-	Fri, 26 Sep 2025 18:00:46 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 553C4606B5;
+	Fri, 26 Sep 2025 16:00:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ABECA102F18CE;
+	Fri, 26 Sep 2025 18:00:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758902448; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1758902450; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=ff9fZeQb1F7MsGgDHiibGZyIrv+Z1+eAxMY8Mv7A+RM=;
-	b=YPFU0VV8h/9XJmajQkQbiSnoYqjzbO/+CZRytTgjsHNm1mRgcjZoBdvtsRlhxghUlK58l1
-	RqEbEpBV1lsTnUwOZXnDKfEJT+TP0UfzQLp5ucnmcC0T2DtKkO/Z3z896+/RUv2cDwf41I
-	YmNUjxgdE2AF7cPDcc0QV5z4EVBzM1kWcZ/6o9uDCIIMomPYQgUO5gj1jRhMmvGgB2aJNu
-	6XywxGEOd1EcoR3+dQsS1qDBCIuU1m+Q/SsT6+3wziFzDHmLmVLhXmcQV20QloNVhLvmd0
-	FVeH6GXFPhoeMgJyYkGDnxuYNumPBDt0hampa7FY9HFMgWPLRBuGSIqevnJtmA==
+	bh=tYrS6dqpb9FXjmJD9lscrTlhi/edkc3Eg6c4OrKKbRw=;
+	b=XbtvrSPfQR9ZA7XGpi67t3aB9jq2x8uIyJcvxAXb1arVZq8vV3OprAxLhrZPyvM7tlW3y4
+	OA+B6NILfxUEw40mM4tGRlLvKs0s9UiJJ4smtuNRfGwkzjTX3Ti0QHybs5YXb/UdS6M4vL
+	vvCekEZUtdSvhuZHrG5FmDoqhlH2lGPsG1Dq/ePpu6Ua4bsq9taxU25PkoW3mt/+JLL8TB
+	hXapXUJt3GCNfvM1RHCuR+wcO1iR0DRFA1rcBpgwsDwmFcoiSgEgWotqVJq+nOVvsG5m0R
+	3FpGdvyxtSidJE0FOowbzh9T49e6sICcK/tMmLl3d1MF1YdL1uPCSaL74nsLWA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 26 Sep 2025 17:59:44 +0200
-Subject: [PATCH 3/7] drm/bridge: lock the encoder bridge chain mutex during
- insertion
+Date: Fri, 26 Sep 2025 17:59:45 +0200
+Subject: [PATCH 4/7] drm/bridge: lock the encoder chain in scoped for_each
+ loops
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-3-23b62c47356a@bootlin.com>
+Message-Id: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-4-23b62c47356a@bootlin.com>
 References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
 In-Reply-To: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -76,64 +76,121 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-drm_bridge_attach() modifies the encoder bridge chain, so take a mutex
-around such operations to allow users of the chain to protect themselves
-from chain modifications while iterating.
+drm_for_each_bridge_in_chain_scoped() and
+drm_for_each_bridge_in_chain_from() currently get/put the bridge at each
+iteration. But they don't protect the encoder chain, so it could change
+(bridges added/removed) while some code is iterating over the list
+itself. To make iterations safe, change the logic of these for_each macros
+to lock the encoder chain mutex at the beginning and unlock it at the end
+of the loop (be it at the end of the list, or earlier due to a 'break'
+statement).
 
-This change does not apply to drm_bridge_detach() because:
- * only the drm_encoder.c calls it, not bridge drivers (unlike
-   drm_bridge_attach())
- * the only drm_bridge_detach() caller is drm_encoder_cleanup() which
-   already locks the mutex for the entire cleanup loop, thus additionally
-   locking it here would deadlock
- * drm_bridge_detach() is recursively calling itself along the chain, so
-   care would be needed to avoid deadlocks
-Add a comment to clarify that is intended.
+Also remove the get/put on the current bridge because it is not needed
+anymore. In fact all bridges in the encoder chain are refcounted already
+thanks to the drm_bridge_get() in drm_bridge_attach() and the
+drm_bridge_put() in drm_bridge_detach(). So while iterating with the mutex
+held the list cannot change _and_ the refcount of all bridges in the list
+cannot drop to zero.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/drm/drm_bridge.h | 62 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 33 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 630b5e6594e0affad9ba48791207c7b403da5db8..90e467cf91a134342c80d2f958b928472aaf0d8b 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -453,10 +453,12 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	bridge->dev = encoder->dev;
- 	bridge->encoder = encoder;
- 
-+	drm_encoder_chain_lock(encoder);
- 	if (previous)
- 		list_add(&bridge->chain_node, &previous->chain_node);
- 	else
- 		list_add(&bridge->chain_node, &encoder->bridge_chain);
-+	drm_encoder_chain_unlock(encoder);
- 
- 	if (bridge->funcs->attach) {
- 		ret = bridge->funcs->attach(bridge, encoder, flags);
-@@ -487,7 +489,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- err_reset_bridge:
- 	bridge->dev = NULL;
- 	bridge->encoder = NULL;
-+	drm_encoder_chain_lock(encoder);
- 	list_del(&bridge->chain_node);
-+	drm_encoder_chain_unlock(encoder);
- 
- 	if (ret != -EPROBE_DEFER)
- 		DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
-@@ -503,6 +507,11 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 0ff7ab4aa8689a022458f935a7ffb23a2b715802..9b1aa1e29c8915648aef86ba9f8d85e843b22ca0 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -1440,26 +1440,29 @@ drm_bridge_chain_get_last_bridge(struct drm_encoder *encoder)
+ 						      struct drm_bridge, chain_node));
  }
- EXPORT_SYMBOL(drm_bridge_attach);
  
-+/*
-+ * Invoked by the encoder during encoder cleanup in drm_encoder_cleanup(),
-+ * so should generally *not* be called by driver code. As opposed to
-+ * drm_bridge_attach(), does not lock the encoder chain mutex.
-+ */
- void drm_bridge_detach(struct drm_bridge *bridge)
+-/**
+- * drm_bridge_get_next_bridge_and_put - Get the next bridge in the chain
+- *                                      and put the previous
+- * @bridge: bridge object
+- *
+- * Same as drm_bridge_get_next_bridge() but additionally puts the @bridge.
+- *
+- * RETURNS:
+- * the next bridge in the chain after @bridge, or NULL if @bridge is the last.
+- */
+-static inline struct drm_bridge *
+-drm_bridge_get_next_bridge_and_put(struct drm_bridge *bridge)
++static inline struct drm_bridge *drm_bridge_encoder_chain_lock(struct drm_bridge *bridge)
  {
- 	if (WARN_ON(!bridge))
+-	struct drm_bridge *next = drm_bridge_get_next_bridge(bridge);
++	drm_encoder_chain_lock(bridge->encoder);
++
++	return bridge;
++}
+ 
+-	drm_bridge_put(bridge);
++/* Internal to drm_for_each_bridge_in_chain*() */
++static inline struct drm_bridge *__drm_encoder_bridge_chain_next(struct drm_bridge *bridge)
++{
++	if (list_is_last(&bridge->chain_node, &bridge->encoder->bridge_chain)) {
++		drm_encoder_chain_unlock(bridge->encoder);
+ 
+-	return next;
++		return NULL;
++	}
++
++	return list_next_entry(bridge, chain_node);
+ }
+ 
++/* Internal to drm_for_each_bridge_in_chain*() */
++DEFINE_FREE(drm_bridge_encoder_chain_unlock, struct drm_bridge *,
++	    if (_T) drm_encoder_chain_unlock(_T->encoder);)
++
+ /**
+  * drm_for_each_bridge_in_chain_scoped - iterate over all bridges attached
+  *                                       to an encoder
+@@ -1469,14 +1472,15 @@ drm_bridge_get_next_bridge_and_put(struct drm_bridge *bridge)
+  *
+  * Iterate over all bridges present in the bridge chain attached to @encoder.
+  *
+- * Automatically gets/puts the bridge reference while iterating, and puts
+- * the reference even if returning or breaking in the middle of the loop.
++ * Automatically locks the encoder chain mutex to prevent chain
++ * modifications while iterating.
+  */
+-#define drm_for_each_bridge_in_chain_scoped(encoder, bridge)		\
+-	for (struct drm_bridge *bridge __free(drm_bridge_put) =		\
+-	     drm_bridge_chain_get_first_bridge(encoder);		\
+-	     bridge;							\
+-	     bridge = drm_bridge_get_next_bridge_and_put(bridge))
++#define drm_for_each_bridge_in_chain_scoped(encoder, bridge)				\
++	for (struct drm_bridge *bridge __free(drm_bridge_encoder_chain_unlock) =	\
++		     list_first_entry(&drm_encoder_chain_lock(encoder)->bridge_chain,	\
++				      struct drm_bridge, chain_node);			\
++	     bridge;									\
++	     bridge = __drm_encoder_bridge_chain_next(bridge))				\
+ 
+ /**
+  * drm_for_each_bridge_in_chain_from - iterate over all bridges starting
+@@ -1488,14 +1492,14 @@ drm_bridge_get_next_bridge_and_put(struct drm_bridge *bridge)
+  * Iterate over all bridges in the encoder chain starting from
+  * @first_bridge, included.
+  *
+- * Automatically gets/puts the bridge reference while iterating, and puts
+- * the reference even if returning or breaking in the middle of the loop.
++ * Automatically locks the encoder chain mutex to prevent chain
++ * modifications while iterating.
+  */
+-#define drm_for_each_bridge_in_chain_from(first_bridge, bridge)		\
+-	for (struct drm_bridge *bridge __free(drm_bridge_put) =		\
+-		     drm_bridge_get(first_bridge);			\
+-	     bridge;							\
+-	     bridge = drm_bridge_get_next_bridge_and_put(bridge))
++#define drm_for_each_bridge_in_chain_from(first_bridge, bridge)				\
++	for (struct drm_bridge *bridge __free(drm_bridge_encoder_chain_unlock) =	\
++		     drm_bridge_encoder_chain_lock(first_bridge);			\
++	     bridge;									\
++	     bridge = __drm_encoder_bridge_chain_next(bridge))				\
+ 
+ enum drm_mode_status
+ drm_bridge_chain_mode_valid(struct drm_bridge *bridge,
 
 -- 
 2.51.0
