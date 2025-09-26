@@ -1,236 +1,174 @@
-Return-Path: <linux-kernel+bounces-833778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B458BA30DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:01:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DE0BA309B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE743B1C38
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B3C385130
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEFD29D287;
-	Fri, 26 Sep 2025 09:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88D627587D;
+	Fri, 26 Sep 2025 09:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JS/uduzc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPD5je9k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA5C29B216;
-	Fri, 26 Sep 2025 09:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A0672608
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877253; cv=none; b=HvfGN11OjCdwS1d8mc4h+13hEf2X6qMTF8uDwvVJkrtWDjAT+Gt7/UcPEQYDTMheBunKao1It1Uin+FlR4zu6Nd1UWzxJyXzUxuLM6u9jWEdcZpkbSW/ddmt39o+o+fBulAqyy54flCDwmxH8H4VwRxOx1RIwXNHWP/qKIqXEOQ=
+	t=1758877218; cv=none; b=gBQ7gGMcRy3P63497/HrzNs1n7wgAE4DJh4fwVhDuDh1aKDB7r4H9OIJ9XeF7knU00z9drS8H2zMUWMuUo40gCxqBVKe74AiN4Hqs5dhclkR9zUABZEw/xK5sfp6i55SP+auM+cU1BvXKjhyPciHCMbSEB+z83Y6/Xmff+mgyfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877253; c=relaxed/simple;
-	bh=jvLTshiEmwU8VfTHgOb3puigYVPsao/g/2gyjr95704=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QQZSVI1mSC67RRjrmv1NrzaV80ZG1agMTryR3BVcTbJZecgKeVvQhJ0rz8hSDE+54nWWGxYtYeYKCPVz88la05MmKEqnyAooRVw6ewBz6f1H2f43R32DHuHn9EPQsiD1sgjg7WQeIV2gzJpfDIuAW+2zBwkf4MVrYEYbq3mq30o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JS/uduzc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vard030527;
-	Fri, 26 Sep 2025 09:00:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=tI3ydivwzZp
-	jdgTNdFF7o40pjFw/3r9BeMoi/UwtNJs=; b=JS/uduzc9QDb8EiZiEgBtk2MuzA
-	lJbXIxbcwjCOMSxigtheBZ3tDlfl3f8q75/gIYDzFDGhKqBqpPGVlYmbdj+SYVoz
-	N8MNt3S276aonO/s0BMBkmKOy6ObhamAnveudgsjPGldSwyJbykyyv9S5WeUMMEM
-	lx5opUaRVPZHQhFvxR70T4bh+k1UFtg+3tRn5kCzE36Yo87DPkmkiUPv7q0UfBzG
-	LqRz3WBPChJDl4JuUvxOZSucd2mCkX/QOsjGeKQ9QjYmUZxvxXfDHghcRC73lJ6v
-	9bJs8iQTzqG8lMsbRRg5ILeZGPTDpzsgX2qRiAc7nPMZDhZ4Tkai2XLOT+w==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0u26gf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 09:00:20 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q90BNx008610;
-	Fri, 26 Sep 2025 09:00:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 499nbmgtp0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 09:00:11 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58Q90AMK008577;
-	Fri, 26 Sep 2025 09:00:10 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-mkuntuma-hyd.qualcomm.com [10.213.97.145])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 58Q90Ace008573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 09:00:10 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4582077)
-	id 9979058A; Fri, 26 Sep 2025 14:30:09 +0530 (+0530)
-From: Mani Chandana Ballary Kuntumalla <quic_mkuntuma@quicinc.com>
-To: dmitry.baryshkov@oss.qualcomm.com, marijn.suijten@somainline.org,
-        swboyd@chromium.org, mripard@kernel.org, abel.vesa@linaro.org,
-        andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, robin.clark@oss.qualcomm.com,
-        jessica.zhang@oss.qualcomm.com, abhinav.kumar@linux.dev,
-        sean@poorly.run, airlied@gmail.com, simona@ffwll.ch,
-        alex.vinarskis@gmail.com
-Cc: Mani Chandana Ballary Kuntumalla <quic_mkuntuma@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_riteshk@quicnic.com, quic_amitsi@quicnic.com
-Subject: [PATCH 4/4] arm64: dts: qcom: lemans-ride: Enable mdss1 display Port
-Date: Fri, 26 Sep 2025 14:29:56 +0530
-Message-Id: <20250926085956.2346179-5-quic_mkuntuma@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250926085956.2346179-1-quic_mkuntuma@quicinc.com>
-References: <20250926085956.2346179-1-quic_mkuntuma@quicinc.com>
+	s=arc-20240116; t=1758877218; c=relaxed/simple;
+	bh=Lq0FsZycQzh8JDhkJkDs9ZbQ4dlQIBZlKIbwpkVD72M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKToLsd8n/UP1xOP8zX7TkQWC2oEId7CZw1HKDml9TboG3lzDD9qzq+58vXE7kng073x4rifcBvzeo+rfcA12//Gmqc1h0IAP/a6imjR9eQvGpDvkWKcIEQBWoK5mEqEw8OKf/1mn1MLa2fRbfpXbdkfM5VuRXsRXdew1SWIT3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPD5je9k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA629C4CEF4;
+	Fri, 26 Sep 2025 09:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758877217;
+	bh=Lq0FsZycQzh8JDhkJkDs9ZbQ4dlQIBZlKIbwpkVD72M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPD5je9kJ9OGWOG1HVacwZ3/iqmBdpLcojlePlQXnuYHnJF4V2JWSF4YD1D5BbNX8
+	 jo1kSXi8SXMHtaNj9/6fIVPurd3/wQ3k/roXWxTcLpR5rN5bnw98MMt/ZKLFCr2QvG
+	 MigQeH4UGyH7sSSzRrauNWZAzR9RcpsvfhvY8HDh/faGwZX/TPJJugOakvNfCUWT77
+	 MTbflMDaIprKvHyxhxXYp+zfMl7uvyUHRk9OYTXJXY1OTOYALATYL2nEJ0vaVAkXyk
+	 XC6nLBWZS/PJsesvjxuo0jRxaOQSf5yHdq1vxdcuVJWimnhXlIBZg7TWmDGXJbbSAb
+	 sN70Wq3aWoCOQ==
+Date: Fri, 26 Sep 2025 11:00:10 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
+Message-ID: <whzecqawauwsoiaydpxsdgt55nmyi4tp5dgzvewmf4pinstdtq@z3kkqwdvscyi>
+References: <cover.1758806023.git.alx@kernel.org>
+ <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CjD4wHk1vGHtmdKmyRB5W09kt0RDR1mM
-X-Proofpoint-GUID: CjD4wHk1vGHtmdKmyRB5W09kt0RDR1mM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX7hgvq8QoI0Bq
- YwOesexJMisfTCuhGMvQZIaW8WgrM4C0mCeNjzWdw33tz+xY11er0JGDBEzHyAqVCq+oAmQSg63
- d3b+TmJ2IuqMgTY+o2HpxO8/7YMNL3Xk7TT9c/pZcB16KCQVjkzxMtHfgigfKixfqtiBQYv9jWq
- X4orwMZfuLhpoZ0JT/uB1KKG0hMuWHCL5E0ELLcqkJyj6zq70kWqgIgg1omdiNYVlwSmbaQK7Ex
- LhtOurioEBb/0/XbdHBoZxzzOeTWxYrydWvwmAsuYjEf9osbzXQUln6FN/agsAebTv5TlXeD5Pj
- NM9I0aAPXESxw71858bXSpRGhUFSmGH0Sneacegw1EYSOhZmIxMNT6FAEKkV4vYkTAfoKdiI4aB
- FOmzZPxStjx66qR/sGHVWGkcFKxeTA==
-X-Authority-Analysis: v=2.4 cv=ZsHg6t7G c=1 sm=1 tr=0 ts=68d65625 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=lcgM4KOETyTTvZj5T8AA:9
- a=TjNXssC_j7lpFel5tvFf:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
- a=xoEH_sTeL_Rfw54TyV31:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p6rukh5wqzefvtiu"
+Content-Disposition: inline
+In-Reply-To: <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
 
-This change enables DP controllers, DPTX0 and DPTX1 alongside
-their corresponding PHYs of mdss1 which corresponds to edp2
-and edp3.
 
-Signed-off-by: Mani Chandana Ballary Kuntumalla <quic_mkuntuma@quicinc.com>
----
- .../boot/dts/qcom/lemans-ride-common.dtsi     | 80 +++++++++++++++++++
- 1 file changed, 80 insertions(+)
+--p6rukh5wqzefvtiu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Christopher Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
+Message-ID: <whzecqawauwsoiaydpxsdgt55nmyi4tp5dgzvewmf4pinstdtq@z3kkqwdvscyi>
+References: <cover.1758806023.git.alx@kernel.org>
+ <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
+MIME-Version: 1.0
+In-Reply-To: <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-index d4436bc473ba..5a7a1c131dd4 100644
---- a/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans-ride-common.dtsi
-@@ -180,6 +180,30 @@ dp1_connector_in: endpoint {
- 		};
- 	};
- 
-+	dp2-connector {
-+		compatible = "dp-connector";
-+		label = "eDP2";
-+		type = "full-size";
-+
-+		port {
-+			dp2_connector_in: endpoint {
-+				remote-endpoint = <&mdss1_dp0_out>;
-+			};
-+		};
-+	};
-+
-+	dp3-connector {
-+		compatible = "dp-connector";
-+		label = "eDP3";
-+		type = "full-size";
-+
-+		port {
-+			dp3_connector_in: endpoint {
-+				remote-endpoint = <&mdss1_dp1_out>;
-+			};
-+		};
-+	};
-+
- 	dp-dsi0-connector {
- 		compatible = "dp-connector";
- 		label = "DSI0";
-@@ -635,6 +659,50 @@ &mdss0_dsi1_phy {
- 	status = "okay";
- };
- 
-+&mdss1 {
-+	status = "okay";
-+};
-+
-+&mdss1_dp0 {
-+	pinctrl-0 = <&dp2_hot_plug_det>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&mdss1_dp0_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp2_connector_in>;
-+};
-+
-+&mdss1_dp0_phy {
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+
-+	status = "okay";
-+};
-+
-+&mdss1_dp1 {
-+	pinctrl-0 = <&dp3_hot_plug_det>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&mdss1_dp1_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp3_connector_in>;
-+};
-+
-+&mdss1_dp1_phy {
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+
-+	status = "okay";
-+};
-+
- &pmm8654au_0_gpios {
- 	gpio-line-names = "DS_EN",
- 			  "POFF_COMPLETE",
-@@ -812,6 +880,18 @@ dp1_hot_plug_det: dp1-hot-plug-det-state {
- 		bias-disable;
- 	};
- 
-+	dp2_hot_plug_det: dp2-hot-plug-det-state {
-+		pins = "gpio104";
-+		function = "edp2_hot";
-+		bias-disable;
-+	};
-+
-+	dp3_hot_plug_det: dp3-hot-plug-det-state {
-+		pins = "gpio103";
-+		function = "edp3_hot";
-+		bias-disable;
-+	};
-+
- 	io_expander_intr_active: io-expander-intr-active-state {
- 		pins = "gpio98";
- 		function = "gpio";
--- 
-2.34.1
+Hi Andrew,
 
+On Thu, Sep 25, 2025 at 01:48:14PM -0700, Andrew Morton wrote:
+> On Thu, 25 Sep 2025 15:20:28 +0200 Alejandro Colomar <alx@kernel.org> wro=
+te:
+>=20
+> > I've split some of the patches from the string patch set, as these are
+> > obvious bug fixes that are trivial to accept.
+> >=20
+> > I've reset the version number of the patch set to 1, to not conflict
+> > with the version numbering of the string series.
+>=20
+> fyi, there's nothing here which is usable in an introductory [0/N]
+> cover letter.
+>=20
+> Documentation/process/submitting-patches.rst should explain the
+> conventions here, but it is presently silent.
+>=20
+> The [0/N] is an overview of the whole patchset - why it was created,
+> what value it provides to our users and perhaps to kernel developers
+> themselves.  It discusses alternative approaches, possible drawbacks,
+> prior work, all that stuff.  And it provides a high-level description
+> of the proposed implementation,
+>=20
+> Potentially lots of words, and it's quite important.  In the case of
+> your patchset, it's one short sentence (sorry).
+>=20
+> The words you did include are short-term development things, unsuitable
+> for inclusion in the permanent kernel record.
+
+Thanks!  I'll keep it in mind.  BTW, I didn't know the cover letters
+were stored anywhere.  By 'the permanent kernel record' you mean that
+cover letters are stored in a merge commit message or something like
+that?  It would be useful to have that documented.  I didn't know.
+
+I can send a v2 with a better cover letter, if you want.
+
+>  Such material *is*
+> important and useful, but should be added after the "^---$" separator,
+> to tell everyone that this material isn't for permanent inclusion.
+
+Okay, I'll keep that in mind.
+
+> Patchset seems reasonable, I guess.  But I'm not loving "ENDOF".  End
+> of what - is that like __etext?  "ARRAY_END" matches "ARRAY_SIZE" quite
+> nicely, no?  And it much better describes what the thing does.
+
+ENDOF() matches countof(), which is the standard name for ARRAY_SIZE().
+
+<https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3550.pdf#subsubsection.0=
+=2E6.5.4.5>
+<https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3550.pdf#section.0.7.21>
+
+I've never loved ARRAY_SIZE, as I have a macro sizeof_array() which
+gives me the size of an array in bytes (and guarantees that the input is
+an array).  The name nelementsof() --or the shorter NELEMS()-- seems
+more appropriate, IMO, since what it returns is "the number of elements
+of an array".  However, the C Committee hated it so much that I couldn't
+get them to standardize it.  I'm content enough with countof().
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--p6rukh5wqzefvtiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWVhMACgkQ64mZXMKQ
+wqkTyQ//c3fcJWmHIFMu8eVOzAW9WbtxAEiXfwbzyFEm7C8M77QPliGplSe7KM4R
+yirn0omM2wIutNULqRhsqmz97FdfNmHTcmzFZVXFddcCH7Xccb2DcbpHQYCkevxZ
+Yb5M/Cp86+4kqXLUIJFCtPAr3bdRU4qK2LIzmbiDM4pvqHrAxXSbzzYl4XkUAR0L
+KC0+5+yv3rBCZFB7s4dfReopQ/kDSUnkg753Xf1/w2z8gLPNheoBvAOa3zKamcUh
+2+wMOsTWs6zlEGXWf/9jbKG+lDONbVr8UW5JbroIotvwwSG6IfXvYxTWlTYkjV5L
+gCAg3nK/Ypdr/RArp1hKktD5w/LaLwbbeG9a7uf2ZPbtp6seI1JHWWRa0CGwTvPE
+9FNnroOKZ1iKMIc/aI5D/UZnHyujblX8M+d2f7V9b1INPhI5V6iM/d5CFGGs6qQO
+eqVeBI2CekAM3vaO+tfe6gl1gxkCMDTnNSyOPIbHaRaWHEtX4Rx7PyyMAap3C1U9
+zD0hl/Nzw+wbup82VkWkWgOkfV/UP9bkrgc/xvCHrPYRVEzA4eBsidTnRHnpo5KJ
+w11kv1Mw1dFHGGPM0UI5sJzSRblQG80RHCz4Szzc4BebnxzK/Rmsm/le+XnbotLL
+yLZrfM8uYLuobnL1AjtY4cRG1L0Dwg/UBda5A78PFjJ5QCfdU/E=
+=vQOv
+-----END PGP SIGNATURE-----
+
+--p6rukh5wqzefvtiu--
 
