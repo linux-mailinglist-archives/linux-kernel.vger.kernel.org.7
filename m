@@ -1,219 +1,163 @@
-Return-Path: <linux-kernel+bounces-834590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A5BBA504B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F87EBA507F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100911B28173
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2049F4C5184
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8A284681;
-	Fri, 26 Sep 2025 19:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85939288C27;
+	Fri, 26 Sep 2025 20:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="aualodt1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkNwdfqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3348280308
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38EC28469A;
+	Fri, 26 Sep 2025 20:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758916666; cv=none; b=eI8SJBiCkNHR19CwvjSLLKZrxXMkc3qlVhpwj7bRhX5FLu+ZlcjqwwNqtn133SDfe2wGmEnGm1fZEn96utcpe1DtuhD2/o7SbawoT3/7gddrdHWZiN0BPN5gmhSIy35ZYS2Lzhhfp9uaeEHCSsmcMlKlkBFUfFtKG343JrERCWU=
+	t=1758916879; cv=none; b=tYvSzoNO6qNppZ0ggaC7GZDtvuVTwYiZP+vhBemcCnXDVexoLWO0/64CQEUWik5JWwJo3wdZUA/SU1KmIfhG9PCjJzAHqzuHGDwuX6wtR7OXg5iJrf9rz5aK4O1Z6ctVhhsyuWj09ChjjTU5vlGflusqMtGX+9ESkBvr8Cpu794=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758916666; c=relaxed/simple;
-	bh=Ul90A3WXVjVOQtEWkwJb9B/4dc313g79jNrBflolSiA=;
+	s=arc-20240116; t=1758916879; c=relaxed/simple;
+	bh=s4u1ER2G5qTcgAa2BrXgHbVJuzX/qyc7Q0c8Zmmx9f4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENzSKNFSg4qfcK4j8RsLS/OlUSWPjtSD7cVujepMSFw5GR93uMDWhGtcE0ZJAF/EvPGwl6dpasek74ogPISQ8WUqPyQt8el1LSajmUZSxStp7s8JhmwjsWqz+Jhjc2K4hbAZzhW5j8Qu4/qpkSWxL1f+oMf1P5217Uil4WatuEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=aualodt1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27edcbbe7bfso25855265ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1758916664; x=1759521464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zASiJDz4r3vYQO3vYDYkcyVx79ekhPk89WizJj5Iigg=;
-        b=aualodt1PB8GaT0QZpHJ965PFhcpyeJMzNUBRv2XWnNdt8cTWcjm6LVoHEg9lgPvq6
-         Y6EVSKbbIzLn2glHOMhnwdRI+uGTGtXVpahrRcWiz8UH2CigIEs9C9VAy2CVf1+gHd4X
-         me8zwNTVU5hpTV56K2l1RaCqaFLP9yBlWK1W++wrjApNcXqbCyY/GedFNndGQN+Ppawx
-         m/HBBSrQDK5TLjqWuTj+FSBJb8UWZQBUpT9DZRYnPKyyL2ZRhAxio3tpyq+kc8n4kJXc
-         zpqCSBODWdqUUNvxKi3MeHwqODe4NSJ7bMNGFe+DcBX5Xq1c1XUcZRSHDsZu8Q7mIEar
-         DZSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758916664; x=1759521464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zASiJDz4r3vYQO3vYDYkcyVx79ekhPk89WizJj5Iigg=;
-        b=ISDIgHio01rS0AjrP6BeN8788X3csORcZhr3LjfUi52CX56Wp1vF59+S006D55Fcy+
-         URGGgdSh6IiaLvGNi4QdYRCz5BpZs+Wwa8QsbPWnw/84cZIUb5onwDAw32VJOnZffU2k
-         5dcMbSffI1/l3FINAF+iRKXZa/4NtG28JdqC1ONlC5/8i8i9P92RSnLg06Pf/vAK7zOU
-         qeYEg9p7WWt9JjWKHUjdOLMSvPuWG8uPcatdJpIB88ugRNPsE/N/UPBW/+KO+3BZcRZ0
-         O/YKkRn5Ku8VORq2e16pIhi1VioLu2sTiH7Mik68A8VMDT8i1M8UGvaugKNiXWPEjG0A
-         Z11g==
-X-Forwarded-Encrypted: i=1; AJvYcCXuGgzL2LTeWomvhnb6qsT6Dn2aurE8x1ESRFaJcmAmfltHCuVcjFkLHkFmtmOzfWFmZDwGb2GHjaLlTTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdBHjWNCDzTjc27Qdkh5crqMty1SZCeCGBiapHZIAxMRO1zlPN
-	bGn6auP4TRADayzP2MZSJxh4mjXge/u+puYAc9a2roPPU1w3mIMVbsfkiavlIZC4VUo=
-X-Gm-Gg: ASbGnctIN/8xE8lRXf+pXd8pYj2Dw2PQ8ffts96BRVWXxghPV0/DgcuERPaNMHfAq9H
-	QjydYGeVsbBtNjko5n+Mge2ixST115E/C+6QTSO2/y+6VERIUg+2qX5CZQw+W4+M4kjh3Wd2SSR
-	z46wiSq6MFCKKHt3rm4IR5ueQuAM6nEel/f+HdnNNP5jYxVbbou5uYMSfXrOMwiqsAaaevt/s1o
-	GDrQ1mnWLZL84owdWx9z5whTy0BqD+YqPYFTLhLnYRLmhLyMSxdg7FxMZRXLjL/Nj0HhPaXaitK
-	WPmMoJYvrOasOTVTn8+oZvZ2OAtyrHQ2+pgDvQ8r3Ycb/Hp6Y2PriXz8vNf6IZehgDQxZVbjUeU
-	9b1Shk/uxp7IeE32I9zed/vA8a3cu7unFCcrJsdcb821kA9xTh3r44g==
-X-Google-Smtp-Source: AGHT+IHlUtnIvbNYTp+NBwFL5kAnFfogcOgIaJtDWQxwNZ7YmExERR63uIq8FMCY+Zw0lEPHKpWKJg==
-X-Received: by 2002:a17:903:28c:b0:26f:f489:bba6 with SMTP id d9443c01a7336-27ed4a5ec62mr76915745ad.50.1758916664000;
-        Fri, 26 Sep 2025 12:57:44 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d43ecsm62938985ad.24.2025.09.26.12.57.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 12:57:43 -0700 (PDT)
-Date: Fri, 26 Sep 2025 12:57:40 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Charles Mirabile <cmirabil@redhat.com>
-Cc: pjw@kernel.org, Liam.Howlett@oracle.com, a.hindborg@kernel.org,
-	akpm@linux-foundation.org, alex.gaynor@gmail.com,
-	alexghiti@rivosinc.com, aliceryhl@google.com,
-	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
-	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
-	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
-	dave.hansen@linux.intel.com, david@redhat.com,
-	devicetree@vger.kernel.org, ebiederm@xmission.com,
-	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
-	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
-	kito.cheng@sifive.com, krzk+dt@kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
-	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
-	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	peterz@infradead.org, richard.henderson@linaro.org,
-	rick.p.edgecombe@intel.com, robh@kernel.org,
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
-	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
-	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
-References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
- <20250926192919.349578-1-cmirabil@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfXr3Zk9YZ9EBSepuergMWnBpP5QlmeZTvKQb1iKCQPImfyeDTiPkIMwBAg2CNjJ4IvPSmOnnYdIjbJvJw5Z0KAXoBIfsI19KdaUNrcStLlcfNl/d+vBRfy1bQEaR2HOVV3V+y1cZp0OsqsYhiW6FXKS3JEBZzuwC2ET82L/dLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkNwdfqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1549BC4CEF4;
+	Fri, 26 Sep 2025 20:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758916878;
+	bh=s4u1ER2G5qTcgAa2BrXgHbVJuzX/qyc7Q0c8Zmmx9f4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pkNwdfqV6raOgekO0YEev2tOKM2O8uZDJyOFxlqnw+ajFnms1NvPaSwvhLVDVeSOZ
+	 vT+WKhZYxr+40TpkxK+xb6q6VAYzAiAFwb6j6/qBPNAiJLPEnFs2ZDhONa0l26xGdc
+	 OzL+QMIZMt5I/9t7OnWuFhs+OnSDFHHagUcopfLGmaTeoVa7g4agqtJArZofzX2Yzw
+	 cgZjYIlJQ4+NDPNKVfvyhma0fUCHOSLOIQVazUsWkkTYVFNSyuwF0o/auNNWiMioda
+	 jaD1CzTkxkQvsGksayGf3tlEoxkR4NVBv9OYyWSUk9PPjmBFOxUcV5CdtNkpislbL7
+	 2cz0HDSHRGFEw==
+Date: Fri, 26 Sep 2025 12:59:58 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and
+ move SHA3 to lib/crypto
+Message-ID: <20250926195958.GA2163@sol>
+References: <20250926141959.1272455-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926192919.349578-1-cmirabil@redhat.com>
+In-Reply-To: <20250926141959.1272455-1-dhowells@redhat.com>
 
-Hi Charles,
+Hi David,
 
-Thanks for response. Rest inline
+On Fri, Sep 26, 2025 at 03:19:43PM +0100, David Howells wrote:
+> I have done what Eric required and made a separate wrapper struct and set
+> of wrapper functions for each algorithm, though I think this is excessively
+> bureaucratic as this multiplies the API load by 7 (and maybe 9 in the
+> future[*]).
 
-On Fri, Sep 26, 2025 at 03:29:19PM -0400, Charles Mirabile wrote:
->Hi -
->
->Hoping that I got everything right with git-send-email so that this is
->delivered alright...
->
->Wanted to jump in to head off a potential talking past one another /
->miscommunication situation I see here.
->
->On Wed, Sep 24, 2025 at 08:36:11AM -0600, Paul Walmsley wrote:
->> Hi,
->>
->> On Thu, 31 Jul 2025, Deepak Gupta wrote:
->>
->> [ ... ]
->>
->> > vDSO related Opens (in the flux)
->> > =================================
->> >
->> > I am listing these opens for laying out plan and what to expect in future
->> > patch sets. And of course for the sake of discussion.
->> >
->>
->> [ ... ]
->>
->> > How many vDSOs
->> > ---------------
->> > Shadow stack instructions are carved out of zimop (may be operations) and if CPU
->> > doesn't implement zimop, they're illegal instructions. Kernel could be running on
->> > a CPU which may or may not implement zimop. And thus kernel will have to carry 2
->> > different vDSOs and expose the appropriate one depending on whether CPU implements
->> > zimop or not.
->>
->> If we merge this series without this, then when CFI is enabled in the
->> Kconfig, we'll wind up with a non-portable kernel that won't run on older
->> hardware.  We go to great lengths to enable kernel binary portability
->> across the presence or absence of other RISC-V extensions, and I think
->> these CFI extensions should be no different.
->
->That is not true, this series does not contain the VDSO changes so it can
->be merged as is.
+I don't think I "required" that it be implemented in exactly this way.
+Sorry if I wasn't clear.  Let me quote what I wrote:
 
-Look at patch 23/27. It does have vDSO change. Although shadow stack
-instruction are inserted as compiled flag for vDSO only when cfi config is
-selected by user. Right now default is "No". So it won't impact anyone unles
-user explicitly says "Yes".
+    First, this patch's proposed API is error-prone due to the weak
+    typing that allows mixing steps of different algorithms together.
+    For example, users could initialize a sha3_ctx with sha3_256_init()
+    and then squeeze an arbitrary amount from it, incorrectly treating
+    it as a XOF.  It would be worth considering separating the APIs for
+    the different algorithms that are part of SHA-3, similar to what I
+    did with SHA-224 and SHA-256.  (They would of course still share
+    code internally, just like SHA-2.)
 
->
->>
->> So before considering this for merging, I'd like to see at least an
->> attempt to implement the dual-vDSO approach (or something equivalent)
->> where the same kernel binary with CFI enabled can run on both pre-Zimop
->> and post-Zimop hardware, with the existing userspaces that are common
->> today.
->
->I agree that when the VDSO patches are submitted for inclusion they should
->be written in a way that avoids limiting the entire kernel to either
->pre-Zimop or post-Zimop hardware based on the config, but I think it
->should be quite possible to perform e.g. runtime patching of the VDSO
->to replace the Zimop instructions with nops if the config is enabled but
->the hardware does not support Zimop.
+So I asked that to prevent usage errors such as treating a digest as a
+XOF, you consider separating the APIs.  There is more than one way to do
+that, and I was hoping that you'd consider different ways.  One way is
+separate functions and types for all six SHA-3 algorithms.
 
-Why kernel need to do this extra work of carry two binaries and patching it
-runtime?
+However, if that is not scaling well, then we could instead just
+separate the SHA-3 algorithms into two groups, the digests and the XOFs:
 
-If for instance we do this, and then this allow this kernel to be taken to
-pre-Zimop hardware, it is assumed that entire userspace for such hardware
-was compiled without shadow stack (thus no zimop). In that case, kernel
-should have been compiled without CFI option.
+    void sha3_224_init(struct sha3_ctx *ctx);
+    void sha3_256_init(struct sha3_ctx *ctx);
+    void sha3_384_init(struct sha3_ctx *ctx);
+    void sha3_512_init(struct sha3_ctx *ctx);
+    void sha3_update(struct sha3_ctx *ctx, const u8 *data, size_t data_len);
+    void sha3_final(struct sha3_ctx *ctx, u8 *out);
 
-Just for sake of thought exercise, let's say Fedora 43 is first release with
-RVA23 compatiblity (zimop and shadow stack), there is no way this and future
-release will be able to run on pre-zimop hardware. Unless redhat is going to
-start two different binary distribution. One for pre-zimop and one for
-post-zimop. If that would be the case, then compiling two different kernel for
-such two different hardware would be least of the worry.
+    void shake128_init(struct shake_ctx *ctx);
+    void shake256_init(struct shake_ctx *ctx);
+    void shake_update(struct shake_ctx *ctx, const u8 *data, size_t data_len);
+    void shake_squeeze(struct shake_ctx *ctx, u8 *out, size_t out_len);
+    void shake_clear(struct shake_ctx *ctx);
 
-Only other usecase is of a seasoned kernel developer or build your own stuff
-in embedded environment, those users can anyways are advanced users. But it
-forces complexity on rest of kernel. There will be more extensions taking zimop
-encodings in future, we will end up patching vDSO and keep this complexity
-while rest of the userspace will not be patched and will be separate binary
-distribution (if OS distros endup distributing multiple binaries per release)
+(With "sha3_ctx" being used for the digests specifically, the internal
+context struct would then have to have a third name, like "__sha3_ctx".)
 
->
->However, that concern should not hold up this patch series. Raise it again
->when the VDSO patches are posted.
+The *_init() functions would store the correct information in the
+context so that the other functions would know what to do.  This would
+be similar to how blake2s_init() saves the 'outlen' for blake2s_final().
 
-As I said earlier, these changes default cfi config to No. So whenever this
-is selected "Yes" by a distro, they can drive such patches (if there is a real
-need)
+That would be sufficient to prevent misuse errors where steps of
+different algorithms are mixed together, right?
 
->
->>
->> thanks Deepak,
->>
->> - Paul
->
->Best - Charlie
->
+Keep in mind that for SHA-2 we have to have completely different code
+and underlying state for the 32-bit hashes (SHA-224 and SHA-256) and
+64-bit hashes (SHA-384 and SHA-512) anyway.  We also traditionally
+haven't kept any information in the SHA-2 context about which SHA-2
+algorithm is being executed.  So that led us more down the road of the
+separate functions and types for each SHA-2 algorithm.  With SHA-3,
+where e.g. the 224, 256, 384, and 512-bit digests all use the same
+underlying state, a slightly more unified API might be appropriate.
+
+All I'm really requesting is that we don't create footguns, like the
+following that the API in the v2 patch permitted:
+
+    1. sha3_init() + sha3_update()
+        [infinite loop]
+
+    2. sha3_256_init() + sha3_update() + sha3_squeeze()
+        [not valid, treats SHA3-256 as a XOF]
+
+    3. sha3_update() + sha3_squeeze() + sha3_update() + sha3_squeeze()
+        [not valid, as discussed]
+
+(1) is prevented just by not having the internal function sha3_init() as
+a public function.
+
+Splitting the context into two types, one for the digests and one for
+the XOFs, is sufficient to prevent (2), as long as there's still one
+init function per algorithm.  We don't necessarily need six types.
+
+(3) isn't preventable via the type system, but it's detectable by a
+run-time check, which you've done by adding a WARN_ON_ONCE() to
+sha3_update().
+
+So, I think we'd be in a good position with just the digests and XOFs
+separated out into different functions + types.
+
+> This does, however, cause a problem for what I need to do as the ML-DSA
+> prehash is dynamically selectable by certificate OID, so I have to add
+> SHAKE128/256 support to the crypto shash API too - though hopefully it will
+> only require an output of 16 or 32 bytes respectively for the prehash case
+> and won't require multiple squeezing.
+
+When there's only a small number of supported algorithms, just doing the
+dispatch in the calling code tends to be simpler than using
+crypto_shash.  For example, see the recent conversion of fs/verity/ to
+use the SHA-2 library API instead of crypto_shash.
+
+- Eric
 
