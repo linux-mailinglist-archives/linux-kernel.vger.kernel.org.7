@@ -1,94 +1,69 @@
-Return-Path: <linux-kernel+bounces-834443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2873BA4B37
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C08BA4B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D694C1192
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:45:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824B32A6A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A37430596D;
-	Fri, 26 Sep 2025 16:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A63064AA;
+	Fri, 26 Sep 2025 16:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kdSYuNVf"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="xJbuw3K4"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C4A1F1302
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110422FF676;
+	Fri, 26 Sep 2025 16:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905147; cv=none; b=h5cMeiqFBd1cLxGNP6wesP2xJy9IvvapEpKDjw2GG5lKTWYsEzdV+gIR3piHclHXf69p00GBDmnJodZxoqOlxIwyw+KxZvyoKc1XCACqP0ICms0ZEsO+YlkprEnTePdAECLl/c9Q2km/FHLAyJL/H8NhsD0MjJAuxIbeqPoNUEc=
+	t=1758905250; cv=none; b=Aw2awaUVPOQPXZq51YpHC5KGjUFvcDXaCnlH50c7/F/02YbEKMjUg7U4DkjbYND3zpjjbZb+yc+zDBMRtVrE0i7AGG9uT+p0lIs8uNB7RO/mM/HGxwz5MIFlO1wzAV1CgtzSFLKqM+YdnZhKriCXMRIfdFlZ2+Ua+nKjM5VRzB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905147; c=relaxed/simple;
-	bh=Vs6TAGLNP0P+xmbqBciKFWYHtBQhY1DI1fGlxkQza8E=;
+	s=arc-20240116; t=1758905250; c=relaxed/simple;
+	bh=/uY42YFE2pKVTRQ2gUXq1OM//KaQee8HjPayqN6+Q+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GooYe855CBA6w2IVsVw7ETePOkVKmzgz5KVU2sM0xwxa4LtqnriLtbqO3ACqt3Tp0EZAqQs1xrHgbdh1e8bS3gyjis6XBAbonTyAtk6vwFZgAbAgIuuE4szRDNkmst+Bg0ij8wZbTljdwB9Z288t80frCX+d1JTVMJkIvrWM2uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kdSYuNVf; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d603b674aso24392557b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758905145; x=1759509945; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rWe6l9DFEZIe2QF5kWTxkiV4TR1qHm+R41H6tLR7BcY=;
-        b=kdSYuNVflSeyGs5exn2hCuFEhA/ar3DNYHXHMbOPamsIprarYpTD/N0qyrz6fQUWXB
-         I9ZKQr9o1NVVic3cnUPTf8fsYMrT4zaasu84yQ75dBmTJp4zWBdYZg8vN5NGlnCvkWkw
-         iJ6GSvEa78eLw0aYSYLaoUR1RR52IAzb6ZWL1iPpzk/o6JtizVsUQAwqlkhbHSbO/u3h
-         0FyCWNKL6pj0gBIkcUT5qs01ViPgvzPODmdhiDMYBfhHb+E3ElbGpdBbO7nv2APHkHua
-         uRKRN7xMSoaIhZc8R1NwGa6era3VDyR7gXTrOasVfyzGefV0iyLKXe56YVW0I9ANOTr3
-         nzgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758905145; x=1759509945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rWe6l9DFEZIe2QF5kWTxkiV4TR1qHm+R41H6tLR7BcY=;
-        b=phE95XAmDVErGt4/6CpGRpsMOfQhgkDkSlRHWEIx74yRTkpfEZrpWYcw8c54KtLGyD
-         hyYiWXGsrhQObdKUGezoHNwpUCmLiSH4FlIFQ4VfUJzgscUDzw7N6lN9XLVrzDqhjHZD
-         htyGoU+HAJnH+vAE/E5KESmRZ4PxZE99vNRB3afkOiyMuFlJfzqi/WUBFZTBt79cniiJ
-         6L5Njf7dj0254BrkHG0S0m9sg/2vnN/XzHe1ACIKO5VvZlZrmCua96hYn2XcqMT/ZRPi
-         v7nNwkYhc7a8R09KW70jvppTousFv5OzRVeZwRirJ/eBgNeiY1NL21lACs9wgz11b4+x
-         5nmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBhqrO6B9oijWubkAU2HbzpuhSJ0xon5FTkJRhbwyLv9RNOucLC3ihcJmPWlYKZz/NSCmmyNwqUgp5FnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBuLN5mACYN9rc4/DsOmwbXpqV1B6RDmFBwVHcrN9H/Ah0mM1K
-	LWqQ+c3qHcY8weYwSSgtoEOVlgn1JSXqbf+9ovXpNOw8KcEZ0eKt11k8
-X-Gm-Gg: ASbGncvs8Oauw5PhH//48Hrt73lQiMSvEcwrn1LRuVinaxO1R9jdZqMMnMZeKSzMnOk
-	p48lMfPiiyuujAjNLtxQBJf/Qbsi2ATTVtP5o1dNequB8prCLSYQ6toD8G/beDhOac0jsRAoXuL
-	rVsDiyuvAxnb0eHT7ttXm1SuX2qnqQdGxHU8OQQL6EsrpOn8cdrnjwrPW6iFk2FfJ1Hne/kiUf7
-	LzXruP/JV/QImdZQg8jOcZVd/WkGrBRbk3AnQ4ImTt+sIQ0NXZHVswxHtJMnZ63eMh4DB7IuasL
-	km9G60gtuGohRn3Cp9RHyAk+n6JKzIeTHqrAbjZUbKKdE7R19G9lUB8i98iyy3QTFxsgFQSqEob
-	34AlB9naP13ddFJK6zXce7jKuoJZTvbbGGnU1GWyMjiYNgI5Nn1rRrVF5Ow==
-X-Google-Smtp-Source: AGHT+IFpF5cWlNLrT5bHlj24v+44FGgh9yJp1dc+sghREQUf8FAhAKLzfo2Kz30PeNG78RhjMp14pA==
-X-Received: by 2002:a05:690c:6c84:b0:763:e43b:3ab6 with SMTP id 00721157ae682-763eae4da07mr94212387b3.0.1758905144931;
-        Fri, 26 Sep 2025 09:45:44 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:70::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-765be47f630sm12074467b3.29.2025.09.26.09.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 09:45:44 -0700 (PDT)
-Date: Fri, 26 Sep 2025 09:45:42 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Mina Almasry <almasrymina@google.com>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v3 0/2] net: devmem: improve cpu cost of RX
- token management
-Message-ID: <aNbDNr8ZHw5AzVHQ@devvm11784.nha0.facebook.com>
-References: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
- <aNa3ValQeGEm_WGb@horms.kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnNHJPio2i0MGzpTfyC3Gm9QslOgpHlP448p4qt0G7ptE/zUU7pa3GjHc5iLwg+Iw2//GRANC3gQpHNCAVimAcb/SIMb8g1AYIN//ft5YUi7PgbeLegEqCnJMvv41Ag87BpJqU8oLMpYEtdwbqUcKNlxlU0vycW3vfaGUMZIRyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=xJbuw3K4; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=L4ev/Rjd0n90nVSqX0Vq46Pw/EmC7LCm4/hilBmaS0s=; b=xJbuw3K41S0SLgVW9GPg5L+9yO
+	N+/WS0IZpJ3XWQWpwYs8ba19NX/IVQ/X9gk61CPS2LslLZ/fF18e5FcdFBW0dFlSMInbLOv4yZoAd
+	vX26Z1T3hzwt8R1xxu9B/2qkEWVc0+4vAvzViX1RNwXRAtvszVvj8Jx4i7YI5PW6gZRCqFnPsYa8w
+	lzwidRgG/fZWVdPtxtJxRHGez+O5LrzkR31mv308XptybfP3lSqOHmN0ZUG21qViuOCPsaON7i1xJ
+	ZlS86nNVJT+6U2n8Hyj9mHhJLzQp/azC9GL3xPSRnd4h3pACx80DGk998Rz0SfY9uKHpS1uDf37Dl
+	Fw95WEnw==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v2BbG-00GLNE-2n;
+	Fri, 26 Sep 2025 18:47:14 +0200
+Date: Fri, 26 Sep 2025 18:47:14 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v2 6/6] i2c: spacemit: introduce pio for k1
+Message-ID: <aNbDkn9AC4FFx-Zc@aurel32.net>
+Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>,
+	Troy Mitchell <troymitchell988@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+References: <20250925-k1-i2c-atomic-v2-0-46dc13311cda@linux.spacemit.com>
+ <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,35 +72,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aNa3ValQeGEm_WGb@horms.kernel.org>
+In-Reply-To: <20250925-k1-i2c-atomic-v2-6-46dc13311cda@linux.spacemit.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Fri, Sep 26, 2025 at 04:55:01PM +0100, Simon Horman wrote:
-> On Fri, Sep 26, 2025 at 08:02:52AM -0700, Bobby Eshleman wrote:
-> > This series improves the CPU cost of RX token management by replacing
-> > the xarray allocator with an niov array and a uref field in niov.
-> > 
-> > Improvement is ~5% per RX user thread.
-> > 
-> > Two other approaches were tested, but with no improvement. Namely, 1)
-> > using a hashmap for tokens and 2) keeping an xarray of atomic counters
-> > but using RCU so that the hotpath could be mostly lockless. Neither of
-> > these approaches proved better than the simple array in terms of CPU.
-> > 
-> > Running with a NCCL workload is still TODO, but I will follow up on this
-> > thread with those results when done.
-> > 
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> 
-> Hi Bobby,
-> 
-> Unfortunately this patchset doesn't apply cleanly to net-next.
-> So you'll need to rebase and repost at some point.
-> 
-> -- 
-> pw-bot: changes-requested
+Hi Troy,
 
-Got it, just resent and added this check to my automation, thanks!
+On 2025-09-25 10:02, Troy Mitchell wrote:
+> This patch introduces I2C PIO functionality for the Spacemit K1 SoC,
+> enabling the use of I2C with interrupts disabled.
+> 
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+>  drivers/i2c/busses/i2c-k1.c | 164 +++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 140 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+> index 6b918770e612e098b8ad17418f420d87c94df166..e403eb7d6f329f4fe5c5242f94cc21094dff105c 100644
+> --- a/drivers/i2c/busses/i2c-k1.c
+> +++ b/drivers/i2c/busses/i2c-k1.c
 
-Best,
-Bobby
+[snip]
+
+> @@ -293,10 +307,54 @@ static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
+>  	/* send start pulse */
+>  	val = readl(i2c->base + SPACEMIT_ICR);
+>  	val &= ~SPACEMIT_CR_STOP;
+> -	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB | SPACEMIT_CR_DTEIE;
+> +	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB;
+> +
+> +	if (!i2c->is_pio)
+> +		val |= SPACEMIT_CR_DTEIE;
+> +
+>  	writel(val, i2c->base + SPACEMIT_ICR);
+>  }
+>  
+> +static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid);
+> +static int spacemit_i2c_wait_pio_xfer(struct spacemit_i2c_dev *i2c)
+> +{
+> +	u32 msec = jiffies_to_msecs(i2c->adapt.timeout);
+> +	ktime_t timeout = ktime_add_ms(ktime_get(), msec);
+> +	int ret;
+> +
+> +	while (i2c->unprocessed && ktime_compare(ktime_get(), timeout) < 0) {
+> +		udelay(10);
+> +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
+> +
+> +		spacemit_i2c_clear_int_status(i2c, i2c->status);
+> +
+> +		if (!(i2c->status & SPACEMIT_SR_IRF) && !(i2c->status & SPACEMIT_SR_ITE))
+> +			continue;
+> +
+> +		spacemit_i2c_irq_handler(0, i2c);
+> +
+> +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
+> +
+> +		/*
+> +		 * This is the last byte to write of the current message.
+> +		 * If we do not wait here, control will proceed directly to start(),
+> +		 * which would overwrite the current data.
+> +		 */
+> +		if (!i2c->read && !i2c->unprocessed) {
+> +			ret = readl_poll_timeout(i2c->base + SPACEMIT_ISR,
+> +						i2c->status, i2c->status & SPACEMIT_SR_ITE,
+> +						30, 1000);
+
+This needs to be readl_poll_timeout_atomic(), like you changed in 
+spacemit_i2c_wait_bus_idle().
+
+> +			if (ret)
+> +				return 0;
+> +		}
+> +	}
+> +
+> +	if (i2c->unprocessed)
+> +		return 0;
+> +
+> +	return 1;
+> +}
+> +
+>  static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
+>  {
+>  	unsigned long time_left;
+
+[snip]
+
+> @@ -479,15 +578,21 @@ static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
+>  	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 10) / i2c->msg_num;
+>  }
+>  
+> -static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
+> +static inline int
+> +spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num, bool is_pio)
+>  {
+>  	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
+>  	int ret;
+>  
+> +	i2c->is_pio = is_pio;
+> +
+>  	i2c->msgs = msgs;
+>  	i2c->msg_num = num;
+>  
+> -	spacemit_i2c_calc_timeout(i2c);
+> +	if (!i2c->is_pio)
+> +		spacemit_i2c_calc_timeout(i2c);
+> +	else
+> +		i2c->adapt.timeout = SPACEMIT_WAIT_TIMEOUT;
+
+Thanks for fixing that, however i2c->adapt.timeout needs to be in 
+jiffies, so you want to use msecs_to_jiffies(SPACEMIT_WAIT_TIMEOUT).
+
+>  	spacemit_i2c_init(i2c);
+>  
+
+Regards
+Aurelien
+
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
