@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-833826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910E6BA3299
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E148ABA32A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 817E17AA4DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:33:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7376F7AFCDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B805C2BDC27;
-	Fri, 26 Sep 2025 09:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7698E2BE034;
+	Fri, 26 Sep 2025 09:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRoARfqg"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOjyiz76"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF4D29B8D9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A641B29CB3A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879253; cv=none; b=DFZ6tnIy+aec0lnhf5P2lwT8uv953PQL4MwuRGqHu2Zgnz81Et7ragYo6uMWBjrUiWRabNpM0SDALBcC7Ds7vJGlH7RNt5RDq1K4R9RJ5CeUy/5xDM/T8Q5A6st64UCL45TuEMhWIEZO8zAHi6EH6qWBuqANFKuxiBOxgtwqUrc=
+	t=1758879261; cv=none; b=T7+T1mXqpJ5NPDkC+NLDdGLqd6tABMNu7zlxx/Ubbaf7C8c3a90bxTeHvvqBeJULWUDvqBopkEmqD2igmdtaPjIbzJP23cIfzTLkc47m9zmLsGStROrN/3nieZqFRbtrg2m2Xusb1wCmzxONH9V3RmRo9thQSGkQU2/5TIcntNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879253; c=relaxed/simple;
-	bh=WFo9LyAeEaA81byOzYYPzk59eC4wRmtclcHVMsp5+Bw=;
+	s=arc-20240116; t=1758879261; c=relaxed/simple;
+	bh=E04frglNkA3VvQRUXJHLpZqQuBz1La1Ik0IcgqmEqYg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GmqX+MSWMLbWCqDb2KY3Jp5956+nDbDKIszKvdcn1K2J2cIXQx7ivvda5JQYshKChGb0IlG4GM7kjJA9AEkgnwDJmeTV9uQQr32PIUE2sg+8CH/7zu6u8WH7bB7MhjLCv+/5E9TiEEyAypA4tX9M3QCb8OjGcYwu8OW4rrT+N8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRoARfqg; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=NUs1M8VEXMrrDg8H3atPuy5u3LJFQQMnQz5QuZu/TgTNkEtbIaCgN/+3pRJMnKXsWWbp7+t/9t4T003PM68tywBQCb9OJ5sGLuoOEABAPgmOGWJq0ZbT+elmX/MWqinvtp5hNjY04/Di4pYsr5c8umv4iwc0i8cOwPUrilvXCyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOjyiz76; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso1233320a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:34:12 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b57f08e88bcso454485a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758879251; x=1759484051; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758879259; x=1759484059; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yZMgKn0wKQ/oqMfqx0uxt+uUc993BOebahb39/puGXY=;
-        b=gRoARfqgFRk9vKKDfTDHsOLPvYzTwN6afyYUYiCLeT1GbcywDbz/MPpntwXtHcENN/
-         VYxy/1MuXNLOj9hCpHaF7ThKXVZ4nNMMBphsAIM7VqxXChxprufykq4jWiWuZD6jt5o2
-         B7DABBqZ/ollBxGZuZcLBLxUgajWBFAjqM9UgiO/TpaIKFVj0xHIJ/Fre9Kkh8vJMEHq
-         PpjupUm4OavdoR7/jqB59cQhLQG6OVn7tpEOz9C/4+EgJvCXorAuBDtL3eXpdArbRfh8
-         hWyH8zKnfd/ySA16aZTWci+D3OtWSeMhVRnkBhUItH5xouE1pLKwJHdZnAVMgAl0xqEB
-         wD6A==
+        bh=8F1HkzqHjtZ4asrnu6+OCuquE7j2zJ/cOO3f5j6VRt0=;
+        b=aOjyiz76H/2qv4Bc1/LyOkHigfsgd8rbZjmOImLy5Xi4TJsru8tBz1U4RHYKvCoP/Z
+         WAeu9AxXZHdVAz6rk3UdlIYKyXmH7t0ws+xwlgsxeo3ZlNnQIqamE1RRrREkscUexVT/
+         8gUjewd8r2IbxZ1fUMZwzNkTZdoB3s4s8Aaq21boyZWkLnF7eCECfOyfHCIOZ1ekXg2d
+         09SUUa0LWLAkQsBqEmoMi+o2fKrN+3rYJWL350pQgNIKvWsCLEfF0kFZnzXAtH56ewPr
+         1r44SFzVSHWTdnKIn8/qf7hYUlLbpZ6Vf3hHd1WLvDc6tOOrlT27P1m0CuL9pOFmo87B
+         R6qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758879251; x=1759484051;
+        d=1e100.net; s=20230601; t=1758879259; x=1759484059;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yZMgKn0wKQ/oqMfqx0uxt+uUc993BOebahb39/puGXY=;
-        b=gwbLlY5GeDvQ5TcB5ozxhXWgoFWJJcmthdH3f+QNR0F2SZDdiSgYFiLQQkls1vC33+
-         SjaQVniQF18cAHkp0NKZDQsJ0CU+TcpBAtxdkW8YXAzEN1ZC/W2eDXxO9VWXiAp/Jj+n
-         DxLz5aetIZCJU40ZC6W+aIYi7+R/VzJekM0cVb2o42jnLEXhExRJy7hOeR0ljDr4C9RA
-         g4ibwhourUeh8CZEo9BArElw8hBJyVe0gT/Myh/2aQKtzCX8XkpFBzDttvEtdf5+TVtC
-         jPIdoGYUyq7EnGcCyeKPU9lu8rH8li/iQvtGHIG/6vDPai8FkqFGAdewR/28s1siqO1W
-         kYnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo2SDSE+/xTkcSkbMWqiSppWd26jeAXP5b3FrfDePNP7Ybkvg1J1t2dDvAqCvnVwsh2xzFiw0nkN80BeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw9Em5gvA/AILLjwn6kdMJF9xG+ETISBob8W/QSKMkPOKhyJ6n
-	V9AiaI3jfcUPncZTlzbrH29BsCm5fM816OcBzRnepbgjI0e7CFFMglQ+
-X-Gm-Gg: ASbGncu2ngE8c/KRXf4+hWRNXv9y53ZfZTwNUb9nria5oq7Sqr2vuHIScvNYFZcbAIm
-	OjCF5/foJS7jo/JQAvxcOcNN0eZ/uAv+b77Mr3qsYApHuJB0otClvSao4WGBjBadILxQ9HACoKB
-	4YMRfArmkxJS7Hg9znXwuPPLO3GT2Acuc0fy83LrEdlPZT7Bfxz5968+R1McJdjGG5+HYhoCOK7
-	BqRoqqhBMHFFjTDW5bOXQABdigZYSqOm55Z3k6GPaqvSsumH3ge+Rr9L7Kzi0KV7oylGaK4b7GK
-	RuVNNU/0TLVKSTZBgt+aOyXOnHLIbMq3rflJdhIDFh+Lj1gPizJcDb5B2xSLmJFOW3I+FV/6b7n
-	zhA8wyx+yRPhRh/F2P5k/SMVBhe9AiWN0hmJGvzbig86Mlz3w2ytjyFoBHSzMBo78Q+EQXdomTy
-	w6+SKgf+YicOp5
-X-Google-Smtp-Source: AGHT+IE8m06qLCI0fDHhVvccWM4X7VzASHCAmPvCMmQy9qW9LwLNoLvpBo8EtHPcpGLM28ZdNvKrWw==
-X-Received: by 2002:a17:903:b06:b0:276:d3e:6844 with SMTP id d9443c01a7336-27ed4a7e7d9mr64071655ad.33.1758879251420;
-        Fri, 26 Sep 2025 02:34:11 -0700 (PDT)
+        bh=8F1HkzqHjtZ4asrnu6+OCuquE7j2zJ/cOO3f5j6VRt0=;
+        b=lk6CrUXPi7EHeUc2H49/68zc7q+73ZtGR1mYbJrpGsxfMaXV3RorovdOwiG7TGCmNj
+         BT4TwD1wdcVV0ESbvV3/KXOMlWoK62iBdi8cppfAXdl7PYfCHpS2IU97TC0R36ae+DS0
+         7yKHq+0QhdnKbWipk1KH4bqX+k5U6a4aZuMMyyWTJSXRURnHpoi9GNabZtNQfGDr8eSM
+         ae1/duOuyy5+b6EQpusS+Dx/ktPNf97lpLL6e/JesIpGybSsMYnYKO2IkDS/tFm7t2gL
+         HcYWwT1MpxDeyIEy4iX9s2JGXNBytinw/hvG8JPthdTKi4cqRkbkWWfpycgMFvu4FOPv
+         RCww==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMm8anl5mFg1VeZfQRgCsmIohJ8uDE+GhjxOeirNd9W/RclL1Vj8BwverGvE1tAtla4BxZo6VdWqeru0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ+S9vhTpABSLEUZGVPT6pQzZ5V9a2UvuEBPmHAigRZi57Iz69
+	/n057ORqOFVb1ddILyYEqoYR4VDQPYETRlBaww0EukiS2epGrsrdN5Yk
+X-Gm-Gg: ASbGncvRNti36ZOiGaC+NhlNgMLjVc0mSaoh7YX1z+BkLWfYW4qOm9lcXso5MRQVT1O
+	zqRdF9iooako608ZvkmCT4cgzpYeiYhp0mqpwxOZfff0+A5j4z7popuWiCWuIUnMFLVGH73X4pX
+	OsNUO8QyMgHhFf3upq2cfixNE7vFRXZ2sE18eICXSFIABk6RpxGqTzjVa9v/Nd15KdMQQjdv8qC
+	dF4CDX379fdHFLRBcwWHSicsxpwDn2ygcOP+Qh31dx+DJ4M21uuGK0GLiP+IsIeES6eZUV7zjrs
+	NzO0DSpKKyPMnDrfR+/K8MJrVWFDfJbPTR51W6PgKVLULj1GLkSg3EJVC7QRQQjZNj3ehZ9Wiqq
+	RKPhvankaZLWoyg94dvZoWpUMOlUDAkW30tvAlJgdemnapJZP6HU9pETr1EyyPEO3aDgXf0tSAR
+	YqUAjmfO6z0kJf
+X-Google-Smtp-Source: AGHT+IGs2RVuLQNle2jpLDUn/dQyj5uYkBVBI0mgx8CiaNeXlryu+CMTBs4lU6XcwR9nFTCXObCvkg==
+X-Received: by 2002:a17:902:cf09:b0:27e:f1d1:74e0 with SMTP id d9443c01a7336-27ef1d178a0mr18485445ad.17.1758879258795;
+        Fri, 26 Sep 2025 02:34:18 -0700 (PDT)
 Received: from localhost.localdomain ([2409:891f:1c21:566:e1d1:c082:790c:7be6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cda43sm49247475ad.25.2025.09.26.02.34.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cda43sm49247475ad.25.2025.09.26.02.34.11
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 26 Sep 2025 02:34:10 -0700 (PDT)
+        Fri, 26 Sep 2025 02:34:18 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -101,11 +101,10 @@ Cc: bpf@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Yang Shi <shy828301@gmail.com>
-Subject: [PATCH v8 mm-new 02/12] mm: thp: remove vm_flags parameter from khugepaged_enter_vma()
-Date: Fri, 26 Sep 2025 17:33:33 +0800
-Message-Id: <20250926093343.1000-3-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v8 mm-new 03/12] mm: thp: remove vm_flags parameter from thp_vma_allowable_order()
+Date: Fri, 26 Sep 2025 17:33:34 +0800
+Message-Id: <20250926093343.1000-4-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 In-Reply-To: <20250926093343.1000-1-laoar.shao@gmail.com>
 References: <20250926093343.1000-1-laoar.shao@gmail.com>
@@ -117,157 +116,254 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The khugepaged_enter_vma() function requires handling in two specific
-scenarios:
-1. New VMA creation
-  When a new VMA is created, if vma->vm_mm is not present in
-  khugepaged_mm_slot, it must be added. In this case,
-  khugepaged_enter_vma() is called after vma->vm_flags have been set,
-  allowing direct use of the VMA's flags.
-2. VMA flag modification
-  When vma->vm_flags are modified (particularly when VM_HUGEPAGE is set),
-  the system must recheck whether to add vma->vm_mm to khugepaged_mm_slot.
-  Currently, khugepaged_enter_vma() is called before the flag update, so
-  the call must be relocated to occur after vma->vm_flags have been set.
-
-Additionally, khugepaged_enter_vma() is invoked in other contexts, such as
-during VMA merging. However, these calls are unnecessary because the
-existing VMA already ensures that vma->vm_mm is registered in
-khugepaged_mm_slot. While removing these redundant calls represents a
-potential optimization, that change should be addressed separately.
-Because VMA merging only occurs when the vm_flags of both VMAs are
-identical (excluding special flags like VM_SOFTDIRTY), we can safely use
-target->vm_flags instead.
-
-After this change, we can further remove vm_flags parameter from
-thp_vma_allowable_order(). That will be handled in a followup patch.
+Because all calls to thp_vma_allowable_order() pass vma->vm_flags as the
+vma_flags argument, we can remove the parameter and have the function
+access vma->vm_flags directly.
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Yang Shi <shy828301@gmail.com>
 ---
- include/linux/khugepaged.h |  6 ++----
- mm/huge_memory.c           |  2 +-
- mm/khugepaged.c            | 11 ++---------
- mm/madvise.c               |  7 +++++++
- mm/vma.c                   |  6 +++---
- 5 files changed, 15 insertions(+), 17 deletions(-)
+ fs/proc/task_mmu.c      |  3 +--
+ include/linux/huge_mm.h | 16 ++++++++--------
+ mm/huge_memory.c        |  4 ++--
+ mm/khugepaged.c         | 10 +++++-----
+ mm/memory.c             | 11 +++++------
+ mm/shmem.c              |  2 +-
+ 6 files changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
-index f14680cd9854..b30814d3d665 100644
---- a/include/linux/khugepaged.h
-+++ b/include/linux/khugepaged.h
-@@ -13,8 +13,7 @@ extern void khugepaged_destroy(void);
- extern int start_stop_khugepaged(void);
- extern void __khugepaged_enter(struct mm_struct *mm);
- extern void __khugepaged_exit(struct mm_struct *mm);
--extern void khugepaged_enter_vma(struct vm_area_struct *vma,
--				 vm_flags_t vm_flags);
-+extern void khugepaged_enter_vma(struct vm_area_struct *vma);
- extern void khugepaged_enter_mm(struct mm_struct *mm);
- extern void khugepaged_min_free_kbytes_update(void);
- extern bool current_is_khugepaged(void);
-@@ -39,8 +38,7 @@ static inline void khugepaged_fork(struct mm_struct *mm, struct mm_struct *oldmm
- static inline void khugepaged_exit(struct mm_struct *mm)
- {
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index fc35a0543f01..e713d1905750 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1369,8 +1369,7 @@ static int show_smap(struct seq_file *m, void *v)
+ 	__show_smap(m, &mss, false);
+ 
+ 	seq_printf(m, "THPeligible:    %8u\n",
+-		   !!thp_vma_allowable_orders(vma, vma->vm_flags, TVA_SMAPS,
+-					      THP_ORDERS_ALL));
++		   !!thp_vma_allowable_orders(vma, TVA_SMAPS, THP_ORDERS_ALL));
+ 
+ 	if (arch_pkeys_enabled())
+ 		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index f327d62fc985..a635dcbb2b99 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -101,8 +101,8 @@ enum tva_type {
+ 	TVA_FORCED_COLLAPSE,	/* Forced collapse (e.g. MADV_COLLAPSE). */
+ };
+ 
+-#define thp_vma_allowable_order(vma, vm_flags, type, order) \
+-	(!!thp_vma_allowable_orders(vma, vm_flags, type, BIT(order)))
++#define thp_vma_allowable_order(vma, type, order) \
++	(!!thp_vma_allowable_orders(vma, type, BIT(order)))
+ 
+ #define split_folio(f) split_folio_to_list(f, NULL)
+ 
+@@ -266,14 +266,12 @@ static inline unsigned long thp_vma_suitable_orders(struct vm_area_struct *vma,
  }
--static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
--					vm_flags_t vm_flags)
-+static inline void khugepaged_enter_vma(struct vm_area_struct *vma)
+ 
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+-					 vm_flags_t vm_flags,
+ 					 enum tva_type type,
+ 					 unsigned long orders);
+ 
+ /**
+  * thp_vma_allowable_orders - determine hugepage orders that are allowed for vma
+  * @vma:  the vm area to check
+- * @vm_flags: use these vm_flags instead of vma->vm_flags
+  * @type: TVA type
+  * @orders: bitfield of all orders to consider
+  *
+@@ -287,10 +285,11 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+  */
+ static inline
+ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+-				       vm_flags_t vm_flags,
+ 				       enum tva_type type,
+ 				       unsigned long orders)
  {
++	vm_flags_t vm_flags = vma->vm_flags;
++
+ 	/*
+ 	 * Optimization to check if required orders are enabled early. Only
+ 	 * forced collapse ignores sysfs configs.
+@@ -309,7 +308,7 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 			return 0;
+ 	}
+ 
+-	return __thp_vma_allowable_orders(vma, vm_flags, type, orders);
++	return __thp_vma_allowable_orders(vma, type, orders);
  }
- static inline void khugepaged_enter_mm(struct mm_struct *mm)
+ 
+ struct thpsize {
+@@ -329,8 +328,10 @@ struct thpsize {
+  * through madvise or prctl.
+  */
+ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+-		vm_flags_t vm_flags, bool forced_collapse)
++				    bool forced_collapse)
+ {
++	vm_flags_t vm_flags = vma->vm_flags;
++
+ 	/* Are THPs disabled for this VMA? */
+ 	if (vm_flags & VM_NOHUGEPAGE)
+ 		return true;
+@@ -560,7 +561,6 @@ static inline unsigned long thp_vma_suitable_orders(struct vm_area_struct *vma,
+ }
+ 
+ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+-					vm_flags_t vm_flags,
+ 					enum tva_type type,
+ 					unsigned long orders)
+ {
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1b81680b4225..ac6601f30e65 100644
+index ac6601f30e65..1ac476fe6dc5 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -1346,7 +1346,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
- 	ret = vmf_anon_prepare(vmf);
- 	if (ret)
- 		return ret;
--	khugepaged_enter_vma(vma, vma->vm_flags);
-+	khugepaged_enter_vma(vma);
- 
- 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
- 			!mm_forbids_zeropage(vma->vm_mm) &&
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index f47ac8c19447..04121ae7d18d 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -353,12 +353,6 @@ int hugepage_madvise(struct vm_area_struct *vma,
- #endif
- 		*vm_flags &= ~VM_NOHUGEPAGE;
- 		*vm_flags |= VM_HUGEPAGE;
--		/*
--		 * If the vma become good for khugepaged to scan,
--		 * register it here without waiting a page fault that
--		 * may not happen any time soon.
--		 */
--		khugepaged_enter_vma(vma, *vm_flags);
- 		break;
- 	case MADV_NOHUGEPAGE:
- 		*vm_flags &= ~VM_HUGEPAGE;
-@@ -467,10 +461,9 @@ void khugepaged_enter_mm(struct mm_struct *mm)
- 	__khugepaged_enter(mm);
+@@ -98,7 +98,6 @@ static inline bool file_thp_enabled(struct vm_area_struct *vma)
  }
  
--void khugepaged_enter_vma(struct vm_area_struct *vma,
--			  vm_flags_t vm_flags)
-+void khugepaged_enter_vma(struct vm_area_struct *vma)
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+-					 vm_flags_t vm_flags,
+ 					 enum tva_type type,
+ 					 unsigned long orders)
  {
--	if (!thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
-+	if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
+@@ -106,6 +105,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 	const bool in_pf = type == TVA_PAGEFAULT;
+ 	const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
+ 	unsigned long supported_orders;
++	vm_flags_t vm_flags = vma->vm_flags;
+ 
+ 	/* Check the intersection of requested and supported orders. */
+ 	if (vma_is_anonymous(vma))
+@@ -122,7 +122,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 	if (!vma->vm_mm)		/* vdso */
+ 		return 0;
+ 
+-	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags, forced_collapse))
++	if (thp_disabled_by_hw() || vma_thp_disabled(vma, forced_collapse))
+ 		return 0;
+ 
+ 	/* khugepaged doesn't collapse DAX vma, but page fault is fine. */
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 04121ae7d18d..9eeb868adcd3 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -463,7 +463,7 @@ void khugepaged_enter_mm(struct mm_struct *mm)
+ 
+ void khugepaged_enter_vma(struct vm_area_struct *vma)
+ {
+-	if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
++	if (!thp_vma_allowable_order(vma, TVA_KHUGEPAGED, PMD_ORDER))
  		return;
  
  	khugepaged_enter_mm(vma->vm_mm);
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 35ed4ab0d7c5..ab8b5d47badb 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1425,6 +1425,13 @@ static int madvise_vma_behavior(struct madvise_behavior *madv_behavior)
- 	VM_WARN_ON_ONCE(madv_behavior->lock_mode != MADVISE_MMAP_WRITE_LOCK);
+@@ -915,7 +915,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
  
- 	error = madvise_update_vma(new_flags, madv_behavior);
-+	/*
-+	 * If the vma become good for khugepaged to scan,
-+	 * register it here without waiting a page fault that
-+	 * may not happen any time soon.
-+	 */
-+	if (!error && new_flags & VM_HUGEPAGE)
-+		khugepaged_enter_mm(vma->vm_mm);
- out:
+ 	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
+ 		return SCAN_ADDRESS_RANGE;
+-	if (!thp_vma_allowable_order(vma, vma->vm_flags, type, PMD_ORDER))
++	if (!thp_vma_allowable_order(vma, type, PMD_ORDER))
+ 		return SCAN_VMA_CHECK;
  	/*
- 	 * madvise() returns EAGAIN if kernel resources, such as
-diff --git a/mm/vma.c b/mm/vma.c
-index a1ec405bda25..6a548b0d64cd 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -973,7 +973,7 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
- 	if (err || commit_merge(vmg))
- 		goto abort;
- 
--	khugepaged_enter_vma(vmg->target, vmg->vm_flags);
-+	khugepaged_enter_vma(vmg->target);
- 	vmg->state = VMA_MERGE_SUCCESS;
- 	return vmg->target;
- 
-@@ -1093,7 +1093,7 @@ struct vm_area_struct *vma_merge_new_range(struct vma_merge_struct *vmg)
- 	 * following VMA if we have VMAs on both sides.
+ 	 * Anon VMA expected, the address may be unmapped then
+@@ -1526,7 +1526,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+ 	 * and map it by a PMD, regardless of sysfs THP settings. As such, let's
+ 	 * analogously elide sysfs THP settings here and force collapse.
  	 */
- 	if (vmg->target && !vma_expand(vmg)) {
--		khugepaged_enter_vma(vmg->target, vmg->vm_flags);
-+		khugepaged_enter_vma(vmg->target);
- 		vmg->state = VMA_MERGE_SUCCESS;
- 		return vmg->target;
- 	}
-@@ -2520,7 +2520,7 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
- 	 * call covers the non-merge case.
- 	 */
- 	if (!vma_is_anonymous(vma))
--		khugepaged_enter_vma(vma, map->vm_flags);
-+		khugepaged_enter_vma(vma);
- 	*vmap = vma;
- 	return 0;
+-	if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_FORCED_COLLAPSE, PMD_ORDER))
++	if (!thp_vma_allowable_order(vma, TVA_FORCED_COLLAPSE, PMD_ORDER))
+ 		return SCAN_VMA_CHECK;
  
+ 	/* Keep pmd pgtable for uffd-wp; see comment in retract_page_tables() */
+@@ -2421,7 +2421,7 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
+ 			progress++;
+ 			break;
+ 		}
+-		if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER)) {
++		if (!thp_vma_allowable_order(vma, TVA_KHUGEPAGED, PMD_ORDER)) {
+ skip:
+ 			progress++;
+ 			continue;
+@@ -2752,7 +2752,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
+ 	BUG_ON(vma->vm_start > start);
+ 	BUG_ON(vma->vm_end < end);
+ 
+-	if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_FORCED_COLLAPSE, PMD_ORDER))
++	if (!thp_vma_allowable_order(vma, TVA_FORCED_COLLAPSE, PMD_ORDER))
+ 		return -EINVAL;
+ 
+ 	cc = kmalloc(sizeof(*cc), GFP_KERNEL);
+diff --git a/mm/memory.c b/mm/memory.c
+index 7e32eb79ba99..cd04e4894725 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4558,7 +4558,7 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+ 	 * Get a list of all the (large) orders below PMD_ORDER that are enabled
+ 	 * and suitable for swapping THP.
+ 	 */
+-	orders = thp_vma_allowable_orders(vma, vma->vm_flags, TVA_PAGEFAULT,
++	orders = thp_vma_allowable_orders(vma, TVA_PAGEFAULT,
+ 					  BIT(PMD_ORDER) - 1);
+ 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+ 	orders = thp_swap_suitable_orders(swp_offset(entry),
+@@ -5107,7 +5107,7 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
+ 	 * for this vma. Then filter out the orders that can't be allocated over
+ 	 * the faulting address and still be fully contained in the vma.
+ 	 */
+-	orders = thp_vma_allowable_orders(vma, vma->vm_flags, TVA_PAGEFAULT,
++	orders = thp_vma_allowable_orders(vma, TVA_PAGEFAULT,
+ 					  BIT(PMD_ORDER) - 1);
+ 	orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+ 
+@@ -5379,7 +5379,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
+ 	 * PMD mappings if THPs are disabled. As we already have a THP,
+ 	 * behave as if we are forcing a collapse.
+ 	 */
+-	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags,
++	if (thp_disabled_by_hw() || vma_thp_disabled(vma,
+ 						     /* forced_collapse=*/ true))
+ 		return ret;
+ 
+@@ -6280,7 +6280,6 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 		.gfp_mask = __get_fault_gfp_mask(vma),
+ 	};
+ 	struct mm_struct *mm = vma->vm_mm;
+-	vm_flags_t vm_flags = vma->vm_flags;
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+ 	vm_fault_t ret;
+@@ -6295,7 +6294,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 		return VM_FAULT_OOM;
+ retry_pud:
+ 	if (pud_none(*vmf.pud) &&
+-	    thp_vma_allowable_order(vma, vm_flags, TVA_PAGEFAULT, PUD_ORDER)) {
++	    thp_vma_allowable_order(vma, TVA_PAGEFAULT, PUD_ORDER)) {
+ 		ret = create_huge_pud(&vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
+ 			return ret;
+@@ -6329,7 +6328,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
+ 		goto retry_pud;
+ 
+ 	if (pmd_none(*vmf.pmd) &&
+-	    thp_vma_allowable_order(vma, vm_flags, TVA_PAGEFAULT, PMD_ORDER)) {
++	    thp_vma_allowable_order(vma, TVA_PAGEFAULT, PMD_ORDER)) {
+ 		ret = create_huge_pmd(&vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
+ 			return ret;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4855eee22731..cc2c90656b66 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1780,7 +1780,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 	vm_flags_t vm_flags = vma ? vma->vm_flags : 0;
+ 	unsigned int global_orders;
+ 
+-	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags, shmem_huge_force)))
++	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, shmem_huge_force)))
+ 		return 0;
+ 
+ 	global_orders = shmem_huge_global_enabled(inode, index, write_end,
 -- 
 2.47.3
 
