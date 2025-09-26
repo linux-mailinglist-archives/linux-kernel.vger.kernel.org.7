@@ -1,103 +1,297 @@
-Return-Path: <linux-kernel+bounces-833503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58E6BA22B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9E7BA22B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967D96278D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629F91C2421E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BE1BD9D3;
-	Fri, 26 Sep 2025 01:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB8C1B87C9;
+	Fri, 26 Sep 2025 01:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMB7Xx91"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RH7jKwlP"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012007.outbound.protection.outlook.com [40.107.200.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FBEC8FE;
-	Fri, 26 Sep 2025 01:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758851553; cv=none; b=ceX6zfQ5lDvavP9mURkD5NnjLIhH6x9U5mPN9H6AHXTJbFNbwL1IkjRBIrJ9Sih0yQbDju1gkbFZlt0QeHlPygXzvNSrajf7MO+RYMlWOqx1Ugof32qemSjsQe7Uxs4yyy2V0eOxw1VB8BbPyhDE4jJcNr7LtI8HxGo88CAH3zM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758851553; c=relaxed/simple;
-	bh=O8SEbiV6bsY5wk64SP2GhKRTTTiaEXDFSuX28Ph1mjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D2tiPQ++/b5BCjieSXl61yfY5CK/TAob2EKb2YCJWjaPJLcqSs/mQACmgRaH3s0S6cu+hbaGoHYGvxtT+EkRMHgGZkaDSTKwOospe4ut8GWTgoV3pvf0bjbKsHzJZyF/mN9HyhxyD0fj3uMmkMLXfPSE1YEai45i5uGMTn6+bMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMB7Xx91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C302BC4CEF0;
-	Fri, 26 Sep 2025 01:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758851552;
-	bh=O8SEbiV6bsY5wk64SP2GhKRTTTiaEXDFSuX28Ph1mjg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FMB7Xx9105TLqKoh1eoqR0qRNhgr14jO3tRI1OchdSW2gQCzp3jbBaNCQqBxfDSNg
-	 KqqJFu2EKPQMUEOdCOx+tlE0pubYwQ2IqPpHXDmyB1j5P7y0+6Q7grJymYg5sANG6d
-	 uH7lsHvSva+WWyHgufaCC9jStvSoFTJhTtUG2umoHBevxEIicsu3OcTgo0uSqOMisS
-	 3RS/BzofuflXzDC0oHFqgOPSkD9a8Glc0SpTQS2xoPSLXl3C9wmNkIyBDPGkYYWMpJ
-	 NvJnOcYkzd7xM76Ql2RLLL/0oE1jdFecH0EOm0jhiyRDvMWemB1IcNVw2MSSODcbS9
-	 MfnadFklajciw==
-Date: Thu, 25 Sep 2025 18:52:30 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: Rohan G Thomas via B4 Relay
- <devnull+rohan.g.thomas.altera.com@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Rohan
- G Thomas <rohan.g.thomas@intel.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>, "Ng, Boon Khai"
- <boon.khai.ng@altera.com>
-Subject: Re: [PATCH net v2 2/2] net: stmmac: Consider Tx VLAN offload tag
- length for maxSDU
-Message-ID: <20250925185230.62b4e2a5@kernel.org>
-In-Reply-To: <157d21fc-4745-4fa3-b7b1-b9f33e2e926e@altera.com>
-References: <20250915-qbv-fixes-v2-0-ec90673bb7d4@altera.com>
-	<20250915-qbv-fixes-v2-2-ec90673bb7d4@altera.com>
-	<20250917154920.7925a20d@kernel.org>
-	<20250917155412.7b2af4f1@kernel.org>
-	<a914f668-95b2-4e6d-bd04-01932fe0fe48@altera.com>
-	<20250924160535.12c14ae9@kernel.org>
-	<157d21fc-4745-4fa3-b7b1-b9f33e2e926e@altera.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E201A08CA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758851619; cv=fail; b=aNpT1I1Ch34hdx0ATkYLRGJGOCE7nG0LZi5pID4zUkriJbUkdnwZ9KoIbt6qV5bTmVMCPrUaHqnb3mjwNdiPcb+SWdcVMziNaD588SEUIBhZhCN14Zy2G5CES9htssezhbzk8BycFBR6hP5jw6c17xZuFlbZsD5F2PtufFng6CQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758851619; c=relaxed/simple;
+	bh=XwrV93EXpTkflmTxwZBQsiF+ZPFUJ3sy3HL+BxOrKJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bCZnhuCmveHUxrzf22pznZG8k0mHsX/QJANSX5XzM7FdLsIDh5i9Qd36Dy5/L5+ILPa1VyrvmNON76fKCZHjGNy97wL1vJQtGphvwuRzzzXOnpH8cWblwEZcWBtHAMI3Mlv4u3tsXrhM4fVmHt29+0ALgmJp8Pj+X57qR7SQJvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RH7jKwlP reason="signature verification failed"; arc=fail smtp.client-ip=40.107.200.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PFlr9PU3utRvMncoGBOBYZPdKb4q0Gxlp4BVULq6gG9yaPKUDvrwY41WOsR5+lG50uWWEaFf6D3puXrCjHYIutVDkmxiQAlb5CX1tEPjFUzAPaWBHO1geji6SN1c3tlQRKujVgFYl2bIXQLswATRMPR5weA3ZufOhBO37t+S6BVyVKHyK4mWX+shKTSMNHzh7IJ1W+mCtSuDpHYaLqD7tuHbnzRrYrfn/ijwNHvcvBqEjE11RhwCPc46qaGq2YGJztQBoP5utmKAlVs0pqw8IyQ0IuBkMgvhmRxHoE3HnXZ4eNVeKDwtDbEjxwv/UEJ4gWuzjyiNfYScIDvR/vbyxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JZBI9rZleJnzOVk+zLOU31NIYOJmrtQ/resMy/Zl9yM=;
+ b=BCcqu54Fl/zdU1HY+IHa/U40JsPR3+XrYOkhc10Q14RPLgw7Bkiie4snFMhqR/kJSBNztcwmGjxsO6kNzC3AXj21f/bZ/kuXhYMatS/j7H1LPgJprH77PH2jLz7TTWGTE8Q3FUD2neTIm1OPQ5Inejl2i1tqGSqwfXNFSHurwJbn1x8TcRw6t/DJwWQe/y5+tGAyklZqkrJDmX1KYWvFV0Kgfu6aRor8qXidM0/KliWo5HeNSyNTTq39z4Ud63zkvYIYbncgmmmr7GA8hsyefgCIoSJNr7ZarBytUZa/9mIht2Z8Yd0/Q0d1uDCF0hQD5wUhI6a1C6eeeHZZ5YeNBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JZBI9rZleJnzOVk+zLOU31NIYOJmrtQ/resMy/Zl9yM=;
+ b=RH7jKwlP8JoNGjm0orhiTcp+OfOeZUfVPsQ0myKfC/OLVi7lKrxxTF/k5FJKcicyngb9LOiZLNpjX2Bw6unEC1tFiJDv6bdPeQwDkPZAJ2k9WRh2w/vOcqdMwDIQJN1S8DgTi1S+XFgKwugAiL2c+Wabe5CJ+T16RzyUbcgXW6qW3dXhYwj5EuYLkOfohBN8qzgC5dzEYcjgpgO5Fg/xM1Ik9cO5tSNaiav3g+Zyd4YvN7u/NAoYN9u0CBfAK88fiqgq10H74WcMLc+fJFaVzKaWtCjLW5op7KugVEn7TZWOCKkmDmwNgEsWBMNnGjNFZHqNGotjjmdDUrLxUicv1A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH1PPFDA9B3771F.namprd12.prod.outlook.com (2603:10b6:61f:fc00::626) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Fri, 26 Sep
+ 2025 01:53:34 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 01:53:34 +0000
+Date: Fri, 26 Sep 2025 11:53:29 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, damon@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+	Matthew Brost <matthew.brost@intel.com>, Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, 
+	Gregory Price <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Oscar Salvador <osalvador@suse.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>, 
+	Mika =?utf-8?B?UGVudHRpbMOk?= <mpenttil@redhat.com>, Francois Dugast <francois.dugast@intel.com>
+Subject: Re: [v6 02/15] mm/huge_memory: add device-private THP support to PMD
+ operations
+Message-ID: <3uxfirnfvki4kztyf3vac5vph6kzhnf623li46gmaqux5ivf5e@3uvtpfeymgug>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-3-balbirs@nvidia.com>
+ <azcaqmqwdslvoei7ma4obtpxcdv7jdqfdc3ny4sylgwelwhfvo@okwd6y2oq5q4>
+ <df1e62e6-57ac-4a5f-bf62-71fea47481af@redhat.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <df1e62e6-57ac-4a5f-bf62-71fea47481af@redhat.com>
+X-ClientProxiedBy: SY5PR01CA0051.ausprd01.prod.outlook.com
+ (2603:10c6:10:1fc::11) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH1PPFDA9B3771F:EE_
+X-MS-Office365-Filtering-Correlation-Id: 458c1150-e028-47d3-6fa7-08ddfc9f803a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?I5kOgucwaxQK+ly+VWIg7LrKOMpBkgRHR8GBa2bpFjznOXlBkMssMSqtmr?=
+ =?iso-8859-1?Q?HCuIOFSa60qQIEYYdnoHmDZEVnQbxp8sxmeFY57umCKkVttdHhSvjv0jko?=
+ =?iso-8859-1?Q?RrEfW86tx433Pe63HdtZSbPTRPKk3c+1X8rBfsqsvy73GzmfrCaXbEg3Tn?=
+ =?iso-8859-1?Q?GY649lZ7qjEazjbs/c8CSxQb+HxnyyccR2YokEizsm3loH2tcKdGq1ULgF?=
+ =?iso-8859-1?Q?v7lAShxR/mJQxFlbhmD62qdLmoENzcv2yR42z4SC3Rzl3Ttrciu0E2pK+w?=
+ =?iso-8859-1?Q?Rb+IX8baSBt9FiCpEWZD2o2j+q0NyEclS3I2w96ORzULMBxYt2XP1vRLue?=
+ =?iso-8859-1?Q?hFE8Ch+uhAmPec1uWjD1al+fXQzn1AVfAoGpkS0iAZgXT5laZs0Fq2fuRH?=
+ =?iso-8859-1?Q?0+KTQt5QnbLlM3GgnfUINJK5nxTkpU3+KmW9ABAqALoyKdyGcq5KhdIdBU?=
+ =?iso-8859-1?Q?oL0NoZnIf5oL/GvHQX7koUgGEVOsusG2L7DJIPyZ5WXCIeOrKR+TqCspLR?=
+ =?iso-8859-1?Q?QnwcN6NH1ce88W8SVn6fRpFiFtTgQ9+gX3WPiJxrYBEsUXtviY9i24qFbV?=
+ =?iso-8859-1?Q?DaiQGhLt5mqmcnGAa6+rxq0rThR+V3DTK6ogZyeBIsy+W/B0tgLCh46s/q?=
+ =?iso-8859-1?Q?3G5QO2IG4DqnWhPMjeUsqwL8iq5etMWVcyruzHSZxpiEKaFGqSLlkW+etj?=
+ =?iso-8859-1?Q?7IWXa3wUa0TBB7pw+Kn69Bk7DgWpTzFxNXKdyRWKJ50JI87zGEbfF/6J0m?=
+ =?iso-8859-1?Q?BACvjZLodgTLlFv6VjxeEvuF6qNeekj40Bf1uzkTWzLeF8seJgU+QMTDOz?=
+ =?iso-8859-1?Q?tNmzSmpHG0UJqbG8AlXk5k+qh4n7xD+qgOCmAeedSSPzuHtLYsSo07sNmH?=
+ =?iso-8859-1?Q?xFNWno/IYPz54EP/xgDMa/ypEz/dgiAicCVRqHD4m0hboeDhhaJUQvCWJL?=
+ =?iso-8859-1?Q?6ELZ3uRECAjD6nt0lyxrl7AKPv07sVDFTzd0xgqO1ctEkgdrmffebYKt8x?=
+ =?iso-8859-1?Q?X8W6YqtGCphd6uVFE0QBcngstXhvknWfA+a/xDu2HQVq80oNd7mWmFtWom?=
+ =?iso-8859-1?Q?bUXrikdw15kKeNO1/8NRP2NCgSvF7Ag2kamplRo8AFgrN5pWy7+mP6drfr?=
+ =?iso-8859-1?Q?brP/HwbTCDmd9n0nmjMPNxZgF/hrKvhuKXqvlj2ttRajMpaiXTxoZUXpIP?=
+ =?iso-8859-1?Q?3oem9akr1hKgeO0IfSCFy5W9JeToJCf2qMN1P2m+fMhBe+X7F3orIWWWn0?=
+ =?iso-8859-1?Q?IBvUo9UAeVd+ht+Xrw+pTl37y4K7RDLYSZ/zlM/oh7BYR6vBh8x7KXaAxb?=
+ =?iso-8859-1?Q?fmuGzYhz5GkOHt2sGsEixGJsOjRpjeGZRQrXF/bJav+t6qFsNPm4EMkKRv?=
+ =?iso-8859-1?Q?WXhDj5umOIjERQr0dlhvOiJtViTW1o3uprDqQvv7t3WVMNkU0zSJMeVone?=
+ =?iso-8859-1?Q?lslN/SVu+Cl0m8Ivc8PdKhF/YnbsyzquOLYLfTsy5aC7MfgAiKIT+AWFJM?=
+ =?iso-8859-1?Q?wJz8f/WAgAPUkM63GIbbxy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?uDlflAWu0uuH3c8H5QWujlIJH3BuhdYQRrNDAelHLGK/psv6p9zkRV3L1G?=
+ =?iso-8859-1?Q?asF28mwoPaLdNetyowj/rumR2jr2AjFeOs2QZ/8LJd+5nZTacVR8ILxvq8?=
+ =?iso-8859-1?Q?zNagkOnoT6LyJAY1ud2AsJufkElZCkMv379JwTEkgMwxSlkkET0OLeKlia?=
+ =?iso-8859-1?Q?maE2z6C02R5nEsayUHyazeQXDeJMF5MDkFnd1CkT24rao/h4Rv17/NbKuu?=
+ =?iso-8859-1?Q?UR10bbuIZbGD+T2UZVQN3ceRF75wkxFGwPPrNSpfpYxp2OSEAYE64Fnf6Y?=
+ =?iso-8859-1?Q?LdkL7XcQQJlzmGjWOtMY0Dq2jFy4WpumMzmMOmQM4t3L8jbZvq+ye0435t?=
+ =?iso-8859-1?Q?uilb9M2b6ffTRS5Plg0KV+9L5BvGUad3bvYceaRTdlgU+WNrw9Vo4DXys8?=
+ =?iso-8859-1?Q?Swa8HKTMGhiDBvlVw5yBVBKOZ4k5l2YPN+QlaexSk8nJ9PgIO+thp0A3QL?=
+ =?iso-8859-1?Q?oUlghQEkXszIW7yGKqpJpBJj4YqF7DAK2S+ltN3vFxu6JfU9NagArpXnpa?=
+ =?iso-8859-1?Q?CHe4PpIgx3L63Huq3A3sIQq2eeKTE7IaoM3rK+T3mcOcXgzK+vzMtJrPM9?=
+ =?iso-8859-1?Q?g/racwmBeuAyL5KwcIugoHRlqYCJh8pLEURQcBk53kN/grNGd5RtoknncU?=
+ =?iso-8859-1?Q?pni4zZy0zHPW/sxpLZtytHYAynJLk9ZJdPhQ3m1TW+/zZCTb3t6ZovRUeN?=
+ =?iso-8859-1?Q?bkOss0J6+3wpafqD8lktla77fQlcSiXl5P42gMH9CU6UUgzIZxGYoDBkOr?=
+ =?iso-8859-1?Q?jTgcGuaX4kIHYc0/cM8ipHtXuwpcwf394BZuoEzFDC2yIkmmwzimzxTvBj?=
+ =?iso-8859-1?Q?RWHcmCTxKGi48io50YjFhZ3VJElRvv5XBEoBNv9xS8hMl2+RMkO9B/Cbsn?=
+ =?iso-8859-1?Q?bTBIFO1GV/klvVAjc4mzH0fUG/9/jSpT/DIc43HMQcsSiUgYiUXqtTbBa6?=
+ =?iso-8859-1?Q?95WCbHr4QG65jxHHV74SlbnZMlPjwKWpMTKdRZopTZ2iimszgUoIcT/QhY?=
+ =?iso-8859-1?Q?zO5GQZiYdB21DK++Ky76RJ6ijBWYllqQDKSwntllmzHACjuh9gfNN4uxA7?=
+ =?iso-8859-1?Q?LU4rVTkY9qCV1xeLd6PGDGJAqVnOsgReccD4ZBBthG1CKwj5JyWsN6LyvZ?=
+ =?iso-8859-1?Q?Pa1SYyrQPj5r3RuaiPMCKg8+pb4PYpZKkVyy5X/M1yz4M0Z7kejvYi//G/?=
+ =?iso-8859-1?Q?wEEVV2T35SU947WkTuNqssvM8uqYlgyrF97QnPUOGgrgxMfygEIT79011M?=
+ =?iso-8859-1?Q?pINt4+eGcR6dzYWrYteCPdh2qyTOuetYjx3jFus1Op1/E3mY1wn2WCWRHl?=
+ =?iso-8859-1?Q?5bLtQyPzmmUyQXJJGMzL+Dq+jZIMbIhA/s3UPHorPJewO3Ad+1RpzEtWhR?=
+ =?iso-8859-1?Q?UNTS9H7xuTJZ2OwgaLJkyMywYrrbBNRLUiY4WNbSGvX8MVTuoZmTj2ftjU?=
+ =?iso-8859-1?Q?eY6Pcyxk4aNrCV2lVgWvGZ+FatGdJtxQ984zrTq+zLTEZ+yzGbsb5aBGdW?=
+ =?iso-8859-1?Q?q8s7p6gCfGQILQVEeAhUZAKsQGWcVVoT8tB5IwtqNHSSTEeUjXYq00mlbD?=
+ =?iso-8859-1?Q?KruzbF1wUaNQXqmOvxjNuQS4m7hOcT2PrHnlrw8z7ufO8tQ4HgQhUolYyx?=
+ =?iso-8859-1?Q?8Rzbsy9WOmgZYde/zl2TJBeDL6UiHOXEwz?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 458c1150-e028-47d3-6fa7-08ddfc9f803a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 01:53:34.1298
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ohyy0UMyeshq1/+LjIQf3wAAu242bmGXha1Y9ukBo1Y4i/gNzORI7bHtmCGINsGEtUGeYoxIXILsvXv1QjBlZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFDA9B3771F
 
-On Thu, 25 Sep 2025 16:33:21 +0530 G Thomas, Rohan wrote:
-> While testing 802.1AD with XGMAC hardware using a simple ping test, I
-> observed an unexpected behavior: the hardware appears to insert an
-> additional 802.1Q CTAG with VLAN ID 0. Despite this, the ping test
-> functions correctly.
->=20
-> Here=E2=80=99s a snapshot from the pcap captured at the remote end. Outer=
- VLAN
-> tag used is 100 and inner VLAN tag used is 200.
->=20
-> Frame 1: 110 bytes on wire (880 bits), 110 bytes captured (880 bits)
-> Ethernet II, Src: <src> (<src>), Dst: <dst> (<dst>)
-> IEEE 802.1ad, ID: 100
-> 802.1Q Virtual LAN, PRI: 0, DEI: 0, ID: 0(unexpected)
-> 802.1Q Virtual LAN, PRI: 0, DEI: 0, ID: 200
-> Internet Protocol Version 4, Src: 192.168.4.10, Dst: 192.168.4.11
-> Internet Control Message Protocol
+On 2025-09-25 at 19:53 +1000, David Hildenbrand <david@redhat.com> wrote...
+> On 25.09.25 02:25, Alistair Popple wrote:
+> > On 2025-09-16 at 22:21 +1000, Balbir Singh <balbirs@nvidia.com> wrote...
+> > > Extend core huge page management functions to handle device-private THP
+> > > entries.  This enables proper handling of large device-private folios in
+> > > fundamental MM operations.
+> > > 
+> > > The following functions have been updated:
+> > > 
+> > > - copy_huge_pmd(): Handle device-private entries during fork/clone
+> > > - zap_huge_pmd(): Properly free device-private THP during munmap
+> > > - change_huge_pmd(): Support protection changes on device-private THP
+> > > - __pte_offset_map(): Add device-private entry awareness
+> > > 
+> > > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> > > Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> > > Cc: David Hildenbrand <david@redhat.com>
+> > > Cc: Zi Yan <ziy@nvidia.com>
+> > > Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+> > > Cc: Rakie Kim <rakie.kim@sk.com>
+> > > Cc: Byungchul Park <byungchul@sk.com>
+> > > Cc: Gregory Price <gourry@gourry.net>
+> > > Cc: Ying Huang <ying.huang@linux.alibaba.com>
+> > > Cc: Alistair Popple <apopple@nvidia.com>
+> > > Cc: Oscar Salvador <osalvador@suse.de>
+> > > Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > > Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> > > Cc: Nico Pache <npache@redhat.com>
+> > > Cc: Ryan Roberts <ryan.roberts@arm.com>
+> > > Cc: Dev Jain <dev.jain@arm.com>
+> > > Cc: Barry Song <baohua@kernel.org>
+> > > Cc: Lyude Paul <lyude@redhat.com>
+> > > Cc: Danilo Krummrich <dakr@kernel.org>
+> > > Cc: David Airlie <airlied@gmail.com>
+> > > Cc: Simona Vetter <simona@ffwll.ch>
+> > > Cc: Ralph Campbell <rcampbell@nvidia.com>
+> > > Cc: Mika Penttilä <mpenttil@redhat.com>
+> > > Cc: Matthew Brost <matthew.brost@intel.com>
+> > > Cc: Francois Dugast <francois.dugast@intel.com>
+> > > ---
+> > >   include/linux/swapops.h | 32 +++++++++++++++++++++++
+> > >   mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
+> > >   mm/pgtable-generic.c    |  2 +-
+> > >   3 files changed, 80 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> > > index 64ea151a7ae3..2687928a8146 100644
+> > > --- a/include/linux/swapops.h
+> > > +++ b/include/linux/swapops.h
+> > > @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+> > >   }
+> > >   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> > > +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> > > +
+> > > +/**
+> > > + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
+> > > + * @pmd: The PMD to check
+> > > + *
+> > > + * Returns true if the PMD contains a swap entry that represents a device private
+> > > + * page mapping. This is used for zone device private pages that have been
+> > > + * swapped out but still need special handling during various memory management
+> > > + * operations.
+> > > + *
+> > > + * Return: 1 if PMD contains device private entry, 0 otherwise
+> > > + */
+> > > +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> > > +{
+> > > +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
+> > > +}
+> > > +
+> > > +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> > > +
+> > > +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> > > +{
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> > > +
+> > >   static inline int non_swap_entry(swp_entry_t entry)
+> > >   {
+> > >   	return swp_type(entry) >= MAX_SWAPFILES;
+> > >   }
+> > > +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
+> > 
+> > I can't think of a better name either although I am curious why open-coding it
+> > was so nasty given we don't have the equivalent for pte entries. Will go read
+> > the previous discussion.
+> 
+> I think for PTEs we just handle all cases (markers, hwpoison etc) properly,
+> manye not being supported yet on the PMD level. See copy_nonpresent_pte() as
+> an example.
+> 
+> We don't even have helpers like is_pte_migration_entry().
+> 
+> > > diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> > > index 567e2d084071..0c847cdf4fd3 100644
+> > > --- a/mm/pgtable-generic.c
+> > > +++ b/mm/pgtable-generic.c
+> > > @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+> > >   	if (pmdvalp)
+> > >   		*pmdvalp = pmdval;
+> > > -	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
+> > > +	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
+> > 
+> > Why isn't is_pmd_non_present_folio_entry() used here?
+> 
+> 
+> I thought I argued that
+> 
+> 	if (!pmd_present(pmdval)))
+> 
+> Should be sufficient here in my last review?
 
-And the packet arrives at the driver with only the .1Q ID 200 pushed?
+My bad, I'm a bit behind catching up on the last review comments. But agree it's
+sufficient, was just curious why it wasn't used so will go read your previous
+comments! Thanks.
 
-Indeed, that looks like a problem with the driver+HW interaction.
-IDK what the right terminology is but IIRC VLAN 0 is not a real VLAN,
-just an ID reserved for frames that don't have a VLAN ID but want to
-use the priority field. Which explains why it "works", receiver just
-ignores that tag. But it's definitely not correct because switches
-on the network will no see the real C-TAG after the S-TAG is stripped.
+> We want to detect page tables we can map after all.
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
 
