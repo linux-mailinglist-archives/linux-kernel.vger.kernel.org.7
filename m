@@ -1,150 +1,154 @@
-Return-Path: <linux-kernel+bounces-833748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BDBBA2F2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E1CBA2F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0F2189538A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:30:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B663B189AC74
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D52900A8;
-	Fri, 26 Sep 2025 08:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277192900A8;
+	Fri, 26 Sep 2025 08:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGxb6Vuc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5oDE31o"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D85921D3CA;
-	Fri, 26 Sep 2025 08:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F009F7404E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758875398; cv=none; b=R5Y1n0XCGXHRUdt1CqHULAJ6mWuHYp9Wi3yIdorjyejd1Gr6cXUn2pnhqZJiAKA4aKV6QAriiS51R9VYHisD2vlKpPlMj3LTVYjTAVpOYSWu4B8Ss/1CjvBerkyyUtwg7BfmDuQuqtHnQ/Ks7i1gIJCxJXafIJrchIsmYMiM4Nw=
+	t=1758875453; cv=none; b=jPO1y1jRY1uZH46XTE8brn8wp1ujafLeT9fZ+o/aYpbEZWuEWta1Ko8anwSEsLs28djTUE1PiG3fi149jJjHZrBNKJx4HbO2ZghQi+J043mnFgEp1OSIKtVAm9OubQRxp1gpjUD2qsS3s9m3htpKoAW6QsJrM/7Ar3OtkqPNPD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758875398; c=relaxed/simple;
-	bh=qTJ3Y5nZVyDi8O3E7SfK6g7n/YNdW3RpTtGkZxkOLiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8/cz/kKjPYFVADr8XEgii2Pax1vGeVJSSBWKVjS/gBfwVkGpwS+OxPDocsXxfFNEbLpjOQD3Nw7BcfdNewWuXlgPLXUEiWuKkSFmr1JQriYh+y4VvQAmS3EGVsXbgYO+yAloQET41jPqyp/2JgIKJUGVZMqXnjhZ8OXWRnI/Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGxb6Vuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B961C4CEF4;
-	Fri, 26 Sep 2025 08:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758875397;
-	bh=qTJ3Y5nZVyDi8O3E7SfK6g7n/YNdW3RpTtGkZxkOLiI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rGxb6Vuc/y1eIjlkzDOiD7glEBcjuSZO5DQbJhka2FiC403nEOXDU7/799tVXJ/sk
-	 kBAEOlGnaOu8nbXp1t8Ufum73V//xgxHxQziDH1A/IrEuROkiPG0gXPv7Br1zvgJL3
-	 HJo0dn1Hl2lcCs85jnEJk/MXk29avAX1ghg5lMj4PTwVAS9H7cst8TAVHs96pwxKNO
-	 YN8xQhOLi6b1z49KhOSeg36aUs1QVO1DA1CitOa/HjE1hqxfDjTD0/+fxj3z6FWu0a
-	 J+mtA4y9Sv9EimnKvqzUAcnxtN38zw+qrQaIkrd7cuSK6CU9zJBQm8GLdI6hrBNYzs
-	 e/zHvUVckDVFw==
-Message-ID: <5fed7e09-b59f-46b0-be49-881c0c1b61c1@kernel.org>
-Date: Fri, 26 Sep 2025 10:29:52 +0200
+	s=arc-20240116; t=1758875453; c=relaxed/simple;
+	bh=bmYnlnjUXppvAW9s+/+M50jRLXusEMuB/votyd89wYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qlQdwmqBYLFxCILhydfCzyFW1NphjPnNVz6YC4epSgi6PGMrHYhb/pTMdzLZhAWUa7VSGcx7kvX0cZ3CMf+/0g/BZCtD4SFa/xDJpFCV6zKG4LKJVZAk4skpswmP67kabhmx2jQEmEQ4utqabzhJns2/UpItGrUSvUcyI8Q007A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5oDE31o; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-791875a9071so17014216d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758875451; x=1759480251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=thNEWAej1SgNRB1VQB78OWVsXGLh5leQSnto1fDdVSk=;
+        b=A5oDE31oJRRIS4p+TvPV9FcFZgSiPkrchGkAtNbeK7F4Ec6b26KJg4+Cx2fj8SYaIu
+         0t3nYXS9TgyZaeP0TJl65OO/iU3Q2av6g2og8XBOOkZ4zYodW/NGNheqR2b1Czf0+a4b
+         YoNIJ1nugb3UcNy+AcS35SnTRct6bdhd5mvdv8oZLf/NTgIWIkAKzCRFmo/tzkxCf61j
+         G4hgx7nWgnemmGDNBREZPHSUqYATd8OYZZK2ScS7PuL5upyCF/QS2QZeZ4q0kpo2hDWu
+         GMkw7PrqaTuvbtBHRvt3ZmVJJYHxKnLGvruZcU4peUyPFzXBW3PFEzo7rliKP5w9D3pj
+         i0IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758875451; x=1759480251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=thNEWAej1SgNRB1VQB78OWVsXGLh5leQSnto1fDdVSk=;
+        b=YPtIk8O4ky11W+vWYLV6Y9s/PaEbQVIROCr7UKJIFG7ntdUvojiPFu1t7ZhUIWFrir
+         k4VO8BHzsf3yNJcQny2fzQC4/1tAy3poNNBhW/JPR5jOV++0aNT7HZhIDCzXrNpA+WbS
+         g9bU3j17+TLCgvwQlOUC/UncBEv0yCgp/Vv7UhxogHyIf3Ck9KRT14DkkIVpfhzIb0Ra
+         5zBnj1qSvS63MSYBeykrW2UEBBeFPkGrphEVAED/SwZ5ViaBgjIp9Cb9O16tfQPCQDmr
+         ZJc3QRU/Lx3o0r4NDTzaSM3OrpymWpaJ5IuZMlOyfDMmMti4ajK0KuleF/LMgU7ROUij
+         SNwA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7TTRj28H1FslLCW64o8qmINbaxEZPWwIFKyAfOUJc7U4C0hkc/8ExN2lKCwBb6uv+F0zIWi970dJrCd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzfmMaGA5YIH2zb+X2A2KkTD6xebvImj8CljjKaKTxiKFZB+KJ
+	YRu5l6ALsmX/OyhB90DEPlgjr3cMb2mPf7wAMZAvnNjo368BoIhylFrL0ITocH3OYMrvV2kj4bp
+	FDsWrE7wgmtAW+p4kbaNebXtbXcfZNeo=
+X-Gm-Gg: ASbGncuD3EogGC4YlcBOwDxQaHdIxblXvMGl2s/snys0VM/9anRXEFTlioPcz3jZb8m
+	cVMNMRbg6vqMYsvFm6LR4KI662Ubq2gdSMZ0M9Rbg5ZNThdE2yye+lvs7jVCN/pMth1SVClwHjD
+	GWK1CDSvVdoSJCB2Gi3vt0Kfd8jPPjlrjQZjwQZD7RuN8WAr7lvisR/fRj5m8/R369QXufOw28y
+	JH9qCXLS23dQescpkxbgPJS+oUYGJPkS4gRXgqSNS3lZdP3Ti9d
+X-Google-Smtp-Source: AGHT+IEQn2g7GaenVfYIpg8793sRNRvoNraVY1RS2Agp6V7rHhz6AY0mis3Yq6EL3hWLSblCY/erSkrYcA7XajSRSvo=
+X-Received: by 2002:a05:6214:500e:b0:780:6d61:bfad with SMTP id
+ 6a1803df08f44-7fc3b6e52c0mr95155536d6.45.1758875450618; Fri, 26 Sep 2025
+ 01:30:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250_pcilib: Replace deprecated PCI functions
-To: Florian Eckert <fe@dev.tdt.de>, gregkh@linuxfoundation.org,
- kumaravel.thiagarajan@microchip.com, tharunkumar.pasumarthi@microchip.com,
- andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
- angelogioacchino.delregno@collabora.com, peterz@infradead.org,
- yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk, macro@orcam.me.uk,
- schnelle@linux.ibm.com, Eckert.Florian@googlemail.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250924133544.2666514-1-fe@dev.tdt.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250924133544.2666514-1-fe@dev.tdt.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250924181138.1762750-1-charan.kalla@oss.qualcomm.com> <CACePvbW=-KZhU_qi4UUw7Pjbz4o=SQwHmQyEOkxhpMvdetbPCg@mail.gmail.com>
+In-Reply-To: <CACePvbW=-KZhU_qi4UUw7Pjbz4o=SQwHmQyEOkxhpMvdetbPCg@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 26 Sep 2025 16:30:38 +0800
+X-Gm-Features: AS18NWBUnKefLjkuLJYGaF1esLUxyHaCmdfHq0pDaW4STq_tBlLvrGMPK_6-4c8
+Message-ID: <CAGsJ_4zhL=4qJDmGA5E-z7=VixkUXOi+qBnN3S-WWH2UbYj=ZA@mail.gmail.com>
+Subject: Re: [PATCH V2] mm: swap: check for stable address space before
+ operating on the VMA
+To: Chris Li <chrisl@kernel.org>
+Cc: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, david@redhat.com, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	akpm@linux-foundation.org, shikemeng@huaweicloud.com, kasong@tencent.com, 
+	nphamcs@gmail.com, bhe@redhat.com, zhangpeng.00@bytedance.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24. 09. 25, 15:35, Florian Eckert wrote:
-> When the '8250_exar' module is loaded in to the kernel, a kernel trace
-> with 'WARN_ON(legacy_iomap_table[bar])' is dumped to the console,
-> because the old pci table mapping is still used in '8250_pcilib'.
-> 
-> The old function have been deprecated in commit e354bb84a4c1 ("PCI:
-> Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> 
-> The remapping already takes or must take place in the driver that calls
-> the function 'serial8250_pci_setup_port()'. The remapping should only be
-> called once via 'pcim_iomap()'. Therefore the remapping moved to the
-> caller of 'serial8250_pci_setup_port()'.
-> 
-> To use the new functions in '8250_pcilib' the function signature of
-> 'serial8250_pci_setup_port()' has been extended with an already iomapped
-> address value. So this can be used directly without mapping again.
-> 
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-...
-> --- a/drivers/tty/serial/8250/8250_pci.c
-> +++ b/drivers/tty/serial/8250/8250_pci.c
-> @@ -165,7 +165,15 @@ static int
->   setup_port(struct serial_private *priv, struct uart_8250_port *port,
->   	   u8 bar, unsigned int offset, int regshift)
->   {
-> -	return serial8250_pci_setup_port(priv->dev, port, bar, offset, regshift);
-> +	void __iomem *iomem = NULL;
-> +
-> +	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
-> +		iomem = pcim_iomap(priv->dev, bar, 0);
-> +		if (IS_ERR(iomem))
-> +			return -ENOMEM;
+On Fri, Sep 26, 2025 at 9:03=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote:
+[...]
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -2389,6 +2389,8 @@ static int unuse_mm(struct mm_struct *mm, unsigne=
+d int type)
+> >         VMA_ITERATOR(vmi, mm, 0);
+> >
+> >         mmap_read_lock(mm);
+> > +       if (check_stable_address_space(mm))
+> > +               goto unlock;
+>
+> This is checking the MMF_UNSTABLE bit in the mm flags.
+> What is the locking requirement for accessing the mm flags MMF_UNSTABLE b=
+it?
+> Here we hold the mm mmap read lock.
+>
+> As far as I can tell, there are two paths that can set that bit.
+>
+> 1) dup_mm()
+> It holds the mm mmap write lock. This path is fine due to the write lock.
+> So far the above race against dup_mm(), adding this  check is fine.
+>
+> 2)  __oom_reap_task_mm()
+> It holds the mmap read lock when setting the MMF_UNSTABLE as far as I can=
+ tell.
+> So checking the MMF_UNSTABLE with another __oom_reap_task_mm() does
+> not exclude each other.
+> This is more of a question for oom reaping.
+> Does MMF_UNSTABLE have the test vs set racing here? It seems this
+> check does not protect against  __oom_reap_task_mm(). I have no idea
+> if this race is triggerable. Just want someone else to double check if
+> my understanding is correct or not.
 
-Why not to propagate the error?
+I haven=E2=80=99t actually run the code.
+My guess is there=E2=80=99s a race when checking MMF_UNSTABLE against the
+OOM reaper. I think it=E2=80=99s fine either way=E2=80=94whether we skip an=
+ OOM-reaped
+mm upfront or take a middle path=E2=80=94since the OOM reaper will handle t=
+hose
+PTEs with the PTL just like unuse_pte() does and eventually free the mm
+of the reaped process. It=E2=80=99s probably better to skip it early and av=
+oid
+unnecessary unuse_pte() calls.
 
-Other than that, LGTM.
+>
+> I can see this patch does protect the intended race in dup_mm() vs
+> unuse_mm(), it adds value.
 
+This also seems to add values for OOM-reaped processes to avoid a
+useless unuse(), in case we aren=E2=80=99t skipping this mm right now. I=E2=
+=80=99m
+not sure if we=E2=80=99ve been skipping OOM-reaped processes elsewhere.
 
--- 
-js
-suse labs
+Hi Charan, do you have any observations on this? If an additional value is
+added, could we record it in the changelog? Otherwise, can we add some
+description in the changelog to address Chris=E2=80=99 concern?
+
+Thanks
+Barry
 
