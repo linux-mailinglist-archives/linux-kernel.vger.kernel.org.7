@@ -1,94 +1,58 @@
-Return-Path: <linux-kernel+bounces-834642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B944BA5298
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB54BA52AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475D14A7D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F4E3B3A91
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3828689A;
-	Fri, 26 Sep 2025 21:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C65296BA9;
+	Fri, 26 Sep 2025 21:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WcyChExw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itEOIySJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECF4242D69
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8222765CE;
+	Fri, 26 Sep 2025 21:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758920931; cv=none; b=kNka/Mqe4QTsylCnNTix0bOdgfxWsjjk0HVv9+MT528mYxDvW3Bkoqqk6/JryZ4cONPuWeckgRZzSpaqLwf+LeP5kntuCkO8p8yf5o7WxRXvwT1+I3tY9gpv89Gvajz3QrMdyTIHALwte5oswiEfz9LGyd+knT+tah5qUeyF6KQ=
+	t=1758921025; cv=none; b=c2gdvce/3Q0bRRDwvfSkjrU11dR7NyQibdziEaAV1oeb2l2nmNYuAA9RzcMUQkF1pZznecfmwHUdeUYXeWaqE741lOHtj6Il6+2z9gYsEzJiNdmIlOLzQUSzexVkXVHp3vuO5THpQ0jtuFgJ8sd4fSpYp/a4ILSDAr3I2Qvxd/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758920931; c=relaxed/simple;
-	bh=Jc4EjceSLmpDjEcyfGiNWZ65Xn1oM5ndssYe+GwUZgA=;
+	s=arc-20240116; t=1758921025; c=relaxed/simple;
+	bh=NbkfRJ3uCCCWJnqxp6JEmBPHMnSmpX7FBo/Rs06M/4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvURC8GLKmi8woQJFNlcENFoEAHwRsZ4HQqXFcGyWKFEjx4Ph8bziPjQjA4Zc0yBOvYxRJiqLd9Zoa4RVC/hCg2Mh1eyG34Wsk7oinu2z5gC0+hA0b3zjGnWhBTylXNzeQBwQ2Bx+oKJ0hP0dsJeglCNBzZkzeAzvXSsPOD7t1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WcyChExw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758920926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y3GVZ1JYDpd64aStls1BI0HpVUBRoCJZmr3t6BifA9A=;
-	b=WcyChExwjLMOdsTYGbJrWkPRIXtr70IfNPL/r8ezpTY9DQm+JhyGUjtAFRWHlnkRbZFDHr
-	eQcDl+GaF1QQXtoCjkEhFPWYnvacMhJs37IhOT6PAQvyglib5FvkllmG5h46iXKbZcKrf0
-	+FuMeOrpEk/9piUSFP+igLwZkFoWl1g=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-wnt7J5dhPwiLMSFcGUSJdA-1; Fri, 26 Sep 2025 17:08:45 -0400
-X-MC-Unique: wnt7J5dhPwiLMSFcGUSJdA-1
-X-Mimecast-MFC-AGG-ID: wnt7J5dhPwiLMSFcGUSJdA_1758920925
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-82968fe9e8cso641081485a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:08:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758920925; x=1759525725;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y3GVZ1JYDpd64aStls1BI0HpVUBRoCJZmr3t6BifA9A=;
-        b=nZUtV5DjP1ck/qBhxfc+7xbEFd85h5d99vl671c+yMyYGrmy5H0YUxkVHk5lLv4ueQ
-         U8eH2gT9wMwLvY+ZP0gEC6qlv1MlX01+ewF7wbc2XZiIW9FgoF3cKlQZisASnJr6E8ff
-         OwzQQajmp1U+7nnJ/KKgdQHJV7Q6IqpxvnDK7ulclX3gpOIdv0Z6b93caCe603E3JO3C
-         AxXq13AT+2xikw6jGiT8p5s0fQufeyFMgrOnC4hhAZ9MQdvDbjjeChAqnixGKqJecAnQ
-         VPnnzEX8Fs2CyPCj427qcnapvVzh6u5ReqSXpILzzcJaFec+Q1lrkFqJnRUYQoD/L2kD
-         dRpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeZkz50/oG7rsr2VqDL6Oc9OZuXBHJB5ZOyACN1483D7JcQCjuWqAqktbB3CcXzqvV+qaFUJOeqJ25tqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhc4EGdqKbr/aVIw87VawjS47QnVFxf9YFkkMjsvVYhpAfZ4HW
-	Bq5TQhoU/XEcbvfACX+vsL2JzIk0moO4h1TT2sZkp308ewMHKcsvIJk4x+rGjgnuIiwJnpSbBvU
-	lZKfofgca+PAUwtm2h1WhcGFOTDVImZINLNMQtKZRbpffa/ifNuV0qiIgzbF8Baayhg==
-X-Gm-Gg: ASbGncv++Vi8msEKKWa15qmb/AjULNnPlVpDEVwBs5iEXcWVG8jiaTyq5OBkUpZ/Fuz
-	oZfFzYm/nN7rMlUpJqwPrA/LuJ8rRl2eexuUcWeW8aOAObTwg35PKjhp8vDsQjzM50+WosusrYs
-	BwV3Mm31qcTl7aYcUIqNWsd800492cjN8FX5XrGETPz/dbD2T4aHzwS1bpmXdWU8ZfdloSDUpTh
-	tZpWLM7SmuErrlaR5nWHDEecTHnLimoP11UNe4dopevL8O06ouzwQKJZKo+5UMY8mPh1XVFbi/w
-	w03iaqFxejKBL5okGvOGjC3htZ2ZhxP9xlAp65OsFyfbPPZdJ/EeCgSj0df1mgPYnYgaAflGS0X
-	iy6ctMeUQcea2uU/r6VILbDYVI9KDXDU=
-X-Received: by 2002:a05:620a:4722:b0:85a:2def:2fe0 with SMTP id af79cd13be357-85ae033d4d8mr1349869085a.22.1758920924970;
-        Fri, 26 Sep 2025 14:08:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJQzW4JZ3je9wirGSfh6XIDEj/iDBCJuS1EQrYgcojfBD4UAa9IhVt5/kN4bppw04xeCyjUw==
-X-Received: by 2002:a05:620a:4722:b0:85a:2def:2fe0 with SMTP id af79cd13be357-85ae033d4d8mr1349864685a.22.1758920924446;
-        Fri, 26 Sep 2025 14:08:44 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c34da236asm340619385a.68.2025.09.26.14.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 14:08:43 -0700 (PDT)
-Date: Fri, 26 Sep 2025 17:08:41 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH 1/2] soc: qcom: ocmem: fix device leak on lookup
-Message-ID: <aNcA2SCZMckYmZXb@redhat.com>
-References: <20250926143511.6715-1-johan@kernel.org>
- <20250926143511.6715-2-johan@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9PHjhm6YAmSIIO+wlzN2ux3Np+RXebRV3w+HrzqJNMZj2oH2gKY34cN7a+BbIwbP7832pLncrZGy+PQMzjdrDuXgfEntUu4mtkq6BPmQrHqKDj6d5G8WZmySpSAqGmCQTSZkaduuBlHGg/NmaqzOTawdOXIqvabjiQxsjpNCjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itEOIySJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DEBC4CEF7;
+	Fri, 26 Sep 2025 21:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758921025;
+	bh=NbkfRJ3uCCCWJnqxp6JEmBPHMnSmpX7FBo/Rs06M/4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itEOIySJQ6PLc22iI/TXbenNX0MXPiw0Hc1Oe/Bkg2C7kDzlJDSS6Zr1Q0pGKKjL9
+	 X3JzPHEVe6HE133pxSDKhCwq99pDsUFtjbKVQ4x/EMW9kmtKJO16Shx6B8F0QrwUJM
+	 56DssVqhEAQ4xlvkUJcZ+jcoTanHmT+Rc2rXkwgmaaO+d+hnoJjhQEDxx5/kZaTdEk
+	 N4vSH0wg9iwxMtrY5rRBqQu5zltvFRwyIDblBBnm60yAHVzAWl3X+yvFfoBOcEiF++
+	 h6FNgrsW3Fzz/u9/Ey018habqiH+tjUbKaDgdLWpr9W+xh4cp+UB2a3PQ5NtV0R5Hs
+	 vOwpBLYJfQIHw==
+Date: Fri, 26 Sep 2025 14:09:05 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/8] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
+ SHA-512, SHAKE128, SHAKE256
+Message-ID: <20250926210905.GB2163@sol>
+References: <20250926141959.1272455-1-dhowells@redhat.com>
+ <20250926141959.1272455-4-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,26 +61,247 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926143511.6715-2-johan@kernel.org>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+In-Reply-To: <20250926141959.1272455-4-dhowells@redhat.com>
 
-On Fri, Sep 26, 2025 at 04:35:10PM +0200, Johan Hovold wrote:
-> Make sure to drop the reference taken to the ocmem platform device when
-> looking up its driver data.
-> 
-> Note that holding a reference to a device does not prevent its driver
-> data from going away so there is no point in keeping the reference.
-> 
-> Also note that commit 0ff027027e05 ("soc: qcom: ocmem: Fix missing
-> put_device() call in of_get_ocmem") fixed the leak in a lookup error
-> path, but the reference is still leaking on success.
-> 
-> Fixes: 88c1e9404f1d ("soc: qcom: add OCMEM driver")
-> Cc: stable@vger.kernel.org	# 5.5: 0ff027027e05
-> Cc: Brian Masney <bmasney@redhat.com>
-> Cc: Miaoqian Lin <linmq006@gmail.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+On Fri, Sep 26, 2025 at 03:19:46PM +0100, David Howells wrote:
+> Add SHA3, providing SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128 and
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+SHA-512 => SHA3-512
 
+> SHAKE256 to lib/crypto.  Also add kunit tests for each of these.
+> 
+> gen-hash-testvecs.py is also modified to be able to generate SHAKE hashes
+> because Python's hashlib requires the output digest size supplying for
+> those two algorithms as they produce arbitrary length digests.
+
+Now that the tests are in a separate patch, the above needs to be
+updated.  Either remove it, or change it to say that the tests come in a
+later patch.
+
+> diff --git a/Documentation/crypto/sha3.rst b/Documentation/crypto/sha3.rst
+> new file mode 100644
+> index 000000000000..ae4902895882
+> --- /dev/null
+> +++ b/Documentation/crypto/sha3.rst
+> @@ -0,0 +1,245 @@
+> +.. SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +==========================
+> +SHA-3 Algorithm collection
+> +==========================
+> +
+> +.. Contents:
+> +
+> +  - Overview
+> +  - Basic API
+> +    - Extendable-Output Functions
+> +  - Convenience API
+> +  - Internal API
+> +    - Testing
+> +  - References
+> +  - API Function Reference
+> +
+> +
+> +Overview
+> +========
+> +
+> +The SHA-3 algorithm base, as specified in NIST FIPS-202[1], provides a number
+> +of specific algorithms all based on the same engine (Keccak).  The differences
+> +between them are: the block size (how much of the common state buffer gets
+> +updated with new data between invocations of the Keccak mixing function), what
+> +termination markers get mixed in upon finalisation and how much data is
+> +extracted at the end.  The Keccak engine is designed such that arbitrary
+> +amounts of output can be obtained for certain algorithms.
+
+Calling Keccak an "engine" and a "mixing function" is nonstandard
+terminology.  It should be called a sponge function, or a permutation
+when referring specifically to the permutation part (Keccak-f).
+
+"Block size" is also not what the SHA-3 spec or publications about
+Keccak use.  They call it the "rate".  Though, "block size" is widely
+used in the code for other hash functions already.  So "block size" is
+probably fine, but we should make sure to explicitly document that it's
+also known as the rate.
+
+> +Caution: The algorithm(s) may be accelerated with optimised assembly and, as
+> +such, may have to sync with or modify the FPU or CPU Vector Unit state.  How
+> +this is done is arch specific and might involve waiting or locking.
+
+As I've mentioned, the functions should be callable in any context.  See
+how the existing FPU/vector/SIMD accelerated functions in lib/crypto/
+and lib/crc/ achieve this.
+
+> +If selectable algorithms are required then the crypto_hash API must be used
+> +instead as this binds each algorithm to a specific C type.
+
+Users can choose to dispatch to different library functions themselves.
+There's no requirement to use crypto_hash (or rather crypto_shash or
+crypto_ahash, since "crypto_hash" doesn't exist).  They could, but it's
+not required.
+
+> +Note that these are relatively large structures, so may not be suitable for
+> +placing on the stack.
+
+Not really.  It's 208 bytes, which is a lot less than the widely-used
+SHASH_DESC_ON_STACK() which uses almost 400.  And the crypto functions
+tend to be called near the leaves of the call tree anyway.
+
+Considering that as well as how much stack allocation simplifies and
+optimizes the calling code, warning against it seems a bit misplaced.
+
+> +Data is then added with the appropriate update function, again one per
+> +algorithm::
+> +
+> +	void sha3_224_update(struct sha3_224_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+> +	void sha3_256_update(struct sha3_256_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+> +	void sha3_384_update(struct sha3_384_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+> +	void sha3_512_update(struct sha3_512_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+> +	void shake128_update(struct shake128_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+> +	void shake256_update(struct shake256_ctx *ctx,
+> +			     const u8 *data, unsigned int len);
+
+Lengths should be size_t.
+
+> +	unsigned int sha3_224_final(struct sha3_224_ctx *ctx,
+> +				    u8 out[SHA3_224_DIGEST_SIZE]);
+> +	unsigned int sha3_256_final(struct sha3_256_ctx *ctx,
+> +				    u8 out[SHA3_256_DIGEST_SIZE]);
+> +	unsigned int sha3_384_final(struct sha3_384_ctx *ctx,
+> +				    u8 out[SHA3_384_DIGEST_SIZE]);
+> +	unsigned int sha3_512_final(struct sha3_512_ctx *ctx,
+> +				    u8 out[SHA3_512_DIGEST_SIZE]);
+
+The return value should be void.
+
+In fact, it is void in the actual code.  This demonstrates the problem
+with documenting functions in a separate Documentation/ file instead of
+with standard kerneldoc right next to the functions themselves...
+
+> +Extendable-Output Functions
+> +---------------------------
+> +
+> +For XOFs, once the data has been added to a context, a variable amount of data
+> +may be extracted.  This can be done by calling the appropriate squeeze
+> +function::
+> +
+> +	void shake128_squeeze(struct shake128_ctx *ctx, u8 *out, size_t out_len);
+> +	void shake256_squeeze(struct shake256_ctx *ctx, u8 *out, size_t out_len);
+> +
+> +and telling it how much data should be extracted.  The squeeze function may be
+> +called multiple times but it will only finalise the context on the first
+> +invocation.
+
+The word "finalise" above should be replaced with something clearer.
+Normally, in the hash function APIs, "finalizing the context" means
+calling the *_final() function, which produces the digest and zeroizes
+the context.  That's not what is meant here, though.
+
+> +Internal API
+> +============
+> +
+> +There is a common internal API underlying all of this that may be used to build
+> +further algorithms or APIs as the engine in the same in all cases.  The
+> +algorithm APIs all wrap the common context structure::
+> +
+> +	struct sha3_ctx {
+> +		struct sha3_state	state;
+> +		u8			block_size;
+> +		u8			padding;
+> +		u8			absorb_offset;
+> +		u8			squeeze_offset;
+> +		bool			end_marked;
+> +	};
+> +
+> +	struct sha3_state {
+> +		u64			st[SHA3_STATE_SIZE / 8];
+> +	};
+> +
+> +The fields are as follows:
+
+This part especially, where it documents implementation details
+including individual fields, really feels like it should go in the code
+itself.  Then it will be easier to find and keep in sync with the code.
+Interestingly, it's *already* out of sync with the code...
+
+> +/* SHAKE128 and SHAKE256 actually have variable output size, but this
+> + * is needed for the kunit tests.
+> + */
+> +#define SHAKE128_DEFAULT_SIZE	(128 / 8)
+> +#define SHAKE128_BLOCK_SIZE	(200 - 2 * SHAKE128_DEFAULT_SIZE)
+> +#define SHAKE256_DEFAULT_SIZE	(256 / 8)
+> +#define SHAKE256_BLOCK_SIZE	(200 - 2 * SHAKE256_DEFAULT_SIZE)
+
+Test-only definitions should go in the tests, not the public header.
+
+> +/**
+> + * sha3_clear() - Explicitly clear the entire context
+> + * @ctx: the context to clear
+> + *
+> + * Explicitly clear the entire context, including the type parameters; after
+> + * this, the context must be fully initialised again.
+> + *
+> + * Return: None.
+> + *
+> + * Context: Any context.
+> + */
+
+"Return: None." doesn't add anything useful when the function returns
+void.  I recommend omitting that, as is usually done.
+
+> +/**
+> + * sha3_224_init() - Set a SHA3 context for SHA3-224
+> + * @ctx: the context to initialise
+> + *
+> + * Initialise a SHA3 context for the production of a SHA3-224 digest of a
+> + * message.
+
+Would you mind doing "initialise" => "initialize"?  The z spelling is
+about 10x more common in the kernel, and it's what include/crypto/ uses.
+
+> +static int __init sha3_mod_init(void)
+> +{
+> +#define out_len 200
+> +	u8 out[8 + out_len + 8] = {};
+> +
+> +#ifdef sha3_mod_init_arch
+> +	sha3_mod_init_arch();
+> +#endif
+> +
+> +	BUILD_BUG_ON(sizeof(out) != sizeof(sha3_sample_shake256_200));
+> +
+> +	shake256(sha3_sample, sizeof(sha3_sample) - 1, out + 8, out_len);
+> +
+> +	if (memcmp(out, sha3_sample_shake256_200,
+> +		   sizeof(sha3_sample_shake256_200)) != 0) {
+> +		pr_err("SHAKE256(200) failed\n");
+> +		for (int i = 0; i < out_len;) {
+> +			int part = min(out_len - i, 32);
+> +
+> +			pr_err("%*phN\n", part, out + i);
+> +			i += part;
+> +		}
+> +		return -EBADMSG;
+> +	}
+> +	return 0;
+> +}
+> +subsys_initcall(sha3_mod_init);
+> +
+> +#ifdef sha3_mod_init_arch
+> +static void __exit sha3_mod_exit(void)
+> +{
+> +}
+> +module_exit(sha3_mod_exit);
+> +#endif
+
+sha3_mod_exit() should be defined unconditionally, given that
+sha3_mod_init() is defined unconditionally.  Otherwise, it would be
+possible for this code to be built as a loadable module that can't be
+unloaded, which is not desirable.
+
+- Eric
 
