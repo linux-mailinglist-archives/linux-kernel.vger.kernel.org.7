@@ -1,241 +1,332 @@
-Return-Path: <linux-kernel+bounces-834441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5964DBA4B22
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEABBA4B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD5E4A28C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ABA44A63AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38852FFDFF;
-	Fri, 26 Sep 2025 16:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6419A2FF147;
+	Fri, 26 Sep 2025 16:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYaNjdkm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h+iVNCIt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AABB2FFDE2
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5CC2FE59E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905002; cv=none; b=aigizl7ufRXzttKT4a5X5DmDFm8ZxP7elUyDiRwATC+DHm+oagO0QU7FJ2cyONUpAG5dsda/bYAmKsVG5tUSr2LpNilI4UiAxPZJdA+G4HuBysEwJxdwPjO+cICTERHJ+qJXSSniNwefhzoNhQOIMh4N3j0PzEC/bwNVENYcjvk=
+	t=1758905017; cv=none; b=f9GPHVtWZI9MhoRrtmt+EUX+phEUN+rcV37M88HWxbmyacwIfhXa8ZdPzQ+NwyIYoUS9HqwqjYKgOobIvUIH4orJ8Xj8wlulMz0xqCrmQFhTrbF5J1yQOC1g59/gzDbsBbDhmVKkXf0Cd6WEPft0sIl6xn/NVvJ5AGFyTzRlLk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905002; c=relaxed/simple;
-	bh=+Qi6lHi3BWk4h+soVr8AsqrSbtdpevz1/dCL0JiOSVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA7M9m6EuBxpXODlNSfKVjae2crE+h9CXoRh/t3SwkgGTSm+SQpLUtq5zBTF29fsgWYLgKKX9y0YdaU9RHpKkkXPn44tMpLzFlEJNPyrnS79IKin+OHj4sIyDRj+PCmhcu6uFNkwx74xdGwtgHg88Q5peEJuZybuAMHdGmkIXE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYaNjdkm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758904998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0W6XP1kSbzIw7BM2wwEE7uA0WcDIj3WgTXNjhtqbHyE=;
-	b=JYaNjdkmSd3KbfZduIu7RtdRa4R3LWctJGW/hgjMNq1BkFWcGkFFxbsi0BfSPVAVJOOxse
-	aGDzz4+WDWhyaOJGlH3azwQnXubb5hip72/sxYxjYQIyaDWDwEtTur7BME4AsWm8Id8LEQ
-	kWc8Eox8Yl+AeCc81SZvZRzIFUx4WQk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-jcSHIPw3NMaC-aKFcRiGNg-1; Fri, 26 Sep 2025 12:43:15 -0400
-X-MC-Unique: jcSHIPw3NMaC-aKFcRiGNg-1
-X-Mimecast-MFC-AGG-ID: jcSHIPw3NMaC-aKFcRiGNg_1758904994
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b98de0e34so25671235e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:43:14 -0700 (PDT)
+	s=arc-20240116; t=1758905017; c=relaxed/simple;
+	bh=rIG4cWp43cAsNeKr1YLyi9hOy3sx5IQvvF4wOGxpB34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qYEJgtZ+dov6edYJFpeOjF77r8S+46gAqmeBym0u9O5XozMCDQW6QoQIbaIqI0KB0ub79uIzbWyt1leAx6LBPc1Hn57ZdOj7kQCMHnHPyIppULDY5+zsLh4HKExe+gr3ZALQg8g2qa9n/PNZ792ajLgnIOwgNAn2qLovP5wajgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h+iVNCIt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QEXo5t001483
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:43:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OOAJKtszuFOluuG6qYkOjreur/Dr9vuVBO3HUnQ0sBI=; b=h+iVNCItG8IaNeo1
+	5WKet2QPTfpcZVIJTNHUnA1IGc0tJXiF0e4OMG0eP89dQxPTjv3yUpM8TBpP7DAQ
+	IhgMxGGm26m+RUmIboNHJp9FYOTEs0zvE1UKja8TxVWN01jYtZGZ2b4L7OByN55k
+	nvAF8UZh13tjgob9ioN1jL40C5FnHTr/OhnbunN9yvOMYo7nCmUH9ESTkm7Vm/Cd
+	Y4w6DOwI+N7tepyxyoudTuzUxhkDo5oieO0MmxITVHu+OEfXeGxu5D2ea3vWkkm4
+	34Ju6XGEucVq4FkxEIvY496FdY7jXIIEjEgXTT6jFF3R9nSrsLRIh0JvYbaBfdI4
+	3X+eZQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0rkhdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:43:34 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso2035621b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:43:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758904994; x=1759509794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0W6XP1kSbzIw7BM2wwEE7uA0WcDIj3WgTXNjhtqbHyE=;
-        b=YStfVE3yIn24ea4iVw/wEAFXHJJn6SoIIn1xcdXyv6TpuGXP1IhxLsVEPFn/i7Alkd
-         JpWRiBJzoRstK8dVi86+iTxpD6rjyEOJL42IyAJxoxZaOXBONvrdtfz5uLUsRmPN6crJ
-         Bj+e6EqYDdrK9/d1F9RrHNurvOjtq9JM8N/UUrr8AKcX2JYLtZDvSqcfVXoXrMhEq2fu
-         bi5tbFOeBXLwZ+pMYoBM3iYL0rDr0UdeKohWfQ3i8E/pBcZOxTe0bgk28QWolm+VxbEU
-         8EcPmr/TXF1eK1Nz3sicAfxdzthxTkAopM/1kUMCnsejD2WnrEYzgWpwQc5jwuuLNVqr
-         6wgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJYo2mBfaU9XwuRjlKdn6Y2GNjC4CZiDomWS+m4GCvlqbpd0gzufVnOfrpQo7xZELwGEEVc63wqDvydpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrbvqn53ZZ2+I98vYJyrTJaywgN1ulhkfW3d3qQRNKZG+Ao/xx
-	ND1KZFA2Fz2tQeSwjyDHQ/noEzYjlAk/4FguH6N/WvCK8GVOLG3Y6FkkdUItJ/qPMr7M6hEez0M
-	O9pT0sFWkRFQJ16BS5Wj4EX9uEER0U/alFHORsy5jw69ZSDjn0QdAGouUOCitMl5QaA==
-X-Gm-Gg: ASbGncviEZK2z85UQJYQx0AgIL4Fudvpp/wo59nCmJlxa4mbhccJDyrZ5nsQ1Qlesow
-	i/OzbZFO4CpQgRpcYC+rwW50hSNKKP/wAfa0MSqZL2EKWKA+mhVic4cYyfRhSNQNJ7wpwlykZye
-	xRGWomqGzg09ATmIkQ9Icxl8GQHwT16N2KC40OZuOcFdzKG3XpNsBmn0UKsGysnZBj374tRvn1X
-	q7SejzbVKcQ3gFBpbIlTWVdpIVUWhlSI+1ilqTeesHWn8vIrQG0BQYGaC0oryr9kUmkVydUvNM5
-	Os+pIUk7GfeNG8mPxtI+t6eBbWQK+YKCKanQ8oXX
-X-Received: by 2002:a05:600c:154a:b0:46e:330a:1762 with SMTP id 5b1f17b1804b1-46e330a1a9cmr61704635e9.22.1758904993871;
-        Fri, 26 Sep 2025 09:43:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQy5MzShEqo4W4mpHSCNBzEP0InFkBO55wUBdI9t6CxMRbrJ2zCQ8i54MhS96fd25/1RMU9g==
-X-Received: by 2002:a05:600c:154a:b0:46e:330a:1762 with SMTP id 5b1f17b1804b1-46e330a1a9cmr61704445e9.22.1758904993353;
-        Fri, 26 Sep 2025 09:43:13 -0700 (PDT)
-Received: from sgarzare-redhat ([5.77.94.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bef4b4sm79560515e9.20.2025.09.26.09.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 09:43:12 -0700 (PDT)
-Date: Fri, 26 Sep 2025 18:43:03 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v6 5/9] vsock/virtio: add netns to virtio
- transport common
-Message-ID: <jukftp6dcz7padxxistl6ifuqnfhsd45owv46d2l4755t7vhxa@tbpri2oxyfyp>
-References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
- <20250916-vsock-vmtest-v6-5-064d2eb0c89d@meta.com>
+        d=1e100.net; s=20230601; t=1758905014; x=1759509814;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOAJKtszuFOluuG6qYkOjreur/Dr9vuVBO3HUnQ0sBI=;
+        b=cY4yOU1PZnJcFeXntTUcBO4/Se2s1X/PmPJNUxvB1Ur1qHEOepEmPz6sAXqMJtqAo+
+         Bo22fzTeL7wMcQFr8Cn2cVgis1eejZDz19vFSXjEXiAnXGkc0ebfeRF7sudVtuwdsmg7
+         q37atelzn/qWxVug8o8j219+1JrXA+cNQWtBNYxtf3AVd7F4z79p2g1ZxmQkdJceZMO3
+         azRryBwqNOZuMFhuZVc+w7W0SmBxnFhHGfBIFDwrOvhyTAaKRVswRb3UKWMO5GyOhlj2
+         4z0L2YN2mIlnjzxPGURkS5MqJKm3GGSFosRSnzZD0nUvUsrifvJYpelKnD9+BfThwxCD
+         bOoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmQlVoH8dr/RJaw3f3pUrGA5rl6AMk2v3Qie8KSHzH8tvaLHXBq4mjeoCldCOSwljInA6QNxS0Go0xk90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7M/L6MVSXoS58qbqPqdDFAs7xTnnofAF94lbQKveWwVCELxXE
+	MslmAolD/3pjUwAbToMLHoofx0+1ERneDU40PkHYI4J8p5yrnyHGh2QVzWQJkir5ijoJHmfScq0
+	ffKS5zHg31R95G30ORVlIRV3LgMkzkU6DXwasaKy6S/thAfveRMuyIqZM/paJIW445Ak=
+X-Gm-Gg: ASbGncukRymEpr1Kd3CmSaQ6o747rAzY0tnbOVe7iRaUR8O9C0ZUztaft4hJsoch8uj
+	vAWUepx+cjHmMKB/SWuRMoQgW1PVnqKHXfQkcqbEy/spMoPkAZUoyjlO7DM05DOsGRh4wueNovO
+	RRSLnwbsitHTuJ0hTmInooZUbckdygJtvkEEScAHoZDemEjJU1IcfEvyvJZtcUtDSW318NFa7mg
+	kNi+rtNdWmInysgbEatlv+b4qYKboVkZ+8iL55FROGREcC6jxLYq3XeUc6P2ARI1BgXGKJo3Ybj
+	TBtPRuL/H1XR0R5Mj7bO1xr3luLsOkBOsPhOM8tqSfiWTSQhqt+W0mCkzqBQ86HG8olmoIUHx+c
+	=
+X-Received: by 2002:a05:6a00:2186:b0:77f:2899:d443 with SMTP id d2e1a72fcca58-780fce1d14fmr7444715b3a.10.1758905013433;
+        Fri, 26 Sep 2025 09:43:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5vWBMgBvL7brIlV8nI5zcGRZcgZLch/n6zvZd8dJYGcdbkBvuKaAP5Kh0UT+1HHmZItjGyg==
+X-Received: by 2002:a05:6a00:2186:b0:77f:2899:d443 with SMTP id d2e1a72fcca58-780fce1d14fmr7444655b3a.10.1758905012812;
+        Fri, 26 Sep 2025 09:43:32 -0700 (PDT)
+Received: from [192.168.29.113] ([49.43.224.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-781023c8aebsm4809340b3a.28.2025.09.26.09.43.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 09:43:32 -0700 (PDT)
+Message-ID: <7cd09815-a657-47cc-9cc2-3751996c3592@oss.qualcomm.com>
+Date: Fri, 26 Sep 2025 22:13:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250916-vsock-vmtest-v6-5-064d2eb0c89d@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 8/9] PCI: pwrctrl: Add power control driver for tc9563
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        chaitanya chundru <quic_krichai@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com,
+        amitk@kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
+        linux-arm-kernel@lists.infradead.org,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250925143924.GA2160097@bhelgaas>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250925143924.GA2160097@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=dP+rWeZb c=1 sm=1 tr=0 ts=68d6c2b6 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=w+9hNF1SH6wH5mqaHp+xkw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=qleSEWVE8P8leAEWZfgA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-ORIG-GUID: L2a-ZGZ217J29ce0XhvGreXsXNXCIhxr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX+iLvzWyXDL8/
+ zlIq306Jji1UA0WGWCSoRz9XlIxy3OKFkwKpcgS5W2B8FWe5k61VB+O45kwh+9A/mCtMTKzArAt
+ z1Di4n93we8jZdlgqpNMwz/Vc/2jlCk1Utf+BvJ7qjBfqO+N05pJzSZdkyrKB3suhp+qsBR8USz
+ 1JsaxBGVzPeCWd8zipoIqBf464vsz9PTe/hrjB1F7sJjuz3nOWCSDJyXhVDIMx3sMxXSkvYxi04
+ 9hXL+nz/x3S4hZH7AK/r/UHcPK7/GoBFhZAxCmv1COwUNaNhicw4MyFaqLaE8rw5EkfwFSPVMhy
+ hiQNR94ktO351kWdiLxrmk8tV7A04EL8+69mGIRy3qHbdMhKcjsrekUf97b+xku5RG+pQP87GBf
+ GFQaNydSCDfCoyOIekZ8h1wv6h5IlQ==
+X-Proofpoint-GUID: L2a-ZGZ217J29ce0XhvGreXsXNXCIhxr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_06,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On Tue, Sep 16, 2025 at 04:43:49PM -0700, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Add support to the virtio-vsock common code for passing around net
->namespace pointers (tx and rx). The series still requires vhost/virtio
->transport support to be added by future patches.
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
-> include/linux/virtio_vsock.h            |  1 +
-> net/vmw_vsock/virtio_transport_common.c | 18 ++++++++++++++++--
-> 2 files changed, 17 insertions(+), 2 deletions(-)
->
->diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
->index ea955892488a..165157580cb8 100644
->--- a/include/linux/virtio_vsock.h
->+++ b/include/linux/virtio_vsock.h
->@@ -196,6 +196,7 @@ struct virtio_vsock_pkt_info {
-> 	u32 remote_cid, remote_port;
-> 	struct vsock_sock *vsk;
-> 	struct msghdr *msg;
->+	struct net *net;
-> 	u32 pkt_len;
-> 	u16 type;
-> 	u16 op;
->diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
->index 1a9129e33d51..8a08a5103e7c 100644
->--- a/net/vmw_vsock/virtio_transport_common.c
->+++ b/net/vmw_vsock/virtio_transport_common.c
->@@ -316,6 +316,11 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
-> 					 info->flags,
-> 					 zcopy);
->
->+	virtio_vsock_skb_set_net(skb, info->net);
->+
->+	if (vsk)
->+		virtio_vsock_skb_set_orig_net_mode(skb, vsk->orig_net_mode);
 
-If `vsk` is NULL we don't set it, is it right?
 
-I'd add a comment to explain that, because it's not clear.
+On 9/25/2025 8:09 PM, Bjorn Helgaas wrote:
+> On Thu, Aug 28, 2025 at 05:39:05PM +0530, Krishna Chaitanya Chundru wrote:
+>> TC9563 is a PCIe switch which has one upstream and three downstream
+>> ports. To one of the downstream ports integrated ethernet MAC is connected
+>> as endpoint device. Other two downstream ports are supposed to connect to
+>> external device. One Host can connect to TC9563 by upstream port. TC9563
+>> switch needs to be configured after powering on and before the PCIe link
+>> was up.
+>>
+>> The PCIe controller driver already enables link training at the host side
+>> even before this driver probe happens, due to this when driver enables
+>> power to the switch it participates in the link training and PCIe link
+>> may come up before configuring the switch through i2c. Once the link is
+>> up the configuration done through i2c will not have any affect.To prevent
+>> the host from participating in link training, disable link training on the
+>> host side to ensure the link does not come up before the switch is
+>> configured via I2C.
+> 
+> s/any affect/any effect/
+> s/.To prevent/. To prevent/
+> 
+>> Based up on dt property and type of the port, tc9563 is configured
+>> through i2c.
+> 
+> s/up on/on/
+> 
+> Pick "i2c" or "I2C" and use it consistently.
+> 
+>> +config PCI_PWRCTRL_TC9563
+>> +	tristate "PCI Power Control driver for TC9563 PCIe switch"
+>> +	select PCI_PWRCTRL
+>> +	help
+>> +	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
+>> +	  switch.
+>> +
+>> +	  This driver enables power and configures the TC9563 PCIe switch
+>> +	  through i2c.TC9563 is a PCIe switch which has one upstream and three
+>> +	  downstream ports. To one of the downstream ports integrated ethernet
+>> +	  MAC is connected as endpoint device. Other two downstream ports are
+>> +	  supposed to connect to external device.
+> 
+> s/i2c.TC9563/i2c. TC9563/
+> 
+>> +static int tc9563_pwrctrl_bring_up(struct tc9563_pwrctrl_ctx *ctx)
+>> +{
+>> +	struct tc9563_pwrctrl_cfg *cfg;
+>> +	int ret, i;
+>> +
+>> +	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+>> +	if (ret < 0)
+>> +		return dev_err_probe(ctx->pwrctrl.dev, ret, "cannot enable regulators\n");
+>> +
+>> +	gpiod_set_value(ctx->reset_gpio, 0);
+>> +
+>> +	 /*
+>> +	  * From TC9563 PORSYS rev 0.2, figure 1.1 POR boot sequence
+>> +	  * wait for 10ms for the internal osc frequency to stabilize.
+>> +	  */
+>> +	usleep_range(10000, 10500);
+> 
+> Possible place for fsleep() unless you have a specific reason for the
+> +500us interval?
+> 
+>> +static int tc9563_pwrctrl_probe(struct platform_device *pdev)
+>> +{
+>> +	struct pci_host_bridge *bridge = to_pci_host_bridge(pdev->dev.parent);
+>> +	struct pci_dev *pci_dev = to_pci_dev(pdev->dev.parent);
+>> +	struct pci_bus *bus = bridge->bus;
+>> +	struct device *dev = &pdev->dev;
+>> +	enum tc9563_pwrctrl_ports port;
+>> +	struct tc9563_pwrctrl_ctx *ctx;
+>> +	struct device_node *i2c_node;
+>> +	int ret, addr;
+>> +
+>> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+>> +	if (!ctx)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = of_property_read_u32_index(pdev->dev.of_node, "i2c-parent", 1, &addr);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to read i2c-parent property\n");
+>> +
+>> +	i2c_node = of_parse_phandle(dev->of_node, "i2c-parent", 0);
+>> +	ctx->adapter = of_find_i2c_adapter_by_node(i2c_node);
+>> +	of_node_put(i2c_node);
+>> +	if (!ctx->adapter)
+>> +		return dev_err_probe(dev, -EPROBE_DEFER, "Failed to find I2C adapter\n");
+>> +
+>> +	ctx->client = i2c_new_dummy_device(ctx->adapter, addr);
+>> +	if (IS_ERR(ctx->client)) {
+>> +		dev_err(dev, "Failed to create I2C client\n");
+>> +		i2c_put_adapter(ctx->adapter);
+>> +		return PTR_ERR(ctx->client);
+>> +	}
+>> +
+>> +	for (int i = 0; i < TC9563_PWRCTL_MAX_SUPPLY; i++)
+>> +		ctx->supplies[i].supply = tc9563_supply_names[i];
+>> +
+>> +	ret = devm_regulator_bulk_get(dev, TC9563_PWRCTL_MAX_SUPPLY, ctx->supplies);
+>> +	if (ret) {
+>> +		dev_err_probe(dev, ret,
+>> +			      "failed to get supply regulator\n");
+>> +		goto remove_i2c;
+>> +	}
+>> +
+>> +	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+>> +	if (IS_ERR(ctx->reset_gpio)) {
+>> +		ret = dev_err_probe(dev, PTR_ERR(ctx->reset_gpio), "failed to get reset GPIO\n");
+>> +		goto remove_i2c;
+>> +	}
+>> +
+>> +	pci_pwrctrl_init(&ctx->pwrctrl, dev);
+>> +
+>> +	port = TC9563_USP;
+>> +	ret = tc9563_pwrctrl_parse_device_dt(ctx, pdev->dev.of_node, port);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to parse device tree properties: %d\n", ret);
+>> +		goto remove_i2c;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Downstream ports are always children of the upstream port.
+>> +	 * The first node represents DSP1, the second node represents DSP2, and so on.
+>> +	 */
+>> +	for_each_child_of_node_scoped(pdev->dev.of_node, child) {
+>> +		ret = tc9563_pwrctrl_parse_device_dt(ctx, child, port++);
+>> +		if (ret)
+>> +			break;
+>> +		/* Embedded ethernet device are under DSP3 */
+>> +		if (port == TC9563_DSP3)
+>> +			for_each_child_of_node_scoped(child, child1) {
+>> +				ret = tc9563_pwrctrl_parse_device_dt(ctx, child1, port++);
+>> +				if (ret)
+>> +					break;
+>> +			}
+>> +	}
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to parse device tree properties: %d\n", ret);
+>> +		goto remove_i2c;
+>> +	}
+>> +
+>> +	if (!pcie_link_is_active(pci_dev) && bridge->ops->stop_link)
+>> +		bridge->ops->stop_link(bus);
+> 
+> Is this pcie_link_is_active() test backwards?  Seems like you would
+> want to stop the link if it *is* active.
+> 
+you are right pci_dev extracted seems wrong and not pointing to root
+port dev, and  returning always zero. It is pointing to pci_dev in host
+bridge which doesn't point root port.
 
-Thanks,
-Stefano
+Thanks for pointing this.
 
->+
-> 	return skb;
-> out:
-> 	kfree_skb(skb);
->@@ -527,6 +532,7 @@ static int virtio_transport_send_credit_update(struct vsock_sock *vsk)
-> 	struct virtio_vsock_pkt_info info = {
-> 		.op = VIRTIO_VSOCK_OP_CREDIT_UPDATE,
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	return virtio_transport_send_pkt_info(vsk, &info);
->@@ -1067,6 +1073,7 @@ int virtio_transport_connect(struct vsock_sock *vsk)
-> 	struct virtio_vsock_pkt_info info = {
-> 		.op = VIRTIO_VSOCK_OP_REQUEST,
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	return virtio_transport_send_pkt_info(vsk, &info);
->@@ -1082,6 +1089,7 @@ int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
-> 			 (mode & SEND_SHUTDOWN ?
-> 			  VIRTIO_VSOCK_SHUTDOWN_SEND : 0),
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	return virtio_transport_send_pkt_info(vsk, &info);
->@@ -1108,6 +1116,7 @@ virtio_transport_stream_enqueue(struct vsock_sock *vsk,
-> 		.msg = msg,
-> 		.pkt_len = len,
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	return virtio_transport_send_pkt_info(vsk, &info);
->@@ -1145,6 +1154,7 @@ static int virtio_transport_reset(struct vsock_sock *vsk,
-> 		.op = VIRTIO_VSOCK_OP_RST,
-> 		.reply = !!skb,
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	/* Send RST only if the original pkt is not a RST pkt */
->@@ -1165,6 +1175,7 @@ static int virtio_transport_reset_no_sock(const struct virtio_transport *t,
-> 		.op = VIRTIO_VSOCK_OP_RST,
-> 		.type = le16_to_cpu(hdr->type),
-> 		.reply = true,
->+		.net = virtio_vsock_skb_net(skb),
-> 	};
-> 	struct sk_buff *reply;
->
->@@ -1465,6 +1476,7 @@ virtio_transport_send_response(struct vsock_sock *vsk,
-> 		.remote_port = le32_to_cpu(hdr->src_port),
-> 		.reply = true,
-> 		.vsk = vsk,
->+		.net = sock_net(sk_vsock(vsk)),
-> 	};
->
-> 	return virtio_transport_send_pkt_info(vsk, &info);
->@@ -1578,7 +1590,9 @@ static bool virtio_transport_valid_type(u16 type)
-> void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 			       struct sk_buff *skb)
-> {
->+	enum vsock_net_mode orig_net_mode = virtio_vsock_skb_orig_net_mode(skb);
-> 	struct virtio_vsock_hdr *hdr = virtio_vsock_hdr(skb);
->+	struct net *net = virtio_vsock_skb_net(skb);
-> 	struct sockaddr_vm src, dst;
-> 	struct vsock_sock *vsk;
-> 	struct sock *sk;
->@@ -1606,9 +1620,9 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 	/* The socket must be in connected or bound table
-> 	 * otherwise send reset back
-> 	 */
->-	sk = vsock_find_connected_socket(&src, &dst, vsock_global_dummy_net());
->+	sk = vsock_find_connected_socket(&src, &dst, net, orig_net_mode);
-> 	if (!sk) {
->-		sk = vsock_find_bound_socket(&dst, vsock_global_dummy_net());
->+		sk = vsock_find_bound_socket(&dst, net, orig_net_mode);
-> 		if (!sk) {
-> 			(void)virtio_transport_reset_no_sock(t, skb);
-> 			goto free_pkt;
->
->-- 
->2.47.3
->
+I will fix it in next version.
+> pcie_link_is_active() is racy, and this looks like a situation where
+> that could be an issue.  Would something break if you omitted the test
+> and *always* stopped and started the link here?
+if we stop the link if the pcie link is active then we might see AER's &
+linkdown.
 
+- Krishna Chaitanya.
+> 
+>> +	ret = tc9563_pwrctrl_bring_up(ctx);
+>> +	if (ret)
+>> +		goto remove_i2c;
+>> +
+>> +	if (!pcie_link_is_active(pci_dev) && bridge->ops->start_link) {
+>> +		ret = bridge->ops->start_link(bus);
+>> +		if (ret)
+>> +			goto power_off;
+>> +	}
+>> +
+>> +	ret = devm_pci_pwrctrl_device_set_ready(dev, &ctx->pwrctrl);
+>> +	if (ret)
+>> +		goto power_off;
+>> +
+>> +	platform_set_drvdata(pdev, ctx);
+>> +
+>> +	return 0;
+>> +
+>> +power_off:
+>> +	tc9563_pwrctrl_power_off(ctx);
+>> +remove_i2c:
+>> +	i2c_unregister_device(ctx->client);
+>> +	i2c_put_adapter(ctx->adapter);
+>> +	return ret;
+>> +}
 
