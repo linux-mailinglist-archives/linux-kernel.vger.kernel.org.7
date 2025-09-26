@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-834350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BCBBA482B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:55:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93D1BA4834
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156D31BC82DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AF964C3BF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3689A22689C;
-	Fri, 26 Sep 2025 15:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B3E2367D2;
+	Fri, 26 Sep 2025 15:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW6u7eIx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfdGyz2L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889FC223DF9;
-	Fri, 26 Sep 2025 15:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB51223DF9;
+	Fri, 26 Sep 2025 15:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758902106; cv=none; b=N6VqY4zfqa6s5zUAt8sEUGSzOwSs5Ly9ZaEXn6IJb77eClyQYhtHfdkAA++/wGHTqz7/2wT62EqelfS5Qs2QCMXxV3acxjmEscInLPB3UGt2rkqHEK8ESGnjW8g4wUzVHFxFF9I9sAYwQblaoBJ74PvIeTOtREqHl0MTwc8qN38=
+	t=1758902111; cv=none; b=KXrFBMBnpQuvIjsTu85scSYLSBRUZS3J53Jc0gjYttHK/V2sg0x0Pd0Kf5IB2f6CHFJXvCZ6wjvOJaOGRZ5P9BwkoRE/v+MPN9KqtimCR3akK6OrZ4qMxcvx+czK8A85JL2zWLD64RmiC/bap+DgP70HiESjaqAsHidFMpDsIb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758902106; c=relaxed/simple;
-	bh=QY04EA7f9rFZc1ry5RbDdee1eH1ZtF6RNbYZ864Iejg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eb7O4RMQTPpNRm1AKmnzvm1eS3WNeiWy8OJxIHMqOxsHOIZ9g4gWKHM2rtF3MRcOqpSVMF2HkZwcJR5RJMGWwM3Z2rjy1Pt0++U9JOQzLBgvT5A5zd0q6cWxMU1Dp/J9HeSl956zvc5bptKfqJvP42j+Jk9AKjquB1OWdtYnqdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW6u7eIx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F4BC4CEF4;
-	Fri, 26 Sep 2025 15:55:03 +0000 (UTC)
+	s=arc-20240116; t=1758902111; c=relaxed/simple;
+	bh=OzxqoyTtf+EuffsezjoPsxJ6HfLEB0LUL8fkAFz4zrE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Cskan+aYvW/s2EWBdeyOUrJ1GlHh9OT+Hmh50o7rvHC0AvvM0TspAszg+1ET8HX3y5/ZeTUXqZuKlM4qgEdLUW0kcqvOD+9FdoIcCiGLafcyPQz/7bq+sglzmuP/nHwEpCBVcfPusvQ9vLWwFa9Vn/JplNIlOTr20ri/RiYFa0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfdGyz2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB885C4CEF4;
+	Fri, 26 Sep 2025 15:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758902106;
-	bh=QY04EA7f9rFZc1ry5RbDdee1eH1ZtF6RNbYZ864Iejg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VW6u7eIxwWH1cr753V5J2LxOOHjIM2+OJigjWqXy14dsgdSVDAbzEcPIWJG0VyCLK
-	 IiccvlAsT6yUeZltR+hEk/dtzTgYiN8iGJTIaVOiWciMEjQIh8uwa5Sh9LyZzxGHdf
-	 6e+BTEIFUWgoEllJmVhO84ZDyvqyCJ6GclSVEfh/uoWb9G74cMnPpPgmp3myebEVZT
-	 DH2NM9Sku3+IlbR22ooNMdKu92dc99ruSbBvc6LFrXx6D8l3z8ZLXsoFZytC/jToL5
-	 HZntiHHn+c/Q5BCRPQfrm9x5FaiE+yy/dZTmjzhS3CQcPXb1K/+j+ptQywWfdiudnf
-	 m8wiQxKpt7BPg==
-Date: Fri, 26 Sep 2025 16:55:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Mina Almasry <almasrymina@google.com>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v3 0/2] net: devmem: improve cpu cost of RX
- token management
-Message-ID: <aNa3ValQeGEm_WGb@horms.kernel.org>
-References: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
+	s=k20201202; t=1758902111;
+	bh=OzxqoyTtf+EuffsezjoPsxJ6HfLEB0LUL8fkAFz4zrE=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=UfdGyz2LRLgLbrl9QdQ87SmP54QKRNkbEBjZH62cdbLcY0wKjDZYSqBpcrMIpVck7
+	 OjRe+wFP0taQ627IV+S0nc2WG1kBNk81EnH+WdHqtIglLeRiN0IdppdxbRPFPtosGH
+	 fvdc9vibD+iWzkv+PE0dyVuahncKOE/GFQV4QzKlip3/r/0XEuJcd6qlc4aU2wOwBW
+	 P0KDG42crpJB7EQTwXezuZzuk7AC6RA4LMZPKFdq5OZQF31fA3/goO2CunOPMxwvdP
+	 1vsiZI68jWTFV7AT1bxBwXXmnlAc+w/d7vHrL2zSrER/MZS3CVK2MVqQfkYs1O8Ufr
+	 9JkA2dmTw7Z+Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 26 Sep 2025 17:55:06 +0200
+Message-Id: <DD2URCNO2P88.168J48GHSJRRL@kernel.org>
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Cc: "Elijah Wright" <git@elijahs.space>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Uladzislau Rezki" <urezki@gmail.com>, <linux-mm@kvack.org>
+To: "Vlastimil Babka" <vbabka@suse.cz>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+ <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
+ <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
+In-Reply-To: <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
 
-On Fri, Sep 26, 2025 at 08:02:52AM -0700, Bobby Eshleman wrote:
-> This series improves the CPU cost of RX token management by replacing
-> the xarray allocator with an niov array and a uref field in niov.
-> 
-> Improvement is ~5% per RX user thread.
-> 
-> Two other approaches were tested, but with no improvement. Namely, 1)
-> using a hashmap for tokens and 2) keeping an xarray of atomic counters
-> but using RCU so that the hotpath could be mostly lockless. Neither of
-> these approaches proved better than the simple array in terms of CPU.
-> 
-> Running with a NCCL workload is still TODO, but I will follow up on this
-> thread with those results when done.
-> 
-> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+On Fri Sep 26, 2025 at 5:33 PM CEST, Danilo Krummrich wrote:
+> The only thing we need on the Rust side is that existing allocations rema=
+in
+> valid even if the cache is destroyed. Or the other way around the cache i=
+s
+> silently kept alive internally.
 
-Hi Bobby,
+Or to express it in C code:
 
-Unfortunately this patchset doesn't apply cleanly to net-next.
-So you'll need to rebase and repost at some point.
+	struct kmem_cache *cache =3D kmem_cache_create();
+	struct Foo *foo =3D kmem_cache_alloc();
 
--- 
-pw-bot: changes-requested
+	// After this call cache will never be accessed; leaves a zombie cache,
+	// since foo is still alive.
+	kmem_cache_destroy(cache);
+
+	// This must still be valid.
+	foo->bar =3D 42;
+
+	// Frees foo and causes the "zombie" cache to actually be destroyed.
+	kmem_cache_free(foo);
 
