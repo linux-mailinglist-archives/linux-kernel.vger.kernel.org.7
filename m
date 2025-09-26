@@ -1,218 +1,141 @@
-Return-Path: <linux-kernel+bounces-834373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520B7BA4904
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD75BA4916
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8224E188DC72
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:11:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C7F16F407
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14CC23C51D;
-	Fri, 26 Sep 2025 16:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF7523BF9B;
+	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WSURiEWC"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdUSHO3h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE382367A0
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F353623A99E;
+	Fri, 26 Sep 2025 16:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903083; cv=none; b=tcXRytbmUirWdJ6/kNgHKKSnFeLXGZU52v4/j23YdZcdZc+QMngUCiPE3K+BZUejD3dMNFC6wsVNpGuofHjpmjcf4qbsKRq2Bhx1OfDUDWgrhZ/eLw0/AIqDAvF6Bm3mipJEe3ALcnLjcCpoI+DTA558WpO8Vcrokn9FKcCiTlM=
+	t=1758903107; cv=none; b=ovdqTBn/XIH+sO3jNfML2SJUZlx/+DJa0yk/hY25Setro6M7kHkNMw9j5hLxV+dq9RcENz/mbz7f6ds7t53FSUgEubNnPFFXbRBXgVnuZ6pQ38oZpZwDst/7AZx7KFqGX1lDaMQEvr5w1LL9mPN2DJDap+bkK1zC2IxkrL3Potg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903083; c=relaxed/simple;
-	bh=97hcWjTcvBFQYDBOqWYzz1/27EeK9RIc1yRkc9gWydE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eowoFL8//r0KLsDOJN+pdPq5lQXi3bgbOGOowYesAu/tzv3Up+ty96t67LFv3vkyQWP0bUie6EwNSVldUrfU9JZxqhaLBkw0dFJEdpiV9ABnT/WXIegxRNnMwHGs99vuKCeHPhBtyQ2VVLGLCpm5HkADqXRbdQZBQu4UtzZJ/gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WSURiEWC; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f207b88c-da98-4fe2-b91f-ed07354ff019@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758903075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ksNWZUZ1JXt7mgfOOzB2IRthXQFU+7HlxAblhclQBI=;
-	b=WSURiEWC4kJwYutU3Y/h/G5r+VAjMJin75vBxNwCEkg2fIMwQK0kxhCKd/tm9QCT9PO96u
-	8wYnt6+X3O9Yxj5sJbylYHT3vMVZzNXNU639+YRpk6iNHJcN6nZoLdq9xDZAqPLjTpV0Wh
-	Sy3kizkSIHLmwGoxANp7agAOtYePeUo=
-Date: Fri, 26 Sep 2025 09:11:11 -0700
+	s=arc-20240116; t=1758903107; c=relaxed/simple;
+	bh=yRHrfjskk6KyPsMbNFVbtbGAg1RRUPZQnBS9srhXpvg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=og89bX2kUIdsd+DFPdFEN5zrBOr3fKnxcrYUNpLDhvCnGTCzeBZE5g3yfNJE+71Z/jAjrXQVFbGiWPmW+0G7ajWG9kGAqZPB550lvJN7TUJ3KfrTatU6MKriJyBTU/dpWQtmOMxI8MNU945ioA0b03zy6woA//DBXCBWlRr/zYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdUSHO3h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2F4C4CEF4;
+	Fri, 26 Sep 2025 16:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758903106;
+	bh=yRHrfjskk6KyPsMbNFVbtbGAg1RRUPZQnBS9srhXpvg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=EdUSHO3h2a1RJKHf8MMj7mPZcuufCtSoAaLqH8n0krh49mmpFo4x3CqD8QcbzYVj5
+	 ZR+73ePW3C31DpO4Lu/xArmPcf2KRsXmsEQnZqzyEiSTpjWv4hUwdvN/AdSHdYSLF1
+	 2S3xaQI6oRCF9x1Ul9O4qDwctXnVHjKowqnCBd1MO1PLF90gzXKNlhfRON8ZrQG6OU
+	 yRHXisWEHUaZuxDi7xR+pnwqK4OsJHu892QvmsbmRrGOyLtasAqSDK04u/imiOeqai
+	 yFgB8FafVjCxfc4X11D26y6/4YYCj+P8guoTtHlvKkgwkVnVGZctb34mQhxreiLhqM
+	 kilQd5CrClt8g==
+Date: Fri, 26 Sep 2025 11:11:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: =?UTF-8?B?UmU6IMOlw6XCpDogUmU6IFtQQVRDSCB2MiByZG1hLXJjXSBSRE1BL2Ju?=
- =?UTF-8?Q?xt=5Fre=3A_Fix_a_potential_memory_leak_in_destroy=5Fgsi=5Fsqp?=
-To: =?UTF-8?B?5Luj5b2m6b6Z?= <daiyanlong@kylinos.cn>,
- Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Cc: jgg <jgg@ziepe.ca>, leon <leon@kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-rdma <linux-rdma@vger.kernel.org>,
- "selvin.xavier" <selvin.xavier@broadcom.com>, dyl_wlc <dyl_wlc@163.com>
-References: <vuezvoi8y7j-vuko1z952k0@nsmail8.2--kylin--1>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "yanjun.zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <vuezvoi8y7j-vuko1z952k0@nsmail8.2--kylin--1>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
+ benjaminfair@google.com, joel@jms.id.au, krzk+dt@kernel.org, 
+ tali.perry1@gmail.com, conor+dt@kernel.org, avifishman70@gmail.com
+To: Tomer Maimon <tmaimon77@gmail.com>
+In-Reply-To: <20250925200625.573902-1-tmaimon77@gmail.com>
+References: <20250925200625.573902-1-tmaimon77@gmail.com>
+Message-Id: <175890301752.880349.2331946518360447485.robh@kernel.org>
+Subject: Re: [PATCH v3 0/3] arm64: dts: nuvoton: add NPCM845 SoC and EVB
+ support
 
-On 9/25/25 7:39 PM, ä»£å½¦é¾ wrote:
-> Hello Kalesh, Selvin, List,
+
+On Thu, 25 Sep 2025 23:06:22 +0300, Tomer Maimon wrote:
+> This series fix warnings and adds device tree support for peripherals on
+> the Nuvoton NPCM845 SoC and its Evaluation Board (EVB).
+> The first patch fix warning and arrange node order.
+> The second patch introduces peripheral nodes for Ethernet, MMC, SPI, USB,
+> RNG, ADC, PWM-FAN, I2C, and OP-TEE firmware in the NPCM845 SoC device tree.
+> The third patch enables these peripherals for the NPCM845-EVB, adding
+> MDIO nodes, reserved memory, aliases, and board-specific configurations
+> like PHY modes and SPI flash partitions.
 > 
-> Gentle ping on this patch.
-> I just wanted to follow up and make sure the v2 version was received 
-> correctly.
+> The NPCM8XX device tree tested on NPCM845 evaluation board.
 > 
-> For easy reference, the patch is available on lore.kernel.org here:
-> https://lore.kernel.org/all/20250924061444.11288-1-daiyanlong <https:// 
-> lore.kernel.org/all/20250924061444.11288-1-daiyanlong>@kylinos.cn/
+> Addressed comments from:
+> 	- Andrew Jeffery: https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-2-tmaimon77@gmail.com/
+> 					  https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-3-tmaimon77@gmail.com/
 > 
-> Please let me know if there's anything else needed from my side, or if 
-> you've had a chance to review the technical changes.
-> Thank you for your time and consideration.
+> Changes since version 2:
+> 	- Fix dts warning
+> 	- Arrange node order by ascending unit address.
 > 
-> Best regards,
-> YanLong Dai
+> Changes since version 1:
+> 	- Fix commit message
+> 	- Fix dtbs_check warnings.
+> 
+> Tomer Maimon (3):
+>   arm64: dts: nuvoton: fix warning and nodes order
+>   arm64: dts: nuvoton: npcm845: Add peripheral nodes
+>   arm64: dts: nuvoton: npcm845-evb: Add peripheral nodes
+> 
+>  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 732 +++++++++++++++++-
+>  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  | 440 +++++++++++
+>  .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |   7 +
+>  3 files changed, 1160 insertions(+), 19 deletions(-)
+> 
+> --
+> 2.34.1
+> 
+> 
 > 
 
-Hi, YanLong
 
-In regions where Chinese is not supported, the email may appear garbled. 
-We recommend replacing any Chinese content in the email with the 
-corresponding English to ensure clarity.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Thanks a lot.
-Yanjun.Zhu
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-> 
-> 
-> 
-> *主   题：*Re: [PATCH v2 rdma-rc] RDMA/bnxt_re: Fix a potential memory 
-> leak in destroy_gsi_sqp
-> *日   期：*2025年09月24日14:33
-> *发件人：*代彦龙
-> *收件人：*Kalesh Anakkur Purayil,代彦龙
-> *抄送人：*jgg,leon,linux-kernel,linux-rdma,selvin.xavier,dyl_wlc
-> 
-> Hello Selvin, Kalesh, List,
-> 
-> Thank you so much for your patience and guidance throughout this 
-> process. I truly appreciate you taking the time to review my patches and 
-> provide detailed feedback - it has been a great learning experience.
-> 
-> I have incorporated all of your suggestions in this v2 version:
-> - Added the "rdma-rc" target tree prefix in the subject line
-> - Used proper version numbering (v2)
-> - Included the changelog below the '---' line as recommended
-> 
-> The updated patch is attached. I believe it now follows all the required 
-> guidelines. Please let me know if there are any further issues or 
-> adjustments needed.
-> 
-> The patch is also available on lore.kernel.org here:
-> https://lore.kernel.org/all/20250924061444.11288-1-daiyanlong <https:// 
-> lore.kernel.org/all/20250924061444.11288-1-daiyanlong>@kylinos.cn/
-> 
-> Best regards,
-> YanLong Dai
-> 
-> ---
-> 
-> 
-> 
-> 
-> *主   题：*Re: [PATCH] RDMA/bnxt_re: Fix a potential memory leak in 
-> destroy_gsi_sqp
-> *日   期：*2025年09月24日13:01
-> *发件人：*Kalesh Anakkur Purayil
-> *收件人：*Kalesh Anakkur Purayil
-> *抄送人：*jgg,leon,linux-kernel,linux-rdma,selvin.xavier,dyl_wlc
-> 
-> Hi YanLong,
-> Few generic guidelines.
-> 1. You should select a target tree in the subject prefix and specify a 
-> revision number. Since this is a bug fix, the target tree should be 
-> "rdma-rc".
-> 2. When you send an updated version of the patch, please mention version 
-> number. Also, mention the changes made in each version. i.e. under --- 
-> you can add extra info that will not be included in the actual commit, 
-> e.g. changes between each version of patches.
-> One comment in line.
-> 
-> On Mon, Sep 22, 2025 at 7:53 AM YanLong Dai <daiyanlong@kylinos.cn 
-> <mailto:daiyanlong@kylinos.cn>> wrote:
-> 
->     From: daiyanlong <daiyanlong@kylinos.cn <mailto:daiyanlong@kylinos.cn>>
-> 
->     The current error handling path in bnxt_re_destroy_gsi_sqp() could lead
->     to a resource leak. When bnxt_qplib_destroy_qp() fails, the function
->     jumps to the 'fail' label and returns immediately, skipping the call
->     to bnxt_qplib_free_qp_res().
-> 
->     Continue the resource teardown even if bnxt_qplib_destroy_qp() fails,
->     which aligns with the driver's general error handling strategy and
->     prevents the potential leak.
-> 
->     Fixes: 8dae419f9ec73 ("RDMA/bnxt_re: Refactor queue pair creation code")
->     [Kalesh] Blank line is not needed between Fixes tag and SOB tag
->     Signed-off-by: daiyanlong <daiyanlong@kylinos.cn
->     <mailto:daiyanlong@kylinos.cn>>
->     ---
->       drivers/infiniband/hw/bnxt_re/ib_verbs.c | 7 ++-----
->       1 file changed, 2 insertions(+), 5 deletions(-)
-> 
->     diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/
->     infiniband/hw/bnxt_re/ib_verbs.c
->     index 260dc67b8b87..15d3f5d5c0ee 100644
->     --- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
->     +++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
->     @@ -931,10 +931,9 @@ static int bnxt_re_destroy_gsi_sqp(struct
->     bnxt_re_qp *qp)
-> 
->              ibdev_dbg(&rdev->ibdev, "Destroy the shadow QP\n");
->              rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &gsi_sqp-
->      >qplib_qp);
->     -       if (rc) {
->     +       if (rc)
->                      ibdev_err(&rdev->ibdev, "Destroy Shadow QP failed");
->     -               goto fail;
->     -       }
->     +
->              bnxt_qplib_free_qp_res(&rdev->qplib_res, &gsi_sqp->qplib_qp);
-> 
->              /* remove from active qp list */
->     @@ -951,8 +950,6 @@ static int bnxt_re_destroy_gsi_sqp(struct
->     bnxt_re_qp *qp)
->              rdev->gsi_ctx.sqp_tbl = NULL;
-> 
->              return 0;
->     -fail:
->     -       return rc;
->       }
-> 
->       /* Queue Pairs */
->     -- 
->     2.43.0
-> 
-> 
-> -- 
-> Regards,
-> Kalesh AP
-> 
-> 
-> ---
-> 
-> 
-> ---
-> 
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: remotes/arm-soc/for-next-12027-gf60eaa447dab (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nuvoton/' for 20250925200625.573902-1-tmaimon77@gmail.com:
+
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb002000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@c0000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb001000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/i2c@86000/tmp100@48: failed to match any schema with compatible: ['tmp100']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/pwm-fan-controller@103000: failed to match any schema with compatible: ['nuvoton,npcm845-pwm-fan']
+arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/spi@201000: failed to match any schema with compatible: ['nuvoton,npcm845-pspi']
+
+
+
+
 
 
