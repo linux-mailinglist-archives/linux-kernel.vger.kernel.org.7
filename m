@@ -1,239 +1,223 @@
-Return-Path: <linux-kernel+bounces-834537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3502EBA4E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB661BA4E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08CC57B264C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:25:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AD633230F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6513F30C63C;
-	Fri, 26 Sep 2025 18:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7AB2FFDDC;
+	Fri, 26 Sep 2025 18:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eg4l62cD"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ud+glv4w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B406C1FE44B
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F86280308
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758911232; cv=none; b=T2jZJLUPc9iES6vewgW4CEI+hmsFFCPFqjb+YlpJzZ2h7IaPqG8SEG5BKoB/kLk17+nLYNKA8HinYm40Hrp1rdZpBcuF4GESi54emMgjpvJ5ta6FrBEzZYIcDmz1gl5ERz/QT0R4cw1f3x6Qq/DOCNoWomX8RTSbJUnq1qrHJs4=
+	t=1758911354; cv=none; b=pq8/l5FxhLWbH/yF6O9TqLh2BJRU7r4Nn39GxrZxQGWSJMHYNFJLkLnTDo49u0ZkX34mzBZnZGeH9iYN86dIvKiAm+e95IbyvOls1p9rxM0u2FJJLv7hDIeIiWe+IpyU9TYU1tKLZKV7VqiEMyevEozH1JmC4CsFeqnnTeyFZvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758911232; c=relaxed/simple;
-	bh=vT0s+anZHp3vVXK8ycfd4nUKVAa/fOAxmeAj5MMGowA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mtHtIS/D5UTNkIQi7LFcgaWZBsYohoXQep40EeOG/DMECBf7VzAOn4xMevIpfXFWTl0TLoLiLy3L6cI3ch2hfJiVpIcyP4HaVr1tAobIqdeNUNA0+Ks2xM1DKl2i0tZWln2PRRrsk5jqdRHGKVO7kn9mo8ZKBN06y87l3rAPNX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eg4l62cD; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-27eceb38eb1so30022715ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758911230; x=1759516030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=+8ocQlmUMq9pXBq8UEwhrzIt6cTNzAIG55h0HBAM4YU=;
-        b=eg4l62cDjAwSXEbk+usRwlw/5OyuKKiiG4weK3xi7QfGBprw+x/3YMXAnrPmBx9mW+
-         H8iGu/82/kE13GU9RcA6oXk7HhjAbQGIyMBF72xOG9W7ALQ81vHtXXHxNK4Cl4P2pGyN
-         SZF7AUWWMNXyZ0AEyzZVbsSb7KxrKwM6nmznsRdphNaiXZ8o3ZlZPzU/i/rIK4PyWE45
-         dDbvERTzV+RsiUHc+QuezL8lkz6nYk1QSB/5oDqYeslO3lYSm01r9g2sx0uoSJUTbX5h
-         le2zpY/aviNzRTdL0wfuHfpgb3TJKW44TDrUYi9cH5O1yY/ra45+2evrU2RHux4YTLFa
-         OwPA==
+	s=arc-20240116; t=1758911354; c=relaxed/simple;
+	bh=Fdtvwdou0j/HPLsynKl5haCoT9J7J98Gr4teoaFv51w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdHSnD8QrZt9vcmn09uN0Yhvz01B4u/SZf7NQmljJbnFb7xHUQXXT302m3jG/5X5evopMCQZ0BT7DY+7q9CMLW1iwZowCEm3lZkTXxyK0Fje0l7KhsHMPJ69g0XhhIUhkYBUVsyUdvfbaP3WUZ/1yhfgcj025cDnmtQIar+KlFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ud+glv4w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758911352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VVK5hqYxqrcHg6x0vzf6zc77p/zTjdplz2xbifw60rg=;
+	b=Ud+glv4wUhkuLSHv7FjFH+xxx3y30nzqiwCURVDnlRt9Y2iAXWHHDLiGrc+Ls/WeRJO3DC
+	qJHptrBTwEL2NkuBVZpIKHU3UPORNB2ti5TOO3CO3KTn62YSgqclEnl0v0xWOrNKAiqlcf
+	3fIZpD7FdW1pv1C/41WJyEnu/4rjtso=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-pWaw8Ao8OIWZlvy7848z8Q-1; Fri, 26 Sep 2025 14:29:11 -0400
+X-MC-Unique: pWaw8Ao8OIWZlvy7848z8Q-1
+X-Mimecast-MFC-AGG-ID: pWaw8Ao8OIWZlvy7848z8Q_1758911348
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b3826ab5449so82545966b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:29:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758911230; x=1759516030;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+8ocQlmUMq9pXBq8UEwhrzIt6cTNzAIG55h0HBAM4YU=;
-        b=gUN7ODHl+p4UuHpbcGnQRFvOSLOmMlRnmYS5VbTswwqxAXi2GUrI6LExyUIEma1jMB
-         m0Vc+lKxrFL7SVwpIKkF75FmxulfAmeHH/GV3c8z+JziEPpdxwqFB2kVdLlzcTpX6S4I
-         P75dZuuyTOMHVdi9nwgsY+5bUhn+LiWP6it3VZ0EOIuZUPwbhk6I6+i+Vng3jYkdvF4P
-         jzoQXoa198vS7FbI/xVBIS7AAgkFM3XER3j2Nkvf1tezI+Ko3GYeF5I11MQJS+iIp+r3
-         rQWBAbNwoyTgbQp6sHk1RKts0mqLFpQdRWQtosyk4wPHTX11M8IJSBF6hSd4lFoe6Y9t
-         xOhw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Tx+dDEXo87XprcgcfznBWnTyoRoPR1ycFodChCC5NsQRrhJr1DqT5BwrnICqnpWYuGwdH3/nvhqkWus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC4iOSpfSS/KpV8q7ZtjV7OXNfxqsFk9Nyn9Fsy9wK2Rydy80o
-	1jF5XigcdvzvEnM/RUV9fP2q2pF+BRopIWrDTzFxyN+oxpKlZN/iGQUu
-X-Gm-Gg: ASbGncv3yMKKxlpd1OxWKgpc7quEIDU5TgjtS+YUTVqMem74PNmRcHIGDESOEdh7dPb
-	OMOTs4vs4dMil2V8wzskphE9yqYpYx0pzFqxWXQOWdGYcLi1hRxUdmIxfcrQts8SYYTM3Bo0wjV
-	XBt54b+bOzJvsF1acb73OKOFy43DnmqPQdrxzr4JW2BXhT6BADgpgGZrBMNN4W8Fn212Ym3fBQw
-	2xYPOni/Lei/dGW17qR1Ih6mo691QGCXroC0Qv9ZoKlf2mo8XNt3gKBNA0JCb335vqAdxga/2jx
-	nKbPHd1rAE0SylZedsNoqj7yjx5z7a754VuqDfcHzQEm4SXHwxSkjhi5Ib7wnfjo/cSZO6xDasl
-	SGsfel5RDq/Z0g5KcEiWkiTBH/Y41JKlezCXZkc3TE6dwp+MnbpVhUP3XHk4dqRwtFUrs4rs=
-X-Google-Smtp-Source: AGHT+IGebjuK7dOicE97vFXuy1UgxSVEpNqQoVcQsII2xv/PqxfHmBnI9VXibz+uzu4TEw8dcVIg5A==
-X-Received: by 2002:a17:902:db09:b0:23f:f96d:7579 with SMTP id d9443c01a7336-27ed4aab6d7mr93613685ad.37.1758911229950;
-        Fri, 26 Sep 2025 11:27:09 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68821c8sm58890595ad.74.2025.09.26.11.27.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 11:27:09 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <0104bccd-d3a2-4f6b-8838-0acf0563c4b6@roeck-us.net>
-Date: Fri, 26 Sep 2025 11:27:08 -0700
+        d=1e100.net; s=20230601; t=1758911348; x=1759516148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VVK5hqYxqrcHg6x0vzf6zc77p/zTjdplz2xbifw60rg=;
+        b=EzASFGGqPlVP+TN3RbxLoPSypsA8kDysXO09BrZ1JMYlhy79PT+Vq6Ny0mEY18yGsJ
+         ZKScVt/T7dXCCuazh6/O2dmtxY/s+Mem9PzbhVPcWApacD7xf8PnLu44axhbt3vbh43b
+         Fn1FBIcPrafSjYoQtlu4CM3fNeVBLpFtKENgLNsymXZVKTmqH2QvOlfQN6pY/iGuiAcK
+         C0uxqaI2bODK9+AhZgvhB7ApDc2rY/5yMaxfYcw+AkxSH1sNxdZFXIoGvAy/InRTgqIN
+         w1HrOCzm/dxpOA8ecRYIHgPv6KczMjv1X7QE/Rgf1jO2r6FeC7PIprHP+xCrwiin2nBG
+         XuPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUudjU7cIM9BPwtwXSMdFk1qSuShrYy78iDePqiT7ldwck/jypPjxx5XgVAqLQCW28otwkS0Xd9AYH7Irw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi+dME3uj5OzN/E7TaGM5xuRPmBajtiVqXQeZyx9jLrxXlpMA7
+	GJGI1eKPBpZdghZ2M4R836zexre/9HaNJD/Mf6Bru2WPUD1hJz+GMWR6JE6KuK1FLp6TCN2OKI1
+	q+kaw7pmDDlntX3CaKnyfmhAWgwYwrO+tuEF6T/iKUfggb/l+BUsdBWvAUQsjh5liWRwmi90V0N
+	d7R1/fJHSirDXoMJy6WCjwMTfpa4t4Jv4S+DYlFtkh
+X-Gm-Gg: ASbGncu9PIeKPzwd+UZrEX7GIa/3RR+a1o8RQ4NQqlpWftJ8nQGAAKjtPm4TLubRFJg
+	FUsjE1XFPLmZJaFlrknC/YWX0msbfBD5FFVSIuNQVwQGR69tyvJQBL9/ETxFyIs5Mu+EK6GYUKr
+	5Ot5NnOPRMmQ6Uf9YDWaECFUWGY5HbQHlX32yjq3buqxT43duGk58xXQ==
+X-Received: by 2002:a17:907:6093:b0:b04:6a58:560b with SMTP id a640c23a62f3a-b34ba93ce11mr909046866b.39.1758911348366;
+        Fri, 26 Sep 2025 11:29:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8NPueb5nCMT5DuPssEE6Gyfl/L/QQSo2uJ/kLrAnQWxWWz6E92b3DZ9NPm4ViF0aNX+BwD71pWnwRFHvSZHo=
+X-Received: by 2002:a17:907:6093:b0:b04:6a58:560b with SMTP id
+ a640c23a62f3a-b34ba93ce11mr909043066b.39.1758911347929; Fri, 26 Sep 2025
+ 11:29:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN
- enabled
-To: Xi Ruoyao <xry111@xry111.site>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
- Xuefeng Li <lixuefeng@loongson.cn>, Guo Ren <guoren@kernel.org>,
- Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Binbin Zhou <zhoubinbin@loongson.cn>
-References: <20250910091033.725716-1-chenhuacai@loongson.cn>
- <20250920234836.GA3857420@ax162>
- <CAAhV-H5S8VKKBkNyrWfeuCVv8jS6tNED6YNeAD=i-+wkaoRSDQ@mail.gmail.com>
- <899f2dec-e8b9-44f4-ab8d-001e160a2aed@roeck-us.net>
- <c1f9e36dbdff64298ed2c6418247fb37dcd1f986.camel@xry111.site>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <c1f9e36dbdff64298ed2c6418247fb37dcd1f986.camel@xry111.site>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250925134156.1948142-1-rrobaina@redhat.com> <c7a8d5f64e19f529a7595f26e150826f@paul-moore.com>
+In-Reply-To: <c7a8d5f64e19f529a7595f26e150826f@paul-moore.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Fri, 26 Sep 2025 15:28:55 -0300
+X-Gm-Features: AS18NWDStEem2dFQRSusMMoOLIwVwIMaAYTG9PMRNMPg6ucZ8NhwQ2lffaOUJ4g
+Message-ID: <CAABTaaC9tSJ2Say6RHiQ3Ffm-xo4g-Ld3r83GwUBYZ5STs-hCA@mail.gmail.com>
+Subject: Re: [PATCH v2] audit: include source and destination ports to NETFILTER_PKT
+To: Paul Moore <paul@paul-moore.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, eparis@redhat.com, 
+	pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de, ej@inai.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/26/25 10:15, Xi Ruoyao wrote:
-> On Fri, 2025-09-26 at 07:31 -0700, Guenter Roeck wrote:
->> On Sun, Sep 21, 2025 at 09:07:38AM +0800, Huacai Chen wrote:
->>> Hi, Nathan,
->>>
->>> On Sun, Sep 21, 2025 at 7:48 AM Nathan Chancellor <nathan@kernel.org> wrote:
->>>>
->>>> Hi Huacai,
->>>>
->>>> On Wed, Sep 10, 2025 at 05:10:33PM +0800, Huacai Chen wrote:
->>>>> ARCH_STRICT_ALIGN is used for hardware without UAL, now it only control
->>>>> the -mstrict-align flag. However, ACPI structures are packed by default
->>>>> so will cause unaligned accesses.
->>>>>
->>>>> To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in asm/acenv.h to
->>>>> align ACPI structures if ARCH_STRICT_ALIGN enabled.
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>> Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
->>>>> Suggested-by: Xi Ruoyao <xry111@xry111.site>
->>>>> Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->>>>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
->>>>> ---
->>>>> V2: Modify asm/acenv.h instead of Makefile.
->>>>>
->>>>>   arch/loongarch/include/asm/acenv.h | 7 +++----
->>>>>   1 file changed, 3 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/arch/loongarch/include/asm/acenv.h b/arch/loongarch/include/asm/acenv.h
->>>>> index 52f298f7293b..483c955f2ae5 100644
->>>>> --- a/arch/loongarch/include/asm/acenv.h
->>>>> +++ b/arch/loongarch/include/asm/acenv.h
->>>>> @@ -10,9 +10,8 @@
->>>>>   #ifndef _ASM_LOONGARCH_ACENV_H
->>>>>   #define _ASM_LOONGARCH_ACENV_H
->>>>>
->>>>> -/*
->>>>> - * This header is required by ACPI core, but we have nothing to fill in
->>>>> - * right now. Will be updated later when needed.
->>>>> - */
->>>>> +#ifdef CONFIG_ARCH_STRICT_ALIGN
->>>>> +#define ACPI_MISALIGNMENT_NOT_SUPPORTED
->>>>> +#endif /* CONFIG_ARCH_STRICT_ALIGN */
->>>>>
->>>>>   #endif /* _ASM_LOONGARCH_ACENV_H */
->>>>
->>>> I am seeing several ACPI errors in my QEMU testing after this change in
->>>> Linus's tree as commit a9d13433fe17 ("LoongArch: Align ACPI structures
->>>> if ARCH_STRICT_ALIGN enabled").
->>>>
->>>>    $ make -skj"$(nproc)" ARCH=loongarch CROSS_COMPILE=loongarch64-linux- clean defconfig vmlinuz.efi
->>>>    kernel/sched/fair.o: warning: objtool: sched_update_scaling() falls through to next function init_entity_runnable_average()
->>>>    mm/mempolicy.o: warning: objtool: alloc_pages_bulk_mempolicy_noprof+0x380: stack state mismatch: reg1[30]=-1+0 reg2[30]=-2-80
->>>>    lib/crypto/mpi/mpih-div.o: warning: objtool: mpihelp_divrem+0x2d0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
->>>>    In file included from include/acpi/acpi.h:24,
->>>>                     from drivers/acpi/acpica/tbprint.c:10:
->>>>    drivers/acpi/acpica/tbprint.c: In function 'acpi_tb_print_table_header':
->>>>    include/acpi/actypes.h:530:43: warning: 'strncmp' argument 1 declared attribute 'nonstring' is smaller than the specified bound 8 [-Wstringop-overread]
->>>>      530 | #define ACPI_VALIDATE_RSDP_SIG(a)       (!strncmp (ACPI_CAST_PTR (char, (a)), ACPI_SIG_RSDP, (sizeof(a) < 8) ? ACPI_NAMESEG_SIZE : 8))
->>>>          |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>    drivers/acpi/acpica/tbprint.c:105:20: note: in expansion of macro 'ACPI_VALIDATE_RSDP_SIG'
->>>>      105 |         } else if (ACPI_VALIDATE_RSDP_SIG(ACPI_CAST_PTR(struct acpi_table_rsdp,
->>>>          |                    ^~~~~~~~~~~~~~~~~~~~~~
->>>>    In file included from include/acpi/acpi.h:26:
->>>>    include/acpi/actbl.h:69:14: note: argument 'signature' declared here
->>>>       69 |         char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;       /* ASCII table signature */
->>>>          |              ^~~~~~~~~
->>>>  From this link this seems a comiler issue (at least not an
->>> arch-specific kernel issue):
->>> https://github.com/AOSC-Tracking/linux/commit/1e9ee413357ef58dd902f6ec55013d2a2f2043eb
->>>
->>
->> I see that the patch made it into the upstream kernel, now breaking both
->> mainline and 6.16.y test builds of loongarch64:allmodconfig with gcc.
->>
->> Since this is apparently intentional, I'll stop build testing
->> loongarch64:allmodconfig. So far it looks like my qemu tests
->> are not affected, so I'll continue testing those for the time being.
-> 
-> See https://gcc.gnu.org/PR122073 and
-> https://github.com/acpica/acpica/pull/1050.
-> 
+Thanks for reviewing this patch, Paul! Sounds great, I'll work on the
+v3 shortly.
 
-I understand that. Every compiler has bugs. Normally workarounds are implemented.
-Since that won't happen here, my remedy is to stop testing the affected
-configuration(s). I do this whenever I learn that a known problem won't be fixed.
-The above is not a complaint, just an information.
-
-Guenter
+On Thu, Sep 25, 2025 at 5:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Sep 25, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
+> >
+> > NETFILTER_PKT records show both source and destination
+> > addresses, in addition to the associated networking protocol.
+> > However, it lacks the ports information, which is often
+> > valuable for troubleshooting.
+> >
+> > This patch adds both source and destination port numbers,
+> > 'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
+> > SCTP-related NETFILTER_PKT records.
+> >
+> >  type=3DNETFILTER_PKT ... saddr=3D127.0.0.1 daddr=3D127.0.0.1 proto=3Di=
+cmp
+> >  type=3DNETFILTER_PKT ... saddr=3D::1 daddr=3D::1 proto=3Dipv6-icmp
+> >  type=3DNETFILTER_PKT ... daddr=3D127.0.0.1 proto=3Dudp sport=3D38173 d=
+port=3D42424
+> >  type=3DNETFILTER_PKT ... daddr=3D::1 proto=3Dudp sport=3D56852 dport=
+=3D42424
+> >  type=3DNETFILTER_PKT ... daddr=3D127.0.0.1 proto=3Dtcp sport=3D57022 d=
+port=3D42424
+> >  type=3DNETFILTER_PKT ... daddr=3D::1 proto=3Dtcp sport=3D50810 dport=
+=3D42424
+> >  type=3DNETFILTER_PKT ... daddr=3D127.0.0.1 proto=3Dsctp sport=3D54944 =
+dport=3D42424
+> >  type=3DNETFILTER_PKT ... daddr=3D::1 proto=3Dsctp sport=3D57963 dport=
+=3D42424
+> >
+> > Link: https://github.com/linux-audit/audit-kernel/issues/162
+> > Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+> > ---
+> >  net/netfilter/xt_AUDIT.c | 42 +++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 41 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+> > index b6a015aee0ce..9fc8a5429fa9 100644
+> > --- a/net/netfilter/xt_AUDIT.c
+> > +++ b/net/netfilter/xt_AUDIT.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/netfilter_bridge/ebtables.h>
+> >  #include <net/ipv6.h>
+> >  #include <net/ip.h>
+> > +#include <linux/sctp.h>
+> >
+> >  MODULE_LICENSE("GPL");
+> >  MODULE_AUTHOR("Thomas Graf <tgraf@redhat.com>");
+> > @@ -32,6 +33,7 @@ static bool audit_ip4(struct audit_buffer *ab, struct=
+ sk_buff *skb)
+> >  {
+> >       struct iphdr _iph;
+> >       const struct iphdr *ih;
+> > +     __be16 dport, sport;
+> >
+> >       ih =3D skb_header_pointer(skb, skb_network_offset(skb), sizeof(_i=
+ph), &_iph);
+> >       if (!ih)
+> > @@ -40,6 +42,25 @@ static bool audit_ip4(struct audit_buffer *ab, struc=
+t sk_buff *skb)
+> >       audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 proto=3D%hhu",
+> >                        &ih->saddr, &ih->daddr, ih->protocol);
+> >
+> > +     switch (ih->protocol) {
+> > +     case IPPROTO_TCP:
+> > +             sport =3D tcp_hdr(skb)->source;
+> > +             dport =3D tcp_hdr(skb)->dest;
+> > +             break;
+> > +     case IPPROTO_UDP:
+> > +     case IPPROTO_UDPLITE:
+> > +             sport =3D udp_hdr(skb)->source;
+> > +             dport =3D udp_hdr(skb)->dest;
+> > +             break;
+> > +     case IPPROTO_SCTP:
+> > +             sport =3D sctp_hdr(skb)->source;
+> > +             dport =3D sctp_hdr(skb)->dest;
+> > +     }
+> > +
+> > +     if (ih->protocol =3D=3D IPPROTO_TCP || ih->protocol =3D=3D IPPROT=
+O_UDP ||
+> > +         ih->protocol =3D=3D IPPROTO_UDPLITE || ih->protocol =3D=3D IP=
+PROTO_SCTP)
+> > +             audit_log_format(ab, " sport=3D%hu dport=3D%hu", ntohs(sp=
+ort), ntohs(dport));
+> >       return true;
+> >  }
+>
+> Instead of having the switch statement and then doing an additional if
+> statement, why not fold it all into the switch statement?  Yes, you
+> would have multiple audit_log_format() calls, but they are trivial to
+> cut-n-paste, and it saves the extra per-packet checking at runtime.
+>
+>   switch (ih->protocol) {
+>   case IPPROTO_TCP:
+>     audit_log_format(ab, " sport=3D...",
+>                      tcp_hdr(skb)->source,
+>                      tcp_hdr(skb)->dest);
+>     break;
+>     ...
+>   }
+>
+> ... considering how expensive multiple audit_log_format() calls can be,
+> it might even be worth considering consolidating the two calls into one:
+>
+>   switch (ih->protocol) {
+>   case IPPROTO_TCP:
+>     audit_log_format(ab, " saddr=3D...",
+>                      ih->saddr,
+>                      ...
+>                      tcp_hdr(skb)->source,
+>                      tcp_hdr(skb)->dest);
+>     break;
+>     ...
+>   default:
+>     audit_log_format(ab, " saddr=3D...",
+>                      ih->saddr,
+>                      ...);
+>   }
+>
+> --
+> paul-moore.com
+>
 
 
