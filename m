@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-834073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91F1BA3C3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE945BA3C44
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E5E164FAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC7A2A1D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1D2F5A37;
-	Fri, 26 Sep 2025 13:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E42F60A1;
+	Fri, 26 Sep 2025 13:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="aKx7BLn6"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXcK1nDI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1448E2512D7;
-	Fri, 26 Sep 2025 13:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19512512D7;
+	Fri, 26 Sep 2025 13:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892155; cv=none; b=kPcV9YTwQhaWYNKB6E6HnZDwGrNUUwQ55i6bWv4K7ojvwh239faZIE8Onaxod4QsAC2GKRUG6oAgZp5C7Sn7g/h26/ccchfw8StODkhxU2VY6+e+Wqy33EQbYH7KL4guyhcaS8x0RJwVZHB8kM+tuU+NmyY/Ku9+J//3CJ5Cdfg=
+	t=1758892190; cv=none; b=W2lVuqa2qd4ua1z3+Ty0D3gIaZxJRYUmnFP037SWIRa2aqLQt4l3BB556c3V5XWp28Of6AAnUt8maLt+YlCV7zRPckOPxZ34JjwWn98n+NlTQw5uMOGHrh5S2hTnDwieUbxl4phePhs2bA0h7LftkkcMnGG9BoEy2rihv2KX03w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892155; c=relaxed/simple;
-	bh=53woFpH+TVw3DizLII2sQ+dYrMreHr6/5VUUIMUfkXw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=eaG5Tf6kzI9x78L7LjrqDkpWbhu9J9LWhZ2qu4Mpd2L9FwVZkbUXzI6d1T9PA15u9YpGruBj8J56ZxTtNFGsc4sl5ezyXWFVpjtBzy3ZQ5AnIStbNmT9U6IgtHdWjtCpjAMGE4nI4eH5i1j9JvfAvhJfd2ywGO9q3YZfv7Xm/5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=aKx7BLn6; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PtyV6PRmbGQ26cR1Yf8W9GPsIiuuem2tM8ucnMedeAc=; b=aKx7BLn6PGRgrEIG0c/4hgZrk4
-	JUaJCJaMZJEbJaMWjkT6lPwpj+QSYsUqFrnryxbzl5484EfHKV8YD2EvCRjVwJGeju9jg5f1ogXDP
-	obOOvOQ/yJlBNKEg9iiuun3XXS3b+FF4obLwUqI9o4i20E4dJ/OV4DK3RE4SUIw66fmQXAZKYAQIh
-	5kb8QsQsisYT2DN/nPHDA6WWvuPDbhRdvPSxyPuz8jMyI7vDkvhABKQWwCPOkoncq23O9oNGUpVDh
-	x6Tigq9l4LSzX4Whu1m0wky27ZCLJrfPbRmZ4U/2qPcP2mU46vKsfoW3wAIsQygyt4TKr4K0kVppg
-	Ap9VUmRg==;
-Received: from [122.175.9.182] (port=48006 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1v28CF-00000006Ytd-0KRX;
-	Fri, 26 Sep 2025 09:09:10 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 125421783FF9;
-	Fri, 26 Sep 2025 18:39:06 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id E37941783FF3;
-	Fri, 26 Sep 2025 18:39:05 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bvkrUVJt43l9; Fri, 26 Sep 2025 18:39:05 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 53A021781C3D;
-	Fri, 26 Sep 2025 18:39:05 +0530 (IST)
-Date: Fri, 26 Sep 2025 18:39:05 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: parvathi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
-	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
-	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
-	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
-Message-ID: <773982362.433508.1758892145106.JavaMail.zimbra@couthit.local>
-In-Reply-To: <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch>
-References: <20250925141246.3433603-1-parvathi@couthit.com> <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch>
-Subject: Re: [PATCH net-next 0/3] RSTP SWITCH support for PRU-ICSSM Ethernet
- driver
+	s=arc-20240116; t=1758892190; c=relaxed/simple;
+	bh=mwabqBGG6iWvuFZvZoI0mQPGdSAIVB5imUltnMh99k8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=NhQqm+X9/z3AE+AAtlowoklkxjnR7cFeeZp9KOgDWTuExnUxi2/AbsEKJJEKi1vKnt7ecAg8NW4aDl9OaH1SYMeessDoa+GadEA+iCXojb/O3RWN0NaLIEHTrmiIF1lZIbRnOtJ35qhdJg/iKWxZuILcDloOOiJj8w9ZggUKLOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXcK1nDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4EAC4CEF4;
+	Fri, 26 Sep 2025 13:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758892189;
+	bh=mwabqBGG6iWvuFZvZoI0mQPGdSAIVB5imUltnMh99k8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=KXcK1nDI5gb72U8fmIArJ4u6fgmjbXHQgW4d7jdB21V2HOosIgdJca9dXxb5ovUqB
+	 vSB/f5oMqM2MkMgBH4u4f6J+MfTPiQ01bSIoWumjDXwIie7zKfxpiA6h7CCoLRoVXm
+	 By1bPcC1Wvby+9xkjppyFL/zZsBffbGM/ev4PclVMzgv6FsmXodeP1xBdvNhWSzjOQ
+	 w0Ino0XlmFt/ddQtpdXNLw+T+W7v01dIp6RnGjcPbAx40r/E1QKC1m6uAdNHoDs2ZG
+	 ZxnvC2s1KzcEXWmkbMatm0AC0HrRxUACYK4Co6XIQ8HTvQL4Yaf9FQHv2rg8eL6RKh
+	 i/wOqKQ+nHyFw==
+Date: Fri, 26 Sep 2025 08:09:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: RSTP SWITCH support for PRU-ICSSM Ethernet driver
-Thread-Index: baBJgWRemsOFlllaDdRIwjoAJGMMPQ==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pci@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ upstream@airoha.com, Jianjun Wang <jianjun.wang@mediatek.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20250925162332.9794-3-ansuelsmth@gmail.com>
+References: <20250925162332.9794-1-ansuelsmth@gmail.com>
+ <20250925162332.9794-3-ansuelsmth@gmail.com>
+Message-Id: <175889218783.498491.9868084189301535953.robh@kernel.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: mediatek: Convert to YAML
+ schema
 
-Hi,
 
-> On Thu, Sep 25, 2025 at 07:32:09PM +0530, Parvathi Pudi wrote:
->> Hi,
->> 
->> The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
->> (ICSSM), which provides the foundational support for Ethernet functionality
->> over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
->> net-next recently [1].
->> 
->> This patch series enhances the PRU-ICSSM Ethernet driver to support
->> RSTP SWITCH mode, which has been implemented based on "switchdev" and
->> interacts with "mstp daemon" to support Rapid Spanning Tree Protocol
->> (RSTP) as well.
+On Thu, 25 Sep 2025 18:23:16 +0200, Christian Marangi wrote:
+> Convert the PCI mediatek Documentation to YAML schema to enable
+> validation of the supported GEN1/2 Mediatek PCIe controller.
 > 
-> Is there anything in this patchset which is specific to RSTP? In
-> general, there is no difference between STP and RSTP. STP is generally
-> done in the kernel as part of the kernel bridge code. RSTP does it in
-> user space. But the hardware driver does not care if it is STP or
-> RSTP, it is the same API to the layer above.
+> While converting, lots of cleanup were done from the .txt with better
+> specifying what is supported by the various PCIe controller variant and
+> drop of redundant info that are part of the standard PCIe Host Bridge
+> schema.
 > 
-> 	Andrew
+> To reduce schema complexity the .txt is split in 2 YAML, one for
+> mt7623/mt2701 and the other for every other compatible.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/pci/mediatek-pcie-mt7623.yaml    | 173 ++++++++
+>  .../devicetree/bindings/pci/mediatek-pcie.txt | 289 -------------
+>  .../bindings/pci/mediatek-pcie.yaml           | 404 ++++++++++++++++++
+>  3 files changed, 577 insertions(+), 289 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
+>  create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+> 
 
-No, this patch-set applies to both STP and RSTP. The driver and firmware
-responds to the port-state transitions and FDB operations through the
-standard Linux switchdev/bridge interfaces, with no STP/RSTP related
-logic executed in driver/firmware.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-We referred to RSTP in the commit message as it is our primary use case
-and it implies support for STP as well.
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/mediatek-pcie-mt7623.example.dtb: syscon@1a000000 (mediatek,mt7623-hifsys): compatible: 'oneOf' conditional failed, one must be fixed:
+	['mediatek,mt7623-hifsys', 'mediatek,mt2701-hifsys', 'syscon'] is too long
+	'mediatek,mt7623-hifsys' is not one of ['mediatek,mt2701-hifsys', 'mediatek,mt7622-hifsys']
+	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt2701-hifsys.yaml#
 
-Thanks and Regards,
-Parvathi.
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250925162332.9794-3-ansuelsmth@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
