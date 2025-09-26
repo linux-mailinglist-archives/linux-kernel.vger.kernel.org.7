@@ -1,276 +1,150 @@
-Return-Path: <linux-kernel+bounces-833749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEAFBA2F2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BDBBA2F2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80652623988
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0F2189538A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B3E296BC5;
-	Fri, 26 Sep 2025 08:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D52900A8;
+	Fri, 26 Sep 2025 08:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzfOP+xm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGxb6Vuc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310D6291C13
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D85921D3CA;
+	Fri, 26 Sep 2025 08:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758875399; cv=none; b=nJl8MYEX0R3kJSduen1HbciD17C6/PlAs58cUzF9qiWUW3fuBDem0ku3wq0CQCsEI/3hHRn3bGh4/cdfx0RY1VLGA56Brskfxy1H1TrqMNjB+7T2vhye7kYZk3cz+icHZSVSVm7vVggwT0M5wEI1O2f5daS7tM9ShqD2d6Tl8Lw=
+	t=1758875398; cv=none; b=R5Y1n0XCGXHRUdt1CqHULAJ6mWuHYp9Wi3yIdorjyejd1Gr6cXUn2pnhqZJiAKA4aKV6QAriiS51R9VYHisD2vlKpPlMj3LTVYjTAVpOYSWu4B8Ss/1CjvBerkyyUtwg7BfmDuQuqtHnQ/Ks7i1gIJCxJXafIJrchIsmYMiM4Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758875399; c=relaxed/simple;
-	bh=2O2Eis/AQxoQlx2boLmGaVYgY6FUanSnJshyf0XdjwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCbST7/wLABVg4Ow9zjy0szJeKI7bWbmWQ6XnMl6QbiC1AdIvdWtPjbMaDD8o2ck9Lvhc6ER1tXlZVWVzeF0hQtcHNZD63puaiC3JklxmkWIFT577jZqPPX/hfnz/Jf+3KDDjQvUzHSFhNw2+FE44HEPjKrbfUbntXpdU5kgORo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzfOP+xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA14EC4CEF5;
+	s=arc-20240116; t=1758875398; c=relaxed/simple;
+	bh=qTJ3Y5nZVyDi8O3E7SfK6g7n/YNdW3RpTtGkZxkOLiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h8/cz/kKjPYFVADr8XEgii2Pax1vGeVJSSBWKVjS/gBfwVkGpwS+OxPDocsXxfFNEbLpjOQD3Nw7BcfdNewWuXlgPLXUEiWuKkSFmr1JQriYh+y4VvQAmS3EGVsXbgYO+yAloQET41jPqyp/2JgIKJUGVZMqXnjhZ8OXWRnI/Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGxb6Vuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B961C4CEF4;
 	Fri, 26 Sep 2025 08:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758875399;
-	bh=2O2Eis/AQxoQlx2boLmGaVYgY6FUanSnJshyf0XdjwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzfOP+xmoc9M4NPmCBGhZ6SkKwuQD42poOqwgfwyRa32F0sttzUhsLot48i6tzg7f
-	 gnK8YT2i6Wh7VoC7CmSCMbkVVHCk2r0Skws5vjbvsOwnMCdICMxyvZvb2xhjFub3Eq
-	 Uuc8mr5Ios/9ZeSVCfeeK5TQHcjMDpLZYn1TMP2xRjpOGJusN46qiV13MH2F1a0Cyk
-	 raRh4y7GtzvFvrJTDPI8ZioieVE/d2ybjLtshLIXad3sknq+1/4KlrcfDW+CpsOegE
-	 OJjwlAweHoCyDButmlWPYD3g/ulQ9PmzRT7aiZEe3aKRlRFBi3j9kcIOFUdUHAs5u7
-	 i734WYfUouw7w==
+	s=k20201202; t=1758875397;
+	bh=qTJ3Y5nZVyDi8O3E7SfK6g7n/YNdW3RpTtGkZxkOLiI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rGxb6Vuc/y1eIjlkzDOiD7glEBcjuSZO5DQbJhka2FiC403nEOXDU7/799tVXJ/sk
+	 kBAEOlGnaOu8nbXp1t8Ufum73V//xgxHxQziDH1A/IrEuROkiPG0gXPv7Br1zvgJL3
+	 HJo0dn1Hl2lcCs85jnEJk/MXk29avAX1ghg5lMj4PTwVAS9H7cst8TAVHs96pwxKNO
+	 YN8xQhOLi6b1z49KhOSeg36aUs1QVO1DA1CitOa/HjE1hqxfDjTD0/+fxj3z6FWu0a
+	 J+mtA4y9Sv9EimnKvqzUAcnxtN38zw+qrQaIkrd7cuSK6CU9zJBQm8GLdI6hrBNYzs
+	 e/zHvUVckDVFw==
+Message-ID: <5fed7e09-b59f-46b0-be49-881c0c1b61c1@kernel.org>
 Date: Fri, 26 Sep 2025 10:29:52 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
-Message-ID: <s6fgd3jzckxv3lrylph5cl4l3ykk7qdrnjwlvwe3pxxc2zgch5@2jgoh5lkoh5b>
-References: <cover.1758806023.git.alx@kernel.org>
- <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
- <202509251657.F4ED4CF@keescook>
- <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
- <202509251823.1B974C7@keescook>
- <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ktuk3iap3hmygfsz"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_pcilib: Replace deprecated PCI functions
+To: Florian Eckert <fe@dev.tdt.de>, gregkh@linuxfoundation.org,
+ kumaravel.thiagarajan@microchip.com, tharunkumar.pasumarthi@microchip.com,
+ andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
+ angelogioacchino.delregno@collabora.com, peterz@infradead.org,
+ yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk, macro@orcam.me.uk,
+ schnelle@linux.ibm.com, Eckert.Florian@googlemail.com
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20250924133544.2666514-1-fe@dev.tdt.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250924133544.2666514-1-fe@dev.tdt.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 24. 09. 25, 15:35, Florian Eckert wrote:
+> When the '8250_exar' module is loaded in to the kernel, a kernel trace
+> with 'WARN_ON(legacy_iomap_table[bar])' is dumped to the console,
+> because the old pci table mapping is still used in '8250_pcilib'.
+> 
+> The old function have been deprecated in commit e354bb84a4c1 ("PCI:
+> Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> 
+> The remapping already takes or must take place in the driver that calls
+> the function 'serial8250_pci_setup_port()'. The remapping should only be
+> called once via 'pcim_iomap()'. Therefore the remapping moved to the
+> caller of 'serial8250_pci_setup_port()'.
+> 
+> To use the new functions in '8250_pcilib' the function signature of
+> 'serial8250_pci_setup_port()' has been extended with an already iomapped
+> address value. So this can be used directly without mapping again.
+> 
+> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+...
+> --- a/drivers/tty/serial/8250/8250_pci.c
+> +++ b/drivers/tty/serial/8250/8250_pci.c
+> @@ -165,7 +165,15 @@ static int
+>   setup_port(struct serial_private *priv, struct uart_8250_port *port,
+>   	   u8 bar, unsigned int offset, int regshift)
+>   {
+> -	return serial8250_pci_setup_port(priv->dev, port, bar, offset, regshift);
+> +	void __iomem *iomem = NULL;
+> +
+> +	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
+> +		iomem = pcim_iomap(priv->dev, bar, 0);
+> +		if (IS_ERR(iomem))
+> +			return -ENOMEM;
+
+Why not to propagate the error?
+
+Other than that, LGTM.
 
 
---ktuk3iap3hmygfsz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
-Message-ID: <s6fgd3jzckxv3lrylph5cl4l3ykk7qdrnjwlvwe3pxxc2zgch5@2jgoh5lkoh5b>
-References: <cover.1758806023.git.alx@kernel.org>
- <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
- <202509251657.F4ED4CF@keescook>
- <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
- <202509251823.1B974C7@keescook>
- <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
-
-Hi Linus, Kees, Andrew,
-
-On Thu, Sep 25, 2025 at 05:00:30PM -0700, Kees Cook wrote:
-> On Thu, Sep 25, 2025 at 01:48:14PM -0700, Andrew Morton wrote:
-> > Patchset seems reasonable, I guess.  But I'm not loving "ENDOF".  End
-> > of what - is that like __etext?  "ARRAY_END" matches "ARRAY_SIZE" quite
-> > nicely, no?  And it much better describes what the thing does.
->
-> And it's really ARRAY_BEYOND. ;) I don't really like having APIs that
-> require holding pointers that are actively invalid, either.
-
-The name END has some conventions.  It's not arbitrarily chosen.
-
-The C standard is quite consistent in referring to the last addressable
-element of an array as the LAST element.
-
-For what we're dealing with, which is a pointer to one after that thing,
-the C standard is also consistent in calling it 'one past the last
-element'.  It doesn't have a single-word term, though.
-
-However, C++ does have a single term: 'std::end'.
-
-And many projects, when having to come up with a single-word term for
-this thing, natural evolution shows it converges to 'end'.  Even in the
-kernel, as your local pointer variables are actually called 'end' and
-not 'beyond'.
-
-> u8 array[10];
-> u8 *first =3D array; // valid address
-> u8 *last =3D &array[ARRAY_SIZE(array) - 1]; // valid address
-
-This last is correctly used, as a term, but quite dangerous, as Linus
-points out.
-
-LASTOF() would be something quite more dangerous than ENDOF().  First of
-all, because it's not guaranteed to exist, as Linus points out.
-LASTOF() applied to a zero-length array would be Undefined Behavior
-straight away.  That's indeed why we have guarantees that the end always
-exists and can be held.
-
->
-> for (u8 *c =3D first; c <=3D last; c++)
-
-Secondly, loops with <=3D are weird and error prone.
-
->   putc(*c);
-> // c would now be invalid but has left scope so it cannot be used
->
-> --
-> Kees Cook
-
-
-On Thu, Sep 25, 2025 at 07:36:13PM -0700, Linus Torvalds wrote:
-> On Thu, 25 Sept 2025 at 18:31, Kees Cook <kees@kernel.org> wrote:
-> >
-> > I can have an opinion about the relative safety of holding pointers that
-> > can't be safely dereferenced, though. :) But yes, I've long since lost
-> > the argument that C should avoid these kinds of past-the-end tokens.
->=20
-> The thing is, the "start+len" model is actually *safer* than the
-> "start+len-1" model.
->=20
-> It's safer because it's simpler and doesn't involve the whole
-> "subtract one" (and then when you have the "past the end" it's also
-> easy to calculate "how much is left").
->=20
-> So it's simpler, and it's explicitly supported by the standard.
->=20
-> It's also more strictly correct, because "start+len-1" is technically
-> not a valid pointer at all. The C standard makes the "past the end"
-> case explicitly valid, but not the "before the beginning".
->=20
-> Now, I'm the last person to say that the C standard is always correct
-> - there's a lot of garbage in there, but in this case it also happens
-> to match the notion of "this works".
->=20
-> Because the "pointer to the last byte" model DOES NOT WORK.
-
-So far, fully agree.
-
-> In C, NULL is actually a valid pointer for zero-sized elements.
-
-This is only valid since very recently.
-
-Remember that 'NULL - NULL' is (or was) Undefined Behavior.  That
-operation doesn't result in 0, per the standard.  NULL < NULL is (or
-was) also Undefined Behavior.
-
-Consider this innocent loop:
-
-	end =3D ptr + size;=20
-
-	for (p =3D ptr; p < end; p++)
-		*p =3D 0;
-
-If ptr were NULL (trying to represent a zero-size array), we'd at least
-incur in one NULL < NULL operation.
-
-However, a unique pointer, as returned by glibc malloc(0), would be
-a valid pointer, and p<p would be perfectly valid.  p-p would also
-perfectly result in 0.  Of course you can't access p[i] for any i>=3D0,
-but that's true of any object.  If you have an array of 2, you can't
-access p[i] for any i>=3D2.  Everything is consistent with unique
-pointers.
-
-So, the whole model of malloc(0) returning NULL as successfully
-allocating 0 bytes is broken.
-
-Recently, the committee decided that memcpy(3) would accept NULL if the
-size is 0, and I'm not sure if they also defined the behavior for any of
-NULL < NULL or NULL - NULL.  I'd still be careful using NULL to
-represent a zero-size array.
-
-> Yes, really.
->=20
-> The C standard says that "malloc(0)" can return NULL, without it being
-> an error. So the tuple "NULL, 0" is actually a perfectly valid
-> "pointer and length" pair, and one that you may actually get thanks to
-> how malloc() works.
-
-This is something I want to change.  malloc(0) returning NULL is
-terrible.  realloc(p,0) returning NULL is even more terrible.  And by
-terrible, I mean it has caused remote-code-execution exploits.
-
-<https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3621.txt>
-
-> Obviously you cannot dereference a zero-sized object, but zero-sized
-> objects aren't "wrong" per se.
->=20
-> Now, I happen to believe that the "return NULL for zero sized
-> allocations" it's not a great model (it also makes error checking more
-> complicated). So the kernel kmalloc() function actually returns a
-> different pointer that cannot be dereferenced (grep for
-> ZERO_SIZE_PTR).
->=20
-> But my point is that "ptr+len" actually *works* for that case.
->=20
-> The "ptr+len-1" loop thing you gave as an example not only is invalid
-> C for zero-sized cases, it simply does not even work at all for the
-> NULL case.
->=20
-> Your example loop of how things should work IS WRONG.
->=20
-> Yes, it happens to work as long as you never have zero-sized things,
-> but it really is a bad pattern.
->=20
-> This is not "opinion". This is just a plain fact about how C works.
-> "start+len" is well-defined. "start+len-1" is NOT.
-
-Agree.
-
-
-Have a lovely day!
-Alex
-
->=20
->                Linus
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---ktuk3iap3hmygfsz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWTvkACgkQ64mZXMKQ
-wqmaIw/+MAcy2ospUQpsCvwNAYYYYMXAEwWw1Sq8i5mQfXKhDEHukb3tWNfH3oM/
-NxYPzYnFV9D6zlnhwg7zKfrFPyI6clhmPQ6GwQ7mbyV0V6sADePRlWZ3LzZ5sOuN
-IqLLagbzzduXITCxqaJ1PiPGXtrx9vAjruxqTC0sbRxF794ZpLgpHOmxpdfm7FpQ
-3AlgIzHdsyrVE0pButr3C2GACtfqh9HyI0EMvK4Wu1F0jiFubw7gOQSfD12pdhfj
-SJQ681DEkUDzsZwWHcppK62sq1Nsn6LGB1aMMdsaOupBRPq8Q9IT/et/LA2a+msD
-u85GVgIxjmkpBEhdu1EvEbua3oKJ+EBDLaOewK0g11W411iP6nmXq9aljoV843XZ
-FGFpaQJWrrq6AqD+urgNFvzG2HynszPeywcFPGfWF+/+iZn9F/AmOmNXhFXEHGTH
-9Bo2vFxCMe0cCCE1HwVUSPVNarOWie0BjlrORKtiLDDDS1daE+yNecrBt/TE0l0V
-PYJat3pm1BBo0D4IzURAuimiRnTYWNW0Q9YMJIBU+ipnjxWcd1EfiIE9lRuqsIXd
-3fSznKiIUw0yc+l21nLdYfgNOEsxfgwA3mFVR+11i8rAXOifbUVJ3Vc2+SsaZuNe
-Ci1E2S2fGEWYCF+ObbdNBbq1P501Y16mjrMd5BID/yJWxSJXsxc=
-=VLnj
------END PGP SIGNATURE-----
-
---ktuk3iap3hmygfsz--
+-- 
+js
+suse labs
 
