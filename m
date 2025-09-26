@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-834700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3A2BA54F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52822BA550C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD371BC3874
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0A24C2145
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF732BEC23;
-	Fri, 26 Sep 2025 22:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2624830CDA6;
+	Fri, 26 Sep 2025 22:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqq2zPpW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwHT7WeU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635192BCF4C;
-	Fri, 26 Sep 2025 22:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BABD29C343;
+	Fri, 26 Sep 2025 22:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758925213; cv=none; b=reF2wHdp4nzvkelEgBloEhKOsI0/ihY4ZgEipIEka+iadHQUSNYEG6eYbLlbBFnCzMqLf8ZzalsF5OYqqVSZhqtQanLfWbiZOiFHt9D0bwse7Sw/M8/UKVS1RtfesvjiNsyfH8B4sPhtBbXk1pOV4VyNKZyR0BLmFxy2ev2F4GY=
+	t=1758925229; cv=none; b=W1TRGL+fglU28gcPOm1voFcJBf2aYisQ2nofuXbZn2T1Gwggc2yvHhF54cNkrrImsT+7zB9FPKALCL3i3jJGLN4tLa7IfCKO1DVVWOS9ZXVV4s9KNieQlmJ1JBShgTCtNPmQlkRwGkt/j1b2I43x5sh9WwZKQzbMUf/Bi4pY0LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758925213; c=relaxed/simple;
-	bh=SKOH/WVgfGEs9IGZxC/aPLizzJJmWJs8ehDW/5dRvd8=;
+	s=arc-20240116; t=1758925229; c=relaxed/simple;
+	bh=0lh+FBpD7SxUWHD4VLefzWfvECsoVn911lKbXf+ZeS0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KJHefoVBo4Uz95MP6grK3omBI1FyOSCcZH9I2UEODg8p+nCxfwH8knT/wvchUo9b2jMTniDBB1BpZUdZ0Qt5hi4pdVPZ2xw1Is9Y6gBh9oaf1DFMASAicdrRKx661imTsutWv7cVByR/chVEtFpjo5a/ff/Pvz3s4K3arhaAqDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqq2zPpW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C2FC4CEF4;
-	Fri, 26 Sep 2025 22:20:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JDhG7EgdqLc0ouuKN+mClNM8bVABWeeq3p51qQ3gvTPpyZVqrvmUaxFTf5L89eb0vW2gC+eB6ZrP5q2wRiLS2iD1dyhfM1PuMoFdQmfstGXCWCfXre07XpZqUu1+0MbKhbg9C89k08sA5gHGM8K0+3fwt2QLcu/VrMqdtem1fE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwHT7WeU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01A15C4CEF4;
+	Fri, 26 Sep 2025 22:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758925213;
-	bh=SKOH/WVgfGEs9IGZxC/aPLizzJJmWJs8ehDW/5dRvd8=;
+	s=k20201202; t=1758925228;
+	bh=0lh+FBpD7SxUWHD4VLefzWfvECsoVn911lKbXf+ZeS0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bqq2zPpWVAoQxzrXkdOQUt+0rWR2t7DqLIvT0mpKn/G3rhn/dEKWKrNH/5yMFRPux
-	 Wgnxy/A/URET6FvbEZn2SfPCBunXmZzqaE8BIKkc+Cp13KeheQFZ9f6PI+OpoeElzL
-	 aPCUm/2oB5bng93xmfvfQgGlw4rvea2/97yC2YCD/Q1rckOl+6h1U0zQ49BYqeiQt6
-	 qnxDYvca2G9YoutN4QuigAeToeIrc4Zwe2zPKUQ5GEyodZwjjQWgtb8wKtrGIrDXUU
-	 7xAUNDKkxtRnRtjHpc1B2GxboViQZ0e23zDxHZx4So6Sabz0r0/4bfO/xwZyTee2fx
-	 +EY+CGgKW4LoA==
+	b=qwHT7WeU1tqyjTWjmSWs+g5N8u995+kqybrS5kbx0thc6PZuGEOV8IQQMouxLeG8d
+	 d8QcI10Jt6wRVMQEuOath+HDnaN12IloSG7l05Zhxi/pqGEpQ3OOEV7pGvjCyuIw1W
+	 V4RdzZFoNiTZ30S1Spddw2JDyHK50dQf3mnU0KHna+tCM1FUUiEWNBZziM/XujiPx3
+	 ETwVMQCuX9LYK0qZUHwQerZobvs75SRGeECoB2sCUKD55HPbSycB8O62IsKVwAC2TY
+	 yvdw1yIPMQ9WE6C/pickTzVLf3ydSUEsUWhxTCCKHyWYxujQD9bNNQYhIr03liS3CY
+	 lTMubccmwECow==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC4A39D0C3F;
-	Fri, 26 Sep 2025 22:20:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E3539D0C3F;
+	Fri, 26 Sep 2025 22:20:24 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: enetc: Fix probing error message typo for the
- ENETCv4 PF driver
+Subject: Re: [PATCH net-next] dibs: Check correct variable in dibs_init()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175892520824.77570.5375385275136011763.git-patchwork-notify@kernel.org>
-Date: Fri, 26 Sep 2025 22:20:08 +0000
-References: <20250924082755.1984798-1-wei.fang@nxp.com>
-In-Reply-To: <20250924082755.1984798-1-wei.fang@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, Frank.Li@nxp.com, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175892522299.77570.1577688973517973113.git-patchwork-notify@kernel.org>
+Date: Fri, 26 Sep 2025 22:20:22 +0000
+References: <aNP-XcrjSUjZAu4a@stanley.mountain>
+In-Reply-To: <aNP-XcrjSUjZAu4a@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: julianr@linux.ibm.com, wintera@linux.ibm.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 24 Sep 2025 16:27:55 +0800 you wrote:
-> From: Claudiu Manoil <claudiu.manoil@nxp.com>
+On Wed, 24 Sep 2025 17:21:17 +0300 you wrote:
+> There is a typo in this code.  It should check "dibs_class" instead of
+> "&dibs_class".  Remove the &.
 > 
-> Blamed commit wrongly indicates VF error in case of PF probing error.
-> 
-> Fixes: 99100d0d9922 ("net: enetc: add preliminary support for i.MX95 ENETC PF")
-> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> 
-> [...]
+> Fixes: 804737349813 ("dibs: Create class dibs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/dibs/dibs_main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - [net] net: enetc: Fix probing error message typo for the ENETCv4 PF driver
-    https://git.kernel.org/netdev/net/c/c35cf24a69b0
+  - [net-next] dibs: Check correct variable in dibs_init()
+    https://git.kernel.org/netdev/net-next/c/231889d9b626
 
 You are awesome, thank you!
 -- 
