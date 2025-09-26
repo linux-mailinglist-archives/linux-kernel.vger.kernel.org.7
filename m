@@ -1,154 +1,81 @@
-Return-Path: <linux-kernel+bounces-834407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D7BBA4A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE442BA4A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3B41BC76A8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61374C67C4
 	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4A2270EDE;
-	Fri, 26 Sep 2025 16:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6972E261573;
+	Fri, 26 Sep 2025 16:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJkel49m"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="skDDhUwp"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AB424338F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2C224DCE9
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904124; cv=none; b=fSVSUBf0Rj5YEEi5cHazUvm9joLdQ4EhTjjg6zTENXSFUOqq0J2L8pQgCa5B1cNtfIM1QrCjAuvHGZqP6NoYjVWA4Hu/lyPwNdb0ClMwRoSLprN9yNn3aRi46yGF+SFkfstBVEh6/qBdvgGPefr89BxMyqljyw+t3r94tzMl0/0=
+	t=1758904196; cv=none; b=O1blKGmfGfvTy1YeTN9RXBSN6LM4qAtV0jRhdnieYLdadkymG4u164CNQUBPIVDCoYmr1jXmlausC/sJ4Diz7OFDAysS5i0I/4P27XgJc9y3IHfxnSofkCVxJDuNMxNlQySlDMEzrkjMVLsdoo+ZZ0yZ1lr6z5m/fQDy2KQj8u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904124; c=relaxed/simple;
-	bh=advGB0s4cY+Eij/iD8U4Na+qAHs8pdRd6nx34nKFrFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M2XnSomYmXtat68a7VYRmOVnOVL2wtDlCP4zxiqg+JiSuWL7xlYEXek7DPKIAS0V0YMie9uhXjqaUqKTIgvnHCKUyrgqPOcJA5EE0uC6bmlucD2Xsufpl7jkl19DxWN9pYkqJqLyInpU47ZtkkLAyeqynrPahqeEGZQ7e1KcviU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJkel49m; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so2792040a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758904122; x=1759508922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=17SdlbsrW/H1oAGhyPo1vRPjIhKSOB2gzK7KjETew8g=;
-        b=aJkel49m22/7RXgjQEiTwgVHHdEqo3rlyx0C0kk9t74ov7a+RFJoDRRrKG75NswkZs
-         /llklE2NCccXLqnG3WZAqgoxVPoZ/w5FqM1Tik6EOIsbhBCAXLXm12ewCag2fbBn6pB4
-         mbdZNpPAcGYQ/rkAg1TRbWZavykJB/ZxaEy7iefU4YxCZBLOXTiExMGkdBFl+HmdSZ7P
-         HX++vjTw/PLTShLl/bx1KJNetNyZjYspQusDSZEiaJDJc3/1ajd2xhi5jNhOfcHBMgJi
-         VPHi8YrmKsySExBGfPPGG7FUAdhQdUHcXXFljZPsKr1qvbPrdNPsBfNe3g+pNlEdkm/n
-         AuoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758904122; x=1759508922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=17SdlbsrW/H1oAGhyPo1vRPjIhKSOB2gzK7KjETew8g=;
-        b=n1qKD2YVyisYNethZYUfQbnUJ6mV2QKI2xNUgNO72/X/xMOPNbq1XJpH+oUf5tZ/CA
-         TFZzRt5wubRJiVgV3eqDTcXuLg9Q3oqqSpZA0woyKw5rR/v+IHWlUZ4WRxXNMNg6S4aW
-         nO4UfXNdV1BpANC1U8Dadsh7vXb3hS6wHWIZT9dCZ8ovMdU6SNCcqh9InGDpUxap1GKq
-         zWlyzAxcbny/TrZiYi4oQP3JuyJX0dNJbyYIGsjMrPNjQLNmg0c4eSMwCpPpzQKTzAMx
-         Gh0ZbO7rvx//lYHkbUQrEpDHdX46JBdn98hdf8lN+N3/0zddO/EN5QnbnBWWW9yjVWK+
-         lNuw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5DBPXc99RcuRxUFV+yaHF0AQ2gYH6djAd/V6XEicBIGoSkTWFIzEi/nKe1lF8vr2SBbRpZBWDiuSdW7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjgsFBasOL9EoZmxTuLBkCkOKp9uu02VDG7xSFK1BY3/3wZHDX
-	xnivW0aepK0gib38Th1BbUts8ow3CW8VHGWpocM3X4YkjM9VlX6/7gd/+sjKeBMSBmET84YOZ5y
-	E13AF5mu0+B0VaoQRiWxC6COQxyqt4YA=
-X-Gm-Gg: ASbGnct559UDPGgW3+kgWc/aRY338GgCCs4iO0OgJ9bZqYSeTWKNjHeZ/YMs4hE7NDF
-	75i4F10TAj3hPgq8yWPdsN3uX7fBinIbvhbSdZ+n/vOiCEChdpRUU6qKN5/rrDzOjLL+s7g3zFg
-	2XiFg6LPHXWIJgYDKMILtXPg0Il9ay6maalX7TP3BHezSRTcafR1b3S6+r9rkBD3Ter91vwfB1q
-	j3AcqqmZ4EcKtPfAoe2mtoRCghUBN0tF9rAH3+hDea3tRUaPdA=
-X-Google-Smtp-Source: AGHT+IFP1pZQQc/fe1s5lC9WTMOccd345qaOrvak7xLKmHiYtcellclXpMJlF7A8FJF338xuOE/Uc1mneQkNtUiDrKk=
-X-Received: by 2002:a17:90b:4a01:b0:32b:6eed:d203 with SMTP id
- 98e67ed59e1d1-3342a2b126emr9404474a91.24.1758904122505; Fri, 26 Sep 2025
- 09:28:42 -0700 (PDT)
+	s=arc-20240116; t=1758904196; c=relaxed/simple;
+	bh=pXZMnjw+Sy9OuF5bFWxCBJB/q1PalvTkN3dKPnTWL5s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gMiu5E0Qm24UI0EYt/EhzO7760exVnox8uo1BScFGkAv8nsiFZSf0h2jDkaOTiDKPF5oWp39xaICP4kFM4cYBo3uxPHQW14Li2nFnNPfyPTE5IaoO9YYaUJ5px3EVVzvWe9B36RltEpCh/Y7f0Hovu7pxSVp1kCgO/53xJco1Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=skDDhUwp; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1758904194;
+	bh=pXZMnjw+Sy9OuF5bFWxCBJB/q1PalvTkN3dKPnTWL5s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=skDDhUwpJ28QhFf/DSEnPG5i/j3L4lkVN7HJLxmnX4uQxrTIFaawx6ZJ0RYaqdB8P
+	 TX2qnBt3jCnEEZntTEo9pqbumFSpzucw40GmAk3mt2XUuX0BlDUT7m+kowp6/xsUBs
+	 Vt5Gf6ITs6DFEN4o42ynwJyrLtOXnNVSwUntSpBs=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id C2062402AD; Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id C0E204028E;
+	Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
+Date: Fri, 26 Sep 2025 09:29:54 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Yang Shi <yang@os.amperecomputing.com>
+cc: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com, 
+    akpm@linux-foundation.org, catalin.marinas@arm.com, will@kernel.org, 
+    carl@os.amperecomputing.com, linux-mm@kvack.org, 
+    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: hugetlb: avoid soft lockup when mprotect with
+ PROT_MTE
+In-Reply-To: <20250926162034.1785899-1-yang@os.amperecomputing.com>
+Message-ID: <1038c7c7-81d6-f273-6fa1-93eb7206d5ed@gentwo.org>
+References: <20250926162034.1785899-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922131148.1917856-1-mmyangfl@gmail.com> <20250922131148.1917856-3-mmyangfl@gmail.com>
- <aNQvW54sk3EzmoJp@shell.armlinux.org.uk> <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
- <aNREByX9-8VtbH0n@shell.armlinux.org.uk> <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
- <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
-In-Reply-To: <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Sat, 27 Sep 2025 00:28:05 +0800
-X-Gm-Features: AS18NWC4VpC0VraXX2b7ElF7Q9xckDyqxA2rIp_ujgdQGGcV--mnzBcfmdWMe7A
-Message-ID: <CAAXyoMM3QG+zWJQ8tAgZfb4R62APgBaqaKDR=151R7+rzzakCw@mail.gmail.com>
-Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce PHY_INTERFACE_MODE_REVSGMII
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
-	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Sep 27, 2025 at 12:09=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote=
-:
->
-> > > > How does the databook describe reverse SGMII? How does it differ fr=
-om
-> > > > SGMII?
-> > >
-> > > It doesn't describe "reverse SGMII". Instead, it describes:
-> > >
-> > > 1. The TC bit in the MAC configuration register, which makes the bloc=
-k
-> > >    transmit the speed and duplex from the MAC configuration register
-> > >    over RGMII, SGMII or SMII links (only, not 1000base-X.)
-> > >
-> > > 2. The SGMIIRAL bit in the PCS control register, which switches where
-> > >    the SGMII rate adapter layer takes its speed configuration from -
-> > >    either the incoming in-band tx_config_reg[15:0] word, or from the
-> > >    MAC configuration register. It is explicitly stated for this bit
-> > >    that it is for back-to-back MAC links, and as it's specific to
-> > >    SGMII, that means a back-to-back SGMII MAC link.
-> > >
-> > > Set both these bits while the MAC is configured for SGMII mode, and
-> > > you have a stmmac MAC which immitates a SGMII PHY as far as the
-> > > in-band tx_config_reg[15:0] word is concerned.
-> >
-> > So any conclusion? Should I go on with REV*MII, or wait for (or write
-> > it myself) reverse-mode flag?
->
-> Sorry, i'm missing some context here.
->
-> Why do you actually need REVSGMII, or at least the concept?
->
-> REVMII is used when you connect one MAC to another. You need to
-> indicate one ends needs to play the PHY role. This is generally when
-> you connect a host MAC to an Ethernet switch, and you want the switch
-> to play the PHY role.
->
-> Now consider SGMII, when connecting a host MAC to a switch. Why would
-> you even use SGMII, 1000BaseX is the more logical choice. You don't
-> want the link to run at 100Mbps, or 10Mbps. The link between the host
-> and the switch should run as fast as possible. And 1000BaseX is
-> symmetrical, you don't need a REV concept.
->
-> Also, in these cases, stmmmac is on the host, not the switch, so it
-> will have the host role, leaving the switch to play 'PHY'. I'm not
-> sure you could even embedded stmmac in a switch, where it might want
-> to play 'PHY', because stmmac is software driven, where as a switch is
-> all hardware.
->
-> So the hardware supports reverse SGMII, but it is not clear to me why
-> you would want to use it.
->
->         Andrew
->
+On Fri, 26 Sep 2025, Yang Shi wrote:
 
-Cause I couldn't make 1000BaseX work with qca-ssdk, so I can only
-confirm and test REVSGMII mode on my device.
+> When calling mprotect() with PROT_MTE, kernel will initialize MTE tags
+> for every single page in the affected area. Soft lockup was observed
+> when doing this for large HugeTLB memory area in our customer's workload
+> (~300GB memory):
+
+AFAICT this is a bug fix. The hugetlb path should be doing a
+cond_resched() like the base page code does.
+
+It is not MTE specific. If other processing takes a long time in the loop
+(setting up terabyte size mappings for hugetlb for example) then the
+softlockup could also be triggered on non MTE workloads.
+
+Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+
 
