@@ -1,163 +1,148 @@
-Return-Path: <linux-kernel+bounces-834594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F87EBA507F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4ACBA5062
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2049F4C5184
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8A61BC5C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85939288C27;
-	Fri, 26 Sep 2025 20:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABD2284669;
+	Fri, 26 Sep 2025 20:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkNwdfqV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjaLfnbx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38EC28469A;
-	Fri, 26 Sep 2025 20:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAF87A13A;
+	Fri, 26 Sep 2025 20:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758916879; cv=none; b=tYvSzoNO6qNppZ0ggaC7GZDtvuVTwYiZP+vhBemcCnXDVexoLWO0/64CQEUWik5JWwJo3wdZUA/SU1KmIfhG9PCjJzAHqzuHGDwuX6wtR7OXg5iJrf9rz5aK4O1Z6ctVhhsyuWj09ChjjTU5vlGflusqMtGX+9ESkBvr8Cpu794=
+	t=1758916861; cv=none; b=dRnnmLnCJczRKBA8asU5y5W8dEqPUwPY6hFLFQMgDZ/Ey+pN2HrLFEiWDQ9vNgnBwkYq/DvvZOheLmALnYk/PDedu4TZc014t/kcdQNqkUKVAJcZuUIQ+sojtalqfIU9wPRsaMeIzmusShUlsW7Uj6x1DJ+N7KHVo3pUtJqcb/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758916879; c=relaxed/simple;
-	bh=s4u1ER2G5qTcgAa2BrXgHbVJuzX/qyc7Q0c8Zmmx9f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfXr3Zk9YZ9EBSepuergMWnBpP5QlmeZTvKQb1iKCQPImfyeDTiPkIMwBAg2CNjJ4IvPSmOnnYdIjbJvJw5Z0KAXoBIfsI19KdaUNrcStLlcfNl/d+vBRfy1bQEaR2HOVV3V+y1cZp0OsqsYhiW6FXKS3JEBZzuwC2ET82L/dLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkNwdfqV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1549BC4CEF4;
-	Fri, 26 Sep 2025 20:01:18 +0000 (UTC)
+	s=arc-20240116; t=1758916861; c=relaxed/simple;
+	bh=LmM6ig4MOGV4lcn/w+S1PNw5phmfSGuH7K+di1MOKA4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nIEusxCUddRnp8WlB6czEz5/aJioz0vZpnK1fYP7oIUcKIocG80Rd+/ESxEd0XKRqYQjocCZS/nPku/miSqHdTumMK7BgW0M1xTHTqll77tSLbWDJsbcooeAR+dsc1ySgTrbfmrfFNTI7ax6C2me7ZpWew2K5Dt4uGiGouxuaRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjaLfnbx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F7C1C4CEF4;
+	Fri, 26 Sep 2025 20:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758916878;
-	bh=s4u1ER2G5qTcgAa2BrXgHbVJuzX/qyc7Q0c8Zmmx9f4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pkNwdfqV6raOgekO0YEev2tOKM2O8uZDJyOFxlqnw+ajFnms1NvPaSwvhLVDVeSOZ
-	 vT+WKhZYxr+40TpkxK+xb6q6VAYzAiAFwb6j6/qBPNAiJLPEnFs2ZDhONa0l26xGdc
-	 OzL+QMIZMt5I/9t7OnWuFhs+OnSDFHHagUcopfLGmaTeoVa7g4agqtJArZofzX2Yzw
-	 cgZjYIlJQ4+NDPNKVfvyhma0fUCHOSLOIQVazUsWkkTYVFNSyuwF0o/auNNWiMioda
-	 jaD1CzTkxkQvsGksayGf3tlEoxkR4NVBv9OYyWSUk9PPjmBFOxUcV5CdtNkpislbL7
-	 2cz0HDSHRGFEw==
-Date: Fri, 26 Sep 2025 12:59:58 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and
- move SHA3 to lib/crypto
-Message-ID: <20250926195958.GA2163@sol>
-References: <20250926141959.1272455-1-dhowells@redhat.com>
+	s=k20201202; t=1758916861;
+	bh=LmM6ig4MOGV4lcn/w+S1PNw5phmfSGuH7K+di1MOKA4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=NjaLfnbxgmQJvJztY7ncapArMYJ4hE3ilw/Tyb8w5GWm6Hc5YOHpUhta0+q1QNEtj
+	 qcgpq3pyyGAYEEaW3wIjFTCK35m01Qfsrtm6wojA/RR11tSnL6kHuzeEiCqnEHWJfs
+	 RKd/Ybcty7YZl4sZtkoImdQ6cvXNms+tKhILliQW6yaUL+oKuxuiqBohOPzom9voxQ
+	 JLe5hqqDkqkGgzK/CzzDHUAxGREQHAgr9RmfSfdqetmiRYW9nrvBvLKEey0a0T0pAZ
+	 6NHOAmlm+1TAHEZIwzaX/JYjjOpJrUM5uvpB6wTYhOQWSVa+l771jPeIzbCigdjvQ2
+	 NYNFa7sq6+5tA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v3 0/2] accel: Add Arm Ethos-U NPU
+Date: Fri, 26 Sep 2025 15:00:47 -0500
+Message-Id: <20250926-ethos-v3-0-6bd24373e4f5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926141959.1272455-1-dhowells@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO/w1mgC/1WMQQrCMBBFr1JmbSQzJWpceQ9xkaaTNiiNJCUop
+ Xc3LRVx+T7/vQkSR88JztUEkbNPPgwF6l0FtjdDx8K3hYEkKXlEJXjsQxK1a9taszs41FC+z8j
+ Ov9bO9Va492kM8b1mMy7rViDaChmFFNaiVUbapnHN5c5x4Mc+xA6WRKafdkL8alQ0Q6idVWS0+
+ tfmef4A8IKvg9IAAAA=
+X-Change-ID: 20250715-ethos-3fdd39ef6f19
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, 
+ Daniel Stone <daniel@fooishbar.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org
+X-Mailer: b4 0.15-dev
 
-Hi David,
+The Arm Ethos-U65/85 NPUs are designed for edge AI inference 
+applications[0].
 
-On Fri, Sep 26, 2025 at 03:19:43PM +0100, David Howells wrote:
-> I have done what Eric required and made a separate wrapper struct and set
-> of wrapper functions for each algorithm, though I think this is excessively
-> bureaucratic as this multiplies the API load by 7 (and maybe 9 in the
-> future[*]).
+The driver works with Mesa Teflon. A merge request for Ethos support is 
+here[1]. The UAPI should also be compatible with the downstream (open 
+source) driver stack[2] and Vela compiler though that has not been 
+implemented.
 
-I don't think I "required" that it be implemented in exactly this way.
-Sorry if I wasn't clear.  Let me quote what I wrote:
+Testing so far has been on i.MX93 boards with Ethos-U65 and a FVP model 
+with Ethos-U85. More work is needed in mesa for handling U85 command 
+stream differences, but that doesn't affect the UABI.
 
-    First, this patch's proposed API is error-prone due to the weak
-    typing that allows mixing steps of different algorithms together.
-    For example, users could initialize a sha3_ctx with sha3_256_init()
-    and then squeeze an arbitrary amount from it, incorrectly treating
-    it as a XOF.  It would be worth considering separating the APIs for
-    the different algorithms that are part of SHA-3, similar to what I
-    did with SHA-224 and SHA-256.  (They would of course still share
-    code internally, just like SHA-2.)
+A git tree is here[3].
 
-So I asked that to prevent usage errors such as treating a digest as a
-XOF, you consider separating the APIs.  There is more than one way to do
-that, and I was hoping that you'd consider different ways.  One way is
-separate functions and types for all six SHA-3 algorithms.
+Rob
 
-However, if that is not scaling well, then we could instead just
-separate the SHA-3 algorithms into two groups, the digests and the XOFs:
+[0] https://www.arm.com/products/silicon-ip-cpu?families=ethos%20npus
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36699/
+[2] https://gitlab.arm.com/artificial-intelligence/ethos-u/
+[3] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git ethos-v3
 
-    void sha3_224_init(struct sha3_ctx *ctx);
-    void sha3_256_init(struct sha3_ctx *ctx);
-    void sha3_384_init(struct sha3_ctx *ctx);
-    void sha3_512_init(struct sha3_ctx *ctx);
-    void sha3_update(struct sha3_ctx *ctx, const u8 *data, size_t data_len);
-    void sha3_final(struct sha3_ctx *ctx, u8 *out);
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes in v3:
+- Rework and improve job submit validation                                                            
+- Rename ethos to ethosu. There was an Ethos-Nxx that's unrelated.
+- Add missing init for sched_lock mutex
+- Drop some prints to debug level          
+- Fix i.MX93 SRAM accesses (AXI config)
+- Add U85 AXI configuration and test on FVP with U85
+- Print the current cmd value on timeout                                                              
+- Link to v2: https://lore.kernel.org/r/20250811-ethos-v2-0-a219fc52a95b@kernel.org
 
-    void shake128_init(struct shake_ctx *ctx);
-    void shake256_init(struct shake_ctx *ctx);
-    void shake_update(struct shake_ctx *ctx, const u8 *data, size_t data_len);
-    void shake_squeeze(struct shake_ctx *ctx, u8 *out, size_t out_len);
-    void shake_clear(struct shake_ctx *ctx);
+Changes in v2:
+- Rebase on v6.17-rc1 adapting to scheduler changes
+- scheduler: Drop the reset workqueue. According to the scheduler docs,
+  we don't need it since we have a single h/w queue.
+- scheduler: Rework the timeout handling to continue running if we are
+  making progress. Fixes timeouts on larger jobs.
+- Reset the NPU on resume so it's in a known state
+- Add error handling on clk_get() calls
+- Fix drm_mm splat on module unload. We were missing a put on the
+  cmdstream BO in the scheduler clean-up.
+- Fix 0-day report needing explicit bitfield.h include
+- Link to v1: https://lore.kernel.org/r/20250722-ethos-v1-0-cc1c5a0cbbfb@kernel.org
 
-(With "sha3_ctx" being used for the digests specifically, the internal
-context struct would then have to have a third name, like "__sha3_ctx".)
+---
+Rob Herring (Arm) (2):
+      dt-bindings: npu: Add Arm Ethos-U65/U85
+      accel: Add Arm Ethos-U NPU driver
 
-The *_init() functions would store the correct information in the
-context so that the other functions would know what to do.  This would
-be similar to how blake2s_init() saves the 'outlen' for blake2s_final().
+ .../devicetree/bindings/npu/arm,ethos.yaml         |  79 +++
+ MAINTAINERS                                        |   9 +
+ drivers/accel/Kconfig                              |   1 +
+ drivers/accel/Makefile                             |   1 +
+ drivers/accel/ethosu/Kconfig                       |  10 +
+ drivers/accel/ethosu/Makefile                      |   4 +
+ drivers/accel/ethosu/ethosu_device.h               | 187 ++++++
+ drivers/accel/ethosu/ethosu_drv.c                  | 430 +++++++++++++
+ drivers/accel/ethosu/ethosu_drv.h                  |  15 +
+ drivers/accel/ethosu/ethosu_gem.c                  | 709 +++++++++++++++++++++
+ drivers/accel/ethosu/ethosu_gem.h                  |  46 ++
+ drivers/accel/ethosu/ethosu_job.c                  | 543 ++++++++++++++++
+ drivers/accel/ethosu/ethosu_job.h                  |  41 ++
+ include/uapi/drm/ethosu_accel.h                    | 262 ++++++++
+ 14 files changed, 2337 insertions(+)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250715-ethos-3fdd39ef6f19
 
-That would be sufficient to prevent misuse errors where steps of
-different algorithms are mixed together, right?
+Best regards,
+--  
+Rob Herring (Arm) <robh@kernel.org>
 
-Keep in mind that for SHA-2 we have to have completely different code
-and underlying state for the 32-bit hashes (SHA-224 and SHA-256) and
-64-bit hashes (SHA-384 and SHA-512) anyway.  We also traditionally
-haven't kept any information in the SHA-2 context about which SHA-2
-algorithm is being executed.  So that led us more down the road of the
-separate functions and types for each SHA-2 algorithm.  With SHA-3,
-where e.g. the 224, 256, 384, and 512-bit digests all use the same
-underlying state, a slightly more unified API might be appropriate.
-
-All I'm really requesting is that we don't create footguns, like the
-following that the API in the v2 patch permitted:
-
-    1. sha3_init() + sha3_update()
-        [infinite loop]
-
-    2. sha3_256_init() + sha3_update() + sha3_squeeze()
-        [not valid, treats SHA3-256 as a XOF]
-
-    3. sha3_update() + sha3_squeeze() + sha3_update() + sha3_squeeze()
-        [not valid, as discussed]
-
-(1) is prevented just by not having the internal function sha3_init() as
-a public function.
-
-Splitting the context into two types, one for the digests and one for
-the XOFs, is sufficient to prevent (2), as long as there's still one
-init function per algorithm.  We don't necessarily need six types.
-
-(3) isn't preventable via the type system, but it's detectable by a
-run-time check, which you've done by adding a WARN_ON_ONCE() to
-sha3_update().
-
-So, I think we'd be in a good position with just the digests and XOFs
-separated out into different functions + types.
-
-> This does, however, cause a problem for what I need to do as the ML-DSA
-> prehash is dynamically selectable by certificate OID, so I have to add
-> SHAKE128/256 support to the crypto shash API too - though hopefully it will
-> only require an output of 16 or 32 bytes respectively for the prehash case
-> and won't require multiple squeezing.
-
-When there's only a small number of supported algorithms, just doing the
-dispatch in the calling code tends to be simpler than using
-crypto_shash.  For example, see the recent conversion of fs/verity/ to
-use the SHA-2 library API instead of crypto_shash.
-
-- Eric
 
