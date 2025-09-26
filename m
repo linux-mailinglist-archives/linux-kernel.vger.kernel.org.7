@@ -1,142 +1,69 @@
-Return-Path: <linux-kernel+bounces-833729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C8CBA2DF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D3EBA2E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35BE17A2025
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:59:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3372D1894CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEC028C03D;
-	Fri, 26 Sep 2025 08:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E996728BA83;
+	Fri, 26 Sep 2025 08:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehZazaXU"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D2725C711
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="kH3JhuuO"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553321D6AA
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758873634; cv=none; b=WdTg6mbp4UvCj6StJyARTtP7jpCMOihavWel5EtSL+eS3aie389cSGMm8dmzSLDnz8txK0dZOURfsclJm/GGEdiCJCvbc9GtrA7yHIdtZZx6pLUyna18ZvqYLvm/v66XTzSBBj+ESw4pcVn2gVRgh0zpP9H78ZKcEbpvRd8AUUU=
+	t=1758873810; cv=none; b=kJlZ+vTDABkDdFVboOHNDWVEYqjA6Ee3Ixgbc2g8L5XHjDX1fa7hkI5y1JOu/xhECDsmKaoYsukHlFCSCwhMQuWMDrPToAPwsumxti3N1YatjQlWNSOrY8LvqyMoThyOtaZQIEJo3BmWXnFODk8XES0E2SpdM1Ngg0a8jqySbps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758873634; c=relaxed/simple;
-	bh=uKv781t5pHxGX9XHdWBHGON9HVERC0KRbzcEdEyQXDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ChF08LTLmN0Vm4KoORc4HwDWXtLZpw/6eTxoYF+QGjgSbDbK8EIVBGfUD0nR31mT+TaYPdcTlIHCtz3CftsqUJpoSB9HEE+UQBOl8v6/X2lGwkWH0qnFN7d5Tih7p9PB1BprAWg4fmx1JxlcT4dr4fCux/6h/qSKTv0GORd/1O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehZazaXU; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3fb179b398fso252926f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:00:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758873631; x=1759478431; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Iu0F1mpJxkFZwruVTis8t8NuagO8uvem8I8R547GH8=;
-        b=ehZazaXUgdfxqtOEp3DjAUVmzKXPtmMOGUFz/v9Wx0T6rquzHgEFJ+YSqHmT8ExDSL
-         Mu0b62zd0iKycRSDgh+ew3ZQ4tsqcYlG4IoMkyaUNVpSbyAyR7z2ZEQFZ4Us0vzpApnO
-         jlo+Zq9azq6fKqpJ1WdiqtezFOawJVJaqU8d8nWPGihIwITmTG4OyMU2FPs84ynMre/J
-         J/Ba0y6hHN9hsBnZHAzWUtcIPXrwrMpLz0L1lKcRUVcunNQ4GpOKv1j8FMbVn3VCGdrK
-         sSiA144hNBEYukfeFKY0k+TggNXaurZENH/7unCeEwndVXUPPjf5ldiyl82GDLpMRIDF
-         l6yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758873631; x=1759478431;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Iu0F1mpJxkFZwruVTis8t8NuagO8uvem8I8R547GH8=;
-        b=kcWLGv/6N91cjqUEON0H5Hg4w1U9WEdZthI9TAd4Qo/cIaY+wIMbDopFTq/fVzzO8m
-         hZO6nPtMnJm+qJIxa39963HVuUxnTUlTQ6gT1ih87HJFGPNZ5PebLDOSZ5piDK2HOkJj
-         Z2Ea7IR+SrtCrGus01GVJUFQ78QgSoJ67MJJhT0ZNxO19QwuddZKtPVH+g/ea2gtXQkt
-         7hAGC7UgDZZYbjmfWn8Qrt7uwg+/eo7NldP30PJ6kS6lhEjuAI/EIdo3g39EaRyYY6vY
-         8MX1x3S3HaKaU6qZIV5ZuNAsCVwR9FAApV8NJukPrNFfwBC/Z0v5qdGL5o8isiiB99WL
-         18Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHECrLKlHXtrRTqCenEpmUzCn/a6VWBHrtkjl1jk5N+MhzLommUGjimNt9kRpoHT9vJiPhCPrjorKNoCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxt+4fSZBU/5HVjt82ZDdPkWb0Y2ecxHHUhLmCwbDY61rXNj2U
-	z54OR80FeVQ7IYNQ+KvaxEQUQuWifcrGN8PWUwJq4HBPOXOoEJtPELOs
-X-Gm-Gg: ASbGncudcXmqz+CLu+zql/bV2aGY06xL7E68L19zBobv1k8x/uQ9D6Y+AZ/b0CtCHNn
-	7gaHp+7v/vgblUomo0880znDLAccInWCM0xfNulWTvE5N5XUSnKEUlWafSQ+t0I0yI9F6uy6DPG
-	JHLWt+K56xTSarlXR+EJV1wk+2iVJzK/uh36XbWXq3nCZvCRXkHOb/4xBqXjItj6BClK86QETSE
-	VanXatZMEs5ZenzqGuc9TzjSXsl40HGL85tiN7FnNinE2n1h1YHiEVcyoR/16V3NsQeLRS46bOc
-	O/DUVFRNu/0FeWrhaLX+5EZdKlPQPYN2UAkOSovOzw5964gdAbugJCPdWNtbmG1+CxDBYUTNAwh
-	lhxGZxcnm7goozh/3WOeGFAnJ76abqleP3daEzPgK
-X-Google-Smtp-Source: AGHT+IHNpFF3srU1saXcXVO6zTDT4O5u6j9Vyxp4h+sviEeunSEZcOR+GiZEhHwsuD8UAwncJOuzoQ==
-X-Received: by 2002:a05:6000:310d:b0:3fc:854:8b84 with SMTP id ffacd0b85a97d-40e455ca678mr3054531f8f.3.1758873630709;
-        Fri, 26 Sep 2025 01:00:30 -0700 (PDT)
-Received: from [172.16.20.151] ([41.229.125.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1bd14sm6212872f8f.28.2025.09.26.01.00.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 01:00:30 -0700 (PDT)
-Message-ID: <fcbdfd79-3996-47cb-9d91-ad049147d352@gmail.com>
-Date: Fri, 26 Sep 2025 09:00:32 +0100
+	s=arc-20240116; t=1758873810; c=relaxed/simple;
+	bh=aknss2c4TjsEbw0W4xTW3NYBRTnEebEtwOKbSYPdURs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzLlCHxctmbHR9aMZ0U9iig3HamNg/3byqqUSuSnHyjqY0BHgsyUpYvA+Gt7rRwQpOYiazGCoKqiyL8zYBxB0xLTiNmtUhi77bCaxB+oO/dZO4aePfyQKI1zeAK7D10KJyN3h6S01SBDfahS7NkYPBfAPXC6OTd+VSnkyDm5eRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=kH3JhuuO; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p54921b16.dip0.t-ipconnect.de [84.146.27.22])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 0456E5653C;
+	Fri, 26 Sep 2025 10:03:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1758873801;
+	bh=aknss2c4TjsEbw0W4xTW3NYBRTnEebEtwOKbSYPdURs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kH3JhuuOoYLh3s2thS1edOqEnGbkVbxEb1I05EXdxq3R2VozvMtz9wCxA8HvtiqqE
+	 smz9fpeewu9CK0EALC+RS4bReXfYhpYP+ChtSzZ2WDDb5tJsd+SPkoX0Hv9bgrGCYr
+	 WvxUFF/YKXwHKICn0S4rlnTj392lxw1ljY1chvCTb0hTerXcMfGH2WUmEYVNokkC0w
+	 BX3oBbBftUfOmpiRushz9VZ9GY6c1nEnnId+wnndkNQxGaoHtB4pQUd8XL0YYreCm2
+	 fG9PFv2P+ZOewBK/PIyqmAgYnZubDwiqQSSn8HDZkGBSb2LthwK7QkLdfGiz4LTyDn
+	 Mp6d8udCEZOZg==
+Date: Fri, 26 Sep 2025 10:03:19 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] [PULL REQUEST] iommu/vt-d: Fixes for v6.18-rc1
+Message-ID: <q444lw2d26oikxwmuasfbrb3mzeey53uvmk6ztmq3r2h6ie3qd@4hbemjg4kv6w>
+References: <20250926024130.157514-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] selftests/bpf: Prepare to add -Wsign-compare for
- bpf selftests
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, daniel@iogearbox.net
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com,
- ameryhung@gmail.com, toke@redhat.com, houtao1@huawei.com,
- emil@etsalapatis.com, yatsenko@meta.com, isolodrai@meta.com,
- a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com,
- vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
- gregkh@linuxfoundation.org, paul@paul-moore.com,
- bboscaccy@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- mrpre@163.com, jakub@cloudflare.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- netdev@vger.kernel.org, mptcp@lists.linux.dev,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com
-References: <20250925103559.14876-1-mehdi.benhadjkhelifa@gmail.com>
- <CAEf4Bzaf81OYLTzpN6E4ths_mN2gP29rMYBmbp7P2GqSMj8FbA@mail.gmail.com>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <CAEf4Bzaf81OYLTzpN6E4ths_mN2gP29rMYBmbp7P2GqSMj8FbA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926024130.157514-1-baolu.lu@linux.intel.com>
 
+On Fri, Sep 26, 2025 at 10:41:29AM +0800, Lu Baolu wrote:
+> Lu Baolu (1):
+>   iommu/vt-d: Disallow dirty tracking if incoherent page walk
 
-> I see little value in these transformations. Did we catch any real
-> issue here? All this type casting and replacement is just churn.
-> 
-> I certainly don't want such churn in libbpf, and I'd leave BPF
-> selftests as is as well. int vs u64 can have subtle and non-obvious
-> implications for BPF code generation (for no-alu32 variants
-> especially), and I think BPF CI already exposed some of those already.
-> 
-> I think we can live without -Wsign-compare just fine.
-> 
-
-I was convinced by [1] that this needed to be done not just for current 
-version of the code but for future code being more robust initially.I 
-have already done all the work and I can follow daniel's suggestion for 
-the next version.Otherwise,This means then that the TODO comment to add 
-that compiler warning in the makefile needs to be removed.
-
-Also I wanted to ask since the CI bot had success with my patch.What 
-does this [2] mean exactly.
-
-Thank you for your time reviewing and helping.
-
-Regards,
-Mehdi
-
-[1]:https://github.com/kernel-patches/bpf/commit/495d2d8133fd1407519170a5238f455abbd9ec9b
-[2]:https://github.com/kernel-patches/bpf/actions/runs/18006172526
-
-
+Applied, thanks Baolu.
 
