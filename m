@@ -1,573 +1,214 @@
-Return-Path: <linux-kernel+bounces-834187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1D8BA4247
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:24:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0466BA4298
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698A81C05A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:24:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB3567BA5D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4E82FC86B;
-	Fri, 26 Sep 2025 14:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9852FFDFE;
+	Fri, 26 Sep 2025 14:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQEC6Lpl"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgK3iC40"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFBF2FB0A9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B811B5EC8
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896371; cv=none; b=jOMM8Aw4AirEkBhuNPNe1IHoA2grWVUCzqPGsdcWNlBh9wC/Q3XAaUmrXdbc93uD2k0Kx7y8Qwy998QKfXgrTcvq8F9vkQhMoWeONnl0ejHDndkjuot2p4zXiHkpMLEopNuz18lCdlFxcTEyupx7xcHGZrgko6xpV9rUgwQqxYo=
+	t=1758896412; cv=none; b=VbttjGrMIe5f3OShmh9FuGF8E8ZWewpX+/uu/7jggMJxj/rCAauVyORu2o8++pbpIfqc4ZO/ONyyBdNgdqqXUS/tfbcC6h3GS01uy1pBwYhOQcLdsRWsAOjFjIVs4PslXBA+jr8xS4M7yULpbJ8ArX6jgYN1FZCWRDxPLWeWqt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896371; c=relaxed/simple;
-	bh=AFFdWPUAXAFNGiiOEJ3coICAhEAc2Pe4JDD1q1kvAsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z8sGnwrJPtDlm4mJyHuXKC5GxaUSQpF0wFht9l7qq+mQKBR5aZF/QczA1AGSiHmAEzSmWEIcIiBlw0DIqadeDb9bwWB98CkcCuvgcrkbb+En4Iz28r+ZSaRXEy0hsMnuGLPXCxj5uWnq/HnY2bhKg4RnNinFS/MqG8hPLAHz9kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQEC6Lpl; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4dca66a31f7so16116351cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758896366; x=1759501166; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UkNfR44T1+aQMXki6JhTMzsXZD4Y5zeYdM+FX7jC1nQ=;
-        b=RQEC6Lplq2Ua6dRSq4fQUzYnO/zK6IQfuNrn28qSLjrZCJH5R0LBYfNIgsWfAEqPz+
-         xjAxsWrmfDUb2HB17YdHFEwNap8AkpM4AgjPLO6o4u+I0ykTzfPkY0BCH0pQbTqnBqjY
-         FdG5S8RopxZ5Womk/j6NdCc0E+Z9TS9MrUIVfFQ+U0VCHoFAm1/hxSRtRiOe6gEpspFa
-         JeVZg8i82H6cbIOmzUZ11xsLgX51ICPk+CLrOaAXlDm3i4mdrEEOOFR8+Aw217YjqDTH
-         sMgOplgNO5lZRx9KAvMCN4p8EiIA/jlQrrYHVuMK13cYA4PHC1kre+yfrRe9/3XpMj1P
-         YrHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758896366; x=1759501166;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UkNfR44T1+aQMXki6JhTMzsXZD4Y5zeYdM+FX7jC1nQ=;
-        b=xSUOKORu0nD7qiFq1jaCkYUg8FWbZ98rnUFqJ9RhUmcpdfUJBWoLejb8t3D5eIm/z7
-         ESHz+mna+k2ylSFgFqGyNg4wu+h2JMs7PjYzW8oz+GbKE7KvW1Evhl4CbKN8JzqJMjyl
-         RMFhx+XqreQ1S5TLxRAYUKwK/BE35RBJooUoEWL616MXwBcilVUljcndAz/bHg3BpKhb
-         YItaVxbnvqfREE/YSOmAPWe4kDrL84DlMxUYWpSYh2jXbt885Ou2ju2Wjlj48akXaF/f
-         j08x/UNFD3RWFNaCszw8mQTwlVmfQ43qiLVPPCWVepXVIrOoyDKgmjPm8XHRgO8K0DID
-         NIVQ==
-X-Gm-Message-State: AOJu0YzTESKe9Eyj9GTw0zHqScUcGNuHsh6prCoXOAXYMZLuG5le85ZT
-	geMHg9NDHZtRSwmlK5SmggpWoLIPW6bPkycwDXYURJ3cNY4Q/9U/Axvo
-X-Gm-Gg: ASbGncsZH2zTnOmNvU2WATKp8FDOXlTvKrdmM8ErCZHCxwlOrO2VlaYeOmTYyJama+9
-	Y/29dhP2i1K4KqwJFUqQRmy3LXfzpoJvLnKBA33q1zCRo1LzFAEeOaDhlx8Mkr3oKflC6brML+z
-	hwHuSwCbLJC0tlEZzqoOVe4258Wm6dwTvgDc0Va5h0FYPf2Yr35MfwAQS62ttE8TpXMJre947il
-	i4+JRHwyC9vQOnxz2APZkrS/BDtgK1vR+QMjyQlUJjEJ/niTLbt/BNbQNaPWJiDZAfUqN9NpC76
-	hvYx3xV07gWfTcHJRvZSRn0CmpmMn/iWYlvB37vaFiVyj2l+fME5sORamg0BbdemzWttf2sSFqW
-	kST3zI/kLkvLQFgy87HTh1A03nM0HvNXSDmokKjr9hSMqA+pfQ9OR19b3ZrOUbIBIncVr
-X-Google-Smtp-Source: AGHT+IGODqsrQGtDZCGx0icngB4w/TaZU1Mpxmyd+O5pnNZPVLJSOQqzJ+8c4HQwg7u/RJ/qyoQEbw==
-X-Received: by 2002:a05:622a:2ce:b0:4d8:cb2f:7fac with SMTP id d75a77b69052e-4da4934ac23mr102100951cf.35.1758896366349;
-        Fri, 26 Sep 2025 07:19:26 -0700 (PDT)
-Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c341319besm286940985a.64.2025.09.26.07.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:19:25 -0700 (PDT)
-From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 7/7] auxdisplay: TM16xx: Add support for SPI-based controllers
-Date: Fri, 26 Sep 2025 10:19:08 -0400
-Message-ID: <20250926141913.25919-8-jefflessard3@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250926141913.25919-1-jefflessard3@gmail.com>
-References: <20250926141913.25919-1-jefflessard3@gmail.com>
+	s=arc-20240116; t=1758896412; c=relaxed/simple;
+	bh=PPiN8pq1LdwYIaUYStL8/OXBtkNaRwfRrT8tXpg2uJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=osA6EKG/8R7EbPBDzQ+4KsdDAOTDPRg0d40+yDzyu/yqsrDVgDQawxAnonju0JcYLH5lI/gl23fIebvKPzsTP3GQ+ygMqdMf+rUEphMwV/31c+pPRhrOPTTZEA3rKTpQVEgnRAvtael+GqOLXyLbDOF5Fck4Aw4DNNbq08m5T5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgK3iC40; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758896409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FZkVHZZVz949SgHPOq8NTiY1Q1JoUahrY4S3yaDuUdI=;
+	b=CgK3iC40gXnChyQ2WsUioEwU3vGia2X9byJXCywCA+tWqgJvE5zm+f3KVOOzQ9KJ3MmewP
+	7beaejJlt/sFVSbeGf+KCshaqOPKKLRIj+6+RnQfRo+RBXxOaM1UIdsgsqu9pjpFMhB+1F
+	GPek1nOKut6fZYVCCq7vTyAeQevOMoQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-D6_-F7m8NpCF8nW-yHeeVQ-1; Fri,
+ 26 Sep 2025 10:20:07 -0400
+X-MC-Unique: D6_-F7m8NpCF8nW-yHeeVQ-1
+X-Mimecast-MFC-AGG-ID: D6_-F7m8NpCF8nW-yHeeVQ_1758896406
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CEDB8180028E;
+	Fri, 26 Sep 2025 14:20:05 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.155])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2C8AB19560AB;
+	Fri, 26 Sep 2025 14:20:02 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: 
+Cc: David Howells <dhowells@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and move SHA3 to lib/crypto
+Date: Fri, 26 Sep 2025 15:19:43 +0100
+Message-ID: <20250926141959.1272455-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Add support for TM16xx-compatible auxiliary display controllers connected
-via the SPI bus.
+Hi Eric, Herbert,
 
-The implementation includes:
-- SPI driver registration and initialization
-- Probe/remove logic for SPI devices
-- Controller-specific handling and communication sequences
-- Integration with the TM16xx core driver for common functionality
+Here's a set of patches does the following:
 
-This allows platforms using TM16xx or compatible controllers over SPI to be
-managed by the TM16xx driver infrastructure.
+ (1) Renames s390 and arm64 sha3_* functions to avoid name collisions.
 
-Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
----
- MAINTAINERS                     |   1 +
- drivers/auxdisplay/Kconfig      |  16 ++
- drivers/auxdisplay/Makefile     |   1 +
- drivers/auxdisplay/tm16xx_spi.c | 397 ++++++++++++++++++++++++++++++++
- 4 files changed, 415 insertions(+)
- create mode 100644 drivers/auxdisplay/tm16xx_spi.c
+ (2) Copies the core of SHA3 support from crypto/ to lib/crypto/.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8a8a53efee52..5d5e5f01e8ed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25450,6 +25450,7 @@ F:	drivers/auxdisplay/tm16xx.h
- F:	drivers/auxdisplay/tm16xx_core.c
- F:	drivers/auxdisplay/tm16xx_i2c.c
- F:	drivers/auxdisplay/tm16xx_keypad.c
-+F:	drivers/auxdisplay/tm16xx_spi.c
- 
- TMIO/SDHI MMC DRIVER
- M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
-diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-index d48c2f18950e..61e5af8d0a3d 100644
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -560,6 +560,22 @@ config TM16XX_I2C
- 	  will be called tm16xx_i2c and you will also get tm16xx for the
- 	  core module.
- 
-+config TM16XX_SPI
-+	tristate "TM16XX-compatible SPI 7-segment LED controllers with keyscan"
-+	depends on SPI
-+	select TM16XX
-+	help
-+	  This driver supports the following TM16XX compatible
-+	  SPI (3-wire) 7-segment led display chips:
-+	  - Titanmec: TM1618, TM1620, TM1628, TM1638
-+	  - Fuda Hisi: FD620, FD628
-+	  - i-Core: AiP1618, AiP1628
-+	  - Princeton: PT6964
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called tm16xx_spi and you will also get tm16xx for the
-+	  core module.
-+
- #
- # Character LCD with non-conforming interface section
- #
-diff --git a/drivers/auxdisplay/Makefile b/drivers/auxdisplay/Makefile
-index ba7b310f5667..2485a3a6769d 100644
---- a/drivers/auxdisplay/Makefile
-+++ b/drivers/auxdisplay/Makefile
-@@ -20,3 +20,4 @@ obj-$(CONFIG_TM16XX)		+= tm16xx.o
- tm16xx-y			+= tm16xx_core.o
- tm16xx-$(CONFIG_TM16XX_KEYPAD)	+= tm16xx_keypad.o
- obj-$(CONFIG_TM16XX_I2C)	+= tm16xx_i2c.o
-+obj-$(CONFIG_TM16XX_SPI)	+= tm16xx_spi.o
-diff --git a/drivers/auxdisplay/tm16xx_spi.c b/drivers/auxdisplay/tm16xx_spi.c
-new file mode 100644
-index 000000000000..b305301f918c
---- /dev/null
-+++ b/drivers/auxdisplay/tm16xx_spi.c
-@@ -0,0 +1,397 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * TM16xx and compatible LED display/keypad controller driver
-+ * Supports TM16xx, FD6xx, PT6964, HBS658, AIP16xx and related chips.
-+ *
-+ * Copyright (C) 2025 Jean-François Lessard
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/device.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/spi/spi.h>
-+
-+#include "tm16xx.h"
-+
-+#define TM16XX_SPI_BUFFER_SIZE	8
-+#define TM16XX_SPI_TWAIT_US	2
-+
-+static int tm16xx_spi_probe(struct spi_device *spi)
-+{
-+	const struct tm16xx_controller *controller;
-+	struct tm16xx_display *display;
-+	int ret;
-+
-+	controller = spi_get_device_match_data(spi);
-+	if (!controller)
-+		return -EINVAL;
-+
-+	display = devm_kzalloc(&spi->dev, sizeof(*display), GFP_KERNEL);
-+	if (!display)
-+		return -ENOMEM;
-+
-+	/* Allocate DMA-safe buffer */
-+	display->spi_buffer = devm_kzalloc(&spi->dev, TM16XX_SPI_BUFFER_SIZE, GFP_KERNEL);
-+	if (!display->spi_buffer)
-+		return -ENOMEM;
-+
-+	display->dev = &spi->dev;
-+	display->controller = controller;
-+
-+	spi_set_drvdata(spi, display);
-+
-+	ret = tm16xx_probe(display);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void tm16xx_spi_remove(struct spi_device *spi)
-+{
-+	struct tm16xx_display *display = spi_get_drvdata(spi);
-+
-+	tm16xx_remove(display);
-+}
-+
-+/**
-+ * tm16xx_spi_read() - SPI read helper for controller
-+ * @display: pointer to tm16xx_display
-+ * @cmd: command to send
-+ * @cmd_len: length of command
-+ * @data: buffer for received data
-+ * @data_len: length of data to read
-+ *
-+ * Return: 0 on success, negative error code on failure
-+ */
-+static int tm16xx_spi_read(struct tm16xx_display *display, u8 *cmd,
-+			   size_t cmd_len, u8 *data, size_t data_len)
-+{
-+	struct spi_device *spi = to_spi_device(display->dev);
-+	struct spi_message msg;
-+	int ret;
-+
-+	/* If STB is high during transmission, command is invalid.
-+	 * Reading requires a minimum 2 microseconds wait (Twait)
-+	 * after the 8th CLK rising edge before reading on falling edge.
-+	 */
-+	struct spi_transfer xfers[2] = {
-+		{
-+			.tx_buf = cmd,
-+			.len = cmd_len,
-+			.cs_change = 0, /* NO CS toggle */
-+			.delay.value = TM16XX_SPI_TWAIT_US,
-+			.delay.unit = SPI_DELAY_UNIT_USECS,
-+		}, {
-+			.rx_buf = data,
-+			.len = data_len,
-+		}
-+	};
-+
-+	spi_message_init_with_transfers(&msg, xfers, ARRAY_SIZE(xfers));
-+
-+	ret = spi_sync(spi, &msg);
-+
-+	return ret;
-+}
-+
-+/**
-+ * tm16xx_spi_write() - SPI write helper for controller
-+ * @display: pointer to tm16xx_display
-+ * @data: data to write
-+ * @len: number of bytes to write
-+ *
-+ * Return: 0 on success, negative error code on failure
-+ */
-+static int tm16xx_spi_write(struct tm16xx_display *display, u8 *data, size_t len)
-+{
-+	struct spi_device *spi = to_spi_device(display->dev);
-+
-+	return spi_write(spi, data, len);
-+}
-+
-+/* SPI controller-specific functions */
-+static int tm1628_init(struct tm16xx_display *display)
-+{
-+	const enum led_brightness brightness = display->main_led.brightness;
-+	const u8 num_hwgrid = display->num_hwgrid;
-+	u8 *cmd = display->spi_buffer;
-+	int ret;
-+
-+	/* Set mode command based on grid count */
-+	cmd[0] = TM16XX_CMD_MODE;
-+	if (num_hwgrid <= 4)
-+		cmd[0] |= TM16XX_MODE_4GRIDS;
-+	else if (num_hwgrid == 5)
-+		cmd[0] |= TM16XX_MODE_5GRIDS;
-+	else if (num_hwgrid == 6)
-+		cmd[0] |= TM16XX_MODE_6GRIDS;
-+	else
-+		cmd[0] |= TM16XX_MODE_7GRIDS;
-+
-+	ret = tm16xx_spi_write(display, cmd, 1);
-+	if (ret)
-+		return ret;
-+
-+	/* Set data command */
-+	cmd[0] = TM16XX_CMD_WRITE | TM16XX_DATA_ADDR_AUTO;
-+	ret = tm16xx_spi_write(display, cmd, 1);
-+	if (ret)
-+		return ret;
-+
-+	/* Set control command with brightness */
-+	cmd[0] = TM16XX_CMD_CTRL |
-+		 TM16XX_CTRL_BRIGHTNESS(brightness, brightness - 1, TM16XX);
-+	ret = tm16xx_spi_write(display, cmd, 1);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int tm1618_data(struct tm16xx_display *display, u8 index,
-+		       unsigned int grid)
-+{
-+	u8 *cmd = display->spi_buffer;
-+
-+	cmd[0] = TM16XX_CMD_ADDR + index * 2;
-+	cmd[1] = FIELD_GET(TM1618_BYTE1_MASK, grid);
-+	cmd[2] = FIELD_GET(TM1618_BYTE2_MASK, grid) << TM1618_BYTE2_SHIFT;
-+
-+	return tm16xx_spi_write(display, cmd, 3);
-+}
-+
-+static int tm1628_data(struct tm16xx_display *display, u8 index,
-+		       unsigned int grid)
-+{
-+	u8 *cmd = display->spi_buffer;
-+
-+	cmd[0] = TM16XX_CMD_ADDR + index * 2;
-+	cmd[1] = FIELD_GET(TM1628_BYTE1_MASK, grid);
-+	cmd[2] = FIELD_GET(TM1628_BYTE2_MASK, grid);
-+
-+	return tm16xx_spi_write(display, cmd, 3);
-+}
-+
-+static int tm1628_keys(struct tm16xx_display *display)
-+{
-+	u8 *cmd = display->spi_buffer;
-+	u8 *codes = display->spi_buffer;
-+	unsigned int i;
-+	int bit, byte;
-+	bool value;
-+	int ret;
-+
-+	cmd[0] = TM16XX_CMD_READ;
-+	ret = tm16xx_spi_read(display, cmd, 1, codes, TM1628_KEY_READ_LEN);
-+	if (ret)
-+		return ret;
-+
-+	/* prevent false readings */
-+	for (i = 0; i < TM1628_KEY_READ_LEN; i++) {
-+		if (codes[i] & ~TM1628_KEY_MASK)
-+			return -EINVAL;
-+	}
-+
-+	tm16xx_for_each_key(display, row, col) {
-+		byte = col >> 1;
-+		bit = row + ((col & 1) * 3);
-+		value = !!(codes[byte] & BIT(bit));
-+
-+		tm16xx_set_key(display, row, col, value);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tm1638_keys(struct tm16xx_display *display)
-+{
-+	u8 *cmd = display->spi_buffer;
-+	u8 *codes = display->spi_buffer;
-+	unsigned int i;
-+	int bit, byte;
-+	bool value;
-+	int ret;
-+
-+	cmd[0] = TM16XX_CMD_READ;
-+	ret = tm16xx_spi_read(display, cmd, 1, codes, TM1638_KEY_READ_LEN);
-+	if (ret)
-+		return ret;
-+
-+	/* prevent false readings */
-+	for (i = 0; i < TM1638_KEY_READ_LEN; i++) {
-+		if (codes[i] & ~TM1638_KEY_MASK)
-+			return -EINVAL;
-+	}
-+
-+	tm16xx_for_each_key(display, row, col) {
-+		byte = col >> 1;
-+		bit = (2 - row) + ((col & 1) << 2);
-+		value = !!(codes[byte] & BIT(bit));
-+
-+		tm16xx_set_key(display, row, col, value);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tm1618_keys(struct tm16xx_display *display)
-+{
-+	u8 *cmd = display->spi_buffer;
-+	u8 *codes = display->spi_buffer;
-+	unsigned int i;
-+	int ret;
-+
-+	cmd[0] = TM16XX_CMD_READ;
-+	ret = tm16xx_spi_read(display, cmd, 1, codes, TM1618_KEY_READ_LEN);
-+	if (ret)
-+		return ret;
-+
-+	/* prevent false readings */
-+	for (i = 0; i < TM1618_KEY_READ_LEN; i++) {
-+		if (codes[i] & ~TM1618_KEY_MASK)
-+			return -EINVAL;
-+	}
-+
-+	tm16xx_set_key(display, 0, 0, !!(codes[0] & BIT(1)));
-+	tm16xx_set_key(display, 0, 1, !!(codes[0] & BIT(4)));
-+	tm16xx_set_key(display, 0, 2, !!(codes[1] & BIT(1)));
-+	tm16xx_set_key(display, 0, 3, !!(codes[1] & BIT(4)));
-+	tm16xx_set_key(display, 0, 4, !!(codes[2] & BIT(1)));
-+
-+	return 0;
-+}
-+
-+static int fd620_data(struct tm16xx_display *display, u8 index,
-+		      unsigned int grid)
-+{
-+	u8 *cmd = display->spi_buffer;
-+
-+	cmd[0] = TM16XX_CMD_ADDR + index * 2;
-+	cmd[1] = FIELD_GET(FD620_BYTE1_MASK, grid);
-+	cmd[2] = FIELD_GET(FD620_BYTE2_MASK, grid) << FD620_BYTE2_SHIFT;
-+
-+	return tm16xx_spi_write(display, cmd, 3);
-+}
-+
-+static int fd620_keys(struct tm16xx_display *display)
-+{
-+	u8 *cmd = display->spi_buffer;
-+	u8 *codes = display->spi_buffer;
-+	unsigned int i;
-+	int ret;
-+
-+	cmd[0] = TM16XX_CMD_READ;
-+	ret = tm16xx_spi_read(display, cmd, 1, codes, FD620_KEY_READ_LEN);
-+	if (ret)
-+		return ret;
-+
-+	/* prevent false readings */
-+	for (i = 0; i < FD620_KEY_READ_LEN; i++) {
-+		if (codes[i] & ~FD620_KEY_MASK)
-+			return -EINVAL;
-+	}
-+
-+	tm16xx_set_key(display, 0, 0, codes[0] & BIT(0));
-+	tm16xx_set_key(display, 0, 1, codes[0] & BIT(3));
-+	tm16xx_set_key(display, 0, 2, codes[1] & BIT(0));
-+	tm16xx_set_key(display, 0, 3, codes[1] & BIT(3));
-+	tm16xx_set_key(display, 0, 4, codes[2] & BIT(0));
-+	tm16xx_set_key(display, 0, 5, codes[2] & BIT(3));
-+	tm16xx_set_key(display, 0, 6, codes[3] & BIT(0));
-+
-+	return 0;
-+}
-+
-+/* SPI controller definitions */
-+static const struct tm16xx_controller tm1618_controller = {
-+	.max_grids = 7,
-+	.max_segments = 8,
-+	.max_brightness = 8,
-+	.max_key_rows = 1,
-+	.max_key_cols = 5,
-+	.init = tm1628_init,
-+	.data = tm1618_data,
-+	.keys = tm1618_keys,
-+};
-+
-+static const struct tm16xx_controller tm1620_controller = {
-+	.max_grids = 6,
-+	.max_segments = 10,
-+	.max_brightness = 8,
-+	.max_key_rows = 0,
-+	.max_key_cols = 0,
-+	.init = tm1628_init,
-+	.data = tm1628_data,
-+};
-+
-+static const struct tm16xx_controller tm1628_controller = {
-+	.max_grids = 7,
-+	.max_segments = 14, /* seg 11 unused */
-+	.max_brightness = 8,
-+	.max_key_rows = 2,
-+	.max_key_cols = 10,
-+	.init = tm1628_init,
-+	.data = tm1628_data,
-+	.keys = tm1628_keys,
-+};
-+
-+static const struct tm16xx_controller tm1638_controller = {
-+	.max_grids = 8,
-+	.max_segments = 10,
-+	.max_brightness = 8,
-+	.max_key_rows = 3,
-+	.max_key_cols = 8,
-+	.init = tm1628_init,
-+	.data = tm1628_data,
-+	.keys = tm1638_keys,
-+};
-+
-+static const struct tm16xx_controller fd620_controller = {
-+	.max_grids = 5,
-+	.max_segments = 8,
-+	.max_brightness = 8,
-+	.max_key_rows = 1,
-+	.max_key_cols = 7,
-+	.init = tm1628_init,
-+	.data = fd620_data,
-+	.keys = fd620_keys,
-+};
-+
-+static const struct of_device_id tm16xx_spi_of_match[] = {
-+	{ .compatible = "titanmec,tm1618",  .data = &tm1618_controller },
-+	{ .compatible = "titanmec,tm1620",  .data = &tm1620_controller },
-+	{ .compatible = "titanmec,tm1628",  .data = &tm1628_controller },
-+	{ .compatible = "titanmec,tm1638",  .data = &tm1638_controller },
-+	{ .compatible = "fdhisi,fd620",     .data = &fd620_controller  },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, tm16xx_spi_of_match);
-+
-+static const struct spi_device_id tm16xx_spi_id[] = {
-+	{ "tm1618",  (kernel_ulong_t)&tm1618_controller },
-+	{ "tm1620",  (kernel_ulong_t)&tm1620_controller },
-+	{ "tm1628",  (kernel_ulong_t)&tm1628_controller },
-+	{ "tm1638",  (kernel_ulong_t)&tm1638_controller },
-+	{ "fd620",   (kernel_ulong_t)&fd620_controller  },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(spi, tm16xx_spi_id);
-+
-+static struct spi_driver tm16xx_spi_driver = {
-+	.driver = {
-+		.name = "tm16xx-spi",
-+		.of_match_table = tm16xx_spi_of_match,
-+	},
-+	.probe = tm16xx_spi_probe,
-+	.remove = tm16xx_spi_remove,
-+	.shutdown = tm16xx_spi_remove,
-+	.id_table = tm16xx_spi_id,
-+};
-+module_spi_driver(tm16xx_spi_driver);
-+
-+MODULE_AUTHOR("Jean-François Lessard");
-+MODULE_DESCRIPTION("TM16xx-spi LED Display Controllers");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("TM16XX");
--- 
-2.43.0
+ (3) Simplifies the internal code to maintain the buffer in little endian
+     form, thereby simplifying the update and extraction code which don't
+     then need to worry about this.  Instead, the state buffer is
+     byteswapped before and after.
+
+ (4) Moves the Iota transform into the function with the rest of the
+     transforms.
+
+ (5) Adds SHAKE128 and SHAKE256 support (needed for ML-DSA).
+
+ (6) Adds a kunit test for SHA3 in lib/crypto/tests/.
+
+ (7) Adds proper API documentation for SHA3.
+
+ (8) Makes crypto/sha3_generic.c use lib/crypto/sha3.  This necessitates a
+     slight enlargement of the context buffers which might affect optimised
+     assembly/hardware drivers.
+
+Note that only the generic code is moved across; the asm-optimised stuff is
+not touched as I'm not familiar with that.
+
+I have done what Eric required and made a separate wrapper struct and set
+of wrapper functions for each algorithm, though I think this is excessively
+bureaucratic as this multiplies the API load by 7 (and maybe 9 in the
+future[*]).
+
+[*] The Kyber algorithm also uses CSHAKE variants in the SHA3 family - and
+    NIST mentions some other variants too.
+
+This does, however, cause a problem for what I need to do as the ML-DSA
+prehash is dynamically selectable by certificate OID, so I have to add
+SHAKE128/256 support to the crypto shash API too - though hopefully it will
+only require an output of 16 or 32 bytes respectively for the prehash case
+and won't require multiple squeezing.
+
+This is based on Eric's libcrypto-next branch.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-pqc
+
+David
+
+Changes
+=======
+ver #3)
+ - Renamed conflicting arm64 functions.
+ - Made a separate wrapper API for each algorithm in the family.
+ - Removed sha3_init(), sha3_reinit() and sha3_final().
+ - Removed sha3_ctx::digest_size.
+ - Renamed sha3_ctx::partial to sha3_ctx::absorb_offset.
+ - Refer to the output of SHAKE* as "output" not "digest".
+ - Moved the Iota transform into the one-round function.
+ - Made sha3_update() warn if called after sha3_squeeze().
+ - Simplified the module-load test to not do update after squeeze.
+ - Added Return: and Context: kdoc statements and expanded the kdoc
+   headers.
+ - Added an API description document.
+ - Overhauled the kunit tests.
+   - Only have one kunit test.
+   - Only call the general hash tester on one algo.
+   - Add separate simple cursory checks for the other algos.
+   - Add resqueezing tests.
+   - Add some NIST example tests.
+ - Changed crypto/sha3_generic to use this
+ - Added SHAKE128/256 to crypto/sha3_generic and crypto/testmgr
+ - Folded struct sha3_state into struct sha3_ctx.
+
+ver #2)
+  - Simplify the endianness handling.
+  - Rename sha3_final() to sha3_squeeze() and don't clear the context at the
+    end as it's permitted to continue calling sha3_final() to extract
+    continuations of the digest (needed by ML-DSA).
+  - Don't reapply the end marker to the hash state in continuation
+    sha3_squeeze() unless sha3_update() gets called again (needed by
+    ML-DSA).
+  - Give sha3_squeeze() the amount of digest to produce as a parameter
+    rather than using ctx->digest_size and don't return the amount digested.
+  - Reimplement sha3_final() as a wrapper around sha3_squeeze() that
+    extracts ctx->digest_size amount of digest and then zeroes out the
+    context.  The latter is necessary to avoid upsetting
+    hash-test-template.h.
+  - Provide a sha3_reinit() function to clear the state, but to leave the
+    parameters that indicate the hash properties unaffected, allowing for
+    reuse.
+  - Provide a sha3_set_digestsize() function to change the size of the
+    digest to be extracted by sha3_final().  sha3_squeeze() takes a
+    parameter for this instead.
+  - Don't pass the digest size as a parameter to shake128/256_init() but
+    rather default to 128/256 bits as per the function name.
+  - Provide a sha3_clear() function to zero out the context.
+
+David Howells (8):
+  s390/sha3: Rename conflicting functions
+  arm64/sha3: Rename conflicting functions
+  lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128,
+    SHAKE256
+  lib/crypto: Move the SHA3 Iota transform into the single round
+    function
+  lib/crypto: Add SHA3 kunit tests
+  crypto/sha3: Use lib/crypto/sha3
+  crypto/sha3: Add SHAKE128/256 support
+  crypto: SHAKE tests
+
+ Documentation/crypto/index.rst      |   1 +
+ Documentation/crypto/sha3.rst       | 241 +++++++++++++
+ arch/arm64/crypto/sha3-ce-glue.c    |  47 +--
+ arch/s390/crypto/sha3_256_s390.c    |  26 +-
+ arch/s390/crypto/sha3_512_s390.c    |  26 +-
+ crypto/sha3_generic.c               | 233 +++---------
+ crypto/testmgr.c                    |  14 +
+ crypto/testmgr.h                    |  59 ++++
+ include/crypto/sha3.h               | 467 +++++++++++++++++++++++-
+ lib/crypto/Kconfig                  |   7 +
+ lib/crypto/Makefile                 |   6 +
+ lib/crypto/sha3.c                   | 529 ++++++++++++++++++++++++++++
+ lib/crypto/tests/Kconfig            |  12 +
+ lib/crypto/tests/Makefile           |   1 +
+ lib/crypto/tests/sha3_kunit.c       | 338 ++++++++++++++++++
+ lib/crypto/tests/sha3_testvecs.h    | 231 ++++++++++++
+ scripts/crypto/gen-hash-testvecs.py |   8 +-
+ 17 files changed, 2012 insertions(+), 234 deletions(-)
+ create mode 100644 Documentation/crypto/sha3.rst
+ create mode 100644 lib/crypto/sha3.c
+ create mode 100644 lib/crypto/tests/sha3_kunit.c
+ create mode 100644 lib/crypto/tests/sha3_testvecs.h
 
 
