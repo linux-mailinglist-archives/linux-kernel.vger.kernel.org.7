@@ -1,144 +1,167 @@
-Return-Path: <linux-kernel+bounces-834722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DE6BA55D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0EBBA55D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Sep 2025 00:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71F43BF6F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:45:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833D2387C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607E829B229;
-	Fri, 26 Sep 2025 22:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511A629D28F;
+	Fri, 26 Sep 2025 22:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g9kdadyk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWKny/ht"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CBF1B3925
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 22:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D412877D3
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 22:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758926746; cv=none; b=YgJnkxVJM62IG2Jd0yO6EDrdR0ZVY8ZKD+u7WIH22c+3+UpJXmxy1s1xS8EuKrdceH2JlntDF8Gr9ObamwnRazGc+rjEPlqqftlDfBIqaI1JP1dbWLW1A7QyVfVq1mbhDlwWbB8Hk+Mv+7+NsTo3AudaEXO6t/FXzyw86yYIMNU=
+	t=1758926770; cv=none; b=b867oAdXWZQ4/qXSGhJwpj0JroW9fnckqF3EekZOsjTtiGl3IdsdsQ0YRH+6AS13k+Jwa4oDmW6BdXz+nbGsCiAHZiE7RNAfgGAGv0lDLb9Ri5hHgMbl1DlY2g+7U4Yd3y995CwkCufnvf3JSmt1HdPcbsFp6IwIh2bag78S4qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758926746; c=relaxed/simple;
-	bh=p5XvchawsOENanpzit5coWI2GxGks3nacGZ9hQTUsvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMarqQW2rOkvaYulqqCrGbtCw+FI4N7fqwxKM2vdFgzQxGtE9W9TpnN7Th80L3DmBKryMf86TWjwym01uxiHO+0micEzFf/8R4tjg7sSprPYbaiIyBvSZ4ETvLZmc+YLJuAKU6TUEWzuFV+MibgN5bHs47wnb7Vm02rIyhbp5iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g9kdadyk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QEX49N006917
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 22:45:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=sW/+vR8VmYRg0AyYThaCLKBv
-	e8fCpAHlijREnAutP8U=; b=g9kdadyk3brJcAfoaIMpWd0XsAWx20JKzU8mdbfw
-	1TVSnIQHptLVeLOJAZIdfhx4L4HuS3Na/OohxN8h5fDxbbXzUROWRkbhTZ224qiQ
-	pfzKoaJTnw9KDV4qhWMEPB0CFrNRcmW8vr9zWbHf6H3IQE3HhG91aanoZW/MeGjP
-	1nVWZx7NT7FvyCDQIXIa+k2SP/q/joUryI8GxKxAbnlxeCPZ1/NdioCDynYHHUoQ
-	cZJjO/YbcxMrpZ5oJV2BKzUtHwu93THFj4GsnBKvoqrx32CdteNKnLZbiuySihMt
-	Tpz9Ad5Da2k59I6kiXE+WbkV3yS6zarY9Fe9gjLoqCU1GA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0qvau8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 22:45:44 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d9ec6e592bso53144511cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:45:44 -0700 (PDT)
+	s=arc-20240116; t=1758926770; c=relaxed/simple;
+	bh=aVLAvDuzjvZUq4o1w0WdiuksjsM3bmOCj0ux9RfpkFc=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=D+ssjnQYPPWEW6igA8TvWp87Z3pdcJwPeJFxO7v1//QcLQa8CenW2HBzUV3V/LyRf6MJ+ZSMmeRnJWk2whonvjGCjSufn+AzTx3my4L054EnWASqylIR6a43F1TZ/xAK6rqpKCcU9hk66RgFsj5cjl/bBDpjz+gk5QEO00Damy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWKny/ht; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-634bc2d6137so2050628a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758926767; x=1759531567; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p0XcUmbDIm9A8aHJ2IMOdtvaZQ6t8E9f+KkDqK772Fo=;
+        b=ZWKny/htVsoqKThzah9+H/u+WP8YCFrb2pjPVyf7/dUPkFajLRlMqoK/c5zwIDyNPa
+         b1MlIPsARVIitkGP80665CUXy6iN0XMBnsbFy0ALRlTwGj5UfbeVxqBxQe/tdp/8TpVv
+         OaUVt4fRl2OKgcF9hMzOvVB+fgborAELlqFqDjCTXgbNLwFlCt/TbXDWC+4qW085obDz
+         GqObzWJzpBucKLGDZketQ3GhTXBHHAnxKG9b6m361ZM/xDYLpg2p6Vxqxp0kd1goeZRO
+         k6fE+QIkiGr3n/eK7Q8BVZIFEIWBZTvLO27D2mzixTtmuKO1k2MkppS3AwvI3PkwVoYU
+         snjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758926743; x=1759531543;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sW/+vR8VmYRg0AyYThaCLKBve8fCpAHlijREnAutP8U=;
-        b=MPrnuytECOU4cFs8sUudY2WgAp5f71jsea7mILgYK778rbNkRS9DIgPQs0jpZokJ/D
-         Jmt4cJqNUf4D3s1azeRnJz0bnRvt660/GNzf6b4rKhoaz0FOkkxyJoapJAzHZIpix5Yz
-         +Q0xSdlu2rtfbd/Rf/xp+dzqwnH8pGq3B/FVFZ2yqnT+SiYLK37DT6vbmYUBQHK46KtS
-         +Rf/t5SRp9GZ2sSsixRr3ggIGO2MrVIpdZU7nvcbXaSA3ZzUfNvLsY5Yg1YzWHAayp/m
-         ShAvuoKszVo0QXxjj0XBU+N1zuh/crbvHrcywjNYbL7SpSq+RHQndHaJsmeKeUo+UD18
-         r6Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9bD+qpoqkEckxB+4oqQE3yt/xalJLJnOsSOlos0mbcGK7tbJKizO1avnY+QQAByoJ9AcbtLZbEhaklSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKbf7RNb583RSlS7sXtof8N1BvPOB0wpY+K3P3oR7ivQ4v5L4u
-	HwnlPotKsqHeJq3QvEaqSbYkXYJFVI2EL4MSjXoNcLUZE8IBBFkq99CK4r3L1RryEGZxvRtYqoG
-	XMhzemCVmbsV3+00EB1OJa+uFWXEEMDT56l8zcP1dcwI74RewMbdpMNX58Wnk/s4WD4w=
-X-Gm-Gg: ASbGnct8pVefV3tTn1QbgsDnr9Pp9xnQx8PxNAR5ry3zxUH51bzaMo6j++npouOg3eD
-	b5LyKnjG95pE+h1YhsL7gbfXUNNZ/5mpu3T/AYJajZPOHCWbrfmg4Gj0UXKNR8W5csrLFpbsr2z
-	mM03ZR0b1m6ylmRwLVdF8ZlcjHQZBZbujYdTTsB0wZaMuCKzfz132vTF9E/3SrtEEZz0gAiA0xH
-	Btb4xKugaRMpCD2qQONE2uwsmdwOY+sxzJg6O+jIyyGm6zOQFSB/gKUKvGAwYQRZ8Ztg9FHJq2B
-	jq+5aIrQ+OIoTyLShpL5gI3vO6n4u83+cuVWcMG5vOGSqwo9SIAuWNZcYh//DZyvBWI5KZerehR
-	8rbhFtfGOoJQyC2LRW5l284GCHd62w6PoqikP+bdJU8tLwlogi2rZ
-X-Received: by 2002:ac8:7dcd:0:b0:4b6:39a2:1de1 with SMTP id d75a77b69052e-4da4b42c2d5mr130498971cf.52.1758926743130;
-        Fri, 26 Sep 2025 15:45:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRfXtG/PeJOoa7YFdPRlCu9ZjyORleotSKki25Y6iLSpr2s7WbBrqGeVtAyk0UN9k7S1S1Zg==
-X-Received: by 2002:ac8:7dcd:0:b0:4b6:39a2:1de1 with SMTP id d75a77b69052e-4da4b42c2d5mr130498621cf.52.1758926742648;
-        Fri, 26 Sep 2025 15:45:42 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5847fd56eaasm945718e87.137.2025.09.26.15.45.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 15:45:40 -0700 (PDT)
-Date: Sat, 27 Sep 2025 01:45:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-        airlied@gmail.com, simona@ffwll.ch, andrzej.hajda@intel.com,
-        treding@nvidia.com, kyungmin.park@samsung.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] drm: mipi-dsi: Fix an API misuse in
- mipi_dsi_device_register_full()
-Message-ID: <m6fvifsbb2yjbx6txqc7luii5mwukrpiw2n6bcnrmgidm5cxjv@ksmcnqg6sv23>
-References: <20250926091758.10069-1-haoxiang_li2024@163.com>
+        d=1e100.net; s=20230601; t=1758926767; x=1759531567;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p0XcUmbDIm9A8aHJ2IMOdtvaZQ6t8E9f+KkDqK772Fo=;
+        b=jLKU/GkTRIUpPLaegNwPJt2IK0mwxm8KWvf5fWFjRYNdJyCm26iRBit3PFBHLNB6oU
+         mNDVwQVS5+BRCiUne3IxZI9sowBV0teAD890ZGZ8K+nWr6x0nCxON1vxz8/+8bZRvH/Y
+         aa50MwsDO4EsC+fbDw9I+kJtU/yDRGPRdwL3kfC4gCFrxMqJ691LfXhe0VVUn64BiRjM
+         0qzUhgpARyKReuzt5b+pV79SCXxHnOO9bTpUrk81XdiUlxXeeL78aobILIrhVuW1b+AL
+         Cp8cIsb+zkylX/FfcGr27p26KBItkUfQGOW2lqmbaVyNncsRmi7fMwuUmYDAR1E+lqlI
+         NzAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNaqzjkTl7+miJg2vwlX9zmfNA/cvJMCpqrd8/xAPGmkdqVmraNs9MKR5uEhpGziNf4qJvkwr6QjmbkbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjZDCYPAyi0T4ALAkZuaLdvSW9IUuXW+E/2AHxmZXW4rhjAIVC
+	EzO3xMVyhT90eY6R8bmJx+Co6kB+xEiVp5Y6vXx1PCGz/MEyZ3v1EksScyZlxfNI7A==
+X-Gm-Gg: ASbGncuZJo+KPUB5e/xi536Yenzi2dRX/XW0ZqblVao+jKhCmG6JDKnD6TvrwRVjjaZ
+	b/scWx+k1wj0Ns7eGywK6/CKkcBXM+32YFCN6aaqqtZj5bhBUCQKGKJgnqr0MmJFtUSGOzj3CkB
+	YjrVjUvDtgRgWe5DSSiqEPjBYGyijl4T/+vvSMpawRe4S1Ljpt5Z7jmXydOKoYKfu6WItf9cmqt
+	hGQ6hTZOCA3LIMYSCOl1YxzLlTINxnTDwYF9bupRyUHOaPliLzlPJrtxktym7ksncGh3a2vF52i
+	IQVFLkkWkficSXktBjszc1J1IbokD0NzdhKEwK9B9NmrArFxFRxiQU+E4B9RXudbcOM2DDLTv1U
+	9gnJ64JXloKaqh/IMOf2xxWPl5jmzMwh719ulFtcwK8K5o7WtIfi24yDBlM6JmCoGLw9IaxaT2q
+	+6S8LO8QWHsB82EsargQahLsBorCOxKJyAdmFOHcd9+tEqZsQ7R7FOwL1rF05GFbI=
+X-Google-Smtp-Source: AGHT+IEgUt5ke5XNe6uNWf2k/utNyZVhDSWziVn5R9T8tXuQhiIvIALdk0ct3EdeGF/jA1gp8kFcMg==
+X-Received: by 2002:a17:907:7f0f:b0:aff:16eb:8b09 with SMTP id a640c23a62f3a-b34b6449b22mr908248066b.5.1758926767146;
+        Fri, 26 Sep 2025 15:46:07 -0700 (PDT)
+Received: from smtpclient.apple (2001-1c00-3b81-9100-e596-dd7e-500a-9b8c.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b81:9100:e596:dd7e:500a:9b8c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f7506sm443091466b.52.2025.09.26.15.46.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Sep 2025 15:46:06 -0700 (PDT)
+From: Aniruddha Deb <aniruddha.deb.2002@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926091758.10069-1-haoxiang_li2024@163.com>
-X-Proofpoint-GUID: ESva3d9mvGwC2JCPgjFVNieUZyCAMGDu
-X-Proofpoint-ORIG-GUID: ESva3d9mvGwC2JCPgjFVNieUZyCAMGDu
-X-Authority-Analysis: v=2.4 cv=api/yCZV c=1 sm=1 tr=0 ts=68d71798 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=Byx-y9mGAAAA:8 a=EUspDBNiAAAA:8
- a=tUFaMFilNNX-uVKmuBsA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzh+f0LnibDct
- 0jt3jrDbZ8RvmQQPJTsLl3g05VW9KPiS8AenbwgRUgL/T5C86d4QuqLjqNLJ/IGX6yevZpJjZ97
- d3yuvzPVlTyZCuObYVMzoJS+Nuqpt0LcjsajLp5ucANlvuuVVC0MMj781jvJs2ZY1JVBVb4JDUV
- j34catx1AK2kBIX54WAV3xansFN/6tRMkCMwR5E7tAv84aph1/SXaWCuGQkYBQCnOjVVNCAy62l
- BQ3hvQK8N7lTA15q6GiDtq6CMN8ydyBot7UNdDzuqrVm9zJbiX46p370QtX23l5tveJAsgbKxlU
- 0mF4fTvxhfVzr4rWFqRnJRXIzJ6bTcb+dRH+Ij547R6LPKVaK02I566dybJpZBtKDSUUzHwuvVQ
- FPgJ2WidqY6Y4lAqGToQeoRUpwhEpA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_08,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 adultscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: [BUG] linux/arch/x86/events/intel/uncore_snbep.c: MCx Channel PCI
+ devices are swapped around
+Message-Id: <AB0DE99B-34C1-4BDC-B9C4-15E85BDBF5FA@gmail.com>
+Date: Sat, 27 Sep 2025 00:46:03 +0200
+Cc: linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+To: acme@kernel.org,
+ peterz@infradead.org,
+ mingo@redhat.com,
+ namhyung@kernel.org
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Fri, Sep 26, 2025 at 05:17:58PM +0800, Haoxiang Li wrote:
-> mipi_dsi_device_alloc() calls device_initialize() to initialize value
-> "&dsi->dev". Thus "dsi" should be freed using put_device() in error
-> handling path.
-> 
-> Fixes: 068a00233969 ("drm: Add MIPI DSI bus support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
-> ---
->  drivers/gpu/drm/drm_mipi_dsi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Hi perf subsystem maintainers,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+The iMC PMC=E2=80=99s in the haswell-EP subsystem have their PCI device =
+ID=E2=80=99s swapped around. According to page 109 of =
+https://www.intel.com/content/www/us/en/content-details/671052/intel-xeon-=
+processor-e5-and-e7-v3-family-uncore-performance-monitoring-reference-manu=
+al.html, MC0 channel 0 and 1 map to 0x2fb4/5 and channel 2/3 map to =
+0x2fb0/1 respectively. Have attached a small patch illustrating the =
+same.
 
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3118,32 +3118,32 @@
+ 	{ /* MC0 Channel 0 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb0),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb4),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 0),
+ 	},
+ 	{ /* MC0 Channel 1 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb1),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb5),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 1),
+ 	},
+ 	{ /* MC0 Channel 2 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb4),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb0),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 2),
+ 	},
+ 	{ /* MC0 Channel 3 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb5),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fb1),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 3),
+ 	},
+ 	{ /* MC1 Channel 0 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd0),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd4),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 4),
+ 	},
+ 	{ /* MC1 Channel 1 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd1),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd5),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 5),
+ 	},
+ 	{ /* MC1 Channel 2 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd4),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd0),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 6),
+ 	},
+ 	{ /* MC1 Channel 3 */
+-		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd5),
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x2fd1),
+ 		.driver_data =3D =
+UNCORE_PCI_DEV_DATA(HSWEP_PCI_UNCORE_IMC, 7),
+ 	},
 
--- 
-With best wishes
-Dmitry
+I came across this when reading the perf subsystem code to see how =
+offcore memory controllers are accessed, and where the addresses are =
+defined. Haven=E2=80=99t had the chance to test it out on hardware yet, =
+so please let me know if the intel document is wrong and the values =
+entered are correct in practice.
+
+Thanks,
+Aniruddha.=
 
