@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-833981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86552BA37D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:28:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153A1BA37D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AEE7A8051
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB736280C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1B52DC77A;
-	Fri, 26 Sep 2025 11:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107312DC77A;
+	Fri, 26 Sep 2025 11:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTkv3tQx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9f7GT05"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47B272814;
-	Fri, 26 Sep 2025 11:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7496288C8B;
+	Fri, 26 Sep 2025 11:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758886123; cv=none; b=XRTS56/LoQBZrTtRw3JFDEzbC3fy9ofEmu3oePrdFkuWDiipfZUDCuCQ5Nw6b958LEhM33BLQKCElXmb1hSFQ8JhXmSnFqhA3xfYx27/Fbti//6icIGFsUSFWpklcEy3Yfe0iKHk7ZObxj6s1jbue8YDGzGwWMd4KbGOZsYWMgw=
+	t=1758886147; cv=none; b=SSYeE7aCasp/gTRTNexRn8GVGXhfUwnyjBitWCXnHIbs4IuIMEFEi5HHuLQegzaJyI8N+3sUDqR0IWV6hQWji+PoP4OAcBua2koUp/UyJTyTtp2oe3rUth8LnAh5HxSQNM4J+ayP4KS8exxigmwc0uEA80AJQPLSLncVhJzoSsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758886123; c=relaxed/simple;
-	bh=3Nyy3MLwVUE/jttrn2yTqB+9QvKaNL2/XNV9ReR+Rb0=;
+	s=arc-20240116; t=1758886147; c=relaxed/simple;
+	bh=stTEul6UHVCiJ8ZlGVsirQ38l3hkR1WGDcoE710mSGU=;
 	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CqugfzVKhTFLfnjabqzwBFNMowkkeUJVbEhZ4PUAJZBFYsp/97LYfzhhlbxvGc+L6MjG4ZmlqoNQZJO4vw26fnFDT3DcqOEYScB88E58QZsWicbQvGDCPGJzVbsdPYun9KTbzBilBk3yviQ1Mg/Gy7XRdsyNWOa+K/o4o9BYUag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTkv3tQx; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version:Content-Type; b=mt76iEi6Tb7mAaeVpVlu8DDMsde9PUAtBBkDt8pY0jjzKoAURcdlbdx+n+7wzkAzrKDvKYyXtQdcspYa6y/D8BvhJIqLBjWjA0idJT4zOghwK3P0+AkgKLc+rQx5hvEoQPsQ4UJ1IYoSWA+rauNB0okxFOHHgCQUOE0KkadfVQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9f7GT05; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758886121; x=1790422121;
+  t=1758886146; x=1790422146;
   h=from:date:to:cc:subject:in-reply-to:message-id:
    references:mime-version;
-  bh=3Nyy3MLwVUE/jttrn2yTqB+9QvKaNL2/XNV9ReR+Rb0=;
-  b=gTkv3tQxgyBnBEr0ARR8roJmM69+FJynxH2oOq9dmwQX0JP13g/dChNz
-   mKq7Dtni+BDq4A1Dub48ZhADnxp4hwYeMQXcAVf+4+eRyevnj+X5Q0DA+
-   7G9poxN/MH2448vJ+ljJ8I+q53H9C7sIj3mu2YMRChfFRkKsVXWhUQsYE
-   HIzUNJSxDWAqxN/O9egj4wWvZwBRYf+6EbvB9RD7j+G1gBYy4mZfle5Cg
-   uMhSShsnQuFyB7D+Ad6wTQusashyAetj0Ew3ag9qfyWfeqH0CcUhriqnM
-   MymS0uT7GMflF1ug48J5TYSLLOL+OEqOG/O4c0/lD7UBvrgi6qYsOyZyr
-   Q==;
-X-CSE-ConnectionGUID: +/xQ+vufRVqBBiujf5pRxg==
-X-CSE-MsgGUID: q0jQAgoQQnSlyrLw6ILpsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="71465957"
+  bh=stTEul6UHVCiJ8ZlGVsirQ38l3hkR1WGDcoE710mSGU=;
+  b=J9f7GT05qr3BMvkzxEkfTk8aUE6EGHCxmHfcvqQFb1K4LFHo0rvS4tSC
+   0UFF7enm8u2+ariwEmeO3Z7MhPKU3sVTYIvXBybtvGMR4WWvWy+KfM7Qz
+   mHjKcsyPOAgmqyOUHSKqlPqsOm4pLQ6KKBBjVxDpZoML0ND2ycQM1LLE/
+   hzoWMLkBfdluFKwayicX2bxoIAYWsshGFtT6LViZM6LJAkU6xFmfgCn/V
+   vyJXMlM6drWj5EgZsjCRK/YTywCVUSfg8lAUmV0zcZ099cC8UO01Bgg3q
+   6XwrQrtWyzntnGW2YRGIP/5HddxlsZ2MiDZeDNfNrzZP3kd4N6FoX/HIP
+   w==;
+X-CSE-ConnectionGUID: CYmNw12ySyGYwhNWgeZ8nA==
+X-CSE-MsgGUID: wZ1hjEEgT3eVlcgcdMSH8w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="71465969"
 X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="71465957"
+   d="scan'208";a="71465969"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:28:41 -0700
-X-CSE-ConnectionGUID: A1DwKmqISTKXyICpOznUCA==
-X-CSE-MsgGUID: EXahYd8MSiWhYvhae86StA==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:29:05 -0700
+X-CSE-ConnectionGUID: H/yFh2ptQqesnMgl/rwidw==
+X-CSE-MsgGUID: 6L0YMAZKRImr5x+RMHSWbg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177522293"
+   d="scan'208";a="177522372"
 Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.23])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:28:37 -0700
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 04:29:02 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 26 Sep 2025 14:28:33 +0300 (EEST)
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-cc: Sebastian Reichel <sre@kernel.org>, Hans de Goede <hansg@kernel.org>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in THINKPAD T14S EMBEDDED
- CONTROLLER DRIVER
-In-Reply-To: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
-Message-ID: <df7a869f-3ea9-d127-5fce-b62be9a2de63@linux.intel.com>
-References: <20250926071859.138396-1-lukas.bulwahn@redhat.com>
+Date: Fri, 26 Sep 2025 14:28:59 +0300 (EEST)
+To: Chen Ni <nichen@iscas.ac.cn>
+cc: sre@kernel.org, Hans de Goede <hansg@kernel.org>, 
+    bryan.odonoghue@linaro.org, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] platform: arm64: thinkpad-t14s-ec: Convert comma to
+ semicolon
+In-Reply-To: <20250926091302.817919-1-nichen@iscas.ac.cn>
+Message-ID: <e690729d-bc5b-3f9a-bfff-100545d8db89@linux.intel.com>
+References: <20250926091302.817919-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,43 +76,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 26 Sep 2025, Lukas Bulwahn wrote:
+On Fri, 26 Sep 2025, Chen Ni wrote:
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Replace comma between expressions with semicolons.
 > 
-> In the activity of revising the patch series "platform: arm64:
-> thinkpad-t14s-ec: new driver" from v1 to v2, the location of the dt-binding
-> for lenovo,thinkpad-t14s-ec.yaml was changed, but the change of that
-> location was not reflected in the corresponding MAINTAINERS section.
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
 > 
-> So, commit bee278e18e64 ("dt-bindings: embedded-controller: Add Lenovo
-> Thinkpad T14s EC") adds the file lenovo,thinkpad-t14s-ec.yaml in the
-> embedded-controller subdirectory, whereas commit 27221f91b83f ("platform:
-> arm64: thinkpad-t14s-ec: new driver") refers for this file to the
-> non-existing platform subdirectory.
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
 > 
-> Adjust the file entry to refer to the right location.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Fixes: 27221f91b83f ("platform: arm64: thinkpad-t14s-ec: new driver")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changelog:
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8fcf4e34eaa5..b641b5e60bf5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -25466,7 +25466,7 @@ F:	drivers/platform/x86/lenovo/thinkpad_acpi.c
->  THINKPAD T14S EMBEDDED CONTROLLER DRIVER
->  M:	Sebastian Reichel <sre@kernel.org>
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/platform/lenovo,thinkpad-t14s-ec.yaml
-> +F:	Documentation/devicetree/bindings/embedded-controller/lenovo,thinkpad-t14s-ec.yaml
->  F:	drivers/platform/arm64/lenovo-thinkpad-t14s.c
+> v1 -> v2:
+> 
+> 1. Add Fixes tag.
+> ---
+>  drivers/platform/arm64/lenovo-thinkpad-t14s.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/platform/arm64/lenovo-thinkpad-t14s.c b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
+> index f721763e13cc..1d5d11adaf32 100644
+> --- a/drivers/platform/arm64/lenovo-thinkpad-t14s.c
+> +++ b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
+> @@ -401,14 +401,14 @@ static int t14s_kbd_audio_led_probe(struct t14s_ec *ec)
+>  	int ret;
 >  
->  THINKPAD LMI DRIVER
+>  	ec->led_mic_mute.name = "platform::micmute";
+> -	ec->led_mic_mute.max_brightness = 1,
+> -	ec->led_mic_mute.default_trigger = "audio-micmute",
+> +	ec->led_mic_mute.max_brightness = 1;
+> +	ec->led_mic_mute.default_trigger = "audio-micmute";
+>  	ec->led_mic_mute.brightness_set_blocking = t14s_mic_mute_led_set;
+>  	ec->led_mic_mute.brightness_get = t14s_mic_mute_led_get;
+>  
+>  	ec->led_spk_mute.name = "platform::mute";
+> -	ec->led_spk_mute.max_brightness = 1,
+> -	ec->led_spk_mute.default_trigger = "audio-mute",
+> +	ec->led_spk_mute.max_brightness = 1;
+> +	ec->led_spk_mute.default_trigger = "audio-mute";
+>  	ec->led_spk_mute.brightness_set_blocking = t14s_spk_mute_led_set;
+>  	ec->led_spk_mute.brightness_get = t14s_spk_mute_led_get;
 
-Thanks a lot, I've folded this into the original commit.
+Thanks a lot, I've folded this into the original commit. 
+
 
 -- 
  i.
