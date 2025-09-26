@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-833887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6804BA34B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E600BA34B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CDA625530
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB300164D63
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F9D2DC32C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1812DC760;
 	Fri, 26 Sep 2025 10:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EZ65DsGu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBLw1wsF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2FE2D9EEF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8532DD5F3;
+	Fri, 26 Sep 2025 10:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758881242; cv=none; b=mUoXZ3qt7zCPVP49T39YvIJgBdzVaOoVU/JHtWBL93s3MXQTAHbtcNAnI6Vgnh7EniHo/zjGtH7AGoBAdqYa7CzBln8Lv5CB5SZgumrBPO4nIO4sDR6wn0NHknQ/73TgHNW/fLHTXJ4RcHVB34C9Sicj5EUIYAD4vG5GAHdXe3k=
+	t=1758881243; cv=none; b=jrRz/v1knIl7gH9lVG4P5/i22YHn59BhORfyM/txVjVDeG54c0snLrna75pblYtsOEwoNZ5cRjSgPOJldS/e8hjYQ6uHkKQwwRblkp78jBYKKcdbDiPLunL+Th63m+gI7L97JCo9uI4OuGWQO9zpCkI1oeNLo6nZdAYTQ424mYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758881242; c=relaxed/simple;
-	bh=Em0zRI0uOGCRmpgRXrzPh+SE4eK4amdzf5fhoYbMqnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DZiXo/8oKFOMlOLCj/9l0Q3PSvqoJssu9S7YGO8n93ojmw8OnuItW+zR9DF0n2wsG0UPEReKJhnbgXDklcewpPbgKivebV9FzQSYcvcw+UInkTrSoB09clW+sBcjPbXviDt37sBnmdY/aigsAb4D0E0dh8ty5Drqxl8wKfpTgHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EZ65DsGu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3734E40E0140;
-	Fri, 26 Sep 2025 10:07:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CaBGj3J8uVZ6; Fri, 26 Sep 2025 10:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758881233; bh=XHZCw/OaWPLcgGbiWcCaaJU/LcshuyY8ILHoPMW/mGg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EZ65DsGujoczlHcY8JRr6UIb9vKeGKdvljWriKdeFDKHewKmJmqGC/rnvdcUqpKXy
-	 WUk0Z8mrReaN6p3rLXSQkTLtEBX0LuyrG75cVz+cvZ/CvI3eYtuqvDGuvps+14aXyR
-	 4GIm3VVqYpr+v08iCuoRoeLxWXurauhy6K7KlqZa/itxRPKogcGv5in5sTpIgKB/rH
-	 Cf1+Z3P+RGYq3YpgigqPe97w3NyMcapECgtAiivBJ8Oiy1P1Lrrw7funz5RI9ZqMEs
-	 IjPvKCYxy7j3NazcDhV8qRGv0lAcUMxlLopiBW/KVQh0Zu9FacvY18uDQDtnG0OAvP
-	 n74bFEhhCKr1CkSxjlHR/BMto5UeLUYzNe8vv3w9UouQMd5qX6XnOFaT7fjHLGXxxF
-	 ggY91gxyLWVGzBoLjYQoYo+3y+Tca5HaYBQwXNJso4XcPoWn9cUWL5jb/Zx/JIgAcz
-	 oVD4+Dah9g+BkfTpPgANdSbny7infzHjVXhTZmt30ouYVue+gHlYfkryMOA1OYm6sx
-	 7M0LQ2NjQgSg0fFYaToMKBazQaBSSBlPsMvaqjnsDJaDJzqigXtjgol9wIAZEAUH0r
-	 Bt2x6kpRMO98xo08z+xT5e481i2820H/FRO2g7UcQg49O5Nsd0gzMrXjCbgFxoPrK+
-	 ga5R6/xERPuLn2IjJAcUDnA4=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D4E2740E0176;
-	Fri, 26 Sep 2025 10:07:09 +0000 (UTC)
-Date: Fri, 26 Sep 2025 12:07:08 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/microcode for v6.18-rc1
-Message-ID: <20250926100708.GAaNZlzKcAZilZHRZb@fat_crate.local>
+	s=arc-20240116; t=1758881243; c=relaxed/simple;
+	bh=6YieKR4J8Mbw3Ba1vqnkJZjydC2nKoRKIxkjkQBOsi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWpmiR7ViMIg3NZRlp56Jn19xKEhYHBIwLwZM8z24/FEbs5FdO5BpUg9CaC5E/Kh4cbYvn1I0EC6npseFbb5BRFL4xJUvt4DvmQysLPnVAD+lNrTEBIgv2ulGzH5VqhkNFf82BwfQ95zcYXy1lsfkhuRG2kqd64RGmunyAW5mUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBLw1wsF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D22C4CEF5;
+	Fri, 26 Sep 2025 10:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758881241;
+	bh=6YieKR4J8Mbw3Ba1vqnkJZjydC2nKoRKIxkjkQBOsi8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBLw1wsFzxMY1khHmSG+/vURGkS0u3lGnJbzteonxV2jH5WWV+3fsKl1aI5E6VofR
+	 4XlGLP7YzuzF9oUnPbgvWdKQMyuXfXcvXi5eOzDB7BOezD5vYrit1JoQTUIQMu832l
+	 Aw3Lk5j0/+S2rfTO4I2unfOgJnhYEiEXbeo4BUBYE9KwsI/pi5EJeVLwyH/iAXYIoV
+	 E3fsMgAa7rsuOD3BzD+nx3JGYuPToMmn4njTedMVDAgqLdBoM7bozvyIvsSDFLWLG8
+	 VwablPukTOB884RYsY/gYqbO2VIuHZRaKZUR9mrMybVlCkqkp1OlnFVJ+sfIvQAHVG
+	 tdQn0zHM0XIEg==
+Date: Fri, 26 Sep 2025 11:07:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rmk+kernel@armlinux.org.uk,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: micrel: Fix lan8814_config_init
+Message-ID: <aNZl1NxC3OAUPS7A@horms.kernel.org>
+References: <20250925064702.3906950-1-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250925064702.3906950-1-horatiu.vultur@microchip.com>
 
-Hi Linus,
+On Thu, Sep 25, 2025 at 08:47:02AM +0200, Horatiu Vultur wrote:
+> The blamed commit introduced the function lanphy_modify_page_reg which
+> as name suggests it, it modifies the registers. In the same commit we
+> have started to use this function inside the drivers. The problem is
+> that in the function lan8814_config_init we passed the wrong page number
+> when disabling the aneg towards host side. We passed extended page number
+> 4(LAN8814_PAGE_COMMON_REGS) instead of extended page
+> 5(LAN8814_PAGE_PORT_REGS)
+> 
+> Fixes: a0de636ed7a264 ("net: phy: micrel: Introduce lanphy_modify_page_reg")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> 
+> ---
+> this is targeting net-next and not net because the blamed commit doesn't
+> exist on net
 
-please pull the x86/microcode lineup for v6.18-rc1.
+Thanks, I agree that the page was changed in the cited commit.
+And it seems to me that it wasn't an intentional change.
 
-Thx.
-
----
-
-The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
-
-  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_microcode_for_v6.18_rc1
-
-for you to fetch changes up to 43181a47263dd9f2bee0afd688a841b09f9b7d12:
-
-  x86/microcode: Add microcode loader debugging functionality (2025-09-04 16:15:19 +0200)
-
-----------------------------------------------------------------
-- Add infrastructure to be able to debug the microcode loader in a guest
-
-- Refresh Intel old microcode revisions
-
-----------------------------------------------------------------
-Borislav Petkov (AMD) (2):
-      x86/microcode: Add microcode= cmdline parsing
-      x86/microcode: Add microcode loader debugging functionality
-
-Sohil Mehta (1):
-      x86/microcode/intel: Refresh the revisions that determine old_microcode
-
- Documentation/admin-guide/kernel-parameters.txt  | 12 +++-
- arch/x86/Kconfig                                 | 16 ++++-
- arch/x86/kernel/cpu/microcode/amd.c              | 73 ++++++++++++++------
- arch/x86/kernel/cpu/microcode/core.c             | 47 +++++++++++--
- arch/x86/kernel/cpu/microcode/intel-ucode-defs.h | 86 +++++++++++++-----------
- arch/x86/kernel/cpu/microcode/internal.h         |  9 +++
- 6 files changed, 174 insertions(+), 69 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Simon Horman <horms@kernel.org>
 
