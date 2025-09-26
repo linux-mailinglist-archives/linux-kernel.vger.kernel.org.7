@@ -1,115 +1,347 @@
-Return-Path: <linux-kernel+bounces-834639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93827BA5271
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C28BA528F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC26A188D5F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E38323A90
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D7B2857CA;
-	Fri, 26 Sep 2025 21:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315E284B58;
+	Fri, 26 Sep 2025 21:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1iLqnk8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="OzgAM4Wl"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4A88834;
-	Fri, 26 Sep 2025 21:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD40C2857C1
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758920627; cv=none; b=dfpBlw7okbgivdLWOuuz+Q/Kl+J+z/gC1UdQaLOYvbLL0HpCIRcSngKIUxuhHRVHI2q3N5W6y+9LeO4IwnkAhLt/XiBzznNMy3oRbuaYF0RczLzxlX0AGQq7LxVnI15sWLU7OJLDU/gmaP0cgESpuzC5hNoc+hNnOfzXr0MRZxc=
+	t=1758920832; cv=none; b=orJKoyZ568mSZAIMWRbEG3pMXmJqo5RaZbrfBnl8I4uK/nXsikeS7K+VVODj5iiJxUKuGz8YVxTvSV7aW4xS1ugEIRImbcK0o6MQiffcof2WwABBDHObmlbCkTqHie/dV45lewryMOtXAfhXE2/XLMxziNEkCgxs0vYeq+1YfWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758920627; c=relaxed/simple;
-	bh=QX0AoWNfzlMuR3VFQA1qd0mbdaWkqIiQQy5wfM0tvEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kt/sdIGm8eYdEv0Shzty3ZntLbDXJqPq1eXnwW9qcibjC4oAe0NHAOXjKM6d4La3cGwDW4qZ8KzwUTbBnvc54cYvLkUNRuCDEDwSCF7rb/nyLYSAn1TePFqBcD6qk4iggVxLF4zVg2eNJzE/N5hVocCCfevLCXBwTuDL2L8yUqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1iLqnk8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB1AC4CEF4;
-	Fri, 26 Sep 2025 21:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758920626;
-	bh=QX0AoWNfzlMuR3VFQA1qd0mbdaWkqIiQQy5wfM0tvEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=K1iLqnk8qYI4QmhvkINvOGG6bCUZZ+ajJ3fsUeXwVtcP9KhYZNB1o6tviTMi7EBij
-	 k4RIM4mk06PmS1Mq2AJIowFYuwXaH+4GgEz96+hK/ChnAHW2mKod+CxJ3CVV0IpLe2
-	 rZPYBIe5X+VBo1k8Sgqv1jd0M2TQhpkJFkavgKQZcQ7XyZuoUvlj5Kv1Ctt1Dwl5oo
-	 d8lgnNBj1/jYxqkOIb+QQ97TbIOiNfLhQBRUbtwPUcDRKBby9K1b8B+vPycBWIDbY0
-	 SfPAYzWp9EJL7u1NE/+8qw1aghU+EO79pft8P5og3/7Sz4s+D+FiHa1x2GpwusD9zO
-	 ia75mI7kSKhkw==
-Date: Fri, 26 Sep 2025 16:03:45 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] PCI: dwc: Support 16-lane operation
-Message-ID: <20250926210345.GA2267761@bhelgaas>
+	s=arc-20240116; t=1758920832; c=relaxed/simple;
+	bh=zNQpeKWP6iuGOhZinBW1XMutuiMBR/+q9XOpc4A9o9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwsi+rSB27qv2Akw7WEi+Gs+8Aqn/ie+Q4N0SUyaWjO+e1YngXAlybmUaAJ86i5jveTK50FL+kxjPfncPJbTL33j2YMvU5ZRjt+u7uYYDLBFqcpiVkFJzWPMjnJkRjgU1Nzzv5x+CAU0D6DyUD5D45b1J2AVUuggEMWp7OCGCAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=OzgAM4Wl; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7811a5ec5b6so810770b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1758920830; x=1759525630; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KnypQUg3EKrzG9RmKnVPYdoI8/tvp78hXYQJseWkeXU=;
+        b=OzgAM4WlyfVg9esUCQ4S1VEi1fOPIK50vw3dEzYQ1l+AL9Bd9Ddmxkik9sPhvlzUsy
+         kWbdsip8BH4UA84c9wULgngKuSsZBEzXZi2t5EkPtRi/Pq/FFRq51G6i330QjhQyhVeY
+         szDCMgnXAb7MjRFan5dbj6cD/xp77ecGBCgBtH3FbpPMQy6wlwi/gKrbFJq9Lwkm8ORM
+         mAvzPIbDmm2QkG9atD75FdAnFneJUp2E2TFENu9AUS9D5wh1JvsSqxluARHcfTJkKNPr
+         pXI8Ce/SEPqCivghS51B88JfxzVqzbFYSCn1+7XBsKLAMNBsPVXCJaf/ydB4U4jS7mJb
+         +rUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758920830; x=1759525630;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KnypQUg3EKrzG9RmKnVPYdoI8/tvp78hXYQJseWkeXU=;
+        b=bidZ7+kezBAhIAM4iQRg2I22v5+6taRqjj55lZQvZhQEnajJ2twHcMBoQas8ZWpNxU
+         Ephq+NJSE2YQi9JTwGbQEApoYeS2sUhgg2aRCUvVzHMMdFcYFRWZTnYvx20OE5dVsh6p
+         kq/hpnh/DjwucR+M3Oa9OCgjl14Zjdzz+WV/V0L5WPg6KucqsJnOD9xKDBWfZ3yKrxQO
+         sILVQnjKZ90nZnyw7bDcO6jE+AJzskhgGEf7vL9waSMhBq7kx0rBETdJmcKvxMPl+7fp
+         gu18R8ON7oaOicE883f8/8i11r013qEGMKKaaDoIRGjRO1hmy0HJWLPGwe0XySFANv1P
+         XuFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kH2ystd7nZbw4sx+LR1ox9ativLF9aWEW+BFv7k7gVVStmKU4RJ0FfBV+8ZnOxOzeu7hjmIGxBlBc6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyU9UAEfGGkKZL+1VnFVdV/qiz6o7IWPm00XO6umq+7Vt8West
+	q37RJxGZ6u5D/nQnbwe2pM2VkJkxq1MmX4Vw5/kjeDkH7DTa/K7Q6P/ugDetubeFrWk=
+X-Gm-Gg: ASbGncvLcDXfExBpZmEBpvz9dWcoNll1r13xnFjM180iqiQa52V+j7tldj+adN39sIb
+	BrFoh/nFAopLkjtSSXH0rvlzKi+DzP2InXmeXC+C/4cOYAClH970JzwoK1bpFDlBQz0ygGAVjcR
+	JRkx3hirmeNQRSKh+RNw40+jT5xEzuJbzIWDBF6ABOleQwgFDPCYAK7CWQbPFswLKosCJqvkg4W
+	4mutnJN1SGzU3xGXxc78vreqFjTVgrCLV60cXlDRwcHWYEndyRL37VkpgityOeZfl+/TPVtWyu4
+	0CLbYOK+JT2TWNlZowUn23zl48/frJRyI6ORp0Ob1HprnYgKRfGAynBr9S+PXwlj/SJpPl7xFhY
+	2hXZAB6efGgs6GrAmloVWFiLQz3yo+LNVONxJhtKLOlk=
+X-Google-Smtp-Source: AGHT+IHn6NeY5dtoWojDFn95+d6BgY2U1yoTg8Yib4J+bRdePmMEhyGi2ikTPsB6k/JjLKsrf4UQUQ==
+X-Received: by 2002:a17:90b:17ce:b0:32e:7340:a7fe with SMTP id 98e67ed59e1d1-336b3ca1d27mr750014a91.12.1758920829689;
+        Fri, 26 Sep 2025 14:07:09 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55a2c45sm5436382a12.45.2025.09.26.14.07.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 14:07:09 -0700 (PDT)
+Date: Fri, 26 Sep 2025 14:07:06 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: pjw@kernel.org, Liam.Howlett@oracle.com, a.hindborg@kernel.org,
+	akpm@linux-foundation.org, alex.gaynor@gmail.com,
+	alexghiti@rivosinc.com, aliceryhl@google.com,
+	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
+	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
+	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
+	dave.hansen@linux.intel.com, david@redhat.com,
+	devicetree@vger.kernel.org, ebiederm@xmission.com,
+	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
+	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
+	kito.cheng@sifive.com, krzk+dt@kernel.org,
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
+	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
+	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	peterz@infradead.org, richard.henderson@linaro.org,
+	rick.p.edgecombe@intel.com, robh@kernel.org,
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
+	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
+	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
+Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
+Message-ID: <aNcAela5tln5KTUI@debug.ba.rivosinc.com>
+References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
+ <20250926192919.349578-1-cmirabil@redhat.com>
+ <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
+ <CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250926-topic-pcie_16ln-v1-1-c249acc18790@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
 
-On Fri, Sep 26, 2025 at 02:22:45PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Some hosts support 16 lanes of PCIe. Make num-lanes accept that number.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, Sep 26, 2025 at 04:28:58PM -0400, Charles Mirabile wrote:
+>Hi Deepak -
+>
+>On Fri, Sep 26, 2025 at 3:57 PM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> Hi Charles,
+>>
+>> Thanks for response. Rest inline
+>>
+>> On Fri, Sep 26, 2025 at 03:29:19PM -0400, Charles Mirabile wrote:
+>> >Hi -
+>> >
+>> >Hoping that I got everything right with git-send-email so that this is
+>> >delivered alright...
+>> >
+>> >Wanted to jump in to head off a potential talking past one another /
+>> >miscommunication situation I see here.
+>> >
+>> >On Wed, Sep 24, 2025 at 08:36:11AM -0600, Paul Walmsley wrote:
+>> >> Hi,
+>> >>
+>> >> On Thu, 31 Jul 2025, Deepak Gupta wrote:
+>> >>
+>> >> [ ... ]
+>> >>
+>> >> > vDSO related Opens (in the flux)
+>> >> > =================================
+>> >> >
+>> >> > I am listing these opens for laying out plan and what to expect in future
+>> >> > patch sets. And of course for the sake of discussion.
+>> >> >
+>> >>
+>> >> [ ... ]
+>> >>
+>> >> > How many vDSOs
+>> >> > ---------------
+>> >> > Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+>> >> > doesn't implement zimop, they're illegal instructions. Kernel could be running on
+>> >> > a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+>> >> > different vDSOs and expose the appropriate one depending on whether CPU implements
+>> >> > zimop or not.
+>> >>
+>> >> If we merge this series without this, then when CFI is enabled in the
+>> >> Kconfig, we'll wind up with a non-portable kernel that won't run on older
+>> >> hardware.  We go to great lengths to enable kernel binary portability
+>> >> across the presence or absence of other RISC-V extensions, and I think
+>> >> these CFI extensions should be no different.
+>> >
+>> >That is not true, this series does not contain the VDSO changes so it can
+>> >be merged as is.
+>>
+>> Look at patch 23/27. It does have vDSO change. Although shadow stack
+>> instruction are inserted as compiled flag for vDSO only when cfi config is
+>> selected by user. Right now default is "No". So it won't impact anyone unles
+>> user explicitly says "Yes".
+>
+>Yes sorry I caught that after hitting send and replied to my own email
+>(but then I said 19/27 instead of 23/27 *facepalm*)
+>
+>>
+>> >
+>> >>
+>> >> So before considering this for merging, I'd like to see at least an
+>> >> attempt to implement the dual-vDSO approach (or something equivalent)
+>> >> where the same kernel binary with CFI enabled can run on both pre-Zimop
+>> >> and post-Zimop hardware, with the existing userspaces that are common
+>> >> today.
+>> >
+>> >I agree that when the VDSO patches are submitted for inclusion they should
+>> >be written in a way that avoids limiting the entire kernel to either
+>> >pre-Zimop or post-Zimop hardware based on the config, but I think it
+>> >should be quite possible to perform e.g. runtime patching of the VDSO
+>> >to replace the Zimop instructions with nops if the config is enabled but
+>> >the hardware does not support Zimop.
+>>
+>> Why kernel need to do this extra work of carry two binaries and patching it
+>> runtime?
+>>
+>> If for instance we do this, and then this allow this kernel to be taken to
+>> pre-Zimop hardware, it is assumed that entire userspace for such hardware
+>> was compiled without shadow stack (thus no zimop). In that case, kernel
+>> should have been compiled without CFI option.
+>
+>You raise a good point, it just breaks the tradition of runtime
+>detection and backwards compat that has been the standard for riscv
+>extensions in the kernel so far.
 
-Applied to pci/controller/dwc, hoping for v6.18.
+riscv (and others arches) have been able to do that because of "alternatives".
+It's just that due to composable nature of riscv, alternatives are just spread
+everywhere in the code and feels like riscv is doing something unique here.
+Whenever there is a surgical placement of certain instructions in kernel, it
+could be hidden behind alternatives and be patched in runtime.
 
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 3 +++
->  drivers/pci/controller/dwc/pcie-designware.h | 1 +
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index fce15582c22a93167c6f03c0e3ae74f3d0e68b1a..1d7c2b27005f757d272fe78c4df48daa6628f0a3 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -774,6 +774,9 @@ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
->  	case 8:
->  		plc |= PORT_LINK_MODE_8_LANES;
->  		break;
-> +	case 16:
-> +		plc |= PORT_LINK_MODE_16_LANES;
-> +		break;
->  	default:
->  		dev_err(pci->dev, "num-lanes %u: invalid value\n", num_lanes);
->  		return;
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index a333ab0b0bbd8c2fc0ee32a5619696178c6b7aa2..ae11a78cc5b9a4202794cfa515e1ee496a4f47c2 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -90,6 +90,7 @@
->  #define PORT_LINK_MODE_2_LANES		PORT_LINK_MODE(0x3)
->  #define PORT_LINK_MODE_4_LANES		PORT_LINK_MODE(0x7)
->  #define PORT_LINK_MODE_8_LANES		PORT_LINK_MODE(0xf)
-> +#define PORT_LINK_MODE_16_LANES		PORT_LINK_MODE(0x1f)
->  
->  #define PCIE_PORT_LANE_SKEW		0x714
->  #define PORT_LANE_SKEW_INSERT_MASK	GENMASK(23, 0)
-> 
-> ---
-> base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-> change-id: 20250926-topic-pcie_16ln-8b505b7909f4
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
+However situations where instructions are emitted as part of codegen, there is
+no hiding. Either it works or it doesn't. If we have auto vectorization enabled
+in usermode, such a binary won't run on hardware which doesn't implement vector.
+
+In case of shadow stack, it similar situation. If enabled compiler decides to
+insert sspush and sspopchk. They necessarily won't be prologue or epilogue but
+somewhere in function body as deemed fit by compiler, thus increasing the
+complexity of runtime patching.
+
+More so, here are wishing for kernel to do this patching for usermode vDSO when
+there is no guarantee of such of rest of usermode (which if was compiled with
+shadow stack would have faulted before vDSO's sspush/sspopchk if ran on
+pre-zimop hardware)
+
+>
+>It would be nice if a kernel could be built that would run on both
+>pre-Zimop and post-Zimop hardware and be able to offer CFI to
+>userspace when running on hardware with Zimop (and Zicfiss / Zicfilp)
+>but agree that it is a burden.
+>
+>>
+>> Just for sake of thought exercise, let's say Fedora 43 is first release with
+>> RVA23 compatiblity (zimop and shadow stack), there is no way this and future
+>> release will be able to run on pre-zimop hardware. Unless redhat is going to
+>> start two different binary distribution. One for pre-zimop and one for
+>> post-zimop. If that would be the case, then compiling two different kernel for
+>> such two different hardware would be least of the worry.
+>
+>It would be one thing if there were hardware supporting
+>Zimop/Zicfiss/Zicfilp readily available, but I am not aware of any
+
+And that's the reason currently default is "No" for cfi config in kernel.
+Hope is whenever we have hardware, we can start lighting up and take decision
+how to proceed. I keep reiterting, door isn't closed yet but we gotta approach
+the door.
+
+>platform other than qemu to test this code. 
+
+I have tested this with qemu in following configurations
+
+qemu implements cfi extensions:
+Kernel with cfi enable is able to host userspace with and without cfi compiled.
+Kernel with cfi enable is able to host userspace with cfi but disabled (default
+to zimop)
+Kernel without cfi enable is able to host userspace with cfi (default to zimop)
+and without cfi.
+
+qemu doesn't implement cfi extension:
+- Kernel without cfi enable is able to host userspace without cfi compiled in.
+- Kernel without cfi enable hosting userspace with cfi compiled in faults in
+   libc/ld on first sspush.
+- Kernel with cfi enable trying to host userspace with cfi faults in libc/ld on
+   first sspush.
+- Kernel with cfi enable trying to host userspace without cfi faults in vDSO on
+   first sspush.
+
+Last case is the only breaking case, rest all compatibilities stories work.
+In order to solve this last compatiblity story, I am fearful that we might be
+adding un-necessary complexity in kernel which isn't desired because rest of
+the userspace won't be signing up for that complexity of patching and making
+it work with single binary.
+
+> Since it breaks
+>compatibility with hardware I am not sure anyone will be able to do
+>anything with this config option and it moves the burden on to each
+>distro to go in and specifically enabling it vs just making things
+>work to get important security improvements if the hardware has
+>support and not if it doesn't in a backwards compatible way.
+
+I wished that shadow stack instructions came out of HINT space. But it is
+what it is. Perhaps distro should give this feedback to RVI. But here we
+are.
+
+zimop is backward compatible only RVA23 onwards. That's why it's important
+for distro to make a decision on this. Once they compile for RVA23 profile,
+it assumed a clean break from previous hardware. Future extensions will also
+take encodings out of zimop and thus I believe its better to take that decision
+now with first user of zimop.
+
+>
+>>
+>> Only other usecase is of a seasoned kernel developer or build your own stuff
+>> in embedded environment, those users can anyways are advanced users. But it
+>> forces complexity on rest of kernel. There will be more extensions taking zimop
+>> encodings in future, we will end up patching vDSO and keep this complexity
+>> while rest of the userspace will not be patched and will be separate binary
+>> distribution (if OS distros endup distributing multiple binaries per release)
+>>
+>> >
+>> >However, that concern should not hold up this patch series. Raise it again
+>> >when the VDSO patches are posted.
+>>
+>> As I said earlier, these changes default cfi config to No. So whenever this
+>> is selected "Yes" by a distro, they can drive such patches (if there is a real
+>> need)
+>
+>If we did the patching we could make this config default to yes to
+>that you are building a kernel that is set up to be able to offer CFI
+>when running on hardware which supports it as long as you have a
+>toolchain that recognizes the extensions which I think would be good
+>for moving this important security feature forward.
+
+Again, Why kernel should be doing this when rest of the userspace isn't
+patchable on pre-zimop hardware (thats the only scenario patching is needed)?
+
+Are distro's distributing different binary for with autovec and without autovec
+for different kind of riscv hardware?
+
+Giving example of Fedora 43, once it is compiled in with cfi enabling, kernel is
+also compiled in with the feature. Its not like there is going to "Fedora
+43_rv64gc" release. If there is going to be a "Fedora 43_rv64gc" release, it'll
+be much easier to no select CFI for that release's kernel compile rather than
+kernel doing patching in runtime (rest of userspace is not doing any patching)
+
+>
+>>
+>> >
+>> >>
+>> >> thanks Deepak,
+>> >>
+>> >> - Paul
+>> >
+>> >Best - Charlie
+>> >
+>>
+>
+>Sorry for stirring the pot on this. I really appreciate your work on
+>this patch series.
+>
+>I agree that this is a difficult call, and I could see it going either
+>way but I lean towards trying to maintain the backwards compatibility
+>because the hardware doesn't exist yet.
+>
+>Best - Charlie
+>
 
