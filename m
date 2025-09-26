@@ -1,148 +1,160 @@
-Return-Path: <linux-kernel+bounces-834562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7FABA4F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:10:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDE8BA4F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F53189C255
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1E8387030
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D74A23E347;
-	Fri, 26 Sep 2025 19:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D2F241663;
+	Fri, 26 Sep 2025 19:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Bxz/9gbw"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GMjmS1D3"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32238221F2D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5677D2A1CA;
+	Fri, 26 Sep 2025 19:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758913799; cv=none; b=WnIDKlnyXVPOQbPVFRicPZkvlNndjOOmkzzKr0M2vqxeXrfLbJUVwApX88w46q2BccTlYaOT+jJ4D5tiGIGZyfcDp8Js/deg91v5/sqX2sDEZcOYgjby/D/pllxn7j1FwX7C4Td2WRy18LQavfnn+6LOcYR8k9XaO0ZIrj22c5I=
+	t=1758914147; cv=none; b=JWg7VJicSZEsFKpJuACoODC364f7G0pIj0MUXdPSFgi7b2w5eETcxQoaJIvlIHsdcn29H56NrMJl86px+MSJTZOrB/nOnorE8V8oE/IsDe7kODOikmASds3i++bQL0Bu+3byBYuNS5I2SEIbM/VJ+Zlx9kfc5E//6RI+4AMDtgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758913799; c=relaxed/simple;
-	bh=Q62ZDzIToQkxvjjbMJvNCic+DFZ6WhJVsANbaVcm4oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npBXRai1dVakXWoioqqPT+Oc0xOFPunwya7uwdjpWTv3V5jg3GRE1K5QPTXO7Shew0m9fw4UkjAXSphPa3YXcnsTPbqcT6lgVUqyt2FKV8eRVWAUJxuq/ZxQ8UL3bFVGj8sYUe+xSeF4DQwrb6QQar1T7W6kAE0S85U2+p82+tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Bxz/9gbw; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-917be46c59bso14198639f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1758913797; x=1759518597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvtv/qcICkYTsHwiHykESM7tgNOYNZooGCxrW6WCvqE=;
-        b=Bxz/9gbwao0yCR3KUDsxKggFjsI4aXPvJ7Ytohc77hNUFyOoBebjLMdVcNjpq/Cley
-         +WhDI2LWEURpbJ+0JRtmpdTRLECitwhsEfcRG2QVOWa84rgTCOwiI2K/1qL5/wVTdGx1
-         ciacthNOWr/cXNIPNKTuNYxjTb0gPEoJK/U4UEJTghY/RsDLyNzzkWrQoUvlRkuhnWml
-         QiB05h7d/nMqDzDy458LdWV/p7Kg0a8Cjwq0oL8/cz8g4AUoW5LxWeB4tqQF+gWTGkGf
-         4GCWTq/3ft2mW1HOYPojGggy5G9T+QvyCEUjUetotB2NxGkXcE1j1sm+hP2455Wi4WY1
-         l8yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758913797; x=1759518597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wvtv/qcICkYTsHwiHykESM7tgNOYNZooGCxrW6WCvqE=;
-        b=HpuiUxKvTCIi7lw3kDk8OcXnVrYUOGDVEfXi74Os/Ppg9BFFOkwjvlyoR/nur6fxBp
-         cfpTqivA6JHcHB6cOIXmgQ1JySHbjC+5GXLHOGdr3vKX/g84c2gtN1i4gc6iIrLmsDg1
-         zFRc7phPb3XJjAaCXqGMYYWYeVMtC61d6GuD4CAeECZGmmDjtZzx3WVqJTBtkEyqqH7Z
-         G9S/ErXhVCgPeV3fz9ziHRWBOYpgUBIQr5JGhxgnY44W+UTXvP6Y9o8TXtx/ynYsXeSA
-         jPVyf1c/QHbaxGd1rMnUdCzbNAgbFgofn4Kpzi3zd7dhOgs60eiNUvXPBriX+BFvPi2Q
-         1IwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyivkQaO2inN+4oSlSguMq26cP1h7u4dSJlfg1KTZo9RwUT/PjwxY9xVm3RLF2MTVxgsbPMzZ3DcKLQl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUrZgu/W2+C3cHx2Z01de0g7Wad2zjNAa+QUOGyy32aE9J/bnM
-	ZyDVh28olWpVllW/HSNSbwRBOYuXIuPRYImJWOPA8IJuW12ZBiD8Bnj/1oCvrb9CCpw=
-X-Gm-Gg: ASbGncs4QmQNtJcq1v5l2RKtNFm/RG0mEviFeBUqvEYPYbzll8CtE2wF000I4MMeKDq
-	PI8E0SXlpRx9pXQQTXV6EoACXGckDZjQbhQUnIbm8HnTX1rG50w2Q90x4RNG3+s0VCn0GKhSsMD
-	+45GgeP8yyT005kwc7xBN3ZhA0LWOiQNeJ3JkrgkAH8lS0uswaFXX9dIRBDEiUHJy3GWGYbN6iv
-	tGBsraSkMAyi9Au/wx+3IC9mE7Gb1kqsHqnmm/6+OhIaH5J4WEta9Jp/Vo5JQiXag3H9CCHM+md
-	J1z6a+K1lN7eC7Hg6cUuaR1A+PN9imNgcimBwfRnD/Y9rxe6k7DE3zxQSfdZsxBDtgImJOGV0f0
-	W2ePJNQVwPeJ1aYfH5EqlRCkBxvMbCvt7zWtB3S/QXkh9rMc12HWR+GJfuVNK2ZX6Yac5cA==
-X-Google-Smtp-Source: AGHT+IFjghvNCqO6TOfbA98+sZd3KQTpt5kAvS4oQsge2mxcUu3UVERk7C8TvE1C6z9/EDMI2LD95A==
-X-Received: by 2002:a6b:6a0c:0:b0:8fd:baa7:bce2 with SMTP id ca18e2360f4ac-9016c57c02amr1232916839f.16.1758913797264;
-        Fri, 26 Sep 2025 12:09:57 -0700 (PDT)
-Received: from 8745f5817b94.dev.purestorage.com ([208.88.159.128])
-        by smtp.googlemail.com with ESMTPSA id ca18e2360f4ac-90e48099408sm105070639f.10.2025.09.26.12.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 12:09:55 -0700 (PDT)
-From: Amit Chaudhary <achaudhary@purestorage.com>
-To: achaudhary@purestorage.com,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: mkhalfella@purestorage.com,
-	randyj@purestorage.com,
-	jmeneghi@redhat.com,
-	emilne@redhat.com,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] nvme-multipath: Skip nr_active increments in RETRY disposition
-Date: Fri, 26 Sep 2025 12:08:22 -0700
-Message-ID: <20250926190823.5031-1-achaudhary@purestorage.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758914147; c=relaxed/simple;
+	bh=/aNc3teXYyRj8ni9DWq0KsAHiheGNzF92SpFUNfa2LU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=C9awTefU4PVaUvlHYNeSWpYbqZGoPr7EZD8+5IzYWevISlFGflOoF1Hs86+Pboh/dqhaPpeJIRn78qk72IVpo7Oz2arNTANPuXpYFaZbLyl8uvNLpAe7LXDGCh3ggUYO6jT55ffAvQbwPI2VTnxOu5L8oc/qPcrtv9KrvxkgP8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GMjmS1D3; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758914132; x=1759518932; i=markus.elfring@web.de;
+	bh=/aNc3teXYyRj8ni9DWq0KsAHiheGNzF92SpFUNfa2LU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GMjmS1D3TuXHDXQYGp9CpuGQ/R7d9HC0XVOeD3/4060a1KYUL7oAaqwUExCvo288
+	 bwvsyJXTBk2TAcgFm+kQNxSPbyOYe25G1IqgRQ8rjN0/rYgEuRVbvmFfpPzEIAmz3
+	 MTlgMMgE77lJh3ddfbrEIc90D0QvxGWs0c2ZgoGDhHaoAiItmZBZMDKtqSzV2Ax6x
+	 ehrwLdHaR/RkP7N2vxeUwRW6xOp1tEUFJ6fur+BcYdEqjZBrW64JoCJFXFuzIfxB4
+	 8QMnyX18mKL4GhQ5fdNDhoSRZQcjF3qmZbJP9SGUNstWBMFmdXhPOCHnWZ085aufU
+	 PFZVEfSGPmMTfwEvrg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M43Kc-1v2Dum2ASW-00FDEK; Fri, 26
+ Sep 2025 21:15:32 +0200
+Message-ID: <bf33acbe-a9c3-46aa-affc-34e416a4b1e3@web.de>
+Date: Fri, 26 Sep 2025 21:15:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, linux-amlogic@lists.infradead.org,
+ Kevin Hilman <khilman@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Yu Kuai <yukuai3@huawei.com>
+References: <20250926142454.5929-2-johan@kernel.org>
+Subject: Re: [PATCH 1/2] soc: amlogic: canvas: fix device leak on lookup
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250926142454.5929-2-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7zutT7CJ+1VskfKbD0bGNLbj29yEZTSD4JnkB/k295iRRDDIN06
+ lpooIXBRfdflodsh62weAFORNJPlvT8SQfJ/HjDTBcY/Uh1lgid4h9CZYWzuiPzfrffJAfR
+ edrO69DTU80m0mL7lpmn57p24smZqxjDixN29Csa5EWE0S+N56AQyC5LJjzGYm/S/nzQrNy
+ FL/e3Cv4JJqfsN3wPUcHg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:I07t/8RDwME=;SAifApDTNhX6zDPY2Rei6+mS7Kl
+ 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
 
-For queue-depth I/O policy, this patch fixes unbalanced I/Os across
-nvme multipaths.
+> Make sure to drop the reference taken to the canvas platform device when
+> looking up its driver data.
+=E2=80=A6
 
-Issue Description:
+How do you think about to increase the application of scope-based resource=
+ management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
+1180
 
-The RETRY disposition incorrectly increments ns->ctrl->nr_active
-counter and reinitializes iostat start-time. In such cases nr_active
-counter never goes back to zero until that path disconnects and
-reconnects.
-
-Such a path is not chosen for new I/Os if multiple RETRY cases on a given
-a path cause its queue-depth counter to be artificially higher compared
-to other paths. This leads to unbalanced I/Os across paths.
-
-The patch skips incrementing nr_active if NVME_MPATH_CNT_ACTIVE is already
-set. And it skips restarting io stats if NVME_MPATH_IO_STATS is already set.
-
-base-commit: e989a3da2d371a4b6597ee8dee5c72e407b4db7a
-Fixes: d4d957b53d91eeb ("nvme-multipath: support io stats on the mpath device")
-Signed-off-by: Amit Chaudhary <achaudhary@purestorage.com>
-Reviewed-by: Randy Jennings <randyj@purestorage.com>
----
-V1 -> V2: Moved check to mpath start and check relevant path bits
-
- drivers/nvme/host/multipath.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 3da980dc60d9..543e17aead12 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -182,12 +182,14 @@ void nvme_mpath_start_request(struct request *rq)
- 	struct nvme_ns *ns = rq->q->queuedata;
- 	struct gendisk *disk = ns->head->disk;
- 
--	if (READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) {
-+	if ((READ_ONCE(ns->head->subsys->iopolicy) == NVME_IOPOLICY_QD) &&
-+	    !(nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE)) {
- 		atomic_inc(&ns->ctrl->nr_active);
- 		nvme_req(rq)->flags |= NVME_MPATH_CNT_ACTIVE;
- 	}
- 
--	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq))
-+	if (!blk_queue_io_stat(disk->queue) || blk_rq_is_passthrough(rq) ||
-+	    (nvme_req(rq)->flags & NVME_MPATH_IO_STATS))
- 		return;
- 
- 	nvme_req(rq)->flags |= NVME_MPATH_IO_STATS;
--- 
-2.43.0
-
+Regards,
+Markus
 
