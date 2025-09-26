@@ -1,214 +1,235 @@
-Return-Path: <linux-kernel+bounces-833632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AAABA27D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B335BA27E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B23A4C39FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5854A6D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A31927A907;
-	Fri, 26 Sep 2025 06:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E63327A92F;
+	Fri, 26 Sep 2025 06:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AK8ABTI0"
-Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A7beQdu3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D76434BA5F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57260276047;
+	Fri, 26 Sep 2025 06:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758866658; cv=none; b=sSucFzVxpmvPlFM52sgc4YlJDd+3BrUW8esOYWbfKo/gv65V/s9bhHSKSu3cOAKCa/VQdiMdydfH0chc21xnNUgF5jSf9IBdoLtJnzxAwCAngmD91mUDeXi4IMHtBruqHvCgNhgWAziSY0zjCPsEl5bawL6x0bJ32Qt6IDORCiM=
+	t=1758866934; cv=none; b=U+S3+iPb4WjYJieVHqHZ1UP0TsVnRjGEhK4s6SvkUZJDYrcwLbba2E82kJdCUUA+eN4iWE4ieykJDTSaAzLEXYt1ufv9IjdKul17gnEc2Y0bSpui+hSJkCoYMnusLt7Fc/XCn86sFDrEu76dffUqDJEl1tMUojv8Ef+fiffksTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758866658; c=relaxed/simple;
-	bh=15IRCIhsbMtksIEBPAtWUBg1v6M0alPNiSjplbzX2Zk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hMNW1DPXnUfKbF/r3i3ov0uV6EvHAlnbUNvJwQkpqU74vpnWfx9QTquFABFmcpFyS9GeLFka/sbkjIQpKCnRaFrWy/quzvX1ba6hf+Y24EDV9YqFy0aqZjvrCup0XzNTJVCwo14wO4joQqVNDzMVWtcVKWrL/oB/oudVeZKybKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AK8ABTI0; arc=none smtp.client-ip=74.125.224.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-635380a4a67so1570651d50.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758866655; x=1759471455; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7H/gn2bXgyEZpagQYajtzENYtfpKhUj6jXIrNVLa+ts=;
-        b=AK8ABTI0wUNBOMsWuY+DWkYWxgRNplY47xmI16NgCx2uRMD3E+AP1zYjRKlBnQNjOH
-         048Xh7VQOUmuLm6giqSTKqJBfcPtic8YDZLXAeP2QcLTpffZF1AiNgQ+CpXv4vshKN/y
-         qu7ie863tX/N3BJ2SiQUOd0emtnIKMgglfM92kXqcgC721U7ijfjikL9c3BN7wlqxVKT
-         Kv71P7fD991OREWO/W+MtOmWVHpqdn6ctRpJ9iiex/V4F4s0MahFEPhtn5lFJrGXAB5+
-         9M50Xd+F3ZeOj6gRTh9DKK0ELqrEe+6CENBRZG08VKlovqJVd5A6jouIWQYObOyCuhgO
-         UqWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758866655; x=1759471455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7H/gn2bXgyEZpagQYajtzENYtfpKhUj6jXIrNVLa+ts=;
-        b=jxIRkkGOXGOFOdmXKgEspBQU7NnJrb1eETAytOdebdOol9JUkAV94vdUKY9facDR3y
-         jsg8ipf1Q/4gTMZiCqDEzAHon1VL8TR6hotlFCBlQMcue4vAiIMvyw638s9MtKmu0dwm
-         tsNLyvRIjaHkrCIOc7bwTCzNssy06F5+L1KX4dYV10ZXvz+aELDfIboCgoBld2FBfZxT
-         mgK+gcaxtg/F52bBqVg/kE/NHfqdtTckmc76Nav2+uGt8K4GxDgR4Q+RgylmyRyaL0On
-         df1fUX3mtPhVWCGlpoxk1HKCvHWgRgk8Th6sYokdKT92To7WgMWQA0KDQRnKr1rY0cxZ
-         wCdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvSTo4FQ+i6gXQYjILt1tBobdLY+OLoOE46OaHs/Ym0b6IKtwouOxtbzMVIFRGtTHWszZG7jTLTVqKt40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAKGCXDQcjEnU/T1pG0ZcxXE5CQ1x488c+3w2kgj1CAXyHNGUf
-	PLDiJ412I8nkpsKSoXaBRUL6bQLqP8dCSZTnpswG3e3Bs2Ukcfz6U4Bo18pE1cfXb8KNy5oqmuc
-	uVYn4ChaOZbF/qa1h5kiLXGZBa5Em6TQzrosHItxKXA==
-X-Gm-Gg: ASbGncs8LYVW+0CKd2k20hGQpcifwj9UpVL8Bh26vOaFS/3XvexsrjcHA/ppobpY9nb
-	ho8L4UiYcYDfgUdiXYK4SambBInnGaenJ3T7+eSjaDN75ST/wAMs8trkI5OYrfg4q5u8HeyyvC6
-	sEyYyRAwmEkWsYOeU/tGUfP2jP/YEWd3PNVx41GpCEab6wD5xYBEe6sd8rhRYpxJk+9liV5EJ3u
-	lZW/mA=
-X-Google-Smtp-Source: AGHT+IFLKqa96SN32ucZyftcaFR3mfhPDDNAMHzDSvk2jt4uz+Ewxi9Sy+yvSExYS1gIFclZKPr1gm/c12BhL0elJOc=
-X-Received: by 2002:a05:690e:88:b0:635:4ed0:5714 with SMTP id
- 956f58d0204a3-6361a8203fcmr3880524d50.46.1758866654962; Thu, 25 Sep 2025
- 23:04:14 -0700 (PDT)
+	s=arc-20240116; t=1758866934; c=relaxed/simple;
+	bh=MHK/UNMUroCGJT5JiELnrh3PnCYfmOqLIKfTXv/Yi2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCbT9UQBMWauFU4bXgCIFmuhZoJ9k+lNh5Dt5o7iXHpNDkMlbdlf+dTxL2JP6FiCxd+6Qvwv8l0MyVtIy9t7tUsblKPqiV5naJ+Ga0EX4QypRqwkFISatFgrYehn6Fw/zdUtScsENJKqnfoB7koArOeVRZaetwAYzMxG+IwBxKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A7beQdu3; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758866932; x=1790402932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MHK/UNMUroCGJT5JiELnrh3PnCYfmOqLIKfTXv/Yi2U=;
+  b=A7beQdu39Hv2Glj/TqauyFzvv8EBGzZyzl4WMocuSUh29OHfy5mvqTCG
+   lOMmZ2sH161EDGs6NAi3tJEK01azRiddc9my6akKVsv+/Y4VA+ocTsoG6
+   n7LOSs9CZlfreTIQ5rO+p8hLMz4jM+wnoIo4h+4KoIAOZGqzNItKfcQ2d
+   HeFqebc0azm3/l7e+zHYa1qpbSaPk1AwGA2yvVRm9kq91BOp42XcNu8S3
+   o/8SSr6nDnu2paEjIvY2BnGJIMgkMl0KpqhxPUyk+ErITWzOw8gBDLum7
+   +n+EEOocVYQUOnEfHC84RiOmxlQ36JFZNwjDDxkC8RzC+waULMJE4Viw+
+   w==;
+X-CSE-ConnectionGUID: j3VLocSTSOqNaywIrfs8Qw==
+X-CSE-MsgGUID: IDIgrNAdR8SJCND8U7oIvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65007345"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="65007345"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 23:08:52 -0700
+X-CSE-ConnectionGUID: 5nu967bgSBqPcDjfGl7jNA==
+X-CSE-MsgGUID: Mg0omiMNRHWHfbAvYnATqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="177091674"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 25 Sep 2025 23:08:49 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v21dO-0005xN-16;
+	Fri, 26 Sep 2025 06:08:46 +0000
+Date: Fri, 26 Sep 2025 14:08:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
+Subject: Re: [PATCH v4 3/3] media: qcom: camss: tpg: Add TPG support for
+ SA8775P and QCS8300
+Message-ID: <202509261315.Ut2kQNiR-lkp@intel.com>
+References: <20250925-camss_tpg-v4-3-d2eb099902c8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923060614.539789-1-dongml2@chinatelecom.cn>
- <aNI_-QHAzwrED-iX@gondor.apana.org.au> <CADxym3YMX063-9S7ZgdMH9PPjmRXj9WG0sesn_och5G+js-P9A@mail.gmail.com>
- <175862707333.1696783.11988392990379659217@noble.neil.brown.name>
- <CADxym3ZA7FsdeA3zz34V7mHHjBC358UoJjrpV6wieZ1LF2aFxA@mail.gmail.com> <175884658630.1696783.7712739490823387474@noble.neil.brown.name>
-In-Reply-To: <175884658630.1696783.7712739490823387474@noble.neil.brown.name>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Fri, 26 Sep 2025 14:04:04 +0800
-X-Gm-Features: AS18NWD-s8rMNpkwFnMzAuRNTEnbQ9ytZZMmmUUayZWUbFpKwJunKSpvUDw_lL0
-Message-ID: <CADxym3bFCuiDWtpEVVSpEt9wmO_6cigCjz8385Ty2h0F8_4sWw@mail.gmail.com>
-Subject: Re: [PATCH] rhashtable: add likely() to __rht_ptr()
-To: NeilBrown <neil@brown.name>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, tgraf@suug.ch, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925-camss_tpg-v4-3-d2eb099902c8@oss.qualcomm.com>
 
-On Fri, Sep 26, 2025 at 8:29=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote=
-:
->
-> On Wed, 24 Sep 2025, Menglong Dong wrote:
-> > On Tue, Sep 23, 2025 at 7:31=E2=80=AFPM NeilBrown <neilb@ownmail.net> w=
-rote:
-> > >
-> > > On Tue, 23 Sep 2025, Menglong Dong wrote:
-> > > > On Tue, Sep 23, 2025 at 2:36=E2=80=AFPM Herbert Xu <herbert@gondor.=
-apana.org.au> wrote:
-> > > > >
-> > > > > Menglong Dong <menglong8.dong@gmail.com> wrote:
-> > > > > > In the fast path, the value of "p" in __rht_ptr() should be val=
-id.
-> > > > > > Therefore, wrap it with a "likely". The performance increasing =
-is tiny,
-> > > > > > but it's still worth to do it.
-> > > > > >
-> > > > > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > > > > ---
-> > > > > > include/linux/rhashtable.h | 5 +++--
-> > > > > > 1 file changed, 3 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > It's not obvious that rht_ptr would be non-NULL.  It depends on t=
-he
-> > > > > work load.  For example, if you're doing a lookup where most keys
-> > > > > are non-existent then it would most likely be NULL.
-> > > >
-> > > > Yeah, I see. In my case, the usage of the rhashtable will be:
-> > > > add -> lookup, and rht_ptr is alway non-NULL. You are right,
-> > > > it can be NULL in other situations, and it's not a good idea to
-> > > > use likely() here ;)
-> > >
-> > > Have you measured a performance increase?  How tiny is it?
-> > >
-> > > It might conceivably make sense to have a rhashtable_lookup_likely() =
-and
-> > > rhashtable_lookup_unlikely(), but concrete evidence of the benefit wo=
-uld
-> > > be needed.
-> >
-> > I made a more accurate bench testing:  call the rhashtable_lookup()
-> > 100000000 times.
-> >
-> > Without the likely(), it cost  123697645ns. And with the likely(), only
-> > 84507668ns.
->
-> a 30% speedup is impressive, even though it is a micro-benchmark.
->
-> >
-> > I add the likely() not only to the __rht_ptr(), but also rht_for_each_r=
-cu_from()
-> > and rhashtable_lookup().
->
-> I suggest you create a patch which adds rhashtable_lookup_likely(),
-> __rhashtable_lookup_likely(), rht_for_each_rcu_from_likely(),
-> rht_ptr_rcu_likely() etc.
-> So that no existing code changes, but the new function uses likely
-> everywhere that you think is important.
+Hi Wenmeng,
 
-OK, sounds great! I'll send such a patch.
+kernel test robot noticed the following build errors:
 
->
-> I had a bit of a look at callers of rhashtable_lookup().  Some return
-> -EEXIST if they find something. Other return -ENOENT if they don't.
-> Using rhasthable_lookup_likely() for those that return -ENOENT probably
-> makes sense.
+[auto build test ERROR on ce7f1a983b074f6cf8609068088ca3182c569ee4]
 
-I'll do it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Wenmeng-Liu/media-qcom-camss-Add-support-for-TPG-common/20250925-083535
+base:   ce7f1a983b074f6cf8609068088ca3182c569ee4
+patch link:    https://lore.kernel.org/r/20250925-camss_tpg-v4-3-d2eb099902c8%40oss.qualcomm.com
+patch subject: [PATCH v4 3/3] media: qcom: camss: tpg: Add TPG support for SA8775P and QCS8300
+config: i386-buildonly-randconfig-005-20250926 (https://download.01.org/0day-ci/archive/20250926/202509261315.Ut2kQNiR-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509261315.Ut2kQNiR-lkp@intel.com/reproduce)
 
-Thanks!
-Menglong Dong
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509261315.Ut2kQNiR-lkp@intel.com/
 
->
-> Thanks,
-> NeilBrown
->
->
-> >
-> > Below is the part code of the testing:
-> >
-> >     for (i =3D 0; i < num_elems; i++) {
-> >         objs[i] =3D kmalloc(sizeof(**objs), GFP_KERNEL);
-> >         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, objs[i]);
-> >         objs[i]->key =3D i;
-> >         INIT_RHT_NULLS_HEAD(objs[i]->node.next);
-> >         ret =3D rhashtable_insert_fast(&ht, &objs[i]->node, bench_param=
-s);
-> >         KUNIT_ASSERT_EQ(test, ret, 0);
-> >     }
-> >
-> >     /* for CPU warm up */
-> >     for (i =3D 0; i < 1000000000; i++) {
-> >         u32 key =3D 0;
-> >         struct bench_obj *found;
-> >
-> >         found =3D rhashtable_lookup(&ht, &key, bench_params);
-> >         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, found);
-> >         KUNIT_ASSERT_EQ(test, found->key, key);
-> >     }
-> >
-> >     rcu_read_lock();
-> >     t0 =3D ktime_get();
-> >     for (i =3D 0; i < 100000000; i++) {
-> >         u32 key =3D 0;
-> >         struct bench_obj *found;
-> >
-> >         found =3D rhashtable_lookup(&ht, &key, bench_params);
-> >         if (unlikely(!found)) {
-> >             pr_info("error!\n");
-> >             break;
-> >         }
-> >     }
-> >     t1 =3D ktime_get();
-> >     rcu_read_unlock();
-> >
-> > >
-> > > Thanks,
-> > > NeilBrown
-> >
->
+All errors (new ones prefixed by >>):
+
+>> drivers/media/platform/qcom/camss/camss-tpg-gen1.c:112:9: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     112 |                 val = FIELD_PREP(TPG_VC_m_DT_n_CFG_0_FRAME_HEIGHT, input_format->height & 0xffff) |
+         |                       ^
+   drivers/media/platform/qcom/camss/camss-tpg-gen1.c:138:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     138 |         val = FIELD_PREP(TPG_CTRL_TEST_EN, 1) |
+         |               ^
+>> drivers/media/platform/qcom/camss/camss-tpg-gen1.c:184:11: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     184 |         hw_gen = FIELD_GET(HW_VERSION_GENERATION, hw_version);
+         |                  ^
+   3 errors generated.
+
+
+vim +/FIELD_PREP +112 drivers/media/platform/qcom/camss/camss-tpg-gen1.c
+
+    86	
+    87	#define TPG_USER_SPECIFIED_PAYLOAD_DEFAULT	0xBE
+    88	#define TPG_HBI_CFG_DEFAULT			0x4701
+    89	#define TPG_VBI_CFG_DEFAULT			0x438
+    90	#define TPG_LFSR_SEED_DEFAULT			0x12345678
+    91	#define TPG_COLOR_BARS_CFG_STANDARD \
+    92		FIELD_PREP(TPG_VC_n_COLOR_BARS_CFG_ROTATE_PERIOD, 0xA)
+    93	
+    94	static int tpg_stream_on(struct tpg_device *tpg)
+    95	{
+    96		struct tpg_testgen_config *tg = &tpg->testgen;
+    97		struct v4l2_mbus_framefmt *input_format;
+    98		const struct tpg_format_info *format;
+    99		u8 lane_cnt = tpg->res->lane_cnt;
+   100		u8 dt_cnt = 0;
+   101		u8 i;
+   102		u32 val;
+   103	
+   104		/* Loop through all enabled VCs and configure stream for each */
+   105		for (i = 0; i < tpg->res->vc_cnt; i++) {
+   106			input_format = &tpg->fmt[MSM_TPG_PAD_SRC + i];
+   107			format = tpg_get_fmt_entry(tpg,
+   108						   tpg->res->formats->formats,
+   109						   tpg->res->formats->nformats,
+   110						   input_format->code);
+   111	
+ > 112			val = FIELD_PREP(TPG_VC_m_DT_n_CFG_0_FRAME_HEIGHT, input_format->height & 0xffff) |
+   113			      FIELD_PREP(TPG_VC_m_DT_n_CFG_0_FRAME_WIDTH, input_format->width & 0xffff);
+   114			writel(val, tpg->base + TPG_VC_m_DT_n_CFG_0(i, dt_cnt));
+   115	
+   116			val = FIELD_PREP(TPG_VC_m_DT_n_CFG_1_DATA_TYPE, format->data_type);
+   117			writel(val, tpg->base + TPG_VC_m_DT_n_CFG_1(i, dt_cnt));
+   118	
+   119			val = FIELD_PREP(TPG_VC_m_DT_n_CFG_2_PAYLOAD_MODE, tg->mode - 1) |
+   120			      FIELD_PREP(TPG_VC_m_DT_n_CFG_2_USER_SPECIFIED_PAYLOAD,
+   121					 TPG_USER_SPECIFIED_PAYLOAD_DEFAULT) |
+   122			      FIELD_PREP(TPG_VC_m_DT_n_CFG_2_ENCODE_FORMAT, format->encode_format);
+   123			writel(val, tpg->base + TPG_VC_m_DT_n_CFG_2(i, dt_cnt));
+   124	
+   125			writel(TPG_COLOR_BARS_CFG_STANDARD, tpg->base + TPG_VC_n_COLOR_BARS_CFG(i));
+   126	
+   127			writel(TPG_HBI_CFG_DEFAULT, tpg->base + TPG_VC_n_HBI_CFG(i));
+   128			writel(TPG_VBI_CFG_DEFAULT, tpg->base + TPG_VC_n_VBI_CFG(i));
+   129	
+   130			writel(TPG_LFSR_SEED_DEFAULT, tpg->base + TPG_VC_n_LSFR_SEED(i));
+   131	
+   132			/* configure one DT, infinite frames */
+   133			val = FIELD_PREP(TPG_VC_n_CFG0_VC_NUM, i) |
+   134			      FIELD_PREP(TPG_VC_n_CFG0_NUM_FRAMES, 0);
+   135			writel(val, tpg->base + TPG_VC_n_CFG0(i));
+   136		}
+   137	
+   138		val = FIELD_PREP(TPG_CTRL_TEST_EN, 1) |
+   139			  FIELD_PREP(TPG_CTRL_PHY_SEL, 0) |
+   140			  FIELD_PREP(TPG_CTRL_NUM_ACTIVE_LANES, lane_cnt - 1) |
+   141			  FIELD_PREP(TPG_CTRL_VC_DT_PATTERN_ID, 0) |
+   142			  FIELD_PREP(TPG_CTRL_NUM_ACTIVE_VC, tpg->res->vc_cnt - 1);
+   143		writel(val, tpg->base + TPG_CTRL);
+   144	
+   145		return 0;
+   146	}
+   147	
+   148	static void tpg_stream_off(struct tpg_device *tpg)
+   149	{
+   150		writel(0, tpg->base + TPG_CTRL);
+   151		writel(1, tpg->base + TPG_CLEAR);
+   152	}
+   153	
+   154	static void tpg_configure_stream(struct tpg_device *tpg, u8 enable)
+   155	{
+   156		if (enable)
+   157			tpg_stream_on(tpg);
+   158		else
+   159			tpg_stream_off(tpg);
+   160	}
+   161	
+   162	static int tpg_configure_testgen_pattern(struct tpg_device *tpg, s32 val)
+   163	{
+   164		if (val > 0 && val <= TPG_PAYLOAD_MODE_COLOR_BARS)
+   165			tpg->testgen.mode = val;
+   166	
+   167		return 0;
+   168	}
+   169	
+   170	/*
+   171	 * tpg_hw_version - tpg hardware version query
+   172	 * @tpg: tpg device
+   173	 *
+   174	 * Return HW version or error
+   175	 */
+   176	static u32 tpg_hw_version(struct tpg_device *tpg)
+   177	{
+   178		u32 hw_version;
+   179		u32 hw_gen;
+   180		u32 hw_rev;
+   181		u32 hw_step;
+   182	
+   183		hw_version = readl(tpg->base + TPG_HW_VERSION);
+ > 184		hw_gen = FIELD_GET(HW_VERSION_GENERATION, hw_version);
+   185		hw_rev = FIELD_GET(HW_VERSION_REVISION, hw_version);
+   186		hw_step = FIELD_GET(HW_VERSION_STEPPING, hw_version);
+   187		dev_dbg_once(tpg->camss->dev, "tpg HW Version = %u.%u.%u\n",
+   188			     hw_gen, hw_rev, hw_step);
+   189	
+   190		return hw_version;
+   191	}
+   192	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
