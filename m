@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-834303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CCFBA4618
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96CBABA4624
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911E1621F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361A07B088B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A967202F7B;
-	Fri, 26 Sep 2025 15:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B862A2192E4;
+	Fri, 26 Sep 2025 15:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KEEsQBEp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDD3xchw"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33841F0E56;
-	Fri, 26 Sep 2025 15:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECEE217716
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758899981; cv=none; b=GldhkEopcINc0leSaFQz1Tjfly4jLfSczRbYq8JYIhy07I+5OlJh/VZGGJnhQVDK24ddhCABI0VS4OeN4sny1UftttmwjwYf2p8NWgxxD6RgDGE8FPlVIjB3e2SudDmon7KaEcWvSgO9c0TG7clQHoUsr2Ijf8lCxusxZTW0FIs=
+	t=1758899987; cv=none; b=Uq7Tefh4AWIW+xsR6AFbGXP7hTTiCt3nAY/iPBUnwsEQicd0Yc9xe/lOSefsr+sW1BLAeOL/9AnFAh9B3kPzRTs83gYwFrB6+ZkwAeL8W6CQJaYoIPCVApXP3s/uMgoSzwvWbm6Q++nOLkBGE5YF5Wex08eC9ezULcL9k3KFSd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758899981; c=relaxed/simple;
-	bh=K0141O9RaooOGMsvlQ1k/qxrc/irBwusYEc6wW+7eGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=H2lvBzhAoZeVExaPDS0bQWG69yf8ErN9XxGRjOTxu0r8rKHfosz7ynki7mO+Skz9v49Hybp9rFPYvqv5fxgfrcTGwHzB8q8Eb7+dxH27nyZae8b+tFCxc//M8qRp8i0UplEp4BZHL+rWFKttoY9HhLncTtWwW6gumJh0cSwrKRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KEEsQBEp; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758899980; x=1790435980;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=K0141O9RaooOGMsvlQ1k/qxrc/irBwusYEc6wW+7eGY=;
-  b=KEEsQBEppvHhc4asLZefpW4e+pwanrMMyHtRWEWPflKP3agIEkEdCom8
-   lz9ZWOBp/I19qmhmuvZvy1UvRTgQ1dXARty4x7PuJ7xk1xe06OikhYARC
-   lKM2IHyOB9hRuXg9REX/OmF2tK7ZmLR20TuEWVexWL6nFbt2ks+idu3Sz
-   iADvtXWG7PB5/FKUslP/ewABD0LDJuP56aMCHfCiOXgZK0KZRnT9zDLsP
-   +2ZgjULO+TCXKjJ5sD269mg+M7mfkwrJJrlD/+VUHk31SrRuO1lgw7lvf
-   hTB+nJs1V+6EumVHznfspYi+f912xsKAfpQEEZtBwdwKUS/UCHXxeJy1Z
-   A==;
-X-CSE-ConnectionGUID: 3UAleIZ2SAaXg8vyXfDbcA==
-X-CSE-MsgGUID: Y56vqJUaTSaEx1zpZeJcoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="78876863"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="78876863"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:19:39 -0700
-X-CSE-ConnectionGUID: aYOtJMwUTB2mm75OCpZ/XQ==
-X-CSE-MsgGUID: IkY0y+JsT5CNdMSjOT5ZCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177199021"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.109.59]) ([10.125.109.59])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:19:38 -0700
-Message-ID: <112cc926-30aa-4f8d-a3a6-aa2262b96916@intel.com>
-Date: Fri, 26 Sep 2025 08:19:37 -0700
+	s=arc-20240116; t=1758899987; c=relaxed/simple;
+	bh=2XTLs4doltlPuCdYFOVv4qEsvroIMNWoNu+9BpzlsAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p51stze7Z8nlilrt0GiQxerX3cGnUzQ1FSXISkLyoXU0bR8u6zk+Z3PNYC5lFvr6KQu0S95+aR6AHiJjBdrxQeJ7DNUtMgPQTFxw78CU4aAuzXXDZ+bJRJfB2njWjyGA9ZzIhuf53He+fO/cf4KBH3V4GSvGVASRdR6mtB/7f08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WDD3xchw; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee130237a8so1686868f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:19:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758899984; x=1759504784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QWlR0y/Sux61rdpKVNHDRpox6sYOOn7qAYyRTBv/JhA=;
+        b=WDD3xchwUJXWqIVv0OYJtLca4TTpdEF98mfveF1/kGNklukMa3WR+wJrd8Z2v2Kr9s
+         8qLa0J1OWNimYBLg/iAPwHoKRCzacxdE8bKGf3ZiIz6fzOuu+aFF05OH0ANYzNnevtDZ
+         7Rnq+4j3BCCnHx5U+5Uu0qVQV60BcQvMA54iFpzDq6NvcQ3zrHRsiYuvKhkq1WEIK18M
+         v5y5vNxpXhjchwFfgSfGW5SITLRAxjkzRLDOcjDlnYf+BYi2ItdZ2+6co7Z9uBEo0drV
+         lOX75b0TxB2+CCvyboL4T/vPoIiw81pKWDy5+DjNruoobJq858MM/aY5gdnRBo2qSw4w
+         owAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758899984; x=1759504784;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWlR0y/Sux61rdpKVNHDRpox6sYOOn7qAYyRTBv/JhA=;
+        b=RzT6iNTzSleY+rClHceExVwxtwClJr4NbHbaq4qryXIBj0rayDgGZx869ggZj2eKdW
+         1hxG94UNVaLstfx2DhxhP7D+TBj1smqpzUd9LhhkEuUG4Ryb1MYWEIOTw68ul7/KGAE6
+         n3pHsKkcwvsPWR+wubtDRPZ29uEN0LpCoP+waHWHBDFjc/2laYl0fWulr7W9qIUiMF4K
+         5BMuQY50MXL8gHD/mmIkhGyjB3qOza8TwyLc6fXIAi0Aixq7iaG3OqaKtrmZgTMX1eB9
+         VAsQfYNWnrY5G+nEC0l1f6B4WdznazKSmLj4K9nN08Tfp6wRlcL4lS6CqWJteo9r3CTW
+         pN/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVEMtq3xibqFzOczw20juuRaQWfL/0at2tWZGC6Pjb+DWP60sYR1h9+nfuVtQ1GfR+45ATKJbGo1y1KSl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsW8ZgFZ3WpxK1kWg9uXU5Qt7zlN5dDe3luDuvpYVOZLeqCic+
+	e3xEmslRL8jX6g8k6Jc5xy7Mw38CAuhToEactf9S/e4LYmF7A+3mqA88
+X-Gm-Gg: ASbGnctNpMVALT7r8cr2s7R8RjbbKGJVaUscnnLuX33PeVGmQhs/YP7IkDGL4tX6/oz
+	ZMrDiLwyKj73x0qDOGlEqT2YkZ+ErX05BTgSbqOVnVzjRRFfj0oOD1r+jowlEnmHTW5mJLc3naS
+	7MMs71SW4YD6frP394i3AJRzxbYWJLbk5+0PU+OUBsstdDH/Y2OpQadrLUMIFz6bFvPqIyVzTQP
+	9EPfvj5ib2KUH2rSqZur+zzqri02DqHZSn8vTzAQttwjmGLh+jzc+E1Vc/Q8/bLaFf8kkGuC2L+
+	J8ejgPAvhS0Q8k1pDXs7vRAk6jqCslQMPSj5GUV9Qfc56u6NeqiuKbI8W2wbHnCgehLlskPJCCv
+	4/kD0yNIVGJTG+fmh/GDI3aEGQ/Dle7Rp4WQBhiNDKi6eU85xViE5nrEsmRK2ZntVxPy/IjdSsw
+	sbl1gBTm7Cn7DkdXv0PHeEACa+2kgiwcyaUpYaLxA=
+X-Google-Smtp-Source: AGHT+IEa1G8Cv8YRgqFXmAP3TAlQSquRLXr05PhtZGwjiNd0B//b+MGhp44cDbdJLfkDnbto9V3Cwg==
+X-Received: by 2002:a05:6000:1889:b0:3f8:8aa7:465d with SMTP id ffacd0b85a97d-40e4adce7e4mr6096265f8f.30.1758899983520;
+        Fri, 26 Sep 2025 08:19:43 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5? ([2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab6a514sm120108055e9.22.2025.09.26.08.19.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 08:19:42 -0700 (PDT)
+Message-ID: <37ec3e8b-e46d-40d4-826d-b4b2378015cb@gmail.com>
+Date: Fri, 26 Sep 2025 16:19:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,78 +82,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/16] x86/virt/tdx: Add helpers to allow for
- pre-allocating pages
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, kas@kernel.org,
- bp@alien8.de, chao.gao@intel.com, dave.hansen@linux.intel.com,
- isaku.yamahata@intel.com, kai.huang@intel.com, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, mingo@redhat.com,
- pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de, x86@kernel.org,
- yan.y.zhao@intel.com, vannapurve@google.com
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-13-rick.p.edgecombe@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250918232224.2202592-13-rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH v8 mm-new 05/12] mm: thp: decouple THP allocation between
+ swap and page fault paths
+Content-Language: en-GB
+To: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
+ david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, hannes@cmpxchg.org,
+ gutierrez.asier@huawei-partners.com, willy@infradead.org, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, ameryhung@gmail.com,
+ rientjes@google.com, corbet@lwn.net, 21cnbao@gmail.com,
+ shakeel.butt@linux.dev, tj@kernel.org, lance.yang@linux.dev
+Cc: bpf@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250926093343.1000-1-laoar.shao@gmail.com>
+ <20250926093343.1000-6-laoar.shao@gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20250926093343.1000-6-laoar.shao@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/18/25 16:22, Rick Edgecombe wrote:
-> +/*
-> + * Simple structure for pre-allocating Dynamic
-> + * PAMT pages outside of locks.
-> + */
-> +struct tdx_prealloc {
-> +	struct list_head page_list;
-> +	int cnt;
-> +};
 
-This is compact and all. But it's really just an open-coded, simplified
-version of what mempool_t plus mempool_init_page_pool() would do.
 
-Could you take a look at that and double check that it's not a good fit
-here, please?
+On 26/09/2025 10:33, Yafang Shao wrote:
+> The new BPF capability enables finer-grained THP policy decisions by
+> introducing separate handling for swap faults versus normal page faults.
+> 
+> As highlighted by Barry:
+> 
+>   We’ve observed that swapping in large folios can lead to more
+>   swap thrashing for some workloads- e.g. kernel build. Consequently,
+>   some workloads might prefer swapping in smaller folios than those
+>   allocated by alloc_anon_folio().
+> 
+> While prtcl() could potentially be extended to leverage this new policy,
+> doing so would require modifications to the uAPI.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Barry Song <21cnbao@gmail.com>
+> ---
+>  include/linux/huge_mm.h | 3 ++-
+>  mm/huge_memory.c        | 2 +-
+>  mm/memory.c             | 2 +-
+>  3 files changed, 4 insertions(+), 3 deletions(-)
+> 
+
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
