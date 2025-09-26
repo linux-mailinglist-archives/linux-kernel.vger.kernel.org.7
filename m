@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-834542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1E8BA4E67
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003E8BA4E6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB92C1C06696
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B03628668
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384A330C101;
-	Fri, 26 Sep 2025 18:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DFB30CB2A;
+	Fri, 26 Sep 2025 18:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJIdnbNt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jiU5gx7H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954B535957
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F079635957
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758911592; cv=none; b=CaXDVTKNTLbk0l8/uoSHd0kk/fZGp70UPdVRjqy7gV8T5ZC8OyqweTOnxB6+xtiT/cPaqaJlZZARire7s48zNH1k0q2zkDupyqHS7VBSQfC3DjodtIah/Dsg4ixTa1IlqeSPh7W0U16FEsrQ3vBHuoHoe98LNikSZH94IrKWrbw=
+	t=1758911626; cv=none; b=ile3kaEbi8+TeH1y9raoXESjeE0bn7mkggM6Q2AvsXUM32WCCq5xcBIk6HnhLx9iqzR/RBnz8muecYkNxTUzbswbWX7gr34qvNqEqhsPAGE7EEWBTcx0qDXjMCUeAGbD1+EKzAAQF5JNnM2r1w8vaOJdswmelQmQ2pt7BYeQMqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758911592; c=relaxed/simple;
-	bh=1FEo+qjc2uVPZtPViZiq0sC5eXwLvDKqGoow+RAmhek=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=b0L7lWIJFzJm1kzPFzJ79HZVGeMtdbQMX8vj672qKCjHNqXyYNHqmQiCrOBmMyfxU780ppsvNeC/oWvIysTvJ0fZm+kLn2SfmOkE71OOpwYiPSNyGcWu3Kgf3qmSMFK1DJYXftCxthxV83mJD2TZxQw/qIRZo5jEfj3YqiZrNB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJIdnbNt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0DFEC4CEF4;
-	Fri, 26 Sep 2025 18:33:10 +0000 (UTC)
+	s=arc-20240116; t=1758911626; c=relaxed/simple;
+	bh=oXdar49xgqDvb/6GA2k51Cj07chVCcuaXGpUDgposp8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TINPtQ9R+9KTLBMJLhGCC9rxDS5d8cLs327g7Wg3WYZMmFDrVyWTjEVXEIe+m1QydcoQlv9GyfddbJmT7J5FgVr9LNmikpwXIyjy4apeFyJTdcqULocNLpqa59nm90MFx3tvelGnilZabDRbPi5ig00wvEOnv6CxI4zBvEEaywY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jiU5gx7H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA16C4CEF4;
+	Fri, 26 Sep 2025 18:33:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758911591;
-	bh=1FEo+qjc2uVPZtPViZiq0sC5eXwLvDKqGoow+RAmhek=;
-	h=Date:From:To:cc:Subject:From;
-	b=FJIdnbNtGWpNcMaPMrA5nKAjR4qQNuEbY6hfgfzXPnBJxHz8/omC8jhIXzZgmvbou
-	 fQrrqiDzxG37jvslR9rDdBGPnKDGs1jp2j+kbHsy+hmC9CLJ5g+uFo6vRSoU89fYCl
-	 7EDdW46P55Zo3WvfuP4pR8Vf6P4b34Oli2XfFpaHw04vKqIxYeknvscjoEEI6etu8L
-	 mhVEGqdU6fKpWhPqDFOfFOMpshCfCYMhjWdJNjKN0ng0INAGcvYl0rlOSZIgVS5ao3
-	 QxjYViXvt5d2ECP+Brbxz7xR8shR0cZK81/+OY9pBZINmhBYxx+8qY9m1p2DGHKo64
-	 EuYLXcT0vSqcg==
-Date: Fri, 26 Sep 2025 12:33:10 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: torvalds@linux-foundation.org
-cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V updates for v6.17-rc8
-Message-ID: <c6ef1683-9c29-cb02-4498-31fce8934d9e@kernel.org>
+	s=k20201202; t=1758911625;
+	bh=oXdar49xgqDvb/6GA2k51Cj07chVCcuaXGpUDgposp8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jiU5gx7H0Z0QQWEfyb0ghA1Tu7eHHeEowdMW+LPoN/nofzvIs7hbcItqMMNVqf9/L
+	 4DTttr8+d2VqDqgnWKhtNV4BuSlv0arCRIEn8csIvEGkecoPjkGqoWKdX4lemoAtFH
+	 ElieiZpxTN5FpVoLOCVeU187mGKM4C2uB6d4iwGL1fcFYn0ikMaeDwPPWeeFHZjV36
+	 /HlK4miuphsl2G7UIqdghk3K3ayfLH7eQ/Njd75oiUsR3uAWdKaK24eUhrvLhHZsbS
+	 /SQCLU1d1BXb9CGUhEQ3uvAC2nVEHPPLuRzr/FOzolSmnS1PyscXdocYetENd9zyqO
+	 PQU5ezUcuhcmw==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Chris Mason <clm@fb.com>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 1/4] mm/page_alloc/vmstat: Simplify refresh_cpu_vm_stats change detection
+Date: Fri, 26 Sep 2025 11:33:43 -0700
+Message-Id: <20250926183343.54956-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250926182438.3108364-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-Linus,
+On Fri, 26 Sep 2025 11:24:37 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+[...]
+> > > @@ -839,7 +839,7 @@ static int refresh_cpu_vm_stats(bool do_pagesets)
+> > >  		if (do_pagesets) {
+> > >  			cond_resched();
+> > >  
+> > > -			changes += decay_pcp_high(zone, this_cpu_ptr(pcp));
+> > > +			changed |= decay_pcp_high(zone, this_cpu_ptr(pcp));
+> > 
+> > I'm not a fan of bit operations unless it provides clear benefits.
+> > What about below?
+> > 
+> >     if (decay_pcp_high(zone, this_cpu_ptr(pcp)) && !changed)
+> >     	changed = truee;
+> 
+> Here, what if I change it to just:
+> 
+> 	if (decay_pcp_high(zone, this_cpu_ptr(pcp))
+> 		changed = true;
 
-The following changes since commit a03ee11b8f850bd008226c6d392da24163dfb56e:
+Looks nice to me! :)
 
-  riscv: Fix sparse warning about different address spaces (2025-09-05 15:33:52 -0600)
+> 
+> Since even if changed == true already, this will be a no-op.
 
-are available in the Git repository at:
+I was thinking the compiler might or might not emit unnecessary writes, but I
+don't really care that.  Your suggested version looks good to me :)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-v6.17-rc8
+> 
+> > Just a personal and trivial taste.  No strong opinion.  If you don't strongly
+> > feel my suggestion is better, please keep the original code.
+> 
+> I feel like if someone (you) feels like bitwise operations here makes it
+> less clear what the code is doing, others may feel the same way as well!
+> Happy to make the change to hopefully make it more easily understandable
+> what is happening. 
 
-for you to fetch changes up to e24108012ce9662d90093f91d5ffebcbf78da7de:
+Thank you Joshua!
 
-  MAINTAINERS: Update Paul Walmsley's E-mail address (2025-09-23 20:18:45 -0600)
+[...]
+> Thanks SJ, I hope you have a great day!
 
-----------------------------------------------------------------
-RISC-V fixes for v6.17-rc8
+You too!  Plus, great weekend!
 
-Two small RISC-V fixes for v6.17-rc8:
 
-- A race-free implementation of pudp_huge_get_and_clear() (based on the x86
-  code)
+Thanks,
+SJ
 
-- A MAINTAINERS update to my E-mail address
-
-----------------------------------------------------------------
-Alexandre Ghiti (1):
-      riscv: Use an atomic xchg in pudp_huge_get_and_clear()
-
-Paul Walmsley (1):
-      MAINTAINERS: Update Paul Walmsley's E-mail address
-
- MAINTAINERS                      |  8 ++++----
- arch/riscv/include/asm/pgtable.h | 17 +++++++++++++++++
- 2 files changed, 21 insertions(+), 4 deletions(-)
-
-    text	   data	    bss	     dec	    hex	filename
-12772113	6174050	 419253	19365416	1277e28	vmlinux.rv64.orig
-12772113	6174050	 419253	19365416	1277e28	vmlinux.rv64
-11725507	5994478	 404229	18124214	1148db6	vmlinux.rv64_nosmp.orig
-11725507	5994478	 404229	18124214	1148db6	vmlinux.rv64_nosmp
-11723502	4702754	 309629	16735885	 ff5e8d	vmlinux.rv32.orig
-11723502	4702754	 309629	16735885	 ff5e8d	vmlinux.rv32
- 2612497	 761072	 119048	 3492617	 354b09	vmlinux.nommu_virt.orig
- 2612497	 761072	 119048	 3492617	 354b09	vmlinux.nommu_virt
+[...]
 
