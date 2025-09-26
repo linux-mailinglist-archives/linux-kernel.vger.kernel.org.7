@@ -1,264 +1,122 @@
-Return-Path: <linux-kernel+bounces-834221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46273BA436B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFA4BA4392
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B013BF763
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7211B1C06FCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28822128A;
-	Fri, 26 Sep 2025 14:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67231F4168;
+	Fri, 26 Sep 2025 14:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pIydO7Am"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TLwizgF6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435F721D58B
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEED114B953;
+	Fri, 26 Sep 2025 14:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896993; cv=none; b=AT1gnvAYrJlMkAXl3jImDmJauvF4Ay86wOlB1BMbTsb6nmuhwJOjng+NywxoGC16lwNWqnOqIzXw6DJ3y8MdEYn/innVMIlhIQ5Zo18lREhYHtUfr0uBeNVCqF1D3DmNjv0WAJN4vl/eRkcGF+DwTD4dIbnrSIAgeKyON9/6+0M=
+	t=1758897094; cv=none; b=dfcJv7ONvDf/lQ1mNZ1pwq7Zt2cTDxoqCOi3jKLzkM6izqINJ4w96WsmWq8UyXC70a+rEK1oNFnG6e8cANZrPW9fns29RhiZDM6HM1semXe1ANgGL2Cb+moLBa4KonzbJ5RBzG0W5XzTzVC16Ul+WUNTlRNZAoak6shnYPL0Rlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896993; c=relaxed/simple;
-	bh=CUu/3WJEonDkBBLP/tEinwlx7X34nDQKtAmkACOqCBg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=krbrSj66o7z3eRzFDeRcJPd/rXGVZ3m6LzjUoNqktAnoq9O0tFNxacpKsx4S0HbDg2+cKvqYen3QCUxg3kjwSnrv9X/nSIphpZYDfLPr7bXl8DaTiPygE6HCia+/NVqb2Uknv1JahcewaCRH5czSFcHx3vFD+mGJN9lBwKNCBBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pIydO7Am; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee1381b835so1881846f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:29:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758896989; x=1759501789; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jO9AJOP56fvfvlt3zhBLeKODfApKPr5H8iD1XyFk8hE=;
-        b=pIydO7Am46MeYJCRLoLV5VIPvQKow1riEYSd0AjGkRCkAvFklMTNpb+7veNmS57hK3
-         L8ngq8GlRUZbZOi1vyoeEwSxriZGHcWpAfYPnKsBTBqBZDfz8dlbgmndR0xWbUEDOInb
-         qjx/umv3pCPSIXiT3sEO/x/UVSZ2f0ykSgCZu6p/mrcMsLHkMN01eiw1Snhko4KZRPOK
-         csDy8zkHYLDjm3HyEXG97LRlgsozRFC8JAAOtXNmW5hWNu97kqWSV2VxZg8umuyzQxI4
-         JfWkTFrc4x6BNtyy5UuxARgAoT7ATcUcDGrEumYkORZ5D/Oc+s5JlGBjJekXZgQzkmgU
-         fq4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758896989; x=1759501789;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jO9AJOP56fvfvlt3zhBLeKODfApKPr5H8iD1XyFk8hE=;
-        b=Tn5AAllnepPQ1U9mGpZ1a0Bookzf4dDEkI6H4/AruOL5GtVND4pjjQR/HlqfVIgOE1
-         lntqvdYtGIFUE8747pQMujYSfenzAdmTY1bZOeVktwz4Wvvd/5qBjPEailVNY8nM3PDg
-         lE4oaR9oI53unNHbQHGmUD3t+bz+MbR63Nea+ebASJGgVL+lWdnYIzXk/yGLeZnQ4x+R
-         bOiEkpTze6nyuhWr9GmQwt70EKN1DqvL0vJzHx0q4abpeGbtrUAt51SqqXzclCqfrMc4
-         txVfTVLqWvFJd4j5lUTCi++lWIsG5+JkRFyNKlJiTL6/fjk9lwy5gi+Ji9hGxXKdUKjh
-         DzUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDqbyemqrPI4vgGnweu0076sji++e3GJzaWbVN7U6BAHXsZa7dNTQOniwyB1phbFI+eisD1kpzh6RWTRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBygxH//z998bxsjFwAVkCUt0FIh9zSSI+dQJ9eRem10ClQJ7k
-	z3lEIJKsbDeSEk/Ux6nJhT+VRH3P85y7WFLm0z/2gW1sVjVVOMmBrN/T1puEtvLg84g=
-X-Gm-Gg: ASbGncs4PFrsuYA46f7O/aehOn1gjgY7LtYcwkckaJz7eqi+KnV2e9VAm4eTuXxZJ0f
-	dh5GWdRXpOH4FS1S04Y/exv+8vKvhoOvrUTo0MkpSAplcCPueJa3+9Ojzuj09SgPtwWUKKh3JkU
-	z2tQcTYBjvjFIUOUBN6JnujSOO9P/3mA/FwNsirj/0LN6Ve9sapp8KNpxxlQXlr09yDcU0Rg/Lt
-	LtSGd7yVAThzGpeWMWNJDRS6NgD2Rrt7N1roQ9guumZNO/L8HpRaiqHEWa/vOTQSVYUODmOilET
-	hJFUp7aNkQN1ZuzB/zdMNC6dKo8FYkQ9jGg85zGleJbkFI14iu8R5p3rUxCZeR4HvgOikEwAOD6
-	KSH2uH8cYpMR2IZIbeDujqwI5O2KnqiuTuqhF3RkGtGSxUhQLhq9udzCDeEhhmjG6W1uxKlT+JS
-	oLvzBJB+h9A8m3
-X-Google-Smtp-Source: AGHT+IG6f7oSRj+qTmZ8hn0pIcEK+5qow20D5m7BI/IT0oCB3TFSjKdzLEQBnjUhwZ4f5aVdP0ljHg==
-X-Received: by 2002:a05:6000:1447:b0:3e8:e52:31c5 with SMTP id ffacd0b85a97d-40e468e626emr7064510f8f.2.1758896989512;
-        Fri, 26 Sep 2025 07:29:49 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:37e6:ed62:3c8b:2621? ([2a05:6e02:1041:c10:37e6:ed62:3c8b:2621])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-40fb89fb19fsm7419825f8f.21.2025.09.26.07.29.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 07:29:48 -0700 (PDT)
-Message-ID: <4868ed10-af6d-455d-b5cb-f301c1e81de1@linaro.org>
-Date: Fri, 26 Sep 2025 16:29:48 +0200
+	s=arc-20240116; t=1758897094; c=relaxed/simple;
+	bh=NVDGDPSRfBOg+IYM2GGQj9xeTSDqNKFZs6gh3u8/io4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HidF207S12/L74YfAt7qwDQQml9faDRBn6fE98kaMVr0/E6hGCOcRiVmzkJG4yvUDVzYLKQOfssPX9n6W2BSP4ZafCLVNIjk02xcYxHblrLqDI87/4//SzVxdmQHIX4pv6+lVapw6imhzbfA7bzrulgLBv+fgErgtm5aaI+Zr8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TLwizgF6; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758897093; x=1790433093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NVDGDPSRfBOg+IYM2GGQj9xeTSDqNKFZs6gh3u8/io4=;
+  b=TLwizgF6nRWQuJrBJSGjiub0gOrIT5lPjFwDQcdEbaWO5UrPdUCJuUxc
+   rCQZneAXZ8Jue/zP5GceQAR3qEgORRdWnse1slsEz/foL+Thq3vAf1MxH
+   Z8A0KNilSEDe31QpFw4kNVDfdWXHFmgk4Tn5qDDMo1qYMSeR19+8nFPvF
+   bsCXTh0JHIF3VHhVG7Rhz6VhYV6L+rDJLsS9Vu6XANeLiyrs5LPgk9FRj
+   0cAWgAvn3j0F7JlZiOAfZgX+sRBgQKxUF0itnzo/SRPIryrs9foiqezub
+   FTsBuHlqF2AZaL+JecDWVIulEdTrOmkTTrYY+IJioU8jVr4fxQ8kBRL/g
+   Q==;
+X-CSE-ConnectionGUID: T2on8A+XS7WzoyDdd7T59A==
+X-CSE-MsgGUID: vxdXDQH1SvWSN02WlQl1rw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61183954"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61183954"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 07:31:33 -0700
+X-CSE-ConnectionGUID: 5AKesJxsQhWElaZ1Al31ag==
+X-CSE-MsgGUID: U1ZXK4swSF2PMznGtDjUgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="208377174"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 26 Sep 2025 07:31:29 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v29Tc-0006JR-30;
+	Fri, 26 Sep 2025 14:31:18 +0000
+Date: Fri, 26 Sep 2025 22:30:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: Re: [PATCH 04/10] uapi: Add ARM SCMI definitions
+Message-ID: <202509262227.VZVSICFi-lkp@intel.com>
+References: <20250925203554.482371-5-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM mailing list <linux-pm@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Gaurav Kohli <quic_gkohli@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>,
- Sumeet Pawnikar <sumeet4linux@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Michael Walle <mwalle@kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- John Madieu <john.madieu.xa@bp.renesas.com>,
- Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [GIT PULL] thermal driver for v6.18-rc1
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925203554.482371-5-cristian.marussi@arm.com>
 
-Hi Rafael,
+Hi Cristian,
 
-please consider the following changes since commit 
-8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+kernel test robot noticed the following build errors:
 
-   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on trace/for-next linus/master v6.17-rc7 next-20250925]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-are available in the Git repository at:
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Define-a-common-SCMI_MAX_PROTOCOLS-value/20250926-044350
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250925203554.482371-5-cristian.marussi%40arm.com
+patch subject: [PATCH 04/10] uapi: Add ARM SCMI definitions
+config: x86_64-buildonly-randconfig-005-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262227.VZVSICFi-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262227.VZVSICFi-lkp@intel.com/reproduce)
 
-  
-ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git 
-tags/thermal-v6.18-rc1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509262227.VZVSICFi-lkp@intel.com/
 
-for you to fetch changes up to 79428e60897916401c9ed326f6ada4d7c7c997a3:
+All errors (new ones prefixed by >>):
 
-   dt-bindings: thermal: qcom-tsens: Document the Glymur temperature 
-Sensor (2025-09-26 13:27:44 +0200)
-
-----------------------------------------------------------------
-- Add the QCS615 compatible DT bindings for QCom platforms (Gaurav
-   Kohli)
-
-- Support fallback trimming values when the fuse is empty in the R-Car
-   driver (Marek Vasut)
-
-- Remove unneeded semicolon in the Mediatek LVTS driver (Jiapeng
-   Chong)
-
-- Fix the LMH Kconfig option by selecting QCOM_SCM and take the
-   opportunity to add the COMPILE_TEST option for the QCom's LMH
-   feature (Dmitry Baryshkov)
-
-- Fix the missing includes and incorrect error message in the Qcom's
-   LMH driver (Dmitry Baryshkov)
-
-- Fix comment typo and add the documentation in the Kconfig for the
-   R-Car Gen3 and Gen4 (Marek Vasut)
-
-- Add Tegra114 SOCTHERM support (Svyatoslav Ryhel)
-
-- Rename the functions name in the driver to be consistent and generic
-   with the different R-Car platform variants (Wolfram Sang)
-
-- Register the TI K3 J72xx bandgap sensor as a hwmon sensor too
-   (Michael Walle)
-
-- Add and document the thermal sensor unit reporting the junction
-   temperature of the RZ/G3S SoC (Claudiu Beznea)
-
-- Support the GRF in the Rockchip driver (Sebastian Reichel)
-
-- Add a temperature IIO sensor channel in the generic thermal ADC
-   driver (Svyatoslav Ryhel)
-
-- Document the temperature sensor on the QCOM's Glymur platform (Manaf
-   Meethalavalappu)
-
-- Add and document the thermal sensor unit reporting the junction
-   temperature of the RZ/G3E SoC (John Madieu)
-
-----------------------------------------------------------------
-Claudiu Beznea (2):
-       dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
-       thermal/drivers/renesas/rzg3s: Add thermal driver for the Renesas 
-RZ/G3S SoC
-
-Dmitry Baryshkov (2):
-       thermal/drivers/qcom: Make LMH select QCOM_SCM
-       thermal/drivers/qcom/lmh: Add missing IRQ includes
-
-Gaurav Kohli (1):
-       dt-bindings: thermal: tsens: Add QCS615 compatible
-
-Jiapeng Chong (1):
-       thermal/drivers/mediatek/lvts_thermal: Remove unneeded semicolon
-
-John Madieu (2):
-       dt-bindings: thermal: r9a09g047-tsu: Document the TSU unit
-       thermal/drivers/renesas/rzg3e: Add thermal driver for the Renesas 
-RZ/G3E SoC
-
-Manaf Meethalavalappu Pallikunhi (1):
-       dt-bindings: thermal: qcom-tsens: Document the Glymur temperature 
-Sensor
-
-Marek Vasut (4):
-       thermal/drivers/rcar_gen3: Add support for per-SoC default trim 
-values
-       thermal/drivers/rcar_gen3: Add support for R-Car V4H default trim 
-values
-       thermal/drivers/rcar_gen3: Fix comment typo
-       thermal/drivers/rcar_gen3: Document Gen4 support in Kconfig entry
-
-Michael Walle (1):
-       thermal/drivers/k3_j72xx_bandgap: Register sensors with hwmon
-
-Sebastian Reichel (3):
-       thermal/drivers/rockchip: Unify struct rockchip_tsadc_chip format
-       thermal/drivers/rockchip: Shut up GRF warning
-       dt-bindings: thermal: rockchip: Tighten grf requirements
-
-Sumeet Pawnikar (1):
-       drivers/thermal/qcom/lmh: Fix incorrect error message
-
-Svyatoslav Ryhel (5):
-       dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal 
-Management System
-       thermal/drivers/tegra/soctherm-fuse: Prepare calibration for 
-Tegra114 support
-       dt-bindings: thermal: add Tegra114 soctherm header
-       thermal/drivers/tegra: Add Tegra114 specific SOCTHERM driver
-       thermal/drivers/thermal-generic-adc: Add temperature sensor channel
-
-Wolfram Sang (1):
-       thermal/drivers/rcar_gen3: Fix mapping SoCs to generic Gen4 entry
-
-  .../bindings/thermal/nvidia,tegra124-soctherm.yaml |   2 +
-  .../devicetree/bindings/thermal/qcom-tsens.yaml    |   2 +
-  .../bindings/thermal/renesas,r9a08g045-tsu.yaml    |  93 +++++++
-  .../bindings/thermal/renesas,r9a09g047-tsu.yaml    |  87 +++++++
-  .../bindings/thermal/rockchip-thermal.yaml         |  15 ++
-  MAINTAINERS                                        |  14 ++
-  drivers/thermal/k3_j72xx_bandgap.c                 |   4 +
-  drivers/thermal/mediatek/lvts_thermal.c            |   2 +-
-  drivers/thermal/qcom/Kconfig                       |   3 +-
-  drivers/thermal/qcom/lmh.c                         |   4 +-
-  drivers/thermal/renesas/Kconfig                    |  21 +-
-  drivers/thermal/renesas/Makefile                   |   3 +
-  drivers/thermal/renesas/rcar_gen3_thermal.c        |  63 +++--
-  drivers/thermal/renesas/rzg3s_thermal.c            | 272 
-+++++++++++++++++++++
-  drivers/thermal/rockchip_thermal.c                 |  50 ++--
-  drivers/thermal/tegra/Makefile                     |   1 +
-  drivers/thermal/tegra/soctherm-fuse.c              |  18 +-
-  drivers/thermal/tegra/soctherm.c                   |  13 +
-  drivers/thermal/tegra/soctherm.h                   |  11 +-
-  drivers/thermal/tegra/tegra114-soctherm.c          | 209 ++++++++++++++++
-  drivers/thermal/tegra/tegra124-soctherm.c          |   4 +
-  drivers/thermal/tegra/tegra132-soctherm.c          |   4 +
-  drivers/thermal/tegra/tegra210-soctherm.c          |   4 +
-  drivers/thermal/thermal-generic-adc.c              |  55 ++++-
-  include/dt-bindings/thermal/tegra114-soctherm.h    |  19 ++
-  25 files changed, 911 insertions(+), 62 deletions(-)
-  create mode 100644 
-Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
-  create mode 100644 
-Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-  create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
-  create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
-  create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
-
+   In file included from <command-line>:
+>> ./usr/include/linux/scmi.h:43:1: error: C++ style comments are not allowed in ISO C90
+      43 | ///TODO more flags
+         | ^
+   ./usr/include/linux/scmi.h:43:1: note: (this will be reported only once per input file)
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
