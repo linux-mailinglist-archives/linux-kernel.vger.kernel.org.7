@@ -1,129 +1,79 @@
-Return-Path: <linux-kernel+bounces-834272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EAFBA4514
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1C7BA4517
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E31740302
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 152A974043E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80F81E25EB;
-	Fri, 26 Sep 2025 14:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7361F1E51EC;
+	Fri, 26 Sep 2025 14:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bkVHthXZ"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7KgpEcZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CE838DE1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C857816132F
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898763; cv=none; b=fBdJMq9+w0WhnIa7oFTfk9qVv7tf/3b1CHeWdiUM3tcW5jkzQXUK6CPfTKXSxxwtjDJbv7vbGpCwoTU/gjLzUl/owVPzeRTJmGZW4tl9cCPQD6Oz0EKCEPBbswcamWLZdggoEF1UszpnxfZ2JT4PV0N4dcxDn4JEBH7RXVEvecI=
+	t=1758898774; cv=none; b=RAitA502VBm2kYL+oQTYGZkLvYX4vZ4bpKszGdx1XN0tKnlfwxnhKGg5KpuEevzZI8ajC/eTKbCBDTG2XqrPQSGQ0lxDdRyHw5Y8v/1l1ABpeEfjtHbPQddKgbLY96pnX+HfXuwUx3sO73NoAES1BnROukC1jGE8S4gcISbNO08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898763; c=relaxed/simple;
-	bh=cpi+tktLDlympylmruyNUEDUWW5i2EItawMWgKbUj4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y1K/QVtow7y6qEj3niuffZsrXZdDJRnA8pXJfHgEtAglXyfp+jwrR8zSFT1aXXNXtXADcHGHfQ0ThKBAd/WkxgwDtPfWcepzidhGkzj12ZpNKV9ggktK7/1LnW1L8vUtUxFbEjhtoMOJLBmGYe9k83kavDd57cYaAHqMJJGv29g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bkVHthXZ; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1617D4E40DFE;
-	Fri, 26 Sep 2025 14:59:12 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C575E606B5;
-	Fri, 26 Sep 2025 14:59:11 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 394F7102F1917;
-	Fri, 26 Sep 2025 16:58:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758898750; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=g/Kz1ie9dmVYwimov0wPhzbQRXu3e/N/BUHb33lb4LI=;
-	b=bkVHthXZkidYzbifdV9SltyAzV3an0uOebGZlXz1RdqZY6tM780H+p54jSeD3ReMauLCwv
-	YFBs1dtpS1qWvPTpvXq1qbMRg3w0ltTpupARRkyFT6/U24rFUmxckxyl3aZfn/3FafmHiB
-	2KgWSFSRnWoKIuonMAGPDRZxpm24xyaHittPgHRs/pU7kvolDiD2Ee5aOQEoYZ4EFSN/bi
-	MSzeR0ADdCjcnWgI04/E9lXI6rZR1dhbKOkbxP8GVjJzSBajx857QzZ61E7NU6HOtnm3a4
-	ER0pCMdWies6+KfYMfVAKVDpg5luyBzGUW75Sxyw/ogoyEfa7j/qYp+vxVAnZA==
-Date: Fri, 26 Sep 2025 16:58:47 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/connector: allow a .destroy callback for
- drmm-allocated connectors
-Message-ID: <20250926165847.51f69473@booty>
-In-Reply-To: <ycbx4fxqppxuopcd64i6lt7qlcsa75iv4z6q4aka7igt7pntc7@bf3toot46wxo>
-References: <20250925-drm-bridge-alloc-getput-bridge-connector-v1-0-f0736e1c73ee@bootlin.com>
-	<20250925-drm-bridge-alloc-getput-bridge-connector-v1-1-f0736e1c73ee@bootlin.com>
-	<ycbx4fxqppxuopcd64i6lt7qlcsa75iv4z6q4aka7igt7pntc7@bf3toot46wxo>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758898774; c=relaxed/simple;
+	bh=0wNINZj/0cp7ofXzw1jVRESj9qK7dxg/w6IvrdV6EEw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=maLu6YpxjM2Q98qN2R3T0MSzq1/Uof5M7mhKmyCnGeXpCNeMLsc3fTJNOX1tGR5sqqI4Q27f/iQ5NIhgf3MZuqMMsJlG5RIItsXTmv+HD7mOmAJEVu9cswHVAERrcSxKlGbUmC0d/Wx2WsgTYS99BTQ2uWqUKohCNHW2smnyJ5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7KgpEcZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B8CC4CEF4;
+	Fri, 26 Sep 2025 14:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758898774;
+	bh=0wNINZj/0cp7ofXzw1jVRESj9qK7dxg/w6IvrdV6EEw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=b7KgpEcZu0sU9dq67N9w9smfPOxSFOqdYqogIluWNPtoWRimBVGoUYTr32fp3rpEi
+	 LLRFDqOv33i+WzKp96GSxpaSdtqs8sD0WX1T/0DdrVK+YD8Cd4aYSbFPdZQr9l/1KX
+	 6WuH99jAim6ZLG0wzVGiyrqPZo9LlMJ7NO5824QMw59lycr7/4L0fJL95ybvjesjUA
+	 2tNN65QM66Ff96FqCMLu7Id6Q3g4ZaIhWLyPpzg1E4mjnL3jjhyPdhed/hAwxCuEPH
+	 HHqO1XvmG3rYrcvHy5Xtfvi4PIuRPm40byfSeIS4wc/vS+VkhoshoFJp6D0jrUJ5ph
+	 TEpl665/tWHZA==
+From: Daniel Thompson <danielt@kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Thorsten Blum <thorsten.blum@linux.dev>
+Cc: kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+In-Reply-To: <20250817231349.633458-2-thorsten.blum@linux.dev>
+References: <20250817231349.633458-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH RESEND] kernel: debug: gdbstub: Replace deprecated
+ strcpy() with strscpy()
+Message-Id: <175889877309.8040.3227655030870638662.b4-ty@kernel.org>
+Date: Fri, 26 Sep 2025 15:59:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Mailer: b4 0.14.2
 
-Hi Dmitry,
 
-On Fri, 26 Sep 2025 01:07:26 +0300
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
-
-> On Thu, Sep 25, 2025 at 07:19:49PM +0200, Luca Ceresoli wrote:
-> > Some code is going to need connector-specific cleanup actions (namely
-> > drm_bridge_connector will need to put refcounted bridges).
-> > 
-> > The .destroy callback is appropriate for this task but it is currently
-> > forbidden by drmm_connector_init(). Relax this limitation and document it.
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > 
-> > ---
-> > 
-> > The other obvious approach would be adding a separate .cleanup callback for
-> > the cleanup-only actions. I tried both, they both apparently work, so any
-> > arguments and opinions on which approach is best within the overall DRM
-> > design would be very useful here.  
+On Mon, 18 Aug 2025 01:13:49 +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
 > 
-> Would it be better to use drmm-reset actions. I think the check here
-> makes much more help overall than harm in your case, so I'd suggest
-> leaving it in place.
+> 
 
-Thanks for the feedback!
+Applied, thanks!
 
-I think using drmm_add_action[_or_reset]() here makes sense indeed.
-
-As I understand it, both .destroy and drmm_add_action[_or_reset]()
-actions will trigger when the drm_device is removed. This is not ideal
-for hotplugging because one would add/remove bridges while the
-drm_device is persistent, so on multiple hot plug/unplug loops stale
-resources would accumulate until the final card removal, perhaps at
-system shutdown. However for now my goal is to have bridges refcount in
-place to avoid use-after-free. Releasing resources for hot-unplugged
-bridges for this case is a further step.
-
-Bottom line: same drawback for both solutions, but the drmm action is
-cleaner. v2 incoming with a drmm action.
+[1/1] kernel: debug: gdbstub: Replace deprecated strcpy() with strscpy()
+      commit: 05c81eddc44733fee60d4c55508c76017995900e
 
 Best regards,
-Luca
-
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Daniel Thompson (RISCstar) <danielt@kernel.org>
+
 
