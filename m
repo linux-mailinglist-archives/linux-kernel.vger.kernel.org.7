@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-834436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1493ABA4AF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:41:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A52BA4B0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C14166AA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796823A9F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5C52FE59F;
-	Fri, 26 Sep 2025 16:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6512F99B0;
+	Fri, 26 Sep 2025 16:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fViBS2mS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXjCDoU7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1026229B1F;
-	Fri, 26 Sep 2025 16:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421F823DD;
+	Fri, 26 Sep 2025 16:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904895; cv=none; b=lsdMCs5ga4qOlo5qdZ9i6pAQ2+nm/BnbBNlP7EyByHVxG4D9hZhAGAG8LLmLsAa86DzmpH71qyH32TBWq/oQhB9yvOEUmRZrr19I5bT8yACOycY9rF9hpkuPdBmWc/566KDChrSVuIvANjwlvjZbJIW/ODd1cVYVw8ZI9oCPBZ8=
+	t=1758904965; cv=none; b=NbJOOteZ9ekkIrcl9HB40Zg0i5zOK5VV0EJScUAB3ZKJIlfN0f7vwq0u9IeU4/Q+gz6dFXIqEu9kQT9uQr2yvtcgvsUl5PGbf5J5VPayK8gZHYU+YcymFYtBjse4O1vyDotIZOt5LShOdHqqQn8U7yZQAcZkxr/S/H8kgv/D5Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904895; c=relaxed/simple;
-	bh=Adm6HvYSUc4fdo95/IlsLBb45FB8Zii6Mcrl6yg6xgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bMFdOV3pBNWyF2rjJbZ1hFk5uemjiyaJ6LVeIRFdvkhm/0xwR9mcRIhAHBhVHE4wx2AW4/AP8x0onH0a/AMXvTtXmzb9/manwvx4vjDwAICYVZNuXBQmcUJcgqQJ4MiW+vw8tWJBV4s0R6y9YbSEeaL3xVGHCL+sM5nxZmmHTQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fViBS2mS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B47BC4CEF4;
-	Fri, 26 Sep 2025 16:41:34 +0000 (UTC)
+	s=arc-20240116; t=1758904965; c=relaxed/simple;
+	bh=EkEGdQzRoQHV/+qgTce+eYgdmMYG6X7KUjwNyIGarvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlPT6xwXdADAi4TPv8lhrLuUDBrGtTJEc9/lwbqsA1BJNlYZG25nEwYmTo2FE01UMyfXC6H14ZTm99/Ndd1IJAC23iCMzmRHqGfnYgJz3HAtw++hKAt3t4mKi9s9TPk7ZDsAEp4E3rckjZPy2kf3J+XiqcTJurZ0A7H3oZ4FEpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXjCDoU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C48F8C4CEF4;
+	Fri, 26 Sep 2025 16:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758904895;
-	bh=Adm6HvYSUc4fdo95/IlsLBb45FB8Zii6Mcrl6yg6xgE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fViBS2mS5Z08a7P2FivkLV6xsp+iGOicTArxX5PYY6agjVQHAbWzT0qPpp2BC2upB
-	 E9lL1+39xflCOd5Sdu8Fxq3HkGk4uI0OqP9fNWuvTjQS7TDMForkbRhFCYu/dHN2VC
-	 0pMzf4/OQu+KOQE/IjFlFX+BJAqataVBtNR0OZiZYSuMXHChFod2bD8WcYXcA1pup6
-	 hq8h0jlQwCu6mNW6Wzi6Ggn4uvE9efnLk99w2tVXbdpdLVHtnmvnedo4FqGBHsiSoq
-	 wwSCXUgkoboHxZH/3od+iOXzaMpg33kaekwdYrxgQqJi5quCkLcLFMXpjr3ViiqZtD
-	 EYXl8AE+9RIng==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v1 2/2] PM: hibernate: Combine return paths in power_down()
-Date: Fri, 26 Sep 2025 18:41:21 +0200
-Message-ID: <3571055.QJadu78ljV@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <3303305.5fSG56mABF@rafael.j.wysocki>
-References: <3303305.5fSG56mABF@rafael.j.wysocki>
+	s=k20201202; t=1758904964;
+	bh=EkEGdQzRoQHV/+qgTce+eYgdmMYG6X7KUjwNyIGarvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jXjCDoU7UvglbHeWZlcgdKM51GzyfPYJ50WZcIvbOLT5FgCmiMLvkmFCrrO4aoEAR
+	 N7NOisYGIWkXtNetrrSAdLSkg6F2zt6DfYtYNr/WkAduuhS7F005fGtwqKzLQ3CqzC
+	 UsJkGx6shKRqXks1NKpSK27vt3p4abdEdL8Z9tLqTUwulM7xEkD8QwPCxmLZLVHgS+
+	 udPJey5RoIhrJXpW5qUbVNZ2yTVt4JuDowuoXEGhOmoqPX3ZOJr+nGUiG71EYLK4UW
+	 rVa6y4cBKsruTw5cCfCgqDCAPrETY3n9SkZsf4o0A4sIMXgGXN1uCtSCBl3sOgwnDR
+	 TeGph+6DY7wTg==
+Date: Fri, 26 Sep 2025 17:42:40 +0100
+From: Simon Horman <horms@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Nishanth Menon <nm@ti.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] net: netcp: Fix crash in error path when DMA channel
+ open fails
+Message-ID: <aNbCgK76kQqhcQY2@horms.kernel.org>
+References: <20250926150853.2907028-1-nm@ti.com>
+ <aNa7rEQLJreJF58p@horms.kernel.org>
+ <ef2bd666-f320-4dc5-b7ae-d12c0487c284@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef2bd666-f320-4dc5-b7ae-d12c0487c284@ti.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Sep 26, 2025 at 09:57:02PM +0530, Siddharth Vadapalli wrote:
+> On 26/09/25 9:43 PM, Simon Horman wrote:
+> > On Fri, Sep 26, 2025 at 10:08:53AM -0500, Nishanth Menon wrote:
+> > > When knav_dma_open_channel() fails in netcp_setup_navigator_resources(),
+> > > the rx_channel field is set to an ERR_PTR value. Later, when
+> > > netcp_free_navigator_resources() is called in the error path, it attempts
+> > > to close this invalid channel pointer, causing a crash.
+> > > 
+> > > Add a check for ERR values to handle the failure scenario.
+> > > 
+> > > Fixes: 84640e27f230 ("net: netcp: Add Keystone NetCP core driver")
+> > > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > > ---
+> > > 
+> > > Seen on kci log for k2hk: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
+> > > 
+> > >   drivers/net/ethernet/ti/netcp_core.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+> > > index 857820657bac..4ff17fd6caae 100644
+> > > --- a/drivers/net/ethernet/ti/netcp_core.c
+> > > +++ b/drivers/net/ethernet/ti/netcp_core.c
+> > > @@ -1549,7 +1549,7 @@ static void netcp_free_navigator_resources(struct netcp_intf *netcp)
+> > >   {
+> > >   	int i;
+> > > -	if (netcp->rx_channel) {
+> > > +	if (!IS_ERR(netcp->rx_channel)) {
+> > >   		knav_dma_close_channel(netcp->rx_channel);
+> > >   		netcp->rx_channel = NULL;
+> > >   	}
+> > 
+> > Hi Nishanth,
+> > 
+> > Thanks for your patch.
+> > 
+> > I expect that netcp_txpipe_close() has a similar problem too.
+> > 
+> > But I also think that using IS_ERR is not correct, because it seems to me
+> > that there are also cases where rx_channel can be NULL.
+> 
+> Could you please clarify where rx_channel is NULL? rx_channel is set by
+> invoking knav_dma_open_channel().
 
-To avoid code duplication and improve clarity, combine the code
-paths in power_down() leading to a return from that function.
+Hi Siddharth,
 
-No intentional functional impact.
+I am assuming that when netcp_setup_navigator_resources() is called, at
+least for the first time, that netcp->rx_channel is NULL. So any of the
+occurrence of 'goto fail' in that function before the call to
+knav_dma_open_channel().
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- kernel/power/hibernate.c |   32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+> Also, please refer to:
+> https://github.com/torvalds/linux/commit/5b6cb43b4d62
+> which specifically points out that knav_dma_open_channel() will not return
+> NULL so the check for NULL isn't required.
+> > 
+> > I see that on error knav_dma_open_channel() always returns ERR_PTR(-EINVAL)
+> > (open coded as (void *)-EINVAL) on error. So I think a better approach
+> > would be to change knav_dma_open_channel() to return NULL, and update callers
+> > accordingly.
+> 
+> The commit referred to above made changes to the driver specifically due to
+> the observation that knav_dma_open_channel() never returns NULL. Modifying
+> knav_dma_open_channel() to return NULL will effectively result in having to
+> undo the changes made by the commit.
 
---- a/kernel/power/hibernate.c
-+++ b/kernel/power/hibernate.c
-@@ -708,21 +708,11 @@ static void power_down(void)
- 	if (hibernation_mode == HIBERNATION_SUSPEND) {
- 		pm_restore_gfp_mask();
- 		error = suspend_devices_and_enter(mem_sleep_current);
--		if (error) {
--			hibernation_mode = hibernation_ops ?
--						HIBERNATION_PLATFORM :
--						HIBERNATION_SHUTDOWN;
--		} else {
--			/* Match pm_restore_gfp_mask() call in hibernate() */
--			pm_restrict_gfp_mask();
-+		if (!error)
-+			goto rollback;
- 
--			/* Restore swap signature. */
--			error = swsusp_unmark();
--			if (error)
--				pr_err("Swap will be unusable! Try swapon -a.\n");
--
--			return;
--		}
-+		hibernation_mode = hibernation_ops ? HIBERNATION_PLATFORM :
-+						     HIBERNATION_SHUTDOWN;
- 	}
- #endif
- 
-@@ -733,12 +723,9 @@ static void power_down(void)
- 	case HIBERNATION_PLATFORM:
- 		error = hibernation_platform_enter();
- 		if (error == -EAGAIN || error == -EBUSY) {
--			/* Match pm_restore_gfp_mask() in hibernate(). */
--			pm_restrict_gfp_mask();
--			swsusp_unmark();
- 			events_check_enabled = false;
- 			pr_info("Wakeup event detected during hibernation, rolling back.\n");
--			return;
-+			goto rollback;
- 		}
- 		fallthrough;
- 	case HIBERNATION_SHUTDOWN:
-@@ -757,6 +744,15 @@ static void power_down(void)
- 	pr_crit("Power down manually\n");
- 	while (1)
- 		cpu_relax();
-+
-+rollback:
-+	/* Match the pm_restore_gfp_mask() call in hibernate(). */
-+	pm_restrict_gfp_mask();
-+
-+	/* Restore swap signature. */
-+	error = swsusp_unmark();
-+	if (error)
-+		pr_err("Swap will be unusable! Try swapon -a.\n");
- }
- 
- static int load_image_and_restore(void)
-
-
-
+I wasn't aware of that patch. But my observation is that the return value
+of knav_dma_open_channel() is still not handled correctly. E.g. the bug
+your patch is fixing.  And I'm proposing an alternate approach which I feel
+will be less error-prone.
 
