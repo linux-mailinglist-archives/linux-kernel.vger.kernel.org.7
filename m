@@ -1,276 +1,180 @@
-Return-Path: <linux-kernel+bounces-833534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD59BA23D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1184FBA242B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027A51C27E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21486246B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB45E14E2E2;
-	Fri, 26 Sep 2025 02:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY6FtYva"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CCE246BD2;
+	Fri, 26 Sep 2025 02:54:26 +0000 (UTC)
+Received: from out28-170.mail.aliyun.com (out28-170.mail.aliyun.com [115.124.28.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAF262FC7;
-	Fri, 26 Sep 2025 02:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990617DFE7;
+	Fri, 26 Sep 2025 02:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758854674; cv=none; b=dq71W9SFeMvu2cnDEZVaSFpgHZGxJ8FUcb/DK1NU086quxO2r1zAuxKXSZTpzErMwzNp0F42C5eKsNlY/oCPP7+m1HPqklUb8Cg/rDfxuAhBYyECZfyD5ceqLbBevkMA91QGPk9/d2RRNIJ01CGe7lttwcBFAz5PdC/P/pfgdsA=
+	t=1758855266; cv=none; b=kaUoim+0aHEI6RjSO8rjgp0XUY8nTkJ3/3waLsd/tw0azdJHVl2Q4N618BMo/FblbHWFUnTbGXC8Psx/O+ux2VeG0pUq5hZ23lwz/do4DGPaO5gJEAd3bFUwpACvcb/4aR4+q6gf8M6Uyw4UwRK/ENFFabpGZWL1Whfehs/+oHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758854674; c=relaxed/simple;
-	bh=WGgd9HbXf3muDxpRoOGtKDqq/H+jWq+KkhqeNuZt26k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oNwAWP4IvV6Dl2ZZ7yVl1xKtRYBLrZ7Ia3qX2+7Md2nl+piDsKvlTGtD8aQbbkqxO6ZikKasLjhwb1ppFu9x6Nbdc7AUkf1g9WA9QuHPm5I1mPRBqKGATEp29+RDNTqSrgH6tsUXwrTgT1HGZAYdtm0p0l3G8+zySHxAqviOknQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY6FtYva; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEC2C4CEF0;
-	Fri, 26 Sep 2025 02:44:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758854672;
-	bh=WGgd9HbXf3muDxpRoOGtKDqq/H+jWq+KkhqeNuZt26k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eY6FtYvabCSorn6RAdJj1vjmjePcCz7dFiqVxMmcfJH4sgooxBzvUdNi1Q+eKdZ+b
-	 OODafboTEd+3Lwtn6jvOGIUfjca2owH71ZvCcGLnEVSmd8BGHzPHBCoaEdrxyX3uku
-	 wSP7OIKfNbXHMh+87f1Ml6x9vh4tuf8f5pJzoS/OKbT9tK0VozyKp+RwgEVt+F6N88
-	 tHGSSGzfngiMMOnL5/OIQsIWQ82v4MkIhO6zRzvEYyQ7vqDfXo5MXzbl0SqAfMQJKw
-	 BEvv3mKXe4qjZIbGBV94KMFy/TWBHkc9ARHEv5938VWDcwP1EnW0uKL6TC8E3ToEuO
-	 heZBsyIpAt8ZA==
-Date: Thu, 25 Sep 2025 21:44:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>,
-	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] PCI: imx6: Add a method to handle CLKREQ#
- override active low
-Message-ID: <20250926024430.GA2217977@bhelgaas>
+	s=arc-20240116; t=1758855266; c=relaxed/simple;
+	bh=7AxJLTHuNLufjyzhwhMdz+Egc9IfsztB8kWgCDonfck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d49IsPJZ3w4JnvGPPiPol8pV25u0YU36lXVZ9hX/EiqeWK+XvuuzAKl0wVFFfQfGM53K8DiyKYIRaJuamPw6By70U6R+UkIPgMH36vtg51U5qIWIale23pIuAqj4lxSUpnxsRjzdKTT9jKg+5gpnmK1W6KVi+CiA8WwyFsy2wOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com; spf=pass smtp.mailfrom=allwinnertech.com; arc=none smtp.client-ip=115.124.28.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allwinnertech.com
+Received: from SunxiBot.allwinnertech.com(mailfrom:michael@allwinnertech.com fp:SMTPD_---.eniF1s7_1758854931 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Fri, 26 Sep 2025 10:48:56 +0800
+From: Michael Wu <michael@allwinnertech.com>
+To: ulf.hansson@linaro.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	adrian.hunter@intel.com,
+	avri.altman@wdc.com,
+	wsa+renesas@sang-engineering.com,
+	andy-ld.lu@mediatek.com,
+	victor.shih@genesyslogic.com.tw
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] mmc: core: Fix system shutdown hang in mmc_bus_shutdown
+Date: Fri, 26 Sep 2025 10:48:47 +0800
+Message-Id: <20250926024847.45814-1-michael@allwinnertech.com>
+X-Mailer: git-send-email 2.29.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU2PR04MB884007655AC6BAF8AFD9AD198C1EA@DU2PR04MB8840.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 02:19:37AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Bjorn Helgaas <helgaas@kernel.org>
-> > On Tue, Sep 23, 2025 at 03:39:13PM +0800, Richard Zhu wrote:
-> > > The CLKREQ# is an open drain, active low signal that is driven low by
-> > > the card to request reference clock. It's an optional signal added in
-> > > PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
-> > > reserved.
-> > >
-> > > Since the reference clock controlled by CLKREQ# may be required by
-> > > i.MX PCIe host too. To make sure this clock is ready even when the
-> > > CLKREQ# isn't driven low by the card(e.x the scenario described
-> > > above), force CLKREQ# override active low for i.MX PCIe host during
-> > initialization.
-> > >
-> > > The CLKREQ# override can be cleared safely when supports-clkreq is
-> > > present and PCIe link is up later. Because the CLKREQ# would be driven
-> > > low by the card at this time.
-> > 
-> > What happens if we clear the CLKREQ# override (so the host doesn't assert
-> > it), and the link is up but the card never asserts CLKREQ# (since it's an
-> > optional signal)?
-> > 
-> > Does the i.MX host still work?
->
-> The CLKREQ# override active low only be cleared when link is up and
->  supports-clkreq is present. In the other words, there is a remote endpoint
->  device, and the CLKREQ# would be driven active low by this endpoint device.
+During system shutdown, mmc_bus_shutdown() calls __mmc_stop_host() which
+uses cancel_delayed_work_sync(). This can block indefinitely if the work
+queue is stuck, causing the system to hang during shutdown.
 
-Assume an endpoint designed to CEM r2.0.  CLKREQ# doesn't exist in CEM
-r2.0, so even if the endpoint is present and the link is up, the
-endpoint will not assert CLKREQ#.
+This patch introduces a new function __mmc_stop_host_no_sync() that skips
+the synchronous work cancellation, preventing potential shutdown hangs.
+The function is used in mmc_bus_shutdown() where blocking is not
+acceptable during system shutdown.
 
-Will the i.MX host still work?
+Changes:
+- Add __mmc_stop_host_no_sync() function that avoids cancel_delayed_work_sync()
+- Update mmc_bus_shutdown() to use the new non-blocking function
+- Keep the original __mmc_stop_host() unchanged for normal operation
 
-IIUC, CLKREQ# is required for ASPM L1 PM Substates.  Maybe the CLKREQ#
-override should only be cleared if the endpoint advertises L1 PM
-Substates support?
+This ensures graceful system shutdown while maintaining existing
+functionality for regular MMC host operations.
 
-Sorry, I'm just really confused about this.  Here's another question:
-Even if the endpoint is designed to CEM r4.0, it supports L1 PM
-Substates, and it asserts CLKREQ#, my understanding is that the
-endpoint won't assert CLKREQ# *all* the time.  For example, when the
-link enters L1, the device deasserts CLKREQ# (CEM r5.0, sec 2.8.2).
+stack information when an error occurs:
+INFO: task init:1 blocked for more than 720 seconds.
+      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:init            state:D stack:    0 pid:    1 ppid:     0 flags:0x04000008
+Call trace:
+ __switch_to+0x234/0x470
+ __schedule+0x694/0xb8c
+ schedule+0x150/0x254
+ schedule_timeout+0x48/0x138
+ wait_for_common+0x144/0x308
+ __flush_work+0x3d8/0x508
+ __cancel_work_timer+0x120/0x2e8
+ mmc_bus_shutdown+0x90/0x158
+ device_shutdown+0x204/0x434
+ kernel_restart+0x54/0x220
+ kernel_restart+0x0/0x220
+ invoke_syscall+0x60/0x150
+ el0_svc_common+0xb8/0xf8
+ do_el0_svc+0x28/0x98
+ el0_svc+0x24/0x84
+ el0t_64_sync_handler+0x88/0xec
+ el0t_64_sync+0x1b8/0x1bc
+INFO: task kworker/1:1:73 blocked for more than 721 seconds.
+      Tainted: G           OE     5.15.185-android13-8-00043-gd00fb6bce7ed-ab13792018 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:1     state:D stack:    0 pid:   73 ppid:     2 flags:0x00000008
+Workqueue: events_freezable mmc_rescan.cfi_jt
+Call trace:
+ __switch_to+0x234/0x470
+ __schedule+0x694/0xb8c
+ schedule+0x150/0x254
+ schedule_preempt_disabled+0x2c/0x4c
+ __mutex_lock+0x360/0xb00
+ __mutex_lock_slowpath+0x18/0x28
+ mutex_lock+0x48/0x12c
+ device_del+0x48/0x8d0
+ mmc_remove_card+0x128/0x158
+ mmc_sdio_remove+0x190/0x1ac
+ mmc_sdio_detect+0x7c/0x118
+ mmc_rescan+0xe8/0x42c
+ process_one_work+0x248/0x55c
+ worker_thread+0x3b0/0x740
+ kthread+0x168/0x1dc
+ ret_from_fork+0x10/0x20
 
-What happens to the i.MX host when the endpoint isn't asserting
-CLKREQ#?  I guess i.MX doesn't need refclk in that situation?
+Signed-off-by: Michael Wu <michael@allwinnertech.com>
+---
+ drivers/mmc/core/bus.c  |  2 +-
+ drivers/mmc/core/core.c | 14 ++++++++++++++
+ drivers/mmc/core/core.h |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
-> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  drivers/pci/controller/dwc/pci-imx6.c | 43
-> > > ++++++++++++++++++++++++++-
-> > >  1 file changed, 42 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
-> > > b/drivers/pci/controller/dwc/pci-imx6.c
-> > > index 80e48746bbaf..6b03b1111d06 100644
-> > > --- a/drivers/pci/controller/dwc/pci-imx6.c
-> > > +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> > > @@ -52,6 +52,8 @@
-> > >  #define IMX95_PCIE_REF_CLKEN			BIT(23)
-> > >  #define IMX95_PCIE_PHY_CR_PARA_SEL		BIT(9)
-> > >  #define IMX95_PCIE_SS_RW_REG_1			0xf4
-> > > +#define IMX95_PCIE_CLKREQ_OVERRIDE_EN		BIT(8)
-> > > +#define IMX95_PCIE_CLKREQ_OVERRIDE_VAL		BIT(9)
-> > >  #define IMX95_PCIE_SYS_AUX_PWR_DET		BIT(31)
-> > >
-> > >  #define IMX95_PE0_GEN_CTRL_1			0x1050
-> > > @@ -136,6 +138,7 @@ struct imx_pcie_drvdata {
-> > >  	int (*enable_ref_clk)(struct imx_pcie *pcie, bool enable);
-> > >  	int (*core_reset)(struct imx_pcie *pcie, bool assert);
-> > >  	int (*wait_pll_lock)(struct imx_pcie *pcie);
-> > > +	void (*clr_clkreq_override)(struct imx_pcie *pcie);
-> > >  	const struct dw_pcie_host_ops *ops;
-> > >  };
-> > >
-> > > @@ -149,6 +152,7 @@ struct imx_pcie {
-> > >  	struct gpio_desc	*reset_gpiod;
-> > >  	struct clk_bulk_data	*clks;
-> > >  	int			num_clks;
-> > > +	bool			supports_clkreq;
-> > >  	struct regmap		*iomuxc_gpr;
-> > >  	u16			msi_ctrl;
-> > >  	u32			controller_id;
-> > > @@ -239,6 +243,16 @@ static unsigned int imx_pcie_grp_offset(const
-> > struct imx_pcie *imx_pcie)
-> > >  	return imx_pcie->controller_id == 1 ? IOMUXC_GPR16 : IOMUXC_GPR14;
-> > > }
-> > >
-> > > +static void  imx95_pcie_clkreq_override(struct imx_pcie *imx_pcie,
-> > > +bool enable) {
-> > > +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
-> > > +			   IMX95_PCIE_CLKREQ_OVERRIDE_EN,
-> > > +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_EN : 0);
-> > > +	regmap_update_bits(imx_pcie->iomuxc_gpr, IMX95_PCIE_SS_RW_REG_1,
-> > > +			   IMX95_PCIE_CLKREQ_OVERRIDE_VAL,
-> > > +			   enable ? IMX95_PCIE_CLKREQ_OVERRIDE_VAL : 0); }
-> > > +
-> > >  static int imx95_pcie_init_phy(struct imx_pcie *imx_pcie)  {
-> > >  	/*
-> > > @@ -685,7 +699,7 @@ static int imx6q_pcie_enable_ref_clk(struct
-> > imx_pcie *imx_pcie, bool enable)
-> > >  	return 0;
-> > >  }
-> > >
-> > > -static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool
-> > > enable)
-> > > +static void imx8mm_pcie_clkreq_override(struct imx_pcie *imx_pcie,
-> > > +bool enable)
-> > >  {
-> > >  	int offset = imx_pcie_grp_offset(imx_pcie);
-> > >
-> > > @@ -695,6 +709,11 @@ static int imx8mm_pcie_enable_ref_clk(struct
-> > imx_pcie *imx_pcie, bool enable)
-> > >  	regmap_update_bits(imx_pcie->iomuxc_gpr, offset,
-> > >  			   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
-> > >  			   enable ? IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN : 0);
-> > > +}
-> > > +
-> > > +static int imx8mm_pcie_enable_ref_clk(struct imx_pcie *imx_pcie, bool
-> > > +enable) {
-> > > +	imx8mm_pcie_clkreq_override(imx_pcie, enable);
-> > >  	return 0;
-> > >  }
-> > >
-> > > @@ -1298,6 +1317,16 @@ static void imx_pcie_host_exit(struct
-> > dw_pcie_rp *pp)
-> > >  		regulator_disable(imx_pcie->vpcie);
-> > >  }
-> > >
-> > > +static void imx8mm_pcie_clr_clkreq_override(struct imx_pcie
-> > > +*imx_pcie) {
-> > > +	imx8mm_pcie_clkreq_override(imx_pcie, false); }
-> > > +
-> > > +static void imx95_pcie_clr_clkreq_override(struct imx_pcie *imx_pcie)
-> > > +{
-> > > +	imx95_pcie_clkreq_override(imx_pcie, false); }
-> > > +
-> > >  static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)  {
-> > >  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp); @@ -1322,6 +1351,12
-> > @@
-> > > static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
-> > >  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-> > >  		dw_pcie_dbi_ro_wr_dis(pci);
-> > >  	}
-> > > +
-> > > +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
-> > > +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
-> > > +		if (imx_pcie->drvdata->clr_clkreq_override)
-> > > +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
-> > > +	}
-> > >  }
-> > >
-> > >  /*
-> > > @@ -1745,6 +1780,8 @@ static int imx_pcie_probe(struct platform_device
-> > *pdev)
-> > >  	pci->max_link_speed = 1;
-> > >  	of_property_read_u32(node, "fsl,max-link-speed",
-> > > &pci->max_link_speed);
-> > >
-> > > +	imx_pcie->supports_clkreq =
-> > > +		of_property_read_bool(node, "supports-clkreq");
-> > >  	imx_pcie->vpcie = devm_regulator_get_optional(&pdev->dev, "vpcie");
-> > >  	if (IS_ERR(imx_pcie->vpcie)) {
-> > >  		if (PTR_ERR(imx_pcie->vpcie) != -ENODEV) @@ -1873,6 +1910,7 @@
-> > > static const struct imx_pcie_drvdata drvdata[] = {
-> > >  		.mode_mask[1] = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
-> > >  		.init_phy = imx8mq_pcie_init_phy,
-> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
-> > >  	},
-> > >  	[IMX8MM] = {
-> > >  		.variant = IMX8MM,
-> > > @@ -1883,6 +1921,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
-> > >  		.mode_off[0] = IOMUXC_GPR12,
-> > >  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
-> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
-> > >  	},
-> > >  	[IMX8MP] = {
-> > >  		.variant = IMX8MP,
-> > > @@ -1893,6 +1932,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
-> > >  		.mode_off[0] = IOMUXC_GPR12,
-> > >  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
-> > >  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
-> > > +		.clr_clkreq_override = imx8mm_pcie_clr_clkreq_override,
-> > >  	},
-> > >  	[IMX8Q] = {
-> > >  		.variant = IMX8Q,
-> > > @@ -1913,6 +1953,7 @@ static const struct imx_pcie_drvdata drvdata[] = {
-> > >  		.core_reset = imx95_pcie_core_reset,
-> > >  		.init_phy = imx95_pcie_init_phy,
-> > >  		.wait_pll_lock = imx95_pcie_wait_for_phy_pll_lock,
-> > > +		.clr_clkreq_override = imx95_pcie_clr_clkreq_override,
-> > >  	},
-> > >  	[IMX8MQ_EP] = {
-> > >  		.variant = IMX8MQ_EP,
-> > > --
-> > > 2.37.1
-> > >
+diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
+index 1cf64e0952fbe..6ff6fcb4c6f27 100644
+--- a/drivers/mmc/core/bus.c
++++ b/drivers/mmc/core/bus.c
+@@ -149,7 +149,7 @@ static void mmc_bus_shutdown(struct device *dev)
+ 	if (dev->driver && drv->shutdown)
+ 		drv->shutdown(card);
+ 
+-	__mmc_stop_host(host);
++	__mmc_stop_host_no_sync(host);
+ 
+ 	if (host->bus_ops->shutdown) {
+ 		ret = host->bus_ops->shutdown(host);
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index a0e2dce704343..2d75ad26f84a9 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2336,6 +2336,20 @@ void __mmc_stop_host(struct mmc_host *host)
+ 	cancel_delayed_work_sync(&host->detect);
+ }
+ 
++void __mmc_stop_host_no_sync(struct mmc_host *host)
++{
++	if (host->rescan_disable)
++		return;
++
++	if (host->slot.cd_irq >= 0) {
++		mmc_gpio_set_cd_wake(host, false);
++		disable_irq(host->slot.cd_irq);
++	}
++
++	host->rescan_disable = 1;
++	/* Skip cancel_delayed_work_sync to avoid potential blocking */
++}
++
+ void mmc_stop_host(struct mmc_host *host)
+ {
+ 	__mmc_stop_host(host);
+diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+index 622085cd766f9..eb59a61717357 100644
+--- a/drivers/mmc/core/core.h
++++ b/drivers/mmc/core/core.h
+@@ -71,6 +71,7 @@ static inline void mmc_delay(unsigned int ms)
+ void mmc_rescan(struct work_struct *work);
+ void mmc_start_host(struct mmc_host *host);
+ void __mmc_stop_host(struct mmc_host *host);
++void __mmc_stop_host_no_sync(struct mmc_host *host);
+ void mmc_stop_host(struct mmc_host *host);
+ 
+ void _mmc_detect_change(struct mmc_host *host, unsigned long delay,
+-- 
+2.29.0
+
 
