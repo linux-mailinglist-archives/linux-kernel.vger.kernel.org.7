@@ -1,150 +1,141 @@
-Return-Path: <linux-kernel+bounces-834609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 523F4BA514B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E523BA5170
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D5D2A6717
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31C453274B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92A42857EF;
-	Fri, 26 Sep 2025 20:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB7B28642C;
+	Fri, 26 Sep 2025 20:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siIOIe/J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="MaV8hRjT"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E953B13BC3F;
-	Fri, 26 Sep 2025 20:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8384227F003;
+	Fri, 26 Sep 2025 20:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758919159; cv=none; b=aZuaAH8MpheAM2ClY37CC++JAZjeUomXmtRIPib+nJTriem63lD8LRcdUOI5K6VieX0jBcJA8/SohQNcyevGOXR1EjE6sWPInI0yPuuSdL0eWBK0rpr6vEY7gMj72m2GbamhmT3HECFCjSmc7kYXvuasmMZbalCWMz1KrHHyFIo=
+	t=1758919245; cv=none; b=kA4JnxzlLMEHY59C6/mTlpuNrRXBPBnsFku7rjC8GEPaktqSWi2OMDZsenaeW24+ayveOz+eqOYAjtKieJqsk5PBDgCByt3cdV9l5LrC3PROzTj5C8rCkUqeM3lwboNw3MVn/YWqx36RmVKcPDVCANmNgF1QcVkJfcRgN3BXTDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758919159; c=relaxed/simple;
-	bh=DN6Qwr15i5uFVBUupd5QlMIvaTum5HUKi8sCfH8FrpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hPhcyx7UNI5gsq63kqMCqq64VLP4b2BNRNjFJzpkWrkRlZ0W1g0v9t2slpnglLO3ZD+oJOKqLKF+I0tTwe4drfLBGchD52tERmjQcwAchtKZO5/SebsGle9Kc4CnR9nMZK1IYZ/RLITnhUQ3XsPUjii0DNvN0Ou7DGQSWR666H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siIOIe/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42628C4CEF4;
-	Fri, 26 Sep 2025 20:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758919158;
-	bh=DN6Qwr15i5uFVBUupd5QlMIvaTum5HUKi8sCfH8FrpI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=siIOIe/Jddewm5lK6in8+WPYGB83DvHTHmJw3qcHCKgl88DH9uAFCnU/alvTGc771
-	 HZ12gzaoeJTS2ZkiYCJxQzvubH66i1yvLvWqsXZThEA2S4AUp8IBYfDtF3wmLthmwl
-	 Zv8lVXGvZWxl0wCFVwRTCzbA3kl76iI3kx4k3oF027IRHXN1J6qdwSPh/+LecMZDVL
-	 IJ4rK4CW9SH0NU08vEURQ0FbvY3v57TZWJfd05qWly7IM3b6wd/kCvJcAt/i1j4SHI
-	 qQlk5c1Tb+Pp3R8+mV3n7mdHgce6ljgKFjzO3hdzrCwrBoTxvDZwZxk12Nzlxs7NlL
-	 5yD7MXLqyUDtw==
-Date: Fri, 26 Sep 2025 15:39:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	chaitanya chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com,
-	amitk@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH v6 5/9] PCI: dwc: Implement .start_link(), .stop_link()
- hooks
-Message-ID: <20250926203916.GA2266029@bhelgaas>
+	s=arc-20240116; t=1758919245; c=relaxed/simple;
+	bh=mMvQO9gUvkU4ydX38HzUe1NFpnjpQb6EoaNFMHqTHoo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jqmg7e92GaLvukWNA8Q6LoqeYCeM/9eshB+32QirEZg2ZAufZCgUDROvxFyKuMV7vHAoM5RTs0zECKYt2QAindfRSGicIVqgQYhY/1FldzKPzharKzTDoJojYe+QVG9F/zlQOFiRoAO2lo+cMuu+7w/IgcLy3xv8uuFPZ6LK97w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=MaV8hRjT; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QJsVPo004633;
+	Fri, 26 Sep 2025 16:40:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=1Xf3P
+	4FaNtw7plQ3RNniLL6fpn0T247BbYMIn6GhM7Y=; b=MaV8hRjT0o82IK0oUwJZc
+	4gkvSsv9LEiIMhik3LhSCvFRtco2qshooM2iWaAff4bpdfkDe3QqWXCrr/XJRI01
+	pLyTxO9UeSZTR66ToSzdzA50gS7dfE+EFTktc8dc40mv1LDl0f0Vevpll6QdK3I2
+	cFw4L90vZ028jy+twF+EMuUZiFKkVFulIWjZb2rz8Dxkkx0LKzgdfylqeKiCgyFe
+	IOuw8g09WyELyDZpoobyRBRC7ViiVH5qsIwjY1VLuCcJvP7gmPXDv9R+KjfsObMY
+	9l5BwpbX1kp0CVRfmQVwnHuMEsNFet92XMVZ+GJ9I8gKHQFSqd4YrM1NsxgPkl7K
+	A==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49db3qy98g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 16:40:38 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 58QKebna027145
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 26 Sep 2025 16:40:37 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 26 Sep
+ 2025 16:40:37 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 26 Sep 2025 16:40:37 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 58QKdIfB010311;
+	Fri, 26 Sep 2025 16:39:21 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
+        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
+        Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: [PATCH v3 3/8] dt-bindings: iio: adc: adi,ad4030: Add PWM
+Date: Fri, 26 Sep 2025 17:39:18 -0300
+Message-ID: <6847f7957873c0a2959ff7ddc8df45f4024b036c.1758916484.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1758916484.git.marcelo.schmitt@analog.com>
+References: <cover.1758916484.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a3f9494-27a2-47d6-bdef-0b1bcbd99903@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 5uRV79wbAYhN5_gRMri4W350h5ajXEcQ
+X-Authority-Analysis: v=2.4 cv=HY0ZjyE8 c=1 sm=1 tr=0 ts=68d6fa46 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=yJojWOMRYYMA:10 a=IpJZQVW2AAAA:8 a=XYAwZIGsAAAA:8 a=gAnH3GRIAAAA:8
+ a=DUOLLnRY7vFq0fwDtzIA:9 a=IawgGOuG5U0WyFbmm1f5:22 a=E8ToXWR_bxluHZ7gmE-Z:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MiBTYWx0ZWRfXwIlWuPmwU1lA
+ 8v4a3KUDAS2jaD2zq5334R1jitDoF4Liv1zA3sXUjLGyFnFbIbXLjqG7FoXxz6GTre6TMAv1jmk
+ 2cC3fnS26YB3pdqaS4W6Rs2SbqH2+kW49NsPIXsNqp0tIl5h1TjTVzN4D1Xrq7IS/fj2gsUoAKl
+ M7yJKD6+iWZ4STDTCg6Y6y/Toerw0o9eE+t8pB+Kl7bISa6QIn0OHi8B+ItvcjhK4q11YD03bpM
+ 0BJdhydAjCwmZL6oy8cBaOcPPbN13tzkBFQIkx+7BIzrvQs+0uSQKtRgkzuQ7MxY075NZh2AtQv
+ Sddl1nUei4YYuKMTYtWYWbeFIc5oBxysqJg5NzCC/9cJscsvhtlaDWJEOTQF5rLRp4ZqIfuIAiO
+ NNaW+ycU3suPadc/6p07aKtypKu6rA==
+X-Proofpoint-GUID: 5uRV79wbAYhN5_gRMri4W350h5ajXEcQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_07,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250172
 
-On Fri, Sep 26, 2025 at 07:09:17PM +0530, Krishna Chaitanya Chundru wrote:
-> On 9/25/2025 10:55 PM, Bjorn Helgaas wrote:
-> > On Thu, Sep 25, 2025 at 09:49:16PM +0530, Manivannan Sadhasivam wrote:
-> > > On Thu, Sep 25, 2025 at 09:54:16AM -0500, Bjorn Helgaas wrote:
-> > > > On Thu, Aug 28, 2025 at 05:39:02PM +0530, Krishna Chaitanya Chundru wrote:
-> > > > > Implement stop_link() and  start_link() function op for dwc drivers.
-> > > > > 
-> > > > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > > > > ---
-> > > > >   drivers/pci/controller/dwc/pcie-designware-host.c | 18 ++++++++++++++++++
-> > > > >   1 file changed, 18 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..bcdc4a0e4b4747f2d62e1b67bc1aeda16e35acdd 100644
-> > > > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > @@ -722,10 +722,28 @@ void __iomem *dw_pcie_own_conf_map_bus(struct pci_bus *bus, unsigned int devfn,
-> > > > >   }
-> > > > >   EXPORT_SYMBOL_GPL(dw_pcie_own_conf_map_bus);
-> > > > > +static int dw_pcie_op_start_link(struct pci_bus *bus)
-> > > > > +{
-> > > > > +	struct dw_pcie_rp *pp = bus->sysdata;
-> > > > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > > > > +
-> > > > > +	return dw_pcie_host_start_link(pci);
-> > > > 
-> > > > This takes a pci_bus *, which could be any PCI bus, but this only
-> > > > works for root buses because it affects the link from a Root Port.
-> > > > 
-> > > > I know the TC9563 is directly below the Root Port in the current
-> > > > topology, but it seems like the ability to configure a Switch with
-> > > > I2C or similar is potentially of general interest, even if the
-> > > > switch is deeper in the hierarchy.
-> > > > 
-> > > > Is there a generic way to inhibit link training, e.g., with the
-> > > > Link Disable bit in the Link Control register?  If so, this could
-> > > > potentially be done in a way that would work for any vendor and
-> > > > for any Downstream Port, including Root Ports and Switch
-> > > > Downstream Ports.
-> > > 
-> > > FWIW, the link should not be stopped for a single device, since it
-> > > could affect other devices in the bus. Imagine if this switch is
-> > > connected to one of the downstream port of another switch. Then
-> > > stopping and starting the link will affect other devices connected
-> > > to the upstream switch as well.
-> > 
-> > Link Disable would affect all devices downstream of the bridge where
-> > it is set, same as dw_pcie_op_stop_link().
-> > 
-> > > This driver is doing it right now just because, there is no other
-> > > way to control the switch state machine. Ideally, we would want the
-> > > PERST# to be in asserted stage to keep the device from starting the
-> > > state machine, then program the registers over I2C and deassert
-> > > PERST#. This will work across all of the host controller drivers (if
-> > > they support pwrctrl framework).
-> > 
-> > I don't think there's a way to implement .start_link() and
-> > .stop_link() for ACPI unless it's by using Link Disable, which is why
-> > I asked about this.  If Link Disable *does* work, it would be a very
-> > generic way to do this because it's part of the PCIe base spec.
-> 
-> We did test as you suggested but unfortunately the setting are not
-> getting reflected we need to explicitly assert perst to make sure
-> pcie is in reset state while applying these settings.
+In setups designed for high speed data rate capture, a PWM is used to
+generate the CNV signal that issues data captures from the ADC. Document
+the use of a PWM for AD4030 and similar devices.
 
-Maybe ".stop_link()" is the wrong name if what's actually required is
-PERST#?
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+---
+ Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This feels like the kind of problem we are likely to see again in
-different topologies, e.g., a switch in an external enclosure that
-needs configuration.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+index a8fee4062d0e..564b6f67a96e 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+@@ -64,6 +64,10 @@ properties:
+       The Reset Input (/RST). Used for asynchronous device reset.
+     maxItems: 1
+ 
++  pwms:
++    description: PWM signal connected to the CNV pin.
++    maxItems: 1
++
+   interrupts:
+     description:
+       The BUSY pin is used to signal that the conversions results are available
+-- 
+2.39.2
+
 
