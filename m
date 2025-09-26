@@ -1,55 +1,70 @@
-Return-Path: <linux-kernel+bounces-834481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D343DBA4C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:47:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF8ABA4C8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7740C2A6032
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 741087AFA79
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCF92FF660;
-	Fri, 26 Sep 2025 17:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AF52FF66C;
+	Fri, 26 Sep 2025 17:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NKqVLA2o"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iP/0kHkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ED3221F2D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA241B4138
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758908856; cv=none; b=laSogAjZmsTh5zhZrClFA5mHhdyjEThpucNYPzgO8W1MGlP7eCumUqzStFZFXile1kAQiV4osKGRSdBblUbydrJTUbJTGntJKpuo9lbyRwptmE2944uuLxSsnFVUJEfgeL9fCsZgq0by/0c4o9Gs15lhC7hJo8tOTm41ZpXVX9o=
+	t=1758909007; cv=none; b=UgMbdsRm4ddP4++JFGqudNGJOFZv/VPxjccDrXS51/T6/Fi1lzKDrN7YCSekHnFLe04Tneq8Q5ysnlloUyNSo+O3H609HUpOwFu8GUzVGUSY5rtFRR+B6RFZnjzm3jZFWnZxWISfUaWsUMkZ3jlqOewoMdf4ui2JBSLSgRqyjD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758908856; c=relaxed/simple;
-	bh=4rxsbevg4chnBqOfRX+ABH/yYGPrI7sZ1/vaHZhsqyY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AWLdpscIEmsuxyZ/tNCWyBJIsJozsyxb/v6O1x+Ih1XHug/ISjETiR3RLKxDSusEW9YzQJNsx0i1XKaBdQbMg0d67KKISXpYCa/fUNYT1ZEnK6wyh9N80eRuvHLADwtdTenQzVb/mb4LlLOYLcwm/BlMJwJV9urXQp1bI56zey0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NKqVLA2o; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758908849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=/tnNPkWcO3GrV8y840HD3cXej6eOO85aFa/etLvYBeE=;
-	b=NKqVLA2oPiITDgF6DF2zk7B+IXFxkKxUXz3k0ID8A7q3r9VxAE+cc14rnMMVxEbqYz134L
-	qHMxi+um1f97Chd+d8AlRfI2yDGBJBIg/D4Y5zU5x0GOetZKjqLWdJaDEvbay0kR6sWJwY
-	7CQSZA3SfRXk6IVpk+2e8nrFckpj9XY=
-From: Wen Yang <wen.yang@linux.dev>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	stable@vger.kernel.org,
-	Wen Yang <wen.yang@linux.dev>
-Subject: [PATCH 6.1] arch_topology: Build cacheinfo from primary CPU
-Date: Sat, 27 Sep 2025 01:46:58 +0800
-Message-Id: <20250926174658.6546-1-wen.yang@linux.dev>
+	s=arc-20240116; t=1758909007; c=relaxed/simple;
+	bh=SNVyu5gv5hl8E6Qx2wc/yrakuqwwjH4Ub9je2xkzgaQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XZTxB47kC5QHh6qvV09efScB6bN7XFGoVaqdEushA1LnGW6+r/xltGBhdog95mBea8cI2nLYaGatdadfhYyrMvCQ83vyhH+iP+QFGRuFN9DajZSzC/fQKjHh7j1LFqzPrqypYivHMkiHv9Bi3kmPQyWgJeG2ApQoC3PLHA/dPro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iP/0kHkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FC5FC4CEF4;
+	Fri, 26 Sep 2025 17:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758909006;
+	bh=SNVyu5gv5hl8E6Qx2wc/yrakuqwwjH4Ub9je2xkzgaQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iP/0kHkAX2Ih1cjA6REv4/yQ/PVDQLisR/NNCt3epWOJp4WR6kWUJN/yZ9paUrlTq
+	 QOT8HRoKT6acsywhGEG6G83EZqi0f5E3Ql0m4tfodVM2sVSnCNIlGfXLXuQj/7rY5s
+	 14dD8pJ5yXexC0GAyCwJIvxlo1wBR6TnPpvGKg6GdkXTkgg0GCwKdy/1yZpLiLpukD
+	 lI1Yrandmm1t1SbyfKYzOdUX1WdTo65t/lOpXO7W0h35vgCj4oeU/gbJKwQlWJ40qK
+	 wZARlWd05vyx1cx8OEaxwmqy8kQ8VUvLVZrtIcXEToAdBMT8TO0FpEmrsKte6s4C/e
+	 d4JCzshH5uDmw==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Chris Mason <clm@fb.com>,
+	Kiryl Shutsemau <kirill@shutemov.name>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 1/4] mm/page_alloc/vmstat: Simplify refresh_cpu_vm_stats change detection
+Date: Fri, 26 Sep 2025 10:50:04 -0700
+Message-Id: <20250926175004.54610-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250924204409.1706524-2-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,258 +72,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Pierre Gondois <pierre.gondois@arm.com>
+On Wed, 24 Sep 2025 13:44:05 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-commit 5944ce092b97caed5d86d961e963b883b5c44ee2 upstream.
+> Currently, refresh_cpu_vm_stats returns an int, indicating how many
+> changes were made during its updates. Using this information, callers
+> like vmstat_update can heuristically determine if more work will be done
+> in the future.
+> 
+> However, all of refresh_cpu_vm_stats's callers either (a) ignore the
+> result, only caring about performing the updates, or (b) only care about
+> whether changes were made, but not *how many* changes were made.
+> 
+> Simplify the code by returning a bool instead to indicate if updates
+> were made.
+> 
+> In addition, simplify fold_diff and decay_pcp_high to return a bool
+> for the same reason.
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> ---
+>  include/linux/gfp.h |  2 +-
+>  mm/page_alloc.c     |  8 ++++----
+>  mm/vmstat.c         | 26 +++++++++++++-------------
+>  3 files changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 5ebf26fcdcfa..63c72cb1d117 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -386,7 +386,7 @@ extern void free_pages(unsigned long addr, unsigned int order);
+>  #define free_page(addr) free_pages((addr), 0)
+>  
+>  void page_alloc_init_cpuhp(void);
+> -int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp);
+> +bool decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp);
+>  void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp);
+>  void drain_all_pages(struct zone *zone);
+>  void drain_local_pages(struct zone *zone);
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index d1d037f97c5f..77e7d9a5f149 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2561,10 +2561,10 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+>   * Called from the vmstat counter updater to decay the PCP high.
+>   * Return whether there are addition works to do.
+>   */
+> -int decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
+> +bool decay_pcp_high(struct zone *zone, struct per_cpu_pages *pcp)
+>  {
+>  	int high_min, to_drain, batch;
+> -	int todo = 0;
+> +	bool todo;
 
-commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection
-in the CPU hotplug path")
-adds a call to detect_cache_attributes() to populate the cacheinfo
-before updating the siblings mask. detect_cache_attributes() allocates
-memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
-kernels, on secondary CPUs, this triggers a:
-  'BUG: sleeping function called from invalid context' [1]
-as the code is executed with preemption and interrupts disabled.
+I know you and others already found 'todo' should be initialized. :)
 
-The primary CPU was previously storing the cache information using
-the now removed (struct cpu_topology).llc_id:
-commit 5b8dc787ce4a ("arch_topology: Drop LLC identifier stash from
-the CPU topology")
+[...]
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 71cd1ceba191..1f74a3517ab2 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+[...]
+> @@ -839,7 +839,7 @@ static int refresh_cpu_vm_stats(bool do_pagesets)
+>  		if (do_pagesets) {
+>  			cond_resched();
+>  
+> -			changes += decay_pcp_high(zone, this_cpu_ptr(pcp));
+> +			changed |= decay_pcp_high(zone, this_cpu_ptr(pcp));
 
-allocate_cache_info() tries to build the cacheinfo from the primary
-CPU prior secondary CPUs boot, if the DT/ACPI description
-contains cache information.
-If allocate_cache_info() fails, then fallback to the current state
-for the cacheinfo allocation. [1] will be triggered in such case.
+I'm not a fan of bit operations unless it provides clear benefits.
+What about below?
 
-When unplugging a CPU, the cacheinfo memory cannot be freed. If it
-was, then the memory would be allocated early by the re-plugged
-CPU and would trigger [1].
+    if (decay_pcp_high(zone, this_cpu_ptr(pcp)) && !changed)
+    	changed = truee;
 
-Note that populate_cache_leaves() might be called multiple times
-due to populate_leaves being moved up. This is required since
-detect_cache_attributes() might be called with per_cpu_cacheinfo(cpu)
-being allocated but not populated.
+Just a personal and trivial taste.  No strong opinion.  If you don't strongly
+feel my suggestion is better, please keep the original code.
 
-[1]:
- | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
- | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
- | preempt_count: 1, expected: 0
- | RCU nest depth: 1, expected: 1
- | 3 locks held by swapper/111/0:
- |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
- |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
- |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
- | irq event stamp: 0
- | hardirqs last  enabled at (0):  0x0
- | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
- | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
- | softirqs last disabled at (0):  0x0
- | Preemption disabled at:
- |  migrate_enable+0x30/0x130
- | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
- | Call trace:
- |  __kmalloc+0xbc/0x1e8
- |  detect_cache_attributes+0x2d4/0x5f0
- |  update_siblings_masks+0x30/0x368
- |  store_cpu_topology+0x78/0xb8
- |  secondary_start_kernel+0xd0/0x198
- |  __secondary_switched+0xb0/0xb4
+>  #ifdef CONFIG_NUMA
+>  			/*
+>  			 * Deal with draining the remote pageset of this
+> @@ -861,13 +861,13 @@ static int refresh_cpu_vm_stats(bool do_pagesets)
+>  			}
+>  
+>  			if (__this_cpu_dec_return(pcp->expire)) {
+> -				changes++;
+> +				changed = true;
+>  				continue;
+>  			}
+>  
+>  			if (__this_cpu_read(pcp->count)) {
+>  				drain_zone_pages(zone, this_cpu_ptr(pcp));
+> -				changes++;
+> +				changed = true;
+>  			}
+>  #endif
+>  		}
+> @@ -887,8 +887,8 @@ static int refresh_cpu_vm_stats(bool do_pagesets)
+>  		}
+>  	}
+>  
+> -	changes += fold_diff(global_zone_diff, global_node_diff);
+> -	return changes;
+> +	changed |= fold_diff(global_zone_diff, global_node_diff);
+> +	return changed;
 
-Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/r/20230104183033.755668-7-pierre.gondois@arm.com
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: <stable@vger.kernel.org> # 6.1.x: c3719bd:cacheinfo: Use RISC-V's init_cache_level() as generic OF implementation
-Cc: <stable@vger.kernel.org> # 6.1.x: 8844c3d:cacheinfo: Return error code in init_of_cache_level(
-Cc: <stable@vger.kernel.org> # 6.1.x: de0df44:cacheinfo: Check 'cache-unified' property to count cache leaves
-Cc: <stable@vger.kernel.org> # 6.1.x: fa4d566:ACPI: PPTT: Remove acpi_find_cache_levels()
-Cc: <stable@vger.kernel.org> # 6.1.x: bd50036:ACPI: PPTT: Update acpi_find_last_cache_level() to acpi_get_cache_info(
-Cc: <stable@vger.kernel.org> # 6.1.x
-Signed-off-by: Wen Yang <wen.yang@linux.dev>
----
- arch/riscv/kernel/cacheinfo.c |  5 ---
- drivers/base/arch_topology.c  | 12 +++++-
- drivers/base/cacheinfo.c      | 71 ++++++++++++++++++++++++++---------
- include/linux/cacheinfo.h     |  1 +
- 4 files changed, 65 insertions(+), 24 deletions(-)
+Ditto.
 
-diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
-index 440a3df5944c..3a13113f1b29 100644
---- a/arch/riscv/kernel/cacheinfo.c
-+++ b/arch/riscv/kernel/cacheinfo.c
-@@ -113,11 +113,6 @@ static void fill_cacheinfo(struct cacheinfo **this_leaf,
- 	}
- }
- 
--int init_cache_level(unsigned int cpu)
--{
--	return init_of_cache_level(cpu);
--}
--
- int populate_cache_leaves(unsigned int cpu)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index e7d6e6657ffa..b1c1dd38ab01 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -736,7 +736,7 @@ void update_siblings_masks(unsigned int cpuid)
- 
- 	ret = detect_cache_attributes(cpuid);
- 	if (ret && ret != -ENOENT)
--		pr_info("Early cacheinfo failed, ret = %d\n", ret);
-+		pr_info("Early cacheinfo allocation failed, ret = %d\n", ret);
- 
- 	/* update core and thread sibling masks */
- 	for_each_online_cpu(cpu) {
-@@ -825,7 +825,7 @@ __weak int __init parse_acpi_topology(void)
- #if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
- void __init init_cpu_topology(void)
- {
--	int ret;
-+	int cpu, ret;
- 
- 	reset_cpu_topology();
- 	ret = parse_acpi_topology();
-@@ -840,6 +840,14 @@ void __init init_cpu_topology(void)
- 		reset_cpu_topology();
- 		return;
- 	}
-+
-+	for_each_possible_cpu(cpu) {
-+		ret = fetch_cache_info(cpu);
-+		if (ret) {
-+			pr_err("Early cacheinfo failed, ret = %d\n", ret);
-+			break;
-+		}
-+	}
- }
- 
- void store_cpu_topology(unsigned int cpuid)
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index ab99b0f0d010..cd943d06d074 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -412,10 +412,6 @@ static void free_cache_attributes(unsigned int cpu)
- 		return;
- 
- 	cache_shared_cpu_map_remove(cpu);
--
--	kfree(per_cpu_cacheinfo(cpu));
--	per_cpu_cacheinfo(cpu) = NULL;
--	cache_leaves(cpu) = 0;
- }
- 
- int __weak init_cache_level(unsigned int cpu)
-@@ -428,29 +424,71 @@ int __weak populate_cache_leaves(unsigned int cpu)
- 	return -ENOENT;
- }
- 
-+static inline
-+int allocate_cache_info(int cpu)
-+{
-+	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu),
-+					 sizeof(struct cacheinfo), GFP_ATOMIC);
-+	if (!per_cpu_cacheinfo(cpu)) {
-+		cache_leaves(cpu) = 0;
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+int fetch_cache_info(unsigned int cpu)
-+{
-+	struct cpu_cacheinfo *this_cpu_ci;
-+	unsigned int levels, split_levels;
-+	int ret;
-+
-+	if (acpi_disabled) {
-+		ret = init_of_cache_level(cpu);
-+		if (ret < 0)
-+			return ret;
-+	} else {
-+		ret = acpi_get_cache_info(cpu, &levels, &split_levels);
-+		if (ret < 0)
-+			return ret;
-+
-+		this_cpu_ci = get_cpu_cacheinfo(cpu);
-+		this_cpu_ci->num_levels = levels;
-+		/*
-+		 * This assumes that:
-+		 * - there cannot be any split caches (data/instruction)
-+		 *   above a unified cache
-+		 * - data/instruction caches come by pair
-+		 */
-+		this_cpu_ci->num_leaves = levels + split_levels;
-+	}
-+	if (!cache_leaves(cpu))
-+		return -ENOENT;
-+
-+	return allocate_cache_info(cpu);
-+}
-+
- int detect_cache_attributes(unsigned int cpu)
- {
- 	int ret;
- 
--	/* Since early detection of the cacheinfo is allowed via this
--	 * function and this also gets called as CPU hotplug callbacks via
--	 * cacheinfo_cpu_online, the initialisation can be skipped and only
--	 * CPU maps can be updated as the CPU online status would be update
--	 * if called via cacheinfo_cpu_online path.
-+	/* Since early initialization/allocation of the cacheinfo is allowed
-+	 * via fetch_cache_info() and this also gets called as CPU hotplug
-+	 * callbacks via cacheinfo_cpu_online, the init/alloc can be skipped
-+	 * as it will happen only once (the cacheinfo memory is never freed).
-+	 * Just populate the cacheinfo.
- 	 */
- 	if (per_cpu_cacheinfo(cpu))
--		goto update_cpu_map;
-+		goto populate_leaves;
- 
- 	if (init_cache_level(cpu) || !cache_leaves(cpu))
- 		return -ENOENT;
- 
--	per_cpu_cacheinfo(cpu) = kcalloc(cache_leaves(cpu),
--					 sizeof(struct cacheinfo), GFP_ATOMIC);
--	if (per_cpu_cacheinfo(cpu) == NULL) {
--		cache_leaves(cpu) = 0;
--		return -ENOMEM;
--	}
-+	ret = allocate_cache_info(cpu);
-+	if (ret)
-+		return ret;
- 
-+populate_leaves:
- 	/*
- 	 * populate_cache_leaves() may completely setup the cache leaves and
- 	 * shared_cpu_map or it may leave it partially setup.
-@@ -459,7 +497,6 @@ int detect_cache_attributes(unsigned int cpu)
- 	if (ret)
- 		goto free_ci;
- 
--update_cpu_map:
- 	/*
- 	 * For systems using DT for cache hierarchy, fw_token
- 	 * and shared_cpu_map will be set up here only if they are
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index 00d8e7f9d1c6..dfef57077cd0 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -85,6 +85,7 @@ int populate_cache_leaves(unsigned int cpu);
- int cache_setup_acpi(unsigned int cpu);
- bool last_level_cache_is_valid(unsigned int cpu);
- bool last_level_cache_is_shared(unsigned int cpu_x, unsigned int cpu_y);
-+int fetch_cache_info(unsigned int cpu);
- int detect_cache_attributes(unsigned int cpu);
- #ifndef CONFIG_ACPI_PPTT
- /*
--- 
-2.25.1
+>  }
+>  
+>  /*
+> -- 
+> 2.47.3
 
+Other than the above trivial things, all looks good to me :)
+
+
+Thanks,
+SJ
 
