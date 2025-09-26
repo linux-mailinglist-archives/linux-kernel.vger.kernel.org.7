@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-834072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9422EBA3C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:07:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91F1BA3C3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD3B6230E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E5E164FAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61B62F5A03;
-	Fri, 26 Sep 2025 13:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C1D2F5A37;
+	Fri, 26 Sep 2025 13:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1n01XNo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="aKx7BLn6"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275AA2512D7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1448E2512D7;
+	Fri, 26 Sep 2025 13:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892067; cv=none; b=uSmTITsqu+JIoeeIvkjVsTItoOnVb5Xd4ExlJnAac3vk38mdUE9mIqTBejw3hmV76GwOji5eTGOnq6Y1GXmWuycAZ0lBkhgiTOgZ3uF4Gwn2uZGgVVY6dBQPP3avp7TCyjxj0N53Dm+urLGt0pqSw21YEQZw8Mtcuc/HLfNTxzM=
+	t=1758892155; cv=none; b=kPcV9YTwQhaWYNKB6E6HnZDwGrNUUwQ55i6bWv4K7ojvwh239faZIE8Onaxod4QsAC2GKRUG6oAgZp5C7Sn7g/h26/ccchfw8StODkhxU2VY6+e+Wqy33EQbYH7KL4guyhcaS8x0RJwVZHB8kM+tuU+NmyY/Ku9+J//3CJ5Cdfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892067; c=relaxed/simple;
-	bh=sNnNky5181T+Iim3C7ZYt71SIiOXQHrD9CaznKPFvWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGPvR3vwRVmiZZ3rXSWsZxmlJ3c2OetrBYocbGMmRj+r78ce+yEFZ83jAdOD61lRdqLMHdLib12J0LhavKVTWJpGEFbKie6JX5ZsH2TvvMlaKTydNWv1ft6Gd7KrkwMCIQZ67knNyc1nOBS2s1EVrBhZkXc0tBE92qmtRZGT5FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1n01XNo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B13C4CEF4;
-	Fri, 26 Sep 2025 13:07:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758892066;
-	bh=sNnNky5181T+Iim3C7ZYt71SIiOXQHrD9CaznKPFvWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W1n01XNoYEv02a1J8/AxKjYRrb0dHsEXwMgiGIQsadJRjX0fm28ooRktzvLLUgMFS
-	 Fl4Sd91E2E++UsiVuW4SQ1hg+XYfyEXLGlfrEXshFEIby3umXmG68LLd6GL0h+pndl
-	 s5hTzahDC8QpPXvlJ2OlQB5mMrdyA2bpoo+hLJp+wpy5Dy5DrtDUdb8JbbQbFAs6uh
-	 6/ghvt8RmVJCs+hsPRBFRR6XdnSF+DlsSAdb5DViUt2/0ITlSbAeTfn94h7M2Cdt6X
-	 gfAlVw2O1aUr/ZqbC/KlHgr7QLDIKi3FUrSrbighulfsXyjPibypLySBmLVZnlOzVn
-	 kJR5Z1NqVL4MA==
-Date: Fri, 26 Sep 2025 15:07:37 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
-Message-ID: <nqhz5vtobixqzgqfei3qgrcpyvjur6onhfeezidta7mgfmg5gx@qwzw3bw3lwr4>
-References: <cover.1758806023.git.alx@kernel.org>
- <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
- <202509251657.F4ED4CF@keescook>
- <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
- <202509251823.1B974C7@keescook>
- <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
- <202509252007.E9D3C14@keescook>
+	s=arc-20240116; t=1758892155; c=relaxed/simple;
+	bh=53woFpH+TVw3DizLII2sQ+dYrMreHr6/5VUUIMUfkXw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=eaG5Tf6kzI9x78L7LjrqDkpWbhu9J9LWhZ2qu4Mpd2L9FwVZkbUXzI6d1T9PA15u9YpGruBj8J56ZxTtNFGsc4sl5ezyXWFVpjtBzy3ZQ5AnIStbNmT9U6IgtHdWjtCpjAMGE4nI4eH5i1j9JvfAvhJfd2ywGO9q3YZfv7Xm/5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=aKx7BLn6; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=PtyV6PRmbGQ26cR1Yf8W9GPsIiuuem2tM8ucnMedeAc=; b=aKx7BLn6PGRgrEIG0c/4hgZrk4
+	JUaJCJaMZJEbJaMWjkT6lPwpj+QSYsUqFrnryxbzl5484EfHKV8YD2EvCRjVwJGeju9jg5f1ogXDP
+	obOOvOQ/yJlBNKEg9iiuun3XXS3b+FF4obLwUqI9o4i20E4dJ/OV4DK3RE4SUIw66fmQXAZKYAQIh
+	5kb8QsQsisYT2DN/nPHDA6WWvuPDbhRdvPSxyPuz8jMyI7vDkvhABKQWwCPOkoncq23O9oNGUpVDh
+	x6Tigq9l4LSzX4Whu1m0wky27ZCLJrfPbRmZ4U/2qPcP2mU46vKsfoW3wAIsQygyt4TKr4K0kVppg
+	Ap9VUmRg==;
+Received: from [122.175.9.182] (port=48006 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1v28CF-00000006Ytd-0KRX;
+	Fri, 26 Sep 2025 09:09:10 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 125421783FF9;
+	Fri, 26 Sep 2025 18:39:06 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id E37941783FF3;
+	Fri, 26 Sep 2025 18:39:05 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bvkrUVJt43l9; Fri, 26 Sep 2025 18:39:05 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 53A021781C3D;
+	Fri, 26 Sep 2025 18:39:05 +0530 (IST)
+Date: Fri, 26 Sep 2025 18:39:05 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: parvathi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
+	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
+Message-ID: <773982362.433508.1758892145106.JavaMail.zimbra@couthit.local>
+In-Reply-To: <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch>
+References: <20250925141246.3433603-1-parvathi@couthit.com> <0080e79a-cf10-43a1-9fc5-864e2b5f5d7a@lunn.ch>
+Subject: Re: [PATCH net-next 0/3] RSTP SWITCH support for PRU-ICSSM Ethernet
+ driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cb3r5bg4c4nytidf"
-Content-Disposition: inline
-In-Reply-To: <202509252007.E9D3C14@keescook>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: RSTP SWITCH support for PRU-ICSSM Ethernet driver
+Thread-Index: baBJgWRemsOFlllaDdRIwjoAJGMMPQ==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+
+Hi,
+
+> On Thu, Sep 25, 2025 at 07:32:09PM +0530, Parvathi Pudi wrote:
+>> Hi,
+>> 
+>> The DUAL-EMAC patch series for Megabit Industrial Communication Sub-system
+>> (ICSSM), which provides the foundational support for Ethernet functionality
+>> over PRU-ICSS on the TI SOCs (AM335x, AM437x, and AM57x), was merged into
+>> net-next recently [1].
+>> 
+>> This patch series enhances the PRU-ICSSM Ethernet driver to support
+>> RSTP SWITCH mode, which has been implemented based on "switchdev" and
+>> interacts with "mstp daemon" to support Rapid Spanning Tree Protocol
+>> (RSTP) as well.
+> 
+> Is there anything in this patchset which is specific to RSTP? In
+> general, there is no difference between STP and RSTP. STP is generally
+> done in the kernel as part of the kernel bridge code. RSTP does it in
+> user space. But the hardware driver does not care if it is STP or
+> RSTP, it is the same API to the layer above.
+> 
+> 	Andrew
+
+No, this patch-set applies to both STP and RSTP. The driver and firmware
+responds to the port-state transitions and FDB operations through the
+standard Linux switchdev/bridge interfaces, with no STP/RSTP related
+logic executed in driver/firmware.
+
+We referred to RSTP in the commit message as it is our primary use case
+and it implies support for STP as well.
 
 
---cb3r5bg4c4nytidf
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Christopher Bazley <chris.bazley.wg14@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
-Message-ID: <nqhz5vtobixqzgqfei3qgrcpyvjur6onhfeezidta7mgfmg5gx@qwzw3bw3lwr4>
-References: <cover.1758806023.git.alx@kernel.org>
- <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
- <202509251657.F4ED4CF@keescook>
- <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
- <202509251823.1B974C7@keescook>
- <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
- <202509252007.E9D3C14@keescook>
-MIME-Version: 1.0
-In-Reply-To: <202509252007.E9D3C14@keescook>
-
-Hi Kees,
-
-On Thu, Sep 25, 2025 at 08:37:49PM -0700, Kees Cook wrote:
-> On Thu, Sep 25, 2025 at 07:36:13PM -0700, Linus Torvalds wrote:
-> > The thing is, the "start+len" model is actually *safer* than the
-> > "start+len-1" model.
->=20
-> Sure. But start + len is a vector: "start" is a pointer, and "len" is a
-> size. No problems at all.
->=20
-> > Obviously you cannot dereference a zero-sized object, but zero-sized
-> > objects aren't "wrong" per se.
->=20
-> Right, totally agreed. I'm a big fan of zero-sized objects which are
-> useful in all kinds of situations (e.g. empty flexible arrays). And
-> as you're saying, a zero-sized object shares the same representation:
-> start + len where len is 0.
->=20
-> What I dislike is having this vector collapsed into a pointer because
-> it loses its explicit start/len information, and becomes ambiguous. And
-> worse we have nothing that says "this pointer isn't safe to dereference".
-
-The word END should be understood as "this isn't safe to dereference".
-
-I'm not inventing anything new; it's something standard in a way, as
-C++'s std::end is precisely that (and no, I don't like C++, but this
-name is quite consistent everywhere, including the kernel itself).
-
-> All the bounds safety work we've been doing lately is mostly centered
-> around finding ways to retain the "len" part of dynamically sized object
-> pointers so we can reconstruct the vector unambiguously.
-
-END is useful in cases where you don't care about the begining.  It's
-useful as a way to know where an array ends, regardless of how much
-we've advanced in its contents.
-
-
-Have a lovely day!
-Alex
-
-P.S.:  Please let me know if this patch set is suitable for applying, or
-if I need to provide a better cover letter, or if I need to do anything
-else.
-
->=20
-> Anyway, yay for vectors. :)
->=20
-> -Kees
->=20
-> --=20
-> Kees Cook
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---cb3r5bg4c4nytidf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWkBIACgkQ64mZXMKQ
-wqk+og//U4ZjFbRCUXrut2QhUGZsxqyDxgfqJVOY1KHnTgXL7PykoP6z6XaeyWyO
-nObPdtDcDezSzH9AXfiVRIDrFMlYQBeAY2VihVWYZH6JxoIQjnVfVN64j2plxBV1
-jcRf9OdI5azkJAxRhLvoyUP9kKH44W+7vsYgp14yum2PxigY88mVr+/b1eCpweAz
-qN6dQc5uj6Pap9c0+OccRyxdZ91iCNIz7FJUhu+vzvJ8Brf3IcC2zu2sl8wTo9GC
-eMndIi1E6hftHAWJsogvXYrUEQBuI6mWls4iY6yL5wNqd8S/MxF8WrFV+KAx1S2p
-gWtdPC/XIZOm53mrdLos2tpZ6X1FyRwvM9e2KhPUL9HPLhFY9sa6eoUH+VE8FE7/
-Wf7d9ew57KYspTzTno96j3Sg/x9BwgN1OGfJ84m/nhSCs0mY0VEGP3WKkPx2K8rN
-cAT/BjrXJKUgWPtB3ppW6edLPrRx2Xwj6HeP/LCrUc3SyuqcoLBGgHIs6LjaGbu/
-nUEWkixOB8cAGT9TUDsKAFRooOyeuYLJ/Pz9fWq8/AS94WzSDfEJjwELa1l7wN++
-QQnp2paFbZb6O7RAWfD8Httm3z4fB31b5AWwviwQQANkOujx29xcWVF/ElEB8Cuo
-7XX8ZTpP5UaoRYyi/3UPir8K8vdq273VImNXICrLc9mUMfiJhds=
-=AHCk
------END PGP SIGNATURE-----
-
---cb3r5bg4c4nytidf--
+Thanks and Regards,
+Parvathi.
 
