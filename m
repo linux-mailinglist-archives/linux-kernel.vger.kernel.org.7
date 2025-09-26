@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-834157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB14BA40FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B14BA4108
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88F51C01D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255934C1542
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D724A2F83B7;
-	Fri, 26 Sep 2025 14:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BDF2F83C0;
+	Fri, 26 Sep 2025 14:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5ZFMrV5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YogcGYGT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388D3225A35;
-	Fri, 26 Sep 2025 14:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B428D136E3F;
+	Fri, 26 Sep 2025 14:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758895959; cv=none; b=ZyOphyBa6K+rxbcoMnV8CafHGcf7Gir+ux8stca4CuYMnq8NWBD+wUPMQMuLnq1fW41rgVi55kH+GLE3udrFCmquOjYsiULMTC63OaZeNgX+4nLmEmrzF/DSuPJIq2kSDacWVXmL+CcipvGjP3oKHz4R2kWCUdx2X1MAXQNuNzU=
+	t=1758896013; cv=none; b=aJi50fqEsdlaAz9eLUob27S160tEeZ2SUuSKAq33ListBrkeOj0TMWgPXZ3ckbYibxip0a9ux5npObMGT+con+5fMNKbXNKqunQO7ImbJMh7W5CuovJ4Tspni5Z/BK0+UhVkHGE5RQr/+bcCYyjqNvGkMgP2Hnfi6Xn01Kr5x1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758895959; c=relaxed/simple;
-	bh=J3DpS5kZB6XptQTvvt2hoOfcWCkqxGjjmHDYrY3f++8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+EQmKMEh/kFabZSsBT9QuNFNALgQF8UZaD+MYnoj5/CPbqrLxO1oORXDIC7PnVLNUulAuTgS0QJ/Nalahvd2zO/ENaPrT6p5Y/qS541AEtJu9AX8ZMt5mgIAPDLCLnMN1IjsERou7eLxUEhZQ/Sgl/6yvzDq3CpbiP/HBtkWvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5ZFMrV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A58C4CEF4;
-	Fri, 26 Sep 2025 14:12:38 +0000 (UTC)
+	s=arc-20240116; t=1758896013; c=relaxed/simple;
+	bh=8DMNFALDkQHKbMdFUPbRi3C2PGsG9BfieE87zOC1sYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOjgvVvIop7PlN4LaBTfXvYuu/cBQYuijNxKfClc5KTjVmKyaLuzFm+U724GEjlx1/1c21FlPLNGLp2Z/71wCmyaItBmaYXDbSL2H+8vSYhpltDoevMeQyBOArWS5mjooPQPIa09Qz8SZFAHZhD+mCH1I9WMu/vKos/Y2fJt3TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YogcGYGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249C9C4CEF7;
+	Fri, 26 Sep 2025 14:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758895958;
-	bh=J3DpS5kZB6XptQTvvt2hoOfcWCkqxGjjmHDYrY3f++8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d5ZFMrV5mmjd4kVyQWI9YEeUlgWKYv0i0vEaPUlgjX/pHOLTOeZMrwRJI5QaCan77
-	 VDQY9kEW98Nl8yhmQYJHjfbUZSoSS1yNvfU96YPuyMqWDZg7kPnYm67YVFcglyG+jV
-	 JbvlQYm53XmbcTOmYTZw68SILW9XH5gMkkhZtXp5/+SvaxYNUJGgSjNT35SFszF74c
-	 Ra7j6lVLCPQDG8OiSflW0Vaq8zhPeVjbakhM1qL5kJkGFKaRqFgUzE9Co/eQLiLwiF
-	 l0qBDxetCTA3CcaLbkMHerAZD0o06TuH+pk6zmqWAKQbMyc3UNI4jh/9RkgBno3RN8
-	 gLttuh7y+ZHLQ==
-Message-ID: <a1a6170e-2d91-4678-9147-6cb3fe534c93@kernel.org>
-Date: Fri, 26 Sep 2025 09:12:37 -0500
+	s=k20201202; t=1758896013;
+	bh=8DMNFALDkQHKbMdFUPbRi3C2PGsG9BfieE87zOC1sYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YogcGYGThZCCV2nyf8IFPVQ/yMB/8SVaSjjgDPt0Qo9nLoK+QtZRJx9/VLZLFhjqk
+	 khGRy3JzQdfrkA6SkjpPOKwISVkCKq/SBHyAJWMgwuK1gcv/42lYbATm4sC4y1XBOH
+	 wTrL8zaXfzL069YawpnUoesSfc9A+Nk45fgvniGr8/XqYGwzq3FRINgNCOzMwf5eUI
+	 lX7dQhTkkJeHL2TlbML9XMk1XEud+wl6MruRSbaHDvo8S6taMdd2TePWLww/9tKHkW
+	 Rzhox4I1BfHqV260wQbYxDtdiqjJ9EITTaMJPDdCoA0kDZshx/lJ2olZH/N4AFp33C
+	 7j9LBwBsoAGag==
+Date: Fri, 26 Sep 2025 15:13:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Adam Young <admiyo@os.amperecomputing.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH net-next v29 1/3] mailbox: add callback function for rx
+ buffer allocation
+Message-ID: <aNafiYk3_Ma5QQ4Q@horms.kernel.org>
+References: <20250925190027.147405-1-admiyo@os.amperecomputing.com>
+ <20250925190027.147405-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] PM: hibernate: Fix pm_hibernation_mode_is_suspend()
- build breakage
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ionut Nechita
- <ionut_n2001@yahoo.com>, Alex Deucher <alexander.deucher@amd.com>,
- Kenneth Crudup <kenny@panix.com>, amd-gfx@lists.freedesktop.org
-References: <12746883.O9o76ZdvQC@rafael.j.wysocki>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <12746883.O9o76ZdvQC@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925190027.147405-2-admiyo@os.amperecomputing.com>
 
-On 9/26/25 6:10 AM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Sep 25, 2025 at 03:00:24PM -0400, Adam Young wrote:
+> Allows the mailbox client to specify how to allocate the memory
+> that the mailbox controller uses to send the message to the client.
 > 
-> Commit 495c8d35035e ("PM: hibernate: Add pm_hibernation_mode_is_suspend()")
-> that introduced pm_hibernation_mode_is_suspend() did not define it in
-> the case when CONFIG_HIBERNATION is unset, but CONFIG_SUSPEND is set.
+> In the case of a network driver, the message should be allocated as
+> a struct sk_buff allocated and managed by the network subsystem.  The
+> two parameters passed back from the callback represent the sk_buff
+> itself and the data section inside the skbuff where the message gets
+> written.
 > 
-> Subsequent commit 0a6e9e098fcc ("drm/amd: Fix hybrid sleep") made the
-> amdgpu driver use that function which led to kernel build breakage in
-> the case mentioned above [1].
+> For simpler cases where the client kmallocs a buffer or returns
+> static memory, both pointers should point to the same value.
 > 
-> Address this by using appropriate #ifdeffery aroung the definition of
-> pm_hibernation_mode_is_suspend().
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> ---
+>  include/linux/mailbox_client.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Fixes: 0a6e9e098fcc ("drm/amd: Fix hybrid sleep")
-> Reported-by: KernelCI bot <bot@kernelci.org>
-> Closes: https://groups.io/g/kernelci-results/topic/regression_pm_testing/115439919 [1]
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>> ---
->   include/linux/suspend.h |    8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> --- a/include/linux/suspend.h
-> +++ b/include/linux/suspend.h
-> @@ -276,7 +276,6 @@ extern void arch_suspend_enable_irqs(voi
->   
->   extern int pm_suspend(suspend_state_t state);
->   extern bool sync_on_suspend_enabled;
-> -bool pm_hibernation_mode_is_suspend(void);
->   #else /* !CONFIG_SUSPEND */
->   #define suspend_valid_only_mem	NULL
->   
-> @@ -289,7 +288,6 @@ static inline bool pm_suspend_via_firmwa
->   static inline bool pm_resume_via_firmware(void) { return false; }
->   static inline bool pm_suspend_no_platform(void) { return false; }
->   static inline bool pm_suspend_default_s2idle(void) { return false; }
-> -static inline bool pm_hibernation_mode_is_suspend(void) { return false; }
->   
->   static inline void suspend_set_ops(const struct platform_suspend_ops *ops) {}
->   static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
-> @@ -420,6 +418,12 @@ static inline int hibernate_quiet_exec(i
->   }
->   #endif /* CONFIG_HIBERNATION */
->   
-> +#if defined(CONFIG_HIBERNATION) && defined(CONFIG_SUSPEND)
-> +bool pm_hibernation_mode_is_suspend(void);
-> +#else
-> +static inline bool pm_hibernation_mode_is_suspend(void) { return false; }
-> +#endif
-> +
->   int arch_resume_nosmt(void);
->   
->   #ifdef CONFIG_HIBERNATION_SNAPSHOT_DEV
-> 
-> 
-> 
+> diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+> index c6eea9afb943..901184d0515e 100644
+> --- a/include/linux/mailbox_client.h
+> +++ b/include/linux/mailbox_client.h
+> @@ -21,6 +21,12 @@ struct mbox_chan;
+>   * @knows_txdone:	If the client could run the TX state machine. Usually
+>   *			if the client receives some ACK packet for transmission.
+>   *			Unused if the controller already has TX_Done/RTR IRQ.
+> + * @rx_alloc		Optional callback that allows the driver
 
+@rx_alloc:
+        ^^^
+
+Flagged by ./scripts/kernel-doc -none -Wall
+
+> + *			to allocate the memory used for receiving
+> + *			messages.  The handle parameter is the value to return
+> + *			to the client,buffer is the location the mailbox should
+> + *			write to, and size it the size of the buffer to allocate.
+> + *			inside the buffer where the mailbox should write the data.
+>   * @rx_callback:	Atomic callback to provide client the data received
+>   * @tx_prepare: 	Atomic callback to ask client to prepare the payload
+>   *			before initiating the transmission if required.
+> @@ -32,6 +38,7 @@ struct mbox_client {
+>  	unsigned long tx_tout;
+>  	bool knows_txdone;
+>  
+> +	void (*rx_alloc)(struct mbox_client *cl, void **handle, void **buffer, int size);
+>  	void (*rx_callback)(struct mbox_client *cl, void *mssg);
+>  	void (*tx_prepare)(struct mbox_client *cl, void *mssg);
+>  	void (*tx_done)(struct mbox_client *cl, void *mssg, int r);
+> -- 
+> 2.43.0
+> 
+> 
 
