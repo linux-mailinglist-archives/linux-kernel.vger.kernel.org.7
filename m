@@ -1,189 +1,276 @@
-Return-Path: <linux-kernel+bounces-833747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4F4BA2F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:27:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEAFBA2F2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8C57B6399
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80652623988
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED6928DF0B;
-	Fri, 26 Sep 2025 08:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B3E296BC5;
+	Fri, 26 Sep 2025 08:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENQwCCYN"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzfOP+xm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEA810942
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310D6291C13
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758875266; cv=none; b=BvCcnPBzxThyVTOdW+5LFU+TTkFYm9lXdlYTe4LiH4U/2bEQVC+/gxwQkPoG4Zwqj9vh7CoHLD8y1r2Q6mfpXKX41EbczoNrsnCfv5Qwhte/SoBPr4amI1R+ofjy2dCBqYRBaiI1FPTVmyU+TL9hmon8fyyhYTJMzaYk2LV3nFw=
+	t=1758875399; cv=none; b=nJl8MYEX0R3kJSduen1HbciD17C6/PlAs58cUzF9qiWUW3fuBDem0ku3wq0CQCsEI/3hHRn3bGh4/cdfx0RY1VLGA56Brskfxy1H1TrqMNjB+7T2vhye7kYZk3cz+icHZSVSVm7vVggwT0M5wEI1O2f5daS7tM9ShqD2d6Tl8Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758875266; c=relaxed/simple;
-	bh=FJ32/p4g+CxM5aiz56PxjKWyf3TIW+l8HDgnXk6ULco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=anwmJY+niBlzWcsAtSgR6DGZRknRyI+IpYRSRDffaW7VOIGbjfAZlj2eYRuxh4hsbNspaa8ZvRfk7rSmzEl1OoVVdbciAr7coGJmQo8RUZx/jxBEZVlPI0WT0b+VX//RrSXVTi2i7zOmyiqSKuKOBYqVomKvdgrP+rBAakzq3hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ENQwCCYN; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7811a02316bso199295b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758875263; x=1759480063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=3c75WAzk0fFcFdEuaqWRC+mXQtAjTaZTP2dlJBnjvyw=;
-        b=ENQwCCYNZuGCdsWln08O4tGsY7haTvhaSvBmmO7w4mIORjv3onfsPRJpKkjyYXN8Av
-         O/3y1eLgGUXVFZZkdxx0TGD6PDZO8ekjWBkfD0raCFLfdON621d1jz+Br5Ur8K24bImF
-         VSbDoSR036OfOa/Y2aOG7cUSej6ibV5kQinIvUut+x1piOT9dbm7Pl77RYhmIp9alV1g
-         BVKUShTppIEVLQCTDhI6Snk6OCsglgRRXvgi5gSisqL9qz3Ei1qgcQ2nCYfhBbpvcyVv
-         vnf0sLYpQYnYec3wZ20G970mqzmQ5YbezKd/ckRngekNkMaAVe5XCW/AVsonFC76vEKS
-         d0Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758875263; x=1759480063;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3c75WAzk0fFcFdEuaqWRC+mXQtAjTaZTP2dlJBnjvyw=;
-        b=BlceANyqFGWxTMYHeM5yQPH3siE5vO0OiJjm+ARZfakwrvQMZMg5z8RdKPSKKm6Guw
-         yz1iSiYVXuX+Q5OHfDPkOs0gY1+VE0qeHiwxrFsX3XqjWHOeayte2/lahx99Rxu0vjum
-         i9IUSDPqALRdqEEkyhxu9VwKqxRycfO3NSAcpAWRX5AVBp750MLNnB3Mp9WbL8DfT1IO
-         +EAr45HK0g0UKUtM0VxIntfA2K5EWAs44KpTJPZcGFS06jgIjphXmZ/Ju6uAR77kRrP5
-         pGaevEuCPscKVchvqC/9mZxINFGjC1NkjKwSIoyVb7m9mWBD3F/g2Rz0io5EyFrI4IYG
-         yrWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Dip0AIeprQdCKBlrsQOyKQUnCHKaHaz6Ofs6akyr5NsN9vy67gwuUY9ccZD2Ze3jnqdQOhgyMzd4aMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ0DSpa9WANGjp2krNVcPWTyEVF3+SUu63WZlhZtVujNg+RNPg
-	AzVzaz44qDYUda//Uz103p4sHBdmRQaY12J6RAFVBf9hVYWj4Jc7Auc6
-X-Gm-Gg: ASbGnct0W3+6WrnGYcLLB6qvIITRc8Y8GuQUhMEUw97/a7Qwgis3R97R+ZL1PbwZjTo
-	qXLUMc05F1OOeSu6zCKe8M6Q4UvfjJw8rUVEJme5x+xvto9ieI+TxABHFpqNqY3HCqCfEQKft5Z
-	3A3RDrv7t4ovGzHJIzgcAXCTqznhVwXGE5Z6NmrZQcrmihSV8OOriAY/sQHNwK7nMwHSK2ZT8zI
-	+g0da030fh14I1LhS7RAMVwSDliz9mBfDpcmIpB1NvTiSe4zaW/FRAhROZYJNfqqckUlUcwFu+2
-	3ukCV2uNBqBQoNBFsppslXikc4bvTLs1USfvspNVoX7oW4GccwS28QFRWx3cohmBU9a8aXEncfl
-	IayY3lFMuTKR0X3LYuel+NXokUCMFBDNs1OtKbaA6QJaMPCgtww+HkyCV7eFBshOBi2QKLsY=
-X-Google-Smtp-Source: AGHT+IFVG/zIzdk+YYb+6Peneg1BzhpGa8nIP/03clP9hKSS2cs92RS7kDIAloGplbjParz2Z0AAUw==
-X-Received: by 2002:a05:6a20:258f:b0:263:b547:d0c3 with SMTP id adf61e73a8af0-2e7ceeee380mr8397622637.36.1758875263508;
-        Fri, 26 Sep 2025 01:27:43 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53d9160sm4089812a12.22.2025.09.26.01.27.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 01:27:42 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f35193de-a106-42ec-b318-1501793fcfb9@roeck-us.net>
-Date: Fri, 26 Sep 2025 01:27:41 -0700
+	s=arc-20240116; t=1758875399; c=relaxed/simple;
+	bh=2O2Eis/AQxoQlx2boLmGaVYgY6FUanSnJshyf0XdjwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCbST7/wLABVg4Ow9zjy0szJeKI7bWbmWQ6XnMl6QbiC1AdIvdWtPjbMaDD8o2ck9Lvhc6ER1tXlZVWVzeF0hQtcHNZD63puaiC3JklxmkWIFT577jZqPPX/hfnz/Jf+3KDDjQvUzHSFhNw2+FE44HEPjKrbfUbntXpdU5kgORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzfOP+xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA14EC4CEF5;
+	Fri, 26 Sep 2025 08:29:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758875399;
+	bh=2O2Eis/AQxoQlx2boLmGaVYgY6FUanSnJshyf0XdjwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dzfOP+xmoc9M4NPmCBGhZ6SkKwuQD42poOqwgfwyRa32F0sttzUhsLot48i6tzg7f
+	 gnK8YT2i6Wh7VoC7CmSCMbkVVHCk2r0Skws5vjbvsOwnMCdICMxyvZvb2xhjFub3Eq
+	 Uuc8mr5Ios/9ZeSVCfeeK5TQHcjMDpLZYn1TMP2xRjpOGJusN46qiV13MH2F1a0Cyk
+	 raRh4y7GtzvFvrJTDPI8ZioieVE/d2ybjLtshLIXad3sknq+1/4KlrcfDW+CpsOegE
+	 OJjwlAweHoCyDButmlWPYD3g/ulQ9PmzRT7aiZEe3aKRlRFBi3j9kcIOFUdUHAs5u7
+	 i734WYfUouw7w==
+Date: Fri, 26 Sep 2025 10:29:52 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
+Message-ID: <s6fgd3jzckxv3lrylph5cl4l3ykk7qdrnjwlvwe3pxxc2zgch5@2jgoh5lkoh5b>
+References: <cover.1758806023.git.alx@kernel.org>
+ <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
+ <202509251657.F4ED4CF@keescook>
+ <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
+ <202509251823.1B974C7@keescook>
+ <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers/hwmon/pmbus: Add support for raa229141 in
- isl68137
-To: Jeff Lin <jefflin994697@gmail.com>, jdelvare@suse.com
-Cc: cedricjustine.encarnacion@analog.com, ninad@linux.ibm.com,
- andriy.shevchenko@linux.intel.com, johnerasmusmari.geronimo@analog.com,
- Mariel.Tinaco@analog.com, jbrunet@baylibre.com, kimseer.paller@analog.com,
- leo.yang.sy0@gmail.com, nuno.sa@analog.com, chiang.brian@inventec.com,
- gregkh@linuxfoundation.org, grantpeltier93@gmail.com, peterz@infradead.org,
- william@wkennington.com, krzysztof.kozlowski@linaro.org, tzungbi@kernel.org,
- thorsten.blum@linux.dev, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250926014552.1625950-1-jefflin994697@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250926014552.1625950-1-jefflin994697@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ktuk3iap3hmygfsz"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
 
-On 9/25/25 18:45, Jeff Lin wrote:
-> In chip RAA229141 there exist ISYS pin which can report the current data
-> for the device connected to this chip through this pin by routed by Direct
-> Memory Access(DMA) command. To read the data in ISYS pin, we have to set
-> the DMA address to 0xC5 and then read the DMA data from 0xC7. And then use
-> the Direct read format with 10mA per LSB to transfer the data in 0xC7.
-> And for ISYS input pin, the DMA address is 0xE0D3 and for ISYS output pin,
-> the DMA address is 0xEE42.
-> 
-> Signed-off-by: Jeff Lin <jefflin994697@gmail.com>
 
-As submitted this is a no-go, for several reasons.
+--ktuk3iap3hmygfsz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christopher Bazley <chris.bazley.wg14@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Marco Elver <elver@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 0/3] Add ENDOF(), and use it to fix off-by-one bugs
+Message-ID: <s6fgd3jzckxv3lrylph5cl4l3ykk7qdrnjwlvwe3pxxc2zgch5@2jgoh5lkoh5b>
+References: <cover.1758806023.git.alx@kernel.org>
+ <20250925134814.1f68d84a951572245893abbe@linux-foundation.org>
+ <202509251657.F4ED4CF@keescook>
+ <CAHk-=wg2M+v5wFQLK3u3DuchpCbuHF8Z7_if3=foECVRXF+8vg@mail.gmail.com>
+ <202509251823.1B974C7@keescook>
+ <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=witf7e1QRp29tAeHLB34HuBSO5G7q82cmd-mAPSt+0JVg@mail.gmail.com>
 
-The description should describe what is done and why (i.e., here, describe
-the added chip), not implementation details. Those are useful as comments
-in the code, not as patch description.
+Hi Linus, Kees, Andrew,
 
-Introducing a new sensor class is unacceptable. This is a current (I think),
-treat it as such.
+On Thu, Sep 25, 2025 at 05:00:30PM -0700, Kees Cook wrote:
+> On Thu, Sep 25, 2025 at 01:48:14PM -0700, Andrew Morton wrote:
+> > Patchset seems reasonable, I guess.  But I'm not loving "ENDOF".  End
+> > of what - is that like __etext?  "ARRAY_END" matches "ARRAY_SIZE" quite
+> > nicely, no?  And it much better describes what the thing does.
+>
+> And it's really ARRAY_BEYOND. ;) I don't really like having APIs that
+> require holding pointers that are actively invalid, either.
 
-Changes in the core together with other changes are unacceptable.
+The name END has some conventions.  It's not arbitrarily chosen.
 
-A new virtual command (or commands) would have to be discussed and be generic.
+The C standard is quite consistent in referring to the last addressable
+element of an array as the LAST element.
 
-A new Kconfig symbol when adding support for a new chip to an existing driver
-is unacceptable. Besides, the new Kconfig symbol would have no effect if
-the driver supporting the chip is not enabled, so this is not only unacceptable
-but wrong.
+For what we're dealing with, which is a pointer to one after that thing,
+the C standard is also consistent in calling it 'one past the last
+element'.  It doesn't have a single-word term, though.
 
-Regarding the code itself: Stick with existing coding style. Do not use C++ comments,
-declare variables at the beginning of code blocks.
+However, C++ does have a single term: 'std::end'.
 
-I would suggest to add support for RAA229141 in one patch, then we can discuss
-what ISYS_{IN,OUT} actually measures, how it differs from IIN/IOUT, if it indeed
-requires new virtual commands and how those command might look like, or if it
-can be handled by mapping a existing commands.
+And many projects, when having to come up with a single-word term for
+this thing, natural evolution shows it converges to 'end'.  Even in the
+kernel, as your local pointer variables are actually called 'end' and
+not 'beyond'.
 
-The datasheet for RAA229141 is not public, so be prepared to provide a detailed
-description.
+> u8 array[10];
+> u8 *first =3D array; // valid address
+> u8 *last =3D &array[ARRAY_SIZE(array) - 1]; // valid address
 
-Guenter
+This last is correctly used, as a term, but quite dangerous, as Linus
+points out.
 
+LASTOF() would be something quite more dangerous than ENDOF().  First of
+all, because it's not guaranteed to exist, as Linus points out.
+LASTOF() applied to a zero-length array would be Undefined Behavior
+straight away.  That's indeed why we have guarantees that the end always
+exists and can be held.
+
+>
+> for (u8 *c =3D first; c <=3D last; c++)
+
+Secondly, loops with <=3D are weird and error prone.
+
+>   putc(*c);
+> // c would now be invalid but has left scope so it cannot be used
+>
+> --
+> Kees Cook
+
+
+On Thu, Sep 25, 2025 at 07:36:13PM -0700, Linus Torvalds wrote:
+> On Thu, 25 Sept 2025 at 18:31, Kees Cook <kees@kernel.org> wrote:
+> >
+> > I can have an opinion about the relative safety of holding pointers that
+> > can't be safely dereferenced, though. :) But yes, I've long since lost
+> > the argument that C should avoid these kinds of past-the-end tokens.
+>=20
+> The thing is, the "start+len" model is actually *safer* than the
+> "start+len-1" model.
+>=20
+> It's safer because it's simpler and doesn't involve the whole
+> "subtract one" (and then when you have the "past the end" it's also
+> easy to calculate "how much is left").
+>=20
+> So it's simpler, and it's explicitly supported by the standard.
+>=20
+> It's also more strictly correct, because "start+len-1" is technically
+> not a valid pointer at all. The C standard makes the "past the end"
+> case explicitly valid, but not the "before the beginning".
+>=20
+> Now, I'm the last person to say that the C standard is always correct
+> - there's a lot of garbage in there, but in this case it also happens
+> to match the notion of "this works".
+>=20
+> Because the "pointer to the last byte" model DOES NOT WORK.
+
+So far, fully agree.
+
+> In C, NULL is actually a valid pointer for zero-sized elements.
+
+This is only valid since very recently.
+
+Remember that 'NULL - NULL' is (or was) Undefined Behavior.  That
+operation doesn't result in 0, per the standard.  NULL < NULL is (or
+was) also Undefined Behavior.
+
+Consider this innocent loop:
+
+	end =3D ptr + size;=20
+
+	for (p =3D ptr; p < end; p++)
+		*p =3D 0;
+
+If ptr were NULL (trying to represent a zero-size array), we'd at least
+incur in one NULL < NULL operation.
+
+However, a unique pointer, as returned by glibc malloc(0), would be
+a valid pointer, and p<p would be perfectly valid.  p-p would also
+perfectly result in 0.  Of course you can't access p[i] for any i>=3D0,
+but that's true of any object.  If you have an array of 2, you can't
+access p[i] for any i>=3D2.  Everything is consistent with unique
+pointers.
+
+So, the whole model of malloc(0) returning NULL as successfully
+allocating 0 bytes is broken.
+
+Recently, the committee decided that memcpy(3) would accept NULL if the
+size is 0, and I'm not sure if they also defined the behavior for any of
+NULL < NULL or NULL - NULL.  I'd still be careful using NULL to
+represent a zero-size array.
+
+> Yes, really.
+>=20
+> The C standard says that "malloc(0)" can return NULL, without it being
+> an error. So the tuple "NULL, 0" is actually a perfectly valid
+> "pointer and length" pair, and one that you may actually get thanks to
+> how malloc() works.
+
+This is something I want to change.  malloc(0) returning NULL is
+terrible.  realloc(p,0) returning NULL is even more terrible.  And by
+terrible, I mean it has caused remote-code-execution exploits.
+
+<https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3621.txt>
+
+> Obviously you cannot dereference a zero-sized object, but zero-sized
+> objects aren't "wrong" per se.
+>=20
+> Now, I happen to believe that the "return NULL for zero sized
+> allocations" it's not a great model (it also makes error checking more
+> complicated). So the kernel kmalloc() function actually returns a
+> different pointer that cannot be dereferenced (grep for
+> ZERO_SIZE_PTR).
+>=20
+> But my point is that "ptr+len" actually *works* for that case.
+>=20
+> The "ptr+len-1" loop thing you gave as an example not only is invalid
+> C for zero-sized cases, it simply does not even work at all for the
+> NULL case.
+>=20
+> Your example loop of how things should work IS WRONG.
+>=20
+> Yes, it happens to work as long as you never have zero-sized things,
+> but it really is a bad pattern.
+>=20
+> This is not "opinion". This is just a plain fact about how C works.
+> "start+len" is well-defined. "start+len-1" is NOT.
+
+Agree.
+
+
+Have a lovely day!
+Alex
+
+>=20
+>                Linus
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--ktuk3iap3hmygfsz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWTvkACgkQ64mZXMKQ
+wqmaIw/+MAcy2ospUQpsCvwNAYYYYMXAEwWw1Sq8i5mQfXKhDEHukb3tWNfH3oM/
+NxYPzYnFV9D6zlnhwg7zKfrFPyI6clhmPQ6GwQ7mbyV0V6sADePRlWZ3LzZ5sOuN
+IqLLagbzzduXITCxqaJ1PiPGXtrx9vAjruxqTC0sbRxF794ZpLgpHOmxpdfm7FpQ
+3AlgIzHdsyrVE0pButr3C2GACtfqh9HyI0EMvK4Wu1F0jiFubw7gOQSfD12pdhfj
+SJQ681DEkUDzsZwWHcppK62sq1Nsn6LGB1aMMdsaOupBRPq8Q9IT/et/LA2a+msD
+u85GVgIxjmkpBEhdu1EvEbua3oKJ+EBDLaOewK0g11W411iP6nmXq9aljoV843XZ
+FGFpaQJWrrq6AqD+urgNFvzG2HynszPeywcFPGfWF+/+iZn9F/AmOmNXhFXEHGTH
+9Bo2vFxCMe0cCCE1HwVUSPVNarOWie0BjlrORKtiLDDDS1daE+yNecrBt/TE0l0V
+PYJat3pm1BBo0D4IzURAuimiRnTYWNW0Q9YMJIBU+ipnjxWcd1EfiIE9lRuqsIXd
+3fSznKiIUw0yc+l21nLdYfgNOEsxfgwA3mFVR+11i8rAXOifbUVJ3Vc2+SsaZuNe
+Ci1E2S2fGEWYCF+ObbdNBbq1P501Y16mjrMd5BID/yJWxSJXsxc=
+=VLnj
+-----END PGP SIGNATURE-----
+
+--ktuk3iap3hmygfsz--
 
