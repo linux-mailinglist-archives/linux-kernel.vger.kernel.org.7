@@ -1,188 +1,138 @@
-Return-Path: <linux-kernel+bounces-834232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014E8BA438F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8867DBA43D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D45562E54
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:34:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F7E188F727
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE683CC7;
-	Fri, 26 Sep 2025 14:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759481D516F;
+	Fri, 26 Sep 2025 14:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYUWlJbG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwJ+Xat9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F1D7E110;
-	Fri, 26 Sep 2025 14:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E8D7E110;
+	Fri, 26 Sep 2025 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897193; cv=none; b=EhTnPN5bHarOr5bSb3I4CG9SZVJT3KDlAPZZbQpZS7/mUU95eN2xXcNOMgmo6Sfk3G8FG5Kl0KLf8aiG0WEmvoE4zxX/BV7HQdeoN/w4p/9z9WOamaAeDJw+Muy12Mb9R/Mt9lIT1c9FsD36oVFqn2ZpBlDGNMIcxfihvNPMSYY=
+	t=1758897205; cv=none; b=lCk/80hIUIQUIBHoUA9Qh5ZnNxe/mVD90ZLY6s9LiXEshqD6yNSBLg/17wA9enb5VzydLSbF4TJJLDaxOcrp7/Z61IfPhOMpSF11JUIwy3zEe3xguyME4oSgrI/m2AMlsAVY/KEt4YliGe27euu3DdcPbLH0fLKtIZhXKrPvIco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897193; c=relaxed/simple;
-	bh=RFIOttVJp0eh/XAlE3x53bbYZOC5tbTcft+rUVFuLtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBVJpz3RcMLHX5QlDn7e13xT1rRX5nDY5D38apu/NlWOa0yAsKOfOfmfddh2I+eZ6pNWtE1WoVVwp/A3L3qWkGMEVSijCDVR4D5D/n32i2mDSSfDSmMO3kkJTrLEJykUNv1MO0aOcmPkfh4gqbDlNbLZWpgTCLKOObVJljMgY5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYUWlJbG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84764C4CEF4;
-	Fri, 26 Sep 2025 14:33:09 +0000 (UTC)
+	s=arc-20240116; t=1758897205; c=relaxed/simple;
+	bh=HCyKHfvLAjQiCuThnkTvglrGD2e2PE527p78aHU/53w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QIv1rhqtrbCT3/ZSgtLIDu1I+losqrk+yojaZ29krHB0pkBdxXE+K7ton4GQcNVLpvw3m1KoUY9MB1ZSk9O4TFf3PDRCCL+UwM28IQWiAZzmJ9wtU5SzsDL9bOZ82VqhoDp2OQ0NevlGLHIsqGydqNsik36s8SU/ywpdqoCsPP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwJ+Xat9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD943C4CEF7;
+	Fri, 26 Sep 2025 14:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758897192;
-	bh=RFIOttVJp0eh/XAlE3x53bbYZOC5tbTcft+rUVFuLtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dYUWlJbG6nnFq6TmgkPCUvJrKhSOr//l2/p9YO9Ob/mS79D4oFiTdapaQWgNvE0Tp
-	 d/vCDqpw50xMSBlk3aVLOoeuaOU4Flxrd56aMguc7oRiVNj0q6AU2XUmY7xmZGdRxu
-	 yzvEHEz66UsLqIhGLS5TxmJVhzOSIieMbM2IQUCN7s18qZz+JDhAXKNMJgcPOg7GLu
-	 G8DS28biYdg1311fE2giZqug6ZU0/T98pwCuu7T7rl2DSOAxkvDj3/RAEi8bpsnrPW
-	 j/b2ihU2NVzZ9jZRiUCwLRy/gCm3LcdbKtiwae+0N+ASIwwY/Gq0RWtAa9tDE9acYS
-	 l5Kc8mI9MFUYw==
-Date: Fri, 26 Sep 2025 15:33:06 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 02/28] KVM: arm64: Donate MMIO to the hypervisor
-Message-ID: <aNakIop0jdz9gH-t@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-3-smostafa@google.com>
- <aMA13Sowq91XEqP9@willie-the-truck>
- <aMlly_9kDE04Inn2@google.com>
+	s=k20201202; t=1758897205;
+	bh=HCyKHfvLAjQiCuThnkTvglrGD2e2PE527p78aHU/53w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jwJ+Xat9Dou58aM+viTe/oJvAmYdvfv+S5OXOIFTB78OhFltPIB61bW6gQJQtLptW
+	 +8hxgtAuYnAzSslHlYOtoNrlCTpafiCmGlZQqPVL8Crcylug8vqnaPjfCf2z97Iv52
+	 QLJa3EvEeF/wDK+urufiKHvDLSGRuybszjFy5fGmf5Jnrm/pU+nrZy2aJ8IpV9pq9P
+	 IOR9XhP5exMWfmbTgnUX6t74PS9s+XLxOM1DLXiyN4YAcWYqC0wm/T5/muLbr76RJQ
+	 HNx4rTpK5EjUHyyxWFVhPOtGJTMapK8whYof37wNMUYf2+B+zy4PcKyXMTJqAZjPpQ
+	 zSDEwXbVq7pww==
+From: Conor Dooley <conor@kernel.org>
+To: linus.walleij@linaro.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RFC 0/5] microchip mpfs/pic64gx pinctrl questions
+Date: Fri, 26 Sep 2025 15:33:08 +0100
+Message-ID: <20250926-manpower-glacial-e9756c82b427@spud>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3488; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=tKRIZ4T6oHzke0pnRvt4sAwKIFFEcFj+sPJFqDpDKfE=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnXlqikGSyZrBXW6fI8dE6N6exNzCdm/s//Gns32tgyY GUnq05zRykLgxgXg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACYy5yUjwwseocNV6x/HqVex ub3PL0qc3972obMs6b4Q++JtK6qzmxgZtifvDg06zH+2trM2+dpb7apjeT82MK2MmeM79WZZYbs 2HwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMlly_9kDE04Inn2@google.com>
 
-On Tue, Sep 16, 2025 at 01:27:39PM +0000, Mostafa Saleh wrote:
-> On Tue, Sep 09, 2025 at 03:12:45PM +0100, Will Deacon wrote:
-> > On Tue, Aug 19, 2025 at 09:51:30PM +0000, Mostafa Saleh wrote:
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > index 861e448183fd..c9a15ef6b18d 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > @@ -799,6 +799,70 @@ int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > +int __pkvm_host_donate_hyp_mmio(u64 pfn)
-> > > +{
-> > > +	u64 phys = hyp_pfn_to_phys(pfn);
-> > > +	void *virt = __hyp_va(phys);
-> > > +	int ret;
-> > > +	kvm_pte_t pte;
-> > > +
-> > > +	host_lock_component();
-> > > +	hyp_lock_component();
-> > > +
-> > > +	ret = kvm_pgtable_get_leaf(&host_mmu.pgt, phys, &pte, NULL);
-> > > +	if (ret)
-> > > +		goto unlock;
-> > > +
-> > > +	if (pte && !kvm_pte_valid(pte)) {
-> > > +		ret = -EPERM;
-> > > +		goto unlock;
-> > > +	}
-> > 
-> > Shouldn't we first check that the pfn is indeed MMIO? Otherwise, testing
-> > the pte for the ownership information isn't right.
-> 
-> I will add it, although the input should be trusted as it comes from the
-> hypervisor SMMUv3 driver.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-(more on this below)
+Hey Linus, or whoever else,
 
-> > > +int __pkvm_hyp_donate_host_mmio(u64 pfn)
-> > > +{
-> > > +	u64 phys = hyp_pfn_to_phys(pfn);
-> > > +	u64 virt = (u64)__hyp_va(phys);
-> > > +	size_t size = PAGE_SIZE;
-> > > +
-> > > +	host_lock_component();
-> > > +	hyp_lock_component();
-> > 
-> > Shouldn't we check that:
-> > 
-> >   1. pfn is mmio
-> >   2. pfn is owned by hyp
-> >   3. The host doesn't have something mapped at pfn already
-> > 
-> > ?
-> > 
-> 
-> I thought about this initially, but as
-> - This code is only called from the hypervisor with trusted
->   inputs (only at boot)
-> - Only called on error path
-> 
-> So WARN_ON in case of failure to unmap MMIO pages seemed is good enough,
-> to avoid extra code.
-> 
-> But I can add the checks if you think they are necessary, we will need
-> to add new helpers for MMIO state though.
+Working on some pinctrl drivers for my devices, and I had two questions,
+so I am sending this as an RFC in the hopes of getting an answer before
+progressing further with the third pin controller on the platform.
 
-I'd personally prefer to put the checks here so that callers don't have
-to worry (or forget!) about them. That also means that the donation
-function can be readily reused in the same way as the existing functions
-which operate on memory pages.
+Firstly, both of the drivers I have produced so far have only pinmuxing
+functions and no pincfg role - they only determine internal routing in
+the SoC. I've got an identical dt_node_to_map implementation in both
+drivers, as all they are doing is populating the pin and mux bit setting
+from dt. I used what the recently added spacemit k1 was doing as a
+guide, but removed the loop since there's no pincfg stuff that can
+differ between pins. I notice there are generic implementations of
+dt_node_to_map but I didn't get them to work. Have I missed a trick here
+(either on the dt side, or in the driver) that would let me use a generic
+function instead of having my own implementation, either in the driver
+or in how I've set up the dt side?
+I got to this point by partially writing the third driver first, based
+on that spacemit k1 driver's approach, so I might've blinded myself to
+the correct/simple approach to things as a result of having to handle
+the pincfg stuff etc in dt_node_to_map there.
 
-How much work is it to add the MMIO helpers?
+Secondly, particularly if there's not some neat way to simplify things
+in dt_node_to_map, should I merge the two drivers, at least partially?
+They're effectively only different in their pinctrl_pin_desc and how the
+regmap is generated in probe (from a syscon regmap versus
+regmap_init_mmio). I've kept the bindings apart, as despite similarity,
+they're really only similar due to simplicity.
 
-> > > +	WARN_ON(kvm_pgtable_hyp_unmap(&pkvm_pgtable, virt, size) != size);
-> > > +	WARN_ON(host_stage2_try(kvm_pgtable_stage2_set_owner, &host_mmu.pgt, phys,
-> > > +				PAGE_SIZE, &host_s2_pool, PKVM_ID_HOST));
-> > > +	hyp_unlock_component();
-> > > +	host_unlock_component();
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
-> > >  {
-> > >  	return ___pkvm_host_donate_hyp(pfn, nr_pages, PAGE_HYP);
-> > > diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> > > index c351b4abd5db..ba06b0c21d5a 100644
-> > > --- a/arch/arm64/kvm/hyp/pgtable.c
-> > > +++ b/arch/arm64/kvm/hyp/pgtable.c
-> > > @@ -1095,13 +1095,8 @@ static int stage2_unmap_walker(const struct kvm_pgtable_visit_ctx *ctx,
-> > >  	kvm_pte_t *childp = NULL;
-> > >  	bool need_flush = false;
-> > >  
-> > > -	if (!kvm_pte_valid(ctx->old)) {
-> > > -		if (stage2_pte_is_counted(ctx->old)) {
-> > > -			kvm_clear_pte(ctx->ptep);
-> > > -			mm_ops->put_page(ctx->ptep);
-> > > -		}
-> > > -		return 0;
-> > > -	}
-> > > +	if (!kvm_pte_valid(ctx->old))
-> > > +		return stage2_pte_is_counted(ctx->old) ? -EPERM : 0;
-> > 
-> > Can this code be reached for the guest? For example, if
-> > pkvm_pgtable_stage2_destroy() runs into an MMIO-guarded pte on teardown?
-> 
-> AFAICT, VMs page table is destroyed from reclaim_pgtable_pages() =>
-> kvm_pgtable_stage2_destroy() => kvm_pgtable_stage2_destroy_range() ... =>
-> stage2_free_walker()
-> 
-> Which doesn't interact with “stage2_unmap_walker”, so that should be
-> fine.
+None of this is in any sort of final state, it's either WIP in and off
+itself or depends on other stuff that's not yet accepted, so please
+excuse any build warnings etc.
 
-Fair enough. I feel like this might bite us later on but, with what you
-have, we'll see the -EPERM and then we can figure out what to do then.
+Cheers,
+Conor.
 
-Will
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: linux-kernel@vger.kernel.org
+CC: linux-gpio@vger.kernel.org
+CC: devicetree@vger.kernel.org
+
+Conor Dooley (5):
+  dt-bindings: pinctrl: add polarfire soc iomux0 pinmux
+  dt-bindings: pinctrl: add pic64gx "gpio2" pinmux
+  pinctrl: add polarfire soc iomux0 pinmux driver
+  pinctrl: add pic64gx "gpio2" pinmux driver
+  riscv: dts: microchip: add pinctrl nodes for iomux0
+
+ .../microchip,mpfs-pinctrl-iomux0.yaml        |  77 +++++
+ .../microchip,pic64gx-pinctrl-gpio2.yaml      |  74 +++++
+ .../microchip,mpfs-mss-top-sysreg.yaml        |  17 +-
+ .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  56 ++++
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   1 -
+ .../boot/dts/microchip/mpfs-pinctrl.dtsi      | 117 ++++++++
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |   9 +
+ drivers/pinctrl/Kconfig                       |  14 +
+ drivers/pinctrl/Makefile                      |   2 +
+ drivers/pinctrl/pinctrl-mpfs-iomux0.c         | 252 ++++++++++++++++
+ drivers/pinctrl/pinctrl-pic64gx-gpio2.c       | 283 ++++++++++++++++++
+ 11 files changed, 900 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,mpfs-pinctrl-iomux0.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
+ create mode 100644 arch/riscv/boot/dts/microchip/mpfs-pinctrl.dtsi
+ create mode 100644 drivers/pinctrl/pinctrl-mpfs-iomux0.c
+ create mode 100644 drivers/pinctrl/pinctrl-pic64gx-gpio2.c
+
+-- 
+2.47.3
+
 
