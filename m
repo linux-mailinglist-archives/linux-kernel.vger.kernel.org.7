@@ -1,348 +1,197 @@
-Return-Path: <linux-kernel+bounces-833786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00F2BA3120
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B17DBA3129
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F23BE7B125B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711201C021F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3938329CB4D;
-	Fri, 26 Sep 2025 09:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590762580F2;
+	Fri, 26 Sep 2025 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="SwbrWYyN"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="puslJr0L"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013046.outbound.protection.outlook.com [40.93.201.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36660279DDD;
-	Fri, 26 Sep 2025 09:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877525; cv=none; b=KDpdqwEtFQH5jOWHIZtDszlwHoTKbbIPl3Yal5/0lOqkUfd8NMkJOMKA00AK8KDC/0wlDS6rPp7wfZuLwA74lp9CdxJzKJ+BPfaWyua61OA2nDx525doOWhKSjoMWQ8JrkODDGDlCj+p3lRZgxJbZt/KpALcVNViaeaJzIZyA6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877525; c=relaxed/simple;
-	bh=MGT7M3ho+6f2a7H56V1e5bSJ+/b8/yfyKV3uaQ1SEEk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TtO5haJvUU2vpdBKt+wI8KL6I7qHnHYAr3v2l0SVaTb9OcafsV5fsXTr5yOERczfjZzDTyUtcfZlNu3zGSTeWsuqunjr0HcNMIwDKfPB9DRl0jGhNszsovcduG0Jy6/5mf3N/mZsIxlw0tA1/5rNMS7eTvGKh1CjK9B7Aw11j00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=SwbrWYyN; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: eb4bec889ab711f0b33aeb1e7f16c2b6-20250926
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=XsEdkxZdfIK6EVNlkW4okmzuOpoq4VM/hmomJzMKJ7I=;
-	b=SwbrWYyN0asnIR1fiLQ+asGKDq4MLQ4U/X+ASh6xuA8tM3MzL/tXEhIBCf/uVD1o6h0BbPZkXfI4jwjwR/TyLl3J6Ni97IKG7cXnA68yMHdCgLOxcr4krzHwTNqXvufwGMzi9mCMcvNgg7i0y7+MumB4s9yYoX0O7iLX2oHoIDg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:ab7397bd-6e9b-4b67-af49-1241ab1c4ef9,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:5f1ce121-c299-443d-bb51-d77d2f000e20,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: eb4bec889ab711f0b33aeb1e7f16c2b6-20250926
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <jjian.zhou@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 299667676; Fri, 26 Sep 2025 17:05:16 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 26 Sep 2025 17:05:11 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Fri, 26 Sep 2025 17:05:10 +0800
-From: Jjian Zhou <jjian.zhou@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Jjian Zhou
-	<Jjian.Zhou@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jjian Zhou
-	<jjian.zhou@mediatek.com>
-Subject: [PATCH v6 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-Date: Fri, 26 Sep 2025 17:05:00 +0800
-Message-ID: <20250926090505.26267-3-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250926090505.26267-1-jjian.zhou@mediatek.com>
-References: <20250926090505.26267-1-jjian.zhou@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF06E22127E;
+	Fri, 26 Sep 2025 09:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758877634; cv=fail; b=DyRDdOcrEcyOZhuFV9Va52UcEsD/gCOv34OW+nozdGuUk0vdGv3Oc642cs3fDEWqoXaM0BieOVxHcUB5h+rp85cZOhWdqQKOngKRxZHZQdmtEBHNz+BGredsI6D8kVHpm7e5FnsaCH93xab2OP9zsm2Bt6+FVmBjVQYEy+j5SDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758877634; c=relaxed/simple;
+	bh=3ZQTbDF9S1F4sX6W5x04ZcU3p+aiHAIATuQn9Cjc/c8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ip3isNsYv0BN0qpCjxxvWyXdDiKnxw3AN5ykdb2rWd6RErERB+vmeDn7R60WUkiJYKn0MEsiu0cdW/Zwzhej13qWtgFxrwKON/LehgOtiCvCJXGzTGF1WFy/JijQgtsazbmXSJwPsoUnaOw0uzfFyfDX6cwSKa0ntKpZ6WDroS0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=puslJr0L; arc=fail smtp.client-ip=40.93.201.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CvuophMuMEwdd7KucfgJlgavcHCFx0f9JxY45J9S2GeXj+4NUQD8g3nmixQXeEctL4bJpSgPMzx+A2zLN++N1TonetETU21hyHYUYSnGT4v83dNlI9mArdGIVtz8gOqlxkHmZ2RJDJJXB6120Gbj4bA0mgunxgpT6P1Fbb9KM49Co7staSGPgnLqT9rzPuj2dXYAuK6iMUGQ0a4F7kc1awS6Bj7TJ97CcelCu3lXprH/lrhDSHJqZZ6HUMZUiWldaltvlwbAgHn7FcLNIM/PR43nM1U+dz3tyMIqANEDWuQXhlvfUZWy2h1AIkXaoXi1wV5ESRLBkCPN15DXSz1Ovg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jKpCKPJkaiPfHM/lohw/hat8Q1iUC93PsTCwHj7mBbo=;
+ b=pxix0yW5r4uB2CUzjjoldRaJn5FlPBgiwg+9EP/i9Bu1N4bWOpWa3HrWEL54eEdcn9qEbtarybqbQUpUiLksmwSHmPRjpPHA4QfA4p5xfoWv9nabugzcE81isTYhzCtf5HXJx2olp0wVi597JuusOmeRMlEO9VqAeo4IW0iBlq9eGi2WpfM9skDx2frx8yyEl8aBsi1J+cQZJGCUC7m8/w/+tnF66CaymxHtiQ/XZ+x/Ma6RKxY1jxN3igwV6qgBx3L/OshYZxqJrwQKcZN2VhfnrQGc4GpYihWL6XYMgcMpqbHgRyUaSK8IXDF3JZSHIzaoZAKc6d/ymvhXlnjJzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jKpCKPJkaiPfHM/lohw/hat8Q1iUC93PsTCwHj7mBbo=;
+ b=puslJr0L+zJs39n9VssVe5jRBLueUI76GplM5sOxb7E/8xF/LrKOuVnNeI5CVl1z+m6gMHzS8+RCUL4xr2ix9Ttzuz7gk1QO092OidtEW1zeHCfu4xOZwtjz3DQLMEdIeE7jwWScrFNvzH83R+KPOIJvAVrfWInQ20zVW/I82qw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com (2603:10b6:208:40b::13)
+ by DM4PR12MB6374.namprd12.prod.outlook.com (2603:10b6:8:a3::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 09:05:44 +0000
+Received: from IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823]) by IA0PR12MB8301.namprd12.prod.outlook.com
+ ([fe80::e929:57f5:f4db:5823%4]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 09:05:44 +0000
+Message-ID: <fc2ecc7b-df2c-4cfd-b898-5112b089b67b@amd.com>
+Date: Fri, 26 Sep 2025 14:35:37 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 kvm-next] KVM: guest_memfd: use kvm_gmem_get_index() in
+ more places and smaller cleanups
+To: pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-coco@lists.linux.dev, David Hildenbrand <david@redhat.com>
+References: <20250902080307.153171-2-shivankg@amd.com>
+ <ea4dae91-2e20-4e29-ba00-b73e6160332f@redhat.com>
+Content-Language: en-US
+From: "Garg, Shivank" <shivankg@amd.com>
+In-Reply-To: <ea4dae91-2e20-4e29-ba00-b73e6160332f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0033.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:97::8) To IA0PR12MB8301.namprd12.prod.outlook.com
+ (2603:10b6:208:40b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PR12MB8301:EE_|DM4PR12MB6374:EE_
+X-MS-Office365-Filtering-Correlation-Id: 554509d8-1bfb-4e83-2410-08ddfcdbdfa1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGt5ZFZKTytIcFRkT0pLZXNpOEJ3Mm5YMWlsTXFpUU04eTNFZVZwQjc2TU9K?=
+ =?utf-8?B?TVVGQmdSU3I0RVBtVXhKWWN1WmNRZXdSVkUxVkpKQ2RVQlIxQU9kWXc5d1pB?=
+ =?utf-8?B?WVZEMWJmR3RpcjJGNzJjdXZaNGhvRmxWZjl0bVZNTVBLOGxIclVqS3QyZlhI?=
+ =?utf-8?B?bE9nM1dYMlpBdEMvZVc0TDlCOURDRnpDQk5RK0VGWWFjamE3YzQvVklOaE4x?=
+ =?utf-8?B?S1hzcEtIbFhTSENhaGVQRzh6QTQ2WVRRSjliSy83M0xMR2x4cXRqSnZQc3dU?=
+ =?utf-8?B?OFB6ajZZMW9aY2diQkU1SWt6RnFldGMxbWVkcHJmV2NtbFMyNFJySnhSdDJp?=
+ =?utf-8?B?RHlXRWg5OGxsWGwxdm96YmVwbFZDRWVJaVdTMjQ4VlpzbHJLTmpuUWhJTGpk?=
+ =?utf-8?B?R0tFTFVKazgxNXZwY1VyN0h4NytZUCtmRGZrNGgxN1QyTVZkUGRSR0czMDg5?=
+ =?utf-8?B?SkhXUmFrZnRQNmJhT2prbDdsdGtON0tCemlEQ1FWa2Nhc1hBbjRWZmdHTGRR?=
+ =?utf-8?B?cDJMbGhNaDRRNDRuK1RlK2t1ZVM2M1dWVXl3Wk03S1F4c2prUjNIWmtsdHVM?=
+ =?utf-8?B?bnlVdm1nZkpzV3hQNVVaZG1ZakU2K3YrS2trekNOeFBVSFdvQ21KUkE2WC9D?=
+ =?utf-8?B?NG5nY1VDTVZCOFBFcTk3dEVoMm1PTUoxWE9rQzBRUjRBQmNmV2R6RXlDeENB?=
+ =?utf-8?B?ZjhIaGlOaHVwNmJQSnU4QTFIRWI4MDhNOHkrZGY3cXovNkdlN0dLdkVudjZF?=
+ =?utf-8?B?RjlBdldvWDY0M0hHTHRpckZHRGdoRkViS284dXJpUFNXTjlqb0NUWVBxVGJW?=
+ =?utf-8?B?Rm5Pd1RaWW01anBCUTJ5eEJxK3JSdCtwZG13b0xFeHUzblR1YTdNaXhwWVhz?=
+ =?utf-8?B?eEtzNkV3V2xtUFVhK1NRczl5QzBsTDVscnFOTzQyYktEN3cxejdXeUJUaWFZ?=
+ =?utf-8?B?enVUemMrUDk5ZkR4T1lVZ1lrVkNKT2xHZncxTFQrTHVGNWkweWllMHRtM2Y3?=
+ =?utf-8?B?K1dZOEMyNHlyT1dTWnFiSjdEZmlxZEUvd0hsWlhCZzZIKzY2cGs0YWk0WUg0?=
+ =?utf-8?B?ZWcwV01MVHZRTElnQnFyaXdPZ0x0ekRlZjlybkFBdEt0YzRua0toclA0TUFX?=
+ =?utf-8?B?UHY2V0FpbXZZWWxnT2wrNFBPVjdDVGl0aG1qVGNucTlxSGpPT3FQNUFmbGZa?=
+ =?utf-8?B?QU9nZlNaUUlCYUlpc0hKdkFGVXl2cWEyekhxUW9MYXFoTW9VT3VGRy9QT3Nw?=
+ =?utf-8?B?bE12OFRHQVBheFJvZkVmdGtXalk2ZWRKeDBxQzA5VUdKU3FJcjg4dlJDZXZp?=
+ =?utf-8?B?dGRUeXRsYk5pWTYvN25VVUdBbXE3ZDhieTlBQ0ZuUVJOM1BYcWxzaGdnay9u?=
+ =?utf-8?B?bjRaV3k3ZGpDcGhNTzltUjczZU0yZmphRm9pS0ZUVmhCOHpHd0hhQVNIU25G?=
+ =?utf-8?B?UGR5OXg1RTYwNHhGVmY0a0U4cktOcUlYbHloRE0zK0hDblczRWU3VmNEN2xH?=
+ =?utf-8?B?bGY0Vms4cHEwY1NPOXNlK2E1VDZJUTIwNVhuVmpRd0Y4SnZHZlBHU0tvbGh1?=
+ =?utf-8?B?dkpJTXRhUXdMSEZJM1UyYzdjQ3ovRXdaWVdtVmIvVFNoUUd4NHZMdWNxS0Yy?=
+ =?utf-8?B?K2hrT1pGZkZsY1dDM25ucUhBd0tDaHRLL1BEcXVjOFhhcFpIb1llaHFPczlC?=
+ =?utf-8?B?c3lyNDAvanA3VkZFalF1cE1WQzNXVFB2anptcUJXOXlPWkFTSnNWbFVjRGRq?=
+ =?utf-8?B?ZU5CcWd0bVlXMGhGUlRCTThJTGtQQk5TTVpYRVl6RUpiS2pRNk01VGNxSG05?=
+ =?utf-8?B?bUNmbmJieU5qdDd6ZUZTR1FEVzlxaHoxOEc5ZVV5MUI2REtpQWpiay95OXFn?=
+ =?utf-8?B?b1B1UTg4RFViTE1WZGRVSmxRU1k1WkdqZFVHaHo0SHM5U2hMQTVyYjhaTUQx?=
+ =?utf-8?Q?GVTk8Ppduz0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MGhkOGI1VDdlNHVtZ1pwS203VWZHNGUrQVR0T3BZbWhGNStOUC9oTmRhc3Fj?=
+ =?utf-8?B?djhMQ1craklXZ2FFbE5JeVdpZ0tzeWxRQ1poQjVaYWJoOTAvYkx3cWo2cXhH?=
+ =?utf-8?B?YTZ2dW5qWWMxUlNRNFdhWUtlYlVFdW5qMXN0T2F5MGZTSzNZT3BydlJWOFhT?=
+ =?utf-8?B?MXpvMDdvSmN5Uys2bU44MWg0RWcrSlNwZWhpMFVMOVJubHMvbEZ2MzlGRXhD?=
+ =?utf-8?B?VFZFYWFIM1RBWVBlSHNSTkpKRmNUUFFKNjYxWEM4MWg0UE9BWkk1aGgwWWpZ?=
+ =?utf-8?B?T2JCc2ZpL3JuSStldHVLNUVzd1FDdFhycTMxY0JDZ0JiUDdSQjd1NWlDbmdx?=
+ =?utf-8?B?MHczcGZGODhqclFnRmE3cjNkYk5HaWwzTEE1SGQ5NVVyMFBOQUVNYmgveXdt?=
+ =?utf-8?B?UloySS9QVjJ4QW01dXJkcEJ2ZlF3MHNQdmQ3eGVnNW14b2FUODZTOU9mSmdP?=
+ =?utf-8?B?aTNVOUZhU2tIS2dReVpKajUveXpEVWFza3VTbkJEdUlZa01WcFk5TWRvR1Iv?=
+ =?utf-8?B?SEUrUnNhSzdjNEdHcUQvU05aTWVSV2lJU1VxY1JmYXZ4VGIwTmludVdjc3B4?=
+ =?utf-8?B?VUlLNDdxVGR3VWdzMmMvVXdiQm4vWFNYTXhERXZmZWQvUU5UdkFWZVR1ZGZz?=
+ =?utf-8?B?NEhWL1NmVk1KSEdVMzBXQ3lnNlJnTXM3d3hVVzlXTjFER0VsNXRGa2xWZmJv?=
+ =?utf-8?B?Vzk1UUxvYlFURjd1SXR3cURoalBONGV6d3h0d0ZHdWVUclRvTlBuOC9mb1NU?=
+ =?utf-8?B?ODJqUHZtYzZnTjEzOTlLT05DTldDdWIxT0Y4dkpYN1lGeTdFTzZubFphZVBQ?=
+ =?utf-8?B?aWlaVHB2R0djY2RIcHFyWDV5eVc1TFlKUnZkdmg1RC83Um45SDRNdEdCWlkz?=
+ =?utf-8?B?ZVVtUTJvNXF0eVBuZXd4b1BqK3czQWZGNWI5S21tN3FtVDZSYVA3ZzBvQTJq?=
+ =?utf-8?B?b0tDNmJybFVteUdaa2hIYkg3ZzhDeWw4emdXdDRkVnlUNHFYbHpKRzJNY25H?=
+ =?utf-8?B?ZUFvSTdtK1lnTFJMSFYvUm1tQXh5bitseTAvdno1bURQRmIvMkdXYS9YK283?=
+ =?utf-8?B?TGNaaURLb3M1M1NYejlYZHhpbm0vM0E4bW13QkFLRmMrcnlLTmlBNEZuMmVP?=
+ =?utf-8?B?dHJuVnRNZmFvdUdtdUF1L3Zwanc5cjhlQzc1dW9ONkF0OXdVczVyKzF0ckx0?=
+ =?utf-8?B?UW5SRkJBajk1aE1McVdUb0tCd1ZUVDBRcU5jZmgwUVNCYzNKR21qblJ3RTJ6?=
+ =?utf-8?B?S29XV2hzbUMxSHcrK2lrZjQvWkdTdGc5SHh4YjZMWEN6OWtiaTBGQVBNU2E4?=
+ =?utf-8?B?SW9KYzZEaUxDME14VjR5WllzVVRwTVRPY2RGWkVmd2szWUZrTFpKaWVqSnhq?=
+ =?utf-8?B?a3VOVTF6YWxrSVNybVFPL1ZHS3VUUVZ0aEx4ejdTWmtjdkNKa3dIWTh3bEV6?=
+ =?utf-8?B?UWhLMG02TTgvZStDQjkxYmsyUDc3SEZpNDVoSDd0TFptYlNmemdkL3NOcGtC?=
+ =?utf-8?B?YVo1OW5oemRxd0l6NVVRU2xpblMrSFJqYkdOM0VOQnNCbHIwMTRGbnZxTW4w?=
+ =?utf-8?B?LzUzS0M0WnBFRkF6dm5JOTBhNFpJSUljUlhOSnphN0ttL01yZW1OWTdUUEZ4?=
+ =?utf-8?B?L0tyTjl4ZUx3eS9rNTlzc254R3JtQVFIdDRmUjFCalJSRW5wQjA4ZTNXS1lU?=
+ =?utf-8?B?WFgzQkZMcm5wSlJjaHRFdnhjNS9GbHpCWWxmeVQ3RElmaEEwcERQR1V6eWJn?=
+ =?utf-8?B?TjA1eUhvWlJ1V3R5RWppK3RDeVpFYUJ5THNRdnBhS2pZdzJFcFhQVjE5dFUv?=
+ =?utf-8?B?ZU9KS2dZNlBiU0czcnppUlM4TjlPODJ1aE9KWFJDMVRZTEh5YXM3bUxDR2l2?=
+ =?utf-8?B?UU1jQWxTMWprR0p1Q0NDVDJMV0swMXZHcGlTTThIRk1MT0hVOURBNHBmZzVt?=
+ =?utf-8?B?TWl0dCtlV0QwOXhRenJ1SFFOejBNdWJnZ0N5a1d0K3hjazJOVHgvV2ZiOVQy?=
+ =?utf-8?B?NnhON0NkOXcxZmxoM09oSHZiTzFpRmExWDR0Nll3cit3OE5FL3NHR21mektH?=
+ =?utf-8?B?UzZMTnV1S1oyRW0rVDNMZWl4SmVaekt2ZU55K2hzMWhoWWJzenRtbXZsNnJR?=
+ =?utf-8?Q?phAff2boTtEoBIYTDPSuy1eEc?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 554509d8-1bfb-4e83-2410-08ddfcdbdfa1
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8301.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 09:05:44.1445
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XUiE14pEy/SnGZD2ten42iFIoONjIN24zUnKPIJhOsP9+g9UEYivfO63+DBtcfPdGRAt8ca8VE3QzVhXA3j1VQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6374
 
-Add mtk-vcp-mailbox driver to support the communication with
-VCP remote microprocessor.
 
-Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
----
- drivers/mailbox/Kconfig                 |   9 ++
- drivers/mailbox/Makefile                |   2 +
- drivers/mailbox/mtk-vcp-mailbox.c       | 168 ++++++++++++++++++++++++
- include/linux/mailbox/mtk-vcp-mailbox.h |  32 +++++
- 4 files changed, 211 insertions(+)
- create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
- create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 02432d4a5ccd..c28bdb855663 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -294,6 +294,15 @@ config MTK_CMDQ_MBOX
- 	  critical time limitation, such as updating display configuration
- 	  during the vblank.
- 
-+config MTK_VCP_MBOX
-+	tristate "MediaTek VCP Mailbox Support"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  Say yes here to add support for the MediaTek VCP mailbox driver.
-+	  The mailbox implementation provides access from the application
-+	  processor to Video Companion Processor Unit.
-+	  If unsure say N.
-+
- config ZYNQMP_IPI_MBOX
- 	tristate "Xilinx ZynqMP IPI Mailbox"
- 	depends on ARCH_ZYNQMP && OF
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index 98a68f838486..07278871d254 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)	+= mtk-adsp-mailbox.o
- 
- obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
- 
-+obj-$(CONFIG_MTK_VCP_MBOX)	+= mtk-vcp-mailbox.o
-+
- obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
- 
- obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
-diff --git a/drivers/mailbox/mtk-vcp-mailbox.c b/drivers/mailbox/mtk-vcp-mailbox.c
-new file mode 100644
-index 000000000000..a2a80d124e50
---- /dev/null
-+++ b/drivers/mailbox/mtk-vcp-mailbox.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 MediaTek Corporation. All rights reserved.
-+ * Author: Jjian Zhou <jjian.zhou.@mediatek.com>
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/mailbox/mtk-vcp-mailbox.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+struct mtk_vcp_mbox {
-+	struct mbox_controller mbox;
-+	void __iomem *base;
-+	struct device *dev;
-+	const struct mtk_vcp_mbox_cfg *cfg;
-+	struct mtk_ipi_info ipi_recv;
-+	struct mbox_chan chans;
-+};
-+
-+struct mtk_vcp_mbox_cfg {
-+	u32 set_in;
-+	u32 clr_out;
-+};
-+
-+static irqreturn_t mtk_vcp_mbox_irq_thread(int irq, void *data)
-+{
-+	struct mtk_vcp_mbox *priv = data;
-+
-+	/* get irq status */
-+	priv->ipi_recv.irq_status = readl(priv->base + priv->cfg->clr_out);
-+
-+	__ioread32_copy(priv->ipi_recv.msg, priv->base, MBOX_SLOT_MAX_SIZE / 4);
-+
-+	mbox_chan_received_data(&priv->chans, &priv->ipi_recv);
-+
-+	/* clear irq status */
-+	writel(priv->ipi_recv.irq_status, priv->base + priv->cfg->clr_out);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct mbox_chan *mtk_vcp_mbox_xlate(struct mbox_controller *mbox,
-+					    const struct of_phandle_args *sp)
-+{
-+	if (sp->args_count)
-+		return NULL;
-+
-+	return &mbox->chans[0];
-+}
-+
-+static int mtk_vcp_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct mtk_vcp_mbox *priv = chan->con_priv;
-+	struct mtk_ipi_info *ipi_info = data;
-+	u32 status;
-+
-+	if (!ipi_info->msg) {
-+		dev_err(priv->dev, "msg buffer is NULL.\n");
-+		return -EINVAL;
-+	}
-+
-+	status = readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index);
-+	if (status) {
-+		dev_warn(priv->dev, "mailbox IPI %d is busy.\n", ipi_info->id);
-+		return -EBUSY;
-+	}
-+
-+	if (ipi_info->slot_ofs + ipi_info->len > MBOX_SLOT_MAX_SIZE)
-+		return -EINVAL;
-+	__iowrite32_copy(priv->base + ipi_info->slot_ofs, ipi_info->msg,
-+			 ipi_info->len);
-+
-+	writel(BIT(ipi_info->index), priv->base + priv->cfg->set_in);
-+
-+	return 0;
-+}
-+
-+static bool mtk_vcp_mbox_last_tx_done(struct mbox_chan *chan)
-+{
-+	struct mtk_ipi_info *ipi_info = chan->active_req;
-+	struct mtk_vcp_mbox *priv = chan->con_priv;
-+
-+	return !(readl(priv->base + priv->cfg->set_in) & BIT(ipi_info->index));
-+}
-+
-+static const struct mbox_chan_ops mtk_vcp_mbox_chan_ops = {
-+	.send_data	= mtk_vcp_mbox_send_data,
-+	.last_tx_done	= mtk_vcp_mbox_last_tx_done,
-+};
-+
-+static int mtk_vcp_mbox_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mtk_vcp_mbox *priv;
-+	struct mbox_controller *mbox;
-+	int ret, irq;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	priv->chans.con_priv = priv;
-+	mbox = &priv->mbox;
-+	mbox->dev = dev;
-+	mbox->ops = &mtk_vcp_mbox_chan_ops;
-+	mbox->txdone_irq = false;
-+	mbox->txdone_poll = true;
-+	mbox->of_xlate = mtk_vcp_mbox_xlate;
-+	mbox->num_chans = 1;
-+	mbox->chans = &priv->chans;
-+
-+	priv->ipi_recv.msg = devm_kzalloc(dev, MBOX_SLOT_MAX_SIZE, GFP_KERNEL);
-+	if (!priv->ipi_recv.msg)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->cfg = of_device_get_match_data(dev);
-+	if (!priv->cfg)
-+		return -EINVAL;
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+					mtk_vcp_mbox_irq_thread, IRQF_ONESHOT,
-+					dev_name(dev), priv);
-+	if (ret < 0)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	return devm_mbox_controller_register(dev, &priv->mbox);
-+}
-+
-+static const struct mtk_vcp_mbox_cfg mt8196_cfg = {
-+	.set_in		= 0x100,
-+	.clr_out	= 0x10c,
-+};
-+
-+static const struct of_device_id mtk_vcp_mbox_of_match[] = {
-+	{ .compatible = "mediatek,mt8196-vcp-mbox", .data = &mt8196_cfg },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, mtk_vcp_mbox_of_match);
-+
-+static struct platform_driver mtk_vcp_mbox_driver = {
-+	.probe		= mtk_vcp_mbox_probe,
-+	.driver = {
-+		.name	= "mtk_vcp_mbox",
-+		.of_match_table = mtk_vcp_mbox_of_match,
-+	},
-+};
-+module_platform_driver(mtk_vcp_mbox_driver);
-+
-+MODULE_AUTHOR("Jjian Zhou <jjian.zhou@mediatek.com>");
-+MODULE_DESCRIPTION("MTK VCP Mailbox Controller");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mailbox/mtk-vcp-mailbox.h b/include/linux/mailbox/mtk-vcp-mailbox.h
-new file mode 100644
-index 000000000000..143fb0d06e30
---- /dev/null
-+++ b/include/linux/mailbox/mtk-vcp-mailbox.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+/*
-+ * Copyright (c) 2025 MediaTek Inc.
-+ */
-+
-+#ifndef __MTK_VCP_MAILBOX_H__
-+#define __MTK_VCP_MAILBOX_H__
-+
-+#define MBOX_SLOT_MAX_SIZE	0x100 /* mbox max slot size */
-+
-+/**
-+ * struct mtk_ipi_info - mailbox message info for mtk-vcp-mailbox
-+ * @msg: The share buffer between IPC and mailbox driver
-+ * @len: Message length
-+ * @id: This is for identification purposes and not actually used
-+ *	by the mailbox hardware.
-+ * @index: The signal number of the mailbox message.
-+ * @slot_ofs: Data slot offset.
-+ * @irq_status: Captures incoming signals for the RX path.
-+ *
-+ * It is used between IPC with mailbox driver.
-+ */
-+struct mtk_ipi_info {
-+	void *msg;
-+	u32 len;
-+	u32 id;
-+	u32 index;
-+	u32 slot_ofs;
-+	u32 irq_status;
-+};
-+
-+#endif
--- 
-2.45.2
+On 9/2/2025 1:42 PM, David Hildenbrand wrote:
+> On 02.09.25 10:03, Shivank Garg wrote:
+>> Move kvm_gmem_get_index() to the top of the file and make it available for
+>> use in more places.
+>>
+>> Remove redundant initialization of the gmem variable because it's already
+>> initialized.
+>>
+>> Replace magic number -1UL with ULONG_MAX.
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> 
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> 
 
+Gentle ping :)
+
+Thanks,
+Shivank
 
