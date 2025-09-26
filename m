@@ -1,120 +1,242 @@
-Return-Path: <linux-kernel+bounces-833804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E9ABA31DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:21:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8125EBA3166
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126674A6BD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384A14C6D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449D0271475;
-	Fri, 26 Sep 2025 09:21:23 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27A29B78E;
+	Fri, 26 Sep 2025 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bocV8BtD"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E09F1DDDD;
-	Fri, 26 Sep 2025 09:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D927AC3A
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878482; cv=none; b=cdOayR0p/18i2rX7D+TLNkWMhojiky7o1B/jc6+SRz60ZTX9C54TD4hniAZkz3V/ibaVVpb/t83H2p8yhq6QlPkJ+fKx9XdcsdeUTA0NYgtr7ZuQ9twNcsumJCogNGvhE3rvNurXSnkl4B+uaR7IhYEBZAdV7aLd3RzSAfbTOhA=
+	t=1758878091; cv=none; b=hhgESJq90OjRnkF1NdEhc2IZdfGbeBkAP/Mqe+jfQL9CXv8u1iCyj4IAFT7obrges4syOIgCs5OSSebnTqAvgjemnvz9PFLIM+SAhytTB4sfU7Y+PsD76bgTWAdc35QvwG0kFybsMAWc+3CqiF7DdfTEnBu+LkUBqaTmSmYIaR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878482; c=relaxed/simple;
-	bh=dPDlLFm6xmd3S3SXV4mz7VPGXEBWtUxgDgWRHPdMV2g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DmRjgJcG8p+yKPV30sPgauhELJtAHdMMxLYdxOYaXIBjUzDKzBFylmaXfK0UWc2NQY5EnBDzVEgaXt/pDtc+lIJS2MblznTWhYr6rijiUn1s2SRN0JYdGbcHCV+vTrKpLNlWoZ6Hj41o7Ji+/dyzzXmFq+/4CXFQWPVaqOcAzz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAB3wHr9WtZoVlaJBg--.8995S2;
-	Fri, 26 Sep 2025 17:21:01 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: sre@kernel.org,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	bryan.odonoghue@linaro.org
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH v2] platform: arm64: thinkpad-t14s-ec: Convert comma to semicolon
-Date: Fri, 26 Sep 2025 17:13:02 +0800
-Message-Id: <20250926091302.817919-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758878091; c=relaxed/simple;
+	bh=JN5UOjmwCjSWTIKExKcOZm8/p1QSiZU0RREtd47LKHE=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=i5l44dsAdplSlWsVweUJ/ljSpMAaitIntYhkUsxzYmU1jJLpEtkWE+5mfzC0z9Nqbxt1GakwKdDvuK61fN/7+lnhuhoupcB2j20T7lgxhwWAzcpPBdsBO278sstUQcNkJA+DmulcX/kZV5CT0eC/XjtCaWzcZLJsyXS1uzx4dN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bocV8BtD; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2681623f927so19451385ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758878088; x=1759482888; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xzlecSBlGNy5Hb7DuTGlXytPmBFktseBO6e58xwE2NU=;
+        b=bocV8BtDjVbArEnht0kkGNFV30VS1S8O9gk6DTTmJu8KNksSxE1Mu2Jm2nlwvOX7pf
+         z7oxApv8G+UqkrU45im+74MRECGMx3ayI2zagbK+vE2HlmkkHhB82kLvIt66Vk+OZsw1
+         Iu2jKi0++jd0De6C2Cyc4Tt2tviqYFF5BhONuZG1dFRjGpMq4S3k9mp3AwcLzPPiyfGR
+         KrRPiESOGRbDrQ6TBJzdENN7Czrop5Q3g9ZcOlSsNfP7BxiwBB4BiPEl/FVV9cM9aENo
+         WMtLM5ieZybLxgrHX9TxX10WDYAIbc16HbvsY1RtBRnbWqgUI/fDwPiWW1523mYL6Acm
+         ZCiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758878088; x=1759482888;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzlecSBlGNy5Hb7DuTGlXytPmBFktseBO6e58xwE2NU=;
+        b=f/N/HyknEzyJONIvL5lryP1vEnLEFT/JOwbVahhzTkNZuS/t1p5xj93SF7FUKWNKrP
+         nPoofOQNmBfqDosS1kMHVzVda66s4iD9dEO3o0XR320p1ilau/XhabxKRGlF5zktHnMN
+         eYNq4mvEYvpcwEeSuplLZgdutl3iXJla3152XaQrIZSU7C8c8hv14NhSUjzj3DfxaeUp
+         LpXbMeF0CvVpEiovNg58ZkpCX2Ig0JoE6m493mxwYRjlMnVNPJ0l3kj+HQOs8yKKON13
+         LMZq4tWaOt4fRn/8O0HKQmnkdyftpfw9yvcSQUUWF87d4Bh1/0WHmK1wFwXTFdm5D2ai
+         +xKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzTf7rx0n+8jMIavCja2GDhgTIiy/JZObvZrhnGc6vvTZIgWeum/oZPR2kJwRBtv9olFwAw0RrWdRPdZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXdoS+L1zM/xvIloolxnpiyW6kt55/9kWkZRB1Xk8RIufA+WHf
+	HEYkRGKsJ68pNV9Q9jL7ErYlLukmQYxXjo0fBrtthLES1heaiXpkHFnBlO/L7dcoNllBMexicGQ
+	C42QZrav/TSEZGp1/FeugtUBLbw==
+X-Google-Smtp-Source: AGHT+IEx8E9cWhlfu1Vxq2AQuNomZgiEGJpm7W9AMx7sfDI2/uhsc96oawFywv4yb5EYZvdHJHPDXZqYAh60qO9vkw==
+X-Received: from plxq5.prod.google.com ([2002:a17:902:dac5:b0:268:eb:3b3b])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:ef09:b0:276:76e1:2e84 with SMTP id d9443c01a7336-27ed4a06b49mr70346315ad.3.1758878087498;
+ Fri, 26 Sep 2025 02:14:47 -0700 (PDT)
+Date: Fri, 26 Sep 2025 09:14:45 +0000
+In-Reply-To: <aDfT35EsYP/Byf7Z@yzhao56-desk.sh.intel.com> (message from Yan
+ Zhao on Thu, 29 May 2025 11:26:23 +0800)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAB3wHr9WtZoVlaJBg--.8995S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF17ur4DKrWUZrW5tr43ZFb_yoW8Aw4rpF
-	1kuwsrtF48Gwsay3Zxtw4xZwn7X3yDXa4jka43C3y09a4Yqr9FqrW0qFWrCF40qFZ7Wa1q
-	qr15AFWjgF4YvwUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFylc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUb7GYJUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Mime-Version: 1.0
+Message-ID: <diqzcy7d60e2.fsf@google.com>
+Subject: Re: [RFC PATCH v2 39/51] KVM: guest_memfd: Merge and truncate on fallocate(PUNCH_HOLE)
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
+	zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Replace comma between expressions with semicolons.
+Yan Zhao <yan.y.zhao@intel.com> writes:
 
-Using a ',' in place of a ';' can have unintended side effects.
-Although that is not the case here, it is seems best to use ';'
-unless ',' is intended.
+> On Wed, May 28, 2025 at 09:39:35AM -0700, Ackerley Tng wrote:
+>> Yan Zhao <yan.y.zhao@intel.com> writes:
+>> 
+>> > On Wed, May 14, 2025 at 04:42:18PM -0700, Ackerley Tng wrote:
+>> >> Merge and truncate on fallocate(PUNCH_HOLE), but if the file is being
+>> >> closed, defer merging to folio_put() callback.
+>> >> 
+>> >> Change-Id: Iae26987756e70c83f3b121edbc0ed0bc105eec0d
+>> >> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> >> ---
+>> >>  virt/kvm/guest_memfd.c | 76 +++++++++++++++++++++++++++++++++++++-----
+>> >>  1 file changed, 68 insertions(+), 8 deletions(-)
+>> >> 
+>> >> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> >> index cb426c1dfef8..04b1513c2998 100644
+>> >> --- a/virt/kvm/guest_memfd.c
+>> >> +++ b/virt/kvm/guest_memfd.c
+>> >> @@ -859,6 +859,35 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
+>> >>  	return ret;
+>> >>  }
+>> >>  
+>> >> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
+>> >> +					   size_t nr_pages)
+>> >> +{
+>> >> +	struct folio *f;
+>> >> +	pgoff_t unused;
+>> >> +	long num_freed;
+>> >> +
+>> >> +	unmap_mapping_pages(inode->i_mapping, index, nr_pages, false);
+>> >> +
+>> >> +	if (!kvm_gmem_has_safe_refcount(inode->i_mapping, index, nr_pages, &unused))
+>> 
+>> Yan, thank you for your reviews!
+>> 
 
-Found by inspection.
-No functional change intended.
-Compile tested only.
+Thanks again for your reviews. I would like to respond to this since I'm
+finally getting back to this part.
 
-Fixes: 27221f91b83f ("platform: arm64: thinkpad-t14s-ec: new driver")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
-Changelog:
+>> > Why is kvm_gmem_has_safe_refcount() checked here, but not in
+>> > kvm_gmem_zero_range() within kvm_gmem_truncate_inode_range() in patch 33?
+>> >
+>> 
+>> The contract for guest_memfd with HugeTLB pages is that if holes are
+>> punched in any ranges less than a full huge page, no pages are removed
+>> from the filemap. Those ranges are only zeroed.
+>> 
+>> In kvm_gmem_zero_range(), we never remove any folios, and so there is no
+>> need to merge. If there's no need to merge, then we don't need to check
+>> for a safe refcount, and can just proceed to zero.
+> However, if there are still extra ref count to a shared page, its content will
+> be zeroed out.
+>
 
-v1 -> v2:
+I believe this topic is kind of overtaken by events. IIUC the current
+upstream stance is that for guest_memfd we're not allowing hole-punching
+of pages for huge pages, so once a HugeTLB guest_memfd is requested,
+hole punching of less than the requested HugeTLB size will result in
+-EINVAL being returned to userspace.
 
-1. Add Fixes tag.
----
- drivers/platform/arm64/lenovo-thinkpad-t14s.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>> 
+>> kvm_gmem_merge_truncate_indices() is only used during hole punching and
+>> not when the file is closed. Hole punch vs file closure is checked using
+>> mapping_exiting(inode->i_mapping).
+>> 
+>> During a hole punch, we will only allow truncation if there are no
+>> unexpected refcounts on any subpages, hence this
+>> kvm_gmem_has_safe_refcount() check.
+> Hmm, I couldn't find a similar refcount check in hugetlbfs_punch_hole().
+> Did I overlook it?
+>
+> So, why does guest_memfd require this check when punching a hole?
+>
 
-diff --git a/drivers/platform/arm64/lenovo-thinkpad-t14s.c b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-index f721763e13cc..1d5d11adaf32 100644
---- a/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-+++ b/drivers/platform/arm64/lenovo-thinkpad-t14s.c
-@@ -401,14 +401,14 @@ static int t14s_kbd_audio_led_probe(struct t14s_ec *ec)
- 	int ret;
- 
- 	ec->led_mic_mute.name = "platform::micmute";
--	ec->led_mic_mute.max_brightness = 1,
--	ec->led_mic_mute.default_trigger = "audio-micmute",
-+	ec->led_mic_mute.max_brightness = 1;
-+	ec->led_mic_mute.default_trigger = "audio-micmute";
- 	ec->led_mic_mute.brightness_set_blocking = t14s_mic_mute_led_set;
- 	ec->led_mic_mute.brightness_get = t14s_mic_mute_led_get;
- 
- 	ec->led_spk_mute.name = "platform::mute";
--	ec->led_spk_mute.max_brightness = 1,
--	ec->led_spk_mute.default_trigger = "audio-mute",
-+	ec->led_spk_mute.max_brightness = 1;
-+	ec->led_spk_mute.default_trigger = "audio-mute";
- 	ec->led_spk_mute.brightness_set_blocking = t14s_spk_mute_led_set;
- 	ec->led_spk_mute.brightness_get = t14s_spk_mute_led_get;
- 
--- 
-2.25.1
+There's no equivalent check in HugeTLBfs.
 
+For guest_memfd, we want to defer merging to the kernel worker as little
+as possible, hence we want to merge before truncating. Checking for
+elevated refcounts is a prerequisite for merging, not directly for hole
+punching.
+
+>> >> +		return -EAGAIN;
+>> >> +
+>> >
+>> > Rather than merging the folios, could we simply call kvm_gmem_truncate_indices()
+>> > instead?
+>> >
+>> > num_freed = kvm_gmem_truncate_indices(inode->i_mapping, index, nr_pages);
+>> > return num_freed;
+>> >
+>> 
+>> We could do this too, but then that would be deferring the huge page
+>> merging to the folio_put() callback and eventually the kernel worker
+>> thread.
+> With deferring the huge page merging to folio_put(), a benefit is that
+> __kvm_gmem_filemap_add_folio() can be saved for the merged folio. This function
+> is possible to fail and is unnecessary for punch hole as the folio will be
+> removed immediately from the filemap in truncate_inode_folio().
+>
+>
+
+That is a good point! Definitely sounds good to defer this to folio_put().
+
+>> My goal here is to try to not to defer merging and freeing as much as
+>> possible so that most of the page/memory operations are
+>> synchronous, because synchronous operations are more predictable.
+>> 
+>> As an example of improving predictability, in one of the selftests, I do
+>> a hole punch and then try to allocate again. Because the merging and
+>> freeing of the HugeTLB page sometimes takes too long, the allocation
+>> sometimes fails: the guest_memfd's subpool hadn't yet received the freed
+>> page back. With a synchronous truncation, the truncation may take
+>> longer, but the selftest predictably passes.
+> Maybe check if guestmem_hugetlb_handle_folio_put() is invoked in the
+> interrupt context, and, if not, invoke the guestmem_hugetlb_cleanup_folio()
+> synchronously?
+>
+>
+
+I think this is a good idea. I would like to pursue this in a future
+revision of a patch series.
+
+It seems like the use of in_atomic() is strongly discouraged, do you
+have any tips on how to determine if folio_put() is being called from
+atomic context?
+
+>> 
+>> [...snip...]
+>> 
 
