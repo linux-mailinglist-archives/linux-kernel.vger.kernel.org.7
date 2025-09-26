@@ -1,193 +1,213 @@
-Return-Path: <linux-kernel+bounces-833466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A9FBA2086
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:11:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34FABA20A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B43160523
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1A61892F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2B3DDD2;
-	Fri, 26 Sep 2025 00:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66D7DDD2;
+	Fri, 26 Sep 2025 00:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bP3Jo4Vf"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RTZFtog3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC0334BA4D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444BB4C79
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758845487; cv=none; b=WQ1QvI2TSBF6/RK4PRy5c/mFtR/80rYv/lWfEXQijK0MmkGYGrY959FYuQsnfX2eFWY7aWDsF3tqNKMGuZbUr2GOuY0pYdFBQXUVIpGZu4mkvXChZH51cHP7IrMBZDS2Whc9mVopoLuedxcBrPdr4cyVQWPlhaIoYy9/fz7aqHA=
+	t=1758845677; cv=none; b=FwFHK3iXDIaVtHTRdu/IoR57iDnn/nEYGIUqeJYJlYUoBhjT8ELQ2gCNBeQyNZeBabOpEFj41mTFEif15glBDf2m/WjD6VLg/+1+eGj0dmnHi2eQ8rBoNcsYr4ecjlSVnYQvWH1cfBETEL6PqimFgAwMxqQiD3WXW9dFWr4FeMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758845487; c=relaxed/simple;
-	bh=Hzl/6sm0ijMbECDHUBEDiRfaMfrSYxO0jGDcnP2SoAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KWavoA0VI0A3pcY+30nOR7nvmykK9UM7uEYWeJFtctVOe919a5hQ0y5xhbnd9zKZrj7II29+OjgzqmgKOJ1jqXKkBD0lWflZiI6pzVBJdRj9t4NCndYoVjp5ocFOGvOnzf+HqWq1fbadN7E6ufNBXGuoJY2iRc9KqPC2Pa2Xo4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bP3Jo4Vf; arc=none smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-635fde9cd06so1083966d50.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:11:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758845484; x=1759450284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AlSE1rUBrC9T1DFQ/5OfHtt+g6SfJ20nkl63DkWshCc=;
-        b=bP3Jo4Vf/EC1Gi82y7K8BAS7Va2DYYHZGFVkgCoJ2iG5B/ygeo6pTYAMxLVpi8dbie
-         9fqtxyt+z6qWchDwENOpsh10htzQbtlxnEQ50k+1PaHaTHI/uPxFgDky6hzv5CVkXdeb
-         CjdZB4Z7nWqTPJ3pGgNghbZwSo1HS2h92rBAbZis5hGzZSy/D3OY6tqF7/TZr6i02MTI
-         nUrO2vGRSwqr9iiI31dBqcsn3wiyCmRVGfs5CgaGTwoBj+7tPJAKEvDzoWXzHGKRuH+4
-         UriW0DguxNsi3Kahab4Gr/A7+IM0HywtQeHEBOrAZv7R70njk2pQHc8wqe7ltT8mqqd/
-         srGw==
+	s=arc-20240116; t=1758845677; c=relaxed/simple;
+	bh=81r53nq+yKoXBaJ4jwvZf/v4iOezccpg3MNQTvV2+X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JS2HEuhnNtu5vDtFhWYvFxNYeHol/xMK9uXq3o2/qOsRCI/byx/YaIEpzwtY5ChyJ8PshRLk8+TSz49F6jz0YkPG7ZffQjycLt7CAMwz8ouZzxeJURWmnUjDTlDOSTxqlOEf6Yg86hRCss8cJ0SGtMrq2ZL6gKNY35NF0RTSaxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RTZFtog3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58PIPpof000869
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	y9aVQL6fEAcMEMTP9D/9Z6oTfy+cY28XMdggMyG2w/o=; b=RTZFtog3ulZxflRw
+	CVYRks4Vr+AFqtvRb2kti29vCk19UwRstvMPlqFZakQgnHKJBcKuBm2qEEB+n1bx
+	ikU5b8JQzPbne7dxrVJXIAlC/PUDsjYrZYkx3LKq8HNvf8UzsfnTLVARh4ehBetw
+	Vs0WmegRNIP12xSGOqMJqc64YMhV8EvldY0JoaRdJaKRdrJDgVIUcCfQ1cCihINt
+	h8247sc7y7UiTy7sKudy8cFnTkckARR0QwyBMGo6GBOYX2piLZEo+xaKiOI3iioW
+	QCTH2+253rOeFFlqMcpFQEppiPq0B0OaQ33xaCrs7mgX3QneJs4ajd/kN6yF9cIQ
+	CKRnCQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0trrw9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:14:35 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-27c62320f16so18165025ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 17:14:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758845484; x=1759450284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AlSE1rUBrC9T1DFQ/5OfHtt+g6SfJ20nkl63DkWshCc=;
-        b=h/V3E+s3SKkh+ezzjo7kJOk0SRcfbAiRYsvioK1uP4Lmf6n0RtlECmEts6JpJTBaHD
-         XP67M4Yzr04Yz8caMW7BI33ocTC6THRjX+0B8ul14PghXJi5N1cD7f77h903M4gkidGm
-         RK5cyRF+ghxC/pGv0kGWq8mz3sv7XXpSrFqUIQSl0JxEMsVH7Cg6xfW9shhYOTn1LsRk
-         As2Yn+Ov/s1s7qnSymV/8hMaI3qezA2tD/j5NmlWcXsmrcHeNXu/R5ekqOPW+8NFSNYV
-         LwG81eQXhgMyRoLNQL21Jlpmjexn7qFqJ2G/Xf9lyHlesjxYMBTN4C7GEvcyyPXv/G5O
-         NkTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnaa6MxP7qpOfDcaTvixXXtDBOVz2Zx/YWa7Nz6fabzveL4AcetPi7hUtAUApOpfp6fK++uVEJPCoV4VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkzcOQzadnOB8bxEIjNMWuSgH0Wv94hpn/3xOG2NiRsmc/XXpi
-	qHlz2gv2zM+b4uLjEPmN3MHyhPFjqfoSgYbFiB2Jwuh6k3O0N8e/D8f7RgoqqAP0Hc/BGgqxjUr
-	yByrtsgrgzqs0pIDt4oO35Rapbg/pZcx9MpJ0bHEW
-X-Gm-Gg: ASbGncs9FMSITXdlU3V7y4lqgwCvRCDMYxRi7VhnPhL5Ifn4q5sDrhATqJvCdktERyE
-	CHjREmr9v27Cpg81U6YvD5KtEzDUUaAJHb5PiVB/FILULMZRFkZPijqhr815j5j0fk2sOo8jYs5
-	AL7nbGZdwYwppCi88GYJT0Ab95nE1Wxc5MHof9DmFIp6og1j8z/DT0dhuF4Gi7iG/JnYv9msRi8
-	wabHUSKH8HSLp+pyWC5MGzWwKU=
-X-Google-Smtp-Source: AGHT+IFjkjg1CJK2kqFcJZmVZhckeV1dW5wAwLpyJnWVbu+PQmvkA/uVH/e/0tYM6tLXM/d7UXxi8O7HF6KX7EuWjD0=
-X-Received: by 2002:a05:690e:159a:10b0:636:d570:c4ed with SMTP id
- 956f58d0204a3-636d570cab0mr1348537d50.10.1758845483874; Thu, 25 Sep 2025
- 17:11:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758845674; x=1759450474;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9aVQL6fEAcMEMTP9D/9Z6oTfy+cY28XMdggMyG2w/o=;
+        b=IGmideb8WbarSEUL6UaNiCR3veiWjD9B19DmZzrYn33/5HGGw0EhvawEd3AcNqUrgC
+         RW5CtV8MG1XY1D8fmvdU48oRZJbzw9yQllj41Qa+hZo0dCQm1HUbj+Sh/kn3h3714W6k
+         3NN38fBMX+WYKBNwwt92mpRFPD6cYNzm+y9KvXE6m3ajoWSYK1yTlXSHsk9jEQBUqcRN
+         Vhn1mk6JG+SShwiplMueVr5DVEC/qGPKhLDhdd8328tH62epQMpZOIzvlXnshwjmPo0+
+         8LG1SjGno2iQPWrljeyrj3zQk0m33FEKFAAYsj5ZlAdessj8uYxJIKh5sKgjBLaB1l/3
+         Q/iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeA3mtTEu+BSj85q4utznz3BLYGW9gIUwAPdwdTj52jd6rMUy7WDnwxwyPxeQigQg3dEQ99+SIigFLABs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVQAFgO+3tzMp1SJdcPjlOrYuWoW8MzxAhFAC1sInpadwX1wph
+	354nmYP1MyzQ84fueq1o8fyke1jKdnz4ddSns6MOjIyGpmOlG8CYs71gyvCfdbB8DrR4zyuaU/E
+	l64haZu8ySKrfsQd6bnZhInf/oVntdC4scblIdhRimU3akvf1INt95Yk7hM0hdjSzAGE=
+X-Gm-Gg: ASbGncufXTZGDXq7meHhXHnWjDn0YZkr1qzcSehHMBMaSUSQLoMqLzcUAG4eQbNTH/e
+	HNuYyhtfoVQaj9Bq5BoD+DGVuyarjTgL9wPCTEmuDlcxB+FOa/nNZR3LurGHnoqFQ8YJO1wJXf3
+	yNxCPqoYRpIp+87RRl873we70jKAUf6lIPwVdfs9tX9l01mE0xMPSUKtPWSZcvI18G+9lnn4bSr
+	w4z33VPYGJIClruPMTt0XBirRWrwIQ5907o+aDmCn6VeTgymTr4ogvmQ0BQ6dFkQZyNW/FYKZfn
+	pFtwlPS46nWmne+DgSj7bTSbv+3dTCMLIJAe7wJH26AsCHp7ZMah/YnIqVNLWl5pUGTgk4qAtvR
+	M100wRVM=
+X-Received: by 2002:a17:902:f544:b0:246:7a43:3f66 with SMTP id d9443c01a7336-27ed4a06c04mr62262985ad.7.1758845673482;
+        Thu, 25 Sep 2025 17:14:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6RS0Z+VcLwtx06uS7E/LrV2b7e5WIQiC7s7bIX/lu3xtr100NQaYggwOJ4VVgTNHsEDWRcg==
+X-Received: by 2002:a17:902:f544:b0:246:7a43:3f66 with SMTP id d9443c01a7336-27ed4a06c04mr62262565ad.7.1758845672931;
+        Thu, 25 Sep 2025 17:14:32 -0700 (PDT)
+Received: from [10.73.53.199] (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66cf181sm36713155ad.28.2025.09.25.17.14.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Sep 2025 17:14:32 -0700 (PDT)
+Message-ID: <5e9e2824-923c-1328-dd7a-a8b496c44a70@oss.qualcomm.com>
+Date: Thu, 25 Sep 2025 17:14:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829105418.3053274-1-sidnayyar@google.com>
- <4e215854-59df-489b-b92d-8d2fb2edf522@suse.com> <CA+OvW8ZY1D3ECy2vw_Nojm1Kc8NzJHCpqNJUF0n8z3MhLAQd8A@mail.gmail.com>
- <409ddefc-24f8-465c-8872-17dc585626a6@suse.com> <CA+OvW8bhWK7prmyQMMJ_VYBeGMbn_mNiamHhUgYuCsnht+LFtA@mail.gmail.com>
- <2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com>
-In-Reply-To: <2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com>
-From: Sid Nayyar <sidnayyar@google.com>
-Date: Fri, 26 Sep 2025 01:11:12 +0100
-X-Gm-Features: AS18NWAL2BOfXlIfw0PmfY9rpNA0-1bzCD1zhOmyRpqI4MrEa3fGtNm7DZbnVa0
-Message-ID: <CA+OvW8ZrbdqDGDkt8jXUX3Vg2aLSzVrP-a39Lqvxd1DYOOUg5g@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/10] scalable symbol flags with __kflagstab
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Giuliano Procida <gprocida@google.com>, =?UTF-8?Q?Matthias_M=C3=A4nnich?= <maennich@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 07/10] phy: qualcomm: qmp-combo: Update QMP PHY with
+ Glymur settings
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250925022850.4133013-1-wesley.cheng@oss.qualcomm.com>
+ <20250925022850.4133013-8-wesley.cheng@oss.qualcomm.com>
+ <oecyjwj7ouufjbiq2fpvlhhuaof5agm22fdsruf3ppayiu4kkm@wvi4no53x64y>
+From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+In-Reply-To: <oecyjwj7ouufjbiq2fpvlhhuaof5agm22fdsruf3ppayiu4kkm@wvi4no53x64y>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=I9Vohdgg c=1 sm=1 tr=0 ts=68d5daeb cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZdW6uxA9NKXbfdqeeS2OGA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=INxguLwuHvTa_v7rZvUA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: ujn2MMX3222NxS3pSwc4M5lxMNVZQsjY
+X-Proofpoint-ORIG-GUID: ujn2MMX3222NxS3pSwc4M5lxMNVZQsjY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX5lAFx6z7J1pP
+ q0SOUHMx7v8D9mNDgWX7j5iaRFCjse5S6XL8WaPSLPAUDQ25fa4YzhWKQKTkGlLz8dpsClwb7Kw
+ vyJqIJqeXQVbRkHj0OqslZGnrum6hFcpOQ+hkqDZIfIT4dLgx9AMMoutI6GQe2OJVJ3amnqVUsH
+ tYuM1+CIJvYrMnZxEjmgXxFjbInrIuXokS9jGrl+u0vUABUV3UY+40F8FGMzXTBRoQUV1xtRzcP
+ 3Tf28jefojft9vdlIifxe5orn5ahZMKokAeC1j5J7vGp5KDN2Hl89vX7yV79+6OMKdavxdZux8y
+ V+sRMJvBKDp/t+JFkRckY7C7VJp7BNG1Qwy0sIfCA3tbJKPYy6JLh//v0UhvHQgAy3LTmKQf/1w
+ f0bDQmUbDG0vRriFmTyAzA4D/I9/ww==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-25_02,2025-09-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On Mon, Sep 22, 2025 at 12:41=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> w=
-rote:
-> This is useful information. However, I was specifically interested in
-> the impact of having the new flags field present as part of __ksymtab
-> (kernel_symbol), compared to keeping it in a separate section. Sorry for
-> not being clear.
->
-> I ran a small test to get a better understanding of the different sizes.
-> I used v6.17-rc6 together with the openSUSE x86_64 config [1], which is
-> fairly large. The resulting vmlinux.bin (no debuginfo) had an on-disk
-> size of 58 MiB, and included 5937 + 6589 (GPL-only) exported symbols.
->
-> The following table summarizes my measurements and calculations
-> regarding the sizes of all sections related to exported symbols:
->
->                       |  HAVE_ARCH_PREL32_RELOCATIONS  | !HAVE_ARCH_PREL3=
-2_RELOCATIONS
->  Section              | Base [B] | Ext. [B] | Sep. [B] | Base [B] | Ext. =
-[B] | Sep. [B]
-> -------------------------------------------------------------------------=
----------------
->  __ksymtab            |    71244 |   200416 |   150312 |   142488 |   400=
-832 |   300624
->  __ksymtab_gpl        |    79068 |       NA |       NA |   158136 |      =
- NA |       NA
->  __kcrctab            |    23748 |    50104 |    50104 |    23748 |    50=
-104 |    50104
->  __kcrctab_gpl        |    26356 |       NA |       NA |    26356 |      =
- NA |       NA
->  __ksymtab_strings    |   253628 |   253628 |   253628 |   253628 |   253=
-628 |   253628
->  __kflagstab          |       NA |       NA |    12526 |       NA |      =
- NA |    12526
-> -------------------------------------------------------------------------=
----------------
->  Total                |   454044 |   504148 |   466570 |   604356 |   704=
-564 |   616882
->  Increase to base [%] |       NA |     11.0 |      2.8 |       NA |     1=
-6.6 |      2.1
->
-> The column "HAVE_ARCH_PREL32_RELOCATIONS -> Base" contains the numbers
-> that I measured. The rest of the values are calculated. The "Ext."
-> column represents the variant of extending __ksymtab, and the "Sep."
-> column represents the variant of having a separate __kflagstab. With
-> HAVE_ARCH_PREL32_RELOCATIONS, each kernel_symbol is 12 B in size and is
-> extended to 16 B. With !HAVE_ARCH_PREL32_RELOCATIONS, it is 24 B,
-> extended to 32 B. Note that this does not include the metadata needed to
-> relocate __ksymtab*, which is freed after the initial processing.
->
-> The base export data in this case totals 0.43 MiB. About 50% is used for
-> storing the names of exported symbols.
->
-> Adding __kflagstab as a separate section has a negligible impact, as
-> expected. When extending __ksymtab (kernel_symbol) instead, the worst
-> case with !HAVE_ARCH_PREL32_RELOCATIONS increases the export data size
-> by 16.6%.
->
-> Based on the above, I think introducing __kflagstab makes senses, as the
-> added complexity is minimal, although I feel we could probably also get
-> away with extending kernel_symbol.
 
-This investigation is very informative, thank you for sharing your
-findings. I am in agreement with your conclusions.
 
-> This seems to answer why the in-tree flag is not sufficient for you.
-> However, I also suggested an alternative that the symbol protection
-> could be determined by whether the module is signed by a key from the
-> .builtin_trusted_keys keyring, as opposed to being signed by another key
-> reachable from the .secondary_trusted_keys keyring or being completely
-> unsigned.
->
-> Distributions can require that external modules be signed and allow
-> additional keys to be added as Machine Owner Keys, which can be made
-> reachable from .secondary_trusted_keys. Nonetheless, such distributions
-> might be still interested in limiting the number of symbols that such
-> external modules can use.
->
-> I think this option is worth considering, as it could potentially make
-> this symbol protection useful for other distributions as well.
+On 9/24/2025 7:54 PM, Dmitry Baryshkov wrote:
+> On Wed, Sep 24, 2025 at 07:28:47PM -0700, Wesley Cheng wrote:
+>> For SuperSpeed USB to work properly, there is a set of HW settings that
+>> need to be programmed into the USB blocks within the QMP PHY.  Ensure that
+>> these settings follow the latest settings mentioned in the HW programming
+>> guide.  The QMP USB PHY on Glymur is a USB43 based PHY that will have some
+>> new ways to define certain registers, such as the replacement of TXA/RXA
+>> and TXB/RXB register sets.  This was replaced with the LALB register set.
+>>
+>> There are also some PHY init updates to modify the PCS MISC register space.
+>> Without these, the QMP PHY PLL locking fails.
+>>
+>> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 311 +++++++++++++++++++++-
+>>   drivers/phy/qualcomm/phy-qcom-qmp.h       |   4 +
+>>   2 files changed, 314 insertions(+), 1 deletion(-)
+>>
+>> +
+>> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_misc_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QPHY_V4_PCS_MISC_PCS_MISC_CONFIG1, 0x01),
+> 
+> Why is this V4 all of sudden?
+> 
 
-This sounds like a great solution to enhance trust and security,
-apologies for missing this in the previous email. I will explore this
-approach, but I would like to do it in a separate series.
+Hi Dmitry,
 
-> I'm personally ok with adding the kflagstab support. I think it
-> introduces minimal complexity and, as you point out, simplifies certain
-> aspects. Additionally, if we add it, I believe that adding the proposed
-> symbol protection is simple enough to be included as well, at least from
-> my perspective.
+Will fix..
 
-Since we are in agreement, I would like to seek code review for this
-series. The code is ready for review from my side, but if you prefer I
-can send out a non-RFC patch series for code review.
+>> +};
+>> +
+>> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG1, 0xc4),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG2, 0x89),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG3, 0x20),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_LOCK_DETECT_CONFIG6, 0x13),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_REFGEN_REQ_CONFIG1, 0x21),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RX_SIGDET_LVL, 0x55),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_TSYNC_RSYNC_TIME, 0xa4),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_RX_CONFIG, 0x0a),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_TSYNC_DLY_TIME, 0x04),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_ALIGN_DETECT_CONFIG1, 0xd4),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_ALIGN_DETECT_CONFIG2, 0x30),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_PCS_TX_RX_CONFIG, 0x0c),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_EQ_CONFIG1, 0x4b),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_USB43_PCS_EQ_CONFIG5, 0x10),
+>> +};
+>> +
+>> +static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_usb_tbl[] = {
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_PCS_USB_LFPS_DET_HIGH_COUNT_VAL, 0xf8),
+>> +	QMP_PHY_INIT_CFG(QPHY_V8_PCS_USB_RXEQTRAINING_DFE_TIME_S2, 0x07),
+>> +};
+>> +
+>> @@ -1667,6 +1899,12 @@ static struct qmp_regulator_data qmp_phy_vreg_l[] = {
+>>   	{ .name = "vdda-pll", .enable_load = 36000 },
+>>   };
+>>   
+>> +static struct qmp_regulator_data qmp_phy_vreg_refgen[] = {
+>> +	{ .name = "vdda-phy", .enable_load = 21800 },
+>> +	{ .name = "vdda-pll", .enable_load = 36000 },
+>> +	{ .name = "refgen", .enable_load = 936 },
+> 
+> Is this a meaningful value?
+> 
 
---
-Thanks,
-Siddharth Nayyar
+I need to adjust this value.  I just want the load for the regulators to 
+be in HPM, and after taking a look, looks like based on the rpmh 
+regulator table, I need to be voting 35000.
+
+Thanks
+Wesley Cheng
+
+>> +};
+>> +
+>>   static const u8 qmp_dp_v3_pre_emphasis_hbr3_hbr2[4][4] = {
+>>   	{ 0x00, 0x0c, 0x15, 0x1a },
+>>   	{ 0x02, 0x0e, 0x16, 0xff },
+> 
 
