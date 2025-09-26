@@ -1,64 +1,72 @@
-Return-Path: <linux-kernel+bounces-833848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F396CBA3362
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:46:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD522BA3380
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE671B28281
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DC64A2B62
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A7C29BD94;
-	Fri, 26 Sep 2025 09:45:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0994129D287;
+	Fri, 26 Sep 2025 09:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HbHlnkNU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD5B26C3AE;
-	Fri, 26 Sep 2025 09:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D763129C339
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879953; cv=none; b=ol251s4bFqcn0Jegmf1JjF/fXG0MYFexpcFHk3EX6NXfxAHMaO1HEwWLE8WaYp1bgVywfOMs7teHM8irILTqdm7R1uvRLwl0EV3IJlaos9Y/nd6+JBtem3NA5wM1/LjrneQArfhw22vUHi0DCjpkrNq2X3Nc73JXv4FSg70tvgo=
+	t=1758879999; cv=none; b=QXQbKXeMWj6079yDcPCRdta2LeBHykLot0WpaTBsLCPkBzsHLVJGDIUHX7j8yJQvFDxExm8zK6somuMGNrvida4MUuPXpyWnJbOowcB/6aEfAipA4Xe11Tzl9B76+fKDcJQ46/lIFU45ulV4pOvuF6FagI4/o3dLqwod6L9+jmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879953; c=relaxed/simple;
-	bh=W6dmbj3nQuaOh1PvpWfrOaUzQV1DSYuduBdMkyJok1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bUkIXxDboqKL0nZq7kP0EkKVwZ9zkUCVVTjzrvAyMjmqy4/uM6s5jLYsD2Je7NjhNsj4qDdyabcMXP989WAI0d83uddWGsfS4/qSqtxvd+LDaeWZvcWr9J2B1/SS3pFmDSbgwp6SrMGQy/nrTfh8QtmH4CfOMAyZ4k2R65jmhC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8dac07389abd11f08b9f7d2eb6caa7cf-20250926
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:8877f317-ac53-4448-93d3-6e10cc58c33d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:186bffe941cd4aec285e7a474c697022,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
-	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8dac07389abd11f08b9f7d2eb6caa7cf-20250926
-X-User: zhangzihuan@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1705799856; Fri, 26 Sep 2025 17:45:36 +0800
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	viresh.kumar@linaro.org,
-	zhangzihuan@kylinos.cn,
-	zhenglifeng1@huawei.com
-Subject: Re: [Question] About unnecessary policy_has_boost_freq() calls in freq_table.c
-Date: Fri, 26 Sep 2025 17:45:33 +0800
-Message-Id: <20250926094533.542873-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAJZ5v0hshbbbTncpkZoS98jq+ChiARSZCNn5P8kaEduADbmHSw@mail.gmail.com>
-References: <CAJZ5v0hshbbbTncpkZoS98jq+ChiARSZCNn5P8kaEduADbmHSw@mail.gmail.com>
+	s=arc-20240116; t=1758879999; c=relaxed/simple;
+	bh=kfIi6VrIE2lEa92dIkJL1fhpPaEmO6naVvpOiV6YbKc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jWyHx01lJbA9Y4sroFB/41wlg6Czj0pJAgqGIpl/mMi7Q05xYIsjZbY9+qZfjNkAGWGMbv0eTgqYsb75cXLyjhh6x+S0Q7e4UcRkn71FtLPz6cA+HKHphR2ZfhpLxYrTkU41UAW6SsNBmMF7h794xfDYYBJ1e6CAqs5lr1iNSug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HbHlnkNU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758879996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rSya+H0jA/G4MDTH6lvX00akKIqMxNianJVPL7t72DQ=;
+	b=HbHlnkNU6S+yt2Itxcmgvozny2o4nvxBbH8800hcldcFQirO/2N0aK2oZjsy2O3o+oEG6/
+	rYHoaKxZyTS+BseDvZ/vMZNuN86h9561UqTgonsUn1B7oDhgA+4PIgogbPkXiNfXfLH3x/
+	OqPOGYo+K3sks7elhvhD8uQeBhMvTn8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-63-e4MAtEV7Mj2HfGs7lxr5tA-1; Fri,
+ 26 Sep 2025 05:46:32 -0400
+X-MC-Unique: e4MAtEV7Mj2HfGs7lxr5tA-1
+X-Mimecast-MFC-AGG-ID: e4MAtEV7Mj2HfGs7lxr5tA_1758879991
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70856195609F;
+	Fri, 26 Sep 2025 09:46:31 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.225.225])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 84B9318003FC;
+	Fri, 26 Sep 2025 09:46:27 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	John Kacur <jkacur@redhat.com>,
+	Waylon Cude <wcude@redhat.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 0/2] selftests/verification: Add initial RV tests
+Date: Fri, 26 Sep 2025 11:46:11 +0200
+Message-ID: <20250926094613.34030-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,21 +74,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-> First off, setting policy->boost_supported doesn't really belong to
-> cpufreq_table_validate_and_sort(), so the idea of splitting it off
-> that function sounds reasonable to me.
-> 
+Add a series of tests to validate the RV tracefs API and basic
+functionality.
 
-Agreed.
+* available monitors:
+    Check that all monitors (from the monitors folder) appear as
+    available and have a description. Works with nested monitors.
 
-> However, cpufreq_boost_set_sw() is used as a .set_boost() callback, so
-> it gets called every time the "boost enabled" setting is changed.  It
-> doesn't look like a good place for updating policy->boost_supported to
-> me.
+* enable/disable:
+    Enable and disable all monitors and validate both the enabled file
+    and the enabled_monitors. Check that enabling container monitors
+    enables all nested monitors.
 
-Got it, where would you suggest updating policy->boost_supported instead?
+* reactors:
+    Set all reactors and validate the setting, also for nested monitors.
 
-Thanks!
+* wwnr with printk:
+    wwnr is broken on purpose, run it with a load and check that the
+    printk reactor works. Also validate disabling reacting_on or
+    monitoring_on prevents reactions.
+
+These tests use the ftracetest suite. The first patch of the series
+adapts ftracetest to make this possible.
+
+The enable/disable test cannot pass on upstream without the application
+of the fix in [1].
+
+[1] - https://lore.kernel.org/lkml/87tt0t4u19.fsf@yellow.woof
+
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: John Kacur <jkacur@redhat.com>
+Cc: Waylon Cude <wcude@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+
+Gabriele Monaco (2):
+  selftest/ftrace: Generalise ftracetest to use with RV
+  selftests/verification: Add initial RV tests
+
+ MAINTAINERS                                   |  1 +
+ tools/testing/selftests/ftrace/ftracetest     | 34 ++++++---
+ .../ftrace/test.d/00basic/mount_options.tc    |  2 +-
+ .../testing/selftests/ftrace/test.d/functions |  6 +-
+ .../testing/selftests/verification/.gitignore |  2 +
+ tools/testing/selftests/verification/Makefile |  8 ++
+ tools/testing/selftests/verification/config   |  1 +
+ tools/testing/selftests/verification/settings |  1 +
+ .../selftests/verification/test.d/functions   | 39 ++++++++++
+ .../test.d/rv_monitor_enable_disable.tc       | 75 +++++++++++++++++++
+ .../verification/test.d/rv_monitor_reactor.tc | 68 +++++++++++++++++
+ .../test.d/rv_monitors_available.tc           | 18 +++++
+ .../verification/test.d/rv_wwnr_printk.tc     | 29 +++++++
+ .../verification/verificationtest-ktap        |  8 ++
+ 14 files changed, 278 insertions(+), 14 deletions(-)
+ create mode 100644 tools/testing/selftests/verification/.gitignore
+ create mode 100644 tools/testing/selftests/verification/Makefile
+ create mode 100644 tools/testing/selftests/verification/config
+ create mode 100644 tools/testing/selftests/verification/settings
+ create mode 100644 tools/testing/selftests/verification/test.d/functions
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_enable_disable.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_reactor.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitors_available.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_wwnr_printk.tc
+ create mode 100644 tools/testing/selftests/verification/verificationtest-ktap
+
+
+base-commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
+-- 
+2.51.0
 
 
