@@ -1,190 +1,242 @@
-Return-Path: <linux-kernel+bounces-833810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0401BA3209
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BCCBA3224
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3786F3A8550
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62AF14C1D1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE9B2765F5;
-	Fri, 26 Sep 2025 09:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6658E2777F9;
+	Fri, 26 Sep 2025 09:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fNTWZCjn"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l3//ZCHj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94484207A;
-	Fri, 26 Sep 2025 09:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594492264D3;
+	Fri, 26 Sep 2025 09:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878721; cv=none; b=Je3S+uQXB6srtEnsuHNnB0zB4qfSVV98aIn5txbry6o7GdmfykaD3tP/LXR3oEo/+aZJh63mIz/q2gMwpcBaOu1+fGyOVW0dSereJE+48AHijjWIYTnTiMjkuwd3Ikiq+gyFTOI2MCVMjc+3Ftc7AdBzXs2EiMf+bO0HvYArYgE=
+	t=1758878768; cv=none; b=k95sepR9F5rVhFM9QHpRQPHBfhlNxkEbvnuKniYTGs9XzQdjQj4knwIMfCUNzQb5yZBiBBeKR2LYKgNwhFLXX4oJ8kqM58fgDDGSj/nNpGnYhOYzNwb8gB4d90RnUyq6jjILO4ChipeCyhTRlZsWRRk3KpSAWtpV9DGswAQLNhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878721; c=relaxed/simple;
-	bh=OtqMBGvJqRuEI+r26Adgr+3QR76ztiv29otfii/Jm0A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=qGDYmaEfNa5yIvparliHvG2ki4zk5cpRNG9ea/XlnUTQ1+ux/zojA14fTHV50sdLA4R63lpDl4p7MI/NwDWye6DALls4cVUKMiOS6QEUQ+DhiHhaRz7CsYJodXJWzawtJdvkGkTy/407ZmUK+88CVDYmKFUoeTWjCVNvPB6INfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fNTWZCjn; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q6Ud1K028794;
-	Fri, 26 Sep 2025 09:25:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=al3aQf
-	G/mnUqk77Tg1qoK5H2G+QguZmcUISkGRTNzJo=; b=fNTWZCjnhwi10jpmLgPMuI
-	YxpDlQrEPHBeOZmZMrfbuO4BgweNjKUxj6slM8SlnMWAAKsebt+9r/7PyuUXnk8l
-	225l3WFgDPR3MuteC25mpCBXBiwpLbL8M+/eGT+McMk16A6jJkeAVy5MJj98btJr
-	bIAniz6XIkyT3po2AmorFGoiOs2mh30jiswh6OdpOPuwapojBg9xpdeiztyiePWo
-	lE3MPmRg+/joRQj0HDe/wKH6y4YKaCpYG4M439Cib5+wdHVVKl42+E4KmK/pZiSA
-	eIyURfW67DeOO4Pgv4z8TlnSoiefTxsWYbj6Xhkeg8DJgOi5lwfV8oDGze4z3ecQ
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbbkkgg-1
+	s=arc-20240116; t=1758878768; c=relaxed/simple;
+	bh=id2RhLldHL1Xg4YJrob/YdDpovjeqIT05CfPxj0p4vI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dRGwFEhBlkJ9iCQChuilkrj/gTpbkEMU1Wzj+wRXPpqIsO0PC09Ojjr8fXEMH/2saFl0+IC9IUql/qBSIMkA/vpM/FFq588rbGwPXNLXdqXiqgcYHwnp5pIp0W4GhnBvH3iGtYB6bt6L6lVMepnR4oYQ4mWjo6aOLpWbJPVEPfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l3//ZCHj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q8vZjR030515;
+	Fri, 26 Sep 2025 09:25:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5TS5AtqdYm2HDDLZWKnMEWSVhW1X2rXyp/0PxVYWGtY=; b=l3//ZCHjTzZwkw82
+	6awUR7tI+gJhfdVe5fYoaBD3ZUazzIiROwjaS2GUalUq1OFCiZNoqAa9PxDtlms/
+	HO5ei79TGR0EUPjgLvR4MMb2F0zZ0ObfN4ZwCWfgO5ZHYc35sdoIqyhXikGu+1Pp
+	wXOmSskJXvJRJ5mZ2hwtuUab6PABjnv59ORcl2Iyb9ZNR/QRYO2qKphEKPEus2Mv
+	Cg6xeXcCyDGRAEv5ZJPiUGvfOwoADjT/owlcYVbTsUK9CMS79l/g/t6hivdRqUKV
+	HOdy6QFb7bpb3axI6x6zTQzbeUnd6uqIft5ttfKBgCaRyP+5MrqAUZJm4UjtwsV5
+	jWbDVA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0u29fk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 09:25:16 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q65057025794;
-	Fri, 26 Sep 2025 09:25:15 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpuaka-1
+	Fri, 26 Sep 2025 09:25:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58Q9Plrp006298
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 09:25:15 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58Q9PBMC30606048
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Sep 2025 09:25:11 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AD3C720043;
-	Fri, 26 Sep 2025 09:25:11 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D105D20040;
-	Fri, 26 Sep 2025 09:25:10 +0000 (GMT)
-Received: from localhost (unknown [9.111.81.227])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 26 Sep 2025 09:25:10 +0000 (GMT)
+	Fri, 26 Sep 2025 09:25:47 GMT
+Received: from [10.206.97.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Fri, 26 Sep
+ 2025 02:25:41 -0700
+Message-ID: <8c248bf8-2f25-443d-a08f-6504c349b72b@quicinc.com>
+Date: Fri, 26 Sep 2025 14:55:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 26 Sep 2025 11:25:10 +0200
-Message-Id: <DD2MGSSNDP6Y.3KSEFVRU4RL4Y@linux.ibm.com>
-Cc: "Keith Busch" <kbusch@kernel.org>, "Gerd Bayer" <gbayer@linux.ibm.com>,
-        "Matthew Rosato" <mjrosato@linux.ibm.com>,
-        "Benjamin Block"
- <bblock@linux.ibm.com>,
-        "Halil Pasic" <pasic@linux.ibm.com>,
-        "Farhan Ali"
- <alifm@linux.ibm.com>,
-        "Julian Ruess" <julianr@linux.ibm.com>,
-        "Heiko
- Carstens" <hca@linux.ibm.com>,
-        "Vasily Gorbik" <gor@linux.ibm.com>,
-        "Alexander Gordeev" <agordeev@linux.ibm.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] PCI: Add lockdep assertion in
- pci_stop_and_remove_bus_device()
-From: "Julian Ruess" <julianr@linux.ibm.com>
-To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
-        "Bjorn Helgaas"
- <helgaas@kernel.org>,
-        "Lukas Wunner" <lukas@wunner.de>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250826-pci_fix_sriov_disable-v1-0-2d0bc938f2a3@linux.ibm.com>
- <20250826-pci_fix_sriov_disable-v1-2-2d0bc938f2a3@linux.ibm.com>
-In-Reply-To: <20250826-pci_fix_sriov_disable-v1-2-2d0bc938f2a3@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Lsb87kpzRMZdRMBrthPY6qAChWqm3fn2
-X-Authority-Analysis: v=2.4 cv=LakxKzfi c=1 sm=1 tr=0 ts=68d65bfc cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=F53kh5m_LVtqdGsIIDMA:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: Lsb87kpzRMZdRMBrthPY6qAChWqm3fn2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX8tY9DiFMlGo4
- wv2UM81pTeXt1mgsk5yaFuO74Ee/OkEFbFnwV8LqdhmLuWrhpU5U/q493Ek9O9VIlIgrYwqDbDj
- 3hpbxt0L437sxws+yyhztP+Q2K0oVuU7jy0J87A/WzptQ4/pIXzkbOc+udNrRw0BUrYj7ozturl
- wD4jz+dYUphOmI2BSe8QEtBoC2c8qYZB5Rjohu+y1hfveud0FabRueY9aQED1wPDBb0jcyk8JIn
- +lbOIlQB5h+qInjLPcEzhhPbK1cc6NM0x85F5jV3i9Uh905ToTh63YAsDcB1xt0eA5y7Z7G9l+e
- P2iZidPHafmP0rsqSFNHHxUplpAV80/1HhSiHwCW5rwSYx+SB2EXcWQ+WyTl3qCEKMZZmfOtLa/
- PrOO0Pp9fLUeagSsgOpZFaKBYiZO3w==
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: qcs8300: add Display Serial
+ Interface device nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
+        <sean@poorly.run>, <marijn.suijten@somainline.org>,
+        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <konradybcio@kernel.org>, <conor+dt@kernel.org>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
+        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
+        <quic_rajeevny@quicinc.com>, <quic_vproddut@quicinc.com>,
+        <quic_jesszhan@quicinc.com>
+References: <20250925053602.4105329-1-quic_amakhija@quicinc.com>
+ <20250925053602.4105329-3-quic_amakhija@quicinc.com>
+ <vsty7sy7gi2eeyifokwcqpoycmarxietkijmlkymwrmzmdsfws@x64f4ulbc6ja>
+Content-Language: en-US
+From: Ayushi Makhija <quic_amakhija@quicinc.com>
+In-Reply-To: <vsty7sy7gi2eeyifokwcqpoycmarxietkijmlkymwrmzmdsfws@x64f4ulbc6ja>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ePYSTuK6cAO9qr2ehXibnVVYJb-MCPtk
+X-Proofpoint-GUID: ePYSTuK6cAO9qr2ehXibnVVYJb-MCPtk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX8MLVqHkJkWcV
+ Mgr9b3zMkKMizTSiChfQSNttbqOt+XrxAmYt3x2s2OPPG6Ypdto7w2crKQhojspbUNEktUaDnxf
+ klFdPDVoLvW1L3GS8gxja70MbRB7/iKh+wIdySMQSfnQCRlVbRhExMGwjmiFHnT6/lh0Kjgnvft
+ sVyAhi31MdbpTfHAhbqP/2xinbmRsxpH9+1I+71bo+6melgLYVlLIM2+u8TyUptSg3mpMaRNGF8
+ wfKI1hF3ySMHi0QHcMykEUYqlXQaXsz781uWKHXSKOQmdHitnK5BH66KyKtQE2sRw2RDr8uPnAm
+ rxNG+QUzQwVtslV12peqous1p3ToYRgTjMSUVuZZVKEZ1zbj5LlK9VE+P86mhQRr1WBPsoAm97T
+ xnZnd6G9xoZL2xfoThdozy+NUcuI7A==
+X-Authority-Analysis: v=2.4 cv=ZsHg6t7G c=1 sm=1 tr=0 ts=68d65c1d cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=A_RCIHCzRNtrZjO7i9kA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-26_02,2025-09-26_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0 clxscore=1015
- impostorscore=0 priorityscore=1501 malwarescore=0 phishscore=0 suspectscore=0
+ phishscore=0 spamscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
 
-On Tue Aug 26, 2025 at 10:52 AM CEST, Niklas Schnelle wrote:
-> Removing a PCI devices requires holding pci_rescan_remove_lock. Prompted
-> by this being missed in sriov_disable() and going unnoticed since its
-> inception add a lockdep assert so this doesn't get missed again in the
-> future.
->
-> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  drivers/pci/pci.h    | 2 ++
->  drivers/pci/probe.c  | 2 +-
->  drivers/pci/remove.c | 1 +
->  3 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 34f65d69662e9f61f0c489ec58de2ce17d21c0c6..1ad2e3ab147f3b2c42b3257e4=
-f366fc5e424ede3 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -84,6 +84,8 @@ struct pcie_tlp_log;
->  extern const unsigned char pcie_link_speed[];
->  extern bool pci_early_dump;
-> =20
-> +extern struct mutex pci_rescan_remove_lock;
-> +
->  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
->  bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
->  bool pcie_cap_has_rtctl(const struct pci_dev *dev);
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index f41128f91ca76ab014ad669ae84a53032c7c6b6b..2b35bb39ab0366bbf86b43e72=
-1811575b9fbcefb 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3469,7 +3469,7 @@ EXPORT_SYMBOL_GPL(pci_rescan_bus);
->   * pci_rescan_bus(), pci_rescan_bus_bridge_resize() and PCI device remov=
-al
->   * routines should always be executed under this mutex.
->   */
-> -static DEFINE_MUTEX(pci_rescan_remove_lock);
-> +DEFINE_MUTEX(pci_rescan_remove_lock);
-> =20
->  void pci_lock_rescan_remove(void)
->  {
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index 445afdfa6498edc88f1ef89df279af1419025495..0b9a609392cecba36a818bc49=
-6a0af64061c259a 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -138,6 +138,7 @@ static void pci_remove_bus_device(struct pci_dev *dev=
-)
->   */
->  void pci_stop_and_remove_bus_device(struct pci_dev *dev)
->  {
-> +	lockdep_assert_held(&pci_rescan_remove_lock);
->  	pci_stop_bus_device(dev);
->  	pci_remove_bus_device(dev);
->  }
+On 9/26/2025 3:32 AM, Dmitry Baryshkov wrote:
+> On Thu, Sep 25, 2025 at 11:06:01AM +0530, Ayushi Makhija wrote:
+>> Add device tree nodes for the DSI0 controller with their corresponding
+>> PHY found on Qualcomm QCS8300 SoC.
+>>
+>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 95 ++++++++++++++++++++++++++-
+>>  1 file changed, 94 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> index e0e1f63fc45b..834ae0522f2f 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>> @@ -3,6 +3,7 @@
+>>   * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>   */
+>>  
+>> +#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+>>  #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
+>>  #include <dt-bindings/clock/qcom,rpmh.h>
+>>  #include <dt-bindings/clock/qcom,sa8775p-camcc.h>
+>> @@ -4854,6 +4855,13 @@ dpu_intf0_out: endpoint {
+>>  							remote-endpoint = <&mdss_dp0_in>;
+>>  						};
+>>  					};
+>> +
+>> +					port@1 {
+>> +						reg = <1>;
+>> +						dpu_intf1_out: endpoint {
+>> +							remote-endpoint = <&mdss_dsi0_in>;
+>> +						};
+>> +					};
+>>  				};
+>>  
+>>  				mdp_opp_table: opp-table {
+>> @@ -4881,6 +4889,89 @@ opp-650000000 {
+>>  				};
+>>  			};
+>>  
+>> +			mdss_dsi0: dsi@ae94000 {
+>> +				compatible =  "qcom,sa8775p-dsi-ctrl","qcom,mdss-dsi-ctrl";
+> 
+> qcom,qcs8300-dsi-ctrl. You might use three compatibles (qcs8300, sa8775p
+> and the generic one), but there should be qcs8300 one.
+> 
+> Also please add a whitespace after comma or (even better), keep one
+> compat per line (align on opening quote).
+> 
+>> +				reg = <0x0 0x0ae94000 0x0 0x400>;
+>> +				reg-names = "dsi_ctrl";
+>> +
+>> +				interrupt-parent = <&mdss>;
+>> +				interrupts = <4>;
+>> +
+>> +				clocks = <&dispcc MDSS_DISP_CC_MDSS_BYTE0_CLK>,
+>> +					 <&dispcc MDSS_DISP_CC_MDSS_BYTE0_INTF_CLK>,
+>> +					 <&dispcc MDSS_DISP_CC_MDSS_PCLK0_CLK>,
+>> +					 <&dispcc MDSS_DISP_CC_MDSS_ESC0_CLK>,
+>> +					 <&dispcc MDSS_DISP_CC_MDSS_AHB_CLK>,
+>> +					 <&gcc GCC_DISP_HF_AXI_CLK>;
+>> +				clock-names = "byte",
+>> +					      "byte_intf",
+>> +					      "pixel",
+>> +					      "core",
+>> +					      "iface",
+>> +					      "bus";
+>> +
+>> +				assigned-clocks = <&dispcc MDSS_DISP_CC_MDSS_BYTE0_CLK_SRC>,
+>> +						  <&dispcc MDSS_DISP_CC_MDSS_PCLK0_CLK_SRC>;
+>> +				assigned-clock-parents = <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
+>> +							 <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>;
+>> +
+>> +				phys = <&mdss_dsi0_phy>;
+>> +
+>> +				operating-points-v2 = <&mdss_dsi_opp_table>;
+>> +				power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				status = "disabled";
+>> +
+>> +				ports {
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>> +
+>> +					port@0 {
+>> +						reg = <0>;
+>> +						mdss_dsi0_in: endpoint {
+>> +							remote-endpoint = <&dpu_intf1_out>;
+>> +						};
+>> +					};
+>> +
+>> +					port@1 {
+>> +						reg = <1>;
+>> +						mdss_dsi0_out: endpoint {
+>> +						};
+>> +					};
+>> +				};
+>> +
+>> +				mdss_dsi_opp_table: opp-table {
+>> +					compatible = "operating-points-v2";
+>> +
+>> +					opp-358000000 {
+>> +						opp-hz = /bits/ 64 <358000000>;
+>> +						required-opps = <&rpmhpd_opp_svs_l1>;
+>> +					};
+>> +				};
+>> +			};
+>> +
+>> +			mdss_dsi0_phy: phy@ae94400 {
+>> +				compatible = "qcom,sa8775p-dsi-phy-5nm";
+> 
+> Add qcs8300-specific compatible and use sa8775p as a fallback
+> 
 
-Feel free to add my
-Reviewed-by: Julian Ruess <julianr@linux.ibm.com>
+Hi Dmitry,
+
+I have one doubt, even though the ctrl and phy versions for sa8775p(LeMans) and qcs8300(Monaco) are same.
+Why can't we use the same compatible string that we have used for LeMans ctrl and phy ? what is the need to define a separate
+compatible string for monaco ctrl and phy ?
 
 Thanks,
-Julian
+Ayushi
+
 
