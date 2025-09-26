@@ -1,90 +1,127 @@
-Return-Path: <linux-kernel+bounces-834448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07470BA4B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:48:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F73BA4B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 266D71B28922
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F571387E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975C305E08;
-	Fri, 26 Sep 2025 16:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204AB30596D;
+	Fri, 26 Sep 2025 16:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKBeNyTf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2n+FoV+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4AEAE7;
-	Fri, 26 Sep 2025 16:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C7F3054FB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758905301; cv=none; b=krWJcDiV8s2WNOld/9ddR/yJraWWLrMkecnIE5GEQdnyB+k0w+LQbAETwqhXLJys51XtXt7XoBz5jAAvqYpQiYc1LGnF184Y3nh0U/HXd0eMz2XjY6SCe+GO6hkubht/z75md7xKYIWgWHCajKd2H6GQOHZtVICuxNUUHdFSaOY=
+	t=1758905314; cv=none; b=upQmFevFf8UJuveRjMwG3VVWzxDrjD0HO1Xopo2ePOT1VBFNbnsAV99N3jIhxgUiUQctTKcTSkcxYQSvsoHjytiKWrVpYfl3yZ+3v7ftkrBnxPGH7hyXxmj9byIE8GLpvsuUzJFkEli2IPa+LV6xFeGWE1W+0udIpRnUgTzQTCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758905301; c=relaxed/simple;
-	bh=aYe63XxFo5QK5aUoNElZrceNs4q+2bbOZSo6fH9A2yE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOAYRIegP4nxoyXfmNGN3167QQr9c4WegWkqkgmTfqtf1jkF0pftPcJwGBf6MhKKwT1uAhLCpOCPj4MrncSqi6q+B6qP0AsiWA/Pt+ElydG8O3tdVrjvjaeCk7/Ffvzxh3JdFrHnBcyAFgwso9MlENfbN4dk9CbPEeNG2WRJ8Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKBeNyTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71EDDC4CEF4;
-	Fri, 26 Sep 2025 16:48:20 +0000 (UTC)
+	s=arc-20240116; t=1758905314; c=relaxed/simple;
+	bh=AZnqdfAmXTllcDi3Twzujw+p767HReUg+7EPXmuH628=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o/oTR1I28Q5naM0vIAQmhunJ8t6w69/up3FvC3vCaSkQ10BoToq4pikicTxaR5BDZvldh0OJonk1WD21f2vO7d01hevGRp8j8kBenpD/8GCGm3yV4tRtT4AD2E3J1EI7o/yzL6BddsWBKK+MKCqmQbk+BJs5aMAxcQ1DhIyS/4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2n+FoV+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1035BC19422
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758905300;
-	bh=aYe63XxFo5QK5aUoNElZrceNs4q+2bbOZSo6fH9A2yE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oKBeNyTfZoeAbJGWR81rox3ej+WWPKIvKoyNEPK7NSjlkDGjSMTL3/5UK5wwozUhG
-	 CCH/ppGVSt9l985fXQQP1fBIGCEr/ecyaodXtxHBn8IhMIVarxoRf4K6E9LPNuyCtd
-	 FAvm1R2qAt9JJtMyqzjZVzZ6dyiQLsbYN5hVL+BkxfGtA54Hx7P2ChCQnjwHx9WvVr
-	 /iteW81eOhBYpgTqZe6lEsbI5lb2MnudAVS55QTckba4z7sVxXxcbCT4sTR3xv75Kc
-	 +/RJDS1UnxncAk1yMAWmdtnaRgSdvOY/dPX8+p6lHcRYARcuFylrSBr7Zuw2zCXFDy
-	 qrCiiKtc+A5HA==
-Date: Fri, 26 Sep 2025 06:48:19 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <aNbD004LOA9xOF27@slm.duckdns.org>
-References: <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
- <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
- <aMnnslT_mUfAtytN@slm.duckdns.org>
- <20250925083533.GW4067720@noisy.programming.kicks-ass.net>
- <aNW3du48v3PvwPbq@slm.duckdns.org>
- <20250926095934.GD4067720@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1758905314;
+	bh=AZnqdfAmXTllcDi3Twzujw+p767HReUg+7EPXmuH628=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j2n+FoV+gPyJg6eMRHmt9yYp6ePQzzY57cYMpSBuzq9OJ0vQ9VyAY5CDZGJ5n5VKx
+	 cA78XaOqjoNKvHAik7Dxmjqx7hEdg8SYbiv/Uf1Cz/vtY9yHYqJL2aUY6XsQpwS+Q1
+	 PinY2S7Q5HLuMWHTssRMsgnO8ZMuHJF6j1sLquBd9M5kaDNr6J6dKUmVLGJvOeZyHj
+	 EsB5n5yD0LRFqu0O4Kj+NrwQS+u1NDJimI1ZRM8fcRS7wuHhjx8QNFkRCxBEArzL0z
+	 xleAApt1Kz4MqBhoWk/Co0BZLHycf1Ai6aWXVMb9T2NZ3AKciqRsbh5UrIl6F8etiy
+	 4W3UwLuvh9hrA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30cce892b7dso1560259fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:48:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXhZlRKSoLRu6YtZtYJR5PZj7gd5XM3Pk5qgTqPyW9mfq+RcCOGjl3Im+72SqVS/gcT8FL5y/N46sQ8hdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCfMcWhSQxu4VLXhSkDRq2T159CWnqrKtNwQJ+F7cTRW9mTqMQ
+	I29rYYqeB2JvIPN1pwBtv1Al+DwqaNmNundwsCzLOsl5gYLS0Is7buU7rnwIynV+I3/+A0h3/Vm
+	0zHea/TCHjcIA24kBr0jRlWIvyYI9Tvc=
+X-Google-Smtp-Source: AGHT+IFQQISfNqAJjJL3OPQ0qJUETOCYhtsACvYO34HWfu9x5TF1hVGFvwZM9GCP/oQResGeCcYUThxAP2N+35DWW1E=
+X-Received: by 2002:a05:6870:31cf:b0:35b:32d5:8fbb with SMTP id
+ 586e51a60fabf-35eea9524d1mr4002216fac.37.1758905312998; Fri, 26 Sep 2025
+ 09:48:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926095934.GD4067720@noisy.programming.kicks-ass.net>
+References: <6196611.lOV4Wx5bFT@rafael.j.wysocki> <7855547.EvYhyI6sBW@rafael.j.wysocki>
+In-Reply-To: <7855547.EvYhyI6sBW@rafael.j.wysocki>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 26 Sep 2025 18:48:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gX-uCsq1OWb2DnTo1PBunwuAOyfopLOO7Qo3KsLV4cZw@mail.gmail.com>
+X-Gm-Features: AS18NWAlFhczlMle0U4gfQp5x5t4FEY-QQemtRbZyEjuMWVTERCtrm3tG7InkKY
+Message-ID: <CAJZ5v0gX-uCsq1OWb2DnTo1PBunwuAOyfopLOO7Qo3KsLV4cZw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] PM: runtime: Drop DEFINE_FREE() for pm_runtime_put()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Takashi Iwai <tiwai@suse.de>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 11:59:34AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 25, 2025 at 11:43:18AM -1000, Tejun Heo wrote:
-> 
-> > Can you point me to the RT interaction issue?
-> 
-> https://lkml.kernel.org/r/fca528bb34394de3a7e87a873fadd9df@honor.com
+On Fri, Sep 26, 2025 at 6:27=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The DEFINE_FREE() for pm_runtime_put has been superseded by recently
+> introduced runtime PM auto-cleanup macros and its only user has been
+> converted to using one of the new macros, so drop it.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> ---
+>
+> v3 -> v4: Pick up R-by from Dhruva
+>
+> v1 -> v3: No changes
+>
+> ---
+>  include/linux/pm_runtime.h |    2 --
+>  rust/kernel/cpufreq.rs     |    3 ++-
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+>
+> --- a/include/linux/pm_runtime.h
+> +++ b/include/linux/pm_runtime.h
+> @@ -561,8 +561,6 @@ static inline int pm_runtime_put(struct
+>         return __pm_runtime_idle(dev, RPM_GET_PUT | RPM_ASYNC);
+>  }
+>
+> -DEFINE_FREE(pm_runtime_put, struct device *, if (_T) pm_runtime_put(_T))
+> -
+>  /**
+>   * __pm_runtime_put_autosuspend - Drop device usage counter and queue au=
+tosuspend if 0.
+>   * @dev: Target device.
 
-Ah, that one. Thought there was another RT proper issue. That's the one
-which can be solved by having post-pick_task() hook.
+The hunk below does not belong to this patch.  It was added here by
+mistake, sorry about that.
 
-Thanks.
-
--- 
-tejun
+> --- a/rust/kernel/cpufreq.rs
+> +++ b/rust/kernel/cpufreq.rs
+> @@ -39,7 +39,8 @@ use macros::vtable;
+>  const CPUFREQ_NAME_LEN: usize =3D bindings::CPUFREQ_NAME_LEN as usize;
+>
+>  /// Default transition latency value in nanoseconds.
+> -pub const ETERNAL_LATENCY_NS: u32 =3D bindings::CPUFREQ_ETERNAL as u32;
+> +pub const DEFAULT_TRANSITION_LATENCY_NS: u32 =3D
+> +    bindings::CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS as u32;
+>
+>  /// CPU frequency driver flags.
+>  pub mod flags {
 
