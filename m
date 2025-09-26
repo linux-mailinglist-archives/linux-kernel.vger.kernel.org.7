@@ -1,158 +1,135 @@
-Return-Path: <linux-kernel+bounces-834515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CABBA4D7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:09:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F138BBA4D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4992626948
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2771C01DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AA630DD34;
-	Fri, 26 Sep 2025 18:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB142FFDD3;
+	Fri, 26 Sep 2025 18:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="niR0BRkz"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwEHATXi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A272C2FFDD3;
-	Fri, 26 Sep 2025 18:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435826ADD;
+	Fri, 26 Sep 2025 18:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758910099; cv=none; b=lXR40pF6ZzC34SuG2yXkWUqmU+wa2LifR67sphjV2pQQsuah6kSRsyxrlEOxjt5zmOp/X08BGN4YrEM0JSGXsIyvV6wz9ifABPg8kiPYO4YytiD+X7trXGDTvdnRBb9tsk5ezAX7LHXwgOnbg1ejI1gYjHPlahY9lZ6Vb8EM12Q=
+	t=1758910308; cv=none; b=djsbpsfBtuX7Z2Wprp6AAIDA3dBvAZzyySboDi0/a9GQ/hCkhwAnfDr/drgmv5uZt+FpgUbmwtIWYpbrhZ1h/OJzdY0vLVMKx+99to7uRlaLCJDuqAx3/W6P0MX/X+i+RqDD5WpfDuwcwM5XNzxIqmTCkY7a6vNZJ+QUD+WplcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758910099; c=relaxed/simple;
-	bh=WiG2nv4r6iepL7WNBmIbqyWOENNO/dStIImlpN2E67U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=n33CCNWSJyEeZn5u47zuVlHmu4Q6WguQ+kA/oKIO9+WBlLt6DPKompIct3blQ2RY+T/ke8UEbPzjErX/A+D+TNxrg5lbtun3UZVzul7sC7IbXiKr+FpxbgicH24ahCfNvMmDZL0W97NkYk+09GeClHGCA2Z6ALW0TBZgyAT31b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=niR0BRkz; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758910088; x=1759514888; i=markus.elfring@web.de;
-	bh=WiG2nv4r6iepL7WNBmIbqyWOENNO/dStIImlpN2E67U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=niR0BRkzZArB6RzVN3WQONUAYnJrTm/uc67A8i8V2DuiF9DoxqFVFrtEU6tfOir8
-	 13OCn3X4Hx/d+yD+lulqVUcx/ZYUg20OlBP4xDpD8Gznv8zKvUdmH8UjQm43ZtyCA
-	 Ls8wF+mvGvKFelTsDsjBu9qiWmxOUFp4o1Oj3Ob+VIG1PooiEoO/S8Y66dIXR31Oi
-	 4v8shJcL9lmY0D5ajasT019Z12FqNZv+PgBUsYYSaoBBxoP7Ml4hEk3DzvkpDuDD3
-	 sA+W8F0sZDrX2uKx4ysXd9gmdZy8cXRAKLGOCHUQjzUnv2q2vhjR2rKY/q25xq05t
-	 4Y6Z4E6EsnEfDX5fjQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwwJ-1uWSYn1SYH-00b8xF; Fri, 26
- Sep 2025 20:08:08 +0200
-Message-ID: <13b7276a-f151-4b03-9f90-847d4a4aa031@web.de>
-Date: Fri, 26 Sep 2025 20:08:06 +0200
+	s=arc-20240116; t=1758910308; c=relaxed/simple;
+	bh=6YcsbRUDVjvq90+XUsFM49RpOjc9gYPwErAKkZrcQYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UU9GsVGfGl3dRabMSoaxWjzoMezrExri4QUlfWQfH/RcoHlw928h+rethxPcNh2BrSDZm6TdIbwUj+bQcoO6iFukJWBDNP6Mwd7GF7RWhgGagsYCEWOHzO7LDvj80OGqEJ2VmWzv+uqCpn1R2EyZQrawUA4R+YpSf4gBGEJbfgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwEHATXi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758910307; x=1790446307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6YcsbRUDVjvq90+XUsFM49RpOjc9gYPwErAKkZrcQYM=;
+  b=SwEHATXi1Ez58+mLU4c/3gOL9lCuV6LUdwpmDe03g8zTKvDit4Id/XVu
+   xfVS1gt3jYM44/Ci8RvOjmPM90/r0BiJ7mtHtAzV8N7+jHChflUQM3ZMl
+   3egfUC/G3lu8swaP2RorDYy3EwFlaYZvK6TwqRdSe/Oq9iTzHjrnNbEhH
+   mgPUCek0MzHgbrxSRKVG6DFMUUgWar06XwvdFlLShV2gdlzXhnqwb/GWK
+   L9NBImxxd+akJC/Jia6lE4zzy1dtsk0jI4TNuMOyY5hpP+Xv5dkBFSjUL
+   jz1DMt6H0r9nyg1XVKX+S3fbVYTG9JNlv+sgRFDiPJPn1TxFeGDdNi5oj
+   g==;
+X-CSE-ConnectionGUID: ibDvskkkReWo/MSP07Xwkw==
+X-CSE-MsgGUID: /NbPAI27RBe8+vAiZWgWag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61139391"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="61139391"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 11:11:47 -0700
+X-CSE-ConnectionGUID: SYiM7HY/RyymKO/bcCngbg==
+X-CSE-MsgGUID: JoNP3XxBQKiatP6zgF2zcQ==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 26 Sep 2025 11:11:42 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v2CuS-0006Ud-0o;
+	Fri, 26 Sep 2025 18:11:16 +0000
+Date: Sat, 27 Sep 2025 02:10:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+	lukas@wunner.de, Benjamin.Cheatham@amd.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, terry.bowman@amd.com
+Subject: Re: [PATCH v12 22/25] CXL/PCI: Export and rename merge_result() to
+ pci_ers_merge_result()
+Message-ID: <202509270131.UIdODBaV-lkp@intel.com>
+References: <20250925223440.3539069-23-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Johan Hovold <johan@kernel.org>, asahi@lists.linux.dev
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
- Sven Peter <sven@kernel.org>
-References: <20250926143132.6419-2-johan@kernel.org>
-Subject: Re: [PATCH 1/2] soc: apple: mailbox: fix device leak on lookup
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250926143132.6419-2-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WZ8kB1o/D1/0UFtoagz28tiEiEeNQi2zXY79gIdExpVZLRMhclx
- tvltvNdKGfw/8bmLyb6VRCsixvD3+uBn7Gqyt4QHC4pySbn44I2dxLSrDYEKNCWZH1zpxYD
- JVHT0u6YM9V8NYSpbSmmouTSlElwKquahn6YV2CVeChiIBjQ7WYOlc/WK5A0XEuRR1src0/
- VwTOUAxNG4U70mmdlvSGA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5Mum5dzn3L4=;BJKQFcqmAw2RfcwyXPvFMb74A1r
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925223440.3539069-23-terry.bowman@amd.com>
 
-> Make sure to drop the reference taken to the mbox platform device when
-> looking up its driver data.
-=E2=80=A6
+Hi Terry,
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
-1180
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/of.h#L138
+kernel test robot noticed the following build warnings:
 
-Regards,
-Markus
+[auto build test WARNING on 46037455cbb748c5e85071c95f2244e81986eb58]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Terry-Bowman/cxl-pci-Remove-unnecessary-CXL-Endpoint-handling-helper-functions/20250926-064816
+base:   46037455cbb748c5e85071c95f2244e81986eb58
+patch link:    https://lore.kernel.org/r/20250925223440.3539069-23-terry.bowman%40amd.com
+patch subject: [PATCH v12 22/25] CXL/PCI: Export and rename merge_result() to pci_ers_merge_result()
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20250927/202509270131.UIdODBaV-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250927/202509270131.UIdODBaV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509270131.UIdODBaV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> arch/powerpc/kernel/eeh_driver.c:68:28: warning: conflicting types for 'pci_ers_merge_result' due to enum/integer mismatch; have 'enum pci_ers_result(enum pci_ers_result,  enum pci_ers_result)' [-Wenum-int-mismatch]
+      68 | static enum pci_ers_result pci_ers_merge_result(enum pci_ers_result old,
+         |                            ^~~~~~~~~~~~~~~~~~~~
+   arch/powerpc/kernel/eeh_driver.c:68:28: error: static declaration of 'pci_ers_merge_result' follows non-static declaration
+   In file included from arch/powerpc/kernel/eeh_driver.c:13:
+   include/linux/pci.h:1897:18: note: previous declaration of 'pci_ers_merge_result' with type 'pci_ers_result_t(enum pci_ers_result,  enum pci_ers_result)' {aka 'unsigned int(enum pci_ers_result,  enum pci_ers_result)'}
+    1897 | pci_ers_result_t pci_ers_merge_result(enum pci_ers_result orig,
+         |                  ^~~~~~~~~~~~~~~~~~~~
+
+
+vim +68 arch/powerpc/kernel/eeh_driver.c
+
+20b344971433da Sam Bobroff 2018-05-25  67  
+30424e386a30d1 Sam Bobroff 2018-05-25 @68  static enum pci_ers_result pci_ers_merge_result(enum pci_ers_result old,
+30424e386a30d1 Sam Bobroff 2018-05-25  69  						enum pci_ers_result new)
+30424e386a30d1 Sam Bobroff 2018-05-25  70  {
+30424e386a30d1 Sam Bobroff 2018-05-25  71  	if (eeh_result_priority(new) > eeh_result_priority(old))
+30424e386a30d1 Sam Bobroff 2018-05-25  72  		return new;
+30424e386a30d1 Sam Bobroff 2018-05-25  73  	return old;
+30424e386a30d1 Sam Bobroff 2018-05-25  74  }
+30424e386a30d1 Sam Bobroff 2018-05-25  75  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
