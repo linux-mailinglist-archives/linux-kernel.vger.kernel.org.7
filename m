@@ -1,164 +1,117 @@
-Return-Path: <linux-kernel+bounces-833849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2297BA3368
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:46:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05474BA3371
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37F297A6A85
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C259E169DF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBE1291C1E;
-	Fri, 26 Sep 2025 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YNZESI5h"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBB829B8FE;
+	Fri, 26 Sep 2025 09:46:32 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED4D2C181
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155772C181;
+	Fri, 26 Sep 2025 09:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879985; cv=none; b=NPooC542lcWvWhuG3W9owUiJ1rWUlUauAP4SFN9vm944kmzFdUJlpO3+QJJT80B7gLVrrGtKIsQxFxrMiAWPxkBuVkBsHDujwXo930GyIZahlpJrUfG+uxvLHDOT21TZMb27TkMKY9wPAGSC8mge0eKzgsLDxTpxQDq1r6Xi0ME=
+	t=1758879992; cv=none; b=CzjEJf+D3I3asaFMImYs+/QgMcu9Lr324w3Z5GgHjnXvxPspN+SvXBBmAu7TQ5l84J3DzUH5PjseoRo9Ck6X/vtsSyApfuXyRHY1BdOkNeBbhX61bf/BXr2iv+bueJxj5YXaSMwgwzc3Li+tjo7k0XKSyIaWt4Tq9OMIFCzA48Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879985; c=relaxed/simple;
-	bh=hUMRS7DJvk7Xj1VzsmX84BYsYqaTZzC1ukrIfumPYIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qXQRwDZRpH2FCJzplx6Anmb6NN/xtz7iqLKQVGYL6NVJey+8kM/woT6bw3wUQYXfIaCdFVEuCka+X4X3Vzpvp/aSuP9LfK6NGpKJDrqcQWiIfD/Z+/Rw5i8KBiNrRhuZrYFKbAiFbjxsmi5pNYnpS1DMt/qtWJRJUArVBEQN1pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YNZESI5h; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c88514c3-e15f-4853-8acf-15e7b4b979f4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758879980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wL/DKY7lmmAFsSL3d0RvnMPd7olra+yxGHLjKGhoofY=;
-	b=YNZESI5h/jXNDiLLb7j86+j+TkXx1nKw543VaKtpr8w5CCCBn8PBOYUz9LE0gA3VqxAeTq
-	vk8gHrlHjKvE2h5y4LlVK9XHV23gdoSJUvecSr6p74DcXM6u9ckDN633ckuAjfmHnKaOOB
-	P/laAqnp0QFmiI8hpwCxa0nGYMdpMzQ=
-Date: Fri, 26 Sep 2025 10:46:15 +0100
+	s=arc-20240116; t=1758879992; c=relaxed/simple;
+	bh=7W08iLAB9tpqDqXOg5kUQRNRI02C9jkApAtavECG8Pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JNuP4bfafqiazFuBAjEjY+wjdBSp/Ua+nJNp3uQfahCo5WWfzpvjxDdgH1V7ahe7MpqsluULCYTSuF2KXFMvPnk3iDHuFu83n8EgBppo1+ev+uGcDEzvD92QqR37QNh35OIvk3bTx36/MwFmC42a3MJP0nmqGM1ZqGgzaZ0XgUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cY5Gy1q7cz2TT1M;
+	Fri, 26 Sep 2025 17:42:50 +0800 (CST)
+Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC5021402CC;
+	Fri, 26 Sep 2025 17:46:26 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
+ (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 26 Sep
+ 2025 17:46:26 +0800
+Message-ID: <4f5e0e2e-7754-4d29-9eba-c671f084fc45@hisilicon.com>
+Date: Fri, 26 Sep 2025 17:46:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-To: David Hildenbrand <david@redhat.com>, Dave Hansen
- <dave.hansen@intel.com>, "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "corbet@lwn.net" <corbet@lwn.net>, "maz@kernel.org" <maz@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "joey.gouly@arm.com" <joey.gouly@arm.com>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "luto@kernel.org" <luto@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "willy@infradead.org" <willy@infradead.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
- "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
- "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
- "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
- <mhocko@suse.com>, "song@kernel.org" <song@kernel.org>,
- "jolsa@kernel.org" <jolsa@kernel.org>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>,
- "yonghong.song@linux.dev" <yonghong.song@linux.dev>,
- "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
- "kpsingh@kernel.org" <kpsingh@kernel.org>, "sdf@fomichev.me"
- <sdf@fomichev.me>, "haoluo@google.com" <haoluo@google.com>,
- "jgg@ziepe.ca" <jgg@ziepe.ca>, "jhubbard@nvidia.com" <jhubbard@nvidia.com>,
- "peterx@redhat.com" <peterx@redhat.com>, "jannh@google.com"
- <jannh@google.com>, "pfalcato@suse.de" <pfalcato@suse.de>,
- "shuah@kernel.org" <shuah@kernel.org>, "seanjc@google.com"
- <seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
- "Thomson, Jack" <jackabt@amazon.co.uk>,
- "derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
- "tabba@google.com" <tabba@google.com>,
- "ackerleytng@google.com" <ackerleytng@google.com>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-3-roypat@amazon.co.uk>
- <e25867b6-ffc0-4c7c-9635-9b3f47b186ca@intel.com>
- <c1875a54-0c87-450f-9370-29e7ec4fea3d@redhat.com>
- <82bff1c4-987f-46cb-833c-bd99eaa46e7a@intel.com>
- <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Patrick Roy <patrick.roy@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] cpufreq: Make drivers using CPUFREQ_ETERNAL
+ specify transition latency
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM
+	<linux-pm@vger.kernel.org>
+CC: Shawn Guo <shawnguo@kernel.org>, Qais Yousef <qyousef@layalina.io>, LKML
+	<linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Prashanth Prakash <pprakash@codeaurora.org>, Pierre Gondois
+	<pierre.gondois@arm.com>, Mario Limonciello <mario.limonciello@amd.com>,
+	Linux ACPI <linux-acpi@vger.kernel.org>
+References: <8605612.T7Z3S40VBb@rafael.j.wysocki>
+ <2346363.iZASKD2KPV@rafael.j.wysocki>
 Content-Language: en-US
-In-Reply-To: <c79173d8-6f18-40fa-9621-e691990501e4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <2346363.iZASKD2KPV@rafael.j.wysocki>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemr500004.china.huawei.com (7.202.195.141)
 
 
 
-On Thu, 2025-09-25 at 21:13 +0100, David Hildenbrand wrote:
-> On 25.09.25 21:59, Dave Hansen wrote:
->> On 9/25/25 12:20, David Hildenbrand wrote:
->>> On 25.09.25 20:27, Dave Hansen wrote:
->>>> On 9/24/25 08:22, Roy, Patrick wrote:
->>>>> Add an option to not perform TLB flushes after direct map manipulations.
->>>>
->>>> I'd really prefer this be left out for now. It's a massive can of worms.
->>>> Let's agree on something that works and has well-defined behavior before
->>>> we go breaking it on purpose.
->>>
->>> May I ask what the big concern here is?
->>
->> It's not a _big_ concern. 
+On 9/25/2025 11:44 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Oh, I read "can of worms" and thought there is something seriously problematic :)
+> Commit a755d0e2d41b ("cpufreq: Honour transition_latency over
+> transition_delay_us") caused platforms where cpuinfo.transition_latency
+> is CPUFREQ_ETERNAL to get a very large transition latency whereas
+> previously it had been capped at 10 ms (and later at 2 ms).
 > 
->> I just think we want to start on something
->> like this as simple, secure, and deterministic as possible.
+> This led to a user-observable regression between 6.6 and 6.12 as
+> described by Shawn:
 > 
-> Yes, I agree. And it should be the default. Less secure would have to be opt-in and documented thoroughly.
-
-Yes, I am definitely happy to have the 100% secure behavior be the
-default, and the skipping of TLB flushes be an opt-in, with thorough
-documentation!
-
-But I would like to include the "skip tlb flushes" option as part of
-this patch series straight away, because as I was alluding to in the
-commit message, with TLB flushes this is not usable for Firecracker for
-performance reasons :(
-
->>
->> Let's say that with all the unmaps that load_unaligned_zeropad() faults
->> start to bite us. It'll take longer to find them if the TLB isn't flushed.
->>
->> Basically, it'll make the bad things happen sooner rather than later.
+> "The dbs sampling_rate was 10000 us on 6.6 and suddently becomes
+>  6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these platforms
+>  because the default transition delay was dropped [...].
 > 
-> Agreed.
+>  It slows down dbs governor's reacting to CPU loading change
+>  dramatically.  Also, as transition_delay_us is used by schedutil
+>  governor as rate_limit_us, it shows a negative impact on device
+>  idle power consumption, because the device gets slightly less time
+>  in the lowest OPP."
 > 
+> Evidently, the expectation of the drivers using CPUFREQ_ETERNAL as
+> cpuinfo.transition_latency was that it would be capped by the core,
+> but they may as well return a default transition latency value instead
+> of CPUFREQ_ETERNAL and the core need not do anything with it.
+> 
+> Accordingly, introduce CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS and make
+> all of the drivers in question use it instead of CPUFREQ_ETERNAL.
+> 
+> Fixes: a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
+> Closes: https://lore.kernel.org/linux-pm/20250922125929.453444-1-shawnguo2@yeah.net/
+> Reported-by: Shawn Guo <shawnguo@kernel.org>
+> Cc: 6.6+ <stable@vger.kernel.org> # 6.6+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks, we've seen similar issues.
 
-Best,
-Patrick
+Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt.c          |    2 +-
+>  drivers/cpufreq/imx6q-cpufreq.c       |    2 +-
+>  drivers/cpufreq/mediatek-cpufreq-hw.c |    2 +-
+>  drivers/cpufreq/scmi-cpufreq.c        |    2 +-
+>  drivers/cpufreq/scpi-cpufreq.c        |    2 +-
+>  drivers/cpufreq/spear-cpufreq.c       |    2 +-
+>  include/linux/cpufreq.h               |    3 +++
+>  7 files changed, 9 insertions(+), 6 deletions(-)
 
