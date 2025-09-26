@@ -1,171 +1,115 @@
-Return-Path: <linux-kernel+bounces-834492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB7DBA4CDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:02:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AC8BA4D94
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46198626486
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 381807BC299
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B853278156;
-	Fri, 26 Sep 2025 18:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3261630DEDF;
+	Fri, 26 Sep 2025 18:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjroutgB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZdUl9+Fj"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB4D230270;
-	Fri, 26 Sep 2025 18:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6729130DECC
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758909726; cv=none; b=D3xd+g27nr6yTauUjpswZm3dDLyfBE3DIsj8ztBJoZMx1XDGmLjtc80jxufH/xv215Vttvs7hXN6BdwSAXVs8ySMh4A2Zve9rK1FFG8rPeB6z/nzz2i3OWVWb5H1p5jWDCRBGjWL8ZcLaGIe42/QsxI9/lEUfaVpFMmq8PRyank=
+	t=1758910126; cv=none; b=ro0uHyRlrJRlJO7hQ2sTADOeZiXHLYQ9b9sNBOJ1OBEksjiJOFNz0zwhJ4ILDNfMjsxmn6cg6M5xaERTDY2mgJJCSVLnBOIRyXU+BnKdwNdS9FO33UvA6wY47wHtYzg0hahC+sxUQtsv9DLhnzEoZ6qXQZJM+8W/QdWGwlJ58+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758909726; c=relaxed/simple;
-	bh=Owx5RhQKmwytc4KFlTa7J1L5/ly/QxMLOTPwzCneccE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TvHxxPNsR3S4KRAMk0qkNeYKpUtRPFXkg8cPhcgCVgRwM8GzJdL+9R3Z3NWCb9v4uYOmS5k0Fzwbh2Et/vh+mouIpaQovQV5T3QKnQA3616h+qCuih31RcBrYo0cSUBd0xwc2QpXekWhJRdg+EuYArRQqfz25zBcrAIhP2wCNBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hjroutgB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB75C4CEF4;
-	Fri, 26 Sep 2025 18:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758909725;
-	bh=Owx5RhQKmwytc4KFlTa7J1L5/ly/QxMLOTPwzCneccE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hjroutgBh2yBKKPkXr6bDMpp4wX0pjxtZvMwF87B1mpY5D7oDFdb5znzWTISyn6Md
-	 /HbhJrgJ25j3nPmkHqbFFRoAaZ6PKdpHW/FpYO878TPRNEBb25/sSgx5xZu/pIGetF
-	 1PLuec0zmI5AN/IGEfcqw7EBnn6/rdX9h0gCzwmoxSgaGKnrF3aEHs5xMeFlJWE+8r
-	 RckWKZZ2KTaucoVg9YOeBVDWbauqfSdYinxH4RkiSI4PZVBHzxpC83+q8XuBK5osua
-	 wnj0KmQHCDnCHFWEYRbcucaMhwziK/h0YGa6fpulcJUB+PZJyAxmmLL2Gg1tyOkMUM
-	 xrrNPV6n6wyow==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1A547CE16D2; Fri, 26 Sep 2025 11:02:03 -0700 (PDT)
-Date: Fri, 26 Sep 2025 11:02:03 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: lirongqing <lirongqing@baidu.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, arnd@arndb.de,
-	feng.tang@linux.alibaba.com, joel.granados@kernel.org,
-	kees@kernel.org, rostedt@goodmis.org, pauld@redhat.com,
-	pawan.kumar.gupta@linux.intel.com, mhiramat@kernel.org,
-	dave.hansen@linux.intel.com, corbet@lwn.net,
-	akpm@linux-foundation.org, mingo@kernel.org
-Subject: Re: [PATCH] hung_task: Panic after fixed number of hung tasks
-Message-ID: <81514e1d-4a10-4466-8a87-2d4b0927195b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250925060605.2659-1-lirongqing@baidu.com>
- <8c4cd66c-9c3f-411a-82df-0130b78e889c@linux.dev>
+	s=arc-20240116; t=1758910126; c=relaxed/simple;
+	bh=/01OVbrqY1/2JAteziqVeUvPOBQ4C3qzeN/sBTR6IAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RdP6h9MppsZquCIYWeo3E7VRFK0Hi8vhb8AfD6rqQTWDqAph/Aoa2EDvXUb1slPVKhQ8EavdEBnhaOwh9D7BMFX62WAABb65W4nvf9CqnZyhKv60TKk55wWJPIdWDGU7AdByvfMe6OQNIxKKLt1XUTUUbK1s45bHrxe33OXvTAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZdUl9+Fj; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b2d116cd1cbso44094666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 11:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758910123; x=1759514923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YFxqmy1UOqhT8MvDvvyaobsR5WofMT3SRajdPJV5Ytw=;
+        b=ZdUl9+Fj0hOSYg465SYY4d7mCpFNSbBUFLPU9/dNAXipSI0yPS5BTuVzXZbdG3B7Tz
+         oYOWSWMWKLvB1WR5SMY2GrCHEW22fIJgOPXNsS+Lrvm1hXyjTEJOWiIFUXmAlRMN4XfK
+         XO4Al9+OdRc/DTJ01SmPxwe6yD6uMEzZPdO6CmNvw9AjAEcqeB3urDwWXygYjXhTH0bb
+         x8QWnRa/Mee+WkXGswpOJZj9BHOl21Ha+Nud0vKr0w/+lh5usbDEOXlUv+dmTPqYOhqI
+         xhayXzSr+cVtndtaZp/tQ4dKQ1JPw1NNd29x5lVG0gTHS9zsOj4MgwH9+lreIQxZba6/
+         x6Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758910123; x=1759514923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFxqmy1UOqhT8MvDvvyaobsR5WofMT3SRajdPJV5Ytw=;
+        b=FaKCf7lahY1tGue9u0xWOIgVqi3o0W0MpOSe0in6bfCYUPIjH9s1Lmb0bSvg5iuuvg
+         NegoBF5KWyYIgok0x9DxTRCM5K9kdoR+crKEsBW52gKr6QqQbcrmdfJahM8A9OSGnt8E
+         4Qb2/vQIuLlSR6wp/JuxffM0rOoEt8MFMToJpxyGxebOGMNetiqKw26B7LNgykglJGJ7
+         Z0EnhC4Q/UISriYiFZj9zphp13/Z8Fjp4OHh9oOMs7/3BPqj4IMjOHP2Cz2XqZvE4VnE
+         ZmHo6U6WjT4/gH1i4b3MwwqeHrOTV7DMP2WvANi8rmg7uL/JsVmHstgjBGlnfmVqh2Uc
+         I1nw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6/fEM7/v8RaxGrkwPUIYBJGhQXUcHcL+kqrevqZ3hO0TkgFgSeCOBQhNPyzDcQahOIq1UQqRCXHqm1QY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwlTqhz/qc2IdR51Pb7ki68wo1nNya1g+m0lWsjEa69GEM5yeK
+	B3N4nmTolOu9l5rySajnzDBWJfk3s+2gaOwFkWm1Gw1E9JfhCADL/Nng7Rdl2fzoYSThn49H/+W
+	Uq3b6
+X-Gm-Gg: ASbGnctGu61IcjJIMjOqiOXL1By0kxMF/x19j/V40KdUiJDpWBqMLZJHPBVhzv+gtwv
+	cmJdq/BQCsFgC2buzrnNkJGyNA8q8A9uZsQ44vdGkHaftRZhQDeUXtXrsu+R6D+D3gBer4luPfP
+	1VQ79DYiw8pMWeWKlb51Ud/Naqsx27vq/9KY5meX06O9R8Y7AFdH2eApSWjtQ/Pnepk1sZcVYzS
+	/TrzyM9AiAC1aEceVelfLyuYoSd0fw4iN1Sh/m9qS/9+dutDV7lPJZ1wKdRmhzmztdHxCXuWzyp
+	rsepQnuZ0Ky0yGkVbtLkxozZBn+hC49vKk53ddLBexzg5SCI7FjjG8TV0B6EWHSzRkjCXGKmPhl
+	Khgnhaje+j9WZFZm/1pXxe93VawhR1u0OQbYu8AtJU0K7szVdTUnompHn7FbDPJGEYCfTw1nyKN
+	lz6faie9Qe5bQitA==
+X-Google-Smtp-Source: AGHT+IECCGYm5Vs1ylzg+CUAIXLN487mRw25AeWzQh+/fZAD/kKYYlLp3EPvmnhb1C0Eel2LURocnQ==
+X-Received: by 2002:a17:907:c22:b0:afe:dbfb:b113 with SMTP id a640c23a62f3a-b34bf56bd7amr494455866b.10.1758910122622;
+        Fri, 26 Sep 2025 11:08:42 -0700 (PDT)
+Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b353efa494esm410272866b.25.2025.09.26.11.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 11:08:42 -0700 (PDT)
+From: Petr Tesarik <ptesarik@suse.com>
+To: "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	Petr Tesarik <ptesarik@suse.com>
+Subject: [PATCH v2 0/2] x86/tsx: Improve handling of the tsx= kernel parameter
+Date: Fri, 26 Sep 2025 20:01:00 +0200
+Message-ID: <cover.1758906115.git.ptesarik@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c4cd66c-9c3f-411a-82df-0130b78e889c@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 25, 2025 at 06:26:00PM +0800, Lance Yang wrote:
-> 
-> Thanks for the patch!
-> 
-> On 2025/9/25 14:06, lirongqing wrote:
-> > From: Li RongQing <lirongqing@baidu.com>
-> > 
-> > Currently, when hung_task_panic is enabled, kernel will panic immediately
-> > upon detecting the first hung task. However, some hung tasks are transient
-> > and the system can recover fully, while others are unrecoverable and
-> > trigger consecutive hung task reports, and a panic is expected.
-> 
-> The new hung_task_count_to_panic relies on an absolute count, but I
-> assume the real indicator you're trying to capture is the trend or
-> rate of increase over a time window (e.g., "panic if count increases
-> by 5 in 10 minutes").
-> 
-> IMHO, this kind of time-windowed, trend-based logic seems much more
-> flexible and better suited for a userspace monitoring agent :)
-> 
-> In other words, why is this the right place for this feature?
+Parse the tsx= kernel parameter with early_param(), so it is not
+reported as unknown.
 
-A possibly related question is "why are RCU CPU stall warnings implemented
-in the kernel instead of in userspace?"  One reason is that by the
-time that things get bad enough to trigger an RCU CPU stall warning,
-userspace might not be capable of doing much of anything.  Thus, there
-is an uncomfortably high probability that orchestrating RCU CPU stall
-warnings from userspace would cause these warnings to be lost entirely.
+Changes from v1:
+* make tsx_ctrl_state local to tsx.c
+* use early_param() instead of core_param()
 
-Similar reasoning might (or might not) apply to the hung-task mechanism.
+Petr Tesarik (2):
+  x86/tsx: Make tsx_ctrl_state static
+  x86/tsx: Get the tsx= command line parameter with early_param()
 
-							Thanx, Paul
+ arch/x86/kernel/cpu/cpu.h |  9 --------
+ arch/x86/kernel/cpu/tsx.c | 47 +++++++++++++++++++++++++--------------
+ 2 files changed, 30 insertions(+), 26 deletions(-)
 
-> Please sell it to us ;)
-> Lance
-> 
-> > 
-> > This commit adds a new sysctl parameter hung_task_count_to_panic to allows
-> > specifying the number of consecutive hung tasks that must be detected
-> > before triggering a kernel panic. This provides finer control for
-> > environments where transient hangs maybe happen but persistent hangs should
-> > still be fatal.
-> > 
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> >   Documentation/admin-guide/sysctl/kernel.rst |  6 ++++++
-> >   kernel/hung_task.c                          | 14 +++++++++++++-
-> >   2 files changed, 19 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> > index 8b49eab..4240e7b 100644
-> > --- a/Documentation/admin-guide/sysctl/kernel.rst
-> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> > @@ -405,6 +405,12 @@ This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
-> >   1 Panic immediately.
-> >   = =================================================
-> > +hung_task_count_to_panic
-> > +=====================
-> > +
-> > +When set to a non-zero value, after the number of consecutive hung task
-> > +occur, the kernel will triggers a panic
-> > +
-> >   hung_task_check_count
-> >   =====================
-> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> > index 8708a12..87a6421 100644
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -83,6 +83,8 @@ static unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
-> >   static unsigned int __read_mostly sysctl_hung_task_panic =
-> >   	IS_ENABLED(CONFIG_BOOTPARAM_HUNG_TASK_PANIC);
-> > +static unsigned int __read_mostly sysctl_hung_task_count_to_panic;
-> > +
-> >   static int
-> >   hung_task_panic(struct notifier_block *this, unsigned long event, void *ptr)
-> >   {
-> > @@ -219,7 +221,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
-> >   	trace_sched_process_hang(t);
-> > -	if (sysctl_hung_task_panic) {
-> > +	if (sysctl_hung_task_panic ||
-> > +	    (sysctl_hung_task_count_to_panic &&
-> > +	     (sysctl_hung_task_detect_count >= sysctl_hung_task_count_to_panic))) {
-> >   		console_verbose();
-> >   		hung_task_show_lock = true;
-> >   		hung_task_call_panic = true;
-> > @@ -388,6 +392,14 @@ static const struct ctl_table hung_task_sysctls[] = {
-> >   		.extra2		= SYSCTL_ONE,
-> >   	},
-> >   	{
-> > +		.procname	= "hung_task_count_to_panic",
-> > +		.data		= &sysctl_hung_task_count_to_panic,
-> > +		.maxlen		= sizeof(int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= proc_dointvec_minmax,
-> > +		.extra1		= SYSCTL_ZERO,
-> > +	},
-> > +	{
-> >   		.procname	= "hung_task_check_count",
-> >   		.data		= &sysctl_hung_task_check_count,
-> >   		.maxlen		= sizeof(int),
-> 
+-- 
+2.50.1
+
 
