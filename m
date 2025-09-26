@@ -1,89 +1,149 @@
-Return-Path: <linux-kernel+bounces-834035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F52BBA3A4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:38:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDFBBA3A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B1D6281D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FAEF561A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40EF2EB85A;
-	Fri, 26 Sep 2025 12:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571A32DFA27;
+	Fri, 26 Sep 2025 12:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="YfmUOBTz"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVixiPpB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FFE22DFA7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BDD18C02E;
+	Fri, 26 Sep 2025 12:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758890288; cv=none; b=Fjai5LmRZSxBmJu370hwkMpPmcVeApzhGC5rMSPyKHjqbmRo15B2yCOHXZczoSZL/VLZBE25y6bhdcxYrA1cmAW4+/ME7LKnF+xYbev+L+QEaqNKibn0nILh21pyZSVmj1rDtBGaKFRXy1j3aYWmc5VcQ5NRCoic/EnaMEFa3sY=
+	t=1758890343; cv=none; b=ADw/Ejqd0bV8AXvY8qBaIOpBIM/MIIKblS5rx4ggAbYmQKKXrWWEa0DRJ2KEWh5kg7ygXhmHeUaRvg9aYMSxnPQ534j/Gt6Ugw2XS97cTrgYgCHVyFopccpObbDosP+FCf5KcutRuUBX9zN6X600bb3EK15ohwqe7ucRSIb/xao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758890288; c=relaxed/simple;
-	bh=AAnczlQ3gVQd6lE65U4G+hnj0JnTGdQsfanTqPzSfB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2HD6Wu/3O47BgY/bZ82UmAgyTccBejmz0/QqZpRASNZrtEUJso8PGySr9Vs2k/hA5L41q01esLEt1Ho2IPrrMol738gG0qGZ/5naX9jLAirGgpX8R8LOKbwc8Y8oBj3RdBkx28A26kq34G6pRfyCZifPzs978QpRBjSbmdtaNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=YfmUOBTz; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58QCZaeS016272
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 08:35:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1758890138; bh=/3LBz4Tk1XyfFxRazsBT96DMKukaqcHxsrVMPrUyl4Q=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=YfmUOBTzLtwlSd6a07krllAKEyDNtRKXO+eYBjRh1F+VcGe4epIhB5xjfU4PAgDMt
-	 xWqgX2KAGvvxlBTvcsVEk8efsiKSGkdqqX6L0eO1f8lXbcbmg/ZfRduJ07WYgB3DV9
-	 BlvjscjHjboL3DPjl+3YYaVsG2pXzQzM8eOrXsNBLfuMZ+cdceyjbBLiXiL7nv5SsU
-	 6uGzd3AfZ9YkaPrqwwpxKT69ppqKreyBKhpWpORZ4GBjpf74QYWriZEA+APrT+eEJX
-	 +sTh3kFAHtKM0hSJdB9WXhCcDQSDgsI4STpQ7XjjofCwaNiG0hyLyRvoU6aGjkSqu5
-	 gUxScHjzgN0ww==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 676762E00D9; Fri, 26 Sep 2025 08:35:36 -0400 (EDT)
-Date: Fri, 26 Sep 2025 08:35:36 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH 2/2] fsmap: use blocksize units instead of cluster units
-Message-ID: <20250926123536.GA12175@mit.edu>
-References: <cover.1757058211.git.ojaswin@linux.ibm.com>
- <d332ed2f90a0c8533139741d25e7fc1935773e14.1757058211.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1758890343; c=relaxed/simple;
+	bh=0MvAdeRu8ksGrr28htzwNweMx63CR1lOx7DQzKb5P80=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=gNLpQNeQG9jTkfL44TpDfvdfnEdDnYk+AYA2RRT5ztBGOATzIIqhy/A7h9LY2Lo+1z3CFgSIsFyFIYZT2oONhziMWHrCDMkW4p2AhLz/Xs3w8sPCVDJbI+oYN+T65Rqmq7L4hp+ZpMTKqiR6D12k28Rd3DtWThV8bcuIqja27uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVixiPpB; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758890342; x=1790426342;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0MvAdeRu8ksGrr28htzwNweMx63CR1lOx7DQzKb5P80=;
+  b=TVixiPpBQdMpl32jLd7meETWh0eNgeup2GrbBYt5M22eh5ATvA83XLNR
+   /WYV/uRpLTCtXS2g93TSNkW7LMEyNjEDmZZU6Qlya6oweEf+YkVmgQdbI
+   bMOKLKjiQAPQOz0aPOPq7wh5kfOOUEfPwmLh4+gjpV/LUgFQo1oX7c2jl
+   MGhI7KFKAz8CYjaV2nQCUINMG7w2wYBZtBSw7rY5Auo30hKHPwj8TQ8hC
+   wehRqRBlM8U5HT4L53B6diNSvAJh9foo6MkixdYJLRq30PNY4dzLm6buV
+   yDVq7IVPLSV2o6Rr5+LpHOlutiNkORHpM9ZOM9NzhdswBuF8cnzSHEgM3
+   A==;
+X-CSE-ConnectionGUID: YRKvgAPpQ2uvvEJxT0/+lQ==
+X-CSE-MsgGUID: PiIcberCQEyTxxpBI3TwvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="61272552"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="61272552"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 05:39:01 -0700
+X-CSE-ConnectionGUID: liQcRqzsQj6fIBQGZy0Iig==
+X-CSE-MsgGUID: 9nGPIktPT7K/gDH7Red4hA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="182006816"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.23])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 05:38:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, Andy Shevchenko <andy@kernel.org>
+Date: Fri, 26 Sep 2025 15:35:52 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.17-5
+Message-ID: <pdx86-pr-20250926153552-300446329@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d332ed2f90a0c8533139741d25e7fc1935773e14.1757058211.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 05, 2025 at 01:44:47PM +0530, Ojaswin Mujoo wrote:
-> Currently, ext4's implementation of fsmap converts the ranges to cluster
-> units if bigalloc is enabled and then converts to block units whenever
-> needed. However, this back and forth conversion has known to cause
-> several edge case issues since even with bigalloc the metadata is still
-> in block size unit....
+Hi Linus,
 
-This commit causes ext4/028 to fail with a 1k blocksize.  The failure
-happens after just under 45 minutes; before this commit, ext4/028
-would complete after a second.
+Here is a platform-drivers-x86 fixes PR for v6.17.
 
-Do you have a preference regarding whether I just drop this commit, or
-drop the whole series?  The previous patch looks fine to me and fixes
-a real problem, so my plan is to keep the 1/2 commit and drop this
-one.
+Fixes and New HW Supoort
 
-Cheers,
+- amd/pmc: Use 8042 quirk for Stellaris Slim Gen6 AMD
 
-						- Ted
+- dell: Set USTT mode according to BIOS after reboot
+
+- dell-lis3lv02d: Add Latitude E6530
+
+- lg-laptop: Fix setting the fan mode
+
+Regards, i.
+
+
+The following changes since commit 225d1ee0f5ba3218d1814d36564fdb5f37b50474:
+
+  platform/x86: asus-wmi: Re-add extra keys to ignore_key_wlan quirk (2025-09-16 11:30:39 +0300)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.17-5
+
+for you to fetch changes up to 3ed17349f18774c24505b0c21dfbd3cc4f126518:
+
+  platform/x86: lg-laptop: Fix WMAB call in fan_mode_store() (2025-09-25 12:21:43 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.17-5
+
+Fixes and New HW Supoort
+
+- amd/pmc: Use 8042 quirk for Stellaris Slim Gen6 AMD
+
+- dell: Set USTT mode according to BIOS after reboot
+
+- dell-lis3lv02d: Add Latitude E6530
+
+- lg-laptop: Fix setting the fan mode
+
+The following is an automated shortlog grouped by driver:
+
+amd/pmc:
+ -  Add Stellaris Slim Gen6 AMD to spurious 8042 quirks list
+
+dell-lis3lv02d:
+ -  Add Latitude E6530
+
+dell:
+ -  Set USTT mode according to BIOS after reboot
+
+lg-laptop:
+ -  Fix WMAB call in fan_mode_store()
+
+----------------------------------------------------------------
+Christoffer Sandberg (1):
+      platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to spurious 8042 quirks list
+
+Daniel Lee (1):
+      platform/x86: lg-laptop: Fix WMAB call in fan_mode_store()
+
+Nickolay Goppen (1):
+      platform/x86: dell-lis3lv02d: Add Latitude E6530
+
+Shyam Sundar S K (1):
+      platform/x86/dell: Set USTT mode according to BIOS after reboot
+
+ Documentation/admin-guide/laptops/lg-laptop.rst |  4 +--
+ drivers/platform/x86/amd/pmc/pmc-quirks.c       |  7 +++++
+ drivers/platform/x86/dell/dell-lis3lv02d.c      |  1 +
+ drivers/platform/x86/dell/dell-pc.c             |  9 +++++++
+ drivers/platform/x86/lg-laptop.c                | 34 ++++++++++---------------
+ 5 files changed, 33 insertions(+), 22 deletions(-)
 
