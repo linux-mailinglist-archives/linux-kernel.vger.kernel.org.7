@@ -1,139 +1,259 @@
-Return-Path: <linux-kernel+bounces-834092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E692BA3D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539C3BA3D8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3301C05499
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D1474254A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0146F13D539;
-	Fri, 26 Sep 2025 13:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6938B2F656E;
+	Fri, 26 Sep 2025 13:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GgcilBPL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e0sqFLkx"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6DC28E9
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47EC2F60B6;
+	Fri, 26 Sep 2025 13:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892525; cv=none; b=PW0zydE6i22QM6cG4/Ny4sVH08peJs+c/VAUtfkznZR/aHnp7C9Z8iw0Gmq1hHFGM9ghAeY7nurGNk+bRgtc7t4zIIdinf+lONMsTQrA6vCGU7/G34PAu51QgDZui04LK2L3QYU82jo3B2e80cs3lW5TjrEghOLnxUD8CaEzXa8=
+	t=1758892556; cv=none; b=AHIL7ffWw/UzMOe9SjgRNP5vr8GD2k2jSz9Kw0FQJsSryihc3Y1XbXNNSdhJMVf0TKKKvWPpsnnIDgL2JjBWJLyNlAqT+Q61bhS6FAdHysccHSo+L0ltrBgYB4rkZfQxGLsrnHnt6BvH+6j5FybLfE9Dj4PXeM12OZ8F/4X0Z9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892525; c=relaxed/simple;
-	bh=JzOguCLcc9FgOCXLjHy3k9+Secjg1Vwq7ITLXqNYsPk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=e7ENMv+oNhXpWi7aolZ9wCSSwzuq/IiuPJPeVPdFU7JiiQ7RL1EsCOALSbI+rksPpXJ0OnKQhS0oQmXTTzHt+uPZQuSn9NhCGbGuraeAfgMdpuURZ1OK6HCyTVjnFm1qX9e0HNfVKN9wjX/QYwX/rLup43wdMRKb65FUBI9Pcs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GgcilBPL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758892521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W6gloL9plQf6RtxB5L806/XSaHmhkeCLtVCZieySzvw=;
-	b=GgcilBPLALLg+6tVnVFOmME89hcztavtd1tyymFdaiEylJ+3NQu4tSyDPWBwC2XL6XjE4o
-	TG0Nypg+m/114Isp+9E629mhw/iyHB7rmhgbbJKX5M/ldgSepiFBYHybOiK5mfUSMsFgnf
-	33lRDcGIyqWA6IlqYzw9GHaEaJbV8U4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-xh2UKwWkOFiVWnnXQzitUw-1; Fri, 26 Sep 2025 09:15:20 -0400
-X-MC-Unique: xh2UKwWkOFiVWnnXQzitUw-1
-X-Mimecast-MFC-AGG-ID: xh2UKwWkOFiVWnnXQzitUw_1758892518
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso1283845f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:15:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758892518; x=1759497318;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W6gloL9plQf6RtxB5L806/XSaHmhkeCLtVCZieySzvw=;
-        b=gmKHNeNNho7z56GHRaNOX8ZjMIc+FDJe71kvcEdzz4s3dST7tzg1Z1dbi0yLCooFCe
-         w3RQzhS/JTFPag+ua1wEQAqUZTvv7fc/7b9QnSAqgso9bZMSzmD8TZmeYiLF3GBu1vz0
-         f8WoY3Jsterbmrw9l5qSxBCpC+ZGej90PxxsvEQ8sIR9DM8lmn/iX/Ik4OE2aKK80F7L
-         hnhzl0/dvPkiHKlKPkRhrpASRVJIGQqq7MB04bzIHn4Qf8B4P07/9RSq/6vneGB1xIV6
-         HaEMafxk6Vt5NzpYmd9VbATcj7sL09JGgq+twuZFvKvZSlJ0BJSECTuXlD2zrTU6RTir
-         ODXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ5SLCxqYPmuLUIpc/ik89/WWiMQpCOES5TE/a4rXHuzNLINmiuDh+LzkOrUSmoUJUi2LyxPmA2Uf16Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi/upJQy3HPxU/+ueSnc/vVTGei2c1hbCL/Elc+v8svpcMXcS9
-	+6VtR51j4UuyPt5z6EUo5wUmOrosSdDGPIizYwkh2a7nqQdGhVPSgM0Yv8gxhjJKngd3Dx722PH
-	Qo9UI6OEAlukzKwEkL/V8T03c1Smfy0FR7SWu1tmErZWsrEklLAhKv4XtaELNfbP3WUikjBlcKg
-	==
-X-Gm-Gg: ASbGncsbgqj/ftiiV4QRNNCXSxJdYyu+b1QyqcKEPng5kXphwwMlA/cfnMYrSmotlaI
-	pu7TCGvI5k3g7ce9MiGgIcvj5uZLGrZ6EbKncvE8vvvryER1g5H/bsk2lSjbnj+VM75xeHpGZA7
-	YN7NX40eYMDQp9VAqxVdG0FLZbNd2+iMw7gHaQSS+pgnBuJQ/KEZYhdlsi8aFr8XoqvbjM1rX5J
-	tmQfkaFjELj7U4xLUw4VznjWF2Ns7+3qTKHyQAgfyBxNzUiQSxQsQ43PX0mVYlqEN9m6UwLuKyr
-	eN4SFuL2dIkc3/7wkc3OHE4M0DT2oa39xlaAaiS5mfCHlpYAT9sxLPDuoof0q9GqAQ==
-X-Received: by 2002:a05:6000:1acb:b0:3e3:24c3:6d71 with SMTP id ffacd0b85a97d-40e447772b6mr6450697f8f.1.1758892517664;
-        Fri, 26 Sep 2025 06:15:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgdQJaXU6qBeKy575PXxNR5wMjBV00QJq4HVM+OcRu1Z+hB4Jn+gkEnlY2TUSw3YCIQLZKVw==
-X-Received: by 2002:a05:6000:1acb:b0:3e3:24c3:6d71 with SMTP id ffacd0b85a97d-40e447772b6mr6450663f8f.1.1758892517117;
-        Fri, 26 Sep 2025 06:15:17 -0700 (PDT)
-Received: from localhost ([90.160.50.24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb89fb264sm7307121f8f.20.2025.09.26.06.15.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 06:15:15 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Iker Pedrosa <ikerpedrosam@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Iker
- Pedrosa <ikerpedrosam@gmail.com>
-Subject: Re: [PATCH v2 0/5] drm/solomon: Code improvements and DRM helper
- adoption
-In-Reply-To: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
-References: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
-Date: Fri, 26 Sep 2025 15:15:13 +0200
-Message-ID: <87zfah8ie6.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1758892556; c=relaxed/simple;
+	bh=uR7y+Uud4T3zE4XNetZ/rqGEDRGDvYymrj7Dcbsi+Bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UNKlIH/nilMGuKlJRf0e1Z2gqH3EeB6XUAcaIiivRUZGnZ3VLLdCB+UOLtJVjl2X/O0GdQaPvXQ8cmlwFBechTF47RH9kwADCusJlF8Fvib1uy8TtJ89cpmMvTiY+VU5SgQNFl25rNkecrpa3yTDDQnLpCS9iiyUjA3XvQK6wQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e0sqFLkx; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q776Kc029549;
+	Fri, 26 Sep 2025 13:15:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=GxwYV887bhAtP2V1Q1mrwuIyi4ZllWeV5OYTH7iA8
+	9U=; b=e0sqFLkxn2TGWc5W3y+mvgSDp3rIp5FTBaa79vsR4PFWAgSKYrcEMuo8j
+	j3UD1fKLQp14O86a5IZbXfgzvjR9s3vxIeyF/ZHHdTpb9Py+huTYh31Aw/NqzKiV
+	JZDooQhChJSgoy4Zo0mjNWHnBZW9BLPUegBhoNh0F3fgJzANdJrvhHJ7xfHMoRjO
+	yCPGzIt9c5VaZykHmV+OKQv2KrTcCIW7uwHQsHVhWC6GA+v1a65c0K7nIgCWLL7E
+	ORZq0/qyuwNeK8HyoM3bfcNtolkPtSiOb4keFIzsoUpgHIpKSOfR5wviiEwkw5Wt
+	o3CfZSAidn/AGEvukV0dxvCvP/n8w==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbb3vmq4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 13:15:46 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58QAGNVL025803;
+	Fri, 26 Sep 2025 13:15:45 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpv5nc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 13:15:45 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QDFfVQ25624920
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Sep 2025 13:15:41 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5BB422004D;
+	Fri, 26 Sep 2025 13:15:41 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3761B20043;
+	Fri, 26 Sep 2025 13:15:41 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 26 Sep 2025 13:15:41 +0000 (GMT)
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sumanth Korikkar <sumanthk@linux.ibm.com>
+Subject: [PATCH 0/4] Support dynamic (de)configuration of memory
+Date: Fri, 26 Sep 2025 15:15:23 +0200
+Message-ID: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfXxef9708wXX71
+ JajduGF3MoAWGFq2gnHthxOhalzc8WnU9S28cm98fiztZK75qP4+qfgMuXWlayhk0IlDX9A52fi
+ rNBPXHt7CzzIcu0TONWFmpRp4sw40zwekAdKlaqCAtQP7N1HYSoruqu1TXd5SBD+XinTK0fFsgM
+ b2Nayq8BjATzlZh9M2dDBut1+zXA4dY363D/EjCQ9Lhb3kf9NbURKlvUxT+GnhK+QHsnTIKuxIR
+ 0Fe2CVS7LeYFYXpwtjQPsMdF3nH3ezUyEwzft9FHAKew0Xpx4/kbwVPcW1xt9lqj8KdQuc1SbvU
+ Xqolu3knuxTC6DxUYJGuKCpqTmhFOTiqE1p7GqgPRJuCUMxIhV5grqNhVg8wXieKwE7AvSevWJQ
+ 9FOqKrUFcwV0/aoRjQAbMIt7MsYnwg==
+X-Proofpoint-GUID: jdJo1Lvmskf3bMY4Td5P14C-JR5f_Ad2
+X-Authority-Analysis: v=2.4 cv=T/qBjvKQ c=1 sm=1 tr=0 ts=68d69203 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
+ a=CfBYPdr6hCx0bjMEc4cA:9 a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
+X-Proofpoint-ORIG-GUID: jdJo1Lvmskf3bMY4Td5P14C-JR5f_Ad2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_03,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
 
-Iker Pedrosa <ikerpedrosam@gmail.com> writes:
+Hi,
 
-Hello Iker,
+Patchset provides a new interface for dynamic configuration and
+deconfiguration of hotplug memory on s390, allowing with/without
+memmap_on_memory support. It is a follow up on the discussion with David
+when introducing memmap_on_memory support for s390 and support dynamic
+(de)configuration of memory:
+https://lore.kernel.org/all/ee492da8-74b4-4a97-8b24-73e07257f01d@redhat.com/
+https://lore.kernel.org/all/20241202082732.3959803-1-sumanthk@linux.ibm.com/
 
-> This patch series improves the Solomon SSD130x DRM driver by adopting
-> existing DRM helpers, improving code clarity, and following kernel
-> coding standards.
->
-> * Patch #1 moves DRM GEM framebuffer CPU access calls to make critical
->   sections more visible and maintainable.
-> * Patch #2 replaces WARN_ON with drm_WARN_ON_ONCE to prevent log spam.
-> * Patch #3 adopts drm_crtc_helper_mode_valid_fixed() for mode
->   validation.
-> * Patch #4 adopts drm_connector_helper_get_modes_fixed() for mode
->   management.
-> * Patch #5 enforces one assignment per line per kernel coding style.
->
-> These improvements reduce code duplication by leveraging existing DRM
-> infrastructure and enhance code readability without changing
-> functionality.
->
-> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
-> ---
-> Changes in v2:
-> - Use a goto label to ensure drm_dev_exit() is called in the error path
->   of drm_gem_fb_begin_cpu_access().
-> - Link to v1: https://lore.kernel.org/r/20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com
->
+The original motivation for introducing memmap_on_memory on s390 was to
+avoid using online memory to store struct pages metadata, particularly
+for standby memory blocks. This became critical in cases where there was
+an imbalance between standby and online memory, potentially leading to
+boot failures due to insufficient memory for metadata allocation.
 
-Pushed to drm-misc (drm-misc-next). Thanks!
+To address this, memmap_on_memory was utilized on s390. However, in its
+current form, it adds struct pages metadata at the start of each memory
+block at the time of addition (only standby memory), and this
+configuration is static. It cannot be changed at runtime  (When the user
+needs continuous physical memory).
+
+Inorder to provide more flexibility to the user and overcome the above
+limitation, add an option to dynamically configure and deconfigure
+hotpluggable memory block with/without memmap_on_memory.
+
+With the new interface, s390 will not add all possible hotplug memory in
+advance, like before, to make it visible in sysfs for online/offline
+actions. Instead, before memory block can be set online, it has to be
+configured via a new interface in /sys/firmware/memory/memoryX/config,
+which makes s390 similar to others.  i.e. Adding of hotpluggable memory is
+controlled by the user instead of adding it at boottime.
+
+s390 kernel sysfs interface to configure/deconfigure memory with
+memmap_on_memory (with upcoming lsmem changes):
+    
+* Initial memory layout:
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x7fffffff   2G  online 0-15  yes        no
+0x80000000-0xffffffff   2G offline 16-31 no         yes
+
+* Configure memory
+echo 1 > /sys/firmware/memory/memory16/config
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x7fffffff    2G  online  0-15  yes        no
+0x80000000-0x87ffffff  128M offline    16  yes        yes
+0x88000000-0xffffffff  1.9G offline 17-31  no         yes
+
+* Deconfigure memory
+echo 0 > /sys/firmware/memory/memory16/config
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                 SIZE   STATE BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x7fffffff   2G  online 0-15  yes        no
+0x80000000-0xffffffff   2G offline 16-31 no         yes
+
+* Enable memmap_on_memory and online it.
+(Deconfigure first)
+echo 0 > /sys/devices/system/memory/memory5/online
+echo 0 > /sys/firmware/memory/memory5/config
+
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x27ffffff  640M  online 0-4   yes        no
+0x28000000-0x2fffffff  128M offline 5     no         no
+0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
+0x80000000-0xffffffff    2G offline 16-31 no         yes
+
+(Enable memmap_on_memory and online it)
+echo 1 > /sys/firmware/memory/memory5/memmap_on_memory
+echo 1 > /sys/firmware/memory/memory5/config
+echo 1 > /sys/devices/system/memory/memory5/online
+
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x27ffffff  640M  online  0-4   yes        no
+0x28000000-0x2fffffff  128M  online  5     yes        yes
+0x30000000-0x7fffffff  1.3G  online  6-15  yes        no
+0x80000000-0xffffffff    2G  offline 16-31 no         yes
+
+* Disable memmap_on_memory and online it.
+(Deconfigure first)
+echo 0 > /sys/devices/system/memory/memory5/online
+echo 0 > /sys/firmware/memory/memory5/config
+
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                  SIZE  STATE  BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x27ffffff  640M  online 0-4   yes        no
+0x28000000-0x2fffffff  128M offline 5     no         yes
+0x30000000-0x7fffffff  1.3G  online 6-15  yes        no
+0x80000000-0xffffffff    2G offline 16-31 no         yes
+
+(Disable memmap_on_memory and online it)
+echo 0 > /sys/firmware/memory/memory5/memmap_on_memory
+echo 1 > /sys/firmware/memory/memory5/config
+echo 1 > /sys/devices/system/memory/memory5/online
+
+lsmem -o RANGE,SIZE,STATE,BLOCK,CONFIGURED,MEMMAP_ON_MEMORY
+RANGE                  SIZE  STATE   BLOCK CONFIGURED MEMMAP_ON_MEMORY
+0x00000000-0x7fffffff  2G    online  0-15  yes        no
+0x80000000-0xffffffff  2G    offline 16-31 no         yes
+
+* Userspace changes:
+lsmem/chmem tool is also changed to use the new interface. I will send
+it to util-linux soon.
+
+Patch 1 adds support for removal of boot-allocated memory blocks.
+
+Patch 2 provides option to dynamically configure and deconfigure memory
+with/without memmap_on_memory.
+
+Patch 3 removes MHP_OFFLINE_INACCESSIBLE from s390. The mhp flag was
+used to mark memory as not accessible until memory hotplug online phase
+begins.  However, with patch 2, it is no longer essential. Memory can be
+brought to accessible state before adding memory, as the memory is added
+during runttime now instead of boottime.
+
+Patch 4 removes the MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers. It
+is no longer needed.  Memory can be brought to accessible state before
+adding memory now, with runtime (de)configuration of memory.
+
+Note: The patches apply to the linux-next branch.
+
+Thank you
+
+Sumanth Korikkar (4):
+  s390/mm: Support removal of boot-allocated virtual memory map
+  s390/sclp: Add support for dynamic (de)configuration of memory
+  s390/sclp: Remove MHP_OFFLINE_INACCESSIBLE
+  mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE
+    notifiers
+
+ arch/s390/mm/pgalloc.c         |   2 +
+ arch/s390/mm/vmem.c            |  21 ++-
+ drivers/base/memory.c          |  23 +--
+ drivers/s390/char/sclp_mem.c   | 291 +++++++++++++++++++++++++++------
+ include/linux/memory.h         |   9 -
+ include/linux/memory_hotplug.h |  18 +-
+ include/linux/memremap.h       |   1 -
+ mm/memory_hotplug.c            |  17 +-
+ mm/sparse.c                    |   3 +-
+ 9 files changed, 261 insertions(+), 124 deletions(-)
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.48.1
 
 
