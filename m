@@ -1,408 +1,345 @@
-Return-Path: <linux-kernel+bounces-834276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9CEBA4526
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:00:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1DCBA4529
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AED2327E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3043A1C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3239D1E832A;
-	Fri, 26 Sep 2025 14:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5FD1F419A;
+	Fri, 26 Sep 2025 14:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DdugRzsm"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgWC0AMz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA9C38DE1
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BEA1E7C2E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898794; cv=none; b=BkbvDIJWyDSScOCdQqpv15FU49kSuJ7suEN/MwEIVBOyKb/wRNlNNZU+333EPxvjLtX9H/Z/yb7tnlIa47FwyIAdNCE9lyahyVAHN9xrm9hE/9BeDezCd9n7wCKrR54SxWw3ixc8Y2dpQ3dJgEm/Hk6rJnb9Zy5hXPc/36vATcg=
+	t=1758898797; cv=none; b=WjVnQjEgBPy0cvfkKxTfaWQPhMNdK9NvV1NTUVwTinAlpbdChykAoePNHzNbp9kLc2j4wtcBCEac/+MWrAsEs0hw/NnimFadQ+Xgy0Ur8kerel9mBNLg3SP7/GB2Y0g1E+5FBhnYjSLmPqPOiuVpVZpHw6sZEzgZc7UazCsm4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898794; c=relaxed/simple;
-	bh=rVNVLXd5g8yysVZ+gKUftRVCgbgGEVo0fdbomwGGYb0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UjD62uIQPCO0G0teQv2Xdz+F241fLT82IQkbrTgblwuAiaHoYayIspA0cMReNBpGYWgdjA29nrcUApSxxk82bGUfYlUdX2AFBqYfvXwlJJwXeixak03Mx4aCYsD3nPALEvRO2M4BBsf+n6R4bcQ9jWvmHP6UfnVgLYwThUQ7KYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DdugRzsm; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 990E54E40DFE;
-	Fri, 26 Sep 2025 14:59:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 6A824606B5;
-	Fri, 26 Sep 2025 14:59:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5BFC6102F193B;
-	Fri, 26 Sep 2025 16:59:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758898788; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=8CsfXJ96vvuHTwghIJVgoKGQ8FN5YoZW9uDWIPZGU7k=;
-	b=DdugRzsmwSQH5OwGjinoq83eM1eHQ9VWovuz2TUnWXmLW5eSne/GMliFBRr2I50JBor7h2
-	PK+WrAxMPejNfXaVL28YjximFZGp0A6B5zmLebvBVQr6/6CMXF7vcf/5GbLRKTGrtqS/J0
-	27ziEzHavPNG1ZqgOTFUdlHbWpBpsHB8DbiOqkYTI0YFIjgaRmEEPTGzJ5PcQ0pl6UGq6p
-	s68QHWOU1mJE3z/gvc9wMQSZhpFu0jlz+UGxmX39qXGpbxpMrApmOgvI/bYT6I0PGOYYNg
-	oIL45c/E2uL1giN7JA/tsePiTGnwVuEfjecBcnqPrVg6vKqvSlCiXaHQ3BdI7Q==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 26 Sep 2025 16:59:40 +0200
-Subject: [PATCH v2] drm/display: bridge_connector: get/put the stored
- bridges
+	s=arc-20240116; t=1758898797; c=relaxed/simple;
+	bh=KI7kp6WM2WzZ9+hspxmsiOeR2W34s6buSt0JdUpZ46g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVekW6MrZuNuX+VxSYQmSD4rO6wjZacpz+njCwokEM5/vATqsBYzV+e1in+kVvJMHmbyFJBnXyrC+U9TjLYUnflKTffNslqhaxuxu1CXweE1DjDSYYYpi6qtVJb5/5f61EZjXsrvXpPA7mUym1A/ISUBwcDRBr1p6JCbFzpgbEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgWC0AMz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758898794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6I7dZDs73n8U+ResplTjCjySoUe7cbKd7TavFeUOHrU=;
+	b=CgWC0AMzb/DNa/YvP2r6Mr36SsAyujoMYukq81E+NbIPswiUGH80h1072h76bSJPGutQdG
+	V4ccge+tGqITrxggInasC96B38sppnBFkDbd7B6pi/YCk7w2NVlAejAL/l7+fUwS2HT/Gb
+	jZONHwt53j7suNDnPkncSSRzxFhKISs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-508-NT4HDMYFPLaMUJM_97zK1g-1; Fri, 26 Sep 2025 10:59:53 -0400
+X-MC-Unique: NT4HDMYFPLaMUJM_97zK1g-1
+X-Mimecast-MFC-AGG-ID: NT4HDMYFPLaMUJM_97zK1g_1758898792
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3f030846a41so1516518f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:59:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758898792; x=1759503592;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6I7dZDs73n8U+ResplTjCjySoUe7cbKd7TavFeUOHrU=;
+        b=s9Tubzl00qr3yu6Jd2GSxT+ANDMJCHU35KJgHVa8YwUkRheeIbq3Yg7q6xXcrrxC4D
+         +2CoRE3mSMfR4LenxvKZdKJqjZy1tn/Fx9Sh3fc0/yJzB623GUx01ZVPPPDNG7/fjU5P
+         NcLPow7XzijcCMK4vsRj0MbAZcCBlus6aTOif20wVGVph/fjRD3SCFkumR6vmswl623X
+         LTWv8MXLC5f0CG1TkGI/sf+zqbOS1BlntkZck+a2J/ROqVx/PKMuCVmVW7Ypcf6J0mGv
+         HTWYC4VyffbYL1f2/9SQSvKsZii50A1tidhJ+70eTAB7R2vjWv8CoT+zWrdWQ5mjZIE2
+         CI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcerUiQW4WHRMD1iVGtfhiZZVLFpsw4bGWVLwd5FHnPgO3NbJFEvUazyPyFFZf0lGmUgeaOZRtExFFSVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrWm3fiSKX5eTs4jwVKBKadxRUFWtLBg9qE63tthFI4Su90hIH
+	IohRvv7LXsEmxjKRaVmn6yKSEFH5FgfQGNc+UF3rHy6LlD04R7ysTLEHuLc7naChieGdPSZHMX9
+	Ob5NCFKKZKxpeSaXjJ286kL9lRJBxv934SrbsyUbbGkvznNOG9MSXI6P5A5eZKUWPcg==
+X-Gm-Gg: ASbGncuMr/xahpzIrIceFUA2ooKNFE4lw5T+lVywoG2JC1OnKz2JekO4HYzTUa/MCxR
+	NCU2nsP9iri/DC1y+3M5IyG4TT3MVzrNounUGj8WK2wZyoaDk/HB4K6td1Aoi+aOTFlxSkJGfdF
+	3xCgyLQXYQTqoLzs3tMQr/zL1C8KRqOydw+gmcVbQsfsJH7qFEZp2dCS1XVjCoPisJ848TA0/pm
+	TBhY7b/1m3VZFfTbMhB1Ld/KRXCPLiUn6vps/oUDLvX/2p3dpt/OUuVXQDf24BWsh3VrjJ8vkPT
+	g6moUCIYPbjwyIL6h+P708donRfu2YjYoqo=
+X-Received: by 2002:a05:6000:25c3:b0:3ec:6259:5096 with SMTP id ffacd0b85a97d-40e45b8770fmr6452396f8f.21.1758898791565;
+        Fri, 26 Sep 2025 07:59:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKbeikSLSfJK1LRxBBJjYur1fJkipbe+xVUW/caJ5fRdhGYcv5hRM+HYX2542boZmkN/QnQA==
+X-Received: by 2002:a05:6000:25c3:b0:3ec:6259:5096 with SMTP id ffacd0b85a97d-40e45b8770fmr6452358f8f.21.1758898790914;
+        Fri, 26 Sep 2025 07:59:50 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-410f2007372sm6491991f8f.16.2025.09.26.07.59.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 07:59:50 -0700 (PDT)
+Date: Fri, 26 Sep 2025 10:59:47 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org,
+	Maxime Coquelin <mcoqueli@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>,
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>,
+	jasowang@redhat.com
+Subject: Re: [PATCH v5 3/6] vduse: add vq group support
+Message-ID: <20250926105938-mutt-send-email-mst@kernel.org>
+References: <20250926101432.2251301-1-eperezma@redhat.com>
+ <20250926101432.2251301-4-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAFuq1mgC/52NQQ6DIBREr2JYlwZQtO2q92hc6OejP1EwQE0b4
- 91LTXqBLt/MZN7GIgbCyG7FxgKuFMm7DOpUMBg7NyAnk5kpobS4Ks1NmHkfyOSmmyYPfMC0PNM
- vA+8cQvKBa13biwFZdbZi+W4JaOl1qB5t5pFinr0P8yq/6R+SVXLBrWjKGiU0JeK99z5N5M7gZ
- 9bu+/4BGi+UgeIAAAA=
-X-Change-ID: 20250925-drm-bridge-alloc-getput-bridge-connector-556f8dc14af4
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20250926101432.2251301-4-eperezma@redhat.com>
 
-drm_bridge_connector_init() takes eight pointers to various bridges, some
-of which can be identical, and stores them in pointers inside struct
-drm_bridge_connector. Get a reference to each of the taken bridges and put
-it on cleanup.
+On Fri, Sep 26, 2025 at 12:14:29PM +0200, Eugenio P�rez wrote:
+> This allows sepparate the different virtqueues in groups that shares the
 
-This is tricky because the pointers are currently stored directly in the
-drm_bridge_connector in the loop, but there is no nice and clean way to put
-those pointers on error return paths. To overcome this, store all pointers
-in temporary local variables with a cleanup action, and only on success
-copy them into struct drm_bridge_connector (getting another ref while
-copying).
+separate
 
-Additionally four of these pointers (edid, hpd, detect and modes) can be
-written in multiple loop iterations, in order to eventually store the last
-matching bridge. However, when one of those pointers is overwritten, we
-need to put the reference that we got during the previous assignment. Add a
-drm_bridge_put() before writing them to handle this.
-
-Finally, there is also a function-local panel_bridge pointer taken inside
-the loop and used after the loop. Use a cleanup action as well to ensure it
-is put on return.
-
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
-This series ensures the bridge-connector gets a reference to bridges when
-storing a pointer to them, and releases them afterwards.
-
-This is part of the work towards removal of bridges from a still existing
-DRM pipeline without use-after-free. The grand plan was discussed in [1].
-Here's the work breakdown (➜ marks the current series):
-
- 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
-    (based on devm_drm_bridge_alloc() [0])
-    A. ✔ add new alloc API and refcounting (v6.16)
-    B. ✔ convert all bridge drivers to new API (v6.17)
-    C. ✔ kunit tests (v6.17)
-    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
-         and warn on old allocation pattern (v6.17)
-    E. … add get/put on drm_bridge accessors
-       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
-            (drm-misc-next)
-       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
-       3. ✔ drm_bridge_get_next_bridge() (drm-misc-next)
-       4. ✔ drm_for_each_bridge_in_chain() (drm-misc-next)
-       5. ➜ drm_bridge_connector_init
-       6. protect encoder bridge chain with a mutex
-       7. of_drm_find_bridge
-       8. drm_of_find_panel_or_bridge, *_of_get_bridge
-    F. ➜ debugfs improvements
-       1. ✔ add top-level 'bridges' file (v6.16)
-       2. ✔ show refcount and list removed bridges (drm-misc-next)
- 2. … handle gracefully atomic updates during bridge removal
- 3. … DSI host-device driver interaction
- 4. removing the need for the "always-disconnected" connector
- 5. finish the hotplug bridge work, moving code to the core and potentially
-    removing the hotplug-bridge itself (this needs to be clarified as
-    points 1-3 are developed)
-
-This was tricky both because there is no central place in
-drm_bridge_connector.c to put the references on disposal (handled by patch
-1) and because of the complex code flow of drm_bridge_connector_init()
-(handled by patch 2).
----
-Changes in v2:
-- Use drmm_add_action() instead of hacking the .destroy connector func
-- Removed patch 1 (where the hacking the .destroy connector func was)
-- Link to v1: https://lore.kernel.org/r/20250925-drm-bridge-alloc-getput-bridge-connector-v1-0-f0736e1c73ee@bootlin.com
----
- drivers/gpu/drm/display/drm_bridge_connector.c | 114 +++++++++++++++++--------
- 1 file changed, 78 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index a5bdd6c1064399ece6b19560f145b877c9e0680e..7b18be3ff9a32b362468351835bdab43c3f524f1 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -618,6 +618,20 @@ static const struct drm_connector_hdmi_cec_funcs drm_bridge_connector_hdmi_cec_f
-  * Bridge Connector Initialisation
-  */
- 
-+static void drm_bridge_connector_put_bridges(struct drm_device *dev, void *data)
-+{
-+	struct drm_bridge_connector *bridge_connector = (struct drm_bridge_connector *)data;
-+
-+	drm_bridge_put(bridge_connector->bridge_edid);
-+	drm_bridge_put(bridge_connector->bridge_hpd);
-+	drm_bridge_put(bridge_connector->bridge_detect);
-+	drm_bridge_put(bridge_connector->bridge_modes);
-+	drm_bridge_put(bridge_connector->bridge_hdmi);
-+	drm_bridge_put(bridge_connector->bridge_hdmi_audio);
-+	drm_bridge_put(bridge_connector->bridge_dp_audio);
-+	drm_bridge_put(bridge_connector->bridge_hdmi_cec);
-+}
-+
- /**
-  * drm_bridge_connector_init - Initialise a connector for a chain of bridges
-  * @drm: the DRM device
-@@ -638,7 +652,15 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	struct drm_bridge_connector *bridge_connector;
- 	struct drm_connector *connector;
- 	struct i2c_adapter *ddc = NULL;
--	struct drm_bridge *panel_bridge = NULL;
-+	struct drm_bridge *panel_bridge      __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_edid       __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hpd        __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_detect     __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_modes      __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi       __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi_audio __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_dp_audio   __free(drm_bridge_put) = NULL;
-+	struct drm_bridge *bridge_hdmi_cec   __free(drm_bridge_put) = NULL;
- 	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
- 	unsigned int max_bpc = 8;
- 	bool support_hdcp = false;
-@@ -649,6 +671,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	if (!bridge_connector)
- 		return ERR_PTR(-ENOMEM);
- 
-+	ret = drmm_add_action(drm, drm_bridge_connector_put_bridges, bridge_connector);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	bridge_connector->encoder = encoder;
- 
- 	/*
-@@ -672,22 +698,30 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		if (!bridge->ycbcr_420_allowed)
- 			connector->ycbcr_420_allowed = false;
- 
--		if (bridge->ops & DRM_BRIDGE_OP_EDID)
--			bridge_connector->bridge_edid = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_HPD)
--			bridge_connector->bridge_hpd = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_DETECT)
--			bridge_connector->bridge_detect = bridge;
--		if (bridge->ops & DRM_BRIDGE_OP_MODES)
--			bridge_connector->bridge_modes = bridge;
-+		if (bridge->ops & DRM_BRIDGE_OP_EDID) {
-+			drm_bridge_put(bridge_edid);
-+			bridge_edid = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_HPD) {
-+			drm_bridge_put(bridge_hpd);
-+			bridge_hpd = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_DETECT) {
-+			drm_bridge_put(bridge_detect);
-+			bridge_detect = drm_bridge_get(bridge);
-+		}
-+		if (bridge->ops & DRM_BRIDGE_OP_MODES) {
-+			drm_bridge_put(bridge_modes);
-+			bridge_modes = drm_bridge_get(bridge);
-+		}
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
--			if (bridge_connector->bridge_hdmi)
-+			if (bridge_hdmi)
- 				return ERR_PTR(-EBUSY);
- 			if (!bridge->funcs->hdmi_write_infoframe ||
- 			    !bridge->funcs->hdmi_clear_infoframe)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_hdmi = bridge;
-+			bridge_hdmi = drm_bridge_get(bridge);
- 
- 			if (bridge->supported_formats)
- 				supported_formats = bridge->supported_formats;
-@@ -696,10 +730,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_AUDIO) {
--			if (bridge_connector->bridge_hdmi_audio)
-+			if (bridge_hdmi_audio)
- 				return ERR_PTR(-EBUSY);
- 
--			if (bridge_connector->bridge_dp_audio)
-+			if (bridge_dp_audio)
- 				return ERR_PTR(-EBUSY);
- 
- 			if (!bridge->hdmi_audio_max_i2s_playback_channels &&
-@@ -710,14 +744,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			    !bridge->funcs->hdmi_audio_shutdown)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_hdmi_audio = bridge;
-+			bridge_hdmi_audio = drm_bridge_get(bridge);
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_DP_AUDIO) {
--			if (bridge_connector->bridge_dp_audio)
-+			if (bridge_dp_audio)
- 				return ERR_PTR(-EBUSY);
- 
--			if (bridge_connector->bridge_hdmi_audio)
-+			if (bridge_hdmi_audio)
- 				return ERR_PTR(-EBUSY);
- 
- 			if (!bridge->hdmi_audio_max_i2s_playback_channels &&
-@@ -728,7 +762,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			    !bridge->funcs->dp_audio_shutdown)
- 				return ERR_PTR(-EINVAL);
- 
--			bridge_connector->bridge_dp_audio = bridge;
-+			bridge_dp_audio = drm_bridge_get(bridge);
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
-@@ -739,10 +773,10 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		}
- 
- 		if (bridge->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
--			if (bridge_connector->bridge_hdmi_cec)
-+			if (bridge_hdmi_cec)
- 				return ERR_PTR(-EBUSY);
- 
--			bridge_connector->bridge_hdmi_cec = bridge;
-+			bridge_hdmi_cec = drm_bridge_get(bridge);
- 
- 			if (!bridge->funcs->hdmi_cec_enable ||
- 			    !bridge->funcs->hdmi_cec_log_addr ||
-@@ -762,7 +796,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			ddc = bridge->ddc;
- 
- 		if (drm_bridge_is_panel(bridge))
--			panel_bridge = bridge;
-+			panel_bridge = drm_bridge_get(bridge);
- 
- 		if (bridge->support_hdcp)
- 			support_hdcp = true;
-@@ -771,13 +805,13 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
- 		return ERR_PTR(-EINVAL);
- 
--	if (bridge_connector->bridge_hdmi) {
-+	if (bridge_hdmi) {
- 		if (!connector->ycbcr_420_allowed)
- 			supported_formats &= ~BIT(HDMI_COLORSPACE_YUV420);
- 
- 		ret = drmm_connector_hdmi_init(drm, connector,
--					       bridge_connector->bridge_hdmi->vendor,
--					       bridge_connector->bridge_hdmi->product,
-+					       bridge_hdmi->vendor,
-+					       bridge_hdmi->product,
- 					       &drm_bridge_connector_funcs,
- 					       &drm_bridge_connector_hdmi_funcs,
- 					       connector_type, ddc,
-@@ -793,15 +827,14 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_audio ||
--	    bridge_connector->bridge_dp_audio) {
-+	if (bridge_hdmi_audio || bridge_dp_audio) {
- 		struct device *dev;
- 		struct drm_bridge *bridge;
- 
--		if (bridge_connector->bridge_hdmi_audio)
--			bridge = bridge_connector->bridge_hdmi_audio;
-+		if (bridge_hdmi_audio)
-+			bridge = bridge_hdmi_audio;
- 		else
--			bridge = bridge_connector->bridge_dp_audio;
-+			bridge = bridge_dp_audio;
- 
- 		dev = bridge->hdmi_audio_dev;
- 
-@@ -815,9 +848,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_cec &&
--	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
--		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
-+	if (bridge_hdmi_cec &&
-+	    bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
-+		struct drm_bridge *bridge = bridge_hdmi_cec;
- 
- 		ret = drmm_connector_hdmi_cec_notifier_register(connector,
- 								NULL,
-@@ -826,9 +859,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			return ERR_PTR(ret);
- 	}
- 
--	if (bridge_connector->bridge_hdmi_cec &&
--	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
--		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
-+	if (bridge_hdmi_cec &&
-+	    bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
-+		struct drm_bridge *bridge = bridge_hdmi_cec;
- 
- 		ret = drmm_connector_hdmi_cec_register(connector,
- 						       &drm_bridge_connector_hdmi_cec_funcs,
-@@ -841,9 +874,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 
- 	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
- 
--	if (bridge_connector->bridge_hpd)
-+	if (bridge_hpd)
- 		connector->polled = DRM_CONNECTOR_POLL_HPD;
--	else if (bridge_connector->bridge_detect)
-+	else if (bridge_detect)
- 		connector->polled = DRM_CONNECTOR_POLL_CONNECT
- 				  | DRM_CONNECTOR_POLL_DISCONNECT;
- 
-@@ -854,6 +887,15 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	    IS_ENABLED(CONFIG_DRM_DISPLAY_HDCP_HELPER))
- 		drm_connector_attach_content_protection_property(connector, true);
- 
-+	bridge_connector->bridge_edid       = drm_bridge_get(bridge_edid);
-+	bridge_connector->bridge_hpd        = drm_bridge_get(bridge_hpd);
-+	bridge_connector->bridge_detect     = drm_bridge_get(bridge_detect);
-+	bridge_connector->bridge_modes      = drm_bridge_get(bridge_modes);
-+	bridge_connector->bridge_hdmi       = drm_bridge_get(bridge_hdmi);
-+	bridge_connector->bridge_hdmi_audio = drm_bridge_get(bridge_hdmi_audio);
-+	bridge_connector->bridge_dp_audio   = drm_bridge_get(bridge_dp_audio);
-+	bridge_connector->bridge_hdmi_cec   = drm_bridge_get(bridge_hdmi_cec);
-+
- 	return connector;
- }
- EXPORT_SYMBOL_GPL(drm_bridge_connector_init);
-
----
-base-commit: 063db451832b8849faf1b0b8404b3a6a39995b29
-change-id: 20250925-drm-bridge-alloc-getput-bridge-connector-556f8dc14af4
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+> same address space.  Asking the VDUSE device for the groups of the vq at
+> the beginning as they're needed for the DMA API.
+> 
+> Allocating 3 vq groups as net is the device that need the most groups:
+> * Dataplane (guest passthrough)
+> * CVQ
+> * Shadowed vrings.
+> 
+> Future versions of the series can include dynamic allocation of the
+> groups array so VDUSE can declare more groups.
+> 
+> Signed-off-by: Eugenio P�rez <eperezma@redhat.com>
+> ---
+> v5:
+> * Revert core vdpa changes (Jason).
+> * Fix group == ngroup case in checking VQ_SETUP argument (Jason).
+> 
+> v4:
+> * Revert the "invalid vq group" concept and assume 0 if not set (Jason).
+> * Make config->ngroups == 0 invalid (Jason).
+> 
+> v3:
+> * Make the default group an invalid group as long as VDUSE device does
+>   not set it to some valid u32 value.  Modify the vdpa core to take that
+>   into account (Jason).
+> * Create the VDUSE_DEV_MAX_GROUPS instead of using a magic number
+> 
+> v2:
+> * Now the vq group is in vduse_vq_config struct instead of issuing one
+>   VDUSE message per vq.
+> 
+> v1:
+> * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+> 
+> RFC v3:
+> * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason).  It was set to a lower
+>   value to reduce memory consumption, but vqs are already limited to
+>   that value and userspace VDUSE is able to allocate that many vqs.
+> * Remove the descs vq group capability as it will not be used and we can
+>   add it on top.
+> * Do not ask for vq groups in number of vq groups < 2.
+> * Move the valid vq groups range check to vduse_validate_config.
+> 
+> RFC v2:
+> * Cache group information in kernel, as we need to provide the vq map
+>   tokens properly.
+> * Add descs vq group to optimize SVQ forwarding and support indirect
+>   descriptors out of the box.
+> ---
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 46 ++++++++++++++++++++++++++----
+>  include/uapi/linux/vduse.h         | 12 ++++++--
+>  2 files changed, 50 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index 2b6a8958ffe0..99e37def7a83 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -40,6 +40,7 @@
+>  #define DRV_LICENSE  "GPL v2"
+>  
+>  #define VDUSE_DEV_MAX (1U << MINORBITS)
+> +#define VDUSE_DEV_MAX_GROUPS 0xffff
+>  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
+>  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
+>  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
+> @@ -59,6 +60,7 @@ struct vduse_virtqueue {
+>  	struct vdpa_vq_state state;
+>  	bool ready;
+>  	bool kicked;
+> +	u32 vq_group;
+>  	spinlock_t kick_lock;
+>  	spinlock_t irq_lock;
+>  	struct eventfd_ctx *kickfd;
+> @@ -115,6 +117,7 @@ struct vduse_dev {
+>  	u8 status;
+>  	u32 vq_num;
+>  	u32 vq_align;
+> +	u32 ngroups;
+>  	struct vduse_umem *umem;
+>  	struct mutex mem_lock;
+>  	unsigned int bounce_size;
+> @@ -456,6 +459,7 @@ static void vduse_dev_reset(struct vduse_dev *dev)
+>  		vq->driver_addr = 0;
+>  		vq->device_addr = 0;
+>  		vq->num = 0;
+> +		vq->vq_group = 0;
+>  		memset(&vq->state, 0, sizeof(vq->state));
+>  
+>  		spin_lock(&vq->kick_lock);
+> @@ -593,6 +597,16 @@ static int vduse_vdpa_set_vq_state(struct vdpa_device *vdpa, u16 idx,
+>  	return 0;
+>  }
+>  
+> +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> +{
+> +	struct vduse_dev *dev = vdpa_to_vduse(vdpa);
+> +
+> +	if (dev->api_version < VDUSE_API_VERSION_1)
+> +		return 0;
+> +
+> +	return dev->vqs[idx]->vq_group;
+> +}
+> +
+>  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+>  				struct vdpa_vq_state *state)
+>  {
+> @@ -790,6 +804,7 @@ static const struct vdpa_config_ops vduse_vdpa_config_ops = {
+>  	.set_vq_cb		= vduse_vdpa_set_vq_cb,
+>  	.set_vq_num             = vduse_vdpa_set_vq_num,
+>  	.get_vq_size		= vduse_vdpa_get_vq_size,
+> +	.get_vq_group		= vduse_get_vq_group,
+>  	.set_vq_ready		= vduse_vdpa_set_vq_ready,
+>  	.get_vq_ready		= vduse_vdpa_get_vq_ready,
+>  	.set_vq_state		= vduse_vdpa_set_vq_state,
+> @@ -1253,12 +1268,24 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+>  		if (config.index >= dev->vq_num)
+>  			break;
+>  
+> -		if (!is_mem_zero((const char *)config.reserved,
+> -				 sizeof(config.reserved)))
+> +		if (dev->api_version < VDUSE_API_VERSION_1 && config.group)
+> +			break;
+> +
+> +		if (dev->api_version >= VDUSE_API_VERSION_1) {
+> +			if (config.group >= dev->ngroups)
+> +				break;
+> +			if (dev->status & VIRTIO_CONFIG_S_DRIVER_OK)
+> +				break;
+> +		}
+> +
+> +		if (config.reserved1 ||
+> +		    !is_mem_zero((const char *)config.reserved2,
+> +				 sizeof(config.reserved2)))
+>  			break;
+>  
+>  		index = array_index_nospec(config.index, dev->vq_num);
+>  		dev->vqs[index]->num_max = config.max_size;
+> +		dev->vqs[index]->vq_group = config.group;
+>  		ret = 0;
+>  		break;
+>  	}
+> @@ -1738,12 +1765,20 @@ static bool features_is_valid(struct vduse_dev_config *config)
+>  	return true;
+>  }
+>  
+> -static bool vduse_validate_config(struct vduse_dev_config *config)
+> +static bool vduse_validate_config(struct vduse_dev_config *config,
+> +				  u64 api_version)
+>  {
+>  	if (!is_mem_zero((const char *)config->reserved,
+>  			 sizeof(config->reserved)))
+>  		return false;
+>  
+> +	if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> +		return false;
+> +
+> +	if (api_version >= VDUSE_API_VERSION_1 &&
+> +	    (!config->ngroups || config->ngroups > VDUSE_DEV_MAX_GROUPS))
+> +		return false;
+> +
+>  	if (config->vq_align > PAGE_SIZE)
+>  		return false;
+>  
+> @@ -1859,6 +1894,7 @@ static int vduse_create_dev(struct vduse_dev_config *config,
+>  	dev->device_features = config->features;
+>  	dev->device_id = config->device_id;
+>  	dev->vendor_id = config->vendor_id;
+> +	dev->ngroups = (dev->api_version < 1) ? 1 : config->ngroups;
+>  	dev->name = kstrdup(config->name, GFP_KERNEL);
+>  	if (!dev->name)
+>  		goto err_str;
+> @@ -1937,7 +1973,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
+>  			break;
+>  
+>  		ret = -EINVAL;
+> -		if (vduse_validate_config(&config) == false)
+> +		if (!vduse_validate_config(&config, control->api_version))
+>  			break;
+>  
+>  		buf = vmemdup_user(argp + size, config.config_size);
+> @@ -2018,7 +2054,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name)
+>  
+>  	vdev = vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+>  				 &vduse_vdpa_config_ops, &vduse_map_ops,
+> -				 1, 1, name, true);
+> +				 dev->ngroups, 1, name, true);
+>  	if (IS_ERR(vdev))
+>  		return PTR_ERR(vdev);
+>  
+> diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> index ccb92a1efce0..a3d51cf6df3a 100644
+> --- a/include/uapi/linux/vduse.h
+> +++ b/include/uapi/linux/vduse.h
+> @@ -31,6 +31,7 @@
+>   * @features: virtio features
+>   * @vq_num: the number of virtqueues
+>   * @vq_align: the allocation alignment of virtqueue's metadata
+> + * @ngroups: number of vq groups that VDUSE device declares
+>   * @reserved: for future use, needs to be initialized to zero
+>   * @config_size: the size of the configuration space
+>   * @config: the buffer of the configuration space
+> @@ -45,7 +46,8 @@ struct vduse_dev_config {
+>  	__u64 features;
+>  	__u32 vq_num;
+>  	__u32 vq_align;
+> -	__u32 reserved[13];
+> +	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
+> +	__u32 reserved[12];
+>  	__u32 config_size;
+>  	__u8 config[];
+>  };
+> @@ -122,14 +124,18 @@ struct vduse_config_data {
+>   * struct vduse_vq_config - basic configuration of a virtqueue
+>   * @index: virtqueue index
+>   * @max_size: the max size of virtqueue
+> - * @reserved: for future use, needs to be initialized to zero
+> + * @reserved1: for future use, needs to be initialized to zero
+> + * @group: virtqueue group
+> + * @reserved2: for future use, needs to be initialized to zero
+>   *
+>   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+>   */
+>  struct vduse_vq_config {
+>  	__u32 index;
+>  	__u16 max_size;
+> -	__u16 reserved[13];
+> +	__u16 reserved1;
+> +	__u32 group;
+> +	__u16 reserved2[10];
+>  };
+>  
+>  /*
+> -- 
+> 2.51.0
 
 
