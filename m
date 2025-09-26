@@ -1,166 +1,216 @@
-Return-Path: <linux-kernel+bounces-833765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCD0BA2FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:46:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FD1BA301A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499E01C21996
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:47:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B92347B89EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6870298987;
-	Fri, 26 Sep 2025 08:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZrQsmMkv"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF6F29A9E9;
+	Fri, 26 Sep 2025 08:47:19 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40C25DAFF;
-	Fri, 26 Sep 2025 08:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B628276028;
+	Fri, 26 Sep 2025 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758876393; cv=none; b=MT0yPoSaR1rkbFX02//IEWSivAJbn3wjvd0+zbjPKk5IvnwIchDjZQjXtZv1VkmGDw0gKZ9YZRaYDyylh3xGViyRMtE/hf+lABXNc2r7G76+malm8xSdlL/RvPdTJN7a25vFNNSX2mEelr/EIrFTb4qXAvumJ0Z1eatNtFu8RDs=
+	t=1758876438; cv=none; b=X53VMfhC4gB7EfQ6u49ROF8ytnLoIUDkfNYOEPkAFeNmpBwGvx59TZuWcrJQvDekMufmG6SwuumjPJ1baScggSvzYPOODPFasWAYHAf1Mui1YC0LA0s3Bf9ObKbUy+PgDvwdBmWKLGdzz6eAXS+5rm7CFWmu3dDhuJE76rBzJfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758876393; c=relaxed/simple;
-	bh=IUA1ANsoSDf4ynFNcNEX5PCTUFJtU9aJS/An4xPjPW4=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=DDi3AwdQF2kATtzTJqBpftKNFac1QUKAexMh93gJqwnTPHic+2qrGvpRvrmk3ODNGdpXSQR1SCuV0pUro9UlUAuAfu1/AxqM9XMsu7JhgAIN3kAgdAOKxo739pSGV92OkeY6SHzLA6jBLutZhFmDOEEifYj4S11fJLV2MJ/P/8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZrQsmMkv; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from thinkpad.ideasonboard.com (cpc90716-aztw32-2-0-cust408.18-1.cable.virginm.net [86.26.101.153])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 43FF81807;
-	Fri, 26 Sep 2025 10:45:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758876301;
-	bh=IUA1ANsoSDf4ynFNcNEX5PCTUFJtU9aJS/An4xPjPW4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ZrQsmMkvFij0yY31VIvySARzvzdhWNfhnXkQnUrONYi17lCK3I/2qDmzyhBdTSJxL
-	 dN3HbjbpWxRuWVge+mXh5887a+MeWz59bmy6T+ocVoozAj0AHJ1zwKwW1L6iKWBrJi
-	 GQ2d7SrtwAsUz2uQQAegMhsnMOBp5a89Epi8fOsY=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758876438; c=relaxed/simple;
+	bh=KG9njXWCG2ZGGxGZ/JUsbLNkBBcUq29Wbu/eYH77B3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JV6hdnvADCNFKmb6NPQgOR3kxODQVaH2DkmBwS/XJ+l3B3c2Bw7JZPbrcllQv4LWEyASRjLlbqPsQatOdYNQi8oTRbSJ9rXSeNjIqdT1h9RlWHxm6jxRFCC5ZmI/Kdz3bam4by/2FFcDHHDHVW12lc8WnXE2asBBhbVdnigsQ6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cY3xl5qwJz13Nm8;
+	Fri, 26 Sep 2025 16:42:51 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 58353180B68;
+	Fri, 26 Sep 2025 16:47:13 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 26 Sep 2025 16:47:13 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 26 Sep 2025 16:47:12 +0800
+Message-ID: <c9b562b4-dd34-411c-91cc-5eda3eadd1de@huawei.com>
+Date: Fri, 26 Sep 2025 16:47:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aNW4zDRAREUZ7v8k@lizhi-Precision-Tower-5810>
-References: <20250925-active-data-lanes-v4-0-8b54e3d5af6c@ideasonboard.com> <20250925-active-data-lanes-v4-3-8b54e3d5af6c@ideasonboard.com> <aNW4zDRAREUZ7v8k@lizhi-Precision-Tower-5810>
-Subject: Re: [PATCH v4 3/4] media: imx-mipi-csis: Store the number of data_lanes configured in dt
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-To: Frank Li <Frank.li@nxp.com>
-Date: Fri, 26 Sep 2025 09:46:22 +0100
-Message-ID: <175887638283.180868.8800087471301856681@isaac-ThinkPad-T16-Gen-2>
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
+	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <fanghao11@huawei.com>, <shenyang39@huawei.com>,
+	<liulongfang@huawei.com>, <qianweili@huawei.com>, "linwenkai (C)"
+	<linwenkai6@hisilicon.com>
+References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
+ <20250916144811.1799687-2-huangchenghai2@huawei.com>
+ <2025091620-theft-glue-5e7f@gregkh>
+ <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
+ <2025091746-starship-nearest-7c10@gregkh>
+From: huangchenghai <huangchenghai2@huawei.com>
+Content-Language: en-US
+In-Reply-To: <2025091746-starship-nearest-7c10@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-Hi Frank,
 
-Thank you for your review!
+On Wed, Sep 17, 2025 at 06:18 PM +0800, Greg KH wrote:
+> On Wed, Sep 17, 2025 at 05:56:16PM +0800, huangchenghai wrote:
+>> On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
+>>> On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
+>>>> From: Wenkai Lin <linwenkai6@hisilicon.com>
+>>>>
+>>>> If cdev_device_add failed, it is hard to determine
+>>>> whether cdev_del has been executed, which lead to a
+>>>> memory leak issue, so we use cdev_init to avoid it.
+>>> I do not understand, what is wrong with the current code?  It checks if
+>>> add fails:
+>>>
+>>>> Fixes: 015d239ac014 ("uacce: add uacce driver")
+>>>> Cc: stable@vger.kernel.org
+>>>> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
+>>>> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+>>>> ---
+>>>>    drivers/misc/uacce/uacce.c | 13 ++++---------
+>>>>    include/linux/uacce.h      |  2 +-
+>>>>    2 files changed, 5 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
+>>>> index 42e7d2a2a90c..12370469f646 100644
+>>>> --- a/drivers/misc/uacce/uacce.c
+>>>> +++ b/drivers/misc/uacce/uacce.c
+>>>> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
+>>>>    	if (!uacce)
+>>>>    		return -ENODEV;
+>>>> -	uacce->cdev = cdev_alloc();
+>>>> -	if (!uacce->cdev)
+>>>> -		return -ENOMEM;
+>>> This is the check.
+>>>
+>>>
+>>>> -
+>>>> -	uacce->cdev->ops = &uacce_fops;
+>>>> -	uacce->cdev->owner = THIS_MODULE;
+>>>> +	cdev_init(&uacce->cdev, &uacce_fops);
+>>>> +	uacce->cdev.owner = THIS_MODULE;
+>>>> -	return cdev_device_add(uacce->cdev, &uacce->dev);
+>>>> +	return cdev_device_add(&uacce->cdev, &uacce->dev);
+>>> And so is this.  So what is wrong here?
+>>>
+>>>
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(uacce_register);
+>>>> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
+>>>>    		unmap_mapping_range(q->mapping, 0, 0, 1);
+>>>>    	}
+>>>> -	if (uacce->cdev)
+>>>> -		cdev_device_del(uacce->cdev, &uacce->dev);
+>>>> +	cdev_device_del(&uacce->cdev, &uacce->dev);
+>>>>    	xa_erase(&uacce_xa, uacce->dev_id);
+>>>>    	/*
+>>>>    	 * uacce exists as long as there are open fds, but ops will be freed
+>>>> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
+>>>> index e290c0269944..98b896192a44 100644
+>>>> --- a/include/linux/uacce.h
+>>>> +++ b/include/linux/uacce.h
+>>>> @@ -126,7 +126,7 @@ struct uacce_device {
+>>>>    	bool is_vf;
+>>>>    	u32 flags;
+>>>>    	u32 dev_id;
+>>>> -	struct cdev *cdev;
+>>>> +	struct cdev cdev;
+>>>>    	struct device dev;
+>>> You can not do this, you now have 2 different reference counts
+>>> controlling the lifespan of this one structure.  That is just going to
+>>> cause so many more bugs...
+>>>
+>>> How was this tested?  What is currently failing that requires this
+>>> change?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>> We analyze it theoretically there may be a memory leak
+>> issue here, if the cdev_device_add returns a failure,
+>> the uacce_remove will not be executed, which results in the
+>> uacce cdev memory not being released.
+> Then properly clean up if that happens.
+>
+>> Therefore, we have decided to align with the design of other
+>> drivers by making cdev a static member of uacce_device and
+>> releasing the memory through uacce_device.
+> But again, this is wrong to do.
+>
+>> found one example in drivers/watchdog/watchdog_dev.h.
+>> struct watchdog_core_data {
+>>      struct device dev;
+>>      struct cdev cdev;
+> This is also wrong and needs to be fixed.  Please send a patch to
+> resolve it as well, as it should not be copied as a valid example.
+>
+> thanks,
+>
+> greg k-h
+Very sorry for the delayed response.
 
-Quoting Frank Li (2025-09-25 22:49:00)
-> On Thu, Sep 25, 2025 at 04:54:28PM +0100, Isaac Scott wrote:
-> > The number of active data lanes in use on a MIPI CSI2 bus is not
-> > necessarily always the maximum. To allow us to configure the number of
-> > data lanes actively in use, store the maximum to ensure we can configure
-> > a number of data lanes that is supported.
-> >
->=20
-> This patch just add num_data_lanes, and use csis->num_data_lanes instead
-> of bus.num_data_lanes.
->=20
-> So commit message not reflect what you did
->=20
-> "
-> media: imx-mipi-csis: Add num_data_lanes in mipi_csis_device
->=20
-> Add num_data_lanes field in mipi_csis_device, set equal to
-> csis->bus.num_data_lanes. Prepare to support cases where the number of
-> active data lanes differs from the maximum supported lanes.
->=20
-> No functional changes.
-> "
+In v1, our first thought was that if cdev_device_add returns a
+failure, we could release the resources allocated by cdev_alloc
+using cdev_del. For this, we attempted the following modification:
 
-Yes, that is much better, thank you for your suggestions (on this and
-the next patch), I'll wait to see if there are any other comments and
-improve my commit messages in the next version.
+@@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
+   */
+  int uacce_register(struct uacce_device *uacce)
+  {
++    int ret;
++
+      if (!uacce)
+          return -ENODEV;
 
-Best wishes,
-Isaac
+@@ -529,7 +531,14 @@ int uacce_register(struct uacce_device *uacce)
+      uacce->cdev->ops = &uacce_fops;
+      uacce->cdev->owner = THIS_MODULE;
 
->=20
-> Frank
->=20
-> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > ---
-> >  drivers/media/platform/nxp/imx-mipi-csis.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media=
-/platform/nxp/imx-mipi-csis.c
-> > index 7c2a679dca2e..838a1ad123b5 100644
-> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > @@ -351,6 +351,8 @@ struct mipi_csis_device {
-> >       u32 hs_settle;
-> >       u32 clk_settle;
-> >
-> > +     unsigned int num_data_lanes;
-> > +
-> >       spinlock_t slock;       /* Protect events */
-> >       struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
-> >       struct dentry *debugfs_root;
-> > @@ -573,7 +575,7 @@ static void mipi_csis_system_enable(struct mipi_csi=
-s_device *csis, int on)
-> >       val =3D mipi_csis_read(csis, MIPI_CSIS_DPHY_CMN_CTRL);
-> >       val &=3D ~MIPI_CSIS_DPHY_CMN_CTRL_ENABLE;
-> >       if (on) {
-> > -             mask =3D (1 << (csis->bus.num_data_lanes + 1)) - 1;
-> > +             mask =3D (1 << (csis->num_data_lanes + 1)) - 1;
-> >               val |=3D (mask & MIPI_CSIS_DPHY_CMN_CTRL_ENABLE);
-> >       }
-> >       mipi_csis_write(csis, MIPI_CSIS_DPHY_CMN_CTRL, val);
-> > @@ -623,7 +625,7 @@ static int mipi_csis_calculate_params(struct mipi_c=
-sis_device *csis,
-> >
-> >       /* Calculate the line rate from the pixel rate. */
-> >       link_freq =3D v4l2_get_link_freq(csis->source.pad, csis_fmt->widt=
-h,
-> > -                                    csis->bus.num_data_lanes * 2);
-> > +                                    csis->num_data_lanes * 2);
-> >       if (link_freq < 0) {
-> >               dev_err(csis->dev, "Unable to obtain link frequency: %d\n=
-",
-> >                       (int)link_freq);
-> > @@ -668,7 +670,7 @@ static void mipi_csis_set_params(struct mipi_csis_d=
-evice *csis,
-> >                                const struct v4l2_mbus_framefmt *format,
-> >                                const struct csis_pix_format *csis_fmt)
-> >  {
-> > -     int lanes =3D csis->bus.num_data_lanes;
-> > +     int lanes =3D csis->num_data_lanes;
-> >       u32 val;
-> >
-> >       val =3D mipi_csis_read(csis, MIPI_CSIS_CMN_CTRL);
-> > @@ -1366,8 +1368,9 @@ static int mipi_csis_async_register(struct mipi_c=
-sis_device *csis)
-> >       }
-> >
-> >       csis->bus =3D vep.bus.mipi_csi2;
-> > +     csis->num_data_lanes =3D csis->bus.num_data_lanes;
-> >
-> > -     dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
-> > +     dev_dbg(csis->dev, "max data lanes: %d\n", csis->bus.num_data_lan=
-es);
-> >       dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
-> >
-> >       asd =3D v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
-> >
-> > --
-> > 2.43.0
-> >
+-    return cdev_device_add(uacce->cdev, &uacce->dev);
++    ret = cdev_device_add(uacce->cdev, &uacce->dev);
++    if (ret) {
++        cdev_del(uacce->cdev);
++        uacce->cdev = NULL;
++        return ret;
++    }
++
++    return 0;
+  }
+
+However, after further analysis, we found that cdev_device_add does
+not increment the reference count when it fails. Therefore, in this
+case, cdev_del is not necessary. This means that the resources
+allocated by cdev_alloc will not cause a memory leak in the failure
+path.
+
+Thus, I believe this patch modification is unnecessary. In the
+upcoming v3 version, I will remove this modification.
+
+Thank you for your patient guidance!
+
+Best regards,
+Chenghai
+>
 
