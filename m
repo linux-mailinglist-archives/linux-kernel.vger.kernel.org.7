@@ -1,191 +1,120 @@
-Return-Path: <linux-kernel+bounces-834472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620E9BA4C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23868BA4C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3DD3A92F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC901891285
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA8F307ACC;
-	Fri, 26 Sep 2025 17:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2A930C609;
+	Fri, 26 Sep 2025 17:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="LxrrZ70p"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XBDNDX7k"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1E23B7A8;
-	Fri, 26 Sep 2025 17:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C136B2AD35;
+	Fri, 26 Sep 2025 17:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758906961; cv=none; b=QLj5DorwobNW5G3AKbI7CDo46K5LTtz2EizQj0JhnJEZkTrzFu5F7uyhRNbSer7BjfOzMMFBCVPX4hwOCzXhO46N8TIB9Rj5xvuy4h2jx6H7BNSx2+ra0J1rj1KRschKkmwiX0B7VMzrGkxiAYkRBGxH673o1EvJI9Gi/J8LlXQ=
+	t=1758907220; cv=none; b=pHEwCV570izFffV9TV2TjKD2P8LESNZpr4/Iu+xgW3OoHrFbut5if88mUqmIRG7skQW2JOYU7qEfAZx/q3stKrNyutyN3CxY8NzXS1YmluSW35KviBAIAyc8Wjh94B14U3YhONg/OFHepLesgvm2jiz279KmuydOBFewLSdu5Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758906961; c=relaxed/simple;
-	bh=9s1JWYLtY9Au2cU7gKvf1tWMFDr3WPsmVd7i7+W3bdA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YrQhTcwQtuOjOCwDGkEmLmHpcXhHiC9UednqGUwpSC3GTG6yZ5neR1jDqLzbeqSPOMG8kZI2v0fWW/4wOWrjqmbhjg99KXYT5RR+LFzGoxSW9TdjE2VXqKHsi6cphFZndLH+iclA0uX5bVAyQRRyByB2w+a2C4MY/CrKisstlkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=LxrrZ70p; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1758906952;
-	bh=9s1JWYLtY9Au2cU7gKvf1tWMFDr3WPsmVd7i7+W3bdA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=LxrrZ70p5KBrbuEn9rhlI5K7pEJeScDXhXKQIG3UYcU+P5QE8OLrSmJhO37NEJPb9
-	 MeKVb7TL05aMrnFLYBhOGbRcxHnQiYJQB92eaTJABKnUhYOylbGydCVNJS8L0uogvR
-	 FUEUwA8lszOSiTAQekw74WUaDmZyWVgxverS4hHY=
-Received: from [127.0.0.1] (2607-8700-5500-e873-0000-0000-0000-1001.16clouds.com [IPv6:2607:8700:5500:e873::1001])
+	s=arc-20240116; t=1758907220; c=relaxed/simple;
+	bh=e5cciZIOlUEd14Nlh9r6UpPh7CEgs/6L/FSJjeP9WoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y/ucb4Yp3C6QOQCCDt1gk33a03Tdg3Nb/zV6BvwN6oSPMITOfPA44yHQ87NHYvHkYBvy+dvIybabytIWG5QJVSlphDxtS0dAo9H2NqU0Kh4MUghrE9NlSY4XyFU0DAEexio76z5E8PeRfxUWPsegheMrA03vm+/W1/cR9ZVVv1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XBDNDX7k; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cYHQh1MRvzlgqy3;
+	Fri, 26 Sep 2025 17:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1758907209; x=1761499210; bh=e5cciZIOlUEd14Nlh9r6UpPh
+	7CEgs/6L/FSJjeP9WoA=; b=XBDNDX7klPhV2LR5Gj/vZnR8shvGvAnsUOjlCkes
+	3lenIfMn+DwuRVIZO+Vbr/D1uJ4gOCAPt8k8ZyGBAbr/4xLQHY4DXNHjFRlN/2pG
+	Ih6HAHDSWbsF3/pj74+qi3zH6Lg7//Esh9EOA4uqXzio29j1fLOKoPhgqywc7P0w
+	sHY8VE/+rJ5hirGz2Thkh5kk4BHltVC7lqIKhJHoyl/MsBET/N6Y+95WmcBsfuk3
+	+QdpPt4gMbce9m1iBQ+/x9yHOzExEf+BzmheZVt+M2pFj0DH4n7UFUT41Kqc3RlN
+	foQEesFSXjuWNV6F42JvSc45kXjABX3SLM62dUcH17Sjfw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id GuQ2MpjtDxTQ; Fri, 26 Sep 2025 17:20:09 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 24C5A66B3B;
-	Fri, 26 Sep 2025 13:15:48 -0400 (EDT)
-Message-ID: <c1f9e36dbdff64298ed2c6418247fb37dcd1f986.camel@xry111.site>
-Subject: Re: [PATCH V2] LoongArch: Align ACPI structures if
- ARCH_STRICT_ALIGN enabled
-From: Xi Ruoyao <xry111@xry111.site>
-To: Guenter Roeck <linux@roeck-us.net>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Huacai Chen
- <chenhuacai@loongson.cn>, 	loongarch@lists.linux.dev, Xuefeng Li
- <lixuefeng@loongson.cn>, Guo Ren	 <guoren@kernel.org>, Xuerui Wang
- <kernel@xen0n.name>, Jiaxun Yang	 <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,  Binbin Zhou
- <zhoubinbin@loongson.cn>
-Date: Sat, 27 Sep 2025 01:15:47 +0800
-In-Reply-To: <899f2dec-e8b9-44f4-ab8d-001e160a2aed@roeck-us.net>
-References: <20250910091033.725716-1-chenhuacai@loongson.cn>
-	 <20250920234836.GA3857420@ax162>
-	 <CAAhV-H5S8VKKBkNyrWfeuCVv8jS6tNED6YNeAD=i-+wkaoRSDQ@mail.gmail.com>
-	 <899f2dec-e8b9-44f4-ab8d-001e160a2aed@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cYHQL0WV5zlgqVf;
+	Fri, 26 Sep 2025 17:19:52 +0000 (UTC)
+Message-ID: <66dcdcd1-df71-43b9-a468-2b4aaa8b6dc7@acm.org>
+Date: Fri, 26 Sep 2025 10:19:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] blk-cgroup: use cgroup lock and rcu to protect
+ iterating blkcg blkgs
+To: Yu Kuai <yukuai1@huaweicloud.com>, Yu Kuai <hailan@yukuai.org.cn>,
+ tj@kernel.org, ming.lei@redhat.com, nilay@linux.ibm.com, hch@lst.de,
+ josef@toxicpanda.com, axboe@kernel.dk, akpm@linux-foundation.org,
+ vgoyal@redhat.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250925081525.700639-1-yukuai1@huaweicloud.com>
+ <20250925081525.700639-2-yukuai1@huaweicloud.com>
+ <bc6fe04d-3245-40dd-aa30-c3a3acb670c2@acm.org>
+ <01e7eccd-3529-4d12-8ad2-fd9e034a026d@yukuai.org.cn>
+ <688275d5-fbb4-08b3-45e1-798ad8cf77fc@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <688275d5-fbb4-08b3-45e1-798ad8cf77fc@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-09-26 at 07:31 -0700, Guenter Roeck wrote:
-> On Sun, Sep 21, 2025 at 09:07:38AM +0800, Huacai Chen wrote:
-> > Hi, Nathan,
-> >=20
-> > On Sun, Sep 21, 2025 at 7:48=E2=80=AFAM Nathan Chancellor <nathan@kerne=
-l.org> wrote:
-> > >=20
-> > > Hi Huacai,
-> > >=20
-> > > On Wed, Sep 10, 2025 at 05:10:33PM +0800, Huacai Chen wrote:
-> > > > ARCH_STRICT_ALIGN is used for hardware without UAL, now it only con=
-trol
-> > > > the -mstrict-align flag. However, ACPI structures are packed by def=
-ault
-> > > > so will cause unaligned accesses.
-> > > >=20
-> > > > To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in asm/acenv.=
-h to
-> > > > align ACPI structures if ARCH_STRICT_ALIGN enabled.
-> > > >=20
-> > > > Cc: stable@vger.kernel.org
-> > > > Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> > > > Suggested-by: Xi Ruoyao <xry111@xry111.site>
-> > > > Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > > > ---
-> > > > V2: Modify asm/acenv.h instead of Makefile.
-> > > >=20
-> > > > =C2=A0arch/loongarch/include/asm/acenv.h | 7 +++----
-> > > > =C2=A01 file changed, 3 insertions(+), 4 deletions(-)
-> > > >=20
-> > > > diff --git a/arch/loongarch/include/asm/acenv.h b/arch/loongarch/in=
-clude/asm/acenv.h
-> > > > index 52f298f7293b..483c955f2ae5 100644
-> > > > --- a/arch/loongarch/include/asm/acenv.h
-> > > > +++ b/arch/loongarch/include/asm/acenv.h
-> > > > @@ -10,9 +10,8 @@
-> > > > =C2=A0#ifndef _ASM_LOONGARCH_ACENV_H
-> > > > =C2=A0#define _ASM_LOONGARCH_ACENV_H
-> > > >=20
-> > > > -/*
-> > > > - * This header is required by ACPI core, but we have nothing to fi=
-ll in
-> > > > - * right now. Will be updated later when needed.
-> > > > - */
-> > > > +#ifdef CONFIG_ARCH_STRICT_ALIGN
-> > > > +#define ACPI_MISALIGNMENT_NOT_SUPPORTED
-> > > > +#endif /* CONFIG_ARCH_STRICT_ALIGN */
-> > > >=20
-> > > > =C2=A0#endif /* _ASM_LOONGARCH_ACENV_H */
-> > >=20
-> > > I am seeing several ACPI errors in my QEMU testing after this change =
-in
-> > > Linus's tree as commit a9d13433fe17 ("LoongArch: Align ACPI structure=
-s
-> > > if ARCH_STRICT_ALIGN enabled").
-> > >=20
-> > > =C2=A0 $ make -skj"$(nproc)" ARCH=3Dloongarch CROSS_COMPILE=3Dloongar=
-ch64-linux- clean defconfig vmlinuz.efi
-> > > =C2=A0 kernel/sched/fair.o: warning: objtool: sched_update_scaling() =
-falls through to next function init_entity_runnable_average()
-> > > =C2=A0 mm/mempolicy.o: warning: objtool: alloc_pages_bulk_mempolicy_n=
-oprof+0x380: stack state mismatch: reg1[30]=3D-1+0 reg2[30]=3D-2-80
-> > > =C2=A0 lib/crypto/mpi/mpih-div.o: warning: objtool: mpihelp_divrem+0x=
-2d0: stack state mismatch: reg1[22]=3D-1+0 reg2[22]=3D-2-16
-> > > =C2=A0 In file included from include/acpi/acpi.h:24,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from drivers/acpi/acpica/tbprint.c:=
-10:
-> > > =C2=A0 drivers/acpi/acpica/tbprint.c: In function 'acpi_tb_print_tabl=
-e_header':
-> > > =C2=A0 include/acpi/actypes.h:530:43: warning: 'strncmp' argument 1 d=
-eclared attribute 'nonstring' is smaller than the specified bound 8 [-Wstri=
-ngop-overread]
-> > > =C2=A0=C2=A0=C2=A0 530 | #define ACPI_VALIDATE_RSDP_SIG(a)=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 (!strncmp (ACPI_CAST_PTR (char, (a)), ACPI_SIG_=
-RSDP, (sizeof(a) < 8) ? ACPI_NAMESEG_SIZE : 8))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~~~~~~~~
-> > > =C2=A0 drivers/acpi/acpica/tbprint.c:105:20: note: in expansion of ma=
-cro 'ACPI_VALIDATE_RSDP_SIG'
-> > > =C2=A0=C2=A0=C2=A0 105 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 } else if (ACPI_VALIDATE_RSDP_SIG(ACPI_CAST_PTR(struct acpi_table_rsdp,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~
-> > > =C2=A0 In file included from include/acpi/acpi.h:26:
-> > > =C2=A0 include/acpi/actbl.h:69:14: note: argument 'signature' declare=
-d here
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 69 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 /* ASCII table signature */
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~
-> > > From this link this seems a comiler issue (at least not an
-> > arch-specific kernel issue):
-> > https://github.com/AOSC-Tracking/linux/commit/1e9ee413357ef58dd902f6ec5=
-5013d2a2f2043eb
-> >=20
+On 9/25/25 5:57 PM, Yu Kuai wrote:
+> =E5=9C=A8 2025/09/26 1:07, Yu Kuai =E5=86=99=E9=81=93:
+>> =E5=9C=A8 2025/9/25 23:57, Bart Van Assche =E5=86=99=E9=81=93:
+>>> On 9/25/25 1:15 AM, Yu Kuai wrote:
+>>>> It's safe to iterate blkgs with cgroup lock or rcu lock held, preven=
+t
+>>>> nested queue_lock under rcu lock, and prepare to convert protecting
+>>>> blkcg with blkcg_mutex instead of queuelock.
+>>>
+>>> Iterating blkgs without holding q->queue_lock is safe but accessing t=
+he
+>>> blkg members without holding that lock is not safe since q->queue_loc=
+k
+>>> is acquired by all code that modifies blkg members. Should perhaps a =
+new
+>>> spinlock be introduced to serialize blkg modifications?
 >=20
-> I see that the patch made it into the upstream kernel, now breaking both
-> mainline and 6.16.y test builds of loongarch64:allmodconfig with gcc.
->=20
-> Since this is apparently intentional, I'll stop build testing
-> loongarch64:allmodconfig. So far it looks like my qemu tests
-> are not affected, so I'll continue testing those for the time being.
+> Actually, only blkcg_print_blkgs() is using rcu in this patch, and take
+> a look at the callers, I don't see anyone have to hold queue_lock. Can
+> you explain in detail which field from blkg is problematic in this
+> patch?
 
-See=C2=A0https://gcc.gnu.org/PR122073 and
-https://github.com/acpica/acpica/pull/1050.
+I'm not a cgroup expert so I cannot answer the above question. But I
+think it's clear that the description of this patch is not sufficient as
+motivation for this patch. Removing the blkg->q->queue_lock lock and
+unlock calls requires a detailed review of all blkcg_print_blkgs() and
+blkcg_print_stat() callers. There is no evidence available in the patch
+description that shows that such a review has happened.
 
+Thanks,
 
---=20
-Xi Ruoyao <xry111@xry111.site>
+Bart.
 
