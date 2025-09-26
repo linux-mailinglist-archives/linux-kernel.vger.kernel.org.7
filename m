@@ -1,220 +1,264 @@
-Return-Path: <linux-kernel+bounces-834547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55A1BA4E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7128BA4EA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8E41C20774
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC17A3ABCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592B930CD8C;
-	Fri, 26 Sep 2025 18:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5E30C349;
+	Fri, 26 Sep 2025 18:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DSmk+3aL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kx8GEON8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7B24C81;
-	Fri, 26 Sep 2025 18:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758912286; cv=none; b=UQ2yMT3WFH3E72V79x5yr+E08DXhAiW/eBzKkJjcVv3Oalrk4u+sCxOGFhD/kux8NLtuum4nb3jA9t9OAIPueAUgX4UXOVQBJ2nJk5TyEgRG6qJJ5UWCr4o3K4RlFPHNRRVS2VRLQR/KIbfd910bbczpjfWhdyz/DMTIHNy/cik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758912286; c=relaxed/simple;
-	bh=A7Le6uma8JN9KcppDV8PAkPLPeqr+dPSkrokTaOlNJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bADHiEZOq2XQSNELpb5vQ7wmfrNN9Fq8JTd2ObUUNyW4MoN9iGP8HP3EVm3eW51fqxkU69Cl8tehvz18dnMsCom7/sWjVs/PyktXaVktXdga1mk1bi4ITaF2TuloFR47a+yIHXaLc2JEvhRnfCRxoZh83LZK10LgkgFlVoRsm1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DSmk+3aL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QHF1Km029912;
-	Fri, 26 Sep 2025 18:44:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=U0bIX0y+m98lPphIhY6ko7upQV06c9wlXoyPw1mEOlo=; b=DSmk+3aLqS1a
-	iV1hm+QaqnW9taWOstMD0E7rqiQgbFFXcYZ/eZ7qXI6E8qhlcTjp2uzU8C8jV3e0
-	K+01PhIg1nvZ0YS4qq/afaMadovxHIIac7BUmH010arbMxkSD/qfvQdZx14dAAUq
-	9PaWulupUG6+FNHkOqpeahyVuWp8xfcHI3nMyt4jjBHahCTTYqVfyjESz3/6SpAX
-	ogAujVxe1DaxfrgiSFlJOE8Q6pDwm0YNXrN6ohmY3B/ywS2HDFNA1K1MxfixlG1p
-	I+BwZ7RQZpf/XmwnWhYfRB1yDt3Px8O5PeS0pukD2O+pctY6d5vvkLrLBZiiANWP
-	nSQhphh0ew==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbapgys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 18:44:43 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58QIb7Mk013648;
-	Fri, 26 Sep 2025 18:44:43 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbapgyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 18:44:43 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58QHH71s025848;
-	Fri, 26 Sep 2025 18:44:42 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpwq5e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 18:44:42 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QIifEs40632834
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Sep 2025 18:44:41 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F50B5805D;
-	Fri, 26 Sep 2025 18:44:41 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1F20158043;
-	Fri, 26 Sep 2025 18:44:40 +0000 (GMT)
-Received: from [9.61.248.170] (unknown [9.61.248.170])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 26 Sep 2025 18:44:40 +0000 (GMT)
-Message-ID: <fa1db8bb-a99f-4efe-af72-4858ee638bd1@linux.ibm.com>
-Date: Fri, 26 Sep 2025 13:44:39 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44ED11DC1AB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758912327; cv=fail; b=lSoN3oRzNgpHfIYhm5ANMAdWGZDhOuyn1ehBKCdWoSd9gN8WlhY0Lt6UvQqwDKr6U+YLybGbsfAF5nd1OrOHIvGnArpiMQUHLFSW6+pcg0iNLm9zPDQ17jAB+yEHtjPOP6gOCfGt5f2pOKHuD0ifgzOasYNLqNKlwCOTMEVQ1mk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758912327; c=relaxed/simple;
+	bh=srdQJIL084Tpz7Rp/QIgPJvDhEIM89xb/L2BDTtRgw8=;
+	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
+	 Content-Type:MIME-Version; b=icdnLyvqfHntOVFNrrpCzkYjyR75mnQMWfhMTH2sLYSPgCI7uRfAbIAfZD2zGfaEqT7hEtH2etaFHsN+RF+yWTSEbJ0gZ8YDq5/ThAFFeMNG28womC9vb3zNLVG6oCVsiyVbLdTB3QmjIjZ7BA7BoOl5qtNcRGNrYlRFQaKUu+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kx8GEON8; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758912325; x=1790448325;
+  h=from:date:to:cc:message-id:in-reply-to:references:
+   subject:content-transfer-encoding:mime-version;
+  bh=srdQJIL084Tpz7Rp/QIgPJvDhEIM89xb/L2BDTtRgw8=;
+  b=kx8GEON8HeQPSg6k9oeQgvk40Nj9oYxdjfl0YDD9+/H6ASCYu0TeB9Zm
+   ZnQqT+PGDts+gW56S3EAdqGwzErLozInEUWAw/12GUoo4H2EMCdfse3PR
+   RlR7TCgDE1Fbt7aaFhgqHFjcI8VZEWOnr2HYB8pGDeHf9WbYEUescVpZw
+   T/m8iom7YRGZ+EfWcNphF3YiqmNF2zO+R9OJ5SGmEoGP+sKfAl3DwPSbz
+   ZtwS00T6ioJbgQmhekKfa93Dak/B1fkaHGBAwGGFhwqYUlxdIpioI7s/L
+   5szrDCtJ0yZGvQJpMm+jY/H5s8WIDYe5XRtrrHpd/IvA95f1EgRmO13k8
+   A==;
+X-CSE-ConnectionGUID: tU8Jmm9iRqeuT3Qc5gs1Cw==
+X-CSE-MsgGUID: RCObnurrQJa7Vq2Jy5hT4g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="72612089"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="72612089"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 11:45:25 -0700
+X-CSE-ConnectionGUID: TsF5d0arRfiikxJjpZ3BHg==
+X-CSE-MsgGUID: HIv5R+H/RL2UMy8Qm2ZlCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="181702238"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 11:45:25 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 11:45:23 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 11:45:23 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.28) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 11:45:23 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fJf3sDOKmK7SLEjfyD8oM3gQqbPVq2uofePk3uB9c5vptF19CNWMB7co9f+1mjAyruSsTPMyVZpUNqIyVizaMndT8gl2QkBN5jM7upF51h8Erv6ESCQ+4eZsuLKDFU5wgFw+cIRfJyf56LGkzcZPaGv/HEPgrip+w1GGcbypHyCGpU8nSgdLBiB0hEhME7pPZcny+l2geBZwCyx5/EXFky2C7AITWdpyUwZ+SjAziRo4aSjgVJDBFpUmlOkXNGly4oIM2uc3b9eOSCPpXFTI/G2mXfuYbovtuZLG3p8tti2l1SS91p3U5MYrOGYD/WDSGyUEANxDHy5zPsuMdtjDwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=srdQJIL084Tpz7Rp/QIgPJvDhEIM89xb/L2BDTtRgw8=;
+ b=eC9WDSEAsTsw0mCmumoHOHnZsrMLZhGmoR/i0HRKkVKPs6Wj4f43yq191zR+X5IcZPnP4PHD9iV6XfxOX2pocjmj7g30X8SDtO7zezdwsgpgi2rdxUi9WHrp0Q0uL5Ego8QRC5XxQibSREcXiJNJwPw3wt8NpVnHoE/K6YaepXpC4+jzXScnJk5jXF/rMSsS9T+bGWuNCmDmWsYGSiW62OZctFx/41nlW/DE3TE0mSRR7Wz6tXNWhXN/eZM14U1plR8QMrSXc0pR3dU8UMKfYDJ6ua1qXaXaKE32RpPIkPU+cd4s1dpjkuT8TZ4t2Lgd8so/uMfp+0Ox78/l44nDDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CH3PR11MB7274.namprd11.prod.outlook.com (2603:10b6:610:140::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 18:45:21 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 18:45:20 +0000
+From: <dan.j.williams@intel.com>
+Date: Fri, 26 Sep 2025 11:45:19 -0700
+To: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+	<dan.j.williams@intel.com>
+CC: Mike Rapoport <rppt@kernel.org>, Ira Weiny <ira.weiny@intel.com>, "Dave
+ Jiang" <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<jane.chu@oracle.com>, Pasha Tatashin <pasha.tatashin@soleen.com>, "Tyler
+ Hicks" <code@tyhicks.com>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>
+Message-ID: <68d6df3f410de_1052010059@dwillia2-mobl4.notmuch>
+In-Reply-To: <CAAi7L5esz-vxbbP-4ay-cCfc1osXLkvGDx5thijuBXFBQNwiug@mail.gmail.com>
+References: <20250826080430.1952982-1-rppt@kernel.org>
+ <20250826080430.1952982-2-rppt@kernel.org>
+ <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch>
+ <aLFdVX4eXrDnDD25@kernel.org>
+ <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com>
+ <68d3465541f82_105201005@dwillia2-mobl4.notmuch>
+ <CAAi7L5esz-vxbbP-4ay-cCfc1osXLkvGDx5thijuBXFBQNwiug@mail.gmail.com>
+Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM
+ devices
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MW4P223CA0016.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::21) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: ramesh@linux.ibm.com
-Subject: Re: [PATCH] PCI: s390: Expose the UID as an arch specific PCI slot
- attribute
-To: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Julian Ruess <julianr@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
- <4dd8a92a-0843-4009-a9c6-3a1336dbf217@linux.ibm.com>
- <67de8faa7eca891c7c39ae83540f74369de5b783.camel@linux.ibm.com>
-Content-Language: en-US
-From: Ramesh Errabolu <ramesh@linux.ibm.com>
-In-Reply-To: <67de8faa7eca891c7c39ae83540f74369de5b783.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: GXVjw1JWOBH-6ExwKV31-tyAsnJ3yX_U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX4cPn1zzTv9lq
- c7qUbcqcBBPivfcDg6jaM8yGmhLmehlWGPUF5qAE7wFvk+TI6lkHiUjoARN52yIgBbmvwpR5XRy
- 9ijDbXagICWt6LnwYjqqMSlbOTtRXB/Fe/Ky92CzfcqpYMyUo8tMz4G9Hf3ULX//ZbTDZE7m4mJ
- cgp5726H5fSWXh76IRrda0z05bqhlMkJg5m3sbZ9MO6LwZ53mAz/IV83Xpqc7B3k1kUgO8xd9+b
- J/feguT6Lu32OhDNuJH1DLRFgd3FEjZfeu0ghIAGjcCGgeE7E4MGlMQRsoqYkuZ2iCMJbnUlJbG
- HfLobgoY1X/MegYI9roNwlfm+VWeXAEvq2CPXF+wgIyaGsQ/GXJzyXKfSdQoA9B2fIf+XL4bKme
- GX8Vpaos4luwcHwreA2Q8uI4wIBHtw==
-X-Proofpoint-ORIG-GUID: Di6Ss-odSHoAP8UaCHCd-0pAfJps-Ity
-X-Authority-Analysis: v=2.4 cv=B6W0EetM c=1 sm=1 tr=0 ts=68d6df1b cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=UMODVSnWySmH3eSmB1kA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_06,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
- phishscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CH3PR11MB7274:EE_
+X-MS-Office365-Filtering-Correlation-Id: 405fffe2-b9a1-403c-e04a-08ddfd2cd864
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MlF5YWtRdzBmRU1QekJSaUNDYkFSalA3NE4yYWNqaUZXYTFCU04xTG9KUU9r?=
+ =?utf-8?B?SlVuOG1WVG5VZ0xrZXl0Q29mdTNjWkM3RGZ5dXJCMy9LaDh0RzZqS2lyQUov?=
+ =?utf-8?B?Z2x6NDBnbFFRRW1EVlhBaXl4QllNQ3kyWHVPYTBCbkZqb25rUFhXbHB5SjEx?=
+ =?utf-8?B?ME16Tzl6LzQyMklhZlZVV0ZwT2hUb1RkbTZvWGhaZkljc0ZOTlNINEdMTU1P?=
+ =?utf-8?B?dEFWdFlrREtTeFl2Z3FmN3BWZHBCKzJtMGgyOXpwUHd6cVV6RkxYNys4c2kv?=
+ =?utf-8?B?ZzF0OU1SQmt5TzFzZTNCVTArM25MbS90dGtxNCtTTmhYYjVXaVFjclh2aFpn?=
+ =?utf-8?B?aHdITFIyNHRIb2VRYWJsOUk1WmFWZ0ZTNDhLK0tSVlJpQkZQOU4wRzZ0VTI2?=
+ =?utf-8?B?eFA1ZXlLdkFFQm9IQ0gwTVZMQk91Zkd5anViNVFwb0kvMGpPQk9XTzNKN1hM?=
+ =?utf-8?B?RnREYSs4aUhIajhWZksvL1BhcVdqdS9OZGFHdWVuQU4yaDhVVzVramRjKzcw?=
+ =?utf-8?B?cTZ6VFRueVUzNGFCODlDWit0TG81MG5jK2hOaU5EeHM0MVFBYmxldTBZZUhy?=
+ =?utf-8?B?Yjg5VjhwTThsbERuRGhSaVhxYVdIVkpTWm96KzhXOThOQmhkc2pwZDFNWEk4?=
+ =?utf-8?B?VzVhb2tsQm5UUElQUi9MWFRiQnB5RVBNWXlCc2hRYTYzaC9zUGRmRHlEWHk3?=
+ =?utf-8?B?WkI2QW9VeUh0ZEhsd0locVpxNlY3Q0J3MXc5N0JqR2wrSVlWK0VwU0RqSDVZ?=
+ =?utf-8?B?eVNLdjZUYytvOXFQZTJxeW5lbCsxYVd5NjhYRlhHRG53TGFFVk1SSmhXekh2?=
+ =?utf-8?B?cGVjVUVrMStQbzJRUHArV2d0YkhvYUN0SVFQY1dxV2R1OTFBQVVFVEtUUTJJ?=
+ =?utf-8?B?UTh3YXJFYmlJVks2RlBQYllhbThhbGYzbTl3dXZWRFlKQUJEYVA3aS9CNGhC?=
+ =?utf-8?B?U3dacGR6Y3VCNThockkvR3RSbFhybWtwRU10RHRvL24xTk5EQWVZL20vb0RN?=
+ =?utf-8?B?d3Z4YVo4d29xejByaDd5a2o5b2NMVEFmYzZXWGVkOVJYaUVHTUdQdUtTQ3Nh?=
+ =?utf-8?B?a3lyQ1lpUUhCY3lwZUx6WWJXU0IyenM4TVVFcmZxTVRzdEtLWGVFZENGa0RJ?=
+ =?utf-8?B?b2VzdlkzOVpaNlBCdWxDb1NKT3FMcmZzQTk2bEg2STJ3Q1JNSHBVNXA3Zkpv?=
+ =?utf-8?B?UjJKZTlYR1JxWk00cEdEU0dDMndqTlJGdnNQaEZGdWlqdUlyWnVkc1d3MVJk?=
+ =?utf-8?B?MzVQaVA1cm5nbURCMXo0NEo0b3J0dFVRZEJ1a2tRclZiQTZqS21Vclh0d2Nq?=
+ =?utf-8?B?RWlnUVRzTnVzVUp3RG5tUnFyWmdCUU9hUFRHSmsxUGJmcGUyUVNEWGpWcFlP?=
+ =?utf-8?B?TFdFWFRNKzZXaHBWbElEdFZHdHBBdysvbjZLeG8wMnVoYjl1OVlPWS9zeFVW?=
+ =?utf-8?B?WXpZWlFjT292YWRMNk16bWpnd2drcU1LYmZIOUpRYnFMSVdNbi9sN3hnd202?=
+ =?utf-8?B?dSs4RUozQXBZeWp1Ym1BTEdpd29ZQUZkTW9BY3EyaStsQ2RacEhIbHp3ZWZS?=
+ =?utf-8?B?eG1INXFWanliWXVGdXh5Yk5iWXdCWGJGeWtlVVVTUTRzbjRPQkFBZkJKUTJB?=
+ =?utf-8?B?NXJPbDljVCtLb0EzQmZkYUp2VDZUcnJ6dnNSYVgzeUFtTEpSRTY3aXBZMTcz?=
+ =?utf-8?B?djFiUGNKbURXYy9EV08xY0VqTVlzdkpFRW1ncFVYaEJFTjQzVWV3MTkxUjlT?=
+ =?utf-8?B?cjBKa2l0Q3dNZ3RMZ29FQm5tVHJOQk9pVFprbnl4TEJkQk9LK0pLS1NvOFpN?=
+ =?utf-8?B?eE92bVBqSnlmb2p3czFWTE5kUjA1MjNDZ0FjSndEbnlzdzhZT05LY0lGa0o1?=
+ =?utf-8?B?dDg4b1REZ3M2ZHBFR2tKSUtzVy90dFg1elUxdURDTEo4UkUxVXNhRlFVQ0RX?=
+ =?utf-8?Q?t3kZOrEyQAu1NTJnSFmBgy6k94JZGAvb?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OVdFY2hmYy80OXljb3Z1UXkrazFxbjBYWGpWaXY4bVFwVStxRWl3T0xYS1dt?=
+ =?utf-8?B?TklkdmpZMTNTVjg2OHpmV0tCTGZ1VlZRT0VnVjNTditrQzVreUtaeHl6eW52?=
+ =?utf-8?B?bG5GR0E0clQ4VE1SV1pGZEpwSnYxZzZpeERlSThiQkFQUGIzMFUrbDE4d1g4?=
+ =?utf-8?B?cDQ0VXJjdFlVczd6TjJTQXBPWnpHSElXZXVUZVRod290eWZ4K1psaERZY0VQ?=
+ =?utf-8?B?Ry9rdmNzOFpmZVVEanlpRERNbitPaDI3eTRaZ1BqSlhNdVNUUWpxaUNWKysv?=
+ =?utf-8?B?TnpLUEhwdTcyTlNJYnV0b0xGM201aHZrRWFUajJoQzNienZyWEhJYnZZT0x5?=
+ =?utf-8?B?T1ppV2JRMG9DYksvZWdNUHhETjFpdk5pdzZXZzErWit6WjNmc1lyWS9BMThv?=
+ =?utf-8?B?LzArVkFORjFiaS96b3NVdS84bFh0U2VNUmIvUDYxT1Z6WmY2UmFQQ1N0Z2Rr?=
+ =?utf-8?B?L0U1Y0VhK1hMc2xCcmo5MWFISlJtbGhtY2RoZmdpM1BtWXNUTUVNdjJrR1R1?=
+ =?utf-8?B?d0EvbE1DVjFCbWpNNlBPQXNNNDF4RG1xSGcwL1gyODFmcjJaN0ZqS1NMNVpM?=
+ =?utf-8?B?cnd1eFlyMm83NEZsTktjZnowNTlFeVdFOFo3YUhQZXFHZlBrVEk0Yi96bVdU?=
+ =?utf-8?B?dFk2cVlLTytkbjdtWlVzZEpZRmFCb3Fta0VidFRGU2M5Ylp1UEEzU1lpRkdo?=
+ =?utf-8?B?RHdOK2xINlg2b3VSY2RrWVNnOUFQVkxESWY4WTBYRVExdEtZWENzNXQ4MmxO?=
+ =?utf-8?B?L0pmaTc3Nk05cXhyMWVlN2VDVmFzWE1sOGpMTFpjM3ZiTC8yYWthVEtJWXRx?=
+ =?utf-8?B?cWlkcVFxYmV1bFU5SVIrb3NFUS9jY0RrWHpzL3dicnJVRVJVOG5lb3JxSFhV?=
+ =?utf-8?B?L3JsQmRHeGJkUlhEdHVzemNIbVZlWDZvZSs5UWxzd3lydm9laUNJOHBOMmRy?=
+ =?utf-8?B?NHF2MkhYZ0ZlUU85U2hmaGwvNTlkeVludHVCMTk1c09RK3VZZ0tqc08vT3dM?=
+ =?utf-8?B?R0FYdlFSbXhYTUZXTW9BMkFjOGZESG11a1RUejFhMEJWRy8zVlpEMUhCcDJx?=
+ =?utf-8?B?SVQ1VFdrK1l2dHdFMGtvcnorVHFGR2hmM25qdHl2eGJFU0xkOThZRjZ1OVRx?=
+ =?utf-8?B?QXIvc2RTQXR3azhPRW91TWRvOXNIcWNJT0pCNUtzRVNkdWRQOS9QMTVFUXRK?=
+ =?utf-8?B?SGRGYzhkc3RvSUE2ZFhmNXBkcy9vYXZ5dFpmV0oyWUNEQWNUTm4yVnJ2SVZm?=
+ =?utf-8?B?QXp6WVRlYVhUdFpiSlBYOWhwN2U4a0YwR1NDV0x1ei81ZEd0UGVCcWMxalhF?=
+ =?utf-8?B?TS9wS0s4YlBkUmFJcmxHNWhWVlNDVVJhL0dZZ1dOdDB4ZjF0UDRTM2FDVFU0?=
+ =?utf-8?B?THoxNUtzSDE3YStxTW5zTU5GdTcyL1lMQm1pOHhDMDVLWENyTlhrekNMS1Nk?=
+ =?utf-8?B?UHNXQ3FyRWZlNUQrZmlaTHpIVVRqWlFiS0xPYnNGUmlDUEU2SjVvSGorWUth?=
+ =?utf-8?B?MkdZdG1UK2xRNEZWZlRCTHBGRVo4M0UyNUtocWVwWVVXNFM2ekp6Ym5taDFv?=
+ =?utf-8?B?eE9YTDF1b2tldUVoRlgvNk9mYXdLS0Zrank2Vy84cW9aTFBpV3JZd25KNU1t?=
+ =?utf-8?B?cEI5WGxvdVpOWjVMRXBZaGVvT1JRR0tUcjZnSzZWbDVKbTB4VHB1R2J0L0Q4?=
+ =?utf-8?B?SjdMNnBHK1NQbFV1L0FZZS9adHV0bDRBRldNSk9jcUcxMHlqMk9PcFhNRnhE?=
+ =?utf-8?B?RjJnOUQ1TTcraVhJUEZTV1BRY1RBZ25qTzNrRHppM2pYbVgxcGNOeFR4V2Zq?=
+ =?utf-8?B?Rm1zL0tpYi96VkVuZXE3eThYZ1dzZGpZYnFrdFplNjZhRXg5M0paSG94L0Vi?=
+ =?utf-8?B?d2JjQnhGeWJUOU5qOUx6cklXbEl3Q2toeFJuMUd4K2l3YlI0MmxNR3FsKzJS?=
+ =?utf-8?B?WGVCYkx6MFBzWTBQRFdCQlptSTJsUG1tMzZPRWMxQzVjcHhWZE1kT3paTUUy?=
+ =?utf-8?B?YzdUenFjS3NTSE5QZjFOVEN5WjRhc09SSCt3b2VySHBEYm1Odzc2QzRhWWMx?=
+ =?utf-8?B?dXBvSEtIVncrSFJaK29qckZwNkZEVXpiMXU0S2V0akIwNWhNcFdJa3NCWUIz?=
+ =?utf-8?B?TWNvR3VmTUNYUUNVUHRodTI1VC8wV050N29ZRVhkM2kxT1E4U0Vwak13OW5Q?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 405fffe2-b9a1-403c-e04a-08ddfd2cd864
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 18:45:20.8839
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iOfqVqyGvHlY5D+6hVXBsoBREpqy4lpUpKxa4VwPte4lEF878Y9wbqhtyhQrjaendGyahCmOSHXUVvkOyptJPjsEZrbhm2bH8kpiecrr6U0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7274
+X-OriginatorOrg: intel.com
 
+Micha=C5=82 C=C5=82api=C5=84ski wrote:
+[..]
+> > As Mike says you would lose 128K at the end, but that indeed becomes
+> > losing that 1GB given alignment constraints.
+> >
+> > However, I think that could be solved by just separately vmalloc'ing th=
+e
+> > label space for this. Then instead of kernel parameters to sub-divide a
+> > region, you just have an initramfs script to do the same.
+> >
+> > Does that meet your needs?
+>=20
+> Sorry, I'm having trouble imagining this.
+> If I wanted 500 1GB chunks, I would request a region of 500GB+space
+> for the label? Or is that a label and info-blocks?
 
-On 9/26/2025 1:36 PM, Niklas Schnelle wrote:
-> On Fri, 2025-09-26 at 11:34 -0500, Ramesh Errabolu wrote:
->> On 9/24/2025 8:14 AM, Niklas Schnelle wrote:
->>
->>> On s390, an individual PCI function can generally be identified by two
->>> IDs, depending on the scope and the platform configuration.
->> It would help to name the two IDs - FID and ???
-> How about:
-> "On s390, an individual PCI function can generally be identified by two
-> identifiers, the FID and the UID. Which identifier is used depends on
-> the scope and the platform configuration."
->
-> And then reword the below without "so-called".
-That will help a lot
->>> The first ID is the so-called FID, which is always available and
->>> identifies a PCI device uniquely within a machine. The FID may be
->>> virtualized by hypervisors, but on the LPAR level, the machine scope
->>> makes it impossible to reuse the same configuration based on FIDs on two
->>> different LPARs.
->>>
->>> Such matching LPAR configurations are useful, though, allowing
->>> standardized setups and booting a Linux installation on different
->>> machines. To allow this, a second user-defined identifier called UID was
->>> introduced. It is only guaranteed to be unique within an LPAR and only
->>> if the platform indicates so via the UID Checking flag.
->> The paragraph as I read is not clear. Your intention is to highlight the
->> need for UID to allow standardized setups.
-> Yes, that was my intention. Also here is where the second ID is
-> introduced so I'll reword this a bit if the name is already mentioned
-> in the first paragraph.
-Will await your next update
->>> On s390, which uses a machine hypervisor, a per PCI function hotplug
->>> model is used. The shortcoming with the UID then is, that it is not
->>> visible to the user without first attaching the PCI function and
->>> accessing the "uid" device attribute. The FID, on the other hand, is
->>> used as slot number and is thus known even with the PCI function in
->>> standby.
->>>
->>> Remedy this shortcoming by providing the UID as an attribute on the slot
->>> allowing the user to identify a PCI function based on the UID without
->>> having to first attach it. Do this via a macro mechanism analogous to
->>> what was introduced by commit 265baca69a07 ("s390/pci: Stop usurping
->>> pdev->dev.groups") for the PCI device attributes.
->>>
->>> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
->>> ---
->>> Note: I considered adding the UID as a generic "index" via the hotplug
->>> slot driver but opted for a minimal solution to open the discussion. In
->>> particular my concern with a generic attribute is that it would be hard
->>> to find a format that fits everyone. For example on PCI devices we also
->>> use the "index" attribute for UIDs analogous to SMBIOS but having it in
->>> decimal is odd on s390 where these are usual in hexadecimal.
->>> ---
->>>    arch/s390/include/asm/pci.h |  4 ++++
->>>    arch/s390/pci/pci_sysfs.c   | 20 ++++++++++++++++++++
->>>    drivers/pci/slot.c          | 13 ++++++++++++-
->>>    3 files changed, 36 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
->>> index 41f900f693d92522ff729829e446b581977ef3ff..23eed78d9dce72ef466679f31c78aca52ba00f99 100644
->>> --- a/arch/s390/include/asm/pci.h
->>> +++ b/arch/s390/include/asm/pci.h
->>> @@ -207,6 +207,10 @@ extern const struct attribute_group zpci_ident_attr_group;
->>>    			    &pfip_attr_group,		 \
->>>    			    &zpci_ident_attr_group,
->>>    
->>> +extern const struct attribute_group zpci_slot_attr_group;
->>> +
->>> +#define ARCH_PCI_SLOT_GROUPS (&zpci_slot_attr_group)
->>> +
->>>    extern unsigned int s390_pci_force_floating __initdata;
->>>    extern unsigned int s390_pci_no_rid;
->>>    
->> Will this not lead to linking error when the patch is built on non-s390
->> architecture. You could refer to zpci_slot_attr_group using a
->> CONFIG_..... and discard the #define ARCH_PCI_SLOT_GROUPS. I didn't find
->> a relevant CONFIG_... that could be used.
-> This code is in arch/s390/ it will not be build on non-s390. For the
-> non s390 case ARCH_PCI_SLOT_GROUPS will be undefined and the #ifdef in
-> slot.c makes sure we're not trying to insert ARCH_PCI_SLOT_GROUPs in
-> the array as it is not defined.
-You are right, I completely overlooked it. My comment is incorrect.
->
-> Thanks,
->
-> Niklas
+You would specify an memmap=3D range of 500GB+128K*.
+
+Force attach that range to Mike's RAMDAX driver.
+
+[ modprobe -r nd_e820, don't build nd_820, or modprobe policy blocks nd_e82=
+0 ]
+echo ramdax > /sys/bus/platform/devices/e820_pmem/driver_override
+echo e820_pmem > /sys/bus/platform/drivers/ramdax
+
+* forget what I said about vmalloc() previously, not needed
+
+> Then on each boot the kernel would check if there is an actual
+> label/info-blocks in that space and if yes, it would recreate my
+> devices (including the fsdax/devdax type)?
+
+Right, if that range is persistent the kernel would automatically parse
+the label space each boot and divide up the 500GB region space into
+namespaces.
+
+128K of label spaces gives you 509 potential namespaces.
+
+> One of the requirements for live update is that the kexec reboot has
+> to be fast. My solution introduced a delay of tens of milliseconds
+> since the actual device creation is asynchronous. Manually dividing a
+> region into thousands of devices from userspace would be very slow but
+
+Wait, 500GB Region / 1GB Namespace =3D thousands of Namespaces?
+
+> I would have to do that only on the first boot, right?
+
+Yes, the expectation is only incur that overhead once. It also allows
+for VMs to be able to lookup their capacity by name. So you do not need
+a separate mapping of 1GB Namepsace blocks to VMs. Just give some VMs
+bigger Namespaces than others by name.=
 
