@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-834375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD75BA4916
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A1DBA4921
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C7F16F407
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:11:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292DF7B6A93
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF7523BF9B;
-	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E04E247DE1;
+	Fri, 26 Sep 2025 16:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdUSHO3h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSeGqp+6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F353623A99E;
-	Fri, 26 Sep 2025 16:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6C23E229;
+	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903107; cv=none; b=ovdqTBn/XIH+sO3jNfML2SJUZlx/+DJa0yk/hY25Setro6M7kHkNMw9j5hLxV+dq9RcENz/mbz7f6ds7t53FSUgEubNnPFFXbRBXgVnuZ6pQ38oZpZwDst/7AZx7KFqGX1lDaMQEvr5w1LL9mPN2DJDap+bkK1zC2IxkrL3Potg=
+	t=1758903109; cv=none; b=sgZpVO13v0k1TYMy4twwklXsKfBbXw7jDfT+/nCnE20GFGphCwZa2UhYBLLvdBfsFd7NF9bgvp6K0OPhO+LLhIUvHVgO7QSnAc76ABAI3gS+cFo3pinm1s63f0VnOKvgtOOWbQ8N/7tI+/dml+ZJhhRswxb9tAT2PAKtaY02QxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903107; c=relaxed/simple;
-	bh=yRHrfjskk6KyPsMbNFVbtbGAg1RRUPZQnBS9srhXpvg=;
+	s=arc-20240116; t=1758903109; c=relaxed/simple;
+	bh=1KDgmYma2MnC8zChopyw3az3a1NpfHFpCuPoWCHv96Q=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=og89bX2kUIdsd+DFPdFEN5zrBOr3fKnxcrYUNpLDhvCnGTCzeBZE5g3yfNJE+71Z/jAjrXQVFbGiWPmW+0G7ajWG9kGAqZPB550lvJN7TUJ3KfrTatU6MKriJyBTU/dpWQtmOMxI8MNU945ioA0b03zy6woA//DBXCBWlRr/zYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdUSHO3h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2F4C4CEF4;
-	Fri, 26 Sep 2025 16:11:45 +0000 (UTC)
+	 Message-Id:Subject; b=oi2XJcVk4LycKHXSY/j509n+ScQv3cD3vCs08LTVTaNNrZFOxaFdVAMixs+REzxeNvugEjhkj5OZwVGFL2N/RBvvxE5JxiuoHIpGK6uounXq/WYi1w8XOGXsv11QiiOLLQqZ9Dy3NOK7YB+JnOwgUhl+ZtGo9874vLVLXGZCo0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSeGqp+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A586C4CEF4;
+	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758903106;
-	bh=yRHrfjskk6KyPsMbNFVbtbGAg1RRUPZQnBS9srhXpvg=;
+	s=k20201202; t=1758903107;
+	bh=1KDgmYma2MnC8zChopyw3az3a1NpfHFpCuPoWCHv96Q=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EdUSHO3h2a1RJKHf8MMj7mPZcuufCtSoAaLqH8n0krh49mmpFo4x3CqD8QcbzYVj5
-	 ZR+73ePW3C31DpO4Lu/xArmPcf2KRsXmsEQnZqzyEiSTpjWv4hUwdvN/AdSHdYSLF1
-	 2S3xaQI6oRCF9x1Ul9O4qDwctXnVHjKowqnCBd1MO1PLF90gzXKNlhfRON8ZrQG6OU
-	 yRHXisWEHUaZuxDi7xR+pnwqK4OsJHu892QvmsbmRrGOyLtasAqSDK04u/imiOeqai
-	 yFgB8FafVjCxfc4X11D26y6/4YYCj+P8guoTtHlvKkgwkVnVGZctb34mQhxreiLhqM
-	 kilQd5CrClt8g==
-Date: Fri, 26 Sep 2025 11:11:39 -0500
+	b=OSeGqp+6hiXXNiT7HIdZdAa9zHJ84BrXo50dVLoOZF7t2lzFo1tgeOKsl1Ga25Zot
+	 4+XlN6qIpsJ2/T1JU9zWqYZ92OJYa2gzwjdUruoIIf7WxYYu3kyc9fdEpkjJap2o7D
+	 kT5+/5Lerqgd8Ht/51vvc5evgHvQBlF9vrKeOlMJpzU1Zol7dNEBO6HjbG8idzl9T2
+	 fW93itZzkyKFyYLlYKqvGJFPgu0l5592VLpm2x1+6/3yTKP7Kzvrb7fFrNV1+iftLG
+	 od1W5uM8Yf+2UbCMOn3bcBAClsuaaPIPefWzyGt904Y5y1tpeS5cmKmBRbMg/J5A5A
+	 I1YcgIUqILcAg==
+Date: Fri, 26 Sep 2025 11:11:46 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,54 +50,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- venture@google.com, yuenn@google.com, openbmc@lists.ozlabs.org, 
- benjaminfair@google.com, joel@jms.id.au, krzk+dt@kernel.org, 
- tali.perry1@gmail.com, conor+dt@kernel.org, avifishman70@gmail.com
-To: Tomer Maimon <tmaimon77@gmail.com>
-In-Reply-To: <20250925200625.573902-1-tmaimon77@gmail.com>
-References: <20250925200625.573902-1-tmaimon77@gmail.com>
-Message-Id: <175890301752.880349.2331946518360447485.robh@kernel.org>
-Subject: Re: [PATCH v3 0/3] arm64: dts: nuvoton: add NPCM845 SoC and EVB
- support
+Cc: Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Magnus Damm <magnus.damm@gmail.com>, David Lechner <dlechner@baylibre.com>, 
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
+Message-Id: <175890301803.880384.843495445196930858.robh@kernel.org>
+Subject: Re: [PATCH v2 0/7] Add ADCs support for RZ/T2H and RZ/N2H
 
 
-On Thu, 25 Sep 2025 23:06:22 +0300, Tomer Maimon wrote:
-> This series fix warnings and adds device tree support for peripherals on
-> the Nuvoton NPCM845 SoC and its Evaluation Board (EVB).
-> The first patch fix warning and arrange node order.
-> The second patch introduces peripheral nodes for Ethernet, MMC, SPI, USB,
-> RNG, ADC, PWM-FAN, I2C, and OP-TEE firmware in the NPCM845 SoC device tree.
-> The third patch enables these peripherals for the NPCM845-EVB, adding
-> MDIO nodes, reserved memory, aliases, and board-specific configurations
-> like PHY modes and SPI flash partitions.
+On Fri, 26 Sep 2025 01:40:02 +0300, Cosmin Tanislav wrote:
+> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs include three
+> 12-Bit successive approximation A/D converters.
 > 
-> The NPCM8XX device tree tested on NPCM845 evaluation board.
+> RZ/T2H has two ADCs with 4 channels and one with 6.
+> RZ/N2H has two ADCs with 4 channels and one with 15.
 > 
-> Addressed comments from:
-> 	- Andrew Jeffery: https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-2-tmaimon77@gmail.com/
-> 					  https://patchwork.ozlabs.org/project/openbmc/patch/20250908125938.3584927-3-tmaimon77@gmail.com/
+> Add support for them.
 > 
-> Changes since version 2:
-> 	- Fix dts warning
-> 	- Arrange node order by ascending unit address.
+> V2:
+>  * pick up Reviewed-by from Geert
+>  * dt-bindings: move required after patternProperties
+>  * dt-bindings: describe 16 channels, but limit per-SoC to 6 / 15
+>  * dt-bindings: use uppercase for clock descriptions
+>  * remove max-channels property and find it from parsed channel subnodes
+>  * remove start/stop wrappers
+>  * stop calibration even on failure
+>  * move data reading to rzt2h_adc_read_single() instead of interrupt
+>  * handler
 > 
-> Changes since version 1:
-> 	- Fix commit message
-> 	- Fix dtbs_check warnings.
+> Cosmin Tanislav (7):
+>   clk: renesas: r9a09g077: Add ADC modules clock
+>   dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
+>   iio: adc: add RZ/T2H / RZ/N2H ADC driver
+>   arm64: dts: renesas: r9a09g077: Add ADCs support
+>   arm64: dts: renesas: r9a09g087: Add ADCs support
+>   arm64: dts: renesas: rzt2h/rzn2h-evk: enable ADCs
+>   arm64: defconfig: enable RZ/T2H / RZ/N2H ADC driver
 > 
-> Tomer Maimon (3):
->   arm64: dts: nuvoton: fix warning and nodes order
->   arm64: dts: nuvoton: npcm845: Add peripheral nodes
->   arm64: dts: nuvoton: npcm845-evb: Add peripheral nodes
-> 
->  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 732 +++++++++++++++++-
->  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  | 440 +++++++++++
->  .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |   7 +
->  3 files changed, 1160 insertions(+), 19 deletions(-)
+>  .../iio/adc/renesas,r9a09g077-adc.yaml        | 160 +++++++++
+>  MAINTAINERS                                   |   8 +
+>  arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  69 ++++
+>  .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  28 ++
+>  arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  69 ++++
+>  .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  64 ++++
+>  .../dts/renesas/rzt2h-n2h-evk-common.dtsi     |  79 +++++
+>  arch/arm64/configs/defconfig                  |   1 +
+>  drivers/clk/renesas/r9a09g077-cpg.c           |   3 +
+>  drivers/iio/adc/Kconfig                       |  10 +
+>  drivers/iio/adc/Makefile                      |   1 +
+>  drivers/iio/adc/rzt2h_adc.c                   | 306 ++++++++++++++++++
+>  12 files changed, 798 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
+>  create mode 100644 drivers/iio/adc/rzt2h_adc.c
 > 
 > --
-> 2.34.1
+> 2.51.0
 > 
 > 
 > 
@@ -119,20 +133,25 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: remotes/arm-soc/for-next-12027-gf60eaa447dab (exact match)
+ Base: tags/next-20250925 (best guess, 2/10 blobs matched)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nuvoton/' for 20250925200625.573902-1-tmaimon77@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com:
 
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb002000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@c0000000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/spi@fb001000: failed to match any schema with compatible: ['nuvoton,npcm845-fiu']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/i2c@86000/tmp100@48: failed to match any schema with compatible: ['tmp100']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/pwm-fan-controller@103000: failed to match any schema with compatible: ['nuvoton,npcm845-pwm-fan']
-arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/bus@f0000000/spi@201000: failed to match any schema with compatible: ['nuvoton,npcm845-pspi']
+arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@90014000 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@90014400 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@80008000 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@90014000 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@90014400 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
+arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@80008000 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
 
 
 
