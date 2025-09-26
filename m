@@ -1,119 +1,243 @@
-Return-Path: <linux-kernel+bounces-834105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6D4BA3E09
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D9CBA3E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D08A3B1961
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE253AF342
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74FB2F5316;
-	Fri, 26 Sep 2025 13:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4396C2F5A0F;
+	Fri, 26 Sep 2025 13:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmaFyvNY"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mlqz/49X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617513D539
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8A82DC346;
+	Fri, 26 Sep 2025 13:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758893132; cv=none; b=lBnE8/9iI4euHY27oQq4J3lLroTZVid3WnKhD2jX+VbSxyjbgPOYRgRfY6F402wCrURydxsakUi90dxI84E1ycdQ8XKp/F6HIu8mN4vkiAQNZ5FsksN2263s2iiwevZrOQNqchEeOGk+Z8x+/Vw/ed2Utwg02L36+C9bRJwAslc=
+	t=1758893208; cv=none; b=D6U4bMKOF59K11f+PyJxLnzjWHVERn2VXWMsNVEZizxA5rrREQ1RjTP2QKTgKcFyc/1yH/WFHy6eo3BES+s1HeKlkhYnfaIHsB2QtQ+1R7y5xtUIuqdklCd8SwH3m+qn/95L3a3M6Tm5TLI7IJIib5psxcbKSI0QRYZtIUk/4JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758893132; c=relaxed/simple;
-	bh=AMYuZ0sc5IDgH+SwisvZgTm8JNt3MSUUKvWEXAE4oEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GOGKrA4rYHy/MWFmjZGgnfh12mq2ZNyhREQJzvSstwJRwHm7WiWClOJyC6t2ULGhP4LbwjZuT/PZndAtjzJ+rSeBB2TtQDekMjK4XuDiYghqMj2DCFV9sQ2l2mKIqQfSnekByYV+hDG+SHqSLKLceQePlJgPLPSeY2RZPlGeT78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmaFyvNY; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-427e5121313so1930415ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758893129; x=1759497929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xfmtM7RZ7AOffVFIOIyywezf5nzzWk/ab7a+2RFSGKs=;
-        b=YmaFyvNY6BThLDSyckewMBBKy2siabHjS3koFbNTU4ZbRFC4ikmiWB+tvP2GkjGWgx
-         hgQSVgMuVrjFl6ItJHTiCRT0zLyOGYKt875Xqv3xhjKz/53dXmlImIt1QVEwT/JUI5zE
-         wBqqrwQq47fieVP6vvMU+huoMIKBAVkl/rB4xIZx1GeZsDq2he4/49IvpohRlzIhPVhQ
-         lr0274Kw3B67v4dDWqyiqmWSS2ofOouaWiIu+VBBDvjD+EVnR4aOxxe3DLcGn0jzXP5c
-         gXUFYMuBjQvbf2M7m7kYMh6KNe50TmDhpmYeUa3y/mqaHZUo89VrF6mrU3Ex3i6AncOQ
-         vjzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758893129; x=1759497929;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xfmtM7RZ7AOffVFIOIyywezf5nzzWk/ab7a+2RFSGKs=;
-        b=ZFySf5iuKAu2DD7bPDz98a0tj02ku+5Pp9p4IMNkK2PXLfnlQQzFVQqN3YiBRaKFUt
-         ncwXBOkaHwAb0JKpFrO4Ydy6xM9xzGEEaOiFuUSiiwbLIEeyumLsF7VHQHuvl89KTaK4
-         LykEWMAeRjXxesOaY/FJ6T6kk5NrEu5wX8MgBGEwSKPQh+oZUQlyv8WyCbRspp1DM/d2
-         0K4N5eF0syGUv7iA/FnztHv2f+FXMAE6dQfY9Nmw6Uc6RRpslfJrX5Qgb6gUdEkeEB++
-         93pNj35Zyn99rktCT5X+lPkQW19n7ikKhuOrX9aEiLbTNY9snDJ1eV3teEGd7QYFBFCb
-         Wkwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgrWTsKUd7Ws0P7fTFgEMGRq8e9zAEVDQjdX2O5a1zPi3iD3vVdI3J1w4nJpr7cde6IZ1jHCL1Epum0NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2stuxEElHvsLtKkNB+ysptmLusrqf2c2W8sYUcFQA1kvHSBzm
-	GTLstx4NjOVnAyNT86ORACq7g28xKeMMuy9KzrJtN9/jPqQi0fGAzVXA
-X-Gm-Gg: ASbGnctGg2uU4l9shXAkKNUQKtMSF44qDWHQDeK2ZOvDmaiAirV8lDXKAUkaiSwjxTl
-	g9H8SRnqUSw2sWiGgtqmwlGrOaC1tD4J+GxqxGqm2jHYJhR+txZIpHa6wK7abJeTyjQxNaaI09v
-	WjAxnnCKkU50Wk/hQEjTFwfEsjjIn1qY37m9m6akNkJDDp1dRaClbSkECASnhE6umwl42aqBu21
-	6EKxI+72Cj+Yyh/NxMFHYYc4JQrZPYDT9ZTrw5fCnPl3IzFTCo1mv7kwXVMbpA4M1GqEmpOjeqz
-	a9OV8OvuKCCdqIfhsaD8BEbAtbXoUEye8CkxgqMQXj3FKqWn/qeaB4yaGJxJ2Ek38Tpa2S3eGJU
-	w6DgsaSjcUZZzPODpCLz3C0V/NUHFuEoP
-X-Google-Smtp-Source: AGHT+IHuN12QnqYCBArnyQoijmnt/uUh4vZpuhcsJapYpJzRJKR3sYrz93g3wBFXERLf6b51Mb32mw==
-X-Received: by 2002:a05:6e02:1aae:b0:424:7ef5:aeb with SMTP id e9e14a558f8ab-4259563befbmr99572855ab.17.1758893128569;
-        Fri, 26 Sep 2025 06:25:28 -0700 (PDT)
-Received: from orangepi5-plus ([144.24.43.60])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425bcb5f6e9sm21946655ab.19.2025.09.26.06.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 06:25:28 -0700 (PDT)
-Date: Fri, 26 Sep 2025 21:25:16 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Rohan G Thomas <rohan.g.thomas@altera.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net-next v3 1/2] net: stmmac: est: Drop frames causing
- HLBS error
-Message-ID: <20250926212516.68d35461@orangepi5-plus>
-In-Reply-To: <20250925-hlbs_2-v3-1-3b39472776c2@altera.com>
-References: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
-	<20250925-hlbs_2-v3-1-3b39472776c2@altera.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1758893208; c=relaxed/simple;
+	bh=tt8j4f67Myq2x91/cEcHImKhtQzK3hMmMD/sIcbXrSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5PHxKg9z+9ZFc6Iq3jFRArqJz1O+iztB8/KXyETukLIWoWhTGoRxRNxeKYbVuyFNgs9uODCS+/vIaZBz2hWn0VHE+O8r/iviyi0oOJ40oyeRnPj4ls5xPd35MMdCESnWg1GikpHUE2ihdvQOrQwW8K3mw2Rp6fB6Iq7XDXc21g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mlqz/49X; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758893207; x=1790429207;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tt8j4f67Myq2x91/cEcHImKhtQzK3hMmMD/sIcbXrSI=;
+  b=mlqz/49Xws/kSlVR6mmKcYj2FWjmAPxW/HiK8HeaFYVmSXtqGUmN2h0C
+   KHywxcQ4+Lp04jWA/eeW06Ve9lCKT54V0T9O0sIPaxAP6fljfJUuZbO6A
+   PD54ksCVx48yOb5f+cUtjtCR9NnLaW8LbIYjxUmj3YJALJecCxjzSbXgZ
+   FLfxrtPnJyMPLxhrg0RzYk+kWE9So9d9HI627hPcyrLUfigV0IKLQyxp+
+   zlC5QRSXC2v3SH/KNKRNdf3JKkW5bkuUZuK3D8wDXUHcoQQabcDWn3zCJ
+   odQRocxBFVvyiFhLetXuPBdpO01b67B9LLH699WEVR9bRwjz5q8h35efG
+   w==;
+X-CSE-ConnectionGUID: QEDmuES2Qa6xKrYL2STbYw==
+X-CSE-MsgGUID: atCguUkdQ/Snd0P9w5W39g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="72324276"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="72324276"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 06:26:46 -0700
+X-CSE-ConnectionGUID: KyBoOnMDT3WLFyHiLckXHQ==
+X-CSE-MsgGUID: gaUzxMHbRR2LRreEpd9+TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="181619627"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 26 Sep 2025 06:26:41 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v28T9-0006GP-0Q;
+	Fri, 26 Sep 2025 13:26:39 +0000
+Date: Fri, 26 Sep 2025 21:26:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	ulf.hansson@linaro.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, nfraprado@collabora.com,
+	fshao@chromium.org, y.oudjana@protonmail.com, wenst@chromium.org,
+	mandyjh.liu@mediatek.com, mbrugger@suse.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 3/5] pmdomain: mediatek: Add support for secure HWCCF
+ infra power on
+Message-ID: <202509262155.Ux4J6K4D-lkp@intel.com>
+References: <20250925143122.39796-4-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925143122.39796-4-angelogioacchino.delregno@collabora.com>
 
-On Thu, 25 Sep 2025 22:06:13 +0800
-Rohan G Thomas <rohan.g.thomas@altera.com> wrote:
+Hi AngeloGioacchino,
 
-> From: Rohan G Thomas <rohan.g.thomas@altera.com>
-> 
-> Drop those frames causing Head-of-Line Blocking due to Scheduling
-> (HLBS) error to avoid HLBS interrupt flooding and netdev watchdog
-> timeouts due to blocked packets. Tx queues can be configured to drop
-> those blocked packets by setting Drop Frames causing Scheduling Error
-> (DFBS) bit of EST_CONTROL register.
-> 
-> Also, add per queue HLBS drop count.
-> 
-> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Furong Xu <0x1207@gmail.com>
+[auto build test ERROR on next-20250924]
+[cannot apply to robh/for-next linus/master v6.17-rc7 v6.17-rc6 v6.17-rc5 v6.17-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/dt-bindings-power-Add-support-for-MT8196-power-controllers/20250925-223530
+base:   next-20250924
+patch link:    https://lore.kernel.org/r/20250925143122.39796-4-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v2 3/5] pmdomain: mediatek: Add support for secure HWCCF infra power on
+config: i386-buildonly-randconfig-001-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262155.Ux4J6K4D-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509262155.Ux4J6K4D-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509262155.Ux4J6K4D-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:124:23: error: variable has incomplete type 'struct arm_smccc_res'
+     124 |         struct arm_smccc_res res;
+         |                              ^
+   drivers/pmdomain/mediatek/mtk-pm-domains.c:124:9: note: forward declaration of 'struct arm_smccc_res'
+     124 |         struct arm_smccc_res res;
+         |                ^
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:127:2: error: call to undeclared function 'arm_smccc_smc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     127 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0, 0, 0, &res);
+         |         ^
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:127:16: error: call to undeclared function 'ARM_SMCCC_CALL_VAL'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     127 |         arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0, 0, 0, &res);
+         |                       ^
+   drivers/pmdomain/mediatek/mtk-pm-domains.c:55:38: note: expanded from macro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
+      55 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
+         |                                         ^
+   include/linux/soc/mediatek/mtk_sip_svc.h:22:2: note: expanded from macro 'MTK_SIP_SMC_CMD'
+      22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENTION, \
+         |         ^
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:127:16: error: use of undeclared identifier 'ARM_SMCCC_FAST_CALL'
+   drivers/pmdomain/mediatek/mtk-pm-domains.c:55:38: note: expanded from macro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
+      55 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
+         |                                         ^
+   include/linux/soc/mediatek/mtk_sip_svc.h:22:21: note: expanded from macro 'MTK_SIP_SMC_CMD'
+      22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENTION, \
+         |                            ^
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:127:16: error: use of undeclared identifier 'ARM_SMCCC_SMC_32'
+   drivers/pmdomain/mediatek/mtk-pm-domains.c:55:38: note: expanded from macro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
+      55 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
+         |                                         ^
+   include/linux/soc/mediatek/mtk_sip_svc.h:22:42: note: expanded from macro 'MTK_SIP_SMC_CMD'
+      22 |         ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, MTK_SIP_SMC_CONVENTION, \
+         |                                                 ^
+   include/linux/soc/mediatek/mtk_sip_svc.h:18:41: note: expanded from macro 'MTK_SIP_SMC_CONVENTION'
+      18 | #define MTK_SIP_SMC_CONVENTION          ARM_SMCCC_SMC_32
+         |                                         ^
+>> drivers/pmdomain/mediatek/mtk-pm-domains.c:127:16: error: use of undeclared identifier 'ARM_SMCCC_OWNER_SIP'
+   drivers/pmdomain/mediatek/mtk-pm-domains.c:55:38: note: expanded from macro 'MTK_SIP_KERNEL_HWCCF_CONTROL'
+      55 | #define MTK_SIP_KERNEL_HWCCF_CONTROL    MTK_SIP_SMC_CMD(0x540)
+         |                                         ^
+   include/linux/soc/mediatek/mtk_sip_svc.h:23:7: note: expanded from macro 'MTK_SIP_SMC_CMD'
+      23 |                            ARM_SMCCC_OWNER_SIP, fn_id)
+         |                            ^
+   6 errors generated.
+
+
+vim +124 drivers/pmdomain/mediatek/mtk-pm-domains.c
+
+    54	
+  > 55	#define MTK_SIP_KERNEL_HWCCF_CONTROL	MTK_SIP_SMC_CMD(0x540)
+    56	
+    57	struct scpsys_domain {
+    58		struct generic_pm_domain genpd;
+    59		const struct scpsys_domain_data *data;
+    60		const struct scpsys_hwv_domain_data *hwv_data;
+    61		struct scpsys *scpsys;
+    62		int num_clks;
+    63		struct clk_bulk_data *clks;
+    64		int num_subsys_clks;
+    65		struct clk_bulk_data *subsys_clks;
+    66		struct regulator *supply;
+    67	};
+    68	
+    69	struct scpsys {
+    70		struct device *dev;
+    71		struct regmap *base;
+    72		const struct scpsys_soc_data *soc_data;
+    73		u8 bus_prot_index[BUS_PROT_BLOCK_COUNT];
+    74		struct regmap **bus_prot;
+    75		struct genpd_onecell_data pd_data;
+    76		struct generic_pm_domain *domains[];
+    77	};
+    78	
+    79	#define to_scpsys_domain(gpd) container_of(gpd, struct scpsys_domain, genpd)
+    80	
+    81	static bool scpsys_domain_is_on(struct scpsys_domain *pd)
+    82	{
+    83		struct scpsys *scpsys = pd->scpsys;
+    84		u32 status, status2;
+    85	
+    86		regmap_read(scpsys->base, pd->data->pwr_sta_offs, &status);
+    87		status &= pd->data->sta_mask;
+    88	
+    89		regmap_read(scpsys->base, pd->data->pwr_sta2nd_offs, &status2);
+    90		status2 &= pd->data->sta_mask;
+    91	
+    92		/* A domain is on when both status bits are set. */
+    93		return status && status2;
+    94	}
+    95	
+    96	static bool scpsys_hwv_domain_is_disable_done(struct scpsys_domain *pd)
+    97	{
+    98		const struct scpsys_hwv_domain_data *hwv = pd->hwv_data;
+    99		u32 regs[2] = { hwv->done, hwv->clr_sta };
+   100		u32 val[2];
+   101		u32 mask = BIT(hwv->setclr_bit);
+   102	
+   103		regmap_multi_reg_read(pd->scpsys->base, regs, val, 2);
+   104	
+   105		/* Disable is done when the bit is set in DONE, cleared in CLR_STA */
+   106		return (val[0] & mask) && !(val[1] & mask);
+   107	}
+   108	
+   109	static bool scpsys_hwv_domain_is_enable_done(struct scpsys_domain *pd)
+   110	{
+   111		const struct scpsys_hwv_domain_data *hwv = pd->hwv_data;
+   112		u32 regs[3] = { hwv->done, hwv->en, hwv->set_sta };
+   113		u32 val[3];
+   114		u32 mask = BIT(hwv->setclr_bit);
+   115	
+   116		regmap_multi_reg_read(pd->scpsys->base, regs, val, 3);
+   117	
+   118		/* Enable is done when the bit is set in DONE and EN, cleared in SET_STA */
+   119		return (val[0] & mask) && (val[1] & mask) && !(val[2] & mask);
+   120	}
+   121	
+   122	static int scpsys_sec_infra_power_on(bool on)
+   123	{
+ > 124		struct arm_smccc_res res;
+   125		unsigned long cmd = on ? 1 : 0;
+   126	
+ > 127		arm_smccc_smc(MTK_SIP_KERNEL_HWCCF_CONTROL, cmd, 0, 0, 0, 0, 0, 0, &res);
+   128		return res.a0;
+   129	}
+   130	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
