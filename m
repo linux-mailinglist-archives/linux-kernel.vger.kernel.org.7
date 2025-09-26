@@ -1,86 +1,56 @@
-Return-Path: <linux-kernel+bounces-834256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB0EBA4465
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:44:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250D9BA446B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DEF7560026
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:44:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A777A2191
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8A419E992;
-	Fri, 26 Sep 2025 14:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6021581EE;
+	Fri, 26 Sep 2025 14:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gmqef7SV"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfmuP/OO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BA717C91
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2604518EAB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897869; cv=none; b=KB8/dMNbHk4LfVV2TUMOJ8FUDy5yCsLr3SnuWgLYTy+EYB7Fk/OBKohQONd8qB8y7cMV06CfS7TrVuHGeFg/zphX5k1ZfHYHk0ug0fGKyz0Vv991hGfLKH4Ljlq3+7HtxtWLWlQds9eL7oQFEkWKLU+bU9dUT2Kur6+xjmgULXI=
+	t=1758897932; cv=none; b=YRzCbrhCzmCWAtOMYgE1SQ4n/WJ5lTnDVlLrs3NIvaaNHpQ9Ldi1coV/kJ9g70/5VQrRP2Mt0E2WzwGDdvWbdltYka18CwWDN51EXXnTpfp9qBWOaLmzD2Gc7JnOV4B0R8OtaPZVNQIfG/56Rkp4sQro5glPBiwJUo5Yy+ohAFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897869; c=relaxed/simple;
-	bh=qMppqb+CsDKsBDctWvW8PXL5K1HhNDMIfSUBQP+oGBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6jXbhQ5h1UIKU78Zugapd7hMoMhGaySuFbe3AYAzxWr/Y+LD/ko3eFunJzLHO3X0CtPnLqNqNci1KMmYH6VZedfsWYkSASEiNN6FJBNqGMtPzGfwImhs9sjSV+3yt0D6BYGYFME/uN0J+JA01WhlGgKEMtcugGvEw3JT630dX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gmqef7SV; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b3727611d76so245187866b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758897865; x=1759502665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuOcMyyuB1YVHMoA1Pld51FVGBjUFoZF1fWRkZlzCjo=;
-        b=gmqef7SVSWoDIHPoQmk7vbUUqXUtAPPX99orLI3ypnqUnzx92UkQ52TpDY4/nBnghH
-         Hdh17IEyU23RaSz+XUS/46corUPpkIUy26UW3qxl0qDlqn3Kj9sD20SX973+LgLrXGRP
-         wIdmxhCjeEebab1uYg/1RLHzNVb/8yT7+nJkRCpk3P/Shkp1aqL26t0OIZ29b8SbO1d4
-         zWyS2Qe3w9IxNaOJ7GNX7XRSHG535Bcvo4E8QdcHv1p1dYAISsaZlkHcZX86rtyIc38I
-         Xnjgau+v4BmryVS7E76zhlmSaoeW3iERyGPOhJ/1oJ1OHOx35U3ksacJa0eKtwgK9bUo
-         Hktw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758897865; x=1759502665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZuOcMyyuB1YVHMoA1Pld51FVGBjUFoZF1fWRkZlzCjo=;
-        b=nRdaBKZnmV0zff1WmBRF+o1xLMQ3wuuQmrRIsq82nCULEno2eSR8VLe+LRMp4vG4vE
-         gbyFZfo7JkYQzESbzVLboPy9qV6erVbRxlc9cxWyPZ68u5fp5mz1Viz/vjmvvIDuxU7B
-         oJC3Ycj5fOL91uajU7FSNdmJVY9xCRvIHvy/2HYySxN1oWz+IY+GV1aIPc1+dINgdQP3
-         9kynXDLwVqB8OpjVpwqqhZ9SRnoQ/chBi3USrxzKsO9oEWhyufBURMNlttf0zFf0JXYF
-         d8BAjLaGhvm3UsIgrLHA/6kF3nrQRt+aUXHTXBnXIU0fon1Do+GXwvIkdnTKbRYutm97
-         nV4w==
-X-Gm-Message-State: AOJu0YzVYI+UihL5EGczXdqQ0U0D8z0GgbyI62/P3TDheCQzRMZsu0HT
-	nEv5vSk9ZhdVDirHpMRC7MYs6vqqmgJaE/AIfip24/cupzOg4q5ooqdbUkUzg04X7Fs=
-X-Gm-Gg: ASbGncv4CKvZUAYYPwjQbDYrObpCarJduqFjQqIE5G8BllyyL5rwQG14tjifvCMOp3i
-	olp4q0as8NRLnlaD+mYkh4Iq0rawH+0szSfsig9hmnXbC4cCbpxwvDIIeo1hO8AiQFof6qzwvkq
-	MhQtuzQExfb0pb7iWM8kjVebU5lz7rOy3H2WV9wGFIl2ECi+Eo+3xYmnf+0b0g7mfx0e1lDrWYK
-	qSUNgMHVpUT6vn4RKJd8qNH+TPUiHE6cH0qQxtNCgEIghEsU20PDIUfCXyA/ojtDUcOlq47SGM3
-	zl6ZPy0rMhIHAFjwDoAMEvk+ykXTA4s3lzN2ERqpiwO3kLzwX5IhwTb4FVvBwnMdOTEOYjqMQyI
-	Y92op9zjDPmeVjOI4jvwxNkA1zzx7XAIhIkpDuHL4
-X-Google-Smtp-Source: AGHT+IEa2rxDSKMejzy6q7qh6tArTajnPkzC3ce9vluXpalPtT6wop2/OTbvJ/E1zQ2B/y4Z9Ipa4g==
-X-Received: by 2002:a17:907:3d90:b0:b10:3eb2:2074 with SMTP id a640c23a62f3a-b34baa34934mr962612966b.18.1758897865321;
-        Fri, 26 Sep 2025 07:44:25 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b353fa65880sm377693066b.45.2025.09.26.07.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:44:24 -0700 (PDT)
-Date: Fri, 26 Sep 2025 16:44:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Daniil Tatianin <d-tatianin@yandex-team.ru>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2 1/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-Message-ID: <aNamx2ZZEJzSCCfu@pathway.suse.cz>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <20250905144152.9137-2-d-tatianin@yandex-team.ru>
+	s=arc-20240116; t=1758897932; c=relaxed/simple;
+	bh=g4pU1woDSzu6mtGDlhD/Rbuub0cyYAVp77nzYSrP5vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=I4pL8Bjm/WmPeyW57zUSSm7qV6HK4QQiZJBJN79jEROslGtbm3wuvEEJyDdjyNZPfPH1jGoTA4MsWDHuTkKyzPoAFchJYCW7qFrfdcejl70XX98nErMnK/0utPIPDCuPEjEgOYVgbbT3I0SDRIJ/cErNvGiRJQ1hpmxvZVebakk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfmuP/OO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A3A2C113CF;
+	Fri, 26 Sep 2025 14:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758897931;
+	bh=g4pU1woDSzu6mtGDlhD/Rbuub0cyYAVp77nzYSrP5vQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JfmuP/OOHM1aY7r/c2XLshxDRkH8LnJRfxuYko/K8Xep2etWmPiWAU1JEPifZRs5B
+	 3xlq7/PvjLycaXYGURI2IKxyc2RXjRS284njWDDnuecyow/+5pHSFQO/yFFmix8MBO
+	 Exv9eT7Fhpd86iebZTPRxT9UBG7okBvonPuR4vN2OlOLGv2PI1M4BmQoq9IpfzDVAN
+	 5Q6SXhyOQzVux2zYTYcyYFLVUoY++O65oZtl0pblYatHdKNgS5x4A7Yutz3vDZCIPe
+	 YfFTngzPl6H58OlREJiF9Bnu9x1zKaQ3MPkG2jMwznUygC0SB0AIirpoLXfUtX90ts
+	 S8zS7k9pGOZMw==
+Date: Fri, 26 Sep 2025 16:45:25 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Gary Guo <gary@garyguo.net>
+Subject: [GIT PULL] locking changes for v6.18
+Message-ID: <aNanBZ9VbIO2CO9x@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,35 +59,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905144152.9137-2-d-tatianin@yandex-team.ru>
 
-On Fri 2025-09-05 17:41:51, Daniil Tatianin wrote:
-> Previously, data blocks that perfectly fit the data ring buffer would
-> get wrapped around to the beginning for no reason since the calculated
-> offset of the next data block would belong to the next wrap. Since this
-> offset is not actually part of the data block, but rather the offset of
-> where the next data block is going to start, there is no reason to
-> include it when deciding whether the current block fits the buffer.
-> 
-> Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
+Linus,
 
-The patch looks good, especially after understanding the problem
-with the maximal record size.
+Please pull the latest locking/core Git tree from:
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2025-09-26
 
-I am sorry that I did not wrote this earlier. I am quite confident
-with the patch but it is quite tricky. And I do not feel comfortable
-with pushing this for 6.18 (the merge window will likely
-start in 3 days).
+   # HEAD: 17d9f8eaa87d40a2ff66598875a43363e37a909b MAINTAINERS: update atomic infrastructure entry to include Rust
 
-I am going to queue it for 6.19 so that it could get enough
-testing in linux-next.
+Locking updates for v6.16 mostly include Rust runtime enhancements:
 
-Best Regards,
-Petr
+ - Add initial support for generic LKMM atomic variables in Rust. (Boqun Feng)
+ - Add the wrapper for `refcount_t` in Rust. (Gary Guo)
+ - Make `data` in `Lock` structurally pinned. (Daniel Almeida)
+ - Add a new reviewer, Gary Guo.
 
-PS: There is no need to resend the patch. I could fix the indentation
-    when committing it.
+ Thanks,
+
+	Ingo
+
+------------------>
+Boqun Feng (9):
+      rust: Introduce atomic API helpers
+      rust: sync: Add basic atomic operation mapping framework
+      rust: sync: atomic: Add ordering annotation types
+      rust: sync: atomic: Add generic atomics
+      rust: sync: atomic: Add atomic {cmp,}xchg operations
+      rust: sync: atomic: Add the framework of arithmetic operations
+      rust: sync: atomic: Add Atomic<u{32,64}>
+      rust: sync: atomic: Add Atomic<{usize,isize}>
+      rust: sync: Add memory barriers
+
+Gary Guo (5):
+      rust: implement `kernel::sync::Refcount`
+      rust: make `Arc::into_unique_or_drop` associated function
+      rust: convert `Arc` to use `Refcount`
+      rust: block: convert `block::mq` to use `Refcount`
+      MAINTAINERS: update atomic infrastructure entry to include Rust
+
+
+ MAINTAINERS                               |    6 +-
+ rust/helpers/atomic.c                     | 1040 +++++++++++++++++++++++++++++
+ rust/helpers/barrier.c                    |   18 +
+ rust/helpers/helpers.c                    |    2 +
+ rust/helpers/refcount.c                   |   10 +
+ rust/kernel/block/mq/operations.rs        |    7 +-
+ rust/kernel/block/mq/request.rs           |   73 +-
+ rust/kernel/sync.rs                       |    4 +
+ rust/kernel/sync/arc.rs                   |   55 +-
+ rust/kernel/sync/atomic.rs                |  551 +++++++++++++++
+ rust/kernel/sync/atomic/internal.rs       |  265 ++++++++
+ rust/kernel/sync/atomic/ordering.rs       |  104 +++
+ rust/kernel/sync/atomic/predefine.rs      |  169 +++++
+ rust/kernel/sync/barrier.rs               |   61 ++
+ rust/kernel/sync/refcount.rs              |  113 ++++
+ scripts/atomic/gen-atomics.sh             |    1 +
+ scripts/atomic/gen-rust-atomic-helpers.sh |   67 ++
+ 17 files changed, 2454 insertions(+), 92 deletions(-)
+ create mode 100644 rust/helpers/atomic.c
+ create mode 100644 rust/helpers/barrier.c
+ create mode 100644 rust/kernel/sync/atomic.rs
+ create mode 100644 rust/kernel/sync/atomic/internal.rs
+ create mode 100644 rust/kernel/sync/atomic/ordering.rs
+ create mode 100644 rust/kernel/sync/atomic/predefine.rs
+ create mode 100644 rust/kernel/sync/barrier.rs
+ create mode 100644 rust/kernel/sync/refcount.rs
+ create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
 
