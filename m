@@ -1,237 +1,233 @@
-Return-Path: <linux-kernel+bounces-834058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D30BA3B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E91BA3B52
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E37BAB4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73503ADB8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3056A2F60DA;
-	Fri, 26 Sep 2025 12:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBSfqMxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ADF2900A8;
+	Fri, 26 Sep 2025 12:54:04 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532952F5A0E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8654248F48
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891149; cv=none; b=VloikaOShsniAh2O9KDow8O1CNk5sHhqMPkf2j+6BR3oxVEiaXQzY4JIO2u0F6BbgAOQmWDTiBciXhXhwm4K6KoXVqw+TvIEUnQnJK4H64DK0RchGzav/DaKLHEcz5xoYkm48qZKMljtwahFo7h0td1seCfksQkMndfO7KhlVfo=
+	t=1758891243; cv=none; b=KoRme2lEMa+gVdLatAi4wRw+ag2PBG7zq5z/DBYFAXh1ESIFQDw+NvwxxX0vxbiNhUnI3EHR9TI/bIVGcF1QIFfLVCGTaYEXw50ePX7eScFWDmQs99kSaVN96O1Dj2cU2akjtkvjsodpxzZFagZnouth51iYyPViBBdI2DH51wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891149; c=relaxed/simple;
-	bh=bgmghckL4Ny0c8O8U8NCksUJHOretkGWrQoDWo8CmCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOGrc4H1U4mJB984SjEI559sHuUWA2LTqiWJQWuwMEOKV1g/OMLMIZpwprbYJgXDsAc+JRlYhI0RYPXDtbiS3pqWNeePjPzDjZ5kU0/mWvSZY6/Xlv2Xq9SS7CXB7/Gy6vmHelAc4edOPodfkLYACvwikpAb6y9WXJT7mCQ79rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBSfqMxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE922C19424
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891149;
-	bh=bgmghckL4Ny0c8O8U8NCksUJHOretkGWrQoDWo8CmCU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NBSfqMxlqp0pSo5pRQWnbaLm910aDdvjl4H9jyOksmG9DqM1boAdmLu4uvK5/3joo
-	 A72K+YbLICgf/Z0MFLw3CqZ+MEap9smN1X9ZATw88CdfLDSAzr2qLM377UjCK9gXbW
-	 W/YEMzwg498V8XGmn8sA4uCUsO7FEKkk06hTqyOrf8+qGrPMiX6MlAjI6R7RplfZ3S
-	 NW4r4NaaTR1ipwPbZU0Ax9+AwPnA1qlFgN3iKviJN502VJvmxhRqYsN203JZwfmUZJ
-	 1cs86+x8oXT7+3lAUiOcAACVfVr6Z7P+hcbBtUbyucBHO5mQIklzIqigjc0wpDf6xb
-	 ifr7NUZtfzVig==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-330d1565844so1537618fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:52:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/8pIsC7TN5U39Bs88x6Q+aUmWL3gPyzkMEzKlPHQDhFNxEospvTCgExo5SiVFaolkf3K++el3IZdmsJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBcZgq0vXqgXK9uhU8NPyZjtOUYohjTtMjU09znWzWXMMsoOQ3
-	Ogr4eJz4EysJzWmQWoNO68rbDnt/QRG+oH1rud8GcACbTRq/qmmWmRYsx8XdzdnfrPHLVCNqPV0
-	AENexpv8MFSZOYP1jIEEfDcSdDPjhnV4=
-X-Google-Smtp-Source: AGHT+IFyJsbtEL/QZxEFMzNMFhjejHmQrKAGHJ2m+Cy67pO650FZ5XV0FAPVcpNkLn5AmmxpCHNcXhCPX9zROUcktt4=
-X-Received: by 2002:a05:6871:79a3:b0:35c:cfec:df79 with SMTP id
- 586e51a60fabf-36c4698a0f9mr1307306fac.51.1758891148064; Fri, 26 Sep 2025
- 05:52:28 -0700 (PDT)
+	s=arc-20240116; t=1758891243; c=relaxed/simple;
+	bh=M8bxK0iXb2FRLKuLBsDiNvlwCoNKiuW5WSKZFjwMKEI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WyhPRTN79l17xzjP9tGATapbX3r7YjWg8RQyRFTgIjlrV+fW1+OaCUiP3tHDxJ/bCyChThiQT/va5oLNL/E8IXwRjCbW1+S4T4wsNYPONdk3Jm80YUMjs9yksnegGe33jrNpd4WIzqi5oSyhrWFf6QZvnTK4kO6QfbDDn4IyMcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4248b59ea91so50411245ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:54:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758891241; x=1759496041;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gm+LwPqy3DYhZr5PODr6bTfwgQx+iWFWRByOeWwAtYE=;
+        b=QhZGlNbesz5x6BCI43Qv2DCPxK+bNvIfx6hVq5kpBPRzQqY+KDD9TGcSnnJGlXL8Vb
+         ZIi5wO9Jra82ngX0lcic9JvSK3qW307BdzdLCQXdz+3n8ZJ3URmo08qkCqqkYkxuoWXL
+         PH1uv/spKAQdnKdhKITBV8y2hP57V9/XcDiedPBXc60VBk3XWEBVmPKqketL9t4gDt3r
+         P+cY3NR4Zmato+CglqrJZoRQPdfNbPy2WL4pWGvepDMypUUO3IxlaMbsz8IWENRkz9EU
+         kRSr5F2OBGiOe+IoF090X8Eh0dGm4xjQ7CVRDEOFgTWgXZGqhsoF55lB2Xg/CqNNg/eR
+         136Q==
+X-Gm-Message-State: AOJu0YxQD7t1pwwXr0J39B8YhLPNuSSdhN0gJNVdXMDfKUuUEAEd1qel
+	/GvPn436AWerUP9pTZguC7u5D51AVG0h9NlEFoGiq3OL9Rt2Zj2sOcfkN0BR0Yl0OnO4jFp6fnL
+	TWeBFJqCkG0KwqoRNmX9x2VnGRoBizIxwv5yObT3J9NEEaO+j+yrRJmDmqZWE/g==
+X-Google-Smtp-Source: AGHT+IE8oNWbIAUpCAos5g1UoqJOK3ltnpE/tzQbLZM3MuHvsdIymbq4QL/f4RrXqHfo1KCC4BRHaCE8BeyhneufDbvMTxYCwWUp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
- <CAJZ5v0hSy9zQd6cP9B4QPSZi-6ughmkW=VoEBV-0MbUr2xcaAQ@mail.gmail.com> <aNZ9fbh8eLiPAJzR@kekkonen.localdomain>
-In-Reply-To: <aNZ9fbh8eLiPAJzR@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 26 Sep 2025 14:52:17 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gQ9vnT+Z8zryEausp-2xX7HocoBgwmiptxg7BGiU9C8g@mail.gmail.com>
-X-Gm-Features: AS18NWDCqPA72v4-2y8V5lEmAid_UEthjaXRBCWFUzQ_Nsh-1l_6LWsoqBtdmRQ
-Message-ID: <CAJZ5v0gQ9vnT+Z8zryEausp-2xX7HocoBgwmiptxg7BGiU9C8g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/16] Align availability checks on fwnode child node enumeration
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-spi@vger.kernel.org, 
-	Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Javier Carrasco <javier.carrasco@wolfvision.net>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Paul Elder <paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+X-Received: by 2002:a92:c26d:0:b0:425:b6a6:77cf with SMTP id
+ e9e14a558f8ab-425b6a679d4mr39801765ab.26.1758891240799; Fri, 26 Sep 2025
+ 05:54:00 -0700 (PDT)
+Date: Fri, 26 Sep 2025 05:54:00 -0700
+In-Reply-To: <68d46aed.050a0220.57ae1.0002.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d68ce8.a00a0220.102ee.0002.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_nls
+From: syzbot <syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sakari,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On Fri, Sep 26, 2025 at 1:48=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Wed, Sep 24, 2025 at 12:52:12PM +0200, Rafael J. Wysocki wrote:
-> > Hi Sakari,
-> >
-> > On Wed, Sep 24, 2025 at 9:46=E2=80=AFAM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hello everyone,
-> > >
-> > > Historically the fwnode property API has enumerated only available de=
-vice
-> > > nodes on OF whereas on ACPI, also nodes that haven't been present in =
-the
-> > > system have been provided. Both OF and ACPI have similar concepts of =
-node
-> > > availbility, on OF it's the "status" property present on device nodes=
- and
-> > > on ACPI the _STA object evaluates to device present, enabled and
-> > > functional bits, of which the present and functional bits are current=
-ly
-> > > being used to determine whether to enumerate a device.
-> > >
-> > > Two additional functions, fwnode_get_next_available_child_node() and
-> > > fwnode_for_each_available_child_node(), have been provided to enumera=
-te
-> > > the available nodes only on ACPI, whereas on OF the implementation ha=
-s
-> > > been the same on the non-available variants. The motivation for provi=
-ding
-> > > these has very likely been to provide fwnode variants of the similarl=
-y
-> > > named functions but the difference isn't justifiable from API consist=
-ency
-> > > viewpoint.
-> > >
-> > > This set switches the users away from the "available" fwnode API func=
-tions
-> > > and later on removes them, aligning the functionality on all fwnode
-> > > backends.
-> > >
-> > > since v1:
-> > >
-> > > - Move patch "ACPI: property: Make acpi_get_next_subnode() static" as
-> > >   first.
-> > >
-> > > - Add missing parentheses and kernel-doc Return: section in
-> > >   acpi_get_next_present_subnode() documentation and move the Return
-> > >   section: of fwnode_graph_get_endpoint_by_id() to the end of the
-> > >   documentation section (new patch for the latter).
-> > >
-> > > - Use device_get_next_child_node() instead of fwnode_get_next_child_n=
-ode()
-> > >   in flash LED driver drivers.
-> > >
-> > > - Rework iterating port nodes in acpi_graph_get_next_endpoint() as
-> > >   suggested by Andy (new patch).
-> >
-> > I think that you really have four series here, or rather two series, a
-> > collection of patches depending on them, and a follow-up cleanup.
-> >
-> > > Sakari Ailus (16):
-> > >   ACPI: property: Make acpi_get_next_subnode() static
-> > >   ACPI: property: Use ACPI functions in acpi_graph_get_next_endpoint(=
-)
-> > >     only
-> > >   ACPI: property: Rework acpi_graph_get_next_endpoint()
-> > >   ACPI: property: Return present device nodes only on fwnode interfac=
-e
-> >
-> > So the above is one series, focused on ACPI property changes.
-> >
-> > They can go in via ACPI as soon as everyone is happy with them.  I
-> > think I can push them for 6.18 if that helps to process the other
-> > patches.
->
-> If it's an option, that would be nice. But see below.
->
-> >
-> > >   property: Move Return: section of fwnode_graph_get_endpoint_by_id()
-> > >     down
-> > >   property: Drop DEVICE_DISABLED flag in
-> > >     fwnode_graph_get_endpoint_by_id()
-> > >   property: Drop DEVICE_DISABLED flag in
-> > >     fwnode_graph_get_endpoint_count()
-> >
-> > The above patches are another series that doesn't depend on the first
-> > one AFAICS and can go in via driver core.
->
-> Agreed.
->
-> >
-> > >   property: Document that fwnode API returns available nodes
-> > >   driver core: Use fwnode_for_each_child_node() instead
-> > >   net: lan966x: Use fwnode_for_each_child_node() instead
-> > >   Input: touch-overlay - Use fwnode_for_each_child_node() instead
-> > >   media: thp7312: Use fwnode_for_each_child_node() instead
-> > >   leds: Use fwnode_for_each_child_node() instead
-> > >   leds: Use fwnode_get_next_child_node() instead
-> >
-> > The above can go in via respective subsystem trees when the ACPI
-> > property series gets in (I'm not sure if/how they depend on the second
-> > series).
-> >
-> > And the following one is a follow-up cleanup getting rid of code that
-> > would be redundant going forward.
-> >
-> > >   property: Drop functions operating on "available" child nodes
-> > >   spi: cadence: Remove explicit device node availability check
-> >
-> > Does the spi change depend on the previous patch?
->
-> There's really only one dependency, apart from the direct dependency of
-> fwnode_get_next_available_child_node() /
-> fwnode_for_each_available_child_node() definitions removed in the second
-> last patch: fwnode_get_next_child_node() and fwnode_for_each_child_node()
-> may still return non-available nodes before the last of the ACPI patches =
-in
-> the set. So if the ACPI patches aren't merged but the rest are,
-> non-available nodes could be returned.
->
-> How about:
->
-> 1. Merge the ACPI patches to 6.18.
->
-> 2. Merge the rest, apart from the second last patch, for 6.19.
->
-> 3. Once everything else is in, merge the last patch. Could wait for 6.20.
+***
 
-Sounds good.
+Subject: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_n=
+ls
+Author: ekffu200098@gmail.com
 
-> Perhaps I should split the series in three sets?
+#syz test
 
-That would help I think.
-
-> I'll send an update on the ACPI patches soon, to address a comment relate=
-d
-> to them.
-
-OK
-
-Thanks!
+On Thu, Sep 25, 2025 at 7:04=E2=80=AFAM syzbot
+<syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    b5a4da2c459f Add linux-next specific files for 20250924
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15ffad3458000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dfc64d939cce41=
+d2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3e9cb93e3c5f90d=
+28e19
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1704cf12580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15c8d4e258000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/127c931e6696/dis=
+k-b5a4da2c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/cf4957abd39e/vmlinu=
+x-b5a4da2c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/860d3ac61bac/b=
+zImage-b5a4da2c.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/9006b1673f=
+9f/mount_0.gz
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
+11c8d4e2580000)
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
+>
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc0000000002: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+> CPU: 1 UID: 0 PID: 5979 Comm: syz-executor Not tainted syzkaller #0 PREEM=
+PT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/18/2025
+> RIP: 0010:exfat_convert_ucs2_to_char fs/exfat/nls.c:441 [inline]
+> RIP: 0010:__exfat_utf16_to_nls fs/exfat/nls.c:554 [inline]
+> RIP: 0010:exfat_utf16_to_nls+0x21c/0x840 fs/exfat/nls.c:638
+> Code: 2e 29 ff 66 41 83 fc 7f 77 14 e8 7f 2a 29 ff e9 b6 00 00 00 e8 75 2=
+a 29 ff e9 a9 00 00 00 48 8b 4c 24 40 48 89 c8 48 c1 e8 03 <42> 80 3c 38 00=
+ 74 0f 48 8b 7c 24 40 e8 d3 6b 8e ff 48 8b 4c 24 40
+> RSP: 0018:ffffc90003fef760 EFLAGS: 00010202
+> RAX: 0000000000000002 RBX: 0000000000000004 RCX: 0000000000000010
+> RDX: ffff88802f18bc80 RSI: 00000000000000e1 RDI: 0000000000000080
+> RBP: ffffc90003fef850 R08: 0000000000000005 R09: 0000000000000000
+> R10: ffffc90003fef7e0 R11: fffff520007fdefc R12: 00000000000000e1
+> R13: ffffc90003fefa48 R14: 0000000000000000 R15: dffffc0000000000
+> FS:  000055557b9c2500(0000) GS:ffff888125b03000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055557b9e5608 CR3: 00000000734c8000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  exfat_readdir fs/exfat/dir.c:143 [inline]
+>  exfat_iterate+0x19a7/0x2050 fs/exfat/dir.c:243
+>  wrap_directory_iterator+0x96/0xe0 fs/readdir.c:65
+>  iterate_dir+0x399/0x570 fs/readdir.c:108
+>  __do_sys_getdents64 fs/readdir.c:410 [inline]
+>  __se_sys_getdents64+0xe4/0x260 fs/readdir.c:396
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f2c837c1833
+> Code: c1 66 0f 1f 44 00 00 48 83 c4 08 48 89 ef 5b 5d e9 32 3d f8 ff 66 9=
+0 b8 ff ff ff 7f 48 39 c2 48 0f 47 d0 b8 d9 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 05 c3 0f 1f 40 00 48 c7 c2 a8 ff ff ff f7 d8
+> RSP: 002b:00007ffc8cf73ff8 EFLAGS: 00000293 ORIG_RAX: 00000000000000d9
+> RAX: ffffffffffffffda RBX: 000055557b9dd600 RCX: 00007f2c837c1833
+> RDX: 0000000000008000 RSI: 000055557b9dd600 RDI: 0000000000000005
+> RBP: 000055557b9dd5d4 R08: 0000000000028a41 R09: 0000000000000000
+> R10: 00007f2c839b7cc0 R11: 0000000000000293 R12: ffffffffffffffa8
+> R13: 0000000000000010 R14: 000055557b9dd5d0 R15: 00007ffc8cf762b0
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:exfat_convert_ucs2_to_char fs/exfat/nls.c:441 [inline]
+> RIP: 0010:__exfat_utf16_to_nls fs/exfat/nls.c:554 [inline]
+> RIP: 0010:exfat_utf16_to_nls+0x21c/0x840 fs/exfat/nls.c:638
+> Code: 2e 29 ff 66 41 83 fc 7f 77 14 e8 7f 2a 29 ff e9 b6 00 00 00 e8 75 2=
+a 29 ff e9 a9 00 00 00 48 8b 4c 24 40 48 89 c8 48 c1 e8 03 <42> 80 3c 38 00=
+ 74 0f 48 8b 7c 24 40 e8 d3 6b 8e ff 48 8b 4c 24 40
+> RSP: 0018:ffffc90003fef760 EFLAGS: 00010202
+> RAX: 0000000000000002 RBX: 0000000000000004 RCX: 0000000000000010
+> RDX: ffff88802f18bc80 RSI: 00000000000000e1 RDI: 0000000000000080
+> RBP: ffffc90003fef850 R08: 0000000000000005 R09: 0000000000000000
+> R10: ffffc90003fef7e0 R11: fffff520007fdefc R12: 00000000000000e1
+> R13: ffffc90003fefa48 R14: 0000000000000000 R15: dffffc0000000000
+> FS:  000055557b9c2500(0000) GS:ffff888125a03000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000c000692800 CR3: 00000000734c8000 CR4: 00000000003526f0
+> ----------------
+> Code disassembly (best guess):
+>    0:   2e 29 ff                cs sub %edi,%edi
+>    3:   66 41 83 fc 7f          cmp    $0x7f,%r12w
+>    8:   77 14                   ja     0x1e
+>    a:   e8 7f 2a 29 ff          call   0xff292a8e
+>    f:   e9 b6 00 00 00          jmp    0xca
+>   14:   e8 75 2a 29 ff          call   0xff292a8e
+>   19:   e9 a9 00 00 00          jmp    0xc7
+>   1e:   48 8b 4c 24 40          mov    0x40(%rsp),%rcx
+>   23:   48 89 c8                mov    %rcx,%rax
+>   26:   48 c1 e8 03             shr    $0x3,%rax
+> * 2a:   42 80 3c 38 00          cmpb   $0x0,(%rax,%r15,1) <-- trapping in=
+struction
+>   2f:   74 0f                   je     0x40
+>   31:   48 8b 7c 24 40          mov    0x40(%rsp),%rdi
+>   36:   e8 d3 6b 8e ff          call   0xff8e6c0e
+>   3b:   48 8b 4c 24 40          mov    0x40(%rsp),%rcx
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
+-bugs/68d46aed.050a0220.57ae1.0002.GAE%40google.com.
 
