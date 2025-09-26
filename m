@@ -1,177 +1,182 @@
-Return-Path: <linux-kernel+bounces-833640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB2BBA2863
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508D8BA2875
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484C938402D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D84F626077
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032FB27B341;
-	Fri, 26 Sep 2025 06:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F5727B327;
+	Fri, 26 Sep 2025 06:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAqJU7u/"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhDlaekI"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F0527A12D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3151E50E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758867823; cv=none; b=bfYUhfI0NM79NAreXseJe2XzpXHJs2+tH6BvkpXCBFchxjaKjUGhekKZZGUyknWT5Qn6rURwqOiUhy/p9SOOcmK+xlsw+zL52buMaOCUAP/mtzRYQ2tQV+Zl6RvDMVEzwlm9A3LNL+8GQBhy9rvAw6yo1aTSsrbSBULd8PiOr7w=
+	t=1758868263; cv=none; b=ZdYxGoH/D35HVCBPRTIja4r8PCTRvzGeDrk6hDczhe+26lcJqEHmrt/B4K/kc3MOg+sGheZONDkbh0J24kkvToBnfh5wX4Tdn6tBg8n2vYlSsUN1pWgMDoOAOOn4mclk8NOwFRCFBT6PegHGFIwKAj6aQU2t+bt6yW1HQ+qnNAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758867823; c=relaxed/simple;
-	bh=u6Sq2YURwtuu5QNEEMlKl7xX/uAJZnHBmjr5auxbeg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CGC6tMMkZ1AaDqJ3kpCYTXl4RIimMk2KIsdIY78n5N1B4ElK448cSSolAep2HVyI7flb1Q2+MxWQf9mTV30jDpX5f0GsyGxXWjo1H7xzZgxLCLqdWof6UE9EFOqhicIvIvVfoLf175pTNCj2SIHKM6do3kgFQP7WC+gtufeb/yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAqJU7u/; arc=none smtp.client-ip=209.85.214.194
+	s=arc-20240116; t=1758868263; c=relaxed/simple;
+	bh=pT4D4Sn35YNV1NvLk0Gg5WRv2gza4yQM0mzRPkxHlLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MMWHwOhZTzcbMMV5OE4cbkNYPjMNHqu0D7DMIOnBsdj3XvVn+PPkH+EhNdOZnLSP5CsbRwMwuQtyJxlo7fPgDLgYfcdX7NamrsG5lKQm13ZCjmlaxXb999aQgbNZc39fbuCaQ5k5+kq/BTRMRDKTopRJFB0HoIZY0zgS2XDVnRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhDlaekI; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-26e68904f0eso19575175ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:23:41 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33255011eafso1763276a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758867820; x=1759472620; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758868262; x=1759473062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I+IWmkPAlMQiBvEu/U0MvJdvKLaUfjFQa+8mon/ZBiY=;
-        b=OAqJU7u/21pfPzvaNE3Epov7BHffzNaL6Uoe3nRutQsaq6BL1pFFv70v3Ac3xZlGUO
-         L37/zEPR9sMrjEyk0jQ/lX/iNvaMdyZUDoxZ40UqDb1uVDp2KTq3J4TTxwf9Ti3RB/q9
-         j9Prubd0l76GWkjdW6WPfoPEwTqCB3ImGwtcKy2uAOVamHPnis+/boeCYrZ1oXrDSsh6
-         eqZFAZJ8u9MzO7b2RHxuUW4Qxz+FQxUwj++X8YI8nZAM10O049JryjX6g+Qd07Bs4hk/
-         la5O/0VXEUySt13VhbAeligm7sP+EkLWubEGvIjnUX1MWZsd73yrkHlOoW4noYiXjRmg
-         vR3A==
+        bh=EC3AeUD+OlSR85O126Z8E0KX/IkQ5ae4Bq/IbfDT0B0=;
+        b=XhDlaekIeF1dGVe8P3FQwV61t1LUrlhY5RWSnLxiNgWf2nfdQpbgPc4hgoRzWV3K1k
+         SYWF5IWgrveXaWzsL/DeB9PQudjpFJ+kKYlUiplyU8Cg0mE/oBblP74Z4UCp0Qnf18SG
+         nPkA5gw0wVzS368sH6uXpGVLvxprEsTL+2aCLcBhr3oYaXZmuQzx0WzY0ocOsON13KhW
+         xiF496hodoN6y0UGOPoMPPOGNHykiytQ2S8xuJ4RQDEy43ptWKRDXoCsbKaLXuu7PZgS
+         nNdquWcLBK9HT4z/im3r8eqNro0CYaif5O235ZM/56L1MAJFZBTl/ZCEXvfw/FeQiE7j
+         c/Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758867820; x=1759472620;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758868262; x=1759473062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I+IWmkPAlMQiBvEu/U0MvJdvKLaUfjFQa+8mon/ZBiY=;
-        b=XthRWeW3FQ9zA6snuBym8XPbR5kyZ5uObplwOAGkWQDEj/TsskRSL7bCmwyWD0vj/0
-         TqRS4gkQrGoHg0E5bbl1iOpwUN7UkPT0Le2YdaxeSB0z7bTxU6RGaFm/n7sR3JRQ7jjH
-         qCiRdWhqZgAl52saoGAstbW/hMXn7vfIuxTmlKMjSefSr/XuokabXHoFECO5D4Y1LMQk
-         zsnXCYZL3q4viMcLePMTnnJsNi3w+1F/QbPyKewUoRMJUkHwISvsf5rSNEiYiUfa5lgw
-         QSKXmXCiiQ9JU/MnCZXhJABk/RtotLGSW62glCNipeFuRTV5cXQAaxD6uSlUMe43ReFp
-         yRow==
-X-Gm-Message-State: AOJu0YwDl7p4ArlgR0cWZHr7ERg/okXuYs0nM9vzyuDh1qvNFcOfkUdB
-	cc8/w03M+m5Kgv6l1cz+XYytuL7O+S+CsE074kd+pAd/YuMAipPFBRJC
-X-Gm-Gg: ASbGnctCOyaqJK0jVlQ8YegfBHkaty3FCV+uLiiJaXuUpSVqeBsNtM8z5jSlNl6pBgK
-	YdVAjd+rla1Rx/hWO2bzZu4M2B8hT0jd2yG0EYKLrIMYUg3J8RMqlmHyeYqt06qFbSW+xwYrfbL
-	qEch3dO8XN2XFeXLVgXHkl4yMrmbQFZQMPjyIjRj9S7M0rCQQLUkA8WCJPOpT4oXu4oNC+uZf2R
-	jfxCRNtSTTqyaUDwrp4JrLqJrSiNqK7riE2rimp6ghn783kyntOQkl/A9I44bBvGYaHGCAE4kt5
-	uAfAmFqudkUIBGgQozCNoZ+9YzJM0qtYiAuimEjnkGyqkro37ktolM3qa8iSywM/ZN+6TWV3NSh
-	nHt/S5D6EyzPohry5K/kR/7OCb2iuoM6oAiXP/oktAy/zPeM9thE=
-X-Google-Smtp-Source: AGHT+IGMdkjfopWJVTl5U8eSEKamt5UYh2lxs0dBr+wzV2Rf8C6wXp6A4BGv3sEN+utd4O11ehuJeA==
-X-Received: by 2002:a17:903:37cf:b0:27d:69de:edca with SMTP id d9443c01a7336-27ed4a16b89mr67720485ad.13.1758867820429;
-        Thu, 25 Sep 2025 23:23:40 -0700 (PDT)
-Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69ab0aesm42856845ad.113.2025.09.25.23.23.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 23:23:40 -0700 (PDT)
-From: Hongru Zhang <zhanghongru06@gmail.com>
-X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
-To: stephen.smalley.work@gmail.com,
-	paul@paul-moore.com,
-	omosnace@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	zhanghongru@xiaomi.com
-Subject: [PATCH v3 2/2] selinux: improve bucket distribution uniformity of avc_hash()
-Date: Fri, 26 Sep 2025 14:23:33 +0800
-Message-ID: <000bce8f11d06684f70a29705dfd417747475b1a.1758859391.git.zhanghongru@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758859391.git.zhanghongru@xiaomi.com>
-References: <cover.1758859391.git.zhanghongru@xiaomi.com>
+        bh=EC3AeUD+OlSR85O126Z8E0KX/IkQ5ae4Bq/IbfDT0B0=;
+        b=RT5bD7P+gqjvulcywM1NGrw5jCOIuOJCOd5GHDlnL7cfT3Ahv4I1tY8g9e9nrqGaYj
+         zUj6KIlYIZXEN2toxbAEsn30n+V8D1QBc1RkNstIoUDy9003PJGotug1XL9PSsTWZkJc
+         h4RuIb822BtnHbHGOMI8+8K4myXhZC1XR7WSxeUD6+K3veSKT48HXZU83Gje5z7NcD5D
+         c3LlVUNS2L3ZYBtK75PIUqXBmpw0So4pE+xCgQ/PvlYbY+PCW9VOwQl7MvmNDwmjHMoX
+         iOoZ/omCCYgOdD8vCFPh4FXwkYgfPiGCu8T4I8AAWJmFGs73ARc3NLUHXgqqtoFPQDdO
+         30Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyxidNB2JCNnvuEdqbe3XzhRZXyJo9KZG+EoDtEq0A2DRzsBNBD9OYRrIvbqzljrDC4IACYCmpQf9cv9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbvye7fOLKgESCEwNnZ7s60x2RWFTNqr568OdMMWW7blcJauUU
+	JfVMD9A/5f2i2ZPjeIBiXmPyO8O+Wr9jutMsluuC5cD+Xa5Wx0XRKh/49o48w0gBKXTJGQILR+/
+	sAUjPuOTbQV77VIAzYipdGYjZvM3I/dU=
+X-Gm-Gg: ASbGnctk9eT+FIOskTrg4byJaWR9VKhIPgFOFvikSO/uNMYG6obWVpVS6IW4UxuS211
+	Unbh2BqfKUQTU1R2q8ZeNqMNaOnvcFgO4nmXv5DLggIuZqrJ3sjgUEEvbb7JhQdon4I9IUT3Znq
+	URigC4TY5ptP9XO9vpJhBLtIZDv+7pXLzVuTfSd6p/Lx/HSkYrSxcOjk6AepTf1kVlhcNCB4id/
+	H1WWeqFhJEewGz38LLg
+X-Google-Smtp-Source: AGHT+IHOQqsbHKaoRWWyK8jo8RXNW/NKUILVQhNWFEFGhfVRUvbzyWKNu5nCPhJOFCZcotGOXjHOERG0NyOWk5Wwvpk=
+X-Received: by 2002:a17:902:e5cf:b0:24b:164d:4e61 with SMTP id
+ d9443c01a7336-27ed49d0775mr63385725ad.13.1758868261660; Thu, 25 Sep 2025
+ 23:31:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250922131148.1917856-1-mmyangfl@gmail.com> <20250922131148.1917856-3-mmyangfl@gmail.com>
+ <aNQvW54sk3EzmoJp@shell.armlinux.org.uk> <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
+ <aNREByX9-8VtbH0n@shell.armlinux.org.uk>
+In-Reply-To: <aNREByX9-8VtbH0n@shell.armlinux.org.uk>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Fri, 26 Sep 2025 14:30:25 +0800
+X-Gm-Features: AS18NWB6pDKhReLM4IsYwOxVnFFQ1lMaREgEQ7ywwv9WWvhB3USv5GmmOErCI0I
+Message-ID: <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce PHY_INTERFACE_MODE_REVSGMII
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hongru Zhang <zhanghongru@xiaomi.com>
+On Thu, Sep 25, 2025 at 3:18=E2=80=AFAM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Wed, Sep 24, 2025 at 08:41:06PM +0200, Andrew Lunn wrote:
+> > In theory, {R}GMII does have inband signalling, but it is pretty much
+> > never used. REV for GMII could thus indicate what role the device is
+> > playing in this in-band signalling?
+>
+> For RGMII, as you say, the in-band signalling is pretty much never used.
+> The stmmac code as it stands today does have support for using it, but
+> the code has been broken for longer than six years:
+>
+> 1. the longest historical breakage, it's conditional on the hardware
+>    reporting that it has a PCS integrated into the design, but a PCS
+>    won't be integrated into the design for RGMII-only cases.
+>
+> 2. even if (1) was fixed, that would result in the driver manipulating
+>    the netif carrier state from interrupt context, always beating
+>    phylink's resolve worker, meaning that mac_link_(down|up) never get
+>    called. This results in no traffic flow and a non-functional
+>    interface.
+>
+> So, maybe we should just ignore the RGMII in-band signalling until
+> someone pops up with a hard and fast requirement for it.
+>
+> > For any SERDES based links likes like SGMII, 1000Base-X and above,
+> > clocking is part of the SERDES, so symmetrical. There clearly is
+> > inband signalling, mostly, when it is not broken because of
+> > overclocked SGMII. But we have never needed to specify what role each
+> > end needs to play.
+>
+> 100base-X is intentionally symmetric, and designed for:
+>
+>         MAC----PCS---- some kind of link ----PCS----MAC
+>
+> where "some kind of link" is fibre or copper. There is no reverse mode
+> possible there, because "reverse" is just the same as "normal".
+>
+> For SGMII though, it's a different matter. The PHY-like end transmits
+> the link configuration. The MAC-like end receives the link
+> configuration and configures itself to it - and never sends a link
+> configuration back.
+>
+> So, the formats of the in-band tx_config_reg[15:0] are different
+> depending on the role each end is in.
+>
+> In order for a SGMII link with in-band signalling to work, one end
+> has to assume the MAC-like role and the other a PHY-like role.
+>
+> PHY_INTERFACE_MODE_SGMII generally means that the MAC is acting in a
+> MAC-like role. However, stmmac had the intention (but broken) idea
+> that setting the DT snps,ps-speed property would configure it into a
+> PHY-like role. It almost does... but instead of setting the "transmit
+> configuration" (TC) bit, someone typo'd and instead set the "transmit
+> enable" (TE) bit. So no one has actually had their stmmac-based
+> device operating in a PHY-like role, even if they _thought_ it was!
+>
+> > > However, stmmac hardware supports "reverse" mode for more than just
+> > > SGMII, also RGMII and SMII.
+> >
+> > How does the databook describe reverse SGMII? How does it differ from
+> > SGMII?
+>
+> It doesn't describe "reverse SGMII". Instead, it describes:
+>
+> 1. The TC bit in the MAC configuration register, which makes the block
+>    transmit the speed and duplex from the MAC configuration register
+>    over RGMII, SGMII or SMII links (only, not 1000base-X.)
+>
+> 2. The SGMIIRAL bit in the PCS control register, which switches where
+>    the SGMII rate adapter layer takes its speed configuration from -
+>    either the incoming in-band tx_config_reg[15:0] word, or from the
+>    MAC configuration register. It is explicitly stated for this bit
+>    that it is for back-to-back MAC links, and as it's specific to
+>    SGMII, that means a back-to-back SGMII MAC link.
+>
+> Set both these bits while the MAC is configured for SGMII mode, and
+> you have a stmmac MAC which immitates a SGMII PHY as far as the
+> in-band tx_config_reg[15:0] word is concerned.
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-Under heavy stress testing (on an 8-core system sustaining over 50,000
-authentication events per second), sample once per second and take the
-mean of 1800 samples:
-
-1. Bucket utilization rate and length of longest chain
-+--------------------------+-----------------------------------------+
-|                          | bucket utilization rate / longest chain |
-|                          +--------------------+--------------------+
-|                          |      no-patch      |     with-patch     |
-+--------------------------+--------------------+--------------------+
-|  512 nodes,  512 buckets |      52.5%/7.5     |     58.2%/6.2      |
-+--------------------------+--------------------+--------------------+
-| 1024 nodes,  512 buckets |      68.9%/12.1    |     82.4%/8.9      |
-+--------------------------+--------------------+--------------------+
-| 2048 nodes,  512 buckets |      83.7%/19.4    |     94.8%/15.2     |
-+--------------------------+--------------------+--------------------+
-| 8192 nodes, 8192 buckets |      49.5%/11.4    |     61.9%/6.6      |
-+--------------------------+--------------------+--------------------+
-
-2. avc_search_node latency (total latency of hash operation and table
-lookup)
-+--------------------------+-----------------------------------------+
-|                          |   latency of function avc_search_node   |
-|                          +--------------------+--------------------+
-|                          |      no-patch      |     with-patch     |
-+--------------------------+--------------------+--------------------+
-|  512 nodes,  512 buckets |        87ns        |        79ns        |
-+--------------------------+--------------------+--------------------+
-| 1024 nodes,  512 buckets |        97ns        |        91ns        |
-+--------------------------+--------------------+--------------------+
-| 2048 nodes,  512 buckets |       118ns        |       110ns        |
-+--------------------------+--------------------+--------------------+
-| 8192 nodes, 8192 buckets |       106ns        |        94ns        |
-+--------------------------+--------------------+--------------------+
-
-Although the multiplication in the new hash algorithm has higher overhead
-than the bitwise operations in the original algorithm, the data shows
-that the new algorithm achieves better distribution, reducing average
-lookup time. Consequently, the total latency of hashing and table lookup
-is lower than before.
-
-Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
----
- security/selinux/avc.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 7a7f88012865..fc631d1097bc 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -146,9 +146,24 @@ static struct kmem_cache *avc_xperms_data_cachep __ro_after_init;
- static struct kmem_cache *avc_xperms_decision_cachep __ro_after_init;
- static struct kmem_cache *avc_xperms_cachep __ro_after_init;
- 
-+/*
-+ * Advantages of this hash design:
-+ *     - Minimized collisions: Different inputs won't produce similar
-+ *       contributions
-+ *     - Bit diffusion: Each constant effectively scrambles input bits
-+ *     - Mathematical guarantee: These constants are theoretically analyzed
-+ *       and empirically validated
-+ *     - Complementarity: Three constants complement each other at the
-+ *       binary level
-+ */
-+#define C1 0x9E3779B9	/* 2^32 multiplied by Golden Ratio, classic constant
-+			 * for Knuth's multiplicative hashing
-+			 */
-+#define C2 0x85EBCA77	/* Large prime-like properties */
-+#define C3 0xC2B2AE35	/* Large prime-like properties, MurmurHash3 constant */
- static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
- {
--	return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
-+	return (ssid * C1 + tsid * C2 + tclass * C3) & (avc_cache_slots - 1);
- }
- 
- /**
--- 
-2.43.0
-
+So any conclusion? Should I go on with REV*MII, or wait for (or write
+it myself) reverse-mode flag?
 
