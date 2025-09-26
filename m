@@ -1,219 +1,108 @@
-Return-Path: <linux-kernel+bounces-834216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46652BA434D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:32:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603CDBA4359
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECABC4A326A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5533A2E46
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005F91F5433;
-	Fri, 26 Sep 2025 14:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A6B20B21E;
+	Fri, 26 Sep 2025 14:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mHqFnV3z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o3fzeac6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mHqFnV3z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o3fzeac6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgMT48U/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C07A1E9B19
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D791FBEB6;
+	Fri, 26 Sep 2025 14:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896845; cv=none; b=kCy1VebqhO5q8dFGajj4NKXKCZ7pFc8ZW5uBtIqo3xjZDzo8uzxKp7YKC0WtCfKOvL7rxycqclNgD4ubVUUMd4HUVAZRlgz98RKf2RZjOEYWs/O4gYU9DaVFFtPvkqX+UBq0eSOtUkLwkK4eVBf59vOSnBSE/3JeyH+EhfvwVIU=
+	t=1758896887; cv=none; b=DB+dodqm+n21hqqMiXtoIEXBUACX6ZH9Vh+xx5W6mvnUltyhpryHtDtpm6DNGgn4TsYyIQRWIWF8rXV5uWCh9eiqMciRgyLIQW/wyGDZw9Q8qCXtZd78o7pjYeh/RYpf/wpuglN3GLB/khLd0zdhLvgrZVNXxfFohPaKN0Cbq/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896845; c=relaxed/simple;
-	bh=K76jz/H2Fo2gmJVDsUiFqUdfhGl+kusT8vt5ziZsz1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wxy2sYxK3ag0Yaj8vheD2O+wMrTXO5eP9typ3AAfDPALG62SgcTS4QABJHpI5+L85iEYXQvPasUKKbgFnfVwFJKVr9yk9FpbuuhReVr0uUyeMJTDY5Xq/M9g4sE2ySdn7z27/u3uRvWn4NWrGNvaD0A7rTIvPZ0iLEsC3nCyT8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mHqFnV3z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o3fzeac6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mHqFnV3z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o3fzeac6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 223696886F;
-	Fri, 26 Sep 2025 14:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758896841; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MW2kEKB150iY4GBcI+DbTA9hS/ZtCe8tdNa+w40U92Q=;
-	b=mHqFnV3zMZJf46R7B06/zjVqbSItZVdPMmyWUjknI+X0m0C9ZWCSh8zWXNb82Qgs6aLSiD
-	AOt1P93PW6hDvoV1wVTpYxVOFHIrPefnNh0Zf6s2WMVGfLVBwcHEn/wwj5+FYsCXR8JaTs
-	rvOkfxFxDs5SlK4UaVJzPA8/D1UEZGM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758896841;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MW2kEKB150iY4GBcI+DbTA9hS/ZtCe8tdNa+w40U92Q=;
-	b=o3fzeac6Gu3iBGiDSXNUY8K2BqXlWMT4JyYNT6Ce3MhnWhMW6qUpTH9dmglkRaWBEH+CRw
-	64BSjjrMYOn4L3Aw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mHqFnV3z;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=o3fzeac6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758896841; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MW2kEKB150iY4GBcI+DbTA9hS/ZtCe8tdNa+w40U92Q=;
-	b=mHqFnV3zMZJf46R7B06/zjVqbSItZVdPMmyWUjknI+X0m0C9ZWCSh8zWXNb82Qgs6aLSiD
-	AOt1P93PW6hDvoV1wVTpYxVOFHIrPefnNh0Zf6s2WMVGfLVBwcHEn/wwj5+FYsCXR8JaTs
-	rvOkfxFxDs5SlK4UaVJzPA8/D1UEZGM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758896841;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MW2kEKB150iY4GBcI+DbTA9hS/ZtCe8tdNa+w40U92Q=;
-	b=o3fzeac6Gu3iBGiDSXNUY8K2BqXlWMT4JyYNT6Ce3MhnWhMW6qUpTH9dmglkRaWBEH+CRw
-	64BSjjrMYOn4L3Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E36591373E;
-	Fri, 26 Sep 2025 14:27:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Y9c3N8ii1mgybAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 26 Sep 2025 14:27:20 +0000
-Message-ID: <3cbe68f0-c449-4634-b5a1-690b3eaf33ca@suse.cz>
-Date: Fri, 26 Sep 2025 16:27:20 +0200
+	s=arc-20240116; t=1758896887; c=relaxed/simple;
+	bh=HpraTQNPQTkOuIgLJo+0IkraxdWBYMEppdjq9Zb6NWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cAGnGxuubJtTWrL0bQf+sSKYE6XontUSYkQjcbxhzAzhblGvfmJWMbYPz73PxXtrpIj4/Y5OlOKOvLV1W1MOWkjPhfeTQhzEgCi+7dzhNi4UxkMEjBZb8/VhpgcJlT7eO9BvGxarljpu9ngcFUepIQ2BFNyd0Md2jQ23EQsmG5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgMT48U/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BD3C4CEF4;
+	Fri, 26 Sep 2025 14:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758896887;
+	bh=HpraTQNPQTkOuIgLJo+0IkraxdWBYMEppdjq9Zb6NWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZgMT48U/1MO9bkpaMDbfKd2teiEIvhNkJ2VWktBQnfN1u5fiGaSHFyEcTV1bbcWRY
+	 0IAZAUfyOYwC81TrFTNgh/ZSg2DbG4QIgDgykF9M3efj/xwylPO5PUd1TlP0V1+Gyl
+	 h6CrcYe+Gw0MBhQ4aQ7GOlyR/aQlfkNf7zJZC9CRa4f4HlxgImVVXDX3IuvMNedTIx
+	 atdr4hCqgTGcarovjCHLwRqCZjHwX4tEGoGodrbfNigdRvIR5xf5u4Zjz/Nqhk51qy
+	 r1uXgDiIPRpvq076PjoIvu23XH7F8BBO1cCXXOXfl45lhw7hu0ItX0Pyi2jts+A/g/
+	 WGNu/kNy0GTwA==
+Date: Fri, 26 Sep 2025 15:28:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: Deepak Sharma <deepak.sharma.472935@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, pwn9uin@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
+	syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com,
+	syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] atm: Fix the cleanup on alloc_mpc failure in
+ atm_mpoa_mpoad_attach
+Message-ID: <aNai8qxJV9rL9wWf@horms.kernel.org>
+References: <20250925204251.232473-1-deepak.sharma.472935@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot ci] Re: rust: zpool: add API for C and Rust
-Content-Language: en-US
-To: Nhat Pham <nphamcs@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
- syzbot ci <syzbot+cica6a1c285444b25f@syzkaller.appspotmail.com>,
- a.hindborg@kernel.org, akpm@linux-foundation.org, alex.gaynor@gmail.com,
- aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- chengming.zhou@linux.dev, dakr@kernel.org, david@redhat.com,
- gary@garyguo.net, gregkh@linuxfoundation.org, liam.howlett@oracle.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, lossin@kernel.org, mhocko@suse.com,
- minchan@kernel.org, ojeda@kernel.org, rppt@kernel.org,
- rust-for-linux@vger.kernel.org, senozhatsky@chromium.org, surenb@google.com,
- tmgross@umich.edu, yosry.ahmed@linux.dev, syzbot@lists.linux.dev,
- syzkaller-bugs@googlegroups.com
-References: <20250923102547.2545992-1-vitaly.wool@konsulko.se>
- <68d2cfc2.a70a0220.4f78.000a.GAE@google.com>
- <20250923215929.GA1122379@cmpxchg.org>
- <aabca3ff-3cbe-468a-9b65-290d5239d987@konsulko.se>
- <CAKEwX=P18Krj-+rXvTSCocRt+Q3o07Ghisv4nJLRCJ8tLus54Q@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAKEwX=P18Krj-+rXvTSCocRt+Q3o07Ghisv4nJLRCJ8tLus54Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 223696886F
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[31];
-	FREEMAIL_TO(0.00)[gmail.com,konsulko.se];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
-	FREEMAIL_CC(0.00)[cmpxchg.org,syzkaller.appspotmail.com,kernel.org,linux-foundation.org,gmail.com,google.com,protonmail.com,linux.dev,redhat.com,garyguo.net,linuxfoundation.org,oracle.com,vger.kernel.org,kvack.org,suse.com,chromium.org,umich.edu,lists.linux.dev,googlegroups.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[cica6a1c285444b25f];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL7z7y9whu5c77jgra59km7rz7)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925204251.232473-1-deepak.sharma.472935@gmail.com>
 
-On 9/24/25 19:38, Nhat Pham wrote:
-> On Tue, Sep 23, 2025 at 10:46 PM Vitaly Wool <vitaly.wool@konsulko.se> wrote:
->>
->> LOL, no, forgot to run git commit --amend so came up with a wrong version.
->>
->> The Rust version is correct though.
->>
->> > This also still proposes an API with no in-kernel user.
->>
->> That's not correct, zsmalloc is the user.
+On Fri, Sep 26, 2025 at 02:12:51AM +0530, Deepak Sharma wrote:
+> Syzbot reported a warning at `add_timer`, which is called from the
+> `atm_mpoa_mpoad_attach` function
 > 
-> A single user does not an API make.
+> The reason for warning is that in the first call to the ioctl, if
+> there is no MPOA client created yet (mpcs is the linked list for
+> these MPOA clients) we do a `mpc_timer_refresh` to arm the timer.
+> Later on, if the `alloc_mpc` fails (which on success will also
+> initialize mpcs if it's first MPOA client created) and we didn't
+> have any MPOA client yet, we return without the timer de-armed
+> 
+> If the same ioctl is called again, since we don't have any MPOA
+> clients yet we again arm the timer, which might already be left
+> armed by the previous call to this ioctl in which `alloc_mpc` failed
+> 
+> Hence, de-arm the timer in the event that `alloc_mpc` fails and we
+> don't have any other MPOA client (that is, `mpcs` is NULL)
+> 
+> Do a `timer_delete_sync` instead of `timer_delete`, since the timer
+> callback can arm it back again
+> 
+> This does not need to be done at the early return in case of
+> `mpc->mpoad_vcc`, or a control channel to MPOAD already exists.
+> The timer should remain there to periodically process caches
+> 
+> Reported-by: syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=07b635b9c111c566af8b
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+> ---
+> v2:
+>  - Improved commit message
+>  - Fix the faulty condition check to disarm the timer
+>  - Use `timer_delete_sync` instead to avoid re-arming of timer
+> 
+> v1:
+>  - Disarm the timer using `timer_delete` in case `alloc_mpc`
+>    fails`
 
-IIRC what was suggested is to implement the zsmalloc API directly. What does
-the extra inline function layer get us in case of a compile-time switch?
+Thanks for the update.
 
-And do you need the Rust abstraction or just can make it part of the zblock
-itself? You don't expect there to be more Rust-based backends than zblock, no?
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
