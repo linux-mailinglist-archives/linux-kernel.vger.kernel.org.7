@@ -1,249 +1,231 @@
-Return-Path: <linux-kernel+bounces-833842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0F2BA3314
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C90BA3317
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99CEF1C02D42
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454EE16EFF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D643C2BE7A6;
-	Fri, 26 Sep 2025 09:38:01 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5826C391;
+	Fri, 26 Sep 2025 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ar88Xfdv"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE35E26C391;
-	Fri, 26 Sep 2025 09:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5829B8CF
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758879481; cv=none; b=KDputOfE95DF3GSZqA51T/b3MRJOJK5T/BunBeJE8Rq5GHUWHMBpoFC6GX82zXre3mseNdtJYzGpjl2ubnYKQRoHHeZf9/8rG1saLLiQvuNXOJhKcCs5I1hqDZ8OX3Vr65tE0/AvQqhRrcUDrS5P3ykT1W8d2ukhe1R1T7ns5n0=
+	t=1758879492; cv=none; b=bLZyxx+X8WG54HBtjAahuP0kECq72P8CHfPQf3pSpM/AQzIIn2ZEWr2+KORxu5e5iNJJcQHUpMt0wi461xPg7JWVN3DO6EBsHT2/qzC8dmyCUzv21rTl4ZvqGaosSpLLKuJZNpPg+lKfYwuxN7wM3RjmRyGSloLmhqtlo+QdXYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758879481; c=relaxed/simple;
-	bh=NIL6k2DPMsux45wF2sJX5fm0A5tzSZzwo3QJ2RUekiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eSBcNp8v8+uIVylrp953nWK0kouOk0o32Jq3adCgJa3vWtV94u2gQkOR5CdUH6VKheb9E7g6bb0MfXHvnBUVyqbhY8T9BrHbFF7EQZMgZgX7HYUkWX3hc7efNtMAl5mAXYtVrCmnVdOLO3DQxoeW02CuQlLS4I0GU8nIZrBpw64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cY53s2tfmz2Cgn0;
-	Fri, 26 Sep 2025 17:33:13 +0800 (CST)
-Received: from kwepemk200007.china.huawei.com (unknown [7.202.194.73])
-	by mail.maildlp.com (Postfix) with ESMTPS id CEDCA1A0171;
-	Fri, 26 Sep 2025 17:37:52 +0800 (CST)
-Received: from [10.67.121.172] (10.67.121.172) by
- kwepemk200007.china.huawei.com (7.202.194.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 26 Sep 2025 17:37:52 +0800
-Message-ID: <d7e82e65-5257-4d72-9fac-91d588770b44@hisilicon.com>
-Date: Fri, 26 Sep 2025 17:37:51 +0800
+	s=arc-20240116; t=1758879492; c=relaxed/simple;
+	bh=p0+qKG09QTuUs+lJdSX0sz2V9tpuU9a8sW4ZzbE42ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jddRgoJ+7Jlng6cY6i9aBo3N47DaL/JY0LWPNsj9kGSnF35EjZawqt3Uac3LW3vx/9tKwPO1PVul8R1+elz7lhwHdjxJ6fApoR+MgYG2vNW8j6INXPMwxYiY0k2saYppGWgzH6+rrYUq3wzNCA3/+EGlajr4fS41Gucb9wOkRjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ar88Xfdv; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b556b3501easo1718447a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758879490; x=1759484290; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=319Aaa2ClsYBmOGjJYnvX/xavv/h+b/5/KtENbr9Jp8=;
+        b=Ar88XfdvDVhAnHSnXOpqUgn83wyYFRuba5V5KyssaF1cGPP1HkusYEtxif8lzu0KhP
+         crnvU7ykPnWkBb1luKq+N1ydo6iuyco3gK4cnGSumrEKgHJhog025Ymli9SjWNkYI2iy
+         h4ld+z6aTJJEuV94/lDni3vFZXNyeeVaKJ0//yB76+hewr1IdvOTjS1rbjGt419yTkrw
+         cPBOKWRddpnUnXf/E3u8yH5Fdw65rx1yWDdiWqNOhw2L6w0Mbcs/lhGT33OhHWfhUcdU
+         BnjVNRBt06ZeMM7qhoDoEDBpR8LRkbYdVU3+nK0Fvv7qME4e6/0qHZtDBknsulgRwnAB
+         S6Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758879490; x=1759484290;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=319Aaa2ClsYBmOGjJYnvX/xavv/h+b/5/KtENbr9Jp8=;
+        b=qHqOe/vzUHe4BBopThSV9qlGw9jqgGOjpezGV/OWsRZjhOi1ppQjypFB5clvd7TXzE
+         w0c9VaOqJfAMCp1rIRv9PYWZEwcQaSsCzIVt79dBwHe3ySpXwfA6Kbz7M6V11Gxjlyqg
+         vqyqEOSq63GGocttWJY5rSwN2nvc9MNGKIQGR89zv4XdSumouB6rlvwb5o7pnKhnhZTC
+         SWAwWnA97Z06V04PGvSCru6NJnY6YZnq6SLjAIb6jCTV8aZau5uvvt4V8oGIVMCcMo9z
+         DeyJCDIPjVEZYHlu8mJmmoPL64EJMnkbJPEVvh1I10VXp8+3GjnP2Eks/dTtfQ+7RuWO
+         m8Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ebnIQyipZdyWZSmH89AEzsqyUakcmo4HuK8akxSILV9S/GnmduCVORFlcADAhd2hCHgWw8Al5Qiwkr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9HsY4IDkeAdMCaDVKLY+k3CWcTdTXnDHSWUpIdauGRZ6aeSs4
+	Hm52U/wmRuB5SLM+L4Rhy3PpXe4vGjxhDyT5yhrQlGaF2HEL2ehyg11IZN4LoUgXxA==
+X-Gm-Gg: ASbGnct+KSemZkHVQmIbh7OX+JFwJPI3ZXF2nDemA/FvKiZ2zyWltm5QVpC9LDaV8pu
+	RdBqT8dUPOBCS0rVt91kk2xVgrwjUA5lKy8Dh+15IibyvGHn7J962Gt3PVi5KBveUiJG5c6mEKY
+	ApqLDGdrZqWelyn/MPxi+E9ouLwBjl+PHH2+mzkg0rMroN1YG1LVPCoCkNBNYKk6Ln18Jc2uCdr
+	YnV86992SUpxlHgpcsMksmG3dr+Aiy0T3eriyvM7A71cdBgPklDhpXauepEyDxPKrhG9++5rhdO
+	4IVng8zsTL1vn5Tg1MKKdiSNe6DDlc7GGAXuwSMPEIYnUupIe0ad6iOcVRmYqk1kniAS3sKrt3j
+	9449QmsHLFFhctMlkU/+45qB/MhlfJK6sjExfrt3NGHOaDcJUQQ==
+X-Google-Smtp-Source: AGHT+IHRbM4vO8CuqreACP8VtswVBHBHyqdG9EYejry2yf3znTIK8yfzElgJ69f60r+wZ+IbIG5CXw==
+X-Received: by 2002:a05:6a21:329b:b0:2b1:c9dc:6da0 with SMTP id adf61e73a8af0-2e7d85a3e50mr8191693637.46.1758879490053;
+        Fri, 26 Sep 2025 02:38:10 -0700 (PDT)
+Received: from bytedance ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810210c076sm3942671b3a.0.2025.09.26.02.38.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 02:38:09 -0700 (PDT)
+Date: Fri, 26 Sep 2025 17:38:01 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH] sched/fair: Start a cfs_rq on throttled hierarchy with
+ PELT clock throttled
+Message-ID: <20250926093801.GE120@bytedance>
+References: <e2e558b863c929c5019264b2ddefd4c0@codethink.co.uk>
+ <20250926081918.30488-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
-To: huangchenghai <huangchenghai2@huawei.com>, Greg KH
-	<gregkh@linuxfoundation.org>
-CC: <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <fanghao11@huawei.com>, <shenyang39@huawei.com>,
-	<liulongfang@huawei.com>, <qianweili@huawei.com>
-References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
- <20250916144811.1799687-2-huangchenghai2@huawei.com>
- <2025091620-theft-glue-5e7f@gregkh>
- <8e5d4afb-8a21-4a93-a80f-e1f2b6baa8ca@huawei.com>
- <2025091746-starship-nearest-7c10@gregkh>
- <c9b562b4-dd34-411c-91cc-5eda3eadd1de@huawei.com>
-From: "linwenkai (C)" <linwenkai6@hisilicon.com>
-In-Reply-To: <c9b562b4-dd34-411c-91cc-5eda3eadd1de@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk200007.china.huawei.com (7.202.194.73)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926081918.30488-1-kprateek.nayak@amd.com>
 
+On Fri, Sep 26, 2025 at 08:19:17AM +0000, K Prateek Nayak wrote:
+> Matteo reported hitting the assert_list_leaf_cfs_rq() warning from
+> enqueue_task_fair() post commit fe8d238e646e ("sched/fair: Propagate
+> load for throttled cfs_rq") which transitioned to using
+> cfs_rq_pelt_clock_throttled() check for leaf cfs_rq insertions in
+> propagate_entity_cfs_rq().
+> 
+> The "cfs_rq->pelt_clock_throttled" flag is used to indicate if the
+> hierarchy has its PELT frozen. If a cfs_rq's PELT is marked frozen, all
+> its descendants should have their PELT frozen too or weird things can
+> happen as a result of children accumulating PELT signals when the
+> parents have their PELT clock stopped.
+> 
+> Another side effect of this is the loss of integrity of the leaf cfs_rq
+> list. As debugged by Aaron, consider the following hierarchy:
+> 
+>     root(#)
+>    /    \
+>   A(#)   B(*)
+>          |
+>          C <--- new cgroup
+>          |
+>          D <--- new cgroup
+> 
+>   # - Already on leaf cfs_rq list
+>   * - Throttled with PELT frozen
+> 
+> The newly created cgroups don't have their "pelt_clock_throttled" signal
+> synced with cgroup B. Next, the following series of events occur:
+> 
+> 1. online_fair_sched_group() for cgroup D will call
+>    propagate_entity_cfs_rq(). (Same can happen if a throttled task is
+>    moved to cgroup C and enqueue_task_fair() returns early.)
+> 
+>    propagate_entity_cfs_rq() adds the cfs_rq of cgroup C to
+>    "rq->tmp_alone_branch" since its PELT clock is not marked throttled
+>    and cfs_rq of cgroup B is not on the list.
+> 
+>    cfs_rq of cgroup B is skipped since its PELT is throttled.
+> 
+>    root cfs_rq already exists on cfs_rq leading to
+>    list_add_leaf_cfs_rq() returning early.
+> 
+>    The cfs_rq of cgroup C is left dangling on the
+>    "rq->tmp_alone_branch".
+> 
+> 2. A new task wakes up on cgroup A. Since the whole hierarchy is already
+>    on the leaf cfs_rq list, list_add_leaf_cfs_rq() keeps returning early
+>    without any modifications to "rq->tmp_alone_branch".
+> 
+>    The final assert_list_leaf_cfs_rq() in enqueue_task_fair() sees the
+>    dangling reference to cgroup C's cfs_rq in "rq->tmp_alone_branch".
+> 
+>    !!! Splat !!!
+> 
+> Syncing the "pelt_clock_throttled" indicator with parent cfs_rq is not
+> enough since the new cfs_rq is not yet enqueued on the hierarchy. A
+> dequeue on other subtree on the throttled hierarchy can freeze the PELT
+> clock for the parent hierarchy without setting the indicators for this
+> newly added cfs_rq which was never enqueued.
+>
 
-在 2025/9/26 16:47, huangchenghai 写道:
->
-> On Wed, Sep 17, 2025 at 06:18 PM +0800, Greg KH wrote:
->> On Wed, Sep 17, 2025 at 05:56:16PM +0800, huangchenghai wrote:
->>> On Mon, Sep 16, 2025 at 11:15 PM +0800, Greg KH wrote:
->>>> On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
->>>>> From: Wenkai Lin <linwenkai6@hisilicon.com>
->>>>>
->>>>> If cdev_device_add failed, it is hard to determine
->>>>> whether cdev_del has been executed, which lead to a
->>>>> memory leak issue, so we use cdev_init to avoid it.
->>>> I do not understand, what is wrong with the current code? It checks if
->>>> add fails:
->>>>
->>>>> Fixes: 015d239ac014 ("uacce: add uacce driver")
->>>>> Cc: stable@vger.kernel.org
->>>>> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
->>>>> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->>>>> ---
->>>>>    drivers/misc/uacce/uacce.c | 13 ++++---------
->>>>>    include/linux/uacce.h      |  2 +-
->>>>>    2 files changed, 5 insertions(+), 10 deletions(-)
->>>>>
->>>>> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
->>>>> index 42e7d2a2a90c..12370469f646 100644
->>>>> --- a/drivers/misc/uacce/uacce.c
->>>>> +++ b/drivers/misc/uacce/uacce.c
->>>>> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
->>>>>        if (!uacce)
->>>>>            return -ENODEV;
->>>>> -    uacce->cdev = cdev_alloc();
->>>>> -    if (!uacce->cdev)
->>>>> -        return -ENOMEM;
->>>> This is the check.
->>>>
->>>>
->>>>> -
->>>>> -    uacce->cdev->ops = &uacce_fops;
->>>>> -    uacce->cdev->owner = THIS_MODULE;
->>>>> +    cdev_init(&uacce->cdev, &uacce_fops);
->>>>> +    uacce->cdev.owner = THIS_MODULE;
->>>>> -    return cdev_device_add(uacce->cdev, &uacce->dev);
->>>>> +    return cdev_device_add(&uacce->cdev, &uacce->dev);
->>>> And so is this.  So what is wrong here?
->>>>
->>>>
->>>>>    }
->>>>>    EXPORT_SYMBOL_GPL(uacce_register);
->>>>> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
->>>>>            unmap_mapping_range(q->mapping, 0, 0, 1);
->>>>>        }
->>>>> -    if (uacce->cdev)
->>>>> -        cdev_device_del(uacce->cdev, &uacce->dev);
->>>>> +    cdev_device_del(&uacce->cdev, &uacce->dev);
->>>>>        xa_erase(&uacce_xa, uacce->dev_id);
->>>>>        /*
->>>>>         * uacce exists as long as there are open fds, but ops will 
->>>>> be freed
->>>>> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
->>>>> index e290c0269944..98b896192a44 100644
->>>>> --- a/include/linux/uacce.h
->>>>> +++ b/include/linux/uacce.h
->>>>> @@ -126,7 +126,7 @@ struct uacce_device {
->>>>>        bool is_vf;
->>>>>        u32 flags;
->>>>>        u32 dev_id;
->>>>> -    struct cdev *cdev;
->>>>> +    struct cdev cdev;
->>>>>        struct device dev;
->>>> You can not do this, you now have 2 different reference counts
->>>> controlling the lifespan of this one structure.  That is just going to
->>>> cause so many more bugs...
->>>>
->>>> How was this tested?  What is currently failing that requires this
->>>> change?
->>>>
->>>> thanks,
->>>>
->>>> greg k-h
->>> We analyze it theoretically there may be a memory leak
->>> issue here, if the cdev_device_add returns a failure,
->>> the uacce_remove will not be executed, which results in the
->>> uacce cdev memory not being released.
->> Then properly clean up if that happens.
->>
->>> Therefore, we have decided to align with the design of other
->>> drivers by making cdev a static member of uacce_device and
->>> releasing the memory through uacce_device.
->> But again, this is wrong to do.
->>
->>> found one example in drivers/watchdog/watchdog_dev.h.
->>> struct watchdog_core_data {
->>>      struct device dev;
->>>      struct cdev cdev;
->> This is also wrong and needs to be fixed.  Please send a patch to
->> resolve it as well, as it should not be copied as a valid example.
->>
->> thanks,
->>
->> greg k-h
-> Very sorry for the delayed response.
->
-> In v1, our first thought was that if cdev_device_add returns a
-> failure, we could release the resources allocated by cdev_alloc
-> using cdev_del. For this, we attempted the following modification:
->
-> @@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
->   */
->  int uacce_register(struct uacce_device *uacce)
->  {
-> +    int ret;
-> +
->      if (!uacce)
->          return -ENODEV;
->
-> @@ -529,7 +531,14 @@ int uacce_register(struct uacce_device *uacce)
->      uacce->cdev->ops = &uacce_fops;
->      uacce->cdev->owner = THIS_MODULE;
->
-> -    return cdev_device_add(uacce->cdev, &uacce->dev);
-> +    ret = cdev_device_add(uacce->cdev, &uacce->dev);
-> +    if (ret) {
-> +        cdev_del(uacce->cdev);
-> +        uacce->cdev = NULL;
-> +        return ret;
-> +    }
-> +
-> +    return 0;
->  }
->
-> However, after further analysis, we found that cdev_device_add does
-> not increment the reference count when it fails. Therefore, in this
-> case, cdev_del is not necessary. This means that the resources
-> allocated by cdev_alloc will not cause a memory leak in the failure
-> path.
->
-> Thus, I believe this patch modification is unnecessary. In the
-> upcoming v3 version, I will remove this modification.
->
-> Thank you for your patient guidance!
->
-> Best regards,
-> Chenghai
->>
-After further analysis, it was found that during the cdev_alloc
-process, the reference count of the cdev is initialized to 1.
+Sigh...
 
-If kobject_put is not actively executed, the release function of
-the cdev cannot be called, and the memory will never be released,
-leading to a leak, so kobject_put is still necessary here?
+> Since there are no tasks on the new hierarchy, start a cfs_rq on a
+> throttled hierarchy with its PELT clock throttled. The first enqueue, or
+> the distribution (whichever happens first) will unfreeze the PELT clock
+> and queue the cfs_rq on the leaf cfs_rq list.
+> 
 
-Here is the new solution:
-@@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
-   */
-  int uacce_register(struct uacce_device *uacce)
-  {
-+    int ret;
-+
-      if (!uacce)
-          return -ENODEV;
+Makes sense.
 
-@@ -529,7 +531,14 @@ int uacce_register(struct uacce_device *uacce)
-      uacce->cdev->ops = &uacce_fops;
-      uacce->cdev->owner = THIS_MODULE;
+> While at it, add an assert_list_leaf_cfs_rq() in
+> propagate_entity_cfs_rq() to catch such cases in the future.
+> 
+> Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
+> Reported-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
+> Closes: https://lore.kernel.org/lkml/58a587d694f33c2ea487c700b0d046fa@codethink.co.uk/
+> Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
 
--    return cdev_device_add(uacce->cdev, &uacce->dev);
-+    ret = cdev_device_add(uacce->cdev, &uacce->dev);
-+    if (ret) {
-+        kobject_put(&uacce->cdev->kobject);
-+        uacce->cdev = NULL;
-+        return ret;
-+    }
-+
-+    return 0;
-  }
+Should be Fixes: e1fad12dcb66("sched/fair: Switch to task based throttle
+model")? "Task based throttle time accounting" doesn't touch pelt bits.
 
-Thanks,
-WenKai
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
+Tested-by: Aaron Lu <ziqianlu@bytedance.com>
+
+Thanks for the fix.
+
+BTW, I'm thinking in propagate_entity_cfs_rq(), we shouldn't check the
+ancestor cfs_rq's pelt clock throttled status but only the first level
+cfs_rq's, because the purpose is to have the first level cfs_rq to stay
+on the leaf list and all those list_add_leaf_cfs_rq() for its ancestors
+are just to make sure the list is fully connected. I mean something like
+this:
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 75c615f5ed640..6a6d9200ab93c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -13170,6 +13170,7 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
+ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++	bool add = !cfs_rq_pelt_clock_throttled(cfs_rq);
+ 
+ 	/*
+ 	 * If a task gets attached to this cfs_rq and before being queued,
+@@ -13177,7 +13178,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
+ 	 * that removed load decayed or it can cause faireness problem.
+ 	 */
+-	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++	if (add)
+ 		list_add_leaf_cfs_rq(cfs_rq);
+ 
+ 	/* Start to propagate at parent */
+@@ -13188,7 +13189,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 
+ 		update_load_avg(cfs_rq, se, UPDATE_TG);
+ 
+-		if (!cfs_rq_pelt_clock_throttled(cfs_rq))
++		if (add)
+ 			list_add_leaf_cfs_rq(cfs_rq);
+ 	}
+
+But this is a different thing and can be taken care of if necessary
+later. Current logic doesn't have a problem, it's just not as clear as
+the above diff to me.
 
