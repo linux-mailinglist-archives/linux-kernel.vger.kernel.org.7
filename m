@@ -1,272 +1,177 @@
-Return-Path: <linux-kernel+bounces-834260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CCABA4483
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8041CBA4486
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B07D621092
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1201BC237B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640D1DB12E;
-	Fri, 26 Sep 2025 14:48:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E101DB12E;
+	Fri, 26 Sep 2025 14:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="iEyUTIH+"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAA618EAB;
-	Fri, 26 Sep 2025 14:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052718EAB
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898097; cv=none; b=OTULOkmfveohsWQMxvbX59umoTdD5PBI4ptYekxIeKpZYvcTR47srUlAfJikQkQmVyfnEp52jODGhHddTjCMlpp11tJnWlRowfr2wYeUhohKfwdMnWfU9dmK8QmtBYNGFLJolzz5P+li9P0n1MoODCzwfmFqye6ESSePbB3nuAU=
+	t=1758898164; cv=none; b=BP5ZbANwSYhKfM4gSei+VPwHtxhK3E1D69R73o7TxIUK4yAq+1VMEL7D2X02dXYDl+qc/pTxGRhEYUdrf6pTvAcg6Xki5h723AQCKO9WwPYDlFN/9mlhNIP7IzrDJ3Yy3OoEZnnrYbw6U1ey2Vt3cfT3TNqku5wbxXEfPVQcxJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898097; c=relaxed/simple;
-	bh=3WOIA2hifttzbRkYMv/RbdzNE6CB2JC73pdMIOqtSGc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dH+yfbKRQabWVAelN/PRQeKvZ335AehINi0hk0H29P45Y3CLXL8TXCxzQB8mz4fr+50Zog6jsJyuwveRR2f7+gWIYyqeFfmEUKvOEJdwTYNiOBPMISHUIrXwaFUq6msiJlY2agJ9l6jZPopUvPtm+z6yD+kno0KznNKgMwXK/pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cYCzn3mX8z6M4Rs;
-	Fri, 26 Sep 2025 22:45:09 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 53443140278;
-	Fri, 26 Sep 2025 22:48:11 +0800 (CST)
-Received: from localhost (10.47.75.77) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 26 Sep
- 2025 15:48:09 +0100
-Date: Fri, 26 Sep 2025 15:48:06 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 06/29] ACPI / MPAM: Parse the MPAM table
-Message-ID: <20250926154806.0000609e@huawei.com>
-In-Reply-To: <334e0e8b-3f30-48b7-896f-0b31111d2b41@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-7-james.morse@arm.com>
-	<20250911141726.00002f0c@huawei.com>
-	<334e0e8b-3f30-48b7-896f-0b31111d2b41@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758898164; c=relaxed/simple;
+	bh=5HBl9Ak2WJrbABXf4eB0MJAFE1IV41DGDgW6Iap2Bw4=;
+	h=Date:Message-ID:From:Subject:To:Cc:In-Reply-To:References; b=BDzJ9IhEWEj5pkDni8hR3GMFMlpDBi+N0ydV8pC2QmTTgKP2Rv1wCGE2VhR1OZ7+TOjVAgxBLX6IlOCNj0tsC9z6OmPGVI7a5gc53fbYTqbMmb5ivAsTUJiCh1td00v459KZyt1W1uyTqG9ZiCIdP9XP5L8sHmAxVJSRIQDsylA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=iEyUTIH+; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:References:In-Reply-To:Cc:To:
+	Subject:From:Message-ID:Date:Reply-To:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yBXAgEpvMU/fDVtw7JdYamQYWe/uR67lM4xFtr0H7eY=; b=iEyUTIH+F7T6W2L35x5FLx9Z7a
+	AvVh/dyTKuidgr1rkRfvvOQBjoqsNyD7Qnzd3eqcnqNPloxPQQtqhNtrqcrmF8EEgxIPohaeYoaWa
+	/3FyVxg4gBrwPEmYW1dvqx9sTyXl3BouKzFFyADqXkj8z0rnm1+JyP4VIaL7A4Zs0lwtc/xnJa/lL
+	Oy+Kc88kR2Mbd8CyPOgCJLdqGu9VBY8xW14OucAvB/iKePgp7H6sXHeAEg3GyjtTXL9Xoh5WC0bCC
+	zu6FfvJOOy78l2sS5Ks0H446tZVvXZACkP3eOvr3NPRy8Vxnjbxb4os1dBDW8VqSQAFJiMtsNLw0g
+	dLou7uYA==;
+Received: from host-79-47-48-17.retail.telecomitalia.it ([79.47.48.17] helo=localhost)
+	by imap4.hz.codethink.co.uk with utf8esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1v29ko-002rgy-GK; Fri, 26 Sep 2025 15:48:58 +0100
+Date: Fri, 26 Sep 2025 16:48:57 +0200
+Message-ID: <83bb46158288dfb314fdf07918b074ae@codethink.co.uk>
+From: Matteo Martelli <matteo.martelli@codethink.co.uk>
+Subject: Re: [PATCH] sched/fair: Start a cfs_rq on throttled hierarchy with
+ PELT clock throttled
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Aaron Lu
+	<ziqianlu@bytedance.com>, linux-kernel@vger.kernel.org
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak
+	<kprateek.nayak@amd.com>, Matteo Martelli <matteo.martelli@codethink.co.uk>
+In-Reply-To: <20250926081918.30488-1-kprateek.nayak@amd.com>
+References: <e2e558b863c929c5019264b2ddefd4c0@codethink.co.uk>
+	<20250926081918.30488-1-kprateek.nayak@amd.com>
+Sender: matteo.martelli@codethink.co.uk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
+Hi Prateek,
 
-Hi James
+On Fri, 26 Sep 2025 08:19:17 +0000, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+> Matteo reported hitting the assert_list_leaf_cfs_rq() warning from
+> enqueue_task_fair() post commit fe8d238e646e ("sched/fair: Propagate
+> load for throttled cfs_rq") which transitioned to using
+> cfs_rq_pelt_clock_throttled() check for leaf cfs_rq insertions in
+> propagate_entity_cfs_rq().
+> 
+> The "cfs_rq->pelt_clock_throttled" flag is used to indicate if the
+> hierarchy has its PELT frozen. If a cfs_rq's PELT is marked frozen, all
+> its descendants should have their PELT frozen too or weird things can
+> happen as a result of children accumulating PELT signals when the
+> parents have their PELT clock stopped.
+> 
+> Another side effect of this is the loss of integrity of the leaf cfs_rq
+> list. As debugged by Aaron, consider the following hierarchy:
+> 
+>     root(#)
+>    /    \
+>   A(#)   B(*)
+>          |
+>          C <--- new cgroup
+>          |
+>          D <--- new cgroup
+> 
+>   # - Already on leaf cfs_rq list
+>   * - Throttled with PELT frozen
+> 
+> The newly created cgroups don't have their "pelt_clock_throttled" signal
+> synced with cgroup B. Next, the following series of events occur:
+> 
+> 1. online_fair_sched_group() for cgroup D will call
+>    propagate_entity_cfs_rq(). (Same can happen if a throttled task is
+>    moved to cgroup C and enqueue_task_fair() returns early.)
+> 
+>    propagate_entity_cfs_rq() adds the cfs_rq of cgroup C to
+>    "rq->tmp_alone_branch" since its PELT clock is not marked throttled
+>    and cfs_rq of cgroup B is not on the list.
+> 
+>    cfs_rq of cgroup B is skipped since its PELT is throttled.
+> 
+>    root cfs_rq already exists on cfs_rq leading to
+>    list_add_leaf_cfs_rq() returning early.
+> 
+>    The cfs_rq of cgroup C is left dangling on the
+>    "rq->tmp_alone_branch".
+> 
+> 2. A new task wakes up on cgroup A. Since the whole hierarchy is already
+>    on the leaf cfs_rq list, list_add_leaf_cfs_rq() keeps returning early
+>    without any modifications to "rq->tmp_alone_branch".
+> 
+>    The final assert_list_leaf_cfs_rq() in enqueue_task_fair() sees the
+>    dangling reference to cgroup C's cfs_rq in "rq->tmp_alone_branch".
+> 
+>    !!! Splat !!!
+> 
+> Syncing the "pelt_clock_throttled" indicator with parent cfs_rq is not
+> enough since the new cfs_rq is not yet enqueued on the hierarchy. A
+> dequeue on other subtree on the throttled hierarchy can freeze the PELT
+> clock for the parent hierarchy without setting the indicators for this
+> newly added cfs_rq which was never enqueued.
+> 
+> Since there are no tasks on the new hierarchy, start a cfs_rq on a
+> throttled hierarchy with its PELT clock throttled. The first enqueue, or
+> the distribution (whichever happens first) will unfreeze the PELT clock
+> and queue the cfs_rq on the leaf cfs_rq list.
+> 
+> While at it, add an assert_list_leaf_cfs_rq() in
+> propagate_entity_cfs_rq() to catch such cases in the future.
+> 
+> Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
+> Reported-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
+> Closes: https://lore.kernel.org/lkml/58a587d694f33c2ea487c700b0d046fa@codethink.co.uk/
+> Fixes: eb962f251fbb ("sched/fair: Task based throttle time accounting")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+> Stress test included running sched-messaging in nested hierarchy with
+> various quota set alongside a continuous loop of cgroup creation and
+> deletion, as well as another loop of continuous movement of a busy loop
+> between cgroups.
+> 
+> No splats have been observed yet with this patch.
+> 
+> Aaron, Matteo,
+> 
+> I've not added any "Tested-by" tags since the final diff is slightly
+> different from the diff shared previously. ...
 
-Just a few things I've picked out to reply to.
-Absolutely fine with your other replies.
+I applied this patch on top of commit 45b7f780739a ("sched: Fix some
+typos in include/linux/preempt.h") from sched/core branch of tip tree,
+and tested it with exactly the same setup I described in my previous
+email[1]. With the patch applied, I couldn't reproduce the warning in 5
+hours of testing, while before the patch the issue was systematically
+reprodicible and the warning was being triggered at least once per
+minute.
 
-> 
-> >> +	char uid[16];
-> >> +	u32 acpi_id;
-> >> +
-> >> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
-> >> +		return 0;
-> >> +
-> >> +	if (table->revision < 1)
-> >> +		return 0;
-> >> +
-> >> +	table_end = (char *)table + table->length;
-> >> +
-> >> +	while (table_offset < table_end) {
-> >> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
-> >> +		table_offset += tbl_msc->length;
-> >> +
-> >> +		if (table_offset > table_end) {
-> >> +			pr_debug("MSC entry overlaps end of ACPI table\n");
-> >> +			break;  
-> 
-> > That this isn't considered an error is a bit subtle and made me wonder
-> > if there was a use of uninitialized pdev (there isn't because err == 0)  
-> 
-> Its somewhat a philosophical arguement. I don't expect the kernel to have to validate
-> these tables, they're not provided by the user and there quickly becomes a point where
-> you have to trust them, and they have to be correct.
+Tested-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
 
-Potential buffer overrun is to me always worth error out screaming, but I get your
-broader point.   Maybe just make it a pr_err()
+> ...
 
-> At the other extreme is the asusmption the table is line-noise and we should check
-> everything to avoid out of bounds accesses. Dave wanted the diagnostic messages on these.
-> 
-> As this is called from an initcall, the best you get is an inexplicable print message.
-> (what should we say - update your firmware?)
+[1]: https://lore.kernel.org/all/e2e558b863c929c5019264b2ddefd4c0@codethink.co.uk/
 
-Depends on whether you can lean hard on the firmware team. Much easier
-for me if I can tell them the board doesn't boot because they got it wrong.
+Thanks to you and Aaron for addressing this!
 
-That would have been safer if we had this upstream in advance of hardware, but indeed
-a little high risk today as who knows what borked tables are out there.
-
-Personal preference though is to error out on things like this and handle the papering
-over at the top level.  Don't put extra effort into checking tables are invalid
-but if we happen to notice as part of code safety stuff like sizes then good to scream
-about it.
-
-> 
-> 
-> Silently failing in this code is always safe as the driver has a count of the number of
-> MSC, and doesn't start accessing the hardware until its found them all.
-> (this is because to find the system wide minimum value - and its not worth starting if
->  its not possible to finish).
-> 
-> 
-> > Why not return here?  
-> 
-> Just because there was no other return in the loop, and I hate surprise returns.
-> 
-> I'll change it if it avoids thinking about how that platform_device_put() gets skipped!
-> 
-> 
-> >   
-> >> +		}
-> >> +
-> >> +		/*
-> >> +		 * If any of the reserved fields are set, make no attempt to
-> >> +		 * parse the MSC structure. This MSC will still be counted,
-> >> +		 * meaning the MPAM driver can't probe against all MSC, and
-> >> +		 * will never be enabled. There is no way to enable it safely,
-> >> +		 * because we cannot determine safe system-wide partid and pmg
-> >> +		 * ranges in this situation.
-> >> +		 */  
-> 
-> > This is decidedly paranoid. I'd normally expect the architecture to be based
-> > on assumption that is fine for old software to ignore new fields.  ACPI itself
-> > has fairly firm rules on this (though it goes wrong sometimes :)  
-> 
-> Yeah - the MPAM table isn't properly structured as subtables. I don't see how they are
-> going to extend it if they need to.
-> 
-> The paranoia is that anything set in these reserved fields probably indicates something
-> the driver needs to know about: a case in point is the way PCC was added.
-> 
-> I'd much prefer we skip creation of MSC devices that have properties we don't understand.
-> acpi_mpam_count_msc() still counts them - which means the driver never finds all the MSC,
-> and never touches the hardware.
-> 
-> MPAM isn't a critical feature, its better that it be disabled than make things worse.
-> (the same attitude holds with the response to the MPAM error interrupt - reset everything
->  and pack up shop. This is bettern than accidentally combining important/unimportant
->  tasks)
-> 
-> 
-> > I'm guessing there is something out there that made this necessary though so
-> > keep it if you actually need it.  
-> 
-> It's a paranoid/violent reaction to the way PCC was added - without something like this,
-> that would have led to the OS trying to map the 0 page and poking around in it - never
-> likely to go well.
-> 
-> Doing this does let them pull another PCC without stable kernels going wrong.
-> Ultimately I think they'll need to replace the table with one that is properly structured.
-> For now - this is working with what we have.
-
-Fair enough. I'm too lazy / behind with reviews to go scream via our channels about
-problems here.  Paranoia it is.  Maybe we'll end up backporting some 'fixes' that
-ignore nicely added fields with appropriate control bits to turn them on.
-So be it if that happens.
-
-> 
-> 
-> >> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2) {
-> >> +			pr_err_once("Unrecognised MSC, MPAM not usable\n");
-> >> +			pr_debug("MSC.%u: reserved field set\n", tbl_msc->identifier);
-> >> +			continue;
-> >> +		}
-> >> +
-> >> +		if (!tbl_msc->mmio_size) {
-> >> +			pr_debug("MSC.%u: marked as disabled\n", tbl_msc->identifier);
-> >> +			continue;
-> >> +		}
-> >> +
-> >> +		if (decode_interface_type(tbl_msc, &iface)) {
-> >> +			pr_debug("MSC.%u: unknown interface type\n", tbl_msc->identifier);
-> >> +			continue;
-> >> +		}
-> >> +
-> >> +		next_res = 0;
-> >> +		next_prop = 0;
-> >> +		memset(res, 0, sizeof(res));
-> >> +		memset(props, 0, sizeof(props));
-> >> +
-> >> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);  
-> > 
-> > https://lore.kernel.org/all/20241009124120.1124-13-shiju.jose@huawei.com/
-> > was a proposal to add a DEFINE_FREE() to clean these up.  Might be worth a revisit.
-> > Then Greg was against the use it was put to and asking for an example of where
-> > it helped.  Maybe this is that example.
-> > 
-> > If you do want to do that, I'd factor out a bunch of the stuff here as a helper
-> > so we can have the clean ownership pass of a return_ptr().  
-> > Similar to what Shiju did here (this is the usecase for platform device that
-> > Greg didn't like).
-> > https://lore.kernel.org/all/20241009124120.1124-14-shiju.jose@huawei.com/
-> > 
-> > Even without that I think factoring some of this out and hence being able to
-> > do returns on errors and put the if (err) into the loop would be a nice
-> > improvement to readability.  
-> 
-> If you think its more readable I'll structure it like that.
-
-The refactor yes. I'd keep clear of the the DEFINE_FREE() unless you have
-some spare time ;)
-> 
-> 
-> >> +		if (!pdev) {
-> >> +			err = -ENOMEM;
-> >> +			break;
-> >> +		}
-
-> >> +int acpi_mpam_count_msc(void)
-> >> +{
-> >> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> >> +	char *table_end, *table_offset = (char *)(table + 1);
-> >> +	struct acpi_mpam_msc_node *tbl_msc;
-> >> +	int count = 0;
-> >> +
-> >> +	if (IS_ERR(table))
-> >> +		return 0;
-> >> +
-> >> +	if (table->revision < 1)
-> >> +		return 0;
-> >> +
-> >> +	table_end = (char *)table + table->length;  
-> 
-> > Trivial so feel free to ignore.
-> > Perhaps should aim for consistency.  Whilst I prefer pointers for this stuff
-> > PPTT did use unsigned longs.  
-> 
-> I prefer the pointers, and as it's a separate file, I don't think it needs to be
-> concistent with PPTT.
-
-Fair enough.  Maybe PPTT is ripe for some cleanup once you are done messing with it.
-I'm certainly going to add churn now.
-
-J
+Best regards,
+Matteo Martelli
 
