@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-834676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874EDBA53FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:48:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A60BA53E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D09560929
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:48:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10FEB7A760A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9DC1A2C11;
-	Fri, 26 Sep 2025 21:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6471C28B400;
+	Fri, 26 Sep 2025 21:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="kxixSHYF"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="biekYPST"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287FE287253
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD091A2C11;
+	Fri, 26 Sep 2025 21:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758923284; cv=none; b=X2VfiUcwDTEYDT4dAoIkE1IVmTd3TjdS1VxrCYN9h4J2vw3X+g4yI6K88Q7kO5FVcNQUUaAqVPe0V+yB31ssBuSz1CctMa8/zDD8x1szscunL6N5v2H+Nx6b2CzYJSET7ViNXQuRUuQR6CUr43unq0FoSIfRaBzyA8F1burL624=
+	t=1758923264; cv=none; b=aVAEgcJSTIcdVDAo5ehWHnzOovJkCizkgg4JMwWZmJ45UR5yzZZIwJOM4NM8Or0j6bnt/SN0tONBz9i7uiAXfTCbBdyTsf+Q/+BZCAGDAYgS5Tdu3rfN5e2oqZqefCxffMZw25HIEqdxcg542J7gZlrem0mRNdqQzX1meqxvjpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758923284; c=relaxed/simple;
-	bh=9NNO5o373SqWmt6lRk8DvxTwe9onkIyB00giMfN4AYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z1VNWD4U8bGLnwBMMrOXzu79IMRrd6DVpP7AjxvtzApO8DkLvoTk0qGivqMKcFatkVgifdl78JAdlLV86JMrthGdjAnbngovzZLitHiGRTwcFt36bet8MXoEWwkFpGLu7IIhJtUcxYHLYYrRp7+3QVtsZN4w8OW35FcjWJyXa5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=kxixSHYF; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58QLlslu014684
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 17:47:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1758923276; bh=5zfWWRMDmJQ6sgyIHjdjHF2ZrLrX84iVpbUGQfi3jjs=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=kxixSHYF6P1m94PzYyxOuBt82NAYLUHFK9vEdlDALwwVYgr8QsYmUOyLpV6RBIJ4f
-	 G6DAvXllMeLqUdcUjDBGllNpwmcMCqV+nDBbFqn/vjLrdnQ8jF5/Qbaq1bolxWW3o3
-	 eZ1RXymYlJpeGh1/jz9FSKiXRCdK3OBBnBn9IlxMPpfesKd6NnUA6aXRfFEyNIKoGy
-	 sWHbbTS2EPT2iqzQcKDbGfaAllg/n048smGwJwl0ZTTKrF+/7ltJYHgMhEKmIrzbyY
-	 0bFP+dl653KnehjvZe/ymzfUYUTG+iLp9LuZ2Xf2szztiw+5knoh4YxaO+Yn4VOxIQ
-	 58KC8iLSx5eVg==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id D31B82E00D5; Fri, 26 Sep 2025 17:47:53 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: adilger.kernel@dilger.ca, Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com,
-        Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: Re: [PATCH v2] Fix: ext4: guard against EA inode refcount underflow in xattr update
-Date: Fri, 26 Sep 2025 17:47:35 -0400
-Message-ID: <175892300646.128029.18166257596583769324.b4-ty@mit.edu>
+	s=arc-20240116; t=1758923264; c=relaxed/simple;
+	bh=HxA4FWs1OVb9xwYCnwSfOJqJ121/RwPpT+3Ri5D0jU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C6WT3z6q2nAPm2Te3UbCajDmSsSAPn+DILQld3g45nu69csAWgo4gYzArYNRIFhlsUpPUESTB2XiZghYe8ORcDqTAcMT1HKW5NswI6Lsg2kYLu1vmWRajOAyf3NHfkUc7vFEN+Yf8syLzGoXONmkF8NRjHNCye23ow+bNyJatOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=biekYPST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26EB2C4CEF4;
+	Fri, 26 Sep 2025 21:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758923264;
+	bh=HxA4FWs1OVb9xwYCnwSfOJqJ121/RwPpT+3Ri5D0jU8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=biekYPSTQA/QwRF8LwegMBnFtdAvJ4AOLx21C5we6QfW77y5R8SO0VMSlqnfWnj76
+	 JHnus3EZDzUfSTs6iVkgUKz2Ey/eF0V+Nz5lcvJ32r097m/H7E+EWz/31WEdae4gN8
+	 pHze25lRxGNsh8TcOhS+htFc+3zgSG1yef5neG0Wqg0TYJYf7zhrBTo2yrrGDOtoGg
+	 mWsKYcMmfKWraFiHL5CXqeIZEa6eZ8n7YNezbMtJiFZlTIjO3E1Bj0bRTNKMneAIRT
+	 NeYmqYEZ695eGn8Bc7ckkZ8M+/s+u4njI5kZHWY4Y8AoBrR4b/qSRx6Uzq4GtX2uzd
+	 SF3NkZ039JZgw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: altera: Drop socfpga-sdram-edac.txt
+Date: Fri, 26 Sep 2025 16:47:37 -0500
+Message-ID: <20250926214738.1791368-1-robh@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250920021342.45575-1-eraykrdg1@gmail.com>
-References: <20250918175545.48297-1-eraykrdg1@gmail.com> <20250920021342.45575-1-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+The contents of arm/altera/socfpga-sdram-edac.txt are already covered by
+edac/altr,socfpga-ecc-manager.yaml except for the "altr,sdram-edac"
+compatible string. Add the compatible and drop the old .txt binding doc.
 
-On Sat, 20 Sep 2025 05:13:43 +0300, Ahmet Eray Karadag wrote:
-> syzkaller found a path where ext4_xattr_inode_update_ref() reads an EA
-> inode refcount that is already <= 0 and then applies ref_change (often
-> -1). That lets the refcount underflow and we proceed with a bogus value,
-> triggering errors like:
-> 
->   EXT4-fs error: EA inode <n> ref underflow: ref_count=-1 ref_change=-1
->   EXT4-fs warning: ea_inode dec ref err=-117
-> 
-> [...]
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/arm/altera/socfpga-sdram-edac.txt    | 15 ---------------
+ .../bindings/edac/altr,socfpga-ecc-manager.yaml   |  1 +
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
 
-Applied, thanks!
-
-[1/1] Fix: ext4: guard against EA inode refcount underflow in xattr update
-      commit: 57295e835408d8d425bef58da5253465db3d6888
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
+deleted file mode 100644
+index f5ad0ff69fae..000000000000
+--- a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
+-The EDAC accesses a range of registers in the SDRAM controller.
+-
+-Required properties:
+-- compatible : should contain "altr,sdram-edac" or "altr,sdram-edac-a10"
+-- altr,sdr-syscon : phandle of the sdr module
+-- interrupts : Should contain the SDRAM ECC IRQ in the
+-	appropriate format for the IRQ controller.
+-
+-Example:
+-	sdramedac {
+-		compatible = "altr,sdram-edac";
+-		altr,sdr-syscon = <&sdr>;
+-		interrupts = <0 39 4>;
+-	};
+diff --git a/Documentation/devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml b/Documentation/devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml
+index ec4634c5fa89..3d787dea0f14 100644
+--- a/Documentation/devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml
++++ b/Documentation/devicetree/bindings/edac/altr,socfpga-ecc-manager.yaml
+@@ -53,6 +53,7 @@ properties:
+     properties:
+       compatible:
+         enum:
++          - altr,sdram-edac
+           - altr,sdram-edac-a10
+           - altr,sdram-edac-s10
+ 
 -- 
-Theodore Ts'o <tytso@mit.edu>
+2.51.0
+
 
