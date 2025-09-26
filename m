@@ -1,124 +1,180 @@
-Return-Path: <linux-kernel+bounces-833480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE6CBA21E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B527FBA21E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 03:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A4D740D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB28B189A2BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 01:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6769E15CD74;
-	Fri, 26 Sep 2025 00:57:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9EC186294;
+	Fri, 26 Sep 2025 01:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="qq7l56sJ"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB8426ACB;
-	Fri, 26 Sep 2025 00:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82873374C4;
+	Fri, 26 Sep 2025 01:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758848232; cv=none; b=WW0/SnLM4kTwAJraz9qobRs/EijtUDr55PM+AtPAFxFFl+yTKXN3eREHTE+0aPeTfgVZRbHZbTK0Hh6eq7TL47TeoRU1aslKAfcNJMj8+vCjCpvhJFN4kCDH1B8q7jhPiFCFOdmHm9vzi6r5wwiwVRUHZkLRDcP/d5b9LoL6yr8=
+	t=1758848673; cv=none; b=IF4RuOnMgyM5t1OF5FVRZqTHrnXPL7h1GAxtAHbMSa8R4kOtoUvMaHINienTgd6fry3mfu7bHisKBn1FvKkC4KGIFdEpeigC6gAFm9KFRbJ4FgXG4DJ828I+LCWmIh/Vh1m+Hmm/0N3LXnJXJ9KYbGP1dOzaO8etimFDQPTzyqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758848232; c=relaxed/simple;
-	bh=4mX3EcmuNBcUPEBlDvx8Usz+XeVEpNdSEwjS9wu5/Aw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UHnR1np/J3harX+IE1+Ou/19kDwtsvms2Y5SW4yM0q2bNMCXa0VCnlZe3xTXE0P9bauGq8eWGDmCcz1LqE7wMMB5CkE2ra1Axs4gZRGn+Gf5cIZwnysspc+DXQeuE/utLeBX2edeT5BugOJQOhfHQV6D1797j0Q/r8dsaWTNthk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cXsc814vfzYQv3Z;
-	Fri, 26 Sep 2025 08:56:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F0771A13AF;
-	Fri, 26 Sep 2025 08:57:06 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHCmLf5NVoUKZVAw--.24830S3;
-	Fri, 26 Sep 2025 08:57:05 +0800 (CST)
-Subject: Re: [PATCH 01/10] blk-cgroup: use cgroup lock and rcu to protect
- iterating blkcg blkgs
-To: Yu Kuai <hailan@yukuai.org.cn>, Bart Van Assche <bvanassche@acm.org>,
- Yu Kuai <yukuai1@huaweicloud.com>, tj@kernel.org, ming.lei@redhat.com,
- nilay@linux.ibm.com, hch@lst.de, josef@toxicpanda.com, axboe@kernel.dk,
- akpm@linux-foundation.org, vgoyal@redhat.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250925081525.700639-1-yukuai1@huaweicloud.com>
- <20250925081525.700639-2-yukuai1@huaweicloud.com>
- <bc6fe04d-3245-40dd-aa30-c3a3acb670c2@acm.org>
- <01e7eccd-3529-4d12-8ad2-fd9e034a026d@yukuai.org.cn>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <688275d5-fbb4-08b3-45e1-798ad8cf77fc@huaweicloud.com>
-Date: Fri, 26 Sep 2025 08:57:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1758848673; c=relaxed/simple;
+	bh=oLmDSJNdpoLwPaidEcnwsYrqjVdl9EpZZx7P1f4xlVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVDPHx33j6EdBb7VUJcNnBwVjnX3EP/Az4JEjZXiJLDmR60Uao202FtyO/ryTcgvreUJrdrpe76PbAmC1Yolh/dEEKhF+O0mRJjFGvAKIRq9L24j5IVCnie7Jgsf4qG0jqHwLlyJmXeLudfeOB1H1FS10hOuw4faCqWXgc2E9d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=qq7l56sJ; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cXsmp1vVlz9stG;
+	Fri, 26 Sep 2025 03:04:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1758848666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vTLrdj3GZdHnJaUp/nrT7MuKvNwikDSkk9dCd6XBhbo=;
+	b=qq7l56sJZBYfZBNZ3i0TiyRp33urO5yqDNzqVohcLxvQhm4T/Th0Qku/rg/vgBlCu7i/CX
+	fbW9+y7S7CghZArfrwo4DM9eoyKNRdjQ4YlrOdLO/Qz0jfTgP0rzYSKNHj7WuoZSc80AvR
+	eFv/U90wjkgQ1EkRp1plO53BJ7yr+KIsAZP6TTxKq1PAdbyi+3cU0ynldd4Zb/0B+0AoeR
+	KJpogVJDtcqFJu+Oll7WqUlRAormfsxk/CcoRF8Z5NZCD9lavMzmDWFFj10Sk72wu/PJT6
+	wMNnHwXslWQ5Ykp3UAaiaimT9RK+7bQYaRt6mNyY113QEk2495FRNP1qK3DSEQ==
+Date: Fri, 26 Sep 2025 06:34:11 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: KaFai Wan <kafai.wan@linux.dev>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, Andrii Nakryiko <andrii@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in print_reg_state()
+Message-ID: <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+ <20250923174738.1713751-1-listout@listout.xyz>
+ <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+ <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
+ <9051652cf548271da9c349758cbd70aaa3cee444.camel@linux.dev>
+ <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
+ <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <01e7eccd-3529-4d12-8ad2-fd9e034a026d@yukuai.org.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHCmLf5NVoUKZVAw--.24830S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruF1rXF15Ar4kuw1rAr1UKFg_yoWftwbEva
-	n0y3s7Gw15Wwnaq3WrGrnxJFZ5Ka18XryUCF48AFW7twnxAa45G3ZrurWxZFZYka1qywn2
-	gr1ku348Jr4aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
 
-Hi,
-
-在 2025/09/26 1:07, Yu Kuai 写道:
-> Hi,
+On 25.09.2025 23:31, KaFai Wan wrote:
+> On Wed, 2025-09-24 at 23:58 +0530, Brahmajit Das wrote:
+> > On 25.09.2025 01:38, KaFai Wan wrote:
+> > > On Wed, 2025-09-24 at 21:10 +0530, Brahmajit Das wrote:
+> > > > On 24.09.2025 09:32, Alexei Starovoitov wrote:
+> > > > > On Wed, Sep 24, 2025 at 1:43 AM Brahmajit Das
+> > > > > <listout@listout.xyz>
+> > > > > wrote:
+> > > > > > 
+> > > > > > Syzkaller reported a general protection fault due to a NULL
+> > > > > > pointer
+> > > > > > dereference in print_reg_state() when accessing reg->map_ptr
+> > > > > > without
+> > > > > > checking if it is NULL.
+> > > > > > 
+...snip...
+> > > 
+> > > Looks like we're getting somewhere.
+> > > It seems the verifier is not clearing reg->type.
+> > > adjust_scalar_min_max_vals() should be called on scalar types only.
+> > 
+> > Right, there is a check in check_alu_op
+> > 
+> > 		if (is_pointer_value(env, insn->dst_reg)) {
+> > 			verbose(env, "R%d pointer arithmetic
+> > prohibited\n",
+> > 				insn->dst_reg);
+> > 			return -EACCES;
+> > 		}
+> > 
+> > is_pointer_value calls __is_pointer_value which takes bool
+> > allow_ptr_leaks as the first argument. Now for some reason in this
+> > case
+> > allow_ptr_leaks is being passed as true, as a result
+> > __is_pointer_value
+> > (and in turn is_pointer_value) returns false when even when register
+> > type is CONST_PTR_TO_MAP.
+> > 
 > 
-> 在 2025/9/25 23:57, Bart Van Assche 写道:
->> On 9/25/25 1:15 AM, Yu Kuai wrote:
->>> It's safe to iterate blkgs with cgroup lock or rcu lock held, prevent
->>> nested queue_lock under rcu lock, and prepare to convert protecting
->>> blkcg with blkcg_mutex instead of queuelock.
->>
->> Iterating blkgs without holding q->queue_lock is safe but accessing the
->> blkg members without holding that lock is not safe since q->queue_lock
->> is acquired by all code that modifies blkg members. Should perhaps a new
->> spinlock be introduced to serialize blkg modifications?
-
-Actually, only blkcg_print_blkgs() is using rcu in this patch, and take
-a look at the callers, I don't see anyone have to hold queue_lock. Can
-you explain in detail which field from blkg is problematic in this
-patch?
-
-Thanks,
-Kuai
-
->>
-> No need for a new lock, I think blkcg->lock can do that.
+> IIUC, `env->allow_ptr_leaks` set true means privileged mode (
+> CAP_PERFMON or CAP_SYS_ADMIN ), false for unprivileged mode. 
 > 
+> 
+> We can use __is_pointer_value to check if the register type is a
+> pointer. For pointers, we check as before (before checking BPF_NEG
+> separately), and for scalars, it remains unchanged. Perhaps this way we
+> can fix the error.
+> 
+> if (opcode == BPF_NEG) {
+> 	if (__is_pointer_value(false, &regs[insn->dst_reg])) {
+> 		err = check_reg_arg(env, insn->dst_reg, DST_OP);
+> 	} else {
+> 		err = check_reg_arg(env, insn->dst_reg,
+> DST_OP_NO_MARK);
+> 		err = err ?: adjust_scalar_min_max_vals(env, insn,
+> 						&regs[insn->dst_reg],
+> 						regs[insn->dst_reg]);
+> 	}
+> } else {
+> 
+> 
+> -- 
 > Thanks,
-> Kuai
-> 
->> Thanks,
->>
->> Bart.
->>
-> .
-> 
+> KaFai
 
+Yep, that works.
+
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -15505,10 +15505,17 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+
+                /* check dest operand */
+                if (opcode == BPF_NEG) {
+-                       err = check_reg_arg(env, insn->dst_reg, DST_OP_NO_MARK);
+-                       err = err ?: adjust_scalar_min_max_vals(env, insn,
+-                                                        &regs[insn->dst_reg],
+-                                                        regs[insn->dst_reg]);
++                       if (__is_pointer_value(false, &regs[insn->dst_reg])) {
++                               err = check_reg_arg(env, insn->dst_reg, DST_OP);
++                       } else {
++                               err = check_reg_arg(env, insn->dst_reg,
++                                                   DST_OP_NO_MARK);
++                               err = err   ?:
++                                             adjust_scalar_min_max_vals(
++                                                     env, insn,
++                                                     &regs[insn->dst_reg],
++                                                     regs[insn->dst_reg]);
++                       }
+                } else {
+                        err = check_reg_arg(env, insn->dst_reg, DST_OP);
+                }
+
+I'll just wait for other developer or Alexei, in case they have any
+feedback before sending a v3.
+
+-- 
+Regards,
+listout
 
