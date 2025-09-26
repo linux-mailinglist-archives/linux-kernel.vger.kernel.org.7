@@ -1,133 +1,309 @@
-Return-Path: <linux-kernel+bounces-833606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC3DBA265C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:42:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF7BA2677
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20894A7CC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:42:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E54F5623C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657CD2727F9;
-	Fri, 26 Sep 2025 04:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF36E275105;
+	Fri, 26 Sep 2025 04:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Nui8T7fH"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cW9LP/3F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228BB1E0E1F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 04:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E122AD35;
+	Fri, 26 Sep 2025 04:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758861759; cv=none; b=J0OmlfUEMyysUPPtfuznI9uppfrS/Wnl97Wuo0e5/xm97t6oce3RiKXW7KmkCkxmQZObOTYkw32fQxgItqX/ypJGe+G54MIPFanpQKImOHxDUwcfiXPCji+JsxBMg4FtxWmZjehBuCkfBM5mL7Sx9HGQS7O2PO0OWz87ZBor3BE=
+	t=1758862145; cv=none; b=clPapjP5w1Z9bCROfKh61Kk8wltlNeCLJY7UM3BKBA1rMmL/7MD5pZX0ZfRx90GSPJgxc2Np17LN38Z/t3VQ7HofGM501EGp1GwfMQH3IU6q/ZOyZzisJN0/pWQsmmMROkjZ3CPsLA0CtTDoOch/mcv+6SvtYgiUNX/OGOyAe7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758861759; c=relaxed/simple;
-	bh=fEauAJYcUbua+cmvgc3OmlOg5F7hAKqTIEP40tTkZjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aGttOjvs8aBKzgGd4iI3/5W4yOH2+kRTKupqt+NpkffJA+48MZahYD3qlYJBUfYHnQhMIyIREyrPfGfWAca/LE3F2+2ssfqMXwKSyjOI+WbEiDvat0TaJpBj/E4NDwgrE0ETYVYCLvjgJpCadWWU30Olg05g6qfOCPXWs25K0Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Nui8T7fH; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f2ae6fae12so876082f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 21:42:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1758861756; x=1759466556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TLGY1bfUCfvvgSQwYAf1vBj9u82Y/c0FBRs2wNpuwOU=;
-        b=Nui8T7fH5wzqOXlynwLj3xh+sI7sW9Thl56x6qqBUrg1lzL3nBXAvRZgTYNfmvzYJp
-         w4cY2BilFGsyeoZVlXPXYzTto1dHX/hHANVY8NujU2Js40Ik6+RWx7pq8M+D8d0jOdLM
-         r7TrRHDRzvxFJpv26MmYLIn3rLMmuthcxE/lDqg2oXtzgYbJNj1DzdFLFBDNlg7IvW/z
-         VsWcv16VZZ0sHNGcYM4TJXfmhMTxqtvjYGCEzHjwVGFj/xcIOjTaJKZEWNIJAg4BOk9o
-         4hSZQrtm+uu7oMaXw9z0cO/EdtYMn0V989WXqrbOBWtTAqhZykqUimWM52LzEx8ERSWo
-         fNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758861756; x=1759466556;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLGY1bfUCfvvgSQwYAf1vBj9u82Y/c0FBRs2wNpuwOU=;
-        b=P0lRvKUzRilD181swcOPHRQFZmqU50YRD0Zg8j4JXAG3rUpfHSXiVvVumLHD0CI9wF
-         6pceUM2jGY7TyO+NQ3n4jMXQzJGIGsQFbpwLVMPOdQJCZige3tOgaS3XNno7JMvaMOcI
-         rKSwlmlW1MPnJw3YmLYCyst+woC8MAvNuWRzZjFLTUcCnvxd06cNoI/Tb7SFrBHSfw7z
-         Ce1G0eVE6e6YUp0ONCByxNXlcGO3Yf4+3XFtqJzVWDe7AstQKXANvV3GAF9r9PCvB/k6
-         uxI6M9gBW9csTMPgqwPaM6mmZKBvPf41MAZ7bgsFQ48q+1m1RL9SJtqU/QcT5mGQ7HRw
-         TMdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZHolzjfn+LUzCD1nUFpnefgqIs0OjVmlBUZEe8zxu+YlITEZVSY604p2+MPrVD8cHRfxshBQuXSlNYdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK15l18OX/dc1285VCqWPe4QK7tVYJ6MDSBDHqmZfNLD3+IH9I
-	nTd4Rqz6Q+oyA7FEIVfvSXiOG0fyvNtddHeHSAeXBeJDlRxB5AsRfeUe5F54UnMkdas=
-X-Gm-Gg: ASbGncvv0ccIhuxrZDkPXegKG7xZiREIyN++Qd0/iwqNktgebjAE14E57aziXIE4pXA
-	8BUouAgV657YFVfPOedn+gI+sOtUxFCgFKxqrUtuycTESTtQJJm9N1WGC1895gVRXkCgCDh0JBr
-	PkWa6qxzr/a5+tPUesU0a6KAHjLtt8O7yQONcqK09hdY0MWufALsMukKrDTAtyI4UKpeWEmTuzq
-	L/Wve1hFyWAiVCLdit/G8mNYUuMKw2lsTlBlsNyueMDvb+iHKIcy4q3aCnOBgTkXwuTTWqz7Bkm
-	I23O1qrrix6Jld3Xdd7RfwccXeI8AYxYSdOgObZbTO6yRCRhjasoX88OGXzRbxRr0bHx4mYpxY6
-	hDNS2vEr05yCKARzoD4L2L+1OLDF/AWE=
-X-Google-Smtp-Source: AGHT+IEcWDDzdBLvASMwHVBQJF3Lf+PtK0CqkPG0drCL4iEC6JWFAWRCy5oEosu1Iyq9sP+wEPuLDQ==
-X-Received: by 2002:a05:6000:40ce:b0:400:ac58:b36c with SMTP id ffacd0b85a97d-40e50f57256mr5069817f8f.62.1758861756442;
-        Thu, 25 Sep 2025 21:42:36 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.111])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33baab12sm58199575e9.8.2025.09.25.21.42.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 21:42:35 -0700 (PDT)
-Message-ID: <1708d3bb-20f7-4b33-b3ce-f69b96ec07ba@tuxon.dev>
-Date: Fri, 26 Sep 2025 07:42:34 +0300
+	s=arc-20240116; t=1758862145; c=relaxed/simple;
+	bh=4na2MwMkmmAaDECDNWbXVEGbVQneUVLeyfZhzwMWr2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmGZWzzfAleVPwM/8/YtZ0eASPKvteG0GXjq+v7Ioia+goJ8O0GtT82XKz8uiCynDPDIpARxcBh6WJBG1LGYa8j0MLLacHdFjiChPqkx4wjwjyHDKeKb58xp5oHPMy2nIxkhAsmallFJnbatRGfuJTEJ1sevaEa5bYWQrxbXZ4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cW9LP/3F; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758862143; x=1790398143;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4na2MwMkmmAaDECDNWbXVEGbVQneUVLeyfZhzwMWr2Q=;
+  b=cW9LP/3FKm+8MQb5qhBNKcYvdynZbgPOTauxG05/ebQDKotNva3fGY18
+   eyJYj8XTHIOallLNSdO9+Sj0A4jwhxOBMhfiF+VRL89gQxMyEFbsht4oo
+   pCEkeFlcDsJJHg8TXe3lOIJDkZpyzsaHDHYVOFj2vZBnGgKhkaocmSiEf
+   tvNTF23UVVcDW8Pyo7VQhsqmswiyX0E3xjDbKaEY7CEu58V1sTxZl6pw3
+   n9VB0ahIv8GFKkJTeP7RRvldGTm7nJ4bYRhdwMu8xn3oJuVLNhgAu8zxC
+   m759VLY6Pw6Sd8TsXbSWJ82CFntJZqNpnQK0UQo4HmBo5yuF6q3po97Xw
+   g==;
+X-CSE-ConnectionGUID: IpIY2hFmQiufR59exh4RpQ==
+X-CSE-MsgGUID: CTk3TcPMRx+1BPUl60PkPA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="60890654"
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="60890654"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 21:49:03 -0700
+X-CSE-ConnectionGUID: 5NSCml62RnC5bGQ7ZNzxUg==
+X-CSE-MsgGUID: xhQYA/zoQXmI+yKr9TDkmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="176634376"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 25 Sep 2025 21:48:59 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v20O7-0005uP-3A;
+	Fri, 26 Sep 2025 04:48:55 +0000
+Date: Fri, 26 Sep 2025 12:48:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	David Collins <david.collins@oss.qualcomm.com>,
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/2] spmi: spmi-pmic-arb: add support for PMIC arbiter
+ v8
+Message-ID: <202509261209.yuXsEYB5-lkp@intel.com>
+References: <20250924-glymur-spmi-v8-v2-2-202fc7a66a97@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver
-To: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, p.zabel@pengutronix.de
-Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250912122444.3870284-3-claudiu.beznea.uj@bp.renesas.com>
- <20250919093741.1695015-1-claudiu.beznea.uj@bp.renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250919093741.1695015-1-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924-glymur-spmi-v8-v2-2-202fc7a66a97@oss.qualcomm.com>
 
-Hi, Mani,
+Hi Kamal,
 
-On 9/19/25 12:37, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> only as a root complex, with a single-lane (x1) configuration. The
-> controller includes Type 1 configuration registers, as well as IP
-> specific registers (called AXI registers) required for various adjustments.
-> 
-> Hardware manual can be downloaded from the address in the "Link" section.
-> The following steps should be followed to access the manual:
-> 1/ Click the "User Manual" button
-> 2/ Click "Confirm"; this will start downloading an archive
-> 3/ Open the downloaded archive
-> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> 5/ Open the file r01uh1014ej*-rzg3s.pdf
-> 
-> Link: https://www.renesas.com/en/products/rz-g3s?
-> queryID=695cc067c2d89e3f271d43656ede4d12
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Hi, Mani,
-> 
-> As mentioned here [1], I'm seding the gotos variant here.
-> Please have a look.
+kernel test robot noticed the following build errors:
 
-Could you please let me know if you are OK with the format using "goto"
-instead of devm action, as proposed in this patch?
+[auto build test ERROR on c3067c2c38316c3ef013636c93daa285ee6aaa2e]
 
-Thank you,
-Claudiu
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Wadhwa/dt-bindings-spmi-add-bindings-for-glymur-spmi-pmic-arb-arbiter-v8/20250925-010123
+base:   c3067c2c38316c3ef013636c93daa285ee6aaa2e
+patch link:    https://lore.kernel.org/r/20250924-glymur-spmi-v8-v2-2-202fc7a66a97%40oss.qualcomm.com
+patch subject: [PATCH v2 2/2] spmi: spmi-pmic-arb: add support for PMIC arbiter v8
+config: csky-randconfig-002-20250926 (https://download.01.org/0day-ci/archive/20250926/202509261209.yuXsEYB5-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509261209.yuXsEYB5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509261209.yuXsEYB5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:21:9: note: in expansion of macro 'BUILD_BUG_ON'
+      21 |         BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
+         |         ^~~~~~~~~~~~
+   include/linux/bitfield.h:75:17: note: in expansion of macro '__BUILD_BUG_ON_NOT_POWER_OF_2'
+      75 |                 __BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +                 \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:10: note: in expansion of macro 'FIELD_PREP'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |          ^~~~~~~~~~
+   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
+      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
+         |                                 ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:21: note: in expansion of macro 'GENMASK'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |                     ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:953:22: note: in expansion of macro 'spec_to_hwirq'
+     953 |         *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+         |                      ^~~~~~~~~~~~~
+   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
+      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+         |                           ^~
+   include/linux/compiler_types.h:554:23: note: in definition of macro '__compiletime_assert'
+     554 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:574:9: note: in expansion of macro '_compiletime_assert'
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:21:9: note: in expansion of macro 'BUILD_BUG_ON'
+      21 |         BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
+         |         ^~~~~~~~~~~~
+   include/linux/bitfield.h:75:17: note: in expansion of macro '__BUILD_BUG_ON_NOT_POWER_OF_2'
+      75 |                 __BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +                 \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:76:56: note: in expansion of macro '__bf_shf'
+      76 |                                               (1ULL << __bf_shf(_mask))); \
+         |                                                        ^~~~~~~~
+   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:10: note: in expansion of macro 'FIELD_PREP'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |          ^~~~~~~~~~
+   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
+      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
+         |                                 ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:21: note: in expansion of macro 'GENMASK'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |                     ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:953:22: note: in expansion of macro 'spec_to_hwirq'
+     953 |         *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+         |                      ^~~~~~~~~~~~~
+   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
+      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+         |                           ^~
+   include/linux/bitfield.h:45:38: note: in definition of macro '__bf_shf'
+      45 | #define __bf_shf(x) (__builtin_ffsll(x) - 1)
+         |                                      ^
+   drivers/spmi/spmi-pmic-arb.c:125:10: note: in expansion of macro 'FIELD_PREP'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |          ^~~~~~~~~~
+   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
+      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
+         |                                 ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:21: note: in expansion of macro 'GENMASK'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |                     ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:953:22: note: in expansion of macro 'spec_to_hwirq'
+     953 |         *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+         |                      ^~~~~~~~~~~~~
+   include/linux/bits.h:49:27: warning: right shift count >= width of type [-Wshift-count-overflow]
+      49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+         |                           ^~
+   include/linux/bitfield.h:116:63: note: in definition of macro 'FIELD_PREP'
+     116 |                 ((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask);   \
+         |                                                               ^~~~~
+   include/linux/bits.h:51:33: note: in expansion of macro 'GENMASK_TYPE'
+      51 | #define GENMASK(h, l)           GENMASK_TYPE(unsigned long, h, l)
+         |                                 ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:21: note: in expansion of macro 'GENMASK'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |                     ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:953:22: note: in expansion of macro 'spec_to_hwirq'
+     953 |         *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+         |                      ^~~~~~~~~~~~~
+>> include/linux/compiler_types.h:574:45: error: call to '__compiletime_assert_283' declared with attribute error: FIELD_PREP: mask is zero
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:555:25: note: in definition of macro '__compiletime_assert'
+     555 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:574:9: note: in expansion of macro '_compiletime_assert'
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:67:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      67 |                 BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:10: note: in expansion of macro 'FIELD_PREP'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |          ^~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:953:22: note: in expansion of macro 'spec_to_hwirq'
+     953 |         *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+         |                      ^~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_irq_domain_activate':
+   include/linux/compiler_types.h:574:45: error: call to '__compiletime_assert_273' declared with attribute error: FIELD_GET: mask is zero
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:555:25: note: in definition of macro '__compiletime_assert'
+     555 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:574:9: note: in expansion of macro '_compiletime_assert'
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:67:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      67 |                 BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:155:17: note: in expansion of macro '__BF_FIELD_CHECK'
+     155 |                 __BF_FIELD_CHECK(_mask, _reg, 0U, "FIELD_GET: ");       \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:130:30: note: in expansion of macro 'FIELD_GET'
+     130 | #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+         |                              ^~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:888:19: note: in expansion of macro 'hwirq_to_sid'
+     888 |         u16 sid = hwirq_to_sid(d->hwirq);
+         |                   ^~~~~~~~~~~~
+   In function 'periph_interrupt',
+       inlined from 'pmic_arb_chained_irq' at drivers/spmi/spmi-pmic-arb.c:737:9:
+   include/linux/compiler_types.h:574:45: error: call to '__compiletime_assert_208' declared with attribute error: FIELD_PREP: mask is zero
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:555:25: note: in definition of macro '__compiletime_assert'
+     555 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:574:9: note: in expansion of macro '_compiletime_assert'
+     574 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:67:17: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      67 |                 BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+         |                 ^~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:17: note: in expansion of macro '__BF_FIELD_CHECK'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:125:10: note: in expansion of macro 'FIELD_PREP'
+     125 |         (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+         |          ^~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:686:40: note: in expansion of macro 'spec_to_hwirq'
+     686 |                                        spec_to_hwirq(sid, per, id, apid));
+         |                                        ^~~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_283 +574 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  560  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  561  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  562  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  563  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  564  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  565   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  566   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  567   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  568   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  569   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  570   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  571   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  572   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  573  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @574  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  575  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
