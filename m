@@ -1,93 +1,156 @@
-Return-Path: <linux-kernel+bounces-834569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E629EBA4F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:25:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B17BA4F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439401C23DA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:25:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 677067AB8E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5EB27A46F;
-	Fri, 26 Sep 2025 19:25:16 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5691227E076;
+	Fri, 26 Sep 2025 19:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fxNclzh+"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C721E7C2D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C7A202976;
+	Fri, 26 Sep 2025 19:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758914715; cv=none; b=UcQMcycbzf9YBRQOJU36elrJQSmqCDLl1VtJs2Kzn02+yH+gL5djuqtLuyVdm/udmPVpicFHJ3hM4N39m8gjg/479F3dcrKr31pKFfwts1vCZWZQTiC5f96E40u4xunFlGtKYnk6OJhI7NIy2GrFV63d3VpIrznd6qQcPpGGXSY=
+	t=1758914939; cv=none; b=q18JeJoASOqTnynCczAfVHkZkTxgU4EdWrcFPcypxJwGZFIjvHtXCdu/dYngGG8i2G2pPScG/ZvuIjB7xleShG+4/HRLjwrq5VU59v2mVZKb2uFuF4/u+UZ8mCoHhkdEkNjTwKIkYAqMsrLcMYKlhNgmuASCG4+XQFyHGb0+MnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758914715; c=relaxed/simple;
-	bh=AjsE0OtOFuiz0tzZGEdBNtjAlV08uWShNc5qCZ2cK/Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RHg3Bbvp/MbJsrRiv4dPl+Z8xiKT7+FrUoZGiCxijAkhN5/Yb9DneJJ6TKuahlmvQQkYHH0xMq0lFMLy360HewnRN2Hh+V2YtEigDRk/QIwTiCeMOuLhO1L9gT1dwu54OuEVl5PPLLqkEZQ+OGO/KmV5ruIdMuovaiQZYCvpzig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-889b8d8b6b7so415054239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:25:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758914713; x=1759519513;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YvFuA4434kRn74Cvfh+GZ/UGjhC11w1l7b/adwnKRIU=;
-        b=EwUYmlURZnNKOEJokWRxy+7xUD7NRCzGADbeGt8nozlPnq3NJ0prSqmfOaRdFo6q3c
-         /juYKuxPtPjQg40FtXyTQUksi+uFb3ytcOC4EHU8UPHmSD0VDnMKV+I9ZNfFICge2CLr
-         FKpp5tl6H/VHOJs7L0kP9gg1BbNHZTwkzwKGGAe7qj9cHi+7Q4Kd0WCeVG2llLBBbI1q
-         CRG71b/HLndHz1dL5vgy9BtT4w7fAUNxNaH1Mfq7QkfuTr/SednHTqLcItOCpSRX+foU
-         WSeDWzVywJ0LGj2rGduUcMgXHPnjzGm8nHjw8ReXSVMpTasL5lQKKcAXSDa7sSO8+HDT
-         rjxQ==
-X-Gm-Message-State: AOJu0YznjyZt+xAsfIt2+ClNo2+7zNCf+sPPzajdV+hN33Iey9EL0ryS
-	FQnW4KkXJYGSM1yr/5+/Cs2e6POsV57h1+3U+N1sBujt2ZromaMyr2JSjhH9Cz/cCOptrSy5xgh
-	aJjsCsCxfLVNp+vT2NYLwId4bNpUsPDAMUSefoa7RtFGZ34LOBxL5PlALEFo=
-X-Google-Smtp-Source: AGHT+IEAr0Fv+uRRK+SVL2zkZ23IvA1A7ugWcC3ZbDn0yGSgkyjysQ/Yl76Twxcr2GvqHgR5UTe3Fyfk5FEhcKiniSOdIDiHqI4/
+	s=arc-20240116; t=1758914939; c=relaxed/simple;
+	bh=1X9v78ltgesidpof57mWkDrgYu9W3wMXPNpxjX5pCYM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ORvVnn4TlsaecXcpoYmkc9TC7SSsbjLAi0Y1NyNhxUQAre7nKVsjfQ8/FIITnrbNBaoGXpkLwhcAs8yVNVI2w0IsoaUUk+QA26MeoFMcfCYUYhOTn/F9Hnm9G4Z9CAsXdCam/gC+LkUIEKLYYNDL9A5BhuEpNbhyclFABgLBJaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fxNclzh+; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758914931; x=1759519731; i=markus.elfring@web.de;
+	bh=1X9v78ltgesidpof57mWkDrgYu9W3wMXPNpxjX5pCYM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fxNclzh+TsDRFi9gQSbq6Tbr5lv7LD3kO6xz8lkrNNR8QZKNk1wDMugpYf0K1Za0
+	 zAInZWIgdW7wYYqddPbUQ9YNKYkUkK9NJ/E+2GiMyo01vR8b2S1OBcCl9/aSfBbRr
+	 +cjAcnpZAxehIXXyEiLiQko6CpcRaw9s6v63UT2BLiU6/NhVQ7UPiwKyG55kOzcfm
+	 r4106B0nsuBsY0V6Ns94HYXoXlmQEbyVmBYHLN7PXUP1b/1AxS59tAjnllJrrJ2gQ
+	 UAkq4yWEuTT0hgpHGbAQmnRUNvXlgpaZ+L8ZP/6x5cl9qy54QFxQxS5OGAxEtt1vP
+	 6JGUAYo7FHW8QkBCDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mcpuy-1uSLPF0Gws-00o09T; Fri, 26
+ Sep 2025 21:28:51 +0200
+Message-ID: <28ac4cf6-f6e3-4c02-b4d5-8cba6d867318@web.de>
+Date: Fri, 26 Sep 2025 21:28:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24c:0:b0:424:8535:651c with SMTP id
- e9e14a558f8ab-425c12dcfd3mr105684405ab.3.1758914713594; Fri, 26 Sep 2025
- 12:25:13 -0700 (PDT)
-Date: Fri, 26 Sep 2025 12:25:13 -0700
-In-Reply-To: <0000000000001c59010612fd7c60@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d6e899.050a0220.25d7ab.0199.GAE@google.com>
-Subject: Forwarded: KMSAN: uninit-value in hfsplus_strcasecmp
-From: syzbot <syzbot+e126b819d8187b282d44@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20250925150219.24361-1-johan@kernel.org>
+Subject: Re: [PATCH] mfd: altera-sysmgr: fix device leak on sysmgr regmap
+ lookup
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250925150219.24361-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LeenfAnobQB/BiT+p3A12FzTELDy6qMO8hlFJ9bKUVRlqMCEq19
+ dQDJs1MUI9TrT/Bcp+D3hSRhMifa6m48oK+bXVRWmMaujEHltdGQynPtKuA6rvolwhr83+1
+ kU89lCNLYUb7sReYql3ZfzmmzT6JbpvPz4leyIpAgXD3Scuk8neN8RiHW6WZkgbj1U5rjbC
+ znstWJ44+uFutya7edIvw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cv3FhLB5lgs=;OosAEUO2EN4F6x+/DBEEZ20b4fW
+ iqStuzxPLL396fIq62EXUFWNu3xnGhnvLo820oMj1M/fSxN7cIkUPei98lMdEqzmoP+mNjoi9
+ 8FjBtXLI59Pq7xPtZ+HtKDDPggdV2TRkUMz1YxPFuWjxUOZ3lCjGgQQ/83U1I/LYucEij8Jo5
+ kN0yVvmgeGK8wPjhndxJyNhjjrbYfQdE4VmTolyw1XLfBG2xW8O+NeRLbZA0TBywyi0efkHmc
+ XJ5B1rQNXM8U2+r0Uyw4Rf8TyZNyBvWJ+ngjyyjaynN+OVyAv8ujzXiS+GXPDKGXYLs158tdc
+ MUQo/wlPuIe3hUlrE+ZVmFpsecRWqRD4RMViE66a0IOBZF74YLHoo7vxPjyDGFtD1F7EhDkbp
+ SXQ04xJWeV7LRCnwHW+2oSCw142Rs3lYfoYyC9Oh4TttIw3sJ+BUyDfgKNiXK80noktUDjPUi
+ ASikYL0XMj/JddtyirDYx9TqeO4BA1WmHgDOVl2mXuD8T2nzPxfk+a0B+NafK48cXBbiBnCmt
+ w/ipPviwldNdotrroECtQ8GeJVIcyZtaZTViBezgKUaSq+dvZj7F28xbeF8LpRs6usgealSrS
+ bBXwHvKsTn3XAapHLdUavgwdo3Nj9tuuZbniKFLn75pgDb5dGS+/bTSeK0AMT62XAbp0OEiw2
+ K8nE9e+cTE1F5ZBG+SnAuv+kQr5DD6SDt6Yda1b5eWYrQT7yplfK5k9yyps/emmg86truEZO6
+ bpZZy8jduGF28KDjwpyIzfpjUZhHS4wEV1oj7dIn0ckq1sDoUVK5gfyr2egdovyZUtik0By/j
+ CUZIdmCBj0tksLftht8k9kQUxzoEjX6NnMGvL71ImtbX4DJk8qeU1Lf4gBtE6JTxMlZWrxB1m
+ rERin3BoETaQ7sVH6CteTKBpJNxUOIz4aUbgVrR3/8JIrXiKCQbdrP9RlNGFv1CmV6GCk/ERu
+ rUBYS6eneGtU+nq6o3fzmmc1pkvXGee4hmk/ezxA9zpetimu9SIMSKgyph06S+oeKJVwP2JVx
+ 6z9rx6QAV7mwSMAGRzEcKkXm0bojLoGzc82chFfy6Kpv1EyoShFlBCXVYACgz+7t3VQgO4i+r
+ RR9xtDHxp2huRZUdCZ3isoyDpaLbFwWHjxXo6M1K4A4IKmOtujFmClHbYYNkBB6vhFrFbN60c
+ 10k2le3AtRYD3EXUhHML3cTpjgwBhoyJMRlD2BGoycAryJd8fYt6F5gOhldvnD36v5ExUxmCx
+ gLngrdO/EXif3FiFy4RJll2d7LuUvgu9SaedI7OdLvQx7L8RxLWwFVJYOjrySaXV1AhayZHit
+ FkSXsqV8uGMUsk9wCpkHXlXPftYysXu3SOmyDnc2u8NIpbhL5n9jIGk7Swa/31P6xxg2o8okK
+ 0v/JNEl7iLZnIFpbp3s37lVV0w69zqb8/+1g30smMW1PGAwh9Z448D97gyu5wcPDL2FCOFAS+
+ pIZAxMKfzOWLecyCTDN3uvGtKTLttcXBolUNCX6jEvTbwgopxVKeOryOiJVwAJOgEjjPSzWQl
+ 4bbj4nuhje03ZcOxof6zBO9Rr5VimhGVrAVRxImZvJDxs2dfj6CGyHQDuI/nWzmht05W6vrSD
+ UxDkIEN23seIP4rXatKHPMkULPr74HErQsjbP6lZ+gr8lYmBVc5CKeZSPkKsoadEyBiGHBi9n
+ 7IYVoL5VduwiYKjv0GUq6YjtlT9mjhzfyk21X/6Ts1AFex0CAmXEAeSsqi6/tM7vqcbnS/xhm
+ o19dLTadzZyYryaFrIAbymmNHFK5mvmx4ZpFWByWUR+UASO9DCDYG00rFo95W0S+JOppOwV0H
+ ZZc/SaviitgBs/h+YQ8Hv+1owzr6pl6R5au2LrbeV0Jx/rfmxnOIziDTw2wuDe4cl5ozX7Mtu
+ i55FkO6lfG7g/CVrcwtuaAQUzBd8Bj9gn47SuAaJPVkFmZeNua6ofzZpsininX4ilgfmrO6s9
+ L9yg47xzEDZOF+SObDgG9o9j9jNlgj8fWHlcHbNkEgzy8auiw4kJ8ribv5byZ7Bte4t5hQEKW
+ cuQXPXRYyGFREGKGOn9+cwuIBn5w1WUMzvs8hnnSHvhUvIK3qlYZ0ih3AKU3e0uCPfDZtHp1q
+ C9na5+CaAWhMYMK0Pl3uXtYp8krrts3Kw5LDsFi1lnQeHz3Fer/GgB92+3FaPWVJlhs61rT8U
+ xryVbAHGmfECwEwICrSIqCMl5pid3K5vLw2mD0WYgConEwWpvZOXtehUxO02APxPPfzzGvVCo
+ TxHo0SkIPaAEOIbkVApYbOeiJ9T8Q1blI4Dgv7BOLHOHAeRANfOyupwfTyCvKo2+S+AiKoiuy
+ QACpb5h8iSj6DOS5u2STeG3OmVWQ3E/D6T2mfje9o4B7bEoNIJAyKY/Z8JQNjwHSl0DE8W7+L
+ 3sA7dmjqC5oiPanB+dPn5V9ONvvNzTjTPkuVau89iz0VMyPssFAgruHXkaUhB707sem8YN9xF
+ e0m4FtwN8Te0iobY2pjscsYvJvQUFSE9DOuCzXSliJcE5aM3QxZM4KWTzMRnM2cx7h5UIXz6j
+ 9BeXA/x0deFGECja9Wqw704zB2YvcaNggEa/rbl0y0rYSj6OVscpqfslRxviOG/cTuRI3yVqJ
+ H/LCIiQwSbm+nFQBp9zsTt1KTlyTPATBln56lRIH6+nmOmNVfks4fbXaR6BeX3KXTNkaB2+rY
+ Hohn8NVI/7Rcqo0Izz0O7WQPQVHbVNAH3jCQOJSCixabED/29zC24LtHFnWXyjilb8h/95E5C
+ /y16hRttF3GoayBvDw7vGUBKyPOgPgwsIMpyOvZpzkJbJCcPy+DhrPuaAKakWCzR8hAY21QYy
+ g3wViZsALaR9YEbEjZ3wZ+ZpaljubKR8rPVi9yoWgDkcZJZpcb1gp9CdhJT/IgXuBslAPChLP
+ 0a7gzbVraRsXFjjomVnJLE9NK57Z7YLtfKnd4klYWW7vgEB9cfUp2m/ZQSztW9BNVivaMHkJg
+ Ib/hfnPsy57Xhi1PEdPK0UFfwdCsoBZhIfOgEt7NExpCIKH0DyyGKeM1K7YtbtIN235FA0E/6
+ maTcLWEHkRzeOKXUNiZsOfwM7vD8aX32dSvQa4y0dLXqe2grPJVf01K7YJL6Mf+9dpbevWiNJ
+ +g7FEjm0jxfYmUyyqoytJuOZaHrlPZvdw2cNx0x8DYPraI+VuvEdlXhYi5HRfJbuxS5OPH2pU
+ 5sgIZ0pfilR2hOsdt4nT/6U1/UzFgU22a0Nq02hnyx9OVBf0+6RlwymVuAKa8nzXP1uHn6dov
+ vJ3jHREm7/hQKhDlm0kZ5wIa6R6XaG1IL3xcg/mhXkiu5fovYlE4EDblLB+XI3M0z42fqMNdo
+ 5Xa+sP5ebFfqDz1ccJE4T28iSl6lUlHe/S3CoN7By494ATaPF7BZc3V961JfKsZJVn1rLrT0d
+ 0WbE5FItL76iUa9Icf63Fj7oJh7S+W6cgx0jxRm/SOc3EHggcfNShJi0ZnmNWhOg10Z6yFKIo
+ Bo70IYxz4YHa8DxRPukz2tNW9ThW1IhG31A2AzBwDp8GhjLctiwbwm13mD2bBewxEmxV+PJT7
+ +9CguXFUl+SzUK014HTUGX41oDFjWoy0TbMPFtkjWvrmqTu4/ZYSPj0BUlWSMbVIUbxA3BlLa
+ AFm2qI2ysFyvKJTOCcseNd3h8Vvrbpf8R5CZdj9m6WT+mjeAJnmFSWsmHul0aQUGvv5i4R+xb
+ RvGK90oTqOXd2DrIDmhnYGVySfgNMb+9RPJ72SVgXnWwLkK5gIZva1zRYi3w80/YzCpu9E0Wx
+ qQonCZSkuRRjZ/KWuzNSkj+yuskr0leTuPQr1a3CxeMjvNr1O7PpX4xYhh3dasjBux1BWSd52
+ 9PMCua7GKO4avW3CfIWpEKuV5Skfk588hIHS6Yc37Op5P+2Slln024uL/XCRslCSLwa5BIWGv
+ o9gkZdFPHSiNBOtBJXKFbuCOcFBLaSt9PGZLt3OqC9eNB8F8MBb8h8TP3itumyNt+msRqZDKi
+ wA+pxGa4I1VkCiG0elNAWF20WKq/ZI7uATwQkRlWnxyW97ByLGnvbWmJhCLqbXNaRVV3BK4sa
+ 1WXDWaynXqrI7DnAtf+kDFXv01nEi8YHAt8W/YGeK7XnRXquDumGEczWajVsk4JfV3/AtZC0X
+ MCTuN0xFPkjZip3fB3fwZ2PjI1+2BlAqAGfSmc6Bn4gQi8JjSlJk+4mHM/U60hYjLITamUual
+ 5kBVn3/NLZOY/zqQ58S4fsV9RA5yM+Tzhy3SjUei2RdzCR5cdU0/lywcxWzqR4x8r+jqh/yE+
+ GNgrzPiyQPW3RPy1a5jJIUuXqCod06wLumBRdbbEGShzQzKdD4uqj0I3RVO+uBDgwt95xtcJe
+ NiCQk85IYhrL2NvIi/QagjMUV4wqtBJghk5fZkivSu9ROu3GZX+TYsQ86Jc442+Yi47ZMfCBi
+ AYgctGC39dYjgXHWM3lk5WMyVtv+IAYnb/UdYAmf4p8ZToS26E0eHR7eIgZUdI6H+6OXyeLh0
+ A+rfPwHLu+cdhcHsEmEe8WWvcRuYyGRDc9KECgWTHwTHt4sME61GBFh+oNIBR4/JcD9Fkfpfo
+ rCh7pz4VvhIeTZCB1WPGyctXIXXbbcJg9bWw/SSBy3qYnBdR2mkO552cQX+fFxAIvuQ+92ABi
+ WKSlTcr7LQiKonfKwpqo+cI4/njvEqfGdBVBamwgWME3lL2KyKogdX6rxqwaG931yO9xXER/x
+ 8aBMQXySO9VwWXypwBIzUfwHfTI7gRBQscxe2PS8A8l1y6X3ANkSLbF/BwtjeWm+utBF1tX9c
+ s2PhR92o72a40JxiD/N0ZPmO5l7Zl9qKzSJSsNqggNH+2jOtb8Ja+Buhou3dqCoW2NWEA6Tq4
+ jBn0x2Nk/sD42lzXoJLhIJg8hAgrOMyVkCOlJ4MpWD2j9JEZ6O5dVLC2/iUfz7ht+dhE+0u8N
+ X
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+> Make sure to drop the reference taken to the sysmgr platform device when
+> retrieving its driver data.
+=E2=80=A6
 
-***
+How do you think about to increase the application of scope-based resource=
+ management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
+1180
 
-Subject: KMSAN: uninit-value in hfsplus_strcasecmp
-Author: rampxxxx@gmail.com
-
-#syz test
-
----
-
-diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-index 901e83d65d20..75f1c029c2ed 100644
---- a/fs/hfsplus/bfind.c
-+++ b/fs/hfsplus/bfind.c
-@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct
-hfs_find_data *fd)
-
-       fd->tree = tree;
-       fd->bnode = NULL;
--       ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-+       ptr = kzalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-       if (!ptr)
-               return -ENOMEM;
-       fd->search_key = ptr;
+Regards,
+Markus
 
