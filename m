@@ -1,243 +1,308 @@
-Return-Path: <linux-kernel+bounces-834133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE55BA3F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:53:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B89BA3FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86927B7C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8D017BA394
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751D92F8BF1;
-	Fri, 26 Sep 2025 13:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139792F90D6;
+	Fri, 26 Sep 2025 13:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sebastianwick.net header.i=@sebastianwick.net header.b="gZvzVX+v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KLQJJxIr"
-Received: from flow-b5-smtp.messagingengine.com (flow-b5-smtp.messagingengine.com [202.12.124.140])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ffc1lvPT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ED319CC0C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A02F90C4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758894744; cv=none; b=CYHBWPYqfIFsn1eIbip1ZJ/gOzHYJrxg0lCidSCDvtoCvYnekMYUnGxwigBjirDJfBnLNMcjxYPD0mBH0++22/dwA40CkPv8fFnQElBGU5BsRu59c4oyc7wgnS2y9IOUL/NxzGV/iKrHhCILviN8KvhryB/NJnhaEISneiAkjI4=
+	t=1758894789; cv=none; b=ExdNwdc8aSE3/6wdnUfCFmHyepAmXphMY9rGkyvR04Y8Np764uzQbncmQ2T76xFDS6iKNZ6UoF+w21BxNiDl+COtYZGujbl7bWbDjJ5pj8w+4kY+TZDSCQysM9JBi342DjhIbSUICZ5920LTDquCi7N2ZL9+uITgjgrz9h0wjPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758894744; c=relaxed/simple;
-	bh=ubaobpELWDD7OpXn1QArICxI3ED6Qq1LB0P0z+bz8wY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=r+7MXfr4e9Dtkysch/pLE68QgDY2j6oMXEWX8fAWJcQFY4lxWXJxBwxZLQmIEgolMlQ+U5zlyx62DU5amT24MOPK63twU4PI6fXwn5XqkwJLlKwG7mlVvQsEf75ptXmXF0UghIsmisXbVPDMv8fS4bDLYGQs/K1pnUF+pZZzk+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sebastianwick.net; spf=pass smtp.mailfrom=sebastianwick.net; dkim=pass (2048-bit key) header.d=sebastianwick.net header.i=@sebastianwick.net header.b=gZvzVX+v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KLQJJxIr; arc=none smtp.client-ip=202.12.124.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sebastianwick.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sebastianwick.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.stl.internal (Postfix) with ESMTP id 921741300055;
-	Fri, 26 Sep 2025 09:52:19 -0400 (EDT)
-Received: from phl-imap-09 ([10.202.2.99])
-  by phl-compute-01.internal (MEProxy); Fri, 26 Sep 2025 09:52:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sebastianwick.net; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1758894739; x=1758901939; bh=e/Miwyy5nX
-	5tiT7Mz4fzifIfuWqRaBy8itcynQspnpE=; b=gZvzVX+vMtwY/Eh184vtzfOksT
-	U0e7pUqZqA8iBvWDxl9s+GF+yVTOAPb43e7lq4gcr5Qs68M8QCAQYuOYHA53fysm
-	jg3FOkFj033tYbiZ3mvm7c/spjJ7uAMGvjT++1hURVdsphlRTVMoWg3sp8XdsKWo
-	lk91rjdD7+dZB2fh+hSyl/o4/dpVsrfFqH/ICVqwW8PMrGe96XjJtcozKjaP9OnE
-	/T/cb07sTZ1nJabL0PqOkpa6ttGPKYUgLbxfCavCAI2x8WnN+Vj2OZTC6zY7O49E
-	pzb1OWVAkkBQUjjYMluXL9Z8i/D5D5gQ8l92p9GA56VpL8I3NEO7DT6edURA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758894739; x=
-	1758901939; bh=e/Miwyy5nX5tiT7Mz4fzifIfuWqRaBy8itcynQspnpE=; b=K
-	LQJJxIryFfwXUbUMVLG7mHaCl7f+PyLuuZbLMxvJkVsLQCI03s9qvdIkY90sB9bC
-	4rJx8ZnSYRqF1W+/wNPKjUIra7beOBviriSV//wEiDv1mzHadNpHUzvC0y3WxVUL
-	RYCKnkxjbOokLceQXLBCvjINZcVmQdFv2eWKAzcG1av8n6py0OfxTtd7L0ZTqmK9
-	JPD+wyj6uiLfnir3idi71yDyIqYcR42387KKoBrFN6Pw7ymsULosAJwZFvtGfR9u
-	4bRmdh5yH07HOsosels1Lr8PC0ez6tEkVD0f4KUScw9jpt0/01UuMNxQtfW12zCH
-	x7/FbVu6cCKXwTFzhrupw==
-X-ME-Sender: <xms:kZrWaBC-Z_teyeytGOi2qhBgUNr9tw5PJxq7XDWHdbD35RunVIe1rQ>
-    <xme:kZrWaKUgPTIPUxLaccLLHUAOj2ReAF8Vex6huoPtAw77k8Xe0TUZnKXMCrvFPdOu8
-    F0WNUGUUgsAlKclRY5wRvdsaqxmwcpZU4jm6voMDrJCw-UqdAmWuN0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeileehgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdfuvggsrghs
-    thhirghnucghihgtkhdfuceoshgvsggrshhtihgrnhesshgvsggrshhtihgrnhifihgtkh
-    drnhgvtheqnecuggftrfgrthhtvghrnhepveetfeetleevfeevtdelhffhuefgheekkeel
-    hfehfeegvdfhfefhlefhieefledtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepshgvsggrshhtihgrnhesshgvsggrshhtihgrnhifihgtkhdr
-    nhgvthdpnhgspghrtghpthhtohepgeegpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrlhgvgidrhhhunhhgsegrmhgurdgtohhmpdhrtghpthhtohephhgrrhhrhidrfigv
-    nhhtlhgrnhgusegrmhgurdgtohhmpdhrtghpthhtoheplhgvohdrlhhiuhesrghmugdrtg
-    homhdprhgtphhtthhopehshhgrshhhrghnkhdrshhhrghrmhgrsegrmhgurdgtohhmpdhr
-    tghpthhtoheplhhivhhiuhdrughuuggruhesrghrmhdrtghomhdprhgtphhtthhopehloh
-    huihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnghgv
-    lhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestgholhhlrggsohhrrgdrtghomh
-    dprhgtphhtthhopegurghnihgvlhhssegtohhllhgrsghorhgrrdgtohhmpdhrtghpthht
-    ohepkhgvrhhnvghlsegtohhllhgrsghorhgrrdgtohhm
-X-ME-Proxy: <xmx:kprWaMdLdGN2spLhtNCNS67Klt1G4DqUzXgUG5qHuc-bEV83ycKSlQ>
-    <xmx:kprWaM0BvbL8ZDrn2YSg496OCpHA33bgktoge4OW1Bp3_Ic0O-21yw>
-    <xmx:kprWaNKBzp0_vxj_swcEwac56RCEoo-XznFcZCRExAuwSYq6vvkj0A>
-    <xmx:kprWaIJTsQOYCLALftDKAFNX28i3MG_FLV2281tt7ltk7KKeZhvr6A>
-    <xmx:k5rWaKDq6aODF1168FNykMnX-9PLei9JflP268c1DX6UH65jH9pbJXS0>
-Feedback-ID: i460949e8:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D68CF3020073; Fri, 26 Sep 2025 09:52:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1758894789; c=relaxed/simple;
+	bh=v9/YoAeo4j+XSzP7jJkloGUF9XXb6rhzguQFkxVhgBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fA2kaD8WPQrq5QW1B6TdUGeBp/i+D/OItvziyJCUdBEeuhsND1XLwHkoZwULwFf8Ok7n2UdAKutQrOupjVq/Whxrd3+k91XX1ra0NTi+KLZzSu6K3vVkXPmJpca5fULXpkr1enVtMn4mBD8MI0iTcIvzbqNkPLaj5z9Ucvj4V2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ffc1lvPT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758894786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JCLhKRo57nwP7lOT098V870p1QhItLboAprKUmrpy6E=;
+	b=Ffc1lvPTzOw7wh6BD9RXKwwuFvx2CtYV6By/+P5ly/oWQa1Xa2lNP78Mcq6D/H7oPefmqk
+	staqruW4ZUUlxkO0o6SbBETA7pg4bXCZ3CmN1ZAxLdesLPxBwgGUf2lrfO52yZ5KpZ9LZA
+	gsTtb2ijH1OJQ8zKFlUoYnu4S9KqMAk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-205-MAIWQ_HbOb2hk3fkPubvnA-1; Fri, 26 Sep 2025 09:53:05 -0400
+X-MC-Unique: MAIWQ_HbOb2hk3fkPubvnA-1
+X-Mimecast-MFC-AGG-ID: MAIWQ_HbOb2hk3fkPubvnA_1758894784
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f384f10762so1229166f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:53:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758894784; x=1759499584;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JCLhKRo57nwP7lOT098V870p1QhItLboAprKUmrpy6E=;
+        b=H2yWidTwlJyLS523UahuEyPxVVN3LhHdAVbeZlxozP27y14y4jxB22hz2rav5S+w/O
+         6hGGjo4gSwRa6P9WKzvKV/UYbyQDCGaPe5lJEavFLRxz/qlmraeoPKy7MJFDkwrzZD5b
+         06zZJmrJhlrAhcWnj93dZIanPfIWcu0UzVrBAU8sUgZfpgC5vxZogLz3oVUAOvF8JL8V
+         SFy1I7OkgXwUlzCisC4YMwpmnAxI6+K7/ccRXhjdKD5VS4fTrq5+70HE2yUUmh/PQnJv
+         AM6Ix0tjKAYwTHeAkFpPphVmWAbJxdhmfCdGQYLOyNqJI0tTnQWNYXT84Txggd5bSZaO
+         vCRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUn5djRSCAIjFfDmZ9LCWHI6Va37fYHqknhBI66ZCDggz/hVAQ4y/y2fevbT/Cik8C6XbThqEJbv0N0CAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8jIpzv4CMLsnW/sz6EVO/FxEvLK214g4n12UOUogJS64uWqr7
+	FMrudlbxOkPQVLz5gR6M2fzzaqQHhA3ZotfmkvOrszDj8yjl6cbHqB/fIXPtT9n59/+bl0OdUWT
+	scvh0F+sIMuWB32rjhNwGtt38yGMO+ZY8IKiJKYP4KCgpbBRuuR2zQF2gwVmDKoh5iA==
+X-Gm-Gg: ASbGncvtNeU8ffc3kbdW2ncFtqhROF42W9EaZAafPCXXWfjM4Gwsg3+tSiUTxMA08Xe
+	VERUocyrnkvRithShFMY+fjsXqBiw/pPmZbr26Aphy9LeIEECpF9P9yvqfGGRhALCtp+T8B//yh
+	H3g+mTmEyCvcHVBYHPJ40be6O4UIBXomFKCab7bvhOXTtK0aV73gDR6Mf2P8hwjqwt+zohzJXyv
+	24NuQwYGJD0gQAx1XBi29DIi8/tKdjfCTK+TVsYJt+HiW1LlVBG4SxvtJZfmxIe5TDYVH4MBx/A
+	bv72sx2lHRn3uYXK/F6nQYvb4YmU6XK7Yf8O+WWQ
+X-Received: by 2002:a05:6000:26c1:b0:3e4:b44d:c586 with SMTP id ffacd0b85a97d-40e4adceb7cmr6693673f8f.34.1758894783791;
+        Fri, 26 Sep 2025 06:53:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0wfQWykC77fe0tKnWjipZaiXo2+AfUKGhVzx7dZmaVWWD2JCCx4wkHBEAM4eWx7GEC2r7Ag==
+X-Received: by 2002:a05:6000:26c1:b0:3e4:b44d:c586 with SMTP id ffacd0b85a97d-40e4adceb7cmr6693638f8f.34.1758894783185;
+        Fri, 26 Sep 2025 06:53:03 -0700 (PDT)
+Received: from sgarzare-redhat ([5.77.94.69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc88b0779sm7003586f8f.58.2025.09.26.06.52.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 06:53:02 -0700 (PDT)
+Date: Fri, 26 Sep 2025 15:52:43 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v6 0/9] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <wcts7brlugr337mcdfbrz5vkhvjikcaql3pdzgke5ahuuut37v@mgcqyo2umu7w>
+References: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AC10qL-M5Mko
-Date: Fri, 26 Sep 2025 15:51:57 +0200
-From: "Sebastian Wick" <sebastian@sebastianwick.net>
-To: "Daniel Stone" <daniel@fooishbar.org>,
- =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Cc: "Xaver Hugl" <xaver.hugl@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Chun-Kuang Hu" <chunkuang.hu@kernel.org>,
- "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Matthias Brugger" <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Alex Hung" <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
- harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, mwen@igalia.com, jadahl@redhat.com,
- sebastian.wick@redhat.com, shashank.sharma@amd.com, agoins@nvidia.com,
- joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
- victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com,
- quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st,
- Liviu.Dudau@arm.com, sashamcintosh@google.com,
- chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com,
- mcanal@igalia.com, kernel@collabora.com, daniels@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- "Simona Vetter" <simona.vetter@ffwll.ch>
-Message-Id: <7a25beb8-6b81-4652-b509-b6410ae1dec1@app.fastmail.com>
-In-Reply-To: 
- <CAPj87rMhsFy+uzKmNecrQG4e+BEoeX1FyEobO7bnHdQqhy1_2Q@mail.gmail.com>
-References: 
- <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
- <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
- <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
- <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
- <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
- <269ca85a59f613568543f45867fba7e604cc9f11.camel@collabora.com>
- <CAPj87rMhsFy+uzKmNecrQG4e+BEoeX1FyEobO7bnHdQqhy1_2Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com>
 
-(Sorry for re-sending; used a web mail client which send html)
+Hi Bobby,
 
-On Mon, Sep 15, 2025, at 2:31 PM, Daniel Stone wrote:
-> Hi N=C3=ADcolas,
->=20
-> On Wed, 3 Sept 2025 at 19:43, N=C3=ADcolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
-> > On Tue, 2025-08-26 at 13:25 +0100, Daniel Stone wrote:
-> > Based on this discussion, this is my understanding for the changes
-> > desired on the series and their reasonings:
-> >
-> > 1. Add a driver cap, DRM_CAP_POST_BLEND_COLOR_PIPELINE, which drivers
-> > will use to signal they support post-blend color pipelines.
-> >   - Reason: Allow userspace to figure out that the driver doesn't
-> > support post-blend color pipelines and choose to not set the client
-> > cap, DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, so it can use legacy
-> > color management instead.
-> > 2. Make it so setting the client cap,
-> > DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, fails if the driver cap,
-> > DRM_CAP_POST_BLEND_COLOR_PIPELINE, isn't set
-> >   - Reason: Prevent userspace from making color management unusable =
-if
-> > the driver doesn't support post-blend color pipelines, as the legacy
-> > color-management properties (GAMMA_LUT, DEGAMMA_LUT, CTM) would be
-> > unwriteable with the client cap set.
->=20
-> Definitely.
->=20
-> > 3. Make legacy color-management properties (GAMMA_LUT, DEGAMMA_LUT,
-> > CTM) read-only if the client cap,
-> > DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, is set
-> >   - Reason: Allow drm_info to print legacy color management
-> > configuration while still enabling post-blend color pipelines through
-> > the client cap. Also to allow smooth handover from pre-colorop
-> > userspace client to colorop-ready userspace client, as the latter can
-> > now replicate the legacy color configuration through the colorops.
->=20
-> I think yes, but I don't really feel strongly about this. If others
-> involved have stronger opinions, I'm happy to yield.
+On Tue, Sep 16, 2025 at 04:43:44PM -0700, Bobby Eshleman wrote:
+>This series adds namespace support to vhost-vsock and loopback. It does
+>not add namespaces to any of the other guest transports (virtio-vsock,
+>hyperv, or vmci).
 
-So I'm going to argue that making the properties read-only or read-write=
- is useless.
+Thanks for this new series and the patience!
+I've been a bit messed up after KVM Forum between personal stuff and 
+other things. I'm starting to review and test today, so between this 
+afternoon and Monday I hope to send you all my comments.
 
-The only case where knowing the color pipeline of the previous user woul=
-d be useful is if you want to re-use the framebuffer of said user. Other=
-wise, the color pipeline and the generated framebuffer have to somehow j=
-ust match to produce the desired output and that does not require any pr=
-evious state, making the legacy properties useless.
+Thanks,
+Stefano
 
-If we genuinely believe that this is something to be supported, then my =
-question is why the new color pipeline should not be able to accurate re=
-flect the state of the previous user, even if they used the legacy props?
+>
+>The current revision supports two modes: local and global. Local
+>mode is complete isolation of namespaces, while global mode is complete
+>sharing between namespaces of CIDs (the original behavior).
+>
+>The mode is set using /proc/sys/net/vsock/ns_mode.
+>
+>Modes are per-netns and write-once. This allows a system to configure
+>namespaces independently (some may share CIDs, others are completely
+>isolated). This also supports future possible mixed use cases, where
+>there may be namespaces in global mode spinning up VMs while there are
+>mixed mode namespaces that provide services to the VMs, but are not
+>allowed to allocate from the global CID pool (this mode not implemented
+>in this series).
+>
+>If a socket or VM is created when a namespace is global but the
+>namespace changes to local, the socket or VM will continue working
+>normally. That is, the socket or VM assumes the mode behavior of the
+>namespace at the time the socket/VM was created. The original mode is
+>captured in vsock_create() and so occurs at the time of socket(2) and
+>accept(2) for sockets and open(2) on /dev/vhost-vsock for VMs. This
+>prevents a socket/VM connection from suddenly breaking due to a
+>namespace mode change. Any new sockets/VMs created after the mode change
+>will adopt the new mode's behavior.
+>
+>Additionally, added tests for the new namespace features:
+>
+>tools/testing/selftests/vsock/vmtest.sh
+>1..22
+>ok 1 vm_server_host_client
+>ok 2 vm_client_host_server
+>ok 3 vm_loopback
+>ok 4 host_vsock_ns_mode_ok
+>ok 5 host_vsock_ns_mode_write_once_ok
+>ok 6 global_same_cid_fails
+>ok 7 local_same_cid_ok
+>ok 8 global_local_same_cid_ok
+>ok 9 local_global_same_cid_ok
+>ok 10 diff_ns_global_host_connect_to_global_vm_ok
+>ok 11 diff_ns_global_host_connect_to_local_vm_fails
+>ok 12 diff_ns_global_vm_connect_to_global_host_ok
+>ok 13 diff_ns_global_vm_connect_to_local_host_fails
+>ok 14 diff_ns_local_host_connect_to_local_vm_fails
+>ok 15 diff_ns_local_vm_connect_to_local_host_fails
+>ok 16 diff_ns_global_to_local_loopback_local_fails
+>ok 17 diff_ns_local_to_global_loopback_fails
+>ok 18 diff_ns_local_to_local_loopback_fails
+>ok 19 diff_ns_global_to_global_loopback_ok
+>ok 20 same_ns_local_loopback_ok
+>ok 21 same_ns_local_host_connect_to_local_vm_ok
+>ok 22 same_ns_local_vm_connect_to_local_host_ok
+>SUMMARY: PASS=22 SKIP=0 FAIL=0
+>Log: /tmp/vsock_vmtest_OQC4.log
+>
+>Thanks again for everyone's help and reviews!
+>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+>To: Stefano Garzarella <sgarzare@redhat.com>
+>To: Shuah Khan <shuah@kernel.org>
+>To: David S. Miller <davem@davemloft.net>
+>To: Eric Dumazet <edumazet@google.com>
+>To: Jakub Kicinski <kuba@kernel.org>
+>To: Paolo Abeni <pabeni@redhat.com>
+>To: Simon Horman <horms@kernel.org>
+>To: Stefan Hajnoczi <stefanha@redhat.com>
+>To: Michael S. Tsirkin <mst@redhat.com>
+>To: Jason Wang <jasowang@redhat.com>
+>To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+>To: Eugenio Pérez <eperezma@redhat.com>
+>To: K. Y. Srinivasan <kys@microsoft.com>
+>To: Haiyang Zhang <haiyangz@microsoft.com>
+>To: Wei Liu <wei.liu@kernel.org>
+>To: Dexuan Cui <decui@microsoft.com>
+>To: Bryan Tan <bryan-bt.tan@broadcom.com>
+>To: Vishnu Dasa <vishnu.dasa@broadcom.com>
+>To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+>Cc: virtualization@lists.linux.dev
+>Cc: netdev@vger.kernel.org
+>Cc: linux-kselftest@vger.kernel.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: kvm@vger.kernel.org
+>Cc: linux-hyperv@vger.kernel.org
+>Cc: berrange@redhat.com
+>
+>Changes in v6:
+>- define behavior when mode changes to local while socket/VM is alive
+>- af_vsock: clarify description of CID behavior
+>- af_vsock: use stronger langauge around CID rules (dont use "may")
+>- af_vsock: improve naming of buf/buffer
+>- af_vsock: improve string length checking on proc writes
+>- vsock_loopback: add space in struct to clarify lock protection
+>- vsock_loopback: do proper cleanup/unregister on vsock_loopback_exit()
+>- vsock_loopback: use virtio_vsock_skb_net() instead of sock_net()
+>- vsock_loopback: set loopback to NULL after kfree()
+>- vsock_loopback: use pernet_operations and remove callback mechanism
+>- vsock_loopback: add macros for "global" and "local"
+>- vsock_loopback: fix length checking
+>- vmtest.sh: check for namespace support in vmtest.sh
+>- Link to v5: https://lore.kernel.org/r/20250827-vsock-vmtest-v5-0-0ba580bede5b@meta.com
+>
+>Changes in v5:
+>- /proc/net/vsock_ns_mode -> /proc/sys/net/vsock/ns_mode
+>- vsock_global_net -> vsock_global_dummy_net
+>- fix netns lookup in vhost_vsock to respect pid namespaces
+>- add callbacks for vsock_loopback to avoid circular dependency
+>- vmtest.sh loads vsock_loopback module
+>- remove vsock_net_mode_can_set()
+>- change vsock_net_write_mode() to return true/false based on success
+>- make vsock_net_mode enum instead of u8
+>- Link to v4: https://lore.kernel.org/r/20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com
+>
+>Changes in v4:
+>- removed RFC tag
+>- implemented loopback support
+>- renamed new tests to better reflect behavior
+>- completed suite of tests with permutations of ns modes and vsock_test
+>  as guest/host
+>- simplified socat bridging with unix socket instead of tcp + veth
+>- only use vsock_test for success case, socat for failure case (context
+>  in commit message)
+>- lots of cleanup
+>
+>Changes in v3:
+>- add notion of "modes"
+>- add procfs /proc/net/vsock_ns_mode
+>- local and global modes only
+>- no /dev/vhost-vsock-netns
+>- vmtest.sh already merged, so new patch just adds new tests for NS
+>- Link to v2:
+>  https://lore.kernel.org/kvm/20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com
+>
+>Changes in v2:
+>- only support vhost-vsock namespaces
+>- all g2h namespaces retain old behavior, only common API changes
+>  impacted by vhost-vsock changes
+>- add /dev/vhost-vsock-netns for "opt-in"
+>- leave /dev/vhost-vsock to old behavior
+>- removed netns module param
+>- Link to v1:
+>  https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+>
+>Changes in v1:
+>- added 'netns' module param to vsock.ko to enable the
+>  network namespace support (disabled by default)
+>- added 'vsock_net_eq()' to check the "net" assigned to a socket
+>  only when 'netns' support is enabled
+>- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+>
+>---
+>Bobby Eshleman (9):
+>      vsock: a per-net vsock NS mode state
+>      vsock: add net to vsock skb cb
+>      vsock: add netns to vsock core
+>      vsock/loopback: add netns support
+>      vsock/virtio: add netns to virtio transport common
+>      vhost/vsock: add netns support
+>      selftests/vsock: improve logging in vmtest.sh
+>      selftests/vsock: invoke vsock_test through helpers
+>      selftests/vsock: add namespace tests
+>
+> MAINTAINERS                             |    1 +
+> drivers/vhost/vsock.c                   |   78 ++-
+> include/linux/virtio_vsock.h            |   24 +
+> include/net/af_vsock.h                  |   71 +-
+> include/net/net_namespace.h             |    4 +
+> include/net/netns/vsock.h               |   26 +
+> net/vmw_vsock/af_vsock.c                |  219 +++++-
+> net/vmw_vsock/hyperv_transport.c        |    2 +-
+> net/vmw_vsock/virtio_transport.c        |    6 +-
+> net/vmw_vsock/virtio_transport_common.c |   18 +-
+> net/vmw_vsock/vmci_transport.c          |    6 +-
+> net/vmw_vsock/vsock_loopback.c          |  102 ++-
+> tools/testing/selftests/vsock/vmtest.sh | 1133 +++++++++++++++++++++++++++----
+> 13 files changed, 1501 insertions(+), 189 deletions(-)
+>---
+>base-commit: 949ddfb774fe527cebfa3f769804344940f7ed2e
+>change-id: 20250325-vsock-vmtest-b3a21d2102c2
+>
+>Best regards,
+>-- 
+>Bobby Eshleman <bobbyeshleman@meta.com>
+>
 
-The hardware was able to get into some state based on the legacy props, =
-so it will be able to get into the same state with the color pipeline pr=
-ops; it's "just" a matter of exposing the right pipeline.
-
-If we are not able to accurate reflect the previous state with the pipel=
-ine props, then use space will see inconsistent state between the legacy=
- and color pipeline props. Which state is the right one? We cannot know.=
- The previous user could have used either one. So having the legacy prop=
-s does not help because we don't know if we should use them or the pipel=
-ine state.
-
-So, I would argue that we should *remove* the legacy props if DRM_CLIENT=
-_CAP_POST_BLEND_COLOR_PIPELINE is set. If the handover is relevant for a=
- driver, they should ensure the legacy props state translates to the cor=
-rect color pipeline state.=20
-
-> > Side note: Smooth handover back to pre-colorop userspace after tweak=
-ing
-> > the colorops to something else would not be possible without making =
-the
-> > legacy properties writable too, so that the client could update them=
- to
-> > match the colorops setting before switching back. I don't imagine th=
-is
-> > would be a common use case, and colorops are a superset of the legacy
-> > properties so there are cases where it wouldn't even be possible to
-> > replicate the colorop setting on the legacy properties, but thought =
-I'd
-> > mention this limitation for completeness' sake.
->=20
-> That's a totally acceptable tradeoff. We don't have a standard
-> inter-client capability handshake, so if downgrading from a
-> newer/more-capable to an older/less-capable client is a bit janky,
-> that's OK. There's only so much we can do given the original design
-> decision for the KMS core to not be opinionated about a 'golden state'
-> that could be used as a reference for userspace to work from as a
-> base.
->=20
-> > Also, as Xaver noted, this feedback also applies to pre-blend pipeli=
-nes
-> > and its legacy color-management properties (COLOR_ENCODING,
-> > COLOR_RANGE), so the same changes would be desirable there for the s=
-ame
-> > reasons. So we should share this feedback on that series as well.
->=20
-> Yep.
->=20
-> Cheers,
-> Daniel
->=20
 
