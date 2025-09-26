@@ -1,131 +1,253 @@
-Return-Path: <linux-kernel+bounces-834575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA5DBA4F9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:36:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A898EBA4FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB20D4C424E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB36173F6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3727FD46;
-	Fri, 26 Sep 2025 19:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78BE283686;
+	Fri, 26 Sep 2025 19:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iCyokDs4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j8q28ATJ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2149E27FB2B
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C830027FB1E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758915378; cv=none; b=Ox2Jd0RuMO3Up7V6mD2SDtXDpKHrYL+aXo3U2EqiKbHjEeGQ0/Nq2qFVwiJdNEoiwGmETm6TKpshC6XSPxWnlaiRNGDUGcvOVhP38A6D784Y0vksLtu8HqkkmJMP6OxsMtdtsijOQ0d0WwpiiA9V/8u9kpSwj6f0KSsDMsEazB8=
+	t=1758915392; cv=none; b=Ls1GQaCzUqw4zOwRO2spZ+ILvTYsISDzctlvFl/j7vCCOhXUpIIPzuFmNESHgIzj+ogvPnjausGUZf5g9KONa7O6/mR1TbrC4tHLyUYXm/kDMG3OdMRxyLW1I1JN/mVf0TeS+/Hq+ySSDs/4v1OYhGySUGABC+zmzd0Gs6LIvZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758915378; c=relaxed/simple;
-	bh=uuIq1t4c7qGDy0Lsti4d3Xt/7BKE5D5umR9UNUEgDjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uZi8h1DxfbowSK7G24Y6OvZrKpaBAZm82lZi/HpFT4OU+xERRQbZu647pSdRi9NgwY8NHuZd5aTB7U7oFL9WhSMqujAXjk5q79MfsxtM+NEOsS0u+2tILwNBkOmD3K5gclNDizjcfANRcRAVv1+ebFNzFOCoLl3wZ9ivTclGljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iCyokDs4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758915374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sjnw97MU9jbLsmf1Uqxw2Nci38Y0dPqhhgHU46NMhgM=;
-	b=iCyokDs4VyUGQceifZAlObyTJn1p+3XZvw4vxy9DWyp8NdICnf9LePnuPRT8+/HgRSrAj9
-	2uh1vpFZBqSLnHf8g9qqAQ46PQG3/JusMo/ph3/NOZGrafblNVkOYVq7/f5etIecX9TQwe
-	867PP5vrC0XLL7RFHt8xQpKzN/XxdNw=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-UrqKQavuP5iDAjtOrDEYHA-1; Fri, 26 Sep 2025 15:36:11 -0400
-X-MC-Unique: UrqKQavuP5iDAjtOrDEYHA-1
-X-Mimecast-MFC-AGG-ID: UrqKQavuP5iDAjtOrDEYHA_1758915371
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4257e2f44e9so5750885ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:36:11 -0700 (PDT)
+	s=arc-20240116; t=1758915392; c=relaxed/simple;
+	bh=mSQKwT+RgGBH3fgRBwHxAMNFrCKxSsVizA+2Gjhn/pY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iGs8ZKnkZf/VAnHcy6e/fHJDn5PneXYvpDoiuZ1SgA/FRfL/vjYTKLb4/Zuz3cwcULx/az+8reAmEaS8UTzLsU8x5dSNbk2vIB5InF06TzFuv/6mnP/a/lVW1k+mPbf0Y4ewQMJ0EgzI9o9o4EIqfcNUllZVerXFoAcPbZF20io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j8q28ATJ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3234811cab3so2790552a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758915389; x=1759520189; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ob/iOTJHVtIxulD10+qfYKaLq05XmILMIQZZtCe3LNU=;
+        b=j8q28ATJXP6njsfMncRoTLIPRIZOM6TE6yvS0FWfgG9oEGpEjpU5QpwTkfS2MhxmOT
+         1WnZ3dk97n6mJLnqIYRvGKm1tUWygYHs95kuxhokBn9aO9RA1XUNY7DN17Q5T1gbSffp
+         P8WsrJuo9tYImTPRk5pu5Fp/kL5Rz2UKC420dK3FSmNh+Xr7sdZzm5kam8Oi0gzgwoX6
+         36VJZSVNuL0mnfDe6/FOqXW7SbQ2YLXEL7NNTot3y7a4uykb9cHCv9EH2EzWB3jZ17Uz
+         ry7y+KqDaMrsA3AHIPC0dEf4lqAwkkAR4r5FfFfvF1ng9ggW9GDE4eP7vjtSrwB8SDYw
+         aCgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758915371; x=1759520171;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sjnw97MU9jbLsmf1Uqxw2Nci38Y0dPqhhgHU46NMhgM=;
-        b=qP49Hrc+8J8zHFxvg5o/5pf5zztbzr1WG/HNfHCY5Y/cPtKciAWKpDmg8GBqZzdid7
-         NrTge3kAlJza2NzAZ6vdO8sQeQBQtthUSCBHwObbeqhj4M/GmUIzzoSGbE82GEPl2FI5
-         OXySLSsWcLb9TIS2DTLANAyeMPJZXa8GrcPuImCIupL8M8lGzVAqDav70QLVhxnI+DH2
-         KwLBZ16/Z/qdgoRlcgrl8HlPAzxIL6disscT/u8pf0PdKReRDH2kKaxP6Sl8Yp+gHf0C
-         s3yw2PzzSvv8yBVBmV4Ab3HcT8sBp8KrqlQZJk6cUgzrIIsjKGSw9bHBo812qsB7Wdwu
-         vTOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzxHh6ROFwcpt4wWZqHS8We8x9aFaZG3GPg0eGCHXJ0jfhnR0TRGieyz1cKFu/CbCgUhJmmjOeALOXGq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCglSW5gPZlI4zw3qCtEuPxdy/gaXxsKXJ7KlG61NCtwI4IwXa
-	Cwg4CbfFEFj+g5CUtWN9RVcHAdICVs4Jp9m/Tb8hMfBRTqQueFXtjNt6jG3vcPbFq5PBWAT/eUx
-	9TM+ZecuOKQ5FsO8HS9mZbsT44x4fRIXIvLcA5hTnyqW/fRLtRmnQ58LV3WGDAHmORw==
-X-Gm-Gg: ASbGncvwp5K/uqM0Oc2mZ9jsfsqH6Q+qM539T1UuaAlEKvdTis6z0dR3oPxYphO/M6E
-	7ESrtZANg/hi7HJrT2VpDUqNBnSLiKnoAv/qCnl2lE8nsf6SjghGp7LyT5NDmRqJs209HvZAs67
-	3ucMJRYL8TQMRuCRZukE5vjZe+jJHXKPIg1QSSyXoqs7UNqzR8gYQeJYRZbI/rYQWv5Jz40nGDA
-	a0QxJZMFijSp9PPIwc9QfTkyJpy2ZY9VbeTmhCwkrYNDV1axxa2RggIkDRBDRTJvdOKxc/xpyTs
-	rrHYbChvLse6YUOkln+o1H6LHOeRaF09b+sViMapG5M=
-X-Received: by 2002:a05:6e02:1523:b0:425:9068:4ff with SMTP id e9e14a558f8ab-425955c8eb5mr44103245ab.1.1758915370844;
-        Fri, 26 Sep 2025 12:36:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5kwS0VyoWACtgc/kvwMhl9hpO10Z/0kNKn1tSjerc+aPGklJvKL8PA+MiMW+9wzh2XQYqfw==
-X-Received: by 2002:a05:6e02:1523:b0:425:9068:4ff with SMTP id e9e14a558f8ab-425955c8eb5mr44103155ab.1.1758915370427;
-        Fri, 26 Sep 2025 12:36:10 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-425b9133085sm25262705ab.0.2025.09.26.12.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 12:36:09 -0700 (PDT)
-Date: Fri, 26 Sep 2025 13:36:08 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Tushar Dave <tdave@nvidia.com>
-Cc: ankita@nvidia.com, jgg@ziepe.ca, yishaih@nvidia.com,
- skolothumtho@nvidia.com, kevin.tian@intel.com, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio/nvgrace-gpu: Add GB300 SKU to the devid table
-Message-ID: <20250926133608.4963f2bb.alex.williamson@redhat.com>
-In-Reply-To: <20250925170935.121587-1-tdave@nvidia.com>
-References: <20250925170935.121587-1-tdave@nvidia.com>
-Organization: Red Hat
+        d=1e100.net; s=20230601; t=1758915389; x=1759520189;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ob/iOTJHVtIxulD10+qfYKaLq05XmILMIQZZtCe3LNU=;
+        b=uRKp4+4I2N1dxp1NqCImMzzIExv3ZknubPF1BUsPR1TcrJ3ZHvIl0NKp/+HgpVxhzp
+         RCK4yYFzzo4L++NE10i66tspUGg0iavbmXawvGciQjCdLBQSCR1Ymp+q+lnBx7V2oqi5
+         T0lJr7Iwpy9KsJdyxKjJIbtP+gavzQ2Clte8h/wPrHCVHC0S/TEhfGuqUuDm2EmsdE/n
+         3E2xSrJIIcNqXpGiPS8nw4lXY8hAnFri92MJAZPvmuV47yp1lAPcBEZdoCMz7h/YVUE1
+         iwrZiAWMb9EaDTrBCK6FXJy4NwJkd/Fp/oZmxpLyE1wovGBD+pQ8Bouu91Y/3VQOpTyE
+         ke2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVntdm9VfpCSjU7N4PhtvBwaXJUm1AzWmyfDMQMJo0yy0YZVIFjIU5UsWGO6u2blPd89E2KypL/2v0ORa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbW99WND6iVbRGYshVKRF2gYmEbzDEgckh98DG65TNgLrAXXcu
+	3Z4ZhduIXV0Myun3d2b6UYc5q+Z6Fi+6VucP8FDp9uSe/mNDYwONjGXCC+ozRR47REQyjCdGACY
+	YChvTMQ==
+X-Google-Smtp-Source: AGHT+IFDksLZfiXKr/BILK4eWMYTpySqi06A6DOxX2zeNKzHO6pmJyAGRZ48y/vvPgWC6WRjoIw3qUZ+1+0=
+X-Received: from pjbaz14.prod.google.com ([2002:a17:90b:28e:b0:32d:e264:a78e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1808:b0:32b:d8bf:c785
+ with SMTP id 98e67ed59e1d1-3342a2c3979mr8949944a91.20.1758915388771; Fri, 26
+ Sep 2025 12:36:28 -0700 (PDT)
+Date: Fri, 26 Sep 2025 12:36:27 -0700
+In-Reply-To: <aNVQJqYLX17v-fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250827175247.83322-2-shivankg@amd.com> <20250827175247.83322-9-shivankg@amd.com>
+ <aNVQJqYLX17v-fsf@google.com>
+Message-ID: <aNbrO7A7fSjb4W84@google.com>
+Subject: Re: [PATCH kvm-next V11 6/7] KVM: guest_memfd: Enforce NUMA mempolicy
+ using shared policy
+From: Sean Christopherson <seanjc@google.com>
+To: Shivank Garg <shivankg@amd.com>
+Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
+	pbonzini@redhat.com, shuah@kernel.org, vbabka@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, dsterba@suse.com, xiang@kernel.org, chao@kernel.org, 
+	jaegeuk@kernel.org, clm@fb.com, josef@toxicpanda.com, 
+	kent.overstreet@linux.dev, zbestahu@gmail.com, jefflexu@linux.alibaba.com, 
+	dhavale@google.com, lihongbo22@huawei.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com, 
+	rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net, 
+	ying.huang@linux.alibaba.com, apopple@nvidia.com, tabba@google.com, 
+	ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, vannapurve@google.com, 
+	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
+	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
+	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, hch@infradead.org, 
+	cgzones@googlemail.com, ira.weiny@intel.com, rientjes@google.com, 
+	roypat@amazon.co.uk, chao.p.peng@intel.com, amit@infradead.org, 
+	ddutile@redhat.com, dan.j.williams@intel.com, ashish.kalra@amd.com, 
+	gshan@redhat.com, jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com, 
+	yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
+	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 25 Sep 2025 12:09:35 -0500
-Tushar Dave <tdave@nvidia.com> wrote:
-
-> GB300 is NVIDIA's Grace Blackwell Ultra Superchip.
+On Thu, Sep 25, 2025, Sean Christopherson wrote:
+> On Wed, Aug 27, 2025, Shivank Garg wrote:
+> > @@ -26,6 +28,9 @@ static inline struct kvm_gmem_inode_info *KVM_GMEM_I(struct inode *inode)
+> >  	return container_of(inode, struct kvm_gmem_inode_info, vfs_inode);
+> >  }
+> >  
+> > +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
+> > +						   pgoff_t index);
+> > +
+> >  /**
+> >   * folio_file_pfn - like folio_file_page, but return a pfn.
+> >   * @folio: The folio which contains this index.
+> > @@ -112,7 +117,25 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+> >  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+> >  {
+> >  	/* TODO: Support huge pages. */
+> > -	return filemap_grab_folio(inode->i_mapping, index);
+> > +	struct mempolicy *policy;
+> > +	struct folio *folio;
+> > +
+> > +	/*
+> > +	 * Fast-path: See if folio is already present in mapping to avoid
+> > +	 * policy_lookup.
+> > +	 */
+> > +	folio = __filemap_get_folio(inode->i_mapping, index,
+> > +				    FGP_LOCK | FGP_ACCESSED, 0);
+> > +	if (!IS_ERR(folio))
+> > +		return folio;
+> > +
+> > +	policy = kvm_gmem_get_pgoff_policy(KVM_GMEM_I(inode), index);
+> > +	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
+> > +					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
+> > +					 mapping_gfp_mask(inode->i_mapping), policy);
+> > +	mpol_cond_put(policy);
+> > +
+> > +	return folio;
+> >  }
+> >  
+> >  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> > @@ -372,8 +395,45 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
+> >  	return ret;
+> >  }
+> >  
+> > +#ifdef CONFIG_NUMA
+> > +static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
+> > +{
+> > +	struct inode *inode = file_inode(vma->vm_file);
+> > +
+> > +	return mpol_set_shared_policy(&KVM_GMEM_I(inode)->policy, vma, mpol);
+> > +}
+> > +
+> > +static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+> > +					     unsigned long addr, pgoff_t *pgoff)
+> > +{
+> > +	struct inode *inode = file_inode(vma->vm_file);
+> > +
+> > +	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+> > +	return mpol_shared_policy_lookup(&KVM_GMEM_I(inode)->policy, *pgoff);
+> > +}
+> > +
+> > +static struct mempolicy *kvm_gmem_get_pgoff_policy(struct kvm_gmem_inode_info *info,
+> > +						   pgoff_t index)
 > 
-> Add the GB300 SKU device-id to nvgrace_gpu_vfio_pci_table.
+> I keep reading this is "page offset policy", as opposed to "policy given a page
+> offset".  Another oddity that is confusing is that this helper explicitly does
+> get_task_policy(current), while kvm_gmem_get_policy() lets the caller do that.
+> The end result is the same, but I think it would be helpful for gmem to be
+> internally consistent.
 > 
-> Signed-off-by: Tushar Dave <tdave@nvidia.com>
-> ---
->  drivers/vfio/pci/nvgrace-gpu/main.c | 2 ++
->  1 file changed, 2 insertions(+)
+> If we have kvm_gmem_get_policy() use this helper, then we can kill two birds with
+> one stone:
 > 
-> diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
-> index d95761dcdd58..36b79713fd5a 100644
-> --- a/drivers/vfio/pci/nvgrace-gpu/main.c
-> +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
-> @@ -995,6 +995,8 @@ static const struct pci_device_id nvgrace_gpu_vfio_pci_table[] = {
->  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2348) },
->  	/* GB200 SKU */
->  	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2941) },
-> +	/* GB300 SKU */
-> +	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x31C2) },
->  	{}
->  };
->  
+> static struct mempolicy *__kvm_gmem_get_policy(struct gmem_inode *gi,
+> 					       pgoff_t index)
+> {
+> 	struct mempolicy *mpol;
+> 
+> 	mpol = mpol_shared_policy_lookup(&gi->policy, index);
+> 	return mpol ? mpol : get_task_policy(current);
+> }
+> 
+> static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+> 					     unsigned long addr, pgoff_t *pgoff)
+> {
+> 	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+> 
+> 	return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
 
-Applied to vfio next branch for v6.18.  Thanks,
+Argh!!!!!  This breaks the selftest because do_get_mempolicy() very specifically
+falls back to the default_policy, NOT to the current task's policy.  That is
+*exactly* the type of subtle detail that needs to be commented, because there's
+no way some random KVM developer is going to know that returning NULL here is
+important with respect to get_mempolicy() ABI.
 
-Alex
+On a happier note, I'm very glad you wrote a testcase :-)
+
+I've got this as fixup-to-the-fixup:
+
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index e796cc552a96..61130a52553f 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -114,8 +114,8 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+        return r;
+ }
+ 
+-static struct mempolicy *__kvm_gmem_get_policy(struct gmem_inode *gi,
+-                                              pgoff_t index)
++static struct mempolicy *kvm_gmem_get_folio_policy(struct gmem_inode *gi,
++                                                  pgoff_t index)
+ {
+ #ifdef CONFIG_NUMA
+        struct mempolicy *mpol;
+@@ -151,7 +151,7 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+        if (!IS_ERR(folio))
+                return folio;
+ 
+-       policy = __kvm_gmem_get_policy(GMEM_I(inode), index);
++       policy = kvm_gmem_get_folio_policy(GMEM_I(inode), index);
+        folio = __filemap_get_folio_mpol(inode->i_mapping, index,
+                                         FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
+                                         mapping_gfp_mask(inode->i_mapping), policy);
+@@ -431,9 +431,18 @@ static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpo
+ static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
+                                              unsigned long addr, pgoff_t *pgoff)
+ {
++       struct inode *inode = file_inode(vma->vm_file);
++
+         *pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
+ 
+-        return __kvm_gmem_get_policy(GMEM_I(file_inode(vma->vm_file)), *pgoff);
++       /*
++        * Note!  Directly return whatever the lookup returns, do NOT return
++        * the current task's policy as is done when looking up the policy for
++        * a specific folio.  Kernel ABI for get_mempolicy() is to return
++        * MPOL_DEFAULT when there is no defined policy, not whatever the
++        * default policy resolves to.
++        */
++        return mpol_shared_policy_lookup(&GMEM_I(inode)->policy, *pgoff);
+ }
+ #endif /* CONFIG_NUMA */
+ 
 
 
