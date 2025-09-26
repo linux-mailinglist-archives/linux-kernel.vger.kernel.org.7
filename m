@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-834660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB29BA5340
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D5DBA5328
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FED83B111C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E94A382A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED12A28D8D1;
-	Fri, 26 Sep 2025 21:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A9E284672;
+	Fri, 26 Sep 2025 21:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ak/qavcg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9ANDHgy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539E128D8F4;
-	Fri, 26 Sep 2025 21:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF2581ACA;
+	Fri, 26 Sep 2025 21:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758921994; cv=none; b=CnpugY3PjNzetwxheAbaMI5xYsXjnWf8EvaSc+dLqErPOmSGWW2ztiRhmh7QhQZixTIw4natAvWBAAm3AbHte+W5KZgKzKlRsDNy1FiaQ/WAnBgsY4fwzJ33YPKf7ee14DTFnR8VvRMsuXBI0i6cbepONLDq9ElrYAlxdeEWAWs=
+	t=1758921921; cv=none; b=RJgYR+azV4jA7AYZ8YawTNw9Pzq4u2mmnLjCzBOoH52eaCAya+KRTgvSPEkAcpkSvnxiUgZz7PEkgeX4DsdnYwFWH7Th6Y1VEXTC7eCFTirrtB/v686WTogq9e6+Vl6BNPwvBze1PTdgrP7+hwqMHNga6/qiHOHBOtdJAOKyrgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758921994; c=relaxed/simple;
-	bh=IoZKsPrcS7krE4hjJ+t9Lyy0kyIowgRVUJ+7yyEDQ34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NHh2aGlNBwDZTM8uJnt1f+D2lcNikZrUvmzahDlJNOehm+y1h7OS+CpCtluzrQCQssxShfeENkYMn5tvzAUnYaEFIAL0EhZjJ0YT3QXp9++8UAiqHFb2+ZqmifTjyXxZRHw8Pv8lr3UT2KN7SDwPFz/1J0WLo21pCCeeklBkYQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ak/qavcg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C8FC4CEF8;
-	Fri, 26 Sep 2025 21:26:33 +0000 (UTC)
+	s=arc-20240116; t=1758921921; c=relaxed/simple;
+	bh=PQumnt7XyXrVYC0j2mqUHUvbODDCGmvh8dmipPDpD7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RRMWyB5Md3z88xd18XgyBENj+mEWclrGg28RXS70p7F4PaAqcvpmn/OV4Zx2pry2zxifD9+74KWmEeIDwBoO7hUqwSdimsfEejO23oP4lSFN0HLnzCZ73GgRhtqEyzQh72AASDBo9LBld0BwO4jbv6iEYEWTa1lgs70z7lC35TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9ANDHgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E15B4C4CEF4;
+	Fri, 26 Sep 2025 21:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758921993;
-	bh=IoZKsPrcS7krE4hjJ+t9Lyy0kyIowgRVUJ+7yyEDQ34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ak/qavcgVqOI1gOpq0ZPpnm6Hc8AQ9nswgpvYE+gayELkYTvfr8BQAO876OoRnsnL
-	 M+R1YM5WkN8/fbV14000pmbN67Yo8hZDalgKMjaTHuAmMi+1BAkc81b9uxO7zLGoQQ
-	 NQ+sbYsS2Eou2/Fat1p0C/YDEMJmSVA7+dq6WRWjiUY2y4JYZmbhhJ5a2h6SWeDCCL
-	 Qk+lneolh9Un2oz1qNXD2qdHI5dZbOFd6RMeqc/pznobKZoVMrTvtRd4yeMm+m/bHX
-	 3pXs7f07tl/eY31n/Pl+N+1egPAbJSvTdGTLfAXtON0NYTekBhTbl8KTQ6OS2I3Ex1
-	 CGePosTC04UqQ==
-Date: Fri, 26 Sep 2025 14:25:14 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] crypto/sha3: Use lib/crypto/sha3
-Message-ID: <20250926212514.GD2163@sol>
-References: <20250926141959.1272455-1-dhowells@redhat.com>
- <20250926141959.1272455-7-dhowells@redhat.com>
+	s=k20201202; t=1758921921;
+	bh=PQumnt7XyXrVYC0j2mqUHUvbODDCGmvh8dmipPDpD7o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=t9ANDHgyhv0ECBteSk6v9OQDSzqchAwI26CuEpIlcgrTJPfqA3gjwDp54B7Pkq56T
+	 gX8pE5rN8XWYHRdh9WoNdzgzAZLLZLRb0/BhI9TUGnhJZ8Rnp+Zbl0oq7MtrSttBap
+	 /85PM93NuKCnaeaLpeJzFL3UuGctNgWCJKSgV8+BUZY2JVX4vdqWNHtkkfb27xJCOF
+	 IfGgdyuWZ7BXaTAeFOSWMmNWtd9oKXidcKmHM6nFdcScB/u0ERfk/k/K5zGy0pvjv9
+	 vdEu4VAz6kzpbWoVbo+1qZDS5t0JK7u5iBk+IBVvHr64OeB9RzBeaVYs3LigM930hI
+	 cChXC1+T2nI4Q==
+Date: Fri, 26 Sep 2025 16:25:19 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: webgeek1234@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] cpuidle: tegra: Export
+ tegra_cpuidle_pcie_irqs_in_use
+Message-ID: <20250926212519.GA2268653@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,45 +64,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926141959.1272455-7-dhowells@redhat.com>
+In-Reply-To: <20250731-pci-tegra-module-v7-2-cad4b088b8fb@gmail.com>
 
-On Fri, Sep 26, 2025 at 03:19:49PM +0100, David Howells wrote:
-> Switch crypto/sha3_generic.c to use lib/crypto/sha3.  Note that this makes
-> use of the internal general API rather implementing a separate set of
-> init/update/finup handlers for each algorithm.
+[cc->to: Rafael, Daniel, any feedback or ack?  Would like to resolve
+this (part of Aaron's series at
+https://lore.kernel.org/r/20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com)]
+
+On Thu, Jul 31, 2025 at 04:59:25PM -0500, Aaron Kling via B4 Relay wrote:
+> From: Aaron Kling <webgeek1234@gmail.com>
 > 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Biggers <ebiggers@kernel.org>
-> cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> cc: Ard Biesheuvel <ardb@kernel.org>
-> cc: Herbert Xu <herbert@gondor.apana.org.au>
-> cc: Stephan Mueller <smueller@chronox.de>
-> cc: linux-crypto@vger.kernel.org
+> Add export for tegra_cpuidle_pcie_irqs_in_use() so that drivers like
+> pci-tegra can be loaded as a module.
+> 
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > ---
->  Documentation/crypto/sha3.rst    |   8 +-
->  arch/arm64/crypto/sha3-ce-glue.c |  25 ++--
->  crypto/sha3_generic.c            | 201 +++----------------------------
->  include/crypto/sha3.h            |   6 +-
->  lib/crypto/sha3.c                |  35 +++---
->  5 files changed, 52 insertions(+), 223 deletions(-)
+>  drivers/cpuidle/cpuidle-tegra.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-tegra.c b/drivers/cpuidle/cpuidle-tegra.c
+> index b203a93deac5f378572be90e22c73e7417adb99e..aca907a62bb5de4ee4c71c1900eacedd4b90bc0a 100644
+> --- a/drivers/cpuidle/cpuidle-tegra.c
+> +++ b/drivers/cpuidle/cpuidle-tegra.c
+> @@ -336,6 +336,7 @@ void tegra_cpuidle_pcie_irqs_in_use(void)
+>  	pr_info("disabling CC6 state, since PCIe IRQs are in use\n");
+>  	tegra_cpuidle_disable_state(TEGRA_CC6);
+>  }
+> +EXPORT_SYMBOL_GPL(tegra_cpuidle_pcie_irqs_in_use);
 
-What's worked well for the other algorithms is to do things in this
-order:
+tegra_cpuidle_pcie_irqs_in_use() looks like a workaround for a Tegra20
+hardware defect, and having no knowledge of typical Tegra20 systems,
+my questions would be "Why do we even bother with this?  Should
+cpuidle-tegra.c just disable CC6 always, unconditionally?  The whole
+thing, and all of include/soc/tegra/cpuidle.h, looks like it might be
+more trouble than it's worth."
 
-    1. Move the arch-specific implementations into lib/crypto/,
-       making them available via the library API and temporarily
-       removing them from the crypto_shash API.  One patch per arch.
-
-    2. Replace crypto/${alg}_generic.c with crypto/${alg}.c that is
-       built directly on the library API.  The algorithms are called
-       "*-lib" instead of "*-generic", and they don't use the
-       crypto_shash generic partial block handling.
-
-Again, if you don't want to do all that, I'd be glad to do it.  I'd be a
-bit hesitant to take this patch instead, as it sort of starts out going
-in a different direction.  So it would create a temporary situation, and
-we'd need to make sure that temporary situation works.  (FWIW, this
-patch breaks the build of sha3-ce-glue.c, so that's not a great start.)
-
-- Eric
+Bjorn
 
