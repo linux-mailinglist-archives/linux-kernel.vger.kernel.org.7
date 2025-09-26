@@ -1,88 +1,141 @@
-Return-Path: <linux-kernel+bounces-834479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFA8BA4C73
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:36:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0AFBA4C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4399164A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F454C2F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFAE2727E6;
-	Fri, 26 Sep 2025 17:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE08274FD7;
+	Fri, 26 Sep 2025 17:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ai5tru/0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPJeV2c+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014DB42AA6;
-	Fri, 26 Sep 2025 17:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF501E570D;
+	Fri, 26 Sep 2025 17:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758908196; cv=none; b=j6S+l3rBLAWQCZTy/w2cgbVGzrkktjNEnl5poqkfxG8TBmOlHrWrVRQqQjyGL36DT0xhuoY2811Hr27p6L7U7g/QAqWE+aIaq0pWxIy/PqkhCmL0iQTWCtKhU9s9BtgmbqM4yQvZYmwDlNfliQRepMYAXOs9BdGAvnfJ+qdS61k=
+	t=1758908492; cv=none; b=ZT4P9oAK2LAT9YIwwPfTthxWNmyMWqXWN8nmzvr7Rc43NS3NIcVzCiYdas5Yz3LLDKSU3SITYl+2fN3zIJ+yuonfcw+7pKY2CV8y57cSBeo0wFTBFcjb81fnywYC1NIwbFM3kio8Oa0T3OMOMHao959RfMkZnQLVYoA6emhGFWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758908196; c=relaxed/simple;
-	bh=ibIe6cCzV4z11ihNj6Ebgclqfn56yjxXANW665UotDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p1Dp2bFo5qo75aIBvHJya7lDC1fwTNVqOgH/Am6/39uXir709WjoeQDBYL4pOC0QCiy1eimRNRaxxCOHzNjJT97+obQe6ISRHu3+obJGNCKhhHnsegWDXMcC03V+FEmTH+pmTLUGPVayJDaE3Jcp0mffVQD+4V9l+bX4NTscyfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ai5tru/0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=OQfOZJJeZJ43T8rPODpG16r6wiKTQshx2hI8W8/pfZM=; b=ai5tru/0HB5WJww4P/BAb89ISI
-	Bifx6Iz5YNLWdnw1Mu3lDsgoTDxY6Jb4dwpI87RZuWIBT7g+mh7bN+s9lf8+119JsJjCcAXdjAM5t
-	40et7tTicBeJjqpvTq5gjz0+Zcc5vWCAP1+OJU8nDWgWU4ScS85r2zbjhEs4cag3N674z3McFvNGr
-	EkeEwwFOFRQXRxfIDUlTLR+JwNBH031jgY0ndb7EbO7Y4qxePOV38qJl6gWSvS/k7gJb7JUv5Bu+z
-	+I2m9gXSl5fWPL7lfq3ne4ZyLS4UJJ+P43dWByc4dlGj0YyHNRSFQzWh9cwoBXoT+zmFtTIESjhHK
-	IFlNSCIA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v2CMv-00000003HEO-2uTj;
-	Fri, 26 Sep 2025 17:36:29 +0000
-Message-ID: <44f3bd7c-b32c-420e-a738-02f40853e472@infradead.org>
-Date: Fri, 26 Sep 2025 10:36:28 -0700
+	s=arc-20240116; t=1758908492; c=relaxed/simple;
+	bh=y0e3n/Z5cwjnt8a2U4ygi4J6ovqvBuTey5rAbVKlvU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=evU6XS/dARXOt/y2e1KV7MTf86vJI69A2OYizSTZE2HnWDwf7EsfKpDXK+E0L9DbtepZQ+Am4+Ilr5UZK9hMW3VoHCwNn8fwmg7UBtOqox5Y/SbhpNKR+mFeLd2enalS/R6jToX1Iahk8Tjvu6/1zqUFw3/TSsz/8daZyqfTsqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPJeV2c+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B00C4CEF4;
+	Fri, 26 Sep 2025 17:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758908491;
+	bh=y0e3n/Z5cwjnt8a2U4ygi4J6ovqvBuTey5rAbVKlvU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JPJeV2c+4uH6bFcHD0j1w2t2Y96QRurk6TyFSLJlwm/PmRc8DzhlxkwmTmjpYAeHe
+	 o7mdsTYw8YDDgtIE9MhXJWGs/im8CD6xyj282zYSsU67MTgPpIFav37r/X6K595Vd8
+	 /kqcWs7Ip6d4rWw5IXJu3tLBMBRaqefEtSzmceJY0bHTCIu610HN/1Yp7AtaDacWLd
+	 iORga2EKfbq7gHSa8WB7NBV7Q1IcZg9oPJ77XmSrapEJB6g24xyS4wijtw5NQ8tAHu
+	 +f5fdjT+kHzb0yp/K3TLyo6WLLp02Eb+kRqM1AFKwwpF/A0u/iMFzLT4xHbzQVGAHj
+	 ZqEbpkWlY5wVA==
+Date: Fri, 26 Sep 2025 19:41:29 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, Benjamin Larsson <benjamin.larsson@genexis.eu>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v23] pwm: airoha: Add support for EN7581 SoC
+Message-ID: <dmtb46zsvj4hnn455n4gjhabl3sgpglcb4meoe3glwlzcpvqm7@3u7ds2rdmsve>
+References: <20250708145053.798-1-ansuelsmth@gmail.com>
+ <xsblhw36y3corxx3pxe6223auirrsqr3efovfnrm5lbo4xy3lf@wf3ytlivzv6g>
+ <68bf2509.050a0220.702b3.c003@mx.google.com>
+ <aMANiyqxneM1QxQ-@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: fix spelling, typos, grammar, duplicated
- words
-To: Markus Heidelberg <m.heidelberg@cab.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250926095312.206231-1-m.heidelberg@cab.de>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250926095312.206231-1-m.heidelberg@cab.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ghrrxael72tbnbfx"
+Content-Disposition: inline
+In-Reply-To: <aMANiyqxneM1QxQ-@smile.fi.intel.com>
 
-Hi Markus,
 
-On 9/26/25 2:53 AM, Markus Heidelberg wrote:
-> Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
-> ---
->  Documentation/bpf/prog_flow_dissector.rst  | 4 ++--
->  Documentation/fb/fbcon.rst                 | 2 +-
->  Documentation/filesystems/path-lookup.rst  | 2 +-
->  Documentation/hwmon/lm75.rst               | 2 +-
->  Documentation/kernel-hacking/hacking.rst   | 2 +-
->  Documentation/networking/phy.rst           | 8 ++++----
->  Documentation/process/management-style.rst | 2 +-
->  7 files changed, 11 insertions(+), 11 deletions(-)
+--ghrrxael72tbnbfx
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v23] pwm: airoha: Add support for EN7581 SoC
+MIME-Version: 1.0
 
-These changes mostly look good. I'm curious about how you
-found these. ??
+On Tue, Sep 09, 2025 at 02:20:43PM +0300, Andy Shevchenko wrote:
+> On Mon, Sep 08, 2025 at 08:48:38PM +0200, Christian Marangi wrote:
+> > On Fri, Aug 01, 2025 at 11:15:41AM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > > On Tue, Jul 08, 2025 at 04:50:52PM +0200, Christian Marangi wrote:
+>=20
+> > > > +	 * Period goes at 4ns step, normalize it to check if we can
+> > >=20
+> > > 4 ms or 4 ns?
+> >=20
+> > 4ms you are right
+>=20
+> One small but important side note (to Uwe as well, however he seems
+> follows what I am about to say). Recently I discovered a nice wrap-up [1]
+> on the writing values with units. And I think we should try to follow it
+> (at bare minimum to be consistent with chosen =E2=80=94 Journalism vs. Sc=
+ientific =E2=80=94
+>  style).
+>=20
+> [1]: https://poynton.ca/notes/units/
 
-thanks.
--- 
-~Randy
+Looking through that, that matches my expectations, apart from:
 
+	Use big K for the multiplier (1024) common in computing
+
+and
+
+	When applied to raw bits, bytes or pixels:
+
+	    M (mega) denotes (1024 K); and
+	    G (giga) denotes .=20
+
+=2E In my bubble at least Ki, Mi, Gi, Ti etc. is usual for base-2
+prefixes, see https://en.wikipedia.org/wiki/Binary_prefix for a
+reference which also has:
+
+	Prior to the 1999 IEC standard, some industry organizations,
+	such as the Joint Electron Device Engineering Council (JEDEC),
+	noted the common use of the terms kilobyte, megabyte, and
+	gigabyte, and the corresponding symbols KB, MB, and GB in the
+	binary sense, for use in storage capacity measurements. However,
+	other computer industry sectors (such as magnetic storage)
+	continued using those same terms and symbols with the decimal
+	meaning. Since then, the major standards organizations have
+	expressly disapproved the use of SI prefixes to denote binary
+	multiples, and recommended or mandated the use of the IEC
+	prefixes for that purpose, but the use of SI prefixes in this
+	sense has persisted in some fields.=20
+
+Best regards
+Uwe
+
+--ghrrxael72tbnbfx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjW0EYACgkQj4D7WH0S
+/k5Akgf+KVkYoIdt1UZKCDIW+QTopKdc1hY4AziC7pnanooit5PHNA9mzS57lgHL
+RhhSyAHlj7aJEJUyoqe44wlFgloLlLCG/sYKnp5+3qydNTBM9vJY4mnz1lUea8fJ
+/GmmhuKE7RJuAkyMoglisr9XiQQ9920gAR3eT8hvLRNbjyCRMI7bPJvLMEsLAAb8
+ZKzqsDfZsbFZhCibdIA1uA7RrCXDl5m8/P+9cwy14tufo0EgftSeC9NELjyz0xFP
+21JUh18kKsfGOCRDD0RJs6n/XnXk/HkAnHpDHec30FxxzPIweq+lADc7aUAmTVbn
+sa4r2Dch9kzlI3gMVAWCpYlSB1eLBA==
+=VjO9
+-----END PGP SIGNATURE-----
+
+--ghrrxael72tbnbfx--
 
