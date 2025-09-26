@@ -1,217 +1,157 @@
-Return-Path: <linux-kernel+bounces-834566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E51EBA4F43
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:18:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AE2BA4F4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265464C81B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:18:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3748D7B6BA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EA027E1C5;
-	Fri, 26 Sep 2025 19:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2391A27B500;
+	Fri, 26 Sep 2025 19:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="yJkoiPLH"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bAcO81pr"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE252AE8D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1240B1E7C2D;
+	Fri, 26 Sep 2025 19:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758914278; cv=none; b=YwP8zWWEkOHLOOLIhA8rUDu2MDVQZhMKRosCk4SMtV2ZZK6hntvx7w6JMb+Pkec57Va04vMVWvHhucIo/EugK7RnDHjv35aMfN/HpH+QJ7hB/+hEPImQsmDGlOpZv7UOsk7iAlUy1jXKM49g0WZqmDRSO5FYfbgruQg8lYj9Joc=
+	t=1758914329; cv=none; b=U8c0XYYATT/n3neVY/Mt8agVZAcHAigBV4uxIe4uUVvy5gRfXKLzMisCpJZbu46GXqc3+A6hhld84CWHu0BRYNCOlS7p/CtrwckI0LbngIGlku5nH6LdTZ25oh/rC5z/5//L8B+/Jc1/eqNbH8lRtI38eqQZjcbT6dddjyh081g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758914278; c=relaxed/simple;
-	bh=YxfNRshw215L0wodq3iL1LXxlLhXHhh51dJCIVY/rCM=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=YNBkpxGk0G/JOc2KdXiPKRRzWGl/a4EcBi0eubE0MYgdMPR+DLYTIc+V7OXUUW99bK8mSuitQNyUCCQhsHQeOBWNB4j7EFcfqE4pdLylKEWJeqDhP3qgpUwziYK+TnR6ZPGn/5uiGhTgg/ifVgdlGTeEx+oYi4jzXcUMr7GyGGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=yJkoiPLH; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32ed19ce5a3so2186189a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:17:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1758914275; x=1759519075; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ur25y4KPAgkJxb7AAIQiwb2eaX3zSnJwUWUorsVvCmY=;
-        b=yJkoiPLHOhvaCmRtCR/PzRbRWXTQdMCFr9+DezVa7NYMrFEJaWmk5HO7ghxZJWqUcn
-         UxI1ivxgns97aiRlG4glUr31rjoCClybAmZ6uoHvpW+2d6kFcrSLvBLFnfvCHYZlwHZd
-         J/bDY7G3fij2wgWjsAPeWo3ZtQDn/mb8HLKVDcO30S3105XHbipfJNrVgf9SZzYvon0g
-         YGopjkSrUnG17NLDDf0gYrLDhuMPvt1//yHrq+jjW4ziP0JsGe7Pa0QGIOfOGEfsjDAj
-         +jIU1I/QajEZl4eMLoGSyTrsEOpVzBhMt0ZjRXM1IeX6qLcK5vRyPGRcZXvDNpjeHmOK
-         ROjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758914275; x=1759519075;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ur25y4KPAgkJxb7AAIQiwb2eaX3zSnJwUWUorsVvCmY=;
-        b=IaTewSY/0QjvT8J71m3JFXw9W/7FEDx1hhYZ/7xT/HCutl1A9b6WdcCFnL64WRyaeu
-         YGT2yvoNFpNnZbXYRhKa7ZhMYaDmT3GEO+br1qYZB8XsFCXoKS6+ni4n++dmbdsPYsnT
-         FSF6zIxxrfY1HMaXIRYECrksxDVOYwkgnCeIn97iYBdDbT3hKzkdppks27053Qr379dk
-         THLW1pI6ZSkB9Uul9xwQRo4Ap0dKI7Koh5NqnlPjtFuKcLBez6ZcKlpKdt9kYw4QJRNu
-         PBRDHAO5eUT+tRZDD+uatUe23UyyHNuMZYKuTUggdMHqpHgTAXGtXFpEchEbpgaMCICj
-         HJYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgdL74FGo9ZYQtU2kc5CDgUDuGLwMLIf+SE9KEZonuwryckSstmyjbKx3OVVM6UP1AWaN60nFzibKm2yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq8tC5NIkc+ZPpNSFxeKfQXaZ248mpRqFiz4UM7A5i7fwtrgeB
-	eHhf2zS2l3RKgY8+LZWXxy2Aac47JGm+cSw5LKNm//kVfsSnQmIO9OBU/W5yf/LIsLw=
-X-Gm-Gg: ASbGncu5xqRm1tHuqMFIXD1GlbbcKYmKSz3HLdasbaGcxCjPJDUlWCJ8aWcLcEwzucg
-	tWJ806PxfI4aoi5MndlwYUkrIERMLIxmDr+IdzQ65LnK8NABCOJT+tPxvM+BjjFStAJ6fxieTNg
-	gAZ/g6RT4/5QRx4/Tgcx3h2douhUAUNw3HlAmHkz4fTEJpL4yRah57XxKAc6j66evIIAxDy7Y/5
-	Zcjvkx3OKNGb+rvFtf+q5t68yIfcmLE0E6qvfgpuCK00mpLr9RDTS6yt5lTOgmYZEV9gZVeaAIH
-	ns+noLthCIDqV+lbqbqwsqmFRzA/q0YKmjO8LPtvWMABi5q6KwwH6JVotT1fYFOn++NVmDskNbb
-	FXzTEHh/gOfThv1KY7b7eQGMbxxgETcIdxpCF7EPnJ4V896ph3m0qt031ZiiACUBr73h+uOeXqb
-	het0KVHg==
-X-Google-Smtp-Source: AGHT+IEqGHHfOCHYWY5HJi+Hs4lNleePoxMcwp/fg2hNFD5mPDO+fX1ABw+ovkuFZ6QkoVefj8AOng==
-X-Received: by 2002:a17:90b:3a81:b0:32b:d79e:58a6 with SMTP id 98e67ed59e1d1-3342a2cadc3mr7331140a91.25.1758914274970;
-        Fri, 26 Sep 2025 12:17:54 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33434ac9998sm3032879a91.2.2025.09.26.12.17.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Sep 2025 12:17:54 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <262BB988-A30B-4A4A-B96B-E604D86CA18C@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_91D7CA21-5D0A-454A-AA15-DF88C6BC1BF3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+	s=arc-20240116; t=1758914329; c=relaxed/simple;
+	bh=gdbuUQ3HKhlNV3e7D5HS5D3mAUvmuheQjb2LyApEvmw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kCb7OAFG2aJgZxD0o5e7a+McqrRSODsu7Y51MddIB6d+CLEClObtoVLD/5Fwndm2hCcohoNrU02IWFqEedB2dMm3ybjjXDkCK+eZohv4zATwsC3MbO9vhhdEY6cCSypFe+E2o32iJUbOezzUSxHlbfij4ffiox9YcQGckSVQnNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bAcO81pr; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1758914324; x=1759519124; i=markus.elfring@web.de;
+	bh=gdbuUQ3HKhlNV3e7D5HS5D3mAUvmuheQjb2LyApEvmw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bAcO81pr1hUloUwKBnpOcFDR1upzv8ju2LVfQyiRIZQVR8M7932QWDsImIVIN9Vg
+	 Dr/32NZOUeEBubToMm5dYeY/MqNTjxyXFZkjddW4/v2rGT6wbDWj8ZSmgfYjziVjk
+	 XClYJ8XMc64ktgvZZONCSXE4Ati7vf+/2x+0iSwUAUaU+KoiVVtLkWxMnZ+fckaK7
+	 0QBDvVfsUxAkuwyUfVAV7ROqaCervfwf/LKn96aPyrbTNf5dzp86MgezHeOb7sIXf
+	 dDXq3jQTMsmAfXKcepmNN6nzoJNpCMoiWi3PAvn7ncziNCHdMjLcrcTaOXi9aen1/
+	 72bS9HhV8Ukos3Ybag==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7elj-1uzDgs3dVN-00BcvP; Fri, 26
+ Sep 2025 21:18:43 +0200
+Message-ID: <4d175e14-dba8-4a7b-8183-828866cc4740@web.de>
+Date: Fri, 26 Sep 2025 21:18:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] ext4: fix allocation failure in ext4_mb_load_buddy_gfp
-Date: Fri, 26 Sep 2025 13:17:51 -0600
-In-Reply-To: <20250925020621.1268714-1-kartikey406@gmail.com>
-Cc: Theodore Ts'o <tytso@mit.edu>,
- linux-ext4 <linux-ext4@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-References: <20250925020621.1268714-1-kartikey406@gmail.com>
-X-Mailer: Apple Mail (2.3273)
-
-
---Apple-Mail=_91D7CA21-5D0A-454A-AA15-DF88C6BC1BF3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Sep 24, 2025, at 8:06 PM, Deepanshu Kartikey <kartikey406@gmail.com> =
-wrote:
->=20
->=20
-> Hi Andreas,
->=20
-> Thank you for pointing out the fundamental issue with my approach. =
-You're right that removing __GFP_NOFAIL creates a worse problem by =
-potentially triggering filesystem errors.
->=20
-> I understand your suggestion about allowing the function to return =
-errors so the caller can retry, but I need more specific guidance on the =
-implementation approach.
->=20
-> Questions:
->=20
-> 1. **Function signature change**: Should ext4_discard_preallocations() =
-be changed from void to int to return error codes? This would require =
-updating all 13+ callers I found.
-
-Changing internal function signatures is never a problem for Linux, =
-except
-userland syscall APIs.  This is even less of a concern if all of the =
-callers
-are inside ext4.
-
-I notice that ext4_discard_preallocations() also has an unused "int =
-needed"
-argument that could be removed.
-
-> 2. **Caller modifications**: How should the various callers =
-(ext4_truncate, ext4_clear_inode, ext4_release_file, etc.) handle =
-allocation failures during memory pressure? Should they:
->   - Retry the operation later?
->   - Skip preallocation cleanup temporarily?
->   - Handle it differently based on the calling context?
-
-Looking at this more closely, it appears that =
-ext4_discard_preallocations()
-should not fail outright, since this would leak space in the filesystem.
-
-I guess this goes back to a question of whether a warning message on the =
-console
-when the kernel is totally out of memory is a bad thing?  The whole =
-point of
-__GFP_NOFAIL was to put the retry in the control of the MM layer, =
-instead of
-having the caller loop and doing the same thing.
-
-> 3. **Memory pressure detection**: Is checking (current->flags & =
-PF_MEMALLOC) the right approach to detect when we're in memory reclaim =
-context?
->=20
-> 4. **Scope of changes**: Would you prefer:
->   - A minimal fix that just handles the allocation failure gracefully?
->   - A more comprehensive rework of the error handling throughout the =
-preallocation discard path?
-
-I was thinking one option might be to have reserved memory to handle =
-this
-specific case, so that *one* preallocation can make progress at a time.
-However, it isn't clear if this one allocation would be enough to =
-guarantee
-forward progress, or if there needs to be a pool at every step along the =
-way.
-
-Just freeing some other buddy bitmap by ext4 and retrying is not =
-guaranteed
-to make progress, since OOM means it is likely that *other* threads are =
-also
-trying hard to allocate memory.
-
-> I want to make sure I understand the preferred approach before =
-submitting v2, especially since this affects multiple call sites =
-throughout the ext4 codebase.
-
-I think the important question is what the impact is of the original =
-problem
-that was being fixed?
-
-Another option would be to return -EAGAIN or -ENOMEM (or similar) from =
-this
-function and then the whole "flush THIS inode from cache" would be =
-dropped,
-and memory reclaim should progress to some other inode that doesn't have
-preallocated blocks, or some other memory.
-
-Cheers, Andreas
-
---Apple-Mail=_91D7CA21-5D0A-454A-AA15-DF88C6BC1BF3
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Johan Hovold <johan@kernel.org>, linux-amlogic@lists.infradead.org,
+ Kevin Hilman <khilman@baylibre.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Yu Kuai <yukuai3@huawei.com>
+References: <20250926142454.5929-3-johan@kernel.org>
+Subject: Re: [PATCH 2/2] soc: amlogic: canvas: simplify lookup error handling
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250926142454.5929-3-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+X-Provags-ID: V03:K1:v2rx3tUODy29kKRV0mV3C9Icy6LDFA7cANpvllUoAJBLKjXzTq6
+ NxJViGSjHrAQ0s8QzIbWabcCXhPDyBJqZuFPL295Fd/6yDqf293Z+PAQRjEiYTn/fL3SqEq
+ RUV6P6SE4xv2p02yRXBxnlyxU65WH+J7iUM4CQijuxlcHDHgp6R9h2WdlO4TsTHshlGY2KW
+ aPMqPC8yxsEceZ2bRqiGg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XGuoCYup/Fs=;+KJRW3jQz24wxVu8O2z6hzikvZC
+ US5tlKp4v1Lt/ToYb2eg0MTQ1EhJB7t4zOLnbulr4bdiDLdt9yzq9yecBowCn1pBZVMIx43hW
+ FVWkRmEVOgD7zdxbIoZDjH05Hx0IJgXkLo1JxBrB8rS2qZGOcNm7ZZQJZJHlHvCBswWpYNyC1
+ m7Q+KWeO0bHy+HAbykpYSAd/ldC+DK0Tj6WHXbX9i8oBQQxQNgB/XiTlQLNcojBiIj56noDMe
+ eryJY3COWZfGfpCR8/kgVQ8JuexCCMnz65MgO3JzDC36+k/nljVAwdiIvCf+BaKNcSB/QT4Jo
+ EuL9e5b4drSmvVWYaPeickCrcApLIdoUh/xHIVLvC8E4q1i67AD4ydr+PSSbARjBTXuH41mB3
+ wJjX2GB9zyHByHDic7Jt4Qkpqw8hzzbbQ0FdlMZ7fyUm2ENAl4eDwjTBx0zvnWBnEtsGl6Yyk
+ GecALZ6/PrMiiPpquLAhWTCI0RSEmo3GwM9CV3QIBIkqVm1H6xj2R2Rf6BvWZRSaLZGEPUNo9
+ liF32M/aiX1STnrjCdb48saTo/E/8Mebg9HYyo3b9xYlxExJ2muI2fGp1RkhOSu3rqCf5tRRO
+ xPXYtr+38sbg9gEVS03sRza/WPUucuUE0DVaQjxwv27eJqEheuI6ARVAflS9vVzJ+G/SY+wYK
+ kUXlMISf7MkVJ8UnPV9C5Y8Q9Hk9obFE359pXOqLtbsFADAVfjMqH7uDgWHEs+J01XuVkPe44
+ 1+W/5Ert+3IHQWLkdevngZMt8oTUjSA4CjpeHd18DoCijSkTRo6LdDKVOeVjtcg0LzNOGQxuq
+ CFa9K69SCLPGtXALINKvktIfQjse/Ddb6Y/cr0MHBf9dgzSRFHI7Btzny9vY8m8Pnm/af2Wnq
+ JZAgmGWp4yzzy4ga2tQRoMWjH1Na4YsZdwlkBPDFWFVwHKwb9L6fiiC0mfD40MgGlDz0aZTqQ
+ SDltH/j4MFBaX410iMwggwASCGTE/cpczxkFS6R22A1FqDp0FC/YxysSXf9fu29XprEnLUv2b
+ m2D/maJg80l0Fmr9gVPCFiTRSQJtLLP9twPUD7ODodEOqbO6QkPN0j44RF5H5zzzFmeqpwzIF
+ yE5UITWzWxr6gvh5BwCRSOfHQuPpTWWxuYRRNwnEaqe0JQE9YQyqq2398JlcenrIqjLlVUjFa
+ UkdNcv30UCmIoIlG905jqLegMRyr6gyCdj3Bt98YH57I0Up512s9FmkbA4XPH8HSzPd+yPQsk
+ /TlipRS5QjI/grXwIU9vJJIR4pFiv0RK9tzm5XwJ3j4nYYdCNxJM60m0hLMDVKFvrs/Mpnmeu
+ wHDx70jYRBZ1/4NDH4hqBv5VY34OO7vpcLohWZlJuWeOelhqXVF/AiSxqQbTYGF9oCEVadTzV
+ lkJ9T5FrOU9KBYm7NDsZOZsBl1ykIpITARu/H45TfAIPkTWXoNpfsobFj0dFFdanKRCaX8MOL
+ pVhAe7S33lFHtbb3hZIlJ9PjPV2Wj8lRmoZ1hmjwoGk4PCNAhp8w0Txl68udlp3V6A9cbQE8q
+ xKisCH0doECrMxLSX3ud0QkZso+G5gyzkoLU8lhZjQafAbEEyT1vF+d6uuqLwt4SZ5xFcAway
+ JF2Bw8V2A5sb4lFpa6WIANEAggek99E0kv1jJRGzgDUbYCxTrpPprFblzeUQ0VjMQBhjXJbtD
+ ejVWOqEQlWlDOu4P7F80PBMWM16YWPBU4h3EHg9Mmhj8FxUwKtlFUgk4F8soZl/t60O/oYXMN
+ pA1Hqntrldi8r5mMcqq5mK6jQWUvA2mwlrq0TZfE+sB4ONMWcjZqRiiw40+KxdKggfvnPbX4i
+ tiPzi/AFpke3SaP+YxpKcE+D2LUaOrpjfg1DZHsjuPrif45tDu2QvB0Qn/F2dELWF39bPJ2jX
+ VUIxajHu8Uxbu+pfBdzBR2+IzyUMzsundRP/5/3Qp2NHN3BgMUO2+4XBbA0AVcGkGVkfHqYC7
+ h5M0Qy9LzCmwI1PN1m064jvxDGKl+gja/RB76UxcE7EGPiGANzNh7FB5dMvqh+L1qx1MI8ka/
+ LsQVl9W1mznw1dkUDVzeLFY95zThgWGtE8SbjVYKhcFtEcx8ZPd6+mZzs1XMoI8BzIU3+WMoa
+ ePOti8xbet3xc64XOiPrFDrgVCXWpPiQPZFj7MIkzyGp5eFNAjsKmnXTm3LVYEA4NsHWzYo61
+ 3rBPM4aj/7bmBGRsJKYbPN22ViaMJYgxNY+Qhc/q2IFUCr7vwUE3M4Rsa4RwvgnZ8RWoIrj5H
+ qRLfU2VOI0DWmEjQLBYvAvzUAr7ICgSAfw8sYgBP4er97e7Tyk4tZeZ46UXXvFWv0fnz1TZOF
+ P7hBKBPQmzj9NrGe6Li8qE/fRJiOtMB6bZ+9vhXArAwmLCKps8u3wUPKNzLD8kGHelnAvFhDb
+ drF+yIVBDnIFRhLxnoapVbaIV2mtyjw2RRAESnJ6ksq43E88yKNWu4Bprwa7U8UJo4R9YoaKW
+ 7jnm72WWXLYoLO0rK3+nSUm7tUA/q9VCCsnUi6X6vdTIXJ6PMKEaqMJXBQZZdYKFNij2K7LV4
+ ulDD/9ALRyPimzbdm4MIOk4PZs8A7d5RTc32St0a12jbe8MZuaJKPS6GKN9JIs7oN7iw2uk9S
+ vAMof0A91PX+qFNPOQ9CHXgImTFICoJogomzZDYpSOu0PX0Sa5hUkWFmupgS7T748+F4a4nqd
+ e6v/ObSRf+y2TKQrkQpXadDtXr2q3aEJVTtyS2ywNhCuRD2UskMMjmUotIeYUzzV2In6w75sw
+ xyWpnTW/V1fDDJPZDPoKbrISsoCx2lYqm6GmeQ3tz85dikSPEW/B39VKS1KVdqL7wTdwEa8I7
+ nX60eT9ggwpgW5zRZBglZAvskanJhr0MiOsKLzpDvSGzxdNnIpc2haCNcLurqsp8vRGj9dXPL
+ Eig8hAotoF5oeNNMTblqtg1mFyBw3Rrjny0G+zf/t5kW9YLlPyPmPO6+kPYNbrjX7b2pzwJxy
+ fjmGjlt0UsD78qHsX0D5MgtUeoyI4kN1jtDZgFHtUzaBcXyBsaGJSSeo19x400roH1UbGChn3
+ MB6zrCRzsvhG78dI6oPl09vzf+ppg7jZuLJ/C4YBRkeIa3md5v6ktEYOKjifKvzH5U7yTvvVG
+ 8IWT/o3BEv1f+pI9YkEiJ2qUz1aQIeBbwEUEXdwepecAZR+AdErtm3UuWKf6mo4X+JVYeKU0e
+ y5HKNDHPXF0Pn/Ctc7/Fbk0CPxQEroJHM9MT87JhVDtYKCBccfMwURRu6gvswbRtbuYTq9OA6
+ q94CBAll9v0LPs2dnMA0uK4RKSNLr/0FDVYjlQZUTRsQJbBTIbDAHv5S1Ov0CscDR2Qe17dEP
+ o3EO6S7l/JICZ0P2a9pIjyHtwy3m2plAhzOwQIb4DiLSjJG/T1E+25TW3RCDwjyXf2Fwn+LVa
+ hFUft/HBgmh5ff67zxAcg5FSuAryxvt030oNHoeRH+vSq7eMKMtVCyqZ8RDgRRNV19/ddcYtC
+ ZR9zYQOdF/7l4GWeYmDaazOQOvqqEsfhbgsAa8pjxyJbRGWvT6Oyd//LbpndDBonHigmwkCBc
+ pE1vSs+VXOQYolINCHxPo/Ysvbo+FDdqpfip6xhjgNT5AAMgQROhp8eNxUs4yPgQiHFHO97mT
+ xn9Gjld2NPf9BHU26dmnQb66XaaV/7fGFXJpTWiejAKs4YODp5ls9crQVS7l4k5UXjfLoJDir
+ z5cwCiGIuQnkmNIQK9BZOjjv+DuSgY/rY/+wKMCl9j0g2pM52zZsrZA9YBKHUnM+HzphmgO7g
+ XOPxcX+oBT7yaODwjLG3V0kFnca7w/r7bEm0fiXyMSOLk50w5McBGymklsl0Cig+h+WaN25+S
+ T4t6WKz+rVAzh7KXXzrLv/gQXfYVyZh2xek1MEJiTYUvV40qOaGD0Lrhg5uE4H5o8EnaExXnt
+ KV95310PvEJ6Tv0MFZJsaKSzs/r3m/Ed5iSAqSpQ2X5serq6k6gEcKL4IsC68VXS/C8AOPQxM
+ K62oHHE4Rki64R9WPZcencutHBtK9AqMhGIujWx7ENf4FiGjPzB+F4IBBgSoZu3NRsvuawXxO
+ CzfzpOE+nZofINqXzN7fv+5h0pJCIekIFLg6BXQJ5ocgEUmhj/W6UsF5NhSWipYm6m1xFngbV
+ fwfs6aQuck86nA7/dLkcVLetLgEFkF0ITeQEY4aCXBrJzlGFu/bT3pHjTHu8pACQyb97jS4UK
+ ToSfZiywZACaVL4J0NxawuruxvA1Fxj1GdEtiT3f6vje9YXsUlGP33NGcVALfvjIR4s4xGe3G
+ 79bveLgVBXa8vYpe5EiOXDOxl0J55+gt9mtZsQvw8GXjccF1YFRuugMxiLBselBsm8FxnkpkZ
+ qkiJw3OpLOwMzo78b+O1PRZvz9DWBTngaGsIHfPPgtjQh9OxvdvFErGvke18FzFbKFfc7EgzL
+ 1FTlDyR2mDLTGQGgtylLZGAAd9qaO3HGoSaY4Z9pDjjhvy7Lc0Erm2IFIQLN/ZgPIEBJ9CGfM
+ TLDE7QwUgwVmUTAR21VP+QGVUljl2X6SH6P74wR519lHEEPUVjXErfe0WYC2kRUWyf3EpsY0+
+ vZGz3GJMWGNaNBgcUR4DhaMRUHA/uiy3BnHPRRYgyzu+EX04KrafDObFRheNKVUekesA4ziGW
+ R3g9ukZQta4oRUWpIMpocC6ule8Dot1VlQ4yltC4TUrgYYDDfe5L8XrZms7BgjtZ2ncPSEtI0
+ H5+VreOpHcz8qz2x2pKS9c4vR/FCX6eS35G92sLbIu/G0ZmwmPLZvzq2QG2l0RO7lhhGD6UMQ
+ qyJzVpWpOH8lFuGt22k/TSvnrqZunqqUZQ8PbQcobimxsGkgAKZHDU5BoDHdRt+EWZtUjOeVl
+ WMfas9Rp70DG/OUPwotNS/Any/SG+sOdd1SYgQqGwJDNEO9qtNabjNXfjZwrMS5PmAxLwflwv
+ EEPe/oBX3c3i1no9Vexd8HA==
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+> Simplify the canvas lookup error handling by dropping the OF node
+> reference sooner.
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmjW5t8ACgkQcqXauRfM
-H+CqgxAArlHlP0Iv+tWoaMRH2t0sbQDnz/9kAT1klGWdxhrtBdfxKKyw6KRb4xhz
-s/8lLxYSryrPl3EwuikPK45S5ZDfjk/bFGkShQfVmjDoQ+JffABynNzU89orLJaG
-a/lKwqgZHIeqvLEU73I7PWaUKjGHG8VOniq9fFjuqh9hETsW/eCesJegZs+NwYSD
-GKyKpPe51ufxj2hA+og1C9YIUISScRGhylfXgwyQgkEa1vzmVYmQ7s2OzcOVMO6H
-McH/zh/HKK1C/2825BixcrAmwtXCt/W+BxFCPPBSKiKA7s0U72Wpt0oUQ+j74rMh
-IVMBRcWDV487PPXquXep3q3b4eMZkfmjM+c3F9dXpzpYMISwyu0Gxm9/qssDsusb
-+QwuOG89WJHeYEsHRQF2T8ztbhpEJb5rys/TMu6rO5xai0jDP9p87czxTnVwVGQq
-xdIGu0LsGkE2f3F5GrgXfasSJjvhNQtcgw5f7vGEp9h3BNsKv+hh8lsZQYAtJ+Ql
-8g2gxacNUyOBCnwFS0iN/1lgvt7ZPkqMrL27DMKNh0+i25hCfWzrciRUBK406tTD
-2zhWUMywADxcX+AGyCVvtwxsVKbjHdkcD42e11gIUn2sPR4GrRdtGOVo6BDAWQQQ
-t1fkLx5/o5gMq6NdD1iuSo8YwEgFijmWkbb8EczwT296Jcdtnx4=
-=wiB7
------END PGP SIGNATURE-----
+How do you think about to increase the application of scope-based resource management?
+https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/of.h#L138
 
---Apple-Mail=_91D7CA21-5D0A-454A-AA15-DF88C6BC1BF3--
+Regards,
+Markus
 
