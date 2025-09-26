@@ -1,130 +1,143 @@
-Return-Path: <linux-kernel+bounces-833648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EC4BA28D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:42:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977B5BA28EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFFFF1C23D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AA11C24797
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93F027F74B;
-	Fri, 26 Sep 2025 06:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9131E283C89;
+	Fri, 26 Sep 2025 06:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwsqQx6w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgpvIJpw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4F51DC1AB;
-	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A9024DFF4;
+	Fri, 26 Sep 2025 06:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758868939; cv=none; b=tYXWbpxMloOw+GWfsT8e/pk4bj9i3UkLvAmPlaCg8UZV6gePLRMbXdfBu8zr5nGAtOPw/k50SllLKNPUisLdb18L44SfkDBW+fIgVRoM6jE7NURENVQ71oj2mO7yYPxBzntMi/1rHLxSn5GCOtIE0lH7OKVNex7DxW0lRpXGj+s=
+	t=1758868947; cv=none; b=Qt8NIaRqX5ug94NpaTB+RZKKNcMc5oKZvBURmmmnFqR7fdH297eIk9J/8ooWCb84POgNqORkw+5w7e7ypVukcaTONP6PN4bwWRFP7jpL8UGUra+bv0ROwXsVEyXOsYUZT6lbZa1uBdN53oXl00qbb+Z60FTbA4GAIC85qX1dpUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758868939; c=relaxed/simple;
-	bh=1hl/eyhRTaS4YhKyjRWY+YNFz7eL/tPWBIU1thtDpTM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QbP6J4pLvi0kA32BlAHugD2XbHrqhm1KYNqPAEAxtjOTdt8YFvFn4ymwW9ta6QImVxJbkhaVRhJeTMqtl/7lwF4iQ8K1wC34Rk5U6giNx+hq1QxgWoxsluLTHVHnaKNFIwNIerOr47NObQRy0l4Ol+SI2YTgWYWOfn9bXSJd1+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwsqQx6w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BF597C4AF0C;
-	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
+	s=arc-20240116; t=1758868947; c=relaxed/simple;
+	bh=vMfY8Fz/H42PyHOYIgHzRanTHxLPTJItPJpih9yRYLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ary/YLrYrnn09LGh8u1HxKUfgLh0rdBp5BHHVzNIFg92waB1AnP6h1oTF2v/G238IqkXE+rReaJ5fDjKzN015YN4N49FPlMDp4NnrRgbY8IP4NDIwajkqe2py84nd15705m6+SInIUQQsA4GaLrxrlqR0DM1FlUt3nJsbitfDqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgpvIJpw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC084C4CEF4;
+	Fri, 26 Sep 2025 06:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758868938;
-	bh=1hl/eyhRTaS4YhKyjRWY+YNFz7eL/tPWBIU1thtDpTM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=hwsqQx6wXXNfOk+GZ5DZACD4DI1pRU1+Av16R0Fk1mhc+FJfEfw8Fql6zjYBrU/ae
-	 JLkd1nHPErDmsqRIYIU0hnxwtH3nUMuLh+vIvMbO67a91urGlLoZeZZ777zzIAn73S
-	 lNTpxH5kpC1CeqOzj7BjUnzu2zIEBG2+s5x7CVTO4gllDlC4qTsfsKE5rYrCH02yrg
-	 P9PmvneirI4cbr8NFNrnWqNTnhP+Hzg2LM8z0rcOPNlJzaCnJi5srA9UQ2XKHzQrt5
-	 X/V1GSd++qsDzXyCqCJ21umwSXeAVmcP0agloS9hS0vp7HB5FcnoPXdAowK5At32qK
-	 w8Wn6hDHor8Og==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8C6CAC5AE;
-	Fri, 26 Sep 2025 06:42:18 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
-Date: Fri, 26 Sep 2025 12:12:10 +0530
-Subject: [PATCH v2 2/2] dt-bindings: interconnect: qcom: Drop QPIC_CORE IDs
+	s=k20201202; t=1758868946;
+	bh=vMfY8Fz/H42PyHOYIgHzRanTHxLPTJItPJpih9yRYLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SgpvIJpw1M41ci3km2PHNLvc+FShJAXQOsar6tMGm+6ImxYR/peYg4ZLIGkvqlysH
+	 bKF80A80jR3OqyPB79unkrfM5D4EvziebbFxDFSgixBG3zKwsFvspoMQ1XB8pXzeM+
+	 ptRH/UcA9Ntzo4ayDB1bgnw8J5b10QDHiBT59mnLYhAC1NYX92E/Cc35WDZ1jJ7XXL
+	 2Wl3ETluKfsT979yVzARdqGm8S+1efNptWvH/zjJkZWIYMcrSFbZ7BfUTG6247kZYN
+	 kJkGs3gWNVtkciXoYNsPcw3RNuaOlX70yRCEbRt0tcURNX9eej+fCVLeYmHL6a2d/7
+	 zccVGzsG+KwOg==
+Date: Fri, 26 Sep 2025 08:42:23 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Cc: Stanislav Fomichev <stfomichev@gmail.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	donald.hunter@gmail.com, andrew+netdev@lunn.ch, ast@kernel.org,
+	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
+	matttbe@kernel.org, chuck.lever@oracle.com, jdamato@fastly.com,
+	skhawaja@google.com, dw@davidwei.uk, mkarsten@uwaterloo.ca,
+	yoong.siang.song@intel.com, david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org, horms@kernel.org, sdf@fomichev.me,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH RFC 0/4] Add XDP RX queue index metadata via kfuncs
+Message-ID: <aNY1z1GId4_-F4Jg@lore-desk>
+References: <20250923210026.3870-1-mehdi.benhadjkhelifa@gmail.com>
+ <aNMG2X2GLDLBIjzB@mini-arch>
+ <f103da72-0973-4a45-af81-ec1537422433@gmail.com>
+ <aNRxRRSfjOzSPNks@mini-arch>
+ <9773fb16-d497-4d67-804d-0c6e70def886@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-sdx75-icc-v2-2-20d6820e455c@oss.qualcomm.com>
-References: <20250926-sdx75-icc-v2-0-20d6820e455c@oss.qualcomm.com>
-In-Reply-To: <20250926-sdx75-icc-v2-0-20d6820e455c@oss.qualcomm.com>
-To: Georgi Djakov <djakov@kernel.org>, 
- Rohit Agarwal <quic_rohiagar@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>, 
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
- Lakshmi Sowjanya D <quic_laksd@quicinc.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1460;
- i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
- bh=H39PzgE3sz0Da1E79p3mlCmC8enF7l/7/JpoIn/7roE=;
- b=kA0DAAoBVZ8R5v6RzvUByyZiAGjWNcij4ji5d+OhMrWz2FxnQl6c2qbFTx8lbJJF8CcwRBhjD
- 4kBMwQAAQoAHRYhBGelQyqBSMvYpFgnl1WfEeb+kc71BQJo1jXIAAoJEFWfEeb+kc71B90IAJ3O
- NF6hWgKBnE3EgdacmcdNpOSGVehcU8hcZiamdB+PleuTeoN9pL3E+8hGmnsOfXJuGuZbdwLtr+V
- teI4RWa5ME5PBIqvLB0R2e1l/ZB2vwAxv34z5QV/XFLCTT5lVQ/rJDRxprKSoZT6gwLOkG6gH2q
- Gt5dHj3Aik2ILARl2jjCJP8uLUVGIeRp9dQBrsoK0ufZfvKJmcJC4qqlbz04qW6esskry0xA78t
- osi7EffgvUa1YiIF0lCV4MvXBi+5ug4iw1Th2GcAhnGmgdhgDqhYRNoYDt82GIg6FmIVFFMG2Z6
- I22cBZAFIaxY6cm/DBif1Qah/HCsCbQr7lkJ+Rg=
-X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Reply-To: manivannan.sadhasivam@oss.qualcomm.com
-
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-
-As like other SDX targets, SDX75 QPIC BCM resource is also modeled as a
-RPMh clock in clk-rpmh driver. However, for SDX75, this resource was also
-described as an interconnect node mistakenly.
-
-Hence, drop the QPIC interconnect IDs and let the clients use clk-rpmh
-driver to vote for this resource.
-
-Even though this change is an ABI break, it is necessary to avoid
-describing the same resource provider in two different drivers, as it may
-lead to votes from clients overriding each other.
-
-Fixes: 956329ec7c5e ("dt-bindings: interconnect: Add compatibles for SDX75")
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-[mani: kept the QUP defines value unchanged]
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
----
- include/dt-bindings/interconnect/qcom,sdx75.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/dt-bindings/interconnect/qcom,sdx75.h b/include/dt-bindings/interconnect/qcom,sdx75.h
-index e903f5f3dd8f63b257222b78e8ea41143d3dc86c..0e19ee8f168702a364f4101991ce9a6213da2eea 100644
---- a/include/dt-bindings/interconnect/qcom,sdx75.h
-+++ b/include/dt-bindings/interconnect/qcom,sdx75.h
-@@ -6,9 +6,7 @@
- #ifndef __DT_BINDINGS_INTERCONNECT_QCOM_SDX75_H
- #define __DT_BINDINGS_INTERCONNECT_QCOM_SDX75_H
- 
--#define MASTER_QPIC_CORE		0
- #define MASTER_QUP_CORE_0		1
--#define SLAVE_QPIC_CORE			2
- #define SLAVE_QUP_CORE_0		3
- 
- #define MASTER_LLCC			0
-
--- 
-2.48.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ewNFLKVIOKk5qNhW"
+Content-Disposition: inline
+In-Reply-To: <9773fb16-d497-4d67-804d-0c6e70def886@gmail.com>
 
 
+--ewNFLKVIOKk5qNhW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> On 9/24/25 11:31 PM, Stanislav Fomichev wrote:
+> > On 09/24, Mehdi Ben Hadj Khelifa wrote:
+> > > On 9/23/25 9:45 PM, Stanislav Fomichev wrote:
+> > > > On 09/23, Mehdi Ben Hadj Khelifa wrote:
+> > > > > ---
+> > > > > Mehdi Ben Hadj Khelifa (4):
+> > > > >     netlink: specs: Add XDP RX queue index to XDP metadata
+> > > > >     net: xdp: Add xmo_rx_queue_index callback
+> > > > >     uapi: netdev: Add XDP RX queue index metadata flags
+> > > > >     net: veth: Implement RX queue index XDP hint
+> > > > >=20
+> > > > >    Documentation/netlink/specs/netdev.yaml |  5 +++++
+> > > > >    drivers/net/veth.c                      | 12 ++++++++++++
+> > > > >    include/net/xdp.h                       |  5 +++++
+> > > > >    include/uapi/linux/netdev.h             |  3 +++
+> > > > >    net/core/xdp.c                          | 15 +++++++++++++++
+> > > > >    tools/include/uapi/linux/netdev.h       |  3 +++
+> > > > >    6 files changed, 43 insertions(+)
+> > > > >    ---
+> > > > >    base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
+> > > > >    this is the commit of tag: v6.17-rc7 on the mainline.
+> > > > >    This patch series is intended to make a base for setting
+> > > > >    queue_index in the xdp_rxq_info struct in bpf/cpumap.c to
+> > > > >    the right index. Although that part I still didn't figure
+> > > > >    out yet,I m searching for my guidance to do that as well
+> > > > >    as for the correctness of the patches in this series.
+> > >=20
+> > > >=20
+> > I don't really understand what queue_index means for the cpu map. It is
+> > a kernel thread doing work, there is no queue. Maybe whoever added
+> > the todo can clarify?
+
+Hi Mehdi,
+
+IIRC it is the queue index of the NIC that received the packet from the wir=
+e.
+
+Regards,
+Lorenzo
+
+>=20
+> Hi Lorenzo,
+> Can you help us clarify the todo added in cpu_map_bpf_prog_run_xdp() in t=
+his
+> commit:
+> github.com/torvalds/linux/commit/9216477449f33cdbc9c9a99d49f500b7fbb81702=
+ ?
+>=20
+> Regards,
+> Mehdi
+
+--ewNFLKVIOKk5qNhW
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaNY1zwAKCRA6cBh0uS2t
+rPt3AQD8rreqdFPyBTg//o5zPgBPhc9+hojkcDCQLrCclGujnAD+LWwu3wofnmi3
+BWIJDd24jUcS+3AK/3vv0ucDBI3+Ngo=
+=e5sl
+-----END PGP SIGNATURE-----
+
+--ewNFLKVIOKk5qNhW--
 
