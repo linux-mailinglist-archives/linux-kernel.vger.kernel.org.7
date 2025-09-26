@@ -1,178 +1,211 @@
-Return-Path: <linux-kernel+bounces-834244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20593BA440D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FE1BA43E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A621890228
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B432F56367F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75EA1F5834;
-	Fri, 26 Sep 2025 14:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00321F4701;
+	Fri, 26 Sep 2025 14:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="GLRrSDRc"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RG/WVriW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BD11E5701
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B551F1505;
+	Fri, 26 Sep 2025 14:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897371; cv=none; b=ZfaMTMxBFx9jq4Mcn7AaslcOBC7kYDeJGHPMyyOIUA21US6ASqPydsgU8zxWSKjcxf6wSlmpxFcnYxI74WDgnAsObfDtELnYoWUyJ7o70TzYo4Qw1ReGziZ90WLkmzAcO7LdhJ7/D44YOa+n/SfdsrUdEzvqKPuGvRHPhM4cE9c=
+	t=1758897369; cv=none; b=Y2QecSG4cvbZcocMp3/C0FaxEjJ7suqMuYLA1jILNHey5GjE5d8kGauXYRndwmZqJMAk8MLI1vdwub/HHHB2miQSpy2xhP2PkazCf/Go6RIR0VVXMx7QvyP3j0bWUg/N7tjjqUbhXqbsbFgXcDG5aTFSiqzYeKRWd7rK4uMxyVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897371; c=relaxed/simple;
-	bh=Sr2fU/vS6MLV71ofJRUzv3IMUQhJYVZX5sbGyDMUEM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qn7Nmy8BwkKaBXecyS6b0TSOckFr1TxFZaqae3gT5WPk0GOzCba9B27WfpXXiI7JmuN+1blP5aax1oxRA79XiQ+7+02YgU9lxiijyCcSB5/66kUzovgsYp6+ZbeFIHHDHSLi9ZlfYbMhCrq/v3QYFupuWbFVdnn0bdLP4V8CyOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=GLRrSDRc; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:cf2d:0:640:140f:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 442DC80F01;
-	Fri, 26 Sep 2025 17:35:55 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8080:c29::1:22] (unknown [2a02:6bf:8080:c29::1:22])
-	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id rZbf8P1FmiE0-sX5adq2X;
-	Fri, 26 Sep 2025 17:35:54 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1758897354;
-	bh=0YTs0g+67oYZ+X55Q+GwXbOVGScp9zVgAXrFRHB4Emo=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=GLRrSDRcQeyPW1jFwVfHiydv4o2yBqdjz8Ntoi0As7t/3mSCfWR7w8da8O7on/B2l
-	 4m7Ni0sSdYtnMK+N106mmluJHT3VgJWUhH8b5BYfLJ2A0R1zzwZ9ho2nsuiW+qXtB0
-	 +pmFQaGNterDdzGvN1eXhIDmaRzTZS9nQZwLGG8g=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <0ffb6fad-20cb-4e87-bfa6-a2e6124c03ad@yandex-team.ru>
-Date: Fri, 26 Sep 2025 17:35:53 +0300
+	s=arc-20240116; t=1758897369; c=relaxed/simple;
+	bh=cZ1XFmRawCazDXi8Ki6dJTBWPaqO33zYZFaUz0RtjW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EZAuRF8r/PyPoz0wlgruXzK44uBFhKWuMQuS7wAVq3R0jTOOfCqHML6csW44uvyK+IzWJJH4/Wm048udTemNaRHETMH/zpePUJT2Os3BDzsxyE9iKjdJs+wCXsDImShzEFa1+kejOZqUP/q1H6ij7rxaNS2UqS81e0FsELbqPrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RG/WVriW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C51C113CF;
+	Fri, 26 Sep 2025 14:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758897367;
+	bh=cZ1XFmRawCazDXi8Ki6dJTBWPaqO33zYZFaUz0RtjW0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RG/WVriWYqdp8egYDAkLACaTSB3TFAcZ+HJGD7P8MXQPQh/kQ36KCD3JSob4ZTXCC
+	 iVCV78d1ryUwe2zgHup6DcWXr4+zyDRsXfm0LZqGM+ffS8Kr14RdxNhh492s6Wvr2i
+	 p6wrxw8MXR+MUdmFAwPn+BTlB3rzRUpKNEQ5Ldz5WHcBfaKBsXJrlU5dVSrR0TkJSu
+	 dRRi4Nb2EzVMy3Fmk2cDZtoOfnX6QCRWipfsCT4jode9WWcROeIki+WryzAT8wnJwO
+	 A6e5zO/bKZurINyA3r0gYT74OxduWsz64rIwGMtt15k2W12coLg+lufWhebcWboxqu
+	 RwwQGDrXcJsVQ==
+Date: Fri, 26 Sep 2025 16:36:02 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] Performance events updates for v6.18
+Message-ID: <aNak0jUWA0JvVEMX@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <20250905144152.9137-2-d-tatianin@yandex-team.ru>
-Content-Language: en-US
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-In-Reply-To: <20250905144152.9137-2-d-tatianin@yandex-team.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi all!
+Linus,
 
-Now that the fix for large messages is committed, I think this patch 
-should be good to take,
-and the second one we can just drop since it's no longer relevant.
+Please pull the latest perf/core Git tree from:
 
-Thanks,
-Daniil
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2025-09-26
 
-On 9/5/25 5:41 PM, Daniil Tatianin wrote:
-> Previously, data blocks that perfectly fit the data ring buffer would
-> get wrapped around to the beginning for no reason since the calculated
-> offset of the next data block would belong to the next wrap. Since this
-> offset is not actually part of the data block, but rather the offset of
-> where the next data block is going to start, there is no reason to
-> include it when deciding whether the current block fits the buffer.
->
-> Signed-off-by: Daniil Tatianin <d-tatianin@yandex-team.ru>
-> ---
->   kernel/printk/printk_ringbuffer.c | 27 +++++++++++++++++++--------
->   1 file changed, 19 insertions(+), 8 deletions(-)
->
-> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-> index d9fb053cff67..99989a9ce4b4 100644
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -1002,6 +1002,17 @@ static bool desc_reserve(struct printk_ringbuffer *rb, unsigned long *id_out)
->   	return true;
->   }
->   
-> +static bool is_blk_wrapped(struct prb_data_ring *data_ring,
-> +			    unsigned long begin_lpos, unsigned long next_lpos)
-> +{
-> +	/*
-> +	 * Subtract one from next_lpos since it's not actually part of this data
-> +	 * block. This allows perfectly fitting records to not wrap.
-> +	 */
-> +	return DATA_WRAPS(data_ring, begin_lpos) !=
-> +	       DATA_WRAPS(data_ring, next_lpos - 1);
-> +}
-> +
->   /* Determine the end of a data block. */
->   static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
->   				   unsigned long lpos, unsigned int size)
-> @@ -1013,7 +1024,7 @@ static unsigned long get_next_lpos(struct prb_data_ring *data_ring,
->   	next_lpos = lpos + size;
->   
->   	/* First check if the data block does not wrap. */
-> -	if (DATA_WRAPS(data_ring, begin_lpos) == DATA_WRAPS(data_ring, next_lpos))
-> +	if (!is_blk_wrapped(data_ring, begin_lpos, next_lpos))
->   		return next_lpos;
->   
->   	/* Wrapping data blocks store their data at the beginning. */
-> @@ -1081,7 +1092,7 @@ static char *data_alloc(struct printk_ringbuffer *rb, unsigned int size,
->   	blk = to_block(data_ring, begin_lpos);
->   	blk->id = id; /* LMM(data_alloc:B) */
->   
-> -	if (DATA_WRAPS(data_ring, begin_lpos) != DATA_WRAPS(data_ring, next_lpos)) {
-> +	if (is_blk_wrapped(data_ring, begin_lpos, next_lpos)) {
->   		/* Wrapping data blocks store their data at the beginning. */
->   		blk = to_block(data_ring, 0);
->   
-> @@ -1125,7 +1136,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
->   		return NULL;
->   
->   	/* Keep track if @blk_lpos was a wrapping data block. */
-> -	wrapped = (DATA_WRAPS(data_ring, blk_lpos->begin) != DATA_WRAPS(data_ring, blk_lpos->next));
-> +	wrapped = is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next);
->   
->   	size = to_blk_size(size);
->   
-> @@ -1151,7 +1162,7 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
->   
->   	blk = to_block(data_ring, blk_lpos->begin);
->   
-> -	if (DATA_WRAPS(data_ring, blk_lpos->begin) != DATA_WRAPS(data_ring, next_lpos)) {
-> +	if (is_blk_wrapped(data_ring, blk_lpos->begin, next_lpos)) {
->   		struct prb_data_block *old_blk = blk;
->   
->   		/* Wrapping data blocks store their data at the beginning. */
-> @@ -1187,7 +1198,7 @@ static unsigned int space_used(struct prb_data_ring *data_ring,
->   	if (BLK_DATALESS(blk_lpos))
->   		return 0;
->   
-> -	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next)) {
-> +	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next)) {
->   		/* Data block does not wrap. */
->   		return (DATA_INDEX(data_ring, blk_lpos->next) -
->   			DATA_INDEX(data_ring, blk_lpos->begin));
-> @@ -1234,14 +1245,14 @@ static const char *get_data(struct prb_data_ring *data_ring,
->   	}
->   
->   	/* Regular data block: @begin less than @next and in same wrap. */
-> -	if (DATA_WRAPS(data_ring, blk_lpos->begin) == DATA_WRAPS(data_ring, blk_lpos->next) &&
-> +	if (!is_blk_wrapped(data_ring, blk_lpos->begin, blk_lpos->next) &&
->   	    blk_lpos->begin < blk_lpos->next) {
->   		db = to_block(data_ring, blk_lpos->begin);
->   		*data_size = blk_lpos->next - blk_lpos->begin;
->   
->   	/* Wrapping data block: @begin is one wrap behind @next. */
-> -	} else if (DATA_WRAPS(data_ring, blk_lpos->begin + DATA_SIZE(data_ring)) ==
-> -		   DATA_WRAPS(data_ring, blk_lpos->next)) {
-> +	} else if (!is_blk_wrapped(data_ring,
-> +		   blk_lpos->begin + DATA_SIZE(data_ring), blk_lpos->next)) {
->   		db = to_block(data_ring, 0);
->   		*data_size = DATA_INDEX(data_ring, blk_lpos->next);
->   
+   # HEAD: 6d48436560e91be858158e227f21aab71698814e selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
+
+Performance events updates for v6.18:
+
+Core perf code updates:
+
+ - Convert mmap() related reference counts to refcount_t. This
+   is in reaction to the recently fixed refcount bugs, which
+   could have been detected earlier and could have mitigated
+   the bug somewhat. (Thomas Gleixner, Peter Zijlstra)
+
+ - Clean up and simplify the callchain code, in preparation
+   for sframes. (Steven Rostedt, Josh Poimboeuf)
+
+Uprobes updates:
+
+ - Add support to optimize usdt probes on x86-64, which
+   gives a substantial speedup. (Jiri Olsa)
+
+ - Cleanups and fixes on x86 (Peter Zijlstra)
+
+PMU driver updates:
+
+ - Various optimizations and fixes to the Intel PMU driver
+   (Dapeng Mi)
+
+Misc cleanups and fixes:
+
+ - Remove redundant __GFP_NOWARN (Qianfeng Rong)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Dapeng Mi (6):
+      perf/x86/intel: Use early_initcall() to hook bts_init()
+      perf/x86/intel: Fix IA32_PMC_x_CFG_B MSRs access error
+      perf/x86: Add PERF_CAP_PEBS_TIMING_INFO flag
+      perf/x86/intel: Change macro GLOBAL_CTRL_EN_PERF_METRICS to BIT_ULL(48)
+      perf/x86/intel: Add ICL_FIXED_0_ADAPTIVE bit into INTEL_FIXED_BITS_MASK
+      perf/x86: Print PMU counters bitmap in x86_pmu_show_pmu_cap()
+
+Jiri Olsa (24):
+      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Add uprobe_write function
+      uprobes: Add nbytes argument to uprobe_write
+      uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
+      uprobes: Add do_ref_ctr argument to uprobe_write function
+      uprobes/x86: Add mapping for optimized uprobe trampolines
+      uprobes/x86: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Import usdt.h from libbpf/usdt project
+      selftests/bpf: Reorg the uprobe_syscall test function
+      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+      selftests/bpf: Add uprobe/usdt syscall tests
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+      selftests/bpf: Add uprobe syscall sigill signal test
+      selftests/bpf: Add optimized usdt variant for basic usdt test
+      selftests/bpf: Add uprobe_regs_equal test
+      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+      selftests/bpf: Fix uprobe syscall shadow stack test
+      seccomp: passthrough uprobe systemcall without filtering
+      selftests/seccomp: validate uprobe syscall passes through seccomp
+      uprobes/x86: Return error from uprobe syscall when not called from trampoline
+      selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
+
+Josh Poimboeuf (4):
+      perf: Remove get_perf_callchain() init_nr argument
+      perf: Have get_perf_callchain() return NULL if crosstask and user are set
+      perf: Simplify get_perf_callchain() user logic
+      perf: Skip user unwind if the task is a kernel thread
+
+Peter Zijlstra (17):
+      perf: Move perf_mmap_calc_limits() into both rb and aux branches
+      perf: Merge consecutive conditionals in perf_mmap()
+      perf: Move common code into both rb and aux branches
+      perf: Remove redundant aux_unlock label
+      perf: Use guard() for aux_mutex in perf_mmap()
+      perf: Reflow to get rid of aux_success label
+      perf: Split out the AUX buffer allocation
+      perf: Make RB allocation branch self sufficient
+      perf: Split out the RB allocation
+      perf: Use scoped_guard() for mmap_mutex in perf_mmap()
+      perf: Identify the 0->1 transition for event::mmap_count
+      uprobes/x86: Add struct uretprobe_syscall_args
+      uprobes/x86: Optimize is_optimize()
+      uprobes/x86: Accept more NOP forms
+      uprobes/x86: Fix uprobe syscall vs shadow stack
+      uprobes/x86: Make asm style consistent
+      uprobes/x86: Add SLS mitigation to the trampolines
+
+Qianfeng Rong (1):
+      uprobes: Remove redundant __GFP_NOWARN
+
+Steven Rostedt (1):
+      perf: Use current->flags & PF_KTHREAD|PF_USER_WORKER instead of current->mm == NULL
+
+Thomas Gleixner (4):
+      perf: Remove redundant condition for AUX buffer size
+      perf: Split out mlock limit handling
+      perf: Split out VM accounting
+      perf: Convert mmap() refcounts to refcount_t
+
+
+ arch/arm/probes/uprobes/core.c                     |   2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/x86/events/core.c                             |  16 +-
+ arch/x86/events/intel/bts.c                        |   2 +-
+ arch/x86/events/intel/core.c                       |  21 +-
+ arch/x86/include/asm/msr-index.h                   |  14 +-
+ arch/x86/include/asm/perf_event.h                  |   8 +-
+ arch/x86/include/asm/shstk.h                       |   4 +
+ arch/x86/include/asm/uprobes.h                     |   7 +
+ arch/x86/kernel/shstk.c                            |  40 ++
+ arch/x86/kernel/uprobes.c                          | 635 ++++++++++++++++++++-
+ arch/x86/kvm/pmu.h                                 |   2 +-
+ include/linux/perf_event.h                         |   4 +-
+ include/linux/syscalls.h                           |   2 +
+ include/linux/uprobes.h                            |  20 +-
+ kernel/bpf/stackmap.c                              |   4 +-
+ kernel/events/callchain.c                          |  40 +-
+ kernel/events/core.c                               | 369 ++++++------
+ kernel/events/internal.h                           |   4 +-
+ kernel/events/ring_buffer.c                        |   2 +-
+ kernel/events/uprobes.c                            | 102 +++-
+ kernel/fork.c                                      |   1 +
+ kernel/seccomp.c                                   |  32 +-
+ kernel/sys_ni.c                                    |   1 +
+ tools/arch/x86/include/asm/msr-index.h             |  14 +-
+ .../selftests/bpf/prog_tests/uprobe_syscall.c      | 484 ++++++++++++++--
+ tools/testing/selftests/bpf/prog_tests/usdt.c      |  38 +-
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c |   4 +-
+ .../selftests/bpf/progs/uprobe_syscall_executed.c  |  60 +-
+ .../testing/selftests/bpf/test_kmods/bpf_testmod.c |  11 +-
+ tools/testing/selftests/bpf/usdt.h                 | 545 ++++++++++++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c      | 107 +++-
+ 32 files changed, 2221 insertions(+), 375 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/usdt.h
 
