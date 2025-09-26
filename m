@@ -1,225 +1,101 @@
-Return-Path: <linux-kernel+bounces-834588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C33BA5033
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:57:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F89BA5039
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54EE3B10A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2872C320CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F1F23BD1F;
-	Fri, 26 Sep 2025 19:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA9123BD1F;
+	Fri, 26 Sep 2025 19:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDrjnqbK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7rSGjCi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4868E27702D
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2183283142
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758916617; cv=none; b=ia+RWW2dLoy05asZgSCNE7/LxVEguqof1JnD2dSNFP1mfRwm41fOC4xL2l6gk65bFE+YE+UvGq4Xt3ZEe4gFYN+pWod6eP+xL0fJvdHHxi8ki9hzkP5euuUuXrJs3ROoutyRexxSD9lwkO9inZRO/zIjPfuNLBxRoww0A/dQ+F0=
+	t=1758916629; cv=none; b=UObVTL8z0C/oBLSv+zl9zPldiCXffIjvgAh/LVTHnsrD651Mg8ieQbrlGIIpH7XcfAexfjKiscMcMlKGa7iYtaWPSIju4v8tmS/u30ZUlCNU5o9xCBDoKmI0S+cPtvRbtdc9YkLO3kZoa7QIKz8LC5sSsUkny1KUDqKvVzhbpvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758916617; c=relaxed/simple;
-	bh=gcGsUnTOZFpinJGpNbdgg0OIj3E+Jfes84YS3x9qtxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fgcTEym7JOhnS7GNXqNL9xevf8rIaCdM3VryQ+5bDPNkcIgLck/cTtdmFuj1tqVudueL8vpDrV995y2Uyi1ZKmNMuS5IeVybz75PbGSwnfhLY/DJetzZ6CDcA0DOSEwkKqySMp1w3BpJHK5rglMOMgCsN+TmCEkewlz1tZeX7/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDrjnqbK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEF39C4CEF4
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 19:56:56 +0000 (UTC)
+	s=arc-20240116; t=1758916629; c=relaxed/simple;
+	bh=lHACcosUWPuIRG0D9BIsFVZk3ycIlyiMq2ZwwGgzksY=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=JxXJygyBY5NgEEf0nHcqcPNVg0yFt4RLrM+cc9xe0mzX3Q6DkYqH1Hyo911lIaYPctPhzG5xHarS5g4bJlBn4Q+E8vmSGeQqErZaimGGJkz1ri1lzysWpvUQzboRHr+pzwNd6ghWUaH+wi3VoP9nhxnXp01CYf5JtWJcWvVUEn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7rSGjCi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F715C4CEF7;
+	Fri, 26 Sep 2025 19:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758916617;
-	bh=gcGsUnTOZFpinJGpNbdgg0OIj3E+Jfes84YS3x9qtxQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fDrjnqbKi1REwGPLuCqk77aQ+mPJ2PId/3ZbmQ6+0kMlSIBe89HSdM/Kv1MSijTvB
-	 qH6Ntla8LBHWxNKdVxCohIImXbtkpCtGouJslVo4HyiMdi6cLBnv5fWQBhnM4n54/P
-	 E+40G0XFWSaPJJVEqLxGbFIb9pCXuw07yEjBwPjKs79Bro+FIt4eUA5PLOyE9arHEA
-	 pPGaASQ5L6GRepRHTxKtiQW0z3TLxopjpvzvMENzplXhyVCgbp5Rianc4aZkzugx8X
-	 anZY/f/LN2fktTyBQ/d+y3GTXWi28v9olrpDlqSSckQsIpe4JocUWU+ACKK5L+hxJ0
-	 U656V8rb1OrmQ==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30cce534a91so1229208fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:56:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWdPbnci7T3+vVI+Jw7yxMwkz+DtlQRst8ynxS2/kvDrj79Q3EcZIGN8+kPhEYs8ORIwO4JTM1KzAjieQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxiFIqYhEh6NSYU7DR9Fa2ZzCuZZoe7WfQBJIYNbn9jPSJg8k0
-	Bz3epR5sAxTGiAqzwnka7k2YQ1u5Qb1pNjiT5L9+LuAz0F1nCP4hSCLlRn1IikVf0sdJbpJhWQr
-	4pXZvInk1Dv8D56CQdQpDP6Zih7sx6So=
-X-Google-Smtp-Source: AGHT+IGJ/TxHhBSCdFSnxsLS7fZGkjdX7dT0D8z+pBuvh59HzTsZmy6A7jugzekGBS2nliL1lV4cbhsldt5sqg9JmMk=
-X-Received: by 2002:a05:6870:a79f:b0:2ff:a27f:9c67 with SMTP id
- 586e51a60fabf-35ee91f95f8mr4352546fac.30.1758916616241; Fri, 26 Sep 2025
- 12:56:56 -0700 (PDT)
+	s=k20201202; t=1758916628;
+	bh=lHACcosUWPuIRG0D9BIsFVZk3ycIlyiMq2ZwwGgzksY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=b7rSGjCiIru44Zmh3UBq0lUgKkygjhk7K4Te/dKimpuyO8p/od+aZaWYVrAV5lGk5
+	 yVjDjwlvBLuy8131WF6q/PO5H5uUWcQLlA31jCTQAWQ6yMGopHMLRKxKRWB7UWjJp5
+	 KgUkd2TMapwJod9kxSG0cwMf1C7BcRlrel7KPpCA+SwM74qWhM7mwplw8VUXVKN6/v
+	 rjhVrc2rGZM6YBZb1klvUv47F6W+prcYbbRKwVMjLefM7R02000gsEBlGYJy6XNjSa
+	 n5uXok2J1oetEwLWyox8uDEYOmB2qLGbVM9cTFbeGZetGoYUPAUrDRfQot2DjOx0wM
+	 zBbSqmlMR1HDg==
+Date: Fri, 26 Sep 2025 09:57:07 -1000
+Message-ID: <50b697d50818b0c9d0abba3f1feaa2d2@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [GIT PULL] workqueue: Changes for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <6196611.lOV4Wx5bFT@rafael.j.wysocki> <2238241.irdbgypaU6@rafael.j.wysocki>
- <68d6edf1cab3b_10520100a5@dwillia2-mobl4.notmuch>
-In-Reply-To: <68d6edf1cab3b_10520100a5@dwillia2-mobl4.notmuch>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 26 Sep 2025 21:56:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iaEyW743NePaVvZnshpRFtxq3QnCrRb7nJ9oNAJnvVdA@mail.gmail.com>
-X-Gm-Features: AS18NWCYJqFIPAhDtZnyW3qMyNTZNTsvssMQGk-05hTXXDWPyxwVHVeNg4owybg
-Message-ID: <CAJZ5v0iaEyW743NePaVvZnshpRFtxq3QnCrRb7nJ9oNAJnvVdA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] PM: runtime: Add auto-cleanup macros for "resume
- and get" operations
-To: dan.j.williams@intel.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Takashi Iwai <tiwai@suse.de>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Zhang Qilong <zhangqilong3@huawei.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Frank Li <Frank.Li@nxp.com>, Dhruva Gole <d-gole@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 9:48=E2=80=AFPM <dan.j.williams@intel.com> wrote:
->
-> Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > It is generally useful to be able to automatically drop a device's
-> > runtime PM usage counter incremented by runtime PM operations that
-> > resume a device and bump up its usage counter [1].
-> >
-> > To that end, add guard definition macros allowing pm_runtime_put()
-> > and pm_runtime_put_autosuspend() to be used for the auto-cleanup in
-> > those cases.
-> >
-> > Simply put, a piece of code like below:
-> >
-> >       pm_runtime_get_sync(dev);
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be transformed with guard() like:
-> >
-> >       guard(pm_runtime_active)(dev);
-> >       .....
-> >       return 0;
-> >
-> > (see the pm_runtime_put() call is gone).
-> >
-> > However, it is better to do proper error handling in the majority of
-> > cases, so doing something like this instead of the above is recommended=
-:
-> >
-> >       ACQUIRE(pm_runtime_active_try, pm)(dev);
-> >       if (ACQUIRE_ERR(pm_runtime_active_try, &pm))
-> >               return -ENXIO;
-> >       .....
-> >       return 0;
-> >
-> > In all of the cases in which runtime PM is known to be enabled for the
-> > given device or the device can be regarded as operational (and so it ca=
-n
-> > be accessed) with runtime PM disabled, a piece of code like:
-> >
-> >       ret =3D pm_runtime_resume_and_get(dev);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be changed as follows:
-> >
-> >       ACQUIRE(pm_runtime_active_try, pm)(dev);
-> >       ret =3D ACQUIRE_ERR(pm_runtime_active_try, &pm);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       return 0;
-> >
-> > (again, see the pm_runtime_put() call is gone).
-> >
-> > Still, if the device cannot be accessed unless runtime PM has been
-> > enabled for it, the CLASS(pm_runtime_get_active_enabled) variant
->
-> Leftover from CLASS() approach?
+The following changes since commit b19a97d57c15643494ac8bfaaa35e3ee472d41da:
 
-Yup.
+  Merge tag 'pull-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2025-08-19 10:12:10 -0700)
 
-> s/CLASS(pm_runtime_get_active_enabled)/ACQUIRE(pm_runtime_active_try_enab=
-led)/
+are available in the Git repository at:
 
-I'll fix this when applying.
+  https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git tags/wq-for-6.18
 
-> > needs to be used, that is (in the context of the example above):
-> >
-> >       ACQUIRE(pm_runtime_active_try_enabled, pm)(dev);
-> >       ret =3D ACQUIRE_ERR(pm_runtime_active_try_enabled, &pm);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       return 0;
-> >
-> > When the original code calls pm_runtime_put_autosuspend(), use one
-> > of the "auto" guard variants, pm_runtime_active_auto/_try/_enabled,
-> > so for example, a piece of code like:
-> >
-> >       ret =3D pm_runtime_resume_and_get(dev);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       pm_runtime_put_autosuspend(dev);
-> >       return 0;
-> >
-> > will become:
-> >
-> >       ACQUIRE(pm_runtime_active_auto_try_enabled, pm)(dev);
-> >       ret =3D ACQUIRE_ERR(pm_runtime_active_auto_try_enabled, &pm);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       return 0;
-> >
-> > Note that the cases in which the return value of pm_runtime_get_sync()
-> > is checked can also be handled with the help of the new class macros.
->
-> s/class/guard/
+for you to fetch changes up to 0950c64ae38661bd97127e9aa0522f1624f82006:
 
-Right, thanks!
+  workqueue: fix texinfodocs warning for WQ_* flags reference (2025-09-22 05:37:20 -1000)
 
-> > For example, a piece of code like:
-> >
-> >       ret =3D pm_runtime_get_sync(dev);
-> >       if (ret < 0) {
-> >               pm_runtime_put(dev);
-> >               return ret;
-> >       }
-> >       .....
-> >       pm_runtime_put(dev);
-> >       return 0;
-> >
-> > can be rewritten as:
-> >
-> >       ACQUIRE(pm_runtime_active_auto_try_enabled, pm)(dev);
-> >       ret =3D ACQUIRE_ERR(pm_runtime_active_auto_try_enabled, &pm);
-> >       if (ret < 0)
-> >               return ret;
-> >       .....
-> >       return 0;
->
-> I like that this appears to unify the pm_runtime_resume_and_get() and
-> pm_runtime_get_sync() usages into common pattern.
+----------------------------------------------------------------
+workqueue: Changes for v6.18
 
-That's intentional.
+- WQ_PERCPU was added to remaining alloc_workqueue() users and system_wq
+  usage was replaced with system_percpu_wq and system_unbound_wq with
+  system_dfl_wq. These are equivalent conversions with no functional changes,
+  preparing for switching default to unbound workqueues from percpu.
 
-> > or pm_runtime_get_active_try can be used if transparent handling of
-> > disabled runtime PM is desirable.
->
-> Do you think the above should go in Documentation too?
+- A handshake mechanism was added for canceling BH workers to avoid live
+  lock scenarios under PREEMPT_RT.
 
-It will, when early adopters tell me that they are happy with it.
+- Unnecessary rcu_read_lock/unlock() calls were dropped in
+  wq_watchdog_timer_fn() and workqueue_congested().
 
-> Either way, for the usage of ACQUIRE(), looks good to me.
->
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
+- Documentation was fixed to resolve texinfodocs warnings.
 
-Thank you!
+----------------------------------------------------------------
+Kriish Sharma (1):
+      workqueue: fix texinfodocs warning for WQ_* flags reference
+
+Marco Crivellari (3):
+      workqueue: replace use of system_unbound_wq with system_dfl_wq
+      workqueue: replace use of system_wq with system_percpu_wq
+      workqueue: WQ_PERCPU added to alloc_workqueue users
+
+Sebastian Andrzej Siewior (1):
+      workqueue: Provide a handshake for canceling BH workers
+
+Zqiang (2):
+      workqueue: Remove redundant rcu_read_lock/unlock() in workqueue_congested()
+      workqueue: Remove rcu_read_lock/unlock() in wq_watchdog_timer_fn()
+
+ include/linux/workqueue.h | 32 +++++++++----------
+ kernel/workqueue.c        | 80 +++++++++++++++++++++++++++++++----------------
+ 2 files changed, 69 insertions(+), 43 deletions(-)
 
