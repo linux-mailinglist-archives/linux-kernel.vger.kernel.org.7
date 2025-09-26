@@ -1,382 +1,237 @@
-Return-Path: <linux-kernel+bounces-834056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D0FBA3B2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:52:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D30BA3B46
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8267B9576
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E37BAB4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881B22F0669;
-	Fri, 26 Sep 2025 12:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3056A2F60DA;
+	Fri, 26 Sep 2025 12:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOBFf2vL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBSfqMxl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3961397;
-	Fri, 26 Sep 2025 12:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532952F5A0E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891117; cv=none; b=IlW+h6TWHKbSW38bEG218IlTdQXgi+5oyjNAheLVzSeSgpCf7VJ7/hnh5UGfGeb6kASr6FZ1jXbM5MtemRcYJRqgW3vV98BZUEHXDbB569JgvRYZuZQ64h3isYDyVitY692MO3RA2mf38HA9zJEF1fF+8mMLSr0fm9fzdkLLYRs=
+	t=1758891149; cv=none; b=VloikaOShsniAh2O9KDow8O1CNk5sHhqMPkf2j+6BR3oxVEiaXQzY4JIO2u0F6BbgAOQmWDTiBciXhXhwm4K6KoXVqw+TvIEUnQnJK4H64DK0RchGzav/DaKLHEcz5xoYkm48qZKMljtwahFo7h0td1seCfksQkMndfO7KhlVfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891117; c=relaxed/simple;
-	bh=3Y4O5LMLCQJieRcZdfxcHnfSnXNNprYMqoTOTujBqTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/t+46SQOkBZiHL4uhfPgTaI4ZT8hZzSSQut6Uwydq2XyTAJYTPh4rUacWBBoxQ6Gg3Hc5Xaoe2/sGce7YWffNUBQnCjvr5l9CF7rC4f8wNZ4PR8zr5few/fbbVSEWAXFshXlGKKpvFK5VjRH3HEPUibOhWK7+Kgo2CSvKf1uIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOBFf2vL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86470C116C6;
-	Fri, 26 Sep 2025 12:51:52 +0000 (UTC)
+	s=arc-20240116; t=1758891149; c=relaxed/simple;
+	bh=bgmghckL4Ny0c8O8U8NCksUJHOretkGWrQoDWo8CmCU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dOGrc4H1U4mJB984SjEI559sHuUWA2LTqiWJQWuwMEOKV1g/OMLMIZpwprbYJgXDsAc+JRlYhI0RYPXDtbiS3pqWNeePjPzDjZ5kU0/mWvSZY6/Xlv2Xq9SS7CXB7/Gy6vmHelAc4edOPodfkLYACvwikpAb6y9WXJT7mCQ79rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBSfqMxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE922C19424
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758891117;
-	bh=3Y4O5LMLCQJieRcZdfxcHnfSnXNNprYMqoTOTujBqTg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SOBFf2vLVWeAV6RnQebajdSIv6gnlUZTSt9UT86Ykm8nBrQr4UXJVFZkTDjFMk/9l
-	 pHNXRwXspHMfi6El0t1+bVQV0Jvw9qyChRcMhdlGadYDgAbriVqLOS7WChdRm51lJj
-	 UXdXZuQa9jzDKI/FT/qOcqxfokZi7v3ZtrTJpwTrH55pTQm9YbCWDRVV3Pglt5K1+p
-	 F1qcPTxX/i5txhntoaiZAAh2XvJYqLPRGk5k7R0hrJv9MtV5Y+fo+MyIdsIEyxXzmU
-	 21oP8OEzLYPzt3hFIZXXE9enPqxG+62f5PmuTW3MsFi4sakt8XJRqulnP03eRQVNVA
-	 6Nfh2uUwn0XkA==
-Date: Fri, 26 Sep 2025 14:51:48 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 4/8] man/man2/fsmount.2: document "new" mount API
-Message-ID: <3kewugw6bh6y6ghw44ksqqir6r37wnyckwx7st66ydtdaxbtgk@ibg57jop5mn7>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
+	s=k20201202; t=1758891149;
+	bh=bgmghckL4Ny0c8O8U8NCksUJHOretkGWrQoDWo8CmCU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NBSfqMxlqp0pSo5pRQWnbaLm910aDdvjl4H9jyOksmG9DqM1boAdmLu4uvK5/3joo
+	 A72K+YbLICgf/Z0MFLw3CqZ+MEap9smN1X9ZATw88CdfLDSAzr2qLM377UjCK9gXbW
+	 W/YEMzwg498V8XGmn8sA4uCUsO7FEKkk06hTqyOrf8+qGrPMiX6MlAjI6R7RplfZ3S
+	 NW4r4NaaTR1ipwPbZU0Ax9+AwPnA1qlFgN3iKviJN502VJvmxhRqYsN203JZwfmUZJ
+	 1cs86+x8oXT7+3lAUiOcAACVfVr6Z7P+hcbBtUbyucBHO5mQIklzIqigjc0wpDf6xb
+	 ifr7NUZtfzVig==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-330d1565844so1537618fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:52:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/8pIsC7TN5U39Bs88x6Q+aUmWL3gPyzkMEzKlPHQDhFNxEospvTCgExo5SiVFaolkf3K++el3IZdmsJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBcZgq0vXqgXK9uhU8NPyZjtOUYohjTtMjU09znWzWXMMsoOQ3
+	Ogr4eJz4EysJzWmQWoNO68rbDnt/QRG+oH1rud8GcACbTRq/qmmWmRYsx8XdzdnfrPHLVCNqPV0
+	AENexpv8MFSZOYP1jIEEfDcSdDPjhnV4=
+X-Google-Smtp-Source: AGHT+IFyJsbtEL/QZxEFMzNMFhjejHmQrKAGHJ2m+Cy67pO650FZ5XV0FAPVcpNkLn5AmmxpCHNcXhCPX9zROUcktt4=
+X-Received: by 2002:a05:6871:79a3:b0:35c:cfec:df79 with SMTP id
+ 586e51a60fabf-36c4698a0f9mr1307306fac.51.1758891148064; Fri, 26 Sep 2025
+ 05:52:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zkcon2xpijdemyux"
-Content-Disposition: inline
-In-Reply-To: <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
-
-
---zkcon2xpijdemyux
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
+ <CAJZ5v0hSy9zQd6cP9B4QPSZi-6ughmkW=VoEBV-0MbUr2xcaAQ@mail.gmail.com> <aNZ9fbh8eLiPAJzR@kekkonen.localdomain>
+In-Reply-To: <aNZ9fbh8eLiPAJzR@kekkonen.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 26 Sep 2025 14:52:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gQ9vnT+Z8zryEausp-2xX7HocoBgwmiptxg7BGiU9C8g@mail.gmail.com>
+X-Gm-Features: AS18NWDCqPA72v4-2y8V5lEmAid_UEthjaXRBCWFUzQ_Nsh-1l_6LWsoqBtdmRQ
+Message-ID: <CAJZ5v0gQ9vnT+Z8zryEausp-2xX7HocoBgwmiptxg7BGiU9C8g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] Align availability checks on fwnode child node enumeration
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-spi@vger.kernel.org, 
+	Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Javier Carrasco <javier.carrasco@wolfvision.net>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Paul Elder <paul.elder@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v5 4/8] man/man2/fsmount.2: document "new" mount API
-Message-ID: <3kewugw6bh6y6ghw44ksqqir6r37wnyckwx7st66ydtdaxbtgk@ibg57jop5mn7>
-References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
- <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250925-new-mount-api-v5-4-028fb88023f2@cyphar.com>
 
-Hi Aleksa,
+Hi Sakari,
 
-On Thu, Sep 25, 2025 at 01:31:26AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
->=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+On Fri, Sep 26, 2025 at 1:48=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Rafael,
+>
+> On Wed, Sep 24, 2025 at 12:52:12PM +0200, Rafael J. Wysocki wrote:
+> > Hi Sakari,
+> >
+> > On Wed, Sep 24, 2025 at 9:46=E2=80=AFAM Sakari Ailus
+> > <sakari.ailus@linux.intel.com> wrote:
+> > >
+> > > Hello everyone,
+> > >
+> > > Historically the fwnode property API has enumerated only available de=
+vice
+> > > nodes on OF whereas on ACPI, also nodes that haven't been present in =
+the
+> > > system have been provided. Both OF and ACPI have similar concepts of =
+node
+> > > availbility, on OF it's the "status" property present on device nodes=
+ and
+> > > on ACPI the _STA object evaluates to device present, enabled and
+> > > functional bits, of which the present and functional bits are current=
+ly
+> > > being used to determine whether to enumerate a device.
+> > >
+> > > Two additional functions, fwnode_get_next_available_child_node() and
+> > > fwnode_for_each_available_child_node(), have been provided to enumera=
+te
+> > > the available nodes only on ACPI, whereas on OF the implementation ha=
+s
+> > > been the same on the non-available variants. The motivation for provi=
+ding
+> > > these has very likely been to provide fwnode variants of the similarl=
+y
+> > > named functions but the difference isn't justifiable from API consist=
+ency
+> > > viewpoint.
+> > >
+> > > This set switches the users away from the "available" fwnode API func=
+tions
+> > > and later on removes them, aligning the functionality on all fwnode
+> > > backends.
+> > >
+> > > since v1:
+> > >
+> > > - Move patch "ACPI: property: Make acpi_get_next_subnode() static" as
+> > >   first.
+> > >
+> > > - Add missing parentheses and kernel-doc Return: section in
+> > >   acpi_get_next_present_subnode() documentation and move the Return
+> > >   section: of fwnode_graph_get_endpoint_by_id() to the end of the
+> > >   documentation section (new patch for the latter).
+> > >
+> > > - Use device_get_next_child_node() instead of fwnode_get_next_child_n=
+ode()
+> > >   in flash LED driver drivers.
+> > >
+> > > - Rework iterating port nodes in acpi_graph_get_next_endpoint() as
+> > >   suggested by Andy (new patch).
+> >
+> > I think that you really have four series here, or rather two series, a
+> > collection of patches depending on them, and a follow-up cleanup.
+> >
+> > > Sakari Ailus (16):
+> > >   ACPI: property: Make acpi_get_next_subnode() static
+> > >   ACPI: property: Use ACPI functions in acpi_graph_get_next_endpoint(=
+)
+> > >     only
+> > >   ACPI: property: Rework acpi_graph_get_next_endpoint()
+> > >   ACPI: property: Return present device nodes only on fwnode interfac=
+e
+> >
+> > So the above is one series, focused on ACPI property changes.
+> >
+> > They can go in via ACPI as soon as everyone is happy with them.  I
+> > think I can push them for 6.18 if that helps to process the other
+> > patches.
+>
+> If it's an option, that would be nice. But see below.
+>
+> >
+> > >   property: Move Return: section of fwnode_graph_get_endpoint_by_id()
+> > >     down
+> > >   property: Drop DEVICE_DISABLED flag in
+> > >     fwnode_graph_get_endpoint_by_id()
+> > >   property: Drop DEVICE_DISABLED flag in
+> > >     fwnode_graph_get_endpoint_count()
+> >
+> > The above patches are another series that doesn't depend on the first
+> > one AFAICS and can go in via driver core.
+>
+> Agreed.
+>
+> >
+> > >   property: Document that fwnode API returns available nodes
+> > >   driver core: Use fwnode_for_each_child_node() instead
+> > >   net: lan966x: Use fwnode_for_each_child_node() instead
+> > >   Input: touch-overlay - Use fwnode_for_each_child_node() instead
+> > >   media: thp7312: Use fwnode_for_each_child_node() instead
+> > >   leds: Use fwnode_for_each_child_node() instead
+> > >   leds: Use fwnode_get_next_child_node() instead
+> >
+> > The above can go in via respective subsystem trees when the ACPI
+> > property series gets in (I'm not sure if/how they depend on the second
+> > series).
+> >
+> > And the following one is a follow-up cleanup getting rid of code that
+> > would be redundant going forward.
+> >
+> > >   property: Drop functions operating on "available" child nodes
+> > >   spi: cadence: Remove explicit device node availability check
+> >
+> > Does the spi change depend on the previous patch?
+>
+> There's really only one dependency, apart from the direct dependency of
+> fwnode_get_next_available_child_node() /
+> fwnode_for_each_available_child_node() definitions removed in the second
+> last patch: fwnode_get_next_child_node() and fwnode_for_each_child_node()
+> may still return non-available nodes before the last of the ACPI patches =
+in
+> the set. So if the ACPI patches aren't merged but the rest are,
+> non-available nodes could be returned.
+>
+> How about:
+>
+> 1. Merge the ACPI patches to 6.18.
+>
+> 2. Merge the rest, apart from the second last patch, for 6.19.
+>
+> 3. Once everything else is in, merge the last patch. Could wait for 6.20.
 
-Thanks!  I've applied this patch.
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3D24243cc66e191fd917c9c13a01b7ac037ce0972e>
+Sounds good.
 
+> Perhaps I should split the series in three sets?
 
-Cheers,
-Alex
+That would help I think.
 
-> ---
->  man/man2/fsmount.2 | 231 +++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 231 insertions(+)
->=20
-> diff --git a/man/man2/fsmount.2 b/man/man2/fsmount.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b62850a68443bb8f6178389eb=
-6cb1a5f9029ab30
-> --- /dev/null
-> +++ b/man/man2/fsmount.2
-> @@ -0,0 +1,231 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fsmount 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fsmount \- instantiate mount object from filesystem context
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fsmount(int " fsfd ", unsigned int " flags \
-> +", unsigned int " attr_flags );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fsmount ()
-> +system call is part of
-> +the suite of file-descriptor-based mount facilities in Linux.
-> +.P
-> +.BR fsmount ()
-> +creates a new detached mount object
-> +for the root of the new filesystem instance
-> +referenced by the filesystem context file descriptor
-> +.IR fsfd .
-> +A new file descriptor
-> +associated with the detached mount object
-> +is then returned.
-> +In order to create a mount object with
-> +.BR fsmount (),
-> +the calling process must have the
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.P
-> +The filesystem context must have been created with a call to
-> +.BR fsopen (2)
-> +and then had a filesystem instance instantiated with a call to
-> +.BR fsconfig (2)
-> +with
-> +.B \%FSCONFIG_CMD_CREATE
-> +or
-> +.B \%FSCONFIG_CMD_CREATE_EXCL
-> +in order to be in the correct state
-> +for this operation
-> +(the "awaiting-mount" mode in kernel-developer parlance).
-> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
-> +Unlike
-> +.BR open_tree (2)
-> +with
-> +.BR \%OPEN_TREE_CLONE ,
-> +.BR fsmount ()
-> +can only be called once
-> +in the lifetime of a filesystem context
-> +to produce a mount object.
-> +.P
-> +As with file descriptors returned from
-> +.BR open_tree (2)
-> +called with
-> +.BR OPEN_TREE_CLONE ,
-> +the returned file descriptor
-> +can then be used with
-> +.BR move_mount (2),
-> +.BR mount_setattr (2),
-> +or other such system calls to do further mount operations.
-> +This mount object will be unmounted and destroyed
-> +when the file descriptor is closed
-> +if it was not otherwise attached to a mount point
-> +by calling
-> +.BR move_mount (2).
-> +(Note that the unmount operation on
-> +.BR close (2)
-> +is lazy\[em]akin to calling
-> +.BR umount2 (2)
-> +with
-> +.BR MNT_DETACH ;
-> +any existing open references to files
-> +from the mount object
-> +will continue to work,
-> +and the mount object will only be completely destroyed
-> +once it ceases to be busy.)
-> +The returned file descriptor
-> +also acts the same as one produced by
-> +.BR open (2)
-> +with
-> +.BR O_PATH ,
-> +meaning it can also be used as a
-> +.I dirfd
-> +argument
-> +to "*at()" system calls.
-> +.P
-> +.I flags
-> +controls the creation of the returned file descriptor.
-> +A value for
-> +.I flags
-> +is constructed by bitwise ORing
-> +zero or more of the following constants:
-> +.RS
-> +.TP
-> +.B FSMOUNT_CLOEXEC
-> +Set the close-on-exec
-> +.RB ( FD_CLOEXEC )
-> +flag on the new file descriptor.
-> +See the description of the
-> +.B O_CLOEXEC
-> +flag in
-> +.BR open (2)
-> +for reasons why this may be useful.
-> +.RE
-> +.P
-> +.I attr_flags
-> +specifies mount attributes
-> +which will be applied to the created mount object,
-> +in the form of
-> +.BI \%MOUNT_ATTR_ *
-> +flags.
-> +The flags are interpreted as though
-> +.BR mount_setattr (2)
-> +was called with
-> +.I attr.attr_set
-> +set to the same value as
-> +.IR attr_flags .
-> +.BI \%MOUNT_ATTR_ *
-> +flags which would require
-> +specifying additional fields in
-> +.BR mount_attr (2type)
-> +(such as
-> +.BR \%MOUNT_ATTR_IDMAP )
-> +are not valid flag values for
-> +.IR attr_flags .
-> +.P
-> +If the
-> +.BR fsmount ()
-> +operation is successful,
-> +the filesystem context
-> +associated with the file descriptor
-> +.I fsfd
-> +is reset
-> +and placed into reconfiguration mode,
-> +as if it were just returned by
-> +.BR fspick (2).
-> +You may continue to use
-> +.BR fsconfig (2)
-> +with the now-reset filesystem context,
-> +including issuing the
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +command
-> +to reconfigure the filesystem instance.
-> +.SH RETURN VALUE
-> +On success, a new file descriptor is returned.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EBUSY
-> +The filesystem context associated with
-> +.I fsfd
-> +is not in the right state
-> +to be used by
-> +.BR fsmount ().
-> +.TP
-> +.B EINVAL
-> +.I flags
-> +had an invalid flag set.
-> +.TP
-> +.B EINVAL
-> +.I attr_flags
-> +had an invalid
-> +.BI MOUNT_ATTR_ *
-> +flag set.
-> +.TP
-> +.B EMFILE
-> +The calling process has too many open files to create more.
-> +.TP
-> +.B ENFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENOSPC
-> +The "anonymous" mount namespace
-> +necessary to contain the new mount object
-> +could not be allocated,
-> +as doing so would exceed
-> +the configured per-user limit on
-> +the number of mount namespaces in the current user namespace.
-> +(See also
-> +.BR namespaces (7).)
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B EPERM
-> +The calling process does not have the required
-> +.B CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit 93766fbd2696c2c4453dd8e1070977e9cd4e6b6d
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH EXAMPLES
-> +.in +4n
-> +.EX
-> +int fsfd, mntfd, tmpfd;
-> +\&
-> +fsfd =3D fsopen("tmpfs", FSOPEN_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC,
-> +                MOUNT_ATTR_NODEV | MOUNT_ATTR_NOEXEC);
-> +\&
-> +/* Create a new file without attaching the mount object */
-> +tmpfd =3D openat(mntfd, "tmpfile", O_CREAT | O_EXCL | O_RDWR, 0600);
-> +unlinkat(mntfd, "tmpfile", 0);
-> +\&
-> +/* Attach the mount object to "/tmp" */
-> +move_mount(mntfd, "", AT_FDCWD, "/tmp", MOVE_MOUNT_F_EMPTY_PATH);
-> +.EE
-> +.in
-> +.SH SEE ALSO
-> +.BR fsconfig (2),
-> +.BR fsopen (2),
-> +.BR fspick (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
->=20
-> --=20
-> 2.51.0
->=20
->=20
+> I'll send an update on the ACPI patches soon, to address a comment relate=
+d
+> to them.
 
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
+OK
 
---zkcon2xpijdemyux
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWjGQACgkQ64mZXMKQ
-wqnZkw//VEWJmFzHgJLA7ZaeZ2efeIHt15CEAGOBq2NkxX5Kg/wBZfLlcftc2Gzh
-lksoFZuskAUCcFSo5MNbGCTqN90bPjWZD4XMzDckbZf9s2WU/9d6Ev5BGYIogW2T
-HgKIeLxQtMBPUdBFwXIDX3JW9/qLInpiXovIpikLdjJTLFrhnp3Wzh4OxjL4CaqP
-Sp9kHRYKcC2kABw8LoH0rX+0Ghe3kRQB3GPw04AXyb19P1k+x8UjFXviXlXZpR7S
-dFhbRakjWiMc0gYJlyqjBjyFVT0Sx3bxuD+NrWaeI1QFwHwNx1EdltkcIXpyY/Ck
-oUL7+zm+qQAf3k2ttFsJ4vMNGVqPmlZYIQfrnR13UwPnNDTfoUh8ibW+bHNgWMnu
-kh5379BaODEr6b/2YkpUSxfPhBrqgOFZiF7q0f5mjGVM24E91zvcEaolFKyy5Yr4
-325oQ1mpbikM+lE4xjNM2o2vNCKGsoKKR/EebYydeeIwi4Ok+fWu8uQ88rGb/zrw
-tYpWCGfy7BWPojqJNvWvIHz+7v/EOmvbWdXsYxvidujWnfcHwALaUtwznjXX/f4m
-+DrM8FNGYn8xT1SuOZtY7q8S9tl63v/Fml4HyhgwpBtP2Ca1WhTHx0wq9uI9XVaz
-EIFeSAptwjNh+uCYTjJphz0vKSaphdW4FCODaHskOO6pTU88jls=
-=fRyU
------END PGP SIGNATURE-----
-
---zkcon2xpijdemyux--
+Thanks!
 
