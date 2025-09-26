@@ -1,85 +1,72 @@
-Return-Path: <linux-kernel+bounces-833880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B872BA3473
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:04:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F20ABA3530
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155B06208F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:04:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF4A7A11BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CEE2BDC1D;
-	Fri, 26 Sep 2025 10:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32882F2900;
+	Fri, 26 Sep 2025 10:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cxKDBoE6"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BxjfsKl5"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A4028F948
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21403233704;
+	Fri, 26 Sep 2025 10:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758881075; cv=none; b=bG8T87yx2C9zYquhwLOm5RtjiBNyhiZfRfE5VzneKykrsRpTHu6RBuUL+Z3DI0/uzK/uPI5TIx4GXvcFy1zt8ws9s72R4JRzMzsJF9QaYBCPXRWZmuezsOJlg1sX0cBSovF5YbS/bAyXnPVU2+tcDhFq0AaXj74RPmAqv8zfZyM=
+	t=1758881808; cv=none; b=pllitqMuq1b7SCQHa2/0bgfrSFXM6P4ueqjwQIEuiHzDTSNWEwVW6+p9xxy6KR0wd6LhDKnAAeB6rUm9ZkRMjR5DZumu+VvcEa4dyl+7nojQyhv2Gm9yWxezEgLc8Z1p48S6mqPFSXBbl0tbYJCbh2cJkC4e1G1rmLrqKmAe1ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758881075; c=relaxed/simple;
-	bh=lfsbpXTCfUSN6aBMYs/nnoiIdzUuh9IZb45T4QOdBFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i88Z/ZuVCPWytOJ7i0/yJFuCtOvKLN9N5Yuqb0jsMSMRteHyp8Lzu6OJVG1kSeZXjRbT3brsQRHXCA0s+OkDE9BZxWijXYtpHrLvXCspYfCrGXqtRI9xPbvErCH6dMQMYF0/vrr8gNhhri9fvNCJ5GTIxPSfZoUFr+0WbU8/4qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cxKDBoE6; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46c889b310dso15361815e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 03:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758881071; x=1759485871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fQM9vZFM7FnvGLKPuP4NIyjEuejpFr/yasQmtJhsCF4=;
-        b=cxKDBoE66gfM2ZcLKJqPdpQ8OcWN40RWoTA1sV0q5MQdNmfEFOPme/TEHulGmTBjyy
-         UJxGJl6KpMr7cDaMW1q5fSVykfZ0OwSHYHEqHFeOisTYuD/hZZPIuzPTK4pPLM9CuYm9
-         /wNgPO+3dub9u1oGubDivoVeW1ox5OOjt7aEmEq9ijxUF/hmwh89nw6DwSnoY9dWUqEx
-         eQ+Zgjuqe4cdV4mLgRswjpjQiCP7wz8PghAdAyoL8c1AFC1By1/WqaRXj7Utm3e8VBok
-         /NU7u/zkHNoYpTJSRdLVoee/iwWQhm9tujNZ8DWPhNQ0e7HlDe6sbKzYMqiOZREGdz0G
-         y3fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758881071; x=1759485871;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fQM9vZFM7FnvGLKPuP4NIyjEuejpFr/yasQmtJhsCF4=;
-        b=pMDL3fYUEDIO+lWDEkZso06UmUkpwR5RYOh3TrU5uJ1YXvZEOrJaAnsA3MUA/gAtZC
-         460gKd8i8H2mEkgUgc60CeI9Oiv1R1qCrDPHjolu0amuQRL4KXVY1lrkc9diK5jlQ5+4
-         6EWapGKSG5AiznXspl973P+7pvNQxWIZBYuzdc7sXbhKhKEJo2e1SwrjZn8qLF59MQ7j
-         ttyTkfS3whJKYaFl+9P/Q36YM20YiSXZC52YJnRNJq8KzcjBAWF+Tqp+bmRKhBlxs7bw
-         CrdHYAUZp6SiEi+X81SHIoJUeve9eL23tVy3zq1u6XUnLcBGXo3Q/2k38ZhWQOIGQeXk
-         XjQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYS8otzC6K4IaRhYuC/ZoWigRkh8G7dDpgthUfPPFd8OPz3TpS+67G+YYXY4m19BbEVl0lxm0YY8dBpT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO+CwNhAGhnquzPUoe0l/3xJtv4S663kO/1sXdrIw9dUqLTd0o
-	fEx+S51KMG5vkcYBaAmAkiGWWkEBfUB2lZKEKV+fL3nhj4ljgsdcGcJZ3LwtxVapQdQ=
-X-Gm-Gg: ASbGnctb36N7aT/Wl5rPg19Afr8ZW2FXH+7vXuGH9jUYWzekJfsz3q8CdtEyzOeUyvp
-	9MqViDh5gfwkscomzt1QIT43nVLl1UxitU1aTDi3z2yQqPvjUY9mo4UPsOzZmO9TZLwvZ9L/XHH
-	epIlNIz27K1DbFu/aut18aXxFEjf/hmHIcoTzCBwViHGm0oZ1zTFli9hdBsUTr2sgo18pjHbSPj
-	izszwbe0cL2+RuYnkkBNWlbPH726EkKoVtFgh8g4CqbxuYC53r+pWwPL4KoxOTeNhkg+EZTTETY
-	a+K+D0V1wF3oeoXz9YGzSyQmdnBEk0MlLD5sU93h1rqcXRTzNbxtbSfHkmSNaWDFLc/M8Bu5xlH
-	TvkFEdI0zJ1pwNgfqBW0RL9o=
-X-Google-Smtp-Source: AGHT+IEgYt39FJi5czBmqHTA/Ju3Jq2wKhFs+ghFwOE8QfeZzBA/+qSEwQ2i6S4wbag+tndOkFR0Ug==
-X-Received: by 2002:a05:600c:c05a:b0:46e:24a4:c247 with SMTP id 5b1f17b1804b1-46e33c37045mr45634845e9.5.1758881071244;
-        Fri, 26 Sep 2025 03:04:31 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ab15:a65:aecd:6def])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf70b5sm67209715e9.21.2025.09.26.03.04.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 03:04:30 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1758881808; c=relaxed/simple;
+	bh=FPM50SUFxE4R91GbidRBo+cPANFD0VljE4jNjCG8P8o=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=CvAq2QnYsRr8sHgPSSLYfvuZru6MyBCVoCcsv3+n0ZisqI6kac07CPrz19ocFdY3jAKa+5E88Wx4n1PiRjxDCjj5KiIRPWsET9IQdNh2quDm/srBEon2jC8AVlmNXGJDaFJhlDUO2WUqheI1bJW/M3MBMCH9ONtQubVZjllaBqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BxjfsKl5; arc=none smtp.client-ip=43.163.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1758881493; bh=p/FWhBW97flJy6Joa5iUDeBbgx31a8n/Yv7gttstfUc=;
+	h=From:To:Cc:Subject:Date;
+	b=BxjfsKl5WlO3X4eQZLqVsKpg4F75JjuE90xXkVG0GaLejDbQ3XKRT4ECIHsjmJ3gJ
+	 aqqaZAG7nrRoW0a8h93fBDi3RPFYMXeg0WyKnjG6sRDJsP94hZnRQxxJBcyTPPcwn9
+	 xB5nXgjz3dTHuRpPRihYlfB3YKAGWoCWhnfrUwCQ=
+Received: from localhost.localdomain ([116.128.244.171])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id E96088A8; Fri, 26 Sep 2025 17:58:22 +0800
+X-QQ-mid: xmsmtpt1758880702tj7hgavkk
+Message-ID: <tencent_16B08FED03C970A0B8F75F16AE3D7A2F3305@qq.com>
+X-QQ-XMAILINFO: OJYupdf7O4WtOarT0umYcT9n2WOK4VNELW60YPTHZEKji+pviCYYHZR6mVbHYl
+	 Pfgs+o+CpTCnb6IkWZ7CPweVeSm1olyv6MW+OIYSEzfAdNuOMqZmIoaHJaduO5xhn95u01kuRJKe
+	 zAxQNh5RigmOXbBmwUB3TXhIhVvSktJkQjXuNEH+mmsSXpP6+0oEKUEicoRx/0tjO8kccRovlVmV
+	 kNYc7y7FxEDuH47dWg2Pntaie4sscqJNkOfXmiLc2SalGfdxV/Mg2T6K0dlFfGPyCYKU7m9foMv4
+	 c4db7W+TcXil8ltSJzaG/loywS4yG1NAr/fFYNLmdhupL55QomwtkT9cH1KkZ2cWLONYKoyYjFsP
+	 ZUhYz1iTvwfV6UJHx7opEzEfAPrPaLuM5j2g6r3wVuHMt7bf/lt1whDjgHAjEi461AjUHsntPd+o
+	 zDEpVWy51qSXwo7QqHreIlk1SzF8Ta4kv7N9QPk0RzCcf19AsXAqL/RLTJUWiOzN3qvX+Iu8l2aa
+	 0eqUoTbG643R3CM5XL+d7Y9eI6zY266su8MZQoIQXQPgPUiDOrufUr+wHYdXycnazBzWb7EQ4cME
+	 hZyTijukkO6FeeMWHakpJ4s6wqjPa3W1bTmDfY4pI4mNLIPrF6AUbNFp66sdxZuSyBOkGL0UEdl4
+	 4ZzItesOC8eQR5vQUorcMtyW6pOGn1fvK4y8iUb4vgI7/HdqbqqS2lJmg2BcZNTbC1oVhdtEOQia
+	 orBrc5Xap99pjam9OCxgzRTv/Qpdmn/C72tKGaHTMSqbVaf/aL3HdJ3YXc6caYsOSZ6P6/qdSCai
+	 QTcTSrp8M+ZUp124o9xdlyi7PXI8FdorRDRY9ti1KZJzAzWyjlHq6HVaceMnp1ptxA7gezu+cX7e
+	 Y8MkABxiYfTwAbR92iwmiOKQvaLAVTpNqD2pb9RfqbcNO9EETgnpvYT37INW6AEqr6cyYiKrYbcf
+	 DyCOO8ODyjtpiYYkdht/FLAdu1Izk/z7nSbBU7HVtGUjSxIjpxMxJ/1vy9BNgjarEvEk3werzcxo
+	 9JE51IutOeezRv657ACic8Wm53XvLbdr1yowBFwhGcg3FkXmuGN4NxUA4+nIQv8TcloTjNXQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Haofeng Li <920484857@qq.com>
+To: Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.17
-Date: Fri, 26 Sep 2025 12:04:29 +0200
-Message-ID: <20250926100429.40265-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	Haofeng Li <13266079573@163.com>,
+	Haofeng Li <lihaofeng@kylinos.cn>
+Subject: [PATCH] net: ynl: return actual error code in ynl_exec_dump()
+Date: Fri, 26 Sep 2025 17:58:20 +0800
+X-OQ-MSGID: <20250926095820.2570975-1-920484857@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,41 +75,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Haofeng Li <lihaofeng@kylinos.cn>
 
-Linus,
+Return the real error code 'err' instead of hardcoded -1 in the error
+path of ynl_exec_dump(). This provides better error information to
+callers for debugging and error handling.
 
-Please pull the final set of GPIO fixes for this release.
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+---
+ tools/net/ynl/lib/ynl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Bartosz
+diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
+index 2a169c3c0797..1a79adcc3ac0 100644
+--- a/tools/net/ynl/lib/ynl.c
++++ b/tools/net/ynl/lib/ynl.c
+@@ -1064,5 +1064,5 @@ int ynl_exec_dump(struct ynl_sock *ys, struct nlmsghdr *req_nlh,
+ 
+ err_close_list:
+ 	yds->first = ynl_dump_end(yds);
+-	return -1;
++	return err;
+ }
+-- 
+2.25.1
 
-The following changes since commit 07e27ad16399afcd693be20211b0dfae63e0615f:
 
-  Linux 6.17-rc7 (2025-09-21 15:08:52 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.17
-
-for you to fetch changes up to 3bd44edd6c55828fd4e11cb0efce5b7160bfa2de:
-
-  gpio: regmap: fix memory leak of gpio_regmap structure (2025-09-22 16:35:21 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v6.17
-
-- allow looking up GPIOs by the secondary firmware node too
-- fix memory leak in gpio-regmap
-
-----------------------------------------------------------------
-Hans de Goede (1):
-      gpiolib: Extend software-node support to support secondary software-nodes
-
-Ioana Ciornei (1):
-      gpio: regmap: fix memory leak of gpio_regmap structure
-
- drivers/gpio/gpio-regmap.c |  2 +-
- drivers/gpio/gpiolib.c     | 21 +++++++++++++++++++--
- 2 files changed, 20 insertions(+), 3 deletions(-)
 
