@@ -1,173 +1,139 @@
-Return-Path: <linux-kernel+bounces-834602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB5FBA50E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:22:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC716BA50E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BC01C21B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A1431C21D15
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65025285C81;
-	Fri, 26 Sep 2025 20:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F100B2857CB;
+	Fri, 26 Sep 2025 20:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YldOrLMh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvLnz60z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6D6270EAB;
-	Fri, 26 Sep 2025 20:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7027260A;
+	Fri, 26 Sep 2025 20:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758918172; cv=none; b=B1mQyLEmKb2fmYPQuhC6v70tDZ8PFkftpyZfUyl6v8udZFdMwZ6b/Jy4/PEmGI3H0fXICeBotezdhiV5Vzh7/L/F/9HTTVuEnk/sCAh+GYP3by7wxKkLBAUWuRZObr4x775hfCs077OfvpAgyvMOie1OR8EEMbz6nV5rBbP9jnc=
+	t=1758918273; cv=none; b=BC/LGDzC6usBsmsj+pAcTIm3+ZwxImuHdJa7v4V9lQo9zIfoAsCavs6YzXgqwwOEoMRHxBZhcg9lDmeFJIuOtYGdBTiC7bSqmhNUUlEciI2lyspMDLErAqbezyox2M3WGgzvkkOfHs7PISIuyc5EQ6dgjp3vjQSsWoYtX4Sq37A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758918172; c=relaxed/simple;
-	bh=zeRZTgjI1eA9qSzzRchD1N5m8fTC0ZL6vbZ3BOloNrY=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=jzrcl1qW5e+gZ6dJR3KWinTWBB7zytor/F6RhlqeWv/zoX7LeN8zPhs9jr8244JvhxnYTtrscrWlikJHUg4fwYu9Qo7KwE59WwHkDQUUyhTZmn3OMi+ZFQ3KGCZH9P2ufP9EXgZ/oe34Fb0Qiaavfhao4fTJGWml2o3fAY3r5kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YldOrLMh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187E3C4CEF4;
-	Fri, 26 Sep 2025 20:22:51 +0000 (UTC)
+	s=arc-20240116; t=1758918273; c=relaxed/simple;
+	bh=/MPD/u4t2P88SZ2+0r0a12nQc9p4Xw3KAEkXXioGITQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KOh11EExoDgKQU1Ur+BUQsT9fcdsHRsE2LVazwhFntxqouSt3yPzmuTE+MLtpXZQnHonDBcbm2oSDEhfYRtlcZ7JTJ8NMV0nnETOTzBJp3VP01ToA9VgUHPWXVL12tO7i6MX58las8du/t9Gdt3d+rfv9a9QYlE2tU/Mo+bmWA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvLnz60z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A293AC4CEF4;
+	Fri, 26 Sep 2025 20:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758918171;
-	bh=zeRZTgjI1eA9qSzzRchD1N5m8fTC0ZL6vbZ3BOloNrY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YldOrLMh8Gc/Qa/goM0tlQp0wplzympB3dPqvKF2MATkZZdwvWthfMKAI+oO53W4X
-	 6e/QPAuRkuTf7sVHObYFEctJ22vuEUep547afNYMUK8qTJ5cyHseNfrLhpqmTBAvek
-	 Zaa952NSgSb0nyzQ5rZ4Kvn94WlRXgDFCE63fFu6k/gLxYWYDt/jZF5EsoYoqdOa1f
-	 rNTgPeKE8HvFimsj8fYJhV/i/vYLjbO0KPAwuXaMngimGvIexzEdt0OnKOMWS+KzZh
-	 Ukfm167c+CtM5ALq+WPVrwR7qlUA8RRnrvNkStgJnWG/YMiFc2vJdoe5cKHsJueNTI
-	 MHzOOdkQGA0cw==
-Date: Fri, 26 Sep 2025 10:22:50 -1000
-Message-ID: <21156f925598248ffe7d2d5f00b212da@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Michal Koutný <mkoutny@suse.com>, Waiman Long <longman@redhat.com>, cgroups@vger.kernel.org
-Subject: [GIT PULL] cgroup: Changes for v6.18
+	s=k20201202; t=1758918272;
+	bh=/MPD/u4t2P88SZ2+0r0a12nQc9p4Xw3KAEkXXioGITQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=cvLnz60zbKZb2fagJbMrNIq5h1vEz+TsG3+VLKWlS+EkGFq9lSd+y5NzIKBRInoJH
+	 GRksN1MO0P61n+VCf0HLJObhdgc4SAcvL7Vs/WMDdZoKDZpCln+WXpm2HbbueDUDcf
+	 8F43oTrr4HwXk0a7qfhLhWLzx8KMe9gSuPcOMidSmtXT4ShZrXOsXgGWERt9WKDOLd
+	 duBN12/yE6HX5kGbc2bv0HsWRschDz/H2L4JPsbjt/995NiCaP4zVwRdMSTrKl28gH
+	 /NqWmg/Mg5XwkljYXlovgzg6M64J47OzsIAofLz5qMLEs843Nx5rCMCyFza99aGwpp
+	 iSw4JaArBXwKQ==
+Date: Fri, 26 Sep 2025 15:24:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] PCI: imx6: Add a method to handle CLKREQ#
+ override active low
+Message-ID: <20250926202431.GA2264754@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB88335EEF20BA7FCF723F81208C1EA@AS8PR04MB8833.eurprd04.prod.outlook.com>
 
-The following changes since commit 94a4acfec14615e971eb2c9e1fa6c992c85ff6c6:
+On Fri, Sep 26, 2025 at 03:23:43AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Bjorn Helgaas <helgaas@kernel.org>
 
-  cgroup/psi: Set of->priv to NULL upon file release (2025-08-22 07:47:43 -1000)
+> > On Fri, Sep 26, 2025 at 02:19:37AM +0000, Hongxing Zhu wrote:
+> > > > -----Original Message-----
+> > > > From: Bjorn Helgaas <helgaas@kernel.org> On Tue, Sep 23, 2025 at
+> > > > 03:39:13PM +0800, Richard Zhu wrote:
+> > > > > The CLKREQ# is an open drain, active low signal that is driven low
+> > > > > by the card to request reference clock. It's an optional signal
+> > > > > added in PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be
+> > > > > driven low if it's reserved.
+> > > > >
+> > > > > Since the reference clock controlled by CLKREQ# may be required by
+> > > > > i.MX PCIe host too. To make sure this clock is ready even when the
+> > > > > CLKREQ# isn't driven low by the card(e.x the scenario described
+> > > > > above), force CLKREQ# override active low for i.MX PCIe host
+> > > > > during initialization.
+> > > > >
+> > > > > The CLKREQ# override can be cleared safely when supports-clkreq is
+> > > > > present and PCIe link is up later. Because the CLKREQ# would be
+> > > > > driven low by the card at this time.
+> > > >
+> > > > What happens if we clear the CLKREQ# override (so the host doesn't
+> > > > assert it), and the link is up but the card never asserts CLKREQ#
+> > > > (since it's an optional signal)?
+> > > >
+> > > > Does the i.MX host still work?
+> > >
+> > > The CLKREQ# override active low only be cleared when link is up
+> > > and supports-clkreq is present. In the other words, there is a
+> > > remote endpoint  device, and the CLKREQ# would be driven active
+> > > low by this endpoint device.
+> > 
+> > Assume an endpoint designed to CEM r2.0.  CLKREQ# doesn't exist in
+> > CEM r2.0, so even if the endpoint is present and the link is up,
+> > the endpoint will not assert CLKREQ#.
+> > 
+> > Will the i.MX host still work?
+> > 
+> > IIUC, CLKREQ# is required for ASPM L1 PM Substates.  Maybe the
+> > CLKREQ# override should only be cleared if the endpoint advertises
+> > L1 PM Substates support?
+>
+> CLKREQ# override active low only be cleared when the endpoint
+> advertises that it has L1 PM Substates support or it always drives
+> CLKREQ# low.
 
-are available in the Git repository at:
+What?  That's not what the patch does.  It calls .clr_clkreq_override()
+whenever the link is up and devicetree contains 'support-clkreq'.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git tags/cgroup-for-6.18
+A device advertises L1 PM Substates support by putting the L1 PM
+Substates Capability in its config space.
 
-for you to fetch changes up to 8f0fdbd4a06bf795c68bc9839d9c349ab592654f:
-
-  cpuset: remove is_prs_invalid helper (2025-09-22 12:57:46 -1000)
-
-----------------------------------------------------------------
-cgroup: Changes for v6.18
-
-- Extensive cpuset code cleanup and refactoring work with no functional
-  changes: CPU mask computation logic refactoring, introducing new helpers,
-  removing redundant code paths, and improving error handling for better
-  maintainability.
-
-- A few bug fixes to cpuset including fixes for partition creation failures
-  when isolcpus is in use, missing error returns, and null pointer access
-  prevention in free_tmpmasks().
-
-- Core cgroup changes include replacing the global percpu_rwsem with
-  per-threadgroup rwsem when writing to cgroup.procs for better scalability,
-  workqueue conversions to use WQ_PERCPU and system_percpu_wq to prepare for
-  workqueue default switching from percpu to unbound, and removal of unused
-  code including the post_attach callback.
-
-- New cgroup.stat.local time accounting feature that tracks frozen time
-  duration.
-
-- Misc changes including selftests updates (new freezer time tests and
-  backward compatibility fixes), documentation sync, string function safety
-  improvements, and 64-bit division fixes.
-
-----------------------------------------------------------------
-Bagas Sanjaya (1):
-      Documentation: cgroup-v2: Sync manual toctree
-
-Chen Ridong (21):
-      cpuset: remove redundant CS_ONLINE flag
-      cpuset: decouple tmpmasks and cpumasks freeing in cgroup
-      cpuset: separate tmpmasks and cpuset allocation logic
-      cpuset: add helpers for cpus read and cpuset_mutex locks
-      cpuset: move the root cpuset write check earlier
-      cpuset: remove unused assignment to trialcs->partition_root_state
-      cpuset: change return type of is_partition_[in]valid to bool
-      cpuset: Refactor exclusive CPU mask computation logic
-      cpuset: refactor CPU mask buffer parsing logic
-      cpuset: introduce cpus_excl_conflict and mems_excl_conflict helpers
-      cpuset: refactor out validate_partition
-      cpuset: refactor cpus_allowed_validate_change
-      cpuset: introduce partition_cpus_change
-      cpuset: use parse_cpulist for setting cpus.exclusive
-      cpuset: use partition_cpus_change for setting exclusive cpus
-      cpuset: fix failure to enable isolated partition when containing isolcpus
-      cpuset: Use new excpus for nocpu error check when enabling root partition
-      cpuset: fix missing error return in update_cpumask
-      cpuset: remove redundant special case for null input in node mask update
-      cpuset: remove impossible warning in update_parent_effective_cpumask
-      cpuset: remove is_prs_invalid helper
-
-Chuyi Zhou (3):
-      cpuset: Don't always flush cpuset_migrate_mm_wq in cpuset_write_resmask
-      cpuset: Defer flushing of the cpuset_migrate_mm_wq to task_work
-      cgroup: Remove unused cgroup_subsys::post_attach
-
-Marco Crivellari (2):
-      cgroup: replace use of system_wq with system_percpu_wq
-      cgroup: WQ_PERCPU added to alloc_workqueue users
-
-Michal Koutný (1):
-      selftests: cgroup: Make test_pids backwards compatible
-
-Tejun Heo (2):
-      cgroup: Remove unused local variables from cgroup_procs_write_finish()
-      cgroup: Merge branch 'for-6.17-fixes' into for-6.18
-
-Thorsten Blum (1):
-      cgroup: Replace deprecated strcpy() with strscpy()
-
-Tiffany Yang (3):
-      cgroup: cgroup.stat.local time accounting
-      cgroup: selftests: Add tests for freezer time
-      cgroup: Fix 64-bit division in cgroup.stat.local
-
-Waiman Long (1):
-      cgroup/cpuset: Prevent NULL pointer access in free_tmpmasks()
-
-Yi Tao (3):
-      cgroup: refactor the cgroup_attach_lock code to make it clearer
-      cgroup: relocate cgroup_attach_lock within cgroup_procs_write_start
-      cgroup: replace global percpu_rwsem with per threadgroup resem when writing to cgroup.procs
-
-pengdonglin (2):
-      cgroup: Remove redundant rcu_read_lock/unlock() in spin_lock
-      cgroup/cpuset: Remove redundant rcu_read_lock/unlock() in spin_lock
-
- Documentation/admin-guide/cgroup-v2.rst            |  33 +-
- include/linux/cgroup-defs.h                        |  43 +-
- include/linux/cgroup.h                             |   5 +
- include/linux/sched/signal.h                       |   4 +
- init/init_task.c                                   |   3 +
- kernel/cgroup/cgroup-internal.h                    |  11 +-
- kernel/cgroup/cgroup-v1.c                          |  19 +-
- kernel/cgroup/cgroup.c                             | 199 ++++--
- kernel/cgroup/cpuset-internal.h                    |   5 +-
- kernel/cgroup/cpuset-v1.c                          |  12 +-
- kernel/cgroup/cpuset.c                             | 752 +++++++++++----------
- kernel/cgroup/debug.c                              |   4 -
- kernel/cgroup/freezer.c                            |  16 +-
- kernel/fork.c                                      |   4 +
- tools/testing/selftests/cgroup/lib/cgroup_util.c   |  12 +
- .../selftests/cgroup/lib/include/cgroup_util.h     |   1 +
- tools/testing/selftests/cgroup/test_freezer.c      | 663 ++++++++++++++++++
- tools/testing/selftests/cgroup/test_pids.c         |   3 +
- 18 files changed, 1355 insertions(+), 434 deletions(-)
+> > > > > static void imx_pcie_host_post_init(struct dw_pcie_rp *pp)
+> > > > >  		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
+> > > > >  		dw_pcie_dbi_ro_wr_dis(pci);
+> > > > >  	}
+> > > > > +
+> > > > > +	/* Clear CLKREQ# override if supports_clkreq is true and link is up */
+> > > > > +	if (dw_pcie_link_up(pci) && imx_pcie->supports_clkreq) {
+> > > > > +		if (imx_pcie->drvdata->clr_clkreq_override)
+> > > > > +			imx_pcie->drvdata->clr_clkreq_override(imx_pcie);
+> > > > > +	}
 
