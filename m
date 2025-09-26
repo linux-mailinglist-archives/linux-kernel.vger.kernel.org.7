@@ -1,160 +1,122 @@
-Return-Path: <linux-kernel+bounces-834007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1713BA3966
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:17:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7502BA395F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2867D1C01E09
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E017F7B3520
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64452EB85A;
-	Fri, 26 Sep 2025 12:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1502EB84D;
+	Fri, 26 Sep 2025 12:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="owG0Wymn"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RT5BCGCl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qZ9RmACI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855A1F5435;
-	Fri, 26 Sep 2025 12:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13D586353
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758889047; cv=none; b=bGTsHmBDgPHWpjQZ9ilWL5/SL3CVWvaf1jLJO0C5+m8/2/Hp+0C0pJ3kg4C4ordGEKgUkGwwakbMktaVOMWhBf/0qA4R1XTbag+55IA+40qTk84jtiBrsB7gL5wy2ZfKtJrVuBCsDk6onda7WlqjeZ0O/Fe3i91D+TWQKJGEwiM=
+	t=1758888887; cv=none; b=RMseVXq7CAT7NkyY2GvraCbI22GXSRSFCs9m5A4tHzb2B2onolu7LT51w+P/t7VLKTibtKM38KUhoasY3F+qud3h8R8qLlVRDSIaJihMS8q2nr6Ta2Y3mpDtohJ8XF040Mj5XdXvmSXRF70r5Tzshwuc1i1p8DBSTE5sP+SI284=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758889047; c=relaxed/simple;
-	bh=+E/+ytuqiTkVd0tbjOzSD8vXyT/FBxpJSn2yZ26yW5s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sgmoseYyjSD6UHIRaHlHfsW095htaCdLvm0XWE7ILotMI5+RSKlOjB48Yb4CQI1NzXpDYj2/xyXEgaPmFYJrxHl09fLOWpztZBjdPCYCTuxM7QdNJN4a4G2gUFm/UNq6J6ylA+eZEIgeYNVNaLBXGuJWYjt/MZ/VLY+3GUtHA88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=owG0Wymn; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758889046; x=1790425046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+E/+ytuqiTkVd0tbjOzSD8vXyT/FBxpJSn2yZ26yW5s=;
-  b=owG0Wymn8Oi81ja9C86nMTesH9LyGKU5cFMkIhye6PvEfgQb+wvTYuZW
-   2P/NCVHcsYYjiFlr9Pg+1OTs5JsNlZbdeJmignuxQY36kLwGdd9W21RJF
-   oGKOP3a2r+phJo9Zacgmh2l0vc1w6JD9fkSnBFdLk2vnxHs6H8Ev4EwyO
-   wns+zz2QW0YYymyR449ugFWb5O+Rsx5QxJ35ItreRrEv1aAjypj2t6koI
-   0TlOBoYlsxpO5McL/alykr/HSHv5IIchfLzT7IIgUOks4wYbaVi6bR94F
-   q93g8u2ist4j5nIOsDhNhkpzUd3QnJs6XYAtW/kAsR0qu7NTw6ZSiPwRK
-   g==;
-X-CSE-ConnectionGUID: Gz3HhZdvQV+zY8Pmob1QIg==
-X-CSE-MsgGUID: KBZh8JZCQEaNs4xhRQer6Q==
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="47028817"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Sep 2025 05:17:20 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 26 Sep 2025 05:16:53 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 26 Sep 2025 05:16:53 -0700
-Date: Fri, 26 Sep 2025 14:12:45 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Vladimir Oltean <vladimir.oltean@nxp.com>, Jakub Kicinski
-	<kuba@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>,
-	<christophe.jaillet@wanadoo.fr>, <rosenp@gmail.com>,
-	<steen.hegelund@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v2] phy: mscc: Fix PTP for vsc8574 and VSC8572
-Message-ID: <20250926121245.eqynm74h22d7fhrn@DEN-DL-M31836.microchip.com>
-References: <20250917113316.3973777-1-horatiu.vultur@microchip.com>
- <20250918160942.3dc54e9a@kernel.org>
- <20250922121524.3baplkjgw2xnwizr@skbuf>
- <20250922123301.y7qjguatajhci67o@DEN-DL-M31836.microchip.com>
- <aNZhB5LnqH5voBBR@shell.armlinux.org.uk>
- <20250926095203.dqg2vkjr5tdwri7w@skbuf>
- <aNZoyOPu3hUDadWv@shell.armlinux.org.uk>
+	s=arc-20240116; t=1758888887; c=relaxed/simple;
+	bh=025+J32XfXKh9tiQzEFu9om/UxFWo4oDjP1jJRYqi8M=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hW+J7V4NMir+y5xF718SMuWBtoy6wJWhZxfVw5xFpbEMYQJK1VGRZ92vuVxlvOImjOLxahP82/hCaKtE+QgUsbSysy8rsc/CKoa9oviQDPDkbLD36knTmKC1w5QtvYU3MXh8jNqavNFF2PnBdgPhLFtzjeu1/rY+Ugzzib2u24o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RT5BCGCl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qZ9RmACI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758888883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nhDPg+3tDEf9MpUD75Uir8jON0jMqHC/BgN+drVu6Ik=;
+	b=RT5BCGClk8eYNLsWrCT9NGMhUhGTFCT+g6BuEE/ZgSTz46KzxrFGrxf5rfbhKDlmDfZ2dF
+	0ZS3KTcwV38r/I9xpofwrp6oDTVzXVb1vUNGtVC5atdEjQoMCLN+n17IHw1IKYK5tNyqjl
+	PpsWxBxMWoXH4oPHzHMNzFAg/azXKAospDHtzCjy+vga4mDcDWhgimkYd1OvPRfnzspNID
+	2Ze8EmQLtt7inp+OT80QkQZUC/jlS4Y1D19uQy1zaHa3NBESKAPm1UybMXTmNJKVjTNHb7
+	XuUCnx4CzTfl++4zbRBP36czEvE8qfTZL5xpxLFdff+pfnHvbojif7ItbBMl6A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758888883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nhDPg+3tDEf9MpUD75Uir8jON0jMqHC/BgN+drVu6Ik=;
+	b=qZ9RmACIatl+hYddkSm7Z/zYxpY3meldLubKjVCBj7S4i2twoQgOwyHOKFHWfdMdyRASsV
+	T6yNn6QBRnHYPVCg==
+To: Thomas Huth <thuth@redhat.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] riscv: Add kprobes KUnit test
+In-Reply-To: <16b74b63-f223-4f0b-b6e5-31cea5e620b4@redhat.com>
+References: <20250513151631.3520793-1-namcao@linutronix.de>
+ <16b74b63-f223-4f0b-b6e5-31cea5e620b4@redhat.com>
+Date: Fri, 26 Sep 2025 14:14:43 +0200
+Message-ID: <87frc9h0lo.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <aNZoyOPu3hUDadWv@shell.armlinux.org.uk>
+Content-Type: text/plain
 
-The 09/26/2025 11:19, Russell King (Oracle) wrote:
+Thomas Huth <thuth@redhat.com> writes:
 
-Hi,
+> On 13/05/2025 17.16, Nam Cao wrote:
+>> Add KUnit test for riscv kprobes, mostly for simulated instructions. The
+>> test install kprobes into multiple sample functions, and check that these
+>> functions still return the expected magic value.
+>> 
+>> This test can detect some kprobe bugs reported in the past (in Link:).
+>> 
+>> Link: https://lore.kernel.org/linux-riscv/20241119111056.2554419-1-namcao@linutronix.de/
+>> Link: https://lore.kernel.org/stable/c7e463c0-8cad-4f4e-addd-195c06b7b6de@iscas.ac.cn/
+>> Link: https://lore.kernel.org/linux-riscv/20230829182500.61875-1-namcaov@gmail.com/
+>> Signed-off-by: Nam Cao <namcao@linutronix.de>
+>> ---
+> ...
+>> diff --git a/arch/riscv/kernel/tests/kprobes/test-kprobes.h b/arch/riscv/kernel/tests/kprobes/test-kprobes.h
+>> new file mode 100644
+>> index 000000000000..3886ab491ecb
+>> --- /dev/null
+>> +++ b/arch/riscv/kernel/tests/kprobes/test-kprobes.h
+>> @@ -0,0 +1,24 @@
+>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>> +#ifndef TEST_KPROBES_H
+>> +#define TEST_KPROBES_H
+>> +
+>> +/*
+>> + * The magic value that all the functions in the test_kprobes_functions array return. The test
+>> + * installs kprobes into these functions, and verify that the functions still correctly return this
+>> + * value.
+>> + */
+>> +#define KPROBE_TEST_MAGIC          0xcafebabe
+>> +#define KPROBE_TEST_MAGIC_LOWER    0x0000babe
+>> +#define KPROBE_TEST_MAGIC_UPPER    0xcafe0000
+>> +
+>> +#ifndef __ASSEMBLY__
+>
+> Could you maybe change that into "__ASSEMBLER__" instead of "__ASSEMBLY__" ? 
+> I'm currently trying to get rid of the latter in the kernel sources, see: 
+> https://lore.kernel.org/all/20250606070952.498274-1-thuth@redhat.com/
 
-> 
-> On Fri, Sep 26, 2025 at 12:52:03PM +0300, Vladimir Oltean wrote:
-> > On Fri, Sep 26, 2025 at 10:46:47AM +0100, Russell King (Oracle) wrote:
-> > > On Mon, Sep 22, 2025 at 02:33:01PM +0200, Horatiu Vultur wrote:
-> > > > Thanks for the advice.
-> > > > What about to make the PHY_ID_VSC8572 and PHY_ID_VSC8574 to use
-> > > > vsc8584_probe() and then in this function just have this check:
-> > > >
-> > > > ---
-> > > > if ((phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8572 &&
-> > > >     (phydev->phy_id & 0xfffffff0) != PHY_ID_VSC8574) {
-> > > >   if ((phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
-> > > >           dev_err(&phydev->mdio.dev, "Only VSC8584 revB is supported.\n");
-> > > >           return -ENOTSUPP;
-> > > >   }
-> > > > }
-> > >
-> > > Please, no, not like this. Have a look how the driver already compares
-> > > PHY IDs in the rest of the code.
-> > >
-> > > When a PHY driver is matched, the PHY ID is compared using the
-> > > .phy_id and .phy_id_mask members of the phy_driver structure.
-> > >
-> > > The .phy_id is normally stuff like PHY_ID_VSC8572 and PHY_ID_VSC8574.
-> > >
-> > > When the driver is probed, phydev->drv is set to point at the
-> > > appropriate phy_driver structure. Thus, the tests can be simplified
-> > > to merely looking at phydev->drv->phy_id:
-> > >
-> > >     if (phydev->drv->phy_id != PHY_ID_VSC8572 &&
-> > >         phydev->drv->phy_id != PHY_ID_VSC8574 &&
-> > >         (phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
-> > > ...
-> > >
-> > > Alternatively, please look at the phy_id*() and phydev_id_compare()
-> > > families of functions.
-> > >
-> > > --
-> > > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> > > FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
-> >
-> > The phydev->phy_id comparisons are problematic with clause 45 PHYs where
-> > this field is zero, but with clause 22 they should technically work.
-> > It's good to know coming from a phylib maintainer that it's preferable
-> > to use phydev->drv->phy_id everywhere (I also wanted to comment on this
-> > aspect, but because technically nothing is broken, I didn't).
-> 
-> Yes indeed, which is another reason to use phydev->drv->* as these
-> get matched against the C22 and C45 IDs during PHY probe.
-> 
-> If we wish to get more clever (in terms of wanthing to know the
-> revision without knowing how the driver was matched) we could store
-> the matched ID in phydev, as read from hardware. This would also get
-> around the problem that where the ID is provided in the DT compatible,
-> we would have the real hardware-read ID to check things like the
-> revision against, rather than a fixed value in DT.
+It's been applied, it's up to riscv's maintainers how we should do this.
 
-Thanks for the explanation and for suggestion.
-I will use your suggestion in the next version.
+I can send v3, or a follow-up patch.
 
-> 
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Or riscv maintainers can also squash that change into this patch, or
+into your patch.
 
--- 
-/Horatiu
+I'm fine with any options.
+
+Nam
 
