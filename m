@@ -1,228 +1,199 @@
-Return-Path: <linux-kernel+bounces-833800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18962BA31BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2C3BA31CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9664B1B22EB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28C41889F73
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176A129BD94;
-	Fri, 26 Sep 2025 09:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDBD248F48;
+	Fri, 26 Sep 2025 09:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sttls.nl header.i=@sttls.nl header.b="Jd79/8NA"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11021092.outbound.protection.outlook.com [52.101.65.92])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFhDJu/o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11535296BB3;
-	Fri, 26 Sep 2025 09:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758878329; cv=fail; b=EuXMz/TfwvNOqzi8qoXupi7iNW37AIno1IFuuXvlNZYlbMH70fknTn5NUHPOSJFjh4gHNomh17P53IPIY0aESelXUFpt+uKpeey6LIHQKvSggrhpcZimOLVp9OAGW7D7PsOte08w6DakKGoJJr6FhHT1SDUTrJeNh2J1va7Rnqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758878329; c=relaxed/simple;
-	bh=WvcqpQpErJALsGFNiAP40ND4B4w4Bo/F5zi4ox6RgSA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OAcBPdV5qpMh6+Isl2lTGo1Un5HkJrH3xcbvcD4Jy58ApdCKR7q9w9zP6TknEe9n6D5MC3ICsfkUwedD46S4StXVZyiy1th0QV0IebJnIhpXFGm/Ty0KXauA4SLgfI0R1OMjYkNvErytfzm1/GjbOys+Efp0WatqEeUaB5V5OFg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sttls.nl; spf=pass smtp.mailfrom=sttls.nl; dkim=pass (2048-bit key) header.d=sttls.nl header.i=@sttls.nl header.b=Jd79/8NA; arc=fail smtp.client-ip=52.101.65.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sttls.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sttls.nl
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LZtqz6KeJGLu+FcuqD1TiH28leA7+Giff9n3p2H4FHOsclUVmZdvb+4hmdHIqe3HLnL7QGe9X241OMU+0XF2WpfkMcVuPBN1Hjkm9qmtiUpPfL6X4LqbXyLBlmYFZkLkV/CMxIVkRDYpYwQfXS1fWp2Qp3raK9GXJSew7q8/B4zf1f+ZxovXHwpSbA8UK5dPnaBeqH9NyIgkkBTUTyESCFKoPO9C0hvm+pr/nySeGitn9BfH3qj1Nqi69dxuO6OaoGvoJGGpf0SaOcKq1cCrv3WKlfqDIVFSW1H24vQtaNdzSH0K7RCKY3Z3VMr2eLU+woJhMSTOvKwJRKfeHrCcCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WvcqpQpErJALsGFNiAP40ND4B4w4Bo/F5zi4ox6RgSA=;
- b=r2nWkF/kUXnatZhon7Kl5vzzjfccZVccyBJB9zsZa8hOEv9WkBgb2DGJV2XhjcKoftS1jvhngg06SdCABUAOmD2j94RqZIxcXt+ZfGh/GpQ844QliW36xmRMEihwKz44RuyZRwxQa0bwuJ4WCqTjH6o9f3PS8p8M81wYiOSVb98v4aeEUAL6YfsGaATYNM1MfwQ8ZSFs8PlPyHaC/POjbxBkXFjiW6Cq8R3/D7NllgeRuDSvyWbedut7OKSB092sNkBudSwcXOhsTpaMtvQaXxne0jKU/d/sNxHhOwrV2ygWdRm4gY6Wokcz+Ke+Wqthdc07fS1mb2RAfwHstMIx3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 13.93.42.39) smtp.rcpttodomain=hugovil.com smtp.mailfrom=sttls.nl; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=sttls.nl; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sttls.nl; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WvcqpQpErJALsGFNiAP40ND4B4w4Bo/F5zi4ox6RgSA=;
- b=Jd79/8NAzxC7LnqnV6/62M5yzj6EsMY3qTAtMV6WgKeggfWysdsueSWOde7Csyv5gFpmWzYH8Naa5+ARWu6MAEnaPye2vqTlVaHBVz0LbEM5Bo8rz0dm+LK+MD4EkkocHKADyx9+7M3HNSi90RKiuB4nHdyprnJvCC6pjaETm+5dDL1L+GTvdGArFmN0JNb4c8plF1AQi+BxaiwkpCEUwwrKHAoFBhpFuNZoFc2KpVYks3/En1oKwWkvQ6+5G0M2l4/U8Oq/+X6V/o7eDwsuAyVGmWZG/jVsNWfkcyK2AngXKj2u5UAIHFSOOKTpB9NDUdahS5ZVhA/RMOXKT7Z0uw==
-Received: from CWLP265CA0482.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:18a::7)
- by PR3PR05MB7034.eurprd05.prod.outlook.com (2603:10a6:102:67::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
- 2025 09:18:41 +0000
-Received: from AMS1EPF00000049.eurprd04.prod.outlook.com
- (2603:10a6:400:18a:cafe::3a) by CWLP265CA0482.outlook.office365.com
- (2603:10a6:400:18a::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.10 via Frontend Transport; Fri,
- 26 Sep 2025 09:18:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=sttls.nl; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=sttls.nl;
-Received-SPF: Pass (protection.outlook.com: domain of sttls.nl designates
- 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
- client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
-Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- AMS1EPF00000049.mail.protection.outlook.com (10.167.16.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Fri, 26 Sep 2025 09:18:40 +0000
-Received: from AS8PR07CU003.outbound.protection.outlook.com (40.93.65.51) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Fri, 26 Sep 2025 09:18:39 +0000
-Received: from DB6PR05MB4551.eurprd05.prod.outlook.com (2603:10a6:6:4a::24) by
- AM9PR05MB7842.eurprd05.prod.outlook.com (2603:10a6:20b:2c6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
- 2025 09:18:38 +0000
-Received: from DB6PR05MB4551.eurprd05.prod.outlook.com
- ([fe80::f854:dcd:a8dc:bc53]) by DB6PR05MB4551.eurprd05.prod.outlook.com
- ([fe80::f854:dcd:a8dc:bc53%5]) with mapi id 15.20.9137.012; Fri, 26 Sep 2025
- 09:18:38 +0000
-From: Maarten Brock <Maarten.Brock@sttls.nl>
-To: Hugo Villeneuve <hugo@hugovil.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "jirislaby@kernel.org" <jirislaby@kernel.org>,
-	"fvallee@eukrea.fr" <fvallee@eukrea.fr>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Hugo
- Villeneuve <hvilleneuve@dimonoff.com>
-Subject: RE: [PATCH 13/15] serial: sc16is7xx: change incorrect indentation
-Thread-Topic: [PATCH 13/15] serial: sc16is7xx: change incorrect indentation
-Thread-Index: AQHcLWl+ScU6GvLviUebs/CeyhgZ/LSlMh/Q
-Date: Fri, 26 Sep 2025 09:18:38 +0000
-Message-ID: <DB6PR05MB4551CE3468BE5BC059981F49831EA@DB6PR05MB4551.eurprd05.prod.outlook.com>
-References: <20250924153740.806444-1-hugo@hugovil.com>
- <20250924153740.806444-14-hugo@hugovil.com>
-In-Reply-To: <20250924153740.806444-14-hugo@hugovil.com>
-Accept-Language: en-US, nl-NL
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=sttls.nl;
-x-ms-traffictypediagnostic:
-	DB6PR05MB4551:EE_|AM9PR05MB7842:EE_|AMS1EPF00000049:EE_|PR3PR05MB7034:EE_
-X-MS-Office365-Filtering-Correlation-Id: 353b4b51-604a-4e78-bb26-08ddfcddaed1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?cjVnN2wxQ1E3TVZic3hYbWtRT0FCSktHZlF0Z3hPYkthL0M5bThaNDV2MVFo?=
- =?utf-8?B?Y1p0SVFvdXBtMHZ0eWs3NEVyVCsxYzc2L2hjQ00xLytNZDZTUENFSlY2b2hn?=
- =?utf-8?B?SFNkSjhoQnlPM3UzTk5PUWJBYU44a3MrTDBrWTJXN1FUbXE3RE9ZZjBpOXZx?=
- =?utf-8?B?Yy9PRE1rd05pUkZqMlB0ZWw3RkVkZEgrVlRMakRyYlI0T052MU1JYldFUGNy?=
- =?utf-8?B?T3pPR1RhbnJwb0RqNjcyQk9hUTdvTkxPOUNHUHRzRUlTMFU4cTlBTGpFeTZX?=
- =?utf-8?B?OCtrTHYwSXF3bXB2ZHdxaTRTVFhHVXdLME5IWDQ3bmloMStydWdPT29vcHQ1?=
- =?utf-8?B?UlJBbWl1a0JGWnpMVHZ4VUVGUjZzZi9SZmNxOUtIQVlVc2w5S1FUVDh6aXhY?=
- =?utf-8?B?ajVVeWpBZVkvNlV0SjFnUTlNRURNcTRDdW5nazVSTGVsUXVKOUhKQk1ESDFT?=
- =?utf-8?B?VlBSVE5iaTkyNDFzTklVdlJWN28zbkt0WjNya3VJTkFCNG44VVZyVkdhdjhU?=
- =?utf-8?B?ZVV1Vm9DWXREKzNzMzhkTFVxM2kyRTJraHQvM0lhQTkzcGg2YUErS2RXdGJi?=
- =?utf-8?B?VWdMakpRanpPZWFTY0FqekhERTllaC9ValdEeTg2ZDhTZ1QxY05YcjFKSmUx?=
- =?utf-8?B?RU1ZNkNId0dWVHJyMkc1UlFnZlFiUnR1MEwzUVNXUGVmYzZ4eEd6cVhVUkp3?=
- =?utf-8?B?bG85aVQ3YlBIdDBVYjBtYXl1L0pQMjU3azdiMU1FWFM3bEM4VVVIdlZDdUNw?=
- =?utf-8?B?RnlwaXc0U05VcGcwT3hHTnJGM2tLaUpsSGJ6T1RRYXlsYUxQR3QvMzdkZ1k2?=
- =?utf-8?B?TUdNV1RHY29rYmJuNmNja0hyNE83d0hoNXlrMm4wT24yelJGR0hGKzg1TGNv?=
- =?utf-8?B?aEN2MzVFNlRFZGhVNk00dytqQjVvd2JuSEg1S3BRaWgwVGlhT2QwbEExcVBa?=
- =?utf-8?B?UEJJREJnY3lLTW5RbzNGNm1xNS84Nk91a2J1NHRSNTFZNWVTaSt0Uk9ybU1R?=
- =?utf-8?B?ZmRaTVZqOUJXTllCdlFBcUh2dEdsOXB1NktLWEZHSXM2b09YVmc2UngvaitM?=
- =?utf-8?B?YWUxc0l6dG9mbnFTalJURFo5aTYrOHdLcWExR2VkVHB2MFh5NTN6RTNiQUlR?=
- =?utf-8?B?WFFoTE9pQXV2b0hsR2o2ZytreTE0Z3VRRmVRd0FuU1ZqSTFLaXM1QTlaMGR0?=
- =?utf-8?B?ZnRTcU1WM1pXbWNaeEU4ak5JVEgyQ2MrNDRKWUM0dFBUa1hEcW9GRk1Fckc3?=
- =?utf-8?B?V3FoNHlac0FCRWp5QWJYa2JLakFNNndwMGdmK2hSc0VZa3hCSkFZSzZ3NzZO?=
- =?utf-8?B?Zm9EUkQxUGd5UXgyVXJmVU4yYUlxeEc3S0REMUpsdlNOaCt4c3ZtNGFYRFQ1?=
- =?utf-8?B?WlROd0Y2OG81MDIwVmJTM0dPQ2t2ZVovTjFUbTJNTkJqWG9wRUtTWGI3R21h?=
- =?utf-8?B?SDlsdFNKS09lbnJRRmkxK2lKUmpybkFCbGZhcG9FamhRMjc2eWFHMDNJZTIz?=
- =?utf-8?B?TDZnd01FRjRsSmZYeGg2RDUvNHFFVXlkMTlKQ1hnNkFrMElpWGtDY2JJSUN3?=
- =?utf-8?B?YW9sYVBXN0J1YjdoVEFKTGlLcnh0VEpOa1orNVRvQm5ES3NLK0crSUVGd2s5?=
- =?utf-8?B?emNSTi9oNENzOEluYmZjSTRTUDIraGUzWXRIdlFlMmNnV0V3S0ZaSkdVYjlY?=
- =?utf-8?B?WjV6L3NFR0xhZ29TY01USUVFU0gzOFpCa3llMm5PaWViRGN1VEltYndBK0p1?=
- =?utf-8?B?bVRSQXRzVVN0bWxYdnpxNWp1dUE3bkwyNE1ObUx3ait4T084eXJhWUxGMEQ1?=
- =?utf-8?B?MTV4YjlCSmpUVUE4Zmg5d05kR0lCSTVmN0twQlA1eE9nb0llWWxUenhLcHll?=
- =?utf-8?B?R0FkSy9xaFBwSmQ4K0w3M1ZPRmNJOHpla3VuMFhndkNma1RQQWFRb2tEY3dN?=
- =?utf-8?B?SkdJQTY3M0l4alFBRTBBZS9tOHdJNEJQeDhRYVRDTlpkS0RxOTBzVFVpK2pp?=
- =?utf-8?B?em53dDlONGNRPT0=?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR05MB4551.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1102;
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0B31DDDD
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758878393; cv=none; b=Y6ENto5K7UBAL0Gxgh9uhk++ZOPDXLGLg8S419peW2LE0BKFtbo4a5YJyo5CTlRvLNQ5ziRzM0899YbVQ7QQKTK5RajwsFtc2xSrwaU3yqUf/0upJoYIlb5Lljdvd8EpelGBVnrJbGLFqg9zU5GgBFSLVtMaz2M5+T/R7Q+DIB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758878393; c=relaxed/simple;
+	bh=TEd5AL7Kg3HFjuObpN9IOQojResG7/awUio+dsSBQ/c=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=mE7lNMPaJsNpP3vsi2GQ2Qv0+PypVlsUIPKBHKErw7vt/v++XB9bDsDfQFbhfvuLkQBk3jl1QxqOBWeXfFETsi3ZKrHWESI5rqRC2RWgeJ94M5T0TdzGYJqdnlx8IAEGLV9/XwSUMk/qVS9NENm4z8Y1KYUOGaDG9BsBWoUFZEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFhDJu/o; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758878392; x=1790414392;
+  h=date:from:to:cc:subject:message-id;
+  bh=TEd5AL7Kg3HFjuObpN9IOQojResG7/awUio+dsSBQ/c=;
+  b=oFhDJu/ovm89+ON4hGHXImeOMSQV+GFglQst9EH64OEo9Ot235HHOiu0
+   aYpOswHH2bhkuVneARFB516WFgrdkhCGWLpD/G9DWUgFeFxWlDFUpGbV/
+   CteM51Gc+IonZJ6HxdiUPjWDqQoTEn6Tf2QROMtkPnqcdaX++h/g25ZHK
+   usfoMyb97gXwOzq401g1od88aOs95Rvu0Vy0bS0viBeoavMBOUf0ftDQr
+   AvHtZPQyudR2whLrjPXr1lj4gnljksxA5wBtojMg6VY7mk+ea1VVC1IPE
+   /Fn88NG7gKVVWfQ5TBmKP3qx2iuNtjzfJGhN7gH4/996xwxw9xwLB84JV
+   A==;
+X-CSE-ConnectionGUID: eUnIRG1lTpSDQyqpKXdugg==
+X-CSE-MsgGUID: FKM7iFSMQueeiURkyYBtUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="78642831"
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="78642831"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 02:19:52 -0700
+X-CSE-ConnectionGUID: Hcai7chaRV2X8RI0uhQGOA==
+X-CSE-MsgGUID: qFIgGa6FRyarn/gSjYn9YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; 
+   d="scan'208";a="181966966"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Sep 2025 02:19:50 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v24cF-00064r-2q;
+	Fri, 26 Sep 2025 09:19:47 +0000
+Date: Fri, 26 Sep 2025 17:19:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/urgent] BUILD SUCCESS
+ a3a70caf7906708bf9bbc80018752a6b36543808
+Message-ID: <202509261721.ajLZeQyS-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR05MB7842
-X-CodeTwo-MessageID: e78bdd4e-c946-4cea-9d53-6068b7714971.20250926091839@westeu12-emailsignatures-cloud.codetwo.com
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS1EPF00000049.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	8d0d443c-20fb-4d5c-cd4f-08ddfcddad70
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026|35042699022|14060799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eW1NWmJEWnR6ekpIa3dPbCsxemVGOXFGcElQdzM3eUNnY0NUMzhLQ1IrdGpj?=
- =?utf-8?B?NzlKamFxSE9YTWNVRW9vcTVjTHpjWWUwTVZXK2ZEa01OV2YxL3p0YktYSFRP?=
- =?utf-8?B?UTlFa1VRaGZIdUN0dFEvOEpHUlArSGx5TGJzbjRlQ2xtbGF1b0I0U1VxaFB5?=
- =?utf-8?B?bHZEbW5kVTllVWxic3RiNmp5RjFFWFFHWTljNFU2d3lXb21iTC9SWXdvMHh1?=
- =?utf-8?B?a0JPZkhDbGpHZlFjVTVRTWh2Z09SZlA3cU44OHEwSldqc2o5elV5WGk1TDVo?=
- =?utf-8?B?Q0lkT3h6TEJqS3pGamhWNS9PazVNamxLUzhSL1VTZXo2YXpWSnVGV2x2UUxq?=
- =?utf-8?B?bTU3d2JTM3R0dnJNa2wrSVRCZGhLaHVOZlF3ZE9UalVpZ1RLUCtLVmpaSEcx?=
- =?utf-8?B?QUR4NkV4cWpwL2I1Q01LcG1EQTdRMDRQUTc0NXU1U2F1QjRmNmF6eWhVbWFx?=
- =?utf-8?B?eUwxMXpuK3JLMmlPQ0NmMzVhNm10WCtZcTFrKzV3cWljOWhJT3RObWtaY240?=
- =?utf-8?B?VldzTmVpbGpTd1hLelBQelRYR0JFbmo1VFNoMDdMcG5leDA3NnpiV3V6VUN6?=
- =?utf-8?B?d0lycXFYdEpZR0ZHenFIdkdFVjQ1Y0Z1N2l4eHpSZ3c1RUFxUkF0WXRCTHZo?=
- =?utf-8?B?elpUTVZlb1pZY3E2blVDcTRPeDBnU0t0WTBqUTdaSWVZWXF2ZU83ZkNDdkk5?=
- =?utf-8?B?UUFocW9iNEFDSGl6bWh4L3ExTE1FWG1rRDdVRkRJeGJZM3ZyMGRTci9aN21v?=
- =?utf-8?B?QkFXbldHU0hxZVhpMjdZMm9wKzFXdFZoQlVRdS9NQXRvSVErTnEvdm4xaHQy?=
- =?utf-8?B?TWlGS2h1TVJnYzFhWXZMY245c1MrekU1Yk5meVlTYmlPR2ZQNGF5clNUNTYv?=
- =?utf-8?B?dVl6bnhFc0VQKzg4bXRFSEFmRDF2OG10dTRzSlpqcEd2MlhuVjZuMFF1ckYw?=
- =?utf-8?B?OFhGV2tIZzZjZmxmYUNvV0QyRm1NcU9TOWdPczVCMlJRU2JZci92bC9GQy9H?=
- =?utf-8?B?OU1lb1k2SlhpZHg3VTAxMlZ5OUhPaGVCdlJjb2xlSW04bDNhR3Q2bDBDRERu?=
- =?utf-8?B?ZzBOOE10SHhmU1FDK3V1S0ZVUHFZM3lzTHRBbEFlWVhLWXpyNktIdlhxWk53?=
- =?utf-8?B?VUpRUWVEalArVFRxN3VSWXB4WTg4Ukh5RjhVTWJibFkzSUNVVVVTc0M5MThX?=
- =?utf-8?B?N2VNbkFyMFl4T21jTk5GNUdkVUNYZHc1MnlWZlBSdzVpRzk2YmxRTHNLbkxB?=
- =?utf-8?B?NW02Yzc0L0pPbnRIeStBOTIzSWVBdWpHQkpaUHlnUkFnQWU1d2ZxWitjbVcy?=
- =?utf-8?B?U3NRajZkZmNVSDAxTkNmbEZCSThHaWxuMmplMi90aDdHTTVlZ3NvUXZBU2pM?=
- =?utf-8?B?SS9xQnZweGIwN1VTdUg2NFVuV1M0QmYwajZyMWtZd2dISU1aTW53ejJmNG5a?=
- =?utf-8?B?ODZwcVF1ZDFyTWFocS9Pbk1MR1QxZ3JMbE5EWlVxUDdXUkVJQkJtbHEvVFJD?=
- =?utf-8?B?UVRyc0JtVG9PSUZKcTNSWTNQNFFhU2N5TXB2VDhRMnJBdCsxdFZTSlVmVGNl?=
- =?utf-8?B?ZlVyazhpNDI5NUUxbkZUbDNSRkNsTGZpUXdScGlQL1llbUxDUzNJU2ltSHg5?=
- =?utf-8?B?bzd2OENWRlJ3cTE0SXMxMytPcGMyQWowa2JQWXJQOEx4STE2Q1V6SGFycDVo?=
- =?utf-8?B?eXlMMDl2YnNFQ3E2TitocGZZRHIxc2o3QjBmMngzcVB5QjQ3SEVuWGVrZEVa?=
- =?utf-8?B?Z1VER05qejBwdWRFNzdXMWpwcmNnL0ZnSys4VEo0T2lMdjMwMHNKS0htV3d0?=
- =?utf-8?B?aGY3cGNuaGYwUzVhYzFXWUYrbWZZeTdaRWl4RUNZTWZuMSsxcDFKdnQyNjk0?=
- =?utf-8?B?QVVxT25tV0c3MzI2cldGYkoydzdhZ0g3SzQyQSsybmc4L0J1TE1xU2k4Y2pT?=
- =?utf-8?B?U2VaRWYwQytMaGVZWHRGamJBNUJwRkNPKy9SbTFhRVR0M0ZvVXVFcmZUeXJX?=
- =?utf-8?B?ZVpLMUdzajNyUkFLNHoyV2lDMEhDblBEVHpEbW1UM3dXaVJkWXhEeWN1R1E4?=
- =?utf-8?B?RHdSblpuTWU0U1lhUjU0RzM0cHNNakgrVmZiWThTY2ltSC91Yjd0K1hnV01C?=
- =?utf-8?Q?Wsto=3D?=
-X-Forefront-Antispam-Report:
-	CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026)(35042699022)(14060799003);DIR:OUT;SFP:1102;
-X-OriginatorOrg: sttls.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 09:18:40.7138
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 353b4b51-604a-4e78-bb26-08ddfcddaed1
-X-MS-Exchange-CrossTenant-Id: 86583a9a-af49-4f90-b51f-a573c9641d6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=86583a9a-af49-4f90-b51f-a573c9641d6a;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF00000049.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR05MB7034
 
-SGkgSHVnbywNCg0KPiBGcm9tOiBIdWdvIFZpbGxlbmV1dmUgPGh2aWxsZW5ldXZlQGRpbW9ub2Zm
-LmNvbT4NCj4gDQo+IENoYW5nZSBpbmNvcnJlY3QgaW5kZW50YXRpb24gbGV2ZWwgaW50cm9kdWNl
-ZCBpbiBjb21taXQgOWViOTBkNTdiNTVhDQo+ICgic2MxNmlzN3h4OiBBZGQgZmxhZyB0byBhY3Rp
-dmF0ZSBJckRBIG1vZGUiKS4NCg0KPiAtLS0gYS9kcml2ZXJzL3R0eS9zZXJpYWwvc2MxNmlzN3h4
-LmMNCj4gKysrIGIvZHJpdmVycy90dHkvc2VyaWFsL3NjMTZpczd4eC5jDQo+IEBAIC0xMTgxLDcg
-KzExODEsNyBAQCBzdGF0aWMgaW50IHNjMTZpczd4eF9zdGFydHVwKHN0cnVjdCB1YXJ0X3BvcnQg
-KnBvcnQpDQo+ICAJc2MxNmlzN3h4X3BvcnRfdXBkYXRlKHBvcnQsIFNDMTZJUzdYWF9NQ1JfUkVH
-LA0KPiAgCQkJICAgICAgU0MxNklTN1hYX01DUl9JUkRBX0JJVCwNCj4gIAkJCSAgICAgIG9uZS0+
-aXJkYV9tb2RlID8NCj4gLQkJCQlTQzE2SVM3WFhfTUNSX0lSREFfQklUIDogMCk7DQo+ICsJCQkg
-ICAgICBTQzE2SVM3WFhfTUNSX0lSREFfQklUIDogMCk7DQoNCkFyZSB5b3Ugc3VyZSB5b3Ugd2Fu
-dCB0byB1bmluZGVudCB0aGlzPw0KVG8gbWUgaXQgbm93IGxvb2tzIGFzIGlmIGJvdGggIm9uZS0+
-aXJkYV9tb2RlIiBhbmQgIlNDMTZJUzdYWF9NQ1JfSVJEQV9CSVQgOiAwIiBhcmUgcGFyYW1ldGVy
-cy4NCkFuZCB3aHkgbm90IGZpeCB0aGlzIGJ5IHBsYWNpbmcgYm90aCBvbiBvbmUgbGluZT8gSXMg
-NzYgY2hhcmFjdGVycyBhbHJlYWR5IG92ZXIgdGhlIGxpbmUgbGVuZ3RoIGxpbWl0Pw0KDQpLaW5k
-IHJlZ2FyZHMsDQpNYWFydGVuIEJyb2NrDQoNCg==
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/urgent
+branch HEAD: a3a70caf7906708bf9bbc80018752a6b36543808  sched/deadline: Fix dl_server behaviour
+
+elapsed time: 1477m
+
+configs tested: 107
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20250925    gcc-13.4.0
+arc                   randconfig-002-20250925    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                   randconfig-001-20250925    gcc-11.5.0
+arm                   randconfig-002-20250925    gcc-10.5.0
+arm                   randconfig-003-20250925    gcc-8.5.0
+arm                   randconfig-004-20250925    gcc-14.3.0
+arm                           sama7_defconfig    clang-22
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250925    gcc-11.5.0
+arm64                 randconfig-002-20250925    gcc-15.1.0
+arm64                 randconfig-003-20250925    clang-19
+arm64                 randconfig-004-20250925    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250925    gcc-14.3.0
+csky                  randconfig-002-20250925    gcc-15.1.0
+hexagon                          alldefconfig    clang-22
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250925    clang-22
+hexagon               randconfig-002-20250925    clang-22
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20250925    clang-20
+i386        buildonly-randconfig-002-20250925    clang-20
+i386        buildonly-randconfig-003-20250925    gcc-14
+i386        buildonly-randconfig-004-20250925    gcc-14
+i386        buildonly-randconfig-005-20250925    clang-20
+i386        buildonly-randconfig-006-20250925    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250925    clang-18
+loongarch             randconfig-002-20250925    gcc-12.5.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                         apollo_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                         rt305x_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250925    gcc-8.5.0
+nios2                 randconfig-002-20250925    gcc-10.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250925    gcc-8.5.0
+parisc                randconfig-002-20250925    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                 canyonlands_defconfig    clang-22
+powerpc                     mpc512x_defconfig    clang-22
+powerpc               randconfig-001-20250925    clang-22
+powerpc               randconfig-002-20250925    gcc-8.5.0
+powerpc               randconfig-003-20250925    gcc-8.5.0
+powerpc64             randconfig-001-20250925    clang-22
+powerpc64             randconfig-002-20250925    gcc-14.3.0
+powerpc64             randconfig-003-20250925    gcc-8.5.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250925    clang-22
+riscv                 randconfig-002-20250925    clang-22
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250925    gcc-15.1.0
+s390                  randconfig-002-20250925    gcc-13.4.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250925    gcc-15.1.0
+sh                    randconfig-002-20250925    gcc-13.4.0
+sh                           se7712_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250925    gcc-15.1.0
+sparc                 randconfig-002-20250925    gcc-12.5.0
+sparc64               randconfig-001-20250925    gcc-10.5.0
+sparc64               randconfig-002-20250925    gcc-10.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                    randconfig-001-20250925    gcc-14
+um                    randconfig-002-20250925    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20250925    clang-20
+x86_64      buildonly-randconfig-002-20250925    gcc-14
+x86_64      buildonly-randconfig-003-20250925    gcc-14
+x86_64      buildonly-randconfig-004-20250925    clang-20
+x86_64      buildonly-randconfig-005-20250925    clang-20
+x86_64      buildonly-randconfig-006-20250925    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                       common_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20250925    gcc-12.5.0
+xtensa                randconfig-002-20250925    gcc-11.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
