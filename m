@@ -1,201 +1,296 @@
-Return-Path: <linux-kernel+bounces-834324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFE1BA4720
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:36:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15949BA472C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3FD87AD103
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:34:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF6174E03E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20FD212B2F;
-	Fri, 26 Sep 2025 15:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B9B219A79;
+	Fri, 26 Sep 2025 15:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ayE2oDV"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hakOpank"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA27F19FA93
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF1D19FA93
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758900986; cv=none; b=bXRa4R0VM2WJrxwIb0V0Klgtp4OLtOwpK1KGeheYdzVxSTHn0A36IIBJpW9XrsxjvPftDTJhfLTz9ME3kUc9aYtV/qr3H2PUgsC6JXdA8Cjzt6SkPSKH/U0/kRdP6DQFU0wgiO2fmXMItAmWoo49naTpaSbpSNdF1br+6Mgghjk=
+	t=1758901143; cv=none; b=kOXGawVp46Aw8h5jBbZP+LWEYTHjfv4TkBEFU+szWzw9rawG1lO8ySV/vX4W3qibUdSFoB45zJ+jCCukh8cv0ivMbZC9DQ3F+Gaz5XKvuHsWu3taksIEFMGwmkjR29Bk+q4j5L9XZnToYX2mVB+LGXeQx50R/TkI26Y9bw102bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758900986; c=relaxed/simple;
-	bh=qAlQBCHkVNdri2wsgGqTnCtud5aoTRwzthHd5ubpOBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WpOVj8WPX2Ayed2v4SDvMr7KsLBASW/kHr/lvvftAxmVk53ZzNUBvo6UCXJj/SUca7HdtT/xWUmoRl/GpJv7lFnPjdAYcq+F3mls5Fx/XYBOwgmVwExuex/WAOfqMGgdz35pUj5f8r9BQE0CsV6Vq0IdBIBZTMIorjIYDvffKUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ayE2oDV; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4de60f19a57so253751cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:36:24 -0700 (PDT)
+	s=arc-20240116; t=1758901143; c=relaxed/simple;
+	bh=1K4sUGLBHZ9fUpOAIcQYsW8EpilQp6Ba5qGwrWESZls=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LENZX7A45HGnbgnWQPuef0Ohwlp5pWPeUAlZPDK3gOGb014rrg4EgKq7b9AB5cTTwS7ngP10RnUcIKB9NUXqAvSFnNcG7/o5cf81Z5Z9K7yDKY++gW3NksGG22VSJMMzkUdX0QXCCrF99i0h0eSLtP1Hrh+JVfwgiiyJJBpt2nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hakOpank; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46b303f755aso21036935e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:39:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758900983; x=1759505783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZSv7jCMIO3/8aLO/JxtF9r3uIns87B1XPQ7ZuJUAZ8=;
-        b=1ayE2oDVoAz1WbmY91hoCMFJzIZ2MGVhpvx37HX45fht3XjgdMqugqXW8n5Znw/M6t
-         LGzDAhmJgDKQitbvvpAL5hID7/MJRvZSEkE4kXmYwO5wUL81Uc8bRVMrtCcgJmKRpO1A
-         Rn7a81RszR3Dwp2IGG1Azl+yb7wDQSBVMst28XqGOfa2qxl/750OZWmHlfu9McvYd1ir
-         wyasBOpTIevuQV+0uqqDM3re7dwYBiqLxtpXdgy1N26FQ8kBCrZTyVvFV0Tj5NDoqeY2
-         1DK4CvQ6JjULtzCNDkb5TESzNnexg/wOO/yzdlGYN6hwnAunjNQS4wsY1LAezxhoBaON
-         bYsw==
+        d=linaro.org; s=google; t=1758901139; x=1759505939; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kgAcNQqeMGknJHmQ8ARkX/S7uQVoabri2v53BdYsfU=;
+        b=hakOpank/89agKnos/6ubztSlGiKtW8OKD52vcOFDWZAYVEF03rW+npPH+Xa4EneDW
+         5TMSp3Oh3hZDymRng4CZwmsH9vzavBnC6zsccxrnQ9Tat94vmsZVOANVkoUhmm3hMXP+
+         rI7N4h/nWQRRb10uOqiZ5SQuIgRSH27Si7B88pCcLpA8QXucO9rK3gxHUlh4blOV34Z8
+         KHNuSuIQii+egTIy+rPFXWbM6aqwwX8G3Tz0HaGZbiY9CEjb85WVaKXn3WMOEyGtT3GX
+         uJ490edJp2Qjb+IV4JI/3ZVtVHlJA/w9FJhmX0ieelpLuHXKfEUavyqXMx1RS6CO5yef
+         /QBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758900983; x=1759505783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZSv7jCMIO3/8aLO/JxtF9r3uIns87B1XPQ7ZuJUAZ8=;
-        b=jaFm6cW4EFOj0bL8BYlmO/6oj1no/Q/aHy5EjrxsgwJxle9NxDN8d9zki/Z8Nc2nis
-         jUwjlq3VWGE3/SW9o4BBRvIyXeZH3o6IAOzXU/BSTLDIb6yuP1KSyqqgohA4B04FuxJn
-         XTQ5rwAioEVpcg3xyDmTIN2FETh1H5Us534bkCJc7NAk3UUjCs8cCQUAoQm95rvlsIcH
-         26MoOA4N3+zE7stxxpEIPWQtdeKXYFAUQrQQR/qezrceH36MkY91Z2Wz3eznvKQqnZxT
-         JlXVAW7HGl+u3lDqMat+Bk3dTIxLX6X8opPqwWBfIqItJLqmd94jo2vSyyzauWwbWn+O
-         7v9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUAXqzktqqc7v02T51QIQ4CBlONEuuRzOzlWoTmJPg+p62rc0W5X2mvxY7UbvELMdyPMuvt73A0/SXem8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm3fZ3gqhJqMb++cEm0OhabYN9SXKmuPViVlpQ6FiGf7Zr8ole
-	ZZWJxpjeOxOxXnZDMUUMz6IwaEON8B9O6Tn1O+BCz8p0eu49faEo5+Bu2gj5XAuzGDNmzyWM6sf
-	8YhQDi2q3DYqfIX4UfcRE16SHkqkrI02VUva+rO37
-X-Gm-Gg: ASbGncviQCCX2PqfT1CP343ABZKh774cDP7Owlv88bQg9Y2G4Fk0Ud5DNfccUpa651+
-	VaeawNRvK20XHVcV5krgkmh6ccZC9IcvU21e1x5RHlFPP26EKsVRxa3K8edmgmRyHl23zCA5WY9
-	0/bCJM8aUg5jmMdggEcwm7p12D4dhQ/1DM5SlmowKpgQJm+RxeB/aS8BNw3U+Ono/OKlpLFqQQX
-	OXMFLCUVMsk3E8L8R9sahE=
-X-Google-Smtp-Source: AGHT+IEI/jk3UcCkf9eM5O2gzijjqrX9cyj5UxKnCeRHeu/NPv0BxP2Itgt6Aa8b5z+x4oXG2jQMDdeupRKQ2GBDutE=
-X-Received: by 2002:a05:622a:14c:b0:4b7:9b06:ca9f with SMTP id
- d75a77b69052e-4dd1675a20amr6239261cf.2.1758900982412; Fri, 26 Sep 2025
- 08:36:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758901139; x=1759505939;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4kgAcNQqeMGknJHmQ8ARkX/S7uQVoabri2v53BdYsfU=;
+        b=RHcahmSqsY8nWuJWmg5VXGnwPRLz6VQXKGAztZHuNodyQtGgJb1t/BuhO+em+qYcbG
+         S3EdQ1WqTHD80evo8xcdhTun8JTYA56MoFu7gELcnNcDlgRl0NJtpkrHXqWX9v6pIC/8
+         VWmTvkWGl0fMh7h0PBQBE2HscJLdxhIm0Ki0m4F35ofwN4HyxoCSS9TfQlNFt/zdiN4T
+         +UIflU02RE+3hhIBQzDIiOxsYfvP2bXgbk/gDB1hLgKzFXQfnIUMR0HuQOVk06gDcJnS
+         tZNBNL2zi1vgDVcnCaZWGdjbOMorfXEJNSUzoMXBclv011+oSRJ8KweZZSeH6PtoUYDm
+         lMNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSPWS3JCEfCkNJrS9BixYhgq/RyNo6rKPT7e9U8ftIOEHCZPFBxRxKr/xa2DR4RNjCk3ogmWa/1WPO76U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgQaSla3IMiPc0FOj7fgHLfcj6iEX/MZXcdluJCXhO1mO3t/M1
+	NROkGTM0JqcCblRXXiOA3CEUUehkdY5Y1YxqMoG24j/Aoc9zXmORgxYb1EYBlx9jZUg=
+X-Gm-Gg: ASbGncupnYPeG4WbxBVxjDtv/hcMXyCUoOuFAR2mFPh6ZnY3UeFrfwHxbzBHE2e8YxP
+	gWy3xWSa+znfUYjvRAHSZbf4Awjh6jVLoc5WBXMHA6bV2p/MJBzzmK9tUeG5TTZI4pPkWPDJrfl
+	GQnSDvLbKIsJO8Wl4WUW14fInJDX21+4D35j73eFBqV5KAifFaY35Z20k2uvRuWFHGnYJ+MRF4x
+	8HyNnjr9z3geSTbcsdvcSawZYrtJmTH3uRLA8xhDZXunAWvOnjOCo1FWufW92LNf8KF7wKXU1lm
+	AKD6dIlIwhJjkGIaAX12ctWou3IUsbvqMPsLGBnauwadTgV+H9MsGGE0Pcz1Z9fDHcSe+le+2oP
+	cB/OYD3xRdt5HcvXOymvfRyDiR68FVMNjKagZsIJrBtjgyZBFhA==
+X-Google-Smtp-Source: AGHT+IG4FIOGcvrxDMC6xc6YryyjWgNtEn/gDy55HG40g/qAQlKrQwZkQXuag7kr8tkIOAvWnC4WqA==
+X-Received: by 2002:a05:600c:310c:b0:46e:35a0:3587 with SMTP id 5b1f17b1804b1-46e35a037c8mr56312325e9.27.1758901139257;
+        Fri, 26 Sep 2025 08:38:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-40fc5602df0sm7507709f8f.36.2025.09.26.08.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Sep 2025 08:38:58 -0700 (PDT)
+Date: Fri, 26 Sep 2025 18:38:55 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Ariana Lazar <ariana.lazar@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ariana Lazar <ariana.lazar@microchip.com>
+Subject: Re: [PATCH 2/2] iio: dac: adding support for Microchip MCP47FEB02
+Message-ID: <202509262228.MYSY2WkV-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926080659.741991-1-ranxiaokai627@163.com> <96d00a94-1a4b-4378-8d89-0554f89778e1@suse.cz>
-In-Reply-To: <96d00a94-1a4b-4378-8d89-0554f89778e1@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 26 Sep 2025 08:36:11 -0700
-X-Gm-Features: AS18NWDFkKvKtLcxfc1dJhlxjz81QX6DLo5WA6zWZ5CPFfbG2tUlSc1PeLBvbDE
-Message-ID: <CAJuCfpHhOohLKDkVKiY11tHnuKLr1C=ffVqUY3BpV+30kDZjgQ@mail.gmail.com>
-Subject: Re: [PATCH linux-next] alloc_tag: Fix boot failure due to NULL
- pointer dereference
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: ranxiaokai627@163.com, akpm@linux-foundation.org, cl@gentwo.org, 
-	rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com, 
-	usamaarif642@gmail.com, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ran.xiaokai@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922-mcp47feb02-v1-2-06cb4acaa347@microchip.com>
 
-On Fri, Sep 26, 2025 at 5:48=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 9/26/25 10:06, ranxiaokai627@163.com wrote:
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >
-> > There is a boot failure when both CONFIG_DEBUG_KMEMLEAK and
-> > CONFIG_MEM_ALLOC_PROFILING are enabled.
-> >
-> > BUG: kernel NULL pointer dereference, address: 0000000000000000
-> > RIP: 0010:__alloc_tagging_slab_alloc_hook+0x181/0x2f0
-> > Call Trace:
-> >  kmem_cache_alloc_noprof+0x1c8/0x5c0
-> >  __alloc_object+0x2f/0x290
-> >  __create_object+0x22/0x80
-> >  kmemleak_init+0x122/0x190
-> >  mm_core_init+0xb6/0x160
-> >  start_kernel+0x39f/0x920
-> >  x86_64_start_reservations+0x18/0x30
-> >  x86_64_start_kernel+0x104/0x120
-> >  common_startup_64+0x12c/0x138
-> >
-> > In kmemleak, mem_pool_alloc() directly calls kmem_cache_alloc_noprof(),
-> > as a result, the alloc_tag structure associated with object_cache is no=
-t
-> > defined neither initialized. So current->alloc_tag is NULL,
-> > leading to a null pointer dereference.
->
-> Agree with Harry. This should be enough:
->
-> "as a result, current->alloc_tag is NULL, leading to a null pointer
-> dereference."
+Hi Ariana,
 
-Yes, that's much more clear.
+kernel test robot noticed the following build warnings:
 
->
-> > Move the checks for SLAB_NO_OBJ_EXT, SLAB_NOLEAKTRACE, and
-> > __GFP_NO_OBJ_EXT to the parent function __alloc_tagging_slab_alloc_hook=
-()
-> > to fix this.
-> >
-> > Also this distinguishes the SLAB_NOLEAKTRACE case between the actual me=
-mory
-> > allocation failures case, make CODETAG_FLAG_INACCURATE more accurate.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ariana-Lazar/dt-bindings-iio-dac-adding-support-for-Microchip-MCP47FEB02/20250922-193559
+base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+patch link:    https://lore.kernel.org/r/20250922-mcp47feb02-v1-2-06cb4acaa347%40microchip.com
+patch subject: [PATCH 2/2] iio: dac: adding support for Microchip MCP47FEB02
+config: x86_64-randconfig-r073-20250926 (https://download.01.org/0day-ci/archive/20250926/202509262228.MYSY2WkV-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
 
-Awsome!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202509262228.MYSY2WkV-lkp@intel.com/
 
->
-> Good point.
->
-> > Fixes: b9e2f58ffb84 ("alloc_tag: mark inaccurate allocation counters in=
- /proc/allocinfo output")
->
-> That's in mm-stable so the fix should go there (probably too late to fold
-> now) if it's to be in the merge window PR.
->
-> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+smatch warnings:
+drivers/iio/dac/mcp47feb02.c:1258 mcp47feb02_probe() error: uninitialized symbol 'vref_mv'.
+drivers/iio/dac/mcp47feb02.c:1258 mcp47feb02_probe() error: uninitialized symbol 'vref1_mv'.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+vim +/vref_mv +1258 drivers/iio/dac/mcp47feb02.c
 
-Thanks for the fix!
+2e305393740054 Ariana Lazar 2025-09-22  1108  static int mcp47feb02_probe(struct i2c_client *client)
+2e305393740054 Ariana Lazar 2025-09-22  1109  {
+2e305393740054 Ariana Lazar 2025-09-22  1110  	int err, ret, vdd_mv, vref_mv, vref1_mv, i, tmp_vref, vref_ch, gain_ch;
+2e305393740054 Ariana Lazar 2025-09-22  1111  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+2e305393740054 Ariana Lazar 2025-09-22  1112  	const struct mcp47feb02_features *info;
+2e305393740054 Ariana Lazar 2025-09-22  1113  	enum vref_mode ref_mode, ref_mode1;
+2e305393740054 Ariana Lazar 2025-09-22  1114  	struct device *dev = &client->dev;
+2e305393740054 Ariana Lazar 2025-09-22  1115  	struct mcp47feb02_data *data;
+2e305393740054 Ariana Lazar 2025-09-22  1116  	struct iio_dev *indio_dev;
+2e305393740054 Ariana Lazar 2025-09-22  1117  
+2e305393740054 Ariana Lazar 2025-09-22  1118  	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+2e305393740054 Ariana Lazar 2025-09-22  1119  	if (!indio_dev)
+2e305393740054 Ariana Lazar 2025-09-22  1120  		return -ENOMEM;
+2e305393740054 Ariana Lazar 2025-09-22  1121  
+2e305393740054 Ariana Lazar 2025-09-22  1122  	data = iio_priv(indio_dev);
+2e305393740054 Ariana Lazar 2025-09-22  1123  	i2c_set_clientdata(client, indio_dev);
+2e305393740054 Ariana Lazar 2025-09-22  1124  	data->client = client;
+2e305393740054 Ariana Lazar 2025-09-22  1125  	info = i2c_get_match_data(client);
+2e305393740054 Ariana Lazar 2025-09-22  1126  
+2e305393740054 Ariana Lazar 2025-09-22  1127  	if (info->have_eeprom) {
+2e305393740054 Ariana Lazar 2025-09-22  1128  		data->regmap = devm_regmap_init_i2c(client, &mcp47feb02_regmap_config);
+2e305393740054 Ariana Lazar 2025-09-22  1129  		data->have_eeprom = true;
+2e305393740054 Ariana Lazar 2025-09-22  1130  	} else {
+2e305393740054 Ariana Lazar 2025-09-22  1131  		data->regmap = devm_regmap_init_i2c(client, &mcp47fvb02_regmap_config);
+2e305393740054 Ariana Lazar 2025-09-22  1132  		data->have_eeprom = false;
+2e305393740054 Ariana Lazar 2025-09-22  1133  	}
+2e305393740054 Ariana Lazar 2025-09-22  1134  
+2e305393740054 Ariana Lazar 2025-09-22  1135  	if (IS_ERR(data->regmap))
+2e305393740054 Ariana Lazar 2025-09-22  1136  		dev_err_probe(dev, PTR_ERR(data->regmap), "Error initializing i2c regmap\n");
+2e305393740054 Ariana Lazar 2025-09-22  1137  
+2e305393740054 Ariana Lazar 2025-09-22  1138  	err = mcp47feb02_parse_fw(indio_dev, info);
+2e305393740054 Ariana Lazar 2025-09-22  1139  	if (err)
+2e305393740054 Ariana Lazar 2025-09-22  1140  		return dev_err_probe(dev, err, "Error parsing devicetree data\n");
+2e305393740054 Ariana Lazar 2025-09-22  1141  
+2e305393740054 Ariana Lazar 2025-09-22  1142  	if (!info->have_ext_vref2 && data->use_vref1)
+2e305393740054 Ariana Lazar 2025-09-22  1143  		return dev_err_probe(dev, -EINVAL,
+2e305393740054 Ariana Lazar 2025-09-22  1144  				     "Second External reference is unavailable on %s\n",
+2e305393740054 Ariana Lazar 2025-09-22  1145  				     info->name);
+2e305393740054 Ariana Lazar 2025-09-22  1146  
+2e305393740054 Ariana Lazar 2025-09-22  1147  	ret = regmap_read(data->regmap, CMD_FORMAT(MCP47FEB02_VREF_REG_ADDR, READ_CMD), &vref_ch);
+2e305393740054 Ariana Lazar 2025-09-22  1148  	if (ret)
+2e305393740054 Ariana Lazar 2025-09-22  1149  		return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1150  
+2e305393740054 Ariana Lazar 2025-09-22  1151  	ret = regmap_read(data->regmap, CMD_FORMAT(MCP47FEB02_GAIN_STATUS_REG_ADDR, READ_CMD),
+2e305393740054 Ariana Lazar 2025-09-22  1152  			  &gain_ch);
+2e305393740054 Ariana Lazar 2025-09-22  1153  	if (ret)
+2e305393740054 Ariana Lazar 2025-09-22  1154  		return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1155  
+2e305393740054 Ariana Lazar 2025-09-22  1156  	gain_ch = gain_ch >> 8;
+2e305393740054 Ariana Lazar 2025-09-22  1157  
+2e305393740054 Ariana Lazar 2025-09-22  1158  	/*
+2e305393740054 Ariana Lazar 2025-09-22  1159  	 * Values stored in the nonvolatile memory will be transferred to the volatile registers
+2e305393740054 Ariana Lazar 2025-09-22  1160  	 * at startup. For safety reasons, the user receives a warning if startup values
+2e305393740054 Ariana Lazar 2025-09-22  1161  	 * do not match the ones from current devicetree configuration.
+2e305393740054 Ariana Lazar 2025-09-22  1162  	 * Nonvolatile memory can be written at any time
+2e305393740054 Ariana Lazar 2025-09-22  1163  	 */
+2e305393740054 Ariana Lazar 2025-09-22  1164  	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
+2e305393740054 Ariana Lazar 2025-09-22  1165  		/* VDD can be set as Vref only with Gain x1 */
+2e305393740054 Ariana Lazar 2025-09-22  1166  		if ((vref_ch & 0x03) == MCP47FEB02_VREF_VDD &&
+2e305393740054 Ariana Lazar 2025-09-22  1167  		    (gain_ch & 0x01) == MCP47FEB02_GAIN_X2) {
+2e305393740054 Ariana Lazar 2025-09-22  1168  			dev_info(dev, "vdd can be used only with gain x1\n");
+2e305393740054 Ariana Lazar 2025-09-22  1169  			ret = mcp47feb02_write_to_register(data->regmap,
+2e305393740054 Ariana Lazar 2025-09-22  1170  							   MCP47FEB02_GAIN_STATUS_REG_ADDR,
+2e305393740054 Ariana Lazar 2025-09-22  1171  							   i, MCP47FEB02_GAIN_X1);
+2e305393740054 Ariana Lazar 2025-09-22  1172  			if (ret)
+2e305393740054 Ariana Lazar 2025-09-22  1173  				return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1174  
+2e305393740054 Ariana Lazar 2025-09-22  1175  			data->chdata[i].use_2x_gain = MCP47FEB02_GAIN_X1;
+2e305393740054 Ariana Lazar 2025-09-22  1176  		}
+2e305393740054 Ariana Lazar 2025-09-22  1177  
+2e305393740054 Ariana Lazar 2025-09-22  1178  		if (data->phys_channels >= 4 && (i % 2)) {
+2e305393740054 Ariana Lazar 2025-09-22  1179  			if ((vref_ch & 0x03) == MCP47FEB02_EXTERNAL_VREF_BUFFERED &&
+2e305393740054 Ariana Lazar 2025-09-22  1180  			    data->use_vref1 && !data->vref1_buffered)
+2e305393740054 Ariana Lazar 2025-09-22  1181  				dev_info(dev, "vref1 is unbuffered\n");
+2e305393740054 Ariana Lazar 2025-09-22  1182  			else if ((vref_ch & 0x03) == MCP47FEB02_EXTERNAL_VREF_UNBUFFERED &&
+2e305393740054 Ariana Lazar 2025-09-22  1183  				 data->use_vref1 && data->vref1_buffered)
+2e305393740054 Ariana Lazar 2025-09-22  1184  				dev_info(dev, "vref1 is buffered\n");
+2e305393740054 Ariana Lazar 2025-09-22  1185  		} else {
+2e305393740054 Ariana Lazar 2025-09-22  1186  			if ((vref_ch & 0x03) == MCP47FEB02_EXTERNAL_VREF_BUFFERED &&
+2e305393740054 Ariana Lazar 2025-09-22  1187  			    data->use_vref && !data->vref_buffered)
+2e305393740054 Ariana Lazar 2025-09-22  1188  				dev_info(dev, "vref is unbuffered\n");
+2e305393740054 Ariana Lazar 2025-09-22  1189  			else if ((vref_ch & 0x03) == MCP47FEB02_EXTERNAL_VREF_UNBUFFERED &&
+2e305393740054 Ariana Lazar 2025-09-22  1190  				 data->use_vref && data->vref_buffered)
+2e305393740054 Ariana Lazar 2025-09-22  1191  				dev_info(dev, "vref is buffered\n");
+2e305393740054 Ariana Lazar 2025-09-22  1192  		}
+2e305393740054 Ariana Lazar 2025-09-22  1193  
+2e305393740054 Ariana Lazar 2025-09-22  1194  		vref_ch = vref_ch >> 2;
+2e305393740054 Ariana Lazar 2025-09-22  1195  		gain_ch = gain_ch >> 1;
+2e305393740054 Ariana Lazar 2025-09-22  1196  	}
+2e305393740054 Ariana Lazar 2025-09-22  1197  
+2e305393740054 Ariana Lazar 2025-09-22  1198  	if (data->use_vref)
+2e305393740054 Ariana Lazar 2025-09-22  1199  		ref_mode = data->vref_buffered ?
+2e305393740054 Ariana Lazar 2025-09-22  1200  			MCP47FEB02_EXTERNAL_VREF_BUFFERED : MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
+2e305393740054 Ariana Lazar 2025-09-22  1201  	else
+2e305393740054 Ariana Lazar 2025-09-22  1202  		ref_mode = MCP47FEB02_INTERNAL_BAND_GAP;
+2e305393740054 Ariana Lazar 2025-09-22  1203  
+2e305393740054 Ariana Lazar 2025-09-22  1204  	if (data->use_vref1)
+2e305393740054 Ariana Lazar 2025-09-22  1205  		ref_mode1 = data->vref1_buffered ?
+2e305393740054 Ariana Lazar 2025-09-22  1206  			MCP47FEB02_EXTERNAL_VREF_BUFFERED : MCP47FEB02_EXTERNAL_VREF_UNBUFFERED;
+2e305393740054 Ariana Lazar 2025-09-22  1207  
+2e305393740054 Ariana Lazar 2025-09-22  1208  	else
+2e305393740054 Ariana Lazar 2025-09-22  1209  		ref_mode1 =  MCP47FEB02_INTERNAL_BAND_GAP;
+2e305393740054 Ariana Lazar 2025-09-22  1210  
+2e305393740054 Ariana Lazar 2025-09-22  1211  	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
+2e305393740054 Ariana Lazar 2025-09-22  1212  		if (data->phys_channels >= 4 && (i % 2))
+2e305393740054 Ariana Lazar 2025-09-22  1213  			tmp_vref = ref_mode1;
+2e305393740054 Ariana Lazar 2025-09-22  1214  		else
+2e305393740054 Ariana Lazar 2025-09-22  1215  			tmp_vref = ref_mode;
+2e305393740054 Ariana Lazar 2025-09-22  1216  
+2e305393740054 Ariana Lazar 2025-09-22  1217  		ret = mcp47feb02_write_to_register(data->regmap, MCP47FEB02_VREF_REG_ADDR,
+2e305393740054 Ariana Lazar 2025-09-22  1218  						   i, tmp_vref);
+2e305393740054 Ariana Lazar 2025-09-22  1219  		if (ret)
+2e305393740054 Ariana Lazar 2025-09-22  1220  			return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1221  
+2e305393740054 Ariana Lazar 2025-09-22  1222  		data->chdata[i].ref_mode = tmp_vref;
+2e305393740054 Ariana Lazar 2025-09-22  1223  	}
+2e305393740054 Ariana Lazar 2025-09-22  1224  
+2e305393740054 Ariana Lazar 2025-09-22  1225  	indio_dev->name = id->name;
+2e305393740054 Ariana Lazar 2025-09-22  1226  	if (info->have_eeprom)
+2e305393740054 Ariana Lazar 2025-09-22  1227  		indio_dev->info = &mcp47feb02_info;
+2e305393740054 Ariana Lazar 2025-09-22  1228  	else
+2e305393740054 Ariana Lazar 2025-09-22  1229  		indio_dev->info = &mcp47fvb02_info;
+2e305393740054 Ariana Lazar 2025-09-22  1230  
+2e305393740054 Ariana Lazar 2025-09-22  1231  	ret = devm_mutex_init(dev, &data->lock);
+2e305393740054 Ariana Lazar 2025-09-22  1232  	if (ret < 0)
+2e305393740054 Ariana Lazar 2025-09-22  1233  		return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1234  
+2e305393740054 Ariana Lazar 2025-09-22  1235  	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
+2e305393740054 Ariana Lazar 2025-09-22  1236  	if (ret < 0)
+2e305393740054 Ariana Lazar 2025-09-22  1237  		return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1238  
+2e305393740054 Ariana Lazar 2025-09-22  1239  	vdd_mv = ret / 1000;
+2e305393740054 Ariana Lazar 2025-09-22  1240  
+2e305393740054 Ariana Lazar 2025-09-22  1241  	if (data->use_vref) {
+2e305393740054 Ariana Lazar 2025-09-22  1242  		ret = devm_regulator_get_enable_read_voltage(dev, "vref");
+2e305393740054 Ariana Lazar 2025-09-22  1243  		if (ret < 0)
+2e305393740054 Ariana Lazar 2025-09-22  1244  			return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1245  
+2e305393740054 Ariana Lazar 2025-09-22  1246  		vref_mv = ret / 1000;
+2e305393740054 Ariana Lazar 2025-09-22  1247  	}
 
->
-> > ---
-> >  mm/slub.c | 18 +++++++++---------
-> >  1 file changed, 9 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 867a07260acf..09cbe580842c 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2197,15 +2197,6 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s,=
- gfp_t flags, void *p)
-> >  {
-> >       struct slab *slab;
-> >
-> > -     if (!p)
-> > -             return NULL;
-> > -
-> > -     if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
-> > -             return NULL;
-> > -
-> > -     if (flags & __GFP_NO_OBJ_EXT)
-> > -             return NULL;
-> > -
-> >       slab =3D virt_to_slab(p);
-> >       if (!slab_obj_exts(slab) &&
-> >           alloc_slab_obj_exts(slab, s, flags, false)) {
-> > @@ -2223,6 +2214,15 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cach=
-e *s, void *object, gfp_t flags)
-> >  {
-> >       struct slabobj_ext *obj_exts;
-> >
-> > +     if (!object)
-> > +             return;
-> > +
-> > +     if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
-> > +             return;
-> > +
-> > +     if (flags & __GFP_NO_OBJ_EXT)
-> > +             return;
-> > +
-> >       obj_exts =3D prepare_slab_obj_exts_hook(s, flags, object);
-> >       /*
-> >        * Currently obj_exts is used only for allocation profiling.
->
+uninitialized on else path.
+
+2e305393740054 Ariana Lazar 2025-09-22  1248  
+2e305393740054 Ariana Lazar 2025-09-22  1249  	if (data->use_vref1) {
+2e305393740054 Ariana Lazar 2025-09-22  1250  		ret = devm_regulator_get_enable_read_voltage(dev, "vref1");
+2e305393740054 Ariana Lazar 2025-09-22  1251  		if (ret < 0)
+2e305393740054 Ariana Lazar 2025-09-22  1252  			return ret;
+2e305393740054 Ariana Lazar 2025-09-22  1253  
+2e305393740054 Ariana Lazar 2025-09-22  1254  		vref1_mv = ret / 1000;
+2e305393740054 Ariana Lazar 2025-09-22  1255  	}
+
+vref1_mv not initialized on else path.
+
+2e305393740054 Ariana Lazar 2025-09-22  1256  
+2e305393740054 Ariana Lazar 2025-09-22  1257  	for_each_set_bit(i, &data->active_channels_mask, data->phys_channels) {
+2e305393740054 Ariana Lazar 2025-09-22 @1258  		ret = mcp47feb02_init_scales_avail(info, data, vdd_mv, vref_mv, vref1_mv);
+
+It doesn't matter that mcp47feb02_init_scales_avail() checks data->use_vref
+and data->use_vref1.  It's considered a bug anyway because the function is
+not marked as __always_inline.  UBSan will complain at runtime as well.
+
+2e305393740054 Ariana Lazar 2025-09-22  1259  		if (ret)
+2e305393740054 Ariana Lazar 2025-09-22  1260  			dev_err_probe(dev, ret, "failed to init scales for ch i %d\n", i);
+2e305393740054 Ariana Lazar 2025-09-22  1261  	}
+2e305393740054 Ariana Lazar 2025-09-22  1262  
+2e305393740054 Ariana Lazar 2025-09-22  1263  	err = iio_device_register(indio_dev);
+2e305393740054 Ariana Lazar 2025-09-22  1264  
+2e305393740054 Ariana Lazar 2025-09-22  1265  	return err;
+2e305393740054 Ariana Lazar 2025-09-22  1266  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
