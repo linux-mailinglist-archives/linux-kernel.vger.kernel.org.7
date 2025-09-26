@@ -1,403 +1,122 @@
-Return-Path: <linux-kernel+bounces-833781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1074FBA30ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:02:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA453BA30F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6923162651C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:02:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0EAC7B99D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC7E28B400;
-	Fri, 26 Sep 2025 09:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060C62BE658;
+	Fri, 26 Sep 2025 09:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ULJO/MAL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYXlLIdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B82A2BE03E
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467A28D8FD
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877261; cv=none; b=uhGkWNmXcr+ASi6Ota3BMpaYS5OhYkR8rrVAAQrCLG7P79gT6Swhbb+AxHnmQyFVOBA2ObRPpydJQ+Dpe5WY+wtR+zi6q+EkFhLszhD2GpRU9pkPKyvKt1FJOZisRzUQMs82WJDS6M5+6cRV5UG6EymlIYLJRxqIV6al71lC4Kk=
+	t=1758877264; cv=none; b=mgCmFtoJADZs3/UFu9hRQLsk6xgutOK4Cz2ZtVxlXGaNIlVnFUp5BzZ9p/oyJjQC56Ib2HlgKhtiLtFnMXLtGTIYIHxZskWyxQRdFhYNG78ilidPvsf3rkVbeJgltpafYItMM81uve/c3TKXaBTHuJCf0PMu1BdRcxbimab7+zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877261; c=relaxed/simple;
-	bh=2wA0d16u/6KCj+Abm5zr10wxjk/Nv6UemcjdDLNfRf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mf3JOS+Qv/Y4lbDzhkqeMYN85cKgWjUt6BUq50AHzKuxe7TxzX3nyPFP3tpZ7CRVz5uW9eiNMvx1mR3Jwvp5pCu7ZLOOm1+blPF8ONe2owKdz8Mqtwy5wzVnvwKXv5RBbjqGVbURQjAU3z1mWdrR8NLEvu55iLaefQKxuNGVr7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ULJO/MAL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758877258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1ShGXGHPdvYlBe5RKUUi4Bd0ovd8HxH8J4+xlI4KkhA=;
-	b=ULJO/MALAs1ZcXAxuOLpTY39cV3NlAw/evOxTJKxu8B7nrqUzvVHXLaZabgxDAeSfcIQVm
-	ZaqqJCdPSF48fFykJIgkjOoprSE+jaBZUIlIvWYQRtn1XIqJ8H8GI6S0UJjSHZ1OsgGBVT
-	awdksZY31Codo1zusfILMPwIWl8NVCI=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-189-NB8asTv_Pmuulr3cT5QhFg-1; Fri, 26 Sep 2025 05:00:57 -0400
-X-MC-Unique: NB8asTv_Pmuulr3cT5QhFg-1
-X-Mimecast-MFC-AGG-ID: NB8asTv_Pmuulr3cT5QhFg_1758877256
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-761169b7f11so2331603a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:00:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758877256; x=1759482056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1ShGXGHPdvYlBe5RKUUi4Bd0ovd8HxH8J4+xlI4KkhA=;
-        b=IA8qZBBtsmcvl10WfCxBjl8hAS69HRuc53vq4Hi3iEfMOeLn1kVpvnfXQ2day6/1Yq
-         v30V4vRuZqXHes4ROpqMcy9AcE7VwpuQPqwIMlCEze58R8oCbFjdYix1/O4zFudNkl6S
-         RMlSjX/yQPZgLs2mUwhBt3yy3fWp13iDwffreaW6t4+CHQywxDjNMDisTHVvGIQX/Rrx
-         OKJ9tflKJA4ncXnuupRTP5n4qeMtNkXJc/ow8fIJA2HC7sGCgRFTQfsF5EC+h33PrGFU
-         BFHdQkZ6rr1N6jVJR+oYpif0zQsvzUPPsgisJ8Nmu/ApVrKXv0SM8bpalOMkP7Kv+YLL
-         /ezQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbPlPWHEW5WwT9jqvAhvriyphXydUNI7ynF18VFKHQ6lWuBGndtrkoEIsS1gL6lGRSBTvQBjY77f8KAl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8xzDfVTc/JojChZvrQwo2Yr4gOufc/osUYI1Ko0+WUhsoGequ
-	Pw/WWfZr2NbumNT8g5TdI7rX6FCt+iYu7JdxPWgKuhaSNxjUXVRzvVpwlJUMiMUJ9IVseETdJNS
-	XjzWK948eynV9IJ+B9hcPhhOzNSclOOv39O1sXWsZAhPJY4jbieR94GcS5WjJFDMeLiuy+nnPsD
-	W8PzNtk2cvgcBNN+Ypnn+qpooZgZBvxpSkF3tdRmj7
-X-Gm-Gg: ASbGncsyPKNWbBZ5lyamtJPcEd+mf1Z0IOhQGJOPYGWS3DoUDenwCB2CZSOk8+X7xhb
-	UAObl8plCIcmzlgbVvmVQTQf01jBm0xD0QXg4ZpvCwbxI71kboWJ3mAqt3es6NJ6WNnP4UhuHKo
-	/mOddiIBRlZUCF3t6XpIuF2Q==
-X-Received: by 2002:a05:6830:25d6:b0:790:78e6:8450 with SMTP id 46e09a7af769-7a03d122795mr3216498a34.6.1758877255716;
-        Fri, 26 Sep 2025 02:00:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZxy8k2uUNsp1XRNbnNWcIuiqAPl8O62jVNCJNNdDph9uiBGilSEFZNffrSh/bpMVUsWAWwFTFyXQs20a4HOw=
-X-Received: by 2002:a05:6830:25d6:b0:790:78e6:8450 with SMTP id
- 46e09a7af769-7a03d122795mr3216478a34.6.1758877255212; Fri, 26 Sep 2025
- 02:00:55 -0700 (PDT)
+	s=arc-20240116; t=1758877264; c=relaxed/simple;
+	bh=aoHwYNOokXAGRoK1jVhoOEMXZxjxQdbdW4MEf+flVRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SJoPulZIS6y8c7DzimHL0q4EXtKtYIDhIy2BJCE8UvGROptFJCGEo0BSOasylEIEWPjjzssZ+Vy4If6M+Gnxtadce0FG5+PavzjgQHCWU9x9cynoYNmooI2xP60w4q27GSfn3n4jO+LogQfkqregSV+iyTrZqP04Zu43VzIgJeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYXlLIdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D609C4CEF7;
+	Fri, 26 Sep 2025 09:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758877264;
+	bh=aoHwYNOokXAGRoK1jVhoOEMXZxjxQdbdW4MEf+flVRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PYXlLIddG5o643w4XSILB/DoVovDl52dYTyTwheDRkfqFKsWIjSGiO1YNg/QQF2DF
+	 Yy3+XfHgVG7ufU9kDESkrPZtZ6d/r8e83/Aj5zIqDus2HtsWqRFwB9E0CxVP8MKee2
+	 59c7jKvWqAeGCPutnOJk6ZvBchzEXqTLA3H+kihwDIrfq00kEMsqu6qC+xkBL2o175
+	 kBmYzKALzV+ZE6VrCqMcG2Lv1rU3A3JU+Yacg3ihF6q+O2+LyoeI2zBr1XyYSxfrQb
+	 O5V93ifpDrkxRLTFW/Zx4by2jpfsBs5VFWTN2ctdyNRWtKWc+c7oNeRitDnaHZehYI
+	 3YYdR/mFK1Ayw==
+Date: Fri, 26 Sep 2025 12:01:00 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+	Cong Wang <cwang@multikernel.io>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
+ support
+Message-ID: <aNZWTB_AbK1qtacy@kernel.org>
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918222202.1353854-1-irogers@google.com> <20250918222202.1353854-4-irogers@google.com>
-In-Reply-To: <20250918222202.1353854-4-irogers@google.com>
-From: Qiao Zhao <qzhao@redhat.com>
-Date: Fri, 26 Sep 2025 17:00:43 +0800
-X-Gm-Features: AS18NWAV1pmn_mwfn6L3-Ucum_4jK7MR8aU109NNkeDKqD7xSbvxIWq9Qew7oX4
-Message-ID: <CAATMXfnqCjxSV2wOqDJ9copKMWyR5hNe9p78kwtrn+W7UCV2DQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] perf test: Avoid uncore_imc/clockticks in
- uniquification test
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Athira Rajeev <atrajeev@linux.ibm.com>, Chun-Tse Shao <ctshao@google.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
 
-Hi Ian,
+On Thu, Sep 18, 2025 at 03:25:59PM -0700, Cong Wang wrote:
+> This patch series introduces multikernel architecture support, enabling
+> multiple independent kernel instances to coexist and communicate on a
+> single physical machine. Each kernel instance can run on dedicated CPU
+> cores while sharing the underlying hardware resources.
+> 
+> The multikernel architecture provides several key benefits:
+> - Improved fault isolation between different workloads
+> - Enhanced security through kernel-level separation
+> - Better resource utilization than traditional VM (KVM, Xen etc.)
+> - Potential zero-down kernel update with KHO (Kernel Hand Over)
 
-I tested your patch (latest linux-next code + your patch) on hybrid
-CPU machine {CPU Model name: 12th Gen Intel(R) Core(TM) i7-12800HE}
-and failed,
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# perf test -vv "perf stat events uniquifying"
- 95: perf stat events uniquifying:
---- start ---
-test child forked, pid 21799
-Uniquification of PMU sysfs events test
-Testing event uncore_imc_free_running/data_read/ is uniquified to
-uncore_imc_free_running_0/data_read/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
+This list is like asking AI to list benefits, or like the whole cover
+letter has that type of feel.
 
+I'd probably work on benchmarks and other types of tests that can
+deliver comparative figures, and show data that addresses workloads
+with KVM, namespaces/cgroups and this, reflecting these qualities.
 
- Performance counter stats for 'system wide':
+E.g. consider "Enhanced security through kernel-level separation".
+It's a pre-existing feature probably since dawn of time. Any new layer
+makes obviously more complex version "kernel-level separation". You'd
+had to prove that this even more complex version is more secure than
+pre-existing science.
 
-CPU0                 1.47 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_read/
-CPU0                 1.47 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_read/
+kexec and its various corner cases and how this patch set addresses
+them is the part where I'm most lost.
 
-       0.000925108 seconds time elapsed
+If I look at one of multikernel distros (I don't know any other
+tbh) that I know it's really VT-d and that type of hardware
+enforcement that make Qubes shine:
 
-Testing event uncore_imc_free_running/data_total/ is uniquified to
-uncore_imc_free_running_0/data_total/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
+https://www.qubes-os.org/
 
+That said, I did not look how/if this is using CPU virtualization
+features as part of the solution, so correct me if I'm wrong.
 
- Performance counter stats for 'system wide':
+I'm not entirely sure whether this is aimed to be alternative to
+namespaces/cgroups or vms but more in the direction of Solaris Zones
+would be imho better alternative at least for containers because
+it saves the overhead of an extra kernel. There's also a patch set
+for this:
 
-CPU0                 0.59 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_total/
-CPU0                 0.58 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_total/
+https://lwn.net/Articles/780364/?ref=alian.info
 
-       0.000969877 seconds time elapsed
+VM barrier combined with IOMMU is pretty strong and hardware
+enforced, and with polished configuration it can be fairly
+performant (e.g. via page cache bypass and stuff like that)
+so really the overhead that this is fighting against is 
+context switch overhead.
 
-Testing event uncore_imc_free_running/data_write/ is uniquified to
-uncore_imc_free_running_0/data_write/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
+In security I don't believe this has any realistic chances to
+win over VMs and IOMMU...
 
-
- Performance counter stats for 'system wide':
-
-CPU0                 0.00 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_write/
-CPU0                 0.00 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_write/
-
-       0.001183888 seconds time elapsed
-
-Testing event uncore_imc_free_running/data_read/ is uniquified to
-uncore_imc_free_running_1/data_read/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
-
-
- Performance counter stats for 'system wide':
-
-CPU0                 0.29 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_read/
-CPU0                 0.29 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_read/
-
-       0.000710088 seconds time elapsed
-
-Testing event uncore_imc_free_running/data_total/ is uniquified to
-uncore_imc_free_running_1/data_total/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
-
-
- Performance counter stats for 'system wide':
-
-CPU0                 0.62 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_total/
-CPU0                 0.67 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_total/
-
-       0.000959074 seconds time elapsed
-
-Testing event uncore_imc_free_running/data_write/ is uniquified to
-uncore_imc_free_running_1/data_write/
-Uniquification of PMU sysfs events test [Failed]
-# started on Fri Sep 26 04:49:54 2025
-
-
- Performance counter stats for 'system wide':
-
-CPU0                 0.23 MiB
-uncore_imc_free_running_0/uncore_imc_free_running,data_write/
-CPU0                 0.23 MiB
-uncore_imc_free_running_1/uncore_imc_free_running,data_write/
-
-       0.000775028 seconds time elapsed
-
----- end(-1) ----
- 95: perf stat events uniquifying                                    : FAIL=
-ED!
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# ls -la /sys/bus/event_source/devices/uncore_imc_free_running_*/events/
-/sys/bus/event_source/devices/uncore_imc_free_running_0/events/:
-total 0
-drwxr-xr-x. 2 root root    0 Sep 26 04:57 .
-drwxr-xr-x. 5 root root    0 Sep 26 01:49 ..
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read.unit
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total.unit
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write.unit
-
-/sys/bus/event_source/devices/uncore_imc_free_running_1/events/:
-total 0
-drwxr-xr-x. 2 root root    0 Sep 26 04:57 .
-drwxr-xr-x. 5 root root    0 Sep 26 01:49 ..
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_read.unit
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_total.unit
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write.scale
--r--r--r--. 1 root root 4096 Sep 26 01:49 data_write.unit
-
-- Qiao
-
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
-On Fri, Sep 19, 2025 at 6:22=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> The detection of uncore_imc may happen for free running PMUs and the
-> clockticks event may be present on uncore_clock. Rewrite the test to
-> detect duplicated/deduplicated events from perf list, not hardcoded to
-> uncore_imc.
->
-> If perf stat fails then assume it is permissions and skip the test.
->
-> Fixes: 070b315333ee ("perf test: Restrict uniquifying test to machines wi=
-th 'uncore_imc'")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  .../tests/shell/stat+event_uniquifying.sh     | 109 ++++++++----------
->  1 file changed, 49 insertions(+), 60 deletions(-)
->
-> diff --git a/tools/perf/tests/shell/stat+event_uniquifying.sh b/tools/per=
-f/tests/shell/stat+event_uniquifying.sh
-> index bf54bd6c3e2e..b5dec6b6da36 100755
-> --- a/tools/perf/tests/shell/stat+event_uniquifying.sh
-> +++ b/tools/perf/tests/shell/stat+event_uniquifying.sh
-> @@ -4,74 +4,63 @@
->
->  set -e
->
-> -stat_output=3D$(mktemp /tmp/__perf_test.stat_output.XXXXX)
-> -perf_tool=3Dperf
->  err=3D0
-> +stat_output=3D$(mktemp /tmp/__perf_test.stat_output.XXXXX)
->
-> -test_event_uniquifying() {
-> -  # We use `clockticks` in `uncore_imc` to verify the uniquify behavior.
-> -  pmu=3D"uncore_imc"
-> -  event=3D"clockticks"
-> -
-> -  # If the `-A` option is added, the event should be uniquified.
-> -  #
-> -  # $perf list -v clockticks
-> -  #
-> -  # List of pre-defined events (to be used in -e or -M):
-> -  #
-> -  #   uncore_imc_0/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #   uncore_imc_1/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #   uncore_imc_2/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #   uncore_imc_3/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #   uncore_imc_4/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #   uncore_imc_5/clockticks/                           [Kernel PMU eve=
-nt]
-> -  #
-> -  #   ...
-> -  #
-> -  # $perf stat -e clockticks -A -- true
-> -  #
-> -  #  Performance counter stats for 'system wide':
-> -  #
-> -  # CPU0            3,773,018      uncore_imc_0/clockticks/
-> -  # CPU0            3,609,025      uncore_imc_1/clockticks/
-> -  # CPU0                    0      uncore_imc_2/clockticks/
-> -  # CPU0            3,230,009      uncore_imc_3/clockticks/
-> -  # CPU0            3,049,897      uncore_imc_4/clockticks/
-> -  # CPU0                    0      uncore_imc_5/clockticks/
-> -  #
-> -  #        0.002029828 seconds time elapsed
-> -
-> -  echo "stat event uniquifying test"
-> -  uniquified_event_array=3D()
-> +cleanup() {
-> +  rm -f "${stat_output}"
->
-> -  # Skip if the machine does not have `uncore_imc` device.
-> -  if ! ${perf_tool} list pmu | grep -q ${pmu}; then
-> -    echo "Target does not support PMU ${pmu} [Skipped]"
-> -    err=3D2
-> -    return
-> -  fi
-> +  trap - EXIT TERM INT
-> +}
->
-> -  # Check how many uniquified events.
-> -  while IFS=3D read -r line; do
-> -    uniquified_event=3D$(echo "$line" | awk '{print $1}')
-> -    uniquified_event_array+=3D("${uniquified_event}")
-> -  done < <(${perf_tool} list -v ${event} | grep ${pmu})
-> +trap_cleanup() {
-> +  echo "Unexpected signal in ${FUNCNAME[1]}"
-> +  cleanup
-> +  exit 1
-> +}
-> +trap trap_cleanup EXIT TERM INT
->
-> -  perf_command=3D"${perf_tool} stat -e $event -A -o ${stat_output} -- tr=
-ue"
-> -  $perf_command
-> +test_event_uniquifying() {
-> +  echo "Uniquification of PMU sysfs events test"
->
-> -  # Check the output contains all uniquified events.
-> -  for uniquified_event in "${uniquified_event_array[@]}"; do
-> -    if ! cat "${stat_output}" | grep -q "${uniquified_event}"; then
-> -      echo "Event is not uniquified [Failed]"
-> -      echo "${perf_command}"
-> -      cat "${stat_output}"
-> -      err=3D1
-> -      break
-> -    fi
-> +  # Read events from perf list with and without -v. With -v the duplicat=
-e PMUs
-> +  # aren't deduplicated. Note, json events are listed by perf list witho=
-ut a
-> +  # PMU.
-> +  read -ra pmu_events <<< "$(perf list --raw pmu)"
-> +  read -ra pmu_v_events <<< "$(perf list -v --raw pmu)"
-> +  # For all non-deduplicated events.
-> +  for pmu_v_event in "${pmu_v_events[@]}"; do
-> +    # If the event matches an event in the deduplicated events then it m=
-usn't
-> +    # be an event with duplicate PMUs, continue the outer loop.
-> +    for pmu_event in "${pmu_events[@]}"; do
-> +      if [[ "$pmu_v_event" =3D=3D "$pmu_event" ]]; then
-> +        continue 2
-> +      fi
-> +    done
-> +    # Strip the suffix from the non-deduplicated event's PMU.
-> +    event=3D$(echo "$pmu_v_event" | sed -E 's/_[0-9]+//')
-> +    for pmu_event in "${pmu_events[@]}"; do
-> +      if [[ "$event" =3D=3D "$pmu_event" ]]; then
-> +        echo "Testing event ${event} is uniquified to ${pmu_v_event}"
-> +        if ! perf stat -e "$event" -A -o ${stat_output} -- true; then
-> +          echo "Error running perf stat for event '$event'  [Skip]"
-> +          if [ $err =3D 0 ]; then
-> +            err=3D2
-> +          fi
-> +          continue
-> +        fi
-> +        # Ensure the non-deduplicated event appears in the output.
-> +        if ! grep -q "${pmu_v_event}" "${stat_output}"; then
-> +          echo "Uniquification of PMU sysfs events test [Failed]"
-> +          cat "${stat_output}"
-> +          err=3D1
-> +        fi
-> +        break
-> +      fi
-> +    done
->    done
->  }
->
->  test_event_uniquifying
-> -rm -f "${stat_output}"
-> +cleanup
->  exit $err
-> --
-> 2.51.0.470.ga7dc726c21-goog
->
->
-
+BR, Jarkko
 
