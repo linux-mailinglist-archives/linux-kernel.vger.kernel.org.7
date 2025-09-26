@@ -1,188 +1,191 @@
-Return-Path: <linux-kernel+bounces-834471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7412BBA4C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620E9BA4C33
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9AE1B2494A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3DD3A92F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECC430CD92;
-	Fri, 26 Sep 2025 17:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA8F307ACC;
+	Fri, 26 Sep 2025 17:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNGR1qfG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="LxrrZ70p"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026030CB50;
-	Fri, 26 Sep 2025 17:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1E23B7A8;
+	Fri, 26 Sep 2025 17:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758906879; cv=none; b=Bi/O+gEx/2C+HpxYXtwWYF5qXWiSBog+LkLcUJS5BTnJzIR21eqUUrqDxCBLByA5O2Pkm7MsL5UHEI2yLKYhGTcX5CwdaMCUPOxfiDbWPMMw0JeAHcovECh5lzS7YvTJxwusdZ3lcqHjM6YmyJARg0m/lUY9fepHvXfGovWaN8w=
+	t=1758906961; cv=none; b=QLj5DorwobNW5G3AKbI7CDo46K5LTtz2EizQj0JhnJEZkTrzFu5F7uyhRNbSer7BjfOzMMFBCVPX4hwOCzXhO46N8TIB9Rj5xvuy4h2jx6H7BNSx2+ra0J1rj1KRschKkmwiX0B7VMzrGkxiAYkRBGxH673o1EvJI9Gi/J8LlXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758906879; c=relaxed/simple;
-	bh=ACLLyTH6WzBUIy6EmJzPFE4VsZS26yNgY1PV+Hi3dKY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=D3LW1Nxs9rz/0s9qkpznoNFUO1ZMGquH4oKev+gyZLavwfAeQoXQvswrGy5sLtHRSTo4tlWfW13wxJjQnCQF0NDexCILhoBROMNrcrZ/bp/XjlwEwv9sujq7hmZzA8aHryWEEby/aCw4b/OTe8NgSPsQeBWCi/vl7wDtcr4w9YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNGR1qfG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E54C4CEF4;
-	Fri, 26 Sep 2025 17:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758906878;
-	bh=ACLLyTH6WzBUIy6EmJzPFE4VsZS26yNgY1PV+Hi3dKY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=sNGR1qfG42JFYCO5k/n7dorfGNrwgbW3MmFZpb9Bh9LRS0VuauOd+I8wsQI055OJ5
-	 0+USKbkaWUCDwGKK/ytGyq6CdleSufXYI47qWpWuVptTTjWVJFVLMgoAHtcPQomU1K
-	 j/zEtcH2r6x8k1F0VfjzYHyMkj6Db8CJ+5awYzyRRP+HW/3wkHqAUxF0mmwvUtJtyG
-	 ZY1yEIy1hsMp+lOMFX48jaWUGvKKyshAPbU9S1PUwUp1l8Idqo02JVsEZhXwB0wswL
-	 ttDs7oQx2yu6TLYdAh/5u1eA1n+DSo6OK0qKBA3TjC71rlacqDcwscaYFjUWu8f8va
-	 fPjiQa5UVfOAw==
-Date: Fri, 26 Sep 2025 19:14:38 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-CC: Manivannan Sadhasivam <mani@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, ntb@lists.linux.dev,
- imx@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_1/3=5D_PCI=3A_endpoint=3A_Add_help?=
- =?US-ASCII?Q?er_function_pci=5Fepf=5Fget=5Fbar=5Frequired=5Fsize=28=29?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aNbI+KrPJW4kgy4e@lizhi-Precision-Tower-5810>
-References: <20250925-vntb_msi_doorbell-v3-0-ae0b0c93caae@nxp.com> <20250925-vntb_msi_doorbell-v3-1-ae0b0c93caae@nxp.com> <aNaHrj0rwLTtSRS3@ryzen> <aNaprpfaeXIcqeGD@lizhi-Precision-Tower-5810> <aNauaSVs5ytzsVFt@ryzen> <aNbI+KrPJW4kgy4e@lizhi-Precision-Tower-5810>
-Message-ID: <924D03A9-0206-4FCA-AE83-4724643561C2@kernel.org>
+	s=arc-20240116; t=1758906961; c=relaxed/simple;
+	bh=9s1JWYLtY9Au2cU7gKvf1tWMFDr3WPsmVd7i7+W3bdA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YrQhTcwQtuOjOCwDGkEmLmHpcXhHiC9UednqGUwpSC3GTG6yZ5neR1jDqLzbeqSPOMG8kZI2v0fWW/4wOWrjqmbhjg99KXYT5RR+LFzGoxSW9TdjE2VXqKHsi6cphFZndLH+iclA0uX5bVAyQRRyByB2w+a2C4MY/CrKisstlkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=LxrrZ70p; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1758906952;
+	bh=9s1JWYLtY9Au2cU7gKvf1tWMFDr3WPsmVd7i7+W3bdA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=LxrrZ70p5KBrbuEn9rhlI5K7pEJeScDXhXKQIG3UYcU+P5QE8OLrSmJhO37NEJPb9
+	 MeKVb7TL05aMrnFLYBhOGbRcxHnQiYJQB92eaTJABKnUhYOylbGydCVNJS8L0uogvR
+	 FUEUwA8lszOSiTAQekw74WUaDmZyWVgxverS4hHY=
+Received: from [127.0.0.1] (2607-8700-5500-e873-0000-0000-0000-1001.16clouds.com [IPv6:2607:8700:5500:e873::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 24C5A66B3B;
+	Fri, 26 Sep 2025 13:15:48 -0400 (EDT)
+Message-ID: <c1f9e36dbdff64298ed2c6418247fb37dcd1f986.camel@xry111.site>
+Subject: Re: [PATCH V2] LoongArch: Align ACPI structures if
+ ARCH_STRICT_ALIGN enabled
+From: Xi Ruoyao <xry111@xry111.site>
+To: Guenter Roeck <linux@roeck-us.net>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Huacai Chen
+ <chenhuacai@loongson.cn>, 	loongarch@lists.linux.dev, Xuefeng Li
+ <lixuefeng@loongson.cn>, Guo Ren	 <guoren@kernel.org>, Xuerui Wang
+ <kernel@xen0n.name>, Jiaxun Yang	 <jiaxun.yang@flygoat.com>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,  Binbin Zhou
+ <zhoubinbin@loongson.cn>
+Date: Sat, 27 Sep 2025 01:15:47 +0800
+In-Reply-To: <899f2dec-e8b9-44f4-ab8d-001e160a2aed@roeck-us.net>
+References: <20250910091033.725716-1-chenhuacai@loongson.cn>
+	 <20250920234836.GA3857420@ax162>
+	 <CAAhV-H5S8VKKBkNyrWfeuCVv8jS6tNED6YNeAD=i-+wkaoRSDQ@mail.gmail.com>
+	 <899f2dec-e8b9-44f4-ab8d-001e160a2aed@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On 26 September 2025 19:10:16 CEST, Frank Li <Frank=2Eli@nxp=2Ecom> wrote:
->On Fri, Sep 26, 2025 at 05:16:57PM +0200, Niklas Cassel wrote:
->> On Fri, Sep 26, 2025 at 10:56:46AM -0400, Frank Li wrote:
->> > On Fri, Sep 26, 2025 at 02:31:42PM +0200, Niklas Cassel wrote:
->> > > On Thu, Sep 25, 2025 at 01:01:47PM -0400, Frank Li wrote:
->> > > > Introduce pci_epf_get_bar_required_size() to retrieve the require=
-d BAR
->> > > > size and memory size=2E Prepare for adding support to set an MMIO=
- address to
->> > > > a specific BAR=2E
->> > > >
->> > > > Use two variables 'aligned_bar_size' and 'aligned_mem_size' to av=
-oid
->> > > > confuse=2E
->> > >
->> > > s/confuse/confusion/
->> > >
->> > >
->> > > >
->> > > > No functional changes=2E
->> > > >
->> > > > Signed-off-by: Frank Li <Frank=2ELi@nxp=2Ecom>
->> > > > ---
->> > > > change in v3
->> > > > - change return value to int=2E
->> > > > - use two pointers return bar size aligned and memory start addre=
-ss aligned
->> > > > - update comments about why need memory align size=2E Actually iA=
-TU require
->> > > > start address match aligned requirement=2E Since kernel return al=
-ign to
->> > > > size's address=2E
->> > > > - use two varible aligned_bar_size and aligned_mem_size to avoid =
-confuse
->> > > > use 'size'=2E
->> > > >
->> > > > change in v2
->> > > > - new patch
->> > > > ---
->> > > >  drivers/pci/endpoint/pci-epf-core=2Ec | 84 +++++++++++++++++++++=
-++--------------
->> > > >  1 file changed, 53 insertions(+), 31 deletions(-)
->> > > >
->> > > > diff --git a/drivers/pci/endpoint/pci-epf-core=2Ec b/drivers/pci/=
-endpoint/pci-epf-core=2Ec
->> > > > index d54e18872aefc07c655c94c104a347328ff7a432=2E=2E2cd0257831f98=
-85a4381c087ed8f3326f5960966 100644
->> > > > --- a/drivers/pci/endpoint/pci-epf-core=2Ec
->> > > > +++ b/drivers/pci/endpoint/pci-epf-core=2Ec
->> > > > @@ -208,6 +208,49 @@ void pci_epf_remove_vepf(struct pci_epf *epf=
-_pf, struct pci_epf *epf_vf)
->> > > >  }
->> > > >  EXPORT_SYMBOL_GPL(pci_epf_remove_vepf);
->> > > >
->> > > > +static int
->> > > > +pci_epf_get_bar_required_size(struct pci_epf *epf, size_t size,
->> > > > +			      size_t *aligned_bar_size,
->> > > > +			      size_t *aligned_mem_size,
->> > > > +			      enum pci_barno bar,
->> > > > +			      const struct pci_epc_features *epc_features,
->> > > > +			      enum pci_epc_interface_type type)
->> > > > +{
->> > > > +	u64 bar_fixed_size =3D epc_features->bar[bar]=2Efixed_size;
->> > > > +	size_t align =3D epc_features->align;
->> > > > +
->> > > > +	if (size < 128)
->> > > > +		size =3D 128;
->> > > > +
->> > > > +	/* According to PCIe base spec, min size for a resizable BAR is=
- 1 MB=2E */
->> > > > +	if (epc_features->bar[bar]=2Etype =3D=3D BAR_RESIZABLE && size =
-< SZ_1M)
->> > > > +		size =3D SZ_1M;
->> > > > +
->> > > > +	if (epc_features->bar[bar]=2Etype =3D=3D BAR_FIXED && bar_fixed=
-_size) {
->> > > > +		if (size > bar_fixed_size) {
->> > > > +			dev_err(&epf->dev,
->> > > > +				"requested BAR size is larger than fixed size\n");
->> > > > +			return -ENOMEM;
->> > > > +		}
->> > > > +		size =3D bar_fixed_size;
->> > > > +	} else {
->> > > > +		/* BAR size must be power of two */
->> > > > +		size =3D roundup_pow_of_two(size);
->> > > > +	}
->> > > > +
->> > > > +	*aligned_bar_size =3D size;
->> > >
->> > > I think this name is wrong=2E
->> > > The BAR size has not been aligned to anything=2E
->> > > The BAR size has to be a power of two, but that is a requirement of=
- the PCI
->> > > specification, so that in an inherent property of a BAR=2E
->> > >
->> > > Perhaps just name it size or bar_size?
->> >
->> > there already have 'size' for input=2E  It should match epc required'=
-s size=2E
->>
->> Why do you need both "size_t size" and "size_t *bar_size"?
->>
->> Isn't it enough with "size_t *bar_size" ?
->>
->> The user can supply a value, and the function could update that value=
-=2E
->
->If not 'aligned_mem_size' in list, it looks fine=2E But after add
->'aligned_mem_size', I think use difference varible for two outputs will b=
-e
->clear and consistent and easy to understand=2E
+On Fri, 2025-09-26 at 07:31 -0700, Guenter Roeck wrote:
+> On Sun, Sep 21, 2025 at 09:07:38AM +0800, Huacai Chen wrote:
+> > Hi, Nathan,
+> >=20
+> > On Sun, Sep 21, 2025 at 7:48=E2=80=AFAM Nathan Chancellor <nathan@kerne=
+l.org> wrote:
+> > >=20
+> > > Hi Huacai,
+> > >=20
+> > > On Wed, Sep 10, 2025 at 05:10:33PM +0800, Huacai Chen wrote:
+> > > > ARCH_STRICT_ALIGN is used for hardware without UAL, now it only con=
+trol
+> > > > the -mstrict-align flag. However, ACPI structures are packed by def=
+ault
+> > > > so will cause unaligned accesses.
+> > > >=20
+> > > > To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in asm/acenv.=
+h to
+> > > > align ACPI structures if ARCH_STRICT_ALIGN enabled.
+> > > >=20
+> > > > Cc: stable@vger.kernel.org
+> > > > Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> > > > Suggested-by: Xi Ruoyao <xry111@xry111.site>
+> > > > Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> > > > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> > > > ---
+> > > > V2: Modify asm/acenv.h instead of Makefile.
+> > > >=20
+> > > > =C2=A0arch/loongarch/include/asm/acenv.h | 7 +++----
+> > > > =C2=A01 file changed, 3 insertions(+), 4 deletions(-)
+> > > >=20
+> > > > diff --git a/arch/loongarch/include/asm/acenv.h b/arch/loongarch/in=
+clude/asm/acenv.h
+> > > > index 52f298f7293b..483c955f2ae5 100644
+> > > > --- a/arch/loongarch/include/asm/acenv.h
+> > > > +++ b/arch/loongarch/include/asm/acenv.h
+> > > > @@ -10,9 +10,8 @@
+> > > > =C2=A0#ifndef _ASM_LOONGARCH_ACENV_H
+> > > > =C2=A0#define _ASM_LOONGARCH_ACENV_H
+> > > >=20
+> > > > -/*
+> > > > - * This header is required by ACPI core, but we have nothing to fi=
+ll in
+> > > > - * right now. Will be updated later when needed.
+> > > > - */
+> > > > +#ifdef CONFIG_ARCH_STRICT_ALIGN
+> > > > +#define ACPI_MISALIGNMENT_NOT_SUPPORTED
+> > > > +#endif /* CONFIG_ARCH_STRICT_ALIGN */
+> > > >=20
+> > > > =C2=A0#endif /* _ASM_LOONGARCH_ACENV_H */
+> > >=20
+> > > I am seeing several ACPI errors in my QEMU testing after this change =
+in
+> > > Linus's tree as commit a9d13433fe17 ("LoongArch: Align ACPI structure=
+s
+> > > if ARCH_STRICT_ALIGN enabled").
+> > >=20
+> > > =C2=A0 $ make -skj"$(nproc)" ARCH=3Dloongarch CROSS_COMPILE=3Dloongar=
+ch64-linux- clean defconfig vmlinuz.efi
+> > > =C2=A0 kernel/sched/fair.o: warning: objtool: sched_update_scaling() =
+falls through to next function init_entity_runnable_average()
+> > > =C2=A0 mm/mempolicy.o: warning: objtool: alloc_pages_bulk_mempolicy_n=
+oprof+0x380: stack state mismatch: reg1[30]=3D-1+0 reg2[30]=3D-2-80
+> > > =C2=A0 lib/crypto/mpi/mpih-div.o: warning: objtool: mpihelp_divrem+0x=
+2d0: stack state mismatch: reg1[22]=3D-1+0 reg2[22]=3D-2-16
+> > > =C2=A0 In file included from include/acpi/acpi.h:24,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from drivers/acpi/acpica/tbprint.c:=
+10:
+> > > =C2=A0 drivers/acpi/acpica/tbprint.c: In function 'acpi_tb_print_tabl=
+e_header':
+> > > =C2=A0 include/acpi/actypes.h:530:43: warning: 'strncmp' argument 1 d=
+eclared attribute 'nonstring' is smaller than the specified bound 8 [-Wstri=
+ngop-overread]
+> > > =C2=A0=C2=A0=C2=A0 530 | #define ACPI_VALIDATE_RSDP_SIG(a)=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 (!strncmp (ACPI_CAST_PTR (char, (a)), ACPI_SIG_=
+RSDP, (sizeof(a) < 8) ? ACPI_NAMESEG_SIZE : 8))
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~~~~~~
+> > > =C2=A0 drivers/acpi/acpica/tbprint.c:105:20: note: in expansion of ma=
+cro 'ACPI_VALIDATE_RSDP_SIG'
+> > > =C2=A0=C2=A0=C2=A0 105 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 } else if (ACPI_VALIDATE_RSDP_SIG(ACPI_CAST_PTR(struct acpi_table_rsdp,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 ^~~~~~~~~~~~~~~~~~~~~~
+> > > =C2=A0 In file included from include/acpi/acpi.h:26:
+> > > =C2=A0 include/acpi/actbl.h:69:14: note: argument 'signature' declare=
+d here
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 69 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 /* ASCII table signature */
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~
+> > > From this link this seems a comiler issue (at least not an
+> > arch-specific kernel issue):
+> > https://github.com/AOSC-Tracking/linux/commit/1e9ee413357ef58dd902f6ec5=
+5013d2a2f2043eb
+> >=20
+>=20
+> I see that the patch made it into the upstream kernel, now breaking both
+> mainline and 6.16.y test builds of loongarch64:allmodconfig with gcc.
+>=20
+> Since this is apparently intentional, I'll stop build testing
+> loongarch64:allmodconfig. So far it looks like my qemu tests
+> are not affected, so I'll continue testing those for the time being.
 
-
-What am trying to say is:
-Why not make "size_t *bar_size" both an input and an output?
+See=C2=A0https://gcc.gnu.org/PR122073 and
+https://github.com/acpica/acpica/pull/1050.
 
 
-Kind regards,
-Niklas
+--=20
+Xi Ruoyao <xry111@xry111.site>
 
