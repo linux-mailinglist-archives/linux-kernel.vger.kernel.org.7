@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-834098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D8ABA3D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:19:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160D1BA3D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF45179482
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B344A1C054AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918F72F9985;
-	Fri, 26 Sep 2025 13:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362C624678F;
+	Fri, 26 Sep 2025 13:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I8s2oBiz"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tjqI83mU"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013021.outbound.protection.outlook.com [40.93.196.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59132FBDF2;
-	Fri, 26 Sep 2025 13:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758892564; cv=none; b=ExYQvTN/5Zl+L3q/Qhejhb6bMm/nFyUVdiPR5zbTfOWRFhEgRpTsttJfVPxfw/wqf9Gq3iPWrsGY0Fc4bLZ6B4uIKIhXYgUWwJbTXyHoGiiQGWRwkbjRPlgpLEL1XvQJfLbHx9/KGXu5Etao9j4Mm+zSq7cyd8NVsqB/7MknkHs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758892564; c=relaxed/simple;
-	bh=Tr3BS1kXKpPCpI+bBzlyko7U56zoI+WhQoCJGijVl14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DT5dsIpt6P1pTUGHXgkZtVN0/Q11tHA01kaSSfU7Zc3u4S72SyqBT4262saBjyd6bEHwo8zZ0T0HoSf/Xs464Dq++lgCLmcCU8Sr5dyqAPEtTx+fwIu/vb8nYf9SgIHMIEP6f79EuziP9plZpTTZd+oXGxvkKvo6NJOaHNZ8gjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I8s2oBiz; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q7Va1M017943;
-	Fri, 26 Sep 2025 13:15:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=lH43ym57j6oeb9QqS
-	BHnLDAMK6emsEJ0+JYF/U+O3AU=; b=I8s2oBizyYzr8Gm62B9PYypKw4IMdmFsU
-	o7p2moc7cMcP6VHKAfySeaLp0lv74XjVcD7gtvNLKKPSy18AL+6+05Sy2N5bbauB
-	yT9QAE8iN38XrggyX+S7Cr0SII5E1cBnsdeveRdMMuWOi+X7CD4KKzVV8RanYD/F
-	wNQ6mEiVmwSzVzRN4hOg5EGy63HftyU8vOCgRTmx5/p2u3tDlppaSEwIUglqUs90
-	KnVpN/yMPjsojL7BvptMACjC63ZkvUzV0be3ymmFXgEleLUb4Qg//AZKxL14lNIX
-	t6IghYmkfAz9pKzzkMyb/yYiYbWJfP7KCunRrTW1aZ2JTZ1Grk4uw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbdcqcd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 13:15:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q9qEa8023724;
-	Fri, 26 Sep 2025 13:15:54 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49ddbd3dsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 13:15:54 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QDFoaU62521654
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 26 Sep 2025 13:15:50 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B9DEA20043;
-	Fri, 26 Sep 2025 13:15:50 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 90F2B20040;
-	Fri, 26 Sep 2025 13:15:50 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 26 Sep 2025 13:15:50 +0000 (GMT)
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm <linux-mm@kvack.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: [PATCH 4/4] mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers
-Date: Fri, 26 Sep 2025 15:15:27 +0200
-Message-ID: <20250926131527.3260733-5-sumanthk@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
-References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F8924A049;
+	Fri, 26 Sep 2025 13:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758892709; cv=fail; b=gkUedBusHvQE6UbehAQSqbhLPWDcir0VgIQUEASeVKZ0GtPxq/yXLu+jaLli0ar0vJmPWSAQX+0CJDWGZ2+zpbs17BVEwXbJnskjl/QqvIWywSLuWtEOv5TDqctBYEMzEPNi92IwX0b+r1yWsbEWUWadP7ZbDW5fuDCettrhHnI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758892709; c=relaxed/simple;
+	bh=rAL3+TyPk20xKyJYyX9iuxjp7ulCHoyS6D/Xys3FeiI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OsxsVRNF/TacatfUtWI9ERJlA8oSKtX61TCZ2w73wI+cJuUAybs2jE96arx+UlRJNSsRqaBa94bVUpq3kmvICClNG+yploiTr7yen423Jjl3cndSiHkwWy7v+UvAMxSOps2gLt9MWFle3LxSRfJLQDewNi5TQ0qlWaKVvHJEQJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tjqI83mU; arc=fail smtp.client-ip=40.93.196.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rcQYVDfu+k6C5nTAbWHo5kN2T7wnukHoeXEo6zDd3KiEvVjhCxlJXAN0YixuJ013oWOvgox3VbaahufDEUoken7yv5qPUjZkvAmiaRf6U7rEjmRIWRKI1E2fBHVO93StZPu4s7xIEA7ZiBv86QVZQZcJ9xNFiXxj6hZ+nTxkUjWNr3iftrQPoL0kv1HZ0nrkmJ6uomFxe4WOuG02M01icySL9WhGBB03iYLEW47wa7JHbvTm/2R+PmykxwzHuI6rnEtnbTGSCSOoCcAnWabqH3R9N0xZUZDeMUCSYMEqbz7OPiXrRpO3xY+Lo9U6CvM4ah0NMuWmpS+mRUpkdwtFUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/SGLGjeXUqbDClmvx5Th+1zIgfCSNq6jO9vq/4lMpSI=;
+ b=ySvg1Btck/gyRSaCfbAp/EzlPpbdqwvXPHLxPSBTi3IQco4zSxR9CS4UVblfkBDrAzYVDQ1WasDEOx3WJQ5cBYQtwnxVhL/Cph+AUVEyutBarnTYxrM0j3yQL9NmF5tr2pFfTYhZXjKHjsjjSVunOPMHYbp15EqXFaoqCAMYKgrmc79mvi49bBV7IpiBWwT7npwOFt83hRk1/n2n0XIBhxqhNx+egzHqTBAoyUe93LZZffk+qoCQwDjG4ooS0otkWmXfzvISAA7ZEF5lJnnjjYQHKrpVAr0ABYiyruqw4eh6QDznt/ykkiIq3JSheqYDIOC48rIJr/mpPIYAFpidyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/SGLGjeXUqbDClmvx5Th+1zIgfCSNq6jO9vq/4lMpSI=;
+ b=tjqI83mUG7Uvp6GPzEXJynhnn4+5ArW9m3Ajq9Rc5MslzK72hgOpEqBy/em8QJv1/PuccrCEW7YNxOLg9Il32pKM8YLL6a8RpDl5ZwiTQDce2dZftqJxO3lv9xOS/3yev59QeVfkHny2mjUpCBTeK6iJ2/SUxtcJwrkob2a07i+gZd4NLaN4CkvAAy2PFTpDA9Jun2nimkW7OiCjVSmzdQzD9bAGdlA7NvMz3ZKC7b36vZ3AfJN6xFVDf9oTsI5dxHNqGcrHqQWmAbAnqveXDVS1la9uPr6PK9QUB/QKqnqcnxSoPefjRJ9JpqGP1mDYM+3jNfTAYWPmEsQNCN7eQA==
+Received: from DS0PR17CA0014.namprd17.prod.outlook.com (2603:10b6:8:191::10)
+ by DM6PR12MB4265.namprd12.prod.outlook.com (2603:10b6:5:211::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
+ 2025 13:18:19 +0000
+Received: from DS2PEPF00003441.namprd04.prod.outlook.com
+ (2603:10b6:8:191:cafe::2c) by DS0PR17CA0014.outlook.office365.com
+ (2603:10b6:8:191::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.10 via Frontend Transport; Fri,
+ 26 Sep 2025 13:18:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS2PEPF00003441.mail.protection.outlook.com (10.167.17.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Fri, 26 Sep 2025 13:18:19 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 26 Sep
+ 2025 06:18:09 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Fri, 26 Sep 2025 06:18:08 -0700
+Received: from c-237-113-200-209.mtl.labs.mlnx (10.127.8.14) by
+ mail.nvidia.com (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20
+ via Frontend Transport; Fri, 26 Sep 2025 06:18:06 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>
+CC: Dragos Tatulea <dtatulea@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next v2] page_pool: Clamp pool size to max 16K pages
+Date: Fri, 26 Sep 2025 16:16:05 +0300
+Message-ID: <20250926131605.2276734-2-dtatulea@nvidia.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,262 +95,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=F/Jat6hN c=1 sm=1 tr=0 ts=68d6920c cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=rQaNfnSK3a-WYbhgV1gA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX0hjtkqhGmUCt
- bd6Gg5GGexm8M2i0HtXWlmTWzhEURzPt1XNWNjmCJ5adV5cp0mBi4Kdnii373Dlp/G7wao2fxBK
- y/r7EJuNQ5Y+2MTYEFMVGXje5u5w+bpDsvLajE3c/yEuawpqOYdusFm57fuNiyI15+eBTslD3ji
- PxxBO2/uOXhTVcc1qHEzlpWpJf1Dx887sSE6sLsEpLj/GCVO76gUDUtcUvB4G+Q6DKXY2inSJn0
- Y6ZOsa6v5BYqHqpC3UycwArZQQ5dNN6UGkuviMFoEaI2a/j8xNKCa6eM3h66WhF9exHgQTT87XD
- LPtM1Kid7COtUzHeU5Uiy5n3cOPkqUCo9EDlGiwQWaPwkOo1Vxejz5C+K8Y+N6fSpOGcnETGQlT
- q2x9FWA7lZZFj2SIy/dd24pOFZqcfQ==
-X-Proofpoint-GUID: M4_GZJeR_0qDItlTmbLDGVsgp0Ovpx-3
-X-Proofpoint-ORIG-GUID: M4_GZJeR_0qDItlTmbLDGVsgp0Ovpx-3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_04,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 malwarescore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003441:EE_|DM6PR12MB4265:EE_
+X-MS-Office365-Filtering-Correlation-Id: da611f31-367f-4ea9-d36a-08ddfcff2945
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ocW3rjJZpRTWdDbBvTu26iBg3bjI8I6HLpQDR8s2hKH9W+DwjfNJB3FmH5ut?=
+ =?us-ascii?Q?7PQnI7J9x8Qmbv7LBfQugPSiTSdoDLJFhZrRN0IrFze82pNKYtTZKqMSI+X/?=
+ =?us-ascii?Q?Ggl9+HbwM5snFJd4uvw/2F/4cWmTENkKztvU/smBMhQJPF18S7POduGLIIWe?=
+ =?us-ascii?Q?hVR+nxh8DZhWNkMT+R+xJ73lKsxyUOJXETgm8FGv/uoJg21gRi1GERuAjFpO?=
+ =?us-ascii?Q?YBELHZEfInmN0jxK09/PBXDLTv/TzjfMSHFOSPWpo6fLaf321tTJ3l3y8yLg?=
+ =?us-ascii?Q?sOSZ80x6NMPcv4H8SL8KUtiJVi7rfaW4wm4DZ+MImJUVzCZ+joDpOOHOC//s?=
+ =?us-ascii?Q?khQGHjiLEisLFJ7wssUHIAIMmGpm/07fOXMVL2EBQ2VKX/Il2TgVMMJzmx0W?=
+ =?us-ascii?Q?VfTtZS4deeLyw9Ux/bi9Oe693UT5QLoIY3Rr6xpUh5hoKyH1Q06RqS89ZhdO?=
+ =?us-ascii?Q?4Xj/WOKEvi5xfXLzGC55cZ1D3gIweJklpyBygWz0FWp1jedi4haAyncN46y8?=
+ =?us-ascii?Q?HbbwCROES93ZNCwuV8Sn2kpFsXtXSBG5uJEXVGLVHZDWzLi9VO1qQMVw5hPA?=
+ =?us-ascii?Q?KpGvq3XUIVqP/zY1kVge2leo3UM4u1mlY4yUe8ZosaQtbOZVflKTgeUj3S8X?=
+ =?us-ascii?Q?/1O7lK+SiXJNnNaYHTIjE1CdoqJF9vgL/nijxMpFyWgXXO3SOxvElBO5aN3u?=
+ =?us-ascii?Q?UfxalWaQAvHSyey1UsEbBwmdsPBM8Xx1vt8+/VAywN1GJ6rJOa7XzD/u99YH?=
+ =?us-ascii?Q?DuRWQPjPbod7x8+ElmK0dI8ewMzd00DEU40vjUbApbZeocvfHw6yL2LbD2e4?=
+ =?us-ascii?Q?hE3zFoRpEwEfKcXh/Mu4iqWnHWq2IUdzcS66aacZ9SZUHXnu2yRBMCxcEAfZ?=
+ =?us-ascii?Q?j8M+1AX523DRqyCO4JDKLXm80t4Eh5fwK4ogeHkrtVTjWBALd8jRCKYScn8v?=
+ =?us-ascii?Q?49J+AGKZ+1ycs8Vbm0jnSNlCf5y5CYqcFnmQ9DhaozRcVrzyP9qi9KiztIGk?=
+ =?us-ascii?Q?2MJRTWi4N3/gqfF7zheLHc1LldWluH8pCBamyftWv+NN21vuQPjOhjn96o7j?=
+ =?us-ascii?Q?W3s+PpHIPu8CY7CSlAPK+CG8JoNvuZRGVtr3hJ5HA2pkhynBg/Eij9OL/o4G?=
+ =?us-ascii?Q?0YbE8podUw3bLVKEx4Mpe1bxNjIDLrk+GGo2349VOFqLmu5kguDBXhqfQfLy?=
+ =?us-ascii?Q?B6+VU454MfBnK3YwzpKgIkKwGD4PMZTaQAC55A3YCV7zzNyqCltXEZMEEBPX?=
+ =?us-ascii?Q?Jp3dDFamlJVc7t6iY1h9Bx4cSMuCHoNrJNho1MhaNxrACp2EPjUqyqQdmKGJ?=
+ =?us-ascii?Q?vQjEMuYeJsuLiX6yvVCLTwr60hBsBEL9m7cbnC2z6l1nGk+OBGPwORK/fs5f?=
+ =?us-ascii?Q?0LMW7eIAECJlXWDSn26I0mXkqUMC3oQsp5UiP3LAqLGKXL8Nbzf7ZxAUpEMb?=
+ =?us-ascii?Q?Ju+W6osSP8wD7YfTYd+mpWFdgWQqOGTPLoOKtWEaIyJW6yyzYAZnfy21zY8b?=
+ =?us-ascii?Q?Mh5mSaYUb1wAoh4C23csxCyLRt5c0RHHyCxJMZNv2EOGTcQovnXURg0KZXPO?=
+ =?us-ascii?Q?dPls/rAHFBO1pmb3h/jmfGNhYeuKXefTz9RO3dWU?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 13:18:19.4362
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da611f31-367f-4ea9-d36a-08ddfcff2945
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003441.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4265
 
-MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE memory notifiers were introduced
-to prepare the transition of memory to and from a physically accessible
-state. This enhancement was crucial for implementing the "memmap on memory"
-feature for s390.
+page_pool_init() returns E2BIG when the page_pool size goes above 32K
+pages. As some drivers are configuring the page_pool size according to
+the MTU and ring size, there are cases where this limit is exceeded and
+the queue creation fails.
 
-With introduction of dynamic (de)configuration of hotpluggable memory,
-memory can be brought to accessible state before add_memory(). Memory
-can be brought to inaccessible state before remove_memory(). Hence,
-there is no need of MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE memory
-notifiers anymore.
+The page_pool size doesn't have to cover a full queue, especially for
+larger ring size. So clamp the size instead of returning an error. Do
+this in the core to avoid having each driver do the clamping.
 
-This basically reverts commit
-c5f1e2d18909 ("mm/memory_hotplug: introduce MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers")
-Additionally, apply minor adjustments to the function parameters of
-move_pfn_range_to_zone() and mhp_supports_memmap_on_memory() to ensure
-compatibility with the latest branch.
+The current limit was deemed to high [1] so it was reduced to 16K to avoid
+page waste.
 
-Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+[1] https://lore.kernel.org/all/1758532715-820422-3-git-send-email-tariqt@nvidia.com/
+
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
 ---
- drivers/base/memory.c          | 23 +----------------------
- include/linux/memory.h         |  9 ---------
- include/linux/memory_hotplug.h | 18 +-----------------
- include/linux/memremap.h       |  1 -
- mm/memory_hotplug.c            | 17 +++--------------
- mm/sparse.c                    |  3 +--
- 6 files changed, 6 insertions(+), 65 deletions(-)
+Changes since v1 [1]:
+- Switched to clamping in page_pool. (Jakub)
+- Reduced 32K -> 16K limit. (Jakub)
+- Dropped mlx5 patch. (Jakub)
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 5c6c1d6bb59f..67a41575ac77 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -226,7 +226,6 @@ static int memory_block_online(struct memory_block *mem)
- 	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
- 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
- 	unsigned long nr_vmemmap_pages = 0;
--	struct memory_notify arg;
- 	struct zone *zone;
- 	int ret;
+[1] https://lore.kernel.org/all/1758532715-820422-1-git-send-email-tariqt@nvidia.com/
+---
+ net/core/page_pool.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index ba70569bd4b0..054a1c38e698 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -211,11 +211,7 @@ static int page_pool_init(struct page_pool *pool,
+ 		return -EINVAL;
  
-@@ -246,19 +245,9 @@ static int memory_block_online(struct memory_block *mem)
- 	if (mem->altmap)
- 		nr_vmemmap_pages = mem->altmap->free;
- 
--	arg.altmap_start_pfn = start_pfn;
--	arg.altmap_nr_pages = nr_vmemmap_pages;
--	arg.start_pfn = start_pfn + nr_vmemmap_pages;
--	arg.nr_pages = nr_pages - nr_vmemmap_pages;
- 	mem_hotplug_begin();
--	ret = memory_notify(MEM_PREPARE_ONLINE, &arg);
--	ret = notifier_to_errno(ret);
--	if (ret)
--		goto out_notifier;
+ 	if (pool->p.pool_size)
+-		ring_qsize = pool->p.pool_size;
 -
- 	if (nr_vmemmap_pages) {
--		ret = mhp_init_memmap_on_memory(start_pfn, nr_vmemmap_pages,
--						zone, mem->altmap->inaccessible);
-+		ret = mhp_init_memmap_on_memory(start_pfn, nr_vmemmap_pages, zone);
- 		if (ret)
- 			goto out;
- 	}
-@@ -280,11 +269,7 @@ static int memory_block_online(struct memory_block *mem)
- 					  nr_vmemmap_pages);
+-	/* Sanity limit mem that can be pinned down */
+-	if (ring_qsize > 32768)
+-		return -E2BIG;
++		ring_qsize = min(pool->p.pool_size, 16384);
  
- 	mem->zone = zone;
--	mem_hotplug_done();
--	return ret;
- out:
--	memory_notify(MEM_FINISH_OFFLINE, &arg);
--out_notifier:
- 	mem_hotplug_done();
- 	return ret;
- }
-@@ -297,7 +282,6 @@ static int memory_block_offline(struct memory_block *mem)
- 	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
- 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
- 	unsigned long nr_vmemmap_pages = 0;
--	struct memory_notify arg;
- 	int ret;
- 
- 	if (!mem->zone)
-@@ -329,11 +313,6 @@ static int memory_block_offline(struct memory_block *mem)
- 		mhp_deinit_memmap_on_memory(start_pfn, nr_vmemmap_pages);
- 
- 	mem->zone = NULL;
--	arg.altmap_start_pfn = start_pfn;
--	arg.altmap_nr_pages = nr_vmemmap_pages;
--	arg.start_pfn = start_pfn + nr_vmemmap_pages;
--	arg.nr_pages = nr_pages - nr_vmemmap_pages;
--	memory_notify(MEM_FINISH_OFFLINE, &arg);
- out:
- 	mem_hotplug_done();
- 	return ret;
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 40eb70ccb09d..e42534b5c5ec 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -96,17 +96,8 @@ int set_memory_block_size_order(unsigned int order);
- #define	MEM_GOING_ONLINE	(1<<3)
- #define	MEM_CANCEL_ONLINE	(1<<4)
- #define	MEM_CANCEL_OFFLINE	(1<<5)
--#define	MEM_PREPARE_ONLINE	(1<<6)
--#define	MEM_FINISH_OFFLINE	(1<<7)
- 
- struct memory_notify {
--	/*
--	 * The altmap_start_pfn and altmap_nr_pages fields are designated for
--	 * specifying the altmap range and are exclusively intended for use in
--	 * MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers.
--	 */
--	unsigned long altmap_start_pfn;
--	unsigned long altmap_nr_pages;
- 	unsigned long start_pfn;
- 	unsigned long nr_pages;
- };
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 23f038a16231..f2f16cdd73ee 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -58,22 +58,6 @@ typedef int __bitwise mhp_t;
-  * implies the node id (nid).
-  */
- #define MHP_NID_IS_MGID		((__force mhp_t)BIT(2))
--/*
-- * The hotplugged memory is completely inaccessible while the memory is
-- * offline. The memory provider will handle MEM_PREPARE_ONLINE /
-- * MEM_FINISH_OFFLINE notifications and make the memory accessible.
-- *
-- * This flag is only relevant when used along with MHP_MEMMAP_ON_MEMORY,
-- * because the altmap cannot be written (e.g., poisoned) when adding
-- * memory -- before it is set online.
-- *
-- * This allows for adding memory with an altmap that is not currently
-- * made available by a hypervisor. When onlining that memory, the
-- * hypervisor can be instructed to make that memory available, and
-- * the onlining phase will not require any memory allocations, which is
-- * helpful in low-memory situations.
-- */
--#define MHP_OFFLINE_INACCESSIBLE	((__force mhp_t)BIT(3))
- 
- /*
-  * Extended parameters for memory hotplug:
-@@ -123,7 +107,7 @@ extern void adjust_present_page_count(struct page *page,
- 				      long nr_pages);
- /* VM interface that may be used by firmware interface */
- extern int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
--				     struct zone *zone, bool mhp_off_inaccessible);
-+				     struct zone *zone);
- extern void mhp_deinit_memmap_on_memory(unsigned long pfn, unsigned long nr_pages);
- extern int online_pages(unsigned long pfn, unsigned long nr_pages,
- 			struct zone *zone, struct memory_group *group);
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 4aa151914eab..7467035d4f29 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -25,7 +25,6 @@ struct vmem_altmap {
- 	unsigned long free;
- 	unsigned long align;
- 	unsigned long alloc;
--	bool inaccessible;
- };
- 
- /*
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 74318c787715..db95933daa4c 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1088,7 +1088,7 @@ void adjust_present_page_count(struct page *page, struct memory_group *group,
- }
- 
- int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
--			      struct zone *zone, bool mhp_off_inaccessible)
-+			      struct zone *zone)
- {
- 	unsigned long end_pfn = pfn + nr_pages;
- 	int ret, i;
-@@ -1097,15 +1097,6 @@ int mhp_init_memmap_on_memory(unsigned long pfn, unsigned long nr_pages,
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Memory block is accessible at this stage and hence poison the struct
--	 * pages now.  If the memory block is accessible during memory hotplug
--	 * addition phase, then page poisining is already performed in
--	 * sparse_add_section().
--	 */
--	if (mhp_off_inaccessible)
--		page_init_poison(pfn_to_page(pfn), sizeof(struct page) * nr_pages);
--
- 	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL, MIGRATE_UNMOVABLE,
- 			       false);
- 
-@@ -1444,7 +1435,7 @@ static void remove_memory_blocks_and_altmaps(u64 start, u64 size)
- }
- 
- static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
--					    u64 start, u64 size, mhp_t mhp_flags)
-+					    u64 start, u64 size)
- {
- 	unsigned long memblock_size = memory_block_size_bytes();
- 	u64 cur_start;
-@@ -1460,8 +1451,6 @@ static int create_altmaps_and_memory_blocks(int nid, struct memory_group *group,
- 		};
- 
- 		mhp_altmap.free = memory_block_memmap_on_memory_pages();
--		if (mhp_flags & MHP_OFFLINE_INACCESSIBLE)
--			mhp_altmap.inaccessible = true;
- 		params.altmap = kmemdup(&mhp_altmap, sizeof(struct vmem_altmap),
- 					GFP_KERNEL);
- 		if (!params.altmap) {
-@@ -1547,7 +1536,7 @@ int add_memory_resource(int nid, struct resource *res, mhp_t mhp_flags)
- 	 */
- 	if ((mhp_flags & MHP_MEMMAP_ON_MEMORY) &&
- 	    mhp_supports_memmap_on_memory()) {
--		ret = create_altmaps_and_memory_blocks(nid, group, start, size, mhp_flags);
-+		ret = create_altmaps_and_memory_blocks(nid, group, start, size);
- 		if (ret)
- 			goto error;
- 	} else {
-diff --git a/mm/sparse.c b/mm/sparse.c
-index e6075b622407..24323122f6cb 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -951,8 +951,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
- 	 * Poison uninitialized struct pages in order to catch invalid flags
- 	 * combinations.
- 	 */
--	if (!altmap || !altmap->inaccessible)
--		page_init_poison(memmap, sizeof(struct page) * nr_pages);
-+	page_init_poison(memmap, sizeof(struct page) * nr_pages);
- 
- 	ms = __nr_to_section(section_nr);
- 	set_section_nid(section_nr, nid);
+ 	/* DMA direction is either DMA_FROM_DEVICE or DMA_BIDIRECTIONAL.
+ 	 * DMA_BIDIRECTIONAL is for allowing page used for DMA sending,
 -- 
-2.48.1
+2.50.0
 
 
