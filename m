@@ -1,281 +1,1129 @@
-Return-Path: <linux-kernel+bounces-833736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B786BA2E6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:16:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755DDBA2E8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E681BC21B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266953A9FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2028CF66;
-	Fri, 26 Sep 2025 08:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D72D28B415;
+	Fri, 26 Sep 2025 08:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKJH8JNW"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PxvUrLJ8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F0726F292
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D13A1C861E
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758874586; cv=none; b=Dw75PRS4/HItqWGl0oF1serkORgW6GvSLFNeCZobWsNh1eYEJ1JhqGfoa6fcKyhgPHuBKOOTRgFmNeBfBpxWFzFs8b4CotkZR0didailkhu3PPzllW6wwy1KFVslIcSlNL8qGoiDSMP636ToDS5/uEgIzwjfvWhHVHh2Hx2B9j8=
+	t=1758874673; cv=none; b=uulfkpWpyZ2kopT9mS92Mu18k5/KZXV03OzJ7LGdRkxoEszmC45iOYKr1XjQBDTI+yIU+TLskqdO8ehM5l9rzIA1e296BHxPg1KLft9ngsvsfvAKKZmEcr2wbUgRjP7ORzqLrdEQoy9eyrrlPhEhAj9/g05HGs6B6sD95wT3Kwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758874586; c=relaxed/simple;
-	bh=k6lf45fFqLQua2wfHuxw2UcHb/XUb77nMh4nSd3qjQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dk8WZtclmU7DkDwFOqfYlvRmXta5tkOs3hqHmobDMD2QOsQnmVflBctrogpmS6bh4tQKyBFniXEHhlI6r6OyvY7lLQjjuhuqObj5jhcahkCbeF/J5eyfAp4fTwaXAZFS1+PgTpnCJpVTF023zJdnqoMfNXYj30BSCf0nLwoMwwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKJH8JNW; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso11297685e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758874583; x=1759479383; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=owSo/UAHk7ZjwnGe8RLbn344mSuiCqhtA8gWsbUgwFQ=;
-        b=CKJH8JNWud2w93fWkTtIqdwof0YVCNiTcKTb/cy8JRtuQHhU7kf9HwgeplKLJQ8KGt
-         Sw7EqT/elbz1WPhhhfnfNfEmw+ogetDP8g+kBLtHl8WDew7rrDHSs/+eHBVauMOefgJI
-         qoPAvIgbLLp1QVjweibuRWxilaOX5SpxmHglEPisiSRX1+1LUGcMo+fCvtp2sf3olixG
-         qdAQfivbc/PdrE7dpusSa5wKl4O8NcxUKfwjmFtcKCOXq7QfO01cl/JueHd1uHn+JOix
-         AD7oDnjrd39c/Hi6+/FVfWxngWeLT5FCY+yVfY1Wv+F3ddaEPbXdZInjkjIh2HkmaK0B
-         PWrQ==
+	s=arc-20240116; t=1758874673; c=relaxed/simple;
+	bh=O+O/5awGhs5pzCS/s51pWzldkWOzhws3J28bFbkG/LA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XtoYSUwe3xR1cgjB6QHykmN+IOT4mH9vZTpCHi+5EWtpBMSwCDIOYzSlNBNBKf3VSOpPXEuwh8tByBrE4zuR/uOFcPd0Dmm8C3Z3lW/WZaeuIjh1sHU+py2XwTmUNDlmCvOceEwxdCpKSyvMq++HAwIYOTYeiyuLDqHgXruWbtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PxvUrLJ8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758874669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MtLCM7svpLhgfRT896j9GCj3PNVopX/H6sMbH0jk6xU=;
+	b=PxvUrLJ8K3cCy7EF9vqen8GTQAHUU8mEqaTyRiAzrWu4Ewc0MPry+GObloi0680GZNUB+R
+	u0St7ZeJuGKP6Xl8CsFNjbtJ0n00lBA+NIQdFs5huRHjqXqZ4VJdA0RPGvFVJmRQrmitv9
+	8ngswaN89VMPqWtsM14X4DnzQ7PKHMM=
+Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
+ [74.125.224.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-389-HDmU85c6NZiHt1CIB9Prkw-1; Fri, 26 Sep 2025 04:17:47 -0400
+X-MC-Unique: HDmU85c6NZiHt1CIB9Prkw-1
+X-Mimecast-MFC-AGG-ID: HDmU85c6NZiHt1CIB9Prkw_1758874667
+Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-60f47bb49f1so2018781d50.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 01:17:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758874583; x=1759479383;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=owSo/UAHk7ZjwnGe8RLbn344mSuiCqhtA8gWsbUgwFQ=;
-        b=Xk/i179Zn0EPqsb+GTih4mb3Lu5YjNOmvk6Jbeh7BOMYp/4lwwc5uY9yO12jplu6UO
-         5W2BlPvCvFUqAWDOG20DjwbPEbQU9kqIu05ETUfOjv0lThF/K5wj9AzLDb0AEG5OP/my
-         ePIrceIVygp/VWEWA1vH2pPMMD1umVDSl5r3oQZIQK/72THoMAFWvmrYq82RyWL8nxiH
-         Io2PZzCv4Z41slWnFJ33TY34gEEmAgZ+RVxuLSUs6sSd2txvhel0S6YfGU75pCbBWNLO
-         74FDMlksMlQPPQABd2v1+Hd3AzFQ/uzPR6zDaGGDudEJyvGz/cnDBWgqTs+WyagSP4SC
-         yYrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7sx9/OnZA9jGsR3FMdTJhYV06i0tCTYB45OkO2cwxdkGDNqD7LJEoJgw2T0lb8O26qEKF+ctgkATX+i4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPw5UHlradf1A4GTvskzZUIQfu1/mc55zZGoRXufZ5R56NZY9
-	WrqmFEKCciOnviqyBoD5KoUhqnkicJaXFM1oMVrv/EvYTZ06SBEn3gp1
-X-Gm-Gg: ASbGncuEWsgd4n/r4Tvh6O0OX0973naCbD+Jj7LwqzFLH+rVlwSYiBMUioHN9j9G3iD
-	FwpjylYsYt4zpGxFo+BKk6DHVSGWZ2XM/LMXyaoAZ2Z0JUKjGbZ1+wYsZHkuLjL3IPxyuiR2QKs
-	d+POJv0TWSXCMV55Dv5FJfUtiwWPR/S/2I93cniXDGgXuC9Rg7CzsM96mTMZ+GJ2nrCdtNGI4tg
-	08ucje3XSS4o+HcINSzOlvy+JBcxax/k/itG80syf1wzuZbvew7iBfOyYG25pNj1Oo+Imn2G/Xl
-	jJnfZYqr23am/wecxiu35OiXPnlPTszLnOIhH0ak6ga2iJ3ACyiUtRREzyH2N3XkA5JiVOtnYa0
-	PpBl92IuCTn+1zuoV3CgdP9IwCn5o7/ZQPaQk0wdf4TFB6YpbEwrnsNA/E1JGk01YNqXXxLPL99
-	blg3pkcj88f3CP6ogOGpCi+fP7FdNfcOpW
-X-Google-Smtp-Source: AGHT+IFx0yw9ADcEN1q8d7rLaWFb+GGXaMOKhEpC6nbYNTwr88rLC4NIVlPty8gFF0O0AfrdRyH49A==
-X-Received: by 2002:a05:600c:37ce:b0:46e:38f7:625f with SMTP id 5b1f17b1804b1-46e38f762f6mr36055225e9.10.1758874582556;
-        Fri, 26 Sep 2025 01:16:22 -0700 (PDT)
-Received: from ?IPV6:2001:9e8:f114:1d01:3846:761a:dc0b:dbb9? ([2001:9e8:f114:1d01:3846:761a:dc0b:dbb9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e354e07f2sm28214135e9.9.2025.09.26.01.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 01:16:22 -0700 (PDT)
-Message-ID: <f62668cb-ad01-495e-86c3-82f92fa5ad90@gmail.com>
-Date: Fri, 26 Sep 2025 10:16:19 +0200
+        d=1e100.net; s=20230601; t=1758874667; x=1759479467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MtLCM7svpLhgfRT896j9GCj3PNVopX/H6sMbH0jk6xU=;
+        b=Q9LdhfukMOJOKB9WvZtPVIBLIT051d45yKHUFtH+L40pb+u67a3XysVvoUI7hEeBF1
+         gfCD4qzOWrBjRJ7rlZersYJtNeFJbie5ZZhHOow6CZ48uNLoA+HGm/jvVBO1REVO4p9n
+         PrOs7UXcIgXkYKNJY7A38GVcoAu3aiAtb93X+sk01xraxWahVyuv3NadyijxS8rWKnOA
+         oVJDLflAxBqPN9Um8jUje0NG7KVIM6voULvifKYI4iLT6BJxzkjAMNu8ka6rdo2J6XfH
+         J2ciiFjgphfqR5hDgb+9tPrCDG4jbdmxCVy8XHxOZ2QmF9iHRMNS3qTItY1vzxPJPIZ6
+         ItCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiRnYxJ+VbJ+pQHMm9ZLnbmHH0dAhhIw8oFU0NQs3Zp9hzntbhTSyw2xKAL7J3/eDqyGOgAmFu+R0oHHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUGRwwMsL+f8QPySlBR/z1skQNEh4qkxJ/jaG99yfnSR9hQHVb
+	++6mXTRqzfKrd11HpaAb8Xf/OvVPouWjep7MgkZhc0pr8meZjq+ARNirGQ/pTb+XrUKkxs9LapL
+	NwXl5rQezwVPqRjl4Cakk9+RlLVQb9ZE1ZrnFo9lFgAXZH0mpxWWD/ktUgALb4njvKClt+cUJ4L
+	D9pjdHvt26R1bGAPEIdqNQJuzP3m8FhpMU9oXYaFb5
+X-Gm-Gg: ASbGnctnkIoJpXk5/Hc0aZ8xmvj3M/JiFiYuteWtLH9Y9A52dAcevE/4aVES1lwmJWO
+	+rI10FNGCJnSfCITBvGGaXY6Dub9Ov/JNrd3AjCtfYX5BDeLsqdyBQDboCkx3AjycPdB125FOEB
+	MhzLgVTwOJarCMAA5rVNYAugHn41vJQl5HYUgPijOeDDomKAOuPbsdtCRMzsXb1z10BDn0YpN7S
+	LFCDKlo
+X-Received: by 2002:a05:690e:15cf:b0:633:b017:42ba with SMTP id 956f58d0204a3-6361a74aae9mr4521652d50.14.1758874666656;
+        Fri, 26 Sep 2025 01:17:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTdz0x+HQ2C82qdjULdshHNNW8gAz5gVB/cueypsANhQ2O5h/L0X7H6mQxsZIXbwHXkxGdGnNvXXk7G8XeJaw=
+X-Received: by 2002:a05:690e:15cf:b0:633:b017:42ba with SMTP id
+ 956f58d0204a3-6361a74aae9mr4521626d50.14.1758874665953; Fri, 26 Sep 2025
+ 01:17:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH i2c-host v6] i2c: rtl9300: Implement I2C block read and
- write
-Content-Language: en-US
-To: Sven Eckelmann <sven@narfation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Harshal Gohel <hg@simonwunderlich.de>,
- Simon Wunderlich <sw@simonwunderlich.de>, Andi Shyti
- <andi.shyti@kernel.org>, Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <20250926-i2c-rtl9300-multi-byte-v6-1-a2d7d8926105@narfation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250925091335.1964283-1-eperezma@redhat.com> <20250925091335.1964283-6-eperezma@redhat.com>
+ <CACGkMEvYw4=TPqQ=R51vYdgE786MWyPP0UcApiDhiCKWMQXR7Q@mail.gmail.com>
+In-Reply-To: <CACGkMEvYw4=TPqQ=R51vYdgE786MWyPP0UcApiDhiCKWMQXR7Q@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Fri, 26 Sep 2025 10:17:08 +0200
+X-Gm-Features: AS18NWA7fIx0OShk57Oth-QBUHoWEctMivRXT4tYSTLyo6rphooOxEm7DNNS-vY
+Message-ID: <CAJaqyWcZGE0SD6Eed2WhiskYaSR0pSm3dMYf2j4TyfbZe3Qmrg@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] vduse: add vq group asid support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	linux-kernel@vger.kernel.org, Maxime Coquelin <mcoqueli@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>, 
+	virtualization@lists.linux.dev, Stefano Garzarella <sgarzare@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sven,
+On Fri, Sep 26, 2025 at 9:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Thu, Sep 25, 2025 at 5:14=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
+> >
+> > Add support for assigning Address Space Identifiers (ASIDs) to each VQ
+> > group.  This enables mapping each group into a distinct memory space.
+> >
+> > Now that the driver can change ASID in the middle of operation, the
+> > domain that each vq address point is also protected by domain_lock.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > ---
+> > v4:
+> > * Divide each domain bounce size between the device bounce size (Jason)=
+.
+> > * revert unneeded addr =3D NULL assignment (Jason)
+> > * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
+> >   return; } (Jason)
+> > * Change a bad multiline comment, using @ caracter instead of * (Jason)=
+.
+> > * Consider config->nas =3D=3D 0 as a fail (Jason).
+> >
+> > v3:
+> > * Get the vduse domain through the vduse_as in the map functions
+> >   (Jason).
+> > * Squash with the patch creating the vduse_as struct (Jason).
+> > * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
+> >   (Jason)
+> >
+> > v2:
+> > * Convert the use of mutex to rwlock.
+> >
+> > RFC v3:
+> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+> >   value to reduce memory consumption, but vqs are already limited to
+> >   that value and userspace VDUSE is able to allocate that many vqs.
+> > * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
+> >   VDUSE_IOTLB_GET_INFO.
+> > * Use of array_index_nospec in VDUSE device ioctls.
+> > * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
+> > * Move the umem mutex to asid struct so there is no contention between
+> >   ASIDs.
+> >
+> > RFC v2:
+> > * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
+> >   part of the struct is the same.
+> > ---
+> >  drivers/vdpa/vdpa_user/vduse_dev.c | 341 +++++++++++++++++++++--------
+> >  include/uapi/linux/vduse.h         |  51 ++++-
+> >  2 files changed, 293 insertions(+), 99 deletions(-)
+> >
+> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
+r/vduse_dev.c
+> > index b181ea342592..8fd34fc67574 100644
+> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > @@ -42,6 +42,7 @@
+> >
+> >  #define VDUSE_DEV_MAX (1U << MINORBITS)
+> >  #define VDUSE_DEV_MAX_GROUPS 0xffff
+> > +#define VDUSE_DEV_MAX_AS 0xffff
+> >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
+> >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
+> >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
+> > @@ -87,7 +88,14 @@ struct vduse_umem {
+> >         struct mm_struct *mm;
+> >  };
+> >
+> > +struct vduse_as {
+> > +       struct vduse_iova_domain *domain;
+> > +       struct vduse_umem *umem;
+> > +       struct mutex mem_lock;
+> > +};
+> > +
+> >  struct vduse_vq_group {
+> > +       struct vduse_as *as;
+> >         struct vduse_dev *dev;
+> >  };
+> >
+> > @@ -95,7 +103,7 @@ struct vduse_dev {
+> >         struct vduse_vdpa *vdev;
+> >         struct device *dev;
+> >         struct vduse_virtqueue **vqs;
+> > -       struct vduse_iova_domain *domain;
+> > +       struct vduse_as *as;
+> >         char *name;
+> >         struct mutex lock;
+> >         spinlock_t msg_lock;
+> > @@ -123,9 +131,8 @@ struct vduse_dev {
+> >         u32 vq_num;
+> >         u32 vq_align;
+> >         u32 ngroups;
+> > -       struct vduse_umem *umem;
+> > +       u32 nas;
+> >         struct vduse_vq_group *groups;
+> > -       struct mutex mem_lock;
+> >         unsigned int bounce_size;
+> >         rwlock_t domain_lock;
+> >  };
+> > @@ -315,7 +322,7 @@ static int vduse_dev_set_status(struct vduse_dev *d=
+ev, u8 status)
+> >         return vduse_dev_msg_sync(dev, &msg);
+> >  }
+> >
+> > -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
+> > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
+> >                                   u64 start, u64 last)
+> >  {
+> >         struct vduse_dev_msg msg =3D { 0 };
+> > @@ -324,8 +331,14 @@ static int vduse_dev_update_iotlb(struct vduse_dev=
+ *dev,
+> >                 return -EINVAL;
+> >
+> >         msg.req.type =3D VDUSE_UPDATE_IOTLB;
+> > -       msg.req.iova.start =3D start;
+> > -       msg.req.iova.last =3D last;
+> > +       if (dev->api_version < VDUSE_API_VERSION_1) {
+> > +               msg.req.iova.start =3D start;
+> > +               msg.req.iova.last =3D last;
+> > +       } else {
+> > +               msg.req.iova_v2.start =3D start;
+> > +               msg.req.iova_v2.last =3D last;
+> > +               msg.req.iova_v2.asid =3D asid;
+> > +       }
+> >
+> >         return vduse_dev_msg_sync(dev, &msg);
+> >  }
+> > @@ -437,14 +450,29 @@ static __poll_t vduse_dev_poll(struct file *file,=
+ poll_table *wait)
+> >         return mask;
+> >  }
+> >
+> > +/* Force set the asid to a vq group without a message to the VDUSE dev=
+ice */
+> > +static void vduse_set_group_asid_nomsg(struct vduse_dev *dev,
+> > +                                      unsigned int group, unsigned int=
+ asid)
+> > +{
+> > +       write_lock(&dev->domain_lock);
+> > +       dev->groups[group].as =3D &dev->as[asid];
+> > +       write_unlock(&dev->domain_lock);
+> > +}
+> > +
+> >  static void vduse_dev_reset(struct vduse_dev *dev)
+> >  {
+> >         int i;
+> > -       struct vduse_iova_domain *domain =3D dev->domain;
+> >
+> >         /* The coherent mappings are handled in vduse_dev_free_coherent=
+() */
+> > -       if (domain && domain->bounce_map)
+> > -               vduse_domain_reset_bounce_map(domain);
+> > +       for (i =3D 0; i < dev->nas; i++) {
+> > +               struct vduse_iova_domain *domain =3D dev->as[i].domain;
+> > +
+> > +               if (domain && domain->bounce_map)
+> > +                       vduse_domain_reset_bounce_map(domain);
+> > +       }
+> > +
+> > +       for (i =3D 0; i < dev->ngroups; i++)
+> > +               vduse_set_group_asid_nomsg(dev, i, 0);
+> >
+> >         down_write(&dev->rwsem);
+> >
+> > @@ -624,6 +652,29 @@ static union virtio_map vduse_get_vq_map(struct vd=
+pa_device *vdpa, u16 idx)
+> >         return ret;
+> >  }
+> >
+> > +static int vduse_set_group_asid(struct vdpa_device *vdpa, unsigned int=
+ group,
+> > +                               unsigned int asid)
+> > +{
+> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > +       struct vduse_dev_msg msg =3D { 0 };
+> > +       int r;
+> > +
+> > +       if (dev->api_version < VDUSE_API_VERSION_1 ||
+> > +           group >=3D dev->ngroups || asid >=3D dev->nas)
+> > +               return -EINVAL;
+> > +
+> > +       msg.req.type =3D VDUSE_SET_VQ_GROUP_ASID;
+> > +       msg.req.vq_group_asid.group =3D group;
+> > +       msg.req.vq_group_asid.asid =3D asid;
+> > +
+> > +       r =3D vduse_dev_msg_sync(dev, &msg);
+> > +       if (r < 0)
+> > +               return r;
+> > +
+> > +       vduse_set_group_asid_nomsg(dev, group, asid);
+> > +       return 0;
+> > +}
+> > +
+> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
+> >                                 struct vdpa_vq_state *state)
+> >  {
+> > @@ -795,13 +846,13 @@ static int vduse_vdpa_set_map(struct vdpa_device =
+*vdpa,
+> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> >         int ret;
+> >
+> > -       ret =3D vduse_domain_set_map(dev->domain, iotlb);
+> > +       ret =3D vduse_domain_set_map(dev->as[asid].domain, iotlb);
+> >         if (ret)
+> >                 return ret;
+> >
+> > -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
+> > +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
+> >         if (ret) {
+> > -               vduse_domain_clear_map(dev->domain, iotlb);
+> > +               vduse_domain_clear_map(dev->as[asid].domain, iotlb);
+> >                 return ret;
+> >         }
+> >
+> > @@ -844,6 +895,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
+ig_ops =3D {
+> >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
+> >         .reset                  =3D vduse_vdpa_reset,
+> >         .set_map                =3D vduse_vdpa_set_map,
+> > +       .set_group_asid         =3D vduse_set_group_asid,
+> >         .get_vq_map             =3D vduse_get_vq_map,
+> >         .free                   =3D vduse_vdpa_free,
+> >  };
+> > @@ -859,9 +911,10 @@ static void vduse_dev_sync_single_for_device(union=
+ virtio_map token,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
+);
+> > +       read_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static void vduse_dev_sync_single_for_cpu(union virtio_map token,
+> > @@ -875,9 +928,10 @@ static void vduse_dev_sync_single_for_cpu(union vi=
+rtio_map token,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
+> > +       read_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static dma_addr_t vduse_dev_map_page(union virtio_map token, struct pa=
+ge *page,
+> > @@ -887,14 +941,18 @@ static dma_addr_t vduse_dev_map_page(union virtio=
+_map token, struct page *page,
+> >  {
+> >         struct vduse_dev *vdev;
+> >         struct vduse_iova_domain *domain;
+> > +       dma_addr_t r;
+> >
+> >         if (!token.group)
+> >                 return DMA_MAPPING_ERROR;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> > +       r =3D vduse_domain_map_page(domain, page, offset, size, dir, at=
+trs);
+> > +       read_unlock(&vdev->domain_lock);
+> >
+> > -       return vduse_domain_map_page(domain, page, offset, size, dir, a=
+ttrs);
+> > +       return r;
+> >  }
+> >
+> >  static void vduse_dev_unmap_page(union virtio_map token, dma_addr_t dm=
+a_addr,
+> > @@ -908,9 +966,10 @@ static void vduse_dev_unmap_page(union virtio_map =
+token, dma_addr_t dma_addr,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > -       return vduse_domain_unmap_page(domain, dma_addr, size, dir, att=
+rs);
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> > +       vduse_domain_unmap_page(domain, dma_addr, size, dir, attrs);
+> > +       read_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static void *vduse_dev_alloc_coherent(union virtio_map token, size_t s=
+ize,
+> > @@ -926,14 +985,14 @@ static void *vduse_dev_alloc_coherent(union virti=
+o_map token, size_t size,
+> >                 return NULL;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         addr =3D vduse_domain_alloc_coherent(domain, size,
+> >                                            (dma_addr_t *)&iova, flag);
+> > -       if (!addr)
+> > -               return NULL;
+> > -
+> > -       *dma_addr =3D (dma_addr_t)iova;
+> > +       if (addr)
+> > +               *dma_addr =3D (dma_addr_t)iova;
+> >
+> > +       read_unlock(&vdev->domain_lock);
+> >         return addr;
+> >  }
+> >
+> > @@ -948,23 +1007,28 @@ static void vduse_dev_free_coherent(union virtio=
+_map token, size_t size,
+> >                 return;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > -
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> >         vduse_domain_free_coherent(domain, size, vaddr, dma_addr, attrs=
+);
+> > +       read_unlock(&vdev->domain_lock);
+> >  }
+> >
+> >  static bool vduse_dev_need_sync(union virtio_map token, dma_addr_t dma=
+_addr)
+> >  {
+> >         struct vduse_dev *vdev;
+> >         struct vduse_iova_domain *domain;
+> > +       size_t bounce_size;
+> >
+> >         if (!token.group)
+> >                 return false;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> > +       bounce_size =3D domain->bounce_size;
+> > +       read_unlock(&vdev->domain_lock);
+> >
+> > -       return dma_addr < domain->bounce_size;
+> > +       return dma_addr < bounce_size;
+> >  }
+> >
+> >  static int vduse_dev_mapping_error(union virtio_map token, dma_addr_t =
+dma_addr)
+> > @@ -978,14 +1042,18 @@ static size_t vduse_dev_max_mapping_size(union v=
+irtio_map token)
+> >  {
+> >         struct vduse_dev *vdev;
+> >         struct vduse_iova_domain *domain;
+> > +       size_t bounce_size;
+> >
+> >         if (!token.group)
+> >                 return 0;
+> >
+> >         vdev =3D token.group->dev;
+> > -       domain =3D vdev->domain;
+> > +       read_lock(&vdev->domain_lock);
+> > +       domain =3D token.group->as->domain;
+> > +       bounce_size =3D domain->bounce_size;
+> > +       read_unlock(&vdev->domain_lock);
+> >
+> > -       return domain->bounce_size;
+> > +       return bounce_size;
+> >  }
+> >
+> >  static const struct virtio_map_ops vduse_map_ops =3D {
+> > @@ -1125,39 +1193,40 @@ static int vduse_dev_queue_irq_work(struct vdus=
+e_dev *dev,
+> >         return ret;
+> >  }
+> >
+> > -static int vduse_dev_dereg_umem(struct vduse_dev *dev,
+> > +static int vduse_dev_dereg_umem(struct vduse_dev *dev, u32 asid,
+> >                                 u64 iova, u64 size)
+> >  {
+> >         int ret;
+> >
+> > -       mutex_lock(&dev->mem_lock);
+> > +       mutex_lock(&dev->as[asid].mem_lock);
+> >         ret =3D -ENOENT;
+> > -       if (!dev->umem)
+> > +       if (!dev->as[asid].umem)
+> >                 goto unlock;
+> >
+> >         ret =3D -EINVAL;
+> > -       if (!dev->domain)
+> > +       if (!dev->as[asid].domain)
+> >                 goto unlock;
+> >
+> > -       if (dev->umem->iova !=3D iova || size !=3D dev->domain->bounce_=
+size)
+> > +       if (dev->as[asid].umem->iova !=3D iova ||
+> > +           size !=3D dev->as[asid].domain->bounce_size)
+> >                 goto unlock;
+> >
+> > -       vduse_domain_remove_user_bounce_pages(dev->domain);
+> > -       unpin_user_pages_dirty_lock(dev->umem->pages,
+> > -                                   dev->umem->npages, true);
+> > -       atomic64_sub(dev->umem->npages, &dev->umem->mm->pinned_vm);
+> > -       mmdrop(dev->umem->mm);
+> > -       vfree(dev->umem->pages);
+> > -       kfree(dev->umem);
+> > -       dev->umem =3D NULL;
+> > +       vduse_domain_remove_user_bounce_pages(dev->as[asid].domain);
+> > +       unpin_user_pages_dirty_lock(dev->as[asid].umem->pages,
+> > +                                   dev->as[asid].umem->npages, true);
+> > +       atomic64_sub(dev->as[asid].umem->npages, &dev->as[asid].umem->m=
+m->pinned_vm);
+> > +       mmdrop(dev->as[asid].umem->mm);
+> > +       vfree(dev->as[asid].umem->pages);
+> > +       kfree(dev->as[asid].umem);
+> > +       dev->as[asid].umem =3D NULL;
+> >         ret =3D 0;
+> >  unlock:
+> > -       mutex_unlock(&dev->mem_lock);
+> > +       mutex_unlock(&dev->as[asid].mem_lock);
+> >         return ret;
+> >  }
+> >
+> >  static int vduse_dev_reg_umem(struct vduse_dev *dev,
+> > -                             u64 iova, u64 uaddr, u64 size)
+> > +                             u32 asid, u64 iova, u64 uaddr, u64 size)
+> >  {
+> >         struct page **page_list =3D NULL;
+> >         struct vduse_umem *umem =3D NULL;
+> > @@ -1165,14 +1234,14 @@ static int vduse_dev_reg_umem(struct vduse_dev =
+*dev,
+> >         unsigned long npages, lock_limit;
+> >         int ret;
+> >
+> > -       if (!dev->domain || !dev->domain->bounce_map ||
+> > -           size !=3D dev->domain->bounce_size ||
+> > +       if (!dev->as[asid].domain || !dev->as[asid].domain->bounce_map =
+||
+> > +           size !=3D dev->as[asid].domain->bounce_size ||
+> >             iova !=3D 0 || uaddr & ~PAGE_MASK)
+> >                 return -EINVAL;
+> >
+> > -       mutex_lock(&dev->mem_lock);
+> > +       mutex_lock(&dev->as[asid].mem_lock);
+> >         ret =3D -EEXIST;
+> > -       if (dev->umem)
+> > +       if (dev->as[asid].umem)
+> >                 goto unlock;
+> >
+> >         ret =3D -ENOMEM;
+> > @@ -1196,7 +1265,7 @@ static int vduse_dev_reg_umem(struct vduse_dev *d=
+ev,
+> >                 goto out;
+> >         }
+> >
+> > -       ret =3D vduse_domain_add_user_bounce_pages(dev->domain,
+> > +       ret =3D vduse_domain_add_user_bounce_pages(dev->as[asid].domain=
+,
+> >                                                  page_list, pinned);
+> >         if (ret)
+> >                 goto out;
+> > @@ -1209,7 +1278,7 @@ static int vduse_dev_reg_umem(struct vduse_dev *d=
+ev,
+> >         umem->mm =3D current->mm;
+> >         mmgrab(current->mm);
+> >
+> > -       dev->umem =3D umem;
+> > +       dev->as[asid].umem =3D umem;
+> >  out:
+> >         if (ret && pinned > 0)
+> >                 unpin_user_pages(page_list, pinned);
+> > @@ -1220,7 +1289,7 @@ static int vduse_dev_reg_umem(struct vduse_dev *d=
+ev,
+> >                 vfree(page_list);
+> >                 kfree(umem);
+> >         }
+> > -       mutex_unlock(&dev->mem_lock);
+> > +       mutex_unlock(&dev->as[asid].mem_lock);
+> >         return ret;
+> >  }
+> >
+> > @@ -1252,47 +1321,66 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >
+> >         switch (cmd) {
+> >         case VDUSE_IOTLB_GET_FD: {
+> > -               struct vduse_iotlb_entry entry;
+> > +               struct vduse_iotlb_entry_v2 entry;
+> >                 struct vhost_iotlb_map *map;
+> >                 struct vdpa_map_file *map_file;
+> >                 struct file *f =3D NULL;
+> > +               u32 asid;
+> >
+> >                 ret =3D -EFAULT;
+> > -               if (copy_from_user(&entry, argp, sizeof(entry)))
+> > -                       break;
+> > +               if (dev->api_version >=3D VDUSE_API_VERSION_1) {
+> > +                       if (copy_from_user(&entry, argp, sizeof(entry))=
+)
+> > +                               break;
+> > +               } else {
+> > +                       entry.asid =3D 0;
+> > +                       if (copy_from_user(&entry.v1, argp,
+> > +                                          sizeof(entry.v1)))
+> > +                               break;
+> > +               }
+> >
+> >                 ret =3D -EINVAL;
+> > -               if (entry.start > entry.last)
+> > +               if (entry.v1.start > entry.v1.last)
+> > +                       break;
+> > +
+> > +               if (entry.asid >=3D dev->nas)
+> >                         break;
+> >
+> >                 read_lock(&dev->domain_lock);
+> > -               if (!dev->domain) {
+> > +               asid =3D array_index_nospec(entry.asid, dev->nas);
+> > +               if (!dev->as[asid].domain) {
+> >                         read_unlock(&dev->domain_lock);
+> >                         break;
+> >                 }
+> > -               spin_lock(&dev->domain->iotlb_lock);
+> > -               map =3D vhost_iotlb_itree_first(dev->domain->iotlb,
+> > -                                             entry.start, entry.last);
+> > +               spin_lock(&dev->as[asid].domain->iotlb_lock);
+> > +               map =3D vhost_iotlb_itree_first(dev->as[asid].domain->i=
+otlb,
+> > +                                             entry.v1.start, entry.v1.=
+last);
+> >                 if (map) {
+> >                         map_file =3D (struct vdpa_map_file *)map->opaqu=
+e;
+> >                         f =3D get_file(map_file->file);
+> > -                       entry.offset =3D map_file->offset;
+> > -                       entry.start =3D map->start;
+> > -                       entry.last =3D map->last;
+> > -                       entry.perm =3D map->perm;
+> > +                       entry.v1.offset =3D map_file->offset;
+> > +                       entry.v1.start =3D map->start;
+> > +                       entry.v1.last =3D map->last;
+> > +                       entry.v1.perm =3D map->perm;
+> >                 }
+> > -               spin_unlock(&dev->domain->iotlb_lock);
+> > +               spin_unlock(&dev->as[asid].domain->iotlb_lock);
+> >                 read_unlock(&dev->domain_lock);
+> >                 ret =3D -EINVAL;
+> >                 if (!f)
+> >                         break;
+> >
+> >                 ret =3D -EFAULT;
+> > -               if (copy_to_user(argp, &entry, sizeof(entry))) {
+> > +               if (dev->api_version >=3D VDUSE_API_VERSION_1)
+> > +                       ret =3D copy_to_user(argp, &entry,
+> > +                                          sizeof(entry));
+> > +               else
+> > +                       ret =3D copy_to_user(argp, &entry.v1,
+> > +                                          sizeof(entry.v1));
+>
+> Note that copy_to_user doesn't return errno.
+>
+> > +
+> > +               if (ret) {
+> >                         fput(f);
+> >                         break;
+> >                 }
+> > -               ret =3D receive_fd(f, NULL, perm_to_file_flags(entry.pe=
+rm));
+> > +               ret =3D receive_fd(f, NULL, perm_to_file_flags(entry.v1=
+.perm));
+> >                 fput(f);
+> >                 break;
+> >         }
+> > @@ -1437,6 +1525,7 @@ static long vduse_dev_ioctl(struct file *file, un=
+signed int cmd,
+> >         }
+> >         case VDUSE_IOTLB_REG_UMEM: {
+> >                 struct vduse_iova_umem umem;
+> > +               u32 asid;
+> >
+> >                 ret =3D -EFAULT;
+> >                 if (copy_from_user(&umem, argp, sizeof(umem)))
+> > @@ -1444,17 +1533,21 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >
+> >                 ret =3D -EINVAL;
+> >                 if (!is_mem_zero((const char *)umem.reserved,
+> > -                                sizeof(umem.reserved)))
+> > +                                sizeof(umem.reserved)) ||
+> > +                   (dev->api_version < VDUSE_API_VERSION_1 &&
+> > +                    umem.asid !=3D 0) || umem.asid >=3D dev->nas)
+> >                         break;
+> >
+> >                 write_lock(&dev->domain_lock);
+> > -               ret =3D vduse_dev_reg_umem(dev, umem.iova,
+> > +               asid =3D array_index_nospec(umem.asid, dev->nas);
+> > +               ret =3D vduse_dev_reg_umem(dev, asid, umem.iova,
+> >                                          umem.uaddr, umem.size);
+> >                 write_unlock(&dev->domain_lock);
+> >                 break;
+> >         }
+> >         case VDUSE_IOTLB_DEREG_UMEM: {
+> >                 struct vduse_iova_umem umem;
+> > +               u32 asid;
+> >
+> >                 ret =3D -EFAULT;
+> >                 if (copy_from_user(&umem, argp, sizeof(umem)))
+> > @@ -1462,10 +1555,15 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >
+> >                 ret =3D -EINVAL;
+> >                 if (!is_mem_zero((const char *)umem.reserved,
+> > -                                sizeof(umem.reserved)))
+> > +                                sizeof(umem.reserved)) ||
+> > +                   (dev->api_version < VDUSE_API_VERSION_1 &&
+> > +                    umem.asid !=3D 0) ||
+> > +                    umem.asid >=3D dev->nas)
+> >                         break;
+> > +
+> >                 write_lock(&dev->domain_lock);
+> > -               ret =3D vduse_dev_dereg_umem(dev, umem.iova,
+> > +               asid =3D array_index_nospec(umem.asid, dev->nas);
+> > +               ret =3D vduse_dev_dereg_umem(dev, asid, umem.iova,
+> >                                            umem.size);
+> >                 write_unlock(&dev->domain_lock);
+> >                 break;
+> > @@ -1473,6 +1571,7 @@ static long vduse_dev_ioctl(struct file *file, un=
+signed int cmd,
+> >         case VDUSE_IOTLB_GET_INFO: {
+> >                 struct vduse_iova_info info;
+> >                 struct vhost_iotlb_map *map;
+> > +               u32 asid;
+> >
+> >                 ret =3D -EFAULT;
+> >                 if (copy_from_user(&info, argp, sizeof(info)))
+> > @@ -1486,23 +1585,31 @@ static long vduse_dev_ioctl(struct file *file, =
+unsigned int cmd,
+> >                                  sizeof(info.reserved)))
+> >                         break;
+> >
+> > +               if (dev->api_version < VDUSE_API_VERSION_1) {
+> > +                       if (info.asid)
+> > +                               break;
+> > +               } else if (info.asid >=3D dev->nas)
+> > +                       break;
+> > +
+> >                 read_lock(&dev->domain_lock);
+> > -               if (!dev->domain) {
+> > +               asid =3D array_index_nospec(info.asid, dev->nas);
+> > +               if (!dev->as[asid].domain) {
+> >                         read_unlock(&dev->domain_lock);
+> >                         break;
+> >                 }
+> > -               spin_lock(&dev->domain->iotlb_lock);
+> > -               map =3D vhost_iotlb_itree_first(dev->domain->iotlb,
+> > +               spin_lock(&dev->as[asid].domain->iotlb_lock);
+> > +               map =3D vhost_iotlb_itree_first(dev->as[asid].domain->i=
+otlb,
+> >                                               info.start, info.last);
+> >                 if (map) {
+> >                         info.start =3D map->start;
+> >                         info.last =3D map->last;
+> >                         info.capability =3D 0;
+> > -                       if (dev->domain->bounce_map && map->start =3D=
+=3D 0 &&
+> > -                           map->last =3D=3D dev->domain->bounce_size -=
+ 1)
+> > +                       if (dev->as[asid].domain->bounce_map &&
+> > +                           map->start =3D=3D 0 &&
+> > +                           map->last =3D=3D dev->as[asid].domain->boun=
+ce_size - 1)
+> >                                 info.capability |=3D VDUSE_IOVA_CAP_UME=
+M;
+> >                 }
+> > -               spin_unlock(&dev->domain->iotlb_lock);
+> > +               spin_unlock(&dev->as[asid].domain->iotlb_lock);
+> >                 read_unlock(&dev->domain_lock);
+> >                 if (!map)
+> >                         break;
+> > @@ -1527,8 +1634,10 @@ static int vduse_dev_release(struct inode *inode=
+, struct file *file)
+> >         struct vduse_dev *dev =3D file->private_data;
+> >
+> >         write_lock(&dev->domain_lock);
+> > -       if (dev->domain)
+> > -               vduse_dev_dereg_umem(dev, 0, dev->domain->bounce_size);
+> > +       for (int i =3D 0; i < dev->nas; i++)
+> > +               if (dev->as[i].domain)
+> > +                       vduse_dev_dereg_umem(dev, i, 0,
+> > +                                            dev->as[i].domain->bounce_=
+size);
+> >         write_unlock(&dev->domain_lock);
+> >         spin_lock(&dev->msg_lock);
+> >         /* Make sure the inflight messages can processed after reconnce=
+ction */
+> > @@ -1747,7 +1856,6 @@ static struct vduse_dev *vduse_dev_create(void)
+> >                 return NULL;
+> >
+> >         mutex_init(&dev->lock);
+> > -       mutex_init(&dev->mem_lock);
+> >         rwlock_init(&dev->domain_lock);
+> >         spin_lock_init(&dev->msg_lock);
+> >         INIT_LIST_HEAD(&dev->send_list);
+> > @@ -1798,8 +1906,11 @@ static int vduse_destroy_dev(char *name)
+> >         idr_remove(&vduse_idr, dev->minor);
+> >         kvfree(dev->config);
+> >         vduse_dev_deinit_vqs(dev);
+> > -       if (dev->domain)
+> > -               vduse_domain_destroy(dev->domain);
+> > +       for (int i =3D 0; i < dev->nas; i++) {
+> > +               if (dev->as[i].domain)
+> > +                       vduse_domain_destroy(dev->as[i].domain);
+> > +       }
+> > +       kfree(dev->as);
+> >         kfree(dev->name);
+> >         kfree(dev->groups);
+> >         vduse_dev_destroy(dev);
+> > @@ -1846,12 +1957,17 @@ static bool vduse_validate_config(struct vduse_=
+dev_config *config,
+> >                          sizeof(config->reserved)))
+> >                 return false;
+> >
+> > -       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> > +       if (api_version < VDUSE_API_VERSION_1 &&
+> > +           (config->ngroups || config->nas))
+> >                 return false;
+> >
+> > -       if (api_version >=3D VDUSE_API_VERSION_1 &&
+> > -           (!config->ngroups || config->ngroups > VDUSE_DEV_MAX_GROUPS=
+))
+> > -               return false;
+> > +       if (api_version >=3D VDUSE_API_VERSION_1) {
+> > +               if (!config->ngroups || config->ngroups > VDUSE_DEV_MAX=
+_GROUPS)
+> > +                       return false;
+> > +
+> > +               if (!config->nas || config->nas > VDUSE_DEV_MAX_AS)
+> > +                       return false;
+> > +       }
+> >
+> >         if (config->vq_align > PAGE_SIZE)
+> >                 return false;
+> > @@ -1916,7 +2032,8 @@ static ssize_t bounce_size_store(struct device *d=
+evice,
+> >
+> >         ret =3D -EPERM;
+> >         write_lock(&dev->domain_lock);
+> > -       if (dev->domain)
+> > +       /* Assuming that if the first domain is allocated, all are allo=
+cated */
+> > +       if (dev->as[0].domain)
+> >                 goto unlock;
+> >
+> >         ret =3D kstrtouint(buf, 10, &bounce_size);
+> > @@ -1976,6 +2093,13 @@ static int vduse_create_dev(struct vduse_dev_con=
+fig *config,
+> >         for (u32 i =3D 0; i < dev->ngroups; ++i)
+> >                 dev->groups[i].dev =3D dev;
+> >
+> > +       dev->nas =3D (dev->api_version < 1) ? 1 : config->nas;
+> > +       dev->as =3D kcalloc(dev->nas, sizeof(dev->as[0]), GFP_KERNEL);
+> > +       if (!dev->as)
+> > +               goto err_as;
+> > +       for (int i =3D 0; i < dev->nas; i++)
+> > +               mutex_init(&dev->as[i].mem_lock);
+> > +
+> >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
+> >         if (!dev->name)
+> >                 goto err_str;
+> > @@ -2012,6 +2136,8 @@ static int vduse_create_dev(struct vduse_dev_conf=
+ig *config,
+> >  err_idr:
+> >         kfree(dev->name);
+> >  err_str:
+> > +       kfree(dev->as);
+> > +err_as:
+> >         kfree(dev->groups);
+> >  err_vq_groups:
+> >         vduse_dev_destroy(dev);
+> > @@ -2137,7 +2263,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev *=
+dev, const char *name)
+> >
+> >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+> >                                  &vduse_vdpa_config_ops, &vduse_map_ops=
+,
+> > -                                dev->ngroups, 1, name, true);
+> > +                                dev->ngroups, dev->nas, name, true);
+> >         if (IS_ERR(vdev))
+> >                 return PTR_ERR(vdev);
+> >
+> > @@ -2152,6 +2278,7 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mde=
+v, const char *name,
+> >                         const struct vdpa_dev_set_config *config)
+> >  {
+> >         struct vduse_dev *dev;
+> > +       size_t domain_bounce_size;
+> >         int ret;
+> >
+> >         mutex_lock(&vduse_lock);
+> > @@ -2166,11 +2293,29 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *m=
+dev, const char *name,
+> >                 return ret;
+> >
+> >         write_lock(&dev->domain_lock);
+> > -       if (!dev->domain)
+> > -               dev->domain =3D vduse_domain_create(VDUSE_IOVA_SIZE - 1=
+,
+> > -                                                 dev->bounce_size);
+> > +       ret =3D 0;
+> > +
+> > +       domain_bounce_size =3D dev->bounce_size / dev->nas;
+> > +       if (domain_bounce_size =3D=3D 0) {
+> > +               write_unlock(&dev->domain_lock);
+> > +               dev_err(&dev->vdev->vdpa.dev, "Bounce size %u / nas %u =
+is 0",
+> > +                       dev->bounce_size, dev->nas);
+>
+> I don't see a reason to err here since it's userspace triggerable behavio=
+ur.
+>
 
-On 26.09.25 09:52, Sven Eckelmann wrote:
-> From: Harshal Gohel <hg@simonwunderlich.de>
->
-> It was noticed that the original implementation of SMBus Block Write in the
-> driver was actually an I2C Block Write. Both differ only in the Count byte
-> before the actual data:
->
->   S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
->
-> The I2C Block Write is just skipping this Count byte and starts directly
-> with the data:
->
->   S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
->
-> The I2C controller of RTL93xx doesn't handle this Count byte special and it
-> is simply another one of (16 possible) data bytes. Adding support for the
-> I2C Block Write therefore only requires skipping the count byte (0) in
-> data->block.
->
-> It is similar for reads. The SMBUS Block read is having a Count byte before
-> the data:
->
->   S Addr Wr [A] Comm [A]
->             Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
->
-> And the I2C Block Read is directly starting with the actual data:
->
->   S Addr Wr [A] Comm [A]
->             Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
->
-> The I2C controller is also not handling this byte in a special way. It
-> simply provides every byte after the Rd marker + Ack as part of the 16 byte
-> receive buffer (registers). The content of this buffer just has to be
-> copied to the right position in the receive data->block.
->
-> Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
-> Co-developed-by: Sven Eckelmann <sven@narfation.org>
-> Signed-off-by: Sven Eckelmann <sven@narfation.org>
-> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> Tested-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> ---
-> This patch was already applied [1] but then removed. Instead, only the
-> chunk
->
->   @@ -314,7 +343,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
->    {
->           return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
->                  I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
->   -              I2C_FUNC_SMBUS_BLOCK_DATA;
->   +              I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_I2C_BLOCK;
->    }
->
-> was added as part of a patch which has nothing to do with
-> I2C_FUNC_SMBUS_I2C_BLOCK [2] and was never submitted like this [3].
->
-> I am therefore resubmitting this patch again without the rtl9300_i2c_func
-> change.
->
-> [1] https://lore.kernel.org/r/a422shurtl3xrvnh2ieynqq2kw5awqnmall2wjdpozx336m26i@54ekftmkwvrv
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git/commit/?h=i2c/i2c-host&id=ede965fd555ac2536cf651893a998dbfd8e57b86
-> [3] https://lore.kernel.org/r/20250831100457.3114-4-jelonek.jonas@gmail.com
-> ---
-> Changes in v6:
-> - drop all fixes patches (which were already applied)
-> - drop rtl9300_i2c_func chunk which was incorrectly added by another commit
->   [2] (but was not intended to be in there by the original patch [3]
-> - Link to v5: https://lore.kernel.org/r/20250810-i2c-rtl9300-multi-byte-v5-0-cd9dca0db722@narfation.org
->
-> Changes in v5:
-> - Simplify function/capability registration by using
->   I2C_FUNC_SMBUS_I2C_BLOCK, thanks Jonas Jelonek
-> - Link to v4: https://lore.kernel.org/r/20250809-i2c-rtl9300-multi-byte-v4-0-d71dd5eb6121@narfation.org
->
-> Changes in v4:
-> - Provide only "write" examples for "i2c: rtl9300: Fix multi-byte I2C write"
-> - drop the second initialization of vals in rtl9300_i2c_write() directly in
->   the "Fix multi-byte I2C write" fix
-> - indicate in target branch for each patch in PATCH prefix
-> - minor commit message cleanups
-> - Link to v3: https://lore.kernel.org/r/20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org
->
-> Changes in v3:
-> - integrated patch
->   https://lore.kernel.org/r/20250615235248.529019-1-alexguo1023@gmail.com
->   to avoid conflicts in the I2C_SMBUS_BLOCK_DATA code
-> - added Fixes and stable@vger.kernel.org to Alex Guo's patch
-> - added Chris Packham's Reviewed-by/Acked-by
-> - Link to v2: https://lore.kernel.org/r/20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org
->
-> Changes in v2:
-> - add the missing transfer width and read length increase for the SMBus
->   Write/Read
-> - Link to v1: https://lore.kernel.org/r/20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org
-> ---
->  drivers/i2c/busses/i2c-rtl9300.c | 35 ++++++++++++++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-> index 9e1f71fed0feac41e1534709de2406c7a63fa9cd..9e623207513718970dc1af82aa8756144a771819 100644
-> --- a/drivers/i2c/busses/i2c-rtl9300.c
-> +++ b/drivers/i2c/busses/i2c-rtl9300.c
-> @@ -186,22 +186,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
->  		return -EIO;
->  
->  	if (read_write == I2C_SMBUS_READ) {
-> -		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
-> +		switch (size) {
-> +		case I2C_SMBUS_BYTE:
-> +		case I2C_SMBUS_BYTE_DATA:
->  			ret = regmap_read(i2c->regmap,
->  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
->  			if (ret)
->  				return ret;
->  			data->byte = val & 0xff;
-> -		} else if (size == I2C_SMBUS_WORD_DATA) {
-> +			break;
-> +		case I2C_SMBUS_WORD_DATA:
->  			ret = regmap_read(i2c->regmap,
->  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
->  			if (ret)
->  				return ret;
->  			data->word = val & 0xffff;
-> -		} else {
-> +			break;
-> +		case I2C_SMBUS_I2C_BLOCK_DATA:
-> +			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
-> +			if (ret)
-> +				return ret;
-> +			break;
-> +		default:
->  			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
->  			if (ret)
->  				return ret;
-> +			break;
->  		}
->  	}
->  
-> @@ -290,6 +300,25 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
->  		len = data->block[0] + 1;
->  		break;
->  
-> +	case I2C_SMBUS_I2C_BLOCK_DATA:
-> +		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
-> +		if (ret)
-> +			goto out_unlock;
-> +		if (data->block[0] < 1 || data->block[0] > I2C_SMBUS_BLOCK_MAX) {
-> +			ret = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
-> +		if (ret)
-> +			goto out_unlock;
-> +		if (read_write == I2C_SMBUS_WRITE) {
-> +			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-> +			if (ret)
-> +				goto out_unlock;
-> +		}
-> +		len = data->block[0];
-> +		break;
-> +
->  	default:
->  		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
->  		ret = -EOPNOTSUPP;
->
-> ---
-> base-commit: 217f92d91c9faeb6b78bd6205b3585944cbcb433
-> change-id: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
->
-> Best regards,
+Understood, removing it.
 
-Thanks for taking care of this quickly.
-Maybe we should include another patch here which fixes the committed version
-of my patch, i.e. removing I2C_FUNC_SMBUS_I2C_BLOCK, with CC to stable. Since
-the patch was also merged to stable, it is somewhat broken there now.
+> > +               put_device(&dev->vdev->vdpa.dev);
+> > +               return -ENOMEM;
+> > +       }
+> > +
+> > +       for (int i =3D 0; i < dev->nas; ++i) {
+> > +               dev->as[i].domain =3D vduse_domain_create(VDUSE_IOVA_SI=
+ZE - 1,
+> > +                                                       dev->bounce_siz=
+e);
+>
+> domain_bounce_size?
+>
 
-Best,
-Jonas Jelonek
+Oh right. Fixing it.
+
+> > +               if (!dev->as[i].domain) {
+> > +                       ret =3D -ENOMEM;
+> > +                       for (int j =3D 0; j < i; ++j)
+> > +                               vduse_domain_destroy(dev->as[j].domain)=
+;
+> > +               }
+> > +       }
+> > +
+> >         write_unlock(&dev->domain_lock);
+> > -       if (!dev->domain) {
+> > +       if (ret =3D=3D -ENOMEM) {
+> >                 put_device(&dev->vdev->vdpa.dev);
+> >                 return -ENOMEM;
+> >         }
+> > @@ -2179,8 +2324,12 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *md=
+ev, const char *name,
+> >         if (ret) {
+> >                 put_device(&dev->vdev->vdpa.dev);
+> >                 write_lock(&dev->domain_lock);
+> > -               vduse_domain_destroy(dev->domain);
+> > -               dev->domain =3D NULL;
+> > +               for (int i =3D 0; i < dev->nas; i++) {
+> > +                       if (dev->as[i].domain) {
+> > +                               vduse_domain_destroy(dev->as[i].domain)=
+;
+> > +                               dev->as[i].domain =3D NULL;
+> > +                       }
+> > +               }
+> >                 write_unlock(&dev->domain_lock);
+> >                 return ret;
+> >         }
+> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > index a3d51cf6df3a..9547cef948bb 100644
+> > --- a/include/uapi/linux/vduse.h
+> > +++ b/include/uapi/linux/vduse.h
+> > @@ -47,7 +47,8 @@ struct vduse_dev_config {
+> >         __u32 vq_num;
+> >         __u32 vq_align;
+> >         __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
+> > -       __u32 reserved[12];
+> > +       __u32 nas; /* if VDUSE_API_VERSION >=3D 1 */
+> > +       __u32 reserved[11];
+> >         __u32 config_size;
+> >         __u8 config[];
+> >  };
+> > @@ -82,6 +83,18 @@ struct vduse_iotlb_entry {
+> >         __u8 perm;
+> >  };
+> >
+> > +/**
+> > + * struct vduse_iotlb_entry_v2 - entry of IOTLB to describe one IOVA r=
+egion in an ASID
+> > + * @v1: the original vduse_iotlb_entry
+> > + * @asid: address space ID of the IOVA region
+> > + *
+> > + * Structure used by VDUSE_IOTLB_GET_FD ioctl to find an overlapped IO=
+VA region.
+> > + */
+> > +struct vduse_iotlb_entry_v2 {
+> > +       struct vduse_iotlb_entry v1;
+> > +       __u32 asid;
+> > +};
+> > +
+> >  /*
+> >   * Find the first IOVA region that overlaps with the range [start, las=
+t]
+> >   * and return the corresponding file descriptor. Return -EINVAL means =
+the
+> > @@ -166,6 +179,16 @@ struct vduse_vq_state_packed {
+> >         __u16 last_used_idx;
+> >  };
+> >
+> > +/**
+> > + * struct vduse_vq_group - virtqueue group
+> > + * @group: Index of the virtqueue group
+> > + * @asid: Address space ID of the group
+> > + */
+> > +struct vduse_vq_group_asid {
+> > +       __u32 group;
+> > +       __u32 asid;
+> > +};
+> > +
+> >  /**
+> >   * struct vduse_vq_info - information of a virtqueue
+> >   * @index: virtqueue index
+> > @@ -225,6 +248,7 @@ struct vduse_vq_eventfd {
+> >   * @uaddr: start address of userspace memory, it must be aligned to pa=
+ge size
+> >   * @iova: start of the IOVA region
+> >   * @size: size of the IOVA region
+> > + * @asid: Address space ID of the IOVA region
+> >   * @reserved: for future use, needs to be initialized to zero
+> >   *
+> >   * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
+> > @@ -234,7 +258,8 @@ struct vduse_iova_umem {
+> >         __u64 uaddr;
+> >         __u64 iova;
+> >         __u64 size;
+> > -       __u64 reserved[3];
+> > +       __u32 asid;
+> > +       __u32 reserved[5];
+> >  };
+> >
+> >  /* Register userspace memory for IOVA regions */
+> > @@ -248,6 +273,7 @@ struct vduse_iova_umem {
+> >   * @start: start of the IOVA region
+> >   * @last: last of the IOVA region
+> >   * @capability: capability of the IOVA region
+> > + * @asid: Address space ID of the IOVA region, only if device API vers=
+ion >=3D 1
+> >   * @reserved: for future use, needs to be initialized to zero
+> >   *
+> >   * Structure used by VDUSE_IOTLB_GET_INFO ioctl to get information of
+> > @@ -258,7 +284,8 @@ struct vduse_iova_info {
+> >         __u64 last;
+> >  #define VDUSE_IOVA_CAP_UMEM (1 << 0)
+> >         __u64 capability;
+> > -       __u64 reserved[3];
+> > +       __u32 asid; /* Only if device API version >=3D 1 */
+> > +       __u32 reserved[5];
+> >  };
+> >
+> >  /*
+> > @@ -280,6 +307,7 @@ enum vduse_req_type {
+> >         VDUSE_GET_VQ_STATE,
+> >         VDUSE_SET_STATUS,
+> >         VDUSE_UPDATE_IOTLB,
+> > +       VDUSE_SET_VQ_GROUP_ASID,
+> >  };
+> >
+> >  /**
+> > @@ -314,6 +342,18 @@ struct vduse_iova_range {
+> >         __u64 last;
+> >  };
+> >
+> > +/**
+> > + * struct vduse_iova_range - IOVA range [start, last] if API_VERSION >=
+=3D 1
+> > + * @start: start of the IOVA range
+> > + * @last: last of the IOVA range
+> > + * @asid: address space ID of the IOVA range
+> > + */
+> > +struct vduse_iova_range_v2 {
+> > +       __u64 start;
+> > +       __u64 last;
+> > +       __u32 asid;
+> > +};
+> > +
+> >  /**
+> >   * struct vduse_dev_request - control request
+> >   * @type: request type
+> > @@ -322,6 +362,8 @@ struct vduse_iova_range {
+> >   * @vq_state: virtqueue state, only index field is available
+> >   * @s: device status
+> >   * @iova: IOVA range for updating
+> > + * @iova_v2: IOVA range for updating if API_VERSION >=3D 1
+> > + * @vq_group_asid: ASID of a virtqueue group
+> >   * @padding: padding
+> >   *
+> >   * Structure used by read(2) on /dev/vduse/$NAME.
+> > @@ -334,6 +376,9 @@ struct vduse_dev_request {
+> >                 struct vduse_vq_state vq_state;
+> >                 struct vduse_dev_status s;
+> >                 struct vduse_iova_range iova;
+> > +               /* Following members only if vduse api version >=3D 1 *=
+/;
+>
+> This comment is confusing since padding exists before.
+>
+
+Ok that's totally right. Should it say "following members but padding"?
+
+> > +               struct vduse_iova_range_v2 iova_v2;
+> > +               struct vduse_vq_group_asid vq_group_asid;
+> >                 __u32 padding[32];
+> >         };
+> >  };
+> > --
+> > 2.51.0
+> >
+>
+> Thanks
+>
+
 
