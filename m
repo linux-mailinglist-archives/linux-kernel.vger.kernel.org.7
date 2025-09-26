@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-833782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA453BA30F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4957BBA310B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0EAC7B99D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:00:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 309F57A7DAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060C62BE658;
-	Fri, 26 Sep 2025 09:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF832773F4;
+	Fri, 26 Sep 2025 09:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYXlLIdd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxkKV6ae"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467A28D8FD
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572191F8AC5
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758877264; cv=none; b=mgCmFtoJADZs3/UFu9hRQLsk6xgutOK4Cz2ZtVxlXGaNIlVnFUp5BzZ9p/oyJjQC56Ib2HlgKhtiLtFnMXLtGTIYIHxZskWyxQRdFhYNG78ilidPvsf3rkVbeJgltpafYItMM81uve/c3TKXaBTHuJCf0PMu1BdRcxbimab7+zY=
+	t=1758877492; cv=none; b=C8xrsPxh6q+Lmv78mQO2sVdVChgUpF9YsBNmNhM9NxqnJGCoxpjUnY/DJHkrTRg9qdMRpOKSW/pP1X2wGxhZjFmDWM8635KdkC69ccDVaUQpncFBmyYQlLHTEghIcjmLK/UC/NdRPl1Iq/V5twGsUeU2u5xvvqe/AAujv6FBhDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758877264; c=relaxed/simple;
-	bh=aoHwYNOokXAGRoK1jVhoOEMXZxjxQdbdW4MEf+flVRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJoPulZIS6y8c7DzimHL0q4EXtKtYIDhIy2BJCE8UvGROptFJCGEo0BSOasylEIEWPjjzssZ+Vy4If6M+Gnxtadce0FG5+PavzjgQHCWU9x9cynoYNmooI2xP60w4q27GSfn3n4jO+LogQfkqregSV+iyTrZqP04Zu43VzIgJeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYXlLIdd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D609C4CEF7;
-	Fri, 26 Sep 2025 09:01:03 +0000 (UTC)
+	s=arc-20240116; t=1758877492; c=relaxed/simple;
+	bh=y9uxlhWtFvfzIMPlNyO7wjBUm8CzNesN83NyBesFjFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zob+5p0ZXRx8qrum4MqVP7rX905SwmvAb2BRFRjihw6vshT+fjpNKCwejUWgheJGW3roeTr/FRD/T62xp09jGc4FgXMGW79rsJXifkSiaOrb45zWhguif7KbWVPLuXahv4KmLpeITOH0eMomBKl9/X4xu5iKwk0Hrz8LzM8ZgPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxkKV6ae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00633C4CEF4
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758877264;
-	bh=aoHwYNOokXAGRoK1jVhoOEMXZxjxQdbdW4MEf+flVRI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PYXlLIddG5o643w4XSILB/DoVovDl52dYTyTwheDRkfqFKsWIjSGiO1YNg/QQF2DF
-	 Yy3+XfHgVG7ufU9kDESkrPZtZ6d/r8e83/Aj5zIqDus2HtsWqRFwB9E0CxVP8MKee2
-	 59c7jKvWqAeGCPutnOJk6ZvBchzEXqTLA3H+kihwDIrfq00kEMsqu6qC+xkBL2o175
-	 kBmYzKALzV+ZE6VrCqMcG2Lv1rU3A3JU+Yacg3ihF6q+O2+LyoeI2zBr1XyYSxfrQb
-	 O5V93ifpDrkxRLTFW/Zx4by2jpfsBs5VFWTN2ctdyNRWtKWc+c7oNeRitDnaHZehYI
-	 3YYdR/mFK1Ayw==
-Date: Fri, 26 Sep 2025 12:01:00 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
-	Cong Wang <cwang@multikernel.io>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture
- support
-Message-ID: <aNZWTB_AbK1qtacy@kernel.org>
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+	s=k20201202; t=1758877492;
+	bh=y9uxlhWtFvfzIMPlNyO7wjBUm8CzNesN83NyBesFjFE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fxkKV6ae1YIWfWH0vCtIKUEbbvf4gml/qJ0mum8+5Bc4aaz/ZHF4R8Ilms1zuLhzG
+	 sYprueZLjofain1+EkH6ccJSqmoE1wK5pOPDuvQebEreF5e+XFhzN88QOXKkApLW8h
+	 Z1Qd8omjnwNOEN0eN7sDTl6dgQwSpxyhoq0qijeDDmDn7rtqC1KKRlhZF4vCR0x9pI
+	 YXtdLN3snljlgeTF7ppXeDZIP7tloAvZ4N/lfLQXB9Q4sG/it3MwMjv7lFWGtrdmY3
+	 wXSbWjIRLxrhDyeOy1F0C64auqfan0XEZi/j/HzaVrYBVJEfgN/NsvVTfEXTdEM1LX
+	 t/ULMhv/RemSA==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b2d92b52149so376382166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 02:04:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXTWlLPbrngO9rEhS6n2hxpO+iSsjpt+YhL182sQ2wa4OHzHl5iy1KODlzNAJmm2RwdgsOfwanbZ1Q1wOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA44qDv+l7ohKw9EI4rdcy49emF2YVHS+8StzY13JsApX0ZAuW
+	ccUMTps4aaxNIV5ktlgwBWPh6hxe9iPDQbY6yIUm5dCHU9SpW2pTMyulLNcAPF+rF+ZGIBGvnJz
+	mDlPl+dPX5s0Zgx/eUuszFK66WwM2sjo=
+X-Google-Smtp-Source: AGHT+IHSiIWew1th6bTnJPsTsYOBIF5IDgsikuwgdP+Do7WPSqHWTaMNJpX+57wvklEoLrLG6qdZvaqjpbptGOvJYoo=
+X-Received: by 2002:a17:907:7f26:b0:b04:75fe:e88 with SMTP id
+ a640c23a62f3a-b34bb9e7465mr603728766b.49.1758877490580; Fri, 26 Sep 2025
+ 02:04:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+References: <20250925184139.403156-1-mssola@mssola.com>
+In-Reply-To: <20250925184139.403156-1-mssola@mssola.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 26 Sep 2025 10:04:13 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H53nu8sGuDCbWzsVFHf5g1ybsRVrdyN6WaET61mk-g3mA@mail.gmail.com>
+X-Gm-Features: AS18NWDBXpVG0hT1J_0jXI-7V7EuXUjwuvNYUW8Pw4zHRsgGl1DLD8e3nNy0xpY
+Message-ID: <CAL3q7H53nu8sGuDCbWzsVFHf5g1ybsRVrdyN6WaET61mk-g3mA@mail.gmail.com>
+Subject: Re: [PATCH v2] btrfs: ioctl: Fix memory leak on duplicated memory
+To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, wqu@suse.com, 
+	linux-kernel@vger.kernel.org, Boris Burkov <boris@bur.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 03:25:59PM -0700, Cong Wang wrote:
-> This patch series introduces multikernel architecture support, enabling
-> multiple independent kernel instances to coexist and communicate on a
-> single physical machine. Each kernel instance can run on dedicated CPU
-> cores while sharing the underlying hardware resources.
-> 
-> The multikernel architecture provides several key benefits:
-> - Improved fault isolation between different workloads
-> - Enhanced security through kernel-level separation
-> - Better resource utilization than traditional VM (KVM, Xen etc.)
-> - Potential zero-down kernel update with KHO (Kernel Hand Over)
+On Thu, Sep 25, 2025 at 11:42=E2=80=AFPM Miquel Sabat=C3=A9 Sol=C3=A0 <msso=
+la@mssola.com> wrote:
+>
+> On 'btrfs_ioctl_qgroup_assign' we first duplicate the argument as
+> provided by the user, which is kfree'd in the end. But this was not the
+> case when allocating memory for 'prealloc'. In this case, if it somehow
+> failed, then the previous code would go directly into calling
+> 'mnt_drop_write_file', without freeing the string duplicated from the
+> user space.
+>
+> Fixes: 4addc1ffd67a ("btrfs: qgroup: preallocate memory before adding a r=
+elation")
+> Reviewed-by: Boris Burkov <boris@bur.io>
+> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
 
-This list is like asking AI to list benefits, or like the whole cover
-letter has that type of feel.
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-I'd probably work on benchmarks and other types of tests that can
-deliver comparative figures, and show data that addresses workloads
-with KVM, namespaces/cgroups and this, reflecting these qualities.
+I pushed it  into the for-next branch [1] with a changed subject to:
 
-E.g. consider "Enhanced security through kernel-level separation".
-It's a pre-existing feature probably since dawn of time. Any new layer
-makes obviously more complex version "kernel-level separation". You'd
-had to prove that this even more complex version is more secure than
-pre-existing science.
+btrfs: fix memory leak on duplicated memory in the qgroup assign ioctl
 
-kexec and its various corner cases and how this patch set addresses
-them is the part where I'm most lost.
+Note that we don't capitalize the first word after the prefix in the subjec=
+t.
+I also made it more specific by mentioning which ioctl, since we have many.
 
-If I look at one of multikernel distros (I don't know any other
-tbh) that I know it's really VT-d and that type of hardware
-enforcement that make Qubes shine:
+Thanks.
 
-https://www.qubes-os.org/
+[1] https://github.com/btrfs/linux/commits/for-next/
 
-That said, I did not look how/if this is using CPU virtualization
-features as part of the solution, so correct me if I'm wrong.
-
-I'm not entirely sure whether this is aimed to be alternative to
-namespaces/cgroups or vms but more in the direction of Solaris Zones
-would be imho better alternative at least for containers because
-it saves the overhead of an extra kernel. There's also a patch set
-for this:
-
-https://lwn.net/Articles/780364/?ref=alian.info
-
-VM barrier combined with IOMMU is pretty strong and hardware
-enforced, and with polished configuration it can be fairly
-performant (e.g. via page cache bypass and stuff like that)
-so really the overhead that this is fighting against is 
-context switch overhead.
-
-In security I don't believe this has any realistic chances to
-win over VMs and IOMMU...
-
-BR, Jarkko
+> ---
+>  fs/btrfs/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 185bef0df1c2..8cb7d5a462ef 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -3740,7 +3740,7 @@ static long btrfs_ioctl_qgroup_assign(struct file *=
+file, void __user *arg)
+>                 prealloc =3D kzalloc(sizeof(*prealloc), GFP_KERNEL);
+>                 if (!prealloc) {
+>                         ret =3D -ENOMEM;
+> -                       goto drop_write;
+> +                       goto out;
+>                 }
+>         }
+>
+> --
+> 2.51.0
+>
 
