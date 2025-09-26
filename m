@@ -1,129 +1,178 @@
-Return-Path: <linux-kernel+bounces-833465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F18BA2074
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84110BA206E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734BA741EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BF31BC458D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 00:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A9B1799F;
-	Fri, 26 Sep 2025 00:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4853AC8FE;
+	Fri, 26 Sep 2025 00:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+L05NGy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="mFiALfgb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nCf3TWm4"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515C82905;
-	Fri, 26 Sep 2025 00:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3589634;
+	Fri, 26 Sep 2025 00:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758845385; cv=none; b=jykRT16+vzaQxXpG99Z8C8eF32f3GEsOJvlZie+0ukOQlDtvXfiPbW194yiS04DsFzsk3LLHbTX/skY1J+UHL702V+2nHKCPTaIn35cUmW2QIhJ40GYZID8cl1AvRuXpZWWHgyU1f9rtINAh8sEyrXU3y0LZw0WSJmW3AaaIIQM=
+	t=1758845384; cv=none; b=iUPI6dAlWjULjptp0gKp+UJMsPUXROw13meYy2EytC1Z8p6Mr4FHDFqepiyfj1qq0NXW9XRTX1ZsX4JEnj8phB33g3ifzIUZsV9vdVwbdwhlbO5StL6aKK6EPZ19CRI2mieiSUa1xs93tI+XwSAFA879ZjZrSWLPHvmQnJEXSCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758845385; c=relaxed/simple;
-	bh=rCHV2gEQn70XE/Sefd9OpykTQf7v/OKrHzYHCAgvBrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uP8d6HkA/rWDPlAnQZMoogUR52/7CIGfb4K35cwFY4D46ABi8k0WnoIv4Gjf/tChOHLjfD4NgECnEVCUoeCDIiwwzkeh+Sx6JmbepzkoCQlIzopkVMXMn8qLr2TJl+XWLc1HpIOAIUXbnwRngHz1fStOW3eimPGnyOWHJxPlb3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+L05NGy; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758845385; x=1790381385;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rCHV2gEQn70XE/Sefd9OpykTQf7v/OKrHzYHCAgvBrM=;
-  b=e+L05NGyjcUErloXJOz0nEPThh+aa8kyP4q7vuM6krY5MGiKmPwYgFtE
-   bdXEc0ZuxVoLBbW56/5jQlQSdel8MRya0/GWoE0AvxQtDk4lyFu838IGR
-   nrbk1sylaWSQIo0Q7MyPvqS6ebo1Ue/HbWRIElxACwg0QOA+PKo7rrJU1
-   6KJB/S5bGLGiQqL0l71z3jTW5OvvBL3FhKAYAA19yZV6CsExXMT1G6rVK
-   e+NS7fI+iWt5mtQDK37SlQzrBcZmLpVgX2D5a/mXP+Bc0SZfhMxBs5eJv
-   JvDjEy/BH49+Uzy6NA2wY4TenpIdysWhBpIfC0oSE59gSfrni/V42FRjx
-   A==;
-X-CSE-ConnectionGUID: R3M/iXo8QbGrXT/Fmr+Emw==
-X-CSE-MsgGUID: LXTgKGvhSp+5f6hg/+OJfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="78610955"
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="78610955"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 17:09:44 -0700
-X-CSE-ConnectionGUID: /XXu750FRjWG6kXmsGY3fw==
-X-CSE-MsgGUID: ThZddzr1QGm/G/5mxTbx7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,293,1751266800"; 
-   d="scan'208";a="177304580"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 25 Sep 2025 17:09:41 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v1w1p-0005k1-2w;
-	Fri, 26 Sep 2025 00:09:37 +0000
-Date: Fri, 26 Sep 2025 08:08:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Amol Maheshwari <amahesh@qti.qualcomm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] misc: fastrpc: Add support for new DSP IOVA
- formatting
-Message-ID: <202509260727.MrXkGDmN-lkp@intel.com>
-References: <20250924-knp-fastrpc-v1-1-4b40f8bfce1d@oss.qualcomm.com>
+	s=arc-20240116; t=1758845384; c=relaxed/simple;
+	bh=9/8sCI2153nJeyn4IUo6fUwEgJeZDHuCqm1VoJgIXDA=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=uIStoHU1Ic8/6PAe5cke/kLyda4J2aE0j1Eq5XKlOm8CLmzzmhFYgmihJ1M8bB73D71mKmAJCf54hiWWwARPRn3/5UNq+2f5PRZrX07AxuViIqlihMfA4JTFdrNlzfi9FM1tWVMZCgbuJbp1d5er/jjbtbGLb7Os/EdO1uh4le4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=mFiALfgb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nCf3TWm4; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CE3971400160;
+	Thu, 25 Sep 2025 20:09:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 20:09:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1758845380; x=1758931780; bh=o+VU/S3EXIHtWNj19MpfZBUY/JHX3mo9zyC
+	te/hn2e8=; b=mFiALfgby59gEpjWQRTPDu7tJlZ535BooJYDadCWrW4+kYSz4+W
+	Acokz36lwMgmA/LstmBvMBcL089l+l6iC8svDEoG+BGqwG7jUu1uL8gkqANOyyUC
+	pR0Ck6/r0bO0TXuQq4NAhxe6Tu8HFusYYohcigsct+P6Lj1tDnfyz2VsEfndgMzE
+	i4P3yd7UXrQFbvr5dVxatlCOj6RUq5bDo0KuaG1zilAfgGswqBKL3i7MCdZsBC6I
+	1tZD4fD3hmJreXfTQI7Hof1Q6f7ik72Dg095NDGxIqqefbte2FE+U98mJ7ZEWx1w
+	SaIKTeiAz7x0yNGADIxMBH2kKxulExCCamA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758845380; x=
+	1758931780; bh=o+VU/S3EXIHtWNj19MpfZBUY/JHX3mo9zyCte/hn2e8=; b=n
+	Cf3TWm4tcOxsYO+IngE8y1YbxO8eXJHV8qNeJYS1M55799wFVC8MnkZc8gCnjDUH
+	Z6OlfrSm0jnrmMkhKbLJcvV4lVJrCsz7BOAHH7+jqbBZ9wc34tQ0NfWfYN6jrV8m
+	BkDomg4mX1ui9yE2BMitb/ZiPjZ6EI32uioC94uWhJ9/ynT3bwQovpWHzZFiYL91
+	CONzXF2tRtGTtwTNCg7j56oXyP7SyVSweu+DvHtDbBXbeLflpaXqe8cxu/A9MGDi
+	F/TKBy/2qlk7F4V1B+IVAOcS4M8GfGW/E0P/9eAj8SRmlLRBBn2V/IxYiRxMisOl
+	P3LcBKBR4H/zypqKNG7Rw==
+X-ME-Sender: <xms:w9nVaGBwEsyGDizkE_Uozuz5zenLdmCuF_42alUKjxesYo_v0dFwOw>
+    <xme:w9nVaFfO3FrIH-qjOhmcfRQJFT8n-k-NJ5SKYRq1EBd931D1EFSuJ2rfKRcNiSRWg
+    ymZyl6_vq74Ru7ZZw78j2xNY6-PL9ktuQOoe8qBV7nCEfJkle0>
+X-ME-Received: <xmr:w9nVaN00Gj0Tr8nSlA5SJlsGtkH9P6feeskU7xhZZzEbk-F3sUmbM7ErLsAbaBBHsGePqRobosV5fLt_0XnfwAtr_Llz2Lk_XCF5TMRN6HBT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeeklecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
+    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eljedtfeegueekieetudevheduveefffevudetgfetudfhgedvgfdtieeguedujeenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgsse
+    hofihnmhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtoheptghhuhgtkh
+    drlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepuggrihdrnhhgohesohhr
+    rggtlhgvrdgtohhmpdhrtghpthhtohepkhholhhgrgesnhgvthgrphhprdgtohhmpdhrtg
+    hpthhtoheplhhvtgdqphhrohhjvggttheslhhinhhugihtvghsthhinhhgrdhorhhgpdhr
+    tghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlsh
+    hpjedtheesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:w9nVaEjGBAMrZ0dTb-ciDb_bXdtda5JHNawWP9rr-8d56zaKDz9_9Q>
+    <xmx:w9nVaOkYlJZHZn6dzRejwm5rbLU83WlGsESNTdMPLufMyJS3iRgrWg>
+    <xmx:w9nVaCbYB6hVkjH1k9DyF1QR-QWaJ8fNBmbQrnaWyM58cVdzRPn8bw>
+    <xmx:w9nVaBFlN0J5hyuO6qIoOj6vfJcn35IOU5vac2wKRoLuPzvIbtmflA>
+    <xmx:xNnVaC9KI83PBctZbzqPsCJAlipFSVztF-C9F3cX1o7ez4njtshCP4Kt>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 25 Sep 2025 20:09:37 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924-knp-fastrpc-v1-1-4b40f8bfce1d@oss.qualcomm.com>
+From: NeilBrown <neilb@ownmail.net>
+To: "Alexandr Sapozhnkiov" <alsp705@gmail.com>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Alexandr Sapozhnikov" <alsp705@gmail.com>,
+ lvc-project@linuxtesting.org
+Subject:
+ Re: [PATCH] nfsd: fix arithmetic expression overflow in decode_saddr()
+In-reply-to: <20250925162848.11-1-alsp705@gmail.com>
+References: <20250925162848.11-1-alsp705@gmail.com>
+Date: Fri, 26 Sep 2025 10:09:30 +1000
+Message-id: <175884537000.1696783.18278273149263057351@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Hi Jingyi,
+On Fri, 26 Sep 2025, Alexandr Sapozhnkiov wrote:
+> From: Alexandr Sapozhnikov <alsp705@gmail.com>
+>=20
+> The value of an arithmetic expression tmp2 * NSEC_PER_USEC=20
+> is a subject to overflow because its operands are not cast=20
+> to a larger data type before performing arithmetic.
+> If tmp2 =3D=3D 17,000,000 then the expression tmp2 * NSEC_PER_USEC
+> will overflow because expression is of type u32.
+> If tmp2 > 1,000,000 then tv_nsec will give be greater=20
+> than 1 second.
 
-kernel test robot noticed the following build warnings:
+You didn't answer my question: why should we be bothered by an over
+flow? What harm does it cause?
 
-[auto build test WARNING on ae2d20002576d2893ecaff25db3d7ef9190ac0b6]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jingyi-Wang/misc-fastrpc-Add-support-for-new-DSP-IOVA-formatting/20250925-074855
-base:   ae2d20002576d2893ecaff25db3d7ef9190ac0b6
-patch link:    https://lore.kernel.org/r/20250924-knp-fastrpc-v1-1-4b40f8bfce1d%40oss.qualcomm.com
-patch subject: [PATCH 1/2] misc: fastrpc: Add support for new DSP IOVA formatting
-config: x86_64-buildonly-randconfig-005-20250926 (https://download.01.org/0day-ci/archive/20250926/202509260727.MrXkGDmN-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250926/202509260727.MrXkGDmN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509260727.MrXkGDmN-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/misc/fastrpc.c:2296:34: warning: 'qcom_soc_match_table' defined but not used [-Wunused-const-variable=]
-    2296 | static const struct of_device_id qcom_soc_match_table[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~~
+If we are going to bother detecting an incorrect value, we should
+respond to it by returning false.  That would tell the client that the
+numbers it provided weren't a valid time.
 
 
-vim +/qcom_soc_match_table +2296 drivers/misc/fastrpc.c
 
-  2295	
-> 2296	static const struct of_device_id qcom_soc_match_table[] = {
-  2297		{ .compatible = "qcom,kaanapali", .data = &kaanapali_soc_data },
-  2298		{},
-  2299	};
-  2300	
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>=20
+> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> ---
+>  fs/nfsd/nfsxdr.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/fs/nfsd/nfsxdr.c b/fs/nfsd/nfsxdr.c
+> index 5777f40c7353..df62ed5099de 100644
+> --- a/fs/nfsd/nfsxdr.c
+> +++ b/fs/nfsd/nfsxdr.c
+> @@ -172,6 +172,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_=
+stream *xdr,
+>  	tmp1 =3D be32_to_cpup(p++);
+>  	tmp2 =3D be32_to_cpup(p++);
+>  	if (tmp1 !=3D (u32)-1 && tmp2 !=3D (u32)-1) {
+> +		if (tmp2 > 999999)
+> +			tmp2 =3D 999999;
+>  		iap->ia_valid |=3D ATTR_ATIME | ATTR_ATIME_SET;
+>  		iap->ia_atime.tv_sec =3D tmp1;
+>  		iap->ia_atime.tv_nsec =3D tmp2 * NSEC_PER_USEC;
+> @@ -180,6 +182,8 @@ svcxdr_decode_sattr(struct svc_rqst *rqstp, struct xdr_=
+stream *xdr,
+>  	tmp1 =3D be32_to_cpup(p++);
+>  	tmp2 =3D be32_to_cpup(p++);
+>  	if (tmp1 !=3D (u32)-1 && tmp2 !=3D (u32)-1) {
+> +		if (tmp2 > 1000000)
+> +			tmp2 =3D 999999;
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Why are the two code fragments different?  This isn't an AI writing the
+patch is it?
+
+NeilBrown
+
+>  		iap->ia_valid |=3D ATTR_MTIME | ATTR_MTIME_SET;
+>  		iap->ia_mtime.tv_sec =3D tmp1;
+>  		iap->ia_mtime.tv_nsec =3D tmp2 * NSEC_PER_USEC;
+> --=20
+> 2.43.0
+>=20
+>=20
+>=20
+
 
