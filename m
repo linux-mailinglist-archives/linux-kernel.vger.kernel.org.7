@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-834617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22B9BA51BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7AF6BA5157
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18BC77425C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F711C0221B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C3A299922;
-	Fri, 26 Sep 2025 20:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090C228504C;
+	Fri, 26 Sep 2025 20:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="gGZH/LWX"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mXC68ciZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4876285C95;
-	Fri, 26 Sep 2025 20:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B929927FB34;
+	Fri, 26 Sep 2025 20:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758919292; cv=none; b=bO80YD++nS2ydOAOC8sgpjMLoxPu6n1Ph1uzVpzmeQPXJgtgtHwX/sElyvbzL/EnS2Tc+1XcCq98VVwIikuGozbKGTbM1I6YX6ZXdCCD+N4JTQyujseaefHUIYis2ywj3qbddnCy/gQvEQTy7dAOdXlTWHecpGT/utN58mnz6bY=
+	t=1758919217; cv=none; b=rxoxMIFHyD72qbeLN0A10F85oztlrBUlDLllBH8u4EbDQwpU2HlYCa6wSVElk8Y5CXiOSHh5fl+r6AG8cBQCzVAKgs19+vtUHvDRH8sCCkdMAUcwWyR9ZUuxgHj0h99pA5uPgdPqHndv4PU5UQr5cecWU08BcltwB45eunRBs0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758919292; c=relaxed/simple;
-	bh=mzHNgv2o4i8/Lrcczcapvp9RFqY9cJtR+vo6bqWGAU4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=taJITihhM8wytmxpeUvlxARekFM1xxVvwqU1XSCp1ydMZ2nai0/CFuc5l9PsC0Qhk0c0uISl23m0SUUW6GFzF4x8wLUQryDFj5Xw6SXPuutGyltraikpw196dIamLeY5kR/znffTwtZklvne880KTNi5oL2HgI1a2Ue+JOlXIOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=gGZH/LWX; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QFlAZD019428;
-	Fri, 26 Sep 2025 16:41:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=VDUKR
-	ZSJWAs/gkKzIwgdj0tML9hZqJO8d8boAN9e7us=; b=gGZH/LWXpklelHn3xsZlU
-	MRRZMvY63BgS794IqiAQrdrU4bT8KN9b/n4ALL2vQo0XQVR7uZVKrDfrZqYCI7FT
-	yJ9JBH7/Vm1wLDD/FdbDp90yLV0Iz9k8HbjXKof0yqH8Ca6ysVk4bIjhAaA9Z6MN
-	gsFxO/V3CNbllrokVMx0eJ1wR31AGE+6Q+/SoTQfC4aheLSQmrC+ygs0HIndGDvb
-	OEDztV7FVzTqYCrmGh4hoH4IUCS7EoLOQSlzf2PslquL/gl4Gn0yZvL1Bf1rKQBs
-	BGvUB2h/uciI9bRftj3ocmv+XcMJ0WcVSaeX73kj/Ds1jHeuVLtbZdvYP8ojoAF8
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49db1ef96j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 16:41:27 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 58QKfQ1a006550
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 26 Sep 2025 16:41:26 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 26 Sep 2025 16:41:26 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Fri, 26 Sep 2025 16:41:25 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 26 Sep 2025 16:41:25 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 58QKe9NX010369;
-	Fri, 26 Sep 2025 16:40:11 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <michael.hennerich@analog.com>, <nuno.sa@analog.com>,
-        <eblanc@baylibre.com>, <dlechner@baylibre.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
-        Andy Shevchenko
-	<andy.shevchenko@gmail.com>
-Subject: [PATCH v3 5/8] iio: adc: ad4030: Use BIT macro to improve code readability
-Date: Fri, 26 Sep 2025 17:40:08 -0300
-Message-ID: <2de5bf50658d5a25d86231b3d1f1ec104a9f1a56.1758916484.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1758916484.git.marcelo.schmitt@analog.com>
-References: <cover.1758916484.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1758919217; c=relaxed/simple;
+	bh=qvpmGn04f1nQWbNS/j/1Di7h/FR8OeiFalN5r9o2bW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4/6/b1a14Iye5Vjj6VOgNnjHqnvobcGPYCH9vd9HdwotIl8cO8p/IT8T6s4DfC8oblBVQc80zAKAQ4IX4DCYOHqt+m1MyziPUNFYarO0wpBS/PZ6od/gvBM7PUpJ4Q+ZJpU7wU8GETKm4u+l5P27X8I/bgXHb6+ozX9lP7eMLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mXC68ciZ; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758919216; x=1790455216;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qvpmGn04f1nQWbNS/j/1Di7h/FR8OeiFalN5r9o2bW4=;
+  b=mXC68ciZrstJtUF0tM2EslgkpLYk+blxxM3EzXYNO6fMGAtES+6pwU23
+   nckpuVC07P4HCP0mhVEWgTMIe4XtoiJSMs3dXCgKUu3+rJkVUtKPPMZui
+   1XNQSXVA5U2w3iI8NTKNjBecCWMOJBPe8MshLhLbrXbnpcBhpdPia/pb+
+   bqcqj0YZgLm3wtjNukhqxljtDBEhfQ+8B5aFVFuafh0FpP3AY/NQTeahj
+   ZAsACcODb9XgbjE46yxLjZcCkv1FaQFEGH9lodJgTINQPVfftW+GqF8KM
+   IsbTP5cnTxXo9l22TL/NuouN8p/8LVyLjcdpLMv8/wRWZbGFy31MNoBLy
+   g==;
+X-CSE-ConnectionGUID: HzvUCzi+SYqpsId0ZYwJEw==
+X-CSE-MsgGUID: 3xExbICWSu6s7WOUg1r+mA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="48818955"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="48818955"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 13:40:12 -0700
+X-CSE-ConnectionGUID: rHFQlC2hTP6FsGYW+b1oWQ==
+X-CSE-MsgGUID: lzNN5vchQPW2D11VF2GEBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="177759461"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.69]) ([10.125.109.69])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 13:40:11 -0700
+Message-ID: <a9c29f6a-6b32-457c-8e9d-a950a992b506@intel.com>
+Date: Fri, 26 Sep 2025 13:40:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: wPkWvlp4vPpcevHN0tdfDCFrJhcDAzDN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfXzEVFp9e4DYAf
- ZymQZuNXfZWKfNKQYkOxML87WLyYW35Fd64Qdel/I+XOFexQE7YimqFLaUoFkGhNiCtfns4uMsz
- /a8GqBofemK5/qyBoKFUwoS303jsEfytMc9SVg5nabPgSg2EDg5m0v30UogsQL2DwMzwIuwQ+KD
- Tn6KnRvT+m63HXL2WC0PoPrW0Zbp1AL7j6Zt4ETlfoMaouFS2HppOuNfXvtia7JcgXlqI1/Zozb
- VZ5tu6CVnSZ5pAy/DB3Yz77K4uwsf6Il/EVwWULIktPIm1TMLrdNXAgDFVYvDRfeaq8D8RSA60i
- FpuOTeSIB5xlT65oL55MOkx4ANUWLtMNgN4H5sTaWQm1duZpOa+t4RJ/U8+BMXjU3WNQvFRL7I1
- cWtF7bn93i/hZc5n1pm0udWsn7P7rA==
-X-Authority-Analysis: v=2.4 cv=YaGwJgRf c=1 sm=1 tr=0 ts=68d6fa77 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=gAnH3GRIAAAA:8
- a=HwBGVG7bte8kWS4IyKsA:9 a=br55WurUj89AL1qEz8Q6:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: wPkWvlp4vPpcevHN0tdfDCFrJhcDAzDN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_07,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0 priorityscore=1501
- spamscore=0 suspectscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: admin-guide: Correct spelling of
+ "userspace"
+To: Akiyoshi Kurita <weibu@redadmin.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Shannon Nelson <sln@onemain.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org
+References: <20250926190019.41788-1-weibu@redadmin.org>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250926190019.41788-1-weibu@redadmin.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Use BIT macro to make the list of average modes more readable.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Link: https://lore.kernel.org/linux-iio/CAHp75Vfu-C3Hd0ZXTj4rxEgRe_O84cfo6jiRCPFxZJnYrvROWQ@mail.gmail.com/
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- drivers/iio/adc/ad4030.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-index 7f0dbb8a3b07..cdf5933e9725 100644
---- a/drivers/iio/adc/ad4030.c
-+++ b/drivers/iio/adc/ad4030.c
-@@ -233,9 +233,11 @@ struct ad4030_state {
- }
- 
- static const int ad4030_average_modes[] = {
--	1, 2, 4, 8, 16, 32, 64, 128,
--	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
--	65536,
-+	BIT(0),					/* No averaging/oversampling */
-+	BIT(1), BIT(2), BIT(3), BIT(4),		/* 2 to 16 */
-+	BIT(5), BIT(6), BIT(7), BIT(8),		/* 32 to 256 */
-+	BIT(9), BIT(10), BIT(11), BIT(12),	/* 512 to 4096 */
-+	BIT(13), BIT(14), BIT(15), BIT(16),	/* 8192 to 65536 */
- };
- 
- static int ad4030_enter_config_mode(struct ad4030_state *st)
--- 
-2.39.2
+On 9/26/25 12:00 PM, Akiyoshi Kurita wrote:
+> The term "userspace" should be a single word. Fix the typo
+> "userpace" accordingly.
+> 
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  Documentation/admin-guide/tainted-kernels.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+> index a0cc017e4424..ed1f8f1e86c5 100644
+> --- a/Documentation/admin-guide/tainted-kernels.rst
+> +++ b/Documentation/admin-guide/tainted-kernels.rst
+> @@ -186,6 +186,6 @@ More detailed explanation for tainting
+>  
+>   18) ``N`` if an in-kernel test, such as a KUnit test, has been run.
+>  
+> - 19) ``J`` if userpace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+> + 19) ``J`` if userspace opened /dev/fwctl/* and performed a FWTCL_RPC_DEBUG_WRITE
+>       to use the devices debugging features. Device debugging features could
+>       cause the device to malfunction in undefined ways.
 
 
