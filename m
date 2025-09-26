@@ -1,99 +1,131 @@
-Return-Path: <linux-kernel+bounces-834210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7EBBA4332
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3209BA432F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8347AC6D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA9A5628D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0617A1DDC0B;
-	Fri, 26 Sep 2025 14:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765881C7009;
+	Fri, 26 Sep 2025 14:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1iKz9jq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b="1gMhlcD1"
+Received: from mx07-007fc201.pphosted.com (mx07-007fc201.pphosted.com [185.132.181.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EA81D5154
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1CC1A3A80;
+	Fri, 26 Sep 2025 14:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.181.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896709; cv=none; b=hpQHNEBauZG4yWl/mkzUxnmoo6zyNVwYhJmWe2VTAd40ovwW49t0pSxHKOfwik1izLDFJUbA3ZtT2rA08JkZpMGKsNKbwX//1pGApyAaIC0pSVVodAsivM8+Rum1Kzzy/5sd7NUb51A/ZQSbv0ZJCtN80du6DW2eMxllgh0q0SE=
+	t=1758896768; cv=none; b=W+COthqoFRqMnqB7a81Xey95xsmLqwfXbym6ks6xqd7xC5FtHS47QleHgBIt/tHBzOxnp8brcsRkB2TAW2qgpeS69U40bU4WzZF7Wp5Gd4BlGJtY8lquvI0aTqUS7meiX5oXVtB+pZURBa7endiBL8U+UxCKyMmCUITi0gVb06Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896709; c=relaxed/simple;
-	bh=0Py0gus+4Kw9xvuUld0HHLpuUDZX3KtoevhAxkUictk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=upql1yJXTKAr6n79CieC65jNv3bo8Ar3u/xt3J8/mUpUVQh3CYJfJ0LsQCFInYg4pbCYjFdH8tnbdKdqjF8JG1I35rF9c9zGsN3gHEI5LdmCPR+JpXLuuc3ki/XmQ6o65XkPNO9n8dwcW4RV46dgu90HVIASbdys9TmwgusJFzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1iKz9jq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13485C113D0;
-	Fri, 26 Sep 2025 14:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758896709;
-	bh=0Py0gus+4Kw9xvuUld0HHLpuUDZX3KtoevhAxkUictk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e1iKz9jq18I9U4b5c4xlfsB04frWUGHM31yqSfASTu16U9A4mndpu425DdOvaP709
-	 +p9LCXNftxuQsIJYbMHZoQzVeLzYPiXWObPDp/os9GYAXiSXWRslh9psOvb55G1X5n
-	 ryeO+/Cv2J1/fjFXLgOPb1JEXcRWo+K2umVzjzajPHDN1CiOncAY/I/ROTUcmz7bJ8
-	 4Y2fQjwYFDlcRDWg3rd3t77kjc7uoqye2uhGcAyjnHHAgoB9ZXXiFnPAsijSLKOFgi
-	 7p1xol7gyPVX28vkVMnlY080MLC2ZPmJrMw6bfpkZxYetfMBVC59w/RHJLNc96HWzx
-	 lwIMhZOTkECdA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v29Ne-000000001Y6-2Y1j;
-	Fri, 26 Sep 2025 16:25:02 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 2/2] soc: amlogic: canvas: simplify lookup error handling
-Date: Fri, 26 Sep 2025 16:24:54 +0200
-Message-ID: <20250926142454.5929-3-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250926142454.5929-1-johan@kernel.org>
-References: <20250926142454.5929-1-johan@kernel.org>
+	s=arc-20240116; t=1758896768; c=relaxed/simple;
+	bh=3k/F3p+Fk/c/cylKUBM1I1qdwFpDIs0egd5HDA0AjmA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fWM+9FJheOK8GbhIIYXpSEkRdtMiQlGwAigucCFHtF9zUaOTDaDkbIydXFdsbSYUbndv3H/Zg5lyCcN40WnmKvd0kL72zq+Qhl7szgJJzYIqJovnUnnWw4XiNWNH9OS4ymM01pP//fgC7jqkNtljJEZjLVEDH1giTDl2R2ooNYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de; spf=pass smtp.mailfrom=cab.de; dkim=pass (2048-bit key) header.d=cab.de header.i=@cab.de header.b=1gMhlcD1; arc=none smtp.client-ip=185.132.181.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cab.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cab.de
+Received: from pps.filterd (m0456228.ppops.net [127.0.0.1])
+	by mx07-007fc201.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58QEPv9r2214265;
+	Fri, 26 Sep 2025 16:25:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cab.de; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp-2025; bh=beKuMb7Rktap9GjfcpKEIdWM9E62yT/fpNMmyIxhXeA=; b=1gMh
+	lcD1elFuH6Aeob8J8JM+IzAIHuliTADDLAfVOyDfSCs8uqtbAsIePHmfNa5c4fAM
+	K4UCuNghbUIVIosopoXbllpFbqvhwbPENtHUFIMIfwqolFKZu6YQ+kTInw9tuxkI
+	g+lRcq5FbKfzyP6okunYKAQ/JSjixKt5VSDSgUM6epBHo4LBEOQ3xIq7VSumq2FA
+	H5ti1xMzfHSlmxdK1YVDtzVa/kr4uytbMJIgWq9/vOMVgqghKOx8h0vFx18hF7vk
+	4qba/hY+BYgmTakjI6ZNclm/Ar+jKPLF/qDd5MO+sCipQfGSBxnuHeuhFFDBMK5w
+	ejCc8K+ujwKL+wVTlw==
+Received: from adranos.cab.de (adranos.cab.de [46.232.229.107])
+	by mx07-007fc201.pphosted.com (PPS) with ESMTPS id 49dbt3ga09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 16:25:57 +0200 (MEST)
+Received: from Adranos.cab.de (10.10.1.54) by Adranos.cab.de (10.10.1.54) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Fri, 26 Sep
+ 2025 16:26:13 +0200
+Received: from Adranos.cab.de ([fe80::9298:8fc8:395c:3859]) by Adranos.cab.de
+ ([fe80::9298:8fc8:395c:3859%7]) with mapi id 15.02.1748.036; Fri, 26 Sep 2025
+ 16:26:13 +0200
+From: Markus Heidelberg <M.Heidelberg@cab.de>
+To: Jonathan Corbet <corbet@lwn.net>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Documentation: fix spelling, typos, grammar, duplicated
+ words
+Thread-Topic: [PATCH] Documentation: fix spelling, typos, grammar, duplicated
+ words
+Thread-Index: AQHcLstyktyjxwWy7UeU9d2/LWnMJrSlRDwAgAAfloA=
+Date: Fri, 26 Sep 2025 14:26:13 +0000
+Message-ID: <aNaic_817_R_SRd6@KAN23-025>
+References: <20250926095312.206231-1-m.heidelberg@cab.de>
+ <875xd52y2z.fsf@trenco.lwn.net>
+In-Reply-To: <875xd52y2z.fsf@trenco.lwn.net>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EA08934B269BC940AE4344BAA3475AAE@cab.de>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=fOA0HJae c=1 sm=1 tr=0 ts=68d6a275 cx=c_pps
+ a=LmW7qmVeM6tFdl5svFU9Cg==:117 a=LmW7qmVeM6tFdl5svFU9Cg==:17
+ a=xqWC_Br6kY4A:10 a=kldc_9v1VKEA:10 a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10
+ a=MAe1x8XT1DE-PPL54jUA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: Ux3e1-HluQHfBqzkmrd2aFa4kW2WRxHo
+X-Proofpoint-ORIG-GUID: Ux3e1-HluQHfBqzkmrd2aFa4kW2WRxHo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI2MDEzMiBTYWx0ZWRfX75iRlmundBZC
+ peS1x0j+5Um7TGTwp/hSQqVajmP8ZSf3vVQ5j/h6+t4pOQleDt1U8LimOF9XjTCggxYnDmM/qNw
+ zBc+3KgGB+TRzQoj7UaDhMMvgTrcmOkPx5gLBY2N4Kle/b+CreEJ5kLu+CFTSMb0svPL1n8/p2f
+ du+FuWApe4ShgPyfByTbs34VTVVvewLVJYhPmo2IwJr8BtgFjMvKDpi2+kj4RubVo+PlcVouZvm
+ TSd7UvHCg9xgiOXUM8XdqcpeWE3RmsQ6pfrEmbuFgwFwREawJe+7Em1OJQAT3h9zp5HDjHK4cpe
+ /gXlOzm22MY2uAna8cVYaW/uuETDxbP63bQ1N4gW39Sd8z2e2ivGq91TnVZI44JKT4G1eq1BscJ
+ /bAhCIDt7Y1RFBTRhVLKlzIZopUo7w==
 
-Simplify the canvas lookup error handling by dropping the OF node
-reference sooner.
+On Fri, Sep 26, 2025 at 06:32:52AM -0600, Jonathan Corbet wrote:
+> Markus Heidelberg <m.heidelberg@cab.de> writes:
+>
+> > diff --git a/Documentation/kernel-hacking/hacking.rst b/Documentation/k=
+ernel-hacking/hacking.rst
+> > index 0042776a9e17..b3d352d2ffcc 100644
+> > --- a/Documentation/kernel-hacking/hacking.rst
+> > +++ b/Documentation/kernel-hacking/hacking.rst
+> > @@ -259,7 +259,7 @@ overruns. Make sure that will be enough.
+> >  .. note::
+> > =20
+> >      You will know when you are a real kernel hacker when you start
+> > -    typoing printf as printk in your user programs :)
+> > +    typing printf as printk in your user programs :)
+>
+> This one, at least, is as intended and does not need to be "fixed".
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/soc/amlogic/meson-canvas.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Oh, I got that joke now :)
 
-diff --git a/drivers/soc/amlogic/meson-canvas.c b/drivers/soc/amlogic/meson-canvas.c
-index 0711088da5dc..79681afea8c6 100644
---- a/drivers/soc/amlogic/meson-canvas.c
-+++ b/drivers/soc/amlogic/meson-canvas.c
-@@ -60,12 +60,9 @@ struct meson_canvas *meson_canvas_get(struct device *dev)
- 		return ERR_PTR(-ENODEV);
- 
- 	canvas_pdev = of_find_device_by_node(canvas_node);
--	if (!canvas_pdev) {
--		of_node_put(canvas_node);
--		return ERR_PTR(-EPROBE_DEFER);
--	}
--
- 	of_node_put(canvas_node);
-+	if (!canvas_pdev)
-+		return ERR_PTR(-EPROBE_DEFER);
- 
- 	/*
- 	 * If priv is NULL, it's probably because the canvas hasn't
--- 
-2.49.1
+> For a future version, it would be better to split the patches apart and
+> send them to the relevant maintainers.
 
+I've scratched my head about the best approach a long time, looked at
+typo git commits, followed mailing list discussion from Link: tags.
+Found documentation patches like this across different subsystems and
+also a reply about undesired one-liner typo patches.
+So I thought, if not touching the technical content, using one combined
+documentation patch might be a proper way.
+
+Will have a look at splitting the patch up if not resulting in
+one-liners only.
+
+Markus=
 
