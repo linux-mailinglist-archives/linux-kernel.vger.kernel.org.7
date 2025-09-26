@@ -1,177 +1,189 @@
-Return-Path: <linux-kernel+bounces-833667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EF5BA2989
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 08:58:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B802EBA29E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 09:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA7614E1809
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 06:58:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C989B18979DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 07:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E822027FB2F;
-	Fri, 26 Sep 2025 06:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UDIG2jBL"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4EA284693;
+	Fri, 26 Sep 2025 07:04:18 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AEA27EFE3
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 06:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1866280308
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758869876; cv=none; b=fnH2yNRJ7RP1KctDoodUUVNi037x9HXwLqg07bW69zfnK398VT6ZQ8rGqUJZO4Xpj2vMi+mX0odX/MUBoUQPx4SKdIPkhbh4nBbWzd+Xb2r67mkx18NJXK8bW+UaHTdYVBFDGAs+5e1x0XKkf5ZhJD7ix8UPIe9gl1XIk5D8jJc=
+	t=1758870258; cv=none; b=DWVpPLF8lFMC1GaUyIqsfrxJdYiXKKjhQLwFmyCekEDSlsxwJBkbWFoCQrEcU69sRyL5nqheYYR2uo2r0A5PnkYOmfbwN52x+Z8ldT6gP4qgxf3EvB0ocV+16yVswtARw9k1iNSCTdhLRfspcHdfL+vMOy4VzihoZrT1lh74uN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758869876; c=relaxed/simple;
-	bh=YgymePRKA7a+5Gycw6dzc3Ehm1gp8bc3lnVl3WW1LzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ObddP1bP2bOazWg4fvEIfN1o8U+/aNBtNpwwIfOMYQzil0MdpBlPnmI7SXNjx92+uO5BKgv8BidWXTlyqEZuMbln+9WAROvvmIm7I+jR14cmDIPT1fd0EzGKgMOkcYCgjpujmtop4vzBOI+V+HnP8K8dpqK73oYO1KZvc9UhAx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UDIG2jBL; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b54a74f9150so1647168a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Sep 2025 23:57:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758869873; x=1759474673; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/vx1itF2fTgxMCrrImdJeroS3R9ZKO1BJn3DX+Hel84=;
-        b=UDIG2jBLNC5IWX7ZlFEoTTyFqrtkm0iblohSdKFYLR2xXCigN3VFO4YG5WP+Yvz0Ld
-         ArnxrpjPICdOtVf569UJpIrdC/n6Y7jX51iedDOYZ5tueypZRxeZtXWFT5go8poZX63U
-         vciUNg38FvKOKVpVqc2IIDcKD+REJnMJkJZHCIDcIXBeyU3LZW2XlVkukwdilPfJly6+
-         S238xtVRDoKjhGtEFKUJngwhwoUW2dKZ4rfyErigQ9qwEWRigT4kXic/PA/psHa/Tgc3
-         OOj4bwKIao4xbFENoaIXpvqC97GqLPH9MX8+unZNLC2qwnvX+hZntM+8pEww6JxKfN+E
-         6USw==
+	s=arc-20240116; t=1758870258; c=relaxed/simple;
+	bh=dw8VodF5d0G5wyZprT1Cfu9CVLPEqqgX7pSeump3QdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N7rDAU4zv2igV98JEGB/mgYEFsx2VLk8pBiEbyqwQq2whoA7zSkEshuP+Md+94uc2/s4eHCpfLoHCXDCV+8naeE1Cct6pRd2laAeZBU6FStmBkxq96vMga2nG8YUyGu1S0Fqrp0c3ipK5fOPRg8VvueJsKRGsDaL0+2fo3za/Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b7a967a990so20301661cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:04:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758869873; x=1759474673;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/vx1itF2fTgxMCrrImdJeroS3R9ZKO1BJn3DX+Hel84=;
-        b=nAI/seC57TosGAEM9lIWyIJMMYvZE/zOvNFpTHshaqxL41HxMNWK81JgzEfokRvKs8
-         s9oVICJLT+yBamg9JeNwtwchCCtXUzBqTxPo/sdcfMXawwyhRp3eFrr2fZMYzfXaIkEM
-         kffZzX8vItJ0f2IJspVfmqNfGo3IuYSzzH7VhHcHrfbL4HwSXANwYj2kUoaHtdwOR9nO
-         T9+0wTiopgMBgbHqlLWdo5quVbdNT3RxS62y/tAbJyxq6KAqk3SzzgprzmxaeYwO31Eh
-         /Uabrxwtk5f14tsn9ygyPc1zJ4lkR9AVbUg2jF6S0x8mZEy5lXWGzWs/Leh5UUmk3nTn
-         9BFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjexJgepoZ1GSxIvTT0ch9uRUsCU/EOzUajfTzbBJ9LmCUHXMYM20hKHX2FPVq6G7tu3Yzymdqjd87hzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxGwL6oUIVcsISWSWZp8WbBV0dOZuFGDH3Xf9VQ9NaHtD/vWBc
-	HC5jjYjU4mzsKTqWGyaERo2ZYwdtTlIj6ihsazKMxWme51xPzFw5WktMTsgeaRzAyaY=
-X-Gm-Gg: ASbGnctRQxPrO8C58OXBtQAqXcBdbJOfuhHTIF3FxkvUQUOfB1xnfC+GH9nl5gskGgR
-	Vjw57BDEK0xA7K38vf8LLiPN34vgHgFQ+w9pU3k+cGa0uAnylEcS1EJcGOGzO3BOHnU82ZH9Sn1
-	EzSbZmB0o31pMI96Uqv8TXN2J6sQIjWqayml2alL9/e1ckPDZAbVNFf+LEz3odHMqcRVr6w3Jly
-	MOezzfkAmdpu4YD2T+2JxUsiXbHQDgfISk8DnXekGZSIQdxGPTW6CS4lwSHb7qNV2XWEWDWzF/R
-	WVmlsoMAOIus8/nGS2Bpe9DjJX8k8ziN8VbwRKpkCR0s9JuGMzJPcNN4b82DsuROGsvC0cGv41M
-	fCRzF78jIS9q/FfyyxlI0hP0pOgP9Qs33KhlMO+OA9BOQl9Duxb6vsYXQmfnPvREA6qz0
-X-Google-Smtp-Source: AGHT+IF5bDf0FkWtdSNimjWM369R4KoAz2kYx41Je3d4j3cldNB8OPUueqbjTUh0a0uZVlv2hvbHNQ==
-X-Received: by 2002:a17:902:db02:b0:26c:3e5d:43b6 with SMTP id d9443c01a7336-27ed4a91a32mr59676945ad.32.1758869872599;
-        Thu, 25 Sep 2025 23:57:52 -0700 (PDT)
-Received: from [100.82.90.25] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27f1c1af2d5sm7102075ad.58.2025.09.25.23.57.41
+        d=1e100.net; s=20230601; t=1758870255; x=1759475055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vjQDtyvvVNH5A+YlQavoDIDNO01bRK+FCcEXT++J39I=;
+        b=oAT01e0DiKLA/AaUEFkR+iomROL5IcL+COXZIFytECohVOJOV01vL9Uho0rygzexPT
+         oLHBL7GnmvTUIirgXUVlpDXuFgduhd5UOWe7DwQ7ma8TrnPNj8VK/BgI4lSSoT9f8yAX
+         a6Ky63/pIgycU/UILz/oK0l4ivgaQY8RLtq8tLkME8OedkZRakbLXAshcSveKXJ4TYXS
+         S503fw3OX88/fr18SR3xI9rLzXe77wzTmYKlkOQjAi7WPMT30YswAtK1Sj//edqKMFR4
+         qjroFr4ERWsMsz42nV5mydNV1AWkD2hsz9Ed4YIqilxFhf0sXlucDVo/tklMjXZsL2da
+         XedA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+okCEQX7K7MnwxgkxST1y1z+2jyV10wxkyto6zquDMooTAcZig7sZVg0DmCV6AAbDrUeoUQIq2CW38w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw34f8zaWRg9cat7HsdyLdEqLtQnqTtgxLH7UagTXdsdcnYWOyF
+	HYw56u8F6QAfFdVb9srB11YeMDeQh+GfkvYSxQnHP2jN4O1n655e+YPoGmdYTr5p
+X-Gm-Gg: ASbGncuRPWsmMP8NTQm+FDGDKuSXKU/S/5XdJFVWiWxxpRlUGGr2tnfojNk3Zv3pklX
+	pNNAlQ8LV4xMOdMdTHypnyP8eCSuNzZCZVjKNRb9uaYH28SR0yN0fH9mSwZRMwAbcBp2eub4vwi
+	m0yk2ioeUx2HayQ7OLX6UxnmfYWmiY42SCMTEcmBLFd/QwKD2MN+B9HbSzGwaOudSCfy4Lqwraq
+	TBdRisbkPPHGFk84DoEfF9MBe/esi6G3dRARc6V3LFauG6ab1qf5IAwe5VJGi90p+1nHU2/jlo0
+	nypaFq/m4jYUdyj3VglzGo4M66je4Ztj1xg40lsMm0Ed99dLEda3qz1Paler5VCSDgBCm31PUW0
+	wEzw34o+FykpLztBruduB8jqnGKaX30aVB4waX23T1ldue7ceNjSVe1w5XjlehdlD7aPtEnYDJi
+	c=
+X-Google-Smtp-Source: AGHT+IFyGQrGZ8BNBRBZjNAj8ScS0gD6mBlgps6+tVwAmJQeL7w9RALlkpSOgjQy9TrpoAGnhyBC0g==
+X-Received: by 2002:a05:6214:242a:b0:7a6:a9a4:c1a9 with SMTP id 6a1803df08f44-7fc440079cdmr67548726d6.64.1758870255270;
+        Fri, 26 Sep 2025 00:04:15 -0700 (PDT)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-801f4df8a4csm22098276d6.49.2025.09.26.00.04.15
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Sep 2025 23:57:52 -0700 (PDT)
-Message-ID: <fc91a0ab-e343-4f7c-8fc3-508ab0644e42@bytedance.com>
-Date: Fri, 26 Sep 2025 14:57:39 +0800
+        Fri, 26 Sep 2025 00:04:15 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b7a967a990so20301421cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 00:04:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1SK1aP3SRCIeOVue1yf4ATT2tVMcLbhA8nD1fl0Qss7fE88XDfuzic2CKJGOh20dSj2Ck1UmrRnmgppU=@vger.kernel.org
+X-Received: by 2002:a05:6102:442c:b0:5a3:6a6f:21ad with SMTP id
+ ada2fe7eead31-5acd0182a34mr2333473137.30.1758869876161; Thu, 25 Sep 2025
+ 23:57:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm: thp: reparent the split queue during memcg
- offline
-To: Shakeel Butt <shakeel.butt@linux.dev>, Zi Yan <ziy@nvidia.com>,
- David Hildenbrand <david@redhat.com>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
- roman.gushchin@linux.dev, muchun.song@linux.dev, lorenzo.stoakes@oracle.com,
- harry.yoo@oracle.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-References: <cover.1758618527.git.zhengqi.arch@bytedance.com>
- <55370bda7b2df617033ac12116c1712144bb7591.1758618527.git.zhengqi.arch@bytedance.com>
- <b041b58d-b0e4-4a01-a459-5449c232c437@redhat.com>
- <46da5d33-20d5-4b32-bca5-466474424178@bytedance.com>
- <39f22c1a-705e-4e76-919a-2ca99d1ed7d6@redhat.com>
- <BF7CAAA2-E42B-4D90-8E35-C5936596D4EB@nvidia.com>
- <tyl5nag4exta7mmxejhzd5xduulfy5pjzde4mpklscqoygkaso@zdyadmle3wjj>
- <wlbplybaecktirfzygddbvrerzrozzfudlqavkbmhnmoyt6xmf@64ikayr3fdlo>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <wlbplybaecktirfzygddbvrerzrozzfudlqavkbmhnmoyt6xmf@64ikayr3fdlo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
+ <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
+ <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+ <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com> <CAGETcx-L-KypYZEkdKRBfZHDhFMTUuwKEGVQ-7QPv=++6uwLSw@mail.gmail.com>
+In-Reply-To: <CAGETcx-L-KypYZEkdKRBfZHDhFMTUuwKEGVQ-7QPv=++6uwLSw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 26 Sep 2025 08:57:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWjhXjjw9wFw5Me-wAX0nA+gK2mdGxLyBJJCWDHZ58LeQ@mail.gmail.com>
+X-Gm-Features: AS18NWD2sqCNW31Hr76xpW5m_kx80ye1q9D4_pFDoOhvkwDietXEmUuVKInRsEY
+Message-ID: <CAMuHMdWjhXjjw9wFw5Me-wAX0nA+gK2mdGxLyBJJCWDHZ58LeQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Saravana Kannan <saravanak@google.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Saravana,
 
+On Fri, 26 Sept 2025 at 00:41, Saravana Kannan <saravanak@google.com> wrote=
+:
+> On Thu, Aug 7, 2025 at 2:43=E2=80=AFAM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wrot=
+e:
+> > > On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.or=
+g> wrote:
+> > > > BTW, the "pending due to"-messages look weird to me.
+> > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
+> > > >
+> > > >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.=
+watchdog
+> > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pendin=
+g
+> > > > due to e6020000.watchdog
+> > > >
+> > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
+> > > > the watchdog resides in the always-on Clock Domain, and uses the
+> > > > clock-controller for PM_CLK handling.
+> >
+> > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
+> > these bogus pending states, and no PM Domain is powered off.
+>
+> Can you explain why you call these as bogus? Sorry if you already
+> explained it. But the reason I'm asking is to see if you can set a
+> flag for the watchdog device so fw_devlink will completely ignore it.
 
-On 9/26/25 6:35 AM, Shakeel Butt wrote:
-> On Thu, Sep 25, 2025 at 03:15:26PM -0700, Shakeel Butt wrote:
->> On Thu, Sep 25, 2025 at 03:49:52PM -0400, Zi Yan wrote:
->>> On 25 Sep 2025, at 15:35, David Hildenbrand wrote:
->>>
->>>> On 25.09.25 08:11, Qi Zheng wrote:
->>>>> Hi David,
->>>>
->>>> Hi :)
->>>>
->>>> [...]
->>>>
->>>>>>> +++ b/include/linux/mmzone.h
->>>>>>> @@ -1346,6 +1346,7 @@ struct deferred_split {
->>>>>>>         spinlock_t split_queue_lock;
->>>>>>>         struct list_head split_queue;
->>>>>>>         unsigned long split_queue_len;
->>>>>>> +    bool is_dying;
->>>>>>
->>>>>> It's a bit weird to query whether the "struct deferred_split" is dying.
->>>>>> Shouldn't this be a memcg property? (and in particular, not exist for
->>>>>
->>>>> There is indeed a CSS_DYING flag. But we must modify 'is_dying' under
->>>>> the protection of the split_queue_lock, otherwise the folio may be added
->>>>> back to the deferred_split of child memcg.
->>>>
->>>> Is there no way to reuse the existing mechanisms, and find a way to have the shrinker / queue locking sync against that?
->>>>
->>>> There is also the offline_css() function where we clear CSS_ONLINE. But it happens after calling ss->css_offline(css);
->>>
->>> I see CSS_DYING will be set by kill_css() before offline_css() is called.
->>> Probably the code can check CSS_DYING instead.
->>>
->>>>
->>>> Being able to query "is the memcg going offline" and having a way to sync against that would be probably cleanest.
->>>
->>> So basically, something like:
->>> 1. at folio_split_queue_lock*() time, get folio’s memcg or
->>>     its parent memcg until there is no CSS_DYING set or CSS_ONLINE is set.
->>> 2. return the associated deferred_split_queue.
->>>
->>
->> Yes, css_is_dying() can be used but please note that there is a rcu
->> grace period between setting CSS_DYING and clearing CSS_ONLINE (i.e.
->> reparenting deferred split queue) and during that period the deferred
->> split THPs of the dying memcg will be hidden from shrinkers (which
->> might be fine).
+"bogus" refers to "1." below.
 
-My mistake, now I think using css_is_dying() is safe.
+Furthermore, devices that are located in an alway-on domain should
+not block the sync state.
 
-> 
-> BTW if this period is not acceptable and we don't want to add is_dying
-> to struct deferred_split, we can use something similar to what list_lru
-> does in the similar situation i.e. set a special value (LONG_MIN) in its
-> nr_items variable. That is make split_queue_len a long and set it to
-> LONG_MIN during memcg offlining/reparenting.
+> It looks like there's a driver for this watchdog node? Why is it not
+> probing then?
 
-I've considered this option, but I am concerned about the risk of
-overflow.
+Because this particular revision of the SoC has a hardware bug that
+prevents the watchdog timer from rebooting the system, and the driver
+detects that.
 
-So I will try to use css_is_dying() in the next version.
+Anyway, if the driver is not available, unused power domains should
+still be powered down, like before.
 
-Thanks,
-Qi
+> > If I remove the "sync_state =3D false" above, genpd_provider_sync_state=
+()
+> > considers all domains, and does power down all unused domains (even
+> > multiple times, as expected).
+> >
+> > Upon closer look, all "pending due to" messages I see claim that the
+> > first (index 0) PM Domain is pending on some devices, while all of
+> > these devices are part of a different domain (usually the always-on
+> > domain, which is always the last (32 or 64) on R-Car).
+> >
+> > So I think there are two issues:
+> >   1. Devices are not attributed to the correct PM Domain using
+> >      fw_devlink sync_state,
+>
+> Is it a fw_devlink issue? Or is this a multi-domain controller?
 
+This is a multi-domain controller.
 
+> >   2. One PM Domain of a multi-domain controller being blocked should
+> >      not block all other domains handled by the same controller.
+>
+> This is going to take a while to sort out. But the current behavior is
+> the safest. How grumpy will you be if we don't fix this :)
 
+Depending on your definition of "safe".  Keeping all power domains on
+increases power consumption and heat generation, and may cause e.g. CPU
+frequency throttling to kick in, slowing down operation of the system.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
