@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-834280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF0DBA453B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:02:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2752BA4559
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BF9188A074
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4DED7A4655
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E3513957E;
-	Fri, 26 Sep 2025 15:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A661F1317;
+	Fri, 26 Sep 2025 15:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GgnjqYvx"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbvyHGad"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A5F16132F
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED7A16132F
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898935; cv=none; b=LE6IOmcBobnXT5ZxQb9ZsQefG8ZSRX5oouHFY0EK+0qWUO+DRCxgFAXx6e3rM5GG+pml968Kc44YgEtchi6YLZev+WNfdFUY0BzVbraJRiQ9XrhEWqRB1LO3nC9VCDK0dULagDNTPvA30ZtayrZGYW7djJjiNDXClx3SmaiiXrA=
+	t=1758898978; cv=none; b=sPoT+gd4Imb1aTQ+gfxy5a4CyXtU4qBYVuNsGMTSzLpb51hdxly7oYPaYfkTOpL/e5DgnZOXqQzZ9wOC6Sa6mTy9ABjapX1eOUX5FLxIZtwgs/qoHvDzcym/WCE7k7C2XXWHTqPmM5qzRlcODYjYn9Gi/PQgZ7dqYP+JUafXku8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898935; c=relaxed/simple;
-	bh=8WJ3zSomR6PmkDmz7wRLvgLPROUSg6bOSPYWkUZH4zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iL4rLRQBRA24jxEF+QzDk5rwuJWx+fqHw6uva2MDlXbUAotcP+X3LH7DP1XCR6EvqVK1lYAvR5DWEqqc8TwmKIJL/mkAShXfbeSvkLvEQTL44HkHnWGAEqxZn92ea5c/x3EkzYNXvVLdspIXVbYXkqogd6NEwuNUibvHGhswwPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GgnjqYvx; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso73195e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:02:13 -0700 (PDT)
+	s=arc-20240116; t=1758898978; c=relaxed/simple;
+	bh=6Cjo7453gcsAZ3b3AJ+K3qw1bp5kC6Dg80+11KpUsjo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cbJyTfWw+0lFgACDpVE6IgqpWmEq8xJB4DplQNW7ychCHPFr9oPIiIBmkl/nuK23A+sb4MwKlz41cEmLoHpLmqxBWIgZt85of6+Tkd1HtrNElnuPyP8hAG7E1EZZaS6+8JOKB26PR0ySTvQ659dk7eJLeP9AZICo5Y9DWNRJR5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbvyHGad; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6354af028c6so1703072d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 08:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758898932; x=1759503732; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s7Baoif17kvHRJvWC6HYyOG9IuJ9PffDdtqs0FozkFg=;
-        b=GgnjqYvxycweAZLhBm3E4lVHSY/Y6ZYUX64/syiO8J5FCcMTs8w95bhLDuIdeX6wlL
-         9/nGiDoVXMP5uPEIZQkG53VDzSmrEr7pJPibdi5yg17wiwALea2nUe3QIgwLb6bBLvdB
-         +f33anEu1ipbswAevamAfdJfFEP8hKXPyp6z/IhlB3sxmPb9KIsPXQ6OXYggh/GDJOMr
-         eO/HXRbKm26zkG0lO+NmmShOr94uBDjvJKBv2acBhSotdwJtkOSOZdxjeQcWZjvywSGU
-         rIgdzoZmdbcvG4yIWFZAwg006nhkJqXeAwT5SpoaNfuvMJkGoRmdypBbvOiJrafBmqOE
-         VPkQ==
+        d=gmail.com; s=20230601; t=1758898976; x=1759503776; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2NK1+qNpVHuxCsWsinsmU1XOieK9VkSoD8m9MtoYpA=;
+        b=cbvyHGadkJ6TUy1wEGF5Zsbh6ltxOXenixQAon1X5fMpHxB9L/6pp02diTU7XXX7+I
+         kvHudl1zO+2yIx3jYhtuG3k8e0HQFMa73JdyxOlFyDhpCiW2uDaSEVyrC2Fh+SWT8zlF
+         4UHVkMfP2zIJJlO1S/K9y7e2X4qceI/swCY/wzvxHMOIFwvAEHB1VEMa5OfuzqGutnr5
+         4HKHyIaEUevK984Pgo92t+O5QtZsSEeUpOACBYdoHudQGp6BPzu6NeEECC3OS6PnjhMc
+         jTpcS1WNUSdnmak0U4jf8lcvYUETP6P4OuOvobo4YaLMV//94qflsGcWle/p8oWt1iWJ
+         npxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758898932; x=1759503732;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7Baoif17kvHRJvWC6HYyOG9IuJ9PffDdtqs0FozkFg=;
-        b=iNANPbbmnq2gZqp9gtVfZFzXVQ/npR2FZ8GnlZ0qTbXdzJEv8j6+V7/9ao2ZiVXwQV
-         9mex0AUuX554o0WhFa59qETL3kteu3NkfIcs7qAMM3wHQONsvHZ4Z8642Ysqq+U0s93P
-         hrkr8p4CMvlNt3uvqBEGKwMQPX7qYHGioFkOlu7Vjm1AFTpsmCxHC2Sqi4KqFleisXbU
-         +Av4va9W1DeWnxKdkMv1OnbPG6pzHwbYEZclfxiRQYpbgvUU4Dbc1yaRHfNBJguLDLO+
-         UHfnWDhzs5hlE35gzpK5KwDePPhUS74+q0UsmTplWME9g78od1EVFLIqtI3WP0MiOTrb
-         qhIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzv6FDYzWJKLD1UYRKr0kFG/B5yF4r82iPpNLAl6yWywxvINWcK6jm86aPdOdNK3QrbUEm6ayKTj0e3Vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfmn4BhQpJjUQLiL5pf7GPkrP+iu/6YMGkNZlSWPfQv0+B17pV
-	+VYwH++CXJWoKlc5zz7hQLk93db26E4PQ7mrZ/B+mg/X9vKkHmusSG1JzNyaEhdLQekvUAX7cCU
-	VtWBIpg==
-X-Gm-Gg: ASbGncsPJS4Z09Lr9m5KIs0lF93urDb/x1j4lBGeY7OtMDQsoJwljgHyaoGo50yRNai
-	p1mFKXpavtsw1qWqmzbejS3y8G1c3J1HyoT6Wus2Jpi0XpraBUgK058qgCKqtdPaA0gJp4xOssj
-	btnvP/5Hu2AagNv1iYmzL88qK63okCLIfvrScYdJnFNJZcQOPuSLWiskFnp2bKZcH72619ZWfQd
-	3xw0Oy3jf4Pky9vT24/nZidPYuJwQYSE9LG3C1urYr2Y+4MV2LoUxWJL6Qnq+4sMFFuUdoHIaIZ
-	wuIwh+ms5C0mM6D3rWzNeD8M744L53MzJuSPc5pIBUUvIHR9SBysCpYr4qS63YpGuPAKUiIZ4Z5
-	0OLkwLjyXPHbxuqwHJsT0AT/fB28KfpEwrNAteT7AN31fs9dF6O4RQ35wtKha8eD+mov1mTEg0v
-	owTA==
-X-Google-Smtp-Source: AGHT+IGGXmNBTu4UEfqjidL+GDIizhadTfvXaAwFgVVLBzv8UsZYzurqe8WWNcR71jr76VBG7flshQ==
-X-Received: by 2002:a05:600c:40c4:b0:45f:2e6d:ca01 with SMTP id 5b1f17b1804b1-46e3b009830mr1290175e9.4.1758898931549;
-        Fri, 26 Sep 2025 08:02:11 -0700 (PDT)
-Received: from google.com (140.240.76.34.bc.googleusercontent.com. [34.76.240.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm141572865e9.7.2025.09.26.08.02.10
+        d=1e100.net; s=20230601; t=1758898976; x=1759503776;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2NK1+qNpVHuxCsWsinsmU1XOieK9VkSoD8m9MtoYpA=;
+        b=RKf2ZQkuzoc69aJ6HE4qKmCYJj7+d9fQfQ6VjovbMaLTqetkc0foDhOMZFP4omMAJP
+         CCggzl4+icjDuS8vsSFWoMRlVWyoAQSb7eeJz8mXAi+gxx/TOEvSLG+3uaDE0Jf9p5iI
+         JVRnT05hovBsJqnw/Lvu53u4rNq3CQ1idOZ3jpOP5WGp755m34EJyxJBmz7TS6nsMcaU
+         C/I8DdVTQl/hfCoupbubyKVvAQDJHoKamKdO+YqGWWTHmJfMOk5UX5C9FHQtp4mZhb3U
+         C643QD1Q1uZcAcJ2xS19W23L91fyMuZujg75hK19xdEU5/LDOtp9NiNZ13sApazCozyg
+         j5bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlJj33ldPWaVILZGjbOHw4fdccnS5EnMhLIPsMZ5WWL837XEASUovU9g8PEXnGVl7/wJytdDPSoTTzEtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlpD/TkzQYeVflGciylLZDwGnrzb75nA4ujAYGiDp1sQBtWgBK
+	6jYKlCE8mTbv9/tG2TwKIQEsWgAo09p2DS0wU8VpeNCqqw/5WSrMCuqL
+X-Gm-Gg: ASbGncuC4uyN8CQk0t22ZUyAGg0yFnrKu0nJKFtLvtQFU3uwhAUhlp/hJXn9wnKZ9Hv
+	UmVklpSAmVcxZOmwmsjPhfGQ4sVnAQUB5HPkTcAPNRvZb7enuOEyvyqtfQTcMA/DaGmQFuaZ4d5
+	ySKd2ZNzfYMfWfZrj1dDUQEeo3yOQgu0iq/Tj1A2CUbLHjZCcGaLs/b8RGfXxzXRddsy5nJCMrO
+	/ttkKCnODOxxxrejyqDmP/EtRPGilS47KhPEV/0YjJ5Tdr+J+yuh4zq52cDRkGUlxtREDwhrqSL
+	Q3Og93g7Fe7ma1mNMGa5LYyM6bCOwcictZl92Ohwvs+MDYX42tDPyD+6a+bSWKYCr1SGkhXdvja
+	2Ufr8+dnKFbxckTYMkntQkTMqF5TZxfOM
+X-Google-Smtp-Source: AGHT+IGN7lutBxmNpnjeMEWOO/IMFULl4v8R8dPpfbxhnimX82dFlrbOOG3JwMAj4RAFC1/vkaLJew==
+X-Received: by 2002:a05:690e:1607:b0:635:4ed0:5730 with SMTP id 956f58d0204a3-6361a862bf9mr6223018d50.52.1758898975497;
+        Fri, 26 Sep 2025 08:02:55 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:50::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-765c91e226csm11365617b3.68.2025.09.26.08.02.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 08:02:10 -0700 (PDT)
-Date: Fri, 26 Sep 2025 15:02:07 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Sjoerd Simons <sjoerd@collabora.com>
-Cc: devicetree@vger.kernel.org,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	linux-rockchip@lists.infradead.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: Support for Rock PI-4b
-Message-ID: <aNaq72xKS4QaNjwx@google.com>
-References: <CAFgf54oYjUEg9KkQUzneYTZH1Z8cX56va5M0853eWPFaYT+Z2A@mail.gmail.com>
- <638b9565b90714f56caa9535b7b9b96cd86100d6.camel@collabora.com>
+        Fri, 26 Sep 2025 08:02:54 -0700 (PDT)
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+Subject: [PATCH net-next v3 0/2] net: devmem: improve cpu cost of RX token
+ management
+Date: Fri, 26 Sep 2025 08:02:52 -0700
+Message-Id: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <638b9565b90714f56caa9535b7b9b96cd86100d6.camel@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAByr1mgC/5WOuw4CIRQFf8VQew2wi4qV/2EseFxdosAGkKwx+
+ +8SKlvLyUlmzodkTA4zOW0+JGF12cXQYNhuiJlUuCM425hwygU9cgnZJFXMBDpq/cY8PdGrABa
+ rRw/FzFDiAwO85lwSKg9cco3sMFpBB9Ksc8KbW3rxQgIWCLgUcm3L5HKJ6d2vVNb3XpWU/12tD
+ ChYOe7ZXmohBD17LGpnou+pyn/0jP2v501vjtQeBqHtKIYf/bquX5+bNyhWAQAA
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Kuniyuki Iwashima <kuniyu@google.com>, 
+ Willem de Bruijn <willemb@google.com>, Neal Cardwell <ncardwell@google.com>, 
+ David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Stanislav Fomichev <sdf@fomichev.me>, Mina Almasry <almasrymina@google.com>, 
+ Bobby Eshleman <bobbyeshleman@meta.com>
+X-Mailer: b4 0.13.0
 
-On Fri, Sep 26, 2025 at 04:28:48PM +0200, Sjoerd Simons wrote:
-> On Fri, 2025-09-26 at 15:07 +0100, Mostafa Saleh wrote:
-> > Hi,
-> > 
-> > I am trying to run Linux[1] on my Rock PI-4b, which I see is supported in
-> > the kernel in “rk3399-rock-pi-4b.dts”.
-> > 
-> > However, compiling “defconfig” (ARM64) and flashing my Image doesn’t
-> > work,
-> > It just hangs before any console (even with earlycon), I tried to also use
-> > some of the vendor configs with no luck.
-> > I did some research and found that [2], which indicates that the upstream
-> > support has been broken for some years?
-> 
-> We've got the Rock 4b in our automated testing lab as part of kernelci and other
-> efforts. Upstream works just fine on those boards, so it's likely an issue in
-> your setup.
-> 
-> See e.g https://lava.collabora.dev/scheduler/job/19978558#L525 for a recent
-> upstream kernel boot.
+This series improves the CPU cost of RX token management by replacing
+the xarray allocator with an niov array and a uref field in niov.
 
-Thanks a lot for the quick response!
+Improvement is ~5% per RX user thread.
 
-I can see some differences between this log and my setup.
+Two other approaches were tested, but with no improvement. Namely, 1)
+using a hashmap for tokens and 2) keeping an xarray of atomic counters
+but using RCU so that the hotpath could be mostly lockless. Neither of
+these approaches proved better than the simple array in terms of CPU.
 
-1- My uboot seems ancient
-   U-Boot 2017.09-00026-g2431fa34678 Compared to U-Boot 2024.07-rc4
+Running with a NCCL workload is still TODO, but I will follow up on this
+thread with those results when done.
 
-2- The board model in this log is not 4b as mine
-   Model: Radxa ROCK Pi 4A while mine shows Model: Radxa ROCK Pi 4B
+Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+---
+Changes in v3:
+- make urefs per-binding instead of per-socket, reducing memory
+  footprint
+- fallback to cleaning up references in dmabuf unbind if socket
+  leaked tokens
+- drop ethtool patch
+- Link to v2: https://lore.kernel.org/r/20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com
 
-3- I am using LLVM not GCC (I don't think that matters though)
+Changes in v2:
+- net: ethtool: prevent user from breaking devmem single-binding rule
+  (Mina)
+- pre-assign niovs in binding->vec for RX case (Mina)
+- remove WARNs on invalid user input (Mina)
+- remove extraneous binding ref get (Mina)
+- remove WARN for changed binding (Mina)
+- always use GFP_ZERO for binding->vec (Mina)
+- fix length of alloc for urefs
+- use atomic_set(, 0) to initialize sk_user_frags.urefs
+- Link to v1:
+https://lore.kernel.org/r/20250902-scratch-bobbyeshleman-devmem-tcp-token-upstream-v1-0-d946169b5550@meta.com
 
-4- I am using MMC to boot and not TFTP
+---
+Bobby Eshleman (2):
+      net: devmem: rename tx_vec to vec in dmabuf binding
+      net: devmem: use niov array for token management
 
-I will try to look more into the differences, and update this thread in
-case I was successful.
+ include/net/netmem.h     |  1 +
+ include/net/sock.h       |  4 +--
+ net/core/devmem.c        | 46 +++++++++++++++---------
+ net/core/devmem.h        |  4 +--
+ net/core/sock.c          | 38 ++++++++++++++------
+ net/ipv4/tcp.c           | 94 +++++++++++-------------------------------------
+ net/ipv4/tcp_ipv4.c      | 18 ++--------
+ net/ipv4/tcp_minisocks.c |  2 --
+ 8 files changed, 85 insertions(+), 122 deletions(-)
+---
+base-commit: cd8a4cfa6bb43a441901e82f5c222dddc75a18a3
+change-id: 20250829-scratch-bobbyeshleman-devmem-tcp-token-upstream-292be174d503
 
-Thanks,
-Mostafa
+Best regards,
+-- 
+Bobby Eshleman <bobbyeshleman@meta.com>
 
-> 
-> Regards,
->   Sjoerd
-> 
-> 
-> > 
-> > Has anyone tried to flash a recent kernel successfully on it? or any
-> > tips are greatly appreciated.
-> > Otherwise, maybe it can be removed to avoid misleading other developers
-> > (I got this board to do some upstream kernel development on)
-> > 
-> > [1] base: 4ff71af020ae59ae2d83b174646fc2ad9fcd4dc4
-> > [2] https://wiki.radxa.com/Rockpi4/dev/kernel-mainline
-> > 
-> > Thanks,
-> > Mostafa
-> > 
-> > _______________________________________________
-> > Linux-rockchip mailing list
-> > Linux-rockchip@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
