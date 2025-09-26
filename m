@@ -1,200 +1,287 @@
-Return-Path: <linux-kernel+bounces-833919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9264BA3564
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247B9BA357C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798DB167E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF26C179562
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57362EFD8E;
-	Fri, 26 Sep 2025 10:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA5B2EFD83;
+	Fri, 26 Sep 2025 10:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W/NchGsh"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NWRFyUGe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ED82E0901
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A924672633
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758882211; cv=none; b=Vs5HewK0NG8V8zxhnDn4cik4aqPj5bZSGYA60MsOa9ZIUPqeFIz4VyzxAO9BNzT82IKJpYi5D/idLWPqGsBT6bnGH4fOrNHCmquhteC+gcXZ6spgCZRAg8FvsI6njzSetxHfRw4RZBwDkaqMPKdoAYx9F0xh4+6+3uN3BKf+MfQ=
+	t=1758882516; cv=none; b=RwmXYrftra3KutBIgFYEXAS3+kfAADKKDVnyE8+DKAdPWasshNfUukShZ8kIy9l48U7DjX9VC9W90UpCi2l8EeIjSQH5J9FJhIUALAe3FiZ9lfvp9RL+0OMAZu4T1aa4pf3oT2ufQpu90xRicf4By0NZv6OrB4Inpyo93DUCt9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758882211; c=relaxed/simple;
-	bh=4K0wqVJ9eczfWiqnopYF3vVChENOHFUsOcB5QiOAapo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bs/thQN2JUcSKKNvoxrcxmVweagEDW3zio75B5hebRicQ/lZjqbpqGozTy6h1ZgTy4BM2Rras2rkrkjj5UC038bL92aXV9MQCoGTq0SIjrc9uGgQw00UBZTZmS8kcAIkBC3lnGUHy2QAQKz2VVOh75IdR4Pu0d+IjhKi7BrKHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W/NchGsh; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-781010ff051so1407098b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 03:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758882209; x=1759487009; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5mjd6nLxKs02Ww/P7pqDd7HAKGioYvOr/N7xDzcLcY=;
-        b=W/NchGshZGkPeVP8GG7wOKY5VR+lybtOt9IlroG7tBRzFRTjvtjhl6REcR6cClcOYO
-         6FVQAcXU2VtVyFJG0DE4GEDMM977Lpi+6PKFEOtYOHZTAWSUCpgM0MFj3ReMA7iIrn8G
-         wVQbZvkXzlc+/wzhl0QR3qqYULLjbZ8DV5qro=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758882209; x=1759487009;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w5mjd6nLxKs02Ww/P7pqDd7HAKGioYvOr/N7xDzcLcY=;
-        b=bahX//QWODeeWjjEKcZKPhFd4NZFGHdJeijR2ovI3xxvnE+QOXPjQQyXUtPC0LY2zN
-         kLGy4wyaU+S6/s2rkvWgHxuwWHko28vp4BmdDoxzZkfdvwxZjIZMmGHzPLsBrqVaBYwu
-         r3iwzSorDfy/ckL+XW2/7EDjJ4dYXijtl7RBiZvUic7kAtZXEyGwfLX/OiZLZI9s+Fxj
-         jexUcjR1RgVU04C8lThz5W0mBJ2VGfAl3Xfvn3FoGhf9vGnsRwMN+wn2ohPBDFGTz12r
-         7qyvt36z5tE0StilWSO4z8kspBxRgG2fckkxUw3rcWvus0XjN7JJiOnvCSqxGzCancfw
-         k/kA==
-X-Gm-Message-State: AOJu0YwZHdt+OTEWJOTSupVzdlC/O6NM+VYufhTUM4nWHkHITAeeewI1
-	dzuYWJEQr61DyegpnHTjI8azbLMFGQualCk3SAu7KQVpEmh1iCs+ADRhkCAdi4akFJBjE2s27CE
-	wykw=
-X-Gm-Gg: ASbGncvrHRrJfV2qir8lVwxjE5PzSotGb65ODbAzna/Zx2quJl46wm8UfhMjpu3ILPt
-	Q9zz/OomtAgFESRzJym/f1euonH5JQvffpT3uFMRbYInl5nQL1y3FSTsinhgjbz7bEQooANxFak
-	FwR86JnRTsky2rtrt4bXTRugqU9J+o3TLCrZtLouMUdn+X6w4qOjWiKf6SQa8ws+mldjJG69uPu
-	J1lBuVBhhX0KcK52hxfr1PdsNHCOs21qRLrcmVddayU0d5JbpLhAeh14bBuvHhtNTsu7oXSQLKd
-	FVSsxCJhBxZzWHRjyxIXhP55eI19R9nkTZ+schE62IBk69xjRRFXwlTYIkeaunr9Gx4RZD0qfQN
-	fcwmVOyuJ+RJmOuqALaczYRUlc8O0wEk4JrjO948xNEjW8JFjhEpuDuKX8fuUqz9ecFtldPTWDs
-	jhWJjfRe2tN8DKxwI53FU=
-X-Google-Smtp-Source: AGHT+IGYRUggPUFZvLH1WiVKpxyZzaen0jkQTx9Ti3sbPmMgM6KTc3sQs3R4T678nozJvNs7/WD6Ig==
-X-Received: by 2002:a05:6a00:1896:b0:77f:4b9b:8c34 with SMTP id d2e1a72fcca58-780fceeb3b7mr7559015b3a.31.1758882208839;
-        Fri, 26 Sep 2025 03:23:28 -0700 (PDT)
-Received: from treapking.tpe.corp.google.com ([2a00:79e0:201d:8:2900:382d:6893:1b9b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7810238f11esm4137236b3a.19.2025.09.26.03.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 03:23:28 -0700 (PDT)
-From: Pin-yen Lin <treapking@chromium.org>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Hsin-Te Yuan <yuanhsinte@chromium.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	linux-pm@vger.kernel.org,
-	Pin-yen Lin <treapking@chromium.org>
-Subject: [PATCH v4] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-Date: Fri, 26 Sep 2025 18:23:18 +0800
-Message-ID: <20250926102320.4053167-1-treapking@chromium.org>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+	s=arc-20240116; t=1758882516; c=relaxed/simple;
+	bh=AV2xaIoL42zj+8krdX+sW73kj32irilNXzL8oyp88Zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AUR+IuU4qHj6J+0O6ws9brDpPKEuejaDMmh1DlAK1S9b7H0ocvPMse+aYDOZjpB6YAMH4FOVoSBKtPnhPNnkDxdRlzLywy5AlsemoEb2TSBO+nl3sBs4x+4wmMxo8y6x5cruwvhtNNeZu3FBGemTHn+EGT7A7j2bkaV3bq6HUTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NWRFyUGe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CE78640E016E;
+	Fri, 26 Sep 2025 10:28:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sFQjA8vez4MI; Fri, 26 Sep 2025 10:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758882507; bh=pYDGEs6A/sMCNprFkSi4bsIIJ6c19t8UtJ38s49rsts=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NWRFyUGedwcd3xJZQ1E3nXCJSWE63PJL+fBg1ujvL2lyXjOXiw/vjej7OyKGsH6Yt
+	 cE8DLvISLZOYymVv/CyNRBnG96MQCT6FTso+Gxqfmpi+jBOjUZp1E5prgQU41meFEb
+	 oc3jaVOq0JFqRTFRVYoy5V/7I3RS0MG/8zQkaXTPQQXbv+bv35wjR9bupTD6PLfYPi
+	 bR6wa9EmlghBo2bc+/CUr0oEtzU3pMbff+U1fCLCd2P6mT1NOpwbmARqlFQmBzSSIJ
+	 /meON5lvh9LmEih9mA5Y/K3XTdm/vU/CMN2Y0g5ybhAVAaPdaGoItTojU3iaeQUk1u
+	 13UvCRkJ11OWr2GSIsc0MFjkPIxjIJKJQkcc+5UeKhhW4AYi65b/4mLq5M3dBZ+kH8
+	 g1EoDcx+7QQ4ZVnjwutlY2vRr+zY+6vT8zvS3dHJ0QBklYkXgZXg+8yI/FijFmUbsz
+	 UuvsIZwG6awSOApNhXW/FeD2dLZ+Wg+7mlbNwcOSH9nwJdr2FhhyxwaYjVbIgRtmoV
+	 Uw4VwMRR1ynZ+kdWdyyk6/o5q0vxL36esC1hguSJgsIkx9ygiS5pyLYWncPyUYqw/3
+	 MUU3DHap5bqRzsX5NC5EOLhRAaQlYsYKRkOj5GOdk/iigJd7Ah6FK/laAxNd9c48sy
+	 ipQsnhLPv6jUNAYE/w1AZDSU=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 0960840E016D;
+	Fri, 26 Sep 2025 10:28:23 +0000 (UTC)
+Date: Fri, 26 Sep 2025 12:28:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/apic for v6.18-rc1
+Message-ID: <20250926102823.GAaNZqxzXkasrXXFjn@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-and resume, and functions like device_reorder_to_tail() and
-device_link_add() doesn't try to reorder the consumers with such flag.
+Hi Linus,
 
-However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-check this flag before triggering dpm_wait, leading to potential hang
-during suspend/resume.
+please pull the x86/apic lineup for v6.18-rc1.
 
-This can be reproduced on MT8186 Corsola Chromebook with devicetree like:
+The AMD SEV (encrypted guests and hypervisor support) side of things received
+a lot of development this time around and you should be getting a lot of code
+from several trees.
 
-usb-a-connector {
-        compatible = "usb-a-connector";
-        port {
-                usb_a_con: endpoint {
-                        remote-endpoint = <&usb_hs>;
-                };
-        };
-};
+Even this branch contains two big features because it was deemed a better idea
+to merge them into one.
 
-usb_host {
-        compatible = "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
-        port {
-                usb_hs: endpoint {
-                        remote-endpoint = <&usb_a_con>;
-                };
-        };
-};
+So there might be other merge conflicts, like with the crypto tree, for
+example:
 
-In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
-between usb_host (supplier) and usb-a-connector (consumer) is created.
+https://lore.kernel.org/r/aM1bJqhtojdLhp3c@sirena.org.uk
 
-Export device_link_flag_is_sync_state_only() and use it to check this in
-dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
+The resolution should be easy but lemme give you a heads-up anyway.
 
-Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STATE_ONLY flag")
-Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+Thx.
+
 ---
 
-Changes in v4:
-- Remove inline for device_link_flag_is_sync_state_only()
+The following changes since commit 7f830e126dc357fc086905ce9730140fd4528d66:
 
-Changes in v3:
-- Squash to one patch and fix the export approach
+  x86/sev: Guard sev_evict_cache() with CONFIG_AMD_MEM_ENCRYPT (2025-09-15 18:29:43 +0200)
 
-Changes in v2:
-- Update commit message
-- Use device_link_flag_is_sync_state_only()
+are available in the Git repository at:
 
- drivers/base/base.h       | 1 +
- drivers/base/core.c       | 2 +-
- drivers/base/power/main.c | 6 ++++--
- 3 files changed, 6 insertions(+), 3 deletions(-)
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_apic_for_v6.18_rc1
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 123031a757d9..80415b140ce7 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *dev);
- void device_links_no_driver(struct device *dev);
- bool device_links_busy(struct device *dev);
- void device_links_unbind_consumers(struct device *dev);
-+bool device_link_flag_is_sync_state_only(u32 flags);
- void fw_devlink_drivers_done(void);
- void fw_devlink_probing_done(void);
- 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index d22d6b23e758..a54ec6df1058 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev, struct device *target)
- #define DL_MARKER_FLAGS		(DL_FLAG_INFERRED | \
- 				 DL_FLAG_CYCLE | \
- 				 DL_FLAG_MANAGED)
--static inline bool device_link_flag_is_sync_state_only(u32 flags)
-+bool device_link_flag_is_sync_state_only(u32 flags)
- {
- 	return (flags & ~DL_MARKER_FLAGS) == DL_FLAG_SYNC_STATE_ONLY;
- }
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 2ea6e05e6ec9..73a1916170ae 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev, bool async)
- 	 * walking.
- 	 */
- 	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
--		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
-+		if (READ_ONCE(link->status) != DL_STATE_DORMANT &&
-+		    !device_link_flag_is_sync_state_only(link->flags))
- 			dpm_wait(link->supplier, async);
- 
- 	device_links_read_unlock(idx);
-@@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev, bool async)
- 	 * unregistration).
- 	 */
- 	list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_node)
--		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
-+		if (READ_ONCE(link->status) != DL_STATE_DORMANT &&
-+		    !device_link_flag_is_sync_state_only(link->flags))
- 			dpm_wait(link->consumer, async);
- 
- 	device_links_read_unlock(idx);
+for you to fetch changes up to 1f6113ae5ac4927fe80256154ebb0461e670fa85:
+
+  x86/boot: Drop erroneous __init annotation from early_set_pages_state() (2025-09-24 18:08:34 +0200)
+
+----------------------------------------------------------------
+- Add functionality to provide runtime firmware updates for the non-x86 parts
+  of an AMD platform like the security processor (ASP) firmware, modules
+  etc, for example. The intent being that these updates are interim,
+  live fixups before a proper BIOS update can be attempted
+
+- Add guest support for AMD's Secure AVIC feature which gives encrypted
+  guests the needed protection against a malicious hypervisor generating
+  unexpected interrupts and injecting them into such guest, thus
+  interfering with its operation in an unexpected and negative manner.
+  The advantage of this scheme is that the guest determines which
+  interrupts and when to accept them vs leaving that to the benevolence
+  (or not) of the hypervisor
+
+- Strictly separate the startup code from the rest of the kernel where
+  former is executed from the initial 1:1 mapping of memory. The problem
+  was that the toolchain-generated version of the code was being
+  executed from a different mapping of memory than what was "assumed"
+  during code generation, needing an ever-growing pile of fixups for
+  absolute memory references which are invalid in the early, 1:1 memory
+  mapping during boot.
+
+  The major advantage of this is that there's no need to check the 1:1
+  mapping portion of the code for absolute relocations anymore and get
+  rid of the RIP_REL_REF() macro sprinkling all over the place.
+
+  For more info, see Ard's very detailed writeup on this:
+  https://lore.kernel.org/r/CAMj1kXEzKEuePEiHB%2BHxvfQbFz0sTiHdn4B%2B%2BzVBJ2mhkPkQ4Q@mail.gmail.com
+
+- The usual cleanups and fixes
+
+----------------------------------------------------------------
+Ard Biesheuvel (23):
+      x86/sev: Separate MSR and GHCB based snp_cpuid() via a callback
+      x86/sev: Use MSR protocol for remapping SVSM calling area
+      x86/sev: Use MSR protocol only for early SVSM PVALIDATE call
+      x86/sev: Run RMPADJUST on SVSM calling area page to test VMPL
+      x86/sev: Move GHCB page based HV communication out of startup code
+      x86/sev: Avoid global variable to store virtual address of SVSM area
+      x86/sev: Share implementation of MSR-based page state change
+      x86/sev: Pass SVSM calling area down to early page state change API
+      x86/sev: Use boot SVSM CA for all startup and init code
+      x86/boot: Drop redundant RMPADJUST in SEV SVSM presence check
+      x86/boot: Provide PIC aliases for 5-level paging related constants
+      x86/sev: Provide PIC aliases for SEV related data objects
+      x86/sev: Move __sev_[get|put]_ghcb() into separate noinstr object
+      x86/sev: Export startup routines for later use
+      objtool: Add action to check for absence of absolute relocations
+      x86/boot: Check startup code for absence of absolute relocations
+      x86/boot: Revert "Reject absolute references in .head.text"
+      x86/kbuild: Incorporate boot/startup/ via Kbuild makefile
+      x86/boot: Create a confined code area for startup code
+      efistub/x86: Remap inittext read-execute when needed
+      x86/boot: Move startup code out of __head section
+      x86/boot: Get rid of the .head.text section
+      x86/boot: Drop erroneous __init annotation from early_set_pages_state()
+
+Ashish Kalra (3):
+      x86/sev: Add new dump_rmp parameter to snp_leak_pages() API
+      crypto: ccp - Add new HV-Fixed page allocation/free API
+      crypto: ccp - Add AMD Seamless Firmware Servicing (SFS) driver
+
+Borislav Petkov (AMD) (2):
+      x86/apic/savic: Do not use snp_abort()
+      x86/sev: Zap snp_abort()
+
+Ingo Molnar (2):
+      Merge branch 'x86/apic' into x86/sev, to resolve conflict
+      Merge branch 'x86/urgent' into x86/apic, to resolve conflict
+
+Kishon Vijay Abraham I (2):
+      x86/sev: Initialize VGIF for secondary vCPUs for Secure AVIC
+      x86/sev: Enable NMI support for Secure AVIC
+
+Nathan Chancellor (1):
+      objtool: Ignore __pi___cfi_ prefixed symbols
+
+Neeraj Upadhyay (16):
+      x86/apic: Add new driver for Secure AVIC
+      x86/apic: Initialize Secure AVIC APIC backing page
+      x86/apic: Populate .read()/.write() callbacks of Secure AVIC driver
+      x86/apic: Initialize APIC ID for Secure AVIC
+      x86/apic: Add update_vector() callback for APIC drivers
+      x86/apic: Add an update_vector() callback for Secure AVIC
+      x86/apic: Add support to send IPI for Secure AVIC
+      x86/apic: Support LAPIC timer for Secure AVIC
+      x86/apic: Add support to send NMI IPI for Secure AVIC
+      x86/apic: Allow NMI to be injected from hypervisor for Secure AVIC
+      x86/apic: Read and write LVT* APIC registers from HV for SAVIC guests
+      x86/apic: Handle EOI writes for Secure AVIC guests
+      x86/apic: Add kexec support for Secure AVIC
+      x86/apic: Enable Secure AVIC in the control MSR
+      x86/sev: Prevent SECURE_AVIC_CONTROL MSR interception for Secure AVIC guests
+      x86/sev: Indicate the SEV-SNP guest supports Secure AVIC
+
+Thomas Gleixner (1):
+      x86/apic: Make the ISR clearing sane
+
+Tom Lendacky (1):
+      x86/startup/sev: Document the CPUID flow in the boot #VC handler
+
+ arch/x86/Kbuild                            |   2 +
+ arch/x86/Kconfig                           |  13 +
+ arch/x86/Makefile                          |   1 -
+ arch/x86/boot/compressed/Makefile          |   2 +-
+ arch/x86/boot/compressed/misc.c            |   2 +
+ arch/x86/boot/compressed/sev-handle-vc.c   |   3 +
+ arch/x86/boot/compressed/sev.c             | 132 +++------
+ arch/x86/boot/cpuflags.c                   |  13 -
+ arch/x86/boot/startup/Makefile             |  22 ++
+ arch/x86/boot/startup/exports.h            |  14 +
+ arch/x86/boot/startup/gdt_idt.c            |   4 +-
+ arch/x86/boot/startup/map_kernel.c         |   4 +-
+ arch/x86/boot/startup/sev-shared.c         | 327 +++++++---------------
+ arch/x86/boot/startup/sev-startup.c        | 210 +++-----------
+ arch/x86/boot/startup/sme.c                |  30 +-
+ arch/x86/coco/core.c                       |   3 +
+ arch/x86/coco/sev/Makefile                 |   8 +-
+ arch/x86/coco/sev/core.c                   | 276 ++++++++++++++++---
+ arch/x86/coco/sev/{sev-nmi.c => noinstr.c} |  74 +++++
+ arch/x86/coco/sev/vc-handle.c              |  22 +-
+ arch/x86/coco/sev/vc-shared.c              | 143 +++++++++-
+ arch/x86/include/asm/apic.h                |  11 +
+ arch/x86/include/asm/apicdef.h             |   2 +
+ arch/x86/include/asm/boot.h                |   2 +
+ arch/x86/include/asm/init.h                |   6 -
+ arch/x86/include/asm/msr-index.h           |   9 +-
+ arch/x86/include/asm/setup.h               |   1 +
+ arch/x86/include/asm/sev-common.h          |   1 +
+ arch/x86/include/asm/sev-internal.h        |  28 +-
+ arch/x86/include/asm/sev.h                 |  41 ++-
+ arch/x86/include/uapi/asm/svm.h            |   4 +
+ arch/x86/kernel/apic/Makefile              |   1 +
+ arch/x86/kernel/apic/apic.c                |  85 +++---
+ arch/x86/kernel/apic/vector.c              |  28 +-
+ arch/x86/kernel/apic/x2apic_savic.c        | 428 +++++++++++++++++++++++++++++
+ arch/x86/kernel/head64.c                   |   5 +-
+ arch/x86/kernel/head_32.S                  |   5 +-
+ arch/x86/kernel/head_64.S                  |  10 +-
+ arch/x86/kernel/vmlinux.lds.S              |   9 +-
+ arch/x86/mm/mem_encrypt_amd.c              |   6 -
+ arch/x86/mm/mem_encrypt_boot.S             |   6 +-
+ arch/x86/platform/pvh/head.S               |   2 +-
+ arch/x86/tools/relocs.c                    |   8 +-
+ arch/x86/virt/svm/sev.c                    |   7 +-
+ drivers/crypto/ccp/Makefile                |   3 +-
+ drivers/crypto/ccp/psp-dev.c               |  20 ++
+ drivers/crypto/ccp/psp-dev.h               |   8 +-
+ drivers/crypto/ccp/sev-dev.c               | 182 ++++++++++++
+ drivers/crypto/ccp/sev-dev.h               |   3 +
+ drivers/crypto/ccp/sfs.c                   | 311 +++++++++++++++++++++
+ drivers/crypto/ccp/sfs.h                   |  47 ++++
+ drivers/firmware/efi/libstub/x86-stub.c    |   4 +-
+ include/linux/cc_platform.h                |   8 +
+ include/linux/psp-platform-access.h        |   2 +
+ include/uapi/linux/psp-sfs.h               |  87 ++++++
+ tools/objtool/arch/x86/decode.c            |  12 +
+ tools/objtool/builtin-check.c              |   2 +
+ tools/objtool/check.c                      |  48 +++-
+ tools/objtool/include/objtool/arch.h       |   1 +
+ tools/objtool/include/objtool/builtin.h    |   1 +
+ tools/objtool/noreturns.h                  |   1 -
+ 61 files changed, 2042 insertions(+), 708 deletions(-)
+ create mode 100644 arch/x86/boot/startup/exports.h
+ rename arch/x86/coco/sev/{sev-nmi.c => noinstr.c} (61%)
+ create mode 100644 arch/x86/kernel/apic/x2apic_savic.c
+ create mode 100644 drivers/crypto/ccp/sfs.c
+ create mode 100644 drivers/crypto/ccp/sfs.h
+ create mode 100644 include/uapi/linux/psp-sfs.h
+
+
 -- 
-2.51.0.536.g15c5d4f767-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
