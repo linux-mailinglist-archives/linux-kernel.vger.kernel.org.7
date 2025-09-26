@@ -1,229 +1,163 @@
-Return-Path: <linux-kernel+bounces-834510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE4ABA4D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:08:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF36DBA4D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E2517D78D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:07:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBBE7BBA2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B2D31282B;
-	Fri, 26 Sep 2025 18:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE91830C343;
+	Fri, 26 Sep 2025 18:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fNY4zWJz"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013068.outbound.protection.outlook.com [40.107.162.68])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NDfBpBx5"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC80A30FF25
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 18:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758909947; cv=fail; b=Dp73VyfuAMsx8WjJPhNbw5D5jcPnqeVPPPkoVnR/GJGrzqf5gCJXEkRJLf5iogpK0daXtD1NZeCNiJyPqbodKlsL9hTtZ4OQXGFLER/OdUQBrvwmiONT2c6vNqmmXYqmHpcX3yNTdjPQRvbasasKBRvFQGXVml3yZcZSGERdY1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758909947; c=relaxed/simple;
-	bh=xXwWWmsyxWtDTUyILLzG4PdAyOOWeogZgWMU8m5ws/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=blgRs6VUrZCGGfZVXJ7jZkJDNRuCattouUgWd85N9z1+poYerJr/ThkI/v+mzuNExFANWGyhBlKLsSdDcukOcAD1eam0QzCH5J7oqvmiY2BGSuVEBedNjt18M8n57jwhEN4nA+OYZsOLlf4pEdwTDI0/JdqPlwhYjvQetUYTeZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fNY4zWJz; arc=fail smtp.client-ip=40.107.162.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tX4t/laGopl//qRUEcV08kmguXGiPQipyW0P8JaF3U9MbgBGVNno4jwzD43NXEP16tyvQjlzpwkAfH7cb382Cz+B/5f6vZXslZBknrUyNH4wsjE6Avx7jqwRzRDNwbVo4/kdWCxOVPPBZZNOEhqXO1/jlc0RVv41r2Tq/KnNpGcjwJ2lRgHHUp1QM7WAda8o9MhRGkUp+TKkC3rtv+CAuUxV1XgAzCbAbciQTzryf0CChWCXyDnGgM1isY0/WLztZYx3yLHskIU9XLDv5JJxfv3UyDXcmF1JQOnCo+fFLHI0ZtO1lPTtYUmGJMIlep/ydy5hcHywmIaTX8Gh/QGpiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vzeDbsjSgzAnwFmwINhDbnmX2vgA3i/eQ7O9lo/IldA=;
- b=BrJIKwRiwVDVS/Lmb2MU81tfBoXPKgPGCvuFMN5bVPik+2fGh5qbF2zxUTsIx4KXdA6OSYUVouQES/hWlNL2mhBvK/PdFbi1UwOmS3jDRuHQBEcI8nD0fVB/ulJjXBa64txLgy6WlGgItRHB6n4erfpgVhxhpxEg/mEBjracXadJuddsh8eoyZ8qMVot1eoxvf9vVc3J3C1jiPoipL/PhB6cLcyWOpQq5wvHXVC9k/Ljmcu/HKdNz++lT850GoMr73W88hk4No5c7bvr53n8KVK3RTv0EzvpXbuZADVeKm8a+cqGl7lSYC6nBydM0q0FhcDTYgLAoNxti7UW+BdOHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vzeDbsjSgzAnwFmwINhDbnmX2vgA3i/eQ7O9lo/IldA=;
- b=fNY4zWJzCaEDAi8FaL381ujAuXhG+NcchUh5lIIUICfHKvbLi6eOHomSeKyp18Sx6uUK70QQ5CH3ymz9au+M9pkVSeNrVnh3AOclsLOJKxhcho0WZohCbGerl/A2EwMMxO0gD4bW1cKXDfK/vr84dWHg4sxTe/fbmkvqhLsb2jDvG6oEuvKHiFLHfvILmvhLYIFX0PjRrFNRtSPcVgJ5fN6whrv5P4iJU/E2MoyUtwFJLyhXz+SgzsJbmIlyTsNLA5PGBgZAAc3ZDLGF/Uq12Veap+/KKRNZ84N2trCrz+EEAjvHt/V4WJhk2IeCbvH9Td6nJNZnMJTgrnbVOfHD2g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PA4PR04MB7823.eurprd04.prod.outlook.com (2603:10a6:102:c1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.14; Fri, 26 Sep
- 2025 18:05:35 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9160.010; Fri, 26 Sep 2025
- 18:05:35 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: linux-phy@lists.infradead.org
-Cc: Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Josua Mayer <josua@solid-run.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B8B27935A;
+	Fri, 26 Sep 2025 18:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758909975; cv=none; b=LY3FfarEcxEuGLMRRdpYQWqXos8Bs6BC76WhRjRfiujsgKeBfmF/PhVAl7+nw1WFuR9y9FX9qroLOUUGMgHCWDEeUm4M4HwYk+Q6pN6yzuCke/e4SkU99xVBaa8NTtBzg5vuK7xd4L3dUxsoj2vmzsBmwmZhm3a4N8QrtNYOD5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758909975; c=relaxed/simple;
+	bh=lVdmk24uzZLUpHExk5q0viaUq0wx6COGjXoe/FACEV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9KP3s5SxFu/ZlrW9g5Ny8/jQBCyLtZCRdTeJNvHEj25gUyaRzMe3eGOOhC/miMpYGJBThuTRod2VlgYDHI0YNdIF8nkOLBRZkTliH9pM+6P7tq0z+SLCnYVKb5lMQ2PVX41LepPJDxzap7fRzavwSUVuvWoODKB6rHooeXQ3Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=NDfBpBx5; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Mt+qW1w7wIpB1oVj2FllX4x1Q+sVAqzARp1FUOTEHxc=; b=NDfBpBx5Tujso5qbk+gGudcjGO
+	LAA8bpUoJGE5k/GIUFDJordr6/LU8IlcSubQo6L+1j2zWT5FteqTuZiTG7V1wHKVXrQdV4dFhevo/
+	pIwrQH4uHMsHBQISAGF/3biaiRJvbgpJVSC+3EcG7GR8PiJi9R9h75gCiFdYHZfLTytZ/ru6In+nN
+	VbJefM0GmPqftoRwwlQbm2Xpo6cEpyRiXCjC/FxVz9eKjClAdqubJmquEOd8DeEieULAg8uPzkPCV
+	hLsolM+af1yegBAxGeUXOcwVjrt9X0pKX1famDnW2ESIkSSgn1uiGiHmkauYiJ2wprVY05cKEVTSs
+	f7KhuuIw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33952)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v2Cpe-000000003pM-3Ayh;
+	Fri, 26 Sep 2025 19:06:10 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v2Cpd-000000000s1-10QB;
+	Fri, 26 Sep 2025 19:06:09 +0100
+Date: Fri, 26 Sep 2025 19:06:09 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yangfl <mmyangfl@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 phy 17/17] phy: lynx-28g: implement phy_exit() operation
-Date: Fri, 26 Sep 2025 21:05:05 +0300
-Message-Id: <20250926180505.760089-18-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250926180505.760089-1-vladimir.oltean@nxp.com>
-References: <20250926180505.760089-1-vladimir.oltean@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P250CA0008.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:20b:5df::9) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce
+ PHY_INTERFACE_MODE_REVSGMII
+Message-ID: <aNbWEdabqXIaoo2T@shell.armlinux.org.uk>
+References: <20250922131148.1917856-1-mmyangfl@gmail.com>
+ <20250922131148.1917856-3-mmyangfl@gmail.com>
+ <aNQvW54sk3EzmoJp@shell.armlinux.org.uk>
+ <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
+ <aNREByX9-8VtbH0n@shell.armlinux.org.uk>
+ <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
+ <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
+ <CAAXyoMM3QG+zWJQ8tAgZfb4R62APgBaqaKDR=151R7+rzzakCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA4PR04MB7823:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0020ff6-bb83-4e99-c1cd-08ddfd274ac5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cVYfgpAasxzl5NkPxf5JoVxJaMYApzoDfgYDux3Uv0PDijHGFKyXOWr4Qg9n?=
- =?us-ascii?Q?bP4iqbe1VRXi4TUfCaikxcgEpSTZT8hOQbB/YFQWveLmTRFbGRfoxbtOJaI/?=
- =?us-ascii?Q?ij/yqU/RM6b/3ys2AWSu3Kfc4QSIJPGjupBR4IxfyxGU6apFLc0JHVLu9JuS?=
- =?us-ascii?Q?WR9y9C8vpDyS4DxDWWihgE9AE84+xpJqLIR8S+PSvxoAIJD46cGThaFbQDcx?=
- =?us-ascii?Q?PQuEK50H+pLtBeFiL8hOvC0Nsn2tuPWnHlKiY7Gsq3RiUHobrnGLWoNdjB+w?=
- =?us-ascii?Q?k0e3T8+41pUNK6WyCs+qj396lTq/LdTywhW+2CiogA1212Dr6yhqVHNXchBz?=
- =?us-ascii?Q?kA6ZhfkV2Q/c/+bAq5VI58bH5baX+qpwGAhKXFc6hWM5CM0TUmcMKEhdbJmA?=
- =?us-ascii?Q?OoaAdKxu/wvqIas6TB7o5/1jazyYf4RpuYkyTjwlAmoMQ/d5S377BfFauM79?=
- =?us-ascii?Q?GA17wRDArOEAuEuSmmSXlwma7MUXDLrVw8YeP1sHOe7uvVolP0fC5eG+5Voz?=
- =?us-ascii?Q?5LFYh0B4GYyl6eP43ap7ODHmKUFyxPiuIGc/6i6eQm6eQbLtlIaEsMwwwm+3?=
- =?us-ascii?Q?dz3rZkDd6j0J9oX4meUZlt+odm72fmGhnCWlzDoEZwH6C60s97dhOp4UeuWI?=
- =?us-ascii?Q?ZXUFAKRXBwGXgn8y2kUPZZzQvBM41WpUeHHVYAcyB4UjEJhKF6w+sbH6G/o4?=
- =?us-ascii?Q?aWB3YtOI6FPuppxhsHSiSrzbVuVvBRolRe6o+6ML3pcF7i0+A5cahgoKTW3R?=
- =?us-ascii?Q?lSPaeyNzh7zG6GVORxPwXM9bOQxL+VLKTKZK/3PUr3NuJiukMxpaKCvKP8lb?=
- =?us-ascii?Q?mzZk9MHj6K7/ft0zvyhOuseCQFkZgLspnTwnFbFF/DC6qgLiPbGnF347lgdf?=
- =?us-ascii?Q?a0XZ8nVrWEUlT5aq4yilc1IUYO+wRXPcqoMz4kj19/1cwGUNIPcZXMYA0kpr?=
- =?us-ascii?Q?C6hiU/oFrw1yUpWB0t6fII2RJ42D2sT7A0HH8C/v0+v8fu+DNwjSs7DULZrX?=
- =?us-ascii?Q?nq13lEIpDLGNQt/tNYsqXetbWvOU7KApZQsX2RZNjz31Cfi11+TUwYRvaT0w?=
- =?us-ascii?Q?jSxPupSFSU7+ZFt0IgOro7tJJetjfJ9Z0il2PNO5fMlOmoxLoWwz8iNdnuDP?=
- =?us-ascii?Q?GFdbPs26cEdRyiIDAR2qGIQXVmzZX4+1IGXqW8PKWAaUB2KfV6qCY7VBWYru?=
- =?us-ascii?Q?21kCd791RZk+zLyi5K772bQb8y+10OX+8pBToags7sAyBdanKrPVjaNdwLCT?=
- =?us-ascii?Q?PI6/NDgRiTnBmb1wfieb3j7bFq6GBH2Wcdbo2d2I8Cy2dJiox4UF2mpkGQ3D?=
- =?us-ascii?Q?8YSqOYUJS/3d94SwsKMKxyZBMrV5AF+XER7mRpqWOHc0y6j5l6A/7s41Ro/Y?=
- =?us-ascii?Q?76ohlVT6s/RU9sxoXZdrgJDbqY190EfpDjbuhwRC1MXaiKCo28fTvV+pa8b3?=
- =?us-ascii?Q?VMutDevSO5QGDvIJuPz3YyRpOidpIPu8UIBKPwHq8/kVGSvIB0c1xTFsGQT3?=
- =?us-ascii?Q?hHtuJDgHt/1e0SAc9RvcnT436qa7zRdA/UD8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?I6vnAL3cAPKV46ayiNThZC+LT7i1wNUvIF79DCkq4ucmtaCgx+Ec8kvzBDYr?=
- =?us-ascii?Q?CIbrBfuDmdQnpbu55yueyb07CnqHa6wZcBAoBgr2xi33Wu3m2Ct0VDPQa1K4?=
- =?us-ascii?Q?DIpVRhNahp7CArMAQlKV7FhTbgedFXdXbHg1YUsxRRSxB38dqQjc+nfdQjRc?=
- =?us-ascii?Q?SAIUmDe+9zn9rvC3i6r11iNeyvEJAiKu5+5Vuh4gvm5e1jmpr2Fy5gmywRPn?=
- =?us-ascii?Q?id2Hf5vGfmfcZ5vyO0G4EAlqmcNMDBKFhLc8MRQuuzNdxl5DcKBkDvyZe7Kv?=
- =?us-ascii?Q?boMmfnShz3bfa2073X+qlR0plwci3KpSaNVLtDrCaEH6yGjh7AhilcMpi7tb?=
- =?us-ascii?Q?oKTPcxgifa6bxnqT15aNUV5RuugD947xvLzyRVF+lBSuoKTQtRCByVnH0uCd?=
- =?us-ascii?Q?r4WU+cxORp7BvSs8Ki5Ww4lvI4GXXcGoVtKvVvr0zHQhKi6hK89ldHH18I3d?=
- =?us-ascii?Q?pWAC4EGOaAcbXXKB7vEhJS4gEg1VG2AGeaohpOdRd2V5GxvVpnaHzVC+/3la?=
- =?us-ascii?Q?li58jriH13mlt5FAQU2IMMK2/iYHe8jBp184eUCxSo1wjY4ggednSH40PDwC?=
- =?us-ascii?Q?ebmRXpJ7qXBKZ7AJVydLGwlf3KaU0Ea6aT1sqYTffy3/1MmZBCU124t6fdOR?=
- =?us-ascii?Q?tL2oIb2WBEqbTaLeYoAgY4YLKUWndPiTqoawuzbwKXbD0KhfH960CRZvu/VG?=
- =?us-ascii?Q?hzSwfcPNQK6p2sUWKZRe2cp16bZqAn5KWOqVbRBA2benRkf00xXZbA7vIJev?=
- =?us-ascii?Q?vTmNCqPUp2rPkqHX2TNDf2/dUOW8yFolpjkzDhZetbiQdrmNf4tpd6+cfjin?=
- =?us-ascii?Q?P84R6Gv1zxe5/EGv5/33NBOe1LjemmVv+GU9lT9lPQM990qo0tQG/RDVCMRj?=
- =?us-ascii?Q?aGTOw8yWH2gFyFtim6Z9xLdiVNeTlTHkHmBHeKzQzGkiZ0GAhbWUvRyizMDH?=
- =?us-ascii?Q?ZZ4xLBOYb54cI3T1Xq4C4fCUFbiGFZx8UL3K/W6G/VAfiFqdAIyUpf0MsWeV?=
- =?us-ascii?Q?61lK16oWLs/Im8iuD50xJejPcR1wsnwWtUEjkkoG2O3uNctrl5oF+hPAfkZa?=
- =?us-ascii?Q?85bDNHAlkTiRWiHvRS7JOixuq3FYJHfrnb3s0sgo6TvlfH3PzzRWg7+kjnPM?=
- =?us-ascii?Q?yK1/tmh9qgqlUTnCNqbH7xorqcqSeq+nFjFvz/juJdcOgPiMrfEtUGRBBD28?=
- =?us-ascii?Q?8am1PWk4sJYlDpyu+BgYSfAZv8bswWG63lOGrKt7nzs8wx/Jnf4d992wOJnJ?=
- =?us-ascii?Q?DC8ShI2Us366gtkIap4s2df+U4IIW0iOW/J84wSUXiViHRPeL6DgKV7pV1Dc?=
- =?us-ascii?Q?znmH3rU1U9RUCDSWl5WyDbUbXpOYvVsxWMRTrL9FFC9l4DvLDiKhz+VncOr5?=
- =?us-ascii?Q?4iNWVx1H3RGPRyeunODw0UwbnWaYlvrKnz7lhM7lkZasMoKSpTD1/cEklirw?=
- =?us-ascii?Q?GFoXdq1/J4ajVOF2H/AluUM+KNTK7MCO9gQWg1DZWofg+IPB/Sh4Df9MsoVY?=
- =?us-ascii?Q?2T/XWdEIA14Xqgii2IjIrrccYvFZPQ7dyTi+dyZHOTJIIQGgHRUMrOe8D5js?=
- =?us-ascii?Q?hHWHjtZOYKX/Vje1j1iRTTmwo9KUgqXyFgtjpgYIZASUi8KS6DUV0B2KMUKo?=
- =?us-ascii?Q?DA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0020ff6-bb83-4e99-c1cd-08ddfd274ac5
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 18:05:35.8148
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aQHetQ3OJ2m5ISdUwhSpwQMLiA/bjGND/II0hoGh0RyUl2G55PjmyMCjJIdcyhfuF//ANHS96KMC1uEy66sfrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7823
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAXyoMM3QG+zWJQ8tAgZfb4R62APgBaqaKDR=151R7+rzzakCw@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Managed lanes are supposed to have power management through
-phy_power_on() and phy_power_off().
+On Sat, Sep 27, 2025 at 12:28:05AM +0800, Yangfl wrote:
+> On Sat, Sep 27, 2025 at 12:09 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > > > > How does the databook describe reverse SGMII? How does it differ from
+> > > > > SGMII?
+> > > >
+> > > > It doesn't describe "reverse SGMII". Instead, it describes:
+> > > >
+> > > > 1. The TC bit in the MAC configuration register, which makes the block
+> > > >    transmit the speed and duplex from the MAC configuration register
+> > > >    over RGMII, SGMII or SMII links (only, not 1000base-X.)
+> > > >
+> > > > 2. The SGMIIRAL bit in the PCS control register, which switches where
+> > > >    the SGMII rate adapter layer takes its speed configuration from -
+> > > >    either the incoming in-band tx_config_reg[15:0] word, or from the
+> > > >    MAC configuration register. It is explicitly stated for this bit
+> > > >    that it is for back-to-back MAC links, and as it's specific to
+> > > >    SGMII, that means a back-to-back SGMII MAC link.
+> > > >
+> > > > Set both these bits while the MAC is configured for SGMII mode, and
+> > > > you have a stmmac MAC which immitates a SGMII PHY as far as the
+> > > > in-band tx_config_reg[15:0] word is concerned.
+> > >
+> > > So any conclusion? Should I go on with REV*MII, or wait for (or write
+> > > it myself) reverse-mode flag?
+> >
+> > Sorry, i'm missing some context here.
+> >
+> > Why do you actually need REVSGMII, or at least the concept?
+> >
+> > REVMII is used when you connect one MAC to another. You need to
+> > indicate one ends needs to play the PHY role. This is generally when
+> > you connect a host MAC to an Ethernet switch, and you want the switch
+> > to play the PHY role.
+> >
+> > Now consider SGMII, when connecting a host MAC to a switch. Why would
+> > you even use SGMII, 1000BaseX is the more logical choice. You don't
+> > want the link to run at 100Mbps, or 10Mbps. The link between the host
+> > and the switch should run as fast as possible. And 1000BaseX is
+> > symmetrical, you don't need a REV concept.
+> >
+> > Also, in these cases, stmmmac is on the host, not the switch, so it
+> > will have the host role, leaving the switch to play 'PHY'. I'm not
+> > sure you could even embedded stmmac in a switch, where it might want
+> > to play 'PHY', because stmmac is software driven, where as a switch is
+> > all hardware.
+> >
+> > So the hardware supports reverse SGMII, but it is not clear to me why
+> > you would want to use it.
+> >
+> >         Andrew
+> >
+> 
+> Cause I couldn't make 1000BaseX work with qca-ssdk, so I can only
+> confirm and test REVSGMII mode on my device.
 
-Unmanaged lanes are supposed to be always powered on, because they might
-have a consumer which doesn't use this SerDes driver, and we don't want
-to break it.
+I think it would help if you could show what you tried for 1000base-X
+in terms of dts fragments for both ends.
 
-A lane is initially unmanaged, and becomes managed when phy_init() is
-called on it.
+Marvell DSA switches support 1000base-X, but it defaults to link-down
+and without AN, so expecting in-band to work with it doesn't result
+in a working link, but using fixed-link on both ends does.
 
-It is normal for consumer drivers to call both phy_init() and
-phy_exit(), in a balanced way. This ensures the phy->init_count from the
-phy core is brought back to zero, for example during -EPROBE_DEFER in
-the consumer, the lane temporarily becomes unmanaged and then managed
-again.
+Maybe qca-ssdk needs that as well? Is that what you tried?
 
-Given the above requirement for consumers, it also imposes a requirement
-for the SerDes driver to implement the exit() operation. Otherwise, a
-balanced set of phy_init() and phy_exit() calls from the consumer will
-effectively result in multiple lynx_28g_init() calls as seen by the
-SerDes and nothing else. That actually doesn't work - the driver can't
-power down a SerDes lane which is actually powered down, so such a call
-sequence would hang the kernel.
+It could also be a buggy MAC driver that doesn't disable in-band AN
+for 1000base-X in fixed link mode.
 
-No consumer driver currently uses phy_exit(), so the above problem does
-not yet trigger, but in preparation for its introduction without any
-regressions, it is necessary to add lynx_28g_exit() as the mirror of
-lynx_28g_init().
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
-v2->v3: propagate the potential -ETIMEDOUT error code from
-        lynx_28g_power_on() to the caller
-v1->v2: slight commit message reword
-
- drivers/phy/freescale/phy-fsl-lynx-28g.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/phy/freescale/phy-fsl-lynx-28g.c b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-index 8e38acd30224..fef2b2d7d170 100644
---- a/drivers/phy/freescale/phy-fsl-lynx-28g.c
-+++ b/drivers/phy/freescale/phy-fsl-lynx-28g.c
-@@ -1295,8 +1295,23 @@ static int lynx_28g_init(struct phy *phy)
- 	return lynx_28g_power_off(phy);
- }
- 
-+static int lynx_28g_exit(struct phy *phy)
-+{
-+	struct lynx_28g_lane *lane = phy_get_drvdata(phy);
-+
-+	/* The lane returns to the state where it isn't managed by the
-+	 * consumer, so we must treat is as if it isn't initialized, and always
-+	 * powered on.
-+	 */
-+	lane->init = false;
-+	lane->powered_up = false;
-+
-+	return lynx_28g_power_on(phy);
-+}
-+
- static const struct phy_ops lynx_28g_ops = {
- 	.init		= lynx_28g_init,
-+	.exit		= lynx_28g_exit,
- 	.power_on	= lynx_28g_power_on,
- 	.power_off	= lynx_28g_power_off,
- 	.set_mode	= lynx_28g_set_mode,
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
