@@ -1,233 +1,805 @@
-Return-Path: <linux-kernel+bounces-834059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E91BA3B52
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD8FBA3B82
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73503ADB8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66B48177F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ADF2900A8;
-	Fri, 26 Sep 2025 12:54:04 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551162F5466;
+	Fri, 26 Sep 2025 12:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bf13dN7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8654248F48
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72F1EEE6;
+	Fri, 26 Sep 2025 12:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758891243; cv=none; b=KoRme2lEMa+gVdLatAi4wRw+ag2PBG7zq5z/DBYFAXh1ESIFQDw+NvwxxX0vxbiNhUnI3EHR9TI/bIVGcF1QIFfLVCGTaYEXw50ePX7eScFWDmQs99kSaVN96O1Dj2cU2akjtkvjsodpxzZFagZnouth51iYyPViBBdI2DH51wk=
+	t=1758891414; cv=none; b=PS6ELjCF9hEYMWQqcyONfLRhADFtMFSv+ruPOzBns+msGqR9qKYMJ/CTHYRQIAyiwSUkNR2S6hAwih/4wXLXCDenfdMxtud4Pjyow1CUAsHhhdnI+BK1Y9vSmrVx+tbP2P6QpeNv8pN1STovp5AZc+l8iMe/rDT4kvNjd8y394Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758891243; c=relaxed/simple;
-	bh=M8bxK0iXb2FRLKuLBsDiNvlwCoNKiuW5WSKZFjwMKEI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WyhPRTN79l17xzjP9tGATapbX3r7YjWg8RQyRFTgIjlrV+fW1+OaCUiP3tHDxJ/bCyChThiQT/va5oLNL/E8IXwRjCbW1+S4T4wsNYPONdk3Jm80YUMjs9yksnegGe33jrNpd4WIzqi5oSyhrWFf6QZvnTK4kO6QfbDDn4IyMcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4248b59ea91so50411245ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:54:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758891241; x=1759496041;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gm+LwPqy3DYhZr5PODr6bTfwgQx+iWFWRByOeWwAtYE=;
-        b=QhZGlNbesz5x6BCI43Qv2DCPxK+bNvIfx6hVq5kpBPRzQqY+KDD9TGcSnnJGlXL8Vb
-         ZIi5wO9Jra82ngX0lcic9JvSK3qW307BdzdLCQXdz+3n8ZJ3URmo08qkCqqkYkxuoWXL
-         PH1uv/spKAQdnKdhKITBV8y2hP57V9/XcDiedPBXc60VBk3XWEBVmPKqketL9t4gDt3r
-         P+cY3NR4Zmato+CglqrJZoRQPdfNbPy2WL4pWGvepDMypUUO3IxlaMbsz8IWENRkz9EU
-         kRSr5F2OBGiOe+IoF090X8Eh0dGm4xjQ7CVRDEOFgTWgXZGqhsoF55lB2Xg/CqNNg/eR
-         136Q==
-X-Gm-Message-State: AOJu0YxQD7t1pwwXr0J39B8YhLPNuSSdhN0gJNVdXMDfKUuUEAEd1qel
-	/GvPn436AWerUP9pTZguC7u5D51AVG0h9NlEFoGiq3OL9Rt2Zj2sOcfkN0BR0Yl0OnO4jFp6fnL
-	TWeBFJqCkG0KwqoRNmX9x2VnGRoBizIxwv5yObT3J9NEEaO+j+yrRJmDmqZWE/g==
-X-Google-Smtp-Source: AGHT+IE8oNWbIAUpCAos5g1UoqJOK3ltnpE/tzQbLZM3MuHvsdIymbq4QL/f4RrXqHfo1KCC4BRHaCE8BeyhneufDbvMTxYCwWUp
+	s=arc-20240116; t=1758891414; c=relaxed/simple;
+	bh=KVEkfKEqyJWR7C8PnNDPX9sWYgFWJeWgn44ONH+/BhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdEYAk8f1Nyuhrf0QWibUGUrglmVOtkcFNrDQ3LFCnn/8csz1CyxkU43M9MjNj2jUWU1gUOki2guUD9qaObZpPB7G5v6g83g0hCIN4WT7keqiCfYgj1AAWRq1TTy78LLGbSs6Wzw/9wNWkSHcRlqhhDgAwVELt2TOgf+QP55FLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bf13dN7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55F9C4CEF4;
+	Fri, 26 Sep 2025 12:56:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758891413;
+	bh=KVEkfKEqyJWR7C8PnNDPX9sWYgFWJeWgn44ONH+/BhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bf13dN7xbEM6/+shWxra64pVahDN+bRu1Y0TlZSNpChy7SA8P5j557LHyEPfapZWC
+	 RzTjAmSLd2IJqEksbuK9g9tLbb1IeRAuQQJ+rzZkT5CZjQ/iBstmJAkMg3s+j4CAW6
+	 SE9qBoXfdRwPtXn1GNWLstDuK633hmedpsVveW+NM4glh2Q9O0P3tyJl3g+vUI21Jw
+	 zGJvTUoiCVclLVAHPUBgr3xQtBELjQHDFn0doGU9kT2yX/L78rCcJ0A+yzgMFSzjoc
+	 kSGu4XrXQi8WHD4mmnYSipiXNOf1+sZpMdbLMGk+UPBgYfDlpGsJjEIUBQ1ivrL1sX
+	 SG5D9gML9eBDg==
+Date: Fri, 26 Sep 2025 14:56:39 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 5/8] man/man2/move_mount.2: document "new" mount API
+Message-ID: <pvcrxgmtpfhx3lfdk5ydwuxffmv3avlsy4tagww2bxdb2ywx6s@iqe4y4mudjq6>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26d:0:b0:425:b6a6:77cf with SMTP id
- e9e14a558f8ab-425b6a679d4mr39801765ab.26.1758891240799; Fri, 26 Sep 2025
- 05:54:00 -0700 (PDT)
-Date: Fri, 26 Sep 2025 05:54:00 -0700
-In-Reply-To: <68d46aed.050a0220.57ae1.0002.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d68ce8.a00a0220.102ee.0002.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_nls
-From: syzbot <syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="goolxarnnegz6rjd"
+Content-Disposition: inline
+In-Reply-To: <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
+
+
+--goolxarnnegz6rjd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 5/8] man/man2/move_mount.2: document "new" mount API
+Message-ID: <pvcrxgmtpfhx3lfdk5ydwuxffmv3avlsy4tagww2bxdb2ywx6s@iqe4y4mudjq6>
+References: <20250925-new-mount-api-v5-0-028fb88023f2@cyphar.com>
+ <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250925-new-mount-api-v5-5-028fb88023f2@cyphar.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Aleksa,
 
-***
+On Thu, Sep 25, 2025 at 01:31:27AM +1000, Aleksa Sarai wrote:
+> This is loosely based on the original documentation written by David
+> Howells and later maintained by Christian Brauner, but has been
+> rewritten to be more from a user perspective (as well as fixing a few
+> critical mistakes).
+>=20
+> Co-authored-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-authored-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-Subject: Re: [syzbot] [exfat?] general protection fault in exfat_utf16_to_n=
-ls
-Author: ekffu200098@gmail.com
+Thanks!  I've applied this patch, with some minor amendments (see below).
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3Deb37a3066ccce4f44ab69fae559016a524e4eac>
 
-#syz test
-
-On Thu, Sep 25, 2025 at 7:04=E2=80=AFAM syzbot
-<syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    b5a4da2c459f Add linux-next specific files for 20250924
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15ffad3458000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dfc64d939cce41=
-d2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3e9cb93e3c5f90d=
-28e19
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
-6-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1704cf12580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15c8d4e258000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/127c931e6696/dis=
-k-b5a4da2c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cf4957abd39e/vmlinu=
-x-b5a4da2c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/860d3ac61bac/b=
-zImage-b5a4da2c.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/9006b1673f=
-9f/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
-11c8d4e2580000)
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+3e9cb93e3c5f90d28e19@syzkaller.appspotmail.com
->
-> Oops: general protection fault, probably for non-canonical address 0xdfff=
-fc0000000002: 0000 [#1] SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
-> CPU: 1 UID: 0 PID: 5979 Comm: syz-executor Not tainted syzkaller #0 PREEM=
-PT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/18/2025
-> RIP: 0010:exfat_convert_ucs2_to_char fs/exfat/nls.c:441 [inline]
-> RIP: 0010:__exfat_utf16_to_nls fs/exfat/nls.c:554 [inline]
-> RIP: 0010:exfat_utf16_to_nls+0x21c/0x840 fs/exfat/nls.c:638
-> Code: 2e 29 ff 66 41 83 fc 7f 77 14 e8 7f 2a 29 ff e9 b6 00 00 00 e8 75 2=
-a 29 ff e9 a9 00 00 00 48 8b 4c 24 40 48 89 c8 48 c1 e8 03 <42> 80 3c 38 00=
- 74 0f 48 8b 7c 24 40 e8 d3 6b 8e ff 48 8b 4c 24 40
-> RSP: 0018:ffffc90003fef760 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: 0000000000000004 RCX: 0000000000000010
-> RDX: ffff88802f18bc80 RSI: 00000000000000e1 RDI: 0000000000000080
-> RBP: ffffc90003fef850 R08: 0000000000000005 R09: 0000000000000000
-> R10: ffffc90003fef7e0 R11: fffff520007fdefc R12: 00000000000000e1
-> R13: ffffc90003fefa48 R14: 0000000000000000 R15: dffffc0000000000
-> FS:  000055557b9c2500(0000) GS:ffff888125b03000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055557b9e5608 CR3: 00000000734c8000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  exfat_readdir fs/exfat/dir.c:143 [inline]
->  exfat_iterate+0x19a7/0x2050 fs/exfat/dir.c:243
->  wrap_directory_iterator+0x96/0xe0 fs/readdir.c:65
->  iterate_dir+0x399/0x570 fs/readdir.c:108
->  __do_sys_getdents64 fs/readdir.c:410 [inline]
->  __se_sys_getdents64+0xe4/0x260 fs/readdir.c:396
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2c837c1833
-> Code: c1 66 0f 1f 44 00 00 48 83 c4 08 48 89 ef 5b 5d e9 32 3d f8 ff 66 9=
-0 b8 ff ff ff 7f 48 39 c2 48 0f 47 d0 b8 d9 00 00 00 0f 05 <48> 3d 00 f0 ff=
- ff 77 05 c3 0f 1f 40 00 48 c7 c2 a8 ff ff ff f7 d8
-> RSP: 002b:00007ffc8cf73ff8 EFLAGS: 00000293 ORIG_RAX: 00000000000000d9
-> RAX: ffffffffffffffda RBX: 000055557b9dd600 RCX: 00007f2c837c1833
-> RDX: 0000000000008000 RSI: 000055557b9dd600 RDI: 0000000000000005
-> RBP: 000055557b9dd5d4 R08: 0000000000028a41 R09: 0000000000000000
-> R10: 00007f2c839b7cc0 R11: 0000000000000293 R12: ffffffffffffffa8
-> R13: 0000000000000010 R14: 000055557b9dd5d0 R15: 00007ffc8cf762b0
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:exfat_convert_ucs2_to_char fs/exfat/nls.c:441 [inline]
-> RIP: 0010:__exfat_utf16_to_nls fs/exfat/nls.c:554 [inline]
-> RIP: 0010:exfat_utf16_to_nls+0x21c/0x840 fs/exfat/nls.c:638
-> Code: 2e 29 ff 66 41 83 fc 7f 77 14 e8 7f 2a 29 ff e9 b6 00 00 00 e8 75 2=
-a 29 ff e9 a9 00 00 00 48 8b 4c 24 40 48 89 c8 48 c1 e8 03 <42> 80 3c 38 00=
- 74 0f 48 8b 7c 24 40 e8 d3 6b 8e ff 48 8b 4c 24 40
-> RSP: 0018:ffffc90003fef760 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: 0000000000000004 RCX: 0000000000000010
-> RDX: ffff88802f18bc80 RSI: 00000000000000e1 RDI: 0000000000000080
-> RBP: ffffc90003fef850 R08: 0000000000000005 R09: 0000000000000000
-> R10: ffffc90003fef7e0 R11: fffff520007fdefc R12: 00000000000000e1
-> R13: ffffc90003fefa48 R14: 0000000000000000 R15: dffffc0000000000
-> FS:  000055557b9c2500(0000) GS:ffff888125a03000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000c000692800 CR3: 00000000734c8000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess):
->    0:   2e 29 ff                cs sub %edi,%edi
->    3:   66 41 83 fc 7f          cmp    $0x7f,%r12w
->    8:   77 14                   ja     0x1e
->    a:   e8 7f 2a 29 ff          call   0xff292a8e
->    f:   e9 b6 00 00 00          jmp    0xca
->   14:   e8 75 2a 29 ff          call   0xff292a8e
->   19:   e9 a9 00 00 00          jmp    0xc7
->   1e:   48 8b 4c 24 40          mov    0x40(%rsp),%rcx
->   23:   48 89 c8                mov    %rcx,%rax
->   26:   48 c1 e8 03             shr    $0x3,%rax
-> * 2a:   42 80 3c 38 00          cmpb   $0x0,(%rax,%r15,1) <-- trapping in=
-struction
->   2f:   74 0f                   je     0x40
->   31:   48 8b 7c 24 40          mov    0x40(%rsp),%rdi
->   36:   e8 d3 6b 8e ff          call   0xff8e6c0e
->   3b:   48 8b 4c 24 40          mov    0x40(%rsp),%rcx
->
->
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
--bugs/68d46aed.050a0220.57ae1.0002.GAE%40google.com.
+>  man/man2/move_mount.2 | 646 ++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 646 insertions(+)
+>=20
+> diff --git a/man/man2/move_mount.2 b/man/man2/move_mount.2
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f954f36c43c444afb167088cc=
+665607dfeb10676
+> --- /dev/null
+> +++ b/man/man2/move_mount.2
+> @@ -0,0 +1,646 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH move_mount 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +move_mount \- move or attach mount object to filesystem
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.BR "#include <fcntl.h>" "          /* Definition of " AT_* " constants =
+*/"
+> +.B #include <sys/mount.h>
+> +.P
+> +.BI "int move_mount(int " from_dirfd ", const char *" from_path ,
+> +.BI "               int " to_dirfd ", const char *" to_path ,
+> +.BI "               unsigned int " flags );
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR move_mount ()
+> +system call is part of
+> +the suite of file-descriptor-based mount facilities in Linux.
+> +.P
+> +.BR move_mount ()
+> +moves the mount object indicated by
+> +.I from_dirfd
+> +and
+> +.I from_path
+> +to the path indicated by
+> +.I to_dirfd
+> +and
+> +.IR to_path .
+> +The mount object being moved
+> +can be an existing mount point in the current mount namespace,
+> +or a detached mount object created by
+> +.BR fsmount (2)
+> +or
+> +.BR open_tree (2)
+> +with
+> +.BR \%OPEN_TREE_CLONE .
+> +.P
+> +To access the source mount object
+> +or the destination mount point,
+> +no permissions are required on the object itself,
+> +but if either pathname is supplied,
+> +execute (search) permission is required
+> +on all of the directories specified in
+> +.I from_path
+> +or
+> +.IR to_path .
+> +.P
+> +The calling process must have the
+> +.B \%CAP_SYS_ADMIN
+> +capability in order to move or attach a mount object.
+> +.P
+> +As with "*at()" system calls,
+> +.BR move_mount ()
+> +uses the
+> +.I from_dirfd
+> +and
+> +.I to_dirfd
+> +arguments
+> +in conjunction with the
+> +.I from_path
+> +and
+> +.I to_path
+> +arguments to determine the source and destination objects to operate on
+> +(respectively), as follows:
+> +.IP \[bu] 3
+> +If the pathname given in
+> +.I *_path
+
+In this case, where the non-variable part is already in italics, the
+variable part is written in roman, for distinguishing it.  (See
+groff_man(7).)
+
+
+Have a lovely day!
+Alex
+
+> +is absolute, then
+> +the corresponding
+> +.I *_dirfd
+> +is ignored.
+> +.IP \[bu]
+> +If the pathname given in
+> +.I *_path
+> +is relative and
+> +the corresponding
+> +.I *_dirfd
+> +is the special value
+> +.BR \%AT_FDCWD ,
+> +then
+> +.I *_path
+> +is interpreted relative to
+> +the current working directory
+> +of the calling process (like
+> +.BR open (2)).
+> +.IP \[bu]
+> +If the pathname given in
+> +.I *_path
+> +is relative,
+> +then it is interpreted relative to
+> +the directory referred to by
+> +the corresponding file descriptor
+> +.I *_dirfd
+> +(rather than relative to
+> +the current working directory
+> +of the calling process,
+> +as is done by
+> +.BR open (2)
+> +for a relative pathname).
+> +In this case,
+> +the corresponding
+> +.I *_dirfd
+> +must be a directory
+> +that was opened for reading
+> +.RB ( O_RDONLY )
+> +or using the
+> +.B O_PATH
+> +flag.
+> +.IP \[bu]
+> +If
+> +.I *_path
+> +is an empty string,
+> +and
+> +.I flags
+> +contains the appropriate
+> +.BI \%MOVE_MOUNT_ * _EMPTY_PATH
+> +flag,
+> +then the corresponding file descriptor
+> +.I *_dirfd
+> +is operated on directly.
+> +In this case,
+> +the corresponding
+> +.I *_dirfd
+> +may refer to any type of file,
+> +not just a directory.
+> +.P
+> +See
+> +.BR openat (2)
+> +for an explanation of why the
+> +.I *_dirfd
+> +arguments are useful.
+> +.P
+> +.I flags
+> +can be used to control aspects of the path lookup
+> +for both the source and destination objects,
+> +as well as other properties of the mount operation.
+> +A value for
+> +.I flags
+> +is constructed by bitwise ORing
+> +zero or more of the following constants:
+> +.RS
+> +.TP
+> +.B MOVE_MOUNT_F_EMPTY_PATH
+> +If
+> +.I from_path
+> +is an empty string, operate on the file referred to by
+> +.I from_dirfd
+> +(which may have been obtained from
+> +.BR open (2),
+> +.BR fsmount (2),
+> +or
+> +.BR open_tree (2)).
+> +In this case,
+> +.I from_dirfd
+> +may refer to any type of file,
+> +not just a directory.
+> +If
+> +.I from_dirfd
+> +is
+> +.BR \%AT_FDCWD ,
+> +.BR move_mount ()
+> +will operate on the current working directory
+> +of the calling process.
+> +.IP
+> +This is the most common mechanism
+> +used to attach detached mount objects
+> +produced by
+> +.BR fsmount (2)
+> +and
+> +.BR open_tree (2)
+> +to a mount point.
+> +.TP
+> +.B MOVE_MOUNT_T_EMPTY_PATH
+> +As with
+> +.BR \%MOVE_MOUNT_F_EMPTY_PATH ,
+> +except operating on
+> +.I to_dirfd
+> +and
+> +.IR to_path .
+> +.TP
+> +.B MOVE_MOUNT_F_SYMLINKS
+> +If
+> +.I from_path
+> +references a symbolic link,
+> +then dereference it.
+> +The default behaviour for
+> +.BR move_mount ()
+> +is to
+> +.I not follow
+> +symbolic links.
+> +.TP
+> +.B MOVE_MOUNT_T_SYMLINKS
+> +As with
+> +.BR \%MOVE_MOUNT_F_SYMLINKS ,
+> +except operating on
+> +.I to_dirfd
+> +and
+> +.IR to_path .
+> +.TP
+> +.B MOVE_MOUNT_F_NO_AUTOMOUNT
+> +Do not automount the terminal ("basename") component of
+> +.I \%from_path
+> +if it is a directory that is an automount point.
+> +This allows a mount object
+> +that has an automount point at its root
+> +to be moved
+> +and prevents unintended triggering of an automount point.
+> +This flag has no effect
+> +if the automount point has already been mounted over.
+> +.TP
+> +.B MOVE_MOUNT_T_NO_AUTOMOUNT
+> +As with
+> +.BR \%MOVE_MOUNT_F_NO_AUTOMOUNT ,
+> +except operating on
+> +.I to_dirfd
+> +and
+> +.IR to_path .
+> +This allows an automount point to be manually mounted over.
+> +.TP
+> +.BR MOVE_MOUNT_SET_GROUP " (since Linux 5.15)"
+> +Add the attached private-propagation mount object indicated by
+> +.I to_dirfd
+> +and
+> +.I to_path
+> +into the mount propagation "peer group"
+> +of the attached non-private-propagation mount object indicated by
+> +.I from_dirfd
+> +and
+> +.IR from_path .
+> +.IP
+> +Unlike other
+> +.BR move_mount ()
+> +operations,
+> +this operation does not move or attach any mount objects.
+> +Instead, it only updates the metadata
+> +of attached mount objects.
+> +(Also, take careful note of
+> +the argument order\[em]\c
+> +the mount object being modified
+> +by this operation is the one specified by
+> +.I to_dirfd
+> +and
+> +.IR to_path .)
+> +.IP
+> +This makes it possible to first create a mount tree
+> +consisting only of private mounts
+> +and then configure the desired propagation layout afterwards.
+> +(See the "SHARED SUBTREES" section of
+> +.BR mount_namespaces (7)
+> +for more information about mount propagation and peer groups.)
+> +.TP
+> +.BR MOVE_MOUNT_BENEATH " (since Linux 6.5)"
+> +If the path indicated by
+> +.I to_dirfd
+> +and
+> +.I to_path
+> +is an existing mount object,
+> +rather than attaching or moving the mount object
+> +indicated by
+> +.I from_dirfd
+> +and
+> +.I from_path
+> +on top of the mount stack,
+> +attach or move it beneath the current top mount
+> +on the mount stack.
+> +.IP
+> +After using
+> +.BR \%MOVE_MOUNT_BENEATH ,
+> +it is possible to
+> +.BR umount (2)
+> +the top mount
+> +in order to reveal the mount object
+> +which was attached beneath it earlier.
+> +This allows for the seamless (and atomic) replacement
+> +of intricate mount trees,
+> +which can further be used
+> +to "upgrade" a mount tree with a newer version.
+> +.IP
+> +This operation has several restrictions:
+> +.RS
+> +.IP \[bu] 3
+> +Mount objects cannot be attached beneath the filesystem root,
+> +including cases where
+> +the filesystem root was configured by
+> +.BR chroot (2)
+> +or
+> +.BR pivot_root (2).
+> +To mount beneath the filesystem root,
+> +.BR pivot_root (2)
+> +must be used.
+> +.IP \[bu]
+> +The target path indicated by
+> +.I to_dirfd
+> +and
+> +.I to_path
+> +must not be a detached mount object,
+> +such as those produced by
+> +.BR open_tree (2)
+> +with
+> +.B \%OPEN_TREE_CLONE
+> +or
+> +.BR fsmount (2).
+> +.IP \[bu]
+> +The current top mount
+> +of the target path's mount stack
+> +and its parent mount
+> +must be in the calling process's mount namespace.
+> +.IP \[bu]
+> +The caller must have sufficient privileges
+> +to unmount the top mount
+> +of the target path's mount stack,
+> +to prove they have privileges
+> +to reveal the underlying mount.
+> +.IP \[bu]
+> +Mount propagation events triggered by this
+> +.BR move_mount ()
+> +operation
+> +(as described in
+> +.BR mount_namespaces (7))
+> +are calculated based on the parent mount
+> +of the current top mount
+> +of the target path's mount stack.
+> +.IP \[bu]
+> +The target path's mount
+> +cannot be an ancestor in the mount tree of
+> +the source mount object.
+> +.IP \[bu]
+> +The source mount object
+> +must not have any overmounts,
+> +otherwise it would be possible to create "shadow mounts"
+> +(i.e., two mounts mounted on the same parent mount at the same mount poi=
+nt).
+> +.IP \[bu]
+> +It is not possible to move a mount
+> +beneath a top mount
+> +if the parent mount
+> +of the current top mount
+> +propagates to the top mount itself.
+> +Otherwise,
+> +.B \%MOVE_MOUNT_BENEATH
+> +would cause the mount object
+> +to be propagated
+> +to the top mount
+> +from the parent mount,
+> +defeating the purpose of using
+> +.BR \%MOVE_MOUNT_BENEATH .
+> +.IP \[bu]
+> +It is not possible to move a mount
+> +beneath a top mount
+> +if the parent mount
+> +of the current top mount
+> +propagates to the mount object
+> +being mounted beneath.
+> +Otherwise, this would cause a similar propagation issue
+> +to the previous point,
+> +also defeating the purpose of using
+> +.BR \%MOVE_MOUNT_BENEATH .
+> +.RE
+> +.RE
+> +.P
+> +If
+> +.I from_dirfd
+> +is a mount object file descriptor and
+> +.BR move_mount ()
+> +is operating on it directly,
+> +.I from_dirfd
+> +will remain associated with the mount object after
+> +.BR move_mount ()
+> +succeeds,
+> +so you may repeatedly use
+> +.I from_dirfd
+> +with
+> +.BR move_mount (2)
+> +and/or "*at()" system calls
+> +as many times as necessary.
+> +.SH RETURN VALUE
+> +On success,
+> +.BR move_mount ()
+> +returns 0.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EACCES
+> +Search permission is denied
+> +for one of the directories
+> +in the path prefix of one of
+> +.I from_path
+> +or
+> +.IR to_path .
+> +(See also
+> +.BR path_resolution (7).)
+> +.TP
+> +.B EBADF
+> +One of
+> +.I from_dirfd
+> +or
+> +.I to_dirfd
+> +is not a valid file descriptor.
+> +.TP
+> +.B EFAULT
+> +One of
+> +.I from_path
+> +or
+> +.I to_path
+> +is NULL
+> +or a pointer to a location
+> +outside the calling process's accessible address space.
+> +.TP
+> +.B EINVAL
+> +Invalid flag specified in
+> +.IR flags .
+> +.TP
+> +.B EINVAL
+> +The path indicated by
+> +.I from_dirfd
+> +and
+> +.I from_path
+> +is not a mount object.
+> +.TP
+> +.B EINVAL
+> +The mount object type
+> +of the source mount object and target inode
+> +are not compatible
+> +(i.e., the source is a file but the target is a directory, or vice-versa=
+).
+> +.TP
+> +.B EINVAL
+> +The source mount object or target path
+> +are not in the calling process's mount namespace
+> +(or an anonymous mount namespace of the calling process).
+> +.TP
+> +.B EINVAL
+> +The source mount object's parent mount
+> +has shared mount propagation,
+> +and thus cannot be moved
+> +(as described in
+> +.BR mount_namespaces (7)).
+> +.TP
+> +.B EINVAL
+> +The source mount has
+> +.B MS_UNBINDABLE
+> +child mounts
+> +but the target path
+> +resides on a mount tree with shared mount propagation,
+> +which would otherwise cause the unbindable mounts to be propagated
+> +(as described in
+> +.BR mount_namespaces (7)).
+> +.TP
+> +.B EINVAL
+> +.B \%MOVE_MOUNT_BENEATH
+> +was attempted,
+> +but one of the listed restrictions was violated.
+> +.TP
+> +.B ELOOP
+> +Too many symbolic links encountered
+> +when resolving one of
+> +.I from_path
+> +or
+> +.IR to_path .
+> +.TP
+> +.B ENAMETOOLONG
+> +One of
+> +.I from_path
+> +or
+> +.I to_path
+> +is longer than
+> +.BR PATH_MAX .
+> +.TP
+> +.B ENOENT
+> +A component of one of
+> +.I from_path
+> +or
+> +.I to_path
+> +does not exist.
+> +.TP
+> +.B ENOENT
+> +One of
+> +.I from_path
+> +or
+> +.I to_path
+> +is an empty string,
+> +but the corresponding
+> +.BI MOVE_MOUNT_ * _EMPTY_PATH
+> +flag is not specified in
+> +.IR flags .
+> +.TP
+> +.B ENOTDIR
+> +A component of the path prefix of one of
+> +.I from_path
+> +or
+> +.I to_path
+> +is not a directory,
+> +or one of
+> +.I from_path
+> +or
+> +.I to_path
+> +is relative
+> +and the corresponding
+> +.I from_dirfd
+> +or
+> +.I to_dirfd
+> +is a file descriptor referring to a file other than a directory.
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the operatio=
+n.
+> +.TP
+> +.B EPERM
+> +The calling process does not have the required
+> +.B \%CAP_SYS_ADMIN
+> +capability.
+> +.SH STANDARDS
+> +Linux.
+> +.SH HISTORY
+> +Linux 5.2.
+> +.\" commit 2db154b3ea8e14b04fee23e3fdfd5e9d17fbc6ae
+> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> +glibc 2.36.
+> +.SH EXAMPLES
+> +.BR move_mount ()
+> +can be used to move attached mounts like the following:
+> +.P
+> +.in +4n
+> +.EX
+> +move_mount(AT_FDCWD, "/a", AT_FDCWD, "/b", 0);
+> +.EE
+> +.in
+> +.P
+> +This would move the mount object mounted on
+> +.I /a
+> +to
+> +.IR /b .
+> +The above procedure is functionally equivalent to
+> +the following mount operation
+> +using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/a", "/b", NULL, MS_MOVE, NULL);
+> +.EE
+> +.in
+> +.P
+> +.BR move_mount ()
+> +can also be used in conjunction with file descriptors returned from
+> +.BR open_tree (2)
+> +or
+> +.BR open (2):
+> +.P
+> +.in +4n
+> +.EX
+> +int fd =3D open_tree(AT_FDCWD, "/mnt", 0); /* open("/mnt", O_PATH); */
+> +move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +This would move the mount object mounted at
+> +.I /mnt
+> +to
+> +.IR /mnt2 ,
+> +then
+> +.IR /mnt3 ,
+> +and then
+> +.IR /mnt4 .
+> +.P
+> +If the source mount object
+> +indicated by
+> +.I from_dirfd
+> +and
+> +.I from_path
+> +is a detached mount object,
+> +.BR move_mount ()
+> +can be used to attach it to a mount point:
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd;
+> +\&
+> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "/dev/sda1", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NODEV);
+> +move_mount(mntfd, "", AT_FDCWD, "/home", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +This would create a new filesystem configuration context for ext4,
+> +configure it,
+> +create a detached mount object,
+> +and then attach it to
+> +.IR /home .
+> +The above procedure is functionally equivalent to
+> +the following mount operation
+> +using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/dev/sda1", "/home", "ext4", MS_NODEV, "user_xattr");
+> +.EE
+> +.in
+> +.P
+> +The same operation also works with detached bind-mounts created with
+> +.BR open_tree (2)
+> +with
+> +.BR OPEN_TREE_CLONE :
+> +.P
+> +.in +4n
+> +.EX
+> +int mntfd =3D open_tree(AT_FDCWD, "/home/cyphar", OPEN_TREE_CLONE);
+> +move_mount(mntfd, "", AT_FDCWD, "/root", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +This would create a new bind-mount of
+> +.I /home/cyphar
+> +as a detached mount object,
+> +and then attach it to
+> +.IR /root .
+> +The above procedure is functionally equivalent to
+> +the following mount operation
+> +using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/home/cyphar", "/root", NULL, MS_BIND, NULL);
+> +.EE
+> +.in
+> +.SH SEE ALSO
+> +.BR fsconfig (2),
+> +.BR fsmount (2),
+> +.BR fsopen (2),
+> +.BR fspick (2),
+> +.BR mount (2),
+> +.BR mount_setattr (2),
+> +.BR open_tree (2),
+> +.BR mount_namespaces (7)
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--goolxarnnegz6rjd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjWjYYACgkQ64mZXMKQ
+wqkAjA/+LCm8H/SrKSDG5eFousYe/3cKemG4P+/ptbpg+QuSsrahvqQrYiXJabBe
+bZRwP82Y76NKVPKMoVg0/r75ZAM7lgxJ8dQARwyWgD0XgJZ+fyadPWXbHtGNCK++
+m5nL+ueYtxTRaVOYTLs6FYBqW/HJOooakmEydLh/Z8A+8/LurHHnWQyODTm/aiym
+cdTUX+RDQ2S5Q3X0im7YpZz1uivS9jO28Gh1rnUXFPJxl8RFvhK/YuD/7L4+ivx0
+y5YBsjOopm/wwDVK9IougxFnlOR413RQ7TLhZNiTjSj7eTcN1qyP4tO0mBAHSans
+RhQMtJku3T85jmzaXM8Cj4rqR4jpKB18QIRvpKeGrxYE8Wz7uFewrCtrVfTNZoeE
+od9htZyYisVeTgVqH981ob8SqjwVulVUlIa5Z3VHPR0JBXFt+NcHnL9dB8pA9KoM
+c+kMWaqusBY2dsh21WwHhr9a2Revk8QwhQ4274d0aCxeQFtOfVmsGEgMkDvCHGX4
+wMb3mf6Tt97MJQ2qRxGWgM25mvUd68ZrugiXw2UB0P6aIowHgw1HIio6heza8Cg/
+2mVgAyU2UbGz3mlsJNNA2A+6TeIZYU0w5FE3R+YEfM2IW7PG4TiuxCxm/Z17HejZ
+LN6ggSm556vniRPs8uzPnI+ZwCz7JRoY/V45g8bjZHWuspH6f6c=
+=Ux1G
+-----END PGP SIGNATURE-----
+
+--goolxarnnegz6rjd--
 
