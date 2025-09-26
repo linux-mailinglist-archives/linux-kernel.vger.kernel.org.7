@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-834377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE95ABA4926
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 405C8BA492F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED52917F619
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C80387799
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A6A23D7C7;
-	Fri, 26 Sep 2025 16:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127223BCFD;
+	Fri, 26 Sep 2025 16:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L8CtANDG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSOMSViZ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9260239085;
-	Fri, 26 Sep 2025 16:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD1C2367A0
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903121; cv=none; b=NIto3EVAUPuWue2AZrc9F6M86St/f4E8YZ6T4+NQ8BjfUIGBIpdMT10qzFH4jwumJsqGww/MHTkWjqAcic2cexjSZsbF4JAmAxZ6E7hnGOEwkBGPzlv8g87hLxlw2fWOV4qGDGAuDs2IIMnTE9hBsJkeg2dToW8TtGYuuWyBV58=
+	t=1758903176; cv=none; b=ggzf7ALJq1fwdUTvAI1C66tRtuiq0MxXkfGiGUGEn87bwL+QWQa35IAGEPfNWlYwzRp0ThTMNS72RimBH/+unhSuEi7Qkfgk6YToe+9gP9CmwrPSCbRGyfm6g6I9seFTEkX/vhmn9CYIWvJPHrr52nJQvbjlVOQeBotqll8D7+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903121; c=relaxed/simple;
-	bh=LzwWJQ2BTEHF4pIUX4Yzagok94NcOb7RjCI0qPZI/y4=;
+	s=arc-20240116; t=1758903176; c=relaxed/simple;
+	bh=fBEeVtjlMh0eakC+fIWfdSjEDTq0k01IZmIVBndPs5o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tWrg4VTo2dIKfs+XRri4qwyM7J8jN5qpCrcSaVlW7iCyCNaCwNFGXBj0GMoY1/ijJgSHCs5Uc4or2j5Qf7G/Bc1vKVf90+9c2VaI1AVnKebUJtLL8kFzcq/gxylvSCnD48sh6oKbYS+CbNrn4dzViO67mw8dI/kgiZh7JyOKUpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L8CtANDG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758903120; x=1790439120;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LzwWJQ2BTEHF4pIUX4Yzagok94NcOb7RjCI0qPZI/y4=;
-  b=L8CtANDGbLvAhC3EGc4pbg8h0uYtFqFCl4kehCwcwaTQbAS+KMTzD+ST
-   q6qP8aUmnpBqGYie0ZxPINakYPUDm6E4UdscbdPB0LXXFQEhpqaEsBpok
-   FLBwnw30l7oA11rRTMuwfkmVh2NkC80frGFfNA94CxGNe3tjEKSuwqBSJ
-   fH5ejFQ8TY81sY8gd3lBfP6Y5iUGLOmvWSi7eQ3GhFuD67jVaSSgHRvTr
-   ISha4HwOQhW+BuRwBV43hVKpjYtkSBtqrKCfWWmUXqHAUE8PJjIuovlVp
-   kluhTBmHsm4y8DtXpuR2/M8mSgKIaU70X3wk3G67sL7w81H+5OnlbKxgU
-   w==;
-X-CSE-ConnectionGUID: ha4fvSChSAyZQLlQ20kzCg==
-X-CSE-MsgGUID: KNCRK3eNRCu8YYm7gRhpjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61192911"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="61192911"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:11:57 -0700
-X-CSE-ConnectionGUID: dPQx06EsSp2EIN10J7xiZQ==
-X-CSE-MsgGUID: oQyf8SwFRMqPukPaf2iwJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177490558"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.109.59]) ([10.125.109.59])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:11:55 -0700
-Message-ID: <7927271c-61e6-4f90-9127-c855a92fe766@intel.com>
-Date: Fri, 26 Sep 2025 09:11:54 -0700
+	 In-Reply-To:Content-Type; b=ocVyAH0iPJ4AUrYEZL6Q3FaiB2p8jWXaspwra4/I80EgvocF1OtqGIeeoWz1ocLSxDAVZ/jS4szOfQdHhN1GIako6oycQqbKDf8f89T6QouSZHP5fr5sN+BSbNlkxzHaYj222xszFdBFsUO0Eg5bYY+CFmOkhrLGEQfl1SWidZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSOMSViZ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27eceb38eb1so28288175ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:12:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758903174; x=1759507974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=P6vogX1yh7DM43cfcKuR1gYad8OSAL2NFfRRQVCWimw=;
+        b=KSOMSViZSkslVSqI2x3iPVHvkwMONLg5YW6fo3wv08cU9Ai6/U5w2hM+t8IFKnqtpx
+         PDFV4eRcsXNl9KrWd9pMYFmZW+P5B65pqx0QAAw7u50TgUgNf7iiTKkfFIECszyLmLuU
+         2BeprnrekofJiUnsThKxWz5Db9PhN5/5G57U5A26g0fRUDpipGLzPHYNi90y03VhSu8F
+         LtYhBNFpvTmYekOQa/m7rl3kAutVl+oKmGhXE0Y8IMD+x4LDy27vwgiBSLpJYbvETvby
+         l4cAnvOqa5kRjthda31HDs/r9rHTEiW8GGrRrUUqBsh48GQ/onhctznWYpMPSL3xS53/
+         zFfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758903174; x=1759507974;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P6vogX1yh7DM43cfcKuR1gYad8OSAL2NFfRRQVCWimw=;
+        b=Ort4/knG+fcRKTEU1hTvHqOADPYj3xexELSotlOYPYzFpy8e/e+u8mnZ7AH0EV/xTF
+         je9dVAqXerh4qSRAS8QXP4IY8Z57bXXMywS7DpRsyBaBaNNVRwL/U5CuX6srnedGdSRB
+         jKxiKv7vrwESuQKrfS3jSm2xb5PnLR9VS8DVUXcqFGbcgovH+OjQibM9HhglWgNR0pp3
+         OCA1z/1LAmKSGsPNWNalkfAR2hzqxC2MOozwWTerBg2Qq4Vr0KvWguIuIg+/CpmoPtoU
+         nhGQzhmDl4dI8ss5IJgSkg6NOJON4qcuTqJoDyKr8gMg2wOEotZLwA0F+9aYpx1zHgHF
+         tJeg==
+X-Gm-Message-State: AOJu0YxfELTlHNfrv8SA9IbybTRAPnmzVaOvNAxsUztH/esTwBzN+trb
+	CBw1TpfTsGB2qmqCDVeo6frXnIa/lQkCH9UwmGX1OtlF5iwpVgt8KzwN
+X-Gm-Gg: ASbGncuEp18kF2re7ZAISYSygLg8KoZSrgOsSJFK1KbF+iriKeny3CJ/LHHoMw68fVB
+	2QAQB0sHk3Fph1YfJ2eBxRmx4JBpPD1SjPVXWRczQavvThTFqZVFsPLnLGLohyLcYjJUFd0gpCj
+	syzhs+t931136FxUG1uYidcBlV2VC7jXP/i0uK4J6RsgpEVWhy1F+Rv7BCpOy57MsZVhQhYxdjS
+	UKmYFLH5aYGpPpjOWTSoWtpOwrg28IH9gNS/BdOhaj1dfu0OaAKz9OjvYXKoxgZLCZkN/lLs4HT
+	2jSo0fVmNwM/UKiiNbj1pGwvOS/qVnMt0jnfZu4WFEU3WPQKkZcVZgtwKrxI7M9XvXPph9XoQ8t
+	g6wJr5N81tI9DGKhuubjDa0wGvzesZJK00AK1k2zUdhIqKIRl4HBcIpNfLzhbtYOnzqade3s=
+X-Google-Smtp-Source: AGHT+IEqhWT9kRq3x7sRjETmq47GmR2SqR1YNEZkhyvoDtGSGrchTQwPFPrqHH522oVmz7oMdfz+yQ==
+X-Received: by 2002:a17:903:292:b0:25e:5d83:2ddd with SMTP id d9443c01a7336-27ed4ac32dcmr87235415ad.45.1758903174334;
+        Fri, 26 Sep 2025 09:12:54 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6725bbesm58952515ad.60.2025.09.26.09.12.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 09:12:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <1ac6f9ac-ff6e-4276-a6d6-c3f115db9b8a@roeck-us.net>
+Date: Fri, 26 Sep 2025 09:12:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,102 +82,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>
-Cc: "Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com"
- <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
- "kas@kernel.org" <kas@kernel.org>, "Annapurve, Vishal"
- <vannapurve@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
- <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
- <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: hwmon: add MP2925 and MP2929 driver
+To: "Colin King (gmail)" <colin.i.king@gmail.com>,
+ Wensheng Wang <wenswang@yeah.net>, linux-hwmon@vger.kernel.org
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <391ee227-54e2-475c-9811-710fa22687ef@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <391ee227-54e2-475c-9811-710fa22687ef@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/26/25 09:02, Edgecombe, Rick P wrote:
-> On Fri, 2025-09-26 at 07:09 -0700, Dave Hansen wrote:
->> On 9/25/25 19:28, Yan Zhao wrote:
->>>> Lastly, Yan raised some last minute doubts internally about TDX
->>>> module locking contention. I’m not sure there is a problem, but
->>>> we
->>>> can come to an agreement as part of the review.
->>> Yes, I found a contention issue that prevents us from dropping the
->>> global lock. I've also written a sample test that demonstrates this
->>> contention.
->> But what is the end result when this contention happens? Does
->> everyone livelock?
+On 9/26/25 07:17, Colin King (gmail) wrote:
+> Hi,
 > 
-> You get a TDX_OPERAND_BUSY error code returned. Inside the TDX module
-> each lock is a try lock. The TDX module tries to take a sequence of
-> locks and if it meets any contention it will release them all and
-> return the TDX_OPERAND_BUSY. Some paths in KVM cannot handle failure
-> and so don't have a way to handle the error.
+> Static analysis on linux-next has found an issue in function mp2925_write_word_data with the following commit:
 > 
-> So another option to handling this is just to retry until you succeed.
-> Then you have a very strange spinlock with a heavyweight inner loop.
-> But since each time the locks are released, some astronomical bad
-> timing might prevent forward progress. On the KVM side we have avoided
-> looping. Although, I think we have not exhausted this path.
+> commit b3a4efc88601cb5fc97b4ae23c478700a60302da
+> Author: Wensheng Wang <wenswang@yeah.net>
+> Date:   Thu Sep 18 16:06:03 2025 +0800
+> 
+>      hwmon: add MP2925 and MP2929 driver
+> 
+> 
+> The issue is as follows:
+> 
+>          case PMBUS_VOUT_OV_FAULT_LIMIT:
+>          case PMBUS_VOUT_UV_FAULT_LIMIT:
+>                  ret = pmbus_write_word_data(client, page, reg,
+>                                              (ret & ~GENMASK(11, 0)) |
+>                                  FIELD_PREP(GENMASK(11, 0),
+>                                             DIV_ROUND_CLOSEST(word * MP2925_VOUT_OVUV_DIV,
+> 
+> MP2925_VOUT_OVUV_UINT)));
+>                  break;
+> 
+> The call to pmbus_write_word_data() is accessing variable ret via the mask ~GENMASK(11, 0) however at this point ret has not been initialized so it contains a garbage value.
+> 
 
-If it can't return failure then the _only_ other option is to spin. Right?
+Yes, that was also reported by 0-day. Patches now dropped from linux-next since I can not
+figure out the intended use (datasheets are not public, or, rather, the chips don't even
+officially exist).
 
-I understand the reluctance to have such a nasty spin loop. But other
-than reworking the KVM code to do the retries at a higher level, is
-there another option?
+Guenter
+
 
