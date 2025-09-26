@@ -1,137 +1,189 @@
-Return-Path: <linux-kernel+bounces-834214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E59BA4344
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:31:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E48BA434A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC50618989ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C993A54AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A751F09B3;
-	Fri, 26 Sep 2025 14:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998621FBE87;
+	Fri, 26 Sep 2025 14:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dkbw00RB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n3qiOmUZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A1POXBgd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEB01C32FF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D71F460B;
+	Fri, 26 Sep 2025 14:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758896830; cv=none; b=PUam7UBxL3zNCOYK7/RIYV9DeYDnaI3nRJvzdRl6lPrRkclhVWBYJJDUDeEvl1Fi5QYvcwx2LBoeSECVAtbaqgN74K6L0k8VI4UzJONWQOXZ2XRKUkx1vubkj0BhKcJDphSmzpJs+iB4mHqNCwN4mdnZaR/czrMwr7aPTklrECQ=
+	t=1758896843; cv=none; b=MQW54c7KkBFuffmMS7GOYPDTlEsm6k9Fg/VK/IsZ7AOW01P1M8EAcY6EvR60eTMxPpLXWc1IZEGDbf5oiob6M7UGHAX0d5qBzBVFh7sXkyEk/eXZMkTWhD6ONR/7BZ2l6XfeeOm+deHTeETvXLURh7aX99alr7EF+H5qvX6eU1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758896830; c=relaxed/simple;
-	bh=lcDQRiCPya8vcqhTTqYOmiGofxrEghenqoSraXXfUro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y2cI7sjjV1dJBJ1bw+Qb8b1v03fZSGsgAZuct1WvD4gF8TrNdAlrTSg8nahkDW5uiXDV2DE1CBHGbli7evRnarG1vEDc840cAKCZKVoAb8c1IgkMgPNEuXNNKLs/L4RMptc+rY3Dtvpmhvdghqa5n5Ry+zBTS8EFt66peXX7RY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dkbw00RB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n3qiOmUZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758896825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Hoykd/ZYbPKM0Mz2PJ8cWxo2hA1pM+9vY9snyfQBfNU=;
-	b=dkbw00RBj1Jb7+GRrFp/hhO/ZPTgb3ps0PkznJCzd2m4bYbo+gl14O9MupVaaQn0SEF84V
-	SZ3bdEeBeo9nfXK8wjQM9bquTXCNq+/shC2sFge+DBm4+0bwdo0SAg9Uhijoylomdjzsf1
-	vhXYkQznO/yUfG60oN4pHct3KN3fTCRm7DO9mRLvX6oStN+jWE87c5k4esPl6pvZZqHe2Q
-	/RDkmVuxqSltWU4BEXVe0GkmYw+zxQdqY9YhgYlP3nV4fW3pQjN9E0o2Vw9G/6gkGtZ1dJ
-	BX+OpvfA4/rG7SQQvBhGu9M1GzkC0yTSF0M8b9WdAhuXPAyzzfL9VXsqHrVVVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758896825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Hoykd/ZYbPKM0Mz2PJ8cWxo2hA1pM+9vY9snyfQBfNU=;
-	b=n3qiOmUZU2vv0db31hLJKs0xiXXby5VF+gMk7CGLqWR7QLAvGdRgihH4PmSPNeMwHt7M5e
-	Ura6Qn0J9+0Bt8Dg==
-Date: Fri, 26 Sep 2025 16:26:58 +0200
-Subject: [PATCH] tools/nolibc: handle NULL wstatus arugment to waitpid()
+	s=arc-20240116; t=1758896843; c=relaxed/simple;
+	bh=u54T70t2/NPnIH1JLcp1TDGROghHZrCaOS3b0VSL4fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hbx/3alISGkbhj9BdBynwNbFO4tZk/DdTqJdCrMKVDdRailRhOYAobzoWKE7Z6lTXN/AQTEvcMzgkQh3ntY5Z4GqOmUxJ5x6drNKYfaOCSs206ohaVaaK26DZTbrEWEB8fZ/7g4vJQzPJAtgBzULjFrVNBSDk2kH/Sg6ZdeVjPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A1POXBgd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58Q7DG09029856;
+	Fri, 26 Sep 2025 14:27:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=R35Gxu9tgHOmxci6XRkN5tK9g9p8bMq5zSdxG/8afJw=; b=A1POXBgdHX8j
+	nwEfRH0JKVNRajXP3825SFJxEzSJ9EyO2zNZMesqJqpcM1JK6O83oeKtzd00u4hL
+	iX7qzWU/IPaS6Ipmb55juOQrqSee38+CVY1qpo+HxttQP01/mJ+Fe5omw1QB/zcx
+	2IHrM2XcMKU91UqLGB1j+ypGz3qUsvuszA0oKTIdbPFKJVeAlHTWO2Dndvlpl9HC
+	kG60HxwsQEwx2jx8fYPfURpXDCLYlwbx7CUEi8kmadh2Biz5GffnbQtuZoHkBkU3
+	xAwHpu2E0jtd5iSiqGJIR1r8TcLaxyE83+FwpEJkZPhh3cEehkL+Se71dHXPa8ZC
+	ImSkd1zI+w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbamyeh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 14:27:20 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58QEMLof017627;
+	Fri, 26 Sep 2025 14:27:20 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbamyec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 14:27:19 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58QEDD8Q030034;
+	Fri, 26 Sep 2025 14:27:19 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49dawmcgav-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 14:27:19 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QERF8941812428
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Sep 2025 14:27:15 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 281202004B;
+	Fri, 26 Sep 2025 14:27:15 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 152E920043;
+	Fri, 26 Sep 2025 14:27:15 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.182])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 26 Sep 2025 14:27:15 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1v29Pm-000000028X7-3SYj;
+	Fri, 26 Sep 2025 16:27:14 +0200
+Date: Fri, 26 Sep 2025 16:27:14 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Ramesh Errabolu <ramesh@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: s390: Expose the UID as an arch specific PCI slot
+ attribute
+Message-ID: <20250926142714.GB17059@p1gen4-pw042f0m.boeblingen.de.ibm.com>
+References: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250926-nolibc-waitpid-nullable-v1-1-4e90500f6ffa@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIALGi1mgC/x3MSQqAMAxA0atI1gZqi4peRVx0iBooVVonEO9uc
- fkW/z+QKDIl6IsHIp2ceA0ZVVmAXXSYCdllgxSyFp1sMKyejcVL876xw3B4r40ndEIJMqrplGs
- h11ukie//PIzv+wHzs/KZaQAAAA==
-X-Change-ID: 20250926-nolibc-waitpid-nullable-d030eb3693d7
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758896819; l=1642;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=lcDQRiCPya8vcqhTTqYOmiGofxrEghenqoSraXXfUro=;
- b=ZqFWTQxo3B4Nmw3i7B98qk5e4zxasTBpdbga9JyP1D0nWxhp/rwDoVE9eMHiWvTvJ41Jjv4b2
- NYvuR97pVCQC9G9OqzD921xc2hunDIKIp+XRpDAUBSnhIFRNb+kkOLE
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+In-Reply-To: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7Ow6O-5xT9bJWZY2QIoR0fgdJIV1moGj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX629BQMJNe9b3
+ Kh5sFw4/tstXt397kDjJDsKztqQqKbMErCxyNM1lzRZQBZE9sQ/r7zRuIOnheTG2m/x+AdLekoR
+ VnCgk1iL/CNkirZt3ZnpY2964rlmX1J9YnR13id+fjEhC3rFGTyKARYpPZGqpdCpPsZyeRCh2ds
+ M3GUxU4k/FQZMOOlfz6rsV1XXAedMv9cYhhHN3xrXrBpTfB83Engp5xZ4/DS5BMulhre8n4Wyoz
+ j6wLUq6sWONkHycXlNsRuPEp5vxONJ0EjXAfab906C8jfux9XyOqDtz1PcP4LvICiw35xE6tyo4
+ pkE5gGXp2MCLK3lFDYh0U4FQNXj+Ta15cTTOUQRztchSXEYqACHMVLnitCEiC6n+HjscToT6Kak
+ 4x74ARspZ6TLHjU/KeA71U/0JH6hmg==
+X-Proofpoint-ORIG-GUID: a3rG87gkYAlXMzNmAeR-q2lI5lXtlU5b
+X-Authority-Analysis: v=2.4 cv=B6W0EetM c=1 sm=1 tr=0 ts=68d6a2c8 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=iu2MVtCyA_F__U3CG2QA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_05,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 spamscore=0 clxscore=1011 priorityscore=1501
+ phishscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
 
-wstatus is allowed to be NULL. Avoid a segmentation fault in this case.
+> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+> index 41f900f693d92522ff729829e446b581977ef3ff..23eed78d9dce72ef466679f31c78aca52ba00f99 100644
+> --- a/arch/s390/include/asm/pci.h
+> +++ b/arch/s390/include/asm/pci.h
+> @@ -207,6 +207,10 @@ extern const struct attribute_group zpci_ident_attr_group;
+>  			    &pfip_attr_group,		 \
+>  			    &zpci_ident_attr_group,
+>  
+> +extern const struct attribute_group zpci_slot_attr_group;
+> +
+> +#define ARCH_PCI_SLOT_GROUPS (&zpci_slot_attr_group)
 
-Fixes: 0c89abf5ab3f ("tools/nolibc: implement waitpid() in terms of waitid()")
-Signed-off-by: Thomas WeiÃŸschuh <thomas.weissschuh@linutronix.de>
----
- tools/include/nolibc/sys/wait.h | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+I don't know the history exactly, but this can't be easily extended like the
+other group above `ARCH_PCI_DEV_GROUPS`.
 
-diff --git a/tools/include/nolibc/sys/wait.h b/tools/include/nolibc/sys/wait.h
-index 4e66e1f7a03e4585c91ec4ea68333b910600239a..9d9319ba92cbd31ee00afa85a2105d7bb00751b8 100644
---- a/tools/include/nolibc/sys/wait.h
-+++ b/tools/include/nolibc/sys/wait.h
-@@ -65,23 +65,29 @@ pid_t waitpid(pid_t pid, int *status, int options)
- 
- 	switch (info.si_code) {
- 	case 0:
--		*status = 0;
-+		if (status)
-+			*status = 0;
- 		break;
- 	case CLD_EXITED:
--		*status = (info.si_status & 0xff) << 8;
-+		if (status)
-+			*status = (info.si_status & 0xff) << 8;
- 		break;
- 	case CLD_KILLED:
--		*status = info.si_status & 0x7f;
-+		if (status)
-+			*status = info.si_status & 0x7f;
- 		break;
- 	case CLD_DUMPED:
--		*status = (info.si_status & 0x7f) | 0x80;
-+		if (status)
-+			*status = (info.si_status & 0x7f) | 0x80;
- 		break;
- 	case CLD_STOPPED:
- 	case CLD_TRAPPED:
--		*status = (info.si_status << 8) + 0x7f;
-+		if (status)
-+			*status = (info.si_status << 8) + 0x7f;
- 		break;
- 	case CLD_CONTINUED:
--		*status = 0xffff;
-+		if (status)
-+			*status = 0xffff;
- 		break;
- 	default:
- 		return -1;
+    (&zpci_slot_attr_group,  \
+     &zpci_slot_attr_group_b)
 
----
-base-commit: 2d965c1ae4135ed6f505661458f6dabd39488dac
-change-id: 20250926-nolibc-waitpid-nullable-d030eb3693d7
+Won't compile. The way `ARCH_PCI_DEV_GROUPS` does it, attaching a different
+group is just adding a new line.
 
-Best regards,
+> diff --git a/arch/s390/pci/pci_sysfs.c b/arch/s390/pci/pci_sysfs.c
+> index 0ee0924cfab7e5d22468fb197ee78cac679d8c13..997dff3796094680d9a3f0b6eb27a89fa1ed30b2 100644
+> --- a/arch/s390/pci/pci_sysfs.c
+> +++ b/arch/s390/pci/pci_sysfs.c
+> @@ -178,6 +178,17 @@ static ssize_t index_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(index);
+>  
+> +static ssize_t zpci_uid_slot_show(struct pci_slot *slot, char *buf)
+> +{
+> +	struct zpci_dev *zdev = container_of(slot->hotplug, struct zpci_dev,
+> +					     hotplug_slot);
+> +
+> +	return sysfs_emit(buf, "0x%x\n", zdev->uid);
+
+Do we need a special case for when `uid` is 0? That would imply the uid is
+invalid, right? Would we want to return an error in that case (-EINVAL, or
+smth)? 
+
+Also, do we want to use the same format as in `zpci_setup_bus_resources()`
+with the 4 leading 0's (`0x%04x`)?
+
+> +}
+> +
+> +static struct pci_slot_attribute zpci_slot_attr_uid =
+> +	__ATTR(uid, 0444, zpci_uid_slot_show, NULL);
+
+__ATTR_RO()?
+
 -- 
-Thomas WeiÃŸschuh <thomas.weissschuh@linutronix.de>
-
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
