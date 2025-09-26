@@ -1,195 +1,215 @@
-Return-Path: <linux-kernel+bounces-834634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273BCBA524A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 22:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A061EBA527A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0A61B219E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD89322685
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774832857CB;
-	Fri, 26 Sep 2025 20:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE6527703A;
+	Fri, 26 Sep 2025 21:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FfUr+C9G"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="BnE9cY9Y";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="F1iKsv5p"
+Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C1526F292
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 20:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F448834
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758920266; cv=none; b=HFmJyDvgOcZzN83Pb5M3ktCDAThuGbGfFckL1gpaelxivNVj2Qwr7YKqp5kHKl4PWvTP9SYjVcTq95CmaAX2l0+2I/b5GzNq4lDpbd7JEVPGzADMwzp3636lb+fqk1UUcDTao9uiCe76cwkN94D0rH7PYfv6P9TTvz7j0VAqoyc=
+	t=1758920669; cv=none; b=iBYFCtqFosLcY1nvqlCD92sIMnScWfCOeko31a3VHMH5J/COOp0LJO9nG8itMZXmr6YBubylNPk7l7iI86mJ7WwCWpveqM9LLUQ6W6K0YD78q3stWa93KQ0gp2MwIbVOaXB6/nQ96aamgLv6e1uuXR5iARio1FgPONF4KgAKvuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758920266; c=relaxed/simple;
-	bh=CE1reL0wncd9PierxwrDmW4jfOrkqzteseelrqjomUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WC2u8QE+mLjHx3CU+vSj1iXrAL/3vwcjLPMINzSsBRt6x3tmIMzBI5Y/yFJEDOtFSu5+1scVXa8HSvJMdF36rbcWgmZ5FymjpdOgI4eHocHqPCpNvsuEX4FGRp1sZn3n6CMRWH/pkDlp08XC1M3WqlWHee2r687YOWrozQ6mHBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FfUr+C9G; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77f2e621ef8so3528076b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758920264; x=1759525064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lH2Sfk58/GaFMno98E5ZZZ0Jezt1oWfRMccsDmLi3+U=;
-        b=FfUr+C9GEzv201QOoV1GLhvr7e1kmG6rj8qoEHiyy2fmYmgHao4kCDXCQd1jOu3tSY
-         oNBIlEVbh4Pxny4SBmiOonFY21m6hyJ0ylYKTLaMH0h0h3yr1oG0po64ILoA8690YMFX
-         m7XaTy/q1z8CWa+rBL/Qce1tclEtyFU/DF7R4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758920264; x=1759525064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lH2Sfk58/GaFMno98E5ZZZ0Jezt1oWfRMccsDmLi3+U=;
-        b=OuxMtMasM4mjagthYvct0nBYyEvEI0BwzqFyyzZ2CEC7HSTHK12vIf81VD+jH5DpaN
-         eWDt+J3ypkMtQseqaPMvwv1xwe7SnWfsyUD7IL708OAii3T6EvIGNSxi+zDqASFYN7lg
-         h7LGyRPZ+iVPXyOl4PawWEhv6gjyDUGKz2EmSIWXzplO2ofNJAky/i2tzN9ManBNMsEr
-         PuNwDuoXfug0lQOXrTm3a7T6lqgGHx4axAspyPen5NQkFJjFX96z4x9gjNm7lE5uRm04
-         tjQljo2IDTTcO7j8GdJoQYZI1HChbKTFJuI/b+qR2pNI8t0NJ3mLL76bLVK5s2nbR+y8
-         9+wA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6TNRuxw7gKGx4WvzI3cFQdBnL0rM6mcZzgbumhp0puIs0zcgkQyllpVVFRL2/kyaRQO00LN4IkGvoVO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx65JhYwhTytr4LuN6cK9LfqdErTvcXnv6UsuHYX2SuDqNOW0Jq
-	6FulZeRrxaR4d1+xJdHchbXaJNA9t2zO03hxVJfzGa4KNNreZIeGJseCl9TKmRUocv02qecXNeX
-	vHmg=
-X-Gm-Gg: ASbGnct4IA9YQtf3E1BSvw4tA3jH7Ox6ZTbkOWFq8wlTy+xsq/xczLQwSdlVL52ac7m
-	my1jYW2Bp9/wIahxQr/0YPw7GjPHrx/7q9yosn5jN+X1QFcyRxmqBEOOfjCti8yCpkvZdAkabPY
-	84ztRUBe62+vGQ1RpH/AY9qawCWeGr1oY3z+2oGunwkQ5nmqVL3fslERXtnTopiwWi1dPTbI32W
-	q/cr5Ys0RHy8AFfEneOa/ssranmgRKL9ESbePAjgxm2YM7PA5S7X6wnCcTk/XBlmmR/9uKtNpxG
-	SBFDgx8f2oxhF4ZWgpojP1mjqF82hDngEI1QJPvbxt9xKKx0nwUx/Aft/IGwQpkr38Sb9qQEU+S
-	A3Mhy4sRA3O0GiO34h/ImFciqLkI2DEE5bDkX15eQAi0y4DwtbSkCEX3Y2OS8GlJoGA==
-X-Google-Smtp-Source: AGHT+IFTowZunFrxeiu3Iib95OmTD1ikPQXlZEeaUMcfzUP6fManCC1r4ikqB88H+sTFzPbm7QI/2A==
-X-Received: by 2002:a05:6a20:7343:b0:2c9:ff13:bc86 with SMTP id adf61e73a8af0-2e7c7cb219emr10574996637.21.1758920264531;
-        Fri, 26 Sep 2025 13:57:44 -0700 (PDT)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com. [209.85.215.172])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b59671ce93fsm96721a12.3.2025.09.26.13.57.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 13:57:44 -0700 (PDT)
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b556284db11so2576355a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 13:57:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDf0Y7RIXnBOrlAZH3P0vg78x784pYPiELJfED3rYa0CSo2zywb6LIndvdw+2oaHxBTXI5/fRCjPwN4NM=@vger.kernel.org
-X-Received: by 2002:a17:902:c402:b0:25c:d4b6:f119 with SMTP id
- d9443c01a7336-27ed49df307mr105837165ad.12.1758920263386; Fri, 26 Sep 2025
- 13:57:43 -0700 (PDT)
+	s=arc-20240116; t=1758920669; c=relaxed/simple;
+	bh=1vidAVltG/8YSPfWuy3MvmtUyAq1zVNdjok6cI6xuNE=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=qEE6t0ewWjyJQJ0d49F8Be7PaHSeAOvbvX+EITJtQ+O/zkE2cq2uuR+ORIfVK/4QvXQ+oFC7yo9Y4bYRrx3qGxiE0BIQNrb+e9VuzcdaYoT23b0oMDJxRmLhOJ7GJXhy+RYPeV9WBBFo+YjFo30O71wived3flt8yPSjrXgQTYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=BnE9cY9Y; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=F1iKsv5p; arc=none smtp.client-ip=81.19.104.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1758920334;
+	bh=rUqclJcLicKjxtPJ9COCQMcfmWgorZyY6uwV+tu84Ow=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	b=BnE9cY9Y/UUnRQfEh/JqFWzehd8gW4LBdMCTuSLYjh+l4rMNKloqQNAqz/8XlJozi
+	 AGDvhafe1U8BFLdKCgPZLhR3XbYDfYjR6p0sVvQ/+seYOv6dx+gm+XykAT91WYW5v2
+	 Gz4TmBJ0STHHdzdcEQJC9CkzCzqQ6iRN3bmGCg4CnQrC29/XudQcet7tsEECCEIjG2
+	 IQBF1XrKJUP47aJ3xqygqhar/yDWYSQcgYoNubwGtgWdT55RhdAoBSi9unGFDE/93Q
+	 iimcRKGw7p8D+ZDJNG0aHKQHasQlZiRPh7bRq6WgIti0KahoCwjzG9tdy9MvXrPT91
+	 SON27BCJ0cRdQ==
+Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id ACA37E86208
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:58:54 +0300 (MSK)
+Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx13.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id 74705E81A49
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 23:58:54 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1758920326;
+	bh=rUqclJcLicKjxtPJ9COCQMcfmWgorZyY6uwV+tu84Ow=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	b=F1iKsv5pjznGTnsHRDnZNda0F1hTASyv+Dftk0kbuvCPiQuExADmWKWY96aLV9waB
+	 FsteNwwDlad6woCKQdGfo1m0hqt8w4j/9Sxiho+oVdpFORLrVRYEAzkwiR8JQinw7I
+	 KRmsVdrBNEO+o2R2moSXs24m2w/NWu/fTGNU2l10/2CXAmB6v9YDLSnapfPSEnl8+O
+	 hBatveZOkF/Zc/vWM+sgVkzra64q4KhxxuA7nT/yMXiwgOpXN7yf3l2AwdpfDtgb9m
+	 N0D3pXBnVCJkZ27kOK/Zsy8pI/U3hdWXBzVWxIDFOCg5rF9copenLZhKHFQgOz9hsJ
+	 EqLjg01aCdryw==
+Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 491A73E264F;
+	Fri, 26 Sep 2025 23:58:46 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 3F21F3E25D9;
+	Fri, 26 Sep 2025 23:58:45 +0300 (MSK)
+Received: from HQMAILSRV2.avp.ru (10.64.57.52) by HQMAILSRV3.avp.ru
+ (10.64.57.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Fri, 26 Sep
+ 2025 23:58:44 +0300
+Received: from HQMAILSRV2.avp.ru ([fe80::c3ea:4064:6675:4f29]) by
+ HQMAILSRV2.avp.ru ([fe80::c3ea:4064:6675:4f29%10]) with mapi id
+ 15.02.1748.036; Fri, 26 Sep 2025 23:58:44 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: "w.d.hubbs@gmail.com" <w.d.hubbs@gmail.com>
+CC: "chris@the-brannons.com" <chris@the-brannons.com>, "kirk@reisers.ca"
+	<kirk@reisers.ca>, "samuel.thibault@ens-lyon.org"
+	<samuel.thibault@ens-lyon.org>, "speakup@linux-speakup.org"
+	<speakup@linux-speakup.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] speakup: keyhelp: guard letter_offsets possible out-of-range
+ indexing
+Thread-Topic: [PATCH] speakup: keyhelp: guard letter_offsets possible
+ out-of-range indexing
+Thread-Index: AQHcLyhYVUw36WpDP066SFHvggEbbQ==
+Date: Fri, 26 Sep 2025 20:58:44 +0000
+Message-ID: <e6dc3bce87084fca83b0a0aa99d9ce96@kaspersky.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-kse-serverinfo: HQMAILSRV3.avp.ru, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 9/26/2025 5:58:00 PM
+x-kse-bulkmessagesfiltering-scan-result: InTheLimit
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925084806.89715-1-cuiyunhui@bytedance.com>
- <20250925084806.89715-2-cuiyunhui@bytedance.com> <CAD=FV=VZLYqPQCOEhbH4QtndeG5e1-0wey24fgYNTeFiqd8qJg@mail.gmail.com>
- <CAEEQ3wnwNdTgt6ByHCzM43fhZMLSxwXvYx-AGBpsktraXqif2Q@mail.gmail.com>
-In-Reply-To: <CAEEQ3wnwNdTgt6ByHCzM43fhZMLSxwXvYx-AGBpsktraXqif2Q@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 26 Sep 2025 13:57:31 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X6Xv_WYPMXKtOWLJX7skCoQmia3JbQej_u38qxqAbqDg@mail.gmail.com>
-X-Gm-Features: AS18NWDVMqIM3NdX-t4tF69rrS3UxfWVNc7ZvIbAVZlF3PJHNdBYWzKZ9mUJzVc
-Message-ID: <CAD=FV=X6Xv_WYPMXKtOWLJX7skCoQmia3JbQej_u38qxqAbqDg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 1/2] watchdog: move arm64 watchdog_hld
- into common code
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, atish.patra@linux.dev, catalin.marinas@arm.com, 
-	johannes@sipsolutions.net, lihuafei1@huawei.com, mark.rutland@arm.com, 
-	masahiroy@kernel.org, maz@kernel.org, mingo@kernel.org, 
-	nicolas.schier@linux.dev, palmer@dabbelt.com, paul.walmsley@sifive.com, 
-	suzuki.poulose@arm.com, thorsten.blum@linux.dev, wangjinchao600@gmail.com, 
-	will@kernel.org, yangyicong@hisilicon.com, zhanjie9@hisilicon.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/26 17:32:00 #27858547
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-Hi,
+From 40a3c73f21311521a510f2df4883296482707302 Mon Sep 17 00:00:00 2001
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: William Hubbs <w.d.hubbs@gmail.com>
+Cc: Chris Brannon <chris@the-brannons.com>, Kirk Reiser <kirk@reisers.ca>
+Cc: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Cc: speakup@linux-speakup.org, linux-kernel@vger.kernel.org
+Cc: lvc-project@linuxtesting.org
+Date: Fri, 26 Sep 2025 23:17:03 +0300
+Subject: [PATCH] speakup: keyhelp: guard letter_offsets possible out-of-ran=
+ge
+ indexing
 
-On Fri, Sep 26, 2025 at 2:37=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.com=
-> wrote:
->
-> Hi Doug,
->
-> On Fri, Sep 26, 2025 at 4:00=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Sep 25, 2025 at 1:48=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance=
-.com> wrote:
-> > >
-> > > @@ -17,6 +17,7 @@
-> > >  #include <linux/cpu_pm.h>
-> > >  #include <linux/export.h>
-> > >  #include <linux/kernel.h>
-> > > +#include <linux/nmi.h>
-> > >  #include <linux/perf/arm_pmu.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/sched/clock.h>
-> > > @@ -696,10 +697,12 @@ static int armpmu_get_cpu_irq(struct arm_pmu *p=
-mu, int cpu)
-> > >         return per_cpu(hw_events->irq, cpu);
-> > >  }
-> > >
-> > > -bool arm_pmu_irq_is_nmi(void)
-> > > +#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
-> > > +bool arch_perf_nmi_is_available(void)
-> > >  {
-> > >         return has_nmi;
-> > >  }
-> > > +#endif
-> >
-> > Should the previous comment move here, AKA:
-> >
-> > /*
-> >  * hardlockup_detector_perf_init() will success even if Pseudo-NMI turn=
-s off,
->
-> Okay, we also need to change it to =E2=80=9Cwatchdog_hardlockup_probe()=
-=E2=80=9D
->
-> >  * however, the pmu interrupts will act like a normal interrupt instead=
- of
-> >  * NMI and the hardlockup detector would be broken.
-> > */
-> >
-> >
-> > > +static int __init init_watchdog_freq_notifier(void)
-> > > +{
-> > > +       return cpufreq_register_notifier(&watchdog_freq_notifier,
-> > > +                                        CPUFREQ_POLICY_NOTIFIER);
-> >
-> > I think you need to do something to prevent this from happening on any
-> > platforms that override hw_nmi_get_sample_period(), right? These
-> > cpufreq notifiers will be useless in that case...
->
-> I understand this is not a problem. watchdog_perf uses
-> PERF_COUNT_HW_CPU_CYCLES, which means it is inherently limited by the
-> CPU's main frequency. After we make such a change, a larger value may
-> be used as the period, so the NMI period will become longer, but this
-> value will not change after the system starts.
+help_init() builds letter_offsets[] by using the first byte of each
+function name as an index via `(start & 31) - 1`. If function_names are
+overridden from sysfs (root) with a name starting outside [a=96z], the
+index underflows or exceeds the array, leading to OOB write.
 
-I'm not sure I follow. On x86, hw_nmi_get_sample_period() is:
+Function names can be overridden with the following commands as root:
 
-u64 hw_nmi_get_sample_period(int watchdog_thresh)
-{
-  return (u64)(cpu_khz) * 1000 * watchdog_thresh;
-}
+    modprobe speakup_soft
+    echo "0 _bad" > /sys/accessibility/speakup/i18n/function_names
+    # then press Insert+2 on /dev/tty
 
-On PowerPC it's:
+This fix checks the first letter in help_init(), and if it is not in the
+[a=96z] range the function returns an error to the caller. Eventually this
+error is propagated to drivers/accessibility/speakup/main.c:2217, which
+causes a bleep sound.
 
-u64 hw_nmi_get_sample_period(int watchdog_thresh)
-{
-  return ppc_proc_freq * watchdog_thresh;
-}
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Neither of those are necessarily based on the results the cpufreq
-reports. ...so therefore I don't think you should be taking the
-cpufreq reported numbers and assuming they're OK on x86 and powerpc.
+Fixes: a4efe6fd5dea ("staging: speakup: (coding style) Add spaces around op=
+erands (checkpatch checks)")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+---
+ drivers/accessibility/speakup/keyhelp.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
--Doug
+diff --git a/drivers/accessibility/speakup/keyhelp.c b/drivers/accessibilit=
+y/speakup/keyhelp.c
+index 822ceac83068..df60a8b15a2f 100644
+--- a/drivers/accessibility/speakup/keyhelp.c
++++ b/drivers/accessibility/speakup/keyhelp.c
+@@ -8,6 +8,7 @@
+  */
+
+ #include <linux/keyboard.h>
++#include <linux/ctype.h>
+ #include "spk_priv.h"
+ #include "speakup.h"
+
+@@ -120,10 +121,20 @@ static int help_init(void)
+ 	state_tbl =3D spk_our_keys[0] + SHIFT_TBL_SIZE + 2;
+ 	for (i =3D 0; i < num_funcs; i++) {
+ 		char *cur_funcname =3D spk_msg_get(MSG_FUNCNAMES_START + i);
++		char first_letter;
+
+-		if (start =3D=3D *cur_funcname)
++		if (!cur_funcname)
++			return -1;
++
++		first_letter =3D tolower(*cur_funcname);
++
++		/* Accept only 'a'..'z' to index letter_offsets[] safely */
++		if (first_letter < 'a' || first_letter > 'z')
++			return -1;
++
++		if (start =3D=3D first_letter)
+ 			continue;
+-		start =3D *cur_funcname;
++		start =3D first_letter;
+ 		letter_offsets[(start & 31) - 1] =3D i;
+ 	}
+ 	return 0;
+@@ -137,14 +148,15 @@ int spk_handle_help(struct vc_data *vc, u_char type, =
+u_char ch, u_short key)
+ 	u_short *p_keys, val;
+
+ 	if (letter_offsets[0] =3D=3D -1)
+-		help_init();
++		if (help_init())
++			return -1;
+ 	if (type =3D=3D KT_LATIN) {
+ 		if (ch =3D=3D SPACE) {
+ 			spk_special_handler =3D NULL;
+ 			synth_printf("%s\n", spk_msg_get(MSG_LEAVING_HELP));
+ 			return 1;
+ 		}
+-		ch |=3D 32; /* lower case */
++		ch =3D tolower(ch);
+ 		if (ch < 'a' || ch > 'z')
+ 			return -1;
+ 		if (letter_offsets[ch - 'a'] =3D=3D -1) {
+--
+2.43.0
+
 
