@@ -1,160 +1,167 @@
-Return-Path: <linux-kernel+bounces-834376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A1DBA4921
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE95ABA4926
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 292DF7B6A93
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED52917F619
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E04E247DE1;
-	Fri, 26 Sep 2025 16:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A6A23D7C7;
+	Fri, 26 Sep 2025 16:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSeGqp+6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L8CtANDG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6C23E229;
-	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9260239085;
+	Fri, 26 Sep 2025 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758903109; cv=none; b=sgZpVO13v0k1TYMy4twwklXsKfBbXw7jDfT+/nCnE20GFGphCwZa2UhYBLLvdBfsFd7NF9bgvp6K0OPhO+LLhIUvHVgO7QSnAc76ABAI3gS+cFo3pinm1s63f0VnOKvgtOOWbQ8N/7tI+/dml+ZJhhRswxb9tAT2PAKtaY02QxE=
+	t=1758903121; cv=none; b=NIto3EVAUPuWue2AZrc9F6M86St/f4E8YZ6T4+NQ8BjfUIGBIpdMT10qzFH4jwumJsqGww/MHTkWjqAcic2cexjSZsbF4JAmAxZ6E7hnGOEwkBGPzlv8g87hLxlw2fWOV4qGDGAuDs2IIMnTE9hBsJkeg2dToW8TtGYuuWyBV58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758903109; c=relaxed/simple;
-	bh=1KDgmYma2MnC8zChopyw3az3a1NpfHFpCuPoWCHv96Q=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=oi2XJcVk4LycKHXSY/j509n+ScQv3cD3vCs08LTVTaNNrZFOxaFdVAMixs+REzxeNvugEjhkj5OZwVGFL2N/RBvvxE5JxiuoHIpGK6uounXq/WYi1w8XOGXsv11QiiOLLQqZ9Dy3NOK7YB+JnOwgUhl+ZtGo9874vLVLXGZCo0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSeGqp+6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A586C4CEF4;
-	Fri, 26 Sep 2025 16:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758903107;
-	bh=1KDgmYma2MnC8zChopyw3az3a1NpfHFpCuPoWCHv96Q=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=OSeGqp+6hiXXNiT7HIdZdAa9zHJ84BrXo50dVLoOZF7t2lzFo1tgeOKsl1Ga25Zot
-	 4+XlN6qIpsJ2/T1JU9zWqYZ92OJYa2gzwjdUruoIIf7WxYYu3kyc9fdEpkjJap2o7D
-	 kT5+/5Lerqgd8Ht/51vvc5evgHvQBlF9vrKeOlMJpzU1Zol7dNEBO6HjbG8idzl9T2
-	 fW93itZzkyKFyYLlYKqvGJFPgu0l5592VLpm2x1+6/3yTKP7Kzvrb7fFrNV1+iftLG
-	 od1W5uM8Yf+2UbCMOn3bcBAClsuaaPIPefWzyGt904Y5y1tpeS5cmKmBRbMg/J5A5A
-	 I1YcgIUqILcAg==
-Date: Fri, 26 Sep 2025 11:11:46 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758903121; c=relaxed/simple;
+	bh=LzwWJQ2BTEHF4pIUX4Yzagok94NcOb7RjCI0qPZI/y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWrg4VTo2dIKfs+XRri4qwyM7J8jN5qpCrcSaVlW7iCyCNaCwNFGXBj0GMoY1/ijJgSHCs5Uc4or2j5Qf7G/Bc1vKVf90+9c2VaI1AVnKebUJtLL8kFzcq/gxylvSCnD48sh6oKbYS+CbNrn4dzViO67mw8dI/kgiZh7JyOKUpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L8CtANDG; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758903120; x=1790439120;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LzwWJQ2BTEHF4pIUX4Yzagok94NcOb7RjCI0qPZI/y4=;
+  b=L8CtANDGbLvAhC3EGc4pbg8h0uYtFqFCl4kehCwcwaTQbAS+KMTzD+ST
+   q6qP8aUmnpBqGYie0ZxPINakYPUDm6E4UdscbdPB0LXXFQEhpqaEsBpok
+   FLBwnw30l7oA11rRTMuwfkmVh2NkC80frGFfNA94CxGNe3tjEKSuwqBSJ
+   fH5ejFQ8TY81sY8gd3lBfP6Y5iUGLOmvWSi7eQ3GhFuD67jVaSSgHRvTr
+   ISha4HwOQhW+BuRwBV43hVKpjYtkSBtqrKCfWWmUXqHAUE8PJjIuovlVp
+   kluhTBmHsm4y8DtXpuR2/M8mSgKIaU70X3wk3G67sL7w81H+5OnlbKxgU
+   w==;
+X-CSE-ConnectionGUID: ha4fvSChSAyZQLlQ20kzCg==
+X-CSE-MsgGUID: KNCRK3eNRCu8YYm7gRhpjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61192911"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61192911"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:11:57 -0700
+X-CSE-ConnectionGUID: dPQx06EsSp2EIN10J7xiZQ==
+X-CSE-MsgGUID: oQyf8SwFRMqPukPaf2iwJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
+   d="scan'208";a="177490558"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.109.59]) ([10.125.109.59])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 09:11:55 -0700
+Message-ID: <7927271c-61e6-4f90-9127-c855a92fe766@intel.com>
+Date: Fri, 26 Sep 2025 09:11:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Magnus Damm <magnus.damm@gmail.com>, David Lechner <dlechner@baylibre.com>, 
- devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com>
-Message-Id: <175890301803.880384.843495445196930858.robh@kernel.org>
-Subject: Re: [PATCH v2 0/7] Add ADCs support for RZ/T2H and RZ/N2H
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/16] TDX: Enable Dynamic PAMT
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>
+Cc: "Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com"
+ <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "kas@kernel.org" <kas@kernel.org>, "Annapurve, Vishal"
+ <vannapurve@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <aNX6V6OSIwly1hu4@yzhao56-desk.sh.intel.com>
+ <8f772a23-ea7f-40eb-8852-49f5e3e16c15@intel.com>
+ <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <2b951e427c3f3f06fc310d151b7c9e960c32ec3f.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On Fri, 26 Sep 2025 01:40:02 +0300, Cosmin Tanislav wrote:
-> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs include three
-> 12-Bit successive approximation A/D converters.
+On 9/26/25 09:02, Edgecombe, Rick P wrote:
+> On Fri, 2025-09-26 at 07:09 -0700, Dave Hansen wrote:
+>> On 9/25/25 19:28, Yan Zhao wrote:
+>>>> Lastly, Yan raised some last minute doubts internally about TDX
+>>>> module locking contention. I’m not sure there is a problem, but
+>>>> we
+>>>> can come to an agreement as part of the review.
+>>> Yes, I found a contention issue that prevents us from dropping the
+>>> global lock. I've also written a sample test that demonstrates this
+>>> contention.
+>> But what is the end result when this contention happens? Does
+>> everyone livelock?
 > 
-> RZ/T2H has two ADCs with 4 channels and one with 6.
-> RZ/N2H has two ADCs with 4 channels and one with 15.
+> You get a TDX_OPERAND_BUSY error code returned. Inside the TDX module
+> each lock is a try lock. The TDX module tries to take a sequence of
+> locks and if it meets any contention it will release them all and
+> return the TDX_OPERAND_BUSY. Some paths in KVM cannot handle failure
+> and so don't have a way to handle the error.
 > 
-> Add support for them.
-> 
-> V2:
->  * pick up Reviewed-by from Geert
->  * dt-bindings: move required after patternProperties
->  * dt-bindings: describe 16 channels, but limit per-SoC to 6 / 15
->  * dt-bindings: use uppercase for clock descriptions
->  * remove max-channels property and find it from parsed channel subnodes
->  * remove start/stop wrappers
->  * stop calibration even on failure
->  * move data reading to rzt2h_adc_read_single() instead of interrupt
->  * handler
-> 
-> Cosmin Tanislav (7):
->   clk: renesas: r9a09g077: Add ADC modules clock
->   dt-bindings: iio: adc: document RZ/T2H and RZ/N2H ADC
->   iio: adc: add RZ/T2H / RZ/N2H ADC driver
->   arm64: dts: renesas: r9a09g077: Add ADCs support
->   arm64: dts: renesas: r9a09g087: Add ADCs support
->   arm64: dts: renesas: rzt2h/rzn2h-evk: enable ADCs
->   arm64: defconfig: enable RZ/T2H / RZ/N2H ADC driver
-> 
->  .../iio/adc/renesas,r9a09g077-adc.yaml        | 160 +++++++++
->  MAINTAINERS                                   |   8 +
->  arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  69 ++++
->  .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    |  28 ++
->  arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  69 ++++
->  .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    |  64 ++++
->  .../dts/renesas/rzt2h-n2h-evk-common.dtsi     |  79 +++++
->  arch/arm64/configs/defconfig                  |   1 +
->  drivers/clk/renesas/r9a09g077-cpg.c           |   3 +
->  drivers/iio/adc/Kconfig                       |  10 +
->  drivers/iio/adc/Makefile                      |   1 +
->  drivers/iio/adc/rzt2h_adc.c                   | 306 ++++++++++++++++++
->  12 files changed, 798 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,r9a09g077-adc.yaml
->  create mode 100644 drivers/iio/adc/rzt2h_adc.c
-> 
-> --
-> 2.51.0
-> 
-> 
-> 
+> So another option to handling this is just to retry until you succeed.
+> Then you have a very strange spinlock with a heavyweight inner loop.
+> But since each time the locks are released, some astronomical bad
+> timing might prevent forward progress. On the KVM side we have avoided
+> looping. Although, I think we have not exhausted this path.
 
+If it can't return failure then the _only_ other option is to spin. Right?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250925 (best guess, 2/10 blobs matched)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250925224013.2146983-1-cosmin-gabriel.tanislav.xa@renesas.com:
-
-arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@90014000 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@90014400 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dtb: adc@80008000 (renesas,r9a09g077-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@90014000 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@90014400 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dtb: adc@80008000 (renesas,r9a09g087-adc): 'renesas,max-channels' does not match any of the regexes: '^channel@[0-9a-f]$', '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/renesas,r9a09g077-adc.yaml#
-
-
-
-
-
+I understand the reluctance to have such a nasty spin loop. But other
+than reworking the KVM code to do the retries at a higher level, is
+there another option?
 
