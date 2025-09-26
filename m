@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-833977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042C9BA377A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:20:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD02BA3783
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 13:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98603561569
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11309627D1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 11:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B45727B356;
-	Fri, 26 Sep 2025 11:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821D1299A85;
+	Fri, 26 Sep 2025 11:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/03Z5zI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpxeCM8E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D1C1A2398;
-	Fri, 26 Sep 2025 11:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5171225A35;
+	Fri, 26 Sep 2025 11:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758885632; cv=none; b=LIDT6N8bXEQjlV26wgfIkhJIaQkwtnLem0dqCsEYJ6MC+4TcMS85StMhqoQ2MWLOQ7k6WtTkWxTW3g1wcfcBHmpuYDApm6oNn+5DrCG1BolzuaV3eEwHcALHmxkg8rfySPY6NKwFqYEywzK806DOEZT31/ymXNPgfA0qZX46eMI=
+	t=1758885641; cv=none; b=eAx2/h+Rxv9zSijGXTbkwW/GooDp7xdF9zzseNOnqnVaEaJlI8soFb958eCKiMcw1GSeS2DjeYXQBL3QONEK8yCn3sA6HQn7oG2u6PYuE939AlMyn/JTCOLxtaR4NrVlLNnUZXvfWTXcEn1A/Y2P96TRfv24jN/MFJrc8SYqAYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758885632; c=relaxed/simple;
-	bh=K8AahNd6DL4smpboYZBm2E+eJM2r7KJlkG/ThKxeJSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qhxONTr/BD/mW6kMoycA9oRJjAB747Ntj9YOIqJkLe4MRKvL6r0Nd314gq7iMclj5HOI9rs9RWKBnmgLi38QIOYhNS9uTxSnhHATkurltpsLib99cDhRCe6W5+QH+x13c2k//MxCdiTRYG9YHskq5Tohvc5LgrE5Qe+Ndx8Tb5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/03Z5zI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 640F2C4CEF4;
-	Fri, 26 Sep 2025 11:20:30 +0000 (UTC)
+	s=arc-20240116; t=1758885641; c=relaxed/simple;
+	bh=c7XM5Cp6e5ot+aV345F+WYOKm/Hfl/9T18HNuk9qmEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ua0xdLx6lv1t6MjDJxp61SK5SXAx9+z26diLrh1XertgWNHiqahxDZJpvGUPNtYKzLoKM+05w/qkmt6qI0D69UWzrnJL+sExP8TK32jI62k66BQSxZqHfwUYdzUU8zyzSL/tm24jh/dA3Y1D+F0okow2yqIIKc0ChsO/zbLaJQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VpxeCM8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77FDAC4CEF4;
+	Fri, 26 Sep 2025 11:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758885631;
-	bh=K8AahNd6DL4smpboYZBm2E+eJM2r7KJlkG/ThKxeJSw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=U/03Z5zIOnNug3cCk74UshOTojRT6e7wH5IP0kNO/sSMrMEfIP16L0psZX4bQ4jpN
-	 QhasIDLTxtgqC3Hh3XFMOCLa1mBBu3np835ks5jhR433G87Er03EVExZkIwEApixTk
-	 0pgwjiDBpHGxaW7TQlGUmy2YkqqzVUpPcbzC+emlQ+XqKx2dcZQOi5snjC4Xb+JN4t
-	 rlQdv0XZh64mkmJrOYu5/QEd9vFVvKswWNk7phSU7vyG7KlOzPXrStCyn24o8Tlha8
-	 SbGjZINeWyFbN70P63i5wHZmKnP0NnKmfgf+Q00xUrJcRAK0Xin+SeetkAH6ptPuf2
-	 AUCR46sXcpI0g==
-Date: Fri, 26 Sep 2025 12:20:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: David Sterba <dsterba@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the btrfs-fixes tree with the origin tree
-Message-ID: <aNZ2-6TZzpXbS50a@sirena.org.uk>
+	s=k20201202; t=1758885641;
+	bh=c7XM5Cp6e5ot+aV345F+WYOKm/Hfl/9T18HNuk9qmEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VpxeCM8Eb8U82a7Pj0UhpWw/5khoG5JXgSS8+XZqhYG1hfBzVXAdhv7KP9Ycl5uTX
+	 h9fTo8/VU0QClfOcacO19w8jjiCoXOHTnsSvLumAcNbd2TJOAlDQAtAQv+4nIlDcVG
+	 3JDmrXwxYSplJZUeqt4rx2SE3bfPjfL21QIyGRQ5fhKsRleIw6WMfzPSFGD7p4COVh
+	 4u0cJnHKcHZwpEf+8lwF0J181QauW8LIRAYUg2b5mhXYmdD5iqFb5sVEk3Cn2KdmDg
+	 u3ZF3T7fIwHfxW47vjwmF5n5FDmrX5gMn3CFW6WHt1jdt3nUKrkrUfNj3p8g4TBbyG
+	 X7BHMn/zXdQ4w==
+Date: Fri, 26 Sep 2025 12:20:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>, stable@vger.kernel.org,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Cyril.Jean@microchip.com, Linus Walleij <linus.walleij@linaro.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] gpio: mpfs: fix setting gpio direction to output
+Message-ID: <20250926-outsmart-galvanize-ac2078557e57@spud>
+References: <20250925-boogieman-carrot-82989ff75d10@spud>
+ <175888059620.38209.6546087887696517521.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,59 +60,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Olj9ztmq2NnX06//"
+	protocol="application/pgp-signature"; boundary="Hr2UoKeytqTZDB2w"
 Content-Disposition: inline
+In-Reply-To: <175888059620.38209.6546087887696517521.b4-ty@linaro.org>
 
 
---Olj9ztmq2NnX06//
+--Hr2UoKeytqTZDB2w
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Sep 26, 2025 at 11:57:30AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+>=20
+> On Thu, 25 Sep 2025 16:39:18 +0100, Conor Dooley wrote:
+> > mpfs_gpio_direction_output() actually sets the line to input mode.
+> > Use the correct register settings for output mode so that this function
+> > actually works as intended.
+> >=20
+> > This was a copy-paste mistake made when converting to regmap during the
+> > driver submission process. It went unnoticed because my test for output
+> > mode is toggling LEDs on an Icicle kit which functions with the
+> > incorrect code. The internal reporter has yet to test the patch, but on
+> > their system the incorrect setting may be the reason for failures to
+> > drive the GPIO lines on the BeagleV-fire board.
+> >=20
+> > [...]
+>=20
+> I'm about to send my last PR with fixes for v6.17 and this hasn't been
+> in next even for a day so let me queue this for v6.18 and it will get
+> backported once it's upstream next week.
 
-Today's linux-next merge of the btrfs-fixes tree got a conflict in:
 
-  fs/btrfs/zoned.c
+Ye, that's not a problem. It's an "always been broken" thing, so no real
+rush. Thanks!
 
-between commit:
-
-  53de7ee4e28f6 ("btrfs: zoned: don't fail mount needlessly due to too many=
- active zones")
-
-=66rom the origin tree and commit:
-
-  cc53bd2085c8f ("btrfs: add unlikely annotations to branches leading to EI=
-O")
-
-=66rom the btrfs-fixes tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/btrfs/zoned.c
-index f426276e2b6bf,e3341a84f4ab3..0000000000000
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-
---Olj9ztmq2NnX06//
+--Hr2UoKeytqTZDB2w
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjWdvoACgkQJNaLcl1U
-h9BUqAf/c7+BudQ0cSYvKvTzcVwm4N7pFzuhnX+SuYxTdJNMpbaGdN53brh63QMN
-qielK5x29FBFj3DiR7KzswtmaiORiWJuGzT+3QFQAb/cW/0HJmAAh+lVbOURrCyx
-Ucjz28gExTzYU3eNztGMXD5j1wxhJ5ybaw7ZoCnM1VFE1Xw2whp7BPimbagvSgZC
-/2SktxcUVutyfEUi1Wr06A/7SHxjdOmyET41NZ9GV8dRT9zo+VwcK1XRrLNPWhs3
-jB9M2iZJoZMNJNTmhbUNXffwuP/M2QAoY6oBY0JRx/xBkepiuMShoW9Q7etiRp++
-Wvz72AewZHRDYQtDZxGzbHvPHUOIjg==
-=z6jd
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNZ3BQAKCRB4tDGHoIJi
+0vdVAQC450FuGTZX1Fl8Vjzn4qKrLcWlwaBPXJqzYkuFW8cdMQEAvIN/tLEIUbCa
+qKHyddxOB6gipmSkhMm4baDJmDiBCwo=
+=sDAR
 -----END PGP SIGNATURE-----
 
---Olj9ztmq2NnX06//--
+--Hr2UoKeytqTZDB2w--
 
