@@ -1,219 +1,252 @@
-Return-Path: <linux-kernel+bounces-834327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EC0BA4743
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F5ABA4746
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCB061C0597D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073AE560979
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCFE219A79;
-	Fri, 26 Sep 2025 15:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29121C19E;
+	Fri, 26 Sep 2025 15:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MmquPv5s"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="THxOKElK"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013061.outbound.protection.outlook.com [40.93.196.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AFA1D5154
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758901224; cv=none; b=ou9mAPslx476uHjl4YFZSlhdJkBGHCZQurrda1G2HnxZplL9dUbuC16pRwtL/0O1gtPxwl5z3hXEzp/O/DuksijqSHmCowkVuI4R3CO87Vo3Hqc+TXFThkRiQtLwf6LSzY4OsQ8GnFqvvTcb5woMGqCJ8kNsFNsCg0jUf5CzD7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758901224; c=relaxed/simple;
-	bh=OiLMjwD6YYiOtFjG9N2Py1ORaI9GhEFST8KctH4GqKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gycgigh4vTKGNJdjib1j7yYZVjKuyOTBJncw5+Bo0uv5rI1Xr3ZzndJS0D4Z4K9MYldt0ARTmGNRKjetovPTdU1RLeyIr5fzuMVVpI4oMV80ppRhOmPbHMdCwlmeSNDycnl+5rI/DMYccGAJt8ix9wxflVqvVar7xa1rmQSFrOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MmquPv5s; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758901220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vsn9shmdm9oEX/iOQrOVgeb6RG1rrnA0a9na9r1L0Og=;
-	b=MmquPv5s5IcolI3VnVJWTr+n62AZ9kxki5J/BsYrzb/H4Lmw/tHYkRJku066VyzNcO24CV
-	d2S6bgnfFNen4/w4mQlPjzUhIO96vW/Ilwn4a9m0mpqMsPxuXFyaqkKAL6zw7oBAQ5PY8j
-	tQFKFPq8AX5yZk7ipvf7HcPP3g9WxuE=
-From: Tao Chen <chen.dylane@linux.dev>
-To: song@kernel.org,
-	jolsa@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v2] bpf: Add preempt_disable to protect get_perf_callchain
-Date: Fri, 26 Sep 2025 23:39:52 +0800
-Message-ID: <20250926153952.1661146-1-chen.dylane@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE57B215F7D;
+	Fri, 26 Sep 2025 15:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758901225; cv=fail; b=awGiHKvoJRwIasACNsoMcmVpZ2B6VAuBnfKKJcAFWX6M5cjTymD4rUYHNFo+vVjnVNFjY0/k+eY69OsJIKWIqoDAJhSZak60+W5isqCnNTO7Zzci6csFkRS5OuccR4smq5+lcTLVuLb8PY1UkosAXydHMKJT3+B3VE97Egpa9Fk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758901225; c=relaxed/simple;
+	bh=axlluGkzl9ympWkRVSLlDukkrX2jer17DhWxguVyOgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qYOoShFahtqfzXwF9EiFdrgJMCdjxJ8cLBJSkGeE9S/qu57LBPCea0A/JXsyrPIPm5EAcg1vR7ZKrR04ei3rbtOieVkI8XCCzcjXXXy6k39WXFHtQJQ30E5QMMbhERisuP5fGg4MqPcaRCQz3QBa5OnIgS6Ar/F1d9F4atlpboA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=THxOKElK; arc=fail smtp.client-ip=40.93.196.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gZN3rVZjWGYlf/h0ZQNGNL7/YDqyoaLFAFkqZmMmtTmNHf7+3gu+rWSv69Ku7dwe1MOvu3zNxqvkK574v+m4uK/2u1HLgGvJ5PZxgvdVv5OAi4p8S/3Q3akl6d/W0eu3VBAUQoT4ozJO9K3ZQ86vdtmJ/j8RCAvsakFyc39+k8MQCRsoYiJBEEiEi6wkrxahobcUpG2kT0m1PxMnsb0rDdG+SilzqXO0owdk9SEj8i/jOb++8Uxvv0rgPhOvDd1rw+vw2Fr5Jp0S64vFsTWv9ViIxpGdSBgHOkMJ1usGKmtPbnsZsFOmbczI94A+TPQqWGU8SbmaWzAtVgmxR3GR1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6ISpOY3zORb6YJvKGa72bTmNY+805q/wQsN7zUJh5i8=;
+ b=oF27LiONmtFTn6EL4NEeqzg8Wm2ovLhenqiK1ZGhXKMDORU+tiNegAamFR7BGdlG3voLnu8tHnD0aJpOxz1Gcvqo5m+yTzoYBj6920KCMaEhF5bxS6NbX/Y6u7Z+jJNonC/ovsza0LQhKEYWKD5jRlLrSEimANXLV2GzV0j0/mIIARe3lr2f469FrKS7TWfVQ/68CZ6GdK44S3IizgsMqPuUzf+Bs558W7iCZTQ0YHINTPacZgI6DJTs/ytzzzGEpNEJ5/jsvHcQkzdKduLix6gHMzY7N0x67W4ZAn/DSTaaQraAdoUK/tFVaAybcprJ1VEsLyFdFZXbQagJqa0Uvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6ISpOY3zORb6YJvKGa72bTmNY+805q/wQsN7zUJh5i8=;
+ b=THxOKElKTVfEh0dddNNlbZ8DHtbYn7vr6WV9DEobQiWfKnlaJYiYUspBqJHSr2o6NpaRyGGaarZRGnd6j9jtKbOydYkpfIISgxP4Wu07aCLKTtzUWPZdVtjX37whc297IxmkAMwzHJ+SwdDkpLB008rvQwxf7q03qOeEYicYepE=
+Received: from CH3P221CA0026.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1e7::27)
+ by IA4PR12MB9761.namprd12.prod.outlook.com (2603:10b6:208:550::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
+ 2025 15:40:19 +0000
+Received: from DS3PEPF000099D7.namprd04.prod.outlook.com
+ (2603:10b6:610:1e7:cafe::bc) by CH3P221CA0026.outlook.office365.com
+ (2603:10b6:610:1e7::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.14 via Frontend Transport; Fri,
+ 26 Sep 2025 15:40:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS3PEPF000099D7.mail.protection.outlook.com (10.167.17.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Fri, 26 Sep 2025 15:40:19 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 26 Sep
+ 2025 08:40:11 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 26 Sep 2025 08:40:10 -0700
+Message-ID: <e93f0ee7-687a-4f47-a847-90cc1ea87290@amd.com>
+Date: Fri, 26 Sep 2025 10:40:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: Peng Fan <peng.fan@oss.nxp.com>
+CC: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
+	<mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<linux-remoteproc@vger.kernel.org>
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+ <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D7:EE_|IA4PR12MB9761:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc87d304-f412-4241-adb8-08ddfd12ff4f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QWJjcE9xcEhJQ2xoREZ5TThOYjgyUCtheEp5Y0hSN29nUklhWkFhVDczaWV0?=
+ =?utf-8?B?N0JSaW82MC83L1ozcEpVZGxKeTVqa1VqZ0RhaTMxc1p4MUsxVmp4VGNhL1JS?=
+ =?utf-8?B?S2JrVDZJQlQ3UjlaYkxDOEdjR0hkNGVSN3J4Q1lOMHIzNFZTa2x2WVlaVzUz?=
+ =?utf-8?B?TEc4Ty9TOWRlVi85RjBSVyt4WHRKallQdTUrVmdia1Rsaks3Y2ZEVHB2eXdI?=
+ =?utf-8?B?ZEZFeFRwVk9TYnhRSUEzVGlIcnFnZjA4cjRzUWtzS2JaQlM0Yk5TeWhsWUJ6?=
+ =?utf-8?B?V0RqSzNtclFPdjlTcUZkYzV2ck04MnlXWWVRRGZEeExyelpNY1pKcjI3d2xy?=
+ =?utf-8?B?K0tiVFB6TDRPMTNraTBSaitnaWhpQ2NlR0dXRXY3QW5ITjFRZnFzRDduY3hv?=
+ =?utf-8?B?c3U0cXZCWjkvOTNQRmgwUVpZQWJUVkRXd2syQWV6NHVHc2wxSW0rQmcxdVh4?=
+ =?utf-8?B?L1JvNldyWnpkbDdWa3dKWUNTSUNJTDc2ZE1xaHZ5UUhMTmFGVFkxeC8vQks3?=
+ =?utf-8?B?TEhMUWxnNHp2UnZSSlpxMGwvazJkZVB3V3V3TExycC8vVlQxOWZsSGt2OVFa?=
+ =?utf-8?B?TUo4eFNzK3dFQVRoMWl4bWprMi92WXQ1dVFIVGUzdFd4alBzTEFJaXhqS21F?=
+ =?utf-8?B?WEZoQTRRZXBIUGhEVVpsb08xYi83YWdRRDUyNG5lQzBkV2JwZkNmS0F3NlNK?=
+ =?utf-8?B?LzFHRDdhM2wzMG0zN3dwSkxkRGRJWGk0cHNsVldZa2lIMjRBVlJDMS9kZ0lS?=
+ =?utf-8?B?Qk9wMGFZSTlNalRiNEFwZWk2QTR1aVFaR2pDS2FENEliUE5qQWRoV28zZmlV?=
+ =?utf-8?B?RFprN2FCQk1xd0doa24zM3JsMjdRaXlDa0dBaEZOVlpjdEQ1V1pEcEc5TG1E?=
+ =?utf-8?B?aTZNUGFZNHI3blZtdGwzRkg0OVJrMnJZeStxRFUzYlExZWhYTDlwNmk1NTIy?=
+ =?utf-8?B?QXJ0OVBOc3R0cW0yOGY4VzFuYjlCWkVyRTVrZWkrWlBvY1VYY1ppVzRqT3RR?=
+ =?utf-8?B?UlJpODY3aVlvSmUvWmZtalU0cXVUVmF0QlgwazEyL1ExSW45cXlPK2ZqVWs3?=
+ =?utf-8?B?L1Bxa29kVEFnUkhSem9tUVRCd0IrVEYrcmFJemk3VnFSbDR2d1BqdksvR2ls?=
+ =?utf-8?B?dktPUVVGOU5xbCtwbDRDK1VuNkx6QkJWVldiK1NMOWtWRG9YS3hTR3h3S2s2?=
+ =?utf-8?B?ZGNsR0V2U0RVVjd4RkYvSlNnd3FRWEliL2NrR2dOUTltOGpub3pOY3lpUXFn?=
+ =?utf-8?B?UzRUZnVqaG84dk9VL1I2RDB0TFlvdldyNS9kdlFCcWVEcEhSSDdSSW42YWZz?=
+ =?utf-8?B?eUFyaGJOeHovRUM2NVlrRkhhRWVXMTU4QjY2NU9uQVFXTHJ0QVo5cmhXQjhR?=
+ =?utf-8?B?TURGSU00a1Y3YkhkbTJvNFc2SXBHVVhacFFkQjFKclVSVW8wQ2w1eWpkNG80?=
+ =?utf-8?B?a2N6ekNqbUp1UE9NS2x5RjZFUEhHejNLQVZ3M1UvdkptMDd5YjBJWTVycjd3?=
+ =?utf-8?B?d3BRdHNUNzJldHVqMm5nMk8rZGlnSXhKVFBMVWI0RDQxWEMrNkhjdE9pSFJH?=
+ =?utf-8?B?UDE0bGVFZTArVWRVYkxaWDBodHpCTzJXdXAzWlkvSFFlZm1aR29PbU16TXRp?=
+ =?utf-8?B?UTZyR2thajB5SGlvYnNodnlYSHJlNXZPSzZzYU02TUlYYkwybUZpMEtJM3lP?=
+ =?utf-8?B?NGZRaTZNTUJZb1gxSXRHUG1TbnBvZkt3d3UzbkVHYVRVelJwdWFYU3hUczU0?=
+ =?utf-8?B?amNnZ3RGM0JrdFpwREEyMktZZ25ybTdyTVFxZm1yb1pEQU00TDRvTGsrb0tU?=
+ =?utf-8?B?MnJBeXZReG1TVlVuWXNuazBSTXZTLy9jUzJEVWFmU0MxYUYwSWdHMTB0c2wr?=
+ =?utf-8?B?V2NDQ0llQkdkVmhsaTlPN3BNcVpqM3lYaFhTeGxQZzFTM3NrSTNMRGs0ZWdR?=
+ =?utf-8?B?Z2tNeWlJVVAxaUVWQytqUm5RODJYelpCZHhONlZnZndJdDZ6MjhWTDFTd3NH?=
+ =?utf-8?B?ZFVhcVp1ajBGT1lIKytVRUM5Yk5MSDVQS0YxL0ZGejFWTnFqZ3lhUHJBNURa?=
+ =?utf-8?B?MnBrMEdCN2Zua1hwczVSYWp4VkFUVlFLb2xiR2xTSmlYN1dMSWhId3BiRDh2?=
+ =?utf-8?Q?XXUg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 15:40:19.0323
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc87d304-f412-4241-adb8-08ddfd12ff4f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9761
 
-As Alexei noted, get_perf_callchain() return values may be reused
-if a task is preempted after the BPF program enters migrate disable
-mode. We therefore use bpf_perf_callchain_entries percpu entries
-similarly to bpf_try_get_buffers to preserve the current task's
-callchain and prevent overwriting by preempting tasks. And we also
-add preempt_disable to protect get_perf_callchain.
+Hi Peng,
 
-Reported-by: Alexei Starovoitov <ast@kernel.org>
-Closes: https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/stackmap.c | 76 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 61 insertions(+), 15 deletions(-)
+Thanks for reviews. Please find my comments below.
 
-Change list:
- v1 -> v2:
-  From Alexei
-  - create percpu entris to preserve current task's callchain
-    similarly to bpf_try_get_buffers.
-  v1: https://lore.kernel.org/bpf/20250922075333.1452803-1-chen.dylane@linux.dev
+On 9/26/25 2:37 AM, Peng Fan wrote:
+> Hi Tanmay,
+> 
+> On Thu, Sep 25, 2025 at 11:50:44AM -0700, Tanmay Shah wrote:
+>> Sometimes clients need to know if mailbox queue is full or not before
+>> posting new message via mailbox. If mailbox queue is full clients can
+>> choose not to post new message. This doesn't mean current queue length
+>> should be increased, but clients may want to wait till previous Tx is
+>> done. This API can help avoid false positive warning from mailbox
+>> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>> drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>> drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>> include/linux/mailbox_client.h          |  1 +
+> 
+> The mailbox and remoteproc should be separated.
+> 
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 2e182a3ac4c..8788c219926 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -31,6 +31,55 @@ struct bpf_stack_map {
- 	struct stack_map_bucket *buckets[] __counted_by(n_buckets);
- };
- 
-+struct bpf_perf_callchain_entry {
-+	u64 nr;
-+	u64 ip[PERF_MAX_STACK_DEPTH];
-+};
-+
-+#define MAX_PERF_CALLCHAIN_PREEMPT 3
-+static DEFINE_PER_CPU(struct bpf_perf_callchain_entry[MAX_PERF_CALLCHAIN_PREEMPT],
-+		      bpf_perf_callchain_entries);
-+static DEFINE_PER_CPU(int, bpf_perf_callchain_preempt_cnt);
-+
-+static int bpf_get_perf_callchain(struct bpf_perf_callchain_entry **entry,
-+				  struct pt_regs *regs, u32 init_nr, bool kernel,
-+				  bool user, u32 max_stack, bool crosstack,
-+				  bool add_mark)
-+{
-+	struct bpf_perf_callchain_entry *bpf_entry;
-+	struct perf_callchain_entry *perf_entry;
-+	int preempt_cnt;
-+
-+	preempt_cnt = this_cpu_inc_return(bpf_perf_callchain_preempt_cnt);
-+	if (WARN_ON_ONCE(preempt_cnt > MAX_PERF_CALLCHAIN_PREEMPT)) {
-+		this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-+		return -EBUSY;
-+	}
-+
-+	bpf_entry = this_cpu_ptr(&bpf_perf_callchain_entries[preempt_cnt - 1]);
-+
-+	preempt_disable();
-+	perf_entry = get_perf_callchain(regs, init_nr, kernel, user, max_stack,
-+					crosstack, add_mark);
-+	if (unlikely(!perf_entry)) {
-+		preempt_enable();
-+		this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-+		return -EFAULT;
-+	}
-+	memcpy(bpf_entry, perf_entry, sizeof(u64) * (perf_entry->nr + 1));
-+	*entry = bpf_entry;
-+	preempt_enable();
-+
-+	return 0;
-+}
-+
-+static void bpf_put_perf_callchain(void)
-+{
-+	if (WARN_ON_ONCE(this_cpu_read(bpf_perf_callchain_preempt_cnt) == 0))
-+		return;
-+	this_cpu_dec(bpf_perf_callchain_preempt_cnt);
-+}
-+
- static inline bool stack_map_use_build_id(struct bpf_map *map)
- {
- 	return (map->map_flags & BPF_F_STACK_BUILD_ID);
-@@ -303,8 +352,9 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	u32 max_depth = map->value_size / stack_map_data_size(map);
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 	bool user = flags & BPF_F_USER_STACK;
--	struct perf_callchain_entry *trace;
-+	struct bpf_perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	int err;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
-@@ -314,14 +364,15 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	if (max_depth > sysctl_perf_event_max_stack)
- 		max_depth = sysctl_perf_event_max_stack;
- 
--	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
--				   false, false);
-+	err = bpf_get_perf_callchain(&trace, regs, 0, kernel, user, max_depth,
-+				     false, false);
-+	if (err)
-+		return err;
- 
--	if (unlikely(!trace))
--		/* couldn't fetch the stack trace */
--		return -EFAULT;
-+	err = __bpf_get_stackid(map, (struct perf_callchain_entry *)trace, flags);
-+	bpf_put_perf_callchain();
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	return err;
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -443,8 +494,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	if (sysctl_perf_event_max_stack < max_depth)
- 		max_depth = sysctl_perf_event_max_stack;
- 
--	if (may_fault)
--		rcu_read_lock(); /* need RCU for perf's callchain below */
-+	preempt_disable();
- 
- 	if (trace_in)
- 		trace = trace_in;
-@@ -455,8 +505,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 					   crosstask, false);
- 
- 	if (unlikely(!trace) || trace->nr < skip) {
--		if (may_fault)
--			rcu_read_unlock();
-+		preempt_enable();
- 		goto err_fault;
- 	}
- 
-@@ -474,10 +523,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	} else {
- 		memcpy(buf, ips, copy_len);
- 	}
--
--	/* trace/ips should not be dereferenced after this point */
--	if (may_fault)
--		rcu_read_unlock();
-+	preempt_enable();
- 
- 	if (user_build_id)
- 		stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
--- 
-2.48.1
+Mailbox framework is introducing new API. I wanted the use case to be in 
+the same patch-set, otherwise we might see unused API warning.
+
+Hence, both in the same patch makes more sense. If maintainers prefer, I 
+will separate them.
+
+>> 3 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>> index 5cd8ae222073..7afdb2c9006d 100644
+>> --- a/drivers/mailbox/mailbox.c
+>> +++ b/drivers/mailbox/mailbox.c
+>> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>> }
+>> EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>>
+>> +/**
+>> + * mbox_queue_full - check if mailbox queue is full or not
+>> + * @chan: Mailbox channel assigned to this client.
+>> + *
+>> + * Clients can choose not to send new msg if mbox queue is full.
+>> + *
+>> + * Return: true if queue is full else false. < 0 for error
+>> + */
+>> +int mbox_queue_full(struct mbox_chan *chan)
+>> +{
+>> +	unsigned long flags;
+>> +	int res;
+>> +
+>> +	if (!chan)
+>> +		return -EINVAL;
+>> +
+>> +	spin_lock_irqsave(&chan->lock, flags);
+> 
+> Use scoped_guard.
+
+Other APIs use spin_lock_irqsave. Probably scoped_guard should be 
+introduced in a different patch for all APIs in the mailbox.
+
+> 
+>> +	res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+>> +	spin_unlock_irqrestore(&chan->lock, flags);
+>> +
+>> +	return res;
+>> +}
+>> +EXPORT_SYMBOL_GPL(mbox_queue_full);
+> 
+> add_to_rbuf is able to return ENOBUFS when call mbox_send_message.
+> Does checking mbox_send_message return value works for you?
+> 
+
+That is the problem. mbox_send_message uses add_to_rbuf and fails. But 
+during failure, it prints warning message:
+
+dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
+
+In some cases there are lot of such messages on terminal. Functionally 
+nothing is wrong and everything is working but user keeps getting false 
+positive warning about increasing mbox tx queue length. That is why we 
+need API to check if mbox queue length is full or not before doing 
+mbox_send_message. Not all clients need to use it, but some cane make 
+use of it.
+
+
+>> +
+>> /**
+>>   * mbox_send_message -	For client to submit a message to be
+>>   *				sent to the remote.
+> 
+> Regards
+> Peng
 
 
