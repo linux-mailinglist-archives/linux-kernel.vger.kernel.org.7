@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-833522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF20BA2377
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BCABA2380
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 04:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE3032176B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6A34C59EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 02:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B7A261573;
-	Fri, 26 Sep 2025 02:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE69264623;
+	Fri, 26 Sep 2025 02:33:21 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E6CD27E;
-	Fri, 26 Sep 2025 02:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64552609D6;
+	Fri, 26 Sep 2025 02:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758853998; cv=none; b=QayaGN42NZ7QjfbQU99YbAAMhnaiwNxqQLMuPoXKElZZkx0rizwQ3d7yBzzjl+J65JMpXiMgTy2LyFgy2S2hoCp+Vq8nwF6D+gD0Pq5p6gpq1Npeg4B3LDxJR+rPGz2iyBPQtSvi1EYvTiPsHTYVapa++QXs+gtYjC/+NSPLr9k=
+	t=1758854001; cv=none; b=XF5pMX6cPKVcid/CR1iwrJffmbPjxGqv70Y7iOAR5BQBr9EzECZtDoBkVDyMrp70AwXV0I/Ifa2J03W0c6yKrrUBUKQMstbZrD/aJA8URmzoSvHlr7trR2nTNG2j/9vWAM4z8qP9yyVaoInTfQBgXi3mm9VGUbQV2DBeG0PDWwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758853998; c=relaxed/simple;
-	bh=x3PFWaBUPTmQ986Ev/z6aqN2yyGmzhZKttLWMMBIcXc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tzcbAkKTWL7Yu0/o9MCuejZnHQZf3LPXH7jvRxjyX3jcgR7SVhIFr62V1wfPjKTWLaQaUkTYp0C331S8Vvmts7EFdM7esOCpKKi/xqrNgx7JMyi3YlwAGucgaU+S/Xu5uiuCUfhLCRtgqx/in8hgbx2CTAXdmMZVstTq5THZnaM=
+	s=arc-20240116; t=1758854001; c=relaxed/simple;
+	bh=9P1DgRTyTwlbkoms5dO/oxOMMmGjxNTqJcoBHpOIcAo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eo6xf5Z09JZAqFYXXWZRAV4b+od2r7GKojBmpLY51j7aw8qHLN45pEFxcaXGE+5xVpnf61DWIOR93TDGc0GnF7v1NRAM7RI423Np10THM1muG9oZ2Ee+Xo5sAWRq0vI15teSb2GvcJ64gnuUsnbiqU1F30wIDj64oxQgY2vmL2Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -40,10 +41,13 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
  Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Alan
  Stern" <stern@rowland.harvard.edu>, <linux-usb@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/2] Add Aspeed AST2700 ehci support
-Date: Fri, 26 Sep 2025 10:33:06 +0800
-Message-ID: <20250926023308.2890607-1-ryan_chen@aspeedtech.com>
+CC: Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 1/2] dt-bindings: usb: ehci: Add Aspeed AST2700 compatible
+Date: Fri, 26 Sep 2025 10:33:07 +0800
+Message-ID: <20250926023308.2890607-2-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250926023308.2890607-1-ryan_chen@aspeedtech.com>
+References: <20250926023308.2890607-1-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,22 +57,26 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This series adds support for the EHCI controller found in Aspeed's
-new AST2700 SoC.
+Add the compatible string for Aspeed AST2700 SoC.
 
-v2:
--ehci-platform.c
- - remove ehci_ast2700_platform replace by of_device_id data for
-   dma_mask_64.
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ryan Chen (2):
-  dt-bindings: usb: ehci: Add Aspeed AST2700 compatible
-  usb: ehci: Add Aspeed AST2700 support
-
- .../devicetree/bindings/usb/generic-ehci.yaml         |  1 +
- drivers/usb/host/ehci-platform.c                      | 11 ++++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+index 508d958e698c..4e84bead0232 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+@@ -46,6 +46,7 @@ properties:
+               - aspeed,ast2400-ehci
+               - aspeed,ast2500-ehci
+               - aspeed,ast2600-ehci
++              - aspeed,ast2700-ehci
+               - brcm,bcm3384-ehci
+               - brcm,bcm63268-ehci
+               - brcm,bcm6328-ehci
 -- 
 2.34.1
 
