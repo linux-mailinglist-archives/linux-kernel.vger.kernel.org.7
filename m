@@ -1,93 +1,176 @@
-Return-Path: <linux-kernel+bounces-833941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91165BA3600
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AA1BA3609
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BE662009C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59B1189B10D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64F52F39B4;
-	Fri, 26 Sep 2025 10:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF376299AB3;
+	Fri, 26 Sep 2025 10:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BYQEGrxD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XIjs4V8m"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D180E2F3607;
-	Fri, 26 Sep 2025 10:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9208626CE0C
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 10:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758883002; cv=none; b=p6w3PLDvUDkLIkpXQx3KJLL6fo1QkzT2Gj3/x776E5DFs9PBXAIDtJ2SfNCA53RqM6wQrer7AeaXCbMYSFnEvNdLr7g6EdmyOxmHQIxvp5m1+GIvzIXTZnHsU8zHxaRtnbfzW+SOeQApTZgl0wEjCD8uySzZ+B55xLK0iJzT8+g=
+	t=1758883039; cv=none; b=riaTagoT5eCCdtAIQSKb4/UjFFs9vzAWuXqQ4RsiHgF5bVaUuCRATcXXMAH9lkmWY5q3O14xYOFuJy5IdLaziplCn+dxBvEs4W0kf+fK1CTf+xsO+uVcMJhHtmkw1U5sfCwmYFe75nd+WPf/RO0rSFSgnF0fDA/+jfCueyFEWps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758883002; c=relaxed/simple;
-	bh=+yWmajeOY4iXOKiCMaYj+7IWbKZOIO8QpBCjTEtIN9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzUVzHdiOCrOiCAnIeupxHB6SKE7jtXRvTlMEpjxv7AXlhwjPGWyw5//u7s3p6R603v6stnaEcexL6Rn8qm2MbZIrTkxjg4KbKC2+TrxWvYLRdGtoeS7H8/eqVuyEwlA7heKJ7/rXGR0qoy9wJQi1peh+JKe840krS3b3L9I7KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BYQEGrxD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+yWmajeOY4iXOKiCMaYj+7IWbKZOIO8QpBCjTEtIN9o=; b=BYQEGrxD39MaHfkivzwdPRT3mq
-	R+moOsTsvPVLEaSmkW5TcYPVh0rH/CJrWhc4p+qz+MvS8rPvYsq4Jkh5MwpPdz7Fk3L8zYrwkBFaX
-	qT4yQj2DfoaZGc9ewP6ICgHgEkhru4QkAf9o2GWd2n3WovXc65ChpU7CJQalvHQWDcfEJyzNJI+JA
-	wmTWSEgZVefPA6RAjUsWt/bPByVSLYhNoMY3x5kRRpMF4a/q2ePeSNP/YGuQlxvIp23C3eu++vPi1
-	wGFBlBOVoa9V63M/GIRgDSt2Gk0WnYPU5ghSMc2iMNzgiZIhG27JMi1TzXhOglUsAg1Ag0//WnMsQ
-	JcWWp0dg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v25oS-00000009pqb-3I87;
-	Fri, 26 Sep 2025 10:36:29 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 556533002BF; Fri, 26 Sep 2025 12:36:28 +0200 (CEST)
-Date: Fri, 26 Sep 2025 12:36:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <20250926103628.GE4067720@noisy.programming.kicks-ass.net>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
- <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
- <aMnnslT_mUfAtytN@slm.duckdns.org>
- <20250925083533.GW4067720@noisy.programming.kicks-ass.net>
- <aNW3du48v3PvwPbq@slm.duckdns.org>
+	s=arc-20240116; t=1758883039; c=relaxed/simple;
+	bh=ZTug48IAnMD3yhiHMIVmwBvbyMFuE3UaW93XHmjETNc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u8Hr+41/13S61xGLazdQB2/AWaSDpb/j4P9GFPwgaen0WH0LC6DO7pL9fqPfhC9oBqSlEuVZPwGjjspI5cWuH5KVP+BNQ+4xWLe6FpwjivmkHUUF5of/Zelo+Eb3gFOmwNUHYu52pOCqxS/gRXTJ32jeDbpHHRr8pKUcbt+MWTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XIjs4V8m; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <14a30aa593f8d8c018bf54439261a8f05182aa87.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758883024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZTug48IAnMD3yhiHMIVmwBvbyMFuE3UaW93XHmjETNc=;
+	b=XIjs4V8mPqHWsmdMVGDTWvCnguAA/13ei+Bgda8NjxRNvwp/WZj/Czr12bQ7XcBIPO5jKc
+	a21qXlWBx9kRuu/a93yC9dsckqoz2cVQ3+50p+o7xnToj2XQ5dW+vS4xjSDMA3hcBqIZZ/
+	r/3hhdk3NdZfS6kvCYt/FscWpplT+WM=
+Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in
+ print_reg_state()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Brahmajit Das <listout@listout.xyz>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+ syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, Andrii Nakryiko
+ <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Eduard
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh
+ <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Song Liu
+ <song@kernel.org>, syzkaller-bugs <syzkaller-bugs@googlegroups.com>, 
+ Yonghong Song <yonghong.song@linux.dev>
+Date: Fri, 26 Sep 2025 18:36:54 +0800
+In-Reply-To: <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+	 <20250923174738.1713751-1-listout@listout.xyz>
+	 <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
+	 <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
+	 <9051652cf548271da9c349758cbd70aaa3cee444.camel@linux.dev>
+	 <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
+	 <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
+	 <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNW3du48v3PvwPbq@slm.duckdns.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 25, 2025 at 11:43:18AM -1000, Tejun Heo wrote:
-> Yes, I was on a similar train of thought. The only reasonable way that I can
-> think of for solving this for BPF managed tasks is giving each task its own
-> inner sched lock, which makes sense as all sched operations (except for
-> things like watchdog) are per-task and we don't really need wider scope
-> locking.
+T24gRnJpLCAyMDI1LTA5LTI2IGF0IDA2OjM0ICswNTMwLCBCcmFobWFqaXQgRGFzIHdyb3RlOgo+
+IE9uIDI1LjA5LjIwMjUgMjM6MzEsIEthRmFpIFdhbiB3cm90ZToKPiA+IE9uIFdlZCwgMjAyNS0w
+OS0yNCBhdCAyMzo1OCArMDUzMCwgQnJhaG1haml0IERhcyB3cm90ZToKPiA+ID4gT24gMjUuMDku
+MjAyNSAwMTozOCwgS2FGYWkgV2FuIHdyb3RlOgo+ID4gPiA+IE9uIFdlZCwgMjAyNS0wOS0yNCBh
+dCAyMToxMCArMDUzMCwgQnJhaG1haml0IERhcyB3cm90ZToKPiA+ID4gPiA+IE9uIDI0LjA5LjIw
+MjUgMDk6MzIsIEFsZXhlaSBTdGFyb3ZvaXRvdiB3cm90ZToKPiA+ID4gPiA+ID4gT24gV2VkLCBT
+ZXAgMjQsIDIwMjUgYXQgMTo0M+KAr0FNIEJyYWhtYWppdCBEYXMKPiA+ID4gPiA+ID4gPGxpc3Rv
+dXRAbGlzdG91dC54eXo+Cj4gPiA+ID4gPiA+IHdyb3RlOgo+ID4gPiA+ID4gPiA+IAo+ID4gPiA+
+ID4gPiA+IFN5emthbGxlciByZXBvcnRlZCBhIGdlbmVyYWwgcHJvdGVjdGlvbiBmYXVsdCBkdWUg
+dG8gYQo+ID4gPiA+ID4gPiA+IE5VTEwKPiA+ID4gPiA+ID4gPiBwb2ludGVyCj4gPiA+ID4gPiA+
+ID4gZGVyZWZlcmVuY2UgaW4gcHJpbnRfcmVnX3N0YXRlKCkgd2hlbiBhY2Nlc3NpbmcgcmVnLQo+
+ID4gPiA+ID4gPiA+ID5tYXBfcHRyCj4gPiA+ID4gPiA+ID4gd2l0aG91dAo+ID4gPiA+ID4gPiA+
+IGNoZWNraW5nIGlmIGl0IGlzIE5VTEwuCj4gPiA+ID4gPiA+ID4gCj4gLi4uc25pcC4uLgo+ID4g
+PiA+IAo+ID4gPiA+IExvb2tzIGxpa2Ugd2UncmUgZ2V0dGluZyBzb21ld2hlcmUuCj4gPiA+ID4g
+SXQgc2VlbXMgdGhlIHZlcmlmaWVyIGlzIG5vdCBjbGVhcmluZyByZWctPnR5cGUuCj4gPiA+ID4g
+YWRqdXN0X3NjYWxhcl9taW5fbWF4X3ZhbHMoKSBzaG91bGQgYmUgY2FsbGVkIG9uIHNjYWxhciB0
+eXBlcwo+ID4gPiA+IG9ubHkuCj4gPiA+IAo+ID4gPiBSaWdodCwgdGhlcmUgaXMgYSBjaGVjayBp
+biBjaGVja19hbHVfb3AKPiA+ID4gCj4gPiA+IAkJaWYgKGlzX3BvaW50ZXJfdmFsdWUoZW52LCBp
+bnNuLT5kc3RfcmVnKSkgewo+ID4gPiAJCQl2ZXJib3NlKGVudiwgIlIlZCBwb2ludGVyIGFyaXRo
+bWV0aWMKPiA+ID4gcHJvaGliaXRlZFxuIiwKPiA+ID4gCQkJCWluc24tPmRzdF9yZWcpOwo+ID4g
+PiAJCQlyZXR1cm4gLUVBQ0NFUzsKPiA+ID4gCQl9Cj4gPiA+IAo+ID4gPiBpc19wb2ludGVyX3Zh
+bHVlIGNhbGxzIF9faXNfcG9pbnRlcl92YWx1ZSB3aGljaCB0YWtlcyBib29sCj4gPiA+IGFsbG93
+X3B0cl9sZWFrcyBhcyB0aGUgZmlyc3QgYXJndW1lbnQuIE5vdyBmb3Igc29tZSByZWFzb24gaW4K
+PiA+ID4gdGhpcwo+ID4gPiBjYXNlCj4gPiA+IGFsbG93X3B0cl9sZWFrcyBpcyBiZWluZyBwYXNz
+ZWQgYXMgdHJ1ZSwgYXMgYSByZXN1bHQKPiA+ID4gX19pc19wb2ludGVyX3ZhbHVlCj4gPiA+IChh
+bmQgaW4gdHVybiBpc19wb2ludGVyX3ZhbHVlKSByZXR1cm5zIGZhbHNlIHdoZW4gZXZlbiB3aGVu
+Cj4gPiA+IHJlZ2lzdGVyCj4gPiA+IHR5cGUgaXMgQ09OU1RfUFRSX1RPX01BUC4KPiA+ID4gCj4g
+PiAKPiA+IElJVUMsIGBlbnYtPmFsbG93X3B0cl9sZWFrc2Agc2V0IHRydWUgbWVhbnMgcHJpdmls
+ZWdlZCBtb2RlICgKPiA+IENBUF9QRVJGTU9OIG9yIENBUF9TWVNfQURNSU4gKSwgZmFsc2UgZm9y
+IHVucHJpdmlsZWdlZCBtb2RlLiAKPiA+IAo+ID4gCj4gPiBXZSBjYW4gdXNlIF9faXNfcG9pbnRl
+cl92YWx1ZSB0byBjaGVjayBpZiB0aGUgcmVnaXN0ZXIgdHlwZSBpcyBhCj4gPiBwb2ludGVyLiBG
+b3IgcG9pbnRlcnMsIHdlIGNoZWNrIGFzIGJlZm9yZSAoYmVmb3JlIGNoZWNraW5nIEJQRl9ORUcK
+PiA+IHNlcGFyYXRlbHkpLCBhbmQgZm9yIHNjYWxhcnMsIGl0IHJlbWFpbnMgdW5jaGFuZ2VkLsKg
+UGVyaGFwcyB0aGlzCj4gPiB3YXkgd2UKPiA+IGNhbiBmaXggdGhlIGVycm9yLgo+ID4gCj4gPiBp
+ZiAob3Bjb2RlID09IEJQRl9ORUcpIHsKPiA+IAlpZiAoX19pc19wb2ludGVyX3ZhbHVlKGZhbHNl
+LCAmcmVnc1tpbnNuLT5kc3RfcmVnXSkpIHsKPiA+IAkJZXJyID0gY2hlY2tfcmVnX2FyZyhlbnYs
+IGluc24tPmRzdF9yZWcsIERTVF9PUCk7Cj4gPiAJfSBlbHNlIHsKPiA+IAkJZXJyID0gY2hlY2tf
+cmVnX2FyZyhlbnYsIGluc24tPmRzdF9yZWcsCj4gPiBEU1RfT1BfTk9fTUFSSyk7Cj4gPiAJCWVy
+ciA9IGVyciA/OiBhZGp1c3Rfc2NhbGFyX21pbl9tYXhfdmFscyhlbnYsIGluc24sCj4gPiAJCQkJ
+CQkmcmVnc1tpbnNuLQo+ID4gPmRzdF9yZWddLAo+ID4gCQkJCQkJcmVnc1tpbnNuLQo+ID4gPmRz
+dF9yZWddKTsKPiA+IAl9Cj4gPiB9IGVsc2Ugewo+ID4gCj4gPiAKPiA+IC0tIAo+ID4gVGhhbmtz
+LAo+ID4gS2FGYWkKPiAKPiBZZXAsIHRoYXQgd29ya3MuCj4gCk9rCj4gLS0tIGEva2VybmVsL2Jw
+Zi92ZXJpZmllci5jCj4gKysrIGIva2VybmVsL2JwZi92ZXJpZmllci5jCj4gQEAgLTE1NTA1LDEw
+ICsxNTUwNSwxNyBAQCBzdGF0aWMgaW50IGNoZWNrX2FsdV9vcChzdHJ1Y3QKPiBicGZfdmVyaWZp
+ZXJfZW52ICplbnYsIHN0cnVjdCBicGZfaW5zbiAqaW5zbikKPiAKPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgLyogY2hlY2sgZGVzdCBvcGVyYW5kICovCj4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIGlmIChvcGNvZGUgPT0gQlBGX05FRykgewo+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlcnIgPSBjaGVja19yZWdfYXJnKGVudiwg
+aW5zbi0+ZHN0X3JlZywKPiBEU1RfT1BfTk9fTUFSSyk7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVyciA9IGVyciA/OiBhZGp1c3Rfc2NhbGFyX21pbl9t
+YXhfdmFscyhlbnYsCj4gaW5zbiwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgJnJlZ3NbaW5zbi0KPiA+ZHN0X3JlZ10sCj4gLcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZ3NbaW5zbi0K
+PiA+ZHN0X3JlZ10pOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBpZiAoX19pc19wb2ludGVyX3ZhbHVlKGZhbHNlLCAmcmVnc1tpbnNuLQo+ID5kc3RfcmVn
+XSkpIHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGVyciA9IGNoZWNrX3JlZ19hcmcoZW52LCBpbnNuLQo+ID5kc3RfcmVnLCBE
+U1RfT1ApOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9
+IGVsc2Ugewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgZXJyID0gY2hlY2tfcmVnX2FyZyhlbnYsIGluc24tCj4gPmRzdF9yZWcs
+Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRFNUX09QX05P
+X01BUkspOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgZXJyID0gZXJywqDCoCA/Ogo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgCj4gYWRqdXN0X3NjYWxhcl9taW5fbWF4X3ZhbHMoCj4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVudiwgaW5zbiwKPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgJnJlZ3NbaW5zbi0KPiA+ZHN0
+X3JlZ10sCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHJlZ3NbaW5zbi0KPiA+ZHN0X3JlZ10pOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCB9Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0gZWxz
+ZSB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlcnIg
+PSBjaGVja19yZWdfYXJnKGVudiwgaW5zbi0+ZHN0X3JlZywKPiBEU1RfT1ApOwo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4gCgpXZSBjYW4gbWFrZSBjb2RlIGNsZWFuZXIgYW5k
+IGNoYW5nZSBqdXN0IG9uZSBsaW5lIGZvciBhbGwuCgppZiAob3Bjb2RlID09IEJQRl9ORUcgJiYg
+IV9faXNfcG9pbnRlcl92YWx1ZShmYWxzZSwgJnJlZ3NbaW5zbi0KPmRzdF9yZWddKSkgewoJZXJy
+ID0gY2hlY2tfcmVnX2FyZyhlbnYsIGluc24tPmRzdF9yZWcsIERTVF9PUF9OT19NQVJLKTsKCWVy
+ciA9IGVyciA/OiBhZGp1c3Rfc2NhbGFyX21pbl9tYXhfdmFscyhlbnYsIGluc24sCgkJCQkJICZy
+ZWdzW2luc24tPmRzdF9yZWddLAoJCQkJCSByZWdzW2luc24tPmRzdF9yZWddKTsKfSBlbHNlIHsK
+CWVyciA9IGNoZWNrX3JlZ19hcmcoZW52LCBpbnNuLT5kc3RfcmVnLCBEU1RfT1ApOwp9Cgo+IAo+
+IEknbGwganVzdCB3YWl0IGZvciBvdGhlciBkZXZlbG9wZXIgb3IgQWxleGVpLCBpbiBjYXNlIHRo
+ZXkgaGF2ZSBhbnkKPiBmZWVkYmFjayBiZWZvcmUgc2VuZGluZyBhIHYzLgo+IAoKWW91IHNob3Vs
+ZCBhZGQgYSBGaXhlcyBsYWJlbCBpbiB0aGUgY29tbWl0IGxvZyBhbmQgYWRkIHNlbGZ0ZXN0IGZv
+ciBpdAppbiBWMy7CoApGaXhlcyBsYWJlbCBpcyBGaXhlczogYWNlZDEzMjU5OWIzICgiYnBmOiBB
+ZGQgcmFuZ2UgdHJhY2tpbmcgZm9yCkJQRl9ORUciKQpGb3Igc2VsZnRlc3QgeW91IG1heSBjaGVj
+ayB0aGUgdGVzdCBpbiB2ZXJpZmllcl92YWx1ZV9pbGxlZ2FsX2FsdS5jIGFuZApvdGhlciBmaWxl
+cy4gIAoKVGhlIGNvZGUgaW4geW91ciBuZXh0IHBvc3Qgd291bGQgY2hhbmdlIHRoZSBiZWhhdmlv
+ciBvZiBCUEZfTkVHIGFuZCAKQlBGX0VORCwgeW91IGNhbiBydW4gdGhlIHNlbGZ0ZXN0IHRvIGNo
+ZWNrIHRoYXQuCgoKVGhlIGVtYWlsIEkgc2VudCBsYXN0IHRpbWUgd2FzIHJlamVjdGVkIGJ5IHRo
+ZSBtYWlsIHNlcnZlciBiZWNhdXNlIGl0CndhcyBpbiBIVE1MIGZvcm1hdO+8jHNvcnJ5IGZvciB0
+aGF0LgotLSAKVGhhbmtzLApLYUZhaQo=
 
-Like I've said before; I really don't understand how that would be
-helpful at all.
-
-How can you migrate a task by holding a per-task lock?
 
