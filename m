@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-834274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF51BA451A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF265BA4520
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD0C321D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2671C037D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462D71F12F4;
-	Fri, 26 Sep 2025 14:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF621F9F47;
+	Fri, 26 Sep 2025 14:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSY7GnSS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMUiONk7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E2B1EA7C9;
-	Fri, 26 Sep 2025 14:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B91F419A;
+	Fri, 26 Sep 2025 14:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898776; cv=none; b=ESk8ZfVQ+rGxo3l5t6jZlC17/mKYG0qEawCOAuc6Tzn4rvwZ1hadIX3z9OU7gA1GtuqPh3LZYcLB67AGGVhf14bwFnB4Grg/8rQ50UjI0rzmPq6606NkMihona5CIDyMz+IhhpwB7xmZTw0tr/HEZRQ7T5YFGJfvADpJxGjfxnE=
+	t=1758898778; cv=none; b=EGnfLV/5Ult0h16gZZ0QbnTKsjou6iXM1JaId8ZTs+2wA8YAf8gyEGmDMntA13gLXa98BgPe+NM8ydnha2e5UiPo0YJDcmBiM8+508qcDFE2/LpEfu3bViCZIk9dqHxhaNTNIlG0BGXsbjRXS/9IiNcxtfFGug5c96pMsRpKOmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898776; c=relaxed/simple;
-	bh=LXAu2pnvqE9GfKVOekmsFUqcnQwGAuCthdxLBtCKXUU=;
+	s=arc-20240116; t=1758898778; c=relaxed/simple;
+	bh=7dxgN7NeLEQ/7j39HKCLIeMvAf2J3M2y7izUrZX/pVg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RJeOW+W0+iMnS+P0NFaZYPls10TTATxW4Yta8kaenbJ8iX7TeeXIAOKMnpTeCZDyH7yLUq0QH1RS0SHbiNPltTxQzslyDI1AnhovvoNgjRljoGN+6AqjB0RQlt27KIQSupk1xy/AwETNKbCZFHv2nGmY0QKParXd0oi0+ahlFz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSY7GnSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B852BC4CEF7;
-	Fri, 26 Sep 2025 14:59:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=LUASu4bCuXDqoLBiOBoy/yTwOD/hNvrlogkLmD6EBUZ8LrWr7B+5HhJ6+0wtb9/RbkxBGQNFwiB5/PIKhhD47BKyxg3SRVTiM/mEl8DxVdcBSqm4qujdEm47gnJh8P5vhnMe/DZNEdxjXwEdtxJYQFnKIRSOFhgT8N5IneoMT1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMUiONk7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F8AC4CEF4;
+	Fri, 26 Sep 2025 14:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758898776;
-	bh=LXAu2pnvqE9GfKVOekmsFUqcnQwGAuCthdxLBtCKXUU=;
+	s=k20201202; t=1758898777;
+	bh=7dxgN7NeLEQ/7j39HKCLIeMvAf2J3M2y7izUrZX/pVg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dSY7GnSSILL/vN7Vh+7Q7Crz3PUYPkR5zUwyiYRZlOSVu07gPUZRfPU/+oF3InfNs
-	 qJUInerUoouJxGuBtiI2mfhH0DJf8uTc6tGLY9vEm1LAvwZXi9K1MhB7Zl0iDxoXDY
-	 hFef34UhKXjKnsvFh3mJGsI3yV9cy4ITCEKpw/rUDv74EprMXN8vuiu2KnjxEd4xoc
-	 YpsbMiXvvwqk7fbxmml6WZstrF6PKeiGyevx0llI42MKE0nbPy8NafHQOTpmXWuKFB
-	 Xi27lu7ujD9TW5q2bQsxv3vbeYuRwrOY98rkX/dCDNjvEFbs9xN5UrTTgoDLmhZ5mU
-	 E1uvCnPt7/Y+w==
+	b=dMUiONk7NKWagQqnnUzQN+lUuU7YUz5xsQdfpUVebuCu1jcmvOHZscBrcdN8NNzB0
+	 XJf0SYV78Stf2LrozRx0S5nhPkLneVXWL7hpUisFuSrt+do1AfUSSRrgCPwqpZDj+T
+	 od1xP7f7EFggpR6EwQDznyrRJbF4633pRVQyK1bqVpIkEd6lZEEFm+112f8qI0FXxS
+	 hCZOWBTCl4xtdr3cJ7CxH2+RaLqApSSWgcKkRerNOd/s6tzI6g04JDAsMKgN15fp7d
+	 jyLNziv0CNo48NL8vi4p6xVdUXVbh7WgjiaYiaSbZOK1GYQ4L0lpVaKEYJZs7tveay
+	 iLgPd7LlC6bPQ==
 From: Daniel Thompson <danielt@kernel.org>
 To: Jason Wessel <jason.wessel@windriver.com>, 
  Douglas Anderson <dianders@chromium.org>, 
- "Dr. David Alan Gilbert" <linux@treblig.org>, 
- Zhang Heng <zhangheng@kylinos.cn>, Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linux-hardening@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250819095915.711085-1-thorsten.blum@linux.dev>
-References: <20250819095915.711085-1-thorsten.blum@linux.dev>
-Subject: Re: [PATCH v2 1/4] kdb: Replace deprecated strcpy() with memcpy()
- in kdb_strdup()
-Message-Id: <175889877450.8040.12478572282164974656.b4-ty@kernel.org>
-Date: Fri, 26 Sep 2025 15:59:34 +0100
+ kgdb-bugreport@lists.sourceforge.net, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250507104337.201695-1-colin.i.king@gmail.com>
+References: <20250507104337.201695-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] kdb: remove redundant check for scancode 0xe0
+Message-Id: <175889877637.8040.5055145066289975102.b4-ty@kernel.org>
+Date: Fri, 26 Sep 2025 15:59:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,21 +62,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 19 Aug 2025 11:59:03 +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use memcpy() instead.
+On Wed, 07 May 2025 11:43:37 +0100, Colin Ian King wrote:
+> The check for scancode 0xe0 is always false because earlier on
+> the scan code is masked with 0x7f so there are never going to
+> be values greater than 0x7f. Remove the redundant check.
 > 
 > 
 
 Applied, thanks!
 
-[1/4] kdb: Replace deprecated strcpy() with memcpy() in kdb_strdup()
-      commit: d4be3238d9e5f4841e5385cba3d81268c00d9e7d
-[2/4] kdb: Replace deprecated strcpy() with memmove() in vkdb_printf()
-      commit: 8790cc2940bf9f5ec4d7458b0ea7f94a8acb094f
-[3/4] kdb: Replace deprecated strcpy() with memcpy() in parse_grep()
-      commit: 5b26f1a3146454a24dbcb8b1cdae5d507f7432e6
-[4/4] kdb: Replace deprecated strcpy() with helper function in kdb_defcmd()
-      commit: 0c28a23722e03695ae1cbbadde3dd32d75c1cb7f
+[1/1] kdb: remove redundant check for scancode 0xe0
+      commit: fdbdd0ccb30af18d3b29e714ac8d5ab6163279e0
 
 Best regards,
 -- 
