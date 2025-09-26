@@ -1,298 +1,154 @@
-Return-Path: <linux-kernel+bounces-834398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAF3BA49DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:27:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D7BBA4A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BDAB7AB068
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3B41BC76A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99742698AF;
-	Fri, 26 Sep 2025 16:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4A2270EDE;
+	Fri, 26 Sep 2025 16:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8PH/vX8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJkel49m"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89644C9F;
-	Fri, 26 Sep 2025 16:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AB424338F
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 16:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758904033; cv=none; b=pnmpYZIMPxN0obz7KXtDKoNo5K0RHZMiRE87tbSgTtQkqSQGE0ejRzSOUCzK28bZmKBm+/m92wI+0HYTVy2cDmMKulKrb+y9zUOu3OfEqzcg29/+pt6DFThhU+iiWXaf1uj/N+XRWcTwc0+x3IHjDya8K5n/5cD5pRYksEm6D04=
+	t=1758904124; cv=none; b=fSVSUBf0Rj5YEEi5cHazUvm9joLdQ4EhTjjg6zTENXSFUOqq0J2L8pQgCa5B1cNtfIM1QrCjAuvHGZqP6NoYjVWA4Hu/lyPwNdb0ClMwRoSLprN9yNn3aRi46yGF+SFkfstBVEh6/qBdvgGPefr89BxMyqljyw+t3r94tzMl0/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758904033; c=relaxed/simple;
-	bh=ky6CZf9ZflX9MtZEDtfZTEh1xsbZA4KMveJMCDkg6R8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t20JBpcqz0CiYlhhnOafEF1QYCgo+n5GUecRzwzP3i2tg3FwnsrNYpGgV5MJuaoPoRLuBqUfFM8STE1qLILnpT547EvDV1/SiSjDuYlcesKblwLRw3Ue+vGcKW1I1LJ9SnGeq1uI6bcXQZC1//m/5kJMnOXCGMlAugfMpgkViYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8PH/vX8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBA1C4CEF4;
-	Fri, 26 Sep 2025 16:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758904032;
-	bh=ky6CZf9ZflX9MtZEDtfZTEh1xsbZA4KMveJMCDkg6R8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=U8PH/vX8Jyonu5oIw3G72uLsjnLABhJOhpBTU0V2Aq+fW4W9h5xi5k5724LWSVCIx
-	 HCPyWiOUvbwswQktPj63IH5yqX1CL8IqgJroPhnXz+EokfUELvEYrLWPd+AuXESRWc
-	 kL7Y0YnnyytzpFXMw13GFRTitXxcN8BzbrCG/yGKNVmGxkvipuLv93gXz1z/KkkJlA
-	 JxbrK5Ah2oH8zInfxYXr7o0eANCf48kVHYkE+Qyn6yfClN960sj8rhZVnpvwv22tQE
-	 1Vp0iJ/5Wzai1aCATlF5lsz5GftLLHZ9jB5L6nnpDyPO6jC4W6tJrlFOnvG5LV1SGI
-	 GV2QAWI2mQuRg==
-Message-ID: <e08f4e061a9bff08066c7a255d8f9277add272f6.camel@kernel.org>
-Subject: Re: [PATCH v3 08/38] vfs: make vfs_mknod break delegations on
- parent directory
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner	
- <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Alexander Aring
-	 <alex.aring@gmail.com>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker	 <anna@kernel.org>, Steve French <sfrench@samba.org>, Ronnie
- Sahlberg	 <ronniesahlberg@gmail.com>, Shyam Prasad N
- <sprasad@microsoft.com>, Tom Talpey	 <tom@talpey.com>, Bharath SM
- <bharathsm@microsoft.com>, NeilBrown	 <neil@brown.name>, Olga Kornievskaia
- <okorniev@redhat.com>, Dai Ngo	 <Dai.Ngo@oracle.com>, Jonathan Corbet
- <corbet@lwn.net>, Amir Goldstein	 <amir73il@gmail.com>, Miklos Szeredi
- <miklos@szeredi.hu>, Paulo Alcantara	 <pc@manguebit.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, David Howells
- <dhowells@redhat.com>,  Tyler Hicks <code@tyhicks.com>, Namjae Jeon
- <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>,  Sergey
- Senozhatsky <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>,  Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Rick Macklem	 <rick.macklem@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-doc@vger.kernel.org, netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
- 	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Date: Fri, 26 Sep 2025 12:27:07 -0400
-In-Reply-To: <ke7z7ptll7svm4ygbtbmv7ezv7rox75ct6mv5sn73lrnqp6g2r@ju2aolr2n5n7>
-References: <20250924-dir-deleg-v3-0-9f3af8bc5c40@kernel.org>
-	 <20250924-dir-deleg-v3-8-9f3af8bc5c40@kernel.org>
-	 <ke7z7ptll7svm4ygbtbmv7ezv7rox75ct6mv5sn73lrnqp6g2r@ju2aolr2n5n7>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758904124; c=relaxed/simple;
+	bh=advGB0s4cY+Eij/iD8U4Na+qAHs8pdRd6nx34nKFrFA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M2XnSomYmXtat68a7VYRmOVnOVL2wtDlCP4zxiqg+JiSuWL7xlYEXek7DPKIAS0V0YMie9uhXjqaUqKTIgvnHCKUyrgqPOcJA5EE0uC6bmlucD2Xsufpl7jkl19DxWN9pYkqJqLyInpU47ZtkkLAyeqynrPahqeEGZQ7e1KcviU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJkel49m; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-32eb76b9039so2792040a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 09:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758904122; x=1759508922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17SdlbsrW/H1oAGhyPo1vRPjIhKSOB2gzK7KjETew8g=;
+        b=aJkel49m22/7RXgjQEiTwgVHHdEqo3rlyx0C0kk9t74ov7a+RFJoDRRrKG75NswkZs
+         /llklE2NCccXLqnG3WZAqgoxVPoZ/w5FqM1Tik6EOIsbhBCAXLXm12ewCag2fbBn6pB4
+         mbdZNpPAcGYQ/rkAg1TRbWZavykJB/ZxaEy7iefU4YxCZBLOXTiExMGkdBFl+HmdSZ7P
+         HX++vjTw/PLTShLl/bx1KJNetNyZjYspQusDSZEiaJDJc3/1ajd2xhi5jNhOfcHBMgJi
+         VPHi8YrmKsySExBGfPPGG7FUAdhQdUHcXXFljZPsKr1qvbPrdNPsBfNe3g+pNlEdkm/n
+         AuoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758904122; x=1759508922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=17SdlbsrW/H1oAGhyPo1vRPjIhKSOB2gzK7KjETew8g=;
+        b=n1qKD2YVyisYNethZYUfQbnUJ6mV2QKI2xNUgNO72/X/xMOPNbq1XJpH+oUf5tZ/CA
+         TFZzRt5wubRJiVgV3eqDTcXuLg9Q3oqqSpZA0woyKw5rR/v+IHWlUZ4WRxXNMNg6S4aW
+         nO4UfXNdV1BpANC1U8Dadsh7vXb3hS6wHWIZT9dCZ8ovMdU6SNCcqh9InGDpUxap1GKq
+         zWlyzAxcbny/TrZiYi4oQP3JuyJX0dNJbyYIGsjMrPNjQLNmg0c4eSMwCpPpzQKTzAMx
+         Gh0ZbO7rvx//lYHkbUQrEpDHdX46JBdn98hdf8lN+N3/0zddO/EN5QnbnBWWW9yjVWK+
+         lNuw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5DBPXc99RcuRxUFV+yaHF0AQ2gYH6djAd/V6XEicBIGoSkTWFIzEi/nKe1lF8vr2SBbRpZBWDiuSdW7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjgsFBasOL9EoZmxTuLBkCkOKp9uu02VDG7xSFK1BY3/3wZHDX
+	xnivW0aepK0gib38Th1BbUts8ow3CW8VHGWpocM3X4YkjM9VlX6/7gd/+sjKeBMSBmET84YOZ5y
+	E13AF5mu0+B0VaoQRiWxC6COQxyqt4YA=
+X-Gm-Gg: ASbGnct559UDPGgW3+kgWc/aRY338GgCCs4iO0OgJ9bZqYSeTWKNjHeZ/YMs4hE7NDF
+	75i4F10TAj3hPgq8yWPdsN3uX7fBinIbvhbSdZ+n/vOiCEChdpRUU6qKN5/rrDzOjLL+s7g3zFg
+	2XiFg6LPHXWIJgYDKMILtXPg0Il9ay6maalX7TP3BHezSRTcafR1b3S6+r9rkBD3Ter91vwfB1q
+	j3AcqqmZ4EcKtPfAoe2mtoRCghUBN0tF9rAH3+hDea3tRUaPdA=
+X-Google-Smtp-Source: AGHT+IFP1pZQQc/fe1s5lC9WTMOccd345qaOrvak7xLKmHiYtcellclXpMJlF7A8FJF338xuOE/Uc1mneQkNtUiDrKk=
+X-Received: by 2002:a17:90b:4a01:b0:32b:6eed:d203 with SMTP id
+ 98e67ed59e1d1-3342a2b126emr9404474a91.24.1758904122505; Fri, 26 Sep 2025
+ 09:28:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250922131148.1917856-1-mmyangfl@gmail.com> <20250922131148.1917856-3-mmyangfl@gmail.com>
+ <aNQvW54sk3EzmoJp@shell.armlinux.org.uk> <fe6a4073-eed0-499d-89ee-04559967b420@lunn.ch>
+ <aNREByX9-8VtbH0n@shell.armlinux.org.uk> <CAAXyoMPmwvxsk0vMD5aUvx9ajbeAENtengzUgBteV_CFJoqXWg@mail.gmail.com>
+ <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
+In-Reply-To: <f7d78131-7425-487f-a8bb-ed747dd9a194@lunn.ch>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Sat, 27 Sep 2025 00:28:05 +0800
+X-Gm-Features: AS18NWC4VpC0VraXX2b7ElF7Q9xckDyqxA2rIp_ujgdQGGcV--mnzBcfmdWMe7A
+Message-ID: <CAAXyoMM3QG+zWJQ8tAgZfb4R62APgBaqaKDR=151R7+rzzakCw@mail.gmail.com>
+Subject: Re: [PATCH net-next v11 2/5] net: phy: introduce PHY_INTERFACE_MODE_REVSGMII
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
+	Vladimir Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-09-26 at 17:32 +0200, Jan Kara wrote:
-> On Wed 24-09-25 14:05:54, Jeff Layton wrote:
-> > In order to add directory delegation support, we need to break
-> > delegations on the parent whenever there is going to be a change in the
-> > directory.
-> >=20
-> > Rename vfs_mknod as __vfs_mknod, make it static, and add a new
-> > delegated_inode parameter.  Make do_mknodat call __vfs_mknod and wait
-> > synchronously for delegation breaks to complete. Add a new exported
-> > vfs_mknod wrapper that calls __vfs_mknod with a NULL delegated_inode
-> > pointer.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Looks good. Feel free to add:
->=20
-> Reviewed-by: Jan Kara <jack@suse.cz>
->=20
+On Sat, Sep 27, 2025 at 12:09=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote=
+:
+>
+> > > > How does the databook describe reverse SGMII? How does it differ fr=
+om
+> > > > SGMII?
+> > >
+> > > It doesn't describe "reverse SGMII". Instead, it describes:
+> > >
+> > > 1. The TC bit in the MAC configuration register, which makes the bloc=
+k
+> > >    transmit the speed and duplex from the MAC configuration register
+> > >    over RGMII, SGMII or SMII links (only, not 1000base-X.)
+> > >
+> > > 2. The SGMIIRAL bit in the PCS control register, which switches where
+> > >    the SGMII rate adapter layer takes its speed configuration from -
+> > >    either the incoming in-band tx_config_reg[15:0] word, or from the
+> > >    MAC configuration register. It is explicitly stated for this bit
+> > >    that it is for back-to-back MAC links, and as it's specific to
+> > >    SGMII, that means a back-to-back SGMII MAC link.
+> > >
+> > > Set both these bits while the MAC is configured for SGMII mode, and
+> > > you have a stmmac MAC which immitates a SGMII PHY as far as the
+> > > in-band tx_config_reg[15:0] word is concerned.
+> >
+> > So any conclusion? Should I go on with REV*MII, or wait for (or write
+> > it myself) reverse-mode flag?
+>
+> Sorry, i'm missing some context here.
+>
+> Why do you actually need REVSGMII, or at least the concept?
+>
+> REVMII is used when you connect one MAC to another. You need to
+> indicate one ends needs to play the PHY role. This is generally when
+> you connect a host MAC to an Ethernet switch, and you want the switch
+> to play the PHY role.
+>
+> Now consider SGMII, when connecting a host MAC to a switch. Why would
+> you even use SGMII, 1000BaseX is the more logical choice. You don't
+> want the link to run at 100Mbps, or 10Mbps. The link between the host
+> and the switch should run as fast as possible. And 1000BaseX is
+> symmetrical, you don't need a REV concept.
+>
+> Also, in these cases, stmmmac is on the host, not the switch, so it
+> will have the host role, leaving the switch to play 'PHY'. I'm not
+> sure you could even embedded stmmac in a switch, where it might want
+> to play 'PHY', because stmmac is software driven, where as a switch is
+> all hardware.
+>
+> So the hardware supports reverse SGMII, but it is not clear to me why
+> you would want to use it.
+>
+>         Andrew
+>
 
-Thanks.
-
-FYI, I've revised this and the rmdir patches to get rid of the wrapper,
-and just have the callers pass in NULL directly. I think that's more
-along the lines of what Christian preferred.
-
-
->=20
-> > ---
-> >  fs/namei.c | 57 +++++++++++++++++++++++++++++++++++-------------------=
----
-> >  1 file changed, 35 insertions(+), 22 deletions(-)
-> >=20
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index d4b8330a3eb97e205dc2e71766fed1e45503323b..7bcd898c84138061030f1f8=
-b91273261cdf2a9b4 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -4215,24 +4215,9 @@ inline struct dentry *user_path_create(int dfd, =
-const char __user *pathname,
-> >  }
-> >  EXPORT_SYMBOL(user_path_create);
-> > =20
-> > -/**
-> > - * vfs_mknod - create device node or file
-> > - * @idmap:	idmap of the mount the inode was found from
-> > - * @dir:	inode of the parent directory
-> > - * @dentry:	dentry of the child device node
-> > - * @mode:	mode of the child device node
-> > - * @dev:	device number of device to create
-> > - *
-> > - * Create a device node or file.
-> > - *
-> > - * If the inode has been found through an idmapped mount the idmap of
-> > - * the vfsmount must be passed through @idmap. This function will then=
- take
-> > - * care to map the inode according to @idmap before checking permissio=
-ns.
-> > - * On non-idmapped mounts or if permission checking is to be performed=
- on the
-> > - * raw inode simply pass @nop_mnt_idmap.
-> > - */
-> > -int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
-> > -	      struct dentry *dentry, umode_t mode, dev_t dev)
-> > +static int __vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
-> > +		       struct dentry *dentry, umode_t mode, dev_t dev,
-> > +		       struct inode **delegated_inode)
-> >  {
-> >  	bool is_whiteout =3D S_ISCHR(mode) && dev =3D=3D WHITEOUT_DEV;
-> >  	int error =3D may_create(idmap, dir, dentry);
-> > @@ -4256,11 +4241,37 @@ int vfs_mknod(struct mnt_idmap *idmap, struct i=
-node *dir,
-> >  	if (error)
-> >  		return error;
-> > =20
-> > +	error =3D try_break_deleg(dir, delegated_inode);
-> > +	if (error)
-> > +		return error;
-> > +
-> >  	error =3D dir->i_op->mknod(idmap, dir, dentry, mode, dev);
-> >  	if (!error)
-> >  		fsnotify_create(dir, dentry);
-> >  	return error;
-> >  }
-> > +
-> > +/**
-> > + * vfs_mknod - create device node or file
-> > + * @idmap:	idmap of the mount the inode was found from
-> > + * @dir:	inode of the parent directory
-> > + * @dentry:	dentry of the child device node
-> > + * @mode:	mode of the child device node
-> > + * @dev:	device number of device to create
-> > + *
-> > + * Create a device node or file.
-> > + *
-> > + * If the inode has been found through an idmapped mount the idmap of
-> > + * the vfsmount must be passed through @idmap. This function will then=
- take
-> > + * care to map the inode according to @idmap before checking permissio=
-ns.
-> > + * On non-idmapped mounts or if permission checking is to be performed=
- on the
-> > + * raw inode simply pass @nop_mnt_idmap.
-> > + */
-> > +int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
-> > +	      struct dentry *dentry, umode_t mode, dev_t dev)
-> > +{
-> > +	return __vfs_mknod(idmap, dir, dentry, mode, dev, NULL);
-> > +}
-> >  EXPORT_SYMBOL(vfs_mknod);
-> > =20
-> >  static int may_mknod(umode_t mode)
-> > @@ -4314,12 +4325,14 @@ static int do_mknodat(int dfd, struct filename =
-*name, umode_t mode,
-> >  				security_path_post_mknod(idmap, dentry);
-> >  			break;
-> >  		case S_IFCHR: case S_IFBLK:
-> > -			error =3D vfs_mknod(idmap, path.dentry->d_inode,
-> > -					  dentry, mode, new_decode_dev(dev));
-> > +			error =3D __vfs_mknod(idmap, path.dentry->d_inode,
-> > +					    dentry, mode, new_decode_dev(dev),
-> > +					    &delegated_inode);
-> >  			break;
-> >  		case S_IFIFO: case S_IFSOCK:
-> > -			error =3D vfs_mknod(idmap, path.dentry->d_inode,
-> > -					  dentry, mode, 0);
-> > +			error =3D __vfs_mknod(idmap, path.dentry->d_inode,
-> > +					    dentry, mode, 0,
-> > +					    &delegated_inode);
-> >  			break;
-> >  	}
-> >  out2:
-> >=20
-> > --=20
-> > 2.51.0
-> >=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Cause I couldn't make 1000BaseX work with qca-ssdk, so I can only
+confirm and test REVSGMII mode on my device.
 
