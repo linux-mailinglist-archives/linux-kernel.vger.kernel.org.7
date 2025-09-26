@@ -1,124 +1,83 @@
-Return-Path: <linux-kernel+bounces-834674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41462BA53DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4094CBA5430
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 958611C00937
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F09CF625F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6609928B4FD;
-	Fri, 26 Sep 2025 21:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A730F928;
+	Fri, 26 Sep 2025 21:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oe8EbAlN"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="noAULKeq"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3687D1A2C11;
-	Fri, 26 Sep 2025 21:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E83530F808
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758923229; cv=none; b=sz9jXXFIkKDHK3IaF2Ezhj4SgSk05UyN6bfR2f68NeJutORuZuBccbF3TFmfLUUeSQQBNo+SahcS+WfVcf7TIFNZruQOcbp6LtOVQSI++DXo2d9iKc41ULL3PNMsMRY0h7BaDR1d3qYkFt1T9woF75mPjLgHX69xSYHom8MXnMg=
+	t=1758923313; cv=none; b=ol5naqpn0/1n7DCM40neWAmjQAxo9qZihnybaC+rWIy8qZqVzAwHJe59QZuWFob7Tf7NAPpjAuRs5GNIcK1QjzwhBGRnsuqt7mTCtcF/kgL/AagONfOHksnnNiy8FvVdfaV7U38j0rIK8UYltVES91zmLIBagUKjUtCaQTpqGeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758923229; c=relaxed/simple;
-	bh=xVwUsh4VEPWNSyVNEeCxRkWfKg9d4hdwW9Tq5tRZDcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOvniDzWqN3LFIQyDLqrQKKTJ8H5OUmAVN9snsNVPsHglv2lFtTOuZwlpeHs/r7EdmWnpHh7IlrKDAt/OYSNEqnxVYfIGAXQAlRIgzH5AJvX65vy8kMw1zBF7jA6+p+zv6q81/K79JPX6mo7n0pjgsLAZkny8s3FB1REFesYVQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=oe8EbAlN; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CDFZDYAxaFN3nhi7/HwU9S5RObSUo/2jEgabQRdF8jk=; b=oe8EbAlN9kRabbnXfuOkmcosZO
-	LbkpaYIMROW0hrnfWI3U9LedmDkc9poV5KKIH4ifyGSjWq5y1Ou7f+A/VFn5u1i6b1AnOHwNzIc0D
-	Hd33Q59nsNUTGxH3NYdpbJC2ARaHnUzpIGn+tvG699CAnYof/HvGKfTUOdYPyo68tr6E=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v2GHA-009bGm-Nm; Fri, 26 Sep 2025 23:46:48 +0200
-Date: Fri, 26 Sep 2025 23:46:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Josef Raschen <josef@raschen.org>
-Cc: Arun Ramadoss <arun.ramadoss@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: microchip_t1: LAN887X: Fix device init issues.
-Message-ID: <0737ef75-b9ac-4979-8040-a3f1a83e974e@lunn.ch>
-References: <20250925205231.67764-1-josef@raschen.org>
- <3e2ea3a1-6c5e-4427-9b23-2c07da09088d@lunn.ch>
- <6ac94be0-5017-49cd-baa3-cea959fa1e0d@raschen.org>
+	s=arc-20240116; t=1758923313; c=relaxed/simple;
+	bh=lxiRKOPjNBCLYP3Ujf6wO7spHZA6f5jBkt47JWpquLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zm6dcKXL0OZX3dT3u/QUhoBYQe0B1LAREJSzOvXWLW9r9Spp4Ude9Fx1G3GjQsNkz3Gk9hapZXxdb8LADd3/BA+fgz5x16w9ICUqqQUGy4xbHfxxd9wYd88xs6OzfGLnLYdLQx//1fxrL2WsduECBgRO40evh2+utXMIKiWZZ+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=noAULKeq; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58QLls72014699
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 17:47:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1758923276; bh=b0n4CKQmMvBflrA5RwASZQlbaLxfJAPAjhaY01zc4ss=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=noAULKeqqDfqnmLGreY3DN958Z1BeM+Ifs4m4MLThAm2J2cROngHMOfxMAGc3HMBb
+	 AEH+2dPJdVZ4+ZsG5/diepBY9m/O+YYs5JtUEmvPMcwQkGLGpEnsKl96A/MWpGywtW
+	 w/jnWQxcJKxSqvMVQvnFjUCGbbrD/SLhKm7vmpp68OK9OLGjIfyDPCaPKmRbAq9qR4
+	 TOaw4ovRg3ua7qhRfowliUCiG+Qqq4YcpbtVIZLz0dQzRZ6DJyafqU9y7UFfK4hbmB
+	 dABvwLuJn+3OE+2yUc/Yqt+QstlYkPTloX8+UZrU9QFpxoiL7Su3Iqs/cj8DwTPJuM
+	 2Kd9Z2tWD4j/Q==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id D18332E00D9; Fri, 26 Sep 2025 17:47:53 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: adilger.kernel@dilger.ca, chuguangqing <chuguangqing@inspur.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] fs: ext4: change GFP_KERNEL to GFP_NOFS to avoid deadlock
+Date: Fri, 26 Sep 2025 17:47:34 -0400
+Message-ID: <175892300639.128029.10746757557072943307.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250806022849.1415-2-chuguangqing@inspur.com>
+References: <20250806022849.1415-1-chuguangqing@inspur.com> <20250806022849.1415-2-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ac94be0-5017-49cd-baa3-cea959fa1e0d@raschen.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 11:24:56PM +0200, Josef Raschen wrote:
-> Hello Andrew,
+
+On Wed, 06 Aug 2025 10:28:49 +0800, chuguangqing wrote:
+> The parent function ext4_xattr_inode_lookup_create already uses GFP_NOFS for memory alloction, so the function ext4_xattr_inode_cache_find should use same gfp_flag.
 > 
-> Thanks for your feedback.
 > 
-> On 9/26/25 00:00, Andrew Lunn wrote:
-> > On Thu, Sep 25, 2025 at 10:52:22PM +0200, Josef Raschen wrote:
-> > > Currently, for a LAN8870 phy, before link up, a call to ethtool to set
-> > > master-slave fails with 'operation not supported'. Reason: speed, duplex
-> > > and master/slave are not properly initialized.
-> > > 
-> > > This change sets proper initial states for speed and duplex and publishes
-> > > master-slave states. A default link up for speed 1000, full duplex and
-> > > slave mode then works without having to call ethtool.
-> > 
-> > Hi Josef
-> > 
-> > What you are missing from the commit message is an explanation why the
-> > LAN8870 is special, it needs to do something no other PHY does. Is
-> > there something broken with this PHY? Some register not following
-> > 802.3?
-> > 
-> >      Andrew
-> > 
-> > ---
-> > pw-bot: cr
-> > 
-> 
-> Special about the LAN8870 might be that it is a dual speed T1 phy.
-> As most other T1 pyhs have only one possible configuration the unknown
-> speed configuration was not a problem so far. But here, when
-> calling link up without manually setting the speed before, it seems to
-> pick speed 100 in phy_sanitize_settings(). I assume that this is not the
-> desired behavior?
 
-What speeds does the PHY say it supports?
+Applied, thanks!
 
-phy_sanitize_settings() should pick the highest speed the PHY supports
-as the default. So if it is picking 100, it suggests the PHY is not
-reporting it supports 1000? Or phy_sanitize_settings() is broken for
-1000Base-T1? Please try understand why it is picking 100.
+[1/1] fs: ext4: change GFP_KERNEL to GFP_NOFS to avoid deadlock
+      commit: 1534f72dc2a11ded38b0e0268fbcc0ca24e9fd4a
 
-> The second problem is that ethtool initially does not allow to set
-> master-slave at all. You first have to call ethtool without the
-> master-slave argument, then again with it. This is fixed by reading
-> the master slave configuration from the device which seems to be missing
-> in the .config_init and .config_aneg functions. I took this solution from
-> net/phy/dp83tg720.c.
-
-How does this work with a regular T4 or T2 PHY? Ideally, A T1 should
-be no different. And ideally, we want a solution for all T1 PHYs,
-assuming it is not something which is special for this PHY.
-
-	Andrew
+Best regards,
+-- 
+Theodore Ts'o <tytso@mit.edu>
 
