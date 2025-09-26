@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-834666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64532BA5391
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45B4BA539D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB00562DAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA22F18930CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD2729A307;
-	Fri, 26 Sep 2025 21:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46106288C27;
+	Fri, 26 Sep 2025 21:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="fs9NHZax"
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="u4qvt+ua"
 Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4FE299ABF
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C732A1CA;
+	Fri, 26 Sep 2025 21:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758922225; cv=none; b=HnmF8yTJxxjnX3XZD5eeF5QlTxxN+yNRuShSP6cR/1NDLu4TbrisYF38mBLJQgdt5A2a4Zt7XWQXbiCk7vUecpilQpzhJf9G16FIJzhbCZC3Uk9+UVTOfU/Y03Pg6Lp8JTJC2AeS4B1OKxsP6uuV4gFlhWpLdevPOOTHJCgTUS8=
+	t=1758922323; cv=none; b=Lqb3yCGBc5GnoqrR1+IORE6J5niDfzb6W+1c8kMA43ldo9CwFM2U+448S6KLP4R1zhCAS+iO13gGk8ha4khu84hJv/i8sIrAnoGVITcOxBP8DEM8YgGVZ+DKAGfdQQLyTBrW6wEszThACOu001SVq5jqMHvDdimR47SZbrp6VGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758922225; c=relaxed/simple;
-	bh=BA+gohtvz2WO5B+sXF0yXpssEaVx2iUOx0L6rwnE9rE=;
+	s=arc-20240116; t=1758922323; c=relaxed/simple;
+	bh=VOpLudAoYINOWilaCdsPnCY3d2h4ndVg/bfmEpjFX0w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oz4tpx2rhp0zfds4k78uFc+KbAHUklHNiN1paCt24yBnq/GSvBMlezSvcv/nZM0jxnWKnNYeJuYHtnDIXrptXvYDUL0DIIFcZ1rA2Jnz0IA6BaugM07OTfB54UhQR8DGK8n7ngfi2L7KRSp+KgHY95xRiCVGhbyp029vbhXBR1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=fs9NHZax; arc=none smtp.client-ip=94.112.25.9
+	 In-Reply-To:Content-Type; b=CxkOhXqUUa+XFCUKYjskmuNd0WIeEStD5QokIKP/oWyB8GeQ1DpkDW19nm9p5VZO1ekVM1n9Sngt+vag5XAir8SQfV36F21NNDIj6eWQR9OsNsFHmcV1u5+wCRp1CI4aJR8faFFvG4sJnkMSnHK7uELUbrt8uLPHmzxgXg9WJzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=u4qvt+ua; arc=none smtp.client-ip=94.112.25.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Received: from [10.0.0.200] (unknown [10.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 280085340DBC;
-	Fri, 26 Sep 2025 23:30:13 +0200 (CEST)
+	by ixit.cz (Postfix) with ESMTPSA id 38EBC5340DBC;
+	Fri, 26 Sep 2025 23:31:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1758922213;
+	t=1758922318;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Wzf3L3bGcQX3lxCw6aXUjsMnc6WWUp8GXTYoewz/VzI=;
-	b=fs9NHZaxvRF851Sxzp+HNwXRJ4b7LY+boHbBlj/cazgQzAvXWiAta31f9LdafICgb+n0oq
-	nrS+uXJI+91k9s5DstW7S6ZrPfmRRbhHmFmp4znNKGdfMAfFwwEO6gedPEhtiujLrVvsGK
-	OBQqRdMePY56ReHm3fcLAkLyGCYtfNQ=
-Message-ID: <86612c2c-1915-4795-8a65-3054f8682488@ixit.cz>
-Date: Fri, 26 Sep 2025 23:30:12 +0200
+	bh=n+aoPzT5+tz+d1ndo5U6KW0Wmbt9YCOMPmMtS2SQE7k=;
+	b=u4qvt+uaGtKOGDDFv3U6DDgnyoD+iY40sKcwq44ib6nD1nBOuW8wMPNe4O8IdIDquVfqN8
+	t05YVGGJPKthIKjHWquj4xVUoRFuJ2CNTPnHQuFDdX8lF94bKaJjLsu3ughDrUuOVw/WJw
+	3X5aB4XpjBzW94kkwOEm6cO83AEz8ME=
+Message-ID: <ec474b72-ebc6-47b1-a559-74c191f7656d@ixit.cz>
+Date: Fri, 26 Sep 2025 23:31:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +55,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ARM: multi_v7_defconfig add /proc/config.gz
-To: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250715-arm-config_gz-v3-1-70c45c58e073@ixit.cz>
+Subject: Re: [PATCH v6 0/2] Add support for sound profile switching and
+ leverage for OnePlus 6 slider
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, Gergo Koteles <soyer@irl.hu>,
+ Casey Connolly <casey@connolly.tech>
+References: <20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz>
 Content-Language: en-US
 From: David Heidelberg <david@ixit.cz>
 Autocrypt: addr=david@ixit.cz; keydata=
@@ -104,53 +113,56 @@ Autocrypt: addr=david@ixit.cz; keydata=
  zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
  fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
  ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
-In-Reply-To: <20250715-arm-config_gz-v3-1-70c45c58e073@ixit.cz>
+In-Reply-To: <20250731-op6-tri-state-v6-0-569c25cbc8c2@ixit.cz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Small reminder.
+Hello!
 
-Thank you.
+Small reminder about this great patchset opening a way for handling 
+slider switches.
 
-On 15/07/2025 13:45, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
+Thank you
+David
+
+On 31/07/2025 23:17, David Heidelberg via B4 Relay wrote:
+> This code was tested for two years within the downstream Snapdragon 845 tree.
+> It is now perfectly integrated with feedbackd in the Phosh environment.
 > 
-> While 32-bit ARM isn't that widespread, multi_v7_defconfig is used for
-> building more generic images, where having access to config can be handy.
+> Changes in v6:
+> - Rebased again next-20250731, otherwise just a resent.
+> - Link to v5: https://lore.kernel.org/r/20250419-op6-tri-state-v5-0-443127078517@ixit.cz
 > 
-> arm64 and x86_64 already bundle config.gz, so this is an effort to provide
-> the same level of comfort with ARMv7 devices.
+> Changes in v5:
+> - Dropped merged
+>    "Input: gpio-keys - add support for linux,input-value DTS property"
+> - Link to v4: https://lore.kernel.org/all/cover.1677022414.git.soyer@irl.hu/
 > 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
+> Changes in v4:
+> - DTS: use default debounce-interval, order alphabetically
+> - Link to v3: https://lore.kernel.org/lkml/cover.1676850819.git.soyer@irl.hu/
+> 
 > Changes in v3:
-> - Rebased against next-20250715; otherwise, just a resend.
-> - Link to v2: https://lore.kernel.org/r/20250329-arm-config_gz-v2-1-f725d331fb5d@ixit.cz
+> - rename tri-state-key to alert-slider, fix DTS warnings,
 > 
 > Changes in v2:
-> - IKCONFIG is now module instead of built-in (Greg).
-> - Link to v1: https://lore.kernel.org/r/20230612210208.109267-1-david@ixit.cz
-> ---
->   arch/arm/configs/multi_v7_defconfig | 2 ++
->   1 file changed, 2 insertions(+)
+> - rebase to qcom/for-next
+> add SND_PROFILE_* identifiers to input-event-codes.h
 > 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 65df4014c4a603bfc6d5810cacf50f904321e9b2..5180c90cb5da1cfc91db39346c4b20d888e0a621 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -1,6 +1,8 @@
->   CONFIG_SYSVIPC=y
->   CONFIG_NO_HZ_IDLE=y
->   CONFIG_HIGH_RES_TIMERS=y
-> +CONFIG_IKCONFIG=m
-> +CONFIG_IKCONFIG_PROC=y
->   CONFIG_CGROUPS=y
->   CONFIG_BLK_DEV_INITRD=y
->   CONFIG_EXPERT=y
-> 
+> base-commit: 02ac8d2a011b630481d959298a1cc76ca0717f3e
 > ---
-> base-commit: f2b1f6a9f382564b1d4cf16c45e73ccccb917f1f
-> change-id: 20250329-arm-config_gz-7d656859ad59
+> Gergo Koteles (2):
+>        Input: add ABS_SND_PROFILE
+>        arm64: dts: qcom: sdm845-oneplus: Add alert-slider
+> 
+>   Documentation/input/event-codes.rst                |  6 ++++
+>   .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 39 ++++++++++++++++++++--
+>   drivers/hid/hid-debug.c                            |  1 +
+>   include/uapi/linux/input-event-codes.h             |  9 +++++
+>   4 files changed, 53 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 84b92a499e7eca54ba1df6f6c6e01766025943f1
+> change-id: 20250419-op6-tri-state-ed1a05a11125
 > 
 > Best regards,
 
