@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-834546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B241ABA4E94
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55A1BA4E9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 20:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71D887ABDD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8E41C20774
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 18:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F063630CD93;
-	Fri, 26 Sep 2025 18:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592B930CD8C;
+	Fri, 26 Sep 2025 18:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PYAARSyg"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DSmk+3aL"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6AD4C81;
-	Fri, 26 Sep 2025 18:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7B24C81;
+	Fri, 26 Sep 2025 18:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758912189; cv=none; b=lyrSWj9L0McXNKsyW7Q3fzzfcUnArDLsYv+u5dmTPJ+kGVxBqm/X95VhH7Lfic++/1IQvPJKl8qPYH/LalTTjRD1Sg2sh+sRsFzSyX8gR4p4jIjKSRpVRRe/sNSF40rIJGgBggBRpTJ1VCXAYbIo607+Ptv0nI8nZ7gFFnUnmqY=
+	t=1758912286; cv=none; b=UQ2yMT3WFH3E72V79x5yr+E08DXhAiW/eBzKkJjcVv3Oalrk4u+sCxOGFhD/kux8NLtuum4nb3jA9t9OAIPueAUgX4UXOVQBJ2nJk5TyEgRG6qJJ5UWCr4o3K4RlFPHNRRVS2VRLQR/KIbfd910bbczpjfWhdyz/DMTIHNy/cik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758912189; c=relaxed/simple;
-	bh=h4y+8CUoaKgJl/hGxGlrt2qInS8Nz4uoeuMb0/pRasA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=g2zc6caLCfc0SUWDNjygqnnki/FcjRjhLZGnJve9/A93O+fB9kywrd1lRiBhkgukjMYhDv08hrwTy5yPLG3CzM2xfhktquyYpWa0o1ccphlye2HIiVdP6kKw2/xj6Bw+LgP4AJixsEr0zRcnqTbOwKdVXkjGcrTgD3ElajU3wlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PYAARSyg; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1758912178; x=1759516978; i=markus.elfring@web.de;
-	bh=h4y+8CUoaKgJl/hGxGlrt2qInS8Nz4uoeuMb0/pRasA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=PYAARSyghqs9PceTUJFDYBfwWVQpWxkCqICPbH+qODKxtkhJjXVVcJ3EcXlwF+Uq
-	 trH/UkT24V+z08D04RL3Lhk4JUrV41G3EaRunPZAW6/obXO3LtPQMqbYl269up2OB
-	 4fiOheisO//kqMGdbbdajP4nZ0PuD0j/4JDeo2k/h5QiCOwDQ1ebaZ3Zdcv3eTh9r
-	 34+vTmeuobkD6WpFTCzWUhXBEp8TuUhQCl6BkyY/cFKQP2hHtFQWzghWkimXLRYLz
-	 lntPJfbNojXztMkT3crxzS9e+wjxkmcov9gB1L2rcElmNoGGZDjn/sivs04y5M7QT
-	 HOEK4xu4u2qY4OAZTg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOdp-1uVuqb1inn-00ZRQs; Fri, 26
- Sep 2025 20:42:58 +0200
-Message-ID: <c74b0111-4db0-4974-b40b-e2cd66cac59f@web.de>
-Date: Fri, 26 Sep 2025 20:42:57 +0200
+	s=arc-20240116; t=1758912286; c=relaxed/simple;
+	bh=A7Le6uma8JN9KcppDV8PAkPLPeqr+dPSkrokTaOlNJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bADHiEZOq2XQSNELpb5vQ7wmfrNN9Fq8JTd2ObUUNyW4MoN9iGP8HP3EVm3eW51fqxkU69Cl8tehvz18dnMsCom7/sWjVs/PyktXaVktXdga1mk1bi4ITaF2TuloFR47a+yIHXaLc2JEvhRnfCRxoZh83LZK10LgkgFlVoRsm1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DSmk+3aL; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QHF1Km029912;
+	Fri, 26 Sep 2025 18:44:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=U0bIX0y+m98lPphIhY6ko7upQV06c9wlXoyPw1mEOlo=; b=DSmk+3aLqS1a
+	iV1hm+QaqnW9taWOstMD0E7rqiQgbFFXcYZ/eZ7qXI6E8qhlcTjp2uzU8C8jV3e0
+	K+01PhIg1nvZ0YS4qq/afaMadovxHIIac7BUmH010arbMxkSD/qfvQdZx14dAAUq
+	9PaWulupUG6+FNHkOqpeahyVuWp8xfcHI3nMyt4jjBHahCTTYqVfyjESz3/6SpAX
+	ogAujVxe1DaxfrgiSFlJOE8Q6pDwm0YNXrN6ohmY3B/ywS2HDFNA1K1MxfixlG1p
+	I+BwZ7RQZpf/XmwnWhYfRB1yDt3Px8O5PeS0pukD2O+pctY6d5vvkLrLBZiiANWP
+	nSQhphh0ew==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbapgys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 18:44:43 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58QIb7Mk013648;
+	Fri, 26 Sep 2025 18:44:43 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49dbbapgyp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 18:44:43 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58QHH71s025848;
+	Fri, 26 Sep 2025 18:44:42 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49dawpwq5e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 26 Sep 2025 18:44:42 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58QIifEs40632834
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 26 Sep 2025 18:44:41 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3F50B5805D;
+	Fri, 26 Sep 2025 18:44:41 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F20158043;
+	Fri, 26 Sep 2025 18:44:40 +0000 (GMT)
+Received: from [9.61.248.170] (unknown [9.61.248.170])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 26 Sep 2025 18:44:40 +0000 (GMT)
+Message-ID: <fa1db8bb-a99f-4efe-af72-4858ee638bd1@linux.ibm.com>
+Date: Fri, 26 Sep 2025 13:44:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,103 +83,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Brian Masney <bmasney@redhat.com>, Miaoqian Lin <linmq006@gmail.com>
-References: <20250926143511.6715-2-johan@kernel.org>
-Subject: Re: [PATCH 1/2] soc: qcom: ocmem: fix device leak on lookup
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250926143511.6715-2-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OrAzeOwkYOYgTVPiW8UASbxQ2vWBnWnT9KVW5nv2ITqy7RlvLIm
- S0EugoLQsoAdAkjmDYerVKSQTdyPzudhsCBUp43LxwGxUXCzwOGEHfiuMSlQImKnhEABqwn
- u0R+9wGuY4IRFwwFWYTrNAFAXJ3zBDV3GtyX/XXQajTWk90mr690/XNa+556T4qjHt2Ekmr
- C+K0IwV4K7hn9V98bp1EQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:V/BxVyjxnYI=;EsI0flHkpTsw5Pt3OqUaBWFPIFj
- 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
+Reply-To: ramesh@linux.ibm.com
+Subject: Re: [PATCH] PCI: s390: Expose the UID as an arch specific PCI slot
+ attribute
+To: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Julian Ruess <julianr@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+References: <20250924-uid_slot-v1-1-09ae04f48c57@linux.ibm.com>
+ <4dd8a92a-0843-4009-a9c6-3a1336dbf217@linux.ibm.com>
+ <67de8faa7eca891c7c39ae83540f74369de5b783.camel@linux.ibm.com>
+Content-Language: en-US
+From: Ramesh Errabolu <ramesh@linux.ibm.com>
+In-Reply-To: <67de8faa7eca891c7c39ae83540f74369de5b783.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GXVjw1JWOBH-6ExwKV31-tyAsnJ3yX_U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3NCBTYWx0ZWRfX4cPn1zzTv9lq
+ c7qUbcqcBBPivfcDg6jaM8yGmhLmehlWGPUF5qAE7wFvk+TI6lkHiUjoARN52yIgBbmvwpR5XRy
+ 9ijDbXagICWt6LnwYjqqMSlbOTtRXB/Fe/Ky92CzfcqpYMyUo8tMz4G9Hf3ULX//ZbTDZE7m4mJ
+ cgp5726H5fSWXh76IRrda0z05bqhlMkJg5m3sbZ9MO6LwZ53mAz/IV83Xpqc7B3k1kUgO8xd9+b
+ J/feguT6Lu32OhDNuJH1DLRFgd3FEjZfeu0ghIAGjcCGgeE7E4MGlMQRsoqYkuZ2iCMJbnUlJbG
+ HfLobgoY1X/MegYI9roNwlfm+VWeXAEvq2CPXF+wgIyaGsQ/GXJzyXKfSdQoA9B2fIf+XL4bKme
+ GX8Vpaos4luwcHwreA2Q8uI4wIBHtw==
+X-Proofpoint-ORIG-GUID: Di6Ss-odSHoAP8UaCHCd-0pAfJps-Ity
+X-Authority-Analysis: v=2.4 cv=B6W0EetM c=1 sm=1 tr=0 ts=68d6df1b cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=UMODVSnWySmH3eSmB1kA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-26_06,2025-09-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ phishscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250174
 
-> Make sure to drop the reference taken to the ocmem platform device when
-> looking up its driver data.
-=E2=80=A6
 
-How do you think about to increase the application of scope-based resource=
- management?
-https://elixir.bootlin.com/linux/v6.17-rc7/source/include/linux/device.h#L=
-1180
-
-Regards,
-Markus
+On 9/26/2025 1:36 PM, Niklas Schnelle wrote:
+> On Fri, 2025-09-26 at 11:34 -0500, Ramesh Errabolu wrote:
+>> On 9/24/2025 8:14 AM, Niklas Schnelle wrote:
+>>
+>>> On s390, an individual PCI function can generally be identified by two
+>>> IDs, depending on the scope and the platform configuration.
+>> It would help to name the two IDs - FID and ???
+> How about:
+> "On s390, an individual PCI function can generally be identified by two
+> identifiers, the FID and the UID. Which identifier is used depends on
+> the scope and the platform configuration."
+>
+> And then reword the below without "so-called".
+That will help a lot
+>>> The first ID is the so-called FID, which is always available and
+>>> identifies a PCI device uniquely within a machine. The FID may be
+>>> virtualized by hypervisors, but on the LPAR level, the machine scope
+>>> makes it impossible to reuse the same configuration based on FIDs on two
+>>> different LPARs.
+>>>
+>>> Such matching LPAR configurations are useful, though, allowing
+>>> standardized setups and booting a Linux installation on different
+>>> machines. To allow this, a second user-defined identifier called UID was
+>>> introduced. It is only guaranteed to be unique within an LPAR and only
+>>> if the platform indicates so via the UID Checking flag.
+>> The paragraph as I read is not clear. Your intention is to highlight the
+>> need for UID to allow standardized setups.
+> Yes, that was my intention. Also here is where the second ID is
+> introduced so I'll reword this a bit if the name is already mentioned
+> in the first paragraph.
+Will await your next update
+>>> On s390, which uses a machine hypervisor, a per PCI function hotplug
+>>> model is used. The shortcoming with the UID then is, that it is not
+>>> visible to the user without first attaching the PCI function and
+>>> accessing the "uid" device attribute. The FID, on the other hand, is
+>>> used as slot number and is thus known even with the PCI function in
+>>> standby.
+>>>
+>>> Remedy this shortcoming by providing the UID as an attribute on the slot
+>>> allowing the user to identify a PCI function based on the UID without
+>>> having to first attach it. Do this via a macro mechanism analogous to
+>>> what was introduced by commit 265baca69a07 ("s390/pci: Stop usurping
+>>> pdev->dev.groups") for the PCI device attributes.
+>>>
+>>> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+>>> ---
+>>> Note: I considered adding the UID as a generic "index" via the hotplug
+>>> slot driver but opted for a minimal solution to open the discussion. In
+>>> particular my concern with a generic attribute is that it would be hard
+>>> to find a format that fits everyone. For example on PCI devices we also
+>>> use the "index" attribute for UIDs analogous to SMBIOS but having it in
+>>> decimal is odd on s390 where these are usual in hexadecimal.
+>>> ---
+>>>    arch/s390/include/asm/pci.h |  4 ++++
+>>>    arch/s390/pci/pci_sysfs.c   | 20 ++++++++++++++++++++
+>>>    drivers/pci/slot.c          | 13 ++++++++++++-
+>>>    3 files changed, 36 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+>>> index 41f900f693d92522ff729829e446b581977ef3ff..23eed78d9dce72ef466679f31c78aca52ba00f99 100644
+>>> --- a/arch/s390/include/asm/pci.h
+>>> +++ b/arch/s390/include/asm/pci.h
+>>> @@ -207,6 +207,10 @@ extern const struct attribute_group zpci_ident_attr_group;
+>>>    			    &pfip_attr_group,		 \
+>>>    			    &zpci_ident_attr_group,
+>>>    
+>>> +extern const struct attribute_group zpci_slot_attr_group;
+>>> +
+>>> +#define ARCH_PCI_SLOT_GROUPS (&zpci_slot_attr_group)
+>>> +
+>>>    extern unsigned int s390_pci_force_floating __initdata;
+>>>    extern unsigned int s390_pci_no_rid;
+>>>    
+>> Will this not lead to linking error when the patch is built on non-s390
+>> architecture. You could refer to zpci_slot_attr_group using a
+>> CONFIG_..... and discard the #define ARCH_PCI_SLOT_GROUPS. I didn't find
+>> a relevant CONFIG_... that could be used.
+> This code is in arch/s390/ it will not be build on non-s390. For the
+> non s390 case ARCH_PCI_SLOT_GROUPS will be undefined and the #ifdef in
+> slot.c makes sure we're not trying to insert ARCH_PCI_SLOT_GROUPs in
+> the array as it is not defined.
+You are right, I completely overlooked it. My comment is incorrect.
+>
+> Thanks,
+>
+> Niklas
 
