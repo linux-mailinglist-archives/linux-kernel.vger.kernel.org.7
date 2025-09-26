@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-834670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AB8BA53BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B76BA53C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CB21B2721D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E30301B2732F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AB5279DDD;
-	Fri, 26 Sep 2025 21:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D5C27F01B;
+	Fri, 26 Sep 2025 21:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Me9WeMme"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ewQbXV9B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDCF17BA6;
-	Fri, 26 Sep 2025 21:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFC123D7CE;
+	Fri, 26 Sep 2025 21:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758922764; cv=none; b=s6/oiXJ4q47fwWDc3cFQx76rNx71mjhZ4YAfcc47phWQp0WM4zMttPuOHBhha3Cw7p9SIIPFIGMZqJmElt5i+DzeXsU2CIeg6jPgy05YJe6j78CnLNeOncgJLqd06HSeoKv04BZ83+LYEymEao0f1RpkjA2qADVSXljN2Wa9BIM=
+	t=1758922789; cv=none; b=DOuPdt8LZskhT+pPmO6O/FG0olbmkzDNMm2s5gVGNtbXd/Kp6u59OQEuqjKYiaPU9hQwX9BY5fN1lEys6sx0kI1mc+1onK3lnwxzWdH2k1XK9JijFgdbpPbWoMPBNm4RIXCPvvrEqv5PtEIrx3jMBV84dOZ62vSweHiRM2K/5D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758922764; c=relaxed/simple;
-	bh=y2HsFa4mUc1wJo6FT6LcQXE3U4dYpvtDPvCC2BQtCW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cdZQfI9XgjH0acpcZDgbIqtFaTdSj4GN6CzCbBRGosOUjbM8EAe8M2aIrMJZ6tHF+FOMgFZTZtW/ji38gJQWo16qVfTdsU+xkYhFXMeLy5J/XCCjRB2QQDLWcNAp4TJRQYbdrpBFwrpKRhRplNl5R7K/XEsRbdqXbljZzTKUPpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Me9WeMme; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B4EC4CEF4;
-	Fri, 26 Sep 2025 21:39:22 +0000 (UTC)
+	s=arc-20240116; t=1758922789; c=relaxed/simple;
+	bh=d1AZ/+AAfFPaPOFnur+pV8mdqf1t1UoRekQUo75AdSQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=W/5FkneUWa2d4jKty7Yv5d3H0d9ltjfOz1S39USRBdbkET1ZZPZS//9+s1qTjNUM647b32wuIdF5cemprhoHRacENbTd9JVq7mG73TfYp9N/kGwDYMZuRJlrtoWFHYWYMEDaA0ewU8NZJmDQLztoF6tzkc9tlP0DLX1jmzPVeXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ewQbXV9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2721C4CEF4;
+	Fri, 26 Sep 2025 21:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758922762;
-	bh=y2HsFa4mUc1wJo6FT6LcQXE3U4dYpvtDPvCC2BQtCW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Me9WeMme6rIwdLABYykyG5eNlDK5NFeKiPOz27CP5s++NyyY6mAhY2H4DgUko0w29
-	 lxBJVv7vSYjeXQfha7cgp7tgr1deluwwe8lYKsi1PQlpqgqOWH6CScys8w0NhR42Pg
-	 IyNp08s/PhltIbHg00rg59eMahWe6qOJPZtihAVeaC40jd/joXpTBuf64COhAIzSm9
-	 jlz4Q0qe06dNoBT1HeNhMYrBosdNNSSrzT/Ob9K/6EkWnGwfdPYj+ifzcVU+MD75Ph
-	 dbn4a8oAja4YlPi+T2i4wR7gVLg+WTGEUasL+ruTx2Iwij5wLSxJNpwuSkTkUEvQZ/
-	 fbxQLsrD3Yh5w==
-Date: Fri, 26 Sep 2025 11:39:21 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <aNcICdscrYDUMKiU@slm.duckdns.org>
-References: <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
- <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
- <aMnnslT_mUfAtytN@slm.duckdns.org>
- <20250925083533.GW4067720@noisy.programming.kicks-ass.net>
- <aNW3du48v3PvwPbq@slm.duckdns.org>
- <20250926103628.GE4067720@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1758922788;
+	bh=d1AZ/+AAfFPaPOFnur+pV8mdqf1t1UoRekQUo75AdSQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ewQbXV9Bn49vaZ9y0XanGKzEcoXauPdYCmWpxL7p9Y8/kkOTx4Je3ft10zoqxb9ND
+	 67bRs57XREasACO1XVtARN+fvRg3SIb+UM1hzKlyZozMBRBDaRSNQd7NN8u0pAXUpN
+	 c6c/4ElUcSvu7O+pYP+pBaudWfQKAkVw9wZbilmO0oxOK2u7GGQcrSe4rUAde3p9Cj
+	 fe+Ehygcm47ts33kBnLKr8kwxcjrux5jTQvQURXbxiAhf7HWDbkWrgIRF0ZlqlMWbi
+	 f/ZDYH1j9zNcBXxy/Y5iP/F39lHoga5QljdQKIlpvWpiNvgtyweQyqGswp5ZiqufeD
+	 5kDLM1UAU2mhg==
+Date: Fri, 26 Sep 2025 16:39:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926103628.GE4067720@noisy.programming.kicks-ass.net>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel <linux-kernel@vger.kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Shawn Anastasio <sanastasio@raptorengineering.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Georgy Yakovlev <Georgy.Yakovlev@sony.com>, 
+ devicetree <devicetree@vger.kernel.org>
+To: Timothy Pearson <tpearson@raptorengineering.com>
+In-Reply-To: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com>
+References: <948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com>
+Message-Id: <175892278740.1727949.11517757635835328406.robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: Add sony,cronos-cpld
 
-Hello,
 
-On Fri, Sep 26, 2025 at 12:36:28PM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 25, 2025 at 11:43:18AM -1000, Tejun Heo wrote:
-> > Yes, I was on a similar train of thought. The only reasonable way that I can
-> > think of for solving this for BPF managed tasks is giving each task its own
-> > inner sched lock, which makes sense as all sched operations (except for
-> > things like watchdog) are per-task and we don't really need wider scope
-> > locking.
+On Thu, 25 Sep 2025 13:17:33 -0500, Timothy Pearson wrote:
+> The Sony Cronos Platform Controller CPLD is a multi-purpose platform
+> controller that provides both a watchdog timer and an LED controller for
+> the Sony Interactive Entertainment Cronos x86 server platform. As both
+> functions are provided by the same CPLD, a multi-function device is
+> exposed as the parent of both functions.
 > 
-> Like I've said before; I really don't understand how that would be
-> helpful at all.
+> Add a DT binding for this device.
 > 
-> How can you migrate a task by holding a per-task lock?
+> Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+> ---
+>  .../bindings/mfd/sony,cronos-cpld.yaml        | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml
+> 
 
-Let's see whether I'm completely confused. Let's say we have p->sub_lock
-which is optionally grabbed by task_rq_lock() if requested by the current
-sched class (maybe it's a sched_class flag). Then, whoever is holding the
-sub_lock would exclude property and other changes to the task.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-In sched_ext, let's say p->sub_lock nests inside dsq locks. Also, right now,
-we're piggy backing on rq lock for local DSQs. We'd need to make local DSQs
-use their own locks like user DSQs. Then,
+yamllint warnings/errors:
 
-- If a task needs to be migrated either during enqueue through
-  process_ddsp_deferred_locals() or during dispatch from BPF through
-  finish_dispatch(): Leave rq locks alone. Grab sub_lock inside
-  dispatch_to_local_dsq() after grabbing the target DSQ's lock.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/sony,cronos-cpld.yaml:
+	Error in referenced schema matching $id: http://devicetree.org/schemas/mfd/leds-class-multicolor.yaml
+	Tried these paths (check schema $id if path is wrong):
+	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/leds-class-multicolor.yaml
+	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/mfd/leds-class-multicolor.yaml
 
-- scx_bpf_dsq_move_to_local() from dispatch: This is a bit tricky as we need
-  to scan the tasks on the source DSQ to find the task to dispatch. However,
-  there's a patch being worked on to add rcu protected pointer to the first
-  task which would be the task to be consumed in vast majority of cases, so
-  the fast path wouldn't be complicated - grab sub_lock, do the moving. If
-  the first task isn't a good candidate, we'd have to grab DSQ lock, iterate
-  looking for the right candidate, unlock DSQ and grab sub_lock (or
-  trylock), and see if the task is still on the DSQ and then relock and
-  remove.
+Lexical error: Documentation/devicetree/bindings/mfd/sony,cronos-cpld.example.dts:42.30-48 Unexpected 'LED_COLOR_ID_MULTI'
+Lexical error: Documentation/devicetree/bindings/mfd/sony,cronos-cpld.example.dts:43.32-51 Unexpected 'LED_FUNCTION_STATUS'
+Error: Documentation/devicetree/bindings/mfd/sony,cronos-cpld.example.dts:43.32-51 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/mfd/sony,cronos-cpld.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-- scx_bpf_dsq_move() during BPF iteration: DSQ is unlocked during each
-  iteration visit, so this is straightforward. Grab sub-lock and do the rest
-  the same.
+doc reference errors (make refcheckdocs):
 
-Wouldn't something like the above provide equivalent synchronization as the
-dynamic lock approach? Whoever is holding sub_lock would be guaranteed that
-the task won't be migrating while the lock is held.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/948400747.1748562.1758824253627.JavaMail.zimbra@raptorengineeringinc.com
 
-However, thinking more about it. I'm unsure how e.g. the actual migration
-would work. The actual migration is done by: deactivate_task() ->
-set_task_cpu() -> switch rq locks -> activate_task(). Enqueueing/dequeueing
-steps have operations that depend on rq lock - psi updates, uclamp updates
-and so on. How would they work?
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Thanks.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
--- 
-tejun
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
