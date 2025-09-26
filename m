@@ -1,132 +1,230 @@
-Return-Path: <linux-kernel+bounces-834246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10ADCBA443D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:40:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD95EBA441C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A33B6022C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152161889E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7C128695;
-	Fri, 26 Sep 2025 14:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903541DF742;
+	Fri, 26 Sep 2025 14:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJBXES1L"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lMv25u/Q";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5CxlFsbX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7EB72605
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC6E1D86DC;
+	Fri, 26 Sep 2025 14:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897451; cv=none; b=epngoCK9jeduTQ+O6hn0L1h4Cdkb7GU9999W/LAHMBrIcIoN6lREQKc0iKW90YR30hcthgwF55BjjfsTpajalGz+B3r355bMtGwWqD1Y4s5r9tbW42ahfROh6WhSVZZ8kGKOBw5MosrV4HCncGUMygNktJMWE6HY6Br5BOrjcgQ=
+	t=1758897457; cv=none; b=IQd9EOeV4YL15x+b08Imu7AQVcxE197udK8elvJt6Gi5rpzG3aoq4UoQ2ZowDwllWkFkyRtUfhFYWuxN7MGigPFo8iNYSE2h9kXjqNdJBARWXJCjnNfvEwuIXQKZ9awDcHxDgPG2YZ9uY577I3mUi9BmBFFgiIc1Cbm5Xy2akcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897451; c=relaxed/simple;
-	bh=ZLYIvEVdYFtaxQbaBOf6ThGMjn/MwBnMXEGHzdAzS1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTmWxV7Xpld1U0CDftWndVU7YixTqsgnyt2NX8+HkAVJB6M1cRP2n1DNdp+XKCSsvUdaPDUtlMchUYEPdrAezUG5U3zucNe7B03twH3yAL1QAOEw9dtvOBbIoiltFGgysZROssjrl/2Mt1rVzfLCxlrWuPhfGV5MOa6xCj+KdXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJBXES1L; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758897448;
+	s=arc-20240116; t=1758897457; c=relaxed/simple;
+	bh=DUqLWtTLmbQA/0A26FSmGeMV3sKmBM/KCq7613sbiAE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sfGSaDQfmE1Z3X3HLg95JZRpwWFt6/Swg4ZjWfeOyuFIgWtVpeGNtgKhvG+15AGufjcLUeYrZ3GhJi+vDSnsb1cTVvm7rP97IjuyQ0UnZSTGlZR7wVnVOCEjV0Wr0KXdSCbk2mXUfmgNJYY3ODR8zbJhOcpHpqy6BwOFX98HlpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lMv25u/Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5CxlFsbX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758897453;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nNHZdA2ynNJGHBH8wutoba5JHt6T91gjLDofejClBRE=;
-	b=bJBXES1LIw1pCAGp8bBrtls/UXkazCEVcLoM3PK4wVVC1swlcZY4RyaYCps2CoMQF1Yr2P
-	XqHZYJGB3S2X0wCAaBMbZ0knfxFNDQVq57rFVtwASR0A4K4dTQVFSbjbisI4DvoOCCSZvH
-	TxWffQs0IbLKy6FsTgLNZf7Im8Jb9V4=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-_Tg7wVYeMqeQ06eV_zDTeg-1; Fri, 26 Sep 2025 10:37:25 -0400
-X-MC-Unique: _Tg7wVYeMqeQ06eV_zDTeg-1
-X-Mimecast-MFC-AGG-ID: _Tg7wVYeMqeQ06eV_zDTeg_1758897444
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3f924ae2a89so1912197f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:37:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758897444; x=1759502244;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nNHZdA2ynNJGHBH8wutoba5JHt6T91gjLDofejClBRE=;
-        b=jMZ7tc9Trgz+BilROwsDD3hmsgT6zg9QAwhx23LfecVljceqyuMZL97PfU7MQazVTh
-         fVn3avpu0e+VZKXebTHfF+Bl9wZD9xsbxwmm8Ibz9+nglriNBTtQFmimEQ281pMMrMY2
-         BKQh8E+v6ASoWRoYfbR4MDwhTvXZZq1Da0e34LoBM8Tt5WvuF5BO85p6y59sdr3mEYKu
-         +1MQH8tIhWY1B95P5QhJGs97iQcQ20pA7man34PhyEmlALKniDQBP4N4WEupi2cVHLRM
-         R4Hbq0tVL2nWZSTXpYLknFYJs1NXRFTjz6ZxypwU0HiHTDuBxUSQvKxSXN5PyXgsq/8m
-         Qdlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYMVccistWiE8EAN1UG0KZUVmWbCOZSIakJ4Sy+efxJxGINXpxmlkooyG7xlPmlSSVPm2Vu1J/dvsEjig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz65xq9i3uNMB7Doq0H4gtoSw5HhQI9PBrCu8v+LSMYxnQvkfy3
-	AA9MLssCK4qVkLnkU+zeMjBnXROOSwUhO1ppUBOyZj4nmg7eOEAJoKgWQtcpfuZ6F+gncpb3IX5
-	4uR7tME8upmxCaK3X0V4XYCfnlSeGMmxzeimYFb1vOyaqqK7Kq9DJ9/V2MCuKubrqFA==
-X-Gm-Gg: ASbGncvA9L+aY/Vtnl/i/Q+CIM0Mfe40Sh4AnwqxF7SO217gd33E3Y8zH4mhLiz5m89
-	4nHdrnsCQnCd0asO7B3AnPUaa6q6OYIymiqcOt4MBo4DPB9prZv44pqM10tLOIbfpNzbJbEDSVV
-	oORQk7idGwBW3BR9qUDukyPvIQl5A09e6/jaQxyoP4A06hGZHl6Nw/WzRSlhBVvZ9WjCp7u8y2A
-	AqIrcOSLu2eeICb1O5ze7MYUO2Pfc5pYihTnl3b7D9bhhE0RslFV2Cn5pH16rj6KPjg5+Fh0DbE
-	O9fKTRMvjHAtftNJaIqoIPAyvYdNGGKryGI=
-X-Received: by 2002:a05:6000:1869:b0:3e8:94d3:766b with SMTP id ffacd0b85a97d-40e468e73c8mr6983290f8f.1.1758897444338;
-        Fri, 26 Sep 2025 07:37:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXwmeHtQqcwnjJIme2wTxfCuczMPQ8tCMq+UMmG5Eh2oYtKsbn0VPkmA3WWKpKwuGGfPj1GA==
-X-Received: by 2002:a05:6000:1869:b0:3e8:94d3:766b with SMTP id ffacd0b85a97d-40e468e73c8mr6983257f8f.1.1758897443747;
-        Fri, 26 Sep 2025 07:37:23 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e33bf6ecbsm82911155e9.22.2025.09.26.07.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Sep 2025 07:37:23 -0700 (PDT)
-Date: Fri, 26 Sep 2025 10:37:20 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Cindy Lu <lulu@redhat.com>,
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>,
-	jasowang@redhat.com
-Subject: Re: [PATCH v5 0/6] Add multiple address spaces support to VDUSE
-Message-ID: <20250926103421-mutt-send-email-mst@kernel.org>
-References: <20250926101432.2251301-1-eperezma@redhat.com>
+	bh=mNZ/O8qWqMZNmQ0bJmoC3D37V6ZldVDNa+YT8EZ2jEY=;
+	b=lMv25u/QeiUxeExqGzdOSp2/9EO/7Iq/dcktc/K+UQ1yxyT7Pk0cCjdUaRB0WeCCdiUiMR
+	TfpFXtJz8pP+pUkN5XOba12doRk75ezy2RI8ar5qgj1QMgZJYe7A3clS5EczAuGp5R538C
+	pxmgkaCgSIzeIu5QQyYZKBk8TORhpg+xP45rZrt586r218pJ1qHjrfxgGzlYXKwEmpRQlD
+	eE9+tPBaW5L+qRP1SE3GGXo4sbg/U0Egu3sSRWaYY4GyFuIMybvsQz9gYkGf32RC9aNIdI
+	3fbqBKv/K/Kem5ellNb7d/KcICT1tYhDgyke6FFwTETudp7IVzMtA4892q4fXg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758897453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mNZ/O8qWqMZNmQ0bJmoC3D37V6ZldVDNa+YT8EZ2jEY=;
+	b=5CxlFsbXAE/4WWJdl/X6+2epLQ7uLHzpiUfRolZhfTkwLdTIPVfy5eSjUAKgLAtxGt7yKr
+	JWzBE8Qg7YCivLAw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann
+ <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, Niklas Schnelle
+ <schnelle@linux.ibm.com>, Serge Semin <fancer.lancer@gmail.com>, Andrew
+ Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH 1/3] printk/nbcon: Block printk kthreads when any CPU is
+ in an emergency context
+In-Reply-To: <20250926124912.243464-2-pmladek@suse.com>
+References: <20250926124912.243464-1-pmladek@suse.com>
+ <20250926124912.243464-2-pmladek@suse.com>
+Date: Fri, 26 Sep 2025 16:43:33 +0206
+Message-ID: <841pnti8k2.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926101432.2251301-1-eperezma@redhat.com>
+Content-Type: text/plain
 
-On Fri, Sep 26, 2025 at 12:14:26PM +0200, Eugenio Pérez wrote:
-> PATCH v5:
-> * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_FD
->   ioctl (Jason).
+On 2025-09-26, Petr Mladek <pmladek@suse.com> wrote:
+> In emergency contexts, printk() tries to flush messages directly even
+> on nbcon consoles. And it is allowed to takeover the console ownership
+> and interrupt the printk kthread in the middle of a message.
+>
+> Only one takeover and one repeated message should be enough in most
+> situations. The first emergency message flushes the backlog and printk
+> kthreads get to sleep. Next emergency messages are flushed directly
+> and printk() does not wake up the kthreads.
+>
+> However, the one takeover is not guaranteed. Any printk() in normal
+> context on another CPU could wake up the kthreads. Or a new emergency
+> message might be added before the kthreads get to sleep. Note that
+> the interrupted .write_kthread() callbacks usually have to call
 
-???
+                  .write_thread()
 
-I think copy_to_user returns an unsigned value: the number of bytes copied.
+> nbcon_reacquire_nobuf() and restore the original device setting
+> before checking for pending messages.
+>
+> The risk of the repeated takeovers will be even bigger because
+> __nbcon_atomic_flush_pending_con is going to release the console
+> ownership after each emitted record. It will be needed to prevent
+> hardlockup reports on other CPUs which are busy waiting for
+> the context ownership, for example, by nbcon_reacquire_nobuf() or
+> __uart_port_nbcon_acquire().
+>
+> The repeated takeovers break the output, for example:
+>
+>     [ 5042.650211][ T2220] Call Trace:
+>     [ 5042.6511
+>     ** replaying previous printk message **
+>     [ 5042.651192][ T2220]  <TASK>
+>     [ 5042.652160][ T2220]  kunit_run_
+>     ** replaying previous printk message **
+>     [ 5042.652160][ T2220]  kunit_run_tests+0x72/0x90
+>     [ 5042.653340][ T22
+>     ** replaying previous printk message **
+>     [ 5042.653340][ T2220]  ? srso_alias_return_thunk+0x5/0xfbef5
+>     [ 5042.654628][ T2220]  ? stack_trace_save+0x4d/0x70
+>     [ 5042.6553
+>     ** replaying previous printk message **
+>     [ 5042.655394][ T2220]  ? srso_alias_return_thunk+0x5/0xfbef5
+>     [ 5042.656713][ T2220]  ? save_trace+0x5b/0x180
+>
+> A more robust solution is to block the printk kthread entirely whenever
+> *any* CPU enters an emergency context. This ensures that critical messages
+> can be flushed without contention from the normal, non-atomic printing
+> path.
+>
+> Link: https://lore.kernel.org/all/aNQO-zl3k1l4ENfy@pathway.suse.cz
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  kernel/printk/nbcon.c | 32 +++++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index d5d8c8c657e0..08b196e898cd 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -117,6 +117,9 @@
+>   * from scratch.
+>   */
+>  
+> +/* Counter of active nbcon emergency contexts. */
+> +atomic_t nbcon_cpu_emergency_cnt;
 
+This can be static and should be initialized:
 
-static __always_inline unsigned long __must_check
-copy_from_user(void *to, const void __user *from, unsigned long n)
-{
-        if (!check_copy_size(to, n, false))
-                return n;
-#ifdef INLINE_COPY_FROM_USER
-        return _inline_copy_from_user(to, from, n);
-#else
-        return _copy_from_user(to, from, n);
-#endif
-}
+static atomic_t nbcon_cpu_emergency_cnt = ATOMIC_INIT(0);
 
+> +
+>  /**
+>   * nbcon_state_set - Helper function to set the console state
+>   * @con:	Console to update
+> @@ -1168,6 +1171,16 @@ static bool nbcon_kthread_should_wakeup(struct console *con, struct nbcon_contex
+>  	if (kthread_should_stop())
+>  		return true;
+>  
+> +	/*
+> +	 * Block the kthread when the system is in an emergency or panic mode.
+> +	 * It increases the chance that these contexts would be able to show
+> +	 * the messages directly. And it reduces the risk of interrupted writes
+> +	 * where the context with a higher priority takes over the nbcon console
+> +	 * ownership in the middle of a message.
+> +	 */
+> +	if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +		return false;
+> +
+>  	cookie = console_srcu_read_lock();
+>  
+>  	flags = console_srcu_read_flags(con);
+> @@ -1219,6 +1232,13 @@ static int nbcon_kthread_func(void *__console)
+>  		if (kthread_should_stop())
+>  			return 0;
+>  
+> +		/*
+> +		 * Block the kthread when the system is in an emergency or panic
+> +		 * mode. See nbcon_kthread_should_wakeup() for more details.
+> +		 */
+> +		if (unlikely(atomic_read(&nbcon_cpu_emergency_cnt)))
+> +			goto wait_for_event;
+> +
+>  		backlog = false;
+>  
+>  		/*
+> @@ -1660,6 +1680,8 @@ void nbcon_cpu_emergency_enter(void)
+>  
+>  	preempt_disable();
+>  
+> +	atomic_inc(&nbcon_cpu_emergency_cnt);
+> +
+>  	cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
+>  	(*cpu_emergency_nesting)++;
+>  }
+> @@ -1674,10 +1696,18 @@ void nbcon_cpu_emergency_exit(void)
+>  	unsigned int *cpu_emergency_nesting;
+>  
+>  	cpu_emergency_nesting = nbcon_get_cpu_emergency_nesting();
+> -
+>  	if (!WARN_ON_ONCE(*cpu_emergency_nesting == 0))
+>  		(*cpu_emergency_nesting)--;
+>  
+> +	/*
+> +	 * Wake up kthreads because there might be some pending messages
+> +	 * added by other CPUs with normal priority since the last flush
+> +	 * in the emergency context.
+> +	 */
+> +	if (!WARN_ON_ONCE(atomic_read(&nbcon_cpu_emergency_cnt) == 0))
+> +		if (atomic_dec_return(&nbcon_cpu_emergency_cnt) == 0)
+> +			nbcon_kthreads_wake();
 
-so, how does the patch work then?
+Although technically it doesn't hurt to blindly call
+nbcon_kthreads_wake(), you may want to do it more formally. Maybe like
+this:
 
--- 
-MST
+	if (!WARN_ON_ONCE(atomic_read(&nbcon_cpu_emergency_cnt) == 0)) {
+		if (atomic_dec_return(&nbcon_cpu_emergency_cnt) == 0) {
+			struct console_flush_type ft;
 
+			printk_get_console_flush_type(&ft);
+			if (ft.nbcon_offload)
+				nbcon_kthreads_wake();
+		}
+	}
+
+I leave it up to you.
+
+With the static+initializer change:
+
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
