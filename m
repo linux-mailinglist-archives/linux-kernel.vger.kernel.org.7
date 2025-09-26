@@ -1,119 +1,132 @@
-Return-Path: <linux-kernel+bounces-833944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-833945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA72BA3612
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8583EBA3618
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BA83A8B3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4173A91E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 10:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C92EB87B;
-	Fri, 26 Sep 2025 10:38:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CBB2F2913;
-	Fri, 26 Sep 2025 10:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399082F2913;
+	Fri, 26 Sep 2025 10:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruQqIn5N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C3B21D3CA;
+	Fri, 26 Sep 2025 10:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758883118; cv=none; b=NqxJHXJbbWTapEFGA39mPMPL84q3X6nhGN1rHU7NHVy3UME7oORdtDeoKgmAKEhRpHPC/b7fovP2HnTtB/CzS2oBzNLXVqRVcQgxsRWBicgZn6XuStk3AijrthiN5lw7g0fLUaYAohRXShF77KDsq4BAuPmnMK3LBDlokFOWR6s=
+	t=1758883178; cv=none; b=GLY6rI27hbs/IfUg0lh+xhOOC6HE+S1EmxjB3lcIxrkEuO9WqjKvwcMRXLbA0ZfOA8xrSfzyGArJkt0Y0NLyPUirTvdajKMb60pR971ZwyRvdk2Ud7xQl7sdP7s/0DNCRw9/msICQW6xTMa8ooGvQgaX0jlTn6rkgOWmmBAUGpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758883118; c=relaxed/simple;
-	bh=YDS4s5RkJHdkLKbCqClrPdikIVhL3WpPUyoR1o2gSvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lm+E6GF7HzKXxdTv0YHmKmR//6+AFYAvvxjGubc4Bok0ZqeuCFYMddQtO8pzyJTNVZpR1iuLcYIdn+0NND/I1g9dM0iRT+23s89qC+DiR3GKH1s3bvsmbw2r5Ixre03gYO8ApjsoCO42ZuGvOFUwb99dCPs1tpKCahuknTe+Dpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C746168F;
-	Fri, 26 Sep 2025 03:38:27 -0700 (PDT)
-Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F14293F5A1;
-	Fri, 26 Sep 2025 03:38:32 -0700 (PDT)
-Date: Fri, 26 Sep 2025 11:38:30 +0100
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH v3 00/26] genirq: Add support for percpu_devid IRQ
- affinity
-Message-ID: <aNZtJoFrOv8dHlkV@raptor>
-References: <20250922082833.2038905-1-maz@kernel.org>
+	s=arc-20240116; t=1758883178; c=relaxed/simple;
+	bh=NaREPQyslYpw3yZG2Tv5+CbuYH4zU8itwcqQWQ+T/QY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TNFYbumxoWXE35RcoExSmkOWc3VkQ8vlAW0kzBnFabmQ1uWWYuMROQnwNVi3O8NDpa1kDpmMj571YtXYM57J4YV8n8fNFxBBwsMUIFXLs4K9d1B6/D3ZVngfaN58RQmiahv2su60PIw0RN4ztDzRzy50LRyol0HuhhSCec80VWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruQqIn5N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3BCCC4CEF4;
+	Fri, 26 Sep 2025 10:39:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758883178;
+	bh=NaREPQyslYpw3yZG2Tv5+CbuYH4zU8itwcqQWQ+T/QY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ruQqIn5ND+xfYOf49puUia1tRETmhf7seGZbtekNQweUUhURpTvPZoMjgo+5RvLG4
+	 zKkgzt40vRS8e4hH0bmIsDEGga5+/kzi43MdCH+iWoI78lSiwjyuq1I+GotDNJ9Vhq
+	 V+81WEAfOilQd9fnHLPz5mHLMhXw6wZQHEoB1WD5n4C44NiLsAaCZ/1HNJa7JRBTKl
+	 IBRDgR9qHs8GZnkr5u8OqG4zMxlV6AJEk38ona1Nvt3MUkVTMxuqy8EO03lAbilRJx
+	 qlKN3rJeObek+WyQIroW81aYuQMUKYGdA57Hbb2yf7JR4nB5KweReeLExSCUN7E7RL
+	 9QE5ammZSNL/Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri, 26 Sep 2025 12:39:22 +0200
+Message-ID: <20250926-vfs-fixes-16a994dd1ae5@brauner>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922082833.2038905-1-maz@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1852; i=brauner@kernel.org; h=from:subject:message-id; bh=NaREPQyslYpw3yZG2Tv5+CbuYH4zU8itwcqQWQ+T/QY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRcy028PVV/S1MLg06/5+292//sPrV42meNI83rb/95y LeqV+v3245SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJ8Okx/C/9OfPYMr6Dudzv 25U7bnoItOc42hwU//IilDFPPuSccjAjw/rmuHWbouMfqOhxr8l7yF2/3yh2Y7G19cmZtt2lpWs WMwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hey Linus,
 
-Tested this on a rockpro64 - 4xA53 + 2xA72.
+/* Summary */
+This contains a few final fixes for this cycle:
 
-On kernel v6.17-rc5, using perf to profile iperf3 for 10 seconds, the top
-overhead symbol was _raw_spinlock_irq_restore() and the PMU wasn't using NMIs
-(checked by printing has_nmi after armpmu_request_irq()).
+- Prevent double unlock in netfs.
 
-With this series, same test, *irq_restore() overhead dropped to about 1% on the
-little core, below 1% on the big core, and the PMU was using NMIs.
+- Fix a NULL pointer dereference in afs_put_server().
 
-Thanks,
-Alex
+- Fix a reference leak in netfs.
 
-On Mon, Sep 22, 2025 at 09:28:07AM +0100, Marc Zyngier wrote:
-> This is the third version of this series, originally posted at [1],
-> which aims at allowing percpu_devid interrupt requests on the basis of
-> an affinity mask. See the original submission for the details of why
-> this is a desirable outcome.
-> 
-> From v2, we have some tidying up, thanks to Jonathan's review -- see
-> changelog for details.
-> 
-> FWIW, I've pushed a branch at [3].
-> 
-> * From v2 [2]:
-> 
->   - Turned of_node_to_fwnode() usage to of_fwnode_handle() (Jonathan)
-> 
->   - Added a patch to finally kill of_node_to_fwnode()
-> 
->   - Tidied-up documentation, comments and formatting (Jonathan)
-> 
->   - Collected ABs and Rbs, with thanks (Jonathan, Suzuki, Sven)
-> 
-> * From v1 [1]:
-> 
->   - Fixed NMI handling by getting rid of the NMI-specific flow
->     handler, which was pretty useless anyway (Will)
-> 
->   - As a result, killed a metric buttload worth of GICv3 code
-> 
->   - Moved irq_fwspec out of irq_fwspec_info, and passed it as a
->     parameter to irq_get_fwspec_info(), renamed from irq_get_info(),
->     and applied some generous sanitisation of the structure (Thomas)
-> 
->   - Dropped the rather useless fwspec validity flag (Thomas)
-> 
->   - Rejigged the PMU per-CPU handling to better deal with the DT/ACPI
->     differences, and drop some now useless patches (Will)
-> 
->   - Plenty of cosmetic rework (Raphael, Thomas)
-> 
-> [1] https://lore.kernel.org/r/20250908163127.2462948-1-maz@kernel.org
-> [2] https://lore.kernel.org/r/20250915085702.519996-1-maz@kernel.org
-> [3] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git irq/ppi-affinity
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3+b1)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
+
+  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.17-rc8.fixes
+
+for you to fetch changes up to 4d428dca252c858bfac691c31fa95d26cd008706:
+
+  netfs: fix reference leak (2025-09-26 10:14:19 +0200)
+
+Please consider pulling these changes from the signed vfs-6.17-rc8.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.17-rc8.fixes
+
+----------------------------------------------------------------
+Lizhi Xu (1):
+      netfs: Prevent duplicate unlocking
+
+Max Kellermann (1):
+      netfs: fix reference leak
+
+Zhen Ni (1):
+      afs: Fix potential null pointer dereference in afs_put_server
+
+ fs/afs/server.c           |  3 ++-
+ fs/netfs/buffered_read.c  | 10 +++++-----
+ fs/netfs/buffered_write.c |  2 +-
+ fs/netfs/direct_read.c    |  7 ++++++-
+ fs/netfs/direct_write.c   |  6 +++++-
+ fs/netfs/internal.h       |  1 +
+ fs/netfs/objects.c        | 30 +++++++++++++++++++++++++++---
+ fs/netfs/read_pgpriv2.c   |  2 +-
+ fs/netfs/read_single.c    |  2 +-
+ fs/netfs/write_issue.c    |  3 +--
+ 10 files changed, 50 insertions(+), 16 deletions(-)
 
