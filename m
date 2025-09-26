@@ -1,120 +1,200 @@
-Return-Path: <linux-kernel+bounces-834011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC7EBA3984
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:23:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59373BA398D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB201C02766
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045B71724E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 12:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A1D2EBB93;
-	Fri, 26 Sep 2025 12:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17172EBBA6;
+	Fri, 26 Sep 2025 12:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1mtqx/7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uDmkgecg"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A51910E3;
-	Fri, 26 Sep 2025 12:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFC12773C0
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 12:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758889374; cv=none; b=c/Kp26vYFI6UX47QPvPCJKEyqbhHL+YJUlKr8LhFeV+7MAge0sQ9adDb1u/WXLq57trYabi8wXZy/5++rnkj5mLY4IcZ3UMi0kPu6PULnQTM+gLE8KrM7H8iHf4hZgkh6asC7d0DaPtBV2kU1jJCvgM+zEpaqyMhsbdjWi2oFio=
+	t=1758889428; cv=none; b=FrGjwhOAvqeZFh5YK500fS99enRoPw31sZC7pgce5ariE24fpqUlZiOQdGOJAOFZKnY59tDjkO853z9PdOhzNUyBCrN8WFRxN6/ZLGCLOa1sTIyzPVCMxExN8MngbTJDLQOmmnQr1Tg1H+LPwE96KQJv+aimG5R+l9dhc5TEG6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758889374; c=relaxed/simple;
-	bh=vY3Zo/cpi4kqXIXBIk9WWdex9nSAmUjz3u2MkA/Z4sU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L6p9FrGt4wVUnwA9zgNk4D9Aa3R/skpdBwwmGfjDcSGjgjG3Z3ZkGQClfHFkvv7YjIQgPkRU0UfxSTg/Us2/v55cp050EH2T2e1NRAKk3J7lp1MbWWNKjmXU9mAoa+9eTn7YZYJUi7ThqbPschF6tONOuLk96wgIRiSRkdLx594=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1mtqx/7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E2CC4CEF4;
-	Fri, 26 Sep 2025 12:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758889373;
-	bh=vY3Zo/cpi4kqXIXBIk9WWdex9nSAmUjz3u2MkA/Z4sU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=O1mtqx/7i4Z2EcQRBJcOTzuBKOBVRQV9pmWxwQTFCXk/NJvLHzonmFJPS+RraKyGj
-	 zqngLGyJmTl2xkRLw97GaR7MOgKuhY9DEyrei41WlJj3Df1i0eaDHHMdA0L0oF0Q4J
-	 2hqBQ1jCfjJshL2MJRtqAdeElh/GV8TqeWTFSFm1PYKIJxzuwNgOcT9qdUmltYC3AG
-	 Txb7LdtyJ45B02UCuI3NaYipIW5P7Wltf6FEzSc+F7lzIrz7w8zoCZnTZohpfe6LMR
-	 ahLqgmrJNM6c0vBjX1tm4f7D+m7fzl97xSZXOzj+krUe8yuBFktqUt6gNJx1pf/TkI
-	 ycB0q9ccJn2iA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 26 Sep 2025 14:22:45 +0200
-Subject: [PATCH] PCI: dwc: Support 16-lane operation
+	s=arc-20240116; t=1758889428; c=relaxed/simple;
+	bh=cFWxzYyz7vK4hyzmjevExbsE5H22NU9YQrR6EsuHvR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3MtWqFUQW+PqL0feGJjv+LlUEcMeDeCDQ+HZur7ky1RecOVsa676W8CuRFgVpcdTuOmHnIeUDZ+xTvUi3cxaIVd3Ladzj6LH80hlsIzE3Ax8MQ/Os3194nRDfBj3qH49az0crpYlXiBpJb6Ev1Y8fpPM8o7oRKZ3EMn26xHx7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uDmkgecg; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-74ea5d32022so24474827b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 05:23:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758889425; x=1759494225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qA8ToaN2ec5XOHTlGwPSdrVYzEewX+q+dK/4ilZO5fw=;
+        b=uDmkgecgfhiW6tzu6JKRZ0AkcghTUMzXG1fUkFY+P0tV9yx+y36fnonuD8tkf6+RzF
+         1fq1Ivlw7isgJHMujMyUFuwLZnyTceVbN12y/WOOZoRHcrPUjBVfNhmQl58zQ563mAIP
+         X/4RIltIEtILFuwf6M8vvU9YuYxD4sOToFjanVwXFP0tuIfe1+kesBqKNACiAoXBmdaf
+         QcHZN8lbL+TjfksqsgnY6tURK1XkQ7Zs/wPTN9Kr/L0MktIv/vyVr6EBUz6lGNKzDenP
+         CMQlOHYBDj8Q8IYAfHt5xc21mm740AoBJWIgbA2wsqOoqMCSz5b4F+PVzQ0rIMnxwPBz
+         yVmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758889425; x=1759494225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qA8ToaN2ec5XOHTlGwPSdrVYzEewX+q+dK/4ilZO5fw=;
+        b=GAIwIE6fBIcHBOEKRNRCDpWr5YjvZsTLv8lfMHHYmOKBr3mLclLCIchDO4G9N3cd+8
+         asUQIoocFytGouq9FTACiQJGrIzihSGysjW5VV0ishjnM7QRW+FFJh/Hida+c0RBaq6C
+         +/hyZpFnv3PYsjwhAvtEpwcbzvAvDwFyzDximf7h8HiKmgsDg7WDOxRVvtfTQ6daEsZR
+         8/HfTnQQ89ulpFSpCmOhsj1GTD022xfzsimiPFvFcXEM1qW9+DMONWR5sVZV9GL7DpCn
+         p7SW3HcrjJQiZXVBeTvN9S5fHF7eT3qfz0mnT/gYOiIlZY4m+h6eqW2Mi7CuPczcP0vP
+         Ywog==
+X-Forwarded-Encrypted: i=1; AJvYcCWesup1zJlK64tYreabBgP3qfp/fhgMmKnmeN7AHFQYUVsai2vb6OuCgLFnCW7Z4qRa8W8hOH/jXPahR98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGLZxsV0nb9KSWs5yUrn+g+guT4ekp9Gyl2ZiBxyx6sQRaFy5D
+	YDDCYgGSLeVTKwnfutdHiLPuBBisE3rQvA/v0xEfTQ1XkgJnL+GTuFQhShBpslZyMxvQmyKXOpC
+	DE4XI8/xFoquAQB0bQH5RxkqCo23tTxsCplxYokiY9w==
+X-Gm-Gg: ASbGncugXmtp2O7ELb6lajXAdDYa66rw4KHXOFk81juHNJ+WvrtPwOyIlCQ0zZslkIx
+	vIMISO1E4GVi1pdn+KmkBU7aS5OvK5KwlWEGyIszjpEwWu8xsx/vz3KCp0av9xm3Am1VwVKkGIi
+	I/4KF4Ab9rfrBGwIgCJN/IIhuGid+6niO1SF1w0jcb513RYEDLs+UUo60lTgq4OnjHR93aTWqvQ
+	4HMTteE
+X-Google-Smtp-Source: AGHT+IFJfK2kUvEQyP3qdusE32Bwrz6NChuV5uHdpq7CNKn6u5E7zONMkQB12h0of7GT99uFXskvFX7pQWW6Gu7R1Rg=
+X-Received: by 2002:a05:690c:6087:b0:734:e6d4:acce with SMTP id
+ 00721157ae682-763f9e75c51mr63338287b3.3.1758889425304; Fri, 26 Sep 2025
+ 05:23:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-topic-pcie_16ln-v1-1-c249acc18790@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAJSF1mgC/x3MQQqAIBBA0avIrBNMsrKrRETaVAOhohFBePek5
- Vv8/0LCSJhgYC9EvCmRdwV1xcAei9uR01oMUkgltGz55QNZHizhXLen471RQplOC701UKoQcaP
- nP45Tzh+mODBBYQAAAA==
-X-Change-ID: 20250926-topic-pcie_16ln-8b505b7909f4
-To: Jingoo Han <jingoohan1@gmail.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758889370; l=1721;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=vGOCxKPjYPmMvFeew3L4g2tgIKxD1UCJfc3AVqJTArA=;
- b=IEC+zlX8nnRQAjSfN8L9nH8koH4uBV+FWPMHZ8VBpQhBUgPVrwdQG5uMOO8CRMMJT4JYNsiHo
- a5Zk/zA4CQxAF9I1bGwDXWSLZleu2DSkj+6xpyTH93tsbwNPjc0ii5I
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
+ <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
+ <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+ <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
+ <CAGETcx-L-KypYZEkdKRBfZHDhFMTUuwKEGVQ-7QPv=++6uwLSw@mail.gmail.com> <CAMuHMdWjhXjjw9wFw5Me-wAX0nA+gK2mdGxLyBJJCWDHZ58LeQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWjhXjjw9wFw5Me-wAX0nA+gK2mdGxLyBJJCWDHZ58LeQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 26 Sep 2025 14:23:09 +0200
+X-Gm-Features: AS18NWAxOQyvszuo2I51LVHpZP8o6Fd_G7IyAwpQbmXUa2S83iiTdpG_DODSHHM
+Message-ID: <CAPDyKFr4t7KjV+bSB2_4wRM0tsSNB7fosoJHAN+yDgc1g=7FgA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, 26 Sept 2025 at 08:57, Geert Uytterhoeven <geert@linux-m68k.org> wr=
+ote:
+>
+> Hi Saravana,
+>
+> On Fri, 26 Sept 2025 at 00:41, Saravana Kannan <saravanak@google.com> wro=
+te:
+> > On Thu, Aug 7, 2025 at 2:43=E2=80=AFAM Geert Uytterhoeven <geert@linux-=
+m68k.org> wrote:
+> > > On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wr=
+ote:
+> > > > On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.=
+org> wrote:
+> > > > > BTW, the "pending due to"-messages look weird to me.
+> > > > > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
+> > > > >
+> > > > >     genpd_provider ca15-cpu0: sync_state() pending due to e602000=
+0.watchdog
+> > > > >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pend=
+ing
+> > > > > due to e6020000.watchdog
+> > > > >
+> > > > > ca15-cpu0 is the PM Domain holding the first CPU core, while
+> > > > > the watchdog resides in the always-on Clock Domain, and uses the
+> > > > > clock-controller for PM_CLK handling.
+> > >
+> > > Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
+> > > these bogus pending states, and no PM Domain is powered off.
+> >
+> > Can you explain why you call these as bogus? Sorry if you already
+> > explained it. But the reason I'm asking is to see if you can set a
+> > flag for the watchdog device so fw_devlink will completely ignore it.
+>
+> "bogus" refers to "1." below.
+>
+> Furthermore, devices that are located in an alway-on domain should
+> not block the sync state.
+>
+> > It looks like there's a driver for this watchdog node? Why is it not
+> > probing then?
+>
+> Because this particular revision of the SoC has a hardware bug that
+> prevents the watchdog timer from rebooting the system, and the driver
+> detects that.
+>
+> Anyway, if the driver is not available, unused power domains should
+> still be powered down, like before.
+>
+> > > If I remove the "sync_state =3D false" above, genpd_provider_sync_sta=
+te()
+> > > considers all domains, and does power down all unused domains (even
+> > > multiple times, as expected).
+> > >
+> > > Upon closer look, all "pending due to" messages I see claim that the
+> > > first (index 0) PM Domain is pending on some devices, while all of
+> > > these devices are part of a different domain (usually the always-on
+> > > domain, which is always the last (32 or 64) on R-Car).
+> > >
+> > > So I think there are two issues:
+> > >   1. Devices are not attributed to the correct PM Domain using
+> > >      fw_devlink sync_state,
+> >
+> > Is it a fw_devlink issue? Or is this a multi-domain controller?
+>
+> This is a multi-domain controller.
+>
+> > >   2. One PM Domain of a multi-domain controller being blocked should
+> > >      not block all other domains handled by the same controller.
+> >
+> > This is going to take a while to sort out. But the current behavior is
+> > the safest. How grumpy will you be if we don't fix this :)
+>
+> Depending on your definition of "safe".  Keeping all power domains on
+> increases power consumption and heat generation, and may cause e.g. CPU
+> frequency throttling to kick in, slowing down operation of the system.
 
-Some hosts support 16 lanes of PCIe. Make num-lanes accept that number.
+FYI, I agree that we need to address these problems, in one way or the
+other. I am trying to summarize them and have also proposed a CFP for
+LPC (power/thermal MC) to discuss and try to solve them.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/pci/controller/dwc/pcie-designware.c | 3 +++
- drivers/pci/controller/dwc/pcie-designware.h | 1 +
- 2 files changed, 4 insertions(+)
+Now, as I also proposed in the other thread [1] just now. How about
+changing the default behaviour from FW_DEVLINK_SYNC_STATE_STRICT to
+FW_DEVLINK_SYNC_STATE_TIMEOUT? I think that would solve a lot of
+problems for us, as it would provide a more similar behaviour to what
+we had in genpd originally, hence it would be a smoother transition.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index fce15582c22a93167c6f03c0e3ae74f3d0e68b1a..1d7c2b27005f757d272fe78c4df48daa6628f0a3 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -774,6 +774,9 @@ static void dw_pcie_link_set_max_link_width(struct dw_pcie *pci, u32 num_lanes)
- 	case 8:
- 		plc |= PORT_LINK_MODE_8_LANES;
- 		break;
-+	case 16:
-+		plc |= PORT_LINK_MODE_16_LANES;
-+		break;
- 	default:
- 		dev_err(pci->dev, "num-lanes %u: invalid value\n", num_lanes);
- 		return;
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index a333ab0b0bbd8c2fc0ee32a5619696178c6b7aa2..ae11a78cc5b9a4202794cfa515e1ee496a4f47c2 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -90,6 +90,7 @@
- #define PORT_LINK_MODE_2_LANES		PORT_LINK_MODE(0x3)
- #define PORT_LINK_MODE_4_LANES		PORT_LINK_MODE(0x7)
- #define PORT_LINK_MODE_8_LANES		PORT_LINK_MODE(0xf)
-+#define PORT_LINK_MODE_16_LANES		PORT_LINK_MODE(0x1f)
- 
- #define PCIE_PORT_LANE_SKEW		0x714
- #define PORT_LANE_SKEW_INSERT_MASK	GENMASK(23, 0)
+I think this would be true when trying to add ->sync_state() support
+for other subsystems too, like clocks and regulators.
 
----
-base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-change-id: 20250926-topic-pcie_16ln-8b505b7909f4
+In the end, when platforms are ready to move to the "strict" mode,
+they can do that via the command-line parameter, for example.
 
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Kind regards
+Uffe
 
+[1]
+https://lore.kernel.org/all/20250925115924.188257-1-ulf.hansson@linaro.org/
 
