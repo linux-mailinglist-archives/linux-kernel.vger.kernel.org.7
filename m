@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-834684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D66CBA5439
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3771DBA540C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 23:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD76B1C0420E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D727F560BAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 21:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E056311958;
-	Fri, 26 Sep 2025 21:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920B30B53B;
+	Fri, 26 Sep 2025 21:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="NdEQD4LV"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="a6YhqvOl"
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DB830BBB3
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A7D2FFDEE
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 21:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758923314; cv=none; b=mlSI6AfQa9rdw/iTZpQ1VEpijUQYAUZj5iizJqMa7f4sifuR54wBvZEmBzUguxEe31cZm9l2WUCQeo9IasHn0NM140rcIDoj21BUcxkpBCc22u24IdCFvafOhDvEt+XRf3ysjcWX+OEnl1HCNlXIxq260nazwBjKwlV8L58W5HE=
+	t=1758923287; cv=none; b=dQ1KiY9tUbTzLY+fHR9s1vYrQiqKgqkTXFhkAOcC03G9tPQMiF4Y6jgQogRj4wGUmoRKOEThvK7mXU1k/dy4ZIWYH9v7ylnieQJgpQeEcOQ+Y2riyOD3yBAuXVywzEa26dSFGhQvcgG0jXKgKpFDidTxljph3X+6ZCRj6O5vvHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758923314; c=relaxed/simple;
-	bh=h9ZcKZS5M9zCK+skcKcB0yIMzN962ADmlrNbEYIP4X8=;
+	s=arc-20240116; t=1758923287; c=relaxed/simple;
+	bh=PrirZ8DwHxYOKiKvv6l5QCUtmPNPWKAhnoYsv9+LeUg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H5od02PsNOFHLCxOFEqDCnsQwI6cSTbFMQgxK7QUEzbGjEcJGW9v/uX7KsH6f6gHGyQC+y/36yS1cLeKddSMJYp3wA8De0gcjTwFCChosBOfyc6eHMtA41shqK3UtxQdmsYS68l2orejV/jvgw9v1zc6bGsUf9/XVXPtrw6a5qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=NdEQD4LV; arc=none smtp.client-ip=18.9.28.11
+	 MIME-Version:Content-Type; b=Schg3Onlg1bv2m/fNuAJWZKE1SGfDmXyZs7IVvm+sPsaK77CED/e+bXVnhRgpMdrJGXw//HSklNmtyeR6u+JB8LG8QtpTb7aqUQOneJejZxxvQulFD9K+paq0qtAibvGuJsKSkDgluuCQDvDYeqQ5yZsF+Ts76s00YAfDU6KPOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=a6YhqvOl; arc=none smtp.client-ip=18.9.28.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
 Received: from trampoline.thunk.org (pool-173-48-115-162.bstnma.fios.verizon.net [173.48.115.162])
 	(authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58QLlu5i014779
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 58QLlv64014794
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 26 Sep 2025 17:47:57 -0400
+	Fri, 26 Sep 2025 17:47:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1758923278; bh=Qr8CzW6IjDYctl+RNiSLbPfoyupXuW/LerzCekhinhI=;
+	t=1758923279; bh=jYCaPO50HXjjJPUVno9CgyqTQ1U5Se94RTPV31moWL8=;
 	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=NdEQD4LVme/lM7VkQKiXvt2v8NgwMbuc3aA5yDXiSGJNWUHKJlAkkURtemFOHCUx7
-	 l51yyuY3AgtymNw+4eRaXErzIxQ7uU4hMgF4nv3kWejyqt6pA1jRzhTgKh4FXGtYjg
-	 Jm6OisEoe3/H4V94lLywyH3lukI9CTMhfMtc3/kW8X+TYMYgJmibUOnmS/D9Dwltwp
-	 m8p7Q6b27E/dDJ0UM452ruSBtY7S9EZMmLs8yzq7Euc7HB0D0u6F110ZMs56tWSXu2
-	 gNqbDxn/FVRAQNs/o4PhOzqRKPhyEUA0MySTC8YMofFAXo2KN/AqF92daeC4wwNIcA
-	 6+i/28rfotiUw==
+	b=a6YhqvOlcKHv77hRYsjN28x1W+bJ8Si5fS/RfR1dw8KDsZmhCDaljgTJ0yGeANuj5
+	 6djOIq9Un8c1jIUqwblaBJfdwU0GhUJQiqgu9vgSKbJmuqrz96DY3eSLm+aRWuCHaN
+	 CRCuujtdKedoU7Iz1BHnQfpSxbd/Xb7Pttx3tRdjccPslYFrZwWMC/tg7TIB4h4dCe
+	 V/ojsRprwMP9oCUQRK6zH5vIzrCjV4bRM5fnP6u3dX0WXnTg8RD5QWOMHuyz1tkjoe
+	 MMWyVOKV6TTgH/bPcVWyinPG7z6SgGgRECf5mDnWVIYP9VjieheBZwfOflE9nUHLJm
+	 9lejb5aBHHZhw==
 Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 01A392E00E7; Fri, 26 Sep 2025 17:47:54 -0400 (EDT)
+	id 043982E00E8; Fri, 26 Sep 2025 17:47:54 -0400 (EDT)
 From: "Theodore Ts'o" <tytso@mit.edu>
-To: linux-ext4@vger.kernel.org, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
-        yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
-        yangerkun@huawei.com
-Subject: Re: [PATCH] ext4: fix an off-by-one issue during moving extents
-Date: Fri, 26 Sep 2025 17:47:48 -0400
-Message-ID: <175892300645.128029.17482024233805029291.b4-ty@mit.edu>
+To: adilger.kernel@dilger.ca, Xichao Zhao <zhao.xichao@vivo.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: replace min/max nesting with clamp()
+Date: Fri, 26 Sep 2025 17:47:49 -0400
+Message-ID: <175892300639.128029.16772861472569556620.b4-ty@mit.edu>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250912105841.1886799-1-yi.zhang@huaweicloud.com>
-References: <20250912105841.1886799-1-yi.zhang@huaweicloud.com>
+In-Reply-To: <20250818072859.468081-1-zhao.xichao@vivo.com>
+References: <20250818072859.468081-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,29 +67,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 12 Sep 2025 18:58:41 +0800, Zhang Yi wrote:
-> During the movement of a written extent, mext_page_mkuptodate() is
-> called to read data in the range [from, to) into the page cache and to
-> update the corresponding buffers. Therefore, we should not wait on any
-> buffer whose start offset is >= 'to'. Otherwise, it will return -EIO and
-> fail the extents movement.
+On Mon, 18 Aug 2025 15:28:59 +0800, Xichao Zhao wrote:
+> The clamp() macro explicitly expresses the intent of constraining a value
+> within bounds.Therefore, replacing max(min(a,b),c) with clamp(val, lo, hi)
+> can improve code readability.
 > 
->  $ for i in `seq 3 -1 0`; \
->    do xfs_io -fs -c "pwrite -b 1024 $((i * 1024)) 1024" /mnt/foo; \
->    done
->  $ umount /mnt && mount /dev/pmem1s /mnt  # drop cache
->  $ e4defrag /mnt/foo
->    e4defrag 1.47.0 (5-Feb-2023)
->    ext4 defragmentation for /mnt/foo
->    [1/1]/mnt/foo:    0%    [ NG ]
->    Success:                       [0/1]
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] ext4: fix an off-by-one issue during moving extents
-      commit: 12e803c8827d049ae8f2c743ef66ab87ae898375
+[1/1] ext4: replace min/max nesting with clamp()
+      commit: 981b696faf2d59a58d1dc8e258bba00b12e5de93
 
 Best regards,
 -- 
