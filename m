@@ -1,107 +1,145 @@
-Return-Path: <linux-kernel+bounces-834250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D57DBA4431
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:40:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B43BA4416
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821621887AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67128179254
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390D0199E94;
-	Fri, 26 Sep 2025 14:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElFc6G7e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C62188713;
+	Fri, 26 Sep 2025 14:39:17 +0000 (UTC)
+Received: from mail-m15566.qiye.163.com (mail-m15566.qiye.163.com [101.71.155.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971BE28695
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EAA13C8EA;
+	Fri, 26 Sep 2025 14:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758897546; cv=none; b=JCz9xY4/k+cbRghJY7Pj+EYxSqsDB6KuNFlBVC2GEhk+i+/SAwn+lkbe+4KOgQ7yYLUAfEobwWlmeLpxQ+mwfaNczCbV4KsejZUi0HZ7frWRYbiQi/LMkj5bkKpjYKdBsqHV59aLC3Yrji9UrVpdtSEo4PSqZKGOQydN5binuZY=
+	t=1758897557; cv=none; b=Dg03d3pJ6LIUzEtXe7bS1ocf4UIqWlCDd6jnAeF7CAy6rZgatvXpnbpRqTvNSvPHycHg/T5BQwElETQqoUtd3ahW1jq7501VBFgPbWMGggyz82dMkh08e3jnKo0/WP3nVlUSnc558JiC/QbI0M8fYpx2aW5aDY9qpsbb3+ug10I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758897546; c=relaxed/simple;
-	bh=GR3UhQsht5K0Jwq5rBXb9dgUoosX34C002/S7elTLUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=piUXUV54f+LMdbHxpA38H31k5jRdxZBLnuPljv8i9oVI1bR6/IPWQiPnXEzuZJKDlMrO1xGEMFB/FrNZOYIzFCbEifAsDkOCSshAlljn2H4+FsD2rSQQ0nwRWjL+aO9jSfKx0wCD/+jajRMHPdtK7t6ffUM4o3MFZMhv3TOeTyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElFc6G7e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57749C4CEF7
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758897546;
-	bh=GR3UhQsht5K0Jwq5rBXb9dgUoosX34C002/S7elTLUE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ElFc6G7eZh2BJ0ifxZKpR2ZW3aV40Xpz93WcjrYBNqlFRkd4KbJnGk4vBbqr6fzE7
-	 rWks5qlWg6XaYE8iGxaZ0oahv381AUWBEhjA/ZjDWIgSpGzic94sEXEuUdxIbWJYhD
-	 5Sq0Jrarm7ad/NszVDm0BX3XLSCNJCkrCm1y/pwixANkxQ+tWsk5bpixRzr0Yn6u0S
-	 RzaFH9VWX+YkwcBryUCfVluRe2q0/dPDxg+CzozyIICwIArfhqFcUCuaSJOJHCE21l
-	 g7i/dj5ZoxrndeIiMW4wmAHpQJe5w6vR78GIJC0pOyqNGXoqSe5FDhMVebAj5IX5Dy
-	 fv2D2XargmJ5w==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381e2079fso2087264a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:39:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUyzgATlrMDmwmIq10g9m35RJKN89fBpw3STQL4FnovCWDhTISKPk4Ntvq1SoXyssNByti1moWvcisG8f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuOCEMNpozcZTZWbIUwSxgfraMp9Vu4rwiXc2BErkFHWQt8Hn7
-	HJQn02Cs2s0XO/887UR/lIsQUWYMrObtm/Y5c6y3qxhE8uVSzC6/69sOYsZ3L3Tk4D7URBVSwdd
-	2vrnmA+gOz5BVSBMSGETk8vthlpVaa/Q=
-X-Google-Smtp-Source: AGHT+IHJHaKvdI68QzUrzIAL1Tex4SlePhlPJbUCP0LntCMfCY3uISEcIn/T2FEFBcTugpvP2WZJI6kObdQ5unAgV7g=
-X-Received: by 2002:a05:6830:6615:b0:745:9769:ea43 with SMTP id
- 46e09a7af769-7a048362392mr4417572a34.11.1758897545660; Fri, 26 Sep 2025
- 07:39:05 -0700 (PDT)
+	s=arc-20240116; t=1758897557; c=relaxed/simple;
+	bh=od9vShACd/JgNkVYzap2DkAP/CrTcrq1VvOTO30I0UI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fa7j15ZnHAPLiuBA9ZpnWsQGFMHR5m7nUJ0c3lDwiNvKVtoXbJADyjEhdS8jO7YwFhb2fs0SxfYsPhmbw3NPZnX4KD1rhS9BOP1uEvDmoRcIMFHrvvYPl46y2EOe2wl6eg+bnDpZNcG6lVmYWjdVi5XL0e7MIFRW+a57pA1qh6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anlogic.com; spf=pass smtp.mailfrom=anlogic.com; arc=none smtp.client-ip=101.71.155.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=anlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=anlogic.com
+Received: from leo-ubuntu21.localdomain (unknown [114.84.85.30])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 10cd375ea;
+	Fri, 26 Sep 2025 22:39:08 +0800 (GMT+08:00)
+From: "fushan.zeng" <fushan.zeng@anlogic.com>
+To: conor@kernel.org
+Cc: alex@ghiti.fr,
+	anup@brainfault.org,
+	aou@eecs.berkeley.edu,
+	conor+dt@kernel.org,
+	daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org,
+	fushan.zeng@anlogic.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	junhui.liu@pigmoral.tech,
+	krzk+dt@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-serial@vger.kernel.org,
+	palmer@dabbelt.com,
+	palmer@sifive.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	samuel.holland@sifive.com,
+	tglx@linutronix.de,
+	ruigang.wan@anlogic.com
+Subject: Re: [PATCH v2 00/11] riscv: Add initial support for Anlogic DR1V90
+Date: Fri, 26 Sep 2025 22:38:55 +0800
+Message-Id: <20250926143855.4106-1-fushan.zeng@anlogic.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20250925-jaundice-uneasy-ff8b3b595879@spud>
+References: <20250925-jaundice-uneasy-ff8b3b595879@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1950293.tdWV9SEqCh@rafael.j.wysocki> <20250922185036.GA1983521@bhelgaas>
- <20250926150613.000073a4@huawei.com>
-In-Reply-To: <20250926150613.000073a4@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 26 Sep 2025 16:38:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hX_KwigOroX1JNMEPbNF5R1csN7zJVenKAPTHtzxQ_Qw@mail.gmail.com>
-X-Gm-Features: AS18NWBV8t3xxNWpfT7og_6rkg4uGmPJmoV5hPwGaOLV6FHNIUYqC7HibpY3w_0
-Message-ID: <CAJZ5v0hX_KwigOroX1JNMEPbNF5R1csN7zJVenKAPTHtzxQ_Qw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] PCI/sysfs: Use runtime PM class macro for auto-cleanup
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
-	Alex Williamson <alex.williamson@redhat.com>, Zhang Qilong <zhangqilong3@huawei.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a998676aceb0224kunmdf48913a39ec1b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHR5LVh0fGhlPGEJKTUJJGVYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSk9VQ09VQ05VSEtZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSExVSktLVU
+	pCS0tZBg++
 
-On Fri, Sep 26, 2025 at 4:06=E2=80=AFPM Jonathan Cameron
-<jonathan.cameron@huawei.com> wrote:
->
-> On Mon, 22 Sep 2025 13:50:36 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> > On Mon, Sep 22, 2025 at 05:31:53PM +0200, Rafael J. Wysocki wrote:
-> > > From: Takashi Iwai <tiwai@suse.de>
-> > >
-> > > Use the newly introduced class macro to simplify the code.
-> > >
-> > > Also, add the proper error handling for the PM runtime get errors.
-> > >
-> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > Link: https://patch.msgid.link/20250919163147.4743-3-tiwai@suse.de
-> > > [ rjw: Adjusted the subject and the name of the class ]
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Being half asleep I went and  replied to v1 when v2 and indeed this v3
-> were already out. Sorry about that.
->
-> Anyhow question is why not ACQUIRE() and ACQUIRE_ERR()?
+On Thu, 25 Sep 2025 18:09:59 +0100, Conor Dooley wrote:
+> On Thu, Sep 25, 2025 at 11:06:50AM +0800, fushan.zeng wrote:
+> > Thanks first.
+> > Anloigc already has the open source SDK at https://gitee.com/anlogic/sdk,
+> > and will submit it to mainline at suitable time.
+> > The code should be a full feature version after lots of tests, not the
+> > modified and simplified version from Anlogic open source.
+> 
+> The nature of the upstreaming process will require what you have to be
+> broken down into multiple parts and be upstreamed at different times,
+> depending on how long components take to review. This is normal and
+> expected. Of course there should be through testing done, but I don't
+> think that what is in this initial patchset really requires much
+> testing - if it boots then it's probably sufficiently tested!
+> 
+> > And we hope that there won't be two different versions code of anlogic SO=
+> Cs,
+> > it may confuse customers.
+> 
+> If there's ever going to be complete upstream support for your device,
+> then there will be two versions, because looking at just the dts files
+> in the gitee sdk you linked I have noticed things that are not acceptable
+> in upstream. As others have said, you are not entitled to control the
+> upstreaming process for your device. The only way to have some control is
+> to submit patches yourself and to engage with the review process for other
+> components. It's in everybody's interest to keep differences with your
+> SDK to a minimum, but you need to accept that there will always be
+> differences because the upstream community simply has higher standards
+> than those in your SDK as well as a requirement for portable code that
+> you do not have.
+> 
+> > It is better that anlogic SOCs are long term maintained and supported
+> > by Anlogic officially in mainline and for customers.
+> 
+> It's only better if Anlogic submits better quality patches (no evidence
+> for that yet) or submits the patches more promptly than others (which
+> clearly has not happened here), and offers review commentary etc at a
+> higher standard and more frequently than a non-employee maintainer would
+> be able to do (there's no evidence for that so far either, given you're
+> trying to stall this patchset). Your claim seems to have no merit as
+> there is no proof that you'd do a better job.
+> 
+> Thanks,
+> Conor.
 
-See my reply:
+Hi all,
+I realize that my previous message was inappropriate and may have
+given the wrong impression - my apologies.
 
-https://lore.kernel.org/linux-pm/CAJZ5v0gnqoJ8bALZT61ZvTA=3Dchp8y5QBiA7ZpNQ=
-6fFJuQzZUnA@mail.gmail.com/
+To clarify, I am not trying to control the community
+or block upstream work. I misunderstood the right
+way to express myself before, and I take my
+previous mail back.
 
-I think that it can be done though.
+Thank you for your guidance and patience. As a
+newcomer to the Linux community, I am still
+learning how to properly contribute.
+
+If Junhui has further technical questions, please
+feel free to contact me in this thread. I am happy to
+help and to welcome contributions from the
+community.
+
+Best regards,
+fushan
+
+
 
