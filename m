@@ -1,262 +1,249 @@
-Return-Path: <linux-kernel+bounces-834462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658D7BA4BE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:10:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1376ABA4BE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 19:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200274A39B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8AA1BC8289
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99FB30C11E;
-	Fri, 26 Sep 2025 17:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EAF30C342;
+	Fri, 26 Sep 2025 17:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bvfJub/L"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013036.outbound.protection.outlook.com [40.107.162.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nRwpXO+E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LR7sDKlf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nRwpXO+E";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LR7sDKlf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11E915B0FE;
-	Fri, 26 Sep 2025 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758906631; cv=fail; b=daJiJtd8DD603Q/yeaYtsQYjvRbC5o4K/73PeDy2Fy8VUy8dXx1+xISLrtCY0PGjijJ+O4cI8s49eF1hqiBfHYWIG5ykOxNIcg3nZ0TA9PbHTE6IriufGs7wr5ILgfB33L4tcuPGtey4TyCGxGA2l/JoMXGCNPRJr3JyHOuG4X0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758906631; c=relaxed/simple;
-	bh=5ZSH7YHBLuKAZcYEAJxG7aL3K9Cb2VRp+gqRV9r8Dv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=E2Wia36U5io+4SXi4d86i5jDWU4m3OHTUeIptgFcfJ5ftnPcqzeGEFn4ZfzMn0W4g8zB6systGfC8xqFfGpktGPRFQ4tK8Y4MurHUTEQ79AHPSlqJ8FohaYvMehaKL4czrfgGyKPn3BT4CLQvhjSwngbE2LaEUN3TxpXMbSev4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bvfJub/L; arc=fail smtp.client-ip=40.107.162.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YVaLgdSr9AE2weual3t/QcMk8pkVAmnBqDIdrgW1Dne2XKRhv/9W2q3KXHMGn4XayedhHtd/rK500wSY1W/AZH5u8wgkGxfWlGWfqAxbYiL3/GKN3RDzIv0ivL8RR9ddsZWFQ52oKajDbNeVVp32vpXf/OvPgBpZyTF0Z+NfIWrT479ZWfT7EqyNz9pmBpQV56WkDZCKE4cUdK8pjyd7y0XInM0RHpbzwy1pqC+DXq0u5qcAbc3LOmF0nMRJ8rKZkiAdGSG1HrM9e2wIgg2wbdYPyq31rbziZqnwTGvbD0Gw1njindZIezr5sntLTrp6l3zBAJVOViRBtaajkunScQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q1+p5WaZA7RgEVl7QZwPQTsY7cL/nzC40e9or1dOeow=;
- b=dRJ0fP07sBnS2iee6GKIqIdkxg0j6J20jDs5cdBz7ufe2cPA3nBr/BoixtiamvAVzrUAS2Y6oSb9XfnLudEftv/UwU8q8zuNgUAcL29U+U/ZVslZOthpV8pT9Vz8CU1cObL0/RcnfyB8HR2I7vjjkASw31vwcf0o5jGIA8q306NgRAfCXgSCGt56C4dzYr/H41CMLWOazeWphGt+w8VLs9Sq6YRcTZ3qbvQXWxk7cE8QMxAvfzooTELbKzK3hQvaOdaTo+AGfA/sxKuBUC+CVrOMtlDgNNPVqAwIZ4gkVSsyVj3t0qcg7VPBKDT8a79w9g9d+nn6jv9x07NLMqBgJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q1+p5WaZA7RgEVl7QZwPQTsY7cL/nzC40e9or1dOeow=;
- b=bvfJub/LLiGE9Sb6jKQEhkTQRfYvRHz7uGkxQH4RnCuOfLvi98jHJpgk3spPYlah/JYuERltqLIph+u25idbFRRnxjKBslNZs1KLpmkcr2RXRhPXjj+2GaOIozpd/idMSOaBddSRrsfbQpj4mSqKMZrrHtFV1VI0t1hHna5g5BVNCqUmiA211oU6/po7kQ1ce6eaNVx/Vwel21a3aV5HlWPYUr68cmLjTfJj5PLe+jpGEj92RemxDlI3V+Ups1VrB+mfrsCjzBu+Xj2G9xtJnTpMtJu3Zvx1PMCtfxHsC/ghuB6Bp3XPGLgcZDe7YPpae+PeOwcEribs6kgHoZvEeQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by DB9PR04MB8107.eurprd04.prod.outlook.com (2603:10a6:10:243::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
- 2025 17:10:25 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
- 17:10:25 +0000
-Date: Fri, 26 Sep 2025 13:10:16 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ntb@lists.linux.dev, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] PCI: endpoint: Add helper function
- pci_epf_get_bar_required_size()
-Message-ID: <aNbI+KrPJW4kgy4e@lizhi-Precision-Tower-5810>
-References: <20250925-vntb_msi_doorbell-v3-0-ae0b0c93caae@nxp.com>
- <20250925-vntb_msi_doorbell-v3-1-ae0b0c93caae@nxp.com>
- <aNaHrj0rwLTtSRS3@ryzen>
- <aNaprpfaeXIcqeGD@lizhi-Precision-Tower-5810>
- <aNauaSVs5ytzsVFt@ryzen>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNauaSVs5ytzsVFt@ryzen>
-X-ClientProxiedBy: BYAPR01CA0019.prod.exchangelabs.com (2603:10b6:a02:80::32)
- To PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F40307ACC
+	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 17:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758906725; cv=none; b=hQRQSfUVGfuQny67a8aAj2AQOht9rNMtEd+UsMczwxs5Wui3JeamuLMBHEGvlf78lU5MJ/DNj/Tre1E/0HOk1S0dzs8RsC2Vz+xSbiCcVyHyiq0M1v7Ci7Gslgj92YXC4y1rCO7lQ++XI+vC5khWL27aqV6jqB8fsaAcjUtV7GQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758906725; c=relaxed/simple;
+	bh=U9N4TeOnkxvqTKSBciFqns4wvFOW1A7fVPj0etLrAFc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fz5gDDYNYQbrgbIxGWNyfdE4itPXGm2IkKeK0iM9wrrirSrWdHmBUg7mN5PfK0sNMoz3pQCEemXB9qypv9vdHogf2JpH+pYUnGynMYasKL1UyxldISLhgCgr8jo5nH8lGff+aro91PRTAuIVVUlUF2h8nPaDdlXTGDXVjtVXBdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nRwpXO+E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LR7sDKlf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nRwpXO+E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LR7sDKlf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5131B243F7;
+	Fri, 26 Sep 2025 17:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758906720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IKHikqJ1cn2yMHDVFPGBQhz/2NMrhqlW0Rdo3rkQdqw=;
+	b=nRwpXO+EozLOwUrBDa+iKRMbOE56Uo1YAqA4ShhGZ9N6+0/Mnppklo/HXx51bKxIm9K4Z+
+	pSpXULhlqcJQp9MSBdivQAYCZHSCrYYSNDuJIOUXLzkr+mZxia/xpLzt4Ej+P7OQGAiPDN
+	WE4OcYvjh9etGPI9l9FNwU8NWVIgOKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758906720;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IKHikqJ1cn2yMHDVFPGBQhz/2NMrhqlW0Rdo3rkQdqw=;
+	b=LR7sDKlfHO9YZuEM9w1sG8Fqn766R0+/Auz4r5Kgb3Azgngf+U1RS41J2xBYM7fsomZGWF
+	ofYq0PV/OoT8nECg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nRwpXO+E;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LR7sDKlf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758906720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IKHikqJ1cn2yMHDVFPGBQhz/2NMrhqlW0Rdo3rkQdqw=;
+	b=nRwpXO+EozLOwUrBDa+iKRMbOE56Uo1YAqA4ShhGZ9N6+0/Mnppklo/HXx51bKxIm9K4Z+
+	pSpXULhlqcJQp9MSBdivQAYCZHSCrYYSNDuJIOUXLzkr+mZxia/xpLzt4Ej+P7OQGAiPDN
+	WE4OcYvjh9etGPI9l9FNwU8NWVIgOKU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758906720;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IKHikqJ1cn2yMHDVFPGBQhz/2NMrhqlW0Rdo3rkQdqw=;
+	b=LR7sDKlfHO9YZuEM9w1sG8Fqn766R0+/Auz4r5Kgb3Azgngf+U1RS41J2xBYM7fsomZGWF
+	ofYq0PV/OoT8nECg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 324BE1373E;
+	Fri, 26 Sep 2025 17:12:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NJS6C2DJ1mjSIAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 26 Sep 2025 17:12:00 +0000
+Message-ID: <57b01f59-f4b1-4f5f-bb63-fd8eea19b7ba@suse.cz>
+Date: Fri, 26 Sep 2025 19:11:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DB9PR04MB8107:EE_
-X-MS-Office365-Filtering-Correlation-Id: a06fa5f5-03b6-45e5-b03e-08ddfd1f9579
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|19092799006|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r8XPSvDVAYEPA714fW/0oVuiv/FnOzZkxSAd91q9GdCGVCKfoYh3Wc+YI8AT?=
- =?us-ascii?Q?CbG8oJ8uhpDr7SXWJ8otK7ioGQf8MMMWwjdvBRF4/QebxbLt9MA2czQKJCUY?=
- =?us-ascii?Q?2Bu3aHO8cbjLIGJiH8KItkT/ljbfUWRJMF7KCANiW4siRzY6ZZzxzPfSTigN?=
- =?us-ascii?Q?cVcIdi1ElhsmBu3P1kVmpqwB/vVzDo1mdzRDgYH0umoOCyY9C/cXknWC9RIw?=
- =?us-ascii?Q?b2bWy+WBHj1KrWckuc+BNzbavauL15kIH3QvQ5pXNhfZpOiPer9GGT7GZSKs?=
- =?us-ascii?Q?7D5gLWcUxQzl8XNbqA1JJM2nJ/kivXnRGUhaU2wpLrsVNCACtwYaVgi0S/nU?=
- =?us-ascii?Q?kqvnaPvIOVumjl2RbX3QSPAcButYk2DH94ebI3JdxukVAy5+DxFBK4S6ZMpX?=
- =?us-ascii?Q?BICLk4GiVK6qmC8JvR4vF5AhB/5uOkfOS9wOYPZWCxJfaVPfQVXnVbqRbeNY?=
- =?us-ascii?Q?KtSdOT3c8CfZonSjHFKSxCCRAcafiunnjfXGt0oF//l7xpNlooULh4B09fu7?=
- =?us-ascii?Q?2+10C51epgGzjJcgFcnx1viV9XSv6Qh0u5mOVxFhjV9lW59h0HbTbAFd8WAH?=
- =?us-ascii?Q?ufJx8WAtNHK5k/m+3H2LU5VXDndM9jzF7FGDAJ3gb10q/HKA5CrVo90LE4Mr?=
- =?us-ascii?Q?WbIt8KVytyvpwIxLC7Yml/GvbqU/rP8OSeBnBnzloeMG9BCGo31PKroLbFoM?=
- =?us-ascii?Q?DTibA++A9Zmqd+OWaaHwNAVePNyWRkOyUUwI7XD5jNgTFbR5at0mngTQtsp1?=
- =?us-ascii?Q?JMV6wP937Id4GacNnZciY5UVNUfJ3sDOjpetx59TkMkq/OepdE7t9j8mNMMb?=
- =?us-ascii?Q?hY3IDolrG4P+t1/YCka8qOSeLSFDFvni0tNu7B1W4ElDQb0b2h196iM+PPzJ?=
- =?us-ascii?Q?reKq+JMZJpSmVyo2B3X05oZYK0PuazNZO3MgGu9rQMusB3n70IJIy7eyMI+X?=
- =?us-ascii?Q?bhaTVvSwzBoWw7bhMtwXrG/Ezk638Zib2sPzjS8JCYlb3DGtaafkvepQorKc?=
- =?us-ascii?Q?i+bt9XO1o6HmnoNwRScGcoXkdziOBVYE9dlCLA760YMKZABa0irEy9M0CAhD?=
- =?us-ascii?Q?+BU1vHY0PWTrTVqCIZAdLOdsZk9ztbUhAFr3eQdH5L+9VAgaQXj6Pd0bM26g?=
- =?us-ascii?Q?GVv8P98s+wV1K9lwjq30rVZuh+jubThWei2pMzBUZnEsN8gE/Hyul/i55Eo7?=
- =?us-ascii?Q?aed6L8u9pUaNf4AvUfHy3HZJreDtIT5vMMfCR5ycxvCvK/VRnQxa1mc099mf?=
- =?us-ascii?Q?6jaCcNFjuR1woZ314mglHmOPC959NFbf4Ci9U0SPjnZhN1SuszOaGcp8y3Ca?=
- =?us-ascii?Q?XW+NUw8oJQVld5UDgxr2CNFEUzZXmrnBU2Vnrx+EN3bcN3ib/IwKHUvImwLy?=
- =?us-ascii?Q?aSup88Yi7bt0GaecG/Lj9SC0iUG0KGR0YATunwlsDT6PLaTbEBPKaQINC4fR?=
- =?us-ascii?Q?3EBuc8ss/Xh79RXSVkpydiiZv4EoJhKAwLWUtozV2+y3miYrBGCKYbMjvDnf?=
- =?us-ascii?Q?1VrgnqunKFi4dMPbdUsct6Mft/jKgv/Ps3hs?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kKTnc96LlYwYnpHpXx7PcK+ofMy5MDZwTMvW8kS7vFdXM3qgpXI8evtgwp9T?=
- =?us-ascii?Q?gdCRwx64Fpzrg/I9PDaeaSSNMKrxkQYX8kclu/sJzS62Pnfzs495GejKxoeC?=
- =?us-ascii?Q?fbOztFIFcRIp83TOSmGK7pG1cpoD5o1Mn6+aSYKQMS1Aq5mk5UHy5YssKz4J?=
- =?us-ascii?Q?SdKUmXug/oIDQSrphnwk5phueAT4KsRp+Zzle1WZXZNiEIV3fBkDsc94CCft?=
- =?us-ascii?Q?zsEm6CR5mST91Moqyk+9PxMf9QCrTn/kHzpAnHdAuZjlLZ3bCGw8XC3h2Mwe?=
- =?us-ascii?Q?QnSdNKyRXS9o7YcotDU73GUBMzh2Cr188u4XCC+e4yn5jtzTltPxB6FOlHS9?=
- =?us-ascii?Q?g04g+lTetNMYJ1Ko167lp1i49K8/qaOT+rD7vy6NGGEN0/pT7ziNbW2XOVqj?=
- =?us-ascii?Q?TGCQS/8rbWN7DBMKZ/nGlqdx6gAfJPVzp4SklxqFgxx3r2gEc7RzU1WvOa1Y?=
- =?us-ascii?Q?/zTtW/YB/BzmtK1GzNrlXi34ddl2UoiB0742EY0bG/Ar8ge2VoJ4B0gKG9Ka?=
- =?us-ascii?Q?L4ylV+uOCirtf2uVuUu7Rn57g9pvC6XyU27PWZNONwPSSCTRIkO/uXvvbRXO?=
- =?us-ascii?Q?394aZ6Yrjm+VRC+5nZbNFYdZ+XMb4WJQ4SiEdh80Z8FW0whBg+DuhwexgHVs?=
- =?us-ascii?Q?D58ax/NeWEErssTKw9+2ev8n/IAerHLKqrsWmzjJnvl/DFndSapDJOWD68DO?=
- =?us-ascii?Q?OdZ1FkEcUy/RPD3TQXUmw7WZ+6J3KMKnIczz7RGTGMRSdUVQjZM/97L0gN55?=
- =?us-ascii?Q?27gAVnTdGQcjnKPXtr+RLXP0WJAJeWtjZjSWDShO/56Pmrp+5fnnQ9sP6Jbz?=
- =?us-ascii?Q?nGN6whZ7hDwYBwZ3Km42/FPhAtVotiKPUl6T3Kb6duDVmHjiu9EJqkkk8OgI?=
- =?us-ascii?Q?+c9dipzVMLhqUOuzW9WaWSgDpwW4SeAEpigA5UxqeICxk/OHrWSXA/i7TgJc?=
- =?us-ascii?Q?K77OI5oQ+esC/uz0zqIZvCDa0aLWJptAYJx12HdOYcQWWIUwn8YUnbywTaJC?=
- =?us-ascii?Q?jZ0OGuKULNCNvSi4psguCu3kEWVc4axnZc9RiDjx3QvZw90IeMM+zXj4LVqB?=
- =?us-ascii?Q?11KyRXqIjcfB+8EZbp09D+HcBDPtyVAeu37iFmxvKWfqfCQ/Tqemr9e7/DQf?=
- =?us-ascii?Q?99r32wlbm/QhHpjsedFqeaKob/0fk2FN0kWFrdixPUZSVsYAt1+4gh6Gs+Y2?=
- =?us-ascii?Q?P9q4wuWnhBCyfKtdoFJ8mqzBaGU6zSavnsSgDQGwrNXOMo3eE3DvmRcjMlcn?=
- =?us-ascii?Q?QxQO1P7SbR2D208YNtioej0EwvrRVjtRRQCqXyjiGELIOIF85tPlXbW566fX?=
- =?us-ascii?Q?2W8sWyurbEInMvr0pPa+rmuaC5aZDC2yifec2C9U/Udzar2hnoxpfJY5nYQ1?=
- =?us-ascii?Q?VuBG5Zcq9sdxQrGULX1yAI0DIlr+bVoS6mBIqzHsd78LX1SiKSyOz6xLE1Z8?=
- =?us-ascii?Q?avz1tLVTeooUX807elEfW0Yn2dBfzGzAEDfjdjN55zex3pFP6MPoUmxEX0ns?=
- =?us-ascii?Q?35fValw04JQP+QyKKLkrlJ+9wzY9bXzSv1yDgNQUjsaurNPWFbLEfqbwBG6d?=
- =?us-ascii?Q?pw4XQsQZgZtM89KeG1NiogyTPpkGhiMqxMYNQ9LE?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a06fa5f5-03b6-45e5-b03e-08ddfd1f9579
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 17:10:25.2002
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kVNvrbt4rq7OFA6vB90PzqjYeOv4w8N8M3BaG0fH8BaYVD+8HMGFTE+Dl2vROb/muIEfvdjtknMpAl50ArLIlA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: slab: add basic slab module
+Content-Language: en-US
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Elijah Wright <git@elijahs.space>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org
+References: <20250924193643.4001-1-git@elijahs.space>
+ <DD1SGLU4180C.361W5XLH76XNC@kernel.org>
+ <5f09b7f5-e7de-4333-8de5-322eb6d93aa9@suse.cz>
+ <DD2UB5P01XW7.1GW33112S22Y@kernel.org>
+ <DD2URCNO2P88.168J48GHSJRRL@kernel.org>
+ <1f5ae3bd-db21-4042-b177-55464644ce2e@suse.cz>
+ <DD2W3LCC7FWA.2X90YAPLI1FGC@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <DD2W3LCC7FWA.2X90YAPLI1FGC@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,protonmail.com];
+	FREEMAIL_CC(0.00)[elijahs.space,kernel.org,gmail.com,garyguo.net,protonmail.com,google.com,umich.edu,vger.kernel.org,oracle.com,kvack.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 5131B243F7
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
 
-On Fri, Sep 26, 2025 at 05:16:57PM +0200, Niklas Cassel wrote:
-> On Fri, Sep 26, 2025 at 10:56:46AM -0400, Frank Li wrote:
-> > On Fri, Sep 26, 2025 at 02:31:42PM +0200, Niklas Cassel wrote:
-> > > On Thu, Sep 25, 2025 at 01:01:47PM -0400, Frank Li wrote:
-> > > > Introduce pci_epf_get_bar_required_size() to retrieve the required BAR
-> > > > size and memory size. Prepare for adding support to set an MMIO address to
-> > > > a specific BAR.
-> > > >
-> > > > Use two variables 'aligned_bar_size' and 'aligned_mem_size' to avoid
-> > > > confuse.
-> > >
-> > > s/confuse/confusion/
-> > >
-> > >
-> > > >
-> > > > No functional changes.
-> > > >
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > > change in v3
-> > > > - change return value to int.
-> > > > - use two pointers return bar size aligned and memory start address aligned
-> > > > - update comments about why need memory align size. Actually iATU require
-> > > > start address match aligned requirement. Since kernel return align to
-> > > > size's address.
-> > > > - use two varible aligned_bar_size and aligned_mem_size to avoid confuse
-> > > > use 'size'.
-> > > >
-> > > > change in v2
-> > > > - new patch
-> > > > ---
-> > > >  drivers/pci/endpoint/pci-epf-core.c | 84 +++++++++++++++++++++++--------------
-> > > >  1 file changed, 53 insertions(+), 31 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> > > > index d54e18872aefc07c655c94c104a347328ff7a432..2cd0257831f9885a4381c087ed8f3326f5960966 100644
-> > > > --- a/drivers/pci/endpoint/pci-epf-core.c
-> > > > +++ b/drivers/pci/endpoint/pci-epf-core.c
-> > > > @@ -208,6 +208,49 @@ void pci_epf_remove_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(pci_epf_remove_vepf);
-> > > >
-> > > > +static int
-> > > > +pci_epf_get_bar_required_size(struct pci_epf *epf, size_t size,
-> > > > +			      size_t *aligned_bar_size,
-> > > > +			      size_t *aligned_mem_size,
-> > > > +			      enum pci_barno bar,
-> > > > +			      const struct pci_epc_features *epc_features,
-> > > > +			      enum pci_epc_interface_type type)
-> > > > +{
-> > > > +	u64 bar_fixed_size = epc_features->bar[bar].fixed_size;
-> > > > +	size_t align = epc_features->align;
-> > > > +
-> > > > +	if (size < 128)
-> > > > +		size = 128;
-> > > > +
-> > > > +	/* According to PCIe base spec, min size for a resizable BAR is 1 MB. */
-> > > > +	if (epc_features->bar[bar].type == BAR_RESIZABLE && size < SZ_1M)
-> > > > +		size = SZ_1M;
-> > > > +
-> > > > +	if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size) {
-> > > > +		if (size > bar_fixed_size) {
-> > > > +			dev_err(&epf->dev,
-> > > > +				"requested BAR size is larger than fixed size\n");
-> > > > +			return -ENOMEM;
-> > > > +		}
-> > > > +		size = bar_fixed_size;
-> > > > +	} else {
-> > > > +		/* BAR size must be power of two */
-> > > > +		size = roundup_pow_of_two(size);
-> > > > +	}
-> > > > +
-> > > > +	*aligned_bar_size = size;
-> > >
-> > > I think this name is wrong.
-> > > The BAR size has not been aligned to anything.
-> > > The BAR size has to be a power of two, but that is a requirement of the PCI
-> > > specification, so that in an inherent property of a BAR.
-> > >
-> > > Perhaps just name it size or bar_size?
-> >
-> > there already have 'size' for input.  It should match epc required's size.
->
-> Why do you need both "size_t size" and "size_t *bar_size"?
->
-> Isn't it enough with "size_t *bar_size" ?
->
-> The user can supply a value, and the function could update that value.
+On 9/26/25 18:58, Danilo Krummrich wrote:
+> On Fri Sep 26, 2025 at 6:32 PM CEST, Vlastimil Babka wrote:
+>> On 9/26/25 17:55, Danilo Krummrich wrote:
+> 
+>>> 	// Frees foo and causes the "zombie" cache to actually be destroyed.
+>>> 	kmem_cache_free(foo);
+>>
+>> The free will be fine. But not cause the cache destruction, as that would
+>> require checks on each free. But should be fine wrt safety if we only leak
+>> some memory due to a wrong usage, no?
+> 
+> Yes, technically that's safe, but we wouldn't prevent the leak, which still
+> is not desirable (and not our ambition for a Rust API).
+> 
+> From a C standpoint, both the warning and the cache leak could be solved by
+> making kmem_cache_destroy() fallible as you mentioned previously.
+> 
+> On the Rust side the cache would be represented with a struct KmemCache<T>
+> (where T is the type that should be allocated by the cache).
+> 
+> kmem_cache_destroy() would be called from KmemCache<T>::drop(), which is not
+> fallible. But even if it were, we can't enforce that users keep the KmemCache
+> instance alive as long as there are allocations.
+> 
+> So, either we always keep the KmemCache<T> alive for the whole module lifetime
+> (which depending on whether its built-in or not could be considered a memory
+> leak as well). Or we ensure that the last kmem_cache_free() also frees the cache
+> if kmem_cache_destroy() was called previously.
 
-If not 'aligned_mem_size' in list, it looks fine. But after add
-'aligned_mem_size', I think use difference varible for two outputs will be
-clear and consistent and easy to understand.
+The rust wrapper side could do that so we don't have to add that check in
+all kmem_cache_free() calls, maybe?
+Also either way it could perhaps be difficult/expensive (memory barriers
+etc) to properly handle a racing kmem_cache_free() and kmem_cache_destroy()
+in a way that ensures the cache is always being destroyed, and not have the
+kmem_cache_destroy() observe the destroy was premature, while the racing
+kmem_cache_free() doesn't yet observe that destroy was attempted, and not
+try to remove it.
+> OOC, does the cache pointer remain valid if kmem_cache_destroy() is called while
+> allocations still exist? I.e. is this, except for the WARN(), valid code?
+> 
+> 	kmem_cache_destroy(cache);
+> 	kmem_cache_free(foo);
+> 	kmem_cache_destroy(cache);
+Currently not, but making it valid hopefully should not be difficult,
+without affecting fast path.
 
-Frank
->
->
-> Kind regards,
-> Niklas
+> At a quick glance it appears to me that things would go south in
+> kmem_cache_release(). Anyways, I don't think it would help, if it would be the
+> case.
+
+It would help if it was safe and the rust wrapper side did this retry?
 
