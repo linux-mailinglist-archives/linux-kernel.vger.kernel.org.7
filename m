@@ -1,237 +1,93 @@
-Return-Path: <linux-kernel+bounces-834349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8BABA4822
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BCBBA482B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 17:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83EA27B2E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156D31BC82DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F15226D0F;
-	Fri, 26 Sep 2025 15:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3689A22689C;
+	Fri, 26 Sep 2025 15:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhWooFkH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW6u7eIx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F379F129A78
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758901961; cv=fail; b=MhXsszc8vOJrXU/vFZR7RwNJmTXXaxANvpxuSfkHPGPRlkk3TRrareoDshvjUjC4LMVhQd8zbSR9LQFmk/W41Bmpx3XTu6hj9apEbGJRfgzrhqJHMVxT3Zv0UEMQOq7qOt61R/8hQInsQFd1iK0Cix+UB/CkCHelr/atEQG+tbw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758901961; c=relaxed/simple;
-	bh=F3GMFzDU+9qSYrK6L3DipkYsBOWUp0sEmb8kcToDzg0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Vxu5ezXy6/eNcKfNHqdRXpA2xADMQhi5zmmsmmSK1e+gny0gO3OkfDUgYk3GyDolNnXePz/Gkkfhprwd2qaqxtbLOTYlhH4hOCfKimBodzNEuIrRhrthK188xYPhZF7AI2EmqD9ql0cmdj4v0qn31iO8O5aLpNFvIhwXE42WMw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhWooFkH; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758901960; x=1790437960;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=F3GMFzDU+9qSYrK6L3DipkYsBOWUp0sEmb8kcToDzg0=;
-  b=NhWooFkH0c30PNYskM9N1qiqHXeCJqv1gkRwYuYqW83VZ79LnpVU9hK8
-   jkhtNdqfLeSI3Sm/Uiva+99DHFqmS+yGBbGyFrFMHo2F9EGCSL5/0Za8P
-   Ohe9pJE/jFcoYW6v1sMeefMlU70dc05xLBE8WjCtPl+yDgKvMonQU6QwP
-   iSNIpdCCmARZpR7vLoSpHq6F398U4Dz24FF6wuDk74YOPOEDHz1bGQJ7a
-   DxGJSICncSznhddAfve3N1pHub2ibLs83SvVasd+uAayJrRY+/Geo3Ykl
-   mF5UvdRxTqayhSAUKjo9jSYxLv8n5hCUG5Q3YQuGe17n1GlJ15hv+e7l0
-   w==;
-X-CSE-ConnectionGUID: yPEy2e83Tn2Gp3z/2smIKw==
-X-CSE-MsgGUID: IEEmWvw+QRuHjsI9O0e6cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61348102"
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="61348102"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:52:39 -0700
-X-CSE-ConnectionGUID: LvDgNVZaSxOxYh6T2EX0ZQ==
-X-CSE-MsgGUID: uX0Va2EqT2OHh7oQhO3WmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; 
-   d="scan'208";a="177203268"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2025 08:52:39 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 26 Sep 2025 08:52:38 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 08:52:38 -0700
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.2) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 26 Sep 2025 08:52:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SgPoFWOlOJSNjiftWTNrKEoUJQzzOtczIdc70QyOe6Mh4p0ZJFWxc8zvph0W7UeDWsWI1fqBwY7LqT5ppicL22+2rvAN8atUiTCuk9zeyOHzer1No4N+hgyTlfMKSGqTCACye7qg913FvQF9RAwBI3Er2p9o70JWNfkM3S1ZTWZnBwdFdRZHC1R0ng4Zen/GnA4zToU9B5CbtPrcFGJZ0lrGm2tEbNFabXyT5nHmvccUcurHTsLFro0o0GeVrnIMW6MM61Fa2MS3GoetBeidV3mMzMlfX18JBILy4BKSWJQCp/aopKzrDhjcmM31xcOXgmyjQFAVyVlorev1xtt8Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dh4+pyyoBdWeMmE5UtMIkNktW2lV1iu0KNuv6MChWyg=;
- b=QOXZD7ywSwX4l9+y45qAUfDPGI+MRJJKvr6eF0Q0n9gI0D7pcbWEiB0gUvOeWk5wEeTmY42SVe+AqJT9IZYm6W4X+0Mkkafl4HmAXRN3ezEamvBZnTqArzZQumLtJaTjscVH0Ft/e8j7dJH12i2hjIhzl2hDK3l/6wwyVbFnOlUhicENZVKjvDQV5WKddYAHn9WxPfbNw95+CFTusWC2IXo+wav7O3pB8a6irrtLCTeXBZVH7YJ6rwOJ3Fmr/iXEtZmof4lUKA0aziDxdWcwFNBYijbA28lvavHu6Jd/en6C5ocK5TNvTTJsP3mGwvb5tbfGIZ2PhQX1VDfm76fgew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by DS0PR11MB8051.namprd11.prod.outlook.com (2603:10b6:8:121::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.14; Fri, 26 Sep
- 2025 15:52:36 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
- 15:52:36 +0000
-Date: Fri, 26 Sep 2025 10:52:33 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-CC: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: drm/xe: Linker errors on configfs symbols
-Message-ID: <t5lgk6bswoaetcl4cr46z23cy3tzewkwiqbsz7xrzrvdkloaar@lsulxa7ti4bg>
-References: <fa25d9b0-1ec5-48fb-9249-78754eef6bd2@intel.com>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <fa25d9b0-1ec5-48fb-9249-78754eef6bd2@intel.com>
-X-ClientProxiedBy: SJ0PR13CA0092.namprd13.prod.outlook.com
- (2603:10b6:a03:2c5::7) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889FC223DF9;
+	Fri, 26 Sep 2025 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758902106; cv=none; b=N6VqY4zfqa6s5zUAt8sEUGSzOwSs5Ly9ZaEXn6IJb77eClyQYhtHfdkAA++/wGHTqz7/2wT62EqelfS5Qs2QCMXxV3acxjmEscInLPB3UGt2rkqHEK8ESGnjW8g4wUzVHFxFF9I9sAYwQblaoBJ74PvIeTOtREqHl0MTwc8qN38=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758902106; c=relaxed/simple;
+	bh=QY04EA7f9rFZc1ry5RbDdee1eH1ZtF6RNbYZ864Iejg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eb7O4RMQTPpNRm1AKmnzvm1eS3WNeiWy8OJxIHMqOxsHOIZ9g4gWKHM2rtF3MRcOqpSVMF2HkZwcJR5RJMGWwM3Z2rjy1Pt0++U9JOQzLBgvT5A5zd0q6cWxMU1Dp/J9HeSl956zvc5bptKfqJvP42j+Jk9AKjquB1OWdtYnqdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW6u7eIx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F4BC4CEF4;
+	Fri, 26 Sep 2025 15:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758902106;
+	bh=QY04EA7f9rFZc1ry5RbDdee1eH1ZtF6RNbYZ864Iejg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VW6u7eIxwWH1cr753V5J2LxOOHjIM2+OJigjWqXy14dsgdSVDAbzEcPIWJG0VyCLK
+	 IiccvlAsT6yUeZltR+hEk/dtzTgYiN8iGJTIaVOiWciMEjQIh8uwa5Sh9LyZzxGHdf
+	 6e+BTEIFUWgoEllJmVhO84ZDyvqyCJ6GclSVEfh/uoWb9G74cMnPpPgmp3myebEVZT
+	 DH2NM9Sku3+IlbR22ooNMdKu92dc99ruSbBvc6LFrXx6D8l3z8ZLXsoFZytC/jToL5
+	 HZntiHHn+c/Q5BCRPQfrm9x5FaiE+yy/dZTmjzhS3CQcPXb1K/+j+ptQywWfdiudnf
+	 m8wiQxKpt7BPg==
+Date: Fri, 26 Sep 2025 16:55:01 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
+	Mina Almasry <almasrymina@google.com>,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v3 0/2] net: devmem: improve cpu cost of RX
+ token management
+Message-ID: <aNa3ValQeGEm_WGb@horms.kernel.org>
+References: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS0PR11MB8051:EE_
-X-MS-Office365-Filtering-Correlation-Id: c06ef207-fc7b-47c0-d45a-08ddfd14b681
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gqsWte09Ds8yxJXx+0WVNlmd1isqGfSvUkSoa6bCz/gK5Z9BZY+rDQEL4mVv?=
- =?us-ascii?Q?XgKq1Nhb0+ou0vTWvNdeuihWQF/QY5SXhk6zqI9MovI+MJpuNpd1zzk21IAG?=
- =?us-ascii?Q?sOuJzuKDSYBlU+XP/0Jsg9jTvXXAsRCMPCiTpGu6QTgvLrP9NCtXE0vUOHH6?=
- =?us-ascii?Q?r0tbrNXYkzuXGwT1FnOFP2nk7xV1YVYXWfhjcRo4s9DXv6w2zHN+aa7Izy5J?=
- =?us-ascii?Q?ePmhQCrAk4/JD9maLtl8xs5hE80shO1wy9xLQXFXKYZ/O+HfMIckHgM75xqV?=
- =?us-ascii?Q?FjXZ3JPuFv9MUmI/ndjvoRVGN+4XRzkqvZfEgmDoP8+pFfEJpq4hSY/Ln/m9?=
- =?us-ascii?Q?QhlEo6GKOc/IaGeBm8nxvIGUL6jdqOsH5ymcOnXii0BkdcwMsGhYi4P4Soc2?=
- =?us-ascii?Q?YOGTS7c/n8jRvSkCo/Pi0hl/pzday/YXy4UU4GpSRi6NR6P/m7W4qPjN5dPd?=
- =?us-ascii?Q?N9gF7zkUss4ZEL3zoV9LKzll7lq7DF5wByfVt6w1DnQpesrMP3bm483exnjN?=
- =?us-ascii?Q?/kULj9wFBYrmuXfStkx79oyJrQFQNIXcv/y1+Z121S+/Fc29vWgBCEiT48i1?=
- =?us-ascii?Q?gXkMocZm2M3b9b89X+IANcGUUJu8YRC2czrttuQWQIyghETEK6fxaTEhDx43?=
- =?us-ascii?Q?1veZ88/sjDc/y22QQtV/p6O2z9xak18p0syCswR5QLK/Mb1qPQkCpFp8o+Sp?=
- =?us-ascii?Q?iCQ81jL1ls1WQ1lvGiz3fdgTDoG4vVgJJr8VrOUxbav5UsouGknHEAkPGrIt?=
- =?us-ascii?Q?RHWal7u0h3AL/UeFBuuaiMMfEmw3XXTFtpn+u8UjQpNy85U0Z43OIXlSHM8i?=
- =?us-ascii?Q?oMM9wnWilukrrvNjhh+cpir1CKt5+Yt62pwDQWe0Er5/3D6u2UVm2b5arY2K?=
- =?us-ascii?Q?sadO2Ed2XCkG0t4FlM4ECxd0QIxgbLAUEWx7D7ydY1jxTE/9rCTLjVZIBlTr?=
- =?us-ascii?Q?KRbwVor7c4/7ILOBoSthUgJlQMeS7USHtDitrvKqDZxiUWfXb82iR1unKEn1?=
- =?us-ascii?Q?CsIaq1KZt9AeGBiZfCeHlXf2QmLPwChyIwz2bgzKvdxnVzRX8YE0Uuk4HrpW?=
- =?us-ascii?Q?qiv3lFv6GjxRgh7Bi2gaTklIAG2wTdZNLYhWcEmw1I8PjYXUkVZXWxmpVVUs?=
- =?us-ascii?Q?gJ3cFofr0crbJ3yEblZFSZgZgJG7LAlkFvbRjZ5DSBkbhjpy0XZVcpZa7kmQ?=
- =?us-ascii?Q?NFGJJGUet0O4VAnpSRe6gi8Mjfwzv9ccuqBRFAJzaVNUB6wkXjKtgIl4TvrS?=
- =?us-ascii?Q?MgFSk9XabE1GxDOXOC9aJnAjwMaQkWP1euJik/xZMhlMsx++8j0pKhGhVxrw?=
- =?us-ascii?Q?qxW3TTaowQIDmxZ+prtabTF9NjDbBJUfZY0EKyC2WYcAH2DtjWiY50SX7wQ3?=
- =?us-ascii?Q?6506QsofI68HjGAu6LLh1sGzooAD17BqqgXsxUPaeLl/UyeocA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?A8gjrH32vsOCwWF/xHcYEXIjnDFUdSCVnpgZgAB1Ux83FneSMF930JrnXuI+?=
- =?us-ascii?Q?inGwEvFEFQXDWZ/u6Y2eEP/qvNggZecVtMlKuspa6o9cf4vKd1Fv7rv83j07?=
- =?us-ascii?Q?lO7Plnm3kXj60khAwmCcQIhd9fc3t7JZa4PMm4VLrmqoVuCdrturDMqq9A8q?=
- =?us-ascii?Q?dlRkpHTyw352n50dgKtHpGYXU/PR7Pp9NTEnsbPA3ccEfx+cYtRWC6aDhbDd?=
- =?us-ascii?Q?46o5WgOEV8c8c88gkwipV5GN6rfDFVUCnuRPT9OPj5HK9iJCyc1NTHMObP3L?=
- =?us-ascii?Q?UUXPabN70T68Uc4ZjpzTLOmz9FBB34z+BdUPecl/gMstn/ixmbUx52ipEYGm?=
- =?us-ascii?Q?YrzeSTSW3sjhuqzJ/cQ2t5uc/wgawrhiSis0uFfVmJnv6ERu55NFrLs90qgB?=
- =?us-ascii?Q?e5vpIGhUaze6bdJ8bVGOS2tdRDPy0HlzTq3IzXbg0jIUltK3JtsCkwAbaGKk?=
- =?us-ascii?Q?jbEY68Zt4j4sdhLU00nzI58CLOWy9uaqq38UJaFXLZlFTZOCFlVsErog+2JI?=
- =?us-ascii?Q?8Tw2LmK6CJePtadWOsWCCrGeMGcu1sSeARkiuR7v2vzRlfE5IjYGaxoRpcnZ?=
- =?us-ascii?Q?WTo6n3s6m+KM0UT3AO1vmvKcYrKIGvWVbAoyyQOVZiCMdgQ0PB6FpBgumpLg?=
- =?us-ascii?Q?P2DeQnn5cXm9E36hMIhvdw5J7HnMrLNaY1vMJLJaUa6jLPdniBpD2kfM21/m?=
- =?us-ascii?Q?dDAmAFtilUKUMfuVhL0Y5DopcueM0E0dvjcz3IjDQ5lhz5/93Dhw3FQEYmAO?=
- =?us-ascii?Q?tnMlub8cL/sL4qarXCO7Q80ejw7X4U6WlIQj0cmtQdfDe7TPccc66R4TPVHE?=
- =?us-ascii?Q?N3OV4ztCiEoGh6q4/yokuSRVSgXykufq71a/ztWLtpNCcSLopEiLTWV2EnQd?=
- =?us-ascii?Q?Ws61eNpx6A2gHGVE1pd/lVlEM306p8djOj6byuQKCtys35eZfzyrORMzg5Hn?=
- =?us-ascii?Q?W8v8yZDjPD/ET7sE0q55VhbOVMq6VASzaOhT4dY78BKW7WCpKdzwpw9xhUZl?=
- =?us-ascii?Q?euBb60l6Qv5lDkx9c27U9TiCSYS1tk0OafzT7koT+NNbk2I1oP/sVj4vqQwD?=
- =?us-ascii?Q?GOTfDXGou3G8DsukfeLsBaL0zT4cbzYriTcvPY4jsMz12rSQG/5PZqcLjVVc?=
- =?us-ascii?Q?hiovbJFfhdvHYpL8zVS0ny7s8ul5imEp/wLmIaS4GQN34A6AE7c2bJcufLAh?=
- =?us-ascii?Q?NQiVi3fqLzFqwtV/EfGTBAH7+vufve7W5ehkKBGp3aEVKnAJq5O4HM8QgzaV?=
- =?us-ascii?Q?KIHoO+XJ2LHEbpNXPjbDyJWVShkR83jRaAsn28DVC/OP1ZsSAPjVVcA6e+10?=
- =?us-ascii?Q?vv/zlLLI3V6iAHQBnO1WxXb56Uc9qBtVTmYBuoEXelGVzBmhtRDRyVPjxams?=
- =?us-ascii?Q?K38RcsGf2QpytYrlFvDXWb4MWvJOsV5BS++neAUxjdxMIY8qr/8P/Z3jWiJ+?=
- =?us-ascii?Q?St/0o+XqghJjj/VA8WkotCp15nJYavDjO8RXE2kI7rhXWSdM4vSHjKTkYySH?=
- =?us-ascii?Q?RqovF0FAiQ4MlKS5UW3BJA6e9k+KXNooRfajSdITrtGQJyJR/BDIwgZLQ7Gz?=
- =?us-ascii?Q?N4c/+85UOblCSqwbIvuYt9jp9wBIuhD3kHzrh35gUaItaWAur0YIN5h11P5G?=
- =?us-ascii?Q?0Q=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c06ef207-fc7b-47c0-d45a-08ddfd14b681
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 15:52:36.0932
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L4Pj3vrnq0fq3/Y8vzo81BqRxIk/UxGuZcboKvfXtnUJEhYKSxDY0sOYbW1G2K7mMjnAjY8tI+TWZGl9tipXn0V/2D2ICDgNVkQhmKQKac0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8051
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926-scratch-bobbyeshleman-devmem-tcp-token-upstream-v3-0-084b46bda88f@meta.com>
 
-On Wed, Sep 24, 2025 at 03:19:22PM -0700, Dave Hansen wrote:
->With a stock 6.17-rc7 and this config:
->
->	https://hansen.beer/~dave/intel/config.xe.20250924
->
->I'm seeing:
->
->ld: vmlinux.o: in function `check_sw_disable':
->.../linux.runme/drivers/gpu/drm/xe/xe_hw_engine.c:812: undefined reference to `xe_configfs_get_engines_allowed'
->ld: vmlinux.o: in function `xe_survivability_mode_is_requested':
->.../linux.runme/drivers/gpu/drm/xe/xe_survivability_mode.c:228: undefined reference to `xe_configfs_get_survivability_mode'
->ld: .../linux.runme/drivers/gpu/drm/xe/xe_survivability_mode.c:233: undefined reference to `xe_configfs_clear_survivability_mode'
->ld: vmlinux.o: in function `BSWAP_SHUFB_CTL':
->sha1-avx2-asm.o:(.rodata+0x57def0): undefined reference to `xe_configfs_init'
->ld: sha1-avx2-asm.o:(.rodata+0x57def8): undefined reference to `xe_configfs_exit'
->vmlinux.o:(.debug_info+0x3176eb6): relocation truncated to fit: R_X86_64_32 against `.debug_loclists'
->
->I'm compiling the 'xe' driver in to the kernel and I've got configfs compiled in as a module, which is (I suspect) the reason this slipped through the cracks until now.
+On Fri, Sep 26, 2025 at 08:02:52AM -0700, Bobby Eshleman wrote:
+> This series improves the CPU cost of RX token management by replacing
+> the xarray allocator with an niov array and a uref field in niov.
+> 
+> Improvement is ~5% per RX user thread.
+> 
+> Two other approaches were tested, but with no improvement. Namely, 1)
+> using a hashmap for tokens and 2) keeping an xarray of atomic counters
+> but using RCU so that the hotpath could be mostly lockless. Neither of
+> these approaches proved better than the simple array in terms of CPU.
+> 
+> Running with a NCCL workload is still TODO, but I will follow up on this
+> thread with those results when done.
+> 
+> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
-yep, usually we have xe as a module, in which case we just rely on the
-stub configfs functions.
+Hi Bobby,
 
->
->In any case, I don't see any Kconfig dependencies for configfs in the xe code. The attached patch at least hacks around the issue for me.
->
->Is there a better way of fixing this?
+Unfortunately this patchset doesn't apply cleanly to net-next.
+So you'll need to rebase and repost at some point.
 
->diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
->index 714d5702dfd7..d04547fc5311 100644
->--- a/drivers/gpu/drm/xe/Kconfig
->+++ b/drivers/gpu/drm/xe/Kconfig
->@@ -47,6 +47,7 @@ config DRM_XE
-> 	select AUXILIARY_BUS
-> 	select HMM_MIRROR
-> 	select REGMAP if I2C
->+	select CONFIGFS_FS
-
-Maybe it'd be better to have it like this so it's still possible to
-remove it?
-
-config DRM_XE_CONFIGFS
-	depends on DRM_XE
-	depends on CONFIGFS_FS
-
-Lucas De Marchi
-
-> 	help
-> 	  Driver for Intel Xe2 series GPUs and later. Experimental support
-> 	  for Xe series is also available.
-
+-- 
+pw-bot: changes-requested
 
