@@ -1,268 +1,226 @@
-Return-Path: <linux-kernel+bounces-834263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-834264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97E8BA449E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD4CBA44BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 16:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF40386EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ABC5562CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Sep 2025 14:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1C31E7C2D;
-	Fri, 26 Sep 2025 14:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1B38DE1;
+	Fri, 26 Sep 2025 14:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRaSQ30J"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XPnJY8b2"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011023.outbound.protection.outlook.com [52.101.65.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2AB1C860C
-	for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 14:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758898207; cv=none; b=DNHnKgRiGIhDEEj14vOCzlrFFWAkvHWTuapynEEKPapnT/TGws9d+D/VKJkaE8xx38gvBxiG+qnZZMue/hZjGE0h50UGp1pEO9+985ZKQlK8zzpLZjJlI/pJm/keomwLcx4N5jjKIftNCznxNqLwG6zIrJWqcYwz1iXjcZES5F4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758898207; c=relaxed/simple;
-	bh=mAp6hBqDCs2MKWcF4MmvTFP9FlAkYa94+ms1Sj43PtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p7FkMMogkBiueZoPI1nK8PGljXONZixMSTb+TvcznaySj+GLksuf4ukn7CapjEuPI6xkHuNz8ir94X093F75TUcznXtGbfVcnNi6jT06II7HfsUFdFYcjeCFnj8j0/Lgg9saYvsjKLPnp7ftvpwwidBKRYdKjf3R3aJYx6G12+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRaSQ30J; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee155e0c08so1348557f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Sep 2025 07:50:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758898203; x=1759503003; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LfW+9l2SULTf/PnftEI2v39jut/0ik4R4e6yFkbRBVU=;
-        b=dRaSQ30JIKiGuUTEXvOWBLU6n5UnDidU8xpvQz1LGmYkrlP+GvIdZO5JFVhnT7RYya
-         DMlS3Xbf+Yi0//NcdGNqRIZuRfDEr1ib7k500JwUjtBQhdfWnLnf8lnWY7p2Oo5yl/wf
-         fb46QdzXGQIctDmaJ4oVzG5sW4DJT9ILIBTMND8NEjY+kanOOtdU6mtzZLEHpboNfsrx
-         n0cQJJdigp8EeEo1Mml81KQc5UQp4MyHzmhhK58zn6wKzj7M9+He8hsA0NdWkp7LH1wM
-         TSEp13nzn9OlgWM2vx/h5tEsBU91sP76f3ZMb6SYgh6xoBP60nJq7a8oDwFSy57MjsSf
-         aRHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758898203; x=1759503003;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LfW+9l2SULTf/PnftEI2v39jut/0ik4R4e6yFkbRBVU=;
-        b=rmz6FPODbUUMjx3gPFZ01fay/VMgNf/u9nkehbtirx3SJBPV8QmaSu5WrxwwLpjQ2b
-         h3OscrFnUsikVuVWWPK+nsTFuLiYSCQSWeL9YpqIuqwF+0xyIug8PQMmvSRGuJY58QZn
-         CHDYcQzpFv/tFwEStfYZreHNrOl2Y4d+gj/Vz6euny1cQHrCZvWoZO5MpOC4hlJTsGr5
-         GsWFbo378ohlHIkfCMDYeSpZtY4SODLWI3iR/IeVbFaraIN7w9TfCWbd72q5ET5eI3zk
-         BgWB4MyK1rYXlRifq3zYpQYTIdXZEh+14ZUhKpfJdqO4CfVbq1TjB2naqwB/kCHAr0Yg
-         FmSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlx7HA5mNeyGhXotUunVgf2v5TELnshyNk7jGxLcVvcYofRzSkJzlog9hXiIRdTWEt0VbMt90lmjHLtOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeGgHvoItXY13ZLJDTYkOt3irQQqUS8FSJ4AFBIFVqxtb13fbA
-	hvLx2+K8qgspMgkHhLgu81AQKsaDc6ABQBDS2hrzTELx2Oj6mcIVVBtH
-X-Gm-Gg: ASbGnctmKSbb/6Icw0SMLVNCmxmYX4o6rzHYHV85lRHNTaGHeKhirR1A8cC6ReZN3A/
-	Em5lrilNP6O95qBMoVJV10H1CRr9xPz4GntDOcaxvfwbHvjnzjoKcsSzTpnY4uP77znddjbCA1T
-	ibr61S9OKazpg3OhIeVZqVMlNRiCgzZ6gMgoW0fOMf6j6vF4h6VYFs6kgALobfRwj1iUGvjEs7N
-	r+rLYLUh/HwuqZT6jhHGhfkoBtc17caKt7pfoPCxAYh7P/OuJBGdqX+sVazNgw9NJDoczwN2ISH
-	cXrusCc2/PwB2A+6EqJTqWtWBG1GL0qU6Jsc0tOklK06MeadzMMTTsuvapBnXmaIUpHs3YaR+HJ
-	gkH2eAbZSNG+Dg4MlVoGrI9eWuw8FLtuDxARO7XQTdHTgsCpEzFxXMUHhLqyIHti+ZezVLwEqkx
-	17UTdFnMFADSJRyYfEBkxUJpGxxpRGLo1zgQ==
-X-Google-Smtp-Source: AGHT+IGRnafcH0soxzxg3eb9QKsI4SDpey1Eua5rAJCC4vB8nwuidScxQ4sm/5KgvJbQ9NySWjYQ2Q==
-X-Received: by 2002:a05:6000:2907:b0:401:41a9:524f with SMTP id ffacd0b85a97d-40e4adce99dmr6532292f8f.29.1758898202610;
-        Fri, 26 Sep 2025 07:50:02 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5? ([2a02:6b6f:e750:1b00:1cfc:9209:4810:3ae5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb7203b8asm7487419f8f.9.2025.09.26.07.50.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Sep 2025 07:50:01 -0700 (PDT)
-Message-ID: <146b95bd-e0f0-4e6b-a9fa-5a8f11355268@gmail.com>
-Date: Fri, 26 Sep 2025 15:49:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983751DE3DC;
+	Fri, 26 Sep 2025 14:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758898314; cv=fail; b=pRYefdWTB6mpJxPQaQkMY6VOaLCemGDjwL9rAoGo+/8zOP0iCaqbmeDearN/9iCA+RbJkhlESBTqingdX7xnGzL4DLqnT6d4huOkafVL5oOcH224lz0CXVjOEDFHbE9a6cw1AiMuXQgpSiauAzBRXfWXzartHfVlRqRl07MbYUU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758898314; c=relaxed/simple;
+	bh=XGVXxGONp+RZ4LQ4j9fp9Oh0g76ZbVPY0pW3b51Gmlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ln57D/IiBSd56A3YzRZuy7qac0tcluyv6U/UIMTO/MnEf8u1uXcvbVej5RZSRcmcgZbHQTDb6x1IZoaJ7ytz94qdgNq5I5/fkr1oeLfGnWL7gf3XNtLbhtXKuv0CGXfgTF3OqSVdtu7mmWG+GYSOVFlPRKzWayn/swaI+QO+dl4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XPnJY8b2; arc=fail smtp.client-ip=52.101.65.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IKtL9ilg8qsEDgzcs99bIz2jxCPhFrgq9JXoFbSrDYG9fb/f1ybyrWIQFbS3xW9HnIhZsG/XPtHU615sEe7qRLcPqTuESLRSywzAod0cNEYL9Vxd5C3RFX988oK2qmbpMeuqVCA0W3hwpMp0t6TMEn0ujTS9xvbIJjvaiqVEHcOgo7BbOkeH98AXgJhYB1q+hr6+ZYjJw/jyFwfxRD15N15RxuwjEDkCNqwv46wWfa4KewZSiUGdUMxJYUlimzCIy019U+JO2oYgE8Ct3m06pBChVePjS6jYOkg3TzH6Twr+UtOZPSrGA1G1NgLmJWfm3LFZpZ0BcoNZssK3tDhMnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pU9+q0Z/rbVBh0lqIw8R1PORXHoiRaC7lN3xsa8XYqM=;
+ b=H/SrUeEuZn/hIFgEU9oOULfrkFEM9PPc1hOEcUBMrZOizu9Ow+gAzui9rtt81k0/2VTXX6FXle6eNxMbpTkCVN9PWuRZHW2VFi4JOrkvxlqMpkazkdMjK7un4R81efACdljq0MiSNXUfcsq9dFuskdX8YfIxYeRD1SazMuRPAa3zD+ssGymWvpE9ZhfR1m9wZKKzLQKZu8u2hJ3UwLPPruyX5s7mq8dxU1rAO1vUB7Vzzdc3/M/M3gh1Qn0xjHZigb0PT5CoyH9jUTHqvojL4s/yX+c7xdvQbVSyjJnBxLdVwz6ZRUMacmZhjLBwNmod8pS2bPVf6ShTdOsxLteiaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pU9+q0Z/rbVBh0lqIw8R1PORXHoiRaC7lN3xsa8XYqM=;
+ b=XPnJY8b2UOKUKg5ZJrGkznTXWZrf6kH7+jBWLxNWmr3K9/09L1p7HqImQ89kSEKgV5OuYsIfgsjOkkkw5n9n46t6ARzHa43YmAf3watFMaM89/pj4UseJZbYD1kOi+cRkTK2deC4vjQK+vth9uN3QJhJ3Ybsk+VVHFKhJ1URzEkLMNIL6WUcwd2glqHIBDiRcvkQoQHiWsS5NmSDidQvz7A+v9w0tB8/qjDwQis6CcHbZEN5FO3wRfLwR1STmch/N5gLKprWKjxZ6+nwnK2sVzOn24d64EIKsrz5xsWlcH/xnCEtrWFjOuUvpJXEw5v7LYT2yq9rl0AkpJ8jfrp6sA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by PA1PR04MB10675.eurprd04.prod.outlook.com (2603:10a6:102:48f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Fri, 26 Sep
+ 2025 14:51:48 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9160.008; Fri, 26 Sep 2025
+ 14:51:48 +0000
+Date: Fri, 26 Sep 2025 10:51:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Manikanta Guntupalli <manikanta.guntupalli@amd.com>, git@amd.com,
+	Michal Simek <michal.simek@amd.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>, krzk+dt@kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	tommaso.merciai.xr@bp.renesas.com, quic_msavaliy@quicinc.com,
+	Shyam-sundar.S-k@amd.com,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"'billy_tsai@aspeedtech.com'" <billy_tsai@aspeedtech.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Jorge Marques <jorge.marques@analog.com>,
+	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-hardening@vger.kernel.org, radhey.shyam.pandey@amd.com,
+	srinivas.goud@amd.com, shubhrajyoti.datta@amd.com,
+	manion05gk@gmail.com
+Subject: Re: [PATCH V8 4/5] i3c: master: Add endianness support for
+ i3c_readl_fifo() and i3c_writel_fifo()
+Message-ID: <aNaod76qkM4Srqyl@lizhi-Precision-Tower-5810>
+References: <20250926105349.2932952-1-manikanta.guntupalli@amd.com>
+ <20250926105349.2932952-5-manikanta.guntupalli@amd.com>
+ <93704e82-ea7d-45ea-8527-8ce92108eccc@app.fastmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93704e82-ea7d-45ea-8527-8ce92108eccc@app.fastmail.com>
+X-ClientProxiedBy: BYAPR08CA0041.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::18) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 mm-new 02/12] mm: thp: remove vm_flags parameter from
- khugepaged_enter_vma()
-Content-Language: en-GB
-To: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
- david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, hannes@cmpxchg.org,
- gutierrez.asier@huawei-partners.com, willy@infradead.org, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, ameryhung@gmail.com,
- rientjes@google.com, corbet@lwn.net, 21cnbao@gmail.com,
- shakeel.butt@linux.dev, tj@kernel.org, lance.yang@linux.dev
-Cc: bpf@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yang Shi <shy828301@gmail.com>
-References: <20250926093343.1000-1-laoar.shao@gmail.com>
- <20250926093343.1000-3-laoar.shao@gmail.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250926093343.1000-3-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA1PR04MB10675:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ec54f8b-9784-4c0e-fd90-08ddfd0c37e4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|19092799006|7416014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jWa6aK+dMrxBtQWkzbyaN04KvnLoESMicfb0BFyFpnmQf5fB1maWVGsm5Em3?=
+ =?us-ascii?Q?OZKJnScDKEEv+UliUZBTLV9G5XzowDXQu7StN/DdLfDaieXFbT4MyADnpDna?=
+ =?us-ascii?Q?WI+GkCd/8HRTxFaAbn+NPuGWpwb31kgeH/Vs/oz+lSHc5cSlt4MR8SHsJtpc?=
+ =?us-ascii?Q?k1EvYT1sOhmCv6oZoIyf71REN6eomX72uPdKwiiLfP2r13hsfjeVDpaKSYUA?=
+ =?us-ascii?Q?m++Bu+J2gJfc4uD+Dz/cR/dQDQ5G+k/Yna3WtEuBmD8kZhYmx4QynGtuAWfb?=
+ =?us-ascii?Q?Kx0MZfIQfGu1uxCQGtroV8Tpof7+zB+xQZB1boJTv2lLAR3w7Yo6DExsZA2L?=
+ =?us-ascii?Q?8P/VAHxavSVO/evEG5Dw1iEFHlw/eW5BIjUxtSJydOroJQt+1bZSv9DtnE3t?=
+ =?us-ascii?Q?dYd2lJsmh5LDr0tDBLM/DrrbJ8KWP7lLrIe/Z9LZUCaaVYmwMMd7Rdiwk4Jo?=
+ =?us-ascii?Q?1rRPgbdnb8LQJY/QWcVSm5rYoHMzQMVWyfNBTGzz5xHI8fzeJiVkBPdLR3Lw?=
+ =?us-ascii?Q?3jFQc65qNjmnsE7zkwjbZBoTrHeVk0ugIm6v0ksVgSwIwjjov5ZBk4rtKZDq?=
+ =?us-ascii?Q?6/6FzCYw1vd8PZ3Fl2YqFYOoXdrsmE7M9QYI+EzD8gGbNxVchXysfF3pDtT5?=
+ =?us-ascii?Q?pisS9x1hgtC81LRUvtnFDepbzc8AVQpjkInYUJONetnButYQIRipPb6eSeWr?=
+ =?us-ascii?Q?6A31U67A+QxcNdg7TEk2XtaXPaeqqlmwxb3DIDg4SS5TlzHI2HCuVFCwVh4w?=
+ =?us-ascii?Q?x015gdrsCfu8kzwzjKj7nIz9RCitcQQWPiAGwFm1EjN81ggiyHACJ7Pj59jk?=
+ =?us-ascii?Q?qtVb9dwVoW+REvRREkshNI2iOrD2tTITjoMF3m9WzKjVopuGuSQggT8yDRwx?=
+ =?us-ascii?Q?cbDECNqdP4gJmXXGGUstQwqBg22vmV4Pl1kUwwPtw3jnSqxThmm+crTIAWO7?=
+ =?us-ascii?Q?l7i6cXpE+srLbci6BIkrGakIABTsxCpmvAwphrJcd8pVu/OjGp/VJBpy5CCC?=
+ =?us-ascii?Q?9usa1kvKfxOQn4IZKEunWb/Och8+BHtRjXTlpPbazGpKwzIR8t4X7GUatAqX?=
+ =?us-ascii?Q?xOmM9v9SKYA4Tb26iHK7tncegEyQOZqmcoP7LouJf4Cl3Qo1vIYn8EaV3ibM?=
+ =?us-ascii?Q?HjNEWr8cYKqiwrF20H9NsVKt3uv67RLZbSFzio5dam0xv6EPnxIExgd2BbNl?=
+ =?us-ascii?Q?YT93eWdUv1liMAmX0uHj8M/M30rqEvWmUGEh26n9etuoRkydo6a0ZNWGL3Yg?=
+ =?us-ascii?Q?roFf9clvL5z9arvEtjIryYc9dZCkQA2/hHIblizojtJAzU0ymm9vfSVUAw2W?=
+ =?us-ascii?Q?1J79wxr3hGfZbS5qwPCl2ZQbC78P5Cb9rwCNXPJ+yv4H7MAu58/h78zZGYwH?=
+ =?us-ascii?Q?SYaqWs6WqztOrYeF8zy60/kLgtd235qKf9Pqv9R9G8xNyvycZlxgFU/XmLOW?=
+ =?us-ascii?Q?YXLzp1EIme10HMZaTPz2IhNdg1q3uHtSilSnYx9cEbE5GLxtqsMWuA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(19092799006)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yNyQBBfhLh1CkkctBLtsJ4pFqaoeSObfTDmAt53anKcFz74yGXWXt73zqpYs?=
+ =?us-ascii?Q?pF9kHS4LZeMmxkTtxQ31EimIUoyFNemEirKS9xR6y4efBVLEml26xxQAVSTl?=
+ =?us-ascii?Q?nKmE2AXE7ZJA0jZOd9ObvQEUtygPtvgAsaoZA1OGs6qqd5bO5XSdeqZJVnf1?=
+ =?us-ascii?Q?gLenNNr+yhpmZv/kMh75E+k8sOUIqOej5Wic2LClmcFenIAkMo+igXCCxr51?=
+ =?us-ascii?Q?ITR0i6/ukaliUmA9liwcMh3H2ET5cRlteqGKqpVAMAD/Y4NIjqLDQTogPRDx?=
+ =?us-ascii?Q?UV90HcqAl2XWZtuWgZveWVe7bqzDmkY9vSnOSSITh5l9JoKnUg5ZoJj4dMAM?=
+ =?us-ascii?Q?WvAECI48E4bOkKxTfWny2sVUfEAswskVAFMpDxfaEbzQknUxwvUWqc3AC+tg?=
+ =?us-ascii?Q?LcO1C5nXvC41M+bIKO4gSrmu8vV2B0FDJmFMY/SG3QzumMD1FCe7i7eWm1Oh?=
+ =?us-ascii?Q?fVGiiDUI4p+1juL7D99LoLXezaNofJtY55XzaWJHpHnUFzaogQS+R+gmCEn+?=
+ =?us-ascii?Q?MSQljFb1rcL1Ms2Q/aAFAV4cPaoi2HDMO6v4g3Yb32HQEpE1bj8vP1yZ0Uwm?=
+ =?us-ascii?Q?UZSepoKWeG6G6RexP+XOBkAw7zkCSn+bj3adv6p56g8qrWzHfawkHc7ZdG1b?=
+ =?us-ascii?Q?YTTPgyG8AJHulBfetGiVWqTp5xC+ftqExoq+ceMKFazcZCEWvyWg8KlQlY6w?=
+ =?us-ascii?Q?75AUmjgXNA6c+j8H8RnlUpTQORDbXId0BbB8mK8bjPx/1uk/vx0xEBw8jt8S?=
+ =?us-ascii?Q?klk+SCV43ix0wSfVk3mK9aQ+MZ57C4/IvpZs2rghtXzTgGyWHIjENXyXr2IH?=
+ =?us-ascii?Q?2Q0WxJFlloVo0cV/Gu2Luptp54y9EnzJKmhM1tyYyP0loQh3pPjgEmPJcbz7?=
+ =?us-ascii?Q?XNwP8GZZ58nrctDlvhxJTXwWe3h9ChpcYv0h7LWXYOmHocTCVbOLP5X4IiFJ?=
+ =?us-ascii?Q?MsAmgEtXFc8lyXYrDqolu1LN86Nk8vEI7fuxNxhhsHHAp+KdEjeZeqKMWH5V?=
+ =?us-ascii?Q?TsxsSKA6vZf95UOe7igzB23R7jD9aIOL7K4MFeRbpsLKKzyn3WxX1zF5qUuw?=
+ =?us-ascii?Q?RUZTV0Kfd6x4t1GTIcCU6mX5ftmpCyxLgu2su1GuQfkQSWnEtaQeHKZGT3Dp?=
+ =?us-ascii?Q?npcrx2Xv/XMqvGMtKmr1MV9+GDaBH8dM8NaRFVJcfUUwtKoy6xPnMq7vt3Ex?=
+ =?us-ascii?Q?e26c07fyEIUJ92T9Ytz/Vr4d1HfixZCeE/kBob7ctsxB0E0mOwLQDk/AjW4A?=
+ =?us-ascii?Q?Q0ZE+BHhCbhCBxZ4sfLDBubCg3g4NiEqU98qT1BjeKuvqk2Hhk37c7iC43lS?=
+ =?us-ascii?Q?7W10ep1Z0d/CqTYPPwIKL27tXdKxftRuxmNwIScx3mljtXnFnZKAqmDgQteN?=
+ =?us-ascii?Q?N9512SVN2AXhDah4YR4+BqQKXXMyB+xVdl63RZ753wRWUNX3JOc8BOxjAW9r?=
+ =?us-ascii?Q?d3EL+GncfyD8a7/nw0Q0bYxPAVLlerXtE6napnFeLobnpS7J6KIF1GY+f9H0?=
+ =?us-ascii?Q?+1oNmED6WYGaaw/H8kg9aBTL5AtEKk6Bl5rT8gKu2oocSdQnVfeSnYyCSkWc?=
+ =?us-ascii?Q?VT18KymEUWyHvSqs8JMMwKJ88PZp+ZzJf43zSpGL?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ec54f8b-9784-4c0e-fd90-08ddfd0c37e4
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 14:51:47.8808
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jAQ3v8CWyEadSqaxiyn55A0JBR/SxQ9HEGJzTgw7yYDaS60mg+fLnfQqxjQI25Y/jyahw7ElsBHd1fMUz6R0AA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10675
+
+On Fri, Sep 26, 2025 at 01:09:37PM +0200, Arnd Bergmann wrote:
+> On Fri, Sep 26, 2025, at 12:53, Manikanta Guntupalli wrote:
+> > Add endianness handling to the FIFO access helpers i3c_readl_fifo() and
+> > i3c_writel_fifo(). This ensures correct data transfers on platforms where
+> > the FIFO registers are expected to be accessed in either big-endian or
+> > little-endian format.
+> >
+> > Update the Synopsys, Cadence, and Renesas I3C master controller drivers to
+> > pass the appropriate endianness argument to these helpers.
+> >
+> > Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+> I don't think this is a good interface, based on our discussion
+> so far, and I had hoped you'd change it the way I had suggested
+> with a separate function for the xi3c driver, so normal drivers
+> don't have to worry about the AMD specific quirk.
+>
+> I think this should also avoid mentioning "endianess" in the
+> changelog and in the code itself, since that would likely
+> confuse readers into thinking (as I did in my earlier replies)
+> that this is related to using big-endian kernels.
+>
+> i3c_readl_fifo()/i3c_writel_fifo() are already portable and
+> handle endianess correctly by using the readsl()/writesl()
+> functions.
+
+I agree. I think previous your suggested API is good.
+
+/*
+ * BIT: 31..24   23..16  15..8   7..0
+ *       B0       B1       B2    B3
+ *
+ * Memory:
+ *  0x0:  B0
+ *  0x1:  B1
+ *  0x2:  B2
+ *  0x3:  B3
+ */
+i3c_writel_fifo_bytereversed()
 
 
-
-On 26/09/2025 10:33, Yafang Shao wrote:
-> The khugepaged_enter_vma() function requires handling in two specific
-> scenarios:
-> 1. New VMA creation
->   When a new VMA is created, if vma->vm_mm is not present in
->   khugepaged_mm_slot, it must be added. In this case,
->   khugepaged_enter_vma() is called after vma->vm_flags have been set,
->   allowing direct use of the VMA's flags.
-> 2. VMA flag modification
->   When vma->vm_flags are modified (particularly when VM_HUGEPAGE is set),
->   the system must recheck whether to add vma->vm_mm to khugepaged_mm_slot.
->   Currently, khugepaged_enter_vma() is called before the flag update, so
->   the call must be relocated to occur after vma->vm_flags have been set.
-> 
-> Additionally, khugepaged_enter_vma() is invoked in other contexts, such as
-> during VMA merging. However, these calls are unnecessary because the
-> existing VMA already ensures that vma->vm_mm is registered in
-> khugepaged_mm_slot. While removing these redundant calls represents a
-> potential optimization, that change should be addressed separately.
-> Because VMA merging only occurs when the vm_flags of both VMAs are
-> identical (excluding special flags like VM_SOFTDIRTY), we can safely use
-> target->vm_flags instead.
-> 
-
-The patch looks good to me, but if we are sure that khugepaged_enter_vma
-is not needed in VMA merging case, we should remove it in this patch itself.
-If the reason we are removing what flags are being considered when calling
-khugepaged_enter_vma in VMA merging case is because the calls are unnecessary,
-then we should just remove the calls and not modify them
-(if its safe and functionally correct :))
-
-> After this change, we can further remove vm_flags parameter from
-> thp_vma_allowable_order(). That will be handled in a followup patch.
-> 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Cc: Yang Shi <shy828301@gmail.com>
-> ---
->  include/linux/khugepaged.h |  6 ++----
->  mm/huge_memory.c           |  2 +-
->  mm/khugepaged.c            | 11 ++---------
->  mm/madvise.c               |  7 +++++++
->  mm/vma.c                   |  6 +++---
->  5 files changed, 15 insertions(+), 17 deletions(-)
-> 
-> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
-> index f14680cd9854..b30814d3d665 100644
-> --- a/include/linux/khugepaged.h
-> +++ b/include/linux/khugepaged.h
-> @@ -13,8 +13,7 @@ extern void khugepaged_destroy(void);
->  extern int start_stop_khugepaged(void);
->  extern void __khugepaged_enter(struct mm_struct *mm);
->  extern void __khugepaged_exit(struct mm_struct *mm);
-> -extern void khugepaged_enter_vma(struct vm_area_struct *vma,
-> -				 vm_flags_t vm_flags);
-> +extern void khugepaged_enter_vma(struct vm_area_struct *vma);
->  extern void khugepaged_enter_mm(struct mm_struct *mm);
->  extern void khugepaged_min_free_kbytes_update(void);
->  extern bool current_is_khugepaged(void);
-> @@ -39,8 +38,7 @@ static inline void khugepaged_fork(struct mm_struct *mm, struct mm_struct *oldmm
->  static inline void khugepaged_exit(struct mm_struct *mm)
->  {
->  }
-> -static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
-> -					vm_flags_t vm_flags)
-> +static inline void khugepaged_enter_vma(struct vm_area_struct *vma)
->  {
->  }
->  static inline void khugepaged_enter_mm(struct mm_struct *mm)
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 1b81680b4225..ac6601f30e65 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1346,7 +1346,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->  	ret = vmf_anon_prepare(vmf);
->  	if (ret)
->  		return ret;
-> -	khugepaged_enter_vma(vma, vma->vm_flags);
-> +	khugepaged_enter_vma(vma);
->  
->  	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
->  			!mm_forbids_zeropage(vma->vm_mm) &&
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index f47ac8c19447..04121ae7d18d 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -353,12 +353,6 @@ int hugepage_madvise(struct vm_area_struct *vma,
->  #endif
->  		*vm_flags &= ~VM_NOHUGEPAGE;
->  		*vm_flags |= VM_HUGEPAGE;
-> -		/*
-> -		 * If the vma become good for khugepaged to scan,
-> -		 * register it here without waiting a page fault that
-> -		 * may not happen any time soon.
-> -		 */
-> -		khugepaged_enter_vma(vma, *vm_flags);
->  		break;
->  	case MADV_NOHUGEPAGE:
->  		*vm_flags &= ~VM_HUGEPAGE;
-> @@ -467,10 +461,9 @@ void khugepaged_enter_mm(struct mm_struct *mm)
->  	__khugepaged_enter(mm);
->  }
->  
-> -void khugepaged_enter_vma(struct vm_area_struct *vma,
-> -			  vm_flags_t vm_flags)
-> +void khugepaged_enter_vma(struct vm_area_struct *vma)
->  {
-> -	if (!thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
-> +	if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
->  		return;
->  
->  	khugepaged_enter_mm(vma->vm_mm);
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 35ed4ab0d7c5..ab8b5d47badb 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -1425,6 +1425,13 @@ static int madvise_vma_behavior(struct madvise_behavior *madv_behavior)
->  	VM_WARN_ON_ONCE(madv_behavior->lock_mode != MADVISE_MMAP_WRITE_LOCK);
->  
->  	error = madvise_update_vma(new_flags, madv_behavior);
-> +	/*
-> +	 * If the vma become good for khugepaged to scan,
-> +	 * register it here without waiting a page fault that
-> +	 * may not happen any time soon.
-> +	 */
-> +	if (!error && new_flags & VM_HUGEPAGE)
-> +		khugepaged_enter_mm(vma->vm_mm);
->  out:
->  	/*
->  	 * madvise() returns EAGAIN if kernel resources, such as
-> diff --git a/mm/vma.c b/mm/vma.c
-> index a1ec405bda25..6a548b0d64cd 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -973,7 +973,7 @@ static __must_check struct vm_area_struct *vma_merge_existing_range(
->  	if (err || commit_merge(vmg))
->  		goto abort;
->  
-> -	khugepaged_enter_vma(vmg->target, vmg->vm_flags);
-> +	khugepaged_enter_vma(vmg->target);
->  	vmg->state = VMA_MERGE_SUCCESS;
->  	return vmg->target;
->  
-> @@ -1093,7 +1093,7 @@ struct vm_area_struct *vma_merge_new_range(struct vma_merge_struct *vmg)
->  	 * following VMA if we have VMAs on both sides.
->  	 */
->  	if (vmg->target && !vma_expand(vmg)) {
-> -		khugepaged_enter_vma(vmg->target, vmg->vm_flags);
-> +		khugepaged_enter_vma(vmg->target);
->  		vmg->state = VMA_MERGE_SUCCESS;
->  		return vmg->target;
->  	}
-> @@ -2520,7 +2520,7 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
->  	 * call covers the non-merge case.
->  	 */
->  	if (!vma_is_anonymous(vma))
-> -		khugepaged_enter_vma(vma, map->vm_flags);
-> +		khugepaged_enter_vma(vma);
->  	*vmap = vma;
->  	return 0;
->  
-
+Frank
+>
+>     Arnd
+>
+> --
+> linux-i3c mailing list
+> linux-i3c@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-i3c
 
